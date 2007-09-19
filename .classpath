@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="bench"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="src" path="conf"/>
+	<classpathentry kind="lib" path="externals/saxon8-xqj__V8.9.jar"/>
+	<classpathentry kind="lib" path="externals/saxon8-xpath__V8.9.jar"/>
+	<classpathentry kind="lib" path="externals/saxon8__V8.9.jar"/>
+	<classpathentry kind="lib" path="externals/log4j__V1.2.14.jar"/>
+	<classpathentry kind="lib" path="externals/excalibur-xmlutil__V2.1.jar"/>
+	<classpathentry kind="lib" path="externals/excalibur-pool-api__V2.1.jar"/>
+	<classpathentry kind="lib" path="externals/commons-logging-api__V1.0.4.jar"/>
+	<classpathentry kind="lib" path="externals/commons-logging__V1.0.4.jar"/>
+	<classpathentry kind="lib" path="externals/commons-lang__V2.2.jar"/>
+	<classpathentry kind="lib" path="externals/cocoon__V2.1.10.jar"/>
+	<classpathentry kind="lib" path="externals/avalon-framework-api__V4.3.jar"/>
+	<classpathentry kind="lib" path="externals/commons-httpclient__V3.0.1.jar"/>
+	<classpathentry kind="lib" path="externals/cajo__V1.96.jar"/>
+	<classpathentry kind="lib" path="externals/commons-codec__V1.3.jar"/>
+	<classpathentry kind="lib" path="externals/wstx-asl__V3.1.1.jar"/>
+	<classpathentry kind="lib" path="externals/stax-api__V1.0.1.jar"/>
+	<classpathentry kind="lib" path="externals/Perfidix__V2.1.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="output" path="generated"/>
+</classpath>
