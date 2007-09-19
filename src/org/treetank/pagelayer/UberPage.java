@@ -1,0 +1,208 @@
+/*
+ * Copyright 2007 Marc Kramis
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * $Id$
+ * 
+ */
+
+package org.treetank.pagelayer;
+
+import org.treetank.utils.FastByteArrayReader;
+import org.treetank.utils.FastByteArrayWriter;
+import org.treetank.utils.IConstants;
+import org.treetank.utils.StaticTree;
+
+final public class UberPage extends AbstractPage implements IPage {
+
+  private long mMaxRevisionKey;
+
+  private final PageReference[] mRevisionRootPageReferences;
+
+  private final PageReference[] mIndirectRevisionRootPageReferences;
+
+  private RevisionRootPage mCurrentRevisionRootPage;
+
+  /**
+   * Constructor to assure minimal common setup.
+   * 
+   * @param pageCache IPageCache to read from.
+   */
+  private UberPage(final PageCache pageCache) {
+    super(pageCache);
+    mRevisionRootPageReferences =
+        new PageReference[IConstants.UP_IMMEDIATE_REVISION_ROOT_PAGE_COUNT];
+    mIndirectRevisionRootPageReferences =
+        new PageReference[IConstants.UP_MAX_REVISION_ROOT_PAGE_INDIRECTION_LEVEL];
+  }
+
+  /**
+   * Create new uncommitted in-memory uber page.
+   * 
+   * @param pageCache
+   * @return
+   * @throws Exception
+   */
+  public static final UberPage create(final PageCache pageCache)
+      throws Exception {
+
+    final UberPage uberPage = new UberPage(pageCache);
+
+    // Make sure that all references are instantiated.
+    uberPage.mMaxRevisionKey = IConstants.UP_INIT_ROOT_REVISION_KEY;
+    createPageReferences(uberPage.mRevisionRootPageReferences);
+
+    // Indirect pages (shallow init).
+    createPageReferences(uberPage.mIndirectRevisionRootPageReferences);
+
+    // Make sure that the first empty revision root page already exists.
+    uberPage.mCurrentRevisionRootPage =
+        RevisionRootPage.create(pageCache, IConstants.UP_ROOT_REVISION_KEY);
+
+    return uberPage;
+
+  }
+
+  /**
+   * Read committed uber page from disk.
+   * 
+   * @param pageCache
+   * @param in
+   * @throws Exception
+   */
+  public static final UberPage read(
+      final PageCache pageCache,
+      final FastByteArrayReader in) throws Exception {
+
+    final UberPage uberPage = new UberPage(pageCache);
+
+    // Deserialize uber page.
+    uberPage.mMaxRevisionKey = in.readLong();
+    readPageReferences(uberPage.mRevisionRootPageReferences, in);
+
+    // Indirect pages (shallow load without indirect page instances).
+    readPageReferences(uberPage.mIndirectRevisionRootPageReferences, in);
+
+    // Make sure latest revision root page is active.
+    uberPage.mCurrentRevisionRootPage =
+        uberPage.getRevisionRootPage(uberPage.mMaxRevisionKey);
+
+    return uberPage;
+  }
+
+  /**
+   * COW committed uber page to modify it.
+   * 
+   * @param committedUberPage
+   * @return
+   */
+  public static final UberPage clone(final UberPage committedUberPage) {
+
+    final UberPage uberPage = new UberPage(committedUberPage.mPageCache);
+
+    // COW uber page.
+    uberPage.mMaxRevisionKey = committedUberPage.mMaxRevisionKey;
+    clonePageReferences(
+        uberPage.mRevisionRootPageReferences,
+        committedUberPage.mRevisionRootPageReferences);
+
+    // Indirect pages (shallow COW without page instances).
+    clonePageReferences(
+        uberPage.mIndirectRevisionRootPageReferences,
+        committedUberPage.mIndirectRevisionRootPageReferences);
+
+    uberPage.mCurrentRevisionRootPage =
+        committedUberPage.mCurrentRevisionRootPage;
+
+    return uberPage;
+  }
+
+  public final long getMaxRevisionKey() {
+    return mMaxRevisionKey;
+  }
+
+  public final RevisionRootPage getRevisionRootPage(final long revisionKey)
+      throws Exception {
+
+    // Calculate number of levels and offsets of these levels.
+    final int[] offsets = StaticTree.calcRevisionRootPageOffsets(revisionKey);
+
+    if (offsets.length == 1) {
+      // Immediate reference.
+      return (RevisionRootPage) dereference(
+          mRevisionRootPageReferences[offsets[0]],
+          IConstants.REVISION_ROOT_PAGE);
+    } else {
+      // Indirect reference.
+      PageReference reference = mIndirectRevisionRootPageReferences[offsets[0]];
+      IPage page = null;
+
+      // Remaining levels.
+      for (int i = 1; i < offsets.length; i++) {
+        page = dereference(reference, IConstants.INDIRECT_PAGE);
+        reference = ((IndirectPage) page).getPageReference(offsets[i]);
+      }
+      return (RevisionRootPage) dereference(
+          reference,
+          IConstants.REVISION_ROOT_PAGE);
+    }
+  }
+
+  public final RevisionRootPage prepareRevisionRootPage() throws Exception {
+
+    // Calculate number of levels and offsets of these levels.
+    final int[] offsets = StaticTree.calcRevisionRootPageOffsets(mMaxRevisionKey + 1);
+
+    // Which page reference to COW on immediate level 0?
+    mCurrentRevisionRootPage =
+        RevisionRootPage.clone(mMaxRevisionKey + 1, mCurrentRevisionRootPage);
+    if (offsets.length == 1) {
+      // Immediate reference.
+      mRevisionRootPageReferences[(int) mMaxRevisionKey + 1]
+          .setPage(mCurrentRevisionRootPage);
+    } else {
+      // Indirect reference.
+      PageReference reference = mIndirectRevisionRootPageReferences[offsets[0]];
+      IPage page = null;
+
+      //    Remaining levels.
+      for (int i = 1; i < offsets.length; i++) {
+        page = prepareIndirectPage(reference);
+        reference = ((IndirectPage) page).getPageReference(offsets[i]);
+      }
+      reference.setPage(mCurrentRevisionRootPage);
+    }
+    return mCurrentRevisionRootPage;
+
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final void commit(final PageWriter pageWriter) throws Exception {
+    commit(pageWriter, mRevisionRootPageReferences);
+    commit(pageWriter, mIndirectRevisionRootPageReferences);
+    mMaxRevisionKey += 1;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final void serialize(final FastByteArrayWriter out) throws Exception {
+    out.writeLong(mMaxRevisionKey);
+    serialize(out, mRevisionRootPageReferences);
+    serialize(out, mIndirectRevisionRootPageReferences);
+  }
+
+}
