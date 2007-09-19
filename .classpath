@@ -5,11 +5,9 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="src" path="conf"/>
 	<classpathentry kind="lib" path="externals/log4j__V1.2.14.jar"/>
-	<classpathentry kind="lib" path="externals/commons-logging-api__V1.0.4.jar"/>
-	<classpathentry kind="lib" path="externals/commons-logging__V1.0.4.jar"/>
+	<classpathentry kind="lib" path="externals/Perfidix__V2.1.0.jar"/>
 	<classpathentry kind="lib" path="externals/wstx-asl__V3.1.1.jar"/>
 	<classpathentry kind="lib" path="externals/stax-api__V1.0.1.jar"/>
-	<classpathentry kind="lib" path="externals/Perfidix__V2.1.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="generated"/>
