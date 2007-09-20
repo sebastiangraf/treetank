@@ -22,8 +22,8 @@ import java.io.PipedOutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 
-import org.treetank.nodelayer.INode;
-import org.treetank.nodelayer.IReadTransaction;
+import org.treetank.api.INode;
+import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastLongStack;
 import org.treetank.utils.FastObjectStack;
 import org.treetank.utils.IConstants;

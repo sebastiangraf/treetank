@@ -25,9 +25,9 @@ import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.nodelayer.IReadTransaction;
-import org.treetank.nodelayer.ISession;
-import org.treetank.nodelayer.IWriteTransaction;
+import org.treetank.api.IReadTransaction;
+import org.treetank.api.ISession;
+import org.treetank.api.IWriteTransaction;
 import org.treetank.nodelayer.Session;
 import org.treetank.utils.IConstants;
 import org.treetank.utils.UTF;

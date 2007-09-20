@@ -28,8 +28,8 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.nodelayer.ISession;
-import org.treetank.nodelayer.IWriteTransaction;
+import org.treetank.api.ISession;
+import org.treetank.api.IWriteTransaction;
 import org.treetank.nodelayer.Session;
 import org.treetank.utils.IConstants;
 import org.treetank.utils.TestDocument;

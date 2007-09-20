@@ -27,7 +27,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 
-import org.treetank.nodelayer.IWriteTransaction;
+import org.treetank.api.IWriteTransaction;
 import org.treetank.nodelayer.Session;
 import org.treetank.utils.FastLongStack;
 import org.treetank.utils.IConstants;
