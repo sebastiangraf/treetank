@@ -21,6 +21,7 @@
 
 package org.treetank.xmllayer;
 
+import org.treetank.api.IAxisIterator;
 import org.treetank.api.IReadTransaction;
 
 /**

@@ -27,13 +27,13 @@ import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.treetank.api.IAxisIterator;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.nodelayer.Session;
 import org.treetank.utils.IConstants;
 import org.treetank.utils.TestDocument;
 import org.treetank.xmllayer.DescendantAxisIterator;
-import org.treetank.xmllayer.IAxisIterator;
 import org.treetank.xmllayer.NameTestAxisIterator;
 
 
