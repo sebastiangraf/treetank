@@ -19,7 +19,7 @@
  * $Id$
  */
 
-package org.treetank.xmllayer;
+package org.treetank.api;
 
 /**
  * <h1>IAxisIterator</h1>

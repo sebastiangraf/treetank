@@ -27,6 +27,7 @@ import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.treetank.api.IAxisIterator;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
@@ -35,7 +36,6 @@ import org.treetank.utils.IConstants;
 import org.treetank.utils.TestDocument;
 import org.treetank.utils.UTF;
 import org.treetank.xmllayer.DescendantAxisIterator;
-import org.treetank.xmllayer.IAxisIterator;
 
 
 public class ThreadTest {
