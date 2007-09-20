@@ -17,7 +17,7 @@
  * 
  */
 
-package org.treetank.nodelayer;
+package org.treetank.api;
 
 import org.treetank.pagelayer.Namespace;
 

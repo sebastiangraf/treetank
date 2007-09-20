@@ -19,7 +19,7 @@
 
 package org.treetank.xmllayer;
 
-import org.treetank.nodelayer.IReadTransaction;
+import org.treetank.api.IReadTransaction;
 
 /**
  * <h1>AttributeAxisIteratorTest</h1>

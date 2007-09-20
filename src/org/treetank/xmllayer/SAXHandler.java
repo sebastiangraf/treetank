@@ -21,7 +21,7 @@ package org.treetank.xmllayer;
 
 import java.util.ArrayList;
 
-import org.treetank.nodelayer.IWriteTransaction;
+import org.treetank.api.IWriteTransaction;
 import org.treetank.utils.FastLongStack;
 import org.treetank.utils.IConstants;
 import org.treetank.utils.UTF;

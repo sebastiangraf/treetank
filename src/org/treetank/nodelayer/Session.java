@@ -26,6 +26,9 @@ import java.util.Map;
 import java.util.concurrent.Semaphore;
 
 import org.apache.log4j.Logger;
+import org.treetank.api.IReadTransaction;
+import org.treetank.api.ISession;
+import org.treetank.api.IWriteTransaction;
 import org.treetank.pagelayer.PageCache;
 import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.PageWriter;

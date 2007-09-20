@@ -17,7 +17,8 @@
  * 
  */
 
-package org.treetank.nodelayer;
+package org.treetank.api;
+
 
 /**
  * <h1>IReadTransaction</h1>

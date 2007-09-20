@@ -19,7 +19,7 @@
 
 package org.treetank.xmllayer;
 
-import org.treetank.nodelayer.IReadTransaction;
+import org.treetank.api.IReadTransaction;
 import org.treetank.utils.IConstants;
 
 /**

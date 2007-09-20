@@ -19,7 +19,7 @@
 
 package org.treetank.utils;
 
-import org.treetank.nodelayer.IWriteTransaction;
+import org.treetank.api.IWriteTransaction;
 
 /**
  * <h1>TestDocument</h1>
