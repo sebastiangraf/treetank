@@ -1,4 +1,10 @@
-#Thu Aug 18 00:23:02 CEST 2005
+#Thu Sep 20 13:29:32 CEST 2007
 eclipse.preferences.version=1
-internal.default.compliance=default
+formatter_profile=_treetank
+formatter_settings_version=11
+org.eclipse.jdt.ui.exception.name=e
+org.eclipse.jdt.ui.gettersetter.use.is=true
+org.eclipse.jdt.ui.javadoc=false
+org.eclipse.jdt.ui.keywordthis=false
+org.eclipse.jdt.ui.overrideannotation=true
 org.eclipse.jdt.ui.text.custom_code_templates=<?xml version\="1.0" encoding\="UTF-8"?>\n<templates/>
