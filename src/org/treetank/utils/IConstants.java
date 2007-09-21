@@ -154,7 +154,7 @@ public interface IConstants {
   // --- Revision Root Page ----------------------------------------------------
 
   /** Immediate node page count per revision root page. */
-  public static final int RRP_IMMEDIATE_NODE_PAGE_COUNT = 16;
+  public static final int RRP_IMMEDIATE_NODE_PAGE_COUNT = 8;
 
   /** Cumulated node pages per level. */
   public static final long[] RRP_CUMULATED_NODE_PAGE_COUNT =
@@ -225,10 +225,10 @@ public interface IConstants {
 
   /** INode kind is document. */
   public static final int DOCUMENT = 9;
-  
+
   //--- XML Layer --------------------------------------------------------------
-  
+
   /** Commit threshold. */
-  public static final int COMMIT_TRESHOLD = 1000;
-  
+  public static final int COMMIT_TRESHOLD = 1000000;
+
 }
