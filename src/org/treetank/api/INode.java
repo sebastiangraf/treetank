@@ -1,7 +1,7 @@
 /*
  * TreeTank - Embedded Native XML Database
  * 
- * Copyright (C) 2007 Marc Kramis
+ * Copyright 2007 Marc Kramis
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

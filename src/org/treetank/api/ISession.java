@@ -1,7 +1,7 @@
 /*
  * TreeTank - Embedded Native XML Database
  * 
- * Copyright (C) 2007 Marc Kramis
+ * Copyright 2007 Marc Kramis
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@ package org.treetank.api;
  * <h1>ISession</h1>
  * 
  * <p>
- * Each IC3 file is bound to one instance implementing ISession. Transactions
- * can then be started from this instance. There can only be one
+ * Each TreeTank file is bound to one instance implementing ISession.
+ * Transactions can then be started from this instance. There can only be one
  * IWriteTransaction at the time. It can be committed or aborted through the
  * ISession.
  * </p>

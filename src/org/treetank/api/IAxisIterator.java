@@ -1,7 +1,7 @@
 /*
  * TreeTank - Embedded Native XML Database
  * 
- * Copyright (C) 2007 Marc Kramis
+ * Copyright 2007 Marc Kramis
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ package org.treetank.api;
  * <h1>IAxisIterator</h1>
  * 
  * <p>
- * The axis iterator interactively iterates over the nodeStore using
+ * The axis iterator interactively iterates over the TreeTank using
  * an IReadTransaction instance. It assumes, that the cursor is not modified
  * or moved by another thread during an iteration.
  * </p>
