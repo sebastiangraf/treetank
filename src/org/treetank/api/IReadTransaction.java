@@ -1,7 +1,7 @@
 /*
  * TreeTank - Embedded Native XML Database
  * 
- * Copyright (C) 2007 Marc Kramis
+ * Copyright 2007 Marc Kramis
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ package org.treetank.api;
  * Key/ParentKey/FirstChildKey/LeftSiblingKey/RightSiblingKey/ChildCount
  * encoding. This encoding keeps the children ordered but has no knowledge of
  * the global node ordering. Nodes must first be selected before they can be
- * read. 
+ * read.
  * </p>
  * 
  * <p>
