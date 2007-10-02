@@ -22,6 +22,9 @@
 package org.treetank.nodelayer;
 
 import java.io.File;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import junit.framework.TestCase;
 
@@ -58,18 +61,17 @@ public class ThreadTest {
     TestDocument.create(trx);
     session.commit();
 
+    ExecutorService taskExecutor = Executors.newFixedThreadPool(WORKER_COUNT);
     Thread[] worker = new Thread[WORKER_COUNT];
     for (int i = 0; i < WORKER_COUNT; i++) {
-      worker[i] = new Worker(session.beginReadTransaction(1L));
-      worker[i].start();
+      taskExecutor.execute(new Task(session));
       final IWriteTransaction wTrx = session.beginWriteTransaction();
       wTrx.moveTo(10L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
       wTrx.setValue(UTF.convert("value" + i));
       session.commit();
     }
-    for (int i = 0; i < WORKER_COUNT; i++) {
-      worker[i].join();
-    }
+    taskExecutor.shutdown();
+    taskExecutor.awaitTermination(1000000, TimeUnit.SECONDS);
 
     session.close();
 
@@ -80,22 +82,23 @@ public class ThreadTest {
     //    TestCase.assertEquals("value" + (WORKER_COUNT - 1), rTrx.getValue());
   }
 
-  private class Worker extends Thread {
+  private class Task implements Runnable {
 
-    private IReadTransaction trx;
+    private IReadTransaction mTrx;
 
-    public Worker(final IReadTransaction initTrx) {
-      trx = initTrx;
+    public Task(final ISession session) throws Exception {
+      mTrx = session.beginReadTransaction(1L);
+      mTrx.moveToRoot();
     }
 
     public void run() {
       try {
-        trx.moveToRoot();
-        final IAxisIterator axis = new DescendantAxisIterator(trx);
+        
+        final IAxisIterator axis = new DescendantAxisIterator(mTrx);
         while (axis.next()) {
           // Move on.
         }
-        trx.moveTo(16L);
+        mTrx.moveTo(16L);
       } catch (Exception e) {
         TestCase.fail(e.getLocalizedMessage());
       }
