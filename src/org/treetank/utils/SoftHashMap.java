@@ -55,15 +55,6 @@ public final class SoftHashMap<K, V> extends AbstractMap<K, V> {
   /** The internal HashMap that will hold the SoftReference. */
   private final Map<K, SoftReference<V>> internalMap;
 
-  /** The number of "hard" references to hold internally. */
-  private final int strongReferenceCount;
-
-  /** The FIFO list of strong references, order of last access. */
-  private V[] strongReferenceArray;
-
-  /** Current offset of FIFO list. */
-  private int currentStrongReferenceOffset;
-
   /** Reference queue for cleared SoftReference objects. */
   private final ReferenceQueue queue;
 
@@ -83,9 +74,6 @@ public final class SoftHashMap<K, V> extends AbstractMap<K, V> {
    */
   public SoftHashMap(final int initStrongReferenceCount) {
     internalMap = new HashMap<K, SoftReference<V>>();
-    strongReferenceCount = initStrongReferenceCount;
-    strongReferenceArray = (V[]) new Object[initStrongReferenceCount];
-    currentStrongReferenceOffset = 0;
     queue = new ReferenceQueue();
   }
 
@@ -102,15 +90,6 @@ public final class SoftHashMap<K, V> extends AbstractMap<K, V> {
       if (value == null) {
         // Reflect garbage collected soft reference in internal hash map.
         internalMap.remove(key);
-      } else {
-        synchronized (strongReferenceArray) {
-          // FIFO on strong references.
-          strongReferenceArray[currentStrongReferenceOffset++] = value;
-          // Assure FIFO does not grow beyond strongReferenceCount.
-          if (currentStrongReferenceOffset >= strongReferenceCount) {
-            currentStrongReferenceOffset = 0;
-          }
-        }
       }
     }
     return value;
@@ -141,7 +120,6 @@ public final class SoftHashMap<K, V> extends AbstractMap<K, V> {
    */
   @Override
   public final synchronized void clear() {
-    strongReferenceArray = (V[]) new Object[strongReferenceCount];
     processQueue();
     internalMap.clear();
   }
