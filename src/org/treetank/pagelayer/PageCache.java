@@ -22,6 +22,7 @@
 package org.treetank.pagelayer;
 
 import java.util.Map;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.log4j.Logger;
 import org.treetank.utils.FastByteArrayReader;
@@ -47,7 +48,7 @@ public final class PageCache {
   private final Map<Long, IPage> mCache;
 
   /** Non-shrinking PageReader pool. */
-  private final FastObjectStack mPool;
+  private final LinkedBlockingQueue<PageReader> mPool;
 
   /** Path of TreeTank file. */
   private final String mPath;
@@ -58,10 +59,14 @@ public final class PageCache {
    * @param path Path to TreeTank file.
    * @throws Exception
    */
-  public PageCache(final String path) {
+  public PageCache(final String path) throws Exception {
     mCache = new SoftHashMap<Long, IPage>(IConstants.STRONG_REFERENCE_COUNT);
-    mPool = new FastObjectStack();
+    mPool = new LinkedBlockingQueue<PageReader>(32);
     mPath = path;
+    
+    for (int i = 0; i < 32; i++) {
+      mPool.put(new PageReader(mPath));
+    }
   }
 
   /**
@@ -99,15 +104,7 @@ public final class PageCache {
       }
 
       // Get page reader from mPool.
-      PageReader reader = null;
-      synchronized (mPool) {
-        if (mPool.size() > 0) {
-          reader = (PageReader) mPool.pop();
-        }
-      }
-      if (reader == null) {
-        reader = new PageReader(mPath);
-      }
+      PageReader reader = mPool.take();
 
       // Deserialize page.
       final FastByteArrayReader in = reader.read(pageReference);
@@ -133,9 +130,7 @@ public final class PageCache {
       mCache.put(pageReference.getStart(), page);
 
       // Give page reader back to mPool.
-      synchronized (mPool) {
-        mPool.push(reader);
-      }
+      mPool.put(reader);
 
     } else {
       // Logging.
