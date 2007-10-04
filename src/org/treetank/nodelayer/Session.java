@@ -142,13 +142,13 @@ public final class Session implements ISession {
         LOGGER.error("Inconsistent TreeTank file encountered. Primary start="
             + mPrimaryUberPageReference.getStart()
             + " size="
-            + mPrimaryUberPageReference.getSize()
+            + mPrimaryUberPageReference.getLength()
             + " checksum="
             + mPrimaryUberPageReference.getChecksum()
             + " secondary start="
             + mSecondaryUberPageReference.getStart()
             + " size="
-            + mSecondaryUberPageReference.getSize()
+            + mSecondaryUberPageReference.getLength()
             + " checksum="
             + mSecondaryUberPageReference.getChecksum());
         throw new IllegalStateException(
@@ -222,7 +222,7 @@ public final class Session implements ISession {
           + " start="
           + mPrimaryUberPageReference.getStart()
           + " size="
-          + mPrimaryUberPageReference.getSize()
+          + mPrimaryUberPageReference.getLength()
           + " checksum="
           + mPrimaryUberPageReference.getChecksum());
     }
@@ -271,13 +271,13 @@ public final class Session implements ISession {
     // Write secondary beacon.
     file.seek(file.length());
     file.writeLong(mPrimaryUberPageReference.getStart());
-    file.writeInt(mPrimaryUberPageReference.getSize());
+    file.writeInt(mPrimaryUberPageReference.getLength());
     file.writeLong(mPrimaryUberPageReference.getChecksum());
 
     // Write primary beacon.
     file.seek(0L);
     file.writeLong(mPrimaryUberPageReference.getStart());
-    file.writeInt(mPrimaryUberPageReference.getSize());
+    file.writeInt(mPrimaryUberPageReference.getLength());
     file.writeLong(mPrimaryUberPageReference.getChecksum());
 
   }
@@ -293,13 +293,13 @@ public final class Session implements ISession {
     // Read primaryy beacon.
     file.seek(0L);
     mPrimaryUberPageReference.setStart(file.readLong());
-    mPrimaryUberPageReference.setSize(file.readInt());
+    mPrimaryUberPageReference.setLength(file.readInt());
     mPrimaryUberPageReference.setChecksum(file.readLong());
 
     // Read secondary beacon.
     file.seek(file.length() - IConstants.BEACON_LENGTH);
     mSecondaryUberPageReference.setStart(file.readLong());
-    mSecondaryUberPageReference.setSize(file.readInt());
+    mSecondaryUberPageReference.setLength(file.readInt());
     mSecondaryUberPageReference.setChecksum(file.readLong());
   }
 

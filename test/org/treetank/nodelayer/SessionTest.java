@@ -89,14 +89,14 @@ public class SessionTest {
     final ISession session = new Session(TEST_REVISION_PATH);
 
     final IReadTransaction rTrx = session.beginReadTransaction();
-    assertEquals(IConstants.UP_ROOT_REVISION_KEY, rTrx.revisionKey());
+    assertEquals(IConstants.UBP_ROOT_REVISION_KEY, rTrx.revisionKey());
     assertEquals(0L, rTrx.revisionSize());
 
     final IWriteTransaction wTrx = session.beginWriteTransaction();
     assertEquals(1L, wTrx.revisionKey());
     assertEquals(0L, wTrx.revisionSize());
 
-    assertEquals(IConstants.UP_ROOT_REVISION_KEY, rTrx.revisionKey());
+    assertEquals(IConstants.UBP_ROOT_REVISION_KEY, rTrx.revisionKey());
     assertEquals(0L, rTrx.revisionSize());
 
     // Insert root and check.
@@ -105,13 +105,13 @@ public class SessionTest {
     assertEquals(1L, wTrx.revisionSize());
     assertEquals("foo", new String(wTrx.getValue(), IConstants.ENCODING));
 
-    assertEquals(IConstants.UP_ROOT_REVISION_KEY, rTrx.revisionKey());
+    assertEquals(IConstants.UBP_ROOT_REVISION_KEY, rTrx.revisionKey());
     assertEquals(0L, rTrx.revisionSize());
 
     // Commit and check.
     session.commit();
 
-    assertEquals(IConstants.UP_ROOT_REVISION_KEY, rTrx.revisionKey());
+    assertEquals(IConstants.UBP_ROOT_REVISION_KEY, rTrx.revisionKey());
     assertEquals(0L, rTrx.revisionSize());
 
     final IReadTransaction rTrx2 = session.beginReadTransaction();

@@ -32,7 +32,7 @@ public class PageReference {
 
   private long mStart;
 
-  private int mSize;
+  private int mLength;
 
   private long mChecksum;
 
@@ -44,7 +44,7 @@ public class PageReference {
     this(
         pageReference.mPage,
         pageReference.mStart,
-        pageReference.mSize,
+        pageReference.mLength,
         pageReference.mChecksum);
     mIsDirty = true;
   }
@@ -52,12 +52,12 @@ public class PageReference {
   public PageReference(
       final IPage page,
       final long start,
-      final int size,
+      final int length,
       final long checksum) {
     mIsDirty = false;
     mPage = page;
     mStart = start;
-    mSize = size;
+    mLength = length;
     mChecksum = checksum;
   }
 
@@ -94,12 +94,12 @@ public class PageReference {
     mIsDirty = true;
   }
 
-  public final int getSize() {
-    return mSize;
+  public final int getLength() {
+    return mLength;
   }
 
-  public final void setSize(final int size) {
-    mSize = size;
+  public final void setLength(final int length) {
+    mLength = length;
   }
 
   public final long getStart() {
@@ -114,13 +114,13 @@ public class PageReference {
   public final boolean equals(final Object object) {
     final PageReference pageReference = (PageReference) object;
     return ((mChecksum == pageReference.mChecksum)
-        && (mStart == pageReference.mStart) && (mSize == pageReference.mSize));
+        && (mStart == pageReference.mStart) && (mLength == pageReference.mLength));
   }
 
   public final void serialize(final FastByteArrayWriter out) throws Exception {
     mIsDirty = false;
     out.writeLong(mStart);
-    out.writeInt(mSize);
+    out.writeInt(mLength);
     out.writeLong(mChecksum);
   }
 

@@ -108,7 +108,7 @@ public final class PageReader {
 
     // Read encrypted page from mFile.
     mFile.seek(pageReference.getStart());
-    page = new byte[pageReference.getSize()];
+    page = new byte[pageReference.getLength()];
     mFile.read(page);
 
     // Decrypt page.
@@ -124,7 +124,7 @@ public final class PageReader {
         LOGGER.error("Page checksum is not valid for start="
             + pageReference.getStart()
             + "; size="
-            + pageReference.getSize()
+            + pageReference.getLength()
             + "; checksum="
             + pageReference.getChecksum());
         throw new IllegalStateException("Page checksum is not valid.");
@@ -149,7 +149,7 @@ public final class PageReader {
       LOGGER.debug("Read start="
           + pageReference.getStart()
           + "; size="
-          + pageReference.getSize()
+          + pageReference.getLength()
           + "; checksum="
           + pageReference.getChecksum());
     }
