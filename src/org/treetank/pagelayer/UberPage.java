@@ -30,8 +30,6 @@ final public class UberPage extends AbstractPage implements IPage {
 
   private long mMaxRevisionKey;
 
-  private final PageReference[] mRevisionRootPageReferences;
-
   private final PageReference[] mIndirectRevisionRootPageReferences;
 
   private RevisionRootPage mCurrentRevisionRootPage;
@@ -43,10 +41,8 @@ final public class UberPage extends AbstractPage implements IPage {
    */
   private UberPage(final PageCache pageCache) {
     super(pageCache);
-    mRevisionRootPageReferences =
-        new PageReference[IConstants.UBP_IMMEDIATE_REVISION_ROOT_PAGE_COUNT];
     mIndirectRevisionRootPageReferences =
-        new PageReference[IConstants.UBP_MAX_REVISION_ROOT_PAGE_INDIRECTION_LEVEL];
+        new PageReference[IConstants.INP_REFERENCE_COUNT];
   }
 
   /**
@@ -63,7 +59,6 @@ final public class UberPage extends AbstractPage implements IPage {
 
     // Make sure that all references are instantiated.
     uberPage.mMaxRevisionKey = IConstants.UBP_INIT_ROOT_REVISION_KEY;
-    createPageReferences(uberPage.mRevisionRootPageReferences);
 
     // Indirect pages (shallow init).
     createPageReferences(uberPage.mIndirectRevisionRootPageReferences);
@@ -91,7 +86,6 @@ final public class UberPage extends AbstractPage implements IPage {
 
     // Deserialize uber page.
     uberPage.mMaxRevisionKey = in.readLong();
-    readPageReferences(uberPage.mRevisionRootPageReferences, in);
 
     // Indirect pages (shallow load without indirect page instances).
     readPageReferences(uberPage.mIndirectRevisionRootPageReferences, in);
@@ -115,9 +109,6 @@ final public class UberPage extends AbstractPage implements IPage {
 
     // COW uber page.
     uberPage.mMaxRevisionKey = committedUberPage.mMaxRevisionKey;
-    clonePageReferences(
-        uberPage.mRevisionRootPageReferences,
-        committedUberPage.mRevisionRootPageReferences);
 
     // Indirect pages (shallow COW without page instances).
     clonePageReferences(
@@ -138,53 +129,44 @@ final public class UberPage extends AbstractPage implements IPage {
       throws Exception {
 
     // Calculate number of levels and offsets of these levels.
-    final int[] offsets = StaticTree.calcRevisionRootPageOffsets(revisionKey);
+    final int[] offsets = StaticTree.calcIndirectPageOffsets(revisionKey);
 
-    if (offsets.length == 1) {
-      // Immediate reference.
-      return (RevisionRootPage) dereference(
-          mRevisionRootPageReferences[offsets[0]],
-          IConstants.REVISION_ROOT_PAGE);
-    } else {
-      // Indirect reference.
-      PageReference reference = mIndirectRevisionRootPageReferences[offsets[0]];
-      IPage page = null;
+    // Indirect reference.
+    PageReference reference = mIndirectRevisionRootPageReferences[offsets[0]];
+    IPage page = null;
 
-      // Remaining levels.
-      for (int i = 1; i < offsets.length; i++) {
-        page = dereference(reference, IConstants.INDIRECT_PAGE);
-        reference = ((IndirectPage) page).getPageReference(offsets[i]);
-      }
-      return (RevisionRootPage) dereference(
-          reference,
-          IConstants.REVISION_ROOT_PAGE);
+    // Remaining levels.
+    for (int i = 1; i < offsets.length; i++) {
+      page = dereference(reference, IConstants.INDIRECT_PAGE);
+      reference = ((IndirectPage) page).getPageReference(offsets[i]);
     }
+    return (RevisionRootPage) dereference(
+        reference,
+        IConstants.REVISION_ROOT_PAGE);
+
   }
 
   public final RevisionRootPage prepareRevisionRootPage() throws Exception {
 
     // Calculate number of levels and offsets of these levels.
-    final int[] offsets = StaticTree.calcRevisionRootPageOffsets(mMaxRevisionKey + 1);
+    final int[] offsets =
+        StaticTree.calcIndirectPageOffsets(mMaxRevisionKey + 1);
 
     // Which page reference to COW on immediate level 0?
     mCurrentRevisionRootPage =
         RevisionRootPage.clone(mMaxRevisionKey + 1, mCurrentRevisionRootPage);
-    if (offsets.length == 1) {
-      // Immediate reference.
-      mRevisionRootPageReferences[(int) mMaxRevisionKey + 1]
-          .setPage(mCurrentRevisionRootPage);
-    } else {
-      // Indirect reference.
-      PageReference reference = mIndirectRevisionRootPageReferences[offsets[0]];
-      IPage page = null;
 
-      //    Remaining levels.
-      for (int i = 1; i < offsets.length; i++) {
-        page = prepareIndirectPage(reference);
-        reference = ((IndirectPage) page).getPageReference(offsets[i]);
-      }
-      reference.setPage(mCurrentRevisionRootPage);
+    // Indirect reference.
+    PageReference reference = mIndirectRevisionRootPageReferences[offsets[0]];
+    IPage page = null;
+
+    //    Remaining levels.
+    for (int i = 1; i < offsets.length; i++) {
+      page = prepareIndirectPage(reference);
+      reference = ((IndirectPage) page).getPageReference(offsets[i]);
     }
+    reference.setPage(mCurrentRevisionRootPage);
+
     return mCurrentRevisionRootPage;
 
   }
@@ -193,7 +175,6 @@ final public class UberPage extends AbstractPage implements IPage {
    * {@inheritDoc}
    */
   public final void commit(final PageWriter pageWriter) throws Exception {
-    commit(pageWriter, mRevisionRootPageReferences);
     commit(pageWriter, mIndirectRevisionRootPageReferences);
     mMaxRevisionKey += 1;
   }
@@ -203,7 +184,6 @@ final public class UberPage extends AbstractPage implements IPage {
    */
   public final void serialize(final FastByteArrayWriter out) throws Exception {
     out.writeLong(mMaxRevisionKey);
-    serialize(out, mRevisionRootPageReferences);
     serialize(out, mIndirectRevisionRootPageReferences);
   }
 

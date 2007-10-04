@@ -37,18 +37,14 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
 
   private long mMaxNodeKey;
 
-  private final PageReference[] mNodePageReferences;
-
   private final PageReference[] mIndirectNodePageReferences;
 
   private RevisionRootPage(final PageCache pageCache, final long revisionKey) {
     super(pageCache);
     mRevisionKey = revisionKey;
     mNamePageReference = null;
-    mNodePageReferences =
-        new PageReference[IConstants.RRP_IMMEDIATE_NODE_PAGE_COUNT];
     mIndirectNodePageReferences =
-        new PageReference[IConstants.RRP_MAX_NODE_PAGE_INDIRECTION_LEVEL];
+        new PageReference[IConstants.INP_REFERENCE_COUNT];
   }
 
   public static final RevisionRootPage create(
@@ -67,7 +63,6 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
 
     // Node pages (shallow init).
     revisionRootPage.mMaxNodeKey = -IConstants.NDP_ATTRIBUTE_COUNT;
-    createPageReferences(revisionRootPage.mNodePageReferences);
 
     // Indirect pages (shallow init).
     createPageReferences(revisionRootPage.mIndirectNodePageReferences);
@@ -91,7 +86,6 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
 
     // Node pages (shallow load without node page instances).
     revisionRootPage.mMaxNodeKey = in.readLong();
-    readPageReferences(revisionRootPage.mNodePageReferences, in);
 
     // Indirect node pages (shallow load without indirect page instances).
     readPageReferences(revisionRootPage.mIndirectNodePageReferences, in);
@@ -118,9 +112,6 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
 
     // INode pages (shallow COW without node page instances).
     revisionRootPage.mMaxNodeKey = committedRevisionRootPage.mMaxNodeKey;
-    clonePageReferences(
-        revisionRootPage.mNodePageReferences,
-        committedRevisionRootPage.mNodePageReferences);
 
     // Indirect node pages (shallow COW without node page instances).
     clonePageReferences(
@@ -186,49 +177,38 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
   public final NodePage getNodePage(final long nodePageKey) throws Exception {
 
     // Calculate number of levels and offsets of these levels.
-    final int[] offsets = StaticTree.calcNodePageOffsets(nodePageKey);
+    final int[] offsets = StaticTree.calcIndirectPageOffsets(nodePageKey);
 
-    if (offsets.length == 1) {
-      // Immediate reference.
-      return (NodePage) dereference(
-          mNodePageReferences[offsets[0]],
-          IConstants.NODE_PAGE);
-    } else {
-      // Indirect reference.
-      PageReference reference = mIndirectNodePageReferences[offsets[0]];
-      IPage page = null;
+    // Indirect reference.
+    PageReference reference = mIndirectNodePageReferences[offsets[0]];
+    IPage page = null;
 
-      // Remaining levels.
-      for (int i = 1; i < offsets.length; i++) {
-        page = dereference(reference, IConstants.INDIRECT_PAGE);
-        reference = ((IndirectPage) page).getPageReference(offsets[i]);
-      }
-      return (NodePage) dereference(reference, IConstants.NODE_PAGE);
+    // Remaining levels.
+    for (int i = 1; i < offsets.length; i++) {
+      page = dereference(reference, IConstants.INDIRECT_PAGE);
+      reference = ((IndirectPage) page).getPageReference(offsets[i]);
     }
+    return (NodePage) dereference(reference, IConstants.NODE_PAGE);
+
   }
 
   private final NodePage prepareNodePage(final long nodePageKey)
       throws Exception {
 
     // Calculate number of levels and offsets of these levels.
-    final int[] offsets = StaticTree.calcNodePageOffsets(nodePageKey);
+    final int[] offsets = StaticTree.calcIndirectPageOffsets(nodePageKey);
 
     // Which page reference to COW on immediate level 0?
-    if (offsets.length == 1) {
-      // Immediate reference.
-      return prepareNodePage(mNodePageReferences[offsets[0]], nodePageKey);
-    } else {
-      // Indirect reference.
-      PageReference reference = mIndirectNodePageReferences[offsets[0]];
-      IPage page = null;
+    // Indirect reference.
+    PageReference reference = mIndirectNodePageReferences[offsets[0]];
+    IPage page = null;
 
-      //    Remaining levels.
-      for (int i = 1; i < offsets.length; i++) {
-        page = prepareIndirectPage(reference);
-        reference = ((IndirectPage) page).getPageReference(offsets[i]);
-      }
-      return prepareNodePage(reference, nodePageKey);
+    //    Remaining levels.
+    for (int i = 1; i < offsets.length; i++) {
+      page = prepareIndirectPage(reference);
+      reference = ((IndirectPage) page).getPageReference(offsets[i]);
     }
+    return prepareNodePage(reference, nodePageKey);
 
   }
 
@@ -284,7 +264,6 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
    */
   public final void commit(final PageWriter pageWriter) throws Exception {
     commit(pageWriter, mNamePageReference);
-    commit(pageWriter, mNodePageReferences);
     commit(pageWriter, mIndirectNodePageReferences);
   }
 
@@ -296,7 +275,6 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
     out.writeLong(mRevisionSize);
     serialize(out, mNamePageReference);
     out.writeLong(mMaxNodeKey);
-    serialize(out, mNodePageReferences);
     serialize(out, mIndirectNodePageReferences);
   }
 
