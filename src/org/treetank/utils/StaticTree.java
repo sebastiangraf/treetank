@@ -33,22 +33,26 @@ public final class StaticTree {
 
   public static final int[] calcIndirectPageOffsets(final long key) {
 
-    final int[] levels = new int[6];
+    final int[] levels = new int[7];
 
     // Unrolled loop for best performance.
     long tmpKey = key;
 
-    levels[0] = 4;
-    tmpKey -= IConstants.INP_LEVEL_PAGE_COUNT[4];
-    levels[1] = (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3]));
-    tmpKey -= levels[1] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
-    levels[2] = (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2]));
-    tmpKey -= levels[2] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2];
-    levels[3] = (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[1]));
-    tmpKey -= levels[3] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[1];
-    levels[4] = (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[0]));
-    levels[5] =
-        (int) (tmpKey - (levels[4] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[0]));
+    levels[0] = 5;
+    tmpKey -= IConstants.INP_LEVEL_PAGE_COUNT[5];
+    
+    levels[1] = (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[4]));
+    tmpKey -= levels[1] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[4];
+    levels[2] = (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3]));
+    tmpKey -= levels[2] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
+    levels[3] = (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2]));
+    tmpKey -= levels[3] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2];
+    levels[4] = (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[1]));
+    tmpKey -= levels[4] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[1];
+    levels[5] = (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[0]));
+    
+    levels[6] =
+        (int) (tmpKey - (levels[5] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[0]));
 
     return levels;
 
