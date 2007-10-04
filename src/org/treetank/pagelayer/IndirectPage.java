@@ -36,7 +36,7 @@ final public class IndirectPage extends AbstractPage implements IPage {
    */
   private IndirectPage(final PageCache pageCache) {
     super(pageCache);
-    mIndirectPageReferences = new PageReference[IConstants.IP_REFERENCE_COUNT];
+    mIndirectPageReferences = new PageReference[IConstants.INP_REFERENCE_COUNT];
   }
 
   /**

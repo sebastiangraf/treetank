@@ -148,7 +148,7 @@ public final class PageWriter {
 
     // Remember page coordinates.
     pageReference.setStart(start);
-    pageReference.setSize((int) (mFile.length() - start));
+    pageReference.setLength((int) (mFile.length() - start));
     pageReference.setChecksum(mChecksum.getValue());
 
     // Logging.
@@ -158,7 +158,7 @@ public final class PageWriter {
           + "; start="
           + pageReference.getStart()
           + "; size="
-          + pageReference.getSize()
+          + pageReference.getLength()
           + "; checksum="
           + pageReference.getChecksum());
     }

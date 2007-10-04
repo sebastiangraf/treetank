@@ -98,7 +98,7 @@ public final class PageCache {
         LOGGER.debug("Miss for start="
             + pageReference.getStart()
             + "; size="
-            + pageReference.getSize()
+            + pageReference.getLength()
             + "; checksum="
             + pageReference.getChecksum());
       }
@@ -138,7 +138,7 @@ public final class PageCache {
         LOGGER.debug("Hit for start="
             + pageReference.getStart()
             + "; size="
-            + pageReference.getSize()
+            + pageReference.getLength()
             + "; checksum="
             + pageReference.getChecksum());
       }

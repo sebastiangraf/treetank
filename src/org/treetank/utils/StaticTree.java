@@ -58,51 +58,51 @@ public final class StaticTree {
     case 2:
       levels[0] = 1;
       tmpKey -= IConstants.RRP_CUMULATED_NODE_PAGE_COUNT[1];
-      levels[1] = (int) (tmpKey >> IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[0]);
+      levels[1] = (int) (tmpKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[0]);
       levels[2] =
-          (int) (tmpKey - (levels[1] << IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[0]));
+          (int) (tmpKey - (levels[1] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[0]));
       break;
     case 3:
       levels[0] = 2;
       tmpKey -= IConstants.RRP_CUMULATED_NODE_PAGE_COUNT[2];
       levels[1] =
-          (int) (tmpKey >> (IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[1]));
-      tmpKey -= levels[1] << IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[1];
+          (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[1]));
+      tmpKey -= levels[1] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[1];
       levels[2] =
-          (int) (tmpKey >> (IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[0]));
+          (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[0]));
       levels[3] =
-          (int) (tmpKey - (levels[2] << IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[0]));
+          (int) (tmpKey - (levels[2] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[0]));
       break;
     case 4:
       levels[0] = 3;
       tmpKey -= IConstants.RRP_CUMULATED_NODE_PAGE_COUNT[3];
       levels[1] =
-          (int) (tmpKey >> (IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[2]));
-      tmpKey -= levels[1] << IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[2];
+          (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2]));
+      tmpKey -= levels[1] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2];
       levels[2] =
-          (int) (tmpKey >> (IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[1]));
-      tmpKey -= levels[2] << IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[1];
+          (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[1]));
+      tmpKey -= levels[2] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[1];
       levels[3] =
-          (int) (tmpKey >> (IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[0]));
+          (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[0]));
       levels[4] =
-          (int) (tmpKey - (levels[3] << IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[0]));
+          (int) (tmpKey - (levels[3] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[0]));
       break;
     case 5:
       levels[0] = 4;
       tmpKey -= IConstants.RRP_CUMULATED_NODE_PAGE_COUNT[4];
       levels[1] =
-          (int) (tmpKey >> (IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[3]));
-      tmpKey -= levels[1] << IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[3];
+          (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3]));
+      tmpKey -= levels[1] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
       levels[2] =
-          (int) (tmpKey >> (IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[2]));
-      tmpKey -= levels[2] << IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[2];
+          (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2]));
+      tmpKey -= levels[2] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2];
       levels[3] =
-          (int) (tmpKey >> (IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[1]));
-      tmpKey -= levels[3] << IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[1];
+          (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[1]));
+      tmpKey -= levels[3] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[1];
       levels[4] =
-          (int) (tmpKey >> (IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[0]));
+          (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[0]));
       levels[5] =
-          (int) (tmpKey - (levels[4] << IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[0]));
+          (int) (tmpKey - (levels[4] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[0]));
       break;
     default:
       throw new IllegalStateException("Only 5 levels supported.");
@@ -116,7 +116,7 @@ public final class StaticTree {
 
     // How many levels do we have to include in the search?
     int level = 0;
-    while (key - IConstants.UP_CUMULATED_REVISION_ROOT_PAGE_COUNT[level] >= 0) {
+    while (key - IConstants.UBP_CUMULATED_REVISION_ROOT_PAGE_COUNT[level] >= 0) {
       level += 1;
     }
     final int[] levels = new int[level + 1];
@@ -129,57 +129,57 @@ public final class StaticTree {
       break;
     case 1:
       levels[0] = 0;
-      tmpKey -= IConstants.UP_CUMULATED_REVISION_ROOT_PAGE_COUNT[0];
+      tmpKey -= IConstants.UBP_CUMULATED_REVISION_ROOT_PAGE_COUNT[0];
       levels[1] = (int) (tmpKey);
       break;
     case 2:
       levels[0] = 1;
-      tmpKey -= IConstants.UP_CUMULATED_REVISION_ROOT_PAGE_COUNT[1];
-      levels[1] = (int) (tmpKey >> IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[0]);
+      tmpKey -= IConstants.UBP_CUMULATED_REVISION_ROOT_PAGE_COUNT[1];
+      levels[1] = (int) (tmpKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[0]);
       levels[2] =
-          (int) (tmpKey - (levels[1] << IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[0]));
+          (int) (tmpKey - (levels[1] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[0]));
       break;
     case 3:
       levels[0] = 2;
-      tmpKey -= IConstants.UP_CUMULATED_REVISION_ROOT_PAGE_COUNT[2];
+      tmpKey -= IConstants.UBP_CUMULATED_REVISION_ROOT_PAGE_COUNT[2];
       levels[1] =
-          (int) (tmpKey >> (IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[1]));
-      tmpKey -= levels[1] << IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[1];
+          (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[1]));
+      tmpKey -= levels[1] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[1];
       levels[2] =
-          (int) (tmpKey >> (IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[0]));
+          (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[0]));
       levels[3] =
-          (int) (tmpKey - (levels[2] << IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[0]));
+          (int) (tmpKey - (levels[2] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[0]));
       break;
     case 4:
       levels[0] = 3;
-      tmpKey -= IConstants.UP_CUMULATED_REVISION_ROOT_PAGE_COUNT[3];
+      tmpKey -= IConstants.UBP_CUMULATED_REVISION_ROOT_PAGE_COUNT[3];
       levels[1] =
-          (int) (tmpKey >> (IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[2]));
-      tmpKey -= levels[1] << IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[2];
+          (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2]));
+      tmpKey -= levels[1] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2];
       levels[2] =
-          (int) (tmpKey >> (IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[1]));
-      tmpKey -= levels[2] << IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[1];
+          (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[1]));
+      tmpKey -= levels[2] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[1];
       levels[3] =
-          (int) (tmpKey >> (IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[0]));
+          (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[0]));
       levels[4] =
-          (int) (tmpKey - (levels[3] << IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[0]));
+          (int) (tmpKey - (levels[3] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[0]));
       break;
     case 5:
       levels[0] = 4;
-      tmpKey -= IConstants.UP_CUMULATED_REVISION_ROOT_PAGE_COUNT[4];
+      tmpKey -= IConstants.UBP_CUMULATED_REVISION_ROOT_PAGE_COUNT[4];
       levels[1] =
-          (int) (tmpKey >> (IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[3]));
-      tmpKey -= levels[1] << IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[3];
+          (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3]));
+      tmpKey -= levels[1] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
       levels[2] =
-          (int) (tmpKey >> (IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[2]));
-      tmpKey -= levels[2] << IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[2];
+          (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2]));
+      tmpKey -= levels[2] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2];
       levels[3] =
-          (int) (tmpKey >> (IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[1]));
-      tmpKey -= levels[3] << IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[1];
+          (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[1]));
+      tmpKey -= levels[3] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[1];
       levels[4] =
-          (int) (tmpKey >> (IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[0]));
+          (int) (tmpKey >> (IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[0]));
       levels[5] =
-          (int) (tmpKey - (levels[4] << IConstants.IP_LEVEL_PAGE_COUNT_EXPONENT[0]));
+          (int) (tmpKey - (levels[4] << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[0]));
       break;
     default:
       throw new IllegalStateException("Only 5 levels supported.");

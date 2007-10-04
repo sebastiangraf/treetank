@@ -22,6 +22,9 @@
 package org.treetank.bench;
 
 import java.io.File;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.perfidix.BeforeFirstBenchRun;
 import org.perfidix.Bench;
@@ -39,36 +42,52 @@ import org.treetank.xmllayer.XMLShredder;
 @BenchClass(runs = 1)
 public class AxisStepBenchmark {
 
+  public final static int TASKS = 10;
+
   public final static String XML_PATH = "xml/shakespeare.xml";
 
   public final static String TNK_PATH = "tnk/shakespeare.tnk";
 
-  private ISession session;
+  private ISession mSession;
+
+  private ExecutorService mTaskExecutor;
 
   @BeforeFirstBenchRun
   public void benchBeforeBenchClass() throws Exception {
 
-    new File(TNK_PATH).delete();
-    XMLShredder.shred(XML_PATH, TNK_PATH);
+//    new File(TNK_PATH).delete();
+//    XMLShredder.shred(XML_PATH, TNK_PATH);
 
-    session = new Session(TNK_PATH);
+    mSession = new Session(TNK_PATH);
+    mTaskExecutor = Executors.newFixedThreadPool(TASKS);
 
   }
 
   @Bench
   public void benchTreeTankDescendant() throws Exception {
-    final IReadTransaction rTrx = session.beginReadTransaction();
-    rTrx.moveToRoot();
 
-    final IAxisIterator iter = new DescendantAxisIterator(rTrx);
-    while (iter.next()) {
+    mTaskExecutor.execute(new DescendantTask(mSession));
+
+    mTaskExecutor.shutdown();
+    mTaskExecutor.awaitTermination(1000000, TimeUnit.SECONDS);
+
+  }
+
+  @Bench
+  public void benchConcurrentTreeTankDescendant() throws Exception {
+
+    for (int i = 0; i < TASKS; i++) {
+      mTaskExecutor.execute(new DescendantTask(mSession));
     }
+
+    mTaskExecutor.shutdown();
+    mTaskExecutor.awaitTermination(1000000, TimeUnit.SECONDS);
 
   }
 
   @Bench
   public void benchTreeTankChild() throws Exception {
-    final IReadTransaction rTrx = session.beginReadTransaction();
+    final IReadTransaction rTrx = mSession.beginReadTransaction();
     rTrx.moveToRoot();
 
     final IAxisIterator iter = new ChildAxisIterator(rTrx);
@@ -90,6 +109,27 @@ public class AxisStepBenchmark {
       System.out.println(v.toString());
     } catch (Exception e) {
       e.printStackTrace();
+    }
+  }
+
+  private class DescendantTask implements Runnable {
+
+    private final IReadTransaction mTrx;
+
+    public DescendantTask(final ISession session) throws Exception {
+      mTrx = session.beginReadTransaction();
+    }
+
+    public void run() {
+      try {
+        mTrx.moveToRoot();
+        final IAxisIterator iter = new DescendantAxisIterator(mTrx);
+        while (iter.next()) {
+          // Nothing to do here.
+        }
+      } catch (Exception e) {
+        throw new IllegalStateException(e);
+      }
     }
   }
 

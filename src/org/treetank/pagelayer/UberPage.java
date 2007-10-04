@@ -44,9 +44,9 @@ final public class UberPage extends AbstractPage implements IPage {
   private UberPage(final PageCache pageCache) {
     super(pageCache);
     mRevisionRootPageReferences =
-        new PageReference[IConstants.UP_IMMEDIATE_REVISION_ROOT_PAGE_COUNT];
+        new PageReference[IConstants.UBP_IMMEDIATE_REVISION_ROOT_PAGE_COUNT];
     mIndirectRevisionRootPageReferences =
-        new PageReference[IConstants.UP_MAX_REVISION_ROOT_PAGE_INDIRECTION_LEVEL];
+        new PageReference[IConstants.UBP_MAX_REVISION_ROOT_PAGE_INDIRECTION_LEVEL];
   }
 
   /**
@@ -62,7 +62,7 @@ final public class UberPage extends AbstractPage implements IPage {
     final UberPage uberPage = new UberPage(pageCache);
 
     // Make sure that all references are instantiated.
-    uberPage.mMaxRevisionKey = IConstants.UP_INIT_ROOT_REVISION_KEY;
+    uberPage.mMaxRevisionKey = IConstants.UBP_INIT_ROOT_REVISION_KEY;
     createPageReferences(uberPage.mRevisionRootPageReferences);
 
     // Indirect pages (shallow init).
@@ -70,7 +70,7 @@ final public class UberPage extends AbstractPage implements IPage {
 
     // Make sure that the first empty revision root page already exists.
     uberPage.mCurrentRevisionRootPage =
-        RevisionRootPage.create(pageCache, IConstants.UP_ROOT_REVISION_KEY);
+        RevisionRootPage.create(pageCache, IConstants.UBP_ROOT_REVISION_KEY);
 
     return uberPage;
 
