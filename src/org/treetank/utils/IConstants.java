@@ -99,6 +99,12 @@ public interface IConstants {
               * INP_REFERENCE_COUNT
               * INP_REFERENCE_COUNT
               * INP_REFERENCE_COUNT
+              * INP_REFERENCE_COUNT,
+          INP_REFERENCE_COUNT
+              * INP_REFERENCE_COUNT
+              * INP_REFERENCE_COUNT
+              * INP_REFERENCE_COUNT
+              * INP_REFERENCE_COUNT
               * INP_REFERENCE_COUNT };
 
   /** Exponent of pages per level. */
@@ -108,7 +114,8 @@ public interface IConstants {
           2 * INP_REFERENCE_COUNT_EXPONENT,
           3 * INP_REFERENCE_COUNT_EXPONENT,
           4 * INP_REFERENCE_COUNT_EXPONENT,
-          5 * INP_REFERENCE_COUNT_EXPONENT };
+          5 * INP_REFERENCE_COUNT_EXPONENT,
+          6 * INP_REFERENCE_COUNT_EXPONENT };
 
   // --- Uber Page -------------------------------------------------------------
 
@@ -121,67 +128,7 @@ public interface IConstants {
   /** Root revisionKey guaranteed to exist in empty storage. */
   public static final long UBP_ROOT_REVISION_SIZE = 0L;
 
-  /** Immediate revision root page count per uber page. */
-  public static final int UBP_IMMEDIATE_REVISION_ROOT_PAGE_COUNT = 8;
-
-  /** Cumulated node pages per level. */
-  public static final long[] UBP_CUMULATED_REVISION_ROOT_PAGE_COUNT =
-      {
-          UBP_IMMEDIATE_REVISION_ROOT_PAGE_COUNT,
-          UBP_IMMEDIATE_REVISION_ROOT_PAGE_COUNT + INP_LEVEL_PAGE_COUNT[0],
-          UBP_IMMEDIATE_REVISION_ROOT_PAGE_COUNT
-              + INP_LEVEL_PAGE_COUNT[0]
-              + INP_LEVEL_PAGE_COUNT[1],
-          UBP_IMMEDIATE_REVISION_ROOT_PAGE_COUNT
-              + INP_LEVEL_PAGE_COUNT[0]
-              + INP_LEVEL_PAGE_COUNT[1]
-              + INP_LEVEL_PAGE_COUNT[2],
-          UBP_IMMEDIATE_REVISION_ROOT_PAGE_COUNT
-              + INP_LEVEL_PAGE_COUNT[0]
-              + INP_LEVEL_PAGE_COUNT[1]
-              + INP_LEVEL_PAGE_COUNT[2]
-              + INP_LEVEL_PAGE_COUNT[3],
-          UBP_IMMEDIATE_REVISION_ROOT_PAGE_COUNT
-              + INP_LEVEL_PAGE_COUNT[0]
-              + INP_LEVEL_PAGE_COUNT[1]
-              + INP_LEVEL_PAGE_COUNT[2]
-              + INP_LEVEL_PAGE_COUNT[3]
-              + INP_LEVEL_PAGE_COUNT[4] };
-
-  /** Maximum number of indirection levels for uber pages. */
-  public static final int UBP_MAX_REVISION_ROOT_PAGE_INDIRECTION_LEVEL = 5;
-
   // --- Revision Root Page ----------------------------------------------------
-
-  /** Immediate node page count per revision root page. */
-  public static final int RRP_IMMEDIATE_NODE_PAGE_COUNT = 8;
-
-  /** Cumulated node pages per level. */
-  public static final long[] RRP_CUMULATED_NODE_PAGE_COUNT =
-      {
-          RRP_IMMEDIATE_NODE_PAGE_COUNT,
-          RRP_IMMEDIATE_NODE_PAGE_COUNT + INP_LEVEL_PAGE_COUNT[0],
-          RRP_IMMEDIATE_NODE_PAGE_COUNT
-              + INP_LEVEL_PAGE_COUNT[0]
-              + INP_LEVEL_PAGE_COUNT[1],
-          RRP_IMMEDIATE_NODE_PAGE_COUNT
-              + INP_LEVEL_PAGE_COUNT[0]
-              + INP_LEVEL_PAGE_COUNT[1]
-              + INP_LEVEL_PAGE_COUNT[2],
-          RRP_IMMEDIATE_NODE_PAGE_COUNT
-              + INP_LEVEL_PAGE_COUNT[0]
-              + INP_LEVEL_PAGE_COUNT[1]
-              + INP_LEVEL_PAGE_COUNT[2]
-              + INP_LEVEL_PAGE_COUNT[3],
-          RRP_IMMEDIATE_NODE_PAGE_COUNT
-              + INP_LEVEL_PAGE_COUNT[0]
-              + INP_LEVEL_PAGE_COUNT[1]
-              + INP_LEVEL_PAGE_COUNT[2]
-              + INP_LEVEL_PAGE_COUNT[3]
-              + INP_LEVEL_PAGE_COUNT[4] };
-
-  /** Maximum number of indirection levels for node pages. */
-  public static final int RRP_MAX_NODE_PAGE_INDIRECTION_LEVEL = 5;
 
   // --- Node Page -------------------------------------------------------------
 
