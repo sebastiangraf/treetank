@@ -33,23 +33,14 @@ public interface IConstants {
 
   //--- Varia ------------------------------------------------------------------
 
-  /** Length of beacon. */
+  /** Length of beacon in bytes. */
   public static final int BEACON_LENGTH = 20;
 
   /** Default internal encoding. */
-  public static final String ENCODING = "UTF-8";
+  public static final String DEFAULT_ENCODING = "UTF-8";
 
-  /** Is compression active? */
-  public static final boolean COMPRESS = true;
-
-  /** Is checksumming active? */
-  public static final boolean CHECKSUM = true;
-
-  /** Encryption algorithm. */
-  public static final String ENCRYPTION_ALGORITHM = "AES";
-
-  /** Checksum algorithm. */
-  public static final String CHECKSUM_ALGORITHM = "CRC";
+  /** Default encryption algorithm. */
+  public static final String DEFAULT_ENCRYPTION_ALGORITHM = "AES";
 
   // --- Pages -----------------------------------------------------------------
 
@@ -154,6 +145,6 @@ public interface IConstants {
   //--- XML Layer --------------------------------------------------------------
 
   /** Commit threshold. */
-  public static final int COMMIT_TRESHOLD = 16777216;
+  public static final int COMMIT_TRESHOLD = 1000000;
 
 }

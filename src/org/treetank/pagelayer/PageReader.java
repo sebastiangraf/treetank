@@ -64,6 +64,9 @@ public final class PageReader {
   /** Do we use encryption? */
   private final boolean mIsEncrypted;
 
+  /** Do we use checksumming? */
+  private final boolean mIsChecksummed;
+
   /** Cipher to encrypt and decrypt blocks. */
   private final Cipher mCipher;
 
@@ -87,16 +90,24 @@ public final class PageReader {
    */
   public PageReader(final SessionConfiguration sessionConfiguration)
       throws Exception {
+
     mFile = new RandomAccessFile(sessionConfiguration.getPath(), READ_ONLY);
-    mChecksum =
-        IConstants.CHECKSUM_ALGORITHM == "CRC" ? new CRC32() : new Adler32();
+
+    if (sessionConfiguration.isChecksummed()) {
+      mIsChecksummed = true;
+      mChecksum = new CRC32();
+    } else {
+      mIsChecksummed = false;
+      mChecksum = null;
+    }
+
     if (sessionConfiguration.isEncrypted()) {
       mIsEncrypted = true;
-      mCipher = Cipher.getInstance(IConstants.ENCRYPTION_ALGORITHM);
+      mCipher = Cipher.getInstance(IConstants.DEFAULT_ENCRYPTION_ALGORITHM);
       mSecretKeySpec =
           new SecretKeySpec(
               sessionConfiguration.getEncryptionKey(),
-              IConstants.ENCRYPTION_ALGORITHM);
+              IConstants.DEFAULT_ENCRYPTION_ALGORITHM);
       mCipher.init(Cipher.DECRYPT_MODE, mSecretKeySpec);
     } else {
       mIsEncrypted = false;
@@ -129,7 +140,7 @@ public final class PageReader {
     }
 
     // Verify checksummed page.
-    if (IConstants.CHECKSUM) {
+    if (mIsChecksummed) {
       mChecksum.reset();
       mChecksum.update(page, 0, page.length);
       if (mChecksum.getValue() != pageReference.getChecksum()) {
@@ -144,17 +155,15 @@ public final class PageReader {
     }
 
     // Decompress page.
-    if (IConstants.COMPRESS) {
-      mDecompressor.reset();
-      mOut.reset();
-      mDecompressor.setInput(page);
-      int count;
-      while (!mDecompressor.finished()) {
-        count = mDecompressor.inflate(mTmp);
-        mOut.write(mTmp, 0, count);
-      }
-      page = mOut.toByteArray();
+    mDecompressor.reset();
+    mOut.reset();
+    mDecompressor.setInput(page);
+    int count;
+    while (!mDecompressor.finished()) {
+      count = mDecompressor.inflate(mTmp);
+      mOut.write(mTmp, 0, count);
     }
+    page = mOut.toByteArray();
 
     // Logging.
     if (LOGGER.isDebugEnabled()) {

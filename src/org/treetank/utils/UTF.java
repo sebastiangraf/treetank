@@ -46,7 +46,7 @@ public final class UTF {
   public static final String convert(final byte[] bytes) {
     String string = null;
     try {
-      string = new String(bytes, IConstants.ENCODING);
+      string = new String(bytes, IConstants.DEFAULT_ENCODING);
     } catch (Exception e) {
       throw new IllegalStateException(e);
     }
@@ -59,7 +59,7 @@ public final class UTF {
       if (string == null || string.length() == 0) {
         bytes = EMPTY;
       } else {
-        bytes = string.getBytes(IConstants.ENCODING);
+        bytes = string.getBytes(IConstants.DEFAULT_ENCODING);
       }
     } catch (Exception e) {
       throw new IllegalStateException(e);

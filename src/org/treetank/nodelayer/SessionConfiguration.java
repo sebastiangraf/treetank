@@ -28,8 +28,8 @@ package org.treetank.nodelayer;
  * Holds the session-wide settings that can not change.
  * 
  * The following logic applies:
- * <li>If the key is null, no encryption is used.</li>
- * 
+ * <li>If the encryption key is null, no encryption is used.</li>
+ * <li>If the checksum algorithm is null, no checksumming is used.</li>
  * </p>
  */
 public final class SessionConfiguration {
@@ -40,13 +40,16 @@ public final class SessionConfiguration {
   /** Key of .tnk file or null. */
   private final byte[] mEncryptionKey;
 
+  /** Checksum algorithm. */
+  private final boolean mIsChecksummed;
+
   /**
    * Convenience constructor binding to .tnk file without encryption.
    * 
    * @param path Path to .tnk file.
    */
   public SessionConfiguration(final String path) {
-    this(path, null);
+    this(path, null, false);
   }
 
   /**
@@ -56,8 +59,23 @@ public final class SessionConfiguration {
    * @param encryptionKey Key to encrypt .tnk file with.
    */
   public SessionConfiguration(final String path, final byte[] encryptionKey) {
+    this(path, encryptionKey, false);
+  }
+
+  /**
+   * Standard constructor binding to .tnk file with encryption.
+   * 
+   * @param path Path to .tnk file.
+   * @param encryptionKey Key to encrypt .tnk file with.
+   * @param isChecksummed Does the .tnk file uses end-to-end checksumming?
+   */
+  public SessionConfiguration(
+      final String path,
+      final byte[] encryptionKey,
+      final boolean isChecksummed) {
     mPath = path;
     mEncryptionKey = encryptionKey;
+    mIsChecksummed = isChecksummed;
   }
 
   /**
@@ -85,6 +103,15 @@ public final class SessionConfiguration {
    */
   public final byte[] getEncryptionKey() {
     return mEncryptionKey;
+  }
+
+  /**
+   * Is the .tnk file checksummed or not?
+   * 
+   * @return True if the .tnk file is checksummed. False else.
+   */
+  public final boolean isChecksummed() {
+    return mIsChecksummed;
   }
 
 }

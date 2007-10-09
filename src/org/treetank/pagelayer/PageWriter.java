@@ -23,7 +23,6 @@ package org.treetank.pagelayer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.RandomAccessFile;
-import java.util.zip.Adler32;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 import java.util.zip.Deflater;
@@ -64,6 +63,9 @@ public final class PageWriter {
   /** Do we use encryption? */
   private final boolean mIsEncrypted;
 
+  /** Do we use checksumming? */
+  private final boolean mIsChecksummed;
+
   /** Cipher to encrypt and decrypt blocks. */
   private final Cipher mCipher;
 
@@ -90,17 +92,24 @@ public final class PageWriter {
    */
   public PageWriter(final SessionConfiguration sessionConfiguration)
       throws Exception {
+
     mFile = new RandomAccessFile(sessionConfiguration.getPath(), READ_WRITE);
-    mChecksum =
-        IConstants.CHECKSUM_ALGORITHM == "CRC" ? new CRC32() : new Adler32();
+
+    if (sessionConfiguration.isChecksummed()) {
+      mIsChecksummed = true;
+      mChecksum = new CRC32();
+    } else {
+      mIsChecksummed = false;
+      mChecksum = null;
+    }
 
     if (sessionConfiguration.isEncrypted()) {
       mIsEncrypted = true;
-      mCipher = Cipher.getInstance(IConstants.ENCRYPTION_ALGORITHM);
+      mCipher = Cipher.getInstance(IConstants.DEFAULT_ENCRYPTION_ALGORITHM);
       mSecretKeySpec =
           new SecretKeySpec(
               sessionConfiguration.getEncryptionKey(),
-              IConstants.ENCRYPTION_ALGORITHM);
+              IConstants.DEFAULT_ENCRYPTION_ALGORITHM);
       mCipher.init(Cipher.ENCRYPT_MODE, mSecretKeySpec);
     } else {
       mIsEncrypted = false;
@@ -130,23 +139,22 @@ public final class PageWriter {
     byte[] page = mWriter.getBytes();
 
     // Compress page.
-    if (IConstants.COMPRESS) {
-      mCompressor.reset();
-      mOut.reset();
-      mCompressor.setInput(page, 0, mWriter.size());
-      mCompressor.finish();
-      int count;
-      while (!mCompressor.finished()) {
-        count = mCompressor.deflate(mTmp);
-        mOut.write(mTmp, 0, count);
-      }
-      page = mOut.toByteArray();
+    mCompressor.reset();
+    mOut.reset();
+    mCompressor.setInput(page, 0, mWriter.size());
+    mCompressor.finish();
+    int count;
+    while (!mCompressor.finished()) {
+      count = mCompressor.deflate(mTmp);
+      mOut.write(mTmp, 0, count);
     }
+    page = mOut.toByteArray();
 
     // Checksum page.
-    if (IConstants.CHECKSUM) {
+    if (mIsChecksummed) {
       mChecksum.reset();
       mChecksum.update(page, 0, page.length);
+      pageReference.setChecksum(mChecksum.getValue());
     }
 
     // Encrypt page.
@@ -162,7 +170,6 @@ public final class PageWriter {
     // Remember page coordinates.
     pageReference.setStart(start);
     pageReference.setLength((int) (mFile.length() - start));
-    pageReference.setChecksum(mChecksum.getValue());
 
     // Logging.
     if (LOGGER.isDebugEnabled()) {

@@ -65,7 +65,7 @@ public class PageWriterTest {
 
     assertEquals("foo", new String(
         page2.getNode(3).getValue(),
-        IConstants.ENCODING));
+        IConstants.DEFAULT_ENCODING));
   }
 
 }
