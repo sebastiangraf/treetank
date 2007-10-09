@@ -85,7 +85,7 @@ final public class UberPage extends AbstractPage implements IPage {
     final UberPage uberPage = new UberPage(pageCache);
 
     // Deserialize uber page.
-    uberPage.mMaxRevisionKey = in.readLong();
+    uberPage.mMaxRevisionKey = in.readPseudoLong();
 
     // Indirect pages (shallow load without indirect page instances).
     readPageReferences(uberPage.mIndirectRevisionRootPageReferences, in);
@@ -183,7 +183,7 @@ final public class UberPage extends AbstractPage implements IPage {
    * {@inheritDoc}
    */
   public final void serialize(final FastByteArrayWriter out) throws Exception {
-    out.writeLong(mMaxRevisionKey);
+    out.writePseudoLong(mMaxRevisionKey);
     serialize(out, mIndirectRevisionRootPageReferences);
   }
 

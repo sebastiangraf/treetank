@@ -44,7 +44,7 @@ public final class FastByteArrayReader {
     return buffer[position++];
   }
 
-  public final int read24Bit() throws Exception {
+  public final int readPseudoInt() throws Exception {
     return ((buffer[position++] & 0xFF) << 16)
         | ((buffer[position++] & 0xFF) << 8)
         | (buffer[position++] & 0xFF);
@@ -57,9 +57,8 @@ public final class FastByteArrayReader {
         | (buffer[position++] & 0xFF);
   }
 
-  public final long read56Bit() throws Exception {
-    return (((long) (buffer[position++] & 255) << 48)
-        + ((long) (buffer[position++] & 255) << 40)
+  public final long readPseudoLong() throws Exception {
+    return (((long) (buffer[position++] & 255) << 40)
         + ((long) (buffer[position++] & 255) << 32)
         + ((long) (buffer[position++] & 255) << 24)
         + ((buffer[position++] & 255) << 16)
