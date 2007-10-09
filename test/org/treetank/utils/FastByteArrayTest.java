@@ -24,8 +24,6 @@ package org.treetank.utils;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.treetank.utils.FastByteArrayReader;
-import org.treetank.utils.FastByteArrayWriter;
 
 public class FastByteArrayTest {
 
@@ -35,6 +33,7 @@ public class FastByteArrayTest {
     final FastByteArrayWriter out = new FastByteArrayWriter();
     out.writeBoolean(true);
     out.writeInt(4);
+    out.write56Bit(Integer.MAX_VALUE);
     out.writeLong(7L);
     out.writeUTF("1");
     out.writeUTF("2");
@@ -46,6 +45,7 @@ public class FastByteArrayTest {
 
     assertEquals(true, in.readBoolean());
     assertEquals(4, in.readInt());
+    assertEquals(Integer.MAX_VALUE, in.read56Bit());
     assertEquals(7L, in.readLong());
     assertEquals("1", in.readUTF());
     assertEquals("2", in.readUTF());
