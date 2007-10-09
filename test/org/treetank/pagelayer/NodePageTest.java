@@ -68,7 +68,7 @@ public class NodePageTest {
     assertEquals(8, page2.getNode(0).getPrefixKey());
     assertEquals("foo", new String(
         page2.getNode(0).getValue(),
-        IConstants.ENCODING));
+        IConstants.DEFAULT_ENCODING));
 
   }
 

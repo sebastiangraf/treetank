@@ -89,8 +89,8 @@ public class XMLShredderTest {
       assertEquals(expectedTrx.nameForKey(expectedTrx.getPrefixKey()), trx
           .nameForKey(trx.getPrefixKey()));
       assertEquals(
-          new String(expectedTrx.getValue(), IConstants.ENCODING),
-          new String(trx.getValue(), IConstants.ENCODING));
+          new String(expectedTrx.getValue(), IConstants.DEFAULT_ENCODING),
+          new String(trx.getValue(), IConstants.DEFAULT_ENCODING));
     }
 
     expectedSession.close();
