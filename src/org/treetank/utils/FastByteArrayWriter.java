@@ -45,8 +45,8 @@ public final class FastByteArrayWriter {
     assertSize(1);
     buffer[size++] = value;
   }
-  
-  public final void write24Bit(final int value) throws Exception {
+
+  public final void writePseudoInt(final int value) throws Exception {
     assertSize(3);
     buffer[size++] = (byte) (value >> 16);
     buffer[size++] = (byte) (value >> 8);
@@ -61,9 +61,8 @@ public final class FastByteArrayWriter {
     buffer[size++] = (byte) value;
   }
 
-  public final void write56Bit(final long value) throws Exception {
-    assertSize(7);
-    buffer[size++] = (byte) (value >>> 48);
+  public final void writePseudoLong(final long value) throws Exception {
+    assertSize(6);
     buffer[size++] = (byte) (value >>> 40);
     buffer[size++] = (byte) (value >>> 32);
     buffer[size++] = (byte) (value >>> 24);
