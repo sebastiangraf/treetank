@@ -45,9 +45,14 @@ public final class FastByteArrayReader {
   }
 
   public final int readPseudoInt() throws Exception {
-    return ((buffer[position++] & 0xFF) << 16)
-        | ((buffer[position++] & 0xFF) << 8)
-        | (buffer[position++] & 0xFF);
+    int value =
+        ((buffer[position++] & 0xFF) << 16)
+            | ((buffer[position++] & 0xFF) << 8)
+            | (buffer[position++] & 0xFF);
+    if (value >> 23 == 1) {
+      value = value | 0xFF000000;
+    }
+    return value;
   }
 
   public final int readInt() throws Exception {
@@ -58,11 +63,16 @@ public final class FastByteArrayReader {
   }
 
   public final long readPseudoLong() throws Exception {
-    return (((long) (buffer[position++] & 255) << 40)
-        + ((long) (buffer[position++] & 255) << 32)
-        + ((long) (buffer[position++] & 255) << 24)
-        + ((buffer[position++] & 255) << 16)
-        + ((buffer[position++] & 255) << 8) + (buffer[position++] & 255));
+    long value =
+        (((long) (buffer[position++] & 255) << 40)
+            + ((long) (buffer[position++] & 255) << 32)
+            + ((long) (buffer[position++] & 255) << 24)
+            + ((buffer[position++] & 255) << 16)
+            + ((buffer[position++] & 255) << 8) + (buffer[position++] & 255));
+    if (value >> 47 == 1) {
+      value = value | 0xFFFF000000000000L;
+    }
+    return value;
   }
 
   public final long readLong() throws Exception {
@@ -75,22 +85,9 @@ public final class FastByteArrayReader {
         + ((buffer[position++] & 255) << 8) + (buffer[position++] & 255));
   }
 
-  public final String readUTF() throws Exception {
-    final int size =
-        ((buffer[position++] & 0xFF) << 24)
-            | ((buffer[position++] & 0xFF) << 16)
-            | ((buffer[position++] & 0xFF) << 8)
-            | (buffer[position++] & 0xFF);
-
-    final String string = new String(buffer, position, size, "UTF-8");
-    position += size;
-    return string;
-  }
-
   public final byte[] readByteArray() throws Exception {
     final int size =
-        ((buffer[position++] & 0xFF) << 24)
-            | ((buffer[position++] & 0xFF) << 16)
+        ((buffer[position++] & 0xFF) << 16)
             | ((buffer[position++] & 0xFF) << 8)
             | (buffer[position++] & 0xFF);
 
@@ -98,21 +95,6 @@ public final class FastByteArrayReader {
     System.arraycopy(buffer, position, byteArray, 0, size);
     position += size;
     return byteArray;
-  }
-
-  public final char[] readCharArray() throws Exception {
-    final int size =
-        ((buffer[position++]) << 24)
-            | ((buffer[position++] & 0xFF) << 16)
-            | ((buffer[position++] & 0xFF) << 8)
-            | (buffer[position++] & 0xFF);
-
-    final char[] chars = new char[size];
-    for (int i = 0; i < size; i++) {
-      chars[i] =
-          (char) (short) (((buffer[position++] & 0xFF) << 8) | (buffer[position++] & 0xFF));
-    }
-    return chars;
   }
 
 }
