@@ -24,7 +24,6 @@ package org.treetank.pagelayer;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.apache.log4j.Logger;
 import org.treetank.nodelayer.SessionConfiguration;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.IConstants;
@@ -39,9 +38,6 @@ import org.treetank.utils.SoftHashMap;
  * </p>
  */
 public final class PageCache {
-
-  /** Logger. */
-  private static final Logger LOGGER = Logger.getLogger(PageCache.class);
 
   /** Page cache mapping start address of page to IPage. */
   private final Map<Long, IPage> mCache;
@@ -93,16 +89,6 @@ public final class PageCache {
     IPage page = (IPage) mCache.get(pageReference.getStart());
     if (page == null) {
 
-      // Logging.
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Miss for start="
-            + pageReference.getStart()
-            + "; size="
-            + pageReference.getLength()
-            + "; checksum="
-            + pageReference.getChecksum());
-      }
-
       // Get page reader from mPool.
       PageReader reader = mPool.take();
 
@@ -132,16 +118,6 @@ public final class PageCache {
       // Give page reader back to mPool.
       mPool.put(reader);
 
-    } else {
-      // Logging.
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Hit for start="
-            + pageReference.getStart()
-            + "; size="
-            + pageReference.getLength()
-            + "; checksum="
-            + pageReference.getChecksum());
-      }
     }
     return page;
   }

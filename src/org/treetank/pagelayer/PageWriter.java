@@ -30,7 +30,6 @@ import java.util.zip.Deflater;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.log4j.Logger;
 import org.treetank.nodelayer.SessionConfiguration;
 import org.treetank.utils.FastByteArrayWriter;
 import org.treetank.utils.IConstants;
@@ -44,9 +43,6 @@ import org.treetank.utils.IConstants;
  * </p>
  */
 public final class PageWriter {
-
-  /** Logger. */
-  private static final Logger LOGGER = Logger.getLogger(PageWriter.class);
 
   /** Read-write mode of mFile to modify. */
   private static final String READ_WRITE = "rw";
@@ -170,18 +166,6 @@ public final class PageWriter {
     // Remember page coordinates.
     pageReference.setStart(start);
     pageReference.setLength((int) (mFile.length() - start));
-
-    // Logging.
-    if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug("Wrote page="
-          + pageReference.getPage().getClass().getSimpleName()
-          + "; start="
-          + pageReference.getStart()
-          + "; size="
-          + pageReference.getLength()
-          + "; checksum="
-          + pageReference.getChecksum());
-    }
 
   }
 
