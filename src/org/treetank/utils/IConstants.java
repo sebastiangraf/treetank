@@ -39,9 +39,6 @@ public interface IConstants {
   /** Default internal encoding. */
   public static final String ENCODING = "UTF-8";
 
-  /** Is encryption active? */
-  public static final boolean ENCRYPT = true;
-
   /** Is compression active? */
   public static final boolean COMPRESS = true;
 
@@ -50,9 +47,6 @@ public interface IConstants {
 
   /** Encryption algorithm. */
   public static final String ENCRYPTION_ALGORITHM = "AES";
-
-  /** Encryption key. */
-  public static final byte[] ENCRYPTION_KEY = "1234567812345678".getBytes();
 
   /** Checksum algorithm. */
   public static final String CHECKSUM_ALGORITHM = "CRC";

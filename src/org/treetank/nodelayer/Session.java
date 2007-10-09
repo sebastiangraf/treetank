@@ -1,7 +1,7 @@
 /*
  * TreeTank - Embedded Native XML Database
  * 
- * Copyright (C) 2007 Marc Kramis
+ * Copyright 2007 Marc Kramis
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,6 @@ import org.treetank.pagelayer.PageWriter;
 import org.treetank.pagelayer.UberPage;
 import org.treetank.utils.IConstants;
 
-
 /**
  * <h1>Session</h1>
  * 
@@ -56,6 +55,9 @@ public final class Session implements ISession {
   /** Pool of current sessions. */
   private static final Map<String, ISession> SESSION_MAP =
       new HashMap<String, ISession>();
+
+  /** Session configuration. */
+  private final SessionConfiguration mSessionConfiguration;
 
   /** Shared read-only page mPageCache. */
   private final PageCache mPageCache;
@@ -77,6 +79,10 @@ public final class Session implements ISession {
 
   /** Random access mFile for beacons. */
   private final RandomAccessFile mFile;
+
+  public Session(final String path) throws Exception {
+    this(new SessionConfiguration(path));
+  }
 
   /**
    * Constructor to bind to a TreeTank file.
@@ -102,19 +108,22 @@ public final class Session implements ISession {
    * @param path Path of TreeTank file.
    * @throws Exception of any kind.
    */
-  public Session(final String path) throws Exception {
+  public Session(final SessionConfiguration sessionConfiguration)
+      throws Exception {
+
+    mSessionConfiguration = sessionConfiguration;
 
     // Make sure that the TreeTank file exists.
-    new File(path).createNewFile();
+    new File(mSessionConfiguration.getPath()).createNewFile();
 
     // Init session members.
-    mPageCache = new PageCache(path);
+    mPageCache = new PageCache(mSessionConfiguration);
     mWriteSemaphore =
         new Semaphore(IConstants.MAX_NUMBER_OF_WRITE_TRANSACTIONS);
     mPrimaryUberPageReference = new PageReference();
     mSecondaryUberPageReference = new PageReference();
-    mPageWriter = new PageWriter(path);
-    mFile = new RandomAccessFile(path, "rw");
+    mPageWriter = new PageWriter(mSessionConfiguration);
+    mFile = new RandomAccessFile(mSessionConfiguration.getPath(), "rw");
 
     // Bootstrap uber page.
     if (mFile.length() == 0L) {
@@ -158,18 +167,19 @@ public final class Session implements ISession {
 
     }
 
-    SESSION_MAP.put(path, this);
+    SESSION_MAP.put(mSessionConfiguration.getPath(), this);
   }
 
   /**
    * {@inheritDoc}
    */
-  public static final ISession getSession(final String path) throws Exception {
-    ISession session = SESSION_MAP.get(path);
+  public static final ISession getSession(
+      final SessionConfiguration sessionConfiguration) throws Exception {
+    ISession session = SESSION_MAP.get(sessionConfiguration.getPath());
 
     if (session == null) {
-      session = new Session(path);
-      SESSION_MAP.put(path, session);
+      session = new Session(sessionConfiguration);
+      SESSION_MAP.put(sessionConfiguration.getPath(), session);
     }
 
     return session;

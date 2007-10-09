@@ -32,9 +32,9 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.log4j.Logger;
+import org.treetank.nodelayer.SessionConfiguration;
 import org.treetank.utils.FastByteArrayWriter;
 import org.treetank.utils.IConstants;
-
 
 /**
  * <h1>PageWriter</h1>
@@ -61,6 +61,9 @@ public final class PageWriter {
   /** Adler32 Checksum to assert integrity. */
   private final Checksum mChecksum;
 
+  /** Do we use encryption? */
+  private final boolean mIsEncrypted;
+
   /** Cipher to encrypt and decrypt blocks. */
   private final Cipher mCipher;
 
@@ -82,19 +85,29 @@ public final class PageWriter {
   /**
    * Constructor.
    * 
-   * @param path Path of mFile to modify.
+   * @param sessionConfiguration Configuration of session we are bound to.
    * @throws Exception of any kind.
    */
-  public PageWriter(final String path) throws Exception {
-    mFile = new RandomAccessFile(path, READ_WRITE);
+  public PageWriter(final SessionConfiguration sessionConfiguration)
+      throws Exception {
+    mFile = new RandomAccessFile(sessionConfiguration.getPath(), READ_WRITE);
     mChecksum =
         IConstants.CHECKSUM_ALGORITHM == "CRC" ? new CRC32() : new Adler32();
-    mCipher = Cipher.getInstance(IConstants.ENCRYPTION_ALGORITHM);
-    mSecretKeySpec =
-        new SecretKeySpec(
-            IConstants.ENCRYPTION_KEY,
-            IConstants.ENCRYPTION_ALGORITHM);
-    mCipher.init(Cipher.ENCRYPT_MODE, mSecretKeySpec);
+
+    if (sessionConfiguration.isEncrypted()) {
+      mIsEncrypted = true;
+      mCipher = Cipher.getInstance(IConstants.ENCRYPTION_ALGORITHM);
+      mSecretKeySpec =
+          new SecretKeySpec(
+              sessionConfiguration.getEncryptionKey(),
+              IConstants.ENCRYPTION_ALGORITHM);
+      mCipher.init(Cipher.ENCRYPT_MODE, mSecretKeySpec);
+    } else {
+      mIsEncrypted = false;
+      mCipher = null;
+      mSecretKeySpec = null;
+    }
+
     mCompressor = new Deflater(Deflater.DEFAULT_COMPRESSION);
     mWriter = new FastByteArrayWriter();
     mOut = new ByteArrayOutputStream();
@@ -137,7 +150,7 @@ public final class PageWriter {
     }
 
     // Encrypt page.
-    if (IConstants.ENCRYPT) {
+    if (mIsEncrypted) {
       page = mCipher.doFinal(page);
     }
 

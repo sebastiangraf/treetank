@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.log4j.Logger;
+import org.treetank.nodelayer.SessionConfiguration;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.IConstants;
 import org.treetank.utils.SoftHashMap;
@@ -48,22 +49,23 @@ public final class PageCache {
   /** Non-shrinking PageReader pool. */
   private final LinkedBlockingQueue<PageReader> mPool;
 
-  /** Path of TreeTank file. */
-  private final String mPath;
+  /** Session configuration. */
+  private final SessionConfiguration mSessionConfiguration;
 
   /**
    * Constructor.
    * 
-   * @param path Path to TreeTank file.
-   * @throws Exception
+   * @param sessionConfiguration Configuration of session we are bound to.
+   * @throws Exception of any kind.
    */
-  public PageCache(final String path) throws Exception {
+  public PageCache(final SessionConfiguration sessionConfiguration)
+      throws Exception {
     mCache = new SoftHashMap<Long, IPage>();
     mPool = new LinkedBlockingQueue<PageReader>(32);
-    mPath = path;
+    mSessionConfiguration = sessionConfiguration;
 
     for (int i = 0; i < 32; i++) {
-      mPool.put(new PageReader(mPath));
+      mPool.put(new PageReader(mSessionConfiguration));
     }
   }
 

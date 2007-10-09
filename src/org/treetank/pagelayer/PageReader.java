@@ -32,9 +32,9 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.log4j.Logger;
+import org.treetank.nodelayer.SessionConfiguration;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.IConstants;
-
 
 /**
  * <h1>PageReader</h1>
@@ -61,6 +61,9 @@ public final class PageReader {
   /** Adler32 Checksum to assert integrity. */
   private final Checksum mChecksum;
 
+  /** Do we use encryption? */
+  private final boolean mIsEncrypted;
+
   /** Cipher to encrypt and decrypt blocks. */
   private final Cipher mCipher;
 
@@ -79,19 +82,28 @@ public final class PageReader {
   /**
    * Constructor.
    * 
-   * @param path Path of mFile to read from.
+   * @param sessionConfiguration Configuration of session we are bound to.
    * @throws Exception of any kind.
    */
-  public PageReader(final String path) throws Exception {
-    mFile = new RandomAccessFile(path, READ_ONLY);
+  public PageReader(final SessionConfiguration sessionConfiguration)
+      throws Exception {
+    mFile = new RandomAccessFile(sessionConfiguration.getPath(), READ_ONLY);
     mChecksum =
         IConstants.CHECKSUM_ALGORITHM == "CRC" ? new CRC32() : new Adler32();
-    mCipher = Cipher.getInstance(IConstants.ENCRYPTION_ALGORITHM);
-    mSecretKeySpec =
-        new SecretKeySpec(
-            IConstants.ENCRYPTION_KEY,
-            IConstants.ENCRYPTION_ALGORITHM);
-    mCipher.init(Cipher.DECRYPT_MODE, mSecretKeySpec);
+    if (sessionConfiguration.isEncrypted()) {
+      mIsEncrypted = true;
+      mCipher = Cipher.getInstance(IConstants.ENCRYPTION_ALGORITHM);
+      mSecretKeySpec =
+          new SecretKeySpec(
+              sessionConfiguration.getEncryptionKey(),
+              IConstants.ENCRYPTION_ALGORITHM);
+      mCipher.init(Cipher.DECRYPT_MODE, mSecretKeySpec);
+    } else {
+      mIsEncrypted = false;
+      mCipher = null;
+      mSecretKeySpec = null;
+    }
+
     mDecompressor = new Inflater();
     mOut = new ByteArrayOutputStream();
     mTmp = new byte[BUFFER_SIZE];
@@ -112,7 +124,7 @@ public final class PageReader {
     mFile.read(page);
 
     // Decrypt page.
-    if (IConstants.ENCRYPT) {
+    if (mIsEncrypted) {
       page = mCipher.doFinal(page);
     }
 
