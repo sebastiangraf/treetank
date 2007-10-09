@@ -58,7 +58,7 @@ public class FastByteArrayBenchmark {
   
   public static void main(final String[] args) {
     System.out
-        .println("$Id:FastByteArrayBenchmark.java 3004 09.10.07 15:59 $");
+        .println("$Id:FastByteArrayBenchmark.java$");
     try {
       Benchmark a = new Benchmark();
       FastByteArrayBenchmark bench = new FastByteArrayBenchmark();
