@@ -31,10 +31,7 @@ import org.treetank.api.IAxisIterator;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.nodelayer.Session;
-import org.treetank.utils.IConstants;
 import org.treetank.utils.TestDocument;
-import org.treetank.xmllayer.DescendantAxisIterator;
-
 
 public class DescendantAxisIteratorTest {
 
@@ -54,85 +51,85 @@ public class DescendantAxisIteratorTest {
     TestDocument.create(trx);
 
     // Find descendants starting from nodeKey 0L (root).
-    trx.moveTo(0L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    trx.moveTo(0L);
     final IAxisIterator descendantIterator1 = new DescendantAxisIterator(trx);
     assertEquals(true, descendantIterator1.next());
-    assertEquals(1L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(1L, trx.getNodeKey());
 
     assertEquals(true, descendantIterator1.next());
-    assertEquals(2L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(2L, trx.getNodeKey());
 
     assertEquals(true, descendantIterator1.next());
-    assertEquals(3L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(3L, trx.getNodeKey());
 
     assertEquals(true, descendantIterator1.next());
-    assertEquals(4L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(4L, trx.getNodeKey());
 
     assertEquals(true, descendantIterator1.next());
-    assertEquals(5L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(5L, trx.getNodeKey());
 
     assertEquals(true, descendantIterator1.next());
-    assertEquals(6L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(6L, trx.getNodeKey());
 
     assertEquals(true, descendantIterator1.next());
-    assertEquals(7L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(7L, trx.getNodeKey());
 
     assertEquals(true, descendantIterator1.next());
-    assertEquals(8L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(8L, trx.getNodeKey());
 
     assertEquals(true, descendantIterator1.next());
-    assertEquals(9L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(9L, trx.getNodeKey());
 
     assertEquals(true, descendantIterator1.next());
-    assertEquals(10L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(10L, trx.getNodeKey());
 
     assertEquals(false, descendantIterator1.next());
 
     // Find descendants starting from nodeKey 1L (first child of root).
-    trx.moveTo(1L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    trx.moveTo(1L);
     final IAxisIterator descendantIterator2 = new DescendantAxisIterator(trx);
     assertEquals(true, descendantIterator2.next());
-    assertEquals(2L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(2L, trx.getNodeKey());
 
     assertEquals(true, descendantIterator2.next());
-    assertEquals(3L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(3L, trx.getNodeKey());
 
     assertEquals(true, descendantIterator2.next());
-    assertEquals(4L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(4L, trx.getNodeKey());
 
     assertEquals(true, descendantIterator2.next());
-    assertEquals(5L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(5L, trx.getNodeKey());
 
     assertEquals(true, descendantIterator2.next());
-    assertEquals(6L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(6L, trx.getNodeKey());
 
     assertEquals(true, descendantIterator2.next());
-    assertEquals(7L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(7L, trx.getNodeKey());
 
     assertEquals(true, descendantIterator2.next());
-    assertEquals(8L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(8L, trx.getNodeKey());
 
     assertEquals(true, descendantIterator2.next());
-    assertEquals(9L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(9L, trx.getNodeKey());
 
     assertEquals(true, descendantIterator2.next());
-    assertEquals(10L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(10L, trx.getNodeKey());
 
     assertEquals(false, descendantIterator2.next());
 
     // Find descendants starting from nodeKey 4L (second child of root).
-    trx.moveTo(7L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    trx.moveTo(7L);
     final IAxisIterator descendantIterator3 = new DescendantAxisIterator(trx);
     assertEquals(true, descendantIterator3.next());
-    assertEquals(8L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(8L, trx.getNodeKey());
 
     assertEquals(true, descendantIterator3.next());
-    assertEquals(9L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(9L, trx.getNodeKey());
 
     assertEquals(false, descendantIterator3.next());
 
     // Find descendants starting from nodeKey 5L (last in document order).
-    trx.moveTo(10L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    trx.moveTo(10L);
     final IAxisIterator descendantIterator4 = new DescendantAxisIterator(trx);
     assertEquals(false, descendantIterator4.next());
 

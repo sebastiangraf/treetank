@@ -396,16 +396,15 @@ public final class Node implements INode {
   }
 
   public final static long nodePageKey(final long nodeKey) {
-    return nodeKey >> (IConstants.NDP_NODE_COUNT_EXPONENT + IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    return nodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT;
   }
 
   public final static int nodePageOffset(final long nodeKey) {
-    return (int) (nodeKey
-        - ((nodeKey >> (IConstants.NDP_NODE_COUNT_EXPONENT + IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT)) << (IConstants.NDP_NODE_COUNT_EXPONENT + IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT)) >> IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    return (int) (nodeKey - ((nodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT) << IConstants.NDP_NODE_COUNT_EXPONENT));
   }
 
   public final static long keyBase(final long nodePageKey) {
-    return nodePageKey << (IConstants.NDP_NODE_COUNT_EXPONENT + IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    return nodePageKey << IConstants.NDP_NODE_COUNT_EXPONENT;
   }
 
 }

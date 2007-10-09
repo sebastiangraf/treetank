@@ -24,9 +24,7 @@ package org.treetank.pagelayer;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.treetank.pagelayer.Node;
 import org.treetank.utils.IConstants;
-
 
 public class NodeTest {
 
@@ -38,24 +36,17 @@ public class NodeTest {
     assertEquals(0L, Node.keyBase(0L));
 
     assertEquals(0L, Node.nodePageKey(1L));
-    assertEquals(0, Node.nodePageOffset(1L));
+    assertEquals(1, Node.nodePageOffset(1L));
     assertEquals(0L, Node.keyBase(0L));
 
-    assertEquals(0L, Node
-        .nodePageKey(1L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT));
-    assertEquals(1, Node
-        .nodePageOffset(1L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT));
+    assertEquals(0L, Node.nodePageKey(1L));
+    assertEquals(1, Node.nodePageOffset(1L));
     assertEquals(0L, Node.keyBase(0L));
 
-    assertEquals(
-        1L,
-        Node
-            .nodePageKey(1L << (IConstants.NDP_NODE_COUNT_EXPONENT + IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT)));
-    assertEquals(
-        0,
-        Node
-            .nodePageOffset(1L << (IConstants.NDP_NODE_COUNT_EXPONENT + IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT)));
-    assertEquals(1L << (IConstants.NDP_NODE_COUNT_EXPONENT + IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT), Node.keyBase(1L));
+    assertEquals(1L, Node.nodePageKey(1L << IConstants.NDP_NODE_COUNT_EXPONENT));
+    assertEquals(0, Node
+        .nodePageOffset(1L << IConstants.NDP_NODE_COUNT_EXPONENT));
+    assertEquals(1L << IConstants.NDP_NODE_COUNT_EXPONENT, Node.keyBase(1L));
 
   }
 

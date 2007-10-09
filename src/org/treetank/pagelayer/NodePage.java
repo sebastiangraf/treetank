@@ -57,7 +57,7 @@ public final class NodePage implements IPage {
     final long keyBase = Node.keyBase(nodePage.mNodePageKey);
     for (int i = 0; i < IConstants.NDP_NODE_COUNT; i++) {
       if (in.readBoolean()) {
-        nodePage.mNodes[i] = new Node(keyBase + (i << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT), in);
+        nodePage.mNodes[i] = new Node(keyBase + i, in);
       } else {
         nodePage.mNodes[i] = null;
       }

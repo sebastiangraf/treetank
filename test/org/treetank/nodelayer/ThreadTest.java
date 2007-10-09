@@ -34,12 +34,9 @@ import org.treetank.api.IAxisIterator;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.nodelayer.Session;
-import org.treetank.utils.IConstants;
 import org.treetank.utils.TestDocument;
 import org.treetank.utils.UTF;
 import org.treetank.xmllayer.DescendantAxisIterator;
-
 
 public class ThreadTest {
 
@@ -66,7 +63,7 @@ public class ThreadTest {
     for (int i = 0; i < WORKER_COUNT; i++) {
       taskExecutor.execute(new Task(session));
       final IWriteTransaction wTrx = session.beginWriteTransaction();
-      wTrx.moveTo(10L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+      wTrx.moveTo(10L);
       wTrx.setValue(UTF.convert("value" + i));
       session.commit();
     }
@@ -93,7 +90,7 @@ public class ThreadTest {
 
     public void run() {
       try {
-        
+
         final IAxisIterator axis = new DescendantAxisIterator(mTrx);
         while (axis.next()) {
           // Move on.

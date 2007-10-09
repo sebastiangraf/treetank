@@ -31,10 +31,7 @@ import org.treetank.api.IAxisIterator;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.nodelayer.Session;
-import org.treetank.utils.IConstants;
 import org.treetank.utils.TestDocument;
-import org.treetank.xmllayer.AncestorAxisIterator;
-
 
 public class AncestorAxisIteratorTest {
 
@@ -54,34 +51,34 @@ public class AncestorAxisIteratorTest {
     TestDocument.create(trx);
 
     // Find ancestors starting from nodeKey 0L (root).
-    trx.moveTo(8L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    trx.moveTo(8L);
     final IAxisIterator ancestorIterator1 = new AncestorAxisIterator(trx);
     assertEquals(true, ancestorIterator1.next());
-    assertEquals(7L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(7L, trx.getNodeKey());
 
     assertEquals(true, ancestorIterator1.next());
-    assertEquals(1L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(1L, trx.getNodeKey());
 
     assertEquals(false, ancestorIterator1.next());
 
     // Find ancestors starting from nodeKey 1L (first child of root).
-    trx.moveTo(3L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    trx.moveTo(3L);
     final IAxisIterator ancestorIterator2 = new AncestorAxisIterator(trx);
     assertEquals(true, ancestorIterator2.next());
-    assertEquals(1L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(1L, trx.getNodeKey());
 
     assertEquals(false, ancestorIterator2.next());
 
     // Find ancestors starting from nodeKey 4L (second child of root).
-    trx.moveTo(2L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    trx.moveTo(2L);
     final IAxisIterator ancestorIterator3 = new AncestorAxisIterator(trx);
     assertEquals(true, ancestorIterator3.next());
-    assertEquals(1L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(1L, trx.getNodeKey());
 
     assertEquals(false, ancestorIterator3.next());
 
     // Find ancestors starting from nodeKey 5L (last in document order).
-    trx.moveTo(1L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    trx.moveTo(1L);
     final IAxisIterator ancestorIterator4 = new AncestorAxisIterator(trx);
     assertEquals(false, ancestorIterator4.next());
 

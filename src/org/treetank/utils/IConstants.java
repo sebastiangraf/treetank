@@ -135,12 +135,6 @@ public interface IConstants {
   /** 2^NDP_NODE_COUNT_EXPONENT = NDP_NODE_COUNT. */
   public static final int NDP_NODE_COUNT_EXPONENT = 8;
 
-  /** Maximum attribute count per node. */
-  public static final int NDP_ATTRIBUTE_COUNT = 16;
-
-  /** 2^NDP_ATTRIBUTE_COUNT_EXPONENT = NDP_ATTRIBUTE_COUNT. */
-  public static final int NDP_ATTRIBUTE_COUNT_EXPONENT = 4;
-
   //--- Node Layer -------------------------------------------------------------
 
   /** Number of concurrent IWriteTransactions. */
@@ -173,6 +167,6 @@ public interface IConstants {
   //--- XML Layer --------------------------------------------------------------
 
   /** Commit threshold. */
-  public static final int COMMIT_TRESHOLD = 1000000;
+  public static final int COMMIT_TRESHOLD = 16777216;
 
 }

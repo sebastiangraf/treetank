@@ -62,7 +62,7 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
     revisionRootPage.mNamePageReference.setPage(NamePage.create(pageCache));
 
     // Node pages (shallow init).
-    revisionRootPage.mMaxNodeKey = -IConstants.NDP_ATTRIBUTE_COUNT;
+    revisionRootPage.mMaxNodeKey = -1L;
 
     // Indirect pages (shallow init).
     createPageReferences(revisionRootPage.mIndirectNodePageReferences);
@@ -228,7 +228,7 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
       final int prefixKey,
       final byte[] value) throws Exception {
 
-    mMaxNodeKey += IConstants.NDP_ATTRIBUTE_COUNT;
+    mMaxNodeKey += 1;
     mRevisionSize += 1;
 
     final Node node =
