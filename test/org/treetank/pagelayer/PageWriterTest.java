@@ -27,15 +27,10 @@ import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.pagelayer.Node;
-import org.treetank.pagelayer.NodePage;
-import org.treetank.pagelayer.PageReader;
-import org.treetank.pagelayer.PageReference;
-import org.treetank.pagelayer.PageWriter;
+import org.treetank.nodelayer.SessionConfiguration;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.IConstants;
 import org.treetank.utils.UTF;
-
 
 public class PageWriterTest {
 
@@ -56,13 +51,15 @@ public class PageWriterTest {
     final PageReference pageReference = new PageReference();
 
     // Serialize node page.
-    final PageWriter pageWriter = new PageWriter(PATH);
+    final PageWriter pageWriter =
+        new PageWriter(new SessionConfiguration(PATH));
     pageReference.setPage(page1);
     pageWriter.write(pageReference);
     assertEquals(0L, pageReference.getStart());
 
     // Deserialize node page.
-    final PageReader pageReader = new PageReader(PATH);
+    final PageReader pageReader =
+        new PageReader(new SessionConfiguration(PATH));
     final FastByteArrayReader in = pageReader.read(pageReference);
     final NodePage page2 = NodePage.read(in);
 

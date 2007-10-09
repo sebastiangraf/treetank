@@ -31,6 +31,7 @@ import org.perfidix.visitor.AsciiTable;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.nodelayer.Session;
+import org.treetank.nodelayer.SessionConfiguration;
 import org.treetank.utils.IConstants;
 import org.treetank.utils.UTF;
 
@@ -46,8 +47,11 @@ public class UpdateBenchmark {
   @BeforeBenchClass
   public void benchBeforeBenchClass() throws Exception {
 
+    final SessionConfiguration config =
+        new SessionConfiguration(FILE, "1234567812345678".getBytes());
+
     new File(FILE).delete();
-    session = Session.getSession(FILE);
+    session = Session.getSession(config);
 
     wtx = session.beginWriteTransaction();
     wtx.insertRoot("benchmark");

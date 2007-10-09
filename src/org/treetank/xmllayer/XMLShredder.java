@@ -31,21 +31,22 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.treetank.api.IWriteTransaction;
 import org.treetank.nodelayer.Session;
+import org.treetank.nodelayer.SessionConfiguration;
 import org.treetank.utils.FastLongStack;
 import org.treetank.utils.IConstants;
 import org.treetank.utils.UTF;
 
-
 public final class XMLShredder {
 
-  public final static void shred(final String xmlPath, final String ic3Path)
-      throws Exception {
-    shred(xmlPath, ic3Path, true);
+  public final static void shred(
+      final String xmlPath,
+      final SessionConfiguration sessionConfiguration) throws Exception {
+    shred(xmlPath, sessionConfiguration, true);
   }
 
   public final static void shred(
       final String xmlPath,
-      final String ic3,
+      final SessionConfiguration sessionConfiguration,
       final boolean isValidating) throws Exception {
     final InputStream in = new FileInputStream(xmlPath);
     final XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -53,12 +54,13 @@ public final class XMLShredder {
     factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
     final XMLStreamReader parser = factory.createXMLStreamReader(in);
 
-    shred(parser, ic3);
+    shred(parser, sessionConfiguration);
   }
 
-  public static final void shred(final XMLStreamReader parser, final String path)
-      throws Exception {
-    Session session = new Session(path);
+  public static final void shred(
+      final XMLStreamReader parser,
+      final SessionConfiguration sessionConfiguration) throws Exception {
+    Session session = new Session(sessionConfiguration);
     IWriteTransaction trx = session.beginWriteTransaction();
     // Prepare variables.
     final FastLongStack leftSiblingKeyStack = new FastLongStack();
@@ -151,7 +153,7 @@ public final class XMLShredder {
 
   public static final void main(String[] args) {
     if (args.length != 2) {
-      System.out.println("Usage: XMLShredder input.xml output.ic3");
+      System.out.println("Usage: XMLShredder input.xml output.tnk key");
       System.exit(1);
     }
 
@@ -159,7 +161,8 @@ public final class XMLShredder {
       System.out.print("Shredding '" + args[0] + "' to '" + args[1] + "' ... ");
       long time = System.currentTimeMillis();
       new File(args[1]).delete();
-      XMLShredder.shred(args[0], args[1], false);
+      XMLShredder.shred(args[0], new SessionConfiguration(args[1], args[2]
+          .getBytes()), false);
       System.out.println(" done ["
           + (System.currentTimeMillis() - time)
           + "ms].");
