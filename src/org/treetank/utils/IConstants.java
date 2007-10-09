@@ -77,10 +77,10 @@ public interface IConstants {
   //--- Indirect Page ----------------------------------------------------------
 
   /** Count of indirect references in indirect page. */
-  public static final int INP_REFERENCE_COUNT = 512;
+  public static final int INP_REFERENCE_COUNT = 256;
 
   /** 2^INP_REFERENCE_COUNT_EXPONENT = INP_REFERENCE_COUNT. */
-  public static final int INP_REFERENCE_COUNT_EXPONENT = 9;
+  public static final int INP_REFERENCE_COUNT_EXPONENT = 8;
 
   /** Pages per level. */
   public static final long[] INP_LEVEL_PAGE_COUNT =
@@ -123,10 +123,10 @@ public interface IConstants {
   // --- Node Page -------------------------------------------------------------
 
   /** Maximum node count per node page. */
-  public static final int NDP_NODE_COUNT = 512;
+  public static final int NDP_NODE_COUNT = 256;
 
   /** 2^NDP_NODE_COUNT_EXPONENT = NDP_NODE_COUNT. */
-  public static final int NDP_NODE_COUNT_EXPONENT = 9;
+  public static final int NDP_NODE_COUNT_EXPONENT = 8;
 
   //--- Node Layer -------------------------------------------------------------
 

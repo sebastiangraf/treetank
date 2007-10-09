@@ -59,7 +59,7 @@ public class UpdateTest {
     assertEquals(1L, rTrx.revisionKey());
 
     // Insert 100 children.
-    for (int i = 1; i <= 100; i++) {
+    for (int i = 1; i <= 10; i++) {
       session = new Session(TEST_PATH);
       trx = session.beginWriteTransaction();
       trx.moveToRoot();
@@ -80,9 +80,9 @@ public class UpdateTest {
     rTrx = session.beginReadTransaction();
     rTrx.moveToRoot();
     rTrx.moveToFirstChild();
-    assertEquals(Integer.toString(100), new String(rTrx.getValue()));
-    assertEquals(101L, rTrx.revisionSize());
-    assertEquals(101L, rTrx.revisionKey());
+    assertEquals(Integer.toString(10), new String(rTrx.getValue()));
+    assertEquals(11L, rTrx.revisionSize());
+    assertEquals(11L, rTrx.revisionKey());
     session.close();
 
   }
