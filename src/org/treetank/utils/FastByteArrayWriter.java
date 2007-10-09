@@ -70,6 +70,10 @@ public final class FastByteArrayWriter {
     buffer[size++] = (byte) (value >> 8);
     buffer[size++] = (byte) value;
   }
+  
+  public final void writePseudoLongNew(final long value) throws Exception {
+    
+  }
 
   public final void writeLong(final long value) throws Exception {
     assertSize(8);

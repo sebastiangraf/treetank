@@ -74,6 +74,11 @@ public final class FastByteArrayReader {
     }
     return value;
   }
+  
+  public final long readPseudoLongNew() throws Exception {
+    return 0;
+    
+  }
 
   public final long readLong() throws Exception {
     return (((long) buffer[position++] << 56)
