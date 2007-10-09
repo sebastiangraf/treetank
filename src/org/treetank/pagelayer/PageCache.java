@@ -26,10 +26,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.log4j.Logger;
 import org.treetank.utils.FastByteArrayReader;
-import org.treetank.utils.FastObjectStack;
 import org.treetank.utils.IConstants;
 import org.treetank.utils.SoftHashMap;
-
 
 /**
  * <h1>PageCache</h1>
@@ -60,10 +58,10 @@ public final class PageCache {
    * @throws Exception
    */
   public PageCache(final String path) throws Exception {
-    mCache = new SoftHashMap<Long, IPage>(IConstants.STRONG_REFERENCE_COUNT);
+    mCache = new SoftHashMap<Long, IPage>();
     mPool = new LinkedBlockingQueue<PageReader>(32);
     mPath = path;
-    
+
     for (int i = 0; i < 32; i++) {
       mPool.put(new PageReader(mPath));
     }

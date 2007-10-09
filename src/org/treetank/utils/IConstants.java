@@ -36,9 +36,6 @@ public interface IConstants {
   /** Length of beacon. */
   public static final int BEACON_LENGTH = 20;
 
-  /** Number of strong references in SoftHashMap. */
-  public static final int STRONG_REFERENCE_COUNT = 512;
-
   /** Default internal encoding. */
   public static final String ENCODING = "UTF-8";
 

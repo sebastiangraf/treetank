@@ -49,9 +49,6 @@ import java.util.Set;
  */
 public final class SoftHashMap<K, V> extends AbstractMap<K, V> {
 
-  /** Default strong reference count. */
-  private static final int DEFAULT_STRONG_REFERENCE_COUNT = 32;
-
   /** The internal HashMap that will hold the SoftReference. */
   private final Map<K, SoftReference<V>> internalMap;
 
@@ -63,16 +60,6 @@ public final class SoftHashMap<K, V> extends AbstractMap<K, V> {
    *
    */
   public SoftHashMap() {
-    this(DEFAULT_STRONG_REFERENCE_COUNT);
-  }
-
-  /**
-   * Constructor that allows to specify how many strong references should
-   * be used internally.
-   * 
-   * @param initStrongReferenceCount Number of internal strong references.
-   */
-  public SoftHashMap(final int initStrongReferenceCount) {
     internalMap = new HashMap<K, SoftReference<V>>();
     queue = new ReferenceQueue();
   }
