@@ -26,8 +26,8 @@ import java.io.RandomAccessFile;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
@@ -50,7 +50,8 @@ import org.treetank.utils.IConstants;
 public final class Session implements ISession {
 
   /** Logger. */
-  private static final Logger LOGGER = Logger.getLogger(Session.class);
+  private static final Logger LOGGER =
+      Logger.getLogger(Session.class.getName());
 
   /** Pool of current sessions. */
   private static final Map<String, ISession> SESSION_MAP =
@@ -148,7 +149,7 @@ public final class Session implements ISession {
       } else {
 
         // TODO implement cases 2i, 2ii, and 2iii to be more robust!
-        LOGGER.error("Inconsistent TreeTank file encountered. Primary start="
+        LOGGER.severe("Inconsistent TreeTank file encountered. Primary start="
             + mPrimaryUberPageReference.getStart()
             + " size="
             + mPrimaryUberPageReference.getLength()
@@ -205,7 +206,7 @@ public final class Session implements ISession {
    */
   public final IWriteTransaction beginWriteTransaction() throws Exception {
     if (mWriteSemaphore.availablePermits() == 0) {
-      LOGGER.error("IWriteTransaction limit reached.");
+      LOGGER.severe("IWriteTransaction limit reached.");
       throw new IllegalStateException(
           "Session can not start new IWriteTransaction due to "
               + (IConstants.MAX_NUMBER_OF_WRITE_TRANSACTIONS - mWriteSemaphore
@@ -226,16 +227,6 @@ public final class Session implements ISession {
     mPageCache.put(mPrimaryUberPageReference);
     writeBeacon(mFile);
     mWriteSemaphore.release();
-    if (LOGGER.isInfoEnabled()) {
-      LOGGER.info("Committed revision="
-          + mUberPage.getMaxRevisionKey()
-          + " start="
-          + mPrimaryUberPageReference.getStart()
-          + " size="
-          + mPrimaryUberPageReference.getLength()
-          + " checksum="
-          + mPrimaryUberPageReference.getChecksum());
-    }
   }
 
   /**
@@ -250,7 +241,7 @@ public final class Session implements ISession {
    */
   public final void close() throws Exception {
     if (mWriteSemaphore.availablePermits() == 0) {
-      LOGGER.warn("Attempt to close session without cleanly "
+      LOGGER.warning("Attempt to close session without cleanly "
           + "committing or aborting it.");
       throw new IllegalStateException("Session can not be closed due to "
           + (IConstants.MAX_NUMBER_OF_WRITE_TRANSACTIONS - mWriteSemaphore

@@ -63,8 +63,8 @@ public class AxisStepBenchmark {
     final SessionConfiguration config =
         new SessionConfiguration(TNK_PATH, TNK_KEY, TNK_CHECKSUM);
 
-    new File(TNK_PATH).delete();
-    XMLShredder.shred(XML_PATH, config);
+//    new File(TNK_PATH).delete();
+//    XMLShredder.shred(XML_PATH, config);
 
     mSession = new Session(config);
     mTaskExecutor = Executors.newFixedThreadPool(TASKS);
