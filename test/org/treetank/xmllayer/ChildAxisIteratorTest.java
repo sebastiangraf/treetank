@@ -34,8 +34,6 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.nodelayer.Session;
 import org.treetank.utils.IConstants;
 import org.treetank.utils.TestDocument;
-import org.treetank.xmllayer.ChildAxisIterator;
-
 
 public class ChildAxisIteratorTest {
 
@@ -58,10 +56,10 @@ public class ChildAxisIteratorTest {
     final IWriteTransaction trx = session.beginWriteTransaction();
     TestDocument.create(trx);
 
-    trx.moveTo(1L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    trx.moveTo(1L);
     final IAxisIterator childIterator1 = new ChildAxisIterator(trx);
     assertEquals(true, childIterator1.next());
-    assertEquals(2L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(2L, trx.getNodeKey());
     assertEquals(3, trx.getKind());
     assertEquals("", trx.nameForKey(trx.getLocalPartKey()));
     assertEquals("", trx.nameForKey(trx.getURIKey()));
@@ -69,7 +67,7 @@ public class ChildAxisIteratorTest {
     assertEquals("oops1", new String(trx.getValue(), IConstants.ENCODING));
 
     assertEquals(true, childIterator1.next());
-    assertEquals(3L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(3L, trx.getNodeKey());
     assertEquals(1, trx.getKind());
     assertEquals("b", trx.nameForKey(trx.getLocalPartKey()));
     assertEquals("", trx.nameForKey(trx.getURIKey()));
@@ -77,7 +75,7 @@ public class ChildAxisIteratorTest {
     assertEquals("", new String(trx.getValue(), IConstants.ENCODING));
 
     assertEquals(true, childIterator1.next());
-    assertEquals(6L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(6L, trx.getNodeKey());
     assertEquals(3, trx.getKind());
     assertEquals("", trx.nameForKey(trx.getLocalPartKey()));
     assertEquals("", trx.nameForKey(trx.getURIKey()));
@@ -85,7 +83,7 @@ public class ChildAxisIteratorTest {
     assertEquals("oops2", new String(trx.getValue(), IConstants.ENCODING));
 
     assertEquals(true, childIterator1.next());
-    assertEquals(7L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(7L, trx.getNodeKey());
     assertEquals(1, trx.getKind());
     assertEquals("b", trx.nameForKey(trx.getLocalPartKey()));
     assertEquals("", trx.nameForKey(trx.getURIKey()));
@@ -93,8 +91,7 @@ public class ChildAxisIteratorTest {
     assertEquals("", new String(trx.getValue(), IConstants.ENCODING));
 
     assertEquals(true, childIterator1.next());
-    assertEquals(10L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx
-        .getNodeKey());
+    assertEquals(10L, trx.getNodeKey());
     assertEquals(3, trx.getKind());
     assertEquals("", trx.nameForKey(trx.getLocalPartKey()));
     assertEquals("", trx.nameForKey(trx.getURIKey()));
@@ -103,10 +100,10 @@ public class ChildAxisIteratorTest {
 
     assertEquals(false, childIterator1.next());
 
-    trx.moveTo(3L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    trx.moveTo(3L);
     final IAxisIterator childIterator2 = new ChildAxisIterator(trx);
     assertEquals(true, childIterator2.next());
-    assertEquals(4L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(4L, trx.getNodeKey());
     assertEquals(3, trx.getKind());
     assertEquals("", trx.nameForKey(trx.getLocalPartKey()));
     assertEquals("", trx.nameForKey(trx.getURIKey()));
@@ -114,7 +111,7 @@ public class ChildAxisIteratorTest {
     assertEquals("foo", new String(trx.getValue(), IConstants.ENCODING));
 
     assertEquals(true, childIterator2.next());
-    assertEquals(5L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(5L, trx.getNodeKey());
     assertEquals(1, trx.getKind());
     assertEquals("c", trx.nameForKey(trx.getLocalPartKey()));
     assertEquals("", trx.nameForKey(trx.getURIKey()));
@@ -123,7 +120,7 @@ public class ChildAxisIteratorTest {
 
     assertEquals(false, childIterator2.next());
 
-    trx.moveTo(10L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    trx.moveTo(10L);
     final IAxisIterator childIterator4 = new ChildAxisIterator(trx);
     assertEquals(false, childIterator4.next());
 
@@ -143,11 +140,10 @@ public class ChildAxisIteratorTest {
     final ISession session1 = new Session(TEST_PERSISTENT_PATH);
     final IReadTransaction rTrx = session1.beginReadTransaction();
 
-    rTrx.moveTo(1L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    rTrx.moveTo(1L);
     final IAxisIterator childIterator1 = new ChildAxisIterator(rTrx);
     assertEquals(true, childIterator1.next());
-    assertEquals(2L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, rTrx
-        .getNodeKey());
+    assertEquals(2L, rTrx.getNodeKey());
     assertEquals(3, rTrx.getKind());
     assertEquals("", rTrx.nameForKey(rTrx.getLocalPartKey()));
     assertEquals("", rTrx.nameForKey(rTrx.getURIKey()));
@@ -155,8 +151,7 @@ public class ChildAxisIteratorTest {
     assertEquals("oops1", new String(rTrx.getValue(), IConstants.ENCODING));
 
     assertEquals(true, childIterator1.next());
-    assertEquals(3L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, rTrx
-        .getNodeKey());
+    assertEquals(3L, rTrx.getNodeKey());
     assertEquals(1, rTrx.getKind());
     assertEquals("b", rTrx.nameForKey(rTrx.getLocalPartKey()));
     assertEquals("", rTrx.nameForKey(rTrx.getURIKey()));
@@ -164,8 +159,7 @@ public class ChildAxisIteratorTest {
     assertEquals("", new String(rTrx.getValue(), IConstants.ENCODING));
 
     assertEquals(true, childIterator1.next());
-    assertEquals(6L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, rTrx
-        .getNodeKey());
+    assertEquals(6L, rTrx.getNodeKey());
     assertEquals(3, rTrx.getKind());
     assertEquals("", rTrx.nameForKey(rTrx.getLocalPartKey()));
     assertEquals("", rTrx.nameForKey(rTrx.getURIKey()));
@@ -173,8 +167,7 @@ public class ChildAxisIteratorTest {
     assertEquals("oops2", new String(rTrx.getValue(), IConstants.ENCODING));
 
     assertEquals(true, childIterator1.next());
-    assertEquals(7L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, rTrx
-        .getNodeKey());
+    assertEquals(7L, rTrx.getNodeKey());
     assertEquals(1, rTrx.getKind());
     assertEquals("b", rTrx.nameForKey(rTrx.getLocalPartKey()));
     assertEquals("", rTrx.nameForKey(rTrx.getURIKey()));
@@ -182,8 +175,7 @@ public class ChildAxisIteratorTest {
     assertEquals("", new String(rTrx.getValue(), IConstants.ENCODING));
 
     assertEquals(true, childIterator1.next());
-    assertEquals(10L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, rTrx
-        .getNodeKey());
+    assertEquals(10L, rTrx.getNodeKey());
     assertEquals(3, rTrx.getKind());
     assertEquals("", rTrx.nameForKey(rTrx.getLocalPartKey()));
     assertEquals("", rTrx.nameForKey(rTrx.getURIKey()));
@@ -192,11 +184,10 @@ public class ChildAxisIteratorTest {
 
     assertEquals(false, childIterator1.next());
 
-    rTrx.moveTo(3L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    rTrx.moveTo(3L);
     final IAxisIterator childIterator2 = new ChildAxisIterator(rTrx);
     assertEquals(true, childIterator2.next());
-    assertEquals(4L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, rTrx
-        .getNodeKey());
+    assertEquals(4L, rTrx.getNodeKey());
     assertEquals(3, rTrx.getKind());
     assertEquals("", rTrx.nameForKey(rTrx.getLocalPartKey()));
     assertEquals("", rTrx.nameForKey(rTrx.getURIKey()));
@@ -204,8 +195,7 @@ public class ChildAxisIteratorTest {
     assertEquals("foo", new String(rTrx.getValue(), IConstants.ENCODING));
 
     assertEquals(true, childIterator2.next());
-    assertEquals(5L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, rTrx
-        .getNodeKey());
+    assertEquals(5L, rTrx.getNodeKey());
     assertEquals(1, rTrx.getKind());
     assertEquals("c", rTrx.nameForKey(rTrx.getLocalPartKey()));
     assertEquals("", rTrx.nameForKey(rTrx.getURIKey()));
@@ -214,7 +204,7 @@ public class ChildAxisIteratorTest {
 
     assertEquals(false, childIterator2.next());
 
-    rTrx.moveTo(10L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    rTrx.moveTo(10L);
     final IAxisIterator childIterator4 = new ChildAxisIterator(rTrx);
     assertEquals(false, childIterator4.next());
 

@@ -31,11 +31,7 @@ import org.treetank.api.IAxisIterator;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.nodelayer.Session;
-import org.treetank.utils.IConstants;
 import org.treetank.utils.TestDocument;
-import org.treetank.xmllayer.DescendantAxisIterator;
-import org.treetank.xmllayer.NameTestAxisIterator;
-
 
 public class NameTestAxisIteratorTest {
 
@@ -55,14 +51,14 @@ public class NameTestAxisIteratorTest {
     TestDocument.create(trx);
 
     // Find descendants starting from nodeKey 0L (root).
-    trx.moveTo(0L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    trx.moveTo(0L);
     final IAxisIterator descendantIterator1 =
         new NameTestAxisIterator(trx, new DescendantAxisIterator(trx), "b");
     assertEquals(true, descendantIterator1.next());
-    assertEquals(3L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(3L, trx.getNodeKey());
 
     assertEquals(true, descendantIterator1.next());
-    assertEquals(7L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(7L, trx.getNodeKey());
     assertEquals(false, descendantIterator1.next());
 
     session.abort();

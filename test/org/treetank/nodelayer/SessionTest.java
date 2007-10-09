@@ -30,11 +30,9 @@ import org.junit.Test;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.nodelayer.Session;
 import org.treetank.utils.IConstants;
 import org.treetank.utils.TestDocument;
 import org.treetank.utils.UTF;
-
 
 public class SessionTest {
 
@@ -74,9 +72,9 @@ public class SessionTest {
     assertEquals(IConstants.ELEMENT, trx.getKind());
     assertEquals("a", trx.getLocalPart());
 
-//    assertEquals(true, trx.moveToFirstAttribute());
-//    assertEquals(IConstants.ATTRIBUTE, trx.getKind());
-//    assertEquals("j", new String(trx.getValue(), IConstants.ENCODING));
+    //    assertEquals(true, trx.moveToFirstAttribute());
+    //    assertEquals(IConstants.ATTRIBUTE, trx.getKind());
+    //    assertEquals("j", new String(trx.getValue(), IConstants.ENCODING));
 
     session.abort();
     session.close();
@@ -133,12 +131,12 @@ public class SessionTest {
 
     final IReadTransaction rTrx1 = session.beginReadTransaction();
     assertEquals(1L, rTrx1.revisionKey());
-    rTrx1.moveTo(9L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    rTrx1.moveTo(9L);
     assertEquals("bar", new String(rTrx1.getValue(), IConstants.ENCODING));
 
     final IWriteTransaction wTrx2 = session.beginWriteTransaction();
     assertEquals(2L, wTrx2.revisionKey());
-    wTrx2.moveTo(9L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    wTrx2.moveTo(9L);
     wTrx2.setValue(UTF.convert("bar2"));
 
     assertEquals("bar", new String(rTrx1.getValue(), IConstants.ENCODING));
@@ -148,7 +146,7 @@ public class SessionTest {
 
     final IReadTransaction rTrx2 = session.beginReadTransaction();
     assertEquals(1L, rTrx2.revisionKey());
-    rTrx2.moveTo(9L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    rTrx2.moveTo(9L);
     assertEquals("bar", new String(rTrx2.getValue(), IConstants.ENCODING));
 
   }
@@ -166,12 +164,12 @@ public class SessionTest {
     final ISession session2 = new Session(TEST_EXISTING_PATH);
     final IReadTransaction rTrx1 = session2.beginReadTransaction();
     assertEquals(1L, rTrx1.revisionKey());
-    rTrx1.moveTo(9L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    rTrx1.moveTo(9L);
     assertEquals("bar", new String(rTrx1.getValue(), IConstants.ENCODING));
 
     final IWriteTransaction wTrx2 = session2.beginWriteTransaction();
     assertEquals(2L, wTrx2.revisionKey());
-    wTrx2.moveTo(9L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    wTrx2.moveTo(9L);
     wTrx2.setValue(UTF.convert("bar2"));
 
     assertEquals("bar", new String(rTrx1.getValue(), IConstants.ENCODING));
@@ -182,7 +180,7 @@ public class SessionTest {
     final ISession session3 = new Session(TEST_EXISTING_PATH);
     final IReadTransaction rTrx2 = session3.beginReadTransaction();
     assertEquals(2L, rTrx2.revisionKey());
-    rTrx2.moveTo(9L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    rTrx2.moveTo(9L);
     assertEquals("bar2", new String(rTrx2.getValue(), IConstants.ENCODING));
 
   }

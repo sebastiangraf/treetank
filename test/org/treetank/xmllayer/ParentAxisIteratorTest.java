@@ -31,10 +31,7 @@ import org.treetank.api.IAxisIterator;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.nodelayer.Session;
-import org.treetank.utils.IConstants;
 import org.treetank.utils.TestDocument;
-import org.treetank.xmllayer.ParentAxisIterator;
-
 
 public class ParentAxisIteratorTest {
 
@@ -52,17 +49,17 @@ public class ParentAxisIteratorTest {
     final IWriteTransaction trx = session.beginWriteTransaction();
     TestDocument.create(trx);
 
-    trx.moveTo(3L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    trx.moveTo(3L);
     final IAxisIterator parentIterator1 = new ParentAxisIterator(trx);
     assertEquals(true, parentIterator1.next());
-    assertEquals(1L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(1L, trx.getNodeKey());
 
     assertEquals(false, parentIterator1.next());
 
-    trx.moveTo(7L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT);
+    trx.moveTo(7L);
     final IAxisIterator parentIterator2 = new ParentAxisIterator(trx);
     assertEquals(true, parentIterator2.next());
-    assertEquals(1L << IConstants.NDP_ATTRIBUTE_COUNT_EXPONENT, trx.getNodeKey());
+    assertEquals(1L, trx.getNodeKey());
 
     assertEquals(false, parentIterator2.next());
 
