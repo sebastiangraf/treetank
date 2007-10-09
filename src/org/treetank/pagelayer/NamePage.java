@@ -54,8 +54,9 @@ final public class NamePage extends AbstractPage implements IPage {
     final NamePage namePage = new NamePage(pageCache);
 
     // Names (deep load).
-    for (int i = 0, l = in.readInt(); i < l; i++) {
-      namePage.mNameMap.put(in.readInt(), UTF.convert(in.readByteArray()));
+    for (int i = 0, l = in.readPseudoInt(); i < l; i++) {
+      namePage.mNameMap
+          .put(in.readPseudoInt(), UTF.convert(in.readByteArray()));
     }
 
     return namePage;
@@ -103,12 +104,12 @@ final public class NamePage extends AbstractPage implements IPage {
    * {@inheritDoc}
    */
   public void serialize(final FastByteArrayWriter out) throws Exception {
-    out.writeInt(mNameMap.size());
+    out.writePseudoInt(mNameMap.size());
     Iterator<Integer> keyIterator = mNameMap.keySet().iterator();
     int key;
     while (keyIterator.hasNext()) {
       key = keyIterator.next();
-      out.writeInt(key);
+      out.writePseudoInt(key);
       out.writeByteArray(UTF.convert(mNameMap.get(key)));
     }
   }

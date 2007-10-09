@@ -21,7 +21,6 @@
 
 package org.treetank.bench;
 
-import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -37,7 +36,6 @@ import org.treetank.api.ISession;
 import org.treetank.nodelayer.Session;
 import org.treetank.xmllayer.ChildAxisIterator;
 import org.treetank.xmllayer.DescendantAxisIterator;
-import org.treetank.xmllayer.XMLShredder;
 
 @BenchClass(runs = 1)
 public class AxisStepBenchmark {
@@ -55,8 +53,8 @@ public class AxisStepBenchmark {
   @BeforeFirstBenchRun
   public void benchBeforeBenchClass() throws Exception {
 
-    new File(TNK_PATH).delete();
-    XMLShredder.shred(XML_PATH, TNK_PATH);
+    //    new File(TNK_PATH).delete();
+    //    XMLShredder.shred(XML_PATH, TNK_PATH);
 
     mSession = new Session(TNK_PATH);
     mTaskExecutor = Executors.newFixedThreadPool(TASKS);

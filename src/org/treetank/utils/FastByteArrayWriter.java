@@ -83,26 +83,10 @@ public final class FastByteArrayWriter {
     buffer[size++] = (byte) value;
   }
 
-  public final void writeUTF(final String value) throws Exception {
-    final byte[] utf = value.getBytes("UTF-8");
-    assertSize(utf.length + 4);
-
-    // Size of UTF-8-encoded string.    
-    buffer[size++] = (byte) (utf.length >> 24);
-    buffer[size++] = (byte) (utf.length >> 16);
-    buffer[size++] = (byte) (utf.length >> 8);
-    buffer[size++] = (byte) utf.length;
-
-    // UTF-8-encoded string.
-    System.arraycopy(utf, 0, buffer, size, utf.length);
-    size += utf.length;
-  }
-
   public final void writeByteArray(final byte[] value) throws Exception {
-    assertSize(value.length + 4);
+    assertSize(value.length + 3);
 
     // Size of byte array.    
-    buffer[size++] = (byte) (value.length >> 24);
     buffer[size++] = (byte) (value.length >> 16);
     buffer[size++] = (byte) (value.length >> 8);
     buffer[size++] = (byte) value.length;
@@ -110,22 +94,6 @@ public final class FastByteArrayWriter {
     // Byte array.
     System.arraycopy(value, 0, buffer, size, value.length);
     size += value.length;
-  }
-
-  public final void writeCharArray(final char[] value) throws Exception {
-    assertSize((value.length << 1) + 4);
-
-    // Size of byte array.    
-    buffer[size++] = (byte) (value.length >> 24);
-    buffer[size++] = (byte) (value.length >> 16);
-    buffer[size++] = (byte) (value.length >> 8);
-    buffer[size++] = (byte) value.length;
-
-    // Byte array.
-    for (int i = 0, l = value.length; i < l; i++) {
-      buffer[size++] = (byte) (value[i] >> 8);
-      buffer[size++] = (byte) value[i];
-    }
   }
 
   public final byte[] getBytes() throws Exception {

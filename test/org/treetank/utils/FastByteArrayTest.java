@@ -33,24 +33,24 @@ public class FastByteArrayTest {
     final FastByteArrayWriter out = new FastByteArrayWriter();
     out.writeBoolean(true);
     out.writeInt(4);
+    out.writePseudoInt(3456345);
+    out.writePseudoInt(-1);
     out.writePseudoLong(Integer.MAX_VALUE);
+    out.writePseudoLong(Integer.MIN_VALUE);
     out.writeLong(7L);
-    out.writeUTF("1");
-    out.writeUTF("2");
     out.writeByte((byte) 7);
-    out.writeCharArray("abc".toCharArray());
 
     final byte[] bytes = out.getBytes();
     final FastByteArrayReader in = new FastByteArrayReader(bytes);
 
     assertEquals(true, in.readBoolean());
     assertEquals(4, in.readInt());
+    assertEquals(3456345, in.readPseudoInt());
+    assertEquals(-1, in.readPseudoInt());
     assertEquals(Integer.MAX_VALUE, in.readPseudoLong());
+    assertEquals(Integer.MIN_VALUE, in.readPseudoLong());
     assertEquals(7L, in.readLong());
-    assertEquals("1", in.readUTF());
-    assertEquals("2", in.readUTF());
     assertEquals((byte) 7, in.readByte());
-    assertEquals("abc", new String(in.readCharArray()));
 
   }
 
