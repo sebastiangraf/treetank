@@ -65,10 +65,7 @@ public final class StaticTree {
       // Fetch page from current level.
       if (levelSteps != mCurrentOffsets[i]) {
         mCurrentOffsets[i] = levelSteps;
-        mCurrentPages[i] =
-            (IndirectPage) mCache.dereference(
-                reference,
-                IConstants.INDIRECT_PAGE);
+        mCurrentPages[i] = mCache.dereferenceIndirectPage(reference);
       }
       reference = mCurrentPages[i].getPageReference(levelSteps);
     }

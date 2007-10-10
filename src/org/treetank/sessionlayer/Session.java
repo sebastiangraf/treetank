@@ -134,10 +134,7 @@ public final class Session implements ISession {
 
       // Beacon logic case 1.
       if (mPrimaryUberPageReference.equals(mSecondaryUberPageReference)) {
-        mUberPage =
-            (UberPage) mPageCache.dereference(
-                mPrimaryUberPageReference,
-                IConstants.UBER_PAGE);
+        mUberPage = mPageCache.dereferenceUberPage(mPrimaryUberPageReference);
 
         // Beacon logic case 2.
       } else {

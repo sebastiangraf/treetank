@@ -21,7 +21,6 @@
 
 package org.treetank.pagelayer;
 
-import org.treetank.api.IConstants;
 import org.treetank.api.IPage;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
@@ -157,9 +156,7 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
    */
   public final String getName(final int nameKey) throws Exception {
     final NamePage namePage =
-        (NamePage) mPageCache.dereference(
-            mNamePageReference,
-            IConstants.NAME_PAGE);
+        mPageCache.dereferenceNamePage(mNamePageReference);
     return namePage.getName(nameKey);
   }
 
@@ -188,9 +185,7 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
    */
   public final NodePage getNodePage(final long nodePageKey) throws Exception {
 
-    return (NodePage) mPageCache.dereference(
-        mStaticTree.get(nodePageKey),
-        IConstants.NODE_PAGE);
+    return mPageCache.dereferenceNodePage(mStaticTree.get(nodePageKey));
 
   }
 

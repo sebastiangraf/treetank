@@ -21,7 +21,6 @@
 
 package org.treetank.pagelayer;
 
-import org.treetank.api.IConstants;
 import org.treetank.api.IPage;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
@@ -135,8 +134,8 @@ public abstract class AbstractPage implements IPage {
     // Load page if it is already existing in a committed revision.
     if (reference.isCommitted() && !reference.isInstantiated()) {
       page =
-          RevisionRootPage.clone(revisionKey, (RevisionRootPage) mPageCache
-              .dereference(reference, IConstants.REVISION_ROOT_PAGE));
+          RevisionRootPage.clone(revisionKey, mPageCache
+              .dereferenceRevisionRootPage(reference));
       reference.setPage(page);
     }
 
@@ -164,10 +163,7 @@ public abstract class AbstractPage implements IPage {
 
     // Load page if it is already existing in a committed revision.
     if (reference.isCommitted() && !reference.isInstantiated()) {
-      page =
-          NamePage.clone((NamePage) mPageCache.dereference(
-              reference,
-              IConstants.NAME_PAGE));
+      page = NamePage.clone(mPageCache.dereferenceNamePage(reference));
       reference.setPage(page);
     }
 
@@ -197,10 +193,7 @@ public abstract class AbstractPage implements IPage {
 
     // Load page if it is already existing in a committed revision.
     if (reference.isCommitted() && !reference.isInstantiated()) {
-      page =
-          NodePage.clone((NodePage) mPageCache.dereference(
-              reference,
-              IConstants.NODE_PAGE));
+      page = NodePage.clone(mPageCache.dereferenceNodePage(reference));
       reference.setPage(page);
     }
 
@@ -229,10 +222,7 @@ public abstract class AbstractPage implements IPage {
 
     // Load page if it is already existing in a committed revision.
     if (reference.isCommitted() && !reference.isInstantiated()) {
-      page =
-          IndirectPage.clone((IndirectPage) mPageCache.dereference(
-              reference,
-              IConstants.INDIRECT_PAGE));
+      page = IndirectPage.clone(mPageCache.dereferenceIndirectPage(reference));
       reference.setPage(page);
     }
 
