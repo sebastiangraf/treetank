@@ -43,8 +43,10 @@ public final class WriteTransaction extends ReadTransaction
    * 
    * @param initRevisionRootPage Revision root page to work with.
    */
-  protected WriteTransaction(final RevisionRootPage initRevisionRootPage) {
-    super(initRevisionRootPage);
+  protected WriteTransaction(
+      final TransactionState state,
+      final RevisionRootPage revisionRootPage) {
+    super(state, revisionRootPage);
   }
 
   /**
@@ -59,14 +61,15 @@ public final class WriteTransaction extends ReadTransaction
     // Create new root node.
     mCurrentNode =
         mRevisionRootPage.createNode(
+            mState,
             IConstants.NULL_KEY,
             IConstants.NULL_KEY,
             IConstants.NULL_KEY,
             IConstants.NULL_KEY,
             IConstants.DOCUMENT,
-            mRevisionRootPage.createNameKey(""),
-            mRevisionRootPage.createNameKey(""),
-            mRevisionRootPage.createNameKey(""),
+            mRevisionRootPage.createNameKey(mState, ""),
+            mRevisionRootPage.createNameKey(mState, ""),
+            mRevisionRootPage.createNameKey(mState, ""),
             UTF.convert(document));
 
     return mCurrentNode.getNodeKey();
@@ -83,58 +86,61 @@ public final class WriteTransaction extends ReadTransaction
       final byte[] value) throws Exception {
 
     assertIsSelected();
-    
+
     // Insert new node in place of current first child.
     if (mCurrentNode.getChildCount() > 0) {
-      
+
       // Create new first child node.
       mCurrentNode =
           mRevisionRootPage.createNode(
+              mState,
               mCurrentNode.getNodeKey(),
               IConstants.NULL_KEY,
               IConstants.NULL_KEY,
               mCurrentNode.getFirstChildKey(),
               kind,
-              mRevisionRootPage.createNameKey(localPart),
-              mRevisionRootPage.createNameKey(uri),
-              mRevisionRootPage.createNameKey(prefix),
+              mRevisionRootPage.createNameKey(mState, localPart),
+              mRevisionRootPage.createNameKey(mState, uri),
+              mRevisionRootPage.createNameKey(mState, prefix),
               value);
-      
+
       // Change existing first child node.
       if (mCurrentNode.getRightSiblingKey() != IConstants.NULL_KEY) {
         final Node rightSiblingNode =
-            mRevisionRootPage.prepareNode(mCurrentNode.getRightSiblingKey());
+            mRevisionRootPage.prepareNode(mState, mCurrentNode
+                .getRightSiblingKey());
         rightSiblingNode.setLeftSiblingKey(mCurrentNode.getNodeKey());
       }
-      
+
       // Change parent node.
       final Node parentNode =
-          mRevisionRootPage.prepareNode(mCurrentNode.getParentKey());
+          mRevisionRootPage.prepareNode(mState, mCurrentNode.getParentKey());
       parentNode.setFirstChildKey(mCurrentNode.getNodeKey());
       parentNode.incrementChildCount();
-      
-    // Insert new node as first child.
+
+      // Insert new node as first child.
     } else {
 
       // Create new first child node.
       mCurrentNode =
           mRevisionRootPage.createNode(
+              mState,
               mCurrentNode.getNodeKey(),
               IConstants.NULL_KEY,
               IConstants.NULL_KEY,
               IConstants.NULL_KEY,
               kind,
-              mRevisionRootPage.createNameKey(localPart),
-              mRevisionRootPage.createNameKey(uri),
-              mRevisionRootPage.createNameKey(prefix),
+              mRevisionRootPage.createNameKey(mState, localPart),
+              mRevisionRootPage.createNameKey(mState, uri),
+              mRevisionRootPage.createNameKey(mState, prefix),
               value);
-  
+
       // Change parent node.
       final Node parentNode =
-          mRevisionRootPage.prepareNode(mCurrentNode.getParentKey());
+          mRevisionRootPage.prepareNode(mState, mCurrentNode.getParentKey());
       parentNode.setFirstChildKey(mCurrentNode.getNodeKey());
       parentNode.incrementChildCount();
-      
+
     }
 
     return mCurrentNode.getNodeKey();
@@ -159,30 +165,32 @@ public final class WriteTransaction extends ReadTransaction
     // Create new right sibling node.
     mCurrentNode =
         mRevisionRootPage.createNode(
+            mState,
             mCurrentNode.getParentKey(),
             IConstants.NULL_KEY,
             mCurrentNode.getNodeKey(),
             mCurrentNode.getRightSiblingKey(),
             kind,
-            mRevisionRootPage.createNameKey(localPart),
-            mRevisionRootPage.createNameKey(uri),
-            mRevisionRootPage.createNameKey(prefix),
+            mRevisionRootPage.createNameKey(mState, localPart),
+            mRevisionRootPage.createNameKey(mState, uri),
+            mRevisionRootPage.createNameKey(mState, prefix),
             value);
 
     // Adapt parent node.
     final Node parentNode =
-        mRevisionRootPage.prepareNode(mCurrentNode.getParentKey());
+        mRevisionRootPage.prepareNode(mState, mCurrentNode.getParentKey());
     parentNode.incrementChildCount();
 
     // Adapt left sibling node.
     final Node leftSiblingNode =
-        mRevisionRootPage.prepareNode(mCurrentNode.getLeftSiblingKey());
+        mRevisionRootPage.prepareNode(mState, mCurrentNode.getLeftSiblingKey());
     leftSiblingNode.setRightSiblingKey(mCurrentNode.getNodeKey());
 
     // Adapt right sibling node.
     if (mCurrentNode.getRightSiblingKey() != IConstants.NULL_KEY) {
       final Node rightSiblingNode =
-          mRevisionRootPage.prepareNode(mCurrentNode.getRightSiblingKey());
+          mRevisionRootPage.prepareNode(mState, mCurrentNode
+              .getRightSiblingKey());
       rightSiblingNode.setLeftSiblingKey(mCurrentNode.getNodeKey());
     }
 
@@ -198,11 +206,12 @@ public final class WriteTransaction extends ReadTransaction
       final String prefix,
       final byte[] value) throws Exception {
     assertIsSelected();
-    mCurrentNode = mRevisionRootPage.prepareNode(mCurrentNode.getNodeKey());
+    mCurrentNode =
+        mRevisionRootPage.prepareNode(mState, mCurrentNode.getNodeKey());
     ((Node) mCurrentNode).insertAttribute(
-        mRevisionRootPage.createNameKey(localPart),
-        mRevisionRootPage.createNameKey(uri),
-        mRevisionRootPage.createNameKey(prefix),
+        mRevisionRootPage.createNameKey(mState, localPart),
+        mRevisionRootPage.createNameKey(mState, uri),
+        mRevisionRootPage.createNameKey(mState, prefix),
         value);
   }
 
@@ -212,10 +221,11 @@ public final class WriteTransaction extends ReadTransaction
   public final void insertNamespace(final String uri, final String prefix)
       throws Exception {
     assertIsSelected();
-    mCurrentNode = mRevisionRootPage.prepareNode(mCurrentNode.getNodeKey());
-    ((Node) mCurrentNode).insertNamespace(
-        mRevisionRootPage.createNameKey(uri),
-        mRevisionRootPage.createNameKey(prefix));
+    mCurrentNode =
+        mRevisionRootPage.prepareNode(mState, mCurrentNode.getNodeKey());
+    ((Node) mCurrentNode).insertNamespace(mRevisionRootPage.createNameKey(
+        mState,
+        uri), mRevisionRootPage.createNameKey(mState, prefix));
   }
 
   /**
@@ -242,26 +252,26 @@ public final class WriteTransaction extends ReadTransaction
     final long nodeKey = mCurrentNode.getNodeKey();
     final long leftSiblingNodeKey = mCurrentNode.getLeftSiblingKey();
     final long rightSiblingNodeKey = mCurrentNode.getRightSiblingKey();
-    
+
     // Remove old node.
-    mRevisionRootPage.removeNode(nodeKey);
+    mRevisionRootPage.removeNode(mState, nodeKey);
 
     // Get and adapt parent node.
-    mCurrentNode = mRevisionRootPage.prepareNode(parentKey);
+    mCurrentNode = mRevisionRootPage.prepareNode(mState, parentKey);
     ((Node) mCurrentNode).decrementChildCount();
     ((Node) mCurrentNode).setFirstChildKey(rightSiblingNodeKey);
 
     // Adapt left sibling node if there is one.
     if (leftSiblingNodeKey != IConstants.NULL_KEY) {
       final Node leftSiblingNode =
-          mRevisionRootPage.prepareNode(leftSiblingNodeKey);
+          mRevisionRootPage.prepareNode(mState, leftSiblingNodeKey);
       leftSiblingNode.setRightSiblingKey(rightSiblingNodeKey);
     }
 
     // Adapt right sibling node if there is one.
     if (rightSiblingNodeKey != IConstants.NULL_KEY) {
       final Node rightSiblingNode =
-          mRevisionRootPage.prepareNode(rightSiblingNodeKey);
+          mRevisionRootPage.prepareNode(mState, rightSiblingNodeKey);
       rightSiblingNode.setLeftSiblingKey(leftSiblingNodeKey);
     }
 
@@ -277,12 +287,13 @@ public final class WriteTransaction extends ReadTransaction
       final String prefix,
       final byte[] value) throws Exception {
     assertIsSelected();
-    mCurrentNode = mRevisionRootPage.prepareNode(mCurrentNode.getNodeKey());
+    mCurrentNode =
+        mRevisionRootPage.prepareNode(mState, mCurrentNode.getNodeKey());
     ((Node) mCurrentNode).setAttribute(
         index,
-        mRevisionRootPage.createNameKey(localPart),
-        mRevisionRootPage.createNameKey(uri),
-        mRevisionRootPage.createNameKey(prefix),
+        mRevisionRootPage.createNameKey(mState, localPart),
+        mRevisionRootPage.createNameKey(mState, uri),
+        mRevisionRootPage.createNameKey(mState, prefix),
         value);
   }
 
@@ -294,9 +305,11 @@ public final class WriteTransaction extends ReadTransaction
       final String uri,
       final String prefix) throws Exception {
     assertIsSelected();
-    mCurrentNode = mRevisionRootPage.prepareNode(mCurrentNode.getNodeKey());
-    ((Node) mCurrentNode).setNamespace(index, mRevisionRootPage
-        .createNameKey(uri), mRevisionRootPage.createNameKey(prefix));
+    mCurrentNode =
+        mRevisionRootPage.prepareNode(mState, mCurrentNode.getNodeKey());
+    ((Node) mCurrentNode).setNamespace(index, mRevisionRootPage.createNameKey(
+        mState,
+        uri), mRevisionRootPage.createNameKey(mState, prefix));
   }
 
   /**
@@ -304,9 +317,11 @@ public final class WriteTransaction extends ReadTransaction
    */
   public final void setLocalPart(final String localPart) throws Exception {
     assertIsSelected();
-    mCurrentNode = mRevisionRootPage.prepareNode(mCurrentNode.getNodeKey());
-    ((Node) mCurrentNode).setLocalPartKey(mRevisionRootPage
-        .createNameKey(localPart));
+    mCurrentNode =
+        mRevisionRootPage.prepareNode(mState, mCurrentNode.getNodeKey());
+    ((Node) mCurrentNode).setLocalPartKey(mRevisionRootPage.createNameKey(
+        mState,
+        localPart));
   }
 
   /**
@@ -314,8 +329,10 @@ public final class WriteTransaction extends ReadTransaction
    */
   public final void setURI(final String uri) throws Exception {
     assertIsSelected();
-    mCurrentNode = mRevisionRootPage.prepareNode(mCurrentNode.getNodeKey());
-    ((Node) mCurrentNode).setURIKey(mRevisionRootPage.createNameKey(uri));
+    mCurrentNode =
+        mRevisionRootPage.prepareNode(mState, mCurrentNode.getNodeKey());
+    ((Node) mCurrentNode).setURIKey(mRevisionRootPage
+        .createNameKey(mState, uri));
   }
 
   /**
@@ -323,8 +340,11 @@ public final class WriteTransaction extends ReadTransaction
    */
   public void setPrefix(final String prefix) throws Exception {
     assertIsSelected();
-    mCurrentNode = mRevisionRootPage.prepareNode(mCurrentNode.getNodeKey());
-    ((Node) mCurrentNode).setPrefixKey(mRevisionRootPage.createNameKey(prefix));
+    mCurrentNode =
+        mRevisionRootPage.prepareNode(mState, mCurrentNode.getNodeKey());
+    ((Node) mCurrentNode).setPrefixKey(mRevisionRootPage.createNameKey(
+        mState,
+        prefix));
   }
 
   /**
@@ -332,7 +352,8 @@ public final class WriteTransaction extends ReadTransaction
    */
   public final void setValue(final byte[] value) throws Exception {
     assertIsSelected();
-    mCurrentNode = mRevisionRootPage.prepareNode(mCurrentNode.getNodeKey());
+    mCurrentNode =
+        mRevisionRootPage.prepareNode(mState, mCurrentNode.getNodeKey());
     ((Node) mCurrentNode).setValue(value);
   }
 

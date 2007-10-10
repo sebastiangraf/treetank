@@ -29,6 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.api.IConstants;
 import org.treetank.sessionlayer.SessionConfiguration;
+import org.treetank.sessionlayer.TransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.UTF;
 
@@ -54,7 +55,7 @@ public class PageWriterTest {
     final PageWriter pageWriter =
         new PageWriter(new SessionConfiguration(PATH));
     pageReference.setPage(page1);
-    pageWriter.write(pageReference);
+    pageWriter.write(new TransactionState(new PageCache(), null), pageReference);
     assertEquals(0L, pageReference.getStart());
 
     // Deserialize node page.

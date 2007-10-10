@@ -22,6 +22,7 @@
 package org.treetank.pagelayer;
 
 import org.treetank.api.IPage;
+import org.treetank.sessionlayer.TransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
@@ -34,18 +35,6 @@ import org.treetank.utils.FastByteArrayWriter;
  * </p>
  */
 public abstract class AbstractPage implements IPage {
-
-  /** Shared read mPageCache to read pages from. */
-  protected final PageCache mPageCache;
-
-  /**
-   * Constructor to assure minimal common setup.
-   * 
-   * @param pageCache IPageCache to read from.
-   */
-  public AbstractPage(final PageCache pageCache) {
-    mPageCache = pageCache;
-  }
 
   /**
    * Initialize given page reference with virgin page reference.
@@ -126,6 +115,7 @@ public abstract class AbstractPage implements IPage {
    * @throws Exception of any kind.
    */
   public final RevisionRootPage prepareRevisionRootPage(
+      final TransactionState state,
       final PageReference reference,
       final long revisionKey) throws Exception {
 
@@ -134,14 +124,15 @@ public abstract class AbstractPage implements IPage {
     // Load page if it is already existing in a committed revision.
     if (reference.isCommitted() && !reference.isInstantiated()) {
       page =
-          RevisionRootPage.clone(revisionKey, mPageCache
-              .dereferenceRevisionRootPage(reference, revisionKey));
+          RevisionRootPage.clone(revisionKey, state
+              .getPageCache()
+              .dereferenceRevisionRootPage(state, reference, revisionKey));
       reference.setPage(page);
     }
 
     // Assert page is properly instantiated.
     if (!reference.isInstantiated()) {
-      page = RevisionRootPage.create(mPageCache, revisionKey);
+      page = RevisionRootPage.create(revisionKey);
       reference.setPage(page);
     }
 
@@ -156,20 +147,24 @@ public abstract class AbstractPage implements IPage {
    * @return COWed name page.
    * @throws Exception of any kind.
    */
-  public final NamePage prepareNamePage(final PageReference reference)
-      throws Exception {
+  public final NamePage prepareNamePage(
+      final TransactionState state,
+      final PageReference reference) throws Exception {
 
     NamePage page = (NamePage) reference.getPage();
 
     // Load page if it is already existing in a committed revision.
     if (reference.isCommitted() && !reference.isInstantiated()) {
-      page = NamePage.clone(mPageCache.dereferenceNamePage(reference));
+      page =
+          NamePage.clone(state.getPageCache().dereferenceNamePage(
+              state,
+              reference));
       reference.setPage(page);
     }
 
     // Assert page is properly instantiated.
     if (!reference.isInstantiated()) {
-      page = NamePage.create(mPageCache);
+      page = NamePage.create();
       reference.setPage(page);
     }
 
@@ -186,6 +181,7 @@ public abstract class AbstractPage implements IPage {
    * @throws Exception of any kind.
    */
   public final NodePage prepareNodePage(
+      final TransactionState state,
       final PageReference reference,
       final long nodePageKey) throws Exception {
 
@@ -194,8 +190,10 @@ public abstract class AbstractPage implements IPage {
     // Load page if it is already existing in a committed revision.
     if (reference.isCommitted() && !reference.isInstantiated()) {
       page =
-          NodePage
-              .clone(mPageCache.dereferenceNodePage(reference, nodePageKey));
+          NodePage.clone(state.getPageCache().dereferenceNodePage(
+              state,
+              reference,
+              nodePageKey));
       reference.setPage(page);
     }
 
@@ -217,20 +215,24 @@ public abstract class AbstractPage implements IPage {
    * @return COWed indirect page.
    * @throws Exception of any kind.
    */
-  public final IndirectPage prepareIndirectPage(final PageReference reference)
-      throws Exception {
+  public final IndirectPage prepareIndirectPage(
+      final TransactionState state,
+      final PageReference reference) throws Exception {
 
     IndirectPage page = (IndirectPage) reference.getPage();
 
     // Load page if it is already existing in a committed revision.
     if (reference.isCommitted() && !reference.isInstantiated()) {
-      page = IndirectPage.clone(mPageCache.dereferenceIndirectPage(reference));
+      page =
+          IndirectPage.clone(state.getPageCache().dereferenceIndirectPage(
+              state,
+              reference));
       reference.setPage(page);
     }
 
     // Assert page is properly instantiated.
     if (!reference.isInstantiated()) {
-      page = IndirectPage.create(mPageCache);
+      page = IndirectPage.create();
       reference.setPage(page);
     }
 
@@ -246,11 +248,12 @@ public abstract class AbstractPage implements IPage {
    * @throws Exception of any kind.
    */
   public final void commit(
+      final TransactionState state,
       final PageWriter writer,
       final PageReference reference) throws Exception {
     if (reference.isInstantiated() && reference.isDirty()) {
-      writer.write(reference);
-      mPageCache.put(reference);
+      writer.write(state, reference);
+      state.getPageCache().put(reference);
     }
   }
 
@@ -262,10 +265,11 @@ public abstract class AbstractPage implements IPage {
    * @throws Exception of any kind.
    */
   public final void commit(
+      final TransactionState state,
       final PageWriter writer,
       final PageReference[] references) throws Exception {
     for (int i = 0, l = references.length; i < l; i++) {
-      commit(writer, references[i]);
+      commit(state, writer, references[i]);
     }
   }
 
@@ -300,7 +304,9 @@ public abstract class AbstractPage implements IPage {
   /**
    * {@inheritDoc}
    */
-  public abstract void commit(PageWriter pageWriter) throws Exception;
+  public abstract void commit(
+      final TransactionState state,
+      PageWriter pageWriter) throws Exception;
 
   /**
    * {@inheritDoc}

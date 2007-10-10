@@ -31,6 +31,7 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.pagelayer.PageCache;
+import org.treetank.pagelayer.PageReader;
 import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.PageWriter;
 import org.treetank.pagelayer.UberPage;
@@ -112,7 +113,7 @@ public final class Session implements ISession {
     new File(mSessionConfiguration.getPath()).createNewFile();
 
     // Init session members.
-    mPageCache = new PageCache(mSessionConfiguration);
+    mPageCache = new PageCache();
     mWriteSemaphore =
         new Semaphore(IConstants.MAX_NUMBER_OF_WRITE_TRANSACTIONS);
     mPrimaryUberPageReference = new PageReference();
@@ -120,13 +121,16 @@ public final class Session implements ISession {
     mPageWriter = new PageWriter(mSessionConfiguration);
     mFile = new RandomAccessFile(mSessionConfiguration.getPath(), "rw");
 
+    final TransactionState state =
+        new TransactionState(mPageCache, new PageReader(mSessionConfiguration));
+
     // Bootstrap uber page.
     if (mFile.length() == 0L) {
       // No revisions available, create empty uber page.
       mFile.setLength(IConstants.BEACON_LENGTH);
-      mUberPage = UberPage.create(mPageCache);
+      mUberPage = UberPage.create();
       mPrimaryUberPageReference.setPage(mUberPage);
-      mUberPage.prepareRevisionRootPage();
+      mUberPage.prepareRevisionRootPage(state);
       commit();
     } else {
       // There already are revisions, read existing uber page.
@@ -134,7 +138,8 @@ public final class Session implements ISession {
 
       // Beacon logic case 1.
       if (mPrimaryUberPageReference.equals(mSecondaryUberPageReference)) {
-        mUberPage = mPageCache.dereferenceUberPage(mPrimaryUberPageReference);
+        mUberPage =
+            mPageCache.dereferenceUberPage(state, mPrimaryUberPageReference);
 
         // Beacon logic case 2.
       } else {
@@ -172,7 +177,11 @@ public final class Session implements ISession {
    */
   public final IReadTransaction beginReadTransaction(final long revisionKey)
       throws Exception {
-    return new ReadTransaction(mUberPage.getRevisionRootPage(revisionKey));
+    final TransactionState state =
+        new TransactionState(mPageCache, new PageReader(mSessionConfiguration));
+    return new ReadTransaction(state, mUberPage.getRevisionRootPage(
+        state,
+        revisionKey));
   }
 
   /**
@@ -190,14 +199,18 @@ public final class Session implements ISession {
     mWriteSemaphore.acquire();
     mUberPage = UberPage.clone(mUberPage);
     mPrimaryUberPageReference.setPage(mUberPage);
-    return new WriteTransaction(mUberPage.prepareRevisionRootPage());
+    final TransactionState state =
+        new TransactionState(mPageCache, new PageReader(mSessionConfiguration));
+    return new WriteTransaction(state, mUberPage.prepareRevisionRootPage(state));
   }
 
   /**
    * {@inheritDoc}
    */
   public final void commit() throws Exception {
-    mPageWriter.write(mPrimaryUberPageReference);
+    final TransactionState state =
+        new TransactionState(mPageCache, new PageReader(mSessionConfiguration));
+    mPageWriter.write(state, mPrimaryUberPageReference);
     mPageCache.put(mPrimaryUberPageReference);
     writeBeacon(mFile);
     mWriteSemaphore.release();

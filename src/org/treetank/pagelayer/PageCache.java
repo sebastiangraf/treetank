@@ -22,10 +22,9 @@
 package org.treetank.pagelayer;
 
 import java.util.Map;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import org.treetank.api.IPage;
-import org.treetank.sessionlayer.SessionConfiguration;
+import org.treetank.sessionlayer.TransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.SoftHashMap;
 
@@ -42,27 +41,14 @@ public final class PageCache {
   /** Page cache mapping start address of page to IPage. */
   private final Map<Long, IPage> mCache;
 
-  /** Non-shrinking PageReader pool. */
-  private final LinkedBlockingQueue<PageReader> mPool;
-
-  /** Session configuration. */
-  private final SessionConfiguration mSessionConfiguration;
-
   /**
    * Constructor.
    * 
    * @param sessionConfiguration Configuration of session we are bound to.
    * @throws Exception of any kind.
    */
-  public PageCache(final SessionConfiguration sessionConfiguration)
-      throws Exception {
+  public PageCache() throws Exception {
     mCache = new SoftHashMap<Long, IPage>();
-    mPool = new LinkedBlockingQueue<PageReader>(32);
-    mSessionConfiguration = sessionConfiguration;
-
-    for (int i = 0; i < 32; i++) {
-      mPool.put(new PageReader(mSessionConfiguration));
-    }
   }
 
   /**
@@ -76,6 +62,7 @@ public final class PageCache {
   }
 
   public final NodePage dereferenceNodePage(
+      final TransactionState state,
       final PageReference reference,
       final long nodePageKey) throws Exception {
     if (reference.isInstantiated()) {
@@ -85,25 +72,17 @@ public final class PageCache {
       // Return committed referenced page.
       NodePage page = (NodePage) mCache.get(reference.getStart());
       if (page == null) {
-
-        // Get page reader from mPool.
-        PageReader reader = mPool.take();
-
-        // Deserialize page.
-        final FastByteArrayReader in = reader.read(reference);
+        final FastByteArrayReader in = state.getPageReader().read(reference);
         page = NodePage.read(in, nodePageKey);
         mCache.put(reference.getStart(), page);
-
-        // Give page reader back to mPool.
-        mPool.put(reader);
-
       }
       return page;
     }
   }
 
-  public final NamePage dereferenceNamePage(final PageReference reference)
-      throws Exception {
+  public final NamePage dereferenceNamePage(
+      final TransactionState state,
+      final PageReference reference) throws Exception {
     if (reference.isInstantiated()) {
       // Return uncommitted referenced page if there is one.
       return (NamePage) reference.getPage();
@@ -111,24 +90,16 @@ public final class PageCache {
       // Return committed referenced page.
       NamePage page = (NamePage) mCache.get(reference.getStart());
       if (page == null) {
-
-        // Get page reader from mPool.
-        PageReader reader = mPool.take();
-
-        // Deserialize page.
-        final FastByteArrayReader in = reader.read(reference);
-        page = NamePage.read(this, in);
+        final FastByteArrayReader in = state.getPageReader().read(reference);
+        page = NamePage.read(in);
         mCache.put(reference.getStart(), page);
-
-        // Give page reader back to mPool.
-        mPool.put(reader);
-
       }
       return page;
     }
   }
 
   public final IndirectPage dereferenceIndirectPage(
+      final TransactionState state,
       final PageReference reference) throws Exception {
     if (reference.isInstantiated()) {
       // Return uncommitted referenced page if there is one.
@@ -137,24 +108,16 @@ public final class PageCache {
       // Return committed referenced page.
       IndirectPage page = (IndirectPage) mCache.get(reference.getStart());
       if (page == null) {
-
-        // Get page reader from mPool.
-        PageReader reader = mPool.take();
-
-        // Deserialize page.
-        final FastByteArrayReader in = reader.read(reference);
-        page = IndirectPage.read(this, in);
+        final FastByteArrayReader in = state.getPageReader().read(reference);
+        page = IndirectPage.read(in);
         mCache.put(reference.getStart(), page);
-
-        // Give page reader back to mPool.
-        mPool.put(reader);
-
       }
       return page;
     }
   }
 
   public final RevisionRootPage dereferenceRevisionRootPage(
+      final TransactionState state,
       final PageReference reference,
       final long revisionKey) throws Exception {
     if (reference.isInstantiated()) {
@@ -165,25 +128,17 @@ public final class PageCache {
       RevisionRootPage page =
           (RevisionRootPage) mCache.get(reference.getStart());
       if (page == null) {
-
-        // Get page reader from mPool.
-        PageReader reader = mPool.take();
-
-        // Deserialize page.
-        final FastByteArrayReader in = reader.read(reference);
-        page = RevisionRootPage.read(this, in, revisionKey);
+        final FastByteArrayReader in = state.getPageReader().read(reference);
+        page = RevisionRootPage.read(in, revisionKey);
         mCache.put(reference.getStart(), page);
-
-        // Give page reader back to mPool.
-        mPool.put(reader);
-
       }
       return page;
     }
   }
 
-  public final UberPage dereferenceUberPage(final PageReference reference)
-      throws Exception {
+  public final UberPage dereferenceUberPage(
+      final TransactionState state,
+      final PageReference reference) throws Exception {
     if (reference.isInstantiated()) {
       // Return uncommitted referenced page if there is one.
       return (UberPage) reference.getPage();
@@ -191,18 +146,9 @@ public final class PageCache {
       // Return committed referenced page.
       UberPage page = (UberPage) mCache.get(reference.getStart());
       if (page == null) {
-
-        // Get page reader from mPool.
-        PageReader reader = mPool.take();
-
-        // Deserialize page.
-        final FastByteArrayReader in = reader.read(reference);
-        page = UberPage.read(this, in);
+        final FastByteArrayReader in = state.getPageReader().read(reference);
+        page = UberPage.read(state, in);
         mCache.put(reference.getStart(), page);
-
-        // Give page reader back to mPool.
-        mPool.put(reader);
-
       }
       return page;
     }

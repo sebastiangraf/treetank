@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.treetank.api.IPage;
+import org.treetank.sessionlayer.TransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 import org.treetank.utils.UTF;
@@ -35,24 +36,20 @@ final public class NamePage extends AbstractPage implements IPage {
   /** Map the hash of a name to its name. */
   private final Map<Integer, String> mNameMap;
 
-  private NamePage(final PageCache pageCache) {
-    super(pageCache);
+  private NamePage() {
     mNameMap = new HashMap<Integer, String>();
   }
 
-  public static final NamePage create(final PageCache pageCache) {
-
-    final NamePage namePage = new NamePage(pageCache);
-
+  public static final NamePage create() {
+    final NamePage namePage = new NamePage();
     return namePage;
 
   }
 
-  public static final NamePage read(
-      final PageCache pageCache,
-      final FastByteArrayReader in) throws Exception {
+  public static final NamePage read(final FastByteArrayReader in)
+      throws Exception {
 
-    final NamePage namePage = new NamePage(pageCache);
+    final NamePage namePage = new NamePage();
 
     // Names (deep load).
     for (int i = 0, l = in.readPseudoInt(); i < l; i++) {
@@ -66,7 +63,7 @@ final public class NamePage extends AbstractPage implements IPage {
 
   public static final NamePage clone(final NamePage committedNamePage) {
 
-    final NamePage namePage = new NamePage(committedNamePage.mPageCache);
+    final NamePage namePage = new NamePage();
 
     // Names (deep COW).
     namePage.mNameMap.putAll(committedNamePage.mNameMap);
@@ -97,7 +94,9 @@ final public class NamePage extends AbstractPage implements IPage {
   /**
    * {@inheritDoc}
    */
-  public final void commit(final PageWriter pageWriter) throws Exception {
+  public final void commit(
+      final TransactionState state,
+      final PageWriter pageWriter) throws Exception {
     // Nothing to do here.
   }
 

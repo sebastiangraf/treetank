@@ -23,6 +23,7 @@ package org.treetank.pagelayer;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.IPage;
+import org.treetank.sessionlayer.TransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
@@ -35,8 +36,7 @@ final public class IndirectPage extends AbstractPage implements IPage {
    * 
    * @param pageCache IPageCache to read from.
    */
-  private IndirectPage(final PageCache pageCache) {
-    super(pageCache);
+  private IndirectPage() {
     mIndirectPageReferences = new PageReference[IConstants.INP_REFERENCE_COUNT];
   }
 
@@ -47,14 +47,10 @@ final public class IndirectPage extends AbstractPage implements IPage {
    * @return
    * @throws Exception
    */
-  public static final IndirectPage create(final PageCache pageCache) {
-
-    final IndirectPage indirectPage = new IndirectPage(pageCache);
-
+  public static final IndirectPage create() {
+    final IndirectPage indirectPage = new IndirectPage();
     createPageReferences(indirectPage.mIndirectPageReferences);
-
     return indirectPage;
-
   }
 
   /**
@@ -65,27 +61,19 @@ final public class IndirectPage extends AbstractPage implements IPage {
    * @param pageKind
    * @throws Exception
    */
-  public static final IndirectPage read(
-      final PageCache pageCache,
-      final FastByteArrayReader in) throws Exception {
-
-    final IndirectPage indirectPage = new IndirectPage(pageCache);
-
+  public static final IndirectPage read(final FastByteArrayReader in)
+      throws Exception {
+    final IndirectPage indirectPage = new IndirectPage();
     readPageReferences(indirectPage.mIndirectPageReferences, in);
-
     return indirectPage;
   }
 
   public static final IndirectPage clone(
       final IndirectPage committedIndirectPage) {
-
-    final IndirectPage indirectPage =
-        new IndirectPage(committedIndirectPage.mPageCache);
-
+    final IndirectPage indirectPage = new IndirectPage();
     clonePageReferences(
         indirectPage.mIndirectPageReferences,
         committedIndirectPage.mIndirectPageReferences);
-
     return indirectPage;
   }
 
@@ -112,8 +100,10 @@ final public class IndirectPage extends AbstractPage implements IPage {
   /**
    * {@inheritDoc}
    */
-  public final void commit(final PageWriter pageWriter) throws Exception {
-    commit(pageWriter, mIndirectPageReferences);
+  public final void commit(
+      final TransactionState state,
+      final PageWriter pageWriter) throws Exception {
+    commit(state, pageWriter, mIndirectPageReferences);
   }
 
   /**
