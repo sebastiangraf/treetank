@@ -67,30 +67,14 @@ public interface IConstants {
   /** 2^INP_REFERENCE_COUNT_EXPONENT = INP_REFERENCE_COUNT. */
   public static final int INP_REFERENCE_COUNT_EXPONENT = 8;
 
-  /** Pages per level. */
-  public static final long[] INP_LEVEL_PAGE_COUNT =
-      {
-          INP_REFERENCE_COUNT,
-          INP_REFERENCE_COUNT * INP_REFERENCE_COUNT,
-          INP_REFERENCE_COUNT * INP_REFERENCE_COUNT * INP_REFERENCE_COUNT,
-          INP_REFERENCE_COUNT
-              * INP_REFERENCE_COUNT
-              * INP_REFERENCE_COUNT
-              * INP_REFERENCE_COUNT,
-          INP_REFERENCE_COUNT
-              * INP_REFERENCE_COUNT
-              * INP_REFERENCE_COUNT
-              * INP_REFERENCE_COUNT
-              * INP_REFERENCE_COUNT };
-
-  /** Exponent of pages per level. */
+  /** Exponent of pages per level (root level = 0, leaf level = 5). */
   public static final long[] INP_LEVEL_PAGE_COUNT_EXPONENT =
       {
-          1 * INP_REFERENCE_COUNT_EXPONENT,
-          2 * INP_REFERENCE_COUNT_EXPONENT,
-          3 * INP_REFERENCE_COUNT_EXPONENT,
           4 * INP_REFERENCE_COUNT_EXPONENT,
-          5 * INP_REFERENCE_COUNT_EXPONENT };
+          3 * INP_REFERENCE_COUNT_EXPONENT,
+          2 * INP_REFERENCE_COUNT_EXPONENT,
+          1 * INP_REFERENCE_COUNT_EXPONENT,
+          0 * INP_REFERENCE_COUNT_EXPONENT };
 
   // --- Uber Page -------------------------------------------------------------
 
