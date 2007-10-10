@@ -68,7 +68,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final long revisionSize() {
-    return mRevisionRootPage.getRevisionSize();
+    return mRevisionRootPage.getNodeCount();
   }
 
   /**

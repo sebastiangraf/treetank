@@ -164,7 +164,7 @@ public final class Session implements ISession {
    * {@inheritDoc}
    */
   public final IReadTransaction beginReadTransaction() throws Exception {
-    return beginReadTransaction(mUberPage.getMaxRevisionKey());
+    return beginReadTransaction(mUberPage.getRevisionCount());
   }
 
   /**

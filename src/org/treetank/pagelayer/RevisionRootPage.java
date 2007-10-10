@@ -30,14 +30,14 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
 
   private final long mRevisionKey;
 
-  private long mRevisionSize;
+  private long mNodeCount;
 
   /** Map the hash of a name to its name. */
   private PageReference mNamePageReference;
 
   private long mMaxNodeKey;
 
-  private PageReference mIndirectNodePageReference;
+  private PageReference mIndirectReference;
 
   private StaticTree mStaticTree;
 
@@ -45,7 +45,7 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
     super(pageCache);
     mRevisionKey = revisionKey;
     mNamePageReference = null;
-    mIndirectNodePageReference = null;
+    mIndirectReference = null;
     mStaticTree = null;
   }
 
@@ -57,7 +57,7 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
         new RevisionRootPage(pageCache, revisionKey);
 
     // Revisioning (deep init).
-    revisionRootPage.mRevisionSize = 0L;
+    revisionRootPage.mNodeCount = 0L;
 
     // Name page (shallow init).
     revisionRootPage.mNamePageReference = createPageReference();
@@ -67,9 +67,9 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
     revisionRootPage.mMaxNodeKey = -1L;
 
     // Indirect pages (shallow init).
-    revisionRootPage.mIndirectNodePageReference = createPageReference();
+    revisionRootPage.mIndirectReference = createPageReference();
     revisionRootPage.mStaticTree =
-        new StaticTree(revisionRootPage.mIndirectNodePageReference, pageCache);
+        new StaticTree(revisionRootPage.mIndirectReference, pageCache);
 
     return revisionRootPage;
 
@@ -77,13 +77,14 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
 
   public static final RevisionRootPage read(
       final PageCache pageCache,
-      final FastByteArrayReader in) throws Exception {
+      final FastByteArrayReader in,
+      final long revisionKey) throws Exception {
 
     final RevisionRootPage revisionRootPage =
-        new RevisionRootPage(pageCache, in.readPseudoLong());
+        new RevisionRootPage(pageCache, revisionKey);
 
     // Revisioning (deep load).
-    revisionRootPage.mRevisionSize = in.readPseudoLong();
+    revisionRootPage.mNodeCount = in.readPseudoLong();
 
     // Name page (shallow load without name page instance).
     revisionRootPage.mNamePageReference = readPageReference(in);
@@ -92,9 +93,9 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
     revisionRootPage.mMaxNodeKey = in.readPseudoLong();
 
     // Indirect node pages (shallow load without indirect page instances).
-    revisionRootPage.mIndirectNodePageReference = readPageReference(in);
+    revisionRootPage.mIndirectReference = readPageReference(in);
     revisionRootPage.mStaticTree =
-        new StaticTree(revisionRootPage.mIndirectNodePageReference, pageCache);
+        new StaticTree(revisionRootPage.mIndirectReference, pageCache);
 
     return revisionRootPage;
 
@@ -110,7 +111,7 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
             initRevisionKey);
 
     // Revisioning (deep COW).
-    revisionRootPage.mRevisionSize = committedRevisionRootPage.mRevisionSize;
+    revisionRootPage.mNodeCount = committedRevisionRootPage.mNodeCount;
 
     // Names (deep COW).
     revisionRootPage.mNamePageReference =
@@ -120,11 +121,11 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
     revisionRootPage.mMaxNodeKey = committedRevisionRootPage.mMaxNodeKey;
 
     // Indirect node pages (shallow COW without node page instances).
-    revisionRootPage.mIndirectNodePageReference =
-        clonePageReference(committedRevisionRootPage.mIndirectNodePageReference);
+    revisionRootPage.mIndirectReference =
+        clonePageReference(committedRevisionRootPage.mIndirectReference);
     revisionRootPage.mStaticTree =
         new StaticTree(
-            revisionRootPage.mIndirectNodePageReference,
+            revisionRootPage.mIndirectReference,
             revisionRootPage.mPageCache);
 
     return revisionRootPage;
@@ -144,8 +145,8 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
    * 
    * @return Revision size.
    */
-  public final long getRevisionSize() {
-    return mRevisionSize;
+  public final long getNodeCount() {
+    return mNodeCount;
   }
 
   /**
@@ -199,7 +200,7 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
 
     // Which page reference to COW on immediate level 0?
     // Indirect reference.
-    PageReference reference = mIndirectNodePageReference;
+    PageReference reference = mIndirectReference;
     IPage page = null;
 
     //    Remaining levels.
@@ -228,7 +229,7 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
       final byte[] value) throws Exception {
 
     mMaxNodeKey += 1;
-    mRevisionSize += 1;
+    mNodeCount += 1;
 
     final Node node =
         new Node(
@@ -252,7 +253,7 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
   }
 
   public final void removeNode(final long nodeKey) throws Exception {
-    mRevisionSize -= 1;
+    mNodeCount -= 1;
     prepareNodePage(Node.nodePageKey(nodeKey)).setNode(
         Node.nodePageOffset(nodeKey),
         null);
@@ -263,18 +264,17 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
    */
   public final void commit(final PageWriter pageWriter) throws Exception {
     commit(pageWriter, mNamePageReference);
-    commit(pageWriter, mIndirectNodePageReference);
+    commit(pageWriter, mIndirectReference);
   }
 
   /**
    * {@inheritDoc}
    */
   public void serialize(final FastByteArrayWriter out) throws Exception {
-    out.writePseudoLong(mRevisionKey);
-    out.writePseudoLong(mRevisionSize);
+    out.writePseudoLong(mNodeCount);
     serialize(out, mNamePageReference);
     out.writePseudoLong(mMaxNodeKey);
-    serialize(out, mIndirectNodePageReference);
+    serialize(out, mIndirectReference);
   }
 
 }

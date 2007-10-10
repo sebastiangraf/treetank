@@ -135,7 +135,7 @@ public abstract class AbstractPage implements IPage {
     if (reference.isCommitted() && !reference.isInstantiated()) {
       page =
           RevisionRootPage.clone(revisionKey, mPageCache
-              .dereferenceRevisionRootPage(reference));
+              .dereferenceRevisionRootPage(reference, revisionKey));
       reference.setPage(page);
     }
 

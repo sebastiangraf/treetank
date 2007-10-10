@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * $Id$
+ * $Id:WriteTransaction.java 3019 2007-10-10 13:28:24Z kramis $
  */
 
 package org.treetank.sessionlayer;
@@ -52,7 +52,7 @@ public final class WriteTransaction extends ReadTransaction
    */
   public final long insertRoot(final String document) throws Exception {
 
-    if (mRevisionRootPage.getRevisionSize() != 0) {
+    if (mRevisionRootPage.getNodeCount() != 0) {
       throw new IllegalStateException("Root node already exists.");
     }
 
