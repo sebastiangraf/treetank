@@ -38,6 +38,8 @@ import org.treetank.pagelayer.RevisionRootPage;
  */
 public class ReadTransaction implements IReadTransaction {
 
+  protected final TransactionState mState;
+
   /** Strong reference to revision root page this transaction reads from. */
   protected final RevisionRootPage mRevisionRootPage;
 
@@ -51,7 +53,10 @@ public class ReadTransaction implements IReadTransaction {
    * 
    * @param revisionRootPage Revision root page to work with.
    */
-  protected ReadTransaction(final RevisionRootPage revisionRootPage) {
+  protected ReadTransaction(
+      final TransactionState state,
+      final RevisionRootPage revisionRootPage) {
+    mState = state;
     mRevisionRootPage = revisionRootPage;
     mCurrentNode = null;
     mCurrentNodePage = null;
@@ -98,7 +103,7 @@ public class ReadTransaction implements IReadTransaction {
       // Fetch node page if it changed.
       if (mCurrentNodePage == null
           || mCurrentNodePage.getNodePageKey() != nodePageKey) {
-        mCurrentNodePage = mRevisionRootPage.getNodePage(nodePageKey);
+        mCurrentNodePage = mRevisionRootPage.getNodePage(mState, nodePageKey);
       }
 
       // Fetch node by offset within mCurrentNodePage.
@@ -239,7 +244,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final String getLocalPart() throws Exception {
     assertIsSelected();
-    return mRevisionRootPage.getName(mCurrentNode.getLocalPartKey());
+    return mRevisionRootPage.getName(mState, mCurrentNode.getLocalPartKey());
   }
 
   /**
@@ -255,7 +260,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final String getURI() throws Exception {
     assertIsSelected();
-    return mRevisionRootPage.getName(mCurrentNode.getURIKey());
+    return mRevisionRootPage.getName(mState, mCurrentNode.getURIKey());
   }
 
   /**
@@ -271,7 +276,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final String getPrefix() throws Exception {
     assertIsSelected();
-    return mRevisionRootPage.getName(mCurrentNode.getPrefixKey());
+    return mRevisionRootPage.getName(mState, mCurrentNode.getPrefixKey());
   }
 
   /**
@@ -302,7 +307,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final String nameForKey(final int key) throws Exception {
-    return mRevisionRootPage.getName(key);
+    return mRevisionRootPage.getName(mState, key);
   }
 
 }

@@ -32,6 +32,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.treetank.api.IConstants;
 import org.treetank.sessionlayer.SessionConfiguration;
+import org.treetank.sessionlayer.TransactionState;
 import org.treetank.utils.FastByteArrayWriter;
 
 /**
@@ -122,10 +123,12 @@ public final class PageWriter {
   /**
    * {@inheritDoc}
    */
-  public final void write(final PageReference pageReference) throws Exception {
+  public final void write(
+      final TransactionState state,
+      final PageReference pageReference) throws Exception {
 
     // Recursively write indirectely referenced pages.
-    pageReference.getPage().commit(this);
+    pageReference.getPage().commit(state, this);
 
     // Serialize page.
     mWriter.reset();

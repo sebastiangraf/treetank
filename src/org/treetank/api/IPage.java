@@ -1,7 +1,7 @@
 /*
  * TreeTank - Embedded Native XML Database
  * 
- * Copyright (C) 2007 Marc Kramis
+ * Copyright 2007 Marc Kramis
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,11 @@
  * 
  * $Id$
  */
+
 package org.treetank.api;
 
 import org.treetank.pagelayer.PageWriter;
+import org.treetank.sessionlayer.TransactionState;
 import org.treetank.utils.FastByteArrayWriter;
 
 /**
@@ -36,10 +38,12 @@ public interface IPage {
   /**
    * Recursively call commit on all referenced pages.
    * 
+   * @param state Transaction state.
    * @param pageWriter Page writer.
    * @throws Exception occurring during commit operation.
    */
-  public void commit(final PageWriter pageWriter) throws Exception;
+  public void commit(final TransactionState state, final PageWriter pageWriter)
+      throws Exception;
 
   /**
    * Serialize self into object output stream.

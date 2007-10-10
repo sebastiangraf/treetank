@@ -23,22 +23,19 @@ package org.treetank.utils;
 
 import org.treetank.api.IConstants;
 import org.treetank.pagelayer.IndirectPage;
-import org.treetank.pagelayer.PageCache;
 import org.treetank.pagelayer.PageReference;
+import org.treetank.sessionlayer.TransactionState;
 
 public final class StaticTree {
 
   private PageReference mStartReference;
 
-  private PageCache mCache;
-
   private int[] mCurrentOffsets;
 
   private IndirectPage[] mCurrentPages;
 
-  public StaticTree(final PageReference startReference, final PageCache cache) {
+  public StaticTree(final PageReference startReference) {
     mStartReference = startReference;
-    mCache = cache;
     mCurrentOffsets = new int[IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length];
     mCurrentPages =
         new IndirectPage[IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length];
@@ -47,7 +44,8 @@ public final class StaticTree {
     }
   }
 
-  public final PageReference get(final long key) throws Exception {
+  public final PageReference get(final TransactionState state, final long key)
+      throws Exception {
 
     // Indirect reference.
     PageReference reference = mStartReference;
@@ -65,7 +63,8 @@ public final class StaticTree {
       // Fetch page from current level.
       if (levelSteps != mCurrentOffsets[i]) {
         mCurrentOffsets[i] = levelSteps;
-        mCurrentPages[i] = mCache.dereferenceIndirectPage(reference);
+        mCurrentPages[i] =
+            state.getPageCache().dereferenceIndirectPage(state, reference);
       }
       reference = mCurrentPages[i].getPageReference(levelSteps);
     }

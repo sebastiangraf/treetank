@@ -22,6 +22,7 @@
 package org.treetank.pagelayer;
 
 import org.treetank.api.IPage;
+import org.treetank.sessionlayer.TransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 import org.treetank.utils.StaticTree;
@@ -41,27 +42,23 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
 
   private StaticTree mStaticTree;
 
-  private RevisionRootPage(final PageCache pageCache, final long revisionKey) {
-    super(pageCache);
+  private RevisionRootPage(final long revisionKey) {
     mRevisionKey = revisionKey;
     mNamePageReference = null;
     mIndirectReference = null;
     mStaticTree = null;
   }
 
-  public static final RevisionRootPage create(
-      final PageCache pageCache,
-      final long revisionKey) {
+  public static final RevisionRootPage create(final long revisionKey) {
 
-    final RevisionRootPage revisionRootPage =
-        new RevisionRootPage(pageCache, revisionKey);
+    final RevisionRootPage revisionRootPage = new RevisionRootPage(revisionKey);
 
     // Revisioning (deep init).
     revisionRootPage.mNodeCount = 0L;
 
     // Name page (shallow init).
     revisionRootPage.mNamePageReference = createPageReference();
-    revisionRootPage.mNamePageReference.setPage(NamePage.create(pageCache));
+    revisionRootPage.mNamePageReference.setPage(NamePage.create());
 
     // Node pages (shallow init).
     revisionRootPage.mMaxNodeKey = -1L;
@@ -69,19 +66,17 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
     // Indirect pages (shallow init).
     revisionRootPage.mIndirectReference = createPageReference();
     revisionRootPage.mStaticTree =
-        new StaticTree(revisionRootPage.mIndirectReference, pageCache);
+        new StaticTree(revisionRootPage.mIndirectReference);
 
     return revisionRootPage;
 
   }
 
   public static final RevisionRootPage read(
-      final PageCache pageCache,
       final FastByteArrayReader in,
       final long revisionKey) throws Exception {
 
-    final RevisionRootPage revisionRootPage =
-        new RevisionRootPage(pageCache, revisionKey);
+    final RevisionRootPage revisionRootPage = new RevisionRootPage(revisionKey);
 
     // Revisioning (deep load).
     revisionRootPage.mNodeCount = in.readPseudoLong();
@@ -95,7 +90,7 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
     // Indirect node pages (shallow load without indirect page instances).
     revisionRootPage.mIndirectReference = readPageReference(in);
     revisionRootPage.mStaticTree =
-        new StaticTree(revisionRootPage.mIndirectReference, pageCache);
+        new StaticTree(revisionRootPage.mIndirectReference);
 
     return revisionRootPage;
 
@@ -106,9 +101,7 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
       final RevisionRootPage committedRevisionRootPage) {
 
     final RevisionRootPage revisionRootPage =
-        new RevisionRootPage(
-            committedRevisionRootPage.mPageCache,
-            initRevisionKey);
+        new RevisionRootPage(initRevisionKey);
 
     // Revisioning (deep COW).
     revisionRootPage.mNodeCount = committedRevisionRootPage.mNodeCount;
@@ -124,9 +117,7 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
     revisionRootPage.mIndirectReference =
         clonePageReference(committedRevisionRootPage.mIndirectReference);
     revisionRootPage.mStaticTree =
-        new StaticTree(
-            revisionRootPage.mIndirectReference,
-            revisionRootPage.mPageCache);
+        new StaticTree(revisionRootPage.mIndirectReference);
 
     return revisionRootPage;
   }
@@ -155,9 +146,10 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
    * @param nameKey Name key identifying name.
    * @return Name of name key.
    */
-  public final String getName(final int nameKey) throws Exception {
+  public final String getName(final TransactionState state, final int nameKey)
+      throws Exception {
     final NamePage namePage =
-        mPageCache.dereferenceNamePage(mNamePageReference);
+        state.getPageCache().dereferenceNamePage(state, mNamePageReference);
     return namePage.getName(nameKey);
   }
 
@@ -167,11 +159,12 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
    * @param name Name to create key for.
    * @return Name key.
    */
-  public final int createNameKey(final String name) throws Exception {
+  public final int createNameKey(final TransactionState state, final String name)
+      throws Exception {
     final String string = (name == null ? "" : name);
     final int nameKey = string.hashCode();
-    if (getName(nameKey) == null) {
-      final NamePage namePage = prepareNamePage(mNamePageReference);
+    if (getName(state, nameKey) == null) {
+      final NamePage namePage = prepareNamePage(state, mNamePageReference);
       namePage.setName(nameKey, string);
     }
     return nameKey;
@@ -184,16 +177,20 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
    * @return INode page with this key.
    * @throws Exception of any kind.
    */
-  public final NodePage getNodePage(final long nodePageKey) throws Exception {
+  public final NodePage getNodePage(
+      final TransactionState state,
+      final long nodePageKey) throws Exception {
 
-    return mPageCache.dereferenceNodePage(
-        mStaticTree.get(nodePageKey),
+    return state.getPageCache().dereferenceNodePage(
+        state,
+        mStaticTree.get(state, nodePageKey),
         nodePageKey);
 
   }
 
-  private final NodePage prepareNodePage(final long nodePageKey)
-      throws Exception {
+  private final NodePage prepareNodePage(
+      final TransactionState state,
+      final long nodePageKey) throws Exception {
 
     // Calculate number of levels and offsets of these levels.
     final int[] offsets = StaticTree.calcIndirectPageOffsets(nodePageKey);
@@ -205,19 +202,21 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
 
     //    Remaining levels.
     for (int i = 0; i < offsets.length; i++) {
-      page = prepareIndirectPage(reference);
+      page = prepareIndirectPage(state, reference);
       reference = ((IndirectPage) page).getPageReference(offsets[i]);
     }
-    return prepareNodePage(reference, nodePageKey);
+    return prepareNodePage(state, reference, nodePageKey);
 
   }
 
-  public final Node prepareNode(final long nodeKey) throws Exception {
-    return prepareNodePage(Node.nodePageKey(nodeKey)).getNode(
+  public final Node prepareNode(final TransactionState state, final long nodeKey)
+      throws Exception {
+    return prepareNodePage(state, Node.nodePageKey(nodeKey)).getNode(
         Node.nodePageOffset(nodeKey));
   }
 
   public final Node createNode(
+      final TransactionState state,
       final long parentKey,
       final long firstChildKey,
       final long leftSiblingKey,
@@ -245,16 +244,17 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
             value);
 
     // Write node into node page.
-    prepareNodePage(Node.nodePageKey(mMaxNodeKey)).setNode(
+    prepareNodePage(state, Node.nodePageKey(mMaxNodeKey)).setNode(
         Node.nodePageOffset(mMaxNodeKey),
         node);
 
     return node;
   }
 
-  public final void removeNode(final long nodeKey) throws Exception {
+  public final void removeNode(final TransactionState state, final long nodeKey)
+      throws Exception {
     mNodeCount -= 1;
-    prepareNodePage(Node.nodePageKey(nodeKey)).setNode(
+    prepareNodePage(state, Node.nodePageKey(nodeKey)).setNode(
         Node.nodePageOffset(nodeKey),
         null);
   }
@@ -262,9 +262,11 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
   /**
    * {@inheritDoc}
    */
-  public final void commit(final PageWriter pageWriter) throws Exception {
-    commit(pageWriter, mNamePageReference);
-    commit(pageWriter, mIndirectReference);
+  public final void commit(
+      final TransactionState state,
+      final PageWriter pageWriter) throws Exception {
+    commit(state, pageWriter, mNamePageReference);
+    commit(state, pageWriter, mIndirectReference);
   }
 
   /**
