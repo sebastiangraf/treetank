@@ -1,7 +1,7 @@
 /*
  * TreeTank - Embedded Native XML Database
  * 
- * Copyright (C) 2007 Marc Kramis
+ * Copyright 2007 Marc Kramis
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,16 +22,17 @@
 package org.treetank.utils;
 
 import org.treetank.api.IConstants;
+import org.treetank.pagelayer.PageCache;
 
 public final class StaticTree {
+  
+  private final PageCache mCache;
 
-  /**
-   * Default constructor is hidden.
-   * 
-   */
-  private StaticTree() {
-    // hidden
+  public StaticTree(final PageCache cache) {
+    mCache = cache;
   }
+  
+  
 
   public static final int[] calcIndirectPageOffsets(final long key) {
 
