@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * $Id$
+ * $Id:ReadTransaction.java 3019 2007-10-10 13:28:24Z kramis $
  */
 
 package org.treetank.sessionlayer;
@@ -25,6 +25,7 @@ import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 import org.treetank.pagelayer.Node;
+import org.treetank.pagelayer.NodePage;
 import org.treetank.pagelayer.RevisionRootPage;
 
 /**
@@ -43,6 +44,8 @@ public class ReadTransaction implements IReadTransaction {
   /** Strong reference to currently selected node. */
   protected INode mCurrentNode;
 
+  protected NodePage mCurrentNodePage;
+
   /**
    * Constructor.
    * 
@@ -51,6 +54,7 @@ public class ReadTransaction implements IReadTransaction {
   protected ReadTransaction(final RevisionRootPage revisionRootPage) {
     mRevisionRootPage = revisionRootPage;
     mCurrentNode = null;
+    mCurrentNodePage = null;
   }
 
   /**
@@ -91,9 +95,14 @@ public class ReadTransaction implements IReadTransaction {
       final long nodePageKey = Node.nodePageKey(nodeKey);
       final int nodePageOffset = Node.nodePageOffset(nodeKey);
 
+      // Fetch node page if it changed.
+      if (mCurrentNodePage == null
+          || mCurrentNodePage.getNodePageKey() != nodePageKey) {
+        mCurrentNodePage = mRevisionRootPage.getNodePage(nodePageKey);
+      }
+
       // Fetch node by offset within mCurrentNodePage.
-      mCurrentNode =
-          mRevisionRootPage.getNodePage(nodePageKey).getNode(nodePageOffset);
+      mCurrentNode = mCurrentNodePage.getNode(nodePageOffset);
 
     } else {
       mCurrentNode = null;
