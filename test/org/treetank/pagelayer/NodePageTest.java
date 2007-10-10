@@ -49,7 +49,7 @@ public class NodePageTest {
 
     final FastByteArrayReader in = new FastByteArrayReader(out.getBytes());
 
-    final NodePage page2 = NodePage.read(in);
+    final NodePage page2 = NodePage.read(in, 0L);
     assertEquals(0L, page2.getNode(0).getNodeKey());
     assertEquals(1L, page2.getNode(0).getParentKey());
     assertEquals(2L, page2.getNode(0).getFirstChildKey());

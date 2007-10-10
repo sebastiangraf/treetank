@@ -42,23 +42,6 @@ public interface IConstants {
   /** Default encryption algorithm. */
   public static final String DEFAULT_ENCRYPTION_ALGORITHM = "AES";
 
-  // --- Pages -----------------------------------------------------------------
-
-  /** Uber page (UBP). */
-  public static final int UBER_PAGE = 0;
-
-  /** Revision root page (RRP). */
-  public static final int REVISION_ROOT_PAGE = 1;
-
-  /** INode page (NDP). */
-  public static final int NODE_PAGE = 2;
-
-  /** Indirect page (INP). */
-  public static final int INDIRECT_PAGE = 3;
-
-  /** Name page (NMP). */
-  public static final int NAME_PAGE = 4;
-
   //--- Indirect Page ----------------------------------------------------------
 
   /** Count of indirect references in indirect page. */

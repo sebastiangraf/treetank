@@ -185,7 +185,9 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
    */
   public final NodePage getNodePage(final long nodePageKey) throws Exception {
 
-    return mPageCache.dereferenceNodePage(mStaticTree.get(nodePageKey));
+    return mPageCache.dereferenceNodePage(
+        mStaticTree.get(nodePageKey),
+        nodePageKey);
 
   }
 
