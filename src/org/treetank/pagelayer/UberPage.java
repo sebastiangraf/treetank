@@ -1,7 +1,7 @@
 /*
  * TreeTank - Embedded Native XML Database
  * 
- * Copyright (C) 2007 Marc Kramis
+ * Copyright 2007 Marc Kramis
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +31,11 @@ final public class UberPage extends AbstractPage implements IPage {
 
   private long mMaxRevisionKey;
 
-  private final PageReference[] mIndirectRevisionRootPageReferences;
+  private PageReference mIndirectRevisionRootPageReference;
 
   private RevisionRootPage mCurrentRevisionRootPage;
+
+  private StaticTree mStaticTree;
 
   /**
    * Constructor to assure minimal common setup.
@@ -42,8 +44,8 @@ final public class UberPage extends AbstractPage implements IPage {
    */
   private UberPage(final PageCache pageCache) {
     super(pageCache);
-    mIndirectRevisionRootPageReferences =
-        new PageReference[IConstants.INP_REFERENCE_COUNT];
+    mIndirectRevisionRootPageReference = null;
+    mStaticTree = new StaticTree(pageCache);
   }
 
   /**
@@ -62,7 +64,7 @@ final public class UberPage extends AbstractPage implements IPage {
     uberPage.mMaxRevisionKey = IConstants.UBP_INIT_ROOT_REVISION_KEY;
 
     // Indirect pages (shallow init).
-    createPageReferences(uberPage.mIndirectRevisionRootPageReferences);
+    uberPage.mIndirectRevisionRootPageReference = createPageReference();
 
     // Make sure that the first empty revision root page already exists.
     uberPage.mCurrentRevisionRootPage =
@@ -89,7 +91,7 @@ final public class UberPage extends AbstractPage implements IPage {
     uberPage.mMaxRevisionKey = in.readPseudoLong();
 
     // Indirect pages (shallow load without indirect page instances).
-    readPageReferences(uberPage.mIndirectRevisionRootPageReferences, in);
+    uberPage.mIndirectRevisionRootPageReference = readPageReference(in);
 
     // Make sure latest revision root page is active.
     uberPage.mCurrentRevisionRootPage =
@@ -112,9 +114,8 @@ final public class UberPage extends AbstractPage implements IPage {
     uberPage.mMaxRevisionKey = committedUberPage.mMaxRevisionKey;
 
     // Indirect pages (shallow COW without page instances).
-    clonePageReferences(
-        uberPage.mIndirectRevisionRootPageReferences,
-        committedUberPage.mIndirectRevisionRootPageReferences);
+    uberPage.mIndirectRevisionRootPageReference =
+        clonePageReference(committedUberPage.mIndirectRevisionRootPageReference);
 
     uberPage.mCurrentRevisionRootPage =
         committedUberPage.mCurrentRevisionRootPage;
@@ -133,11 +134,11 @@ final public class UberPage extends AbstractPage implements IPage {
     final int[] offsets = StaticTree.calcIndirectPageOffsets(revisionKey);
 
     // Indirect reference.
-    PageReference reference = mIndirectRevisionRootPageReferences[offsets[0]];
+    PageReference reference = mIndirectRevisionRootPageReference;
     IPage page = null;
 
     // Remaining levels.
-    for (int i = 1; i < offsets.length; i++) {
+    for (int i = 0; i < offsets.length; i++) {
       page = dereference(reference, IConstants.INDIRECT_PAGE);
       reference = ((IndirectPage) page).getPageReference(offsets[i]);
     }
@@ -158,11 +159,11 @@ final public class UberPage extends AbstractPage implements IPage {
         RevisionRootPage.clone(mMaxRevisionKey + 1, mCurrentRevisionRootPage);
 
     // Indirect reference.
-    PageReference reference = mIndirectRevisionRootPageReferences[offsets[0]];
+    PageReference reference = mIndirectRevisionRootPageReference;
     IPage page = null;
 
     //    Remaining levels.
-    for (int i = 1; i < offsets.length; i++) {
+    for (int i = 0; i < offsets.length; i++) {
       page = prepareIndirectPage(reference);
       reference = ((IndirectPage) page).getPageReference(offsets[i]);
     }
@@ -176,7 +177,7 @@ final public class UberPage extends AbstractPage implements IPage {
    * {@inheritDoc}
    */
   public final void commit(final PageWriter pageWriter) throws Exception {
-    commit(pageWriter, mIndirectRevisionRootPageReferences);
+    commit(pageWriter, mIndirectRevisionRootPageReference);
     mMaxRevisionKey += 1;
   }
 
@@ -185,7 +186,7 @@ final public class UberPage extends AbstractPage implements IPage {
    */
   public final void serialize(final FastByteArrayWriter out) throws Exception {
     out.writePseudoLong(mMaxRevisionKey);
-    serialize(out, mIndirectRevisionRootPageReferences);
+    serialize(out, mIndirectRevisionRootPageReference);
   }
 
 }
