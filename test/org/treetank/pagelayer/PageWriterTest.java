@@ -61,7 +61,7 @@ public class PageWriterTest {
     final PageReader pageReader =
         new PageReader(new SessionConfiguration(PATH));
     final FastByteArrayReader in = pageReader.read(pageReference);
-    final NodePage page2 = NodePage.read(in);
+    final NodePage page2 = NodePage.read(in, 0L);
 
     assertEquals("foo", new String(
         page2.getNode(3).getValue(),

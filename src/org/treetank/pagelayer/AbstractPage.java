@@ -193,7 +193,9 @@ public abstract class AbstractPage implements IPage {
 
     // Load page if it is already existing in a committed revision.
     if (reference.isCommitted() && !reference.isInstantiated()) {
-      page = NodePage.clone(mPageCache.dereferenceNodePage(reference));
+      page =
+          NodePage
+              .clone(mPageCache.dereferenceNodePage(reference, nodePageKey));
       reference.setPage(page);
     }
 

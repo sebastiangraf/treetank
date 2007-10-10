@@ -75,8 +75,9 @@ public final class PageCache {
     pageReference.setPage(null);
   }
 
-  public final NodePage dereferenceNodePage(final PageReference reference)
-      throws Exception {
+  public final NodePage dereferenceNodePage(
+      final PageReference reference,
+      final long nodePageKey) throws Exception {
     if (reference.isInstantiated()) {
       // Return uncommitted referenced page if there is one.
       return (NodePage) reference.getPage();
@@ -90,7 +91,7 @@ public final class PageCache {
 
         // Deserialize page.
         final FastByteArrayReader in = reader.read(reference);
-        page = NodePage.read(in);
+        page = NodePage.read(in, nodePageKey);
         mCache.put(reference.getStart(), page);
 
         // Give page reader back to mPool.
