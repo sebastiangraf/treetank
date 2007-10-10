@@ -155,7 +155,8 @@ public final class PageCache {
   }
 
   public final RevisionRootPage dereferenceRevisionRootPage(
-      final PageReference reference) throws Exception {
+      final PageReference reference,
+      final long revisionKey) throws Exception {
     if (reference.isInstantiated()) {
       // Return uncommitted referenced page if there is one.
       return (RevisionRootPage) reference.getPage();
@@ -170,7 +171,7 @@ public final class PageCache {
 
         // Deserialize page.
         final FastByteArrayReader in = reader.read(reference);
-        page = RevisionRootPage.read(this, in);
+        page = RevisionRootPage.read(this, in, revisionKey);
         mCache.put(reference.getStart(), page);
 
         // Give page reader back to mPool.

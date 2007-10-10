@@ -29,9 +29,9 @@ import org.treetank.utils.StaticTree;
 
 final public class UberPage extends AbstractPage implements IPage {
 
-  private long mMaxRevisionKey;
+  private long mRevisionCount;
 
-  private PageReference mIndirectRevisionRootPageReference;
+  private PageReference mIndirectPageReference;
 
   private RevisionRootPage mCurrentRevisionRootPage;
 
@@ -44,7 +44,7 @@ final public class UberPage extends AbstractPage implements IPage {
    */
   private UberPage(final PageCache pageCache) {
     super(pageCache);
-    mIndirectRevisionRootPageReference = null;
+    mIndirectPageReference = null;
     mStaticTree = null;
   }
 
@@ -61,12 +61,12 @@ final public class UberPage extends AbstractPage implements IPage {
     final UberPage uberPage = new UberPage(pageCache);
 
     // Make sure that all references are instantiated.
-    uberPage.mMaxRevisionKey = IConstants.UBP_INIT_ROOT_REVISION_KEY;
+    uberPage.mRevisionCount = IConstants.UBP_INIT_ROOT_REVISION_KEY;
 
     // Indirect pages (shallow init).
-    uberPage.mIndirectRevisionRootPageReference = createPageReference();
+    uberPage.mIndirectPageReference = createPageReference();
     uberPage.mStaticTree =
-        new StaticTree(uberPage.mIndirectRevisionRootPageReference, pageCache);
+        new StaticTree(uberPage.mIndirectPageReference, pageCache);
 
     // Make sure that the first empty revision root page already exists.
     uberPage.mCurrentRevisionRootPage =
@@ -90,16 +90,16 @@ final public class UberPage extends AbstractPage implements IPage {
     final UberPage uberPage = new UberPage(pageCache);
 
     // Deserialize uber page.
-    uberPage.mMaxRevisionKey = in.readPseudoLong();
+    uberPage.mRevisionCount = in.readPseudoLong();
 
     // Indirect pages (shallow load without indirect page instances).
-    uberPage.mIndirectRevisionRootPageReference = readPageReference(in);
+    uberPage.mIndirectPageReference = readPageReference(in);
     uberPage.mStaticTree =
-        new StaticTree(uberPage.mIndirectRevisionRootPageReference, pageCache);
+        new StaticTree(uberPage.mIndirectPageReference, pageCache);
 
     // Make sure latest revision root page is active.
     uberPage.mCurrentRevisionRootPage =
-        uberPage.getRevisionRootPage(uberPage.mMaxRevisionKey);
+        uberPage.getRevisionRootPage(uberPage.mRevisionCount);
 
     return uberPage;
   }
@@ -115,15 +115,13 @@ final public class UberPage extends AbstractPage implements IPage {
     final UberPage uberPage = new UberPage(committedUberPage.mPageCache);
 
     // COW uber page.
-    uberPage.mMaxRevisionKey = committedUberPage.mMaxRevisionKey;
+    uberPage.mRevisionCount = committedUberPage.mRevisionCount;
 
     // Indirect pages (shallow COW without page instances).
-    uberPage.mIndirectRevisionRootPageReference =
-        clonePageReference(committedUberPage.mIndirectRevisionRootPageReference);
+    uberPage.mIndirectPageReference =
+        clonePageReference(committedUberPage.mIndirectPageReference);
     uberPage.mStaticTree =
-        new StaticTree(
-            uberPage.mIndirectRevisionRootPageReference,
-            uberPage.mPageCache);
+        new StaticTree(uberPage.mIndirectPageReference, uberPage.mPageCache);
 
     uberPage.mCurrentRevisionRootPage =
         committedUberPage.mCurrentRevisionRootPage;
@@ -131,15 +129,17 @@ final public class UberPage extends AbstractPage implements IPage {
     return uberPage;
   }
 
-  public final long getMaxRevisionKey() {
-    return mMaxRevisionKey;
+  public final long getRevisionCount() {
+    return mRevisionCount;
   }
 
   public final RevisionRootPage getRevisionRootPage(final long revisionKey)
       throws Exception {
 
     RevisionRootPage page =
-        mPageCache.dereferenceRevisionRootPage(mStaticTree.get(revisionKey));
+        mPageCache.dereferenceRevisionRootPage(
+            mStaticTree.get(revisionKey),
+            revisionKey);
 
     return RevisionRootPage.clone(revisionKey, page);
 
@@ -149,14 +149,14 @@ final public class UberPage extends AbstractPage implements IPage {
 
     // Calculate number of levels and offsets of these levels.
     final int[] offsets =
-        StaticTree.calcIndirectPageOffsets(mMaxRevisionKey + 1);
+        StaticTree.calcIndirectPageOffsets(mRevisionCount + 1);
 
     // Which page reference to COW on immediate level 0?
     mCurrentRevisionRootPage =
-        RevisionRootPage.clone(mMaxRevisionKey + 1, mCurrentRevisionRootPage);
+        RevisionRootPage.clone(mRevisionCount + 1, mCurrentRevisionRootPage);
 
     // Indirect reference.
-    PageReference reference = mIndirectRevisionRootPageReference;
+    PageReference reference = mIndirectPageReference;
     IPage page = null;
 
     //    Remaining levels.
@@ -174,16 +174,16 @@ final public class UberPage extends AbstractPage implements IPage {
    * {@inheritDoc}
    */
   public final void commit(final PageWriter pageWriter) throws Exception {
-    commit(pageWriter, mIndirectRevisionRootPageReference);
-    mMaxRevisionKey += 1;
+    commit(pageWriter, mIndirectPageReference);
+    mRevisionCount += 1;
   }
 
   /**
    * {@inheritDoc}
    */
   public final void serialize(final FastByteArrayWriter out) throws Exception {
-    out.writePseudoLong(mMaxRevisionKey);
-    serialize(out, mIndirectRevisionRootPageReference);
+    out.writePseudoLong(mRevisionCount);
+    serialize(out, mIndirectPageReference);
   }
 
 }
