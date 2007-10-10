@@ -77,53 +77,6 @@ public final class PageCache {
   }
 
   /**
-   * Get a page from the cache. In case the page was not in the cache, it is
-   * silently fetched using the provided page reference.
-   * 
-   * @param pageReference Page reference pointing to added page.
-   * @param pageKind Kind of page to instantiate the right IPage instance.
-   * @return Page from cache (both for hits and "misses").
-   * @throws Exception if the page could not be read.
-   */
-  public final IPage get(final PageReference pageReference, final int pageKind)
-      throws Exception {
-    IPage page = (IPage) mCache.get(pageReference.getStart());
-    if (page == null) {
-
-      // Get page reader from mPool.
-      PageReader reader = mPool.take();
-
-      // Deserialize page.
-      final FastByteArrayReader in = reader.read(pageReference);
-      switch (pageKind) {
-      case IConstants.REVISION_ROOT_PAGE:
-        page = RevisionRootPage.read(this, in);
-        break;
-      case IConstants.NAME_PAGE:
-        page = NamePage.read(this, in);
-        break;
-      case IConstants.NODE_PAGE:
-        page = NodePage.read(in);
-        break;
-      case IConstants.UBER_PAGE:
-        page = UberPage.read(this, in);
-        break;
-      case IConstants.INDIRECT_PAGE:
-        page = IndirectPage.read(this, in);
-        break;
-      default:
-        throw new IllegalStateException("Unknown page kind.");
-      }
-      mCache.put(pageReference.getStart(), page);
-
-      // Give page reader back to mPool.
-      mPool.put(reader);
-
-    }
-    return page;
-  }
-
-  /**
    * Safely dereference page.
    * 
    * @param reference Reference to dereference.
@@ -138,7 +91,40 @@ public final class PageCache {
       return reference.getPage();
     } else {
       // Return committed referenced page.
-      return get(reference, kind);
+      IPage page = (IPage) mCache.get(reference.getStart());
+      if (page == null) {
+
+        // Get page reader from mPool.
+        PageReader reader = mPool.take();
+
+        // Deserialize page.
+        final FastByteArrayReader in = reader.read(reference);
+        switch (kind) {
+        case IConstants.REVISION_ROOT_PAGE:
+          page = RevisionRootPage.read(this, in);
+          break;
+        case IConstants.NAME_PAGE:
+          page = NamePage.read(this, in);
+          break;
+        case IConstants.NODE_PAGE:
+          page = NodePage.read(in);
+          break;
+        case IConstants.UBER_PAGE:
+          page = UberPage.read(this, in);
+          break;
+        case IConstants.INDIRECT_PAGE:
+          page = IndirectPage.read(this, in);
+          break;
+        default:
+          throw new IllegalStateException("Unknown page kind.");
+        }
+        mCache.put(reference.getStart(), page);
+
+        // Give page reader back to mPool.
+        mPool.put(reader);
+
+      }
+      return page;
     }
   }
 

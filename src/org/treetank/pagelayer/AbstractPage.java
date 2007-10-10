@@ -136,7 +136,7 @@ public abstract class AbstractPage implements IPage {
     if (reference.isCommitted() && !reference.isInstantiated()) {
       page =
           RevisionRootPage.clone(revisionKey, (RevisionRootPage) mPageCache
-              .get(reference, IConstants.REVISION_ROOT_PAGE));
+              .dereference(reference, IConstants.REVISION_ROOT_PAGE));
       reference.setPage(page);
     }
 
@@ -165,7 +165,7 @@ public abstract class AbstractPage implements IPage {
     // Load page if it is already existing in a committed revision.
     if (reference.isCommitted() && !reference.isInstantiated()) {
       page =
-          NamePage.clone((NamePage) mPageCache.get(
+          NamePage.clone((NamePage) mPageCache.dereference(
               reference,
               IConstants.NAME_PAGE));
       reference.setPage(page);
@@ -198,7 +198,7 @@ public abstract class AbstractPage implements IPage {
     // Load page if it is already existing in a committed revision.
     if (reference.isCommitted() && !reference.isInstantiated()) {
       page =
-          NodePage.clone((NodePage) mPageCache.get(
+          NodePage.clone((NodePage) mPageCache.dereference(
               reference,
               IConstants.NODE_PAGE));
       reference.setPage(page);
@@ -230,7 +230,7 @@ public abstract class AbstractPage implements IPage {
     // Load page if it is already existing in a committed revision.
     if (reference.isCommitted() && !reference.isInstantiated()) {
       page =
-          IndirectPage.clone((IndirectPage) mPageCache.get(
+          IndirectPage.clone((IndirectPage) mPageCache.dereference(
               reference,
               IConstants.INDIRECT_PAGE));
       reference.setPage(page);

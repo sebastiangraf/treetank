@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * $Id$
+ * $Id:Session.java 3019 2007-10-10 13:28:24Z kramis $
  */
 
 package org.treetank.sessionlayer;
@@ -135,7 +135,7 @@ public final class Session implements ISession {
       // Beacon logic case 1.
       if (mPrimaryUberPageReference.equals(mSecondaryUberPageReference)) {
         mUberPage =
-            (UberPage) mPageCache.get(
+            (UberPage) mPageCache.dereference(
                 mPrimaryUberPageReference,
                 IConstants.UBER_PAGE);
 
