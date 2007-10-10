@@ -19,7 +19,7 @@
  * $Id$
  */
 
-package org.treetank.nodelayer;
+package org.treetank.sessionlayer;
 
 import static org.junit.Assert.assertEquals;
 
@@ -31,6 +31,7 @@ import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
+import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
 import org.treetank.utils.UTF;
 

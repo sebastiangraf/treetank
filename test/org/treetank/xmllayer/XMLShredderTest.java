@@ -32,8 +32,8 @@ import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.nodelayer.Session;
-import org.treetank.nodelayer.SessionConfiguration;
+import org.treetank.sessionlayer.Session;
+import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.utils.TestDocument;
 
 public class XMLShredderTest {

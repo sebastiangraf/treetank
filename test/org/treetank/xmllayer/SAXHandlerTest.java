@@ -34,7 +34,7 @@ import org.treetank.api.IAxisIterator;
 import org.treetank.api.IConstants;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.nodelayer.Session;
+import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
 import org.treetank.xmllayer.DescendantAxisIterator;
 import org.treetank.xmllayer.SAXHandler;

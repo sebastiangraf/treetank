@@ -19,7 +19,7 @@
  * $Id$
  */
 
-package org.treetank.nodelayer;
+package org.treetank.sessionlayer;
 
 /**
  * <h1>SessionConfiguration</h1>

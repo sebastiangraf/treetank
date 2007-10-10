@@ -19,7 +19,7 @@
  * $Id$
  */
 
-package org.treetank.nodelayer;
+package org.treetank.sessionlayer;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;

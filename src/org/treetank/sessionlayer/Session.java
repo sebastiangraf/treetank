@@ -19,7 +19,7 @@
  * $Id$
  */
 
-package org.treetank.nodelayer;
+package org.treetank.sessionlayer;
 
 import java.io.File;
 import java.io.RandomAccessFile;

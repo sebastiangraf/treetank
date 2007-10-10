@@ -31,8 +31,8 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.nodelayer.Session;
-import org.treetank.nodelayer.SessionConfiguration;
+import org.treetank.sessionlayer.Session;
+import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.utils.FastLongStack;
 import org.treetank.utils.UTF;
 
