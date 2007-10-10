@@ -24,7 +24,6 @@ package org.treetank.pagelayer;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.treetank.api.IConstants;
 import org.treetank.api.IPage;
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.utils.FastByteArrayReader;
@@ -76,22 +75,14 @@ public final class PageCache {
     pageReference.setPage(null);
   }
 
-  /**
-   * Safely dereference page.
-   * 
-   * @param reference Reference to dereference.
-   * @param kind Kind of dereferenced page.
-   * @return Dereferenced page.
-   * @throws Exception of any kind.
-   */
-  public final IPage dereference(final PageReference reference, final int kind)
+  public final NodePage dereferenceNodePage(final PageReference reference)
       throws Exception {
     if (reference.isInstantiated()) {
       // Return uncommitted referenced page if there is one.
-      return reference.getPage();
+      return (NodePage) reference.getPage();
     } else {
       // Return committed referenced page.
-      IPage page = (IPage) mCache.get(reference.getStart());
+      NodePage page = (NodePage) mCache.get(reference.getStart());
       if (page == null) {
 
         // Get page reader from mPool.
@@ -99,25 +90,112 @@ public final class PageCache {
 
         // Deserialize page.
         final FastByteArrayReader in = reader.read(reference);
-        switch (kind) {
-        case IConstants.REVISION_ROOT_PAGE:
-          page = RevisionRootPage.read(this, in);
-          break;
-        case IConstants.NAME_PAGE:
-          page = NamePage.read(this, in);
-          break;
-        case IConstants.NODE_PAGE:
-          page = NodePage.read(in);
-          break;
-        case IConstants.UBER_PAGE:
-          page = UberPage.read(this, in);
-          break;
-        case IConstants.INDIRECT_PAGE:
-          page = IndirectPage.read(this, in);
-          break;
-        default:
-          throw new IllegalStateException("Unknown page kind.");
-        }
+        page = NodePage.read(in);
+        mCache.put(reference.getStart(), page);
+
+        // Give page reader back to mPool.
+        mPool.put(reader);
+
+      }
+      return page;
+    }
+  }
+
+  public final NamePage dereferenceNamePage(final PageReference reference)
+      throws Exception {
+    if (reference.isInstantiated()) {
+      // Return uncommitted referenced page if there is one.
+      return (NamePage) reference.getPage();
+    } else {
+      // Return committed referenced page.
+      NamePage page = (NamePage) mCache.get(reference.getStart());
+      if (page == null) {
+
+        // Get page reader from mPool.
+        PageReader reader = mPool.take();
+
+        // Deserialize page.
+        final FastByteArrayReader in = reader.read(reference);
+        page = NamePage.read(this, in);
+        mCache.put(reference.getStart(), page);
+
+        // Give page reader back to mPool.
+        mPool.put(reader);
+
+      }
+      return page;
+    }
+  }
+
+  public final IndirectPage dereferenceIndirectPage(
+      final PageReference reference) throws Exception {
+    if (reference.isInstantiated()) {
+      // Return uncommitted referenced page if there is one.
+      return (IndirectPage) reference.getPage();
+    } else {
+      // Return committed referenced page.
+      IndirectPage page = (IndirectPage) mCache.get(reference.getStart());
+      if (page == null) {
+
+        // Get page reader from mPool.
+        PageReader reader = mPool.take();
+
+        // Deserialize page.
+        final FastByteArrayReader in = reader.read(reference);
+        page = IndirectPage.read(this, in);
+        mCache.put(reference.getStart(), page);
+
+        // Give page reader back to mPool.
+        mPool.put(reader);
+
+      }
+      return page;
+    }
+  }
+
+  public final RevisionRootPage dereferenceRevisionRootPage(
+      final PageReference reference) throws Exception {
+    if (reference.isInstantiated()) {
+      // Return uncommitted referenced page if there is one.
+      return (RevisionRootPage) reference.getPage();
+    } else {
+      // Return committed referenced page.
+      RevisionRootPage page =
+          (RevisionRootPage) mCache.get(reference.getStart());
+      if (page == null) {
+
+        // Get page reader from mPool.
+        PageReader reader = mPool.take();
+
+        // Deserialize page.
+        final FastByteArrayReader in = reader.read(reference);
+        page = RevisionRootPage.read(this, in);
+        mCache.put(reference.getStart(), page);
+
+        // Give page reader back to mPool.
+        mPool.put(reader);
+
+      }
+      return page;
+    }
+  }
+
+  public final UberPage dereferenceUberPage(final PageReference reference)
+      throws Exception {
+    if (reference.isInstantiated()) {
+      // Return uncommitted referenced page if there is one.
+      return (UberPage) reference.getPage();
+    } else {
+      // Return committed referenced page.
+      UberPage page = (UberPage) mCache.get(reference.getStart());
+      if (page == null) {
+
+        // Get page reader from mPool.
+        PageReader reader = mPool.take();
+
+        // Deserialize page.
+        final FastByteArrayReader in = reader.read(reference);
+        page = UberPage.read(this, in);
         mCache.put(reference.getStart(), page);
 
         // Give page reader back to mPool.

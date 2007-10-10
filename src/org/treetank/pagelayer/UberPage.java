@@ -139,9 +139,7 @@ final public class UberPage extends AbstractPage implements IPage {
       throws Exception {
 
     RevisionRootPage page =
-        (RevisionRootPage) mPageCache.dereference(
-            mStaticTree.get(revisionKey),
-            IConstants.REVISION_ROOT_PAGE);
+        mPageCache.dereferenceRevisionRootPage(mStaticTree.get(revisionKey));
 
     return RevisionRootPage.clone(revisionKey, page);
 

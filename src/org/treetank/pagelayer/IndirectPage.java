@@ -90,19 +90,6 @@ final public class IndirectPage extends AbstractPage implements IPage {
   }
 
   /**
-   * Get page by page offset.
-   * 
-   * @param pageOffset Offset of referenced page.
-   * @return INode page with this key.
-   * @throws Exception of any kind.
-   */
-  public final IPage getPage(final int pageOffset, final byte pageKind)
-      throws Exception {
-    return mPageCache
-        .dereference(mIndirectPageReferences[pageOffset], pageKind);
-  }
-
-  /**
    * Get reference by page offset.
    * 
    * @param pageOffset Offset of referenced page.
