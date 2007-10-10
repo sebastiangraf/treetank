@@ -33,26 +33,36 @@ public final class StaticTree {
 
   private PageCache mCache;
 
-  private int[] mOffsets;
+  private int[] mCurrentOffsets;
+
+  private IPage[] mCurrentPages;
 
   public StaticTree(final PageReference startReference, final PageCache cache) {
     mStartReference = startReference;
     mCache = cache;
+    mCurrentOffsets = new int[IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length];
+    mCurrentPages = new IPage[IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length];
   }
 
   public final PageReference get(final long key) throws Exception {
-
-    // Calculate number of levels and offsets of these levels.
-    mOffsets = StaticTree.calcIndirectPageOffsets(key);
 
     // Indirect reference.
     PageReference reference = mStartReference;
     IPage page = null;
 
     // Remaining levels.
-    for (int i = 0; i < mOffsets.length; i++) {
+    int levelSteps = 0;
+    long levelKey = key;
+    for (int i = 0; i < mCurrentOffsets.length; i++) {
+
+      // Calculate offset of current level.
+      levelSteps =
+          (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i]);
+      levelKey -= levelSteps << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i];
+
+      // Fetch page from current level.
       page = mCache.dereference(reference, IConstants.INDIRECT_PAGE);
-      reference = ((IndirectPage) page).getPageReference(mOffsets[i]);
+      reference = ((IndirectPage) page).getPageReference(levelSteps);
     }
 
     return reference;
