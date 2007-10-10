@@ -45,7 +45,7 @@ final public class UberPage extends AbstractPage implements IPage {
   private UberPage(final PageCache pageCache) {
     super(pageCache);
     mIndirectRevisionRootPageReference = null;
-    mStaticTree = new StaticTree(pageCache);
+    mStaticTree = null;
   }
 
   /**
@@ -65,6 +65,8 @@ final public class UberPage extends AbstractPage implements IPage {
 
     // Indirect pages (shallow init).
     uberPage.mIndirectRevisionRootPageReference = createPageReference();
+    uberPage.mStaticTree =
+        new StaticTree(uberPage.mIndirectRevisionRootPageReference, pageCache);
 
     // Make sure that the first empty revision root page already exists.
     uberPage.mCurrentRevisionRootPage =
@@ -92,6 +94,8 @@ final public class UberPage extends AbstractPage implements IPage {
 
     // Indirect pages (shallow load without indirect page instances).
     uberPage.mIndirectRevisionRootPageReference = readPageReference(in);
+    uberPage.mStaticTree =
+        new StaticTree(uberPage.mIndirectRevisionRootPageReference, pageCache);
 
     // Make sure latest revision root page is active.
     uberPage.mCurrentRevisionRootPage =
@@ -116,6 +120,10 @@ final public class UberPage extends AbstractPage implements IPage {
     // Indirect pages (shallow COW without page instances).
     uberPage.mIndirectRevisionRootPageReference =
         clonePageReference(committedUberPage.mIndirectRevisionRootPageReference);
+    uberPage.mStaticTree =
+        new StaticTree(
+            uberPage.mIndirectRevisionRootPageReference,
+            uberPage.mPageCache);
 
     uberPage.mCurrentRevisionRootPage =
         committedUberPage.mCurrentRevisionRootPage;
@@ -130,21 +138,12 @@ final public class UberPage extends AbstractPage implements IPage {
   public final RevisionRootPage getRevisionRootPage(final long revisionKey)
       throws Exception {
 
-    // Calculate number of levels and offsets of these levels.
-    final int[] offsets = StaticTree.calcIndirectPageOffsets(revisionKey);
+    RevisionRootPage page =
+        (RevisionRootPage) mPageCache.dereference(
+            mStaticTree.get(revisionKey),
+            IConstants.REVISION_ROOT_PAGE);
 
-    // Indirect reference.
-    PageReference reference = mIndirectRevisionRootPageReference;
-    IPage page = null;
-
-    // Remaining levels.
-    for (int i = 0; i < offsets.length; i++) {
-      page = dereference(reference, IConstants.INDIRECT_PAGE);
-      reference = ((IndirectPage) page).getPageReference(offsets[i]);
-    }
-    return (RevisionRootPage) dereference(
-        reference,
-        IConstants.REVISION_ROOT_PAGE);
+    return RevisionRootPage.clone(revisionKey, page);
 
   }
 

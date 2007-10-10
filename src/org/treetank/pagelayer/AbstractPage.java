@@ -306,25 +306,6 @@ public abstract class AbstractPage implements IPage {
   }
 
   /**
-   * Safely dereference page.
-   * 
-   * @param reference Reference to dereference.
-   * @param kind Kind of dereferenced page.
-   * @return Dereferenced page.
-   * @throws Exception of any kind.
-   */
-  public final IPage dereference(final PageReference reference, final int kind)
-      throws Exception {
-    if (reference.isInstantiated()) {
-      // Return uncommitted referenced page if there is one.
-      return reference.getPage();
-    } else {
-      // Return committed referenced page.
-      return mPageCache.get(reference, kind);
-    }
-  }
-
-  /**
    * {@inheritDoc}
    */
   public abstract void commit(PageWriter pageWriter) throws Exception;

@@ -98,7 +98,8 @@ final public class IndirectPage extends AbstractPage implements IPage {
    */
   public final IPage getPage(final int pageOffset, final byte pageKind)
       throws Exception {
-    return dereference(mIndirectPageReferences[pageOffset], pageKind);
+    return mPageCache
+        .dereference(mIndirectPageReferences[pageOffset], pageKind);
   }
 
   /**
