@@ -31,7 +31,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.treetank.api.IConstants;
-import org.treetank.nodelayer.SessionConfiguration;
+import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.utils.FastByteArrayWriter;
 
 /**

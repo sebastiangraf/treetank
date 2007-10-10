@@ -28,7 +28,7 @@ import java.io.File;
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.api.IConstants;
-import org.treetank.nodelayer.SessionConfiguration;
+import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.UTF;
 

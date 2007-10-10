@@ -27,7 +27,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.nodelayer.Session;
+import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
 import org.treetank.xmllayer.SAXGenerator;
 

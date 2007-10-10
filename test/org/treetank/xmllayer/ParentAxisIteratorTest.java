@@ -30,7 +30,7 @@ import org.junit.Test;
 import org.treetank.api.IAxisIterator;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.nodelayer.Session;
+import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
 
 public class ParentAxisIteratorTest {
