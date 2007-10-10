@@ -21,10 +21,10 @@
 
 package org.treetank.nodelayer;
 
+import org.treetank.api.IConstants;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.pagelayer.Node;
 import org.treetank.pagelayer.RevisionRootPage;
-import org.treetank.utils.IConstants;
 import org.treetank.utils.UTF;
 
 /**

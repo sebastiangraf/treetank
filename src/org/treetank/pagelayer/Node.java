@@ -21,10 +21,10 @@
 
 package org.treetank.pagelayer;
 
+import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
-import org.treetank.utils.IConstants;
 import org.treetank.utils.UTF;
 
 public final class Node implements INode {

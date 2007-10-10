@@ -19,7 +19,7 @@
  * $Id$
  */
 
-package org.treetank.utils;
+package org.treetank.api;
 
 /**
  * <h1>IConstants</h1>

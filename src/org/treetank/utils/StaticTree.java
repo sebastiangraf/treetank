@@ -21,6 +21,8 @@
 
 package org.treetank.utils;
 
+import org.treetank.api.IConstants;
+
 public final class StaticTree {
 
   /**

@@ -18,8 +18,9 @@
  * 
  * $Id$
  */
-package org.treetank.pagelayer;
+package org.treetank.api;
 
+import org.treetank.pagelayer.PageWriter;
 import org.treetank.utils.FastByteArrayWriter;
 
 /**

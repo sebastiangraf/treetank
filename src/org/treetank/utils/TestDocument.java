@@ -21,6 +21,7 @@
 
 package org.treetank.utils;
 
+import org.treetank.api.IConstants;
 import org.treetank.api.IWriteTransaction;
 
 /**

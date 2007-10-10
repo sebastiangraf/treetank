@@ -23,11 +23,10 @@ package org.treetank.nodelayer;
 
 import java.io.File;
 import java.io.RandomAccessFile;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Logger;
 
+import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
@@ -35,7 +34,6 @@ import org.treetank.pagelayer.PageCache;
 import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.PageWriter;
 import org.treetank.pagelayer.UberPage;
-import org.treetank.utils.IConstants;
 
 /**
  * <h1>Session</h1>
@@ -52,10 +50,6 @@ public final class Session implements ISession {
   /** Logger. */
   private static final Logger LOGGER =
       Logger.getLogger(Session.class.getName());
-
-  /** Pool of current sessions. */
-  private static final Map<String, ISession> SESSION_MAP =
-      new HashMap<String, ISession>();
 
   /** Session configuration. */
   private final SessionConfiguration mSessionConfiguration;
@@ -167,23 +161,6 @@ public final class Session implements ISession {
       }
 
     }
-
-    SESSION_MAP.put(mSessionConfiguration.getPath(), this);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public static final ISession getSession(
-      final SessionConfiguration sessionConfiguration) throws Exception {
-    ISession session = SESSION_MAP.get(sessionConfiguration.getPath());
-
-    if (session == null) {
-      session = new Session(sessionConfiguration);
-      SESSION_MAP.put(sessionConfiguration.getPath(), session);
-    }
-
-    return session;
   }
 
   /**

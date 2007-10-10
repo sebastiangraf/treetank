@@ -24,7 +24,7 @@ package org.treetank.pagelayer;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.treetank.utils.IConstants;
+import org.treetank.api.IConstants;
 
 public class NodeTest {
 
