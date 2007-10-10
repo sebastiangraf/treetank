@@ -21,6 +21,8 @@
 
 package org.treetank.utils;
 
+import org.treetank.api.IConstants;
+
 public final class UTF {
 
   public static final int MAX_HASH_LENGTH = 32;

@@ -27,10 +27,10 @@ import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.utils.IConstants;
 import org.treetank.utils.TestDocument;
 import org.treetank.utils.UTF;
 

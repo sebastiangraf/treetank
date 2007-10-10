@@ -24,11 +24,11 @@ package org.treetank.pagelayer;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.treetank.api.IConstants;
 import org.treetank.pagelayer.Node;
 import org.treetank.pagelayer.NodePage;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
-import org.treetank.utils.IConstants;
 import org.treetank.utils.UTF;
 
 

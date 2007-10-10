@@ -21,6 +21,7 @@
 
 package org.treetank.pagelayer;
 
+import org.treetank.api.IPage;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 

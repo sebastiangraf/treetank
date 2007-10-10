@@ -30,9 +30,9 @@ import java.util.zip.Deflater;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.treetank.api.IConstants;
 import org.treetank.nodelayer.SessionConfiguration;
 import org.treetank.utils.FastByteArrayWriter;
-import org.treetank.utils.IConstants;
 
 /**
  * <h1>PageWriter</h1>

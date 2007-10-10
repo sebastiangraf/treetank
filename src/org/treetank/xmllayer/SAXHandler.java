@@ -23,9 +23,9 @@ package org.treetank.xmllayer;
 
 import java.util.ArrayList;
 
+import org.treetank.api.IConstants;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.utils.FastLongStack;
-import org.treetank.utils.IConstants;
 import org.treetank.utils.UTF;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;

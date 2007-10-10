@@ -24,9 +24,10 @@ package org.treetank.pagelayer;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.treetank.api.IConstants;
+import org.treetank.api.IPage;
 import org.treetank.nodelayer.SessionConfiguration;
 import org.treetank.utils.FastByteArrayReader;
-import org.treetank.utils.IConstants;
 import org.treetank.utils.SoftHashMap;
 
 /**

@@ -21,11 +21,11 @@
 
 package org.treetank.nodelayer;
 
+import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 import org.treetank.pagelayer.Node;
 import org.treetank.pagelayer.RevisionRootPage;
-import org.treetank.utils.IConstants;
 
 /**
  * <h1>ReadTransaction</h1>

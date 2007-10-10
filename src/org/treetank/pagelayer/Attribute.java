@@ -21,8 +21,8 @@
 
 package org.treetank.pagelayer;
 
+import org.treetank.api.IConstants;
 import org.treetank.api.INode;
-import org.treetank.utils.IConstants;
 
 public final class Attribute implements INode {
 

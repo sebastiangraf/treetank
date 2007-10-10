@@ -21,9 +21,10 @@
 
 package org.treetank.pagelayer;
 
+import org.treetank.api.IConstants;
+import org.treetank.api.IPage;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
-import org.treetank.utils.IConstants;
 import org.treetank.utils.StaticTree;
 
 final public class UberPage extends AbstractPage implements IPage {

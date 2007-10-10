@@ -22,9 +22,9 @@
 package org.treetank.xmllayer;
 
 import org.treetank.api.IAxisIterator;
+import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastLongStack;
-import org.treetank.utils.IConstants;
 
 /**
  * <h1>DescendantAxisIterator</h1>
