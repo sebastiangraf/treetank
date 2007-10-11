@@ -24,6 +24,7 @@ package org.treetank.sessionlayer;
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
+import org.treetank.api.IReadTransactionState;
 import org.treetank.pagelayer.Node;
 import org.treetank.pagelayer.NodePage;
 import org.treetank.pagelayer.RevisionRootPage;
@@ -38,7 +39,7 @@ import org.treetank.pagelayer.RevisionRootPage;
  */
 public class ReadTransaction implements IReadTransaction {
 
-  protected final TransactionState mState;
+  protected final IReadTransactionState mState;
 
   /** Strong reference to revision root page this transaction reads from. */
   protected final RevisionRootPage mRevisionRootPage;
@@ -54,7 +55,7 @@ public class ReadTransaction implements IReadTransaction {
    * @param revisionRootPage Revision root page to work with.
    */
   protected ReadTransaction(
-      final TransactionState state,
+      final IReadTransactionState state,
       final RevisionRootPage revisionRootPage) {
     mState = state;
     mRevisionRootPage = revisionRootPage;

@@ -23,7 +23,7 @@ package org.treetank.pagelayer;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.IPage;
-import org.treetank.sessionlayer.TransactionState;
+import org.treetank.api.IWriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
@@ -100,10 +100,8 @@ final public class IndirectPage extends AbstractPage implements IPage {
   /**
    * {@inheritDoc}
    */
-  public final void commit(
-      final TransactionState state,
-      final PageWriter pageWriter) throws Exception {
-    commit(state, pageWriter, mIndirectPageReferences);
+  public final void commit(final IWriteTransactionState state) throws Exception {
+    commit(state, mIndirectPageReferences);
   }
 
   /**

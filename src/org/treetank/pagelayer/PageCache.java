@@ -24,7 +24,7 @@ package org.treetank.pagelayer;
 import java.util.Map;
 
 import org.treetank.api.IPage;
-import org.treetank.sessionlayer.TransactionState;
+import org.treetank.api.IReadTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.SoftHashMap;
 
@@ -62,7 +62,7 @@ public final class PageCache {
   }
 
   public final NodePage dereferenceNodePage(
-      final TransactionState state,
+      final IReadTransactionState state,
       final PageReference reference,
       final long nodePageKey) throws Exception {
     if (reference.isInstantiated()) {
@@ -81,7 +81,7 @@ public final class PageCache {
   }
 
   public final NamePage dereferenceNamePage(
-      final TransactionState state,
+      final IReadTransactionState state,
       final PageReference reference) throws Exception {
     if (reference.isInstantiated()) {
       // Return uncommitted referenced page if there is one.
@@ -99,7 +99,7 @@ public final class PageCache {
   }
 
   public final IndirectPage dereferenceIndirectPage(
-      final TransactionState state,
+      final IReadTransactionState state,
       final PageReference reference) throws Exception {
     if (reference.isInstantiated()) {
       // Return uncommitted referenced page if there is one.
@@ -117,7 +117,7 @@ public final class PageCache {
   }
 
   public final RevisionRootPage dereferenceRevisionRootPage(
-      final TransactionState state,
+      final IReadTransactionState state,
       final PageReference reference,
       final long revisionKey) throws Exception {
     if (reference.isInstantiated()) {
@@ -137,7 +137,7 @@ public final class PageCache {
   }
 
   public final UberPage dereferenceUberPage(
-      final TransactionState state,
+      final IReadTransactionState state,
       final PageReference reference) throws Exception {
     if (reference.isInstantiated()) {
       // Return uncommitted referenced page if there is one.

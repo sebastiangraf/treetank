@@ -22,7 +22,8 @@
 package org.treetank.pagelayer;
 
 import org.treetank.api.IPage;
-import org.treetank.sessionlayer.TransactionState;
+import org.treetank.api.IReadTransactionState;
+import org.treetank.api.IWriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
@@ -115,7 +116,7 @@ public abstract class AbstractPage implements IPage {
    * @throws Exception of any kind.
    */
   public final RevisionRootPage prepareRevisionRootPage(
-      final TransactionState state,
+      final IReadTransactionState state,
       final PageReference reference,
       final long revisionKey) throws Exception {
 
@@ -148,7 +149,7 @@ public abstract class AbstractPage implements IPage {
    * @throws Exception of any kind.
    */
   public final NamePage prepareNamePage(
-      final TransactionState state,
+      final IReadTransactionState state,
       final PageReference reference) throws Exception {
 
     NamePage page = (NamePage) reference.getPage();
@@ -181,7 +182,7 @@ public abstract class AbstractPage implements IPage {
    * @throws Exception of any kind.
    */
   public final NodePage prepareNodePage(
-      final TransactionState state,
+      final IReadTransactionState state,
       final PageReference reference,
       final long nodePageKey) throws Exception {
 
@@ -216,7 +217,7 @@ public abstract class AbstractPage implements IPage {
    * @throws Exception of any kind.
    */
   public final IndirectPage prepareIndirectPage(
-      final TransactionState state,
+      final IReadTransactionState state,
       final PageReference reference) throws Exception {
 
     IndirectPage page = (IndirectPage) reference.getPage();
@@ -248,11 +249,10 @@ public abstract class AbstractPage implements IPage {
    * @throws Exception of any kind.
    */
   public final void commit(
-      final TransactionState state,
-      final PageWriter writer,
+      final IWriteTransactionState state,
       final PageReference reference) throws Exception {
     if (reference.isInstantiated() && reference.isDirty()) {
-      writer.write(state, reference);
+      state.getPageWriter().write(state, reference);
       state.getPageCache().put(reference);
     }
   }
@@ -265,11 +265,10 @@ public abstract class AbstractPage implements IPage {
    * @throws Exception of any kind.
    */
   public final void commit(
-      final TransactionState state,
-      final PageWriter writer,
+      final IWriteTransactionState state,
       final PageReference[] references) throws Exception {
     for (int i = 0, l = references.length; i < l; i++) {
-      commit(state, writer, references[i]);
+      commit(state, references[i]);
     }
   }
 
@@ -304,9 +303,8 @@ public abstract class AbstractPage implements IPage {
   /**
    * {@inheritDoc}
    */
-  public abstract void commit(
-      final TransactionState state,
-      PageWriter pageWriter) throws Exception;
+  public abstract void commit(final IWriteTransactionState state)
+      throws Exception;
 
   /**
    * {@inheritDoc}

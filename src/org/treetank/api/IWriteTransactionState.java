@@ -16,37 +16,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * $Id$
+ * $Id: IReadTransaction.java 2987 2007-10-01 12:58:09Z kramis $
  */
 
 package org.treetank.api;
 
-import org.treetank.utils.FastByteArrayWriter;
+import org.treetank.pagelayer.PageWriter;
 
 /**
- * <h1>IPage</h1>
+ * <h1>IWriteTransactionState</h1>
  * 
  * <p>
- * Each page must implement this interface to allow recursive commit on all
- * dirty pages and to recursively serialize all dirty pages.
+ * Interface to access the state of a IReadTransaction.
  * </p>
  */
-public interface IPage {
+public interface IWriteTransactionState extends IReadTransactionState {
 
   /**
-   * Recursively call commit on all referenced pages.
+   * Get the page writer used within this transaction.
    * 
-   * @param state IWriteTransaction state.
-   * @throws Exception occurring during commit operation.
+   * @return PageWriter instance.
    */
-  public void commit(final IWriteTransactionState state) throws Exception;
-
-  /**
-   * Serialize self into object output stream.
-   * 
-   * @param out Object output stream.
-   * @throws Exception if the stream encounters an error.
-   */
-  public void serialize(final FastByteArrayWriter out) throws Exception;
+  public PageWriter getPageWriter();
 
 }

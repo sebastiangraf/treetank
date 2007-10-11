@@ -22,9 +22,9 @@
 package org.treetank.utils;
 
 import org.treetank.api.IConstants;
+import org.treetank.api.IReadTransactionState;
 import org.treetank.pagelayer.IndirectPage;
 import org.treetank.pagelayer.PageReference;
-import org.treetank.sessionlayer.TransactionState;
 
 public final class StaticTree {
 
@@ -44,8 +44,9 @@ public final class StaticTree {
     }
   }
 
-  public final PageReference get(final TransactionState state, final long key)
-      throws Exception {
+  public final PageReference get(
+      final IReadTransactionState state,
+      final long key) throws Exception {
 
     // Indirect reference.
     PageReference reference = mStartReference;

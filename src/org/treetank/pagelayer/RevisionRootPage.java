@@ -22,7 +22,8 @@
 package org.treetank.pagelayer;
 
 import org.treetank.api.IPage;
-import org.treetank.sessionlayer.TransactionState;
+import org.treetank.api.IReadTransactionState;
+import org.treetank.api.IWriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 import org.treetank.utils.StaticTree;
@@ -146,8 +147,9 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
    * @param nameKey Name key identifying name.
    * @return Name of name key.
    */
-  public final String getName(final TransactionState state, final int nameKey)
-      throws Exception {
+  public final String getName(
+      final IReadTransactionState state,
+      final int nameKey) throws Exception {
     final NamePage namePage =
         state.getPageCache().dereferenceNamePage(state, mNamePageReference);
     return namePage.getName(nameKey);
@@ -159,8 +161,9 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
    * @param name Name to create key for.
    * @return Name key.
    */
-  public final int createNameKey(final TransactionState state, final String name)
-      throws Exception {
+  public final int createNameKey(
+      final IReadTransactionState state,
+      final String name) throws Exception {
     final String string = (name == null ? "" : name);
     final int nameKey = string.hashCode();
     if (getName(state, nameKey) == null) {
@@ -178,7 +181,7 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
    * @throws Exception of any kind.
    */
   public final NodePage getNodePage(
-      final TransactionState state,
+      final IReadTransactionState state,
       final long nodePageKey) throws Exception {
 
     return state.getPageCache().dereferenceNodePage(
@@ -189,7 +192,7 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
   }
 
   private final NodePage prepareNodePage(
-      final TransactionState state,
+      final IReadTransactionState state,
       final long nodePageKey) throws Exception {
 
     // Calculate number of levels and offsets of these levels.
@@ -209,14 +212,15 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
 
   }
 
-  public final Node prepareNode(final TransactionState state, final long nodeKey)
-      throws Exception {
+  public final Node prepareNode(
+      final IReadTransactionState state,
+      final long nodeKey) throws Exception {
     return prepareNodePage(state, Node.nodePageKey(nodeKey)).getNode(
         Node.nodePageOffset(nodeKey));
   }
 
   public final Node createNode(
-      final TransactionState state,
+      final IReadTransactionState state,
       final long parentKey,
       final long firstChildKey,
       final long leftSiblingKey,
@@ -251,8 +255,9 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
     return node;
   }
 
-  public final void removeNode(final TransactionState state, final long nodeKey)
-      throws Exception {
+  public final void removeNode(
+      final IReadTransactionState state,
+      final long nodeKey) throws Exception {
     mNodeCount -= 1;
     prepareNodePage(state, Node.nodePageKey(nodeKey)).setNode(
         Node.nodePageOffset(nodeKey),
@@ -262,11 +267,9 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
   /**
    * {@inheritDoc}
    */
-  public final void commit(
-      final TransactionState state,
-      final PageWriter pageWriter) throws Exception {
-    commit(state, pageWriter, mNamePageReference);
-    commit(state, pageWriter, mIndirectReference);
+  public final void commit(final IWriteTransactionState state) throws Exception {
+    commit(state, mNamePageReference);
+    commit(state, mIndirectReference);
   }
 
   /**

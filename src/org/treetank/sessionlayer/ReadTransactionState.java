@@ -16,37 +16,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * $Id$
+ * $Id:SessionConfiguration.java 3019 2007-10-10 13:28:24Z kramis $
  */
 
-package org.treetank.api;
+package org.treetank.sessionlayer;
 
-import org.treetank.utils.FastByteArrayWriter;
+import org.treetank.api.IReadTransactionState;
+import org.treetank.pagelayer.PageCache;
+import org.treetank.pagelayer.PageReader;
 
-/**
- * <h1>IPage</h1>
- * 
- * <p>
- * Each page must implement this interface to allow recursive commit on all
- * dirty pages and to recursively serialize all dirty pages.
- * </p>
- */
-public interface IPage {
+public class ReadTransactionState implements IReadTransactionState {
 
-  /**
-   * Recursively call commit on all referenced pages.
-   * 
-   * @param state IWriteTransaction state.
-   * @throws Exception occurring during commit operation.
-   */
-  public void commit(final IWriteTransactionState state) throws Exception;
+  private final PageCache mPageCache;
+
+  private final PageReader mPageReader;
+
+  public ReadTransactionState(
+      final PageCache pageCache,
+      final PageReader pageReader) {
+    mPageCache = pageCache;
+    mPageReader = pageReader;
+  }
 
   /**
-   * Serialize self into object output stream.
-   * 
-   * @param out Object output stream.
-   * @throws Exception if the stream encounters an error.
+   * {@inheritDoc}
    */
-  public void serialize(final FastByteArrayWriter out) throws Exception;
+  public final PageCache getPageCache() {
+    return mPageCache;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final PageReader getPageReader() {
+    return mPageReader;
+  }
 
 }

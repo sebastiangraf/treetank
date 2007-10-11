@@ -23,7 +23,8 @@ package org.treetank.pagelayer;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.IPage;
-import org.treetank.sessionlayer.TransactionState;
+import org.treetank.api.IReadTransactionState;
+import org.treetank.api.IWriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 import org.treetank.utils.StaticTree;
@@ -82,7 +83,7 @@ final public class UberPage extends AbstractPage implements IPage {
    * @throws Exception
    */
   public static final UberPage read(
-      final TransactionState state,
+      final IReadTransactionState state,
       final FastByteArrayReader in) throws Exception {
 
     final UberPage uberPage = new UberPage();
@@ -130,7 +131,7 @@ final public class UberPage extends AbstractPage implements IPage {
   }
 
   public final RevisionRootPage getRevisionRootPage(
-      final TransactionState state,
+      final IReadTransactionState state,
       final long revisionKey) throws Exception {
 
     RevisionRootPage page =
@@ -144,7 +145,7 @@ final public class UberPage extends AbstractPage implements IPage {
   }
 
   public final RevisionRootPage prepareRevisionRootPage(
-      final TransactionState state) throws Exception {
+      final IReadTransactionState state) throws Exception {
 
     // Calculate number of levels and offsets of these levels.
     final int[] offsets =
@@ -172,10 +173,8 @@ final public class UberPage extends AbstractPage implements IPage {
   /**
    * {@inheritDoc}
    */
-  public final void commit(
-      final TransactionState state,
-      final PageWriter pageWriter) throws Exception {
-    commit(state, pageWriter, mIndirectPageReference);
+  public final void commit(final IWriteTransactionState state) throws Exception {
+    commit(state, mIndirectPageReference);
     mRevisionCount += 1;
   }
 
