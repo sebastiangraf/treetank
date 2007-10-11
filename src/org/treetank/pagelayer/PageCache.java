@@ -26,7 +26,7 @@ import java.util.Map;
 import org.treetank.api.IPage;
 import org.treetank.api.IReadTransactionState;
 import org.treetank.utils.FastByteArrayReader;
-import org.treetank.utils.SoftHashMap;
+import org.treetank.utils.WeakHashMap;
 
 /**
  * <h1>PageCache</h1>
@@ -48,7 +48,7 @@ public final class PageCache {
    * @throws Exception of any kind.
    */
   public PageCache() throws Exception {
-    mCache = new SoftHashMap<Long, IPage>();
+    mCache = new WeakHashMap<Long, IPage>();
   }
 
   /**

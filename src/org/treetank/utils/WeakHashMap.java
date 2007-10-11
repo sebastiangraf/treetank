@@ -22,22 +22,21 @@
 package org.treetank.utils;
 
 import java.lang.ref.ReferenceQueue;
-import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * <h1>SoftHashMap</h1>
+ * <h1>WeakHashMap</h1>
  * 
  * <p>
  * Based on the SoftHashMap implemented by Dr. Heinz Kabutz.
  * </p>
  * 
  * <p>
- * Hash map based on soft references. The hash map always makes sure a limited
- * amount of strong references it maintained in FIFO order to simulate LRU.
+ * Hash map based on weak references.
  * </p>
  * 
  * <p>
@@ -47,20 +46,20 @@ import java.util.Set;
  * @param <K> Key object of type K.
  * @param <V> Value object of type V.
  */
-public final class SoftHashMap<K, V> extends AbstractMap<K, V> {
+public final class WeakHashMap<K, V> extends AbstractMap<K, V> {
 
-  /** The internal HashMap that will hold the SoftReference. */
-  private final Map<K, SoftReference<V>> mInternalMap;
+  /** The internal HashMap that will hold the WeakReference. */
+  private final Map<K, WeakReference<V>> mInternalMap;
 
-  /** Reference queue for cleared SoftReference objects. */
+  /** Reference queue for cleared WeakReference objects. */
   private final ReferenceQueue mQueue;
 
   /**
    * Default constructor internally using 32 strong references.
    *
    */
-  public SoftHashMap() {
-    mInternalMap = new HashMap<K, SoftReference<V>>();
+  public WeakHashMap() {
+    mInternalMap = new HashMap<K, WeakReference<V>>();
     mQueue = new ReferenceQueue();
   }
 
@@ -70,12 +69,12 @@ public final class SoftHashMap<K, V> extends AbstractMap<K, V> {
   @Override
   public final V get(final Object key) {
     V value = null;
-    final SoftReference<V> softReference = mInternalMap.get(key);
-    if (softReference != null) {
-      // Soft reference was garbage collected.
-      value = softReference.get();
+    final WeakReference<V> weakReference = mInternalMap.get(key);
+    if (weakReference != null) {
+      // Weak reference was garbage collected.
+      value = weakReference.get();
       if (value == null) {
-        // Reflect garbage collected soft reference in internal hash map.
+        // Reflect garbage collected weak reference in internal hash map.
         mInternalMap.remove(key);
       }
     }
@@ -88,7 +87,7 @@ public final class SoftHashMap<K, V> extends AbstractMap<K, V> {
   @Override
   public final V put(final K key, final V value) {
     processQueue();
-    mInternalMap.put(key, new SoftValue<V>(value, key, mQueue));
+    mInternalMap.put(key, new WeakValue<V>(value, key, mQueue));
     return null;
   }
 
@@ -129,30 +128,30 @@ public final class SoftHashMap<K, V> extends AbstractMap<K, V> {
   }
 
   /**
-   * Remove garbage collected soft values with the help of the reference queue.
+   * Remove garbage collected weak values with the help of the reference queue.
    *
    */
   private final void processQueue() {
-    SoftValue<V> softValue;
-    while ((softValue = (SoftValue) mQueue.poll()) != null) {
-      mInternalMap.remove(softValue.key);
+    WeakValue<V> weakValue;
+    while ((weakValue = (WeakValue) mQueue.poll()) != null) {
+      mInternalMap.remove(weakValue.key);
     }
   }
 
   /**
    * Internal subclass to store keys and values for more convenient lookups.
    */
-  private final class SoftValue<V> extends SoftReference<V> {
+  private final class WeakValue<V> extends WeakReference<V> {
     private final K key;
 
     /**
      * Constructor.
      * 
-     * @param initValue Value wrapped as soft reference.
+     * @param initValue Value wrapped as weak reference.
      * @param initKey Key for given value.
      * @param initReferenceQueue Reference queue for cleanup.
      */
-    private SoftValue(
+    private WeakValue(
         final V initValue,
         final K initKey,
         final ReferenceQueue initReferenceQueue) {
