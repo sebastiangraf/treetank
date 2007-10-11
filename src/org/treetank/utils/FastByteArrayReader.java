@@ -82,6 +82,7 @@ public final class FastByteArrayReader {
     bb.put(buffer, position, 6);
     bb.position(0);
     position += 6;
+    
     return bb.getLong();   
   }
 
