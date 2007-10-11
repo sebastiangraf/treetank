@@ -32,7 +32,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
 
-
 /**
  * <h1>SAXHandler</h1>
  * 
@@ -43,36 +42,36 @@ import org.xml.sax.helpers.DefaultHandler;
 public class SAXHandler extends DefaultHandler implements LexicalHandler {
 
   /** System ID of document. */
-  private final String document;
+  private final String mDocument;
 
   /** Idefix write transaction. */
-  private final IWriteTransaction trx;
+  private final IWriteTransaction mWTX;
 
   /** Stack containing left sibling nodeKey of each level. */
-  private final FastLongStack leftSiblingKeyStack;
+  private final FastLongStack mLeftSiblingKeyStack;
 
   /** Aggregated pending text node. */
-  private final StringBuilder characters;
+  private final StringBuilder mCharacters;
 
   /** List of prefixes bound to last element node. */
-  private final ArrayList<String> prefixList;
+  private final ArrayList<String> mPrefixList;
 
   /** List of URIs bound to last element node. */
-  private final ArrayList<String> uriList;
+  private final ArrayList<String> mURIList;
 
   /**
    * Constructor.
    * 
-   * @param initDocument Name of document.
-   * @param initTrx Writing transaction to write to.
+   * @param document Name of document.
+   * @param wtx Writing transaction to write to.
    */
-  public SAXHandler(final String initDocument, final IWriteTransaction initTrx) {
-    document = initDocument;
-    trx = initTrx;
-    leftSiblingKeyStack = new FastLongStack();
-    characters = new StringBuilder();
-    prefixList = new ArrayList<String>();
-    uriList = new ArrayList<String>();
+  public SAXHandler(final String document, final IWriteTransaction wtx) {
+    mDocument = document;
+    mWTX = wtx;
+    mLeftSiblingKeyStack = new FastLongStack();
+    mCharacters = new StringBuilder();
+    mPrefixList = new ArrayList<String>();
+    mURIList = new ArrayList<String>();
   }
 
   /**
@@ -83,9 +82,9 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
 
     try {
 
-      trx.insertRoot(document);
+      mWTX.insertRoot(mDocument);
 
-      leftSiblingKeyStack.push(IConstants.NULL_KEY);
+      mLeftSiblingKeyStack.push(IConstants.NULL_KEY);
 
     } catch (Exception e) {
       throw new SAXException(e);
@@ -110,9 +109,9 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
 
       // Insert element node and maintain stack.      
       long key;
-      if (leftSiblingKeyStack.peek() == IConstants.NULL_KEY) {
+      if (mLeftSiblingKeyStack.peek() == IConstants.NULL_KEY) {
         key =
-            trx.insertFirstChild(
+            mWTX.insertFirstChild(
                 IConstants.ELEMENT,
                 localName,
                 uri,
@@ -120,28 +119,28 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
                 UTF.EMPTY);
       } else {
         key =
-            trx.insertRightSibling(
+            mWTX.insertRightSibling(
                 IConstants.ELEMENT,
                 localName,
                 uri,
                 qNameToPrefix(qName),
                 UTF.EMPTY);
       }
-      leftSiblingKeyStack.pop();
-      leftSiblingKeyStack.push(key);
+      mLeftSiblingKeyStack.pop();
+      mLeftSiblingKeyStack.push(key);
 
-      leftSiblingKeyStack.push(IConstants.NULL_KEY);
+      mLeftSiblingKeyStack.push(IConstants.NULL_KEY);
 
       // Insert uriKey nodes.
-      for (int i = 0, n = prefixList.size(); i < n; i++) {
+      for (int i = 0, n = mPrefixList.size(); i < n; i++) {
         //insert(IConstants.NAMESPACE, "", uriList.get(i), prefixList.get(i), "");
       }
-      prefixList.clear();
-      uriList.clear();
+      mPrefixList.clear();
+      mURIList.clear();
 
       // Insert attribute nodes.
       for (int i = 0, l = attr.getLength(); i < l; i++) {
-        trx.insertAttribute(
+        mWTX.insertAttribute(
             attr.getLocalName(i),
             attr.getURI(i),
             qNameToPrefix(attr.getQName(i)),
@@ -166,9 +165,9 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
 
       insertPendingText();
 
-      leftSiblingKeyStack.pop();
+      mLeftSiblingKeyStack.pop();
 
-      trx.moveTo(leftSiblingKeyStack.peek());
+      mWTX.moveTo(mLeftSiblingKeyStack.peek());
 
     } catch (Exception e) {
       throw new SAXException(e);
@@ -182,7 +181,7 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
   public void characters(final char[] ch, final int start, final int length)
       throws SAXException {
 
-    characters.append(ch, start, length);
+    mCharacters.append(ch, start, length);
 
   }
 
@@ -204,8 +203,8 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
   @Override
   public void startPrefixMapping(String prefix, String uri) throws SAXException {
 
-    prefixList.add(prefix);
-    uriList.add(uri);
+    mPrefixList.add(prefix);
+    mURIList.add(uri);
   }
 
   /**
@@ -215,25 +214,24 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
    */
   private final void insertPendingText() throws Exception {
 
-    String text = characters.toString().trim();
-    characters.setLength(0);
+    String text = mCharacters.toString().trim();
+    mCharacters.setLength(0);
 
     if (text.length() > 0) {
 
       // Insert text node and maintain stacks.
       long key;
-      if (leftSiblingKeyStack.peek() == IConstants.NULL_KEY) {
+      if (mLeftSiblingKeyStack.peek() == IConstants.NULL_KEY) {
         key =
-            trx
-                .insertFirstChild(IConstants.TEXT, "", "", "", UTF
-                    .convert(text));
+            mWTX.insertFirstChild(IConstants.TEXT, "", "", "", UTF
+                .convert(text));
       } else {
         key =
-            trx.insertRightSibling(IConstants.TEXT, "", "", "", UTF
+            mWTX.insertRightSibling(IConstants.TEXT, "", "", "", UTF
                 .convert(text));
       }
-      leftSiblingKeyStack.pop();
-      leftSiblingKeyStack.push(key);
+      mLeftSiblingKeyStack.pop();
+      mLeftSiblingKeyStack.push(key);
 
     }
 

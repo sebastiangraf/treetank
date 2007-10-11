@@ -37,37 +37,36 @@ import org.treetank.utils.FastLongStack;
 public class DescendantAxisIterator implements IAxisIterator {
 
   /** Exclusive (immutable) trx to iterate with. */
-  private final IReadTransaction trx;
+  private final IReadTransaction mRTX;
 
   /** Stack for remembering next nodeKey in document order. */
-  private final FastLongStack rightSiblingKeyStack;
+  private final FastLongStack mRightSiblingKeyStack;
 
   /** The nodeKey of the next node to visit. */
-  private long nextKey;
+  private long mNextKey;
 
   /**
    * Constructor initializing internal state.
    * 
-   * @param initTrx Exclusive (immutable) trx to iterate with.
+   * @param rtx Exclusive (immutable) trx to iterate with.
    * @throws Exception of any kind.
    */
-  public DescendantAxisIterator(final IReadTransaction initTrx)
-      throws Exception {
+  public DescendantAxisIterator(final IReadTransaction rtx) throws Exception {
 
     // Init members.
-    trx = initTrx;
-    rightSiblingKeyStack = new FastLongStack();
+    mRTX = rtx;
+    mRightSiblingKeyStack = new FastLongStack();
 
     // Find delimiter nodeKey.
-    final long currentKey = trx.getNodeKey();
-    while ((trx.getRightSiblingKey() == IConstants.NULL_KEY)
-        && (trx.getParentKey() != IConstants.NULL_KEY)) {
-      trx.moveToParent();
+    final long currentKey = mRTX.getNodeKey();
+    while ((mRTX.getRightSiblingKey() == IConstants.NULL_KEY)
+        && (mRTX.getParentKey() != IConstants.NULL_KEY)) {
+      mRTX.moveToParent();
     }
-    rightSiblingKeyStack.push(trx.getRightSiblingKey());
-    trx.moveTo(currentKey);
+    mRightSiblingKeyStack.push(mRTX.getRightSiblingKey());
+    mRTX.moveTo(currentKey);
 
-    nextKey = trx.getFirstChildKey();
+    mNextKey = mRTX.getFirstChildKey();
 
   }
 
@@ -76,25 +75,26 @@ public class DescendantAxisIterator implements IAxisIterator {
    */
   public final boolean next() throws Exception {
 
-    if (trx.moveTo(nextKey) && trx.getNodeKey() != rightSiblingKeyStack.get(0)) {
+    if (mRTX.moveTo(mNextKey)
+        && mRTX.getNodeKey() != mRightSiblingKeyStack.get(0)) {
 
       // Always follow first child if there is one.
-      if (trx.getFirstChildKey() != IConstants.NULL_KEY) {
-        nextKey = trx.getFirstChildKey();
-        if (trx.getRightSiblingKey() != IConstants.NULL_KEY) {
-          rightSiblingKeyStack.push(trx.getRightSiblingKey());
+      if (mRTX.getFirstChildKey() != IConstants.NULL_KEY) {
+        mNextKey = mRTX.getFirstChildKey();
+        if (mRTX.getRightSiblingKey() != IConstants.NULL_KEY) {
+          mRightSiblingKeyStack.push(mRTX.getRightSiblingKey());
         }
         return true;
       }
 
       // Then follow right sibling if there is one.
-      if (trx.getRightSiblingKey() != IConstants.NULL_KEY) {
-        nextKey = trx.getRightSiblingKey();
+      if (mRTX.getRightSiblingKey() != IConstants.NULL_KEY) {
+        mNextKey = mRTX.getRightSiblingKey();
         return true;
       }
 
       // Then follow right sibling on stack.
-      nextKey = rightSiblingKeyStack.pop();
+      mNextKey = mRightSiblingKeyStack.pop();
       return true;
 
     } else {

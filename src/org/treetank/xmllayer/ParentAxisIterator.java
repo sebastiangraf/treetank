@@ -35,32 +35,32 @@ import org.treetank.api.IReadTransaction;
 public class ParentAxisIterator implements IAxisIterator {
 
   /** Exclusive (immutable) trx to iterate with. */
-  private final IReadTransaction trx;
+  private final IReadTransaction mRTX;
 
   /** The nodeKey of the next node to visit. */
-  private long nextKey;
+  private long mNextKey;
 
   /** Track number of calls of next. */
-  private boolean isFirstNext;
+  private boolean mIsFirstNext;
 
   /**
    * Constructor initializing internal state.
    * 
-   * @param initTrx Exclusive (immutable) trx to iterate with.
+   * @param rtx Exclusive (immutable) trx to iterate with.
    * @throws Exception of any kind.
    */
-  public ParentAxisIterator(final IReadTransaction initTrx) throws Exception {
-    trx = initTrx;
-    isFirstNext = true;
-    nextKey = trx.getParentKey();
+  public ParentAxisIterator(final IReadTransaction rtx) throws Exception {
+    mRTX = rtx;
+    mIsFirstNext = true;
+    mNextKey = mRTX.getParentKey();
   }
 
   /**
    * {@inheritDoc}
    */
   public final boolean next() throws Exception {
-    if (isFirstNext && trx.moveTo(nextKey)) {
-      isFirstNext = false;
+    if (mIsFirstNext && mRTX.moveTo(mNextKey)) {
+      mIsFirstNext = false;
       return true;
     } else {
       return false;

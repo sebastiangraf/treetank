@@ -32,18 +32,18 @@ package org.treetank.utils;
 public final class FastObjectStack {
 
   /** Internal array to store stack elements. */
-  private Object[] stack;
+  private Object[] mStack;
 
   /** Current size of stack. */
-  private int size;
+  private int mSize;
 
   /**
    * Constructor.
    *
    */
   public FastObjectStack() {
-    stack = new Object[32];
-    size = 0;
+    mStack = new Object[32];
+    mSize = 0;
   }
 
   /**
@@ -53,12 +53,12 @@ public final class FastObjectStack {
    * @param element Element to push.
    */
   public final void push(final Object element) {
-    if (stack.length == size) {
-      Object[] biggerStack = new Object[stack.length << 1];
-      System.arraycopy(stack, 0, biggerStack, 0, stack.length);
-      stack = biggerStack;
+    if (mStack.length == mSize) {
+      Object[] biggerStack = new Object[mStack.length << 1];
+      System.arraycopy(mStack, 0, biggerStack, 0, mStack.length);
+      mStack = biggerStack;
     }
-    stack[size++] = element;
+    mStack[mSize++] = element;
   }
 
   /**
@@ -68,7 +68,7 @@ public final class FastObjectStack {
    * @return Topmost stack element.
    */
   public final Object peek() {
-    return stack[size - 1];
+    return mStack[mSize - 1];
   }
 
   /**
@@ -79,7 +79,7 @@ public final class FastObjectStack {
    * @return Stack element at given position.
    */
   public final Object get(final int position) {
-    return stack[position];
+    return mStack[position];
   }
 
   /**
@@ -88,7 +88,7 @@ public final class FastObjectStack {
    * @return Removed topmost element of stack.
    */
   public final Object pop() {
-    return stack[--size];
+    return mStack[--mSize];
   }
 
   /**
@@ -96,7 +96,7 @@ public final class FastObjectStack {
    * 
    */
   public final void clear() {
-    size = 0;
+    mSize = 0;
   }
 
   /**
@@ -105,7 +105,7 @@ public final class FastObjectStack {
    * @return Current size of stack.
    */
   public final int size() {
-    return size;
+    return mSize;
   }
 
 }

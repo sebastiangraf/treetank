@@ -40,36 +40,35 @@ import com.sun.org.apache.xml.internal.serializer.OutputPropertiesFactory;
 import com.sun.org.apache.xml.internal.serializer.Serializer;
 import com.sun.org.apache.xml.internal.serializer.SerializerFactory;
 
-
 /**
  * Reconstructs an XML document from XPathAccelerator encoding.
  */
 public final class SAXGenerator extends Thread {
 
-  private final IReadTransaction trx;
+  private final IReadTransaction mRTX;
 
-  private ContentHandler handler;
+  private ContentHandler mHandler;
 
-  private Writer writer;
+  private Writer mWriter;
 
-  private boolean isSerialize = false;
+  private boolean mIsSerialize = false;
 
-  private boolean asInputStream = false;
+  private boolean mAsInputStream = false;
 
-  private PipedOutputStream pipedOut;
+  private PipedOutputStream mPipedOut;
 
-  private final FastLongStack rightSiblingKeyStack;
+  private final FastLongStack mRightSiblingKeyStack;
 
   /** The nodeKey of the next node to visit. */
-  private long nextKey;
+  private long mNextKey;
 
-  private final FastObjectStack nodeStack = new FastObjectStack();
+  private final FastObjectStack mNodeStack = new FastObjectStack();
 
   /**
    * Constructor for printing the reconstructed XML of global storage to stdout.
    */
-  public SAXGenerator(final IReadTransaction initTrx) throws Exception {
-    this(initTrx, new PrintWriter(System.out));
+  public SAXGenerator(final IReadTransaction rtx) throws Exception {
+    this(rtx, new PrintWriter(System.out));
   }
 
   /**
@@ -78,18 +77,18 @@ public final class SAXGenerator extends Thread {
    * @param aWriter
    * @see java.io.Writer
    */
-  public SAXGenerator(final IReadTransaction initTrx, final Writer initWriter)
+  public SAXGenerator(final IReadTransaction rtx, final Writer writer)
       throws Exception {
 
-    trx = initTrx;
-    writer = initWriter;
-    isSerialize = true;
+    mRTX = rtx;
+    mWriter = writer;
+    mIsSerialize = true;
 
     // Prepare full descendant iteration.
-    rightSiblingKeyStack = new FastLongStack();
-    trx.moveToRoot();
-    rightSiblingKeyStack.push(IConstants.NULL_KEY);
-    nextKey = trx.getFirstChildKey();
+    mRightSiblingKeyStack = new FastLongStack();
+    mRTX.moveToRoot();
+    mRightSiblingKeyStack.push(IConstants.NULL_KEY);
+    mNextKey = mRTX.getFirstChildKey();
 
   }
 
@@ -99,20 +98,19 @@ public final class SAXGenerator extends Thread {
    * @param aWriter
    * @see java.io.Writer
    */
-  public SAXGenerator(
-      final IReadTransaction initTrx,
-      final PipedInputStream pipedIn) throws Exception {
+  public SAXGenerator(final IReadTransaction rtx, final PipedInputStream pipedIn)
+      throws Exception {
 
-    trx = initTrx;
-    pipedOut = new PipedOutputStream(pipedIn);
-    asInputStream = true;
-    isSerialize = true;
+    mRTX = rtx;
+    mPipedOut = new PipedOutputStream(pipedIn);
+    mAsInputStream = true;
+    mIsSerialize = true;
 
     // Prepare full descendant iteration.
-    rightSiblingKeyStack = new FastLongStack();
-    trx.moveToRoot();
-    rightSiblingKeyStack.push(IConstants.NULL_KEY);
-    nextKey = trx.getFirstChildKey();
+    mRightSiblingKeyStack = new FastLongStack();
+    mRTX.moveToRoot();
+    mRightSiblingKeyStack.push(IConstants.NULL_KEY);
+    mNextKey = mRTX.getFirstChildKey();
 
   }
 
@@ -124,17 +122,17 @@ public final class SAXGenerator extends Thread {
    * </p>
    */
   public SAXGenerator(
-      final IReadTransaction initTrx,
+      final IReadTransaction rtx,
       final ContentHandler contentHandler) throws Exception {
 
-    trx = initTrx;
-    handler = contentHandler;
+    mRTX = rtx;
+    mHandler = contentHandler;
 
     // Prepare full descendant iteration.
-    rightSiblingKeyStack = new FastLongStack();
-    rightSiblingKeyStack.push(IConstants.NULL_KEY);
-    trx.moveToRoot();
-    nextKey = trx.getFirstChildKey();
+    mRightSiblingKeyStack = new FastLongStack();
+    mRightSiblingKeyStack.push(IConstants.NULL_KEY);
+    mRTX.moveToRoot();
+    mNextKey = mRTX.getFirstChildKey();
 
   }
 
@@ -146,11 +144,11 @@ public final class SAXGenerator extends Thread {
 
     final AttributesImpl attributes = new AttributesImpl();
 
-    for (int i = 0, l = trx.getAttributeCount(); i < l; i++) {
-      final INode attribute = trx.getNode().getAttribute(i);
-      attributes.addAttribute(trx.nameForKey(attribute.getURIKey()), trx
-          .nameForKey(attribute.getLocalPartKey()), qName(trx
-          .nameForKey(attribute.getPrefixKey()), trx.nameForKey(attribute
+    for (int i = 0, l = mRTX.getAttributeCount(); i < l; i++) {
+      final INode attribute = mRTX.getNode().getAttribute(i);
+      attributes.addAttribute(mRTX.nameForKey(attribute.getURIKey()), mRTX
+          .nameForKey(attribute.getLocalPartKey()), qName(mRTX
+          .nameForKey(attribute.getPrefixKey()), mRTX.nameForKey(attribute
           .getLocalPartKey())), "", UTF.convert(attribute.getValue()));
     }
 
@@ -159,83 +157,83 @@ public final class SAXGenerator extends Thread {
 
   private final void setNextKey() throws Exception {
     // Where to go?
-    if (trx.getFirstChildKey() != IConstants.NULL_KEY) {
-      nextKey = trx.getFirstChildKey();
-      if (trx.getRightSiblingKey() == IConstants.NULL_KEY) {
-        rightSiblingKeyStack.push(rightSiblingKeyStack.peek());
+    if (mRTX.getFirstChildKey() != IConstants.NULL_KEY) {
+      mNextKey = mRTX.getFirstChildKey();
+      if (mRTX.getRightSiblingKey() == IConstants.NULL_KEY) {
+        mRightSiblingKeyStack.push(mRightSiblingKeyStack.peek());
       } else {
-        rightSiblingKeyStack.push(trx.getRightSiblingKey());
+        mRightSiblingKeyStack.push(mRTX.getRightSiblingKey());
       }
-    } else if (trx.getRightSiblingKey() != IConstants.NULL_KEY) {
-      nextKey = trx.getRightSiblingKey();
-      rightSiblingKeyStack.push(trx.getRightSiblingKey());
+    } else if (mRTX.getRightSiblingKey() != IConstants.NULL_KEY) {
+      mNextKey = mRTX.getRightSiblingKey();
+      mRightSiblingKeyStack.push(mRTX.getRightSiblingKey());
     } else {
-      nextKey = rightSiblingKeyStack.peek();
-      rightSiblingKeyStack.push(rightSiblingKeyStack.peek());
+      mNextKey = mRightSiblingKeyStack.peek();
+      mRightSiblingKeyStack.push(mRightSiblingKeyStack.peek());
     }
     // Remember node infos.
-    nodeStack.push(trx.getNode());
+    mNodeStack.push(mRTX.getNode());
   }
 
   private final void visitDocument() throws Exception {
 
     // Iterate over all descendants.
-    while (trx.moveTo(nextKey)) {
+    while (mRTX.moveTo(mNextKey)) {
 
       //debug();
 
       // --- Clean up all pending closing tags. --------------------------------
-      while (rightSiblingKeyStack.size() > 0
-          && trx.getNodeKey() == rightSiblingKeyStack.peek()) {
-        rightSiblingKeyStack.pop();
-        final INode node = (INode) nodeStack.pop();
-        final String localPart = trx.nameForKey(node.getLocalPartKey());
-        final String prefix = trx.nameForKey(node.getPrefixKey());
-        final String uri = trx.nameForKey(node.getURIKey());
+      while (mRightSiblingKeyStack.size() > 0
+          && mRTX.getNodeKey() == mRightSiblingKeyStack.peek()) {
+        mRightSiblingKeyStack.pop();
+        final INode node = (INode) mNodeStack.pop();
+        final String localPart = mRTX.nameForKey(node.getLocalPartKey());
+        final String prefix = mRTX.nameForKey(node.getPrefixKey());
+        final String uri = mRTX.nameForKey(node.getURIKey());
         if (localPart.length() > 0) {
-          handler.endElement(uri, localPart, qName(prefix, localPart));
+          mHandler.endElement(uri, localPart, qName(prefix, localPart));
         }
       }
 
       setNextKey();
 
       // --- Emit events based on current node. --------------------------------
-      switch (trx.getKind()) {
+      switch (mRTX.getKind()) {
       case IConstants.ELEMENT:
-        final INode node = (INode) nodeStack.peek();
-        final String localPart = trx.nameForKey(node.getLocalPartKey());
-        final String prefix = trx.nameForKey(node.getPrefixKey());
-        final String uri = trx.nameForKey(node.getURIKey());
-        handler.startElement(
+        final INode node = (INode) mNodeStack.peek();
+        final String localPart = mRTX.nameForKey(node.getLocalPartKey());
+        final String prefix = mRTX.nameForKey(node.getPrefixKey());
+        final String uri = mRTX.nameForKey(node.getURIKey());
+        mHandler.startElement(
             uri,
             localPart,
             qName(prefix, localPart),
             visitAttributes());
         break;
       case IConstants.TEXT:
-        final char[] text = UTF.convert(trx.getValue()).toCharArray();
-        handler.characters(text, 0, text.length);
+        final char[] text = UTF.convert(mRTX.getValue()).toCharArray();
+        mHandler.characters(text, 0, text.length);
         break;
       case IConstants.PROCESSING_INSTRUCTION:
-        handler.processingInstruction(trx.getLocalPart(), UTF.convert(trx
+        mHandler.processingInstruction(mRTX.getLocalPart(), UTF.convert(mRTX
             .getValue()));
         break;
       default:
-        throw new IllegalStateException("Unknown kind: " + trx.getKind());
+        throw new IllegalStateException("Unknown kind: " + mRTX.getKind());
 
       }
 
     }
 
     // Clean up all pending closing tags.
-    while (nodeStack.size() > 0) {
-      rightSiblingKeyStack.pop();
-      final INode node = (INode) nodeStack.pop();
-      final String localPart = trx.nameForKey(node.getLocalPartKey());
-      final String prefix = trx.nameForKey(node.getPrefixKey());
-      final String uri = trx.nameForKey(node.getURIKey());
+    while (mNodeStack.size() > 0) {
+      mRightSiblingKeyStack.pop();
+      final INode node = (INode) mNodeStack.pop();
+      final String localPart = mRTX.nameForKey(node.getLocalPartKey());
+      final String prefix = mRTX.nameForKey(node.getPrefixKey());
+      final String uri = mRTX.nameForKey(node.getURIKey());
       if (localPart.length() > 0) {
-        handler.endElement(uri, localPart, qName(prefix, localPart));
+        mHandler.endElement(uri, localPart, qName(prefix, localPart));
       }
     }
 
@@ -245,7 +243,7 @@ public final class SAXGenerator extends Thread {
     try {
 
       // Start document.
-      if (isSerialize) {
+      if (mIsSerialize) {
         // Set up serializer, why here? XML Declaration.
         java.util.Properties props =
             OutputPropertiesFactory.getDefaultMethodProperties(Method.XML);
@@ -259,24 +257,24 @@ public final class SAXGenerator extends Thread {
 
         Serializer serializer = SerializerFactory.getSerializer(props);
 
-        if (asInputStream) {
-          serializer.setOutputStream(pipedOut);
+        if (mAsInputStream) {
+          serializer.setOutputStream(mPipedOut);
           serializer.setWriter(new PrintWriter(System.err));
         } else {
-          serializer.setWriter(writer);
+          serializer.setWriter(mWriter);
         }
-        handler = serializer.asContentHandler();
+        mHandler = serializer.asContentHandler();
       }
-      handler.startDocument();
+      mHandler.startDocument();
 
       // Traverse all descendants in document order.
       visitDocument();
 
       // End document.
-      handler.endDocument();
+      mHandler.endDocument();
 
-      if (asInputStream) {
-        pipedOut.close();
+      if (mAsInputStream) {
+        mPipedOut.close();
       }
 
     } catch (Exception e) {
@@ -286,15 +284,15 @@ public final class SAXGenerator extends Thread {
 
   private final void debug() throws Exception {
     System.out.println(">>> DEBUG >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-    System.out.println("nodeKey = " + trx.getNodeKey());
-    System.out.println("nextKey = " + nextKey);
+    System.out.println("nodeKey = " + mRTX.getNodeKey());
+    System.out.println("nextKey = " + mNextKey);
     System.out.print("rightSiblingKeyStack = { ");
-    for (int i = 0; i < rightSiblingKeyStack.size(); i++) {
-      System.out.print(rightSiblingKeyStack.get(i) + "; ");
+    for (int i = 0; i < mRightSiblingKeyStack.size(); i++) {
+      System.out.print(mRightSiblingKeyStack.get(i) + "; ");
     }
     System.out.println("}");
     System.out.println("}");
-    System.out.println("attributeCount = " + trx.getAttributeCount());
+    System.out.println("attributeCount = " + mRTX.getAttributeCount());
     System.out.println("<<< DEBUG <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
   }
 

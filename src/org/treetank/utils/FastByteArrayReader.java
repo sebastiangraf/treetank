@@ -25,32 +25,32 @@ import java.nio.ByteBuffer;
 
 public final class FastByteArrayReader {
 
-  private final byte[] buffer;
+  private final byte[] mBuffer;
 
-  private int position;
+  private int mPosition;
 
   /**
    * Constructor.
    *
    */
-  public FastByteArrayReader(final byte[] initBuffer) throws Exception {
-    buffer = initBuffer;
-    position = 0;
+  public FastByteArrayReader(final byte[] buffer) throws Exception {
+    mBuffer = buffer;
+    mPosition = 0;
   }
 
   public final boolean readBoolean() throws Exception {
-    return (buffer[position++] == 1 ? true : false);
+    return (mBuffer[mPosition++] == 1 ? true : false);
   }
 
   public final byte readByte() throws Exception {
-    return buffer[position++];
+    return mBuffer[mPosition++];
   }
 
   public final int readPseudoInt() throws Exception {
     int value =
-        ((buffer[position++] & 0xFF) << 16)
-            | ((buffer[position++] & 0xFF) << 8)
-            | (buffer[position++] & 0xFF);
+        ((mBuffer[mPosition++] & 0xFF) << 16)
+            | ((mBuffer[mPosition++] & 0xFF) << 8)
+            | (mBuffer[mPosition++] & 0xFF);
     if (value >> 23 == 1) {
       value = value | 0xFF000000;
     }
@@ -58,19 +58,19 @@ public final class FastByteArrayReader {
   }
 
   public final int readInt() throws Exception {
-    return ((buffer[position++] & 0xFF) << 24)
-        | ((buffer[position++] & 0xFF) << 16)
-        | ((buffer[position++] & 0xFF) << 8)
-        | (buffer[position++] & 0xFF);
+    return ((mBuffer[mPosition++] & 0xFF) << 24)
+        | ((mBuffer[mPosition++] & 0xFF) << 16)
+        | ((mBuffer[mPosition++] & 0xFF) << 8)
+        | (mBuffer[mPosition++] & 0xFF);
   }
 
   public final long readPseudoLong() throws Exception {
     long value =
-        (((long) (buffer[position++] & 255) << 40)
-            + ((long) (buffer[position++] & 255) << 32)
-            + ((long) (buffer[position++] & 255) << 24)
-            + ((buffer[position++] & 255) << 16)
-            + ((buffer[position++] & 255) << 8) + (buffer[position++] & 255));
+        (((long) (mBuffer[mPosition++] & 255) << 40)
+            + ((long) (mBuffer[mPosition++] & 255) << 32)
+            + ((long) (mBuffer[mPosition++] & 255) << 24)
+            + ((mBuffer[mPosition++] & 255) << 16)
+            + ((mBuffer[mPosition++] & 255) << 8) + (mBuffer[mPosition++] & 255));
     if (value >> 47 == 1) {
       value = value | 0xFFFF000000000000L;
     }
@@ -79,32 +79,32 @@ public final class FastByteArrayReader {
   
   public final long readPseudoLongNew() throws Exception {
     ByteBuffer bb = ByteBuffer.allocate(8);
-    bb.put(buffer, position, 6);
+    bb.put(mBuffer, mPosition, 6);
     bb.position(0);
-    position += 6;
+    mPosition += 6;
     
     return bb.getLong();   
   }
 
   public final long readLong() throws Exception {
-    return (((long) buffer[position++] << 56)
-        + ((long) (buffer[position++] & 255) << 48)
-        + ((long) (buffer[position++] & 255) << 40)
-        + ((long) (buffer[position++] & 255) << 32)
-        + ((long) (buffer[position++] & 255) << 24)
-        + ((buffer[position++] & 255) << 16)
-        + ((buffer[position++] & 255) << 8) + (buffer[position++] & 255));
+    return (((long) mBuffer[mPosition++] << 56)
+        + ((long) (mBuffer[mPosition++] & 255) << 48)
+        + ((long) (mBuffer[mPosition++] & 255) << 40)
+        + ((long) (mBuffer[mPosition++] & 255) << 32)
+        + ((long) (mBuffer[mPosition++] & 255) << 24)
+        + ((mBuffer[mPosition++] & 255) << 16)
+        + ((mBuffer[mPosition++] & 255) << 8) + (mBuffer[mPosition++] & 255));
   }
 
   public final byte[] readByteArray() throws Exception {
     final int size =
-        ((buffer[position++] & 0xFF) << 16)
-            | ((buffer[position++] & 0xFF) << 8)
-            | (buffer[position++] & 0xFF);
+        ((mBuffer[mPosition++] & 0xFF) << 16)
+            | ((mBuffer[mPosition++] & 0xFF) << 8)
+            | (mBuffer[mPosition++] & 0xFF);
 
     final byte[] byteArray = new byte[size];
-    System.arraycopy(buffer, position, byteArray, 0, size);
-    position += size;
+    System.arraycopy(mBuffer, mPosition, byteArray, 0, size);
+    mPosition += size;
     return byteArray;
   }
 

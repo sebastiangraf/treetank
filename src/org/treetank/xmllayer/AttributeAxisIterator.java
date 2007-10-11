@@ -35,7 +35,7 @@ import org.treetank.api.IReadTransaction;
 public class AttributeAxisIterator implements IAxisIterator {
 
   /** Exclusive (immutable) mTrx to iterate with. */
-  private final IReadTransaction mTrx;
+  private final IReadTransaction mRTX;
 
   /** Remember next key to visit. */
   private int mNextIndex;
@@ -43,11 +43,11 @@ public class AttributeAxisIterator implements IAxisIterator {
   /**
    * Constructor initializing internal state.
    * 
-   * @param trx Exclusive (immutable) mTrx to iterate with.
+   * @param rtx Exclusive (immutable) mTrx to iterate with.
    * @throws Exception of any kind.
    */
-  public AttributeAxisIterator(final IReadTransaction trx) throws Exception {
-    mTrx = trx;
+  public AttributeAxisIterator(final IReadTransaction rtx) throws Exception {
+    mRTX = rtx;
     mNextIndex = 0;
   }
 
@@ -55,16 +55,16 @@ public class AttributeAxisIterator implements IAxisIterator {
    * {@inheritDoc}
    */
   public final boolean next() throws Exception {
-    if (mNextIndex < mTrx.getAttributeCount()) {
+    if (mNextIndex < mRTX.getAttributeCount()) {
       if (mNextIndex > 0) {
-        mTrx.moveToParent();
+        mRTX.moveToParent();
       }
-      mTrx.moveToAttribute(mNextIndex);
+      mRTX.moveToAttribute(mNextIndex);
       mNextIndex += 1;
       return true;
     } else {
       if (mNextIndex > 0) {
-        mTrx.moveToParent();
+        mRTX.moveToParent();
       }
       return false;
     }
