@@ -25,6 +25,7 @@ import org.treetank.api.IWriteTransactionState;
 import org.treetank.pagelayer.PageCache;
 import org.treetank.pagelayer.PageReader;
 import org.treetank.pagelayer.PageWriter;
+import org.treetank.utils.StaticTree;
 
 public final class WriteTransactionState extends ReadTransactionState
     implements
@@ -32,12 +33,17 @@ public final class WriteTransactionState extends ReadTransactionState
 
   private final PageWriter mPageWriter;
 
+  private final StaticTree mStaticRevisionTree;
+
   public WriteTransactionState(
       final PageCache pageCache,
       final PageReader pageReader,
-      final PageWriter pageWriter) {
-    super(pageCache, pageReader);
+      final PageWriter pageWriter,
+      final StaticTree staticNodeTree,
+      final StaticTree staticRevisionTree) {
+    super(pageCache, pageReader, staticNodeTree);
     mPageWriter = pageWriter;
+    mStaticRevisionTree = staticRevisionTree;
   }
 
   /**
@@ -45,6 +51,13 @@ public final class WriteTransactionState extends ReadTransactionState
    */
   public final PageWriter getPageWriter() {
     return mPageWriter;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final StaticTree getStaticRevisionTree() {
+    return mStaticRevisionTree;
   }
 
 }
