@@ -75,6 +75,7 @@ public final class FastByteArrayWriter {
   
   public final void writePseudoLongNew(final long value) throws Exception {
     assertSize(6);
+    
     byte[] tmp = BigInteger.valueOf(value).toByteArray();
     System.arraycopy(tmp, 0, buffer, size, tmp.length);
     size += 6;
