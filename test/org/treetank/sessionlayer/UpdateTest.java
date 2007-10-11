@@ -68,6 +68,7 @@ public class UpdateTest {
       session.commit();
       session.close();
 
+      session = new Session(TEST_PATH);
       rTrx = session.beginReadTransaction();
       rTrx.moveToRoot();
       rTrx.moveToFirstChild();

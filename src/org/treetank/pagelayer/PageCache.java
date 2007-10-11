@@ -147,7 +147,7 @@ public final class PageCache {
       UberPage page = (UberPage) mCache.get(reference.getStart());
       if (page == null) {
         final FastByteArrayReader in = state.getPageReader().read(reference);
-        page = UberPage.read(state, in);
+        page = UberPage.read(in);
         mCache.put(reference.getStart(), page);
       }
       return page;

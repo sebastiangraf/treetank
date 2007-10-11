@@ -82,9 +82,8 @@ final public class UberPage extends AbstractPage implements IPage {
    * @param in
    * @throws Exception
    */
-  public static final UberPage read(
-      final IReadTransactionState state,
-      final FastByteArrayReader in) throws Exception {
+  public static final UberPage read(final FastByteArrayReader in)
+      throws Exception {
 
     final UberPage uberPage = new UberPage();
 
@@ -94,10 +93,6 @@ final public class UberPage extends AbstractPage implements IPage {
     // Indirect pages (shallow load without indirect page instances).
     uberPage.mIndirectPageReference = readPageReference(in);
     uberPage.mStaticTree = new StaticTree(uberPage.mIndirectPageReference);
-
-    // Make sure latest revision root page is active.
-    uberPage.mCurrentRevisionRootPage =
-        uberPage.getRevisionRootPage(state, uberPage.mRevisionCount);
 
     return uberPage;
   }
@@ -152,6 +147,9 @@ final public class UberPage extends AbstractPage implements IPage {
         StaticTree.calcIndirectPageOffsets(mRevisionCount + 1);
 
     // Which page reference to COW on immediate level 0?
+    if (mCurrentRevisionRootPage == null) {
+      mCurrentRevisionRootPage = getRevisionRootPage(state, mRevisionCount);
+    }
     mCurrentRevisionRootPage =
         RevisionRootPage.clone(mRevisionCount + 1, mCurrentRevisionRootPage);
 
