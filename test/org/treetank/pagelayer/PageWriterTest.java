@@ -58,7 +58,9 @@ public class PageWriterTest {
     pageWriter.write(new WriteTransactionState(
         new PageCache(),
         null,
-        pageWriter), pageReference);
+        pageWriter,
+        null,
+        null), pageReference);
     assertEquals(0L, pageReference.getStart());
 
     // Deserialize node page.
