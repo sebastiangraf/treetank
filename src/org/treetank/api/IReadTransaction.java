@@ -21,7 +21,6 @@
 
 package org.treetank.api;
 
-
 /**
  * <h1>IReadTransaction</h1>
  * 
@@ -116,7 +115,7 @@ public interface IReadTransaction {
    * @throws Exception of any kind.
    */
   public boolean moveToRightSibling() throws Exception;
-  
+
   public boolean moveToAttribute(final int index) throws Exception;
 
   // --- Node Getters ----------------------------------------------------------
@@ -178,7 +177,7 @@ public interface IReadTransaction {
    * @return Attribute count of currently selected node.
    */
   public int getAttributeCount();
-  
+
   /**
    * Get namespace declaration count of currently selected node.
    * 
@@ -199,11 +198,12 @@ public interface IReadTransaction {
    * @return Local part key of node.
    */
   public int getLocalPartKey();
-  
+
   /**
    * Get local part of node.
    * 
    * @return Local part of node.
+   * @throws Exception of any kind.
    */
   public String getLocalPart() throws Exception;
 
@@ -214,12 +214,13 @@ public interface IReadTransaction {
    * @return URI key of node.
    */
   public int getURIKey();
-  
+
   /**
    * Get URI of node. Note that this actually is an IRI but the
    * W3C decided to continue using URI not to confuse anyone.
    * 
    * @return URI of node.
+   * @throws Exception of any kind.
    */
   public String getURI() throws Exception;
 
@@ -229,11 +230,12 @@ public interface IReadTransaction {
    * @return Prefix key of node.
    */
   public int getPrefixKey();
-  
+
   /**
    * Get prefix of node.
    * 
    * @return Prefix of node.
+   * @throws Exception of any kind.
    */
   public String getPrefix() throws Exception;
 
@@ -257,6 +259,7 @@ public interface IReadTransaction {
    * 
    * @param key Key, i.e., local part key, URI key, or prefix key.
    * @return Byte array containing name for given key.
+   * @throws Exception of any kind.
    */
   public String nameForKey(final int key) throws Exception;
 
