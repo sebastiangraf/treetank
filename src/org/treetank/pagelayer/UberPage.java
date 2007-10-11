@@ -37,8 +37,6 @@ final public class UberPage extends AbstractPage implements IPage {
 
   private RevisionRootPage mCurrentRevisionRootPage;
 
-  private StaticTree mStaticTree;
-
   /**
    * Constructor to assure minimal common setup.
    * 
@@ -46,7 +44,6 @@ final public class UberPage extends AbstractPage implements IPage {
    */
   private UberPage() {
     mIndirectPageReference = null;
-    mStaticTree = null;
   }
 
   /**
@@ -65,7 +62,6 @@ final public class UberPage extends AbstractPage implements IPage {
 
     // Indirect pages (shallow init).
     uberPage.mIndirectPageReference = createPageReference();
-    uberPage.mStaticTree = new StaticTree(uberPage.mIndirectPageReference);
 
     // Make sure that the first empty revision root page already exists.
     uberPage.mCurrentRevisionRootPage =
@@ -92,7 +88,6 @@ final public class UberPage extends AbstractPage implements IPage {
 
     // Indirect pages (shallow load without indirect page instances).
     uberPage.mIndirectPageReference = readPageReference(in);
-    uberPage.mStaticTree = new StaticTree(uberPage.mIndirectPageReference);
 
     return uberPage;
   }
@@ -113,7 +108,6 @@ final public class UberPage extends AbstractPage implements IPage {
     // Indirect pages (shallow COW without page instances).
     uberPage.mIndirectPageReference =
         clonePageReference(committedUberPage.mIndirectPageReference);
-    uberPage.mStaticTree = new StaticTree(uberPage.mIndirectPageReference);
 
     uberPage.mCurrentRevisionRootPage =
         committedUberPage.mCurrentRevisionRootPage;
@@ -129,10 +123,13 @@ final public class UberPage extends AbstractPage implements IPage {
       final IReadTransactionState state,
       final long revisionKey) throws Exception {
 
+    final StaticTree staticRevisionTree =
+        new StaticTree(mIndirectPageReference);
+
     RevisionRootPage page =
         state.getPageCache().dereferenceRevisionRootPage(
             state,
-            mStaticTree.get(state, revisionKey),
+            staticRevisionTree.get(state, revisionKey),
             revisionKey);
 
     return RevisionRootPage.clone(revisionKey, page);
