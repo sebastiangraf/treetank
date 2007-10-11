@@ -33,17 +33,13 @@ public final class WriteTransactionState extends ReadTransactionState
 
   private final PageWriter mPageWriter;
 
-  private final StaticTree mStaticRevisionTree;
-
   public WriteTransactionState(
       final PageCache pageCache,
       final PageReader pageReader,
-      final PageWriter pageWriter,
       final StaticTree staticNodeTree,
-      final StaticTree staticRevisionTree) {
+      final PageWriter pageWriter) {
     super(pageCache, pageReader, staticNodeTree);
     mPageWriter = pageWriter;
-    mStaticRevisionTree = staticRevisionTree;
   }
 
   /**
@@ -51,13 +47,6 @@ public final class WriteTransactionState extends ReadTransactionState
    */
   public final PageWriter getPageWriter() {
     return mPageWriter;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final StaticTree getStaticRevisionTree() {
-    return mStaticRevisionTree;
   }
 
 }
