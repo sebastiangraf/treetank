@@ -23,7 +23,7 @@ package org.treetank.pagelayer;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.IPage;
-import org.treetank.sessionlayer.TransactionState;
+import org.treetank.api.IWriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
@@ -114,9 +114,7 @@ public final class NodePage implements IPage {
   /**
    * {@inheritDoc}
    */
-  public final void commit(
-      final TransactionState state,
-      final PageWriter pageWriter) {
+  public final void commit(final IWriteTransactionState state) {
     // Nothing to do because there are no page references.
   }
 

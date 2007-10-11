@@ -28,8 +28,10 @@ import java.util.logging.Logger;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
+import org.treetank.api.IReadTransactionState;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
+import org.treetank.api.IWriteTransactionState;
 import org.treetank.pagelayer.PageCache;
 import org.treetank.pagelayer.PageReader;
 import org.treetank.pagelayer.PageReference;
@@ -121,8 +123,9 @@ public final class Session implements ISession {
     mPageWriter = new PageWriter(mSessionConfiguration);
     mFile = new RandomAccessFile(mSessionConfiguration.getPath(), "rw");
 
-    final TransactionState state =
-        new TransactionState(mPageCache, new PageReader(mSessionConfiguration));
+    final ReadTransactionState state =
+        new ReadTransactionState(mPageCache, new PageReader(
+            mSessionConfiguration));
 
     // Bootstrap uber page.
     if (mFile.length() == 0L) {
@@ -177,8 +180,9 @@ public final class Session implements ISession {
    */
   public final IReadTransaction beginReadTransaction(final long revisionKey)
       throws Exception {
-    final TransactionState state =
-        new TransactionState(mPageCache, new PageReader(mSessionConfiguration));
+    final IReadTransactionState state =
+        new ReadTransactionState(mPageCache, new PageReader(
+            mSessionConfiguration));
     return new ReadTransaction(state, mUberPage.getRevisionRootPage(
         state,
         revisionKey));
@@ -199,8 +203,9 @@ public final class Session implements ISession {
     mWriteSemaphore.acquire();
     mUberPage = UberPage.clone(mUberPage);
     mPrimaryUberPageReference.setPage(mUberPage);
-    final TransactionState state =
-        new TransactionState(mPageCache, new PageReader(mSessionConfiguration));
+    final IWriteTransactionState state =
+        new WriteTransactionState(mPageCache, new PageReader(
+            mSessionConfiguration), mPageWriter);
     return new WriteTransaction(state, mUberPage.prepareRevisionRootPage(state));
   }
 
@@ -208,8 +213,9 @@ public final class Session implements ISession {
    * {@inheritDoc}
    */
   public final void commit() throws Exception {
-    final TransactionState state =
-        new TransactionState(mPageCache, new PageReader(mSessionConfiguration));
+    final IWriteTransactionState state =
+        new WriteTransactionState(mPageCache, new PageReader(
+            mSessionConfiguration), mPageWriter);
     mPageWriter.write(state, mPrimaryUberPageReference);
     mPageCache.put(mPrimaryUberPageReference);
     writeBeacon(mFile);

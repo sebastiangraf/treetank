@@ -16,31 +16,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * $Id:SessionConfiguration.java 3019 2007-10-10 13:28:24Z kramis $
+ * $Id: IReadTransaction.java 2987 2007-10-01 12:58:09Z kramis $
  */
 
-package org.treetank.sessionlayer;
+package org.treetank.api;
 
 import org.treetank.pagelayer.PageCache;
 import org.treetank.pagelayer.PageReader;
 
-public final class TransactionState {
+/**
+ * <h1>IReadTransactionState</h1>
+ * 
+ * <p>
+ * Interface to access the state of a IReadTransaction.
+ * </p>
+ */
+public interface IReadTransactionState {
 
-  private final PageCache mPageCache;
+  /**
+   * Get the page cache accessed through this transaction.
+   * 
+   * @return PageCache instance.
+   */
+  public PageCache getPageCache();
 
-  private final PageReader mPageReader;
-
-  public TransactionState(final PageCache pageCache, final PageReader pageReader) {
-    mPageCache = pageCache;
-    mPageReader = pageReader;
-  }
-
-  public final PageCache getPageCache() {
-    return mPageCache;
-  }
-
-  public final PageReader getPageReader() {
-    return mPageReader;
-  }
+  /**
+   * Get the page reader used within this transaction.
+   * 
+   * @return PageReader instance.
+   */
+  public PageReader getPageReader();
 
 }

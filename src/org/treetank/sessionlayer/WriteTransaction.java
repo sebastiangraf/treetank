@@ -23,6 +23,7 @@ package org.treetank.sessionlayer;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.IWriteTransaction;
+import org.treetank.api.IWriteTransactionState;
 import org.treetank.pagelayer.Node;
 import org.treetank.pagelayer.RevisionRootPage;
 import org.treetank.utils.UTF;
@@ -44,7 +45,7 @@ public final class WriteTransaction extends ReadTransaction
    * @param initRevisionRootPage Revision root page to work with.
    */
   protected WriteTransaction(
-      final TransactionState state,
+      final IWriteTransactionState state,
       final RevisionRootPage revisionRootPage) {
     super(state, revisionRootPage);
   }
