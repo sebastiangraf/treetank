@@ -36,7 +36,9 @@ import org.treetank.pagelayer.PageCache;
 import org.treetank.pagelayer.PageReader;
 import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.PageWriter;
+import org.treetank.pagelayer.RevisionRootPage;
 import org.treetank.pagelayer.UberPage;
+import org.treetank.utils.StaticTree;
 
 /**
  * <h1>Session</h1>
@@ -137,7 +139,7 @@ public final class Session implements ISession {
       final PageWriter pageWriter = new PageWriter(mSessionConfiguration);
       mWriteTransactionState =
           new WriteTransactionState(mPageCache, new PageReader(
-              mSessionConfiguration), pageWriter, null, null);
+              mSessionConfiguration), null, pageWriter);
 
       commit();
     } else {
@@ -185,12 +187,18 @@ public final class Session implements ISession {
    */
   public final IReadTransaction beginReadTransaction(final long revisionKey)
       throws Exception {
+
+    final PageReader pageReader = new PageReader(mSessionConfiguration);
+    final RevisionRootPage revisionRootPage =
+        mUberPage.getRevisionRootPage(new ReadTransactionState(
+            mPageCache,
+            pageReader,
+            null), revisionKey);
     final IReadTransactionState state =
-        new ReadTransactionState(mPageCache, new PageReader(
-            mSessionConfiguration), null);
-    return new ReadTransaction(state, mUberPage.getRevisionRootPage(
-        state,
-        revisionKey));
+        new ReadTransactionState(mPageCache, pageReader, new StaticTree(
+            revisionRootPage.getIndirectPageReference()));
+
+    return new ReadTransaction(state, revisionRootPage);
   }
 
   /**
@@ -210,11 +218,17 @@ public final class Session implements ISession {
     mPrimaryUberPageReference.setPage(mUberPage);
 
     final PageWriter pageWriter = new PageWriter(mSessionConfiguration);
+    final PageReader pageReader = new PageReader(mSessionConfiguration);
+    final RevisionRootPage revisionRootPage =
+        mUberPage.prepareRevisionRootPage(new ReadTransactionState(
+            mPageCache,
+            pageReader,
+            null));
+
     mWriteTransactionState =
-        new WriteTransactionState(mPageCache, new PageReader(
-            mSessionConfiguration), pageWriter, null, null);
-    return new WriteTransaction(mWriteTransactionState, mUberPage
-        .prepareRevisionRootPage(mWriteTransactionState));
+        new WriteTransactionState(mPageCache, pageReader, new StaticTree(
+            revisionRootPage.getIndirectPageReference()), pageWriter);
+    return new WriteTransaction(mWriteTransactionState, revisionRootPage);
   }
 
   /**
