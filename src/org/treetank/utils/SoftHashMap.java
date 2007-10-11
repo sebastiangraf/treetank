@@ -50,18 +50,18 @@ import java.util.Set;
 public final class SoftHashMap<K, V> extends AbstractMap<K, V> {
 
   /** The internal HashMap that will hold the SoftReference. */
-  private final Map<K, SoftReference<V>> internalMap;
+  private final Map<K, SoftReference<V>> mInternalMap;
 
   /** Reference queue for cleared SoftReference objects. */
-  private final ReferenceQueue queue;
+  private final ReferenceQueue mQueue;
 
   /**
    * Default constructor internally using 32 strong references.
    *
    */
   public SoftHashMap() {
-    internalMap = new HashMap<K, SoftReference<V>>();
-    queue = new ReferenceQueue();
+    mInternalMap = new HashMap<K, SoftReference<V>>();
+    mQueue = new ReferenceQueue();
   }
 
   /**
@@ -70,13 +70,13 @@ public final class SoftHashMap<K, V> extends AbstractMap<K, V> {
   @Override
   public final V get(final Object key) {
     V value = null;
-    final SoftReference<V> softReference = internalMap.get(key);
+    final SoftReference<V> softReference = mInternalMap.get(key);
     if (softReference != null) {
       // Soft reference was garbage collected.
       value = softReference.get();
       if (value == null) {
         // Reflect garbage collected soft reference in internal hash map.
-        internalMap.remove(key);
+        mInternalMap.remove(key);
       }
     }
     return value;
@@ -88,7 +88,7 @@ public final class SoftHashMap<K, V> extends AbstractMap<K, V> {
   @Override
   public final V put(final K key, final V value) {
     processQueue();
-    internalMap.put(key, new SoftValue<V>(value, key, queue));
+    mInternalMap.put(key, new SoftValue<V>(value, key, mQueue));
     return null;
   }
 
@@ -98,7 +98,7 @@ public final class SoftHashMap<K, V> extends AbstractMap<K, V> {
   @Override
   public final V remove(final Object key) {
     processQueue();
-    internalMap.remove(key);
+    mInternalMap.remove(key);
     return null;
   }
 
@@ -108,7 +108,7 @@ public final class SoftHashMap<K, V> extends AbstractMap<K, V> {
   @Override
   public final synchronized void clear() {
     processQueue();
-    internalMap.clear();
+    mInternalMap.clear();
   }
 
   /**
@@ -117,7 +117,7 @@ public final class SoftHashMap<K, V> extends AbstractMap<K, V> {
   @Override
   public final int size() {
     processQueue();
-    return internalMap.size();
+    return mInternalMap.size();
   }
 
   /**
@@ -134,8 +134,8 @@ public final class SoftHashMap<K, V> extends AbstractMap<K, V> {
    */
   private final void processQueue() {
     SoftValue<V> softValue;
-    while ((softValue = (SoftValue) queue.poll()) != null) {
-      internalMap.remove(softValue.key);
+    while ((softValue = (SoftValue) mQueue.poll()) != null) {
+      mInternalMap.remove(softValue.key);
     }
   }
 

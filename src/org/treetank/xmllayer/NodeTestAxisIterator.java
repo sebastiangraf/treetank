@@ -36,29 +36,30 @@ import org.treetank.api.IReadTransaction;
 public class NodeTestAxisIterator implements IAxisIterator {
 
   /** Exclusive (immutable) trx to iterate with. */
-  private final IReadTransaction trx;
+  private final IReadTransaction mRTX;
 
   /** Remember next key to visit. */
-  private final IAxisIterator axis;
+  private final IAxisIterator mAxis;
 
   /**
    * Constructor initializing internal state.
    * 
-   * @param initTrx Exclusive (immutable) trx to iterate with.
+   * @param rtx Exclusive (immutable) trx to iterate with.
    * @throws Exception of any kind.
    */
   public NodeTestAxisIterator(
-      final IReadTransaction initTrx,
-      final IAxisIterator initAxis) throws Exception {
-    trx = initTrx;
-    axis = initAxis;
+      final IReadTransaction rtx,
+      final IAxisIterator axis) throws Exception {
+    mRTX = rtx;
+    mAxis = axis;
   }
 
   /**
    * {@inheritDoc}
    */
   public final boolean next() throws Exception {
-    return (axis.next() && trx.getKind() == IConstants.ELEMENT || trx.getKind() == IConstants.TEXT);
+    return (mAxis.next() && mRTX.getKind() == IConstants.ELEMENT || mRTX
+        .getKind() == IConstants.TEXT);
   }
 
 }

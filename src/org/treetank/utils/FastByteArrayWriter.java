@@ -25,105 +25,105 @@ import java.math.BigInteger;
 
 public final class FastByteArrayWriter {
 
-  private byte[] buffer;
+  private byte[] mBuffer;
 
-  private int size;
+  private int mSize;
 
   /**
    * Constructor.
    *
    */
   public FastByteArrayWriter() throws Exception {
-    buffer = new byte[32];
-    size = 0;
+    mBuffer = new byte[32];
+    mSize = 0;
   }
 
   public final void writeBoolean(final boolean value) throws Exception {
     assertSize(1);
-    buffer[size++] = (byte) (value ? 1 : 0);
+    mBuffer[mSize++] = (byte) (value ? 1 : 0);
   }
 
   public final void writeByte(final byte value) throws Exception {
     assertSize(1);
-    buffer[size++] = value;
+    mBuffer[mSize++] = value;
   }
 
   public final void writePseudoInt(final int value) throws Exception {
     assertSize(3);
-    buffer[size++] = (byte) (value >> 16);
-    buffer[size++] = (byte) (value >> 8);
-    buffer[size++] = (byte) value;
+    mBuffer[mSize++] = (byte) (value >> 16);
+    mBuffer[mSize++] = (byte) (value >> 8);
+    mBuffer[mSize++] = (byte) value;
   }
 
   public final void writeInt(final int value) throws Exception {
     assertSize(4);
-    buffer[size++] = (byte) (value >> 24);
-    buffer[size++] = (byte) (value >> 16);
-    buffer[size++] = (byte) (value >> 8);
-    buffer[size++] = (byte) value;
+    mBuffer[mSize++] = (byte) (value >> 24);
+    mBuffer[mSize++] = (byte) (value >> 16);
+    mBuffer[mSize++] = (byte) (value >> 8);
+    mBuffer[mSize++] = (byte) value;
   }
 
   public final void writePseudoLong(final long value) throws Exception {
     assertSize(6);
-    buffer[size++] = (byte) (value >>> 40);
-    buffer[size++] = (byte) (value >>> 32);
-    buffer[size++] = (byte) (value >>> 24);
-    buffer[size++] = (byte) (value >>> 16);
-    buffer[size++] = (byte) (value >> 8);
-    buffer[size++] = (byte) value;
+    mBuffer[mSize++] = (byte) (value >>> 40);
+    mBuffer[mSize++] = (byte) (value >>> 32);
+    mBuffer[mSize++] = (byte) (value >>> 24);
+    mBuffer[mSize++] = (byte) (value >>> 16);
+    mBuffer[mSize++] = (byte) (value >> 8);
+    mBuffer[mSize++] = (byte) value;
   }
   
   public final void writePseudoLongNew(final long value) throws Exception {
     assertSize(6);
     
     byte[] tmp = BigInteger.valueOf(value).toByteArray();
-    System.arraycopy(tmp, 0, buffer, size, tmp.length);
-    size += 6;
+    System.arraycopy(tmp, 0, mBuffer, mSize, tmp.length);
+    mSize += 6;
   }
 
   public final void writeLong(final long value) throws Exception {
     assertSize(8);
-    buffer[size++] = (byte) (value >>> 56);
-    buffer[size++] = (byte) (value >>> 48);
-    buffer[size++] = (byte) (value >>> 40);
-    buffer[size++] = (byte) (value >>> 32);
-    buffer[size++] = (byte) (value >>> 24);
-    buffer[size++] = (byte) (value >>> 16);
-    buffer[size++] = (byte) (value >> 8);
-    buffer[size++] = (byte) value;
+    mBuffer[mSize++] = (byte) (value >>> 56);
+    mBuffer[mSize++] = (byte) (value >>> 48);
+    mBuffer[mSize++] = (byte) (value >>> 40);
+    mBuffer[mSize++] = (byte) (value >>> 32);
+    mBuffer[mSize++] = (byte) (value >>> 24);
+    mBuffer[mSize++] = (byte) (value >>> 16);
+    mBuffer[mSize++] = (byte) (value >> 8);
+    mBuffer[mSize++] = (byte) value;
   }
 
   public final void writeByteArray(final byte[] value) throws Exception {
     assertSize(value.length + 3);
 
     // Size of byte array.    
-    buffer[size++] = (byte) (value.length >> 16);
-    buffer[size++] = (byte) (value.length >> 8);
-    buffer[size++] = (byte) value.length;
+    mBuffer[mSize++] = (byte) (value.length >> 16);
+    mBuffer[mSize++] = (byte) (value.length >> 8);
+    mBuffer[mSize++] = (byte) value.length;
 
     // Byte array.
-    System.arraycopy(value, 0, buffer, size, value.length);
-    size += value.length;
+    System.arraycopy(value, 0, mBuffer, mSize, value.length);
+    mSize += value.length;
   }
 
   public final byte[] getBytes() throws Exception {
-    return buffer;
+    return mBuffer;
   }
 
   public final int size() {
-    return size;
+    return mSize;
   }
 
   public final void reset() {
-    size = 0;
+    mSize = 0;
   }
 
   private final void assertSize(final int sizeDifference) {
-    final int requestedSize = size + sizeDifference;
-    if (requestedSize > buffer.length) {
+    final int requestedSize = mSize + sizeDifference;
+    if (requestedSize > mBuffer.length) {
       final byte[] biggerBuffer = new byte[requestedSize << 1];
-      System.arraycopy(buffer, 0, biggerBuffer, 0, buffer.length);
-      buffer = biggerBuffer;
+      System.arraycopy(mBuffer, 0, biggerBuffer, 0, mBuffer.length);
+      mBuffer = biggerBuffer;
     }
   }
 

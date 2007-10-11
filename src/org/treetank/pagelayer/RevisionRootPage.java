@@ -98,11 +98,11 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
   }
 
   public static final RevisionRootPage clone(
-      final long initRevisionKey,
+      final long revisionKey,
       final RevisionRootPage committedRevisionRootPage) {
 
     final RevisionRootPage revisionRootPage =
-        new RevisionRootPage(initRevisionKey);
+        new RevisionRootPage(revisionKey);
 
     // Revisioning (deep COW).
     revisionRootPage.mNodeCount = committedRevisionRootPage.mNodeCount;

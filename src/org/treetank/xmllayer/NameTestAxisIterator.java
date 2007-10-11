@@ -35,7 +35,7 @@ import org.treetank.api.IReadTransaction;
 public class NameTestAxisIterator implements IAxisIterator {
 
   /** Exclusive (immutable) mTrx to iterate with. */
-  private final IReadTransaction mTrx;
+  private final IReadTransaction mRTX;
 
   /** Remember next key to visit. */
   private final IAxisIterator mAxis;
@@ -46,25 +46,25 @@ public class NameTestAxisIterator implements IAxisIterator {
   /**
    * Constructor initializing internal state.
    * 
-   * @param trx Exclusive (immutable) mTrx to iterate with.
+   * @param rtx Exclusive (immutable) mTrx to iterate with.
    * @throws Exception of any kind.
    */
   public NameTestAxisIterator(
-      final IReadTransaction trx,
+      final IReadTransaction rtx,
       final IAxisIterator axis,
       final String name) throws Exception {
-    mTrx = trx;
+    mRTX = rtx;
     mAxis = axis;
-    mNameKey = mTrx.keyForName(name);
+    mNameKey = mRTX.keyForName(name);
   }
 
   /**
    * {@inheritDoc}
    */
   public final boolean next() throws Exception {
-    while (mAxis.next() && !(mTrx.getLocalPartKey() == mNameKey))
+    while (mAxis.next() && !(mRTX.getLocalPartKey() == mNameKey))
       ;
-    return mTrx.isSelected();
+    return mRTX.isSelected();
   }
 
 }
