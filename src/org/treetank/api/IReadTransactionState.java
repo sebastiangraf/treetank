@@ -23,6 +23,7 @@ package org.treetank.api;
 
 import org.treetank.pagelayer.PageCache;
 import org.treetank.pagelayer.PageReader;
+import org.treetank.utils.StaticTree;
 
 /**
  * <h1>IReadTransactionState</h1>
@@ -46,5 +47,12 @@ public interface IReadTransactionState {
    * @return PageReader instance.
    */
   public PageReader getPageReader();
+
+  /**
+   * Get the static tree used within this transaction to find a node page.
+   * 
+   * @return PageReader instance.
+   */
+  public StaticTree getStaticNodeTree();
 
 }

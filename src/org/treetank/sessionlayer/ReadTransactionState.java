@@ -24,6 +24,7 @@ package org.treetank.sessionlayer;
 import org.treetank.api.IReadTransactionState;
 import org.treetank.pagelayer.PageCache;
 import org.treetank.pagelayer.PageReader;
+import org.treetank.utils.StaticTree;
 
 public class ReadTransactionState implements IReadTransactionState {
 
@@ -31,11 +32,15 @@ public class ReadTransactionState implements IReadTransactionState {
 
   private final PageReader mPageReader;
 
+  private final StaticTree mStaticNodeTree;
+
   public ReadTransactionState(
       final PageCache pageCache,
-      final PageReader pageReader) {
+      final PageReader pageReader,
+      final StaticTree staticNodeTree) {
     mPageCache = pageCache;
     mPageReader = pageReader;
+    mStaticNodeTree = staticNodeTree;
   }
 
   /**
@@ -50,6 +55,13 @@ public class ReadTransactionState implements IReadTransactionState {
    */
   public final PageReader getPageReader() {
     return mPageReader;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final StaticTree getStaticNodeTree() {
+    return mStaticNodeTree;
   }
 
 }

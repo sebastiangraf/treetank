@@ -22,6 +22,7 @@
 package org.treetank.api;
 
 import org.treetank.pagelayer.PageWriter;
+import org.treetank.utils.StaticTree;
 
 /**
  * <h1>IWriteTransactionState</h1>
@@ -38,5 +39,12 @@ public interface IWriteTransactionState extends IReadTransactionState {
    * @return PageWriter instance.
    */
   public PageWriter getPageWriter();
+
+  /**
+   * Get the static tree used within this transaction to find a uber page.
+   * 
+   * @return PageReader instance.
+   */
+  public StaticTree getStaticRevisionTree();
 
 }
