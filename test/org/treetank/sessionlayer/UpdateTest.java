@@ -31,9 +31,7 @@ import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.sessionlayer.Session;
 import org.treetank.utils.UTF;
-
 
 public class UpdateTest {
 
@@ -76,7 +74,7 @@ public class UpdateTest {
       assertEquals(i + 1L, rTrx.revisionSize());
       assertEquals(i + 1L, rTrx.revisionKey());
     }
-    
+
     session = new Session(TEST_PATH);
     rTrx = session.beginReadTransaction();
     rTrx.moveToRoot();
@@ -86,6 +84,62 @@ public class UpdateTest {
     assertEquals(11L, rTrx.revisionKey());
     session.close();
 
+  }
+
+  @Test
+  public void testInsertPath() throws Exception {
+
+    final ISession session = new Session(TEST_PATH);
+
+    IWriteTransaction wtx = session.beginWriteTransaction();
+    assertEquals(0L, wtx.insertRoot("foo"));
+    session.commit();
+    
+    wtx = session.beginWriteTransaction();
+    assertEquals(true, wtx.moveToRoot());
+    assertEquals(1L, wtx.insertFirstChild(
+        IConstants.ELEMENT,
+        "",
+        "",
+        "",
+        UTF.EMPTY));
+
+    assertEquals(2L, wtx.insertFirstChild(
+        IConstants.ELEMENT,
+        "",
+        "",
+        "",
+        UTF.EMPTY));
+    assertEquals(3L, wtx.insertFirstChild(
+        IConstants.ELEMENT,
+        "",
+        "",
+        "",
+        UTF.EMPTY));
+
+    assertEquals(true, wtx.moveToParent());
+    assertEquals(4L, wtx.insertRightSibling(
+        IConstants.ELEMENT,
+        "",
+        "",
+        "",
+        UTF.EMPTY));
+
+    session.commit();
+
+    final IWriteTransaction wtx2 = session.beginWriteTransaction();
+
+    assertEquals(true, wtx2.moveToRoot());
+    assertEquals(5L, wtx.insertFirstChild(
+        IConstants.ELEMENT,
+        "",
+        "",
+        "",
+        UTF.EMPTY));
+
+    session.commit();
+
+    session.close();
   }
 
 }
