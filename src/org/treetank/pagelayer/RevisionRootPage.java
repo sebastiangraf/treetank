@@ -26,7 +26,6 @@ import org.treetank.api.IReadTransactionState;
 import org.treetank.api.IWriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
-import org.treetank.utils.StaticTree;
 
 final public class RevisionRootPage extends AbstractPage implements IPage {
 
@@ -181,7 +180,6 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
   public final NodePage getNodePage(
       final IReadTransactionState state,
       final long nodePageKey) throws Exception {
-
     return state.getPageCache().dereferenceNodePage(
         state,
         state.getStaticNodeTree().get(state, nodePageKey),
@@ -192,21 +190,10 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
   private final NodePage prepareNodePage(
       final IReadTransactionState state,
       final long nodePageKey) throws Exception {
-
-    // Calculate number of levels and offsets of these levels.
-    final int[] offsets = StaticTree.calcIndirectPageOffsets(nodePageKey);
-
-    // Which page reference to COW on immediate level 0?
-    // Indirect reference.
-    PageReference reference = mIndirectPageReference;
-    IPage page = null;
-
-    //    Remaining levels.
-    for (int i = 0; i < offsets.length; i++) {
-      page = prepareIndirectPage(state, reference);
-      reference = ((IndirectPage) page).getPageReference(offsets[i]);
-    }
-    return prepareNodePage(state, reference, nodePageKey);
+    return prepareNodePage(state, state.getStaticNodeTree().prepare(
+        state,
+        this,
+        nodePageKey), nodePageKey);
 
   }
 
