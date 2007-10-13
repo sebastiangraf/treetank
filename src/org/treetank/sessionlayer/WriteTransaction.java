@@ -73,6 +73,8 @@ public final class WriteTransaction extends ReadTransaction
             mRevisionRootPage.createNameKey(mState, ""),
             UTF.convert(document));
 
+    mCurrentNodePage = null;
+
     return mCurrentNode.getNodeKey();
   }
 
@@ -144,7 +146,16 @@ public final class WriteTransaction extends ReadTransaction
 
     }
 
+    mCurrentNodePage = null;
+
     return mCurrentNode.getNodeKey();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final long insertTextAsFirstChild(final byte[] value) throws Exception {
+    return insertFirstChild(IConstants.TEXT, "", "", "", value);
   }
 
   /**
@@ -195,7 +206,17 @@ public final class WriteTransaction extends ReadTransaction
       rightSiblingNode.setLeftSiblingKey(mCurrentNode.getNodeKey());
     }
 
+    mCurrentNodePage = null;
+
     return mCurrentNode.getNodeKey();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final long insertTextAsRightSibling(final byte[] value)
+      throws Exception {
+    return insertRightSibling(IConstants.TEXT, "", "", "", value);
   }
 
   /**
@@ -207,6 +228,7 @@ public final class WriteTransaction extends ReadTransaction
       final String prefix,
       final byte[] value) throws Exception {
     assertIsSelected();
+    mCurrentNodePage = null;
     mCurrentNode =
         mRevisionRootPage.prepareNode(mState, mCurrentNode.getNodeKey());
     ((Node) mCurrentNode).insertAttribute(
@@ -222,6 +244,7 @@ public final class WriteTransaction extends ReadTransaction
   public final void insertNamespace(final String uri, final String prefix)
       throws Exception {
     assertIsSelected();
+    mCurrentNodePage = null;
     mCurrentNode =
         mRevisionRootPage.prepareNode(mState, mCurrentNode.getNodeKey());
     ((Node) mCurrentNode).insertNamespace(mRevisionRootPage.createNameKey(
@@ -233,9 +256,8 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final void remove() throws Exception {
-
     assertIsSelected();
-
+    mCurrentNodePage = null;
     if (mCurrentNode.getChildCount() > 0) {
       throw new IllegalStateException("INode "
           + mCurrentNode.getNodeKey()
@@ -288,6 +310,7 @@ public final class WriteTransaction extends ReadTransaction
       final String prefix,
       final byte[] value) throws Exception {
     assertIsSelected();
+    mCurrentNodePage = null;
     mCurrentNode =
         mRevisionRootPage.prepareNode(mState, mCurrentNode.getNodeKey());
     ((Node) mCurrentNode).setAttribute(
@@ -306,6 +329,7 @@ public final class WriteTransaction extends ReadTransaction
       final String uri,
       final String prefix) throws Exception {
     assertIsSelected();
+    mCurrentNodePage = null;
     mCurrentNode =
         mRevisionRootPage.prepareNode(mState, mCurrentNode.getNodeKey());
     ((Node) mCurrentNode).setNamespace(index, mRevisionRootPage.createNameKey(
@@ -318,6 +342,7 @@ public final class WriteTransaction extends ReadTransaction
    */
   public final void setLocalPart(final String localPart) throws Exception {
     assertIsSelected();
+    mCurrentNodePage = null;
     mCurrentNode =
         mRevisionRootPage.prepareNode(mState, mCurrentNode.getNodeKey());
     ((Node) mCurrentNode).setLocalPartKey(mRevisionRootPage.createNameKey(
@@ -330,6 +355,7 @@ public final class WriteTransaction extends ReadTransaction
    */
   public final void setURI(final String uri) throws Exception {
     assertIsSelected();
+    mCurrentNodePage = null;
     mCurrentNode =
         mRevisionRootPage.prepareNode(mState, mCurrentNode.getNodeKey());
     ((Node) mCurrentNode).setURIKey(mRevisionRootPage
@@ -341,6 +367,7 @@ public final class WriteTransaction extends ReadTransaction
    */
   public void setPrefix(final String prefix) throws Exception {
     assertIsSelected();
+    mCurrentNodePage = null;
     mCurrentNode =
         mRevisionRootPage.prepareNode(mState, mCurrentNode.getNodeKey());
     ((Node) mCurrentNode).setPrefixKey(mRevisionRootPage.createNameKey(
@@ -353,6 +380,7 @@ public final class WriteTransaction extends ReadTransaction
    */
   public final void setValue(final byte[] value) throws Exception {
     assertIsSelected();
+    mCurrentNodePage = null;
     mCurrentNode =
         mRevisionRootPage.prepareNode(mState, mCurrentNode.getNodeKey());
     ((Node) mCurrentNode).setValue(value);

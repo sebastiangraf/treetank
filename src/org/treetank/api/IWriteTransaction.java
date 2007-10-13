@@ -21,7 +21,6 @@
 
 package org.treetank.api;
 
-
 /**
  * <h1>IWriteTransaction</h1>
  * 
@@ -79,6 +78,17 @@ public interface IWriteTransaction extends IReadTransaction {
       final byte[] value) throws Exception;
 
   /**
+   * Insert new text node as first child of currently selected node.
+   * The cursor is moved to the inserted node.
+   * 
+   * @param value Value of inserted node.
+   * @return Key of inserted node.
+   * @throws Exception of any kind and if no node is selected or the node
+   * already has a first child.
+   */
+  public long insertTextAsFirstChild(final byte[] value) throws Exception;
+
+  /**
    * Insert new node as right sibling of currently selected node.
    * The cursor is moved to the inserted node.
    * 
@@ -97,6 +107,17 @@ public interface IWriteTransaction extends IReadTransaction {
       final String uri,
       final String prefix,
       final byte[] value) throws Exception;
+
+  /**
+   * Insert new text node as right sibling of currently selected node.
+   * The cursor is moved to the inserted node.
+   * 
+   * @param value Value of inserted node.
+   * @return Key of inserted node.
+   * @throws Exception of any kind and if no node is selected or the node is
+   * the root node which is not allowed to have right siblings.
+   */
+  public long insertTextAsRightSibling(final byte[] value) throws Exception;
 
   /**
    * Insert attribute in currently selected node.
