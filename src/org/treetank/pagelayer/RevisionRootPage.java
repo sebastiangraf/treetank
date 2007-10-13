@@ -41,6 +41,8 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
 
   private PageReference mIndirectPageReference;
 
+  private NamePage mNamePage;
+
   private RevisionRootPage(final long revisionKey) {
     mRevisionKey = revisionKey;
     mNamePageReference = null;
@@ -144,9 +146,11 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
   public final String getName(
       final IReadTransactionState state,
       final int nameKey) throws Exception {
-    final NamePage namePage =
-        state.getPageCache().dereferenceNamePage(state, mNamePageReference);
-    return namePage.getName(nameKey);
+    if (mNamePage == null) {
+      mNamePage =
+          state.getPageCache().dereferenceNamePage(state, mNamePageReference);
+    }
+    return mNamePage.getName(nameKey);
   }
 
   /**
@@ -161,8 +165,8 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
     final String string = (name == null ? "" : name);
     final int nameKey = string.hashCode();
     if (getName(state, nameKey) == null) {
-      final NamePage namePage = prepareNamePage(state, mNamePageReference);
-      namePage.setName(nameKey, string);
+      mNamePage = prepareNamePage(state, mNamePageReference);
+      mNamePage.setName(nameKey, string);
     }
     return nameKey;
   }
