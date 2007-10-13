@@ -24,7 +24,6 @@ package org.treetank.utils;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.treetank.utils.UTF;
 
 public class UTFTest {
 
@@ -34,6 +33,17 @@ public class UTFTest {
     assertEquals("foo", UTF.convert(UTF.convert("foo")));
     assertEquals("fö§", UTF.convert(UTF.convert("fö§")));
     assertEquals("", UTF.convert(UTF.convert("")));
+  }
+
+  @Test
+  public void testEquals() {
+    assertEquals(false, UTF.equals(UTF.convert("foo"), UTF.convert("foobar")));
+    assertEquals(false, UTF.equals(UTF.convert("foo"), UTF.convert("bar")));
+    assertEquals(true, UTF.equals(UTF.convert("foo"), UTF.convert("foo")));
+
+    assertEquals(true, UTF.equals("foo", UTF.convert("foo")));
+    assertEquals(true, UTF.equals(UTF.convert("foo"), "foo"));
+    assertEquals(true, UTF.equals("foo", "foo"));
   }
 
 }

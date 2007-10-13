@@ -69,4 +69,31 @@ public final class UTF {
     return bytes;
   }
 
+  public static final boolean equals(final byte[] value1, final byte[] value2) {
+    // Fail if the values are not of equal length.
+    if (value1.length != value2.length) {
+      return false;
+    }
+    // Fail if a single byte does not match.
+    for (int i = 0, l = value1.length; i < l; i++) {
+      if (value1[i] != value2[i]) {
+        return false;
+      }
+    }
+    // Values must be equal if we reach here.
+    return true;
+  }
+
+  public static final boolean equals(final byte[] value1, final String value2) {
+    return equals(value1, UTF.convert(value2));
+  }
+
+  public static final boolean equals(final String value1, final byte[] value2) {
+    return equals(UTF.convert(value1), value2);
+  }
+
+  public static final boolean equals(final String value1, final String value2) {
+    return equals(UTF.convert(value1), UTF.convert(value2));
+  }
+
 }
