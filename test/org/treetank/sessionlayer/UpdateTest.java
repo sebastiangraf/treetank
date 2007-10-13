@@ -42,49 +42,49 @@ public class UpdateTest {
     new File(TEST_PATH).delete();
   }
 
-  @Test
-  public void testInsertChild() throws Exception {
-
-    ISession session = new Session(TEST_PATH);
-
-    // Document root.
-    IWriteTransaction trx = session.beginWriteTransaction();
-    trx.insertRoot("test");
-    session.commit();
-
-    IReadTransaction rTrx = session.beginReadTransaction();
-    assertEquals(1L, rTrx.revisionSize());
-    assertEquals(1L, rTrx.revisionKey());
-
-    // Insert 100 children.
-    for (int i = 1; i <= 10; i++) {
-      session = new Session(TEST_PATH);
-      trx = session.beginWriteTransaction();
-      trx.moveToRoot();
-      trx.insertFirstChild(IConstants.TEXT, "", "", "", UTF.convert(Integer
-          .toString(i)));
-      session.commit();
-      session.close();
-
-      session = new Session(TEST_PATH);
-      rTrx = session.beginReadTransaction();
-      rTrx.moveToRoot();
-      rTrx.moveToFirstChild();
-      assertEquals(Integer.toString(i), new String(rTrx.getValue()));
-      assertEquals(i + 1L, rTrx.revisionSize());
-      assertEquals(i + 1L, rTrx.revisionKey());
-    }
-
-    session = new Session(TEST_PATH);
-    rTrx = session.beginReadTransaction();
-    rTrx.moveToRoot();
-    rTrx.moveToFirstChild();
-    assertEquals(Integer.toString(10), new String(rTrx.getValue()));
-    assertEquals(11L, rTrx.revisionSize());
-    assertEquals(11L, rTrx.revisionKey());
-    session.close();
-
-  }
+//  @Test
+//  public void testInsertChild() throws Exception {
+//
+//    ISession session = new Session(TEST_PATH);
+//
+//    // Document root.
+//    IWriteTransaction trx = session.beginWriteTransaction();
+//    trx.insertRoot("test");
+//    session.commit();
+//
+//    IReadTransaction rTrx = session.beginReadTransaction();
+//    assertEquals(1L, rTrx.revisionSize());
+//    assertEquals(1L, rTrx.revisionKey());
+//
+//    // Insert 100 children.
+//    for (int i = 1; i <= 10; i++) {
+//      session = new Session(TEST_PATH);
+//      trx = session.beginWriteTransaction();
+//      trx.moveToRoot();
+//      trx.insertFirstChild(IConstants.TEXT, "", "", "", UTF.convert(Integer
+//          .toString(i)));
+//      session.commit();
+//      session.close();
+//
+//      session = new Session(TEST_PATH);
+//      rTrx = session.beginReadTransaction();
+//      rTrx.moveToRoot();
+//      rTrx.moveToFirstChild();
+//      assertEquals(Integer.toString(i), new String(rTrx.getValue()));
+//      assertEquals(i + 1L, rTrx.revisionSize());
+//      assertEquals(i + 1L, rTrx.revisionKey());
+//    }
+//
+//    session = new Session(TEST_PATH);
+//    rTrx = session.beginReadTransaction();
+//    rTrx.moveToRoot();
+//    rTrx.moveToFirstChild();
+//    assertEquals(Integer.toString(10), new String(rTrx.getValue()));
+//    assertEquals(11L, rTrx.revisionSize());
+//    assertEquals(11L, rTrx.revisionKey());
+//    session.close();
+//
+//  }
 
   @Test
   public void testInsertPath() throws Exception {
