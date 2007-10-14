@@ -25,7 +25,6 @@ import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.IReadTransactionState;
-import org.treetank.pagelayer.Node;
 
 /**
  * <h1>ReadTransaction</h1>
@@ -37,6 +36,7 @@ import org.treetank.pagelayer.Node;
  */
 public class ReadTransaction implements IReadTransaction {
 
+  /** State of transaction including all cached stuff. */
   protected final IReadTransactionState mState;
 
   /** Strong reference to currently selected node. */
@@ -45,7 +45,7 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * Constructor.
    * 
-   * @param revisionRootPage Revision root page to work with.
+   * @param state Transaction state to work with.
    */
   protected ReadTransaction(final IReadTransactionState state) {
     mState = state;
@@ -86,12 +86,8 @@ public class ReadTransaction implements IReadTransaction {
   public final boolean moveTo(final long nodeKey) throws Exception {
     if (nodeKey != IConstants.NULL_KEY) {
 
-      // Calculate coordinates for given nodeKey.
-      final long nodePageKey = Node.nodePageKey(nodeKey);
-      final int nodePageOffset = Node.nodePageOffset(nodeKey);
-
       // Fetch node by offset within mCurrentNodePage.
-      mCurrentNode = mState.getNodePage(nodePageKey).getNode(nodePageOffset);
+      mCurrentNode = mState.getNode(nodeKey);
 
     } else {
       mCurrentNode = null;
