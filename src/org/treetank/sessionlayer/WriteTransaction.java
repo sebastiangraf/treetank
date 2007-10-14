@@ -105,17 +105,15 @@ public final class WriteTransaction extends ReadTransaction
       // Change existing first child node.
       if (mCurrentNode.getRightSiblingKey() != IConstants.NULL_KEY) {
         final Node rightSiblingNode =
-            mState.getRevisionRootPage().prepareNode(
-                (IWriteTransactionState) mState,
-                mCurrentNode.getRightSiblingKey());
+            ((IWriteTransactionState) mState).prepareNode(mCurrentNode
+                .getRightSiblingKey());
         rightSiblingNode.setLeftSiblingKey(mCurrentNode.getNodeKey());
       }
 
       // Change parent node.
       final Node parentNode =
-          mState.getRevisionRootPage().prepareNode(
-              (IWriteTransactionState) mState,
-              mCurrentNode.getParentKey());
+          ((IWriteTransactionState) mState).prepareNode(mCurrentNode
+              .getParentKey());
       parentNode.setFirstChildKey(mCurrentNode.getNodeKey());
       parentNode.incrementChildCount();
 
@@ -138,9 +136,8 @@ public final class WriteTransaction extends ReadTransaction
 
       // Change parent node.
       final Node parentNode =
-          mState.getRevisionRootPage().prepareNode(
-              (IWriteTransactionState) mState,
-              mCurrentNode.getParentKey());
+          ((IWriteTransactionState) mState).prepareNode(mCurrentNode
+              .getParentKey());
       parentNode.setFirstChildKey(mCurrentNode.getNodeKey());
       parentNode.incrementChildCount();
 
@@ -188,24 +185,21 @@ public final class WriteTransaction extends ReadTransaction
 
     // Adapt parent node.
     final Node parentNode =
-        mState.getRevisionRootPage().prepareNode(
-            (IWriteTransactionState) mState,
-            mCurrentNode.getParentKey());
+        ((IWriteTransactionState) mState).prepareNode(mCurrentNode
+            .getParentKey());
     parentNode.incrementChildCount();
 
     // Adapt left sibling node.
     final Node leftSiblingNode =
-        mState.getRevisionRootPage().prepareNode(
-            (IWriteTransactionState) mState,
-            mCurrentNode.getLeftSiblingKey());
+        ((IWriteTransactionState) mState).prepareNode(mCurrentNode
+            .getLeftSiblingKey());
     leftSiblingNode.setRightSiblingKey(mCurrentNode.getNodeKey());
 
     // Adapt right sibling node.
     if (mCurrentNode.getRightSiblingKey() != IConstants.NULL_KEY) {
       final Node rightSiblingNode =
-          mState.getRevisionRootPage().prepareNode(
-              (IWriteTransactionState) mState,
-              mCurrentNode.getRightSiblingKey());
+          ((IWriteTransactionState) mState).prepareNode(mCurrentNode
+              .getRightSiblingKey());
       rightSiblingNode.setLeftSiblingKey(mCurrentNode.getNodeKey());
     }
 
@@ -230,9 +224,8 @@ public final class WriteTransaction extends ReadTransaction
       final byte[] value) throws Exception {
     assertIsSelected();
     mCurrentNode =
-        mState.getRevisionRootPage().prepareNode(
-            (IWriteTransactionState) mState,
-            mCurrentNode.getNodeKey());
+        ((IWriteTransactionState) mState)
+            .prepareNode(mCurrentNode.getNodeKey());
     ((Node) mCurrentNode).insertAttribute(((IWriteTransactionState) mState)
         .createNameKey(localPart), ((IWriteTransactionState) mState)
         .createNameKey(uri), ((IWriteTransactionState) mState)
@@ -246,9 +239,8 @@ public final class WriteTransaction extends ReadTransaction
       throws Exception {
     assertIsSelected();
     mCurrentNode =
-        mState.getRevisionRootPage().prepareNode(
-            (IWriteTransactionState) mState,
-            mCurrentNode.getNodeKey());
+        ((IWriteTransactionState) mState)
+            .prepareNode(mCurrentNode.getNodeKey());
     ((Node) mCurrentNode).insertNamespace(((IWriteTransactionState) mState)
         .createNameKey(uri), ((IWriteTransactionState) mState)
         .createNameKey(prefix));
@@ -278,33 +270,24 @@ public final class WriteTransaction extends ReadTransaction
     final long rightSiblingNodeKey = mCurrentNode.getRightSiblingKey();
 
     // Remove old node.
-    mState.getRevisionRootPage().removeNode(
-        (IWriteTransactionState) mState,
-        nodeKey);
+    ((IWriteTransactionState) mState).removeNode(nodeKey);
 
     // Get and adapt parent node.
-    mCurrentNode =
-        mState.getRevisionRootPage().prepareNode(
-            (IWriteTransactionState) mState,
-            parentKey);
+    mCurrentNode = ((IWriteTransactionState) mState).prepareNode(parentKey);
     ((Node) mCurrentNode).decrementChildCount();
     ((Node) mCurrentNode).setFirstChildKey(rightSiblingNodeKey);
 
     // Adapt left sibling node if there is one.
     if (leftSiblingNodeKey != IConstants.NULL_KEY) {
       final Node leftSiblingNode =
-          mState.getRevisionRootPage().prepareNode(
-              (IWriteTransactionState) mState,
-              leftSiblingNodeKey);
+          ((IWriteTransactionState) mState).prepareNode(leftSiblingNodeKey);
       leftSiblingNode.setRightSiblingKey(rightSiblingNodeKey);
     }
 
     // Adapt right sibling node if there is one.
     if (rightSiblingNodeKey != IConstants.NULL_KEY) {
       final Node rightSiblingNode =
-          mState.getRevisionRootPage().prepareNode(
-              (IWriteTransactionState) mState,
-              rightSiblingNodeKey);
+          ((IWriteTransactionState) mState).prepareNode(rightSiblingNodeKey);
       rightSiblingNode.setLeftSiblingKey(leftSiblingNodeKey);
     }
 
@@ -321,9 +304,8 @@ public final class WriteTransaction extends ReadTransaction
       final byte[] value) throws Exception {
     assertIsSelected();
     mCurrentNode =
-        mState.getRevisionRootPage().prepareNode(
-            (IWriteTransactionState) mState,
-            mCurrentNode.getNodeKey());
+        ((IWriteTransactionState) mState)
+            .prepareNode(mCurrentNode.getNodeKey());
     ((Node) mCurrentNode).setAttribute(index, ((IWriteTransactionState) mState)
         .createNameKey(localPart), ((IWriteTransactionState) mState)
         .createNameKey(uri), ((IWriteTransactionState) mState)
@@ -339,9 +321,8 @@ public final class WriteTransaction extends ReadTransaction
       final String prefix) throws Exception {
     assertIsSelected();
     mCurrentNode =
-        mState.getRevisionRootPage().prepareNode(
-            (IWriteTransactionState) mState,
-            mCurrentNode.getNodeKey());
+        ((IWriteTransactionState) mState)
+            .prepareNode(mCurrentNode.getNodeKey());
     ((Node) mCurrentNode).setNamespace(index, ((IWriteTransactionState) mState)
         .createNameKey(uri), ((IWriteTransactionState) mState)
         .createNameKey(prefix));
@@ -353,9 +334,8 @@ public final class WriteTransaction extends ReadTransaction
   public final void setLocalPart(final String localPart) throws Exception {
     assertIsSelected();
     mCurrentNode =
-        mState.getRevisionRootPage().prepareNode(
-            (IWriteTransactionState) mState,
-            mCurrentNode.getNodeKey());
+        ((IWriteTransactionState) mState)
+            .prepareNode(mCurrentNode.getNodeKey());
     ((Node) mCurrentNode).setLocalPartKey(((IWriteTransactionState) mState)
         .createNameKey(localPart));
   }
@@ -366,9 +346,8 @@ public final class WriteTransaction extends ReadTransaction
   public final void setURI(final String uri) throws Exception {
     assertIsSelected();
     mCurrentNode =
-        mState.getRevisionRootPage().prepareNode(
-            (IWriteTransactionState) mState,
-            mCurrentNode.getNodeKey());
+        ((IWriteTransactionState) mState)
+            .prepareNode(mCurrentNode.getNodeKey());
     ((Node) mCurrentNode).setURIKey(((IWriteTransactionState) mState)
         .createNameKey(uri));
   }
@@ -379,9 +358,8 @@ public final class WriteTransaction extends ReadTransaction
   public void setPrefix(final String prefix) throws Exception {
     assertIsSelected();
     mCurrentNode =
-        mState.getRevisionRootPage().prepareNode(
-            (IWriteTransactionState) mState,
-            mCurrentNode.getNodeKey());
+        ((IWriteTransactionState) mState)
+            .prepareNode(mCurrentNode.getNodeKey());
     ((Node) mCurrentNode).setPrefixKey(((IWriteTransactionState) mState)
         .createNameKey(prefix));
   }
@@ -392,9 +370,8 @@ public final class WriteTransaction extends ReadTransaction
   public final void setValue(final byte[] value) throws Exception {
     assertIsSelected();
     mCurrentNode =
-        mState.getRevisionRootPage().prepareNode(
-            (IWriteTransactionState) mState,
-            mCurrentNode.getNodeKey());
+        ((IWriteTransactionState) mState)
+            .prepareNode(mCurrentNode.getNodeKey());
     ((Node) mCurrentNode).setValue(value);
   }
 

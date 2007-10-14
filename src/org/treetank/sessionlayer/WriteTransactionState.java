@@ -23,6 +23,7 @@ package org.treetank.sessionlayer;
 
 import org.treetank.api.IWriteTransactionState;
 import org.treetank.pagelayer.AbstractPage;
+import org.treetank.pagelayer.Node;
 import org.treetank.pagelayer.NodePage;
 import org.treetank.pagelayer.PageCache;
 import org.treetank.pagelayer.PageReader;
@@ -61,6 +62,24 @@ public final class WriteTransactionState extends ReadTransactionState
             this,
             nodePageKey), nodePageKey);
     return mNodePage;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final Node prepareNode(final long nodeKey) throws Exception {
+    return prepareNodePage(Node.nodePageKey(nodeKey)).getNode(
+        Node.nodePageOffset(nodeKey));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final void removeNode(final long nodeKey) throws Exception {
+    mRevisionRootPage.decrementNodeCount();
+    prepareNodePage(Node.nodePageKey(nodeKey)).setNode(
+        Node.nodePageOffset(nodeKey),
+        null);
   }
 
   /**

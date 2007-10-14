@@ -21,6 +21,7 @@
 
 package org.treetank.api;
 
+import org.treetank.pagelayer.Node;
 import org.treetank.pagelayer.NodePage;
 import org.treetank.pagelayer.PageWriter;
 
@@ -41,6 +42,10 @@ public interface IWriteTransactionState extends IReadTransactionState {
   public PageWriter getPageWriter();
 
   public NodePage prepareNodePage(final long nodePageKey) throws Exception;
+
+  public Node prepareNode(final long nodeKey) throws Exception;
+  
+  public void removeNode(final long nodeKey) throws Exception;
 
   /**
    * Create name key given a name.
