@@ -21,7 +21,6 @@
 
 package org.treetank.api;
 
-import org.treetank.pagelayer.NodePage;
 import org.treetank.pagelayer.PageCache;
 import org.treetank.pagelayer.PageReader;
 import org.treetank.pagelayer.RevisionRootPage;
@@ -65,13 +64,13 @@ public interface IReadTransactionState {
   public RevisionRootPage getRevisionRootPage();
 
   /**
-   * Get the node page most recently accessed.
+   * Get a node.
    * 
-   * @param nodePageKey Key of node page to get.
-   * @return Cached node page.
+   * @param nodeKey Key of node to get.
+   * @return Node that was requested.
    * @throws Exception of any kind.
    */
-  public NodePage getNodePage(final long nodePageKey) throws Exception;
+  public INode getNode(final long nodeKey) throws Exception;
 
   /**
    * Get the name associated with the given name key.

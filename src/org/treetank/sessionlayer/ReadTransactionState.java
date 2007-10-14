@@ -21,8 +21,10 @@
 
 package org.treetank.sessionlayer;
 
+import org.treetank.api.INode;
 import org.treetank.api.IReadTransactionState;
 import org.treetank.pagelayer.NamePage;
+import org.treetank.pagelayer.Node;
 import org.treetank.pagelayer.NodePage;
 import org.treetank.pagelayer.PageCache;
 import org.treetank.pagelayer.PageReader;
@@ -91,11 +93,19 @@ public class ReadTransactionState implements IReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public final NodePage getNodePage(final long nodePageKey) throws Exception {
+  public final INode getNode(final long nodeKey) throws Exception {
+
+    // Calculate coordinates for given nodeKey.
+    final long nodePageKey = Node.nodePageKey(nodeKey);
+    final int nodePageOffset = Node.nodePageOffset(nodeKey);
+
+    // Fetch node page if required.
     if (mNodePage == null || mNodePage.getNodePageKey() != nodePageKey) {
       mNodePage = mRevisionRootPage.getNodePage(this, nodePageKey);
     }
-    return mNodePage;
+
+    // Fetch node from node page.
+    return mNodePage.getNode(nodePageOffset);
   }
 
   /**
