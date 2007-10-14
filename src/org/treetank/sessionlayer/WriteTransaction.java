@@ -65,9 +65,9 @@ public final class WriteTransaction extends ReadTransaction
             IConstants.NULL_KEY,
             IConstants.NULL_KEY,
             IConstants.DOCUMENT,
-            mState.getRevisionRootPage().createNameKey(mState, ""),
-            mState.getRevisionRootPage().createNameKey(mState, ""),
-            mState.getRevisionRootPage().createNameKey(mState, ""),
+            ((IWriteTransactionState) mState).createNameKey(""),
+            ((IWriteTransactionState) mState).createNameKey(""),
+            ((IWriteTransactionState) mState).createNameKey(""),
             UTF.convert(document));
 
     return mCurrentNode.getNodeKey();
@@ -97,15 +97,9 @@ public final class WriteTransaction extends ReadTransaction
               IConstants.NULL_KEY,
               mCurrentNode.getFirstChildKey(),
               kind,
-              mState.getRevisionRootPage().createNameKey(
-                  (IWriteTransactionState) mState,
-                  localPart),
-              mState.getRevisionRootPage().createNameKey(
-                  (IWriteTransactionState) mState,
-                  uri),
-              mState.getRevisionRootPage().createNameKey(
-                  (IWriteTransactionState) mState,
-                  prefix),
+              ((IWriteTransactionState) mState).createNameKey(localPart),
+              ((IWriteTransactionState) mState).createNameKey(uri),
+              ((IWriteTransactionState) mState).createNameKey(prefix),
               value);
 
       // Change existing first child node.
@@ -137,15 +131,9 @@ public final class WriteTransaction extends ReadTransaction
               IConstants.NULL_KEY,
               IConstants.NULL_KEY,
               kind,
-              mState.getRevisionRootPage().createNameKey(
-                  (IWriteTransactionState) mState,
-                  localPart),
-              mState.getRevisionRootPage().createNameKey(
-                  (IWriteTransactionState) mState,
-                  uri),
-              mState.getRevisionRootPage().createNameKey(
-                  (IWriteTransactionState) mState,
-                  prefix),
+              ((IWriteTransactionState) mState).createNameKey(localPart),
+              ((IWriteTransactionState) mState).createNameKey(uri),
+              ((IWriteTransactionState) mState).createNameKey(prefix),
               value);
 
       // Change parent node.
@@ -193,15 +181,9 @@ public final class WriteTransaction extends ReadTransaction
             mCurrentNode.getNodeKey(),
             mCurrentNode.getRightSiblingKey(),
             kind,
-            mState.getRevisionRootPage().createNameKey(
-                (IWriteTransactionState) mState,
-                localPart),
-            mState.getRevisionRootPage().createNameKey(
-                (IWriteTransactionState) mState,
-                uri),
-            mState.getRevisionRootPage().createNameKey(
-                (IWriteTransactionState) mState,
-                prefix),
+            ((IWriteTransactionState) mState).createNameKey(localPart),
+            ((IWriteTransactionState) mState).createNameKey(uri),
+            ((IWriteTransactionState) mState).createNameKey(prefix),
             value);
 
     // Adapt parent node.
@@ -251,13 +233,10 @@ public final class WriteTransaction extends ReadTransaction
         mState.getRevisionRootPage().prepareNode(
             (IWriteTransactionState) mState,
             mCurrentNode.getNodeKey());
-    ((Node) mCurrentNode).insertAttribute(mState
-        .getRevisionRootPage()
-        .createNameKey((IWriteTransactionState) mState, localPart), mState
-        .getRevisionRootPage()
-        .createNameKey((IWriteTransactionState) mState, uri), mState
-        .getRevisionRootPage()
-        .createNameKey((IWriteTransactionState) mState, prefix), value);
+    ((Node) mCurrentNode).insertAttribute(((IWriteTransactionState) mState)
+        .createNameKey(localPart), ((IWriteTransactionState) mState)
+        .createNameKey(uri), ((IWriteTransactionState) mState)
+        .createNameKey(prefix), value);
   }
 
   /**
@@ -270,11 +249,9 @@ public final class WriteTransaction extends ReadTransaction
         mState.getRevisionRootPage().prepareNode(
             (IWriteTransactionState) mState,
             mCurrentNode.getNodeKey());
-    ((Node) mCurrentNode).insertNamespace(mState
-        .getRevisionRootPage()
-        .createNameKey((IWriteTransactionState) mState, uri), mState
-        .getRevisionRootPage()
-        .createNameKey((IWriteTransactionState) mState, prefix));
+    ((Node) mCurrentNode).insertNamespace(((IWriteTransactionState) mState)
+        .createNameKey(uri), ((IWriteTransactionState) mState)
+        .createNameKey(prefix));
   }
 
   /**
@@ -347,13 +324,10 @@ public final class WriteTransaction extends ReadTransaction
         mState.getRevisionRootPage().prepareNode(
             (IWriteTransactionState) mState,
             mCurrentNode.getNodeKey());
-    ((Node) mCurrentNode).setAttribute(index, mState
-        .getRevisionRootPage()
-        .createNameKey((IWriteTransactionState) mState, localPart), mState
-        .getRevisionRootPage()
-        .createNameKey((IWriteTransactionState) mState, uri), mState
-        .getRevisionRootPage()
-        .createNameKey((IWriteTransactionState) mState, prefix), value);
+    ((Node) mCurrentNode).setAttribute(index, ((IWriteTransactionState) mState)
+        .createNameKey(localPart), ((IWriteTransactionState) mState)
+        .createNameKey(uri), ((IWriteTransactionState) mState)
+        .createNameKey(prefix), value);
   }
 
   /**
@@ -368,11 +342,9 @@ public final class WriteTransaction extends ReadTransaction
         mState.getRevisionRootPage().prepareNode(
             (IWriteTransactionState) mState,
             mCurrentNode.getNodeKey());
-    ((Node) mCurrentNode).setNamespace(index, mState
-        .getRevisionRootPage()
-        .createNameKey((IWriteTransactionState) mState, uri), mState
-        .getRevisionRootPage()
-        .createNameKey((IWriteTransactionState) mState, prefix));
+    ((Node) mCurrentNode).setNamespace(index, ((IWriteTransactionState) mState)
+        .createNameKey(uri), ((IWriteTransactionState) mState)
+        .createNameKey(prefix));
   }
 
   /**
@@ -384,9 +356,8 @@ public final class WriteTransaction extends ReadTransaction
         mState.getRevisionRootPage().prepareNode(
             (IWriteTransactionState) mState,
             mCurrentNode.getNodeKey());
-    ((Node) mCurrentNode).setLocalPartKey(mState
-        .getRevisionRootPage()
-        .createNameKey((IWriteTransactionState) mState, localPart));
+    ((Node) mCurrentNode).setLocalPartKey(((IWriteTransactionState) mState)
+        .createNameKey(localPart));
   }
 
   /**
@@ -398,9 +369,8 @@ public final class WriteTransaction extends ReadTransaction
         mState.getRevisionRootPage().prepareNode(
             (IWriteTransactionState) mState,
             mCurrentNode.getNodeKey());
-    ((Node) mCurrentNode).setURIKey(mState.getRevisionRootPage().createNameKey(
-        (IWriteTransactionState) mState,
-        uri));
+    ((Node) mCurrentNode).setURIKey(((IWriteTransactionState) mState)
+        .createNameKey(uri));
   }
 
   /**
@@ -412,9 +382,8 @@ public final class WriteTransaction extends ReadTransaction
         mState.getRevisionRootPage().prepareNode(
             (IWriteTransactionState) mState,
             mCurrentNode.getNodeKey());
-    ((Node) mCurrentNode).setPrefixKey(mState
-        .getRevisionRootPage()
-        .createNameKey((IWriteTransactionState) mState, prefix));
+    ((Node) mCurrentNode).setPrefixKey(((IWriteTransactionState) mState)
+        .createNameKey(prefix));
   }
 
   /**

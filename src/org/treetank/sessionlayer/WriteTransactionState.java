@@ -63,4 +63,19 @@ public final class WriteTransactionState extends ReadTransactionState
     return mNodePage;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  public final int createNameKey(final String name) throws Exception {
+    final String string = (name == null ? "" : name);
+    final int nameKey = string.hashCode();
+    if (getName(nameKey) == null) {
+      mNamePage =
+          AbstractPage.prepareNamePage(this, mRevisionRootPage
+              .getNamePageReference());
+      mNamePage.setName(nameKey, string);
+    }
+    return nameKey;
+  }
+
 }

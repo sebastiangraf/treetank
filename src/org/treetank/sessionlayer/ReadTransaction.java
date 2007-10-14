@@ -91,10 +91,7 @@ public class ReadTransaction implements IReadTransaction {
       final int nodePageOffset = Node.nodePageOffset(nodeKey);
 
       // Fetch node by offset within mCurrentNodePage.
-      mCurrentNode =
-          mState
-              .getNodePage(mState.getRevisionRootPage(), nodePageKey)
-              .getNode(nodePageOffset);
+      mCurrentNode = mState.getNodePage(nodePageKey).getNode(nodePageOffset);
 
     } else {
       mCurrentNode = null;
@@ -231,9 +228,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final String getLocalPart() throws Exception {
     assertIsSelected();
-    return mState.getRevisionRootPage().getName(
-        mState,
-        mCurrentNode.getLocalPartKey());
+    return mState.getName(mCurrentNode.getLocalPartKey());
   }
 
   /**
@@ -249,9 +244,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final String getURI() throws Exception {
     assertIsSelected();
-    return mState.getRevisionRootPage().getName(
-        mState,
-        mCurrentNode.getURIKey());
+    return mState.getName(mCurrentNode.getURIKey());
   }
 
   /**
@@ -267,9 +260,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final String getPrefix() throws Exception {
     assertIsSelected();
-    return mState.getRevisionRootPage().getName(
-        mState,
-        mCurrentNode.getPrefixKey());
+    return mState.getName(mCurrentNode.getPrefixKey());
   }
 
   /**
@@ -300,7 +291,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final String nameForKey(final int key) throws Exception {
-    return mState.getRevisionRootPage().getName(mState, key);
+    return mState.getName(key);
   }
 
 }

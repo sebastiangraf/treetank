@@ -22,6 +22,7 @@
 package org.treetank.sessionlayer;
 
 import org.treetank.api.IReadTransactionState;
+import org.treetank.pagelayer.NamePage;
 import org.treetank.pagelayer.NodePage;
 import org.treetank.pagelayer.PageCache;
 import org.treetank.pagelayer.PageReader;
@@ -40,6 +41,8 @@ public class ReadTransactionState implements IReadTransactionState {
 
   protected NodePage mNodePage;
 
+  protected NamePage mNamePage;
+
   public ReadTransactionState(
       final PageCache pageCache,
       final PageReader pageReader,
@@ -54,6 +57,7 @@ public class ReadTransactionState implements IReadTransactionState {
       mStaticNodeTree = null;
     }
     mNodePage = null;
+    mNamePage = null;
   }
 
   /**
@@ -87,13 +91,23 @@ public class ReadTransactionState implements IReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public final NodePage getNodePage(
-      final RevisionRootPage revisionRootPage,
-      final long nodePageKey) throws Exception {
+  public final NodePage getNodePage(final long nodePageKey) throws Exception {
     if (mNodePage == null || mNodePage.getNodePageKey() != nodePageKey) {
-      mNodePage = revisionRootPage.getNodePage(this, nodePageKey);
+      mNodePage = mRevisionRootPage.getNodePage(this, nodePageKey);
     }
     return mNodePage;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final String getName(final int nameKey) throws Exception {
+    if (mNamePage == null) {
+      mNamePage =
+          mPageCache.dereferenceNamePage(this, mRevisionRootPage
+              .getNamePageReference());
+    }
+    return mNamePage.getName(nameKey);
   }
 
 }
