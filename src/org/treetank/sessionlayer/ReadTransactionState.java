@@ -101,7 +101,10 @@ public class ReadTransactionState implements IReadTransactionState {
 
     // Fetch node page if required.
     if (mNodePage == null || mNodePage.getNodePageKey() != nodePageKey) {
-      mNodePage = mRevisionRootPage.getNodePage(this, nodePageKey);
+      mNodePage =
+          mPageCache.dereferenceNodePage(this, mStaticNodeTree.get(
+              this,
+              nodePageKey), nodePageKey);
     }
 
     // Fetch node from node page.

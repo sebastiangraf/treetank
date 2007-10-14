@@ -22,7 +22,6 @@
 package org.treetank.pagelayer;
 
 import org.treetank.api.IPage;
-import org.treetank.api.IReadTransactionState;
 import org.treetank.api.IWriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
@@ -111,7 +110,7 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
 
     return revisionRootPage;
   }
-  
+
   public final PageReference getNamePageReference() {
     return mNamePageReference;
   }
@@ -136,23 +135,6 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
    */
   public final long getNodeCount() {
     return mNodeCount;
-  }
-
-  /**
-   * Get node page by node page key.
-   * 
-   * @param nodePageKey Key of node page.
-   * @return INode page with this key.
-   * @throws Exception of any kind.
-   */
-  public final NodePage getNodePage(
-      final IReadTransactionState state,
-      final long nodePageKey) throws Exception {
-    return state.getPageCache().dereferenceNodePage(
-        state,
-        state.getStaticNodeTree().get(state, nodePageKey),
-        nodePageKey);
-
   }
 
   public final Node prepareNode(
