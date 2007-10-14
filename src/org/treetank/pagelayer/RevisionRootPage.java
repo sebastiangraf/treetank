@@ -192,7 +192,6 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
       final long nodePageKey) throws Exception {
     return prepareNodePage(state, state.getStaticNodeTree().prepare(
         state,
-        this,
         nodePageKey), nodePageKey);
 
   }

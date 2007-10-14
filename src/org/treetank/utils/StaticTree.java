@@ -77,7 +77,6 @@ public final class StaticTree {
 
   public final PageReference prepare(
       final IReadTransactionState state,
-      final AbstractPage page,
       final long key) throws Exception {
 
     // Indirect reference.
@@ -95,7 +94,7 @@ public final class StaticTree {
 
       // Fetch page from current level.
       mCurrentOffsets[i] = levelSteps;
-      mCurrentPages[i] = page.prepareIndirectPage(state, reference);
+      mCurrentPages[i] = AbstractPage.prepareIndirectPage(state, reference);
       reference = mCurrentPages[i].getPageReference(levelSteps);
     }
 
