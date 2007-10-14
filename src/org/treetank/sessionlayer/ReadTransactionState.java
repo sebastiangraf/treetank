@@ -22,8 +22,11 @@
 package org.treetank.sessionlayer;
 
 import org.treetank.api.IReadTransactionState;
+import org.treetank.pagelayer.AbstractPage;
+import org.treetank.pagelayer.NodePage;
 import org.treetank.pagelayer.PageCache;
 import org.treetank.pagelayer.PageReader;
+import org.treetank.pagelayer.RevisionRootPage;
 import org.treetank.utils.StaticTree;
 
 public class ReadTransactionState implements IReadTransactionState {
@@ -34,6 +37,8 @@ public class ReadTransactionState implements IReadTransactionState {
 
   private final StaticTree mStaticNodeTree;
 
+  private NodePage mNodePage;
+
   public ReadTransactionState(
       final PageCache pageCache,
       final PageReader pageReader,
@@ -41,6 +46,7 @@ public class ReadTransactionState implements IReadTransactionState {
     mPageCache = pageCache;
     mPageReader = pageReader;
     mStaticNodeTree = staticNodeTree;
+    mNodePage = null;
   }
 
   /**
@@ -62,6 +68,30 @@ public class ReadTransactionState implements IReadTransactionState {
    */
   public final StaticTree getStaticNodeTree() {
     return mStaticNodeTree;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final NodePage getNodePage(
+      final RevisionRootPage revisionRootPage,
+      final long nodePageKey) throws Exception {
+    if (mNodePage == null || mNodePage.getNodePageKey() != nodePageKey) {
+      mNodePage = revisionRootPage.getNodePage(this, nodePageKey);
+    }
+    return mNodePage;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final NodePage prepareNodePage(final long nodePageKey)
+      throws Exception {
+    mNodePage =
+        AbstractPage.prepareNodePage(this, getStaticNodeTree().prepare(
+            this,
+            nodePageKey), nodePageKey);
+    return mNodePage;
   }
 
 }

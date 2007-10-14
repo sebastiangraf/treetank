@@ -21,8 +21,10 @@
 
 package org.treetank.api;
 
+import org.treetank.pagelayer.NodePage;
 import org.treetank.pagelayer.PageCache;
 import org.treetank.pagelayer.PageReader;
+import org.treetank.pagelayer.RevisionRootPage;
 import org.treetank.utils.StaticTree;
 
 /**
@@ -54,5 +56,19 @@ public interface IReadTransactionState {
    * @return PageReader instance.
    */
   public StaticTree getStaticNodeTree();
+
+  /**
+   * Get the node page most recently accessed.
+   * 
+   * @param revisionRootPage to start search from.
+   * @param nodePageKey Key of node page to get.
+   * @return Cached node page.
+   * @throws Exception of any kind.
+   */
+  public NodePage getNodePage(
+      final RevisionRootPage revisionRootPage,
+      final long nodePageKey) throws Exception;
+
+  public NodePage prepareNodePage(final long nodePageKey) throws Exception;
 
 }
