@@ -23,17 +23,21 @@ package org.treetank.sessionlayer;
 
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransactionState;
+import org.treetank.pagelayer.IndirectPage;
 import org.treetank.pagelayer.NamePage;
 import org.treetank.pagelayer.Node;
 import org.treetank.pagelayer.NodePage;
 import org.treetank.pagelayer.PageCache;
 import org.treetank.pagelayer.PageReader;
+import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.RevisionRootPage;
+import org.treetank.pagelayer.UberPage;
+import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.StaticTree;
 
 public class ReadTransactionState implements IReadTransactionState {
 
-  private final PageCache mPageCache;
+  protected final PageCache mPageCache;
 
   private final PageReader mPageReader;
 
@@ -65,20 +69,6 @@ public class ReadTransactionState implements IReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public final PageCache getPageCache() {
-    return mPageCache;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final PageReader getPageReader() {
-    return mPageReader;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
   public final StaticTree getStaticNodeTree() {
     return mStaticNodeTree;
   }
@@ -102,9 +92,9 @@ public class ReadTransactionState implements IReadTransactionState {
     // Fetch node page if required.
     if (mNodePage == null || mNodePage.getNodePageKey() != nodePageKey) {
       mNodePage =
-          mPageCache.dereferenceNodePage(this, mStaticNodeTree.get(
-              this,
-              nodePageKey), nodePageKey);
+          dereferenceNodePage(
+              mStaticNodeTree.get(this, nodePageKey),
+              nodePageKey);
     }
 
     // Fetch node from node page.
@@ -116,11 +106,67 @@ public class ReadTransactionState implements IReadTransactionState {
    */
   public final String getName(final int nameKey) throws Exception {
     if (mNamePage == null) {
-      mNamePage =
-          mPageCache.dereferenceNamePage(this, mRevisionRootPage
-              .getNamePageReference());
+      mNamePage = dereferenceNamePage(mRevisionRootPage.getNamePageReference());
     }
     return mNamePage.getName(nameKey);
+  }
+
+  public final NodePage dereferenceNodePage(
+      final PageReference reference,
+      final long nodePageKey) throws Exception {
+    NodePage page = (NodePage) mPageCache.get(reference);
+    if (page == null) {
+      final FastByteArrayReader in = mPageReader.read(reference);
+      page = NodePage.read(in, nodePageKey);
+      mPageCache.put(reference.getStart(), page);
+    }
+    return page;
+
+  }
+
+  public final NamePage dereferenceNamePage(final PageReference reference)
+      throws Exception {
+    NamePage page = (NamePage) mPageCache.get(reference);
+    if (page == null) {
+      final FastByteArrayReader in = mPageReader.read(reference);
+      page = NamePage.read(in);
+      mPageCache.put(reference.getStart(), page);
+    }
+    return page;
+  }
+
+  public final IndirectPage dereferenceIndirectPage(
+      final PageReference reference) throws Exception {
+    IndirectPage page = (IndirectPage) mPageCache.get(reference);
+    if (page == null) {
+      final FastByteArrayReader in = mPageReader.read(reference);
+      page = IndirectPage.read(in);
+      mPageCache.put(reference.getStart(), page);
+    }
+    return page;
+  }
+
+  public final RevisionRootPage dereferenceRevisionRootPage(
+      final PageReference reference,
+      final long revisionKey) throws Exception {
+    RevisionRootPage page = (RevisionRootPage) mPageCache.get(reference);
+    if (page == null) {
+      final FastByteArrayReader in = mPageReader.read(reference);
+      page = RevisionRootPage.read(in, revisionKey);
+      mPageCache.put(reference.getStart(), page);
+    }
+    return page;
+  }
+
+  public final UberPage dereferenceUberPage(final PageReference reference)
+      throws Exception {
+    UberPage page = (UberPage) mPageCache.get(reference);
+    if (page == null) {
+      final FastByteArrayReader in = mPageReader.read(reference);
+      page = UberPage.read(in);
+      mPageCache.put(reference.getStart(), page);
+    }
+    return page;
   }
 
 }

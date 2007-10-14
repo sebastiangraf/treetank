@@ -21,9 +21,13 @@
 
 package org.treetank.api;
 
+import org.treetank.pagelayer.IndirectPage;
+import org.treetank.pagelayer.NamePage;
 import org.treetank.pagelayer.Node;
 import org.treetank.pagelayer.NodePage;
+import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.PageWriter;
+import org.treetank.pagelayer.RevisionRootPage;
 
 /**
  * <h1>IWriteTransactionState</h1>
@@ -44,7 +48,7 @@ public interface IWriteTransactionState extends IReadTransactionState {
   public NodePage prepareNodePage(final long nodePageKey) throws Exception;
 
   public Node prepareNode(final long nodeKey) throws Exception;
-  
+
   public void removeNode(final long nodeKey) throws Exception;
 
   /**
@@ -55,5 +59,69 @@ public interface IWriteTransactionState extends IReadTransactionState {
    * @throws Exception exception.
    */
   public int createNameKey(final String name) throws Exception;
+
+  /**
+   * COW revision root page or instantiate virgin one from given revision
+   * root page reference.
+   * 
+   * @param reference Revision root page reference.
+   * @param revisionKey Key of revision root page in case it must be created.
+   * @return COWed revision root page.
+   * @throws Exception of any kind.
+   */
+  public RevisionRootPage prepareRevisionRootPage(
+      final PageReference reference,
+      final long revisionKey) throws Exception;
+
+  /**
+   * COW name page or instantiate virgin one from given name page reference.
+   * 
+   * @param reference Name page reference.
+   * @return COWed name page.
+   * @throws Exception of any kind.
+   */
+  public NamePage prepareNamePage(final PageReference reference)
+      throws Exception;
+
+  /**
+   * COW node page or instantiate virgin one from given node page reference.
+   * 
+   * @param reference INode page reference.
+   * @param nodePageKey Key of node page in case it must be created.
+   * @return COWed node page.
+   * @throws Exception of any kind.
+   */
+  public NodePage prepareNodePage(
+      final PageReference reference,
+      final long nodePageKey) throws Exception;
+
+  /**
+   * COW indirect page or instantiate virgin one from given indirect page
+   * reference.
+   * 
+   * @param reference Indirect page reference.
+   * @return COWed indirect page.
+   * @throws Exception of any kind.
+   */
+  public IndirectPage prepareIndirectPage(final PageReference reference)
+      throws Exception;
+
+  /**
+   * Safely commit and serialize dereferenced dirty page.
+   * 
+   * @param writer PageWriter to write page to.
+   * @param reference Reference to dereference and serialize.
+   * @throws Exception of any kind.
+   */
+  public void commit(final PageReference reference) throws Exception;
+
+  /**
+   * Safely commit and serialize dereferenced dirty page.
+   * 
+   * @param writer PageWriter to write page to.
+   * @param references Reference array to dereference and serialize.
+   * @throws Exception of any kind.
+   */
+  public void commit(final PageReference[] references) throws Exception;
 
 }

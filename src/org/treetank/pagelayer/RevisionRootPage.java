@@ -185,8 +185,8 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
    * {@inheritDoc}
    */
   public final void commit(final IWriteTransactionState state) throws Exception {
-    commit(state, mNamePageReference);
-    commit(state, mIndirectPageReference);
+    state.commit(mNamePageReference);
+    state.commit(mIndirectPageReference);
   }
 
   /**

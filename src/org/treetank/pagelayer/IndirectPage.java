@@ -101,7 +101,7 @@ final public class IndirectPage extends AbstractPage implements IPage {
    * {@inheritDoc}
    */
   public final void commit(final IWriteTransactionState state) throws Exception {
-    commit(state, mIndirectPageReferences);
+    state.commit(mIndirectPageReferences);
   }
 
   /**

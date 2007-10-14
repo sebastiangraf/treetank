@@ -123,9 +123,9 @@ public final class Session implements ISession {
     mSecondaryUberPageReference = new PageReference();
     mFile = new RandomAccessFile(mSessionConfiguration.getPath(), "rw");
 
-    final ReadTransactionState state =
-        new ReadTransactionState(mPageCache, new PageReader(
-            mSessionConfiguration), null);
+    final WriteTransactionState state =
+        new WriteTransactionState(mPageCache, new PageReader(
+            mSessionConfiguration), null, null);
 
     // Bootstrap uber page.
     if (mFile.length() == 0L) {
@@ -147,8 +147,7 @@ public final class Session implements ISession {
 
       // Beacon logic case 1.
       if (mPrimaryUberPageReference.equals(mSecondaryUberPageReference)) {
-        mUberPage =
-            mPageCache.dereferenceUberPage(state, mPrimaryUberPageReference);
+        mUberPage = state.dereferenceUberPage(mPrimaryUberPageReference);
 
         // Beacon logic case 2.
       } else {
@@ -218,9 +217,10 @@ public final class Session implements ISession {
     final PageWriter pageWriter = new PageWriter(mSessionConfiguration);
     final PageReader pageReader = new PageReader(mSessionConfiguration);
     final RevisionRootPage revisionRootPage =
-        mUberPage.prepareRevisionRootPage(new ReadTransactionState(
+        mUberPage.prepareRevisionRootPage(new WriteTransactionState(
             mPageCache,
             pageReader,
+            null,
             null));
 
     mWriteTransactionState =
@@ -239,7 +239,10 @@ public final class Session implements ISession {
     mWriteTransactionState.getPageWriter().write(
         mWriteTransactionState,
         mPrimaryUberPageReference);
-    mPageCache.put(mPrimaryUberPageReference);
+    mPageCache.put(
+        mPrimaryUberPageReference.getStart(),
+        mPrimaryUberPageReference.getPage());
+    mPrimaryUberPageReference.setPage(null);
     writeBeacon(mFile);
     mWriteTransactionState = null;
     mWriteSemaphore.release();

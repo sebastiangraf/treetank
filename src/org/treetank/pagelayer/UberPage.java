@@ -127,17 +127,16 @@ final public class UberPage extends AbstractPage implements IPage {
         new StaticTree(mIndirectPageReference);
 
     RevisionRootPage page =
-        state.getPageCache().dereferenceRevisionRootPage(
+        state.dereferenceRevisionRootPage(staticRevisionTree.get(
             state,
-            staticRevisionTree.get(state, revisionKey),
-            revisionKey);
+            revisionKey), revisionKey);
 
     return RevisionRootPage.clone(revisionKey, page);
 
   }
 
   public final RevisionRootPage prepareRevisionRootPage(
-      final IReadTransactionState state) throws Exception {
+      final IWriteTransactionState state) throws Exception {
 
     // Calculate number of levels and offsets of these levels.
     final int[] offsets =
@@ -156,7 +155,7 @@ final public class UberPage extends AbstractPage implements IPage {
 
     //    Remaining levels.
     for (int i = 0; i < offsets.length; i++) {
-      page = prepareIndirectPage(state, reference);
+      page = state.prepareIndirectPage(reference);
       reference = ((IndirectPage) page).getPageReference(offsets[i]);
     }
     reference.setPage(mCurrentRevisionRootPage);
@@ -169,7 +168,7 @@ final public class UberPage extends AbstractPage implements IPage {
    * {@inheritDoc}
    */
   public final void commit(final IWriteTransactionState state) throws Exception {
-    commit(state, mIndirectPageReference);
+    state.commit(mIndirectPageReference);
     mRevisionCount += 1;
   }
 
