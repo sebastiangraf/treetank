@@ -188,14 +188,14 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
   }
 
   public final Node prepareNode(
-      final IReadTransactionState state,
+      final IWriteTransactionState state,
       final long nodeKey) throws Exception {
     return state.prepareNodePage(Node.nodePageKey(nodeKey)).getNode(
         Node.nodePageOffset(nodeKey));
   }
 
   public final Node createNode(
-      final IReadTransactionState state,
+      final IWriteTransactionState state,
       final long parentKey,
       final long firstChildKey,
       final long leftSiblingKey,
@@ -231,7 +231,7 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
   }
 
   public final void removeNode(
-      final IReadTransactionState state,
+      final IWriteTransactionState state,
       final long nodeKey) throws Exception {
     mNodeCount -= 1;
     state.prepareNodePage(Node.nodePageKey(nodeKey)).setNode(

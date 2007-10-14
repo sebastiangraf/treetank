@@ -22,7 +22,6 @@
 package org.treetank.sessionlayer;
 
 import org.treetank.api.IReadTransactionState;
-import org.treetank.pagelayer.AbstractPage;
 import org.treetank.pagelayer.NodePage;
 import org.treetank.pagelayer.PageCache;
 import org.treetank.pagelayer.PageReader;
@@ -37,15 +36,23 @@ public class ReadTransactionState implements IReadTransactionState {
 
   private final StaticTree mStaticNodeTree;
 
-  private NodePage mNodePage;
+  protected RevisionRootPage mRevisionRootPage;
+
+  protected NodePage mNodePage;
 
   public ReadTransactionState(
       final PageCache pageCache,
       final PageReader pageReader,
-      final StaticTree staticNodeTree) {
+      final RevisionRootPage revisionRootPage) {
     mPageCache = pageCache;
     mPageReader = pageReader;
-    mStaticNodeTree = staticNodeTree;
+    mRevisionRootPage = revisionRootPage;
+    if (revisionRootPage != null) {
+      mStaticNodeTree =
+          new StaticTree(revisionRootPage.getIndirectPageReference());
+    } else {
+      mStaticNodeTree = null;
+    }
     mNodePage = null;
   }
 
@@ -73,24 +80,19 @@ public class ReadTransactionState implements IReadTransactionState {
   /**
    * {@inheritDoc}
    */
+  public final RevisionRootPage getRevisionRootPage() {
+    return mRevisionRootPage;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final NodePage getNodePage(
       final RevisionRootPage revisionRootPage,
       final long nodePageKey) throws Exception {
     if (mNodePage == null || mNodePage.getNodePageKey() != nodePageKey) {
       mNodePage = revisionRootPage.getNodePage(this, nodePageKey);
     }
-    return mNodePage;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final NodePage prepareNodePage(final long nodePageKey)
-      throws Exception {
-    mNodePage =
-        AbstractPage.prepareNodePage(this, getStaticNodeTree().prepare(
-            this,
-            nodePageKey), nodePageKey);
     return mNodePage;
   }
 

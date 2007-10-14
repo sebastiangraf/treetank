@@ -22,10 +22,12 @@
 package org.treetank.sessionlayer;
 
 import org.treetank.api.IWriteTransactionState;
+import org.treetank.pagelayer.AbstractPage;
+import org.treetank.pagelayer.NodePage;
 import org.treetank.pagelayer.PageCache;
 import org.treetank.pagelayer.PageReader;
 import org.treetank.pagelayer.PageWriter;
-import org.treetank.utils.StaticTree;
+import org.treetank.pagelayer.RevisionRootPage;
 
 public final class WriteTransactionState extends ReadTransactionState
     implements
@@ -36,9 +38,9 @@ public final class WriteTransactionState extends ReadTransactionState
   public WriteTransactionState(
       final PageCache pageCache,
       final PageReader pageReader,
-      final StaticTree staticNodeTree,
-      final PageWriter pageWriter) {
-    super(pageCache, pageReader, staticNodeTree);
+      final PageWriter pageWriter,
+      final RevisionRootPage revisionRootPage) {
+    super(pageCache, pageReader, revisionRootPage);
     mPageWriter = pageWriter;
   }
 
@@ -47,6 +49,18 @@ public final class WriteTransactionState extends ReadTransactionState
    */
   public final PageWriter getPageWriter() {
     return mPageWriter;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final NodePage prepareNodePage(final long nodePageKey)
+      throws Exception {
+    mNodePage =
+        AbstractPage.prepareNodePage(this, getStaticNodeTree().prepare(
+            this,
+            nodePageKey), nodePageKey);
+    return mNodePage;
   }
 
 }

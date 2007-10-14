@@ -38,7 +38,6 @@ import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.PageWriter;
 import org.treetank.pagelayer.RevisionRootPage;
 import org.treetank.pagelayer.UberPage;
-import org.treetank.utils.StaticTree;
 
 /**
  * <h1>Session</h1>
@@ -139,7 +138,7 @@ public final class Session implements ISession {
       final PageWriter pageWriter = new PageWriter(mSessionConfiguration);
       mWriteTransactionState =
           new WriteTransactionState(mPageCache, new PageReader(
-              mSessionConfiguration), null, pageWriter);
+              mSessionConfiguration), pageWriter, null);
 
       commit();
     } else {
@@ -195,10 +194,9 @@ public final class Session implements ISession {
             pageReader,
             null), revisionKey);
     final IReadTransactionState state =
-        new ReadTransactionState(mPageCache, pageReader, new StaticTree(
-            revisionRootPage.getIndirectPageReference()));
+        new ReadTransactionState(mPageCache, pageReader, revisionRootPage);
 
-    return new ReadTransaction(state, revisionRootPage);
+    return new ReadTransaction(state);
   }
 
   /**
@@ -226,9 +224,12 @@ public final class Session implements ISession {
             null));
 
     mWriteTransactionState =
-        new WriteTransactionState(mPageCache, pageReader, new StaticTree(
-            revisionRootPage.getIndirectPageReference()), pageWriter);
-    return new WriteTransaction(mWriteTransactionState, revisionRootPage);
+        new WriteTransactionState(
+            mPageCache,
+            pageReader,
+            pageWriter,
+            revisionRootPage);
+    return new WriteTransaction(mWriteTransactionState);
   }
 
   /**
