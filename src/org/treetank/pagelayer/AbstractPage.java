@@ -115,7 +115,7 @@ public abstract class AbstractPage implements IPage {
    * @return COWed revision root page.
    * @throws Exception of any kind.
    */
-  public final RevisionRootPage prepareRevisionRootPage(
+  public static final RevisionRootPage prepareRevisionRootPage(
       final IReadTransactionState state,
       final PageReference reference,
       final long revisionKey) throws Exception {
@@ -148,7 +148,7 @@ public abstract class AbstractPage implements IPage {
    * @return COWed name page.
    * @throws Exception of any kind.
    */
-  public final NamePage prepareNamePage(
+  public static final NamePage prepareNamePage(
       final IReadTransactionState state,
       final PageReference reference) throws Exception {
 
@@ -181,7 +181,7 @@ public abstract class AbstractPage implements IPage {
    * @return COWed node page.
    * @throws Exception of any kind.
    */
-  public final NodePage prepareNodePage(
+  public static final NodePage prepareNodePage(
       final IReadTransactionState state,
       final PageReference reference,
       final long nodePageKey) throws Exception {
@@ -216,7 +216,7 @@ public abstract class AbstractPage implements IPage {
    * @return COWed indirect page.
    * @throws Exception of any kind.
    */
-  public final IndirectPage prepareIndirectPage(
+  public static final IndirectPage prepareIndirectPage(
       final IReadTransactionState state,
       final PageReference reference) throws Exception {
 
@@ -248,7 +248,7 @@ public abstract class AbstractPage implements IPage {
    * @param reference Reference to dereference and serialize.
    * @throws Exception of any kind.
    */
-  public final void commit(
+  public static final void commit(
       final IWriteTransactionState state,
       final PageReference reference) throws Exception {
     if (reference.isInstantiated() && reference.isDirty()) {
@@ -264,7 +264,7 @@ public abstract class AbstractPage implements IPage {
    * @param references Reference array to dereference and serialize.
    * @throws Exception of any kind.
    */
-  public final void commit(
+  public static final void commit(
       final IWriteTransactionState state,
       final PageReference[] references) throws Exception {
     for (int i = 0, l = references.length; i < l; i++) {
@@ -279,7 +279,7 @@ public abstract class AbstractPage implements IPage {
    * @param reference Reference to dereference and serialize.
    * @throws Exception of any kind.
    */
-  public final void serialize(
+  public static final void serialize(
       final FastByteArrayWriter out,
       final PageReference reference) throws Exception {
     reference.serialize(out);
@@ -292,7 +292,7 @@ public abstract class AbstractPage implements IPage {
    * @param references Reference array to dereference and serialize.
    * @throws Exception of any kind.
    */
-  public final void serialize(
+  public static final void serialize(
       final FastByteArrayWriter out,
       final PageReference[] references) throws Exception {
     for (int i = 0, l = references.length; i < l; i++) {
