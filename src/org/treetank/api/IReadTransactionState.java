@@ -21,9 +21,12 @@
 
 package org.treetank.api;
 
-import org.treetank.pagelayer.PageCache;
-import org.treetank.pagelayer.PageReader;
+import org.treetank.pagelayer.IndirectPage;
+import org.treetank.pagelayer.NamePage;
+import org.treetank.pagelayer.NodePage;
+import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.RevisionRootPage;
+import org.treetank.pagelayer.UberPage;
 import org.treetank.utils.StaticTree;
 
 /**
@@ -34,20 +37,6 @@ import org.treetank.utils.StaticTree;
  * </p>
  */
 public interface IReadTransactionState {
-
-  /**
-   * Get the page cache accessed through this transaction.
-   * 
-   * @return PageCache instance.
-   */
-  public PageCache getPageCache();
-
-  /**
-   * Get the page reader used within this transaction.
-   * 
-   * @return PageReader instance.
-   */
-  public PageReader getPageReader();
 
   /**
    * Get the static tree used within this transaction to find a node page.
@@ -80,5 +69,22 @@ public interface IReadTransactionState {
    * @throws Exception of any kind.
    */
   public String getName(final int nameKey) throws Exception;
+
+  public NodePage dereferenceNodePage(
+      final PageReference reference,
+      final long nodePageKey) throws Exception;
+
+  public NamePage dereferenceNamePage(final PageReference reference)
+      throws Exception;
+
+  public IndirectPage dereferenceIndirectPage(final PageReference reference)
+      throws Exception;
+
+  public RevisionRootPage dereferenceRevisionRootPage(
+      final PageReference reference,
+      final long revisionKey) throws Exception;
+
+  public UberPage dereferenceUberPage(final PageReference reference)
+      throws Exception;
 
 }

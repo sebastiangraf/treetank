@@ -22,11 +22,13 @@
 package org.treetank.sessionlayer;
 
 import org.treetank.api.IWriteTransactionState;
-import org.treetank.pagelayer.AbstractPage;
+import org.treetank.pagelayer.IndirectPage;
+import org.treetank.pagelayer.NamePage;
 import org.treetank.pagelayer.Node;
 import org.treetank.pagelayer.NodePage;
 import org.treetank.pagelayer.PageCache;
 import org.treetank.pagelayer.PageReader;
+import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.PageWriter;
 import org.treetank.pagelayer.RevisionRootPage;
 
@@ -58,9 +60,9 @@ public final class WriteTransactionState extends ReadTransactionState
   public final NodePage prepareNodePage(final long nodePageKey)
       throws Exception {
     mNodePage =
-        AbstractPage.prepareNodePage(this, getStaticNodeTree().prepare(
-            this,
-            nodePageKey), nodePageKey);
+        prepareNodePage(
+            getStaticNodeTree().prepare(this, nodePageKey),
+            nodePageKey);
     return mNodePage;
   }
 
@@ -89,12 +91,131 @@ public final class WriteTransactionState extends ReadTransactionState
     final String string = (name == null ? "" : name);
     final int nameKey = string.hashCode();
     if (getName(nameKey) == null) {
-      mNamePage =
-          AbstractPage.prepareNamePage(this, mRevisionRootPage
-              .getNamePageReference());
+      mNamePage = prepareNamePage(mRevisionRootPage.getNamePageReference());
       mNamePage.setName(nameKey, string);
     }
     return nameKey;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final RevisionRootPage prepareRevisionRootPage(
+      final PageReference reference,
+      final long revisionKey) throws Exception {
+
+    RevisionRootPage page = (RevisionRootPage) reference.getPage();
+
+    // Load page if it is already existing in a committed revision.
+    if (reference.isCommitted() && !reference.isInstantiated()) {
+      page =
+          RevisionRootPage.clone(revisionKey, dereferenceRevisionRootPage(
+              reference,
+              revisionKey));
+      reference.setPage(page);
+    }
+
+    // Assert page is properly instantiated.
+    if (!reference.isInstantiated()) {
+      page = RevisionRootPage.create(revisionKey);
+      reference.setPage(page);
+    }
+
+    return page;
+
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final NamePage prepareNamePage(final PageReference reference)
+      throws Exception {
+
+    NamePage page = (NamePage) reference.getPage();
+
+    // Load page if it is already existing in a committed revision.
+    if (reference.isCommitted() && !reference.isInstantiated()) {
+      page = NamePage.clone(dereferenceNamePage(reference));
+      reference.setPage(page);
+    }
+
+    // Assert page is properly instantiated.
+    if (!reference.isInstantiated()) {
+      page = NamePage.create();
+      reference.setPage(page);
+    }
+
+    return page;
+
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final NodePage prepareNodePage(
+      final PageReference reference,
+      final long nodePageKey) throws Exception {
+
+    NodePage page = (NodePage) reference.getPage();
+
+    // Load page if it is already existing in a committed revision.
+    if (reference.isCommitted() && !reference.isInstantiated()) {
+      page = NodePage.clone(dereferenceNodePage(reference, nodePageKey));
+      reference.setPage(page);
+    }
+
+    // Assert page is properly instantiated.
+    if (!reference.isInstantiated()) {
+      page = NodePage.create(nodePageKey);
+      reference.setPage(page);
+    }
+
+    return page;
+
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final IndirectPage prepareIndirectPage(final PageReference reference)
+      throws Exception {
+
+    IndirectPage page = (IndirectPage) reference.getPage();
+
+    // Load page if it is already existing in a committed revision.
+    if (reference.isCommitted() && !reference.isInstantiated()) {
+      page = IndirectPage.clone(dereferenceIndirectPage(reference));
+      reference.setPage(page);
+    }
+
+    // Assert page is properly instantiated.
+    if (!reference.isInstantiated()) {
+      page = IndirectPage.create();
+      reference.setPage(page);
+    }
+
+    return page;
+
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final void commit(final PageReference reference) throws Exception {
+    if (reference.isInstantiated() && reference.isDirty()) {
+      mPageWriter.write(this, reference);
+      mPageCache.put(reference.getStart(), reference.getPage());
+      reference.setPage(null);
+    }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final void commit(final PageReference[] references) throws Exception {
+    for (int i = 0, l = references.length; i < l; i++) {
+      commit(references[i]);
+    }
   }
 
 }
