@@ -27,7 +27,6 @@ import org.treetank.pagelayer.NodePage;
 import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.RevisionRootPage;
 import org.treetank.pagelayer.UberPage;
-import org.treetank.utils.StaticTree;
 
 /**
  * <h1>IReadTransactionState</h1>
@@ -37,13 +36,6 @@ import org.treetank.utils.StaticTree;
  * </p>
  */
 public interface IReadTransactionState {
-
-  /**
-   * Get the static tree used within this transaction to find a node page.
-   * 
-   * @return PageReader instance.
-   */
-  public StaticTree getStaticNodeTree();
 
   /**
    * Get revision root page.

@@ -62,9 +62,7 @@ public final class WriteTransactionState extends ReadTransactionState
   public final NodePage prepareNodePage(final long nodePageKey)
       throws Exception {
     mNodePage =
-        prepareNodePage(
-            getStaticNodeTree().prepare(this, nodePageKey),
-            nodePageKey);
+        prepareNodePage(mStaticNodeTree.prepare(this, nodePageKey), nodePageKey);
     return mNodePage;
   }
 

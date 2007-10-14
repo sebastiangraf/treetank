@@ -44,7 +44,7 @@ public class ReadTransactionState implements IReadTransactionState {
 
   private final PageReader mPageReader;
 
-  private final StaticTree mStaticNodeTree;
+  protected final StaticTree mStaticNodeTree;
 
   protected RevisionRootPage mRevisionRootPage;
 
@@ -67,13 +67,6 @@ public class ReadTransactionState implements IReadTransactionState {
     }
     mNodePage = null;
     mNamePage = null;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final StaticTree getStaticNodeTree() {
-    return mStaticNodeTree;
   }
 
   /**
