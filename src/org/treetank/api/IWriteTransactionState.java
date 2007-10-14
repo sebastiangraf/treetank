@@ -21,6 +21,7 @@
 
 package org.treetank.api;
 
+import org.treetank.pagelayer.NodePage;
 import org.treetank.pagelayer.PageWriter;
 
 /**
@@ -38,5 +39,7 @@ public interface IWriteTransactionState extends IReadTransactionState {
    * @return PageWriter instance.
    */
   public PageWriter getPageWriter();
+
+  public NodePage prepareNodePage(final long nodePageKey) throws Exception;
 
 }

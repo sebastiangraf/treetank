@@ -58,6 +58,13 @@ public interface IReadTransactionState {
   public StaticTree getStaticNodeTree();
 
   /**
+   * Get revision root page.
+   * 
+   * @return Revision root page.
+   */
+  public RevisionRootPage getRevisionRootPage();
+
+  /**
    * Get the node page most recently accessed.
    * 
    * @param revisionRootPage to start search from.
@@ -68,7 +75,5 @@ public interface IReadTransactionState {
   public NodePage getNodePage(
       final RevisionRootPage revisionRootPage,
       final long nodePageKey) throws Exception;
-
-  public NodePage prepareNodePage(final long nodePageKey) throws Exception;
 
 }
