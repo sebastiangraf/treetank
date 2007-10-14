@@ -42,4 +42,13 @@ public interface IWriteTransactionState extends IReadTransactionState {
 
   public NodePage prepareNodePage(final long nodePageKey) throws Exception;
 
+  /**
+   * Create name key given a name.
+   * 
+   * @param name Name to create key for.
+   * @return Name key.
+   * @throws Exception exception.
+   */
+  public int createNameKey(final String name) throws Exception;
+
 }

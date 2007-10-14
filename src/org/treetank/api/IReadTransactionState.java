@@ -67,13 +67,19 @@ public interface IReadTransactionState {
   /**
    * Get the node page most recently accessed.
    * 
-   * @param revisionRootPage to start search from.
    * @param nodePageKey Key of node page to get.
    * @return Cached node page.
    * @throws Exception of any kind.
    */
-  public NodePage getNodePage(
-      final RevisionRootPage revisionRootPage,
-      final long nodePageKey) throws Exception;
+  public NodePage getNodePage(final long nodePageKey) throws Exception;
+
+  /**
+   * Get the name associated with the given name key.
+   * 
+   * @param nameKey Key to find name.
+   * @return Name associated to name key.
+   * @throws Exception of any kind.
+   */
+  public String getName(final int nameKey) throws Exception;
 
 }
