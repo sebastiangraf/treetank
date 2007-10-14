@@ -85,14 +85,12 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final boolean moveTo(final long nodeKey) throws Exception {
     if (nodeKey != IConstants.NULL_KEY) {
-
-      // Fetch node by offset within mCurrentNodePage.
       mCurrentNode = mState.getNode(nodeKey);
-
+      return true;
     } else {
       mCurrentNode = null;
+      return false;
     }
-    return (mCurrentNode != null);
   }
 
   /**
@@ -268,15 +266,6 @@ public class ReadTransaction implements IReadTransaction {
   }
 
   /**
-   * Assert that a node is selected.
-   */
-  protected void assertIsSelected() {
-    if (mCurrentNode == null) {
-      throw new IllegalStateException("No node selected.");
-    }
-  }
-
-  /**
    * {@inheritDoc}
    */
   public final int keyForName(final String name) {
@@ -288,6 +277,15 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final String nameForKey(final int key) throws Exception {
     return mState.getName(key);
+  }
+
+  /**
+   * Assert that a node is selected.
+   */
+  protected void assertIsSelected() {
+    if (mCurrentNode == null) {
+      throw new IllegalStateException("No node selected.");
+    }
   }
 
 }
