@@ -28,10 +28,12 @@ import java.io.File;
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.api.IConstants;
+import org.treetank.api.IPage;
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.sessionlayer.WriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.UTF;
+import org.treetank.utils.WeakHashMap;
 
 public class PageWriterTest {
 
@@ -56,7 +58,7 @@ public class PageWriterTest {
         new PageWriter(new SessionConfiguration(PATH));
     pageReference.setPage(page1);
     pageWriter.write(new WriteTransactionState(
-        new PageCache(),
+        new WeakHashMap<Long, IPage>(),
         null,
         pageWriter,
         null), pageReference);

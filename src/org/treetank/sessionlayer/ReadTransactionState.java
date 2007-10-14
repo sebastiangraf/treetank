@@ -21,13 +21,15 @@
 
 package org.treetank.sessionlayer;
 
+import java.util.Map;
+
 import org.treetank.api.INode;
+import org.treetank.api.IPage;
 import org.treetank.api.IReadTransactionState;
 import org.treetank.pagelayer.IndirectPage;
 import org.treetank.pagelayer.NamePage;
 import org.treetank.pagelayer.Node;
 import org.treetank.pagelayer.NodePage;
-import org.treetank.pagelayer.PageCache;
 import org.treetank.pagelayer.PageReader;
 import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.RevisionRootPage;
@@ -37,7 +39,8 @@ import org.treetank.utils.StaticTree;
 
 public class ReadTransactionState implements IReadTransactionState {
 
-  protected final PageCache mPageCache;
+  /** Page cache mapping start address of page to IPage. */
+  protected final Map<Long, IPage> mPageCache;
 
   private final PageReader mPageReader;
 
@@ -50,7 +53,7 @@ public class ReadTransactionState implements IReadTransactionState {
   protected NamePage mNamePage;
 
   public ReadTransactionState(
-      final PageCache pageCache,
+      final Map<Long, IPage> pageCache,
       final PageReader pageReader,
       final RevisionRootPage revisionRootPage) {
     mPageCache = pageCache;
@@ -114,58 +117,108 @@ public class ReadTransactionState implements IReadTransactionState {
   public final NodePage dereferenceNodePage(
       final PageReference reference,
       final long nodePageKey) throws Exception {
-    NodePage page = (NodePage) mPageCache.get(reference);
+
+    // Get uncommitted referenced page if there is one.
+    NodePage page = (NodePage) reference.getPage();
+
+    // Get committed referenced page from cache if there is one.
+    if (page == null) {
+      page = (NodePage) mPageCache.get(reference.getStart());
+    }
+
+    // Get committed referenced page from storage.
     if (page == null) {
       final FastByteArrayReader in = mPageReader.read(reference);
       page = NodePage.read(in, nodePageKey);
       mPageCache.put(reference.getStart(), page);
     }
+
     return page;
 
   }
 
   public final NamePage dereferenceNamePage(final PageReference reference)
       throws Exception {
-    NamePage page = (NamePage) mPageCache.get(reference);
+
+    // Get uncommitted referenced page if there is one.
+    NamePage page = (NamePage) reference.getPage();
+
+    // Get committed referenced page from cache if there is one.
+    if (page == null) {
+      page = (NamePage) mPageCache.get(reference.getStart());
+    }
+
+    // Get committed referenced page from storage.
     if (page == null) {
       final FastByteArrayReader in = mPageReader.read(reference);
       page = NamePage.read(in);
       mPageCache.put(reference.getStart(), page);
     }
+
     return page;
   }
 
   public final IndirectPage dereferenceIndirectPage(
       final PageReference reference) throws Exception {
-    IndirectPage page = (IndirectPage) mPageCache.get(reference);
+
+    // Get uncommitted referenced page if there is one.
+    IndirectPage page = (IndirectPage) reference.getPage();
+
+    // Get committed referenced page from cache if there is one.
+    if (page == null) {
+      page = (IndirectPage) mPageCache.get(reference.getStart());
+    }
+
+    // Get committed referenced page from storage.
     if (page == null) {
       final FastByteArrayReader in = mPageReader.read(reference);
       page = IndirectPage.read(in);
       mPageCache.put(reference.getStart(), page);
     }
+
     return page;
   }
 
   public final RevisionRootPage dereferenceRevisionRootPage(
       final PageReference reference,
       final long revisionKey) throws Exception {
-    RevisionRootPage page = (RevisionRootPage) mPageCache.get(reference);
+
+    // Get uncommitted referenced page if there is one.
+    RevisionRootPage page = (RevisionRootPage) reference.getPage();
+
+    // Get committed referenced page from cache if there is one.
+    if (page == null) {
+      page = (RevisionRootPage) mPageCache.get(reference.getStart());
+    }
+
+    // Get committed referenced page from storage.
     if (page == null) {
       final FastByteArrayReader in = mPageReader.read(reference);
       page = RevisionRootPage.read(in, revisionKey);
       mPageCache.put(reference.getStart(), page);
     }
+
     return page;
   }
 
   public final UberPage dereferenceUberPage(final PageReference reference)
       throws Exception {
-    UberPage page = (UberPage) mPageCache.get(reference);
+
+    // Get uncommitted referenced page if there is one.
+    UberPage page = (UberPage) reference.getPage();
+
+    // Get committed referenced page from cache if there is one.
+    if (page == null) {
+      page = (UberPage) mPageCache.get(reference.getStart());
+    }
+
+    // Get committed referenced page from storage.
     if (page == null) {
       final FastByteArrayReader in = mPageReader.read(reference);
       page = UberPage.read(in);
       mPageCache.put(reference.getStart(), page);
     }
+
     return page;
   }
 

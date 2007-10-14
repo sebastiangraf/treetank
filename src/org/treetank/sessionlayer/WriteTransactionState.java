@@ -21,12 +21,14 @@
 
 package org.treetank.sessionlayer;
 
+import java.util.Map;
+
+import org.treetank.api.IPage;
 import org.treetank.api.IWriteTransactionState;
 import org.treetank.pagelayer.IndirectPage;
 import org.treetank.pagelayer.NamePage;
 import org.treetank.pagelayer.Node;
 import org.treetank.pagelayer.NodePage;
-import org.treetank.pagelayer.PageCache;
 import org.treetank.pagelayer.PageReader;
 import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.PageWriter;
@@ -39,7 +41,7 @@ public final class WriteTransactionState extends ReadTransactionState
   private final PageWriter mPageWriter;
 
   public WriteTransactionState(
-      final PageCache pageCache,
+      final Map<Long, IPage> pageCache,
       final PageReader pageReader,
       final PageWriter pageWriter,
       final RevisionRootPage revisionRootPage) {

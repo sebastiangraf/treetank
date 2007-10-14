@@ -23,21 +23,23 @@ package org.treetank.sessionlayer;
 
 import java.io.File;
 import java.io.RandomAccessFile;
+import java.util.Map;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Logger;
 
 import org.treetank.api.IConstants;
+import org.treetank.api.IPage;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.IReadTransactionState;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.api.IWriteTransactionState;
-import org.treetank.pagelayer.PageCache;
 import org.treetank.pagelayer.PageReader;
 import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.PageWriter;
 import org.treetank.pagelayer.RevisionRootPage;
 import org.treetank.pagelayer.UberPage;
+import org.treetank.utils.WeakHashMap;
 
 /**
  * <h1>Session</h1>
@@ -59,7 +61,7 @@ public final class Session implements ISession {
   private final SessionConfiguration mSessionConfiguration;
 
   /** Shared read-only page mPageCache. */
-  private final PageCache mPageCache;
+  private final Map<Long, IPage> mPageCache;
 
   /** Write semaphore to assure only one IWriteTransaction exists. */
   private final Semaphore mWriteSemaphore;
@@ -116,7 +118,7 @@ public final class Session implements ISession {
     new File(mSessionConfiguration.getPath()).createNewFile();
 
     // Init session members.
-    mPageCache = new PageCache();
+    mPageCache = new WeakHashMap<Long, IPage>();
     mWriteSemaphore =
         new Semaphore(IConstants.MAX_NUMBER_OF_WRITE_TRANSACTIONS);
     mPrimaryUberPageReference = new PageReference();
