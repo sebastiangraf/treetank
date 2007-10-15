@@ -46,7 +46,7 @@ import java.util.Set;
  * @param <K> Key object of type K.
  * @param <V> Value object of type V.
  */
-public final class WeakHashMap<K, V> extends AbstractMap<K, V> {
+public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
 
   /** The internal HashMap that will hold the WeakReference. */
   private final Map<K, WeakReference<V>> mInternalMap;
@@ -58,7 +58,7 @@ public final class WeakHashMap<K, V> extends AbstractMap<K, V> {
    * Default constructor internally using 32 strong references.
    *
    */
-  public WeakHashMap() {
+  public FastWeakHashMap() {
     mInternalMap = new HashMap<K, WeakReference<V>>();
     mQueue = new ReferenceQueue();
   }

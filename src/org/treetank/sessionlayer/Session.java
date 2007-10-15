@@ -39,7 +39,7 @@ import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.PageWriter;
 import org.treetank.pagelayer.RevisionRootPage;
 import org.treetank.pagelayer.UberPage;
-import org.treetank.utils.WeakHashMap;
+import org.treetank.utils.FastWeakHashMap;
 
 /**
  * <h1>Session</h1>
@@ -118,7 +118,7 @@ public final class Session implements ISession {
     new File(mSessionConfiguration.getPath()).createNewFile();
 
     // Init session members.
-    mPageCache = new WeakHashMap<Long, IPage>();
+    mPageCache = new FastWeakHashMap<Long, IPage>();
     mWriteSemaphore =
         new Semaphore(IConstants.MAX_NUMBER_OF_WRITE_TRANSACTIONS);
     mPrimaryUberPageReference = new PageReference();
@@ -238,9 +238,11 @@ public final class Session implements ISession {
    * {@inheritDoc}
    */
   public final void commit() throws Exception {
-    mWriteTransactionState.getPageWriter().write(
-        mWriteTransactionState,
-        mPrimaryUberPageReference);
+
+    // Recursively write indirectely referenced pages.
+    mPrimaryUberPageReference.getPage().commit(mWriteTransactionState);
+
+    mWriteTransactionState.getPageWriter().write(mPrimaryUberPageReference);
     mPageCache.put(
         mPrimaryUberPageReference.getStart(),
         mPrimaryUberPageReference.getPage());

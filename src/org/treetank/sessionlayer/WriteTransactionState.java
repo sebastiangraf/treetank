@@ -76,7 +76,9 @@ public final class WriteTransactionState extends ReadTransactionState
    */
   public final NodePage prepareNodePage(final long nodePageKey)
       throws Exception {
-    setNodePage(prepareNodePage(getStaticNodeTree().prepare(this, nodePageKey), nodePageKey));
+    setNodePage(prepareNodePage(
+        getStaticNodeTree().prepare(this, nodePageKey),
+        nodePageKey));
     return getNodePage();
   }
 
@@ -217,7 +219,11 @@ public final class WriteTransactionState extends ReadTransactionState
    */
   public final void commit(final PageReference reference) throws Exception {
     if (reference.isInstantiated() && reference.isDirty()) {
-      mPageWriter.write(this, reference);
+
+      // Recursively write indirectely referenced pages.
+      reference.getPage().commit(this);
+
+      mPageWriter.write(reference);
       getPageCache().put(reference.getStart(), reference.getPage());
       reference.setPage(null);
     }
