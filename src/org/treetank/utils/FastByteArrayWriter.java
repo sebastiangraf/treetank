@@ -62,6 +62,23 @@ public final class FastByteArrayWriter {
     mBuffer[mSize++] = (byte) (value >> 8);
     mBuffer[mSize++] = (byte) value;
   }
+  
+  public final void writePseudoVarSizeInt(final int value) throws Exception {
+    assertSize(4);
+    mBuffer[mSize++] = (byte) (value >> 24);
+    if (value > 127) {
+      mBuffer[mSize-1] |= 128;
+      mBuffer[mSize++] = (byte) (value >> 17);
+      if (value > 16383) {
+        mBuffer[mSize-1] |= 16384;
+        mBuffer[mSize++] = (byte) (value >> 10);
+        if (value > 2097151) {
+          mBuffer[mSize-1] |= 2097152;
+          mBuffer[mSize++] = (byte) (value >> 3);
+        } else mBuffer[mSize-1] &= 127;
+      } else mBuffer[mSize-1] &= 16383;
+    } else mBuffer[mSize-1] &= 2097151;
+  }
 
   public final void writePseudoLong(final long value) throws Exception {
     assertSize(6);
@@ -71,14 +88,6 @@ public final class FastByteArrayWriter {
     mBuffer[mSize++] = (byte) (value >>> 16);
     mBuffer[mSize++] = (byte) (value >> 8);
     mBuffer[mSize++] = (byte) value;
-  }
-  
-  public final void writePseudoLongNew(final long value) throws Exception {
-    assertSize(6);
-    
-    byte[] tmp = BigInteger.valueOf(value).toByteArray();
-    System.arraycopy(tmp, 0, mBuffer, mSize, tmp.length);
-    mSize += 6;
   }
 
   public final void writeLong(final long value) throws Exception {
