@@ -21,8 +21,6 @@
 
 package org.treetank.utils;
 
-import java.nio.ByteBuffer;
-
 public final class FastByteArrayReader {
 
   private final byte[] mBuffer;
@@ -64,6 +62,20 @@ public final class FastByteArrayReader {
         | (mBuffer[mPosition++] & 0xFF);
   }
 
+  public final int readPseudoVarSizeInt() throws Exception {
+    int value = ((mBuffer[mPosition++] >> 1));
+    if ((mBuffer[mPosition - 1] & 128) != 0) {
+      value |= ((mBuffer[mPosition++] >> 1)) << 7;
+      if ((mBuffer[mPosition - 1] & 128) != 0) {
+        value |= ((mBuffer[mPosition++] >> 1)) << 14;
+        if ((mBuffer[mPosition - 1] & 128) != 0) {
+          value |= ((mBuffer[mPosition++])) << 21;
+        }
+      }
+    }
+    return value;
+  }
+
   public final long readPseudoLong() throws Exception {
     long value =
         (((long) (mBuffer[mPosition++] & 255) << 40)
@@ -75,15 +87,6 @@ public final class FastByteArrayReader {
       value = value | 0xFFFF000000000000L;
     }
     return value;
-  }
-  
-  public final long readPseudoLongNew() throws Exception {
-    ByteBuffer bb = ByteBuffer.allocate(8);
-    bb.put(mBuffer, mPosition, 6);
-    bb.position(0);
-    mPosition += 6;
-    
-    return bb.getLong();   
   }
 
   public final long readLong() throws Exception {
