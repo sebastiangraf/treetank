@@ -23,6 +23,7 @@ package org.treetank.sessionlayer;
 
 import java.util.Map;
 
+import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IPage;
 import org.treetank.api.IReadTransactionState;
@@ -35,7 +36,6 @@ import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.RevisionRootPage;
 import org.treetank.pagelayer.UberPage;
 import org.treetank.utils.FastByteArrayReader;
-import org.treetank.utils.StaticTree;
 
 /**
  * <h1>ReadTransactionState</h1>
@@ -58,9 +58,6 @@ public class ReadTransactionState implements IReadTransactionState {
   /** Page reader exclusively assigned to this transaction. */
   private final PageReader mPageReader;
 
-  /** Static node tree mapping node page keys to node pages. */
-  private final StaticTree mStaticNodeTree;
-
   /** Revision root page as root of this transaction. */
   private RevisionRootPage mRevisionRootPage;
 
@@ -69,6 +66,12 @@ public class ReadTransactionState implements IReadTransactionState {
 
   /** Cached name page of this revision. */
   private NamePage mNamePage;
+
+  /** Offsets of indirect tree to locate node page. */
+  private int[] mIndirectOffsets;
+
+  /** Pages of indirect tree to locate node page. */
+  private IndirectPage[] mIndirectPages;
 
   /**
    * Standard constructor.
@@ -84,14 +87,14 @@ public class ReadTransactionState implements IReadTransactionState {
     mPageCache = pageCache;
     mPageReader = pageReader;
     mRevisionRootPage = revisionRootPage;
-    if (revisionRootPage != null) {
-      mStaticNodeTree =
-          new StaticTree(revisionRootPage.getIndirectPageReference());
-    } else {
-      mStaticNodeTree = null;
-    }
     mNodePage = null;
     mNamePage = null;
+    mIndirectOffsets = new int[IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length];
+    mIndirectPages =
+        new IndirectPage[IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length];
+    for (int i = 0; i < mIndirectOffsets.length; i++) {
+      mIndirectOffsets[i] = -1;
+    }
   }
 
   /**
@@ -112,10 +115,28 @@ public class ReadTransactionState implements IReadTransactionState {
 
     // Fetch node page if required.
     if (mNodePage == null || mNodePage.getNodePageKey() != nodePageKey) {
-      mNodePage =
-          dereferenceNodePage(
-              mStaticNodeTree.get(this, nodePageKey),
-              nodePageKey);
+      // Indirect reference.
+      PageReference reference = mRevisionRootPage.getIndirectPageReference();
+
+      // Remaining levels.
+      int levelSteps = 0;
+      long levelKey = nodePageKey;
+      for (int i = 0; i < mIndirectOffsets.length; i++) {
+
+        // Calculate offset of current level.
+        levelSteps =
+            (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i]);
+        levelKey -= levelSteps << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i];
+
+        // Fetch page from current level.
+        if (levelSteps != mIndirectOffsets[i]) {
+          mIndirectOffsets[i] = levelSteps;
+          mIndirectPages[i] = dereferenceIndirectPage(reference);
+        }
+        reference = mIndirectPages[i].getPageReference(levelSteps);
+      }
+
+      mNodePage = dereferenceNodePage(reference, nodePageKey);
     }
 
     // Fetch node from node page.
@@ -263,13 +284,6 @@ public class ReadTransactionState implements IReadTransactionState {
   }
 
   /**
-   * @return The static node tree.
-   */
-  protected final StaticTree getStaticNodeTree() {
-    return mStaticNodeTree;
-  }
-
-  /**
    * @param nodePage The node page to set.
    */
   protected final void setNodePage(final NodePage nodePage) {
@@ -295,6 +309,34 @@ public class ReadTransactionState implements IReadTransactionState {
    */
   protected final NamePage getNamePage() {
     return mNamePage;
+  }
+
+  /**
+   * @return The indirect offsets.
+   */
+  protected final int getIndirectOffset(final int index) {
+    return mIndirectOffsets[index];
+  }
+
+  /**
+   * @param indirectOffsets The indirect offsets to set.
+   */
+  protected final void setIndirectOffset(final int index, final int value) {
+    mIndirectOffsets[index] = value;
+  }
+
+  /**
+   * @return The indirect pages.
+   */
+  protected final IndirectPage getIndirectPage(final int index) {
+    return mIndirectPages[index];
+  }
+
+  /**
+   * @param indirectPages The indirect pages to set.
+   */
+  protected final void setIndirectPage(final int index, final IndirectPage page) {
+    mIndirectPages[index] = page;
   }
 
 }

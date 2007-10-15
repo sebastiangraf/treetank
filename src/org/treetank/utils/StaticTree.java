@@ -31,17 +31,17 @@ public final class StaticTree {
 
   private PageReference mStartReference;
 
-  private int[] mCurrentOffsets;
+  private int[] mIndirectOffsets;
 
-  private IndirectPage[] mCurrentPages;
+  private IndirectPage[] mIndirectPages;
 
   public StaticTree(final PageReference startReference) {
     mStartReference = startReference;
-    mCurrentOffsets = new int[IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length];
-    mCurrentPages =
+    mIndirectOffsets = new int[IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length];
+    mIndirectPages =
         new IndirectPage[IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length];
-    for (int i = 0; i < mCurrentOffsets.length; i++) {
-      mCurrentOffsets[i] = -1;
+    for (int i = 0; i < mIndirectOffsets.length; i++) {
+      mIndirectOffsets[i] = -1;
     }
   }
 
@@ -55,7 +55,7 @@ public final class StaticTree {
     // Remaining levels.
     int levelSteps = 0;
     long levelKey = key;
-    for (int i = 0; i < mCurrentOffsets.length; i++) {
+    for (int i = 0; i < mIndirectOffsets.length; i++) {
 
       // Calculate offset of current level.
       levelSteps =
@@ -63,11 +63,11 @@ public final class StaticTree {
       levelKey -= levelSteps << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i];
 
       // Fetch page from current level.
-      if (levelSteps != mCurrentOffsets[i]) {
-        mCurrentOffsets[i] = levelSteps;
-        mCurrentPages[i] = state.dereferenceIndirectPage(reference);
+      if (levelSteps != mIndirectOffsets[i]) {
+        mIndirectOffsets[i] = levelSteps;
+        mIndirectPages[i] = state.dereferenceIndirectPage(reference);
       }
-      reference = mCurrentPages[i].getPageReference(levelSteps);
+      reference = mIndirectPages[i].getPageReference(levelSteps);
     }
 
     return reference;
@@ -84,7 +84,7 @@ public final class StaticTree {
     // Remaining levels.
     int levelSteps = 0;
     long levelKey = key;
-    for (int i = 0; i < mCurrentOffsets.length; i++) {
+    for (int i = 0; i < mIndirectOffsets.length; i++) {
 
       // Calculate offset of current level.
       levelSteps =
@@ -92,9 +92,9 @@ public final class StaticTree {
       levelKey -= levelSteps << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i];
 
       // Fetch page from current level.
-      mCurrentOffsets[i] = levelSteps;
-      mCurrentPages[i] = state.prepareIndirectPage(reference);
-      reference = mCurrentPages[i].getPageReference(levelSteps);
+      mIndirectOffsets[i] = levelSteps;
+      mIndirectPages[i] = state.prepareIndirectPage(reference);
+      reference = mIndirectPages[i].getPageReference(levelSteps);
     }
 
     return reference;

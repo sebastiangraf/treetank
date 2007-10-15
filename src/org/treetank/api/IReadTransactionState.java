@@ -22,8 +22,6 @@
 package org.treetank.api;
 
 import org.treetank.pagelayer.IndirectPage;
-import org.treetank.pagelayer.NamePage;
-import org.treetank.pagelayer.NodePage;
 import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.RevisionRootPage;
 import org.treetank.pagelayer.UberPage;
@@ -63,16 +61,6 @@ public interface IReadTransactionState {
   public String getName(final int nameKey) throws Exception;
 
   /**
-   * Dereference reference referencing an indirect page.
-   * 
-   * @param reference Reference to dereference.
-   * @return Dereferenced indirect page.
-   * @throws Exception of any kind.
-   */
-  public IndirectPage dereferenceIndirectPage(final PageReference reference)
-      throws Exception;
-
-  /**
    * Dereference reference referencing a revision root page.
    * 
    * @param reference Reference to dereference.
@@ -93,6 +81,9 @@ public interface IReadTransactionState {
    * @throws Exception of any kind.
    */
   public UberPage dereferenceUberPage(final PageReference reference)
+      throws Exception;
+
+  public IndirectPage dereferenceIndirectPage(final PageReference reference)
       throws Exception;
 
 }
