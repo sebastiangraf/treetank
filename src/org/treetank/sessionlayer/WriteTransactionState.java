@@ -76,9 +76,8 @@ public final class WriteTransactionState extends ReadTransactionState
    */
   public final NodePage prepareNodePage(final long nodePageKey)
       throws Exception {
-    mNodePage =
-        prepareNodePage(mStaticNodeTree.prepare(this, nodePageKey), nodePageKey);
-    return mNodePage;
+    setNodePage(prepareNodePage(getStaticNodeTree().prepare(this, nodePageKey), nodePageKey));
+    return getNodePage();
   }
 
   /**
@@ -93,7 +92,7 @@ public final class WriteTransactionState extends ReadTransactionState
    * {@inheritDoc}
    */
   public final void removeNode(final long nodeKey) throws Exception {
-    mRevisionRootPage.decrementNodeCount();
+    getRevisionRootPage().decrementNodeCount();
     prepareNodePage(Node.nodePageKey(nodeKey)).setNode(
         Node.nodePageOffset(nodeKey),
         null);
@@ -106,8 +105,8 @@ public final class WriteTransactionState extends ReadTransactionState
     final String string = (name == null ? "" : name);
     final int nameKey = string.hashCode();
     if (getName(nameKey) == null) {
-      mNamePage = prepareNamePage(mRevisionRootPage.getNamePageReference());
-      mNamePage.setName(nameKey, string);
+      setNamePage(prepareNamePage(getRevisionRootPage().getNamePageReference()));
+      getNamePage().setName(nameKey, string);
     }
     return nameKey;
   }
@@ -219,7 +218,7 @@ public final class WriteTransactionState extends ReadTransactionState
   public final void commit(final PageReference reference) throws Exception {
     if (reference.isInstantiated() && reference.isDirty()) {
       mPageWriter.write(this, reference);
-      mPageCache.put(reference.getStart(), reference.getPage());
+      getPageCache().put(reference.getStart(), reference.getPage());
       reference.setPage(null);
     }
   }
