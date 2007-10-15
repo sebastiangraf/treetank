@@ -27,7 +27,6 @@ import org.treetank.api.IReadTransactionState;
 import org.treetank.api.IWriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
-import org.treetank.utils.StaticTree;
 
 final public class UberPage extends AbstractPage implements IPage {
 
@@ -151,10 +150,6 @@ final public class UberPage extends AbstractPage implements IPage {
   public final RevisionRootPage prepareRevisionRootPage(
       final IWriteTransactionState state) throws Exception {
 
-    // Calculate number of levels and offsets of these levels.
-    final int[] offsets =
-        StaticTree.calcIndirectPageOffsets(mRevisionCount + 1);
-
     // Which page reference to COW on immediate level 0?
     if (mCurrentRevisionRootPage == null) {
       mCurrentRevisionRootPage = getRevisionRootPage(state, mRevisionCount);
@@ -164,13 +159,22 @@ final public class UberPage extends AbstractPage implements IPage {
 
     // Indirect reference.
     PageReference reference = mIndirectPageReference;
-    IPage page = null;
 
-    //    Remaining levels.
-    for (int i = 0; i < offsets.length; i++) {
-      page = state.prepareIndirectPage(reference);
-      reference = ((IndirectPage) page).getPageReference(offsets[i]);
+    // Remaining levels.
+    int levelSteps = 0;
+    long levelKey = mRevisionCount + 1;
+    for (int i = 0; i < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i++) {
+
+      // Calculate offset of current level.
+      levelSteps =
+          (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i]);
+      levelKey -= levelSteps << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i];
+
+      // Fetch page from current level.
+      reference =
+          state.prepareIndirectPage(reference).getPageReference(levelSteps);
     }
+
     reference.setPage(mCurrentRevisionRootPage);
 
     return mCurrentRevisionRootPage;
