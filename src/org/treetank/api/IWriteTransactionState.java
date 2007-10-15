@@ -45,10 +45,31 @@ public interface IWriteTransactionState extends IReadTransactionState {
    */
   public PageWriter getPageWriter();
 
+  /**
+   * COW the node page specified by its node page key.
+   * 
+   * @param nodePageKey Referencing the node page.
+   * @return COWed node page.
+   * @throws Exception of any kind.
+   */
   public NodePage prepareNodePage(final long nodePageKey) throws Exception;
 
+  /**
+   * COW the node specified by its node key. This implies COWing the 
+   * node page the node is stored in.
+   * 
+   * @param nodeKey Referencing the node.
+   * @return COWed node.
+   * @throws Exception of any kind.
+   */
   public Node prepareNode(final long nodeKey) throws Exception;
 
+  /**
+   * Remove node specified by its node key.
+   * 
+   * @param nodeKey Referencing the node.
+   * @throws Exception of any kind.
+   */
   public void removeNode(final long nodeKey) throws Exception;
 
   /**
@@ -109,7 +130,6 @@ public interface IWriteTransactionState extends IReadTransactionState {
   /**
    * Safely commit and serialize dereferenced dirty page.
    * 
-   * @param writer PageWriter to write page to.
    * @param reference Reference to dereference and serialize.
    * @throws Exception of any kind.
    */
@@ -118,7 +138,6 @@ public interface IWriteTransactionState extends IReadTransactionState {
   /**
    * Safely commit and serialize dereferenced dirty page.
    * 
-   * @param writer PageWriter to write page to.
    * @param references Reference array to dereference and serialize.
    * @throws Exception of any kind.
    */

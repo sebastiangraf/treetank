@@ -62,20 +62,58 @@ public interface IReadTransactionState {
    */
   public String getName(final int nameKey) throws Exception;
 
+  /**
+   * Dereference reference referencing a node page.
+   * 
+   * @param reference Reference to dereference.
+   * @param nodePageKey Node page key to assign to dereferenced node page.
+   * @return Dereferenced node page.
+   * @throws Exception of any kind.
+   */
   public NodePage dereferenceNodePage(
       final PageReference reference,
       final long nodePageKey) throws Exception;
 
+  /**
+   * Dereference reference referencing a name page.
+   * 
+   * @param reference Reference to dereference.
+   * @return Dereferenced name page.
+   * @throws Exception of any kind.
+   */
   public NamePage dereferenceNamePage(final PageReference reference)
       throws Exception;
 
+  /**
+   * Dereference reference referencing an indirect page.
+   * 
+   * @param reference Reference to dereference.
+   * @return Dereferenced indirect page.
+   * @throws Exception of any kind.
+   */
   public IndirectPage dereferenceIndirectPage(final PageReference reference)
       throws Exception;
 
+  /**
+   * Dereference reference referencing a revision root page.
+   * 
+   * @param reference Reference to dereference.
+   * @param revisionKey Revision key to assign to dereferenced
+   *        revision root page.
+   * @return Dereferenced revision root page.
+   * @throws Exception of any kind.
+   */
   public RevisionRootPage dereferenceRevisionRootPage(
       final PageReference reference,
       final long revisionKey) throws Exception;
 
+  /**
+   * Dereference reference referencing an uber page.
+   * 
+   * @param reference Reference to dereference.
+   * @return Dereferenced uber page.
+   * @throws Exception of any kind.
+   */
   public UberPage dereferenceUberPage(final PageReference reference)
       throws Exception;
 
