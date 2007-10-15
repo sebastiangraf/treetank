@@ -116,35 +116,7 @@ public final class WriteTransactionState extends ReadTransactionState
   /**
    * {@inheritDoc}
    */
-  public final RevisionRootPage prepareRevisionRootPage(
-      final PageReference reference,
-      final long revisionKey) throws Exception {
-
-    RevisionRootPage page = (RevisionRootPage) reference.getPage();
-
-    // Load page if it is already existing in a committed revision.
-    if (reference.isCommitted() && !reference.isInstantiated()) {
-      page =
-          RevisionRootPage.clone(revisionKey, dereferenceRevisionRootPage(
-              reference,
-              revisionKey));
-      reference.setPage(page);
-    }
-
-    // Assert page is properly instantiated.
-    if (!reference.isInstantiated()) {
-      page = RevisionRootPage.create(revisionKey);
-      reference.setPage(page);
-    }
-
-    return page;
-
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final NamePage prepareNamePage(final PageReference reference)
+  protected final NamePage prepareNamePage(final PageReference reference)
       throws Exception {
 
     NamePage page = (NamePage) reference.getPage();
@@ -168,7 +140,7 @@ public final class WriteTransactionState extends ReadTransactionState
   /**
    * {@inheritDoc}
    */
-  public final NodePage prepareNodePage(
+  protected final NodePage prepareNodePage(
       final PageReference reference,
       final long nodePageKey) throws Exception {
 
