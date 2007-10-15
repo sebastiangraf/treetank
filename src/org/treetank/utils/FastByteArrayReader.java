@@ -63,13 +63,13 @@ public final class FastByteArrayReader {
   }
 
   public final int readPseudoVarSizeInt() throws Exception {
-    int value = ((mBuffer[mPosition++] >> 1));
+    int value = ((mBuffer[mPosition++] & 127));
     if ((mBuffer[mPosition - 1] & 128) != 0) {
-      value |= ((mBuffer[mPosition++] >> 1)) << 7;
+      value |= ((mBuffer[mPosition++] & 127)) << 7;
       if ((mBuffer[mPosition - 1] & 128) != 0) {
-        value |= ((mBuffer[mPosition++] >> 1)) << 14;
+        value |= ((mBuffer[mPosition++] & 127)) << 14;
         if ((mBuffer[mPosition - 1] & 128) != 0) {
-          value |= ((mBuffer[mPosition++])) << 21;
+          value |= ((mBuffer[mPosition++] & 255)) << 21;
         }
       }
     }
