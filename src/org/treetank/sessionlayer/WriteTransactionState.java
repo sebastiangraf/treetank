@@ -23,6 +23,7 @@ package org.treetank.sessionlayer;
 
 import java.util.Map;
 
+import org.treetank.api.IConstants;
 import org.treetank.api.IPage;
 import org.treetank.api.IWriteTransactionState;
 import org.treetank.pagelayer.IndirectPage;
@@ -76,10 +77,45 @@ public final class WriteTransactionState extends ReadTransactionState
    */
   public final NodePage prepareNodePage(final long nodePageKey)
       throws Exception {
-    setNodePage(prepareNodePage(
-        getStaticNodeTree().prepare(this, nodePageKey),
-        nodePageKey));
-    return getNodePage();
+
+    // Indirect reference.
+    PageReference reference = getRevisionRootPage().getIndirectPageReference();
+
+    // Remaining levels.
+    int levelSteps = 0;
+    long levelKey = nodePageKey;
+    for (int i = 0; i < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i++) {
+
+      // Calculate offset of current level.
+      levelSteps =
+          (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i]);
+      levelKey -= levelSteps << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i];
+
+      // Fetch page from current level.
+      setIndirectOffset(i, levelSteps);
+      setIndirectPage(i, prepareIndirectPage(reference));
+      reference = getIndirectPage(i).getPageReference(levelSteps);
+    }
+
+    // Last level points to node page.
+    NodePage page = (NodePage) reference.getPage();
+
+    // Load page if it is already existing in a committed revision.
+    if (reference.isCommitted() && !reference.isInstantiated()) {
+      page = NodePage.clone(dereferenceNodePage(reference, nodePageKey));
+      reference.setPage(page);
+    }
+
+    // Assert page is properly instantiated.
+    if (!reference.isInstantiated()) {
+      page = NodePage.create(nodePageKey);
+      reference.setPage(page);
+    }
+
+    // Cache node page.
+    setNodePage(page);
+
+    return page;
   }
 
   /**
@@ -130,31 +166,6 @@ public final class WriteTransactionState extends ReadTransactionState
     // Assert page is properly instantiated.
     if (!reference.isInstantiated()) {
       page = NamePage.create();
-      reference.setPage(page);
-    }
-
-    return page;
-
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  protected final NodePage prepareNodePage(
-      final PageReference reference,
-      final long nodePageKey) throws Exception {
-
-    NodePage page = (NodePage) reference.getPage();
-
-    // Load page if it is already existing in a committed revision.
-    if (reference.isCommitted() && !reference.isInstantiated()) {
-      page = NodePage.clone(dereferenceNodePage(reference, nodePageKey));
-      reference.setPage(page);
-    }
-
-    // Assert page is properly instantiated.
-    if (!reference.isInstantiated()) {
-      page = NodePage.create(nodePageKey);
       reference.setPage(page);
     }
 
