@@ -135,7 +135,7 @@ public class ReadTransactionState implements IReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public final NodePage dereferenceNodePage(
+  protected final NodePage dereferenceNodePage(
       final PageReference reference,
       final long nodePageKey) throws Exception {
 
@@ -161,7 +161,7 @@ public class ReadTransactionState implements IReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public final NamePage dereferenceNamePage(final PageReference reference)
+  protected final NamePage dereferenceNamePage(final PageReference reference)
       throws Exception {
 
     // Get uncommitted referenced page if there is one.
