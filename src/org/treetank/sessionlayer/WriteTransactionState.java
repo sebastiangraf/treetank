@@ -34,12 +34,27 @@ import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.PageWriter;
 import org.treetank.pagelayer.RevisionRootPage;
 
+/**
+ * <h1>WriteTransactionState</h1>
+ * 
+ * <p>
+ * See {@link ReadTransactionState}.
+ * </p>
+ */
 public final class WriteTransactionState extends ReadTransactionState
     implements
     IWriteTransactionState {
 
   private final PageWriter mPageWriter;
 
+  /**
+   * Standard constructor.
+   * 
+   * @param pageCache Shared page cache.
+   * @param pageReader Exclusive page reader.
+   * @param pageWriter Exclusive page writer.
+   * @param revisionRootPage Root of revision.
+   */
   public WriteTransactionState(
       final Map<Long, IPage> pageCache,
       final PageReader pageReader,

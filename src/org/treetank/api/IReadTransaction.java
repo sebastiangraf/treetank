@@ -116,6 +116,13 @@ public interface IReadTransaction {
    */
   public boolean moveToRightSibling() throws Exception;
 
+  /**
+   * Move cursor to attribute by its index.
+   * 
+   * @param index Index of attribute to move to.
+   * @return True if the attribute is selected.
+   * @throws Exception of any kind.
+   */
   public boolean moveToAttribute(final int index) throws Exception;
 
   // --- Node Getters ----------------------------------------------------------

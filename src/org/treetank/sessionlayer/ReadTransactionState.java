@@ -37,21 +37,46 @@ import org.treetank.pagelayer.UberPage;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.StaticTree;
 
+/**
+ * <h1>ReadTransactionState</h1>
+ * 
+ * <p>
+ * State of a reading transaction. The only thing shared amongst transactions
+ * is the page cache. Everything else is exclusive to this transaction. It
+ * is required that only a single thread has access to this transaction.
+ * </p>
+ * 
+ * <p>
+ * A path-like cache boosts sequential operations.
+ * </p>
+ */
 public class ReadTransactionState implements IReadTransactionState {
 
-  /** Page cache mapping start address of page to IPage. */
+  /** Shared page cache mapping start address of page to IPage. */
   protected final Map<Long, IPage> mPageCache;
 
+  /** Page reader exclusively assigned to this transaction. */
   private final PageReader mPageReader;
 
+  /** Static node tree mapping node page keys to node pages. */
   protected final StaticTree mStaticNodeTree;
 
+  /** Revision root page as root of this transaction. */
   protected RevisionRootPage mRevisionRootPage;
 
+  /** Cached least recently touched node page. */
   protected NodePage mNodePage;
 
+  /** Cached name page of this revision. */
   protected NamePage mNamePage;
 
+  /**
+   * Standard constructor.
+   * 
+   * @param pageCache Shared page cache.
+   * @param pageReader Exclusive page reader.
+   * @param revisionRootPage Root of revision.
+   */
   public ReadTransactionState(
       final Map<Long, IPage> pageCache,
       final PageReader pageReader,
@@ -107,6 +132,9 @@ public class ReadTransactionState implements IReadTransactionState {
     return mNamePage.getName(nameKey);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   public final NodePage dereferenceNodePage(
       final PageReference reference,
       final long nodePageKey) throws Exception {
@@ -130,6 +158,9 @@ public class ReadTransactionState implements IReadTransactionState {
 
   }
 
+  /**
+   * {@inheritDoc}
+   */
   public final NamePage dereferenceNamePage(final PageReference reference)
       throws Exception {
 
@@ -151,6 +182,9 @@ public class ReadTransactionState implements IReadTransactionState {
     return page;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   public final IndirectPage dereferenceIndirectPage(
       final PageReference reference) throws Exception {
 
@@ -172,6 +206,9 @@ public class ReadTransactionState implements IReadTransactionState {
     return page;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   public final RevisionRootPage dereferenceRevisionRootPage(
       final PageReference reference,
       final long revisionKey) throws Exception {
@@ -194,6 +231,9 @@ public class ReadTransactionState implements IReadTransactionState {
     return page;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   public final UberPage dereferenceUberPage(final PageReference reference)
       throws Exception {
 
