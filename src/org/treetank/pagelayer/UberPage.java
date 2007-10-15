@@ -123,13 +123,26 @@ final public class UberPage extends AbstractPage implements IPage {
       final IReadTransactionState state,
       final long revisionKey) throws Exception {
 
-    final StaticTree staticRevisionTree =
-        new StaticTree(mIndirectPageReference);
+    // Indirect reference.
+    PageReference reference = mIndirectPageReference;
+
+    // Remaining levels.
+    int levelSteps = 0;
+    long levelKey = revisionKey;
+    for (int i = 0; i < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i++) {
+
+      // Calculate offset of current level.
+      levelSteps =
+          (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i]);
+      levelKey -= levelSteps << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i];
+
+      // Fetch page from current level.
+      reference =
+          state.dereferenceIndirectPage(reference).getPageReference(levelSteps);
+    }
 
     RevisionRootPage page =
-        state.dereferenceRevisionRootPage(staticRevisionTree.get(
-            state,
-            revisionKey), revisionKey);
+        state.dereferenceRevisionRootPage(reference, revisionKey);
 
     return RevisionRootPage.clone(revisionKey, page);
 
