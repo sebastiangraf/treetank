@@ -37,10 +37,10 @@ import org.treetank.api.IReadTransactionState;
 public class ReadTransaction implements IReadTransaction {
 
   /** State of transaction including all cached stuff. */
-  protected final IReadTransactionState mState;
+  private final IReadTransactionState mState;
 
   /** Strong reference to currently selected node. */
-  protected INode mCurrentNode;
+  private INode mCurrentNode;
 
   /**
    * Constructor.
@@ -49,28 +49,28 @@ public class ReadTransaction implements IReadTransaction {
    */
   protected ReadTransaction(final IReadTransactionState state) {
     mState = state;
-    mCurrentNode = null;
+    setCurrentNode(null);
   }
 
   /**
    * {@inheritDoc}
    */
   public final long revisionKey() {
-    return mState.getRevisionRootPage().getRevisionKey();
+    return getState().getRevisionRootPage().getRevisionKey();
   }
 
   /**
    * {@inheritDoc}
    */
   public final long revisionSize() {
-    return mState.getRevisionRootPage().getNodeCount();
+    return getState().getRevisionRootPage().getNodeCount();
   }
 
   /**
    * {@inheritDoc}
    */
   public final boolean isSelected() {
-    return (mCurrentNode != null);
+    return (getCurrentNode() != null);
   }
 
   /**
@@ -85,10 +85,10 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final boolean moveTo(final long nodeKey) throws Exception {
     if (nodeKey != IConstants.NULL_KEY) {
-      mCurrentNode = mState.getNode(nodeKey);
+      setCurrentNode(getState().getNode(nodeKey));
       return true;
     } else {
-      mCurrentNode = null;
+      setCurrentNode(null);
       return false;
     }
   }
@@ -97,35 +97,35 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final boolean moveToParent() throws Exception {
-    return moveTo(mCurrentNode.getParentKey());
+    return moveTo(getCurrentNode().getParentKey());
   }
 
   /**
    * {@inheritDoc}
    */
   public final boolean moveToFirstChild() throws Exception {
-    return moveTo(mCurrentNode.getFirstChildKey());
+    return moveTo(getCurrentNode().getFirstChildKey());
   }
 
   /**
    * {@inheritDoc}
    */
   public final boolean moveToLeftSibling() throws Exception {
-    return moveTo(mCurrentNode.getLeftSiblingKey());
+    return moveTo(getCurrentNode().getLeftSiblingKey());
   }
 
   /**
    * {@inheritDoc}
    */
   public final boolean moveToRightSibling() throws Exception {
-    return moveTo(mCurrentNode.getRightSiblingKey());
+    return moveTo(getCurrentNode().getRightSiblingKey());
   }
 
   /**
    * {@inheritDoc}
    */
   public final boolean moveToAttribute(final int index) throws Exception {
-    mCurrentNode = mCurrentNode.getAttribute(index);
+    setCurrentNode(getCurrentNode().getAttribute(index));
     return true;
   }
 
@@ -134,7 +134,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final INode getNode() {
     assertIsSelected();
-    return mCurrentNode;
+    return getCurrentNode();
   }
 
   /**
@@ -142,7 +142,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final long getNodeKey() {
     assertIsSelected();
-    return mCurrentNode.getNodeKey();
+    return getCurrentNode().getNodeKey();
   }
 
   /**
@@ -150,7 +150,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final long getParentKey() {
     assertIsSelected();
-    return mCurrentNode.getParentKey();
+    return getCurrentNode().getParentKey();
   }
 
   /**
@@ -158,7 +158,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final long getFirstChildKey() {
     assertIsSelected();
-    return mCurrentNode.getFirstChildKey();
+    return getCurrentNode().getFirstChildKey();
   }
 
   /**
@@ -166,7 +166,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final long getLeftSiblingKey() {
     assertIsSelected();
-    return mCurrentNode.getLeftSiblingKey();
+    return getCurrentNode().getLeftSiblingKey();
   }
 
   /**
@@ -174,7 +174,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final long getRightSiblingKey() {
     assertIsSelected();
-    return mCurrentNode.getRightSiblingKey();
+    return getCurrentNode().getRightSiblingKey();
   }
 
   /**
@@ -182,7 +182,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final long getChildCount() {
     assertIsSelected();
-    return mCurrentNode.getChildCount();
+    return getCurrentNode().getChildCount();
   }
 
   /**
@@ -190,7 +190,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final int getAttributeCount() {
     assertIsSelected();
-    return mCurrentNode.getAttributeCount();
+    return getCurrentNode().getAttributeCount();
   }
 
   /**
@@ -198,7 +198,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final int getNamespaceCount() {
     assertIsSelected();
-    return mCurrentNode.getNamespaceCount();
+    return getCurrentNode().getNamespaceCount();
   }
 
   /**
@@ -206,7 +206,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final int getKind() {
     assertIsSelected();
-    return mCurrentNode.getKind();
+    return getCurrentNode().getKind();
   }
 
   /**
@@ -214,7 +214,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final int getLocalPartKey() {
     assertIsSelected();
-    return mCurrentNode.getLocalPartKey();
+    return getCurrentNode().getLocalPartKey();
   }
 
   /**
@@ -222,7 +222,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final String getLocalPart() throws Exception {
     assertIsSelected();
-    return mState.getName(mCurrentNode.getLocalPartKey());
+    return getState().getName(getCurrentNode().getLocalPartKey());
   }
 
   /**
@@ -230,7 +230,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final int getURIKey() {
     assertIsSelected();
-    return mCurrentNode.getURIKey();
+    return getCurrentNode().getURIKey();
   }
 
   /**
@@ -238,7 +238,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final String getURI() throws Exception {
     assertIsSelected();
-    return mState.getName(mCurrentNode.getURIKey());
+    return getState().getName(getCurrentNode().getURIKey());
   }
 
   /**
@@ -246,7 +246,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final int getPrefixKey() {
     assertIsSelected();
-    return mCurrentNode.getPrefixKey();
+    return getCurrentNode().getPrefixKey();
   }
 
   /**
@@ -254,7 +254,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final String getPrefix() throws Exception {
     assertIsSelected();
-    return mState.getName(mCurrentNode.getPrefixKey());
+    return getState().getName(getCurrentNode().getPrefixKey());
   }
 
   /**
@@ -262,7 +262,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final byte[] getValue() {
     assertIsSelected();
-    return mCurrentNode.getValue();
+    return getCurrentNode().getValue();
   }
 
   /**
@@ -276,16 +276,37 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final String nameForKey(final int key) throws Exception {
-    return mState.getName(key);
+    return getState().getName(key);
   }
 
   /**
    * Assert that a node is selected.
    */
   protected void assertIsSelected() {
-    if (mCurrentNode == null) {
+    if (getCurrentNode() == null) {
       throw new IllegalStateException("No node selected.");
     }
+  }
+
+  /**
+   * @return The state of this transaction.
+   */
+  protected final IReadTransactionState getState() {
+    return mState;
+  }
+
+  /**
+   * @param currentNode The current node to set.
+   */
+  protected final void setCurrentNode(final INode currentNode) {
+    mCurrentNode = currentNode;
+  }
+
+  /**
+   * @return The current node.
+   */
+  protected final INode getCurrentNode() {
+    return mCurrentNode;
   }
 
 }

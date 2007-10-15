@@ -53,22 +53,22 @@ import org.treetank.utils.StaticTree;
 public class ReadTransactionState implements IReadTransactionState {
 
   /** Shared page cache mapping start address of page to IPage. */
-  protected final Map<Long, IPage> mPageCache;
+  private final Map<Long, IPage> mPageCache;
 
   /** Page reader exclusively assigned to this transaction. */
   private final PageReader mPageReader;
 
   /** Static node tree mapping node page keys to node pages. */
-  protected final StaticTree mStaticNodeTree;
+  private final StaticTree mStaticNodeTree;
 
   /** Revision root page as root of this transaction. */
-  protected RevisionRootPage mRevisionRootPage;
+  private RevisionRootPage mRevisionRootPage;
 
   /** Cached least recently touched node page. */
-  protected NodePage mNodePage;
+  private NodePage mNodePage;
 
   /** Cached name page of this revision. */
-  protected NamePage mNamePage;
+  private NamePage mNamePage;
 
   /**
    * Standard constructor.
@@ -83,15 +83,15 @@ public class ReadTransactionState implements IReadTransactionState {
       final RevisionRootPage revisionRootPage) {
     mPageCache = pageCache;
     mPageReader = pageReader;
-    mRevisionRootPage = revisionRootPage;
+    setRevisionRootPage(revisionRootPage);
     if (revisionRootPage != null) {
       mStaticNodeTree =
           new StaticTree(revisionRootPage.getIndirectPageReference());
     } else {
       mStaticNodeTree = null;
     }
-    mNodePage = null;
-    mNamePage = null;
+    setNodePage(null);
+    setNamePage(null);
   }
 
   /**
@@ -111,25 +111,24 @@ public class ReadTransactionState implements IReadTransactionState {
     final int nodePageOffset = Node.nodePageOffset(nodeKey);
 
     // Fetch node page if required.
-    if (mNodePage == null || mNodePage.getNodePageKey() != nodePageKey) {
-      mNodePage =
-          dereferenceNodePage(
-              mStaticNodeTree.get(this, nodePageKey),
-              nodePageKey);
+    if (getNodePage() == null || getNodePage().getNodePageKey() != nodePageKey) {
+      setNodePage(dereferenceNodePage(getStaticNodeTree()
+          .get(this, nodePageKey), nodePageKey));
     }
 
     // Fetch node from node page.
-    return mNodePage.getNode(nodePageOffset);
+    return getNodePage().getNode(nodePageOffset);
   }
 
   /**
    * {@inheritDoc}
    */
   public final String getName(final int nameKey) throws Exception {
-    if (mNamePage == null) {
-      mNamePage = dereferenceNamePage(mRevisionRootPage.getNamePageReference());
+    if (getNamePage() == null) {
+      setNamePage(dereferenceNamePage(getRevisionRootPage()
+          .getNamePageReference()));
     }
-    return mNamePage.getName(nameKey);
+    return getNamePage().getName(nameKey);
   }
 
   /**
@@ -144,14 +143,14 @@ public class ReadTransactionState implements IReadTransactionState {
 
     // Get committed referenced page from cache if there is one.
     if (page == null) {
-      page = (NodePage) mPageCache.get(reference.getStart());
+      page = (NodePage) getPageCache().get(reference.getStart());
     }
 
     // Get committed referenced page from storage.
     if (page == null) {
       final FastByteArrayReader in = mPageReader.read(reference);
       page = NodePage.read(in, nodePageKey);
-      mPageCache.put(reference.getStart(), page);
+      getPageCache().put(reference.getStart(), page);
     }
 
     return page;
@@ -169,14 +168,14 @@ public class ReadTransactionState implements IReadTransactionState {
 
     // Get committed referenced page from cache if there is one.
     if (page == null) {
-      page = (NamePage) mPageCache.get(reference.getStart());
+      page = (NamePage) getPageCache().get(reference.getStart());
     }
 
     // Get committed referenced page from storage.
     if (page == null) {
       final FastByteArrayReader in = mPageReader.read(reference);
       page = NamePage.read(in);
-      mPageCache.put(reference.getStart(), page);
+      getPageCache().put(reference.getStart(), page);
     }
 
     return page;
@@ -193,14 +192,14 @@ public class ReadTransactionState implements IReadTransactionState {
 
     // Get committed referenced page from cache if there is one.
     if (page == null) {
-      page = (IndirectPage) mPageCache.get(reference.getStart());
+      page = (IndirectPage) getPageCache().get(reference.getStart());
     }
 
     // Get committed referenced page from storage.
     if (page == null) {
       final FastByteArrayReader in = mPageReader.read(reference);
       page = IndirectPage.read(in);
-      mPageCache.put(reference.getStart(), page);
+      getPageCache().put(reference.getStart(), page);
     }
 
     return page;
@@ -218,14 +217,14 @@ public class ReadTransactionState implements IReadTransactionState {
 
     // Get committed referenced page from cache if there is one.
     if (page == null) {
-      page = (RevisionRootPage) mPageCache.get(reference.getStart());
+      page = (RevisionRootPage) getPageCache().get(reference.getStart());
     }
 
     // Get committed referenced page from storage.
     if (page == null) {
       final FastByteArrayReader in = mPageReader.read(reference);
       page = RevisionRootPage.read(in, revisionKey);
-      mPageCache.put(reference.getStart(), page);
+      getPageCache().put(reference.getStart(), page);
     }
 
     return page;
@@ -242,17 +241,67 @@ public class ReadTransactionState implements IReadTransactionState {
 
     // Get committed referenced page from cache if there is one.
     if (page == null) {
-      page = (UberPage) mPageCache.get(reference.getStart());
+      page = (UberPage) getPageCache().get(reference.getStart());
     }
 
     // Get committed referenced page from storage.
     if (page == null) {
       final FastByteArrayReader in = mPageReader.read(reference);
       page = UberPage.read(in);
-      mPageCache.put(reference.getStart(), page);
+      getPageCache().put(reference.getStart(), page);
     }
 
     return page;
+  }
+
+  /**
+   * @return The page cache.
+   */
+  protected final Map<Long, IPage> getPageCache() {
+    return mPageCache;
+  }
+
+  /**
+   * @return The static node tree.
+   */
+  protected final StaticTree getStaticNodeTree() {
+    return mStaticNodeTree;
+  }
+
+  /**
+   * @param revisionRootPage The revision root page to set.
+   */
+  protected final void setRevisionRootPage(
+      final RevisionRootPage revisionRootPage) {
+    mRevisionRootPage = revisionRootPage;
+  }
+
+  /**
+   * @param nodePage The node page to set.
+   */
+  protected final void setNodePage(final NodePage nodePage) {
+    mNodePage = nodePage;
+  }
+
+  /**
+   * @return The node page.
+   */
+  protected final NodePage getNodePage() {
+    return mNodePage;
+  }
+
+  /**
+   * @param namePage The name page to set.
+   */
+  protected final void setNamePage(final NamePage namePage) {
+    mNamePage = namePage;
+  }
+
+  /**
+   * @return The name page.
+   */
+  protected final NamePage getNamePage() {
+    return mNamePage;
   }
 
 }
