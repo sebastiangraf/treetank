@@ -67,7 +67,7 @@ public final class XMLShredder {
     long key;
     String text;
     leftSiblingKeyStack.push(IConstants.NULL_KEY);
-    trx.insertRoot("");
+    trx.insertRoot();
     int nodeCounter = 0;
 
     // Iterate over all nodes.

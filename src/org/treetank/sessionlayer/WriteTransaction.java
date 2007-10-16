@@ -50,7 +50,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final long insertRoot(final String document) throws Exception {
+  public final long insertRoot() throws Exception {
 
     if (getState().getRevisionRootPage().getNodeCount() != 0) {
       throw new IllegalStateException("Root node already exists.");
@@ -66,7 +66,7 @@ public final class WriteTransaction extends ReadTransaction
         ((IWriteTransactionState) getState()).createNameKey(""),
         ((IWriteTransactionState) getState()).createNameKey(""),
         ((IWriteTransactionState) getState()).createNameKey(""),
-        UTF.convert(document)));
+        UTF.EMPTY));
 
     return getCurrentNode().getNodeKey();
   }

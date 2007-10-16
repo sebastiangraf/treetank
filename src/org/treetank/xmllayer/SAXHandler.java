@@ -82,7 +82,7 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
 
     try {
 
-      mWTX.insertRoot(mDocument);
+      mWTX.insertRoot();
 
       mLeftSiblingKeyStack.push(IConstants.NULL_KEY);
 
