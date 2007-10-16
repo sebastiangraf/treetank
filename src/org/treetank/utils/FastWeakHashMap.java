@@ -22,11 +22,11 @@
 package org.treetank.utils;
 
 import java.lang.ref.ReferenceQueue;
-import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 import java.util.AbstractMap;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <h1>WeakHashMap</h1>
@@ -49,7 +49,7 @@ import java.util.Set;
 public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
 
   /** The internal HashMap that will hold the WeakReference. */
-  private final Map<K, SoftReference<V>> mInternalMap;
+  private final Map<K, WeakReference<V>> mInternalMap;
 
   /** Reference queue for cleared WeakReference objects. */
   private final ReferenceQueue mQueue;
@@ -59,7 +59,7 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
    *
    */
   public FastWeakHashMap() {
-    mInternalMap = new HashMap<K, SoftReference<V>>();
+    mInternalMap = new ConcurrentHashMap<K, WeakReference<V>>();
     mQueue = new ReferenceQueue();
   }
 
@@ -69,7 +69,7 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
   @Override
   public final V get(final Object key) {
     V value = null;
-    final SoftReference<V> weakReference = mInternalMap.get(key);
+    final WeakReference<V> weakReference = mInternalMap.get(key);
     if (weakReference != null) {
       // Weak reference was garbage collected.
       value = weakReference.get();
@@ -87,7 +87,7 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
   @Override
   public final V put(final K key, final V value) {
     processQueue();
-    mInternalMap.put(key, new SoftValue<V>(value, key, mQueue));
+    mInternalMap.put(key, new WeakValue<V>(value, key, mQueue));
     return null;
   }
 
@@ -132,8 +132,8 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
    *
    */
   private final void processQueue() {
-    SoftValue<V> weakValue;
-    while ((weakValue = (SoftValue) mQueue.poll()) != null) {
+    WeakValue<V> weakValue;
+    while ((weakValue = (WeakValue) mQueue.poll()) != null) {
       mInternalMap.remove(weakValue.key);
     }
   }
@@ -141,7 +141,7 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
   /**
    * Internal subclass to store keys and values for more convenient lookups.
    */
-  private final class SoftValue<V> extends SoftReference<V> {
+  private final class WeakValue<V> extends WeakReference<V> {
     private final K key;
 
     /**
@@ -151,7 +151,7 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
      * @param initKey Key for given value.
      * @param initReferenceQueue Reference queue for cleanup.
      */
-    private SoftValue(
+    private WeakValue(
         final V initValue,
         final K initKey,
         final ReferenceQueue initReferenceQueue) {
