@@ -73,16 +73,6 @@ public interface IReadTransactionState {
       final PageReference reference,
       final long revisionKey) throws Exception;
 
-  /**
-   * Dereference reference referencing an uber page.
-   * 
-   * @param reference Reference to dereference.
-   * @return Dereferenced uber page.
-   * @throws Exception of any kind.
-   */
-  public UberPage dereferenceUberPage(final PageReference reference)
-      throws Exception;
-
   public IndirectPage dereferenceIndirectPage(final PageReference reference)
       throws Exception;
 

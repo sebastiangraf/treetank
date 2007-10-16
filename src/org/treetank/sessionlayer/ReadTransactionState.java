@@ -253,30 +253,6 @@ public class ReadTransactionState implements IReadTransactionState {
   }
 
   /**
-   * {@inheritDoc}
-   */
-  public final UberPage dereferenceUberPage(final PageReference reference)
-      throws Exception {
-
-    // Get uncommitted referenced page if there is one.
-    UberPage page = (UberPage) reference.getPage();
-
-    // Get committed referenced page from cache if there is one.
-    if (page == null) {
-      page = (UberPage) mPageCache.get(reference.getStart());
-    }
-
-    // Get committed referenced page from storage.
-    if (page == null) {
-      final FastByteArrayReader in = mPageReader.read(reference);
-      page = UberPage.read(in);
-      mPageCache.put(reference.getStart(), page);
-    }
-
-    return page;
-  }
-
-  /**
    * @return The page cache.
    */
   protected final Map<Long, IPage> getPageCache() {
