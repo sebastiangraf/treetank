@@ -39,6 +39,7 @@ import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.PageWriter;
 import org.treetank.pagelayer.RevisionRootPage;
 import org.treetank.pagelayer.UberPage;
+import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastWeakHashMap;
 
 /**
@@ -125,31 +126,24 @@ public final class Session implements ISession {
     mSecondaryUberPageReference = new PageReference();
     mFile = new RandomAccessFile(mSessionConfiguration.getPath(), "rw");
 
-    final WriteTransactionState state =
-        new WriteTransactionState(mPageCache, new PageReader(
-            mSessionConfiguration), null, null);
-
     // Bootstrap uber page.
     if (mFile.length() == 0L) {
       // No revisions available, create empty uber page.
       mFile.setLength(IConstants.BEACON_LENGTH);
       mUberPage = UberPage.create();
       mPrimaryUberPageReference.setPage(mUberPage);
-      mUberPage.bootstrapRevisionRootPage(state);
-
-      final PageWriter pageWriter = new PageWriter(mSessionConfiguration);
-      mWriteTransactionState =
-          new WriteTransactionState(mPageCache, new PageReader(
-              mSessionConfiguration), pageWriter, null);
-
-      commit();
+      mUberPage.bootstrapRevisionRootPage();
     } else {
       // There already are revisions, read existing uber page.
       readBeacon(mFile);
 
       // Beacon logic case 1.
       if (mPrimaryUberPageReference.equals(mSecondaryUberPageReference)) {
-        mUberPage = state.dereferenceUberPage(mPrimaryUberPageReference);
+
+        final FastByteArrayReader in =
+            new PageReader(mSessionConfiguration)
+                .read(mPrimaryUberPageReference);
+        mUberPage = UberPage.read(in);
 
         // Beacon logic case 2.
       } else {
