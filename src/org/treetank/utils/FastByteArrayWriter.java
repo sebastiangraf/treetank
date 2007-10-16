@@ -89,6 +89,34 @@ public final class FastByteArrayWriter {
     mBuffer[mSize++] = (byte) (value >> 8);
     mBuffer[mSize++] = (byte) value;
   }
+  
+  public final void writeVarSizeLong(final long value) throws Exception {
+    assertSize(9);
+    mSize++;
+    mBuffer[mSize++] = (byte) value;
+    if (value > 127 || value < -128) {
+      mBuffer[mSize++] = (byte) (value >> 8);
+      if (value > 32767 || value < -32768) {
+        mBuffer[mSize++] = (byte) (value >>> 16);
+        if (value > 8388607 || value < -8388608) {
+          mBuffer[mSize++] = (byte) (value >>> 24);
+          if (value > 2147483647 || value < -2147483648) {
+            mBuffer[mSize++] = (byte) (value >>> 32);
+            if (value > (2^39)-1 || value < -(2^39)) {
+              mBuffer[mSize++] = (byte) (value >>> 40);
+              if (value > (2^47)-1 || value < -(2^47)) {
+                mBuffer[mSize++] = (byte) (value >>> 48);
+                if (value > (2^55)-1 || value < -(2^55)) {
+                  mBuffer[mSize++] = (byte) (value >>> 56);
+                  mBuffer[mSize-9] = (byte) 8;
+                } else mBuffer[mSize-8] = (byte) 7;
+              } else mBuffer[mSize-7] = (byte) 6;
+            } else mBuffer[mSize-6] = (byte) 5;
+          } else mBuffer[mSize-5] = (byte) 4;
+        } else mBuffer[mSize-4] = (byte) 3;
+      } else mBuffer[mSize-3] = (byte) 2;
+    } else mBuffer[mSize-2] = (byte) 1;
+  }
 
   public final void writeLong(final long value) throws Exception {
     assertSize(8);
