@@ -25,6 +25,7 @@ import org.treetank.api.IConstants;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.api.IWriteTransactionState;
 import org.treetank.pagelayer.Node;
+import org.treetank.utils.UTF;
 
 /**
  * <h1>WriteTransaction</h1>
@@ -120,8 +121,23 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final long insertTextAsFirstChild(final byte[] value) throws Exception {
+  public final long insertFirstChild(final byte[] value) throws Exception {
     return insertFirstChild(IConstants.TEXT, "", "", "", value);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final long insertFirstChild(
+      final String localPart,
+      final String uri,
+      final String prefix) throws Exception {
+    return insertFirstChild(
+        IConstants.ELEMENT,
+        localPart,
+        uri,
+        prefix,
+        UTF.EMPTY);
   }
 
   /**

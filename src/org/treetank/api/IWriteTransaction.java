@@ -76,7 +76,23 @@ public interface IWriteTransaction extends IReadTransaction {
    * @throws Exception of any kind and if no node is selected or the node
    * already has a first child.
    */
-  public long insertTextAsFirstChild(final byte[] value) throws Exception;
+  public long insertFirstChild(final byte[] value) throws Exception;
+
+  /**
+   * Insert new element node as first child of currently selected node.
+   * The cursor is moved to the inserted node.
+   * 
+   * @param localPart Local part of inserted node.
+   * @param uri URI of inserted node.
+   * @param prefix Prefix of inserted node.
+   * @return Key of inserted node.
+   * @throws Exception of any kind and if no node is selected or the node
+   * already has a first child.
+   */
+  public long insertFirstChild(
+      final String localPart,
+      final String uri,
+      final String prefix) throws Exception;
 
   /**
    * Insert new node as right sibling of currently selected node.
