@@ -66,13 +66,13 @@ public final class FastByteArrayWriter {
   public final void writePseudoVarSizeInt(final int value) throws Exception {
     assertSize(4);
     mBuffer[mSize++] = (byte) (value);
-    if (value > 127/*63 || value < -64*/) {
+    if (value > 63 || value < -64) {
       mBuffer[mSize-1] |= 128;
       mBuffer[mSize++] = (byte) (value >> 7);
-      if (value > 16383/*8191 || value < -8192*/) {
+      if (value > 8191 || value < -8192) {
         mBuffer[mSize-1] |= 128;
         mBuffer[mSize++] = (byte) (value >> 14);
-        if (value > 2097151/*1048575 || value < -1048576*/) {
+        if (value > 1048575 || value < -1048576) {
           mBuffer[mSize-1] |= 128;
           mBuffer[mSize++] = (byte) (value >> 21);
         } else mBuffer[mSize-1] &= 127;
