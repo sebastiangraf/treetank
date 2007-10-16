@@ -62,10 +62,6 @@ final public class UberPage extends AbstractPage implements IPage {
     // Indirect pages (shallow init).
     uberPage.mIndirectPageReference = createPageReference();
 
-    // Make sure that the first empty revision root page already exists.
-    uberPage.mCurrentRevisionRootPage =
-        RevisionRootPage.create(IConstants.UBP_ROOT_REVISION_KEY);
-
     return uberPage;
 
   }
@@ -107,9 +103,6 @@ final public class UberPage extends AbstractPage implements IPage {
     // Indirect pages (shallow COW without page instances).
     uberPage.mIndirectPageReference =
         clonePageReference(committedUberPage.mIndirectPageReference);
-
-    uberPage.mCurrentRevisionRootPage =
-        committedUberPage.mCurrentRevisionRootPage;
 
     return uberPage;
   }
