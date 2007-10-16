@@ -24,6 +24,7 @@ package org.treetank.xmllayer;
 import java.util.ArrayList;
 
 import org.treetank.api.IConstants;
+import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.utils.FastLongStack;
 import org.treetank.utils.UTF;
@@ -41,8 +42,10 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class SAXHandler extends DefaultHandler implements LexicalHandler {
 
+  private final ISession mSession;
+
   /** Idefix write transaction. */
-  private final IWriteTransaction mWTX;
+  protected IWriteTransaction mWTX;
 
   /** Stack containing left sibling nodeKey of each level. */
   private final FastLongStack mLeftSiblingKeyStack;
@@ -61,12 +64,22 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
    * 
    * @param wtx Writing transaction to write to.
    */
-  public SAXHandler(final IWriteTransaction wtx) {
-    mWTX = wtx;
+  public SAXHandler(final ISession session) throws Exception {
+    mSession = session;
+    mWTX = mSession.beginWriteTransaction();
     mLeftSiblingKeyStack = new FastLongStack();
     mCharacters = new StringBuilder();
     mPrefixList = new ArrayList<String>();
     mURIList = new ArrayList<String>();
+  }
+
+  @Override
+  public void endDocument() throws SAXException {
+    try {
+      this.mSession.commit();
+    } catch (final Exception e) {
+      throw new SAXException(e);
+    }
   }
 
   /**
@@ -102,7 +115,8 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
 
       // Insert element node and maintain stack.      
       long key;
-      if (mLeftSiblingKeyStack.peek() == IConstants.NULL_KEY) {
+      if (mWTX.getParentKey() == IConstants.ROOT_KEY
+          || mLeftSiblingKeyStack.peek() == IConstants.NULL_KEY) {
         key =
             mWTX.insertFirstChild(
                 IConstants.ELEMENT,
@@ -110,6 +124,7 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
                 uri,
                 qNameToPrefix(qName),
                 UTF.EMPTY);
+
       } else {
         key =
             mWTX.insertRightSibling(
@@ -118,6 +133,7 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
                 uri,
                 qNameToPrefix(qName),
                 UTF.EMPTY);
+
       }
       mLeftSiblingKeyStack.pop();
       mLeftSiblingKeyStack.push(key);

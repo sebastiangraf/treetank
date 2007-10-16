@@ -326,4 +326,19 @@ public class ReadTransaction implements IReadTransaction {
     return mCurrentNode;
   }
 
+  @Override
+  public String toString() {
+    String localPart = "";
+    try {
+      localPart = getLocalPart();
+    } catch (Exception e) {
+      throw new IllegalStateException(e);
+    }
+    return "Node "
+        + this.getNodeKey()
+        + "\nwith name: "
+        + localPart
+        + "\nand value:"
+        + getValue();
+  }
 }

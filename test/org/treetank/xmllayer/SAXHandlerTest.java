@@ -32,14 +32,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.api.IAxisIterator;
 import org.treetank.api.IConstants;
+import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
-import org.treetank.xmllayer.DescendantAxisIterator;
-import org.treetank.xmllayer.SAXHandler;
 import org.xml.sax.InputSource;
-
 
 public class SAXHandlerTest {
 
@@ -65,13 +63,14 @@ public class SAXHandlerTest {
 
     // Setup parsed session.
     final ISession session = new Session(PATH);
-    final IWriteTransaction trx = session.beginWriteTransaction();
     final SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
     saxParserFactory.setValidating(false);
     saxParserFactory.setNamespaceAware(true);
     final SAXParser parser = saxParserFactory.newSAXParser();
     final InputSource inputSource = new InputSource("xml/test.xml");
-    parser.parse(inputSource, new SAXHandler(trx));
+    parser.parse(inputSource, new SAXHandler(session));
+
+    final IReadTransaction trx = session.beginReadTransaction();
 
     expectedTrx.moveToRoot();
     trx.moveToRoot();
@@ -93,9 +92,11 @@ public class SAXHandlerTest {
           .nameForKey(trx.getURIKey()));
       assertEquals(expectedTrx.nameForKey(expectedTrx.getPrefixKey()), trx
           .nameForKey(trx.getPrefixKey()));
-      assertEquals(
-          new String(expectedTrx.getValue(), IConstants.DEFAULT_ENCODING),
-          new String(trx.getValue(), IConstants.DEFAULT_ENCODING));
+      assertEquals(new String(
+          expectedTrx.getValue(),
+          IConstants.DEFAULT_ENCODING), new String(
+          trx.getValue(),
+          IConstants.DEFAULT_ENCODING));
     }
 
     expectedSession.abort();
