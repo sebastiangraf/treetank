@@ -166,4 +166,17 @@ public final class PageWriter {
 
   }
 
+  /**
+   * Required to close file handle.
+   * 
+   * @throws Throwable if the finalization of the superclass does not work.
+   */
+  protected void finalize() throws Throwable {
+    try {
+      mFile.close();
+    } finally {
+      super.finalize();
+    }
+  }
+
 }

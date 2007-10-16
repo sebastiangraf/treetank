@@ -258,6 +258,19 @@ public final class Session implements ISession {
   }
 
   /**
+   * Required to close file handle.
+   * 
+   * @throws Throwable if the finalization of the superclass does not work.
+   */
+  protected void finalize() throws Throwable {
+    try {
+      close();
+    } finally {
+      super.finalize();
+    }
+  }
+
+  /**
    * Write a primary and secondary beacon to safely, quickly and conveniently
    * access the uber page later on.
    * 
