@@ -51,6 +51,8 @@ final public class UberPage extends AbstractPage implements IPage {
    */
   public static final UberPage create() throws Exception {
 
+    // --- Create uber page ----------------------------------------------------
+
     final UberPage uberPage = new UberPage();
 
     // Make sure that all references are instantiated.
@@ -59,7 +61,9 @@ final public class UberPage extends AbstractPage implements IPage {
     // Indirect pages (shallow init).
     uberPage.mIndirectPageReference = createPageReference();
 
-    // Indirect reference.
+    // --- Create revision tree ------------------------------------------------
+
+    // Initialize revision tree to guarantee that there is a revision root page.
     IndirectPage page = null;
     PageReference reference = uberPage.mIndirectPageReference;
 
@@ -72,6 +76,26 @@ final public class UberPage extends AbstractPage implements IPage {
 
     RevisionRootPage rrp = RevisionRootPage.create(uberPage.mRevisionCount);
     reference.setPage(rrp);
+
+    // --- Create node tree ----------------------------------------------------
+
+    // Initialize revision tree to guarantee that there is a revision root page.
+    page = null;
+    reference = rrp.getIndirectPageReference();
+
+    // Remaining levels.
+    for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
+      page = IndirectPage.create();
+      reference.setPage(page);
+      reference = page.getPageReference(0);
+    }
+
+    NodePage ndp = NodePage.create(IConstants.ROOT_KEY);
+    reference.setPage(ndp);
+
+    ndp.setNode(0, new Node(IConstants.ROOT_KEY));
+    
+    rrp.incrementNodeCountAndMaxNodeKey();
 
     return uberPage;
 

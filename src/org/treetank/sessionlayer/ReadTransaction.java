@@ -46,10 +46,12 @@ public class ReadTransaction implements IReadTransaction {
    * Constructor.
    * 
    * @param state Transaction state to work with.
+   * @throws Exception of any kind.
    */
-  protected ReadTransaction(final IReadTransactionState state) {
+  protected ReadTransaction(final IReadTransactionState state) throws Exception {
     mState = state;
     mCurrentNode = null;
+    moveToRoot();
   }
 
   /**

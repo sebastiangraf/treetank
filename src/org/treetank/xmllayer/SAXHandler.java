@@ -41,9 +41,6 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class SAXHandler extends DefaultHandler implements LexicalHandler {
 
-  /** System ID of document. */
-  private final String mDocument;
-
   /** Idefix write transaction. */
   private final IWriteTransaction mWTX;
 
@@ -62,11 +59,9 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
   /**
    * Constructor.
    * 
-   * @param document Name of document.
    * @param wtx Writing transaction to write to.
    */
-  public SAXHandler(final String document, final IWriteTransaction wtx) {
-    mDocument = document;
+  public SAXHandler(final IWriteTransaction wtx) {
     mWTX = wtx;
     mLeftSiblingKeyStack = new FastLongStack();
     mCharacters = new StringBuilder();
@@ -81,8 +76,6 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
   public void startDocument() throws SAXException {
 
     try {
-
-      mWTX.insertRoot();
 
       mLeftSiblingKeyStack.push(IConstants.NULL_KEY);
 

@@ -71,7 +71,7 @@ public class SAXHandlerTest {
     saxParserFactory.setNamespaceAware(true);
     final SAXParser parser = saxParserFactory.newSAXParser();
     final InputSource inputSource = new InputSource("xml/test.xml");
-    parser.parse(inputSource, new SAXHandler(inputSource.getSystemId(), trx));
+    parser.parse(inputSource, new SAXHandler(trx));
 
     expectedTrx.moveToRoot();
     trx.moveToRoot();

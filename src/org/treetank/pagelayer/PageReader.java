@@ -23,7 +23,6 @@ package org.treetank.pagelayer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.RandomAccessFile;
-import java.util.logging.Logger;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 import java.util.zip.Inflater;
@@ -44,10 +43,6 @@ import org.treetank.utils.FastByteArrayReader;
  * </p>
  */
 public final class PageReader {
-
-  /** Logger. */
-  private static final Logger LOGGER =
-      Logger.getLogger(PageReader.class.getName());
 
   /** Read-only mode for random access mFile. */
   private static final String READ_ONLY = "r";
@@ -126,6 +121,10 @@ public final class PageReader {
   public final FastByteArrayReader read(final PageReference pageReference)
       throws Exception {
 
+    if (!pageReference.isCommitted()) {
+      throw new Exception("Empty page reference.");
+    }
+
     // Prepare members.
     byte[] page;
 
@@ -144,13 +143,12 @@ public final class PageReader {
       mChecksum.reset();
       mChecksum.update(page, 0, page.length);
       if (mChecksum.getValue() != pageReference.getChecksum()) {
-        LOGGER.severe("Page checksum is not valid for start="
+        throw new Exception("Page checksum is not valid for start="
             + pageReference.getStart()
             + "; size="
             + pageReference.getLength()
             + "; checksum="
             + pageReference.getChecksum());
-        throw new IllegalStateException("Page checksum is not valid.");
       }
     }
 
