@@ -147,6 +147,26 @@ final public class UberPage extends AbstractPage implements IPage {
 
   }
 
+  public final RevisionRootPage bootstrapRevisionRootPage(
+      final IWriteTransactionState state) throws Exception {
+
+    // Indirect reference.
+    PageReference reference = mIndirectPageReference;
+
+    // Remaining levels.
+    for (int i = 0; i < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i++) {
+      reference = state.prepareIndirectPage(reference).getPageReference(0);
+    }
+
+    RevisionRootPage page = RevisionRootPage.create(mRevisionCount + 1);
+    reference.setPage(page);
+
+    mCurrentRevisionRootPage = page;
+
+    return page;
+
+  }
+
   public final RevisionRootPage prepareRevisionRootPage(
       final IWriteTransactionState state) throws Exception {
 
