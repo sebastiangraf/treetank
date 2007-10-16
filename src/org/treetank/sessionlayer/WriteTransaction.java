@@ -215,12 +215,11 @@ public final class WriteTransaction extends ReadTransaction
       final String prefix,
       final byte[] value) throws Exception {
     assertIsSelected();
-    setCurrentNode(((IWriteTransactionState) getState())
-        .prepareNode(getCurrentNode().getNodeKey()));
-    ((Node) getCurrentNode()).insertAttribute(((IWriteTransactionState) getState())
-        .createNameKey(localPart), ((IWriteTransactionState) getState())
-        .createNameKey(uri), ((IWriteTransactionState) getState())
-        .createNameKey(prefix), value);
+    prepareCurrentNode().insertAttribute(
+        ((IWriteTransactionState) getState()).createNameKey(localPart),
+        ((IWriteTransactionState) getState()).createNameKey(uri),
+        ((IWriteTransactionState) getState()).createNameKey(prefix),
+        value);
   }
 
   /**
@@ -229,11 +228,9 @@ public final class WriteTransaction extends ReadTransaction
   public final void insertNamespace(final String uri, final String prefix)
       throws Exception {
     assertIsSelected();
-    setCurrentNode(((IWriteTransactionState) getState())
-        .prepareNode(getCurrentNode().getNodeKey()));
-    ((Node) getCurrentNode()).insertNamespace(((IWriteTransactionState) getState())
-        .createNameKey(uri), ((IWriteTransactionState) getState())
-        .createNameKey(prefix));
+    prepareCurrentNode().insertNamespace(
+        ((IWriteTransactionState) getState()).createNameKey(uri),
+        ((IWriteTransactionState) getState()).createNameKey(prefix));
   }
 
   /**
@@ -277,7 +274,8 @@ public final class WriteTransaction extends ReadTransaction
     // Adapt right sibling node if there is one.
     if (rightSiblingNodeKey != IConstants.NULL_KEY) {
       final Node rightSiblingNode =
-          ((IWriteTransactionState) getState()).prepareNode(rightSiblingNodeKey);
+          ((IWriteTransactionState) getState())
+              .prepareNode(rightSiblingNodeKey);
       rightSiblingNode.setLeftSiblingKey(leftSiblingNodeKey);
     }
 
@@ -293,12 +291,12 @@ public final class WriteTransaction extends ReadTransaction
       final String prefix,
       final byte[] value) throws Exception {
     assertIsSelected();
-    setCurrentNode(((IWriteTransactionState) getState())
-        .prepareNode(getCurrentNode().getNodeKey()));
-    ((Node) getCurrentNode()).setAttribute(index, ((IWriteTransactionState) getState())
-        .createNameKey(localPart), ((IWriteTransactionState) getState())
-        .createNameKey(uri), ((IWriteTransactionState) getState())
-        .createNameKey(prefix), value);
+    prepareCurrentNode().setAttribute(
+        index,
+        ((IWriteTransactionState) getState()).createNameKey(localPart),
+        ((IWriteTransactionState) getState()).createNameKey(uri),
+        ((IWriteTransactionState) getState()).createNameKey(prefix),
+        value);
   }
 
   /**
@@ -309,11 +307,10 @@ public final class WriteTransaction extends ReadTransaction
       final String uri,
       final String prefix) throws Exception {
     assertIsSelected();
-    setCurrentNode(((IWriteTransactionState) getState())
-        .prepareNode(getCurrentNode().getNodeKey()));
-    ((Node) getCurrentNode()).setNamespace(index, ((IWriteTransactionState) getState())
-        .createNameKey(uri), ((IWriteTransactionState) getState())
-        .createNameKey(prefix));
+    prepareCurrentNode().setNamespace(
+        index,
+        ((IWriteTransactionState) getState()).createNameKey(uri),
+        ((IWriteTransactionState) getState()).createNameKey(prefix));
   }
 
   /**
@@ -321,10 +318,8 @@ public final class WriteTransaction extends ReadTransaction
    */
   public final void setLocalPart(final String localPart) throws Exception {
     assertIsSelected();
-    setCurrentNode(((IWriteTransactionState) getState())
-        .prepareNode(getCurrentNode().getNodeKey()));
-    ((Node) getCurrentNode()).setLocalPartKey(((IWriteTransactionState) getState())
-        .createNameKey(localPart));
+    prepareCurrentNode().setLocalPartKey(
+        ((IWriteTransactionState) getState()).createNameKey(localPart));
   }
 
   /**
@@ -332,10 +327,8 @@ public final class WriteTransaction extends ReadTransaction
    */
   public final void setURI(final String uri) throws Exception {
     assertIsSelected();
-    setCurrentNode(((IWriteTransactionState) getState())
-        .prepareNode(getCurrentNode().getNodeKey()));
-    ((Node) getCurrentNode()).setURIKey(((IWriteTransactionState) getState())
-        .createNameKey(uri));
+    prepareCurrentNode().setURIKey(
+        ((IWriteTransactionState) getState()).createNameKey(uri));
   }
 
   /**
@@ -343,10 +336,8 @@ public final class WriteTransaction extends ReadTransaction
    */
   public void setPrefix(final String prefix) throws Exception {
     assertIsSelected();
-    setCurrentNode(((IWriteTransactionState) getState())
-        .prepareNode(getCurrentNode().getNodeKey()));
-    ((Node) getCurrentNode()).setPrefixKey(((IWriteTransactionState) getState())
-        .createNameKey(prefix));
+    prepareCurrentNode().setPrefixKey(
+        ((IWriteTransactionState) getState()).createNameKey(prefix));
   }
 
   /**
@@ -354,9 +345,16 @@ public final class WriteTransaction extends ReadTransaction
    */
   public final void setValue(final byte[] value) throws Exception {
     assertIsSelected();
-    setCurrentNode(((IWriteTransactionState) getState())
-        .prepareNode(getCurrentNode().getNodeKey()));
-    ((Node) getCurrentNode()).setValue(value);
+    prepareCurrentNode().setValue(value);
+  }
+
+  private final Node prepareCurrentNode() throws Exception {
+    final Node modNode =
+        ((IWriteTransactionState) getState()).prepareNode(getCurrentNode()
+            .getNodeKey());
+    setCurrentNode(modNode);
+
+    return modNode;
   }
 
 }

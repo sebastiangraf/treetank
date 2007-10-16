@@ -80,7 +80,9 @@ public class ReadTransactionState implements IReadTransactionState {
    * 
    * @param pageCache Shared page cache.
    * @param pageReader Exclusive page reader.
-   * @param revisionRootPage Root of revision.
+   * @param uberPage Uber page to start reading with.
+   * @param revisionKey Key of revision to read from uber page.
+   * @throws Exception of any kind.
    */
   public ReadTransactionState(
       final Map<Long, IPage> pageCache,
@@ -158,7 +160,12 @@ public class ReadTransactionState implements IReadTransactionState {
   }
 
   /**
-   * {@inheritDoc}
+   * Dereference node page reference.
+   * 
+   * @param reference Reference to dereference.
+   * @param nodePageKey Key of node page.
+   * @return Dereferenced page.
+   * @throws Exception of any kind.
    */
   protected final NodePage dereferenceNodePage(
       final PageReference reference,
@@ -184,7 +191,11 @@ public class ReadTransactionState implements IReadTransactionState {
   }
 
   /**
-   * {@inheritDoc}
+   * Dereference name page reference.
+   * 
+   * @param reference Reference to dereference.
+   * @return Dereferenced page.
+   * @throws Exception of any kind.
    */
   protected final NamePage dereferenceNamePage(final PageReference reference)
       throws Exception {
@@ -208,7 +219,11 @@ public class ReadTransactionState implements IReadTransactionState {
   }
 
   /**
-   * {@inheritDoc}
+   * Dereference indirect page reference.
+   * 
+   * @param reference Reference to dereference.
+   * @return Dereferenced page.
+   * @throws Exception of any kind.
    */
   protected final IndirectPage dereferenceIndirectPage(
       final PageReference reference) throws Exception {
@@ -232,7 +247,12 @@ public class ReadTransactionState implements IReadTransactionState {
   }
 
   /**
-   * {@inheritDoc}
+   * Dereference revision root page reference.
+   * 
+   * @param reference Reference to dereference.
+   * @param revisionKey Key of revision.
+   * @return Dereferenced page.
+   * @throws Exception of any kind.
    */
   protected final RevisionRootPage dereferenceRevisionRootPage(
       final PageReference reference,
@@ -256,6 +276,13 @@ public class ReadTransactionState implements IReadTransactionState {
     return page;
   }
 
+  /**
+   * Get revision root page belonging to revision key.
+   * 
+   * @param revisionKey Key of revision to find revision root page for.
+   * @return Revision root page of this revision key.
+   * @throws Exception of any kind.
+   */
   protected final RevisionRootPage getRevisionRootPage(final long revisionKey)
       throws Exception {
 
@@ -319,6 +346,7 @@ public class ReadTransactionState implements IReadTransactionState {
   }
 
   /**
+   * @param index Index of indirect reference.
    * @return The indirect offsets.
    */
   protected final int getIndirectOffset(final int index) {
@@ -326,13 +354,15 @@ public class ReadTransactionState implements IReadTransactionState {
   }
 
   /**
-   * @param indirectOffsets The indirect offsets to set.
+   * @param index Index of indirect reference.
+   * @param value Indirect reference.
    */
   protected final void setIndirectOffset(final int index, final int value) {
     mIndirectOffsets[index] = value;
   }
 
   /**
+   * @param index Index of indirect page.
    * @return The indirect pages.
    */
   protected final IndirectPage getIndirectPage(final int index) {
@@ -340,7 +370,8 @@ public class ReadTransactionState implements IReadTransactionState {
   }
 
   /**
-   * @param indirectPages The indirect pages to set.
+   * @param index Index of indirect page.
+   * @param page Indirect page.
    */
   protected final void setIndirectPage(final int index, final IndirectPage page) {
     mIndirectPages[index] = page;
@@ -354,17 +385,29 @@ public class ReadTransactionState implements IReadTransactionState {
   }
 
   /**
-   * @param uberPage The revision root page to set.
+   * @param revisionRootPage The revision root page to set.
    */
   protected final void setRevisionRootPage(
       final RevisionRootPage revisionRootPage) {
     mRevisionRootPage = revisionRootPage;
   }
 
+  /**
+   * Calculate node page key from a given node key.
+   * 
+   * @param nodeKey Node key to find node page key for.
+   * @return Node page key.
+   */
   protected final long nodePageKey(final long nodeKey) {
     return nodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT;
   }
 
+  /**
+   * Calculate node page offset for a given node key.
+   * 
+   * @param nodeKey Node key to find offset for.
+   * @return Offset into node page.
+   */
   protected final int nodePageOffset(final long nodeKey) {
     return (int) (nodeKey - ((nodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT) << IConstants.NDP_NODE_COUNT_EXPONENT));
   }
