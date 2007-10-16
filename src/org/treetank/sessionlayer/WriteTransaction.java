@@ -25,7 +25,6 @@ import org.treetank.api.IConstants;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.api.IWriteTransactionState;
 import org.treetank.pagelayer.Node;
-import org.treetank.utils.UTF;
 
 /**
  * <h1>WriteTransaction</h1>
@@ -41,34 +40,12 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * Constructor.
    * 
-   * @param initRevisionRootPage Revision root page to work with.
+   * @param state State of this transaction.
+   * @throws Exception of any kind.
    */
-  protected WriteTransaction(final IWriteTransactionState state) {
+  protected WriteTransaction(final IWriteTransactionState state)
+      throws Exception {
     super(state);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final long insertRoot() throws Exception {
-
-    if (getState().getRevisionRootPage().getNodeCount() != 0) {
-      throw new IllegalStateException("Root node already exists.");
-    }
-
-    // Create new root node.
-    setCurrentNode(((IWriteTransactionState) getState()).createNode(
-        IConstants.NULL_KEY,
-        IConstants.NULL_KEY,
-        IConstants.NULL_KEY,
-        IConstants.NULL_KEY,
-        IConstants.DOCUMENT,
-        ((IWriteTransactionState) getState()).createNameKey(""),
-        ((IWriteTransactionState) getState()).createNameKey(""),
-        ((IWriteTransactionState) getState()).createNameKey(""),
-        UTF.EMPTY));
-
-    return getCurrentNode().getNodeKey();
   }
 
   /**

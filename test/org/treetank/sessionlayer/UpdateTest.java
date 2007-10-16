@@ -49,7 +49,6 @@ public class UpdateTest {
 
     // Document root.
     IWriteTransaction trx = session.beginWriteTransaction();
-    trx.insertRoot();
     session.commit();
 
     IReadTransaction rTrx = session.beginReadTransaction();
@@ -92,7 +91,6 @@ public class UpdateTest {
     final ISession session = new Session(TEST_PATH);
 
     IWriteTransaction wtx = session.beginWriteTransaction();
-    assertEquals(0L, wtx.insertRoot());
     session.commit();
     
     wtx = session.beginWriteTransaction();

@@ -51,7 +51,7 @@ public class NameTestAxisIteratorTest {
     TestDocument.create(trx);
 
     // Find descendants starting from nodeKey 0L (root).
-    trx.moveTo(0L);
+    trx.moveToRoot();
     final IAxisIterator descendantIterator1 =
         new NameTestAxisIterator(trx, new DescendantAxisIterator(trx), "b");
     assertEquals(true, descendantIterator1.next());

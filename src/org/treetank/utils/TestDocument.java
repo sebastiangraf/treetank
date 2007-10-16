@@ -78,8 +78,6 @@ public final class TestDocument {
    */
   public static void create(final IWriteTransaction trx) throws Exception {
 
-    trx.insertRoot();
-
     trx.insertFirstChild(IConstants.ELEMENT, "a", "ns", "p", UTF.EMPTY);
     trx.insertAttribute("i", "", "", UTF.convert("j"));
 
