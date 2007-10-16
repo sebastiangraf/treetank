@@ -112,6 +112,14 @@ public final class Node implements INode {
 
     // Read according to node kind.
     switch (mKind) {
+    case IConstants.DOCUMENT:
+      mParentKey = IConstants.NULL_KEY;
+      mFirstChildKey = mNodeKey - in.readPseudoLong();
+      mLeftSiblingKey = IConstants.NULL_KEY;
+      mRightSiblingKey = IConstants.NULL_KEY;
+      mChildCount = in.readPseudoLong();
+      break;
+    
     case IConstants.ELEMENT:
       mParentKey = mNodeKey - in.readPseudoLong();
       mFirstChildKey = mNodeKey - in.readPseudoLong();
@@ -342,6 +350,12 @@ public final class Node implements INode {
 
     // Adaptive serialization according to node kind.
     switch (mKind) {
+    
+    case IConstants.DOCUMENT:
+      out.writePseudoLong(mNodeKey - mFirstChildKey);
+      out.writePseudoLong(mChildCount);
+      break;
+    
     case IConstants.ELEMENT:
       out.writePseudoLong(mNodeKey - mParentKey);
       out.writePseudoLong(mNodeKey - mFirstChildKey);
