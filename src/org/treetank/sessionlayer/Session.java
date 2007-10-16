@@ -81,6 +81,12 @@ public final class Session implements ISession {
   /** Random access mFile for beacons. */
   private final RandomAccessFile mFile;
 
+  /**
+   * Convenient constructor.
+   * 
+   * @param path Path to TreeTank file.
+   * @throws Exception of any kind.
+   */
   public Session(final String path) throws Exception {
     this(new SessionConfiguration(path));
   }
@@ -106,7 +112,7 @@ public final class Session implements ISession {
    * </ol>
    * </p>
    * 
-   * @param path Path of TreeTank file.
+   * @param sessionConfiguration Session configuration for the TreeTank.
    * @throws Exception of any kind.
    */
   public Session(final SessionConfiguration sessionConfiguration)
