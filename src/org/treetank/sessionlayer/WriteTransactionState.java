@@ -77,52 +77,6 @@ public final class WriteTransactionState extends ReadTransactionState
   /**
    * {@inheritDoc}
    */
-  protected final NodePage prepareNodePage(final long nodePageKey)
-      throws Exception {
-
-    // Indirect reference.
-    PageReference reference = getRevisionRootPage().getIndirectPageReference();
-
-    // Remaining levels.
-    int levelSteps = 0;
-    long levelKey = nodePageKey;
-    for (int i = 0; i < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i++) {
-
-      // Calculate offset of current level.
-      levelSteps =
-          (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i]);
-      levelKey -= levelSteps << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i];
-
-      // Fetch page from current level.
-      setIndirectOffset(i, levelSteps);
-      setIndirectPage(i, prepareIndirectPage(reference));
-      reference = getIndirectPage(i).getPageReference(levelSteps);
-    }
-
-    // Last level points to node page.
-    NodePage page = (NodePage) reference.getPage();
-
-    // Load page if it is already existing in a committed revision.
-    if (reference.isCommitted() && !reference.isInstantiated()) {
-      page = NodePage.clone(dereferenceNodePage(reference, nodePageKey));
-      reference.setPage(page);
-    }
-
-    // Assert page is properly instantiated.
-    if (!reference.isInstantiated()) {
-      page = NodePage.create(nodePageKey);
-      reference.setPage(page);
-    }
-
-    // Cache node page.
-    setNodePage(page);
-
-    return page;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
   public final Node prepareNode(final long nodeKey) throws Exception {
     return prepareNodePage(nodePageKey(nodeKey)).getNode(
         nodePageOffset(nodeKey));
@@ -186,6 +140,30 @@ public final class WriteTransactionState extends ReadTransactionState
   /**
    * {@inheritDoc}
    */
+  public final void commit(final PageReference reference) throws Exception {
+    if (reference.isInstantiated() && reference.isDirty()) {
+
+      // Recursively write indirectely referenced pages.
+      reference.getPage().commit(this);
+
+      mPageWriter.write(reference);
+      getPageCache().put(reference.getStart(), reference.getPage());
+      reference.setPage(null);
+    }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final void commit(final PageReference[] references) throws Exception {
+    for (int i = 0, l = references.length; i < l; i++) {
+      commit(references[i]);
+    }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   protected final NamePage prepareNamePage(final PageReference reference)
       throws Exception {
 
@@ -234,25 +212,47 @@ public final class WriteTransactionState extends ReadTransactionState
   /**
    * {@inheritDoc}
    */
-  public final void commit(final PageReference reference) throws Exception {
-    if (reference.isInstantiated() && reference.isDirty()) {
+  protected final NodePage prepareNodePage(final long nodePageKey)
+      throws Exception {
 
-      // Recursively write indirectely referenced pages.
-      reference.getPage().commit(this);
+    // Indirect reference.
+    PageReference reference = getRevisionRootPage().getIndirectPageReference();
 
-      mPageWriter.write(reference);
-      getPageCache().put(reference.getStart(), reference.getPage());
-      reference.setPage(null);
+    // Remaining levels.
+    int levelSteps = 0;
+    long levelKey = nodePageKey;
+    for (int i = 0; i < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i++) {
+
+      // Calculate offset of current level.
+      levelSteps =
+          (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i]);
+      levelKey -= levelSteps << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i];
+
+      // Fetch page from current level.
+      setIndirectOffset(i, levelSteps);
+      setIndirectPage(i, prepareIndirectPage(reference));
+      reference = getIndirectPage(i).getPageReference(levelSteps);
     }
-  }
 
-  /**
-   * {@inheritDoc}
-   */
-  public final void commit(final PageReference[] references) throws Exception {
-    for (int i = 0, l = references.length; i < l; i++) {
-      commit(references[i]);
+    // Last level points to node page.
+    NodePage page = (NodePage) reference.getPage();
+
+    // Load page if it is already existing in a committed revision.
+    if (reference.isCommitted() && !reference.isInstantiated()) {
+      page = NodePage.clone(dereferenceNodePage(reference, nodePageKey));
+      reference.setPage(page);
     }
+
+    // Assert page is properly instantiated.
+    if (!reference.isInstantiated()) {
+      page = NodePage.create(nodePageKey);
+      reference.setPage(page);
+    }
+
+    // Cache node page.
+    setNodePage(page);
+
+    return page;
   }
 
   protected final RevisionRootPage prepareRevisionRootPage() throws Exception {
