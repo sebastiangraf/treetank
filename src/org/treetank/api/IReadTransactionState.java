@@ -21,10 +21,7 @@
 
 package org.treetank.api;
 
-import org.treetank.pagelayer.IndirectPage;
-import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.RevisionRootPage;
-import org.treetank.pagelayer.UberPage;
 
 /**
  * <h1>IReadTransactionState</h1>
@@ -59,21 +56,5 @@ public interface IReadTransactionState {
    * @throws Exception of any kind.
    */
   public String getName(final int nameKey) throws Exception;
-
-  /**
-   * Dereference reference referencing a revision root page.
-   * 
-   * @param reference Reference to dereference.
-   * @param revisionKey Revision key to assign to dereferenced
-   *        revision root page.
-   * @return Dereferenced revision root page.
-   * @throws Exception of any kind.
-   */
-  public RevisionRootPage dereferenceRevisionRootPage(
-      final PageReference reference,
-      final long revisionKey) throws Exception;
-
-  public IndirectPage dereferenceIndirectPage(final PageReference reference)
-      throws Exception;
 
 }
