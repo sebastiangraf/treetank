@@ -38,14 +38,14 @@ import org.treetank.api.IWriteTransaction;
  * <code>xml/test.xml</code>). The nodes are described as follows:
  * 
  * <ul>
- * <li><code>IConstants.DOCUMENT : doc('value')</code></li>
+ * <li><code>IConstants.DOCUMENT : doc()</code></li>
  * <li><code>IConstants.ELEMENT  : &lt;prefix:localPart&gt;</code></li>
  * <li><code>IConstants.ATTRIBUTE: &#64;prefix:localPart='value'</code></li>
  * <li><code>IConstants.TEXT     : #value</code></li>
  * </ul>
  *
  * <pre>
- * 0 doc('doc')
+ * 0 doc()
  * |-  1 &lt;p:a §p:ns &#64;i='j'&gt;
  *     |-  2 #oops1
  *     |-  3 &lt;b&gt;
@@ -78,7 +78,7 @@ public final class TestDocument {
    */
   public static void create(final IWriteTransaction trx) throws Exception {
 
-    trx.insertRoot("doc");
+    trx.insertRoot();
 
     trx.insertFirstChild(IConstants.ELEMENT, "a", "ns", "p", UTF.EMPTY);
     trx.insertAttribute("i", "", "", UTF.convert("j"));

@@ -51,11 +51,10 @@ public interface IWriteTransaction extends IReadTransaction {
    * Insert root node. The cursor is moved to the root node. The kind is
    * automatically set to DOCUMENT.
    * 
-   * @param document Document identifier.
    * @return Key of inserted node always equal to IConstants.ROOT_KEY.
    * @throws Exception of any kind and if there already is a root node.
    */
-  public long insertRoot(final String document) throws Exception;
+  public long insertRoot() throws Exception;
 
   /**
    * Insert new node as first child of currently selected node.
