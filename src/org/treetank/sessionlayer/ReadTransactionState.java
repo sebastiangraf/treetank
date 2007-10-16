@@ -29,7 +29,6 @@ import org.treetank.api.IPage;
 import org.treetank.api.IReadTransactionState;
 import org.treetank.pagelayer.IndirectPage;
 import org.treetank.pagelayer.NamePage;
-import org.treetank.pagelayer.Node;
 import org.treetank.pagelayer.NodePage;
 import org.treetank.pagelayer.PageReader;
 import org.treetank.pagelayer.PageReference;
@@ -115,8 +114,8 @@ public class ReadTransactionState implements IReadTransactionState {
   public final INode getNode(final long nodeKey) throws Exception {
 
     // Calculate coordinates for given nodeKey.
-    final long nodePageKey = Node.nodePageKey(nodeKey);
-    final int nodePageOffset = Node.nodePageOffset(nodeKey);
+    final long nodePageKey = nodePageKey(nodeKey);
+    final int nodePageOffset = nodePageOffset(nodeKey);
 
     // Fetch node page if required.
     if (mNodePage == null || mNodePage.getNodePageKey() != nodePageKey) {
@@ -360,6 +359,14 @@ public class ReadTransactionState implements IReadTransactionState {
   protected final void setRevisionRootPage(
       final RevisionRootPage revisionRootPage) {
     mRevisionRootPage = revisionRootPage;
+  }
+
+  protected final long nodePageKey(final long nodeKey) {
+    return nodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT;
+  }
+
+  protected final int nodePageOffset(final long nodeKey) {
+    return (int) (nodeKey - ((nodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT) << IConstants.NDP_NODE_COUNT_EXPONENT));
   }
 
 }
