@@ -190,11 +190,11 @@ public class ReadTransactionState implements IReadTransactionState {
       throws Exception {
 
     // Get uncommitted referenced page if there is one.
-    NamePage page = (NamePage) reference.getPage();
+    IPage page = reference.getPage();
 
     // Get committed referenced page from cache if there is one.
     if (page == null) {
-      page = (NamePage) mPageCache.get(reference.getStart());
+      page = mPageCache.get(reference.getStart());
     }
 
     // Get committed referenced page from storage.
@@ -204,7 +204,7 @@ public class ReadTransactionState implements IReadTransactionState {
       mPageCache.put(reference.getStart(), page);
     }
 
-    return page;
+    return (NamePage) page;
   }
 
   /**
@@ -256,7 +256,7 @@ public class ReadTransactionState implements IReadTransactionState {
     return page;
   }
 
-  public final RevisionRootPage getRevisionRootPage(final long revisionKey)
+  protected final RevisionRootPage getRevisionRootPage(final long revisionKey)
       throws Exception {
 
     // Indirect reference.
