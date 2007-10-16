@@ -115,7 +115,23 @@ public interface IWriteTransaction extends IReadTransaction {
       final byte[] value) throws Exception;
 
   /**
-   * Insert new text node as right sibling of currently selected node.
+   * Insert new element node as right sibling of currently selected node.
+   * The cursor is moved to the inserted node.
+   * 
+   * @param localPart Local part of inserted node.
+   * @param uri URI of inserted node.
+   * @param prefix Prefix of inserted node.
+   * @return Key of inserted node.
+   * @throws Exception of any kind and if no node is selected or the node
+   * already has a first child.
+   */
+  public long insertRightSibling(
+      final String localPart,
+      final String uri,
+      final String prefix) throws Exception;
+  
+  /**
+   * Insert new element node as right sibling of currently selected node.
    * The cursor is moved to the inserted node.
    * 
    * @param value Value of inserted node.
@@ -123,7 +139,7 @@ public interface IWriteTransaction extends IReadTransaction {
    * @throws Exception of any kind and if no node is selected or the node is
    * the root node which is not allowed to have right siblings.
    */
-  public long insertTextAsRightSibling(final byte[] value) throws Exception;
+  public long insertRightSibling(final byte[] value) throws Exception;
 
   /**
    * Insert attribute in currently selected node.
