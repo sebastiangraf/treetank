@@ -70,10 +70,14 @@ public final class FastByteArrayReader {
         value |= ((mBuffer[mPosition++] & 127)) << 14;
         if ((mBuffer[mPosition - 1] & 128) != 0) {
           value |= ((mBuffer[mPosition++] & 255)) << 21;
-          if ((mBuffer[mPosition - 1] & 128) != 0) value |= 0xE0000000;
-        } else if ((mBuffer[mPosition - 1] & 64) != 0) value |= 0xFFF00000;
-      } else if ((mBuffer[mPosition - 1] & 64) != 0) value |= 0xFFFFE000;
-    } else if ((mBuffer[mPosition - 1] & 64) != 0) value |= 0xFFFFFFC0;
+          if ((mBuffer[mPosition - 1] & 128) != 0)
+            value |= 0xE0000000;
+        } else if ((mBuffer[mPosition - 1] & 64) != 0)
+          value |= 0xFFF00000;
+      } else if ((mBuffer[mPosition - 1] & 64) != 0)
+        value |= 0xFFFFE000;
+    } else if ((mBuffer[mPosition - 1] & 64) != 0)
+      value |= 0xFFFFFFC0;
     return value;
   }
 
@@ -87,6 +91,33 @@ public final class FastByteArrayReader {
     if (value >> 47 == 1) {
       value = value | 0xFFFF000000000000L;
     }
+    return value;
+  }
+
+  public final long readVarSizeLong() throws Exception {
+    mPosition++;
+    long value = (long) (mBuffer[mPosition++] & 255);
+    if (mBuffer[mPosition - 2] > 1) {
+      value += ((long) (mBuffer[mPosition++] & 255) << 8);
+      if (mBuffer[mPosition - 3] > 2) {
+        value += ((long) (mBuffer[mPosition++] & 255) << 16);
+        if (mBuffer[mPosition - 4] > 3) {
+          value += ((long) (mBuffer[mPosition++] & 255) << 24);
+          if (mBuffer[mPosition - 5] > 4) {
+            value += ((long) (mBuffer[mPosition++] & 255) << 32);
+            if (mBuffer[mPosition - 6] > 5) {
+              value += ((long) (mBuffer[mPosition++] & 255) << 40);
+              if (mBuffer[mPosition - 7] > 6) {
+                value += ((long) (mBuffer[mPosition++] & 255) << 48);
+                if (mBuffer[mPosition - 8] > 7) {
+                  value += ((long) mBuffer[mPosition++] << 56);
+                } else if ((mBuffer[mPosition-1] & 128) != 0) value |= 0xFF000000000000L;
+              } else if ((mBuffer[mPosition-1] & 128) != 0) value |= 0xFFFF000000000000L;
+            } else if ((mBuffer[mPosition-1] & 128) != 0) value |= 0xFFFFFF0000000000L;
+          } else if ((mBuffer[mPosition-1] & 128) != 0) value |= 0xFFFFFFFF00000000L;
+        } else if ((mBuffer[mPosition-1] & 128) != 0) value |= 0xFFFFFFFFFF000000L;
+      } else if ((mBuffer[mPosition-1] & 128) != 0) value |= 0xFFFFFFFFFFFF0000L;
+    } else if ((mBuffer[mPosition-1] & 128) != 0) value |= 0xFFFFFFFFFFFFFF00L;
     return value;
   }
 
