@@ -23,7 +23,6 @@ package org.treetank.pagelayer;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.IPage;
-import org.treetank.api.IReadTransactionState;
 import org.treetank.api.IWriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
@@ -59,6 +58,20 @@ final public class UberPage extends AbstractPage implements IPage {
 
     // Indirect pages (shallow init).
     uberPage.mIndirectPageReference = createPageReference();
+
+    // Indirect reference.
+    IndirectPage page = null;
+    PageReference reference = uberPage.mIndirectPageReference;
+
+    // Remaining levels.
+    for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
+      page = IndirectPage.create();
+      reference.setPage(page);
+      reference = page.getPageReference(0);
+    }
+
+    RevisionRootPage rrp = RevisionRootPage.create(uberPage.mRevisionCount);
+    reference.setPage(rrp);
 
     return uberPage;
 
@@ -105,86 +118,12 @@ final public class UberPage extends AbstractPage implements IPage {
     return uberPage;
   }
 
+  public final PageReference getIndirectPageReference() {
+    return mIndirectPageReference;
+  }
+
   public final long getRevisionCount() {
     return mRevisionCount;
-  }
-
-  public final RevisionRootPage getRevisionRootPage(
-      final IReadTransactionState state,
-      final long revisionKey) throws Exception {
-
-    // Indirect reference.
-    PageReference reference = mIndirectPageReference;
-
-    // Remaining levels.
-    int levelSteps = 0;
-    long levelKey = revisionKey;
-    for (int i = 0; i < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i++) {
-
-      // Calculate offset of current level.
-      levelSteps =
-          (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i]);
-      levelKey -= levelSteps << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i];
-
-      // Fetch page from current level.
-      reference =
-          state.dereferenceIndirectPage(reference).getPageReference(levelSteps);
-    }
-
-    RevisionRootPage page =
-        state.dereferenceRevisionRootPage(reference, revisionKey);
-
-    return page;
-
-  }
-
-  public final RevisionRootPage bootstrapRevisionRootPage() throws Exception {
-
-    // Indirect reference.
-    IndirectPage page = null;
-    PageReference reference = mIndirectPageReference;
-
-    // Remaining levels.
-    for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
-      page = IndirectPage.create();
-      reference.setPage(page);
-      reference = page.getPageReference(0);
-    }
-
-    RevisionRootPage rrp = RevisionRootPage.create(mRevisionCount);
-    reference.setPage(rrp);
-
-    return rrp;
-
-  }
-
-  public final RevisionRootPage prepareRevisionRootPage(
-      final IWriteTransactionState state) throws Exception {
-
-    // Indirect reference.
-    PageReference reference = mIndirectPageReference;
-
-    // Remaining levels.
-    int levelSteps = 0;
-    long levelKey = mRevisionCount + 1;
-    for (int i = 0; i < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i++) {
-
-      // Calculate offset of current level.
-      levelSteps =
-          (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i]);
-      levelKey -= levelSteps << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i];
-
-      // Fetch page from current level.
-      reference =
-          state.prepareIndirectPage(reference).getPageReference(levelSteps);
-    }
-
-    RevisionRootPage rrp = getRevisionRootPage(state, mRevisionCount);
-    rrp = RevisionRootPage.clone(rrp);
-    reference.setPage(rrp);
-
-    return rrp;
-
   }
 
   /**

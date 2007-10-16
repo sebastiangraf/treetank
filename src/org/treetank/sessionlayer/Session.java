@@ -37,7 +37,6 @@ import org.treetank.api.IWriteTransactionState;
 import org.treetank.pagelayer.PageReader;
 import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.PageWriter;
-import org.treetank.pagelayer.RevisionRootPage;
 import org.treetank.pagelayer.UberPage;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastWeakHashMap;
@@ -132,7 +131,6 @@ public final class Session implements ISession {
       mFile.setLength(IConstants.BEACON_LENGTH);
       mUberPage = UberPage.create();
       mPrimaryUberPageReference.setPage(mUberPage);
-      mUberPage.bootstrapRevisionRootPage();
     } else {
       // There already are revisions, read existing uber page.
       readBeacon(mFile);
@@ -183,13 +181,8 @@ public final class Session implements ISession {
       throws Exception {
 
     final PageReader pageReader = new PageReader(mSessionConfiguration);
-    final RevisionRootPage revisionRootPage =
-        mUberPage.getRevisionRootPage(new ReadTransactionState(
-            mPageCache,
-            pageReader,
-            null), revisionKey);
     final IReadTransactionState state =
-        new ReadTransactionState(mPageCache, pageReader, revisionRootPage);
+        new ReadTransactionState(mPageCache, pageReader, mUberPage, revisionKey);
 
     return new ReadTransaction(state);
   }
@@ -212,19 +205,9 @@ public final class Session implements ISession {
 
     final PageWriter pageWriter = new PageWriter(mSessionConfiguration);
     final PageReader pageReader = new PageReader(mSessionConfiguration);
-    final RevisionRootPage revisionRootPage =
-        mUberPage.prepareRevisionRootPage(new WriteTransactionState(
-            mPageCache,
-            pageReader,
-            null,
-            null));
 
     mWriteTransactionState =
-        new WriteTransactionState(
-            mPageCache,
-            pageReader,
-            pageWriter,
-            revisionRootPage);
+        new WriteTransactionState(mPageCache, pageReader, pageWriter, mUberPage);
     return new WriteTransaction(mWriteTransactionState);
   }
 

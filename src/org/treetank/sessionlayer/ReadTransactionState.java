@@ -58,6 +58,9 @@ public class ReadTransactionState implements IReadTransactionState {
   /** Page reader exclusively assigned to this transaction. */
   private final PageReader mPageReader;
 
+  /** Uber page this transaction is bound to. */
+  private UberPage mUberPage;
+
   /** Revision root page as root of this transaction. */
   private RevisionRootPage mRevisionRootPage;
 
@@ -83,10 +86,12 @@ public class ReadTransactionState implements IReadTransactionState {
   public ReadTransactionState(
       final Map<Long, IPage> pageCache,
       final PageReader pageReader,
-      final RevisionRootPage revisionRootPage) {
+      final UberPage uberPage,
+      final long revisionKey) throws Exception {
     mPageCache = pageCache;
     mPageReader = pageReader;
-    mRevisionRootPage = revisionRootPage;
+    mUberPage = uberPage;
+    mRevisionRootPage = getRevisionRootPage(revisionKey);
     mNodePage = null;
     mNamePage = null;
     mIndirectOffsets = new int[IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length];
@@ -227,6 +232,33 @@ public class ReadTransactionState implements IReadTransactionState {
     return page;
   }
 
+  public final RevisionRootPage getRevisionRootPage(final long revisionKey)
+      throws Exception {
+
+    // Indirect reference.
+    PageReference reference = mUberPage.getIndirectPageReference();
+
+    // Remaining levels.
+    int levelSteps = 0;
+    long levelKey = revisionKey;
+    for (int i = 0; i < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i++) {
+
+      // Calculate offset of current level.
+      levelSteps =
+          (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i]);
+      levelKey -= levelSteps << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i];
+
+      // Fetch page from current level.
+      reference =
+          dereferenceIndirectPage(reference).getPageReference(levelSteps);
+    }
+
+    RevisionRootPage page = dereferenceRevisionRootPage(reference, revisionKey);
+
+    return page;
+
+  }
+
   /**
    * {@inheritDoc}
    */
@@ -313,6 +345,21 @@ public class ReadTransactionState implements IReadTransactionState {
    */
   protected final void setIndirectPage(final int index, final IndirectPage page) {
     mIndirectPages[index] = page;
+  }
+
+  /**
+   * @return The uber page.
+   */
+  protected final UberPage getUberPage() {
+    return mUberPage;
+  }
+
+  /**
+   * @param uberPage The revision root page to set.
+   */
+  protected final void setRevisionRootPage(
+      final RevisionRootPage revisionRootPage) {
+    mRevisionRootPage = revisionRootPage;
   }
 
 }

@@ -34,6 +34,7 @@ import org.treetank.pagelayer.PageReader;
 import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.PageWriter;
 import org.treetank.pagelayer.RevisionRootPage;
+import org.treetank.pagelayer.UberPage;
 
 /**
  * <h1>WriteTransactionState</h1>
@@ -60,9 +61,10 @@ public final class WriteTransactionState extends ReadTransactionState
       final Map<Long, IPage> pageCache,
       final PageReader pageReader,
       final PageWriter pageWriter,
-      final RevisionRootPage revisionRootPage) {
-    super(pageCache, pageReader, revisionRootPage);
+      final UberPage uberPage) throws Exception {
+    super(pageCache, pageReader, uberPage, uberPage.getRevisionCount());
     mPageWriter = pageWriter;
+    setRevisionRootPage(prepareRevisionRootPage());
   }
 
   /**
@@ -254,6 +256,34 @@ public final class WriteTransactionState extends ReadTransactionState
     for (int i = 0, l = references.length; i < l; i++) {
       commit(references[i]);
     }
+  }
+
+  public final RevisionRootPage prepareRevisionRootPage() throws Exception {
+
+    // Indirect reference.
+    PageReference reference = getUberPage().getIndirectPageReference();
+
+    // Remaining levels.
+    int levelSteps = 0;
+    long levelKey = getUberPage().getRevisionCount() + 1;
+    for (int i = 0; i < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i++) {
+
+      // Calculate offset of current level.
+      levelSteps =
+          (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i]);
+      levelKey -= levelSteps << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i];
+
+      // Fetch page from current level.
+      reference = prepareIndirectPage(reference).getPageReference(levelSteps);
+    }
+
+    RevisionRootPage rrp =
+        getRevisionRootPage(getUberPage().getRevisionCount());
+    rrp = RevisionRootPage.clone(rrp);
+    reference.setPage(rrp);
+
+    return rrp;
+
   }
 
 }
