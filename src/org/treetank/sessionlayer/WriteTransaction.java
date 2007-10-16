@@ -57,8 +57,7 @@ public final class WriteTransaction extends ReadTransaction
     }
 
     // Create new root node.
-    setCurrentNode(getState().getRevisionRootPage().createNode(
-        (IWriteTransactionState) getState(),
+    setCurrentNode(((IWriteTransactionState) getState()).createNode(
         IConstants.NULL_KEY,
         IConstants.NULL_KEY,
         IConstants.NULL_KEY,
@@ -88,8 +87,7 @@ public final class WriteTransaction extends ReadTransaction
     if (getCurrentNode().getChildCount() > 0) {
 
       // Create new first child node.
-      setCurrentNode(getState().getRevisionRootPage().createNode(
-          (IWriteTransactionState) getState(),
+      setCurrentNode(((IWriteTransactionState) getState()).createNode(
           getCurrentNode().getNodeKey(),
           IConstants.NULL_KEY,
           IConstants.NULL_KEY,
@@ -119,8 +117,7 @@ public final class WriteTransaction extends ReadTransaction
     } else {
 
       // Create new first child node.
-      setCurrentNode(getState().getRevisionRootPage().createNode(
-          (IWriteTransactionState) getState(),
+      setCurrentNode(((IWriteTransactionState) getState()).createNode(
           getCurrentNode().getNodeKey(),
           IConstants.NULL_KEY,
           IConstants.NULL_KEY,
@@ -167,8 +164,7 @@ public final class WriteTransaction extends ReadTransaction
     }
 
     // Create new right sibling node.
-    setCurrentNode(getState().getRevisionRootPage().createNode(
-        (IWriteTransactionState) getState(),
+    setCurrentNode(((IWriteTransactionState) getState()).createNode(
         getCurrentNode().getParentKey(),
         IConstants.NULL_KEY,
         getCurrentNode().getNodeKey(),

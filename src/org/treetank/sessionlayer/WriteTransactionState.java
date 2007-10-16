@@ -126,6 +126,41 @@ public final class WriteTransactionState extends ReadTransactionState
         Node.nodePageOffset(nodeKey));
   }
 
+  public final Node createNode(
+      final long parentKey,
+      final long firstChildKey,
+      final long leftSiblingKey,
+      final long rightSiblingKey,
+      final int kind,
+      final int localPartKey,
+      final int uriKey,
+      final int prefixKey,
+      final byte[] value) throws Exception {
+
+    getRevisionRootPage().incrementNodeCountAndMaxNodeKey();
+
+    final Node node =
+        new Node(
+            getRevisionRootPage().getMaxNodeKey(),
+            parentKey,
+            firstChildKey,
+            leftSiblingKey,
+            rightSiblingKey,
+            kind,
+            localPartKey,
+            uriKey,
+            prefixKey,
+            value);
+
+    // Write node into node page.
+    prepareNodePage(Node.nodePageKey(getRevisionRootPage().getMaxNodeKey()))
+        .setNode(
+            Node.nodePageOffset(getRevisionRootPage().getMaxNodeKey()),
+            node);
+
+    return node;
+  }
+
   /**
    * {@inheritDoc}
    */
