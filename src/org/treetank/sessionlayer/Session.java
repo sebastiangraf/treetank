@@ -135,7 +135,7 @@ public final class Session implements ISession {
       mFile.setLength(IConstants.BEACON_LENGTH);
       mUberPage = UberPage.create();
       mPrimaryUberPageReference.setPage(mUberPage);
-      mUberPage.prepareRevisionRootPage(state);
+      mUberPage.bootstrapRevisionRootPage(state);
 
       final PageWriter pageWriter = new PageWriter(mSessionConfiguration);
       mWriteTransactionState =
