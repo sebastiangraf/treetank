@@ -34,7 +34,7 @@ import org.treetank.utils.FastByteArrayWriter;
  * A node page stores a set of nodes.
  * </p>
  */
-public final class NodePage implements IPage {
+public final class NodePage extends AbstractPage implements IPage {
 
   /** Key of node page. This is the base key of all contained nodes. */
   private final long mNodePageKey;

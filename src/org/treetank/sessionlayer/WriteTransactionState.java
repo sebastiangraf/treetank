@@ -77,7 +77,7 @@ public final class WriteTransactionState extends ReadTransactionState
   /**
    * {@inheritDoc}
    */
-  public final NodePage prepareNodePage(final long nodePageKey)
+  protected final NodePage prepareNodePage(final long nodePageKey)
       throws Exception {
 
     // Indirect reference.
@@ -210,7 +210,7 @@ public final class WriteTransactionState extends ReadTransactionState
   /**
    * {@inheritDoc}
    */
-  public final IndirectPage prepareIndirectPage(final PageReference reference)
+  protected final IndirectPage prepareIndirectPage(final PageReference reference)
       throws Exception {
 
     IndirectPage page = (IndirectPage) reference.getPage();
@@ -255,7 +255,7 @@ public final class WriteTransactionState extends ReadTransactionState
     }
   }
 
-  public final RevisionRootPage prepareRevisionRootPage() throws Exception {
+  protected final RevisionRootPage prepareRevisionRootPage() throws Exception {
 
     // Indirect reference.
     PageReference reference = getUberPage().getIndirectPageReference();

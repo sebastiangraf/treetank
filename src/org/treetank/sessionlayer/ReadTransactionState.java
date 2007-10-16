@@ -210,7 +210,7 @@ public class ReadTransactionState implements IReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public final IndirectPage dereferenceIndirectPage(
+  protected final IndirectPage dereferenceIndirectPage(
       final PageReference reference) throws Exception {
 
     // Get uncommitted referenced page if there is one.
@@ -225,6 +225,31 @@ public class ReadTransactionState implements IReadTransactionState {
     if (page == null) {
       final FastByteArrayReader in = mPageReader.read(reference);
       page = IndirectPage.read(in);
+      mPageCache.put(reference.getStart(), page);
+    }
+
+    return page;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  protected final RevisionRootPage dereferenceRevisionRootPage(
+      final PageReference reference,
+      final long revisionKey) throws Exception {
+
+    // Get uncommitted referenced page if there is one.
+    RevisionRootPage page = (RevisionRootPage) reference.getPage();
+
+    // Get committed referenced page from cache if there is one.
+    if (page == null) {
+      page = (RevisionRootPage) mPageCache.get(reference.getStart());
+    }
+
+    // Get committed referenced page from storage.
+    if (page == null) {
+      final FastByteArrayReader in = mPageReader.read(reference);
+      page = RevisionRootPage.read(in, revisionKey);
       mPageCache.put(reference.getStart(), page);
     }
 
@@ -256,31 +281,6 @@ public class ReadTransactionState implements IReadTransactionState {
 
     return page;
 
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final RevisionRootPage dereferenceRevisionRootPage(
-      final PageReference reference,
-      final long revisionKey) throws Exception {
-
-    // Get uncommitted referenced page if there is one.
-    RevisionRootPage page = (RevisionRootPage) reference.getPage();
-
-    // Get committed referenced page from cache if there is one.
-    if (page == null) {
-      page = (RevisionRootPage) mPageCache.get(reference.getStart());
-    }
-
-    // Get committed referenced page from storage.
-    if (page == null) {
-      final FastByteArrayReader in = mPageReader.read(reference);
-      page = RevisionRootPage.read(in, revisionKey);
-      mPageCache.put(reference.getStart(), page);
-    }
-
-    return page;
   }
 
   /**

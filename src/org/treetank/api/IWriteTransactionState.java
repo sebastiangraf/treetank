@@ -21,9 +21,7 @@
 
 package org.treetank.api;
 
-import org.treetank.pagelayer.IndirectPage;
 import org.treetank.pagelayer.Node;
-import org.treetank.pagelayer.NodePage;
 import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.PageWriter;
 
@@ -42,15 +40,6 @@ public interface IWriteTransactionState extends IReadTransactionState {
    * @return PageWriter instance.
    */
   public PageWriter getPageWriter();
-
-  /**
-   * COW the node page specified by its node page key.
-   * 
-   * @param nodePageKey Referencing the node page.
-   * @return COWed node page.
-   * @throws Exception of any kind.
-   */
-  public NodePage prepareNodePage(final long nodePageKey) throws Exception;
 
   /**
    * COW the node specified by its node key. This implies COWing the 
@@ -104,17 +93,6 @@ public interface IWriteTransactionState extends IReadTransactionState {
    * @throws Exception exception.
    */
   public int createNameKey(final String name) throws Exception;
-
-  /**
-   * COW indirect page or instantiate virgin one from given indirect page
-   * reference.
-   * 
-   * @param reference Indirect page reference.
-   * @return COWed indirect page.
-   * @throws Exception of any kind.
-   */
-  public IndirectPage prepareIndirectPage(final PageReference reference)
-      throws Exception;
 
   /**
    * Safely commit and serialize dereferenced dirty page.
