@@ -34,8 +34,6 @@ final public class UberPage extends AbstractPage implements IPage {
 
   private PageReference mIndirectPageReference;
 
-  private RevisionRootPage mCurrentRevisionRootPage;
-
   /**
    * Constructor to assure minimal common setup.
    * 
@@ -156,20 +154,12 @@ final public class UberPage extends AbstractPage implements IPage {
     RevisionRootPage rrp = RevisionRootPage.create(mRevisionCount);
     reference.setPage(rrp);
 
-    mCurrentRevisionRootPage = rrp;
-
     return rrp;
 
   }
 
   public final RevisionRootPage prepareRevisionRootPage(
       final IWriteTransactionState state) throws Exception {
-
-    // Which page reference to COW on immediate level 0?
-    if (mCurrentRevisionRootPage == null) {
-      mCurrentRevisionRootPage = getRevisionRootPage(state, mRevisionCount);
-    }
-    mCurrentRevisionRootPage = RevisionRootPage.clone(mCurrentRevisionRootPage);
 
     // Indirect reference.
     PageReference reference = mIndirectPageReference;
@@ -189,9 +179,11 @@ final public class UberPage extends AbstractPage implements IPage {
           state.prepareIndirectPage(reference).getPageReference(levelSteps);
     }
 
-    reference.setPage(mCurrentRevisionRootPage);
+    RevisionRootPage rrp = getRevisionRootPage(state, mRevisionCount);
+    rrp = RevisionRootPage.clone(rrp);
+    reference.setPage(rrp);
 
-    return mCurrentRevisionRootPage;
+    return rrp;
 
   }
 
