@@ -35,6 +35,8 @@ public class FastByteArrayTest {
     out.writeInt(4);
     out.writePseudoInt(3456345);
     out.writePseudoInt(-1);
+    out.writePseudoVarSizeInt(2^28-1);
+    out.writePseudoVarSizeInt(-2^28);
     out.writePseudoLong(Integer.MAX_VALUE);
     out.writePseudoLong(Integer.MIN_VALUE);
     out.writeLong(7L);
@@ -47,6 +49,8 @@ public class FastByteArrayTest {
     assertEquals(4, in.readInt());
     assertEquals(3456345, in.readPseudoInt());
     assertEquals(-1, in.readPseudoInt());
+    assertEquals(2^28-1, in.readPseudoVarSizeInt());
+    assertEquals(-2^28, in.readPseudoVarSizeInt());
     assertEquals(Integer.MAX_VALUE, in.readPseudoLong());
     assertEquals(Integer.MIN_VALUE, in.readPseudoLong());
     assertEquals(7L, in.readLong());
