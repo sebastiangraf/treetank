@@ -143,7 +143,7 @@ final public class UberPage extends AbstractPage implements IPage {
     RevisionRootPage page =
         state.dereferenceRevisionRootPage(reference, revisionKey);
 
-    return RevisionRootPage.clone(revisionKey, page);
+    return page;
 
   }
 
@@ -160,7 +160,7 @@ final public class UberPage extends AbstractPage implements IPage {
       reference = page.getPageReference(0);
     }
 
-    RevisionRootPage rrp = RevisionRootPage.create(mRevisionCount + 1);
+    RevisionRootPage rrp = RevisionRootPage.create(mRevisionCount);
     reference.setPage(rrp);
 
     mCurrentRevisionRootPage = rrp;
@@ -176,8 +176,7 @@ final public class UberPage extends AbstractPage implements IPage {
     if (mCurrentRevisionRootPage == null) {
       mCurrentRevisionRootPage = getRevisionRootPage(state, mRevisionCount);
     }
-    mCurrentRevisionRootPage =
-        RevisionRootPage.clone(mRevisionCount + 1, mCurrentRevisionRootPage);
+    mCurrentRevisionRootPage = RevisionRootPage.clone(mCurrentRevisionRootPage);
 
     // Indirect reference.
     PageReference reference = mIndirectPageReference;
