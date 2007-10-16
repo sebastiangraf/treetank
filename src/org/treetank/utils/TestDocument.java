@@ -21,7 +21,6 @@
 
 package org.treetank.utils;
 
-import org.treetank.api.IConstants;
 import org.treetank.api.IWriteTransaction;
 
 /**
@@ -78,27 +77,27 @@ public final class TestDocument {
    */
   public static void create(final IWriteTransaction trx) throws Exception {
 
-    trx.insertFirstChild(IConstants.ELEMENT, "a", "ns", "p", UTF.EMPTY);
+    trx.insertFirstChild("a", "ns", "p");
     trx.insertAttribute("i", "", "", UTF.convert("j"));
 
-    trx.insertFirstChild(IConstants.TEXT, "", "", "", UTF.convert("oops1"));
+    trx.insertFirstChild(UTF.convert("oops1"));
 
-    trx.insertRightSibling(IConstants.ELEMENT, "b", "", "", UTF.EMPTY);
+    trx.insertRightSibling("b", "", "");
 
-    trx.insertFirstChild(IConstants.TEXT, "", "", "", UTF.convert("foo"));
-    trx.insertRightSibling(IConstants.ELEMENT, "c", "", "", UTF.EMPTY);
+    trx.insertFirstChild(UTF.convert("foo"));
+    trx.insertRightSibling("c", "", "");
     trx.moveToParent();
 
-    trx.insertRightSibling(IConstants.TEXT, "", "", "", UTF.convert("oops2"));
+    trx.insertRightSibling(UTF.convert("oops2"));
 
-    trx.insertRightSibling(IConstants.ELEMENT, "b", "", "", UTF.EMPTY);
+    trx.insertRightSibling("b", "", "");
     trx.insertAttribute("x", "ns", "p", UTF.convert("y"));
 
-    trx.insertFirstChild(IConstants.ELEMENT, "c", "", "", UTF.EMPTY);
-    trx.insertRightSibling(IConstants.TEXT, "", "", "", UTF.convert("bar"));
+    trx.insertFirstChild("c", "", "");
+    trx.insertRightSibling(UTF.convert("bar"));
     trx.moveToParent();
 
-    trx.insertRightSibling(IConstants.TEXT, "", "", "", UTF.convert("oops3"));
+    trx.insertRightSibling(UTF.convert("oops3"));
 
   }
 

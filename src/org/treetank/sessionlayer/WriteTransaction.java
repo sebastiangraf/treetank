@@ -194,9 +194,23 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final long insertTextAsRightSibling(final byte[] value)
-      throws Exception {
+  public final long insertRightSibling(final byte[] value) throws Exception {
     return insertRightSibling(IConstants.TEXT, "", "", "", value);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final long insertRightSibling(
+      final String localPart,
+      final String uri,
+      final String prefix) throws Exception {
+    return insertRightSibling(
+        IConstants.ELEMENT,
+        localPart,
+        uri,
+        prefix,
+        UTF.EMPTY);
   }
 
   /**
