@@ -124,8 +124,8 @@ public final class WriteTransactionState extends ReadTransactionState
    * {@inheritDoc}
    */
   public final Node prepareNode(final long nodeKey) throws Exception {
-    return prepareNodePage(Node.nodePageKey(nodeKey)).getNode(
-        Node.nodePageOffset(nodeKey));
+    return prepareNodePage(nodePageKey(nodeKey)).getNode(
+        nodePageOffset(nodeKey));
   }
 
   public final Node createNode(
@@ -155,10 +155,8 @@ public final class WriteTransactionState extends ReadTransactionState
             value);
 
     // Write node into node page.
-    prepareNodePage(Node.nodePageKey(getRevisionRootPage().getMaxNodeKey()))
-        .setNode(
-            Node.nodePageOffset(getRevisionRootPage().getMaxNodeKey()),
-            node);
+    prepareNodePage(nodePageKey(getRevisionRootPage().getMaxNodeKey()))
+        .setNode(nodePageOffset(getRevisionRootPage().getMaxNodeKey()), node);
 
     return node;
   }
@@ -168,9 +166,8 @@ public final class WriteTransactionState extends ReadTransactionState
    */
   public final void removeNode(final long nodeKey) throws Exception {
     getRevisionRootPage().decrementNodeCount();
-    prepareNodePage(Node.nodePageKey(nodeKey)).setNode(
-        Node.nodePageOffset(nodeKey),
-        null);
+    prepareNodePage(nodePageKey(nodeKey))
+        .setNode(nodePageOffset(nodeKey), null);
   }
 
   /**
