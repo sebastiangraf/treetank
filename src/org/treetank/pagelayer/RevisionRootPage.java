@@ -137,48 +137,17 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
     return mNodeCount;
   }
 
-  public final Node createNode(
-      final IWriteTransactionState state,
-      final long parentKey,
-      final long firstChildKey,
-      final long leftSiblingKey,
-      final long rightSiblingKey,
-      final int kind,
-      final int localPartKey,
-      final int uriKey,
-      final int prefixKey,
-      final byte[] value) throws Exception {
-
-    mMaxNodeKey += 1;
-    mNodeCount += 1;
-
-    final Node node =
-        new Node(
-            mMaxNodeKey,
-            parentKey,
-            firstChildKey,
-            leftSiblingKey,
-            rightSiblingKey,
-            kind,
-            localPartKey,
-            uriKey,
-            prefixKey,
-            value);
-
-    // Write node into node page.
-    state.prepareNodePage(Node.nodePageKey(mMaxNodeKey)).setNode(
-        Node.nodePageOffset(mMaxNodeKey),
-        node);
-
-    return node;
+  public final long getMaxNodeKey() {
+    return mMaxNodeKey;
   }
 
   public final void decrementNodeCount() {
     mNodeCount -= 1;
   }
 
-  public final void incrementNodeCount() {
+  public final void incrementNodeCountAndMaxNodeKey() {
     mNodeCount += 1;
+    mMaxNodeKey += 1;
   }
 
   /**

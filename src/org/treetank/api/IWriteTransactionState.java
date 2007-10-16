@@ -63,6 +63,32 @@ public interface IWriteTransactionState extends IReadTransactionState {
   public Node prepareNode(final long nodeKey) throws Exception;
 
   /**
+   * Create a new node.
+   * 
+   * @param parentKey Key of parent node.
+   * @param firstChildKey Key of first child node.
+   * @param leftSiblingKey Key of left sibling node.
+   * @param rightSiblingKey Key of right sibling node.
+   * @param kind Kind of node.
+   * @param localPartKey Local part key of node.
+   * @param uriKey URI key of node.
+   * @param prefixKey Prefix key of node.
+   * @param value Value of node.
+   * @return Freshly created node.
+   * @throws Exception of any kind.
+   */
+  public Node createNode(
+      final long parentKey,
+      final long firstChildKey,
+      final long leftSiblingKey,
+      final long rightSiblingKey,
+      final int kind,
+      final int localPartKey,
+      final int uriKey,
+      final int prefixKey,
+      final byte[] value) throws Exception;
+
+  /**
    * Remove node specified by its node key.
    * 
    * @param nodeKey Referencing the node.
