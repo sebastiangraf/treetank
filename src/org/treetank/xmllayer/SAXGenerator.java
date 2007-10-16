@@ -43,11 +43,11 @@ import com.sun.org.apache.xml.internal.serializer.SerializerFactory;
 /**
  * Reconstructs an XML document from XPathAccelerator encoding.
  */
-public final class SAXGenerator extends Thread {
+public class SAXGenerator extends Thread {
 
-  private final IReadTransaction mRTX;
+  protected final IReadTransaction mRTX;
 
-  private ContentHandler mHandler;
+  protected ContentHandler mHandler;
 
   private Writer mWriter;
 
@@ -57,12 +57,12 @@ public final class SAXGenerator extends Thread {
 
   private PipedOutputStream mPipedOut;
 
-  private final FastLongStack mRightSiblingKeyStack;
+  protected final FastLongStack mRightSiblingKeyStack;
 
   /** The nodeKey of the next node to visit. */
-  private long mNextKey;
+  protected long mNextKey;
 
-  private final FastObjectStack mNodeStack = new FastObjectStack();
+  protected final FastObjectStack mNodeStack = new FastObjectStack();
 
   /**
    * Constructor for printing the reconstructed XML of global storage to stdout.
@@ -136,11 +136,11 @@ public final class SAXGenerator extends Thread {
 
   }
 
-  private final String qName(final String prefix, final String localPart) {
+  protected final String qName(final String prefix, final String localPart) {
     return (prefix.length() > 0 ? prefix + ":" + localPart : localPart);
   }
 
-  private final AttributesImpl visitAttributes() throws Exception {
+  protected final AttributesImpl visitAttributes() throws Exception {
 
     final AttributesImpl attributes = new AttributesImpl();
 
@@ -155,7 +155,7 @@ public final class SAXGenerator extends Thread {
     return attributes;
   }
 
-  private final void setNextKey() throws Exception {
+  protected final void setNextKey() throws Exception {
     // Where to go?
     if (mRTX.getFirstChildKey() != IConstants.NULL_KEY) {
       mNextKey = mRTX.getFirstChildKey();
@@ -239,7 +239,8 @@ public final class SAXGenerator extends Thread {
 
   }
 
-  public final void run() {
+  @Override
+  public void run() {
     try {
 
       // Start document.
@@ -282,18 +283,18 @@ public final class SAXGenerator extends Thread {
     }
   }
 
-  private final void debug() throws Exception {
-    System.out.println(">>> DEBUG >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-    System.out.println("nodeKey = " + mRTX.getNodeKey());
-    System.out.println("nextKey = " + mNextKey);
-    System.out.print("rightSiblingKeyStack = { ");
-    for (int i = 0; i < mRightSiblingKeyStack.size(); i++) {
-      System.out.print(mRightSiblingKeyStack.get(i) + "; ");
-    }
-    System.out.println("}");
-    System.out.println("}");
-    System.out.println("attributeCount = " + mRTX.getAttributeCount());
-    System.out.println("<<< DEBUG <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-  }
+  //  private final void debug() throws Exception {
+  //    System.out.println(">>> DEBUG >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+  //    System.out.println("nodeKey = " + mRTX.getNodeKey());
+  //    System.out.println("nextKey = " + mNextKey);
+  //    System.out.print("rightSiblingKeyStack = { ");
+  //    for (int i = 0; i < mRightSiblingKeyStack.size(); i++) {
+  //      System.out.print(mRightSiblingKeyStack.get(i) + "; ");
+  //    }
+  //    System.out.println("}");
+  //    System.out.println("}");
+  //    System.out.println("attributeCount = " + mRTX.getAttributeCount());
+  //    System.out.println("<<< DEBUG <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+  //  }
 
 }
