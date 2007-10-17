@@ -121,7 +121,6 @@ final public class IndirectPage implements IPage {
    */
   public final void commit(final IWriteTransactionState state) throws Exception {
     state.commit(mIndirectPageReferences);
-    mDirty = false;
   }
 
   /**
@@ -136,6 +135,7 @@ final public class IndirectPage implements IPage {
         out.writeBoolean(false);
       }
     }
+    mDirty = false;
   }
 
   /**

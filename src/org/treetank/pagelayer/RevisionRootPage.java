@@ -162,7 +162,6 @@ final public class RevisionRootPage implements IPage {
   public final void commit(final IWriteTransactionState state) throws Exception {
     state.commit(mNamePageReference);
     state.commit(mIndirectPageReference);
-    mDirty = false;
   }
 
   /**
@@ -173,6 +172,7 @@ final public class RevisionRootPage implements IPage {
     mNamePageReference.serialize(out);
     out.writeVarLong(mMaxNodeKey);
     mIndirectPageReference.serialize(out);
+    mDirty = false;
   }
 
   /**
