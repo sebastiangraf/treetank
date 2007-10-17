@@ -27,8 +27,6 @@ import org.treetank.utils.FastByteArrayWriter;
 
 public class PageReference {
 
-  private boolean mIsDirty;
-
   private IPage mPage;
 
   private long mStart;
@@ -47,7 +45,6 @@ public class PageReference {
         pageReference.mStart,
         pageReference.mLength,
         pageReference.mChecksum);
-    mIsDirty = true;
   }
 
   public PageReference(
@@ -55,7 +52,6 @@ public class PageReference {
       final long start,
       final int length,
       final long checksum) {
-    mIsDirty = false;
     mPage = page;
     mStart = start;
     mLength = length;
@@ -75,7 +71,7 @@ public class PageReference {
   }
 
   public final boolean isDirty() {
-    return mIsDirty;
+    return (mPage != null || mPage.isDirty());
   }
 
   public final long getChecksum() {
@@ -92,7 +88,6 @@ public class PageReference {
 
   public final void setPage(final IPage page) {
     mPage = page;
-    mIsDirty = true;
   }
 
   public final int getLength() {
@@ -112,7 +107,6 @@ public class PageReference {
   }
 
   public final void serialize(final FastByteArrayWriter out) throws Exception {
-    mIsDirty = false;
     out.writeVarLong(mStart);
     out.writeVarInt(mLength);
     out.writeVarLong(mChecksum);
