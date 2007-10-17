@@ -33,8 +33,8 @@ public class FastByteArrayTest {
     final FastByteArrayWriter out = new FastByteArrayWriter();
     out.writeBoolean(true);
     out.writeInt(4);
-    out.writeVarInt(2 ^ 28 - 1);
-    out.writeVarInt(-2 ^ 28);
+    out.writeVarInt(Integer.MAX_VALUE);
+    out.writeVarInt(Integer.MIN_VALUE);
     out.writeVarLong(Long.MAX_VALUE);
     out.writeVarLong(Long.MIN_VALUE);
     out.writeLong(7L);
@@ -45,8 +45,8 @@ public class FastByteArrayTest {
 
     assertEquals(true, in.readBoolean());
     assertEquals(4, in.readInt());
-    assertEquals(2 ^ 28 - 1, in.readVarInt());
-    assertEquals(-2 ^ 28, in.readVarInt());
+    assertEquals(Integer.MAX_VALUE, in.readVarInt());
+    assertEquals(Integer.MIN_VALUE, in.readVarInt());
     assertEquals(Long.MAX_VALUE, in.readVarLong());
     assertEquals(Long.MIN_VALUE, in.readVarLong());
     assertEquals(7L, in.readLong());
