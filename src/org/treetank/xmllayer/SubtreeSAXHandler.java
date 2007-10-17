@@ -2,15 +2,23 @@ package org.treetank.xmllayer;
 
 import java.util.Hashtable;
 
+import org.treetank.api.IConstants;
 import org.treetank.api.ISession;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+/**
+ * Subtree SAXHandler to handle a xml input and store it into serveral given subtrees.
+ * Every subtree starts at the first level of the xml.
+ * 
+ * @author sebi
+ *
+ */
 public class SubtreeSAXHandler extends SAXHandler {
 
   private static final int COMMITTHRESHOLD = 10000;
 
-  /** Idefix write transaction. */
+  /** TreeTank write transaction. */
   private final ISession session;
 
   /**
@@ -107,7 +115,7 @@ public class SubtreeSAXHandler extends SAXHandler {
       // }
       // }
       mWTX.moveToRoot();
-      // mLeftSiblingKeyStack.push(IConstants.NULL_KEY);
+      mLeftSiblingKeyStack.push(IConstants.NULL_KEY);
 
       // while (mWTX.getRightSiblingKey() != IConstants.NULL_KEY)
       // {
