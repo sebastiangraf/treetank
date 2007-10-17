@@ -111,6 +111,13 @@ public class PageReference {
     mStart = start;
   }
 
+  public final void serialize(final FastByteArrayWriter out) throws Exception {
+    mIsDirty = false;
+    out.writeVarLong(mStart);
+    out.writeVarInt(mLength);
+    out.writeVarLong(mChecksum);
+  }
+
   @Override
   public final boolean equals(final Object object) {
     final PageReference pageReference = (PageReference) object;
@@ -118,11 +125,14 @@ public class PageReference {
         && (mStart == pageReference.mStart) && (mLength == pageReference.mLength));
   }
 
-  public final void serialize(final FastByteArrayWriter out) throws Exception {
-    mIsDirty = false;
-    out.writeVarLong(mStart);
-    out.writeVarInt(mLength);
-    out.writeVarLong(mChecksum);
+  @Override
+  public final String toString() {
+    return "start="
+        + mStart
+        + ", length="
+        + mLength
+        + ", checksum="
+        + mChecksum;
   }
 
 }
