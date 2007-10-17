@@ -27,7 +27,7 @@ import org.treetank.api.IWriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
-final public class IndirectPage extends AbstractPage implements IPage {
+final public class IndirectPage implements IPage {
 
   private final PageReference[] mIndirectPageReferences;
 
@@ -49,7 +49,6 @@ final public class IndirectPage extends AbstractPage implements IPage {
    */
   public static final IndirectPage create() {
     final IndirectPage indirectPage = new IndirectPage();
-    createPageReferences(indirectPage.mIndirectPageReferences);
     return indirectPage;
   }
 
@@ -64,16 +63,27 @@ final public class IndirectPage extends AbstractPage implements IPage {
   public static final IndirectPage read(final FastByteArrayReader in)
       throws Exception {
     final IndirectPage indirectPage = new IndirectPage();
-    readPageReferences(indirectPage.mIndirectPageReferences, in);
+
+    for (int i = 0, l = indirectPage.mIndirectPageReferences.length; i < l; i++) {
+      if (in.readBoolean()) {
+        indirectPage.mIndirectPageReferences[i] = new PageReference(in);
+      }
+    }
+
     return indirectPage;
   }
 
   public static final IndirectPage clone(
       final IndirectPage committedIndirectPage) {
     final IndirectPage indirectPage = new IndirectPage();
-    clonePageReferences(
-        indirectPage.mIndirectPageReferences,
-        committedIndirectPage.mIndirectPageReferences);
+
+    for (int i = 0, l = indirectPage.mIndirectPageReferences.length; i < l; i++) {
+      if (committedIndirectPage.mIndirectPageReferences[i] != null) {
+        indirectPage.mIndirectPageReferences[i] =
+            new PageReference(committedIndirectPage.mIndirectPageReferences[i]);
+      }
+    }
+
     return indirectPage;
   }
 
@@ -113,7 +123,14 @@ final public class IndirectPage extends AbstractPage implements IPage {
    * {@inheritDoc}
    */
   public final void serialize(final FastByteArrayWriter out) throws Exception {
-    serialize(out, mIndirectPageReferences);
+    for (int i = 0, l = mIndirectPageReferences.length; i < l; i++) {
+      if (mIndirectPageReferences[i] != null) {
+        out.writeBoolean(true);
+        mIndirectPageReferences[i].serialize(out);
+      } else {
+        out.writeBoolean(false);
+      }
+    }
   }
 
 }
