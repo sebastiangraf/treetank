@@ -54,6 +54,7 @@ public class NameTestAxisIteratorTest {
     trx.moveToRoot();
     final IAxisIterator descendantIterator1 =
         new NameTestAxisIterator(trx, new DescendantAxisIterator(trx), "b");
+
     assertEquals(true, descendantIterator1.next());
     assertEquals(3L, trx.getNodeKey());
 

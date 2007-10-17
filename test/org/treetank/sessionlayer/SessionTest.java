@@ -199,4 +199,21 @@ public class SessionTest {
 
   }
 
+  @Test
+  public void testIsSelected() throws Exception {
+
+    final ISession session = new Session(TEST_EXISTING_PATH);
+
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+    TestDocument.create(wtx);
+    session.commit();
+
+    final IReadTransaction rtx = session.beginReadTransaction();
+    assertEquals(11L, rtx.revisionSize());
+    assertEquals(true, rtx.isSelected());
+    assertEquals(false, rtx.moveTo(12L));
+    assertEquals(false, rtx.isSelected());
+
+  }
+
 }
