@@ -82,7 +82,9 @@ public abstract class AbstractPage implements IPage {
       final PageReference[] references,
       final FastByteArrayReader in) throws Exception {
     for (int i = 0, l = references.length; i < l; i++) {
-      references[i] = new PageReference(in);
+      if (in.readBoolean()) {
+        references[i] = new PageReference(in);
+      }
     }
   }
 
@@ -135,7 +137,12 @@ public abstract class AbstractPage implements IPage {
       final FastByteArrayWriter out,
       final PageReference[] references) throws Exception {
     for (int i = 0, l = references.length; i < l; i++) {
-      references[i].serialize(out);
+      if (references[i] != null) {
+        out.writeBoolean(true);
+        references[i].serialize(out);
+      } else {
+        out.writeBoolean(false);
+      }
     }
   }
 
