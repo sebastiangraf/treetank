@@ -55,7 +55,7 @@ public final class FastByteArrayWriter {
   }
 
   public final void writeVarInt(final int value) throws Exception {
-    assertSize(4);
+    assertSize(5);
     mBuffer[mSize++] = (byte) (value);
     if (value > 63 || value < -64) {
       mBuffer[mSize - 1] |= 128;
@@ -66,6 +66,11 @@ public final class FastByteArrayWriter {
         if (value > 1048575 || value < -1048576) {
           mBuffer[mSize - 1] |= 128;
           mBuffer[mSize++] = (byte) (value >> 21);
+          if (value > 268435455 || value < -268435456) {
+            mBuffer[mSize - 1] |= 128;
+            mBuffer[mSize++] = (byte) (value >> 28);
+          } else
+            mBuffer[mSize - 1] &= 127;
         } else
           mBuffer[mSize - 1] &= 127;
       } else

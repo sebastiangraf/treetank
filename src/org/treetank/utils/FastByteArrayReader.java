@@ -58,9 +58,11 @@ public final class FastByteArrayReader {
       if ((mBuffer[mPosition - 1] & 128) != 0) {
         value |= ((mBuffer[mPosition++] & 127)) << 14;
         if ((mBuffer[mPosition - 1] & 128) != 0) {
-          value |= ((mBuffer[mPosition++] & 255)) << 21;
-          if ((mBuffer[mPosition - 1] & 128) != 0)
-            value |= 0xE0000000;
+          value |= ((mBuffer[mPosition++] & 127)) << 21;
+          if ((mBuffer[mPosition - 1] & 128) != 0) {
+            value |= ((mBuffer[mPosition++] & 255)) << 28;
+          } else if ((mBuffer[mPosition - 1] & 64) != 0)
+            value |= 0xF0000000;            
         } else if ((mBuffer[mPosition - 1] & 64) != 0)
           value |= 0xFFF00000;
       } else if ((mBuffer[mPosition - 1] & 64) != 0)
