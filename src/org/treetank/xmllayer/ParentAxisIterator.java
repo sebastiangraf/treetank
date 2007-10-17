@@ -25,11 +25,10 @@ import org.treetank.api.IAxisIterator;
 import org.treetank.api.IReadTransaction;
 
 /**
- * <h1>ParentAxisIteratorTest</h1>
+ * <h1>ParentAxisIterator</h1>
  * 
  * <p>
- * Iterate to parent node starting at a given
- * node. Self is not included.
+ * Iterate to parent node starting at a given node. Self is not included.
  * </p>
  */
 public class ParentAxisIterator implements IAxisIterator {

@@ -25,11 +25,10 @@ import org.treetank.api.IAxisIterator;
 import org.treetank.api.IReadTransaction;
 
 /**
- * <h1>AttributeAxisIteratorTest</h1>
+ * <h1>AttributeAxisIterator</h1>
  * 
  * <p>
- * Iterate over all children of kind ATTRIBUTE starting at a given
- * node.
+ * Iterate over all attibutes of a given node.
  * </p>
  */
 public class AttributeAxisIterator implements IAxisIterator {
