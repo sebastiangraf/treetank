@@ -103,31 +103,15 @@ public class ReadTransactionState implements IReadTransactionState {
    */
   public final INode getNode(final long nodeKey) throws Exception {
 
-    // Calculate coordinates for given nodeKey.
+    // Calculate page and node part for given nodeKey.
     final long nodePageKey = nodePageKey(nodeKey);
     final int nodePageOffset = nodePageOffset(nodeKey);
 
-    // Fetch node page if required.
+    // Fetch node page if it is not yet in the state cache.
     if (mNodePage == null || mNodePage.getNodePageKey() != nodePageKey) {
-      // Indirect reference.
-      PageReference reference = mRevisionRootPage.getIndirectPageReference();
-
-      // Remaining levels.
-      int offset = 0;
-      long levelKey = nodePageKey;
-      for (int level = 0, height =
-          IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
-
-        // Calculate offset of current level.
-        offset =
-            (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
-        levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
-
-        // Fetch page from current level.
-        reference = dereferenceIndirectPage(reference).getPageReference(offset);
-      }
-
-      mNodePage = dereferenceNodePage(reference, nodePageKey);
+      mNodePage =
+          dereferenceNodePage(dereferenceLeafOfTree(mRevisionRootPage
+              .getIndirectPageReference(), nodePageKey), nodePageKey);
     }
 
     // Fetch node from node page.
@@ -145,123 +129,6 @@ public class ReadTransactionState implements IReadTransactionState {
   }
 
   /**
-   * Dereference node page reference.
-   * 
-   * @param reference Reference to dereference.
-   * @param nodePageKey Key of node page.
-   * @return Dereferenced page.
-   * @throws Exception of any kind.
-   */
-  protected final NodePage dereferenceNodePage(
-      final PageReference reference,
-      final long nodePageKey) throws Exception {
-
-    // Get uncommitted referenced page if there is one.
-    NodePage page = (NodePage) reference.getPage();
-
-    // Get committed referenced page from cache if there is one.
-    if (page == null) {
-      page = (NodePage) mPageCache.get(reference.getStart());
-    }
-
-    // Get committed referenced page from storage.
-    if (page == null) {
-      final FastByteArrayReader in = mPageReader.read(reference);
-      page = NodePage.read(in, nodePageKey);
-      mPageCache.put(reference.getStart(), page);
-    }
-
-    return page;
-
-  }
-
-  /**
-   * Dereference name page reference.
-   * 
-   * @param reference Reference to dereference.
-   * @return Dereferenced page.
-   * @throws Exception of any kind.
-   */
-  protected final NamePage dereferenceNamePage(final PageReference reference)
-      throws Exception {
-
-    // Get uncommitted referenced page if there is one.
-    IPage page = reference.getPage();
-
-    // Get committed referenced page from cache if there is one.
-    if (page == null) {
-      page = mPageCache.get(reference.getStart());
-    }
-
-    // Get committed referenced page from storage.
-    if (page == null) {
-      final FastByteArrayReader in = mPageReader.read(reference);
-      page = NamePage.read(in);
-      mPageCache.put(reference.getStart(), page);
-    }
-
-    return (NamePage) page;
-  }
-
-  /**
-   * Dereference indirect page reference.
-   * 
-   * @param reference Reference to dereference.
-   * @return Dereferenced page.
-   * @throws Exception of any kind.
-   */
-  protected final IndirectPage dereferenceIndirectPage(
-      final PageReference reference) throws Exception {
-
-    // Get uncommitted referenced page if there is one.
-    IndirectPage page = (IndirectPage) reference.getPage();
-
-    // Get committed referenced page from cache if there is one.
-    if (page == null) {
-      page = (IndirectPage) mPageCache.get(reference.getStart());
-    }
-
-    // Get committed referenced page from storage.
-    if (page == null) {
-      final FastByteArrayReader in = mPageReader.read(reference);
-      page = IndirectPage.read(in);
-      mPageCache.put(reference.getStart(), page);
-    }
-
-    return page;
-  }
-
-  /**
-   * Dereference revision root page reference.
-   * 
-   * @param reference Reference to dereference.
-   * @param revisionKey Key of revision.
-   * @return Dereferenced page.
-   * @throws Exception of any kind.
-   */
-  protected final RevisionRootPage dereferenceRevisionRootPage(
-      final PageReference reference,
-      final long revisionKey) throws Exception {
-
-    // Get uncommitted referenced page if there is one.
-    RevisionRootPage page = (RevisionRootPage) reference.getPage();
-
-    // Get committed referenced page from cache if there is one.
-    if (page == null) {
-      page = (RevisionRootPage) mPageCache.get(reference.getStart());
-    }
-
-    // Get committed referenced page from storage.
-    if (page == null) {
-      final FastByteArrayReader in = mPageReader.read(reference);
-      page = RevisionRootPage.read(in, revisionKey);
-      mPageCache.put(reference.getStart(), page);
-    }
-
-    return page;
-  }
-
-  /**
    * Get revision root page belonging to revision key.
    * 
    * @param revisionKey Key of revision to find revision root page for.
@@ -271,27 +138,9 @@ public class ReadTransactionState implements IReadTransactionState {
   protected final RevisionRootPage getRevisionRootPage(final long revisionKey)
       throws Exception {
 
-    // Indirect reference.
-    PageReference reference = mUberPage.getIndirectPageReference();
-
-    // Remaining levels.
-    int offset = 0;
-    long levelKey = revisionKey;
-    for (int level = 0, height =
-        IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
-
-      // Calculate offset of current level.
-      offset =
-          (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
-      levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
-
-      // Fetch page from current level.
-      reference = dereferenceIndirectPage(reference).getPageReference(offset);
-    }
-
-    RevisionRootPage page = dereferenceRevisionRootPage(reference, revisionKey);
-
-    return page;
+    // Get revision root page which is the leaf of the indirect tree.
+    return dereferenceRevisionRootPage(dereferenceLeafOfTree(mUberPage
+        .getIndirectPageReference(), revisionKey), revisionKey);
 
   }
 
@@ -363,6 +212,153 @@ public class ReadTransactionState implements IReadTransactionState {
    */
   protected final int nodePageOffset(final long nodeKey) {
     return (int) (nodeKey - ((nodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT) << IConstants.NDP_NODE_COUNT_EXPONENT));
+  }
+
+  /**
+   * Dereference node page reference.
+   * 
+   * @param reference Reference to dereference.
+   * @param nodePageKey Key of node page.
+   * @return Dereferenced page.
+   * @throws Exception of any kind.
+   */
+  protected final NodePage dereferenceNodePage(
+      final PageReference reference,
+      final long nodePageKey) throws Exception {
+
+    // Get page that was dereferenced or prepared earlier.
+    NodePage page = (NodePage) reference.getPage();
+
+    // If there is no page, get it from the cache.
+    if (page == null) {
+      page = (NodePage) mPageCache.get(reference.getStart());
+    }
+
+    // If there is no page, get it from the storage and cache it.
+    if (page == null) {
+      final FastByteArrayReader in = mPageReader.read(reference);
+      page = NodePage.read(in, nodePageKey);
+      mPageCache.put(reference.getStart(), page);
+    }
+
+    return page;
+
+  }
+
+  /**
+   * Dereference name page reference.
+   * 
+   * @param reference Reference to dereference.
+   * @return Dereferenced page.
+   * @throws Exception of any kind.
+   */
+  protected final NamePage dereferenceNamePage(final PageReference reference)
+      throws Exception {
+
+    // Get page that was dereferenced or prepared earlier.
+    IPage page = reference.getPage();
+
+    // If there is no page, get it from the cache.
+    if (page == null) {
+      page = mPageCache.get(reference.getStart());
+    }
+
+    // If there is no page, get it from the storage and cache it.
+    if (page == null) {
+      final FastByteArrayReader in = mPageReader.read(reference);
+      page = NamePage.read(in);
+      mPageCache.put(reference.getStart(), page);
+    }
+
+    return (NamePage) page;
+  }
+
+  /**
+   * Dereference indirect page reference.
+   * 
+   * @param reference Reference to dereference.
+   * @return Dereferenced page.
+   * @throws Exception of any kind.
+   */
+  protected final IndirectPage dereferenceIndirectPage(
+      final PageReference reference) throws Exception {
+
+    // Get page that was dereferenced or prepared earlier.
+    IndirectPage page = (IndirectPage) reference.getPage();
+
+    // If there is no page, get it from the cache.
+    if (page == null) {
+      page = (IndirectPage) mPageCache.get(reference.getStart());
+    }
+
+    // If there is no page, get it from the storage and cache it.
+    if (page == null) {
+      final FastByteArrayReader in = mPageReader.read(reference);
+      page = IndirectPage.read(in);
+      mPageCache.put(reference.getStart(), page);
+    }
+
+    return page;
+  }
+
+  /**
+   * Dereference revision root page reference.
+   * 
+   * @param reference Reference to dereference.
+   * @param revisionKey Key of revision.
+   * @return Dereferenced page.
+   * @throws Exception of any kind.
+   */
+  protected final RevisionRootPage dereferenceRevisionRootPage(
+      final PageReference reference,
+      final long revisionKey) throws Exception {
+
+    // Get page that was dereferenced or prepared earlier.
+    RevisionRootPage page = (RevisionRootPage) reference.getPage();
+
+    // If there is no page, get it from the cache.
+    if (page == null) {
+      page = (RevisionRootPage) mPageCache.get(reference.getStart());
+    }
+
+    // If there is no page, get it from the storage and cache it.
+    if (page == null) {
+      final FastByteArrayReader in = mPageReader.read(reference);
+      page = RevisionRootPage.read(in, revisionKey);
+      mPageCache.put(reference.getStart(), page);
+    }
+
+    return page;
+  }
+
+  /**
+   * Find reference pointing to leaf page of an indirect tree.
+   * 
+   * @param startReference Start reference pointing to the indirect tree.
+   * @param key Key to look up in the indirect tree.
+   * @return Reference denoted by key pointing to the leaf page.
+   * @throws Exception of any kind.
+   */
+  protected final PageReference dereferenceLeafOfTree(
+      final PageReference startReference,
+      final long key) throws Exception {
+
+    // Initial state pointing to the indirect page of level 0.
+    PageReference reference = startReference;
+    int offset = 0;
+    long levelKey = key;
+
+    // Iterate through all levels.
+    for (int level = 0, height =
+        IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
+      offset =
+          (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
+      levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
+      reference = dereferenceIndirectPage(reference).getPageReference(offset);
+    }
+
+    // Return reference to leaf of indirect tree.
+    return reference;
   }
 
 }

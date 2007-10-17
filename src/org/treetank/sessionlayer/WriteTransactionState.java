@@ -217,22 +217,10 @@ public final class WriteTransactionState extends ReadTransactionState
       throws Exception {
 
     // Indirect reference.
-    PageReference reference = getRevisionRootPage().getIndirectPageReference();
-
-    // Remaining levels.
-    int offset = 0;
-    long levelKey = nodePageKey;
-    for (int level = 0, height =
-        IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
-
-      // Calculate offset of current level.
-      offset =
-          (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
-      levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
-
-      // Fetch page from current level.
-      reference = prepareIndirectPage(reference).getPageReference(offset);
-    }
+    PageReference reference =
+        prepareLeafOfTree(
+            getRevisionRootPage().getIndirectPageReference(),
+            nodePageKey);
 
     // Last level points to node page.
     NodePage page = (NodePage) reference.getPage();
@@ -257,31 +245,44 @@ public final class WriteTransactionState extends ReadTransactionState
 
   protected final RevisionRootPage prepareRevisionRootPage() throws Exception {
 
-    // Indirect reference.
-    PageReference reference = getUberPage().getIndirectPageReference();
+    // Prepare revision root page.
+    final RevisionRootPage revisionRootPage =
+        RevisionRootPage.clone(getRevisionRootPage(getUberPage()
+            .getRevisionCount() - 1));
 
-    // Remaining levels.
+    // Prepare indirect tree to hold reference to prepared revision root page.
+    final PageReference revisionRootPageReference =
+        prepareLeafOfTree(
+            getUberPage().getIndirectPageReference(),
+            getUberPage().getRevisionCount());
+
+    // Link the prepared revision root page with the prepared indirect tree.
+    revisionRootPageReference.setPage(revisionRootPage);
+
+    // Return prepared revision root page.
+    return revisionRootPage;
+  }
+
+  protected final PageReference prepareLeafOfTree(
+      final PageReference startReference,
+      final long key) throws Exception {
+
+    // Initial state pointing to the indirect page of level 0.
+    PageReference reference = startReference;
     int offset = 0;
-    long levelKey = getUberPage().getRevisionCount();
+    long levelKey = key;
+
+    // Iterate through all levels.
     for (int level = 0, height =
         IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
-
-      // Calculate offset of current level.
       offset =
           (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
       levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
-
-      // Fetch page from current level.
       reference = prepareIndirectPage(reference).getPageReference(offset);
     }
 
-    RevisionRootPage rrp =
-        getRevisionRootPage(getUberPage().getRevisionCount() - 1);
-    rrp = RevisionRootPage.clone(rrp);
-    reference.setPage(rrp);
-
-    return rrp;
-
+    // Return reference to leaf of indirect tree.
+    return reference;
   }
 
 }
