@@ -17,7 +17,7 @@ public class PostOrderIterator implements IAxisIterator {
   /** Exclusive (immutable) trx to iterate with. */
   private final IReadTransaction trx;
 
-  /** For remembering last parent */
+  /** For remembering last parent. */
   private final FastLongStack lastParent;
 
   /** The nodeKey of the next node to visit. */
@@ -50,12 +50,11 @@ public class PostOrderIterator implements IAxisIterator {
   }
 
   /**
-   * Method to start at the beginning of the tree
+   * Method to start at the beginning of the tree.
    * 
-   * @return
-   * @throws Exception
+   * @throws Exception of any kind.
    */
-  private void startAtBeginning() throws Exception {
+  private final void startAtBeginning() throws Exception {
     trx.moveToRoot();
     while (trx.getFirstChildKey() != IConstants.NULL_KEY) {
       lastParent.push(trx.getNodeKey());

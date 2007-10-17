@@ -25,7 +25,7 @@ import org.treetank.api.IAxisIterator;
 import org.treetank.api.IReadTransaction;
 
 /**
- * <h1>ChildAxisIteratorTest</h1>
+ * <h1>ChildAxisIterator</h1>
  * 
  * <p>
  * Iterate over all children of kind ELEMENT or TEXT starting at a given

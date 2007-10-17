@@ -26,11 +26,10 @@ import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 
 /**
- * <h1>AttributeAxisIteratorTest</h1>
+ * <h1>NodeTestAxisIterator</h1>
  * 
  * <p>
- * Iterate over all children of kind ATTRIBUTE starting at a given
- * node.
+ * Only select nodes of kind ELEMENT and TEXT.
  * </p>
  */
 public class NodeTestAxisIterator implements IAxisIterator {
@@ -45,6 +44,7 @@ public class NodeTestAxisIterator implements IAxisIterator {
    * Constructor initializing internal state.
    * 
    * @param rtx Exclusive (immutable) trx to iterate with.
+   * @param axis Axis to iterate over.
    * @throws Exception of any kind.
    */
   public NodeTestAxisIterator(

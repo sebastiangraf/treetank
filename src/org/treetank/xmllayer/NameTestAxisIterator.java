@@ -25,11 +25,12 @@ import org.treetank.api.IAxisIterator;
 import org.treetank.api.IReadTransaction;
 
 /**
- * <h1>AttributeAxisIteratorTest</h1>
+ * <h1>NameTestAxisIterator</h1>
  * 
  * <p>
- * Iterate over all children of kind ATTRIBUTE starting at a given
- * node.
+ * Find all ELEMENTS provided by some axis iterator that match a given name.
+ * Note that this is efficiently done with a single String and multiple integer
+ * comparisons.
  * </p>
  */
 public class NameTestAxisIterator implements IAxisIterator {
@@ -47,6 +48,8 @@ public class NameTestAxisIterator implements IAxisIterator {
    * Constructor initializing internal state.
    * 
    * @param rtx Exclusive (immutable) mTrx to iterate with.
+   * @param axis Axis iterator providing ELEMENTS.
+   * @param name Name ELEMENTS must match to.
    * @throws Exception of any kind.
    */
   public NameTestAxisIterator(
@@ -62,8 +65,9 @@ public class NameTestAxisIterator implements IAxisIterator {
    * {@inheritDoc}
    */
   public final boolean next() throws Exception {
-    while (mAxis.next() && !(mRTX.getLocalPartKey() == mNameKey))
-      ;
+    while (mAxis.next() && !(mRTX.getLocalPartKey() == mNameKey)) {
+      // Nothing to do here.
+    }
     return mRTX.isSelected();
   }
 
