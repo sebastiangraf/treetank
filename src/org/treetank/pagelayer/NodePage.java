@@ -49,6 +49,7 @@ public final class NodePage extends AbstractPage implements IPage {
 
   public static final NodePage create(final long nodePageKey) {
     final NodePage nodePage = new NodePage(nodePageKey);
+    nodePage.setDirty(true);
     return nodePage;
   }
 
@@ -67,6 +68,7 @@ public final class NodePage extends AbstractPage implements IPage {
       }
     }
 
+    nodePage.setDirty(false);
     return nodePage;
   }
 
@@ -80,6 +82,7 @@ public final class NodePage extends AbstractPage implements IPage {
       }
     }
 
+    nodePage.setDirty(false);
     return nodePage;
   }
 
@@ -95,28 +98,29 @@ public final class NodePage extends AbstractPage implements IPage {
   /**
    * Get node at a given offset.
    * 
-   * @param nodeOffset Offset of node within local node page.
+   * @param offset Offset of node within local node page.
    * @return INode at given offset.
    */
-  public final Node getNode(final int nodeOffset) {
-    return mNodes[nodeOffset];
+  public final Node getNode(final int offset) {
+    return mNodes[offset];
   }
 
   /**
    * Overwrite a single node at a given offset.
    * 
-   * @param nodeOffset Offset of node to overwrite in this node page.
+   * @param offset Offset of node to overwrite in this node page.
    * @param node INode to store at given nodeOffset.
    */
-  public final void setNode(final int nodeOffset, final Node node) {
-    mNodes[nodeOffset] = node;
+  public final void setNode(final int offset, final Node node) {
+    mNodes[offset] = node;
+    setDirty(true);
   }
 
   /**
    * {@inheritDoc}
    */
   public final void commit(final IWriteTransactionState state) {
-    // Nothing to do because there are no page references.
+    setDirty(false);
   }
 
   /**

@@ -36,8 +36,13 @@ import org.treetank.utils.FastByteArrayWriter;
  */
 public abstract class AbstractPage implements IPage {
 
+  /** Flag to tell whether the page was modified. */
+  private boolean mDirty = true;
+
   /**
    * Initialize given page reference with virgin page reference.
+   * 
+   * @return New page reference.
    */
   public static final PageReference createPageReference() {
     return new PageReference();
@@ -50,15 +55,15 @@ public abstract class AbstractPage implements IPage {
    */
   public static final void createPageReferences(final PageReference[] references) {
     for (int i = 0, l = references.length; i < l; i++) {
-      references[i] = createPageReference();
+      references[i] = new PageReference();
     }
   }
 
   /**
    * Deserialize page reference from reader to page reference.
    * 
-   * @param references Page reference array to deserialize.
    * @param in Reader to read from.
+   * @return Deserialized page reference.
    * @throws Exception of any kind.
    */
   public static final PageReference readPageReference(
@@ -77,7 +82,7 @@ public abstract class AbstractPage implements IPage {
       final PageReference[] references,
       final FastByteArrayReader in) throws Exception {
     for (int i = 0, l = references.length; i < l; i++) {
-      references[i] = readPageReference(in);
+      references[i] = new PageReference(in);
     }
   }
 
@@ -85,6 +90,7 @@ public abstract class AbstractPage implements IPage {
    * COW committed page reference to virgin page reference.
    * 
    * @param committedReference Committed page reference to COW.
+   * @return COWed page reference.
    */
   public static final PageReference clonePageReference(
       final PageReference committedReference) {
@@ -101,7 +107,7 @@ public abstract class AbstractPage implements IPage {
       final PageReference[] references,
       final PageReference[] committedReferences) {
     for (int i = 0, l = references.length; i < l; i++) {
-      references[i] = clonePageReference(committedReferences[i]);
+      references[i] = new PageReference(committedReferences[i]);
     }
   }
 
@@ -129,8 +135,26 @@ public abstract class AbstractPage implements IPage {
       final FastByteArrayWriter out,
       final PageReference[] references) throws Exception {
     for (int i = 0, l = references.length; i < l; i++) {
-      serialize(out, references[i]);
+      references[i].serialize(out);
     }
+  }
+
+  /**
+   * Modify dirty state of page.
+   * 
+   * @param dirty True if the page is modified and needs a commit, false else.
+   */
+  protected final void setDirty(final boolean dirty) {
+    mDirty = dirty;
+  }
+
+  /**
+   * Is the page dirty?
+   * 
+   * @return True if the page is dirty and needs a fresh commit.
+   */
+  public final boolean isDirty() {
+    return mDirty;
   }
 
   /**

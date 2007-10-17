@@ -138,11 +138,11 @@ public final class Attribute implements INode {
     return IConstants.NULL_KEY;
   }
 
-  public Namespace getNamespace(int index) {
+  public final Namespace getNamespace(final int index) {
     return null;
   }
 
-  public int getNamespaceCount() {
+  public final int getNamespaceCount() {
     return 0;
   }
 
