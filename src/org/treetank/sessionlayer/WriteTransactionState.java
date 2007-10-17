@@ -55,14 +55,15 @@ public final class WriteTransactionState extends ReadTransactionState
    * @param pageCache Shared page cache.
    * @param pageReader Exclusive page reader.
    * @param pageWriter Exclusive page writer.
-   * @param revisionRootPage Root of revision.
+   * @param uberPage Root of revision.
+   * @throws Exception of any kind.
    */
   public WriteTransactionState(
       final Map<Long, IPage> pageCache,
       final PageReader pageReader,
       final PageWriter pageWriter,
       final UberPage uberPage) throws Exception {
-    super(pageCache, pageReader, uberPage, uberPage.getRevisionCount());
+    super(pageCache, pageReader, uberPage, uberPage.getRevisionCount() - 1);
     mPageWriter = pageWriter;
     setRevisionRootPage(prepareRevisionRootPage());
   }
@@ -261,7 +262,7 @@ public final class WriteTransactionState extends ReadTransactionState
 
     // Remaining levels.
     int offset = 0;
-    long levelKey = getUberPage().getRevisionCount() + 1;
+    long levelKey = getUberPage().getRevisionCount();
     for (int level = 0, height =
         IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
 
@@ -275,7 +276,7 @@ public final class WriteTransactionState extends ReadTransactionState
     }
 
     RevisionRootPage rrp =
-        getRevisionRootPage(getUberPage().getRevisionCount());
+        getRevisionRootPage(getUberPage().getRevisionCount() - 1);
     rrp = RevisionRootPage.clone(rrp);
     reference.setPage(rrp);
 

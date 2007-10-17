@@ -239,6 +239,7 @@ public final class Session implements ISession {
    * {@inheritDoc}
    */
   public final void abort() throws Exception {
+    mUberPage.abort();
     mWriteSemaphore.release();
   }
 

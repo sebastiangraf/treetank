@@ -137,7 +137,7 @@ final public class UberPage implements IPage {
     final UberPage uberPage = new UberPage(true);
 
     // COW uber page.
-    uberPage.mRevisionCount = committedUberPage.mRevisionCount;
+    uberPage.mRevisionCount = committedUberPage.mRevisionCount + 1;
 
     // Indirect pages (shallow COW without page instances).
     uberPage.mIndirectPageReference =
@@ -154,12 +154,15 @@ final public class UberPage implements IPage {
     return mRevisionCount;
   }
 
+  public final void abort() {
+    mRevisionCount -= 1;
+  }
+
   /**
    * {@inheritDoc}
    */
   public final void commit(final IWriteTransactionState state) throws Exception {
     state.commit(mIndirectPageReference);
-    mRevisionCount += 1;
     mDirty = false;
   }
 
