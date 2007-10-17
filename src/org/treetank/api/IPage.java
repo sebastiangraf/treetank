@@ -34,13 +34,6 @@ import org.treetank.utils.FastByteArrayWriter;
 public interface IPage {
 
   /**
-   * Is the page dirty?
-   * 
-   * @return True if the page is dirty and must be committed, false else.
-   */
-  public boolean isDirty();
-
-  /**
    * Recursively call commit on all referenced pages.
    * 
    * @param state IWriteTransaction state.

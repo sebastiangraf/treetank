@@ -62,7 +62,6 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
     // Indirect pages (shallow init).
     revisionRootPage.mIndirectPageReference = createPageReference();
 
-    revisionRootPage.setDirty();
     return revisionRootPage;
 
   }
@@ -109,7 +108,6 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
     revisionRootPage.mIndirectPageReference =
         clonePageReference(committedRevisionRootPage.mIndirectPageReference);
 
-    revisionRootPage.setDirty();
     return revisionRootPage;
   }
 
@@ -156,7 +154,6 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
    * {@inheritDoc}
    */
   public final void commit(final IWriteTransactionState state) throws Exception {
-    super.commit(state);
     state.commit(mNamePageReference);
     state.commit(mIndirectPageReference);
   }

@@ -97,7 +97,6 @@ final public class UberPage extends AbstractPage implements IPage {
 
     rrp.incrementNodeCountAndMaxNodeKey();
 
-    uberPage.setDirty();
     return uberPage;
 
   }
@@ -140,7 +139,6 @@ final public class UberPage extends AbstractPage implements IPage {
     uberPage.mIndirectPageReference =
         clonePageReference(committedUberPage.mIndirectPageReference);
 
-    uberPage.setDirty();
     return uberPage;
   }
 
@@ -156,7 +154,6 @@ final public class UberPage extends AbstractPage implements IPage {
    * {@inheritDoc}
    */
   public final void commit(final IWriteTransactionState state) throws Exception {
-    super.commit(state);
     state.commit(mIndirectPageReference);
     mRevisionCount += 1;
   }

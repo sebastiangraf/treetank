@@ -36,9 +36,6 @@ import org.treetank.utils.FastByteArrayWriter;
  */
 public abstract class AbstractPage implements IPage {
 
-  /** Flag to tell whether the page was modified. */
-  private boolean mDirty = false;
-
   /**
    * Initialize given page reference with virgin page reference.
    * 
@@ -147,28 +144,10 @@ public abstract class AbstractPage implements IPage {
   }
 
   /**
-   * Modify dirty state of page.
-   */
-  protected final void setDirty() {
-    mDirty = true;
-  }
-
-  /**
-   * Is the page dirty?
-   * 
-   * @return True if the page is dirty and needs a fresh commit.
-   */
-  public final boolean isDirty() {
-    return mDirty;
-  }
-
-  /**
    * {@inheritDoc}
    */
-  public void commit(final IWriteTransactionState state)
-      throws Exception {
-    mDirty = false;
-  }
+  public abstract void commit(final IWriteTransactionState state)
+      throws Exception;
 
   /**
    * {@inheritDoc}
