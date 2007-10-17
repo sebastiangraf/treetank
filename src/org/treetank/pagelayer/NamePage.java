@@ -52,9 +52,9 @@ final public class NamePage extends AbstractPage implements IPage {
     final NamePage namePage = new NamePage();
 
     // Names (deep load).
-    for (int i = 0, l = in.readPseudoInt(); i < l; i++) {
+    for (int i = 0, l = in.readVarInt(); i < l; i++) {
       namePage.mNameMap
-          .put(in.readPseudoInt(), UTF.convert(in.readByteArray()));
+          .put(in.readVarInt(), UTF.convert(in.readByteArray()));
     }
 
     return namePage;
@@ -102,12 +102,12 @@ final public class NamePage extends AbstractPage implements IPage {
    * {@inheritDoc}
    */
   public void serialize(final FastByteArrayWriter out) throws Exception {
-    out.writePseudoInt(mNameMap.size());
+    out.writeVarInt(mNameMap.size());
     Iterator<Integer> keyIterator = mNameMap.keySet().iterator();
     int key;
     while (keyIterator.hasNext()) {
       key = keyIterator.next();
-      out.writePseudoInt(key);
+      out.writeVarInt(key);
       out.writeByteArray(UTF.convert(mNameMap.get(key)));
     }
   }

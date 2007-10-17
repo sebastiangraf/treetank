@@ -33,14 +33,10 @@ public class FastByteArrayTest {
     final FastByteArrayWriter out = new FastByteArrayWriter();
     out.writeBoolean(true);
     out.writeInt(4);
-    out.writePseudoInt(3456345);
-    out.writePseudoInt(-1);
-    out.writePseudoVarSizeInt(2^28-1);
-    out.writePseudoVarSizeInt(-2^28);
-    out.writePseudoLong(Integer.MAX_VALUE);
-    out.writePseudoLong(Integer.MIN_VALUE);
-    out.writeVarSizeLong(Long.MAX_VALUE);
-    out.writeVarSizeLong(Long.MIN_VALUE);
+    out.writeVarInt(2 ^ 28 - 1);
+    out.writeVarInt(-2 ^ 28);
+    out.writeVarLong(Long.MAX_VALUE);
+    out.writeVarLong(Long.MIN_VALUE);
     out.writeLong(7L);
     out.writeByte((byte) 7);
 
@@ -49,14 +45,10 @@ public class FastByteArrayTest {
 
     assertEquals(true, in.readBoolean());
     assertEquals(4, in.readInt());
-    assertEquals(3456345, in.readPseudoInt());
-    assertEquals(-1, in.readPseudoInt());
-    assertEquals(2^28-1, in.readPseudoVarSizeInt());
-    assertEquals(-2^28, in.readPseudoVarSizeInt());
-    assertEquals(Integer.MAX_VALUE, in.readPseudoLong());
-    assertEquals(Integer.MIN_VALUE, in.readPseudoLong());
-    assertEquals(Long.MAX_VALUE, in.readVarSizeLong());
-    assertEquals(Long.MIN_VALUE, in.readVarSizeLong());
+    assertEquals(2 ^ 28 - 1, in.readVarInt());
+    assertEquals(-2 ^ 28, in.readVarInt());
+    assertEquals(Long.MAX_VALUE, in.readVarLong());
+    assertEquals(Long.MIN_VALUE, in.readVarLong());
     assertEquals(7L, in.readLong());
     assertEquals((byte) 7, in.readByte());
 

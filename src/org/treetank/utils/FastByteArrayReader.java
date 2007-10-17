@@ -27,7 +27,7 @@ public final class FastByteArrayReader {
 
   private int mPosition;
 
-  /**
+  /**F
    * Constructor.
    *
    */
@@ -44,17 +44,6 @@ public final class FastByteArrayReader {
     return mBuffer[mPosition++];
   }
 
-  public final int readPseudoInt() throws Exception {
-    int value =
-        ((mBuffer[mPosition++] & 0xFF) << 16)
-            | ((mBuffer[mPosition++] & 0xFF) << 8)
-            | (mBuffer[mPosition++] & 0xFF);
-    if (value >> 23 == 1) {
-      value = value | 0xFF000000;
-    }
-    return value;
-  }
-
   public final int readInt() throws Exception {
     return ((mBuffer[mPosition++] & 0xFF) << 24)
         | ((mBuffer[mPosition++] & 0xFF) << 16)
@@ -62,7 +51,7 @@ public final class FastByteArrayReader {
         | (mBuffer[mPosition++] & 0xFF);
   }
 
-  public final int readPseudoVarSizeInt() throws Exception {
+  public final int readVarInt() throws Exception {
     int value = ((mBuffer[mPosition++] & 127));
     if ((mBuffer[mPosition - 1] & 128) != 0) {
       value |= ((mBuffer[mPosition++] & 127)) << 7;
@@ -81,20 +70,7 @@ public final class FastByteArrayReader {
     return value;
   }
 
-  public final long readPseudoLong() throws Exception {
-    long value =
-        (((long) (mBuffer[mPosition++] & 255) << 40)
-            + ((long) (mBuffer[mPosition++] & 255) << 32)
-            + ((long) (mBuffer[mPosition++] & 255) << 24)
-            + ((mBuffer[mPosition++] & 255) << 16)
-            + ((mBuffer[mPosition++] & 255) << 8) + (mBuffer[mPosition++] & 255));
-    if (value >> 47 == 1) {
-      value = value | 0xFFFF000000000000L;
-    }
-    return value;
-  }
-
-  public final long readVarSizeLong() throws Exception {
+  public final long readVarLong() throws Exception {
     mPosition++;
     long value = (long) (mBuffer[mPosition++] & 255);
     if (mBuffer[mPosition - 2] > 1) {
@@ -111,13 +87,20 @@ public final class FastByteArrayReader {
                 value += ((long) (mBuffer[mPosition++] & 255) << 48);
                 if (mBuffer[mPosition - 8] > 7) {
                   value += ((long) mBuffer[mPosition++] << 56);
-                } else if ((mBuffer[mPosition-1] & 128) != 0) value |= 0xFF000000000000L;
-              } else if ((mBuffer[mPosition-1] & 128) != 0) value |= 0xFFFF000000000000L;
-            } else if ((mBuffer[mPosition-1] & 128) != 0) value |= 0xFFFFFF0000000000L;
-          } else if ((mBuffer[mPosition-1] & 128) != 0) value |= 0xFFFFFFFF00000000L;
-        } else if ((mBuffer[mPosition-1] & 128) != 0) value |= 0xFFFFFFFFFF000000L;
-      } else if ((mBuffer[mPosition-1] & 128) != 0) value |= 0xFFFFFFFFFFFF0000L;
-    } else if ((mBuffer[mPosition-1] & 128) != 0) value |= 0xFFFFFFFFFFFFFF00L;
+                } else if ((mBuffer[mPosition - 1] & 128) != 0)
+                  value |= 0xFF000000000000L;
+              } else if ((mBuffer[mPosition - 1] & 128) != 0)
+                value |= 0xFFFF000000000000L;
+            } else if ((mBuffer[mPosition - 1] & 128) != 0)
+              value |= 0xFFFFFF0000000000L;
+          } else if ((mBuffer[mPosition - 1] & 128) != 0)
+            value |= 0xFFFFFFFF00000000L;
+        } else if ((mBuffer[mPosition - 1] & 128) != 0)
+          value |= 0xFFFFFFFFFF000000L;
+      } else if ((mBuffer[mPosition - 1] & 128) != 0)
+        value |= 0xFFFFFFFFFFFF0000L;
+    } else if ((mBuffer[mPosition - 1] & 128) != 0)
+      value |= 0xFFFFFFFFFFFFFF00L;
     return value;
   }
 

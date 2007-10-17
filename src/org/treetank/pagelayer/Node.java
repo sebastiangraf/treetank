@@ -128,39 +128,39 @@ public final class Node implements INode {
     switch (mKind) {
     case IConstants.DOCUMENT:
       mParentKey = IConstants.NULL_KEY;
-      mFirstChildKey = mNodeKey - in.readPseudoLong();
+      mFirstChildKey = mNodeKey - in.readVarLong();
       mLeftSiblingKey = IConstants.NULL_KEY;
       mRightSiblingKey = IConstants.NULL_KEY;
-      mChildCount = in.readPseudoLong();
+      mChildCount = in.readVarLong();
       break;
 
     case IConstants.ELEMENT:
-      mParentKey = mNodeKey - in.readPseudoLong();
-      mFirstChildKey = mNodeKey - in.readPseudoLong();
-      mLeftSiblingKey = mNodeKey - in.readPseudoLong();
-      mRightSiblingKey = mNodeKey - in.readPseudoLong();
-      mChildCount = in.readPseudoLong();
+      mParentKey = mNodeKey - in.readVarLong();
+      mFirstChildKey = mNodeKey - in.readVarLong();
+      mLeftSiblingKey = mNodeKey - in.readVarLong();
+      mRightSiblingKey = mNodeKey - in.readVarLong();
+      mChildCount = in.readVarLong();
       mAttributes = new Attribute[in.readByte()];
       for (int i = 0, l = mAttributes.length; i < l; i++) {
         mAttributes[i] =
-            new Attribute(mNodeKey + i + 1, mNodeKey, in.readPseudoInt(), in
-                .readPseudoInt(), in.readPseudoInt(), in.readByteArray());
+            new Attribute(mNodeKey + i + 1, mNodeKey, in.readVarInt(), in
+                .readVarInt(), in.readVarInt(), in.readByteArray());
       }
       mNamespaces = new Namespace[in.readByte()];
       for (int i = 0, l = mNamespaces.length; i < l; i++) {
-        mNamespaces[i] = new Namespace(in.readPseudoInt(), in.readPseudoInt());
+        mNamespaces[i] = new Namespace(in.readVarInt(), in.readVarInt());
       }
-      mLocalPartKey = in.readPseudoInt();
-      mURIKey = in.readPseudoInt();
-      mPrefixKey = in.readPseudoInt();
+      mLocalPartKey = in.readVarInt();
+      mURIKey = in.readVarInt();
+      mPrefixKey = in.readVarInt();
       mValue = UTF.EMPTY;
       break;
 
     case IConstants.TEXT:
-      mParentKey = mNodeKey - in.readPseudoLong();
+      mParentKey = mNodeKey - in.readVarLong();
       mFirstChildKey = IConstants.NULL_KEY;
-      mLeftSiblingKey = in.readPseudoLong();
-      mRightSiblingKey = in.readPseudoLong();
+      mLeftSiblingKey = in.readVarLong();
+      mRightSiblingKey = in.readVarLong();
       mChildCount = 0L;
       mAttributes = null;
       mNamespaces = null;
@@ -171,24 +171,24 @@ public final class Node implements INode {
       break;
 
     default:
-      mParentKey = mNodeKey - in.readPseudoLong();
-      mFirstChildKey = mNodeKey - in.readPseudoLong();
-      mLeftSiblingKey = mNodeKey - in.readPseudoLong();
-      mRightSiblingKey = mNodeKey - in.readPseudoLong();
-      mChildCount = in.readPseudoLong();
+      mParentKey = mNodeKey - in.readVarLong();
+      mFirstChildKey = mNodeKey - in.readVarLong();
+      mLeftSiblingKey = mNodeKey - in.readVarLong();
+      mRightSiblingKey = mNodeKey - in.readVarLong();
+      mChildCount = in.readVarLong();
       mAttributes = new Attribute[in.readByte()];
       for (int i = 0, l = mAttributes.length; i < l; i++) {
         mAttributes[i] =
-            new Attribute(mNodeKey + i + 1, mNodeKey, in.readPseudoInt(), in
-                .readPseudoInt(), in.readPseudoInt(), in.readByteArray());
+            new Attribute(mNodeKey + i + 1, mNodeKey, in.readVarInt(), in
+                .readVarInt(), in.readVarInt(), in.readByteArray());
       }
       mNamespaces = new Namespace[in.readByte()];
       for (int i = 0, l = mNamespaces.length; i < l; i++) {
-        mNamespaces[i] = new Namespace(in.readPseudoInt(), in.readPseudoInt());
+        mNamespaces[i] = new Namespace(in.readVarInt(), in.readVarInt());
       }
-      mLocalPartKey = in.readPseudoInt();
-      mURIKey = in.readPseudoInt();
-      mPrefixKey = in.readPseudoInt();
+      mLocalPartKey = in.readVarInt();
+      mURIKey = in.readVarInt();
+      mPrefixKey = in.readVarInt();
       mValue = in.readByteArray();
     }
   }
@@ -366,59 +366,59 @@ public final class Node implements INode {
     switch (mKind) {
 
     case IConstants.DOCUMENT:
-      out.writePseudoLong(mNodeKey - mFirstChildKey);
-      out.writePseudoLong(mChildCount);
+      out.writeVarLong(mNodeKey - mFirstChildKey);
+      out.writeVarLong(mChildCount);
       break;
 
     case IConstants.ELEMENT:
-      out.writePseudoLong(mNodeKey - mParentKey);
-      out.writePseudoLong(mNodeKey - mFirstChildKey);
-      out.writePseudoLong(mNodeKey - mLeftSiblingKey);
-      out.writePseudoLong(mNodeKey - mRightSiblingKey);
-      out.writePseudoLong(mChildCount);
+      out.writeVarLong(mNodeKey - mParentKey);
+      out.writeVarLong(mNodeKey - mFirstChildKey);
+      out.writeVarLong(mNodeKey - mLeftSiblingKey);
+      out.writeVarLong(mNodeKey - mRightSiblingKey);
+      out.writeVarLong(mChildCount);
       out.writeByte((byte) mAttributes.length);
       for (int i = 0, l = mAttributes.length; i < l; i++) {
-        out.writePseudoInt(mAttributes[i].getLocalPartKey());
-        out.writePseudoInt(mAttributes[i].getURIKey());
-        out.writePseudoInt(mAttributes[i].getPrefixKey());
+        out.writeVarInt(mAttributes[i].getLocalPartKey());
+        out.writeVarInt(mAttributes[i].getURIKey());
+        out.writeVarInt(mAttributes[i].getPrefixKey());
         out.writeByteArray(mAttributes[i].getValue());
       }
       out.writeByte((byte) mNamespaces.length);
       for (int i = 0, l = mNamespaces.length; i < l; i++) {
-        out.writePseudoInt(mNamespaces[i].getURIKey());
-        out.writePseudoInt(mNamespaces[i].getPrefixKey());
+        out.writeVarInt(mNamespaces[i].getURIKey());
+        out.writeVarInt(mNamespaces[i].getPrefixKey());
       }
-      out.writePseudoInt(mLocalPartKey);
-      out.writePseudoInt(mURIKey);
-      out.writePseudoInt(mPrefixKey);
+      out.writeVarInt(mLocalPartKey);
+      out.writeVarInt(mURIKey);
+      out.writeVarInt(mPrefixKey);
       break;
     case IConstants.TEXT:
-      out.writePseudoLong(mNodeKey - mParentKey);
-      out.writePseudoLong(mLeftSiblingKey);
-      out.writePseudoLong(mRightSiblingKey);
+      out.writeVarLong(mNodeKey - mParentKey);
+      out.writeVarLong(mLeftSiblingKey);
+      out.writeVarLong(mRightSiblingKey);
       out.writeByteArray(mValue);
       break;
     default:
-      out.writePseudoLong(mNodeKey - mParentKey);
-      out.writePseudoLong(mNodeKey - mFirstChildKey);
-      out.writePseudoLong(mNodeKey - mLeftSiblingKey);
-      out.writePseudoLong(mNodeKey - mRightSiblingKey);
-      out.writePseudoLong(mChildCount);
+      out.writeVarLong(mNodeKey - mParentKey);
+      out.writeVarLong(mNodeKey - mFirstChildKey);
+      out.writeVarLong(mNodeKey - mLeftSiblingKey);
+      out.writeVarLong(mNodeKey - mRightSiblingKey);
+      out.writeVarLong(mChildCount);
       out.writeByte((byte) mAttributes.length);
       for (int i = 0, l = mAttributes.length; i < l; i++) {
-        out.writePseudoInt(mAttributes[i].getLocalPartKey());
-        out.writePseudoInt(mAttributes[i].getURIKey());
-        out.writePseudoInt(mAttributes[i].getPrefixKey());
+        out.writeVarInt(mAttributes[i].getLocalPartKey());
+        out.writeVarInt(mAttributes[i].getURIKey());
+        out.writeVarInt(mAttributes[i].getPrefixKey());
         out.writeByteArray(mAttributes[i].getValue());
       }
       out.writeByte((byte) mNamespaces.length);
       for (int i = 0, l = mNamespaces.length; i < l; i++) {
-        out.writePseudoInt(mNamespaces[i].getURIKey());
-        out.writePseudoInt(mNamespaces[i].getPrefixKey());
+        out.writeVarInt(mNamespaces[i].getURIKey());
+        out.writeVarInt(mNamespaces[i].getPrefixKey());
       }
-      out.writePseudoInt(mLocalPartKey);
-      out.writePseudoInt(mURIKey);
-      out.writePseudoInt(mPrefixKey);
+      out.writeVarInt(mLocalPartKey);
+      out.writeVarInt(mURIKey);
+      out.writeVarInt(mPrefixKey);
       out.writeByteArray(mValue);
     }
   }

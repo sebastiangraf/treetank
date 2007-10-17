@@ -73,13 +73,13 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
     final RevisionRootPage revisionRootPage = new RevisionRootPage(revisionKey);
 
     // Revisioning (deep load).
-    revisionRootPage.mNodeCount = in.readPseudoLong();
+    revisionRootPage.mNodeCount = in.readVarLong();
 
     // Name page (shallow load without name page instance).
     revisionRootPage.mNamePageReference = readPageReference(in);
 
     // Node pages (shallow load without node page instances).
-    revisionRootPage.mMaxNodeKey = in.readPseudoLong();
+    revisionRootPage.mMaxNodeKey = in.readVarLong();
 
     // Indirect node pages (shallow load without indirect page instances).
     revisionRootPage.mIndirectPageReference = readPageReference(in);
@@ -162,9 +162,9 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
    * {@inheritDoc}
    */
   public void serialize(final FastByteArrayWriter out) throws Exception {
-    out.writePseudoLong(mNodeCount);
+    out.writeVarLong(mNodeCount);
     serialize(out, mNamePageReference);
-    out.writePseudoLong(mMaxNodeKey);
+    out.writeVarLong(mMaxNodeKey);
     serialize(out, mIndirectPageReference);
   }
 
