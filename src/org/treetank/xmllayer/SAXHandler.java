@@ -48,7 +48,7 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
   protected IWriteTransaction mWTX;
 
   /** Stack containing left sibling nodeKey of each level. */
-  private final FastLongStack mLeftSiblingKeyStack;
+  protected final FastLongStack mLeftSiblingKeyStack;
 
   /** Aggregated pending text node. */
   private final StringBuilder mCharacters;
