@@ -89,7 +89,7 @@ public class ReadTransaction implements IReadTransaction {
   public final boolean moveTo(final long nodeKey) throws Exception {
     if (nodeKey != IConstants.NULL_KEY) {
       mCurrentNode = mState.getNode(nodeKey);
-      return true;
+      return (mCurrentNode != null);
     } else {
       mCurrentNode = null;
       return false;

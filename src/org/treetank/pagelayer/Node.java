@@ -82,9 +82,17 @@ public final class Node implements INode {
   }
 
   public Node(final long nodeKey) {
-    mNodeKey = nodeKey;
-    mChildCount = 0L;
-    mKind = IConstants.DOCUMENT;
+    this(
+        nodeKey,
+        IConstants.NULL_KEY,
+        IConstants.NULL_KEY,
+        IConstants.NULL_KEY,
+        IConstants.NULL_KEY,
+        IConstants.DOCUMENT,
+        (int) IConstants.NULL_KEY,
+        (int) IConstants.NULL_KEY,
+        (int) IConstants.NULL_KEY,
+        UTF.EMPTY);
   }
 
   public Node(final INode node) {
