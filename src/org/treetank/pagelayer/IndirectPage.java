@@ -50,7 +50,6 @@ final public class IndirectPage extends AbstractPage implements IPage {
   public static final IndirectPage create() {
     final IndirectPage indirectPage = new IndirectPage();
     createPageReferences(indirectPage.mIndirectPageReferences);
-    indirectPage.setDirty();
     return indirectPage;
   }
 
@@ -75,7 +74,6 @@ final public class IndirectPage extends AbstractPage implements IPage {
     clonePageReferences(
         indirectPage.mIndirectPageReferences,
         committedIndirectPage.mIndirectPageReferences);
-    indirectPage.setDirty();
     return indirectPage;
   }
 
@@ -105,7 +103,6 @@ final public class IndirectPage extends AbstractPage implements IPage {
    * {@inheritDoc}
    */
   public final void commit(final IWriteTransactionState state) throws Exception {
-    super.commit(state);
     state.commit(mIndirectPageReferences);
   }
 
