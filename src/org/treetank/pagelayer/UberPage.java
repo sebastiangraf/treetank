@@ -27,7 +27,7 @@ import org.treetank.api.IWriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
-final public class UberPage extends AbstractPage implements IPage {
+final public class UberPage implements IPage {
 
   private long mRevisionCount;
 
@@ -59,7 +59,7 @@ final public class UberPage extends AbstractPage implements IPage {
     uberPage.mRevisionCount = IConstants.UBP_INIT_ROOT_REVISION_KEY;
 
     // Indirect pages (shallow init).
-    uberPage.mIndirectPageReference = createPageReference();
+    uberPage.mIndirectPageReference = new PageReference();
 
     // --- Create revision tree ------------------------------------------------
 
@@ -117,7 +117,7 @@ final public class UberPage extends AbstractPage implements IPage {
     uberPage.mRevisionCount = in.readVarLong();
 
     // Indirect pages (shallow load without indirect page instances).
-    uberPage.mIndirectPageReference = readPageReference(in);
+    uberPage.mIndirectPageReference = new PageReference(in);
 
     return uberPage;
   }
@@ -137,7 +137,7 @@ final public class UberPage extends AbstractPage implements IPage {
 
     // Indirect pages (shallow COW without page instances).
     uberPage.mIndirectPageReference =
-        clonePageReference(committedUberPage.mIndirectPageReference);
+        new PageReference(committedUberPage.mIndirectPageReference);
 
     return uberPage;
   }
@@ -163,7 +163,7 @@ final public class UberPage extends AbstractPage implements IPage {
    */
   public final void serialize(final FastByteArrayWriter out) throws Exception {
     out.writeVarLong(mRevisionCount);
-    serialize(out, mIndirectPageReference);
+    mIndirectPageReference.serialize(out);
   }
 
 }

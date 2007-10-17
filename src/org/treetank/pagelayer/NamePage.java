@@ -31,7 +31,7 @@ import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 import org.treetank.utils.UTF;
 
-final public class NamePage extends AbstractPage implements IPage {
+final public class NamePage implements IPage {
 
   /** Map the hash of a name to its name. */
   private final Map<Integer, String> mNameMap;

@@ -26,7 +26,7 @@ import org.treetank.api.IWriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
-final public class RevisionRootPage extends AbstractPage implements IPage {
+final public class RevisionRootPage implements IPage {
 
   private final long mRevisionKey;
 
@@ -53,14 +53,14 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
     revisionRootPage.mNodeCount = 0L;
 
     // Name page (shallow init).
-    revisionRootPage.mNamePageReference = createPageReference();
+    revisionRootPage.mNamePageReference = new PageReference();
     revisionRootPage.mNamePageReference.setPage(NamePage.create());
 
     // Node pages (shallow init).
     revisionRootPage.mMaxNodeKey = -1L;
 
     // Indirect pages (shallow init).
-    revisionRootPage.mIndirectPageReference = createPageReference();
+    revisionRootPage.mIndirectPageReference = new PageReference();
 
     return revisionRootPage;
 
@@ -76,13 +76,13 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
     revisionRootPage.mNodeCount = in.readVarLong();
 
     // Name page (shallow load without name page instance).
-    revisionRootPage.mNamePageReference = readPageReference(in);
+    revisionRootPage.mNamePageReference = new PageReference(in);
 
     // Node pages (shallow load without node page instances).
     revisionRootPage.mMaxNodeKey = in.readVarLong();
 
     // Indirect node pages (shallow load without indirect page instances).
-    revisionRootPage.mIndirectPageReference = readPageReference(in);
+    revisionRootPage.mIndirectPageReference = new PageReference(in);
 
     return revisionRootPage;
 
@@ -99,14 +99,14 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
 
     // Names (deep COW).
     revisionRootPage.mNamePageReference =
-        clonePageReference(committedRevisionRootPage.mNamePageReference);
+        new PageReference(committedRevisionRootPage.mNamePageReference);
 
     // INode pages (shallow COW without node page instances).
     revisionRootPage.mMaxNodeKey = committedRevisionRootPage.mMaxNodeKey;
 
     // Indirect node pages (shallow COW without node page instances).
     revisionRootPage.mIndirectPageReference =
-        clonePageReference(committedRevisionRootPage.mIndirectPageReference);
+        new PageReference(committedRevisionRootPage.mIndirectPageReference);
 
     return revisionRootPage;
   }
@@ -163,9 +163,9 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
    */
   public void serialize(final FastByteArrayWriter out) throws Exception {
     out.writeVarLong(mNodeCount);
-    serialize(out, mNamePageReference);
+    mNamePageReference.serialize(out);
     out.writeVarLong(mMaxNodeKey);
-    serialize(out, mIndirectPageReference);
+    mIndirectPageReference.serialize(out);
   }
 
 }
