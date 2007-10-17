@@ -92,7 +92,7 @@ public class UpdateTest {
 
     IWriteTransaction wtx = session.beginWriteTransaction();
     session.commit();
-    
+
     wtx = session.beginWriteTransaction();
     assertEquals(true, wtx.moveToRoot());
     assertEquals(1L, wtx.insertFirstChild(
@@ -138,6 +138,26 @@ public class UpdateTest {
     session.commit();
 
     session.close();
+  }
+
+  @Test
+  public void testPageBoundary() throws Exception {
+
+    ISession session = new Session(TEST_PATH);
+
+    // Document root.
+    IWriteTransaction wtx = session.beginWriteTransaction();
+
+    for (int i = 0; i < 256 * 256 + 1; i++) {
+      wtx.insertFirstChild("", "", "");
+    }
+
+    assertEquals(true, wtx.moveTo(0L));
+    assertEquals(0L, wtx.getNodeKey());
+
+    session.abort();
+    session.close();
+
   }
 
 }
