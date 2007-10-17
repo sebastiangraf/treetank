@@ -181,4 +181,16 @@ final public class UberPage implements IPage {
     return mDirty;
   }
 
+  @Override
+  public final String toString() {
+    return super.toString()
+        + ": revisionCount="
+        + mRevisionCount
+        + ", nodeCount="
+        + ", indirectPage=("
+        + mIndirectPageReference.getPage()
+        + "), isDirty="
+        + mDirty;
+  }
+
 }

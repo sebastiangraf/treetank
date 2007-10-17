@@ -145,4 +145,13 @@ public final class NodePage implements IPage {
     return mDirty;
   }
 
+  @Override
+  public final String toString() {
+    return super.toString()
+        + ": nodePageKey="
+        + mNodePageKey
+        + ", isDirty="
+        + mDirty;
+  }
+
 }

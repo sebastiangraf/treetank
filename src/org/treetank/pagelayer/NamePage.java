@@ -120,5 +120,14 @@ final public class NamePage implements IPage {
   public final boolean isDirty() {
     return mDirty;
   }
+  
+  @Override
+  public final String toString() {
+    return super.toString()
+        + ": nameCount="
+        + mNameMap.size()
+        + ", isDirty="
+        + mDirty;
+  }
 
 }
