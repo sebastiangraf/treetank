@@ -36,26 +36,30 @@ import org.treetank.utils.FastByteArrayWriter;
  */
 public final class NodePage implements IPage {
 
+  /** True if page was created or cloned. False if it was read or committed. */
+  private boolean mDirty;
+
   /** Key of node page. This is the base key of all contained nodes. */
   private final long mNodePageKey;
 
   /** Array of nodes. This can have null nodes that were removed. */
   private final Node[] mNodes;
 
-  private NodePage(final long nodePageKey) {
+  private NodePage(final boolean dirty, final long nodePageKey) {
+    mDirty = dirty;
     mNodePageKey = nodePageKey;
     mNodes = new Node[IConstants.NDP_NODE_COUNT];
   }
 
   public static final NodePage create(final long nodePageKey) {
-    final NodePage nodePage = new NodePage(nodePageKey);
+    final NodePage nodePage = new NodePage(true, nodePageKey);
     return nodePage;
   }
 
   public static final NodePage read(
       final FastByteArrayReader in,
       final long nodePageKey) throws Exception {
-    final NodePage nodePage = new NodePage(nodePageKey);
+    final NodePage nodePage = new NodePage(false, nodePageKey);
 
     final long keyBase =
         nodePage.mNodePageKey << IConstants.NDP_NODE_COUNT_EXPONENT;
@@ -71,7 +75,8 @@ public final class NodePage implements IPage {
   }
 
   public static final NodePage clone(final NodePage committedNodePage) {
-    final NodePage nodePage = new NodePage(committedNodePage.mNodePageKey);
+    final NodePage nodePage =
+        new NodePage(true, committedNodePage.mNodePageKey);
 
     // Deep-copy all nodes.
     for (int i = 0; i < IConstants.NDP_NODE_COUNT; i++) {
@@ -116,7 +121,7 @@ public final class NodePage implements IPage {
    * {@inheritDoc}
    */
   public final void commit(final IWriteTransactionState state) throws Exception {
-    // Nothing to do here.
+    mDirty = false;
   }
 
   /**
@@ -131,6 +136,13 @@ public final class NodePage implements IPage {
         out.writeBoolean(false);
       }
     }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final boolean isDirty() {
+    return mDirty;
   }
 
 }

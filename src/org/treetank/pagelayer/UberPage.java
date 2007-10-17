@@ -29,6 +29,9 @@ import org.treetank.utils.FastByteArrayWriter;
 
 final public class UberPage implements IPage {
 
+  /** True if page was created or cloned. False if it was read or committed. */
+  private boolean mDirty;
+
   private long mRevisionCount;
 
   private PageReference mIndirectPageReference;
@@ -38,7 +41,8 @@ final public class UberPage implements IPage {
    * 
    * @param pageCache IPageCache to read from.
    */
-  private UberPage() {
+  private UberPage(final boolean dirty) {
+    mDirty = dirty;
     mIndirectPageReference = null;
   }
 
@@ -53,7 +57,7 @@ final public class UberPage implements IPage {
 
     // --- Create uber page ----------------------------------------------------
 
-    final UberPage uberPage = new UberPage();
+    final UberPage uberPage = new UberPage(true);
 
     // Make sure that all references are instantiated.
     uberPage.mRevisionCount = IConstants.UBP_INIT_ROOT_REVISION_KEY;
@@ -111,7 +115,7 @@ final public class UberPage implements IPage {
   public static final UberPage read(final FastByteArrayReader in)
       throws Exception {
 
-    final UberPage uberPage = new UberPage();
+    final UberPage uberPage = new UberPage(false);
 
     // Deserialize uber page.
     uberPage.mRevisionCount = in.readVarLong();
@@ -130,7 +134,7 @@ final public class UberPage implements IPage {
    */
   public static final UberPage clone(final UberPage committedUberPage) {
 
-    final UberPage uberPage = new UberPage();
+    final UberPage uberPage = new UberPage(true);
 
     // COW uber page.
     uberPage.mRevisionCount = committedUberPage.mRevisionCount;
@@ -156,6 +160,7 @@ final public class UberPage implements IPage {
   public final void commit(final IWriteTransactionState state) throws Exception {
     state.commit(mIndirectPageReference);
     mRevisionCount += 1;
+    mDirty = false;
   }
 
   /**
@@ -164,6 +169,13 @@ final public class UberPage implements IPage {
   public final void serialize(final FastByteArrayWriter out) throws Exception {
     out.writeVarLong(mRevisionCount);
     mIndirectPageReference.serialize(out);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final boolean isDirty() {
+    return mDirty;
   }
 
 }

@@ -32,6 +32,8 @@ import org.treetank.utils.FastByteArrayWriter;
  * </p>
  */
 public interface IPage {
+  
+  public boolean isDirty();
 
   /**
    * Recursively call commit on all referenced pages.

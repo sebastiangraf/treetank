@@ -29,6 +29,9 @@ import org.treetank.utils.FastByteArrayWriter;
 
 final public class IndirectPage implements IPage {
 
+  /** True if page was created or cloned. False if it was read or committed. */
+  private boolean mDirty;
+
   private final PageReference[] mIndirectPageReferences;
 
   /**
@@ -36,7 +39,8 @@ final public class IndirectPage implements IPage {
    * 
    * @param pageCache IPageCache to read from.
    */
-  private IndirectPage() {
+  private IndirectPage(final boolean dirty) {
+    mDirty = dirty;
     mIndirectPageReferences = new PageReference[IConstants.INP_REFERENCE_COUNT];
   }
 
@@ -48,7 +52,7 @@ final public class IndirectPage implements IPage {
    * @throws Exception
    */
   public static final IndirectPage create() {
-    final IndirectPage indirectPage = new IndirectPage();
+    final IndirectPage indirectPage = new IndirectPage(true);
     return indirectPage;
   }
 
@@ -62,7 +66,7 @@ final public class IndirectPage implements IPage {
    */
   public static final IndirectPage read(final FastByteArrayReader in)
       throws Exception {
-    final IndirectPage indirectPage = new IndirectPage();
+    final IndirectPage indirectPage = new IndirectPage(false);
 
     for (int i = 0, l = indirectPage.mIndirectPageReferences.length; i < l; i++) {
       if (in.readBoolean()) {
@@ -75,7 +79,7 @@ final public class IndirectPage implements IPage {
 
   public static final IndirectPage clone(
       final IndirectPage committedIndirectPage) {
-    final IndirectPage indirectPage = new IndirectPage();
+    final IndirectPage indirectPage = new IndirectPage(true);
 
     for (int i = 0, l = indirectPage.mIndirectPageReferences.length; i < l; i++) {
       if (committedIndirectPage.mIndirectPageReferences[i] != null) {
@@ -117,6 +121,7 @@ final public class IndirectPage implements IPage {
    */
   public final void commit(final IWriteTransactionState state) throws Exception {
     state.commit(mIndirectPageReferences);
+    mDirty = false;
   }
 
   /**
@@ -131,6 +136,13 @@ final public class IndirectPage implements IPage {
         out.writeBoolean(false);
       }
     }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final boolean isDirty() {
+    return mDirty;
   }
 
 }

@@ -28,6 +28,9 @@ import org.treetank.utils.FastByteArrayWriter;
 
 final public class RevisionRootPage implements IPage {
 
+  /** True if page was created or cloned. False if it was read or committed. */
+  private boolean mDirty;
+
   private final long mRevisionKey;
 
   private long mNodeCount;
@@ -39,7 +42,8 @@ final public class RevisionRootPage implements IPage {
 
   private PageReference mIndirectPageReference;
 
-  private RevisionRootPage(final long revisionKey) {
+  private RevisionRootPage(final boolean dirty, final long revisionKey) {
+    mDirty = dirty;
     mRevisionKey = revisionKey;
     mNamePageReference = null;
     mIndirectPageReference = null;
@@ -47,7 +51,8 @@ final public class RevisionRootPage implements IPage {
 
   public static final RevisionRootPage create(final long revisionKey) {
 
-    final RevisionRootPage revisionRootPage = new RevisionRootPage(revisionKey);
+    final RevisionRootPage revisionRootPage =
+        new RevisionRootPage(true, revisionKey);
 
     // Revisioning (deep init).
     revisionRootPage.mNodeCount = 0L;
@@ -70,7 +75,8 @@ final public class RevisionRootPage implements IPage {
       final FastByteArrayReader in,
       final long revisionKey) throws Exception {
 
-    final RevisionRootPage revisionRootPage = new RevisionRootPage(revisionKey);
+    final RevisionRootPage revisionRootPage =
+        new RevisionRootPage(false, revisionKey);
 
     // Revisioning (deep load).
     revisionRootPage.mNodeCount = in.readVarLong();
@@ -92,7 +98,7 @@ final public class RevisionRootPage implements IPage {
       final RevisionRootPage committedRevisionRootPage) {
 
     final RevisionRootPage revisionRootPage =
-        new RevisionRootPage(committedRevisionRootPage.mRevisionKey + 1);
+        new RevisionRootPage(true, committedRevisionRootPage.mRevisionKey + 1);
 
     // Revisioning (deep COW).
     revisionRootPage.mNodeCount = committedRevisionRootPage.mNodeCount;
@@ -156,6 +162,7 @@ final public class RevisionRootPage implements IPage {
   public final void commit(final IWriteTransactionState state) throws Exception {
     state.commit(mNamePageReference);
     state.commit(mIndirectPageReference);
+    mDirty = false;
   }
 
   /**
@@ -166,6 +173,13 @@ final public class RevisionRootPage implements IPage {
     mNamePageReference.serialize(out);
     out.writeVarLong(mMaxNodeKey);
     mIndirectPageReference.serialize(out);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final boolean isDirty() {
+    return mDirty;
   }
 
 }

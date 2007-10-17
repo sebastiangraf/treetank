@@ -33,22 +33,26 @@ import org.treetank.utils.UTF;
 
 final public class NamePage implements IPage {
 
+  /** True if page was created or cloned. False if it was read or committed. */
+  private boolean mDirty;
+  
   /** Map the hash of a name to its name. */
   private final Map<Integer, String> mNameMap;
 
-  private NamePage() {
+  private NamePage(final boolean dirty) {
+    mDirty = dirty;
     mNameMap = new HashMap<Integer, String>();
   }
 
   public static final NamePage create() {
-    final NamePage namePage = new NamePage();
+    final NamePage namePage = new NamePage(true);
     return namePage;
   }
 
   public static final NamePage read(final FastByteArrayReader in)
       throws Exception {
 
-    final NamePage namePage = new NamePage();
+    final NamePage namePage = new NamePage(false);
 
     // Names (deep load).
     for (int i = 0, l = in.readVarInt(); i < l; i++) {
@@ -61,7 +65,7 @@ final public class NamePage implements IPage {
 
   public static final NamePage clone(final NamePage committedNamePage) {
 
-    final NamePage namePage = new NamePage();
+    final NamePage namePage = new NamePage(true);
 
     // Names (deep COW).
     namePage.mNameMap.putAll(committedNamePage.mNameMap);
@@ -93,7 +97,7 @@ final public class NamePage implements IPage {
    * {@inheritDoc}
    */
   public final void commit(final IWriteTransactionState state) throws Exception {
-    // Nothing to do here.
+    mDirty = false;
   }
 
   /**
@@ -108,6 +112,13 @@ final public class NamePage implements IPage {
       out.writeVarInt(key);
       out.writeByteArray(UTF.convert(mNameMap.get(key)));
     }
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public final boolean isDirty() {
+    return mDirty;
   }
 
 }
