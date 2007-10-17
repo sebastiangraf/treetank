@@ -69,12 +69,6 @@ public class ReadTransactionState implements IReadTransactionState {
   /** Cached name page of this revision. */
   private NamePage mNamePage;
 
-  /** Offsets of indirect tree to locate node page. */
-  private int[] mIndirectOffsets;
-
-  /** Pages of indirect tree to locate node page. */
-  private IndirectPage[] mIndirectPages;
-
   /**
    * Standard constructor.
    * 
@@ -95,12 +89,6 @@ public class ReadTransactionState implements IReadTransactionState {
     mRevisionRootPage = getRevisionRootPage(revisionKey);
     mNodePage = null;
     mNamePage = null;
-    mIndirectOffsets = new int[IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length];
-    mIndirectPages =
-        new IndirectPage[IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length];
-    for (int i = 0; i < mIndirectOffsets.length; i++) {
-      mIndirectOffsets[i] = -1;
-    }
   }
 
   /**
@@ -136,11 +124,7 @@ public class ReadTransactionState implements IReadTransactionState {
         levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
 
         // Fetch page from current level.
-        if (offset != mIndirectOffsets[level]) {
-          mIndirectOffsets[level] = offset;
-          mIndirectPages[level] = dereferenceIndirectPage(reference);
-        }
-        reference = mIndirectPages[level].getPageReference(offset);
+        reference = dereferenceIndirectPage(reference).getPageReference(offset);
       }
 
       mNodePage = dereferenceNodePage(reference, nodePageKey);
@@ -344,38 +328,6 @@ public class ReadTransactionState implements IReadTransactionState {
    */
   protected final NamePage getNamePage() {
     return mNamePage;
-  }
-
-  /**
-   * @param index Index of indirect reference.
-   * @return The indirect offsets.
-   */
-  protected final int getIndirectOffset(final int index) {
-    return mIndirectOffsets[index];
-  }
-
-  /**
-   * @param index Index of indirect reference.
-   * @param value Indirect reference.
-   */
-  protected final void setIndirectOffset(final int index, final int value) {
-    mIndirectOffsets[index] = value;
-  }
-
-  /**
-   * @param index Index of indirect page.
-   * @return The indirect pages.
-   */
-  protected final IndirectPage getIndirectPage(final int index) {
-    return mIndirectPages[index];
-  }
-
-  /**
-   * @param index Index of indirect page.
-   * @param page Indirect page.
-   */
-  protected final void setIndirectPage(final int index, final IndirectPage page) {
-    mIndirectPages[index] = page;
   }
 
   /**

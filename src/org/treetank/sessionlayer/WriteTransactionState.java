@@ -230,9 +230,7 @@ public final class WriteTransactionState extends ReadTransactionState
       levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
 
       // Fetch page from current level.
-      setIndirectOffset(level, offset);
-      setIndirectPage(level, prepareIndirectPage(reference));
-      reference = getIndirectPage(level).getPageReference(offset);
+      reference = prepareIndirectPage(reference).getPageReference(offset);
     }
 
     // Last level points to node page.
