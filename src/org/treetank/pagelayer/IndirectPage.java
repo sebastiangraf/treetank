@@ -84,6 +84,9 @@ final public class IndirectPage extends AbstractPage implements IPage {
    * @return Reference at given offset.
    */
   public final PageReference getPageReference(final int offset) {
+    if (mIndirectPageReferences[offset] == null) {
+      mIndirectPageReferences[offset] = new PageReference();
+    }
     return mIndirectPageReferences[offset];
   }
 

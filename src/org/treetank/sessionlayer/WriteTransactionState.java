@@ -141,7 +141,7 @@ public final class WriteTransactionState extends ReadTransactionState
    * {@inheritDoc}
    */
   public final void commit(final PageReference reference) throws Exception {
-    if (reference.isInstantiated() && reference.isDirty()) {
+    if (reference != null && reference.isInstantiated() && reference.isDirty()) {
 
       // Recursively write indirectely referenced pages.
       reference.getPage().commit(this);
