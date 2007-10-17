@@ -97,7 +97,6 @@ final public class NamePage implements IPage {
    * {@inheritDoc}
    */
   public final void commit(final IWriteTransactionState state) throws Exception {
-    mDirty = false;
   }
 
   /**
@@ -112,6 +111,7 @@ final public class NamePage implements IPage {
       out.writeVarInt(key);
       out.writeByteArray(UTF.convert(mNameMap.get(key)));
     }
+    mDirty = false;
   }
   
   /**

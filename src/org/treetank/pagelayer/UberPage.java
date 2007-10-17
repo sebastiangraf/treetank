@@ -163,7 +163,6 @@ final public class UberPage implements IPage {
    */
   public final void commit(final IWriteTransactionState state) throws Exception {
     state.commit(mIndirectPageReference);
-    mDirty = false;
   }
 
   /**
@@ -172,6 +171,7 @@ final public class UberPage implements IPage {
   public final void serialize(final FastByteArrayWriter out) throws Exception {
     out.writeVarLong(mRevisionCount);
     mIndirectPageReference.serialize(out);
+    mDirty = false;
   }
 
   /**

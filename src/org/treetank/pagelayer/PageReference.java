@@ -71,7 +71,7 @@ public class PageReference {
   }
 
   public final boolean isDirty() {
-    return (mPage != null || mPage.isDirty());
+    return mPage.isDirty();
   }
 
   public final long getChecksum() {
