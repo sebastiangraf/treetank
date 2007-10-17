@@ -170,20 +170,22 @@ public final class WriteTransactionState extends ReadTransactionState
 
     NamePage page = (NamePage) reference.getPage();
 
-    // Load page if it is already existing in a committed revision.
-    if (reference.isCommitted() && !reference.isInstantiated()) {
-      page = NamePage.clone(dereferenceNamePage(reference));
-      reference.setPage(page);
-    }
-
-    // Assert page is properly instantiated.
     if (!reference.isInstantiated()) {
-      page = NamePage.create();
-      reference.setPage(page);
+      if (reference.isCommitted()) {
+        page = NamePage.clone(dereferenceNamePage(reference));
+        reference.setPage(page);
+      } else {
+        page = NamePage.create();
+        reference.setPage(page);
+      }
+    } else {
+      if (!reference.isDirty()) {
+        page = NamePage.clone(page);
+        reference.setPage(page);
+      }
     }
 
     return page;
-
   }
 
   /**
@@ -194,16 +196,19 @@ public final class WriteTransactionState extends ReadTransactionState
 
     IndirectPage page = (IndirectPage) reference.getPage();
 
-    // Load page if it is already existing in a committed revision.
-    if (reference.isCommitted() && !reference.isInstantiated()) {
-      page = IndirectPage.clone(dereferenceIndirectPage(reference));
-      reference.setPage(page);
-    }
-
-    // Assert page is properly instantiated.
     if (!reference.isInstantiated()) {
-      page = IndirectPage.create();
-      reference.setPage(page);
+      if (reference.isCommitted()) {
+        page = IndirectPage.clone(dereferenceIndirectPage(reference));
+        reference.setPage(page);
+      } else {
+        page = IndirectPage.create();
+        reference.setPage(page);
+      }
+    } else {
+      if (!reference.isDirty()) {
+        page = IndirectPage.clone(page);
+        reference.setPage(page);
+      }
     }
 
     return page;
@@ -225,16 +230,19 @@ public final class WriteTransactionState extends ReadTransactionState
     // Last level points to node page.
     NodePage page = (NodePage) reference.getPage();
 
-    // Load page if it is already existing in a committed revision.
-    if (reference.isCommitted() && !reference.isInstantiated()) {
-      page = NodePage.clone(dereferenceNodePage(reference, nodePageKey));
-      reference.setPage(page);
-    }
-
-    // Assert page is properly instantiated.
     if (!reference.isInstantiated()) {
-      page = NodePage.create(nodePageKey);
-      reference.setPage(page);
+      if (reference.isCommitted()) {
+        page = NodePage.clone(dereferenceNodePage(reference, nodePageKey));
+        reference.setPage(page);
+      } else {
+        page = NodePage.create(nodePageKey);
+        reference.setPage(page);
+      }
+    } else {
+      if (!reference.isDirty()) {
+        page = NodePage.clone(page);
+        reference.setPage(page);
+      }
     }
 
     // Cache node page.
