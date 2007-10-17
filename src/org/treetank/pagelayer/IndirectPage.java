@@ -144,5 +144,12 @@ final public class IndirectPage implements IPage {
   public final boolean isDirty() {
     return mDirty;
   }
+  
+  @Override
+  public final String toString() {
+    return super.toString()
+        + ": isDirty="
+        + mDirty;
+  }
 
 }

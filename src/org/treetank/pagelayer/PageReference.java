@@ -121,7 +121,8 @@ public class PageReference {
 
   @Override
   public final String toString() {
-    return "start="
+    return super.toString()
+        + ": start="
         + mStart
         + ", length="
         + mLength

@@ -182,4 +182,19 @@ final public class RevisionRootPage implements IPage {
     return mDirty;
   }
 
+  @Override
+  public final String toString() {
+    return super.toString()
+        + ": revisionKey="
+        + mRevisionKey
+        + ", nodeCount="
+        + mNodeCount
+        + ", namePage=("
+        + mNamePageReference.getPage()
+        + "), indirectPage=("
+        + mIndirectPageReference.getPage()
+        + "), isDirty="
+        + mDirty;
+  }
+
 }
