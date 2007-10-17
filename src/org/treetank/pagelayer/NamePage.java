@@ -42,7 +42,7 @@ final public class NamePage extends AbstractPage implements IPage {
 
   public static final NamePage create() {
     final NamePage namePage = new NamePage();
-    namePage.setDirty(true);
+    namePage.setDirty();
     return namePage;
   }
 
@@ -56,7 +56,6 @@ final public class NamePage extends AbstractPage implements IPage {
       namePage.mNameMap.put(in.readVarInt(), UTF.convert(in.readByteArray()));
     }
 
-    namePage.setDirty(false);
     return namePage;
 
   }
@@ -68,7 +67,7 @@ final public class NamePage extends AbstractPage implements IPage {
     // Names (deep COW).
     namePage.mNameMap.putAll(committedNamePage.mNameMap);
 
-    namePage.setDirty(false);
+    namePage.setDirty();
     return namePage;
   }
 
@@ -90,14 +89,13 @@ final public class NamePage extends AbstractPage implements IPage {
    */
   public final void setName(final int key, final String name) {
     mNameMap.put(key, name);
-    setDirty(true);
   }
 
   /**
    * {@inheritDoc}
    */
   public final void commit(final IWriteTransactionState state) throws Exception {
-    setDirty(false);
+    super.commit(state);
   }
 
   /**

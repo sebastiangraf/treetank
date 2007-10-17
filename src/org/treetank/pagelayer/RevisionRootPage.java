@@ -62,7 +62,7 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
     // Indirect pages (shallow init).
     revisionRootPage.mIndirectPageReference = createPageReference();
 
-    revisionRootPage.setDirty(true);
+    revisionRootPage.setDirty();
     return revisionRootPage;
 
   }
@@ -85,7 +85,6 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
     // Indirect node pages (shallow load without indirect page instances).
     revisionRootPage.mIndirectPageReference = readPageReference(in);
 
-    revisionRootPage.setDirty(false);
     return revisionRootPage;
 
   }
@@ -110,7 +109,7 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
     revisionRootPage.mIndirectPageReference =
         clonePageReference(committedRevisionRootPage.mIndirectPageReference);
 
-    revisionRootPage.setDirty(false);
+    revisionRootPage.setDirty();
     return revisionRootPage;
   }
 
@@ -118,18 +117,8 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
     return mNamePageReference;
   }
 
-  public final void setNamePageReference(final PageReference reference) {
-    mNamePageReference = reference;
-    setDirty(true);
-  }
-
   public final PageReference getIndirectPageReference() {
     return mIndirectPageReference;
-  }
-
-  public final void setIndirectPageReference(final PageReference reference) {
-    mIndirectPageReference = reference;
-    setDirty(true);
   }
 
   /**
@@ -156,22 +145,20 @@ final public class RevisionRootPage extends AbstractPage implements IPage {
 
   public final void decrementNodeCount() {
     mNodeCount -= 1;
-    setDirty(true);
   }
 
   public final void incrementNodeCountAndMaxNodeKey() {
     mNodeCount += 1;
     mMaxNodeKey += 1;
-    setDirty(true);
   }
 
   /**
    * {@inheritDoc}
    */
   public final void commit(final IWriteTransactionState state) throws Exception {
+    super.commit(state);
     state.commit(mNamePageReference);
     state.commit(mIndirectPageReference);
-    setDirty(false);
   }
 
   /**

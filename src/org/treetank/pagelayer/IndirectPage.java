@@ -50,7 +50,7 @@ final public class IndirectPage extends AbstractPage implements IPage {
   public static final IndirectPage create() {
     final IndirectPage indirectPage = new IndirectPage();
     createPageReferences(indirectPage.mIndirectPageReferences);
-    indirectPage.setDirty(true);
+    indirectPage.setDirty();
     return indirectPage;
   }
 
@@ -66,7 +66,6 @@ final public class IndirectPage extends AbstractPage implements IPage {
       throws Exception {
     final IndirectPage indirectPage = new IndirectPage();
     readPageReferences(indirectPage.mIndirectPageReferences, in);
-    indirectPage.setDirty(false);
     return indirectPage;
   }
 
@@ -76,7 +75,7 @@ final public class IndirectPage extends AbstractPage implements IPage {
     clonePageReferences(
         indirectPage.mIndirectPageReferences,
         committedIndirectPage.mIndirectPageReferences);
-    indirectPage.setDirty(false);
+    indirectPage.setDirty();
     return indirectPage;
   }
 
@@ -100,15 +99,14 @@ final public class IndirectPage extends AbstractPage implements IPage {
       final int offset,
       final PageReference reference) {
     mIndirectPageReferences[offset] = reference;
-    setDirty(true);
   }
 
   /**
    * {@inheritDoc}
    */
   public final void commit(final IWriteTransactionState state) throws Exception {
+    super.commit(state);
     state.commit(mIndirectPageReferences);
-    setDirty(false);
   }
 
   /**
