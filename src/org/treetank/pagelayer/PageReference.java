@@ -63,7 +63,7 @@ public class PageReference {
   }
 
   public PageReference(final FastByteArrayReader in) throws Exception {
-    this(null, in.readPseudoLong(), in.readPseudoInt(), in.readPseudoLong());
+    this(null, in.readVarLong(), in.readVarInt(), in.readVarLong());
   }
 
   public final boolean isInstantiated() {
@@ -120,9 +120,9 @@ public class PageReference {
 
   public final void serialize(final FastByteArrayWriter out) throws Exception {
     mIsDirty = false;
-    out.writePseudoLong(mStart);
-    out.writePseudoInt(mLength);
-    out.writePseudoLong(mChecksum);
+    out.writeVarLong(mStart);
+    out.writeVarInt(mLength);
+    out.writeVarLong(mChecksum);
   }
 
 }

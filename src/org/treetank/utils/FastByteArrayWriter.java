@@ -21,8 +21,6 @@
 
 package org.treetank.utils;
 
-import java.math.BigInteger;
-
 public final class FastByteArrayWriter {
 
   private byte[] mBuffer;
@@ -48,13 +46,6 @@ public final class FastByteArrayWriter {
     mBuffer[mSize++] = value;
   }
 
-  public final void writePseudoInt(final int value) throws Exception {
-    assertSize(3);
-    mBuffer[mSize++] = (byte) (value >> 16);
-    mBuffer[mSize++] = (byte) (value >> 8);
-    mBuffer[mSize++] = (byte) value;
-  }
-
   public final void writeInt(final int value) throws Exception {
     assertSize(4);
     mBuffer[mSize++] = (byte) (value >> 24);
@@ -62,35 +53,28 @@ public final class FastByteArrayWriter {
     mBuffer[mSize++] = (byte) (value >> 8);
     mBuffer[mSize++] = (byte) value;
   }
-  
-  public final void writePseudoVarSizeInt(final int value) throws Exception {
+
+  public final void writeVarInt(final int value) throws Exception {
     assertSize(4);
     mBuffer[mSize++] = (byte) (value);
     if (value > 63 || value < -64) {
-      mBuffer[mSize-1] |= 128;
+      mBuffer[mSize - 1] |= 128;
       mBuffer[mSize++] = (byte) (value >> 7);
       if (value > 8191 || value < -8192) {
-        mBuffer[mSize-1] |= 128;
+        mBuffer[mSize - 1] |= 128;
         mBuffer[mSize++] = (byte) (value >> 14);
         if (value > 1048575 || value < -1048576) {
-          mBuffer[mSize-1] |= 128;
+          mBuffer[mSize - 1] |= 128;
           mBuffer[mSize++] = (byte) (value >> 21);
-        } else mBuffer[mSize-1] &= 127;
-      } else mBuffer[mSize-1] &= 127;
-    } else mBuffer[mSize-1] &= 127;
+        } else
+          mBuffer[mSize - 1] &= 127;
+      } else
+        mBuffer[mSize - 1] &= 127;
+    } else
+      mBuffer[mSize - 1] &= 127;
   }
 
-  public final void writePseudoLong(final long value) throws Exception {
-    assertSize(6);
-    mBuffer[mSize++] = (byte) (value >>> 40);
-    mBuffer[mSize++] = (byte) (value >>> 32);
-    mBuffer[mSize++] = (byte) (value >>> 24);
-    mBuffer[mSize++] = (byte) (value >>> 16);
-    mBuffer[mSize++] = (byte) (value >> 8);
-    mBuffer[mSize++] = (byte) value;
-  }
-  
-  public final void writeVarSizeLong(final long value) throws Exception {
+  public final void writeVarLong(final long value) throws Exception {
     assertSize(9);
     mSize++;
     mBuffer[mSize++] = (byte) value;
@@ -102,20 +86,27 @@ public final class FastByteArrayWriter {
           mBuffer[mSize++] = (byte) (value >>> 24);
           if (value > 2147483647 || value < -2147483648) {
             mBuffer[mSize++] = (byte) (value >>> 32);
-            if (value > (2^39)-1 || value < -(2^39)) {
+            if (value > (2 ^ 39) - 1 || value < -(2 ^ 39)) {
               mBuffer[mSize++] = (byte) (value >>> 40);
-              if (value > (2^47)-1 || value < -(2^47)) {
+              if (value > (2 ^ 47) - 1 || value < -(2 ^ 47)) {
                 mBuffer[mSize++] = (byte) (value >>> 48);
-                if (value > (2^55)-1 || value < -(2^55)) {
+                if (value > (2 ^ 55) - 1 || value < -(2 ^ 55)) {
                   mBuffer[mSize++] = (byte) (value >>> 56);
-                  mBuffer[mSize-9] = (byte) 8;
-                } else mBuffer[mSize-8] = (byte) 7;
-              } else mBuffer[mSize-7] = (byte) 6;
-            } else mBuffer[mSize-6] = (byte) 5;
-          } else mBuffer[mSize-5] = (byte) 4;
-        } else mBuffer[mSize-4] = (byte) 3;
-      } else mBuffer[mSize-3] = (byte) 2;
-    } else mBuffer[mSize-2] = (byte) 1;
+                  mBuffer[mSize - 9] = (byte) 8;
+                } else
+                  mBuffer[mSize - 8] = (byte) 7;
+              } else
+                mBuffer[mSize - 7] = (byte) 6;
+            } else
+              mBuffer[mSize - 6] = (byte) 5;
+          } else
+            mBuffer[mSize - 5] = (byte) 4;
+        } else
+          mBuffer[mSize - 4] = (byte) 3;
+      } else
+        mBuffer[mSize - 3] = (byte) 2;
+    } else
+      mBuffer[mSize - 2] = (byte) 1;
   }
 
   public final void writeLong(final long value) throws Exception {
