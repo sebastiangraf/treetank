@@ -49,7 +49,7 @@ public final class NodePage extends AbstractPage implements IPage {
 
   public static final NodePage create(final long nodePageKey) {
     final NodePage nodePage = new NodePage(nodePageKey);
-    nodePage.setDirty(true);
+    nodePage.setDirty();
     return nodePage;
   }
 
@@ -68,7 +68,6 @@ public final class NodePage extends AbstractPage implements IPage {
       }
     }
 
-    nodePage.setDirty(false);
     return nodePage;
   }
 
@@ -82,7 +81,7 @@ public final class NodePage extends AbstractPage implements IPage {
       }
     }
 
-    nodePage.setDirty(false);
+    nodePage.setDirty();
     return nodePage;
   }
 
@@ -113,14 +112,13 @@ public final class NodePage extends AbstractPage implements IPage {
    */
   public final void setNode(final int offset, final Node node) {
     mNodes[offset] = node;
-    setDirty(true);
   }
 
   /**
    * {@inheritDoc}
    */
-  public final void commit(final IWriteTransactionState state) {
-    setDirty(false);
+  public final void commit(final IWriteTransactionState state) throws Exception {
+    super.commit(state);
   }
 
   /**
