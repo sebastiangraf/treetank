@@ -94,9 +94,10 @@ final public class UberPage extends AbstractPage implements IPage {
     reference.setPage(ndp);
 
     ndp.setNode(0, new Node(IConstants.ROOT_KEY));
-    
+
     rrp.incrementNodeCountAndMaxNodeKey();
 
+    uberPage.setDirty(true);
     return uberPage;
 
   }
@@ -119,6 +120,7 @@ final public class UberPage extends AbstractPage implements IPage {
     // Indirect pages (shallow load without indirect page instances).
     uberPage.mIndirectPageReference = readPageReference(in);
 
+    uberPage.setDirty(false);
     return uberPage;
   }
 
@@ -139,11 +141,17 @@ final public class UberPage extends AbstractPage implements IPage {
     uberPage.mIndirectPageReference =
         clonePageReference(committedUberPage.mIndirectPageReference);
 
+    uberPage.setDirty(false);
     return uberPage;
   }
 
   public final PageReference getIndirectPageReference() {
     return mIndirectPageReference;
+  }
+
+  public final void setIndirectPageReference(final PageReference reference) {
+    mIndirectPageReference = reference;
+    setDirty(true);
   }
 
   public final long getRevisionCount() {
@@ -156,6 +164,7 @@ final public class UberPage extends AbstractPage implements IPage {
   public final void commit(final IWriteTransactionState state) throws Exception {
     state.commit(mIndirectPageReference);
     mRevisionCount += 1;
+    setDirty(false);
   }
 
   /**

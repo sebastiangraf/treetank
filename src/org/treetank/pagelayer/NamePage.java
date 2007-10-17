@@ -42,8 +42,8 @@ final public class NamePage extends AbstractPage implements IPage {
 
   public static final NamePage create() {
     final NamePage namePage = new NamePage();
+    namePage.setDirty(true);
     return namePage;
-
   }
 
   public static final NamePage read(final FastByteArrayReader in)
@@ -53,10 +53,10 @@ final public class NamePage extends AbstractPage implements IPage {
 
     // Names (deep load).
     for (int i = 0, l = in.readVarInt(); i < l; i++) {
-      namePage.mNameMap
-          .put(in.readVarInt(), UTF.convert(in.readByteArray()));
+      namePage.mNameMap.put(in.readVarInt(), UTF.convert(in.readByteArray()));
     }
 
+    namePage.setDirty(false);
     return namePage;
 
   }
@@ -68,34 +68,36 @@ final public class NamePage extends AbstractPage implements IPage {
     // Names (deep COW).
     namePage.mNameMap.putAll(committedNamePage.mNameMap);
 
+    namePage.setDirty(false);
     return namePage;
   }
 
   /**
    * Get name belonging to name key.
    * 
-   * @param nameKey Name key identifying name.
+   * @param key Name key identifying name.
    * @return Name of name key.
    */
-  public final String getName(final int nameKey) {
-    return mNameMap.get(nameKey);
+  public final String getName(final int key) {
+    return mNameMap.get(key);
   }
 
   /**
    * Create name key given a name.
    * 
+   * @param key Key for given name.
    * @param name Name to create key for.
-   * @return Name key.
    */
-  public final void setName(final int nameKey, final String name) {
-    mNameMap.put(nameKey, name);
+  public final void setName(final int key, final String name) {
+    mNameMap.put(key, name);
+    setDirty(true);
   }
 
   /**
    * {@inheritDoc}
    */
   public final void commit(final IWriteTransactionState state) throws Exception {
-    // Nothing to do here.
+    setDirty(false);
   }
 
   /**

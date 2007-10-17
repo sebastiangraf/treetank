@@ -50,6 +50,7 @@ final public class IndirectPage extends AbstractPage implements IPage {
   public static final IndirectPage create() {
     final IndirectPage indirectPage = new IndirectPage();
     createPageReferences(indirectPage.mIndirectPageReferences);
+    indirectPage.setDirty(true);
     return indirectPage;
   }
 
@@ -65,6 +66,7 @@ final public class IndirectPage extends AbstractPage implements IPage {
       throws Exception {
     final IndirectPage indirectPage = new IndirectPage();
     readPageReferences(indirectPage.mIndirectPageReferences, in);
+    indirectPage.setDirty(false);
     return indirectPage;
   }
 
@@ -74,27 +76,31 @@ final public class IndirectPage extends AbstractPage implements IPage {
     clonePageReferences(
         indirectPage.mIndirectPageReferences,
         committedIndirectPage.mIndirectPageReferences);
+    indirectPage.setDirty(false);
     return indirectPage;
   }
 
   /**
    * Get reference by page offset.
    * 
-   * @param pageOffset Offset of referenced page.
+   * @param offset Offset of referenced page.
    * @return Reference at given offset.
    */
-  public final PageReference getPageReference(final int pageOffset) {
-    return mIndirectPageReferences[pageOffset];
+  public final PageReference getPageReference(final int offset) {
+    return mIndirectPageReferences[offset];
   }
 
   /**
-   * Set page at page offset.
+   * Set page reference at page offset.
    * 
-   * @param pageOffset Offset of referenced page.
-   * @param page Page to set at pageOffset.
+   * @param offset Offset of referenced page.
+   * @param reference Page reference to set at pageOffset.
    */
-  public final void setPage(final int pageOffset, final IPage page) {
-    mIndirectPageReferences[pageOffset].setPage(page);
+  public final void setPageReference(
+      final int offset,
+      final PageReference reference) {
+    mIndirectPageReferences[offset] = reference;
+    setDirty(true);
   }
 
   /**
@@ -102,6 +108,7 @@ final public class IndirectPage extends AbstractPage implements IPage {
    */
   public final void commit(final IWriteTransactionState state) throws Exception {
     state.commit(mIndirectPageReferences);
+    setDirty(false);
   }
 
   /**
