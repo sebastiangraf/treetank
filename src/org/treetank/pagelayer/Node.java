@@ -423,4 +423,20 @@ public final class Node implements INode {
     }
   }
 
+  @Override
+  public String toString() {
+    return "Node "
+        + this.mNodeKey
+        + "\n\tchildcount: "
+        + this.mChildCount
+        + "\n\tparentKey: "
+        + this.mParentKey
+        + "\n\tfirstChildKey: "
+        + this.mFirstChildKey
+        + "\n\tleftSiblingKey: "
+        + this.mLeftSiblingKey
+        + "\n\trightSiblingKey: "
+        + this.mRightSiblingKey;
+  }
+
 }

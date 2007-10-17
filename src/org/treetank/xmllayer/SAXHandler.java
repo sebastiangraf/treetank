@@ -115,8 +115,7 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
 
       // Insert element node and maintain stack.      
       long key;
-      if (mWTX.getParentKey() == IConstants.ROOT_KEY
-          || mLeftSiblingKeyStack.peek() == IConstants.NULL_KEY) {
+      if (mLeftSiblingKeyStack.peek() == IConstants.NULL_KEY) {
         key =
             mWTX.insertFirstChild(
                 IConstants.ELEMENT,
