@@ -125,21 +125,22 @@ public class ReadTransactionState implements IReadTransactionState {
       PageReference reference = mRevisionRootPage.getIndirectPageReference();
 
       // Remaining levels.
-      int levelSteps = 0;
+      int offset = 0;
       long levelKey = nodePageKey;
-      for (int i = 0; i < mIndirectOffsets.length; i++) {
+      for (int level = 0, height =
+          IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
 
         // Calculate offset of current level.
-        levelSteps =
-            (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i]);
-        levelKey -= levelSteps << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i];
+        offset =
+            (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
+        levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
 
         // Fetch page from current level.
-        if (levelSteps != mIndirectOffsets[i]) {
-          mIndirectOffsets[i] = levelSteps;
-          mIndirectPages[i] = dereferenceIndirectPage(reference);
+        if (offset != mIndirectOffsets[level]) {
+          mIndirectOffsets[level] = offset;
+          mIndirectPages[level] = dereferenceIndirectPage(reference);
         }
-        reference = mIndirectPages[i].getPageReference(levelSteps);
+        reference = mIndirectPages[level].getPageReference(offset);
       }
 
       mNodePage = dereferenceNodePage(reference, nodePageKey);
@@ -290,18 +291,18 @@ public class ReadTransactionState implements IReadTransactionState {
     PageReference reference = mUberPage.getIndirectPageReference();
 
     // Remaining levels.
-    int levelSteps = 0;
+    int offset = 0;
     long levelKey = revisionKey;
-    for (int i = 0; i < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i++) {
+    for (int level = 0, height =
+        IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
 
       // Calculate offset of current level.
-      levelSteps =
-          (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i]);
-      levelKey -= levelSteps << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[i];
+      offset =
+          (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
+      levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
 
       // Fetch page from current level.
-      reference =
-          dereferenceIndirectPage(reference).getPageReference(levelSteps);
+      reference = dereferenceIndirectPage(reference).getPageReference(offset);
     }
 
     RevisionRootPage page = dereferenceRevisionRootPage(reference, revisionKey);
