@@ -108,4 +108,13 @@ public final class FastLongStack {
     return mSize;
   }
 
+  @Override
+  public final String toString() {
+    String result = new String();
+    for (int i = mSize - 1; i >= 0; i--) {
+      result = result + this.mStack[i] + " ";
+    }
+    return result;
+  }
+
 }

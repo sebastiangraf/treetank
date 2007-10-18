@@ -4,6 +4,8 @@ import java.util.Hashtable;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.ISession;
+import org.treetank.utils.FastLongStack;
+import org.treetank.utils.FastObjectStack;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -30,6 +32,9 @@ public class SubtreeSAXHandler extends SAXHandler {
   /** Mapping for nodekeys for each subtree */
   private final Hashtable<Long, Long> subtreeKeyNodeMapping;
 
+  /** Stack for storing the different leftSiblingStacks */
+  private final FastObjectStack<FastLongStack> stacks;
+
   /**
    * Constructor.
    * 
@@ -42,6 +47,7 @@ public class SubtreeSAXHandler extends SAXHandler {
     super(initSession);
     session = initSession;
     subtreeKeyNodeMapping = new Hashtable<Long, Long>(0);
+    stacks = new FastObjectStack<FastLongStack>();
   }
 
   @Override
@@ -99,28 +105,11 @@ public class SubtreeSAXHandler extends SAXHandler {
     try {
 
       this.subtreeKeyNodeMapping.put(subtreeID, mWTX.getNodeKey());
-
-      // while (mLeftSiblingKeyStack.size() > 0) {
-      // if (mLeftSiblingKeyStack.peek() != IConstants.NULL_KEY) {
-      // mWTX.moveTo(mLeftSiblingKeyStack.peek());
-      //
-      // if (this.subtreeKeyNodeMapping.containsValue(mWTX
-      // .getParentKey())) {
-      // break;
-      // } else {
-      // mLeftSiblingKeyStack.pop();
-      // }
-      // } else {
-      // break;
-      // }
-      // }
-      mWTX.moveToRoot();
+      this.stacks.push(mLeftSiblingKeyStack);
+      mLeftSiblingKeyStack = new FastLongStack();
       mLeftSiblingKeyStack.push(IConstants.NULL_KEY);
-
-      // while (mWTX.getRightSiblingKey() != IConstants.NULL_KEY)
-      // {
-      // mWTX.moveToRightSibling();
-      // }
+      mLeftSiblingKeyStack.push(IConstants.NULL_KEY);
+      mWTX.moveToRoot();
 
     } catch (Exception e) {
       throw new SAXException(e);
@@ -142,6 +131,7 @@ public class SubtreeSAXHandler extends SAXHandler {
       System.gc();
       nodeCounter = 0;
       mWTX.moveTo(this.subtreeKeyNodeMapping.remove(subtreeID));
+      mLeftSiblingKeyStack = stacks.pop();
     } catch (Exception e) {
       throw new SAXException(e);
     }
