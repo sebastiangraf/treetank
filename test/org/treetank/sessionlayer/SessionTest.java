@@ -26,6 +26,8 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 
+import junit.framework.TestCase;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.api.IConstants;
@@ -59,6 +61,28 @@ public class SessionTest {
     new File(TEST_REVISION_PATH).delete();
     new File(TEST_SHREDDED_REVISION_PATH).delete();
     new File(TEST_EXISTING_PATH).delete();
+  }
+
+  @Test
+  public void testNoWritesBeforeFirstCommit() throws Exception {
+
+    ISession session = new Session(TEST_INSERT_CHILD_PATH);
+    assertEquals(0L, new File(TEST_INSERT_CHILD_PATH).length());
+    session.close();
+    assertEquals(0L, new File(TEST_INSERT_CHILD_PATH).length());
+
+    session = new Session(TEST_INSERT_CHILD_PATH);
+    assertEquals(0L, new File(TEST_INSERT_CHILD_PATH).length());
+
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+    session.commit();
+    session.close();
+
+    session = new Session(TEST_INSERT_CHILD_PATH);
+    final IReadTransaction rtx = session.beginReadTransaction();
+    session.close();
+
+    TestCase.assertNotSame(0L, new File(TEST_INSERT_CHILD_PATH).length());
   }
 
   @Test
