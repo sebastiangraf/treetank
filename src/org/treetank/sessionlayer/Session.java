@@ -184,11 +184,6 @@ public final class Session implements ISession {
    */
   public final IReadTransaction beginReadTransaction(final long revisionKey)
       throws Exception {
-    
-    // Check whether ther is a revision at all.
-    if (mUberPage.isBootstrap()) {
-      throw new IllegalStateException("No revision available.");
-    }
 
     final PageReader pageReader = new PageReader(mSessionConfiguration);
     final IReadTransactionState state =
