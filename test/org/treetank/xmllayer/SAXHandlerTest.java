@@ -53,7 +53,7 @@ public class SAXHandlerTest {
   }
 
   @Test
-  public void testIdefixSAXHandler() throws Exception {
+  public void testSAXHandler() throws Exception {
 
     // Setup expected session.
     final ISession expectedSession = new Session(EXPECTED_PATH);

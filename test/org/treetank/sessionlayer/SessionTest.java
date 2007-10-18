@@ -40,19 +40,19 @@ import org.treetank.utils.UTF;
 public class SessionTest {
 
   public static final String NON_EXISTING_PATH =
-      "generated/NonExisting_SAXHandlerTest.tnk";
+      "generated/NonExisting_SessionTest.tnk";
 
   public static final String TEST_INSERT_CHILD_PATH =
-      "generated/SessionTest_InsertChild.tnk";
+      "generated/InsertChild_SessionTest.tnk";
 
   public static final String TEST_REVISION_PATH =
-      "generated/SessionTest_Revision.tnk";
+      "generated/Revision_SessionTest.tnk";
 
   public static final String TEST_SHREDDED_REVISION_PATH =
-      "generated/SessionTest_ShreddedRevision.tnk";
+      "generated/ShreddedRevision_SessionTest.tnk";
 
   public static final String TEST_EXISTING_PATH =
-      "generated/SessionTest_Existing.tnk";
+      "generated/Existing_SessionTest.tnk";
 
   @Before
   public void setUp() throws Exception {
