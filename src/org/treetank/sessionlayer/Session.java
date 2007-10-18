@@ -131,14 +131,13 @@ public final class Session implements ISession {
     mSecondaryUberPageReference = new PageReference();
     mFile = new RandomAccessFile(mSessionConfiguration.getPath(), "rw");
 
-    // Bootstrap uber page.
     if (mFile.length() == 0L) {
-      // No revisions available, create empty uber page.
+      // Bootstrap uber page and make sure there already is a root node.
       mFile.setLength(IConstants.BEACON_LENGTH);
       mUberPage = UberPage.create();
       mPrimaryUberPageReference.setPage(mUberPage);
     } else {
-      // There already are revisions, read existing uber page.
+      // Read existing uber page.
       readBeacon(mFile);
 
       // Beacon logic case 1.
@@ -177,7 +176,7 @@ public final class Session implements ISession {
    * {@inheritDoc}
    */
   public final IReadTransaction beginReadTransaction() throws Exception {
-    return beginReadTransaction(mUberPage.getRevisionCount());
+    return beginReadTransaction(mUberPage.getRevisionKey());
   }
 
   /**
@@ -185,6 +184,11 @@ public final class Session implements ISession {
    */
   public final IReadTransaction beginReadTransaction(final long revisionKey)
       throws Exception {
+    
+    // Check whether ther is a revision at all.
+    if (mUberPage.isBootstrap()) {
+      throw new IllegalStateException("No revision available.");
+    }
 
     final PageReader pageReader = new PageReader(mSessionConfiguration);
     final IReadTransactionState state =
@@ -197,6 +201,8 @@ public final class Session implements ISession {
    * {@inheritDoc}
    */
   public final IWriteTransaction beginWriteTransaction() throws Exception {
+
+    // Make sure that only one write transaction exists per session.
     if (mWriteSemaphore.availablePermits() == 0) {
       LOGGER.severe("IWriteTransaction limit reached.");
       throw new IllegalStateException(
@@ -206,14 +212,18 @@ public final class Session implements ISession {
               + " running IWriteTransaction(s).");
     }
     mWriteSemaphore.acquire();
+
+    // Make uber page only ready for new commit if it is not the first WTX.
     mUberPage = UberPage.clone(mUberPage);
     mPrimaryUberPageReference.setPage(mUberPage);
 
+    // Make write transaction state ready.
     final PageWriter pageWriter = new PageWriter(mSessionConfiguration);
     final PageReader pageReader = new PageReader(mSessionConfiguration);
-
     mWriteTransactionState =
         new WriteTransactionState(mPageCache, pageReader, pageWriter, mUberPage);
+
+    // Return fresh write transaction.
     return new WriteTransaction(mWriteTransactionState);
   }
 
@@ -223,7 +233,7 @@ public final class Session implements ISession {
   public final void commit() throws Exception {
 
     // Recursively write indirectely referenced pages.
-    mPrimaryUberPageReference.getPage().commit(mWriteTransactionState);
+    mUberPage.commit(mWriteTransactionState);
 
     mWriteTransactionState.getPageWriter().write(mPrimaryUberPageReference);
     mPageCache.put(

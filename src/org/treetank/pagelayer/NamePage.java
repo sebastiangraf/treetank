@@ -35,7 +35,7 @@ final public class NamePage implements IPage {
 
   /** True if page was created or cloned. False if it was read or committed. */
   private boolean mDirty;
-  
+
   /** Map the hash of a name to its name. */
   private final Map<Integer, String> mNameMap;
 
@@ -58,7 +58,6 @@ final public class NamePage implements IPage {
     for (int i = 0, l = in.readVarInt(); i < l; i++) {
       namePage.mNameMap.put(in.readVarInt(), UTF.convert(in.readByteArray()));
     }
-
     return namePage;
 
   }
@@ -97,6 +96,7 @@ final public class NamePage implements IPage {
    * {@inheritDoc}
    */
   public final void commit(final IWriteTransactionState state) throws Exception {
+    mDirty = false;
   }
 
   /**
@@ -111,16 +111,15 @@ final public class NamePage implements IPage {
       out.writeVarInt(key);
       out.writeByteArray(UTF.convert(mNameMap.get(key)));
     }
-    mDirty = false;
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public final boolean isDirty() {
     return mDirty;
   }
-  
+
   @Override
   public final String toString() {
     return super.toString()

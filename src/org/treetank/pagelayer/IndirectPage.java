@@ -73,7 +73,6 @@ final public class IndirectPage implements IPage {
         indirectPage.mIndirectPageReferences[i] = new PageReference(in);
       }
     }
-
     return indirectPage;
   }
 
@@ -121,6 +120,7 @@ final public class IndirectPage implements IPage {
    */
   public final void commit(final IWriteTransactionState state) throws Exception {
     state.commit(mIndirectPageReferences);
+    mDirty = false;
   }
 
   /**
@@ -135,7 +135,6 @@ final public class IndirectPage implements IPage {
         out.writeBoolean(false);
       }
     }
-    mDirty = false;
   }
 
   /**
@@ -144,12 +143,10 @@ final public class IndirectPage implements IPage {
   public final boolean isDirty() {
     return mDirty;
   }
-  
+
   @Override
   public final String toString() {
-    return super.toString()
-        + ": isDirty="
-        + mDirty;
+    return super.toString() + ": isDirty=" + mDirty;
   }
 
 }

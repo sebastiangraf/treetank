@@ -63,7 +63,8 @@ public final class WriteTransactionState extends ReadTransactionState
       final PageReader pageReader,
       final PageWriter pageWriter,
       final UberPage uberPage) throws Exception {
-    super(pageCache, pageReader, uberPage, uberPage.getRevisionCount() - 1);
+    super(pageCache, pageReader, uberPage, uberPage
+        .getLastCommittedRevisionKey());
     mPageWriter = pageWriter;
     setRevisionRootPage(prepareRevisionRootPage());
   }
@@ -142,14 +143,13 @@ public final class WriteTransactionState extends ReadTransactionState
    * {@inheritDoc}
    */
   public final void commit(final PageReference reference) throws Exception {
-    if (reference != null && reference.isInstantiated()) {
+    if (reference != null && reference.isInstantiated() && reference.isDirty()) {
 
       // Recursively write indirectely referenced pages.
       reference.getPage().commit(this);
 
       mPageWriter.write(reference);
       getPageCache().put(reference.getStart(), reference.getPage());
-      reference.setPage(null);
     }
   }
 
@@ -253,16 +253,20 @@ public final class WriteTransactionState extends ReadTransactionState
 
   protected final RevisionRootPage prepareRevisionRootPage() throws Exception {
 
+    if (getUberPage().isBootstrap()) {
+      return getRevisionRootPage();
+    }
+
     // Prepare revision root page.
     final RevisionRootPage revisionRootPage =
         RevisionRootPage.clone(getRevisionRootPage(getUberPage()
-            .getRevisionCount() - 1));
+            .getLastCommittedRevisionKey()));
 
     // Prepare indirect tree to hold reference to prepared revision root page.
     final PageReference revisionRootPageReference =
         prepareLeafOfTree(
             getUberPage().getIndirectPageReference(),
-            getUberPage().getRevisionCount());
+            getUberPage().getRevisionKey());
 
     // Link the prepared revision root page with the prepared indirect tree.
     revisionRootPageReference.setPage(revisionRootPage);

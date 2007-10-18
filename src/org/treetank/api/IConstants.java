@@ -62,13 +62,10 @@ public interface IConstants {
   // --- Uber Page -------------------------------------------------------------
 
   /** Revision key of unitialized storage. */
-  public static final long UBP_INIT_ROOT_REVISION_KEY = 0L;
+  public static final long UBP_ROOT_REVISION_COUNT = 1L;
 
   /** Root revisionKey guaranteed to exist in empty storage. */
   public static final long UBP_ROOT_REVISION_KEY = 0L;
-
-  /** Root revisionKey guaranteed to exist in empty storage. */
-  public static final long UBP_ROOT_REVISION_SIZE = 0L;
 
   // --- Revision Root Page ----------------------------------------------------
 
@@ -90,6 +87,9 @@ public interface IConstants {
 
   /** Root nodeKey constant. */
   public static final long ROOT_KEY = 0L;
+
+  /** Root node page key constant. */
+  public static final long ROOT_PAGE_KEY = 0L;
 
   /** INode kind is element. */
   public static final int ELEMENT = 1;

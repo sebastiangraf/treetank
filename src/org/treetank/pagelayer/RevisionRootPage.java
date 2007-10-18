@@ -21,6 +21,7 @@
 
 package org.treetank.pagelayer;
 
+import org.treetank.api.IConstants;
 import org.treetank.api.IPage;
 import org.treetank.api.IWriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
@@ -49,10 +50,15 @@ final public class RevisionRootPage implements IPage {
     mIndirectPageReference = null;
   }
 
-  public static final RevisionRootPage create(final long revisionKey) {
+  /**
+   * This is only required to bootstrap an empty TreeTank.
+   * 
+   * @return Bootstrapped revision root page.
+   */
+  public static final RevisionRootPage create() {
 
     final RevisionRootPage revisionRootPage =
-        new RevisionRootPage(true, revisionKey);
+        new RevisionRootPage(true, IConstants.UBP_ROOT_REVISION_KEY);
 
     // Revisioning (deep init).
     revisionRootPage.mNodeCount = 0L;
@@ -162,6 +168,7 @@ final public class RevisionRootPage implements IPage {
   public final void commit(final IWriteTransactionState state) throws Exception {
     state.commit(mNamePageReference);
     state.commit(mIndirectPageReference);
+    mDirty = false;
   }
 
   /**
@@ -172,7 +179,6 @@ final public class RevisionRootPage implements IPage {
     mNamePageReference.serialize(out);
     out.writeVarLong(mMaxNodeKey);
     mIndirectPageReference.serialize(out);
-    mDirty = false;
   }
 
   /**
@@ -190,9 +196,9 @@ final public class RevisionRootPage implements IPage {
         + ", nodeCount="
         + mNodeCount
         + ", namePage=("
-        + mNamePageReference.getPage()
+        + mNamePageReference
         + "), indirectPage=("
-        + mIndirectPageReference.getPage()
+        + mIndirectPageReference
         + "), isDirty="
         + mDirty;
   }

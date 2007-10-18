@@ -60,9 +60,8 @@ public class ThreadTest {
     session.commit();
 
     ExecutorService taskExecutor = Executors.newFixedThreadPool(WORKER_COUNT);
-    Thread[] worker = new Thread[WORKER_COUNT];
     for (int i = 0; i < WORKER_COUNT; i++) {
-      taskExecutor.execute(new Task(session));
+      taskExecutor.execute(new Task(session.beginReadTransaction(0L)));
       final IWriteTransaction wTrx = session.beginWriteTransaction();
       wTrx.moveTo(10L);
       wTrx.setValue(UTF.convert("value" + i));
@@ -72,31 +71,24 @@ public class ThreadTest {
     taskExecutor.awaitTermination(1000000, TimeUnit.SECONDS);
 
     session.close();
-
-    //    session = new Session(THREAD_TEST_PATH);
-    //    final IReadTransaction rTrx = session.beginReadTransaction();
-    //    TestCase.assertEquals((WORKER_COUNT + 1), rTrx.revisionKey());
-    //    TestCase.assertTrue(rTrx.moveTo(16L));
-    //    TestCase.assertEquals("value" + (WORKER_COUNT - 1), rTrx.getValue());
   }
 
   private class Task implements Runnable {
 
-    private IReadTransaction mTrx;
+    private IReadTransaction mRTX;
 
-    public Task(final ISession session) throws Exception {
-      mTrx = session.beginReadTransaction(1L);
-      mTrx.moveToRoot();
+    public Task(final IReadTransaction rtx) throws Exception {
+      mRTX = rtx;
     }
 
     public void run() {
       try {
 
-        final IAxisIterator axis = new DescendantAxisIterator(mTrx);
+        final IAxisIterator axis = new DescendantAxisIterator(mRTX);
         while (axis.next()) {
           // Move on.
         }
-        mTrx.moveTo(16L);
+        mRTX.moveTo(16L);
       } catch (Exception e) {
         TestCase.fail(e.getLocalizedMessage());
       }
