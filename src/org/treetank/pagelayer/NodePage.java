@@ -121,6 +121,7 @@ public final class NodePage implements IPage {
    * {@inheritDoc}
    */
   public final void commit(final IWriteTransactionState state) throws Exception {
+    mDirty = false;
   }
 
   /**
@@ -135,7 +136,6 @@ public final class NodePage implements IPage {
         out.writeBoolean(false);
       }
     }
-    mDirty = false;
   }
 
   /**

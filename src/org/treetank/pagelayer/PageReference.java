@@ -127,7 +127,10 @@ public class PageReference {
         + ", length="
         + mLength
         + ", checksum="
-        + mChecksum;
+        + mChecksum
+        + ", page=("
+        + mPage
+        + ")";
   }
 
 }

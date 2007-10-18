@@ -59,6 +59,8 @@ public class SAXGenerator extends Thread {
 
   protected final FastLongStack mRightSiblingKeyStack;
 
+  private final boolean mPrettyPrint;
+
   /** The nodeKey of the next node to visit. */
   protected long mNextKey;
 
@@ -67,8 +69,9 @@ public class SAXGenerator extends Thread {
   /**
    * Constructor for printing the reconstructed XML of global storage to stdout.
    */
-  public SAXGenerator(final IReadTransaction rtx) throws Exception {
-    this(rtx, new PrintWriter(System.out));
+  public SAXGenerator(final IReadTransaction rtx, final boolean prettyPrint)
+      throws Exception {
+    this(rtx, new PrintWriter(System.out), prettyPrint);
   }
 
   /**
@@ -77,8 +80,10 @@ public class SAXGenerator extends Thread {
    * @param aWriter
    * @see java.io.Writer
    */
-  public SAXGenerator(final IReadTransaction rtx, final Writer writer)
-      throws Exception {
+  public SAXGenerator(
+      final IReadTransaction rtx,
+      final Writer writer,
+      final boolean prettyPrint) throws Exception {
 
     mRTX = rtx;
     mWriter = writer;
@@ -90,6 +95,13 @@ public class SAXGenerator extends Thread {
     mRightSiblingKeyStack.push(IConstants.NULL_KEY);
     mNextKey = mRTX.getFirstChildKey();
 
+    mPrettyPrint = prettyPrint;
+
+  }
+
+  public SAXGenerator(final IReadTransaction rtx, final Writer writer)
+      throws Exception {
+    this(rtx, writer, false);
   }
 
   /**
@@ -98,8 +110,10 @@ public class SAXGenerator extends Thread {
    * @param aWriter
    * @see java.io.Writer
    */
-  public SAXGenerator(final IReadTransaction rtx, final PipedInputStream pipedIn)
-      throws Exception {
+  public SAXGenerator(
+      final IReadTransaction rtx,
+      final PipedInputStream pipedIn,
+      final boolean prettyPrint) throws Exception {
 
     mRTX = rtx;
     mPipedOut = new PipedOutputStream(pipedIn);
@@ -112,6 +126,8 @@ public class SAXGenerator extends Thread {
     mRightSiblingKeyStack.push(IConstants.NULL_KEY);
     mNextKey = mRTX.getFirstChildKey();
 
+    mPrettyPrint = prettyPrint;
+
   }
 
   /**
@@ -123,7 +139,8 @@ public class SAXGenerator extends Thread {
    */
   public SAXGenerator(
       final IReadTransaction rtx,
-      final ContentHandler contentHandler) throws Exception {
+      final ContentHandler contentHandler,
+      final boolean prettyPrint) throws Exception {
 
     mRTX = rtx;
     mHandler = contentHandler;
@@ -133,6 +150,8 @@ public class SAXGenerator extends Thread {
     mRightSiblingKeyStack.push(IConstants.NULL_KEY);
     mRTX.moveToRoot();
     mNextKey = mRTX.getFirstChildKey();
+
+    mPrettyPrint = prettyPrint;
 
   }
 
@@ -248,8 +267,8 @@ public class SAXGenerator extends Thread {
         // Set up serializer, why here? XML Declaration.
         java.util.Properties props =
             OutputPropertiesFactory.getDefaultMethodProperties(Method.XML);
-        props.setProperty("indent", "no");
-        props.setProperty("{http://xml.apache.org/xalan}indent-amount", "4");
+        props.setProperty("indent", mPrettyPrint ? "yes" : "no");
+        props.setProperty("{http://xml.apache.org/xalan}indent-amount", "2");
 
         // Process XML declaration.
         props.setProperty("version", "1.0");

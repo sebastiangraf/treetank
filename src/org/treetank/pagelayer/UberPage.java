@@ -36,31 +36,34 @@ final public class UberPage implements IPage {
 
   private PageReference mIndirectPageReference;
 
+  private boolean mBootstrap;
+
   /**
    * Constructor to assure minimal common setup.
    * 
    * @param pageCache IPageCache to read from.
    */
-  private UberPage(final boolean dirty) {
+  private UberPage(final boolean dirty, final boolean bootstrap) {
     mDirty = dirty;
     mIndirectPageReference = null;
+    mBootstrap = bootstrap;
   }
 
   /**
-   * Create new uncommitted in-memory uber page.
+   * Create new uncommitted in-memory uber page. This is only required
+   * to bootstrap an empty TreeTank.
    * 
-   * @param pageCache
-   * @return
+   * @return Bootstrapped uber page.
    * @throws Exception
    */
   public static final UberPage create() throws Exception {
 
     // --- Create uber page ----------------------------------------------------
 
-    final UberPage uberPage = new UberPage(true);
+    final UberPage uberPage = new UberPage(true, true);
 
     // Make sure that all references are instantiated.
-    uberPage.mRevisionCount = IConstants.UBP_INIT_ROOT_REVISION_KEY;
+    uberPage.mRevisionCount = IConstants.UBP_ROOT_REVISION_COUNT;
 
     // Indirect pages (shallow init).
     uberPage.mIndirectPageReference = new PageReference();
@@ -78,7 +81,7 @@ final public class UberPage implements IPage {
       reference = page.getPageReference(0);
     }
 
-    RevisionRootPage rrp = RevisionRootPage.create(uberPage.mRevisionCount);
+    RevisionRootPage rrp = RevisionRootPage.create();
     reference.setPage(rrp);
 
     // --- Create node tree ----------------------------------------------------
@@ -94,7 +97,7 @@ final public class UberPage implements IPage {
       reference = page.getPageReference(0);
     }
 
-    NodePage ndp = NodePage.create(IConstants.ROOT_KEY);
+    NodePage ndp = NodePage.create(IConstants.ROOT_PAGE_KEY);
     reference.setPage(ndp);
 
     ndp.setNode(0, new Node(IConstants.ROOT_KEY));
@@ -115,7 +118,7 @@ final public class UberPage implements IPage {
   public static final UberPage read(final FastByteArrayReader in)
       throws Exception {
 
-    final UberPage uberPage = new UberPage(false);
+    final UberPage uberPage = new UberPage(false, false);
 
     // Deserialize uber page.
     uberPage.mRevisionCount = in.readVarLong();
@@ -134,7 +137,12 @@ final public class UberPage implements IPage {
    */
   public static final UberPage clone(final UberPage committedUberPage) {
 
-    final UberPage uberPage = new UberPage(true);
+    // Make sure that the uber page is only cloned if it is not the first one.
+    if (committedUberPage.mBootstrap) {
+      return committedUberPage;
+    }
+
+    final UberPage uberPage = new UberPage(true, false);
 
     // COW uber page.
     uberPage.mRevisionCount = committedUberPage.mRevisionCount + 1;
@@ -154,6 +162,22 @@ final public class UberPage implements IPage {
     return mRevisionCount;
   }
 
+  public final long getLastCommittedRevisionKey() {
+    if (mRevisionCount == IConstants.UBP_ROOT_REVISION_COUNT) {
+      return IConstants.UBP_ROOT_REVISION_KEY;
+    } else {
+      return mRevisionCount - 2;
+    }
+  }
+
+  public final long getRevisionKey() {
+    if (mRevisionCount == IConstants.UBP_ROOT_REVISION_COUNT) {
+      return IConstants.UBP_ROOT_REVISION_KEY;
+    } else {
+      return mRevisionCount - 1;
+    }
+  }
+
   public final void abort() {
     mRevisionCount -= 1;
   }
@@ -163,6 +187,8 @@ final public class UberPage implements IPage {
    */
   public final void commit(final IWriteTransactionState state) throws Exception {
     state.commit(mIndirectPageReference);
+    mDirty = false;
+    mBootstrap = false;
   }
 
   /**
@@ -171,7 +197,6 @@ final public class UberPage implements IPage {
   public final void serialize(final FastByteArrayWriter out) throws Exception {
     out.writeVarLong(mRevisionCount);
     mIndirectPageReference.serialize(out);
-    mDirty = false;
   }
 
   /**
@@ -181,16 +206,21 @@ final public class UberPage implements IPage {
     return mDirty;
   }
 
+  public final boolean isBootstrap() {
+    return mBootstrap;
+  }
+
   @Override
   public final String toString() {
     return super.toString()
         + ": revisionCount="
         + mRevisionCount
-        + ", nodeCount="
         + ", indirectPage=("
-        + mIndirectPageReference.getPage()
+        + mIndirectPageReference
         + "), isDirty="
-        + mDirty;
+        + mDirty
+        + ", isBootstrap="
+        + mBootstrap;
   }
 
 }

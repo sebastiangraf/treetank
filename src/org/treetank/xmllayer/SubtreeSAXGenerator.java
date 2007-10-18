@@ -18,8 +18,9 @@ public class SubtreeSAXGenerator extends SAXGenerator {
 
   public SubtreeSAXGenerator(
       final IReadTransaction initTrx,
-      final ContentHandler contentHandler) throws Exception {
-    super(initTrx, contentHandler);
+      final ContentHandler contentHandler,
+      final boolean prettyPrint) throws Exception {
+    super(initTrx, contentHandler, prettyPrint);
   }
 
   @Override

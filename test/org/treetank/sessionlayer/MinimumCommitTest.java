@@ -16,44 +16,52 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * $Id$
+ * $Id:UpdateTest.java 3019 2007-10-10 13:28:24Z kramis $
  */
 
-package org.treetank.xmllayer;
+package org.treetank.sessionlayer;
 
 import java.io.File;
 
+import junit.framework.TestCase;
+
 import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.Test;
+import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
 
-public class SAXGeneratorTest {
+public class MinimumCommitTest {
 
-  public static final String PATH = "generated/SAXGeneratorTest.tnk";
+  public static final String TEST_PATH = "generated/MinimumCommitTest.tnk";
 
   @Before
   public void setUp() throws Exception {
-    new File(PATH).delete();
+    new File(TEST_PATH).delete();
   }
 
-  @Ignore
-  public void testIdefixSAXGenerator() throws Exception {
+  @Test
+  public void test() throws Exception {
 
-    // Setup expected session.
-    final ISession session = new Session(PATH);
-    final IWriteTransaction trx = session.beginWriteTransaction();
-    TestDocument.create(trx);
-
-    final SAXGenerator generator = new SAXGenerator(trx, false);
-    generator.start();
-    generator.join();
-
+    ISession session = new Session(TEST_PATH);
+    IWriteTransaction wtx = session.beginWriteTransaction();
+    TestCase.assertEquals(0L, wtx.revisionKey());
     session.commit();
     session.close();
 
-  }
+    session = new Session(TEST_PATH);
+    wtx = session.beginWriteTransaction();
+    TestCase.assertEquals(1L, wtx.revisionKey());
+    TestDocument.create(wtx);
+    session.commit();
 
+    wtx = session.beginWriteTransaction();
+    TestCase.assertEquals(2L, wtx.revisionKey());
+    session.commit();
+
+    IReadTransaction rtx = session.beginReadTransaction();
+    TestCase.assertEquals(2L, rtx.revisionKey());
+
+  }
 }
