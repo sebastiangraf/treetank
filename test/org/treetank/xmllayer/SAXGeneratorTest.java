@@ -40,7 +40,7 @@ public class SAXGeneratorTest {
   }
 
   @Ignore
-  public void testIdefixSAXGenerator() throws Exception {
+  public void testSAXGenerator() throws Exception {
 
     // Setup expected session.
     final ISession session = new Session(PATH);
