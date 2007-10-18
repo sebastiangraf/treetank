@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <project name="TreeTank" default="jar">
 
-	<property name="treetank.jar" value="treetank__V4.5.jar" />
+	<property name="treetank.jar" value="treetank__V4.6.jar" />
 
 	<property name="debuglevel" value="source,lines,vars" />
 	<property name="target" value="1.5" />

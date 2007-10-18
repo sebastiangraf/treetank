@@ -133,7 +133,6 @@ public final class Session implements ISession {
 
     if (mFile.length() == 0L) {
       // Bootstrap uber page and make sure there already is a root node.
-      mFile.setLength(IConstants.BEACON_LENGTH);
       mUberPage = UberPage.create();
       mPrimaryUberPageReference.setPage(mUberPage);
     } else {
@@ -226,6 +225,10 @@ public final class Session implements ISession {
    * {@inheritDoc}
    */
   public final void commit() throws Exception {
+
+    if (mUberPage.isBootstrap()) {
+      mFile.setLength(IConstants.BEACON_LENGTH);
+    }
 
     // Recursively write indirectely referenced pages.
     mUberPage.commit(mWriteTransactionState);
