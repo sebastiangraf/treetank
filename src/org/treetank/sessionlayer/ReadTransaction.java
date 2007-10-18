@@ -326,6 +326,13 @@ public class ReadTransaction implements IReadTransaction {
     return mCurrentNode;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  public void close() throws Exception {
+    mState.close();
+  }
+
   @Override
   public String toString() {
     String localPart = "";

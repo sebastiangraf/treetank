@@ -129,6 +129,13 @@ public class ReadTransactionState implements IReadTransactionState {
   }
 
   /**
+   * {@inheritDoc}
+   */
+  public void close() throws Exception {
+    mPageReader.close();
+  }
+
+  /**
    * Get revision root page belonging to revision key.
    * 
    * @param revisionKey Key of revision to find revision root page for.
