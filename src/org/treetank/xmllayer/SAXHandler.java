@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import org.treetank.api.IConstants;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.utils.FastLongStack;
+import org.treetank.utils.FastStack;
 import org.treetank.utils.UTF;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -48,7 +48,7 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
   protected IWriteTransaction mWTX;
 
   /** Stack containing left sibling nodeKey of each level. */
-  protected FastLongStack mLeftSiblingKeyStack;
+  protected FastStack<Long> mLeftSiblingKeyStack;
 
   /** Aggregated pending text node. */
   private final StringBuilder mCharacters;
@@ -67,7 +67,7 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
   public SAXHandler(final ISession session) throws Exception {
     mSession = session;
     mWTX = mSession.beginWriteTransaction();
-    mLeftSiblingKeyStack = new FastLongStack();
+    mLeftSiblingKeyStack = new FastStack<Long>();
     mCharacters = new StringBuilder();
     mPrefixList = new ArrayList<String>();
     mURIList = new ArrayList<String>();

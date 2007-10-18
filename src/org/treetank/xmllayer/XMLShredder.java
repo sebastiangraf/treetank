@@ -33,7 +33,7 @@ import org.treetank.api.IConstants;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
 import org.treetank.sessionlayer.SessionConfiguration;
-import org.treetank.utils.FastLongStack;
+import org.treetank.utils.FastStack;
 import org.treetank.utils.UTF;
 
 public final class XMLShredder {
@@ -63,7 +63,7 @@ public final class XMLShredder {
     Session session = new Session(sessionConfiguration);
     IWriteTransaction trx = session.beginWriteTransaction();
     // Prepare variables.
-    final FastLongStack leftSiblingKeyStack = new FastLongStack();
+    final FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
     long key;
     String text;
     leftSiblingKeyStack.push(IConstants.NULL_KEY);

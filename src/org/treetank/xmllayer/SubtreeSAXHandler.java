@@ -4,8 +4,7 @@ import java.util.Hashtable;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.ISession;
-import org.treetank.utils.FastLongStack;
-import org.treetank.utils.FastObjectStack;
+import org.treetank.utils.FastStack;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -33,7 +32,7 @@ public class SubtreeSAXHandler extends SAXHandler {
   private final Hashtable<Long, Long> subtreeKeyNodeMapping;
 
   /** Stack for storing the different leftSiblingStacks */
-  private final FastObjectStack<FastLongStack> stacks;
+  private final FastStack<FastStack<Long>> stacks;
 
   /**
    * Constructor.
@@ -47,7 +46,7 @@ public class SubtreeSAXHandler extends SAXHandler {
     super(initSession);
     session = initSession;
     subtreeKeyNodeMapping = new Hashtable<Long, Long>(0);
-    stacks = new FastObjectStack<FastLongStack>();
+    stacks = new FastStack<FastStack<Long>>();
   }
 
   @Override
@@ -106,7 +105,7 @@ public class SubtreeSAXHandler extends SAXHandler {
 
       this.subtreeKeyNodeMapping.put(subtreeID, mWTX.getNodeKey());
       this.stacks.push(mLeftSiblingKeyStack);
-      mLeftSiblingKeyStack = new FastLongStack();
+      mLeftSiblingKeyStack = new FastStack<Long>();
       mLeftSiblingKeyStack.push(IConstants.NULL_KEY);
       mLeftSiblingKeyStack.push(IConstants.NULL_KEY);
       mWTX.moveToRoot();

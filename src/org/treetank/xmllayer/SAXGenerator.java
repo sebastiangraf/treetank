@@ -29,8 +29,7 @@ import java.io.Writer;
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
-import org.treetank.utils.FastLongStack;
-import org.treetank.utils.FastObjectStack;
+import org.treetank.utils.FastStack;
 import org.treetank.utils.UTF;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.helpers.AttributesImpl;
@@ -57,14 +56,14 @@ public class SAXGenerator extends Thread {
 
   private PipedOutputStream mPipedOut;
 
-  protected final FastLongStack mRightSiblingKeyStack;
+  protected final FastStack<Long> mRightSiblingKeyStack;
 
   private final boolean mPrettyPrint;
 
   /** The nodeKey of the next node to visit. */
   protected long mNextKey;
 
-  protected final FastObjectStack mNodeStack = new FastObjectStack();
+  protected final FastStack mNodeStack = new FastStack();
 
   /**
    * Constructor for printing the reconstructed XML of global storage to stdout.
@@ -90,7 +89,7 @@ public class SAXGenerator extends Thread {
     mIsSerialize = true;
 
     // Prepare full descendant iteration.
-    mRightSiblingKeyStack = new FastLongStack();
+    mRightSiblingKeyStack = new FastStack<Long>();
     mRTX.moveToRoot();
     mRightSiblingKeyStack.push(IConstants.NULL_KEY);
     mNextKey = mRTX.getFirstChildKey();
@@ -121,7 +120,7 @@ public class SAXGenerator extends Thread {
     mIsSerialize = true;
 
     // Prepare full descendant iteration.
-    mRightSiblingKeyStack = new FastLongStack();
+    mRightSiblingKeyStack = new FastStack<Long>();
     mRTX.moveToRoot();
     mRightSiblingKeyStack.push(IConstants.NULL_KEY);
     mNextKey = mRTX.getFirstChildKey();
@@ -146,7 +145,7 @@ public class SAXGenerator extends Thread {
     mHandler = contentHandler;
 
     // Prepare full descendant iteration.
-    mRightSiblingKeyStack = new FastLongStack();
+    mRightSiblingKeyStack = new FastStack<Long>();
     mRightSiblingKeyStack.push(IConstants.NULL_KEY);
     mRTX.moveToRoot();
     mNextKey = mRTX.getFirstChildKey();
