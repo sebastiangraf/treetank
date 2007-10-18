@@ -145,11 +145,13 @@ public final class WriteTransactionState extends ReadTransactionState
   public final void commit(final PageReference reference) throws Exception {
     if (reference != null && reference.isInstantiated() && reference.isDirty()) {
 
-      // Recursively write indirectely referenced pages.
+      // Recursively commit indirectely referenced pages and then write self.
       reference.getPage().commit(this);
-
       mPageWriter.write(reference);
+
+      // Make sure the reference tree does not grow beyond memory.
       getPageCache().put(reference.getStart(), reference.getPage());
+      reference.setPage(null);
     }
   }
 

@@ -25,8 +25,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.api.IConstants;
@@ -88,12 +86,9 @@ public class SessionTest {
 
     final ISession session = new Session(TEST_REVISION_PATH);
 
-    try {
-      final IReadTransaction rTrx = session.beginReadTransaction();
-      TestCase.fail();
-    } catch (Exception e) {
-      // Must fail.
-    }
+    IReadTransaction rTrx = session.beginReadTransaction();
+    assertEquals(0L, rTrx.revisionKey());
+    assertEquals(1L, rTrx.revisionSize());
 
     final IWriteTransaction wTrx = session.beginWriteTransaction();
     assertEquals(0L, wTrx.revisionKey());
@@ -102,7 +97,7 @@ public class SessionTest {
     // Commit and check.
     session.commit();
 
-    final IReadTransaction rTrx = session.beginReadTransaction();
+    rTrx = session.beginReadTransaction();
 
     assertEquals(IConstants.UBP_ROOT_REVISION_KEY, rTrx.revisionKey());
     assertEquals(1L, rTrx.revisionSize());
