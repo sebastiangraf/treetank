@@ -57,4 +57,11 @@ public interface IReadTransactionState {
    */
   public String getName(final int nameKey) throws Exception;
 
+  /**
+   * Close transaction and immediately release all resources.
+   * 
+   * @throws Exception of any kind.
+   */
+  public void close() throws Exception;
+
 }

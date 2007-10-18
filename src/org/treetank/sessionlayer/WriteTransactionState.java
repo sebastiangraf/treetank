@@ -167,6 +167,14 @@ public final class WriteTransactionState extends ReadTransactionState
   /**
    * {@inheritDoc}
    */
+  public void close() throws Exception {
+    super.close();
+    mPageWriter.close();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   protected final NamePage prepareNamePage(final PageReference reference)
       throws Exception {
 

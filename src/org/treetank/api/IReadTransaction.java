@@ -288,4 +288,11 @@ public interface IReadTransaction {
    */
   public String nameForKey(final int key) throws Exception;
 
+  /**
+   * Close transaction and immediately release all resources.
+   * 
+   * @throws Exception of any kind.
+   */
+  public void close() throws Exception;
+
 }

@@ -169,10 +169,20 @@ public final class PageReader {
   }
 
   /**
-   * Required to close file handle.
+   * Properly close file handle.
+   * 
+   * @throws Exception of any kind.
+   */
+  public final void close() throws Exception {
+    mFile.close();
+  }
+
+  /**
+   * Close file handle in case it is not properly closed by the application.
    * 
    * @throws Throwable if the finalization of the superclass does not work.
    */
+  @Override
   protected void finalize() throws Throwable {
     try {
       mFile.close();
