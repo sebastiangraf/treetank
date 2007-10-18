@@ -22,6 +22,7 @@
 package org.treetank.sessionlayer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 
@@ -35,6 +36,9 @@ import org.treetank.utils.TestDocument;
 import org.treetank.utils.UTF;
 
 public class SessionTest {
+
+  public static final String NON_EXISTING_PATH =
+      "generated/NonExisting_SAXHandlerTest.tnk";
 
   public static final String TEST_INSERT_CHILD_PATH =
       "generated/SessionTest_InsertChild.tnk";
@@ -50,10 +54,41 @@ public class SessionTest {
 
   @Before
   public void setUp() throws Exception {
+    new File(NON_EXISTING_PATH).delete();
     new File(TEST_INSERT_CHILD_PATH).delete();
     new File(TEST_REVISION_PATH).delete();
     new File(TEST_SHREDDED_REVISION_PATH).delete();
     new File(TEST_EXISTING_PATH).delete();
+  }
+
+  @Test
+  public void testNonExisting() {
+    try {
+      new Session(NON_EXISTING_PATH);
+      final Thread secondAccess = new Thread() {
+        @Override
+        public void run() {
+          try {
+            new Session(NON_EXISTING_PATH);
+          } catch (final Exception e) {
+            fail(e.toString());
+            e.printStackTrace();
+          }
+        }
+      };
+      secondAccess.start();
+      long counter = 0;
+      while (secondAccess.isAlive() && counter < 100000) {
+        counter++;
+      }
+      if (secondAccess.isAlive()) {
+        fail("Second access should have died!");
+      }
+
+    } catch (final Exception e) {
+      fail(e.toString());
+      e.printStackTrace();
+    }
   }
 
   @Test
