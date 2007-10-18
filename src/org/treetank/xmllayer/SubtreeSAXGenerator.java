@@ -3,7 +3,7 @@ package org.treetank.xmllayer;
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
-import org.treetank.utils.FastLongStack;
+import org.treetank.utils.FastStack;
 import org.treetank.utils.UTF;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -14,7 +14,7 @@ public class SubtreeSAXGenerator extends SAXGenerator {
 
   private boolean lastElement = true;
 
-  private final FastLongStack subtreeKeyStack = new FastLongStack();
+  private final FastStack<Long> subtreeKeyStack = new FastStack<Long>();
 
   public SubtreeSAXGenerator(
       final IReadTransaction initTrx,

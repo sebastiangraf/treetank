@@ -29,10 +29,10 @@ package org.treetank.utils;
  * faster than Stack<Long>.
  * </p>
  */
-public final class FastLongStack {
+public final class FastStack<E> {
 
   /** Internal array to store stack elements. */
-  private long[] mStack;
+  private E[] mStack;
 
   /** Current size of stack. */
   private int mSize;
@@ -41,8 +41,9 @@ public final class FastLongStack {
    * Constructor.
    *
    */
-  public FastLongStack() {
-    mStack = new long[32];
+  @SuppressWarnings("unchecked")
+  public FastStack() {
+    mStack = (E[]) new Object[32];
     mSize = 0;
   }
 
@@ -52,9 +53,10 @@ public final class FastLongStack {
    * 
    * @param element Element to push.
    */
-  public final void push(final long element) {
+  @SuppressWarnings("unchecked")
+  public final void push(final E element) {
     if (mStack.length == mSize) {
-      long[] biggerStack = new long[mStack.length << 1];
+      E[] biggerStack = (E[]) new Object[mStack.length << 1];
       System.arraycopy(mStack, 0, biggerStack, 0, mStack.length);
       mStack = biggerStack;
     }
@@ -67,7 +69,7 @@ public final class FastLongStack {
    * 
    * @return Topmost stack element.
    */
-  public final long peek() {
+  public final E peek() {
     return mStack[mSize - 1];
   }
 
@@ -78,7 +80,7 @@ public final class FastLongStack {
    * @param position Position in stack from where to get the element.
    * @return Stack element at given position.
    */
-  public final long get(final int position) {
+  public final E get(final int position) {
     return mStack[position];
   }
 
@@ -87,7 +89,7 @@ public final class FastLongStack {
    * 
    * @return Removed topmost element of stack.
    */
-  public final long pop() {
+  public final E pop() {
     return mStack[--mSize];
   }
 
@@ -106,15 +108,6 @@ public final class FastLongStack {
    */
   public final int size() {
     return mSize;
-  }
-
-  @Override
-  public final String toString() {
-    String result = new String();
-    for (int i = mSize - 1; i >= 0; i--) {
-      result = result + this.mStack[i] + " ";
-    }
-    return result;
   }
 
 }

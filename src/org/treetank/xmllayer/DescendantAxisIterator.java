@@ -24,7 +24,7 @@ package org.treetank.xmllayer;
 import org.treetank.api.IAxisIterator;
 import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
-import org.treetank.utils.FastLongStack;
+import org.treetank.utils.FastStack;
 
 /**
  * <h1>DescendantAxisIterator</h1>
@@ -40,7 +40,7 @@ public class DescendantAxisIterator implements IAxisIterator {
   private final IReadTransaction mRTX;
 
   /** Stack for remembering next nodeKey in document order. */
-  private final FastLongStack mRightSiblingKeyStack;
+  private final FastStack<Long> mRightSiblingKeyStack;
 
   /** The nodeKey of the next node to visit. */
   private long mNextKey;
@@ -55,7 +55,7 @@ public class DescendantAxisIterator implements IAxisIterator {
 
     // Init members.
     mRTX = rtx;
-    mRightSiblingKeyStack = new FastLongStack();
+    mRightSiblingKeyStack = new FastStack<Long>();
 
     // Find delimiter nodeKey.
     final long currentKey = mRTX.getNodeKey();

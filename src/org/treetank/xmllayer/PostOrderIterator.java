@@ -3,7 +3,7 @@ package org.treetank.xmllayer;
 import org.treetank.api.IAxisIterator;
 import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
-import org.treetank.utils.FastLongStack;
+import org.treetank.utils.FastStack;
 
 /**
  * <h1>PostOrderIterator</h1>
@@ -18,7 +18,7 @@ public class PostOrderIterator implements IAxisIterator {
   private final IReadTransaction trx;
 
   /** For remembering last parent. */
-  private final FastLongStack lastParent;
+  private final FastStack<Long> lastParent;
 
   /** The nodeKey of the next node to visit. */
   private long nextKey;
@@ -40,7 +40,7 @@ public class PostOrderIterator implements IAxisIterator {
 
     // Init members.
     trx = initTrx;
-    lastParent = new FastLongStack();
+    lastParent = new FastStack<Long>();
     lastParent.push(IConstants.NULL_KEY);
     nextKey = trx.getNodeKey();
     if (startAtBeginning) {
