@@ -7,7 +7,6 @@ import java.io.File;
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.api.IAxisIterator;
-import org.treetank.api.IConstants;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
