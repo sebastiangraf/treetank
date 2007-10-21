@@ -81,6 +81,10 @@ public final class Session implements ISession {
   /** Random access mFile for beacons. */
   private final RandomAccessFile mFile;
 
+  public Session(final File file) throws Exception {
+    this(new SessionConfiguration(file.getAbsolutePath()));
+  }
+  
   /**
    * Convenient constructor.
    * 
