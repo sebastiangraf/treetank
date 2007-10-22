@@ -34,7 +34,8 @@ import org.treetank.utils.UTF;
 
 public class PageWriterTest {
 
-  private final static String PATH = "generated/PageWriterTest.tnk";
+  private final static String PATH =
+      "generated" + File.separator + "PageWriterTest.tnk";
 
   @Before
   public void setUp() throws Exception {

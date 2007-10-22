@@ -38,12 +38,13 @@ import org.treetank.utils.TestDocument;
 
 public class XMLShredderTest {
 
-  public static final String XML = "xml/test.xml";
+  public static final String XML = "xml" + File.separator + "test.xml";
 
-  public static final String PATH = "generated/XMLShredderTest.tnk";
+  public static final String PATH =
+      "generated" + File.separator + "XMLShredderTest.tnk";
 
   public static final String EXPECTED_PATH =
-      "generated/Expected_XMLShredderTest.tnk";
+      "generated" + File.separator + "ExpectedXMLShredderTest.tnk";
 
   @Before
   public void setUp() throws Exception {

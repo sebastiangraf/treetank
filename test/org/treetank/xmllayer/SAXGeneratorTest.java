@@ -32,7 +32,8 @@ import org.treetank.utils.TestDocument;
 
 public class SAXGeneratorTest {
 
-  public static final String PATH = "generated/SAXGeneratorTest.tnk";
+  public static final String PATH =
+      "generated" + File.separator + "SAXGeneratorTest.tnk";
 
   @Before
   public void setUp() throws Exception {

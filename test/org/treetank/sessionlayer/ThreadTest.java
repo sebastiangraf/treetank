@@ -34,7 +34,6 @@ import org.treetank.api.IAxisIterator;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
 import org.treetank.utils.UTF;
 import org.treetank.xmllayer.DescendantAxisIterator;
@@ -43,7 +42,8 @@ public class ThreadTest {
 
   public static final int WORKER_COUNT = 100;
 
-  public static final String THREAD_TEST_PATH = "generated/ThreadTest.tnk";
+  public static final String THREAD_TEST_PATH =
+      "generated" + File.separator + "ThreadTest.tnk";
 
   @Before
   public void setUp() throws Exception {
