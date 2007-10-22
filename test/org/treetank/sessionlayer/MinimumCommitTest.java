@@ -63,6 +63,8 @@ public class MinimumCommitTest {
 
     IReadTransaction rtx = session.beginReadTransaction();
     TestCase.assertEquals(2L, rtx.revisionKey());
+    rtx.close();
+    session.close();
 
   }
 }

@@ -60,7 +60,9 @@ public interface ISession {
   public IWriteTransaction beginWriteTransaction() throws Exception;
 
   /**
-   * Close session.
+   * Safely close session and immediately release all resources. A session
+   * can not be closed as long as there are running reading or writing
+   * transactions.
    * 
    * @throws Exception of any kind.
    */

@@ -55,8 +55,11 @@ public final class SessionState implements ISession {
   /** Shared read-only page mPageCache. */
   private final Map<Long, IPage> mPageCache;
 
-  /** Write semaphore to assure only one IWriteTransaction exists. */
+  /** Write semaphore to assure only one exclusive write transaction exists. */
   private final Semaphore mWriteSemaphore;
+
+  /** Read semaphore to control running read transactions. */
+  private final Semaphore mReadSemaphore;
 
   /** Reference to uber page as root of whole storage (primary beacon). */
   private final PageReference mPrimaryUberPageReference;
@@ -107,8 +110,8 @@ public final class SessionState implements ISession {
 
     // Init session members.
     mPageCache = new FastWeakHashMap<Long, IPage>();
-    mWriteSemaphore =
-        new Semaphore(IConstants.MAX_NUMBER_OF_WRITE_TRANSACTIONS);
+    mWriteSemaphore = new Semaphore(IConstants.MAX_WRITE_TRANSACTIONS);
+    mReadSemaphore = new Semaphore(IConstants.MAX_READ_TRANSACTIONS);
     mPrimaryUberPageReference = new PageReference();
     mSecondaryUberPageReference = new PageReference();
     mFile = new RandomAccessFile(mSessionConfiguration.getPath(), "rw");
@@ -165,11 +168,13 @@ public final class SessionState implements ISession {
   public final IReadTransaction beginReadTransaction(final long revisionKey)
       throws Exception {
 
+    mReadSemaphore.acquire();
+
     final PageReader pageReader = new PageReader(mSessionConfiguration);
     final IReadTransactionState state =
         new ReadTransactionState(mPageCache, pageReader, mUberPage, revisionKey);
 
-    return new ReadTransaction(state);
+    return new ReadTransaction(this, state);
   }
 
   /**
@@ -180,10 +185,7 @@ public final class SessionState implements ISession {
     // Make sure that only one write transaction exists per session.
     if (mWriteSemaphore.availablePermits() == 0) {
       throw new IllegalStateException(
-          "Session can not start new IWriteTransaction due to "
-              + (IConstants.MAX_NUMBER_OF_WRITE_TRANSACTIONS - mWriteSemaphore
-                  .availablePermits())
-              + " running IWriteTransaction(s).");
+          "There already is a running exclusive write transaction.");
     }
     mWriteSemaphore.acquire();
 
@@ -204,7 +206,7 @@ public final class SessionState implements ISession {
   /**
    * {@inheritDoc}
    */
-  public final void commit() throws Exception {
+  public final void commitWriteTransaction() throws Exception {
 
     if (mUberPage.isBootstrap()) {
       mFile.setLength(IConstants.BEACON_LENGTH);
@@ -226,7 +228,7 @@ public final class SessionState implements ISession {
   /**
    * {@inheritDoc}
    */
-  public final void abort() throws Exception {
+  public final void abortWriteTransaction() throws Exception {
     mUberPage.abort();
     mWriteSemaphore.release();
   }
@@ -234,12 +236,21 @@ public final class SessionState implements ISession {
   /**
    * {@inheritDoc}
    */
+  public final void closeReadTransaction() throws Exception {
+    mReadSemaphore.release();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final void close() throws Exception {
-    if (mWriteSemaphore.availablePermits() == 0) {
-      throw new IllegalStateException("Session can not be closed due to "
-          + (IConstants.MAX_NUMBER_OF_WRITE_TRANSACTIONS - mWriteSemaphore
-              .availablePermits())
-          + " running IWriteTransaction(s).");
+    if (mWriteSemaphore.drainPermits() != IConstants.MAX_WRITE_TRANSACTIONS) {
+      throw new IllegalStateException("Session can not be closed due to a"
+          + "running exclusive write transaction.");
+    }
+    if (mReadSemaphore.drainPermits() != IConstants.MAX_READ_TRANSACTIONS) {
+      throw new IllegalStateException("Session can not be closed due to one "
+          + "or more running share read transactions.");
     }
     mFile.close();
   }

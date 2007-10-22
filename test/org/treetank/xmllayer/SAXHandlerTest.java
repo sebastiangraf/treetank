@@ -103,6 +103,7 @@ public class SAXHandlerTest {
     expectedWTX.abort();
     expectedSession.close();
 
+    rtx.close();
     session.close();
 
   }

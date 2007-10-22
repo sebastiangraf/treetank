@@ -68,35 +68,36 @@ public class XMLShredderTest {
 
     // Verify.
     final ISession session = new Session(PATH);
-    final IReadTransaction trx = session.beginReadTransaction();
-    trx.moveToRoot();
+    final IReadTransaction rtx = session.beginReadTransaction();
+    rtx.moveToRoot();
     final IAxisIterator expectedDescendants =
         new DescendantAxisIterator(expectedTrx);
-    final IAxisIterator descendants = new DescendantAxisIterator(trx);
+    final IAxisIterator descendants = new DescendantAxisIterator(rtx);
 
-    assertEquals(expectedTrx.revisionSize(), trx.revisionSize());
+    assertEquals(expectedTrx.revisionSize(), rtx.revisionSize());
     while (expectedDescendants.next() && descendants.next()) {
-      assertEquals(expectedTrx.getNodeKey(), trx.getNodeKey());
-      assertEquals(expectedTrx.getParentKey(), trx.getParentKey());
-      assertEquals(expectedTrx.getFirstChildKey(), trx.getFirstChildKey());
-      assertEquals(expectedTrx.getLeftSiblingKey(), trx.getLeftSiblingKey());
-      assertEquals(expectedTrx.getRightSiblingKey(), trx.getRightSiblingKey());
-      assertEquals(expectedTrx.getChildCount(), trx.getChildCount());
-      assertEquals(expectedTrx.getKind(), trx.getKind());
-      assertEquals(expectedTrx.nameForKey(expectedTrx.getLocalPartKey()), trx
-          .nameForKey(trx.getLocalPartKey()));
-      assertEquals(expectedTrx.nameForKey(expectedTrx.getURIKey()), trx
-          .nameForKey(trx.getURIKey()));
-      assertEquals(expectedTrx.nameForKey(expectedTrx.getPrefixKey()), trx
-          .nameForKey(trx.getPrefixKey()));
+      assertEquals(expectedTrx.getNodeKey(), rtx.getNodeKey());
+      assertEquals(expectedTrx.getParentKey(), rtx.getParentKey());
+      assertEquals(expectedTrx.getFirstChildKey(), rtx.getFirstChildKey());
+      assertEquals(expectedTrx.getLeftSiblingKey(), rtx.getLeftSiblingKey());
+      assertEquals(expectedTrx.getRightSiblingKey(), rtx.getRightSiblingKey());
+      assertEquals(expectedTrx.getChildCount(), rtx.getChildCount());
+      assertEquals(expectedTrx.getKind(), rtx.getKind());
+      assertEquals(expectedTrx.nameForKey(expectedTrx.getLocalPartKey()), rtx
+          .nameForKey(rtx.getLocalPartKey()));
+      assertEquals(expectedTrx.nameForKey(expectedTrx.getURIKey()), rtx
+          .nameForKey(rtx.getURIKey()));
+      assertEquals(expectedTrx.nameForKey(expectedTrx.getPrefixKey()), rtx
+          .nameForKey(rtx.getPrefixKey()));
       assertEquals(new String(
           expectedTrx.getValue(),
           IConstants.DEFAULT_ENCODING), new String(
-          trx.getValue(),
+          rtx.getValue(),
           IConstants.DEFAULT_ENCODING));
     }
 
     expectedSession.close();
+    rtx.close();
     session.close();
 
   }

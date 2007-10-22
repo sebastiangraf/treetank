@@ -52,9 +52,9 @@ public class UpdateTest {
     IWriteTransaction wtx = session.beginWriteTransaction();
     wtx.commit();
 
-    IReadTransaction rTrx = session.beginReadTransaction();
-    assertEquals(1L, rTrx.revisionSize());
-    assertEquals(0L, rTrx.revisionKey());
+    IReadTransaction rtx = session.beginReadTransaction();
+    assertEquals(1L, rtx.revisionSize());
+    assertEquals(0L, rtx.revisionKey());
 
     // Insert 100 children.
     for (int i = 1; i <= 10; i++) {
@@ -67,21 +67,23 @@ public class UpdateTest {
       session.close();
 
       session = new Session(TEST_PATH);
-      rTrx = session.beginReadTransaction();
-      rTrx.moveToRoot();
-      rTrx.moveToFirstChild();
-      assertEquals(Integer.toString(i), new String(rTrx.getValue()));
-      assertEquals(i + 1L, rTrx.revisionSize());
-      assertEquals(i, rTrx.revisionKey());
+      rtx = session.beginReadTransaction();
+      rtx.moveToRoot();
+      rtx.moveToFirstChild();
+      assertEquals(Integer.toString(i), new String(rtx.getValue()));
+      assertEquals(i + 1L, rtx.revisionSize());
+      assertEquals(i, rtx.revisionKey());
     }
+    rtx.close();
 
     session = new Session(TEST_PATH);
-    rTrx = session.beginReadTransaction();
-    rTrx.moveToRoot();
-    rTrx.moveToFirstChild();
-    assertEquals(Integer.toString(10), new String(rTrx.getValue()));
-    assertEquals(11L, rTrx.revisionSize());
-    assertEquals(10L, rTrx.revisionKey());
+    rtx = session.beginReadTransaction();
+    rtx.moveToRoot();
+    rtx.moveToFirstChild();
+    assertEquals(Integer.toString(10), new String(rtx.getValue()));
+    assertEquals(11L, rtx.revisionSize());
+    assertEquals(10L, rtx.revisionKey());
+    rtx.close();
     session.close();
 
   }

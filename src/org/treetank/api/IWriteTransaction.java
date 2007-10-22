@@ -242,14 +242,15 @@ public interface IWriteTransaction extends IReadTransaction {
   public void setValue(final byte[] value) throws Exception;
 
   /**
-   * Commit all modifications of the single IWriteTransaction.
+   * Commit all modifications of the exclusive write transaction. Calling
+   * <code>close()</code> is semantiacally equivalent.
    * 
    * @throws Exception if commit failed.
    */
   public void commit() throws Exception;
 
   /**
-   * Abort all modifications of the single IWriteTransaction.
+   * Abort all modifications of the exclusive write transaction.
    * 
    * @throws Exception if abort failed.
    */

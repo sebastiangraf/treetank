@@ -89,6 +89,7 @@ public class ThreadTest {
           // Move on.
         }
         mRTX.moveTo(16L);
+        mRTX.close();
       } catch (Exception e) {
         TestCase.fail(e.getLocalizedMessage());
       }
