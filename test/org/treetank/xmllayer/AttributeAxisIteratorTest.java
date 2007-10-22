@@ -35,7 +35,8 @@ import org.treetank.utils.TestDocument;
 
 public class AttributeAxisIteratorTest {
 
-  public static final String PATH = "generated/AttributeAxisIteratorTest.tnk";
+  public static final String PATH =
+      "generated" + File.separator + "AttributeAxisIteratorTest.tnk";
 
   @Before
   public void setUp() throws Exception {

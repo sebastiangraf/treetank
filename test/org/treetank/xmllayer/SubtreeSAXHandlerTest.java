@@ -20,10 +20,11 @@ import org.xml.sax.InputSource;
 import org.xml.sax.helpers.AttributesImpl;
 
 public class SubtreeSAXHandlerTest {
-  public static final String PATH = "generated/SubtreeSAXHandlerTest.tnk";
+  public static final String PATH =
+      "generated" + File.separator + "SubtreeSAXHandlerTest.tnk";
 
   public static final String EXPECTED_PATH =
-      "generated/Expected_SubtreeSAXHandlerTest.tnk";
+      "generated" + File.separator + "ExpectedSubtreeSAXHandlerTest.tnk";
 
   @Before
   public void setUp() throws Exception {

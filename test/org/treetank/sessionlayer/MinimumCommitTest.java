@@ -34,7 +34,8 @@ import org.treetank.utils.TestDocument;
 
 public class MinimumCommitTest {
 
-  public static final String TEST_PATH = "generated/MinimumCommitTest.tnk";
+  public static final String TEST_PATH =
+      "generated" + File.separator + "MinimumCommitTest.tnk";
 
   @Before
   public void setUp() throws Exception {

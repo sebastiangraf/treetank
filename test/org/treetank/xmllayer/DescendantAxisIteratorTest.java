@@ -35,7 +35,8 @@ import org.treetank.utils.TestDocument;
 
 public class DescendantAxisIteratorTest {
 
-  public static final String PATH = "generated/DescendantAxisIteratorTest.tnk";
+  public static final String PATH =
+      "generated" + File.separator + "DescendantAxisIteratorTest.tnk";
 
   @Before
   public void setUp() throws Exception {

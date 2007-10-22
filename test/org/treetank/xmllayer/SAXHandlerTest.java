@@ -41,10 +41,11 @@ import org.xml.sax.InputSource;
 
 public class SAXHandlerTest {
 
-  public static final String PATH = "generated/SAXHandlerTest.tnk";
+  public static final String PATH =
+      "generated" + File.separator + "SAXHandlerTest.tnk";
 
   public static final String EXPECTED_PATH =
-      "generated/Expected_SAXHandlerTest.tnk";
+      "generated" + File.separator + "ExpectedSAXHandlerTest.tnk";
 
   @Before
   public void setUp() throws Exception {

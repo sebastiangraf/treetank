@@ -38,10 +38,10 @@ import org.treetank.utils.TestDocument;
 public class ChildAxisIteratorTest {
 
   public static final String TEST_ITERATE_PATH =
-      "generated/ChildAxitIteratorTest_Iterate.tnk";
+      "generated" + File.separator + "ChildAxitIteratorTestIterate.tnk";
 
   public static final String TEST_PERSISTENT_PATH =
-      "generated/ChildAxitIteratorTest_Persistent.tnk";
+      "generated" + File.separator + "ChildAxitIteratorTestPersistent.tnk";
 
   @Before
   public void setUp() throws Exception {
@@ -64,7 +64,9 @@ public class ChildAxisIteratorTest {
     assertEquals("", trx.nameForKey(trx.getLocalPartKey()));
     assertEquals("", trx.nameForKey(trx.getURIKey()));
     assertEquals("", trx.nameForKey(trx.getPrefixKey()));
-    assertEquals("oops1", new String(trx.getValue(), IConstants.DEFAULT_ENCODING));
+    assertEquals("oops1", new String(
+        trx.getValue(),
+        IConstants.DEFAULT_ENCODING));
 
     assertEquals(true, childIterator1.next());
     assertEquals(3L, trx.getNodeKey());
@@ -80,7 +82,9 @@ public class ChildAxisIteratorTest {
     assertEquals("", trx.nameForKey(trx.getLocalPartKey()));
     assertEquals("", trx.nameForKey(trx.getURIKey()));
     assertEquals("", trx.nameForKey(trx.getPrefixKey()));
-    assertEquals("oops2", new String(trx.getValue(), IConstants.DEFAULT_ENCODING));
+    assertEquals("oops2", new String(
+        trx.getValue(),
+        IConstants.DEFAULT_ENCODING));
 
     assertEquals(true, childIterator1.next());
     assertEquals(7L, trx.getNodeKey());
@@ -96,7 +100,9 @@ public class ChildAxisIteratorTest {
     assertEquals("", trx.nameForKey(trx.getLocalPartKey()));
     assertEquals("", trx.nameForKey(trx.getURIKey()));
     assertEquals("", trx.nameForKey(trx.getPrefixKey()));
-    assertEquals("oops3", new String(trx.getValue(), IConstants.DEFAULT_ENCODING));
+    assertEquals("oops3", new String(
+        trx.getValue(),
+        IConstants.DEFAULT_ENCODING));
 
     assertEquals(false, childIterator1.next());
 
@@ -148,7 +154,9 @@ public class ChildAxisIteratorTest {
     assertEquals("", rTrx.nameForKey(rTrx.getLocalPartKey()));
     assertEquals("", rTrx.nameForKey(rTrx.getURIKey()));
     assertEquals("", rTrx.nameForKey(rTrx.getPrefixKey()));
-    assertEquals("oops1", new String(rTrx.getValue(), IConstants.DEFAULT_ENCODING));
+    assertEquals("oops1", new String(
+        rTrx.getValue(),
+        IConstants.DEFAULT_ENCODING));
 
     assertEquals(true, childIterator1.next());
     assertEquals(3L, rTrx.getNodeKey());
@@ -164,7 +172,9 @@ public class ChildAxisIteratorTest {
     assertEquals("", rTrx.nameForKey(rTrx.getLocalPartKey()));
     assertEquals("", rTrx.nameForKey(rTrx.getURIKey()));
     assertEquals("", rTrx.nameForKey(rTrx.getPrefixKey()));
-    assertEquals("oops2", new String(rTrx.getValue(), IConstants.DEFAULT_ENCODING));
+    assertEquals("oops2", new String(
+        rTrx.getValue(),
+        IConstants.DEFAULT_ENCODING));
 
     assertEquals(true, childIterator1.next());
     assertEquals(7L, rTrx.getNodeKey());
@@ -180,7 +190,9 @@ public class ChildAxisIteratorTest {
     assertEquals("", rTrx.nameForKey(rTrx.getLocalPartKey()));
     assertEquals("", rTrx.nameForKey(rTrx.getURIKey()));
     assertEquals("", rTrx.nameForKey(rTrx.getPrefixKey()));
-    assertEquals("oops3", new String(rTrx.getValue(), IConstants.DEFAULT_ENCODING));
+    assertEquals("oops3", new String(
+        rTrx.getValue(),
+        IConstants.DEFAULT_ENCODING));
 
     assertEquals(false, childIterator1.next());
 
@@ -192,7 +204,9 @@ public class ChildAxisIteratorTest {
     assertEquals("", rTrx.nameForKey(rTrx.getLocalPartKey()));
     assertEquals("", rTrx.nameForKey(rTrx.getURIKey()));
     assertEquals("", rTrx.nameForKey(rTrx.getPrefixKey()));
-    assertEquals("foo", new String(rTrx.getValue(), IConstants.DEFAULT_ENCODING));
+    assertEquals(
+        "foo",
+        new String(rTrx.getValue(), IConstants.DEFAULT_ENCODING));
 
     assertEquals(true, childIterator2.next());
     assertEquals(5L, rTrx.getNodeKey());

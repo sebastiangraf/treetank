@@ -35,7 +35,8 @@ import org.treetank.utils.TestDocument;
 
 public class ParentAxisIteratorTest {
 
-  public static final String PATH = "generated/ParentAxisIteratorTest.tnk";
+  public static final String PATH =
+      "generated" + File.separator + "ParentAxisIteratorTest.tnk";
 
   @Before
   public void setUp() throws Exception {

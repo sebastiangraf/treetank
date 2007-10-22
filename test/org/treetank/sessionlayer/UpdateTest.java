@@ -35,7 +35,8 @@ import org.treetank.utils.UTF;
 
 public class UpdateTest {
 
-  public static final String TEST_PATH = "generated/UpdateTest.tnk";
+  public static final String TEST_PATH =
+      "generated" + File.separator + "UpdateTest.tnk";
 
   @Before
   public void setUp() throws Exception {
