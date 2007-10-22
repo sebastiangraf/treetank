@@ -48,42 +48,42 @@ public class AncestorAxisIteratorTest {
 
     // Build simple test tree.
     final ISession session = new Session(PATH);
-    final IWriteTransaction trx = session.beginWriteTransaction();
-    TestDocument.create(trx);
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+    TestDocument.create(wtx);
 
     // Find ancestors starting from nodeKey 0L (root).
-    trx.moveTo(8L);
-    final IAxisIterator ancestorIterator1 = new AncestorAxisIterator(trx);
+    wtx.moveTo(8L);
+    final IAxisIterator ancestorIterator1 = new AncestorAxisIterator(wtx);
     assertEquals(true, ancestorIterator1.next());
-    assertEquals(7L, trx.getNodeKey());
+    assertEquals(7L, wtx.getNodeKey());
 
     assertEquals(true, ancestorIterator1.next());
-    assertEquals(1L, trx.getNodeKey());
+    assertEquals(1L, wtx.getNodeKey());
 
     assertEquals(false, ancestorIterator1.next());
 
     // Find ancestors starting from nodeKey 1L (first child of root).
-    trx.moveTo(3L);
-    final IAxisIterator ancestorIterator2 = new AncestorAxisIterator(trx);
+    wtx.moveTo(3L);
+    final IAxisIterator ancestorIterator2 = new AncestorAxisIterator(wtx);
     assertEquals(true, ancestorIterator2.next());
-    assertEquals(1L, trx.getNodeKey());
+    assertEquals(1L, wtx.getNodeKey());
 
     assertEquals(false, ancestorIterator2.next());
 
     // Find ancestors starting from nodeKey 4L (second child of root).
-    trx.moveTo(2L);
-    final IAxisIterator ancestorIterator3 = new AncestorAxisIterator(trx);
+    wtx.moveTo(2L);
+    final IAxisIterator ancestorIterator3 = new AncestorAxisIterator(wtx);
     assertEquals(true, ancestorIterator3.next());
-    assertEquals(1L, trx.getNodeKey());
+    assertEquals(1L, wtx.getNodeKey());
 
     assertEquals(false, ancestorIterator3.next());
 
     // Find ancestors starting from nodeKey 5L (last in document order).
-    trx.moveTo(1L);
-    final IAxisIterator ancestorIterator4 = new AncestorAxisIterator(trx);
+    wtx.moveTo(1L);
+    final IAxisIterator ancestorIterator4 = new AncestorAxisIterator(wtx);
     assertEquals(false, ancestorIterator4.next());
 
-    session.abort();
+    wtx.abort();
     session.close();
 
   }

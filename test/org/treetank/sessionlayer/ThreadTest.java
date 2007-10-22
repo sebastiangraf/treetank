@@ -55,17 +55,17 @@ public class ThreadTest {
 
     ISession session = new Session(THREAD_TEST_PATH);
 
-    final IWriteTransaction trx = session.beginWriteTransaction();
-    TestDocument.create(trx);
-    session.commit();
+    IWriteTransaction wtx = session.beginWriteTransaction();
+    TestDocument.create(wtx);
+    wtx.commit();
 
     ExecutorService taskExecutor = Executors.newFixedThreadPool(WORKER_COUNT);
     for (int i = 0; i < WORKER_COUNT; i++) {
       taskExecutor.execute(new Task(session.beginReadTransaction(0L)));
-      final IWriteTransaction wTrx = session.beginWriteTransaction();
-      wTrx.moveTo(10L);
-      wTrx.setValue(UTF.convert("value" + i));
-      session.commit();
+      wtx = session.beginWriteTransaction();
+      wtx.moveTo(10L);
+      wtx.setValue(UTF.convert("value" + i));
+      wtx.commit();
     }
     taskExecutor.shutdown();
     taskExecutor.awaitTermination(1000000, TimeUnit.SECONDS);

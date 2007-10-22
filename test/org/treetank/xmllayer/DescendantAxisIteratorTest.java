@@ -48,93 +48,93 @@ public class DescendantAxisIteratorTest {
 
     // Build simple test tree.
     final ISession session = new Session(PATH);
-    final IWriteTransaction trx = session.beginWriteTransaction();
-    TestDocument.create(trx);
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+    TestDocument.create(wtx);
 
     // Find descendants starting from nodeKey 0L (root).
-    trx.moveToRoot();
-    final IAxisIterator descendantIterator1 = new DescendantAxisIterator(trx);
+    wtx.moveToRoot();
+    final IAxisIterator descendantIterator1 = new DescendantAxisIterator(wtx);
     assertEquals(true, descendantIterator1.next());
-    assertEquals(1L, trx.getNodeKey());
+    assertEquals(1L, wtx.getNodeKey());
 
     assertEquals(true, descendantIterator1.next());
-    assertEquals(2L, trx.getNodeKey());
+    assertEquals(2L, wtx.getNodeKey());
 
     assertEquals(true, descendantIterator1.next());
-    assertEquals(3L, trx.getNodeKey());
+    assertEquals(3L, wtx.getNodeKey());
 
     assertEquals(true, descendantIterator1.next());
-    assertEquals(4L, trx.getNodeKey());
+    assertEquals(4L, wtx.getNodeKey());
 
     assertEquals(true, descendantIterator1.next());
-    assertEquals(5L, trx.getNodeKey());
+    assertEquals(5L, wtx.getNodeKey());
 
     assertEquals(true, descendantIterator1.next());
-    assertEquals(6L, trx.getNodeKey());
+    assertEquals(6L, wtx.getNodeKey());
 
     assertEquals(true, descendantIterator1.next());
-    assertEquals(7L, trx.getNodeKey());
+    assertEquals(7L, wtx.getNodeKey());
 
     assertEquals(true, descendantIterator1.next());
-    assertEquals(8L, trx.getNodeKey());
+    assertEquals(8L, wtx.getNodeKey());
 
     assertEquals(true, descendantIterator1.next());
-    assertEquals(9L, trx.getNodeKey());
+    assertEquals(9L, wtx.getNodeKey());
 
     assertEquals(true, descendantIterator1.next());
-    assertEquals(10L, trx.getNodeKey());
+    assertEquals(10L, wtx.getNodeKey());
 
     assertEquals(false, descendantIterator1.next());
 
     // Find descendants starting from nodeKey 1L (first child of root).
-    trx.moveTo(1L);
-    final IAxisIterator descendantIterator2 = new DescendantAxisIterator(trx);
+    wtx.moveTo(1L);
+    final IAxisIterator descendantIterator2 = new DescendantAxisIterator(wtx);
     assertEquals(true, descendantIterator2.next());
-    assertEquals(2L, trx.getNodeKey());
+    assertEquals(2L, wtx.getNodeKey());
 
     assertEquals(true, descendantIterator2.next());
-    assertEquals(3L, trx.getNodeKey());
+    assertEquals(3L, wtx.getNodeKey());
 
     assertEquals(true, descendantIterator2.next());
-    assertEquals(4L, trx.getNodeKey());
+    assertEquals(4L, wtx.getNodeKey());
 
     assertEquals(true, descendantIterator2.next());
-    assertEquals(5L, trx.getNodeKey());
+    assertEquals(5L, wtx.getNodeKey());
 
     assertEquals(true, descendantIterator2.next());
-    assertEquals(6L, trx.getNodeKey());
+    assertEquals(6L, wtx.getNodeKey());
 
     assertEquals(true, descendantIterator2.next());
-    assertEquals(7L, trx.getNodeKey());
+    assertEquals(7L, wtx.getNodeKey());
 
     assertEquals(true, descendantIterator2.next());
-    assertEquals(8L, trx.getNodeKey());
+    assertEquals(8L, wtx.getNodeKey());
 
     assertEquals(true, descendantIterator2.next());
-    assertEquals(9L, trx.getNodeKey());
+    assertEquals(9L, wtx.getNodeKey());
 
     assertEquals(true, descendantIterator2.next());
-    assertEquals(10L, trx.getNodeKey());
+    assertEquals(10L, wtx.getNodeKey());
 
     assertEquals(false, descendantIterator2.next());
 
     // Find descendants starting from nodeKey 4L (second child of root).
-    trx.moveTo(7L);
-    final IAxisIterator descendantIterator3 = new DescendantAxisIterator(trx);
+    wtx.moveTo(7L);
+    final IAxisIterator descendantIterator3 = new DescendantAxisIterator(wtx);
     assertEquals(true, descendantIterator3.next());
-    assertEquals(8L, trx.getNodeKey());
+    assertEquals(8L, wtx.getNodeKey());
 
     assertEquals(true, descendantIterator3.next());
-    assertEquals(9L, trx.getNodeKey());
+    assertEquals(9L, wtx.getNodeKey());
 
     assertEquals(false, descendantIterator3.next());
 
     // Find descendants starting from nodeKey 5L (last in document order).
-    trx.moveTo(10L);
-    final IAxisIterator descendantIterator4 = new DescendantAxisIterator(trx);
+    wtx.moveTo(10L);
+    final IAxisIterator descendantIterator4 = new DescendantAxisIterator(wtx);
     assertEquals(false, descendantIterator4.next());
 
-    session.abort();
+    wtx.abort();
     session.close();
 
   }

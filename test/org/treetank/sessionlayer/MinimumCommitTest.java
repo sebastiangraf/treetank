@@ -48,18 +48,18 @@ public class MinimumCommitTest {
     ISession session = new Session(TEST_PATH);
     IWriteTransaction wtx = session.beginWriteTransaction();
     TestCase.assertEquals(0L, wtx.revisionKey());
-    session.commit();
+    wtx.commit();
     session.close();
 
     session = new Session(TEST_PATH);
     wtx = session.beginWriteTransaction();
     TestCase.assertEquals(1L, wtx.revisionKey());
     TestDocument.create(wtx);
-    session.commit();
+    wtx.commit();
 
     wtx = session.beginWriteTransaction();
     TestCase.assertEquals(2L, wtx.revisionKey());
-    session.commit();
+    wtx.commit();
 
     IReadTransaction rtx = session.beginReadTransaction();
     TestCase.assertEquals(2L, rtx.revisionKey());

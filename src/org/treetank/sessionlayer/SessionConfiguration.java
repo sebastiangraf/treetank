@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * $Id$
+ * $Id:SessionConfiguration.java 3019 2007-10-10 13:28:24Z kramis $
  */
 
 package org.treetank.sessionlayer;
@@ -34,7 +34,7 @@ package org.treetank.sessionlayer;
  */
 public final class SessionConfiguration {
 
-  /** Path to .tnk file. */
+  /** Absolute path to .tnk file. */
   private final String mPath;
 
   /** Key of .tnk file or null. */
@@ -79,7 +79,7 @@ public final class SessionConfiguration {
   }
 
   /**
-   * Get path to .tnk file.
+   * Get absolute path to .tnk file.
    * 
    * @return Path to .tnk file.
    */

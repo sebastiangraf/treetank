@@ -75,7 +75,7 @@ public class SessionTest {
     assertEquals(0L, new File(TEST_INSERT_CHILD_PATH).length());
 
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    session.commit();
+    wtx.commit();
     session.close();
 
     session = new Session(TEST_INSERT_CHILD_PATH);
@@ -120,22 +120,22 @@ public class SessionTest {
 
     final ISession session = new Session(TEST_INSERT_CHILD_PATH);
 
-    final IWriteTransaction trx = session.beginWriteTransaction();
+    final IWriteTransaction wtx = session.beginWriteTransaction();
 
-    TestDocument.create(trx);
+    TestDocument.create(wtx);
 
-    assertEquals(true, trx.moveToRoot());
-    assertEquals(IConstants.DOCUMENT, trx.getKind());
+    assertEquals(true, wtx.moveToRoot());
+    assertEquals(IConstants.DOCUMENT, wtx.getKind());
 
-    assertEquals(true, trx.moveToFirstChild());
-    assertEquals(IConstants.ELEMENT, trx.getKind());
-    assertEquals("a", trx.getLocalPart());
+    assertEquals(true, wtx.moveToFirstChild());
+    assertEquals(IConstants.ELEMENT, wtx.getKind());
+    assertEquals("a", wtx.getLocalPart());
 
     //    assertEquals(true, trx.moveToFirstAttribute());
     //    assertEquals(IConstants.ATTRIBUTE, trx.getKind());
     //    assertEquals("j", new String(trx.getValue(), IConstants.ENCODING));
 
-    session.abort();
+    wtx.abort();
     session.close();
 
   }
@@ -145,25 +145,25 @@ public class SessionTest {
 
     final ISession session = new Session(TEST_REVISION_PATH);
 
-    IReadTransaction rTrx = session.beginReadTransaction();
-    assertEquals(0L, rTrx.revisionKey());
-    assertEquals(1L, rTrx.revisionSize());
+    IReadTransaction rtx = session.beginReadTransaction();
+    assertEquals(0L, rtx.revisionKey());
+    assertEquals(1L, rtx.revisionSize());
 
-    final IWriteTransaction wTrx = session.beginWriteTransaction();
-    assertEquals(0L, wTrx.revisionKey());
-    assertEquals(1L, wTrx.revisionSize());
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+    assertEquals(0L, wtx.revisionKey());
+    assertEquals(1L, wtx.revisionSize());
 
     // Commit and check.
-    session.commit();
+    wtx.commit();
 
-    rTrx = session.beginReadTransaction();
+    rtx = session.beginReadTransaction();
 
-    assertEquals(IConstants.UBP_ROOT_REVISION_KEY, rTrx.revisionKey());
-    assertEquals(1L, rTrx.revisionSize());
+    assertEquals(IConstants.UBP_ROOT_REVISION_KEY, rtx.revisionKey());
+    assertEquals(1L, rtx.revisionSize());
 
-    final IReadTransaction rTrx2 = session.beginReadTransaction();
-    assertEquals(0L, rTrx2.revisionKey());
-    assertEquals(1L, rTrx2.revisionSize());
+    final IReadTransaction rtx2 = session.beginReadTransaction();
+    assertEquals(0L, rtx2.revisionKey());
+    assertEquals(1L, rtx2.revisionSize());
 
   }
 
@@ -172,39 +172,39 @@ public class SessionTest {
 
     final ISession session = new Session(TEST_SHREDDED_REVISION_PATH);
 
-    final IWriteTransaction wTrx1 = session.beginWriteTransaction();
-    TestDocument.create(wTrx1);
-    assertEquals(0L, wTrx1.revisionKey());
-    assertEquals(11L, wTrx1.revisionSize());
-    session.commit();
+    final IWriteTransaction wtx1 = session.beginWriteTransaction();
+    TestDocument.create(wtx1);
+    assertEquals(0L, wtx1.revisionKey());
+    assertEquals(11L, wtx1.revisionSize());
+    wtx1.commit();
 
-    final IReadTransaction rTrx1 = session.beginReadTransaction();
-    assertEquals(0L, rTrx1.revisionKey());
-    rTrx1.moveTo(9L);
-    assertEquals("bar", new String(
-        rTrx1.getValue(),
-        IConstants.DEFAULT_ENCODING));
+    final IReadTransaction rtx1 = session.beginReadTransaction();
+    assertEquals(0L, rtx1.revisionKey());
+    rtx1.moveTo(9L);
+    assertEquals(
+        "bar",
+        new String(rtx1.getValue(), IConstants.DEFAULT_ENCODING));
 
-    final IWriteTransaction wTrx2 = session.beginWriteTransaction();
-    assertEquals(1L, wTrx2.revisionKey());
-    wTrx2.moveTo(9L);
-    wTrx2.setValue(UTF.convert("bar2"));
+    final IWriteTransaction wtx2 = session.beginWriteTransaction();
+    assertEquals(1L, wtx2.revisionKey());
+    wtx2.moveTo(9L);
+    wtx2.setValue(UTF.convert("bar2"));
 
-    assertEquals("bar", new String(
-        rTrx1.getValue(),
-        IConstants.DEFAULT_ENCODING));
+    assertEquals(
+        "bar",
+        new String(rtx1.getValue(), IConstants.DEFAULT_ENCODING));
     assertEquals("bar2", new String(
-        wTrx2.getValue(),
+        wtx2.getValue(),
         IConstants.DEFAULT_ENCODING));
 
-    session.abort();
+    wtx2.abort();
 
-    final IReadTransaction rTrx2 = session.beginReadTransaction();
-    assertEquals(0L, rTrx2.revisionKey());
-    rTrx2.moveTo(9L);
-    assertEquals("bar", new String(
-        rTrx2.getValue(),
-        IConstants.DEFAULT_ENCODING));
+    final IReadTransaction rtx2 = session.beginReadTransaction();
+    assertEquals(0L, rtx2.revisionKey());
+    rtx2.moveTo(9L);
+    assertEquals(
+        "bar",
+        new String(rtx2.getValue(), IConstants.DEFAULT_ENCODING));
 
   }
 
@@ -213,41 +213,41 @@ public class SessionTest {
 
     final ISession session1 = new Session(TEST_EXISTING_PATH);
 
-    final IWriteTransaction wTrx1 = session1.beginWriteTransaction();
-    TestDocument.create(wTrx1);
-    assertEquals(0L, wTrx1.revisionKey());
-    session1.commit();
+    final IWriteTransaction wtx1 = session1.beginWriteTransaction();
+    TestDocument.create(wtx1);
+    assertEquals(0L, wtx1.revisionKey());
+    wtx1.commit();
     session1.close();
 
     final ISession session2 = new Session(TEST_EXISTING_PATH);
-    final IReadTransaction rTrx1 = session2.beginReadTransaction();
-    assertEquals(0L, rTrx1.revisionKey());
-    rTrx1.moveTo(9L);
-    assertEquals("bar", new String(
-        rTrx1.getValue(),
-        IConstants.DEFAULT_ENCODING));
+    final IReadTransaction rtx1 = session2.beginReadTransaction();
+    assertEquals(0L, rtx1.revisionKey());
+    rtx1.moveTo(9L);
+    assertEquals(
+        "bar",
+        new String(rtx1.getValue(), IConstants.DEFAULT_ENCODING));
 
-    final IWriteTransaction wTrx2 = session2.beginWriteTransaction();
-    assertEquals(1L, wTrx2.revisionKey());
-    wTrx2.moveTo(9L);
-    wTrx2.setValue(UTF.convert("bar2"));
+    final IWriteTransaction wtx2 = session2.beginWriteTransaction();
+    assertEquals(1L, wtx2.revisionKey());
+    wtx2.moveTo(9L);
+    wtx2.setValue(UTF.convert("bar2"));
 
-    assertEquals("bar", new String(
-        rTrx1.getValue(),
-        IConstants.DEFAULT_ENCODING));
+    assertEquals(
+        "bar",
+        new String(rtx1.getValue(), IConstants.DEFAULT_ENCODING));
     assertEquals("bar2", new String(
-        wTrx2.getValue(),
+        wtx2.getValue(),
         IConstants.DEFAULT_ENCODING));
 
-    session2.commit();
+    wtx2.commit();
     session2.close();
 
     final ISession session3 = new Session(TEST_EXISTING_PATH);
-    final IReadTransaction rTrx2 = session3.beginReadTransaction();
-    assertEquals(1L, rTrx2.revisionKey());
-    rTrx2.moveTo(9L);
+    final IReadTransaction rtx2 = session3.beginReadTransaction();
+    assertEquals(1L, rtx2.revisionKey());
+    rtx2.moveTo(9L);
     assertEquals("bar2", new String(
-        rTrx2.getValue(),
+        rtx2.getValue(),
         IConstants.DEFAULT_ENCODING));
 
   }
@@ -259,7 +259,7 @@ public class SessionTest {
 
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
-    session.commit();
+    wtx.commit();
 
     final IReadTransaction rtx = session.beginReadTransaction();
     assertEquals(11L, rtx.revisionSize());

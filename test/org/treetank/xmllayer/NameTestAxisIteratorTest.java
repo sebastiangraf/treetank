@@ -48,22 +48,22 @@ public class NameTestAxisIteratorTest {
 
     // Build simple test tree.
     final ISession session = new Session(PATH);
-    final IWriteTransaction trx = session.beginWriteTransaction();
-    TestDocument.create(trx);
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+    TestDocument.create(wtx);
 
     // Find descendants starting from nodeKey 0L (root).
-    trx.moveToRoot();
+    wtx.moveToRoot();
     final IAxisIterator descendantIterator1 =
-        new NameTestAxisIterator(trx, new DescendantAxisIterator(trx), "b");
+        new NameTestAxisIterator(wtx, new DescendantAxisIterator(wtx), "b");
 
     assertEquals(true, descendantIterator1.next());
-    assertEquals(3L, trx.getNodeKey());
+    assertEquals(3L, wtx.getNodeKey());
 
     assertEquals(true, descendantIterator1.next());
-    assertEquals(7L, trx.getNodeKey());
+    assertEquals(7L, wtx.getNodeKey());
     assertEquals(false, descendantIterator1.next());
 
-    session.abort();
+    wtx.abort();
     session.close();
 
   }

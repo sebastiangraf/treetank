@@ -53,84 +53,84 @@ public class ChildAxisIteratorTest {
   public void testIterate() throws Exception {
 
     final ISession session = new Session(TEST_ITERATE_PATH);
-    final IWriteTransaction trx = session.beginWriteTransaction();
-    TestDocument.create(trx);
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+    TestDocument.create(wtx);
 
-    trx.moveTo(1L);
-    final IAxisIterator childIterator1 = new ChildAxisIterator(trx);
+    wtx.moveTo(1L);
+    final IAxisIterator childIterator1 = new ChildAxisIterator(wtx);
     assertEquals(true, childIterator1.next());
-    assertEquals(2L, trx.getNodeKey());
-    assertEquals(3, trx.getKind());
-    assertEquals("", trx.nameForKey(trx.getLocalPartKey()));
-    assertEquals("", trx.nameForKey(trx.getURIKey()));
-    assertEquals("", trx.nameForKey(trx.getPrefixKey()));
+    assertEquals(2L, wtx.getNodeKey());
+    assertEquals(3, wtx.getKind());
+    assertEquals("", wtx.nameForKey(wtx.getLocalPartKey()));
+    assertEquals("", wtx.nameForKey(wtx.getURIKey()));
+    assertEquals("", wtx.nameForKey(wtx.getPrefixKey()));
     assertEquals("oops1", new String(
-        trx.getValue(),
+        wtx.getValue(),
         IConstants.DEFAULT_ENCODING));
 
     assertEquals(true, childIterator1.next());
-    assertEquals(3L, trx.getNodeKey());
-    assertEquals(1, trx.getKind());
-    assertEquals("b", trx.nameForKey(trx.getLocalPartKey()));
-    assertEquals("", trx.nameForKey(trx.getURIKey()));
-    assertEquals("", trx.nameForKey(trx.getPrefixKey()));
-    assertEquals("", new String(trx.getValue(), IConstants.DEFAULT_ENCODING));
+    assertEquals(3L, wtx.getNodeKey());
+    assertEquals(1, wtx.getKind());
+    assertEquals("b", wtx.nameForKey(wtx.getLocalPartKey()));
+    assertEquals("", wtx.nameForKey(wtx.getURIKey()));
+    assertEquals("", wtx.nameForKey(wtx.getPrefixKey()));
+    assertEquals("", new String(wtx.getValue(), IConstants.DEFAULT_ENCODING));
 
     assertEquals(true, childIterator1.next());
-    assertEquals(6L, trx.getNodeKey());
-    assertEquals(3, trx.getKind());
-    assertEquals("", trx.nameForKey(trx.getLocalPartKey()));
-    assertEquals("", trx.nameForKey(trx.getURIKey()));
-    assertEquals("", trx.nameForKey(trx.getPrefixKey()));
+    assertEquals(6L, wtx.getNodeKey());
+    assertEquals(3, wtx.getKind());
+    assertEquals("", wtx.nameForKey(wtx.getLocalPartKey()));
+    assertEquals("", wtx.nameForKey(wtx.getURIKey()));
+    assertEquals("", wtx.nameForKey(wtx.getPrefixKey()));
     assertEquals("oops2", new String(
-        trx.getValue(),
+        wtx.getValue(),
         IConstants.DEFAULT_ENCODING));
 
     assertEquals(true, childIterator1.next());
-    assertEquals(7L, trx.getNodeKey());
-    assertEquals(1, trx.getKind());
-    assertEquals("b", trx.nameForKey(trx.getLocalPartKey()));
-    assertEquals("", trx.nameForKey(trx.getURIKey()));
-    assertEquals("", trx.nameForKey(trx.getPrefixKey()));
-    assertEquals("", new String(trx.getValue(), IConstants.DEFAULT_ENCODING));
+    assertEquals(7L, wtx.getNodeKey());
+    assertEquals(1, wtx.getKind());
+    assertEquals("b", wtx.nameForKey(wtx.getLocalPartKey()));
+    assertEquals("", wtx.nameForKey(wtx.getURIKey()));
+    assertEquals("", wtx.nameForKey(wtx.getPrefixKey()));
+    assertEquals("", new String(wtx.getValue(), IConstants.DEFAULT_ENCODING));
 
     assertEquals(true, childIterator1.next());
-    assertEquals(10L, trx.getNodeKey());
-    assertEquals(3, trx.getKind());
-    assertEquals("", trx.nameForKey(trx.getLocalPartKey()));
-    assertEquals("", trx.nameForKey(trx.getURIKey()));
-    assertEquals("", trx.nameForKey(trx.getPrefixKey()));
+    assertEquals(10L, wtx.getNodeKey());
+    assertEquals(3, wtx.getKind());
+    assertEquals("", wtx.nameForKey(wtx.getLocalPartKey()));
+    assertEquals("", wtx.nameForKey(wtx.getURIKey()));
+    assertEquals("", wtx.nameForKey(wtx.getPrefixKey()));
     assertEquals("oops3", new String(
-        trx.getValue(),
+        wtx.getValue(),
         IConstants.DEFAULT_ENCODING));
 
     assertEquals(false, childIterator1.next());
 
-    trx.moveTo(3L);
-    final IAxisIterator childIterator2 = new ChildAxisIterator(trx);
+    wtx.moveTo(3L);
+    final IAxisIterator childIterator2 = new ChildAxisIterator(wtx);
     assertEquals(true, childIterator2.next());
-    assertEquals(4L, trx.getNodeKey());
-    assertEquals(3, trx.getKind());
-    assertEquals("", trx.nameForKey(trx.getLocalPartKey()));
-    assertEquals("", trx.nameForKey(trx.getURIKey()));
-    assertEquals("", trx.nameForKey(trx.getPrefixKey()));
-    assertEquals("foo", new String(trx.getValue(), IConstants.DEFAULT_ENCODING));
+    assertEquals(4L, wtx.getNodeKey());
+    assertEquals(3, wtx.getKind());
+    assertEquals("", wtx.nameForKey(wtx.getLocalPartKey()));
+    assertEquals("", wtx.nameForKey(wtx.getURIKey()));
+    assertEquals("", wtx.nameForKey(wtx.getPrefixKey()));
+    assertEquals("foo", new String(wtx.getValue(), IConstants.DEFAULT_ENCODING));
 
     assertEquals(true, childIterator2.next());
-    assertEquals(5L, trx.getNodeKey());
-    assertEquals(1, trx.getKind());
-    assertEquals("c", trx.nameForKey(trx.getLocalPartKey()));
-    assertEquals("", trx.nameForKey(trx.getURIKey()));
-    assertEquals("", trx.nameForKey(trx.getPrefixKey()));
-    assertEquals("", new String(trx.getValue(), IConstants.DEFAULT_ENCODING));
+    assertEquals(5L, wtx.getNodeKey());
+    assertEquals(1, wtx.getKind());
+    assertEquals("c", wtx.nameForKey(wtx.getLocalPartKey()));
+    assertEquals("", wtx.nameForKey(wtx.getURIKey()));
+    assertEquals("", wtx.nameForKey(wtx.getPrefixKey()));
+    assertEquals("", new String(wtx.getValue(), IConstants.DEFAULT_ENCODING));
 
     assertEquals(false, childIterator2.next());
 
-    trx.moveTo(10L);
-    final IAxisIterator childIterator4 = new ChildAxisIterator(trx);
+    wtx.moveTo(10L);
+    final IAxisIterator childIterator4 = new ChildAxisIterator(wtx);
     assertEquals(false, childIterator4.next());
 
-    session.abort();
+    wtx.abort();
     session.close();
 
   }
@@ -139,87 +139,85 @@ public class ChildAxisIteratorTest {
   public void testPersistent() throws Exception {
 
     final ISession session = new Session(TEST_PERSISTENT_PATH);
-    final IWriteTransaction trx = session.beginWriteTransaction();
-    TestDocument.create(trx);
-    session.commit();
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+    TestDocument.create(wtx);
+    wtx.commit();
 
     final ISession session1 = new Session(TEST_PERSISTENT_PATH);
-    final IReadTransaction rTrx = session1.beginReadTransaction();
+    final IReadTransaction rtx = session1.beginReadTransaction();
 
-    rTrx.moveTo(1L);
-    final IAxisIterator childIterator1 = new ChildAxisIterator(rTrx);
+    rtx.moveTo(1L);
+    final IAxisIterator childIterator1 = new ChildAxisIterator(rtx);
     assertEquals(true, childIterator1.next());
-    assertEquals(2L, rTrx.getNodeKey());
-    assertEquals(3, rTrx.getKind());
-    assertEquals("", rTrx.nameForKey(rTrx.getLocalPartKey()));
-    assertEquals("", rTrx.nameForKey(rTrx.getURIKey()));
-    assertEquals("", rTrx.nameForKey(rTrx.getPrefixKey()));
+    assertEquals(2L, rtx.getNodeKey());
+    assertEquals(3, rtx.getKind());
+    assertEquals("", rtx.nameForKey(rtx.getLocalPartKey()));
+    assertEquals("", rtx.nameForKey(rtx.getURIKey()));
+    assertEquals("", rtx.nameForKey(rtx.getPrefixKey()));
     assertEquals("oops1", new String(
-        rTrx.getValue(),
+        rtx.getValue(),
         IConstants.DEFAULT_ENCODING));
 
     assertEquals(true, childIterator1.next());
-    assertEquals(3L, rTrx.getNodeKey());
-    assertEquals(1, rTrx.getKind());
-    assertEquals("b", rTrx.nameForKey(rTrx.getLocalPartKey()));
-    assertEquals("", rTrx.nameForKey(rTrx.getURIKey()));
-    assertEquals("", rTrx.nameForKey(rTrx.getPrefixKey()));
-    assertEquals("", new String(rTrx.getValue(), IConstants.DEFAULT_ENCODING));
+    assertEquals(3L, rtx.getNodeKey());
+    assertEquals(1, rtx.getKind());
+    assertEquals("b", rtx.nameForKey(rtx.getLocalPartKey()));
+    assertEquals("", rtx.nameForKey(rtx.getURIKey()));
+    assertEquals("", rtx.nameForKey(rtx.getPrefixKey()));
+    assertEquals("", new String(rtx.getValue(), IConstants.DEFAULT_ENCODING));
 
     assertEquals(true, childIterator1.next());
-    assertEquals(6L, rTrx.getNodeKey());
-    assertEquals(3, rTrx.getKind());
-    assertEquals("", rTrx.nameForKey(rTrx.getLocalPartKey()));
-    assertEquals("", rTrx.nameForKey(rTrx.getURIKey()));
-    assertEquals("", rTrx.nameForKey(rTrx.getPrefixKey()));
+    assertEquals(6L, rtx.getNodeKey());
+    assertEquals(3, rtx.getKind());
+    assertEquals("", rtx.nameForKey(rtx.getLocalPartKey()));
+    assertEquals("", rtx.nameForKey(rtx.getURIKey()));
+    assertEquals("", rtx.nameForKey(rtx.getPrefixKey()));
     assertEquals("oops2", new String(
-        rTrx.getValue(),
+        rtx.getValue(),
         IConstants.DEFAULT_ENCODING));
 
     assertEquals(true, childIterator1.next());
-    assertEquals(7L, rTrx.getNodeKey());
-    assertEquals(1, rTrx.getKind());
-    assertEquals("b", rTrx.nameForKey(rTrx.getLocalPartKey()));
-    assertEquals("", rTrx.nameForKey(rTrx.getURIKey()));
-    assertEquals("", rTrx.nameForKey(rTrx.getPrefixKey()));
-    assertEquals("", new String(rTrx.getValue(), IConstants.DEFAULT_ENCODING));
+    assertEquals(7L, rtx.getNodeKey());
+    assertEquals(1, rtx.getKind());
+    assertEquals("b", rtx.nameForKey(rtx.getLocalPartKey()));
+    assertEquals("", rtx.nameForKey(rtx.getURIKey()));
+    assertEquals("", rtx.nameForKey(rtx.getPrefixKey()));
+    assertEquals("", new String(rtx.getValue(), IConstants.DEFAULT_ENCODING));
 
     assertEquals(true, childIterator1.next());
-    assertEquals(10L, rTrx.getNodeKey());
-    assertEquals(3, rTrx.getKind());
-    assertEquals("", rTrx.nameForKey(rTrx.getLocalPartKey()));
-    assertEquals("", rTrx.nameForKey(rTrx.getURIKey()));
-    assertEquals("", rTrx.nameForKey(rTrx.getPrefixKey()));
+    assertEquals(10L, rtx.getNodeKey());
+    assertEquals(3, rtx.getKind());
+    assertEquals("", rtx.nameForKey(rtx.getLocalPartKey()));
+    assertEquals("", rtx.nameForKey(rtx.getURIKey()));
+    assertEquals("", rtx.nameForKey(rtx.getPrefixKey()));
     assertEquals("oops3", new String(
-        rTrx.getValue(),
+        rtx.getValue(),
         IConstants.DEFAULT_ENCODING));
 
     assertEquals(false, childIterator1.next());
 
-    rTrx.moveTo(3L);
-    final IAxisIterator childIterator2 = new ChildAxisIterator(rTrx);
+    rtx.moveTo(3L);
+    final IAxisIterator childIterator2 = new ChildAxisIterator(rtx);
     assertEquals(true, childIterator2.next());
-    assertEquals(4L, rTrx.getNodeKey());
-    assertEquals(3, rTrx.getKind());
-    assertEquals("", rTrx.nameForKey(rTrx.getLocalPartKey()));
-    assertEquals("", rTrx.nameForKey(rTrx.getURIKey()));
-    assertEquals("", rTrx.nameForKey(rTrx.getPrefixKey()));
-    assertEquals(
-        "foo",
-        new String(rTrx.getValue(), IConstants.DEFAULT_ENCODING));
+    assertEquals(4L, rtx.getNodeKey());
+    assertEquals(3, rtx.getKind());
+    assertEquals("", rtx.nameForKey(rtx.getLocalPartKey()));
+    assertEquals("", rtx.nameForKey(rtx.getURIKey()));
+    assertEquals("", rtx.nameForKey(rtx.getPrefixKey()));
+    assertEquals("foo", new String(rtx.getValue(), IConstants.DEFAULT_ENCODING));
 
     assertEquals(true, childIterator2.next());
-    assertEquals(5L, rTrx.getNodeKey());
-    assertEquals(1, rTrx.getKind());
-    assertEquals("c", rTrx.nameForKey(rTrx.getLocalPartKey()));
-    assertEquals("", rTrx.nameForKey(rTrx.getURIKey()));
-    assertEquals("", rTrx.nameForKey(rTrx.getPrefixKey()));
-    assertEquals("", new String(rTrx.getValue(), IConstants.DEFAULT_ENCODING));
+    assertEquals(5L, rtx.getNodeKey());
+    assertEquals(1, rtx.getKind());
+    assertEquals("c", rtx.nameForKey(rtx.getLocalPartKey()));
+    assertEquals("", rtx.nameForKey(rtx.getURIKey()));
+    assertEquals("", rtx.nameForKey(rtx.getPrefixKey()));
+    assertEquals("", new String(rtx.getValue(), IConstants.DEFAULT_ENCODING));
 
     assertEquals(false, childIterator2.next());
 
-    rTrx.moveTo(10L);
-    final IAxisIterator childIterator4 = new ChildAxisIterator(rTrx);
+    rtx.moveTo(10L);
+    final IAxisIterator childIterator4 = new ChildAxisIterator(rtx);
     assertEquals(false, childIterator4.next());
 
     session1.close();
