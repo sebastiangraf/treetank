@@ -168,8 +168,8 @@ public final class WriteTransactionState extends ReadTransactionState
    * {@inheritDoc}
    */
   public void close() throws Exception {
-    super.close();
     mPageWriter.close();
+    super.close();
   }
 
   /**

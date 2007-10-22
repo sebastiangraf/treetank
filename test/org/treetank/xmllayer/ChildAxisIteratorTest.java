@@ -220,6 +220,7 @@ public class ChildAxisIteratorTest {
     final IAxisIterator childIterator4 = new ChildAxisIterator(rtx);
     assertEquals(false, childIterator4.next());
 
+    rtx.close();
     session1.close();
 
   }

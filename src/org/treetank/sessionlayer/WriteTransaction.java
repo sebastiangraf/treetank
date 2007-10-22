@@ -38,9 +38,6 @@ public final class WriteTransaction extends ReadTransaction
     implements
     IWriteTransaction {
 
-  /** Session state this write transaction is bound to. */
-  private final SessionState mSessionState;
-
   /**
    * Constructor.
    * 
@@ -50,8 +47,7 @@ public final class WriteTransaction extends ReadTransaction
   protected WriteTransaction(
       final SessionState sessionState,
       final IWriteTransactionState state) throws Exception {
-    super(state);
-    mSessionState = sessionState;
+    super(sessionState, state);
   }
 
   /**
@@ -359,28 +355,29 @@ public final class WriteTransaction extends ReadTransaction
     assertIsSelected();
     prepareCurrentNode().setValue(value);
   }
-  
+
   /**
    * {@inheritDoc}
    */
+  @Override
   public final void close() throws Exception {
-    mSessionState.commit();
-    super.close();
+    commit();
   }
 
   /**
    * {@inheritDoc}
    */
   public final void commit() throws Exception {
-    mSessionState.commit();
-    super.close();
+    getSessionState().commitWriteTransaction();
+    getState().close();
   }
 
   /**
    * {@inheritDoc}
    */
   public final void abort() throws Exception {
-    mSessionState.abort();
+    getSessionState().abortWriteTransaction();
+    getState().close();
   }
 
   private final Node prepareCurrentNode() throws Exception {

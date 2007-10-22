@@ -80,6 +80,7 @@ public class SessionTest {
 
     session = new Session(TEST_INSERT_CHILD_PATH);
     final IReadTransaction rtx = session.beginReadTransaction();
+    rtx.close();
     session.close();
 
     TestCase.assertNotSame(0L, new File(TEST_INSERT_CHILD_PATH).length());
@@ -239,6 +240,7 @@ public class SessionTest {
         wtx2.getValue(),
         IConstants.DEFAULT_ENCODING));
 
+    rtx1.close();
     wtx2.commit();
     session2.close();
 

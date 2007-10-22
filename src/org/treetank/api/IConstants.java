@@ -79,8 +79,11 @@ public interface IConstants {
 
   //--- Node Layer -------------------------------------------------------------
 
-  /** Number of concurrent IWriteTransactions. */
-  public static final int MAX_NUMBER_OF_WRITE_TRANSACTIONS = 1;
+  /** Number of concurrent exclusive write transactions. */
+  public static final int MAX_WRITE_TRANSACTIONS = 1;
+
+  /** Number of concurrent shared read transactions. */
+  public static final int MAX_READ_TRANSACTIONS = 256;
 
   /** Null nodeKey constant. */
   public static final long NULL_KEY = -1L;

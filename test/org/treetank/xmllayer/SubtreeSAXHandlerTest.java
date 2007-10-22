@@ -50,38 +50,38 @@ public class SubtreeSAXHandlerTest {
     final InputSource inputSource = new InputSource("xml/test.xml");
     parser.parse(inputSource, new SubtreeSAXHandler(session));
 
-    final IReadTransaction trx = session.beginReadTransaction();
+    final IReadTransaction rtx = session.beginReadTransaction();
 
     expectedTrx.moveToRoot();
-    trx.moveToRoot();
+    rtx.moveToRoot();
     final IAxisIterator expectedDescendants =
         new DescendantAxisIterator(expectedTrx);
-    final IAxisIterator descendants = new DescendantAxisIterator(trx);
+    final IAxisIterator descendants = new DescendantAxisIterator(rtx);
 
     while (expectedDescendants.next() && descendants.next()) {
-      assertEquals(expectedTrx.getNodeKey(), trx.getNodeKey());
-      assertEquals(expectedTrx.getParentKey(), trx.getParentKey());
-      assertEquals(expectedTrx.getFirstChildKey(), trx.getFirstChildKey());
-      assertEquals(expectedTrx.getLeftSiblingKey(), trx.getLeftSiblingKey());
-      assertEquals(expectedTrx.getRightSiblingKey(), trx.getRightSiblingKey());
-      assertEquals(expectedTrx.getChildCount(), trx.getChildCount());
-      assertEquals(expectedTrx.getKind(), trx.getKind());
-      assertEquals(expectedTrx.nameForKey(expectedTrx.getLocalPartKey()), trx
-          .nameForKey(trx.getLocalPartKey()));
-      assertEquals(expectedTrx.nameForKey(expectedTrx.getURIKey()), trx
-          .nameForKey(trx.getURIKey()));
-      assertEquals(expectedTrx.nameForKey(expectedTrx.getPrefixKey()), trx
-          .nameForKey(trx.getPrefixKey()));
+      assertEquals(expectedTrx.getNodeKey(), rtx.getNodeKey());
+      assertEquals(expectedTrx.getParentKey(), rtx.getParentKey());
+      assertEquals(expectedTrx.getFirstChildKey(), rtx.getFirstChildKey());
+      assertEquals(expectedTrx.getLeftSiblingKey(), rtx.getLeftSiblingKey());
+      assertEquals(expectedTrx.getRightSiblingKey(), rtx.getRightSiblingKey());
+      assertEquals(expectedTrx.getChildCount(), rtx.getChildCount());
+      assertEquals(expectedTrx.getKind(), rtx.getKind());
+      assertEquals(expectedTrx.nameForKey(expectedTrx.getLocalPartKey()), rtx
+          .nameForKey(rtx.getLocalPartKey()));
+      assertEquals(expectedTrx.nameForKey(expectedTrx.getURIKey()), rtx
+          .nameForKey(rtx.getURIKey()));
+      assertEquals(expectedTrx.nameForKey(expectedTrx.getPrefixKey()), rtx
+          .nameForKey(rtx.getPrefixKey()));
       assertEquals(new String(
           expectedTrx.getValue(),
           IConstants.DEFAULT_ENCODING), new String(
-          trx.getValue(),
+          rtx.getValue(),
           IConstants.DEFAULT_ENCODING));
     }
 
     expectedTrx.abort();
     expectedSession.close();
-
+    rtx.close();
     session.close();
 
   }
@@ -107,18 +107,20 @@ public class SubtreeSAXHandlerTest {
     handler.subtreeEnding(1);
     handler.endDocument();
 
-    final IReadTransaction rTrx = session.beginReadTransaction();
-    rTrx.moveToRoot();
+    final IReadTransaction rtx = session.beginReadTransaction();
+    rtx.moveToRoot();
 
-    rTrx.moveToFirstChild();
-    assertEquals("fooZwei", rTrx.getLocalPart());
-    rTrx.moveToFirstChild();
-    assertEquals("barZwei", rTrx.getLocalPart());
-    rTrx.moveToParent();
-    rTrx.moveToRightSibling();
-    assertEquals("fooEins", rTrx.getLocalPart());
-    rTrx.moveToFirstChild();
-    assertEquals("barEins", rTrx.getLocalPart());
+    rtx.moveToFirstChild();
+    assertEquals("fooZwei", rtx.getLocalPart());
+    rtx.moveToFirstChild();
+    assertEquals("barZwei", rtx.getLocalPart());
+    rtx.moveToParent();
+    rtx.moveToRightSibling();
+    assertEquals("fooEins", rtx.getLocalPart());
+    rtx.moveToFirstChild();
+    assertEquals("barEins", rtx.getLocalPart());
+
+    rtx.close();
     session.close();
 
   }
@@ -192,33 +194,34 @@ public class SubtreeSAXHandlerTest {
     handler.subtreeEnding(1);
     handler.endDocument();
 
-    final IReadTransaction rTrx = session.beginReadTransaction();
-    rTrx.moveToRoot();
+    final IReadTransaction rtx = session.beginReadTransaction();
+    rtx.moveToRoot();
     //checking second subtree
-    rTrx.moveToFirstChild();
-    assertEquals("subtreestartnode-10", rTrx.getLocalPart());
-    rTrx.moveToFirstChild();
-    assertEquals("P", rTrx.getLocalPart());
-    rTrx.moveToFirstChild();
-    assertEquals(new String(elements2), new String(rTrx.getValue()));
-    rTrx.moveToParent();
+    rtx.moveToFirstChild();
+    assertEquals("subtreestartnode-10", rtx.getLocalPart());
+    rtx.moveToFirstChild();
+    assertEquals("P", rtx.getLocalPart());
+    rtx.moveToFirstChild();
+    assertEquals(new String(elements2), new String(rtx.getValue()));
+    rtx.moveToParent();
 
     //checking first subtree
-    rTrx.moveToParent();
-    rTrx.moveToRightSibling();
-    assertEquals("subtreestartnode-1", rTrx.getLocalPart());
-    rTrx.moveToFirstChild();
-    assertEquals("PLAY", rTrx.getLocalPart());
-    rTrx.moveToFirstChild();
-    assertEquals("TITLE", rTrx.getLocalPart());
-    rTrx.moveToFirstChild();
-    assertEquals(new String(elements), new String(rTrx.getValue()));
-    rTrx.moveToParent();
-    rTrx.moveToRightSibling();
-    assertEquals("FM", rTrx.getLocalPart());
-    rTrx.moveToFirstChild();
-    assertEquals("splitnode-655360", rTrx.getLocalPart());
+    rtx.moveToParent();
+    rtx.moveToRightSibling();
+    assertEquals("subtreestartnode-1", rtx.getLocalPart());
+    rtx.moveToFirstChild();
+    assertEquals("PLAY", rtx.getLocalPart());
+    rtx.moveToFirstChild();
+    assertEquals("TITLE", rtx.getLocalPart());
+    rtx.moveToFirstChild();
+    assertEquals(new String(elements), new String(rtx.getValue()));
+    rtx.moveToParent();
+    rtx.moveToRightSibling();
+    assertEquals("FM", rtx.getLocalPart());
+    rtx.moveToFirstChild();
+    assertEquals("splitnode-655360", rtx.getLocalPart());
 
+    rtx.close();
     session.close();
 
   }

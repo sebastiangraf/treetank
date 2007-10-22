@@ -37,6 +37,9 @@ import org.treetank.pagelayer.Namespace;
  */
 public class ReadTransaction implements IReadTransaction {
 
+  /** Session state this write transaction is bound to. */
+  private final SessionState mSessionState;
+
   /** State of transaction including all cached stuff. */
   private final IReadTransactionState mState;
 
@@ -49,7 +52,10 @@ public class ReadTransaction implements IReadTransaction {
    * @param state Transaction state to work with.
    * @throws Exception of any kind.
    */
-  protected ReadTransaction(final IReadTransactionState state) throws Exception {
+  protected ReadTransaction(
+      final SessionState sessionState,
+      final IReadTransactionState state) throws Exception {
+    mSessionState = sessionState;
     mState = state;
     mCurrentNode = null;
     moveToRoot();
@@ -319,6 +325,10 @@ public class ReadTransaction implements IReadTransaction {
     mCurrentNode = currentNode;
   }
 
+  protected final SessionState getSessionState() {
+    return mSessionState;
+  }
+
   /**
    * @return The current node.
    */
@@ -331,6 +341,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public void close() throws Exception {
     mState.close();
+    mSessionState.closeReadTransaction();
   }
 
   @Override
