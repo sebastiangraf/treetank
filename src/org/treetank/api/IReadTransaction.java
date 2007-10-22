@@ -73,59 +73,52 @@ public interface IReadTransaction {
    * Move cursor to root node.
    * 
    * @return True if the root node is selected.
-   * @throws Exception of any kind.
    */
-  public boolean moveToRoot() throws Exception;
+  public boolean moveToRoot();
 
   /**
    * Move cursor to a node by its node key.
    * 
    * @param nodeKey Key of node to select.
    * @return True if the node with the given node key is selected.
-   * @throws Exception of any kind.
    */
-  public boolean moveTo(final long nodeKey) throws Exception;
+  public boolean moveTo(final long nodeKey);
 
   /**
    * Move cursor to parent node of currently selected node.
    * 
    * @return True if the parent node is selected.
-   * @throws Exception of any kind.
    */
-  public boolean moveToParent() throws Exception;
+  public boolean moveToParent();
 
   /**
    * Move cursor to first child node of currently selected node.
    * 
    * @return True if the first child node is selected.
-   * @throws Exception of any kind.
    */
-  public boolean moveToFirstChild() throws Exception;
+  public boolean moveToFirstChild();
 
   /**
    * Move cursor to left sibling node of the currently selected node.
    * 
    * @return True if the left sibling node is selected.
-   * @throws Exception of any kind.
    */
-  public boolean moveToLeftSibling() throws Exception;
+  public boolean moveToLeftSibling();
 
   /**
    * Move cursor to right sibling node of the currently selected node.
    * 
    * @return True if the right sibling node is selected.
-   * @throws Exception of any kind.
    */
-  public boolean moveToRightSibling() throws Exception;
+  public boolean moveToRightSibling();
 
   /**
    * Move cursor to attribute by its index.
    * 
    * @param index Index of attribute to move to.
    * @return True if the attribute is selected.
-   * @throws Exception of any kind.
    */
-  public boolean moveToAttribute(final int index) throws Exception;
+  public boolean moveToAttribute(final int index);
 
   // --- Node Getters ----------------------------------------------------------
 
@@ -228,9 +221,8 @@ public interface IReadTransaction {
    * Get local part of node.
    * 
    * @return Local part of node.
-   * @throws Exception of any kind.
    */
-  public String getLocalPart() throws Exception;
+  public String getLocalPart();
 
   /**
    * Get URI key of node. Note that this actually is an IRI but the
@@ -245,9 +237,8 @@ public interface IReadTransaction {
    * W3C decided to continue using URI not to confuse anyone.
    * 
    * @return URI of node.
-   * @throws Exception of any kind.
    */
-  public String getURI() throws Exception;
+  public String getURI();
 
   /**
    * Get prefix key of node.
@@ -260,9 +251,8 @@ public interface IReadTransaction {
    * Get prefix of node.
    * 
    * @return Prefix of node.
-   * @throws Exception of any kind.
    */
-  public String getPrefix() throws Exception;
+  public String getPrefix();
 
   /**
    * Get value of node.
@@ -284,15 +274,12 @@ public interface IReadTransaction {
    * 
    * @param key Key, i.e., local part key, URI key, or prefix key.
    * @return Byte array containing name for given key.
-   * @throws Exception of any kind.
    */
-  public String nameForKey(final int key) throws Exception;
+  public String nameForKey(final int key);
 
   /**
    * Close shared read transaction and immediately release all resources.
-   * 
-   * @throws Exception of any kind.
    */
-  public void close() throws Exception;
+  public void close();
 
 }

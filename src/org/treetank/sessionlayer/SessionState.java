@@ -241,7 +241,7 @@ public final class SessionState implements ISession {
   /**
    * {@inheritDoc}
    */
-  public final void closeReadTransaction() throws Exception {
+  public final void closeReadTransaction() {
     mReadSemaphore.release();
   }
 

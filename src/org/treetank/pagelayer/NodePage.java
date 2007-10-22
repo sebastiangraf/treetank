@@ -58,7 +58,7 @@ public final class NodePage implements IPage {
 
   public static final NodePage read(
       final FastByteArrayReader in,
-      final long nodePageKey) throws Exception {
+      final long nodePageKey) {
     final NodePage nodePage = new NodePage(false, nodePageKey);
 
     final long keyBase =
@@ -127,7 +127,7 @@ public final class NodePage implements IPage {
   /**
    * {@inheritDoc}
    */
-  public final void serialize(final FastByteArrayWriter out) throws Exception {
+  public final void serialize(final FastByteArrayWriter out) {
     for (int i = 0; i < IConstants.NDP_NODE_COUNT; i++) {
       if (mNodes[i] != null) {
         out.writeBoolean(true);
@@ -145,6 +145,9 @@ public final class NodePage implements IPage {
     return mDirty;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public final String toString() {
     return super.toString()

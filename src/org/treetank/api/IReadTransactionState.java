@@ -44,18 +44,16 @@ public interface IReadTransactionState {
    * 
    * @param nodeKey Key of node to get.
    * @return Node that was requested.
-   * @throws Exception of any kind.
    */
-  public INode getNode(final long nodeKey) throws Exception;
+  public INode getNode(final long nodeKey);
 
   /**
    * Get the name associated with the given name key.
    * 
    * @param nameKey Key to find name.
    * @return Name associated to name key.
-   * @throws Exception of any kind.
    */
-  public String getName(final int nameKey) throws Exception;
+  public String getName(final int nameKey);
 
   /**
    * Immediately release all resources.

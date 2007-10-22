@@ -43,9 +43,8 @@ public class AttributeAxisIterator implements IAxisIterator {
    * Constructor initializing internal state.
    * 
    * @param rtx Exclusive (immutable) mTrx to iterate with.
-   * @throws Exception of any kind.
    */
-  public AttributeAxisIterator(final IReadTransaction rtx) throws Exception {
+  public AttributeAxisIterator(final IReadTransaction rtx) {
     mRTX = rtx;
     mNextIndex = 0;
   }
@@ -53,7 +52,7 @@ public class AttributeAxisIterator implements IAxisIterator {
   /**
    * {@inheritDoc}
    */
-  public final boolean next() throws Exception {
+  public final boolean next() {
     if (mNextIndex < mRTX.getAttributeCount()) {
       if (mNextIndex > 0) {
         mRTX.moveToParent();

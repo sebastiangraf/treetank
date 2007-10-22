@@ -91,83 +91,98 @@ public final class PageWriter {
    * @param sessionConfiguration Configuration of session we are bound to.
    * @throws Exception of any kind.
    */
-  public PageWriter(final SessionConfiguration sessionConfiguration)
-      throws Exception {
+  public PageWriter(final SessionConfiguration sessionConfiguration) {
 
-    mFile = new RandomAccessFile(sessionConfiguration.getPath(), READ_WRITE);
+    try {
 
-    if (sessionConfiguration.isChecksummed()) {
-      mIsChecksummed = true;
-      mChecksum = new CRC32();
-    } else {
-      mIsChecksummed = false;
-      mChecksum = null;
+      mFile = new RandomAccessFile(sessionConfiguration.getPath(), READ_WRITE);
+
+      if (sessionConfiguration.isChecksummed()) {
+        mIsChecksummed = true;
+        mChecksum = new CRC32();
+      } else {
+        mIsChecksummed = false;
+        mChecksum = null;
+      }
+
+      if (sessionConfiguration.isEncrypted()) {
+        mIsEncrypted = true;
+        mCipher = Cipher.getInstance(IConstants.DEFAULT_ENCRYPTION_ALGORITHM);
+        mSecretKeySpec =
+            new SecretKeySpec(
+                sessionConfiguration.getEncryptionKey(),
+                IConstants.DEFAULT_ENCRYPTION_ALGORITHM);
+        mCipher.init(Cipher.ENCRYPT_MODE, mSecretKeySpec);
+      } else {
+        mIsEncrypted = false;
+        mCipher = null;
+        mSecretKeySpec = null;
+      }
+
+      mCompressor = new Deflater(Deflater.DEFAULT_COMPRESSION);
+      mWriter = new FastByteArrayWriter();
+      mOut = new ByteArrayOutputStream();
+      mTmp = new byte[BUFFER_SIZE];
+
+    } catch (Exception e) {
+      throw new RuntimeException("Could not create page writer: "
+          + e.getLocalizedMessage());
     }
-
-    if (sessionConfiguration.isEncrypted()) {
-      mIsEncrypted = true;
-      mCipher = Cipher.getInstance(IConstants.DEFAULT_ENCRYPTION_ALGORITHM);
-      mSecretKeySpec =
-          new SecretKeySpec(
-              sessionConfiguration.getEncryptionKey(),
-              IConstants.DEFAULT_ENCRYPTION_ALGORITHM);
-      mCipher.init(Cipher.ENCRYPT_MODE, mSecretKeySpec);
-    } else {
-      mIsEncrypted = false;
-      mCipher = null;
-      mSecretKeySpec = null;
-    }
-
-    mCompressor = new Deflater(Deflater.DEFAULT_COMPRESSION);
-    mWriter = new FastByteArrayWriter();
-    mOut = new ByteArrayOutputStream();
-    mTmp = new byte[BUFFER_SIZE];
   }
 
   /**
    * {@inheritDoc}
    */
-  public final void write(final PageReference pageReference) throws Exception {
+  public final void write(final PageReference pageReference) {
 
-    // Serialize page.
-    mWriter.reset();
-    pageReference.getPage().serialize(mWriter);
+    try {
 
-    // Prepare members.
-    byte[] page = mWriter.getBytes();
+      // Serialize page.
+      mWriter.reset();
+      pageReference.getPage().serialize(mWriter);
 
-    // Compress page.
-    mCompressor.reset();
-    mOut.reset();
-    mCompressor.setInput(page, 0, mWriter.size());
-    mCompressor.finish();
-    int count;
-    while (!mCompressor.finished()) {
-      count = mCompressor.deflate(mTmp);
-      mOut.write(mTmp, 0, count);
+      // Prepare members.
+      byte[] page = mWriter.getBytes();
+
+      // Compress page.
+      mCompressor.reset();
+      mOut.reset();
+      mCompressor.setInput(page, 0, mWriter.size());
+      mCompressor.finish();
+      int count;
+      while (!mCompressor.finished()) {
+        count = mCompressor.deflate(mTmp);
+        mOut.write(mTmp, 0, count);
+      }
+      page = mOut.toByteArray();
+
+      // Checksum page.
+      if (mIsChecksummed) {
+        mChecksum.reset();
+        mChecksum.update(page, 0, page.length);
+        pageReference.setChecksum(mChecksum.getValue());
+      }
+
+      // Encrypt page.
+      if (mIsEncrypted) {
+        page = mCipher.doFinal(page);
+      }
+
+      // Write page to mFile.
+      final long start = mFile.length();
+      mFile.seek(start);
+      mFile.write(page);
+
+      // Remember page coordinates.
+      pageReference.setStart(start);
+      pageReference.setLength((int) (mFile.length() - start));
+
+    } catch (Exception e) {
+      throw new RuntimeException("Could not write page "
+          + pageReference
+          + " due to: "
+          + e.getLocalizedMessage());
     }
-    page = mOut.toByteArray();
-
-    // Checksum page.
-    if (mIsChecksummed) {
-      mChecksum.reset();
-      mChecksum.update(page, 0, page.length);
-      pageReference.setChecksum(mChecksum.getValue());
-    }
-
-    // Encrypt page.
-    if (mIsEncrypted) {
-      page = mCipher.doFinal(page);
-    }
-
-    // Write page to mFile.
-    final long start = mFile.length();
-    mFile.seek(start);
-    mFile.write(page);
-
-    // Remember page coordinates.
-    pageReference.setStart(start);
-    pageReference.setLength((int) (mFile.length() - start));
 
   }
 

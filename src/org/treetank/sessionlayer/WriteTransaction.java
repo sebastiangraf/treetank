@@ -360,8 +360,9 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   @Override
-  public final void close() throws Exception {
-    commit();
+  public final void close() {
+    throw new IllegalAccessError(
+        "Write transactions must either be committed or aborted.");
   }
 
   /**

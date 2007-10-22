@@ -76,13 +76,12 @@ public class ReadTransactionState implements IReadTransactionState {
    * @param pageReader Exclusive page reader.
    * @param uberPage Uber page to start reading with.
    * @param revisionKey Key of revision to read from uber page.
-   * @throws Exception of any kind.
    */
   public ReadTransactionState(
       final Map<Long, IPage> pageCache,
       final PageReader pageReader,
       final UberPage uberPage,
-      final long revisionKey) throws Exception {
+      final long revisionKey) {
     mPageCache = pageCache;
     mPageReader = pageReader;
     mUberPage = uberPage;
@@ -101,7 +100,7 @@ public class ReadTransactionState implements IReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public final INode getNode(final long nodeKey) throws Exception {
+  public final INode getNode(final long nodeKey) {
 
     // Calculate page and node part for given nodeKey.
     final long nodePageKey = nodePageKey(nodeKey);
@@ -121,7 +120,7 @@ public class ReadTransactionState implements IReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public final String getName(final int nameKey) throws Exception {
+  public final String getName(final int nameKey) {
     if (mNamePage == null) {
       mNamePage = dereferenceNamePage(mRevisionRootPage.getNamePageReference());
     }
@@ -140,10 +139,8 @@ public class ReadTransactionState implements IReadTransactionState {
    * 
    * @param revisionKey Key of revision to find revision root page for.
    * @return Revision root page of this revision key.
-   * @throws Exception of any kind.
    */
-  protected final RevisionRootPage getRevisionRootPage(final long revisionKey)
-      throws Exception {
+  protected final RevisionRootPage getRevisionRootPage(final long revisionKey) {
 
     // Get revision root page which is the leaf of the indirect tree.
     return dereferenceRevisionRootPage(dereferenceLeafOfTree(mUberPage
@@ -227,11 +224,10 @@ public class ReadTransactionState implements IReadTransactionState {
    * @param reference Reference to dereference.
    * @param nodePageKey Key of node page.
    * @return Dereferenced page.
-   * @throws Exception of any kind.
    */
   protected final NodePage dereferenceNodePage(
       final PageReference reference,
-      final long nodePageKey) throws Exception {
+      final long nodePageKey) {
 
     // Get page that was dereferenced or prepared earlier.
     NodePage page = (NodePage) reference.getPage();
@@ -257,10 +253,8 @@ public class ReadTransactionState implements IReadTransactionState {
    * 
    * @param reference Reference to dereference.
    * @return Dereferenced page.
-   * @throws Exception of any kind.
    */
-  protected final NamePage dereferenceNamePage(final PageReference reference)
-      throws Exception {
+  protected final NamePage dereferenceNamePage(final PageReference reference) {
 
     // Get page that was dereferenced or prepared earlier.
     IPage page = reference.getPage();
@@ -285,10 +279,9 @@ public class ReadTransactionState implements IReadTransactionState {
    * 
    * @param reference Reference to dereference.
    * @return Dereferenced page.
-   * @throws Exception of any kind.
    */
   protected final IndirectPage dereferenceIndirectPage(
-      final PageReference reference) throws Exception {
+      final PageReference reference) {
 
     // Get page that was dereferenced or prepared earlier.
     IndirectPage page = (IndirectPage) reference.getPage();
@@ -314,11 +307,10 @@ public class ReadTransactionState implements IReadTransactionState {
    * @param reference Reference to dereference.
    * @param revisionKey Key of revision.
    * @return Dereferenced page.
-   * @throws Exception of any kind.
    */
   protected final RevisionRootPage dereferenceRevisionRootPage(
       final PageReference reference,
-      final long revisionKey) throws Exception {
+      final long revisionKey) {
 
     // Get page that was dereferenced or prepared earlier.
     RevisionRootPage page = (RevisionRootPage) reference.getPage();
@@ -344,11 +336,10 @@ public class ReadTransactionState implements IReadTransactionState {
    * @param startReference Start reference pointing to the indirect tree.
    * @param key Key to look up in the indirect tree.
    * @return Reference denoted by key pointing to the leaf page.
-   * @throws Exception of any kind.
    */
   protected final PageReference dereferenceLeafOfTree(
       final PageReference startReference,
-      final long key) throws Exception {
+      final long key) {
 
     // Initial state pointing to the indirect page of level 0.
     PageReference reference = startReference;

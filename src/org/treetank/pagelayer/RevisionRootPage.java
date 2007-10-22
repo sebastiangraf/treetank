@@ -79,7 +79,7 @@ final public class RevisionRootPage implements IPage {
 
   public static final RevisionRootPage read(
       final FastByteArrayReader in,
-      final long revisionKey) throws Exception {
+      final long revisionKey) {
 
     final RevisionRootPage revisionRootPage =
         new RevisionRootPage(false, revisionKey);
@@ -174,7 +174,7 @@ final public class RevisionRootPage implements IPage {
   /**
    * {@inheritDoc}
    */
-  public void serialize(final FastByteArrayWriter out) throws Exception {
+  public void serialize(final FastByteArrayWriter out) {
     out.writeVarLong(mNodeCount);
     mNamePageReference.serialize(out);
     out.writeVarLong(mMaxNodeKey);
@@ -188,6 +188,9 @@ final public class RevisionRootPage implements IPage {
     return mDirty;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public final String toString() {
     return super.toString()

@@ -48,12 +48,13 @@ public class ValueTestAxisIterator implements IAxisIterator {
    * Constructor initializing internal state.
    * 
    * @param rtx Exclusive (immutable) mTrx to iterate with.
-   * @throws Exception of any kind.
+   * @param axis Axis iterator over which we should find values.
+   * @param value Value to find.
    */
   public ValueTestAxisIterator(
       final IReadTransaction rtx,
       final IAxisIterator axis,
-      final byte[] value) throws Exception {
+      final byte[] value) {
     mRTX = rtx;
     mAxis = axis;
     mValue = value;
@@ -63,19 +64,20 @@ public class ValueTestAxisIterator implements IAxisIterator {
    * Constructor initializing internal state.
    * 
    * @param rtx Exclusive (immutable) mTrx to iterate with.
-   * @throws Exception of any kind.
+   * @param axis Axis iterator over which we should find values.
+   * @param value Value to find.
    */
   public ValueTestAxisIterator(
       final IReadTransaction rtx,
       final IAxisIterator axis,
-      final String value) throws Exception {
+      final String value) {
     this(rtx, axis, UTF.convert(value));
   }
 
   /**
    * {@inheritDoc}
    */
-  public final boolean next() throws Exception {
+  public final boolean next() {
     while (mAxis.next() && !(UTF.equals(mRTX.getValue(), mValue)))
       ;
     return mRTX.isSelected();
