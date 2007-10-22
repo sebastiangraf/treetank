@@ -35,10 +35,8 @@ public interface IAxisIterator {
   /**
    * Iterate to next node if there is one.
    * 
-   * @return Key of node if there is one or NULL_KEY if the
-   * iteration is finished.
-   * @throws Exception of any kind.
+   * @return True if the next node could be selected. False else.
    */
-  public boolean next() throws Exception;
+  public boolean next();
 
 }

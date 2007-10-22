@@ -50,12 +50,11 @@ public class NameTestAxisIterator implements IAxisIterator {
    * @param rtx Exclusive (immutable) mTrx to iterate with.
    * @param axis Axis iterator providing ELEMENTS.
    * @param name Name ELEMENTS must match to.
-   * @throws Exception of any kind.
    */
   public NameTestAxisIterator(
       final IReadTransaction rtx,
       final IAxisIterator axis,
-      final String name) throws Exception {
+      final String name) {
     mRTX = rtx;
     mAxis = axis;
     mNameKey = mRTX.keyForName(name);
@@ -64,7 +63,7 @@ public class NameTestAxisIterator implements IAxisIterator {
   /**
    * {@inheritDoc}
    */
-  public final boolean next() throws Exception {
+  public final boolean next() {
     while (mAxis.next() && !(mRTX.getLocalPartKey() == mNameKey)) {
       // Nothing to do here.
     }

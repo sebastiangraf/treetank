@@ -31,12 +31,10 @@ public class PostOrderIterator implements IAxisIterator {
    * @param startAtBeginning
    *            Starting at the beginning of the tree and though just
    *            traversing the whole tree..No, the root is not the start!
-   * @throws Exception
-   *             of any kind.
    */
   public PostOrderIterator(
       final IReadTransaction initTrx,
-      final boolean startAtBeginning) throws Exception {
+      final boolean startAtBeginning) {
 
     // Init members.
     trx = initTrx;
@@ -51,10 +49,8 @@ public class PostOrderIterator implements IAxisIterator {
 
   /**
    * Method to start at the beginning of the tree.
-   * 
-   * @throws Exception of any kind.
    */
-  private final void startAtBeginning() throws Exception {
+  private final void startAtBeginning() {
     trx.moveToRoot();
     while (trx.getFirstChildKey() != IConstants.NULL_KEY) {
       lastParent.push(trx.getNodeKey());
@@ -68,7 +64,7 @@ public class PostOrderIterator implements IAxisIterator {
   /**
    * {@inheritDoc}
    */
-  public boolean next() throws Exception {
+  public boolean next() {
 
     if (trx.moveTo(nextKey)) {
       while (trx.getFirstChildKey() != IConstants.NULL_KEY

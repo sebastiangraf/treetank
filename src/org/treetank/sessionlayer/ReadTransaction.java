@@ -85,14 +85,14 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final boolean moveToRoot() throws Exception {
+  public final boolean moveToRoot() {
     return moveTo(IConstants.ROOT_KEY);
   }
 
   /**
    * {@inheritDoc}
    */
-  public final boolean moveTo(final long nodeKey) throws Exception {
+  public final boolean moveTo(final long nodeKey) {
     if (nodeKey != IConstants.NULL_KEY) {
       mCurrentNode = mState.getNode(nodeKey);
       return (mCurrentNode != null);
@@ -105,35 +105,35 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final boolean moveToParent() throws Exception {
+  public final boolean moveToParent() {
     return moveTo(mCurrentNode.getParentKey());
   }
 
   /**
    * {@inheritDoc}
    */
-  public final boolean moveToFirstChild() throws Exception {
+  public final boolean moveToFirstChild() {
     return moveTo(mCurrentNode.getFirstChildKey());
   }
 
   /**
    * {@inheritDoc}
    */
-  public final boolean moveToLeftSibling() throws Exception {
+  public final boolean moveToLeftSibling() {
     return moveTo(mCurrentNode.getLeftSiblingKey());
   }
 
   /**
    * {@inheritDoc}
    */
-  public final boolean moveToRightSibling() throws Exception {
+  public final boolean moveToRightSibling() {
     return moveTo(mCurrentNode.getRightSiblingKey());
   }
 
   /**
    * {@inheritDoc}
    */
-  public final boolean moveToAttribute(final int index) throws Exception {
+  public final boolean moveToAttribute(final int index) {
     mCurrentNode = mCurrentNode.getAttribute(index);
     return true;
   }
@@ -243,7 +243,7 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final String getLocalPart() throws Exception {
+  public final String getLocalPart() {
     assertIsSelected();
     return mState.getName(mCurrentNode.getLocalPartKey());
   }
@@ -259,7 +259,7 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final String getURI() throws Exception {
+  public final String getURI() {
     assertIsSelected();
     return mState.getName(mCurrentNode.getURIKey());
   }
@@ -275,7 +275,7 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final String getPrefix() throws Exception {
+  public final String getPrefix() {
     assertIsSelected();
     return mState.getName(mCurrentNode.getPrefixKey());
   }
@@ -298,7 +298,7 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final String nameForKey(final int key) throws Exception {
+  public final String nameForKey(final int key) {
     return mState.getName(key);
   }
 
@@ -339,11 +339,14 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public void close() throws Exception {
+  public void close() {
     mState.close();
     mSessionState.closeReadTransaction();
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public String toString() {
     String localPart = "";

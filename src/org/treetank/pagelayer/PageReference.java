@@ -58,7 +58,7 @@ public class PageReference {
     mChecksum = checksum;
   }
 
-  public PageReference(final FastByteArrayReader in) throws Exception {
+  public PageReference(final FastByteArrayReader in) {
     this(null, in.readVarLong(), in.readVarInt(), in.readVarLong());
   }
 
@@ -106,12 +106,15 @@ public class PageReference {
     mStart = start;
   }
 
-  public final void serialize(final FastByteArrayWriter out) throws Exception {
+  public final void serialize(final FastByteArrayWriter out) {
     out.writeVarLong(mStart);
     out.writeVarInt(mLength);
     out.writeVarLong(mChecksum);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public final boolean equals(final Object object) {
     final PageReference pageReference = (PageReference) object;
@@ -119,6 +122,9 @@ public class PageReference {
         && (mStart == pageReference.mStart) && (mLength == pageReference.mLength));
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public final String toString() {
     return super.toString()

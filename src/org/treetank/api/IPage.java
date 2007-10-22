@@ -32,7 +32,12 @@ import org.treetank.utils.FastByteArrayWriter;
  * </p>
  */
 public interface IPage {
-  
+
+  /**
+   * Is this page dirty?
+   * 
+   * @return True if the page was created or cloned. False if it was read.
+   */
   public boolean isDirty();
 
   /**
@@ -47,8 +52,7 @@ public interface IPage {
    * Serialize self into object output stream.
    * 
    * @param out Object output stream.
-   * @throws Exception if the stream encounters an error.
    */
-  public void serialize(final FastByteArrayWriter out) throws Exception;
+  public void serialize(final FastByteArrayWriter out);
 
 }

@@ -117,8 +117,7 @@ public final class Node implements INode {
     mValue = node.getValue();
   }
 
-  public Node(final long nodeKey, final FastByteArrayReader in)
-      throws Exception {
+  public Node(final long nodeKey, final FastByteArrayReader in) {
 
     // Always read node key and kind.
     mNodeKey = nodeKey;
@@ -357,7 +356,7 @@ public final class Node implements INode {
     mValue = value;
   }
 
-  public final void serialize(final FastByteArrayWriter out) throws Exception {
+  public final void serialize(final FastByteArrayWriter out) {
 
     // Guarantee kind to be stored.
     out.writeByte((byte) mKind);

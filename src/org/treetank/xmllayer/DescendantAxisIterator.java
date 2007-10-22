@@ -49,9 +49,8 @@ public class DescendantAxisIterator implements IAxisIterator {
    * Constructor initializing internal state.
    * 
    * @param rtx Exclusive (immutable) trx to iterate with.
-   * @throws Exception of any kind.
    */
-  public DescendantAxisIterator(final IReadTransaction rtx) throws Exception {
+  public DescendantAxisIterator(final IReadTransaction rtx) {
 
     // Init members.
     mRTX = rtx;
@@ -73,7 +72,7 @@ public class DescendantAxisIterator implements IAxisIterator {
   /**
    * {@inheritDoc}
    */
-  public final boolean next() throws Exception {
+  public final boolean next() {
 
     if (mRTX.moveTo(mNextKey)
         && mRTX.getNodeKey() != mRightSiblingKeyStack.get(0)) {

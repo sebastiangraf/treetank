@@ -86,87 +86,100 @@ public final class PageReader {
    * Constructor.
    * 
    * @param sessionConfiguration Configuration of session we are bound to.
-   * @throws Exception of any kind.
    */
-  public PageReader(final SessionConfiguration sessionConfiguration)
-      throws Exception {
+  public PageReader(final SessionConfiguration sessionConfiguration) {
 
-    mFile = new RandomAccessFile(sessionConfiguration.getPath(), READ_ONLY);
+    try {
 
-    if (sessionConfiguration.isChecksummed()) {
-      mIsChecksummed = true;
-      mChecksum = new CRC32();
-    } else {
-      mIsChecksummed = false;
-      mChecksum = null;
+      mFile = new RandomAccessFile(sessionConfiguration.getPath(), READ_ONLY);
+
+      if (sessionConfiguration.isChecksummed()) {
+        mIsChecksummed = true;
+        mChecksum = new CRC32();
+      } else {
+        mIsChecksummed = false;
+        mChecksum = null;
+      }
+
+      if (sessionConfiguration.isEncrypted()) {
+        mIsEncrypted = true;
+        mCipher = Cipher.getInstance(IConstants.DEFAULT_ENCRYPTION_ALGORITHM);
+        mSecretKeySpec =
+            new SecretKeySpec(
+                sessionConfiguration.getEncryptionKey(),
+                IConstants.DEFAULT_ENCRYPTION_ALGORITHM);
+        mCipher.init(Cipher.DECRYPT_MODE, mSecretKeySpec);
+      } else {
+        mIsEncrypted = false;
+        mCipher = null;
+        mSecretKeySpec = null;
+      }
+
+      mDecompressor = new Inflater();
+      mOut = new ByteArrayOutputStream();
+      mTmp = new byte[BUFFER_SIZE];
+
+    } catch (Exception e) {
+      throw new RuntimeException("Could not create page reader: "
+          + e.getLocalizedMessage());
     }
-
-    if (sessionConfiguration.isEncrypted()) {
-      mIsEncrypted = true;
-      mCipher = Cipher.getInstance(IConstants.DEFAULT_ENCRYPTION_ALGORITHM);
-      mSecretKeySpec =
-          new SecretKeySpec(
-              sessionConfiguration.getEncryptionKey(),
-              IConstants.DEFAULT_ENCRYPTION_ALGORITHM);
-      mCipher.init(Cipher.DECRYPT_MODE, mSecretKeySpec);
-    } else {
-      mIsEncrypted = false;
-      mCipher = null;
-      mSecretKeySpec = null;
-    }
-
-    mDecompressor = new Inflater();
-    mOut = new ByteArrayOutputStream();
-    mTmp = new byte[BUFFER_SIZE];
   }
 
   /**
    * {@inheritDoc}
    */
-  public final FastByteArrayReader read(final PageReference pageReference)
-      throws Exception {
+  public final FastByteArrayReader read(final PageReference pageReference) {
 
     if (!pageReference.isCommitted()) {
-      throw new Exception("Empty page reference.");
+      throw new IllegalStateException("Empty page reference.");
     }
 
     // Prepare members.
     byte[] page;
 
-    // Read encrypted page from mFile.
-    mFile.seek(pageReference.getStart());
-    page = new byte[pageReference.getLength()];
-    mFile.read(page);
+    try {
 
-    // Decrypt page.
-    if (mIsEncrypted) {
-      page = mCipher.doFinal(page);
-    }
+      // Read encrypted page from mFile.
+      mFile.seek(pageReference.getStart());
+      page = new byte[pageReference.getLength()];
+      mFile.read(page);
 
-    // Verify checksummed page.
-    if (mIsChecksummed) {
-      mChecksum.reset();
-      mChecksum.update(page, 0, page.length);
-      if (mChecksum.getValue() != pageReference.getChecksum()) {
-        throw new Exception("Page checksum is not valid for start="
-            + pageReference.getStart()
-            + "; size="
-            + pageReference.getLength()
-            + "; checksum="
-            + pageReference.getChecksum());
+      // Decrypt page.
+      if (mIsEncrypted) {
+        page = mCipher.doFinal(page);
       }
-    }
 
-    // Decompress page.
-    mDecompressor.reset();
-    mOut.reset();
-    mDecompressor.setInput(page);
-    int count;
-    while (!mDecompressor.finished()) {
-      count = mDecompressor.inflate(mTmp);
-      mOut.write(mTmp, 0, count);
+      // Verify checksummed page.
+      if (mIsChecksummed) {
+        mChecksum.reset();
+        mChecksum.update(page, 0, page.length);
+        if (mChecksum.getValue() != pageReference.getChecksum()) {
+          throw new Exception("Page checksum is not valid for start="
+              + pageReference.getStart()
+              + "; size="
+              + pageReference.getLength()
+              + "; checksum="
+              + pageReference.getChecksum());
+        }
+      }
+
+      // Decompress page.
+      mDecompressor.reset();
+      mOut.reset();
+      mDecompressor.setInput(page);
+      int count;
+      while (!mDecompressor.finished()) {
+        count = mDecompressor.inflate(mTmp);
+        mOut.write(mTmp, 0, count);
+      }
+      page = mOut.toByteArray();
+
+    } catch (Exception e) {
+      throw new RuntimeException("Could not read page "
+          + pageReference
+          + " due to: "
+          + e.getLocalizedMessage());
     }
-    page = mOut.toByteArray();
 
     // Return reader required to instantiate and deserialize page.
     return new FastByteArrayReader(page);

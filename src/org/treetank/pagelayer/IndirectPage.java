@@ -45,11 +45,9 @@ final public class IndirectPage implements IPage {
   }
 
   /**
-   * Create new uncommitted in-memory uber page.
+   * Create new uncommitted in-memory indirect page.
    * 
-   * @param pageCache
-   * @return
-   * @throws Exception
+   * @return Freshly created indirect page.
    */
   public static final IndirectPage create() {
     final IndirectPage indirectPage = new IndirectPage(true);
@@ -57,15 +55,12 @@ final public class IndirectPage implements IPage {
   }
 
   /**
-   * Read committed uber page from disk.
+   * Read committed indirect page from disk.
    * 
-   * @param pageCache
-   * @param in
-   * @param pageKind
-   * @throws Exception
+   * @param in Input stream.
+   * @return Indirect page read from storage.
    */
-  public static final IndirectPage read(final FastByteArrayReader in)
-      throws Exception {
+  public static final IndirectPage read(final FastByteArrayReader in) {
     final IndirectPage indirectPage = new IndirectPage(false);
 
     for (int i = 0, l = indirectPage.mIndirectPageReferences.length; i < l; i++) {
@@ -76,6 +71,12 @@ final public class IndirectPage implements IPage {
     return indirectPage;
   }
 
+  /**
+   * Clone indirect page.
+   * 
+   * @param committedIndirectPage Existing page to clone.
+   * @return Cloned indirect page.
+   */
   public static final IndirectPage clone(
       final IndirectPage committedIndirectPage) {
     final IndirectPage indirectPage = new IndirectPage(true);
@@ -126,7 +127,7 @@ final public class IndirectPage implements IPage {
   /**
    * {@inheritDoc}
    */
-  public final void serialize(final FastByteArrayWriter out) throws Exception {
+  public final void serialize(final FastByteArrayWriter out) {
     for (int i = 0, l = mIndirectPageReferences.length; i < l; i++) {
       if (mIndirectPageReferences[i] != null) {
         out.writeBoolean(true);
@@ -144,6 +145,9 @@ final public class IndirectPage implements IPage {
     return mDirty;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public final String toString() {
     return super.toString() + ": isDirty=" + mDirty;

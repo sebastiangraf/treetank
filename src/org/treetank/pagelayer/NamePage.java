@@ -49,8 +49,7 @@ final public class NamePage implements IPage {
     return namePage;
   }
 
-  public static final NamePage read(final FastByteArrayReader in)
-      throws Exception {
+  public static final NamePage read(final FastByteArrayReader in) {
 
     final NamePage namePage = new NamePage(false);
 
@@ -102,7 +101,7 @@ final public class NamePage implements IPage {
   /**
    * {@inheritDoc}
    */
-  public void serialize(final FastByteArrayWriter out) throws Exception {
+  public void serialize(final FastByteArrayWriter out) {
     out.writeVarInt(mNameMap.size());
     Iterator<Integer> keyIterator = mNameMap.keySet().iterator();
     int key;
@@ -120,6 +119,9 @@ final public class NamePage implements IPage {
     return mDirty;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public final String toString() {
     return super.toString()

@@ -45,9 +45,8 @@ public class AncestorAxisIterator implements IAxisIterator {
    * Constructor initializing internal state.
    * 
    * @param rtx Exclusive (immutable) trx to iterate with.
-   * @throws Exception of any kind.
    */
-  public AncestorAxisIterator(final IReadTransaction rtx) throws Exception {
+  public AncestorAxisIterator(final IReadTransaction rtx) {
     mRTX = rtx;
     mNextKey = mRTX.getParentKey();
   }
@@ -55,7 +54,7 @@ public class AncestorAxisIterator implements IAxisIterator {
   /**
    * {@inheritDoc}
    */
-  public final boolean next() throws Exception {
+  public final boolean next() {
     if (mNextKey != IConstants.ROOT_KEY && mRTX.moveTo(mNextKey)) {
       mNextKey = mRTX.getParentKey();
       return true;

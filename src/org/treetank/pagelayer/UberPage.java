@@ -56,7 +56,7 @@ final public class UberPage implements IPage {
    * @return Bootstrapped uber page.
    * @throws Exception
    */
-  public static final UberPage create() throws Exception {
+  public static final UberPage create() {
 
     // --- Create uber page ----------------------------------------------------
 
@@ -115,8 +115,7 @@ final public class UberPage implements IPage {
    * @param in
    * @throws Exception
    */
-  public static final UberPage read(final FastByteArrayReader in)
-      throws Exception {
+  public static final UberPage read(final FastByteArrayReader in) {
 
     final UberPage uberPage = new UberPage(false, false);
 
@@ -194,7 +193,7 @@ final public class UberPage implements IPage {
   /**
    * {@inheritDoc}
    */
-  public final void serialize(final FastByteArrayWriter out) throws Exception {
+  public final void serialize(final FastByteArrayWriter out) {
     out.writeVarLong(mRevisionCount);
     mIndirectPageReference.serialize(out);
   }
@@ -210,6 +209,9 @@ final public class UberPage implements IPage {
     return mBootstrap;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public final String toString() {
     return super.toString()

@@ -46,9 +46,8 @@ public class ParentAxisIterator implements IAxisIterator {
    * Constructor initializing internal state.
    * 
    * @param rtx Exclusive (immutable) trx to iterate with.
-   * @throws Exception of any kind.
    */
-  public ParentAxisIterator(final IReadTransaction rtx) throws Exception {
+  public ParentAxisIterator(final IReadTransaction rtx) {
     mRTX = rtx;
     mIsFirstNext = true;
     mNextKey = mRTX.getParentKey();
@@ -57,7 +56,7 @@ public class ParentAxisIterator implements IAxisIterator {
   /**
    * {@inheritDoc}
    */
-  public final boolean next() throws Exception {
+  public final boolean next() {
     if (mIsFirstNext && mRTX.moveTo(mNextKey)) {
       mIsFirstNext = false;
       return true;

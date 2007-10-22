@@ -45,11 +45,10 @@ public class NodeTestAxisIterator implements IAxisIterator {
    * 
    * @param rtx Exclusive (immutable) trx to iterate with.
    * @param axis Axis to iterate over.
-   * @throws Exception of any kind.
    */
   public NodeTestAxisIterator(
       final IReadTransaction rtx,
-      final IAxisIterator axis) throws Exception {
+      final IAxisIterator axis) {
     mRTX = rtx;
     mAxis = axis;
   }
@@ -57,7 +56,7 @@ public class NodeTestAxisIterator implements IAxisIterator {
   /**
    * {@inheritDoc}
    */
-  public final boolean next() throws Exception {
+  public final boolean next() {
     return (mAxis.next() && mRTX.getKind() == IConstants.ELEMENT || mRTX
         .getKind() == IConstants.TEXT);
   }
