@@ -59,9 +59,7 @@ public interface IReadTransactionState {
 
   /**
    * Immediately release all resources.
-   * 
-   * @throws Exception of any kind.
    */
-  public void close() throws Exception;
+  public void close();
 
 }

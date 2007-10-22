@@ -167,7 +167,7 @@ public final class WriteTransactionState extends ReadTransactionState
   /**
    * {@inheritDoc}
    */
-  public void close() throws Exception {
+  public void close() {
     mPageWriter.close();
     super.close();
   }

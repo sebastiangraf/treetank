@@ -23,6 +23,7 @@ package org.treetank.pagelayer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.RandomAccessFile;
+import java.util.logging.Logger;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 import java.util.zip.Deflater;
@@ -43,6 +44,10 @@ import org.treetank.utils.FastByteArrayWriter;
  * </p>
  */
 public final class PageWriter {
+
+  /** Logger. */
+  private static final Logger LOGGER =
+      Logger.getLogger(PageWriter.class.getName());
 
   /** Read-write mode of mFile to modify. */
   private static final String READ_WRITE = "rw";
@@ -168,11 +173,13 @@ public final class PageWriter {
 
   /**
    * Properly close file handle.
-   * 
-   * @throws Exception of any kind.
    */
-  public final void close() throws Exception {
-    mFile.close();
+  public final void close() {
+    try {
+      mFile.close();
+    } catch (Exception e) {
+      LOGGER.warning("Could not close file: " + e.getLocalizedMessage());
+    }
   }
 
   /**

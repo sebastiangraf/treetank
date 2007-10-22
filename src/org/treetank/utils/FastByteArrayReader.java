@@ -31,27 +31,27 @@ public final class FastByteArrayReader {
    * Constructor.
    *
    */
-  public FastByteArrayReader(final byte[] buffer) throws Exception {
+  public FastByteArrayReader(final byte[] buffer) {
     mBuffer = buffer;
     mPosition = 0;
   }
 
-  public final boolean readBoolean() throws Exception {
+  public final boolean readBoolean() {
     return (mBuffer[mPosition++] == 1 ? true : false);
   }
 
-  public final byte readByte() throws Exception {
+  public final byte readByte() {
     return mBuffer[mPosition++];
   }
 
-  public final int readInt() throws Exception {
+  public final int readInt() {
     return ((mBuffer[mPosition++] & 0xFF) << 24)
         | ((mBuffer[mPosition++] & 0xFF) << 16)
         | ((mBuffer[mPosition++] & 0xFF) << 8)
         | (mBuffer[mPosition++] & 0xFF);
   }
 
-  public final int readVarInt() throws Exception {
+  public final int readVarInt() {
     int value = ((mBuffer[mPosition++] & 127));
     if ((mBuffer[mPosition - 1] & 128) != 0) {
       value |= ((mBuffer[mPosition++] & 127)) << 7;
@@ -62,7 +62,7 @@ public final class FastByteArrayReader {
           if ((mBuffer[mPosition - 1] & 128) != 0) {
             value |= ((mBuffer[mPosition++] & 255)) << 28;
           } else if ((mBuffer[mPosition - 1] & 64) != 0)
-            value |= 0xF0000000;            
+            value |= 0xF0000000;
         } else if ((mBuffer[mPosition - 1] & 64) != 0)
           value |= 0xFFF00000;
       } else if ((mBuffer[mPosition - 1] & 64) != 0)
@@ -72,7 +72,7 @@ public final class FastByteArrayReader {
     return value;
   }
 
-  public final long readVarLong() throws Exception {
+  public final long readVarLong() {
     mPosition++;
     long value = (long) (mBuffer[mPosition++] & 255);
     if (mBuffer[mPosition - 2] > 1) {
@@ -106,7 +106,7 @@ public final class FastByteArrayReader {
     return value;
   }
 
-  public final long readLong() throws Exception {
+  public final long readLong() {
     return (((long) mBuffer[mPosition++] << 56)
         + ((long) (mBuffer[mPosition++] & 255) << 48)
         + ((long) (mBuffer[mPosition++] & 255) << 40)
@@ -116,7 +116,7 @@ public final class FastByteArrayReader {
         + ((mBuffer[mPosition++] & 255) << 8) + (mBuffer[mPosition++] & 255));
   }
 
-  public final byte[] readByteArray() throws Exception {
+  public final byte[] readByteArray() {
     final int size =
         ((mBuffer[mPosition++] & 0xFF) << 16)
             | ((mBuffer[mPosition++] & 0xFF) << 8)

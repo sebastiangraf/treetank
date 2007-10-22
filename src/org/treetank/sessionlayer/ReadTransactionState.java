@@ -131,7 +131,7 @@ public class ReadTransactionState implements IReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public void close() throws Exception {
+  public void close() {
     mPageReader.close();
   }
 

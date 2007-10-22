@@ -132,7 +132,7 @@ public final class Session implements ISession {
   /**
    * {@inheritDoc}
    */
-  public final void close() throws Exception {
+  public final void close() {
     mSessionState.close();
     SESSION_MAP.remove(mSessionState.getSessionConfiguration().getPath());
   }
