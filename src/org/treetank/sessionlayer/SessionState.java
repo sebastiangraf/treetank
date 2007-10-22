@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.RandomAccessFile;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
+import java.util.logging.Logger;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.IPage;
@@ -48,6 +49,10 @@ import org.treetank.utils.FastWeakHashMap;
  * </p>
  */
 public final class SessionState implements ISession {
+
+  /** Logger. */
+  private static final Logger LOGGER =
+      Logger.getLogger(SessionState.class.getName());
 
   /** Session configuration. */
   private final SessionConfiguration mSessionConfiguration;
@@ -243,7 +248,7 @@ public final class SessionState implements ISession {
   /**
    * {@inheritDoc}
    */
-  public final void close() throws Exception {
+  public final void close() {
     if (mWriteSemaphore.drainPermits() != IConstants.MAX_WRITE_TRANSACTIONS) {
       throw new IllegalStateException("Session can not be closed due to a"
           + "running exclusive write transaction.");
@@ -252,7 +257,11 @@ public final class SessionState implements ISession {
       throw new IllegalStateException("Session can not be closed due to one "
           + "or more running share read transactions.");
     }
-    mFile.close();
+    try {
+      mFile.close();
+    } catch (Exception e) {
+      LOGGER.warning("Could not close file: " + e.getLocalizedMessage());
+    }
   }
 
   /**

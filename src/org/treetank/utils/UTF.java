@@ -50,7 +50,8 @@ public final class UTF {
     try {
       string = new String(bytes, IConstants.DEFAULT_ENCODING);
     } catch (Exception e) {
-      throw new IllegalStateException(e);
+      throw new RuntimeException("Could not convert byte[] to String: "
+          + e.getLocalizedMessage());
     }
     return string;
   }
@@ -64,7 +65,8 @@ public final class UTF {
         bytes = string.getBytes(IConstants.DEFAULT_ENCODING);
       }
     } catch (Exception e) {
-      throw new IllegalStateException(e);
+      throw new RuntimeException("Could not convert String to byte[]: "
+          + e.getLocalizedMessage());
     }
     return bytes;
   }

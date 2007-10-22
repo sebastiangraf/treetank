@@ -31,22 +31,22 @@ public final class FastByteArrayWriter {
    * Constructor.
    *
    */
-  public FastByteArrayWriter() throws Exception {
+  public FastByteArrayWriter() {
     mBuffer = new byte[32];
     mSize = 0;
   }
 
-  public final void writeBoolean(final boolean value) throws Exception {
+  public final void writeBoolean(final boolean value) {
     assertSize(1);
     mBuffer[mSize++] = (byte) (value ? 1 : 0);
   }
 
-  public final void writeByte(final byte value) throws Exception {
+  public final void writeByte(final byte value) {
     assertSize(1);
     mBuffer[mSize++] = value;
   }
 
-  public final void writeInt(final int value) throws Exception {
+  public final void writeInt(final int value) {
     assertSize(4);
     mBuffer[mSize++] = (byte) (value >> 24);
     mBuffer[mSize++] = (byte) (value >> 16);
@@ -54,7 +54,7 @@ public final class FastByteArrayWriter {
     mBuffer[mSize++] = (byte) value;
   }
 
-  public final void writeVarInt(final int value) throws Exception {
+  public final void writeVarInt(final int value) {
     assertSize(5);
     mBuffer[mSize++] = (byte) (value);
     if (value > 63 || value < -64) {
@@ -79,7 +79,7 @@ public final class FastByteArrayWriter {
       mBuffer[mSize - 1] &= 127;
   }
 
-  public final void writeVarLong(final long value) throws Exception {
+  public final void writeVarLong(final long value) {
     assertSize(9);
     mSize++;
     mBuffer[mSize++] = (byte) value;
@@ -114,7 +114,7 @@ public final class FastByteArrayWriter {
       mBuffer[mSize - 2] = (byte) 1;
   }
 
-  public final void writeLong(final long value) throws Exception {
+  public final void writeLong(final long value) {
     assertSize(8);
     mBuffer[mSize++] = (byte) (value >>> 56);
     mBuffer[mSize++] = (byte) (value >>> 48);
@@ -126,7 +126,7 @@ public final class FastByteArrayWriter {
     mBuffer[mSize++] = (byte) value;
   }
 
-  public final void writeByteArray(final byte[] value) throws Exception {
+  public final void writeByteArray(final byte[] value) {
     assertSize(value.length + 3);
 
     // Size of byte array.    
@@ -139,7 +139,7 @@ public final class FastByteArrayWriter {
     mSize += value.length;
   }
 
-  public final byte[] getBytes() throws Exception {
+  public final byte[] getBytes() {
     return mBuffer;
   }
 
