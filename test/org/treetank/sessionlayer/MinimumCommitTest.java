@@ -45,13 +45,13 @@ public class MinimumCommitTest {
   @Test
   public void test() throws Exception {
 
-    ISession session = new Session(TEST_PATH);
+    ISession session = Session.getSession(TEST_PATH);
     IWriteTransaction wtx = session.beginWriteTransaction();
     TestCase.assertEquals(0L, wtx.revisionKey());
     wtx.commit();
     session.close();
 
-    session = new Session(TEST_PATH);
+    session = Session.getSession(TEST_PATH);
     wtx = session.beginWriteTransaction();
     TestCase.assertEquals(1L, wtx.revisionKey());
     TestDocument.create(wtx);

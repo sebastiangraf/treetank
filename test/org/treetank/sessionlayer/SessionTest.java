@@ -66,19 +66,19 @@ public class SessionTest {
   @Test
   public void testNoWritesBeforeFirstCommit() throws Exception {
 
-    ISession session = new Session(TEST_INSERT_CHILD_PATH);
+    ISession session = Session.getSession(TEST_INSERT_CHILD_PATH);
     assertEquals(0L, new File(TEST_INSERT_CHILD_PATH).length());
     session.close();
     assertEquals(0L, new File(TEST_INSERT_CHILD_PATH).length());
 
-    session = new Session(TEST_INSERT_CHILD_PATH);
+    session = Session.getSession(TEST_INSERT_CHILD_PATH);
     assertEquals(0L, new File(TEST_INSERT_CHILD_PATH).length());
 
     final IWriteTransaction wtx = session.beginWriteTransaction();
     wtx.commit();
     session.close();
 
-    session = new Session(TEST_INSERT_CHILD_PATH);
+    session = Session.getSession(TEST_INSERT_CHILD_PATH);
     final IReadTransaction rtx = session.beginReadTransaction();
     rtx.close();
     session.close();
@@ -89,12 +89,12 @@ public class SessionTest {
   @Test
   public void testNonExisting() {
     try {
-      new Session(NON_EXISTING_PATH);
+      Session.getSession(NON_EXISTING_PATH);
       final Thread secondAccess = new Thread() {
         @Override
         public void run() {
           try {
-            new Session(NON_EXISTING_PATH);
+            Session.getSession(NON_EXISTING_PATH);
           } catch (final Exception e) {
             fail(e.toString());
             e.printStackTrace();
@@ -119,7 +119,7 @@ public class SessionTest {
   @Test
   public void testInsertChild() throws Exception {
 
-    final ISession session = new Session(TEST_INSERT_CHILD_PATH);
+    final ISession session = Session.getSession(TEST_INSERT_CHILD_PATH);
 
     final IWriteTransaction wtx = session.beginWriteTransaction();
 
@@ -144,7 +144,7 @@ public class SessionTest {
   @Test
   public void testRevision() throws Exception {
 
-    final ISession session = new Session(TEST_REVISION_PATH);
+    final ISession session = Session.getSession(TEST_REVISION_PATH);
 
     IReadTransaction rtx = session.beginReadTransaction();
     assertEquals(0L, rtx.revisionKey());
@@ -171,7 +171,7 @@ public class SessionTest {
   @Test
   public void testShreddedRevision() throws Exception {
 
-    final ISession session = new Session(TEST_SHREDDED_REVISION_PATH);
+    final ISession session = Session.getSession(TEST_SHREDDED_REVISION_PATH);
 
     final IWriteTransaction wtx1 = session.beginWriteTransaction();
     TestDocument.create(wtx1);
@@ -212,7 +212,7 @@ public class SessionTest {
   @Test
   public void testExisting() throws Exception {
 
-    final ISession session1 = new Session(TEST_EXISTING_PATH);
+    final ISession session1 = Session.getSession(TEST_EXISTING_PATH);
 
     final IWriteTransaction wtx1 = session1.beginWriteTransaction();
     TestDocument.create(wtx1);
@@ -220,7 +220,7 @@ public class SessionTest {
     wtx1.commit();
     session1.close();
 
-    final ISession session2 = new Session(TEST_EXISTING_PATH);
+    final ISession session2 = Session.getSession(TEST_EXISTING_PATH);
     final IReadTransaction rtx1 = session2.beginReadTransaction();
     assertEquals(0L, rtx1.revisionKey());
     rtx1.moveTo(9L);
@@ -244,7 +244,7 @@ public class SessionTest {
     wtx2.commit();
     session2.close();
 
-    final ISession session3 = new Session(TEST_EXISTING_PATH);
+    final ISession session3 = Session.getSession(TEST_EXISTING_PATH);
     final IReadTransaction rtx2 = session3.beginReadTransaction();
     assertEquals(1L, rtx2.revisionKey());
     rtx2.moveTo(9L);
@@ -252,12 +252,15 @@ public class SessionTest {
         rtx2.getValue(),
         IConstants.DEFAULT_ENCODING));
 
+    rtx2.close();
+    session3.close();
+
   }
 
   @Test
   public void testIsSelected() throws Exception {
 
-    final ISession session = new Session(TEST_EXISTING_PATH);
+    final ISession session = Session.getSession(TEST_EXISTING_PATH);
 
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
@@ -268,6 +271,9 @@ public class SessionTest {
     assertEquals(true, rtx.isSelected());
     assertEquals(false, rtx.moveTo(12L));
     assertEquals(false, rtx.isSelected());
+
+    rtx.close();
+    session.close();
 
   }
 

@@ -36,13 +36,13 @@ public class SubtreeSAXHandlerTest {
   public void testNormal() throws Exception {
 
     // Setup expected session.
-    final ISession expectedSession = new Session(EXPECTED_PATH);
+    final ISession expectedSession = Session.getSession(EXPECTED_PATH);
     final IWriteTransaction expectedTrx =
         expectedSession.beginWriteTransaction();
     TestDocument.create(expectedTrx);
 
     // Setup parsed session.
-    final ISession session = new Session(PATH);
+    final ISession session = Session.getSession(PATH);
     final SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
     saxParserFactory.setValidating(false);
     saxParserFactory.setNamespaceAware(true);
@@ -90,7 +90,7 @@ public class SubtreeSAXHandlerTest {
   public void test1Subtree() throws Exception {
 
     // Setup parsed session.
-    final ISession session = new Session(PATH);
+    final ISession session = Session.getSession(PATH);
     final SubtreeSAXHandler handler = new SubtreeSAXHandler(session);
     handler.startDocument();
     handler.subtreeStarting(0);
@@ -129,7 +129,7 @@ public class SubtreeSAXHandlerTest {
   public void test2Subtree() throws Exception {
 
     // Setup parsed session.
-    final ISession session = new Session(PATH);
+    final ISession session = Session.getSession(PATH);
     final SubtreeSAXHandler handler = new SubtreeSAXHandler(session);
     handler.startDocument();
 

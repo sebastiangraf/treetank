@@ -52,7 +52,7 @@ public class ChildAxisIteratorTest {
   @Test
   public void testIterate() throws Exception {
 
-    final ISession session = new Session(TEST_ITERATE_PATH);
+    final ISession session = Session.getSession(TEST_ITERATE_PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
 
@@ -138,12 +138,12 @@ public class ChildAxisIteratorTest {
   @Test
   public void testPersistent() throws Exception {
 
-    final ISession session = new Session(TEST_PERSISTENT_PATH);
+    final ISession session = Session.getSession(TEST_PERSISTENT_PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
     wtx.commit();
 
-    final ISession session1 = new Session(TEST_PERSISTENT_PATH);
+    final ISession session1 = Session.getSession(TEST_PERSISTENT_PATH);
     final IReadTransaction rtx = session1.beginReadTransaction();
 
     rtx.moveTo(1L);
