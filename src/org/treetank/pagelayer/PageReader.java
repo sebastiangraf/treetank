@@ -131,7 +131,7 @@ public final class PageReader {
   public final FastByteArrayReader read(final PageReference pageReference) {
 
     if (!pageReference.isCommitted()) {
-      throw new IllegalStateException("Empty page reference.");
+      throw new IllegalArgumentException("Page reference is invalid.");
     }
 
     // Prepare members.
