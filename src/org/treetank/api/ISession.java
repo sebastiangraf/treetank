@@ -37,27 +37,23 @@ public interface ISession {
    * Begin a read-only transaction on the latest committed revision key.
    * 
    * @return IReadTransaction instance.
-   * @throws Exception of any kind.
    */
-  public IReadTransaction beginReadTransaction() throws Exception;
+  public IReadTransaction beginReadTransaction();
 
   /**
    * Begin a read-only transaction on the given revision key.
    * 
    * @param revisionKey Revision key to read from.
    * @return IReadTransaction instance.
-   * @throws Exception of any kind or if the given revision key does not exist.
    */
-  public IReadTransaction beginReadTransaction(final long revisionKey)
-      throws Exception;
+  public IReadTransaction beginReadTransaction(final long revisionKey);
 
   /**
    * Begin exclusive read/write transaction.
    * 
    * @return IWriteTransaction instance.
-   * @throws Exception of any kind.
    */
-  public IWriteTransaction beginWriteTransaction() throws Exception;
+  public IWriteTransaction beginWriteTransaction();
 
   /**
    * Safely close session and immediately release all resources. A session

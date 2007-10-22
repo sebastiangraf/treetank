@@ -108,24 +108,21 @@ public final class Session implements ISession {
   /**
    * {@inheritDoc}
    */
-  public final IReadTransaction beginReadTransaction() throws Exception {
+  public final IReadTransaction beginReadTransaction() {
     return mSessionState.beginReadTransaction();
   }
 
   /**
    * {@inheritDoc}
    */
-  public final IReadTransaction beginReadTransaction(final long revisionKey)
-      throws Exception {
-
+  public final IReadTransaction beginReadTransaction(final long revisionKey) {
     return mSessionState.beginReadTransaction(revisionKey);
   }
 
   /**
    * {@inheritDoc}
    */
-  public final IWriteTransaction beginWriteTransaction() throws Exception {
-
+  public final IWriteTransaction beginWriteTransaction() {
     return mSessionState.beginWriteTransaction();
   }
 

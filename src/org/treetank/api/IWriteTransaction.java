@@ -251,9 +251,7 @@ public interface IWriteTransaction extends IReadTransaction {
 
   /**
    * Abort all modifications of the exclusive write transaction.
-   * 
-   * @throws Exception if abort failed.
    */
-  public void abort() throws Exception;
+  public void abort();
 
 }

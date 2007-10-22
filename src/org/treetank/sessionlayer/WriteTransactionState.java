@@ -56,13 +56,12 @@ public final class WriteTransactionState extends ReadTransactionState
    * @param pageReader Exclusive page reader.
    * @param pageWriter Exclusive page writer.
    * @param uberPage Root of revision.
-   * @throws Exception of any kind.
    */
   public WriteTransactionState(
       final Map<Long, IPage> pageCache,
       final PageReader pageReader,
       final PageWriter pageWriter,
-      final UberPage uberPage) throws Exception {
+      final UberPage uberPage) {
     super(pageCache, pageReader, uberPage, uberPage
         .getLastCommittedRevisionKey());
     mPageWriter = pageWriter;
@@ -172,11 +171,7 @@ public final class WriteTransactionState extends ReadTransactionState
     super.close();
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  protected final NamePage prepareNamePage(final PageReference reference)
-      throws Exception {
+  protected final NamePage prepareNamePage(final PageReference reference) {
 
     NamePage page = (NamePage) reference.getPage();
 
@@ -198,11 +193,7 @@ public final class WriteTransactionState extends ReadTransactionState
     return page;
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  protected final IndirectPage prepareIndirectPage(final PageReference reference)
-      throws Exception {
+  protected final IndirectPage prepareIndirectPage(final PageReference reference) {
 
     IndirectPage page = (IndirectPage) reference.getPage();
 
@@ -225,11 +216,7 @@ public final class WriteTransactionState extends ReadTransactionState
 
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  protected final NodePage prepareNodePage(final long nodePageKey)
-      throws Exception {
+  protected final NodePage prepareNodePage(final long nodePageKey) {
 
     // Indirect reference.
     PageReference reference =
@@ -261,7 +248,7 @@ public final class WriteTransactionState extends ReadTransactionState
     return page;
   }
 
-  protected final RevisionRootPage prepareRevisionRootPage() throws Exception {
+  protected final RevisionRootPage prepareRevisionRootPage() {
 
     if (getUberPage().isBootstrap()) {
       return getRevisionRootPage();
@@ -287,7 +274,7 @@ public final class WriteTransactionState extends ReadTransactionState
 
   protected final PageReference prepareLeafOfTree(
       final PageReference startReference,
-      final long key) throws Exception {
+      final long key) {
 
     // Initial state pointing to the indirect page of level 0.
     PageReference reference = startReference;

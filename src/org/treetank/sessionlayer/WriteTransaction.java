@@ -41,12 +41,12 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * Constructor.
    * 
+   * @param sessionState State of the session.
    * @param state State of this transaction.
-   * @throws Exception of any kind.
    */
   protected WriteTransaction(
       final SessionState sessionState,
-      final IWriteTransactionState state) throws Exception {
+      final IWriteTransactionState state) {
     super(sessionState, state);
   }
 
@@ -376,7 +376,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final void abort() throws Exception {
+  public final void abort() {
     getSessionState().abortWriteTransaction();
     getState().close();
   }

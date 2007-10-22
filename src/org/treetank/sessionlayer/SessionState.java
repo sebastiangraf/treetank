@@ -163,17 +163,20 @@ public final class SessionState implements ISession {
   /**
    * {@inheritDoc}
    */
-  public final IReadTransaction beginReadTransaction() throws Exception {
+  public final IReadTransaction beginReadTransaction() {
     return beginReadTransaction(mUberPage.getRevisionKey());
   }
 
   /**
    * {@inheritDoc}
    */
-  public final IReadTransaction beginReadTransaction(final long revisionKey)
-      throws Exception {
+  public final IReadTransaction beginReadTransaction(final long revisionKey) {
 
-    mReadSemaphore.acquire();
+    try {
+      mReadSemaphore.acquire();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
 
     final PageReader pageReader = new PageReader(mSessionConfiguration);
     final IReadTransactionState state =
@@ -185,14 +188,19 @@ public final class SessionState implements ISession {
   /**
    * {@inheritDoc}
    */
-  public final IWriteTransaction beginWriteTransaction() throws Exception {
+  public final IWriteTransaction beginWriteTransaction() {
 
     // Make sure that only one write transaction exists per session.
     if (mWriteSemaphore.availablePermits() == 0) {
       throw new IllegalStateException(
           "There already is a running exclusive write transaction.");
     }
-    mWriteSemaphore.acquire();
+
+    try {
+      mWriteSemaphore.acquire();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
 
     // Make uber page only ready for new commit if it is not the first WTX.
     mUberPage = UberPage.clone(mUberPage);
@@ -233,7 +241,7 @@ public final class SessionState implements ISession {
   /**
    * {@inheritDoc}
    */
-  public final void abortWriteTransaction() throws Exception {
+  public final void abortWriteTransaction() {
     mUberPage.abort();
     mWriteSemaphore.release();
   }
