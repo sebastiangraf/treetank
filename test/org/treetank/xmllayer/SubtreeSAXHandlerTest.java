@@ -79,10 +79,9 @@ public class SubtreeSAXHandlerTest {
           IConstants.DEFAULT_ENCODING));
     }
 
-    expectedSession.abort();
+    expectedTrx.abort();
     expectedSession.close();
 
-    session.abort();
     session.close();
 
   }
@@ -120,7 +119,6 @@ public class SubtreeSAXHandlerTest {
     assertEquals("fooEins", rTrx.getLocalPart());
     rTrx.moveToFirstChild();
     assertEquals("barEins", rTrx.getLocalPart());
-    session.abort();
     session.close();
 
   }
@@ -221,7 +219,6 @@ public class SubtreeSAXHandlerTest {
     rTrx.moveToFirstChild();
     assertEquals("splitnode-655360", rTrx.getLocalPart());
 
-    session.abort();
     session.close();
 
   }

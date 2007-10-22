@@ -61,7 +61,7 @@ public final class XMLShredder {
       final XMLStreamReader parser,
       final SessionConfiguration sessionConfiguration) throws Exception {
     Session session = new Session(sessionConfiguration);
-    IWriteTransaction trx = session.beginWriteTransaction();
+    IWriteTransaction wtx = session.beginWriteTransaction();
     // Prepare variables.
     final FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
     long key;
@@ -73,11 +73,11 @@ public final class XMLShredder {
     while (parser.hasNext()) {
 
       if (nodeCounter > IConstants.COMMIT_TRESHOLD) {
-        final long tempkey = trx.getNodeKey();
-        session.commit();
-        trx = session.beginWriteTransaction();
+        final long tempkey = wtx.getNodeKey();
+        wtx.commit();
+        wtx = session.beginWriteTransaction();
         // System.gc();
-        trx.moveTo(tempkey);
+        wtx.moveTo(tempkey);
         nodeCounter = 0;
 
       }
@@ -88,7 +88,7 @@ public final class XMLShredder {
 
         if (leftSiblingKeyStack.peek() == IConstants.NULL_KEY) {
           key =
-              trx.insertFirstChild(
+              wtx.insertFirstChild(
                   IConstants.ELEMENT,
                   parser.getLocalName(),
                   parser.getNamespaceURI(),
@@ -96,7 +96,7 @@ public final class XMLShredder {
                   UTF.EMPTY);
         } else {
           key =
-              trx.insertRightSibling(
+              wtx.insertRightSibling(
                   IConstants.ELEMENT,
                   parser.getLocalName(),
                   parser.getNamespaceURI(),
@@ -109,13 +109,13 @@ public final class XMLShredder {
 
         // Parse namespaces.
         for (int i = 0, l = parser.getNamespaceCount(); i < l; i++) {
-          trx.insertNamespace(parser.getNamespaceURI(i), parser
+          wtx.insertNamespace(parser.getNamespaceURI(i), parser
               .getNamespacePrefix(i));
         }
 
         // Parse attributes.
         for (int i = 0, l = parser.getAttributeCount(); i < l; i++) {
-          trx.insertAttribute(parser.getAttributeLocalName(i), parser
+          wtx.insertAttribute(parser.getAttributeLocalName(i), parser
               .getAttributeNamespace(i), parser.getAttributePrefix(i), UTF
               .convert(parser.getAttributeValue(i)));
         }
@@ -123,7 +123,7 @@ public final class XMLShredder {
 
       case XMLStreamConstants.END_ELEMENT:
         leftSiblingKeyStack.pop();
-        trx.moveTo(leftSiblingKeyStack.peek());
+        wtx.moveTo(leftSiblingKeyStack.peek());
         break;
 
       case XMLStreamConstants.CHARACTERS:
@@ -131,11 +131,11 @@ public final class XMLShredder {
         if (text.length() > 0) {
           if (leftSiblingKeyStack.peek() == IConstants.NULL_KEY) {
             key =
-                trx.insertFirstChild(IConstants.TEXT, "", "", "", UTF
+                wtx.insertFirstChild(IConstants.TEXT, "", "", "", UTF
                     .convert(text));
           } else {
             key =
-                trx.insertRightSibling(IConstants.TEXT, "", "", "", UTF
+                wtx.insertRightSibling(IConstants.TEXT, "", "", "", UTF
                     .convert(text));
           }
           leftSiblingKeyStack.pop();
@@ -145,7 +145,7 @@ public final class XMLShredder {
 
       }
     }
-    session.commit();
+    wtx.commit();
     session.close();
     parser.close();
   }

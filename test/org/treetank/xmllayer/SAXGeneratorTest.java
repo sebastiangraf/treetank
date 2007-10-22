@@ -45,14 +45,14 @@ public class SAXGeneratorTest {
 
     // Setup expected session.
     final ISession session = new Session(PATH);
-    final IWriteTransaction trx = session.beginWriteTransaction();
-    TestDocument.create(trx);
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+    TestDocument.create(wtx);
 
-    final SAXGenerator generator = new SAXGenerator(trx, false);
+    final SAXGenerator generator = new SAXGenerator(wtx, false);
     generator.start();
     generator.join();
 
-    session.commit();
+    wtx.commit();
     session.close();
 
   }

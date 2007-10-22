@@ -58,9 +58,9 @@ public class SAXHandlerTest {
 
     // Setup expected session.
     final ISession expectedSession = new Session(EXPECTED_PATH);
-    final IWriteTransaction expectedTrx =
+    final IWriteTransaction expectedWTX =
         expectedSession.beginWriteTransaction();
-    TestDocument.create(expectedTrx);
+    TestDocument.create(expectedWTX);
 
     // Setup parsed session.
     final ISession session = new Session(PATH);
@@ -71,39 +71,38 @@ public class SAXHandlerTest {
     final InputSource inputSource = new InputSource("xml/test.xml");
     parser.parse(inputSource, new SAXHandler(session));
 
-    final IReadTransaction trx = session.beginReadTransaction();
+    final IReadTransaction rtx = session.beginReadTransaction();
 
-    expectedTrx.moveToRoot();
-    trx.moveToRoot();
+    expectedWTX.moveToRoot();
+    rtx.moveToRoot();
     final IAxisIterator expectedDescendants =
-        new DescendantAxisIterator(expectedTrx);
-    final IAxisIterator descendants = new DescendantAxisIterator(trx);
+        new DescendantAxisIterator(expectedWTX);
+    final IAxisIterator descendants = new DescendantAxisIterator(rtx);
 
     while (expectedDescendants.next() && descendants.next()) {
-      assertEquals(expectedTrx.getNodeKey(), trx.getNodeKey());
-      assertEquals(expectedTrx.getParentKey(), trx.getParentKey());
-      assertEquals(expectedTrx.getFirstChildKey(), trx.getFirstChildKey());
-      assertEquals(expectedTrx.getLeftSiblingKey(), trx.getLeftSiblingKey());
-      assertEquals(expectedTrx.getRightSiblingKey(), trx.getRightSiblingKey());
-      assertEquals(expectedTrx.getChildCount(), trx.getChildCount());
-      assertEquals(expectedTrx.getKind(), trx.getKind());
-      assertEquals(expectedTrx.nameForKey(expectedTrx.getLocalPartKey()), trx
-          .nameForKey(trx.getLocalPartKey()));
-      assertEquals(expectedTrx.nameForKey(expectedTrx.getURIKey()), trx
-          .nameForKey(trx.getURIKey()));
-      assertEquals(expectedTrx.nameForKey(expectedTrx.getPrefixKey()), trx
-          .nameForKey(trx.getPrefixKey()));
+      assertEquals(expectedWTX.getNodeKey(), rtx.getNodeKey());
+      assertEquals(expectedWTX.getParentKey(), rtx.getParentKey());
+      assertEquals(expectedWTX.getFirstChildKey(), rtx.getFirstChildKey());
+      assertEquals(expectedWTX.getLeftSiblingKey(), rtx.getLeftSiblingKey());
+      assertEquals(expectedWTX.getRightSiblingKey(), rtx.getRightSiblingKey());
+      assertEquals(expectedWTX.getChildCount(), rtx.getChildCount());
+      assertEquals(expectedWTX.getKind(), rtx.getKind());
+      assertEquals(expectedWTX.nameForKey(expectedWTX.getLocalPartKey()), rtx
+          .nameForKey(rtx.getLocalPartKey()));
+      assertEquals(expectedWTX.nameForKey(expectedWTX.getURIKey()), rtx
+          .nameForKey(rtx.getURIKey()));
+      assertEquals(expectedWTX.nameForKey(expectedWTX.getPrefixKey()), rtx
+          .nameForKey(rtx.getPrefixKey()));
       assertEquals(new String(
-          expectedTrx.getValue(),
+          expectedWTX.getValue(),
           IConstants.DEFAULT_ENCODING), new String(
-          trx.getValue(),
+          rtx.getValue(),
           IConstants.DEFAULT_ENCODING));
     }
 
-    expectedSession.abort();
+    expectedWTX.abort();
     expectedSession.close();
 
-    session.abort();
     session.close();
 
   }

@@ -47,24 +47,24 @@ public class ParentAxisIteratorTest {
   public void testIterate() throws Exception {
 
     final ISession session = new Session(PATH);
-    final IWriteTransaction trx = session.beginWriteTransaction();
-    TestDocument.create(trx);
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+    TestDocument.create(wtx);
 
-    trx.moveTo(3L);
-    final IAxisIterator parentIterator1 = new ParentAxisIterator(trx);
+    wtx.moveTo(3L);
+    final IAxisIterator parentIterator1 = new ParentAxisIterator(wtx);
     assertEquals(true, parentIterator1.next());
-    assertEquals(1L, trx.getNodeKey());
+    assertEquals(1L, wtx.getNodeKey());
 
     assertEquals(false, parentIterator1.next());
 
-    trx.moveTo(7L);
-    final IAxisIterator parentIterator2 = new ParentAxisIterator(trx);
+    wtx.moveTo(7L);
+    final IAxisIterator parentIterator2 = new ParentAxisIterator(wtx);
     assertEquals(true, parentIterator2.next());
-    assertEquals(1L, trx.getNodeKey());
+    assertEquals(1L, wtx.getNodeKey());
 
     assertEquals(false, parentIterator2.next());
 
-    session.abort();
+    wtx.abort();
     session.close();
 
   }

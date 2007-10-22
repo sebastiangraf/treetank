@@ -129,7 +129,7 @@ public interface IWriteTransaction extends IReadTransaction {
       final String localPart,
       final String uri,
       final String prefix) throws Exception;
-  
+
   /**
    * Insert new element node as right sibling of currently selected node.
    * The cursor is moved to the inserted node.
@@ -240,5 +240,19 @@ public interface IWriteTransaction extends IReadTransaction {
    * @throws Exception of any kind and if no node is selected.
    */
   public void setValue(final byte[] value) throws Exception;
+
+  /**
+   * Commit all modifications of the single IWriteTransaction.
+   * 
+   * @throws Exception if commit failed.
+   */
+  public void commit() throws Exception;
+
+  /**
+   * Abort all modifications of the single IWriteTransaction.
+   * 
+   * @throws Exception if abort failed.
+   */
+  public void abort() throws Exception;
 
 }

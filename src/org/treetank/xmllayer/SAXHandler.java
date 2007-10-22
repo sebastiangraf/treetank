@@ -76,7 +76,7 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
   @Override
   public void endDocument() throws SAXException {
     try {
-      this.mSession.commit();
+      mWTX.commit();
     } catch (final Exception e) {
       throw new SAXException(e);
     }

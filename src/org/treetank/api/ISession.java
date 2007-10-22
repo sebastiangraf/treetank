@@ -21,7 +21,6 @@
 
 package org.treetank.api;
 
-
 /**
  * <h1>ISession</h1>
  * 
@@ -59,20 +58,6 @@ public interface ISession {
    * @throws Exception of any kind.
    */
   public IWriteTransaction beginWriteTransaction() throws Exception;
-
-  /**
-   * Commit all modifications of the single IWriteTransaction.
-   * 
-   * @throws Exception if commit failed.
-   */
-  public void commit() throws Exception;
-
-  /**
-   * Abort all modifications of the single IWriteTransaction.
-   * 
-   * @throws Exception if abort failed.
-   */
-  public void abort() throws Exception;
 
   /**
    * Close session.

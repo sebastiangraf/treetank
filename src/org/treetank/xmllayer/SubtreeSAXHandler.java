@@ -76,7 +76,7 @@ public class SubtreeSAXHandler extends SAXHandler {
 
       if (nodeCounter > COMMITTHRESHOLD) {
         final long tempkey = mWTX.getNodeKey();
-        session.commit();
+        mWTX.commit();
         mWTX = session.beginWriteTransaction();
         System.gc();
         mWTX.moveTo(tempkey);
@@ -125,7 +125,7 @@ public class SubtreeSAXHandler extends SAXHandler {
    */
   public void subtreeEnding(final long subtreeID) throws SAXException {
     try {
-      session.commit();
+      mWTX.commit();
       mWTX = session.beginWriteTransaction();
       System.gc();
       nodeCounter = 0;

@@ -49,8 +49,8 @@ public class UpdateTest {
     ISession session = new Session(TEST_PATH);
 
     // Document root.
-    IWriteTransaction trx = session.beginWriteTransaction();
-    session.commit();
+    IWriteTransaction wtx = session.beginWriteTransaction();
+    wtx.commit();
 
     IReadTransaction rTrx = session.beginReadTransaction();
     assertEquals(1L, rTrx.revisionSize());
@@ -59,11 +59,11 @@ public class UpdateTest {
     // Insert 100 children.
     for (int i = 1; i <= 10; i++) {
       session = new Session(TEST_PATH);
-      trx = session.beginWriteTransaction();
-      trx.moveToRoot();
-      trx.insertFirstChild(IConstants.TEXT, "", "", "", UTF.convert(Integer
+      wtx = session.beginWriteTransaction();
+      wtx.moveToRoot();
+      wtx.insertFirstChild(IConstants.TEXT, "", "", "", UTF.convert(Integer
           .toString(i)));
-      session.commit();
+      wtx.commit();
       session.close();
 
       session = new Session(TEST_PATH);
@@ -92,7 +92,7 @@ public class UpdateTest {
     final ISession session = new Session(TEST_PATH);
 
     IWriteTransaction wtx = session.beginWriteTransaction();
-    session.commit();
+    wtx.commit();
 
     wtx = session.beginWriteTransaction();
     assertEquals(true, wtx.moveToRoot());
@@ -124,7 +124,7 @@ public class UpdateTest {
         "",
         UTF.EMPTY));
 
-    session.commit();
+    wtx.commit();
 
     final IWriteTransaction wtx2 = session.beginWriteTransaction();
 
@@ -136,7 +136,7 @@ public class UpdateTest {
         "",
         UTF.EMPTY));
 
-    session.commit();
+    wtx2.commit();
 
     session.close();
   }
@@ -156,7 +156,7 @@ public class UpdateTest {
     assertEquals(true, wtx.moveTo(0L));
     assertEquals(0L, wtx.getNodeKey());
 
-    session.abort();
+    wtx.abort();
     session.close();
 
   }
