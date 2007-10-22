@@ -347,19 +347,12 @@ public class ReadTransactionState implements IReadTransactionState {
     long levelKey = key;
 
     // Iterate through all levels.
-    try {
-      for (int level = 0, height =
-          IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
-        offset =
-            (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
-        levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
-        reference = dereferenceIndirectPage(reference).getPageReference(offset);
-      }
-    } catch (Exception e) {
-      throw new RuntimeException("Could not find or access key="
-          + key
-          + " due to: "
-          + e.getLocalizedMessage());
+    for (int level = 0, height =
+        IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
+      offset =
+          (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
+      levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
+      reference = dereferenceIndirectPage(reference).getPageReference(offset);
     }
 
     // Return reference to leaf of indirect tree.
