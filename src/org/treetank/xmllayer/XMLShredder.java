@@ -30,6 +30,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 
 import org.treetank.api.IConstants;
+import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
 import org.treetank.sessionlayer.SessionConfiguration;
@@ -60,7 +61,7 @@ public final class XMLShredder {
   public static final void shred(
       final XMLStreamReader parser,
       final SessionConfiguration sessionConfiguration) throws Exception {
-    Session session = new Session(sessionConfiguration);
+    ISession session = Session.getSession(sessionConfiguration);
     IWriteTransaction wtx = session.beginWriteTransaction();
     // Prepare variables.
     final FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();

@@ -46,7 +46,7 @@ public class UpdateTest {
   @Test
   public void testInsertChild() throws Exception {
 
-    ISession session = new Session(TEST_PATH);
+    ISession session = Session.getSession(TEST_PATH);
 
     // Document root.
     IWriteTransaction wtx = session.beginWriteTransaction();
@@ -55,28 +55,25 @@ public class UpdateTest {
     IReadTransaction rtx = session.beginReadTransaction();
     assertEquals(1L, rtx.revisionSize());
     assertEquals(0L, rtx.revisionKey());
+    rtx.close();
 
     // Insert 100 children.
     for (int i = 1; i <= 10; i++) {
-      session = new Session(TEST_PATH);
       wtx = session.beginWriteTransaction();
       wtx.moveToRoot();
       wtx.insertFirstChild(IConstants.TEXT, "", "", "", UTF.convert(Integer
           .toString(i)));
       wtx.commit();
-      session.close();
 
-      session = new Session(TEST_PATH);
       rtx = session.beginReadTransaction();
       rtx.moveToRoot();
       rtx.moveToFirstChild();
       assertEquals(Integer.toString(i), new String(rtx.getValue()));
       assertEquals(i + 1L, rtx.revisionSize());
       assertEquals(i, rtx.revisionKey());
+      rtx.close();
     }
-    rtx.close();
 
-    session = new Session(TEST_PATH);
     rtx = session.beginReadTransaction();
     rtx.moveToRoot();
     rtx.moveToFirstChild();
@@ -84,6 +81,7 @@ public class UpdateTest {
     assertEquals(11L, rtx.revisionSize());
     assertEquals(10L, rtx.revisionKey());
     rtx.close();
+
     session.close();
 
   }
@@ -91,7 +89,7 @@ public class UpdateTest {
   @Test
   public void testInsertPath() throws Exception {
 
-    final ISession session = new Session(TEST_PATH);
+    final ISession session = Session.getSession(TEST_PATH);
 
     IWriteTransaction wtx = session.beginWriteTransaction();
     wtx.commit();
@@ -146,7 +144,7 @@ public class UpdateTest {
   @Test
   public void testPageBoundary() throws Exception {
 
-    ISession session = new Session(TEST_PATH);
+    ISession session = Session.getSession(TEST_PATH);
 
     // Document root.
     IWriteTransaction wtx = session.beginWriteTransaction();

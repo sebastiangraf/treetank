@@ -268,6 +268,10 @@ public final class SessionState implements ISession {
     }
   }
 
+  public SessionConfiguration getSessionConfiguration() {
+    return mSessionConfiguration;
+  }
+
   /**
    * Write a primary and secondary beacon to safely, quickly and conveniently
    * access the uber page later on.

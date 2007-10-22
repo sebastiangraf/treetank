@@ -22,6 +22,8 @@
 package org.treetank.sessionlayer;
 
 import java.io.File;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import org.treetank.api.IReadTransaction;
@@ -44,11 +46,18 @@ public final class Session implements ISession {
   private static final Logger LOGGER =
       Logger.getLogger(Session.class.getName());
 
+  private static final Map<String, ISession> SESSION_MAP =
+      new ConcurrentHashMap<String, ISession>();
+
   /** Session configuration. */
   private final SessionState mSessionState;
 
-  public Session(final File file) throws Exception {
-    this(new SessionConfiguration(file.getAbsolutePath()));
+  private Session(final SessionState sessionState) {
+    mSessionState = sessionState;
+  }
+
+  public static final ISession getSession(final File file) throws Exception {
+    return getSession(new SessionConfiguration(file.getAbsolutePath()));
   }
 
   /**
@@ -57,8 +66,8 @@ public final class Session implements ISession {
    * @param path Path to TreeTank file.
    * @throws Exception of any kind.
    */
-  public Session(final String path) throws Exception {
-    this(new SessionConfiguration(new File(path).getAbsolutePath()));
+  public static final ISession getSession(final String path) throws Exception {
+    return getSession(new SessionConfiguration(new File(path).getAbsolutePath()));
   }
 
   /**
@@ -85,11 +94,15 @@ public final class Session implements ISession {
    * @param sessionConfiguration Session configuration for the TreeTank.
    * @throws Exception of any kind.
    */
-  public Session(final SessionConfiguration sessionConfiguration)
-      throws Exception {
+  public static final ISession getSession(
+      final SessionConfiguration sessionConfiguration) throws Exception {
 
-    mSessionState = new SessionState(sessionConfiguration);
-
+    ISession session = SESSION_MAP.get(sessionConfiguration.getPath());
+    if (session == null) {
+      session = new Session(new SessionState(sessionConfiguration));
+      SESSION_MAP.put(sessionConfiguration.getPath(), session);
+    }
+    return session;
   }
 
   /**
@@ -121,6 +134,7 @@ public final class Session implements ISession {
    */
   public final void close() throws Exception {
     mSessionState.close();
+    SESSION_MAP.remove(mSessionState.getSessionConfiguration().getPath());
   }
 
   /**

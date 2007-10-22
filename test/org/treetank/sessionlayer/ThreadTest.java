@@ -53,7 +53,7 @@ public class ThreadTest {
   @Test
   public void testThreads() throws Exception {
 
-    ISession session = new Session(THREAD_TEST_PATH);
+    ISession session = Session.getSession(THREAD_TEST_PATH);
 
     IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);

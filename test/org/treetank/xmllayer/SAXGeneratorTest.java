@@ -44,7 +44,7 @@ public class SAXGeneratorTest {
   public void testSAXGenerator() throws Exception {
 
     // Setup expected session.
-    final ISession session = new Session(PATH);
+    final ISession session = Session.getSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
 

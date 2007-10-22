@@ -47,7 +47,7 @@ public class NameTestAxisIteratorTest {
   public void testIterate() throws Exception {
 
     // Build simple test tree.
-    final ISession session = new Session(PATH);
+    final ISession session = Session.getSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
 
