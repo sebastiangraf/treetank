@@ -21,6 +21,10 @@
 
 package org.treetank.sessionlayer;
 
+import java.io.File;
+
+import org.treetank.api.IConstants;
+
 /**
  * <h1>SessionConfiguration</h1>
  * 
@@ -44,7 +48,8 @@ public final class SessionConfiguration {
   private final boolean mIsChecksummed;
 
   /**
-   * Convenience constructor binding to .tnk file without encryption.
+   * Convenience constructor binding to .tnk file without encryption or
+   * end-to-end integrity.
    * 
    * @param path Path to .tnk file.
    */
@@ -53,7 +58,8 @@ public final class SessionConfiguration {
   }
 
   /**
-   * Standard constructor binding to .tnk file with encryption.
+   * Standard constructor binding to .tnk file with encryption but no
+   * end-to-end integrity.
    * 
    * @param path Path to .tnk file.
    * @param encryptionKey Key to encrypt .tnk file with.
@@ -73,7 +79,23 @@ public final class SessionConfiguration {
       final String path,
       final byte[] encryptionKey,
       final boolean isChecksummed) {
-    mPath = path;
+
+    // Make sure the path is legal.
+    if ((path == null) || (!path.endsWith(".tnk"))) {
+      throw new IllegalArgumentException(
+          "Path to TreeTank file must not be null and end with '.tnk'.");
+    }
+
+    // Make sure the encryption key is properly set.
+    if ((encryptionKey != null)
+        && (encryptionKey.length != IConstants.ENCRYPTION_KEY_LENGTH)) {
+      throw new IllegalArgumentException(
+          "Encryption key must either be null (encryption disabled) or "
+              + IConstants.ENCRYPTION_KEY_LENGTH
+              + " bytes long (encryption enabled).");
+    }
+
+    mPath = new File(path).getAbsolutePath();
     mEncryptionKey = encryptionKey;
     mIsChecksummed = isChecksummed;
   }

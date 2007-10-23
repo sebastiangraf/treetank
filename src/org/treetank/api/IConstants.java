@@ -42,6 +42,9 @@ public interface IConstants {
   /** Default encryption algorithm. */
   public static final String DEFAULT_ENCRYPTION_ALGORITHM = "AES";
 
+  /** Length of encryption key. */
+  public static final int ENCRYPTION_KEY_LENGTH = 16;
+
   //--- Indirect Page ----------------------------------------------------------
 
   /** Count of indirect references in indirect page. */
