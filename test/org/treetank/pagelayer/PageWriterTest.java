@@ -46,7 +46,7 @@ public class PageWriterTest {
   public void testWriteRead() throws Exception {
 
     // Create node page with single node.
-    final NodePage page1 = NodePage.create(13L);
+    final NodePage page1 = new NodePage(13L);
     page1.setNode(3, new Node(0L, 1L, 2L, 3L, 4L, 5, 6, 7, 8, UTF
         .convert("foo")));
     final PageReference pageReference = new PageReference();
@@ -62,7 +62,7 @@ public class PageWriterTest {
     final PageReader pageReader =
         new PageReader(new SessionConfiguration(PATH));
     final FastByteArrayReader in = pageReader.read(pageReference);
-    final NodePage page2 = NodePage.read(in, 0L);
+    final NodePage page2 = new NodePage(in, 0L);
 
     assertEquals("foo", new String(
         page2.getNode(3).getValue(),

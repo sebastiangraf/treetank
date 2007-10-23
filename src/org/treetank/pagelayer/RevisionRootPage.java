@@ -67,7 +67,7 @@ final public class RevisionRootPage implements IPage {
 
     // Name page (shallow init).
     revisionRootPage.mNamePageReference = new PageReference();
-    revisionRootPage.mNamePageReference.setPage(NamePage.create());
+    revisionRootPage.mNamePageReference.setPage(new NamePage());
 
     // Node pages (shallow init).
     revisionRootPage.mMaxNodeKey = -1L;

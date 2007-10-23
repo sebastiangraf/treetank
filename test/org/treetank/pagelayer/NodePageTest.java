@@ -25,18 +25,15 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.treetank.api.IConstants;
-import org.treetank.pagelayer.Node;
-import org.treetank.pagelayer.NodePage;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 import org.treetank.utils.UTF;
-
 
 public class NodePageTest {
 
   @Test
   public void testSerializeDeserialize() throws Exception {
-    final NodePage page1 = NodePage.create(0L);
+    final NodePage page1 = new NodePage(0L);
     assertEquals(0L, page1.getNodePageKey());
     final Node node1 =
         new Node(0L, 1L, 2L, 3L, 4L, 5, 6, 7, 8, UTF.convert("foo"));
@@ -49,7 +46,7 @@ public class NodePageTest {
 
     final FastByteArrayReader in = new FastByteArrayReader(out.getBytes());
 
-    final NodePage page2 = NodePage.read(in, 0L);
+    final NodePage page2 = new NodePage(in, 0L);
     assertEquals(0L, page2.getNode(0).getNodeKey());
     assertEquals(1L, page2.getNode(0).getParentKey());
     assertEquals(2L, page2.getNode(0).getFirstChildKey());

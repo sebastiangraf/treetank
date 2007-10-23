@@ -99,7 +99,7 @@ final public class UberPage implements IPage {
       reference = page.getReference(0);
     }
 
-    NodePage ndp = NodePage.create(IConstants.ROOT_PAGE_KEY);
+    NodePage ndp = new NodePage(IConstants.ROOT_PAGE_KEY);
     reference.setPage(ndp);
 
     ndp.setNode(0, new Node(IConstants.ROOT_KEY));
