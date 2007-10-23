@@ -21,6 +21,7 @@
 
 package org.treetank.pagelayer;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -94,7 +95,8 @@ final public class NamePage implements IPage {
   /**
    * {@inheritDoc}
    */
-  public final void commit(final WriteTransactionState state) throws Exception {
+  public final void commit(final WriteTransactionState state)
+      throws IOException {
     mDirty = false;
   }
 

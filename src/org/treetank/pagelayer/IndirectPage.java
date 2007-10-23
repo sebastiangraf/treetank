@@ -23,126 +23,40 @@ package org.treetank.pagelayer;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.IPage;
-import org.treetank.sessionlayer.WriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
-import org.treetank.utils.FastByteArrayWriter;
 
-final public class IndirectPage implements IPage {
-
-  /** True if page was created or cloned. False if it was read or committed. */
-  private boolean mDirty;
-
-  private final PageReference[] mIndirectPageReferences;
+/**
+ * <h1>IndirectPage</h1>
+ * 
+ * <p>
+ * Indirect page holds a set of references to build a reference tree.
+ * </p>
+ */
+public final class IndirectPage extends AbstractPage implements IPage {
 
   /**
-   * Constructor to assure minimal common setup.
-   * 
-   * @param pageCache IPageCache to read from.
+   * Create indirect page.
    */
-  private IndirectPage(final boolean dirty) {
-    mDirty = dirty;
-    mIndirectPageReferences = new PageReference[IConstants.INP_REFERENCE_COUNT];
+  public IndirectPage() {
+    super(IConstants.INP_REFERENCE_COUNT);
   }
 
   /**
-   * Create new uncommitted in-memory indirect page.
+   * Read indirect page.
    * 
-   * @return Freshly created indirect page.
+   * @param in Input bytes.
    */
-  public static final IndirectPage create() {
-    final IndirectPage indirectPage = new IndirectPage(true);
-    return indirectPage;
-  }
-
-  /**
-   * Read committed indirect page from disk.
-   * 
-   * @param in Input stream.
-   * @return Indirect page read from storage.
-   */
-  public static final IndirectPage read(final FastByteArrayReader in) {
-    final IndirectPage indirectPage = new IndirectPage(false);
-
-    for (int i = 0, l = indirectPage.mIndirectPageReferences.length; i < l; i++) {
-      if (in.readBoolean()) {
-        indirectPage.mIndirectPageReferences[i] = new PageReference(in);
-      }
-    }
-    return indirectPage;
+  public IndirectPage(final FastByteArrayReader in) {
+    super(IConstants.INP_REFERENCE_COUNT, in);
   }
 
   /**
    * Clone indirect page.
    * 
-   * @param committedIndirectPage Existing page to clone.
-   * @return Cloned indirect page.
+   * @param page Page to clone.
    */
-  public static final IndirectPage clone(
-      final IndirectPage committedIndirectPage) {
-    final IndirectPage indirectPage = new IndirectPage(true);
-
-    for (int i = 0, l = indirectPage.mIndirectPageReferences.length; i < l; i++) {
-      if (committedIndirectPage.mIndirectPageReferences[i] != null) {
-        indirectPage.mIndirectPageReferences[i] =
-            new PageReference(committedIndirectPage.mIndirectPageReferences[i]);
-      }
-    }
-
-    return indirectPage;
-  }
-
-  /**
-   * Get reference by page offset.
-   * 
-   * @param offset Offset of referenced page.
-   * @return Reference at given offset.
-   */
-  public final PageReference getPageReference(final int offset) {
-    if (mIndirectPageReferences[offset] == null) {
-      mIndirectPageReferences[offset] = new PageReference();
-    }
-    return mIndirectPageReferences[offset];
-  }
-
-  /**
-   * Set page reference at page offset.
-   * 
-   * @param offset Offset of referenced page.
-   * @param reference Page reference to set at pageOffset.
-   */
-  public final void setPageReference(
-      final int offset,
-      final PageReference reference) {
-    mIndirectPageReferences[offset] = reference;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final void commit(final WriteTransactionState state) throws Exception {
-    state.commit(mIndirectPageReferences);
-    mDirty = false;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final void serialize(final FastByteArrayWriter out) {
-    for (int i = 0, l = mIndirectPageReferences.length; i < l; i++) {
-      if (mIndirectPageReferences[i] != null) {
-        out.writeBoolean(true);
-        mIndirectPageReferences[i].serialize(out);
-      } else {
-        out.writeBoolean(false);
-      }
-    }
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final boolean isDirty() {
-    return mDirty;
+  public IndirectPage(final IndirectPage page) {
+    super(IConstants.INP_REFERENCE_COUNT, page);
   }
 
   /**
@@ -150,7 +64,7 @@ final public class IndirectPage implements IPage {
    */
   @Override
   public final String toString() {
-    return super.toString() + ": isDirty=" + mDirty;
+    return super.toString() + ": isDirty=" + isDirty();
   }
 
 }
