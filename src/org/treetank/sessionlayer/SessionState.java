@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Logger;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.IPage;
@@ -48,10 +47,6 @@ import org.treetank.utils.FastWeakHashMap;
  */
 public final class SessionState implements ISession {
 
-  /** Logger. */
-  private static final Logger LOGGER =
-      Logger.getLogger(SessionState.class.getName());
-
   /** Session configuration. */
   private final SessionConfiguration mSessionConfiguration;
 
@@ -64,14 +59,8 @@ public final class SessionState implements ISession {
   /** Read semaphore to control running read transactions. */
   private final Semaphore mReadSemaphore;
 
-  /** Reference to uber page as root of whole storage (primary beacon). */
-  private final PageReference mUberPageReference;
-
   /** Strong reference to uber page before the begin of a write transaction. */
   private UberPage mLastCommittedUberPage;
-
-  /** Random access mFile for beacons. */
-  private final RandomAccessFile mFile;
 
   /**
    * Constructor to bind to a TreeTank file.
@@ -109,33 +98,34 @@ public final class SessionState implements ISession {
     mPageCache = new FastWeakHashMap<Long, IPage>();
     mWriteSemaphore = new Semaphore(IConstants.MAX_WRITE_TRANSACTIONS);
     mReadSemaphore = new Semaphore(IConstants.MAX_READ_TRANSACTIONS);
-    mUberPageReference = new PageReference();
+    final PageReference uberPageReference = new PageReference();
     PageReference secondaryUberPageReference = new PageReference();
-    mFile = new RandomAccessFile(mSessionConfiguration.getPath(), "rw");
+    final RandomAccessFile file =
+        new RandomAccessFile(mSessionConfiguration.getPath(), "rw");
 
-    if (mFile.length() == 0L) {
+    if (file.length() == 0L) {
       // Bootstrap uber page and make sure there already is a root node.
       mLastCommittedUberPage = UberPage.create();
-      mUberPageReference.setPage(mLastCommittedUberPage);
+      uberPageReference.setPage(mLastCommittedUberPage);
     } else {
       // Read existing uber page.
       // Read primary beacon.
-      mFile.seek(0L);
-      mUberPageReference.setStart(mFile.readLong());
-      mUberPageReference.setLength(mFile.readInt());
-      mUberPageReference.setChecksum(mFile.readLong());
+      file.seek(0L);
+      uberPageReference.setStart(file.readLong());
+      uberPageReference.setLength(file.readInt());
+      uberPageReference.setChecksum(file.readLong());
 
       // Read secondary beacon.
-      mFile.seek(mFile.length() - IConstants.BEACON_LENGTH);
-      secondaryUberPageReference.setStart(mFile.readLong());
-      secondaryUberPageReference.setLength(mFile.readInt());
-      secondaryUberPageReference.setChecksum(mFile.readLong());
+      file.seek(file.length() - IConstants.BEACON_LENGTH);
+      secondaryUberPageReference.setStart(file.readLong());
+      secondaryUberPageReference.setLength(file.readInt());
+      secondaryUberPageReference.setChecksum(file.readLong());
 
       // Beacon logic case 1.
-      if (mUberPageReference.equals(secondaryUberPageReference)) {
+      if (uberPageReference.equals(secondaryUberPageReference)) {
 
         final FastByteArrayReader in =
-            new PageReader(mSessionConfiguration).read(mUberPageReference);
+            new PageReader(mSessionConfiguration).read(uberPageReference);
         mLastCommittedUberPage = UberPage.read(in);
 
         // Beacon logic case 2.
@@ -144,11 +134,11 @@ public final class SessionState implements ISession {
         // TODO implement cases 2i, 2ii, and 2iii to be more robust!
         throw new IllegalStateException(
             "Inconsistent TreeTank file encountered. Primary start="
-                + mUberPageReference.getStart()
+                + uberPageReference.getStart()
                 + " size="
-                + mUberPageReference.getLength()
+                + uberPageReference.getLength()
                 + " checksum="
-                + mUberPageReference.getChecksum()
+                + uberPageReference.getChecksum()
                 + " secondary start="
                 + secondaryUberPageReference.getStart()
                 + " size="
@@ -159,6 +149,8 @@ public final class SessionState implements ISession {
       }
 
     }
+
+    file.close();
   }
 
   public final IReadTransaction beginReadTransaction() {
@@ -199,37 +191,9 @@ public final class SessionState implements ISession {
         UberPage.clone(mLastCommittedUberPage)));
   }
 
-  public final void commitWriteTransaction(final WriteTransactionState state)
+  public final void commitWriteTransaction(final UberPage lastCommittedUberPage)
       throws Exception {
-
-    UberPage uberPage = state.getUberPage();
-
-    if (uberPage.isBootstrap()) {
-      mFile.setLength(IConstants.BEACON_LENGTH);
-    }
-
-    // Recursively write indirectely referenced pages.
-    uberPage.commit(state);
-
-    mUberPageReference.setPage(uberPage);
-    state.getPageWriter().write(mUberPageReference);
-    mPageCache.put(mUberPageReference.getStart(), mUberPageReference.getPage());
-    mUberPageReference.setPage(null);
-
-    // Write secondary beacon.
-    mFile.seek(mFile.length());
-    mFile.writeLong(mUberPageReference.getStart());
-    mFile.writeInt(mUberPageReference.getLength());
-    mFile.writeLong(mUberPageReference.getChecksum());
-
-    // Write primary beacon.
-    mFile.seek(0L);
-    mFile.writeLong(mUberPageReference.getStart());
-    mFile.writeInt(mUberPageReference.getLength());
-    mFile.writeLong(mUberPageReference.getChecksum());
-
-    closeWriteTransaction();
-    mLastCommittedUberPage = uberPage;
+    mLastCommittedUberPage = lastCommittedUberPage;
   }
 
   public final void abortWriteTransaction() {
@@ -252,11 +216,6 @@ public final class SessionState implements ISession {
     if (mReadSemaphore.drainPermits() != IConstants.MAX_READ_TRANSACTIONS) {
       throw new IllegalStateException("Session can not be closed due to one "
           + "or more running share read transactions.");
-    }
-    try {
-      mFile.close();
-    } catch (Exception e) {
-      LOGGER.warning("Could not close file: " + e.getLocalizedMessage());
     }
   }
 

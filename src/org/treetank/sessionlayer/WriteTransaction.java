@@ -25,6 +25,7 @@ import org.treetank.api.IConstants;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.api.IWriteTransactionState;
 import org.treetank.pagelayer.Node;
+import org.treetank.pagelayer.UberPage;
 import org.treetank.utils.UTF;
 
 /**
@@ -369,9 +370,14 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final void commit() throws Exception {
-    getSessionState()
-        .commitWriteTransaction((WriteTransactionState) getState());
+    final UberPage uberPage =
+        ((WriteTransactionState) getState()).commit(getSessionState()
+            .getSessionConfiguration());
+
+    getSessionState().commitWriteTransaction(uberPage);
     getState().close();
+
+    getSessionState().closeWriteTransaction();
   }
 
   /**
