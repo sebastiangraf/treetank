@@ -57,13 +57,13 @@ public class SAXHandlerTest {
   public void testSAXHandler() throws Exception {
 
     // Setup expected session.
-    final ISession expectedSession = Session.getSession(EXPECTED_PATH);
+    final ISession expectedSession = Session.beginSession(EXPECTED_PATH);
     final IWriteTransaction expectedWTX =
         expectedSession.beginWriteTransaction();
     TestDocument.create(expectedWTX);
 
     // Setup parsed session.
-    final ISession session = Session.getSession(PATH);
+    final ISession session = Session.beginSession(PATH);
     final SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
     saxParserFactory.setValidating(false);
     saxParserFactory.setNamespaceAware(true);
