@@ -150,4 +150,8 @@ public class SubtreeSAXGenerator extends SAXGenerator {
     return mHandler;
   }
 
+  public void closeTransaction() {
+    this.mRTX.close();
+  }
+
 }
