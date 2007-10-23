@@ -43,12 +43,12 @@ public final class WriteTransaction extends ReadTransaction
    * Constructor.
    * 
    * @param sessionState State of the session.
-   * @param state State of this transaction.
+   * @param transactionState State of this transaction.
    */
   protected WriteTransaction(
       final SessionState sessionState,
-      final IWriteTransactionState state) {
-    super(sessionState, state);
+      final IWriteTransactionState transactionState) {
+    super(sessionState, transactionState);
   }
 
   /**
@@ -67,29 +67,33 @@ public final class WriteTransaction extends ReadTransaction
     if (getCurrentNode().getChildCount() > 0) {
 
       // Create new first child node.
-      setCurrentNode(((IWriteTransactionState) getState()).createNode(
-          getCurrentNode().getNodeKey(),
-          IConstants.NULL_KEY,
-          IConstants.NULL_KEY,
-          getCurrentNode().getFirstChildKey(),
-          kind,
-          ((IWriteTransactionState) getState()).createNameKey(localPart),
-          ((IWriteTransactionState) getState()).createNameKey(uri),
-          ((IWriteTransactionState) getState()).createNameKey(prefix),
-          value));
+      setCurrentNode(((IWriteTransactionState) getTransactionState())
+          .createNode(
+              getCurrentNode().getNodeKey(),
+              IConstants.NULL_KEY,
+              IConstants.NULL_KEY,
+              getCurrentNode().getFirstChildKey(),
+              kind,
+              ((IWriteTransactionState) getTransactionState())
+                  .createNameKey(localPart),
+              ((IWriteTransactionState) getTransactionState())
+                  .createNameKey(uri),
+              ((IWriteTransactionState) getTransactionState())
+                  .createNameKey(prefix),
+              value));
 
       // Change existing first child node.
       if (getCurrentNode().getRightSiblingKey() != IConstants.NULL_KEY) {
         final Node rightSiblingNode =
-            ((IWriteTransactionState) getState()).prepareNode(getCurrentNode()
-                .getRightSiblingKey());
+            ((IWriteTransactionState) getTransactionState())
+                .prepareNode(getCurrentNode().getRightSiblingKey());
         rightSiblingNode.setLeftSiblingKey(getCurrentNode().getNodeKey());
       }
 
       // Change parent node.
       final Node parentNode =
-          ((IWriteTransactionState) getState()).prepareNode(getCurrentNode()
-              .getParentKey());
+          ((IWriteTransactionState) getTransactionState())
+              .prepareNode(getCurrentNode().getParentKey());
       parentNode.setFirstChildKey(getCurrentNode().getNodeKey());
       parentNode.incrementChildCount();
 
@@ -97,21 +101,25 @@ public final class WriteTransaction extends ReadTransaction
     } else {
 
       // Create new first child node.
-      setCurrentNode(((IWriteTransactionState) getState()).createNode(
-          getCurrentNode().getNodeKey(),
-          IConstants.NULL_KEY,
-          IConstants.NULL_KEY,
-          IConstants.NULL_KEY,
-          kind,
-          ((IWriteTransactionState) getState()).createNameKey(localPart),
-          ((IWriteTransactionState) getState()).createNameKey(uri),
-          ((IWriteTransactionState) getState()).createNameKey(prefix),
-          value));
+      setCurrentNode(((IWriteTransactionState) getTransactionState())
+          .createNode(
+              getCurrentNode().getNodeKey(),
+              IConstants.NULL_KEY,
+              IConstants.NULL_KEY,
+              IConstants.NULL_KEY,
+              kind,
+              ((IWriteTransactionState) getTransactionState())
+                  .createNameKey(localPart),
+              ((IWriteTransactionState) getTransactionState())
+                  .createNameKey(uri),
+              ((IWriteTransactionState) getTransactionState())
+                  .createNameKey(prefix),
+              value));
 
       // Change parent node.
       final Node parentNode =
-          ((IWriteTransactionState) getState()).prepareNode(getCurrentNode()
-              .getParentKey());
+          ((IWriteTransactionState) getTransactionState())
+              .prepareNode(getCurrentNode().getParentKey());
       parentNode.setFirstChildKey(getCurrentNode().getNodeKey());
       parentNode.incrementChildCount();
 
@@ -159,34 +167,35 @@ public final class WriteTransaction extends ReadTransaction
     }
 
     // Create new right sibling node.
-    setCurrentNode(((IWriteTransactionState) getState()).createNode(
+    setCurrentNode(((IWriteTransactionState) getTransactionState()).createNode(
         getCurrentNode().getParentKey(),
         IConstants.NULL_KEY,
         getCurrentNode().getNodeKey(),
         getCurrentNode().getRightSiblingKey(),
         kind,
-        ((IWriteTransactionState) getState()).createNameKey(localPart),
-        ((IWriteTransactionState) getState()).createNameKey(uri),
-        ((IWriteTransactionState) getState()).createNameKey(prefix),
+        ((IWriteTransactionState) getTransactionState())
+            .createNameKey(localPart),
+        ((IWriteTransactionState) getTransactionState()).createNameKey(uri),
+        ((IWriteTransactionState) getTransactionState()).createNameKey(prefix),
         value));
 
     // Adapt parent node.
     final Node parentNode =
-        ((IWriteTransactionState) getState()).prepareNode(getCurrentNode()
-            .getParentKey());
+        ((IWriteTransactionState) getTransactionState())
+            .prepareNode(getCurrentNode().getParentKey());
     parentNode.incrementChildCount();
 
     // Adapt left sibling node.
     final Node leftSiblingNode =
-        ((IWriteTransactionState) getState()).prepareNode(getCurrentNode()
-            .getLeftSiblingKey());
+        ((IWriteTransactionState) getTransactionState())
+            .prepareNode(getCurrentNode().getLeftSiblingKey());
     leftSiblingNode.setRightSiblingKey(getCurrentNode().getNodeKey());
 
     // Adapt right sibling node.
     if (getCurrentNode().getRightSiblingKey() != IConstants.NULL_KEY) {
       final Node rightSiblingNode =
-          ((IWriteTransactionState) getState()).prepareNode(getCurrentNode()
-              .getRightSiblingKey());
+          ((IWriteTransactionState) getTransactionState())
+              .prepareNode(getCurrentNode().getRightSiblingKey());
       rightSiblingNode.setLeftSiblingKey(getCurrentNode().getNodeKey());
     }
 
@@ -225,9 +234,10 @@ public final class WriteTransaction extends ReadTransaction
       final byte[] value) throws Exception {
     assertIsSelected();
     prepareCurrentNode().insertAttribute(
-        ((IWriteTransactionState) getState()).createNameKey(localPart),
-        ((IWriteTransactionState) getState()).createNameKey(uri),
-        ((IWriteTransactionState) getState()).createNameKey(prefix),
+        ((IWriteTransactionState) getTransactionState())
+            .createNameKey(localPart),
+        ((IWriteTransactionState) getTransactionState()).createNameKey(uri),
+        ((IWriteTransactionState) getTransactionState()).createNameKey(prefix),
         value);
   }
 
@@ -238,8 +248,8 @@ public final class WriteTransaction extends ReadTransaction
       throws Exception {
     assertIsSelected();
     prepareCurrentNode().insertNamespace(
-        ((IWriteTransactionState) getState()).createNameKey(uri),
-        ((IWriteTransactionState) getState()).createNameKey(prefix));
+        ((IWriteTransactionState) getTransactionState()).createNameKey(uri),
+        ((IWriteTransactionState) getTransactionState()).createNameKey(prefix));
   }
 
   /**
@@ -266,24 +276,26 @@ public final class WriteTransaction extends ReadTransaction
     final long rightSiblingNodeKey = getCurrentNode().getRightSiblingKey();
 
     // Remove old node.
-    ((IWriteTransactionState) getState()).removeNode(nodeKey);
+    ((IWriteTransactionState) getTransactionState()).removeNode(nodeKey);
 
     // Get and adapt parent node.
-    setCurrentNode(((IWriteTransactionState) getState()).prepareNode(parentKey));
+    setCurrentNode(((IWriteTransactionState) getTransactionState())
+        .prepareNode(parentKey));
     ((Node) getCurrentNode()).decrementChildCount();
     ((Node) getCurrentNode()).setFirstChildKey(rightSiblingNodeKey);
 
     // Adapt left sibling node if there is one.
     if (leftSiblingNodeKey != IConstants.NULL_KEY) {
       final Node leftSiblingNode =
-          ((IWriteTransactionState) getState()).prepareNode(leftSiblingNodeKey);
+          ((IWriteTransactionState) getTransactionState())
+              .prepareNode(leftSiblingNodeKey);
       leftSiblingNode.setRightSiblingKey(rightSiblingNodeKey);
     }
 
     // Adapt right sibling node if there is one.
     if (rightSiblingNodeKey != IConstants.NULL_KEY) {
       final Node rightSiblingNode =
-          ((IWriteTransactionState) getState())
+          ((IWriteTransactionState) getTransactionState())
               .prepareNode(rightSiblingNodeKey);
       rightSiblingNode.setLeftSiblingKey(leftSiblingNodeKey);
     }
@@ -302,9 +314,10 @@ public final class WriteTransaction extends ReadTransaction
     assertIsSelected();
     prepareCurrentNode().setAttribute(
         index,
-        ((IWriteTransactionState) getState()).createNameKey(localPart),
-        ((IWriteTransactionState) getState()).createNameKey(uri),
-        ((IWriteTransactionState) getState()).createNameKey(prefix),
+        ((IWriteTransactionState) getTransactionState())
+            .createNameKey(localPart),
+        ((IWriteTransactionState) getTransactionState()).createNameKey(uri),
+        ((IWriteTransactionState) getTransactionState()).createNameKey(prefix),
         value);
   }
 
@@ -318,8 +331,8 @@ public final class WriteTransaction extends ReadTransaction
     assertIsSelected();
     prepareCurrentNode().setNamespace(
         index,
-        ((IWriteTransactionState) getState()).createNameKey(uri),
-        ((IWriteTransactionState) getState()).createNameKey(prefix));
+        ((IWriteTransactionState) getTransactionState()).createNameKey(uri),
+        ((IWriteTransactionState) getTransactionState()).createNameKey(prefix));
   }
 
   /**
@@ -328,7 +341,8 @@ public final class WriteTransaction extends ReadTransaction
   public final void setLocalPart(final String localPart) throws Exception {
     assertIsSelected();
     prepareCurrentNode().setLocalPartKey(
-        ((IWriteTransactionState) getState()).createNameKey(localPart));
+        ((IWriteTransactionState) getTransactionState())
+            .createNameKey(localPart));
   }
 
   /**
@@ -337,7 +351,7 @@ public final class WriteTransaction extends ReadTransaction
   public final void setURI(final String uri) throws Exception {
     assertIsSelected();
     prepareCurrentNode().setURIKey(
-        ((IWriteTransactionState) getState()).createNameKey(uri));
+        ((IWriteTransactionState) getTransactionState()).createNameKey(uri));
   }
 
   /**
@@ -346,7 +360,7 @@ public final class WriteTransaction extends ReadTransaction
   public void setPrefix(final String prefix) throws Exception {
     assertIsSelected();
     prepareCurrentNode().setPrefixKey(
-        ((IWriteTransactionState) getState()).createNameKey(prefix));
+        ((IWriteTransactionState) getTransactionState()).createNameKey(prefix));
   }
 
   /**
@@ -371,12 +385,14 @@ public final class WriteTransaction extends ReadTransaction
    */
   public final void commit() throws Exception {
     final UberPage uberPage =
-        ((WriteTransactionState) getState()).commit(getSessionState()
-            .getSessionConfiguration());
+        ((WriteTransactionState) getTransactionState())
+            .commit(getSessionState().getSessionConfiguration());
 
+    // Close own state.
+    getTransactionState().close();
+
+    // Callback on session to make sure everything is cleaned up.
     getSessionState().commitWriteTransaction(uberPage);
-    getState().close();
-
     getSessionState().closeWriteTransaction();
   }
 
@@ -384,14 +400,18 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final void abort() {
+    // Close own state.
+    getTransactionState().close();
+
+    // Callback on session to make sure everything is cleaned up.
     getSessionState().abortWriteTransaction();
-    getState().close();
+    getSessionState().closeWriteTransaction();
   }
 
   private final Node prepareCurrentNode() throws Exception {
     final Node modNode =
-        ((IWriteTransactionState) getState()).prepareNode(getCurrentNode()
-            .getNodeKey());
+        ((IWriteTransactionState) getTransactionState())
+            .prepareNode(getCurrentNode().getNodeKey());
     setCurrentNode(modNode);
 
     return modNode;

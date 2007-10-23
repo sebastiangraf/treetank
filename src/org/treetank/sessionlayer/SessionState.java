@@ -197,7 +197,7 @@ public final class SessionState implements ISession {
   }
 
   public final void abortWriteTransaction() {
-    closeWriteTransaction();
+    // Nothing to do here
   }
 
   public final void closeWriteTransaction() {
@@ -232,7 +232,7 @@ public final class SessionState implements ISession {
     }
   }
 
-  public SessionConfiguration getSessionConfiguration() {
+  protected final SessionConfiguration getSessionConfiguration() {
     return mSessionConfiguration;
   }
 
