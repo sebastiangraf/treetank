@@ -26,7 +26,6 @@ import java.util.Map;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.IPage;
-import org.treetank.api.IWriteTransactionState;
 import org.treetank.pagelayer.IndirectPage;
 import org.treetank.pagelayer.NamePage;
 import org.treetank.pagelayer.Node;
@@ -43,9 +42,7 @@ import org.treetank.pagelayer.UberPage;
  * See {@link ReadTransactionState}.
  * </p>
  */
-public final class WriteTransactionState extends ReadTransactionState
-    implements
-    IWriteTransactionState {
+public final class WriteTransactionState extends ReadTransactionState {
 
   private final PageWriter mPageWriter;
 

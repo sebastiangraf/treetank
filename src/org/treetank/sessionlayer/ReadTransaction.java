@@ -24,7 +24,6 @@ package org.treetank.sessionlayer;
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
-import org.treetank.api.IReadTransactionState;
 import org.treetank.pagelayer.Namespace;
 
 /**
@@ -41,7 +40,7 @@ public class ReadTransaction implements IReadTransaction {
   private final SessionState mSessionState;
 
   /** State of transaction including all cached stuff. */
-  private final IReadTransactionState mTransactionState;
+  private final ReadTransactionState mTransactionState;
 
   /** Strong reference to currently selected node. */
   private INode mCurrentNode;
@@ -54,7 +53,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   protected ReadTransaction(
       final SessionState sessionState,
-      final IReadTransactionState transactionState) {
+      final ReadTransactionState transactionState) {
     mSessionState = sessionState;
     mTransactionState = transactionState;
     mCurrentNode = null;
@@ -312,7 +311,7 @@ public class ReadTransaction implements IReadTransaction {
   public void close() {
     // Close own state.
     mTransactionState.close();
-    
+
     // Callback on session to make sure everything is cleaned up.
     mSessionState.closeReadTransaction();
   }
@@ -350,7 +349,7 @@ public class ReadTransaction implements IReadTransaction {
    * 
    * @return The state of this transaction.
    */
-  protected final IReadTransactionState getTransactionState() {
+  protected final ReadTransactionState getTransactionState() {
     return mTransactionState;
   }
 

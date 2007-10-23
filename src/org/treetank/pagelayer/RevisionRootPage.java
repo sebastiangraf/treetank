@@ -23,7 +23,7 @@ package org.treetank.pagelayer;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.IPage;
-import org.treetank.api.IWriteTransactionState;
+import org.treetank.sessionlayer.WriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
@@ -165,7 +165,7 @@ final public class RevisionRootPage implements IPage {
   /**
    * {@inheritDoc}
    */
-  public final void commit(final IWriteTransactionState state) throws Exception {
+  public final void commit(final WriteTransactionState state) throws Exception {
     state.commit(mNamePageReference);
     state.commit(mIndirectPageReference);
     mDirty = false;

@@ -26,7 +26,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.treetank.api.IPage;
-import org.treetank.api.IWriteTransactionState;
+import org.treetank.sessionlayer.WriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 import org.treetank.utils.UTF;
@@ -94,7 +94,7 @@ final public class NamePage implements IPage {
   /**
    * {@inheritDoc}
    */
-  public final void commit(final IWriteTransactionState state) throws Exception {
+  public final void commit(final WriteTransactionState state) throws Exception {
     mDirty = false;
   }
 
