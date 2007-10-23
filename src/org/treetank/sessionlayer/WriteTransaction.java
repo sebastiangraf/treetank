@@ -369,7 +369,8 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final void commit() throws Exception {
-    getSessionState().commitWriteTransaction();
+    getSessionState()
+        .commitWriteTransaction((WriteTransactionState) getState());
     getState().close();
   }
 

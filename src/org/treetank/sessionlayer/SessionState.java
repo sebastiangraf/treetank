@@ -31,10 +31,8 @@ import java.util.logging.Logger;
 import org.treetank.api.IConstants;
 import org.treetank.api.IPage;
 import org.treetank.api.IReadTransaction;
-import org.treetank.api.IReadTransactionState;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.api.IWriteTransactionState;
 import org.treetank.pagelayer.PageReader;
 import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.UberPage;
@@ -45,7 +43,7 @@ import org.treetank.utils.FastWeakHashMap;
  * <h1>SessionState</h1>
  * 
  * <p>
- * 
+ * State of each session.
  * </p>
  */
 public final class SessionState implements ISession {
@@ -67,19 +65,10 @@ public final class SessionState implements ISession {
   private final Semaphore mReadSemaphore;
 
   /** Reference to uber page as root of whole storage (primary beacon). */
-  private final PageReference mPrimaryUberPageReference;
-
-  /** Reference to uber page as root of whole storage (secondary beacon). */
-  private final PageReference mSecondaryUberPageReference;
-
-  /** Strong reference to uber page. */
-  private UberPage mUberPage;
+  private final PageReference mUberPageReference;
 
   /** Strong reference to uber page before the begin of a write transaction. */
   private UberPage mLastCommittedUberPage;
-
-  /** AbstractPage writer for commits. */
-  private IWriteTransactionState mWriteTransactionState;
 
   /** Random access mFile for beacons. */
   private final RandomAccessFile mFile;
@@ -120,27 +109,34 @@ public final class SessionState implements ISession {
     mPageCache = new FastWeakHashMap<Long, IPage>();
     mWriteSemaphore = new Semaphore(IConstants.MAX_WRITE_TRANSACTIONS);
     mReadSemaphore = new Semaphore(IConstants.MAX_READ_TRANSACTIONS);
-    mPrimaryUberPageReference = new PageReference();
-    mSecondaryUberPageReference = new PageReference();
+    mUberPageReference = new PageReference();
+    PageReference secondaryUberPageReference = new PageReference();
     mFile = new RandomAccessFile(mSessionConfiguration.getPath(), "rw");
 
     if (mFile.length() == 0L) {
       // Bootstrap uber page and make sure there already is a root node.
-      mUberPage = UberPage.create();
-      mPrimaryUberPageReference.setPage(mUberPage);
-      mLastCommittedUberPage = mUberPage;
+      mLastCommittedUberPage = UberPage.create();
+      mUberPageReference.setPage(mLastCommittedUberPage);
     } else {
       // Read existing uber page.
-      readBeacon(mFile);
+      // Read primary beacon.
+      mFile.seek(0L);
+      mUberPageReference.setStart(mFile.readLong());
+      mUberPageReference.setLength(mFile.readInt());
+      mUberPageReference.setChecksum(mFile.readLong());
+
+      // Read secondary beacon.
+      mFile.seek(mFile.length() - IConstants.BEACON_LENGTH);
+      secondaryUberPageReference.setStart(mFile.readLong());
+      secondaryUberPageReference.setLength(mFile.readInt());
+      secondaryUberPageReference.setChecksum(mFile.readLong());
 
       // Beacon logic case 1.
-      if (mPrimaryUberPageReference.equals(mSecondaryUberPageReference)) {
+      if (mUberPageReference.equals(secondaryUberPageReference)) {
 
         final FastByteArrayReader in =
-            new PageReader(mSessionConfiguration)
-                .read(mPrimaryUberPageReference);
-        mUberPage = UberPage.read(in);
-        mLastCommittedUberPage = mUberPage;
+            new PageReader(mSessionConfiguration).read(mUberPageReference);
+        mLastCommittedUberPage = UberPage.read(in);
 
         // Beacon logic case 2.
       } else {
@@ -148,17 +144,17 @@ public final class SessionState implements ISession {
         // TODO implement cases 2i, 2ii, and 2iii to be more robust!
         throw new IllegalStateException(
             "Inconsistent TreeTank file encountered. Primary start="
-                + mPrimaryUberPageReference.getStart()
+                + mUberPageReference.getStart()
                 + " size="
-                + mPrimaryUberPageReference.getLength()
+                + mUberPageReference.getLength()
                 + " checksum="
-                + mPrimaryUberPageReference.getChecksum()
+                + mUberPageReference.getChecksum()
                 + " secondary start="
-                + mSecondaryUberPageReference.getStart()
+                + secondaryUberPageReference.getStart()
                 + " size="
-                + mSecondaryUberPageReference.getLength()
+                + secondaryUberPageReference.getLength()
                 + " checksum="
-                + mSecondaryUberPageReference.getChecksum());
+                + secondaryUberPageReference.getChecksum());
 
       }
 
@@ -177,19 +173,15 @@ public final class SessionState implements ISession {
       throw new RuntimeException(e);
     }
 
-    final IReadTransactionState state =
-        new ReadTransactionState(
-            mSessionConfiguration,
-            mPageCache,
-            mLastCommittedUberPage,
-            revisionKey);
-
-    return new ReadTransaction(this, state);
+    return new ReadTransaction(this, new ReadTransactionState(
+        mSessionConfiguration,
+        mPageCache,
+        mLastCommittedUberPage,
+        revisionKey));
   }
 
   public final IWriteTransaction beginWriteTransaction() {
 
-    // Make sure that only one write transaction exists per session.
     if (mWriteSemaphore.availablePermits() == 0) {
       throw new IllegalStateException(
           "There already is a running exclusive write transaction.");
@@ -201,36 +193,43 @@ public final class SessionState implements ISession {
       throw new RuntimeException(e);
     }
 
-    // Make uber page only ready for new commit if it is not the first WTX.
-    mUberPage = UberPage.clone(mUberPage);
-    mPrimaryUberPageReference.setPage(mUberPage);
-
-    // Make write transaction state ready.
-    mWriteTransactionState =
-        new WriteTransactionState(mSessionConfiguration, mPageCache, mUberPage);
-
-    // Return fresh write transaction.
-    return new WriteTransaction(this, mWriteTransactionState);
+    return new WriteTransaction(this, new WriteTransactionState(
+        mSessionConfiguration,
+        mPageCache,
+        UberPage.clone(mLastCommittedUberPage)));
   }
 
-  public final void commitWriteTransaction() throws Exception {
+  public final void commitWriteTransaction(final WriteTransactionState state)
+      throws Exception {
 
-    if (mUberPage.isBootstrap()) {
+    UberPage uberPage = state.getUberPage();
+
+    if (uberPage.isBootstrap()) {
       mFile.setLength(IConstants.BEACON_LENGTH);
     }
 
     // Recursively write indirectely referenced pages.
-    mUberPage.commit(mWriteTransactionState);
+    uberPage.commit(state);
 
-    mWriteTransactionState.getPageWriter().write(mPrimaryUberPageReference);
-    mPageCache.put(
-        mPrimaryUberPageReference.getStart(),
-        mPrimaryUberPageReference.getPage());
-    mPrimaryUberPageReference.setPage(null);
-    writeBeacon(mFile);
-    mWriteTransactionState = null;
+    mUberPageReference.setPage(uberPage);
+    state.getPageWriter().write(mUberPageReference);
+    mPageCache.put(mUberPageReference.getStart(), mUberPageReference.getPage());
+    mUberPageReference.setPage(null);
+
+    // Write secondary beacon.
+    mFile.seek(mFile.length());
+    mFile.writeLong(mUberPageReference.getStart());
+    mFile.writeInt(mUberPageReference.getLength());
+    mFile.writeLong(mUberPageReference.getChecksum());
+
+    // Write primary beacon.
+    mFile.seek(0L);
+    mFile.writeLong(mUberPageReference.getStart());
+    mFile.writeInt(mUberPageReference.getLength());
+    mFile.writeLong(mUberPageReference.getChecksum());
+
     closeWriteTransaction();
-    mLastCommittedUberPage = mUberPage;
+    mLastCommittedUberPage = uberPage;
   }
 
   public final void abortWriteTransaction() {
@@ -276,60 +275,6 @@ public final class SessionState implements ISession {
 
   public SessionConfiguration getSessionConfiguration() {
     return mSessionConfiguration;
-  }
-
-  /**
-   * Write a primary and secondary beacon to safely, quickly and conveniently
-   * access the uber page later on.
-   * 
-   * The committing process first writes the uber page, then the secondary
-   * beacon to the end of the file and eventually the primary beacon to the
-   * start of the file. If the writing process crashes during writing the
-   * pages or beacons, the storage can still be reset to the last successfully
-   * committed revision.
-   * 
-   * The secondary beacon is written before the primary beacon because it can
-   * be written sequentially just after the uber page.
-   * 
-   * @param mFile File to write to.
-   * @throws Exception of any kind.
-   */
-  private final void writeBeacon(final RandomAccessFile file)
-      throws IOException {
-
-    // Write secondary beacon.
-    file.seek(file.length());
-    file.writeLong(mPrimaryUberPageReference.getStart());
-    file.writeInt(mPrimaryUberPageReference.getLength());
-    file.writeLong(mPrimaryUberPageReference.getChecksum());
-
-    // Write primary beacon.
-    file.seek(0L);
-    file.writeLong(mPrimaryUberPageReference.getStart());
-    file.writeInt(mPrimaryUberPageReference.getLength());
-    file.writeLong(mPrimaryUberPageReference.getChecksum());
-
-  }
-
-  /**
-   * Read the uber page with the help of the beacons.
-   * 
-   * @param mFile File to read from.
-   * @throws Exception of any kind.
-   */
-  private final void readBeacon(final RandomAccessFile file) throws IOException {
-
-    // Read primary beacon.
-    file.seek(0L);
-    mPrimaryUberPageReference.setStart(file.readLong());
-    mPrimaryUberPageReference.setLength(file.readInt());
-    mPrimaryUberPageReference.setChecksum(file.readLong());
-
-    // Read secondary beacon.
-    file.seek(file.length() - IConstants.BEACON_LENGTH);
-    mSecondaryUberPageReference.setStart(file.readLong());
-    mSecondaryUberPageReference.setLength(file.readInt());
-    mSecondaryUberPageReference.setChecksum(file.readLong());
   }
 
 }
