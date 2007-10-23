@@ -1,15 +1,43 @@
 <html>
   <body>
-    <h1>Package Node Layer</h1>
+    <h1>Session Layer</h1>
     <p>
-    This package contains the basic node model compliant with 
-      <a href="http://www.w3.org/TR/xml11">
-    	  Extensible Markup Language (XML) 1.1 (Second Edition)
-    	</a>
-    	 and 
-      <a href="http://www.w3.org/TR/xml-names11">
-    	  Namespaces in XML 1.1 (Second Edition)
-    	</a>
+      The session semantics is as follows:
+      <li>There can only be a single Session instance per JVM and TreeTank file.
+      <li>There can only be a single WriteTransaction instance per session.
+      <li>There can be multiple ReadTransaction instances per session.
+    </p>
+    <p>
+      Code examples:
+      <pre>
+        final ISession someSession = Session.beginSession("example.tnk");
+        final ISession otherSession = Session.beginSession("other.tnk");
+        
+        //! final ISession concurrentSession = Session.beginSessoin("other.tnk");
+        //! Error: There already is a session bound to "other.tnk" (otherSession).
+        
+        final IWriteTransaction someWTX = someSession.beginWriteTransaction();
+        final IWriteTransaction otherWTX = otherSession.beginWriteTransaction();
+        
+        //! final IWriteTransaction concurrentWTX = otherSession.beginWriteTransaction();
+        //! Error: There already is a write transaction running (wtx).
+        
+        final IReadTransaction someRTX = someSession.beginReadTransaction();
+        final IReadTransaction someConcurrentRTX = someSession.beginReadTransaction();
+        
+        //! otherSession.close();
+        //! Error: All transactions must be closed first.
+        
+        otherWTX.commit();
+        otherWTX.abort();
+        otherWTX.close();
+        otherSession.close();
+        
+        someWTX.close();  // Implicit commit.
+        someRTX.close();
+        someConcurrentRTX.close();
+        someSession.close();
+      </pre>
     </p>
   </body>
 </html>

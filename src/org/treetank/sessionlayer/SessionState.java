@@ -76,6 +76,9 @@ public final class SessionState implements ISession {
   /** Strong reference to uber page. */
   private UberPage mUberPage;
 
+  /** Strong reference to uber page before the begin of a write transaction. */
+  private UberPage mLastCommittedUberPage;
+
   /** AbstractPage writer for commits. */
   private IWriteTransactionState mWriteTransactionState;
 
@@ -126,6 +129,7 @@ public final class SessionState implements ISession {
       // Bootstrap uber page and make sure there already is a root node.
       mUberPage = UberPage.create();
       mPrimaryUberPageReference.setPage(mUberPage);
+      mLastCommittedUberPage = mUberPage;
     } else {
       // Read existing uber page.
       readBeacon(mFile);
@@ -137,6 +141,7 @@ public final class SessionState implements ISession {
             new PageReader(mSessionConfiguration)
                 .read(mPrimaryUberPageReference);
         mUberPage = UberPage.read(in);
+        mLastCommittedUberPage = mUberPage;
 
         // Beacon logic case 2.
       } else {
@@ -161,16 +166,10 @@ public final class SessionState implements ISession {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
   public final IReadTransaction beginReadTransaction() {
-    return beginReadTransaction(mUberPage.getRevisionKey());
+    return beginReadTransaction(mLastCommittedUberPage.getRevisionKey());
   }
 
-  /**
-   * {@inheritDoc}
-   */
   public final IReadTransaction beginReadTransaction(final long revisionKey) {
 
     try {
@@ -181,14 +180,15 @@ public final class SessionState implements ISession {
 
     final PageReader pageReader = new PageReader(mSessionConfiguration);
     final IReadTransactionState state =
-        new ReadTransactionState(mPageCache, pageReader, mUberPage, revisionKey);
+        new ReadTransactionState(
+            mPageCache,
+            pageReader,
+            mLastCommittedUberPage,
+            revisionKey);
 
     return new ReadTransaction(this, state);
   }
 
-  /**
-   * {@inheritDoc}
-   */
   public final IWriteTransaction beginWriteTransaction() {
 
     // Make sure that only one write transaction exists per session.
@@ -217,9 +217,6 @@ public final class SessionState implements ISession {
     return new WriteTransaction(this, mWriteTransactionState);
   }
 
-  /**
-   * {@inheritDoc}
-   */
   public final void commitWriteTransaction() throws Exception {
 
     if (mUberPage.isBootstrap()) {
@@ -236,27 +233,22 @@ public final class SessionState implements ISession {
     mPrimaryUberPageReference.setPage(null);
     writeBeacon(mFile);
     mWriteTransactionState = null;
-    mWriteSemaphore.release();
+    closeWriteTransaction();
+    mLastCommittedUberPage = mUberPage;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   public final void abortWriteTransaction() {
-    mUberPage.abort();
+    closeWriteTransaction();
+  }
+
+  public final void closeWriteTransaction() {
     mWriteSemaphore.release();
   }
 
-  /**
-   * {@inheritDoc}
-   */
   public final void closeReadTransaction() {
     mReadSemaphore.release();
   }
 
-  /**
-   * {@inheritDoc}
-   */
   public final void close() {
     if (mWriteSemaphore.drainPermits() != IConstants.MAX_WRITE_TRANSACTIONS) {
       throw new IllegalStateException("Session can not be closed due to a"
