@@ -18,6 +18,11 @@
  * 
  * $Id$
  */
+
+TreeTank 4.10.:
+---------------
++ Session makes sure that there is only one session bound to some TreeTank
+  file at any time.
  
 TreeTank 4.9:
 -------------
