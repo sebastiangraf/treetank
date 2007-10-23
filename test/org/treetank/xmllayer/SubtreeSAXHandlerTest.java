@@ -42,14 +42,15 @@ public class SubtreeSAXHandlerTest {
     TestDocument.create(expectedTrx);
 
     // Setup parsed session.
-    final ISession session = Session.beginSession(PATH);
     final SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
     saxParserFactory.setValidating(false);
     saxParserFactory.setNamespaceAware(true);
     final SAXParser parser = saxParserFactory.newSAXParser();
     final InputSource inputSource = new InputSource("xml/test.xml");
-    parser.parse(inputSource, new SubtreeSAXHandler(session));
 
+    parser.parse(inputSource, new SubtreeSAXHandler(new File(PATH)));
+
+    final ISession session = Session.beginSession(new File(PATH));
     final IReadTransaction rtx = session.beginReadTransaction();
 
     expectedTrx.moveToRoot();
@@ -90,8 +91,7 @@ public class SubtreeSAXHandlerTest {
   public void test1Subtree() throws Exception {
 
     // Setup parsed session.
-    final ISession session = Session.beginSession(PATH);
-    final SubtreeSAXHandler handler = new SubtreeSAXHandler(session);
+    final SubtreeSAXHandler handler = new SubtreeSAXHandler(new File(PATH));
     handler.startDocument();
     handler.subtreeStarting(0);
     handler.startElement("", "fooEins", "", new AttributesImpl());
@@ -107,6 +107,7 @@ public class SubtreeSAXHandlerTest {
     handler.subtreeEnding(1);
     handler.endDocument();
 
+    final ISession session = Session.beginSession(new File(PATH));
     final IReadTransaction rtx = session.beginReadTransaction();
     rtx.moveToRoot();
 
@@ -129,8 +130,7 @@ public class SubtreeSAXHandlerTest {
   public void test2Subtree() throws Exception {
 
     // Setup parsed session.
-    final ISession session = Session.beginSession(PATH);
-    final SubtreeSAXHandler handler = new SubtreeSAXHandler(session);
+    final SubtreeSAXHandler handler = new SubtreeSAXHandler(new File(PATH));
     handler.startDocument();
 
     handler.subtreeStarting(1);
@@ -194,6 +194,7 @@ public class SubtreeSAXHandlerTest {
     handler.subtreeEnding(1);
     handler.endDocument();
 
+    final ISession session = Session.beginSession(new File(PATH));
     final IReadTransaction rtx = session.beginReadTransaction();
     rtx.moveToRoot();
     //checking second subtree

@@ -21,7 +21,7 @@
 
 package org.treetank.xmllayer;
 
-import java.io.PipedInputStream;
+import java.io.File;
 import java.io.PipedOutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -29,6 +29,8 @@ import java.io.Writer;
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
+import org.treetank.api.ISession;
+import org.treetank.sessionlayer.Session;
 import org.treetank.utils.FastStack;
 import org.treetank.utils.UTF;
 import org.xml.sax.ContentHandler;
@@ -44,6 +46,8 @@ import com.sun.org.apache.xml.internal.serializer.SerializerFactory;
  */
 public class SAXGenerator extends Thread {
 
+  protected final ISession session;
+
   protected final IReadTransaction mRTX;
 
   protected ContentHandler mHandler;
@@ -52,7 +56,7 @@ public class SAXGenerator extends Thread {
 
   private boolean mIsSerialize = false;
 
-  private boolean mAsInputStream = false;
+  private final boolean mAsInputStream = false;
 
   private PipedOutputStream mPipedOut;
 
@@ -66,11 +70,29 @@ public class SAXGenerator extends Thread {
   protected final FastStack<INode> mNodeStack = new FastStack<INode>();
 
   /**
-   * Constructor for printing the reconstructed XML of global storage to stdout.
+   * 'Callback' Constructor.
+   * <p>
+   * You'll get the SAX events emited during the roconstruction process. You can
+   * use these as input for your application.
+   * </p>
    */
-  public SAXGenerator(final IReadTransaction rtx, final boolean prettyPrint)
-      throws Exception {
-    this(rtx, new PrintWriter(System.out), prettyPrint);
+  public SAXGenerator(
+      final File input,
+      final ContentHandler contentHandler,
+      final boolean prettyPrint) throws Exception {
+
+    session = Session.beginSession(input);
+    mRTX = session.beginReadTransaction();
+    mHandler = contentHandler;
+
+    // Prepare full descendant iteration.
+    mRightSiblingKeyStack = new FastStack<Long>();
+    mRightSiblingKeyStack.push(IConstants.NULL_KEY);
+    mRTX.moveToRoot();
+    mNextKey = mRTX.getFirstChildKey();
+
+    mPrettyPrint = prettyPrint;
+
   }
 
   /**
@@ -80,11 +102,12 @@ public class SAXGenerator extends Thread {
    * @see java.io.Writer
    */
   public SAXGenerator(
-      final IReadTransaction rtx,
+      final File file,
       final Writer writer,
       final boolean prettyPrint) throws Exception {
 
-    mRTX = rtx;
+    session = Session.beginSession(file);
+    mRTX = session.beginReadTransaction();
     mWriter = writer;
     mIsSerialize = true;
 
@@ -98,60 +121,12 @@ public class SAXGenerator extends Thread {
 
   }
 
-  public SAXGenerator(final IReadTransaction rtx, final Writer writer)
+  /**
+   * Constructor for printing the reconstructed XML of global storage to stdout.
+   */
+  public SAXGenerator(final File file, final boolean prettyPrint)
       throws Exception {
-    this(rtx, writer, false);
-  }
-
-  /**
-   * Constructor to get reconstructed XML as InputSource.
-   * 
-   * @param aWriter
-   * @see java.io.Writer
-   */
-  public SAXGenerator(
-      final IReadTransaction rtx,
-      final PipedInputStream pipedIn,
-      final boolean prettyPrint) throws Exception {
-
-    mRTX = rtx;
-    mPipedOut = new PipedOutputStream(pipedIn);
-    mAsInputStream = true;
-    mIsSerialize = true;
-
-    // Prepare full descendant iteration.
-    mRightSiblingKeyStack = new FastStack<Long>();
-    mRTX.moveToRoot();
-    mRightSiblingKeyStack.push(IConstants.NULL_KEY);
-    mNextKey = mRTX.getFirstChildKey();
-
-    mPrettyPrint = prettyPrint;
-
-  }
-
-  /**
-   * 'Callback' Constructor.
-   * <p>
-   * You'll get the SAX events emited during the roconstruction process. You can
-   * use these as input for your application.
-   * </p>
-   */
-  public SAXGenerator(
-      final IReadTransaction rtx,
-      final ContentHandler contentHandler,
-      final boolean prettyPrint) throws Exception {
-
-    mRTX = rtx;
-    mHandler = contentHandler;
-
-    // Prepare full descendant iteration.
-    mRightSiblingKeyStack = new FastStack<Long>();
-    mRightSiblingKeyStack.push(IConstants.NULL_KEY);
-    mRTX.moveToRoot();
-    mNextKey = mRTX.getFirstChildKey();
-
-    mPrettyPrint = prettyPrint;
-
+    this(file, new PrintWriter(System.out), prettyPrint);
   }
 
   protected final String qName(final String prefix, final String localPart) {
@@ -204,7 +179,7 @@ public class SAXGenerator extends Thread {
       while (mRightSiblingKeyStack.size() > 0
           && mRTX.getNodeKey() == mRightSiblingKeyStack.peek()) {
         mRightSiblingKeyStack.pop();
-        final INode node = (INode) mNodeStack.pop();
+        final INode node = mNodeStack.pop();
         final String localPart = mRTX.nameForKey(node.getLocalPartKey());
         final String prefix = mRTX.nameForKey(node.getPrefixKey());
         final String uri = mRTX.nameForKey(node.getURIKey());
@@ -218,7 +193,7 @@ public class SAXGenerator extends Thread {
       // --- Emit events based on current node. --------------------------------
       switch (mRTX.getKind()) {
       case IConstants.ELEMENT:
-        final INode node = (INode) mNodeStack.peek();
+        final INode node = mNodeStack.peek();
         final String localPart = mRTX.nameForKey(node.getLocalPartKey());
         final String prefix = mRTX.nameForKey(node.getPrefixKey());
         final String uri = mRTX.nameForKey(node.getURIKey());
@@ -246,7 +221,7 @@ public class SAXGenerator extends Thread {
     // Clean up all pending closing tags.
     while (mNodeStack.size() > 0) {
       mRightSiblingKeyStack.pop();
-      final INode node = (INode) mNodeStack.pop();
+      final INode node = mNodeStack.pop();
       final String localPart = mRTX.nameForKey(node.getLocalPartKey());
       final String prefix = mRTX.nameForKey(node.getPrefixKey());
       final String uri = mRTX.nameForKey(node.getURIKey());
@@ -291,6 +266,10 @@ public class SAXGenerator extends Thread {
 
       // End document.
       mHandler.endDocument();
+
+      //cleaning up
+      mRTX.close();
+      session.close();
 
       if (mAsInputStream) {
         mPipedOut.close();

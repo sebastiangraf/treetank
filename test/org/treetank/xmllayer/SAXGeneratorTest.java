@@ -47,13 +47,12 @@ public class SAXGeneratorTest {
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
-
-    final SAXGenerator generator = new SAXGenerator(wtx, false);
-    generator.start();
-    generator.join();
-
     wtx.commit();
     session.close();
+
+    final SAXGenerator generator = new SAXGenerator(new File(PATH), false);
+    generator.start();
+    generator.join();
 
   }
 
