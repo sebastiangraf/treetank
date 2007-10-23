@@ -21,55 +21,56 @@
 
 package org.treetank.pagelayer;
 
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.treetank.api.IPage;
-import org.treetank.sessionlayer.WriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 import org.treetank.utils.UTF;
 
-final public class NamePage implements IPage {
-
-  /** True if page was created or cloned. False if it was read or committed. */
-  private boolean mDirty;
+/**
+ * <h1>NamePage</h1>
+ * 
+ * <p>
+ * Name page holds all names and their keys for a revision.
+ * </p>
+ */
+public final class NamePage extends AbstractPage implements IPage {
 
   /** Map the hash of a name to its name. */
   private final Map<Integer, String> mNameMap;
 
-  private NamePage(final boolean dirty) {
-    mDirty = dirty;
+  /**
+   * Create name page.
+   */
+  public NamePage() {
+    super(0);
     mNameMap = new HashMap<Integer, String>();
   }
 
-  public static final NamePage create() {
-    final NamePage namePage = new NamePage(true);
-    return namePage;
-  }
+  /**
+   * Read name page.
+   * 
+   * @param in Input bytes to read from.
+   */
+  public NamePage(final FastByteArrayReader in) {
+    super(0, in);
+    mNameMap = new HashMap<Integer, String>();
 
-  public static final NamePage read(final FastByteArrayReader in) {
-
-    final NamePage namePage = new NamePage(false);
-
-    // Names (deep load).
     for (int i = 0, l = in.readVarInt(); i < l; i++) {
-      namePage.mNameMap.put(in.readVarInt(), UTF.convert(in.readByteArray()));
+      mNameMap.put(in.readVarInt(), UTF.convert(in.readByteArray()));
     }
-    return namePage;
-
   }
 
-  public static final NamePage clone(final NamePage committedNamePage) {
-
-    final NamePage namePage = new NamePage(true);
-
-    // Names (deep COW).
-    namePage.mNameMap.putAll(committedNamePage.mNameMap);
-
-    return namePage;
+  /**
+   * Clone name page.
+   * 
+   * @param committedNamePage Page to clone.
+   */
+  public NamePage(final NamePage committedNamePage) {
+    super(0, committedNamePage);
+    mNameMap = new HashMap<Integer, String>(committedNamePage.mNameMap);
   }
 
   /**
@@ -95,30 +96,16 @@ final public class NamePage implements IPage {
   /**
    * {@inheritDoc}
    */
-  public final void commit(final WriteTransactionState state)
-      throws IOException {
-    mDirty = false;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
+  @Override
   public void serialize(final FastByteArrayWriter out) {
+    super.serialize(out);
+
     out.writeVarInt(mNameMap.size());
-    Iterator<Integer> keyIterator = mNameMap.keySet().iterator();
-    int key;
-    while (keyIterator.hasNext()) {
-      key = keyIterator.next();
+
+    for (final int key : mNameMap.keySet()) {
       out.writeVarInt(key);
       out.writeByteArray(UTF.convert(mNameMap.get(key)));
     }
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final boolean isDirty() {
-    return mDirty;
   }
 
   /**
@@ -130,7 +117,7 @@ final public class NamePage implements IPage {
         + ": nameCount="
         + mNameMap.size()
         + ", isDirty="
-        + mDirty;
+        + isDirty();
   }
 
 }

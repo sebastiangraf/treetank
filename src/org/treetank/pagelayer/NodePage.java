@@ -21,11 +21,8 @@
 
 package org.treetank.pagelayer;
 
-import java.io.IOException;
-
 import org.treetank.api.IConstants;
 import org.treetank.api.IPage;
-import org.treetank.sessionlayer.WriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
@@ -36,10 +33,7 @@ import org.treetank.utils.FastByteArrayWriter;
  * A node page stores a set of nodes.
  * </p>
  */
-public final class NodePage implements IPage {
-
-  /** True if page was created or cloned. False if it was read or committed. */
-  private boolean mDirty;
+public final class NodePage extends AbstractPage implements IPage {
 
   /** Key of node page. This is the base key of all contained nodes. */
   private final long mNodePageKey;
@@ -47,53 +41,58 @@ public final class NodePage implements IPage {
   /** Array of nodes. This can have null nodes that were removed. */
   private final Node[] mNodes;
 
-  private NodePage(final boolean dirty, final long nodePageKey) {
-    mDirty = dirty;
+  /**
+   * Create node page.
+   * 
+   * @param nodePageKey Base key assigned to this node page.
+   */
+  public NodePage(final long nodePageKey) {
+    super(0);
     mNodePageKey = nodePageKey;
     mNodes = new Node[IConstants.NDP_NODE_COUNT];
   }
 
-  public static final NodePage create(final long nodePageKey) {
-    final NodePage nodePage = new NodePage(true, nodePageKey);
-    return nodePage;
-  }
+  /**
+   * Read node page.
+   * 
+   * @param in Input bytes to read page from.
+   * @param nodePageKey Base key assigned to this node page.
+   */
+  public NodePage(final FastByteArrayReader in, final long nodePageKey) {
+    super(0, in);
+    mNodePageKey = nodePageKey;
+    mNodes = new Node[IConstants.NDP_NODE_COUNT];
 
-  public static final NodePage read(
-      final FastByteArrayReader in,
-      final long nodePageKey) {
-    final NodePage nodePage = new NodePage(false, nodePageKey);
-
-    final long keyBase =
-        nodePage.mNodePageKey << IConstants.NDP_NODE_COUNT_EXPONENT;
-    for (int i = 0; i < IConstants.NDP_NODE_COUNT; i++) {
+    final long keyBase = mNodePageKey << IConstants.NDP_NODE_COUNT_EXPONENT;
+    for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
       if (in.readBoolean()) {
-        nodePage.mNodes[i] = new Node(keyBase + i, in);
-      } else {
-        nodePage.mNodes[i] = null;
+        mNodes[offset] = new Node(keyBase + offset, in);
       }
     }
-
-    return nodePage;
   }
 
-  public static final NodePage clone(final NodePage committedNodePage) {
-    final NodePage nodePage =
-        new NodePage(true, committedNodePage.mNodePageKey);
+  /**
+   * Clone node page.
+   * 
+   * @param committedNodePage Node page to clone.
+   */
+  public NodePage(final NodePage committedNodePage) {
+    super(0, committedNodePage);
+    mNodePageKey = committedNodePage.mNodePageKey;
+    mNodes = new Node[IConstants.NDP_NODE_COUNT];
 
     // Deep-copy all nodes.
     for (int i = 0; i < IConstants.NDP_NODE_COUNT; i++) {
       if (committedNodePage.mNodes[i] != null) {
-        nodePage.mNodes[i] = new Node(committedNodePage.mNodes[i]);
+        mNodes[i] = new Node(committedNodePage.mNodes[i]);
       }
     }
-
-    return nodePage;
   }
 
   /**
    * Get key of node page.
    * 
-   * @return INode page key.
+   * @return Node page key.
    */
   public final long getNodePageKey() {
     return mNodePageKey;
@@ -103,7 +102,7 @@ public final class NodePage implements IPage {
    * Get node at a given offset.
    * 
    * @param offset Offset of node within local node page.
-   * @return INode at given offset.
+   * @return Node at given offset.
    */
   public final Node getNode(final int offset) {
     return mNodes[offset];
@@ -113,7 +112,7 @@ public final class NodePage implements IPage {
    * Overwrite a single node at a given offset.
    * 
    * @param offset Offset of node to overwrite in this node page.
-   * @param node INode to store at given nodeOffset.
+   * @param node Node to store at given nodeOffset.
    */
   public final void setNode(final int offset, final Node node) {
     mNodes[offset] = node;
@@ -122,30 +121,18 @@ public final class NodePage implements IPage {
   /**
    * {@inheritDoc}
    */
-  public final void commit(final WriteTransactionState state)
-      throws IOException {
-    mDirty = false;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
+  @Override
   public final void serialize(final FastByteArrayWriter out) {
-    for (int i = 0; i < IConstants.NDP_NODE_COUNT; i++) {
-      if (mNodes[i] != null) {
+    super.serialize(out);
+    
+    for (final Node node : mNodes) {
+      if (node != null) {
         out.writeBoolean(true);
-        mNodes[i].serialize(out);
+        node.serialize(out);
       } else {
         out.writeBoolean(false);
       }
     }
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final boolean isDirty() {
-    return mDirty;
   }
 
   /**
@@ -157,7 +144,7 @@ public final class NodePage implements IPage {
         + ": nodePageKey="
         + mNodePageKey
         + ", isDirty="
-        + mDirty;
+        + isDirty();
   }
 
 }

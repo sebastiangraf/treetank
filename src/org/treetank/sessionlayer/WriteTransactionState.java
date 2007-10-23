@@ -211,15 +211,15 @@ public final class WriteTransactionState extends ReadTransactionState {
 
     if (!reference.isInstantiated()) {
       if (reference.isCommitted()) {
-        page = NamePage.clone(dereferenceNamePage(reference));
+        page = new NamePage(dereferenceNamePage(reference));
         reference.setPage(page);
       } else {
-        page = NamePage.create();
+        page = new NamePage();
         reference.setPage(page);
       }
     } else {
       if (!reference.isDirty()) {
-        page = NamePage.clone(page);
+        page = new NamePage(page);
         reference.setPage(page);
       }
     }
@@ -263,15 +263,15 @@ public final class WriteTransactionState extends ReadTransactionState {
 
     if (!reference.isInstantiated()) {
       if (reference.isCommitted()) {
-        page = NodePage.clone(dereferenceNodePage(reference, nodePageKey));
+        page = new NodePage(dereferenceNodePage(reference, nodePageKey));
         reference.setPage(page);
       } else {
-        page = NodePage.create(nodePageKey);
+        page = new NodePage(nodePageKey);
         reference.setPage(page);
       }
     } else {
       if (!reference.isDirty()) {
-        page = NodePage.clone(page);
+        page = new NodePage(page);
         reference.setPage(page);
       }
     }

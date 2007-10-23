@@ -232,7 +232,7 @@ public class ReadTransactionState {
     // If there is no page, get it from the storage and cache it.
     if (page == null) {
       final FastByteArrayReader in = mPageReader.read(reference);
-      page = NodePage.read(in, nodePageKey);
+      page = new NodePage(in, nodePageKey);
       mPageCache.put(reference.getStart(), page);
     }
 
@@ -259,7 +259,7 @@ public class ReadTransactionState {
     // If there is no page, get it from the storage and cache it.
     if (page == null) {
       final FastByteArrayReader in = mPageReader.read(reference);
-      page = NamePage.read(in);
+      page = new NamePage(in);
       mPageCache.put(reference.getStart(), page);
     }
 
