@@ -177,10 +177,6 @@ final public class UberPage implements IPage {
     }
   }
 
-  public final void abort() {
-    mRevisionCount -= 1;
-  }
-
   /**
    * {@inheritDoc}
    */
