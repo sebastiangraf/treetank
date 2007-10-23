@@ -25,6 +25,7 @@ import java.io.File;
 
 import org.junit.Before;
 import org.junit.Ignore;
+import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
@@ -48,11 +49,15 @@ public class SAXGeneratorTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
     wtx.commit();
-    session.close();
+    wtx.close();
 
-    final SAXGenerator generator = new SAXGenerator(new File(PATH), false);
+    final IReadTransaction rtx = session.beginReadTransaction();
+
+    final SAXGenerator generator = new SAXGenerator(rtx, false);
     generator.start();
     generator.join();
+    rtx.close();
+    session.close();
 
   }
 
