@@ -61,7 +61,7 @@ public final class XMLShredder {
   public static final void shred(
       final XMLStreamReader parser,
       final SessionConfiguration sessionConfiguration) throws Exception {
-    ISession session = Session.getSession(sessionConfiguration);
+    ISession session = Session.beginSession(sessionConfiguration);
     IWriteTransaction wtx = session.beginWriteTransaction();
     // Prepare variables.
     final FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();

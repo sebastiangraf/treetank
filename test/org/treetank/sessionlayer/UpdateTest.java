@@ -46,7 +46,7 @@ public class UpdateTest {
   @Test
   public void testInsertChild() throws Exception {
 
-    ISession session = Session.getSession(TEST_PATH);
+    ISession session = Session.beginSession(TEST_PATH);
 
     // Document root.
     IWriteTransaction wtx = session.beginWriteTransaction();
@@ -89,7 +89,7 @@ public class UpdateTest {
   @Test
   public void testInsertPath() throws Exception {
 
-    final ISession session = Session.getSession(TEST_PATH);
+    final ISession session = Session.beginSession(TEST_PATH);
 
     IWriteTransaction wtx = session.beginWriteTransaction();
     wtx.commit();
@@ -144,7 +144,7 @@ public class UpdateTest {
   @Test
   public void testPageBoundary() throws Exception {
 
-    ISession session = Session.getSession(TEST_PATH);
+    ISession session = Session.beginSession(TEST_PATH);
 
     // Document root.
     IWriteTransaction wtx = session.beginWriteTransaction();

@@ -46,7 +46,7 @@ public class AttributeAxisIteratorTest {
   @Test
   public void testIterate() throws Exception {
 
-    final ISession session = Session.getSession(PATH);
+    final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
 

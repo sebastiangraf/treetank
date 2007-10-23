@@ -56,8 +56,8 @@ public final class Session implements ISession {
     mSessionState = sessionState;
   }
 
-  public static final ISession getSession(final File file) throws Exception {
-    return getSession(new SessionConfiguration(file.getAbsolutePath()));
+  public static final ISession beginSession(final File file) throws Exception {
+    return beginSession(new SessionConfiguration(file.getAbsolutePath()));
   }
 
   /**
@@ -66,8 +66,8 @@ public final class Session implements ISession {
    * @param path Path to TreeTank file.
    * @throws Exception of any kind.
    */
-  public static final ISession getSession(final String path) throws Exception {
-    return getSession(new SessionConfiguration(new File(path).getAbsolutePath()));
+  public static final ISession beginSession(final String path) throws Exception {
+    return beginSession(new SessionConfiguration(new File(path).getAbsolutePath()));
   }
 
   /**
@@ -94,7 +94,7 @@ public final class Session implements ISession {
    * @param sessionConfiguration Session configuration for the TreeTank.
    * @throws Exception of any kind.
    */
-  public static final ISession getSession(
+  public static final ISession beginSession(
       final SessionConfiguration sessionConfiguration) throws Exception {
 
     ISession session = SESSION_MAP.get(sessionConfiguration.getPath());

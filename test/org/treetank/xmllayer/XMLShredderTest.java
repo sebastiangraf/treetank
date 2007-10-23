@@ -56,7 +56,7 @@ public class XMLShredderTest {
   public void testSTAXShredder() throws Exception {
 
     // Setup expected session.
-    final ISession expectedSession = Session.getSession(EXPECTED_PATH);
+    final ISession expectedSession = Session.beginSession(EXPECTED_PATH);
     final IWriteTransaction expectedTrx =
         expectedSession.beginWriteTransaction();
     TestDocument.create(expectedTrx);
@@ -67,7 +67,7 @@ public class XMLShredderTest {
     XMLShredder.shred(XML, new SessionConfiguration(PATH));
 
     // Verify.
-    final ISession session = Session.getSession(PATH);
+    final ISession session = Session.beginSession(PATH);
     final IReadTransaction rtx = session.beginReadTransaction();
     rtx.moveToRoot();
     final IAxisIterator expectedDescendants =
