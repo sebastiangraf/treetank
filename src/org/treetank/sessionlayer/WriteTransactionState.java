@@ -21,6 +21,7 @@
 
 package org.treetank.sessionlayer;
 
+import java.io.RandomAccessFile;
 import java.util.Map;
 
 import org.treetank.api.IConstants;
@@ -158,6 +159,44 @@ public final class WriteTransactionState extends ReadTransactionState
     for (int i = 0, l = references.length; i < l; i++) {
       commit(references[i]);
     }
+  }
+
+  public final UberPage commit(final SessionConfiguration sessionConfiguration)
+      throws Exception {
+    final PageReference uberPageReference = new PageReference();
+    final UberPage uberPage = getUberPage();
+    final RandomAccessFile file =
+        new RandomAccessFile(sessionConfiguration.getPath(), "rw");
+
+    if (uberPage.isBootstrap()) {
+      file.setLength(IConstants.BEACON_LENGTH);
+    }
+
+    // Recursively write indirectely referenced pages.
+    uberPage.commit(this);
+
+    uberPageReference.setPage(uberPage);
+    mPageWriter.write(uberPageReference);
+    getPageCache().put(
+        uberPageReference.getStart(),
+        uberPageReference.getPage());
+    uberPageReference.setPage(null);
+
+    // Write secondary beacon.
+    file.seek(file.length());
+    file.writeLong(uberPageReference.getStart());
+    file.writeInt(uberPageReference.getLength());
+    file.writeLong(uberPageReference.getChecksum());
+
+    // Write primary beacon.
+    file.seek(0L);
+    file.writeLong(uberPageReference.getStart());
+    file.writeInt(uberPageReference.getLength());
+    file.writeLong(uberPageReference.getChecksum());
+
+    file.close();
+
+    return uberPage;
   }
 
   /**
