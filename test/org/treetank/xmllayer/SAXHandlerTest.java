@@ -81,7 +81,7 @@ public class SAXHandlerTest {
     final AbstractAxis descendants = new DescendantAxis(rtrx2);
 
     while (expectedDescendants.hasNext() && descendants.hasNext()) {
-      if (!expectedDescendants.mCurrentNode.equals(descendants.mCurrentNode)) {
+      if (!expectedDescendants.next().equals(descendants.next())) {
         fail(expectedDescendants.mCurrentNode.toString()
             + " and "
             + descendants.mCurrentNode
