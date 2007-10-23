@@ -24,7 +24,6 @@ package org.treetank.pagelayer;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.treetank.api.IPage;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 import org.treetank.utils.UTF;
@@ -36,7 +35,7 @@ import org.treetank.utils.UTF;
  * Name page holds all names and their keys for a revision.
  * </p>
  */
-public final class NamePage extends AbstractPage implements IPage {
+public final class NamePage extends AbstractPage {
 
   /** Map the hash of a name to its name. */
   private final Map<Integer, String> mNameMap;

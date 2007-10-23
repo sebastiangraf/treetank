@@ -22,7 +22,6 @@
 package org.treetank.pagelayer;
 
 import org.treetank.api.IConstants;
-import org.treetank.api.IPage;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
@@ -34,7 +33,7 @@ import org.treetank.utils.FastByteArrayWriter;
  * the static node page tree.
  * </p>
  */
-public final class RevisionRootPage extends AbstractPage implements IPage {
+public final class RevisionRootPage extends AbstractPage {
 
   /** Offset of name page reference. */
   private static final int NAME_REFERENCE_OFFSET = 0;

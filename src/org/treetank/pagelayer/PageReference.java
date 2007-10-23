@@ -21,13 +21,12 @@
 
 package org.treetank.pagelayer;
 
-import org.treetank.api.IPage;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
 public final class PageReference {
 
-  private IPage mPage;
+  private AbstractPage mPage;
 
   private long mStart;
 
@@ -48,7 +47,7 @@ public final class PageReference {
   }
 
   public PageReference(
-      final IPage page,
+      final AbstractPage page,
       final long start,
       final int length,
       final long checksum) {
@@ -82,11 +81,11 @@ public final class PageReference {
     mChecksum = checksum;
   }
 
-  public final IPage getPage() {
+  public final AbstractPage getPage() {
     return mPage;
   }
 
-  public final void setPage(final IPage page) {
+  public final void setPage(final AbstractPage page) {
     mPage = page;
   }
 

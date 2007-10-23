@@ -25,7 +25,7 @@ import java.util.Map;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
-import org.treetank.api.IPage;
+import org.treetank.pagelayer.AbstractPage;
 import org.treetank.pagelayer.IndirectPage;
 import org.treetank.pagelayer.NamePage;
 import org.treetank.pagelayer.NodePage;
@@ -51,7 +51,7 @@ import org.treetank.utils.FastByteArrayReader;
 public class ReadTransactionState {
 
   /** Shared page cache mapping start address of page to IPage. */
-  private final Map<Long, IPage> mPageCache;
+  private final Map<Long, AbstractPage> mPageCache;
 
   /** Page reader exclusively assigned to this transaction. */
   private final PageReader mPageReader;
@@ -78,7 +78,7 @@ public class ReadTransactionState {
    */
   public ReadTransactionState(
       final SessionConfiguration sessionConfiguration,
-      final Map<Long, IPage> pageCache,
+      final Map<Long, AbstractPage> pageCache,
       final UberPage uberPage,
       final long revisionKey) {
     mPageCache = pageCache;
@@ -150,7 +150,7 @@ public class ReadTransactionState {
   /**
    * @return The page cache.
    */
-  protected final Map<Long, IPage> getPageCache() {
+  protected final Map<Long, AbstractPage> getPageCache() {
     return mPageCache;
   }
 
@@ -249,7 +249,7 @@ public class ReadTransactionState {
   protected final NamePage dereferenceNamePage(final PageReference reference) {
 
     // Get page that was dereferenced or prepared earlier.
-    IPage page = reference.getPage();
+    AbstractPage page = reference.getPage();
 
     // If there is no page, get it from the cache.
     if (page == null) {
