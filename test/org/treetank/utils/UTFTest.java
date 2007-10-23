@@ -33,6 +33,12 @@ public class UTFTest {
     assertEquals("foo", UTF.convert(UTF.convert("foo")));
     assertEquals("fö§", UTF.convert(UTF.convert("fö§")));
     assertEquals("", UTF.convert(UTF.convert("")));
+    
+    //Tests for fastConvert()
+    assertEquals("a", UTF.convert(UTF.fastConvert("a")));
+    assertEquals("foo", UTF.convert(UTF.fastConvert("foo")));
+    assertEquals("fö§", UTF.convert(UTF.fastConvert("fö§")));
+    assertEquals("", UTF.convert(UTF.fastConvert("")));
   }
 
   @Test
@@ -44,6 +50,14 @@ public class UTFTest {
     assertEquals(true, UTF.equals("foo", UTF.convert("foo")));
     assertEquals(true, UTF.equals(UTF.convert("foo"), "foo"));
     assertEquals(true, UTF.equals("foo", "foo"));
+    
+    //Tests for fastConvert()
+    assertEquals(false, UTF.equals(UTF.fastConvert("foo"), UTF.fastConvert("foobar")));
+    assertEquals(false, UTF.equals(UTF.fastConvert("foo"), UTF.fastConvert("bar")));
+    assertEquals(true, UTF.equals(UTF.fastConvert("foo"), UTF.fastConvert("foo")));
+
+    assertEquals(true, UTF.equals("foo", UTF.fastConvert("foo")));
+    assertEquals(true, UTF.equals(UTF.fastConvert("foo"), "foo"));
   }
 
 }
