@@ -26,7 +26,7 @@ import java.io.RandomAccessFile;
 import java.util.Map;
 
 import org.treetank.api.IConstants;
-import org.treetank.api.IPage;
+import org.treetank.pagelayer.AbstractPage;
 import org.treetank.pagelayer.IndirectPage;
 import org.treetank.pagelayer.NamePage;
 import org.treetank.pagelayer.Node;
@@ -56,7 +56,7 @@ public final class WriteTransactionState extends ReadTransactionState {
    */
   public WriteTransactionState(
       final SessionConfiguration sessionConfiguration,
-      final Map<Long, IPage> pageCache,
+      final Map<Long, AbstractPage> pageCache,
       final UberPage uberPage) {
     super(sessionConfiguration, pageCache, uberPage, uberPage
         .getLastCommittedRevisionKey());

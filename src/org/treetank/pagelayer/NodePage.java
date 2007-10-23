@@ -22,7 +22,6 @@
 package org.treetank.pagelayer;
 
 import org.treetank.api.IConstants;
-import org.treetank.api.IPage;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
@@ -33,7 +32,7 @@ import org.treetank.utils.FastByteArrayWriter;
  * A node page stores a set of nodes.
  * </p>
  */
-public final class NodePage extends AbstractPage implements IPage {
+public final class NodePage extends AbstractPage {
 
   /** Key of node page. This is the base key of all contained nodes. */
   private final long mNodePageKey;
@@ -124,7 +123,7 @@ public final class NodePage extends AbstractPage implements IPage {
   @Override
   public final void serialize(final FastByteArrayWriter out) {
     super.serialize(out);
-    
+
     for (final Node node : mNodes) {
       if (node != null) {
         out.writeBoolean(true);

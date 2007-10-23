@@ -24,57 +24,41 @@ package org.treetank.pagelayer;
 import java.io.IOException;
 
 import org.treetank.api.IConstants;
-import org.treetank.api.IPage;
 import org.treetank.sessionlayer.WriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
-final public class UberPage implements IPage {
+/**
+ * <h1>UberPage</h1>
+ * 
+ * <p>
+ * Uber page holds a reference to the static revision root page tree.
+ * </p>
+ */
+public final class UberPage extends AbstractPage {
 
-  /** True if page was created or cloned. False if it was read or committed. */
-  private boolean mDirty;
+  /** Offset of indirect page reference. */
+  private static final int INDIRECT_REFERENCE_OFFSET = 0;
 
+  /** Number of revisions. */
   private long mRevisionCount;
 
-  private PageReference mIndirectPageReference;
-
+  /** True if this uber page is the uber page of a fresh TreeTank file. */
   private boolean mBootstrap;
 
   /**
-   * Constructor to assure minimal common setup.
-   * 
-   * @param pageCache IPageCache to read from.
-   */
-  private UberPage(final boolean dirty, final boolean bootstrap) {
-    mDirty = dirty;
-    mIndirectPageReference = null;
-    mBootstrap = bootstrap;
-  }
-
-  /**
-   * Create new uncommitted in-memory uber page. This is only required
-   * to bootstrap an empty TreeTank.
-   * 
-   * @return Bootstrapped uber page.
-   * @throws Exception
+   * Create uber page.
    */
   public UberPage() {
-
-    // --- Create uber page ----------------------------------------------------
-
-    this(true, true);
-
-    // Make sure that all references are instantiated.
+    super(1);
     mRevisionCount = IConstants.UBP_ROOT_REVISION_COUNT;
-
-    // Indirect pages (shallow init).
-    mIndirectPageReference = new PageReference();
+    mBootstrap = true;
 
     // --- Create revision tree ------------------------------------------------
 
     // Initialize revision tree to guarantee that there is a revision root page.
     IndirectPage page = null;
-    PageReference reference = mIndirectPageReference;
+    PageReference reference = getReference(INDIRECT_REFERENCE_OFFSET);
 
     // Remaining levels.
     for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
@@ -109,55 +93,56 @@ final public class UberPage implements IPage {
   }
 
   /**
-   * Read committed uber page from disk.
+   * Read uber page.
    * 
-   * @param pageCache
-   * @param in
-   * @throws Exception
+   * @param in Input bytes.
    */
   public UberPage(final FastByteArrayReader in) {
-
-    this(false, false);
-
-    // Deserialize uber page.
+    super(1, in);
     mRevisionCount = in.readVarLong();
-
-    // Indirect pages (shallow load without indirect page instances).
-    mIndirectPageReference = new PageReference(in);
+    mBootstrap = false;
   }
 
   /**
-   * COW committed uber page to modify it.
+   * Clone uber page.
    * 
-   * @param committedUberPage
-   * @return
+   * @param committedUberPage Page to clone.
    */
   public UberPage(final UberPage committedUberPage) {
-
-    // Make sure that the uber page is only cloned if it is not the first one.
-    if (committedUberPage.mBootstrap) {
-      mDirty = committedUberPage.mDirty;
-      mIndirectPageReference =
-          new PageReference(committedUberPage.mIndirectPageReference);
-      mBootstrap = committedUberPage.mBootstrap;
+    super(1, committedUberPage);
+    if (committedUberPage.isBootstrap()) {
       mRevisionCount = committedUberPage.mRevisionCount;
+      mBootstrap = committedUberPage.mBootstrap;
     } else {
-      mDirty = true;
-      mIndirectPageReference =
-          new PageReference(committedUberPage.mIndirectPageReference);
-      mBootstrap = false;
       mRevisionCount = committedUberPage.mRevisionCount + 1;
+      mBootstrap = false;
     }
+
   }
 
+  /**
+   * Get indirect page reference.
+   * 
+   * @return Indirect page reference.
+   */
   public final PageReference getIndirectPageReference() {
-    return mIndirectPageReference;
+    return getReference(INDIRECT_REFERENCE_OFFSET);
   }
 
+  /**
+   * Get number of revisions.
+   * 
+   * @return Number of revisions.
+   */
   public final long getRevisionCount() {
     return mRevisionCount;
   }
 
+  /**
+   * Get key of last committed revision.
+   * 
+   * @return Key of last committed revision.
+   */
   public final long getLastCommittedRevisionKey() {
     if (mRevisionCount == IConstants.UBP_ROOT_REVISION_COUNT) {
       return IConstants.UBP_ROOT_REVISION_KEY;
@@ -166,6 +151,11 @@ final public class UberPage implements IPage {
     }
   }
 
+  /**
+   * Get revision key of current in-memory state.
+   * 
+   * @return Revision key.
+   */
   public final long getRevisionKey() {
     if (mRevisionCount == IConstants.UBP_ROOT_REVISION_COUNT) {
       return IConstants.UBP_ROOT_REVISION_KEY;
@@ -175,12 +165,21 @@ final public class UberPage implements IPage {
   }
 
   /**
+   * Flag to indicate whether this uber page is the first ever.
+   * 
+   * @return True if this uber page is the first one of the TreeTank file.
+   */
+  public final boolean isBootstrap() {
+    return mBootstrap;
+  }
+
+  /**
    * {@inheritDoc}
    */
+  @Override
   public final void commit(final WriteTransactionState state)
       throws IOException {
-    state.commit(mIndirectPageReference);
-    mDirty = false;
+    super.commit(state);
     mBootstrap = false;
   }
 
@@ -188,19 +187,8 @@ final public class UberPage implements IPage {
    * {@inheritDoc}
    */
   public final void serialize(final FastByteArrayWriter out) {
+    super.serialize(out);
     out.writeVarLong(mRevisionCount);
-    mIndirectPageReference.serialize(out);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final boolean isDirty() {
-    return mDirty;
-  }
-
-  public final boolean isBootstrap() {
-    return mBootstrap;
   }
 
   /**
@@ -212,9 +200,9 @@ final public class UberPage implements IPage {
         + ": revisionCount="
         + mRevisionCount
         + ", indirectPage=("
-        + mIndirectPageReference
+        + getReference(INDIRECT_REFERENCE_OFFSET)
         + "), isDirty="
-        + mDirty
+        + isDirty()
         + ", isBootstrap="
         + mBootstrap;
   }
