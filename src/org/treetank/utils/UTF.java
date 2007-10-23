@@ -71,6 +71,26 @@ public final class UTF {
     return bytes;
   }
 
+  public static final byte[] fastConvert(final String string) {
+    final int l = string.length();
+    byte[] bytes = new byte[l];
+    for (int i = 0; i < l; i++) {
+      bytes[i] = (byte) string.charAt(i);
+      // Check if char is ASCII
+      if (bytes[i] < 0)
+        return convert(string);
+    }
+    return bytes;
+  }
+
+  public static boolean ascii(final byte[] bytes) {
+    final int l = bytes.length;
+    for (int i = 0; i < l; i++)
+      if (bytes[i] < 0)
+        return false;
+    return true;
+  }
+
   public static final boolean equals(final byte[] value1, final byte[] value2) {
     // Fail if the values are not of equal length.
     if (value1.length != value2.length) {
