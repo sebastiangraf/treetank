@@ -21,6 +21,8 @@
 
 package org.treetank.utils;
 
+import java.io.ByteArrayOutputStream;
+
 import org.treetank.api.IConstants;
 
 public final class UTF {
@@ -81,6 +83,25 @@ public final class UTF {
         return convert(string);
     }
     return bytes;
+  }
+
+  public static final byte[] nextConvert(final String string) {
+    final int l = string.length();
+    ByteArrayOutputStream bytes = new ByteArrayOutputStream(l);
+    try {
+      for (int i = 0; i < l; i++) {
+        byte b = (byte) string.charAt(i);
+        if (b < 0)
+          bytes.write(b);
+        else
+          bytes.write(string.substring(i, i + 1).getBytes(
+              IConstants.DEFAULT_ENCODING));
+      }
+    } catch (Exception e) {
+      throw new RuntimeException("Could not convert String to byte[]: "
+          + e.getLocalizedMessage());
+    }
+    return bytes.toByteArray();
   }
 
   public static boolean ascii(final byte[] bytes) {
