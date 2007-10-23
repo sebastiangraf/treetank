@@ -42,8 +42,6 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class SAXHandler extends DefaultHandler implements LexicalHandler {
 
-  private final ISession mSession;
-
   /** Idefix write transaction. */
   protected IWriteTransaction mWTX;
 
@@ -65,8 +63,7 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
    * @param wtx Writing transaction to write to.
    */
   public SAXHandler(final ISession session) throws Exception {
-    mSession = session;
-    mWTX = mSession.beginWriteTransaction();
+    mWTX = session.beginWriteTransaction();
     mLeftSiblingKeyStack = new FastStack<Long>();
     mCharacters = new StringBuilder();
     mPrefixList = new ArrayList<String>();

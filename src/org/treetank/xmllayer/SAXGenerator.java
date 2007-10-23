@@ -63,7 +63,7 @@ public class SAXGenerator extends Thread {
   /** The nodeKey of the next node to visit. */
   protected long mNextKey;
 
-  protected final FastStack mNodeStack = new FastStack();
+  protected final FastStack<INode> mNodeStack = new FastStack<INode>();
 
   /**
    * Constructor for printing the reconstructed XML of global storage to stdout.
