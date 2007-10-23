@@ -1,9 +1,9 @@
 package org.treetank.xmllayer;
 
+import java.io.File;
 import java.util.Hashtable;
 
 import org.treetank.api.IConstants;
-import org.treetank.api.ISession;
 import org.treetank.utils.FastStack;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -18,9 +18,6 @@ import org.xml.sax.SAXException;
 public class SubtreeSAXHandler extends SAXHandler {
 
   private static final int COMMITTHRESHOLD = 10000;
-
-  /** TreeTank write transaction. */
-  private final ISession session;
 
   /**
    * Counter for commiting after the insertation of a fixed number of
@@ -39,12 +36,11 @@ public class SubtreeSAXHandler extends SAXHandler {
    * 
    * @param initDocument
    *            Name of document.
-   * @param initSession
-   *            Writing transaction to write to.
+   * @param target
+   *            File to write to.
    */
-  public SubtreeSAXHandler(final ISession initSession) throws Exception {
-    super(initSession);
-    session = initSession;
+  public SubtreeSAXHandler(final File target) throws Exception {
+    super(target);
     subtreeKeyNodeMapping = new Hashtable<Long, Long>(0);
     stacks = new FastStack<FastStack<Long>>();
   }

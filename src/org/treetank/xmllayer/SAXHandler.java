@@ -21,11 +21,13 @@
 
 package org.treetank.xmllayer;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
+import org.treetank.sessionlayer.Session;
 import org.treetank.utils.FastStack;
 import org.treetank.utils.UTF;
 import org.xml.sax.Attributes;
@@ -42,7 +44,10 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class SAXHandler extends DefaultHandler implements LexicalHandler {
 
-  /** Idefix write transaction. */
+  /**TreeTank session for clean closure*/
+  protected final ISession session;
+
+  /** TreeTank write transaction. */
   protected IWriteTransaction mWTX;
 
   /** Stack containing left sibling nodeKey of each level. */
@@ -60,9 +65,10 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
   /**
    * Constructor.
    * 
-   * @param wtx Writing transaction to write to.
+   * @param target File to write to.
    */
-  public SAXHandler(final ISession session) throws Exception {
+  public SAXHandler(final File target) throws Exception {
+    session = Session.beginSession(target);
     mWTX = session.beginWriteTransaction();
     mLeftSiblingKeyStack = new FastStack<Long>();
     mCharacters = new StringBuilder();
@@ -74,6 +80,7 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
   public void endDocument() throws SAXException {
     try {
       mWTX.commit();
+      session.close();
     } catch (final Exception e) {
       throw new SAXException(e);
     }

@@ -63,14 +63,14 @@ public class SAXHandlerTest {
     TestDocument.create(expectedWTX);
 
     // Setup parsed session.
-    final ISession session = Session.beginSession(PATH);
     final SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
     saxParserFactory.setValidating(false);
     saxParserFactory.setNamespaceAware(true);
     final SAXParser parser = saxParserFactory.newSAXParser();
     final InputSource inputSource = new InputSource("xml/test.xml");
-    parser.parse(inputSource, new SAXHandler(session));
+    parser.parse(inputSource, new SAXHandler(new File(PATH)));
 
+    final ISession session = Session.beginSession(new File(PATH));
     final IReadTransaction rtx = session.beginReadTransaction();
 
     expectedWTX.moveToRoot();

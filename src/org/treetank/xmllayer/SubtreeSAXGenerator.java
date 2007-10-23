@@ -1,8 +1,9 @@
 package org.treetank.xmllayer;
 
+import java.io.File;
+
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
-import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastStack;
 import org.treetank.utils.UTF;
 import org.xml.sax.ContentHandler;
@@ -17,10 +18,10 @@ public class SubtreeSAXGenerator extends SAXGenerator {
   private final FastStack<Long> subtreeKeyStack = new FastStack<Long>();
 
   public SubtreeSAXGenerator(
-      final IReadTransaction initTrx,
+      final File input,
       final ContentHandler contentHandler,
       final boolean prettyPrint) throws Exception {
-    super(initTrx, contentHandler, prettyPrint);
+    super(input, contentHandler, prettyPrint);
   }
 
   @Override
@@ -43,7 +44,7 @@ public class SubtreeSAXGenerator extends SAXGenerator {
       firstElement = false;
       return true;
     }
-    while (mRTX.moveTo(mNextKey)) {
+    while (lastElement && mRTX.moveTo(mNextKey)) {
 
       // debug();
 
@@ -52,7 +53,7 @@ public class SubtreeSAXGenerator extends SAXGenerator {
       while (mRightSiblingKeyStack.size() > 0
           && mRTX.getNodeKey() == mRightSiblingKeyStack.peek()) {
         mRightSiblingKeyStack.pop();
-        final INode node = (INode) mNodeStack.pop();
+        final INode node = mNodeStack.pop();
         final String localPart = mRTX.nameForKey(node.getLocalPartKey());
         final String prefix = mRTX.nameForKey(node.getPrefixKey());
         final String uri = mRTX.nameForKey(node.getURIKey());
@@ -68,7 +69,7 @@ public class SubtreeSAXGenerator extends SAXGenerator {
       // --------------------------------
       switch (mRTX.getKind()) {
       case IConstants.ELEMENT:
-        final INode node = (INode) mNodeStack.peek();
+        final INode node = mNodeStack.peek();
         final String localPart = mRTX.nameForKey(node.getLocalPartKey());
         final String prefix = mRTX.nameForKey(node.getPrefixKey());
         final String uri = mRTX.nameForKey(node.getURIKey());
@@ -96,7 +97,7 @@ public class SubtreeSAXGenerator extends SAXGenerator {
     // Clean up all pending closing tags.
     while (mNodeStack.size() > 0) {
       mRightSiblingKeyStack.pop();
-      final INode node = (INode) mNodeStack.pop();
+      final INode node = mNodeStack.pop();
       final String localPart = mRTX.nameForKey(node.getLocalPartKey());
       final String prefix = mRTX.nameForKey(node.getPrefixKey());
       final String uri = mRTX.nameForKey(node.getURIKey());
@@ -108,6 +109,8 @@ public class SubtreeSAXGenerator extends SAXGenerator {
     if (lastElement) {
       mHandler.endDocument();
       lastElement = false;
+      mRTX.close();
+      session.close();
       return true;
     }
 

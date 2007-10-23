@@ -58,7 +58,7 @@ public class ReadTransactionState implements IReadTransactionState {
   private final PageReader mPageReader;
 
   /** Uber page this transaction is bound to. */
-  private UberPage mUberPage;
+  private final UberPage mUberPage;
 
   /** Revision root page as root of this transaction. */
   private RevisionRootPage mRevisionRootPage;
