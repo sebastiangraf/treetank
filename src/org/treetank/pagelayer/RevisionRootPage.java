@@ -21,101 +21,88 @@
 
 package org.treetank.pagelayer;
 
-import java.io.IOException;
-
 import org.treetank.api.IConstants;
 import org.treetank.api.IPage;
-import org.treetank.sessionlayer.WriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
-final public class RevisionRootPage implements IPage {
+/**
+ * <h1>RevisionRootPage</h1>
+ * 
+ * <p>
+ * Revision root page holds a reference to the name page as well as
+ * the static node page tree.
+ * </p>
+ */
+public final class RevisionRootPage extends AbstractPage implements IPage {
 
-  /** True if page was created or cloned. False if it was read or committed. */
-  private boolean mDirty;
+  /** Offset of name page reference. */
+  private static final int NAME_REFERENCE_OFFSET = 0;
 
+  /** Offset of indirect page reference. */
+  private static final int INDIRECT_REFERENCE_OFFSET = 1;
+
+  /** Key of revision. */
   private final long mRevisionKey;
 
+  /** Number of nodes of this revision. */
   private long mNodeCount;
 
-  /** Map the hash of a name to its name. */
-  private PageReference mNamePageReference;
-
+  /** Last allocated node key. */
   private long mMaxNodeKey;
 
-  private PageReference mIndirectPageReference;
-
-  private RevisionRootPage(final boolean dirty, final long revisionKey) {
-    mDirty = dirty;
-    mRevisionKey = revisionKey;
-    mNamePageReference = null;
-    mIndirectPageReference = null;
+  /**
+   * Create revision root page.
+   */
+  public RevisionRootPage() {
+    super(2);
+    mRevisionKey = IConstants.UBP_ROOT_REVISION_KEY;
+    mNodeCount = 0L;
+    getReference(NAME_REFERENCE_OFFSET).setPage(new NamePage());
+    mMaxNodeKey = -1L;
   }
 
   /**
-   * This is only required to bootstrap an empty TreeTank.
+   * Read revision root page.
    * 
-   * @return Bootstrapped revision root page.
+   * @param in Input bytes.
+   * @param revisionKey Key of revision.
    */
-  public RevisionRootPage() {
-    this(true, IConstants.UBP_ROOT_REVISION_KEY);
-
-    // Revisioning (deep init).
-    mNodeCount = 0L;
-
-    // Name page (shallow init).
-    mNamePageReference = new PageReference();
-    mNamePageReference.setPage(new NamePage());
-
-    // Node pages (shallow init).
-    mMaxNodeKey = -1L;
-
-    // Indirect pages (shallow init).
-    mIndirectPageReference = new PageReference();
-
-  }
-
   public RevisionRootPage(final FastByteArrayReader in, final long revisionKey) {
-    this(false, revisionKey);
-
-    // Revisioning (deep load).
+    super(2, in);
+    mRevisionKey = revisionKey;
     mNodeCount = in.readVarLong();
-
-    // Name page (shallow load without name page instance).
-    mNamePageReference = new PageReference(in);
-
-    // Node pages (shallow load without node page instances).
     mMaxNodeKey = in.readVarLong();
-
-    // Indirect node pages (shallow load without indirect page instances).
-    mIndirectPageReference = new PageReference(in);
-
   }
 
+  /**
+   * Clone revision root page.
+   * 
+   * @param committedRevisionRootPage Page to clone.
+   */
   public RevisionRootPage(final RevisionRootPage committedRevisionRootPage) {
-    this(true, committedRevisionRootPage.mRevisionKey + 1);
-
-    // Revisioning (deep COW).
+    super(2, committedRevisionRootPage);
+    mRevisionKey = committedRevisionRootPage.mRevisionKey + 1;
     mNodeCount = committedRevisionRootPage.mNodeCount;
-
-    // Names (deep COW).
-    mNamePageReference =
-        new PageReference(committedRevisionRootPage.mNamePageReference);
-
-    // INode pages (shallow COW without node page instances).
     mMaxNodeKey = committedRevisionRootPage.mMaxNodeKey;
-
-    // Indirect node pages (shallow COW without node page instances).
-    mIndirectPageReference =
-        new PageReference(committedRevisionRootPage.mIndirectPageReference);
   }
 
+  /**
+   * Get name page reference.
+   * 
+   * @return Name page reference.
+   */
   public final PageReference getNamePageReference() {
-    return mNamePageReference;
+    return getReference(NAME_REFERENCE_OFFSET);
   }
 
+  /**
+   * Get indirect page reference.
+   * 
+   * @return Indirect page reference.
+   */
   public final PageReference getIndirectPageReference() {
-    return mIndirectPageReference;
+    return getReference(INDIRECT_REFERENCE_OFFSET);
   }
 
   /**
@@ -136,14 +123,25 @@ final public class RevisionRootPage implements IPage {
     return mNodeCount;
   }
 
+  /**
+   * Get last allocated node key.
+   * 
+   * @return Last allocated node key.
+   */
   public final long getMaxNodeKey() {
     return mMaxNodeKey;
   }
 
+  /**
+   * Decrement number of nodes by one.
+   */
   public final void decrementNodeCount() {
     mNodeCount -= 1;
   }
 
+  /**
+   * Increment number of nodes by one while allocating another key.
+   */
   public final void incrementNodeCountAndMaxNodeKey() {
     mNodeCount += 1;
     mMaxNodeKey += 1;
@@ -152,28 +150,11 @@ final public class RevisionRootPage implements IPage {
   /**
    * {@inheritDoc}
    */
-  public final void commit(final WriteTransactionState state)
-      throws IOException {
-    state.commit(mNamePageReference);
-    state.commit(mIndirectPageReference);
-    mDirty = false;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
+  @Override
   public void serialize(final FastByteArrayWriter out) {
+    super.serialize(out);
     out.writeVarLong(mNodeCount);
-    mNamePageReference.serialize(out);
     out.writeVarLong(mMaxNodeKey);
-    mIndirectPageReference.serialize(out);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final boolean isDirty() {
-    return mDirty;
   }
 
   /**
@@ -187,11 +168,11 @@ final public class RevisionRootPage implements IPage {
         + ", nodeCount="
         + mNodeCount
         + ", namePage=("
-        + mNamePageReference
+        + getReference(NAME_REFERENCE_OFFSET)
         + "), indirectPage=("
-        + mIndirectPageReference
+        + getReference(INDIRECT_REFERENCE_OFFSET)
         + "), isDirty="
-        + mDirty;
+        + isDirty();
   }
 
 }
