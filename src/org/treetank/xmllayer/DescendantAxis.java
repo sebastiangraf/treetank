@@ -16,12 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * $Id$
+ * $Id: DescendantAxisIterator.java 3174 2007-10-22 13:44:43Z kramis $
  */
 
 package org.treetank.xmllayer;
 
-import org.treetank.api.IAxisIterator;
 import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastStack;
@@ -34,11 +33,7 @@ import org.treetank.utils.FastStack;
  * node. Self is not included.
  * </p>
  */
-@Deprecated
-public class DescendantAxisIterator implements IAxisIterator {
-
-  /** Exclusive (immutable) trx to iterate with. */
-  private final IReadTransaction mRTX;
+public class DescendantAxis extends AbstractAxis {
 
   /** Stack for remembering next nodeKey in document order. */
   private final FastStack<Long> mRightSiblingKeyStack;
@@ -51,29 +46,27 @@ public class DescendantAxisIterator implements IAxisIterator {
    * 
    * @param rtx Exclusive (immutable) trx to iterate with.
    */
-  public DescendantAxisIterator(final IReadTransaction rtx) {
-
-    // Init members.
-    mRTX = rtx;
+  public DescendantAxis(final IReadTransaction rtx) {
+    super(rtx);
     mRightSiblingKeyStack = new FastStack<Long>();
 
     // Find delimiter nodeKey.
-    final long currentKey = mRTX.getNodeKey();
-    while ((mRTX.getRightSiblingKey() == IConstants.NULL_KEY)
-        && (mRTX.getParentKey() != IConstants.NULL_KEY)) {
-      mRTX.moveToParent();
+    final long currentKey = rtx.getNodeKey();
+    while ((rtx.getRightSiblingKey() == IConstants.NULL_KEY)
+        && (rtx.getParentKey() != IConstants.NULL_KEY)) {
+      rtx.moveToParent();
     }
-    mRightSiblingKeyStack.push(mRTX.getRightSiblingKey());
-    mRTX.moveTo(currentKey);
+    mRightSiblingKeyStack.push(rtx.getRightSiblingKey());
+    rtx.moveTo(currentKey);
 
-    mNextKey = mRTX.getFirstChildKey();
+    mNextKey = rtx.getFirstChildKey();
 
   }
 
   /**
    * {@inheritDoc}
    */
-  public final boolean next() {
+  public final boolean hasNext() {
 
     if (mRTX.moveTo(mNextKey)
         && mRTX.getNodeKey() != mRightSiblingKeyStack.get(0)) {
@@ -84,20 +77,24 @@ public class DescendantAxisIterator implements IAxisIterator {
         if (mRTX.getRightSiblingKey() != IConstants.NULL_KEY) {
           mRightSiblingKeyStack.push(mRTX.getRightSiblingKey());
         }
+        mCurrentNode = mRTX.getNode();
         return true;
       }
 
       // Then follow right sibling if there is one.
       if (mRTX.getRightSiblingKey() != IConstants.NULL_KEY) {
         mNextKey = mRTX.getRightSiblingKey();
+        mCurrentNode = mRTX.getNode();
         return true;
       }
 
       // Then follow right sibling on stack.
       mNextKey = mRightSiblingKeyStack.pop();
+      mCurrentNode = mRTX.getNode();
       return true;
 
     } else {
+      mCurrentNode = null;
       return false;
     }
   }

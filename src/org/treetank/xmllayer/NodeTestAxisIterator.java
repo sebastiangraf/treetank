@@ -32,6 +32,7 @@ import org.treetank.api.IReadTransaction;
  * Only select nodes of kind ELEMENT and TEXT.
  * </p>
  */
+@Deprecated
 public class NodeTestAxisIterator implements IAxisIterator {
 
   /** Exclusive (immutable) trx to iterate with. */

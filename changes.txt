@@ -19,6 +19,14 @@
  * $Id$
  */
  
-Release 4.8:
+TreeTank 4.9:
+-------------
++ Deprecated IAxisIterator and its implementing classes.
++ Added AbstractAxis and its subclasses to support Java 5 enhanced for loops
+  and iterators.
++ Renamed Session.getSession(...) to Session.beginSession(...).
++ Made sure that SessionConfiguration always binds to absolute path.
+ 
+TreeTank 4.8:
 ------------
 + Added changes.txt to document major changes in APIs and binary format.

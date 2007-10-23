@@ -16,52 +16,47 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * $Id$
+ * $Id: AncestorAxisIterator.java 3174 2007-10-22 13:44:43Z kramis $
  */
 
 package org.treetank.xmllayer;
 
-import org.treetank.api.IAxisIterator;
+import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 
 /**
- * <h1>ParentAxisIterator</h1>
+ * <h1>AncestorAxisIterator</h1>
  * 
  * <p>
- * Iterate to parent node starting at a given node. Self is not included.
+ * Iterate over all descendants of kind ELEMENT or TEXT starting at a given
+ * node. Self is not included.
  * </p>
  */
-@Deprecated
-public class ParentAxisIterator implements IAxisIterator {
-
-  /** Exclusive (immutable) trx to iterate with. */
-  private final IReadTransaction mRTX;
+public class AncestorAxis extends AbstractAxis {
 
   /** The nodeKey of the next node to visit. */
   private long mNextKey;
-
-  /** Track number of calls of next. */
-  private boolean mIsFirstNext;
 
   /**
    * Constructor initializing internal state.
    * 
    * @param rtx Exclusive (immutable) trx to iterate with.
    */
-  public ParentAxisIterator(final IReadTransaction rtx) {
-    mRTX = rtx;
-    mIsFirstNext = true;
-    mNextKey = mRTX.getParentKey();
+  public AncestorAxis(final IReadTransaction rtx) {
+    super(rtx);
+    mNextKey = rtx.getParentKey();
   }
 
   /**
    * {@inheritDoc}
    */
-  public final boolean next() {
-    if (mIsFirstNext && mRTX.moveTo(mNextKey)) {
-      mIsFirstNext = false;
+  public final boolean hasNext() {
+    if (mNextKey != IConstants.ROOT_KEY && mRTX.moveTo(mNextKey)) {
+      mNextKey = mRTX.getParentKey();
+      mCurrentNode = mRTX.getNode();
       return true;
     } else {
+      mCurrentNode = null;
       return false;
     }
   }

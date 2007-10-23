@@ -30,6 +30,7 @@ package org.treetank.api;
  * or moved by another thread during an iteration.
  * </p>
  */
+@Deprecated
 public interface IAxisIterator {
 
   /**
