@@ -163,13 +163,6 @@ public class ReadTransactionState implements IReadTransactionState {
   }
 
   /**
-   * @return The node page.
-   */
-  protected final NodePage getNodePage() {
-    return mNodePage;
-  }
-
-  /**
    * @param namePage The name page to set.
    */
   protected final void setNamePage(final NamePage namePage) {
