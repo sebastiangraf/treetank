@@ -21,6 +21,8 @@
 
 package org.treetank.api;
 
+import java.io.IOException;
+
 import org.treetank.sessionlayer.WriteTransactionState;
 import org.treetank.utils.FastByteArrayWriter;
 
@@ -45,9 +47,9 @@ public interface IPage {
    * Recursively call commit on all referenced pages.
    * 
    * @param state IWriteTransaction state.
-   * @throws Exception occurring during commit operation.
+   * @throws IOException occurring during commit operation.
    */
-  public void commit(final WriteTransactionState state) throws Exception;
+  public void commit(final WriteTransactionState state) throws IOException;
 
   /**
    * Serialize self into object output stream.

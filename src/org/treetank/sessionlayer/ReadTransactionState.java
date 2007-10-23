@@ -286,7 +286,7 @@ public class ReadTransactionState {
     // If there is no page, get it from the storage and cache it.
     if (page == null) {
       final FastByteArrayReader in = mPageReader.read(reference);
-      page = IndirectPage.read(in);
+      page = new IndirectPage(in);
       mPageCache.put(reference.getStart(), page);
     }
 
@@ -344,7 +344,7 @@ public class ReadTransactionState {
       offset =
           (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
       levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
-      reference = dereferenceIndirectPage(reference).getPageReference(offset);
+      reference = dereferenceIndirectPage(reference).getReference(offset);
     }
 
     // Return reference to leaf of indirect tree.

@@ -21,6 +21,8 @@
 
 package org.treetank.pagelayer;
 
+import java.io.IOException;
+
 import org.treetank.api.IConstants;
 import org.treetank.api.IPage;
 import org.treetank.sessionlayer.WriteTransactionState;
@@ -76,9 +78,9 @@ final public class UberPage implements IPage {
 
     // Remaining levels.
     for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
-      page = IndirectPage.create();
+      page = new IndirectPage();
       reference.setPage(page);
-      reference = page.getPageReference(0);
+      reference = page.getReference(0);
     }
 
     RevisionRootPage rrp = RevisionRootPage.create();
@@ -92,9 +94,9 @@ final public class UberPage implements IPage {
 
     // Remaining levels.
     for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
-      page = IndirectPage.create();
+      page = new IndirectPage();
       reference.setPage(page);
-      reference = page.getPageReference(0);
+      reference = page.getReference(0);
     }
 
     NodePage ndp = NodePage.create(IConstants.ROOT_PAGE_KEY);
@@ -180,7 +182,8 @@ final public class UberPage implements IPage {
   /**
    * {@inheritDoc}
    */
-  public final void commit(final WriteTransactionState state) throws Exception {
+  public final void commit(final WriteTransactionState state)
+      throws IOException {
     state.commit(mIndirectPageReference);
     mDirty = false;
     mBootstrap = false;

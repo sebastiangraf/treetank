@@ -21,6 +21,8 @@
 
 package org.treetank.pagelayer;
 
+import java.io.IOException;
+
 import org.treetank.api.IConstants;
 import org.treetank.api.IPage;
 import org.treetank.sessionlayer.WriteTransactionState;
@@ -120,7 +122,8 @@ public final class NodePage implements IPage {
   /**
    * {@inheritDoc}
    */
-  public final void commit(final WriteTransactionState state) throws Exception {
+  public final void commit(final WriteTransactionState state)
+      throws IOException {
     mDirty = false;
   }
 

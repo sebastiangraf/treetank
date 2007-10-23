@@ -21,6 +21,7 @@
 
 package org.treetank.sessionlayer;
 
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Map;
 
@@ -136,7 +137,7 @@ public final class WriteTransactionState extends ReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public final void commit(final PageReference reference) throws Exception {
+  public final void commit(final PageReference reference) throws IOException {
     if (reference != null && reference.isInstantiated() && reference.isDirty()) {
 
       // Recursively commit indirectely referenced pages and then write self.
@@ -152,14 +153,14 @@ public final class WriteTransactionState extends ReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public final void commit(final PageReference[] references) throws Exception {
+  public final void commit(final PageReference[] references) throws IOException {
     for (int i = 0, l = references.length; i < l; i++) {
       commit(references[i]);
     }
   }
 
   public final UberPage commit(final SessionConfiguration sessionConfiguration)
-      throws Exception {
+      throws IOException {
     final PageReference uberPageReference = new PageReference();
     final UberPage uberPage = getUberPage();
     final RandomAccessFile file =
@@ -232,15 +233,15 @@ public final class WriteTransactionState extends ReadTransactionState {
 
     if (!reference.isInstantiated()) {
       if (reference.isCommitted()) {
-        page = IndirectPage.clone(dereferenceIndirectPage(reference));
+        page = new IndirectPage(dereferenceIndirectPage(reference));
         reference.setPage(page);
       } else {
-        page = IndirectPage.create();
+        page = new IndirectPage();
         reference.setPage(page);
       }
     } else {
       if (!reference.isDirty()) {
-        page = IndirectPage.clone(page);
+        page = new IndirectPage(page);
         reference.setPage(page);
       }
     }
@@ -320,7 +321,7 @@ public final class WriteTransactionState extends ReadTransactionState {
       offset =
           (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
       levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
-      reference = prepareIndirectPage(reference).getPageReference(offset);
+      reference = prepareIndirectPage(reference).getReference(offset);
     }
 
     // Return reference to leaf of indirect tree.
