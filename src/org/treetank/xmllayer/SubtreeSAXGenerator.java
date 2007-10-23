@@ -107,6 +107,7 @@ public class SubtreeSAXGenerator extends SAXGenerator {
     }
     if (lastElement) {
       mHandler.endDocument();
+      mRTX.close();
       lastElement = false;
       return true;
     }
