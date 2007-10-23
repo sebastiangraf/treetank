@@ -21,9 +21,7 @@
 
 TreeTank 4.10.:
 ---------------
-+ IWriteTransaction close now performs implicit commit. This allows to commit
-  and abort multiple times on a single WriteTransaction instance without
-  closing and beginning it again.
++ Safely switch between commits.
 + Session makes sure that there is only one session bound to some TreeTank
   file at any time.
  

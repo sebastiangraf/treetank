@@ -37,7 +37,6 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.api.IWriteTransactionState;
 import org.treetank.pagelayer.PageReader;
 import org.treetank.pagelayer.PageReference;
-import org.treetank.pagelayer.PageWriter;
 import org.treetank.pagelayer.UberPage;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastWeakHashMap;
@@ -178,11 +177,10 @@ public final class SessionState implements ISession {
       throw new RuntimeException(e);
     }
 
-    final PageReader pageReader = new PageReader(mSessionConfiguration);
     final IReadTransactionState state =
         new ReadTransactionState(
+            mSessionConfiguration,
             mPageCache,
-            pageReader,
             mLastCommittedUberPage,
             revisionKey);
 
@@ -208,10 +206,8 @@ public final class SessionState implements ISession {
     mPrimaryUberPageReference.setPage(mUberPage);
 
     // Make write transaction state ready.
-    final PageWriter pageWriter = new PageWriter(mSessionConfiguration);
-    final PageReader pageReader = new PageReader(mSessionConfiguration);
     mWriteTransactionState =
-        new WriteTransactionState(mPageCache, pageReader, pageWriter, mUberPage);
+        new WriteTransactionState(mSessionConfiguration, mPageCache, mUberPage);
 
     // Return fresh write transaction.
     return new WriteTransaction(this, mWriteTransactionState);

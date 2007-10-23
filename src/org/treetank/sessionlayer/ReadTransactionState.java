@@ -72,18 +72,18 @@ public class ReadTransactionState implements IReadTransactionState {
   /**
    * Standard constructor.
    * 
+   * @param sessionConfiguration Configuration of session.
    * @param pageCache Shared page cache.
-   * @param pageReader Exclusive page reader.
    * @param uberPage Uber page to start reading with.
    * @param revisionKey Key of revision to read from uber page.
    */
   public ReadTransactionState(
+      final SessionConfiguration sessionConfiguration,
       final Map<Long, IPage> pageCache,
-      final PageReader pageReader,
       final UberPage uberPage,
       final long revisionKey) {
     mPageCache = pageCache;
-    mPageReader = pageReader;
+    mPageReader = new PageReader(sessionConfiguration);
     mUberPage = uberPage;
     mRevisionRootPage = getRevisionRootPage(revisionKey);
     mNodePage = null;

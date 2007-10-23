@@ -30,7 +30,6 @@ import org.treetank.pagelayer.IndirectPage;
 import org.treetank.pagelayer.NamePage;
 import org.treetank.pagelayer.Node;
 import org.treetank.pagelayer.NodePage;
-import org.treetank.pagelayer.PageReader;
 import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.PageWriter;
 import org.treetank.pagelayer.RevisionRootPage;
@@ -52,19 +51,17 @@ public final class WriteTransactionState extends ReadTransactionState
   /**
    * Standard constructor.
    * 
+   * @param sessionConfiguration Configuration of session.
    * @param pageCache Shared page cache.
-   * @param pageReader Exclusive page reader.
-   * @param pageWriter Exclusive page writer.
    * @param uberPage Root of revision.
    */
   public WriteTransactionState(
+      final SessionConfiguration sessionConfiguration,
       final Map<Long, IPage> pageCache,
-      final PageReader pageReader,
-      final PageWriter pageWriter,
       final UberPage uberPage) {
-    super(pageCache, pageReader, uberPage, uberPage
+    super(sessionConfiguration, pageCache, uberPage, uberPage
         .getLastCommittedRevisionKey());
-    mPageWriter = pageWriter;
+    mPageWriter = new PageWriter(sessionConfiguration);
     setRevisionRootPage(prepareRevisionRootPage());
   }
 
