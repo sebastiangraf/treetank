@@ -33,6 +33,7 @@ import org.treetank.api.IReadTransaction;
  * comparisons.
  * </p>
  */
+@Deprecated
 public class NameTestAxisIterator implements IAxisIterator {
 
   /** Exclusive (immutable) mTrx to iterate with. */

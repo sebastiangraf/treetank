@@ -24,19 +24,20 @@ package org.treetank.xmllayer;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.api.IAxisIterator;
+import org.treetank.api.INode;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
 
-public class AttributeAxisIteratorTest {
+public class ParentAxisTest {
 
   public static final String PATH =
-      "generated" + File.separator + "AttributeAxisIteratorTest.tnk";
+      "generated" + File.separator + "ParentAxisTest.tnk";
 
   @Before
   public void setUp() throws Exception {
@@ -50,28 +51,19 @@ public class AttributeAxisIteratorTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
 
-    wtx.moveTo(0L);
-    final IAxisIterator attributeIterator1 = new AttributeAxisIterator(wtx);
+    wtx.moveTo(3L);
+    final Iterator<INode> axis1 = new ParentAxis(wtx);
+    assertEquals(true, axis1.hasNext());
+    assertEquals(1L, wtx.getNodeKey());
 
-    assertEquals(false, attributeIterator1.next());
-
-    wtx.moveTo(1L);
-    final IAxisIterator attributeIterator2 = new AttributeAxisIterator(wtx);
-    assertEquals(true, attributeIterator2.next());
-    assertEquals((1L) + 1, wtx.getNodeKey());
-
-    assertEquals(false, attributeIterator2.next());
+    assertEquals(false, axis1.hasNext());
 
     wtx.moveTo(7L);
-    final IAxisIterator attributeIterator4 = new AttributeAxisIterator(wtx);
-    assertEquals(true, attributeIterator4.next());
-    assertEquals((7L) + 1, wtx.getNodeKey());
+    final Iterator<INode> axis2 = new ParentAxis(wtx);
+    assertEquals(true, axis2.hasNext());
+    assertEquals(1L, wtx.getNodeKey());
 
-    assertEquals(false, attributeIterator4.next());
-
-    wtx.moveTo(10L);
-    final IAxisIterator attributeIterator5 = new AttributeAxisIterator(wtx);
-    assertEquals(false, attributeIterator5.next());
+    assertEquals(false, axis2.hasNext());
 
     wtx.abort();
     session.close();

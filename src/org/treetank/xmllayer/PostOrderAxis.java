@@ -1,6 +1,5 @@
 package org.treetank.xmllayer;
 
-import org.treetank.api.IAxisIterator;
 import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastStack;
@@ -12,11 +11,7 @@ import org.treetank.utils.FastStack;
  * Iterate over the whole tree starting with the last node.
  * </p>
  */
-@Deprecated
-public class PostOrderIterator implements IAxisIterator {
-
-  /** Exclusive (immutable) trx to iterate with. */
-  private final IReadTransaction trx;
+public class PostOrderAxis extends AbstractAxis {
 
   /** For remembering last parent. */
   private final FastStack<Long> lastParent;
@@ -27,21 +22,19 @@ public class PostOrderIterator implements IAxisIterator {
   /**
    * Constructor initializing internal state.
    * 
-   * @param initTrx
+   * @param rtx
    *            Exclusive (immutable) trx to iterate with.
    * @param startAtBeginning
    *            Starting at the beginning of the tree and though just
    *            traversing the whole tree..No, the root is not the start!
    */
-  public PostOrderIterator(
-      final IReadTransaction initTrx,
+  public PostOrderAxis(
+      final IReadTransaction rtx,
       final boolean startAtBeginning) {
-
-    // Init members.
-    trx = initTrx;
+    super(rtx);
     lastParent = new FastStack<Long>();
     lastParent.push(IConstants.NULL_KEY);
-    nextKey = trx.getNodeKey();
+    nextKey = rtx.getNodeKey();
     if (startAtBeginning) {
       startAtBeginning();
     }
@@ -52,12 +45,12 @@ public class PostOrderIterator implements IAxisIterator {
    * Method to start at the beginning of the tree.
    */
   private final void startAtBeginning() {
-    trx.moveToRoot();
-    while (trx.getFirstChildKey() != IConstants.NULL_KEY) {
-      lastParent.push(trx.getNodeKey());
-      trx.moveToFirstChild();
+    mRTX.moveToRoot();
+    while (mRTX.getFirstChildKey() != IConstants.NULL_KEY) {
+      lastParent.push(mRTX.getNodeKey());
+      mRTX.moveToFirstChild();
 
-      nextKey = trx.getNodeKey();
+      nextKey = mRTX.getNodeKey();
     }
     next();
   }
@@ -65,28 +58,30 @@ public class PostOrderIterator implements IAxisIterator {
   /**
    * {@inheritDoc}
    */
-  public boolean next() {
+  public boolean hasNext() {
 
-    if (trx.moveTo(nextKey)) {
-      while (trx.getFirstChildKey() != IConstants.NULL_KEY
-          && trx.getNodeKey() != this.lastParent.peek()) {
-        this.lastParent.push(trx.getNodeKey());
-        trx.moveToFirstChild();
+    if (mRTX.moveTo(nextKey)) {
+      while (mRTX.getFirstChildKey() != IConstants.NULL_KEY
+          && mRTX.getNodeKey() != this.lastParent.peek()) {
+        this.lastParent.push(mRTX.getNodeKey());
+        mRTX.moveToFirstChild();
       }
-      if (trx.getNodeKey() == this.lastParent.peek()) {
+      if (mRTX.getNodeKey() == this.lastParent.peek()) {
         this.lastParent.pop();
       }
 
-      if (trx.getRightSiblingKey() != IConstants.NULL_KEY) {
-        nextKey = trx.getRightSiblingKey();
+      if (mRTX.getRightSiblingKey() != IConstants.NULL_KEY) {
+        nextKey = mRTX.getRightSiblingKey();
 
       } else {
         nextKey = this.lastParent.peek();
       }
 
+      mCurrentNode = mRTX.getNode();
       return true;
 
     } else {
+      mCurrentNode = null;
       return false;
     }
   }

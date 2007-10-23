@@ -16,12 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * $Id$
+ * $Id: ParentAxisIterator.java 3174 2007-10-22 13:44:43Z kramis $
  */
 
 package org.treetank.xmllayer;
 
-import org.treetank.api.IAxisIterator;
 import org.treetank.api.IReadTransaction;
 
 /**
@@ -31,11 +30,7 @@ import org.treetank.api.IReadTransaction;
  * Iterate to parent node starting at a given node. Self is not included.
  * </p>
  */
-@Deprecated
-public class ParentAxisIterator implements IAxisIterator {
-
-  /** Exclusive (immutable) trx to iterate with. */
-  private final IReadTransaction mRTX;
+public class ParentAxis extends AbstractAxis {
 
   /** The nodeKey of the next node to visit. */
   private long mNextKey;
@@ -48,20 +43,22 @@ public class ParentAxisIterator implements IAxisIterator {
    * 
    * @param rtx Exclusive (immutable) trx to iterate with.
    */
-  public ParentAxisIterator(final IReadTransaction rtx) {
-    mRTX = rtx;
+  public ParentAxis(final IReadTransaction rtx) {
+    super(rtx);
     mIsFirstNext = true;
-    mNextKey = mRTX.getParentKey();
+    mNextKey = rtx.getParentKey();
   }
 
   /**
    * {@inheritDoc}
    */
-  public final boolean next() {
+  public final boolean hasNext() {
     if (mIsFirstNext && mRTX.moveTo(mNextKey)) {
       mIsFirstNext = false;
+      mCurrentNode = mRTX.getNode();
       return true;
     } else {
+      mCurrentNode = null;
       return false;
     }
   }

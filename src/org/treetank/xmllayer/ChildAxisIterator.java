@@ -32,6 +32,7 @@ import org.treetank.api.IReadTransaction;
  * node. Self is not included.
  * </p>
  */
+@Deprecated
 public class ChildAxisIterator implements IAxisIterator {
 
   /** Exclusive (immutable) trx to iterate with. */

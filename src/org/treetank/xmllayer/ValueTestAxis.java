@@ -16,12 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * $Id$
+ * $Id: ValueTestAxisIterator.java 3174 2007-10-22 13:44:43Z kramis $
  */
 
 package org.treetank.xmllayer;
 
-import org.treetank.api.IAxisIterator;
 import org.treetank.api.IReadTransaction;
 import org.treetank.utils.UTF;
 
@@ -33,14 +32,10 @@ import org.treetank.utils.UTF;
  * node.
  * </p>
  */
-@Deprecated
-public class ValueTestAxisIterator implements IAxisIterator {
-
-  /** Exclusive (immutable) mTrx to iterate with. */
-  private final IReadTransaction mRTX;
+public class ValueTestAxis extends AbstractAxis {
 
   /** Remember next key to visit. */
-  private final IAxisIterator mAxis;
+  private final AbstractAxis mAxis;
 
   /** Name test to do. */
   private final byte[] mValue;
@@ -52,11 +47,11 @@ public class ValueTestAxisIterator implements IAxisIterator {
    * @param axis Axis iterator over which we should find values.
    * @param value Value to find.
    */
-  public ValueTestAxisIterator(
+  public ValueTestAxis(
       final IReadTransaction rtx,
-      final IAxisIterator axis,
+      final AbstractAxis axis,
       final byte[] value) {
-    mRTX = rtx;
+    super(rtx);
     mAxis = axis;
     mValue = value;
   }
@@ -68,9 +63,9 @@ public class ValueTestAxisIterator implements IAxisIterator {
    * @param axis Axis iterator over which we should find values.
    * @param value Value to find.
    */
-  public ValueTestAxisIterator(
+  public ValueTestAxis(
       final IReadTransaction rtx,
-      final IAxisIterator axis,
+      final AbstractAxis axis,
       final String value) {
     this(rtx, axis, UTF.convert(value));
   }
@@ -78,10 +73,17 @@ public class ValueTestAxisIterator implements IAxisIterator {
   /**
    * {@inheritDoc}
    */
-  public final boolean next() {
-    while (mAxis.next() && !(UTF.equals(mRTX.getValue(), mValue)))
-      ;
-    return mRTX.isSelected();
+  public final boolean hasNext() {
+    while (mAxis.hasNext() && !(UTF.equals(mAxis.next().getValue(), mValue))) {
+      // Nothing to do.
+    }
+    if (mRTX.isSelected()) {
+      mCurrentNode = mRTX.getNode();
+      return true;
+    } else {
+      mCurrentNode = null;
+      return false;
+    }
   }
 
 }

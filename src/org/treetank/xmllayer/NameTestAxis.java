@@ -16,55 +16,58 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * $Id$
+ * $Id: NameTestAxisIterator.java 3174 2007-10-22 13:44:43Z kramis $
  */
 
 package org.treetank.xmllayer;
 
-import org.treetank.api.IAxisIterator;
 import org.treetank.api.IReadTransaction;
 
 /**
- * <h1>AttributeAxisIterator</h1>
+ * <h1>NameTestAxisIterator</h1>
  * 
  * <p>
- * Iterate over all attibutes of a given node.
+ * Find all ELEMENTS provided by some axis iterator that match a given name.
+ * Note that this is efficiently done with a single String and multiple integer
+ * comparisons.
  * </p>
  */
-@Deprecated
-public class AttributeAxisIterator implements IAxisIterator {
-
-  /** Exclusive (immutable) mTrx to iterate with. */
-  private final IReadTransaction mRTX;
+public class NameTestAxis extends AbstractAxis {
 
   /** Remember next key to visit. */
-  private int mNextIndex;
+  private final AbstractAxis mAxis;
+
+  /** Name test to do. */
+  private final int mNameKey;
 
   /**
    * Constructor initializing internal state.
    * 
    * @param rtx Exclusive (immutable) mTrx to iterate with.
+   * @param axis Axis iterator providing ELEMENTS.
+   * @param name Name ELEMENTS must match to.
    */
-  public AttributeAxisIterator(final IReadTransaction rtx) {
-    mRTX = rtx;
-    mNextIndex = 0;
+  public NameTestAxis(
+      final IReadTransaction rtx,
+      final AbstractAxis axis,
+      final String name) {
+    super(rtx);
+    mAxis = axis;
+    mNameKey = rtx.keyForName(name);
   }
 
   /**
    * {@inheritDoc}
    */
-  public final boolean next() {
-    if (mNextIndex < mRTX.getAttributeCount()) {
-      if (mNextIndex > 0) {
-        mRTX.moveToParent();
-      }
-      mRTX.moveToAttribute(mNextIndex);
-      mNextIndex += 1;
+  public final boolean hasNext() {
+    while ((mAxis.hasNext()) && !(mAxis.next().getLocalPartKey() == mNameKey)) {
+      // Nothing to do here.
+    }
+    if (mRTX.isSelected()) {
+      mCurrentNode = mRTX.getNode();
       return true;
     } else {
-      if (mNextIndex > 0) {
-        mRTX.moveToParent();
-      }
+      mCurrentNode = null;
       return false;
     }
   }

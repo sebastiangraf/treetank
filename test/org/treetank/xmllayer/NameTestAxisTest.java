@@ -24,19 +24,20 @@ package org.treetank.xmllayer;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.api.IAxisIterator;
+import org.treetank.api.INode;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
 
-public class AncestorAxisIteratorTest {
+public class NameTestAxisTest {
 
   public static final String PATH =
-      "generated" + File.separator + "AncestorAxisIteratorTest.tnk";
+      "generated" + File.separator + "NameTestAxisTest.tnk";
 
   @Before
   public void setUp() throws Exception {
@@ -51,37 +52,17 @@ public class AncestorAxisIteratorTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
 
-    // Find ancestors starting from nodeKey 0L (root).
-    wtx.moveTo(8L);
-    final IAxisIterator ancestorIterator1 = new AncestorAxisIterator(wtx);
-    assertEquals(true, ancestorIterator1.next());
+    // Find descendants starting from nodeKey 0L (root).
+    wtx.moveToRoot();
+    final Iterator<INode> axis1 =
+        new NameTestAxis(wtx, new DescendantAxis(wtx), "b");
+
+    assertEquals(true, axis1.hasNext());
+    assertEquals(3L, wtx.getNodeKey());
+
+    assertEquals(true, axis1.hasNext());
     assertEquals(7L, wtx.getNodeKey());
-
-    assertEquals(true, ancestorIterator1.next());
-    assertEquals(1L, wtx.getNodeKey());
-
-    assertEquals(false, ancestorIterator1.next());
-
-    // Find ancestors starting from nodeKey 1L (first child of root).
-    wtx.moveTo(3L);
-    final IAxisIterator ancestorIterator2 = new AncestorAxisIterator(wtx);
-    assertEquals(true, ancestorIterator2.next());
-    assertEquals(1L, wtx.getNodeKey());
-
-    assertEquals(false, ancestorIterator2.next());
-
-    // Find ancestors starting from nodeKey 4L (second child of root).
-    wtx.moveTo(2L);
-    final IAxisIterator ancestorIterator3 = new AncestorAxisIterator(wtx);
-    assertEquals(true, ancestorIterator3.next());
-    assertEquals(1L, wtx.getNodeKey());
-
-    assertEquals(false, ancestorIterator3.next());
-
-    // Find ancestors starting from nodeKey 5L (last in document order).
-    wtx.moveTo(1L);
-    final IAxisIterator ancestorIterator4 = new AncestorAxisIterator(wtx);
-    assertEquals(false, ancestorIterator4.next());
+    assertEquals(false, axis1.hasNext());
 
     wtx.abort();
     session.close();

@@ -16,52 +16,51 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * $Id$
+ * $Id: NodeTestAxisIterator.java 3174 2007-10-22 13:44:43Z kramis $
  */
 
 package org.treetank.xmllayer;
 
-import org.treetank.api.IAxisIterator;
+import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 
 /**
- * <h1>ParentAxisIterator</h1>
+ * <h1>NodeTestAxisIterator</h1>
  * 
  * <p>
- * Iterate to parent node starting at a given node. Self is not included.
+ * Only select nodes of kind ELEMENT and TEXT.
  * </p>
  */
-@Deprecated
-public class ParentAxisIterator implements IAxisIterator {
+public class NodeTestAxis extends AbstractAxis {
 
-  /** Exclusive (immutable) trx to iterate with. */
-  private final IReadTransaction mRTX;
-
-  /** The nodeKey of the next node to visit. */
-  private long mNextKey;
-
-  /** Track number of calls of next. */
-  private boolean mIsFirstNext;
+  /** Remember next key to visit. */
+  private final AbstractAxis mAxis;
 
   /**
    * Constructor initializing internal state.
    * 
    * @param rtx Exclusive (immutable) trx to iterate with.
+   * @param axis Axis to iterate over.
    */
-  public ParentAxisIterator(final IReadTransaction rtx) {
-    mRTX = rtx;
-    mIsFirstNext = true;
-    mNextKey = mRTX.getParentKey();
+  public NodeTestAxis(
+      final IReadTransaction rtx,
+      final AbstractAxis axis) {
+    super(rtx);
+    mAxis = axis;
   }
 
   /**
    * {@inheritDoc}
    */
-  public final boolean next() {
-    if (mIsFirstNext && mRTX.moveTo(mNextKey)) {
-      mIsFirstNext = false;
+  public final boolean hasNext() {
+    // TODO The double next() call works but is not Iterator conformant.
+    if (mAxis.hasNext()
+        && mAxis.next().getKind() == IConstants.ELEMENT
+        || mAxis.next().getKind() == IConstants.TEXT) {
+      mCurrentNode = mRTX.getNode();
       return true;
     } else {
+      mCurrentNode = null;
       return false;
     }
   }
