@@ -1,9 +1,9 @@
 package org.treetank.xmllayer;
 
-import java.io.File;
 import java.util.Hashtable;
 
 import org.treetank.api.IConstants;
+import org.treetank.api.IWriteTransaction;
 import org.treetank.utils.FastStack;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -39,7 +39,7 @@ public class SubtreeSAXHandler extends SAXHandler {
    * @param target
    *            File to write to.
    */
-  public SubtreeSAXHandler(final File target) throws Exception {
+  public SubtreeSAXHandler(final IWriteTransaction target) throws Exception {
     super(target);
     subtreeKeyNodeMapping = new Hashtable<Long, Long>(0);
     stacks = new FastStack<FastStack<Long>>();
@@ -72,8 +72,7 @@ public class SubtreeSAXHandler extends SAXHandler {
 
       if (nodeCounter > COMMITTHRESHOLD) {
         final long tempkey = mWTX.getNodeKey();
-        mWTX.commit();
-        mWTX = session.beginWriteTransaction();
+        //        mWTX.commit();
         System.gc();
         mWTX.moveTo(tempkey);
         nodeCounter = 0;
@@ -121,8 +120,7 @@ public class SubtreeSAXHandler extends SAXHandler {
    */
   public void subtreeEnding(final long subtreeID) throws SAXException {
     try {
-      mWTX.commit();
-      mWTX = session.beginWriteTransaction();
+      //      mWTX.commit();
       System.gc();
       nodeCounter = 0;
       mWTX.moveTo(this.subtreeKeyNodeMapping.remove(subtreeID));

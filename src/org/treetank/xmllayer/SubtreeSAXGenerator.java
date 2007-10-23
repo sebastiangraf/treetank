@@ -1,9 +1,8 @@
 package org.treetank.xmllayer;
 
-import java.io.File;
-
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
+import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastStack;
 import org.treetank.utils.UTF;
 import org.xml.sax.ContentHandler;
@@ -18,7 +17,7 @@ public class SubtreeSAXGenerator extends SAXGenerator {
   private final FastStack<Long> subtreeKeyStack = new FastStack<Long>();
 
   public SubtreeSAXGenerator(
-      final File input,
+      final IReadTransaction input,
       final ContentHandler contentHandler,
       final boolean prettyPrint) throws Exception {
     super(input, contentHandler, prettyPrint);
@@ -109,8 +108,6 @@ public class SubtreeSAXGenerator extends SAXGenerator {
     if (lastElement) {
       mHandler.endDocument();
       lastElement = false;
-      mRTX.close();
-      session.close();
       return true;
     }
 

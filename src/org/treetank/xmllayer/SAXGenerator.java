@@ -21,7 +21,6 @@
 
 package org.treetank.xmllayer;
 
-import java.io.File;
 import java.io.PipedOutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -29,8 +28,6 @@ import java.io.Writer;
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
-import org.treetank.sessionlayer.Session;
 import org.treetank.utils.FastStack;
 import org.treetank.utils.UTF;
 import org.xml.sax.ContentHandler;
@@ -45,8 +42,6 @@ import com.sun.org.apache.xml.internal.serializer.SerializerFactory;
  * Reconstructs an XML document from XPathAccelerator encoding.
  */
 public class SAXGenerator extends Thread {
-
-  protected final ISession session;
 
   protected final IReadTransaction mRTX;
 
@@ -77,12 +72,11 @@ public class SAXGenerator extends Thread {
    * </p>
    */
   public SAXGenerator(
-      final File input,
+      final IReadTransaction input,
       final ContentHandler contentHandler,
       final boolean prettyPrint) throws Exception {
 
-    session = Session.beginSession(input);
-    mRTX = session.beginReadTransaction();
+    mRTX = input;
     mHandler = contentHandler;
 
     // Prepare full descendant iteration.
@@ -102,12 +96,11 @@ public class SAXGenerator extends Thread {
    * @see java.io.Writer
    */
   public SAXGenerator(
-      final File file,
+      final IReadTransaction input,
       final Writer writer,
       final boolean prettyPrint) throws Exception {
 
-    session = Session.beginSession(file);
-    mRTX = session.beginReadTransaction();
+    mRTX = input;
     mWriter = writer;
     mIsSerialize = true;
 
@@ -124,9 +117,9 @@ public class SAXGenerator extends Thread {
   /**
    * Constructor for printing the reconstructed XML of global storage to stdout.
    */
-  public SAXGenerator(final File file, final boolean prettyPrint)
+  public SAXGenerator(final IReadTransaction input, final boolean prettyPrint)
       throws Exception {
-    this(file, new PrintWriter(System.out), prettyPrint);
+    this(input, new PrintWriter(System.out), prettyPrint);
   }
 
   protected final String qName(final String prefix, final String localPart) {
@@ -266,10 +259,6 @@ public class SAXGenerator extends Thread {
 
       // End document.
       mHandler.endDocument();
-
-      //cleaning up
-      mRTX.close();
-      session.close();
 
       if (mAsInputStream) {
         mPipedOut.close();

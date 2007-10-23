@@ -21,6 +21,8 @@
 
 package org.treetank.pagelayer;
 
+import java.util.Arrays;
+
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.utils.FastByteArrayReader;
@@ -436,6 +438,66 @@ public final class Node implements INode {
         + this.mLeftSiblingKey
         + "\n\trightSiblingKey: "
         + this.mRightSiblingKey;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + Arrays.hashCode(mAttributes);
+    result = prime * result + (int) (mChildCount ^ (mChildCount >>> 32));
+    result = prime * result + (int) (mFirstChildKey ^ (mFirstChildKey >>> 32));
+    result = prime * result + mKind;
+    result =
+        prime * result + (int) (mLeftSiblingKey ^ (mLeftSiblingKey >>> 32));
+    result = prime * result + mLocalPartKey;
+    result = prime * result + Arrays.hashCode(mNamespaces);
+    result = prime * result + (int) (mNodeKey ^ (mNodeKey >>> 32));
+    result = prime * result + (int) (mParentKey ^ (mParentKey >>> 32));
+    result = prime * result + mPrefixKey;
+    result =
+        prime * result + (int) (mRightSiblingKey ^ (mRightSiblingKey >>> 32));
+    result = prime * result + mURIKey;
+    result = prime * result + Arrays.hashCode(mValue);
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    final Node other = (Node) obj;
+    if (!Arrays.equals(mAttributes, other.mAttributes))
+      return false;
+    if (mChildCount != other.mChildCount)
+      return false;
+    if (mFirstChildKey != other.mFirstChildKey)
+      return false;
+    if (mKind != other.mKind)
+      return false;
+    if (mLeftSiblingKey != other.mLeftSiblingKey)
+      return false;
+    if (mLocalPartKey != other.mLocalPartKey)
+      return false;
+    if (!Arrays.equals(mNamespaces, other.mNamespaces))
+      return false;
+    if (mNodeKey != other.mNodeKey)
+      return false;
+    if (mParentKey != other.mParentKey)
+      return false;
+    if (mPrefixKey != other.mPrefixKey)
+      return false;
+    if (mRightSiblingKey != other.mRightSiblingKey)
+      return false;
+    if (mURIKey != other.mURIKey)
+      return false;
+    if (!Arrays.equals(mValue, other.mValue))
+      return false;
+    return true;
   }
 
 }

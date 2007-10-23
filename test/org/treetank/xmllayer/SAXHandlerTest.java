@@ -21,7 +21,7 @@
 
 package org.treetank.xmllayer;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 
@@ -30,8 +30,6 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.api.IAxisIterator;
-import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
@@ -61,6 +59,8 @@ public class SAXHandlerTest {
     final IWriteTransaction expectedWTX =
         expectedSession.beginWriteTransaction();
     TestDocument.create(expectedWTX);
+    expectedWTX.commit();
+    //    expectedWTX.close();
 
     // Setup parsed session.
     final SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
@@ -68,44 +68,32 @@ public class SAXHandlerTest {
     saxParserFactory.setNamespaceAware(true);
     final SAXParser parser = saxParserFactory.newSAXParser();
     final InputSource inputSource = new InputSource("xml/test.xml");
-    parser.parse(inputSource, new SAXHandler(new File(PATH)));
-
     final ISession session = Session.beginSession(new File(PATH));
-    final IReadTransaction rtx = session.beginReadTransaction();
+    final IWriteTransaction wrtx = session.beginWriteTransaction();
+    parser.parse(inputSource, new SAXHandler(wrtx));
+    wrtx.commit();
+    //    wrtx.close();
 
-    expectedWTX.moveToRoot();
-    rtx.moveToRoot();
-    final IAxisIterator expectedDescendants =
-        new DescendantAxisIterator(expectedWTX);
-    final IAxisIterator descendants = new DescendantAxisIterator(rtx);
+    final IReadTransaction expectedTrx = expectedSession.beginReadTransaction();
+    final IReadTransaction rtrx2 = session.beginReadTransaction();
 
-    while (expectedDescendants.next() && descendants.next()) {
-      assertEquals(expectedWTX.getNodeKey(), rtx.getNodeKey());
-      assertEquals(expectedWTX.getParentKey(), rtx.getParentKey());
-      assertEquals(expectedWTX.getFirstChildKey(), rtx.getFirstChildKey());
-      assertEquals(expectedWTX.getLeftSiblingKey(), rtx.getLeftSiblingKey());
-      assertEquals(expectedWTX.getRightSiblingKey(), rtx.getRightSiblingKey());
-      assertEquals(expectedWTX.getChildCount(), rtx.getChildCount());
-      assertEquals(expectedWTX.getKind(), rtx.getKind());
-      assertEquals(expectedWTX.nameForKey(expectedWTX.getLocalPartKey()), rtx
-          .nameForKey(rtx.getLocalPartKey()));
-      assertEquals(expectedWTX.nameForKey(expectedWTX.getURIKey()), rtx
-          .nameForKey(rtx.getURIKey()));
-      assertEquals(expectedWTX.nameForKey(expectedWTX.getPrefixKey()), rtx
-          .nameForKey(rtx.getPrefixKey()));
-      assertEquals(new String(
-          expectedWTX.getValue(),
-          IConstants.DEFAULT_ENCODING), new String(
-          rtx.getValue(),
-          IConstants.DEFAULT_ENCODING));
+    final AbstractAxis expectedDescendants = new DescendantAxis(expectedTrx);
+    final AbstractAxis descendants = new DescendantAxis(rtrx2);
+
+    while (expectedDescendants.hasNext() && descendants.hasNext()) {
+      if (!expectedDescendants.mCurrentNode.equals(descendants.mCurrentNode)) {
+        fail(expectedDescendants.mCurrentNode.toString()
+            + " and "
+            + descendants.mCurrentNode
+            + " are not the same!");
+      }
     }
 
-    expectedWTX.abort();
+    expectedTrx.close();
     expectedSession.close();
 
-    rtx.close();
+    rtrx2.close();
     session.close();
 
   }
-
 }

@@ -21,6 +21,8 @@
 
 package org.treetank.pagelayer;
 
+import java.util.Arrays;
+
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 
@@ -144,6 +146,43 @@ public final class Attribute implements INode {
 
   public final int getNamespaceCount() {
     return 0;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + mLocalPartKey;
+    result = prime * result + (int) (mNodeKey ^ (mNodeKey >>> 32));
+    result = prime * result + (int) (mParentKey ^ (mParentKey >>> 32));
+    result = prime * result + mPrefixKey;
+    result = prime * result + mURIKey;
+    result = prime * result + Arrays.hashCode(mValue);
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    final Attribute other = (Attribute) obj;
+    if (mLocalPartKey != other.mLocalPartKey)
+      return false;
+    if (mNodeKey != other.mNodeKey)
+      return false;
+    if (mParentKey != other.mParentKey)
+      return false;
+    if (mPrefixKey != other.mPrefixKey)
+      return false;
+    if (mURIKey != other.mURIKey)
+      return false;
+    if (!Arrays.equals(mValue, other.mValue))
+      return false;
+    return true;
   }
 
 }

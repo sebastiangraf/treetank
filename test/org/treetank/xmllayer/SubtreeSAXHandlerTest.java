@@ -1,6 +1,7 @@
 package org.treetank.xmllayer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 
@@ -9,8 +10,6 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.api.IAxisIterator;
-import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
@@ -37,9 +36,11 @@ public class SubtreeSAXHandlerTest {
 
     // Setup expected session.
     final ISession expectedSession = Session.beginSession(EXPECTED_PATH);
-    final IWriteTransaction expectedTrx =
+    final IWriteTransaction expectedWTX =
         expectedSession.beginWriteTransaction();
-    TestDocument.create(expectedTrx);
+    TestDocument.create(expectedWTX);
+    expectedWTX.commit();
+    //    expectedWTX.close();
 
     // Setup parsed session.
     final SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
@@ -47,42 +48,31 @@ public class SubtreeSAXHandlerTest {
     saxParserFactory.setNamespaceAware(true);
     final SAXParser parser = saxParserFactory.newSAXParser();
     final InputSource inputSource = new InputSource("xml/test.xml");
-
-    parser.parse(inputSource, new SubtreeSAXHandler(new File(PATH)));
-
     final ISession session = Session.beginSession(new File(PATH));
-    final IReadTransaction rtx = session.beginReadTransaction();
+    final IWriteTransaction wrtx = session.beginWriteTransaction();
+    parser.parse(inputSource, new SubtreeSAXHandler(wrtx));
+    wrtx.commit();
+    //    wrtx.close();
 
-    expectedTrx.moveToRoot();
-    rtx.moveToRoot();
-    final IAxisIterator expectedDescendants =
-        new DescendantAxisIterator(expectedTrx);
-    final IAxisIterator descendants = new DescendantAxisIterator(rtx);
+    final IReadTransaction expectedTrx = expectedSession.beginReadTransaction();
+    final IReadTransaction rtrx2 = session.beginReadTransaction();
 
-    while (expectedDescendants.next() && descendants.next()) {
-      assertEquals(expectedTrx.getNodeKey(), rtx.getNodeKey());
-      assertEquals(expectedTrx.getParentKey(), rtx.getParentKey());
-      assertEquals(expectedTrx.getFirstChildKey(), rtx.getFirstChildKey());
-      assertEquals(expectedTrx.getLeftSiblingKey(), rtx.getLeftSiblingKey());
-      assertEquals(expectedTrx.getRightSiblingKey(), rtx.getRightSiblingKey());
-      assertEquals(expectedTrx.getChildCount(), rtx.getChildCount());
-      assertEquals(expectedTrx.getKind(), rtx.getKind());
-      assertEquals(expectedTrx.nameForKey(expectedTrx.getLocalPartKey()), rtx
-          .nameForKey(rtx.getLocalPartKey()));
-      assertEquals(expectedTrx.nameForKey(expectedTrx.getURIKey()), rtx
-          .nameForKey(rtx.getURIKey()));
-      assertEquals(expectedTrx.nameForKey(expectedTrx.getPrefixKey()), rtx
-          .nameForKey(rtx.getPrefixKey()));
-      assertEquals(new String(
-          expectedTrx.getValue(),
-          IConstants.DEFAULT_ENCODING), new String(
-          rtx.getValue(),
-          IConstants.DEFAULT_ENCODING));
+    final AbstractAxis expectedDescendants = new DescendantAxis(expectedTrx);
+    final AbstractAxis descendants = new DescendantAxis(rtrx2);
+
+    while (expectedDescendants.hasNext() && descendants.hasNext()) {
+      if (!expectedDescendants.mCurrentNode.equals(descendants.mCurrentNode)) {
+        fail(expectedDescendants.mCurrentNode.toString()
+            + " and "
+            + descendants.mCurrentNode
+            + " are not the same!");
+      }
     }
 
-    expectedTrx.abort();
+    expectedTrx.close();
     expectedSession.close();
-    rtx.close();
+
+    rtrx2.close();
     session.close();
 
   }
@@ -90,8 +80,10 @@ public class SubtreeSAXHandlerTest {
   @Test
   public void test1Subtree() throws Exception {
 
+    final ISession session = Session.beginSession(new File(PATH));
+    final IWriteTransaction wrtx = session.beginWriteTransaction();
     // Setup parsed session.
-    final SubtreeSAXHandler handler = new SubtreeSAXHandler(new File(PATH));
+    final SubtreeSAXHandler handler = new SubtreeSAXHandler(wrtx);
     handler.startDocument();
     handler.subtreeStarting(0);
     handler.startElement("", "fooEins", "", new AttributesImpl());
@@ -107,7 +99,9 @@ public class SubtreeSAXHandlerTest {
     handler.subtreeEnding(1);
     handler.endDocument();
 
-    final ISession session = Session.beginSession(new File(PATH));
+    wrtx.commit();
+    //    wrtx.close();
+
     final IReadTransaction rtx = session.beginReadTransaction();
     rtx.moveToRoot();
 
@@ -129,8 +123,11 @@ public class SubtreeSAXHandlerTest {
   @Test
   public void test2Subtree() throws Exception {
 
+    final ISession session = Session.beginSession(new File(PATH));
+    final IWriteTransaction wrtx = session.beginWriteTransaction();
+
     // Setup parsed session.
-    final SubtreeSAXHandler handler = new SubtreeSAXHandler(new File(PATH));
+    final SubtreeSAXHandler handler = new SubtreeSAXHandler(wrtx);
     handler.startDocument();
 
     handler.subtreeStarting(1);
@@ -194,7 +191,9 @@ public class SubtreeSAXHandlerTest {
     handler.subtreeEnding(1);
     handler.endDocument();
 
-    final ISession session = Session.beginSession(new File(PATH));
+    wrtx.commit();
+    //    wrtx.close();
+
     final IReadTransaction rtx = session.beginReadTransaction();
     rtx.moveToRoot();
     //checking second subtree
