@@ -290,7 +290,7 @@ public final class WriteTransactionState extends ReadTransactionState {
 
     // Prepare revision root page.
     final RevisionRootPage revisionRootPage =
-        RevisionRootPage.clone(getRevisionRootPage(getUberPage()
+        new RevisionRootPage(getRevisionRootPage(getUberPage()
             .getLastCommittedRevisionKey()));
 
     // Prepare indirect tree to hold reference to prepared revision root page.

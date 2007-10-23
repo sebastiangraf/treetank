@@ -57,72 +57,57 @@ final public class RevisionRootPage implements IPage {
    * 
    * @return Bootstrapped revision root page.
    */
-  public static final RevisionRootPage create() {
-
-    final RevisionRootPage revisionRootPage =
-        new RevisionRootPage(true, IConstants.UBP_ROOT_REVISION_KEY);
+  public RevisionRootPage() {
+    this(true, IConstants.UBP_ROOT_REVISION_KEY);
 
     // Revisioning (deep init).
-    revisionRootPage.mNodeCount = 0L;
+    mNodeCount = 0L;
 
     // Name page (shallow init).
-    revisionRootPage.mNamePageReference = new PageReference();
-    revisionRootPage.mNamePageReference.setPage(new NamePage());
+    mNamePageReference = new PageReference();
+    mNamePageReference.setPage(new NamePage());
 
     // Node pages (shallow init).
-    revisionRootPage.mMaxNodeKey = -1L;
+    mMaxNodeKey = -1L;
 
     // Indirect pages (shallow init).
-    revisionRootPage.mIndirectPageReference = new PageReference();
-
-    return revisionRootPage;
+    mIndirectPageReference = new PageReference();
 
   }
 
-  public static final RevisionRootPage read(
-      final FastByteArrayReader in,
-      final long revisionKey) {
-
-    final RevisionRootPage revisionRootPage =
-        new RevisionRootPage(false, revisionKey);
+  public RevisionRootPage(final FastByteArrayReader in, final long revisionKey) {
+    this(false, revisionKey);
 
     // Revisioning (deep load).
-    revisionRootPage.mNodeCount = in.readVarLong();
+    mNodeCount = in.readVarLong();
 
     // Name page (shallow load without name page instance).
-    revisionRootPage.mNamePageReference = new PageReference(in);
+    mNamePageReference = new PageReference(in);
 
     // Node pages (shallow load without node page instances).
-    revisionRootPage.mMaxNodeKey = in.readVarLong();
+    mMaxNodeKey = in.readVarLong();
 
     // Indirect node pages (shallow load without indirect page instances).
-    revisionRootPage.mIndirectPageReference = new PageReference(in);
-
-    return revisionRootPage;
+    mIndirectPageReference = new PageReference(in);
 
   }
 
-  public static final RevisionRootPage clone(
-      final RevisionRootPage committedRevisionRootPage) {
-
-    final RevisionRootPage revisionRootPage =
-        new RevisionRootPage(true, committedRevisionRootPage.mRevisionKey + 1);
+  public RevisionRootPage(final RevisionRootPage committedRevisionRootPage) {
+    this(true, committedRevisionRootPage.mRevisionKey + 1);
 
     // Revisioning (deep COW).
-    revisionRootPage.mNodeCount = committedRevisionRootPage.mNodeCount;
+    mNodeCount = committedRevisionRootPage.mNodeCount;
 
     // Names (deep COW).
-    revisionRootPage.mNamePageReference =
+    mNamePageReference =
         new PageReference(committedRevisionRootPage.mNamePageReference);
 
     // INode pages (shallow COW without node page instances).
-    revisionRootPage.mMaxNodeKey = committedRevisionRootPage.mMaxNodeKey;
+    mMaxNodeKey = committedRevisionRootPage.mMaxNodeKey;
 
     // Indirect node pages (shallow COW without node page instances).
-    revisionRootPage.mIndirectPageReference =
+    mIndirectPageReference =
         new PageReference(committedRevisionRootPage.mIndirectPageReference);
-
-    return revisionRootPage;
   }
 
   public final PageReference getNamePageReference() {
