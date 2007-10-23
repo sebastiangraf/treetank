@@ -21,6 +21,7 @@
 
 package org.treetank.api;
 
+import org.treetank.sessionlayer.WriteTransactionState;
 import org.treetank.utils.FastByteArrayWriter;
 
 /**
@@ -46,7 +47,7 @@ public interface IPage {
    * @param state IWriteTransaction state.
    * @throws Exception occurring during commit operation.
    */
-  public void commit(final IWriteTransactionState state) throws Exception;
+  public void commit(final WriteTransactionState state) throws Exception;
 
   /**
    * Serialize self into object output stream.

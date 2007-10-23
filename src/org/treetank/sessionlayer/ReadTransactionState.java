@@ -26,7 +26,6 @@ import java.util.Map;
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IPage;
-import org.treetank.api.IReadTransactionState;
 import org.treetank.pagelayer.IndirectPage;
 import org.treetank.pagelayer.NamePage;
 import org.treetank.pagelayer.NodePage;
@@ -49,7 +48,7 @@ import org.treetank.utils.FastByteArrayReader;
  * A path-like cache boosts sequential operations.
  * </p>
  */
-public class ReadTransactionState implements IReadTransactionState {
+public class ReadTransactionState {
 
   /** Shared page cache mapping start address of page to IPage. */
   private final Map<Long, IPage> mPageCache;
