@@ -329,6 +329,9 @@ public class ReadTransaction implements IReadTransaction {
     mCurrentNode = currentNode;
   }
 
+  /**
+   * @return The session state.
+   */
   protected final SessionState getSessionState() {
     return mSessionState;
   }

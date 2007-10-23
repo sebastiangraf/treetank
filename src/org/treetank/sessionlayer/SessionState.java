@@ -22,6 +22,7 @@
 package org.treetank.sessionlayer;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
@@ -103,10 +104,10 @@ public final class SessionState implements ISession {
    * </p>
    * 
    * @param sessionConfiguration Session configuration for the TreeTank.
-   * @throws Exception of any kind.
+   * @throws IOException if there is a problem with opening the file.
    */
   public SessionState(final SessionConfiguration sessionConfiguration)
-      throws Exception {
+      throws IOException {
 
     mSessionConfiguration = sessionConfiguration;
 
@@ -305,7 +306,8 @@ public final class SessionState implements ISession {
    * @param mFile File to write to.
    * @throws Exception of any kind.
    */
-  private final void writeBeacon(final RandomAccessFile file) throws Exception {
+  private final void writeBeacon(final RandomAccessFile file)
+      throws IOException {
 
     // Write secondary beacon.
     file.seek(file.length());
@@ -327,7 +329,7 @@ public final class SessionState implements ISession {
    * @param mFile File to read from.
    * @throws Exception of any kind.
    */
-  private final void readBeacon(final RandomAccessFile file) throws Exception {
+  private final void readBeacon(final RandomAccessFile file) throws IOException {
 
     // Read primary beacon.
     file.seek(0L);

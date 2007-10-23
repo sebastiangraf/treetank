@@ -22,9 +22,9 @@
 package org.treetank.sessionlayer;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
 
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
@@ -34,74 +34,74 @@ import org.treetank.api.IWriteTransaction;
  * <h1>Session</h1>
  * 
  * <p>
- * Singelton per TreeTank file. Manages transaction handling and links
- * to page layer. Multiple threads can concurrently create
- * transactions on this object but only one IWriteTransaction can exist at
- * any time.
+ * Makes sure that there only is a single session instance bound to a
+ * TreeTank file. 
  * </p>
  */
 public final class Session implements ISession {
 
-  /** Logger. */
-  private static final Logger LOGGER =
-      Logger.getLogger(Session.class.getName());
-
+  /** Central repository of all running sessions. */
   private static final Map<String, ISession> SESSION_MAP =
-      new ConcurrentHashMap<String, ISession>();
+      new HashMap<String, ISession>();
 
-  /** Session configuration. */
+  /** Session state. */
   private final SessionState mSessionState;
 
+  /**
+   * Hidden constructor.
+   * 
+   * @param sessionState State assigned to session.
+   */
   private Session(final SessionState sessionState) {
     mSessionState = sessionState;
   }
 
-  public static final ISession beginSession(final File file) throws Exception {
-    return beginSession(new SessionConfiguration(file.getAbsolutePath()));
+  /**
+   * Bind new session to given TreeTank file.
+   * 
+   * @param file TreeTank file to bind new session to.
+   * @return New session bound to given TreeTank file.
+   * @throws IOException if there is a problem with opening the given file.
+   */
+  public static final ISession beginSession(final File file) throws IOException {
+    return beginSession(file.getAbsolutePath());
   }
 
   /**
-   * Convenient constructor.
+   * Bind new session to given TreeTank file.
    * 
    * @param path Path to TreeTank file.
-   * @throws Exception of any kind.
+   * @return New session bound to given TreeTank file.
+   * @throws IOException if there is a problem with opening the given file.
    */
-  public static final ISession beginSession(final String path) throws Exception {
-    return beginSession(new SessionConfiguration(new File(path).getAbsolutePath()));
+  public static final ISession beginSession(final String path)
+      throws IOException {
+    return beginSession(new SessionConfiguration(path));
   }
 
   /**
-   * Constructor to bind to a TreeTank file.
+   * Bind new session to given TreeTank file.
    * 
-   * <p>
-   * The beacon logic works as follows:
-   * 
-   * <ol>
-   * <li><code>Primary beacon == secondary beacon</code>: OK.</li>
-   * <li><code>Primary beacon != secondary beacon</code>: try to recover...
-   *    <ol type="i">
-   *    <li><code>Checksum(uberpage) == primary beacon</code>:
-   *        truncate file and write secondary beacon - OK.</li>
-   *    <li><code>Checksum(uberpage) == secondary beacon</code>:
-   *        write primary beacon - OK.</li>
-   *    <li><code>Checksum(uberpage) != secondary beacon 
-   *        != primary beacon</code>: NOK.</li>
-   *    </ol>
-   * </li>
-   * </ol>
-   * </p>
-   * 
-   * @param sessionConfiguration Session configuration for the TreeTank.
-   * @throws Exception of any kind.
+   * @param sessionConfiguration Configuration of session.
+   * @return New session bound to given TreeTank file.
+   * @throws IOException if there is a problem with opening the given file.
    */
   public static final ISession beginSession(
-      final SessionConfiguration sessionConfiguration) throws Exception {
+      final SessionConfiguration sessionConfiguration) throws IOException {
 
-    ISession session = SESSION_MAP.get(sessionConfiguration.getPath());
-    if (session == null) {
-      session = new Session(new SessionState(sessionConfiguration));
-      SESSION_MAP.put(sessionConfiguration.getPath(), session);
+    ISession session = null;
+
+    synchronized (SESSION_MAP) {
+      session = SESSION_MAP.get(sessionConfiguration.getPath());
+      if (session == null) {
+        session = new Session(new SessionState(sessionConfiguration));
+        SESSION_MAP.put(sessionConfiguration.getPath(), session);
+      } else {
+        throw new IllegalStateException("There already is a session bound to "
+            + sessionConfiguration.getPath());
+      }
     }
+
     return session;
   }
 

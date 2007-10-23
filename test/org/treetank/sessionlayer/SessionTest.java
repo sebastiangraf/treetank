@@ -95,9 +95,9 @@ public class SessionTest {
         public void run() {
           try {
             Session.beginSession(NON_EXISTING_PATH);
+            fail();
           } catch (final Exception e) {
-            fail(e.toString());
-            e.printStackTrace();
+            // Must catch to pass test.
           }
         }
       };
