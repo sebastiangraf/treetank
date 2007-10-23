@@ -315,7 +315,7 @@ public class ReadTransactionState {
     // If there is no page, get it from the storage and cache it.
     if (page == null) {
       final FastByteArrayReader in = mPageReader.read(reference);
-      page = RevisionRootPage.read(in, revisionKey);
+      page = new RevisionRootPage(in, revisionKey);
       mPageCache.put(reference.getStart(), page);
     }
 

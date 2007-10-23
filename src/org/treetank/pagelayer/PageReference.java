@@ -25,7 +25,7 @@ import org.treetank.api.IPage;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
-public class PageReference {
+public final class PageReference {
 
   private IPage mPage;
 

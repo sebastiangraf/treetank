@@ -105,7 +105,7 @@ public final class SessionState implements ISession {
 
     if (file.length() == 0L) {
       // Bootstrap uber page and make sure there already is a root node.
-      mLastCommittedUberPage = UberPage.create();
+      mLastCommittedUberPage = new UberPage();
       uberPageReference.setPage(mLastCommittedUberPage);
     } else {
       // Read existing uber page.
@@ -126,7 +126,7 @@ public final class SessionState implements ISession {
 
         final FastByteArrayReader in =
             new PageReader(mSessionConfiguration).read(uberPageReference);
-        mLastCommittedUberPage = UberPage.read(in);
+        mLastCommittedUberPage = new UberPage(in);
 
         // Beacon logic case 2.
       } else {
@@ -188,7 +188,7 @@ public final class SessionState implements ISession {
     return new WriteTransaction(this, new WriteTransactionState(
         mSessionConfiguration,
         mPageCache,
-        UberPage.clone(mLastCommittedUberPage)));
+        new UberPage(mLastCommittedUberPage)));
   }
 
   public final void commitWriteTransaction(final UberPage lastCommittedUberPage)

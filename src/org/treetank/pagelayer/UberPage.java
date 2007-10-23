@@ -58,23 +58,23 @@ final public class UberPage implements IPage {
    * @return Bootstrapped uber page.
    * @throws Exception
    */
-  public static final UberPage create() {
+  public UberPage() {
 
     // --- Create uber page ----------------------------------------------------
 
-    final UberPage uberPage = new UberPage(true, true);
+    this(true, true);
 
     // Make sure that all references are instantiated.
-    uberPage.mRevisionCount = IConstants.UBP_ROOT_REVISION_COUNT;
+    mRevisionCount = IConstants.UBP_ROOT_REVISION_COUNT;
 
     // Indirect pages (shallow init).
-    uberPage.mIndirectPageReference = new PageReference();
+    mIndirectPageReference = new PageReference();
 
     // --- Create revision tree ------------------------------------------------
 
     // Initialize revision tree to guarantee that there is a revision root page.
     IndirectPage page = null;
-    PageReference reference = uberPage.mIndirectPageReference;
+    PageReference reference = mIndirectPageReference;
 
     // Remaining levels.
     for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
@@ -83,7 +83,7 @@ final public class UberPage implements IPage {
       reference = page.getReference(0);
     }
 
-    RevisionRootPage rrp = RevisionRootPage.create();
+    RevisionRootPage rrp = new RevisionRootPage();
     reference.setPage(rrp);
 
     // --- Create node tree ----------------------------------------------------
@@ -106,8 +106,6 @@ final public class UberPage implements IPage {
 
     rrp.incrementNodeCountAndMaxNodeKey();
 
-    return uberPage;
-
   }
 
   /**
@@ -117,17 +115,15 @@ final public class UberPage implements IPage {
    * @param in
    * @throws Exception
    */
-  public static final UberPage read(final FastByteArrayReader in) {
+  public UberPage(final FastByteArrayReader in) {
 
-    final UberPage uberPage = new UberPage(false, false);
+    this(false, false);
 
     // Deserialize uber page.
-    uberPage.mRevisionCount = in.readVarLong();
+    mRevisionCount = in.readVarLong();
 
     // Indirect pages (shallow load without indirect page instances).
-    uberPage.mIndirectPageReference = new PageReference(in);
-
-    return uberPage;
+    mIndirectPageReference = new PageReference(in);
   }
 
   /**
@@ -136,23 +132,22 @@ final public class UberPage implements IPage {
    * @param committedUberPage
    * @return
    */
-  public static final UberPage clone(final UberPage committedUberPage) {
+  public UberPage(final UberPage committedUberPage) {
 
     // Make sure that the uber page is only cloned if it is not the first one.
     if (committedUberPage.mBootstrap) {
-      return committedUberPage;
+      mDirty = committedUberPage.mDirty;
+      mIndirectPageReference =
+          new PageReference(committedUberPage.mIndirectPageReference);
+      mBootstrap = committedUberPage.mBootstrap;
+      mRevisionCount = committedUberPage.mRevisionCount;
+    } else {
+      mDirty = true;
+      mIndirectPageReference =
+          new PageReference(committedUberPage.mIndirectPageReference);
+      mBootstrap = false;
+      mRevisionCount = committedUberPage.mRevisionCount + 1;
     }
-
-    final UberPage uberPage = new UberPage(true, false);
-
-    // COW uber page.
-    uberPage.mRevisionCount = committedUberPage.mRevisionCount + 1;
-
-    // Indirect pages (shallow COW without page instances).
-    uberPage.mIndirectPageReference =
-        new PageReference(committedUberPage.mIndirectPageReference);
-
-    return uberPage;
   }
 
   public final PageReference getIndirectPageReference() {
