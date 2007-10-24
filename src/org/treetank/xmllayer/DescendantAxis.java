@@ -72,9 +72,9 @@ public class DescendantAxis extends Axis {
     if ((node != null) && (node.getNodeKey() != mRightSiblingKeyStack.get(0))) {
 
       // Always follow first child if there is one.
-      if (node.getFirstChildKey() != IConstants.NULL_KEY) {
+      if (node.hasFirstChild()) {
         mNextKey = node.getFirstChildKey();
-        if (node.getRightSiblingKey() != IConstants.NULL_KEY) {
+        if (node.hasRightSibling()) {
           mRightSiblingKeyStack.push(node.getRightSiblingKey());
         }
         mCurrentNode = node;
@@ -82,7 +82,7 @@ public class DescendantAxis extends Axis {
       }
 
       // Then follow right sibling if there is one.
-      if (node.getRightSiblingKey() != IConstants.NULL_KEY) {
+      if (node.hasRightSibling()) {
         mNextKey = node.getRightSiblingKey();
         mCurrentNode = node;
         return true;

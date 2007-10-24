@@ -62,8 +62,7 @@ public class PostOrderAxis extends Axis {
   public boolean hasNext() {
     INode node = mRTX.moveTo(mNextKey);
     if (node != null) {
-      while (node.getFirstChildKey() != IConstants.NULL_KEY
-          && node.getNodeKey() != mLastParent.peek()) {
+      while (node.hasFirstChild() && node.getNodeKey() != mLastParent.peek()) {
         mLastParent.push(node.getNodeKey());
         node = mRTX.moveToFirstChild();
       }
@@ -71,7 +70,7 @@ public class PostOrderAxis extends Axis {
         mLastParent.pop();
       }
 
-      if (node.getRightSiblingKey() != IConstants.NULL_KEY) {
+      if (node.hasRightSibling()) {
         mNextKey = node.getRightSiblingKey();
 
       } else {

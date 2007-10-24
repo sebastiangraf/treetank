@@ -210,6 +210,10 @@ public final class Node implements INode, ITransactionNode {
     mNodeKey = nodeKey;
   }
 
+  public final boolean hasParent() {
+    return (mParentKey != IConstants.NULL_KEY);
+  }
+
   public final long getParentKey() {
     return mParentKey;
   }
@@ -220,6 +224,10 @@ public final class Node implements INode, ITransactionNode {
 
   public final void setParentKey(final long parentKey) {
     mParentKey = parentKey;
+  }
+
+  public final boolean hasFirstChild() {
+    return (mFirstChildKey != IConstants.NULL_KEY);
   }
 
   public final long getFirstChildKey() {
@@ -234,6 +242,10 @@ public final class Node implements INode, ITransactionNode {
     mFirstChildKey = firstChildKey;
   }
 
+  public final boolean hasLeftSibling() {
+    return (mLeftSiblingKey != IConstants.NULL_KEY);
+  }
+
   public final long getLeftSiblingKey() {
     return mLeftSiblingKey;
   }
@@ -244,6 +256,10 @@ public final class Node implements INode, ITransactionNode {
 
   public final void setLeftSiblingKey(final long leftSiblingKey) {
     mLeftSiblingKey = leftSiblingKey;
+  }
+
+  public final boolean hasRightSibling() {
+    return (mRightSiblingKey != IConstants.NULL_KEY);
   }
 
   public final long getRightSiblingKey() {
