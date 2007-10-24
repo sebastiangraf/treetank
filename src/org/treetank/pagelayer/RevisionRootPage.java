@@ -48,13 +48,13 @@ public final class RevisionRootPage extends Page {
   private final long mRevisionKey;
 
   /** Number of nodes of this revision. */
-  private long mNodeCount;
+  private long mRevisionSize;
 
   /** Last allocated node key. */
   private long mMaxNodeKey;
 
   /** Timestamp of revision. */
-  private long mTimestamp;
+  private long mRevisionTimestamp;
 
   /**
    * Create revision root page.
@@ -62,7 +62,7 @@ public final class RevisionRootPage extends Page {
   public RevisionRootPage() {
     super(2);
     mRevisionKey = IConstants.UBP_ROOT_REVISION_KEY;
-    mNodeCount = 0L;
+    mRevisionSize = 0L;
     getReference(NAME_REFERENCE_OFFSET).setPage(new NamePage());
     mMaxNodeKey = -1L;
   }
@@ -76,9 +76,9 @@ public final class RevisionRootPage extends Page {
   public RevisionRootPage(final FastByteArrayReader in, final long revisionKey) {
     super(2, in);
     mRevisionKey = revisionKey;
-    mNodeCount = in.readVarLong();
+    mRevisionSize = in.readVarLong();
     mMaxNodeKey = in.readVarLong();
-    mTimestamp = in.readVarLong();
+    mRevisionTimestamp = in.readVarLong();
   }
 
   /**
@@ -89,7 +89,7 @@ public final class RevisionRootPage extends Page {
   public RevisionRootPage(final RevisionRootPage committedRevisionRootPage) {
     super(2, committedRevisionRootPage);
     mRevisionKey = committedRevisionRootPage.mRevisionKey + 1;
-    mNodeCount = committedRevisionRootPage.mNodeCount;
+    mRevisionSize = committedRevisionRootPage.mRevisionSize;
     mMaxNodeKey = committedRevisionRootPage.mMaxNodeKey;
   }
 
@@ -125,8 +125,8 @@ public final class RevisionRootPage extends Page {
    * 
    * @return Revision size.
    */
-  public final long getNodeCount() {
-    return mNodeCount;
+  public final long getRevisionSize() {
+    return mRevisionSize;
   }
 
   /**
@@ -135,7 +135,7 @@ public final class RevisionRootPage extends Page {
    * @return Revision timestamp.
    */
   public final long getRevisionTimestamp() {
-    return mTimestamp;
+    return mRevisionTimestamp;
   }
 
   /**
@@ -151,14 +151,14 @@ public final class RevisionRootPage extends Page {
    * Decrement number of nodes by one.
    */
   public final void decrementNodeCount() {
-    mNodeCount -= 1;
+    mRevisionSize -= 1;
   }
 
   /**
    * Increment number of nodes by one while allocating another key.
    */
   public final void incrementNodeCountAndMaxNodeKey() {
-    mNodeCount += 1;
+    mRevisionSize += 1;
     mMaxNodeKey += 1;
   }
 
@@ -169,7 +169,7 @@ public final class RevisionRootPage extends Page {
   public final void commit(final WriteTransactionState state)
       throws IOException {
     super.commit(state);
-    mTimestamp = System.currentTimeMillis();
+    mRevisionTimestamp = System.currentTimeMillis();
   }
 
   /**
@@ -178,9 +178,9 @@ public final class RevisionRootPage extends Page {
   @Override
   public final void serialize(final FastByteArrayWriter out) {
     super.serialize(out);
-    out.writeVarLong(mNodeCount);
+    out.writeVarLong(mRevisionSize);
     out.writeVarLong(mMaxNodeKey);
-    out.writeVarLong(mTimestamp);
+    out.writeVarLong(mRevisionTimestamp);
   }
 
   /**
@@ -191,10 +191,10 @@ public final class RevisionRootPage extends Page {
     return super.toString()
         + ": revisionKey="
         + mRevisionKey
-        + ", nodeCount="
-        + mNodeCount
-        + ", timestamp="
-        + mTimestamp
+        + ", revisionSize="
+        + mRevisionSize
+        + ", revisionTimestamp="
+        + mRevisionTimestamp
         + ", namePage=("
         + getReference(NAME_REFERENCE_OFFSET)
         + "), indirectPage=("
