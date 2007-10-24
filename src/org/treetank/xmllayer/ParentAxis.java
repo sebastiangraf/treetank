@@ -21,6 +21,7 @@
 
 package org.treetank.xmllayer;
 
+import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 
 /**
@@ -53,9 +54,10 @@ public class ParentAxis extends AbstractAxis {
    * {@inheritDoc}
    */
   public final boolean hasNext() {
-    if (mIsFirstNext && mRTX.moveTo(mNextKey)) {
+    final INode node = mRTX.moveTo(mNextKey);
+    if (mIsFirstNext && (node != null)) {
       mIsFirstNext = false;
-      mCurrentNode = mRTX.getNode();
+      mCurrentNode = node;
       return true;
     } else {
       mCurrentNode = null;

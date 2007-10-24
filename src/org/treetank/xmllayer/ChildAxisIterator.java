@@ -55,7 +55,7 @@ public class ChildAxisIterator implements IAxisIterator {
    * {@inheritDoc}
    */
   public final boolean next() {
-    if (mRTX.moveTo(mNextKey)) {
+    if (mRTX.moveTo(mNextKey) != null) {
       mNextKey = mRTX.getRightSiblingKey();
       return true;
     } else {

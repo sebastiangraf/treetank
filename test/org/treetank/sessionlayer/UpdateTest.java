@@ -25,6 +25,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 
+import junit.framework.TestCase;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.api.IConstants;
@@ -95,7 +97,7 @@ public class UpdateTest {
     wtx.commit();
 
     wtx = session.beginWriteTransaction();
-    assertEquals(true, wtx.moveToRoot());
+    TestCase.assertNotNull(wtx.moveToRoot());
     assertEquals(1L, wtx.insertFirstChild(
         IConstants.ELEMENT,
         "",
@@ -116,7 +118,7 @@ public class UpdateTest {
         "",
         UTF.EMPTY));
 
-    assertEquals(true, wtx.moveToParent());
+    TestCase.assertNotNull(wtx.moveToParent());
     assertEquals(4L, wtx.insertRightSibling(
         IConstants.ELEMENT,
         "",
@@ -128,7 +130,7 @@ public class UpdateTest {
 
     final IWriteTransaction wtx2 = session.beginWriteTransaction();
 
-    assertEquals(true, wtx2.moveToRoot());
+    TestCase.assertNotNull(wtx2.moveToRoot());
     assertEquals(5L, wtx.insertFirstChild(
         IConstants.ELEMENT,
         "",
@@ -153,7 +155,7 @@ public class UpdateTest {
       wtx.insertFirstChild("", "", "");
     }
 
-    assertEquals(true, wtx.moveTo(0L));
+    TestCase.assertNotNull(wtx.moveTo(0L));
     assertEquals(0L, wtx.getNodeKey());
 
     wtx.abort();

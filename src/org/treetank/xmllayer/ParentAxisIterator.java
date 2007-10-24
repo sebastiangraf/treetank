@@ -58,7 +58,7 @@ public class ParentAxisIterator implements IAxisIterator {
    * {@inheritDoc}
    */
   public final boolean next() {
-    if (mIsFirstNext && mRTX.moveTo(mNextKey)) {
+    if (mIsFirstNext && mRTX.moveTo(mNextKey) != null) {
       mIsFirstNext = false;
       return true;
     } else {
