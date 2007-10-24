@@ -24,11 +24,12 @@ package org.treetank.xmllayer;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.api.IAxisIterator;
 import org.treetank.api.IConstants;
+import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
@@ -70,12 +71,11 @@ public class XMLShredderTest {
     final ISession session = Session.beginSession(PATH);
     final IReadTransaction rtx = session.beginReadTransaction();
     rtx.moveToRoot();
-    final IAxisIterator expectedDescendants =
-        new DescendantAxisIterator(expectedTrx);
-    final IAxisIterator descendants = new DescendantAxisIterator(rtx);
+    final Iterator<INode> expectedDescendants = new DescendantAxis(expectedTrx);
+    final Iterator<INode> descendants = new DescendantAxis(rtx);
 
     assertEquals(expectedTrx.revisionSize(), rtx.revisionSize());
-    while (expectedDescendants.next() && descendants.next()) {
+    while (expectedDescendants.hasNext() && descendants.hasNext()) {
       assertEquals(expectedTrx.getNodeKey(), rtx.getNodeKey());
       assertEquals(expectedTrx.getParentKey(), rtx.getParentKey());
       assertEquals(expectedTrx.getFirstChildKey(), rtx.getFirstChildKey());
