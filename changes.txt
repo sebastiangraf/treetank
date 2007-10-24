@@ -21,6 +21,8 @@
  
 TreeTank 4.11
 -------------
++ Binary incompatibility to previous releases due to revision timestamp.
++ Added timestamp to each revision.
 + Extended INode API for convenience.
 + INode can be bound to transaction for immediate node-based navigation.
 + Removed IAxisIterator and its implementations.

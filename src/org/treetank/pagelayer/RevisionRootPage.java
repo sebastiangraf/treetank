@@ -21,7 +21,10 @@
 
 package org.treetank.pagelayer;
 
+import java.io.IOException;
+
 import org.treetank.api.IConstants;
+import org.treetank.sessionlayer.WriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
@@ -50,6 +53,9 @@ public final class RevisionRootPage extends Page {
   /** Last allocated node key. */
   private long mMaxNodeKey;
 
+  /** Timestamp of revision. */
+  private long mTimestamp;
+
   /**
    * Create revision root page.
    */
@@ -72,6 +78,7 @@ public final class RevisionRootPage extends Page {
     mRevisionKey = revisionKey;
     mNodeCount = in.readVarLong();
     mMaxNodeKey = in.readVarLong();
+    mTimestamp = in.readVarLong();
   }
 
   /**
@@ -123,6 +130,15 @@ public final class RevisionRootPage extends Page {
   }
 
   /**
+   * Get timestamp of revision.
+   * 
+   * @return Revision timestamp.
+   */
+  public final long getRevisionTimestamp() {
+    return mTimestamp;
+  }
+
+  /**
    * Get last allocated node key.
    * 
    * @return Last allocated node key.
@@ -150,10 +166,21 @@ public final class RevisionRootPage extends Page {
    * {@inheritDoc}
    */
   @Override
-  public void serialize(final FastByteArrayWriter out) {
+  public final void commit(final WriteTransactionState state)
+      throws IOException {
+    super.commit(state);
+    mTimestamp = System.currentTimeMillis();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final void serialize(final FastByteArrayWriter out) {
     super.serialize(out);
     out.writeVarLong(mNodeCount);
     out.writeVarLong(mMaxNodeKey);
+    out.writeVarLong(mTimestamp);
   }
 
   /**
@@ -166,6 +193,8 @@ public final class RevisionRootPage extends Page {
         + mRevisionKey
         + ", nodeCount="
         + mNodeCount
+        + ", timestamp="
+        + mTimestamp
         + ", namePage=("
         + getReference(NAME_REFERENCE_OFFSET)
         + "), indirectPage=("
