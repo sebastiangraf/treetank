@@ -21,9 +21,8 @@
 
 TreeTank 4.10.:
 ---------------
-+ Binary incompatibility to previous releases due to AbstractPage.
-+ Introduced AbstractPage to make pagelayer package code less error prone.
-  AbstractPage replaces IPage.
++ Binary incompatibility to previous releases due to Page automatization.
++ Page replaces IPage to make pagelayer package code less error prone.
 + Safely switch between commits.
 + Session makes sure that there is only one session bound to some TreeTank
   file at any time.
