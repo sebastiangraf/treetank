@@ -25,11 +25,15 @@ import java.util.Arrays;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
+import org.treetank.api.IReadTransaction;
+import org.treetank.api.ITransactionNode;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 import org.treetank.utils.UTF;
 
-public final class Node implements INode {
+public final class Node implements INode, ITransactionNode {
+
+  private IReadTransaction mRTX;
 
   private long mNodeKey;
 
@@ -194,6 +198,10 @@ public final class Node implements INode {
     }
   }
 
+  public final void setTransaction(final IReadTransaction rtx) {
+    mRTX = rtx;
+  }
+
   public final long getNodeKey() {
     return mNodeKey;
   }
@@ -206,12 +214,20 @@ public final class Node implements INode {
     return mParentKey;
   }
 
+  public final INode getParent() {
+    return mRTX.moveTo(mParentKey);
+  }
+
   public final void setParentKey(final long parentKey) {
     mParentKey = parentKey;
   }
 
   public final long getFirstChildKey() {
     return mFirstChildKey;
+  }
+
+  public final INode getFirstChild() {
+    return mRTX.moveTo(mFirstChildKey);
   }
 
   public final void setFirstChildKey(final long firstChildKey) {
@@ -222,12 +238,20 @@ public final class Node implements INode {
     return mLeftSiblingKey;
   }
 
+  public final INode getLeftSibling() {
+    return mRTX.moveTo(mLeftSiblingKey);
+  }
+
   public final void setLeftSiblingKey(final long leftSiblingKey) {
     mLeftSiblingKey = leftSiblingKey;
   }
 
   public final long getRightSiblingKey() {
     return mRightSiblingKey;
+  }
+
+  public final INode getRightSibling() {
+    return mRTX.moveTo(mRightSiblingKey);
   }
 
   public final void setRightSiblingKey(final long rightSiblingKey) {
@@ -330,6 +354,10 @@ public final class Node implements INode {
     return mLocalPartKey;
   }
 
+  public final String getLocalPart() {
+    return mRTX.nameForKey(mLocalPartKey);
+  }
+
   public final void setLocalPartKey(final int localPartKey) {
     mLocalPartKey = localPartKey;
   }
@@ -338,12 +366,20 @@ public final class Node implements INode {
     return mPrefixKey;
   }
 
+  public final String getPrefix() {
+    return mRTX.nameForKey(mPrefixKey);
+  }
+
   public final void setPrefixKey(final int prefixKey) {
     mPrefixKey = prefixKey;
   }
 
   public final int getURIKey() {
     return mURIKey;
+  }
+
+  public final String getURI() {
+    return mRTX.nameForKey(mURIKey);
   }
 
   public final void setURIKey(final int uriKey) {
@@ -424,9 +460,13 @@ public final class Node implements INode {
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public String toString() {
     return "Node "
+        + "\n\tnodeKey: "
         + this.mNodeKey
         + "\n\tchildcount: "
         + this.mChildCount
@@ -440,6 +480,9 @@ public final class Node implements INode {
         + this.mRightSiblingKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -462,42 +505,16 @@ public final class Node implements INode {
     return result;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
+  public boolean equals(final Object obj) {
+    if ((obj == null) || (mNodeKey != ((INode) obj).getNodeKey())) {
+      return false;
+    } else {
       return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
-    final Node other = (Node) obj;
-    if (!Arrays.equals(mAttributes, other.mAttributes))
-      return false;
-    if (mChildCount != other.mChildCount)
-      return false;
-    if (mFirstChildKey != other.mFirstChildKey)
-      return false;
-    if (mKind != other.mKind)
-      return false;
-    if (mLeftSiblingKey != other.mLeftSiblingKey)
-      return false;
-    if (mLocalPartKey != other.mLocalPartKey)
-      return false;
-    if (!Arrays.equals(mNamespaces, other.mNamespaces))
-      return false;
-    if (mNodeKey != other.mNodeKey)
-      return false;
-    if (mParentKey != other.mParentKey)
-      return false;
-    if (mPrefixKey != other.mPrefixKey)
-      return false;
-    if (mRightSiblingKey != other.mRightSiblingKey)
-      return false;
-    if (mURIKey != other.mURIKey)
-      return false;
-    if (!Arrays.equals(mValue, other.mValue))
-      return false;
-    return true;
+    }
   }
 
 }

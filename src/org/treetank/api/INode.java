@@ -45,11 +45,25 @@ public interface INode {
   public long getParentKey();
 
   /**
+   * Get parent of currently selected node.
+   * 
+   * @return Parent of currently selected node.
+   */
+  public INode getParent();
+
+  /**
    * Get first child key of currently selected node.
    * 
    * @return First child key of currently selected node.
    */
   public long getFirstChildKey();
+
+  /**
+   * Get first child of currently selected node.
+   * 
+   * @return First child of currently selected node.
+   */
+  public INode getFirstChild();
 
   /**
    * Get left sibling key of currently selected node.
@@ -59,11 +73,25 @@ public interface INode {
   public long getLeftSiblingKey();
 
   /**
+   * Get left sibling of currently selected node.
+   * 
+   * @return Left sibling of currently selected node.
+   */
+  public INode getLeftSibling();
+
+  /**
    * Get right sibling key of currently selected node.
    * 
    * @return Right sibling key of currently selected node.
    */
   public long getRightSiblingKey();
+
+  /**
+   * Get right sibling of currently selected node.
+   * 
+   * @return Right sibling of currently selected node.
+   */
+  public INode getRightSibling();
 
   /**
    * Get child count (including element and text nodes) of currently selected
@@ -119,6 +147,13 @@ public interface INode {
   public int getLocalPartKey();
 
   /**
+   * Get local part of node.
+   * 
+   * @return Local part of node.
+   */
+  public String getLocalPart();
+
+  /**
    * Get URI key of node. Note that this actually is an IRI but the
    * W3C decided to continue using URI not to confuse anyone.
    * 
@@ -127,11 +162,26 @@ public interface INode {
   public int getURIKey();
 
   /**
+   * Get URI of node. Note that this actually is an IRI but the
+   * W3C decided to continue using URI not to confuse anyone.
+   * 
+   * @return URI of node.
+   */
+  public String getURI();
+
+  /**
    * Get prefix key of node.
    * 
    * @return Prefix key of node.
    */
   public int getPrefixKey();
+
+  /**
+   * Get prefix of node.
+   * 
+   * @return Prefix of node.
+   */
+  public String getPrefix();
 
   /**
    * Get value of node.

@@ -24,6 +24,7 @@ package org.treetank.sessionlayer;
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
+import org.treetank.api.ITransactionNode;
 import org.treetank.pagelayer.Namespace;
 
 /**
@@ -84,17 +85,11 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final INode moveToRoot() {
-    return moveTo(IConstants.ROOT_KEY);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
   public final INode moveTo(final long nodeKey) {
     if (nodeKey != IConstants.NULL_KEY) {
       try {
         mCurrentNode = mTransactionState.getNode(nodeKey);
+        ((ITransactionNode) mCurrentNode).setTransaction(this);
       } catch (Exception e) {
         mCurrentNode = null;
       }
@@ -102,6 +97,20 @@ public class ReadTransaction implements IReadTransaction {
       mCurrentNode = null;
     }
     return mCurrentNode;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final INode moveTo(final INode node) {
+    return moveTo(node.getNodeKey());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final INode moveToRoot() {
+    return moveTo(IConstants.ROOT_KEY);
   }
 
   /**
