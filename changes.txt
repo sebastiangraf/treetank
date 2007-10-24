@@ -21,6 +21,7 @@
  
 TreeTank 4.11
 -------------
++ INode can be bound to transaction for immediate node-based navigation.
 + Removed IAxisIterator and its implementations.
 
 TreeTank 4.10
