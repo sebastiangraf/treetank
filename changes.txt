@@ -18,6 +18,10 @@
  * 
  * $Id$
  */
+ 
+TreeTank 4.11
+-------------
++ Removed IAxisIterator and its implementations.
 
 TreeTank 4.10
 -------------

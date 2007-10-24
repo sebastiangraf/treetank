@@ -30,13 +30,13 @@ import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.api.IAxisIterator;
+import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.utils.TestDocument;
 import org.treetank.utils.UTF;
-import org.treetank.xmllayer.DescendantAxisIterator;
+import org.treetank.xmllayer.DescendantAxis;
 
 public class ThreadTest {
 
@@ -84,9 +84,9 @@ public class ThreadTest {
     public void run() {
       try {
 
-        final IAxisIterator axis = new DescendantAxisIterator(mRTX);
-        while (axis.next()) {
-          // Move on.
+        final Iterable<INode> axis = new DescendantAxis(mRTX);
+        for (final INode node : axis) {
+          // Nothing to do.
         }
         mRTX.moveTo(16L);
         mRTX.close();
