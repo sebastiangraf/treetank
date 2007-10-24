@@ -28,13 +28,13 @@ import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
 /**
- * <h1>AbstractPage</h1>
+ * <h1>Page</h1>
  * 
  * <p>
- * Abstract class to provide basic reference handling functionality.
+ * Class to provide basic reference handling functionality.
  * </p>
  */
-public abstract class AbstractPage {
+public class Page {
 
   /** Page references. */
   private final PageReference[] mReferences;
@@ -49,7 +49,7 @@ public abstract class AbstractPage {
    *        committed.
    * @param referenceCount Number of references of page.
    */
-  private AbstractPage(final boolean dirty, final int referenceCount) {
+  private Page(final boolean dirty, final int referenceCount) {
     mReferences = new PageReference[referenceCount];
     mDirty = dirty;
   }
@@ -59,7 +59,7 @@ public abstract class AbstractPage {
    * 
    * @param referenceCount Number of references of page.
    */
-  protected AbstractPage(final int referenceCount) {
+  protected Page(final int referenceCount) {
     this(true, referenceCount);
   }
 
@@ -69,7 +69,7 @@ public abstract class AbstractPage {
    * @param referenceCount Number of references of page.
    * @param in Input reader to read from.
    */
-  protected AbstractPage(final int referenceCount, final FastByteArrayReader in) {
+  protected Page(final int referenceCount, final FastByteArrayReader in) {
     this(false, referenceCount);
     for (int offset = 0; offset < referenceCount; offset++) {
       if (in.readBoolean()) {
@@ -84,9 +84,9 @@ public abstract class AbstractPage {
    * @param referenceCount Number of references of page.
    * @param committedPage Page to clone.
    */
-  protected AbstractPage(
+  protected Page(
       final int referenceCount,
-      final AbstractPage committedPage) {
+      final Page committedPage) {
     this(true, referenceCount);
 
     for (int offset = 0; offset < referenceCount; offset++) {

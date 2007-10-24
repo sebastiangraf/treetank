@@ -33,7 +33,7 @@ import org.treetank.utils.FastByteArrayWriter;
  * the static node page tree.
  * </p>
  */
-public final class RevisionRootPage extends AbstractPage {
+public final class RevisionRootPage extends Page {
 
   /** Offset of name page reference. */
   private static final int NAME_REFERENCE_OFFSET = 0;

@@ -26,7 +26,7 @@ import org.treetank.utils.FastByteArrayWriter;
 
 public final class PageReference {
 
-  private AbstractPage mPage;
+  private Page mPage;
 
   private long mStart;
 
@@ -47,7 +47,7 @@ public final class PageReference {
   }
 
   public PageReference(
-      final AbstractPage page,
+      final Page page,
       final long start,
       final int length,
       final long checksum) {
@@ -81,11 +81,11 @@ public final class PageReference {
     mChecksum = checksum;
   }
 
-  public final AbstractPage getPage() {
+  public final Page getPage() {
     return mPage;
   }
 
-  public final void setPage(final AbstractPage page) {
+  public final void setPage(final Page page) {
     mPage = page;
   }
 

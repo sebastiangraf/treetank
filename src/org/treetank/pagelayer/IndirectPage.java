@@ -31,7 +31,7 @@ import org.treetank.utils.FastByteArrayReader;
  * Indirect page holds a set of references to build a reference tree.
  * </p>
  */
-public final class IndirectPage extends AbstractPage {
+public final class IndirectPage extends Page {
 
   /**
    * Create indirect page.
