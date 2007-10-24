@@ -67,4 +67,23 @@ public class MinimumCommitTest {
     session.close();
 
   }
+
+  @Test
+  public void testTimestamp() throws Exception {
+
+    ISession session = Session.beginSession(TEST_PATH);
+    IWriteTransaction wtx = session.beginWriteTransaction();
+    TestCase.assertEquals(0L, wtx.revisionTimestamp());
+    wtx.commit();
+
+    IReadTransaction rtx = session.beginReadTransaction();
+    if (rtx.revisionTimestamp() >= System.currentTimeMillis()) {
+      TestCase.fail("Committed revision timestamp must be smaller than now.");
+    }
+    rtx.close();
+
+    session.close();
+
+  }
+
 }

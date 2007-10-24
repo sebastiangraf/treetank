@@ -61,6 +61,13 @@ public interface IReadTransaction {
   public long revisionSize();
 
   /**
+   * UNIX-style timestamp of the commit of the revision.
+   * 
+   * @return Timestamp of revision commit.
+   */
+  public long revisionTimestamp();
+
+  /**
    * Is a node selected?
    * 
    * @return True if a node is selected.

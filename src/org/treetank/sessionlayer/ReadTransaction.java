@@ -78,6 +78,13 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
+  public final long revisionTimestamp() {
+    return mTransactionState.getRevisionRootPage().getRevisionTimestamp();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final boolean isSelected() {
     return (mCurrentNode != null);
   }

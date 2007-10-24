@@ -96,7 +96,7 @@ public final class NamePage extends Page {
    * {@inheritDoc}
    */
   @Override
-  public void serialize(final FastByteArrayWriter out) {
+  public final void serialize(final FastByteArrayWriter out) {
     super.serialize(out);
 
     out.writeVarInt(mNameMap.size());
