@@ -25,8 +25,12 @@ import java.util.Arrays;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
+import org.treetank.api.IReadTransaction;
+import org.treetank.api.ITransactionNode;
 
-public final class Attribute implements INode {
+public final class Attribute implements INode, ITransactionNode {
+
+  private IReadTransaction mRTX;
 
   private long mNodeKey;
 
@@ -64,6 +68,10 @@ public final class Attribute implements INode {
     mValue = attribute.getValue();
   }
 
+  public final void setTransaction(final IReadTransaction rtx) {
+    mRTX = rtx;
+  }
+
   public final long getNodeKey() {
     return mNodeKey;
   }
@@ -76,12 +84,20 @@ public final class Attribute implements INode {
     return mLocalPartKey;
   }
 
+  public final String getLocalPart() {
+    return mRTX.nameForKey(mLocalPartKey);
+  }
+
   public final void setLocalPartKey(final int localPartKey) {
     this.mLocalPartKey = localPartKey;
   }
 
   public final long getParentKey() {
     return mParentKey;
+  }
+
+  public final INode getParent() {
+    return mRTX.moveTo(mParentKey);
   }
 
   public final void setParentKey(final long parentKey) {
@@ -92,12 +108,20 @@ public final class Attribute implements INode {
     return mPrefixKey;
   }
 
+  public final String getPrefix() {
+    return mRTX.nameForKey(mPrefixKey);
+  }
+
   public final void setPrefixKey(final int prefixKey) {
     this.mPrefixKey = prefixKey;
   }
 
   public final int getURIKey() {
     return mURIKey;
+  }
+
+  public final String getURI() {
+    return mRTX.nameForKey(mURIKey);
   }
 
   public final void setURIKey(final int uriKey) {
@@ -128,6 +152,10 @@ public final class Attribute implements INode {
     return IConstants.NULL_KEY;
   }
 
+  public final INode getFirstChild() {
+    return null;
+  }
+
   public final int getKind() {
     return IConstants.ATTRIBUTE;
   }
@@ -136,8 +164,16 @@ public final class Attribute implements INode {
     return IConstants.NULL_KEY;
   }
 
+  public final INode getLeftSibling() {
+    return null;
+  }
+
   public final long getRightSiblingKey() {
     return IConstants.NULL_KEY;
+  }
+
+  public final INode getRightSibling() {
+    return null;
   }
 
   public final Namespace getNamespace(final int index) {
@@ -161,28 +197,16 @@ public final class Attribute implements INode {
     return result;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
+    if ((obj == null) || (mNodeKey != ((INode) obj).getNodeKey())) {
+      return false;
+    } else {
       return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
-    final Attribute other = (Attribute) obj;
-    if (mLocalPartKey != other.mLocalPartKey)
-      return false;
-    if (mNodeKey != other.mNodeKey)
-      return false;
-    if (mParentKey != other.mParentKey)
-      return false;
-    if (mPrefixKey != other.mPrefixKey)
-      return false;
-    if (mURIKey != other.mURIKey)
-      return false;
-    if (!Arrays.equals(mValue, other.mValue))
-      return false;
-    return true;
+    }
   }
 
 }

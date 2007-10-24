@@ -70,19 +70,27 @@ public interface IReadTransaction {
   // --- Node Selectors --------------------------------------------------------
 
   /**
-   * Move cursor to root node.
-   * 
-   * @return True if the root node is selected.
-   */
-  public INode moveToRoot();
-
-  /**
    * Move cursor to a node by its node key.
    * 
    * @param nodeKey Key of node to select.
    * @return True if the node with the given node key is selected.
    */
   public INode moveTo(final long nodeKey);
+
+  /**
+   * Move cursor to a node.
+   * 
+   * @param node Node to select.
+   * @return True if the node with the given node key is selected.
+   */
+  public INode moveTo(final INode node);
+
+  /**
+   * Move cursor to root node.
+   * 
+   * @return True if the root node is selected.
+   */
+  public INode moveToRoot();
 
   /**
    * Move cursor to parent node of currently selected node.
