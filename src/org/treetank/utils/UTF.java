@@ -21,7 +21,7 @@
 
 package org.treetank.utils;
 
-import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 
 import org.treetank.api.IConstants;
 
@@ -73,35 +73,62 @@ public final class UTF {
     return bytes;
   }
 
-  public static final byte[] fastConvert(final String string) {
-    final int l = string.length();
-    byte[] bytes = new byte[l];
-    for (int i = 0; i < l; i++) {
-      bytes[i] = (byte) string.charAt(i);
-      // Check if char is ASCII
-      if (bytes[i] < 0)
-        return convert(string);
+  public static final String fastConvert(final byte[] bytes) {
+    char[] out = new char[bytes.length];
+    int j = 0;
+    for (int i = 0; i < bytes.length;) {
+      int value = ((bytes[i++] & 127));
+      if ((bytes[i - 1] & 128) != 0) {
+        value |= ((bytes[i++] & 127)) << 7;
+        if ((bytes[i - 1] & 128) != 0) {
+          value |= ((bytes[i++] & 127)) << 14;
+          if ((bytes[i - 1] & 128) != 0) {
+            value |= ((bytes[i++] & 127)) << 21;
+            if ((bytes[i - 1] & 128) != 0) {
+              value |= ((bytes[i++] & 255)) << 28;
+            } else if ((bytes[i - 1] & 64) != 0)
+              value |= 0xF0000000;
+          } else if ((bytes[i - 1] & 64) != 0)
+            value |= 0xFFF00000;
+        } else if ((bytes[i - 1] & 64) != 0)
+          value |= 0xFFFFE000;
+      } else if ((bytes[i - 1] & 64) != 0)
+        value |= 0xFFFFFFC0;
+      out[j++]= (char) value;
     }
-    return bytes;
+    return String.valueOf(Arrays.copyOf(out, j));
   }
 
-  public static final byte[] nextConvert(final String string) {
+  public static final byte[] fastConvert(final String string) {
     final int l = string.length();
-    ByteArrayOutputStream bytes = new ByteArrayOutputStream(l);
-    try {
-      for (int i = 0; i < l; i++) {
-        byte b = (byte) string.charAt(i);
-        if (b < 0)
-          bytes.write(b);
-        else
-          bytes.write(string.substring(i, i + 1).getBytes(
-              IConstants.DEFAULT_ENCODING));
-      }
-    } catch (Exception e) {
-      throw new RuntimeException("Could not convert String to byte[]: "
-          + e.getLocalizedMessage());
+    byte[] bytes = new byte[5 * l];
+    int value;
+    int j = 0;
+    for (int i = 0; i < l; i++) {
+      value = string.charAt(i);
+      bytes[j++] = (byte) (value);
+      if (value > 63 || value < -64) {
+        bytes[j - 1] |= 128;
+        bytes[j++] = (byte) (value >> 7);
+        if (value > 8191 || value < -8192) {
+          bytes[j - 1] |= 128;
+          bytes[j++] = (byte) (value >> 14);
+          if (value > 1048575 || value < -1048576) {
+            bytes[j - 1] |= 128;
+            bytes[j++] = (byte) (value >> 21);
+            if (value > 268435455 || value < -268435456) {
+              bytes[j - 1] |= 128;
+              bytes[j++] = (byte) (value >> 28);
+            } else
+              bytes[j - 1] &= 127;
+          } else
+            bytes[j - 1] &= 127;
+        } else
+          bytes[j - 1] &= 127;
+      } else
+        bytes[j - 1] &= 127;
     }
-    return bytes.toByteArray();
+    return Arrays.copyOf(bytes, j);
   }
 
   public static boolean ascii(final byte[] bytes) {
@@ -137,6 +164,18 @@ public final class UTF {
 
   public static final boolean equals(final String value1, final String value2) {
     return equals(UTF.convert(value1), UTF.convert(value2));
+  }
+  
+  public static final boolean fastEquals(final byte[] value1, final String value2) {
+    return equals(value1, UTF.fastConvert(value2));
+  }
+
+  public static final boolean fastEquals(final String value1, final byte[] value2) {
+    return equals(UTF.fastConvert(value1), value2);
+  }
+
+  public static final boolean fastEquals(final String value1, final String value2) {
+    return equals(UTF.fastConvert(value1), UTF.fastConvert(value2));
   }
 
 }
