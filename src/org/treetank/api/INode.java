@@ -38,6 +38,13 @@ public interface INode {
   public long getNodeKey();
 
   /**
+   * Is there a parent?
+   * 
+   * @return True if there is a parent. False else.
+   */
+  public boolean hasParent();
+
+  /**
    * Get parent key of currently selected node.
    * 
    * @return Parent key of currently selected node.
@@ -50,6 +57,13 @@ public interface INode {
    * @return Parent of currently selected node.
    */
   public INode getParent();
+
+  /**
+   * Is there a first child?
+   * 
+   * @return True if there is a first child. False else.
+   */
+  public boolean hasFirstChild();
 
   /**
    * Get first child key of currently selected node.
@@ -66,6 +80,13 @@ public interface INode {
   public INode getFirstChild();
 
   /**
+   * Is there a left sibling?
+   * 
+   * @return True if there is a left sibling. False else.
+   */
+  public boolean hasLeftSibling();
+
+  /**
    * Get left sibling key of currently selected node.
    * 
    * @return Left sibling key of currently selected node.
@@ -78,6 +99,13 @@ public interface INode {
    * @return Left sibling of currently selected node.
    */
   public INode getLeftSibling();
+
+  /**
+   * Is there a right sibling?
+   * 
+   * @return True if there is a right sibling. False else.
+   */
+  public boolean hasRightSibling();
 
   /**
    * Get right sibling key of currently selected node.

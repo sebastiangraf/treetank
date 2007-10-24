@@ -92,6 +92,10 @@ public final class Attribute implements INode, ITransactionNode {
     this.mLocalPartKey = localPartKey;
   }
 
+  public final boolean hasParent() {
+    return true;
+  }
+
   public final long getParentKey() {
     return mParentKey;
   }
@@ -148,6 +152,10 @@ public final class Attribute implements INode, ITransactionNode {
     return 0L;
   }
 
+  public final boolean hasFirstChild() {
+    return false;
+  }
+
   public final long getFirstChildKey() {
     return IConstants.NULL_KEY;
   }
@@ -160,12 +168,20 @@ public final class Attribute implements INode, ITransactionNode {
     return IConstants.ATTRIBUTE;
   }
 
+  public final boolean hasLeftSibling() {
+    return false;
+  }
+
   public final long getLeftSiblingKey() {
     return IConstants.NULL_KEY;
   }
 
   public final INode getLeftSibling() {
     return null;
+  }
+
+  public final boolean hasRightSibling() {
+    return false;
   }
 
   public final long getRightSiblingKey() {
