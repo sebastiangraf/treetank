@@ -31,10 +31,10 @@ import org.treetank.api.IReadTransaction;
  * Only select nodes of kind ELEMENT and TEXT.
  * </p>
  */
-public class NodeTestAxis extends AbstractAxis {
+public class NodeTestAxis extends Axis {
 
   /** Remember next key to visit. */
-  private final AbstractAxis mAxis;
+  private final Axis mAxis;
 
   /**
    * Constructor initializing internal state.
@@ -44,7 +44,7 @@ public class NodeTestAxis extends AbstractAxis {
    */
   public NodeTestAxis(
       final IReadTransaction rtx,
-      final AbstractAxis axis) {
+      final Axis axis) {
     super(rtx);
     mAxis = axis;
   }

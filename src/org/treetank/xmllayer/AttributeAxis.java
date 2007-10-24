@@ -30,7 +30,7 @@ import org.treetank.api.IReadTransaction;
  * Iterate over all attibutes of a given node.
  * </p>
  */
-public class AttributeAxis extends AbstractAxis {
+public class AttributeAxis extends Axis {
 
   /** Remember next key to visit. */
   private int mNextIndex;

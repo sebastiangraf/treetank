@@ -32,7 +32,7 @@ import org.treetank.api.IReadTransaction;
  * node. Self is not included.
  * </p>
  */
-public class ChildAxis extends AbstractAxis {
+public class ChildAxis extends Axis {
 
   /** Has another child node. */
   private long mNextKey;

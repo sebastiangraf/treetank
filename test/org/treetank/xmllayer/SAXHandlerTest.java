@@ -77,8 +77,8 @@ public class SAXHandlerTest {
     final IReadTransaction expectedTrx = expectedSession.beginReadTransaction();
     final IReadTransaction rtrx2 = session.beginReadTransaction();
 
-    final AbstractAxis expectedDescendants = new DescendantAxis(expectedTrx);
-    final AbstractAxis descendants = new DescendantAxis(rtrx2);
+    final Axis expectedDescendants = new DescendantAxis(expectedTrx);
+    final Axis descendants = new DescendantAxis(rtrx2);
 
     while (expectedDescendants.hasNext() && descendants.hasNext()) {
       if (!expectedDescendants.next().equals(descendants.next())) {

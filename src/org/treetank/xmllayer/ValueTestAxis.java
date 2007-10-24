@@ -32,10 +32,10 @@ import org.treetank.utils.UTF;
  * node.
  * </p>
  */
-public class ValueTestAxis extends AbstractAxis {
+public class ValueTestAxis extends Axis {
 
   /** Remember next key to visit. */
-  private final AbstractAxis mAxis;
+  private final Axis mAxis;
 
   /** Name test to do. */
   private final byte[] mValue;
@@ -49,7 +49,7 @@ public class ValueTestAxis extends AbstractAxis {
    */
   public ValueTestAxis(
       final IReadTransaction rtx,
-      final AbstractAxis axis,
+      final Axis axis,
       final byte[] value) {
     super(rtx);
     mAxis = axis;
@@ -65,7 +65,7 @@ public class ValueTestAxis extends AbstractAxis {
    */
   public ValueTestAxis(
       final IReadTransaction rtx,
-      final AbstractAxis axis,
+      final Axis axis,
       final String value) {
     this(rtx, axis, UTF.convert(value));
   }

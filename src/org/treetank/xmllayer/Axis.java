@@ -34,7 +34,7 @@ import org.treetank.api.IReadTransaction;
  * enhanced for loop available since Java 5.
  * </p>
  */
-public abstract class AbstractAxis
+public abstract class Axis
     implements
     Iterable<INode>,
     Iterator<INode> {
@@ -50,7 +50,7 @@ public abstract class AbstractAxis
    * 
    * @param rtx Transaction to operate with.
    */
-  public AbstractAxis(final IReadTransaction rtx) {
+  public Axis(final IReadTransaction rtx) {
     mRTX = rtx;
     mCurrentNode = null;
   }

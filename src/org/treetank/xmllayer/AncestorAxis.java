@@ -33,7 +33,7 @@ import org.treetank.api.IReadTransaction;
  * node. Self is not included.
  * </p>
  */
-public class AncestorAxis extends AbstractAxis {
+public class AncestorAxis extends Axis {
 
   /** The nodeKey of the next node to visit. */
   private long mNextKey;
