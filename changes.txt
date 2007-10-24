@@ -19,22 +19,23 @@
  * $Id$
  */
 
-TreeTank 4.10.:
----------------
+TreeTank 4.10
+-------------
++ IReadTransaction move methods now immediately return INode.
 + Binary incompatibility to previous releases due to Page automatization.
 + Page replaces IPage to make pagelayer package code less error prone.
 + Safely switch between commits.
 + Session makes sure that there is only one session bound to some TreeTank
   file at any time.
  
-TreeTank 4.9:
--------------
+TreeTank 4.9
+------------
 + Deprecated IAxisIterator and its implementing classes.
 + Added AbstractAxis and its subclasses to support Java 5 enhanced for loops
   and iterators.
 + Renamed Session.getSession(...) to Session.beginSession(...).
 + Made sure that SessionConfiguration always binds to absolute path.
  
-TreeTank 4.8:
+TreeTank 4.8
 ------------
 + Added changes.txt to document major changes in APIs and binary format.

@@ -84,61 +84,60 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final boolean moveToRoot() {
+  public final INode moveToRoot() {
     return moveTo(IConstants.ROOT_KEY);
   }
 
   /**
    * {@inheritDoc}
    */
-  public final boolean moveTo(final long nodeKey) {
+  public final INode moveTo(final long nodeKey) {
     if (nodeKey != IConstants.NULL_KEY) {
       try {
         mCurrentNode = mTransactionState.getNode(nodeKey);
       } catch (Exception e) {
         mCurrentNode = null;
       }
-      return (mCurrentNode != null);
     } else {
       mCurrentNode = null;
-      return false;
     }
+    return mCurrentNode;
   }
 
   /**
    * {@inheritDoc}
    */
-  public final boolean moveToParent() {
+  public final INode moveToParent() {
     return moveTo(mCurrentNode.getParentKey());
   }
 
   /**
    * {@inheritDoc}
    */
-  public final boolean moveToFirstChild() {
+  public final INode moveToFirstChild() {
     return moveTo(mCurrentNode.getFirstChildKey());
   }
 
   /**
    * {@inheritDoc}
    */
-  public final boolean moveToLeftSibling() {
+  public final INode moveToLeftSibling() {
     return moveTo(mCurrentNode.getLeftSiblingKey());
   }
 
   /**
    * {@inheritDoc}
    */
-  public final boolean moveToRightSibling() {
+  public final INode moveToRightSibling() {
     return moveTo(mCurrentNode.getRightSiblingKey());
   }
 
   /**
    * {@inheritDoc}
    */
-  public final boolean moveToAttribute(final int index) {
+  public final INode moveToAttribute(final int index) {
     mCurrentNode = mCurrentNode.getAttribute(index);
-    return true;
+    return mCurrentNode;
   }
 
   /**

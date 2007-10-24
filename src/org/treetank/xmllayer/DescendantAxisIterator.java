@@ -75,7 +75,7 @@ public class DescendantAxisIterator implements IAxisIterator {
    */
   public final boolean next() {
 
-    if (mRTX.moveTo(mNextKey)
+    if (mRTX.moveTo(mNextKey) != null
         && mRTX.getNodeKey() != mRightSiblingKeyStack.get(0)) {
 
       // Always follow first child if there is one.

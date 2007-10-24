@@ -43,7 +43,7 @@ public class SubtreeSAXGenerator extends SAXGenerator {
       firstElement = false;
       return true;
     }
-    while (lastElement && mRTX.moveTo(mNextKey)) {
+    while (lastElement && mRTX.moveTo(mNextKey) != null) {
 
       // debug();
 
@@ -132,7 +132,7 @@ public class SubtreeSAXGenerator extends SAXGenerator {
               "Invalid XML Layout, just splitelements should occur on the first level!");
         }
 
-      } while (mRTX.moveToRightSibling());
+      } while (mRTX.moveToRightSibling() != null);
     } catch (Exception e) {
       throw new SAXException(e);
     }

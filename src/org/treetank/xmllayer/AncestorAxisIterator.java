@@ -56,7 +56,7 @@ public class AncestorAxisIterator implements IAxisIterator {
    * {@inheritDoc}
    */
   public final boolean next() {
-    if (mNextKey != IConstants.ROOT_KEY && mRTX.moveTo(mNextKey)) {
+    if (mNextKey != IConstants.ROOT_KEY && mRTX.moveTo(mNextKey) != null) {
       mNextKey = mRTX.getParentKey();
       return true;
     } else {

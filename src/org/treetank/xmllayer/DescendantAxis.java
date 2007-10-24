@@ -22,6 +22,7 @@
 package org.treetank.xmllayer;
 
 import org.treetank.api.IConstants;
+import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastStack;
 
@@ -67,30 +68,29 @@ public class DescendantAxis extends AbstractAxis {
    * {@inheritDoc}
    */
   public final boolean hasNext() {
-
-    if (mRTX.moveTo(mNextKey)
-        && mRTX.getNodeKey() != mRightSiblingKeyStack.get(0)) {
+    final INode node = mRTX.moveTo(mNextKey);
+    if ((node != null) && (node.getNodeKey() != mRightSiblingKeyStack.get(0))) {
 
       // Always follow first child if there is one.
-      if (mRTX.getFirstChildKey() != IConstants.NULL_KEY) {
-        mNextKey = mRTX.getFirstChildKey();
-        if (mRTX.getRightSiblingKey() != IConstants.NULL_KEY) {
-          mRightSiblingKeyStack.push(mRTX.getRightSiblingKey());
+      if (node.getFirstChildKey() != IConstants.NULL_KEY) {
+        mNextKey = node.getFirstChildKey();
+        if (node.getRightSiblingKey() != IConstants.NULL_KEY) {
+          mRightSiblingKeyStack.push(node.getRightSiblingKey());
         }
-        mCurrentNode = mRTX.getNode();
+        mCurrentNode = node;
         return true;
       }
 
       // Then follow right sibling if there is one.
-      if (mRTX.getRightSiblingKey() != IConstants.NULL_KEY) {
-        mNextKey = mRTX.getRightSiblingKey();
-        mCurrentNode = mRTX.getNode();
+      if (node.getRightSiblingKey() != IConstants.NULL_KEY) {
+        mNextKey = node.getRightSiblingKey();
+        mCurrentNode = node;
         return true;
       }
 
       // Then follow right sibling on stack.
       mNextKey = mRightSiblingKeyStack.pop();
-      mCurrentNode = mRTX.getNode();
+      mCurrentNode = node;
       return true;
 
     } else {

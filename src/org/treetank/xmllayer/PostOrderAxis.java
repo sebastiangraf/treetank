@@ -1,6 +1,7 @@
 package org.treetank.xmllayer;
 
 import org.treetank.api.IConstants;
+import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastStack;
 
@@ -14,10 +15,10 @@ import org.treetank.utils.FastStack;
 public class PostOrderAxis extends AbstractAxis {
 
   /** For remembering last parent. */
-  private final FastStack<Long> lastParent;
+  private final FastStack<Long> mLastParent;
 
   /** The nodeKey of the next node to visit. */
-  private long nextKey;
+  private long mNextKey;
 
   /**
    * Constructor initializing internal state.
@@ -32,9 +33,9 @@ public class PostOrderAxis extends AbstractAxis {
       final IReadTransaction rtx,
       final boolean startAtBeginning) {
     super(rtx);
-    lastParent = new FastStack<Long>();
-    lastParent.push(IConstants.NULL_KEY);
-    nextKey = rtx.getNodeKey();
+    mLastParent = new FastStack<Long>();
+    mLastParent.push(IConstants.NULL_KEY);
+    mNextKey = rtx.getNodeKey();
     if (startAtBeginning) {
       startAtBeginning();
     }
@@ -47,10 +48,10 @@ public class PostOrderAxis extends AbstractAxis {
   private final void startAtBeginning() {
     mRTX.moveToRoot();
     while (mRTX.getFirstChildKey() != IConstants.NULL_KEY) {
-      lastParent.push(mRTX.getNodeKey());
+      mLastParent.push(mRTX.getNodeKey());
       mRTX.moveToFirstChild();
 
-      nextKey = mRTX.getNodeKey();
+      mNextKey = mRTX.getNodeKey();
     }
     next();
   }
@@ -59,25 +60,25 @@ public class PostOrderAxis extends AbstractAxis {
    * {@inheritDoc}
    */
   public boolean hasNext() {
-
-    if (mRTX.moveTo(nextKey)) {
-      while (mRTX.getFirstChildKey() != IConstants.NULL_KEY
-          && mRTX.getNodeKey() != this.lastParent.peek()) {
-        this.lastParent.push(mRTX.getNodeKey());
-        mRTX.moveToFirstChild();
+    INode node = mRTX.moveTo(mNextKey);
+    if (node != null) {
+      while (node.getFirstChildKey() != IConstants.NULL_KEY
+          && node.getNodeKey() != mLastParent.peek()) {
+        mLastParent.push(node.getNodeKey());
+        node = mRTX.moveToFirstChild();
       }
-      if (mRTX.getNodeKey() == this.lastParent.peek()) {
-        this.lastParent.pop();
+      if (node.getNodeKey() == mLastParent.peek()) {
+        mLastParent.pop();
       }
 
-      if (mRTX.getRightSiblingKey() != IConstants.NULL_KEY) {
-        nextKey = mRTX.getRightSiblingKey();
+      if (node.getRightSiblingKey() != IConstants.NULL_KEY) {
+        mNextKey = node.getRightSiblingKey();
 
       } else {
-        nextKey = this.lastParent.peek();
+        mNextKey = mLastParent.peek();
       }
 
-      mCurrentNode = mRTX.getNode();
+      mCurrentNode = node;
       return true;
 
     } else {

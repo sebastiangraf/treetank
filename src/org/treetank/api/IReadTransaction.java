@@ -74,7 +74,7 @@ public interface IReadTransaction {
    * 
    * @return True if the root node is selected.
    */
-  public boolean moveToRoot();
+  public INode moveToRoot();
 
   /**
    * Move cursor to a node by its node key.
@@ -82,35 +82,35 @@ public interface IReadTransaction {
    * @param nodeKey Key of node to select.
    * @return True if the node with the given node key is selected.
    */
-  public boolean moveTo(final long nodeKey);
+  public INode moveTo(final long nodeKey);
 
   /**
    * Move cursor to parent node of currently selected node.
    * 
    * @return True if the parent node is selected.
    */
-  public boolean moveToParent();
+  public INode moveToParent();
 
   /**
    * Move cursor to first child node of currently selected node.
    * 
    * @return True if the first child node is selected.
    */
-  public boolean moveToFirstChild();
+  public INode moveToFirstChild();
 
   /**
    * Move cursor to left sibling node of the currently selected node.
    * 
    * @return True if the left sibling node is selected.
    */
-  public boolean moveToLeftSibling();
+  public INode moveToLeftSibling();
 
   /**
    * Move cursor to right sibling node of the currently selected node.
    * 
    * @return True if the right sibling node is selected.
    */
-  public boolean moveToRightSibling();
+  public INode moveToRightSibling();
 
   /**
    * Move cursor to attribute by its index.
@@ -118,7 +118,7 @@ public interface IReadTransaction {
    * @param index Index of attribute to move to.
    * @return True if the attribute is selected.
    */
-  public boolean moveToAttribute(final int index);
+  public INode moveToAttribute(final int index);
 
   // --- Node Getters ----------------------------------------------------------
 

@@ -67,7 +67,7 @@ public class PostOrderIterator implements IAxisIterator {
    */
   public boolean next() {
 
-    if (trx.moveTo(nextKey)) {
+    if (trx.moveTo(nextKey) != null) {
       while (trx.getFirstChildKey() != IConstants.NULL_KEY
           && trx.getNodeKey() != this.lastParent.peek()) {
         this.lastParent.push(trx.getNodeKey());

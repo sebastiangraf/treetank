@@ -125,16 +125,12 @@ public class SessionTest {
 
     TestDocument.create(wtx);
 
-    assertEquals(true, wtx.moveToRoot());
+    TestCase.assertNotNull(wtx.moveToRoot());
     assertEquals(IConstants.DOCUMENT, wtx.getKind());
 
-    assertEquals(true, wtx.moveToFirstChild());
+    TestCase.assertNotNull(wtx.moveToFirstChild());
     assertEquals(IConstants.ELEMENT, wtx.getKind());
     assertEquals("a", wtx.getLocalPart());
-
-    //    assertEquals(true, trx.moveToFirstAttribute());
-    //    assertEquals(IConstants.ATTRIBUTE, trx.getKind());
-    //    assertEquals("j", new String(trx.getValue(), IConstants.ENCODING));
 
     wtx.abort();
     session.close();
@@ -269,7 +265,7 @@ public class SessionTest {
     final IReadTransaction rtx = session.beginReadTransaction();
     assertEquals(11L, rtx.revisionSize());
     assertEquals(true, rtx.isSelected());
-    assertEquals(false, rtx.moveTo(12L));
+    TestCase.assertNull(rtx.moveTo(12L));
     assertEquals(false, rtx.isSelected());
 
     rtx.close();

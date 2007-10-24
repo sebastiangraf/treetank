@@ -164,7 +164,7 @@ public class SAXGenerator extends Thread {
   private final void visitDocument() throws Exception {
 
     // Iterate over all descendants.
-    while (mRTX.moveTo(mNextKey)) {
+    while (mRTX.moveTo(mNextKey) != null) {
 
       //debug();
 
