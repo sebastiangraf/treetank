@@ -32,10 +32,10 @@ import org.treetank.api.IReadTransaction;
  * comparisons.
  * </p>
  */
-public class NameTestAxis extends AbstractAxis {
+public class NameTestAxis extends Axis {
 
   /** Remember next key to visit. */
-  private final AbstractAxis mAxis;
+  private final Axis mAxis;
 
   /** Name test to do. */
   private final int mNameKey;
@@ -49,7 +49,7 @@ public class NameTestAxis extends AbstractAxis {
    */
   public NameTestAxis(
       final IReadTransaction rtx,
-      final AbstractAxis axis,
+      final Axis axis,
       final String name) {
     super(rtx);
     mAxis = axis;
