@@ -21,7 +21,9 @@
  
 TreeTank 4.12
 -------------
-
++ Add extended API of INode to IReadTransaction for convenience.
++ ISession tells absolute path, file name, and whether it is
+  encrypted or checksummed.
  
 TreeTank 4.11
 -------------

@@ -152,11 +152,25 @@ public interface IReadTransaction {
   public long getNodeKey();
 
   /**
+   * Is there a parent?
+   * 
+   * @return True if there is a parent. False else.
+   */
+  public boolean hasParent();
+
+  /**
    * Get parent key of currently selected node.
    * 
    * @return Parent key of currently selected node.
    */
   public long getParentKey();
+
+  /**
+   * Is there a first child?
+   * 
+   * @return True if there is a first child. False else.
+   */
+  public boolean hasFirstChild();
 
   /**
    * Get first child key of currently selected node.
@@ -166,11 +180,25 @@ public interface IReadTransaction {
   public long getFirstChildKey();
 
   /**
+   * Is there a left sibling?
+   * 
+   * @return True if there is a left sibling. False else.
+   */
+  public boolean hasLeftSibling();
+
+  /**
    * Get left sibling key of currently selected node.
    * 
    * @return Left sibling key of currently selected node.
    */
   public long getLeftSiblingKey();
+
+  /**
+   * Is there a right sibling?
+   * 
+   * @return True if there is a right sibling. False else.
+   */
+  public boolean hasRightSibling();
 
   /**
    * Get right sibling key of currently selected node.
@@ -224,6 +252,34 @@ public interface IReadTransaction {
    * @return Kind of node.
    */
   public int getKind();
+
+  /**
+   * Is this node the root node?
+   * 
+   * @return True if it is the root node, false else.
+   */
+  public boolean isRoot();
+
+  /**
+   * Is node a element?
+   * 
+   * @return True if node is element. False else.
+   */
+  public boolean isElement();
+
+  /**
+   * Is node a attribute?
+   * 
+   * @return True if node is attribute. False else.
+   */
+  public boolean isAttribute();
+
+  /**
+   * Is node a text?
+   * 
+   * @return True if node is text. False else.
+   */
+  public boolean isText();
 
   /**
    * Get local part key of node.

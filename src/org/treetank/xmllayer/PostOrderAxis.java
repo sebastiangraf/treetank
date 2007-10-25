@@ -47,7 +47,7 @@ public class PostOrderAxis extends Axis {
    */
   private final void startAtBeginning() {
     mRTX.moveToRoot();
-    while (mRTX.getFirstChildKey() != IConstants.NULL_KEY) {
+    while (mRTX.hasFirstChild()) {
       mLastParent.push(mRTX.getNodeKey());
       mRTX.moveToFirstChild();
 

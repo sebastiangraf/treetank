@@ -143,14 +143,14 @@ public class SAXGenerator extends Thread {
 
   protected final void setNextKey() throws Exception {
     // Where to go?
-    if (mRTX.getFirstChildKey() != IConstants.NULL_KEY) {
+    if (mRTX.hasFirstChild()) {
       mNextKey = mRTX.getFirstChildKey();
-      if (mRTX.getRightSiblingKey() == IConstants.NULL_KEY) {
+      if (!mRTX.hasRightSibling()) {
         mRightSiblingKeyStack.push(mRightSiblingKeyStack.peek());
       } else {
         mRightSiblingKeyStack.push(mRTX.getRightSiblingKey());
       }
-    } else if (mRTX.getRightSiblingKey() != IConstants.NULL_KEY) {
+    } else if (mRTX.hasRightSibling()) {
       mNextKey = mRTX.getRightSiblingKey();
       mRightSiblingKeyStack.push(mRTX.getRightSiblingKey());
     } else {
