@@ -21,8 +21,6 @@
 
 package org.treetank.pagelayer;
 
-import java.util.Arrays;
-
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
@@ -133,7 +131,8 @@ public final class Text implements INode, InternalNode {
   }
 
   public final INode getFirstChild(final IReadTransaction rtx) {
-    return null;
+    throw new UnsupportedOperationException(
+        "Text does not implement this method.");
   }
 
   public final void setFirstChildKey(final long firstChildKey) {
@@ -176,12 +175,16 @@ public final class Text implements INode, InternalNode {
   }
 
   public final void setChildCount(final long childCount) {
+    throw new UnsupportedOperationException(
+        "Text does not implement this method.");
   }
 
   public final void incrementChildCount() {
   }
 
   public final void decrementChildCount() {
+    throw new UnsupportedOperationException(
+        "Text does not implement this method.");
   }
 
   public final int getAttributeCount() {
@@ -189,7 +192,8 @@ public final class Text implements INode, InternalNode {
   }
 
   public final INode getAttribute(final int index) {
-    return null;
+    throw new UnsupportedOperationException(
+        "Text does not implement this method.");
   }
 
   public final void setAttribute(
@@ -198,6 +202,8 @@ public final class Text implements INode, InternalNode {
       final int uriKey,
       final int prefixKey,
       final byte[] value) {
+    throw new UnsupportedOperationException(
+        "Text does not implement this method.");
   }
 
   public final void insertAttribute(
@@ -205,6 +211,8 @@ public final class Text implements INode, InternalNode {
       final int uriKey,
       final int prefixKey,
       final byte[] value) {
+    throw new UnsupportedOperationException(
+        "Text does not implement this method.");
   }
 
   public final int getNamespaceCount() {
@@ -212,16 +220,21 @@ public final class Text implements INode, InternalNode {
   }
 
   public final Namespace getNamespace(final int index) {
-    return null;
+    throw new UnsupportedOperationException(
+        "Text does not implement this method.");
   }
 
   public final void setNamespace(
       final int index,
       final int uriKey,
       final int prefixKey) {
+    throw new UnsupportedOperationException(
+        "Text does not implement this method.");
   }
 
   public final void insertNamespace(final int uriKey, final int prefixKey) {
+    throw new UnsupportedOperationException(
+        "Text does not implement this method.");
   }
 
   public final int getKind() {
@@ -229,6 +242,8 @@ public final class Text implements INode, InternalNode {
   }
 
   public final void setKind(final byte kind) {
+    throw new UnsupportedOperationException(
+        "Text does not implement this method.");
   }
 
   public final int getLocalPartKey() {
@@ -236,10 +251,13 @@ public final class Text implements INode, InternalNode {
   }
 
   public final String getLocalPart(final IReadTransaction rtx) {
-    return null;
+    throw new UnsupportedOperationException(
+        "Text does not implement this method.");
   }
 
   public final void setLocalPartKey(final int localPartKey) {
+    throw new UnsupportedOperationException(
+        "Text does not implement this method.");
   }
 
   public final int getPrefixKey() {
@@ -247,10 +265,13 @@ public final class Text implements INode, InternalNode {
   }
 
   public final String getPrefix(final IReadTransaction rtx) {
-    return null;
+    throw new UnsupportedOperationException(
+        "Text does not implement this method.");
   }
 
   public final void setPrefixKey(final int prefixKey) {
+    throw new UnsupportedOperationException(
+        "Text does not implement this method.");
   }
 
   public final int getURIKey() {
@@ -258,10 +279,13 @@ public final class Text implements INode, InternalNode {
   }
 
   public final String getURI(final IReadTransaction rtx) {
-    return null;
+    throw new UnsupportedOperationException(
+        "Text does not implement this method.");
   }
 
   public final void setURIKey(final int uriKey) {
+    throw new UnsupportedOperationException(
+        "Text does not implement this method.");
   }
 
   public final byte[] getValue() {
@@ -300,16 +324,7 @@ public final class Text implements INode, InternalNode {
    */
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result =
-        prime * result + (int) (mLeftSiblingKey ^ (mLeftSiblingKey >>> 32));
-    result = prime * result + (int) (mNodeKey ^ (mNodeKey >>> 32));
-    result = prime * result + (int) (mParentKey ^ (mParentKey >>> 32));
-    result =
-        prime * result + (int) (mRightSiblingKey ^ (mRightSiblingKey >>> 32));
-    result = prime * result + Arrays.hashCode(mValue);
-    return result;
+    return (int) mNodeKey;
   }
 
   /**

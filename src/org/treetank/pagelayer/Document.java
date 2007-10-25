@@ -85,14 +85,18 @@ public final class Document implements INode, InternalNode {
   }
 
   public final long getParentKey() {
-    return IConstants.NULL_KEY;
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final INode getParent(final IReadTransaction rtx) {
-    return null;
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final void setParentKey(final long parentKey) {
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final boolean hasFirstChild() {
@@ -116,14 +120,18 @@ public final class Document implements INode, InternalNode {
   }
 
   public final long getLeftSiblingKey() {
-    return IConstants.NULL_KEY;
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final INode getLeftSibling(final IReadTransaction rtx) {
-    return null;
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final void setLeftSiblingKey(final long leftSiblingKey) {
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final boolean hasRightSibling() {
@@ -131,14 +139,18 @@ public final class Document implements INode, InternalNode {
   }
 
   public final long getRightSiblingKey() {
-    return IConstants.NULL_KEY;
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final INode getRightSibling(final IReadTransaction rtx) {
-    return null;
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final void setRightSiblingKey(final long rightSiblingKey) {
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final long getChildCount() {
@@ -162,7 +174,8 @@ public final class Document implements INode, InternalNode {
   }
 
   public final INode getAttribute(final int index) {
-    return null;
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final void setAttribute(
@@ -171,6 +184,8 @@ public final class Document implements INode, InternalNode {
       final int uriKey,
       final int prefixKey,
       final byte[] value) {
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final void insertAttribute(
@@ -178,6 +193,8 @@ public final class Document implements INode, InternalNode {
       final int uriKey,
       final int prefixKey,
       final byte[] value) {
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final int getNamespaceCount() {
@@ -185,16 +202,21 @@ public final class Document implements INode, InternalNode {
   }
 
   public final Namespace getNamespace(final int index) {
-    return null;
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final void setNamespace(
       final int index,
       final int uriKey,
       final int prefixKey) {
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final void insertNamespace(final int uriKey, final int prefixKey) {
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final int getKind() {
@@ -202,46 +224,63 @@ public final class Document implements INode, InternalNode {
   }
 
   public final void setKind(final byte kind) {
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final int getLocalPartKey() {
-    return -1;
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final String getLocalPart(final IReadTransaction rtx) {
-    return null;
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final void setLocalPartKey(final int localPartKey) {
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final int getPrefixKey() {
-    return -1;
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final String getPrefix(final IReadTransaction rtx) {
-    return null;
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final void setPrefixKey(final int prefixKey) {
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final int getURIKey() {
-    return -1;
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final String getURI(final IReadTransaction rtx) {
-    return null;
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final void setURIKey(final int uriKey) {
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final byte[] getValue() {
-    return null;
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final void setValue(final byte[] value) {
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final void serialize(final FastByteArrayWriter out) {
@@ -268,12 +307,7 @@ public final class Document implements INode, InternalNode {
    */
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + (int) (mChildCount ^ (mChildCount >>> 32));
-    result = prime * result + (int) (mFirstChildKey ^ (mFirstChildKey >>> 32));
-    result = prime * result + (int) (mNodeKey ^ (mNodeKey >>> 32));
-    return result;
+    return (int) mNodeKey;
   }
 
   /**
