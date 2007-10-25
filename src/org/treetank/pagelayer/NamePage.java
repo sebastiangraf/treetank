@@ -35,7 +35,7 @@ import org.treetank.utils.UTF;
  * Name page holds all names and their keys for a revision.
  * </p>
  */
-public final class NamePage extends Page {
+public final class NamePage extends AbstractPage {
 
   /** Map the hash of a name to its name. */
   private final Map<Integer, String> mNameMap;

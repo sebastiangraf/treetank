@@ -33,7 +33,7 @@ import org.treetank.utils.FastStack;
  * node. Self is not included.
  * </p>
  */
-public class DescendantAxis extends Axis {
+public class DescendantAxis extends AbstractAxis {
 
   /** Stack for remembering next nodeKey in document order. */
   private final FastStack<Long> mRightSiblingKeyStack;

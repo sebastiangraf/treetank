@@ -24,11 +24,10 @@ package org.treetank.xmllayer;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.api.INode;
+import org.treetank.api.IAxis;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
@@ -54,8 +53,7 @@ public class NameTestAxisTest {
 
     // Find descendants starting from nodeKey 0L (root).
     wtx.moveToDocument();
-    final Iterator<INode> axis1 =
-        new NameTestAxis(wtx, new DescendantAxis(wtx), "b");
+    final IAxis axis1 = new NameTestAxis(wtx, new DescendantAxis(wtx), "b");
 
     assertEquals(true, axis1.hasNext());
     assertEquals(3L, wtx.getNodeKey());

@@ -21,6 +21,7 @@
 
 package org.treetank.xmllayer;
 
+import org.treetank.api.IAxis;
 import org.treetank.api.IReadTransaction;
 
 /**
@@ -30,10 +31,10 @@ import org.treetank.api.IReadTransaction;
  * Only select nodes of kind ELEMENT and TEXT.
  * </p>
  */
-public class NodeTestAxis extends Axis {
+public class NodeTestAxis extends AbstractAxis {
 
   /** Remember next key to visit. */
-  private final Axis mAxis;
+  private final IAxis mAxis;
 
   /**
    * Constructor initializing internal state.
@@ -41,7 +42,7 @@ public class NodeTestAxis extends Axis {
    * @param rtx Exclusive (immutable) trx to iterate with.
    * @param axis Axis to iterate over.
    */
-  public NodeTestAxis(final IReadTransaction rtx, final Axis axis) {
+  public NodeTestAxis(final IReadTransaction rtx, final IAxis axis) {
     super(rtx);
     mAxis = axis;
   }

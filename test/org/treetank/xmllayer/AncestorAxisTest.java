@@ -24,11 +24,10 @@ package org.treetank.xmllayer;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.api.INode;
+import org.treetank.api.IAxis;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
@@ -54,7 +53,7 @@ public class AncestorAxisTest {
 
     // Find ancestors starting from nodeKey 0L (root).
     wtx.moveTo(8L);
-    final Iterator<INode> axis1 = new AncestorAxis(wtx);
+    final IAxis axis1 = new AncestorAxis(wtx);
     assertEquals(true, axis1.hasNext());
     assertEquals(7L, axis1.next().getNodeKey());
 
@@ -65,7 +64,7 @@ public class AncestorAxisTest {
 
     // Find ancestors starting from nodeKey 1L (first child of root).
     wtx.moveTo(3L);
-    final Iterator<INode> axis2 = new AncestorAxis(wtx);
+    final IAxis axis2 = new AncestorAxis(wtx);
     assertEquals(true, axis2.hasNext());
     assertEquals(1L, axis2.next().getNodeKey());
 
@@ -73,7 +72,7 @@ public class AncestorAxisTest {
 
     // Find ancestors starting from nodeKey 4L (second child of root).
     wtx.moveTo(2L);
-    final Iterator<INode> axis3 = new AncestorAxis(wtx);
+    final IAxis axis3 = new AncestorAxis(wtx);
     assertEquals(true, axis3.hasNext());
     assertEquals(1L, axis3.next().getNodeKey());
 
@@ -81,7 +80,7 @@ public class AncestorAxisTest {
 
     // Find ancestors starting from nodeKey 5L (last in document order).
     wtx.moveTo(1L);
-    final Iterator<INode> axis4 = new AncestorAxis(wtx);
+    final IAxis axis4 = new AncestorAxis(wtx);
     assertEquals(false, axis4.hasNext());
 
     wtx.abort();

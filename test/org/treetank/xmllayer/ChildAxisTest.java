@@ -24,10 +24,10 @@ package org.treetank.xmllayer;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.treetank.api.IAxis;
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
@@ -58,7 +58,7 @@ public class ChildAxisTest {
     TestDocument.create(wtx);
 
     wtx.moveTo(1L);
-    final Iterator<INode> axis1 = new ChildAxis(wtx);
+    final IAxis axis1 = new ChildAxis(wtx);
     assertEquals(true, axis1.hasNext());
     INode node = axis1.next();
     assertEquals(2L, node.getNodeKey());
@@ -102,7 +102,7 @@ public class ChildAxisTest {
     assertEquals(false, axis1.hasNext());
 
     wtx.moveTo(3L);
-    final Iterator<INode> axis2 = new ChildAxis(wtx);
+    final IAxis axis2 = new ChildAxis(wtx);
     assertEquals(true, axis2.hasNext());
     node = axis2.next();
     assertEquals(4L, node.getNodeKey());
@@ -122,7 +122,7 @@ public class ChildAxisTest {
     assertEquals(false, axis2.hasNext());
 
     wtx.moveTo(10L);
-    final Iterator<INode> axis4 = new ChildAxis(wtx);
+    final IAxis axis4 = new ChildAxis(wtx);
     assertEquals(false, axis4.hasNext());
 
     wtx.abort();
@@ -143,7 +143,7 @@ public class ChildAxisTest {
     final IReadTransaction rtx = session1.beginReadTransaction();
 
     rtx.moveTo(1L);
-    final Iterator<INode> axis1 = new ChildAxis(rtx);
+    final IAxis axis1 = new ChildAxis(rtx);
     assertEquals(true, axis1.hasNext());
     INode node = axis1.next();
     assertEquals(2L, node.getNodeKey());
@@ -187,7 +187,7 @@ public class ChildAxisTest {
     assertEquals(false, axis1.hasNext());
 
     rtx.moveTo(3L);
-    final Iterator<INode> axis2 = new ChildAxis(rtx);
+    final IAxis axis2 = new ChildAxis(rtx);
     assertEquals(true, axis2.hasNext());
     node = axis2.next();
     assertEquals(4L, node.getNodeKey());
@@ -207,7 +207,7 @@ public class ChildAxisTest {
     assertEquals(false, axis2.hasNext());
 
     rtx.moveTo(10L);
-    final Iterator<INode> axis4 = new ChildAxis(rtx);
+    final IAxis axis4 = new ChildAxis(rtx);
     assertEquals(false, axis4.hasNext());
 
     rtx.close();

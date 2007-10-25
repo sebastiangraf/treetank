@@ -28,7 +28,7 @@ import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 import org.treetank.utils.UTF;
 
-public final class TextNode extends Node {
+public final class TextNode extends AbstractNode {
 
   private long mParentKey;
 

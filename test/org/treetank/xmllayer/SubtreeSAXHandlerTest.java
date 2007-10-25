@@ -57,8 +57,8 @@ public class SubtreeSAXHandlerTest {
     final IReadTransaction expectedTrx = expectedSession.beginReadTransaction();
     final IReadTransaction rtrx2 = session.beginReadTransaction();
 
-    final Axis expectedDescendants = new DescendantAxis(expectedTrx);
-    final Axis descendants = new DescendantAxis(rtrx2);
+    final AbstractAxis expectedDescendants = new DescendantAxis(expectedTrx);
+    final AbstractAxis descendants = new DescendantAxis(rtrx2);
 
     while (expectedDescendants.hasNext() && descendants.hasNext()) {
       if (!expectedDescendants.mCurrentNode.equals(descendants.mCurrentNode)) {

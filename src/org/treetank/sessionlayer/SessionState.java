@@ -30,7 +30,7 @@ import java.util.concurrent.Semaphore;
 import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.pagelayer.Page;
+import org.treetank.pagelayer.AbstractPage;
 import org.treetank.pagelayer.PageReader;
 import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.UberPage;
@@ -50,7 +50,7 @@ public final class SessionState {
   private final SessionConfiguration mSessionConfiguration;
 
   /** Shared read-only page mPageCache. */
-  private final Map<Long, Page> mPageCache;
+  private final Map<Long, AbstractPage> mPageCache;
 
   /** Write semaphore to assure only one exclusive write transaction exists. */
   private final Semaphore mWriteSemaphore;
@@ -94,7 +94,7 @@ public final class SessionState {
     new File(mSessionConfiguration.getAbsolutePath()).createNewFile();
 
     // Init session members.
-    mPageCache = new FastWeakHashMap<Long, Page>();
+    mPageCache = new FastWeakHashMap<Long, AbstractPage>();
     mWriteSemaphore = new Semaphore(IConstants.MAX_WRITE_TRANSACTIONS);
     mReadSemaphore = new Semaphore(IConstants.MAX_READ_TRANSACTIONS);
     final PageReference uberPageReference = new PageReference();

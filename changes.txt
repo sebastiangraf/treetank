@@ -18,6 +18,11 @@
  * 
  * $Id$
  */
+
+TreeTank 4.13
+-------------
++ IAxis now public API and can be used instead of Iterable<INode>.
++ Made Node, Page, and Axis abstract and renamed them accordingly.
  
 TreeTank 4.12
 -------------

@@ -27,7 +27,7 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
-public final class ElementNode extends Node {
+public final class ElementNode extends AbstractNode {
 
   private long mParentKey;
 

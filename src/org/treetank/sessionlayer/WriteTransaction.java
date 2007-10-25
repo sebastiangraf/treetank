@@ -23,7 +23,7 @@ package org.treetank.sessionlayer;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.nodelayer.Node;
+import org.treetank.nodelayer.AbstractNode;
 import org.treetank.pagelayer.UberPage;
 
 /**
@@ -218,12 +218,12 @@ public final class WriteTransaction extends ReadTransaction
     // Get and adapt parent node.
     setCurrentNode(((WriteTransactionState) getTransactionState())
         .prepareNode(parentKey));
-    ((Node) getCurrentNode()).decrementChildCount();
-    ((Node) getCurrentNode()).setFirstChildKey(rightSiblingNodeKey);
+    ((AbstractNode) getCurrentNode()).decrementChildCount();
+    ((AbstractNode) getCurrentNode()).setFirstChildKey(rightSiblingNodeKey);
 
     // Adapt left sibling node if there is one.
     if (leftSiblingNodeKey != IConstants.NULL_KEY) {
-      final Node leftSiblingNode =
+      final AbstractNode leftSiblingNode =
           ((WriteTransactionState) getTransactionState())
               .prepareNode(leftSiblingNodeKey);
       leftSiblingNode.setRightSiblingKey(rightSiblingNodeKey);
@@ -231,7 +231,7 @@ public final class WriteTransaction extends ReadTransaction
 
     // Adapt right sibling node if there is one.
     if (rightSiblingNodeKey != IConstants.NULL_KEY) {
-      final Node rightSiblingNode =
+      final AbstractNode rightSiblingNode =
           ((WriteTransactionState) getTransactionState())
               .prepareNode(rightSiblingNodeKey);
       rightSiblingNode.setLeftSiblingKey(leftSiblingNodeKey);
@@ -345,8 +345,8 @@ public final class WriteTransaction extends ReadTransaction
     getSessionState().closeWriteTransaction();
   }
 
-  private final Node prepareCurrentNode() throws Exception {
-    final Node modNode =
+  private final AbstractNode prepareCurrentNode() throws Exception {
+    final AbstractNode modNode =
         ((WriteTransactionState) getTransactionState())
             .prepareNode(getCurrentNode().getNodeKey());
     setCurrentNode(modNode);
@@ -356,7 +356,7 @@ public final class WriteTransaction extends ReadTransaction
 
   private final void updateParent(final boolean updateFirstChild)
       throws Exception {
-    final Node parentNode =
+    final AbstractNode parentNode =
         ((WriteTransactionState) getTransactionState())
             .prepareNode(getCurrentNode().getParentKey());
     parentNode.incrementChildCount();
@@ -367,7 +367,7 @@ public final class WriteTransaction extends ReadTransaction
 
   private final void updateRightSibling() throws Exception {
     if (getCurrentNode().hasRightSibling()) {
-      final Node rightSiblingNode =
+      final AbstractNode rightSiblingNode =
           ((WriteTransactionState) getTransactionState())
               .prepareNode(getCurrentNode().getRightSiblingKey());
       rightSiblingNode.setLeftSiblingKey(getCurrentNode().getNodeKey());
@@ -375,7 +375,7 @@ public final class WriteTransaction extends ReadTransaction
   }
 
   private final void updateLeftSibling() throws Exception {
-    final Node leftSiblingNode =
+    final AbstractNode leftSiblingNode =
         ((WriteTransactionState) getTransactionState())
             .prepareNode(getCurrentNode().getLeftSiblingKey());
     leftSiblingNode.setRightSiblingKey(getCurrentNode().getNodeKey());

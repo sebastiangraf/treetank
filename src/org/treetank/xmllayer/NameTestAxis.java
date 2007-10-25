@@ -21,6 +21,7 @@
 
 package org.treetank.xmllayer;
 
+import org.treetank.api.IAxis;
 import org.treetank.api.IReadTransaction;
 
 /**
@@ -32,10 +33,10 @@ import org.treetank.api.IReadTransaction;
  * comparisons.
  * </p>
  */
-public class NameTestAxis extends Axis {
+public class NameTestAxis extends AbstractAxis {
 
   /** Remember next key to visit. */
-  private final Axis mAxis;
+  private final IAxis mAxis;
 
   /** Name test to do. */
   private final int mNameKey;
@@ -49,7 +50,7 @@ public class NameTestAxis extends Axis {
    */
   public NameTestAxis(
       final IReadTransaction rtx,
-      final Axis axis,
+      final IAxis axis,
       final String name) {
     super(rtx);
     mAxis = axis;

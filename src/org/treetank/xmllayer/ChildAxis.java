@@ -31,7 +31,7 @@ import org.treetank.api.IReadTransaction;
  * node. Self is not included.
  * </p>
  */
-public class ChildAxis extends Axis {
+public class ChildAxis extends AbstractAxis {
 
   /** Has another child node. */
   private long mNextKey;

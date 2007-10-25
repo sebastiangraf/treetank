@@ -25,7 +25,7 @@ import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 
-public final class AttributeNode extends Node {
+public final class AttributeNode extends AbstractNode {
 
   private long mParentKey;
 
