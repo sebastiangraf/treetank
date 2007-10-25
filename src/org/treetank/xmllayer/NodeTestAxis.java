@@ -25,7 +25,7 @@ import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 
 /**
- * <h1>NodeTestAxisIterator</h1>
+ * <h1>NodeTestAxis</h1>
  * 
  * <p>
  * Only select nodes of kind ELEMENT and TEXT.

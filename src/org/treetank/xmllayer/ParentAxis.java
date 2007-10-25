@@ -25,7 +25,7 @@ import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 
 /**
- * <h1>ParentAxisIterator</h1>
+ * <h1>ParentAxis</h1>
  * 
  * <p>
  * Iterate to parent node starting at a given node. Self is not included.

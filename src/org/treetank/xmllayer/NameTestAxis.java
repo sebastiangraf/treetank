@@ -24,7 +24,7 @@ package org.treetank.xmllayer;
 import org.treetank.api.IReadTransaction;
 
 /**
- * <h1>NameTestAxisIterator</h1>
+ * <h1>NameTestAxis</h1>
  * 
  * <p>
  * Find all ELEMENTS provided by some axis iterator that match a given name.

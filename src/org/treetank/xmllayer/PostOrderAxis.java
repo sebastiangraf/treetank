@@ -6,7 +6,7 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastStack;
 
 /**
- * <h1>PostOrderIterator</h1>
+ * <h1>PostOrder</h1>
  * 
  * <p>
  * Iterate over the whole tree starting with the last node.
