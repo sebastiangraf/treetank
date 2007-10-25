@@ -69,6 +69,18 @@ public final class Attribute implements INode {
     return false;
   }
 
+  public final boolean isElement() {
+    return false;
+  }
+
+  public final boolean isAttribute() {
+    return true;
+  }
+
+  public final boolean isText() {
+    return false;
+  }
+
   public final long getNodeKey() {
     return mNodeKey;
   }

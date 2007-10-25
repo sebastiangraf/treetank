@@ -38,6 +38,27 @@ public interface INode {
   public boolean isRoot();
 
   /**
+   * Is node a element?
+   * 
+   * @return True if node is element. False else.
+   */
+  public boolean isElement();
+
+  /**
+   * Is node a attribute?
+   * 
+   * @return True if node is attribute. False else.
+   */
+  public boolean isAttribute();
+
+  /**
+   * Is node a text?
+   * 
+   * @return True if node is text. False else.
+   */
+  public boolean isText();
+
+  /**
    * Get node key of currently selected node.
    * 
    * @return INode key of currently selected node.

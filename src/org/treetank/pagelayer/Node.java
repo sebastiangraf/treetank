@@ -199,6 +199,18 @@ public final class Node implements INode {
     return (mNodeKey == IConstants.ROOT_KEY);
   }
 
+  public final boolean isElement() {
+    return (mKind == IConstants.ELEMENT);
+  }
+
+  public final boolean isAttribute() {
+    return (mKind == IConstants.ATTRIBUTE);
+  }
+
+  public final boolean isText() {
+    return (mKind == IConstants.TEXT);
+  }
+
   public final long getNodeKey() {
     return mNodeKey;
   }
