@@ -77,27 +77,27 @@ public final class TestDocument {
    */
   public static void create(final IWriteTransaction trx) throws Exception {
 
-    trx.insertFirstChild("a", "ns", "p");
+    trx.insertElementAsFirstChild("a", "ns", "p");
     trx.insertAttribute("i", "", "", UTF.convert("j"));
 
-    trx.insertFirstChild(UTF.convert("oops1"));
+    trx.insertTextAsFirstChild(UTF.convert("oops1"));
 
-    trx.insertRightSibling("b", "", "");
+    trx.insertElementAsRightSibling("b", "", "");
 
-    trx.insertFirstChild(UTF.convert("foo"));
-    trx.insertRightSibling("c", "", "");
+    trx.insertTextAsFirstChild(UTF.convert("foo"));
+    trx.insertElementAsRightSibling("c", "", "");
     trx.moveToParent();
 
-    trx.insertRightSibling(UTF.convert("oops2"));
+    trx.insertTextAsRightSibling(UTF.convert("oops2"));
 
-    trx.insertRightSibling("b", "", "");
+    trx.insertElementAsRightSibling("b", "", "");
     trx.insertAttribute("x", "ns", "p", UTF.convert("y"));
 
-    trx.insertFirstChild("c", "", "");
-    trx.insertRightSibling(UTF.convert("bar"));
+    trx.insertElementAsFirstChild("c", "", "");
+    trx.insertTextAsRightSibling(UTF.convert("bar"));
     trx.moveToParent();
 
-    trx.insertRightSibling(UTF.convert("oops3"));
+    trx.insertTextAsRightSibling(UTF.convert("oops3"));
 
   }
 

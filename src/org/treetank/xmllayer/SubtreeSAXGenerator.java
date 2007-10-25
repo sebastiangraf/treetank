@@ -118,7 +118,7 @@ public class SubtreeSAXGenerator extends SAXGenerator {
   public void subtreeStarting(final long subtreeID) throws SAXException {
     try {
       subtreeKeyStack.push(this.mNextKey);
-      mRTX.moveToRoot();
+      mRTX.moveToDocument();
       mRTX.moveToFirstChild();
       do {
         if (mRTX.getLocalPart().matches("((\\D)+)(.{1})((\\d)+){1}")) {

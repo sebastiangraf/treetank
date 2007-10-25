@@ -48,37 +48,6 @@ public interface IWriteTransaction extends IReadTransaction {
   // --- Node Modifiers --------------------------------------------------------
 
   /**
-   * Insert new node as first child of currently selected node.
-   * The cursor is moved to the inserted node.
-   * 
-   * @param kind Kind of inserted node.
-   * @param localPart Local part of inserted node.
-   * @param uri URI of inserted node.
-   * @param prefix Prefix of inserted node.
-   * @param value Value of inserted node.
-   * @return Key of inserted node.
-   * @throws Exception of any kind and if no node is selected or the node
-   * already has a first child.
-   */
-  public long insertFirstChild(
-      final int kind,
-      final String localPart,
-      final String uri,
-      final String prefix,
-      final byte[] value) throws Exception;
-
-  /**
-   * Insert new text node as first child of currently selected node.
-   * The cursor is moved to the inserted node.
-   * 
-   * @param value Value of inserted node.
-   * @return Key of inserted node.
-   * @throws Exception of any kind and if no node is selected or the node
-   * already has a first child.
-   */
-  public long insertFirstChild(final byte[] value) throws Exception;
-
-  /**
    * Insert new element node as first child of currently selected node.
    * The cursor is moved to the inserted node.
    * 
@@ -89,30 +58,21 @@ public interface IWriteTransaction extends IReadTransaction {
    * @throws Exception of any kind and if no node is selected or the node
    * already has a first child.
    */
-  public long insertFirstChild(
+  public long insertElementAsFirstChild(
       final String localPart,
       final String uri,
       final String prefix) throws Exception;
-
+  
   /**
-   * Insert new node as right sibling of currently selected node.
+   * Insert new text node as first child of currently selected node.
    * The cursor is moved to the inserted node.
    * 
-   * @param kind Kind of inserted node.
-   * @param localPart Local part of inserted node.
-   * @param uri URI of inserted node.
-   * @param prefix Prefix of inserted node.
    * @param value Value of inserted node.
    * @return Key of inserted node.
-   * @throws Exception of any kind and if no node is selected or the node is
-   * the root node which is not allowed to have right siblings.
+   * @throws Exception of any kind and if no node is selected or the node
+   * already has a first child.
    */
-  public long insertRightSibling(
-      final int kind,
-      final String localPart,
-      final String uri,
-      final String prefix,
-      final byte[] value) throws Exception;
+  public long insertTextAsFirstChild(final byte[] value) throws Exception;
 
   /**
    * Insert new element node as right sibling of currently selected node.
@@ -125,7 +85,7 @@ public interface IWriteTransaction extends IReadTransaction {
    * @throws Exception of any kind and if no node is selected or the node
    * already has a first child.
    */
-  public long insertRightSibling(
+  public long insertElementAsRightSibling(
       final String localPart,
       final String uri,
       final String prefix) throws Exception;
@@ -139,7 +99,7 @@ public interface IWriteTransaction extends IReadTransaction {
    * @throws Exception of any kind and if no node is selected or the node is
    * the root node which is not allowed to have right siblings.
    */
-  public long insertRightSibling(final byte[] value) throws Exception;
+  public long insertTextAsRightSibling(final byte[] value) throws Exception;
 
   /**
    * Insert attribute in currently selected node.

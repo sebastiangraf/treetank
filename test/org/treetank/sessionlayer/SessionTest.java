@@ -125,7 +125,7 @@ public class SessionTest {
 
     TestDocument.create(wtx);
 
-    TestCase.assertNotNull(wtx.moveToRoot());
+    TestCase.assertNotNull(wtx.moveToDocument());
     assertEquals(IConstants.DOCUMENT, wtx.getKind());
 
     TestCase.assertNotNull(wtx.moveToFirstChild());
@@ -143,24 +143,24 @@ public class SessionTest {
     final ISession session = Session.beginSession(TEST_REVISION_PATH);
 
     IReadTransaction rtx = session.beginReadTransaction();
-    assertEquals(0L, rtx.revisionKey());
-    assertEquals(1L, rtx.revisionSize());
+    assertEquals(0L, rtx.getRevisionNumber());
+    assertEquals(1L, rtx.getRevisionSize());
 
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    assertEquals(0L, wtx.revisionKey());
-    assertEquals(1L, wtx.revisionSize());
+    assertEquals(0L, wtx.getRevisionNumber());
+    assertEquals(1L, wtx.getRevisionSize());
 
     // Commit and check.
     wtx.commit();
 
     rtx = session.beginReadTransaction();
 
-    assertEquals(IConstants.UBP_ROOT_REVISION_KEY, rtx.revisionKey());
-    assertEquals(1L, rtx.revisionSize());
+    assertEquals(IConstants.UBP_ROOT_REVISION_KEY, rtx.getRevisionNumber());
+    assertEquals(1L, rtx.getRevisionSize());
 
     final IReadTransaction rtx2 = session.beginReadTransaction();
-    assertEquals(0L, rtx2.revisionKey());
-    assertEquals(1L, rtx2.revisionSize());
+    assertEquals(0L, rtx2.getRevisionNumber());
+    assertEquals(1L, rtx2.getRevisionSize());
 
   }
 
@@ -171,19 +171,19 @@ public class SessionTest {
 
     final IWriteTransaction wtx1 = session.beginWriteTransaction();
     TestDocument.create(wtx1);
-    assertEquals(0L, wtx1.revisionKey());
-    assertEquals(11L, wtx1.revisionSize());
+    assertEquals(0L, wtx1.getRevisionNumber());
+    assertEquals(11L, wtx1.getRevisionSize());
     wtx1.commit();
 
     final IReadTransaction rtx1 = session.beginReadTransaction();
-    assertEquals(0L, rtx1.revisionKey());
+    assertEquals(0L, rtx1.getRevisionNumber());
     rtx1.moveTo(9L);
     assertEquals(
         "bar",
         new String(rtx1.getValue(), IConstants.DEFAULT_ENCODING));
 
     final IWriteTransaction wtx2 = session.beginWriteTransaction();
-    assertEquals(1L, wtx2.revisionKey());
+    assertEquals(1L, wtx2.getRevisionNumber());
     wtx2.moveTo(9L);
     wtx2.setValue(UTF.convert("bar2"));
 
@@ -197,7 +197,7 @@ public class SessionTest {
     wtx2.abort();
 
     final IReadTransaction rtx2 = session.beginReadTransaction();
-    assertEquals(0L, rtx2.revisionKey());
+    assertEquals(0L, rtx2.getRevisionNumber());
     rtx2.moveTo(9L);
     assertEquals(
         "bar",
@@ -212,20 +212,20 @@ public class SessionTest {
 
     final IWriteTransaction wtx1 = session1.beginWriteTransaction();
     TestDocument.create(wtx1);
-    assertEquals(0L, wtx1.revisionKey());
+    assertEquals(0L, wtx1.getRevisionNumber());
     wtx1.commit();
     session1.close();
 
     final ISession session2 = Session.beginSession(TEST_EXISTING_PATH);
     final IReadTransaction rtx1 = session2.beginReadTransaction();
-    assertEquals(0L, rtx1.revisionKey());
+    assertEquals(0L, rtx1.getRevisionNumber());
     rtx1.moveTo(9L);
     assertEquals(
         "bar",
         new String(rtx1.getValue(), IConstants.DEFAULT_ENCODING));
 
     final IWriteTransaction wtx2 = session2.beginWriteTransaction();
-    assertEquals(1L, wtx2.revisionKey());
+    assertEquals(1L, wtx2.getRevisionNumber());
     wtx2.moveTo(9L);
     wtx2.setValue(UTF.convert("bar2"));
 
@@ -242,7 +242,7 @@ public class SessionTest {
 
     final ISession session3 = Session.beginSession(TEST_EXISTING_PATH);
     final IReadTransaction rtx2 = session3.beginReadTransaction();
-    assertEquals(1L, rtx2.revisionKey());
+    assertEquals(1L, rtx2.getRevisionNumber());
     rtx2.moveTo(9L);
     assertEquals("bar2", new String(
         rtx2.getValue(),
@@ -263,7 +263,7 @@ public class SessionTest {
     wtx.commit();
 
     final IReadTransaction rtx = session.beginReadTransaction();
-    assertEquals(11L, rtx.revisionSize());
+    assertEquals(11L, rtx.getRevisionSize());
     assertEquals(true, rtx.isSelected());
     TestCase.assertNull(rtx.moveTo(12L));
     assertEquals(false, rtx.isSelected());

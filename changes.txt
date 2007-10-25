@@ -21,6 +21,9 @@
  
 TreeTank 4.12
 -------------
++ Binary incompatibility to previous releases due to pagelayer changes.
++ IWriteTransaction now comes with insertElementAs... and insertTextAs...
++ Major rework of pagelayer. Node is split into Document, Element, and Text.
 + Add extended API of INode to IReadTransaction for convenience.
 + ISession tells absolute path, file name, and whether it is
   encrypted or checksummed.

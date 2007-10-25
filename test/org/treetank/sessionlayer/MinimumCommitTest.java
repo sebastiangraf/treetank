@@ -47,22 +47,22 @@ public class MinimumCommitTest {
 
     ISession session = Session.beginSession(TEST_PATH);
     IWriteTransaction wtx = session.beginWriteTransaction();
-    TestCase.assertEquals(0L, wtx.revisionKey());
+    TestCase.assertEquals(0L, wtx.getRevisionNumber());
     wtx.commit();
     session.close();
 
     session = Session.beginSession(TEST_PATH);
     wtx = session.beginWriteTransaction();
-    TestCase.assertEquals(1L, wtx.revisionKey());
+    TestCase.assertEquals(1L, wtx.getRevisionNumber());
     TestDocument.create(wtx);
     wtx.commit();
 
     wtx = session.beginWriteTransaction();
-    TestCase.assertEquals(2L, wtx.revisionKey());
+    TestCase.assertEquals(2L, wtx.getRevisionNumber());
     wtx.commit();
 
     IReadTransaction rtx = session.beginReadTransaction();
-    TestCase.assertEquals(2L, rtx.revisionKey());
+    TestCase.assertEquals(2L, rtx.getRevisionNumber());
     rtx.close();
     session.close();
 
@@ -73,11 +73,11 @@ public class MinimumCommitTest {
 
     ISession session = Session.beginSession(TEST_PATH);
     IWriteTransaction wtx = session.beginWriteTransaction();
-    TestCase.assertEquals(0L, wtx.revisionTimestamp());
+    TestCase.assertEquals(0L, wtx.getRevisionTimestamp());
     wtx.commit();
 
     IReadTransaction rtx = session.beginReadTransaction();
-    if (rtx.revisionTimestamp() >= System.currentTimeMillis()) {
+    if (rtx.getRevisionTimestamp() >= System.currentTimeMillis()) {
       TestCase.fail("Committed revision timestamp must be smaller than now.");
     }
     rtx.close();

@@ -46,7 +46,7 @@ public class PostOrderAxis extends Axis {
    * Method to start at the beginning of the tree.
    */
   private final void startAtBeginning() {
-    mRTX.moveToRoot();
+    mRTX.moveToDocument();
     while (mRTX.hasFirstChild()) {
       mLastParent.push(mRTX.getNodeKey());
       mRTX.moveToFirstChild();
