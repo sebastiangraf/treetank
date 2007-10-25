@@ -29,8 +29,6 @@ import org.treetank.utils.FastByteArrayWriter;
 
 public final class ElementNode extends Node {
 
-  private long mNodeKey;
-
   private long mParentKey;
 
   private long mFirstChildKey;
@@ -60,7 +58,7 @@ public final class ElementNode extends Node {
       final int localPartKey,
       final int uriKey,
       final int prefixKey) {
-    mNodeKey = nodeKey;
+    super(nodeKey);
     mParentKey = parentKey;
     mFirstChildKey = firstChildKey;
     mLeftSiblingKey = leftSiblingKey;
@@ -86,7 +84,7 @@ public final class ElementNode extends Node {
   }
 
   public ElementNode(final INode node) {
-    mNodeKey = node.getNodeKey();
+    super(node.getNodeKey());
     mParentKey = node.getParentKey();
     mFirstChildKey = node.getFirstChildKey();
     mLeftSiblingKey = node.getLeftSiblingKey();
@@ -106,21 +104,24 @@ public final class ElementNode extends Node {
   }
 
   public ElementNode(final long nodeKey, final FastByteArrayReader in) {
-
-    // Always read node key and kind.
-    mNodeKey = nodeKey;
+    super(nodeKey);
 
     // Read according to node kind.
-    mParentKey = mNodeKey - in.readVarLong();
-    mFirstChildKey = mNodeKey - in.readVarLong();
-    mLeftSiblingKey = mNodeKey - in.readVarLong();
-    mRightSiblingKey = mNodeKey - in.readVarLong();
+    mParentKey = getNodeKey() - in.readVarLong();
+    mFirstChildKey = getNodeKey() - in.readVarLong();
+    mLeftSiblingKey = getNodeKey() - in.readVarLong();
+    mRightSiblingKey = getNodeKey() - in.readVarLong();
     mChildCount = in.readVarLong();
     mAttributes = new AttributeNode[in.readByte()];
     for (int i = 0, l = mAttributes.length; i < l; i++) {
       mAttributes[i] =
-          new AttributeNode(mNodeKey + i + 1, mNodeKey, in.readVarInt(), in
-              .readVarInt(), in.readVarInt(), in.readByteArray());
+          new AttributeNode(
+              getNodeKey() + i + 1,
+              getNodeKey(),
+              in.readVarInt(),
+              in.readVarInt(),
+              in.readVarInt(),
+              in.readByteArray());
     }
     mNamespaces = new NamespaceNode[in.readByte()];
     for (int i = 0, l = mNamespaces.length; i < l; i++) {
@@ -132,118 +133,194 @@ public final class ElementNode extends Node {
 
   }
 
-  public final boolean isDocument() {
-    return false;
-  }
-
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final boolean isElement() {
     return true;
   }
 
-  public final boolean isAttribute() {
-    return false;
-  }
-
-  public final boolean isText() {
-    return false;
-  }
-
-  public final long getNodeKey() {
-    return mNodeKey;
-  }
-
-  public final void setNodeKey(final long nodeKey) {
-    mNodeKey = nodeKey;
-  }
-
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final boolean hasParent() {
     return (mParentKey != IConstants.NULL_KEY);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final long getParentKey() {
     return mParentKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final INode getParent(final IReadTransaction rtx) {
     return rtx.moveTo(mParentKey);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final void setParentKey(final long parentKey) {
     mParentKey = parentKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final boolean hasFirstChild() {
     return (mFirstChildKey != IConstants.NULL_KEY);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final long getFirstChildKey() {
     return mFirstChildKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final INode getFirstChild(final IReadTransaction rtx) {
     return rtx.moveTo(mFirstChildKey);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final void setFirstChildKey(final long firstChildKey) {
     mFirstChildKey = firstChildKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final boolean hasLeftSibling() {
     return (mLeftSiblingKey != IConstants.NULL_KEY);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final long getLeftSiblingKey() {
     return mLeftSiblingKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final INode getLeftSibling(final IReadTransaction rtx) {
     return rtx.moveTo(mLeftSiblingKey);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final void setLeftSiblingKey(final long leftSiblingKey) {
     mLeftSiblingKey = leftSiblingKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final boolean hasRightSibling() {
     return (mRightSiblingKey != IConstants.NULL_KEY);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final long getRightSiblingKey() {
     return mRightSiblingKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final INode getRightSibling(final IReadTransaction rtx) {
     return rtx.moveTo(mRightSiblingKey);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final void setRightSiblingKey(final long rightSiblingKey) {
     mRightSiblingKey = rightSiblingKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final long getChildCount() {
     return mChildCount;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final void setChildCount(final long childCount) {
     mChildCount = childCount;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final void incrementChildCount() {
     mChildCount += 1;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final void decrementChildCount() {
     mChildCount -= 1;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final int getAttributeCount() {
     return mAttributes == null ? 0 : mAttributes.length;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final INode getAttribute(final int index) {
     return mAttributes[index];
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final void setAttribute(
       final int index,
       final int localPartKey,
@@ -252,14 +329,18 @@ public final class ElementNode extends Node {
       final byte[] value) {
     mAttributes[index] =
         new AttributeNode(
-            mNodeKey + index + 1,
-            mNodeKey,
+            getNodeKey() + index + 1,
+            getNodeKey(),
             localPartKey,
             uriKey,
             prefixKey,
             value);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final void insertAttribute(
       final int localPartKey,
       final int uriKey,
@@ -272,22 +353,34 @@ public final class ElementNode extends Node {
 
     mAttributes[mAttributes.length - 1] =
         new AttributeNode(
-            mNodeKey + mAttributes.length,
-            mNodeKey,
+            getNodeKey() + mAttributes.length,
+            getNodeKey(),
             localPartKey,
             uriKey,
             prefixKey,
             value);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final int getNamespaceCount() {
     return mNamespaces == null ? 0 : mNamespaces.length;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final NamespaceNode getNamespace(final int index) {
     return mNamespaces[index];
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final void setNamespace(
       final int index,
       final int uriKey,
@@ -295,6 +388,10 @@ public final class ElementNode extends Node {
     mNamespaces[index] = new NamespaceNode(uriKey, prefixKey);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final void insertNamespace(final int uriKey, final int prefixKey) {
 
     NamespaceNode[] tmp = new NamespaceNode[mAttributes.length + 1];
@@ -304,66 +401,95 @@ public final class ElementNode extends Node {
     mNamespaces[mNamespaces.length - 1] = new NamespaceNode(uriKey, prefixKey);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final int getKind() {
     return IConstants.ELEMENT;
   }
 
-  public final void setKind(final byte kind) {
-    throw new UnsupportedOperationException(
-        "Element does not implement this method.");
-  }
-
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final int getLocalPartKey() {
     return mLocalPartKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final String getLocalPart(final IReadTransaction rtx) {
     return rtx.nameForKey(mLocalPartKey);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final void setLocalPartKey(final int localPartKey) {
     mLocalPartKey = localPartKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final int getPrefixKey() {
     return mPrefixKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final String getPrefix(final IReadTransaction rtx) {
     return rtx.nameForKey(mPrefixKey);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final void setPrefixKey(final int prefixKey) {
     mPrefixKey = prefixKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final int getURIKey() {
     return mURIKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final String getURI(final IReadTransaction rtx) {
     return rtx.nameForKey(mURIKey);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final void setURIKey(final int uriKey) {
     mURIKey = uriKey;
   }
 
-  public final byte[] getValue() {
-    throw new UnsupportedOperationException(
-        "Element does not implement this method.");
-  }
-
-  public final void setValue(final byte[] value) {
-    throw new UnsupportedOperationException(
-        "Element does not implement this method.");
-  }
-
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final void serialize(final FastByteArrayWriter out) {
-    out.writeVarLong(mNodeKey - mParentKey);
-    out.writeVarLong(mNodeKey - mFirstChildKey);
-    out.writeVarLong(mNodeKey - mLeftSiblingKey);
-    out.writeVarLong(mNodeKey - mRightSiblingKey);
+    out.writeVarLong(getNodeKey() - mParentKey);
+    out.writeVarLong(getNodeKey() - mFirstChildKey);
+    out.writeVarLong(getNodeKey() - mLeftSiblingKey);
+    out.writeVarLong(getNodeKey() - mRightSiblingKey);
     out.writeVarLong(mChildCount);
     out.writeByte((byte) mAttributes.length);
     for (int i = 0, l = mAttributes.length; i < l; i++) {
@@ -389,7 +515,7 @@ public final class ElementNode extends Node {
   public String toString() {
     return "Node "
         + "\n\tnodeKey: "
-        + this.mNodeKey
+        + this.getNodeKey()
         + "\n\tchildcount: "
         + this.mChildCount
         + "\n\tparentKey: "
@@ -400,26 +526,6 @@ public final class ElementNode extends Node {
         + this.mLeftSiblingKey
         + "\n\trightSiblingKey: "
         + this.mRightSiblingKey;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public int hashCode() {
-    return (int) mNodeKey;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public boolean equals(final Object obj) {
-    if ((obj == null) || (mNodeKey != ((INode) obj).getNodeKey())) {
-      return false;
-    } else {
-      return true;
-    }
   }
 
 }
