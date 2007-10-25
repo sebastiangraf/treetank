@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='iso-8859-1'?>
+
+<strip copyright='United Feature Syndicate' year='2000'>
+  <prolog>
+    <series href='http://www.dilbert.com'>Dilbert</series>
+    <author>Scott Adams</author>
+    <characters>
+      <character id='phb'>The Pointy-Haired Boss</character>
+      <character id='dilbert'>Dilbert</character>
+      <character id='wally'>Wally</character>
+    </characters>
+  </prolog>
+  <panels length='3'>
+    <panel no='1'>
+      <scene visible='phb dilbert'>
+        Pointy-Haired Boss and Dilbert sitting at table.
+      </scene>
+      <bubbles>
+        <bubble speaker='phb'>
+          We have a gigantic database full of customer behavior information.
+        </bubble>
+      </bubbles>
+    </panel>
+    <panel no='2'>
+      <scene visible='dilbert'> Dilbert, looking enthusiastic. </scene>
+      <bubbles>
+        <bubble speaker='dilbert'>
+          Excellent. We can use non-linear math and data mining technology
+          to optimize our retail channels!
+        </bubble>
+      </bubbles>
+    </panel>
+    <panel no='3'>
+      <scene visible='phb dilbert'>
+        Pointy-Haired Boss and Dilbert sitting at table. </scene>
+      <bubbles>
+        <bubble speaker='phb'>
+          If that's the same thing as SPAM, we're having a good meeting here.
+        </bubble>
+      </bubbles>
+    </panel>
+  </panels>
+</strip>
