@@ -173,9 +173,25 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
+  public final boolean hasParent() {
+    assertIsSelected();
+    return mCurrentNode.hasParent();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final long getParentKey() {
     assertIsSelected();
     return mCurrentNode.getParentKey();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final boolean hasFirstChild() {
+    assertIsSelected();
+    return mCurrentNode.hasFirstChild();
   }
 
   /**
@@ -189,9 +205,25 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
+  public final boolean hasLeftSibling() {
+    assertIsSelected();
+    return mCurrentNode.hasLeftSibling();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final long getLeftSiblingKey() {
     assertIsSelected();
     return mCurrentNode.getLeftSiblingKey();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final boolean hasRightSibling() {
+    assertIsSelected();
+    return mCurrentNode.hasParent();
   }
 
   /**
@@ -246,6 +278,38 @@ public class ReadTransaction implements IReadTransaction {
   public final int getKind() {
     assertIsSelected();
     return mCurrentNode.getKind();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final boolean isRoot() {
+    assertIsSelected();
+    return mCurrentNode.isRoot();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final boolean isElement() {
+    assertIsSelected();
+    return mCurrentNode.isElement();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final boolean isAttribute() {
+    assertIsSelected();
+    return mCurrentNode.isAttribute();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final boolean isText() {
+    assertIsSelected();
+    return mCurrentNode.isText();
   }
 
   /**

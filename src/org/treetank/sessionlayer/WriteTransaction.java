@@ -82,7 +82,7 @@ public final class WriteTransaction extends ReadTransaction
               value));
 
       // Change existing first child node.
-      if (getCurrentNode().getRightSiblingKey() != IConstants.NULL_KEY) {
+      if (getCurrentNode().hasRightSibling()) {
         final Node rightSiblingNode =
             ((WriteTransactionState) getTransactionState())
                 .prepareNode(getCurrentNode().getRightSiblingKey());
@@ -191,7 +191,7 @@ public final class WriteTransaction extends ReadTransaction
     leftSiblingNode.setRightSiblingKey(getCurrentNode().getNodeKey());
 
     // Adapt right sibling node.
-    if (getCurrentNode().getRightSiblingKey() != IConstants.NULL_KEY) {
+    if (getCurrentNode().hasRightSibling()) {
       final Node rightSiblingNode =
           ((WriteTransactionState) getTransactionState())
               .prepareNode(getCurrentNode().getRightSiblingKey());
