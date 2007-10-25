@@ -26,14 +26,11 @@ import java.util.Arrays;
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
-import org.treetank.api.ITransactionNode;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 import org.treetank.utils.UTF;
 
-public final class Node implements INode, ITransactionNode {
-
-  private IReadTransaction mRTX;
+public final class Node implements INode {
 
   private long mNodeKey;
 
@@ -198,8 +195,8 @@ public final class Node implements INode, ITransactionNode {
     }
   }
 
-  public final void setTransaction(final IReadTransaction rtx) {
-    mRTX = rtx;
+  public final boolean isRoot() {
+    return (mNodeKey == IConstants.ROOT_KEY);
   }
 
   public final long getNodeKey() {
@@ -218,8 +215,8 @@ public final class Node implements INode, ITransactionNode {
     return mParentKey;
   }
 
-  public final INode getParent() {
-    return mRTX.moveTo(mParentKey);
+  public final INode getParent(final IReadTransaction rtx) {
+    return rtx.moveTo(mParentKey);
   }
 
   public final void setParentKey(final long parentKey) {
@@ -234,8 +231,8 @@ public final class Node implements INode, ITransactionNode {
     return mFirstChildKey;
   }
 
-  public final INode getFirstChild() {
-    return mRTX.moveTo(mFirstChildKey);
+  public final INode getFirstChild(final IReadTransaction rtx) {
+    return rtx.moveTo(mFirstChildKey);
   }
 
   public final void setFirstChildKey(final long firstChildKey) {
@@ -250,8 +247,8 @@ public final class Node implements INode, ITransactionNode {
     return mLeftSiblingKey;
   }
 
-  public final INode getLeftSibling() {
-    return mRTX.moveTo(mLeftSiblingKey);
+  public final INode getLeftSibling(final IReadTransaction rtx) {
+    return rtx.moveTo(mLeftSiblingKey);
   }
 
   public final void setLeftSiblingKey(final long leftSiblingKey) {
@@ -266,8 +263,8 @@ public final class Node implements INode, ITransactionNode {
     return mRightSiblingKey;
   }
 
-  public final INode getRightSibling() {
-    return mRTX.moveTo(mRightSiblingKey);
+  public final INode getRightSibling(final IReadTransaction rtx) {
+    return rtx.moveTo(mRightSiblingKey);
   }
 
   public final void setRightSiblingKey(final long rightSiblingKey) {
@@ -370,8 +367,8 @@ public final class Node implements INode, ITransactionNode {
     return mLocalPartKey;
   }
 
-  public final String getLocalPart() {
-    return mRTX.nameForKey(mLocalPartKey);
+  public final String getLocalPart(final IReadTransaction rtx) {
+    return rtx.nameForKey(mLocalPartKey);
   }
 
   public final void setLocalPartKey(final int localPartKey) {
@@ -382,8 +379,8 @@ public final class Node implements INode, ITransactionNode {
     return mPrefixKey;
   }
 
-  public final String getPrefix() {
-    return mRTX.nameForKey(mPrefixKey);
+  public final String getPrefix(final IReadTransaction rtx) {
+    return rtx.nameForKey(mPrefixKey);
   }
 
   public final void setPrefixKey(final int prefixKey) {
@@ -394,8 +391,8 @@ public final class Node implements INode, ITransactionNode {
     return mURIKey;
   }
 
-  public final String getURI() {
-    return mRTX.nameForKey(mURIKey);
+  public final String getURI(final IReadTransaction rtx) {
+    return rtx.nameForKey(mURIKey);
   }
 
   public final void setURIKey(final int uriKey) {

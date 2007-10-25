@@ -26,11 +26,8 @@ import java.util.Arrays;
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
-import org.treetank.api.ITransactionNode;
 
-public final class Attribute implements INode, ITransactionNode {
-
-  private IReadTransaction mRTX;
+public final class Attribute implements INode {
 
   private long mNodeKey;
 
@@ -68,8 +65,8 @@ public final class Attribute implements INode, ITransactionNode {
     mValue = attribute.getValue();
   }
 
-  public final void setTransaction(final IReadTransaction rtx) {
-    mRTX = rtx;
+  public final boolean isRoot() {
+    return false;
   }
 
   public final long getNodeKey() {
@@ -84,8 +81,8 @@ public final class Attribute implements INode, ITransactionNode {
     return mLocalPartKey;
   }
 
-  public final String getLocalPart() {
-    return mRTX.nameForKey(mLocalPartKey);
+  public final String getLocalPart(final IReadTransaction rtx) {
+    return rtx.nameForKey(mLocalPartKey);
   }
 
   public final void setLocalPartKey(final int localPartKey) {
@@ -100,8 +97,8 @@ public final class Attribute implements INode, ITransactionNode {
     return mParentKey;
   }
 
-  public final INode getParent() {
-    return mRTX.moveTo(mParentKey);
+  public final INode getParent(final IReadTransaction rtx) {
+    return rtx.moveTo(mParentKey);
   }
 
   public final void setParentKey(final long parentKey) {
@@ -112,8 +109,8 @@ public final class Attribute implements INode, ITransactionNode {
     return mPrefixKey;
   }
 
-  public final String getPrefix() {
-    return mRTX.nameForKey(mPrefixKey);
+  public final String getPrefix(final IReadTransaction rtx) {
+    return rtx.nameForKey(mPrefixKey);
   }
 
   public final void setPrefixKey(final int prefixKey) {
@@ -124,8 +121,8 @@ public final class Attribute implements INode, ITransactionNode {
     return mURIKey;
   }
 
-  public final String getURI() {
-    return mRTX.nameForKey(mURIKey);
+  public final String getURI(final IReadTransaction rtx) {
+    return rtx.nameForKey(mURIKey);
   }
 
   public final void setURIKey(final int uriKey) {
@@ -160,7 +157,7 @@ public final class Attribute implements INode, ITransactionNode {
     return IConstants.NULL_KEY;
   }
 
-  public final INode getFirstChild() {
+  public final INode getFirstChild(final IReadTransaction rtx) {
     return null;
   }
 
@@ -176,7 +173,7 @@ public final class Attribute implements INode, ITransactionNode {
     return IConstants.NULL_KEY;
   }
 
-  public final INode getLeftSibling() {
+  public final INode getLeftSibling(final IReadTransaction rtx) {
     return null;
   }
 
@@ -188,7 +185,7 @@ public final class Attribute implements INode, ITransactionNode {
     return IConstants.NULL_KEY;
   }
 
-  public final INode getRightSibling() {
+  public final INode getRightSibling(final IReadTransaction rtx) {
     return null;
   }
 

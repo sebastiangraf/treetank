@@ -24,7 +24,6 @@ package org.treetank.sessionlayer;
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
-import org.treetank.api.ITransactionNode;
 import org.treetank.pagelayer.Namespace;
 
 /**
@@ -96,7 +95,6 @@ public class ReadTransaction implements IReadTransaction {
     if (nodeKey != IConstants.NULL_KEY) {
       try {
         mCurrentNode = mTransactionState.getNode(nodeKey);
-        ((ITransactionNode) mCurrentNode).setTransaction(this);
       } catch (Exception e) {
         mCurrentNode = null;
       }
