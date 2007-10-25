@@ -96,7 +96,13 @@ public final class UTF {
         value |= 0xFFFFFFC0;
       out[j++] = (char) value;
     }
-    return String.valueOf(Arrays.copyOf(out, j));
+    /*JAVA SE 5 Compatible Version*/
+    char[] ret = new char[j];
+    System.arraycopy(out, 0, ret, 0, j);
+    return String.valueOf(ret);
+    
+    /*JAVA SE 6 Version*/
+    /*return String.valueOf(Arrays.copyOf(out, j));*/
   }
 
   public static final byte[] fastConvert(final String string) {
@@ -128,7 +134,13 @@ public final class UTF {
       } else
         bytes[j - 1] &= 127;
     }
-    return Arrays.copyOf(bytes, j);
+    /*JAVA SE 5 Compatible Version*/
+    byte[] ret = new byte[j];
+    System.arraycopy(bytes, 0, ret, 0, j);
+    return ret;
+    
+    /*JAVA SE 6 Version*/
+    /*return Arrays.copyOf(bytes, j);*/
   }
 
   public static boolean ascii(final byte[] bytes) {
