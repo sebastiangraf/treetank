@@ -164,7 +164,7 @@ public final class WriteTransactionState extends ReadTransactionState {
     final PageReference uberPageReference = new PageReference();
     final UberPage uberPage = getUberPage();
     final RandomAccessFile file =
-        new RandomAccessFile(sessionConfiguration.getPath(), "rw");
+        new RandomAccessFile(sessionConfiguration.getAbsolutePath(), "rw");
 
     if (uberPage.isBootstrap()) {
       file.setLength(IConstants.BEACON_LENGTH);

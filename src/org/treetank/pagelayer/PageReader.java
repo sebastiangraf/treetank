@@ -91,7 +91,7 @@ public final class PageReader {
 
     try {
 
-      mFile = new RandomAccessFile(sessionConfiguration.getPath(), READ_ONLY);
+      mFile = new RandomAccessFile(sessionConfiguration.getAbsolutePath(), READ_ONLY);
 
       if (sessionConfiguration.isChecksummed()) {
         mIsChecksummed = true;
