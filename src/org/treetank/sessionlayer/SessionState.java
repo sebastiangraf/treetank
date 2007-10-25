@@ -91,7 +91,7 @@ public final class SessionState {
     mSessionConfiguration = sessionConfiguration;
 
     // Make sure that the TreeTank file exists.
-    new File(mSessionConfiguration.getPath()).createNewFile();
+    new File(mSessionConfiguration.getAbsolutePath()).createNewFile();
 
     // Init session members.
     mPageCache = new FastWeakHashMap<Long, Page>();
@@ -100,7 +100,7 @@ public final class SessionState {
     final PageReference uberPageReference = new PageReference();
     PageReference secondaryUberPageReference = new PageReference();
     final RandomAccessFile file =
-        new RandomAccessFile(mSessionConfiguration.getPath(), "rw");
+        new RandomAccessFile(mSessionConfiguration.getAbsolutePath(), "rw");
 
     if (file.length() == 0L) {
       // Bootstrap uber page and make sure there already is a root node.

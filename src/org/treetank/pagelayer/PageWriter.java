@@ -95,7 +95,7 @@ public final class PageWriter {
 
     try {
 
-      mFile = new RandomAccessFile(sessionConfiguration.getPath(), READ_WRITE);
+      mFile = new RandomAccessFile(sessionConfiguration.getAbsolutePath(), READ_WRITE);
 
       if (sessionConfiguration.isChecksummed()) {
         mIsChecksummed = true;

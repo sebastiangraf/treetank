@@ -34,11 +34,18 @@ package org.treetank.api;
 public interface ISession {
 
   /**
+   * Get file name of TreeTank file.
+   * 
+   * @return File name of TreeTank file.
+   */
+  public String getFileName();
+
+  /**
    * Get absolute path to TreeTank file.
    * 
    * @return Absolute path to TreeTank file.
    */
-  public String getPath();
+  public String getAbsolutePath();
 
   /**
    * Tells whether the session is bound to an encrypted TreeTank file.

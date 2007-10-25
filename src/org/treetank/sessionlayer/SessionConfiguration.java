@@ -38,8 +38,11 @@ import org.treetank.api.IConstants;
  */
 public final class SessionConfiguration {
 
+  /** File name only. */
+  private final String mFileName;
+
   /** Absolute path to .tnk file. */
-  private final String mPath;
+  private final String mAbsolutePath;
 
   /** Key of .tnk file or null. */
   private final byte[] mEncryptionKey;
@@ -95,9 +98,20 @@ public final class SessionConfiguration {
               + " bytes long (encryption enabled).");
     }
 
-    mPath = new File(path).getAbsolutePath();
+    final File tnk = new File(path);
+    mFileName = tnk.getName();
+    mAbsolutePath = tnk.getAbsolutePath();
     mEncryptionKey = encryptionKey;
     mIsChecksummed = isChecksummed;
+  }
+
+  /**
+   * Get name of file.
+   * 
+   * @return Name of TreeTank file.
+   */
+  public final String getFileName() {
+    return mFileName;
   }
 
   /**
@@ -105,8 +119,8 @@ public final class SessionConfiguration {
    * 
    * @return Path to .tnk file.
    */
-  public final String getPath() {
-    return mPath;
+  public final String getAbsolutePath() {
+    return mAbsolutePath;
   }
 
   /**

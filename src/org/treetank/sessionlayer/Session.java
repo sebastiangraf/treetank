@@ -92,13 +92,13 @@ public final class Session implements ISession {
     ISession session = null;
 
     synchronized (SESSION_MAP) {
-      session = SESSION_MAP.get(sessionConfiguration.getPath());
+      session = SESSION_MAP.get(sessionConfiguration.getAbsolutePath());
       if (session == null) {
         session = new Session(new SessionState(sessionConfiguration));
-        SESSION_MAP.put(sessionConfiguration.getPath(), session);
+        SESSION_MAP.put(sessionConfiguration.getAbsolutePath(), session);
       } else {
         throw new IllegalStateException("There already is a session bound to "
-            + sessionConfiguration.getPath());
+            + sessionConfiguration.getAbsolutePath());
       }
     }
 
@@ -108,8 +108,15 @@ public final class Session implements ISession {
   /**
    * {@inheritDoc}
    */
-  public final String getPath() {
-    return mSessionState.getSessionConfiguration().getPath();
+  public final String getFileName() {
+    return mSessionState.getSessionConfiguration().getFileName();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final String getAbsolutePath() {
+    return mSessionState.getSessionConfiguration().getAbsolutePath();
   }
 
   /**
@@ -152,7 +159,9 @@ public final class Session implements ISession {
    */
   public final void close() {
     mSessionState.close();
-    SESSION_MAP.remove(mSessionState.getSessionConfiguration().getPath());
+    SESSION_MAP.remove(mSessionState
+        .getSessionConfiguration()
+        .getAbsolutePath());
   }
 
   /**
