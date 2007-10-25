@@ -123,8 +123,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final long insertTextAsFirstChild(final byte[] value)
-      throws Exception {
+  public final long insertTextAsFirstChild(final byte[] value) throws Exception {
     assertIsSelected();
 
     // Insert new node in place of current first child.

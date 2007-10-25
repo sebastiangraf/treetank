@@ -21,8 +21,6 @@
 
 package org.treetank.pagelayer;
 
-import java.util.Arrays;
-
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
@@ -86,7 +84,7 @@ public final class Attribute implements INode {
   }
 
   public final void setNodeKey(final long nodeKey) {
-    this.mNodeKey = nodeKey;
+    mNodeKey = nodeKey;
   }
 
   public final int getLocalPartKey() {
@@ -114,7 +112,7 @@ public final class Attribute implements INode {
   }
 
   public final void setParentKey(final long parentKey) {
-    this.mParentKey = parentKey;
+    mParentKey = parentKey;
   }
 
   public final int getPrefixKey() {
@@ -126,7 +124,7 @@ public final class Attribute implements INode {
   }
 
   public final void setPrefixKey(final int prefixKey) {
-    this.mPrefixKey = prefixKey;
+    mPrefixKey = prefixKey;
   }
 
   public final int getURIKey() {
@@ -138,7 +136,7 @@ public final class Attribute implements INode {
   }
 
   public final void setURIKey(final int uriKey) {
-    this.mURIKey = uriKey;
+    mURIKey = uriKey;
   }
 
   public final byte[] getValue() {
@@ -146,11 +144,12 @@ public final class Attribute implements INode {
   }
 
   public final void setValue(final byte[] value) {
-    this.mValue = value;
+    mValue = value;
   }
 
   public final INode getAttribute(final int index) {
-    return null;
+    throw new UnsupportedOperationException(
+        "Attribute does not implement this method.");
   }
 
   public final int getAttributeCount() {
@@ -166,11 +165,13 @@ public final class Attribute implements INode {
   }
 
   public final long getFirstChildKey() {
-    return IConstants.NULL_KEY;
+    throw new UnsupportedOperationException(
+        "Attribute does not implement this method.");
   }
 
   public final INode getFirstChild(final IReadTransaction rtx) {
-    return null;
+    throw new UnsupportedOperationException(
+        "Attribute does not implement this method.");
   }
 
   public final int getKind() {
@@ -182,27 +183,33 @@ public final class Attribute implements INode {
   }
 
   public final long getLeftSiblingKey() {
-    return IConstants.NULL_KEY;
+    throw new UnsupportedOperationException(
+        "Attribute does not implement this method.");
   }
 
   public final INode getLeftSibling(final IReadTransaction rtx) {
-    return null;
+    throw new UnsupportedOperationException(
+        "Attribute does not implement this method.");
   }
 
   public final boolean hasRightSibling() {
-    return false;
+    throw new UnsupportedOperationException(
+        "Attribute does not implement this method.");
   }
 
   public final long getRightSiblingKey() {
-    return IConstants.NULL_KEY;
+    throw new UnsupportedOperationException(
+        "Attribute does not implement this method.");
   }
 
   public final INode getRightSibling(final IReadTransaction rtx) {
-    return null;
+    throw new UnsupportedOperationException(
+        "Attribute does not implement this method.");
   }
 
   public final Namespace getNamespace(final int index) {
-    return null;
+    throw new UnsupportedOperationException(
+        "Attribute does not implement this method.");
   }
 
   public final int getNamespaceCount() {
@@ -211,15 +218,7 @@ public final class Attribute implements INode {
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + mLocalPartKey;
-    result = prime * result + (int) (mNodeKey ^ (mNodeKey >>> 32));
-    result = prime * result + (int) (mParentKey ^ (mParentKey >>> 32));
-    result = prime * result + mPrefixKey;
-    result = prime * result + mURIKey;
-    result = prime * result + Arrays.hashCode(mValue);
-    return result;
+    return (int) mNodeKey;
   }
 
   /**
