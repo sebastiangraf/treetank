@@ -74,7 +74,9 @@ public class ValueTestAxis extends Axis {
    * {@inheritDoc}
    */
   public final boolean hasNext() {
-    while (mAxis.hasNext() && !(UTF.equals(mAxis.next().getValue(), mValue))) {
+    while (mAxis.hasNext()
+        && (mAxis.next().isText())
+        & !(UTF.equals(mAxis.next().getValue(), mValue))) {
       // Nothing to do.
     }
     if (mRTX.isSelected()) {

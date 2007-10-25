@@ -21,7 +21,6 @@
 
 package org.treetank.xmllayer;
 
-import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 
 /**
@@ -42,9 +41,7 @@ public class NodeTestAxis extends Axis {
    * @param rtx Exclusive (immutable) trx to iterate with.
    * @param axis Axis to iterate over.
    */
-  public NodeTestAxis(
-      final IReadTransaction rtx,
-      final Axis axis) {
+  public NodeTestAxis(final IReadTransaction rtx, final Axis axis) {
     super(rtx);
     mAxis = axis;
   }
@@ -54,9 +51,7 @@ public class NodeTestAxis extends Axis {
    */
   public final boolean hasNext() {
     // TODO The double next() call works but is not Iterator conformant.
-    if (mAxis.hasNext()
-        && mAxis.next().getKind() == IConstants.ELEMENT
-        || mAxis.next().getKind() == IConstants.TEXT) {
+    if (mAxis.hasNext() && mAxis.next().isElement() || mAxis.next().isText()) {
       mCurrentNode = mRTX.getNode();
       return true;
     } else {
