@@ -51,7 +51,7 @@ public class AncestorAxis extends Axis {
    */
   public final boolean hasNext() {
     mCurrentNode = mRTX.moveTo(mNextKey);
-    if ((mCurrentNode != null) & !(mCurrentNode.isRoot())) {
+    if ((mCurrentNode != null) & !(mCurrentNode.isDocument())) {
       mNextKey = mCurrentNode.getParentKey();
       return true;
     } else {

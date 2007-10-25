@@ -23,9 +23,8 @@ package org.treetank.sessionlayer;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.pagelayer.Node;
+import org.treetank.pagelayer.InternalNode;
 import org.treetank.pagelayer.UberPage;
-import org.treetank.utils.UTF;
 
 /**
  * <h1>WriteTransaction</h1>
@@ -53,12 +52,10 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final long insertFirstChild(
-      final int kind,
+  public final long insertElementAsFirstChild(
       final String localPart,
       final String uri,
-      final String prefix,
-      final byte[] value) throws Exception {
+      final String prefix) throws Exception {
 
     assertIsSelected();
 
@@ -67,30 +64,28 @@ public final class WriteTransaction extends ReadTransaction
 
       // Create new first child node.
       setCurrentNode(((WriteTransactionState) getTransactionState())
-          .createNode(
+          .createElementNode(
               getCurrentNode().getNodeKey(),
               IConstants.NULL_KEY,
               IConstants.NULL_KEY,
               getCurrentNode().getFirstChildKey(),
-              kind,
               ((WriteTransactionState) getTransactionState())
                   .createNameKey(localPart),
               ((WriteTransactionState) getTransactionState())
                   .createNameKey(uri),
               ((WriteTransactionState) getTransactionState())
-                  .createNameKey(prefix),
-              value));
+                  .createNameKey(prefix)));
 
       // Change existing first child node.
       if (getCurrentNode().hasRightSibling()) {
-        final Node rightSiblingNode =
+        final InternalNode rightSiblingNode =
             ((WriteTransactionState) getTransactionState())
                 .prepareNode(getCurrentNode().getRightSiblingKey());
         rightSiblingNode.setLeftSiblingKey(getCurrentNode().getNodeKey());
       }
 
       // Change parent node.
-      final Node parentNode =
+      final InternalNode parentNode =
           ((WriteTransactionState) getTransactionState())
               .prepareNode(getCurrentNode().getParentKey());
       parentNode.setFirstChildKey(getCurrentNode().getNodeKey());
@@ -101,22 +96,20 @@ public final class WriteTransaction extends ReadTransaction
 
       // Create new first child node.
       setCurrentNode(((WriteTransactionState) getTransactionState())
-          .createNode(
+          .createElementNode(
               getCurrentNode().getNodeKey(),
               IConstants.NULL_KEY,
               IConstants.NULL_KEY,
               IConstants.NULL_KEY,
-              kind,
               ((WriteTransactionState) getTransactionState())
                   .createNameKey(localPart),
               ((WriteTransactionState) getTransactionState())
                   .createNameKey(uri),
               ((WriteTransactionState) getTransactionState())
-                  .createNameKey(prefix),
-              value));
+                  .createNameKey(prefix)));
 
       // Change parent node.
-      final Node parentNode =
+      final InternalNode parentNode =
           ((WriteTransactionState) getTransactionState())
               .prepareNode(getCurrentNode().getParentKey());
       parentNode.setFirstChildKey(getCurrentNode().getNodeKey());
@@ -130,34 +123,66 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final long insertFirstChild(final byte[] value) throws Exception {
-    return insertFirstChild(IConstants.TEXT, "", "", "", value);
+  public final long insertTextAsFirstChild(final byte[] value)
+      throws Exception {
+    assertIsSelected();
+
+    // Insert new node in place of current first child.
+    if (getCurrentNode().getChildCount() > 0) {
+
+      // Create new first child node.
+      setCurrentNode(((WriteTransactionState) getTransactionState())
+          .createTextNode(
+              getCurrentNode().getNodeKey(),
+              IConstants.NULL_KEY,
+              IConstants.NULL_KEY,
+              value));
+
+      // Change existing first child node.
+      if (getCurrentNode().hasRightSibling()) {
+        final InternalNode rightSiblingNode =
+            ((WriteTransactionState) getTransactionState())
+                .prepareNode(getCurrentNode().getRightSiblingKey());
+        rightSiblingNode.setLeftSiblingKey(getCurrentNode().getNodeKey());
+      }
+
+      // Change parent node.
+      final InternalNode parentNode =
+          ((WriteTransactionState) getTransactionState())
+              .prepareNode(getCurrentNode().getParentKey());
+      parentNode.setFirstChildKey(getCurrentNode().getNodeKey());
+      parentNode.incrementChildCount();
+
+      // Insert new node as first child.
+    } else {
+
+      // Create new first child node.
+      setCurrentNode(((WriteTransactionState) getTransactionState())
+          .createTextNode(
+              getCurrentNode().getNodeKey(),
+              IConstants.NULL_KEY,
+              IConstants.NULL_KEY,
+              value));
+
+      // Change parent node.
+      final InternalNode parentNode =
+          ((WriteTransactionState) getTransactionState())
+              .prepareNode(getCurrentNode().getParentKey());
+      parentNode.setFirstChildKey(getCurrentNode().getNodeKey());
+      parentNode.incrementChildCount();
+
+    }
+
+    return getCurrentNode().getNodeKey();
   }
 
   /**
    * {@inheritDoc}
    */
-  public final long insertFirstChild(
+  public final long insertElementAsRightSibling(
       final String localPart,
       final String uri,
       final String prefix) throws Exception {
-    return insertFirstChild(
-        IConstants.ELEMENT,
-        localPart,
-        uri,
-        prefix,
-        UTF.EMPTY);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final long insertRightSibling(
-      final int kind,
-      final String localPart,
-      final String uri,
-      final String prefix,
-      final byte[] value) throws Exception {
 
     assertIsSelected();
 
@@ -166,33 +191,33 @@ public final class WriteTransaction extends ReadTransaction
     }
 
     // Create new right sibling node.
-    setCurrentNode(((WriteTransactionState) getTransactionState()).createNode(
-        getCurrentNode().getParentKey(),
-        IConstants.NULL_KEY,
-        getCurrentNode().getNodeKey(),
-        getCurrentNode().getRightSiblingKey(),
-        kind,
-        ((WriteTransactionState) getTransactionState())
-            .createNameKey(localPart),
-        ((WriteTransactionState) getTransactionState()).createNameKey(uri),
-        ((WriteTransactionState) getTransactionState()).createNameKey(prefix),
-        value));
+    setCurrentNode(((WriteTransactionState) getTransactionState())
+        .createElementNode(
+            getCurrentNode().getParentKey(),
+            IConstants.NULL_KEY,
+            getCurrentNode().getNodeKey(),
+            getCurrentNode().getRightSiblingKey(),
+            ((WriteTransactionState) getTransactionState())
+                .createNameKey(localPart),
+            ((WriteTransactionState) getTransactionState()).createNameKey(uri),
+            ((WriteTransactionState) getTransactionState())
+                .createNameKey(prefix)));
 
     // Adapt parent node.
-    final Node parentNode =
+    final InternalNode parentNode =
         ((WriteTransactionState) getTransactionState())
             .prepareNode(getCurrentNode().getParentKey());
     parentNode.incrementChildCount();
 
     // Adapt left sibling node.
-    final Node leftSiblingNode =
+    final InternalNode leftSiblingNode =
         ((WriteTransactionState) getTransactionState())
             .prepareNode(getCurrentNode().getLeftSiblingKey());
     leftSiblingNode.setRightSiblingKey(getCurrentNode().getNodeKey());
 
     // Adapt right sibling node.
     if (getCurrentNode().hasRightSibling()) {
-      final Node rightSiblingNode =
+      final InternalNode rightSiblingNode =
           ((WriteTransactionState) getTransactionState())
               .prepareNode(getCurrentNode().getRightSiblingKey());
       rightSiblingNode.setLeftSiblingKey(getCurrentNode().getNodeKey());
@@ -204,23 +229,41 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final long insertRightSibling(final byte[] value) throws Exception {
-    return insertRightSibling(IConstants.TEXT, "", "", "", value);
-  }
+  public final long insertTextAsRightSibling(final byte[] value)
+      throws Exception {
 
-  /**
-   * {@inheritDoc}
-   */
-  public final long insertRightSibling(
-      final String localPart,
-      final String uri,
-      final String prefix) throws Exception {
-    return insertRightSibling(
-        IConstants.ELEMENT,
-        localPart,
-        uri,
-        prefix,
-        UTF.EMPTY);
+    assertIsSelected();
+
+    if (getCurrentNode().getNodeKey() == IConstants.ROOT_KEY) {
+      throw new IllegalStateException("Root node can not have siblings.");
+    }
+
+    // Create new right sibling node.
+    setCurrentNode(((WriteTransactionState) getTransactionState())
+        .createTextNode(getCurrentNode().getParentKey(), getCurrentNode()
+            .getNodeKey(), getCurrentNode().getRightSiblingKey(), value));
+
+    // Adapt parent node.
+    final InternalNode parentNode =
+        ((WriteTransactionState) getTransactionState())
+            .prepareNode(getCurrentNode().getParentKey());
+    parentNode.incrementChildCount();
+
+    // Adapt left sibling node.
+    final InternalNode leftSiblingNode =
+        ((WriteTransactionState) getTransactionState())
+            .prepareNode(getCurrentNode().getLeftSiblingKey());
+    leftSiblingNode.setRightSiblingKey(getCurrentNode().getNodeKey());
+
+    // Adapt right sibling node.
+    if (getCurrentNode().hasRightSibling()) {
+      final InternalNode rightSiblingNode =
+          ((WriteTransactionState) getTransactionState())
+              .prepareNode(getCurrentNode().getRightSiblingKey());
+      rightSiblingNode.setLeftSiblingKey(getCurrentNode().getNodeKey());
+    }
+
+    return getCurrentNode().getNodeKey();
   }
 
   /**
@@ -280,12 +323,12 @@ public final class WriteTransaction extends ReadTransaction
     // Get and adapt parent node.
     setCurrentNode(((WriteTransactionState) getTransactionState())
         .prepareNode(parentKey));
-    ((Node) getCurrentNode()).decrementChildCount();
-    ((Node) getCurrentNode()).setFirstChildKey(rightSiblingNodeKey);
+    ((InternalNode) getCurrentNode()).decrementChildCount();
+    ((InternalNode) getCurrentNode()).setFirstChildKey(rightSiblingNodeKey);
 
     // Adapt left sibling node if there is one.
     if (leftSiblingNodeKey != IConstants.NULL_KEY) {
-      final Node leftSiblingNode =
+      final InternalNode leftSiblingNode =
           ((WriteTransactionState) getTransactionState())
               .prepareNode(leftSiblingNodeKey);
       leftSiblingNode.setRightSiblingKey(rightSiblingNodeKey);
@@ -293,7 +336,7 @@ public final class WriteTransaction extends ReadTransaction
 
     // Adapt right sibling node if there is one.
     if (rightSiblingNodeKey != IConstants.NULL_KEY) {
-      final Node rightSiblingNode =
+      final InternalNode rightSiblingNode =
           ((WriteTransactionState) getTransactionState())
               .prepareNode(rightSiblingNodeKey);
       rightSiblingNode.setLeftSiblingKey(leftSiblingNodeKey);
@@ -407,8 +450,8 @@ public final class WriteTransaction extends ReadTransaction
     getSessionState().closeWriteTransaction();
   }
 
-  private final Node prepareCurrentNode() throws Exception {
-    final Node modNode =
+  private final InternalNode prepareCurrentNode() throws Exception {
+    final InternalNode modNode =
         ((WriteTransactionState) getTransactionState())
             .prepareNode(getCurrentNode().getNodeKey());
     setCurrentNode(modNode);

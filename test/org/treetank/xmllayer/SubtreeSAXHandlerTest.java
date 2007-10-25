@@ -103,7 +103,7 @@ public class SubtreeSAXHandlerTest {
     //    wrtx.close();
 
     final IReadTransaction rtx = session.beginReadTransaction();
-    rtx.moveToRoot();
+    rtx.moveToDocument();
 
     rtx.moveToFirstChild();
     assertEquals("fooZwei", rtx.getLocalPart());
@@ -195,7 +195,7 @@ public class SubtreeSAXHandlerTest {
     //    wrtx.close();
 
     final IReadTransaction rtx = session.beginReadTransaction();
-    rtx.moveToRoot();
+    rtx.moveToDocument();
     //checking second subtree
     rtx.moveToFirstChild();
     assertEquals("subtreestartnode-10", rtx.getLocalPart());

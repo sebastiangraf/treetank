@@ -89,20 +89,12 @@ public final class XMLShredder {
 
         if (leftSiblingKeyStack.peek() == IConstants.NULL_KEY) {
           key =
-              wtx.insertFirstChild(
-                  IConstants.ELEMENT,
-                  parser.getLocalName(),
-                  parser.getNamespaceURI(),
-                  parser.getPrefix(),
-                  UTF.EMPTY);
+              wtx.insertElementAsFirstChild(parser.getLocalName(), parser
+                  .getNamespaceURI(), parser.getPrefix());
         } else {
           key =
-              wtx.insertRightSibling(
-                  IConstants.ELEMENT,
-                  parser.getLocalName(),
-                  parser.getNamespaceURI(),
-                  parser.getPrefix(),
-                  UTF.EMPTY);
+              wtx.insertElementAsRightSibling(parser.getLocalName(), parser
+                  .getNamespaceURI(), parser.getPrefix());
         }
         leftSiblingKeyStack.pop();
         leftSiblingKeyStack.push(key);
@@ -131,13 +123,9 @@ public final class XMLShredder {
         text = parser.getText().trim();
         if (text.length() > 0) {
           if (leftSiblingKeyStack.peek() == IConstants.NULL_KEY) {
-            key =
-                wtx.insertFirstChild(IConstants.TEXT, "", "", "", UTF
-                    .convert(text));
+            key = wtx.insertTextAsFirstChild(UTF.convert(text));
           } else {
-            key =
-                wtx.insertRightSibling(IConstants.TEXT, "", "", "", UTF
-                    .convert(text));
+            key = wtx.insertTextAsRightSibling(UTF.convert(text));
           }
           leftSiblingKeyStack.pop();
           leftSiblingKeyStack.push(key);

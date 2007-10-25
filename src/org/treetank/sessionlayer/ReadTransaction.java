@@ -57,27 +57,27 @@ public class ReadTransaction implements IReadTransaction {
     mSessionState = sessionState;
     mTransactionState = transactionState;
     mCurrentNode = null;
-    moveToRoot();
+    moveToDocument();
   }
 
   /**
    * {@inheritDoc}
    */
-  public final long revisionKey() {
+  public final long getRevisionNumber() {
     return mTransactionState.getRevisionRootPage().getRevisionKey();
   }
 
   /**
    * {@inheritDoc}
    */
-  public final long revisionSize() {
+  public final long getRevisionSize() {
     return mTransactionState.getRevisionRootPage().getRevisionSize();
   }
 
   /**
    * {@inheritDoc}
    */
-  public final long revisionTimestamp() {
+  public final long getRevisionTimestamp() {
     return mTransactionState.getRevisionRootPage().getRevisionTimestamp();
   }
 
@@ -114,7 +114,7 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final INode moveToRoot() {
+  public final INode moveToDocument() {
     return moveTo(IConstants.ROOT_KEY);
   }
 
@@ -283,9 +283,9 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final boolean isRoot() {
+  public final boolean isDocument() {
     assertIsSelected();
-    return mCurrentNode.isRoot();
+    return mCurrentNode.isDocument();
   }
 
   /**

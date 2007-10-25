@@ -82,7 +82,7 @@ public class SAXGenerator extends Thread {
     // Prepare full descendant iteration.
     mRightSiblingKeyStack = new FastStack<Long>();
     mRightSiblingKeyStack.push(IConstants.NULL_KEY);
-    mRTX.moveToRoot();
+    mRTX.moveToDocument();
     mNextKey = mRTX.getFirstChildKey();
 
     mPrettyPrint = prettyPrint;
@@ -106,7 +106,7 @@ public class SAXGenerator extends Thread {
 
     // Prepare full descendant iteration.
     mRightSiblingKeyStack = new FastStack<Long>();
-    mRTX.moveToRoot();
+    mRTX.moveToDocument();
     mRightSiblingKeyStack.push(IConstants.NULL_KEY);
     mNextKey = mRTX.getFirstChildKey();
 

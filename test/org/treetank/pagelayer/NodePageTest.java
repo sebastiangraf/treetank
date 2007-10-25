@@ -24,10 +24,8 @@ package org.treetank.pagelayer;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.treetank.api.IConstants;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
-import org.treetank.utils.UTF;
 
 public class NodePageTest {
 
@@ -35,8 +33,7 @@ public class NodePageTest {
   public void testSerializeDeserialize() throws Exception {
     final NodePage page1 = new NodePage(0L);
     assertEquals(0L, page1.getNodePageKey());
-    final Node node1 =
-        new Node(0L, 1L, 2L, 3L, 4L, 5, 6, 7, 8, UTF.convert("foo"));
+    final Element node1 = new Element(0L, 1L, 2L, 3L, 4L, 6, 7, 8);
     node1.insertAttribute(22, 23, 24, new byte[0]);
     assertEquals(0L, node1.getNodeKey());
     page1.setNode(0, node1);
@@ -59,13 +56,9 @@ public class NodePageTest {
     assertEquals(22, page2.getNode(0).getAttribute(0).getLocalPartKey());
     assertEquals(23, page2.getNode(0).getAttribute(0).getURIKey());
     assertEquals(24, page2.getNode(0).getAttribute(0).getPrefixKey());
-    assertEquals(5, page2.getNode(0).getKind());
     assertEquals(6, page2.getNode(0).getLocalPartKey());
     assertEquals(7, page2.getNode(0).getURIKey());
     assertEquals(8, page2.getNode(0).getPrefixKey());
-    assertEquals("foo", new String(
-        page2.getNode(0).getValue(),
-        IConstants.DEFAULT_ENCODING));
 
   }
 

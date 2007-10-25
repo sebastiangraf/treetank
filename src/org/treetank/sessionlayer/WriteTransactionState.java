@@ -26,14 +26,17 @@ import java.io.RandomAccessFile;
 import java.util.Map;
 
 import org.treetank.api.IConstants;
-import org.treetank.pagelayer.Page;
+import org.treetank.pagelayer.Document;
+import org.treetank.pagelayer.Element;
 import org.treetank.pagelayer.IndirectPage;
+import org.treetank.pagelayer.InternalNode;
 import org.treetank.pagelayer.NamePage;
-import org.treetank.pagelayer.Node;
 import org.treetank.pagelayer.NodePage;
+import org.treetank.pagelayer.Page;
 import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.PageWriter;
 import org.treetank.pagelayer.RevisionRootPage;
+import org.treetank.pagelayer.Text;
 import org.treetank.pagelayer.UberPage;
 
 /**
@@ -74,35 +77,67 @@ public final class WriteTransactionState extends ReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public final Node prepareNode(final long nodeKey) throws Exception {
+  public final InternalNode prepareNode(final long nodeKey) throws Exception {
     return prepareNodePage(nodePageKey(nodeKey)).getNode(
         nodePageOffset(nodeKey));
   }
 
-  public final Node createNode(
+  public final Document createDocumentNode() throws Exception {
+
+    getRevisionRootPage().incrementNodeCountAndMaxNodeKey();
+
+    final Document node = new Document();
+
+    // Write node into node page.
+    prepareNodePage(nodePageKey(getRevisionRootPage().getMaxNodeKey()))
+        .setNode(nodePageOffset(getRevisionRootPage().getMaxNodeKey()), node);
+
+    return node;
+  }
+
+  public final Element createElementNode(
       final long parentKey,
       final long firstChildKey,
       final long leftSiblingKey,
       final long rightSiblingKey,
-      final int kind,
       final int localPartKey,
       final int uriKey,
-      final int prefixKey,
-      final byte[] value) throws Exception {
+      final int prefixKey) throws Exception {
 
     getRevisionRootPage().incrementNodeCountAndMaxNodeKey();
 
-    final Node node =
-        new Node(
+    final Element node =
+        new Element(
             getRevisionRootPage().getMaxNodeKey(),
             parentKey,
             firstChildKey,
             leftSiblingKey,
             rightSiblingKey,
-            kind,
             localPartKey,
             uriKey,
-            prefixKey,
+            prefixKey);
+
+    // Write node into node page.
+    prepareNodePage(nodePageKey(getRevisionRootPage().getMaxNodeKey()))
+        .setNode(nodePageOffset(getRevisionRootPage().getMaxNodeKey()), node);
+
+    return node;
+  }
+
+  public final Text createTextNode(
+      final long parentKey,
+      final long leftSiblingKey,
+      final long rightSiblingKey,
+      final byte[] value) throws Exception {
+
+    getRevisionRootPage().incrementNodeCountAndMaxNodeKey();
+
+    final Text node =
+        new Text(
+            getRevisionRootPage().getMaxNodeKey(),
+            parentKey,
+            leftSiblingKey,
+            rightSiblingKey,
             value);
 
     // Write node into node page.

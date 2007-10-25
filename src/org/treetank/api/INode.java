@@ -31,11 +31,11 @@ import org.treetank.pagelayer.Namespace;
 public interface INode {
 
   /**
-   * Is this node the root node?
+   * Is this node the document node?
    * 
-   * @return True if it is the root node, false else.
+   * @return True if it is the document node, false else.
    */
-  public boolean isRoot();
+  public boolean isDocument();
 
   /**
    * Is node a element?

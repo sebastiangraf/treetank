@@ -114,21 +114,17 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
       long key;
       if (mLeftSiblingKeyStack.peek() == IConstants.NULL_KEY) {
         key =
-            mWTX.insertFirstChild(
-                IConstants.ELEMENT,
+            mWTX.insertElementAsFirstChild(
                 localName,
                 uri,
-                qNameToPrefix(qName),
-                UTF.EMPTY);
+                qNameToPrefix(qName));
 
       } else {
         key =
-            mWTX.insertRightSibling(
-                IConstants.ELEMENT,
+            mWTX.insertElementAsRightSibling(
                 localName,
                 uri,
-                qNameToPrefix(qName),
-                UTF.EMPTY);
+                qNameToPrefix(qName));
 
       }
       mLeftSiblingKeyStack.pop();
@@ -227,13 +223,9 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
       // Insert text node and maintain stacks.
       long key;
       if (mLeftSiblingKeyStack.peek() == IConstants.NULL_KEY) {
-        key =
-            mWTX.insertFirstChild(IConstants.TEXT, "", "", "", UTF
-                .convert(text));
+        key = mWTX.insertTextAsFirstChild(UTF.convert(text));
       } else {
-        key =
-            mWTX.insertRightSibling(IConstants.TEXT, "", "", "", UTF
-                .convert(text));
+        key = mWTX.insertTextAsRightSibling(UTF.convert(text));
       }
       mLeftSiblingKeyStack.pop();
       mLeftSiblingKeyStack.push(key);

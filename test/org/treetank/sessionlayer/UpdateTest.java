@@ -29,7 +29,6 @@ import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
@@ -55,33 +54,32 @@ public class UpdateTest {
     wtx.commit();
 
     IReadTransaction rtx = session.beginReadTransaction();
-    assertEquals(1L, rtx.revisionSize());
-    assertEquals(0L, rtx.revisionKey());
+    assertEquals(1L, rtx.getRevisionSize());
+    assertEquals(0L, rtx.getRevisionNumber());
     rtx.close();
 
     // Insert 100 children.
     for (int i = 1; i <= 10; i++) {
       wtx = session.beginWriteTransaction();
-      wtx.moveToRoot();
-      wtx.insertFirstChild(IConstants.TEXT, "", "", "", UTF.convert(Integer
-          .toString(i)));
+      wtx.moveToDocument();
+      wtx.insertTextAsFirstChild(UTF.convert(Integer.toString(i)));
       wtx.commit();
 
       rtx = session.beginReadTransaction();
-      rtx.moveToRoot();
+      rtx.moveToDocument();
       rtx.moveToFirstChild();
       assertEquals(Integer.toString(i), new String(rtx.getValue()));
-      assertEquals(i + 1L, rtx.revisionSize());
-      assertEquals(i, rtx.revisionKey());
+      assertEquals(i + 1L, rtx.getRevisionSize());
+      assertEquals(i, rtx.getRevisionNumber());
       rtx.close();
     }
 
     rtx = session.beginReadTransaction();
-    rtx.moveToRoot();
+    rtx.moveToDocument();
     rtx.moveToFirstChild();
     assertEquals(Integer.toString(10), new String(rtx.getValue()));
-    assertEquals(11L, rtx.revisionSize());
-    assertEquals(10L, rtx.revisionKey());
+    assertEquals(11L, rtx.getRevisionSize());
+    assertEquals(10L, rtx.getRevisionNumber());
     rtx.close();
 
     session.close();
@@ -97,46 +95,21 @@ public class UpdateTest {
     wtx.commit();
 
     wtx = session.beginWriteTransaction();
-    TestCase.assertNotNull(wtx.moveToRoot());
-    assertEquals(1L, wtx.insertFirstChild(
-        IConstants.ELEMENT,
-        "",
-        "",
-        "",
-        UTF.EMPTY));
+    TestCase.assertNotNull(wtx.moveToDocument());
+    assertEquals(1L, wtx.insertElementAsFirstChild("", "", ""));
 
-    assertEquals(2L, wtx.insertFirstChild(
-        IConstants.ELEMENT,
-        "",
-        "",
-        "",
-        UTF.EMPTY));
-    assertEquals(3L, wtx.insertFirstChild(
-        IConstants.ELEMENT,
-        "",
-        "",
-        "",
-        UTF.EMPTY));
+    assertEquals(2L, wtx.insertElementAsFirstChild("", "", ""));
+    assertEquals(3L, wtx.insertElementAsFirstChild("", "", ""));
 
     TestCase.assertNotNull(wtx.moveToParent());
-    assertEquals(4L, wtx.insertRightSibling(
-        IConstants.ELEMENT,
-        "",
-        "",
-        "",
-        UTF.EMPTY));
+    assertEquals(4L, wtx.insertElementAsRightSibling("", "", ""));
 
     wtx.commit();
 
     final IWriteTransaction wtx2 = session.beginWriteTransaction();
 
-    TestCase.assertNotNull(wtx2.moveToRoot());
-    assertEquals(5L, wtx.insertFirstChild(
-        IConstants.ELEMENT,
-        "",
-        "",
-        "",
-        UTF.EMPTY));
+    TestCase.assertNotNull(wtx2.moveToDocument());
+    assertEquals(5L, wtx.insertElementAsFirstChild("", "", ""));
 
     wtx2.commit();
 
@@ -152,7 +125,7 @@ public class UpdateTest {
     IWriteTransaction wtx = session.beginWriteTransaction();
 
     for (int i = 0; i < 256 * 256 + 1; i++) {
-      wtx.insertFirstChild("", "", "");
+      wtx.insertTextAsFirstChild(UTF.EMPTY);
     }
 
     TestCase.assertNotNull(wtx.moveTo(0L));

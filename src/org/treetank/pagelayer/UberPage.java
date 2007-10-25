@@ -86,7 +86,7 @@ public final class UberPage extends Page {
     NodePage ndp = new NodePage(IConstants.ROOT_PAGE_KEY);
     reference.setPage(ndp);
 
-    ndp.setNode(0, new Node(IConstants.ROOT_KEY));
+    ndp.setNode(0, new Document());
 
     rrp.incrementNodeCountAndMaxNodeKey();
 

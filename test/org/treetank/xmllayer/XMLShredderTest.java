@@ -62,7 +62,7 @@ public class XMLShredderTest {
         expectedSession.beginWriteTransaction();
     TestDocument.create(expectedTrx);
     expectedTrx.commit();
-    expectedTrx.moveToRoot();
+    expectedTrx.moveToDocument();
 
     // Setup parsed session.
     XMLShredder.shred(XML, new SessionConfiguration(PATH));
@@ -70,11 +70,11 @@ public class XMLShredderTest {
     // Verify.
     final ISession session = Session.beginSession(PATH);
     final IReadTransaction rtx = session.beginReadTransaction();
-    rtx.moveToRoot();
+    rtx.moveToDocument();
     final Iterator<INode> expectedDescendants = new DescendantAxis(expectedTrx);
     final Iterator<INode> descendants = new DescendantAxis(rtx);
 
-    assertEquals(expectedTrx.revisionSize(), rtx.revisionSize());
+    assertEquals(expectedTrx.getRevisionSize(), rtx.getRevisionSize());
     while (expectedDescendants.hasNext() && descendants.hasNext()) {
       assertEquals(expectedTrx.getNodeKey(), rtx.getNodeKey());
       assertEquals(expectedTrx.getParentKey(), rtx.getParentKey());
@@ -89,11 +89,13 @@ public class XMLShredderTest {
           .nameForKey(rtx.getURIKey()));
       assertEquals(expectedTrx.nameForKey(expectedTrx.getPrefixKey()), rtx
           .nameForKey(rtx.getPrefixKey()));
-      assertEquals(new String(
-          expectedTrx.getValue(),
-          IConstants.DEFAULT_ENCODING), new String(
-          rtx.getValue(),
-          IConstants.DEFAULT_ENCODING));
+      if (expectedTrx.isText()) {
+        assertEquals(new String(
+            expectedTrx.getValue(),
+            IConstants.DEFAULT_ENCODING), new String(
+            rtx.getValue(),
+            IConstants.DEFAULT_ENCODING));
+      }
     }
 
     expectedSession.close();

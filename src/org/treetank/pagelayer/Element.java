@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * $Id$
+ * $Id: Node.java 3268 2007-10-25 13:16:01Z kramis $
  */
 
 package org.treetank.pagelayer;
@@ -28,9 +28,8 @@ import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
-import org.treetank.utils.UTF;
 
-public final class Node implements INode {
+public final class Element implements INode, InternalNode {
 
   private long mNodeKey;
 
@@ -48,27 +47,21 @@ public final class Node implements INode {
 
   private Namespace[] mNamespaces;
 
-  private int mKind;
-
   private int mLocalPartKey;
 
   private int mURIKey;
 
   private int mPrefixKey;
 
-  private byte[] mValue;
-
-  public Node(
+  public Element(
       final long nodeKey,
       final long parentKey,
       final long firstChildKey,
       final long leftSiblingKey,
       final long rightSiblingKey,
-      final int kind,
       final int localPartKey,
       final int uriKey,
-      final int prefixKey,
-      final byte[] value) {
+      final int prefixKey) {
     mNodeKey = nodeKey;
     mParentKey = parentKey;
     mFirstChildKey = firstChildKey;
@@ -77,28 +70,24 @@ public final class Node implements INode {
     mChildCount = 0;
     mAttributes = new Attribute[0];
     mNamespaces = new Namespace[0];
-    mKind = kind;
     mLocalPartKey = localPartKey;
     mURIKey = uriKey;
     mPrefixKey = prefixKey;
-    mValue = value;
   }
 
-  public Node(final long nodeKey) {
+  public Element(final long nodeKey) {
     this(
         nodeKey,
         IConstants.NULL_KEY,
         IConstants.NULL_KEY,
         IConstants.NULL_KEY,
         IConstants.NULL_KEY,
-        IConstants.DOCUMENT,
         (int) IConstants.NULL_KEY,
         (int) IConstants.NULL_KEY,
-        (int) IConstants.NULL_KEY,
-        UTF.EMPTY);
+        (int) IConstants.NULL_KEY);
   }
 
-  public Node(final INode node) {
+  public Element(final INode node) {
     mNodeKey = node.getNodeKey();
     mParentKey = node.getParentKey();
     mFirstChildKey = node.getFirstChildKey();
@@ -113,102 +102,52 @@ public final class Node implements INode {
     for (int i = 0, l = mNamespaces.length; i < l; i++) {
       mNamespaces[i] = new Namespace(node.getNamespace(i));
     }
-    mKind = node.getKind();
     mLocalPartKey = node.getLocalPartKey();
     mURIKey = node.getURIKey();
     mPrefixKey = node.getPrefixKey();
-    mValue = node.getValue();
   }
 
-  public Node(final long nodeKey, final FastByteArrayReader in) {
+  public Element(final long nodeKey, final FastByteArrayReader in) {
 
     // Always read node key and kind.
     mNodeKey = nodeKey;
-    mKind = in.readByte();
 
     // Read according to node kind.
-    switch (mKind) {
-    case IConstants.DOCUMENT:
-      mParentKey = IConstants.NULL_KEY;
-      mFirstChildKey = mNodeKey - in.readVarLong();
-      mLeftSiblingKey = IConstants.NULL_KEY;
-      mRightSiblingKey = IConstants.NULL_KEY;
-      mChildCount = in.readVarLong();
-      break;
-
-    case IConstants.ELEMENT:
-      mParentKey = mNodeKey - in.readVarLong();
-      mFirstChildKey = mNodeKey - in.readVarLong();
-      mLeftSiblingKey = mNodeKey - in.readVarLong();
-      mRightSiblingKey = mNodeKey - in.readVarLong();
-      mChildCount = in.readVarLong();
-      mAttributes = new Attribute[in.readByte()];
-      for (int i = 0, l = mAttributes.length; i < l; i++) {
-        mAttributes[i] =
-            new Attribute(mNodeKey + i + 1, mNodeKey, in.readVarInt(), in
-                .readVarInt(), in.readVarInt(), in.readByteArray());
-      }
-      mNamespaces = new Namespace[in.readByte()];
-      for (int i = 0, l = mNamespaces.length; i < l; i++) {
-        mNamespaces[i] = new Namespace(in.readVarInt(), in.readVarInt());
-      }
-      mLocalPartKey = in.readVarInt();
-      mURIKey = in.readVarInt();
-      mPrefixKey = in.readVarInt();
-      mValue = UTF.EMPTY;
-      break;
-
-    case IConstants.TEXT:
-      mParentKey = mNodeKey - in.readVarLong();
-      mFirstChildKey = IConstants.NULL_KEY;
-      mLeftSiblingKey = in.readVarLong();
-      mRightSiblingKey = in.readVarLong();
-      mChildCount = 0L;
-      mAttributes = null;
-      mNamespaces = null;
-      mLocalPartKey = 0;
-      mURIKey = 0;
-      mPrefixKey = 0;
-      mValue = in.readByteArray();
-      break;
-
-    default:
-      mParentKey = mNodeKey - in.readVarLong();
-      mFirstChildKey = mNodeKey - in.readVarLong();
-      mLeftSiblingKey = mNodeKey - in.readVarLong();
-      mRightSiblingKey = mNodeKey - in.readVarLong();
-      mChildCount = in.readVarLong();
-      mAttributes = new Attribute[in.readByte()];
-      for (int i = 0, l = mAttributes.length; i < l; i++) {
-        mAttributes[i] =
-            new Attribute(mNodeKey + i + 1, mNodeKey, in.readVarInt(), in
-                .readVarInt(), in.readVarInt(), in.readByteArray());
-      }
-      mNamespaces = new Namespace[in.readByte()];
-      for (int i = 0, l = mNamespaces.length; i < l; i++) {
-        mNamespaces[i] = new Namespace(in.readVarInt(), in.readVarInt());
-      }
-      mLocalPartKey = in.readVarInt();
-      mURIKey = in.readVarInt();
-      mPrefixKey = in.readVarInt();
-      mValue = in.readByteArray();
+    mParentKey = mNodeKey - in.readVarLong();
+    mFirstChildKey = mNodeKey - in.readVarLong();
+    mLeftSiblingKey = mNodeKey - in.readVarLong();
+    mRightSiblingKey = mNodeKey - in.readVarLong();
+    mChildCount = in.readVarLong();
+    mAttributes = new Attribute[in.readByte()];
+    for (int i = 0, l = mAttributes.length; i < l; i++) {
+      mAttributes[i] =
+          new Attribute(mNodeKey + i + 1, mNodeKey, in.readVarInt(), in
+              .readVarInt(), in.readVarInt(), in.readByteArray());
     }
+    mNamespaces = new Namespace[in.readByte()];
+    for (int i = 0, l = mNamespaces.length; i < l; i++) {
+      mNamespaces[i] = new Namespace(in.readVarInt(), in.readVarInt());
+    }
+    mLocalPartKey = in.readVarInt();
+    mURIKey = in.readVarInt();
+    mPrefixKey = in.readVarInt();
+
   }
 
-  public final boolean isRoot() {
-    return (mNodeKey == IConstants.ROOT_KEY);
+  public final boolean isDocument() {
+    return false;
   }
 
   public final boolean isElement() {
-    return (mKind == IConstants.ELEMENT);
+    return true;
   }
 
   public final boolean isAttribute() {
-    return (mKind == IConstants.ATTRIBUTE);
+    return false;
   }
 
   public final boolean isText() {
-    return (mKind == IConstants.TEXT);
+    return false;
   }
 
   public final long getNodeKey() {
@@ -368,11 +307,10 @@ public final class Node implements INode {
   }
 
   public final int getKind() {
-    return mKind;
+    return IConstants.ELEMENT;
   }
 
   public final void setKind(final byte kind) {
-    mKind = kind;
   }
 
   public final int getLocalPartKey() {
@@ -412,77 +350,33 @@ public final class Node implements INode {
   }
 
   public final byte[] getValue() {
-    return mValue;
+    return null;
   }
 
   public final void setValue(final byte[] value) {
-    mValue = value;
   }
 
   public final void serialize(final FastByteArrayWriter out) {
-
-    // Guarantee kind to be stored.
-    out.writeByte((byte) mKind);
-
-    // Adaptive serialization according to node kind.
-    switch (mKind) {
-
-    case IConstants.DOCUMENT:
-      out.writeVarLong(mNodeKey - mFirstChildKey);
-      out.writeVarLong(mChildCount);
-      break;
-
-    case IConstants.ELEMENT:
-      out.writeVarLong(mNodeKey - mParentKey);
-      out.writeVarLong(mNodeKey - mFirstChildKey);
-      out.writeVarLong(mNodeKey - mLeftSiblingKey);
-      out.writeVarLong(mNodeKey - mRightSiblingKey);
-      out.writeVarLong(mChildCount);
-      out.writeByte((byte) mAttributes.length);
-      for (int i = 0, l = mAttributes.length; i < l; i++) {
-        out.writeVarInt(mAttributes[i].getLocalPartKey());
-        out.writeVarInt(mAttributes[i].getURIKey());
-        out.writeVarInt(mAttributes[i].getPrefixKey());
-        out.writeByteArray(mAttributes[i].getValue());
-      }
-      out.writeByte((byte) mNamespaces.length);
-      for (int i = 0, l = mNamespaces.length; i < l; i++) {
-        out.writeVarInt(mNamespaces[i].getURIKey());
-        out.writeVarInt(mNamespaces[i].getPrefixKey());
-      }
-      out.writeVarInt(mLocalPartKey);
-      out.writeVarInt(mURIKey);
-      out.writeVarInt(mPrefixKey);
-      break;
-    case IConstants.TEXT:
-      out.writeVarLong(mNodeKey - mParentKey);
-      out.writeVarLong(mLeftSiblingKey);
-      out.writeVarLong(mRightSiblingKey);
-      out.writeByteArray(mValue);
-      break;
-    default:
-      out.writeVarLong(mNodeKey - mParentKey);
-      out.writeVarLong(mNodeKey - mFirstChildKey);
-      out.writeVarLong(mNodeKey - mLeftSiblingKey);
-      out.writeVarLong(mNodeKey - mRightSiblingKey);
-      out.writeVarLong(mChildCount);
-      out.writeByte((byte) mAttributes.length);
-      for (int i = 0, l = mAttributes.length; i < l; i++) {
-        out.writeVarInt(mAttributes[i].getLocalPartKey());
-        out.writeVarInt(mAttributes[i].getURIKey());
-        out.writeVarInt(mAttributes[i].getPrefixKey());
-        out.writeByteArray(mAttributes[i].getValue());
-      }
-      out.writeByte((byte) mNamespaces.length);
-      for (int i = 0, l = mNamespaces.length; i < l; i++) {
-        out.writeVarInt(mNamespaces[i].getURIKey());
-        out.writeVarInt(mNamespaces[i].getPrefixKey());
-      }
-      out.writeVarInt(mLocalPartKey);
-      out.writeVarInt(mURIKey);
-      out.writeVarInt(mPrefixKey);
-      out.writeByteArray(mValue);
+    out.writeVarLong(mNodeKey - mParentKey);
+    out.writeVarLong(mNodeKey - mFirstChildKey);
+    out.writeVarLong(mNodeKey - mLeftSiblingKey);
+    out.writeVarLong(mNodeKey - mRightSiblingKey);
+    out.writeVarLong(mChildCount);
+    out.writeByte((byte) mAttributes.length);
+    for (int i = 0, l = mAttributes.length; i < l; i++) {
+      out.writeVarInt(mAttributes[i].getLocalPartKey());
+      out.writeVarInt(mAttributes[i].getURIKey());
+      out.writeVarInt(mAttributes[i].getPrefixKey());
+      out.writeByteArray(mAttributes[i].getValue());
     }
+    out.writeByte((byte) mNamespaces.length);
+    for (int i = 0, l = mNamespaces.length; i < l; i++) {
+      out.writeVarInt(mNamespaces[i].getURIKey());
+      out.writeVarInt(mNamespaces[i].getPrefixKey());
+    }
+    out.writeVarInt(mLocalPartKey);
+    out.writeVarInt(mURIKey);
+    out.writeVarInt(mPrefixKey);
   }
 
   /**
@@ -515,7 +409,6 @@ public final class Node implements INode {
     result = prime * result + Arrays.hashCode(mAttributes);
     result = prime * result + (int) (mChildCount ^ (mChildCount >>> 32));
     result = prime * result + (int) (mFirstChildKey ^ (mFirstChildKey >>> 32));
-    result = prime * result + mKind;
     result =
         prime * result + (int) (mLeftSiblingKey ^ (mLeftSiblingKey >>> 32));
     result = prime * result + mLocalPartKey;
@@ -526,7 +419,6 @@ public final class Node implements INode {
     result =
         prime * result + (int) (mRightSiblingKey ^ (mRightSiblingKey >>> 32));
     result = prime * result + mURIKey;
-    result = prime * result + Arrays.hashCode(mValue);
     return result;
   }
 

@@ -27,10 +27,8 @@ import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.api.IConstants;
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.utils.FastByteArrayReader;
-import org.treetank.utils.UTF;
 
 public class PageWriterTest {
 
@@ -47,8 +45,7 @@ public class PageWriterTest {
 
     // Create node page with single node.
     final NodePage page1 = new NodePage(13L);
-    page1.setNode(3, new Node(0L, 1L, 2L, 3L, 4L, 5, 6, 7, 8, UTF
-        .convert("foo")));
+    page1.setNode(3, new Element(0L, 1L, 2L, 3L, 4L, 6, 7, 8));
     final PageReference pageReference = new PageReference();
 
     // Serialize node page.
@@ -64,9 +61,6 @@ public class PageWriterTest {
     final FastByteArrayReader in = pageReader.read(pageReference);
     final NodePage page2 = new NodePage(in, 0L);
 
-    assertEquals("foo", new String(
-        page2.getNode(3).getValue(),
-        IConstants.DEFAULT_ENCODING));
   }
 
 }

@@ -47,25 +47,25 @@ import org.treetank.pagelayer.Namespace;
 public interface IReadTransaction {
 
   /**
-   * What is the revision key of this IReadTransaction?
+   * What is the revision number of this IReadTransaction?
    * 
-   * @return Immutable revision key of this IReadTransaction.
+   * @return Immutable revision number of this IReadTransaction.
    */
-  public long revisionKey();
+  public long getRevisionNumber();
 
   /**
    * How many nodes are stored in the revision of this IReadTransaction?
    * 
    * @return Immutable number of nodes of this IReadTransaction.
    */
-  public long revisionSize();
+  public long getRevisionSize();
 
   /**
    * UNIX-style timestamp of the commit of the revision.
    * 
    * @return Timestamp of revision commit.
    */
-  public long revisionTimestamp();
+  public long getRevisionTimestamp();
 
   /**
    * Is a node selected?
@@ -93,11 +93,11 @@ public interface IReadTransaction {
   public INode moveTo(final INode node);
 
   /**
-   * Move cursor to root node.
+   * Move cursor to document node.
    * 
-   * @return True if the root node is selected.
+   * @return True if the document node is selected.
    */
-  public INode moveToRoot();
+  public INode moveToDocument();
 
   /**
    * Move cursor to parent node of currently selected node.
@@ -254,11 +254,11 @@ public interface IReadTransaction {
   public int getKind();
 
   /**
-   * Is this node the root node?
+   * Is this node the document node?
    * 
-   * @return True if it is the root node, false else.
+   * @return True if it is the document node, false else.
    */
-  public boolean isRoot();
+  public boolean isDocument();
 
   /**
    * Is node a element?

@@ -65,7 +65,7 @@ public final class Attribute implements INode {
     mValue = attribute.getValue();
   }
 
-  public final boolean isRoot() {
+  public final boolean isDocument() {
     return false;
   }
 

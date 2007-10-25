@@ -63,9 +63,6 @@ public class ChildAxisTest {
     INode node = axis1.next();
     assertEquals(2L, node.getNodeKey());
     assertEquals(3, node.getKind());
-    assertEquals("", wtx.nameForKey(node.getLocalPartKey()));
-    assertEquals("", wtx.nameForKey(node.getURIKey()));
-    assertEquals("", wtx.nameForKey(node.getPrefixKey()));
     assertEquals("oops1", new String(
         node.getValue(),
         IConstants.DEFAULT_ENCODING));
@@ -77,15 +74,11 @@ public class ChildAxisTest {
     assertEquals("b", wtx.nameForKey(node.getLocalPartKey()));
     assertEquals("", wtx.nameForKey(node.getURIKey()));
     assertEquals("", wtx.nameForKey(node.getPrefixKey()));
-    assertEquals("", new String(node.getValue(), IConstants.DEFAULT_ENCODING));
 
     assertEquals(true, axis1.hasNext());
     node = axis1.next();
     assertEquals(6L, node.getNodeKey());
     assertEquals(3, node.getKind());
-    assertEquals("", wtx.nameForKey(node.getLocalPartKey()));
-    assertEquals("", wtx.nameForKey(node.getURIKey()));
-    assertEquals("", wtx.nameForKey(node.getPrefixKey()));
     assertEquals("oops2", new String(
         node.getValue(),
         IConstants.DEFAULT_ENCODING));
@@ -97,15 +90,11 @@ public class ChildAxisTest {
     assertEquals("b", wtx.nameForKey(node.getLocalPartKey()));
     assertEquals("", wtx.nameForKey(node.getURIKey()));
     assertEquals("", wtx.nameForKey(node.getPrefixKey()));
-    assertEquals("", new String(node.getValue(), IConstants.DEFAULT_ENCODING));
 
     assertEquals(true, axis1.hasNext());
     node = axis1.next();
     assertEquals(10L, node.getNodeKey());
     assertEquals(3, node.getKind());
-    assertEquals("", wtx.nameForKey(node.getLocalPartKey()));
-    assertEquals("", wtx.nameForKey(node.getURIKey()));
-    assertEquals("", wtx.nameForKey(node.getPrefixKey()));
     assertEquals("oops3", new String(
         node.getValue(),
         IConstants.DEFAULT_ENCODING));
@@ -118,9 +107,6 @@ public class ChildAxisTest {
     node = axis2.next();
     assertEquals(4L, node.getNodeKey());
     assertEquals(3, node.getKind());
-    assertEquals("", wtx.nameForKey(node.getLocalPartKey()));
-    assertEquals("", wtx.nameForKey(node.getURIKey()));
-    assertEquals("", wtx.nameForKey(node.getPrefixKey()));
     assertEquals(
         "foo",
         new String(node.getValue(), IConstants.DEFAULT_ENCODING));
@@ -132,7 +118,6 @@ public class ChildAxisTest {
     assertEquals("c", wtx.nameForKey(node.getLocalPartKey()));
     assertEquals("", wtx.nameForKey(node.getURIKey()));
     assertEquals("", wtx.nameForKey(node.getPrefixKey()));
-    assertEquals("", new String(node.getValue(), IConstants.DEFAULT_ENCODING));
 
     assertEquals(false, axis2.hasNext());
 
@@ -163,9 +148,6 @@ public class ChildAxisTest {
     INode node = axis1.next();
     assertEquals(2L, node.getNodeKey());
     assertEquals(3, node.getKind());
-    assertEquals("", rtx.nameForKey(node.getLocalPartKey()));
-    assertEquals("", rtx.nameForKey(node.getURIKey()));
-    assertEquals("", rtx.nameForKey(node.getPrefixKey()));
     assertEquals("oops1", new String(
         node.getValue(),
         IConstants.DEFAULT_ENCODING));
@@ -177,15 +159,11 @@ public class ChildAxisTest {
     assertEquals("b", rtx.nameForKey(node.getLocalPartKey()));
     assertEquals("", rtx.nameForKey(node.getURIKey()));
     assertEquals("", rtx.nameForKey(node.getPrefixKey()));
-    assertEquals("", new String(node.getValue(), IConstants.DEFAULT_ENCODING));
 
     assertEquals(true, axis1.hasNext());
     node = axis1.next();
     assertEquals(6L, node.getNodeKey());
     assertEquals(3, node.getKind());
-    assertEquals("", rtx.nameForKey(node.getLocalPartKey()));
-    assertEquals("", rtx.nameForKey(node.getURIKey()));
-    assertEquals("", rtx.nameForKey(node.getPrefixKey()));
     assertEquals("oops2", new String(
         node.getValue(),
         IConstants.DEFAULT_ENCODING));
@@ -197,15 +175,11 @@ public class ChildAxisTest {
     assertEquals("b", rtx.nameForKey(node.getLocalPartKey()));
     assertEquals("", rtx.nameForKey(node.getURIKey()));
     assertEquals("", rtx.nameForKey(node.getPrefixKey()));
-    assertEquals("", new String(node.getValue(), IConstants.DEFAULT_ENCODING));
 
     assertEquals(true, axis1.hasNext());
     node = axis1.next();
     assertEquals(10L, node.getNodeKey());
     assertEquals(3, node.getKind());
-    assertEquals("", rtx.nameForKey(node.getLocalPartKey()));
-    assertEquals("", rtx.nameForKey(node.getURIKey()));
-    assertEquals("", rtx.nameForKey(node.getPrefixKey()));
     assertEquals("oops3", new String(
         node.getValue(),
         IConstants.DEFAULT_ENCODING));
@@ -218,9 +192,6 @@ public class ChildAxisTest {
     node = axis2.next();
     assertEquals(4L, node.getNodeKey());
     assertEquals(3, node.getKind());
-    assertEquals("", rtx.nameForKey(node.getLocalPartKey()));
-    assertEquals("", rtx.nameForKey(node.getURIKey()));
-    assertEquals("", rtx.nameForKey(node.getPrefixKey()));
     assertEquals(
         "foo",
         new String(node.getValue(), IConstants.DEFAULT_ENCODING));
@@ -232,7 +203,6 @@ public class ChildAxisTest {
     assertEquals("c", rtx.nameForKey(node.getLocalPartKey()));
     assertEquals("", rtx.nameForKey(node.getURIKey()));
     assertEquals("", rtx.nameForKey(node.getPrefixKey()));
-    assertEquals("", new String(node.getValue(), IConstants.DEFAULT_ENCODING));
 
     assertEquals(false, axis2.hasNext());
 

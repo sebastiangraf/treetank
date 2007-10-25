@@ -103,7 +103,7 @@ public class SubtreeSAXHandler extends SAXHandler {
       mLeftSiblingKeyStack = new FastStack<Long>();
       mLeftSiblingKeyStack.push(IConstants.NULL_KEY);
       mLeftSiblingKeyStack.push(IConstants.NULL_KEY);
-      mWTX.moveToRoot();
+      mWTX.moveToDocument();
 
     } catch (Exception e) {
       throw new SAXException(e);
