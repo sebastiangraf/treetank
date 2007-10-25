@@ -108,6 +108,27 @@ public final class Session implements ISession {
   /**
    * {@inheritDoc}
    */
+  public final String getPath() {
+    return mSessionState.getSessionConfiguration().getPath();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final boolean isEncrypted() {
+    return mSessionState.getSessionConfiguration().isEncrypted();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final boolean isChecksummed() {
+    return mSessionState.getSessionConfiguration().isChecksummed();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final IReadTransaction beginReadTransaction() {
     return mSessionState.beginReadTransaction();
   }

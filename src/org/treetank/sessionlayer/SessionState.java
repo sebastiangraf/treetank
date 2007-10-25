@@ -29,7 +29,6 @@ import java.util.concurrent.Semaphore;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
-import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.pagelayer.Page;
 import org.treetank.pagelayer.PageReader;
@@ -45,7 +44,7 @@ import org.treetank.utils.FastWeakHashMap;
  * State of each session.
  * </p>
  */
-public final class SessionState implements ISession {
+public final class SessionState {
 
   /** Session configuration. */
   private final SessionConfiguration mSessionConfiguration;

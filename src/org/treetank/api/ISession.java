@@ -34,6 +34,27 @@ package org.treetank.api;
 public interface ISession {
 
   /**
+   * Get absolute path to TreeTank file.
+   * 
+   * @return Absolute path to TreeTank file.
+   */
+  public String getPath();
+
+  /**
+   * Tells whether the session is bound to an encrypted TreeTank file.
+   * 
+   * @return True if the TreeTank file is encrypted. False else.
+   */
+  public boolean isEncrypted();
+
+  /**
+   * Tells whether the session is bound to a checksummed TreeTank file.
+   * 
+   * @return True if the TreeTank file is checksummed. False else.
+   */
+  public boolean isChecksummed();
+
+  /**
    * Begin a read-only transaction on the latest committed revision key.
    * 
    * @return IReadTransaction instance.
