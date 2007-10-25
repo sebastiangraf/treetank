@@ -152,8 +152,8 @@ public final class XMLShredder {
   }
 
   public static final void main(String[] args) {
-    if (args.length != 2) {
-      System.out.println("Usage: XMLShredder input.xml output.tnk key");
+    if (args.length < 2 || args.length > 3) {
+      System.out.println("Usage: XMLShredder input.xml output.tnk [key]");
       System.exit(1);
     }
 
@@ -161,8 +161,12 @@ public final class XMLShredder {
       System.out.print("Shredding '" + args[0] + "' to '" + args[1] + "' ... ");
       long time = System.currentTimeMillis();
       new File(args[1]).delete();
-      XMLShredder.shred(args[0], new SessionConfiguration(args[1], args[2]
-          .getBytes()), false);
+      XMLShredder.shred(
+          args[0],
+          args.length == 2
+              ? new SessionConfiguration(args[1])
+              : new SessionConfiguration(args[1], args[2].getBytes()),
+          false);
       System.out.println(" done ["
           + (System.currentTimeMillis() - time)
           + "ms].");
