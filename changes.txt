@@ -19,6 +19,10 @@
  * $Id$
  */
  
+TreeTank 4.12
+-------------
+
+ 
 TreeTank 4.11
 -------------
 + Binary incompatibility to previous releases due to revision timestamp.
