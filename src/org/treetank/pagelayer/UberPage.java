@@ -36,7 +36,7 @@ import org.treetank.utils.FastByteArrayWriter;
  * Uber page holds a reference to the static revision root page tree.
  * </p>
  */
-public final class UberPage extends Page {
+public final class UberPage extends AbstractPage {
 
   /** Offset of indirect page reference. */
   private static final int INDIRECT_REFERENCE_OFFSET = 0;

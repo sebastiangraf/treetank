@@ -24,11 +24,10 @@ package org.treetank.xmllayer;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.api.INode;
+import org.treetank.api.IAxis;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
@@ -52,14 +51,14 @@ public class ParentAxisTest {
     TestDocument.create(wtx);
 
     wtx.moveTo(3L);
-    final Iterator<INode> axis1 = new ParentAxis(wtx);
+    final IAxis axis1 = new ParentAxis(wtx);
     assertEquals(true, axis1.hasNext());
     assertEquals(1L, wtx.getNodeKey());
 
     assertEquals(false, axis1.hasNext());
 
     wtx.moveTo(7L);
-    final Iterator<INode> axis2 = new ParentAxis(wtx);
+    final IAxis axis2 = new ParentAxis(wtx);
     assertEquals(true, axis2.hasNext());
     assertEquals(1L, wtx.getNodeKey());
 

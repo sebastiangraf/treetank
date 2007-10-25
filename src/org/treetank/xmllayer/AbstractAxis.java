@@ -23,6 +23,7 @@ package org.treetank.xmllayer;
 
 import java.util.Iterator;
 
+import org.treetank.api.IAxis;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 
@@ -34,10 +35,7 @@ import org.treetank.api.IReadTransaction;
  * enhanced for loop available since Java 5.
  * </p>
  */
-public abstract class Axis
-    implements
-    Iterable<INode>,
-    Iterator<INode> {
+public abstract class AbstractAxis implements IAxis {
 
   /** Iterate over transaction exclusive to this step. */
   protected final IReadTransaction mRTX;
@@ -50,7 +48,7 @@ public abstract class Axis
    * 
    * @param rtx Transaction to operate with.
    */
-  public Axis(final IReadTransaction rtx) {
+  public AbstractAxis(final IReadTransaction rtx) {
     mRTX = rtx;
     mCurrentNode = null;
   }

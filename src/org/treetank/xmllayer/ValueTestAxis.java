@@ -21,6 +21,7 @@
 
 package org.treetank.xmllayer;
 
+import org.treetank.api.IAxis;
 import org.treetank.api.IReadTransaction;
 import org.treetank.utils.UTF;
 
@@ -32,10 +33,10 @@ import org.treetank.utils.UTF;
  * node.
  * </p>
  */
-public class ValueTestAxis extends Axis {
+public class ValueTestAxis extends AbstractAxis {
 
   /** Remember next key to visit. */
-  private final Axis mAxis;
+  private final IAxis mAxis;
 
   /** Name test to do. */
   private final byte[] mValue;
@@ -49,7 +50,7 @@ public class ValueTestAxis extends Axis {
    */
   public ValueTestAxis(
       final IReadTransaction rtx,
-      final Axis axis,
+      final IAxis axis,
       final byte[] value) {
     super(rtx);
     mAxis = axis;
@@ -65,7 +66,7 @@ public class ValueTestAxis extends Axis {
    */
   public ValueTestAxis(
       final IReadTransaction rtx,
-      final Axis axis,
+      final AbstractAxis axis,
       final String value) {
     this(rtx, axis, UTF.convert(value));
   }

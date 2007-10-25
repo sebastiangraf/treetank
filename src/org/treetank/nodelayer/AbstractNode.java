@@ -26,7 +26,7 @@ import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayWriter;
 
-public class Node implements INode {
+public abstract class AbstractNode implements INode {
 
   /** Node key is common to all node kinds. */
   private long mNodeKey;
@@ -36,7 +36,7 @@ public class Node implements INode {
    * 
    * @param nodeKey Key of node.
    */
-  public Node(final long nodeKey) {
+  public AbstractNode(final long nodeKey) {
     mNodeKey = nodeKey;
   }
 

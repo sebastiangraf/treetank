@@ -34,7 +34,7 @@ import org.treetank.utils.FastByteArrayWriter;
  * Class to provide basic reference handling functionality.
  * </p>
  */
-public class Page {
+public abstract class AbstractPage {
 
   /** Page references. */
   private final PageReference[] mReferences;
@@ -49,7 +49,7 @@ public class Page {
    *        committed.
    * @param referenceCount Number of references of page.
    */
-  private Page(final boolean dirty, final int referenceCount) {
+  private AbstractPage(final boolean dirty, final int referenceCount) {
     mReferences = new PageReference[referenceCount];
     mDirty = dirty;
   }
@@ -59,7 +59,7 @@ public class Page {
    * 
    * @param referenceCount Number of references of page.
    */
-  protected Page(final int referenceCount) {
+  protected AbstractPage(final int referenceCount) {
     this(true, referenceCount);
   }
 
@@ -69,7 +69,7 @@ public class Page {
    * @param referenceCount Number of references of page.
    * @param in Input reader to read from.
    */
-  protected Page(final int referenceCount, final FastByteArrayReader in) {
+  protected AbstractPage(final int referenceCount, final FastByteArrayReader in) {
     this(false, referenceCount);
     for (int offset = 0; offset < referenceCount; offset++) {
       if (in.readBoolean()) {
@@ -84,9 +84,7 @@ public class Page {
    * @param referenceCount Number of references of page.
    * @param committedPage Page to clone.
    */
-  protected Page(
-      final int referenceCount,
-      final Page committedPage) {
+  protected AbstractPage(final int referenceCount, final AbstractPage committedPage) {
     this(true, referenceCount);
 
     for (int offset = 0; offset < referenceCount; offset++) {

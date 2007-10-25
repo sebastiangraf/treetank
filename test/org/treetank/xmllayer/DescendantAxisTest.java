@@ -24,11 +24,10 @@ package org.treetank.xmllayer;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.api.INode;
+import org.treetank.api.IAxis;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
@@ -54,7 +53,7 @@ public class DescendantAxisTest {
 
     // Find descendants starting from nodeKey 0L (root).
     wtx.moveToDocument();
-    final Iterator<INode> axis1 = new DescendantAxis(wtx);
+    final IAxis axis1 = new DescendantAxis(wtx);
     assertEquals(true, axis1.hasNext());
     assertEquals(1L, wtx.getNodeKey());
 
@@ -89,7 +88,7 @@ public class DescendantAxisTest {
 
     // Find descendants starting from nodeKey 1L (first child of root).
     wtx.moveTo(1L);
-    final Iterator<INode> axis2 = new DescendantAxis(wtx);
+    final IAxis axis2 = new DescendantAxis(wtx);
     assertEquals(true, axis2.hasNext());
     assertEquals(2L, wtx.getNodeKey());
 
@@ -121,7 +120,7 @@ public class DescendantAxisTest {
 
     // Find descendants starting from nodeKey 4L (second child of root).
     wtx.moveTo(7L);
-    final Iterator<INode> axis3 = new DescendantAxis(wtx);
+    final IAxis axis3 = new DescendantAxis(wtx);
     assertEquals(true, axis3.hasNext());
     assertEquals(8L, wtx.getNodeKey());
 
@@ -132,7 +131,7 @@ public class DescendantAxisTest {
 
     // Find descendants starting from nodeKey 5L (last in document order).
     wtx.moveTo(10L);
-    final Iterator<INode> axis4 = new DescendantAxis(wtx);
+    final IAxis axis4 = new DescendantAxis(wtx);
     assertEquals(false, axis4.hasNext());
 
     wtx.abort();

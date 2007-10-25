@@ -28,12 +28,12 @@ import java.util.Map;
 import org.treetank.api.IConstants;
 import org.treetank.nodelayer.DocumentNode;
 import org.treetank.nodelayer.ElementNode;
-import org.treetank.nodelayer.Node;
+import org.treetank.nodelayer.AbstractNode;
 import org.treetank.nodelayer.TextNode;
 import org.treetank.pagelayer.IndirectPage;
 import org.treetank.pagelayer.NamePage;
 import org.treetank.pagelayer.NodePage;
-import org.treetank.pagelayer.Page;
+import org.treetank.pagelayer.AbstractPage;
 import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.PageWriter;
 import org.treetank.pagelayer.RevisionRootPage;
@@ -59,7 +59,7 @@ public final class WriteTransactionState extends ReadTransactionState {
    */
   public WriteTransactionState(
       final SessionConfiguration sessionConfiguration,
-      final Map<Long, Page> pageCache,
+      final Map<Long, AbstractPage> pageCache,
       final UberPage uberPage) {
     super(sessionConfiguration, pageCache, uberPage, uberPage
         .getLastCommittedRevisionKey());
@@ -77,7 +77,7 @@ public final class WriteTransactionState extends ReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public final Node prepareNode(final long nodeKey) throws Exception {
+  public final AbstractNode prepareNode(final long nodeKey) throws Exception {
     return prepareNodePage(nodePageKey(nodeKey)).getNode(
         nodePageOffset(nodeKey));
   }

@@ -3,11 +3,10 @@ package org.treetank.xmllayer;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.api.INode;
+import org.treetank.api.IAxis;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
@@ -31,7 +30,7 @@ public class PostOrderTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
 
-    final Iterator<INode> axis = new PostOrderAxis(wtx, true);
+    final IAxis axis = new PostOrderAxis(wtx, true);
 
     assertEquals(true, axis.hasNext());
     assertEquals(2L, wtx.getNodeKey());

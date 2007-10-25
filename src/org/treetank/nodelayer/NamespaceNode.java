@@ -24,7 +24,7 @@ package org.treetank.nodelayer;
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 
-public final class NamespaceNode extends Node {
+public final class NamespaceNode extends AbstractNode {
 
   private int mURIKey;
 

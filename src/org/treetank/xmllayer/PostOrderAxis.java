@@ -12,7 +12,7 @@ import org.treetank.utils.FastStack;
  * Iterate over the whole tree starting with the last node.
  * </p>
  */
-public class PostOrderAxis extends Axis {
+public class PostOrderAxis extends AbstractAxis {
 
   /** For remembering last parent. */
   private final FastStack<Long> mLastParent;

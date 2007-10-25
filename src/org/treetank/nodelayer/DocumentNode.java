@@ -27,7 +27,7 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
-public final class DocumentNode extends Node {
+public final class DocumentNode extends AbstractNode {
 
   private long mFirstChildKey;
 
@@ -43,7 +43,7 @@ public final class DocumentNode extends Node {
     this(IConstants.ROOT_KEY, IConstants.NULL_KEY);
   }
 
-  public DocumentNode(final Node node) {
+  public DocumentNode(final AbstractNode node) {
     super(node.getNodeKey());
     mFirstChildKey = node.getFirstChildKey();
     mChildCount = node.getChildCount();
