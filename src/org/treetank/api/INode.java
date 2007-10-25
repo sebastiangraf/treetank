@@ -31,6 +31,13 @@ import org.treetank.pagelayer.Namespace;
 public interface INode {
 
   /**
+   * Is this node the root node?
+   * 
+   * @return True if it is the root node, false else.
+   */
+  public boolean isRoot();
+
+  /**
    * Get node key of currently selected node.
    * 
    * @return INode key of currently selected node.
@@ -54,9 +61,10 @@ public interface INode {
   /**
    * Get parent of currently selected node.
    * 
+   * @param rtx Transaction.
    * @return Parent of currently selected node.
    */
-  public INode getParent();
+  public INode getParent(final IReadTransaction rtx);
 
   /**
    * Is there a first child?
@@ -75,9 +83,10 @@ public interface INode {
   /**
    * Get first child of currently selected node.
    * 
+   * @param rtx Transaction.
    * @return First child of currently selected node.
    */
-  public INode getFirstChild();
+  public INode getFirstChild(final IReadTransaction rtx);
 
   /**
    * Is there a left sibling?
@@ -96,9 +105,10 @@ public interface INode {
   /**
    * Get left sibling of currently selected node.
    * 
+   * @param rtx Transaction.
    * @return Left sibling of currently selected node.
    */
-  public INode getLeftSibling();
+  public INode getLeftSibling(final IReadTransaction rtx);
 
   /**
    * Is there a right sibling?
@@ -117,9 +127,10 @@ public interface INode {
   /**
    * Get right sibling of currently selected node.
    * 
+   * @param rtx Transaction.
    * @return Right sibling of currently selected node.
    */
-  public INode getRightSibling();
+  public INode getRightSibling(final IReadTransaction rtx);
 
   /**
    * Get child count (including element and text nodes) of currently selected
@@ -177,9 +188,10 @@ public interface INode {
   /**
    * Get local part of node.
    * 
+   * @param rtx Transaction.
    * @return Local part of node.
    */
-  public String getLocalPart();
+  public String getLocalPart(final IReadTransaction rtx);
 
   /**
    * Get URI key of node. Note that this actually is an IRI but the
@@ -193,9 +205,10 @@ public interface INode {
    * Get URI of node. Note that this actually is an IRI but the
    * W3C decided to continue using URI not to confuse anyone.
    * 
+   * @param rtx Transaction.
    * @return URI of node.
    */
-  public String getURI();
+  public String getURI(final IReadTransaction rtx);
 
   /**
    * Get prefix key of node.
@@ -207,9 +220,10 @@ public interface INode {
   /**
    * Get prefix of node.
    * 
+   * @param rtx Transaction.
    * @return Prefix of node.
    */
-  public String getPrefix();
+  public String getPrefix(final IReadTransaction rtx);
 
   /**
    * Get value of node.
