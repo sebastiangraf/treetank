@@ -28,6 +28,18 @@ import org.treetank.utils.FastByteArrayWriter;
 
 public class Node implements INode {
 
+  /** Node key is common to all node kinds. */
+  private long mNodeKey;
+
+  /**
+   * Constructor to set node key.
+   * 
+   * @param nodeKey Key of node.
+   */
+  public Node(final long nodeKey) {
+    mNodeKey = nodeKey;
+  }
+
   /**
    * {@inheritDoc}
    */
@@ -59,8 +71,8 @@ public class Node implements INode {
   /**
    * {@inheritDoc}
    */
-  public long getNodeKey() {
-    return IConstants.NULL_KEY;
+  public final long getNodeKey() {
+    return mNodeKey;
   }
 
   /**
@@ -241,7 +253,8 @@ public class Node implements INode {
   public void serialize(final FastByteArrayWriter out) {
   }
 
-  public void setNodeKey(final long nodeKey) {
+  public final void setNodeKey(final long nodeKey) {
+    mNodeKey = nodeKey;
   }
 
   public void setParentKey(final long parentKey) {
@@ -302,6 +315,26 @@ public class Node implements INode {
   }
 
   public void setValue(final byte[] value) {
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public int hashCode() {
+    return (int) mNodeKey;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if ((obj == null) || (mNodeKey != ((INode) obj).getNodeKey())) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
 }

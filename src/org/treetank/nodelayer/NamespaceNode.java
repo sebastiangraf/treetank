@@ -21,6 +21,7 @@
 
 package org.treetank.nodelayer;
 
+import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 
 public final class NamespaceNode extends Node {
@@ -30,27 +31,45 @@ public final class NamespaceNode extends Node {
   private int mPrefixKey;
 
   public NamespaceNode(final int uriKey, final int prefixKey) {
+    super(IConstants.NULL_KEY);
     mURIKey = uriKey;
     mPrefixKey = prefixKey;
   }
 
   public NamespaceNode(final INode namespace) {
+    super(IConstants.NULL_KEY);
     mURIKey = namespace.getURIKey();
     mPrefixKey = namespace.getPrefixKey();
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final int getPrefixKey() {
     return mPrefixKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final void setPrefixKey(final int prefixKey) {
     mPrefixKey = prefixKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final int getURIKey() {
     return mURIKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final void setURIKey(final int uriKey) {
     mURIKey = uriKey;
   }

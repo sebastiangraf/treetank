@@ -24,11 +24,8 @@ package org.treetank.nodelayer;
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
-import org.treetank.utils.FastByteArrayWriter;
 
 public final class AttributeNode extends Node {
-
-  private long mNodeKey;
 
   private long mParentKey;
 
@@ -47,7 +44,7 @@ public final class AttributeNode extends Node {
       final int uriKey,
       final int prefixKey,
       final byte[] value) {
-    mNodeKey = nodeKey;
+    super(nodeKey);
     mParentKey = parentKey;
     mLocalPartKey = localPartKey;
     mURIKey = uriKey;
@@ -56,7 +53,7 @@ public final class AttributeNode extends Node {
   }
 
   public AttributeNode(final INode attribute) {
-    mNodeKey = attribute.getNodeKey();
+    super(attribute.getNodeKey());
     mParentKey = attribute.getParentKey();
     mLocalPartKey = attribute.getLocalPartKey();
     mURIKey = attribute.getURIKey();
@@ -64,255 +61,140 @@ public final class AttributeNode extends Node {
     mValue = attribute.getValue();
   }
 
-  public final boolean isDocument() {
-    return false;
-  }
-
-  public final boolean isElement() {
-    return false;
-  }
-
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final boolean isAttribute() {
     return true;
-  }
-
-  public final boolean isText() {
-    return false;
-  }
-
-  public final long getNodeKey() {
-    return mNodeKey;
-  }
-
-  public final void setNodeKey(final long nodeKey) {
-    mNodeKey = nodeKey;
-  }
-
-  public final int getLocalPartKey() {
-    return mLocalPartKey;
-  }
-
-  public final String getLocalPart(final IReadTransaction rtx) {
-    return rtx.nameForKey(mLocalPartKey);
-  }
-
-  public final void setLocalPartKey(final int localPartKey) {
-    this.mLocalPartKey = localPartKey;
-  }
-
-  public final boolean hasParent() {
-    return true;
-  }
-
-  public final long getParentKey() {
-    return mParentKey;
-  }
-
-  public final INode getParent(final IReadTransaction rtx) {
-    return rtx.moveTo(mParentKey);
-  }
-
-  public final void setParentKey(final long parentKey) {
-    mParentKey = parentKey;
-  }
-
-  public final int getPrefixKey() {
-    return mPrefixKey;
-  }
-
-  public final String getPrefix(final IReadTransaction rtx) {
-    return rtx.nameForKey(mPrefixKey);
-  }
-
-  public final void setPrefixKey(final int prefixKey) {
-    mPrefixKey = prefixKey;
-  }
-
-  public final int getURIKey() {
-    return mURIKey;
-  }
-
-  public final String getURI(final IReadTransaction rtx) {
-    return rtx.nameForKey(mURIKey);
-  }
-
-  public final void setURIKey(final int uriKey) {
-    mURIKey = uriKey;
-  }
-
-  public final byte[] getValue() {
-    return mValue;
-  }
-
-  public final void setValue(final byte[] value) {
-    mValue = value;
-  }
-
-  public final INode getAttribute(final int index) {
-    throw new UnsupportedOperationException(
-        "Attribute does not implement this method.");
-  }
-
-  public final int getAttributeCount() {
-    return 0;
-  }
-
-  public final long getChildCount() {
-    return 0L;
-  }
-
-  public final boolean hasFirstChild() {
-    return false;
-  }
-
-  public final long getFirstChildKey() {
-    throw new UnsupportedOperationException(
-        "Attribute does not implement this method.");
-  }
-
-  public final INode getFirstChild(final IReadTransaction rtx) {
-    throw new UnsupportedOperationException(
-        "Attribute does not implement this method.");
-  }
-
-  public final int getKind() {
-    return IConstants.ATTRIBUTE;
-  }
-
-  public final boolean hasLeftSibling() {
-    return false;
-  }
-
-  public final long getLeftSiblingKey() {
-    throw new UnsupportedOperationException(
-        "Attribute does not implement this method.");
-  }
-
-  public final INode getLeftSibling(final IReadTransaction rtx) {
-    throw new UnsupportedOperationException(
-        "Attribute does not implement this method.");
-  }
-
-  public final boolean hasRightSibling() {
-    throw new UnsupportedOperationException(
-        "Attribute does not implement this method.");
-  }
-
-  public final long getRightSiblingKey() {
-    throw new UnsupportedOperationException(
-        "Attribute does not implement this method.");
-  }
-
-  public final INode getRightSibling(final IReadTransaction rtx) {
-    throw new UnsupportedOperationException(
-        "Attribute does not implement this method.");
-  }
-
-  public final NamespaceNode getNamespace(final int index) {
-    throw new UnsupportedOperationException(
-        "Attribute does not implement this method.");
-  }
-
-  public final int getNamespaceCount() {
-    return 0;
-  }
-
-  @Override
-  public int hashCode() {
-    return (int) mNodeKey;
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public boolean equals(Object obj) {
-    if ((obj == null) || (mNodeKey != ((INode) obj).getNodeKey())) {
-      return false;
-    } else {
-      return true;
-    }
+  public final int getLocalPartKey() {
+    return mLocalPartKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  public void decrementChildCount() {
-    // TODO Auto-generated method stub
-
+  public final String getLocalPart(final IReadTransaction rtx) {
+    return rtx.nameForKey(mLocalPartKey);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  public void incrementChildCount() {
-    // TODO Auto-generated method stub
-
+  public final void setLocalPartKey(final int localPartKey) {
+    this.mLocalPartKey = localPartKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  public void insertAttribute(
-      int localPartKey,
-      int uriKey,
-      int prefixKey,
-      byte[] value) {
-    // TODO Auto-generated method stub
-
+  public final boolean hasParent() {
+    return true;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  public void insertNamespace(int uriKey, int prefixKey) {
-    // TODO Auto-generated method stub
-
+  public final long getParentKey() {
+    return mParentKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  public void serialize(FastByteArrayWriter out) {
-    // TODO Auto-generated method stub
-
+  public final INode getParent(final IReadTransaction rtx) {
+    return rtx.moveTo(mParentKey);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  public void setAttribute(
-      int index,
-      int localPartKey,
-      int uriKey,
-      int prefixKey,
-      byte[] value) {
-    // TODO Auto-generated method stub
-
+  public final void setParentKey(final long parentKey) {
+    mParentKey = parentKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  public void setChildCount(long childCount) {
-    // TODO Auto-generated method stub
-
+  public final int getPrefixKey() {
+    return mPrefixKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  public void setFirstChildKey(long firstChildKey) {
-    // TODO Auto-generated method stub
-
+  public final String getPrefix(final IReadTransaction rtx) {
+    return rtx.nameForKey(mPrefixKey);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  public void setKind(byte kind) {
-    // TODO Auto-generated method stub
-
+  public final void setPrefixKey(final int prefixKey) {
+    mPrefixKey = prefixKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  public void setLeftSiblingKey(long leftSiblingKey) {
-    // TODO Auto-generated method stub
-
+  public final int getURIKey() {
+    return mURIKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  public void setNamespace(int index, int uriKey, int prefixKey) {
-    // TODO Auto-generated method stub
-
+  public final String getURI(final IReadTransaction rtx) {
+    return rtx.nameForKey(mURIKey);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  public void setRightSiblingKey(long rightSiblingKey) {
-    // TODO Auto-generated method stub
+  public final void setURIKey(final int uriKey) {
+    mURIKey = uriKey;
+  }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final byte[] getValue() {
+    return mValue;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final void setValue(final byte[] value) {
+    mValue = value;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final int getKind() {
+    return IConstants.ATTRIBUTE;
   }
 
 }

@@ -29,14 +29,12 @@ import org.treetank.utils.FastByteArrayWriter;
 
 public final class DocumentNode extends Node {
 
-  private long mNodeKey;
-
   private long mFirstChildKey;
 
   private long mChildCount;
 
   public DocumentNode(final long nodeKey, final long firstChildKey) {
-    mNodeKey = nodeKey;
+    super(nodeKey);
     mFirstChildKey = firstChildKey;
     mChildCount = 0;
   }
@@ -46,245 +44,103 @@ public final class DocumentNode extends Node {
   }
 
   public DocumentNode(final Node node) {
-    mNodeKey = node.getNodeKey();
+    super(node.getNodeKey());
     mFirstChildKey = node.getFirstChildKey();
     mChildCount = node.getChildCount();
   }
 
   public DocumentNode(final FastByteArrayReader in) {
-    mFirstChildKey = mNodeKey - in.readVarLong();
+    super(IConstants.ROOT_KEY);
+    mFirstChildKey = in.readVarLong();
     mChildCount = in.readVarLong();
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final boolean isDocument() {
     return true;
   }
 
-  public final boolean isElement() {
-    return false;
-  }
-
-  public final boolean isAttribute() {
-    return false;
-  }
-
-  public final boolean isText() {
-    return false;
-  }
-
-  public final long getNodeKey() {
-    return mNodeKey;
-  }
-
-  public final void setNodeKey(final long nodeKey) {
-    mNodeKey = nodeKey;
-  }
-
-  public final boolean hasParent() {
-    return false;
-  }
-
-  public final long getParentKey() {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
-  public final INode getParent(final IReadTransaction rtx) {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
-  public final void setParentKey(final long parentKey) {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final boolean hasFirstChild() {
     return (mFirstChildKey != IConstants.NULL_KEY);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final long getFirstChildKey() {
     return mFirstChildKey;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final INode getFirstChild(final IReadTransaction rtx) {
     return rtx.moveTo(mFirstChildKey);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final void setFirstChildKey(final long firstChildKey) {
     mFirstChildKey = firstChildKey;
   }
 
-  public final boolean hasLeftSibling() {
-    return false;
-  }
-
-  public final long getLeftSiblingKey() {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
-  public final INode getLeftSibling(final IReadTransaction rtx) {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
-  public final void setLeftSiblingKey(final long leftSiblingKey) {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
-  public final boolean hasRightSibling() {
-    return false;
-  }
-
-  public final long getRightSiblingKey() {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
-  public final INode getRightSibling(final IReadTransaction rtx) {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
-  public final void setRightSiblingKey(final long rightSiblingKey) {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final long getChildCount() {
     return mChildCount;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final void setChildCount(final long childCount) {
     mChildCount = childCount;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final void incrementChildCount() {
     mChildCount += 1;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final void decrementChildCount() {
     mChildCount -= 1;
   }
 
-  public final int getAttributeCount() {
-    return 0;
-  }
-
-  public final INode getAttribute(final int index) {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
-  public final void setAttribute(
-      final int index,
-      final int localPartKey,
-      final int uriKey,
-      final int prefixKey,
-      final byte[] value) {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
-  public final void insertAttribute(
-      final int localPartKey,
-      final int uriKey,
-      final int prefixKey,
-      final byte[] value) {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
-  public final int getNamespaceCount() {
-    return 0;
-  }
-
-  public final NamespaceNode getNamespace(final int index) {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
-  public final void setNamespace(
-      final int index,
-      final int uriKey,
-      final int prefixKey) {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
-  public final void insertNamespace(final int uriKey, final int prefixKey) {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final int getKind() {
     return IConstants.DOCUMENT;
   }
 
-  public final void setKind(final byte kind) {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
-  public final int getLocalPartKey() {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
-  public final String getLocalPart(final IReadTransaction rtx) {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
-  public final void setLocalPartKey(final int localPartKey) {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
-  public final int getPrefixKey() {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
-  public final String getPrefix(final IReadTransaction rtx) {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
-  public final void setPrefixKey(final int prefixKey) {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
-  public final int getURIKey() {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
-  public final String getURI(final IReadTransaction rtx) {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
-  public final void setURIKey(final int uriKey) {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
-  public final byte[] getValue() {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
-  public final void setValue(final byte[] value) {
-    throw new UnsupportedOperationException(
-        "Document does not implement this method.");
-  }
-
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final void serialize(final FastByteArrayWriter out) {
-    out.writeVarLong(mNodeKey - mFirstChildKey);
+    out.writeVarLong(mFirstChildKey);
     out.writeVarLong(mChildCount);
   }
 
@@ -295,31 +151,11 @@ public final class DocumentNode extends Node {
   public String toString() {
     return "Node "
         + "\n\tnodeKey: "
-        + this.mNodeKey
+        + getNodeKey()
         + "\n\tchildcount: "
-        + this.mChildCount
+        + mChildCount
         + "\n\tfirstChildKey: "
-        + this.mFirstChildKey;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public int hashCode() {
-    return (int) mNodeKey;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public boolean equals(final Object obj) {
-    if ((obj == null) || (mNodeKey != ((INode) obj).getNodeKey())) {
-      return false;
-    } else {
-      return true;
-    }
+        + mFirstChildKey;
   }
 
 }
