@@ -24,7 +24,7 @@ package org.treetank.xmllayer;
 import org.treetank.api.IReadTransaction;
 
 /**
- * <h1>AttributeAxisIterator</h1>
+ * <h1>AttributeAxis</h1>
  * 
  * <p>
  * Iterate over all attibutes of a given node.

@@ -26,7 +26,7 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastStack;
 
 /**
- * <h1>DescendantAxisIterator</h1>
+ * <h1>DescendantAxis</h1>
  * 
  * <p>
  * Iterate over all descendants of kind ELEMENT or TEXT starting at a given

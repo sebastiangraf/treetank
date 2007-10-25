@@ -25,7 +25,7 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.utils.UTF;
 
 /**
- * <h1>AttributeAxisIteratorTest</h1>
+ * <h1>ValueTestAxis</h1>
  * 
  * <p>
  * Iterate over all children of kind ATTRIBUTE starting at a given
