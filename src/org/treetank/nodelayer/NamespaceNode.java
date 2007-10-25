@@ -16,23 +16,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * $Id$
+ * $Id: Namespace.java 3030 2007-10-11 07:22:54Z kramis $
  */
 
-package org.treetank.pagelayer;
+package org.treetank.nodelayer;
 
-public final class Namespace {
+import org.treetank.api.INode;
+
+public final class NamespaceNode extends Node {
 
   private int mURIKey;
 
   private int mPrefixKey;
 
-  public Namespace(final int uriKey, final int prefixKey) {
+  public NamespaceNode(final int uriKey, final int prefixKey) {
     mURIKey = uriKey;
     mPrefixKey = prefixKey;
   }
 
-  public Namespace(final Namespace namespace) {
+  public NamespaceNode(final INode namespace) {
     mURIKey = namespace.getURIKey();
     mPrefixKey = namespace.getPrefixKey();
   }

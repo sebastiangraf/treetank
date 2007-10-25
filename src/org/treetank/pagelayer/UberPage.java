@@ -24,6 +24,7 @@ package org.treetank.pagelayer;
 import java.io.IOException;
 
 import org.treetank.api.IConstants;
+import org.treetank.nodelayer.DocumentNode;
 import org.treetank.sessionlayer.WriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
@@ -86,7 +87,7 @@ public final class UberPage extends Page {
     NodePage ndp = new NodePage(IConstants.ROOT_PAGE_KEY);
     reference.setPage(ndp);
 
-    ndp.setNode(0, new Document());
+    ndp.setNode(0, new DocumentNode());
 
     rrp.incrementNodeCountAndMaxNodeKey();
 

@@ -23,7 +23,7 @@ package org.treetank.sessionlayer;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.pagelayer.InternalNode;
+import org.treetank.nodelayer.Node;
 import org.treetank.pagelayer.UberPage;
 
 /**
@@ -78,14 +78,14 @@ public final class WriteTransaction extends ReadTransaction
 
       // Change existing first child node.
       if (getCurrentNode().hasRightSibling()) {
-        final InternalNode rightSiblingNode =
+        final Node rightSiblingNode =
             ((WriteTransactionState) getTransactionState())
                 .prepareNode(getCurrentNode().getRightSiblingKey());
         rightSiblingNode.setLeftSiblingKey(getCurrentNode().getNodeKey());
       }
 
       // Change parent node.
-      final InternalNode parentNode =
+      final Node parentNode =
           ((WriteTransactionState) getTransactionState())
               .prepareNode(getCurrentNode().getParentKey());
       parentNode.setFirstChildKey(getCurrentNode().getNodeKey());
@@ -109,7 +109,7 @@ public final class WriteTransaction extends ReadTransaction
                   .createNameKey(prefix)));
 
       // Change parent node.
-      final InternalNode parentNode =
+      final Node parentNode =
           ((WriteTransactionState) getTransactionState())
               .prepareNode(getCurrentNode().getParentKey());
       parentNode.setFirstChildKey(getCurrentNode().getNodeKey());
@@ -139,14 +139,14 @@ public final class WriteTransaction extends ReadTransaction
 
       // Change existing first child node.
       if (getCurrentNode().hasRightSibling()) {
-        final InternalNode rightSiblingNode =
+        final Node rightSiblingNode =
             ((WriteTransactionState) getTransactionState())
                 .prepareNode(getCurrentNode().getRightSiblingKey());
         rightSiblingNode.setLeftSiblingKey(getCurrentNode().getNodeKey());
       }
 
       // Change parent node.
-      final InternalNode parentNode =
+      final Node parentNode =
           ((WriteTransactionState) getTransactionState())
               .prepareNode(getCurrentNode().getParentKey());
       parentNode.setFirstChildKey(getCurrentNode().getNodeKey());
@@ -164,7 +164,7 @@ public final class WriteTransaction extends ReadTransaction
               value));
 
       // Change parent node.
-      final InternalNode parentNode =
+      final Node parentNode =
           ((WriteTransactionState) getTransactionState())
               .prepareNode(getCurrentNode().getParentKey());
       parentNode.setFirstChildKey(getCurrentNode().getNodeKey());
@@ -203,20 +203,20 @@ public final class WriteTransaction extends ReadTransaction
                 .createNameKey(prefix)));
 
     // Adapt parent node.
-    final InternalNode parentNode =
+    final Node parentNode =
         ((WriteTransactionState) getTransactionState())
             .prepareNode(getCurrentNode().getParentKey());
     parentNode.incrementChildCount();
 
     // Adapt left sibling node.
-    final InternalNode leftSiblingNode =
+    final Node leftSiblingNode =
         ((WriteTransactionState) getTransactionState())
             .prepareNode(getCurrentNode().getLeftSiblingKey());
     leftSiblingNode.setRightSiblingKey(getCurrentNode().getNodeKey());
 
     // Adapt right sibling node.
     if (getCurrentNode().hasRightSibling()) {
-      final InternalNode rightSiblingNode =
+      final Node rightSiblingNode =
           ((WriteTransactionState) getTransactionState())
               .prepareNode(getCurrentNode().getRightSiblingKey());
       rightSiblingNode.setLeftSiblingKey(getCurrentNode().getNodeKey());
@@ -243,20 +243,20 @@ public final class WriteTransaction extends ReadTransaction
             .getNodeKey(), getCurrentNode().getRightSiblingKey(), value));
 
     // Adapt parent node.
-    final InternalNode parentNode =
+    final Node parentNode =
         ((WriteTransactionState) getTransactionState())
             .prepareNode(getCurrentNode().getParentKey());
     parentNode.incrementChildCount();
 
     // Adapt left sibling node.
-    final InternalNode leftSiblingNode =
+    final Node leftSiblingNode =
         ((WriteTransactionState) getTransactionState())
             .prepareNode(getCurrentNode().getLeftSiblingKey());
     leftSiblingNode.setRightSiblingKey(getCurrentNode().getNodeKey());
 
     // Adapt right sibling node.
     if (getCurrentNode().hasRightSibling()) {
-      final InternalNode rightSiblingNode =
+      final Node rightSiblingNode =
           ((WriteTransactionState) getTransactionState())
               .prepareNode(getCurrentNode().getRightSiblingKey());
       rightSiblingNode.setLeftSiblingKey(getCurrentNode().getNodeKey());
@@ -322,12 +322,12 @@ public final class WriteTransaction extends ReadTransaction
     // Get and adapt parent node.
     setCurrentNode(((WriteTransactionState) getTransactionState())
         .prepareNode(parentKey));
-    ((InternalNode) getCurrentNode()).decrementChildCount();
-    ((InternalNode) getCurrentNode()).setFirstChildKey(rightSiblingNodeKey);
+    ((Node) getCurrentNode()).decrementChildCount();
+    ((Node) getCurrentNode()).setFirstChildKey(rightSiblingNodeKey);
 
     // Adapt left sibling node if there is one.
     if (leftSiblingNodeKey != IConstants.NULL_KEY) {
-      final InternalNode leftSiblingNode =
+      final Node leftSiblingNode =
           ((WriteTransactionState) getTransactionState())
               .prepareNode(leftSiblingNodeKey);
       leftSiblingNode.setRightSiblingKey(rightSiblingNodeKey);
@@ -335,7 +335,7 @@ public final class WriteTransaction extends ReadTransaction
 
     // Adapt right sibling node if there is one.
     if (rightSiblingNodeKey != IConstants.NULL_KEY) {
-      final InternalNode rightSiblingNode =
+      final Node rightSiblingNode =
           ((WriteTransactionState) getTransactionState())
               .prepareNode(rightSiblingNodeKey);
       rightSiblingNode.setLeftSiblingKey(leftSiblingNodeKey);
@@ -449,8 +449,8 @@ public final class WriteTransaction extends ReadTransaction
     getSessionState().closeWriteTransaction();
   }
 
-  private final InternalNode prepareCurrentNode() throws Exception {
-    final InternalNode modNode =
+  private final Node prepareCurrentNode() throws Exception {
+    final Node modNode =
         ((WriteTransactionState) getTransactionState())
             .prepareNode(getCurrentNode().getNodeKey());
     setCurrentNode(modNode);

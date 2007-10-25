@@ -24,6 +24,7 @@ package org.treetank.pagelayer;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.treetank.nodelayer.ElementNode;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
@@ -33,7 +34,7 @@ public class NodePageTest {
   public void testSerializeDeserialize() throws Exception {
     final NodePage page1 = new NodePage(0L);
     assertEquals(0L, page1.getNodePageKey());
-    final Element node1 = new Element(0L, 1L, 2L, 3L, 4L, 6, 7, 8);
+    final ElementNode node1 = new ElementNode(0L, 1L, 2L, 3L, 4L, 6, 7, 8);
     node1.insertAttribute(22, 23, 24, new byte[0]);
     assertEquals(0L, node1.getNodeKey());
     page1.setNode(0, node1);

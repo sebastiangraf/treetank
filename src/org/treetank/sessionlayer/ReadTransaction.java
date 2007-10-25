@@ -24,7 +24,6 @@ package org.treetank.sessionlayer;
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
-import org.treetank.pagelayer.Namespace;
 
 /**
  * <h1>ReadTransaction</h1>
@@ -268,7 +267,7 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public Namespace getNamespace(final int index) {
+  public INode getNamespace(final int index) {
     return mCurrentNode.getNamespace(index);
   }
 

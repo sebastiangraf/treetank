@@ -16,16 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * $Id$
+ * $Id: Attribute.java 3276 2007-10-25 15:28:13Z kramis $
  */
 
-package org.treetank.pagelayer;
+package org.treetank.nodelayer;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
+import org.treetank.utils.FastByteArrayWriter;
 
-public final class Attribute implements INode {
+public final class AttributeNode extends Node {
 
   private long mNodeKey;
 
@@ -39,7 +40,7 @@ public final class Attribute implements INode {
 
   private byte[] mValue;
 
-  public Attribute(
+  public AttributeNode(
       final long nodeKey,
       final long parentKey,
       final int localPartKey,
@@ -54,7 +55,7 @@ public final class Attribute implements INode {
     mValue = value;
   }
 
-  public Attribute(final INode attribute) {
+  public AttributeNode(final INode attribute) {
     mNodeKey = attribute.getNodeKey();
     mParentKey = attribute.getParentKey();
     mLocalPartKey = attribute.getLocalPartKey();
@@ -207,7 +208,7 @@ public final class Attribute implements INode {
         "Attribute does not implement this method.");
   }
 
-  public final Namespace getNamespace(final int index) {
+  public final NamespaceNode getNamespace(final int index) {
     throw new UnsupportedOperationException(
         "Attribute does not implement this method.");
   }
@@ -231,6 +232,87 @@ public final class Attribute implements INode {
     } else {
       return true;
     }
+  }
+
+  @Override
+  public void decrementChildCount() {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void incrementChildCount() {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void insertAttribute(
+      int localPartKey,
+      int uriKey,
+      int prefixKey,
+      byte[] value) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void insertNamespace(int uriKey, int prefixKey) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void serialize(FastByteArrayWriter out) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void setAttribute(
+      int index,
+      int localPartKey,
+      int uriKey,
+      int prefixKey,
+      byte[] value) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void setChildCount(long childCount) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void setFirstChildKey(long firstChildKey) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void setKind(byte kind) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void setLeftSiblingKey(long leftSiblingKey) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void setNamespace(int index, int uriKey, int prefixKey) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void setRightSiblingKey(long rightSiblingKey) {
+    // TODO Auto-generated method stub
+
   }
 
 }

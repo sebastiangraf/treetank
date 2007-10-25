@@ -26,17 +26,17 @@ import java.io.RandomAccessFile;
 import java.util.Map;
 
 import org.treetank.api.IConstants;
-import org.treetank.pagelayer.Document;
-import org.treetank.pagelayer.Element;
+import org.treetank.nodelayer.DocumentNode;
+import org.treetank.nodelayer.ElementNode;
+import org.treetank.nodelayer.Node;
+import org.treetank.nodelayer.TextNode;
 import org.treetank.pagelayer.IndirectPage;
-import org.treetank.pagelayer.InternalNode;
 import org.treetank.pagelayer.NamePage;
 import org.treetank.pagelayer.NodePage;
 import org.treetank.pagelayer.Page;
 import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.PageWriter;
 import org.treetank.pagelayer.RevisionRootPage;
-import org.treetank.pagelayer.Text;
 import org.treetank.pagelayer.UberPage;
 
 /**
@@ -77,16 +77,16 @@ public final class WriteTransactionState extends ReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public final InternalNode prepareNode(final long nodeKey) throws Exception {
+  public final Node prepareNode(final long nodeKey) throws Exception {
     return prepareNodePage(nodePageKey(nodeKey)).getNode(
         nodePageOffset(nodeKey));
   }
 
-  public final Document createDocumentNode() throws Exception {
+  public final DocumentNode createDocumentNode() throws Exception {
 
     getRevisionRootPage().incrementNodeCountAndMaxNodeKey();
 
-    final Document node = new Document();
+    final DocumentNode node = new DocumentNode();
 
     // Write node into node page.
     prepareNodePage(nodePageKey(getRevisionRootPage().getMaxNodeKey()))
@@ -95,7 +95,7 @@ public final class WriteTransactionState extends ReadTransactionState {
     return node;
   }
 
-  public final Element createElementNode(
+  public final ElementNode createElementNode(
       final long parentKey,
       final long firstChildKey,
       final long leftSiblingKey,
@@ -106,8 +106,8 @@ public final class WriteTransactionState extends ReadTransactionState {
 
     getRevisionRootPage().incrementNodeCountAndMaxNodeKey();
 
-    final Element node =
-        new Element(
+    final ElementNode node =
+        new ElementNode(
             getRevisionRootPage().getMaxNodeKey(),
             parentKey,
             firstChildKey,
@@ -124,7 +124,7 @@ public final class WriteTransactionState extends ReadTransactionState {
     return node;
   }
 
-  public final Text createTextNode(
+  public final TextNode createTextNode(
       final long parentKey,
       final long leftSiblingKey,
       final long rightSiblingKey,
@@ -132,8 +132,8 @@ public final class WriteTransactionState extends ReadTransactionState {
 
     getRevisionRootPage().incrementNodeCountAndMaxNodeKey();
 
-    final Text node =
-        new Text(
+    final TextNode node =
+        new TextNode(
             getRevisionRootPage().getMaxNodeKey(),
             parentKey,
             leftSiblingKey,

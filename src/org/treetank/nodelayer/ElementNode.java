@@ -19,7 +19,7 @@
  * $Id: Node.java 3268 2007-10-25 13:16:01Z kramis $
  */
 
-package org.treetank.pagelayer;
+package org.treetank.nodelayer;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
@@ -27,7 +27,7 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
-public final class Element implements INode, InternalNode {
+public final class ElementNode extends Node {
 
   private long mNodeKey;
 
@@ -41,9 +41,9 @@ public final class Element implements INode, InternalNode {
 
   private long mChildCount;
 
-  private INode[] mAttributes;
+  private AttributeNode[] mAttributes;
 
-  private Namespace[] mNamespaces;
+  private NamespaceNode[] mNamespaces;
 
   private int mLocalPartKey;
 
@@ -51,7 +51,7 @@ public final class Element implements INode, InternalNode {
 
   private int mPrefixKey;
 
-  public Element(
+  public ElementNode(
       final long nodeKey,
       final long parentKey,
       final long firstChildKey,
@@ -66,14 +66,14 @@ public final class Element implements INode, InternalNode {
     mLeftSiblingKey = leftSiblingKey;
     mRightSiblingKey = rightSiblingKey;
     mChildCount = 0;
-    mAttributes = new Attribute[0];
-    mNamespaces = new Namespace[0];
+    mAttributes = new AttributeNode[0];
+    mNamespaces = new NamespaceNode[0];
     mLocalPartKey = localPartKey;
     mURIKey = uriKey;
     mPrefixKey = prefixKey;
   }
 
-  public Element(final long nodeKey) {
+  public ElementNode(final long nodeKey) {
     this(
         nodeKey,
         IConstants.NULL_KEY,
@@ -85,27 +85,27 @@ public final class Element implements INode, InternalNode {
         (int) IConstants.NULL_KEY);
   }
 
-  public Element(final INode node) {
+  public ElementNode(final INode node) {
     mNodeKey = node.getNodeKey();
     mParentKey = node.getParentKey();
     mFirstChildKey = node.getFirstChildKey();
     mLeftSiblingKey = node.getLeftSiblingKey();
     mRightSiblingKey = node.getRightSiblingKey();
     mChildCount = node.getChildCount();
-    mAttributes = new INode[node.getAttributeCount()];
+    mAttributes = new AttributeNode[node.getAttributeCount()];
     for (int i = 0, l = mAttributes.length; i < l; i++) {
-      mAttributes[i] = new Attribute(node.getAttribute(i));
+      mAttributes[i] = new AttributeNode(node.getAttribute(i));
     }
-    mNamespaces = new Namespace[node.getNamespaceCount()];
+    mNamespaces = new NamespaceNode[node.getNamespaceCount()];
     for (int i = 0, l = mNamespaces.length; i < l; i++) {
-      mNamespaces[i] = new Namespace(node.getNamespace(i));
+      mNamespaces[i] = new NamespaceNode(node.getNamespace(i));
     }
     mLocalPartKey = node.getLocalPartKey();
     mURIKey = node.getURIKey();
     mPrefixKey = node.getPrefixKey();
   }
 
-  public Element(final long nodeKey, final FastByteArrayReader in) {
+  public ElementNode(final long nodeKey, final FastByteArrayReader in) {
 
     // Always read node key and kind.
     mNodeKey = nodeKey;
@@ -116,15 +116,15 @@ public final class Element implements INode, InternalNode {
     mLeftSiblingKey = mNodeKey - in.readVarLong();
     mRightSiblingKey = mNodeKey - in.readVarLong();
     mChildCount = in.readVarLong();
-    mAttributes = new Attribute[in.readByte()];
+    mAttributes = new AttributeNode[in.readByte()];
     for (int i = 0, l = mAttributes.length; i < l; i++) {
       mAttributes[i] =
-          new Attribute(mNodeKey + i + 1, mNodeKey, in.readVarInt(), in
+          new AttributeNode(mNodeKey + i + 1, mNodeKey, in.readVarInt(), in
               .readVarInt(), in.readVarInt(), in.readByteArray());
     }
-    mNamespaces = new Namespace[in.readByte()];
+    mNamespaces = new NamespaceNode[in.readByte()];
     for (int i = 0, l = mNamespaces.length; i < l; i++) {
-      mNamespaces[i] = new Namespace(in.readVarInt(), in.readVarInt());
+      mNamespaces[i] = new NamespaceNode(in.readVarInt(), in.readVarInt());
     }
     mLocalPartKey = in.readVarInt();
     mURIKey = in.readVarInt();
@@ -251,7 +251,7 @@ public final class Element implements INode, InternalNode {
       final int prefixKey,
       final byte[] value) {
     mAttributes[index] =
-        new Attribute(
+        new AttributeNode(
             mNodeKey + index + 1,
             mNodeKey,
             localPartKey,
@@ -266,12 +266,12 @@ public final class Element implements INode, InternalNode {
       final int prefixKey,
       final byte[] value) {
 
-    INode[] tmp = new INode[mAttributes.length + 1];
+    AttributeNode[] tmp = new AttributeNode[mAttributes.length + 1];
     System.arraycopy(mAttributes, 0, tmp, 0, mAttributes.length);
     mAttributes = tmp;
 
     mAttributes[mAttributes.length - 1] =
-        new Attribute(
+        new AttributeNode(
             mNodeKey + mAttributes.length,
             mNodeKey,
             localPartKey,
@@ -284,7 +284,7 @@ public final class Element implements INode, InternalNode {
     return mNamespaces == null ? 0 : mNamespaces.length;
   }
 
-  public final Namespace getNamespace(final int index) {
+  public final NamespaceNode getNamespace(final int index) {
     return mNamespaces[index];
   }
 
@@ -292,16 +292,16 @@ public final class Element implements INode, InternalNode {
       final int index,
       final int uriKey,
       final int prefixKey) {
-    mNamespaces[index] = new Namespace(uriKey, prefixKey);
+    mNamespaces[index] = new NamespaceNode(uriKey, prefixKey);
   }
 
   public final void insertNamespace(final int uriKey, final int prefixKey) {
 
-    Namespace[] tmp = new Namespace[mAttributes.length + 1];
+    NamespaceNode[] tmp = new NamespaceNode[mAttributes.length + 1];
     System.arraycopy(mNamespaces, 0, tmp, 0, mNamespaces.length);
     mNamespaces = tmp;
 
-    mNamespaces[mNamespaces.length - 1] = new Namespace(uriKey, prefixKey);
+    mNamespaces[mNamespaces.length - 1] = new NamespaceNode(uriKey, prefixKey);
   }
 
   public final int getKind() {

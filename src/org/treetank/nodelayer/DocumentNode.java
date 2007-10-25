@@ -19,71 +19,45 @@
  * $Id: Node.java 3268 2007-10-25 13:16:01Z kramis $
  */
 
-package org.treetank.pagelayer;
+package org.treetank.nodelayer;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
-import org.treetank.utils.UTF;
 
-public final class Text implements INode, InternalNode {
+public final class DocumentNode extends Node {
 
   private long mNodeKey;
 
-  private long mParentKey;
+  private long mFirstChildKey;
 
-  private long mLeftSiblingKey;
+  private long mChildCount;
 
-  private long mRightSiblingKey;
-
-  private byte[] mValue;
-
-  public Text(
-      final long nodeKey,
-      final long parentKey,
-      final long leftSiblingKey,
-      final long rightSiblingKey,
-      final byte[] value) {
+  public DocumentNode(final long nodeKey, final long firstChildKey) {
     mNodeKey = nodeKey;
-    mParentKey = parentKey;
-    mLeftSiblingKey = leftSiblingKey;
-    mRightSiblingKey = rightSiblingKey;
-    mValue = value;
+    mFirstChildKey = firstChildKey;
+    mChildCount = 0;
   }
 
-  public Text(final long nodeKey) {
-    this(
-        nodeKey,
-        IConstants.NULL_KEY,
-        IConstants.NULL_KEY,
-        IConstants.NULL_KEY,
-        UTF.EMPTY);
+  public DocumentNode() {
+    this(IConstants.ROOT_KEY, IConstants.NULL_KEY);
   }
 
-  public Text(final INode node) {
+  public DocumentNode(final Node node) {
     mNodeKey = node.getNodeKey();
-    mParentKey = node.getParentKey();
-    mLeftSiblingKey = node.getLeftSiblingKey();
-    mRightSiblingKey = node.getRightSiblingKey();
-    mValue = node.getValue();
+    mFirstChildKey = node.getFirstChildKey();
+    mChildCount = node.getChildCount();
   }
 
-  public Text(final long nodeKey, final FastByteArrayReader in) {
-
-    // Always read node key and kind.
-    mNodeKey = nodeKey;
-
-    mParentKey = mNodeKey - in.readVarLong();
-    mLeftSiblingKey = in.readVarLong();
-    mRightSiblingKey = in.readVarLong();
-    mValue = in.readByteArray();
-
+  public DocumentNode(final FastByteArrayReader in) {
+    mFirstChildKey = mNodeKey - in.readVarLong();
+    mChildCount = in.readVarLong();
   }
 
   public final boolean isDocument() {
-    return false;
+    return true;
   }
 
   public final boolean isElement() {
@@ -95,7 +69,7 @@ public final class Text implements INode, InternalNode {
   }
 
   public final boolean isText() {
-    return true;
+    return false;
   }
 
   public final long getNodeKey() {
@@ -107,84 +81,92 @@ public final class Text implements INode, InternalNode {
   }
 
   public final boolean hasParent() {
-    return (mParentKey != IConstants.NULL_KEY);
-  }
-
-  public final long getParentKey() {
-    return mParentKey;
-  }
-
-  public final INode getParent(final IReadTransaction rtx) {
-    return rtx.moveTo(mParentKey);
-  }
-
-  public final void setParentKey(final long parentKey) {
-    mParentKey = parentKey;
-  }
-
-  public final boolean hasFirstChild() {
     return false;
   }
 
+  public final long getParentKey() {
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
+  }
+
+  public final INode getParent(final IReadTransaction rtx) {
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
+  }
+
+  public final void setParentKey(final long parentKey) {
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
+  }
+
+  public final boolean hasFirstChild() {
+    return (mFirstChildKey != IConstants.NULL_KEY);
+  }
+
   public final long getFirstChildKey() {
-    return IConstants.NULL_KEY;
+    return mFirstChildKey;
   }
 
   public final INode getFirstChild(final IReadTransaction rtx) {
-    throw new UnsupportedOperationException(
-        "Text does not implement this method.");
+    return rtx.moveTo(mFirstChildKey);
   }
 
   public final void setFirstChildKey(final long firstChildKey) {
+    mFirstChildKey = firstChildKey;
   }
 
   public final boolean hasLeftSibling() {
-    return (mLeftSiblingKey != IConstants.NULL_KEY);
+    return false;
   }
 
   public final long getLeftSiblingKey() {
-    return mLeftSiblingKey;
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final INode getLeftSibling(final IReadTransaction rtx) {
-    return rtx.moveTo(mLeftSiblingKey);
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final void setLeftSiblingKey(final long leftSiblingKey) {
-    mLeftSiblingKey = leftSiblingKey;
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final boolean hasRightSibling() {
-    return (mRightSiblingKey != IConstants.NULL_KEY);
+    return false;
   }
 
   public final long getRightSiblingKey() {
-    return mRightSiblingKey;
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final INode getRightSibling(final IReadTransaction rtx) {
-    return rtx.moveTo(mRightSiblingKey);
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final void setRightSiblingKey(final long rightSiblingKey) {
-    mRightSiblingKey = rightSiblingKey;
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final long getChildCount() {
-    return 0L;
+    return mChildCount;
   }
 
   public final void setChildCount(final long childCount) {
-    throw new UnsupportedOperationException(
-        "Text does not implement this method.");
+    mChildCount = childCount;
   }
 
   public final void incrementChildCount() {
+    mChildCount += 1;
   }
 
   public final void decrementChildCount() {
-    throw new UnsupportedOperationException(
-        "Text does not implement this method.");
+    mChildCount -= 1;
   }
 
   public final int getAttributeCount() {
@@ -193,7 +175,7 @@ public final class Text implements INode, InternalNode {
 
   public final INode getAttribute(final int index) {
     throw new UnsupportedOperationException(
-        "Text does not implement this method.");
+        "Document does not implement this method.");
   }
 
   public final void setAttribute(
@@ -203,7 +185,7 @@ public final class Text implements INode, InternalNode {
       final int prefixKey,
       final byte[] value) {
     throw new UnsupportedOperationException(
-        "Text does not implement this method.");
+        "Document does not implement this method.");
   }
 
   public final void insertAttribute(
@@ -212,16 +194,16 @@ public final class Text implements INode, InternalNode {
       final int prefixKey,
       final byte[] value) {
     throw new UnsupportedOperationException(
-        "Text does not implement this method.");
+        "Document does not implement this method.");
   }
 
   public final int getNamespaceCount() {
     return 0;
   }
 
-  public final Namespace getNamespace(final int index) {
+  public final NamespaceNode getNamespace(final int index) {
     throw new UnsupportedOperationException(
-        "Text does not implement this method.");
+        "Document does not implement this method.");
   }
 
   public final void setNamespace(
@@ -229,78 +211,81 @@ public final class Text implements INode, InternalNode {
       final int uriKey,
       final int prefixKey) {
     throw new UnsupportedOperationException(
-        "Text does not implement this method.");
+        "Document does not implement this method.");
   }
 
   public final void insertNamespace(final int uriKey, final int prefixKey) {
     throw new UnsupportedOperationException(
-        "Text does not implement this method.");
+        "Document does not implement this method.");
   }
 
   public final int getKind() {
-    return IConstants.TEXT;
+    return IConstants.DOCUMENT;
   }
 
   public final void setKind(final byte kind) {
     throw new UnsupportedOperationException(
-        "Text does not implement this method.");
+        "Document does not implement this method.");
   }
 
   public final int getLocalPartKey() {
-    return -1;
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final String getLocalPart(final IReadTransaction rtx) {
     throw new UnsupportedOperationException(
-        "Text does not implement this method.");
+        "Document does not implement this method.");
   }
 
   public final void setLocalPartKey(final int localPartKey) {
     throw new UnsupportedOperationException(
-        "Text does not implement this method.");
+        "Document does not implement this method.");
   }
 
   public final int getPrefixKey() {
-    return -1;
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final String getPrefix(final IReadTransaction rtx) {
     throw new UnsupportedOperationException(
-        "Text does not implement this method.");
+        "Document does not implement this method.");
   }
 
   public final void setPrefixKey(final int prefixKey) {
     throw new UnsupportedOperationException(
-        "Text does not implement this method.");
+        "Document does not implement this method.");
   }
 
   public final int getURIKey() {
-    return -1;
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final String getURI(final IReadTransaction rtx) {
     throw new UnsupportedOperationException(
-        "Text does not implement this method.");
+        "Document does not implement this method.");
   }
 
   public final void setURIKey(final int uriKey) {
     throw new UnsupportedOperationException(
-        "Text does not implement this method.");
+        "Document does not implement this method.");
   }
 
   public final byte[] getValue() {
-    return mValue;
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final void setValue(final byte[] value) {
-    mValue = value;
+    throw new UnsupportedOperationException(
+        "Document does not implement this method.");
   }
 
   public final void serialize(final FastByteArrayWriter out) {
-    out.writeVarLong(mNodeKey - mParentKey);
-    out.writeVarLong(mLeftSiblingKey);
-    out.writeVarLong(mRightSiblingKey);
-    out.writeByteArray(mValue);
+    out.writeVarLong(mNodeKey - mFirstChildKey);
+    out.writeVarLong(mChildCount);
   }
 
   /**
@@ -311,12 +296,10 @@ public final class Text implements INode, InternalNode {
     return "Node "
         + "\n\tnodeKey: "
         + this.mNodeKey
-        + "\n\tparentKey: "
-        + this.mParentKey
-        + "\n\tleftSiblingKey: "
-        + this.mLeftSiblingKey
-        + "\n\trightSiblingKey: "
-        + this.mRightSiblingKey;
+        + "\n\tchildcount: "
+        + this.mChildCount
+        + "\n\tfirstChildKey: "
+        + this.mFirstChildKey;
   }
 
   /**
