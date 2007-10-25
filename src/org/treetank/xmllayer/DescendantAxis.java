@@ -22,7 +22,6 @@
 package org.treetank.xmllayer;
 
 import org.treetank.api.IConstants;
-import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastStack;
 
@@ -50,53 +49,45 @@ public class DescendantAxis extends Axis {
   public DescendantAxis(final IReadTransaction rtx) {
     super(rtx);
     mRightSiblingKeyStack = new FastStack<Long>();
-
-    // Find delimiter nodeKey.
-    final long currentKey = rtx.getNodeKey();
-    while ((rtx.getRightSiblingKey() == IConstants.NULL_KEY)
-        && (rtx.getParentKey() != IConstants.NULL_KEY)) {
-      rtx.moveToParent();
-    }
-    mRightSiblingKeyStack.push(rtx.getRightSiblingKey());
-    rtx.moveTo(currentKey);
-
     mNextKey = rtx.getFirstChildKey();
-
   }
 
   /**
    * {@inheritDoc}
    */
   public final boolean hasNext() {
-    final INode node = mRTX.moveTo(mNextKey);
-    if ((node != null) && (node.getNodeKey() != mRightSiblingKeyStack.get(0))) {
+    mCurrentNode = mRTX.moveTo(mNextKey);
 
-      // Always follow first child if there is one.
-      if (node.hasFirstChild()) {
-        mNextKey = node.getFirstChildKey();
-        if (node.hasRightSibling()) {
-          mRightSiblingKeyStack.push(node.getRightSiblingKey());
-        }
-        mCurrentNode = node;
-        return true;
-      }
-
-      // Then follow right sibling if there is one.
-      if (node.hasRightSibling()) {
-        mNextKey = node.getRightSiblingKey();
-        mCurrentNode = node;
-        return true;
-      }
-
-      // Then follow right sibling on stack.
-      mNextKey = mRightSiblingKeyStack.pop();
-      mCurrentNode = node;
-      return true;
-
-    } else {
-      mCurrentNode = null;
+    // Fail if there is no node anymore.
+    if (mCurrentNode == null) {
       return false;
     }
+
+    // Always follow first child if there is one.
+    if (mCurrentNode.hasFirstChild()) {
+      mNextKey = mCurrentNode.getFirstChildKey();
+      if (mCurrentNode.hasRightSibling()) {
+        mRightSiblingKeyStack.push(mCurrentNode.getRightSiblingKey());
+      }
+      return true;
+    }
+
+    // Then follow right sibling if there is one.
+    if (mCurrentNode.hasRightSibling()) {
+      mNextKey = mCurrentNode.getRightSiblingKey();
+      return true;
+    }
+
+    // Then follow right sibling on stack.
+    if (mRightSiblingKeyStack.size() > 0) {
+      mNextKey = mRightSiblingKeyStack.pop();
+      return true;
+    }
+
+    // Then end.
+    mNextKey = IConstants.NULL_KEY;
+    return true;
+
   }
 
 }
