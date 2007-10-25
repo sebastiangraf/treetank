@@ -21,7 +21,6 @@
 
 package org.treetank.xmllayer;
 
-import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 
 /**
@@ -52,7 +51,7 @@ public class AncestorAxis extends Axis {
    */
   public final boolean hasNext() {
     mCurrentNode = mRTX.moveTo(mNextKey);
-    if ((mNextKey != IConstants.ROOT_KEY) && (mCurrentNode != null)) {
+    if ((mCurrentNode != null) & !(mCurrentNode.isRoot())) {
       mNextKey = mCurrentNode.getParentKey();
       return true;
     } else {
