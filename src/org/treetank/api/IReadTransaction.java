@@ -21,8 +21,6 @@
 
 package org.treetank.api;
 
-import org.treetank.pagelayer.Namespace;
-
 /**
  * <h1>IReadTransaction</h1>
  * 
@@ -244,7 +242,7 @@ public interface IReadTransaction {
    * @param index Index of namespace to get.
    * @return Namespace denoted by its index.
    */
-  public Namespace getNamespace(final int index);
+  public INode getNamespace(final int index);
 
   /**
    * Get kind of node.

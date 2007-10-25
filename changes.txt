@@ -21,6 +21,7 @@
  
 TreeTank 4.12
 -------------
++ Added pagelayer and moved all nodes there.
 + Binary incompatibility to previous releases due to pagelayer changes.
 + IWriteTransaction now comes with insertElementAs... and insertTextAs...
 + Major rework of pagelayer. Node is split into Document, Element, and Text.

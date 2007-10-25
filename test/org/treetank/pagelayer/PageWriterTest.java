@@ -27,6 +27,7 @@ import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.treetank.nodelayer.ElementNode;
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.utils.FastByteArrayReader;
 
@@ -45,7 +46,7 @@ public class PageWriterTest {
 
     // Create node page with single node.
     final NodePage page1 = new NodePage(13L);
-    page1.setNode(3, new Element(0L, 1L, 2L, 3L, 4L, 6, 7, 8));
+    page1.setNode(3, new ElementNode(0L, 1L, 2L, 3L, 4L, 6, 7, 8));
     final PageReference pageReference = new PageReference();
 
     // Serialize node page.

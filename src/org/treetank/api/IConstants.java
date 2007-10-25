@@ -97,6 +97,12 @@ public interface IConstants {
   /** Root node page key constant. */
   public static final long ROOT_PAGE_KEY = 0L;
 
+  /** Undefined name. */
+  public static final int NULL_NAME = -1;
+
+  /** Undefined node. */
+  public static final int UNKNOWN = 0;
+
   /** INode kind is element. */
   public static final int ELEMENT = 1;
 

@@ -21,8 +21,6 @@
 
 package org.treetank.api;
 
-import org.treetank.pagelayer.Namespace;
-
 /**
  * <h1>INode</h1>
  * 
@@ -190,7 +188,7 @@ public interface INode {
    * @param index Index of attribute to return.
    * @return INode for given index.
    */
-  public Namespace getNamespace(final int index);
+  public INode getNamespace(final int index);
 
   /**
    * Get kind of node.

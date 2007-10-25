@@ -22,6 +22,10 @@
 package org.treetank.pagelayer;
 
 import org.treetank.api.IConstants;
+import org.treetank.nodelayer.DocumentNode;
+import org.treetank.nodelayer.ElementNode;
+import org.treetank.nodelayer.Node;
+import org.treetank.nodelayer.TextNode;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
@@ -38,7 +42,7 @@ public final class NodePage extends Page {
   private final long mNodePageKey;
 
   /** Array of nodes. This can have null nodes that were removed. */
-  private final InternalNode[] mNodes;
+  private final Node[] mNodes;
 
   /**
    * Create node page.
@@ -48,7 +52,7 @@ public final class NodePage extends Page {
   public NodePage(final long nodePageKey) {
     super(0);
     mNodePageKey = nodePageKey;
-    mNodes = new InternalNode[IConstants.NDP_NODE_COUNT];
+    mNodes = new Node[IConstants.NDP_NODE_COUNT];
   }
 
   /**
@@ -60,23 +64,23 @@ public final class NodePage extends Page {
   public NodePage(final FastByteArrayReader in, final long nodePageKey) {
     super(0, in);
     mNodePageKey = nodePageKey;
-    mNodes = new InternalNode[IConstants.NDP_NODE_COUNT];
+    mNodes = new Node[IConstants.NDP_NODE_COUNT];
 
     final long keyBase = mNodePageKey << IConstants.NDP_NODE_COUNT_EXPONENT;
     for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
       final int kind = in.readByte();
       switch (kind) {
-      case 0:
+      case IConstants.UNKNOWN:
         // Was null node, do nothing here.
         break;
       case IConstants.DOCUMENT:
-        mNodes[offset] = new Document(in);
+        mNodes[offset] = new DocumentNode(in);
         break;
       case IConstants.ELEMENT:
-        mNodes[offset] = new Element(keyBase + offset, in);
+        mNodes[offset] = new ElementNode(keyBase + offset, in);
         break;
       case IConstants.TEXT:
-        mNodes[offset] = new Text(keyBase + offset, in);
+        mNodes[offset] = new TextNode(keyBase + offset, in);
         break;
       default:
         throw new IllegalStateException(
@@ -93,24 +97,24 @@ public final class NodePage extends Page {
   public NodePage(final NodePage committedNodePage) {
     super(0, committedNodePage);
     mNodePageKey = committedNodePage.mNodePageKey;
-    mNodes = new InternalNode[IConstants.NDP_NODE_COUNT];
+    mNodes = new Node[IConstants.NDP_NODE_COUNT];
 
     // Deep-copy all nodes.
     for (int i = 0; i < IConstants.NDP_NODE_COUNT; i++) {
       if (committedNodePage.mNodes[i] != null) {
         final int kind = committedNodePage.mNodes[i].getKind();
         switch (kind) {
-        case 0:
+        case IConstants.UNKNOWN:
           // Was null node, do nothing here.
           break;
         case IConstants.DOCUMENT:
-          mNodes[i] = new Document(committedNodePage.mNodes[i]);
+          mNodes[i] = new DocumentNode(committedNodePage.mNodes[i]);
           break;
         case IConstants.ELEMENT:
-          mNodes[i] = new Element(committedNodePage.mNodes[i]);
+          mNodes[i] = new ElementNode(committedNodePage.mNodes[i]);
           break;
         case IConstants.TEXT:
-          mNodes[i] = new Text(committedNodePage.mNodes[i]);
+          mNodes[i] = new TextNode(committedNodePage.mNodes[i]);
           break;
         default:
           throw new IllegalStateException(
@@ -135,7 +139,7 @@ public final class NodePage extends Page {
    * @param offset Offset of node within local node page.
    * @return Node at given offset.
    */
-  public final InternalNode getNode(final int offset) {
+  public final Node getNode(final int offset) {
     return mNodes[offset];
   }
 
@@ -145,7 +149,7 @@ public final class NodePage extends Page {
    * @param offset Offset of node to overwrite in this node page.
    * @param node Node to store at given nodeOffset.
    */
-  public final void setNode(final int offset, final InternalNode node) {
+  public final void setNode(final int offset, final Node node) {
     mNodes[offset] = node;
   }
 
@@ -156,12 +160,12 @@ public final class NodePage extends Page {
   public final void serialize(final FastByteArrayWriter out) {
     super.serialize(out);
 
-    for (final InternalNode node : mNodes) {
+    for (final Node node : mNodes) {
       if (node != null) {
         out.writeByte((byte) node.getKind());
         node.serialize(out);
       } else {
-        out.writeByte((byte) 0);
+        out.writeByte((byte) IConstants.UNKNOWN);
       }
     }
   }
