@@ -56,6 +56,13 @@ public abstract class AbstractAxis implements IAxis {
   /**
    * {@inheritDoc}
    */
+  public final IReadTransaction getTransaction() {
+    return mRTX;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final Iterator<INode> iterator() {
     return this;
   }

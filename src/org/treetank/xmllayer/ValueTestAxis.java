@@ -22,7 +22,6 @@
 package org.treetank.xmllayer;
 
 import org.treetank.api.IAxis;
-import org.treetank.api.IReadTransaction;
 import org.treetank.utils.UTF;
 
 /**
@@ -44,15 +43,11 @@ public class ValueTestAxis extends AbstractAxis {
   /**
    * Constructor initializing internal state.
    * 
-   * @param rtx Exclusive (immutable) mTrx to iterate with.
    * @param axis Axis iterator over which we should find values.
    * @param value Value to find.
    */
-  public ValueTestAxis(
-      final IReadTransaction rtx,
-      final IAxis axis,
-      final byte[] value) {
-    super(rtx);
+  public ValueTestAxis(final IAxis axis, final byte[] value) {
+    super(axis.getTransaction());
     mAxis = axis;
     mValue = value;
   }
@@ -60,15 +55,11 @@ public class ValueTestAxis extends AbstractAxis {
   /**
    * Constructor initializing internal state.
    * 
-   * @param rtx Exclusive (immutable) mTrx to iterate with.
    * @param axis Axis iterator over which we should find values.
    * @param value Value to find.
    */
-  public ValueTestAxis(
-      final IReadTransaction rtx,
-      final AbstractAxis axis,
-      final String value) {
-    this(rtx, axis, UTF.convert(value));
+  public ValueTestAxis(final AbstractAxis axis, final String value) {
+    this(axis, UTF.convert(value));
   }
 
   /**

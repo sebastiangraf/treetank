@@ -87,7 +87,6 @@ public class DescendantAxis extends AbstractAxis {
     // Then end.
     mNextKey = IConstants.NULL_KEY;
     return true;
-
   }
 
 }

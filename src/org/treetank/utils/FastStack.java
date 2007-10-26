@@ -22,12 +22,14 @@
 package org.treetank.utils;
 
 /**
- * <h1>FastLongStack</h1>
+ * <h1>FastStack</h1>
  * 
  * <p>
- * Unsynchronized stack optimized for long primitive type. Is significantly
- * faster than Stack<Long>.
+ * Unsynchronized stack optimized for generic type. Is significantly
+ * faster than Stack.
  * </p>
+ * 
+ * @param E Generic type.
  */
 public final class FastStack<E> {
 
@@ -108,6 +110,22 @@ public final class FastStack<E> {
    */
   public final int size() {
     return mSize;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public String toString() {
+    final StringBuilder builder = new StringBuilder("[");
+    for (int i = 0; i < mSize; i++) {
+      builder.append(mStack[i]);
+      if (i < mSize) {
+        builder.append(",");
+      }
+    }
+    builder.append("]");
+    return builder.toString();
   }
 
 }

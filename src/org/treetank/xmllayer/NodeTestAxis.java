@@ -22,7 +22,6 @@
 package org.treetank.xmllayer;
 
 import org.treetank.api.IAxis;
-import org.treetank.api.IReadTransaction;
 
 /**
  * <h1>NodeTestAxis</h1>
@@ -39,11 +38,10 @@ public class NodeTestAxis extends AbstractAxis {
   /**
    * Constructor initializing internal state.
    * 
-   * @param rtx Exclusive (immutable) trx to iterate with.
    * @param axis Axis to iterate over.
    */
-  public NodeTestAxis(final IReadTransaction rtx, final IAxis axis) {
-    super(rtx);
+  public NodeTestAxis(final IAxis axis) {
+    super(axis.getTransaction());
     mAxis = axis;
   }
 
