@@ -24,6 +24,10 @@ package org.treetank.xmllayer;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.StringWriter;
+import java.io.Writer;
+
+import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -53,10 +57,12 @@ public class SAXGeneratorTest {
       wtx.commit();
 
       // Generate from this session.
+      final Writer writer = new StringWriter();
       final IReadTransaction rtx = session.beginReadTransaction();
       final SAXGenerator generator =
-          new SAXGenerator(new DescendantAxis(rtx), false);
+          new SAXGenerator(new DescendantAxis(rtx), writer, false);
       generator.run();
+      TestCase.assertEquals(TestDocument.XML, writer.toString());
       rtx.close();
       session.close();
     } catch (Exception e) {
