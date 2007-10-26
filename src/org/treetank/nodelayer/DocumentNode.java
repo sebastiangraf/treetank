@@ -27,28 +27,56 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
+/**
+ * <h1>DocumentNode</h1>
+ * 
+ * <p>
+ * Node representing the root of a document. This node
+ * is guaranteed to exist in revision 0 and can not be removed.
+ * </p>
+ */
 public final class DocumentNode extends AbstractNode {
 
+  /** Key of first child. */
   private long mFirstChildKey;
 
+  /** Child count including element and text nodes. */
   private long mChildCount;
 
-  public DocumentNode(final long nodeKey, final long firstChildKey) {
-    super(nodeKey);
+  /**
+   * Constructor to create document node.
+   * 
+   * @param firstChildKey Key of first child.
+   */
+  public DocumentNode(final long firstChildKey) {
+    super(IConstants.ROOT_KEY);
     mFirstChildKey = firstChildKey;
     mChildCount = 0;
   }
 
+  /**
+   * Create new document node.
+   */
   public DocumentNode() {
-    this(IConstants.ROOT_KEY, IConstants.NULL_KEY);
+    this(IConstants.NULL_KEY);
   }
 
-  public DocumentNode(final AbstractNode node) {
+  /**
+   * Clone document node.
+   * 
+   * @param node Node to clone.
+   */
+  public DocumentNode(final INode node) {
     super(node.getNodeKey());
     mFirstChildKey = node.getFirstChildKey();
     mChildCount = node.getChildCount();
   }
 
+  /**
+   * Read document node.
+   * 
+   * @param in Byte input to read node from.
+   */
   public DocumentNode(final FastByteArrayReader in) {
     super(IConstants.ROOT_KEY);
     mFirstChildKey = in.readVarLong();

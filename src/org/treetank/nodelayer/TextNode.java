@@ -26,18 +26,35 @@ import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
-import org.treetank.utils.UTF;
 
+/**
+ * <h1>TextNode</h1>
+ * 
+ * <p>Node representing a text node.</p>
+ */
 public final class TextNode extends AbstractNode {
 
+  /** Key of parent node. */
   private long mParentKey;
 
+  /** Key of left sibling. */
   private long mLeftSiblingKey;
 
+  /** Key of right sibling. */
   private long mRightSiblingKey;
 
+  /** Text value. */
   private byte[] mValue;
 
+  /**
+   * Create text node.
+   * 
+   * @param nodeKey Key of node.
+   * @param parentKey Key of parent.
+   * @param leftSiblingKey Key of left sibling.
+   * @param rightSiblingKey Key of right sibling.
+   * @param value Text value.
+   */
   public TextNode(
       final long nodeKey,
       final long parentKey,
@@ -51,15 +68,11 @@ public final class TextNode extends AbstractNode {
     mValue = value;
   }
 
-  public TextNode(final long nodeKey) {
-    this(
-        nodeKey,
-        IConstants.NULL_KEY,
-        IConstants.NULL_KEY,
-        IConstants.NULL_KEY,
-        UTF.EMPTY);
-  }
-
+  /**
+   * Clone text node.
+   * 
+   * @param node Text node to clone.
+   */
   public TextNode(final INode node) {
     super(node.getNodeKey());
     mParentKey = node.getParentKey();
@@ -68,6 +81,12 @@ public final class TextNode extends AbstractNode {
     mValue = node.getValue();
   }
 
+  /**
+   * Read text node.
+   * 
+   * @param nodeKey Key of text node.
+   * @param in Input bytes to read node from.
+   */
   public TextNode(final long nodeKey, final FastByteArrayReader in) {
     super(nodeKey);
     mParentKey = getNodeKey() - in.readVarLong();

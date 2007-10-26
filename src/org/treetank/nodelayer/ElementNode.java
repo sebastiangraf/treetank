@@ -27,28 +27,57 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
+/**
+ * <h1>ElementNode</h1>
+ * 
+ * <p>
+ * Node representing an XML element.
+ * </p>
+ */
 public final class ElementNode extends AbstractNode {
 
+  /** Key of parent node. */
   private long mParentKey;
 
+  /** Key of first child. */
   private long mFirstChildKey;
 
+  /** Key of left sibling. */
   private long mLeftSiblingKey;
 
+  /** Key of right sibling. */
   private long mRightSiblingKey;
 
+  /** Number of children including text and element nodes. */
   private long mChildCount;
 
+  /** Attributes of node. */
   private AttributeNode[] mAttributes;
 
+  /** Namespaces of node. */
   private NamespaceNode[] mNamespaces;
 
+  /** Key of local part. */
   private int mLocalPartKey;
 
+  /** Key of URI. */
   private int mURIKey;
 
+  /** Key of prefix. */
   private int mPrefixKey;
 
+  /**
+   * Create new element node.
+   * 
+   * @param nodeKey Key of node.
+   * @param parentKey Key of parent.
+   * @param firstChildKey Key of first child.
+   * @param leftSiblingKey Key of left sibling.
+   * @param rightSiblingKey Key of right sibling.
+   * @param localPartKey Key of local part.
+   * @param uriKey Key of URI.
+   * @param prefixKey Key of prefix.
+   */
   public ElementNode(
       final long nodeKey,
       final long parentKey,
@@ -71,18 +100,11 @@ public final class ElementNode extends AbstractNode {
     mPrefixKey = prefixKey;
   }
 
-  public ElementNode(final long nodeKey) {
-    this(
-        nodeKey,
-        IConstants.NULL_KEY,
-        IConstants.NULL_KEY,
-        IConstants.NULL_KEY,
-        IConstants.NULL_KEY,
-        (int) IConstants.NULL_KEY,
-        (int) IConstants.NULL_KEY,
-        (int) IConstants.NULL_KEY);
-  }
-
+  /**
+   * Clone element node.
+   * 
+   * @param node Element node to clone.
+   */
   public ElementNode(final INode node) {
     super(node.getNodeKey());
     mParentKey = node.getParentKey();
@@ -103,6 +125,12 @@ public final class ElementNode extends AbstractNode {
     mPrefixKey = node.getPrefixKey();
   }
 
+  /**
+   * Read element node.
+   * 
+   * @param nodeKey Key to assign to read element node.
+   * @param in Input bytes to read from.
+   */
   public ElementNode(final long nodeKey, final FastByteArrayReader in) {
     super(nodeKey);
 
