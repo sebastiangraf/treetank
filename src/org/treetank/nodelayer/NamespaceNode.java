@@ -24,18 +24,38 @@ package org.treetank.nodelayer;
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 
+/**
+ * <h1>NamespaceNode</h1>
+ * 
+ * <p>
+ * Node representing a namespace.
+ * </p>
+ */
 public final class NamespaceNode extends AbstractNode {
 
+  /** Key of URI. */
   private int mURIKey;
 
+  /** Key of prefix. */
   private int mPrefixKey;
 
+  /**
+   * Create namespace node.
+   * 
+   * @param uriKey Key of URI.
+   * @param prefixKey Key of prefix.
+   */
   public NamespaceNode(final int uriKey, final int prefixKey) {
     super(IConstants.NULL_KEY);
     mURIKey = uriKey;
     mPrefixKey = prefixKey;
   }
 
+  /**
+   * Clone namespace node.
+   * 
+   * @param namespace Namespace node to clone.
+   */
   public NamespaceNode(final INode namespace) {
     super(IConstants.NULL_KEY);
     mURIKey = namespace.getURIKey();

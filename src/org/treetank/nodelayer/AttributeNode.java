@@ -25,18 +25,38 @@ import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 
+/**
+ * <h1>AttributeNode</h1>
+ * 
+ * <p>Node representing an attribute.</p>
+ */
 public final class AttributeNode extends AbstractNode {
 
+  /** Key of parent node. */
   private long mParentKey;
 
+  /** Key of local part. */
   private int mLocalPartKey;
 
+  /** Key of URI. */
   private int mURIKey;
 
+  /** Key of prefix. */
   private int mPrefixKey;
 
+  /** Value of attribute. */
   private byte[] mValue;
 
+  /**
+   * Constructor to create attribute.
+   * 
+   * @param nodeKey Key of node.
+   * @param parentKey Key of parent node.
+   * @param localPartKey Key of local part.
+   * @param uriKey Key of URI.
+   * @param prefixKey Key of prefix.
+   * @param value Value of attribute.
+   */
   public AttributeNode(
       final long nodeKey,
       final long parentKey,
@@ -52,6 +72,11 @@ public final class AttributeNode extends AbstractNode {
     mValue = value;
   }
 
+  /**
+   * Constructor to clone attribute.
+   * 
+   * @param attribute Attribute to clone.
+   */
   public AttributeNode(final INode attribute) {
     super(attribute.getNodeKey());
     mParentKey = attribute.getParentKey();
