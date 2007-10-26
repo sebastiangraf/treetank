@@ -118,6 +118,13 @@ public class SAXGenerator extends Thread {
     return attributes;
   }
 
+  protected final void emitEndElement(
+      final INode node,
+      final IReadTransaction rtx) throws Exception {
+    mHandler.endElement(node.getURI(rtx), node.getLocalPart(rtx), qName(node
+        .getPrefix(rtx), node.getLocalPart(rtx)));
+  }
+
   private final void visitDocument() throws Exception {
     final IReadTransaction rtx = mAxis.getTransaction();
     final FastStack<INode> stack = new FastStack<INode>();
@@ -134,9 +141,7 @@ public class SAXGenerator extends Thread {
 
         // Emit corresponding end element or push it to stack.
         if (!node.hasFirstChild()) {
-          mHandler.endElement(node.getURI(rtx), node.getLocalPart(rtx), qName(
-              node.getPrefix(rtx),
-              node.getLocalPart(rtx)));
+          emitEndElement(node, rtx);
         } else {
           stack.push(node);
         }
@@ -152,11 +157,7 @@ public class SAXGenerator extends Thread {
 
       // Emit pending end element from stack if required.
       if (!node.hasFirstChild() && !node.hasRightSibling()) {
-        final INode endNode = stack.pop();
-        mHandler.endElement(
-            endNode.getURI(rtx),
-            endNode.getLocalPart(rtx),
-            qName(endNode.getPrefix(rtx), endNode.getLocalPart(rtx)));
+        emitEndElement(stack.pop(), rtx);
       }
     }
 
