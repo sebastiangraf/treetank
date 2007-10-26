@@ -128,8 +128,19 @@ public class SAXGenerator extends Thread {
   private final void visitDocument() throws Exception {
     final IReadTransaction rtx = mAxis.getTransaction();
     final FastStack<INode> stack = new FastStack<INode>();
+    boolean closeElements = false;
 
     for (final INode node : mAxis) {
+
+      // Emit all pending end elements.
+      if (closeElements) {
+        while (stack.peek().getNodeKey() != node.getLeftSiblingKey()) {
+          emitEndElement(stack.pop(), rtx);
+        }
+        emitEndElement(stack.pop(), rtx);
+        closeElements = false;
+      }
+
       // Emit events of current node.
       switch (node.getKind()) {
       case IConstants.ELEMENT:
@@ -155,10 +166,15 @@ public class SAXGenerator extends Thread {
         throw new IllegalStateException("Unknown kind: " + node.getKind());
       }
 
-      // Emit pending end element from stack if required.
+      // Remember to emit all pending end elements from stack if required.
       if (!node.hasFirstChild() && !node.hasRightSibling()) {
-        emitEndElement(stack.pop(), rtx);
+        closeElements = true;
       }
+    }
+
+    // Finally emit all pending end elements.
+    while (stack.size() > 0) {
+      emitEndElement(stack.pop(), rtx);
     }
 
   }
