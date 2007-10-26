@@ -21,10 +21,13 @@
 
 package org.treetank.xmllayer;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
 
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Test;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
@@ -41,24 +44,25 @@ public class SAXGeneratorTest {
     new File(PATH).delete();
   }
 
+  @Test
   @Ignore
-  public void testSAXGenerator() throws Exception {
+  public void testSAXGenerator() {
+    try {
+      // Setup expected session.
+      final ISession session = Session.beginSession(PATH);
+      final IWriteTransaction wtx = session.beginWriteTransaction();
+      TestDocument.create(wtx);
+      wtx.commit();
 
-    // Setup expected session.
-    final ISession session = Session.beginSession(PATH);
-    final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
-    wtx.commit();
-    wtx.close();
-
-    final IReadTransaction rtx = session.beginReadTransaction();
-
-    final SAXGenerator generator = new SAXGenerator(rtx, false);
-    generator.start();
-    generator.join();
-    rtx.close();
-    session.close();
-
+      final IReadTransaction rtx = session.beginReadTransaction();
+      final SAXGenerator generator = new SAXGenerator(rtx, false);
+      generator.run();
+      rtx.close();
+      session.close();
+    } catch (Exception e) {
+      e.printStackTrace();
+      fail(e.getLocalizedMessage());
+    }
   }
 
 }
