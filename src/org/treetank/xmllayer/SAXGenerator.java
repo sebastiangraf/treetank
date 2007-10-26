@@ -25,6 +25,7 @@ import java.io.PipedOutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 
+import org.treetank.api.IAxis;
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
@@ -43,8 +44,6 @@ import com.sun.org.apache.xml.internal.serializer.SerializerFactory;
  */
 public class SAXGenerator extends Thread {
 
-  protected final IReadTransaction mRTX;
-
   protected ContentHandler mHandler;
 
   private Writer mWriter;
@@ -55,14 +54,10 @@ public class SAXGenerator extends Thread {
 
   private PipedOutputStream mPipedOut;
 
-  protected final FastStack<Long> mRightSiblingKeyStack;
-
   private final boolean mPrettyPrint;
 
   /** The nodeKey of the next node to visit. */
-  protected long mNextKey;
-
-  protected final FastStack<INode> mNodeStack = new FastStack<INode>();
+  protected final IAxis mAxis;
 
   /**
    * 'Callback' Constructor.
@@ -72,19 +67,11 @@ public class SAXGenerator extends Thread {
    * </p>
    */
   public SAXGenerator(
-      final IReadTransaction input,
+      final IAxis axis,
       final ContentHandler contentHandler,
       final boolean prettyPrint) throws Exception {
-
-    mRTX = input;
+    mAxis = axis;
     mHandler = contentHandler;
-
-    // Prepare full descendant iteration.
-    mRightSiblingKeyStack = new FastStack<Long>();
-    mRightSiblingKeyStack.push(IConstants.NULL_KEY);
-    mRTX.moveToDocument();
-    mNextKey = mRTX.getFirstChildKey();
-
     mPrettyPrint = prettyPrint;
 
   }
@@ -96,130 +83,80 @@ public class SAXGenerator extends Thread {
    * @see java.io.Writer
    */
   public SAXGenerator(
-      final IReadTransaction input,
+      final IAxis axis,
       final Writer writer,
       final boolean prettyPrint) throws Exception {
-
-    mRTX = input;
     mWriter = writer;
     mIsSerialize = true;
-
-    // Prepare full descendant iteration.
-    mRightSiblingKeyStack = new FastStack<Long>();
-    mRTX.moveToDocument();
-    mRightSiblingKeyStack.push(IConstants.NULL_KEY);
-    mNextKey = mRTX.getFirstChildKey();
-
+    mAxis = axis;
     mPrettyPrint = prettyPrint;
-
   }
 
   /**
    * Constructor for printing the reconstructed XML of global storage to stdout.
    */
-  public SAXGenerator(final IReadTransaction input, final boolean prettyPrint)
+  public SAXGenerator(final IAxis axis, final boolean prettyPrint)
       throws Exception {
-    this(input, new PrintWriter(System.out), prettyPrint);
+    this(axis, new PrintWriter(System.out), prettyPrint);
   }
 
   protected final String qName(final String prefix, final String localPart) {
     return (prefix.length() > 0 ? prefix + ":" + localPart : localPart);
   }
 
-  protected final AttributesImpl visitAttributes() throws Exception {
+  protected final AttributesImpl visitAttributes(final IReadTransaction rtx)
+      throws Exception {
 
     final AttributesImpl attributes = new AttributesImpl();
 
-    for (int i = 0, l = mRTX.getAttributeCount(); i < l; i++) {
-      final INode attribute = mRTX.getNode().getAttribute(i);
-      attributes.addAttribute(mRTX.nameForKey(attribute.getURIKey()), mRTX
-          .nameForKey(attribute.getLocalPartKey()), qName(mRTX
-          .nameForKey(attribute.getPrefixKey()), mRTX.nameForKey(attribute
-          .getLocalPartKey())), "", UTF.convert(attribute.getValue()));
+    for (final INode attribute : new AttributeAxis(rtx)) {
+      attributes.addAttribute(attribute.getURI(rtx), attribute
+          .getLocalPart(rtx), qName(attribute.getPrefix(rtx), attribute
+          .getLocalPart(rtx)), "", UTF.convert(attribute.getValue()));
     }
 
     return attributes;
   }
 
-  protected final void setNextKey() throws Exception {
-    // Where to go?
-    if (mRTX.hasFirstChild()) {
-      mNextKey = mRTX.getFirstChildKey();
-      if (!mRTX.hasRightSibling()) {
-        mRightSiblingKeyStack.push(mRightSiblingKeyStack.peek());
-      } else {
-        mRightSiblingKeyStack.push(mRTX.getRightSiblingKey());
-      }
-    } else if (mRTX.hasRightSibling()) {
-      mNextKey = mRTX.getRightSiblingKey();
-      mRightSiblingKeyStack.push(mRTX.getRightSiblingKey());
-    } else {
-      mNextKey = mRightSiblingKeyStack.peek();
-      mRightSiblingKeyStack.push(mRightSiblingKeyStack.peek());
-    }
-    // Remember node infos.
-    mNodeStack.push(mRTX.getNode());
-  }
-
   private final void visitDocument() throws Exception {
+    final IReadTransaction rtx = mAxis.getTransaction();
+    final FastStack<INode> stack = new FastStack<INode>();
 
-    // Iterate over all descendants.
-    while (mRTX.moveTo(mNextKey) != null) {
-
-      //debug();
-
-      // --- Clean up all pending closing tags. --------------------------------
-      while (mRightSiblingKeyStack.size() > 0
-          && mRTX.getNodeKey() == mRightSiblingKeyStack.peek()) {
-        mRightSiblingKeyStack.pop();
-        final INode node = mNodeStack.pop();
-        final String localPart = mRTX.nameForKey(node.getLocalPartKey());
-        final String prefix = mRTX.nameForKey(node.getPrefixKey());
-        final String uri = mRTX.nameForKey(node.getURIKey());
-        if (localPart.length() > 0) {
-          mHandler.endElement(uri, localPart, qName(prefix, localPart));
-        }
-      }
-
-      setNextKey();
-
-      // --- Emit events based on current node. --------------------------------
-      switch (mRTX.getKind()) {
+    for (final INode node : mAxis) {
+      // Emit events of current node.
+      switch (node.getKind()) {
       case IConstants.ELEMENT:
-        final INode node = mNodeStack.peek();
-        final String localPart = mRTX.nameForKey(node.getLocalPartKey());
-        final String prefix = mRTX.nameForKey(node.getPrefixKey());
-        final String uri = mRTX.nameForKey(node.getURIKey());
-        mHandler.startElement(
-            uri,
-            localPart,
-            qName(prefix, localPart),
-            visitAttributes());
+
+        // Emit start element.
+        mHandler.startElement(node.getURI(rtx), node.getLocalPart(rtx), qName(
+            node.getPrefix(rtx),
+            node.getLocalPart(rtx)), visitAttributes(rtx));
+
+        // Emit corresponding end element or push it to stack.
+        if (!node.hasFirstChild()) {
+          mHandler.endElement(node.getURI(rtx), node.getLocalPart(rtx), qName(
+              node.getPrefix(rtx),
+              node.getLocalPart(rtx)));
+        } else {
+          stack.push(node);
+        }
+
         break;
       case IConstants.TEXT:
-        final char[] text = UTF.convert(mRTX.getValue()).toCharArray();
+        final char[] text = UTF.convert(node.getValue()).toCharArray();
         mHandler.characters(text, 0, text.length);
         break;
-      case IConstants.PROCESSING_INSTRUCTION:
-        mHandler.processingInstruction(mRTX.getLocalPart(), UTF.convert(mRTX
-            .getValue()));
-        break;
       default:
-        throw new IllegalStateException("Unknown kind: " + mRTX.getKind());
-
+        throw new IllegalStateException("Unknown kind: " + node.getKind());
       }
 
-    }
-
-    // Clean up all pending closing tags.
-    while (mNodeStack.size() > 0) {
-      mRightSiblingKeyStack.pop();
-      final INode node = mNodeStack.pop();
-      final String localPart = mRTX.nameForKey(node.getLocalPartKey());
-      final String prefix = mRTX.nameForKey(node.getPrefixKey());
-      final String uri = mRTX.nameForKey(node.getURIKey());
-      if (localPart.length() > 0) {
-        mHandler.endElement(uri, localPart, qName(prefix, localPart));
+      // Emit pending end element from stack if required.
+      if (!node.hasFirstChild() && !node.hasRightSibling()) {
+        final INode endNode = stack.pop();
+        mHandler.endElement(
+            endNode.getURI(rtx),
+            endNode.getLocalPart(rtx),
+            qName(endNode.getPrefix(rtx), endNode.getLocalPart(rtx)));
       }
     }
 
@@ -271,7 +208,7 @@ public class SAXGenerator extends Thread {
 
   //  private final void debug() throws Exception {
   //    System.out.println(">>> DEBUG >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-  //    System.out.println("nodeKey = " + mRTX.getNodeKey());
+  //    System.out.println("nodeKey = " + rtx.getNodeKey());
   //    System.out.println("nextKey = " + mNextKey);
   //    System.out.print("rightSiblingKeyStack = { ");
   //    for (int i = 0; i < mRightSiblingKeyStack.size(); i++) {
@@ -279,7 +216,7 @@ public class SAXGenerator extends Thread {
   //    }
   //    System.out.println("}");
   //    System.out.println("}");
-  //    System.out.println("attributeCount = " + mRTX.getAttributeCount());
+  //    System.out.println("attributeCount = " + rtx.getAttributeCount());
   //    System.out.println("<<< DEBUG <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
   //  }
 
