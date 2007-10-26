@@ -21,6 +21,8 @@
 
 TreeTank 4.13
 -------------
++ SAXGenerator now accepting IAxis as input for more convenience.
++ IAxis makes its transaction available to the public.
 + IAxis now public API and can be used instead of Iterable<INode>.
 + Made Node, Page, and Axis abstract and renamed them accordingly.
  
