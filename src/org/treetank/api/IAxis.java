@@ -30,4 +30,11 @@ import java.util.Iterator;
  */
 public interface IAxis extends Iterator<INode>, Iterable<INode> {
 
+  /**
+   * Access transaction to which this axis is bound.
+   * 
+   * @return Transaction to which this axis is bound.
+   */
+  public IReadTransaction getTransaction();
+
 }
