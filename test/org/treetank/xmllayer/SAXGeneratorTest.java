@@ -26,7 +26,6 @@ import static org.junit.Assert.fail;
 import java.io.File;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
@@ -45,17 +44,18 @@ public class SAXGeneratorTest {
   }
 
   @Test
-  @Ignore
   public void testSAXGenerator() {
     try {
-      // Setup expected session.
+      // Setup session.
       final ISession session = Session.beginSession(PATH);
       final IWriteTransaction wtx = session.beginWriteTransaction();
       TestDocument.create(wtx);
       wtx.commit();
 
+      // Generate from this session.
       final IReadTransaction rtx = session.beginReadTransaction();
-      final SAXGenerator generator = new SAXGenerator(rtx, false);
+      final SAXGenerator generator =
+          new SAXGenerator(new DescendantAxis(rtx), false);
       generator.run();
       rtx.close();
       session.close();
