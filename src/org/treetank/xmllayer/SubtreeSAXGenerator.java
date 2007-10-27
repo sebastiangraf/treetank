@@ -4,146 +4,85 @@ import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastStack;
-import org.treetank.utils.UTF;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 public class SubtreeSAXGenerator extends SAXGenerator {
 
-  private boolean firstElement = true;
+  private final FastStack<INode> subtreeKeyStack;
 
-  private boolean lastElement = true;
+  private INode lastNode;
 
-  private final FastStack<Long> subtreeKeyStack = new FastStack<Long>();
+  private INode currentNode;
 
   public SubtreeSAXGenerator(
       final IReadTransaction input,
       final ContentHandler contentHandler,
       final boolean prettyPrint) throws Exception {
-    super(input, contentHandler, prettyPrint);
+    super(new DescendantAxis(input), contentHandler, prettyPrint);
+    subtreeKeyStack = new FastStack<INode>();
+    currentNode = super.mAxis.next();
   }
 
-  @Override
-  public final void run() {
-    try {
-
-      while (fireNextEvent()) {
-        Thread.yield();
-      }
-
-    } catch (Exception e) {
-      throw new IllegalStateException(e);
-    }
-  }
-
-  public final boolean fireNextEvent() throws Exception {
-    // Iterate over all descendants.
-    if (firstElement) {
-      mHandler.startDocument();
-      firstElement = false;
+  private boolean oneStepFurther() {
+    if (super.mAxis.hasNext()) {
+      lastNode = currentNode;
+      currentNode = super.mAxis.next();
       return true;
+    } else {
+      return false;
     }
-    while (lastElement && mRTX.moveTo(mNextKey) != null) {
+  }
 
-      // debug();
+  public final boolean nextEventAvaliable() throws Exception {
 
-      // --- Clean up all pending closing tags.
-      // --------------------------------
-      while (mRightSiblingKeyStack.size() > 0
-          && mRTX.getNodeKey() == mRightSiblingKeyStack.peek()) {
-        mRightSiblingKeyStack.pop();
-        final INode node = mNodeStack.pop();
-        final String localPart = mRTX.nameForKey(node.getLocalPartKey());
-        final String prefix = mRTX.nameForKey(node.getPrefixKey());
-        final String uri = mRTX.nameForKey(node.getURIKey());
-        if (localPart.length() > 0) {
-          mHandler.endElement(uri, localPart, qName(prefix, localPart));
-          return true;
+    final IReadTransaction trx = super.mAxis.getTransaction();
+    if (trx.hasFirstChild()) {
+      emitNode(currentNode, trx);
+      if (currentNode.getKind() == IConstants.ELEMENT) {
+        super.stack.push(currentNode);
+      }
+    } else {
+      //evaluating endElement
+      if (currentNode.getKind() == IConstants.ELEMENT) {
+        if (super.stack.peek().getNodeKey() == currentNode.getParentKey()) {
+          emitEndElement(currentNode, trx);
         }
       }
 
-      setNextKey();
-
-      // --- Emit events based on current node.
-      // --------------------------------
-      switch (mRTX.getKind()) {
-      case IConstants.ELEMENT:
-        final INode node = mNodeStack.peek();
-        final String localPart = mRTX.nameForKey(node.getLocalPartKey());
-        final String prefix = mRTX.nameForKey(node.getPrefixKey());
-        final String uri = mRTX.nameForKey(node.getURIKey());
-        mHandler.startElement(
-            uri,
-            localPart,
-            qName(prefix, localPart),
-            visitAttributes());
-        return true;
-      case IConstants.TEXT:
-        final char[] text = UTF.convert(mRTX.getValue()).toCharArray();
-        mHandler.characters(text, 0, text.length);
-        return true;
-      case IConstants.PROCESSING_INSTRUCTION:
-        mHandler.processingInstruction(mRTX.getLocalPart(), UTF.convert(mRTX
-            .getValue()));
-        return true;
-      default:
-        throw new IllegalStateException("Unknown kind: " + mRTX.getKind());
-
-      }
-
     }
-
-    // Clean up all pending closing tags.
-    while (mNodeStack.size() > 0) {
-      mRightSiblingKeyStack.pop();
-      final INode node = mNodeStack.pop();
-      final String localPart = mRTX.nameForKey(node.getLocalPartKey());
-      final String prefix = mRTX.nameForKey(node.getPrefixKey());
-      final String uri = mRTX.nameForKey(node.getURIKey());
-      if (localPart.length() > 0) {
-        mHandler.endElement(uri, localPart, qName(prefix, localPart));
-        return true;
-      }
-    }
-    if (lastElement) {
-      mHandler.endDocument();
-      mRTX.close();
-      lastElement = false;
-      return true;
-    }
-
-    return false;
+    return oneStepFurther();
   }
 
   public void subtreeStarting(final long subtreeID) throws SAXException {
-    try {
-      subtreeKeyStack.push(this.mNextKey);
-      mRTX.moveToDocument();
-      mRTX.moveToFirstChild();
-      do {
-        if (mRTX.getLocalPart().matches("((\\D)+)(.{1})((\\d)+){1}")) {
-          final long currentSubtreeID =
-              Long.parseLong(mRTX.getLocalPart().replaceAll("((\\D)+)", ""));
-          if (currentSubtreeID == subtreeID) {
-            mNextKey = mRTX.getNodeKey();
-          }
-        } else {
-          throw new SAXException(
-              "Invalid XML Layout, just splitelements should occur on the first level!");
-        }
-
-      } while (mRTX.moveToRightSibling() != null);
-    } catch (Exception e) {
-      throw new SAXException(e);
-    }
+    //    try {
+    //      subtreeKeyStack.push(this.mNextKey);
+    //      mRTX.moveToDocument();
+    //      mRTX.moveToFirstChild();
+    //      do {
+    //        if (mRTX.getLocalPart().matches("((\\D)+)(.{1})((\\d)+){1}")) {
+    //          final long currentSubtreeID =
+    //              Long.parseLong(mRTX.getLocalPart().replaceAll("((\\D)+)", ""));
+    //          if (currentSubtreeID == subtreeID) {
+    //            mNextKey = mRTX.getNodeKey();
+    //          }
+    //        } else {
+    //          throw new SAXException(
+    //              "Invalid XML Layout, just splitelements should occur on the first level!");
+    //        }
+    //
+    //      } while (mRTX.moveToRightSibling() != null);
+    //    } catch (Exception e) {
+    //      throw new SAXException(e);
+    //    }
   }
 
   public void subtreeEnding(final long subtreeID) throws SAXException {
-    try {
-      mNextKey = subtreeKeyStack.pop();
-    } catch (Exception e) {
-      throw new SAXException(e);
-    }
+    //    try {
+    //      mNextKey = subtreeKeyStack.pop();
+    //    } catch (Exception e) {
+    //      throw new SAXException(e);
+    //    }
   }
 
   public ContentHandler getHandler() {
@@ -151,7 +90,7 @@ public class SubtreeSAXGenerator extends SAXGenerator {
   }
 
   public void closeTransaction() {
-    this.mRTX.close();
+    //    this.mRTX.close();
   }
 
 }

@@ -59,6 +59,8 @@ public class SAXGenerator extends Thread {
   /** The nodeKey of the next node to visit. */
   protected final IAxis mAxis;
 
+  protected final FastStack<INode> stack;
+
   /**
    * 'Callback' Constructor.
    * <p>
@@ -73,6 +75,7 @@ public class SAXGenerator extends Thread {
     mAxis = axis;
     mHandler = contentHandler;
     mPrettyPrint = prettyPrint;
+    stack = new FastStack<INode>();
 
   }
 
@@ -90,6 +93,7 @@ public class SAXGenerator extends Thread {
     mIsSerialize = true;
     mAxis = axis;
     mPrettyPrint = prettyPrint;
+    stack = new FastStack<INode>();
   }
 
   /**
@@ -118,6 +122,26 @@ public class SAXGenerator extends Thread {
     return attributes;
   }
 
+  protected final void emitNode(
+      final INode node,
+      final IReadTransaction rtx) throws Exception {
+    // Emit events of current node.
+    switch (node.getKind()) {
+    case IConstants.ELEMENT:
+      // Emit start element.
+      mHandler.startElement(node.getURI(rtx), node.getLocalPart(rtx), qName(
+          node.getPrefix(rtx),
+          node.getLocalPart(rtx)), visitAttributes(rtx));
+      break;
+    case IConstants.TEXT:
+      final char[] text = UTF.convert(node.getValue()).toCharArray();
+      mHandler.characters(text, 0, text.length);
+      break;
+    default:
+      throw new IllegalStateException("Unknown kind: " + node.getKind());
+    }
+  }
+
   protected final void emitEndElement(
       final INode node,
       final IReadTransaction rtx) throws Exception {
@@ -127,7 +151,6 @@ public class SAXGenerator extends Thread {
 
   private final void visitDocument() throws Exception {
     final IReadTransaction rtx = mAxis.getTransaction();
-    final FastStack<INode> stack = new FastStack<INode>();
     boolean closeElements = false;
 
     for (final INode node : mAxis) {
@@ -141,29 +164,15 @@ public class SAXGenerator extends Thread {
         closeElements = false;
       }
 
-      // Emit events of current node.
-      switch (node.getKind()) {
-      case IConstants.ELEMENT:
+      emitNode(node, rtx);
 
-        // Emit start element.
-        mHandler.startElement(node.getURI(rtx), node.getLocalPart(rtx), qName(
-            node.getPrefix(rtx),
-            node.getLocalPart(rtx)), visitAttributes(rtx));
-
-        // Emit corresponding end element or push it to stack.
+      // Emit corresponding end element or push it to stack.
+      if (node.getKind() == IConstants.ELEMENT) {
         if (!node.hasFirstChild()) {
           emitEndElement(node, rtx);
         } else {
           stack.push(node);
         }
-
-        break;
-      case IConstants.TEXT:
-        final char[] text = UTF.convert(node.getValue()).toCharArray();
-        mHandler.characters(text, 0, text.length);
-        break;
-      default:
-        throw new IllegalStateException("Unknown kind: " + node.getKind());
       }
 
       // Remember to emit all pending end elements from stack if required.
