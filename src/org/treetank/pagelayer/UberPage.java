@@ -84,7 +84,7 @@ public final class UberPage extends AbstractPage {
       reference = page.getReference(0);
     }
 
-    NodePage ndp = new NodePage(IConstants.ROOT_PAGE_KEY);
+    NodePage ndp = new NodePage(IConstants.DOCUMENT_PAGE_KEY);
     reference.setPage(ndp);
 
     ndp.setNode(0, new DocumentNode());

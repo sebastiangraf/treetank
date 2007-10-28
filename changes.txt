@@ -21,6 +21,8 @@
 
 TreeTank 4.13
 -------------
++ Fixed bug with remove() in IWriteTransaction. Now also deleting
+  descendants.
 + SAXGenerator bug fixed.
 + SAXGenerator now accepting IAxis as input for more convenience.
 + IAxis makes its transaction available to the public.

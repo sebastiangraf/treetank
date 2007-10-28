@@ -32,6 +32,7 @@ import org.junit.Test;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
+import org.treetank.utils.TestDocument;
 import org.treetank.utils.UTF;
 
 public class UpdateTest {
@@ -134,6 +135,37 @@ public class UpdateTest {
     wtx.abort();
     session.close();
 
+  }
+
+  @Test
+  public void testRemoveDocument() throws Exception {
+    final ISession session = Session.beginSession(TEST_PATH);
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+    TestDocument.create(wtx);
+
+    try {
+      wtx.moveToDocument();
+      wtx.remove();
+      TestCase.fail();
+    } catch (Exception e) {
+      // Must fail.
+    }
+
+    wtx.abort();
+    session.close();
+  }
+
+  @Test
+  public void testRemoveDescendant() throws Exception {
+    final ISession session = Session.beginSession(TEST_PATH);
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+    TestDocument.create(wtx);
+
+    wtx.moveTo(1L);
+    wtx.remove();
+
+    wtx.abort();
+    session.close();
   }
 
 }
