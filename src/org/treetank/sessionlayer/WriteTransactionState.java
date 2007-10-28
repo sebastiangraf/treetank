@@ -26,14 +26,14 @@ import java.io.RandomAccessFile;
 import java.util.Map;
 
 import org.treetank.api.IConstants;
+import org.treetank.nodelayer.AbstractNode;
 import org.treetank.nodelayer.DocumentNode;
 import org.treetank.nodelayer.ElementNode;
-import org.treetank.nodelayer.AbstractNode;
 import org.treetank.nodelayer.TextNode;
+import org.treetank.pagelayer.AbstractPage;
 import org.treetank.pagelayer.IndirectPage;
 import org.treetank.pagelayer.NamePage;
 import org.treetank.pagelayer.NodePage;
-import org.treetank.pagelayer.AbstractPage;
 import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.PageWriter;
 import org.treetank.pagelayer.RevisionRootPage;
@@ -202,7 +202,10 @@ public final class WriteTransactionState extends ReadTransactionState {
         new RandomAccessFile(sessionConfiguration.getAbsolutePath(), "rw");
 
     if (uberPage.isBootstrap()) {
-      file.setLength(IConstants.BEACON_LENGTH);
+      file.setLength(IConstants.BEACON_START + IConstants.BEACON_LENGTH);
+      file.writeInt(IConstants.VERSION_MAJOR);
+      file.writeInt(IConstants.VERSION_MINOR);
+      // TODO: Write isEncrypted and isChecksummed.
     }
 
     // Recursively write indirectely referenced pages.
@@ -222,7 +225,7 @@ public final class WriteTransactionState extends ReadTransactionState {
     file.writeLong(uberPageReference.getChecksum());
 
     // Write primary beacon.
-    file.seek(0L);
+    file.seek(IConstants.BEACON_START);
     file.writeLong(uberPageReference.getStart());
     file.writeInt(uberPageReference.getLength());
     file.writeLong(uberPageReference.getChecksum());
