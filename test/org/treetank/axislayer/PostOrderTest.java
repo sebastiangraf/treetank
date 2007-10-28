@@ -1,4 +1,4 @@
-package org.treetank.xmllayer;
+package org.treetank.axislayer;
 
 import static org.junit.Assert.assertEquals;
 
@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.treetank.api.IAxis;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
+import org.treetank.axislayer.PostOrderAxis;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
 

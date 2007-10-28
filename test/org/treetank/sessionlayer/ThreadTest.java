@@ -34,9 +34,9 @@ import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
+import org.treetank.axislayer.DescendantAxis;
 import org.treetank.utils.TestDocument;
 import org.treetank.utils.UTF;
-import org.treetank.xmllayer.DescendantAxis;
 
 public class ThreadTest {
 

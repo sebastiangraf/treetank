@@ -19,7 +19,7 @@
  * $Id$
  */
 
-package org.treetank.xmllayer;
+package org.treetank.axislayer;
 
 import static org.junit.Assert.assertEquals;
 
@@ -30,13 +30,15 @@ import org.junit.Test;
 import org.treetank.api.IAxis;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
+import org.treetank.axislayer.DescendantAxis;
+import org.treetank.axislayer.NameTestAxis;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
 
-public class ParentAxisTest {
+public class NameTestAxisTest {
 
   public static final String PATH =
-      "generated" + File.separator + "ParentAxisTest.tnk";
+      "generated" + File.separator + "NameTestAxisTest.tnk";
 
   @Before
   public void setUp() throws Exception {
@@ -46,23 +48,21 @@ public class ParentAxisTest {
   @Test
   public void testIterate() throws Exception {
 
+    // Build simple test tree.
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
 
-    wtx.moveTo(3L);
-    final IAxis axis1 = new ParentAxis(wtx);
+    // Find descendants starting from nodeKey 0L (root).
+    wtx.moveToDocument();
+    final IAxis axis1 = new NameTestAxis(new DescendantAxis(wtx), "b");
+
     assertEquals(true, axis1.hasNext());
-    assertEquals(1L, wtx.getNodeKey());
+    assertEquals(3L, wtx.getNodeKey());
 
+    assertEquals(true, axis1.hasNext());
+    assertEquals(7L, wtx.getNodeKey());
     assertEquals(false, axis1.hasNext());
-
-    wtx.moveTo(7L);
-    final IAxis axis2 = new ParentAxis(wtx);
-    assertEquals(true, axis2.hasNext());
-    assertEquals(1L, wtx.getNodeKey());
-
-    assertEquals(false, axis2.hasNext());
 
     wtx.abort();
     session.close();

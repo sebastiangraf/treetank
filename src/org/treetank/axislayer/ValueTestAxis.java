@@ -19,7 +19,7 @@
  * $Id: ValueTestAxisIterator.java 3174 2007-10-22 13:44:43Z kramis $
  */
 
-package org.treetank.xmllayer;
+package org.treetank.axislayer;
 
 import org.treetank.api.IAxis;
 import org.treetank.utils.UTF;
@@ -71,11 +71,11 @@ public class ValueTestAxis extends AbstractAxis {
         & !(UTF.equals(mAxis.next().getValue(), mValue))) {
       // Nothing to do.
     }
-    if (mRTX.isSelected()) {
-      mCurrentNode = mRTX.getNode();
+    if (getTransaction().isSelected()) {
+      setCurrentNode(getTransaction().getNode());
       return true;
     } else {
-      mCurrentNode = null;
+      setCurrentNode(null);
       return false;
     }
   }

@@ -16,45 +16,52 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * $Id: NodeTestAxisIterator.java 3174 2007-10-22 13:44:43Z kramis $
+ * $Id: AttributeAxisIterator.java 3174 2007-10-22 13:44:43Z kramis $
  */
 
-package org.treetank.xmllayer;
+package org.treetank.axislayer;
 
-import org.treetank.api.IAxis;
+import org.treetank.api.IReadTransaction;
 
 /**
- * <h1>NodeTestAxis</h1>
+ * <h1>AttributeAxis</h1>
  * 
  * <p>
- * Only select nodes of kind ELEMENT and TEXT.
+ * Iterate over all attibutes of a given node.
  * </p>
  */
-public class NodeTestAxis extends AbstractAxis {
+public class AttributeAxis extends AbstractAxis {
 
   /** Remember next key to visit. */
-  private final IAxis mAxis;
+  private int mNextIndex;
 
   /**
    * Constructor initializing internal state.
    * 
-   * @param axis Axis to iterate over.
+   * @param rtx Exclusive (immutable) mTrx to iterate with.
    */
-  public NodeTestAxis(final IAxis axis) {
-    super(axis.getTransaction());
-    mAxis = axis;
+  public AttributeAxis(final IReadTransaction rtx) {
+    super(rtx);
+    mNextIndex = 0;
   }
 
   /**
    * {@inheritDoc}
    */
   public final boolean hasNext() {
-    // TODO The double next() call works but is not Iterator conformant.
-    if (mAxis.hasNext() && mAxis.next().isElement() || mAxis.next().isText()) {
-      mCurrentNode = mRTX.getNode();
+    if (mNextIndex < getTransaction().getAttributeCount()) {
+      if (mNextIndex > 0) {
+        getTransaction().moveToParent();
+      }
+      getTransaction().moveToAttribute(mNextIndex);
+      mNextIndex += 1;
+      setCurrentNode(getTransaction().getNode());
       return true;
     } else {
-      mCurrentNode = null;
+      if (mNextIndex > 0) {
+        getTransaction().moveToParent();
+      }
+      setCurrentNode(null);
       return false;
     }
   }

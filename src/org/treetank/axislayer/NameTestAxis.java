@@ -19,7 +19,7 @@
  * $Id: NameTestAxisIterator.java 3174 2007-10-22 13:44:43Z kramis $
  */
 
-package org.treetank.xmllayer;
+package org.treetank.axislayer;
 
 import org.treetank.api.IAxis;
 
@@ -49,7 +49,7 @@ public class NameTestAxis extends AbstractAxis {
   public NameTestAxis(final IAxis axis, final String name) {
     super(axis.getTransaction());
     mAxis = axis;
-    mNameKey = mRTX.keyForName(name);
+    mNameKey = getTransaction().keyForName(name);
   }
 
   /**
@@ -59,11 +59,11 @@ public class NameTestAxis extends AbstractAxis {
     while ((mAxis.hasNext()) && !(mAxis.next().getLocalPartKey() == mNameKey)) {
       // Nothing to do here.
     }
-    if (mRTX.isSelected()) {
-      mCurrentNode = mRTX.getNode();
+    if (getTransaction().isSelected()) {
+      setCurrentNode(getTransaction().getNode());
       return true;
     } else {
-      mCurrentNode = null;
+      setCurrentNode(null);
       return false;
     }
   }
