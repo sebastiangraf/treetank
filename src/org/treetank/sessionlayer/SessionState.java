@@ -109,7 +109,7 @@ public final class SessionState {
     } else {
       // Read existing uber page.
       // Read primary beacon.
-      file.seek(0L);
+      file.seek(IConstants.BEACON_START);
       uberPageReference.setStart(file.readLong());
       uberPageReference.setLength(file.readInt());
       uberPageReference.setChecksum(file.readLong());

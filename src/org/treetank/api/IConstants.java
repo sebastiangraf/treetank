@@ -31,8 +31,25 @@ package org.treetank.api;
  */
 public interface IConstants {
 
+  //--- Version ----------------------------------------------------------------
+
+  /** Major version number of this release. */
+  public static final int VERSION_MAJOR = 4;
+
+  /** Minor version number of this release. */
+  public static final int VERSION_MINOR = 13;
+
+  /** Last major version to which this version is binary compatible. */
+  public static final int LAST_VERSION_MAJOR = 4;
+
+  /** Last minor version to which this version is binary compatible. */
+  public static final int LAST_VERSION_MINOR = 13;
+
   //--- Varia ------------------------------------------------------------------
 
+  /** Start of beacon. */
+  public static final int BEACON_START = 10;
+  
   /** Length of beacon in bytes. */
   public static final int BEACON_LENGTH = 20;
 
