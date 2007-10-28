@@ -92,10 +92,10 @@ public interface IConstants {
   public static final long NULL_KEY = -1L;
 
   /** Root nodeKey constant. */
-  public static final long ROOT_KEY = 0L;
+  public static final long DOCUMENT_KEY = 0L;
 
   /** Root node page key constant. */
-  public static final long ROOT_PAGE_KEY = 0L;
+  public static final long DOCUMENT_PAGE_KEY = 0L;
 
   /** Undefined name. */
   public static final int NULL_NAME = -1;

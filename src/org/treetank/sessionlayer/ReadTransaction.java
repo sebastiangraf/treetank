@@ -114,7 +114,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final INode moveToDocument() {
-    return moveTo(IConstants.ROOT_KEY);
+    return moveTo(IConstants.DOCUMENT_KEY);
   }
 
   /**

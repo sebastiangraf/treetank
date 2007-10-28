@@ -49,7 +49,7 @@ public final class DocumentNode extends AbstractNode {
    * @param firstChildKey Key of first child.
    */
   public DocumentNode(final long firstChildKey) {
-    super(IConstants.ROOT_KEY);
+    super(IConstants.DOCUMENT_KEY);
     mFirstChildKey = firstChildKey;
     mChildCount = 0;
   }
@@ -78,7 +78,7 @@ public final class DocumentNode extends AbstractNode {
    * @param in Byte input to read node from.
    */
   public DocumentNode(final FastByteArrayReader in) {
-    super(IConstants.ROOT_KEY);
+    super(IConstants.DOCUMENT_KEY);
     mFirstChildKey = in.readVarLong();
     mChildCount = in.readVarLong();
   }

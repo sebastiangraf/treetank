@@ -71,7 +71,7 @@ public final class WriteTransaction extends ReadTransaction
             ((WriteTransactionState) getTransactionState())
                 .createNameKey(prefix)));
 
-    updateParent(true);
+    updateParentAfterInsert(true);
 
     if (getCurrentNode().getChildCount() > 0) {
       updateRightSibling();
@@ -94,7 +94,7 @@ public final class WriteTransaction extends ReadTransaction
             IConstants.NULL_KEY,
             value));
 
-    updateParent(true);
+    updateParentAfterInsert(true);
 
     if (getCurrentNode().getChildCount() > 0) {
       updateRightSibling();
@@ -113,7 +113,7 @@ public final class WriteTransaction extends ReadTransaction
 
     assertIsSelected();
 
-    if (getCurrentNode().getNodeKey() == IConstants.ROOT_KEY) {
+    if (getCurrentNode().getNodeKey() == IConstants.DOCUMENT_KEY) {
       throw new IllegalStateException("Root node can not have siblings.");
     }
 
@@ -130,7 +130,7 @@ public final class WriteTransaction extends ReadTransaction
             ((WriteTransactionState) getTransactionState())
                 .createNameKey(prefix)));
 
-    updateParent(false);
+    updateParentAfterInsert(false);
     updateLeftSibling();
     updateRightSibling();
 
@@ -145,7 +145,7 @@ public final class WriteTransaction extends ReadTransaction
 
     assertIsSelected();
 
-    if (getCurrentNode().getNodeKey() == IConstants.ROOT_KEY) {
+    if (getCurrentNode().getNodeKey() == IConstants.DOCUMENT_KEY) {
       throw new IllegalStateException("Root node can not have siblings.");
     }
 
@@ -154,7 +154,7 @@ public final class WriteTransaction extends ReadTransaction
         .createTextNode(getCurrentNode().getParentKey(), getCurrentNode()
             .getNodeKey(), getCurrentNode().getRightSiblingKey(), value));
 
-    updateParent(false);
+    updateParentAfterInsert(false);
     updateLeftSibling();
     updateRightSibling();
 
@@ -194,48 +194,70 @@ public final class WriteTransaction extends ReadTransaction
    */
   public final void remove() throws Exception {
     assertIsSelected();
-    if (getCurrentNode().getChildCount() > 0) {
-      throw new IllegalStateException("INode "
-          + getCurrentNode().getNodeKey()
-          + " has "
-          + getCurrentNode().getChildCount()
-          + " child(ren) and can not be removed.");
+
+    if (getCurrentNode().isDocument()) {
+      throw new IllegalStateException("Document node can not be removed.");
     }
 
-    if (getCurrentNode().getNodeKey() == IConstants.ROOT_KEY) {
-      throw new IllegalStateException("Root node can not be removed.");
-    }
-
-    // Remember left and right sibling keys.
-    final long parentKey = getCurrentNode().getParentKey();
-    final long nodeKey = getCurrentNode().getNodeKey();
-    final long leftSiblingNodeKey = getCurrentNode().getLeftSiblingKey();
-    final long rightSiblingNodeKey = getCurrentNode().getRightSiblingKey();
+    // Remember all related nodes.
+    AbstractNode node = (AbstractNode) getCurrentNode();
+    AbstractNode parent = (AbstractNode) node.getParent(this);
+    AbstractNode leftSibling = (AbstractNode) node.getLeftSibling(this);
+    AbstractNode rightSibling = (AbstractNode) node.getRightSibling(this);
 
     // Remove old node.
-    ((WriteTransactionState) getTransactionState()).removeNode(nodeKey);
-
-    // Get and adapt parent node.
-    setCurrentNode(((WriteTransactionState) getTransactionState())
-        .prepareNode(parentKey));
-    ((AbstractNode) getCurrentNode()).decrementChildCount();
-    ((AbstractNode) getCurrentNode()).setFirstChildKey(rightSiblingNodeKey);
+    ((WriteTransactionState) getTransactionState()).removeNode(node
+        .getNodeKey());
 
     // Adapt left sibling node if there is one.
-    if (leftSiblingNodeKey != IConstants.NULL_KEY) {
-      final AbstractNode leftSiblingNode =
+    if (leftSibling != null) {
+      leftSibling =
           ((WriteTransactionState) getTransactionState())
-              .prepareNode(leftSiblingNodeKey);
-      leftSiblingNode.setRightSiblingKey(rightSiblingNodeKey);
+              .prepareNode(leftSibling.getNodeKey());
+      if (rightSibling != null) {
+        leftSibling.setRightSiblingKey(rightSibling.getNodeKey());
+      } else {
+        leftSibling.setRightSiblingKey(IConstants.NULL_KEY);
+      }
     }
 
     // Adapt right sibling node if there is one.
-    if (rightSiblingNodeKey != IConstants.NULL_KEY) {
-      final AbstractNode rightSiblingNode =
+    if (rightSibling != null) {
+      rightSibling =
           ((WriteTransactionState) getTransactionState())
-              .prepareNode(rightSiblingNodeKey);
-      rightSiblingNode.setLeftSiblingKey(leftSiblingNodeKey);
+              .prepareNode(rightSibling.getNodeKey());
+      if (leftSibling != null) {
+        rightSibling.setLeftSiblingKey(leftSibling.getNodeKey());
+      } else {
+        rightSibling.setLeftSiblingKey(IConstants.NULL_KEY);
+      }
     }
+
+    // Adapt parent.
+    parent =
+        ((WriteTransactionState) getTransactionState()).prepareNode(parent
+            .getNodeKey());
+    parent.decrementChildCount();
+    if (parent.getFirstChildKey() == node.getNodeKey()) {
+      if (rightSibling != null) {
+        parent.setFirstChildKey(rightSibling.getNodeKey());
+      } else {
+        parent.setFirstChildKey(IConstants.NULL_KEY);
+      }
+    }
+
+    // Set current node.
+    if (rightSibling != null) {
+      setCurrentNode(rightSibling);
+      return;
+    }
+
+    if (leftSibling != null) {
+      setCurrentNode(leftSibling);
+      return;
+    }
+
+    setCurrentNode(parent);
 
   }
 
@@ -354,7 +376,7 @@ public final class WriteTransaction extends ReadTransaction
     return modNode;
   }
 
-  private final void updateParent(final boolean updateFirstChild)
+  private final void updateParentAfterInsert(final boolean updateFirstChild)
       throws Exception {
     final AbstractNode parentNode =
         ((WriteTransactionState) getTransactionState())
