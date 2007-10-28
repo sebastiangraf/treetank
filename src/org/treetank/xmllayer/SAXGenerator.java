@@ -29,6 +29,7 @@ import org.treetank.api.IAxis;
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
+import org.treetank.axislayer.AttributeAxis;
 import org.treetank.utils.FastStack;
 import org.treetank.utils.UTF;
 import org.xml.sax.ContentHandler;

@@ -1,4 +1,4 @@
-package org.treetank.xmllayer;
+package org.treetank.axislayer;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
@@ -46,12 +46,12 @@ public class PostOrderAxis extends AbstractAxis {
    * Method to start at the beginning of the tree.
    */
   private final void startAtBeginning() {
-    mRTX.moveToDocument();
-    while (mRTX.hasFirstChild()) {
-      mLastParent.push(mRTX.getNodeKey());
-      mRTX.moveToFirstChild();
+    getTransaction().moveToDocument();
+    while (getTransaction().hasFirstChild()) {
+      mLastParent.push(getTransaction().getNodeKey());
+      getTransaction().moveToFirstChild();
 
-      mNextKey = mRTX.getNodeKey();
+      mNextKey = getTransaction().getNodeKey();
     }
     next();
   }
@@ -60,11 +60,11 @@ public class PostOrderAxis extends AbstractAxis {
    * {@inheritDoc}
    */
   public boolean hasNext() {
-    INode node = mRTX.moveTo(mNextKey);
+    INode node = getTransaction().moveTo(mNextKey);
     if (node != null) {
       while (node.hasFirstChild() && node.getNodeKey() != mLastParent.peek()) {
         mLastParent.push(node.getNodeKey());
-        node = mRTX.moveToFirstChild();
+        node = getTransaction().moveToFirstChild();
       }
       if (node.getNodeKey() == mLastParent.peek()) {
         mLastParent.pop();
@@ -77,11 +77,11 @@ public class PostOrderAxis extends AbstractAxis {
         mNextKey = mLastParent.peek();
       }
 
-      mCurrentNode = node;
+      setCurrentNode(node);
       return true;
 
     } else {
-      mCurrentNode = null;
+      setCurrentNode(null);
       return false;
     }
   }

@@ -19,7 +19,7 @@
  * $Id: DescendantAxisIterator.java 3174 2007-10-22 13:44:43Z kramis $
  */
 
-package org.treetank.xmllayer;
+package org.treetank.axislayer;
 
 import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
@@ -56,25 +56,25 @@ public class DescendantAxis extends AbstractAxis {
    * {@inheritDoc}
    */
   public final boolean hasNext() {
-    mCurrentNode = mRTX.moveTo(mNextKey);
+    setCurrentNode(getTransaction().moveTo(mNextKey));
 
     // Fail if there is no node anymore.
-    if (mCurrentNode == null) {
+    if (getCurrentNode() == null) {
       return false;
     }
 
     // Always follow first child if there is one.
-    if (mCurrentNode.hasFirstChild()) {
-      mNextKey = mCurrentNode.getFirstChildKey();
-      if (mCurrentNode.hasRightSibling()) {
-        mRightSiblingKeyStack.push(mCurrentNode.getRightSiblingKey());
+    if (getCurrentNode().hasFirstChild()) {
+      mNextKey = getCurrentNode().getFirstChildKey();
+      if (getCurrentNode().hasRightSibling()) {
+        mRightSiblingKeyStack.push(getCurrentNode().getRightSiblingKey());
       }
       return true;
     }
 
     // Then follow right sibling if there is one.
-    if (mCurrentNode.hasRightSibling()) {
-      mNextKey = mCurrentNode.getRightSiblingKey();
+    if (getCurrentNode().hasRightSibling()) {
+      mNextKey = getCurrentNode().getRightSiblingKey();
       return true;
     }
 

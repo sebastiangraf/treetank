@@ -19,7 +19,7 @@
  * $Id: ParentAxisIterator.java 3174 2007-10-22 13:44:43Z kramis $
  */
 
-package org.treetank.xmllayer;
+package org.treetank.axislayer;
 
 import java.util.Iterator;
 
@@ -38,10 +38,10 @@ import org.treetank.api.IReadTransaction;
 public abstract class AbstractAxis implements IAxis {
 
   /** Iterate over transaction exclusive to this step. */
-  protected final IReadTransaction mRTX;
+  private final IReadTransaction mRTX;
 
   /** Current node returned by <code>next()</code> call. */
-  protected INode mCurrentNode;
+  private INode mCurrentNode;
 
   /**
    * Bind axis step to transaction.
@@ -50,7 +50,7 @@ public abstract class AbstractAxis implements IAxis {
    */
   public AbstractAxis(final IReadTransaction rtx) {
     mRTX = rtx;
-    mCurrentNode = null;
+    setCurrentNode(null);
   }
 
   /**
@@ -71,7 +71,7 @@ public abstract class AbstractAxis implements IAxis {
    * {@inheritDoc}
    */
   public final INode next() {
-    return mCurrentNode;
+    return getCurrentNode();
   }
 
   /**
@@ -85,5 +85,19 @@ public abstract class AbstractAxis implements IAxis {
    * {@inheritDoc}
    */
   public abstract boolean hasNext();
+
+  /**
+   * @param currentNode The currentnNode to set.
+   */
+  public final void setCurrentNode(final INode currentNode) {
+    mCurrentNode = currentNode;
+  }
+
+  /**
+   * @return The current node.
+   */
+  public final INode getCurrentNode() {
+    return mCurrentNode;
+  }
 
 }

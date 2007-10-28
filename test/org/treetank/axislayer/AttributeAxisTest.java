@@ -19,7 +19,7 @@
  * $Id$
  */
 
-package org.treetank.xmllayer;
+package org.treetank.axislayer;
 
 import static org.junit.Assert.assertEquals;
 
@@ -28,15 +28,17 @@ import java.io.File;
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.api.IAxis;
+import org.treetank.api.INode;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
+import org.treetank.axislayer.AttributeAxis;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
 
-public class NameTestAxisTest {
+public class AttributeAxisTest {
 
   public static final String PATH =
-      "generated" + File.separator + "NameTestAxisTest.tnk";
+      "generated" + File.separator + "AttributeAxisTest.tnk";
 
   @Before
   public void setUp() throws Exception {
@@ -46,21 +48,34 @@ public class NameTestAxisTest {
   @Test
   public void testIterate() throws Exception {
 
-    // Build simple test tree.
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
 
-    // Find descendants starting from nodeKey 0L (root).
-    wtx.moveToDocument();
-    final IAxis axis1 = new NameTestAxis(new DescendantAxis(wtx), "b");
+    wtx.moveTo(0L);
+    final IAxis axis1 = new AttributeAxis(wtx);
 
-    assertEquals(true, axis1.hasNext());
-    assertEquals(3L, wtx.getNodeKey());
-
-    assertEquals(true, axis1.hasNext());
-    assertEquals(7L, wtx.getNodeKey());
     assertEquals(false, axis1.hasNext());
+
+    wtx.moveTo(1L);
+    final IAxis axis2 = new AttributeAxis(wtx);
+    assertEquals(true, axis2.hasNext());
+    INode node = axis2.next();
+    assertEquals((1L) + 1, node.getNodeKey());
+
+    assertEquals(false, axis2.hasNext());
+
+    wtx.moveTo(7L);
+    final IAxis axis4 = new AttributeAxis(wtx);
+    assertEquals(true, axis4.hasNext());
+    node = axis4.next();
+    assertEquals((7L) + 1, node.getNodeKey());
+
+    assertEquals(false, axis4.hasNext());
+
+    wtx.moveTo(10L);
+    final IAxis axis5 = new AttributeAxis(wtx);
+    assertEquals(false, axis5.hasNext());
 
     wtx.abort();
     session.close();

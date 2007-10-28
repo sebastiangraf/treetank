@@ -16,48 +16,45 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * $Id: ParentAxisIterator.java 3174 2007-10-22 13:44:43Z kramis $
+ * $Id: NodeTestAxisIterator.java 3174 2007-10-22 13:44:43Z kramis $
  */
 
-package org.treetank.xmllayer;
+package org.treetank.axislayer;
 
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.IAxis;
 
 /**
- * <h1>ParentAxis</h1>
+ * <h1>NodeTestAxis</h1>
  * 
  * <p>
- * Iterate to parent node starting at a given node. Self is not included.
+ * Only select nodes of kind ELEMENT and TEXT.
  * </p>
  */
-public class ParentAxis extends AbstractAxis {
+public class NodeTestAxis extends AbstractAxis {
 
-  /** The nodeKey of the next node to visit. */
-  private long mNextKey;
-
-  /** Track number of calls of next. */
-  private boolean mIsFirstNext;
+  /** Remember next key to visit. */
+  private final IAxis mAxis;
 
   /**
    * Constructor initializing internal state.
    * 
-   * @param rtx Exclusive (immutable) trx to iterate with.
+   * @param axis Axis to iterate over.
    */
-  public ParentAxis(final IReadTransaction rtx) {
-    super(rtx);
-    mIsFirstNext = true;
-    mNextKey = rtx.getParentKey();
+  public NodeTestAxis(final IAxis axis) {
+    super(axis.getTransaction());
+    mAxis = axis;
   }
 
   /**
    * {@inheritDoc}
    */
   public final boolean hasNext() {
-    mCurrentNode = mRTX.moveTo(mNextKey);
-    if (mIsFirstNext && (mCurrentNode != null)) {
-      mIsFirstNext = false;
+    // TODO The double next() call works but is not Iterator conformant.
+    if (mAxis.hasNext() && mAxis.next().isElement() || mAxis.next().isText()) {
+      setCurrentNode(getTransaction().getNode());
       return true;
     } else {
+      setCurrentNode(null);
       return false;
     }
   }

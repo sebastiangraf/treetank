@@ -16,52 +16,45 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * $Id: AttributeAxisIterator.java 3174 2007-10-22 13:44:43Z kramis $
+ * $Id: ChildAxisIterator.java 3174 2007-10-22 13:44:43Z kramis $
  */
 
-package org.treetank.xmllayer;
+package org.treetank.axislayer;
 
 import org.treetank.api.IReadTransaction;
 
 /**
- * <h1>AttributeAxis</h1>
+ * <h1>ChildAxis</h1>
  * 
  * <p>
- * Iterate over all attibutes of a given node.
+ * Iterate over all children of kind ELEMENT or TEXT starting at a given
+ * node. Self is not included.
  * </p>
  */
-public class AttributeAxis extends AbstractAxis {
+public class ChildAxis extends AbstractAxis {
 
-  /** Remember next key to visit. */
-  private int mNextIndex;
+  /** Has another child node. */
+  private long mNextKey;
 
   /**
    * Constructor initializing internal state.
    * 
-   * @param rtx Exclusive (immutable) mTrx to iterate with.
+   * @param rtx Exclusive (immutable) trx to iterate with.
    */
-  public AttributeAxis(final IReadTransaction rtx) {
+  public ChildAxis(final IReadTransaction rtx) {
     super(rtx);
-    mNextIndex = 0;
+    mNextKey = rtx.getFirstChildKey();
   }
 
   /**
    * {@inheritDoc}
    */
   public final boolean hasNext() {
-    if (mNextIndex < mRTX.getAttributeCount()) {
-      if (mNextIndex > 0) {
-        mRTX.moveToParent();
-      }
-      mRTX.moveToAttribute(mNextIndex);
-      mNextIndex += 1;
-      mCurrentNode = mRTX.getNode();
+    setCurrentNode(getTransaction().moveTo(mNextKey));
+    if (getCurrentNode() != null) {
+      mNextKey = getCurrentNode().getRightSiblingKey();
       return true;
     } else {
-      if (mNextIndex > 0) {
-        mRTX.moveToParent();
-      }
-      mCurrentNode = null;
       return false;
     }
   }

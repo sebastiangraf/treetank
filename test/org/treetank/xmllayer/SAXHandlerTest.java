@@ -33,6 +33,8 @@ import org.junit.Test;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
+import org.treetank.axislayer.AbstractAxis;
+import org.treetank.axislayer.DescendantAxis;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
 import org.xml.sax.InputSource;
@@ -82,9 +84,9 @@ public class SAXHandlerTest {
 
     while (expectedDescendants.hasNext() && descendants.hasNext()) {
       if (!expectedDescendants.next().equals(descendants.next())) {
-        fail(expectedDescendants.mCurrentNode.toString()
+        fail(expectedDescendants.getCurrentNode().toString()
             + " and "
-            + descendants.mCurrentNode
+            + descendants.getCurrentNode()
             + " are not the same!");
       }
     }
