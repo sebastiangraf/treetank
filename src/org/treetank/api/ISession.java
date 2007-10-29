@@ -62,6 +62,20 @@ public interface ISession {
   public boolean isChecksummed();
 
   /**
+   * Get the major revision of the TreeTank version.
+   * 
+   * @return Major revision of TreeTank version.
+   */
+  public int getVersionMajor();
+
+  /**
+   * Get the minor revision of the TreeTank version.
+   * 
+   * @return Minor revision of TreeTank version.
+   */
+  public int getVersionMinor();
+
+  /**
    * Begin a read-only transaction on the latest committed revision key.
    * 
    * @return IReadTransaction instance.

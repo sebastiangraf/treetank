@@ -21,7 +21,6 @@
 
 package org.treetank.xmllayer;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -32,7 +31,6 @@ import java.io.Writer;
 import junit.framework.TestCase;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
@@ -40,10 +38,6 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.axislayer.DescendantAxis;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
 
 public class SAXGeneratorTest {
 
@@ -77,93 +71,6 @@ public class SAXGeneratorTest {
       e.printStackTrace();
       fail(e.getLocalizedMessage());
     }
-  }
-
-  @Test
-  @Ignore
-  public void testSubtreeSAXGenerator() {
-    try {
-      // Setup session.
-      final ISession session = Session.beginSession(PATH);
-      final IWriteTransaction wtx = session.beginWriteTransaction();
-      TestDocument.createWithoutAttributes(wtx);
-      wtx.commit();
-
-      // Generate from this session.
-      final IReadTransaction rtx = session.beginReadTransaction();
-      ContentHandler testHandler =
-          new SubtreeHandlerTest(TestDocument.XMLWITHOUTATTRIBUTES);
-      final SubtreeSAXGenerator generator =
-          new SubtreeSAXGenerator(rtx, testHandler);
-      generator.run();
-      rtx.close();
-      session.close();
-    } catch (Exception e) {
-      e.printStackTrace();
-      fail(e.getLocalizedMessage());
-    }
-  }
-
-  class SubtreeHandlerTest implements ContentHandler {
-
-    String document;
-
-    String generatedDocument;
-
-    SubtreeHandlerTest(String paramDocument) {
-      document = paramDocument;
-    }
-
-    public void characters(char[] arg0, int arg1, int arg2) throws SAXException {
-      this.generatedDocument =
-          this.generatedDocument + new String(arg0, arg1, arg2);
-    }
-
-    public void endDocument() throws SAXException {
-      assertEquals(document, generatedDocument);
-    }
-
-    public void endElement(String arg0, String arg1, String arg2)
-        throws SAXException {
-      this.generatedDocument = this.generatedDocument + "</" + arg2 + ">";
-    }
-
-    public void endPrefixMapping(String arg0) throws SAXException {
-    }
-
-    public void ignorableWhitespace(char[] arg0, int arg1, int arg2)
-        throws SAXException {
-    }
-
-    public void processingInstruction(String arg0, String arg1)
-        throws SAXException {
-    }
-
-    public void setDocumentLocator(Locator arg0) {
-    }
-
-    public void skippedEntity(String arg0) throws SAXException {
-    }
-
-    public void startDocument() throws SAXException {
-      this.generatedDocument =
-          "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>";
-    }
-
-    public void startElement(
-        String arg0,
-        String arg1,
-        String qname,
-        Attributes arg3) throws SAXException {
-      this.generatedDocument = this.generatedDocument + "<" + qname + ">";
-    }
-
-    public void startPrefixMapping(String arg0, String arg1)
-        throws SAXException {
-      // TODO Auto-generated method stub
-
-    }
-
   }
 
 }
