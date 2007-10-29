@@ -74,7 +74,6 @@ public class SAXHandlerTest {
     final ISession session = Session.beginSession(new File(PATH));
     final IWriteTransaction wrtx = session.beginWriteTransaction();
     parser.parse(inputSource, new SAXHandler(wrtx));
-    wrtx.commit();
     wrtx.close();
 
     final IReadTransaction expectedTrx = expectedSession.beginReadTransaction();
