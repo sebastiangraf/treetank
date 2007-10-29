@@ -65,6 +65,40 @@ public class SessionTest {
   }
 
   @Test
+  public void testClosed() throws IOException {
+
+    ISession session = Session.beginSession(TEST_INSERT_CHILD_PATH);
+    session.close();
+
+    try {
+      session.getAbsolutePath();
+      TestCase.fail();
+    } catch (Exception e) {
+      // Must fail.
+    }
+
+    session = Session.beginSession(TEST_INSERT_CHILD_PATH);
+    IReadTransaction rtx = session.beginReadTransaction();
+    rtx.close();
+
+    try {
+      rtx.getAttributeCount();
+      TestCase.fail();
+    } catch (Exception e) {
+      // Must fail.
+    }
+
+    session.close();
+
+    try {
+      session.getAbsolutePath();
+      TestCase.fail();
+    } catch (Exception e) {
+      // Must fail.
+    }
+  }
+
+  @Test
   public void testNoWritesBeforeFirstCommit() throws IOException {
 
     ISession session = Session.beginSession(TEST_INSERT_CHILD_PATH);

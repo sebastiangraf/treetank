@@ -47,6 +47,9 @@ public final class Session implements ISession {
   /** Session state. */
   private SessionState mSessionState;
 
+  /** Was session closed? */
+  private boolean mClosed;
+
   /**
    * Hidden constructor.
    * 
@@ -54,6 +57,7 @@ public final class Session implements ISession {
    */
   private Session(final SessionState sessionState) {
     mSessionState = sessionState;
+    mClosed = false;
   }
 
   /**
@@ -109,6 +113,7 @@ public final class Session implements ISession {
    * {@inheritDoc}
    */
   public final String getFileName() {
+    assertNotClosed();
     return mSessionState.getSessionConfiguration().getFileName();
   }
 
@@ -116,6 +121,7 @@ public final class Session implements ISession {
    * {@inheritDoc}
    */
   public final String getAbsolutePath() {
+    assertNotClosed();
     return mSessionState.getSessionConfiguration().getAbsolutePath();
   }
 
@@ -123,6 +129,7 @@ public final class Session implements ISession {
    * {@inheritDoc}
    */
   public final boolean isEncrypted() {
+    assertNotClosed();
     return mSessionState.getSessionConfiguration().isEncrypted();
   }
 
@@ -130,6 +137,7 @@ public final class Session implements ISession {
    * {@inheritDoc}
    */
   public final boolean isChecksummed() {
+    assertNotClosed();
     return mSessionState.getSessionConfiguration().isChecksummed();
   }
 
@@ -137,6 +145,7 @@ public final class Session implements ISession {
    * {@inheritDoc}
    */
   public final int getVersionMajor() {
+    assertNotClosed();
     return mSessionState.getSessionConfiguration().getVersionMajor();
   }
 
@@ -144,6 +153,7 @@ public final class Session implements ISession {
    * {@inheritDoc}
    */
   public final int getVersionMinor() {
+    assertNotClosed();
     return mSessionState.getSessionConfiguration().getVersionMinor();
   }
 
@@ -151,6 +161,7 @@ public final class Session implements ISession {
    * {@inheritDoc}
    */
   public final IReadTransaction beginReadTransaction() {
+    assertNotClosed();
     return mSessionState.beginReadTransaction();
   }
 
@@ -158,6 +169,7 @@ public final class Session implements ISession {
    * {@inheritDoc}
    */
   public final IReadTransaction beginReadTransaction(final long revisionKey) {
+    assertNotClosed();
     return mSessionState.beginReadTransaction(revisionKey);
   }
 
@@ -165,6 +177,7 @@ public final class Session implements ISession {
    * {@inheritDoc}
    */
   public final IWriteTransaction beginWriteTransaction() {
+    assertNotClosed();
     return mSessionState.beginWriteTransaction();
   }
 
@@ -172,11 +185,13 @@ public final class Session implements ISession {
    * {@inheritDoc}
    */
   public final void close() {
+    assertNotClosed();
     SESSION_MAP.remove(mSessionState
         .getSessionConfiguration()
         .getAbsolutePath());
     mSessionState.close();
     mSessionState = null;
+    mClosed = true;
   }
 
   /**
@@ -189,6 +204,15 @@ public final class Session implements ISession {
       close();
     } finally {
       super.finalize();
+    }
+  }
+
+  /**
+   * Make sure that the session is not yet closed when calling this method.
+   */
+  private final void assertNotClosed() {
+    if (mClosed) {
+      throw new IllegalStateException("Session is already closed.");
     }
   }
 

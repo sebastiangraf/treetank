@@ -59,6 +59,7 @@ public final class WriteTransaction extends ReadTransaction
       final String uri,
       final String prefix) {
 
+    assertNotClosed();
     assertIsSelected();
 
     setCurrentNode(((WriteTransactionState) getTransactionState())
@@ -87,6 +88,7 @@ public final class WriteTransaction extends ReadTransaction
    */
   public final long insertTextAsFirstChild(final byte[] value) {
 
+    assertNotClosed();
     assertIsSelected();
 
     setCurrentNode(((WriteTransactionState) getTransactionState())
@@ -113,6 +115,7 @@ public final class WriteTransaction extends ReadTransaction
       final String uri,
       final String prefix) {
 
+    assertNotClosed();
     assertIsSelected();
 
     if (getCurrentNode().getNodeKey() == IConstants.DOCUMENT_KEY) {
@@ -144,6 +147,7 @@ public final class WriteTransaction extends ReadTransaction
    */
   public final long insertTextAsRightSibling(final byte[] value) {
 
+    assertNotClosed();
     assertIsSelected();
 
     if (getCurrentNode().getNodeKey() == IConstants.DOCUMENT_KEY) {
@@ -170,7 +174,10 @@ public final class WriteTransaction extends ReadTransaction
       final String uri,
       final String prefix,
       final byte[] value) {
+
+    assertNotClosed();
     assertIsSelected();
+
     prepareCurrentNode().insertAttribute(
         ((WriteTransactionState) getTransactionState())
             .createNameKey(localPart),
@@ -183,7 +190,10 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final void insertNamespace(final String uri, final String prefix) {
+
+    assertNotClosed();
     assertIsSelected();
+
     prepareCurrentNode().insertNamespace(
         ((WriteTransactionState) getTransactionState()).createNameKey(uri),
         ((WriteTransactionState) getTransactionState()).createNameKey(prefix));
@@ -193,6 +203,8 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final void remove() {
+
+    assertNotClosed();
     assertIsSelected();
 
     if (getCurrentNode().isDocument()) {
@@ -270,7 +282,10 @@ public final class WriteTransaction extends ReadTransaction
       final String uri,
       final String prefix,
       final byte[] value) {
+
+    assertNotClosed();
     assertIsSelected();
+
     prepareCurrentNode().setAttribute(
         index,
         ((WriteTransactionState) getTransactionState())
@@ -287,7 +302,10 @@ public final class WriteTransaction extends ReadTransaction
       final int index,
       final String uri,
       final String prefix) {
+
+    assertNotClosed();
     assertIsSelected();
+
     prepareCurrentNode().setNamespace(
         index,
         ((WriteTransactionState) getTransactionState()).createNameKey(uri),
@@ -298,7 +316,10 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final void setLocalPart(final String localPart) {
+
+    assertNotClosed();
     assertIsSelected();
+
     prepareCurrentNode().setLocalPartKey(
         ((WriteTransactionState) getTransactionState())
             .createNameKey(localPart));
@@ -308,7 +329,10 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final void setURI(final String uri) {
+
+    assertNotClosed();
     assertIsSelected();
+
     prepareCurrentNode().setURIKey(
         ((WriteTransactionState) getTransactionState()).createNameKey(uri));
   }
@@ -317,7 +341,10 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public void setPrefix(final String prefix) {
+
+    assertNotClosed();
     assertIsSelected();
+
     prepareCurrentNode().setPrefixKey(
         ((WriteTransactionState) getTransactionState()).createNameKey(prefix));
   }
@@ -326,7 +353,10 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final void setValue(final byte[] value) {
+
+    assertNotClosed();
     assertIsSelected();
+
     prepareCurrentNode().setValue(value);
   }
 
@@ -335,17 +365,25 @@ public final class WriteTransaction extends ReadTransaction
    */
   @Override
   public final void close() {
+
+    assertNotClosed();
+
     getTransactionState().close();
     getSessionState().closeWriteTransaction();
     setSessionState(null);
     setTransactionState(null);
     setCurrentNode(null);
+
+    setClosed();
   }
 
   /**
    * {@inheritDoc}
    */
   public final void commit() throws IOException {
+
+    assertNotClosed();
+
     // Commit uber page.
     final UberPage uberPage =
         ((WriteTransactionState) getTransactionState())
@@ -362,6 +400,9 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final void abort() {
+
+    assertNotClosed();
+
     // Reset internal transaction state to last committed uber page.
     setTransactionState(getSessionState().getWriteTransactionState());
   }
