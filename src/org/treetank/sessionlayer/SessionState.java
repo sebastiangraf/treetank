@@ -107,7 +107,7 @@ public final class SessionState {
       mLastCommittedUberPage = new UberPage();
       uberPageReference.setPage(mLastCommittedUberPage);
     } else {
-      // Read existing uber page.
+
       // Read primary beacon.
       file.seek(IConstants.BEACON_START);
       uberPageReference.setStart(file.readLong());

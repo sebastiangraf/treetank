@@ -50,6 +50,9 @@ import org.treetank.utils.FastByteArrayReader;
  */
 public class ReadTransactionState {
 
+  /** Session configuration. */
+  private final SessionConfiguration mSessionConfiguration;
+
   /** Shared page cache mapping start address of page to IPage. */
   private final Map<Long, AbstractPage> mPageCache;
 
@@ -81,6 +84,7 @@ public class ReadTransactionState {
       final Map<Long, AbstractPage> pageCache,
       final UberPage uberPage,
       final long revisionKey) {
+    mSessionConfiguration = sessionConfiguration;
     mPageCache = pageCache;
     mPageReader = new PageReader(sessionConfiguration);
     mUberPage = uberPage;
@@ -145,6 +149,13 @@ public class ReadTransactionState {
     return dereferenceRevisionRootPage(dereferenceLeafOfTree(mUberPage
         .getIndirectPageReference(), revisionKey), revisionKey);
 
+  }
+
+  /**
+   * @return The session configuration.
+   */
+  protected final SessionConfiguration getSessionConfiguration() {
+    return mSessionConfiguration;
   }
 
   /**

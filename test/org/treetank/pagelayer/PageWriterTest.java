@@ -24,9 +24,11 @@ package org.treetank.pagelayer;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+import java.io.RandomAccessFile;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.treetank.api.IConstants;
 import org.treetank.nodelayer.ElementNode;
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.utils.FastByteArrayReader;
@@ -44,6 +46,15 @@ public class PageWriterTest {
   @Test
   public void testWriteRead() throws Exception {
 
+    // Prepare file with version info.
+    final RandomAccessFile file = new RandomAccessFile(PATH, "rw");
+    file.seek(0L);
+    file.writeInt(IConstants.VERSION_MAJOR);
+    file.writeInt(IConstants.VERSION_MINOR);
+    file.writeBoolean(false);
+    file.writeBoolean(false);
+    file.close();
+
     // Create node page with single node.
     final NodePage page1 = new NodePage(13L);
     page1.setNode(3, new ElementNode(0L, 1L, 2L, 3L, 4L, 6, 7, 8));
@@ -54,7 +65,7 @@ public class PageWriterTest {
         new PageWriter(new SessionConfiguration(PATH));
     pageReference.setPage(page1);
     pageWriter.write(pageReference);
-    assertEquals(0L, pageReference.getStart());
+    assertEquals(IConstants.BEACON_START, pageReference.getStart());
 
     // Deserialize node page.
     final PageReader pageReader =
@@ -63,5 +74,4 @@ public class PageWriterTest {
     final NodePage page2 = new NodePage(in, 0L);
 
   }
-
 }
