@@ -72,6 +72,10 @@ public final class UTF {
   }
 
   public static final boolean equals(final byte[] value1, final byte[] value2) {
+    // Fail if one is null.
+    if ((value1 == null) || (value2 == null)) {
+      return false;
+    }
     // Fail if the values are not of equal length.
     if (value1.length != value2.length) {
       return false;
