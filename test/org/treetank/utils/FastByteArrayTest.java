@@ -28,7 +28,7 @@ import org.junit.Test;
 public class FastByteArrayTest {
 
   @Test
-  public void testSerializeDeserialize() throws Exception {
+  public void testSerializeDeserialize() {
 
     final FastByteArrayWriter out = new FastByteArrayWriter();
     out.writeBoolean(true);

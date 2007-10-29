@@ -24,6 +24,7 @@ package org.treetank.axislayer;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +34,6 @@ import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.axislayer.ChildAxis;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
 
@@ -46,13 +46,13 @@ public class ChildAxisTest {
       "generated" + File.separator + "ChildAxisTestPersistent.tnk";
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() throws IOException {
     new File(TEST_ITERATE_PATH).delete();
     new File(TEST_PERSISTENT_PATH).delete();
   }
 
   @Test
-  public void testIterate() throws Exception {
+  public void testIterate() throws IOException {
 
     final ISession session = Session.beginSession(TEST_ITERATE_PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -132,7 +132,7 @@ public class ChildAxisTest {
   }
 
   @Test
-  public void testPersistent() throws Exception {
+  public void testPersistent() throws IOException {
 
     final ISession session = Session.beginSession(TEST_PERSISTENT_PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();

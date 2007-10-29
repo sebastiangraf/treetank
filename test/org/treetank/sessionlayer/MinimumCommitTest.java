@@ -22,6 +22,7 @@
 package org.treetank.sessionlayer;
 
 import java.io.File;
+import java.io.IOException;
 
 import junit.framework.TestCase;
 
@@ -38,12 +39,12 @@ public class MinimumCommitTest {
       "generated" + File.separator + "MinimumCommitTest.tnk";
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() throws IOException {
     new File(TEST_PATH).delete();
   }
 
   @Test
-  public void test() throws Exception {
+  public void test() throws IOException {
 
     ISession session = Session.beginSession(TEST_PATH);
     IWriteTransaction wtx = session.beginWriteTransaction();
@@ -69,7 +70,7 @@ public class MinimumCommitTest {
   }
 
   @Test
-  public void testTimestamp() throws Exception {
+  public void testTimestamp() throws IOException {
 
     ISession session = Session.beginSession(TEST_PATH);
     IWriteTransaction wtx = session.beginWriteTransaction();

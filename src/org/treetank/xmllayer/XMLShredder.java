@@ -23,10 +23,12 @@ package org.treetank.xmllayer;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.treetank.api.IConstants;
@@ -41,14 +43,16 @@ public final class XMLShredder {
 
   public final static void shred(
       final String xmlPath,
-      final SessionConfiguration sessionConfiguration) throws Exception {
+      final SessionConfiguration sessionConfiguration)
+      throws IOException,
+      XMLStreamException {
     shred(xmlPath, sessionConfiguration, true);
   }
 
   public final static void shred(
       final String xmlPath,
       final SessionConfiguration sessionConfiguration,
-      final boolean isValidating) throws Exception {
+      final boolean isValidating) throws IOException, XMLStreamException {
     final InputStream in = new FileInputStream(xmlPath);
     final XMLInputFactory factory = XMLInputFactory.newInstance();
     factory.setProperty(XMLInputFactory.IS_VALIDATING, isValidating);
@@ -60,7 +64,9 @@ public final class XMLShredder {
 
   public static final void shred(
       final XMLStreamReader parser,
-      final SessionConfiguration sessionConfiguration) throws Exception {
+      final SessionConfiguration sessionConfiguration)
+      throws IOException,
+      XMLStreamException {
     ISession session = Session.beginSession(sessionConfiguration);
     IWriteTransaction wtx = session.beginWriteTransaction();
     // Prepare variables.

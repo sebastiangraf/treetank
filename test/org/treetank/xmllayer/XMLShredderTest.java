@@ -24,7 +24,10 @@ package org.treetank.xmllayer;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
+
+import javax.xml.stream.XMLStreamException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -49,13 +52,13 @@ public class XMLShredderTest {
       "generated" + File.separator + "ExpectedXMLShredderTest.tnk";
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() throws IOException {
     new File(PATH).delete();
     new File(EXPECTED_PATH).delete();
   }
 
   @Test
-  public void testSTAXShredder() throws Exception {
+  public void testSTAXShredder() throws IOException, XMLStreamException {
 
     // Setup expected session.
     final ISession expectedSession = Session.beginSession(EXPECTED_PATH);
