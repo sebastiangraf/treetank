@@ -21,6 +21,8 @@
 
 package org.treetank.api;
 
+import java.io.IOException;
+
 /**
  * <h1>IWriteTransaction</h1>
  * 
@@ -55,24 +57,22 @@ public interface IWriteTransaction extends IReadTransaction {
    * @param uri URI of inserted node.
    * @param prefix Prefix of inserted node.
    * @return Key of inserted node.
-   * @throws Exception of any kind and if no node is selected or the node
    * already has a first child.
    */
   public long insertElementAsFirstChild(
       final String localPart,
       final String uri,
-      final String prefix) throws Exception;
-  
+      final String prefix);
+
   /**
    * Insert new text node as first child of currently selected node.
    * The cursor is moved to the inserted node.
    * 
    * @param value Value of inserted node.
    * @return Key of inserted node.
-   * @throws Exception of any kind and if no node is selected or the node
    * already has a first child.
    */
-  public long insertTextAsFirstChild(final byte[] value) throws Exception;
+  public long insertTextAsFirstChild(final byte[] value);
 
   /**
    * Insert new element node as right sibling of currently selected node.
@@ -82,13 +82,12 @@ public interface IWriteTransaction extends IReadTransaction {
    * @param uri URI of inserted node.
    * @param prefix Prefix of inserted node.
    * @return Key of inserted node.
-   * @throws Exception of any kind and if no node is selected or the node
    * already has a first child.
    */
   public long insertElementAsRightSibling(
       final String localPart,
       final String uri,
-      final String prefix) throws Exception;
+      final String prefix);
 
   /**
    * Insert new element node as right sibling of currently selected node.
@@ -96,10 +95,9 @@ public interface IWriteTransaction extends IReadTransaction {
    * 
    * @param value Value of inserted node.
    * @return Key of inserted node.
-   * @throws Exception of any kind and if no node is selected or the node is
    * the root node which is not allowed to have right siblings.
    */
-  public long insertTextAsRightSibling(final byte[] value) throws Exception;
+  public long insertTextAsRightSibling(final byte[] value);
 
   /**
    * Insert attribute in currently selected node.
@@ -109,13 +107,12 @@ public interface IWriteTransaction extends IReadTransaction {
    * @param uri URI of inserted node.
    * @param prefix Prefix of inserted node.
    * @param value Value of inserted node.
-   * @throws Exception of any kind and if no node is selected.
    */
   public void insertAttribute(
       final String localPart,
       final String uri,
       final String prefix,
-      final byte[] value) throws Exception;
+      final byte[] value);
 
   /**
    * Insert namespace declaration in currently selected node.
@@ -123,19 +120,14 @@ public interface IWriteTransaction extends IReadTransaction {
    * 
    * @param uri URI of inserted node.
    * @param prefix Prefix of inserted node.
-   * @throws Exception of any kind and if no node is selected.
    */
-  public void insertNamespace(final String uri, final String prefix)
-      throws Exception;
+  public void insertNamespace(final String uri, final String prefix);
 
   /**
    * Remove currently selected node. This does not automatically remove
    * descendants.
-   * 
-   * @throws Exception of any kind and if no node is selected or the node
-   * has children.
    */
-  public void remove() throws Exception;
+  public void remove();
 
   //--- Node Setters -----------------------------------------------------------
 
@@ -147,14 +139,13 @@ public interface IWriteTransaction extends IReadTransaction {
    * @param uri URI of inserted node.
    * @param prefix Prefix of inserted node.
    * @param value Value of inserted node.
-   * @throws Exception of any kind and if no node is selected.
    */
   public void setAttribute(
       final int index,
       final String localPart,
       final String uri,
       final String prefix,
-      final byte[] value) throws Exception;
+      final byte[] value);
 
   /**
    * Set a namespace of the currently selected node.
@@ -162,52 +153,47 @@ public interface IWriteTransaction extends IReadTransaction {
    * @param index Index of attribute to set.
    * @param uri URI of inserted node.
    * @param prefix Prefix of inserted node.
-   * @throws Exception of any kind and if no node is selected.
    */
   public void setNamespace(
       final int index,
       final String uri,
-      final String prefix) throws Exception;
+      final String prefix);
 
   /**
    * Set local part of node.
    * 
    * @param localPart New local part of node.
-   * @throws Exception of any kind and if no node is selected.
    */
-  public void setLocalPart(final String localPart) throws Exception;
+  public void setLocalPart(final String localPart);
 
   /**
    * Set URI of node.
    * 
    * @param uri New URI of node.
-   * @throws Exception of any kind and if no node is selected.
    */
-  public void setURI(final String uri) throws Exception;
+  public void setURI(final String uri);
 
   /**
    * Set prefix of node.
    * 
    * @param prefix New prefix of node.
-   * @throws Exception of any kind and if no node is selected.
    */
-  public void setPrefix(final String prefix) throws Exception;
+  public void setPrefix(final String prefix);
 
   /**
    * Set value of node.
    * 
    * @param value New value of node.
-   * @throws Exception of any kind and if no node is selected.
    */
-  public void setValue(final byte[] value) throws Exception;
+  public void setValue(final byte[] value);
 
   /**
    * Commit all modifications of the exclusive write transaction. Calling
    * <code>close()</code> is semantiacally equivalent.
    * 
-   * @throws Exception if commit failed.
+   * @throws IOException if commit to file failed.
    */
-  public void commit() throws Exception;
+  public void commit() throws IOException;
 
   /**
    * Abort all modifications of the exclusive write transaction.

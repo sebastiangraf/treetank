@@ -77,12 +77,12 @@ public final class WriteTransactionState extends ReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public final AbstractNode prepareNode(final long nodeKey) throws Exception {
+  public final AbstractNode prepareNode(final long nodeKey) {
     return prepareNodePage(nodePageKey(nodeKey)).getNode(
         nodePageOffset(nodeKey));
   }
 
-  public final DocumentNode createDocumentNode() throws Exception {
+  public final DocumentNode createDocumentNode() {
 
     getRevisionRootPage().incrementNodeCountAndMaxNodeKey();
 
@@ -102,7 +102,7 @@ public final class WriteTransactionState extends ReadTransactionState {
       final long rightSiblingKey,
       final int localPartKey,
       final int uriKey,
-      final int prefixKey) throws Exception {
+      final int prefixKey) {
 
     getRevisionRootPage().incrementNodeCountAndMaxNodeKey();
 
@@ -128,7 +128,7 @@ public final class WriteTransactionState extends ReadTransactionState {
       final long parentKey,
       final long leftSiblingKey,
       final long rightSiblingKey,
-      final byte[] value) throws Exception {
+      final byte[] value) {
 
     getRevisionRootPage().incrementNodeCountAndMaxNodeKey();
 
@@ -150,7 +150,7 @@ public final class WriteTransactionState extends ReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public final void removeNode(final long nodeKey) throws Exception {
+  public final void removeNode(final long nodeKey) {
     getRevisionRootPage().decrementNodeCount();
     prepareNodePage(nodePageKey(nodeKey))
         .setNode(nodePageOffset(nodeKey), null);
@@ -159,7 +159,7 @@ public final class WriteTransactionState extends ReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public final int createNameKey(final String name) throws Exception {
+  public final int createNameKey(final String name) {
     final String string = (name == null ? "" : name);
     final int nameKey = string.hashCode();
     if (getName(nameKey) == null) {

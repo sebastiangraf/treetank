@@ -19,6 +19,11 @@
  * $Id$
  */
 
+TreeTank 4.14
+-------------
++ Removed checked exceptions from IWriteTransaction exception for commit()
+  which must throw an IOException in case the writing to the file failed.
+
 TreeTank 4.13
 -------------
 + Binary incompatibility to previous releases due to stored version info.
