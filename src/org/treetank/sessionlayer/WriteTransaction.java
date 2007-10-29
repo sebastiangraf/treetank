@@ -21,6 +21,8 @@
 
 package org.treetank.sessionlayer;
 
+import java.io.IOException;
+
 import org.treetank.api.IConstants;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.nodelayer.AbstractNode;
@@ -55,7 +57,7 @@ public final class WriteTransaction extends ReadTransaction
   public final long insertElementAsFirstChild(
       final String localPart,
       final String uri,
-      final String prefix) throws Exception {
+      final String prefix) {
 
     assertIsSelected();
 
@@ -83,7 +85,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final long insertTextAsFirstChild(final byte[] value) throws Exception {
+  public final long insertTextAsFirstChild(final byte[] value) {
 
     assertIsSelected();
 
@@ -109,7 +111,7 @@ public final class WriteTransaction extends ReadTransaction
   public final long insertElementAsRightSibling(
       final String localPart,
       final String uri,
-      final String prefix) throws Exception {
+      final String prefix) {
 
     assertIsSelected();
 
@@ -140,8 +142,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final long insertTextAsRightSibling(final byte[] value)
-      throws Exception {
+  public final long insertTextAsRightSibling(final byte[] value) {
 
     assertIsSelected();
 
@@ -168,7 +169,7 @@ public final class WriteTransaction extends ReadTransaction
       final String localPart,
       final String uri,
       final String prefix,
-      final byte[] value) throws Exception {
+      final byte[] value) {
     assertIsSelected();
     prepareCurrentNode().insertAttribute(
         ((WriteTransactionState) getTransactionState())
@@ -181,8 +182,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final void insertNamespace(final String uri, final String prefix)
-      throws Exception {
+  public final void insertNamespace(final String uri, final String prefix) {
     assertIsSelected();
     prepareCurrentNode().insertNamespace(
         ((WriteTransactionState) getTransactionState()).createNameKey(uri),
@@ -192,7 +192,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final void remove() throws Exception {
+  public final void remove() {
     assertIsSelected();
 
     if (getCurrentNode().isDocument()) {
@@ -269,7 +269,7 @@ public final class WriteTransaction extends ReadTransaction
       final String localPart,
       final String uri,
       final String prefix,
-      final byte[] value) throws Exception {
+      final byte[] value) {
     assertIsSelected();
     prepareCurrentNode().setAttribute(
         index,
@@ -286,7 +286,7 @@ public final class WriteTransaction extends ReadTransaction
   public final void setNamespace(
       final int index,
       final String uri,
-      final String prefix) throws Exception {
+      final String prefix) {
     assertIsSelected();
     prepareCurrentNode().setNamespace(
         index,
@@ -297,7 +297,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final void setLocalPart(final String localPart) throws Exception {
+  public final void setLocalPart(final String localPart) {
     assertIsSelected();
     prepareCurrentNode().setLocalPartKey(
         ((WriteTransactionState) getTransactionState())
@@ -307,7 +307,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final void setURI(final String uri) throws Exception {
+  public final void setURI(final String uri) {
     assertIsSelected();
     prepareCurrentNode().setURIKey(
         ((WriteTransactionState) getTransactionState()).createNameKey(uri));
@@ -316,7 +316,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public void setPrefix(final String prefix) throws Exception {
+  public void setPrefix(final String prefix) {
     assertIsSelected();
     prepareCurrentNode().setPrefixKey(
         ((WriteTransactionState) getTransactionState()).createNameKey(prefix));
@@ -325,7 +325,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final void setValue(final byte[] value) throws Exception {
+  public final void setValue(final byte[] value) {
     assertIsSelected();
     prepareCurrentNode().setValue(value);
   }
@@ -342,7 +342,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final void commit() throws Exception {
+  public final void commit() throws IOException {
     final UberPage uberPage =
         ((WriteTransactionState) getTransactionState())
             .commit(getSessionState().getSessionConfiguration());
@@ -367,7 +367,7 @@ public final class WriteTransaction extends ReadTransaction
     getSessionState().closeWriteTransaction();
   }
 
-  private final AbstractNode prepareCurrentNode() throws Exception {
+  private final AbstractNode prepareCurrentNode() {
     final AbstractNode modNode =
         ((WriteTransactionState) getTransactionState())
             .prepareNode(getCurrentNode().getNodeKey());
@@ -376,8 +376,7 @@ public final class WriteTransaction extends ReadTransaction
     return modNode;
   }
 
-  private final void updateParentAfterInsert(final boolean updateFirstChild)
-      throws Exception {
+  private final void updateParentAfterInsert(final boolean updateFirstChild) {
     final AbstractNode parentNode =
         ((WriteTransactionState) getTransactionState())
             .prepareNode(getCurrentNode().getParentKey());
@@ -387,7 +386,7 @@ public final class WriteTransaction extends ReadTransaction
     }
   }
 
-  private final void updateRightSibling() throws Exception {
+  private final void updateRightSibling() {
     if (getCurrentNode().hasRightSibling()) {
       final AbstractNode rightSiblingNode =
           ((WriteTransactionState) getTransactionState())
@@ -396,7 +395,7 @@ public final class WriteTransaction extends ReadTransaction
     }
   }
 
-  private final void updateLeftSibling() throws Exception {
+  private final void updateLeftSibling() {
     final AbstractNode leftSiblingNode =
         ((WriteTransactionState) getTransactionState())
             .prepareNode(getCurrentNode().getLeftSiblingKey());

@@ -191,7 +191,7 @@ public final class SessionState {
   }
 
   public final void commitWriteTransaction(final UberPage lastCommittedUberPage)
-      throws Exception {
+      throws IOException {
     mLastCommittedUberPage = lastCommittedUberPage;
   }
 
@@ -218,6 +218,10 @@ public final class SessionState {
     }
   }
 
+  protected final SessionConfiguration getSessionConfiguration() {
+    return mSessionConfiguration;
+  }
+
   /**
    * Required to close file handle.
    * 
@@ -229,10 +233,6 @@ public final class SessionState {
     } finally {
       super.finalize();
     }
-  }
-
-  protected final SessionConfiguration getSessionConfiguration() {
-    return mSessionConfiguration;
   }
 
 }
