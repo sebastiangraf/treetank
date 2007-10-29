@@ -43,7 +43,7 @@ import com.sun.org.apache.xml.internal.serializer.SerializerFactory;
 /**
  * Reconstructs an XML document from XPathAccelerator encoding.
  */
-public class SAXGenerator extends Thread {
+public final class SAXGenerator extends Thread {
 
   protected ContentHandler mHandler;
 
@@ -58,9 +58,11 @@ public class SAXGenerator extends Thread {
   private final boolean mPrettyPrint;
 
   /** The nodeKey of the next node to visit. */
-  protected final IAxis mAxis;
+  private final IAxis mAxis;
 
-  protected final FastStack<INode> stack;
+  private final FastStack<INode> stack;
+  
+  
 
   /**
    * 'Callback' Constructor.
@@ -105,11 +107,11 @@ public class SAXGenerator extends Thread {
     this(axis, new PrintWriter(System.out), prettyPrint);
   }
 
-  protected final String qName(final String prefix, final String localPart) {
+  private final String qName(final String prefix, final String localPart) {
     return (prefix.length() > 0 ? prefix + ":" + localPart : localPart);
   }
-
-  protected final AttributesImpl visitAttributes(final IReadTransaction rtx)
+  
+  private final AttributesImpl visitAttributes(final IReadTransaction rtx)
       throws Exception {
 
     final AttributesImpl attributes = new AttributesImpl();
@@ -123,7 +125,7 @@ public class SAXGenerator extends Thread {
     return attributes;
   }
 
-  protected final void emitNode(
+  private final void emitNode(
       final INode node,
       final IReadTransaction rtx) throws Exception {
     // Emit events of current node.
@@ -143,7 +145,7 @@ public class SAXGenerator extends Thread {
     }
   }
 
-  protected final void emitEndElement(
+  private final void emitEndElement(
       final INode node,
       final IReadTransaction rtx) throws Exception {
     mHandler.endElement(node.getURI(rtx), node.getLocalPart(rtx), qName(node
