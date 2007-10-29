@@ -24,6 +24,7 @@ package org.treetank.pagelayer;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import org.junit.Before;
@@ -39,12 +40,12 @@ public class PageWriterTest {
       "generated" + File.separator + "PageWriterTest.tnk";
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() throws IOException {
     new File(PATH).delete();
   }
 
   @Test
-  public void testWriteRead() throws Exception {
+  public void testWriteRead() throws IOException {
 
     // Prepare file with version info.
     final RandomAccessFile file = new RandomAccessFile(PATH, "rw");

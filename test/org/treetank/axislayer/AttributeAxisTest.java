@@ -24,6 +24,7 @@ package org.treetank.axislayer;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +32,6 @@ import org.treetank.api.IAxis;
 import org.treetank.api.INode;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.axislayer.AttributeAxis;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
 
@@ -41,12 +41,12 @@ public class AttributeAxisTest {
       "generated" + File.separator + "AttributeAxisTest.tnk";
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() throws IOException {
     new File(PATH).delete();
   }
 
   @Test
-  public void testIterate() throws Exception {
+  public void testIterate() throws IOException {
 
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();

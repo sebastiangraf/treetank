@@ -31,7 +31,7 @@ import org.treetank.utils.FastByteArrayWriter;
 public class NodePageTest {
 
   @Test
-  public void testSerializeDeserialize() throws Exception {
+  public void testSerializeDeserialize() {
     final NodePage page1 = new NodePage(0L);
     assertEquals(0L, page1.getNodePageKey());
     final ElementNode node1 = new ElementNode(0L, 1L, 2L, 3L, 4L, 6, 7, 8);

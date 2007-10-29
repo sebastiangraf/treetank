@@ -25,6 +25,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.IOException;
 
 import junit.framework.TestCase;
 
@@ -55,7 +56,7 @@ public class SessionTest {
       "generated" + File.separator + "ExistingSessionTest.tnk";
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() throws IOException {
     new File(NON_EXISTING_PATH).delete();
     new File(TEST_INSERT_CHILD_PATH).delete();
     new File(TEST_REVISION_PATH).delete();
@@ -64,7 +65,7 @@ public class SessionTest {
   }
 
   @Test
-  public void testNoWritesBeforeFirstCommit() throws Exception {
+  public void testNoWritesBeforeFirstCommit() throws IOException {
 
     ISession session = Session.beginSession(TEST_INSERT_CHILD_PATH);
     assertEquals(0L, new File(TEST_INSERT_CHILD_PATH).length());
@@ -117,7 +118,7 @@ public class SessionTest {
   }
 
   @Test
-  public void testInsertChild() throws Exception {
+  public void testInsertChild() throws IOException {
 
     final ISession session = Session.beginSession(TEST_INSERT_CHILD_PATH);
 
@@ -138,7 +139,7 @@ public class SessionTest {
   }
 
   @Test
-  public void testRevision() throws Exception {
+  public void testRevision() throws IOException {
 
     final ISession session = Session.beginSession(TEST_REVISION_PATH);
 
@@ -165,7 +166,7 @@ public class SessionTest {
   }
 
   @Test
-  public void testShreddedRevision() throws Exception {
+  public void testShreddedRevision() throws IOException {
 
     final ISession session = Session.beginSession(TEST_SHREDDED_REVISION_PATH);
 
@@ -206,7 +207,7 @@ public class SessionTest {
   }
 
   @Test
-  public void testExisting() throws Exception {
+  public void testExisting() throws IOException {
 
     final ISession session1 = Session.beginSession(TEST_EXISTING_PATH);
 
@@ -254,7 +255,7 @@ public class SessionTest {
   }
 
   @Test
-  public void testIsSelected() throws Exception {
+  public void testIsSelected() throws IOException {
 
     final ISession session = Session.beginSession(TEST_EXISTING_PATH);
 

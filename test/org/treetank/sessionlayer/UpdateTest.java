@@ -24,6 +24,7 @@ package org.treetank.sessionlayer;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+import java.io.IOException;
 
 import junit.framework.TestCase;
 
@@ -41,12 +42,12 @@ public class UpdateTest {
       "generated" + File.separator + "UpdateTest.tnk";
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() throws IOException {
     new File(TEST_PATH).delete();
   }
 
   @Test
-  public void testInsertChild() throws Exception {
+  public void testInsertChild() throws IOException {
 
     ISession session = Session.beginSession(TEST_PATH);
 
@@ -88,7 +89,7 @@ public class UpdateTest {
   }
 
   @Test
-  public void testInsertPath() throws Exception {
+  public void testInsertPath() throws IOException {
 
     final ISession session = Session.beginSession(TEST_PATH);
 
@@ -118,7 +119,7 @@ public class UpdateTest {
   }
 
   @Test
-  public void testPageBoundary() throws Exception {
+  public void testPageBoundary() throws IOException {
 
     ISession session = Session.beginSession(TEST_PATH);
 
@@ -138,7 +139,7 @@ public class UpdateTest {
   }
 
   @Test
-  public void testRemoveDocument() throws Exception {
+  public void testRemoveDocument() throws IOException {
     final ISession session = Session.beginSession(TEST_PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
@@ -156,7 +157,7 @@ public class UpdateTest {
   }
 
   @Test
-  public void testRemoveDescendant() throws Exception {
+  public void testRemoveDescendant() throws IOException {
     final ISession session = Session.beginSession(TEST_PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);

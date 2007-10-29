@@ -22,6 +22,7 @@
 package org.treetank.sessionlayer;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -46,7 +47,7 @@ public class ThreadTest {
       "generated" + File.separator + "ThreadTest.tnk";
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() throws IOException {
     new File(THREAD_TEST_PATH).delete();
   }
 
@@ -77,7 +78,7 @@ public class ThreadTest {
 
     private IReadTransaction mRTX;
 
-    public Task(final IReadTransaction rtx) throws Exception {
+    public Task(final IReadTransaction rtx) {
       mRTX = rtx;
     }
 
