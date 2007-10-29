@@ -58,7 +58,6 @@ public final class XMLShredder {
     factory.setProperty(XMLInputFactory.IS_VALIDATING, isValidating);
     factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
     final XMLStreamReader parser = factory.createXMLStreamReader(in);
-
     shred(parser, sessionConfiguration);
   }
 
@@ -67,10 +66,10 @@ public final class XMLShredder {
       final SessionConfiguration sessionConfiguration)
       throws IOException,
       XMLStreamException {
-    ISession session = Session.beginSession(sessionConfiguration);
-    IWriteTransaction wtx = session.beginWriteTransaction();
-    // Prepare variables.
+    final ISession session = Session.beginSession(sessionConfiguration);
+    final IWriteTransaction wtx = session.beginWriteTransaction();
     final FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
+
     long key;
     String text;
     leftSiblingKeyStack.push(IConstants.NULL_KEY);
