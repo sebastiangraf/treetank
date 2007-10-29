@@ -30,14 +30,33 @@
         
         otherWTX.commit();
         otherWTX.abort();
+        otherWTX.commit();
         otherWTX.close();
         otherSession.close();
         
-        someWTX.close();  // Implicit commit.
+        someWTX.abort();
+        someWTX.close();
         someRTX.close();
         someConcurrentRTX.close();
         someSession.close();
       </pre>
     </p>
+    <p>
+      Code example to safely manipulate a TreeTank:
+      <pre>
+        final ISession session = Session.beginSession("example.tnk");
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        try {
+          wtx.insertElementAsFirstChild("foo", "", "");
+          ...
+          wtx.commit();
+        } catch (Exception e) {
+          wtx.abort();
+          throw new RuntimeException(e);
+        } finally {
+          wtx.close();
+        }
+        session.close(); // Might also stand in the finally...        
+      </pre>
   </body>
 </html>
