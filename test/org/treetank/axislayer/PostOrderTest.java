@@ -69,6 +69,7 @@ public class PostOrderTest {
     assertEquals(false, axis.hasNext());
 
     wtx.abort();
+    wtx.close();
     session.close();
 
   }

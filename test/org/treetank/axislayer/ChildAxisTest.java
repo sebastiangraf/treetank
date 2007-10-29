@@ -127,6 +127,7 @@ public class ChildAxisTest {
     assertEquals(false, axis4.hasNext());
 
     wtx.abort();
+    wtx.close();
     session.close();
 
   }

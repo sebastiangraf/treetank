@@ -135,6 +135,7 @@ public class SessionTest {
     assertEquals("a", wtx.getLocalPart());
 
     wtx.abort();
+    wtx.close();
     session.close();
 
   }
@@ -198,6 +199,7 @@ public class SessionTest {
         IConstants.DEFAULT_ENCODING));
 
     wtx2.abort();
+    wtx2.close();
 
     final IReadTransaction rtx2 = session.beginReadTransaction();
     assertEquals(0L, rtx2.getRevisionNumber());

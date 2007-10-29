@@ -45,7 +45,7 @@ public final class RevisionRootPage extends AbstractPage {
   private static final int INDIRECT_REFERENCE_OFFSET = 1;
 
   /** Key of revision. */
-  private final long mRevisionKey;
+  private final long mRevisionNumber;
 
   /** Number of nodes of this revision. */
   private long mRevisionSize;
@@ -61,7 +61,7 @@ public final class RevisionRootPage extends AbstractPage {
    */
   public RevisionRootPage() {
     super(2);
-    mRevisionKey = IConstants.UBP_ROOT_REVISION_KEY;
+    mRevisionNumber = IConstants.UBP_ROOT_REVISION_KEY;
     mRevisionSize = 0L;
     getReference(NAME_REFERENCE_OFFSET).setPage(new NamePage());
     mMaxNodeKey = -1L;
@@ -75,7 +75,7 @@ public final class RevisionRootPage extends AbstractPage {
    */
   public RevisionRootPage(final FastByteArrayReader in, final long revisionKey) {
     super(2, in);
-    mRevisionKey = revisionKey;
+    mRevisionNumber = revisionKey;
     mRevisionSize = in.readVarLong();
     mMaxNodeKey = in.readVarLong();
     mRevisionTimestamp = in.readVarLong();
@@ -88,7 +88,7 @@ public final class RevisionRootPage extends AbstractPage {
    */
   public RevisionRootPage(final RevisionRootPage committedRevisionRootPage) {
     super(2, committedRevisionRootPage);
-    mRevisionKey = committedRevisionRootPage.mRevisionKey + 1;
+    mRevisionNumber = committedRevisionRootPage.mRevisionNumber + 1;
     mRevisionSize = committedRevisionRootPage.mRevisionSize;
     mMaxNodeKey = committedRevisionRootPage.mMaxNodeKey;
   }
@@ -112,12 +112,12 @@ public final class RevisionRootPage extends AbstractPage {
   }
 
   /**
-   * Get key of revision.
+   * Get number of revision.
    * 
-   * @return Revision key.
+   * @return Revision number.
    */
-  public final long getRevisionKey() {
-    return mRevisionKey;
+  public final long getRevisionNumber() {
+    return mRevisionNumber;
   }
 
   /**
@@ -190,7 +190,7 @@ public final class RevisionRootPage extends AbstractPage {
   public final String toString() {
     return super.toString()
         + ": revisionKey="
-        + mRevisionKey
+        + mRevisionNumber
         + ", revisionSize="
         + mRevisionSize
         + ", revisionTimestamp="

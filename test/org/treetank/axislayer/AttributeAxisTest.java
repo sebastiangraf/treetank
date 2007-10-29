@@ -78,6 +78,7 @@ public class AttributeAxisTest {
     assertEquals(false, axis5.hasNext());
 
     wtx.abort();
+    wtx.close();
     session.close();
 
   }

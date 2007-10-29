@@ -57,7 +57,7 @@ public final class WriteTransactionState extends ReadTransactionState {
    * @param pageCache Shared page cache.
    * @param uberPage Root of revision.
    */
-  public WriteTransactionState(
+  protected WriteTransactionState(
       final SessionConfiguration sessionConfiguration,
       final Map<Long, AbstractPage> pageCache,
       final UberPage uberPage) {
@@ -70,19 +70,19 @@ public final class WriteTransactionState extends ReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public final PageWriter getPageWriter() {
+  protected final PageWriter getPageWriter() {
     return mPageWriter;
   }
 
   /**
    * {@inheritDoc}
    */
-  public final AbstractNode prepareNode(final long nodeKey) {
+  protected final AbstractNode prepareNode(final long nodeKey) {
     return prepareNodePage(nodePageKey(nodeKey)).getNode(
         nodePageOffset(nodeKey));
   }
 
-  public final DocumentNode createDocumentNode() {
+  protected final DocumentNode createDocumentNode() {
 
     getRevisionRootPage().incrementNodeCountAndMaxNodeKey();
 
@@ -95,7 +95,7 @@ public final class WriteTransactionState extends ReadTransactionState {
     return node;
   }
 
-  public final ElementNode createElementNode(
+  protected final ElementNode createElementNode(
       final long parentKey,
       final long firstChildKey,
       final long leftSiblingKey,
@@ -124,7 +124,7 @@ public final class WriteTransactionState extends ReadTransactionState {
     return node;
   }
 
-  public final TextNode createTextNode(
+  protected final TextNode createTextNode(
       final long parentKey,
       final long leftSiblingKey,
       final long rightSiblingKey,
@@ -150,7 +150,7 @@ public final class WriteTransactionState extends ReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public final void removeNode(final long nodeKey) {
+  protected final void removeNode(final long nodeKey) {
     getRevisionRootPage().decrementNodeCount();
     prepareNodePage(nodePageKey(nodeKey))
         .setNode(nodePageOffset(nodeKey), null);
@@ -159,7 +159,7 @@ public final class WriteTransactionState extends ReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public final int createNameKey(final String name) {
+  protected final int createNameKey(final String name) {
     final String string = (name == null ? "" : name);
     final int nameKey = string.hashCode();
     if (getName(nameKey) == null) {
@@ -188,14 +188,15 @@ public final class WriteTransactionState extends ReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public final void commit(final PageReference[] references) throws IOException {
+  protected final void commit(final PageReference[] references)
+      throws IOException {
     for (int i = 0, l = references.length; i < l; i++) {
       commit(references[i]);
     }
   }
 
-  public final UberPage commit(final SessionConfiguration sessionConfiguration)
-      throws IOException {
+  protected final UberPage commit(
+      final SessionConfiguration sessionConfiguration) throws IOException {
     final PageReference uberPageReference = new PageReference();
     final UberPage uberPage = getUberPage();
     final RandomAccessFile file =
@@ -239,7 +240,7 @@ public final class WriteTransactionState extends ReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public void close() {
+  protected void close() {
     mPageWriter.close();
     super.close();
   }
