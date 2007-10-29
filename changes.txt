@@ -21,6 +21,7 @@
 
 TreeTank 4.14
 -------------
++ Session and transaction tracks close state to prevent access after close.
 + Allow multiple commit() and abort() calls before close().
 + Split IWriteTransaction semantics: now use [commit|abort]() AND close().
 + Fixed bug in axis classes performing tests.
