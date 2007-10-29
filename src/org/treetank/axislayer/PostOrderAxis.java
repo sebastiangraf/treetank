@@ -53,7 +53,6 @@ public class PostOrderAxis extends AbstractAxis {
 
       mNextKey = getTransaction().getNodeKey();
     }
-    next();
   }
 
   /**
