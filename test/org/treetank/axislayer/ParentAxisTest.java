@@ -66,6 +66,7 @@ public class ParentAxisTest {
     assertEquals(false, axis2.hasNext());
 
     wtx.abort();
+    wtx.close();
     session.close();
 
   }

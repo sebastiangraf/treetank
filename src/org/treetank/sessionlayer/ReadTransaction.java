@@ -39,7 +39,7 @@ public class ReadTransaction implements IReadTransaction {
   private final SessionState mSessionState;
 
   /** State of transaction including all cached stuff. */
-  private final ReadTransactionState mTransactionState;
+  private ReadTransactionState mTransactionState;
 
   /** Strong reference to currently selected node. */
   private INode mCurrentNode;
@@ -63,7 +63,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final long getRevisionNumber() {
-    return mTransactionState.getRevisionRootPage().getRevisionKey();
+    return mTransactionState.getRevisionRootPage().getRevisionNumber();
   }
 
   /**
@@ -427,6 +427,16 @@ public class ReadTransaction implements IReadTransaction {
    */
   protected final ReadTransactionState getTransactionState() {
     return mTransactionState;
+  }
+
+  /**
+   * Replace the state of the transaction.
+   * 
+   * @param transactionState
+   */
+  protected final void setTransactionState(
+      final ReadTransactionState transactionState) {
+    mTransactionState = transactionState;
   }
 
   /**

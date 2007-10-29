@@ -139,6 +139,7 @@ public class UpdateTest {
     assertEquals(0L, wtx.getNodeKey());
 
     wtx.abort();
+    wtx.close();
     session.close();
 
   }
@@ -158,6 +159,7 @@ public class UpdateTest {
     }
 
     wtx.abort();
+    wtx.close();
     session.close();
   }
 
@@ -171,6 +173,7 @@ public class UpdateTest {
     wtx.remove();
 
     wtx.abort();
+    wtx.close();
     session.close();
   }
 

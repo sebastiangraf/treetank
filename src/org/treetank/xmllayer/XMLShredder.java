@@ -79,17 +79,12 @@ public final class XMLShredder {
     // Iterate over all nodes.
     while (parser.hasNext()) {
 
-      if (nodeCounter > IConstants.COMMIT_TRESHOLD) {
-        final long tempkey = wtx.getNodeKey();
+      // Make sure the in-memory state does not grow un-boundedly.
+      if ((++nodeCounter) > IConstants.COMMIT_TRESHOLD) {
         wtx.commit();
-        wtx.close();
-        wtx = session.beginWriteTransaction();
-        // System.gc();
-        wtx.moveTo(tempkey);
         nodeCounter = 0;
-
       }
-      nodeCounter++;
+
       switch (parser.next()) {
 
       case XMLStreamConstants.START_ELEMENT:

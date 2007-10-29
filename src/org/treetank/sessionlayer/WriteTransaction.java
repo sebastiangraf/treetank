@@ -343,22 +343,24 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final void commit() throws IOException {
+    // Commit uber page.
     final UberPage uberPage =
         ((WriteTransactionState) getTransactionState())
             .commit(getSessionState().getSessionConfiguration());
-    getSessionState().commitWriteTransaction(uberPage);
+
+    // Remember succesfully committed uber page in session state.
+    getSessionState().setLastCommittedUberPage(uberPage);
+
+    // Reset internal transaction state to new uber page.
+    setTransactionState(getSessionState().getWriteTransactionState());
   }
 
   /**
    * {@inheritDoc}
    */
   public final void abort() {
-    // Close own state.
-    getTransactionState().close();
-
-    // Callback on session to make sure everything is cleaned up.
-    getSessionState().abortWriteTransaction();
-    getSessionState().closeWriteTransaction();
+    // Reset internal transaction state to last committed uber page.
+    setTransactionState(getSessionState().getWriteTransactionState());
   }
 
   private final AbstractNode prepareCurrentNode() {

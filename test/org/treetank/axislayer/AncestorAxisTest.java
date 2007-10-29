@@ -85,6 +85,7 @@ public class AncestorAxisTest {
     assertEquals(false, axis4.hasNext());
 
     wtx.abort();
+    wtx.close();
     session.close();
 
   }

@@ -85,7 +85,7 @@ public final class SessionState {
    * @param sessionConfiguration Session configuration for the TreeTank.
    * @throws IOException if there is a problem with opening the file.
    */
-  public SessionState(final SessionConfiguration sessionConfiguration)
+  protected SessionState(final SessionConfiguration sessionConfiguration)
       throws IOException {
 
     mSessionConfiguration = sessionConfiguration;
@@ -152,11 +152,11 @@ public final class SessionState {
     file.close();
   }
 
-  public final IReadTransaction beginReadTransaction() {
+  protected final IReadTransaction beginReadTransaction() {
     return beginReadTransaction(mLastCommittedUberPage.getRevisionKey());
   }
 
-  public final IReadTransaction beginReadTransaction(final long revisionKey) {
+  protected final IReadTransaction beginReadTransaction(final long revisionKey) {
 
     try {
       mReadSemaphore.acquire();
@@ -171,7 +171,7 @@ public final class SessionState {
         revisionKey));
   }
 
-  public final IWriteTransaction beginWriteTransaction() {
+  protected final IWriteTransaction beginWriteTransaction() {
 
     if (mWriteSemaphore.availablePermits() == 0) {
       throw new IllegalStateException(
@@ -184,30 +184,34 @@ public final class SessionState {
       throw new RuntimeException(e);
     }
 
-    return new WriteTransaction(this, new WriteTransactionState(
-        mSessionConfiguration,
-        mPageCache,
-        new UberPage(mLastCommittedUberPage)));
+    return new WriteTransaction(this, getWriteTransactionState());
   }
 
-  public final void commitWriteTransaction(final UberPage lastCommittedUberPage)
-      throws IOException {
+  protected final WriteTransactionState getWriteTransactionState() {
+    return new WriteTransactionState(
+        mSessionConfiguration,
+        mPageCache,
+        new UberPage(mLastCommittedUberPage));
+  }
+
+  protected final UberPage getLastCommittedUberPage() {
+    return mLastCommittedUberPage;
+  }
+
+  protected final void setLastCommittedUberPage(
+      final UberPage lastCommittedUberPage) {
     mLastCommittedUberPage = lastCommittedUberPage;
   }
 
-  public final void abortWriteTransaction() {
-    // Nothing to do here
-  }
-
-  public final void closeWriteTransaction() {
+  protected final void closeWriteTransaction() {
     mWriteSemaphore.release();
   }
 
-  public final void closeReadTransaction() {
+  protected final void closeReadTransaction() {
     mReadSemaphore.release();
   }
 
-  public final void close() {
+  protected final void close() {
     if (mWriteSemaphore.drainPermits() != IConstants.MAX_WRITE_TRANSACTIONS) {
       throw new IllegalStateException("Session can not be closed due to a"
           + " running exclusive write transaction.");

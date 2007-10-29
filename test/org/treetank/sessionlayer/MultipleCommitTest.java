@@ -16,57 +16,49 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * $Id$
+ * $Id:UpdateTest.java 3019 2007-10-10 13:28:24Z kramis $
  */
 
-package org.treetank.axislayer;
-
-import static org.junit.Assert.assertEquals;
+package org.treetank.sessionlayer;
 
 import java.io.File;
 import java.io.IOException;
 
+import junit.framework.TestCase;
+
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.api.IAxis;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.sessionlayer.Session;
-import org.treetank.utils.TestDocument;
 
-public class NameTestAxisTest {
+public class MultipleCommitTest {
 
-  public static final String PATH =
-      "generated" + File.separator + "NameTestAxisTest.tnk";
+  public static final String TEST_PATH =
+      "generated" + File.separator + "MultipleCommitTest.tnk";
 
   @Before
   public void setUp() throws IOException {
-    new File(PATH).delete();
+    new File(TEST_PATH).delete();
   }
 
   @Test
-  public void testIterate() throws IOException {
+  public void test() throws IOException {
+    ISession session = Session.beginSession(TEST_PATH);
+    IWriteTransaction wtx = session.beginWriteTransaction();
+    TestCase.assertEquals(0L, wtx.getRevisionNumber());
+    TestCase.assertEquals(1L, wtx.getRevisionSize());
+    wtx.commit();
 
-    // Build simple test tree.
-    final ISession session = Session.beginSession(PATH);
-    final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
-
-    // Find descendants starting from nodeKey 0L (root).
-    wtx.moveToDocument();
-    final IAxis axis1 = new NameTestAxis(new DescendantAxis(wtx), "b");
-
-    assertEquals(true, axis1.hasNext());
-    assertEquals(3L, wtx.getNodeKey());
-
-    assertEquals(true, axis1.hasNext());
-    assertEquals(7L, wtx.getNodeKey());
-    assertEquals(false, axis1.hasNext());
-
+    wtx.insertElementAsFirstChild("foo", "", "");
+    TestCase.assertEquals(1L, wtx.getRevisionNumber());
+    TestCase.assertEquals(2L, wtx.getRevisionSize());
     wtx.abort();
-    wtx.close();
-    session.close();
 
+    TestCase.assertEquals(1L, wtx.getRevisionNumber());
+    TestCase.assertEquals(1L, wtx.getRevisionSize());
+    wtx.close();
+
+    session.close();
   }
 
 }

@@ -62,6 +62,7 @@ public class ValueTestAxisTest {
     assertEquals(false, axis1.hasNext());
 
     wtx.abort();
+    wtx.close();
     session.close();
 
   }

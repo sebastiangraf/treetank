@@ -21,7 +21,8 @@
 
 TreeTank 4.14
 -------------
-+ Split IWriteTransaction semantics: now use [commit|abort]() AND close();
++ Allow multiple commit() and abort() calls before close().
++ Split IWriteTransaction semantics: now use [commit|abort]() AND close().
 + Fixed bug in axis classes performing tests.
 + Removed checked exceptions from IWriteTransaction exception for commit()
   which must throw an IOException in case the writing to the file failed.

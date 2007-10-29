@@ -79,7 +79,7 @@ public class ReadTransactionState {
    * @param uberPage Uber page to start reading with.
    * @param revisionKey Key of revision to read from uber page.
    */
-  public ReadTransactionState(
+  protected ReadTransactionState(
       final SessionConfiguration sessionConfiguration,
       final Map<Long, AbstractPage> pageCache,
       final UberPage uberPage,
@@ -96,14 +96,14 @@ public class ReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public final RevisionRootPage getRevisionRootPage() {
+  protected final RevisionRootPage getRevisionRootPage() {
     return mRevisionRootPage;
   }
 
   /**
    * {@inheritDoc}
    */
-  public final INode getNode(final long nodeKey) {
+  protected final INode getNode(final long nodeKey) {
 
     // Calculate page and node part for given nodeKey.
     final long nodePageKey = nodePageKey(nodeKey);
@@ -123,7 +123,7 @@ public class ReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public final String getName(final int nameKey) {
+  protected final String getName(final int nameKey) {
     if (mNamePage == null) {
       mNamePage = dereferenceNamePage(mRevisionRootPage.getNamePageReference());
     }
@@ -133,7 +133,7 @@ public class ReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public void close() {
+  protected void close() {
     mPageReader.close();
   }
 
