@@ -116,8 +116,8 @@ public final class SessionConfiguration {
         tnk.close();
 
         // Fail if an old TreeTank file is encountered.
-        if (mVersionMajor != IConstants.LAST_VERSION_MAJOR
-            || mVersionMinor != IConstants.LAST_VERSION_MINOR) {
+        if (mVersionMajor < IConstants.LAST_VERSION_MAJOR
+            || mVersionMinor < IConstants.LAST_VERSION_MINOR) {
           throw new IllegalStateException("'"
               + mFileName
               + "' was created with TreeTank release "

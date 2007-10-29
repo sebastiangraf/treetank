@@ -51,16 +51,16 @@ import org.treetank.utils.FastByteArrayReader;
 public class ReadTransactionState {
 
   /** Session configuration. */
-  private final SessionConfiguration mSessionConfiguration;
+  private SessionConfiguration mSessionConfiguration;
 
   /** Shared page cache mapping start address of page to IPage. */
-  private final Map<Long, AbstractPage> mPageCache;
+  private Map<Long, AbstractPage> mPageCache;
 
   /** Page reader exclusively assigned to this transaction. */
-  private final PageReader mPageReader;
+  private PageReader mPageReader;
 
   /** Uber page this transaction is bound to. */
-  private final UberPage mUberPage;
+  private UberPage mUberPage;
 
   /** Revision root page as root of this transaction. */
   private RevisionRootPage mRevisionRootPage;
@@ -135,6 +135,15 @@ public class ReadTransactionState {
    */
   protected void close() {
     mPageReader.close();
+
+    // Immediately release all references.
+    mSessionConfiguration = null;
+    mPageCache = null;
+    mPageReader = null;
+    mUberPage = null;
+    mRevisionRootPage = null;
+    mNodePage = null;
+    mNamePage = null;
   }
 
   /**
