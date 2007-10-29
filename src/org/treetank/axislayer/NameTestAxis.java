@@ -22,6 +22,7 @@
 package org.treetank.axislayer;
 
 import org.treetank.api.IAxis;
+import org.treetank.api.INode;
 
 /**
  * <h1>NameTestAxis</h1>
@@ -56,16 +57,14 @@ public class NameTestAxis extends AbstractAxis {
    * {@inheritDoc}
    */
   public final boolean hasNext() {
-    while ((mAxis.hasNext()) && !(mAxis.next().getLocalPartKey() == mNameKey)) {
-      // Nothing to do here.
+    while (mAxis.hasNext()) {
+      final INode node = mAxis.next();
+      if (node.getLocalPartKey() == mNameKey) {
+        setCurrentNode(node);
+        return true;
+      }
     }
-    if (getTransaction().isSelected()) {
-      setCurrentNode(getTransaction().getNode());
-      return true;
-    } else {
-      setCurrentNode(null);
-      return false;
-    }
+    return false;
   }
 
 }

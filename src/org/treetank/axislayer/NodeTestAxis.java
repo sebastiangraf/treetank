@@ -22,6 +22,7 @@
 package org.treetank.axislayer;
 
 import org.treetank.api.IAxis;
+import org.treetank.api.INode;
 
 /**
  * <h1>NodeTestAxis</h1>
@@ -49,14 +50,14 @@ public class NodeTestAxis extends AbstractAxis {
    * {@inheritDoc}
    */
   public final boolean hasNext() {
-    // TODO The double next() call works but is not Iterator conformant.
-    if (mAxis.hasNext() && mAxis.next().isElement() || mAxis.next().isText()) {
-      setCurrentNode(getTransaction().getNode());
-      return true;
-    } else {
-      setCurrentNode(null);
-      return false;
+    while (mAxis.hasNext()) {
+      final INode node = mAxis.next();
+      if (node.isElement() || node.isText()) {
+        setCurrentNode(node);
+        return true;
+      }
     }
+    return false;
   }
 
 }
