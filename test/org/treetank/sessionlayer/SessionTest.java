@@ -77,6 +77,7 @@ public class SessionTest {
 
     final IWriteTransaction wtx = session.beginWriteTransaction();
     wtx.commit();
+    wtx.close();
     session.close();
 
     session = Session.beginSession(TEST_INSERT_CHILD_PATH);
@@ -175,6 +176,7 @@ public class SessionTest {
     assertEquals(0L, wtx1.getRevisionNumber());
     assertEquals(11L, wtx1.getRevisionSize());
     wtx1.commit();
+    wtx1.close();
 
     final IReadTransaction rtx1 = session.beginReadTransaction();
     assertEquals(0L, rtx1.getRevisionNumber());
@@ -215,6 +217,7 @@ public class SessionTest {
     TestDocument.create(wtx1);
     assertEquals(0L, wtx1.getRevisionNumber());
     wtx1.commit();
+    wtx1.close();
     session1.close();
 
     final ISession session2 = Session.beginSession(TEST_EXISTING_PATH);
@@ -239,6 +242,7 @@ public class SessionTest {
 
     rtx1.close();
     wtx2.commit();
+    wtx2.close();
     session2.close();
 
     final ISession session3 = Session.beginSession(TEST_EXISTING_PATH);
@@ -262,6 +266,7 @@ public class SessionTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
     wtx.commit();
+    wtx.close();
 
     final IReadTransaction rtx = session.beginReadTransaction();
     assertEquals(11L, rtx.getRevisionSize());

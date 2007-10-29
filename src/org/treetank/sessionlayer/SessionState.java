@@ -210,11 +210,11 @@ public final class SessionState {
   public final void close() {
     if (mWriteSemaphore.drainPermits() != IConstants.MAX_WRITE_TRANSACTIONS) {
       throw new IllegalStateException("Session can not be closed due to a"
-          + "running exclusive write transaction.");
+          + " running exclusive write transaction.");
     }
     if (mReadSemaphore.drainPermits() != IConstants.MAX_READ_TRANSACTIONS) {
-      throw new IllegalStateException("Session can not be closed due to one "
-          + "or more running share read transactions.");
+      throw new IllegalStateException("Session can not be closed due to one"
+          + " or more running share read transactions.");
     }
   }
 

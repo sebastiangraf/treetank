@@ -54,6 +54,7 @@ public class UpdateTest {
     // Document root.
     IWriteTransaction wtx = session.beginWriteTransaction();
     wtx.commit();
+    wtx.close();
 
     IReadTransaction rtx = session.beginReadTransaction();
     assertEquals(1L, rtx.getRevisionSize());
@@ -66,6 +67,7 @@ public class UpdateTest {
       wtx.moveToDocument();
       wtx.insertTextAsFirstChild(UTF.convert(Integer.toString(i)));
       wtx.commit();
+      wtx.close();
 
       rtx = session.beginReadTransaction();
       rtx.moveToDocument();
@@ -95,6 +97,7 @@ public class UpdateTest {
 
     IWriteTransaction wtx = session.beginWriteTransaction();
     wtx.commit();
+    wtx.close();
 
     wtx = session.beginWriteTransaction();
     TestCase.assertNotNull(wtx.moveToDocument());
@@ -107,6 +110,7 @@ public class UpdateTest {
     assertEquals(4L, wtx.insertElementAsRightSibling("", "", ""));
 
     wtx.commit();
+    wtx.close();
 
     final IWriteTransaction wtx2 = session.beginWriteTransaction();
 
@@ -114,6 +118,7 @@ public class UpdateTest {
     assertEquals(5L, wtx.insertElementAsFirstChild("", "", ""));
 
     wtx2.commit();
+    wtx2.close();
 
     session.close();
   }

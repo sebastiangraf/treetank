@@ -63,7 +63,7 @@ public class SAXHandlerTest {
         expectedSession.beginWriteTransaction();
     TestDocument.create(expectedWTX);
     expectedWTX.commit();
-    //    expectedWTX.close();
+    expectedWTX.close();
 
     // Setup parsed session.
     final SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
@@ -75,7 +75,7 @@ public class SAXHandlerTest {
     final IWriteTransaction wrtx = session.beginWriteTransaction();
     parser.parse(inputSource, new SAXHandler(wrtx));
     wrtx.commit();
-    //    wrtx.close();
+    wrtx.close();
 
     final IReadTransaction expectedTrx = expectedSession.beginReadTransaction();
     final IReadTransaction rtrx2 = session.beginReadTransaction();

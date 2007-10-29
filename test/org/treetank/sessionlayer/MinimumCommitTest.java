@@ -50,6 +50,7 @@ public class MinimumCommitTest {
     IWriteTransaction wtx = session.beginWriteTransaction();
     TestCase.assertEquals(0L, wtx.getRevisionNumber());
     wtx.commit();
+    wtx.close();
     session.close();
 
     session = Session.beginSession(TEST_PATH);
@@ -57,10 +58,12 @@ public class MinimumCommitTest {
     TestCase.assertEquals(1L, wtx.getRevisionNumber());
     TestDocument.create(wtx);
     wtx.commit();
+    wtx.close();
 
     wtx = session.beginWriteTransaction();
     TestCase.assertEquals(2L, wtx.getRevisionNumber());
     wtx.commit();
+    wtx.close();
 
     IReadTransaction rtx = session.beginReadTransaction();
     TestCase.assertEquals(2L, rtx.getRevisionNumber());
@@ -76,6 +79,7 @@ public class MinimumCommitTest {
     IWriteTransaction wtx = session.beginWriteTransaction();
     TestCase.assertEquals(0L, wtx.getRevisionTimestamp());
     wtx.commit();
+    wtx.close();
 
     IReadTransaction rtx = session.beginReadTransaction();
     if (rtx.getRevisionTimestamp() >= System.currentTimeMillis()) {
