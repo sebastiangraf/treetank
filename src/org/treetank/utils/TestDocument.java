@@ -67,6 +67,11 @@ public final class TestDocument {
           + "<p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b p:x=\"y\">"
           + "<c/>bar</b>oops3</p:a>";
 
+  public static final String XMLWITHOUTATTRIBUTES = 
+    "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+    + "<p:a>oops1<b>foo<c></c></b>oops2<b>"
+    + "<c></c>bar</b>oops3</p:a>";
+  
   /**
    * Hidden constructor.
    *
@@ -107,4 +112,28 @@ public final class TestDocument {
 
   }
 
+  
+  public static void createWithoutAttributes(final IWriteTransaction trx) throws Exception {
+    trx.insertElementAsFirstChild("a", "ns", "p");
+
+    trx.insertTextAsFirstChild(UTF.convert("oops1"));
+
+    trx.insertElementAsRightSibling("b", "", "");
+
+    trx.insertTextAsFirstChild(UTF.convert("foo"));
+    trx.insertElementAsRightSibling("c", "", "");
+    trx.moveToParent();
+
+    trx.insertTextAsRightSibling(UTF.convert("oops2"));
+
+    trx.insertElementAsRightSibling("b", "", "");
+
+    trx.insertElementAsFirstChild("c", "", "");
+    trx.insertTextAsRightSibling(UTF.convert("bar"));
+    trx.moveToParent();
+
+    trx.insertTextAsRightSibling(UTF.convert("oops3"));
+    
+  }
+  
 }
