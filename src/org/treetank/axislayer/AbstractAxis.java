@@ -22,6 +22,7 @@
 package org.treetank.axislayer;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.treetank.api.IAxis;
 import org.treetank.api.INode;
@@ -50,7 +51,7 @@ public abstract class AbstractAxis implements IAxis {
    */
   public AbstractAxis(final IReadTransaction rtx) {
     mRTX = rtx;
-    setCurrentNode(null);
+    mCurrentNode = null;
   }
 
   /**
@@ -71,7 +72,10 @@ public abstract class AbstractAxis implements IAxis {
    * {@inheritDoc}
    */
   public final INode next() {
-    return getCurrentNode();
+    if (mCurrentNode == null) {
+      throw new NoSuchElementException();
+    }
+    return mCurrentNode;
   }
 
   /**
