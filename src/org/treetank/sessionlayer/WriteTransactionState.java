@@ -203,9 +203,10 @@ public final class WriteTransactionState extends ReadTransactionState {
 
     if (uberPage.isBootstrap()) {
       file.setLength(IConstants.BEACON_START + IConstants.BEACON_LENGTH);
-      file.writeInt(IConstants.VERSION_MAJOR);
-      file.writeInt(IConstants.VERSION_MINOR);
-      // TODO: Write isEncrypted and isChecksummed.
+      file.writeInt(getSessionConfiguration().getVersionMajor());
+      file.writeInt(getSessionConfiguration().getVersionMinor());
+      file.writeBoolean(getSessionConfiguration().isChecksummed());
+      file.writeBoolean(getSessionConfiguration().isEncrypted());
     }
 
     // Recursively write indirectely referenced pages.

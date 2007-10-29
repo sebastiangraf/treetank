@@ -22,6 +22,9 @@
 package org.treetank.sessionlayer;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 
 import org.treetank.api.IConstants;
 
@@ -48,7 +51,13 @@ public final class SessionConfiguration {
   private final byte[] mEncryptionKey;
 
   /** Checksum algorithm. */
-  private final boolean mIsChecksummed;
+  private final boolean mChecksummed;
+
+  /** Major of TreeTank version of TreeTank file. */
+  private final int mVersionMajor;
+
+  /** Minor of TreeTank version of TreeTank file. */
+  private final int mVersionMinor;
 
   /**
    * Convenience constructor binding to .tnk file without encryption or
@@ -76,17 +85,77 @@ public final class SessionConfiguration {
    * 
    * @param path Path to .tnk file.
    * @param encryptionKey Key to encrypt .tnk file with.
-   * @param isChecksummed Does the .tnk file uses end-to-end checksumming?
+   * @param checksummed Does the .tnk file uses end-to-end checksumming?
    */
   public SessionConfiguration(
       final String path,
       final byte[] encryptionKey,
-      final boolean isChecksummed) {
+      final boolean checksummed) {
 
     // Make sure the path is legal.
     if ((path == null) || (!path.endsWith(".tnk"))) {
       throw new IllegalArgumentException(
           "Path to TreeTank file must not be null and end with '.tnk'.");
+    }
+
+    // Set path and name.
+    final File file = new File(path);
+    mFileName = file.getName();
+    mAbsolutePath = file.getAbsolutePath();
+
+    // Read version info from file if it contains a TreeTank.
+    try {
+      final RandomAccessFile tnk = new RandomAccessFile(path, "rw");
+
+      if (tnk.length() > 0L) {
+        tnk.seek(0L);
+        mVersionMajor = tnk.readInt();
+        mVersionMinor = tnk.readInt();
+        final boolean isChecksummed = tnk.readBoolean();
+        final boolean isEncrypted = tnk.readBoolean();
+        tnk.close();
+
+        // Fail if an old TreeTank file is encountered.
+        if (mVersionMajor != IConstants.LAST_VERSION_MAJOR
+            || mVersionMinor != IConstants.LAST_VERSION_MINOR) {
+          throw new IllegalStateException("'"
+              + mFileName
+              + "' was created with TreeTank release "
+              + mVersionMajor
+              + "."
+              + mVersionMinor
+              + " and is incompatible with release "
+              + IConstants.VERSION_MAJOR
+              + "."
+              + IConstants.VERSION_MINOR
+              + ".");
+        }
+
+        // Fail if the encryption info does not match.
+        if (isEncrypted != (encryptionKey != null)) {
+          throw new IllegalStateException("'"
+              + mFileName
+              + "' encryption mode does not match "
+              + "this session configuration.");
+        }
+
+        // Fail if the checksum info does not match.
+        if (isChecksummed != checksummed) {
+          throw new IllegalStateException("'"
+              + mFileName
+              + "' checksum mode does not match "
+              + "this session configuration.");
+        }
+      } else {
+        mVersionMajor = IConstants.VERSION_MAJOR;
+        mVersionMinor = IConstants.VERSION_MINOR;
+      }
+    } catch (FileNotFoundException fnfe) {
+      throw new IllegalStateException("Could not find '" + mFileName + "'.");
+    } catch (IOException ioe) {
+      throw new IllegalStateException("Could not read from '"
+          + mFileName
+          + "'.");
     }
 
     // Make sure the encryption key is properly set.
@@ -98,11 +167,8 @@ public final class SessionConfiguration {
               + " bytes long (encryption enabled).");
     }
 
-    final File tnk = new File(path);
-    mFileName = tnk.getName();
-    mAbsolutePath = tnk.getAbsolutePath();
     mEncryptionKey = encryptionKey;
-    mIsChecksummed = isChecksummed;
+    mChecksummed = checksummed;
   }
 
   /**
@@ -147,7 +213,25 @@ public final class SessionConfiguration {
    * @return True if the .tnk file is checksummed. False else.
    */
   public final boolean isChecksummed() {
-    return mIsChecksummed;
+    return mChecksummed;
+  }
+
+  /**
+   * TreeTank version major of TreeTank file.
+   * 
+   * @return Major of TreeTank version.
+   */
+  public final int getVersionMajor() {
+    return mVersionMajor;
+  }
+
+  /**
+   * TreeTank version minor of TreeTank file.
+   * 
+   * @return Minor of TreeTank version.
+   */
+  public final int getVersionMinor() {
+    return mVersionMinor;
   }
 
 }
