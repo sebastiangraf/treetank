@@ -72,8 +72,7 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
   @Override
   public void endDocument() throws SAXException {
     try {
-      //      mWTX.commit();
-      //      mWTX.close();
+      mWTX.commit();
     } catch (final Exception e) {
       throw new SAXException(e);
     }
@@ -114,10 +113,8 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
       long key;
       if (mLeftSiblingKeyStack.peek() == IConstants.NULL_KEY) {
         key =
-            mWTX.insertElementAsFirstChild(
-                localName,
-                uri,
-                qNameToPrefix(qName));
+            mWTX
+                .insertElementAsFirstChild(localName, uri, qNameToPrefix(qName));
 
       } else {
         key =
