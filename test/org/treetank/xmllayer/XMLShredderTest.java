@@ -66,7 +66,7 @@ public class XMLShredderTest {
         expectedSession.beginWriteTransaction();
     TestDocument.create(expectedTrx);
     expectedTrx.commit();
-    expectedTrx.moveToDocument();
+    expectedTrx.close();
 
     // Setup parsed session.
     XMLShredder.shred(XML, new SessionConfiguration(PATH));

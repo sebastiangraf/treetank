@@ -59,6 +59,7 @@ public class ThreadTest {
     IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
     wtx.commit();
+    wtx.close();
 
     ExecutorService taskExecutor = Executors.newFixedThreadPool(WORKER_COUNT);
     for (int i = 0; i < WORKER_COUNT; i++) {
@@ -67,6 +68,7 @@ public class ThreadTest {
       wtx.moveTo(10L);
       wtx.setValue(UTF.convert("value" + i));
       wtx.commit();
+      wtx.close();
     }
     taskExecutor.shutdown();
     taskExecutor.awaitTermination(1000000, TimeUnit.SECONDS);

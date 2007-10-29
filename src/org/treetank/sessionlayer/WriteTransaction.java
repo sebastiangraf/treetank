@@ -335,8 +335,8 @@ public final class WriteTransaction extends ReadTransaction
    */
   @Override
   public final void close() {
-    throw new IllegalAccessError(
-        "Write transactions must either be committed or aborted.");
+    getTransactionState().close();
+    getSessionState().closeWriteTransaction();
   }
 
   /**
@@ -346,13 +346,7 @@ public final class WriteTransaction extends ReadTransaction
     final UberPage uberPage =
         ((WriteTransactionState) getTransactionState())
             .commit(getSessionState().getSessionConfiguration());
-
-    // Close own state.
-    getTransactionState().close();
-
-    // Callback on session to make sure everything is cleaned up.
     getSessionState().commitWriteTransaction(uberPage);
-    getSessionState().closeWriteTransaction();
   }
 
   /**

@@ -57,6 +57,7 @@ public class SAXGeneratorTest {
       final IWriteTransaction wtx = session.beginWriteTransaction();
       TestDocument.create(wtx);
       wtx.commit();
+      wtx.close();
 
       // Generate from this session.
       final Writer writer = new StringWriter();

@@ -82,6 +82,7 @@ public final class XMLShredder {
       if (nodeCounter > IConstants.COMMIT_TRESHOLD) {
         final long tempkey = wtx.getNodeKey();
         wtx.commit();
+        wtx.close();
         wtx = session.beginWriteTransaction();
         // System.gc();
         wtx.moveTo(tempkey);
@@ -141,6 +142,7 @@ public final class XMLShredder {
       }
     }
     wtx.commit();
+    wtx.close();
     session.close();
     parser.close();
   }

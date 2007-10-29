@@ -138,6 +138,7 @@ public class ChildAxisTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
     wtx.commit();
+    wtx.close();
     session.close();
 
     final ISession session1 = Session.beginSession(TEST_PERSISTENT_PATH);
