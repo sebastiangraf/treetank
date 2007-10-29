@@ -136,6 +136,20 @@ public final class Session implements ISession {
   /**
    * {@inheritDoc}
    */
+  public final int getVersionMajor() {
+    return mSessionState.getSessionConfiguration().getVersionMajor();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final int getVersionMinor() {
+    return mSessionState.getSessionConfiguration().getVersionMinor();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final IReadTransaction beginReadTransaction() {
     return mSessionState.beginReadTransaction();
   }
