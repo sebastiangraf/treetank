@@ -48,7 +48,7 @@ import org.treetank.pagelayer.UberPage;
  */
 public final class WriteTransactionState extends ReadTransactionState {
 
-  private final PageWriter mPageWriter;
+  private PageWriter mPageWriter;
 
   /**
    * Standard constructor.
@@ -242,6 +242,7 @@ public final class WriteTransactionState extends ReadTransactionState {
    */
   protected void close() {
     mPageWriter.close();
+    mPageWriter = null;
     super.close();
   }
 

@@ -45,7 +45,7 @@ public final class Session implements ISession {
       new HashMap<String, ISession>();
 
   /** Session state. */
-  private final SessionState mSessionState;
+  private SessionState mSessionState;
 
   /**
    * Hidden constructor.
@@ -172,10 +172,11 @@ public final class Session implements ISession {
    * {@inheritDoc}
    */
   public final void close() {
-    mSessionState.close();
     SESSION_MAP.remove(mSessionState
         .getSessionConfiguration()
         .getAbsolutePath());
+    mSessionState.close();
+    mSessionState = null;
   }
 
   /**

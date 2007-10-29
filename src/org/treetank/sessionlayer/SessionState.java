@@ -47,16 +47,16 @@ import org.treetank.utils.FastWeakHashMap;
 public final class SessionState {
 
   /** Session configuration. */
-  private final SessionConfiguration mSessionConfiguration;
+  private SessionConfiguration mSessionConfiguration;
 
   /** Shared read-only page mPageCache. */
-  private final Map<Long, AbstractPage> mPageCache;
+  private Map<Long, AbstractPage> mPageCache;
 
   /** Write semaphore to assure only one exclusive write transaction exists. */
-  private final Semaphore mWriteSemaphore;
+  private Semaphore mWriteSemaphore;
 
   /** Read semaphore to control running read transactions. */
-  private final Semaphore mReadSemaphore;
+  private Semaphore mReadSemaphore;
 
   /** Strong reference to uber page before the begin of a write transaction. */
   private UberPage mLastCommittedUberPage;
@@ -220,6 +220,13 @@ public final class SessionState {
       throw new IllegalStateException("Session can not be closed due to one"
           + " or more running share read transactions.");
     }
+
+    // Immediately release all ressources.
+    mSessionConfiguration = null;
+    mPageCache = null;
+    mWriteSemaphore = null;
+    mReadSemaphore = null;
+    mLastCommittedUberPage = null;
   }
 
   protected final SessionConfiguration getSessionConfiguration() {

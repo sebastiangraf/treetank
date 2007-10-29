@@ -115,7 +115,7 @@ public class UpdateTest {
     final IWriteTransaction wtx2 = session.beginWriteTransaction();
 
     TestCase.assertNotNull(wtx2.moveToDocument());
-    assertEquals(5L, wtx.insertElementAsFirstChild("", "", ""));
+    assertEquals(5L, wtx2.insertElementAsFirstChild("", "", ""));
 
     wtx2.commit();
     wtx2.close();

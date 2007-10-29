@@ -36,7 +36,7 @@ import org.treetank.api.IReadTransaction;
 public class ReadTransaction implements IReadTransaction {
 
   /** Session state this write transaction is bound to. */
-  private final SessionState mSessionState;
+  private SessionState mSessionState;
 
   /** State of transaction including all cached stuff. */
   private ReadTransactionState mTransactionState;
@@ -390,6 +390,11 @@ public class ReadTransaction implements IReadTransaction {
 
     // Callback on session to make sure everything is cleaned up.
     mSessionState.closeReadTransaction();
+
+    // Immediately release all references.
+    mSessionState = null;
+    mTransactionState = null;
+    mCurrentNode = null;
   }
 
   /**
@@ -432,7 +437,7 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * Replace the state of the transaction.
    * 
-   * @param transactionState
+   * @param transactionState State of transaction.
    */
   protected final void setTransactionState(
       final ReadTransactionState transactionState) {
@@ -446,6 +451,15 @@ public class ReadTransaction implements IReadTransaction {
    */
   protected final SessionState getSessionState() {
     return mSessionState;
+  }
+
+  /**
+   * Set session state.
+   * 
+   * @param sessionState Session state to set.
+   */
+  protected final void setSessionState(final SessionState sessionState) {
+    mSessionState = sessionState;
   }
 
   /**

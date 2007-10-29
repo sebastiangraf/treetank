@@ -337,6 +337,9 @@ public final class WriteTransaction extends ReadTransaction
   public final void close() {
     getTransactionState().close();
     getSessionState().closeWriteTransaction();
+    setSessionState(null);
+    setTransactionState(null);
+    setCurrentNode(null);
   }
 
   /**
