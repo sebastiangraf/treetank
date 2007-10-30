@@ -57,7 +57,7 @@ public class UpdateTest {
     wtx.close();
 
     IReadTransaction rtx = session.beginReadTransaction();
-    assertEquals(1L, rtx.getRevisionSize());
+    assertEquals(2L, rtx.getRevisionSize());
     assertEquals(0L, rtx.getRevisionNumber());
     rtx.close();
 
@@ -73,7 +73,7 @@ public class UpdateTest {
       rtx.moveToDocument();
       rtx.moveToFirstChild();
       assertEquals(Integer.toString(i), new String(rtx.getValue()));
-      assertEquals(i + 1L, rtx.getRevisionSize());
+      assertEquals(i + 2L, rtx.getRevisionSize());
       assertEquals(i, rtx.getRevisionNumber());
       rtx.close();
     }
@@ -82,7 +82,7 @@ public class UpdateTest {
     rtx.moveToDocument();
     rtx.moveToFirstChild();
     assertEquals(Integer.toString(10), new String(rtx.getValue()));
-    assertEquals(11L, rtx.getRevisionSize());
+    assertEquals(12L, rtx.getRevisionSize());
     assertEquals(10L, rtx.getRevisionNumber());
     rtx.close();
 
@@ -101,13 +101,13 @@ public class UpdateTest {
 
     wtx = session.beginWriteTransaction();
     TestCase.assertNotNull(wtx.moveToDocument());
-    assertEquals(1L, wtx.insertElementAsFirstChild("", "", ""));
-
     assertEquals(2L, wtx.insertElementAsFirstChild("", "", ""));
+
     assertEquals(3L, wtx.insertElementAsFirstChild("", "", ""));
+    assertEquals(4L, wtx.insertElementAsFirstChild("", "", ""));
 
     TestCase.assertNotNull(wtx.moveToParent());
-    assertEquals(4L, wtx.insertElementAsRightSibling("", "", ""));
+    assertEquals(5L, wtx.insertElementAsRightSibling("", "", ""));
 
     wtx.commit();
     wtx.close();
@@ -115,7 +115,7 @@ public class UpdateTest {
     final IWriteTransaction wtx2 = session.beginWriteTransaction();
 
     TestCase.assertNotNull(wtx2.moveToDocument());
-    assertEquals(5L, wtx2.insertElementAsFirstChild("", "", ""));
+    assertEquals(6L, wtx2.insertElementAsFirstChild("", "", ""));
 
     wtx2.commit();
     wtx2.close();
@@ -135,8 +135,8 @@ public class UpdateTest {
       wtx.insertTextAsFirstChild(UTF.EMPTY);
     }
 
-    TestCase.assertNotNull(wtx.moveTo(0L));
-    assertEquals(0L, wtx.getNodeKey());
+    TestCase.assertNotNull(wtx.moveTo(2L));
+    assertEquals(2L, wtx.getNodeKey());
 
     wtx.abort();
     wtx.close();
@@ -169,7 +169,7 @@ public class UpdateTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
 
-    wtx.moveTo(1L);
+    wtx.moveTo(2L);
     wtx.remove();
 
     wtx.abort();

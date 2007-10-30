@@ -22,9 +22,10 @@
 package org.treetank.pagelayer;
 
 import org.treetank.api.IConstants;
+import org.treetank.nodelayer.AbstractNode;
 import org.treetank.nodelayer.DocumentNode;
 import org.treetank.nodelayer.ElementNode;
-import org.treetank.nodelayer.AbstractNode;
+import org.treetank.nodelayer.FullTextNode;
 import org.treetank.nodelayer.TextNode;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
@@ -82,6 +83,9 @@ public final class NodePage extends AbstractPage {
       case IConstants.TEXT:
         mNodes[offset] = new TextNode(keyBase + offset, in);
         break;
+      case IConstants.FULLTEXT:
+        mNodes[offset] = new FullTextNode(keyBase + offset, in);
+        break;
       default:
         throw new IllegalStateException(
             "Unsupported node kind encountered during read: " + kind);
@@ -100,21 +104,24 @@ public final class NodePage extends AbstractPage {
     mNodes = new AbstractNode[IConstants.NDP_NODE_COUNT];
 
     // Deep-copy all nodes.
-    for (int i = 0; i < IConstants.NDP_NODE_COUNT; i++) {
-      if (committedNodePage.mNodes[i] != null) {
-        final int kind = committedNodePage.mNodes[i].getKind();
+    for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
+      if (committedNodePage.mNodes[offset] != null) {
+        final int kind = committedNodePage.mNodes[offset].getKind();
         switch (kind) {
         case IConstants.UNKNOWN:
           // Was null node, do nothing here.
           break;
         case IConstants.DOCUMENT:
-          mNodes[i] = new DocumentNode(committedNodePage.mNodes[i]);
+          mNodes[offset] = new DocumentNode(committedNodePage.mNodes[offset]);
           break;
         case IConstants.ELEMENT:
-          mNodes[i] = new ElementNode(committedNodePage.mNodes[i]);
+          mNodes[offset] = new ElementNode(committedNodePage.mNodes[offset]);
           break;
         case IConstants.TEXT:
-          mNodes[i] = new TextNode(committedNodePage.mNodes[i]);
+          mNodes[offset] = new TextNode(committedNodePage.mNodes[offset]);
+          break;
+        case IConstants.FULLTEXT:
+          mNodes[offset] = new FullTextNode(committedNodePage.mNodes[offset]);
           break;
         default:
           throw new IllegalStateException(

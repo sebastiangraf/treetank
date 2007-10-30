@@ -129,6 +129,13 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
+  public final INode moveToFullText() {
+    return moveTo(IConstants.FULLTEXT_KEY);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final INode moveToParent() {
     return moveTo(mCurrentNode.getParentKey());
   }
@@ -339,6 +346,15 @@ public class ReadTransaction implements IReadTransaction {
     assertNotClosed();
     assertIsSelected();
     return mCurrentNode.isText();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final boolean isFullText() {
+    assertNotClosed();
+    assertIsSelected();
+    return mCurrentNode.isFullText();
   }
 
   /**

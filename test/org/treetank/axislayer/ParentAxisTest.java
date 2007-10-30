@@ -51,17 +51,17 @@ public class ParentAxisTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
 
-    wtx.moveTo(3L);
+    wtx.moveTo(4L);
     final IAxis axis1 = new ParentAxis(wtx);
     assertEquals(true, axis1.hasNext());
-    assertEquals(1L, wtx.getNodeKey());
+    assertEquals(2L, wtx.getNodeKey());
 
     assertEquals(false, axis1.hasNext());
 
-    wtx.moveTo(7L);
+    wtx.moveTo(8L);
     final IAxis axis2 = new ParentAxis(wtx);
     assertEquals(true, axis2.hasNext());
-    assertEquals(1L, wtx.getNodeKey());
+    assertEquals(2L, wtx.getNodeKey());
 
     assertEquals(false, axis2.hasNext());
 

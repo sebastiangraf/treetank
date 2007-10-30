@@ -58,11 +58,11 @@ public class ChildAxisTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
 
-    wtx.moveTo(1L);
+    wtx.moveTo(2L);
     final IAxis axis1 = new ChildAxis(wtx);
     assertEquals(true, axis1.hasNext());
     INode node = axis1.next();
-    assertEquals(2L, node.getNodeKey());
+    assertEquals(3L, node.getNodeKey());
     assertEquals(3, node.getKind());
     assertEquals("oops1", new String(
         node.getValue(),
@@ -70,7 +70,7 @@ public class ChildAxisTest {
 
     assertEquals(true, axis1.hasNext());
     node = axis1.next();
-    assertEquals(3L, node.getNodeKey());
+    assertEquals(4L, node.getNodeKey());
     assertEquals(1, node.getKind());
     assertEquals("b", wtx.nameForKey(node.getLocalPartKey()));
     assertEquals("", wtx.nameForKey(node.getURIKey()));
@@ -78,7 +78,7 @@ public class ChildAxisTest {
 
     assertEquals(true, axis1.hasNext());
     node = axis1.next();
-    assertEquals(6L, node.getNodeKey());
+    assertEquals(7L, node.getNodeKey());
     assertEquals(3, node.getKind());
     assertEquals("oops2", new String(
         node.getValue(),
@@ -86,7 +86,7 @@ public class ChildAxisTest {
 
     assertEquals(true, axis1.hasNext());
     node = axis1.next();
-    assertEquals(7L, node.getNodeKey());
+    assertEquals(8L, node.getNodeKey());
     assertEquals(1, node.getKind());
     assertEquals("b", wtx.nameForKey(node.getLocalPartKey()));
     assertEquals("", wtx.nameForKey(node.getURIKey()));
@@ -94,7 +94,7 @@ public class ChildAxisTest {
 
     assertEquals(true, axis1.hasNext());
     node = axis1.next();
-    assertEquals(10L, node.getNodeKey());
+    assertEquals(11L, node.getNodeKey());
     assertEquals(3, node.getKind());
     assertEquals("oops3", new String(
         node.getValue(),
@@ -102,11 +102,11 @@ public class ChildAxisTest {
 
     assertEquals(false, axis1.hasNext());
 
-    wtx.moveTo(3L);
+    wtx.moveTo(4L);
     final IAxis axis2 = new ChildAxis(wtx);
     assertEquals(true, axis2.hasNext());
     node = axis2.next();
-    assertEquals(4L, node.getNodeKey());
+    assertEquals(5L, node.getNodeKey());
     assertEquals(3, node.getKind());
     assertEquals(
         "foo",
@@ -114,7 +114,7 @@ public class ChildAxisTest {
 
     assertEquals(true, axis2.hasNext());
     node = axis2.next();
-    assertEquals(5L, node.getNodeKey());
+    assertEquals(6L, node.getNodeKey());
     assertEquals(1, node.getKind());
     assertEquals("c", wtx.nameForKey(node.getLocalPartKey()));
     assertEquals("", wtx.nameForKey(node.getURIKey()));
@@ -122,7 +122,7 @@ public class ChildAxisTest {
 
     assertEquals(false, axis2.hasNext());
 
-    wtx.moveTo(10L);
+    wtx.moveTo(11L);
     final IAxis axis4 = new ChildAxis(wtx);
     assertEquals(false, axis4.hasNext());
 
@@ -145,11 +145,11 @@ public class ChildAxisTest {
     final ISession session1 = Session.beginSession(TEST_PERSISTENT_PATH);
     final IReadTransaction rtx = session1.beginReadTransaction();
 
-    rtx.moveTo(1L);
+    rtx.moveTo(2L);
     final IAxis axis1 = new ChildAxis(rtx);
     assertEquals(true, axis1.hasNext());
     INode node = axis1.next();
-    assertEquals(2L, node.getNodeKey());
+    assertEquals(3L, node.getNodeKey());
     assertEquals(3, node.getKind());
     assertEquals("oops1", new String(
         node.getValue(),
@@ -157,7 +157,7 @@ public class ChildAxisTest {
 
     assertEquals(true, axis1.hasNext());
     node = axis1.next();
-    assertEquals(3L, node.getNodeKey());
+    assertEquals(4L, node.getNodeKey());
     assertEquals(1, node.getKind());
     assertEquals("b", rtx.nameForKey(node.getLocalPartKey()));
     assertEquals("", rtx.nameForKey(node.getURIKey()));
@@ -165,7 +165,7 @@ public class ChildAxisTest {
 
     assertEquals(true, axis1.hasNext());
     node = axis1.next();
-    assertEquals(6L, node.getNodeKey());
+    assertEquals(7L, node.getNodeKey());
     assertEquals(3, node.getKind());
     assertEquals("oops2", new String(
         node.getValue(),
@@ -173,7 +173,7 @@ public class ChildAxisTest {
 
     assertEquals(true, axis1.hasNext());
     node = axis1.next();
-    assertEquals(7L, node.getNodeKey());
+    assertEquals(8L, node.getNodeKey());
     assertEquals(1, node.getKind());
     assertEquals("b", rtx.nameForKey(node.getLocalPartKey()));
     assertEquals("", rtx.nameForKey(node.getURIKey()));
@@ -181,7 +181,7 @@ public class ChildAxisTest {
 
     assertEquals(true, axis1.hasNext());
     node = axis1.next();
-    assertEquals(10L, node.getNodeKey());
+    assertEquals(11L, node.getNodeKey());
     assertEquals(3, node.getKind());
     assertEquals("oops3", new String(
         node.getValue(),
@@ -189,11 +189,11 @@ public class ChildAxisTest {
 
     assertEquals(false, axis1.hasNext());
 
-    rtx.moveTo(3L);
+    rtx.moveTo(4L);
     final IAxis axis2 = new ChildAxis(rtx);
     assertEquals(true, axis2.hasNext());
     node = axis2.next();
-    assertEquals(4L, node.getNodeKey());
+    assertEquals(5L, node.getNodeKey());
     assertEquals(3, node.getKind());
     assertEquals(
         "foo",
@@ -201,7 +201,7 @@ public class ChildAxisTest {
 
     assertEquals(true, axis2.hasNext());
     node = axis2.next();
-    assertEquals(5L, node.getNodeKey());
+    assertEquals(6L, node.getNodeKey());
     assertEquals(1, node.getKind());
     assertEquals("c", rtx.nameForKey(node.getLocalPartKey()));
     assertEquals("", rtx.nameForKey(node.getURIKey()));
@@ -209,7 +209,7 @@ public class ChildAxisTest {
 
     assertEquals(false, axis2.hasNext());
 
-    rtx.moveTo(10L);
+    rtx.moveTo(11L);
     final IAxis axis4 = new ChildAxis(rtx);
     assertEquals(false, axis4.hasNext());
 
