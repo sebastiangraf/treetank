@@ -28,10 +28,10 @@ import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
 /**
- * <h1>ElementNode</h1>
+ * <h1>FullTextRootNode</h1>
  * 
  * <p>
- * Node representing an XML element.
+ * Node representing a fulltext root node.
  * </p>
  */
 public final class FullTextRootNode extends AbstractNode {

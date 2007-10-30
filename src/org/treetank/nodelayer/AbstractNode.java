@@ -85,6 +85,13 @@ public abstract class AbstractNode implements INode {
   /**
    * {@inheritDoc}
    */
+  public boolean isFullTextAttribute() {
+    return false;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final long getNodeKey() {
     return mNodeKey;
   }
