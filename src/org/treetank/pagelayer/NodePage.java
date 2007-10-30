@@ -25,7 +25,7 @@ import org.treetank.api.IConstants;
 import org.treetank.nodelayer.AbstractNode;
 import org.treetank.nodelayer.DocumentRootNode;
 import org.treetank.nodelayer.ElementNode;
-import org.treetank.nodelayer.FullTextNode;
+import org.treetank.nodelayer.FullTextRootNode;
 import org.treetank.nodelayer.TextNode;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
@@ -84,7 +84,7 @@ public final class NodePage extends AbstractPage {
         mNodes[offset] = new TextNode(keyBase + offset, in);
         break;
       case IConstants.FULLTEXT_ROOT:
-        mNodes[offset] = new FullTextNode(keyBase + offset, in);
+        mNodes[offset] = new FullTextRootNode(keyBase + offset, in);
         break;
       default:
         throw new IllegalStateException(
@@ -121,7 +121,7 @@ public final class NodePage extends AbstractPage {
           mNodes[offset] = new TextNode(committedNodePage.mNodes[offset]);
           break;
         case IConstants.FULLTEXT_ROOT:
-          mNodes[offset] = new FullTextNode(committedNodePage.mNodes[offset]);
+          mNodes[offset] = new FullTextRootNode(committedNodePage.mNodes[offset]);
           break;
         default:
           throw new IllegalStateException(
