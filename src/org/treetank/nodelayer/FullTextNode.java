@@ -70,9 +70,7 @@ public final class FullTextNode extends AbstractNode {
       final long firstChildKey,
       final long leftSiblingKey,
       final long rightSiblingKey,
-      final int localPartKey,
-      final int uriKey,
-      final int prefixKey) {
+      final int localPartKey) {
     super(nodeKey);
     mParentKey = parentKey;
     mFirstChildKey = firstChildKey;
