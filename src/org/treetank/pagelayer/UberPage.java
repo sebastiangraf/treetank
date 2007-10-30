@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import org.treetank.api.IConstants;
 import org.treetank.nodelayer.DocumentRootNode;
+import org.treetank.nodelayer.FullTextRootNode;
 import org.treetank.sessionlayer.WriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
@@ -84,11 +85,11 @@ public final class UberPage extends AbstractPage {
       reference = page.getReference(0);
     }
 
-    NodePage ndp = new NodePage(IConstants.DOCUMENT_PAGE_KEY);
+    NodePage ndp = new NodePage(IConstants.ROOT_PAGE_KEY);
     reference.setPage(ndp);
 
     ndp.setNode((int) IConstants.DOCUMENT_ROOT_KEY, new DocumentRootNode());
-    ndp.setNode((int) IConstants.FULLTEXT_ROOT_KEY, new DocumentRootNode());
+    ndp.setNode((int) IConstants.FULLTEXT_ROOT_KEY, new FullTextRootNode());
 
     rrp.incrementNodeCountAndMaxNodeKey();
     rrp.incrementNodeCountAndMaxNodeKey();

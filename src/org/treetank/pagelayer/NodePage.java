@@ -84,7 +84,7 @@ public final class NodePage extends AbstractPage {
         mNodes[offset] = new TextNode(keyBase + offset, in);
         break;
       case IConstants.FULLTEXT_ROOT:
-        mNodes[offset] = new FullTextRootNode(keyBase + offset, in);
+        mNodes[offset] = new FullTextRootNode(in);
         break;
       default:
         throw new IllegalStateException(
@@ -112,7 +112,8 @@ public final class NodePage extends AbstractPage {
           // Was null node, do nothing here.
           break;
         case IConstants.DOCUMENT_ROOT:
-          mNodes[offset] = new DocumentRootNode(committedNodePage.mNodes[offset]);
+          mNodes[offset] =
+              new DocumentRootNode(committedNodePage.mNodes[offset]);
           break;
         case IConstants.ELEMENT:
           mNodes[offset] = new ElementNode(committedNodePage.mNodes[offset]);
@@ -121,7 +122,8 @@ public final class NodePage extends AbstractPage {
           mNodes[offset] = new TextNode(committedNodePage.mNodes[offset]);
           break;
         case IConstants.FULLTEXT_ROOT:
-          mNodes[offset] = new FullTextRootNode(committedNodePage.mNodes[offset]);
+          mNodes[offset] =
+              new FullTextRootNode(committedNodePage.mNodes[offset]);
           break;
         default:
           throw new IllegalStateException(
