@@ -351,6 +351,15 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
+  public final boolean isFullText() {
+    assertNotClosed();
+    assertIsSelected();
+    return mCurrentNode.isFullText();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final boolean isFullTextRoot() {
     assertNotClosed();
     assertIsSelected();
