@@ -287,6 +287,13 @@ public interface IReadTransaction {
   public boolean isText();
 
   /**
+   * Is node a full text?
+   * 
+   * @return True if node is full text. False else.
+   */
+  public boolean isFullText();
+
+  /**
    * Is node a full text root?
    * 
    * @return True if node is full text root. False else.

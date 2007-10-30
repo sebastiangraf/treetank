@@ -55,6 +55,13 @@ public interface INode {
    * @return True if node is text. False else.
    */
   public boolean isText();
+  
+  /**
+   * Is node a full text?
+   * 
+   * @return True if node is full text. False else.
+   */
+  public boolean isFullText();
 
   /**
    * Is node a full text root?

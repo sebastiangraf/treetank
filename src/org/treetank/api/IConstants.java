@@ -138,11 +138,14 @@ public interface IConstants {
   /** INode kind is comment. */
   public static final int COMMENT = 8;
 
-  /** INode kind is document. */
+  /** INode kind is document root. */
   public static final int DOCUMENT_ROOT = 9;
 
-  /** INode kind is fulltext. */
+  /** INode kind is fulltext root. */
   public static final int FULLTEXT_ROOT = 13;
+
+  /** INode kind is fulltext. */
+  public static final int FULLTEXT = 14;
 
   //--- XML Layer --------------------------------------------------------------
 
