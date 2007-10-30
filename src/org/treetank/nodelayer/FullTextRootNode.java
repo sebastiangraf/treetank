@@ -36,75 +36,50 @@ import org.treetank.utils.FastByteArrayWriter;
  */
 public final class FullTextRootNode extends AbstractNode {
 
-  /** Key of parent node. */
-  private long mParentKey;
-
   /** Key of first child. */
   private long mFirstChildKey;
 
-  /** Key of left sibling. */
-  private long mLeftSiblingKey;
-
-  /** Key of right sibling. */
-  private long mRightSiblingKey;
-
-  /** Key of character. */
-  private int mLocalPartKey;
+  /** Child count including element and text nodes. */
+  private long mChildCount;
 
   /**
-   * Create new element node.
+   * Constructor to create full text root node.
    * 
-   * @param nodeKey Key of node.
-   * @param parentKey Key of parent.
    * @param firstChildKey Key of first child.
-   * @param leftSiblingKey Key of left sibling.
-   * @param rightSiblingKey Key of right sibling.
-   * @param localPartKey Key of local part.
    */
-  public FullTextRootNode(
-      final long nodeKey,
-      final long parentKey,
-      final long firstChildKey,
-      final long leftSiblingKey,
-      final long rightSiblingKey,
-      final int localPartKey) {
-    super(nodeKey);
-    mParentKey = parentKey;
+  public FullTextRootNode(final long firstChildKey) {
+    super(IConstants.FULLTEXT_ROOT_KEY);
     mFirstChildKey = firstChildKey;
-    mLeftSiblingKey = leftSiblingKey;
-    mRightSiblingKey = rightSiblingKey;
-    mLocalPartKey = localPartKey;
+    mChildCount = 0;
   }
 
   /**
-   * Clone element node.
+   * Create new fulltext root node.
+   */
+  public FullTextRootNode() {
+    this(IConstants.NULL_KEY);
+  }
+
+  /**
+   * Clone full text root node.
    * 
-   * @param node Element node to clone.
+   * @param node Node to clone.
    */
   public FullTextRootNode(final INode node) {
     super(node.getNodeKey());
-    mParentKey = node.getParentKey();
     mFirstChildKey = node.getFirstChildKey();
-    mLeftSiblingKey = node.getLeftSiblingKey();
-    mRightSiblingKey = node.getRightSiblingKey();
-    mLocalPartKey = node.getLocalPartKey();
+    mChildCount = node.getChildCount();
   }
 
   /**
-   * Read element node.
+   * Read full text root node.
    * 
-   * @param nodeKey Key to assign to read element node.
-   * @param in Input bytes to read from.
+   * @param in Byte input to read node from.
    */
-  public FullTextRootNode(final long nodeKey, final FastByteArrayReader in) {
-    super(nodeKey);
-
-    // Read according to node kind.
-    mParentKey = getNodeKey() - in.readVarLong();
-    mFirstChildKey = getNodeKey() - in.readVarLong();
-    mLeftSiblingKey = getNodeKey() - in.readVarLong();
-    mRightSiblingKey = getNodeKey() - in.readVarLong();
-    mLocalPartKey = in.readVarInt();
+  public FullTextRootNode(final FastByteArrayReader in) {
+    super(IConstants.FULLTEXT_ROOT_KEY);
+    mFirstChildKey = in.readVarLong();
+    mChildCount = in.readVarLong();
   }
 
   /**
@@ -113,38 +88,6 @@ public final class FullTextRootNode extends AbstractNode {
   @Override
   public final boolean isFullTextRoot() {
     return true;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final boolean hasParent() {
-    return (mParentKey != IConstants.NULL_KEY);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final long getParentKey() {
-    return mParentKey;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final INode getParent(final IReadTransaction rtx) {
-    return rtx.moveTo(mParentKey);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final void setParentKey(final long parentKey) {
-    mParentKey = parentKey;
   }
 
   /**
@@ -183,64 +126,32 @@ public final class FullTextRootNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final boolean hasLeftSibling() {
-    return (mLeftSiblingKey != IConstants.NULL_KEY);
+  public final long getChildCount() {
+    return mChildCount;
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public final long getLeftSiblingKey() {
-    return mLeftSiblingKey;
+  public final void setChildCount(final long childCount) {
+    mChildCount = childCount;
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public final INode getLeftSibling(final IReadTransaction rtx) {
-    return rtx.moveTo(mLeftSiblingKey);
+  public final void incrementChildCount() {
+    mChildCount += 1;
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public final void setLeftSiblingKey(final long leftSiblingKey) {
-    mLeftSiblingKey = leftSiblingKey;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final boolean hasRightSibling() {
-    return (mRightSiblingKey != IConstants.NULL_KEY);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final long getRightSiblingKey() {
-    return mRightSiblingKey;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final INode getRightSibling(final IReadTransaction rtx) {
-    return rtx.moveTo(mRightSiblingKey);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final void setRightSiblingKey(final long rightSiblingKey) {
-    mRightSiblingKey = rightSiblingKey;
+  public final void decrementChildCount() {
+    mChildCount -= 1;
   }
 
   /**
@@ -255,36 +166,9 @@ public final class FullTextRootNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final int getLocalPartKey() {
-    return mLocalPartKey;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final String getLocalPart(final IReadTransaction rtx) {
-    return rtx.nameForKey(mLocalPartKey);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final void setLocalPartKey(final int localPartKey) {
-    mLocalPartKey = localPartKey;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
   public final void serialize(final FastByteArrayWriter out) {
-    out.writeVarLong(getNodeKey() - mParentKey);
-    out.writeVarLong(getNodeKey() - mFirstChildKey);
-    out.writeVarLong(getNodeKey() - mLeftSiblingKey);
-    out.writeVarLong(getNodeKey() - mRightSiblingKey);
-    out.writeVarInt(mLocalPartKey);
+    out.writeVarLong(mFirstChildKey);
+    out.writeVarLong(mChildCount);
   }
 
   /**
@@ -292,16 +176,12 @@ public final class FullTextRootNode extends AbstractNode {
    */
   @Override
   public String toString() {
-    return "Node "
+    return "FullTextRootNode "
         + "\n\tnodeKey: "
-        + this.getNodeKey()
-        + "\n\tparentKey: "
-        + this.mParentKey
+        + getNodeKey()
+        + "\n\tchildcount: "
+        + mChildCount
         + "\n\tfirstChildKey: "
-        + this.mFirstChildKey
-        + "\n\tleftSiblingKey: "
-        + this.mLeftSiblingKey
-        + "\n\trightSiblingKey: "
-        + this.mRightSiblingKey;
+        + mFirstChildKey;
   }
 }

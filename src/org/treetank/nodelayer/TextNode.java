@@ -240,7 +240,7 @@ public final class TextNode extends AbstractNode {
    */
   @Override
   public String toString() {
-    return "Node "
+    return "TextNode "
         + "\n\tnodeKey: "
         + getNodeKey()
         + "\n\tparentKey: "

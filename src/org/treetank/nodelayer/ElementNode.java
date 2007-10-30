@@ -541,7 +541,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public String toString() {
-    return "Node "
+    return "ElementNode "
         + "\n\tnodeKey: "
         + this.getNodeKey()
         + "\n\tchildcount: "

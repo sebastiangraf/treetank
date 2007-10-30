@@ -155,22 +155,24 @@ public final class WriteTransactionState extends ReadTransactionState {
       final long rightSiblingKey,
       final int localPartKey) {
 
-    getRevisionRootPage().incrementNodeCountAndMaxNodeKey();
+    //    getRevisionRootPage().incrementNodeCountAndMaxNodeKey();
+    //
+    //    final FullTextRootNode node =
+    //        new FullTextRootNode(
+    //            getRevisionRootPage().getMaxNodeKey(),
+    //            parentKey,
+    //            firstChildKey,
+    //            leftSiblingKey,
+    //            rightSiblingKey,
+    //            localPartKey);
+    //
+    //    // Write node into node page.
+    //    prepareNodePage(nodePageKey(getRevisionRootPage().getMaxNodeKey()))
+    //        .setNode(nodePageOffset(getRevisionRootPage().getMaxNodeKey()), node);
+    //
+    //    return node;
 
-    final FullTextRootNode node =
-        new FullTextRootNode(
-            getRevisionRootPage().getMaxNodeKey(),
-            parentKey,
-            firstChildKey,
-            leftSiblingKey,
-            rightSiblingKey,
-            localPartKey);
-
-    // Write node into node page.
-    prepareNodePage(nodePageKey(getRevisionRootPage().getMaxNodeKey()))
-        .setNode(nodePageOffset(getRevisionRootPage().getMaxNodeKey()), node);
-
-    return node;
+    return null;
   }
 
   /**

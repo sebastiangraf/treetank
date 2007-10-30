@@ -177,7 +177,7 @@ public final class DocumentRootNode extends AbstractNode {
    */
   @Override
   public String toString() {
-    return "Node "
+    return "DocumentRootNode "
         + "\n\tnodeKey: "
         + getNodeKey()
         + "\n\tchildcount: "

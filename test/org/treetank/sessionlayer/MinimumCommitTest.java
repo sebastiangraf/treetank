@@ -50,6 +50,7 @@ public class MinimumCommitTest {
     IWriteTransaction wtx = session.beginWriteTransaction();
     TestCase.assertEquals(0L, wtx.getRevisionNumber());
     wtx.commit();
+
     wtx.close();
     session.close();
 
