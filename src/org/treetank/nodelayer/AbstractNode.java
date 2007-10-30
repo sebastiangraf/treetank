@@ -204,6 +204,13 @@ public abstract class AbstractNode implements INode {
   /**
    * {@inheritDoc}
    */
+  public int getFullTextAttributeCount() {
+    return 0;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public INode getAttribute(final int index) {
     return null;
   }
@@ -212,6 +219,13 @@ public abstract class AbstractNode implements INode {
    * {@inheritDoc}
    */
   public NamespaceNode getNamespace(final int index) {
+    return null;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public INode getFullTextAttribute(final long nodeKey) {
     return null;
   }
 
@@ -321,6 +335,20 @@ public abstract class AbstractNode implements INode {
   }
 
   public void insertNamespace(final int uriKey, final int prefixKey) {
+  }
+
+  public void setFullTextAttribute(
+      final long nodeKey,
+      final long parentKey,
+      final long leftSiblingKey,
+      final long rightSiblingKey) {
+  }
+
+  public void insertFullTextAttribute(
+      final long nodeKey,
+      final long parentKey,
+      final long leftSiblingKey,
+      final long rightSiblingKey) {
   }
 
   public void setKind(final byte kind) {
