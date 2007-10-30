@@ -39,9 +39,6 @@ public final class FullTextAttributeNode extends AbstractNode {
   /** Key of parent node. */
   private long mParentKey;
 
-  /** Key of first child. */
-  private long mFirstChildKey;
-
   /** Key of left sibling. */
   private long mLeftSiblingKey;
 
@@ -53,19 +50,16 @@ public final class FullTextAttributeNode extends AbstractNode {
    * 
    * @param nodeKey Key of node.
    * @param parentKey Key of parent.
-   * @param firstChildKey Key of first child.
    * @param leftSiblingKey Key of left sibling.
    * @param rightSiblingKey Key of right sibling.
    */
   public FullTextAttributeNode(
       final long nodeKey,
       final long parentKey,
-      final long firstChildKey,
       final long leftSiblingKey,
       final long rightSiblingKey) {
     super(nodeKey);
     mParentKey = parentKey;
-    mFirstChildKey = firstChildKey;
     mLeftSiblingKey = leftSiblingKey;
     mRightSiblingKey = rightSiblingKey;
   }
@@ -78,7 +72,6 @@ public final class FullTextAttributeNode extends AbstractNode {
   public FullTextAttributeNode(final INode node) {
     super(node.getNodeKey());
     mParentKey = node.getParentKey();
-    mFirstChildKey = node.getFirstChildKey();
     mLeftSiblingKey = node.getLeftSiblingKey();
     mRightSiblingKey = node.getRightSiblingKey();
   }
@@ -94,7 +87,6 @@ public final class FullTextAttributeNode extends AbstractNode {
 
     // Read according to node kind.
     mParentKey = getNodeKey() - in.readVarLong();
-    mFirstChildKey = getNodeKey() - in.readVarLong();
     mLeftSiblingKey = getNodeKey() - in.readVarLong();
     mRightSiblingKey = getNodeKey() - in.readVarLong();
 
@@ -138,38 +130,6 @@ public final class FullTextAttributeNode extends AbstractNode {
   @Override
   public final void setParentKey(final long parentKey) {
     mParentKey = parentKey;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final boolean hasFirstChild() {
-    return (mFirstChildKey != IConstants.NULL_KEY);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final long getFirstChildKey() {
-    return mFirstChildKey;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final INode getFirstChild(final IReadTransaction rtx) {
-    return rtx.moveTo(mFirstChildKey);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final void setFirstChildKey(final long firstChildKey) {
-    mFirstChildKey = firstChildKey;
   }
 
   /**
@@ -250,7 +210,6 @@ public final class FullTextAttributeNode extends AbstractNode {
   @Override
   public final void serialize(final FastByteArrayWriter out) {
     out.writeVarLong(getNodeKey() - mParentKey);
-    out.writeVarLong(getNodeKey() - mFirstChildKey);
     out.writeVarLong(getNodeKey() - mLeftSiblingKey);
     out.writeVarLong(getNodeKey() - mRightSiblingKey);
   }
@@ -265,8 +224,6 @@ public final class FullTextAttributeNode extends AbstractNode {
         + this.getNodeKey()
         + "\n\tparentKey: "
         + this.mParentKey
-        + "\n\tfirstChildKey: "
-        + this.mFirstChildKey
         + "\n\tleftSiblingKey: "
         + this.mLeftSiblingKey
         + "\n\trightSiblingKey: "

@@ -194,6 +194,13 @@ public interface INode {
    * @return Namespace declaration count of currently selected node.
    */
   public int getNamespaceCount();
+  
+  /**
+   * Get fulltext attribute count of currently selected node.
+   * 
+   * @return Fulltext attribute count of currently selected node.
+   */
+  public int getFullTextAttributeCount();
 
   /**
    * Get attribute with given index.
@@ -210,6 +217,14 @@ public interface INode {
    * @return INode for given index.
    */
   public INode getNamespace(final int index);
+  
+  /**
+   * Get fulltext attribute with given index.
+   * 
+   * @param nodeKey Key of fulltext attribute to return.
+   * @return INode for given index.
+   */
+  public INode getFullTextAttribute(final long nodeKey);
 
   /**
    * Get kind of node.

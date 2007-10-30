@@ -57,6 +57,9 @@ public final class ElementNode extends AbstractNode {
   /** Namespaces of node. */
   private NamespaceNode[] mNamespaces;
 
+  /** Fulltext of node. */
+  private FullTextAttributeNode[] mFullTextAttributes;
+
   /** Key of local part. */
   private int mLocalPartKey;
 
@@ -95,6 +98,7 @@ public final class ElementNode extends AbstractNode {
     mChildCount = 0;
     mAttributes = new AttributeNode[0];
     mNamespaces = new NamespaceNode[0];
+    mFullTextAttributes = new FullTextAttributeNode[0];
     mLocalPartKey = localPartKey;
     mURIKey = uriKey;
     mPrefixKey = prefixKey;
@@ -119,6 +123,12 @@ public final class ElementNode extends AbstractNode {
     mNamespaces = new NamespaceNode[node.getNamespaceCount()];
     for (int i = 0, l = mNamespaces.length; i < l; i++) {
       mNamespaces[i] = new NamespaceNode(node.getNamespace(i));
+    }
+    mFullTextAttributes =
+        new FullTextAttributeNode[node.getFullTextAttributeCount()];
+    for (int i = 0, l = mFullTextAttributes.length; i < l; i++) {
+      mFullTextAttributes[i] =
+          new FullTextAttributeNode(node.getFullTextAttribute(i));
     }
     mLocalPartKey = node.getLocalPartKey();
     mURIKey = node.getURIKey();
@@ -154,6 +164,12 @@ public final class ElementNode extends AbstractNode {
     mNamespaces = new NamespaceNode[in.readByte()];
     for (int i = 0, l = mNamespaces.length; i < l; i++) {
       mNamespaces[i] = new NamespaceNode(in.readVarInt(), in.readVarInt());
+    }
+    mFullTextAttributes = new FullTextAttributeNode[in.readByte()];
+    for (int i = 0, l = mFullTextAttributes.length; i < l; i++) {
+      mFullTextAttributes[i] =
+          new FullTextAttributeNode(in.readVarLong(), getNodeKey(), in
+              .readVarLong(), in.readVarLong());
     }
     mLocalPartKey = in.readVarInt();
     mURIKey = in.readVarInt();
@@ -422,11 +438,68 @@ public final class ElementNode extends AbstractNode {
   @Override
   public final void insertNamespace(final int uriKey, final int prefixKey) {
 
-    NamespaceNode[] tmp = new NamespaceNode[mAttributes.length + 1];
+    NamespaceNode[] tmp = new NamespaceNode[mNamespaces.length + 1];
     System.arraycopy(mNamespaces, 0, tmp, 0, mNamespaces.length);
     mNamespaces = tmp;
 
     mNamespaces[mNamespaces.length - 1] = new NamespaceNode(uriKey, prefixKey);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public int getFullTextAttributeCount() {
+    return mFullTextAttributes == null ? 0 : mFullTextAttributes.length;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final FullTextAttributeNode getFullTextAttribute(final long nodeKey) {
+    return mFullTextAttributes[(int) nodeKey];
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final void setFullTextAttribute(
+      final long nodeKey,
+      final long parentKey,
+      final long leftSiblingKey,
+      final long rightSiblingKey) {
+    mFullTextAttributes[(int) nodeKey] =
+        new FullTextAttributeNode(
+            nodeKey,
+            parentKey,
+            leftSiblingKey,
+            rightSiblingKey);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final void insertFullTextAttribute(
+      final long nodeKey,
+      final long parentKey,
+      final long leftSiblingKey,
+      final long rightSiblingKey) {
+
+    FullTextAttributeNode[] tmp =
+        new FullTextAttributeNode[mFullTextAttributes.length + 1];
+    System
+        .arraycopy(mFullTextAttributes, 0, tmp, 0, mFullTextAttributes.length);
+    mFullTextAttributes = tmp;
+
+    mFullTextAttributes[mFullTextAttributes.length - 1] =
+        new FullTextAttributeNode(
+            nodeKey,
+            parentKey,
+            leftSiblingKey,
+            rightSiblingKey);
   }
 
   /**
@@ -530,6 +603,12 @@ public final class ElementNode extends AbstractNode {
     for (int i = 0, l = mNamespaces.length; i < l; i++) {
       out.writeVarInt(mNamespaces[i].getURIKey());
       out.writeVarInt(mNamespaces[i].getPrefixKey());
+    }
+    out.writeByte((byte) mFullTextAttributes.length);
+    for (int i = 0, l = mFullTextAttributes.length; i < l; i++) {
+      out.writeVarLong(mFullTextAttributes[i].getNodeKey());
+      out.writeVarLong(mFullTextAttributes[i].getLeftSiblingKey());
+      out.writeVarLong(mFullTextAttributes[i].getRightSiblingKey());
     }
     out.writeVarInt(mLocalPartKey);
     out.writeVarInt(mURIKey);
