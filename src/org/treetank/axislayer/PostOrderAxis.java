@@ -46,7 +46,7 @@ public class PostOrderAxis extends AbstractAxis {
    * Method to start at the beginning of the tree.
    */
   private final void startAtBeginning() {
-    getTransaction().moveToDocument();
+    getTransaction().moveToDocumentRoot();
     while (getTransaction().hasFirstChild()) {
       mLastParent.push(getTransaction().getNodeKey());
       getTransaction().moveToFirstChild();

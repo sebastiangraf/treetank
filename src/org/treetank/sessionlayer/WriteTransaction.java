@@ -143,7 +143,7 @@ public final class WriteTransaction extends ReadTransaction
     assertNotClosed();
     assertIsSelected();
 
-    if (getCurrentNode().getNodeKey() == IConstants.DOCUMENT_KEY) {
+    if (getCurrentNode().getNodeKey() == IConstants.DOCUMENT_ROOT_KEY) {
       throw new IllegalStateException("Root node can not have siblings.");
     }
 
@@ -175,7 +175,7 @@ public final class WriteTransaction extends ReadTransaction
     assertNotClosed();
     assertIsSelected();
 
-    if (getCurrentNode().getNodeKey() == IConstants.DOCUMENT_KEY) {
+    if (getCurrentNode().getNodeKey() == IConstants.DOCUMENT_ROOT_KEY) {
       throw new IllegalStateException("Root node can not have siblings.");
     }
 
@@ -199,7 +199,7 @@ public final class WriteTransaction extends ReadTransaction
     assertNotClosed();
     assertIsSelected();
 
-    if (getCurrentNode().getNodeKey() == IConstants.DOCUMENT_KEY) {
+    if (getCurrentNode().getNodeKey() == IConstants.DOCUMENT_ROOT_KEY) {
       throw new IllegalStateException("Root node can not have siblings.");
     }
 
@@ -260,7 +260,7 @@ public final class WriteTransaction extends ReadTransaction
     assertNotClosed();
     assertIsSelected();
 
-    if (getCurrentNode().isDocument()) {
+    if (getCurrentNode().isDocumentRoot()) {
       throw new IllegalStateException("Document node can not be removed.");
     }
 

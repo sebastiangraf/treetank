@@ -27,7 +27,7 @@ import java.util.Map;
 
 import org.treetank.api.IConstants;
 import org.treetank.nodelayer.AbstractNode;
-import org.treetank.nodelayer.DocumentNode;
+import org.treetank.nodelayer.DocumentRootNode;
 import org.treetank.nodelayer.ElementNode;
 import org.treetank.nodelayer.FullTextNode;
 import org.treetank.nodelayer.TextNode;
@@ -83,11 +83,11 @@ public final class WriteTransactionState extends ReadTransactionState {
         nodePageOffset(nodeKey));
   }
 
-  protected final DocumentNode createDocumentNode() {
+  protected final DocumentRootNode createDocumentNode() {
 
     getRevisionRootPage().incrementNodeCountAndMaxNodeKey();
 
-    final DocumentNode node = new DocumentNode();
+    final DocumentRootNode node = new DocumentRootNode();
 
     // Write node into node page.
     prepareNodePage(nodePageKey(getRevisionRootPage().getMaxNodeKey()))

@@ -24,7 +24,7 @@ package org.treetank.pagelayer;
 import java.io.IOException;
 
 import org.treetank.api.IConstants;
-import org.treetank.nodelayer.DocumentNode;
+import org.treetank.nodelayer.DocumentRootNode;
 import org.treetank.sessionlayer.WriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
@@ -87,8 +87,8 @@ public final class UberPage extends AbstractPage {
     NodePage ndp = new NodePage(IConstants.DOCUMENT_PAGE_KEY);
     reference.setPage(ndp);
 
-    ndp.setNode((int) IConstants.DOCUMENT_KEY, new DocumentNode());
-    ndp.setNode((int) IConstants.FULLTEXT_KEY, new DocumentNode());
+    ndp.setNode((int) IConstants.DOCUMENT_ROOT_KEY, new DocumentRootNode());
+    ndp.setNode((int) IConstants.FULLTEXT_ROOT_KEY, new DocumentRootNode());
 
     rrp.incrementNodeCountAndMaxNodeKey();
     rrp.incrementNodeCountAndMaxNodeKey();
@@ -148,7 +148,7 @@ public final class UberPage extends AbstractPage {
    */
   public final long getLastCommittedRevisionKey() {
     if (mRevisionCount == IConstants.UBP_ROOT_REVISION_COUNT) {
-      return IConstants.UBP_ROOT_REVISION_KEY;
+      return IConstants.UBP_ROOT_REVISION_NUMBER;
     } else {
       return mRevisionCount - 2;
     }
@@ -161,7 +161,7 @@ public final class UberPage extends AbstractPage {
    */
   public final long getRevisionKey() {
     if (mRevisionCount == IConstants.UBP_ROOT_REVISION_COUNT) {
-      return IConstants.UBP_ROOT_REVISION_KEY;
+      return IConstants.UBP_ROOT_REVISION_NUMBER;
     } else {
       return mRevisionCount - 1;
     }

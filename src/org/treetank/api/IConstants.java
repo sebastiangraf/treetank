@@ -85,7 +85,7 @@ public interface IConstants {
   public static final long UBP_ROOT_REVISION_COUNT = 1L;
 
   /** Root revisionKey guaranteed to exist in empty storage. */
-  public static final long UBP_ROOT_REVISION_KEY = 0L;
+  public static final long UBP_ROOT_REVISION_NUMBER = 0L;
 
   // --- Revision Root Page ----------------------------------------------------
 
@@ -109,10 +109,10 @@ public interface IConstants {
   public static final long NULL_KEY = -1L;
 
   /** Document root key constant. */
-  public static final long DOCUMENT_KEY = 0L;
+  public static final long DOCUMENT_ROOT_KEY = 0L;
 
   /** FullText root key constant. */
-  public static final long FULLTEXT_KEY = 1L;
+  public static final long FULLTEXT_ROOT_KEY = 1L;
 
   /** Root node page key constant. */
   public static final long DOCUMENT_PAGE_KEY = 0L;
@@ -139,10 +139,10 @@ public interface IConstants {
   public static final int COMMENT = 8;
 
   /** INode kind is document. */
-  public static final int DOCUMENT = 9;
+  public static final int DOCUMENT_ROOT = 9;
 
   /** INode kind is fulltext. */
-  public static final int FULLTEXT = 13;
+  public static final int FULLTEXT_ROOT = 13;
 
   //--- XML Layer --------------------------------------------------------------
 

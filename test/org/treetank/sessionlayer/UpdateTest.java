@@ -64,13 +64,13 @@ public class UpdateTest {
     // Insert 100 children.
     for (int i = 1; i <= 10; i++) {
       wtx = session.beginWriteTransaction();
-      wtx.moveToDocument();
+      wtx.moveToDocumentRoot();
       wtx.insertTextAsFirstChild(UTF.convert(Integer.toString(i)));
       wtx.commit();
       wtx.close();
 
       rtx = session.beginReadTransaction();
-      rtx.moveToDocument();
+      rtx.moveToDocumentRoot();
       rtx.moveToFirstChild();
       assertEquals(Integer.toString(i), new String(rtx.getValue()));
       assertEquals(i + 2L, rtx.getRevisionSize());
@@ -79,7 +79,7 @@ public class UpdateTest {
     }
 
     rtx = session.beginReadTransaction();
-    rtx.moveToDocument();
+    rtx.moveToDocumentRoot();
     rtx.moveToFirstChild();
     assertEquals(Integer.toString(10), new String(rtx.getValue()));
     assertEquals(12L, rtx.getRevisionSize());
@@ -100,7 +100,7 @@ public class UpdateTest {
     wtx.close();
 
     wtx = session.beginWriteTransaction();
-    TestCase.assertNotNull(wtx.moveToDocument());
+    TestCase.assertNotNull(wtx.moveToDocumentRoot());
     assertEquals(2L, wtx.insertElementAsFirstChild("", "", ""));
 
     assertEquals(3L, wtx.insertElementAsFirstChild("", "", ""));
@@ -114,7 +114,7 @@ public class UpdateTest {
 
     final IWriteTransaction wtx2 = session.beginWriteTransaction();
 
-    TestCase.assertNotNull(wtx2.moveToDocument());
+    TestCase.assertNotNull(wtx2.moveToDocumentRoot());
     assertEquals(6L, wtx2.insertElementAsFirstChild("", "", ""));
 
     wtx2.commit();
@@ -151,7 +151,7 @@ public class UpdateTest {
     TestDocument.create(wtx);
 
     try {
-      wtx.moveToDocument();
+      wtx.moveToDocumentRoot();
       wtx.remove();
       TestCase.fail();
     } catch (Exception e) {

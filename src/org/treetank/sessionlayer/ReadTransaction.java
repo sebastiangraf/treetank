@@ -60,7 +60,7 @@ public class ReadTransaction implements IReadTransaction {
     mTransactionState = transactionState;
     mCurrentNode = null;
     mClosed = false;
-    moveToDocument();
+    moveToDocumentRoot();
   }
 
   /**
@@ -122,15 +122,15 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final INode moveToDocument() {
-    return moveTo(IConstants.DOCUMENT_KEY);
+  public final INode moveToDocumentRoot() {
+    return moveTo(IConstants.DOCUMENT_ROOT_KEY);
   }
 
   /**
    * {@inheritDoc}
    */
   public final INode moveToFullText() {
-    return moveTo(IConstants.FULLTEXT_KEY);
+    return moveTo(IConstants.FULLTEXT_ROOT_KEY);
   }
 
   /**
@@ -315,10 +315,10 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final boolean isDocument() {
+  public final boolean isDocumentRoot() {
     assertNotClosed();
     assertIsSelected();
-    return mCurrentNode.isDocument();
+    return mCurrentNode.isDocumentRoot();
   }
 
   /**

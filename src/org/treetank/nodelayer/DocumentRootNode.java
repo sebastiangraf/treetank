@@ -35,7 +35,7 @@ import org.treetank.utils.FastByteArrayWriter;
  * is guaranteed to exist in revision 0 and can not be removed.
  * </p>
  */
-public final class DocumentNode extends AbstractNode {
+public final class DocumentRootNode extends AbstractNode {
 
   /** Key of first child. */
   private long mFirstChildKey;
@@ -48,8 +48,8 @@ public final class DocumentNode extends AbstractNode {
    * 
    * @param firstChildKey Key of first child.
    */
-  public DocumentNode(final long firstChildKey) {
-    super(IConstants.DOCUMENT_KEY);
+  public DocumentRootNode(final long firstChildKey) {
+    super(IConstants.DOCUMENT_ROOT_KEY);
     mFirstChildKey = firstChildKey;
     mChildCount = 0;
   }
@@ -57,7 +57,7 @@ public final class DocumentNode extends AbstractNode {
   /**
    * Create new document node.
    */
-  public DocumentNode() {
+  public DocumentRootNode() {
     this(IConstants.NULL_KEY);
   }
 
@@ -66,7 +66,7 @@ public final class DocumentNode extends AbstractNode {
    * 
    * @param node Node to clone.
    */
-  public DocumentNode(final INode node) {
+  public DocumentRootNode(final INode node) {
     super(node.getNodeKey());
     mFirstChildKey = node.getFirstChildKey();
     mChildCount = node.getChildCount();
@@ -77,8 +77,8 @@ public final class DocumentNode extends AbstractNode {
    * 
    * @param in Byte input to read node from.
    */
-  public DocumentNode(final FastByteArrayReader in) {
-    super(IConstants.DOCUMENT_KEY);
+  public DocumentRootNode(final FastByteArrayReader in) {
+    super(IConstants.DOCUMENT_ROOT_KEY);
     mFirstChildKey = in.readVarLong();
     mChildCount = in.readVarLong();
   }
@@ -87,7 +87,7 @@ public final class DocumentNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final boolean isDocument() {
+  public final boolean isDocumentRoot() {
     return true;
   }
 
@@ -160,7 +160,7 @@ public final class DocumentNode extends AbstractNode {
    */
   @Override
   public final int getKind() {
-    return IConstants.DOCUMENT;
+    return IConstants.DOCUMENT_ROOT;
   }
 
   /**

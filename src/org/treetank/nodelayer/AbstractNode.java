@@ -43,7 +43,7 @@ public abstract class AbstractNode implements INode {
   /**
    * {@inheritDoc}
    */
-  public boolean isDocument() {
+  public boolean isDocumentRoot() {
     return false;
   }
 

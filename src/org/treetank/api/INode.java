@@ -29,11 +29,11 @@ package org.treetank.api;
 public interface INode {
 
   /**
-   * Is this node the document node?
+   * Is this node the document root node?
    * 
-   * @return True if it is the document node, false else.
+   * @return True if it is the document root node, false else.
    */
-  public boolean isDocument();
+  public boolean isDocumentRoot();
 
   /**
    * Is node a element?
