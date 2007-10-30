@@ -199,6 +199,7 @@ public final class Session implements ISession {
    * 
    * @throws Throwable if the finalization of the superclass does not work.
    */
+  @Override
   protected void finalize() throws Throwable {
     try {
       close();
