@@ -53,7 +53,7 @@ public class NameTestAxisTest {
     TestDocument.create(wtx);
 
     // Find descendants starting from nodeKey 0L (root).
-    wtx.moveToDocument();
+    wtx.moveToDocumentRoot();
     final IAxis axis1 = new NameTestAxis(new DescendantAxis(wtx), "b");
 
     assertEquals(true, axis1.hasNext());

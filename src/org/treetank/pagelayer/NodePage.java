@@ -23,7 +23,7 @@ package org.treetank.pagelayer;
 
 import org.treetank.api.IConstants;
 import org.treetank.nodelayer.AbstractNode;
-import org.treetank.nodelayer.DocumentNode;
+import org.treetank.nodelayer.DocumentRootNode;
 import org.treetank.nodelayer.ElementNode;
 import org.treetank.nodelayer.FullTextNode;
 import org.treetank.nodelayer.TextNode;
@@ -74,8 +74,8 @@ public final class NodePage extends AbstractPage {
       case IConstants.UNKNOWN:
         // Was null node, do nothing here.
         break;
-      case IConstants.DOCUMENT:
-        mNodes[offset] = new DocumentNode(in);
+      case IConstants.DOCUMENT_ROOT:
+        mNodes[offset] = new DocumentRootNode(in);
         break;
       case IConstants.ELEMENT:
         mNodes[offset] = new ElementNode(keyBase + offset, in);
@@ -83,7 +83,7 @@ public final class NodePage extends AbstractPage {
       case IConstants.TEXT:
         mNodes[offset] = new TextNode(keyBase + offset, in);
         break;
-      case IConstants.FULLTEXT:
+      case IConstants.FULLTEXT_ROOT:
         mNodes[offset] = new FullTextNode(keyBase + offset, in);
         break;
       default:
@@ -111,8 +111,8 @@ public final class NodePage extends AbstractPage {
         case IConstants.UNKNOWN:
           // Was null node, do nothing here.
           break;
-        case IConstants.DOCUMENT:
-          mNodes[offset] = new DocumentNode(committedNodePage.mNodes[offset]);
+        case IConstants.DOCUMENT_ROOT:
+          mNodes[offset] = new DocumentRootNode(committedNodePage.mNodes[offset]);
           break;
         case IConstants.ELEMENT:
           mNodes[offset] = new ElementNode(committedNodePage.mNodes[offset]);
@@ -120,7 +120,7 @@ public final class NodePage extends AbstractPage {
         case IConstants.TEXT:
           mNodes[offset] = new TextNode(committedNodePage.mNodes[offset]);
           break;
-        case IConstants.FULLTEXT:
+        case IConstants.FULLTEXT_ROOT:
           mNodes[offset] = new FullTextNode(committedNodePage.mNodes[offset]);
           break;
         default:

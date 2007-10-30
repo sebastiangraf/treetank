@@ -51,7 +51,7 @@ public class AncestorAxis extends AbstractAxis {
    */
   public final boolean hasNext() {
     setCurrentNode(getTransaction().moveTo(mNextKey));
-    if ((getCurrentNode() != null) & !(getCurrentNode().isDocument())) {
+    if ((getCurrentNode() != null) & !(getCurrentNode().isDocumentRoot())) {
       mNextKey = getCurrentNode().getParentKey();
       return true;
     } else {

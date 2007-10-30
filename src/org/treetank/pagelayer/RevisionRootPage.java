@@ -61,7 +61,7 @@ public final class RevisionRootPage extends AbstractPage {
    */
   public RevisionRootPage() {
     super(2);
-    mRevisionNumber = IConstants.UBP_ROOT_REVISION_KEY;
+    mRevisionNumber = IConstants.UBP_ROOT_REVISION_NUMBER;
     mRevisionSize = 0L;
     getReference(NAME_REFERENCE_OFFSET).setPage(new NamePage());
     mMaxNodeKey = -1L;

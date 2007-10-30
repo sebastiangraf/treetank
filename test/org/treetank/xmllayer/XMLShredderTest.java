@@ -73,7 +73,7 @@ public class XMLShredderTest {
     // Verify.
     final ISession session = Session.beginSession(PATH);
     final IReadTransaction rtx = session.beginReadTransaction();
-    rtx.moveToDocument();
+    rtx.moveToDocumentRoot();
     final Iterator<INode> expectedDescendants = new DescendantAxis(expectedTrx);
     final Iterator<INode> descendants = new DescendantAxis(rtx);
 

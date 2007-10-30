@@ -161,8 +161,8 @@ public class SessionTest {
 
     TestDocument.create(wtx);
 
-    TestCase.assertNotNull(wtx.moveToDocument());
-    assertEquals(IConstants.DOCUMENT, wtx.getKind());
+    TestCase.assertNotNull(wtx.moveToDocumentRoot());
+    assertEquals(IConstants.DOCUMENT_ROOT, wtx.getKind());
 
     TestCase.assertNotNull(wtx.moveToFirstChild());
     assertEquals(IConstants.ELEMENT, wtx.getKind());
@@ -192,7 +192,7 @@ public class SessionTest {
 
     rtx = session.beginReadTransaction();
 
-    assertEquals(IConstants.UBP_ROOT_REVISION_KEY, rtx.getRevisionNumber());
+    assertEquals(IConstants.UBP_ROOT_REVISION_NUMBER, rtx.getRevisionNumber());
     assertEquals(2L, rtx.getRevisionSize());
 
     final IReadTransaction rtx2 = session.beginReadTransaction();

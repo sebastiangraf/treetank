@@ -91,11 +91,11 @@ public interface IReadTransaction {
   public INode moveTo(final INode node);
 
   /**
-   * Move cursor to document (root) node.
+   * Move cursor to document root node.
    * 
-   * @return True if the document node is selected.
+   * @return True if the document root node is selected.
    */
-  public INode moveToDocument();
+  public INode moveToDocumentRoot();
 
   /**
    * Move cursor to fulltext (root) node.
@@ -259,11 +259,11 @@ public interface IReadTransaction {
   public int getKind();
 
   /**
-   * Is this node the document node?
+   * Is this node the document root node?
    * 
-   * @return True if it is the document node, false else.
+   * @return True if it is the document root node, false else.
    */
-  public boolean isDocument();
+  public boolean isDocumentRoot();
 
   /**
    * Is node a element?
