@@ -241,7 +241,7 @@ public class ReadTransaction implements IReadTransaction {
   public final boolean hasRightSibling() {
     assertNotClosed();
     assertIsSelected();
-    return mCurrentNode.hasParent();
+    return mCurrentNode.hasRightSibling();
   }
 
   /**
