@@ -71,7 +71,7 @@ public abstract class AbstractNode implements INode {
   /**
    * {@inheritDoc}
    */
-  public boolean isFullText() {
+  public boolean isFullTextRoot() {
     return false;
   }
 

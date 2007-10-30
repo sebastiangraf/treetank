@@ -34,7 +34,7 @@ import org.treetank.utils.FastByteArrayWriter;
  * Node representing an XML element.
  * </p>
  */
-public final class FullTextNode extends AbstractNode {
+public final class FullTextRootNode extends AbstractNode {
 
   /** Key of parent node. */
   private long mParentKey;
@@ -61,7 +61,7 @@ public final class FullTextNode extends AbstractNode {
    * @param rightSiblingKey Key of right sibling.
    * @param localPartKey Key of local part.
    */
-  public FullTextNode(
+  public FullTextRootNode(
       final long nodeKey,
       final long parentKey,
       final long firstChildKey,
@@ -81,7 +81,7 @@ public final class FullTextNode extends AbstractNode {
    * 
    * @param node Element node to clone.
    */
-  public FullTextNode(final INode node) {
+  public FullTextRootNode(final INode node) {
     super(node.getNodeKey());
     mParentKey = node.getParentKey();
     mFirstChildKey = node.getFirstChildKey();
@@ -96,7 +96,7 @@ public final class FullTextNode extends AbstractNode {
    * @param nodeKey Key to assign to read element node.
    * @param in Input bytes to read from.
    */
-  public FullTextNode(final long nodeKey, final FastByteArrayReader in) {
+  public FullTextRootNode(final long nodeKey, final FastByteArrayReader in) {
     super(nodeKey);
 
     // Read according to node kind.
@@ -111,7 +111,7 @@ public final class FullTextNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final boolean isFullText() {
+  public final boolean isFullTextRoot() {
     return true;
   }
 

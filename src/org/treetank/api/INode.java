@@ -57,11 +57,11 @@ public interface INode {
   public boolean isText();
 
   /**
-   * Is node a full text?
+   * Is node a full text root?
    * 
-   * @return True if node is full text. False else.
+   * @return True if node is full text root. False else.
    */
-  public boolean isFullText();
+  public boolean isFullTextRoot();
 
   /**
    * Get node key of currently selected node.
