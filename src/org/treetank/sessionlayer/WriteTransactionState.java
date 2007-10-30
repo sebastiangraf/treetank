@@ -29,6 +29,7 @@ import org.treetank.api.IConstants;
 import org.treetank.nodelayer.AbstractNode;
 import org.treetank.nodelayer.DocumentNode;
 import org.treetank.nodelayer.ElementNode;
+import org.treetank.nodelayer.FullTextNode;
 import org.treetank.nodelayer.TextNode;
 import org.treetank.pagelayer.AbstractPage;
 import org.treetank.pagelayer.IndirectPage;
@@ -139,6 +140,31 @@ public final class WriteTransactionState extends ReadTransactionState {
             leftSiblingKey,
             rightSiblingKey,
             value);
+
+    // Write node into node page.
+    prepareNodePage(nodePageKey(getRevisionRootPage().getMaxNodeKey()))
+        .setNode(nodePageOffset(getRevisionRootPage().getMaxNodeKey()), node);
+
+    return node;
+  }
+
+  protected final FullTextNode createFullTextNode(
+      final long parentKey,
+      final long firstChildKey,
+      final long leftSiblingKey,
+      final long rightSiblingKey,
+      final int localPartKey) {
+
+    getRevisionRootPage().incrementNodeCountAndMaxNodeKey();
+
+    final FullTextNode node =
+        new FullTextNode(
+            getRevisionRootPage().getMaxNodeKey(),
+            parentKey,
+            firstChildKey,
+            leftSiblingKey,
+            rightSiblingKey,
+            localPartKey);
 
     // Write node into node page.
     prepareNodePage(nodePageKey(getRevisionRootPage().getMaxNodeKey()))

@@ -110,6 +110,31 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
+  public final long insertFullTextAsFirstChild(final int localPartKey) {
+
+    assertNotClosed();
+    assertIsSelected();
+
+    setCurrentNode(((WriteTransactionState) getTransactionState())
+        .createFullTextNode(
+            getCurrentNode().getNodeKey(),
+            IConstants.NULL_KEY,
+            IConstants.NULL_KEY,
+            getCurrentNode().getFirstChildKey(),
+            localPartKey));
+
+    updateParentAfterInsert(true);
+
+    if (getCurrentNode().getChildCount() > 0) {
+      updateRightSibling();
+    }
+
+    return getCurrentNode().getNodeKey();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final long insertElementAsRightSibling(
       final String localPart,
       final String uri,
@@ -158,6 +183,34 @@ public final class WriteTransaction extends ReadTransaction
     setCurrentNode(((WriteTransactionState) getTransactionState())
         .createTextNode(getCurrentNode().getParentKey(), getCurrentNode()
             .getNodeKey(), getCurrentNode().getRightSiblingKey(), value));
+
+    updateParentAfterInsert(false);
+    updateLeftSibling();
+    updateRightSibling();
+
+    return getCurrentNode().getNodeKey();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final long insertFullTextAsRightSibling(final int localPartKey) {
+
+    assertNotClosed();
+    assertIsSelected();
+
+    if (getCurrentNode().getNodeKey() == IConstants.DOCUMENT_KEY) {
+      throw new IllegalStateException("Root node can not have siblings.");
+    }
+
+    // Create new right sibling node.
+    setCurrentNode(((WriteTransactionState) getTransactionState())
+        .createFullTextNode(
+            getCurrentNode().getParentKey(),
+            IConstants.NULL_KEY,
+            getCurrentNode().getNodeKey(),
+            getCurrentNode().getRightSiblingKey(),
+            localPartKey));
 
     updateParentAfterInsert(false);
     updateLeftSibling();

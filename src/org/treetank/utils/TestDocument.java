@@ -38,6 +38,7 @@ import org.treetank.api.IWriteTransaction;
  * 
  * <ul>
  * <li><code>IConstants.DOCUMENT : doc()</code></li>
+ * <li><code>IConstants.FULLTEXT : ft()</code></li>
  * <li><code>IConstants.ELEMENT  : &lt;prefix:localPart&gt;</code></li>
  * <li><code>IConstants.ATTRIBUTE: &#64;prefix:localPart='value'</code></li>
  * <li><code>IConstants.TEXT     : #value</code></li>
@@ -45,16 +46,17 @@ import org.treetank.api.IWriteTransaction;
  *
  * <pre>
  * 0 doc()
- * |-  1 &lt;p:a §p:ns &#64;i='j'&gt;
- *     |-  2 #oops1
- *     |-  3 &lt;b&gt;
- *     |   |-  4 #foo
- *     |   |-  5 &lt;c&gt;
- *     |-  6 #oops2
- *     |-  7 &lt;b &#64;p:x='y'&gt;
- *     |   |-  8 &lt;c&gt;
- *     |   |-  9 #bar
- *     |- 10 #oops3
+ * 1 ft()
+ * |-  2 &lt;p:a §p:ns &#64;i='j'&gt;
+ *     |-  3 #oops1
+ *     |-  4 &lt;b&gt;
+ *     |   |-  5 #foo
+ *     |   |-  6 &lt;c&gt;
+ *     |-  7 #oops2
+ *     |-  8 &lt;b &#64;p:x='y'&gt;
+ *     |   |-  9 &lt;c&gt;
+ *     |   |- 10 #bar
+ *     |- 11 #oops3
  * </pre>
  * 
  * </p>

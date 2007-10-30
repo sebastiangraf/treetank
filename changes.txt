@@ -21,6 +21,8 @@
 
 TreeTank 4.14
 -------------
++ Binary incompatibility because fulltext root node takes key 1.
++ Added hooks for fulltext index.
 + Session and transaction tracks close state to prevent access after close.
 + Allow multiple commit() and abort() calls before close().
 + Split IWriteTransaction semantics: now use [commit|abort]() AND close().

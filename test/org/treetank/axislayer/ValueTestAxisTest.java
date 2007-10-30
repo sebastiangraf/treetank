@@ -57,7 +57,7 @@ public class ValueTestAxisTest {
     final IAxis axis1 = new ValueTestAxis(new DescendantAxis(wtx), "foo");
 
     assertEquals(true, axis1.hasNext());
-    assertEquals(4L, wtx.getNodeKey());
+    assertEquals(5L, wtx.getNodeKey());
 
     assertEquals(false, axis1.hasNext());
 

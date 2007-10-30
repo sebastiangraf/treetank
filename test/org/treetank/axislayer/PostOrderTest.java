@@ -34,34 +34,34 @@ public class PostOrderTest {
     final IAxis axis = new PostOrderAxis(wtx, true);
 
     assertEquals(true, axis.hasNext());
-    assertEquals(2L, wtx.getNodeKey());
-
-    assertEquals(true, axis.hasNext());
-    assertEquals(4L, wtx.getNodeKey());
+    assertEquals(3L, wtx.getNodeKey());
 
     assertEquals(true, axis.hasNext());
     assertEquals(5L, wtx.getNodeKey());
 
     assertEquals(true, axis.hasNext());
-    assertEquals(3L, wtx.getNodeKey());
-
-    assertEquals(true, axis.hasNext());
     assertEquals(6L, wtx.getNodeKey());
 
     assertEquals(true, axis.hasNext());
-    assertEquals(8L, wtx.getNodeKey());
-
-    assertEquals(true, axis.hasNext());
-    assertEquals(9L, wtx.getNodeKey());
+    assertEquals(4L, wtx.getNodeKey());
 
     assertEquals(true, axis.hasNext());
     assertEquals(7L, wtx.getNodeKey());
 
     assertEquals(true, axis.hasNext());
+    assertEquals(9L, wtx.getNodeKey());
+
+    assertEquals(true, axis.hasNext());
     assertEquals(10L, wtx.getNodeKey());
 
     assertEquals(true, axis.hasNext());
-    assertEquals(1L, wtx.getNodeKey());
+    assertEquals(8L, wtx.getNodeKey());
+
+    assertEquals(true, axis.hasNext());
+    assertEquals(11L, wtx.getNodeKey());
+
+    assertEquals(true, axis.hasNext());
+    assertEquals(2L, wtx.getNodeKey());
 
     assertEquals(true, axis.hasNext());
     assertEquals(0L, wtx.getNodeKey());

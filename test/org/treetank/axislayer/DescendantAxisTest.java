@@ -56,9 +56,6 @@ public class DescendantAxisTest {
     wtx.moveToDocument();
     final IAxis axis1 = new DescendantAxis(wtx);
     assertEquals(true, axis1.hasNext());
-    assertEquals(1L, wtx.getNodeKey());
-
-    assertEquals(true, axis1.hasNext());
     assertEquals(2L, wtx.getNodeKey());
 
     assertEquals(true, axis1.hasNext());
@@ -84,15 +81,15 @@ public class DescendantAxisTest {
 
     assertEquals(true, axis1.hasNext());
     assertEquals(10L, wtx.getNodeKey());
+
+    assertEquals(true, axis1.hasNext());
+    assertEquals(11L, wtx.getNodeKey());
 
     assertEquals(false, axis1.hasNext());
 
     // Find descendants starting from nodeKey 1L (first child of root).
-    wtx.moveTo(1L);
+    wtx.moveTo(2L);
     final IAxis axis2 = new DescendantAxis(wtx);
-    assertEquals(true, axis2.hasNext());
-    assertEquals(2L, wtx.getNodeKey());
-
     assertEquals(true, axis2.hasNext());
     assertEquals(3L, wtx.getNodeKey());
 
@@ -117,21 +114,24 @@ public class DescendantAxisTest {
     assertEquals(true, axis2.hasNext());
     assertEquals(10L, wtx.getNodeKey());
 
+    assertEquals(true, axis2.hasNext());
+    assertEquals(11L, wtx.getNodeKey());
+
     assertEquals(false, axis2.hasNext());
 
     // Find descendants starting from nodeKey 4L (second child of root).
-    wtx.moveTo(7L);
+    wtx.moveTo(8L);
     final IAxis axis3 = new DescendantAxis(wtx);
     assertEquals(true, axis3.hasNext());
-    assertEquals(8L, wtx.getNodeKey());
+    assertEquals(9L, wtx.getNodeKey());
 
     assertEquals(true, axis3.hasNext());
-    assertEquals(9L, wtx.getNodeKey());
+    assertEquals(10L, wtx.getNodeKey());
 
     assertEquals(false, axis3.hasNext());
 
     // Find descendants starting from nodeKey 5L (last in document order).
-    wtx.moveTo(10L);
+    wtx.moveTo(11L);
     final IAxis axis4 = new DescendantAxis(wtx);
     assertEquals(false, axis4.hasNext());
 

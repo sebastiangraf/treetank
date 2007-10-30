@@ -43,7 +43,7 @@ public interface IConstants {
   public static final int LAST_VERSION_MAJOR = 4;
 
   /** Last minor version to which this version is binary compatible. */
-  public static final int LAST_VERSION_MINOR = 13;
+  public static final int LAST_VERSION_MINOR = 14;
 
   //--- Varia ------------------------------------------------------------------
 
@@ -108,8 +108,11 @@ public interface IConstants {
   /** Null nodeKey constant. */
   public static final long NULL_KEY = -1L;
 
-  /** Root nodeKey constant. */
+  /** Document root key constant. */
   public static final long DOCUMENT_KEY = 0L;
+
+  /** FullText root key constant. */
+  public static final long FULLTEXT_KEY = 1L;
 
   /** Root node page key constant. */
   public static final long DOCUMENT_PAGE_KEY = 0L;
@@ -137,6 +140,9 @@ public interface IConstants {
 
   /** INode kind is document. */
   public static final int DOCUMENT = 9;
+
+  /** INode kind is fulltext. */
+  public static final int FULLTEXT = 13;
 
   //--- XML Layer --------------------------------------------------------------
 

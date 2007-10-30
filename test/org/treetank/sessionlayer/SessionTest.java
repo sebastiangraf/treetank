@@ -181,11 +181,11 @@ public class SessionTest {
 
     IReadTransaction rtx = session.beginReadTransaction();
     assertEquals(0L, rtx.getRevisionNumber());
-    assertEquals(1L, rtx.getRevisionSize());
+    assertEquals(2L, rtx.getRevisionSize());
 
     final IWriteTransaction wtx = session.beginWriteTransaction();
     assertEquals(0L, wtx.getRevisionNumber());
-    assertEquals(1L, wtx.getRevisionSize());
+    assertEquals(2L, wtx.getRevisionSize());
 
     // Commit and check.
     wtx.commit();
@@ -193,11 +193,11 @@ public class SessionTest {
     rtx = session.beginReadTransaction();
 
     assertEquals(IConstants.UBP_ROOT_REVISION_KEY, rtx.getRevisionNumber());
-    assertEquals(1L, rtx.getRevisionSize());
+    assertEquals(2L, rtx.getRevisionSize());
 
     final IReadTransaction rtx2 = session.beginReadTransaction();
     assertEquals(0L, rtx2.getRevisionNumber());
-    assertEquals(1L, rtx2.getRevisionSize());
+    assertEquals(2L, rtx2.getRevisionSize());
 
   }
 
@@ -209,20 +209,20 @@ public class SessionTest {
     final IWriteTransaction wtx1 = session.beginWriteTransaction();
     TestDocument.create(wtx1);
     assertEquals(0L, wtx1.getRevisionNumber());
-    assertEquals(11L, wtx1.getRevisionSize());
+    assertEquals(12L, wtx1.getRevisionSize());
     wtx1.commit();
     wtx1.close();
 
     final IReadTransaction rtx1 = session.beginReadTransaction();
     assertEquals(0L, rtx1.getRevisionNumber());
-    rtx1.moveTo(9L);
+    rtx1.moveTo(10L);
     assertEquals(
         "bar",
         new String(rtx1.getValue(), IConstants.DEFAULT_ENCODING));
 
     final IWriteTransaction wtx2 = session.beginWriteTransaction();
     assertEquals(1L, wtx2.getRevisionNumber());
-    wtx2.moveTo(9L);
+    wtx2.moveTo(10L);
     wtx2.setValue(UTF.convert("bar2"));
 
     assertEquals(
@@ -237,7 +237,7 @@ public class SessionTest {
 
     final IReadTransaction rtx2 = session.beginReadTransaction();
     assertEquals(0L, rtx2.getRevisionNumber());
-    rtx2.moveTo(9L);
+    rtx2.moveTo(10L);
     assertEquals(
         "bar",
         new String(rtx2.getValue(), IConstants.DEFAULT_ENCODING));
@@ -259,14 +259,14 @@ public class SessionTest {
     final ISession session2 = Session.beginSession(TEST_EXISTING_PATH);
     final IReadTransaction rtx1 = session2.beginReadTransaction();
     assertEquals(0L, rtx1.getRevisionNumber());
-    rtx1.moveTo(9L);
+    rtx1.moveTo(10L);
     assertEquals(
         "bar",
         new String(rtx1.getValue(), IConstants.DEFAULT_ENCODING));
 
     final IWriteTransaction wtx2 = session2.beginWriteTransaction();
     assertEquals(1L, wtx2.getRevisionNumber());
-    wtx2.moveTo(9L);
+    wtx2.moveTo(10L);
     wtx2.setValue(UTF.convert("bar2"));
 
     assertEquals(
@@ -284,7 +284,7 @@ public class SessionTest {
     final ISession session3 = Session.beginSession(TEST_EXISTING_PATH);
     final IReadTransaction rtx2 = session3.beginReadTransaction();
     assertEquals(1L, rtx2.getRevisionNumber());
-    rtx2.moveTo(9L);
+    rtx2.moveTo(10L);
     assertEquals("bar2", new String(
         rtx2.getValue(),
         IConstants.DEFAULT_ENCODING));
@@ -305,7 +305,7 @@ public class SessionTest {
     wtx.close();
 
     final IReadTransaction rtx = session.beginReadTransaction();
-    assertEquals(11L, rtx.getRevisionSize());
+    assertEquals(12L, rtx.getRevisionSize());
     assertEquals(true, rtx.isSelected());
     TestCase.assertNull(rtx.moveTo(12L));
     assertEquals(false, rtx.isSelected());

@@ -91,11 +91,18 @@ public interface IReadTransaction {
   public INode moveTo(final INode node);
 
   /**
-   * Move cursor to document node.
+   * Move cursor to document (root) node.
    * 
    * @return True if the document node is selected.
    */
   public INode moveToDocument();
+
+  /**
+   * Move cursor to fulltext (root) node.
+   * 
+   * @return True if the fulltext node is selected.
+   */
+  public INode moveToFullText();
 
   /**
    * Move cursor to parent node of currently selected node.
@@ -278,6 +285,13 @@ public interface IReadTransaction {
    * @return True if node is text. False else.
    */
   public boolean isText();
+
+  /**
+   * Is node a full text?
+   * 
+   * @return True if node is full text. False else.
+   */
+  public boolean isFullText();
 
   /**
    * Get local part key of node.

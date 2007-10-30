@@ -53,34 +53,34 @@ public class AncestorAxisTest {
     TestDocument.create(wtx);
 
     // Find ancestors starting from nodeKey 0L (root).
-    wtx.moveTo(8L);
+    wtx.moveTo(9L);
     final IAxis axis1 = new AncestorAxis(wtx);
     assertEquals(true, axis1.hasNext());
-    assertEquals(7L, axis1.next().getNodeKey());
+    assertEquals(8L, axis1.next().getNodeKey());
 
     assertEquals(true, axis1.hasNext());
-    assertEquals(1L, axis1.next().getNodeKey());
+    assertEquals(2L, axis1.next().getNodeKey());
 
     assertEquals(false, axis1.hasNext());
 
     // Find ancestors starting from nodeKey 1L (first child of root).
-    wtx.moveTo(3L);
+    wtx.moveTo(4L);
     final IAxis axis2 = new AncestorAxis(wtx);
     assertEquals(true, axis2.hasNext());
-    assertEquals(1L, axis2.next().getNodeKey());
+    assertEquals(2L, axis2.next().getNodeKey());
 
     assertEquals(false, axis2.hasNext());
 
     // Find ancestors starting from nodeKey 4L (second child of root).
-    wtx.moveTo(2L);
+    wtx.moveTo(3L);
     final IAxis axis3 = new AncestorAxis(wtx);
     assertEquals(true, axis3.hasNext());
-    assertEquals(1L, axis3.next().getNodeKey());
+    assertEquals(2L, axis3.next().getNodeKey());
 
     assertEquals(false, axis3.hasNext());
 
     // Find ancestors starting from nodeKey 5L (last in document order).
-    wtx.moveTo(1L);
+    wtx.moveTo(2L);
     final IAxis axis4 = new AncestorAxis(wtx);
     assertEquals(false, axis4.hasNext());
 

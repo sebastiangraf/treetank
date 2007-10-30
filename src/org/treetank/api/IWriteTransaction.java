@@ -75,6 +75,16 @@ public interface IWriteTransaction extends IReadTransaction {
   public long insertTextAsFirstChild(final byte[] value);
 
   /**
+   * Insert new fulltext node as first child of currently selected node.
+   * The cursor is moved to the inserted node.
+   * 
+   * @param localPartKey Local part key of inserted node.
+   * @return Key of inserted node.
+   * already has a first child.
+   */
+  public long insertFullTextAsFirstChild(final int localPartKey);
+
+  /**
    * Insert new element node as right sibling of currently selected node.
    * The cursor is moved to the inserted node.
    * 
@@ -98,6 +108,16 @@ public interface IWriteTransaction extends IReadTransaction {
    * the root node which is not allowed to have right siblings.
    */
   public long insertTextAsRightSibling(final byte[] value);
+
+  /**
+   * Insert new fulltext node as right sibling of currently selected node.
+   * The cursor is moved to the inserted node.
+   * 
+   * @param localPartKey Local part key of inserted node.
+   * @return Key of inserted node.
+   * already has a first child.
+   */
+  public long insertFullTextAsRightSibling(final int localPartKey);
 
   /**
    * Insert attribute in currently selected node.
