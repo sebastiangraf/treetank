@@ -29,7 +29,7 @@ import org.treetank.api.IConstants;
 import org.treetank.nodelayer.AbstractNode;
 import org.treetank.nodelayer.DocumentRootNode;
 import org.treetank.nodelayer.ElementNode;
-import org.treetank.nodelayer.FullTextRootNode;
+import org.treetank.nodelayer.FullTextNode;
 import org.treetank.nodelayer.TextNode;
 import org.treetank.pagelayer.AbstractPage;
 import org.treetank.pagelayer.IndirectPage;
@@ -148,31 +148,29 @@ public final class WriteTransactionState extends ReadTransactionState {
     return node;
   }
 
-  protected final FullTextRootNode createFullTextNode(
+  protected final FullTextNode createFullTextNode(
       final long parentKey,
       final long firstChildKey,
       final long leftSiblingKey,
       final long rightSiblingKey,
       final int localPartKey) {
 
-    //    getRevisionRootPage().incrementNodeCountAndMaxNodeKey();
-    //
-    //    final FullTextRootNode node =
-    //        new FullTextRootNode(
-    //            getRevisionRootPage().getMaxNodeKey(),
-    //            parentKey,
-    //            firstChildKey,
-    //            leftSiblingKey,
-    //            rightSiblingKey,
-    //            localPartKey);
-    //
-    //    // Write node into node page.
-    //    prepareNodePage(nodePageKey(getRevisionRootPage().getMaxNodeKey()))
-    //        .setNode(nodePageOffset(getRevisionRootPage().getMaxNodeKey()), node);
-    //
-    //    return node;
+    getRevisionRootPage().incrementNodeCountAndMaxNodeKey();
 
-    return null;
+    final FullTextNode node =
+        new FullTextNode(
+            getRevisionRootPage().getMaxNodeKey(),
+            parentKey,
+            firstChildKey,
+            leftSiblingKey,
+            rightSiblingKey,
+            localPartKey);
+
+    // Write node into node page.
+    prepareNodePage(nodePageKey(getRevisionRootPage().getMaxNodeKey()))
+        .setNode(nodePageOffset(getRevisionRootPage().getMaxNodeKey()), node);
+
+    return node;
   }
 
   /**
