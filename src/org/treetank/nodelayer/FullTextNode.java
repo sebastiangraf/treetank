@@ -302,14 +302,6 @@ public final class FullTextNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final String getLocalPart(final IReadTransaction rtx) {
-    return rtx.nameForKey(mLocalPartKey);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
   public final void setLocalPartKey(final int localPartKey) {
     mLocalPartKey = localPartKey;
   }
