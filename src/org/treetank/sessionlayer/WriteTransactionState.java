@@ -153,6 +153,7 @@ public final class WriteTransactionState extends ReadTransactionState {
       final long firstChildKey,
       final long leftSiblingKey,
       final long rightSiblingKey,
+      final long referenceKey,
       final int localPartKey) {
 
     getRevisionRootPage().incrementNodeCountAndMaxNodeKey();
@@ -164,6 +165,7 @@ public final class WriteTransactionState extends ReadTransactionState {
             firstChildKey,
             leftSiblingKey,
             rightSiblingKey,
+            referenceKey,
             localPartKey);
 
     // Write node into node page.

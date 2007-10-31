@@ -132,7 +132,8 @@ public final class WriteTransaction extends ReadTransaction
             getCurrentNode().getNodeKey(),
             IConstants.NULL_KEY,
             IConstants.NULL_KEY,
-            getCurrentNode().getFirstChildKey(),
+            IConstants.NULL_KEY,
+            IConstants.NULL_KEY,
             localPartKey));
 
     updateParentAfterInsert(true);
@@ -222,6 +223,7 @@ public final class WriteTransaction extends ReadTransaction
             IConstants.NULL_KEY,
             getCurrentNode().getNodeKey(),
             getCurrentNode().getRightSiblingKey(),
+            IConstants.NULL_KEY,
             localPartKey));
 
     updateParentAfterInsert(false);
@@ -388,6 +390,17 @@ public final class WriteTransaction extends ReadTransaction
     prepareCurrentNode().setLocalPartKey(
         ((WriteTransactionState) getTransactionState())
             .createNameKey(localPart));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final void setReferenceKey(final long referenceKey) {
+
+    assertNotClosed();
+    assertIsSelected();
+
+    prepareCurrentNode().setReferenceKey(referenceKey);
   }
 
   /**
