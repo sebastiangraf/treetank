@@ -155,7 +155,7 @@ public final class SAXGenerator extends Thread {
     for (final INode node : mAxis) {
 
       // Emit all pending end elements.
-      if (closeElements && stack.size() > 0) {
+      if (closeElements && !stack.empty()) {
         while (stack.peek().getNodeKey() != node.getLeftSiblingKey()) {
           emitEndElement(stack.pop(), rtx);
         }
