@@ -21,7 +21,9 @@
 
 package org.treetank.nodelayer;
 
+import org.treetank.api.IConstants;
 import org.treetank.api.INode;
+import org.treetank.api.IReadTransaction;
 
 /**
  * <h1>NamespaceNode</h1>
@@ -59,6 +61,38 @@ public final class NamespaceNode extends AbstractNode {
     super(namespace.getNodeKey());
     mURIKey = namespace.getURIKey();
     mPrefixKey = namespace.getPrefixKey();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final boolean hasParent() {
+    return true;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final long getParentKey() {
+    return getNodeKey();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final INode getParent(final IReadTransaction rtx) {
+    return rtx.moveTo(getNodeKey());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final int getKind() {
+    return IConstants.NAMESPACE;
   }
 
   /**

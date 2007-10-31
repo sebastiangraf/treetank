@@ -155,8 +155,8 @@ public final class ElementNode extends AbstractNode {
     mAttributes = new AttributeNode[in.readByte()];
     for (int i = 0, l = mAttributes.length; i < l; i++) {
       mAttributes[i] =
-          new AttributeNode(getNodeKey(), getNodeKey(), in.readVarInt(), in
-              .readVarInt(), in.readVarInt(), in.readByteArray());
+          new AttributeNode(getNodeKey(), in.readVarInt(), in.readVarInt(), in
+              .readVarInt(), in.readByteArray());
     }
     mNamespaces = new NamespaceNode[in.readByte()];
     for (int i = 0, l = mNamespaces.length; i < l; i++) {
@@ -370,13 +370,7 @@ public final class ElementNode extends AbstractNode {
       final int prefixKey,
       final byte[] value) {
     mAttributes[index] =
-        new AttributeNode(
-            getNodeKey(),
-            getNodeKey(),
-            localPartKey,
-            uriKey,
-            prefixKey,
-            value);
+        new AttributeNode(getNodeKey(), localPartKey, uriKey, prefixKey, value);
   }
 
   /**
@@ -394,13 +388,7 @@ public final class ElementNode extends AbstractNode {
     mAttributes = tmp;
 
     mAttributes[mAttributes.length - 1] =
-        new AttributeNode(
-            getNodeKey(),
-            getNodeKey(),
-            localPartKey,
-            uriKey,
-            prefixKey,
-            value);
+        new AttributeNode(getNodeKey(), localPartKey, uriKey, prefixKey, value);
   }
 
   /**
