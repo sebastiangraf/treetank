@@ -26,7 +26,18 @@ import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayWriter;
 
-public abstract class AbstractNode implements INode {
+/**
+ * <h1>AbstractNode</h1>
+ * 
+ * <p>
+ * Abstract node class to implement all methods required with INode.
+ * To reduce implementation overhead in subclasses it implements all
+ * methods but does silently not do anything there. A subclass must only
+ * implement those methods that are required to provide proper subclass
+ * functionality.
+ * </p>
+ */
+public abstract class AbstractNode implements INode, Comparable<INode> {
 
   /** Node key is common to all node kinds. */
   private long mNodeKey;
@@ -378,11 +389,25 @@ public abstract class AbstractNode implements INode {
    * {@inheritDoc}
    */
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(final Object obj) {
     if ((obj == null) || (mNodeKey != ((INode) obj).getNodeKey())) {
       return false;
     } else {
       return true;
+    }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public int compareTo(final INode node) {
+    final long nodeKey = ((INode) node).getNodeKey();
+    if (mNodeKey < nodeKey) {
+      return -1;
+    } else if (mNodeKey == nodeKey) {
+      return 0;
+    } else {
+      return 1;
     }
   }
 
