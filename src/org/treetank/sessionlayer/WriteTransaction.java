@@ -54,6 +54,18 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
+  public final void insertFullTextAttributeAsFirstChild(final long fullTextKey) {
+    assertNotClosed();
+    assertIsSelected();
+
+    final AbstractNode node = prepareCurrentNode();
+    node.setFirstChildKey(fullTextKey);
+    node.incrementChildCount();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final long insertElementAsFirstChild(
       final String localPart,
       final String uri,

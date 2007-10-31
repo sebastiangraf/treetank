@@ -50,6 +50,13 @@ public interface IWriteTransaction extends IReadTransaction {
   // --- Node Modifiers --------------------------------------------------------
 
   /**
+   * Insert new full text attribute as first child.
+   * 
+   * @param fullTextKey Key of full text leaf.
+   */
+  public void insertFullTextAttributeAsFirstChild(final long fullTextKey);
+
+  /**
    * Insert new element node as first child of currently selected node.
    * The cursor is moved to the inserted node.
    * 
