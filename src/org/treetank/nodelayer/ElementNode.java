@@ -21,6 +21,8 @@
 
 package org.treetank.nodelayer;
 
+import java.util.Arrays;
+
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
@@ -458,7 +460,13 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final FullTextAttributeNode getFullTextAttribute(final long nodeKey) {
-    return mFullTextAttributes[(int) nodeKey];
+    // TODO Replace with Arrays.search in Java 6.
+    for (final FullTextAttributeNode node : mFullTextAttributes) {
+      if (node.getNodeKey() == nodeKey) {
+        return node;
+      }
+    }
+    return null;
   }
 
   /**
@@ -500,6 +508,8 @@ public final class ElementNode extends AbstractNode {
             parentKey,
             leftSiblingKey,
             rightSiblingKey);
+
+    Arrays.sort(mFullTextAttributes);
   }
 
   /**
