@@ -131,6 +131,13 @@ public interface IReadTransaction {
    * @return True if the right sibling node is selected.
    */
   public INode moveToRightSibling();
+  
+  /**
+   * Move cursor to referenceg node of the currently selected node.
+   * 
+   * @return True if the reference node is selected.
+   */
+  public INode moveToReference();
 
   /**
    * Move cursor to attribute by its index.
