@@ -34,7 +34,7 @@ import org.treetank.nodelayer.ElementNode;
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.utils.FastByteArrayReader;
 
-public class PageWriterTest {
+public class PageReaderAndWriterTest {
 
   private final static String PATH =
       "generated" + File.separator + "PageWriterTest.tnk";
