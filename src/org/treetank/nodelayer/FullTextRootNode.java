@@ -44,20 +44,11 @@ public final class FullTextRootNode extends AbstractNode {
 
   /**
    * Constructor to create full text root node.
-   * 
-   * @param firstChildKey Key of first child.
-   */
-  public FullTextRootNode(final long firstChildKey) {
-    super(IConstants.FULLTEXT_ROOT_KEY);
-    mFirstChildKey = firstChildKey;
-    mChildCount = 0;
-  }
-
-  /**
-   * Create new fulltext root node.
    */
   public FullTextRootNode() {
-    this(IConstants.NULL_KEY);
+    super(IConstants.FULLTEXT_ROOT_KEY);
+    mFirstChildKey = IConstants.NULL_KEY;
+    mChildCount = 0;
   }
 
   /**

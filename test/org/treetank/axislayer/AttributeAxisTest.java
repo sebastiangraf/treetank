@@ -61,7 +61,7 @@ public class AttributeAxisTest {
     final IAxis axis2 = new AttributeAxis(wtx);
     assertEquals(true, axis2.hasNext());
     INode node = axis2.next();
-    assertEquals((2L) + 1, node.getNodeKey());
+    assertEquals(2L, node.getNodeKey());
 
     assertEquals(false, axis2.hasNext());
 
@@ -69,7 +69,7 @@ public class AttributeAxisTest {
     final IAxis axis4 = new AttributeAxis(wtx);
     assertEquals(true, axis4.hasNext());
     node = axis4.next();
-    assertEquals((8L) + 1, node.getNodeKey());
+    assertEquals(8L, node.getNodeKey());
 
     assertEquals(false, axis4.hasNext());
 

@@ -52,7 +52,7 @@ public class NodePageTest {
     assertEquals(4L, page2.getNode(0).getRightSiblingKey());
     assertEquals(0L, page2.getNode(0).getChildCount());
     assertEquals(1, page2.getNode(0).getAttributeCount());
-    assertEquals(1L, page2.getNode(0).getAttribute(0).getNodeKey());
+    assertEquals(0L, page2.getNode(0).getAttribute(0).getNodeKey());
     assertEquals(0L, page2.getNode(0).getAttribute(0).getParentKey());
     assertEquals(22, page2.getNode(0).getAttribute(0).getLocalPartKey());
     assertEquals(23, page2.getNode(0).getAttribute(0).getURIKey());

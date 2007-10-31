@@ -155,17 +155,13 @@ public final class ElementNode extends AbstractNode {
     mAttributes = new AttributeNode[in.readByte()];
     for (int i = 0, l = mAttributes.length; i < l; i++) {
       mAttributes[i] =
-          new AttributeNode(
-              getNodeKey() + i + 1,
-              getNodeKey(),
-              in.readVarInt(),
-              in.readVarInt(),
-              in.readVarInt(),
-              in.readByteArray());
+          new AttributeNode(getNodeKey(), getNodeKey(), in.readVarInt(), in
+              .readVarInt(), in.readVarInt(), in.readByteArray());
     }
     mNamespaces = new NamespaceNode[in.readByte()];
     for (int i = 0, l = mNamespaces.length; i < l; i++) {
-      mNamespaces[i] = new NamespaceNode(in.readVarInt(), in.readVarInt());
+      mNamespaces[i] =
+          new NamespaceNode(getNodeKey(), in.readVarInt(), in.readVarInt());
     }
     mFullTextAttributes = new FullTextAttributeNode[in.readByte()];
     for (int i = 0, l = mFullTextAttributes.length; i < l; i++) {
@@ -375,7 +371,7 @@ public final class ElementNode extends AbstractNode {
       final byte[] value) {
     mAttributes[index] =
         new AttributeNode(
-            getNodeKey() + index + 1,
+            getNodeKey(),
             getNodeKey(),
             localPartKey,
             uriKey,
@@ -399,7 +395,7 @@ public final class ElementNode extends AbstractNode {
 
     mAttributes[mAttributes.length - 1] =
         new AttributeNode(
-            getNodeKey() + mAttributes.length,
+            getNodeKey(),
             getNodeKey(),
             localPartKey,
             uriKey,
@@ -431,7 +427,7 @@ public final class ElementNode extends AbstractNode {
       final int index,
       final int uriKey,
       final int prefixKey) {
-    mNamespaces[index] = new NamespaceNode(uriKey, prefixKey);
+    mNamespaces[index] = new NamespaceNode(getNodeKey(), uriKey, prefixKey);
   }
 
   /**
@@ -444,7 +440,8 @@ public final class ElementNode extends AbstractNode {
     System.arraycopy(mNamespaces, 0, tmp, 0, mNamespaces.length);
     mNamespaces = tmp;
 
-    mNamespaces[mNamespaces.length - 1] = new NamespaceNode(uriKey, prefixKey);
+    mNamespaces[mNamespaces.length - 1] =
+        new NamespaceNode(getNodeKey(), uriKey, prefixKey);
   }
 
   /**
