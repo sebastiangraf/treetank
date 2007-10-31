@@ -187,6 +187,13 @@ public interface IWriteTransaction extends IReadTransaction {
       final String prefix);
 
   /**
+   * Set reference key.
+   * 
+   * @param referenceKey Key to referenced node.
+   */
+  public void setReferenceKey(final long referenceKey);
+
+  /**
    * Set local part of node.
    * 
    * @param localPart New local part of node.

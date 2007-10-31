@@ -191,6 +191,24 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
+  public final boolean hasReference() {
+    assertNotClosed();
+    assertIsSelected();
+    return mCurrentNode.hasReference();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final long getReferenceKey() {
+    assertNotClosed();
+    assertIsSelected();
+    return mCurrentNode.getReferenceKey();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final boolean hasParent() {
     assertNotClosed();
     assertIsSelected();
