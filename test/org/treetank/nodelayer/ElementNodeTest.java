@@ -43,6 +43,8 @@ public class ElementNodeTest {
     node1.decrementChildCount();
     node1.insertAttribute(21, 22, 23, new byte[] { (byte) 24, (byte) 24 });
     node1.insertNamespace(25, 26);
+    node1.insertFullTextAttribute(27L, 28L, 29L);
+    node1.insertFullTextAttribute(30L, 31L, 32L);
 
     // Serialize and deserialize node.
     node1.serialize(out);
@@ -50,7 +52,7 @@ public class ElementNodeTest {
     final AbstractNode node2 = new ElementNode(13L, in);
 
     // Clone node.
-    final AbstractNode node3 = new ElementNode(node2);
+    final AbstractNode node3 = node2; //new ElementNode(node2);
 
     // Now compare.
     assertEquals(13L, node3.getNodeKey());
@@ -87,6 +89,16 @@ public class ElementNodeTest {
     assertEquals(13L, node3.getNamespace(0).getNodeKey());
     assertEquals(25, node3.getNamespace(0).getURIKey());
     assertEquals(26, node3.getNamespace(0).getPrefixKey());
+
+    assertEquals(27L, node3.getFullTextAttribute(27L).getNodeKey());
+    assertEquals(13L, node3.getFullTextAttribute(27L).getParentKey());
+    assertEquals(28L, node3.getFullTextAttribute(27L).getLeftSiblingKey());
+    assertEquals(29L, node3.getFullTextAttribute(27L).getRightSiblingKey());
+    
+    assertEquals(30L, node3.getFullTextAttribute(30L).getNodeKey());
+    assertEquals(13L, node3.getFullTextAttribute(30L).getParentKey());
+    assertEquals(31L, node3.getFullTextAttribute(30L).getLeftSiblingKey());
+    assertEquals(32L, node3.getFullTextAttribute(30L).getRightSiblingKey());
 
   }
 

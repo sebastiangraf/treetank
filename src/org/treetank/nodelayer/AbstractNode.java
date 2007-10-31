@@ -357,7 +357,6 @@ public abstract class AbstractNode implements INode, Comparable<INode> {
 
   public void insertFullTextAttribute(
       final long nodeKey,
-      final long parentKey,
       final long leftSiblingKey,
       final long rightSiblingKey) {
   }
