@@ -70,6 +70,12 @@ public final class XMLShredder {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     final FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
 
+    // Make sure that we do not shred into an existing TreeTank.
+    if (wtx.hasFirstChild()) {
+      throw new IllegalStateException(
+          "XMLShredder can not shred into an existing TreeTank.");
+    }
+
     long key;
     String text;
     leftSiblingKeyStack.push(IConstants.NULL_KEY);
