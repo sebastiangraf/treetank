@@ -132,6 +132,9 @@ public interface IConstants {
   /** INode kind is text. */
   public static final int TEXT = 3;
 
+  /** INode kind is namespace. */
+  public static final int NAMESPACE = 4;
+
   /** INode kind is processing instruction. */
   public static final int PROCESSING_INSTRUCTION = 7;
 

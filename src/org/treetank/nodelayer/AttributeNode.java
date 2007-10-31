@@ -32,9 +32,6 @@ import org.treetank.api.IReadTransaction;
  */
 public final class AttributeNode extends AbstractNode {
 
-  /** Key of parent node. */
-  private long mParentKey;
-
   /** Key of local part. */
   private int mLocalPartKey;
 
@@ -51,7 +48,6 @@ public final class AttributeNode extends AbstractNode {
    * Constructor to create attribute.
    * 
    * @param nodeKey Key of node.
-   * @param parentKey Key of parent node.
    * @param localPartKey Key of local part.
    * @param uriKey Key of URI.
    * @param prefixKey Key of prefix.
@@ -59,13 +55,11 @@ public final class AttributeNode extends AbstractNode {
    */
   public AttributeNode(
       final long nodeKey,
-      final long parentKey,
       final int localPartKey,
       final int uriKey,
       final int prefixKey,
       final byte[] value) {
     super(nodeKey);
-    mParentKey = parentKey;
     mLocalPartKey = localPartKey;
     mURIKey = uriKey;
     mPrefixKey = prefixKey;
@@ -79,7 +73,6 @@ public final class AttributeNode extends AbstractNode {
    */
   public AttributeNode(final INode attribute) {
     super(attribute.getNodeKey());
-    mParentKey = attribute.getParentKey();
     mLocalPartKey = attribute.getLocalPartKey();
     mURIKey = attribute.getURIKey();
     mPrefixKey = attribute.getPrefixKey();
@@ -131,7 +124,7 @@ public final class AttributeNode extends AbstractNode {
    */
   @Override
   public final long getParentKey() {
-    return mParentKey;
+    return getNodeKey();
   }
 
   /**
@@ -139,15 +132,7 @@ public final class AttributeNode extends AbstractNode {
    */
   @Override
   public final INode getParent(final IReadTransaction rtx) {
-    return rtx.moveTo(mParentKey);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final void setParentKey(final long parentKey) {
-    mParentKey = parentKey;
+    return rtx.moveTo(getNodeKey());
   }
 
   /**
