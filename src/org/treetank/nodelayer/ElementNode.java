@@ -445,13 +445,12 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final FullTextAttributeNode getFullTextAttribute(final long nodeKey) {
-    // TODO Replace with Arrays.search in Java 6.
-    for (final FullTextAttributeNode node : mFullTextAttributes) {
-      if (node.getNodeKey() == nodeKey) {
-        return node;
-      }
+    final int index = binarySearch(nodeKey);
+    if (index >= 0) {
+      return mFullTextAttributes[index];
+    } else {
+      return null;
     }
-    return null;
   }
 
   /**
@@ -463,7 +462,15 @@ public final class ElementNode extends AbstractNode {
       final long parentKey,
       final long leftSiblingKey,
       final long rightSiblingKey) {
-    mFullTextAttributes[(int) nodeKey] =
+
+    final int index = binarySearch(nodeKey);
+    if (index < 0) {
+      throw new IllegalArgumentException("Node key "
+          + nodeKey
+          + " does not exist and can thus not be set.");
+    }
+
+    mFullTextAttributes[index] =
         new FullTextAttributeNode(
             nodeKey,
             parentKey,
@@ -477,7 +484,6 @@ public final class ElementNode extends AbstractNode {
   @Override
   public final void insertFullTextAttribute(
       final long nodeKey,
-      final long parentKey,
       final long leftSiblingKey,
       final long rightSiblingKey) {
 
@@ -490,7 +496,7 @@ public final class ElementNode extends AbstractNode {
     mFullTextAttributes[mFullTextAttributes.length - 1] =
         new FullTextAttributeNode(
             nodeKey,
-            parentKey,
+            getNodeKey(),
             leftSiblingKey,
             rightSiblingKey);
 
@@ -628,6 +634,27 @@ public final class ElementNode extends AbstractNode {
         + this.mLeftSiblingKey
         + "\n\trightSiblingKey: "
         + this.mRightSiblingKey;
+  }
+
+  /**
+   * Binary search on full text attribute nodes. Every modifying operation
+   * must sort the array of full text attributes before it returns. This
+   * is required because the array must provide random access on the node key.
+   */
+  private final int binarySearch(final long nodeKey) {
+    int low = 0;
+    int high = mFullTextAttributes.length - 1;
+    while (low <= high) {
+      int mid = (low + high) >> 1;
+      if (mFullTextAttributes[mid].getNodeKey() > nodeKey) {
+        high = mid - 1;
+      } else if (mFullTextAttributes[mid].getNodeKey() < nodeKey) {
+        low = mid + 1;
+      } else {
+        return mid;
+      }
+    }
+    return -1;
   }
 
 }
