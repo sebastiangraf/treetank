@@ -87,10 +87,7 @@ public final class WriteTransaction extends ReadTransaction
                 .createNameKey(prefix)));
 
     updateParentAfterInsert(true);
-
-    if (getCurrentNode().getChildCount() > 0) {
-      updateRightSibling();
-    }
+    updateRightSibling();
 
     return getCurrentNode().getNodeKey();
   }
@@ -107,14 +104,11 @@ public final class WriteTransaction extends ReadTransaction
         .createTextNode(
             getCurrentNode().getNodeKey(),
             IConstants.NULL_KEY,
-            IConstants.NULL_KEY,
+            getCurrentNode().getFirstChildKey(),
             value));
 
     updateParentAfterInsert(true);
-
-    if (getCurrentNode().getChildCount() > 0) {
-      updateRightSibling();
-    }
+    updateRightSibling();
 
     return getCurrentNode().getNodeKey();
   }
@@ -132,15 +126,12 @@ public final class WriteTransaction extends ReadTransaction
             getCurrentNode().getNodeKey(),
             IConstants.NULL_KEY,
             IConstants.NULL_KEY,
-            IConstants.NULL_KEY,
+            getCurrentNode().getFirstChildKey(),
             IConstants.NULL_KEY,
             localPartKey));
 
     updateParentAfterInsert(true);
-
-    if (getCurrentNode().getChildCount() > 0) {
-      updateRightSibling();
-    }
+    updateRightSibling();
 
     return getCurrentNode().getNodeKey();
   }

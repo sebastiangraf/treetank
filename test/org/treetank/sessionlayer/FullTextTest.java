@@ -28,6 +28,7 @@ import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
@@ -45,25 +46,37 @@ public class FullTextTest {
   @Test
   public void testInsertChild() throws IOException {
 
-    final ISession session = Session.beginSession(TEST_PATH);
+    ISession session = Session.beginSession(TEST_PATH);
 
     final IWriteTransaction wtx = session.beginWriteTransaction();
     wtx.moveToFullTextRoot();
-    wtx.insertFullTextAsFirstChild(13);
+    TestCase.assertEquals(2L, wtx.insertFullTextAsFirstChild(13));
     wtx.setReferenceKey(23L);
-    wtx.insertFullTextAsFirstChild(14);
+    TestCase.assertEquals(3L, wtx.insertFullTextAsFirstChild(14));
     wtx.setReferenceKey(24L);
-    wtx.insertFullTextAsRightSibling(15);
+    TestCase.assertEquals(4L, wtx.insertFullTextAsRightSibling(15));
     wtx.setReferenceKey(25L);
-    wtx.insertFullTextAsRightSibling(16);
+    TestCase.assertEquals(5L, wtx.insertFullTextAsRightSibling(16));
     wtx.setReferenceKey(26L);
+    TestCase.assertEquals(6L, wtx.insertFullTextAsFirstChild(17));
+    wtx.setReferenceKey(27L);
+    wtx.moveToParent();
+    TestCase.assertEquals(7L, wtx.insertFullTextAsFirstChild(18));
+    wtx.setReferenceKey(28L);
     wtx.commit();
     wtx.close();
+    session.close();
 
+    session = Session.beginSession(TEST_PATH);
     final IReadTransaction rtx = session.beginReadTransaction();
 
     rtx.moveToFullTextRoot();
     TestCase.assertEquals(1L, rtx.getChildCount());
+    TestCase.assertEquals(IConstants.FULLTEXT_ROOT_KEY, rtx.getNodeKey());
+    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getParentKey());
+    TestCase.assertEquals(2L, rtx.getFirstChildKey());
+    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getLeftSiblingKey());
+    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getRightSiblingKey());
 
     rtx.moveToFirstChild();
     TestCase.assertEquals(3L, rtx.getChildCount());
@@ -74,6 +87,11 @@ public class FullTextTest {
     TestCase.assertEquals(false, rtx.hasLeftSibling());
     TestCase.assertEquals(false, rtx.hasRightSibling());
     TestCase.assertEquals(true, rtx.hasReference());
+    TestCase.assertEquals(2L, rtx.getNodeKey());
+    TestCase.assertEquals(IConstants.FULLTEXT_ROOT_KEY, rtx.getParentKey());
+    TestCase.assertEquals(3L, rtx.getFirstChildKey());
+    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getLeftSiblingKey());
+    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getRightSiblingKey());
 
     rtx.moveToFirstChild();
     TestCase.assertEquals(0L, rtx.getChildCount());
@@ -84,6 +102,11 @@ public class FullTextTest {
     TestCase.assertEquals(false, rtx.hasLeftSibling());
     TestCase.assertEquals(true, rtx.hasRightSibling());
     TestCase.assertEquals(true, rtx.hasReference());
+    TestCase.assertEquals(3L, rtx.getNodeKey());
+    TestCase.assertEquals(2L, rtx.getParentKey());
+    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getFirstChildKey());
+    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getLeftSiblingKey());
+    TestCase.assertEquals(4L, rtx.getRightSiblingKey());
 
     rtx.moveToRightSibling();
     TestCase.assertEquals(0L, rtx.getChildCount());
@@ -94,16 +117,56 @@ public class FullTextTest {
     TestCase.assertEquals(true, rtx.hasLeftSibling());
     TestCase.assertEquals(true, rtx.hasRightSibling());
     TestCase.assertEquals(true, rtx.hasReference());
+    TestCase.assertEquals(4L, rtx.getNodeKey());
+    TestCase.assertEquals(2L, rtx.getParentKey());
+    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getFirstChildKey());
+    TestCase.assertEquals(3L, rtx.getLeftSiblingKey());
+    TestCase.assertEquals(5L, rtx.getRightSiblingKey());
+
+    rtx.moveToRightSibling();
+    TestCase.assertEquals(2L, rtx.getChildCount());
+    TestCase.assertEquals(16, rtx.getLocalPartKey());
+    TestCase.assertEquals(26L, rtx.getReferenceKey());
+    TestCase.assertEquals(true, rtx.hasParent());
+    TestCase.assertEquals(true, rtx.hasFirstChild());
+    TestCase.assertEquals(true, rtx.hasLeftSibling());
+    TestCase.assertEquals(false, rtx.hasRightSibling());
+    TestCase.assertEquals(true, rtx.hasReference());
+    TestCase.assertEquals(5L, rtx.getNodeKey());
+    TestCase.assertEquals(2L, rtx.getParentKey());
+    TestCase.assertEquals(7L, rtx.getFirstChildKey());
+    TestCase.assertEquals(4L, rtx.getLeftSiblingKey());
+    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getRightSiblingKey());
+
+    rtx.moveToFirstChild();
+    TestCase.assertEquals(0L, rtx.getChildCount());
+    TestCase.assertEquals(18, rtx.getLocalPartKey());
+    TestCase.assertEquals(28L, rtx.getReferenceKey());
+    TestCase.assertEquals(true, rtx.hasParent());
+    TestCase.assertEquals(false, rtx.hasFirstChild());
+    TestCase.assertEquals(false, rtx.hasLeftSibling());
+    TestCase.assertEquals(true, rtx.hasRightSibling());
+    TestCase.assertEquals(true, rtx.hasReference());
+    TestCase.assertEquals(7L, rtx.getNodeKey());
+    TestCase.assertEquals(5L, rtx.getParentKey());
+    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getFirstChildKey());
+    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getLeftSiblingKey());
+    TestCase.assertEquals(6L, rtx.getRightSiblingKey());
 
     rtx.moveToRightSibling();
     TestCase.assertEquals(0L, rtx.getChildCount());
-    TestCase.assertEquals(16, rtx.getLocalPartKey());
-    TestCase.assertEquals(26L, rtx.getReferenceKey());
+    TestCase.assertEquals(17, rtx.getLocalPartKey());
+    TestCase.assertEquals(27L, rtx.getReferenceKey());
     TestCase.assertEquals(true, rtx.hasParent());
     TestCase.assertEquals(false, rtx.hasFirstChild());
     TestCase.assertEquals(true, rtx.hasLeftSibling());
     TestCase.assertEquals(false, rtx.hasRightSibling());
     TestCase.assertEquals(true, rtx.hasReference());
+    TestCase.assertEquals(6L, rtx.getNodeKey());
+    TestCase.assertEquals(5L, rtx.getParentKey());
+    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getFirstChildKey());
+    TestCase.assertEquals(7L, rtx.getLeftSiblingKey());
+    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getRightSiblingKey());
 
     rtx.close();
 
