@@ -181,7 +181,7 @@ public final class SAXGenerator extends Thread {
     }
 
     // Finally emit all pending end elements.
-    while (stack.size() > 0) {
+    while (!stack.empty()) {
       emitEndElement(stack.pop(), rtx);
     }
 
