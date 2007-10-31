@@ -83,7 +83,7 @@ public class MinimumCommitTest {
     wtx.close();
 
     IReadTransaction rtx = session.beginReadTransaction();
-    if (rtx.getRevisionTimestamp() >= System.currentTimeMillis()) {
+    if (rtx.getRevisionTimestamp() >= (System.currentTimeMillis() + 1)) {
       TestCase.fail("Committed revision timestamp must be smaller than now.");
     }
     rtx.close();

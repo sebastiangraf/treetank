@@ -45,20 +45,11 @@ public final class DocumentRootNode extends AbstractNode {
 
   /**
    * Constructor to create document node.
-   * 
-   * @param firstChildKey Key of first child.
-   */
-  public DocumentRootNode(final long firstChildKey) {
-    super(IConstants.DOCUMENT_ROOT_KEY);
-    mFirstChildKey = firstChildKey;
-    mChildCount = 0;
-  }
-
-  /**
-   * Create new document node.
    */
   public DocumentRootNode() {
-    this(IConstants.NULL_KEY);
+    super(IConstants.DOCUMENT_ROOT_KEY);
+    mFirstChildKey = IConstants.NULL_KEY;
+    mChildCount = 0;
   }
 
   /**
