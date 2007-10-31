@@ -138,10 +138,7 @@ public class SessionTest {
         }
       };
       secondAccess.start();
-      long counter = 0;
-      while (secondAccess.isAlive() && counter < 100000) {
-        counter++;
-      }
+      Thread.sleep(100);
       if (secondAccess.isAlive()) {
         fail("Second access should have died!");
       }
