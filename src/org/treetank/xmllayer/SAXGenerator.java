@@ -61,8 +61,6 @@ public final class SAXGenerator extends Thread {
   private final IAxis mAxis;
 
   private final FastStack<INode> stack;
-  
-  
 
   /**
    * 'Callback' Constructor.
@@ -110,7 +108,7 @@ public final class SAXGenerator extends Thread {
   private final String qName(final String prefix, final String localPart) {
     return (prefix.length() > 0 ? prefix + ":" + localPart : localPart);
   }
-  
+
   private final AttributesImpl visitAttributes(final IReadTransaction rtx)
       throws Exception {
 
@@ -125,9 +123,8 @@ public final class SAXGenerator extends Thread {
     return attributes;
   }
 
-  private final void emitNode(
-      final INode node,
-      final IReadTransaction rtx) throws Exception {
+  private final void emitNode(final INode node, final IReadTransaction rtx)
+      throws Exception {
     // Emit events of current node.
     switch (node.getKind()) {
     case IConstants.ELEMENT:
@@ -145,9 +142,8 @@ public final class SAXGenerator extends Thread {
     }
   }
 
-  private final void emitEndElement(
-      final INode node,
-      final IReadTransaction rtx) throws Exception {
+  private final void emitEndElement(final INode node, final IReadTransaction rtx)
+      throws Exception {
     mHandler.endElement(node.getURI(rtx), node.getLocalPart(rtx), qName(node
         .getPrefix(rtx), node.getLocalPart(rtx)));
   }
@@ -159,7 +155,7 @@ public final class SAXGenerator extends Thread {
     for (final INode node : mAxis) {
 
       // Emit all pending end elements.
-      if (closeElements) {
+      if (closeElements && stack.size() > 0) {
         while (stack.peek().getNodeKey() != node.getLeftSiblingKey()) {
           emitEndElement(stack.pop(), rtx);
         }
