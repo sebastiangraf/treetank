@@ -29,7 +29,9 @@ import java.util.Iterator;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.junit.Before;
+import junit.framework.TestCase;
+
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
@@ -51,8 +53,8 @@ public class XMLShredderTest {
   public static final String EXPECTED_PATH =
       "generated" + File.separator + "ExpectedXMLShredderTest.tnk";
 
-  @Before
-  public void setUp() throws IOException {
+  @BeforeClass
+  public static void setUp() throws IOException {
     new File(PATH).delete();
     new File(EXPECTED_PATH).delete();
   }
@@ -106,6 +108,16 @@ public class XMLShredderTest {
     rtx.close();
     session.close();
 
+  }
+
+  @Test
+  public void testShredIntoExisting() throws IOException, XMLStreamException {
+    try {
+      XMLShredder.shred(XML, new SessionConfiguration(PATH));
+      TestCase.fail();
+    } catch (Exception e) {
+      // Must fail.
+    }
   }
 
 }
