@@ -164,6 +164,13 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
+  public final INode moveToReference() {
+    return moveTo(mCurrentNode.getReferenceKey());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final INode moveToAttribute(final int index) {
     assertNotClosed();
     mCurrentNode = mCurrentNode.getAttribute(index);
