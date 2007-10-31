@@ -29,7 +29,7 @@ package org.treetank.utils;
  * faster than Stack.
  * </p>
  * 
- * @param E Generic type.
+ * @param <E> Generic type.
  */
 public final class FastStack<E> {
 
@@ -45,7 +45,7 @@ public final class FastStack<E> {
    */
   @SuppressWarnings("unchecked")
   public FastStack() {
-    mStack = (E[]) new Object[32];
+    mStack = (E[]) new Object[16];
     mSize = 0;
   }
 
@@ -110,6 +110,15 @@ public final class FastStack<E> {
    */
   public final int size() {
     return mSize;
+  }
+
+  /**
+   * Is the stack empty?
+   * 
+   * @return True if there are no elements anymore. False else.
+   */
+  public final boolean empty() {
+    return (mSize == 0);
   }
 
   /**
