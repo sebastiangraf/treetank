@@ -21,6 +21,7 @@
 
 TreeTank 4.14
 -------------
++ Added notion of reference key as multipurpose key.
 + Added lots of test cases.
 + Binary incompatibility because fulltext root node takes key 1.
 + Added hooks for fulltext index
