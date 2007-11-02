@@ -90,15 +90,15 @@ public class ElementNodeTest {
     assertEquals(25, node3.getNamespace(0).getURIKey());
     assertEquals(26, node3.getNamespace(0).getPrefixKey());
 
-    assertEquals(27L, node3.getFullTextAttribute(27L).getNodeKey());
-    assertEquals(13L, node3.getFullTextAttribute(27L).getParentKey());
-    assertEquals(28L, node3.getFullTextAttribute(27L).getLeftSiblingKey());
-    assertEquals(29L, node3.getFullTextAttribute(27L).getRightSiblingKey());
+    assertEquals(27L, node3.getFullTextAttributeByTokenKey(27L).getNodeKey());
+    assertEquals(13L, node3.getFullTextAttributeByTokenKey(27L).getParentKey());
+    assertEquals(28L, node3.getFullTextAttributeByTokenKey(27L).getLeftSiblingKey());
+    assertEquals(29L, node3.getFullTextAttributeByTokenKey(27L).getRightSiblingKey());
     
-    assertEquals(30L, node3.getFullTextAttribute(30L).getNodeKey());
-    assertEquals(13L, node3.getFullTextAttribute(30L).getParentKey());
-    assertEquals(31L, node3.getFullTextAttribute(30L).getLeftSiblingKey());
-    assertEquals(32L, node3.getFullTextAttribute(30L).getRightSiblingKey());
+    assertEquals(30L, node3.getFullTextAttributeByTokenKey(30L).getNodeKey());
+    assertEquals(13L, node3.getFullTextAttributeByTokenKey(30L).getParentKey());
+    assertEquals(31L, node3.getFullTextAttributeByTokenKey(30L).getLeftSiblingKey());
+    assertEquals(32L, node3.getFullTextAttributeByTokenKey(30L).getRightSiblingKey());
 
   }
 

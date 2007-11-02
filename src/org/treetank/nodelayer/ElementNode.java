@@ -130,7 +130,7 @@ public final class ElementNode extends AbstractNode {
         new FullTextAttributeNode[node.getFullTextAttributeCount()];
     for (int i = 0, l = mFullTextAttributes.length; i < l; i++) {
       mFullTextAttributes[i] =
-          new FullTextAttributeNode(node.getFullTextAttribute(i));
+          new FullTextAttributeNode(node.getFullTextAttributeByOffset(i));
     }
     mLocalPartKey = node.getLocalPartKey();
     mURIKey = node.getURIKey();
@@ -444,7 +444,8 @@ public final class ElementNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final FullTextAttributeNode getFullTextAttribute(final long nodeKey) {
+  public final FullTextAttributeNode getFullTextAttributeByTokenKey(
+      final long nodeKey) {
     final int index = binarySearch(nodeKey);
     if (index >= 0) {
       return mFullTextAttributes[index];
@@ -457,9 +458,17 @@ public final class ElementNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
+  public final FullTextAttributeNode getFullTextAttributeByOffset(
+      final int offset) {
+    return mFullTextAttributes[offset];
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final void setFullTextAttribute(
       final long nodeKey,
-      final long parentKey,
       final long leftSiblingKey,
       final long rightSiblingKey) {
 
@@ -473,7 +482,7 @@ public final class ElementNode extends AbstractNode {
     mFullTextAttributes[index] =
         new FullTextAttributeNode(
             nodeKey,
-            parentKey,
+            getParentKey(),
             leftSiblingKey,
             rightSiblingKey);
   }

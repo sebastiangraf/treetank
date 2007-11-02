@@ -241,12 +241,20 @@ public interface INode {
   public INode getNamespace(final int index);
   
   /**
-   * Get fulltext attribute with given index.
+   * Get full text attribute by its token key.
    * 
-   * @param nodeKey Key of fulltext attribute to return.
+   * @param tokenKey Key of fulltext attribute to return.
    * @return INode for given index.
    */
-  public INode getFullTextAttribute(final long nodeKey);
+  public INode getFullTextAttributeByTokenKey(final long tokenKey);
+  
+  /**
+   * Get fulltext attribute by its offset.
+   * 
+   * @param offset Offset of full text attribute.
+   * @return INode for given index.
+   */
+  public INode getFullTextAttributeByOffset(final int offset);
 
   /**
    * Get kind of node.

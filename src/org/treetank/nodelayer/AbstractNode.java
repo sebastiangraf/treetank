@@ -257,7 +257,14 @@ public abstract class AbstractNode implements INode, Comparable<INode> {
   /**
    * {@inheritDoc}
    */
-  public INode getFullTextAttribute(final long nodeKey) {
+  public INode getFullTextAttributeByTokenKey(final long tokenKey) {
+    return null;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public INode getFullTextAttributeByOffset(final int offset) {
     return null;
   }
 
@@ -373,14 +380,13 @@ public abstract class AbstractNode implements INode, Comparable<INode> {
   }
 
   public void setFullTextAttribute(
-      final long nodeKey,
-      final long parentKey,
+      final long tokenKey,
       final long leftSiblingKey,
       final long rightSiblingKey) {
   }
 
   public void insertFullTextAttribute(
-      final long nodeKey,
+      final long tokenKey,
       final long leftSiblingKey,
       final long rightSiblingKey) {
   }
