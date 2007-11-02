@@ -46,6 +46,17 @@ import java.io.IOException;
  * </p>
  */
 public interface IWriteTransaction extends IReadTransaction {
+  
+  //--- FullText Support -------------------------------------------------------
+  
+  /**
+   * Index the given token occurring in the provided node key. The caller
+   * must make sure that the token is efficiently filtered and trimmed.
+   * 
+   * @param token Token to store (unmodified) in the inverted index.
+   * @param nodeKey Key of node which contains the token.
+   */
+  public void index(final String token, final long nodeKey);
 
   // --- Node Modifiers --------------------------------------------------------
 
