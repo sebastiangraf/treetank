@@ -85,55 +85,60 @@ public final class TestDocument {
   /**
    * Create simple test document containing all supported node kinds.
    * 
-   * @param trx IWriteTransaction to write to.
-   * @throws Exception of any kind.
+   * @param wtx IWriteTransaction to write to.
    */
-  public static void create(final IWriteTransaction trx) {
+  public static void create(final IWriteTransaction wtx) {
 
-    trx.insertElementAsFirstChild("a", "ns", "p");
-    trx.insertAttribute("i", "", "", UTF.convert("j"));
+    wtx.insertElementAsFirstChild("a", "ns", "p");
+    wtx.insertAttribute("i", "", "", UTF.convert("j"));
 
-    trx.insertTextAsFirstChild(UTF.convert("oops1"));
+    wtx.insertTextAsFirstChild(UTF.convert("oops1"));
 
-    trx.insertElementAsRightSibling("b", "", "");
+    wtx.insertElementAsRightSibling("b", "", "");
 
-    trx.insertTextAsFirstChild(UTF.convert("foo"));
-    trx.insertElementAsRightSibling("c", "", "");
-    trx.moveToParent();
+    wtx.insertTextAsFirstChild(UTF.convert("foo"));
+    wtx.insertElementAsRightSibling("c", "", "");
+    wtx.moveToParent();
 
-    trx.insertTextAsRightSibling(UTF.convert("oops2"));
+    wtx.insertTextAsRightSibling(UTF.convert("oops2"));
 
-    trx.insertElementAsRightSibling("b", "", "");
-    trx.insertAttribute("x", "ns", "p", UTF.convert("y"));
+    wtx.insertElementAsRightSibling("b", "", "");
+    wtx.insertAttribute("x", "ns", "p", UTF.convert("y"));
 
-    trx.insertElementAsFirstChild("c", "", "");
-    trx.insertTextAsRightSibling(UTF.convert("bar"));
-    trx.moveToParent();
+    wtx.insertElementAsFirstChild("c", "", "");
+    wtx.insertTextAsRightSibling(UTF.convert("bar"));
+    wtx.moveToParent();
 
-    trx.insertTextAsRightSibling(UTF.convert("oops3"));
+    wtx.insertTextAsRightSibling(UTF.convert("oops3"));
 
   }
 
-  public static void createWithoutAttributes(final IWriteTransaction trx) {
-    trx.insertElementAsFirstChild("a", "ns", "p");
+  /**
+   * Create simple test document containing all supported node kinds except
+   * the attributes.
+   * 
+   * @param wtx IWriteTransaction to write to.
+   */
+  public static void createWithoutAttributes(final IWriteTransaction wtx) {
+    wtx.insertElementAsFirstChild("a", "ns", "p");
 
-    trx.insertTextAsFirstChild(UTF.convert("oops1"));
+    wtx.insertTextAsFirstChild(UTF.convert("oops1"));
 
-    trx.insertElementAsRightSibling("b", "", "");
+    wtx.insertElementAsRightSibling("b", "", "");
 
-    trx.insertTextAsFirstChild(UTF.convert("foo"));
-    trx.insertElementAsRightSibling("c", "", "");
-    trx.moveToParent();
+    wtx.insertTextAsFirstChild(UTF.convert("foo"));
+    wtx.insertElementAsRightSibling("c", "", "");
+    wtx.moveToParent();
 
-    trx.insertTextAsRightSibling(UTF.convert("oops2"));
+    wtx.insertTextAsRightSibling(UTF.convert("oops2"));
 
-    trx.insertElementAsRightSibling("b", "", "");
+    wtx.insertElementAsRightSibling("b", "", "");
 
-    trx.insertElementAsFirstChild("c", "", "");
-    trx.insertTextAsRightSibling(UTF.convert("bar"));
-    trx.moveToParent();
+    wtx.insertElementAsFirstChild("c", "", "");
+    wtx.insertTextAsRightSibling(UTF.convert("bar"));
+    wtx.moveToParent();
 
-    trx.insertTextAsRightSibling(UTF.convert("oops3"));
+    wtx.insertTextAsRightSibling(UTF.convert("oops3"));
 
   }
 

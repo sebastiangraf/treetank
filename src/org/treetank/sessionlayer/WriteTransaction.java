@@ -54,6 +54,36 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
+  public final void index(final String token, final long nodeKey) {
+
+    // Make sure we always operate from the full text root node.
+    moveToFullTextRoot();
+
+    // Add characters to inverted index consisting of a prefix tree.
+    for (final char character : token.toCharArray()) {
+      if (hasFirstChild()) {
+        moveToFirstChild();
+        while ((getLocalPartKey() != character) && hasRightSibling()) {
+          moveToRightSibling();
+        }
+        if (getLocalPartKey() != character) {
+          insertFullTextAsRightSibling(character);
+        }
+      } else {
+        insertFullTextAsFirstChild(character);
+      }
+    }
+
+    // Add key.
+    if (!hasReference()) {
+      setReferenceKey(nodeKey);
+    }
+
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final void insertFullTextAttributeAsFirstChild(final long fullTextKey) {
     assertNotClosed();
     assertIsSelected();
