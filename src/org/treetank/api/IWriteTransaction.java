@@ -46,26 +46,21 @@ import java.io.IOException;
  * </p>
  */
 public interface IWriteTransaction extends IReadTransaction {
-  
+
   //--- FullText Support -------------------------------------------------------
-  
+
   /**
    * Index the given token occurring in the provided node key. The caller
    * must make sure that the token is efficiently filtered and trimmed.
    * 
    * @param token Token to store (unmodified) in the inverted index.
    * @param nodeKey Key of node which contains the token.
+   * @return Key of token (node key of full text node matching last character
+   *         of token).
    */
-  public void index(final String token, final long nodeKey);
+  public long index(final String token, final long nodeKey);
 
   // --- Node Modifiers --------------------------------------------------------
-
-  /**
-   * Insert new full text attribute as first child.
-   * 
-   * @param fullTextKey Key of full text leaf.
-   */
-  public void insertFullTextAttributeAsFirstChild(final long fullTextKey);
 
   /**
    * Insert new element node as first child of currently selected node.
@@ -162,6 +157,18 @@ public interface IWriteTransaction extends IReadTransaction {
   public void insertNamespace(final String uri, final String prefix);
 
   /**
+   * Insert full text attribute in currently selected node.
+   * 
+   * @param tokenKey Node key of full text node.
+   * @param leftSiblingKey Key of left sibling in result list.
+   * @param rightSiblingKey Key of right sibling in result list.
+   */
+  public void insertFullTextAttribute(
+      final long tokenKey,
+      final long leftSiblingKey,
+      final long rightSiblingKey);
+
+  /**
    * Remove currently selected node. This does not automatically remove
    * descendants.
    */
@@ -196,6 +203,18 @@ public interface IWriteTransaction extends IReadTransaction {
       final int index,
       final String uri,
       final String prefix);
+
+  /**
+   * Set full text attribute in currently selected node.
+   * 
+   * @param tokenKey Node key of full text node.
+   * @param leftSiblingKey Key of left sibling in result list.
+   * @param rightSiblingKey Key of right sibling in result list.
+   */
+  public void setFullTextAttribute(
+      final long tokenKey,
+      final long leftSiblingKey,
+      final long rightSiblingKey);
 
   /**
    * Set reference key.

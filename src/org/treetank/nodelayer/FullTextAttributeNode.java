@@ -48,7 +48,7 @@ public final class FullTextAttributeNode extends AbstractNode {
   /**
    * Create new element node.
    * 
-   * @param nodeKey Key of node.
+   * @param nodeKey Key of token.
    * @param parentKey Key of parent.
    * @param leftSiblingKey Key of left sibling.
    * @param rightSiblingKey Key of right sibling.

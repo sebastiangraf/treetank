@@ -21,6 +21,7 @@
 
 package org.treetank.axislayer;
 
+import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 
 /**
@@ -32,11 +33,11 @@ import org.treetank.api.IReadTransaction;
  */
 public class FullTextAxis extends AbstractAxis {
 
-  /** The nodeKey of the next node to visit. */
-  private String mToken;
+  /** Key of token to find. */
+  private long mTokenKey;
 
-  /** Is the token contained in the prefix tree? */
-  private boolean mIsContained;
+  /** Key of next node to visit. */
+  private long mNextKey;
 
   /**
    * Constructor initializing internal state.
@@ -50,13 +51,20 @@ public class FullTextAxis extends AbstractAxis {
     if (token == null || token.length() == 0) {
       throw new IllegalArgumentException("Token can not be null or empty.");
     }
-    mToken = token;
-    mIsContained = true;
 
     rtx.moveToFullTextRoot();
 
-    for (final char character : mToken.toCharArray()) {
-      mIsContained = mIsContained && isContained(character);
+    boolean isContained = true;
+    for (final char character : token.toCharArray()) {
+      isContained = isContained && isContained(character);
+    }
+
+    if (isContained) {
+      mTokenKey = rtx.getNodeKey();
+      mNextKey = rtx.getReferenceKey();
+    } else {
+      mTokenKey = IConstants.NULL_KEY;
+      mNextKey = IConstants.NULL_KEY;
     }
   }
 
@@ -82,9 +90,10 @@ public class FullTextAxis extends AbstractAxis {
    * {@inheritDoc}
    */
   public final boolean hasNext() {
-    if (mIsContained) {
-      setCurrentNode(getTransaction().moveToReference());
-      mIsContained = false;
+    if (mNextKey != IConstants.NULL_KEY) {
+      setCurrentNode(getTransaction().moveTo(mNextKey));
+      mNextKey =
+          getCurrentNode().getFullTextAttributeByTokenKey(mTokenKey).getRightSiblingKey();
       return true;
     } else {
       setCurrentNode(null);

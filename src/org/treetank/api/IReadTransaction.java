@@ -271,6 +271,21 @@ public interface IReadTransaction {
    * @return Namespace denoted by its index.
    */
   public INode getNamespace(final int index);
+  
+  /**
+   * Get full text attribute count of currently selected node.
+   * 
+   * @return Full text attribute count of currently selected node.
+   */
+  public int getFullTextAttributeCount();
+
+  /**
+   * Get the full text attribute specified by its index.
+   * 
+   * @param nodeKey Key of full text node to get.
+   * @return Full text attribute denoted by the node key.
+   */
+  public INode getFullTextAttribute(final long nodeKey);
 
   /**
    * Get kind of node.
