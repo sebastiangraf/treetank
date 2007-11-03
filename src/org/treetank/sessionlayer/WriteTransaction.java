@@ -24,6 +24,7 @@ package org.treetank.sessionlayer;
 import java.io.IOException;
 
 import org.treetank.api.IConstants;
+import org.treetank.api.INode;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.nodelayer.AbstractNode;
 import org.treetank.pagelayer.UberPage;
@@ -103,11 +104,7 @@ public final class WriteTransaction extends ReadTransaction
       final String localPart,
       final String uri,
       final String prefix) {
-
-    assertNotClosed();
-    assertIsSelected();
-
-    setCurrentNode(((WriteTransactionState) getTransactionState())
+    return insertFirstChild(((WriteTransactionState) getTransactionState())
         .createElementNode(
             getCurrentNode().getNodeKey(),
             IConstants.NULL_KEY,
@@ -118,75 +115,43 @@ public final class WriteTransaction extends ReadTransaction
             ((WriteTransactionState) getTransactionState()).createNameKey(uri),
             ((WriteTransactionState) getTransactionState())
                 .createNameKey(prefix)));
-
-    updateParentAfterInsert(true);
-    updateRightSibling();
-
-    return getCurrentNode().getNodeKey();
   }
 
   /**
    * {@inheritDoc}
    */
   public final long insertTextAsFirstChild(final byte[] value) {
-
-    assertNotClosed();
-    assertIsSelected();
-
-    setCurrentNode(((WriteTransactionState) getTransactionState())
+    return insertFirstChild(((WriteTransactionState) getTransactionState())
         .createTextNode(
             getCurrentNode().getNodeKey(),
             IConstants.NULL_KEY,
             getCurrentNode().getFirstChildKey(),
             value));
-
-    updateParentAfterInsert(true);
-    updateRightSibling();
-
-    return getCurrentNode().getNodeKey();
   }
 
   /**
    * {@inheritDoc}
    */
   public final long insertFullTextAsFirstChild(final int localPartKey) {
-
-    assertNotClosed();
-    assertIsSelected();
-
-    setCurrentNode(((WriteTransactionState) getTransactionState())
+    return insertFirstChild(((WriteTransactionState) getTransactionState())
         .createFullTextNode(
             getCurrentNode().getNodeKey(),
             IConstants.NULL_KEY,
             IConstants.NULL_KEY,
             getCurrentNode().getFirstChildKey(),
             localPartKey));
-
-    updateParentAfterInsert(true);
-    updateRightSibling();
-
-    return getCurrentNode().getNodeKey();
   }
 
   /**
    * {@inheritDoc}
    */
   public final long insertFullTextLeafAsFirstChild(final long firstChildKey) {
-
-    assertNotClosed();
-    assertIsSelected();
-
-    setCurrentNode(((WriteTransactionState) getTransactionState())
+    return insertFirstChild(((WriteTransactionState) getTransactionState())
         .createFullTextLeafNode(
             getCurrentNode().getNodeKey(),
             firstChildKey,
             IConstants.NULL_KEY,
             getCurrentNode().getFirstChildKey()));
-
-    updateParentAfterInsert(true);
-    updateRightSibling();
-
-    return getCurrentNode().getNodeKey();
   }
 
   /**
@@ -196,16 +161,7 @@ public final class WriteTransaction extends ReadTransaction
       final String localPart,
       final String uri,
       final String prefix) {
-
-    assertNotClosed();
-    assertIsSelected();
-
-    if (getCurrentNode().getNodeKey() == IConstants.DOCUMENT_ROOT_KEY) {
-      throw new IllegalStateException("Root node can not have siblings.");
-    }
-
-    // Create new right sibling node.
-    setCurrentNode(((WriteTransactionState) getTransactionState())
+    return insertRightSibling(((WriteTransactionState) getTransactionState())
         .createElementNode(
             getCurrentNode().getParentKey(),
             IConstants.NULL_KEY,
@@ -216,91 +172,40 @@ public final class WriteTransaction extends ReadTransaction
             ((WriteTransactionState) getTransactionState()).createNameKey(uri),
             ((WriteTransactionState) getTransactionState())
                 .createNameKey(prefix)));
-
-    updateParentAfterInsert(false);
-    updateLeftSibling();
-    updateRightSibling();
-
-    return getCurrentNode().getNodeKey();
   }
 
   /**
    * {@inheritDoc}
    */
   public final long insertTextAsRightSibling(final byte[] value) {
-
-    assertNotClosed();
-    assertIsSelected();
-
-    if (getCurrentNode().getNodeKey() == IConstants.DOCUMENT_ROOT_KEY) {
-      throw new IllegalStateException("Root node can not have siblings.");
-    }
-
-    // Create new right sibling node.
-    setCurrentNode(((WriteTransactionState) getTransactionState())
+    return insertRightSibling(((WriteTransactionState) getTransactionState())
         .createTextNode(getCurrentNode().getParentKey(), getCurrentNode()
             .getNodeKey(), getCurrentNode().getRightSiblingKey(), value));
-
-    updateParentAfterInsert(false);
-    updateLeftSibling();
-    updateRightSibling();
-
-    return getCurrentNode().getNodeKey();
   }
 
   /**
    * {@inheritDoc}
    */
   public final long insertFullTextAsRightSibling(final int localPartKey) {
-
-    assertNotClosed();
-    assertIsSelected();
-
-    if (getCurrentNode().getNodeKey() == IConstants.DOCUMENT_ROOT_KEY) {
-      throw new IllegalStateException("Root node can not have siblings.");
-    }
-
-    // Create new right sibling node.
-    setCurrentNode(((WriteTransactionState) getTransactionState())
+    return insertRightSibling(((WriteTransactionState) getTransactionState())
         .createFullTextNode(
             getCurrentNode().getParentKey(),
             IConstants.NULL_KEY,
             getCurrentNode().getNodeKey(),
             getCurrentNode().getRightSiblingKey(),
             localPartKey));
-
-    updateParentAfterInsert(false);
-    updateLeftSibling();
-    updateRightSibling();
-
-    return getCurrentNode().getNodeKey();
   }
 
   /**
    * {@inheritDoc}
    */
   public final long insertFullTextLeafAsRightSibling(final long firstChildKey) {
-
-    assertNotClosed();
-    assertIsSelected();
-
-    if (getCurrentNode().getNodeKey() == IConstants.DOCUMENT_ROOT_KEY) {
-      throw new IllegalStateException("Root node can not have siblings.");
-    }
-
-    // Create new right sibling node.
-    setCurrentNode(((WriteTransactionState) getTransactionState())
+    return insertRightSibling(((WriteTransactionState) getTransactionState())
         .createFullTextLeafNode(
             getCurrentNode().getParentKey(),
             firstChildKey,
             getCurrentNode().getNodeKey(),
             getCurrentNode().getRightSiblingKey()));
-
-    updateParentAfterInsert(false);
-    updateLeftSibling();
-    updateRightSibling();
-
-    return getCurrentNode().getNodeKey();
   }
 
   /**
@@ -551,6 +456,35 @@ public final class WriteTransaction extends ReadTransaction
     setCurrentNode(modNode);
 
     return modNode;
+  }
+
+  private final long insertFirstChild(final INode node) {
+    assertNotClosed();
+    assertIsSelected();
+
+    setCurrentNode(node);
+
+    updateParentAfterInsert(true);
+    updateRightSibling();
+
+    return node.getNodeKey();
+  }
+
+  private final long insertRightSibling(final INode node) {
+    assertNotClosed();
+    assertIsSelected();
+
+    if (getCurrentNode().getNodeKey() == IConstants.DOCUMENT_ROOT_KEY) {
+      throw new IllegalStateException("Root node can not have siblings.");
+    }
+
+    setCurrentNode(node);
+
+    updateParentAfterInsert(false);
+    updateLeftSibling();
+    updateRightSibling();
+
+    return node.getNodeKey();
   }
 
   private final void updateParentAfterInsert(final boolean updateFirstChild) {
