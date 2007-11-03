@@ -65,7 +65,6 @@ public class FullTextTest {
     final IReadTransaction rtx = session.beginReadTransaction();
 
     rtx.moveToFullTextRoot();
-    TestCase.assertEquals(1L, rtx.getChildCount());
     TestCase.assertEquals(IConstants.FULLTEXT_ROOT_KEY, rtx.getNodeKey());
     TestCase.assertEquals(IConstants.NULL_KEY, rtx.getParentKey());
     TestCase.assertEquals(2L, rtx.getFirstChildKey());
@@ -73,7 +72,6 @@ public class FullTextTest {
     TestCase.assertEquals(IConstants.NULL_KEY, rtx.getRightSiblingKey());
 
     rtx.moveToFirstChild();
-    TestCase.assertEquals(3L, rtx.getChildCount());
     TestCase.assertEquals(13, rtx.getLocalPartKey());
     TestCase.assertEquals(true, rtx.hasParent());
     TestCase.assertEquals(true, rtx.hasFirstChild());
@@ -86,7 +84,6 @@ public class FullTextTest {
     TestCase.assertEquals(IConstants.NULL_KEY, rtx.getRightSiblingKey());
 
     rtx.moveToFirstChild();
-    TestCase.assertEquals(0L, rtx.getChildCount());
     TestCase.assertEquals(14, rtx.getLocalPartKey());
     TestCase.assertEquals(true, rtx.hasParent());
     TestCase.assertEquals(false, rtx.hasFirstChild());
@@ -99,7 +96,6 @@ public class FullTextTest {
     TestCase.assertEquals(4L, rtx.getRightSiblingKey());
 
     rtx.moveToRightSibling();
-    TestCase.assertEquals(0L, rtx.getChildCount());
     TestCase.assertEquals(15, rtx.getLocalPartKey());
     TestCase.assertEquals(true, rtx.hasParent());
     TestCase.assertEquals(false, rtx.hasFirstChild());
@@ -112,7 +108,6 @@ public class FullTextTest {
     TestCase.assertEquals(5L, rtx.getRightSiblingKey());
 
     rtx.moveToRightSibling();
-    TestCase.assertEquals(2L, rtx.getChildCount());
     TestCase.assertEquals(16, rtx.getLocalPartKey());
     TestCase.assertEquals(true, rtx.hasParent());
     TestCase.assertEquals(true, rtx.hasFirstChild());
@@ -125,7 +120,6 @@ public class FullTextTest {
     TestCase.assertEquals(IConstants.NULL_KEY, rtx.getRightSiblingKey());
 
     rtx.moveToFirstChild();
-    TestCase.assertEquals(0L, rtx.getChildCount());
     TestCase.assertEquals(18, rtx.getLocalPartKey());
     TestCase.assertEquals(true, rtx.hasParent());
     TestCase.assertEquals(false, rtx.hasFirstChild());
@@ -138,7 +132,6 @@ public class FullTextTest {
     TestCase.assertEquals(6L, rtx.getRightSiblingKey());
 
     rtx.moveToRightSibling();
-    TestCase.assertEquals(0L, rtx.getChildCount());
     TestCase.assertEquals(17, rtx.getLocalPartKey());
     TestCase.assertEquals(true, rtx.hasParent());
     TestCase.assertEquals(false, rtx.hasFirstChild());

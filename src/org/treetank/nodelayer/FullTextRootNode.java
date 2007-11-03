@@ -39,16 +39,12 @@ public final class FullTextRootNode extends AbstractNode {
   /** Key of first child. */
   private long mFirstChildKey;
 
-  /** Child count including element and text nodes. */
-  private long mChildCount;
-
   /**
    * Constructor to create full text root node.
    */
   public FullTextRootNode() {
     super(IConstants.FULLTEXT_ROOT_KEY);
     mFirstChildKey = IConstants.NULL_KEY;
-    mChildCount = 0;
   }
 
   /**
@@ -59,7 +55,6 @@ public final class FullTextRootNode extends AbstractNode {
   public FullTextRootNode(final INode node) {
     super(node.getNodeKey());
     mFirstChildKey = node.getFirstChildKey();
-    mChildCount = node.getChildCount();
   }
 
   /**
@@ -70,7 +65,6 @@ public final class FullTextRootNode extends AbstractNode {
   public FullTextRootNode(final FastByteArrayReader in) {
     super(IConstants.FULLTEXT_ROOT_KEY);
     mFirstChildKey = IConstants.FULLTEXT_ROOT_KEY - in.readVarLong();
-    mChildCount = in.readVarLong();
   }
 
   /**
@@ -117,38 +111,6 @@ public final class FullTextRootNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final long getChildCount() {
-    return mChildCount;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final void setChildCount(final long childCount) {
-    mChildCount = childCount;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final void incrementChildCount() {
-    mChildCount += 1;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final void decrementChildCount() {
-    mChildCount -= 1;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
   public final int getKind() {
     return IConstants.FULLTEXT_ROOT;
   }
@@ -159,7 +121,6 @@ public final class FullTextRootNode extends AbstractNode {
   @Override
   public final void serialize(final FastByteArrayWriter out) {
     out.writeVarLong(IConstants.FULLTEXT_ROOT_KEY - mFirstChildKey);
-    out.writeVarLong(mChildCount);
   }
 
   /**
@@ -170,8 +131,6 @@ public final class FullTextRootNode extends AbstractNode {
     return "FullTextRootNode "
         + "\n\tnodeKey: "
         + getNodeKey()
-        + "\n\tchildcount: "
-        + mChildCount
         + "\n\tfirstChildKey: "
         + mFirstChildKey;
   }
