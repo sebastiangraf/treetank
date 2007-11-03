@@ -90,8 +90,8 @@ public final class FullTextLeafNode extends AbstractNode {
     super(nodeKey);
     mParentKey = getNodeKey() - in.readVarLong();
     mFirstChildKey = getNodeKey() - in.readVarLong();
-    mLeftSiblingKey = in.readVarLong();
-    mRightSiblingKey = in.readVarLong();
+    mLeftSiblingKey = getNodeKey() - in.readVarLong();
+    mRightSiblingKey = getNodeKey() - in.readVarLong();
   }
 
   /**
@@ -245,8 +245,8 @@ public final class FullTextLeafNode extends AbstractNode {
   public final void serialize(final FastByteArrayWriter out) {
     out.writeVarLong(getNodeKey() - mParentKey);
     out.writeVarLong(getNodeKey() - mFirstChildKey);
-    out.writeVarLong(mLeftSiblingKey);
-    out.writeVarLong(mRightSiblingKey);
+    out.writeVarLong(getNodeKey() - mLeftSiblingKey);
+    out.writeVarLong(getNodeKey() - mRightSiblingKey);
   }
 
   /**
