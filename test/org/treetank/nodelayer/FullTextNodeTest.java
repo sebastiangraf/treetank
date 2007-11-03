@@ -34,8 +34,7 @@ public class FullTextNodeTest {
   public void testFullTextNode() {
 
     // Create empty node.
-    final AbstractNode node1 =
-        new FullTextNode(13L, 14L, 15L, 16L, 17L, 18L, 19);
+    final AbstractNode node1 = new FullTextNode(13L, 14L, 15L, 16L, 17L, 19);
     final FastByteArrayWriter out = new FastByteArrayWriter();
 
     // Modify it.
@@ -56,7 +55,6 @@ public class FullTextNodeTest {
     assertEquals(15L, node3.getFirstChildKey());
     assertEquals(16L, node3.getLeftSiblingKey());
     assertEquals(17L, node3.getRightSiblingKey());
-    assertEquals(18L, node3.getReferenceKey());
     assertEquals(0, node3.getChildCount());
     assertEquals(0, node3.getAttributeCount());
     assertEquals(0, node3.getNamespaceCount());

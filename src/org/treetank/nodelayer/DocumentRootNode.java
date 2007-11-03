@@ -70,7 +70,7 @@ public final class DocumentRootNode extends AbstractNode {
    */
   public DocumentRootNode(final FastByteArrayReader in) {
     super(IConstants.DOCUMENT_ROOT_KEY);
-    mFirstChildKey = in.readVarLong();
+    mFirstChildKey = IConstants.DOCUMENT_ROOT_KEY - in.readVarLong();
     mChildCount = in.readVarLong();
   }
 
@@ -159,7 +159,7 @@ public final class DocumentRootNode extends AbstractNode {
    */
   @Override
   public final void serialize(final FastByteArrayWriter out) {
-    out.writeVarLong(mFirstChildKey);
+    out.writeVarLong(IConstants.DOCUMENT_ROOT_KEY - mFirstChildKey);
     out.writeVarLong(mChildCount);
   }
 

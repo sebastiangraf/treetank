@@ -36,9 +36,6 @@ import org.treetank.utils.FastByteArrayWriter;
  */
 public final class FullTextNode extends AbstractNode {
 
-  /** Key of referenced node. */
-  private long mReferenceKey;
-
   /** Key of parent node. */
   private long mParentKey;
 
@@ -61,7 +58,6 @@ public final class FullTextNode extends AbstractNode {
    * Create new element node.
    * 
    * @param nodeKey Key of node.
-   * @param referenceKey Key of referenced node.
    * @param parentKey Key of parent.
    * @param firstChildKey Key of first child.
    * @param leftSiblingKey Key of left sibling.
@@ -74,14 +70,12 @@ public final class FullTextNode extends AbstractNode {
       final long firstChildKey,
       final long leftSiblingKey,
       final long rightSiblingKey,
-      final long referenceKey,
       final int localPartKey) {
     super(nodeKey);
     mParentKey = parentKey;
     mFirstChildKey = firstChildKey;
     mLeftSiblingKey = leftSiblingKey;
     mRightSiblingKey = rightSiblingKey;
-    mReferenceKey = referenceKey;
     mChildCount = 0;
     mLocalPartKey = localPartKey;
   }
@@ -97,7 +91,6 @@ public final class FullTextNode extends AbstractNode {
     mFirstChildKey = node.getFirstChildKey();
     mLeftSiblingKey = node.getLeftSiblingKey();
     mRightSiblingKey = node.getRightSiblingKey();
-    mReferenceKey = node.getReferenceKey();
     mChildCount = node.getChildCount();
     mLocalPartKey = node.getLocalPartKey();
   }
@@ -114,9 +107,8 @@ public final class FullTextNode extends AbstractNode {
     // Read according to node kind.
     mParentKey = getNodeKey() - in.readVarLong();
     mFirstChildKey = getNodeKey() - in.readVarLong();
-    mLeftSiblingKey = getNodeKey() - in.readVarLong();
-    mRightSiblingKey = getNodeKey() - in.readVarLong();
-    mReferenceKey = getNodeKey() - in.readVarLong();
+    mLeftSiblingKey = in.readVarLong();
+    mRightSiblingKey = in.readVarLong();
     mChildCount = in.readVarLong();
     mLocalPartKey = in.readVarInt();
 
@@ -128,38 +120,6 @@ public final class FullTextNode extends AbstractNode {
   @Override
   public final boolean isFullText() {
     return true;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final boolean hasReference() {
-    return (mReferenceKey != IConstants.NULL_KEY);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final long getReferenceKey() {
-    return mReferenceKey;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final INode getReference(final IReadTransaction rtx) {
-    return rtx.moveTo(mReferenceKey);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final void setReferenceKey(final long referenceKey) {
-    mReferenceKey = referenceKey;
   }
 
   /**
@@ -353,9 +313,8 @@ public final class FullTextNode extends AbstractNode {
   public final void serialize(final FastByteArrayWriter out) {
     out.writeVarLong(getNodeKey() - mParentKey);
     out.writeVarLong(getNodeKey() - mFirstChildKey);
-    out.writeVarLong(getNodeKey() - mLeftSiblingKey);
-    out.writeVarLong(getNodeKey() - mRightSiblingKey);
-    out.writeVarLong(getNodeKey() - mReferenceKey);
+    out.writeVarLong(mLeftSiblingKey);
+    out.writeVarLong(mRightSiblingKey);
     out.writeVarLong(mChildCount);
     out.writeVarInt(mLocalPartKey);
   }
@@ -368,8 +327,6 @@ public final class FullTextNode extends AbstractNode {
     return "FullTextNode "
         + "\n\tnodeKey: "
         + getNodeKey()
-        + "\n\treferenceKey: "
-        + mReferenceKey
         + "\n\tchildcount: "
         + mChildCount
         + "\n\tparentKey: "

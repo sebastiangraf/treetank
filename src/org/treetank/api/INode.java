@@ -85,28 +85,6 @@ public interface INode {
   public long getNodeKey();
 
   /**
-   * Is there a reference?
-   * 
-   * @return True if there is a reference. False else.
-   */
-  public boolean hasReference();
-
-  /**
-   * Get reference key of currently selected node.
-   * 
-   * @return Reference key of currently selected node.
-   */
-  public long getReferenceKey();
-
-  /**
-   * Get reference of currently selected node.
-   * 
-   * @param rtx Transaction.
-   * @return Reference of currently selected node.
-   */
-  public INode getReference(final IReadTransaction rtx);
-
-  /**
    * Is there a parent?
    * 
    * @return True if there is a parent. False else.
