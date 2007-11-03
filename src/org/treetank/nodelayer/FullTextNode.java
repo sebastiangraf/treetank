@@ -48,9 +48,6 @@ public final class FullTextNode extends AbstractNode {
   /** Key of right sibling. */
   private long mRightSiblingKey;
 
-  /** Number of children including text and element nodes. */
-  private long mChildCount;
-
   /** Key of local part. */
   private int mLocalPartKey;
 
@@ -76,7 +73,6 @@ public final class FullTextNode extends AbstractNode {
     mFirstChildKey = firstChildKey;
     mLeftSiblingKey = leftSiblingKey;
     mRightSiblingKey = rightSiblingKey;
-    mChildCount = 0;
     mLocalPartKey = localPartKey;
   }
 
@@ -91,7 +87,6 @@ public final class FullTextNode extends AbstractNode {
     mFirstChildKey = node.getFirstChildKey();
     mLeftSiblingKey = node.getLeftSiblingKey();
     mRightSiblingKey = node.getRightSiblingKey();
-    mChildCount = node.getChildCount();
     mLocalPartKey = node.getLocalPartKey();
   }
 
@@ -109,7 +104,6 @@ public final class FullTextNode extends AbstractNode {
     mFirstChildKey = getNodeKey() - in.readVarLong();
     mLeftSiblingKey = in.readVarLong();
     mRightSiblingKey = in.readVarLong();
-    mChildCount = in.readVarLong();
     mLocalPartKey = in.readVarInt();
 
   }
@@ -254,38 +248,6 @@ public final class FullTextNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final long getChildCount() {
-    return mChildCount;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final void setChildCount(final long childCount) {
-    mChildCount = childCount;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final void incrementChildCount() {
-    mChildCount += 1;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final void decrementChildCount() {
-    mChildCount -= 1;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
   public final int getKind() {
     return IConstants.FULLTEXT;
   }
@@ -315,7 +277,6 @@ public final class FullTextNode extends AbstractNode {
     out.writeVarLong(getNodeKey() - mFirstChildKey);
     out.writeVarLong(mLeftSiblingKey);
     out.writeVarLong(mRightSiblingKey);
-    out.writeVarLong(mChildCount);
     out.writeVarInt(mLocalPartKey);
   }
 
@@ -327,8 +288,6 @@ public final class FullTextNode extends AbstractNode {
     return "FullTextNode "
         + "\n\tnodeKey: "
         + getNodeKey()
-        + "\n\tchildcount: "
-        + mChildCount
         + "\n\tparentKey: "
         + mParentKey
         + "\n\tfirstChildKey: "
