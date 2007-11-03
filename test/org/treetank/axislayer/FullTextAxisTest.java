@@ -31,7 +31,6 @@ import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.api.IAxis;
-import org.treetank.api.IConstants;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
@@ -52,8 +51,6 @@ public class FullTextAxisTest {
 
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    // final long nodeKey1 = wtx.insertElementAsFirstChild("foo", "", "");
-    // final long nodeKey2 = wtx.insertElementAsRightSibling("foo", "", "");
     final long nodeKey1 = wtx.insertTextAsFirstChild(UTF.convert("foo"));
     final long nodeKey2 = wtx.insertTextAsRightSibling(UTF.convert("foo"));
     final long tokenKey1 = wtx.index("foo", nodeKey1);
@@ -61,33 +58,12 @@ public class FullTextAxisTest {
     final long tokenKey2 = wtx.index("foo", nodeKey2);
     assertEquals(tokenKey1, tokenKey2);
 
-    // Verify raw
-    wtx.moveTo(nodeKey1);
-    assertEquals(1, wtx.getFullTextAttributeCount());
-    assertEquals(tokenKey1, wtx.getFullTextAttribute(tokenKey1).getNodeKey());
-    assertEquals(nodeKey2, wtx
-        .getFullTextAttribute(tokenKey1)
-        .getLeftSiblingKey());
-    assertEquals(IConstants.NULL_KEY, wtx
-        .getFullTextAttribute(tokenKey1)
-        .getRightSiblingKey());
-
-    wtx.moveTo(nodeKey2);
-    assertEquals(1, wtx.getFullTextAttributeCount());
-    assertEquals(tokenKey2, wtx.getFullTextAttribute(tokenKey2).getNodeKey());
-    assertEquals(IConstants.NULL_KEY, wtx
-        .getFullTextAttribute(tokenKey2)
-        .getLeftSiblingKey());
-    assertEquals(nodeKey1, wtx
-        .getFullTextAttribute(tokenKey2)
-        .getRightSiblingKey());
-
     // Verify axis
     final IAxis axis1 = new FullTextAxis(wtx, "foo");
     assertEquals(true, axis1.hasNext());
-    assertEquals(nodeKey2, wtx.getNodeKey());
+    assertEquals(nodeKey1, axis1.next().getNodeKey());
     assertEquals(true, axis1.hasNext());
-    assertEquals(nodeKey1, wtx.getNodeKey());
+    assertEquals(nodeKey2, axis1.next().getNodeKey());
     assertEquals(false, axis1.hasNext());
 
     final IAxis axis2 = new FullTextAxis(wtx, "bar");

@@ -96,7 +96,7 @@ public abstract class AbstractNode implements INode, Comparable<INode> {
   /**
    * {@inheritDoc}
    */
-  public boolean isFullTextAttribute() {
+  public boolean isFullTextLeaf() {
     return false;
   }
 
@@ -232,14 +232,7 @@ public abstract class AbstractNode implements INode, Comparable<INode> {
   public int getNamespaceCount() {
     return 0;
   }
-
-  /**
-   * {@inheritDoc}
-   */
-  public int getFullTextAttributeCount() {
-    return 0;
-  }
-
+  
   /**
    * {@inheritDoc}
    */
@@ -251,20 +244,6 @@ public abstract class AbstractNode implements INode, Comparable<INode> {
    * {@inheritDoc}
    */
   public NamespaceNode getNamespace(final int index) {
-    return null;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public INode getFullTextAttributeByTokenKey(final long tokenKey) {
-    return null;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public INode getFullTextAttributeByOffset(final int offset) {
     return null;
   }
 
@@ -377,18 +356,6 @@ public abstract class AbstractNode implements INode, Comparable<INode> {
   }
 
   public void insertNamespace(final int uriKey, final int prefixKey) {
-  }
-
-  public void setFullTextAttribute(
-      final long tokenKey,
-      final long leftSiblingKey,
-      final long rightSiblingKey) {
-  }
-
-  public void insertFullTextAttribute(
-      final long tokenKey,
-      final long leftSiblingKey,
-      final long rightSiblingKey) {
   }
 
   public void setKind(final byte kind) {

@@ -64,11 +64,14 @@ public final class WriteTransaction extends ReadTransaction
     for (final char character : token.toCharArray()) {
       if (hasFirstChild()) {
         moveToFirstChild();
-        while ((getLocalPartKey() != character) && hasRightSibling()) {
+        while (isFullText()
+            && (getLocalPartKey() != character)
+            && hasRightSibling()) {
           moveToRightSibling();
         }
         if (getLocalPartKey() != character) {
-          tokenKey = insertFullTextAsRightSibling(character);
+          moveToParent();
+          tokenKey = insertFullTextAsFirstChild(character);
         } else {
           tokenKey = getNodeKey();
         }
@@ -78,27 +81,15 @@ public final class WriteTransaction extends ReadTransaction
     }
 
     // Add key into list of keys containing the token.
-    if (!hasReference()) {
-      setReferenceKey(nodeKey);
-      moveTo(nodeKey);
-      insertFullTextAttribute(
-          tokenKey,
-          IConstants.NULL_KEY,
-          IConstants.NULL_KEY);
-    } else {
-      final long oldNodeKey = getReferenceKey();
-      setReferenceKey(nodeKey);
-      moveTo(nodeKey);
-      if (getFullTextAttribute(tokenKey) == null) {
-        insertFullTextAttribute(tokenKey, IConstants.NULL_KEY, oldNodeKey);
-        moveTo(oldNodeKey);
-        if (getCurrentNode() == null) {
-          System.out.println(oldNodeKey);
-        }
-        final long oldRightSiblingKey =
-            getFullTextAttribute(tokenKey).getRightSiblingKey();
-        setFullTextAttribute(tokenKey, nodeKey, oldRightSiblingKey);
+    if (hasFirstChild()) {
+      // Make sure that full text nodes come first.
+      moveToFirstChild();
+      while (isFullText() && hasRightSibling()) {
+        moveToRightSibling();
       }
+      insertFullTextLeafAsRightSibling(nodeKey);
+    } else {
+      insertFullTextLeafAsFirstChild(nodeKey);
     }
 
     return tokenKey;
@@ -171,6 +162,27 @@ public final class WriteTransaction extends ReadTransaction
             getCurrentNode().getFirstChildKey(),
             IConstants.NULL_KEY,
             localPartKey));
+
+    updateParentAfterInsert(true);
+    updateRightSibling();
+
+    return getCurrentNode().getNodeKey();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final long insertFullTextLeafAsFirstChild(final long firstChildKey) {
+
+    assertNotClosed();
+    assertIsSelected();
+
+    setCurrentNode(((WriteTransactionState) getTransactionState())
+        .createFullTextLeafNode(
+            getCurrentNode().getNodeKey(),
+            firstChildKey,
+            IConstants.NULL_KEY,
+            getCurrentNode().getFirstChildKey()));
 
     updateParentAfterInsert(true);
     updateRightSibling();
@@ -269,6 +281,33 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
+  public final long insertFullTextLeafAsRightSibling(final long firstChildKey) {
+
+    assertNotClosed();
+    assertIsSelected();
+
+    if (getCurrentNode().getNodeKey() == IConstants.DOCUMENT_ROOT_KEY) {
+      throw new IllegalStateException("Root node can not have siblings.");
+    }
+
+    // Create new right sibling node.
+    setCurrentNode(((WriteTransactionState) getTransactionState())
+        .createFullTextLeafNode(
+            getCurrentNode().getParentKey(),
+            firstChildKey,
+            getCurrentNode().getNodeKey(),
+            getCurrentNode().getRightSiblingKey()));
+
+    updateParentAfterInsert(false);
+    updateLeftSibling();
+    updateRightSibling();
+
+    return getCurrentNode().getNodeKey();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final void insertAttribute(
       final String localPart,
       final String uri,
@@ -297,21 +336,6 @@ public final class WriteTransaction extends ReadTransaction
     prepareCurrentNode().insertNamespace(
         ((WriteTransactionState) getTransactionState()).createNameKey(uri),
         ((WriteTransactionState) getTransactionState()).createNameKey(prefix));
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final void insertFullTextAttribute(
-      final long nodeKey,
-      final long leftSiblingKey,
-      final long rightSiblingKey) {
-    assertNotClosed();
-    assertIsSelected();
-    prepareCurrentNode().insertFullTextAttribute(
-        nodeKey,
-        leftSiblingKey,
-        rightSiblingKey);
   }
 
   /**
@@ -425,21 +449,6 @@ public final class WriteTransaction extends ReadTransaction
         index,
         ((WriteTransactionState) getTransactionState()).createNameKey(uri),
         ((WriteTransactionState) getTransactionState()).createNameKey(prefix));
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final void setFullTextAttribute(
-      final long nodeKey,
-      final long leftSiblingKey,
-      final long rightSiblingKey) {
-    assertNotClosed();
-    assertIsSelected();
-    prepareCurrentNode().setFullTextAttribute(
-        nodeKey,
-        leftSiblingKey,
-        rightSiblingKey);
   }
 
   /**

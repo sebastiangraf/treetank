@@ -75,7 +75,7 @@ public interface INode {
    * 
    * @return True if node is full text attribute. False else.
    */
-  public boolean isFullTextAttribute();
+  public boolean isFullTextLeaf();
 
   /**
    * Get node key of currently selected node.
@@ -83,7 +83,7 @@ public interface INode {
    * @return INode key of currently selected node.
    */
   public long getNodeKey();
-  
+
   /**
    * Is there a reference?
    * 
@@ -97,7 +97,7 @@ public interface INode {
    * @return Reference key of currently selected node.
    */
   public long getReferenceKey();
-  
+
   /**
    * Get reference of currently selected node.
    * 
@@ -216,13 +216,6 @@ public interface INode {
    * @return Namespace declaration count of currently selected node.
    */
   public int getNamespaceCount();
-  
-  /**
-   * Get fulltext attribute count of currently selected node.
-   * 
-   * @return Fulltext attribute count of currently selected node.
-   */
-  public int getFullTextAttributeCount();
 
   /**
    * Get attribute with given index.
@@ -239,22 +232,6 @@ public interface INode {
    * @return INode for given index.
    */
   public INode getNamespace(final int index);
-  
-  /**
-   * Get full text attribute by its token key.
-   * 
-   * @param tokenKey Key of fulltext attribute to return.
-   * @return INode for given index.
-   */
-  public INode getFullTextAttributeByTokenKey(final long tokenKey);
-  
-  /**
-   * Get fulltext attribute by its offset.
-   * 
-   * @param offset Offset of full text attribute.
-   * @return INode for given index.
-   */
-  public INode getFullTextAttributeByOffset(final int offset);
 
   /**
    * Get kind of node.

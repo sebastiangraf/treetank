@@ -150,8 +150,8 @@ public interface IConstants {
   /** INode kind is fulltext. */
   public static final int FULLTEXT = 14;
 
-  /** INode kind is fulltext attribute. */
-  public static final int FULLTEXT_ATTRIBUTE = 15;
+  /** INode kind is fulltext leaf. */
+  public static final int FULLTEXT_LEAF = 15;
 
   //--- XML Layer --------------------------------------------------------------
 

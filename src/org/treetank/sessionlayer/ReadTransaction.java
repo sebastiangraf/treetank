@@ -331,23 +331,6 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final int getFullTextAttributeCount() {
-    assertNotClosed();
-    assertIsSelected();
-    return mCurrentNode.getFullTextAttributeCount();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public INode getFullTextAttribute(final long tokenKey) {
-    assertNotClosed();
-    return mCurrentNode.getFullTextAttributeByTokenKey(tokenKey);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
   public final int getKind() {
     assertNotClosed();
     assertIsSelected();
@@ -397,6 +380,15 @@ public class ReadTransaction implements IReadTransaction {
     assertNotClosed();
     assertIsSelected();
     return mCurrentNode.isFullText();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final boolean isFullTextLeaf() {
+    assertNotClosed();
+    assertIsSelected();
+    return mCurrentNode.isFullTextLeaf();
   }
 
   /**
