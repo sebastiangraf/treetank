@@ -133,13 +133,6 @@ public interface IReadTransaction {
   public INode moveToRightSibling();
 
   /**
-   * Move cursor to referenceg node of the currently selected node.
-   * 
-   * @return True if the reference node is selected.
-   */
-  public INode moveToReference();
-
-  /**
    * Move cursor to attribute by its index.
    * 
    * @param index Index of attribute to move to.
@@ -162,20 +155,6 @@ public interface IReadTransaction {
    * @return INode key of currently selected node.
    */
   public long getNodeKey();
-
-  /**
-   * Is there a reference?
-   * 
-   * @return True if there is a reference. False else.
-   */
-  public boolean hasReference();
-
-  /**
-   * Get reference key of currently selected node.
-   * 
-   * @return Reference key of currently selected node.
-   */
-  public long getReferenceKey();
 
   /**
    * Is there a parent?

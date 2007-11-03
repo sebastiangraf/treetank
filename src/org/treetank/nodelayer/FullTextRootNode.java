@@ -69,7 +69,7 @@ public final class FullTextRootNode extends AbstractNode {
    */
   public FullTextRootNode(final FastByteArrayReader in) {
     super(IConstants.FULLTEXT_ROOT_KEY);
-    mFirstChildKey = in.readVarLong();
+    mFirstChildKey = IConstants.FULLTEXT_ROOT_KEY - in.readVarLong();
     mChildCount = in.readVarLong();
   }
 
@@ -158,7 +158,7 @@ public final class FullTextRootNode extends AbstractNode {
    */
   @Override
   public final void serialize(final FastByteArrayWriter out) {
-    out.writeVarLong(mFirstChildKey);
+    out.writeVarLong(IConstants.FULLTEXT_ROOT_KEY - mFirstChildKey);
     out.writeVarLong(mChildCount);
   }
 

@@ -137,8 +137,8 @@ public final class ElementNode extends AbstractNode {
     // Read according to node kind.
     mParentKey = getNodeKey() - in.readVarLong();
     mFirstChildKey = getNodeKey() - in.readVarLong();
-    mLeftSiblingKey = getNodeKey() - in.readVarLong();
-    mRightSiblingKey = getNodeKey() - in.readVarLong();
+    mLeftSiblingKey = in.readVarLong();
+    mRightSiblingKey = in.readVarLong();
     mChildCount = in.readVarLong();
     mAttributes = new AttributeNode[in.readByte()];
     for (int i = 0, l = mAttributes.length; i < l; i++) {
@@ -497,8 +497,8 @@ public final class ElementNode extends AbstractNode {
   public final void serialize(final FastByteArrayWriter out) {
     out.writeVarLong(getNodeKey() - mParentKey);
     out.writeVarLong(getNodeKey() - mFirstChildKey);
-    out.writeVarLong(getNodeKey() - mLeftSiblingKey);
-    out.writeVarLong(getNodeKey() - mRightSiblingKey);
+    out.writeVarLong(mLeftSiblingKey);
+    out.writeVarLong(mRightSiblingKey);
     out.writeVarLong(mChildCount);
     out.writeByte((byte) mAttributes.length);
     for (int i = 0, l = mAttributes.length; i < l; i++) {

@@ -110,27 +110,6 @@ public abstract class AbstractNode implements INode, Comparable<INode> {
   /**
    * {@inheritDoc}
    */
-  public boolean hasReference() {
-    return false;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public long getReferenceKey() {
-    return IConstants.NULL_KEY;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public INode getReference(final IReadTransaction rtx) {
-    return null;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
   public boolean hasParent() {
     return false;
   }
@@ -232,7 +211,7 @@ public abstract class AbstractNode implements INode, Comparable<INode> {
   public int getNamespaceCount() {
     return 0;
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -308,9 +287,6 @@ public abstract class AbstractNode implements INode, Comparable<INode> {
 
   public final void setNodeKey(final long nodeKey) {
     mNodeKey = nodeKey;
-  }
-
-  public void setReferenceKey(final long referenceKey) {
   }
 
   public void setParentKey(final long parentKey) {
