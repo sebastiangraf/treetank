@@ -59,7 +59,7 @@ public class FullTextAxis extends AbstractAxis {
     if (isContained && rtx.hasFirstChild()) {
       mNext = rtx.moveToFirstChild();
       while (mNext.isFullText() && mNext.hasRightSibling()) {
-        getTransaction().moveToRightSibling();
+        mNext = mNext.getRightSibling(rtx);
       }
     } else {
       mNext = null;
