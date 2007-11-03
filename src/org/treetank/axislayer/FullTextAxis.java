@@ -21,7 +21,7 @@
 
 package org.treetank.axislayer;
 
-import org.treetank.api.IConstants;
+import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 
 /**
@@ -34,10 +34,7 @@ import org.treetank.api.IReadTransaction;
 public class FullTextAxis extends AbstractAxis {
 
   /** Key of token to find. */
-  private long mTokenKey;
-
-  /** Key of next node to visit. */
-  private long mNextKey;
+  private INode mNext;
 
   /**
    * Constructor initializing internal state.
@@ -59,13 +56,15 @@ public class FullTextAxis extends AbstractAxis {
       isContained = isContained && isContained(character);
     }
 
-    if (isContained) {
-      mTokenKey = rtx.getNodeKey();
-      mNextKey = rtx.getReferenceKey();
+    if (isContained && rtx.hasFirstChild()) {
+      mNext = rtx.moveToFirstChild();
+      while (mNext.isFullText() && mNext.hasRightSibling()) {
+        getTransaction().moveToRightSibling();
+      }
     } else {
-      mTokenKey = IConstants.NULL_KEY;
-      mNextKey = IConstants.NULL_KEY;
+      mNext = null;
     }
+
   }
 
   /**
@@ -76,7 +75,8 @@ public class FullTextAxis extends AbstractAxis {
    */
   private final boolean isContained(final int character) {
     if (getTransaction().moveToFirstChild() != null) {
-      while ((getTransaction().getLocalPartKey() != character)
+      while (getTransaction().isFullText()
+          && (getTransaction().getLocalPartKey() != character)
           && getTransaction().hasRightSibling()) {
         getTransaction().moveToRightSibling();
       }
@@ -90,10 +90,9 @@ public class FullTextAxis extends AbstractAxis {
    * {@inheritDoc}
    */
   public final boolean hasNext() {
-    if (mNextKey != IConstants.NULL_KEY) {
-      setCurrentNode(getTransaction().moveTo(mNextKey));
-      mNextKey =
-          getCurrentNode().getFullTextAttributeByTokenKey(mTokenKey).getRightSiblingKey();
+    if (mNext != null) {
+      setCurrentNode(mNext.getFirstChild(getTransaction()));
+      mNext = mNext.getRightSibling(getTransaction());
       return true;
     } else {
       setCurrentNode(null);

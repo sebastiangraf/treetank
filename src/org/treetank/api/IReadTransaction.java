@@ -131,7 +131,7 @@ public interface IReadTransaction {
    * @return True if the right sibling node is selected.
    */
   public INode moveToRightSibling();
-  
+
   /**
    * Move cursor to referenceg node of the currently selected node.
    * 
@@ -271,21 +271,6 @@ public interface IReadTransaction {
    * @return Namespace denoted by its index.
    */
   public INode getNamespace(final int index);
-  
-  /**
-   * Get full text attribute count of currently selected node.
-   * 
-   * @return Full text attribute count of currently selected node.
-   */
-  public int getFullTextAttributeCount();
-
-  /**
-   * Get the full text attribute specified by its index.
-   * 
-   * @param nodeKey Key of full text node to get.
-   * @return Full text attribute denoted by the node key.
-   */
-  public INode getFullTextAttribute(final long nodeKey);
 
   /**
    * Get kind of node.
@@ -328,6 +313,13 @@ public interface IReadTransaction {
    * @return True if node is full text. False else.
    */
   public boolean isFullText();
+
+  /**
+   * Is node a full text leaf?
+   * 
+   * @return True if node is full text leaf. False else.
+   */
+  public boolean isFullTextLeaf();
 
   /**
    * Is node a full text root?

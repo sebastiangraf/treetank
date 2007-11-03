@@ -28,7 +28,7 @@ TreeTank 4.14
 + Added lots of test cases.
 + Binary incompatibility because full text root node takes key 1.
 + Added hooks for full text index (inverted index based on prefix tree).
-  (FullTextRootNode, FullTextNode, and FullTextAttributeNode).
+  (FullTextRootNode, FullTextNode, and FullTextLeafNode).
 + Session and transaction tracks close state to prevent access after close.
 + Allow multiple commit() and abort() calls before close().
 + Split IWriteTransaction semantics: now use [commit|abort]() AND close().

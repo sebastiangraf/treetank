@@ -25,6 +25,7 @@ import org.treetank.api.IConstants;
 import org.treetank.nodelayer.AbstractNode;
 import org.treetank.nodelayer.DocumentRootNode;
 import org.treetank.nodelayer.ElementNode;
+import org.treetank.nodelayer.FullTextLeafNode;
 import org.treetank.nodelayer.FullTextNode;
 import org.treetank.nodelayer.FullTextRootNode;
 import org.treetank.nodelayer.TextNode;
@@ -87,6 +88,9 @@ public final class NodePage extends AbstractPage {
       case IConstants.FULLTEXT:
         mNodes[offset] = new FullTextNode(keyBase + offset, in);
         break;
+      case IConstants.FULLTEXT_LEAF:
+        mNodes[offset] = new FullTextLeafNode(keyBase + offset, in);
+        break;
       case IConstants.FULLTEXT_ROOT:
         mNodes[offset] = new FullTextRootNode(in);
         break;
@@ -127,6 +131,10 @@ public final class NodePage extends AbstractPage {
           break;
         case IConstants.FULLTEXT:
           mNodes[offset] = new FullTextNode(committedNodePage.mNodes[offset]);
+          break;
+        case IConstants.FULLTEXT_LEAF:
+          mNodes[offset] =
+              new FullTextLeafNode(committedNodePage.mNodes[offset]);
           break;
         case IConstants.FULLTEXT_ROOT:
           mNodes[offset] =

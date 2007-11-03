@@ -21,8 +21,6 @@
 
 package org.treetank.nodelayer;
 
-import java.util.Arrays;
-
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
@@ -48,9 +46,6 @@ public final class TextNode extends AbstractNode {
   /** Text value. */
   private byte[] mValue;
 
-  /** Fulltext of node. */
-  private FullTextAttributeNode[] mFullTextAttributes;
-
   /**
    * Create text node.
    * 
@@ -71,7 +66,6 @@ public final class TextNode extends AbstractNode {
     mLeftSiblingKey = leftSiblingKey;
     mRightSiblingKey = rightSiblingKey;
     mValue = value;
-    mFullTextAttributes = new FullTextAttributeNode[0];
   }
 
   /**
@@ -85,12 +79,6 @@ public final class TextNode extends AbstractNode {
     mLeftSiblingKey = node.getLeftSiblingKey();
     mRightSiblingKey = node.getRightSiblingKey();
     mValue = node.getValue();
-    mFullTextAttributes =
-        new FullTextAttributeNode[node.getFullTextAttributeCount()];
-    for (int i = 0, l = mFullTextAttributes.length; i < l; i++) {
-      mFullTextAttributes[i] =
-          new FullTextAttributeNode(node.getFullTextAttributeByOffset(i));
-    }
   }
 
   /**
@@ -105,12 +93,6 @@ public final class TextNode extends AbstractNode {
     mLeftSiblingKey = in.readVarLong();
     mRightSiblingKey = in.readVarLong();
     mValue = in.readByteArray();
-    mFullTextAttributes = new FullTextAttributeNode[in.readByte()];
-    for (int i = 0, l = mFullTextAttributes.length; i < l; i++) {
-      mFullTextAttributes[i] =
-          new FullTextAttributeNode(in.readVarLong(), getNodeKey(), in
-              .readVarLong(), in.readVarLong());
-    }
   }
 
   /**
@@ -245,97 +227,11 @@ public final class TextNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public int getFullTextAttributeCount() {
-    return mFullTextAttributes == null ? 0 : mFullTextAttributes.length;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final FullTextAttributeNode getFullTextAttributeByTokenKey(
-      final long tokenKey) {
-    final int index = binarySearch(tokenKey);
-    if (index >= 0) {
-      return mFullTextAttributes[index];
-    } else {
-      return null;
-    }
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final FullTextAttributeNode getFullTextAttributeByOffset(
-      final int offset) {
-    return mFullTextAttributes[offset];
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final void setFullTextAttribute(
-      final long nodeKey,
-      final long leftSiblingKey,
-      final long rightSiblingKey) {
-
-    final int index = binarySearch(nodeKey);
-    if (index < 0) {
-      throw new IllegalArgumentException("Node key "
-          + nodeKey
-          + " does not exist and can thus not be set.");
-    }
-
-    mFullTextAttributes[index] =
-        new FullTextAttributeNode(
-            nodeKey,
-            getParentKey(),
-            leftSiblingKey,
-            rightSiblingKey);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final void insertFullTextAttribute(
-      final long nodeKey,
-      final long leftSiblingKey,
-      final long rightSiblingKey) {
-
-    FullTextAttributeNode[] tmp =
-        new FullTextAttributeNode[mFullTextAttributes.length + 1];
-    System
-        .arraycopy(mFullTextAttributes, 0, tmp, 0, mFullTextAttributes.length);
-    mFullTextAttributes = tmp;
-
-    mFullTextAttributes[mFullTextAttributes.length - 1] =
-        new FullTextAttributeNode(
-            nodeKey,
-            getNodeKey(),
-            leftSiblingKey,
-            rightSiblingKey);
-
-    Arrays.sort(mFullTextAttributes);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
   public final void serialize(final FastByteArrayWriter out) {
     out.writeVarLong(getNodeKey() - mParentKey);
     out.writeVarLong(mLeftSiblingKey);
     out.writeVarLong(mRightSiblingKey);
     out.writeByteArray(mValue);
-    out.writeByte((byte) mFullTextAttributes.length);
-    for (int i = 0, l = mFullTextAttributes.length; i < l; i++) {
-      out.writeVarLong(mFullTextAttributes[i].getNodeKey());
-      out.writeVarLong(mFullTextAttributes[i].getLeftSiblingKey());
-      out.writeVarLong(mFullTextAttributes[i].getRightSiblingKey());
-    }
   }
 
   /**
@@ -352,27 +248,6 @@ public final class TextNode extends AbstractNode {
         + mLeftSiblingKey
         + "\n\trightSiblingKey: "
         + mRightSiblingKey;
-  }
-
-  /**
-   * Binary search on full text attribute nodes. Every modifying operation
-   * must sort the array of full text attributes before it returns. This
-   * is required because the array must provide random access on the node key.
-   */
-  private final int binarySearch(final long nodeKey) {
-    int low = 0;
-    int high = mFullTextAttributes.length - 1;
-    while (low <= high) {
-      int mid = (low + high) >> 1;
-      if (mFullTextAttributes[mid].getNodeKey() > nodeKey) {
-        high = mid - 1;
-      } else if (mFullTextAttributes[mid].getNodeKey() < nodeKey) {
-        low = mid + 1;
-      } else {
-        return mid;
-      }
-    }
-    return -1;
   }
 
 }

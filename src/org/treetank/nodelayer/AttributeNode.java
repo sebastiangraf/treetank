@@ -24,6 +24,8 @@ package org.treetank.nodelayer;
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
+import org.treetank.utils.FastByteArrayReader;
+import org.treetank.utils.FastByteArrayWriter;
 
 /**
  * <h1>AttributeNode</h1>
@@ -77,6 +79,15 @@ public final class AttributeNode extends AbstractNode {
     mURIKey = attribute.getURIKey();
     mPrefixKey = attribute.getPrefixKey();
     mValue = attribute.getValue();
+  }
+
+  public AttributeNode(final long nodeKey, final FastByteArrayReader in) {
+    super(nodeKey);
+
+    mLocalPartKey = in.readVarInt();
+    mURIKey = in.readVarInt();
+    mPrefixKey = in.readVarInt();
+    mValue = in.readByteArray();
   }
 
   /**
@@ -205,6 +216,17 @@ public final class AttributeNode extends AbstractNode {
   @Override
   public final int getKind() {
     return IConstants.ATTRIBUTE;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final void serialize(final FastByteArrayWriter out) {
+    out.writeVarInt(mLocalPartKey);
+    out.writeVarInt(mURIKey);
+    out.writeVarInt(mPrefixKey);
+    out.writeByteArray(mValue);
   }
 
 }

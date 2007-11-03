@@ -24,6 +24,8 @@ package org.treetank.nodelayer;
 import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
+import org.treetank.utils.FastByteArrayReader;
+import org.treetank.utils.FastByteArrayWriter;
 
 /**
  * <h1>NamespaceNode</h1>
@@ -61,6 +63,13 @@ public final class NamespaceNode extends AbstractNode {
     super(namespace.getNodeKey());
     mURIKey = namespace.getURIKey();
     mPrefixKey = namespace.getPrefixKey();
+  }
+
+  public NamespaceNode(final long nodeKey, final FastByteArrayReader in) {
+    super(nodeKey);
+
+    mURIKey = in.readVarInt();
+    mPrefixKey = in.readVarInt();
   }
 
   /**
@@ -125,6 +134,15 @@ public final class NamespaceNode extends AbstractNode {
   @Override
   public final void setURIKey(final int uriKey) {
     mURIKey = uriKey;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final void serialize(final FastByteArrayWriter out) {
+    out.writeVarInt(mURIKey);
+    out.writeVarInt(mPrefixKey);
   }
 
 }

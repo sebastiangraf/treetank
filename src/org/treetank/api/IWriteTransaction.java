@@ -157,18 +157,6 @@ public interface IWriteTransaction extends IReadTransaction {
   public void insertNamespace(final String uri, final String prefix);
 
   /**
-   * Insert full text attribute in currently selected node.
-   * 
-   * @param tokenKey Node key of full text node.
-   * @param leftSiblingKey Key of left sibling in result list.
-   * @param rightSiblingKey Key of right sibling in result list.
-   */
-  public void insertFullTextAttribute(
-      final long tokenKey,
-      final long leftSiblingKey,
-      final long rightSiblingKey);
-
-  /**
    * Remove currently selected node. This does not automatically remove
    * descendants.
    */
@@ -203,18 +191,6 @@ public interface IWriteTransaction extends IReadTransaction {
       final int index,
       final String uri,
       final String prefix);
-
-  /**
-   * Set full text attribute in currently selected node.
-   * 
-   * @param tokenKey Node key of full text node.
-   * @param leftSiblingKey Key of left sibling in result list.
-   * @param rightSiblingKey Key of right sibling in result list.
-   */
-  public void setFullTextAttribute(
-      final long tokenKey,
-      final long leftSiblingKey,
-      final long rightSiblingKey);
 
   /**
    * Set reference key.

@@ -73,7 +73,7 @@ public class FullTextNodeTest {
     assertEquals(false, node3.isDocumentRoot());
     assertEquals(false, node3.isElement());
     assertEquals(true, node3.isFullText());
-    assertEquals(false, node3.isFullTextAttribute());
+    assertEquals(false, node3.isFullTextLeaf());
     assertEquals(false, node3.isFullTextRoot());
     assertEquals(false, node3.isText());
 
