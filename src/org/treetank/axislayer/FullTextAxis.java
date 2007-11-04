@@ -61,6 +61,9 @@ public class FullTextAxis extends AbstractAxis {
       while (mNext.isFullText() && mNext.hasRightSibling()) {
         mNext = mNext.getRightSibling(rtx);
       }
+      if (!mNext.isFullTextLeaf()) {
+        mNext = null;
+      }
     } else {
       mNext = null;
     }

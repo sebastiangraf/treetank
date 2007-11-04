@@ -69,17 +69,23 @@ public class FullTextAxisTest {
     final IAxis axis2 = new FullTextAxis(wtx, "bar");
     assertEquals(false, axis2.hasNext());
 
+    final IAxis axis3 = new FullTextAxis(wtx, "ba");
+    assertEquals(false, axis3.hasNext());
+
+    final IAxis axis4 = new FullTextAxis(wtx, "fo");
+    assertEquals(false, axis4.hasNext());
+
     try {
-      final IAxis axis3 = new FullTextAxis(wtx, null);
-      assertEquals(false, axis3.hasNext());
+      final IAxis axis5 = new FullTextAxis(wtx, null);
+      assertEquals(false, axis5.hasNext());
       TestCase.fail();
     } catch (Exception e) {
       // Must catch.
     }
 
     try {
-      final IAxis axis3 = new FullTextAxis(wtx, "");
-      assertEquals(false, axis3.hasNext());
+      final IAxis axis6 = new FullTextAxis(wtx, "");
+      assertEquals(false, axis6.hasNext());
       TestCase.fail();
     } catch (Exception e) {
       // Must catch.
