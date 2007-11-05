@@ -38,18 +38,18 @@ import org.treetank.utils.UTF;
 
 public class UpdateTest {
 
-  public static final String TEST_PATH =
+  public static final String PATH =
       "generated" + File.separator + "UpdateTest.tnk";
 
   @Before
-  public void setUp() throws IOException {
-    new File(TEST_PATH).delete();
+  public void setUp() {
+    Session.removeSession(PATH);
   }
 
   @Test
   public void testInsertChild() throws IOException {
 
-    ISession session = Session.beginSession(TEST_PATH);
+    ISession session = Session.beginSession(PATH);
 
     // Document root.
     IWriteTransaction wtx = session.beginWriteTransaction();
@@ -93,7 +93,7 @@ public class UpdateTest {
   @Test
   public void testInsertPath() throws IOException {
 
-    final ISession session = Session.beginSession(TEST_PATH);
+    final ISession session = Session.beginSession(PATH);
 
     IWriteTransaction wtx = session.beginWriteTransaction();
     wtx.commit();
@@ -126,7 +126,7 @@ public class UpdateTest {
   @Test
   public void testPageBoundary() throws IOException {
 
-    ISession session = Session.beginSession(TEST_PATH);
+    ISession session = Session.beginSession(PATH);
 
     // Document root.
     IWriteTransaction wtx = session.beginWriteTransaction();
@@ -146,7 +146,7 @@ public class UpdateTest {
 
   @Test
   public void testRemoveDocument() throws IOException {
-    final ISession session = Session.beginSession(TEST_PATH);
+    final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
 
@@ -165,7 +165,7 @@ public class UpdateTest {
 
   @Test
   public void testRemoveDescendant() throws IOException {
-    final ISession session = Session.beginSession(TEST_PATH);
+    final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
 

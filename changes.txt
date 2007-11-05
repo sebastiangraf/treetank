@@ -18,6 +18,10 @@
  * 
  * $Id$
  */
+ 
+TreeTank 4.15
+-------------
++ Added Session.removeSession() to safely remove a TreeTank file.
 
 TreeTank 4.14
 -------------

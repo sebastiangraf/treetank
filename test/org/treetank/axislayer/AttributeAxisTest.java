@@ -41,8 +41,8 @@ public class AttributeAxisTest {
       "generated" + File.separator + "AttributeAxisTest.tnk";
 
   @Before
-  public void setUp() throws IOException {
-    new File(PATH).delete();
+  public void setUp() {
+    Session.removeSession(PATH);
   }
 
   @Test

@@ -24,7 +24,6 @@ package org.treetank.xmllayer;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 
@@ -45,8 +44,8 @@ public class SAXGeneratorTest {
       "generated" + File.separator + "SAXGeneratorTest.tnk";
 
   @Before
-  public void setUp() throws IOException {
-    new File(PATH).delete();
+  public void setUp() {
+    Session.removeSession(PATH);
   }
 
   @Test

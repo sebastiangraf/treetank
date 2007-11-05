@@ -54,9 +54,9 @@ public class XMLShredderTest {
       "generated" + File.separator + "ExpectedXMLShredderTest.tnk";
 
   @BeforeClass
-  public static void setUp() throws IOException {
-    new File(PATH).delete();
-    new File(EXPECTED_PATH).delete();
+  public static void setUp() {
+    Session.removeSession(PATH);
+    Session.removeSession(EXPECTED_PATH);
   }
 
   @Test

@@ -22,7 +22,6 @@
 package org.treetank.sessionlayer;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -43,18 +42,18 @@ public class ThreadTest {
 
   public static final int WORKER_COUNT = 100;
 
-  public static final String THREAD_TEST_PATH =
+  public static final String PATH =
       "generated" + File.separator + "ThreadTest.tnk";
 
   @Before
-  public void setUp() throws IOException {
-    new File(THREAD_TEST_PATH).delete();
+  public void setUp() {
+    Session.removeSession(PATH);
   }
 
   @Test
   public void testThreads() throws Exception {
 
-    ISession session = Session.beginSession(THREAD_TEST_PATH);
+    ISession session = Session.beginSession(PATH);
 
     IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);

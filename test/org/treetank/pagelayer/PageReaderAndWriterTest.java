@@ -31,6 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.api.IConstants;
 import org.treetank.nodelayer.ElementNode;
+import org.treetank.sessionlayer.Session;
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.utils.FastByteArrayReader;
 
@@ -40,8 +41,8 @@ public class PageReaderAndWriterTest {
       "generated" + File.separator + "PageWriterTest.tnk";
 
   @Before
-  public void setUp() throws IOException {
-    new File(PATH).delete();
+  public void setUp() {
+    Session.removeSession(PATH);
   }
 
   @Test

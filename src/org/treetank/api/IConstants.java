@@ -37,7 +37,7 @@ public interface IConstants {
   public static final int VERSION_MAJOR = 4;
 
   /** Minor version number of this release. */
-  public static final int VERSION_MINOR = 14;
+  public static final int VERSION_MINOR = 15;
 
   /** Last major version to which this version is binary compatible. */
   public static final int LAST_VERSION_MAJOR = 4;
