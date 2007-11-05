@@ -46,9 +46,9 @@ public class ChildAxisTest {
       "generated" + File.separator + "ChildAxisTestPersistent.tnk";
 
   @Before
-  public void setUp() throws IOException {
-    new File(TEST_ITERATE_PATH).delete();
-    new File(TEST_PERSISTENT_PATH).delete();
+  public void setUp() {
+    Session.removeSession(TEST_ITERATE_PATH);
+    Session.removeSession(TEST_PERSISTENT_PATH);
   }
 
   @Test

@@ -24,7 +24,6 @@ package org.treetank.xmllayer;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.IOException;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -49,9 +48,9 @@ public class SAXHandlerTest {
       "generated" + File.separator + "ExpectedSAXHandlerTest.tnk";
 
   @Before
-  public void setUp() throws IOException {
-    new File(PATH).delete();
-    new File(EXPECTED_PATH).delete();
+  public void setUp() {
+    Session.removeSession(PATH);
+    Session.removeSession(EXPECTED_PATH);
   }
 
   @Test

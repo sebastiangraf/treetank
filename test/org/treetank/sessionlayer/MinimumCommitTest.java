@@ -35,18 +35,18 @@ import org.treetank.utils.TestDocument;
 
 public class MinimumCommitTest {
 
-  public static final String TEST_PATH =
+  public static final String PATH =
       "generated" + File.separator + "MinimumCommitTest.tnk";
 
   @Before
-  public void setUp() throws IOException {
-    new File(TEST_PATH).delete();
+  public void setUp() {
+    Session.removeSession(PATH);
   }
 
   @Test
   public void test() throws IOException {
 
-    ISession session = Session.beginSession(TEST_PATH);
+    ISession session = Session.beginSession(PATH);
     IWriteTransaction wtx = session.beginWriteTransaction();
     TestCase.assertEquals(0L, wtx.getRevisionNumber());
     wtx.commit();
@@ -54,7 +54,7 @@ public class MinimumCommitTest {
     wtx.close();
     session.close();
 
-    session = Session.beginSession(TEST_PATH);
+    session = Session.beginSession(PATH);
     wtx = session.beginWriteTransaction();
     TestCase.assertEquals(1L, wtx.getRevisionNumber());
     TestDocument.create(wtx);
@@ -76,7 +76,7 @@ public class MinimumCommitTest {
   @Test
   public void testTimestamp() throws IOException {
 
-    ISession session = Session.beginSession(TEST_PATH);
+    ISession session = Session.beginSession(PATH);
     IWriteTransaction wtx = session.beginWriteTransaction();
     TestCase.assertEquals(0L, wtx.getRevisionTimestamp());
     wtx.commit();

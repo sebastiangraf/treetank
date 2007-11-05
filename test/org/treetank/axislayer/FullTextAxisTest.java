@@ -42,8 +42,8 @@ public class FullTextAxisTest {
       "generated" + File.separator + "FullTextAxisTest.tnk";
 
   @Before
-  public void setUp() throws IOException {
-    new File(PATH).delete();
+  public void setUp() {
+    Session.removeSession(PATH);
   }
 
   @Test

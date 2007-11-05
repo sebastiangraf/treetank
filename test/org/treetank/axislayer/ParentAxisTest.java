@@ -40,8 +40,8 @@ public class ParentAxisTest {
       "generated" + File.separator + "ParentAxisTest.tnk";
 
   @Before
-  public void setUp() throws IOException {
-    new File(PATH).delete();
+  public void setUp() {
+    Session.removeSession(PATH);
   }
 
   @Test

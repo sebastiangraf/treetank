@@ -110,6 +110,32 @@ public final class Session implements ISession {
   }
 
   /**
+   * Removes the specified TreeTank file.
+   * 
+   * @param file TreeTank file to remove.
+   */
+  public static final void removeSession(final File file) {
+    removeSession(file.getAbsolutePath());
+  }
+
+  /**
+   * Removes the specified TreeTank file.
+   * 
+   * @param path TreeTank file to remove.
+   */
+  public static final void removeSession(final String path) {
+    synchronized (SESSION_MAP) {
+      ISession session = SESSION_MAP.get(path);
+      if (session == null) {
+        new File(path).delete();
+      } else {
+        throw new IllegalStateException("There already is a session bound to "
+            + path);
+      }
+    }
+  }
+
+  /**
    * {@inheritDoc}
    */
   public final String getFileName() {
@@ -186,9 +212,11 @@ public final class Session implements ISession {
    */
   public final void close() {
     assertNotClosed();
-    SESSION_MAP.remove(mSessionState
-        .getSessionConfiguration()
-        .getAbsolutePath());
+    synchronized (SESSION_MAP) {
+      SESSION_MAP.remove(mSessionState
+          .getSessionConfiguration()
+          .getAbsolutePath());
+    }
     mSessionState.close();
     mSessionState = null;
     mClosed = true;

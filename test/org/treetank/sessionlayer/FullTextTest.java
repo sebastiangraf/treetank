@@ -35,18 +35,18 @@ import org.treetank.api.IWriteTransaction;
 
 public class FullTextTest {
 
-  public static final String TEST_PATH =
+  public static final String PATH =
       "generated" + File.separator + "FullTextTest.tnk";
 
   @Before
-  public void setUp() throws IOException {
-    new File(TEST_PATH).delete();
+  public void setUp() {
+    Session.removeSession(PATH);
   }
 
   @Test
   public void testInsertChild() throws IOException {
 
-    ISession session = Session.beginSession(TEST_PATH);
+    ISession session = Session.beginSession(PATH);
 
     final IWriteTransaction wtx = session.beginWriteTransaction();
     wtx.moveToFullTextRoot();
@@ -61,7 +61,7 @@ public class FullTextTest {
     wtx.close();
     session.close();
 
-    session = Session.beginSession(TEST_PATH);
+    session = Session.beginSession(PATH);
     final IReadTransaction rtx = session.beginReadTransaction();
 
     rtx.moveToFullTextRoot();

@@ -56,12 +56,12 @@ public class SessionTest {
       "generated" + File.separator + "ExistingSessionTest.tnk";
 
   @Before
-  public void setUp() throws IOException {
-    new File(NON_EXISTING_PATH).delete();
-    new File(TEST_INSERT_CHILD_PATH).delete();
-    new File(TEST_REVISION_PATH).delete();
-    new File(TEST_SHREDDED_REVISION_PATH).delete();
-    new File(TEST_EXISTING_PATH).delete();
+  public void setUp() {
+    Session.removeSession(NON_EXISTING_PATH);
+    Session.removeSession(TEST_INSERT_CHILD_PATH);
+    Session.removeSession(TEST_REVISION_PATH);
+    Session.removeSession(TEST_SHREDDED_REVISION_PATH);
+    Session.removeSession(TEST_EXISTING_PATH);
   }
 
   @Test
