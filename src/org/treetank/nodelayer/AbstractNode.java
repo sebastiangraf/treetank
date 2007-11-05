@@ -362,11 +362,7 @@ public abstract class AbstractNode implements INode, Comparable<INode> {
    */
   @Override
   public boolean equals(final Object obj) {
-    if ((obj == null) || (mNodeKey != ((INode) obj).getNodeKey())) {
-      return false;
-    } else {
-      return true;
-    }
+    return ((obj != null) && (mNodeKey == ((INode) obj).getNodeKey()));
   }
 
   /**
