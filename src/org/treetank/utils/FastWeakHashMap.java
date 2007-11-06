@@ -46,13 +46,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * @param <K> Key object of type K.
  * @param <V> Value object of type V.
  */
+@SuppressWarnings("unchecked")
 public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
 
   /** The internal HashMap that will hold the WeakReference. */
   private final Map<K, WeakReference<V>> mInternalMap;
 
   /** Reference queue for cleared WeakReference objects. */
-  private final ReferenceQueue<? super V> mQueue;
+  private final ReferenceQueue mQueue;
 
   /**
    * Default constructor internally using 32 strong references.
@@ -60,7 +61,7 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
    */
   public FastWeakHashMap() {
     mInternalMap = new ConcurrentHashMap<K, WeakReference<V>>();
-    mQueue = new ReferenceQueue<Object>();
+    mQueue = new ReferenceQueue();
   }
 
   /**
@@ -141,6 +142,7 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
   /**
    * Internal subclass to store keys and values for more convenient lookups.
    */
+  @SuppressWarnings("hiding")
   private final class WeakValue<V> extends WeakReference<V> {
     private final K key;
 
@@ -154,7 +156,7 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
     private WeakValue(
         final V initValue,
         final K initKey,
-        final ReferenceQueue<? super V> initReferenceQueue) {
+        final ReferenceQueue initReferenceQueue) {
       super(initValue, initReferenceQueue);
       key = initKey;
     }
