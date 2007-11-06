@@ -80,10 +80,22 @@ import org.treetank.utils.UTF;
  * 
  * <strong>Important</strong>
  * 
- * Currently, only String properties are supported.
+ * The following Java types are currentyl supported:
+ * <li>boolean</li>
+ * <li>int</li>
+ * <li>long</li>
+ * <li>float</li>
+ * <li>double</li>
+ * <li>String</li>
  * </p>
  */
 public final class BeanUtil {
+
+  public static final int STRING_HASH_CODE = String.class.getName().hashCode();
+
+  public static final int INT_HASH_CODE = int.class.getName().hashCode();
+
+  public static final int LONG_HASH_CODE = long.class.getName().hashCode();
 
   /**
    * Hidden constructor.
@@ -127,7 +139,34 @@ public final class BeanUtil {
               final Field field =
                   clazz.getDeclaredField(node.getLocalPart(rtx));
               field.setAccessible(true);
-              field.set(target, UTF.convert(text.getValue()));
+              // Switch according to field type.
+              switch (field.getType().getName().hashCode()) {
+              case 64711720: // boolean
+                field.setBoolean(target, Boolean.parseBoolean(UTF.convert(text
+                    .getValue())));
+                break;
+              case 104431: // int
+                field.setInt(target, Integer.parseInt(UTF.convert(text
+                    .getValue())));
+                break;
+              case 3327612: // long
+                field.setLong(target, Long.parseLong(UTF.convert(text
+                    .getValue())));
+                break;
+              case 97526364: // float
+                field.setFloat(target, Float.parseFloat(UTF.convert(text
+                    .getValue())));
+                break;
+              case -1325958191: // double
+                field.setDouble(target, Double.parseDouble(UTF.convert(text
+                    .getValue())));
+                break;
+              case 1195259493: // String
+                field.set(target, UTF.convert(text.getValue()));
+                break;
+              default:
+                throw new IllegalStateException(field.getType().getName());
+              }
             }
           }
 
