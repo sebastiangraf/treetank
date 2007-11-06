@@ -26,6 +26,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 
+import org.treetank.api.FullTextIndex;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.IWriteTransaction;
@@ -161,7 +162,8 @@ public final class BeanUtil {
     try {
 
       // Insert bean root element.
-      wtx.insertElementAsFirstChild(object.getClass().getName(), "", "");
+      final long key =
+          wtx.insertElementAsFirstChild(object.getClass().getName(), "", "");
 
       // Find all properties.
       boolean isFirst = true;
@@ -173,18 +175,25 @@ public final class BeanUtil {
         final Field field =
             object.getClass().getDeclaredField(property.getName());
         field.setAccessible(true);
-        final String value = (String) field.get(object);
 
         // Insert property as element with text.
         if (isFirst) {
           wtx.insertElementAsFirstChild(property.getName(), "", "");
-          wtx.insertTextAsFirstChild(UTF.convert(value));
+          wtx.insertTextAsFirstChild(UTF.convert(field.get(object).toString()));
           wtx.moveToParent();
           isFirst = false;
         } else {
           wtx.insertElementAsRightSibling(property.getName(), "", "");
-          wtx.insertTextAsFirstChild(UTF.convert(value));
+          wtx.insertTextAsFirstChild(UTF.convert(field.get(object).toString()));
           wtx.moveToParent();
+        }
+      }
+
+      // Find all full text index annotated fields.
+      for (final Field field : object.getClass().getDeclaredFields()) {
+        if (field.getAnnotation(FullTextIndex.class) != null) {
+          field.setAccessible(true);
+          wtx.index(field.get(object).toString().toLowerCase(), key);
         }
       }
 
