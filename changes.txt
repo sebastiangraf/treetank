@@ -21,7 +21,7 @@
  
 TreeTank 4.15
 -------------
-+ Added FullTextIndex annotation to mark that Java bean field must be indexed.
++ Added FullText annotation to mark that Java bean field must be indexed.
 + Added BeanUtil to make Java beans persistent with TreeTank.
 + Added Session.removeSession() to safely remove a TreeTank file.
 

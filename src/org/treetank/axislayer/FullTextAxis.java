@@ -96,6 +96,7 @@ public class FullTextAxis extends AbstractAxis {
     if (mNext != null) {
       setCurrentNode(mNext.getFirstChild(getTransaction()));
       mNext = mNext.getRightSibling(getTransaction());
+      getTransaction().moveTo(getCurrentNode());
       return true;
     } else {
       setCurrentNode(null);
