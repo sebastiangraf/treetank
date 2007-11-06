@@ -91,12 +91,6 @@ import org.treetank.utils.UTF;
  */
 public final class BeanUtil {
 
-  public static final int STRING_HASH_CODE = String.class.getName().hashCode();
-
-  public static final int INT_HASH_CODE = int.class.getName().hashCode();
-
-  public static final int LONG_HASH_CODE = long.class.getName().hashCode();
-
   /**
    * Hidden constructor.
    */
