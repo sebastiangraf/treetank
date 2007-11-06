@@ -26,7 +26,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 
-import org.treetank.api.FullTextIndex;
+import org.treetank.api.FullText;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.IWriteTransaction;
@@ -96,7 +96,6 @@ public final class BeanUtil {
    * Read Java bean from TreeTank.
    * 
    * @param rtx IReadTransaction to read.
-   * @param parentElement Parent element from where to start the read.
    * @param clazz Class to create.
    * @return Instance of clazz with all properties set or null if there
    *         was no element or property stored.
@@ -105,7 +104,6 @@ public final class BeanUtil {
    */
   public static final Object read(
       final IReadTransaction rtx,
-      final INode parentElement,
       final Class<? extends Object> clazz) {
 
     Object target = null;
@@ -113,26 +111,27 @@ public final class BeanUtil {
     try {
 
       // Check whether node points to element with clazz name.
-      if (parentElement.isElement()
-          && parentElement.getLocalPart(rtx).equalsIgnoreCase(clazz.getName())) {
+      if (rtx.isElement()
+          && rtx.getLocalPart().equalsIgnoreCase(clazz.getName())) {
         target = clazz.newInstance();
 
         // Loop over all children of node.
-        INode tmp = parentElement.getFirstChild(rtx);
-        while (tmp != null) {
+        INode node = rtx.moveToFirstChild();
+        while (node != null) {
 
           // Only fetch elements that contain a text.
-          if (tmp.isElement() && tmp.hasFirstChild()) {
-            final INode text = tmp.getFirstChild(rtx);
+          if (node.isElement() && node.hasFirstChild()) {
+            final INode text = node.getFirstChild(rtx);
             if (text.isText()) {
               // Set (private) property.
-              final Field field = clazz.getDeclaredField(tmp.getLocalPart(rtx));
+              final Field field =
+                  clazz.getDeclaredField(node.getLocalPart(rtx));
               field.setAccessible(true);
               field.set(target, UTF.convert(text.getValue()));
             }
           }
 
-          tmp = tmp.getRightSibling(rtx);
+          node = node.getRightSibling(rtx);
         }
 
       }
@@ -149,14 +148,12 @@ public final class BeanUtil {
    * Write Java bean to TreeTank.
    * 
    * @param wtx IWriteTransaction to write.
-   * @param parentElement Parent element from where to start the write.
    * @param object Java bean to write.
    * @throws RuntimeException in case the object properties could not be
    *         read.
    */
   public static final void write(
       final IWriteTransaction wtx,
-      final INode parentElement,
       final Object object) {
 
     try {
@@ -191,7 +188,7 @@ public final class BeanUtil {
 
       // Find all full text index annotated fields.
       for (final Field field : object.getClass().getDeclaredFields()) {
-        if (field.getAnnotation(FullTextIndex.class) != null) {
+        if (field.getAnnotation(FullText.class) != null) {
           field.setAccessible(true);
           wtx.index(field.get(object).toString().toLowerCase(), key);
         }

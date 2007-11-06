@@ -32,6 +32,6 @@ import java.lang.annotation.RetentionPolicy;
  * </p>
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface FullTextIndex {
+public @interface FullText {
 
 }
