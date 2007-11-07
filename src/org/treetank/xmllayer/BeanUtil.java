@@ -143,8 +143,7 @@ public final class BeanUtil {
                 field.setInt(target, UTF.parseInt(text.getValue()));
                 break;
               case 3327612: // long
-                field.setLong(target, Long.parseLong(UTF.parseString(text
-                    .getValue())));
+                field.setLong(target, UTF.parseLong(text.getValue()));
                 break;
               case 97526364: // float
                 field.setFloat(target, Float.parseFloat(UTF.parseString(text
@@ -215,7 +214,7 @@ public final class BeanUtil {
           bytes = UTF.getBytes(field.getInt(object));
           break;
         case 3327612: // long
-          bytes = UTF.getBytes(field.get(object).toString());
+          bytes = UTF.getBytes(field.getLong(object));
           break;
         case 97526364: // float
           bytes = UTF.getBytes(field.get(object).toString());
