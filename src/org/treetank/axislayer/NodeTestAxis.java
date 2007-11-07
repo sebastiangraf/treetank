@@ -50,10 +50,10 @@ public class NodeTestAxis extends AbstractAxis {
    * {@inheritDoc}
    */
   public final boolean hasNext() {
+    INode node = null;
     while (mAxis.hasNext()) {
-      final INode node = mAxis.next();
+      node = mAxis.next();
       if (node.isElement() || node.isText()) {
-        setCurrentNode(node);
         return true;
       }
     }

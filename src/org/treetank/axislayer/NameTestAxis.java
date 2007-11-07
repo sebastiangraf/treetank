@@ -57,10 +57,10 @@ public class NameTestAxis extends AbstractAxis {
    * {@inheritDoc}
    */
   public final boolean hasNext() {
+    INode node = null;
     while (mAxis.hasNext()) {
-      final INode node = mAxis.next();
+      node = mAxis.next();
       if (node.getLocalPartKey() == mNameKey) {
-        setCurrentNode(node);
         return true;
       }
     }

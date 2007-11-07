@@ -21,6 +21,9 @@
  
 TreeTank 4.15
 -------------
++ Introduce concept of cursor stability: Always leave the cursor of a
+  transaction where it was before calling a method except the method explicitly
+  modifies the state of the transaction.
 + Moved bean-related stuff to beanlayer package.
 + Renamed UTF.convert() to UTF.getBytes([String|int]) 
   and UTF.parse[String|int](). Integer and Long methods are twice as fast and

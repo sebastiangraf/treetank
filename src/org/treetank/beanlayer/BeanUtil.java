@@ -102,7 +102,8 @@ public final class BeanUtil {
   }
 
   /**
-   * Read Java bean from TreeTank.
+   * Read Java bean from TreeTank. Cursor of transaction is leaved where it was
+   * before reading the Java bean.
    * 
    * @param rtx IReadTransaction to read.
    * @param clazz Class to create.
@@ -114,6 +115,8 @@ public final class BeanUtil {
   public static final Object read(
       final IReadTransaction rtx,
       final Class<? extends Object> clazz) {
+
+    final long currentKey = rtx.getNodeKey();
 
     Object target = null;
 
@@ -175,11 +178,14 @@ public final class BeanUtil {
       throw new RuntimeException(e);
     }
 
+    rtx.moveTo(currentKey);
+
     return target;
   }
 
   /**
-   * Write Java bean to TreeTank.
+   * Write Java bean to TreeTank. Cursor of transaction is leaved where it was
+   * before reading the Java bean.
    * 
    * @param wtx IWriteTransaction to write.
    * @param object Java bean to write.
@@ -189,6 +195,8 @@ public final class BeanUtil {
   public static final void write(
       final IWriteTransaction wtx,
       final Object object) {
+
+    final long currentKey = wtx.getNodeKey();
 
     try {
 
@@ -257,6 +265,8 @@ public final class BeanUtil {
       // Transform into unchecked exception.
       throw new RuntimeException(e);
     }
+
+    wtx.moveTo(currentKey);
 
   }
 
