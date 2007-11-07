@@ -43,7 +43,7 @@ import com.sun.org.apache.xml.internal.serializer.SerializerFactory;
 /**
  * Reconstructs an XML document from XPathAccelerator encoding.
  */
-public final class SAXGenerator extends Thread {
+public final class SAXGenerator implements Runnable {
 
   protected ContentHandler mHandler;
 
@@ -187,7 +187,6 @@ public final class SAXGenerator extends Thread {
 
   }
 
-  @Override
   public void run() {
     try {
 
