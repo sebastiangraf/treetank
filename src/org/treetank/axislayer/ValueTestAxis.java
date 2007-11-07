@@ -64,13 +64,33 @@ public class ValueTestAxis extends AbstractAxis {
   }
 
   /**
+   * Constructor initializing internal state.
+   * 
+   * @param axis Axis iterator over which we should find values.
+   * @param value Value to find.
+   */
+  public ValueTestAxis(final AbstractAxis axis, final int value) {
+    this(axis, UTF.getBytes(value));
+  }
+
+  /**
+   * Constructor initializing internal state.
+   * 
+   * @param axis Axis iterator over which we should find values.
+   * @param value Value to find.
+   */
+  public ValueTestAxis(final AbstractAxis axis, final long value) {
+    this(axis, UTF.getBytes(value));
+  }
+
+  /**
    * {@inheritDoc}
    */
   public final boolean hasNext() {
+    INode node = null;
     while (mAxis.hasNext()) {
-      final INode node = mAxis.next();
+      node = mAxis.next();
       if (node.isText() && (UTF.equals(node.getValue(), mValue))) {
-        setCurrentNode(node);
         return true;
       }
     }
