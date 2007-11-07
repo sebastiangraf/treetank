@@ -44,8 +44,12 @@ import org.treetank.utils.UTF;
  * <pre>
  * public class Address {
  *   // Bean properties.
+ *   &#64;FullText
  *   private String firstName;
+ *   
+ *   &#64;FullText
  *   private String lastName;
+ *   
  *   private String street;
  *   
  *   // Bean setters and getters.
@@ -63,18 +67,18 @@ import org.treetank.utils.UTF;
  * 
  * This will be mapped to:
  * <pre>
- * &lt;address&gt;
+ * &lt;Address&gt;
  *   &lt;firstname&gt;Joe&lt;/firstname&gt;
  *   &lt;lastname&gt;Black&lt;/lastname&gt;
  *   &lt;street&gt;World&lt;/street&gt;
- * &lt;/address&gt;
+ * &lt;/Address&gt;
  * </pre>
  * 
  * <strong>Usage</strong>
  * 
  * <pre>
- * Address address = BeanUtil.read(rtx, parentElement, Address.class);
- * BeanUtil.write(wtx, parentElement, address);
+ * Address address = BeanUtil.read(rtx, Address.class);
+ * BeanUtil.write(wtx, address);
  * </pre>
  * 
  * <strong>Important</strong>
