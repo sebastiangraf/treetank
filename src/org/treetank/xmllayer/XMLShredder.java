@@ -117,7 +117,7 @@ public final class XMLShredder {
         for (int i = 0, l = parser.getAttributeCount(); i < l; i++) {
           wtx.insertAttribute(parser.getAttributeLocalName(i), parser
               .getAttributeNamespace(i), parser.getAttributePrefix(i), UTF
-              .convert(parser.getAttributeValue(i)));
+              .getBytes(parser.getAttributeValue(i)));
         }
         break;
 
@@ -130,9 +130,9 @@ public final class XMLShredder {
         text = parser.getText().trim();
         if (text.length() > 0) {
           if (leftSiblingKeyStack.peek() == IConstants.NULL_KEY) {
-            key = wtx.insertTextAsFirstChild(UTF.convert(text));
+            key = wtx.insertTextAsFirstChild(UTF.getBytes(text));
           } else {
-            key = wtx.insertTextAsRightSibling(UTF.convert(text));
+            key = wtx.insertTextAsRightSibling(UTF.getBytes(text));
           }
           leftSiblingKeyStack.pop();
           leftSiblingKeyStack.push(key);

@@ -21,6 +21,10 @@
  
 TreeTank 4.15
 -------------
++ Renamed UTF.convert() to UTF.getBytes([String|int]) 
+  and UTF.parse[String|int](). Integer and Long methods are twice as fast and
+  compatible to String.
++ BeanUtil now supporting boolean, int, long, float, double, and String.
 + Added FullText annotation to mark that Java bean field must be indexed.
 + Added BeanUtil to make Java beans persistent with TreeTank.
 + Added Session.removeSession() to safely remove a TreeTank file.

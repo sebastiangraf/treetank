@@ -60,7 +60,7 @@ public class ValueTestAxis extends AbstractAxis {
    * @param value Value to find.
    */
   public ValueTestAxis(final AbstractAxis axis, final String value) {
-    this(axis, UTF.convert(value));
+    this(axis, UTF.getBytes(value));
   }
 
   /**

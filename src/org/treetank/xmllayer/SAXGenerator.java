@@ -117,7 +117,7 @@ public final class SAXGenerator extends Thread {
     for (final INode attribute : new AttributeAxis(rtx)) {
       attributes.addAttribute(attribute.getURI(rtx), attribute
           .getLocalPart(rtx), qName(attribute.getPrefix(rtx), attribute
-          .getLocalPart(rtx)), "", UTF.convert(attribute.getValue()));
+          .getLocalPart(rtx)), "", UTF.parseString(attribute.getValue()));
     }
 
     return attributes;
@@ -134,7 +134,7 @@ public final class SAXGenerator extends Thread {
           node.getLocalPart(rtx)), visitAttributes(rtx));
       break;
     case IConstants.TEXT:
-      final char[] text = UTF.convert(node.getValue()).toCharArray();
+      final char[] text = UTF.parseString(node.getValue()).toCharArray();
       mHandler.characters(text, 0, text.length);
       break;
     default:
