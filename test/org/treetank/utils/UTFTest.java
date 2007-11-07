@@ -68,10 +68,37 @@ public class UTFTest {
     assertEquals("-4", UTF.parseString(UTF.getBytes(-4)));
     assertEquals(-4, UTF.parseInt(UTF.getBytes(-4)));
 
-    assertEquals(String.valueOf(Integer.MIN_VALUE), UTF.parseString(UTF
-        .getBytes(Integer.MIN_VALUE)));
-    assertEquals(Integer.MIN_VALUE, UTF.parseInt(UTF
-        .getBytes(Integer.MIN_VALUE)));
+    assertEquals(String.valueOf(Integer.MIN_VALUE + 1), UTF.parseString(UTF
+        .getBytes(Integer.MIN_VALUE + 1)));
+    assertEquals(Integer.MIN_VALUE + 1, UTF.parseInt(UTF
+        .getBytes(Integer.MIN_VALUE + 1)));
+  }
+
+  @Test
+  public void testLong() {
+    assertEquals("0", UTF.parseString(UTF.getBytes(0L)));
+    assertEquals(0L, UTF.parseLong(UTF.getBytes(0L)));
+
+    assertEquals("1234", UTF.parseString(UTF.getBytes(1234L)));
+    assertEquals(1234L, UTF.parseLong(UTF.getBytes(1234L)));
+
+    assertEquals("4", UTF.parseString(UTF.getBytes(4L)));
+    assertEquals(4L, UTF.parseLong(UTF.getBytes(4L)));
+
+    assertEquals(String.valueOf(Long.MAX_VALUE), UTF.parseString(UTF
+        .getBytes(Long.MAX_VALUE)));
+    assertEquals(Long.MAX_VALUE, UTF.parseLong(UTF.getBytes(Long.MAX_VALUE)));
+
+    assertEquals("-1234", UTF.parseString(UTF.getBytes(-1234L)));
+    assertEquals(-1234L, UTF.parseLong(UTF.getBytes(-1234L)));
+
+    assertEquals("-4", UTF.parseString(UTF.getBytes(-4L)));
+    assertEquals(-4L, UTF.parseLong(UTF.getBytes(-4L)));
+
+    assertEquals(String.valueOf(Long.MIN_VALUE + 1), UTF.parseString(UTF
+        .getBytes(Long.MIN_VALUE + 1)));
+    assertEquals(Long.MIN_VALUE + 1, UTF.parseLong(UTF
+        .getBytes(Long.MIN_VALUE + 1)));
   }
 
 }
