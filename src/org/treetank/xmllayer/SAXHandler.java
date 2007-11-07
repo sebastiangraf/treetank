@@ -142,7 +142,7 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
             attr.getLocalName(i),
             attr.getURI(i),
             qNameToPrefix(attr.getQName(i)),
-            UTF.convert(attr.getValue(i)));
+            UTF.getBytes(attr.getValue(i)));
       }
 
     } catch (Exception e) {
@@ -220,9 +220,9 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
       // Insert text node and maintain stacks.
       long key;
       if (mLeftSiblingKeyStack.peek() == IConstants.NULL_KEY) {
-        key = mWTX.insertTextAsFirstChild(UTF.convert(text));
+        key = mWTX.insertTextAsFirstChild(UTF.getBytes(text));
       } else {
-        key = mWTX.insertTextAsRightSibling(UTF.convert(text));
+        key = mWTX.insertTextAsRightSibling(UTF.getBytes(text));
       }
       mLeftSiblingKeyStack.pop();
       mLeftSiblingKeyStack.push(key);

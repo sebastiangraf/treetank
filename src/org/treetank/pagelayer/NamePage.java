@@ -58,7 +58,7 @@ public final class NamePage extends AbstractPage {
     mNameMap = new HashMap<Integer, String>();
 
     for (int i = 0, l = in.readVarInt(); i < l; i++) {
-      mNameMap.put(in.readVarInt(), UTF.convert(in.readByteArray()));
+      mNameMap.put(in.readVarInt(), UTF.parseString(in.readByteArray()));
     }
   }
 
@@ -103,7 +103,7 @@ public final class NamePage extends AbstractPage {
 
     for (final int key : mNameMap.keySet()) {
       out.writeVarInt(key);
-      out.writeByteArray(UTF.convert(mNameMap.get(key)));
+      out.writeByteArray(UTF.getBytes(mNameMap.get(key)));
     }
   }
 

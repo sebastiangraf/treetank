@@ -65,7 +65,7 @@ public class UpdateTest {
     for (int i = 1; i <= 10; i++) {
       wtx = session.beginWriteTransaction();
       wtx.moveToDocumentRoot();
-      wtx.insertTextAsFirstChild(UTF.convert(Integer.toString(i)));
+      wtx.insertTextAsFirstChild(UTF.getBytes(Integer.toString(i)));
       wtx.commit();
       wtx.close();
 

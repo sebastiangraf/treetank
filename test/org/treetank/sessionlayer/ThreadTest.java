@@ -65,7 +65,7 @@ public class ThreadTest {
       taskExecutor.execute(new Task(session.beginReadTransaction(0L)));
       wtx = session.beginWriteTransaction();
       wtx.moveTo(10L);
-      wtx.setValue(UTF.convert("value" + i));
+      wtx.setValue(UTF.getBytes("value" + i));
       wtx.commit();
       wtx.close();
     }

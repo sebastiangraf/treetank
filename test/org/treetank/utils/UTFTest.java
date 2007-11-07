@@ -29,21 +29,49 @@ public class UTFTest {
 
   @Test
   public void test() {
-    assertEquals("a", UTF.convert(UTF.convert("a")));
-    assertEquals("foo", UTF.convert(UTF.convert("foo")));
-    assertEquals("fö§", UTF.convert(UTF.convert("fö§")));
-    assertEquals("", UTF.convert(UTF.convert("")));
+    assertEquals("a", UTF.parseString(UTF.getBytes("a")));
+    assertEquals("foo", UTF.parseString(UTF.getBytes("foo")));
+    assertEquals("fö§", UTF.parseString(UTF.getBytes("fö§")));
+    assertEquals("", UTF.parseString(UTF.getBytes("")));
   }
 
   @Test
   public void testEquals() {
-    assertEquals(false, UTF.equals(UTF.convert("foo"), UTF.convert("foobar")));
-    assertEquals(false, UTF.equals(UTF.convert("foo"), UTF.convert("bar")));
-    assertEquals(true, UTF.equals(UTF.convert("foo"), UTF.convert("foo")));
+    assertEquals(false, UTF.equals(UTF.getBytes("foo"), UTF.getBytes("foobar")));
+    assertEquals(false, UTF.equals(UTF.getBytes("foo"), UTF.getBytes("bar")));
+    assertEquals(true, UTF.equals(UTF.getBytes("foo"), UTF.getBytes("foo")));
 
-    assertEquals(true, UTF.equals("foo", UTF.convert("foo")));
-    assertEquals(true, UTF.equals(UTF.convert("foo"), "foo"));
+    assertEquals(true, UTF.equals("foo", UTF.getBytes("foo")));
+    assertEquals(true, UTF.equals(UTF.getBytes("foo"), "foo"));
     assertEquals(true, UTF.equals("foo", "foo"));
+  }
+
+  @Test
+  public void testInt() {
+    assertEquals("0", UTF.parseString(UTF.getBytes(0)));
+    assertEquals(0, UTF.parseInt(UTF.getBytes(0)));
+
+    assertEquals("1234", UTF.parseString(UTF.getBytes(1234)));
+    assertEquals(1234, UTF.parseInt(UTF.getBytes(1234)));
+
+    assertEquals("4", UTF.parseString(UTF.getBytes(4)));
+    assertEquals(4, UTF.parseInt(UTF.getBytes(4)));
+
+    assertEquals(String.valueOf(Integer.MAX_VALUE), UTF.parseString(UTF
+        .getBytes(Integer.MAX_VALUE)));
+    assertEquals(Integer.MAX_VALUE, UTF.parseInt(UTF
+        .getBytes(Integer.MAX_VALUE)));
+
+    assertEquals("-1234", UTF.parseString(UTF.getBytes(-1234)));
+    assertEquals(-1234, UTF.parseInt(UTF.getBytes(-1234)));
+
+    assertEquals("-4", UTF.parseString(UTF.getBytes(-4)));
+    assertEquals(-4, UTF.parseInt(UTF.getBytes(-4)));
+
+    assertEquals(String.valueOf(Integer.MIN_VALUE), UTF.parseString(UTF
+        .getBytes(Integer.MIN_VALUE)));
+    assertEquals(Integer.MIN_VALUE, UTF.parseInt(UTF
+        .getBytes(Integer.MIN_VALUE)));
   }
 
 }

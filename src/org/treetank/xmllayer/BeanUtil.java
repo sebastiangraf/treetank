@@ -136,27 +136,26 @@ public final class BeanUtil {
               // Switch according to field type.
               switch (field.getType().getName().hashCode()) {
               case 64711720: // boolean
-                field.setBoolean(target, Boolean.parseBoolean(UTF.convert(text
-                    .getValue())));
+                field.setBoolean(target, Boolean.parseBoolean(UTF
+                    .parseString(text.getValue())));
                 break;
               case 104431: // int
-                field.setInt(target, Integer.parseInt(UTF.convert(text
-                    .getValue())));
+                field.setInt(target, UTF.parseInt(text.getValue()));
                 break;
               case 3327612: // long
-                field.setLong(target, Long.parseLong(UTF.convert(text
+                field.setLong(target, Long.parseLong(UTF.parseString(text
                     .getValue())));
                 break;
               case 97526364: // float
-                field.setFloat(target, Float.parseFloat(UTF.convert(text
+                field.setFloat(target, Float.parseFloat(UTF.parseString(text
                     .getValue())));
                 break;
               case -1325958191: // double
-                field.setDouble(target, Double.parseDouble(UTF.convert(text
+                field.setDouble(target, Double.parseDouble(UTF.parseString(text
                     .getValue())));
                 break;
               case 1195259493: // String
-                field.set(target, UTF.convert(text.getValue()));
+                field.set(target, UTF.parseString(text.getValue()));
                 break;
               default:
                 throw new IllegalStateException(field.getType().getName());
@@ -206,15 +205,40 @@ public final class BeanUtil {
             object.getClass().getDeclaredField(property.getName());
         field.setAccessible(true);
 
+        // Switch according to field type.
+        byte[] bytes = null;
+        switch (field.getType().getName().hashCode()) {
+        case 64711720: // boolean
+          bytes = UTF.getBytes(field.get(object).toString());
+          break;
+        case 104431: // int
+          bytes = UTF.getBytes(field.getInt(object));
+          break;
+        case 3327612: // long
+          bytes = UTF.getBytes(field.get(object).toString());
+          break;
+        case 97526364: // float
+          bytes = UTF.getBytes(field.get(object).toString());
+          break;
+        case -1325958191: // double
+          bytes = UTF.getBytes(field.get(object).toString());
+          break;
+        case 1195259493: // String
+          bytes = UTF.getBytes(field.get(object).toString());
+          break;
+        default:
+          throw new IllegalStateException(field.getType().getName());
+        }
+
         // Insert property as element with text.
         if (isFirst) {
           wtx.insertElementAsFirstChild(property.getName(), "", "");
-          wtx.insertTextAsFirstChild(UTF.convert(field.get(object).toString()));
+          wtx.insertTextAsFirstChild(bytes);
           wtx.moveToParent();
           isFirst = false;
         } else {
           wtx.insertElementAsRightSibling(property.getName(), "", "");
-          wtx.insertTextAsFirstChild(UTF.convert(field.get(object).toString()));
+          wtx.insertTextAsFirstChild(bytes);
           wtx.moveToParent();
         }
       }

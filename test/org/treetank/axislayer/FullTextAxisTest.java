@@ -51,8 +51,8 @@ public class FullTextAxisTest {
 
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    final long nodeKey1 = wtx.insertTextAsFirstChild(UTF.convert("foo"));
-    final long nodeKey2 = wtx.insertTextAsRightSibling(UTF.convert("foo"));
+    final long nodeKey1 = wtx.insertTextAsFirstChild(UTF.getBytes("foo"));
+    final long nodeKey2 = wtx.insertTextAsRightSibling(UTF.getBytes("foo"));
     final long tokenKey1 = wtx.index("foo", nodeKey1);
     wtx.commit();
     final long tokenKey2 = wtx.index("foo", nodeKey2);

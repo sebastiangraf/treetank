@@ -90,26 +90,26 @@ public final class TestDocument {
   public static void create(final IWriteTransaction wtx) {
 
     wtx.insertElementAsFirstChild("a", "ns", "p");
-    wtx.insertAttribute("i", "", "", UTF.convert("j"));
+    wtx.insertAttribute("i", "", "", UTF.getBytes("j"));
 
-    wtx.insertTextAsFirstChild(UTF.convert("oops1"));
+    wtx.insertTextAsFirstChild(UTF.getBytes("oops1"));
 
     wtx.insertElementAsRightSibling("b", "", "");
 
-    wtx.insertTextAsFirstChild(UTF.convert("foo"));
+    wtx.insertTextAsFirstChild(UTF.getBytes("foo"));
     wtx.insertElementAsRightSibling("c", "", "");
     wtx.moveToParent();
 
-    wtx.insertTextAsRightSibling(UTF.convert("oops2"));
+    wtx.insertTextAsRightSibling(UTF.getBytes("oops2"));
 
     wtx.insertElementAsRightSibling("b", "", "");
-    wtx.insertAttribute("x", "ns", "p", UTF.convert("y"));
+    wtx.insertAttribute("x", "ns", "p", UTF.getBytes("y"));
 
     wtx.insertElementAsFirstChild("c", "", "");
-    wtx.insertTextAsRightSibling(UTF.convert("bar"));
+    wtx.insertTextAsRightSibling(UTF.getBytes("bar"));
     wtx.moveToParent();
 
-    wtx.insertTextAsRightSibling(UTF.convert("oops3"));
+    wtx.insertTextAsRightSibling(UTF.getBytes("oops3"));
 
   }
 
@@ -122,23 +122,23 @@ public final class TestDocument {
   public static void createWithoutAttributes(final IWriteTransaction wtx) {
     wtx.insertElementAsFirstChild("a", "ns", "p");
 
-    wtx.insertTextAsFirstChild(UTF.convert("oops1"));
+    wtx.insertTextAsFirstChild(UTF.getBytes("oops1"));
 
     wtx.insertElementAsRightSibling("b", "", "");
 
-    wtx.insertTextAsFirstChild(UTF.convert("foo"));
+    wtx.insertTextAsFirstChild(UTF.getBytes("foo"));
     wtx.insertElementAsRightSibling("c", "", "");
     wtx.moveToParent();
 
-    wtx.insertTextAsRightSibling(UTF.convert("oops2"));
+    wtx.insertTextAsRightSibling(UTF.getBytes("oops2"));
 
     wtx.insertElementAsRightSibling("b", "", "");
 
     wtx.insertElementAsFirstChild("c", "", "");
-    wtx.insertTextAsRightSibling(UTF.convert("bar"));
+    wtx.insertTextAsRightSibling(UTF.getBytes("bar"));
     wtx.moveToParent();
 
-    wtx.insertTextAsRightSibling(UTF.convert("oops3"));
+    wtx.insertTextAsRightSibling(UTF.getBytes("oops3"));
 
   }
 

@@ -220,7 +220,7 @@ public class SessionTest {
     final IWriteTransaction wtx2 = session.beginWriteTransaction();
     assertEquals(1L, wtx2.getRevisionNumber());
     wtx2.moveTo(10L);
-    wtx2.setValue(UTF.convert("bar2"));
+    wtx2.setValue(UTF.getBytes("bar2"));
 
     assertEquals(
         "bar",
@@ -264,7 +264,7 @@ public class SessionTest {
     final IWriteTransaction wtx2 = session2.beginWriteTransaction();
     assertEquals(1L, wtx2.getRevisionNumber());
     wtx2.moveTo(10L);
-    wtx2.setValue(UTF.convert("bar2"));
+    wtx2.setValue(UTF.getBytes("bar2"));
 
     assertEquals(
         "bar",
