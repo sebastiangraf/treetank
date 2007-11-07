@@ -21,6 +21,7 @@
  
 TreeTank 4.15
 -------------
++ Moved bean-related stuff to beanlayer package.
 + Renamed UTF.convert() to UTF.getBytes([String|int]) 
   and UTF.parse[String|int](). Integer and Long methods are twice as fast and
   compatible to String.

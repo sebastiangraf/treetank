@@ -19,14 +19,13 @@
  * $Id: INode.java 3277 2007-10-25 19:30:30Z kramis $
  */
 
-package org.treetank.xmllayer;
+package org.treetank.beanlayer;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 
-import org.treetank.api.FullText;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.IWriteTransaction;

@@ -19,19 +19,19 @@
  * $Id: INode.java 3277 2007-10-25 19:30:30Z kramis $
  */
 
-package org.treetank.api;
+package org.treetank.beanlayer;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * <h1>Index</h1>
+ * <h1>Attribute</h1>
  * 
  * <p>
- * Field annotation to tell BeanUtil to index the given field.
+ * Field annotation to tell BeanUtil to store the given field as attribute.
  * </p>
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface FullText {
+public @interface Attribute {
 
 }
