@@ -26,6 +26,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 
+import org.treetank.api.IConstants;
 import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.IWriteTransaction;
@@ -105,6 +106,7 @@ public final class BeanUtil {
    * Read Java bean from TreeTank. Cursor of transaction is leaved where it was
    * before reading the Java bean.
    * 
+   * @param <B> Java Bean.
    * @param rtx IReadTransaction to read.
    * @param clazz Class to create.
    * @return Instance of clazz with all properties set or null if there
@@ -112,19 +114,20 @@ public final class BeanUtil {
    * @throws RuntimeException in case the class could not be instantiated
    *         or the property setter could not be invoked.
    */
-  public static final Object read(
+  public static final <B> B read(
       final IReadTransaction rtx,
-      final Class<? extends Object> clazz) {
+      final Class<B> clazz) {
 
     final long currentKey = rtx.getNodeKey();
 
-    Object target = null;
+    B target = null;
 
     try {
 
       // Check whether node points to element with clazz name.
       if (rtx.isElement()
-          && rtx.getLocalPart().equalsIgnoreCase(clazz.getName())) {
+          && rtx.getLocalPart().equalsIgnoreCase(clazz.getSimpleName())) {
+
         target = clazz.newInstance();
 
         // Loop over all children of node.
@@ -184,25 +187,29 @@ public final class BeanUtil {
   }
 
   /**
-   * Write Java bean to TreeTank. Cursor of transaction is leaved where it was
-   * before reading the Java bean.
+   * Write Java bean to TreeTank. Cursors of transaction is moved to
+   * "root" element node of newly written Java bean.
    * 
    * @param wtx IWriteTransaction to write.
    * @param object Java bean to write.
+   * @return key of newly written Java bean element node.
    * @throws RuntimeException in case the object properties could not be
    *         read.
    */
-  public static final void write(
+  public static final long write(
       final IWriteTransaction wtx,
       final Object object) {
 
-    final long currentKey = wtx.getNodeKey();
+    long beanKey = IConstants.NULL_KEY;
 
     try {
 
       // Insert bean root element.
-      final long key =
-          wtx.insertElementAsFirstChild(object.getClass().getName(), "", "");
+      beanKey =
+          wtx.insertElementAsFirstChild(
+              object.getClass().getSimpleName(),
+              "",
+              "");
 
       // Find all properties.
       boolean isFirst = true;
@@ -257,7 +264,7 @@ public final class BeanUtil {
       for (final Field field : object.getClass().getDeclaredFields()) {
         if (field.getAnnotation(FullText.class) != null) {
           field.setAccessible(true);
-          wtx.index(field.get(object).toString().toLowerCase(), key);
+          wtx.index(field.get(object).toString().toLowerCase(), beanKey);
         }
       }
 
@@ -266,7 +273,10 @@ public final class BeanUtil {
       throw new RuntimeException(e);
     }
 
-    wtx.moveTo(currentKey);
+    // Make sure the cursor selects the newly written Java bean element node.
+    wtx.moveTo(beanKey);
+
+    return beanKey;
 
   }
 
