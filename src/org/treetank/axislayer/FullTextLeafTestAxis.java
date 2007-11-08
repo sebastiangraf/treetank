@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * $Id: NameTestAxisIterator.java 3174 2007-10-22 13:44:43Z kramis $
+ * $Id: NodeTestAxisIterator.java 3174 2007-10-22 13:44:43Z kramis $
  */
 
 package org.treetank.axislayer;
@@ -24,32 +24,25 @@ package org.treetank.axislayer;
 import org.treetank.api.IAxis;
 
 /**
- * <h1>NameTestAxis</h1>
+ * <h1>FullTextLeafTestAxis</h1>
  * 
  * <p>
- * Find all ELEMENTS provided by some axis iterator that match a given name.
- * Note that this is efficiently done with a single String and multiple integer
- * comparisons.
+ * Only select nodes of kind FULLTEXT_LEAF.
  * </p>
  */
-public class NameTestAxis extends AbstractAxis {
+public class FullTextLeafTestAxis extends AbstractAxis {
 
   /** Remember next key to visit. */
   private final IAxis mAxis;
 
-  /** Name test to do. */
-  private final int mNameKey;
-
   /**
    * Constructor initializing internal state.
    * 
-   * @param axis Axis iterator providing ELEMENTS.
-   * @param name Name ELEMENTS must match to.
+   * @param axis Axis to iterate over.
    */
-  public NameTestAxis(final IAxis axis, final String name) {
+  public FullTextLeafTestAxis(final IAxis axis) {
     super(axis.getTransaction());
     mAxis = axis;
-    mNameKey = getTransaction().keyForName(name);
   }
 
   /**
@@ -59,7 +52,7 @@ public class NameTestAxis extends AbstractAxis {
     resetToLastKey();
     while (mAxis.hasNext()) {
       mAxis.next();
-      if (getTransaction().getLocalPartKey() == mNameKey) {
+      if (getTransaction().isFullTextLeaf()) {
         return true;
       }
     }
