@@ -21,6 +21,7 @@
  
 TreeTank 4.15
 -------------
++ INode no longer part of public API; replaced by AbstractNode.
 + BeanUtil now supports byte[].
 + No longer make INode public. This lead to a variety of use cases mixing
   pure transaction cursor and node semantics. As a result, nobody really knew

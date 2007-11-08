@@ -22,8 +22,6 @@
 package org.treetank.nodelayer;
 
 import org.treetank.api.IConstants;
-import org.treetank.api.INode;
-import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayWriter;
 
 /**
@@ -37,7 +35,7 @@ import org.treetank.utils.FastByteArrayWriter;
  * functionality.
  * </p>
  */
-public abstract class AbstractNode implements INode, Comparable<INode> {
+public abstract class AbstractNode implements Comparable<AbstractNode> {
 
   /** Node key is common to all node kinds. */
   private long mNodeKey;
@@ -124,13 +122,6 @@ public abstract class AbstractNode implements INode, Comparable<INode> {
   /**
    * {@inheritDoc}
    */
-  public INode getParent(final IReadTransaction rtx) {
-    return null;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
   public boolean hasFirstChild() {
     return false;
   }
@@ -140,13 +131,6 @@ public abstract class AbstractNode implements INode, Comparable<INode> {
    */
   public long getFirstChildKey() {
     return IConstants.NULL_KEY;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public INode getFirstChild(final IReadTransaction rtx) {
-    return null;
   }
 
   /**
@@ -166,13 +150,6 @@ public abstract class AbstractNode implements INode, Comparable<INode> {
   /**
    * {@inheritDoc}
    */
-  public INode getLeftSibling(final IReadTransaction rtx) {
-    return null;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
   public boolean hasRightSibling() {
     return false;
   }
@@ -182,13 +159,6 @@ public abstract class AbstractNode implements INode, Comparable<INode> {
    */
   public long getRightSiblingKey() {
     return IConstants.NULL_KEY;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public INode getRightSibling(final IReadTransaction rtx) {
-    return null;
   }
 
   /**
@@ -215,14 +185,14 @@ public abstract class AbstractNode implements INode, Comparable<INode> {
   /**
    * {@inheritDoc}
    */
-  public INode getAttribute(final int index) {
+  public AbstractNode getAttribute(final int index) {
     return null;
   }
 
   /**
    * {@inheritDoc}
    */
-  public NamespaceNode getNamespace(final int index) {
+  public AbstractNode getNamespace(final int index) {
     return null;
   }
 
@@ -243,13 +213,6 @@ public abstract class AbstractNode implements INode, Comparable<INode> {
   /**
    * {@inheritDoc}
    */
-  public String getLocalPart(final IReadTransaction rtx) {
-    return null;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
   public int getURIKey() {
     return IConstants.NULL_NAME;
   }
@@ -257,22 +220,8 @@ public abstract class AbstractNode implements INode, Comparable<INode> {
   /**
    * {@inheritDoc}
    */
-  public String getURI(final IReadTransaction rtx) {
-    return null;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
   public int getPrefixKey() {
     return IConstants.NULL_NAME;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public String getPrefix(final IReadTransaction rtx) {
-    return null;
   }
 
   /**
@@ -362,14 +311,14 @@ public abstract class AbstractNode implements INode, Comparable<INode> {
    */
   @Override
   public boolean equals(final Object obj) {
-    return ((obj != null) && (mNodeKey == ((INode) obj).getNodeKey()));
+    return ((obj != null) && (mNodeKey == ((AbstractNode) obj).getNodeKey()));
   }
 
   /**
    * {@inheritDoc}
    */
-  public int compareTo(final INode node) {
-    final long nodeKey = ((INode) node).getNodeKey();
+  public int compareTo(final AbstractNode node) {
+    final long nodeKey = ((AbstractNode) node).getNodeKey();
     if (mNodeKey < nodeKey) {
       return -1;
     } else if (mNodeKey == nodeKey) {

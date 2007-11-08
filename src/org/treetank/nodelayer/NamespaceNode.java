@@ -22,8 +22,6 @@
 package org.treetank.nodelayer;
 
 import org.treetank.api.IConstants;
-import org.treetank.api.INode;
-import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
@@ -59,7 +57,7 @@ public final class NamespaceNode extends AbstractNode {
    * 
    * @param namespace Namespace node to clone.
    */
-  public NamespaceNode(final INode namespace) {
+  public NamespaceNode(final AbstractNode namespace) {
     super(namespace.getNodeKey());
     mURIKey = namespace.getURIKey();
     mPrefixKey = namespace.getPrefixKey();
@@ -86,15 +84,6 @@ public final class NamespaceNode extends AbstractNode {
   @Override
   public final long getParentKey() {
     return getNodeKey();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final INode getParent(final IReadTransaction rtx) {
-    rtx.moveTo(getNodeKey());
-    return rtx.getNode();
   }
 
   /**

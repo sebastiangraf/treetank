@@ -24,7 +24,7 @@ package org.treetank.sessionlayer;
 import java.util.Map;
 
 import org.treetank.api.IConstants;
-import org.treetank.api.INode;
+import org.treetank.nodelayer.AbstractNode;
 import org.treetank.pagelayer.AbstractPage;
 import org.treetank.pagelayer.IndirectPage;
 import org.treetank.pagelayer.NamePage;
@@ -103,7 +103,7 @@ public class ReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  protected final INode getNode(final long nodeKey) {
+  protected final AbstractNode getNode(final long nodeKey) {
 
     // Calculate page and node part for given nodeKey.
     final long nodePageKey = nodePageKey(nodeKey);

@@ -24,7 +24,6 @@ package org.treetank.sessionlayer;
 import java.io.IOException;
 
 import org.treetank.api.IConstants;
-import org.treetank.api.INode;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.nodelayer.AbstractNode;
 import org.treetank.pagelayer.UberPage;
@@ -254,10 +253,23 @@ public final class WriteTransaction extends ReadTransaction
     }
 
     // Remember all related nodes.
-    AbstractNode node = (AbstractNode) getCurrentNode();
-    AbstractNode parent = (AbstractNode) node.getParent(this);
-    AbstractNode leftSibling = (AbstractNode) node.getLeftSibling(this);
-    AbstractNode rightSibling = (AbstractNode) node.getRightSibling(this);
+    AbstractNode node = null;
+    AbstractNode leftSibling = null;
+    AbstractNode rightSibling = null;
+    AbstractNode parent = null;
+
+    node = (AbstractNode) getCurrentNode();
+    if (hasLeftSibling()) {
+      moveToLeftSibling();
+      leftSibling = (AbstractNode) getCurrentNode();
+      moveToRightSibling();
+    }
+    if (hasRightSibling()) {
+      moveToRightSibling();
+      rightSibling = (AbstractNode) getCurrentNode();
+    }
+    moveToParent();
+    parent = (AbstractNode) getCurrentNode();
 
     // Remove old node.
     ((WriteTransactionState) getTransactionState()).removeNode(node
@@ -458,7 +470,7 @@ public final class WriteTransaction extends ReadTransaction
     return modNode;
   }
 
-  private final long insertFirstChild(final INode node) {
+  private final long insertFirstChild(final AbstractNode node) {
     assertNotClosed();
     assertIsSelected();
 
@@ -470,7 +482,7 @@ public final class WriteTransaction extends ReadTransaction
     return node.getNodeKey();
   }
 
-  private final long insertRightSibling(final INode node) {
+  private final long insertRightSibling(final AbstractNode node) {
     assertNotClosed();
     assertIsSelected();
 

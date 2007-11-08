@@ -22,8 +22,6 @@
 package org.treetank.nodelayer;
 
 import org.treetank.api.IConstants;
-import org.treetank.api.INode;
-import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
@@ -57,7 +55,7 @@ public final class DocumentRootNode extends AbstractNode {
    * 
    * @param node Node to clone.
    */
-  public DocumentRootNode(final INode node) {
+  public DocumentRootNode(final AbstractNode node) {
     super(node.getNodeKey());
     mFirstChildKey = node.getFirstChildKey();
     mChildCount = node.getChildCount();
@@ -96,15 +94,6 @@ public final class DocumentRootNode extends AbstractNode {
   @Override
   public final long getFirstChildKey() {
     return mFirstChildKey;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final INode getFirstChild(final IReadTransaction rtx) {
-    rtx.moveTo(mFirstChildKey);
-    return rtx.getNode();
   }
 
   /**

@@ -22,8 +22,6 @@
 package org.treetank.nodelayer;
 
 import org.treetank.api.IConstants;
-import org.treetank.api.INode;
-import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
@@ -52,10 +50,10 @@ public final class ElementNode extends AbstractNode {
   private long mChildCount;
 
   /** Attributes of node. */
-  private AttributeNode[] mAttributes;
+  private AbstractNode[] mAttributes;
 
   /** Namespaces of node. */
-  private NamespaceNode[] mNamespaces;
+  private AbstractNode[] mNamespaces;
 
   /** Key of local part. */
   private int mLocalPartKey;
@@ -105,7 +103,7 @@ public final class ElementNode extends AbstractNode {
    * 
    * @param node Element node to clone.
    */
-  public ElementNode(final INode node) {
+  public ElementNode(final AbstractNode node) {
     super(node.getNodeKey());
     mParentKey = node.getParentKey();
     mFirstChildKey = node.getFirstChildKey();
@@ -181,15 +179,6 @@ public final class ElementNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final INode getParent(final IReadTransaction rtx) {
-    rtx.moveTo(mParentKey);
-    return rtx.getNode();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
   public final void setParentKey(final long parentKey) {
     mParentKey = parentKey;
   }
@@ -208,15 +197,6 @@ public final class ElementNode extends AbstractNode {
   @Override
   public final long getFirstChildKey() {
     return mFirstChildKey;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final INode getFirstChild(final IReadTransaction rtx) {
-    rtx.moveTo(mFirstChildKey);
-    return rtx.getNode();
   }
 
   /**
@@ -247,19 +227,6 @@ public final class ElementNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final INode getLeftSibling(final IReadTransaction rtx) {
-    if (rtx.hasLeftSibling()) {
-      rtx.moveToLeftSibling();
-      return rtx.getNode();
-    } else {
-      return null;
-    }
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
   public final void setLeftSiblingKey(final long leftSiblingKey) {
     mLeftSiblingKey = leftSiblingKey;
   }
@@ -278,19 +245,6 @@ public final class ElementNode extends AbstractNode {
   @Override
   public final long getRightSiblingKey() {
     return mRightSiblingKey;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final INode getRightSibling(final IReadTransaction rtx) {
-    if (rtx.hasRightSibling()) {
-      rtx.moveToRightSibling();
-      return rtx.getNode();
-    } else {
-      return null;
-    }
   }
 
   /**
@@ -345,7 +299,7 @@ public final class ElementNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final INode getAttribute(final int index) {
+  public final AbstractNode getAttribute(final int index) {
     return mAttributes[index];
   }
 
@@ -393,7 +347,7 @@ public final class ElementNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final NamespaceNode getNamespace(final int index) {
+  public final AbstractNode getNamespace(final int index) {
     return mNamespaces[index];
   }
 
@@ -442,14 +396,6 @@ public final class ElementNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final String getLocalPart(final IReadTransaction rtx) {
-    return rtx.nameForKey(mLocalPartKey);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
   public final void setLocalPartKey(final int localPartKey) {
     mLocalPartKey = localPartKey;
   }
@@ -466,14 +412,6 @@ public final class ElementNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final String getPrefix(final IReadTransaction rtx) {
-    return rtx.nameForKey(mPrefixKey);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
   public final void setPrefixKey(final int prefixKey) {
     mPrefixKey = prefixKey;
   }
@@ -484,14 +422,6 @@ public final class ElementNode extends AbstractNode {
   @Override
   public final int getURIKey() {
     return mURIKey;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final String getURI(final IReadTransaction rtx) {
-    return rtx.nameForKey(mURIKey);
   }
 
   /**

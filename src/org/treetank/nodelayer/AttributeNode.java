@@ -22,8 +22,6 @@
 package org.treetank.nodelayer;
 
 import org.treetank.api.IConstants;
-import org.treetank.api.INode;
-import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
@@ -73,7 +71,7 @@ public final class AttributeNode extends AbstractNode {
    * 
    * @param attribute Attribute to clone.
    */
-  public AttributeNode(final INode attribute) {
+  public AttributeNode(final AbstractNode attribute) {
     super(attribute.getNodeKey());
     mLocalPartKey = attribute.getLocalPartKey();
     mURIKey = attribute.getURIKey();
@@ -110,14 +108,6 @@ public final class AttributeNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final String getLocalPart(final IReadTransaction rtx) {
-    return rtx.nameForKey(mLocalPartKey);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
   public final void setLocalPartKey(final int localPartKey) {
     this.mLocalPartKey = localPartKey;
   }
@@ -142,25 +132,8 @@ public final class AttributeNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final INode getParent(final IReadTransaction rtx) {
-    rtx.moveTo(getNodeKey());
-    return rtx.getNode();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
   public final int getPrefixKey() {
     return mPrefixKey;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final String getPrefix(final IReadTransaction rtx) {
-    return rtx.nameForKey(mPrefixKey);
   }
 
   /**
@@ -177,14 +150,6 @@ public final class AttributeNode extends AbstractNode {
   @Override
   public final int getURIKey() {
     return mURIKey;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final String getURI(final IReadTransaction rtx) {
-    return rtx.nameForKey(mURIKey);
   }
 
   /**

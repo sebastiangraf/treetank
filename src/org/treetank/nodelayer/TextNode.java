@@ -22,8 +22,6 @@
 package org.treetank.nodelayer;
 
 import org.treetank.api.IConstants;
-import org.treetank.api.INode;
-import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
@@ -73,7 +71,7 @@ public final class TextNode extends AbstractNode {
    * 
    * @param node Text node to clone.
    */
-  public TextNode(final INode node) {
+  public TextNode(final AbstractNode node) {
     super(node.getNodeKey());
     mParentKey = node.getParentKey();
     mLeftSiblingKey = node.getLeftSiblingKey();
@@ -123,15 +121,6 @@ public final class TextNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final INode getParent(final IReadTransaction rtx) {
-    rtx.moveTo(mParentKey);
-    return rtx.getNode();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
   public final void setParentKey(final long parentKey) {
     mParentKey = parentKey;
   }
@@ -156,15 +145,6 @@ public final class TextNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final INode getLeftSibling(final IReadTransaction rtx) {
-    rtx.moveTo(mLeftSiblingKey);
-    return rtx.getNode();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
   public final void setLeftSiblingKey(final long leftSiblingKey) {
     mLeftSiblingKey = leftSiblingKey;
   }
@@ -183,15 +163,6 @@ public final class TextNode extends AbstractNode {
   @Override
   public final long getRightSiblingKey() {
     return mRightSiblingKey;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final INode getRightSibling(final IReadTransaction rtx) {
-    rtx.moveTo(mRightSiblingKey);
-    return rtx.getNode();
   }
 
   /**

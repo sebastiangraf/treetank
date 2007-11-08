@@ -22,8 +22,8 @@
 package org.treetank.sessionlayer;
 
 import org.treetank.api.IConstants;
-import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
+import org.treetank.nodelayer.AbstractNode;
 
 /**
  * <h1>ReadTransaction</h1>
@@ -42,7 +42,7 @@ public class ReadTransaction implements IReadTransaction {
   private ReadTransactionState mTransactionState;
 
   /** Strong reference to currently selected node. */
-  private INode mCurrentNode;
+  private AbstractNode mCurrentNode;
 
   /** Tracks whether the transaction is closed. */
   private boolean mClosed;
@@ -120,14 +120,8 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final long moveTo(final INode node) {
-    return moveTo(node.getNodeKey());
-  }
-
-  /**
-   * {@inheritDoc}
-   */
   public final long moveToDocumentRoot() {
+    assertNotClosed();
     return moveTo(IConstants.DOCUMENT_ROOT_KEY);
   }
 
@@ -135,6 +129,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final long moveToFullTextRoot() {
+    assertNotClosed();
     return moveTo(IConstants.FULLTEXT_ROOT_KEY);
   }
 
@@ -142,6 +137,8 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final long moveToParent() {
+    assertNotClosed();
+    assertIsSelected();
     return moveTo(mCurrentNode.getParentKey());
   }
 
@@ -149,6 +146,8 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final long moveToFirstChild() {
+    assertNotClosed();
+    assertIsSelected();
     return moveTo(mCurrentNode.getFirstChildKey());
   }
 
@@ -156,6 +155,8 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final long moveToLeftSibling() {
+    assertNotClosed();
+    assertIsSelected();
     return moveTo(mCurrentNode.getLeftSiblingKey());
   }
 
@@ -163,6 +164,8 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final long moveToRightSibling() {
+    assertNotClosed();
+    assertIsSelected();
     return moveTo(mCurrentNode.getRightSiblingKey());
   }
 
@@ -171,17 +174,9 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final long moveToAttribute(final int index) {
     assertNotClosed();
+    assertIsSelected();
     mCurrentNode = mCurrentNode.getAttribute(index);
     return mCurrentNode.getNodeKey();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final INode getNode() {
-    assertNotClosed();
-    assertIsSelected();
-    return mCurrentNode;
   }
 
   /**
@@ -286,7 +281,7 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public INode getAttribute(final int index) {
+  public AbstractNode getAttribute(final int index) {
     assertNotClosed();
     return mCurrentNode.getAttribute(index);
   }
@@ -303,7 +298,7 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public INode getNamespace(final int index) {
+  public AbstractNode getNamespace(final int index) {
     assertNotClosed();
     return mCurrentNode.getNamespace(index);
   }
@@ -566,7 +561,7 @@ public class ReadTransaction implements IReadTransaction {
    * 
    * @return The current node.
    */
-  protected final INode getCurrentNode() {
+  protected final AbstractNode getCurrentNode() {
     return mCurrentNode;
   }
 
@@ -575,7 +570,7 @@ public class ReadTransaction implements IReadTransaction {
    * 
    * @param currentNode The current node to set.
    */
-  protected final void setCurrentNode(final INode currentNode) {
+  protected final void setCurrentNode(final AbstractNode currentNode) {
     mCurrentNode = currentNode;
   }
 
