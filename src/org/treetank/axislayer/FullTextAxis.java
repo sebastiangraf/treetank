@@ -33,6 +33,7 @@ import org.treetank.api.IReadTransaction;
  */
 public class FullTextAxis extends AbstractAxis {
 
+  /** Axis (either child or descendant) to search for fulltext leafs. */
   private final IAxis mAxis;
 
   /**
@@ -50,12 +51,22 @@ public class FullTextAxis extends AbstractAxis {
 
     rtx.moveToFullTextRoot();
 
-    boolean contained = true;
-    for (final char character : token.toCharArray()) {
-      contained = contained && isContained(character);
+    if (token.charAt(token.length() - 1) != '*') {
+      boolean contained = true;
+      for (final char character : token.toCharArray()) {
+        contained = contained && isContained(character);
+      }
+      mAxis = new FullTextLeafTestAxis(new ChildAxis(rtx));
+    } else {
+      boolean contained = true;
+      for (final char character : token
+          .substring(0, token.length() - 2)
+          .toCharArray()) {
+        contained = contained && isContained(character);
+      }
+      mAxis = new FullTextLeafTestAxis(new DescendantAxis(rtx));
     }
 
-    mAxis = new FullTextLeafTestAxis(new ChildAxis(rtx));
   }
 
   /**

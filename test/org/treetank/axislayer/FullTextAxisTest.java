@@ -108,5 +108,33 @@ public class FullTextAxisTest {
     session.close();
 
   }
+  
+  @Test
+  public void testWildcard() throws IOException {
+
+    final ISession session = Session.beginSession(PATH);
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+    final long nodeKey1 = wtx.insertTextAsFirstChild(UTF.getBytes("foo"));
+    final long nodeKey2 = wtx.insertTextAsRightSibling(UTF.getBytes("foo"));
+    final long tokenKey1 = wtx.index("foo", nodeKey1);
+    wtx.commit();
+    final long tokenKey2 = wtx.index("foo", nodeKey2);
+    assertEquals(tokenKey1, tokenKey2);
+
+    // Verify axis
+    final long key1 = wtx.getNodeKey();
+    final IAxis axis1 = new FullTextAxis(wtx, "f*");
+    assertEquals(true, axis1.hasNext());
+    assertEquals(nodeKey1, axis1.next());
+    assertEquals(true, axis1.hasNext());
+    assertEquals(nodeKey2, axis1.next());
+    assertEquals(false, axis1.hasNext());
+    assertEquals(key1, wtx.getNodeKey());
+
+    wtx.abort();
+    wtx.close();
+    session.close();
+
+  }
 
 }
