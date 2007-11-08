@@ -137,7 +137,7 @@ public interface IReadTransaction {
   /**
    * Get node key of currently selected node.
    * 
-   * @return INode key of currently selected node.
+   * @return Node key of currently selected node.
    */
   public long getNodeKey();
 
