@@ -216,8 +216,7 @@ public final class WriteTransaction extends ReadTransaction
       final String prefix,
       final byte[] value) {
 
-    assertNotClosed();
-    assertIsSelected();
+    assertNotClosedAndSelected();
 
     prepareCurrentNode().insertAttribute(
         ((WriteTransactionState) getTransactionState())
@@ -232,8 +231,7 @@ public final class WriteTransaction extends ReadTransaction
    */
   public final void insertNamespace(final String uri, final String prefix) {
 
-    assertNotClosed();
-    assertIsSelected();
+    assertNotClosedAndSelected();
 
     prepareCurrentNode().insertNamespace(
         ((WriteTransactionState) getTransactionState()).createNameKey(uri),
@@ -245,8 +243,7 @@ public final class WriteTransaction extends ReadTransaction
    */
   public final void remove() {
 
-    assertNotClosed();
-    assertIsSelected();
+    assertNotClosedAndSelected();
 
     if (getCurrentNode().isDocumentRoot()) {
       throw new IllegalStateException("Document node can not be removed.");
@@ -337,8 +334,7 @@ public final class WriteTransaction extends ReadTransaction
       final String prefix,
       final byte[] value) {
 
-    assertNotClosed();
-    assertIsSelected();
+    assertNotClosedAndSelected();
 
     prepareCurrentNode().setAttribute(
         index,
@@ -357,8 +353,7 @@ public final class WriteTransaction extends ReadTransaction
       final String uri,
       final String prefix) {
 
-    assertNotClosed();
-    assertIsSelected();
+    assertNotClosedAndSelected();
 
     prepareCurrentNode().setNamespace(
         index,
@@ -371,8 +366,7 @@ public final class WriteTransaction extends ReadTransaction
    */
   public final void setLocalPart(final String localPart) {
 
-    assertNotClosed();
-    assertIsSelected();
+    assertNotClosedAndSelected();
 
     prepareCurrentNode().setLocalPartKey(
         ((WriteTransactionState) getTransactionState())
@@ -384,8 +378,7 @@ public final class WriteTransaction extends ReadTransaction
    */
   public final void setURI(final String uri) {
 
-    assertNotClosed();
-    assertIsSelected();
+    assertNotClosedAndSelected();
 
     prepareCurrentNode().setURIKey(
         ((WriteTransactionState) getTransactionState()).createNameKey(uri));
@@ -396,8 +389,7 @@ public final class WriteTransaction extends ReadTransaction
    */
   public void setPrefix(final String prefix) {
 
-    assertNotClosed();
-    assertIsSelected();
+    assertNotClosedAndSelected();
 
     prepareCurrentNode().setPrefixKey(
         ((WriteTransactionState) getTransactionState()).createNameKey(prefix));
@@ -408,8 +400,7 @@ public final class WriteTransaction extends ReadTransaction
    */
   public final void setValue(final byte[] value) {
 
-    assertNotClosed();
-    assertIsSelected();
+    assertNotClosedAndSelected();
 
     prepareCurrentNode().setValue(value);
   }
@@ -471,8 +462,8 @@ public final class WriteTransaction extends ReadTransaction
   }
 
   private final long insertFirstChild(final AbstractNode node) {
-    assertNotClosed();
-    assertIsSelected();
+
+    assertNotClosedAndSelected();
 
     setCurrentNode(node);
 
@@ -483,8 +474,8 @@ public final class WriteTransaction extends ReadTransaction
   }
 
   private final long insertRightSibling(final AbstractNode node) {
-    assertNotClosed();
-    assertIsSelected();
+
+    assertNotClosedAndSelected();
 
     if (getCurrentNode().getNodeKey() == IConstants.DOCUMENT_ROOT_KEY) {
       throw new IllegalStateException("Root node can not have siblings.");

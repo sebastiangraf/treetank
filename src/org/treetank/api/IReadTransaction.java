@@ -21,8 +21,6 @@
 
 package org.treetank.api;
 
-import org.treetank.nodelayer.AbstractNode;
-
 /**
  * <h1>IReadTransaction</h1>
  * 
@@ -216,27 +214,11 @@ public interface IReadTransaction {
   public int getAttributeCount();
 
   /**
-   * Get the attribute specified by its index.
-   * 
-   * @param index Index of attribute to get.
-   * @return Attribute denoted by its index.
-   */
-  public AbstractNode getAttribute(final int index);
-
-  /**
    * Get namespace declaration count of currently selected node.
    * 
    * @return Namespace declaration count of currently selected node.
    */
   public int getNamespaceCount();
-
-  /**
-   * Get the namespace specified by its index.
-   * 
-   * @param index Index of namespace to get.
-   * @return Namespace denoted by its index.
-   */
-  public AbstractNode getNamespace(final int index);
 
   /**
    * Get kind of node.
