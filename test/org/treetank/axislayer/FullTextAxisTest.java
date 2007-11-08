@@ -59,33 +59,45 @@ public class FullTextAxisTest {
     assertEquals(tokenKey1, tokenKey2);
 
     // Verify axis
+    final long key1 = wtx.getNodeKey();
     final IAxis axis1 = new FullTextAxis(wtx, "foo");
     assertEquals(true, axis1.hasNext());
-    assertEquals(nodeKey1, axis1.next().getNodeKey());
+    assertEquals(nodeKey1, axis1.next());
     assertEquals(true, axis1.hasNext());
-    assertEquals(nodeKey2, axis1.next().getNodeKey());
+    assertEquals(nodeKey2, axis1.next());
     assertEquals(false, axis1.hasNext());
+    assertEquals(key1, wtx.getNodeKey());
 
+    final long key2 = wtx.getNodeKey();
     final IAxis axis2 = new FullTextAxis(wtx, "bar");
     assertEquals(false, axis2.hasNext());
+    assertEquals(key2, wtx.getNodeKey());
 
+    final long key3 = wtx.getNodeKey();
     final IAxis axis3 = new FullTextAxis(wtx, "ba");
     assertEquals(false, axis3.hasNext());
+    assertEquals(key3, wtx.getNodeKey());
 
+    final long key4 = wtx.getNodeKey();
     final IAxis axis4 = new FullTextAxis(wtx, "fo");
     assertEquals(false, axis4.hasNext());
+    assertEquals(key4, wtx.getNodeKey());
 
     try {
+      final long key5 = wtx.getNodeKey();
       final IAxis axis5 = new FullTextAxis(wtx, null);
       assertEquals(false, axis5.hasNext());
+      assertEquals(key5, wtx.getNodeKey());
       TestCase.fail();
     } catch (Exception e) {
       // Must catch.
     }
 
     try {
+      final long key6 = wtx.getNodeKey();
       final IAxis axis6 = new FullTextAxis(wtx, "");
       assertEquals(false, axis6.hasNext());
+      assertEquals(key6, wtx.getNodeKey());
       TestCase.fail();
     } catch (Exception e) {
       // Must catch.

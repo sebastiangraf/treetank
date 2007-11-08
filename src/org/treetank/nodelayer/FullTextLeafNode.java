@@ -123,7 +123,8 @@ public final class FullTextLeafNode extends AbstractNode {
    */
   @Override
   public final INode getParent(final IReadTransaction rtx) {
-    return rtx.moveTo(mParentKey);
+    rtx.moveTo(mParentKey);
+    return rtx.getNode();
   }
 
   /**
@@ -155,7 +156,8 @@ public final class FullTextLeafNode extends AbstractNode {
    */
   @Override
   public final INode getFirstChild(final IReadTransaction rtx) {
-    return rtx.moveTo(mFirstChildKey);
+    rtx.moveTo(mFirstChildKey);
+    return rtx.getNode();
   }
 
   /**
@@ -187,7 +189,8 @@ public final class FullTextLeafNode extends AbstractNode {
    */
   @Override
   public final INode getLeftSibling(final IReadTransaction rtx) {
-    return rtx.moveTo(mLeftSiblingKey);
+    rtx.moveTo(mLeftSiblingKey);
+    return rtx.getNode();
   }
 
   /**
@@ -219,7 +222,8 @@ public final class FullTextLeafNode extends AbstractNode {
    */
   @Override
   public final INode getRightSibling(final IReadTransaction rtx) {
-    return rtx.moveTo(mRightSiblingKey);
+    rtx.moveTo(mRightSiblingKey);
+    return rtx.getNode();
   }
 
   /**

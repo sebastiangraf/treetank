@@ -98,7 +98,7 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final INode moveTo(final long nodeKey) {
+  public final long moveTo(final long nodeKey) {
     assertNotClosed();
     if (nodeKey != IConstants.NULL_KEY) {
       try {
@@ -106,68 +106,73 @@ public class ReadTransaction implements IReadTransaction {
       } catch (Exception e) {
         mCurrentNode = null;
       }
+      if (mCurrentNode != null) {
+        return nodeKey;
+      } else {
+        return IConstants.NULL_KEY;
+      }
     } else {
       mCurrentNode = null;
+      return IConstants.NULL_KEY;
     }
-    return mCurrentNode;
   }
 
   /**
    * {@inheritDoc}
    */
-  public final INode moveTo(final INode node) {
+  public final long moveTo(final INode node) {
     return moveTo(node.getNodeKey());
   }
 
   /**
    * {@inheritDoc}
    */
-  public final INode moveToDocumentRoot() {
+  public final long moveToDocumentRoot() {
     return moveTo(IConstants.DOCUMENT_ROOT_KEY);
   }
 
   /**
    * {@inheritDoc}
    */
-  public final INode moveToFullTextRoot() {
+  public final long moveToFullTextRoot() {
     return moveTo(IConstants.FULLTEXT_ROOT_KEY);
   }
 
   /**
    * {@inheritDoc}
    */
-  public final INode moveToParent() {
+  public final long moveToParent() {
     return moveTo(mCurrentNode.getParentKey());
   }
 
   /**
    * {@inheritDoc}
    */
-  public final INode moveToFirstChild() {
+  public final long moveToFirstChild() {
     return moveTo(mCurrentNode.getFirstChildKey());
   }
 
   /**
    * {@inheritDoc}
    */
-  public final INode moveToLeftSibling() {
+  public final long moveToLeftSibling() {
     return moveTo(mCurrentNode.getLeftSiblingKey());
   }
 
   /**
    * {@inheritDoc}
    */
-  public final INode moveToRightSibling() {
+  public final long moveToRightSibling() {
     return moveTo(mCurrentNode.getRightSiblingKey());
   }
 
   /**
    * {@inheritDoc}
    */
-  public final INode moveToAttribute(final int index) {
+  public final long moveToAttribute(final int index) {
     assertNotClosed();
     mCurrentNode = mCurrentNode.getAttribute(index);
-    return mCurrentNode;
+    return mCurrentNode.getNodeKey();
   }
 
   /**

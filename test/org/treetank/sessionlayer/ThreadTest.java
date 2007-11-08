@@ -30,7 +30,6 @@ import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
@@ -85,12 +84,11 @@ public class ThreadTest {
 
     public void run() {
       try {
-
-        final Iterable<INode> axis = new DescendantAxis(mRTX);
-        for (final INode node : axis) {
+        for (final long key : new DescendantAxis(mRTX)) {
           // Nothing to do.
         }
-        mRTX.moveTo(16L);
+        mRTX.moveTo(10L);
+        TestCase.assertEquals("bar", UTF.parseString(mRTX.getValue()));
         mRTX.close();
       } catch (Exception e) {
         TestCase.fail(e.getLocalizedMessage());

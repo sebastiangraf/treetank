@@ -57,10 +57,10 @@ public class NameTestAxisTest {
     final IAxis axis1 = new NameTestAxis(new DescendantAxis(wtx), "b");
 
     assertEquals(true, axis1.hasNext());
-    assertEquals(4L, wtx.getNodeKey());
+    assertEquals(4L, axis1.next());
 
     assertEquals(true, axis1.hasNext());
-    assertEquals(8L, wtx.getNodeKey());
+    assertEquals(8L, axis1.next());
     assertEquals(false, axis1.hasNext());
 
     wtx.abort();

@@ -34,7 +34,7 @@ import org.treetank.api.IReadTransaction;
 public class ChildAxis extends AbstractAxis {
 
   /** Has another child node. */
-  private long mNextKey;
+  private boolean mFirst;
 
   /**
    * Constructor initializing internal state.
@@ -43,18 +43,23 @@ public class ChildAxis extends AbstractAxis {
    */
   public ChildAxis(final IReadTransaction rtx) {
     super(rtx);
-    mNextKey = rtx.getFirstChildKey();
+    mFirst = true;
   }
 
   /**
    * {@inheritDoc}
    */
   public final boolean hasNext() {
-    setCurrentNode(getTransaction().moveTo(mNextKey));
-    if (getCurrentNode() != null) {
-      mNextKey = getCurrentNode().getRightSiblingKey();
+    resetToLastKey();
+    if (!mFirst && mRTX.hasRightSibling()) {
+      mRTX.moveToRightSibling();
+      return true;
+    } else if (mFirst && mRTX.hasFirstChild()) {
+      mFirst = false;
+      mRTX.moveToFirstChild();
       return true;
     } else {
+      resetToStartKey();
       return false;
     }
   }

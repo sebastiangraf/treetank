@@ -56,10 +56,10 @@ public class AncestorAxisTest {
     wtx.moveTo(9L);
     final IAxis axis1 = new AncestorAxis(wtx);
     assertEquals(true, axis1.hasNext());
-    assertEquals(8L, axis1.next().getNodeKey());
+    assertEquals(8L, axis1.next());
 
     assertEquals(true, axis1.hasNext());
-    assertEquals(2L, axis1.next().getNodeKey());
+    assertEquals(2L, axis1.next());
 
     assertEquals(false, axis1.hasNext());
 
@@ -67,7 +67,7 @@ public class AncestorAxisTest {
     wtx.moveTo(4L);
     final IAxis axis2 = new AncestorAxis(wtx);
     assertEquals(true, axis2.hasNext());
-    assertEquals(2L, axis2.next().getNodeKey());
+    assertEquals(2L, axis2.next());
 
     assertEquals(false, axis2.hasNext());
 
@@ -75,7 +75,7 @@ public class AncestorAxisTest {
     wtx.moveTo(3L);
     final IAxis axis3 = new AncestorAxis(wtx);
     assertEquals(true, axis3.hasNext());
-    assertEquals(2L, axis3.next().getNodeKey());
+    assertEquals(2L, axis3.next());
 
     assertEquals(false, axis3.hasNext());
 

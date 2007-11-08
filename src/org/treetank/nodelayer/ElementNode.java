@@ -182,7 +182,8 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final INode getParent(final IReadTransaction rtx) {
-    return rtx.moveTo(mParentKey);
+    rtx.moveTo(mParentKey);
+    return rtx.getNode();
   }
 
   /**
@@ -214,7 +215,8 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final INode getFirstChild(final IReadTransaction rtx) {
-    return rtx.moveTo(mFirstChildKey);
+    rtx.moveTo(mFirstChildKey);
+    return rtx.getNode();
   }
 
   /**
@@ -246,7 +248,12 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final INode getLeftSibling(final IReadTransaction rtx) {
-    return rtx.moveTo(mLeftSiblingKey);
+    if (rtx.hasLeftSibling()) {
+      rtx.moveToLeftSibling();
+      return rtx.getNode();
+    } else {
+      return null;
+    }
   }
 
   /**
@@ -278,7 +285,12 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final INode getRightSibling(final IReadTransaction rtx) {
-    return rtx.moveTo(mRightSiblingKey);
+    if (rtx.hasRightSibling()) {
+      rtx.moveToRightSibling();
+      return rtx.getNode();
+    } else {
+      return null;
+    }
   }
 
   /**

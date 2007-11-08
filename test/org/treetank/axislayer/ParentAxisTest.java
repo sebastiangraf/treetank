@@ -54,14 +54,14 @@ public class ParentAxisTest {
     wtx.moveTo(4L);
     final IAxis axis1 = new ParentAxis(wtx);
     assertEquals(true, axis1.hasNext());
-    assertEquals(2L, wtx.getNodeKey());
+    assertEquals(2L, axis1.next());
 
     assertEquals(false, axis1.hasNext());
 
     wtx.moveTo(8L);
     final IAxis axis2 = new ParentAxis(wtx);
     assertEquals(true, axis2.hasNext());
-    assertEquals(2L, wtx.getNodeKey());
+    assertEquals(2L, axis2.next());
 
     assertEquals(false, axis2.hasNext());
 
