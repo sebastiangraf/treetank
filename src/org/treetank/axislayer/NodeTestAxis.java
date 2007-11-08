@@ -51,6 +51,7 @@ public class NodeTestAxis extends AbstractAxis {
   public final boolean hasNext() {
     resetToLastKey();
     while (mAxis.hasNext()) {
+      mAxis.next();
       if (getTransaction().isElement() || getTransaction().isText()) {
         return true;
       }

@@ -21,7 +21,7 @@
 
 package org.treetank.axislayer;
 
-import org.treetank.api.IConstants;
+import org.treetank.api.IAxis;
 import org.treetank.api.IReadTransaction;
 
 /**
@@ -33,7 +33,7 @@ import org.treetank.api.IReadTransaction;
  */
 public class FullTextAxis extends AbstractAxis {
 
-  private long mFullTextLeafKey;
+  private final IAxis mAxis;
 
   /**
    * Constructor initializing internal state.
@@ -55,17 +55,7 @@ public class FullTextAxis extends AbstractAxis {
       contained = contained && isContained(character);
     }
 
-    mFullTextLeafKey = IConstants.NULL_KEY;
-    if (contained && rtx.hasFirstChild()) {
-      rtx.moveToFirstChild();
-      while (rtx.isFullText() && rtx.hasRightSibling()) {
-        rtx.moveToRightSibling();
-      }
-      if (rtx.isFullTextLeaf()) {
-        mFullTextLeafKey = rtx.getNodeKey();
-      }
-    }
-
+    mAxis = new FullTextLeafTestAxis(new ChildAxis(rtx));
   }
 
   /**
@@ -93,16 +83,10 @@ public class FullTextAxis extends AbstractAxis {
    */
   public final boolean hasNext() {
     resetToLastKey();
-    if (mFullTextLeafKey != IConstants.NULL_KEY) {
-      getTransaction().moveTo(mFullTextLeafKey);
-      mFullTextLeafKey = getTransaction().getRightSiblingKey();
-      if (getTransaction().hasFirstChild()) {
-        getTransaction().moveToFirstChild();
-        return true;
-      } else {
-        resetToStartKey();
-        return false;
-      }
+    if (mAxis.hasNext()) {
+      mAxis.next();
+      getTransaction().moveToFirstChild();
+      return true;
     } else {
       resetToStartKey();
       return false;
