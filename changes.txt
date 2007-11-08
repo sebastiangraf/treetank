@@ -21,7 +21,8 @@
  
 TreeTank 4.16
 -------------
-+ 
++ Support wildcard suffix in FullTextAxis. It is activated by * as last
+  character in token.
  
 TreeTank 4.15
 -------------
