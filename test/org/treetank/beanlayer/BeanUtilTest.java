@@ -49,10 +49,13 @@ public class BeanUtilTest {
 
     // Write bean.
     final TestBean expectedBean = new TestBean();
-    expectedBean.setToken("foo");
-    expectedBean.setDate(13L);
-    expectedBean.setNaturalNumber(14);
-    expectedBean.setByteArray(new byte[] { (byte) 15, (byte) 16 });
+    expectedBean.setStringField("foo");
+    expectedBean.setLongField(13L);
+    expectedBean.setIntField(14);
+    expectedBean.setBooleanField(true);
+    expectedBean.setFloatField(13.5f);
+    expectedBean.setDoubleField(345.4d);
+    expectedBean.setByteArrayField(new byte[] { (byte) 15, (byte) 16 });
     wtx.moveToDocumentRoot();
     final long expectedBeanKey = BeanUtil.write(wtx, expectedBean);
 
@@ -60,12 +63,15 @@ public class BeanUtilTest {
     wtx.moveTo(expectedBeanKey);
     final TestBean bean = BeanUtil.read(wtx, TestBean.class);
     TestCase.assertNotNull(bean);
-    TestCase.assertEquals("foo", bean.getToken());
-    TestCase.assertEquals(13L, bean.getDate());
-    TestCase.assertEquals(14, bean.getNaturalNumber());
-    TestCase.assertEquals(2, bean.getByteArray().length);
-    TestCase.assertEquals((byte) 15, bean.getByteArray()[0]);
-    TestCase.assertEquals((byte) 16, bean.getByteArray()[1]);
+    TestCase.assertEquals("foo", bean.getStringField());
+    TestCase.assertEquals(13L, bean.getLongField());
+    TestCase.assertEquals(14, bean.getIntField());
+    TestCase.assertEquals(2, bean.getByteArrayField().length);
+    TestCase.assertEquals((byte) 15, bean.getByteArrayField()[0]);
+    TestCase.assertEquals((byte) 16, bean.getByteArrayField()[1]);
+    TestCase.assertEquals(true, bean.isBooleanField());
+    TestCase.assertEquals(13.5f, bean.getFloatField());
+    TestCase.assertEquals(345.4d, bean.getDoubleField());
     TestCase.assertEquals(expectedBeanKey, wtx.getNodeKey());
 
     wtx.abort();
@@ -82,10 +88,8 @@ public class BeanUtilTest {
 
     // Write bean.
     final TestBean expectedBean = new TestBean();
-    expectedBean.setToken("foo");
-    expectedBean.setDate(13L);
-    expectedBean.setNaturalNumber(14);
-    expectedBean.setByteArray(null);
+    expectedBean.setStringField(null);
+    expectedBean.setByteArrayField(null);
     wtx.moveToDocumentRoot();
     final long expectedBeanKey = BeanUtil.write(wtx, expectedBean);
 
@@ -93,10 +97,8 @@ public class BeanUtilTest {
     wtx.moveTo(expectedBeanKey);
     final TestBean bean = BeanUtil.read(wtx, TestBean.class);
     TestCase.assertNotNull(bean);
-    TestCase.assertEquals("foo", bean.getToken());
-    TestCase.assertEquals(13L, bean.getDate());
-    TestCase.assertEquals(14, bean.getNaturalNumber());
-    TestCase.assertEquals(null, bean.getByteArray());
+    TestCase.assertEquals(null, bean.getByteArrayField());
+    TestCase.assertEquals(null, bean.getStringField());
     TestCase.assertEquals(expectedBeanKey, wtx.getNodeKey());
 
     wtx.abort();

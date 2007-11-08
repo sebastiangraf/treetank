@@ -23,69 +23,117 @@ package org.treetank.beanlayer;
 
 public class TestBean {
 
+  private byte[] byteArrayField;
+
+  private boolean booleanField;
+
   @FullText
-  private String token;
+  private String stringField;
 
-  private long date;
-  
-  private int naturalNumber;
-  
-  private byte[] byteArray;
+  private int intField;
+
+  private long longField;
+
+  private float floatField;
+
+  private double doubleField;
 
   /**
-   * @return the token
+   * @return the byteArrayField
    */
-  public final String getToken() {
-    return token;
+  public final byte[] getByteArrayField() {
+    return byteArrayField;
   }
 
   /**
-   * @param token the token to set
+   * @param byteArrayField the byteArrayField to set
    */
-  public final void setToken(final String token) {
-    this.token = token;
+  public final void setByteArrayField(final byte[] byteArrayField) {
+    this.byteArrayField = byteArrayField;
   }
 
   /**
-   * @return the date
+   * @return the booleanField
    */
-  public final long getDate() {
-    return date;
+  public final boolean isBooleanField() {
+    return booleanField;
   }
 
   /**
-   * @param date the date to set
+   * @param booleanField the booleanField to set
    */
-  public final void setDate(final long date) {
-    this.date = date;
+  public final void setBooleanField(final boolean booleanField) {
+    this.booleanField = booleanField;
   }
 
   /**
-   * @return the naturalNumber
+   * @return the stringField
    */
-  public final int getNaturalNumber() {
-    return naturalNumber;
+  public final String getStringField() {
+    return stringField;
   }
 
   /**
-   * @param naturalNumber the naturalNumber to set
+   * @param stringField the stringField to set
    */
-  public final void setNaturalNumber(int naturalNumber) {
-    this.naturalNumber = naturalNumber;
+  public final void setStringField(final String stringField) {
+    this.stringField = stringField;
   }
 
   /**
-   * @return the byteArray
+   * @return the intField
    */
-  public final byte[] getByteArray() {
-    return byteArray;
+  public final int getIntField() {
+    return intField;
   }
 
   /**
-   * @param byteArray the byteArray to set
+   * @param intField the intField to set
    */
-  public final void setByteArray(final byte[] byteArray) {
-    this.byteArray = byteArray;
+  public final void setIntField(final int intField) {
+    this.intField = intField;
+  }
+
+  /**
+   * @return the longField
+   */
+  public final long getLongField() {
+    return longField;
+  }
+
+  /**
+   * @param longField the longField to set
+   */
+  public final void setLongField(final long longField) {
+    this.longField = longField;
+  }
+
+  /**
+   * @return the floatField
+   */
+  public final float getFloatField() {
+    return floatField;
+  }
+
+  /**
+   * @param floatField the floatField to set
+   */
+  public final void setFloatField(final float floatField) {
+    this.floatField = floatField;
+  }
+
+  /**
+   * @return the doubleField
+   */
+  public final double getDoubleField() {
+    return doubleField;
+  }
+
+  /**
+   * @param doubleField the doubleField to set
+   */
+  public final void setDoubleField(final double doubleField) {
+    this.doubleField = doubleField;
   }
 
 }
