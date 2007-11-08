@@ -74,4 +74,35 @@ public class BeanUtilTest {
 
   }
 
+  @Test
+  public void testNullBean() throws Exception {
+
+    final ISession session = Session.beginSession(PATH);
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+
+    // Write bean.
+    final TestBean expectedBean = new TestBean();
+    expectedBean.setToken("foo");
+    expectedBean.setDate(13L);
+    expectedBean.setNaturalNumber(14);
+    expectedBean.setByteArray(null);
+    wtx.moveToDocumentRoot();
+    final long expectedBeanKey = BeanUtil.write(wtx, expectedBean);
+
+    // Read bean.
+    wtx.moveTo(expectedBeanKey);
+    final TestBean bean = BeanUtil.read(wtx, TestBean.class);
+    TestCase.assertNotNull(bean);
+    TestCase.assertEquals("foo", bean.getToken());
+    TestCase.assertEquals(13L, bean.getDate());
+    TestCase.assertEquals(14, bean.getNaturalNumber());
+    TestCase.assertEquals(null, bean.getByteArray());
+    TestCase.assertEquals(expectedBeanKey, wtx.getNodeKey());
+
+    wtx.abort();
+    wtx.close();
+    session.close();
+
+  }
+
 }
