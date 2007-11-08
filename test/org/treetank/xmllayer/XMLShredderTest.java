@@ -86,6 +86,8 @@ public class XMLShredderTest {
       assertEquals(expectedTrx.getLeftSiblingKey(), rtx.getLeftSiblingKey());
       assertEquals(expectedTrx.getRightSiblingKey(), rtx.getRightSiblingKey());
       assertEquals(expectedTrx.getChildCount(), rtx.getChildCount());
+      assertEquals(expectedTrx.getAttributeCount(), rtx.getAttributeCount());
+      assertEquals(expectedTrx.getNamespaceCount(), rtx.getNamespaceCount());
       assertEquals(expectedTrx.getKind(), rtx.getKind());
       assertEquals(expectedTrx.nameForKey(expectedTrx.getLocalPartKey()), rtx
           .nameForKey(rtx.getLocalPartKey()));

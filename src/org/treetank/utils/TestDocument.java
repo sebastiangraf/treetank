@@ -91,6 +91,7 @@ public final class TestDocument {
 
     wtx.insertElementAsFirstChild("a", "ns", "p");
     wtx.insertAttribute("i", "", "", UTF.getBytes("j"));
+    wtx.insertNamespace("ns", "p");
 
     wtx.insertTextAsFirstChild(UTF.getBytes("oops1"));
 
