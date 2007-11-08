@@ -265,9 +265,97 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
+  public final int getAttributeLocalPartKey(final int index) {
+    assertNotClosedAndSelected();
+    return mCurrentNode.getAttribute(index).getLocalPartKey();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final String getAttributeLocalPart(final int index) {
+    assertNotClosedAndSelected();
+    return nameForKey(mCurrentNode.getAttribute(index).getLocalPartKey());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final int getAttributePrefixKey(final int index) {
+    assertNotClosedAndSelected();
+    return mCurrentNode.getAttribute(index).getPrefixKey();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final String getAttributePrefix(final int index) {
+    assertNotClosedAndSelected();
+    return nameForKey(mCurrentNode.getAttribute(index).getPrefixKey());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final int getAttributeURIKey(final int index) {
+    assertNotClosedAndSelected();
+    return mCurrentNode.getAttribute(index).getURIKey();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final String getAttributeURI(final int index) {
+    assertNotClosedAndSelected();
+    return nameForKey(mCurrentNode.getAttribute(index).getURIKey());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final byte[] getAttributeValue(final int index) {
+    assertNotClosedAndSelected();
+    return mCurrentNode.getAttribute(index).getValue();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final int getNamespaceCount() {
     assertNotClosedAndSelected();
     return mCurrentNode.getNamespaceCount();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final int getNamespacePrefixKey(final int index) {
+    assertNotClosedAndSelected();
+    return mCurrentNode.getNamespace(index).getPrefixKey();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final String getNamespacePrefix(final int index) {
+    assertNotClosedAndSelected();
+    return nameForKey(mCurrentNode.getNamespace(index).getPrefixKey());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final int getNamespaceURIKey(final int index) {
+    assertNotClosedAndSelected();
+    return mCurrentNode.getNamespace(index).getURIKey();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final String getNamespaceURI(final int index) {
+    assertNotClosedAndSelected();
+    return nameForKey(mCurrentNode.getNamespace(index).getURIKey());
   }
 
   /**

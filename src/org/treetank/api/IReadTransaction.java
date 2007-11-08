@@ -214,11 +214,99 @@ public interface IReadTransaction {
   public int getAttributeCount();
 
   /**
+   * Get local part key of attribute at given index.
+   * 
+   * @param index Index of attribute [0..getAttributeCount()].
+   * @return Local part key of attribute at given index.
+   */
+  public int getAttributeLocalPartKey(final int index);
+
+  /**
+   * Get local part of attribute at given index.
+   * 
+   * @param index Index of attribute [0..getAttributeCount()].
+   * @return Local part of attribute at given index.
+   */
+  public String getAttributeLocalPart(final int index);
+
+  /**
+   * Get prefix key of attribute at given index.
+   * 
+   * @param index Index of attribute [0..getAttributeCount()].
+   * @return Prefix key of attribute at given index.
+   */
+  public int getAttributePrefixKey(final int index);
+
+  /**
+   * Get prefix of attribute at given index.
+   * 
+   * @param index Index of attribute [0..getAttributeCount()].
+   * @return Prefix of attribute at given index.
+   */
+  public String getAttributePrefix(final int index);
+
+  /**
+   * Get URI key of attribute at given index.
+   * 
+   * @param index Index of attribute [0..getAttributeCount()].
+   * @return URI key of attribute at given index.
+   */
+  public int getAttributeURIKey(final int index);
+
+  /**
+   * Get URI of attribute at given index.
+   * 
+   * @param index Index of attribute [0..getAttributeCount()].
+   * @return URI of attribute at given index.
+   */
+  public String getAttributeURI(final int index);
+
+  /**
+   * Get value of attribute at given index.
+   * 
+   * @param index Index of attribute [0..getAttributeCount()].
+   * @return Value of attribute at given index.
+   */
+  public byte[] getAttributeValue(final int index);
+
+  /**
    * Get namespace declaration count of currently selected node.
    * 
    * @return Namespace declaration count of currently selected node.
    */
   public int getNamespaceCount();
+
+  /**
+   * Get prefix key of namespace at given index.
+   * 
+   * @param index Index of namespace [0..getNamespaceCount()].
+   * @return Prefix key of namespace at given index.
+   */
+  public int getNamespacePrefixKey(final int index);
+
+  /**
+   * Get prefix of namespace at given index.
+   * 
+   * @param index Index of namespace [0..getNamespaceCount()].
+   * @return Prefix of namespace at given index.
+   */
+  public String getNamespacePrefix(final int index);
+
+  /**
+   * Get URI key of namespace at given index.
+   * 
+   * @param index Index of namespace [0..getNamespaceCount()].
+   * @return URI key of namespace at given index.
+   */
+  public int getNamespaceURIKey(final int index);
+
+  /**
+   * Get URI of namespace at given index.
+   * 
+   * @param index Index of namespace [0..getNamespaceCount()].
+   * @return URI of namespace at given index.
+   */
+  public String getNamespaceURI(final int index);
 
   /**
    * Get kind of node.
