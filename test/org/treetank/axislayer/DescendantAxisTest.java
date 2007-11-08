@@ -57,7 +57,7 @@ public class DescendantAxisTest {
     wtx.moveToDocumentRoot();
     final IAxis axis1 = new DescendantAxis(wtx);
     assertEquals(true, axis1.hasNext());
-    assertEquals(2L, wtx.getNodeKey());
+    assertEquals(2L, axis1.next());
 
     assertEquals(true, axis1.hasNext());
     assertEquals(3L, axis1.next());

@@ -113,6 +113,7 @@ public abstract class AbstractAxis implements IAxis {
    */
   public final long resetToStartKey() {
     mRTX.moveTo(mStartKey);
+    mNext = false;
     return mStartKey;
   }
 
