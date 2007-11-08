@@ -28,7 +28,6 @@ import java.io.Writer;
 import org.treetank.api.IAxis;
 import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
-import org.treetank.axislayer.AttributeAxis;
 import org.treetank.utils.FastStack;
 import org.treetank.utils.UTF;
 import org.xml.sax.ContentHandler;
@@ -112,10 +111,12 @@ public final class SAXGenerator implements Runnable {
 
     final AttributesImpl attributes = new AttributesImpl();
 
-    for (final long attributeKey : new AttributeAxis(rtx)) {
-      attributes.addAttribute(rtx.getURI(), rtx.getLocalPart(), qName(rtx
-          .getPrefix(), rtx.getLocalPart()), "", UTF
-          .parseString(rtx.getValue()));
+    for (int index = 0, length = rtx.getAttributeCount(); index < length; index++) {
+      attributes.addAttribute(rtx.getAttributeURI(index), rtx
+          .getAttributeLocalPart(index), qName(
+          rtx.getAttributePrefix(index),
+          rtx.getAttributeLocalPart(index)), "", UTF.parseString(rtx
+          .getAttributeValue(index)));
     }
 
     return attributes;

@@ -21,6 +21,7 @@
  
 TreeTank 4.16
 -------------
++ BeanUtil now serializing fields as attributes.
 + Added namespace and attribute getters to IReadTransaction.
 + Support wildcard suffix in FullTextAxis. It is activated by * as last
   character in token.

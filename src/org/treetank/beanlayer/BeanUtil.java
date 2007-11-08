@@ -29,7 +29,6 @@ import java.lang.reflect.Field;
 import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.axislayer.ChildAxis;
 import org.treetank.utils.UTF;
 
 /**
@@ -68,11 +67,7 @@ import org.treetank.utils.UTF;
  * 
  * This will be mapped to:
  * <pre>
- * &lt;Address&gt;
- *   &lt;firstname&gt;Joe&lt;/firstname&gt;
- *   &lt;lastname&gt;Black&lt;/lastname&gt;
- *   &lt;street&gt;World&lt;/street&gt;
- * &lt;/Address&gt;
+ * &lt;Address firstname='Joe' lastname='Black' street='World'/&gt;
  * </pre>
  * 
  * <strong>Usage</strong>
@@ -118,8 +113,6 @@ public final class BeanUtil {
       final IReadTransaction rtx,
       final Class<B> clazz) {
 
-    final long currentKey = rtx.getNodeKey();
-
     B target = null;
 
     try {
@@ -131,58 +124,49 @@ public final class BeanUtil {
         target = clazz.newInstance();
 
         // Loop over all children of node.
-        for (final long key : new ChildAxis(rtx)) {
+        for (int index = 0, length = rtx.getAttributeCount(); index < length; index++) {
 
           // Only fetch elements that contain a text.
-          if (rtx.isElement() && rtx.hasFirstChild()) {
-            // Set (private) property.
-            final Field field = clazz.getDeclaredField(rtx.getLocalPart());
-            field.setAccessible(true);
-            rtx.moveToFirstChild();
-            if (rtx.isText()) {
-              // Switch according to field type.
-              switch (field.getType().getCanonicalName().hashCode()) {
-              case -1374008726: // byte[]
-                field.set(target, rtx.getValue());
-                break;
-              case 64711720: // boolean
-                field.setBoolean(target, Boolean.parseBoolean(UTF
-                    .parseString(rtx.getValue())));
-                break;
-              case 104431: // int
-                field.setInt(target, UTF.parseInt(rtx.getValue()));
-                break;
-              case 3327612: // long
-                field.setLong(target, UTF.parseLong(rtx.getValue()));
-                break;
-              case 97526364: // float
-                field.setFloat(target, Float.parseFloat(UTF.parseString(rtx
-                    .getValue())));
-                break;
-              case -1325958191: // double
-                field.setDouble(target, Double.parseDouble(UTF.parseString(rtx
-                    .getValue())));
-                break;
-              case 1195259493: // String
-                field.set(target, UTF.parseString(rtx.getValue()));
-                break;
-              default:
-                throw new IllegalStateException(field.getType().getName());
-              }
-            }
-            rtx.moveToParent();
+          // Set (private) property.
+          final Field field =
+              clazz.getDeclaredField(rtx.getAttributeLocalPart(index));
+          field.setAccessible(true);
+          // Switch according to field type.
+          switch (field.getType().getCanonicalName().hashCode()) {
+          case -1374008726: // byte[]
+            field.set(target, rtx.getAttributeValue(index));
+            break;
+          case 64711720: // boolean
+            field.setBoolean(target, Boolean.parseBoolean(UTF.parseString(rtx
+                .getAttributeValue(index))));
+            break;
+          case 104431: // int
+            field.setInt(target, UTF.parseInt(rtx.getAttributeValue(index)));
+            break;
+          case 3327612: // long
+            field.setLong(target, UTF.parseLong(rtx.getAttributeValue(index)));
+            break;
+          case 97526364: // float
+            field.setFloat(target, Float.parseFloat(UTF.parseString(rtx
+                .getAttributeValue(index))));
+            break;
+          case -1325958191: // double
+            field.setDouble(target, Double.parseDouble(UTF.parseString(rtx
+                .getAttributeValue(index))));
+            break;
+          case 1195259493: // String
+            field.set(target, UTF.parseString(rtx.getAttributeValue(index)));
+            break;
+          default:
+            throw new IllegalStateException(field.getType().getName());
           }
-
         }
-
       }
 
     } catch (Exception e) {
       // Transform into unchecked exception.
       throw new RuntimeException(e);
     }
-
-    rtx.moveTo(currentKey);
 
     return target;
   }
@@ -213,7 +197,6 @@ public final class BeanUtil {
               "");
 
       // Find all properties.
-      boolean isFirst = true;
       final BeanInfo info =
           Introspector.getBeanInfo(object.getClass(), Object.class);
       for (final PropertyDescriptor property : info.getPropertyDescriptors()) {
@@ -255,16 +238,7 @@ public final class BeanUtil {
           }
 
           // Insert property as element with text.
-          if (isFirst) {
-            wtx.insertElementAsFirstChild(property.getName(), "", "");
-            wtx.insertTextAsFirstChild(bytes);
-            wtx.moveToParent();
-            isFirst = false;
-          } else {
-            wtx.insertElementAsRightSibling(property.getName(), "", "");
-            wtx.insertTextAsFirstChild(bytes);
-            wtx.moveToParent();
-          }
+          wtx.insertAttribute(property.getName(), "", "", bytes);
 
         }
       }
@@ -282,7 +256,6 @@ public final class BeanUtil {
 
     } catch (Exception e) {
       // Transform into unchecked exception.
-      e.printStackTrace();
       throw new RuntimeException(e);
     }
 
