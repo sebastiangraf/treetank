@@ -51,12 +51,12 @@ public class ChildAxis extends AbstractAxis {
    */
   public final boolean hasNext() {
     resetToLastKey();
-    if (!mFirst && mRTX.hasRightSibling()) {
-      mRTX.moveToRightSibling();
+    if (!mFirst && getTransaction().hasRightSibling()) {
+      getTransaction().moveToRightSibling();
       return true;
-    } else if (mFirst && mRTX.hasFirstChild()) {
+    } else if (mFirst && getTransaction().hasFirstChild()) {
       mFirst = false;
-      mRTX.moveToFirstChild();
+      getTransaction().moveToFirstChild();
       return true;
     } else {
       resetToStartKey();

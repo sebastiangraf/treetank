@@ -49,7 +49,7 @@ public class NameTestAxis extends AbstractAxis {
   public NameTestAxis(final IAxis axis, final String name) {
     super(axis.getTransaction());
     mAxis = axis;
-    mNameKey = mRTX.keyForName(name);
+    mNameKey = getTransaction().keyForName(name);
   }
 
   /**
@@ -58,7 +58,7 @@ public class NameTestAxis extends AbstractAxis {
   public final boolean hasNext() {
     resetToLastKey();
     while (mAxis.hasNext()) {
-      if (mRTX.getLocalPartKey() == mNameKey) {
+      if (getTransaction().getLocalPartKey() == mNameKey) {
         return true;
       }
     }

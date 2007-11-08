@@ -88,7 +88,8 @@ public class ValueTestAxis extends AbstractAxis {
   public final boolean hasNext() {
     resetToLastKey();
     while (mAxis.hasNext()) {
-      if (mRTX.isText() && (UTF.equals(mRTX.getValue(), mValue))) {
+      if (getTransaction().isText()
+          && (UTF.equals(getTransaction().getValue(), mValue))) {
         return true;
       }
     }

@@ -45,12 +45,12 @@ public class PostOrderAxis extends AbstractAxis {
    * Method to start at the beginning of the tree.
    */
   private final void startAtBeginning() {
-    mRTX.moveToDocumentRoot();
-    while (mRTX.hasFirstChild()) {
-      mLastParent.push(mRTX.getNodeKey());
-      mRTX.moveToFirstChild();
+    getTransaction().moveToDocumentRoot();
+    while (getTransaction().hasFirstChild()) {
+      mLastParent.push(getTransaction().getNodeKey());
+      getTransaction().moveToFirstChild();
 
-      mNextKey = mRTX.getNodeKey();
+      mNextKey = getTransaction().getNodeKey();
     }
   }
 
@@ -59,18 +59,18 @@ public class PostOrderAxis extends AbstractAxis {
    */
   public boolean hasNext() {
     resetToLastKey();
-    long key = mRTX.moveTo(mNextKey);
-    if (mRTX.isSelected()) {
-      while (mRTX.hasFirstChild() && key != mLastParent.peek()) {
+    long key = getTransaction().moveTo(mNextKey);
+    if (getTransaction().isSelected()) {
+      while (getTransaction().hasFirstChild() && key != mLastParent.peek()) {
         mLastParent.push(key);
-        key = mRTX.moveToFirstChild();
+        key = getTransaction().moveToFirstChild();
       }
       if (key == mLastParent.peek()) {
         mLastParent.pop();
       }
 
-      if (mRTX.hasRightSibling()) {
-        mNextKey = mRTX.getRightSiblingKey();
+      if (getTransaction().hasRightSibling()) {
+        mNextKey = getTransaction().getRightSiblingKey();
 
       } else {
         mNextKey = mLastParent.peek();

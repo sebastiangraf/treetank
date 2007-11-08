@@ -46,7 +46,7 @@ import org.treetank.api.IReadTransaction;
 public abstract class AbstractAxis implements IAxis {
 
   /** Iterate over transaction exclusive to this step. */
-  protected final IReadTransaction mRTX;
+  private final IReadTransaction mRTX;
 
   /** Key of last found node. */
   private long mKey;

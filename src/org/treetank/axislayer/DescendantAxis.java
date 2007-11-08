@@ -64,20 +64,20 @@ public class DescendantAxis extends AbstractAxis {
       return false;
     }
 
-    mRTX.moveTo(mNextKey);
+    getTransaction().moveTo(mNextKey);
 
     // Always follow first child if there is one.
-    if (mRTX.hasFirstChild()) {
-      mNextKey = mRTX.getFirstChildKey();
-      if (mRTX.hasRightSibling()) {
-        mRightSiblingKeyStack.push(mRTX.getRightSiblingKey());
+    if (getTransaction().hasFirstChild()) {
+      mNextKey = getTransaction().getFirstChildKey();
+      if (getTransaction().hasRightSibling()) {
+        mRightSiblingKeyStack.push(getTransaction().getRightSiblingKey());
       }
       return true;
     }
 
     // Then follow right sibling if there is one.
-    if (mRTX.hasRightSibling()) {
-      mNextKey = mRTX.getRightSiblingKey();
+    if (getTransaction().hasRightSibling()) {
+      mNextKey = getTransaction().getRightSiblingKey();
       return true;
     }
 
