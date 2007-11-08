@@ -21,6 +21,8 @@
 
 package org.treetank.api;
 
+import org.treetank.nodelayer.AbstractNode;
+
 /**
  * <h1>IReadTransaction</h1>
  * 
@@ -83,14 +85,6 @@ public interface IReadTransaction {
   public long moveTo(final long nodeKey);
 
   /**
-   * Move cursor to a node.
-   * 
-   * @param node Node to select.
-   * @return True if the node with the given node key is selected.
-   */
-  public long moveTo(final INode node);
-
-  /**
    * Move cursor to document root node.
    * 
    * @return True if the document root node is selected.
@@ -141,14 +135,6 @@ public interface IReadTransaction {
   public long moveToAttribute(final int index);
 
   // --- Node Getters ----------------------------------------------------------
-
-  /**
-   * Expose getters of internal node object.
-   * 
-   * @return Interface for getting all node values.
-   */
-  @Deprecated
-  public INode getNode();
 
   /**
    * Get node key of currently selected node.
@@ -235,7 +221,7 @@ public interface IReadTransaction {
    * @param index Index of attribute to get.
    * @return Attribute denoted by its index.
    */
-  public INode getAttribute(final int index);
+  public AbstractNode getAttribute(final int index);
 
   /**
    * Get namespace declaration count of currently selected node.
@@ -250,7 +236,7 @@ public interface IReadTransaction {
    * @param index Index of namespace to get.
    * @return Namespace denoted by its index.
    */
-  public INode getNamespace(final int index);
+  public AbstractNode getNamespace(final int index);
 
   /**
    * Get kind of node.

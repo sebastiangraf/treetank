@@ -22,8 +22,6 @@
 package org.treetank.nodelayer;
 
 import org.treetank.api.IConstants;
-import org.treetank.api.INode;
-import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
@@ -72,7 +70,7 @@ public final class FullTextLeafNode extends AbstractNode {
    * 
    * @param node Text node to clone.
    */
-  public FullTextLeafNode(final INode node) {
+  public FullTextLeafNode(final AbstractNode node) {
     super(node.getNodeKey());
     mParentKey = node.getParentKey();
     mFirstChildKey = node.getFirstChildKey();
@@ -122,15 +120,6 @@ public final class FullTextLeafNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final INode getParent(final IReadTransaction rtx) {
-    rtx.moveTo(mParentKey);
-    return rtx.getNode();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
   public final void setParentKey(final long parentKey) {
     mParentKey = parentKey;
   }
@@ -149,15 +138,6 @@ public final class FullTextLeafNode extends AbstractNode {
   @Override
   public final long getFirstChildKey() {
     return mFirstChildKey;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final INode getFirstChild(final IReadTransaction rtx) {
-    rtx.moveTo(mFirstChildKey);
-    return rtx.getNode();
   }
 
   /**
@@ -188,15 +168,6 @@ public final class FullTextLeafNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final INode getLeftSibling(final IReadTransaction rtx) {
-    rtx.moveTo(mLeftSiblingKey);
-    return rtx.getNode();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
   public final void setLeftSiblingKey(final long leftSiblingKey) {
     mLeftSiblingKey = leftSiblingKey;
   }
@@ -215,15 +186,6 @@ public final class FullTextLeafNode extends AbstractNode {
   @Override
   public final long getRightSiblingKey() {
     return mRightSiblingKey;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final INode getRightSibling(final IReadTransaction rtx) {
-    rtx.moveTo(mRightSiblingKey);
-    return rtx.getNode();
   }
 
   /**
