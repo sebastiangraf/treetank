@@ -50,16 +50,16 @@ public class AttributeAxis extends AbstractAxis {
    */
   public final boolean hasNext() {
     resetToLastKey();
-    if (mNextIndex < mRTX.getAttributeCount()) {
+    if (mNextIndex < getTransaction().getAttributeCount()) {
       if (mNextIndex > 0) {
-        mRTX.moveToParent();
+        getTransaction().moveToParent();
       }
-      mRTX.moveToAttribute(mNextIndex);
+      getTransaction().moveToAttribute(mNextIndex);
       mNextIndex += 1;
       return true;
     } else {
       if (mNextIndex > 0) {
-        mRTX.moveToParent();
+        getTransaction().moveToParent();
       }
       resetToStartKey();
       return false;

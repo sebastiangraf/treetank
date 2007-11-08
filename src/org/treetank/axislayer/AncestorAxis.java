@@ -48,10 +48,10 @@ public class AncestorAxis extends AbstractAxis {
    */
   public final boolean hasNext() {
     resetToLastKey();
-    if (!mRTX.isDocumentRoot()
-        && mRTX.hasParent()
-        && mRTX.getParentKey() != IConstants.DOCUMENT_ROOT_KEY) {
-      mRTX.moveToParent();
+    if (!getTransaction().isDocumentRoot()
+        && getTransaction().hasParent()
+        && getTransaction().getParentKey() != IConstants.DOCUMENT_ROOT_KEY) {
+      getTransaction().moveToParent();
       return true;
     } else {
       resetToStartKey();

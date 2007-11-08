@@ -51,12 +51,12 @@ public class ParentAxis extends AbstractAxis {
    */
   public final boolean hasNext() {
     resetToLastKey();
-    if (!mRTX.isDocumentRoot()
+    if (!getTransaction().isDocumentRoot()
         && mFirst
-        && mRTX.hasParent()
-        && mRTX.getParentKey() != IConstants.DOCUMENT_ROOT_KEY) {
+        && getTransaction().hasParent()
+        && getTransaction().getParentKey() != IConstants.DOCUMENT_ROOT_KEY) {
       mFirst = false;
-      mRTX.moveToParent();
+      getTransaction().moveToParent();
       return true;
     } else {
       resetToStartKey();

@@ -75,14 +75,14 @@ public class FullTextAxis extends AbstractAxis {
    * @return True if the character is contained. False else.
    */
   private final boolean isContained(final int character) {
-    if (mRTX.hasFirstChild()) {
-      mRTX.moveToFirstChild();
-      while (mRTX.isFullText()
-          && (mRTX.getLocalPartKey() != character)
-          && mRTX.hasRightSibling()) {
-        mRTX.moveToRightSibling();
+    if (getTransaction().hasFirstChild()) {
+      getTransaction().moveToFirstChild();
+      while (getTransaction().isFullText()
+          && (getTransaction().getLocalPartKey() != character)
+          && getTransaction().hasRightSibling()) {
+        getTransaction().moveToRightSibling();
       }
-      return (mRTX.getLocalPartKey() == character);
+      return (getTransaction().getLocalPartKey() == character);
     } else {
       return false;
     }
@@ -94,10 +94,10 @@ public class FullTextAxis extends AbstractAxis {
   public final boolean hasNext() {
     resetToLastKey();
     if (mFullTextLeafKey != IConstants.NULL_KEY) {
-      mRTX.moveTo(mFullTextLeafKey);
-      mFullTextLeafKey = mRTX.getRightSiblingKey();
-      if (mRTX.hasFirstChild()) {
-        mRTX.moveToFirstChild();
+      getTransaction().moveTo(mFullTextLeafKey);
+      mFullTextLeafKey = getTransaction().getRightSiblingKey();
+      if (getTransaction().hasFirstChild()) {
+        getTransaction().moveToFirstChild();
         return true;
       } else {
         resetToStartKey();
