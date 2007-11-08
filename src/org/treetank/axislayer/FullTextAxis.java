@@ -51,21 +51,28 @@ public class FullTextAxis extends AbstractAxis {
 
     rtx.moveToFullTextRoot();
 
+    IAxis innerAxis;
+    boolean contained = true;
     if (token.charAt(token.length() - 1) != '*') {
-      boolean contained = true;
       for (final char character : token.toCharArray()) {
         contained = contained && isContained(character);
       }
-      mAxis = new FullTextLeafTestAxis(new ChildAxis(rtx));
+      innerAxis = new ChildAxis(rtx);
     } else {
-      boolean contained = true;
-      for (final char character : token
-          .substring(0, token.length() - 2)
-          .toCharArray()) {
-        contained = contained && isContained(character);
+      if (token.length() > 1) {
+        for (final char character : token
+            .substring(0, token.length() - 1)
+            .toCharArray()) {
+          contained = contained && isContained(character);
+        }
       }
-      mAxis = new FullTextLeafTestAxis(new DescendantAxis(rtx));
+      innerAxis = new DescendantAxis(rtx);
     }
+    if (!contained) {
+      innerAxis = new SelfAxis(rtx);
+    }
+
+    mAxis = new FullTextLeafTestAxis(innerAxis);
 
   }
 
