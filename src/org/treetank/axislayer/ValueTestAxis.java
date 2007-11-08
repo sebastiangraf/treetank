@@ -22,7 +22,6 @@
 package org.treetank.axislayer;
 
 import org.treetank.api.IAxis;
-import org.treetank.api.INode;
 import org.treetank.utils.UTF;
 
 /**
@@ -87,13 +86,13 @@ public class ValueTestAxis extends AbstractAxis {
    * {@inheritDoc}
    */
   public final boolean hasNext() {
-    INode node = null;
+    resetToLastKey();
     while (mAxis.hasNext()) {
-      node = mAxis.next();
-      if (node.isText() && (UTF.equals(node.getValue(), mValue))) {
+      if (mRTX.isText() && (UTF.equals(mRTX.getValue(), mValue))) {
         return true;
       }
     }
+    resetToStartKey();
     return false;
   }
 

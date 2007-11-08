@@ -34,7 +34,6 @@ import junit.framework.TestCase;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.treetank.api.IConstants;
-import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
@@ -76,8 +75,8 @@ public class XMLShredderTest {
     final ISession session = Session.beginSession(PATH);
     final IReadTransaction rtx = session.beginReadTransaction();
     rtx.moveToDocumentRoot();
-    final Iterator<INode> expectedDescendants = new DescendantAxis(expectedTrx);
-    final Iterator<INode> descendants = new DescendantAxis(rtx);
+    final Iterator<Long> expectedDescendants = new DescendantAxis(expectedTrx);
+    final Iterator<Long> descendants = new DescendantAxis(rtx);
 
     assertEquals(expectedTrx.getRevisionSize(), rtx.getRevisionSize());
     while (expectedDescendants.hasNext() && descendants.hasNext()) {

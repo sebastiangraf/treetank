@@ -1,7 +1,6 @@
 package org.treetank.axislayer;
 
 import org.treetank.api.IConstants;
-import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastStack;
 
@@ -46,12 +45,12 @@ public class PostOrderAxis extends AbstractAxis {
    * Method to start at the beginning of the tree.
    */
   private final void startAtBeginning() {
-    getTransaction().moveToDocumentRoot();
-    while (getTransaction().hasFirstChild()) {
-      mLastParent.push(getTransaction().getNodeKey());
-      getTransaction().moveToFirstChild();
+    mRTX.moveToDocumentRoot();
+    while (mRTX.hasFirstChild()) {
+      mLastParent.push(mRTX.getNodeKey());
+      mRTX.moveToFirstChild();
 
-      mNextKey = getTransaction().getNodeKey();
+      mNextKey = mRTX.getNodeKey();
     }
   }
 
@@ -59,28 +58,28 @@ public class PostOrderAxis extends AbstractAxis {
    * {@inheritDoc}
    */
   public boolean hasNext() {
-    INode node = getTransaction().moveTo(mNextKey);
-    if (node != null) {
-      while (node.hasFirstChild() && node.getNodeKey() != mLastParent.peek()) {
-        mLastParent.push(node.getNodeKey());
-        node = getTransaction().moveToFirstChild();
+    resetToLastKey();
+    long key = mRTX.moveTo(mNextKey);
+    if (mRTX.isSelected()) {
+      while (mRTX.hasFirstChild() && key != mLastParent.peek()) {
+        mLastParent.push(key);
+        key = mRTX.moveToFirstChild();
       }
-      if (node.getNodeKey() == mLastParent.peek()) {
+      if (key == mLastParent.peek()) {
         mLastParent.pop();
       }
 
-      if (node.hasRightSibling()) {
-        mNextKey = node.getRightSiblingKey();
+      if (mRTX.hasRightSibling()) {
+        mNextKey = mRTX.getRightSiblingKey();
 
       } else {
         mNextKey = mLastParent.peek();
       }
 
-      setCurrentNode(node);
       return true;
 
     } else {
-      setCurrentNode(null);
+      resetToStartKey();
       return false;
     }
   }

@@ -27,9 +27,9 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 
 import org.treetank.api.IConstants;
-import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.IWriteTransaction;
+import org.treetank.axislayer.ChildAxis;
 import org.treetank.utils.UTF;
 
 /**
@@ -131,47 +131,45 @@ public final class BeanUtil {
         target = clazz.newInstance();
 
         // Loop over all children of node.
-        INode node = rtx.moveToFirstChild();
-        while (node != null) {
+        for (final long key : new ChildAxis(rtx)) {
 
           // Only fetch elements that contain a text.
-          if (node.isElement() && node.hasFirstChild()) {
-            final INode text = node.getFirstChild(rtx);
-            if (text.isText()) {
-              // Set (private) property.
-              final Field field =
-                  clazz.getDeclaredField(node.getLocalPart(rtx));
-              field.setAccessible(true);
+          if (rtx.isElement() && rtx.hasFirstChild()) {
+            // Set (private) property.
+            final Field field = clazz.getDeclaredField(rtx.getLocalPart());
+            field.setAccessible(true);
+            rtx.moveToFirstChild();
+            if (rtx.isText()) {
               // Switch according to field type.
               switch (field.getType().getName().hashCode()) {
               case 64711720: // boolean
                 field.setBoolean(target, Boolean.parseBoolean(UTF
-                    .parseString(text.getValue())));
+                    .parseString(rtx.getValue())));
                 break;
               case 104431: // int
-                field.setInt(target, UTF.parseInt(text.getValue()));
+                field.setInt(target, UTF.parseInt(rtx.getValue()));
                 break;
               case 3327612: // long
-                field.setLong(target, UTF.parseLong(text.getValue()));
+                field.setLong(target, UTF.parseLong(rtx.getValue()));
                 break;
               case 97526364: // float
-                field.setFloat(target, Float.parseFloat(UTF.parseString(text
+                field.setFloat(target, Float.parseFloat(UTF.parseString(rtx
                     .getValue())));
                 break;
               case -1325958191: // double
-                field.setDouble(target, Double.parseDouble(UTF.parseString(text
+                field.setDouble(target, Double.parseDouble(UTF.parseString(rtx
                     .getValue())));
                 break;
               case 1195259493: // String
-                field.set(target, UTF.parseString(text.getValue()));
+                field.set(target, UTF.parseString(rtx.getValue()));
                 break;
               default:
                 throw new IllegalStateException(field.getType().getName());
               }
             }
+            rtx.moveToParent();
           }
 
-          node = node.getRightSibling(rtx);
         }
 
       }

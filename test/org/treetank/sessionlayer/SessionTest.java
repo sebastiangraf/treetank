@@ -304,7 +304,7 @@ public class SessionTest {
     final IReadTransaction rtx = session.beginReadTransaction();
     assertEquals(12L, rtx.getRevisionSize());
     assertEquals(true, rtx.isSelected());
-    TestCase.assertNull(rtx.moveTo(12L));
+    assertEquals(IConstants.NULL_KEY, rtx.moveTo(12L));
     assertEquals(false, rtx.isSelected());
 
     rtx.close();

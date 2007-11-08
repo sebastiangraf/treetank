@@ -83,10 +83,7 @@ public class SAXHandlerTest {
 
     while (expectedDescendants.hasNext() && descendants.hasNext()) {
       if (!expectedDescendants.next().equals(descendants.next())) {
-        fail(expectedDescendants.getCurrentNode().toString()
-            + " and "
-            + descendants.getCurrentNode()
-            + " are not the same!");
+        fail();
       }
     }
 

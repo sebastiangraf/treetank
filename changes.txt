@@ -21,6 +21,10 @@
  
 TreeTank 4.15
 -------------
++ No longer make INode public. This lead to a variety of use cases mixing
+  pure transaction cursor and node semantics. As a result, nobody really knew
+  where the transaction cursor actually resided. These side-effects can be
+  clearly avoided by a pure cursor-based approach.
 + Introduce concept of cursor stability: Always leave the cursor of a
   transaction where it was before calling a method except the method explicitly
   modifies the state of the transaction.

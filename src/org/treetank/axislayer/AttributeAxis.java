@@ -49,19 +49,19 @@ public class AttributeAxis extends AbstractAxis {
    * {@inheritDoc}
    */
   public final boolean hasNext() {
-    if (mNextIndex < getTransaction().getAttributeCount()) {
+    resetToLastKey();
+    if (mNextIndex < mRTX.getAttributeCount()) {
       if (mNextIndex > 0) {
-        getTransaction().moveToParent();
+        mRTX.moveToParent();
       }
-      getTransaction().moveToAttribute(mNextIndex);
+      mRTX.moveToAttribute(mNextIndex);
       mNextIndex += 1;
-      setCurrentNode(getTransaction().getNode());
       return true;
     } else {
       if (mNextIndex > 0) {
-        getTransaction().moveToParent();
+        mRTX.moveToParent();
       }
-      setCurrentNode(null);
+      resetToStartKey();
       return false;
     }
   }

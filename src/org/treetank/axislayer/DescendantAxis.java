@@ -56,25 +56,28 @@ public class DescendantAxis extends AbstractAxis {
    * {@inheritDoc}
    */
   public final boolean hasNext() {
-    setCurrentNode(getTransaction().moveTo(mNextKey));
+    resetToLastKey();
 
     // Fail if there is no node anymore.
-    if (getCurrentNode() == null) {
+    if (mNextKey == IConstants.NULL_KEY) {
+      resetToStartKey();
       return false;
     }
 
+    mRTX.moveTo(mNextKey);
+
     // Always follow first child if there is one.
-    if (getCurrentNode().hasFirstChild()) {
-      mNextKey = getCurrentNode().getFirstChildKey();
-      if (getCurrentNode().hasRightSibling()) {
-        mRightSiblingKeyStack.push(getCurrentNode().getRightSiblingKey());
+    if (mRTX.hasFirstChild()) {
+      mNextKey = mRTX.getFirstChildKey();
+      if (mRTX.hasRightSibling()) {
+        mRightSiblingKeyStack.push(mRTX.getRightSiblingKey());
       }
       return true;
     }
 
     // Then follow right sibling if there is one.
-    if (getCurrentNode().hasRightSibling()) {
-      mNextKey = getCurrentNode().getRightSiblingKey();
+    if (mRTX.hasRightSibling()) {
+      mNextKey = mRTX.getRightSiblingKey();
       return true;
     }
 

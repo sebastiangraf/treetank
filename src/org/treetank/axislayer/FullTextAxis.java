@@ -21,7 +21,7 @@
 
 package org.treetank.axislayer;
 
-import org.treetank.api.INode;
+import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 
 /**
@@ -33,8 +33,7 @@ import org.treetank.api.IReadTransaction;
  */
 public class FullTextAxis extends AbstractAxis {
 
-  /** Key of token to find. */
-  private INode mNext;
+  private long mFullTextLeafKey;
 
   /**
    * Constructor initializing internal state.
@@ -51,21 +50,20 @@ public class FullTextAxis extends AbstractAxis {
 
     rtx.moveToFullTextRoot();
 
-    boolean isContained = true;
+    boolean contained = true;
     for (final char character : token.toCharArray()) {
-      isContained = isContained && isContained(character);
+      contained = contained && isContained(character);
     }
 
-    if (isContained && rtx.hasFirstChild()) {
-      mNext = rtx.moveToFirstChild();
-      while (mNext.isFullText() && mNext.hasRightSibling()) {
-        mNext = mNext.getRightSibling(rtx);
+    mFullTextLeafKey = IConstants.NULL_KEY;
+    if (contained && rtx.hasFirstChild()) {
+      rtx.moveToFirstChild();
+      while (rtx.isFullText() && rtx.hasRightSibling()) {
+        rtx.moveToRightSibling();
       }
-      if (!mNext.isFullTextLeaf()) {
-        mNext = null;
+      if (rtx.isFullTextLeaf()) {
+        mFullTextLeafKey = rtx.getNodeKey();
       }
-    } else {
-      mNext = null;
     }
 
   }
@@ -77,13 +75,14 @@ public class FullTextAxis extends AbstractAxis {
    * @return True if the character is contained. False else.
    */
   private final boolean isContained(final int character) {
-    if (getTransaction().moveToFirstChild() != null) {
-      while (getTransaction().isFullText()
-          && (getTransaction().getLocalPartKey() != character)
-          && getTransaction().hasRightSibling()) {
-        getTransaction().moveToRightSibling();
+    if (mRTX.hasFirstChild()) {
+      mRTX.moveToFirstChild();
+      while (mRTX.isFullText()
+          && (mRTX.getLocalPartKey() != character)
+          && mRTX.hasRightSibling()) {
+        mRTX.moveToRightSibling();
       }
-      return (getTransaction().getLocalPartKey() == character);
+      return (mRTX.getLocalPartKey() == character);
     } else {
       return false;
     }
@@ -93,13 +92,19 @@ public class FullTextAxis extends AbstractAxis {
    * {@inheritDoc}
    */
   public final boolean hasNext() {
-    if (mNext != null) {
-      setCurrentNode(mNext.getFirstChild(getTransaction()));
-      mNext = mNext.getRightSibling(getTransaction());
-      getTransaction().moveTo(getCurrentNode());
-      return true;
+    resetToLastKey();
+    if (mFullTextLeafKey != IConstants.NULL_KEY) {
+      mRTX.moveTo(mFullTextLeafKey);
+      mFullTextLeafKey = mRTX.getRightSiblingKey();
+      if (mRTX.hasFirstChild()) {
+        mRTX.moveToFirstChild();
+        return true;
+      } else {
+        resetToStartKey();
+        return false;
+      }
     } else {
-      setCurrentNode(null);
+      resetToStartKey();
       return false;
     }
   }

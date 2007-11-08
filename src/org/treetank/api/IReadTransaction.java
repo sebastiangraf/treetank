@@ -80,7 +80,7 @@ public interface IReadTransaction {
    * @param nodeKey Key of node to select.
    * @return True if the node with the given node key is selected.
    */
-  public INode moveTo(final long nodeKey);
+  public long moveTo(final long nodeKey);
 
   /**
    * Move cursor to a node.
@@ -88,49 +88,49 @@ public interface IReadTransaction {
    * @param node Node to select.
    * @return True if the node with the given node key is selected.
    */
-  public INode moveTo(final INode node);
+  public long moveTo(final INode node);
 
   /**
    * Move cursor to document root node.
    * 
    * @return True if the document root node is selected.
    */
-  public INode moveToDocumentRoot();
+  public long moveToDocumentRoot();
 
   /**
    * Move cursor to fulltext root node.
    * 
    * @return True if the fulltext root node is selected.
    */
-  public INode moveToFullTextRoot();
+  public long moveToFullTextRoot();
 
   /**
    * Move cursor to parent node of currently selected node.
    * 
    * @return True if the parent node is selected.
    */
-  public INode moveToParent();
+  public long moveToParent();
 
   /**
    * Move cursor to first child node of currently selected node.
    * 
    * @return True if the first child node is selected.
    */
-  public INode moveToFirstChild();
+  public long moveToFirstChild();
 
   /**
    * Move cursor to left sibling node of the currently selected node.
    * 
    * @return True if the left sibling node is selected.
    */
-  public INode moveToLeftSibling();
+  public long moveToLeftSibling();
 
   /**
    * Move cursor to right sibling node of the currently selected node.
    * 
    * @return True if the right sibling node is selected.
    */
-  public INode moveToRightSibling();
+  public long moveToRightSibling();
 
   /**
    * Move cursor to attribute by its index.
@@ -138,7 +138,7 @@ public interface IReadTransaction {
    * @param index Index of attribute to move to.
    * @return True if the attribute is selected.
    */
-  public INode moveToAttribute(final int index);
+  public long moveToAttribute(final int index);
 
   // --- Node Getters ----------------------------------------------------------
 
@@ -147,6 +147,7 @@ public interface IReadTransaction {
    * 
    * @return Interface for getting all node values.
    */
+  @Deprecated
   public INode getNode();
 
   /**

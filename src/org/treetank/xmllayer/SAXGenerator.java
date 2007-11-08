@@ -27,7 +27,6 @@ import java.io.Writer;
 
 import org.treetank.api.IAxis;
 import org.treetank.api.IConstants;
-import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axislayer.AttributeAxis;
 import org.treetank.utils.FastStack;
@@ -60,7 +59,7 @@ public final class SAXGenerator implements Runnable {
   /** The nodeKey of the next node to visit. */
   private final IAxis mAxis;
 
-  private final FastStack<INode> stack;
+  private final FastStack<Long> stack;
 
   /**
    * 'Callback' Constructor.
@@ -76,7 +75,7 @@ public final class SAXGenerator implements Runnable {
     mAxis = axis;
     mHandler = contentHandler;
     mPrettyPrint = prettyPrint;
-    stack = new FastStack<INode>();
+    stack = new FastStack<Long>();
 
   }
 
@@ -94,7 +93,7 @@ public final class SAXGenerator implements Runnable {
     mIsSerialize = true;
     mAxis = axis;
     mPrettyPrint = prettyPrint;
-    stack = new FastStack<INode>();
+    stack = new FastStack<Long>();
   }
 
   /**
@@ -109,80 +108,84 @@ public final class SAXGenerator implements Runnable {
     return (prefix.length() > 0 ? prefix + ":" + localPart : localPart);
   }
 
-  private final AttributesImpl visitAttributes(final IReadTransaction rtx)
-      throws Exception {
+  private final AttributesImpl visitAttributes(final IReadTransaction rtx) {
 
     final AttributesImpl attributes = new AttributesImpl();
 
-    for (final INode attribute : new AttributeAxis(rtx)) {
-      attributes.addAttribute(attribute.getURI(rtx), attribute
-          .getLocalPart(rtx), qName(attribute.getPrefix(rtx), attribute
-          .getLocalPart(rtx)), "", UTF.parseString(attribute.getValue()));
+    for (final long attributeKey : new AttributeAxis(rtx)) {
+      attributes.addAttribute(rtx.getURI(), rtx.getLocalPart(), qName(rtx
+          .getPrefix(), rtx.getLocalPart()), "", UTF
+          .parseString(rtx.getValue()));
     }
 
     return attributes;
   }
 
-  private final void emitNode(final INode node, final IReadTransaction rtx)
-      throws Exception {
+  private final void emitNode(final IReadTransaction rtx) throws Exception {
     // Emit events of current node.
-    switch (node.getKind()) {
+    switch (rtx.getKind()) {
     case IConstants.ELEMENT:
       // Emit start element.
-      mHandler.startElement(node.getURI(rtx), node.getLocalPart(rtx), qName(
-          node.getPrefix(rtx),
-          node.getLocalPart(rtx)), visitAttributes(rtx));
+      mHandler.startElement(rtx.getURI(), rtx.getLocalPart(), qName(rtx
+          .getPrefix(), rtx.getLocalPart()), visitAttributes(rtx));
       break;
     case IConstants.TEXT:
-      final char[] text = UTF.parseString(node.getValue()).toCharArray();
+      final char[] text = UTF.parseString(rtx.getValue()).toCharArray();
       mHandler.characters(text, 0, text.length);
       break;
     default:
-      throw new IllegalStateException("Unknown kind: " + node.getKind());
+      throw new IllegalStateException("Unknown kind: " + rtx.getKind());
     }
   }
 
-  private final void emitEndElement(final INode node, final IReadTransaction rtx)
+  private final void emitEndElement(final IReadTransaction rtx)
       throws Exception {
-    mHandler.endElement(node.getURI(rtx), node.getLocalPart(rtx), qName(node
-        .getPrefix(rtx), node.getLocalPart(rtx)));
+    mHandler.endElement(rtx.getURI(), rtx.getLocalPart(), qName(
+        rtx.getPrefix(),
+        rtx.getLocalPart()));
   }
 
   private final void visitDocument() throws Exception {
     final IReadTransaction rtx = mAxis.getTransaction();
     boolean closeElements = false;
 
-    for (final INode node : mAxis) {
+    for (final long key : mAxis) {
 
       // Emit all pending end elements.
-      if (closeElements && !stack.empty()) {
-        while (stack.peek().getNodeKey() != node.getLeftSiblingKey()) {
-          emitEndElement(stack.pop(), rtx);
+      if (closeElements) {
+        while (!stack.empty() && stack.peek() != rtx.getLeftSiblingKey()) {
+          rtx.moveTo(stack.pop());
+          emitEndElement(rtx);
         }
-        emitEndElement(stack.pop(), rtx);
+        if (!stack.empty()) {
+          rtx.moveTo(stack.pop());
+          emitEndElement(rtx);
+        }
+        rtx.moveTo(key);
         closeElements = false;
       }
 
-      emitNode(node, rtx);
+      emitNode(rtx);
 
       // Emit corresponding end element or push it to stack.
-      if (node.getKind() == IConstants.ELEMENT) {
-        if (!node.hasFirstChild()) {
-          emitEndElement(node, rtx);
+      if (rtx.isElement()) {
+        if (!rtx.hasFirstChild()) {
+          emitEndElement(rtx);
         } else {
-          stack.push(node);
+          stack.push(rtx.getNodeKey());
         }
       }
 
       // Remember to emit all pending end elements from stack if required.
-      if (!node.hasFirstChild() && !node.hasRightSibling()) {
+      if (!rtx.hasFirstChild() && !rtx.hasRightSibling()) {
         closeElements = true;
       }
     }
 
     // Finally emit all pending end elements.
     while (!stack.empty()) {
-      emitEndElement(stack.pop(), rtx);
+      rtx.moveTo(stack.pop());
+      emitEndElement(rtx);
     }
 
   }

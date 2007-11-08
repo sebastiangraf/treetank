@@ -22,7 +22,6 @@
 package org.treetank.axislayer;
 
 import org.treetank.api.IAxis;
-import org.treetank.api.INode;
 
 /**
  * <h1>NodeTestAxis</h1>
@@ -50,13 +49,13 @@ public class NodeTestAxis extends AbstractAxis {
    * {@inheritDoc}
    */
   public final boolean hasNext() {
-    INode node = null;
+    resetToLastKey();
     while (mAxis.hasNext()) {
-      node = mAxis.next();
-      if (node.isElement() || node.isText()) {
+      if (mRTX.isElement() || mRTX.isText()) {
         return true;
       }
     }
+    resetToStartKey();
     return false;
   }
 

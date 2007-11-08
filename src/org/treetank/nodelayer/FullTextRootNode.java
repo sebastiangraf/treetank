@@ -96,7 +96,8 @@ public final class FullTextRootNode extends AbstractNode {
    */
   @Override
   public final INode getFirstChild(final IReadTransaction rtx) {
-    return rtx.moveTo(mFirstChildKey);
+    rtx.moveTo(mFirstChildKey);
+    return rtx.getNode();
   }
 
   /**

@@ -21,6 +21,7 @@
 
 package org.treetank.axislayer;
 
+import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 
 /**
@@ -32,11 +33,8 @@ import org.treetank.api.IReadTransaction;
  */
 public class ParentAxis extends AbstractAxis {
 
-  /** The nodeKey of the next node to visit. */
-  private long mNextKey;
-
   /** Track number of calls of next. */
-  private boolean mIsFirstNext;
+  private boolean mFirst;
 
   /**
    * Constructor initializing internal state.
@@ -45,19 +43,23 @@ public class ParentAxis extends AbstractAxis {
    */
   public ParentAxis(final IReadTransaction rtx) {
     super(rtx);
-    mIsFirstNext = true;
-    mNextKey = rtx.getParentKey();
+    mFirst = true;
   }
 
   /**
    * {@inheritDoc}
    */
   public final boolean hasNext() {
-    setCurrentNode(getTransaction().moveTo(mNextKey));
-    if (mIsFirstNext && (getCurrentNode() != null)) {
-      mIsFirstNext = false;
+    resetToLastKey();
+    if (!mRTX.isDocumentRoot()
+        && mFirst
+        && mRTX.hasParent()
+        && mRTX.getParentKey() != IConstants.DOCUMENT_ROOT_KEY) {
+      mFirst = false;
+      mRTX.moveToParent();
       return true;
     } else {
+      resetToStartKey();
       return false;
     }
   }

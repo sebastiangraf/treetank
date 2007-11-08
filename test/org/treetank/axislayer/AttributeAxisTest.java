@@ -29,7 +29,6 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.api.IAxis;
-import org.treetank.api.INode;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
@@ -54,28 +53,29 @@ public class AttributeAxisTest {
 
     wtx.moveTo(0L);
     final IAxis axis1 = new AttributeAxis(wtx);
-
     assertEquals(false, axis1.hasNext());
+    assertEquals(0L, wtx.getNodeKey());
 
     wtx.moveTo(2L);
     final IAxis axis2 = new AttributeAxis(wtx);
     assertEquals(true, axis2.hasNext());
-    INode node = axis2.next();
-    assertEquals(2L, node.getNodeKey());
+    assertEquals(2L, axis2.next());
 
     assertEquals(false, axis2.hasNext());
+    assertEquals(2L, wtx.getNodeKey());
 
     wtx.moveTo(8L);
     final IAxis axis4 = new AttributeAxis(wtx);
     assertEquals(true, axis4.hasNext());
-    node = axis4.next();
-    assertEquals(8L, node.getNodeKey());
+    assertEquals(8L, axis4.next());
 
     assertEquals(false, axis4.hasNext());
+    assertEquals(8L, wtx.getNodeKey());
 
     wtx.moveTo(11L);
     final IAxis axis5 = new AttributeAxis(wtx);
     assertEquals(false, axis5.hasNext());
+    assertEquals(11L, wtx.getNodeKey());
 
     wtx.abort();
     wtx.close();

@@ -143,7 +143,8 @@ public final class AttributeNode extends AbstractNode {
    */
   @Override
   public final INode getParent(final IReadTransaction rtx) {
-    return rtx.moveTo(getNodeKey());
+    rtx.moveTo(getNodeKey());
+    return rtx.getNode();
   }
 
   /**

@@ -22,27 +22,40 @@
 package org.treetank.axislayer;
 
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 import org.treetank.api.IAxis;
-import org.treetank.api.INode;
 import org.treetank.api.IReadTransaction;
 
 /**
- * <h1>AbstractAxisStep</h1>
+ * <h1>AbstractAxis</h1>
  * 
  * <p>
  * Provide standard Java iterator capability compatible with the new
  * enhanced for loop available since Java 5.
  * </p>
+ * 
+ * <p>
+ * All implementations must make sure to call super.hasNext() as the first
+ * thing in hasNext().
+ * </p>
+ * 
+ * <p>
+ * All users must make sure to call next() after hasNext() evaluated to true.
+ * </p>
  */
 public abstract class AbstractAxis implements IAxis {
 
   /** Iterate over transaction exclusive to this step. */
-  private final IReadTransaction mRTX;
+  protected final IReadTransaction mRTX;
 
-  /** Current node returned by <code>next()</code> call. */
-  private INode mCurrentNode;
+  /** Key of last found node. */
+  private long mKey;
+
+  /** Make sure next() can only be called after hasNext(). */
+  private boolean mNext;
+
+  /** Key of node where axis started. */
+  private final long mStartKey;
 
   /**
    * Bind axis step to transaction.
@@ -51,31 +64,30 @@ public abstract class AbstractAxis implements IAxis {
    */
   public AbstractAxis(final IReadTransaction rtx) {
     mRTX = rtx;
-    mCurrentNode = null;
+    mStartKey = mRTX.getNodeKey();
+    mKey = mStartKey;
+    mNext = false;
   }
 
   /**
    * {@inheritDoc}
    */
-  public final IReadTransaction getTransaction() {
-    return mRTX;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final Iterator<INode> iterator() {
+  public final Iterator<Long> iterator() {
     return this;
   }
 
   /**
    * {@inheritDoc}
    */
-  public final INode next() {
-    if (mCurrentNode == null) {
-      throw new NoSuchElementException();
+  public final Long next() {
+    if (!mNext) {
+      throw new IllegalStateException(
+          "IAxis.next() must be called exactely once after hasNext()"
+              + " evaluated to true.");
     }
-    return mCurrentNode;
+    mKey = mRTX.getNodeKey();
+    mNext = false;
+    return mKey;
   }
 
   /**
@@ -88,20 +100,38 @@ public abstract class AbstractAxis implements IAxis {
   /**
    * {@inheritDoc}
    */
+  public final IReadTransaction getTransaction() {
+    return mRTX;
+  }
+
+  /**
+   * Make sure the transaction points to the node it started with. This must
+   * be called just before hasNext() == false.
+   * 
+   * @return Key of node where transaction was before the first call of
+   *         hasNext().
+   */
+  public final long resetToStartKey() {
+    mRTX.moveTo(mStartKey);
+    return mStartKey;
+  }
+
+  /**
+   * Make sure the transaction points to the node after the last hasNext().
+   * This must be called first in hasNext().
+   * 
+   * @return Key of node where transaction was after the last call of
+   *         hasNext().
+   */
+  public final long resetToLastKey() {
+    mRTX.moveTo(mKey);
+    mNext = true;
+    return mKey;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public abstract boolean hasNext();
-
-  /**
-   * @param currentNode The currentnNode to set.
-   */
-  public final void setCurrentNode(final INode currentNode) {
-    mCurrentNode = currentNode;
-  }
-
-  /**
-   * @return The current node.
-   */
-  public final INode getCurrentNode() {
-    return mCurrentNode;
-  }
 
 }
