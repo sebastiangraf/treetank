@@ -27,6 +27,10 @@ public class TestBean {
   private String token;
 
   private long date;
+  
+  private int naturalNumber;
+  
+  private byte[] byteArray;
 
   /**
    * @return the token
@@ -54,6 +58,34 @@ public class TestBean {
    */
   public final void setDate(final long date) {
     this.date = date;
+  }
+
+  /**
+   * @return the naturalNumber
+   */
+  public final int getNaturalNumber() {
+    return naturalNumber;
+  }
+
+  /**
+   * @param naturalNumber the naturalNumber to set
+   */
+  public final void setNaturalNumber(int naturalNumber) {
+    this.naturalNumber = naturalNumber;
+  }
+
+  /**
+   * @return the byteArray
+   */
+  public final byte[] getByteArray() {
+    return byteArray;
+  }
+
+  /**
+   * @param byteArray the byteArray to set
+   */
+  public final void setByteArray(final byte[] byteArray) {
+    this.byteArray = byteArray;
   }
 
 }

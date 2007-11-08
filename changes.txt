@@ -21,6 +21,7 @@
  
 TreeTank 4.15
 -------------
++ BeanUtil now supports byte[].
 + No longer make INode public. This lead to a variety of use cases mixing
   pure transaction cursor and node semantics. As a result, nobody really knew
   where the transaction cursor actually resided. These side-effects can be

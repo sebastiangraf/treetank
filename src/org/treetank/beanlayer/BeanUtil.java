@@ -141,7 +141,10 @@ public final class BeanUtil {
             rtx.moveToFirstChild();
             if (rtx.isText()) {
               // Switch according to field type.
-              switch (field.getType().getName().hashCode()) {
+              switch (field.getType().getCanonicalName().hashCode()) {
+              case -1374008726: // byte[]
+                field.set(target, rtx.getValue());
+                break;
               case 64711720: // boolean
                 field.setBoolean(target, Boolean.parseBoolean(UTF
                     .parseString(rtx.getValue())));
@@ -222,7 +225,10 @@ public final class BeanUtil {
 
         // Switch according to field type.
         byte[] bytes = null;
-        switch (field.getType().getName().hashCode()) {
+        switch (field.getType().getCanonicalName().hashCode()) {
+        case -1374008726: // byte[]
+          bytes = (byte[]) field.get(object);
+          break;
         case 64711720: // boolean
           bytes = UTF.getBytes(field.get(object).toString());
           break;
