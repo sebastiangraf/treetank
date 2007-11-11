@@ -98,7 +98,7 @@ public final class RevisionRootPage extends AbstractPage {
    * 
    * @return Name page reference.
    */
-  public final PageReference getNamePageReference() {
+  public final PageReference<NamePage> getNamePageReference() {
     return getReference(NAME_REFERENCE_OFFSET);
   }
 
@@ -107,7 +107,7 @@ public final class RevisionRootPage extends AbstractPage {
    * 
    * @return Indirect page reference.
    */
-  public final PageReference getIndirectPageReference() {
+  public final PageReference<IndirectPage> getIndirectPageReference() {
     return getReference(INDIRECT_REFERENCE_OFFSET);
   }
 

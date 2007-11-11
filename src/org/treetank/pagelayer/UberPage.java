@@ -129,7 +129,7 @@ public final class UberPage extends AbstractPage {
    * 
    * @return Indirect page reference.
    */
-  public final PageReference getIndirectPageReference() {
+  public final PageReference<IndirectPage> getIndirectPageReference() {
     return getReference(INDIRECT_REFERENCE_OFFSET);
   }
 

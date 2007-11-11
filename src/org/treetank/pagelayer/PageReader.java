@@ -86,12 +86,16 @@ public final class PageReader {
    * Constructor.
    * 
    * @param sessionConfiguration Configuration of session we are bound to.
+   * @throws RuntimeException if the class could not be instantiated.
    */
   public PageReader(final SessionConfiguration sessionConfiguration) {
 
     try {
 
-      mFile = new RandomAccessFile(sessionConfiguration.getAbsolutePath(), READ_ONLY);
+      mFile =
+          new RandomAccessFile(
+              sessionConfiguration.getAbsolutePath(),
+              READ_ONLY);
 
       if (sessionConfiguration.isChecksummed()) {
         mIsChecksummed = true;
@@ -126,9 +130,14 @@ public final class PageReader {
   }
 
   /**
-   * {@inheritDoc}
+   * Read page from storage.
+   * 
+   * @param pageReference to read.
+   * @return Byte array reader to read bytes from.o
+   * @throws RuntimeException if there was an error during reading.
    */
-  public final FastByteArrayReader read(final PageReference pageReference) {
+  public final FastByteArrayReader read(
+      final PageReference<? extends AbstractPage> pageReference) {
 
     if (!pageReference.isCommitted()) {
       throw new IllegalArgumentException("Page reference is invalid.");
