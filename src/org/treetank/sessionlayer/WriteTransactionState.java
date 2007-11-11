@@ -77,24 +77,31 @@ public final class WriteTransactionState extends ReadTransactionState {
   }
 
   /**
-   * {@inheritDoc}
+   * Prepare node for modifications (COW).
    */
   protected final AbstractNode prepareNode(final long nodeKey) {
     return prepareNodePage(nodePageKey(nodeKey)).getNode(
         nodePageOffset(nodeKey));
   }
 
-  protected final DocumentRootNode createDocumentNode() {
-
+  /**
+   * Create fresh node and prepare node page for modifications (COW).
+   * 
+   * @param <N> Subclass of AbstractNode.
+   * @param node node to add.
+   * @return Unmodified node from parameter for convenience.
+   */
+  protected final <N extends AbstractNode> N createNode(final N node) {
+    // Allocate node key and increment node count.
     getRevisionRootPage().incrementNodeCountAndMaxNodeKey();
-
-    final DocumentRootNode node = new DocumentRootNode();
-
-    // Write node into node page.
+    // Prepare node page (COW).
     prepareNodePage(nodePageKey(getRevisionRootPage().getMaxNodeKey()))
         .setNode(nodePageOffset(getRevisionRootPage().getMaxNodeKey()), node);
-
     return node;
+  }
+
+  protected final DocumentRootNode createDocumentNode() {
+    return createNode(new DocumentRootNode());
   }
 
   protected final ElementNode createElementNode(
@@ -105,25 +112,15 @@ public final class WriteTransactionState extends ReadTransactionState {
       final int localPartKey,
       final int uriKey,
       final int prefixKey) {
-
-    getRevisionRootPage().incrementNodeCountAndMaxNodeKey();
-
-    final ElementNode node =
-        new ElementNode(
-            getRevisionRootPage().getMaxNodeKey(),
-            parentKey,
-            firstChildKey,
-            leftSiblingKey,
-            rightSiblingKey,
-            localPartKey,
-            uriKey,
-            prefixKey);
-
-    // Write node into node page.
-    prepareNodePage(nodePageKey(getRevisionRootPage().getMaxNodeKey()))
-        .setNode(nodePageOffset(getRevisionRootPage().getMaxNodeKey()), node);
-
-    return node;
+    return createNode(new ElementNode(
+        getRevisionRootPage().getMaxNodeKey() + 1,
+        parentKey,
+        firstChildKey,
+        leftSiblingKey,
+        rightSiblingKey,
+        localPartKey,
+        uriKey,
+        prefixKey));
   }
 
   protected final TextNode createTextNode(
@@ -131,22 +128,12 @@ public final class WriteTransactionState extends ReadTransactionState {
       final long leftSiblingKey,
       final long rightSiblingKey,
       final byte[] value) {
-
-    getRevisionRootPage().incrementNodeCountAndMaxNodeKey();
-
-    final TextNode node =
-        new TextNode(
-            getRevisionRootPage().getMaxNodeKey(),
-            parentKey,
-            leftSiblingKey,
-            rightSiblingKey,
-            value);
-
-    // Write node into node page.
-    prepareNodePage(nodePageKey(getRevisionRootPage().getMaxNodeKey()))
-        .setNode(nodePageOffset(getRevisionRootPage().getMaxNodeKey()), node);
-
-    return node;
+    return createNode(new TextNode(
+        getRevisionRootPage().getMaxNodeKey() + 1,
+        parentKey,
+        leftSiblingKey,
+        rightSiblingKey,
+        value));
   }
 
   protected final FullTextNode createFullTextNode(
@@ -155,23 +142,13 @@ public final class WriteTransactionState extends ReadTransactionState {
       final long leftSiblingKey,
       final long rightSiblingKey,
       final int localPartKey) {
-
-    getRevisionRootPage().incrementNodeCountAndMaxNodeKey();
-
-    final FullTextNode node =
-        new FullTextNode(
-            getRevisionRootPage().getMaxNodeKey(),
-            parentKey,
-            firstChildKey,
-            leftSiblingKey,
-            rightSiblingKey,
-            localPartKey);
-
-    // Write node into node page.
-    prepareNodePage(nodePageKey(getRevisionRootPage().getMaxNodeKey()))
-        .setNode(nodePageOffset(getRevisionRootPage().getMaxNodeKey()), node);
-
-    return node;
+    return createNode(new FullTextNode(
+        getRevisionRootPage().getMaxNodeKey() + 1,
+        parentKey,
+        firstChildKey,
+        leftSiblingKey,
+        rightSiblingKey,
+        localPartKey));
   }
 
   protected final FullTextLeafNode createFullTextLeafNode(
@@ -179,22 +156,12 @@ public final class WriteTransactionState extends ReadTransactionState {
       final long firstChildKey,
       final long leftSiblingKey,
       final long rightSiblingKey) {
-
-    getRevisionRootPage().incrementNodeCountAndMaxNodeKey();
-
-    final FullTextLeafNode node =
-        new FullTextLeafNode(
-            getRevisionRootPage().getMaxNodeKey(),
-            parentKey,
-            firstChildKey,
-            leftSiblingKey,
-            rightSiblingKey);
-
-    // Write node into node page.
-    prepareNodePage(nodePageKey(getRevisionRootPage().getMaxNodeKey()))
-        .setNode(nodePageOffset(getRevisionRootPage().getMaxNodeKey()), node);
-
-    return node;
+    return createNode(new FullTextLeafNode(
+        getRevisionRootPage().getMaxNodeKey() + 1,
+        parentKey,
+        firstChildKey,
+        leftSiblingKey,
+        rightSiblingKey));
   }
 
   /**
