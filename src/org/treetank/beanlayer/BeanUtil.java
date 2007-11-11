@@ -44,6 +44,9 @@ import org.treetank.utils.UTF;
  * <pre>
  * public class Address {
  *   // Bean properties.
+ *   &#64;
+ *   private long id;
+ *   
  *   &#64;FullText
  *   private String firstName;
  *   
@@ -67,7 +70,7 @@ import org.treetank.utils.UTF;
  * 
  * This will be mapped to:
  * <pre>
- * &lt;Address firstname='Joe' lastname='Black' street='World'/&gt;
+ * &lt;Address id='0' firstname='Joe' lastname='Black' street='World'/&gt;
  * </pre>
  * 
  * <strong>Usage</strong>
@@ -196,15 +199,39 @@ public final class BeanUtil {
               "",
               "");
 
-      // Find all properties.
+      // Find all fields.
       final BeanInfo info =
           Introspector.getBeanInfo(object.getClass(), Object.class);
       for (final PropertyDescriptor property : info.getPropertyDescriptors()) {
 
-        // Get field value.
+        // Access private field.
         final Field field =
             object.getClass().getDeclaredField(property.getName());
         field.setAccessible(true);
+
+        // Handle field ID annotation.
+        if (field.getAnnotation(ID.class) != null) {
+          if (field.getType() != long.class) {
+            throw new IllegalStateException(
+                "Only fields of type long are supported by the"
+                    + " ID annotation.");
+          }
+          field.setLong(object, beanKey);
+        }
+
+        // Handle field FullText annotation.
+        if (field.getAnnotation(FullText.class) != null) {
+          if (field.getType() != String.class) {
+            throw new IllegalStateException(
+                "Only fields of type String are supported by the"
+                    + " FullText annotation.");
+          }
+          final String string = (String) field.get(object);
+          if (string != null) {
+            wtx.index(string.toLowerCase(), beanKey);
+            wtx.moveTo(beanKey);
+          }
+        }
 
         // Make sure not to serialize null fields.
         if (field.get(object) != null) {
@@ -240,17 +267,6 @@ public final class BeanUtil {
           // Insert property as element with text.
           wtx.insertAttribute(property.getName(), "", "", bytes);
 
-        }
-      }
-
-      // Find all full text index annotated fields.
-      for (final Field field : object.getClass().getDeclaredFields()) {
-        if (field.getAnnotation(FullText.class) != null) {
-          field.setAccessible(true);
-          final String string = (String) field.get(object);
-          if (string != null) {
-            wtx.index(string.toLowerCase(), beanKey);
-          }
         }
       }
 
