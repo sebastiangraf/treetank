@@ -23,6 +23,9 @@ package org.treetank.beanlayer;
 
 public class TestBean {
 
+  @ID
+  private long idField;
+
   private byte[] byteArrayField;
 
   private boolean booleanField;
@@ -37,6 +40,20 @@ public class TestBean {
   private float floatField;
 
   private double doubleField;
+
+  /**
+   * @return the idField
+   */
+  public final long getIdField() {
+    return idField;
+  }
+
+  /**
+   * @param idField the idField to set
+   */
+  public final void setIdField(final int idField) {
+    this.idField = idField;
+  }
 
   /**
    * @return the byteArrayField

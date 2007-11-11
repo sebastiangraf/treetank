@@ -63,6 +63,7 @@ public class BeanUtilTest {
     wtx.moveTo(expectedBeanKey);
     final TestBean bean = BeanUtil.read(wtx, TestBean.class);
     TestCase.assertNotNull(bean);
+    TestCase.assertEquals(expectedBeanKey, bean.getIdField());
     TestCase.assertEquals("foo", bean.getStringField());
     TestCase.assertEquals(13L, bean.getLongField());
     TestCase.assertEquals(14, bean.getIntField());
