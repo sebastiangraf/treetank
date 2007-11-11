@@ -263,9 +263,10 @@ public final class WriteTransactionState extends ReadTransactionState {
     super.close();
   }
 
-  protected final NamePage prepareNamePage(final PageReference reference) {
+  protected final NamePage prepareNamePage(
+      final PageReference<NamePage> reference) {
 
-    NamePage page = (NamePage) reference.getPage();
+    NamePage page = reference.getPage();
 
     if (!reference.isInstantiated()) {
       if (reference.isCommitted()) {
@@ -285,9 +286,10 @@ public final class WriteTransactionState extends ReadTransactionState {
     return page;
   }
 
-  protected final IndirectPage prepareIndirectPage(final PageReference reference) {
+  protected final IndirectPage prepareIndirectPage(
+      final PageReference<IndirectPage> reference) {
 
-    IndirectPage page = (IndirectPage) reference.getPage();
+    IndirectPage page = reference.getPage();
 
     if (!reference.isInstantiated()) {
       if (reference.isCommitted()) {
@@ -311,7 +313,7 @@ public final class WriteTransactionState extends ReadTransactionState {
   protected final NodePage prepareNodePage(final long nodePageKey) {
 
     // Indirect reference.
-    PageReference reference =
+    PageReference<NodePage> reference =
         prepareLeafOfTree(
             getRevisionRootPage().getIndirectPageReference(),
             nodePageKey);
@@ -352,7 +354,7 @@ public final class WriteTransactionState extends ReadTransactionState {
             .getLastCommittedRevisionKey()));
 
     // Prepare indirect tree to hold reference to prepared revision root page.
-    final PageReference revisionRootPageReference =
+    final PageReference<RevisionRootPage> revisionRootPageReference =
         prepareLeafOfTree(
             getUberPage().getIndirectPageReference(),
             getUberPage().getRevisionKey());
@@ -365,7 +367,7 @@ public final class WriteTransactionState extends ReadTransactionState {
   }
 
   protected final PageReference prepareLeafOfTree(
-      final PageReference startReference,
+      final PageReference<IndirectPage> startReference,
       final long key) {
 
     // Initial state pointing to the indirect page of level 0.
