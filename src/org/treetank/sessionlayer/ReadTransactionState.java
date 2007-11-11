@@ -238,11 +238,11 @@ public class ReadTransactionState {
    * @return Dereferenced page.
    */
   protected final NodePage dereferenceNodePage(
-      final PageReference reference,
+      final PageReference<NodePage> reference,
       final long nodePageKey) {
 
     // Get page that was dereferenced or prepared earlier.
-    NodePage page = (NodePage) reference.getPage();
+    NodePage page = reference.getPage();
 
     // If there is no page, get it from the cache.
     if (page == null) {
@@ -266,14 +266,15 @@ public class ReadTransactionState {
    * @param reference Reference to dereference.
    * @return Dereferenced page.
    */
-  protected final NamePage dereferenceNamePage(final PageReference reference) {
+  protected final NamePage dereferenceNamePage(
+      final PageReference<NamePage> reference) {
 
     // Get page that was dereferenced or prepared earlier.
-    AbstractPage page = reference.getPage();
+    NamePage page = reference.getPage();
 
     // If there is no page, get it from the cache.
     if (page == null) {
-      page = mPageCache.get(reference.getStart());
+      page = (NamePage) mPageCache.get(reference.getStart());
     }
 
     // If there is no page, get it from the storage and cache it.
@@ -283,7 +284,7 @@ public class ReadTransactionState {
       mPageCache.put(reference.getStart(), page);
     }
 
-    return (NamePage) page;
+    return page;
   }
 
   /**
@@ -293,10 +294,10 @@ public class ReadTransactionState {
    * @return Dereferenced page.
    */
   protected final IndirectPage dereferenceIndirectPage(
-      final PageReference reference) {
+      final PageReference<IndirectPage> reference) {
 
     // Get page that was dereferenced or prepared earlier.
-    IndirectPage page = (IndirectPage) reference.getPage();
+    IndirectPage page = reference.getPage();
 
     // If there is no page, get it from the cache.
     if (page == null) {
@@ -321,11 +322,11 @@ public class ReadTransactionState {
    * @return Dereferenced page.
    */
   protected final RevisionRootPage dereferenceRevisionRootPage(
-      final PageReference reference,
+      final PageReference<RevisionRootPage> reference,
       final long revisionKey) {
 
     // Get page that was dereferenced or prepared earlier.
-    RevisionRootPage page = (RevisionRootPage) reference.getPage();
+    RevisionRootPage page = reference.getPage();
 
     // If there is no page, get it from the cache.
     if (page == null) {
@@ -350,7 +351,7 @@ public class ReadTransactionState {
    * @return Reference denoted by key pointing to the leaf page.
    */
   protected final PageReference dereferenceLeafOfTree(
-      final PageReference startReference,
+      final PageReference<IndirectPage> startReference,
       final long key) {
 
     // Initial state pointing to the indirect page of level 0.

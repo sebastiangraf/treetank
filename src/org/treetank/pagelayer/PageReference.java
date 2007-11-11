@@ -24,9 +24,9 @@ package org.treetank.pagelayer;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
 
-public final class PageReference {
+public final class PageReference<T extends AbstractPage> {
 
-  private AbstractPage mPage;
+  private T mPage;
 
   private long mStart;
 
@@ -38,7 +38,7 @@ public final class PageReference {
     this(null, -1L, -1, -1L);
   }
 
-  public PageReference(final PageReference pageReference) {
+  public PageReference(final PageReference<T> pageReference) {
     this(
         pageReference.mPage,
         pageReference.mStart,
@@ -47,7 +47,7 @@ public final class PageReference {
   }
 
   public PageReference(
-      final AbstractPage page,
+      final T page,
       final long start,
       final int length,
       final long checksum) {
@@ -81,11 +81,11 @@ public final class PageReference {
     mChecksum = checksum;
   }
 
-  public final AbstractPage getPage() {
+  public final T getPage() {
     return mPage;
   }
 
-  public final void setPage(final AbstractPage page) {
+  public final void setPage(final T page) {
     mPage = page;
   }
 
@@ -116,7 +116,7 @@ public final class PageReference {
    */
   @Override
   public final boolean equals(final Object object) {
-    final PageReference pageReference = (PageReference) object;
+    final PageReference<T> pageReference = (PageReference<T>) object;
     return ((mChecksum == pageReference.mChecksum)
         && (mStart == pageReference.mStart) && (mLength == pageReference.mLength));
   }

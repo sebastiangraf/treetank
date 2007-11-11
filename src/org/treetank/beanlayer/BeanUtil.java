@@ -101,7 +101,7 @@ public final class BeanUtil {
    * Read Java bean from TreeTank. Cursor of transaction is leaved where it was
    * before reading the Java bean.
    * 
-   * @param <B> Java Bean.
+   * @param <T> Java Bean.
    * @param rtx IReadTransaction to read.
    * @param clazz Class to create.
    * @return Instance of clazz with all properties set or null if there
@@ -109,11 +109,11 @@ public final class BeanUtil {
    * @throws RuntimeException in case the class could not be instantiated
    *         or the property setter could not be invoked.
    */
-  public static final <B> B read(
+  public static final <T> T read(
       final IReadTransaction rtx,
-      final Class<B> clazz) {
+      final Class<T> clazz) {
 
-    B target = null;
+    T target = null;
 
     try {
 
