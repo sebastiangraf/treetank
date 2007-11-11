@@ -37,7 +37,7 @@ import org.treetank.utils.FastByteArrayWriter;
 public abstract class AbstractPage {
 
   /** Page references. */
-  private final PageReference[] mReferences;
+  private final PageReference<? extends AbstractPage>[] mReferences;
 
   /** True if page was created or cloned. False if it was read or committed. */
   private boolean mDirty;
@@ -84,7 +84,9 @@ public abstract class AbstractPage {
    * @param referenceCount Number of references of page.
    * @param committedPage Page to clone.
    */
-  protected AbstractPage(final int referenceCount, final AbstractPage committedPage) {
+  protected AbstractPage(
+      final int referenceCount,
+      final AbstractPage committedPage) {
     this(true, referenceCount);
 
     for (int offset = 0; offset < referenceCount; offset++) {
@@ -123,7 +125,9 @@ public abstract class AbstractPage {
    * @param offset Offset of page reference.
    * @param reference Page reference to set.
    */
-  public final void setReference(final int offset, final PageReference reference) {
+  public final void setReference(
+      final int offset,
+      final PageReference<? extends AbstractPage> reference) {
     mReferences[offset] = reference;
   }
 
@@ -134,7 +138,7 @@ public abstract class AbstractPage {
    * @throws IOException occurring during commit operation.
    */
   public void commit(final WriteTransactionState state) throws IOException {
-    for (final PageReference reference : mReferences) {
+    for (final PageReference<? extends AbstractPage> reference : mReferences) {
       state.commit(reference);
     }
     mDirty = false;
@@ -146,7 +150,7 @@ public abstract class AbstractPage {
    * @param out Output stream.
    */
   public void serialize(final FastByteArrayWriter out) {
-    for (final PageReference reference : mReferences) {
+    for (final PageReference<? extends AbstractPage> reference : mReferences) {
       if (reference != null) {
         out.writeBoolean(true);
         reference.serialize(out);
