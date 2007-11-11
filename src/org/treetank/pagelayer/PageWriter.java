@@ -89,13 +89,16 @@ public final class PageWriter {
    * Constructor.
    * 
    * @param sessionConfiguration Configuration of session we are bound to.
-   * @throws Exception of any kind.
+   * @throws RuntimeException if the PageWriter could not be instantiated.
    */
   public PageWriter(final SessionConfiguration sessionConfiguration) {
 
     try {
 
-      mFile = new RandomAccessFile(sessionConfiguration.getAbsolutePath(), READ_WRITE);
+      mFile =
+          new RandomAccessFile(
+              sessionConfiguration.getAbsolutePath(),
+              READ_WRITE);
 
       if (sessionConfiguration.isChecksummed()) {
         mIsChecksummed = true;
@@ -131,9 +134,13 @@ public final class PageWriter {
   }
 
   /**
-   * {@inheritDoc}
+   * Write page contained in page reference to storage.
+   * 
+   * @param pageReference Page reference to write.
+   * @throws RuntimeException due to errors during writing.
    */
-  public final void write(final PageReference pageReference) {
+  public final void write(
+      final PageReference<? extends AbstractPage> pageReference) {
 
     try {
 
