@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
+import org.treetank.utils.UTF;
 
 public class BeanUtilTest {
 
@@ -100,6 +101,32 @@ public class BeanUtilTest {
     TestCase.assertNotNull(bean);
     TestCase.assertEquals(null, bean.getByteArrayField());
     TestCase.assertEquals(null, bean.getStringField());
+    TestCase.assertEquals(expectedBeanKey, wtx.getNodeKey());
+
+    wtx.abort();
+    wtx.close();
+    session.close();
+
+  }
+
+  @Test
+  public void testSubelementBean() throws Exception {
+
+    final ISession session = Session.beginSession(PATH);
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+
+    // Write bean.
+    final TestBean expectedBean = new TestBean();
+    wtx.moveToDocumentRoot();
+    final long expectedBeanKey = BeanUtil.write(wtx, expectedBean);
+    wtx.insertElementAsFirstChild("subelement", "", "");
+    wtx.insertTextAsFirstChild(UTF.getBytes("hello, world"));
+
+    // Read bean.
+    wtx.moveTo(expectedBeanKey);
+    final TestBean bean = BeanUtil.read(wtx, TestBean.class);
+    TestCase.assertNotNull(bean);
+    TestCase.assertEquals(expectedBeanKey, bean.getIdField());
     TestCase.assertEquals(expectedBeanKey, wtx.getNodeKey());
 
     wtx.abort();
