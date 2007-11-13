@@ -53,7 +53,7 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
   private final Map<K, WeakReference<V>> mInternalMap;
 
   /** Reference queue for cleared WeakReference objects. */
-  private final ReferenceQueue mQueue;
+  private final ReferenceQueue<WeakValue<V>> mQueue;
 
   /**
    * Default constructor internally using 32 strong references.
@@ -61,7 +61,7 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
    */
   public FastWeakHashMap() {
     mInternalMap = new ConcurrentHashMap<K, WeakReference<V>>();
-    mQueue = new ReferenceQueue();
+    mQueue = new ReferenceQueue<WeakValue<V>>();
   }
 
   /**
@@ -134,7 +134,7 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
    */
   private final void processQueue() {
     WeakValue<V> weakValue;
-    while ((weakValue = (WeakValue<V>) mQueue.poll()) != null) {
+    while ((weakValue = mQueue.poll().get()) != null) {
       mInternalMap.remove(weakValue.key);
     }
   }
