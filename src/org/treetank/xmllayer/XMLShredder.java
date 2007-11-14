@@ -134,7 +134,6 @@ public final class XMLShredder {
 
       }
     }
-    wtx.commit();
     wtx.close();
     session.close();
     parser.close();
