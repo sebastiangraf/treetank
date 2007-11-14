@@ -410,16 +410,15 @@ public final class WriteTransaction extends ReadTransaction
    */
   @Override
   public final void close() {
+    if (!isClosed()) {
+      getTransactionState().close();
+      getSessionState().closeWriteTransaction();
+      setSessionState(null);
+      setTransactionState(null);
+      setCurrentNode(null);
 
-    assertNotClosed();
-
-    getTransactionState().close();
-    getSessionState().closeWriteTransaction();
-    setSessionState(null);
-    setTransactionState(null);
-    setCurrentNode(null);
-
-    setClosed();
+      setClosed();
+    }
   }
 
   /**

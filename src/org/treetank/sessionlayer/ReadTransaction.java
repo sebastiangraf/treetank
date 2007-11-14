@@ -494,20 +494,20 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public void close() {
-    assertNotClosed();
+    if (!mClosed) {
+      // Close own state.
+      mTransactionState.close();
 
-    // Close own state.
-    mTransactionState.close();
+      // Callback on session to make sure everything is cleaned up.
+      mSessionState.closeReadTransaction();
 
-    // Callback on session to make sure everything is cleaned up.
-    mSessionState.closeReadTransaction();
+      // Immediately release all references.
+      mSessionState = null;
+      mTransactionState = null;
+      mCurrentNode = null;
 
-    // Immediately release all references.
-    mSessionState = null;
-    mTransactionState = null;
-    mCurrentNode = null;
-
-    mClosed = true;
+      mClosed = true;
+    }
   }
 
   /**
@@ -556,6 +556,15 @@ public class ReadTransaction implements IReadTransaction {
    */
   protected final void setClosed() {
     mClosed = true;
+  }
+
+  /**
+   * Is the transaction closed?
+   * 
+   * @return True if the transaction was closed.
+   */
+  protected final boolean isClosed() {
+    return mClosed;
   }
 
   /**

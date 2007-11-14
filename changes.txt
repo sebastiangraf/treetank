@@ -21,6 +21,7 @@
  
 TreeTank 4.16
 -------------
++ Idempotent close operation. Multiple calls do no longer hurt.
 + Added ID annotation for beans.
 + BeanUtil now serializing fields as attributes.
 + Added namespace and attribute getters to IReadTransaction.

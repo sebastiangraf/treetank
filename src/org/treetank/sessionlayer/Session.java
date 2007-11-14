@@ -211,15 +211,16 @@ public final class Session implements ISession {
    * {@inheritDoc}
    */
   public final void close() {
-    assertNotClosed();
-    synchronized (SESSION_MAP) {
-      SESSION_MAP.remove(mSessionState
-          .getSessionConfiguration()
-          .getAbsolutePath());
+    if (!mClosed) {
+      synchronized (SESSION_MAP) {
+        SESSION_MAP.remove(mSessionState
+            .getSessionConfiguration()
+            .getAbsolutePath());
+      }
+      mSessionState.close();
+      mSessionState = null;
+      mClosed = true;
     }
-    mSessionState.close();
-    mSessionState = null;
-    mClosed = true;
   }
 
   /**
