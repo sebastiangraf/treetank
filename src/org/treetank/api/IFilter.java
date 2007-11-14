@@ -48,7 +48,7 @@ package org.treetank.api;
  * <li>Always call reset() before return false in hasNext().</li> 
  * </p>
  */
-public interface IAxisFilter {
+public interface IFilter {
 
   /**
    * Access transaction to which this axis is bound.

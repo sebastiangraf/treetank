@@ -21,11 +21,9 @@
 
 package org.treetank.axislayer;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.File;
-import java.io.IOException;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.api.IAxis;
@@ -34,10 +32,10 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
 
-public class FilterAxisTest {
+public class NestedAxisTest {
 
   public static final String PATH =
-      "generated" + File.separator + "FilterAxisTest.tnk";
+      "generated" + File.separator + "ChainedAxisTest.tnk";
 
   @Before
   public void setUp() {
@@ -45,7 +43,7 @@ public class FilterAxisTest {
   }
 
   @Test
-  public void testNameAxisTest() throws IOException {
+  public void testChainedAxisTest() {
 
     // Build simple test tree.
     final ISession session = Session.beginSession(PATH);
@@ -54,16 +52,24 @@ public class FilterAxisTest {
 
     // Find descendants starting from nodeKey 0L (root).
     wtx.moveToDocumentRoot();
-    final IAxis axis1 =
-        new FilterAxis(new DescendantAxis(wtx), new NameFilter(wtx
-            .keyForName("b")));
 
-    assertEquals(true, axis1.hasNext());
-    assertEquals(4L, axis1.next());
+    // XPath expression /a/b/text():
+    // Part: /a
+    final IAxis childA =
+        new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx.keyForName("a")));
+    // Part: /b
+    final IAxis childB =
+        new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx.keyForName("b")));
+    // Part: /text()
+    final IAxis text = new FilterAxis(new ChildAxis(wtx), new TextFilter());
+    // Part: /a/b/text():
+    final IAxis axis = new NestedAxis(new NestedAxis(childA, childB), text);
 
-    assertEquals(true, axis1.hasNext());
-    assertEquals(8L, axis1.next());
-    assertEquals(false, axis1.hasNext());
+    Assert.assertEquals(true, axis.hasNext());
+    Assert.assertEquals(5L, axis.next());
+    Assert.assertEquals(true, axis.hasNext());
+    Assert.assertEquals(10L, axis.next());
+    Assert.assertEquals(false, axis.hasNext());
 
     wtx.abort();
     wtx.close();
@@ -72,7 +78,7 @@ public class FilterAxisTest {
   }
 
   @Test
-  public void testValueAxisTest() throws IOException {
+  public void testChainedAxisTest2() {
 
     // Build simple test tree.
     final ISession session = Session.beginSession(PATH);
@@ -81,13 +87,25 @@ public class FilterAxisTest {
 
     // Find descendants starting from nodeKey 0L (root).
     wtx.moveToDocumentRoot();
-    final IAxis axis1 =
-        new FilterAxis(new DescendantAxis(wtx), new ValueFilter("foo"));
 
-    assertEquals(true, axis1.hasNext());
-    assertEquals(5L, axis1.next());
+    // XPath expression /a/b/@x:
+    // Part: /a
+    final IAxis childA =
+        new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx.keyForName("a")));
+    // Part: /b
+    final IAxis childB =
+        new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx.keyForName("b")));
+    // Part: /@x
+    final IAxis attributeX =
+        new FilterAxis(new AttributeAxis(wtx), new NameFilter(wtx
+            .keyForName("x")));
+    // Part: /a/b/@x:
+    final IAxis axis =
+        new NestedAxis(new NestedAxis(childA, childB), attributeX);
 
-    assertEquals(false, axis1.hasNext());
+    Assert.assertEquals(true, axis.hasNext());
+    Assert.assertEquals(8L, axis.next());
+    Assert.assertEquals(false, axis.hasNext());
 
     wtx.abort();
     wtx.close();

@@ -30,7 +30,7 @@
 
 package org.treetank.axislayer;
 
-import org.treetank.api.IAxisFilter;
+import org.treetank.api.IFilter;
 import org.treetank.api.IReadTransaction;
 
 /**
@@ -40,13 +40,13 @@ import org.treetank.api.IReadTransaction;
  * Only select nodes of kind FULLTEXT_LEAF.
  * </p>
  */
-public class TextAxisFilter implements IAxisFilter {
+public class FullTextLeafFilter implements IFilter {
 
   /**
    * {@inheritDoc}
    */
   public final boolean test(final IReadTransaction rtx) {
-    return rtx.isText();
+    return rtx.isFullTextLeaf();
   }
 
 }

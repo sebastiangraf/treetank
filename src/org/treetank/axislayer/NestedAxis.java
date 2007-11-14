@@ -30,23 +30,69 @@
 
 package org.treetank.axislayer;
 
-import org.treetank.api.IAxisFilter;
-import org.treetank.api.IReadTransaction;
+import org.treetank.api.IAxis;
 
 /**
- * <h1>NodeAxisTest</h1>
+ * <h1>ChainedAxis</h1>
  * 
  * <p>
- * Only match ELEMENT and TEXT nodes.
+ * Chains two axis operations.
  * </p>
  */
-public class NodeAxisFilter implements IAxisFilter {
+public class NestedAxis extends AbstractAxis {
+
+  /** Axis to test. */
+  private final IAxis mInnerAxis;
+
+  /** Test to apply to axis. */
+  private final IAxis mOuterAxis;
+
+  /**
+   * Constructor initializing internal state.
+   * 
+   * @param innerAxis Inner nested axis.
+   * @param outerAxis Outer nested axis.
+   */
+  public NestedAxis(final IAxis innerAxis, final IAxis outerAxis) {
+    super(innerAxis.getTransaction());
+    mInnerAxis = innerAxis;
+    mOuterAxis = outerAxis;
+  }
 
   /**
    * {@inheritDoc}
    */
-  public final boolean test(final IReadTransaction rtx) {
-    return (rtx.isElement() || rtx.isText());
+  @Override
+  public final void reset(final long nodeKey) {
+    super.reset(nodeKey);
+    if (mInnerAxis != null) {
+      mInnerAxis.reset(nodeKey);
+    }
+    if (mOuterAxis != null) {
+      mOuterAxis.reset(nodeKey);
+    }
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  public final boolean hasNext() {
+    resetToLastKey();
+
+    boolean hasNext = false;
+    while (!(hasNext = mOuterAxis.hasNext())) {
+      if (mInnerAxis.hasNext()) {
+        mOuterAxis.reset(mInnerAxis.next());
+      } else {
+        break;
+      }
+    }
+    if (hasNext) {
+      mOuterAxis.next();
+      return true;
+    }
+
+    resetToStartKey();
+    return false;
+  }
 }

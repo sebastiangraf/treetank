@@ -30,7 +30,8 @@ public class PostOrderTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
 
-    final IAxis axis = new PostOrderAxis(wtx, true);
+    wtx.moveToDocumentRoot();
+    final IAxis axis = new PostOrderAxis(wtx);
 
     assertEquals(true, axis.hasNext());
     assertEquals(3L, axis.next());

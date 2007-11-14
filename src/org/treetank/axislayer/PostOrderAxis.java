@@ -44,7 +44,7 @@ import org.treetank.utils.FastStack;
 public class PostOrderAxis extends AbstractAxis {
 
   /** For remembering last parent. */
-  private final FastStack<Long> mLastParent;
+  private FastStack<Long> mLastParent;
 
   /** The nodeKey of the next node to visit. */
   private long mNextKey;
@@ -54,34 +54,20 @@ public class PostOrderAxis extends AbstractAxis {
    * 
    * @param rtx
    *            Exclusive (immutable) trx to iterate with.
-   * @param startAtBeginning
-   *            Starting at the beginning of the tree and though just
-   *            traversing the whole tree..No, the root is not the start!
    */
-  public PostOrderAxis(
-      final IReadTransaction rtx,
-      final boolean startAtBeginning) {
+  public PostOrderAxis(final IReadTransaction rtx) {
     super(rtx);
-    mLastParent = new FastStack<Long>();
-    mLastParent.push(IConstants.NULL_KEY);
-    mNextKey = rtx.getNodeKey();
-    if (startAtBeginning) {
-      startAtBeginning();
-    }
-
   }
 
   /**
-   * Method to start at the beginning of the tree.
+   * {@inheritDoc}
    */
-  private final void startAtBeginning() {
-    getTransaction().moveToDocumentRoot();
-    while (getTransaction().hasFirstChild()) {
-      mLastParent.push(getTransaction().getNodeKey());
-      getTransaction().moveToFirstChild();
-
-      mNextKey = getTransaction().getNodeKey();
-    }
+  @Override
+  public final void reset(final long nodeKey) {
+    super.reset(nodeKey);
+    mLastParent = new FastStack<Long>();
+    mLastParent.push(IConstants.NULL_KEY);
+    mNextKey = nodeKey;
   }
 
   /**

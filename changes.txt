@@ -30,9 +30,11 @@
  
 TreeTank 4.17
 -------------
++ Added reset() to IAxis to allow for NestedAxis.
 + Moved to FreeBSD License.
-+ Replaced all axis classes performing tests to generic TestAxis combined
-  with IAxisTest.
++ Replaced all axis classes performing tests to generic FilterAxis combined
+  with IFilter.
++ Completely switched to unchecked exceptions.
  
 TreeTank 4.16
 -------------

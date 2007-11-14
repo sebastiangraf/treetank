@@ -51,6 +51,14 @@ public class SelfAxis extends AbstractAxis {
    */
   public SelfAxis(final IReadTransaction rtx) {
     super(rtx);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final void reset(final long nodeKey) {
+    super.reset(nodeKey);
     mFirst = true;
   }
 
