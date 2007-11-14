@@ -95,7 +95,8 @@ public final class PageReference<T extends AbstractPage> {
    * @param in Input bytes.
    */
   public PageReference(final FastByteArrayReader in) {
-    this(null, in.readVarLong(), in.readVarInt(), in.readVarLong());
+    //    this(null, in.readVarLong(), in.readVarInt(), in.readVarLong());
+    this(null, in.readLong(), in.readInt(), in.readLong());
   }
 
   /**
@@ -208,9 +209,12 @@ public final class PageReference<T extends AbstractPage> {
    * @param out Output bytes that get written to a file.
    */
   public final void serialize(final FastByteArrayWriter out) {
-    out.writeVarLong(mStart);
-    out.writeVarInt(mLength);
-    out.writeVarLong(mChecksum);
+    //    out.writeVarLong(mStart);
+    //    out.writeVarInt(mLength);
+    //    out.writeVarLong(mChecksum);
+    out.writeLong(mStart);
+    out.writeInt(mLength);
+    out.writeLong(mChecksum);
   }
 
   /**
