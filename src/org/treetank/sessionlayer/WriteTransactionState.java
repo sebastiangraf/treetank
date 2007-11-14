@@ -216,6 +216,7 @@ public final class WriteTransactionState extends ReadTransactionState {
 
   protected final UberPage commit(
       final SessionConfiguration sessionConfiguration) throws IOException {
+    
     final PageReference<UberPage> uberPageReference =
         new PageReference<UberPage>();
     final UberPage uberPage = getUberPage();
