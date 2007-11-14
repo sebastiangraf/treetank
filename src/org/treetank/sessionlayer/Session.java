@@ -127,10 +127,13 @@ public final class Session implements ISession {
     synchronized (SESSION_MAP) {
       ISession session = SESSION_MAP.get(path);
       if (session == null) {
-        new File(path).delete();
+        if (new File(path).exists() && !new File(path).delete()) {
+          throw new RuntimeException("Could not delete file '" + path + "'");
+        }
       } else {
-        throw new IllegalStateException("There already is a session bound to "
-            + path);
+        throw new IllegalStateException("There already is a session bound to '"
+            + path
+            + "'");
       }
     }
   }
