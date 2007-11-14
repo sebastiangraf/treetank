@@ -30,56 +30,23 @@
 
 package org.treetank.axislayer;
 
+import org.treetank.api.IAxisFilter;
 import org.treetank.api.IReadTransaction;
 
 /**
- * <h1>AttributeAxis</h1>
+ * <h1>FullTextLeafAxisTest</h1>
  * 
  * <p>
- * Iterate over all attibutes of a given node.
+ * Only select nodes of kind FULLTEXT_LEAF.
  * </p>
  */
-public class AttributeAxis extends AbstractAxis {
-
-  /** Remember next key to visit. */
-  private int mNextIndex;
-
-  /**
-   * Constructor initializing internal state.
-   * 
-   * @param rtx Exclusive (immutable) mTrx to iterate with.
-   */
-  public AttributeAxis(final IReadTransaction rtx) {
-    super(rtx);
-  }
+public class FullTextLeafAxisFilter implements IAxisFilter {
 
   /**
    * {@inheritDoc}
    */
-  @Override
-  public final void reset(final long nodeKey) {
-    super.reset(nodeKey);
-    mNextIndex = 0;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final boolean hasNext() {
-    resetToLastKey();
-
-    if (mNextIndex > 0) {
-      getTransaction().moveToParent();
-    }
-
-    if (mNextIndex < getTransaction().getAttributeCount()) {
-      getTransaction().moveToAttribute(mNextIndex);
-      mNextIndex += 1;
-      return true;
-    } else {
-      resetToStartKey();
-      return false;
-    }
+  public final boolean test(final IReadTransaction rtx) {
+    return rtx.isFullTextLeaf();
   }
 
 }

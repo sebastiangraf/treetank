@@ -34,10 +34,10 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
 
-public class TestAxisTest {
+public class FilterAxisTest {
 
   public static final String PATH =
-      "generated" + File.separator + "NameTestAxisTest.tnk";
+      "generated" + File.separator + "FilterAxisTest.tnk";
 
   @Before
   public void setUp() {
@@ -55,7 +55,7 @@ public class TestAxisTest {
     // Find descendants starting from nodeKey 0L (root).
     wtx.moveToDocumentRoot();
     final IAxis axis1 =
-        new TestAxis(new DescendantAxis(wtx), new NameAxisTest(wtx
+        new FilterAxis(new DescendantAxis(wtx), new NameAxisFilter(wtx
             .keyForName("b")));
 
     assertEquals(true, axis1.hasNext());
@@ -82,7 +82,7 @@ public class TestAxisTest {
     // Find descendants starting from nodeKey 0L (root).
     wtx.moveToDocumentRoot();
     final IAxis axis1 =
-        new TestAxis(new DescendantAxis(wtx), new ValueAxisTest("foo"));
+        new FilterAxis(new DescendantAxis(wtx), new ValueAxisFilter("foo"));
 
     assertEquals(true, axis1.hasNext());
     assertEquals(5L, axis1.next());

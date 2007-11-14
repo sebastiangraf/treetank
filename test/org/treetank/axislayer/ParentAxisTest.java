@@ -24,7 +24,6 @@ package org.treetank.axislayer;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -45,7 +44,7 @@ public class ParentAxisTest {
   }
 
   @Test
-  public void testIterate() throws IOException {
+  public void testIterate() {
 
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();

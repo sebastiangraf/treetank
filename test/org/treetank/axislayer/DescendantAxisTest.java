@@ -24,7 +24,6 @@ package org.treetank.axislayer;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -46,7 +45,7 @@ public class DescendantAxisTest {
   }
 
   @Test
-  public void testIterate() throws IOException {
+  public void testIterate() {
 
     // Build simple test tree.
     final ISession session = Session.beginSession(PATH);

@@ -45,7 +45,7 @@ import org.treetank.utils.FastStack;
 public class DescendantAxis extends AbstractAxis {
 
   /** Stack for remembering next nodeKey in document order. */
-  private final FastStack<Long> mRightSiblingKeyStack;
+  private FastStack<Long> mRightSiblingKeyStack;
 
   /** The nodeKey of the next node to visit. */
   private long mNextKey;
@@ -57,8 +57,16 @@ public class DescendantAxis extends AbstractAxis {
    */
   public DescendantAxis(final IReadTransaction rtx) {
     super(rtx);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final void reset(final long nodeKey) {
+    super.reset(nodeKey);
     mRightSiblingKeyStack = new FastStack<Long>();
-    mNextKey = rtx.getFirstChildKey();
+    mNextKey = getTransaction().getFirstChildKey();
   }
 
   /**

@@ -30,48 +30,23 @@
 
 package org.treetank.axislayer;
 
-import org.treetank.api.IAxis;
-import org.treetank.api.IAxisTest;
+import org.treetank.api.IAxisFilter;
+import org.treetank.api.IReadTransaction;
 
 /**
- * <h1>TestAxis</h1>
+ * <h1>NodeAxisTest</h1>
  * 
  * <p>
- * Perform a test on a given axis.
+ * Only match ELEMENT and TEXT nodes.
  * </p>
  */
-public class TestAxis extends AbstractAxis {
-
-  /** Axis to test. */
-  private final IAxis mAxis;
-
-  /** Test to apply to axis. */
-  private final IAxisTest mAxisTest;
-
-  /**
-   * Constructor initializing internal state.
-   * 
-   * @param axis Axis to iterate over.
-   * @param axisTest Test to perform for each node found with axis.
-   */
-  public TestAxis(final IAxis axis, final IAxisTest axisTest) {
-    super(axis.getTransaction());
-    mAxis = axis;
-    mAxisTest = axisTest;
-  }
+public class NodeAxisFilter implements IAxisFilter {
 
   /**
    * {@inheritDoc}
    */
-  public final boolean hasNext() {
-    resetToLastKey();
-    while (mAxis.hasNext()) {
-      mAxis.next();
-      if (mAxisTest.test(getTransaction())) {
-        return true;
-      }
-    }
-    resetToStartKey();
-    return false;
+  public final boolean test(final IReadTransaction rtx) {
+    return (rtx.isElement() || rtx.isText());
   }
+
 }

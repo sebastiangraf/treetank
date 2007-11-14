@@ -81,7 +81,7 @@ public class FullTextAxis extends AbstractAxis {
       innerAxis = new SelfAxis(rtx);
     }
 
-    mAxis = new TestAxis(innerAxis, new FullTextLeafAxisTest());
+    mAxis = new FilterAxis(innerAxis, new FullTextLeafAxisFilter());
 
   }
 

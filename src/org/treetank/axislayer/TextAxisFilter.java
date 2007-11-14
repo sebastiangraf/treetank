@@ -30,23 +30,23 @@
 
 package org.treetank.axislayer;
 
-import org.treetank.api.IAxisTest;
+import org.treetank.api.IAxisFilter;
 import org.treetank.api.IReadTransaction;
 
 /**
- * <h1>NodeAxisTest</h1>
+ * <h1>FullTextLeafAxisTest</h1>
  * 
  * <p>
- * Only match ELEMENT and TEXT nodes.
+ * Only select nodes of kind FULLTEXT_LEAF.
  * </p>
  */
-public class NodeAxisTest implements IAxisTest {
+public class TextAxisFilter implements IAxisFilter {
 
   /**
    * {@inheritDoc}
    */
   public final boolean test(final IReadTransaction rtx) {
-    return (rtx.isElement() || rtx.isText());
+    return rtx.isText();
   }
 
 }
