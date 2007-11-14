@@ -53,6 +53,13 @@ import java.util.Iterator;
 public interface IAxis extends Iterator<Long>, Iterable<Long> {
 
   /**
+   * Access super axis to which this axis is bound.
+   * 
+   * @return Axis to which this axis is bound.
+   */
+  public IAxis getAxis();
+
+  /**
    * Access transaction to which this axis is bound.
    * 
    * @return Transaction to which this axis is bound.

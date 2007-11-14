@@ -24,7 +24,6 @@ package org.treetank.axislayer;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -45,7 +44,7 @@ public class AttributeAxisTest {
   }
 
   @Test
-  public void testIterate() throws IOException {
+  public void testIterate() {
 
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -76,6 +75,28 @@ public class AttributeAxisTest {
     final IAxis axis5 = new AttributeAxis(wtx);
     assertEquals(false, axis5.hasNext());
     assertEquals(11L, wtx.getNodeKey());
+
+    wtx.abort();
+    wtx.close();
+    session.close();
+
+  }
+
+  @Test
+  public void testIterateWithNameTest() {
+
+    final ISession session = Session.beginSession(PATH);
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+    TestDocument.create(wtx);
+
+    wtx.moveTo(2L);
+    final IAxis axis1 = new NameTestAxis(new AttributeAxis(wtx), "i");
+    assertEquals(true, axis1.hasNext());
+    assertEquals(2L, axis1.next());
+    assertEquals(2L, wtx.getNodeKey());
+
+    assertEquals(false, axis1.hasNext());
+    assertEquals(2L, wtx.getNodeKey());
 
     wtx.abort();
     wtx.close();
