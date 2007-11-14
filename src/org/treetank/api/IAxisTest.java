@@ -28,41 +28,33 @@
  * $Id$
  */
 
-package org.treetank.axislayer;
-
-import org.treetank.api.IAxis;
+package org.treetank.api;
 
 /**
- * <h1>NodeTestAxis</h1>
+ * <h1>IAxis</h1>
  * 
  * <p>
- * Only select nodes of kind ELEMENT and TEXT.
+ * Interface to iterate over the TreeTank according to an iteration logic.
+ * All implementations must comply with the following:
+ * <li>next() must be called exactly once after hasNext() yields true.</li>
+ * <li>after hasNext() is false, the transaction points to the node where
+ *     it started</li>
+ * <li>before each hasNext(), the cursor is guaranteed to point to the last
+ *     node found with hasNext().</li>
+ * </p>
+ * <p>
+ * This behavior can be achieved by:
+ * <li>Always call super.hasNext() as the first thing in hasNext().</li>
+ * <li>Always call reset() before return false in hasNext().</li> 
  * </p>
  */
-public class NodeTestAxis extends AbstractAxis {
+public interface IAxisTest {
 
   /**
-   * Constructor initializing internal state.
+   * Access transaction to which this axis is bound.
    * 
-   * @param axis Axis to iterate over.
+   * @return Transaction to which this axis is bound.
    */
-  public NodeTestAxis(final IAxis axis) {
-    super(axis);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final boolean hasNext() {
-    resetToLastKey();
-    while (getAxis().hasNext()) {
-      getAxis().next();
-      if (getTransaction().isElement() || getTransaction().isText()) {
-        return true;
-      }
-    }
-    resetToStartKey();
-    return false;
-  }
+  public boolean test(final IReadTransaction rtx);
 
 }

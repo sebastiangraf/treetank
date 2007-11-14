@@ -28,35 +28,37 @@
  * $Id$
  */
 
-package org.treetank.api;
+package org.treetank.axislayer;
 
-import java.util.Iterator;
+import org.treetank.api.IAxisTest;
+import org.treetank.api.IReadTransaction;
 
 /**
- * <h1>IAxis</h1>
+ * <h1>NameAxisTest</h1>
  * 
  * <p>
- * Interface to iterate over the TreeTank according to an iteration logic.
- * All implementations must comply with the following:
- * <li>next() must be called exactly once after hasNext() yields true.</li>
- * <li>after hasNext() is false, the transaction points to the node where
- *     it started</li>
- * <li>before each hasNext(), the cursor is guaranteed to point to the last
- *     node found with hasNext().</li>
- * </p>
- * <p>
- * This behavior can be achieved by:
- * <li>Always call super.hasNext() as the first thing in hasNext().</li>
- * <li>Always call reset() before return false in hasNext().</li> 
+ * Match local part by key.
  * </p>
  */
-public interface IAxis extends Iterator<Long>, Iterable<Long> {
+public class NameAxisTest implements IAxisTest {
+
+  /** Key of name to test. */
+  private final int mLocalPartKey;
 
   /**
-   * Access transaction to which this axis is bound.
+   * Constructor.
    * 
-   * @return Transaction to which this axis is bound.
+   * @param localPartKey Local part key to test for.
    */
-  public IReadTransaction getTransaction();
+  public NameAxisTest(final int localPartKey) {
+    mLocalPartKey = localPartKey;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final boolean test(final IReadTransaction rtx) {
+    return (rtx.getLocalPartKey() == mLocalPartKey);
+  }
 
 }

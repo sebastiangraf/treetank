@@ -30,7 +30,9 @@
  
 TreeTank 4.17
 -------------
-+ Moved to New BSD License.
++ Moved to FreeBSD License.
++ Replaced all axis classes performing tests to generic TestAxis combined
+  with IAxisTest.
  
 TreeTank 4.16
 -------------
