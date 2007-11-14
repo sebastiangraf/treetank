@@ -35,6 +35,14 @@ public final class FastByteArrayReader {
     mBuffer = buffer;
     mPosition = 0;
   }
+  
+  public final boolean setOffset(int offset) {
+    if (offset < mBuffer.length) {
+      mPosition = offset;
+      return true;
+    }
+    return false;
+  }
 
   public final boolean readBoolean() {
     return (mBuffer[mPosition++] == 1 ? true : false);
