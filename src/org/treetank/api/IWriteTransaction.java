@@ -21,8 +21,6 @@
 
 package org.treetank.api;
 
-import java.io.IOException;
-
 /**
  * <h1>IWriteTransaction</h1>
  * 
@@ -221,12 +219,10 @@ public interface IWriteTransaction extends IReadTransaction {
   public void setValue(final byte[] value);
 
   /**
-   * Commit all modifications of the exclusive write transaction. Calling
-   * <code>close()</code> is semantically equivalent.
-   * 
-   * @throws IOException if commit to file failed.
+   * Commit all modifications of the exclusive write transaction. Even commit
+   * if there are no modification at all.
    */
-  public void commit() throws IOException;
+  public void commit();
 
   /**
    * Abort all modifications of the exclusive write transaction.

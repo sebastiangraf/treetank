@@ -334,5 +334,24 @@ public class SessionTest {
     session.close();
     session.close();
   }
+  
+  @Test
+  public void testAutoCommit() throws IOException {
+
+    final ISession session = Session.beginSession(TEST_EXISTING_PATH);
+
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+    TestDocument.create(wtx);
+    wtx.close();
+
+    final IReadTransaction rtx = session.beginReadTransaction();
+    assertEquals(12L, rtx.getRevisionSize());
+    assertEquals(true, rtx.isSelected());
+    assertEquals(IConstants.NULL_KEY, rtx.moveTo(12L));
+    assertEquals(false, rtx.isSelected());
+    rtx.close();
+
+    session.close();
+  }
 
 }

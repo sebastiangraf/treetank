@@ -162,6 +162,6 @@ public interface IConstants {
   //--- XML Layer --------------------------------------------------------------
 
   /** Commit threshold. */
-  public static final int COMMIT_TRESHOLD = 262144;
+  public static final int COMMIT_THRESHOLD = 262144;
 
 }

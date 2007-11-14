@@ -21,8 +21,6 @@
 
 package org.treetank.sessionlayer;
 
-import java.io.IOException;
-
 import org.treetank.api.IConstants;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.nodelayer.AbstractNode;
@@ -39,16 +37,22 @@ public final class WriteTransaction extends ReadTransaction
     implements
     IWriteTransaction {
 
+  /** True enabled auto commit. */
+  private final boolean mAutoCommit;
+
   /**
    * Constructor.
    * 
    * @param sessionState State of the session.
    * @param transactionState State of this transaction.
+   * @param autoCommit True enables auto commit.
    */
   protected WriteTransaction(
       final SessionState sessionState,
-      final WriteTransactionState transactionState) {
+      final WriteTransactionState transactionState,
+      final boolean autoCommit) {
     super(sessionState, transactionState);
+    mAutoCommit = autoCommit;
   }
 
   /**
@@ -411,6 +415,11 @@ public final class WriteTransaction extends ReadTransaction
   @Override
   public final void close() {
     if (!isClosed()) {
+      if (mAutoCommit
+          && ((WriteTransactionState) getTransactionState())
+              .getModificationCount() > 0) {
+        commit();
+      }
       getTransactionState().close();
       getSessionState().closeWriteTransaction();
       setSessionState(null);
@@ -424,7 +433,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final void commit() throws IOException {
+  public final synchronized void commit() {
 
     assertNotClosed();
 
@@ -436,6 +445,9 @@ public final class WriteTransaction extends ReadTransaction
     // Remember succesfully committed uber page in session state.
     getSessionState().setLastCommittedUberPage(uberPage);
 
+    // Reset modification counter.
+    ((WriteTransactionState) getTransactionState()).resetModificationCount();
+
     // Reset internal transaction state to new uber page.
     setTransactionState(getSessionState().getWriteTransactionState());
   }
@@ -443,12 +455,24 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final void abort() {
+  public final synchronized void abort() {
 
     assertNotClosed();
 
+    // Reset modification counter.
+    ((WriteTransactionState) getTransactionState()).resetModificationCount();
+
     // Reset internal transaction state to last committed uber page.
     setTransactionState(getSessionState().getWriteTransactionState());
+  }
+
+  private final void intermediateCommitIfRequired() {
+    if (mAutoCommit
+        && ((WriteTransactionState) getTransactionState())
+            .getModificationCount() > IConstants.COMMIT_THRESHOLD) {
+      commit();
+      ((WriteTransactionState) getTransactionState()).resetModificationCount();
+    }
   }
 
   private final AbstractNode prepareCurrentNode() {
@@ -463,6 +487,7 @@ public final class WriteTransaction extends ReadTransaction
   private final long insertFirstChild(final AbstractNode node) {
 
     assertNotClosedAndSelected();
+    intermediateCommitIfRequired();
 
     setCurrentNode(node);
 
@@ -475,6 +500,7 @@ public final class WriteTransaction extends ReadTransaction
   private final long insertRightSibling(final AbstractNode node) {
 
     assertNotClosedAndSelected();
+    intermediateCommitIfRequired();
 
     if (getCurrentNode().getNodeKey() == IConstants.DOCUMENT_ROOT_KEY) {
       throw new IllegalStateException("Root node can not have siblings.");

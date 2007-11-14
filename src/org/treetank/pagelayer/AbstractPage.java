@@ -21,8 +21,6 @@
 
 package org.treetank.pagelayer;
 
-import java.io.IOException;
-
 import org.treetank.sessionlayer.WriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
@@ -135,9 +133,8 @@ public abstract class AbstractPage {
    * Recursively call commit on all referenced pages.
    * 
    * @param state IWriteTransaction state.
-   * @throws IOException occurring during commit operation.
    */
-  public void commit(final WriteTransactionState state) throws IOException {
+  public void commit(final WriteTransactionState state) {
     for (final PageReference<? extends AbstractPage> reference : mReferences) {
       state.commit(reference);
     }
