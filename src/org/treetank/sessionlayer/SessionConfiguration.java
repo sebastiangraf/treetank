@@ -107,7 +107,7 @@ public final class SessionConfiguration {
     RandomAccessFile tnk = null;
     try {
 
-      tnk = new RandomAccessFile(path, "rw");
+      tnk = new RandomAccessFile(path, IConstants.READ_WRITE);
 
       if (tnk.length() > 0L) {
         tnk.seek(0L);
@@ -115,7 +115,6 @@ public final class SessionConfiguration {
         mVersionMinor = tnk.readInt();
         final boolean isChecksummed = tnk.readBoolean();
         final boolean isEncrypted = tnk.readBoolean();
-        tnk.close();
 
         // Fail if an old TreeTank file is encountered.
         if (mVersionMajor < IConstants.LAST_VERSION_MAJOR
