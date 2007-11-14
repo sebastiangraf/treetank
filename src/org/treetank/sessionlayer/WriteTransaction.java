@@ -58,7 +58,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final long index(final String token, final long nodeKey) {
+  public final synchronized long index(final String token, final long nodeKey) {
 
     // Make sure we always operate from the full text root node.
     moveToFullTextRoot();
@@ -103,7 +103,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final long insertElementAsFirstChild(
+  public final synchronized long insertElementAsFirstChild(
       final String localPart,
       final String uri,
       final String prefix) {
@@ -123,7 +123,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final long insertTextAsFirstChild(final byte[] value) {
+  public final synchronized long insertTextAsFirstChild(final byte[] value) {
     return insertFirstChild(((WriteTransactionState) getTransactionState())
         .createTextNode(
             getCurrentNode().getNodeKey(),
@@ -135,7 +135,8 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final long insertFullTextAsFirstChild(final int localPartKey) {
+  public final synchronized long insertFullTextAsFirstChild(
+      final int localPartKey) {
     return insertFirstChild(((WriteTransactionState) getTransactionState())
         .createFullTextNode(
             getCurrentNode().getNodeKey(),
@@ -148,7 +149,8 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final long insertFullTextLeafAsFirstChild(final long firstChildKey) {
+  public final synchronized long insertFullTextLeafAsFirstChild(
+      final long firstChildKey) {
     return insertFirstChild(((WriteTransactionState) getTransactionState())
         .createFullTextLeafNode(
             getCurrentNode().getNodeKey(),
@@ -160,7 +162,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final long insertElementAsRightSibling(
+  public final synchronized long insertElementAsRightSibling(
       final String localPart,
       final String uri,
       final String prefix) {
@@ -180,7 +182,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final long insertTextAsRightSibling(final byte[] value) {
+  public final synchronized long insertTextAsRightSibling(final byte[] value) {
     return insertRightSibling(((WriteTransactionState) getTransactionState())
         .createTextNode(getCurrentNode().getParentKey(), getCurrentNode()
             .getNodeKey(), getCurrentNode().getRightSiblingKey(), value));
@@ -189,7 +191,8 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final long insertFullTextAsRightSibling(final int localPartKey) {
+  public final synchronized long insertFullTextAsRightSibling(
+      final int localPartKey) {
     return insertRightSibling(((WriteTransactionState) getTransactionState())
         .createFullTextNode(
             getCurrentNode().getParentKey(),
@@ -202,7 +205,8 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final long insertFullTextLeafAsRightSibling(final long firstChildKey) {
+  public final synchronized long insertFullTextLeafAsRightSibling(
+      final long firstChildKey) {
     return insertRightSibling(((WriteTransactionState) getTransactionState())
         .createFullTextLeafNode(
             getCurrentNode().getParentKey(),
@@ -214,7 +218,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final void insertAttribute(
+  public final synchronized void insertAttribute(
       final String localPart,
       final String uri,
       final String prefix,
@@ -233,7 +237,9 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final void insertNamespace(final String uri, final String prefix) {
+  public final synchronized void insertNamespace(
+      final String uri,
+      final String prefix) {
 
     assertNotClosedAndSelected();
 
@@ -245,7 +251,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final void remove() {
+  public final synchronized void remove() {
 
     assertNotClosedAndSelected();
 
@@ -331,7 +337,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final void setAttribute(
+  public final synchronized void setAttribute(
       final int index,
       final String localPart,
       final String uri,
@@ -352,7 +358,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final void setNamespace(
+  public final synchronized void setNamespace(
       final int index,
       final String uri,
       final String prefix) {
@@ -368,7 +374,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final void setLocalPart(final String localPart) {
+  public final synchronized void setLocalPart(final String localPart) {
 
     assertNotClosedAndSelected();
 
@@ -380,7 +386,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final void setURI(final String uri) {
+  public final synchronized void setURI(final String uri) {
 
     assertNotClosedAndSelected();
 
@@ -391,7 +397,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public void setPrefix(final String prefix) {
+  public final synchronized void setPrefix(final String prefix) {
 
     assertNotClosedAndSelected();
 
@@ -402,7 +408,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final void setValue(final byte[] value) {
+  public final synchronized void setValue(final byte[] value) {
 
     assertNotClosedAndSelected();
 
@@ -413,7 +419,7 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   @Override
-  public final void close() {
+  public final synchronized void close() {
     if (!isClosed()) {
       if (mAutoCommit
           && ((WriteTransactionState) getTransactionState())

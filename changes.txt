@@ -21,6 +21,7 @@
  
 TreeTank 4.16
 -------------
++ WriteTransaction now threadsafe by enforcing single-writer contract.
 + Auto commit now default. User must no longer call commit. Auto commit
   commits after the modification of some nodes as well as before
   IWriteTransaction.close().
