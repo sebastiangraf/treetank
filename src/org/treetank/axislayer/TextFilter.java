@@ -30,35 +30,23 @@
 
 package org.treetank.axislayer;
 
-import org.treetank.api.IAxisFilter;
+import org.treetank.api.IFilter;
 import org.treetank.api.IReadTransaction;
 
 /**
- * <h1>NameAxisTest</h1>
+ * <h1>FullTextLeafAxisTest</h1>
  * 
  * <p>
- * Match local part by key.
+ * Only select nodes of kind FULLTEXT_LEAF.
  * </p>
  */
-public class NameAxisFilter implements IAxisFilter {
-
-  /** Key of name to test. */
-  private final int mLocalPartKey;
-
-  /**
-   * Constructor.
-   * 
-   * @param localPartKey Local part key to test for.
-   */
-  public NameAxisFilter(final int localPartKey) {
-    mLocalPartKey = localPartKey;
-  }
+public class TextFilter implements IFilter {
 
   /**
    * {@inheritDoc}
    */
   public final boolean test(final IReadTransaction rtx) {
-    return (rtx.getLocalPartKey() == mLocalPartKey);
+    return rtx.isText();
   }
 
 }

@@ -30,59 +30,63 @@
 
 package org.treetank.axislayer;
 
-import org.treetank.api.IAxis;
 import org.treetank.api.IFilter;
+import org.treetank.api.IReadTransaction;
+import org.treetank.utils.UTF;
 
 /**
- * <h1>TestAxis</h1>
+ * <h1>ValueAxisTest</h1>
  * 
  * <p>
- * Perform a test on a given axis.
+ * Only match nodes of kind TEXT whoms value matches.
  * </p>
  */
-public class FilterAxis extends AbstractAxis {
+public class ValueFilter implements IFilter {
 
-  /** Axis to test. */
-  private final IAxis mAxis;
-
-  /** Test to apply to axis. */
-  private final IFilter mAxisTest;
+  /** Value test to do. */
+  private final byte[] mValue;
 
   /**
    * Constructor initializing internal state.
    * 
-   * @param axis Axis to iterate over.
-   * @param axisTest Test to perform for each node found with axis.
+   * @param value Value to find.
    */
-  public FilterAxis(final IAxis axis, final IFilter axisTest) {
-    super(axis.getTransaction());
-    mAxis = axis;
-    mAxisTest = axisTest;
+  public ValueFilter(final byte[] value) {
+    mValue = value;
+  }
+
+  /**
+   * Constructor initializing internal state.
+   * 
+   * @param value Value to find.
+   */
+  public ValueFilter(final String value) {
+    this(UTF.getBytes(value));
+  }
+
+  /**
+   * Constructor initializing internal state.
+   * 
+   * @param value Value to find.
+   */
+  public ValueFilter(final int value) {
+    this(UTF.getBytes(value));
+  }
+
+  /**
+   * Constructor initializing internal state.
+   * 
+   * @param value Value to find.
+   */
+  public ValueFilter(final long value) {
+    this(UTF.getBytes(value));
   }
 
   /**
    * {@inheritDoc}
    */
-  @Override
-  public final void reset(final long nodeKey) {
-    super.reset(nodeKey);
-    if (mAxis != null) {
-      mAxis.reset(nodeKey);
-    }
+  public final boolean test(final IReadTransaction rtx) {
+    return (rtx.isText() && (UTF.equals(rtx.getValue(), mValue)));
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  public final boolean hasNext() {
-    resetToLastKey();
-    while (mAxis.hasNext()) {
-      mAxis.next();
-      if (mAxisTest.test(getTransaction())) {
-        return true;
-      }
-    }
-    resetToStartKey();
-    return false;
-  }
 }

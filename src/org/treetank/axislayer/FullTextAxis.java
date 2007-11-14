@@ -81,8 +81,19 @@ public class FullTextAxis extends AbstractAxis {
       innerAxis = new SelfAxis(rtx);
     }
 
-    mAxis = new FilterAxis(innerAxis, new FullTextLeafAxisFilter());
+    mAxis = new FilterAxis(innerAxis, new FullTextLeafFilter());
 
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final void reset(final long nodeKey) {
+    super.reset(nodeKey);
+    if (mAxis != null) {
+      mAxis.reset(nodeKey);
+    }
   }
 
   /**
