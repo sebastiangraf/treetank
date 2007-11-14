@@ -69,15 +69,6 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
     mURIList = new ArrayList<String>();
   }
 
-  @Override
-  public void endDocument() throws SAXException {
-    try {
-      mWTX.commit();
-    } catch (final Exception e) {
-      throw new SAXException(e);
-    }
-  }
-
   /**
    * {@inheritDoc}
    */
