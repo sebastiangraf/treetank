@@ -30,77 +30,63 @@
 
 package org.treetank.axislayer;
 
-import org.treetank.api.IAxis;
+import org.treetank.api.IAxisTest;
+import org.treetank.api.IReadTransaction;
 import org.treetank.utils.UTF;
 
 /**
- * <h1>ValueTestAxis</h1>
+ * <h1>ValueAxisTest</h1>
  * 
  * <p>
- * Iterate over all children of kind ATTRIBUTE starting at a given
- * node.
+ * Only match nodes of kind TEXT whoms value matches.
  * </p>
  */
-public class ValueTestAxis extends AbstractAxis {
+public class ValueAxisTest implements IAxisTest {
 
-  /** Name test to do. */
+  /** Value test to do. */
   private final byte[] mValue;
 
   /**
    * Constructor initializing internal state.
    * 
-   * @param axis Axis iterator over which we should find values.
    * @param value Value to find.
    */
-  public ValueTestAxis(final IAxis axis, final byte[] value) {
-    super(axis);
+  public ValueAxisTest(final byte[] value) {
     mValue = value;
   }
 
   /**
    * Constructor initializing internal state.
    * 
-   * @param axis Axis iterator over which we should find values.
    * @param value Value to find.
    */
-  public ValueTestAxis(final AbstractAxis axis, final String value) {
-    this(axis, UTF.getBytes(value));
+  public ValueAxisTest(final String value) {
+    this(UTF.getBytes(value));
   }
 
   /**
    * Constructor initializing internal state.
    * 
-   * @param axis Axis iterator over which we should find values.
    * @param value Value to find.
    */
-  public ValueTestAxis(final AbstractAxis axis, final int value) {
-    this(axis, UTF.getBytes(value));
+  public ValueAxisTest(final int value) {
+    this(UTF.getBytes(value));
   }
 
   /**
    * Constructor initializing internal state.
    * 
-   * @param axis Axis iterator over which we should find values.
    * @param value Value to find.
    */
-  public ValueTestAxis(final AbstractAxis axis, final long value) {
-    this(axis, UTF.getBytes(value));
+  public ValueAxisTest(final long value) {
+    this(UTF.getBytes(value));
   }
 
   /**
    * {@inheritDoc}
    */
-  public final boolean hasNext() {
-    resetToLastKey();
-    while (getAxis().hasNext()) {
-      getAxis().next();
-      if (getTransaction().isText()
-          && (UTF.equals(getTransaction().getValue(), mValue))) {
-        return true;
-      }
-    }
-    resetToStartKey();
-    return false;
+  public final boolean test(final IReadTransaction rtx) {
+    return (rtx.isText() && (UTF.equals(rtx.getValue(), mValue)));
   }
 
 }

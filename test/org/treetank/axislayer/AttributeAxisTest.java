@@ -82,26 +82,4 @@ public class AttributeAxisTest {
 
   }
 
-  @Test
-  public void testIterateWithNameTest() {
-
-    final ISession session = Session.beginSession(PATH);
-    final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
-
-    wtx.moveTo(2L);
-    final IAxis axis1 = new NameTestAxis(new AttributeAxis(wtx), "i");
-    assertEquals(true, axis1.hasNext());
-    assertEquals(2L, axis1.next());
-    assertEquals(2L, wtx.getNodeKey());
-
-    assertEquals(false, axis1.hasNext());
-    assertEquals(2L, wtx.getNodeKey());
-
-    wtx.abort();
-    wtx.close();
-    session.close();
-
-  }
-
 }

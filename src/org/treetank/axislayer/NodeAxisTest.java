@@ -30,46 +30,23 @@
 
 package org.treetank.axislayer;
 
-import org.treetank.api.IAxis;
+import org.treetank.api.IAxisTest;
+import org.treetank.api.IReadTransaction;
 
 /**
- * <h1>NameTestAxis</h1>
+ * <h1>NodeAxisTest</h1>
  * 
  * <p>
- * Find all ELEMENTS provided by some axis iterator that match a given name.
- * Note that this is efficiently done with a single String and multiple integer
- * comparisons.
+ * Only match ELEMENT and TEXT nodes.
  * </p>
  */
-public class NameTestAxis extends AbstractAxis {
-
-  /** Name test to do. */
-  private final int mNameKey;
-
-  /**
-   * Constructor initializing internal state.
-   * 
-   * @param axis Axis iterator providing ELEMENTS.
-   * @param name Name ELEMENTS must match to.
-   */
-  public NameTestAxis(final IAxis axis, final String name) {
-    super(axis);
-    mNameKey = getTransaction().keyForName(name);
-  }
+public class NodeAxisTest implements IAxisTest {
 
   /**
    * {@inheritDoc}
    */
-  public final boolean hasNext() {
-    resetToLastKey();
-    while (getAxis().hasNext()) {
-      getAxis().next();
-      if (getTransaction().getLocalPartKey() == mNameKey) {
-        return true;
-      }
-    }
-    resetToStartKey();
-    return false;
+  public final boolean test(final IReadTransaction rtx) {
+    return (rtx.isElement() || rtx.isText());
   }
 
 }

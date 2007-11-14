@@ -25,44 +25,28 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
- * $Id$
+ * $Id: FullTextLeafTestAxis.java 3499 2007-11-14 18:12:10Z kramis $
  */
 
 package org.treetank.axislayer;
 
-import org.treetank.api.IAxis;
+import org.treetank.api.IAxisTest;
+import org.treetank.api.IReadTransaction;
 
 /**
- * <h1>FullTextLeafTestAxis</h1>
+ * <h1>FullTextLeafAxisTest</h1>
  * 
  * <p>
  * Only select nodes of kind FULLTEXT_LEAF.
  * </p>
  */
-public class FullTextLeafTestAxis extends AbstractAxis {
-
-  /**
-   * Constructor initializing internal state.
-   * 
-   * @param axis Axis to iterate over.
-   */
-  public FullTextLeafTestAxis(final IAxis axis) {
-    super(axis);
-  }
+public class FullTextLeafAxisTest implements IAxisTest {
 
   /**
    * {@inheritDoc}
    */
-  public final boolean hasNext() {
-    resetToLastKey();
-    while (getAxis().hasNext()) {
-      getAxis().next();
-      if (getTransaction().isFullTextLeaf()) {
-        return true;
-      }
-    }
-    resetToStartKey();
-    return false;
+  public final boolean test(final IReadTransaction rtx) {
+    return rtx.isFullTextLeaf();
   }
 
 }

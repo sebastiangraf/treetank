@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
- * $Id: NameTestAxisTest.java 3317 2007-10-29 12:45:25Z kramis $
+ * $Id$
  */
 
 package org.treetank.axislayer;
@@ -34,10 +34,10 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
 
-public class ValueTestAxisTest {
+public class TestAxisTest {
 
   public static final String PATH =
-      "generated" + File.separator + "ValueTestAxisTest.tnk";
+      "generated" + File.separator + "NameTestAxisTest.tnk";
 
   @Before
   public void setUp() {
@@ -45,7 +45,7 @@ public class ValueTestAxisTest {
   }
 
   @Test
-  public void testIterate() throws IOException {
+  public void testNameAxisTest() throws IOException {
 
     // Build simple test tree.
     final ISession session = Session.beginSession(PATH);
@@ -54,7 +54,35 @@ public class ValueTestAxisTest {
 
     // Find descendants starting from nodeKey 0L (root).
     wtx.moveToDocumentRoot();
-    final IAxis axis1 = new ValueTestAxis(new DescendantAxis(wtx), "foo");
+    final IAxis axis1 =
+        new TestAxis(new DescendantAxis(wtx), new NameAxisTest(wtx
+            .keyForName("b")));
+
+    assertEquals(true, axis1.hasNext());
+    assertEquals(4L, axis1.next());
+
+    assertEquals(true, axis1.hasNext());
+    assertEquals(8L, axis1.next());
+    assertEquals(false, axis1.hasNext());
+
+    wtx.abort();
+    wtx.close();
+    session.close();
+
+  }
+
+  @Test
+  public void testValueAxisTest() throws IOException {
+
+    // Build simple test tree.
+    final ISession session = Session.beginSession(PATH);
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+    TestDocument.create(wtx);
+
+    // Find descendants starting from nodeKey 0L (root).
+    wtx.moveToDocumentRoot();
+    final IAxis axis1 =
+        new TestAxis(new DescendantAxis(wtx), new ValueAxisTest("foo"));
 
     assertEquals(true, axis1.hasNext());
     assertEquals(5L, axis1.next());
