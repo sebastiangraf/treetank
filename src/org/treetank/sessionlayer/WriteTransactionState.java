@@ -219,42 +219,56 @@ public final class WriteTransactionState extends ReadTransactionState {
     final PageReference<UberPage> uberPageReference =
         new PageReference<UberPage>();
     final UberPage uberPage = getUberPage();
-    final RandomAccessFile file =
-        new RandomAccessFile(
-            sessionConfiguration.getAbsolutePath(),
-            IConstants.READ_WRITE);
 
-    if (uberPage.isBootstrap()) {
-      file.setLength(IConstants.BEACON_START + IConstants.BEACON_LENGTH);
-      file.writeInt(getSessionConfiguration().getVersionMajor());
-      file.writeInt(getSessionConfiguration().getVersionMinor());
-      file.writeBoolean(getSessionConfiguration().isChecksummed());
-      file.writeBoolean(getSessionConfiguration().isEncrypted());
+    RandomAccessFile file = null;
+
+    try {
+      file =
+          new RandomAccessFile(
+              sessionConfiguration.getAbsolutePath(),
+              IConstants.READ_WRITE);
+
+      if (uberPage.isBootstrap()) {
+        file.setLength(IConstants.BEACON_START + IConstants.BEACON_LENGTH);
+        file.writeInt(getSessionConfiguration().getVersionMajor());
+        file.writeInt(getSessionConfiguration().getVersionMinor());
+        file.writeBoolean(getSessionConfiguration().isChecksummed());
+        file.writeBoolean(getSessionConfiguration().isEncrypted());
+      }
+
+      // Recursively write indirectely referenced pages.
+      uberPage.commit(this);
+
+      uberPageReference.setPage(uberPage);
+      mPageWriter.write(uberPageReference);
+      getPageCache().put(
+          uberPageReference.getStart(),
+          uberPageReference.getPage());
+      uberPageReference.setPage(null);
+
+      // Write secondary beacon.
+      file.seek(file.length());
+      file.writeLong(uberPageReference.getStart());
+      file.writeInt(uberPageReference.getLength());
+      file.writeLong(uberPageReference.getChecksum());
+
+      // Write primary beacon.
+      file.seek(IConstants.BEACON_START);
+      file.writeLong(uberPageReference.getStart());
+      file.writeInt(uberPageReference.getLength());
+      file.writeLong(uberPageReference.getChecksum());
+
+    } catch (IOException e) {
+      throw e;
+    } finally {
+      if (file != null) {
+        try {
+          file.close();
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+      }
     }
-
-    // Recursively write indirectely referenced pages.
-    uberPage.commit(this);
-
-    uberPageReference.setPage(uberPage);
-    mPageWriter.write(uberPageReference);
-    getPageCache().put(
-        uberPageReference.getStart(),
-        uberPageReference.getPage());
-    uberPageReference.setPage(null);
-
-    // Write secondary beacon.
-    file.seek(file.length());
-    file.writeLong(uberPageReference.getStart());
-    file.writeInt(uberPageReference.getLength());
-    file.writeLong(uberPageReference.getChecksum());
-
-    // Write primary beacon.
-    file.seek(IConstants.BEACON_START);
-    file.writeLong(uberPageReference.getStart());
-    file.writeInt(uberPageReference.getLength());
-    file.writeLong(uberPageReference.getChecksum());
-
-    file.close();
 
     return uberPage;
   }

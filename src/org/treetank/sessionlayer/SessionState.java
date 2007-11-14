@@ -89,71 +89,84 @@ public final class SessionState {
       throws IOException {
 
     mSessionConfiguration = sessionConfiguration;
+    RandomAccessFile file = null;
 
-    // Make sure that the TreeTank file exists.
-    new File(mSessionConfiguration.getAbsolutePath()).createNewFile();
+    try {
 
-    // Init session members.
-    mPageCache = new FastWeakHashMap<Long, AbstractPage>();
-    mWriteSemaphore = new Semaphore(IConstants.MAX_WRITE_TRANSACTIONS);
-    mReadSemaphore = new Semaphore(IConstants.MAX_READ_TRANSACTIONS);
-    final PageReference<UberPage> uberPageReference =
-        new PageReference<UberPage>();
-    final PageReference<UberPage> secondaryUberPageReference =
-        new PageReference<UberPage>();
-    final RandomAccessFile file =
-        new RandomAccessFile(
-            mSessionConfiguration.getAbsolutePath(),
-            IConstants.READ_WRITE);
+      // Make sure that the TreeTank file exists.
+      new File(mSessionConfiguration.getAbsolutePath()).createNewFile();
 
-    if (file.length() == 0L) {
-      // Bootstrap uber page and make sure there already is a root node.
-      mLastCommittedUberPage = new UberPage();
-      uberPageReference.setPage(mLastCommittedUberPage);
-    } else {
+      // Init session members.
+      mPageCache = new FastWeakHashMap<Long, AbstractPage>();
+      mWriteSemaphore = new Semaphore(IConstants.MAX_WRITE_TRANSACTIONS);
+      mReadSemaphore = new Semaphore(IConstants.MAX_READ_TRANSACTIONS);
+      final PageReference<UberPage> uberPageReference =
+          new PageReference<UberPage>();
+      final PageReference<UberPage> secondaryUberPageReference =
+          new PageReference<UberPage>();
 
-      // Read primary beacon.
-      file.seek(IConstants.BEACON_START);
-      uberPageReference.setStart(file.readLong());
-      uberPageReference.setLength(file.readInt());
-      uberPageReference.setChecksum(file.readLong());
+      file =
+          new RandomAccessFile(
+              mSessionConfiguration.getAbsolutePath(),
+              IConstants.READ_WRITE);
 
-      // Read secondary beacon.
-      file.seek(file.length() - IConstants.BEACON_LENGTH);
-      secondaryUberPageReference.setStart(file.readLong());
-      secondaryUberPageReference.setLength(file.readInt());
-      secondaryUberPageReference.setChecksum(file.readLong());
-
-      // Beacon logic case 1.
-      if (uberPageReference.equals(secondaryUberPageReference)) {
-
-        final FastByteArrayReader in =
-            new PageReader(mSessionConfiguration).read(uberPageReference);
-        mLastCommittedUberPage = new UberPage(in);
-
-        // Beacon logic case 2.
+      if (file.length() == 0L) {
+        // Bootstrap uber page and make sure there already is a root node.
+        mLastCommittedUberPage = new UberPage();
+        uberPageReference.setPage(mLastCommittedUberPage);
       } else {
-        file.close();
-        // TODO implement cases 2i, 2ii, and 2iii to be more robust!
-        throw new IllegalStateException(
-            "Inconsistent TreeTank file encountered. Primary start="
-                + uberPageReference.getStart()
-                + " size="
-                + uberPageReference.getLength()
-                + " checksum="
-                + uberPageReference.getChecksum()
-                + " secondary start="
-                + secondaryUberPageReference.getStart()
-                + " size="
-                + secondaryUberPageReference.getLength()
-                + " checksum="
-                + secondaryUberPageReference.getChecksum());
+
+        // Read primary beacon.
+        file.seek(IConstants.BEACON_START);
+        uberPageReference.setStart(file.readLong());
+        uberPageReference.setLength(file.readInt());
+        uberPageReference.setChecksum(file.readLong());
+
+        // Read secondary beacon.
+        file.seek(file.length() - IConstants.BEACON_LENGTH);
+        secondaryUberPageReference.setStart(file.readLong());
+        secondaryUberPageReference.setLength(file.readInt());
+        secondaryUberPageReference.setChecksum(file.readLong());
+
+        // Beacon logic case 1.
+        if (uberPageReference.equals(secondaryUberPageReference)) {
+
+          final FastByteArrayReader in =
+              new PageReader(mSessionConfiguration).read(uberPageReference);
+          mLastCommittedUberPage = new UberPage(in);
+
+          // Beacon logic case 2.
+        } else {
+          // TODO implement cases 2i, 2ii, and 2iii to be more robust!
+          throw new IllegalStateException(
+              "Inconsistent TreeTank file encountered. Primary start="
+                  + uberPageReference.getStart()
+                  + " size="
+                  + uberPageReference.getLength()
+                  + " checksum="
+                  + uberPageReference.getChecksum()
+                  + " secondary start="
+                  + secondaryUberPageReference.getStart()
+                  + " size="
+                  + secondaryUberPageReference.getLength()
+                  + " checksum="
+                  + secondaryUberPageReference.getChecksum());
+
+        }
 
       }
 
+    } catch (IOException e) {
+      throw e;
+    } finally {
+      if (file != null) {
+        try {
+          file.close();
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+      }
     }
-
-    file.close();
   }
 
   protected final IReadTransaction beginReadTransaction() {
