@@ -21,6 +21,7 @@
  
 TreeTank 4.16
 -------------
++ Fixed bug only visible under Windows because one file was not closed.
 + Idempotent close operation. Multiple calls do no longer hurt.
 + Added ID annotation for beans.
 + BeanUtil now serializing fields as attributes.

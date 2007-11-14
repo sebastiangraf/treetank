@@ -22,8 +22,8 @@
 package org.treetank.pagelayer;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.logging.Logger;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 import java.util.zip.Inflater;
@@ -44,13 +44,6 @@ import org.treetank.utils.FastByteArrayReader;
  * </p>
  */
 public final class PageReader {
-
-  /** Logger. */
-  private static final Logger LOGGER =
-      Logger.getLogger(PageReader.class.getName());
-
-  /** Read-only mode for random access mFile. */
-  private static final String READ_ONLY = "r";
 
   /** Size of temporary buffer. */
   private static final int BUFFER_SIZE = 8192;
@@ -95,7 +88,7 @@ public final class PageReader {
       mFile =
           new RandomAccessFile(
               sessionConfiguration.getAbsolutePath(),
-              READ_ONLY);
+              IConstants.READ_ONLY);
 
       if (sessionConfiguration.isChecksummed()) {
         mIsChecksummed = true;
@@ -201,8 +194,8 @@ public final class PageReader {
   public final void close() {
     try {
       mFile.close();
-    } catch (Exception e) {
-      LOGGER.warning("Could not close file: " + e.getLocalizedMessage());
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
   }
 

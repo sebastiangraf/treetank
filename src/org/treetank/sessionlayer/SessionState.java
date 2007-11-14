@@ -97,10 +97,14 @@ public final class SessionState {
     mPageCache = new FastWeakHashMap<Long, AbstractPage>();
     mWriteSemaphore = new Semaphore(IConstants.MAX_WRITE_TRANSACTIONS);
     mReadSemaphore = new Semaphore(IConstants.MAX_READ_TRANSACTIONS);
-    final PageReference uberPageReference = new PageReference();
-    PageReference secondaryUberPageReference = new PageReference();
+    final PageReference<UberPage> uberPageReference =
+        new PageReference<UberPage>();
+    final PageReference<UberPage> secondaryUberPageReference =
+        new PageReference<UberPage>();
     final RandomAccessFile file =
-        new RandomAccessFile(mSessionConfiguration.getAbsolutePath(), "rw");
+        new RandomAccessFile(
+            mSessionConfiguration.getAbsolutePath(),
+            IConstants.READ_WRITE);
 
     if (file.length() == 0L) {
       // Bootstrap uber page and make sure there already is a root node.
@@ -129,7 +133,7 @@ public final class SessionState {
 
         // Beacon logic case 2.
       } else {
-
+        file.close();
         // TODO implement cases 2i, 2ii, and 2iii to be more robust!
         throw new IllegalStateException(
             "Inconsistent TreeTank file encountered. Primary start="
