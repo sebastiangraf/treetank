@@ -189,7 +189,8 @@ public final class WriteTransactionState extends ReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public final void commit(final PageReference reference) throws IOException {
+  public final void commit(final PageReference<? extends AbstractPage> reference)
+      throws IOException {
     if (reference != null && reference.isInstantiated() && reference.isDirty()) {
 
       // Recursively commit indirectely referenced pages and then write self.
@@ -205,7 +206,8 @@ public final class WriteTransactionState extends ReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  protected final void commit(final PageReference[] references)
+  protected final void commit(
+      final PageReference<? extends AbstractPage>[] references)
       throws IOException {
     for (int i = 0, l = references.length; i < l; i++) {
       commit(references[i]);
@@ -214,10 +216,13 @@ public final class WriteTransactionState extends ReadTransactionState {
 
   protected final UberPage commit(
       final SessionConfiguration sessionConfiguration) throws IOException {
-    final PageReference uberPageReference = new PageReference();
+    final PageReference<UberPage> uberPageReference =
+        new PageReference<UberPage>();
     final UberPage uberPage = getUberPage();
     final RandomAccessFile file =
-        new RandomAccessFile(sessionConfiguration.getAbsolutePath(), "rw");
+        new RandomAccessFile(
+            sessionConfiguration.getAbsolutePath(),
+            IConstants.READ_WRITE);
 
     if (uberPage.isBootstrap()) {
       file.setLength(IConstants.BEACON_START + IConstants.BEACON_LENGTH);

@@ -62,6 +62,12 @@ public interface IConstants {
   /** Length of encryption key. */
   public static final int ENCRYPTION_KEY_LENGTH = 16;
 
+  /** Read-only random access file. */
+  public static final String READ_ONLY = "r";
+
+  /** Read-write random access file. */
+  public static final String READ_WRITE = "rw";
+
   //--- Indirect Page ----------------------------------------------------------
 
   /** Count of indirect references in indirect page. */

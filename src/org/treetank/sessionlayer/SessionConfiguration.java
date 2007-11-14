@@ -104,8 +104,10 @@ public final class SessionConfiguration {
     mAbsolutePath = file.getAbsolutePath();
 
     // Read version info from file if it contains a TreeTank.
+    RandomAccessFile tnk = null;
     try {
-      final RandomAccessFile tnk = new RandomAccessFile(path, "rw");
+
+      tnk = new RandomAccessFile(path, "rw");
 
       if (tnk.length() > 0L) {
         tnk.seek(0L);
@@ -156,6 +158,14 @@ public final class SessionConfiguration {
       throw new IllegalStateException("Could not read from '"
           + mFileName
           + "'.");
+    } finally {
+      if (tnk != null) {
+        try {
+          tnk.close();
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+      }
     }
 
     // Make sure the encryption key is properly set.
