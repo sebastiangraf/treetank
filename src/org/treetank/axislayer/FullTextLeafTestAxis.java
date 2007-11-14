@@ -41,17 +41,13 @@ import org.treetank.api.IAxis;
  */
 public class FullTextLeafTestAxis extends AbstractAxis {
 
-  /** Remember next key to visit. */
-  private final IAxis mAxis;
-
   /**
    * Constructor initializing internal state.
    * 
    * @param axis Axis to iterate over.
    */
   public FullTextLeafTestAxis(final IAxis axis) {
-    super(axis.getTransaction());
-    mAxis = axis;
+    super(axis);
   }
 
   /**
@@ -59,8 +55,8 @@ public class FullTextLeafTestAxis extends AbstractAxis {
    */
   public final boolean hasNext() {
     resetToLastKey();
-    while (mAxis.hasNext()) {
-      mAxis.next();
+    while (getAxis().hasNext()) {
+      getAxis().next();
       if (getTransaction().isFullTextLeaf()) {
         return true;
       }

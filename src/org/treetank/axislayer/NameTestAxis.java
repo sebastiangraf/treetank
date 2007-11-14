@@ -43,9 +43,6 @@ import org.treetank.api.IAxis;
  */
 public class NameTestAxis extends AbstractAxis {
 
-  /** Remember next key to visit. */
-  private final IAxis mAxis;
-
   /** Name test to do. */
   private final int mNameKey;
 
@@ -56,8 +53,7 @@ public class NameTestAxis extends AbstractAxis {
    * @param name Name ELEMENTS must match to.
    */
   public NameTestAxis(final IAxis axis, final String name) {
-    super(axis.getTransaction());
-    mAxis = axis;
+    super(axis);
     mNameKey = getTransaction().keyForName(name);
   }
 
@@ -66,8 +62,8 @@ public class NameTestAxis extends AbstractAxis {
    */
   public final boolean hasNext() {
     resetToLastKey();
-    while (mAxis.hasNext()) {
-      mAxis.next();
+    while (getAxis().hasNext()) {
+      getAxis().next();
       if (getTransaction().getLocalPartKey() == mNameKey) {
         return true;
       }

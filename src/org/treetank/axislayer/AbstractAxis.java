@@ -54,6 +54,9 @@ import org.treetank.api.IReadTransaction;
  */
 public abstract class AbstractAxis implements IAxis {
 
+  /** Parent axis to work on. Used for axis chaining. */
+  private final IAxis mAxis;
+
   /** Iterate over transaction exclusive to this step. */
   private final IReadTransaction mRTX;
 
@@ -67,13 +70,28 @@ public abstract class AbstractAxis implements IAxis {
   private final long mStartKey;
 
   /**
+   * Bind axis step to another axis step. Used for axis step
+   * chaining.
+   * 
+   * @param axis Axis to iterate over.
+   */
+  public AbstractAxis(final IAxis axis) {
+    mAxis = axis;
+    mRTX = axis.getTransaction();
+    mStartKey = mRTX.getNodeKey();
+    mKey = mStartKey;
+    mNext = false;
+  }
+
+  /**
    * Bind axis step to transaction.
    * 
    * @param rtx Transaction to operate with.
    */
   public AbstractAxis(final IReadTransaction rtx) {
+    mAxis = null;
     mRTX = rtx;
-    mStartKey = mRTX.getNodeKey();
+    mStartKey = rtx.getNodeKey();
     mKey = mStartKey;
     mNext = false;
   }
@@ -104,6 +122,13 @@ public abstract class AbstractAxis implements IAxis {
    */
   public final void remove() {
     throw new UnsupportedOperationException();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final IAxis getAxis() {
+    return mAxis;
   }
 
   /**

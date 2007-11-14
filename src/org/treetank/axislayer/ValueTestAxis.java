@@ -43,9 +43,6 @@ import org.treetank.utils.UTF;
  */
 public class ValueTestAxis extends AbstractAxis {
 
-  /** Remember next key to visit. */
-  private final IAxis mAxis;
-
   /** Name test to do. */
   private final byte[] mValue;
 
@@ -56,8 +53,7 @@ public class ValueTestAxis extends AbstractAxis {
    * @param value Value to find.
    */
   public ValueTestAxis(final IAxis axis, final byte[] value) {
-    super(axis.getTransaction());
-    mAxis = axis;
+    super(axis);
     mValue = value;
   }
 
@@ -96,8 +92,8 @@ public class ValueTestAxis extends AbstractAxis {
    */
   public final boolean hasNext() {
     resetToLastKey();
-    while (mAxis.hasNext()) {
-      mAxis.next();
+    while (getAxis().hasNext()) {
+      getAxis().next();
       if (getTransaction().isText()
           && (UTF.equals(getTransaction().getValue(), mValue))) {
         return true;
