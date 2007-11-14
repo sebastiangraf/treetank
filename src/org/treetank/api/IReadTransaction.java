@@ -433,6 +433,9 @@ public interface IReadTransaction {
 
   /**
    * Close shared read transaction and immediately release all resources.
+   * 
+   * This is an idempotent operation and does nothing if the transaction is
+   * already closed.
    */
   public void close();
 

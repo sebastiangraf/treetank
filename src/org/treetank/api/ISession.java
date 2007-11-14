@@ -101,6 +101,9 @@ public interface ISession {
    * Safely close session and immediately release all resources. A session
    * can not be closed as long as there are running reading or writing
    * transactions.
+   * 
+   * This is an idempotent operation and does nothing if the session is
+   * already closed.
    */
   public void close();
 
