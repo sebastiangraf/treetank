@@ -222,7 +222,7 @@ public interface IWriteTransaction extends IReadTransaction {
 
   /**
    * Commit all modifications of the exclusive write transaction. Calling
-   * <code>close()</code> is semantiacally equivalent.
+   * <code>close()</code> is semantically equivalent.
    * 
    * @throws IOException if commit to file failed.
    */
