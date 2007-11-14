@@ -76,10 +76,8 @@ public final class Session implements ISession {
    * 
    * @param path Path to TreeTank file.
    * @return New session bound to given TreeTank file.
-   * @throws IOException if there is a problem with opening the given file.
    */
-  public static final ISession beginSession(final String path)
-      throws IOException {
+  public static final ISession beginSession(final String path) {
     return beginSession(new SessionConfiguration(path));
   }
 
@@ -88,10 +86,9 @@ public final class Session implements ISession {
    * 
    * @param sessionConfiguration Configuration of session.
    * @return New session bound to given TreeTank file.
-   * @throws IOException if there is a problem with opening the given file.
    */
   public static final ISession beginSession(
-      final SessionConfiguration sessionConfiguration) throws IOException {
+      final SessionConfiguration sessionConfiguration) {
 
     ISession session = null;
 
@@ -207,7 +204,15 @@ public final class Session implements ISession {
    */
   public final IWriteTransaction beginWriteTransaction() {
     assertNotClosed();
-    return mSessionState.beginWriteTransaction();
+    return mSessionState.beginWriteTransaction(true);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final IWriteTransaction beginWriteTransaction(final boolean autoCommit) {
+    assertNotClosed();
+    return mSessionState.beginWriteTransaction(autoCommit);
   }
 
   /**

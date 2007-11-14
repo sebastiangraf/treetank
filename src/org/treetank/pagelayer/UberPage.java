@@ -21,8 +21,6 @@
 
 package org.treetank.pagelayer;
 
-import java.io.IOException;
-
 import org.treetank.api.IConstants;
 import org.treetank.nodelayer.DocumentRootNode;
 import org.treetank.nodelayer.FullTextRootNode;
@@ -181,8 +179,7 @@ public final class UberPage extends AbstractPage {
    * {@inheritDoc}
    */
   @Override
-  public final void commit(final WriteTransactionState state)
-      throws IOException {
+  public final void commit(final WriteTransactionState state) {
     super.commit(state);
     mBootstrap = false;
   }

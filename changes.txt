@@ -21,7 +21,9 @@
  
 TreeTank 4.16
 -------------
-+ Fixed bug only visible under Windows because one file was not closed.
++ Auto commit now default. User must no longer call commit. Auto commit
+  commits after the modification of some nodes as well as before
+  IWriteTransaction.close().
 + Idempotent close operation. Multiple calls do no longer hurt.
 + Added ID annotation for beans.
 + BeanUtil now serializing fields as attributes.

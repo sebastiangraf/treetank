@@ -83,10 +83,8 @@ public final class SessionState {
    * </p>
    * 
    * @param sessionConfiguration Session configuration for the TreeTank.
-   * @throws IOException if there is a problem with opening the file.
    */
-  protected SessionState(final SessionConfiguration sessionConfiguration)
-      throws IOException {
+  protected SessionState(final SessionConfiguration sessionConfiguration) {
 
     mSessionConfiguration = sessionConfiguration;
     RandomAccessFile file = null;
@@ -157,7 +155,7 @@ public final class SessionState {
       }
 
     } catch (IOException e) {
-      throw e;
+      throw new RuntimeException(e);
     } finally {
       if (file != null) {
         try {
@@ -188,7 +186,8 @@ public final class SessionState {
         revisionKey));
   }
 
-  protected final IWriteTransaction beginWriteTransaction() {
+  protected final IWriteTransaction beginWriteTransaction(
+      final boolean autoCommit) {
 
     if (mWriteSemaphore.availablePermits() == 0) {
       throw new IllegalStateException(
@@ -201,7 +200,7 @@ public final class SessionState {
       throw new RuntimeException(e);
     }
 
-    return new WriteTransaction(this, getWriteTransactionState());
+    return new WriteTransaction(this, getWriteTransactionState(), autoCommit);
   }
 
   protected final WriteTransactionState getWriteTransactionState() {

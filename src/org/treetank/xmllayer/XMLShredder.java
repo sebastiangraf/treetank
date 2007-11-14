@@ -79,16 +79,9 @@ public final class XMLShredder {
     long key;
     String text;
     leftSiblingKeyStack.push(IConstants.NULL_KEY);
-    int nodeCounter = 0;
 
     // Iterate over all nodes.
     while (parser.hasNext()) {
-
-      // Make sure the in-memory state does not grow un-boundedly.
-      if ((++nodeCounter) > IConstants.COMMIT_TRESHOLD) {
-        wtx.commit();
-        nodeCounter = 0;
-      }
 
       switch (parser.next()) {
 

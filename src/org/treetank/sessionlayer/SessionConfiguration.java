@@ -99,9 +99,10 @@ public final class SessionConfiguration {
     }
 
     // Set path and name.
-    final File file = new File(path);
+    File file = new File(path);
     mFileName = file.getName();
     mAbsolutePath = file.getAbsolutePath();
+    file = null;
 
     // Read version info from file if it contains a TreeTank.
     RandomAccessFile tnk = null;
@@ -161,6 +162,7 @@ public final class SessionConfiguration {
       if (tnk != null) {
         try {
           tnk.close();
+          tnk = null;
         } catch (IOException e) {
           throw new RuntimeException(e);
         }

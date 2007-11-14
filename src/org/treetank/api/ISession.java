@@ -30,6 +30,14 @@ package org.treetank.api;
  * IWriteTransaction at the time. It can be committed or aborted through the
  * ISession.
  * </p>
+ * 
+ * <p>
+ * Auto commit mode is the default mode and works as follows:
+ * <ul>
+ *  <li>Commit when the number of modifications exceeds
+ *      <code>IConstants.COMMIT_THRESHOLD</code>.</li>
+ * </ul>
+ * </p>
  */
 public interface ISession {
 
@@ -91,11 +99,19 @@ public interface ISession {
   public IReadTransaction beginReadTransaction(final long revisionKey);
 
   /**
-   * Begin exclusive read/write transaction.
+   * Begin exclusive read/write transaction. Uses auto commit as default.
    * 
    * @return IWriteTransaction instance.
    */
   public IWriteTransaction beginWriteTransaction();
+
+  /**
+   * Begin exclusive read/write transaction.
+   * 
+   * @param autoCommit True activates auto commit.
+   * @return IWriteTransaction instance.
+   */
+  public IWriteTransaction beginWriteTransaction(final boolean autoCommit);
 
   /**
    * Safely close session and immediately release all resources. A session

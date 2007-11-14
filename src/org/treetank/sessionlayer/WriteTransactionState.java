@@ -50,7 +50,11 @@ import org.treetank.pagelayer.UberPage;
  */
 public final class WriteTransactionState extends ReadTransactionState {
 
+  /** Page writer to serialize. */
   private PageWriter mPageWriter;
+
+  /** Counts calls of prepareNode(). */
+  private long mModificationCount;
 
   /**
    * Standard constructor.
@@ -67,19 +71,39 @@ public final class WriteTransactionState extends ReadTransactionState {
         .getLastCommittedRevisionKey());
     mPageWriter = new PageWriter(sessionConfiguration);
     setRevisionRootPage(prepareRevisionRootPage());
+    mModificationCount = 0L;
   }
 
   /**
-   * {@inheritDoc}
+   * Getter for page writer.
+   * 
+   * @return Page writer assigned to this transaction.
    */
   protected final PageWriter getPageWriter() {
     return mPageWriter;
   }
 
   /**
+   * Getter for number of calls to prepareNode().
+   * 
+   * @return Number of calls to prepareNode().
+   */
+  protected final long getModificationCount() {
+    return mModificationCount;
+  }
+
+  /**
+   * Reset modification counter. 
+   */
+  protected final void resetModificationCount() {
+    mModificationCount = 0L;
+  }
+
+  /**
    * Prepare node for modifications (COW).
    */
   protected final AbstractNode prepareNode(final long nodeKey) {
+    mModificationCount += 1;
     return prepareNodePage(nodePageKey(nodeKey)).getNode(
         nodePageOffset(nodeKey));
   }
@@ -189,8 +213,7 @@ public final class WriteTransactionState extends ReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  public final void commit(final PageReference<? extends AbstractPage> reference)
-      throws IOException {
+  public final void commit(final PageReference<? extends AbstractPage> reference) {
     if (reference != null && reference.isInstantiated() && reference.isDirty()) {
 
       // Recursively commit indirectely referenced pages and then write self.
@@ -207,16 +230,15 @@ public final class WriteTransactionState extends ReadTransactionState {
    * {@inheritDoc}
    */
   protected final void commit(
-      final PageReference<? extends AbstractPage>[] references)
-      throws IOException {
+      final PageReference<? extends AbstractPage>[] references) {
     for (int i = 0, l = references.length; i < l; i++) {
       commit(references[i]);
     }
   }
 
   protected final UberPage commit(
-      final SessionConfiguration sessionConfiguration) throws IOException {
-    
+      final SessionConfiguration sessionConfiguration) {
+
     final PageReference<UberPage> uberPageReference =
         new PageReference<UberPage>();
     final UberPage uberPage = getUberPage();
@@ -260,7 +282,7 @@ public final class WriteTransactionState extends ReadTransactionState {
       file.writeLong(uberPageReference.getChecksum());
 
     } catch (IOException e) {
-      throw e;
+      throw new RuntimeException(e);
     } finally {
       if (file != null) {
         try {

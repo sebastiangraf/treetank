@@ -21,8 +21,6 @@
 
 package org.treetank.pagelayer;
 
-import java.io.IOException;
-
 import org.treetank.api.IConstants;
 import org.treetank.sessionlayer.WriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
@@ -166,8 +164,7 @@ public final class RevisionRootPage extends AbstractPage {
    * {@inheritDoc}
    */
   @Override
-  public final void commit(final WriteTransactionState state)
-      throws IOException {
+  public final void commit(final WriteTransactionState state) {
     super.commit(state);
     mRevisionTimestamp = System.currentTimeMillis();
   }
