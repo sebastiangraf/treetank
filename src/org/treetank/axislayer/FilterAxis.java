@@ -28,33 +28,50 @@
  * $Id$
  */
 
-package org.treetank.api;
+package org.treetank.axislayer;
+
+import org.treetank.api.IAxis;
+import org.treetank.api.IAxisFilter;
 
 /**
- * <h1>IAxis</h1>
+ * <h1>TestAxis</h1>
  * 
  * <p>
- * Interface to iterate over the TreeTank according to an iteration logic.
- * All implementations must comply with the following:
- * <li>next() must be called exactly once after hasNext() yields true.</li>
- * <li>after hasNext() is false, the transaction points to the node where
- *     it started</li>
- * <li>before each hasNext(), the cursor is guaranteed to point to the last
- *     node found with hasNext().</li>
- * </p>
- * <p>
- * This behavior can be achieved by:
- * <li>Always call super.hasNext() as the first thing in hasNext().</li>
- * <li>Always call reset() before return false in hasNext().</li> 
+ * Perform a test on a given axis.
  * </p>
  */
-public interface IAxisTest {
+public class FilterAxis extends AbstractAxis {
+
+  /** Axis to test. */
+  private final IAxis mAxis;
+
+  /** Test to apply to axis. */
+  private final IAxisFilter mAxisTest;
 
   /**
-   * Access transaction to which this axis is bound.
+   * Constructor initializing internal state.
    * 
-   * @return Transaction to which this axis is bound.
+   * @param axis Axis to iterate over.
+   * @param axisTest Test to perform for each node found with axis.
    */
-  public boolean test(final IReadTransaction rtx);
+  public FilterAxis(final IAxis axis, final IAxisFilter axisTest) {
+    super(axis.getTransaction());
+    mAxis = axis;
+    mAxisTest = axisTest;
+  }
 
+  /**
+   * {@inheritDoc}
+   */
+  public final boolean hasNext() {
+    resetToLastKey();
+    while (mAxis.hasNext()) {
+      mAxis.next();
+      if (mAxisTest.test(getTransaction())) {
+        return true;
+      }
+    }
+    resetToStartKey();
+    return false;
+  }
 }

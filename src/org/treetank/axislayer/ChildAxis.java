@@ -52,6 +52,14 @@ public class ChildAxis extends AbstractAxis {
    */
   public ChildAxis(final IReadTransaction rtx) {
     super(rtx);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final void reset(final long nodeKey) {
+    super.reset(nodeKey);
     mFirst = true;
   }
 

@@ -53,6 +53,13 @@ import java.util.Iterator;
 public interface IAxis extends Iterator<Long>, Iterable<Long> {
 
   /**
+   * Reset axis to new start node key.
+   * 
+   * @param nodeKey New start node key.
+   */
+  public void reset(final long nodeKey);
+
+  /**
    * Access transaction to which this axis is bound.
    * 
    * @return Transaction to which this axis is bound.

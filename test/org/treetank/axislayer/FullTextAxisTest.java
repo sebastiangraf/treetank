@@ -24,7 +24,6 @@ package org.treetank.axislayer;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.io.IOException;
 
 import junit.framework.TestCase;
 
@@ -47,7 +46,7 @@ public class FullTextAxisTest {
   }
 
   @Test
-  public void testIterate() throws IOException {
+  public void testIterate() {
 
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -110,7 +109,7 @@ public class FullTextAxisTest {
   }
 
   @Test
-  public void testWildcard() throws IOException {
+  public void testWildcard() {
 
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -139,7 +138,7 @@ public class FullTextAxisTest {
   }
 
   @Test
-  public void testFullSuffixWildcard() throws IOException {
+  public void testFullSuffixWildcard() {
 
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -167,7 +166,7 @@ public class FullTextAxisTest {
   }
 
   @Test
-  public void testFullWildcard() throws IOException {
+  public void testFullWildcard() {
 
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();

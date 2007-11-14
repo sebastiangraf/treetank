@@ -25,28 +25,68 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
- * $Id: FullTextLeafTestAxis.java 3499 2007-11-14 18:12:10Z kramis $
+ * $Id$
  */
 
 package org.treetank.axislayer;
 
-import org.treetank.api.IAxisTest;
+import org.treetank.api.IAxisFilter;
 import org.treetank.api.IReadTransaction;
+import org.treetank.utils.UTF;
 
 /**
- * <h1>FullTextLeafAxisTest</h1>
+ * <h1>ValueAxisTest</h1>
  * 
  * <p>
- * Only select nodes of kind FULLTEXT_LEAF.
+ * Only match nodes of kind TEXT whoms value matches.
  * </p>
  */
-public class FullTextLeafAxisTest implements IAxisTest {
+public class ValueAxisFilter implements IAxisFilter {
+
+  /** Value test to do. */
+  private final byte[] mValue;
+
+  /**
+   * Constructor initializing internal state.
+   * 
+   * @param value Value to find.
+   */
+  public ValueAxisFilter(final byte[] value) {
+    mValue = value;
+  }
+
+  /**
+   * Constructor initializing internal state.
+   * 
+   * @param value Value to find.
+   */
+  public ValueAxisFilter(final String value) {
+    this(UTF.getBytes(value));
+  }
+
+  /**
+   * Constructor initializing internal state.
+   * 
+   * @param value Value to find.
+   */
+  public ValueAxisFilter(final int value) {
+    this(UTF.getBytes(value));
+  }
+
+  /**
+   * Constructor initializing internal state.
+   * 
+   * @param value Value to find.
+   */
+  public ValueAxisFilter(final long value) {
+    this(UTF.getBytes(value));
+  }
 
   /**
    * {@inheritDoc}
    */
   public final boolean test(final IReadTransaction rtx) {
-    return rtx.isFullTextLeaf();
+    return (rtx.isText() && (UTF.equals(rtx.getValue(), mValue)));
   }
 
 }

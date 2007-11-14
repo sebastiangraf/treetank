@@ -30,63 +30,35 @@
 
 package org.treetank.axislayer;
 
-import org.treetank.api.IAxisTest;
+import org.treetank.api.IAxisFilter;
 import org.treetank.api.IReadTransaction;
-import org.treetank.utils.UTF;
 
 /**
- * <h1>ValueAxisTest</h1>
+ * <h1>NameAxisTest</h1>
  * 
  * <p>
- * Only match nodes of kind TEXT whoms value matches.
+ * Match local part by key.
  * </p>
  */
-public class ValueAxisTest implements IAxisTest {
+public class NameAxisFilter implements IAxisFilter {
 
-  /** Value test to do. */
-  private final byte[] mValue;
-
-  /**
-   * Constructor initializing internal state.
-   * 
-   * @param value Value to find.
-   */
-  public ValueAxisTest(final byte[] value) {
-    mValue = value;
-  }
+  /** Key of name to test. */
+  private final int mLocalPartKey;
 
   /**
-   * Constructor initializing internal state.
+   * Constructor.
    * 
-   * @param value Value to find.
+   * @param localPartKey Local part key to test for.
    */
-  public ValueAxisTest(final String value) {
-    this(UTF.getBytes(value));
-  }
-
-  /**
-   * Constructor initializing internal state.
-   * 
-   * @param value Value to find.
-   */
-  public ValueAxisTest(final int value) {
-    this(UTF.getBytes(value));
-  }
-
-  /**
-   * Constructor initializing internal state.
-   * 
-   * @param value Value to find.
-   */
-  public ValueAxisTest(final long value) {
-    this(UTF.getBytes(value));
+  public NameAxisFilter(final int localPartKey) {
+    mLocalPartKey = localPartKey;
   }
 
   /**
    * {@inheritDoc}
    */
   public final boolean test(final IReadTransaction rtx) {
-    return (rtx.isText() && (UTF.equals(rtx.getValue(), mValue)));
+    return (rtx.getLocalPartKey() == mLocalPartKey);
   }
 
 }

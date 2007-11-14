@@ -64,7 +64,7 @@ public abstract class AbstractAxis implements IAxis {
   private boolean mNext;
 
   /** Key of node where axis started. */
-  private final long mStartKey;
+  private long mStartKey;
 
   /**
    * Bind axis step to transaction.
@@ -73,9 +73,7 @@ public abstract class AbstractAxis implements IAxis {
    */
   public AbstractAxis(final IReadTransaction rtx) {
     mRTX = rtx;
-    mStartKey = rtx.getNodeKey();
-    mKey = mStartKey;
-    mNext = false;
+    reset(rtx.getNodeKey());
   }
 
   /**
@@ -104,6 +102,15 @@ public abstract class AbstractAxis implements IAxis {
    */
   public final void remove() {
     throw new UnsupportedOperationException();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public void reset(final long nodeKey) {
+    mStartKey = nodeKey;
+    mKey = nodeKey;
+    mNext = false;
   }
 
   /**
