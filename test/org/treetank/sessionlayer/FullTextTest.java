@@ -23,6 +23,7 @@ import java.io.IOException;
 
 import junit.framework.TestCase;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.api.IConstants;
@@ -38,6 +39,47 @@ public class FullTextTest {
   @Before
   public void setUp() {
     Session.removeSession(PATH);
+  }
+
+  @Test
+  public void testTokenLifecycle() throws IOException {
+
+    ISession session = Session.beginSession(PATH);
+
+    final IWriteTransaction wtx = session.beginWriteTransaction(false);
+
+    // Create token.
+    final long elementKey1 = wtx.insertElementAsFirstChild("foo", "", "");
+    final long tokenKey1 = wtx.insertToken("foo", elementKey1);
+
+    // Move to token.
+    wtx.moveToDocumentRoot();
+    Assert.assertEquals(tokenKey1, wtx.moveToToken("foo"));
+    wtx.moveToDocumentRoot();
+    Assert.assertEquals(IConstants.FULLTEXT_ROOT_KEY, wtx.moveToToken("bar"));
+    wtx.moveToDocumentRoot();
+    Assert.assertEquals(tokenKey1 - 1, wtx.moveToToken("fo"));
+
+    // Insert another key for token.
+    wtx.moveToDocumentRoot();
+    final long elementKey2 = wtx.insertElementAsFirstChild("foo", "", "");
+    final long tokenKey2 = wtx.insertToken("foo", elementKey2);
+    Assert.assertEquals(tokenKey1, tokenKey2);
+    Assert.assertEquals(tokenKey2, wtx.moveToToken("foo"));
+
+    // Remove token.
+    wtx.moveToDocumentRoot();
+    wtx.removeToken("foo", elementKey1);
+    wtx.moveToDocumentRoot();
+    Assert.assertEquals(tokenKey2, wtx.moveToToken("foo"));
+
+    wtx.removeToken("foo", elementKey2);
+    wtx.moveToDocumentRoot();
+    Assert.assertEquals(IConstants.FULLTEXT_ROOT_KEY, wtx.moveToToken("foo"));
+
+    wtx.abort();
+    wtx.close();
+    session.close();
   }
 
   @Test

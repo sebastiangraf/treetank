@@ -225,7 +225,7 @@ public final class BeanUtil {
           }
           final String string = (String) field.get(object);
           if (string != null) {
-            wtx.index(string.toLowerCase(), beanKey);
+            wtx.insertToken(string.toLowerCase(), beanKey);
             wtx.moveTo(beanKey);
           }
         }
