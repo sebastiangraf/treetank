@@ -18,6 +18,7 @@
  
 TreeTank 4.17
 -------------
++ BeanUtil now supporting remove().
 + Added readme.txt to provide authoritative coding conventions.
 + Added reset() to IAxis to allow for NestedAxis.
 + Switched to ISC License.

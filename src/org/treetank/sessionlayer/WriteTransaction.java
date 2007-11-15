@@ -112,12 +112,12 @@ public final class WriteTransaction extends ReadTransaction
     final long tokenKey = moveToToken(token);
 
     // Remove node key from key list this token points to.
-    if (hasFirstChild()) {
+    if (isFullText() && hasFirstChild()) {
       moveToFirstChild();
       while ((getFirstChildKey() != nodeKey) && hasRightSibling()) {
         moveToRightSibling();
       }
-      if (getFirstChildKey() == nodeKey) {
+      if (isFullTextLeaf() && getFirstChildKey() == nodeKey) {
         remove();
       }
     }
@@ -125,7 +125,9 @@ public final class WriteTransaction extends ReadTransaction
     // Remove token or prefix of it if there are no other dependencies.
     moveTo(tokenKey);
     while (!hasFirstChild() && getNodeKey() != IConstants.FULLTEXT_ROOT_KEY) {
+      final long parentKey = getParentKey();
       remove();
+      moveTo(parentKey);
     }
   }
 
