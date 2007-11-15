@@ -53,7 +53,15 @@ public interface IWriteTransaction extends IReadTransaction {
    * @return Key of token (node key of full text node matching last character
    *         of token).
    */
-  public long index(final String token, final long nodeKey);
+  public long insertToken(final String token, final long nodeKey);
+
+  /**
+   * Remove key from list under token.
+   * 
+   * @param token Token from which to remove key.
+   * @param nodeKey Key of node which contains the token.
+   */
+  public void removeToken(final String token, final long nodeKey);
 
   // --- Node Modifiers --------------------------------------------------------
 

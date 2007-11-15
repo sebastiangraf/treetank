@@ -49,9 +49,9 @@ public class FullTextAxisTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     final long nodeKey1 = wtx.insertTextAsFirstChild(UTF.getBytes("foo"));
     final long nodeKey2 = wtx.insertTextAsRightSibling(UTF.getBytes("foo"));
-    final long tokenKey1 = wtx.index("foo", nodeKey1);
+    final long tokenKey1 = wtx.insertToken("foo", nodeKey1);
     wtx.commit();
-    final long tokenKey2 = wtx.index("foo", nodeKey2);
+    final long tokenKey2 = wtx.insertToken("foo", nodeKey2);
     assertEquals(tokenKey1, tokenKey2);
 
     // Verify axis
@@ -112,11 +112,11 @@ public class FullTextAxisTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     final long nodeKey1 = wtx.insertTextAsFirstChild(UTF.getBytes("foo"));
     final long nodeKey2 = wtx.insertTextAsRightSibling(UTF.getBytes("foo"));
-    final long tokenKey1 = wtx.index("foo", nodeKey1);
+    final long tokenKey1 = wtx.insertToken("foo", nodeKey1);
     wtx.commit();
-    final long tokenKey2 = wtx.index("foo", nodeKey2);
+    final long tokenKey2 = wtx.insertToken("foo", nodeKey2);
     assertEquals(tokenKey1, tokenKey2);
-    final long tokenKey3 = wtx.index("bar", nodeKey2);
+    final long tokenKey3 = wtx.insertToken("bar", nodeKey2);
 
     // Verify axis
     final long key1 = wtx.getNodeKey();
@@ -141,9 +141,9 @@ public class FullTextAxisTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     final long nodeKey1 = wtx.insertTextAsFirstChild(UTF.getBytes("foo"));
     final long nodeKey2 = wtx.insertTextAsRightSibling(UTF.getBytes("foo"));
-    final long tokenKey1 = wtx.index("foo", nodeKey1);
+    final long tokenKey1 = wtx.insertToken("foo", nodeKey1);
     wtx.commit();
-    final long tokenKey2 = wtx.index("foo", nodeKey2);
+    final long tokenKey2 = wtx.insertToken("foo", nodeKey2);
     assertEquals(tokenKey1, tokenKey2);
 
     // Verify axis
@@ -169,9 +169,9 @@ public class FullTextAxisTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     final long nodeKey1 = wtx.insertTextAsFirstChild(UTF.getBytes("foo"));
     final long nodeKey2 = wtx.insertTextAsRightSibling(UTF.getBytes("foo"));
-    final long tokenKey1 = wtx.index("foo", nodeKey1);
+    final long tokenKey1 = wtx.insertToken("foo", nodeKey1);
     wtx.commit();
-    final long tokenKey2 = wtx.index("foo", nodeKey2);
+    final long tokenKey2 = wtx.insertToken("foo", nodeKey2);
     assertEquals(tokenKey1, tokenKey2);
 
     // Verify axis

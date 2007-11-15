@@ -113,6 +113,35 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
+  public final long moveToToken(final String token) {
+    assertNotClosed();
+
+    moveToFullTextRoot();
+    boolean contained = true;
+    for (final char character : token.toCharArray()) {
+      if (hasFirstChild()) {
+        moveToFirstChild();
+        while (isFullText()
+            && (getLocalPartKey() != character)
+            && hasRightSibling()) {
+          moveToRightSibling();
+        }
+        contained = contained && (getLocalPartKey() == character);
+      } else {
+        contained = false;
+      }
+    }
+
+    if (contained) {
+      return mCurrentNode.getNodeKey();
+    } else {
+      return moveToFullTextRoot();
+    }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final long moveToDocumentRoot() {
     assertNotClosed();
     return moveTo(IConstants.DOCUMENT_ROOT_KEY);

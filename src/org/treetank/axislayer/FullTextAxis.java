@@ -46,26 +46,21 @@ public class FullTextAxis extends AbstractAxis {
       throw new IllegalArgumentException("Token can not be null or empty.");
     }
 
-    rtx.moveToFullTextRoot();
-
-    IAxis innerAxis;
-    boolean contained = true;
+    IAxis innerAxis = null;
     if (token.charAt(token.length() - 1) != '*') {
-      for (final char character : token.toCharArray()) {
-        contained = contained && isContained(character);
-      }
+      // No wildcard.
+      rtx.moveToToken(token);
       innerAxis = new ChildAxis(rtx);
     } else {
+      // Wildcard.
       if (token.length() > 1) {
-        for (final char character : token
-            .substring(0, token.length() - 1)
-            .toCharArray()) {
-          contained = contained && isContained(character);
-        }
+        rtx.moveToToken(token.substring(0, token.length() - 1));
+      } else {
+        rtx.moveToFullTextRoot();
       }
       innerAxis = new DescendantAxis(rtx);
     }
-    if (!contained) {
+    if (innerAxis == null) {
       innerAxis = new SelfAxis(rtx);
     }
 
@@ -81,26 +76,6 @@ public class FullTextAxis extends AbstractAxis {
     super.reset(nodeKey);
     if (mAxis != null) {
       mAxis.reset(nodeKey);
-    }
-  }
-
-  /**
-   * Is the given character contained?
-   * 
-   * @param character Character to look for.
-   * @return True if the character is contained. False else.
-   */
-  private final boolean isContained(final int character) {
-    if (getTransaction().hasFirstChild()) {
-      getTransaction().moveToFirstChild();
-      while (getTransaction().isFullText()
-          && (getTransaction().getLocalPartKey() != character)
-          && getTransaction().hasRightSibling()) {
-        getTransaction().moveToRightSibling();
-      }
-      return (getTransaction().getLocalPartKey() == character);
-    } else {
-      return false;
     }
   }
 

@@ -80,6 +80,16 @@ public interface IReadTransaction {
   public long moveTo(final long nodeKey);
 
   /**
+   * Move cursor to token in full text index. Note that this might only be
+   * the prefix of a token. If the token can not be found, the cursor is
+   * left off at the full text root node.
+   * 
+   * @param token Token to find.
+   * @return Node key of token.
+   */
+  public long moveToToken(final String token);
+
+  /**
    * Move cursor to document root node.
    * 
    * @return True if the document root node is selected.

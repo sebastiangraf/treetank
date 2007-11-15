@@ -55,7 +55,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final synchronized long index(final String token, final long nodeKey) {
+  public final synchronized long insertToken(final String token, final long nodeKey) {
 
     // Make sure we always operate from the full text root node.
     moveToFullTextRoot();
@@ -95,6 +95,13 @@ public final class WriteTransaction extends ReadTransaction
 
     return tokenKey;
 
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public final void removeToken(final String token, final long nodeKey) {
+    
   }
 
   /**
