@@ -22,8 +22,10 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.treetank.api.IConstants;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
@@ -132,4 +134,35 @@ public class BeanUtilTest {
 
   }
 
+  @Test
+  public void testRemoveBean() throws Exception {
+
+    final ISession session = Session.beginSession(PATH);
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+
+    // Write bean.
+    final TestBean expectedBean1 = new TestBean();
+    expectedBean1.setStringField("foo");
+    wtx.moveToDocumentRoot();
+    final long expectedBeanKey1 = BeanUtil.write(wtx, expectedBean1);
+
+    final TestBean expectedBean2 = new TestBean();
+    expectedBean2.setStringField("foobar");
+    wtx.moveToDocumentRoot();
+    final long expectedBeanKey2 = BeanUtil.write(wtx, expectedBean2);
+
+    // Remove bean.
+    wtx.moveTo(expectedBeanKey1);
+    BeanUtil.remove(wtx, expectedBean1);
+    Assert.assertEquals(IConstants.NULL_KEY, wtx.moveTo(expectedBeanKey1));
+
+    wtx.moveTo(expectedBeanKey2);
+    BeanUtil.remove(wtx, expectedBean2);
+    Assert.assertEquals(IConstants.NULL_KEY, wtx.moveTo(expectedBeanKey2));
+
+    wtx.abort();
+    wtx.close();
+    session.close();
+
+  }
 }

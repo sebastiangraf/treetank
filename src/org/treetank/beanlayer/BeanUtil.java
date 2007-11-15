@@ -40,8 +40,8 @@ import org.treetank.utils.UTF;
  * 
  * <pre>
  * public class Address {
- *   // Bean properties.
- *   &#64;
+ *   // Bean fields.
+ *   &#64;ID
  *   private long id;
  *   
  *   &#64;FullText
@@ -75,17 +75,21 @@ import org.treetank.utils.UTF;
  * <pre>
  * Address address = BeanUtil.read(rtx, Address.class);
  * BeanUtil.write(wtx, address);
+ * BeanUtil.remove(wtx, address);
  * </pre>
  * 
  * <strong>Important</strong>
  * 
- * The following Java types are currentyl supported:
+ * The following Java types are currently supported:
+ * <ul>
  * <li>boolean</li>
  * <li>int</li>
  * <li>long</li>
  * <li>float</li>
  * <li>double</li>
  * <li>String</li>
+ * <li>byte[]</li>
+ * </ul>
  * </p>
  */
 public final class BeanUtil {
@@ -225,7 +229,7 @@ public final class BeanUtil {
           }
           final String string = (String) field.get(object);
           if (string != null) {
-            wtx.insertToken(string.toLowerCase(), beanKey);
+            wtx.insertToken(string, beanKey);
             wtx.moveTo(beanKey);
           }
         }
@@ -277,6 +281,51 @@ public final class BeanUtil {
 
     return beanKey;
 
+  }
+
+  /**
+   * Remove Java bean from TreeTank. Cursor of transaction is leaved according
+   * to the semantics of <code>IWriteTransaction.remove()</code>. All contained
+   * full text fields are removed from the full text index.
+   * 
+   * @param wtx IWriteTransaction to write to.
+   * @param object Object to remove.
+   * @throws RuntimeException in case the class could not be instantiated
+   *         or the property setter could not be invoked.
+   */
+  public static final void remove(
+      final IWriteTransaction wtx,
+      final Object object) {
+    // Check whether node points to element with clazz name.
+    if (wtx.isElement()
+        && wtx.getLocalPart().equalsIgnoreCase(
+            object.getClass().getSimpleName())) {
+
+      final long nodeKey = wtx.getNodeKey();
+
+      // Remove subtree.
+      wtx.remove();
+
+      // Remove all fields with FullText annotation.
+      try {
+        final BeanInfo info =
+            Introspector.getBeanInfo(object.getClass(), Object.class);
+        for (final PropertyDescriptor property : info.getPropertyDescriptors()) {
+
+          // Access private field.
+          final Field field =
+              object.getClass().getDeclaredField(property.getName());
+          field.setAccessible(true);
+
+          // Handle field ID annotation.
+          if (field.getAnnotation(FullText.class) != null) {
+            wtx.removeToken((String) field.get(object), nodeKey);
+          }
+        }
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+    }
   }
 
 }

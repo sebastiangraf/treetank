@@ -46,6 +46,8 @@ public class FullTextAxis extends AbstractAxis {
       throw new IllegalArgumentException("Token can not be null or empty.");
     }
 
+    rtx.moveToFullTextRoot();
+
     IAxis innerAxis = null;
     if (token.charAt(token.length() - 1) != '*') {
       // No wildcard.
