@@ -20,12 +20,10 @@ package org.treetank.xmllayer;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.treetank.api.IConstants;
@@ -40,100 +38,105 @@ public final class XMLShredder {
 
   public final static void shred(
       final String xmlPath,
-      final SessionConfiguration sessionConfiguration)
-      throws IOException,
-      XMLStreamException {
+      final SessionConfiguration sessionConfiguration) {
     shred(xmlPath, sessionConfiguration, true);
   }
 
   public final static void shred(
       final String xmlPath,
       final SessionConfiguration sessionConfiguration,
-      final boolean isValidating) throws IOException, XMLStreamException {
-    final InputStream in = new FileInputStream(xmlPath);
-    final XMLInputFactory factory = XMLInputFactory.newInstance();
-    factory.setProperty(XMLInputFactory.IS_VALIDATING, isValidating);
-    factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
-    final XMLStreamReader parser = factory.createXMLStreamReader(in);
-    shred(parser, sessionConfiguration);
+      final boolean isValidating) {
+    try {
+      final InputStream in = new FileInputStream(xmlPath);
+      final XMLInputFactory factory = XMLInputFactory.newInstance();
+      factory.setProperty(XMLInputFactory.IS_VALIDATING, isValidating);
+      factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+      final XMLStreamReader parser = factory.createXMLStreamReader(in);
+      shred(parser, sessionConfiguration);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 
   public static final void shred(
       final XMLStreamReader parser,
-      final SessionConfiguration sessionConfiguration)
-      throws IOException,
-      XMLStreamException {
-    final ISession session = Session.beginSession(sessionConfiguration);
-    final IWriteTransaction wtx = session.beginWriteTransaction();
-    final FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
+      final SessionConfiguration sessionConfiguration) {
 
-    // Make sure that we do not shred into an existing TreeTank.
-    if (wtx.hasFirstChild()) {
-      throw new IllegalStateException(
-          "XMLShredder can not shred into an existing TreeTank.");
-    }
+    try {
+      final ISession session = Session.beginSession(sessionConfiguration);
+      final IWriteTransaction wtx = session.beginWriteTransaction();
+      final FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
 
-    long key;
-    String text;
-    leftSiblingKeyStack.push(IConstants.NULL_KEY);
+      // Make sure that we do not shred into an existing TreeTank.
+      if (wtx.hasFirstChild()) {
+        throw new IllegalStateException(
+            "XMLShredder can not shred into an existing TreeTank.");
+      }
 
-    // Iterate over all nodes.
-    while (parser.hasNext()) {
+      long key;
+      String text;
+      leftSiblingKeyStack.push(IConstants.NULL_KEY);
 
-      switch (parser.next()) {
+      // Iterate over all nodes.
+      while (parser.hasNext()) {
 
-      case XMLStreamConstants.START_ELEMENT:
+        switch (parser.next()) {
 
-        if (leftSiblingKeyStack.peek() == IConstants.NULL_KEY) {
-          key =
-              wtx.insertElementAsFirstChild(parser.getLocalName(), parser
-                  .getNamespaceURI(), parser.getPrefix());
-        } else {
-          key =
-              wtx.insertElementAsRightSibling(parser.getLocalName(), parser
-                  .getNamespaceURI(), parser.getPrefix());
-        }
-        leftSiblingKeyStack.pop();
-        leftSiblingKeyStack.push(key);
-        leftSiblingKeyStack.push(IConstants.NULL_KEY);
+        case XMLStreamConstants.START_ELEMENT:
 
-        // Parse namespaces.
-        for (int i = 0, l = parser.getNamespaceCount(); i < l; i++) {
-          wtx.insertNamespace(parser.getNamespaceURI(i), parser
-              .getNamespacePrefix(i));
-        }
-
-        // Parse attributes.
-        for (int i = 0, l = parser.getAttributeCount(); i < l; i++) {
-          wtx.insertAttribute(parser.getAttributeLocalName(i), parser
-              .getAttributeNamespace(i), parser.getAttributePrefix(i), UTF
-              .getBytes(parser.getAttributeValue(i)));
-        }
-        break;
-
-      case XMLStreamConstants.END_ELEMENT:
-        leftSiblingKeyStack.pop();
-        wtx.moveTo(leftSiblingKeyStack.peek());
-        break;
-
-      case XMLStreamConstants.CHARACTERS:
-        text = parser.getText().trim();
-        if (text.length() > 0) {
           if (leftSiblingKeyStack.peek() == IConstants.NULL_KEY) {
-            key = wtx.insertTextAsFirstChild(UTF.getBytes(text));
+            key =
+                wtx.insertElementAsFirstChild(parser.getLocalName(), parser
+                    .getNamespaceURI(), parser.getPrefix());
           } else {
-            key = wtx.insertTextAsRightSibling(UTF.getBytes(text));
+            key =
+                wtx.insertElementAsRightSibling(parser.getLocalName(), parser
+                    .getNamespaceURI(), parser.getPrefix());
           }
           leftSiblingKeyStack.pop();
           leftSiblingKeyStack.push(key);
-        }
-        break;
+          leftSiblingKeyStack.push(IConstants.NULL_KEY);
 
+          // Parse namespaces.
+          for (int i = 0, l = parser.getNamespaceCount(); i < l; i++) {
+            wtx.insertNamespace(parser.getNamespaceURI(i), parser
+                .getNamespacePrefix(i));
+          }
+
+          // Parse attributes.
+          for (int i = 0, l = parser.getAttributeCount(); i < l; i++) {
+            wtx.insertAttribute(parser.getAttributeLocalName(i), parser
+                .getAttributeNamespace(i), parser.getAttributePrefix(i), UTF
+                .getBytes(parser.getAttributeValue(i)));
+          }
+          break;
+
+        case XMLStreamConstants.END_ELEMENT:
+          leftSiblingKeyStack.pop();
+          wtx.moveTo(leftSiblingKeyStack.peek());
+          break;
+
+        case XMLStreamConstants.CHARACTERS:
+          text = parser.getText().trim();
+          if (text.length() > 0) {
+            if (leftSiblingKeyStack.peek() == IConstants.NULL_KEY) {
+              key = wtx.insertTextAsFirstChild(UTF.getBytes(text));
+            } else {
+              key = wtx.insertTextAsRightSibling(UTF.getBytes(text));
+            }
+            leftSiblingKeyStack.pop();
+            leftSiblingKeyStack.push(key);
+          }
+          break;
+
+        }
       }
+      wtx.close();
+      session.close();
+      parser.close();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     }
-    wtx.close();
-    session.close();
-    parser.close();
   }
 
   public static final void main(String[] args) {
