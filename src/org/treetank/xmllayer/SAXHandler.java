@@ -58,7 +58,7 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
    * 
    * @param target File to write to.
    */
-  public SAXHandler(final IWriteTransaction target) throws Exception {
+  public SAXHandler(final IWriteTransaction target) {
     mWTX = target;
     mLeftSiblingKeyStack = new FastStack<Long>();
     mCharacters = new StringBuilder();
