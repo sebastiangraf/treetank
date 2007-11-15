@@ -55,7 +55,11 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final synchronized long insertToken(final String token, final long nodeKey) {
+  public final synchronized long insertToken(
+      final String token,
+      final long nodeKey) {
+
+    assertNotClosed();
 
     // Make sure we always operate from the full text root node.
     moveToFullTextRoot();
@@ -96,12 +100,33 @@ public final class WriteTransaction extends ReadTransaction
     return tokenKey;
 
   }
-  
+
   /**
    * {@inheritDoc}
    */
-  public final void removeToken(final String token, final long nodeKey) {
-    
+  public final synchronized void removeToken(
+      final String token,
+      final long nodeKey) {
+    assertNotClosed();
+
+    final long tokenKey = moveToToken(token);
+
+    // Remove node key from key list this token points to.
+    if (hasFirstChild()) {
+      moveToFirstChild();
+      while ((getFirstChildKey() != nodeKey) && hasRightSibling()) {
+        moveToRightSibling();
+      }
+      if (getFirstChildKey() == nodeKey) {
+        remove();
+      }
+    }
+
+    // Remove token or prefix of it if there are no other dependencies.
+    moveTo(tokenKey);
+    while (!hasFirstChild() && getNodeKey() != IConstants.FULLTEXT_ROOT_KEY) {
+      remove();
+    }
   }
 
   /**
@@ -259,8 +284,8 @@ public final class WriteTransaction extends ReadTransaction
 
     assertNotClosedAndSelected();
 
-    if (getCurrentNode().isDocumentRoot()) {
-      throw new IllegalStateException("Document node can not be removed.");
+    if (getCurrentNode().isDocumentRoot() || getCurrentNode().isFullTextRoot()) {
+      throw new IllegalStateException("Root node can not be removed.");
     }
 
     // Remember all related nodes.
