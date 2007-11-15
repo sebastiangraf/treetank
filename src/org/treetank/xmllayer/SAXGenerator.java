@@ -67,7 +67,7 @@ public final class SAXGenerator implements Runnable {
   public SAXGenerator(
       final IAxis axis,
       final ContentHandler contentHandler,
-      final boolean prettyPrint) throws Exception {
+      final boolean prettyPrint) {
     mAxis = axis;
     mHandler = contentHandler;
     mPrettyPrint = prettyPrint;
@@ -84,7 +84,7 @@ public final class SAXGenerator implements Runnable {
   public SAXGenerator(
       final IAxis axis,
       final Writer writer,
-      final boolean prettyPrint) throws Exception {
+      final boolean prettyPrint) {
     mWriter = writer;
     mIsSerialize = true;
     mAxis = axis;
@@ -95,8 +95,7 @@ public final class SAXGenerator implements Runnable {
   /**
    * Constructor for printing the reconstructed XML of global storage to stdout.
    */
-  public SAXGenerator(final IAxis axis, final boolean prettyPrint)
-      throws Exception {
+  public SAXGenerator(final IAxis axis, final boolean prettyPrint) {
     this(axis, new PrintWriter(System.out), prettyPrint);
   }
 
@@ -227,7 +226,7 @@ public final class SAXGenerator implements Runnable {
       }
 
     } catch (Exception e) {
-      throw new IllegalStateException(e);
+      throw new RuntimeException(e);
     }
   }
 
