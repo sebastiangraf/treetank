@@ -19,6 +19,7 @@
 package org.treetank.axislayer;
 
 import org.treetank.api.IAxis;
+import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 
 /**
@@ -57,10 +58,13 @@ public class FullTextAxis extends AbstractAxis {
       // Wildcard.
       if (token.length() > 1) {
         rtx.moveToToken(token.substring(0, token.length() - 1));
+        if (rtx.getNodeKey() != IConstants.FULLTEXT_ROOT_KEY) {
+          innerAxis = new DescendantAxis(rtx);
+        }
       } else {
         rtx.moveToFullTextRoot();
+        innerAxis = new DescendantAxis(rtx);
       }
-      innerAxis = new DescendantAxis(rtx);
     }
     if (innerAxis == null) {
       innerAxis = new SelfAxis(rtx);

@@ -128,6 +128,12 @@ public class FullTextAxisTest {
     assertEquals(false, axis1.hasNext());
     assertEquals(key1, wtx.getNodeKey());
 
+    // Verify axis
+    final long key2 = wtx.getNodeKey();
+    final IAxis axis2 = new FullTextAxis(wtx, "x*");
+    assertEquals(false, axis2.hasNext());
+    assertEquals(key2, wtx.getNodeKey());
+
     wtx.abort();
     wtx.close();
     session.close();
