@@ -160,8 +160,11 @@ public interface IWriteTransaction extends IReadTransaction {
   public void insertNamespace(final String uri, final String prefix);
 
   /**
-   * Remove currently selected node. This does not automatically remove
-   * descendants.
+   * Remove currently selected node. This does automatically remove descendants.
+   * 
+   * The cursor is located at the former right sibling. If there was no right
+   * sibling, it is located at the former left sibling. If there was no left
+   * sibling, it is located at the former parent.
    */
   public void remove();
 
