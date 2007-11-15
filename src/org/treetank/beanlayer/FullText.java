@@ -26,6 +26,7 @@ import java.lang.annotation.RetentionPolicy;
  * 
  * <p>
  * Field annotation to tell BeanUtil to full text index the given field.
+ * Note that the field is treated as a single token.
  * </p>
  */
 @Retention(RetentionPolicy.RUNTIME)
