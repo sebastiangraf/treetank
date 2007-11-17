@@ -61,7 +61,7 @@ public class NestedAxisTest {
     // Part: /a/b/text():
     final IAxis axis = new NestedAxis(new NestedAxis(childA, childB), text);
 
-    AbstractAxisTest.testAxisConventions(axis, new long[] { 5L, 10L });
+    IAxisTest.testIAxisConventions(axis, new long[] { 5L, 10L });
 
     wtx.abort();
     wtx.close();
@@ -95,7 +95,7 @@ public class NestedAxisTest {
     final IAxis axis =
         new NestedAxis(new NestedAxis(childA, childB), attributeX);
 
-    AbstractAxisTest.testAxisConventions(axis, new long[] { 8L });
+    IAxisTest.testIAxisConventions(axis, new long[] { 8L });
 
     wtx.abort();
     wtx.close();

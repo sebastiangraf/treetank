@@ -45,20 +45,20 @@ public class AttributeAxisTest {
     TestDocument.create(wtx);
 
     wtx.moveToDocumentRoot();
-    AbstractAxisTest.testAxisConventions(new AttributeAxis(wtx), new long[] {});
+    IAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
 
     wtx.moveTo(2L);
-    AbstractAxisTest.testAxisConventions(
+    IAxisTest.testIAxisConventions(
         new AttributeAxis(wtx),
         new long[] { 2L });
 
     wtx.moveTo(8L);
-    AbstractAxisTest.testAxisConventions(
+    IAxisTest.testIAxisConventions(
         new AttributeAxis(wtx),
         new long[] { 8L });
 
     wtx.moveTo(11L);
-    AbstractAxisTest.testAxisConventions(new AttributeAxis(wtx), new long[] {});
+    IAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
 
     wtx.abort();
     wtx.close();

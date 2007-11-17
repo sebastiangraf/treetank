@@ -54,28 +54,28 @@ public class FullTextAxisTest {
     assertEquals(tokenKey1, tokenKey2);
 
     wtx.moveToDocumentRoot();
-    AbstractAxisTest.testAxisConventions(
+    IAxisTest.testIAxisConventions(
         new FullTextAxis(wtx, "foo"),
         new long[] { nodeKey1, nodeKey2 });
 
     wtx.moveToDocumentRoot();
-    AbstractAxisTest.testAxisConventions(
+    IAxisTest.testIAxisConventions(
         new FullTextAxis(wtx, "bar"),
         new long[] {});
 
     wtx.moveToDocumentRoot();
-    AbstractAxisTest.testAxisConventions(
+    IAxisTest.testIAxisConventions(
         new FullTextAxis(wtx, "ba"),
         new long[] {});
 
     wtx.moveToDocumentRoot();
-    AbstractAxisTest.testAxisConventions(
+    IAxisTest.testIAxisConventions(
         new FullTextAxis(wtx, "fo"),
         new long[] {});
 
     try {
       wtx.moveToDocumentRoot();
-      AbstractAxisTest.testAxisConventions(
+      IAxisTest.testIAxisConventions(
           new FullTextAxis(wtx, null),
           new long[] { nodeKey1, nodeKey2 });
       TestCase.fail("Token of FullTextAxis() must not be null.");
@@ -85,7 +85,7 @@ public class FullTextAxisTest {
 
     try {
       wtx.moveToDocumentRoot();
-      AbstractAxisTest.testAxisConventions(
+      IAxisTest.testIAxisConventions(
           new FullTextAxis(wtx, ""),
           new long[] { nodeKey1, nodeKey2 });
       TestCase.fail("Token of FullTextAxis() must not be empty.");
@@ -113,12 +113,12 @@ public class FullTextAxisTest {
     final long tokenKey3 = wtx.insertToken("bar", nodeKey2);
 
     wtx.moveToDocumentRoot();
-    AbstractAxisTest.testAxisConventions(
+    IAxisTest.testIAxisConventions(
         new FullTextAxis(wtx, "f*"),
         new long[] { nodeKey1, nodeKey2 });
 
     wtx.moveToDocumentRoot();
-    AbstractAxisTest.testAxisConventions(
+    IAxisTest.testIAxisConventions(
         new FullTextAxis(wtx, "x*"),
         new long[] {});
 
@@ -141,7 +141,7 @@ public class FullTextAxisTest {
     assertEquals(tokenKey1, tokenKey2);
 
     wtx.moveToDocumentRoot();
-    AbstractAxisTest.testAxisConventions(
+    IAxisTest.testIAxisConventions(
         new FullTextAxis(wtx, "foo*"),
         new long[] { nodeKey1, nodeKey2 });
 
@@ -164,7 +164,7 @@ public class FullTextAxisTest {
     assertEquals(tokenKey1, tokenKey2);
 
     wtx.moveToDocumentRoot();
-    AbstractAxisTest.testAxisConventions(
+    IAxisTest.testIAxisConventions(
         new FullTextAxis(wtx, "*"),
         new long[] { nodeKey1, nodeKey2 });
 

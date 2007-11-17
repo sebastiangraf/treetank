@@ -47,7 +47,7 @@ public class FilterAxisTest {
     TestDocument.create(wtx);
 
     wtx.moveToDocumentRoot();
-    AbstractAxisTest.testAxisConventions(new FilterAxis(
+    IAxisTest.testIAxisConventions(new FilterAxis(
         new DescendantAxis(wtx),
         new NameFilter(wtx.keyForName("b"))), new long[] { 4L, 8L });
 
@@ -66,7 +66,7 @@ public class FilterAxisTest {
     TestDocument.create(wtx);
 
     wtx.moveToDocumentRoot();
-    AbstractAxisTest.testAxisConventions(new FilterAxis(
+    IAxisTest.testIAxisConventions(new FilterAxis(
         new DescendantAxis(wtx),
         new ValueFilter("foo")), new long[] { 5L });
 

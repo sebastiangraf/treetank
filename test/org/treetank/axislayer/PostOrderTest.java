@@ -46,7 +46,7 @@ public class PostOrderTest {
     TestDocument.create(wtx);
 
     wtx.moveToDocumentRoot();
-    AbstractAxisTest.testAxisConventions(new PostOrderAxis(wtx), new long[] {
+    IAxisTest.testIAxisConventions(new PostOrderAxis(wtx), new long[] {
         3L,
         5L,
         6L,

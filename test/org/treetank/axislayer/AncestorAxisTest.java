@@ -44,22 +44,22 @@ public class AncestorAxisTest {
     TestDocument.create(wtx);
 
     wtx.moveTo(9L);
-    AbstractAxisTest.testAxisConventions(new AncestorAxis(wtx), new long[] {
+    IAxisTest.testIAxisConventions(new AncestorAxis(wtx), new long[] {
         8L,
         2L });
 
     wtx.moveTo(4L);
-    AbstractAxisTest.testAxisConventions(
+    IAxisTest.testIAxisConventions(
         new AncestorAxis(wtx),
         new long[] { 2L });
 
     wtx.moveTo(3L);
-    AbstractAxisTest.testAxisConventions(
+    IAxisTest.testIAxisConventions(
         new AncestorAxis(wtx),
         new long[] { 2L });
 
     wtx.moveTo(2L);
-    AbstractAxisTest.testAxisConventions(new AncestorAxis(wtx), new long[] {});
+    IAxisTest.testIAxisConventions(new AncestorAxis(wtx), new long[] {});
 
     wtx.abort();
     wtx.close();

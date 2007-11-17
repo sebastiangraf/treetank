@@ -46,7 +46,7 @@ public class DescendantAxisTest {
     TestDocument.create(wtx);
 
     wtx.moveToDocumentRoot();
-    AbstractAxisTest.testAxisConventions(new DescendantAxis(wtx), new long[] {
+    IAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {
         2L,
         3L,
         4L,
@@ -59,7 +59,7 @@ public class DescendantAxisTest {
         11L });
 
     wtx.moveTo(2L);
-    AbstractAxisTest.testAxisConventions(new DescendantAxis(wtx), new long[] {
+    IAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {
         3L,
         4L,
         5L,
@@ -71,13 +71,13 @@ public class DescendantAxisTest {
         11L });
 
     wtx.moveTo(8L);
-    AbstractAxisTest.testAxisConventions(new DescendantAxis(wtx), new long[] {
+    IAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {
         9L,
         10L });
 
     wtx.moveTo(11L);
-    AbstractAxisTest
-        .testAxisConventions(new DescendantAxis(wtx), new long[] {});
+    IAxisTest
+        .testIAxisConventions(new DescendantAxis(wtx), new long[] {});
 
     wtx.abort();
     wtx.close();

@@ -45,12 +45,12 @@ public class ParentAxisTest {
     TestDocument.create(wtx);
 
     wtx.moveTo(4L);
-    AbstractAxisTest
-        .testAxisConventions(new ParentAxis(wtx), new long[] { 2L });
+    IAxisTest
+        .testIAxisConventions(new ParentAxis(wtx), new long[] { 2L });
 
     wtx.moveTo(8L);
-    AbstractAxisTest
-        .testAxisConventions(new ParentAxis(wtx), new long[] { 2L });
+    IAxisTest
+        .testIAxisConventions(new ParentAxis(wtx), new long[] { 2L });
 
     wtx.abort();
     wtx.close();
