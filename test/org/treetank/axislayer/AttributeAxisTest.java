@@ -18,13 +18,10 @@
 
 package org.treetank.axislayer;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.api.IAxis;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
@@ -47,31 +44,21 @@ public class AttributeAxisTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
 
-    wtx.moveTo(0L);
-    final IAxis axis1 = new AttributeAxis(wtx);
-    assertEquals(false, axis1.hasNext());
-    assertEquals(0L, wtx.getNodeKey());
+    wtx.moveToDocumentRoot();
+    AbstractAxisTest.testAxisConventions(new AttributeAxis(wtx), new long[] {});
 
     wtx.moveTo(2L);
-    final IAxis axis2 = new AttributeAxis(wtx);
-    assertEquals(true, axis2.hasNext());
-    assertEquals(2L, axis2.next());
-
-    assertEquals(false, axis2.hasNext());
-    assertEquals(2L, wtx.getNodeKey());
+    AbstractAxisTest.testAxisConventions(
+        new AttributeAxis(wtx),
+        new long[] { 2L });
 
     wtx.moveTo(8L);
-    final IAxis axis4 = new AttributeAxis(wtx);
-    assertEquals(true, axis4.hasNext());
-    assertEquals(8L, axis4.next());
-
-    assertEquals(false, axis4.hasNext());
-    assertEquals(8L, wtx.getNodeKey());
+    AbstractAxisTest.testAxisConventions(
+        new AttributeAxis(wtx),
+        new long[] { 8L });
 
     wtx.moveTo(11L);
-    final IAxis axis5 = new AttributeAxis(wtx);
-    assertEquals(false, axis5.hasNext());
-    assertEquals(11L, wtx.getNodeKey());
+    AbstractAxisTest.testAxisConventions(new AttributeAxis(wtx), new long[] {});
 
     wtx.abort();
     wtx.close();

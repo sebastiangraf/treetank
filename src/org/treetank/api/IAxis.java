@@ -23,25 +23,78 @@ import java.util.Iterator;
 /**
  * <h1>IAxis</h1>
  * 
+ * <h2>Description</h2>
+ * 
  * <p>
- * Interface to iterate over the TreeTank according to an iteration logic.
- * All implementations must comply with the following:
- * <li>next() must be called exactly once after hasNext() yields true.</li>
- * <li>after hasNext() is false, the transaction points to the node where
- *     it started</li>
- * <li>before each hasNext(), the cursor is guaranteed to point to the last
- *     node found with hasNext().</li>
+ * Interface to iterate over nodes without storing intermediate lists.
  * </p>
+ * 
+ * <h2>Convention</h2>
+ * 
  * <p>
- * This behavior can be achieved by:
- * <li>Always call super.hasNext() as the first thing in hasNext().</li>
- * <li>Always call reset() before return false in hasNext().</li> 
+ *  <ol>
+ *   <li><strong>Precondition</strong> before first call to
+ *       <code>IAxis.hasNext()</code>:
+ *       <code>IReadTransaction.isSelected() == true
+ *       && IReadTransaction.getNodeKey() == n</code>.</li>
+ *   <li><code>IAxis.next()</code> must be called exactly once after
+ *       <code>IAxis.hasNext() == true</code>.</li>
+ *   <li><code>IReadTransaction.getNodeKey()</code> must be equal right after
+ *       <code>IAxis.hasNext()</code> and right before the next call to
+ *       <code>IAxis.hasNext()</code>.</li>
+ *   <li>If used with <code>IWriteTransaction</code>, there are no modification
+ *       during an enhanced for loop.</li>
+ *   <li><strong>Postcondition</strong> after 
+ *       <code>IAxis.hasNext() == false</code>:
+ *       <code>IReadTransaction.isSelected() == true &&
+ *       IReadTransaction.getNodeKey() == n</code>.</li>
+ *  </ol>
+ * </p>
+ * 
+ * <h2>Example</h2>
+ * 
+ * <p>
+ *  <pre>
+ *   public class ExampleAxis implements IAxis {
+ *  
+ *     public ExampleAxis(final IReadTransaction rtx) {
+ *       // Must be called as first.
+ *       super(rtx);
+ *       // Some code moving rtx.
+ *       ...
+ *       // Must reset rtx to start key.
+ *       resetToStartKey();
+ *     }
+ *
+ *     public final boolean hasNext() {
+ *       // Must be called as first.
+ *       resetToLastKey();
+ *       if (getTransaction.hasParent) {
+ *         // Leave cursor in checked state before returning true.
+ *         getTransaction().moveToParent();
+ *         return true;
+ *       } else {
+ *         // Must be called before returning false.
+ *         resetToStartKey();
+ *         return false;
+ *       }
+ *     }
+ *   
+ *   }
+ *   </pre>
+ *   <pre>
+ *   ...
+ *   for (final long key : new ExampleAxis(rtx)) {
+ *      ...
+ *   }
+ *   ...
+ *  </pre>
  * </p>
  */
 public interface IAxis extends Iterator<Long>, Iterable<Long> {
 
   /**
-   * Reset axis to new start node key.
+   * Reset axis to new start node key. Used for nesting.
    * 
    * @param nodeKey New start node key.
    */
