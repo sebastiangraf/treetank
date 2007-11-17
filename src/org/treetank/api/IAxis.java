@@ -27,7 +27,9 @@ import java.util.Iterator;
  * 
  * <p>
  * Interface to iterate over nodes according to a given axis step without
- * storing intermediate lists.
+ * storing intermediate lists. <code>IAxis</code> extends the well-known Java
+ * <code>Iterator&lt;Long&gt;</code> and <code>Iterable&lt;Long&gt;</code>
+ * interfaces
  * </p>
  * 
  * <h2>Convention</h2>
