@@ -25,9 +25,9 @@ import static org.junit.Assert.fail;
 import org.treetank.api.IAxis;
 import org.treetank.api.IReadTransaction;
 
-public class AbstractAxisTest {
+public class IAxisTest {
 
-  public static void testAxisConventions(
+  public static void testIAxisConventions(
       final IAxis axis,
       final long[] expectedKeys) {
 
