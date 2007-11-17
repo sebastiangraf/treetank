@@ -18,6 +18,7 @@
 
 package org.treetank.axislayer;
 
+import org.treetank.api.IAxis;
 import org.treetank.api.IReadTransaction;
 
 /**
@@ -28,7 +29,7 @@ import org.treetank.api.IReadTransaction;
  * node. Self is not included.
  * </p>
  */
-public class ChildAxis extends AbstractAxis {
+public class ChildAxis extends AbstractAxis implements IAxis {
 
   /** Has another child node. */
   private boolean mFirst;

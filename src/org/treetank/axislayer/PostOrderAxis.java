@@ -18,6 +18,7 @@
 
 package org.treetank.axislayer;
 
+import org.treetank.api.IAxis;
 import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastStack;
@@ -29,7 +30,7 @@ import org.treetank.utils.FastStack;
  * Iterate over the whole tree starting with the last node.
  * </p>
  */
-public class PostOrderAxis extends AbstractAxis {
+public class PostOrderAxis extends AbstractAxis implements IAxis {
 
   /** For remembering last parent. */
   private FastStack<Long> mLastParent;

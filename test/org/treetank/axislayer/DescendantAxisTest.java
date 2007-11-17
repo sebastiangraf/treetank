@@ -76,8 +76,7 @@ public class DescendantAxisTest {
         10L });
 
     wtx.moveTo(11L);
-    IAxisTest
-        .testIAxisConventions(new DescendantAxis(wtx), new long[] {});
+    IAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {});
 
     wtx.abort();
     wtx.close();

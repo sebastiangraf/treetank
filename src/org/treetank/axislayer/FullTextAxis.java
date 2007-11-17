@@ -29,7 +29,7 @@ import org.treetank.api.IReadTransaction;
  * Iterate to parent node starting at a given node. Self is not included.
  * </p>
  */
-public class FullTextAxis extends AbstractAxis {
+public class FullTextAxis extends AbstractAxis implements IAxis {
 
   /** Axis (either child or descendant) to search for fulltext leafs. */
   private final IAxis mAxis;

@@ -18,6 +18,7 @@
 
 package org.treetank.axislayer;
 
+import org.treetank.api.IAxis;
 import org.treetank.api.IReadTransaction;
 
 /**
@@ -27,7 +28,7 @@ import org.treetank.api.IReadTransaction;
  * Iterate over all attibutes of a given node.
  * </p>
  */
-public class AttributeAxis extends AbstractAxis {
+public class AttributeAxis extends AbstractAxis implements IAxis {
 
   /** Remember next key to visit. */
   private int mNextIndex;

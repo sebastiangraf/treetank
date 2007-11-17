@@ -18,6 +18,7 @@
 
 package org.treetank.axislayer;
 
+import org.treetank.api.IAxis;
 import org.treetank.api.IReadTransaction;
 
 /**
@@ -27,7 +28,7 @@ import org.treetank.api.IReadTransaction;
  * Iterate to parent node starting at a given node. Self is not included.
  * </p>
  */
-public class SelfAxis extends AbstractAxis {
+public class SelfAxis extends AbstractAxis implements IAxis {
 
   /** Track number of calls of next. */
   private boolean mFirst;

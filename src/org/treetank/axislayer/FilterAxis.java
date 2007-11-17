@@ -28,7 +28,7 @@ import org.treetank.api.IFilter;
  * Perform a test on a given axis.
  * </p>
  */
-public class FilterAxis extends AbstractAxis {
+public class FilterAxis extends AbstractAxis implements IAxis {
 
   /** Axis to test. */
   private final IAxis mAxis;
