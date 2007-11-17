@@ -97,6 +97,11 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final long moveTo(final long nodeKey) {
     assertNotClosed();
+    // Do nothing if this node is already selected.
+    if (mCurrentNode != null && mCurrentNode.getNodeKey() == nodeKey) {
+      return nodeKey;
+    }
+    // Find node by its key.
     if (nodeKey != IConstants.NULL_KEY) {
       mCurrentNode = mTransactionState.getNode(nodeKey);
       if (mCurrentNode != null) {
