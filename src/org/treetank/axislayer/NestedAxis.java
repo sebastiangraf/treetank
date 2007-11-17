@@ -27,7 +27,7 @@ import org.treetank.api.IAxis;
  * Chains two axis operations.
  * </p>
  */
-public class NestedAxis extends AbstractAxis {
+public class NestedAxis extends AbstractAxis implements IAxis {
 
   /** Axis to test. */
   private final IAxis mInnerAxis;

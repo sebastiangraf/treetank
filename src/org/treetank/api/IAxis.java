@@ -26,7 +26,8 @@ import java.util.Iterator;
  * <h2>Description</h2>
  * 
  * <p>
- * Interface to iterate over nodes without storing intermediate lists.
+ * Interface to iterate over nodes according to a given axis step without
+ * storing intermediate lists.
  * </p>
  * 
  * <h2>Convention</h2>
@@ -51,11 +52,33 @@ import java.util.Iterator;
  *  </ol>
  * </p>
  * 
- * <h2>Example</h2>
+ * <h2>User Example</h2>
  * 
  * <p>
  *  <pre>
- *   public class ExampleAxis implements IAxis {
+ *   ...
+ *   for (final long key : new ExampleAxis(rtx)) {
+ *      ...
+ *   }
+ *   ...
+ *  </pre>
+ *  <pre>
+ *   ...
+ *   final IAxis axis = new ExampleAxis(rtx);
+ *   long count = 0L;
+ *   while (axis.hasNext()) {
+ *     count += 1;
+ *   }
+ *   ...
+ *  </pre>
+ * </p>
+ * 
+ * <h2>Developer Example</h2>
+ * 
+ * <p>
+ *  <pre>
+ *   // Must extend <code>AbstractAxis</code> and implement <code>IAxis</code>.
+ *   public class ExampleAxis extends AbstractAxis implements IAxis {
  *  
  *     public ExampleAxis(final IReadTransaction rtx) {
  *       // Must be called as first.
@@ -82,13 +105,6 @@ import java.util.Iterator;
  *   
  *   }
  *   </pre>
- *   <pre>
- *   ...
- *   for (final long key : new ExampleAxis(rtx)) {
- *      ...
- *   }
- *   ...
- *  </pre>
  * </p>
  */
 public interface IAxis extends Iterator<Long>, Iterable<Long> {

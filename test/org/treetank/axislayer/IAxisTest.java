@@ -22,10 +22,27 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.io.File;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.treetank.api.IAxis;
 import org.treetank.api.IReadTransaction;
+import org.treetank.api.ISession;
+import org.treetank.api.IWriteTransaction;
+import org.treetank.sessionlayer.Session;
+import org.treetank.utils.TestDocument;
 
 public class IAxisTest {
+
+  public static final String PATH =
+      "generated" + File.separator + "IAxisTest.tnk";
+
+  @Before
+  public void setUp() {
+    Session.removeSession(PATH);
+  }
 
   public static void testIAxisConventions(
       final IAxis axis,
@@ -64,6 +81,27 @@ public class IAxisTest {
     // IAxis results.
     assertArrayEquals(expectedKeys, keys);
 
+  }
+
+  @Test
+  public void testIAxisUserExample() {
+
+    // Build simple test tree.
+    final ISession session = Session.beginSession(PATH);
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+    TestDocument.create(wtx);
+
+    wtx.moveToDocumentRoot();
+    final IAxis axis = new DescendantAxis(wtx);
+    long count = 0L;
+    while (axis.hasNext()) {
+      count += 1;
+    }
+    Assert.assertEquals(10L, count);
+
+    wtx.abort();
+    wtx.close();
+    session.close();
   }
 
 }

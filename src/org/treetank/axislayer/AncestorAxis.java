@@ -18,6 +18,7 @@
 
 package org.treetank.axislayer;
 
+import org.treetank.api.IAxis;
 import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 
@@ -29,7 +30,7 @@ import org.treetank.api.IReadTransaction;
  * node. Self is not included.
  * </p>
  */
-public class AncestorAxis extends AbstractAxis {
+public class AncestorAxis extends AbstractAxis implements IAxis {
 
   /**
    * Constructor initializing internal state.

@@ -86,6 +86,8 @@ public final class TestDocument {
    */
   public static void create(final IWriteTransaction wtx) {
 
+    wtx.moveToDocumentRoot();
+
     wtx.insertElementAsFirstChild("a", "ns", "p");
     wtx.insertAttribute("i", "", "", UTF.getBytes("j"));
     wtx.insertNamespace("ns", "p");
@@ -109,6 +111,8 @@ public final class TestDocument {
 
     wtx.insertTextAsRightSibling(UTF.getBytes("oops3"));
 
+    wtx.moveToDocumentRoot();
+
   }
 
   /**
@@ -118,6 +122,9 @@ public final class TestDocument {
    * @param wtx IWriteTransaction to write to.
    */
   public static void createWithoutAttributes(final IWriteTransaction wtx) {
+
+    wtx.moveToDocumentRoot();
+
     wtx.insertElementAsFirstChild("a", "ns", "p");
 
     wtx.insertTextAsFirstChild(UTF.getBytes("oops1"));
@@ -137,6 +144,8 @@ public final class TestDocument {
     wtx.moveToParent();
 
     wtx.insertTextAsRightSibling(UTF.getBytes("oops3"));
+
+    wtx.moveToDocumentRoot();
 
   }
 

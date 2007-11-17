@@ -18,6 +18,7 @@
 
 package org.treetank.axislayer;
 
+import org.treetank.api.IAxis;
 import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastStack;
@@ -30,7 +31,7 @@ import org.treetank.utils.FastStack;
  * node. Self is not included.
  * </p>
  */
-public class DescendantAxis extends AbstractAxis {
+public class DescendantAxis extends AbstractAxis implements IAxis {
 
   /** Stack for remembering next nodeKey in document order. */
   private FastStack<Long> mRightSiblingKeyStack;
