@@ -18,13 +18,10 @@
 
 package org.treetank.axislayer;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.api.IAxis;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
@@ -41,44 +38,28 @@ public class AncestorAxisTest {
   }
 
   @Test
-  public void testIterate() {
-
-    // Build simple test tree.
+  public void testAxisConventions() {
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
 
-    // Find ancestors starting from nodeKey 0L (root).
     wtx.moveTo(9L);
-    final IAxis axis1 = new AncestorAxis(wtx);
-    assertEquals(true, axis1.hasNext());
-    assertEquals(8L, axis1.next());
+    AbstractAxisTest.testAxisConventions(new AncestorAxis(wtx), new long[] {
+        8L,
+        2L });
 
-    assertEquals(true, axis1.hasNext());
-    assertEquals(2L, axis1.next());
-
-    assertEquals(false, axis1.hasNext());
-
-    // Find ancestors starting from nodeKey 1L (first child of root).
     wtx.moveTo(4L);
-    final IAxis axis2 = new AncestorAxis(wtx);
-    assertEquals(true, axis2.hasNext());
-    assertEquals(2L, axis2.next());
+    AbstractAxisTest.testAxisConventions(
+        new AncestorAxis(wtx),
+        new long[] { 2L });
 
-    assertEquals(false, axis2.hasNext());
-
-    // Find ancestors starting from nodeKey 4L (second child of root).
     wtx.moveTo(3L);
-    final IAxis axis3 = new AncestorAxis(wtx);
-    assertEquals(true, axis3.hasNext());
-    assertEquals(2L, axis3.next());
+    AbstractAxisTest.testAxisConventions(
+        new AncestorAxis(wtx),
+        new long[] { 2L });
 
-    assertEquals(false, axis3.hasNext());
-
-    // Find ancestors starting from nodeKey 5L (last in document order).
     wtx.moveTo(2L);
-    final IAxis axis4 = new AncestorAxis(wtx);
-    assertEquals(false, axis4.hasNext());
+    AbstractAxisTest.testAxisConventions(new AncestorAxis(wtx), new long[] {});
 
     wtx.abort();
     wtx.close();

@@ -18,13 +18,10 @@
 
 package org.treetank.axislayer;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.api.IAxis;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
@@ -48,18 +45,12 @@ public class ParentAxisTest {
     TestDocument.create(wtx);
 
     wtx.moveTo(4L);
-    final IAxis axis1 = new ParentAxis(wtx);
-    assertEquals(true, axis1.hasNext());
-    assertEquals(2L, axis1.next());
-
-    assertEquals(false, axis1.hasNext());
+    AbstractAxisTest
+        .testAxisConventions(new ParentAxis(wtx), new long[] { 2L });
 
     wtx.moveTo(8L);
-    final IAxis axis2 = new ParentAxis(wtx);
-    assertEquals(true, axis2.hasNext());
-    assertEquals(2L, axis2.next());
-
-    assertEquals(false, axis2.hasNext());
+    AbstractAxisTest
+        .testAxisConventions(new ParentAxis(wtx), new long[] { 2L });
 
     wtx.abort();
     wtx.close();

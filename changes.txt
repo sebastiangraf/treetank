@@ -18,6 +18,8 @@
  
 TreeTank 4.17
 -------------
++ Introduced Conventions for IAxis. Generic test case added to test all axis
+  for convention compliance. Bug fixed with FullTextAxis.
 + BeanUtil now supporting remove().
 + Added readme.txt to provide authoritative coding conventions.
 + Added reset() to IAxis to allow for NestedAxis.

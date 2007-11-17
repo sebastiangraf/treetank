@@ -18,14 +18,11 @@
 
 package org.treetank.axislayer;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.File;
 import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.api.IAxis;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
@@ -49,18 +46,10 @@ public class FilterAxisTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
 
-    // Find descendants starting from nodeKey 0L (root).
     wtx.moveToDocumentRoot();
-    final IAxis axis1 =
-        new FilterAxis(new DescendantAxis(wtx), new NameFilter(wtx
-            .keyForName("b")));
-
-    assertEquals(true, axis1.hasNext());
-    assertEquals(4L, axis1.next());
-
-    assertEquals(true, axis1.hasNext());
-    assertEquals(8L, axis1.next());
-    assertEquals(false, axis1.hasNext());
+    AbstractAxisTest.testAxisConventions(new FilterAxis(
+        new DescendantAxis(wtx),
+        new NameFilter(wtx.keyForName("b"))), new long[] { 4L, 8L });
 
     wtx.abort();
     wtx.close();
@@ -76,15 +65,10 @@ public class FilterAxisTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
 
-    // Find descendants starting from nodeKey 0L (root).
     wtx.moveToDocumentRoot();
-    final IAxis axis1 =
-        new FilterAxis(new DescendantAxis(wtx), new ValueFilter("foo"));
-
-    assertEquals(true, axis1.hasNext());
-    assertEquals(5L, axis1.next());
-
-    assertEquals(false, axis1.hasNext());
+    AbstractAxisTest.testAxisConventions(new FilterAxis(
+        new DescendantAxis(wtx),
+        new ValueFilter("foo")), new long[] { 5L });
 
     wtx.abort();
     wtx.close();

@@ -72,6 +72,8 @@ public class FullTextAxis extends AbstractAxis {
 
     mAxis = new FilterAxis(innerAxis, new FullTextLeafFilter());
 
+    resetToStartKey();
+
   }
 
   /**

@@ -26,7 +26,6 @@ import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.api.IAxis;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
@@ -54,47 +53,42 @@ public class FullTextAxisTest {
     final long tokenKey2 = wtx.insertToken("foo", nodeKey2);
     assertEquals(tokenKey1, tokenKey2);
 
-    // Verify axis
-    final long key1 = wtx.getNodeKey();
-    final IAxis axis1 = new FullTextAxis(wtx, "foo");
-    assertEquals(true, axis1.hasNext());
-    assertEquals(nodeKey1, axis1.next());
-    assertEquals(true, axis1.hasNext());
-    assertEquals(nodeKey2, axis1.next());
-    assertEquals(false, axis1.hasNext());
-    assertEquals(key1, wtx.getNodeKey());
+    wtx.moveToDocumentRoot();
+    AbstractAxisTest.testAxisConventions(
+        new FullTextAxis(wtx, "foo"),
+        new long[] { nodeKey1, nodeKey2 });
 
-    final long key2 = wtx.getNodeKey();
-    final IAxis axis2 = new FullTextAxis(wtx, "bar");
-    assertEquals(false, axis2.hasNext());
-    assertEquals(key2, wtx.getNodeKey());
+    wtx.moveToDocumentRoot();
+    AbstractAxisTest.testAxisConventions(
+        new FullTextAxis(wtx, "bar"),
+        new long[] {});
 
-    final long key3 = wtx.getNodeKey();
-    final IAxis axis3 = new FullTextAxis(wtx, "ba");
-    assertEquals(false, axis3.hasNext());
-    assertEquals(key3, wtx.getNodeKey());
+    wtx.moveToDocumentRoot();
+    AbstractAxisTest.testAxisConventions(
+        new FullTextAxis(wtx, "ba"),
+        new long[] {});
 
-    final long key4 = wtx.getNodeKey();
-    final IAxis axis4 = new FullTextAxis(wtx, "fo");
-    assertEquals(false, axis4.hasNext());
-    assertEquals(key4, wtx.getNodeKey());
+    wtx.moveToDocumentRoot();
+    AbstractAxisTest.testAxisConventions(
+        new FullTextAxis(wtx, "fo"),
+        new long[] {});
 
     try {
-      final long key5 = wtx.getNodeKey();
-      final IAxis axis5 = new FullTextAxis(wtx, null);
-      assertEquals(false, axis5.hasNext());
-      assertEquals(key5, wtx.getNodeKey());
-      TestCase.fail();
+      wtx.moveToDocumentRoot();
+      AbstractAxisTest.testAxisConventions(
+          new FullTextAxis(wtx, null),
+          new long[] { nodeKey1, nodeKey2 });
+      TestCase.fail("Token of FullTextAxis() must not be null.");
     } catch (Exception e) {
       // Must catch.
     }
 
     try {
-      final long key6 = wtx.getNodeKey();
-      final IAxis axis6 = new FullTextAxis(wtx, "");
-      assertEquals(false, axis6.hasNext());
-      assertEquals(key6, wtx.getNodeKey());
-      TestCase.fail();
+      wtx.moveToDocumentRoot();
+      AbstractAxisTest.testAxisConventions(
+          new FullTextAxis(wtx, ""),
+          new long[] { nodeKey1, nodeKey2 });
+      TestCase.fail("Token of FullTextAxis() must not be empty.");
     } catch (Exception e) {
       // Must catch.
     }
@@ -118,21 +112,15 @@ public class FullTextAxisTest {
     assertEquals(tokenKey1, tokenKey2);
     final long tokenKey3 = wtx.insertToken("bar", nodeKey2);
 
-    // Verify axis
-    final long key1 = wtx.getNodeKey();
-    final IAxis axis1 = new FullTextAxis(wtx, "f*");
-    assertEquals(true, axis1.hasNext());
-    assertEquals(nodeKey1, axis1.next());
-    assertEquals(true, axis1.hasNext());
-    assertEquals(nodeKey2, axis1.next());
-    assertEquals(false, axis1.hasNext());
-    assertEquals(key1, wtx.getNodeKey());
+    wtx.moveToDocumentRoot();
+    AbstractAxisTest.testAxisConventions(
+        new FullTextAxis(wtx, "f*"),
+        new long[] { nodeKey1, nodeKey2 });
 
-    // Verify axis
-    final long key2 = wtx.getNodeKey();
-    final IAxis axis2 = new FullTextAxis(wtx, "x*");
-    assertEquals(false, axis2.hasNext());
-    assertEquals(key2, wtx.getNodeKey());
+    wtx.moveToDocumentRoot();
+    AbstractAxisTest.testAxisConventions(
+        new FullTextAxis(wtx, "x*"),
+        new long[] {});
 
     wtx.abort();
     wtx.close();
@@ -152,15 +140,10 @@ public class FullTextAxisTest {
     final long tokenKey2 = wtx.insertToken("foo", nodeKey2);
     assertEquals(tokenKey1, tokenKey2);
 
-    // Verify axis
-    final long key1 = wtx.getNodeKey();
-    final IAxis axis1 = new FullTextAxis(wtx, "foo*");
-    assertEquals(true, axis1.hasNext());
-    assertEquals(nodeKey1, axis1.next());
-    assertEquals(true, axis1.hasNext());
-    assertEquals(nodeKey2, axis1.next());
-    assertEquals(false, axis1.hasNext());
-    assertEquals(key1, wtx.getNodeKey());
+    wtx.moveToDocumentRoot();
+    AbstractAxisTest.testAxisConventions(
+        new FullTextAxis(wtx, "foo*"),
+        new long[] { nodeKey1, nodeKey2 });
 
     wtx.abort();
     wtx.close();
@@ -180,15 +163,10 @@ public class FullTextAxisTest {
     final long tokenKey2 = wtx.insertToken("foo", nodeKey2);
     assertEquals(tokenKey1, tokenKey2);
 
-    // Verify axis
-    final long key1 = wtx.getNodeKey();
-    final IAxis axis1 = new FullTextAxis(wtx, "*");
-    assertEquals(true, axis1.hasNext());
-    assertEquals(nodeKey1, axis1.next());
-    assertEquals(true, axis1.hasNext());
-    assertEquals(nodeKey2, axis1.next());
-    assertEquals(false, axis1.hasNext());
-    assertEquals(key1, wtx.getNodeKey());
+    wtx.moveToDocumentRoot();
+    AbstractAxisTest.testAxisConventions(
+        new FullTextAxis(wtx, "*"),
+        new long[] { nodeKey1, nodeKey2 });
 
     wtx.abort();
     wtx.close();

@@ -20,7 +20,6 @@ package org.treetank.axislayer;
 
 import java.io.File;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.api.IAxis;
@@ -62,11 +61,7 @@ public class NestedAxisTest {
     // Part: /a/b/text():
     final IAxis axis = new NestedAxis(new NestedAxis(childA, childB), text);
 
-    Assert.assertEquals(true, axis.hasNext());
-    Assert.assertEquals(5L, axis.next());
-    Assert.assertEquals(true, axis.hasNext());
-    Assert.assertEquals(10L, axis.next());
-    Assert.assertEquals(false, axis.hasNext());
+    AbstractAxisTest.testAxisConventions(axis, new long[] { 5L, 10L });
 
     wtx.abort();
     wtx.close();
@@ -100,9 +95,7 @@ public class NestedAxisTest {
     final IAxis axis =
         new NestedAxis(new NestedAxis(childA, childB), attributeX);
 
-    Assert.assertEquals(true, axis.hasNext());
-    Assert.assertEquals(8L, axis.next());
-    Assert.assertEquals(false, axis.hasNext());
+    AbstractAxisTest.testAxisConventions(axis, new long[] { 8L });
 
     wtx.abort();
     wtx.close();

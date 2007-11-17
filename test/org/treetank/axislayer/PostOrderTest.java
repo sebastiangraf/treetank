@@ -18,13 +18,10 @@
 
 package org.treetank.axislayer;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.api.IAxis;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
@@ -49,42 +46,18 @@ public class PostOrderTest {
     TestDocument.create(wtx);
 
     wtx.moveToDocumentRoot();
-    final IAxis axis = new PostOrderAxis(wtx);
-
-    assertEquals(true, axis.hasNext());
-    assertEquals(3L, axis.next());
-
-    assertEquals(true, axis.hasNext());
-    assertEquals(5L, axis.next());
-
-    assertEquals(true, axis.hasNext());
-    assertEquals(6L, axis.next());
-
-    assertEquals(true, axis.hasNext());
-    assertEquals(4L, axis.next());
-
-    assertEquals(true, axis.hasNext());
-    assertEquals(7L, axis.next());
-
-    assertEquals(true, axis.hasNext());
-    assertEquals(9L, axis.next());
-
-    assertEquals(true, axis.hasNext());
-    assertEquals(10L, axis.next());
-
-    assertEquals(true, axis.hasNext());
-    assertEquals(8L, axis.next());
-
-    assertEquals(true, axis.hasNext());
-    assertEquals(11L, axis.next());
-
-    assertEquals(true, axis.hasNext());
-    assertEquals(2L, axis.next());
-
-    assertEquals(true, axis.hasNext());
-    assertEquals(0L, axis.next());
-
-    assertEquals(false, axis.hasNext());
+    AbstractAxisTest.testAxisConventions(new PostOrderAxis(wtx), new long[] {
+        3L,
+        5L,
+        6L,
+        4L,
+        7L,
+        9L,
+        10L,
+        8L,
+        11L,
+        2L,
+        0L });
 
     wtx.abort();
     wtx.close();
