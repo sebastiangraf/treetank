@@ -46,7 +46,7 @@ public class FullTextTest {
 
     ISession session = Session.beginSession(PATH);
 
-    final IWriteTransaction wtx = session.beginWriteTransaction(false);
+    final IWriteTransaction wtx = session.beginWriteTransaction();
 
     // Create token.
     final long elementKey1 = wtx.insertElementAsFirstChild("foo", "", "");

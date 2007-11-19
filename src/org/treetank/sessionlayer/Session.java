@@ -201,15 +201,17 @@ public final class Session implements ISession {
    */
   public final IWriteTransaction beginWriteTransaction() {
     assertNotClosed();
-    return mSessionState.beginWriteTransaction(true);
+    return mSessionState.beginWriteTransaction(0, 0);
   }
 
   /**
    * {@inheritDoc}
    */
-  public final IWriteTransaction beginWriteTransaction(final boolean autoCommit) {
+  public final IWriteTransaction beginWriteTransaction(
+      final int maxNodeCount,
+      final int maxTime) {
     assertNotClosed();
-    return mSessionState.beginWriteTransaction(autoCommit);
+    return mSessionState.beginWriteTransaction(maxNodeCount, maxTime);
   }
 
   /**

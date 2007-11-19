@@ -18,6 +18,9 @@
  
 TreeTank 4.17
 -------------
+11 ISession now accepts maximum number of node modifications or elapsed
+   seconds before auto commit. Auto commit must now be activated by 
+   ISession.beginWriteTransaction(maxNodeCount, maxTime).
 10 Introduced Conventions for IReadTransaction and IFilter. Bug fixed with
    IReadTransaction.moveTo(key).
  9 Moved IConstants to utils package. It should no longer be used publicly.

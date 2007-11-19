@@ -111,19 +111,23 @@ public interface ISession {
   public IReadTransaction beginReadTransaction(final long revisionKey);
 
   /**
-   * Begin exclusive read/write transaction. Uses auto commit as default.
+   * Begin exclusive read/write transaction without auto commit.
    * 
    * @return IWriteTransaction instance.
    */
   public IWriteTransaction beginWriteTransaction();
 
   /**
-   * Begin exclusive read/write transaction.
+   * Begin exclusive read/write transaction with auto commit.
    * 
-   * @param autoCommit True activates auto commit.
+   * @param maxNodeCount Count of node modifications after which a commit is
+   *        issued.
+   * @param maxTime Time in seconds after which a commit is issued.
    * @return IWriteTransaction instance.
    */
-  public IWriteTransaction beginWriteTransaction(final boolean autoCommit);
+  public IWriteTransaction beginWriteTransaction(
+      final int maxNodeCount,
+      final int maxTime);
 
   /**
    * Safely close session and immediately release all resources. A session
