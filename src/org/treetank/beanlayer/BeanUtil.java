@@ -25,7 +25,6 @@ import java.lang.reflect.Field;
 
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.utils.IConstants;
 import org.treetank.utils.UTF;
 
 /**
@@ -189,7 +188,7 @@ public final class BeanUtil {
       final IWriteTransaction wtx,
       final Object object) {
 
-    long beanKey = IConstants.NULL_KEY;
+    long beanKey = wtx.getNullNodeKey();
 
     try {
 

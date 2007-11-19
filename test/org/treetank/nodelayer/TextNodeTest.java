@@ -21,9 +21,9 @@ package org.treetank.nodelayer;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.treetank.api.IConstants;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
+import org.treetank.utils.IConstants;
 
 public class TextNodeTest {
 

@@ -18,6 +18,8 @@
  
 TreeTank 4.17
 -------------
++ Moved IConstants to utils package. It should no longer be used publicly.
+  Use IReadTransaction.isNullNodeKey(key) and getNullNodeKey().
 + Refactored IReadTransaction. Move operations return true if the new node
   could be selected. If not, the cursor stays with the former node and false
   is returned.
