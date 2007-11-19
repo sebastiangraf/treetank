@@ -18,8 +18,8 @@
 
 package org.treetank.pagelayer;
 
-import org.treetank.api.IConstants;
 import org.treetank.utils.FastByteArrayReader;
+import org.treetank.utils.IConstants;
 
 /**
  * <h1>IndirectPage</h1>

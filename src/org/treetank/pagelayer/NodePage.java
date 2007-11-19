@@ -18,7 +18,6 @@
 
 package org.treetank.pagelayer;
 
-import org.treetank.api.IConstants;
 import org.treetank.nodelayer.AbstractNode;
 import org.treetank.nodelayer.DocumentRootNode;
 import org.treetank.nodelayer.ElementNode;
@@ -28,6 +27,7 @@ import org.treetank.nodelayer.FullTextRootNode;
 import org.treetank.nodelayer.TextNode;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
+import org.treetank.utils.IConstants;
 
 /**
  * <h1>NodePage</h1>

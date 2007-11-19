@@ -20,7 +20,6 @@ package org.treetank.sessionlayer;
 
 import java.util.Map;
 
-import org.treetank.api.IConstants;
 import org.treetank.nodelayer.AbstractNode;
 import org.treetank.pagelayer.AbstractPage;
 import org.treetank.pagelayer.IndirectPage;
@@ -31,6 +30,7 @@ import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.RevisionRootPage;
 import org.treetank.pagelayer.UberPage;
 import org.treetank.utils.FastByteArrayReader;
+import org.treetank.utils.IConstants;
 
 /**
  * <h1>ReadTransactionState</h1>

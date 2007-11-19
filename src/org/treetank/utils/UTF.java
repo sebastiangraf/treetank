@@ -18,7 +18,6 @@
 
 package org.treetank.utils;
 
-import org.treetank.api.IConstants;
 
 /**
  * <h1>UTF</h1>

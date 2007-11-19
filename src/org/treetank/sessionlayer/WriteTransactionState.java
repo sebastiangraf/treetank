@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Map;
 
-import org.treetank.api.IConstants;
 import org.treetank.nodelayer.AbstractNode;
 import org.treetank.nodelayer.DocumentRootNode;
 import org.treetank.nodelayer.ElementNode;
@@ -37,6 +36,7 @@ import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.PageWriter;
 import org.treetank.pagelayer.RevisionRootPage;
 import org.treetank.pagelayer.UberPage;
+import org.treetank.utils.IConstants;
 
 /**
  * <h1>WriteTransactionState</h1>

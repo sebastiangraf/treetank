@@ -18,10 +18,10 @@
 
 package org.treetank.sessionlayer;
 
-import org.treetank.api.IConstants;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.nodelayer.AbstractNode;
 import org.treetank.pagelayer.UberPage;
+import org.treetank.utils.IConstants;
 
 /**
  * <h1>WriteTransaction</h1>

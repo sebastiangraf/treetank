@@ -26,12 +26,12 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 
-import org.treetank.api.IConstants;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.utils.FastStack;
+import org.treetank.utils.IConstants;
 import org.treetank.utils.UTF;
 
 public final class XMLShredder {
