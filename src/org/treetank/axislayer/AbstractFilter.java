@@ -22,28 +22,36 @@ import org.treetank.api.IFilter;
 import org.treetank.api.IReadTransaction;
 
 /**
- * <h1>NodeAxisTest</h1>
+ * <h1>AbstractFilter</h1>
  * 
  * <p>
- * Only match ELEMENT and TEXT nodes.
+ * Filter node of transaction this filter is bound to.
  * </p>
  */
-public class NodeFilter extends AbstractFilter implements IFilter {
+public abstract class AbstractFilter implements IFilter {
+
+  /** Iterate over transaction exclusive to this step. */
+  private final IReadTransaction mRTX;
 
   /**
-   * Default constructor.
+   * Bind axis step to transaction.
    * 
-   * @param rtx Transaction this filter is bound to.
+   * @param rtx Transaction to operate with.
    */
-  public NodeFilter(final IReadTransaction rtx) {
-    super(rtx);
+  public AbstractFilter(final IReadTransaction rtx) {
+    mRTX = rtx;
   }
 
   /**
    * {@inheritDoc}
    */
-  public final boolean filter() {
-    return (getTransaction().isElement() || getTransaction().isText());
+  public IReadTransaction getTransaction() {
+    return mRTX;
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  public abstract boolean filter();
 
 }

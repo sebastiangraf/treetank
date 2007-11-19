@@ -28,25 +28,27 @@ import org.treetank.api.IReadTransaction;
  * Match local part by key.
  * </p>
  */
-public class NameFilter implements IFilter {
+public class NameFilter extends AbstractFilter implements IFilter {
 
   /** Key of name to test. */
   private final int mLocalPartKey;
 
   /**
-   * Constructor.
+   * Default constructor.
    * 
-   * @param localPartKey Local part key to test for.
+   * @param rtx Transaction this filter is bound to.
+   * @param localPart Local part to check.
    */
-  public NameFilter(final int localPartKey) {
-    mLocalPartKey = localPartKey;
+  public NameFilter(final IReadTransaction rtx, final String localPart) {
+    super(rtx);
+    mLocalPartKey = rtx.keyForName(localPart);
   }
 
   /**
    * {@inheritDoc}
    */
-  public final boolean test(final IReadTransaction rtx) {
-    return (rtx.getLocalPartKey() == mLocalPartKey);
+  public final boolean filter() {
+    return (getTransaction().getLocalPartKey() == mLocalPartKey);
   }
 
 }

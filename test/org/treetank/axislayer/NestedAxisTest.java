@@ -52,12 +52,12 @@ public class NestedAxisTest {
     // XPath expression /a/b/text():
     // Part: /a
     final IAxis childA =
-        new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx.keyForName("a")));
+        new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "a"));
     // Part: /b
     final IAxis childB =
-        new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx.keyForName("b")));
+        new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "b"));
     // Part: /text()
-    final IAxis text = new FilterAxis(new ChildAxis(wtx), new TextFilter());
+    final IAxis text = new FilterAxis(new ChildAxis(wtx), new TextFilter(wtx));
     // Part: /a/b/text():
     final IAxis axis = new NestedAxis(new NestedAxis(childA, childB), text);
 
@@ -83,14 +83,13 @@ public class NestedAxisTest {
     // XPath expression /a/b/@x:
     // Part: /a
     final IAxis childA =
-        new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx.keyForName("a")));
+        new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "a"));
     // Part: /b
     final IAxis childB =
-        new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx.keyForName("b")));
+        new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "b"));
     // Part: /@x
     final IAxis attributeX =
-        new FilterAxis(new AttributeAxis(wtx), new NameFilter(wtx
-            .keyForName("x")));
+        new FilterAxis(new AttributeAxis(wtx), new NameFilter(wtx, "x"));
     // Part: /a/b/@x:
     final IAxis axis =
         new NestedAxis(new NestedAxis(childA, childB), attributeX);

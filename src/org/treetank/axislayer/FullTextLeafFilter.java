@@ -28,13 +28,22 @@ import org.treetank.api.IReadTransaction;
  * Only select nodes of kind FULLTEXT_LEAF.
  * </p>
  */
-public class FullTextLeafFilter implements IFilter {
+public class FullTextLeafFilter extends AbstractFilter implements IFilter {
+
+  /**
+   * Default constructor.
+   * 
+   * @param rtx Transaction this filter is bound to.
+   */
+  public FullTextLeafFilter(final IReadTransaction rtx) {
+    super(rtx);
+  }
 
   /**
    * {@inheritDoc}
    */
-  public final boolean test(final IReadTransaction rtx) {
-    return rtx.isFullTextLeaf();
+  public final boolean filter() {
+    return getTransaction().isFullTextLeaf();
   }
 
 }

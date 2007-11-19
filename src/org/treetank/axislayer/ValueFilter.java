@@ -29,7 +29,7 @@ import org.treetank.utils.UTF;
  * Only match nodes of kind TEXT whoms value matches.
  * </p>
  */
-public class ValueFilter implements IFilter {
+public class ValueFilter extends AbstractFilter implements IFilter {
 
   /** Value test to do. */
   private final byte[] mValue;
@@ -37,44 +37,50 @@ public class ValueFilter implements IFilter {
   /**
    * Constructor initializing internal state.
    * 
+   * @param rtx Transaction to bind filter to.
    * @param value Value to find.
    */
-  public ValueFilter(final byte[] value) {
+  public ValueFilter(final IReadTransaction rtx, final byte[] value) {
+    super(rtx);
     mValue = value;
   }
 
   /**
    * Constructor initializing internal state.
    * 
+   * @param rtx Transaction to bind filter to.
    * @param value Value to find.
    */
-  public ValueFilter(final String value) {
-    this(UTF.getBytes(value));
+  public ValueFilter(final IReadTransaction rtx, final String value) {
+    this(rtx, UTF.getBytes(value));
   }
 
   /**
    * Constructor initializing internal state.
    * 
+   * @param rtx Transaction to bind filter to.
    * @param value Value to find.
    */
-  public ValueFilter(final int value) {
-    this(UTF.getBytes(value));
+  public ValueFilter(final IReadTransaction rtx, final int value) {
+    this(rtx, UTF.getBytes(value));
   }
 
   /**
    * Constructor initializing internal state.
    * 
+   * @param rtx Transaction to bind filter to.
    * @param value Value to find.
    */
-  public ValueFilter(final long value) {
-    this(UTF.getBytes(value));
+  public ValueFilter(final IReadTransaction rtx, final long value) {
+    this(rtx, UTF.getBytes(value));
   }
 
   /**
    * {@inheritDoc}
    */
-  public final boolean test(final IReadTransaction rtx) {
-    return (rtx.isText() && (UTF.equals(rtx.getValue(), mValue)));
+  public final boolean filter() {
+    return (getTransaction().isText() && (UTF.equals(getTransaction()
+        .getValue(), mValue)));
   }
 
 }
