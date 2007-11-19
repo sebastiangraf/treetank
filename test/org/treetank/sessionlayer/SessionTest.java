@@ -289,27 +289,6 @@ public class SessionTest {
   }
 
   @Test
-  public void testIsSelected() throws IOException {
-
-    final ISession session = Session.beginSession(TEST_EXISTING_PATH);
-
-    final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
-    wtx.commit();
-    wtx.close();
-
-    final IReadTransaction rtx = session.beginReadTransaction();
-    assertEquals(12L, rtx.getRevisionSize());
-    assertEquals(true, rtx.isSelected());
-    assertEquals(IConstants.NULL_KEY, rtx.moveTo(12L));
-    assertEquals(false, rtx.isSelected());
-
-    rtx.close();
-    session.close();
-
-  }
-
-  @Test
   public void testIdempotentClose() throws IOException {
 
     final ISession session = Session.beginSession(TEST_EXISTING_PATH);
@@ -322,16 +301,14 @@ public class SessionTest {
 
     final IReadTransaction rtx = session.beginReadTransaction();
     assertEquals(12L, rtx.getRevisionSize());
-    assertEquals(true, rtx.isSelected());
-    assertEquals(IConstants.NULL_KEY, rtx.moveTo(12L));
-    assertEquals(false, rtx.isSelected());
+    assertEquals(false, rtx.moveTo(12L));
     rtx.close();
     rtx.close();
 
     session.close();
     session.close();
   }
-  
+
   @Test
   public void testAutoCommit() throws IOException {
 
@@ -343,9 +320,7 @@ public class SessionTest {
 
     final IReadTransaction rtx = session.beginReadTransaction();
     assertEquals(12L, rtx.getRevisionSize());
-    assertEquals(true, rtx.isSelected());
-    assertEquals(IConstants.NULL_KEY, rtx.moveTo(12L));
-    assertEquals(false, rtx.isSelected());
+    assertEquals(false, rtx.moveTo(12L));
     rtx.close();
 
     session.close();

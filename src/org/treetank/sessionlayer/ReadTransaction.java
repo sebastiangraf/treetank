@@ -55,9 +55,8 @@ public class ReadTransaction implements IReadTransaction {
       final ReadTransactionState transactionState) {
     mSessionState = sessionState;
     mTransactionState = transactionState;
-    mCurrentNode = null;
     mClosed = false;
-    moveToDocumentRoot();
+    mCurrentNode = getTransactionState().getNode(IConstants.DOCUMENT_ROOT_KEY);
   }
 
   /**
@@ -87,39 +86,34 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final boolean isSelected() {
-    assertNotClosed();
-    return (mCurrentNode != null);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final long moveTo(final long nodeKey) {
+  public final boolean moveTo(final long nodeKey) {
     assertNotClosed();
     // Do nothing if this node is already selected.
-    if (mCurrentNode != null && mCurrentNode.getNodeKey() == nodeKey) {
-      return nodeKey;
+    if (mCurrentNode.getNodeKey() == nodeKey) {
+      return true;
     }
     // Find node by its key.
     if (nodeKey != IConstants.NULL_KEY) {
+      final AbstractNode oldNode = mCurrentNode;
       mCurrentNode = mTransactionState.getNode(nodeKey);
       if (mCurrentNode != null) {
-        return nodeKey;
+        return true;
       } else {
-        return IConstants.NULL_KEY;
+        mCurrentNode = oldNode;
+        return false;
       }
     } else {
-      mCurrentNode = null;
-      return IConstants.NULL_KEY;
+      return false;
     }
   }
 
   /**
    * {@inheritDoc}
    */
-  public final long moveToToken(final String token) {
+  public final boolean moveToToken(final String token) {
     assertNotClosed();
+
+    final AbstractNode oldNode = mCurrentNode;
 
     moveToFullTextRoot();
     boolean contained = true;
@@ -138,74 +132,73 @@ public class ReadTransaction implements IReadTransaction {
     }
 
     if (contained) {
-      return mCurrentNode.getNodeKey();
+      return true;
     } else {
-      return moveToFullTextRoot();
+      mCurrentNode = oldNode;
+      return false;
     }
   }
 
   /**
    * {@inheritDoc}
    */
-  public final long moveToDocumentRoot() {
-    assertNotClosed();
+  public final boolean moveToDocumentRoot() {
     return moveTo(IConstants.DOCUMENT_ROOT_KEY);
   }
 
   /**
    * {@inheritDoc}
    */
-  public final long moveToFullTextRoot() {
-    assertNotClosed();
+  public final boolean moveToFullTextRoot() {
     return moveTo(IConstants.FULLTEXT_ROOT_KEY);
   }
 
   /**
    * {@inheritDoc}
    */
-  public final long moveToParent() {
-    assertNotClosedAndSelected();
+  public final boolean moveToParent() {
     return moveTo(mCurrentNode.getParentKey());
   }
 
   /**
    * {@inheritDoc}
    */
-  public final long moveToFirstChild() {
-    assertNotClosedAndSelected();
+  public final boolean moveToFirstChild() {
     return moveTo(mCurrentNode.getFirstChildKey());
   }
 
   /**
    * {@inheritDoc}
    */
-  public final long moveToLeftSibling() {
-    assertNotClosedAndSelected();
+  public final boolean moveToLeftSibling() {
     return moveTo(mCurrentNode.getLeftSiblingKey());
   }
 
   /**
    * {@inheritDoc}
    */
-  public final long moveToRightSibling() {
-    assertNotClosedAndSelected();
+  public final boolean moveToRightSibling() {
     return moveTo(mCurrentNode.getRightSiblingKey());
   }
 
   /**
    * {@inheritDoc}
    */
-  public final long moveToAttribute(final int index) {
-    assertNotClosedAndSelected();
-    mCurrentNode = mCurrentNode.getAttribute(index);
-    return mCurrentNode.getNodeKey();
+  public final boolean moveToAttribute(final int index) {
+    final AbstractNode attributeNode = mCurrentNode.getAttribute(index);
+    if (attributeNode != null) {
+      mCurrentNode = attributeNode;
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /**
    * {@inheritDoc}
    */
   public final long getNodeKey() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.getNodeKey();
   }
 
@@ -213,7 +206,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final boolean hasParent() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.hasParent();
   }
 
@@ -221,7 +214,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final long getParentKey() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.getParentKey();
   }
 
@@ -229,7 +222,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final boolean hasFirstChild() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.hasFirstChild();
   }
 
@@ -237,7 +230,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final long getFirstChildKey() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.getFirstChildKey();
   }
 
@@ -245,7 +238,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final boolean hasLeftSibling() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.hasLeftSibling();
   }
 
@@ -253,7 +246,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final long getLeftSiblingKey() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.getLeftSiblingKey();
   }
 
@@ -261,7 +254,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final boolean hasRightSibling() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.hasRightSibling();
   }
 
@@ -269,7 +262,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final long getRightSiblingKey() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.getRightSiblingKey();
   }
 
@@ -277,7 +270,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final long getChildCount() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.getChildCount();
   }
 
@@ -285,7 +278,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final int getAttributeCount() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.getAttributeCount();
   }
 
@@ -293,7 +286,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final int getAttributeLocalPartKey(final int index) {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.getAttribute(index).getLocalPartKey();
   }
 
@@ -301,7 +294,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final String getAttributeLocalPart(final int index) {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return nameForKey(mCurrentNode.getAttribute(index).getLocalPartKey());
   }
 
@@ -309,7 +302,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final int getAttributePrefixKey(final int index) {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.getAttribute(index).getPrefixKey();
   }
 
@@ -317,7 +310,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final String getAttributePrefix(final int index) {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return nameForKey(mCurrentNode.getAttribute(index).getPrefixKey());
   }
 
@@ -325,7 +318,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final int getAttributeURIKey(final int index) {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.getAttribute(index).getURIKey();
   }
 
@@ -333,7 +326,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final String getAttributeURI(final int index) {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return nameForKey(mCurrentNode.getAttribute(index).getURIKey());
   }
 
@@ -341,7 +334,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final byte[] getAttributeValue(final int index) {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.getAttribute(index).getValue();
   }
 
@@ -349,7 +342,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final int getNamespaceCount() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.getNamespaceCount();
   }
 
@@ -357,7 +350,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final int getNamespacePrefixKey(final int index) {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.getNamespace(index).getPrefixKey();
   }
 
@@ -365,7 +358,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final String getNamespacePrefix(final int index) {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return nameForKey(mCurrentNode.getNamespace(index).getPrefixKey());
   }
 
@@ -373,7 +366,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final int getNamespaceURIKey(final int index) {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.getNamespace(index).getURIKey();
   }
 
@@ -381,7 +374,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final String getNamespaceURI(final int index) {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return nameForKey(mCurrentNode.getNamespace(index).getURIKey());
   }
 
@@ -389,7 +382,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final int getKind() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.getKind();
   }
 
@@ -397,7 +390,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final boolean isDocumentRoot() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.isDocumentRoot();
   }
 
@@ -405,7 +398,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final boolean isElement() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.isElement();
   }
 
@@ -413,7 +406,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final boolean isAttribute() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.isAttribute();
   }
 
@@ -421,7 +414,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final boolean isText() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.isText();
   }
 
@@ -429,7 +422,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final boolean isFullText() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.isFullText();
   }
 
@@ -437,7 +430,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final boolean isFullTextLeaf() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.isFullTextLeaf();
   }
 
@@ -445,7 +438,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final boolean isFullTextRoot() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.isFullTextRoot();
   }
 
@@ -453,7 +446,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final int getLocalPartKey() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.getLocalPartKey();
   }
 
@@ -461,7 +454,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final String getLocalPart() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mTransactionState.getName(mCurrentNode.getLocalPartKey());
   }
 
@@ -469,7 +462,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final int getURIKey() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.getURIKey();
   }
 
@@ -477,7 +470,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final String getURI() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mTransactionState.getName(mCurrentNode.getURIKey());
   }
 
@@ -485,7 +478,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final int getPrefixKey() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.getPrefixKey();
   }
 
@@ -493,7 +486,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final String getPrefix() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mTransactionState.getName(mCurrentNode.getPrefixKey());
   }
 
@@ -501,7 +494,7 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final byte[] getValue() {
-    assertNotClosedAndSelected();
+    assertNotClosed();
     return mCurrentNode.getValue();
   }
 
@@ -559,27 +552,6 @@ public class ReadTransaction implements IReadTransaction {
         + localPart
         + "\nand value:"
         + getValue();
-  }
-
-  /**
-   * Test both whether transaction is closed and a node is selected.
-   */
-  protected final void assertNotClosedAndSelected() {
-    if (mClosed) {
-      throw new IllegalStateException("Transaction is already closed.");
-    }
-    if (mCurrentNode == null) {
-      throw new IllegalStateException("No node selected.");
-    }
-  }
-
-  /**
-   * Assert that a node is selected.
-   */
-  protected final void assertIsSelected() {
-    if (mCurrentNode == null) {
-      throw new IllegalStateException("No node selected.");
-    }
   }
 
   /**

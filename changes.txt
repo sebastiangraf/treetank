@@ -18,6 +18,9 @@
  
 TreeTank 4.17
 -------------
++ Refactored IReadTransaction. Move operations return true if the new node
+  could be selected. If not, the cursor stays with the former node and false
+  is returned.
 + Refactored IFilter, added AbstractFilter not to pass transaction with each
   call to filter().
 + Introduced Conventions for IAxis. Generic test case added to test all axis

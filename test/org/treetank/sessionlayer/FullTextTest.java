@@ -54,28 +54,28 @@ public class FullTextTest {
 
     // Move to token.
     wtx.moveToDocumentRoot();
-    Assert.assertEquals(tokenKey1, wtx.moveToToken("foo"));
+    Assert.assertEquals(true, wtx.moveToToken("foo"));
     wtx.moveToDocumentRoot();
-    Assert.assertEquals(IConstants.FULLTEXT_ROOT_KEY, wtx.moveToToken("bar"));
+    Assert.assertEquals(false, wtx.moveToToken("bar"));
     wtx.moveToDocumentRoot();
-    Assert.assertEquals(tokenKey1 - 1, wtx.moveToToken("fo"));
+    Assert.assertEquals(true, wtx.moveToToken("fo"));
 
     // Insert another key for token.
     wtx.moveToDocumentRoot();
     final long elementKey2 = wtx.insertElementAsFirstChild("foo", "", "");
     final long tokenKey2 = wtx.insertToken("foo", elementKey2);
     Assert.assertEquals(tokenKey1, tokenKey2);
-    Assert.assertEquals(tokenKey2, wtx.moveToToken("foo"));
+    Assert.assertEquals(true, wtx.moveToToken("foo"));
 
     // Remove token.
     wtx.moveToDocumentRoot();
     wtx.removeToken("foo", elementKey1);
     wtx.moveToDocumentRoot();
-    Assert.assertEquals(tokenKey2, wtx.moveToToken("foo"));
+    Assert.assertEquals(true, wtx.moveToToken("foo"));
 
     wtx.removeToken("foo", elementKey2);
     wtx.moveToDocumentRoot();
-    Assert.assertEquals(IConstants.FULLTEXT_ROOT_KEY, wtx.moveToToken("foo"));
+    Assert.assertEquals(false, wtx.moveToToken("foo"));
 
     wtx.abort();
     wtx.close();

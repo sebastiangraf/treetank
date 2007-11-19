@@ -64,11 +64,13 @@ public class PostOrderAxis extends AbstractAxis implements IAxis {
    */
   public boolean hasNext() {
     resetToLastKey();
-    long key = getTransaction().moveTo(mNextKey);
-    if (getTransaction().isSelected()) {
+    long key = mNextKey;
+    if (key != IConstants.NULL_KEY) {
+      getTransaction().moveTo(mNextKey);
       while (getTransaction().hasFirstChild() && key != mLastParent.peek()) {
         mLastParent.push(key);
-        key = getTransaction().moveToFirstChild();
+        key = getTransaction().getFirstChildKey();
+        getTransaction().moveToFirstChild();
       }
       if (key == mLastParent.peek()) {
         mLastParent.pop();
