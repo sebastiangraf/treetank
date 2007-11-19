@@ -38,8 +38,7 @@ import java.util.Iterator;
  *  <ol>
  *   <li><strong>Precondition</strong> before first call to
  *       <code>IAxis.hasNext()</code>:
- *       <code>IReadTransaction.isSelected() == true
- *       && IReadTransaction.getNodeKey() == n</code>.</li>
+ *       <code>IReadTransaction.getNodeKey() == n</code>.</li>
  *   <li><code>IAxis.next()</code> must be called exactly once after
  *       <code>IAxis.hasNext() == true</code>.</li>
  *   <li><code>IReadTransaction.getNodeKey()</code> must be equal right after
@@ -49,8 +48,7 @@ import java.util.Iterator;
  *       during an enhanced for loop.</li>
  *   <li><strong>Postcondition</strong> after 
  *       <code>IAxis.hasNext() == false</code>:
- *       <code>IReadTransaction.isSelected() == true &&
- *       IReadTransaction.getNodeKey() == n</code>.</li>
+ *       <code>IReadTransaction.getNodeKey() == n</code>.</li>
  *  </ol>
  * </p>
  * 
