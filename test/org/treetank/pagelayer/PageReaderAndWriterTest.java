@@ -26,11 +26,11 @@ import java.io.RandomAccessFile;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.api.IConstants;
 import org.treetank.nodelayer.ElementNode;
 import org.treetank.sessionlayer.Session;
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.utils.FastByteArrayReader;
+import org.treetank.utils.IConstants;
 
 public class PageReaderAndWriterTest {
 

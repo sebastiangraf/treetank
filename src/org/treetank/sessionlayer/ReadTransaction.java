@@ -501,6 +501,34 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
+  public final boolean isNullNameKey(final int nameKey) {
+    return (nameKey == IConstants.NULL_NAME);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final boolean isNullNodeKey(final long nodeKey) {
+    return (nodeKey == IConstants.NULL_KEY);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final int getNullNameKey() {
+    return IConstants.NULL_NAME;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final long getNullNodeKey() {
+    return IConstants.NULL_KEY;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final int keyForName(final String name) {
     assertNotClosed();
     return name.hashCode();

@@ -21,7 +21,6 @@ package org.treetank.axislayer;
 import org.treetank.api.IAxis;
 import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastStack;
-import org.treetank.utils.IConstants;
 
 /**
  * <h1>DescendantAxis</h1>
@@ -65,7 +64,7 @@ public class DescendantAxis extends AbstractAxis implements IAxis {
     resetToLastKey();
 
     // Fail if there is no node anymore.
-    if (mNextKey == IConstants.NULL_KEY) {
+    if (getTransaction().isNullNodeKey(mNextKey)) {
       resetToStartKey();
       return false;
     }
@@ -94,7 +93,7 @@ public class DescendantAxis extends AbstractAxis implements IAxis {
     }
 
     // Then end.
-    mNextKey = IConstants.NULL_KEY;
+    mNextKey = getTransaction().getNullNodeKey();
     return true;
   }
 

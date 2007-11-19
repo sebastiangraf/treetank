@@ -424,6 +424,36 @@ public interface IReadTransaction {
   public byte[] getValue();
 
   /**
+   * Is the name key the null key?
+   * 
+   * @param nameKey Name key to test for null key.
+   * @return True if the name key equals the null key.
+   */
+  public boolean isNullNameKey(final int nameKey);
+
+  /**
+   * Is the node key the null key?
+   * 
+   * @param nodeKey Node key to test for null key.
+   * @return True if the node key equals the null key.
+   */
+  public boolean isNullNodeKey(final long nodeKey);
+
+  /**
+   * Get the null node key.
+   * 
+   * @return The null node key.
+   */
+  public int getNullNameKey();
+
+  /**
+   * Get the null node key.
+   * 
+   * @return The null node key.
+   */
+  public long getNullNodeKey();
+
+  /**
    * Get key for given name. This is used for efficient name testing.
    * 
    * @param name Name, i.e., local part, URI, or prefix.
