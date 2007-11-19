@@ -33,12 +33,10 @@ package org.treetank.api;
  *   <ol>
  *     <li><strong>Precondition</strong> before each call to
  *       <code>IFilter.filter()</code>:
- *       <code>IReadTransaction.isSelected() == true
- *       && IReadTransaction.getNodeKey() == n</code>.</li>
+ *       <code>IReadTransaction.getNodeKey() == n</code>.</li>
  *     <li><strong>Postcondition</strong> after each call to
  *       <code>IFilter.filter()</code>:
- *       <code>IReadTransaction.isSelected() == true
- *       && IReadTransaction.getNodeKey() == n</code>.</li>
+ *       <code>IReadTransaction.getNodeKey() == n</code>.</li>
  *   </ol>
  * </p>
  * 

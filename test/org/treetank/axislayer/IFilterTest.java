@@ -18,37 +18,39 @@
 
 package org.treetank.axislayer;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.File;
+
+import org.junit.Before;
 import org.treetank.api.IFilter;
 import org.treetank.api.IReadTransaction;
+import org.treetank.sessionlayer.Session;
 
-/**
- * <h1>NameAxisTest</h1>
- * 
- * <p>
- * Match local part of ELEMENT or ATTRIBUTE by key.
- * </p>
- */
-public class NameFilter extends AbstractFilter implements IFilter {
+public class IFilterTest {
 
-  /** Key of name to test. */
-  private final int mLocalPartKey;
+  public static final String PATH =
+      "generated" + File.separator + "IFilterTest.tnk";
 
-  /**
-   * Default constructor.
-   * 
-   * @param rtx Transaction this filter is bound to.
-   * @param localPart Local part to check.
-   */
-  public NameFilter(final IReadTransaction rtx, final String localPart) {
-    super(rtx);
-    mLocalPartKey = rtx.keyForName(localPart);
+  @Before
+  public void setUp() {
+    Session.removeSession(PATH);
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  public final boolean filter() {
-    return ((getTransaction().isElement() || getTransaction().isAttribute()) && (getTransaction()
-        .getLocalPartKey() == mLocalPartKey));
+  public static void testIFilterConventions(
+      final IFilter filter,
+      final boolean expected) {
+
+    final IReadTransaction rtx = filter.getTransaction();
+
+    // IFilter Convention 1.
+    final long startKey = rtx.getNodeKey();
+
+    assertEquals(expected, filter.filter());
+
+    // IAxis Convention 2.
+    assertEquals(startKey, rtx.getNodeKey());
+
   }
+
 }

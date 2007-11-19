@@ -79,8 +79,8 @@ public class ValueFilter extends AbstractFilter implements IFilter {
    * {@inheritDoc}
    */
   public final boolean filter() {
-    return (getTransaction().isText() && (UTF.equals(getTransaction()
-        .getValue(), mValue)));
+    return ((getTransaction().isText() || getTransaction().isAttribute()) && (UTF
+        .equals(getTransaction().getValue(), mValue)));
   }
 
 }
