@@ -36,7 +36,8 @@ TreeTank Coding Conventions
 + Subversion, JavaDoc, and other comments: Correct English sentences.
 
 + Test driven development: Write test cases.
-+ Change management: Append changes to changes.txt.
++ Change management: Append changes to changes.txt and increment revision
+  in build.xml.
 + Team collaboration: Checkout or update must not yield errors or failing tests.
 + Trunk maintenance: Work on branch until the project lead agrees to merge.
 + Dependencies: No external dependencies (jar files).
