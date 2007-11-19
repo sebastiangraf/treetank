@@ -25,7 +25,6 @@ import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.api.IConstants;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
@@ -154,11 +153,11 @@ public class BeanUtilTest {
     // Remove bean.
     wtx.moveTo(expectedBeanKey1);
     BeanUtil.remove(wtx, expectedBean1);
-    Assert.assertEquals(IConstants.NULL_KEY, wtx.moveTo(expectedBeanKey1));
+    Assert.assertEquals(false, wtx.moveTo(expectedBeanKey1));
 
     wtx.moveTo(expectedBeanKey2);
     BeanUtil.remove(wtx, expectedBean2);
-    Assert.assertEquals(IConstants.NULL_KEY, wtx.moveTo(expectedBeanKey2));
+    Assert.assertEquals(false, wtx.moveTo(expectedBeanKey2));
 
     wtx.abort();
     wtx.close();

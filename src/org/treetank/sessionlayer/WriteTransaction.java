@@ -109,7 +109,8 @@ public final class WriteTransaction extends ReadTransaction
       final long nodeKey) {
     assertNotClosed();
 
-    final long tokenKey = moveToToken(token);
+    moveToToken(token);
+    final long tokenKey = getNodeKey();
 
     // Remove node key from key list this token points to.
     if (isFullText() && hasFirstChild()) {
@@ -255,7 +256,7 @@ public final class WriteTransaction extends ReadTransaction
       final String prefix,
       final byte[] value) {
 
-    assertNotClosedAndSelected();
+    assertNotClosed();
 
     prepareCurrentNode().insertAttribute(
         ((WriteTransactionState) getTransactionState())
@@ -272,7 +273,7 @@ public final class WriteTransaction extends ReadTransaction
       final String uri,
       final String prefix) {
 
-    assertNotClosedAndSelected();
+    assertNotClosed();
 
     prepareCurrentNode().insertNamespace(
         ((WriteTransactionState) getTransactionState()).createNameKey(uri),
@@ -284,7 +285,7 @@ public final class WriteTransaction extends ReadTransaction
    */
   public final synchronized void remove() {
 
-    assertNotClosedAndSelected();
+    assertNotClosed();
 
     if (getCurrentNode().isDocumentRoot() || getCurrentNode().isFullTextRoot()) {
       throw new IllegalStateException("Root node can not be removed.");
@@ -375,7 +376,7 @@ public final class WriteTransaction extends ReadTransaction
       final String prefix,
       final byte[] value) {
 
-    assertNotClosedAndSelected();
+    assertNotClosed();
 
     prepareCurrentNode().setAttribute(
         index,
@@ -394,7 +395,7 @@ public final class WriteTransaction extends ReadTransaction
       final String uri,
       final String prefix) {
 
-    assertNotClosedAndSelected();
+    assertNotClosed();
 
     prepareCurrentNode().setNamespace(
         index,
@@ -407,7 +408,7 @@ public final class WriteTransaction extends ReadTransaction
    */
   public final synchronized void setLocalPart(final String localPart) {
 
-    assertNotClosedAndSelected();
+    assertNotClosed();
 
     prepareCurrentNode().setLocalPartKey(
         ((WriteTransactionState) getTransactionState())
@@ -419,7 +420,7 @@ public final class WriteTransaction extends ReadTransaction
    */
   public final synchronized void setURI(final String uri) {
 
-    assertNotClosedAndSelected();
+    assertNotClosed();
 
     prepareCurrentNode().setURIKey(
         ((WriteTransactionState) getTransactionState()).createNameKey(uri));
@@ -430,7 +431,7 @@ public final class WriteTransaction extends ReadTransaction
    */
   public final synchronized void setPrefix(final String prefix) {
 
-    assertNotClosedAndSelected();
+    assertNotClosed();
 
     prepareCurrentNode().setPrefixKey(
         ((WriteTransactionState) getTransactionState()).createNameKey(prefix));
@@ -441,7 +442,7 @@ public final class WriteTransaction extends ReadTransaction
    */
   public final synchronized void setValue(final byte[] value) {
 
-    assertNotClosedAndSelected();
+    assertNotClosed();
 
     prepareCurrentNode().setValue(value);
   }
@@ -523,7 +524,7 @@ public final class WriteTransaction extends ReadTransaction
 
   private final long insertFirstChild(final AbstractNode node) {
 
-    assertNotClosedAndSelected();
+    assertNotClosed();
     intermediateCommitIfRequired();
 
     setCurrentNode(node);
@@ -536,7 +537,7 @@ public final class WriteTransaction extends ReadTransaction
 
   private final long insertRightSibling(final AbstractNode node) {
 
-    assertNotClosedAndSelected();
+    assertNotClosed();
     intermediateCommitIfRequired();
 
     if (getCurrentNode().getNodeKey() == IConstants.DOCUMENT_ROOT_KEY) {

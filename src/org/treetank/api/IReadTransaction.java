@@ -70,13 +70,6 @@ public interface IReadTransaction {
    */
   public long getRevisionTimestamp();
 
-  /**
-   * Is a node selected?
-   * 
-   * @return True if a node is selected.
-   */
-  public boolean isSelected();
-
   // --- Node Selectors --------------------------------------------------------
 
   /**
@@ -85,7 +78,7 @@ public interface IReadTransaction {
    * @param nodeKey Key of node to select.
    * @return True if the node with the given node key is selected.
    */
-  public long moveTo(final long nodeKey);
+  public boolean moveTo(final long nodeKey);
 
   /**
    * Move cursor to token in full text index. Note that this might only be
@@ -93,59 +86,59 @@ public interface IReadTransaction {
    * left off at the full text root node.
    * 
    * @param token Token to find.
-   * @return Node key of token.
+   * @return True if the token is contained.
    */
-  public long moveToToken(final String token);
+  public boolean moveToToken(final String token);
 
   /**
    * Move cursor to document root node.
    * 
    * @return True if the document root node is selected.
    */
-  public long moveToDocumentRoot();
+  public boolean moveToDocumentRoot();
 
   /**
    * Move cursor to fulltext root node.
    * 
-   * @return True if the fulltext root node is selected.
+   * @return True if the full text root node is selected.
    */
-  public long moveToFullTextRoot();
+  public boolean moveToFullTextRoot();
 
   /**
    * Move cursor to parent node of currently selected node.
    * 
    * @return True if the parent node is selected.
    */
-  public long moveToParent();
+  public boolean moveToParent();
 
   /**
    * Move cursor to first child node of currently selected node.
    * 
    * @return True if the first child node is selected.
    */
-  public long moveToFirstChild();
+  public boolean moveToFirstChild();
 
   /**
    * Move cursor to left sibling node of the currently selected node.
    * 
    * @return True if the left sibling node is selected.
    */
-  public long moveToLeftSibling();
+  public boolean moveToLeftSibling();
 
   /**
    * Move cursor to right sibling node of the currently selected node.
    * 
    * @return True if the right sibling node is selected.
    */
-  public long moveToRightSibling();
+  public boolean moveToRightSibling();
 
   /**
    * Move cursor to attribute by its index.
    * 
    * @param index Index of attribute to move to.
-   * @return True if the attribute is selected.
+   * @return True if the attribute node is selected.
    */
-  public long moveToAttribute(final int index);
+  public boolean moveToAttribute(final int index);
 
   // --- Node Getters ----------------------------------------------------------
 

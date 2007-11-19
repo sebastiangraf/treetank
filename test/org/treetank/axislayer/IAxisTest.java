@@ -51,7 +51,6 @@ public class IAxisTest {
     final IReadTransaction rtx = axis.getTransaction();
 
     // IAxis Convention 1.
-    assertEquals(true, rtx.isSelected());
     final long startKey = rtx.getNodeKey();
 
     final long[] keys = new long[expectedKeys.length];
@@ -75,7 +74,6 @@ public class IAxisTest {
     }
 
     // IAxis Convention 5.
-    assertEquals(true, rtx.isSelected());
     assertEquals(startKey, rtx.getNodeKey());
 
     // IAxis results.

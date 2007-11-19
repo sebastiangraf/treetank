@@ -55,16 +55,12 @@ public abstract class AbstractAxis implements IAxis {
   private long mStartKey;
 
   /**
-   * Bind axis step to transaction. Make sure to hold IAxis Convention 1 by
-   * moving the cursor to the document root node if no node was selected.
+   * Bind axis step to transaction.
    * 
    * @param rtx Transaction to operate with.
    */
   public AbstractAxis(final IReadTransaction rtx) {
     mRTX = rtx;
-    if (!mRTX.isSelected()) {
-      mRTX.moveToDocumentRoot();
-    }
     reset(rtx.getNodeKey());
   }
 
