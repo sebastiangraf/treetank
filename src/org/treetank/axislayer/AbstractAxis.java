@@ -116,6 +116,7 @@ public abstract class AbstractAxis implements IAxis {
    *         hasNext().
    */
   public final long resetToStartKey() {
+    // No check beacause of IAxis Convention 4.
     mRTX.moveTo(mStartKey);
     mNext = false;
     return mStartKey;
@@ -129,6 +130,7 @@ public abstract class AbstractAxis implements IAxis {
    *         hasNext().
    */
   public final long resetToLastKey() {
+    // No check beacause of IAxis Convention 4.
     mRTX.moveTo(mKey);
     mNext = true;
     return mKey;

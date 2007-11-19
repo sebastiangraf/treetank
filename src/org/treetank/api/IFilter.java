@@ -19,7 +19,7 @@
 package org.treetank.api;
 
 /**
- * <h1>IAxis</h1>
+ * <h1>IFilter</h1>
  * 
  * <h2>Description</h2>
  * 
