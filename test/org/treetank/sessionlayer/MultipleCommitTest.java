@@ -22,8 +22,10 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.utils.TestDocument;
@@ -61,9 +63,13 @@ public class MultipleCommitTest {
   @Test
   public void testAutoCommit() {
     final ISession session = Session.beginSession(PATH);
-    final IWriteTransaction wtx = session.beginWriteTransaction(1000, 1);
+    final IWriteTransaction wtx = session.beginWriteTransaction(100, 1);
     TestDocument.create(wtx);
     wtx.close();
+
+    final IReadTransaction rtx = session.beginReadTransaction();
+    Assert.assertEquals(12, rtx.getRevisionSize());
+    rtx.close();
     session.close();
   }
 
