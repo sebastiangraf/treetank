@@ -18,9 +18,9 @@
 
 package org.treetank.sessionlayer;
 
-import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 import org.treetank.nodelayer.AbstractNode;
+import org.treetank.utils.IConstants;
 
 /**
  * <h1>ReadTransaction</h1>

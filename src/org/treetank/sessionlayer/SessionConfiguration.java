@@ -23,7 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import org.treetank.api.IConstants;
+import org.treetank.utils.IConstants;
 
 /**
  * <h1>SessionConfiguration</h1>

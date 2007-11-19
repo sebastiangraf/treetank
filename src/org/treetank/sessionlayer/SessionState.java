@@ -24,7 +24,6 @@ import java.io.RandomAccessFile;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
 
-import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.pagelayer.AbstractPage;
@@ -33,6 +32,7 @@ import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.UberPage;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastWeakHashMap;
+import org.treetank.utils.IConstants;
 
 /**
  * <h1>SessionState</h1>

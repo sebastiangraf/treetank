@@ -18,9 +18,9 @@
 
 package org.treetank.nodelayer;
 
-import org.treetank.api.IConstants;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
+import org.treetank.utils.IConstants;
 
 /**
  * <h1>FullTextRootNode</h1>

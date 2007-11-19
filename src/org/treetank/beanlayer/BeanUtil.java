@@ -23,9 +23,9 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 
-import org.treetank.api.IConstants;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.IWriteTransaction;
+import org.treetank.utils.IConstants;
 import org.treetank.utils.UTF;
 
 /**

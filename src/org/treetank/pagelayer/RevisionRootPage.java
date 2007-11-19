@@ -18,10 +18,10 @@
 
 package org.treetank.pagelayer;
 
-import org.treetank.api.IConstants;
 import org.treetank.sessionlayer.WriteTransactionState;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
+import org.treetank.utils.IConstants;
 
 /**
  * <h1>RevisionRootPage</h1>
