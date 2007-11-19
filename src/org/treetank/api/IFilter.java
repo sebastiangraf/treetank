@@ -23,14 +23,56 @@ package org.treetank.api;
  * 
  * <h2>Description</h2>
  * 
+ * <p>
+ * Filter the node currently selected by the provided transaction.
+ * </p>
+ * 
  * <h2>Convention</h2>
+ * 
+ * <p>
+ *   <ol>
+ *     <li><strong>Precondition</strong> before each call to
+ *       <code>IFilter.filter()</code>:
+ *       <code>IReadTransaction.isSelected() == true
+ *       && IReadTransaction.getNodeKey() == n</code>.</li>
+ *     <li><strong>Postcondition</strong> after each call to
+ *       <code>IFilter.filter()</code>:
+ *       <code>IReadTransaction.isSelected() == true
+ *       && IReadTransaction.getNodeKey() == n</code>.</li>
+ *   </ol>
+ * </p>
  * 
  * <h2>User Example</h2>
  * 
+ * <p>
+ *  <pre>
+ *    // hasNext() yields true iff rtx selects an element with local part "foo".
+ *    new FilterAxis(new SelfAxis(rtx), new NameFilter(rtx, "foo"));
+ *  </pre>
+ * </p>
+ * 
  * <h2>Developer Example</h2>
+ * 
+ * <p>
+ *  <pre>
+ *   // Must extend <code>AbstractFilter</code> and implement <code>IFilter</code>.
+ *   public class ExampleFilter extends AbstractFilter implements IFilter {
+ * 
+ *     public ExampleFilter(final IReadTransaction rtx) {
+ *       // Must be called as first.
+ *       super(rtx);
+ *      }
+ * 
+ *     public final boolean filter() {
+ *       // Do not move cursor.
+ *       return (getTransaction().isSelected());
+ *     }
+ *   }
+ *  </pre>
+ * </p>
  */
 public interface IFilter {
-  
+
   /**
    * Access transaction to which this filter is bound.
    * 
