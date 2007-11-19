@@ -39,6 +39,14 @@ package org.treetank.api;
  * Exceptions are only thrown if an internal error occurred which must be
  * resolved at a higher layer.
  * </p>
+ * 
+ * <h2>Description</h2>
+ * 
+ * <h2>Convention</h2>
+ * 
+ * <h2>User Example</h2>
+ * 
+ * <h2>Developer Example</h2>
  */
 public interface IWriteTransaction extends IReadTransaction {
 

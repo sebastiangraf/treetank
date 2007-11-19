@@ -35,6 +35,14 @@ package org.treetank.api;
  *      <code>IConstants.COMMIT_THRESHOLD</code>.</li>
  * </ul>
  * </p>
+ * 
+ * <h2>Description</h2>
+ * 
+ * <h2>Convention</h2>
+ * 
+ * <h2>User Example</h2>
+ * 
+ * <h2>Developer Example</h2>
  */
 public interface ISession {
 

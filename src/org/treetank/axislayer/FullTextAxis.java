@@ -70,7 +70,7 @@ public class FullTextAxis extends AbstractAxis implements IAxis {
       innerAxis = new SelfAxis(rtx);
     }
 
-    mAxis = new FilterAxis(innerAxis, new FullTextLeafFilter());
+    mAxis = new FilterAxis(innerAxis, new FullTextLeafFilter(rtx));
 
     resetToStartKey();
 

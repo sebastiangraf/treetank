@@ -34,7 +34,7 @@ public class FilterAxis extends AbstractAxis implements IAxis {
   private final IAxis mAxis;
 
   /** Test to apply to axis. */
-  private final IFilter mAxisTest;
+  private final IFilter mAxisFilter;
 
   /**
    * Constructor initializing internal state.
@@ -45,7 +45,7 @@ public class FilterAxis extends AbstractAxis implements IAxis {
   public FilterAxis(final IAxis axis, final IFilter axisTest) {
     super(axis.getTransaction());
     mAxis = axis;
-    mAxisTest = axisTest;
+    mAxisFilter = axisTest;
   }
 
   /**
@@ -66,7 +66,7 @@ public class FilterAxis extends AbstractAxis implements IAxis {
     resetToLastKey();
     while (mAxis.hasNext()) {
       mAxis.next();
-      if (mAxisTest.test(getTransaction())) {
+      if (mAxisFilter.filter()) {
         return true;
       }
     }
