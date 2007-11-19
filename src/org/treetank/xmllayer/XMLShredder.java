@@ -31,6 +31,7 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.utils.FastStack;
+import org.treetank.utils.IConstants;
 import org.treetank.utils.UTF;
 
 public final class XMLShredder {
@@ -63,7 +64,8 @@ public final class XMLShredder {
 
     try {
       final ISession session = Session.beginSession(sessionConfiguration);
-      final IWriteTransaction wtx = session.beginWriteTransaction();
+      final IWriteTransaction wtx =
+          session.beginWriteTransaction(IConstants.COMMIT_THRESHOLD, 0);
       final FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
 
       // Make sure that we do not shred into an existing TreeTank.

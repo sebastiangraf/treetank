@@ -18,6 +18,10 @@
 
 package org.treetank.sessionlayer;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import org.treetank.api.IWriteTransaction;
 import org.treetank.nodelayer.AbstractNode;
 import org.treetank.pagelayer.UberPage;
@@ -37,19 +41,44 @@ public final class WriteTransaction extends ReadTransaction
   /** True enabled auto commit. */
   private final boolean mAutoCommit;
 
+  /** Maximum number of node modifications before auto commit. */
+  private final int mMaxNodeCount;
+
+  /** Scheduler to commit after mMaxTime seconds. */
+  private ScheduledExecutorService mCommitScheduler;
+
   /**
    * Constructor.
    * 
    * @param sessionState State of the session.
    * @param transactionState State of this transaction.
-   * @param autoCommit True enables auto commit.
+   * @param maxNodeCount Maximum number of node modifications before auto
+   *        commit.
+   * @param maxTime Maximum number of seconds before auto commit.
    */
   protected WriteTransaction(
       final SessionState sessionState,
       final WriteTransactionState transactionState,
-      final boolean autoCommit) {
+      final int maxNodeCount,
+      final int maxTime) {
     super(sessionState, transactionState);
-    mAutoCommit = autoCommit;
+    mAutoCommit = ((maxNodeCount > 0) || (maxTime > 0));
+    mMaxNodeCount = maxNodeCount;
+
+    // Launch commit scheduler if auto commit is enabled.
+    if (maxTime > 0) {
+      mCommitScheduler = Executors.newScheduledThreadPool(1);
+      mCommitScheduler.scheduleAtFixedRate(new Runnable() {
+        public final void run() {
+          if (((WriteTransactionState) getTransactionState())
+              .getModificationCount() > 0) {
+            commit();
+          }
+        }
+      }, 0, maxTime, TimeUnit.SECONDS);
+    } else {
+      mCommitScheduler = null;
+    }
   }
 
   /**
@@ -453,17 +482,23 @@ public final class WriteTransaction extends ReadTransaction
   @Override
   public final synchronized void close() {
     if (!isClosed()) {
-      if (mAutoCommit
-          && ((WriteTransactionState) getTransactionState())
-              .getModificationCount() > 0) {
+      // Make sure to commit all dirty data.
+      if (((WriteTransactionState) getTransactionState())
+          .getModificationCount() > 0) {
         commit();
       }
+      // Make sure to cancel the periodic commit task if it was started.
+      if (mCommitScheduler != null) {
+        mCommitScheduler.shutdownNow();
+        mCommitScheduler = null;
+      }
+      // Release all state immediately.
       getTransactionState().close();
       getSessionState().closeWriteTransaction();
       setSessionState(null);
       setTransactionState(null);
       setCurrentNode(null);
-
+      // Remember that we are closed.
       setClosed();
     }
   }
@@ -488,6 +523,7 @@ public final class WriteTransaction extends ReadTransaction
 
     // Reset internal transaction state to new uber page.
     setTransactionState(getSessionState().getWriteTransactionState());
+
   }
 
   /**
@@ -507,7 +543,7 @@ public final class WriteTransaction extends ReadTransaction
   private final void intermediateCommitIfRequired() {
     if (mAutoCommit
         && ((WriteTransactionState) getTransactionState())
-            .getModificationCount() > IConstants.COMMIT_THRESHOLD) {
+            .getModificationCount() > mMaxNodeCount) {
       commit();
       ((WriteTransactionState) getTransactionState()).resetModificationCount();
     }

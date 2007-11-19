@@ -184,7 +184,8 @@ public final class SessionState {
   }
 
   protected final IWriteTransaction beginWriteTransaction(
-      final boolean autoCommit) {
+      final int maxNodeCount,
+      final int maxTime) {
 
     if (mWriteSemaphore.availablePermits() == 0) {
       throw new IllegalStateException(
@@ -197,7 +198,11 @@ public final class SessionState {
       throw new RuntimeException(e);
     }
 
-    return new WriteTransaction(this, getWriteTransactionState(), autoCommit);
+    return new WriteTransaction(
+        this,
+        getWriteTransactionState(),
+        maxNodeCount,
+        maxTime);
   }
 
   protected final WriteTransactionState getWriteTransactionState() {

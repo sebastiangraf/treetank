@@ -19,7 +19,6 @@
 package org.treetank.sessionlayer;
 
 import java.io.File;
-import java.io.IOException;
 
 import junit.framework.TestCase;
 
@@ -27,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
+import org.treetank.utils.TestDocument;
 
 public class MultipleCommitTest {
 
@@ -39,9 +39,9 @@ public class MultipleCommitTest {
   }
 
   @Test
-  public void test() throws IOException {
-    ISession session = Session.beginSession(PATH);
-    IWriteTransaction wtx = session.beginWriteTransaction();
+  public void test() {
+    final ISession session = Session.beginSession(PATH);
+    final IWriteTransaction wtx = session.beginWriteTransaction();
     TestCase.assertEquals(0L, wtx.getRevisionNumber());
     TestCase.assertEquals(2L, wtx.getRevisionSize());
     wtx.commit();
@@ -55,6 +55,15 @@ public class MultipleCommitTest {
     TestCase.assertEquals(2L, wtx.getRevisionSize());
     wtx.close();
 
+    session.close();
+  }
+
+  @Test
+  public void testAutoCommit() {
+    final ISession session = Session.beginSession(PATH);
+    final IWriteTransaction wtx = session.beginWriteTransaction(1000, 1);
+    TestDocument.create(wtx);
+    wtx.close();
     session.close();
   }
 
