@@ -95,7 +95,11 @@ public class ReadTransaction implements IReadTransaction {
     // Find node by its key.
     if (nodeKey != IConstants.NULL_KEY) {
       final AbstractNode oldNode = mCurrentNode;
-      mCurrentNode = mTransactionState.getNode(nodeKey);
+      try {
+        mCurrentNode = mTransactionState.getNode(nodeKey);
+      } catch (Exception e) {
+        mCurrentNode = null;
+      }
       if (mCurrentNode != null) {
         return true;
       } else {

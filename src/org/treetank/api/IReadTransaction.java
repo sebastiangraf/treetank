@@ -21,31 +21,73 @@ package org.treetank.api;
 /**
  * <h1>IReadTransaction</h1>
  * 
+ * <h2>Description</h2>
+ * 
  * <p>
  * Interface to access nodes based on the
  * Key/ParentKey/FirstChildKey/LeftSiblingKey/RightSiblingKey/ChildCount
  * encoding. This encoding keeps the children ordered but has no knowledge of
- * the global node ordering. Nodes must first be selected before they can be
- * read.
+ * the global node ordering. The underlying tree is accessed in a cursor-like
+ * fashion.
  * </p>
- * 
- * <p>
- * The interface has a single-threaded semantics, this is, each thread accessing
- * the ISession in a read-only way needs its own IReadTransaction instance.
- * </p>
- * 
- * <p>
- * Exceptions are only thrown if an internal error occurred which must be
- * resolved at a higher layer.
- * </p>
- * 
- * <h2>Description</h2>
  * 
  * <h2>Convention</h2>
  * 
+ * <p>
+ *  <ol>
+ *   <li><strong>Precondition</strong> before moving cursor:
+ *       <code>IReadTransaction.getNodeKey() == n</code>.</li>
+ *   <li><strong>Postcondition</strong> after moving cursor:
+ *       <code>(IReadTransaction.moveX() == true &&
+ *       IReadTransaction.getNodeKey() == m) ||
+ *       (IReadTransaction.moveX() == false &&
+ *       IReadTransaction.getNodeKey() == n)</code>.</li>
+ *  </ol>
+ * </p>
+ * 
  * <h2>User Example</h2>
  * 
+ * <p>
+ *  <pre>
+ *   final IReadTransaction rtx = session.beginReadTransaction();
+ *   
+ *   // Either test before moving...
+ *   if (rtx.hasFirstChild()) {
+ *     rtx.moveToFirstChild();
+ *     ...
+ *   }
+ *   
+ *   // or test after moving. Whatever, do the test!
+ *   if (rtx.moveToFirstChild()) {
+ *     ...
+ *   }
+ *   
+ *   // Access local part of element.
+ *   if (rtx.isElement() && rtx.getLocalPart().equalsIgnoreCase("foo") {
+ *     ...
+ *   }
+ *   
+ *   // Access value of first attribute of element.
+ *   if (rtx.isElement() && (rtx.getAttributeCount() > 0)) {
+ *     rtx.moveToAttribute(0);
+ *     System.out.println(UTF.parseString(rtx.getValue()));
+ *   }
+ *   
+ *   rtx.close();
+ *  </pre>
+ * </p>
+ * 
  * <h2>Developer Example</h2>
+ * 
+ * <p>
+ *  <pre>
+ *   public final void someIReadTransactionMethod() {
+ *     // This must be called to make sure the transaction is not closed.
+ *     assertNotClosed();
+ *     ...
+ *   }
+ *  </pre>
+ * </p>
  */
 public interface IReadTransaction {
 

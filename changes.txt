@@ -18,6 +18,8 @@
  
 TreeTank 4.17
 -------------
++ Introduced Conventions for IReadTransaction and IFilter. Bug fixed with
+  IReadTransaction.moveTo(key).
 + Moved IConstants to utils package. It should no longer be used publicly.
   Use IReadTransaction.isNullNodeKey(key) and getNullNodeKey().
 + Refactored IReadTransaction. Move operations return true if the new node
