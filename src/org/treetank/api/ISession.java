@@ -21,26 +21,33 @@ package org.treetank.api;
 /**
  * <h1>ISession</h1>
  * 
- * <p>
- * Each TreeTank file is bound to one instance implementing ISession.
- * Transactions can then be started from this instance. There can only be one
- * IWriteTransaction at the time. It can be committed or aborted through the
- * ISession.
- * </p>
- * 
- * <p>
- * Auto commit mode is the default mode and works as follows:
- * <ul>
- *  <li>Commit when the number of modifications exceeds
- *      <code>IConstants.COMMIT_THRESHOLD</code>.</li>
- * </ul>
- * </p>
- * 
  * <h2>Description</h2>
+ * 
+ * <p>
+ * Each TreeTank file is bound to one instance implementing
+ * <code>ISession</code>.
+ * Transactions can then be started from this instance. There can only be one
+ * <code>IWriteTransaction</code> at the time. However, multiple
+ * <code>IReadTransactions</code> can coexist concurrently.
+ * </p>
  * 
  * <h2>Convention</h2>
  * 
  * <h2>User Example</h2>
+ * 
+ * <p>
+ *  <pre>
+ *   // Simple session without encryption or end-to-end integrity.
+ *   final ISession session = Session.beginSession("example.tnk");
+ *   
+ *   // Session with encryption and end-to-end integrity.
+ *   final SessionConfiguration config = new SessionConfiguration(
+ *       "example.tnk",
+ *       "exampleKey......".getBytes(),
+ *       true);
+ *   final ISession session = Session.beginSession(config);
+ *  </pre>
+ * </p>
  * 
  * <h2>Developer Example</h2>
  */
