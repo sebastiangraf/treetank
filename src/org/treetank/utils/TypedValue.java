@@ -18,6 +18,8 @@
 
 package org.treetank.utils;
 
+import org.treetank.api.IReadTransaction;
+
 /**
  * <h1>UTF</h1>
  * 
@@ -30,27 +32,6 @@ public final class TypedValue {
 
   /** Empty string. */
   public static final byte[] EMPTY = new byte[0];
-
-  /** Node type is UTF-8 String. */
-  public static final int STRING_TYPE = 0;
-
-  /** Node type is raw byte[]. */
-  public static final int BYTEARRAY_TYPE = 1;
-
-  /** Node type is int. */
-  public static final int INT_TYPE = 2;
-
-  /** Node type is long. */
-  public static final int LONG_TYPE = 3;
-
-  /** Node type is float. */
-  public static final int FLOAT_TYPE = 4;
-
-  /** Node type is double. */
-  public static final int DOUBLE_TYPE = 5;
-
-  /** Node type is boolean. */
-  public static final int BOOLEAN_TYPE = 6;
 
   /**
    * Hidden constructor.
@@ -68,11 +49,11 @@ public final class TypedValue {
    */
   public static String atomize(final int valueType, final byte[] bytes) {
     switch (valueType) {
-    case TypedValue.INT_TYPE:
+    case IReadTransaction.INT_TYPE:
       return Integer.toString(parseInt(bytes));
-    case TypedValue.LONG_TYPE:
+    case IReadTransaction.LONG_TYPE:
       return Long.toString(parseLong(bytes));
-    case TypedValue.BOOLEAN_TYPE:
+    case IReadTransaction.BOOLEAN_TYPE:
       return Boolean.toString(parseBoolean(bytes));
     default:
       return parseString(bytes);

@@ -20,7 +20,6 @@ package org.treetank.axislayer;
 
 import org.treetank.api.IAxis;
 import org.treetank.api.IReadTransaction;
-import org.treetank.utils.IConstants;
 
 /**
  * <h1>ParentAxis</h1>
@@ -58,7 +57,7 @@ public class FullTextAxis extends AbstractAxis implements IAxis {
       // Wildcard.
       if (token.length() > 1) {
         rtx.moveToToken(token.substring(0, token.length() - 1));
-        if (rtx.getNodeKey() != IConstants.FULLTEXT_ROOT_KEY) {
+        if (rtx.getNodeKey() != IReadTransaction.FULLTEXT_ROOT_KEY) {
           innerAxis = new DescendantAxis(rtx);
         }
       } else {

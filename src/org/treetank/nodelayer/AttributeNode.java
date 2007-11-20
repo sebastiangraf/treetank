@@ -18,9 +18,9 @@
 
 package org.treetank.nodelayer;
 
+import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
-import org.treetank.utils.IConstants;
 
 /**
  * <h1>AttributeNode</h1>
@@ -195,7 +195,7 @@ public final class AttributeNode extends AbstractNode {
    */
   @Override
   public final int getKind() {
-    return IConstants.ATTRIBUTE_KIND;
+    return IReadTransaction.ATTRIBUTE_KIND;
   }
 
   /**

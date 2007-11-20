@@ -22,10 +22,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.treetank.api.IReadTransaction;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.nodelayer.AbstractNode;
 import org.treetank.pagelayer.UberPage;
-import org.treetank.utils.IConstants;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -95,7 +95,7 @@ public final class WriteTransaction extends ReadTransaction
     moveToFullTextRoot();
 
     // Add characters to inverted index consisting of a prefix tree.
-    long tokenKey = IConstants.NULL_KEY;
+    long tokenKey = NULL_NODE_KEY;
     for (final char character : token.toCharArray()) {
       if (hasFirstChild()) {
         moveToFirstChild();
@@ -155,7 +155,7 @@ public final class WriteTransaction extends ReadTransaction
 
     // Remove token or prefix of it if there are no other dependencies.
     moveTo(tokenKey);
-    while (!hasFirstChild() && getNodeKey() != IConstants.FULLTEXT_ROOT_KEY) {
+    while (!hasFirstChild() && getNodeKey() != FULLTEXT_ROOT_KEY) {
       final long parentKey = getParentKey();
       remove();
       moveTo(parentKey);
@@ -172,8 +172,8 @@ public final class WriteTransaction extends ReadTransaction
     return insertFirstChild(((WriteTransactionState) getTransactionState())
         .createElementNode(
             getCurrentNode().getNodeKey(),
-            IConstants.NULL_KEY,
-            IConstants.NULL_KEY,
+            NULL_NODE_KEY,
+            NULL_NODE_KEY,
             getCurrentNode().getFirstChildKey(),
             ((WriteTransactionState) getTransactionState())
                 .createNameKey(localPart),
@@ -191,7 +191,7 @@ public final class WriteTransaction extends ReadTransaction
     return insertFirstChild(((WriteTransactionState) getTransactionState())
         .createTextNode(
             getCurrentNode().getNodeKey(),
-            IConstants.NULL_KEY,
+            NULL_NODE_KEY,
             getCurrentNode().getFirstChildKey(),
             valueType,
             value));
@@ -201,7 +201,7 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final synchronized long insertTextAsFirstChild(final String value) {
-    return insertTextAsFirstChild(TypedValue.STRING_TYPE, TypedValue
+    return insertTextAsFirstChild(IReadTransaction.STRING_TYPE, TypedValue
         .getBytes(value));
   }
 
@@ -209,7 +209,7 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final synchronized long insertTextAsFirstChild(final int value) {
-    return insertTextAsFirstChild(TypedValue.INT_TYPE, TypedValue
+    return insertTextAsFirstChild(IReadTransaction.INT_TYPE, TypedValue
         .getBytes(value));
   }
 
@@ -217,7 +217,7 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final synchronized long insertTextAsFirstChild(final long value) {
-    return insertTextAsFirstChild(TypedValue.LONG_TYPE, TypedValue
+    return insertTextAsFirstChild(IReadTransaction.LONG_TYPE, TypedValue
         .getBytes(value));
   }
 
@@ -229,8 +229,8 @@ public final class WriteTransaction extends ReadTransaction
     return insertFirstChild(((WriteTransactionState) getTransactionState())
         .createFullTextNode(
             getCurrentNode().getNodeKey(),
-            IConstants.NULL_KEY,
-            IConstants.NULL_KEY,
+            NULL_NODE_KEY,
+            NULL_NODE_KEY,
             getCurrentNode().getFirstChildKey(),
             localPartKey));
   }
@@ -244,7 +244,7 @@ public final class WriteTransaction extends ReadTransaction
         .createFullTextLeafNode(
             getCurrentNode().getNodeKey(),
             firstChildKey,
-            IConstants.NULL_KEY,
+            NULL_NODE_KEY,
             getCurrentNode().getFirstChildKey()));
   }
 
@@ -258,7 +258,7 @@ public final class WriteTransaction extends ReadTransaction
     return insertRightSibling(((WriteTransactionState) getTransactionState())
         .createElementNode(
             getCurrentNode().getParentKey(),
-            IConstants.NULL_KEY,
+            NULL_NODE_KEY,
             getCurrentNode().getNodeKey(),
             getCurrentNode().getRightSiblingKey(),
             ((WriteTransactionState) getTransactionState())
@@ -287,7 +287,7 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final synchronized long insertTextAsRightSibling(final String value) {
-    return insertTextAsRightSibling(TypedValue.STRING_TYPE, TypedValue
+    return insertTextAsRightSibling(IReadTransaction.STRING_TYPE, TypedValue
         .getBytes(value));
   }
 
@@ -295,7 +295,7 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final synchronized long insertTextAsRightSibling(final int value) {
-    return insertTextAsRightSibling(TypedValue.INT_TYPE, TypedValue
+    return insertTextAsRightSibling(IReadTransaction.INT_TYPE, TypedValue
         .getBytes(value));
   }
 
@@ -303,7 +303,7 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final synchronized long insertTextAsRightSibling(final long value) {
-    return insertTextAsRightSibling(TypedValue.LONG_TYPE, TypedValue
+    return insertTextAsRightSibling(IReadTransaction.LONG_TYPE, TypedValue
         .getBytes(value));
   }
 
@@ -315,7 +315,7 @@ public final class WriteTransaction extends ReadTransaction
     return insertRightSibling(((WriteTransactionState) getTransactionState())
         .createFullTextNode(
             getCurrentNode().getParentKey(),
-            IConstants.NULL_KEY,
+            NULL_NODE_KEY,
             getCurrentNode().getNodeKey(),
             getCurrentNode().getRightSiblingKey(),
             localPartKey));
@@ -363,7 +363,7 @@ public final class WriteTransaction extends ReadTransaction
       final String uri,
       final String prefix,
       final String value) {
-    insertAttribute(localPart, uri, prefix, TypedValue.STRING_TYPE, TypedValue
+    insertAttribute(localPart, uri, prefix, IReadTransaction.STRING_TYPE, TypedValue
         .getBytes(value));
   }
 
@@ -375,7 +375,7 @@ public final class WriteTransaction extends ReadTransaction
       final String uri,
       final String prefix,
       final int value) {
-    insertAttribute(localPart, uri, prefix, TypedValue.INT_TYPE, TypedValue
+    insertAttribute(localPart, uri, prefix, IReadTransaction.INT_TYPE, TypedValue
         .getBytes(value));
   }
 
@@ -387,7 +387,7 @@ public final class WriteTransaction extends ReadTransaction
       final String uri,
       final String prefix,
       final long value) {
-    insertAttribute(localPart, uri, prefix, TypedValue.LONG_TYPE, TypedValue
+    insertAttribute(localPart, uri, prefix, IReadTransaction.LONG_TYPE, TypedValue
         .getBytes(value));
   }
 
@@ -447,7 +447,7 @@ public final class WriteTransaction extends ReadTransaction
       if (rightSibling != null) {
         leftSibling.setRightSiblingKey(rightSibling.getNodeKey());
       } else {
-        leftSibling.setRightSiblingKey(IConstants.NULL_KEY);
+        leftSibling.setRightSiblingKey(NULL_NODE_KEY);
       }
     }
 
@@ -459,7 +459,7 @@ public final class WriteTransaction extends ReadTransaction
       if (leftSibling != null) {
         rightSibling.setLeftSiblingKey(leftSibling.getNodeKey());
       } else {
-        rightSibling.setLeftSiblingKey(IConstants.NULL_KEY);
+        rightSibling.setLeftSiblingKey(NULL_NODE_KEY);
       }
     }
 
@@ -472,7 +472,7 @@ public final class WriteTransaction extends ReadTransaction
       if (rightSibling != null) {
         parent.setFirstChildKey(rightSibling.getNodeKey());
       } else {
-        parent.setFirstChildKey(IConstants.NULL_KEY);
+        parent.setFirstChildKey(NULL_NODE_KEY);
       }
     }
 
@@ -677,7 +677,7 @@ public final class WriteTransaction extends ReadTransaction
     assertNotClosed();
     intermediateCommitIfRequired();
 
-    if (getCurrentNode().getNodeKey() == IConstants.DOCUMENT_ROOT_KEY) {
+    if (getCurrentNode().getNodeKey() == DOCUMENT_ROOT_KEY) {
       throw new IllegalStateException("Root node can not have siblings.");
     }
 

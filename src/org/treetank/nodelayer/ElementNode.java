@@ -18,9 +18,9 @@
 
 package org.treetank.nodelayer;
 
+import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
-import org.treetank.utils.IConstants;
 
 /**
  * <h1>ElementNode</h1>
@@ -161,7 +161,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final boolean hasParent() {
-    return (mParentKey != IConstants.NULL_KEY);
+    return (mParentKey != IReadTransaction.NULL_NODE_KEY);
   }
 
   /**
@@ -185,7 +185,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final boolean hasFirstChild() {
-    return (mFirstChildKey != IConstants.NULL_KEY);
+    return (mFirstChildKey != IReadTransaction.NULL_NODE_KEY);
   }
 
   /**
@@ -209,7 +209,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final boolean hasLeftSibling() {
-    return (mLeftSiblingKey != IConstants.NULL_KEY);
+    return (mLeftSiblingKey != IReadTransaction.NULL_NODE_KEY);
   }
 
   /**
@@ -233,7 +233,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final boolean hasRightSibling() {
-    return (mRightSiblingKey != IConstants.NULL_KEY);
+    return (mRightSiblingKey != IReadTransaction.NULL_NODE_KEY);
   }
 
   /**
@@ -392,7 +392,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final int getKind() {
-    return IConstants.ELEMENT_KIND;
+    return IReadTransaction.ELEMENT_KIND;
   }
 
   /**

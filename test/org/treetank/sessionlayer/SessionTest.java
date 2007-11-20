@@ -156,10 +156,10 @@ public class SessionTest {
     TestDocument.create(wtx);
 
     TestCase.assertNotNull(wtx.moveToDocumentRoot());
-    assertEquals(IConstants.DOCUMENT_ROOT_KIND, wtx.getKind());
+    assertEquals(IReadTransaction.DOCUMENT_ROOT_KIND, wtx.getKind());
 
     TestCase.assertNotNull(wtx.moveToFirstChild());
-    assertEquals(IConstants.ELEMENT_KIND, wtx.getKind());
+    assertEquals(IReadTransaction.ELEMENT_KIND, wtx.getKind());
     assertEquals("a", wtx.getLocalPart());
 
     wtx.abort();
@@ -217,7 +217,7 @@ public class SessionTest {
     final IWriteTransaction wtx2 = session.beginWriteTransaction();
     assertEquals(1L, wtx2.getRevisionNumber());
     wtx2.moveTo(10L);
-    wtx2.setValue(TypedValue.STRING_TYPE, TypedValue.getBytes("bar2"));
+    wtx2.setValue(IReadTransaction.STRING_TYPE, TypedValue.getBytes("bar2"));
 
     assertEquals(
         "bar",
@@ -261,7 +261,7 @@ public class SessionTest {
     final IWriteTransaction wtx2 = session2.beginWriteTransaction();
     assertEquals(1L, wtx2.getRevisionNumber());
     wtx2.moveTo(10L);
-    wtx2.setValue(TypedValue.STRING_TYPE, TypedValue.getBytes("bar2"));
+    wtx2.setValue(IReadTransaction.STRING_TYPE, TypedValue.getBytes("bar2"));
 
     assertEquals(
         "bar",

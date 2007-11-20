@@ -21,6 +21,7 @@ package org.treetank.utils;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.treetank.api.IReadTransaction;
 
 public class TypedValueTest {
 
@@ -50,34 +51,34 @@ public class TypedValueTest {
 
   @Test
   public void testInt() {
-    assertEquals("0", TypedValue.atomize(TypedValue.INT_TYPE, TypedValue
+    assertEquals("0", TypedValue.atomize(IReadTransaction.INT_TYPE, TypedValue
         .getBytes(0)));
     assertEquals(0, TypedValue.parseInt(TypedValue.getBytes(0)));
 
-    assertEquals("1234", TypedValue.atomize(TypedValue.INT_TYPE, TypedValue
+    assertEquals("1234", TypedValue.atomize(IReadTransaction.INT_TYPE, TypedValue
         .getBytes(1234)));
     assertEquals(1234, TypedValue.parseInt(TypedValue.getBytes(1234)));
 
-    assertEquals("4", TypedValue.atomize(TypedValue.INT_TYPE, TypedValue
+    assertEquals("4", TypedValue.atomize(IReadTransaction.INT_TYPE, TypedValue
         .getBytes(4)));
     assertEquals(4, TypedValue.parseInt(TypedValue.getBytes(4)));
 
     assertEquals(String.valueOf(Integer.MAX_VALUE), TypedValue.atomize(
-        TypedValue.INT_TYPE,
+        IReadTransaction.INT_TYPE,
         TypedValue.getBytes(Integer.MAX_VALUE)));
     assertEquals(Integer.MAX_VALUE, TypedValue.parseInt(TypedValue
         .getBytes(Integer.MAX_VALUE)));
 
-    assertEquals("-1234", TypedValue.atomize(TypedValue.INT_TYPE, TypedValue
+    assertEquals("-1234", TypedValue.atomize(IReadTransaction.INT_TYPE, TypedValue
         .getBytes(-1234)));
     assertEquals(-1234, TypedValue.parseInt(TypedValue.getBytes(-1234)));
 
-    assertEquals("-4", TypedValue.atomize(TypedValue.INT_TYPE, TypedValue
+    assertEquals("-4", TypedValue.atomize(IReadTransaction.INT_TYPE, TypedValue
         .getBytes(-4)));
     assertEquals(-4, TypedValue.parseInt(TypedValue.getBytes(-4)));
 
     assertEquals(String.valueOf(Integer.MIN_VALUE + 1), TypedValue.atomize(
-        TypedValue.INT_TYPE,
+        IReadTransaction.INT_TYPE,
         TypedValue.getBytes(Integer.MIN_VALUE + 1)));
     assertEquals(Integer.MIN_VALUE + 1, TypedValue.parseInt(TypedValue
         .getBytes(Integer.MIN_VALUE + 1)));
@@ -85,34 +86,34 @@ public class TypedValueTest {
 
   @Test
   public void testLong() {
-    assertEquals("0", TypedValue.atomize(TypedValue.LONG_TYPE, TypedValue
+    assertEquals("0", TypedValue.atomize(IReadTransaction.LONG_TYPE, TypedValue
         .getBytes(0L)));
     assertEquals(0L, TypedValue.parseLong(TypedValue.getBytes(0L)));
 
-    assertEquals("1234", TypedValue.atomize(TypedValue.LONG_TYPE, TypedValue
+    assertEquals("1234", TypedValue.atomize(IReadTransaction.LONG_TYPE, TypedValue
         .getBytes(1234L)));
     assertEquals(1234L, TypedValue.parseLong(TypedValue.getBytes(1234L)));
 
-    assertEquals("4", TypedValue.atomize(TypedValue.LONG_TYPE, TypedValue
+    assertEquals("4", TypedValue.atomize(IReadTransaction.LONG_TYPE, TypedValue
         .getBytes(4L)));
     assertEquals(4L, TypedValue.parseLong(TypedValue.getBytes(4L)));
 
     assertEquals(String.valueOf(Long.MAX_VALUE), TypedValue.atomize(
-        TypedValue.LONG_TYPE,
+        IReadTransaction.LONG_TYPE,
         TypedValue.getBytes(Long.MAX_VALUE)));
     assertEquals(Long.MAX_VALUE, TypedValue.parseLong(TypedValue
         .getBytes(Long.MAX_VALUE)));
 
-    assertEquals("-1234", TypedValue.atomize(TypedValue.LONG_TYPE, TypedValue
+    assertEquals("-1234", TypedValue.atomize(IReadTransaction.LONG_TYPE, TypedValue
         .getBytes(-1234L)));
     assertEquals(-1234L, TypedValue.parseLong(TypedValue.getBytes(-1234L)));
 
-    assertEquals("-4", TypedValue.atomize(TypedValue.LONG_TYPE, TypedValue
+    assertEquals("-4", TypedValue.atomize(IReadTransaction.LONG_TYPE, TypedValue
         .getBytes(-4L)));
     assertEquals(-4L, TypedValue.parseLong(TypedValue.getBytes(-4L)));
 
     assertEquals(String.valueOf(Long.MIN_VALUE + 1), TypedValue.atomize(
-        TypedValue.LONG_TYPE,
+        IReadTransaction.LONG_TYPE,
         TypedValue.getBytes(Long.MIN_VALUE + 1)));
     assertEquals(Long.MIN_VALUE + 1, TypedValue.parseLong(TypedValue
         .getBytes(Long.MIN_VALUE + 1)));
@@ -120,10 +121,10 @@ public class TypedValueTest {
 
   @Test
   public void testBoolean() {
-    assertEquals("true", TypedValue.atomize(TypedValue.BOOLEAN_TYPE, TypedValue
+    assertEquals("true", TypedValue.atomize(IReadTransaction.BOOLEAN_TYPE, TypedValue
         .getBytes(true)));
     assertEquals("false", TypedValue.atomize(
-        TypedValue.BOOLEAN_TYPE,
+        IReadTransaction.BOOLEAN_TYPE,
         TypedValue.getBytes(false)));
   }
 

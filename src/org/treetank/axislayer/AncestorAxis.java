@@ -20,7 +20,6 @@ package org.treetank.axislayer;
 
 import org.treetank.api.IAxis;
 import org.treetank.api.IReadTransaction;
-import org.treetank.utils.IConstants;
 
 /**
  * <h1>AncestorAxis</h1>
@@ -48,7 +47,7 @@ public class AncestorAxis extends AbstractAxis implements IAxis {
     resetToLastKey();
     if (!getTransaction().isDocumentRootKind()
         && getTransaction().hasParent()
-        && getTransaction().getParentKey() != IConstants.DOCUMENT_ROOT_KEY) {
+        && getTransaction().getParentKey() != IReadTransaction.DOCUMENT_ROOT_KEY) {
       getTransaction().moveToParent();
       return true;
     } else {

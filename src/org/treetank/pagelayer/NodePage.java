@@ -18,6 +18,7 @@
 
 package org.treetank.pagelayer;
 
+import org.treetank.api.IReadTransaction;
 import org.treetank.nodelayer.AbstractNode;
 import org.treetank.nodelayer.DocumentRootNode;
 import org.treetank.nodelayer.ElementNode;
@@ -73,22 +74,22 @@ public final class NodePage extends AbstractPage {
       case IConstants.UNKNOWN:
         // Was null node, do nothing here.
         break;
-      case IConstants.DOCUMENT_ROOT_KIND:
+      case IReadTransaction.DOCUMENT_ROOT_KIND:
         mNodes[offset] = new DocumentRootNode(in);
         break;
-      case IConstants.ELEMENT_KIND:
+      case IReadTransaction.ELEMENT_KIND:
         mNodes[offset] = new ElementNode(keyBase + offset, in);
         break;
-      case IConstants.TEXT_KIND:
+      case IReadTransaction.TEXT_KIND:
         mNodes[offset] = new TextNode(keyBase + offset, in);
         break;
-      case IConstants.FULLTEXT_KIND:
+      case IReadTransaction.FULLTEXT_KIND:
         mNodes[offset] = new FullTextNode(keyBase + offset, in);
         break;
-      case IConstants.FULLTEXT_LEAF_KIND:
+      case IReadTransaction.FULLTEXT_LEAF_KIND:
         mNodes[offset] = new FullTextLeafNode(keyBase + offset, in);
         break;
-      case IConstants.FULLTEXT_ROOT_KIND:
+      case IReadTransaction.FULLTEXT_ROOT_KIND:
         mNodes[offset] = new FullTextRootNode(in);
         break;
       default:
@@ -116,24 +117,24 @@ public final class NodePage extends AbstractPage {
         case IConstants.UNKNOWN:
           // Was null node, do nothing here.
           break;
-        case IConstants.DOCUMENT_ROOT_KIND:
+        case IReadTransaction.DOCUMENT_ROOT_KIND:
           mNodes[offset] =
               new DocumentRootNode(committedNodePage.mNodes[offset]);
           break;
-        case IConstants.ELEMENT_KIND:
+        case IReadTransaction.ELEMENT_KIND:
           mNodes[offset] = new ElementNode(committedNodePage.mNodes[offset]);
           break;
-        case IConstants.TEXT_KIND:
+        case IReadTransaction.TEXT_KIND:
           mNodes[offset] = new TextNode(committedNodePage.mNodes[offset]);
           break;
-        case IConstants.FULLTEXT_KIND:
+        case IReadTransaction.FULLTEXT_KIND:
           mNodes[offset] = new FullTextNode(committedNodePage.mNodes[offset]);
           break;
-        case IConstants.FULLTEXT_LEAF_KIND:
+        case IReadTransaction.FULLTEXT_LEAF_KIND:
           mNodes[offset] =
               new FullTextLeafNode(committedNodePage.mNodes[offset]);
           break;
-        case IConstants.FULLTEXT_ROOT_KIND:
+        case IReadTransaction.FULLTEXT_ROOT_KIND:
           mNodes[offset] =
               new FullTextRootNode(committedNodePage.mNodes[offset]);
           break;

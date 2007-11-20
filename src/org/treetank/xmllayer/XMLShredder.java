@@ -26,6 +26,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 
+import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
@@ -75,7 +76,7 @@ public final class XMLShredder {
 
       long key;
       String text;
-      leftSiblingKeyStack.push(wtx.getNullNodeKey());
+      leftSiblingKeyStack.push(IReadTransaction.NULL_NODE_KEY);
 
       // Iterate over all nodes.
       while (parser.hasNext()) {
@@ -84,7 +85,7 @@ public final class XMLShredder {
 
         case XMLStreamConstants.START_ELEMENT:
 
-          if (wtx.isNullNodeKey(leftSiblingKeyStack.peek())) {
+          if (leftSiblingKeyStack.peek() == IReadTransaction.NULL_NODE_KEY) {
             key =
                 wtx.insertElementAsFirstChild(parser.getLocalName(), parser
                     .getNamespaceURI(), parser.getPrefix());
@@ -95,7 +96,7 @@ public final class XMLShredder {
           }
           leftSiblingKeyStack.pop();
           leftSiblingKeyStack.push(key);
-          leftSiblingKeyStack.push(wtx.getNullNodeKey());
+          leftSiblingKeyStack.push(IReadTransaction.NULL_NODE_KEY);
 
           // Parse namespaces.
           for (int i = 0, l = parser.getNamespaceCount(); i < l; i++) {
@@ -119,7 +120,7 @@ public final class XMLShredder {
         case XMLStreamConstants.CHARACTERS:
           text = parser.getText().trim();
           if (text.length() > 0) {
-            if (wtx.isNullNodeKey(leftSiblingKeyStack.peek())) {
+            if (leftSiblingKeyStack.peek() == IReadTransaction.NULL_NODE_KEY) {
               key = wtx.insertTextAsFirstChild(text);
             } else {
               key = wtx.insertTextAsRightSibling(text);

@@ -20,6 +20,7 @@ package org.treetank.xmllayer;
 
 import java.util.ArrayList;
 
+import org.treetank.api.IReadTransaction;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.utils.FastStack;
 import org.xml.sax.Attributes;
@@ -72,7 +73,7 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
 
     try {
 
-      mLeftSiblingKeyStack.push(mWTX.getNullNodeKey());
+      mLeftSiblingKeyStack.push(IReadTransaction.NULL_NODE_KEY);
 
     } catch (Exception e) {
       throw new SAXException(e);
@@ -97,7 +98,7 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
 
       // Insert element node and maintain stack.      
       long key;
-      if (mWTX.isNullNodeKey(mLeftSiblingKeyStack.peek())) {
+      if (mLeftSiblingKeyStack.peek() == IReadTransaction.NULL_NODE_KEY) {
         key =
             mWTX
                 .insertElementAsFirstChild(localName, uri, qNameToPrefix(qName));
@@ -113,7 +114,7 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
       mLeftSiblingKeyStack.pop();
       mLeftSiblingKeyStack.push(key);
 
-      mLeftSiblingKeyStack.push(mWTX.getNullNodeKey());
+      mLeftSiblingKeyStack.push(IReadTransaction.NULL_NODE_KEY);
 
       // Insert uriKey nodes.
       for (int i = 0, n = mPrefixList.size(); i < n; i++) {
@@ -205,7 +206,7 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
 
       // Insert text node and maintain stacks.
       long key;
-      if (mWTX.isNullNodeKey(mLeftSiblingKeyStack.peek())) {
+      if (mLeftSiblingKeyStack.peek() == IReadTransaction.NULL_NODE_KEY) {
         key = mWTX.insertTextAsFirstChild(text);
       } else {
         key = mWTX.insertTextAsRightSibling(text);

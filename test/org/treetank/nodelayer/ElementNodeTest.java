@@ -21,9 +21,9 @@ package org.treetank.nodelayer;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
-import org.treetank.utils.IConstants;
 
 public class ElementNodeTest {
 
@@ -62,7 +62,7 @@ public class ElementNodeTest {
     assertEquals(19, node3.getURIKey());
     assertEquals(20, node3.getPrefixKey());
     assertEquals(null, node3.getValue());
-    assertEquals(IConstants.ELEMENT_KIND, node3.getKind());
+    assertEquals(IReadTransaction.ELEMENT_KIND, node3.getKind());
     assertEquals(true, node3.hasFirstChild());
     assertEquals(true, node3.hasParent());
     assertEquals(true, node3.hasLeftSibling());

@@ -43,7 +43,7 @@ public class IReadTransactionTest {
     SESSION = Session.beginSession(PATH);
     final IWriteTransaction wtx = SESSION.beginWriteTransaction();
     TestDocument.create(wtx);
-    wtx.insertToken("foo", wtx.getNullNodeKey());
+    wtx.insertToken("foo", IReadTransaction.NULL_NODE_KEY);
     wtx.close();
   }
 

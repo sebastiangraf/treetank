@@ -108,55 +108,11 @@ public interface IConstants {
   /** Number of concurrent shared read transactions. */
   public static final int MAX_READ_TRANSACTIONS = 256;
 
-  /** Null nodeKey constant. */
-  public static final long NULL_KEY = -1L;
-
-  /** Document root key constant. */
-  public static final long DOCUMENT_ROOT_KEY = 0L;
-
-  /** FullText root key constant. */
-  public static final long FULLTEXT_ROOT_KEY = 1L;
-
   /** Root node page key constant. */
   public static final long ROOT_PAGE_KEY = 0L;
 
-  /** Undefined name. */
-  public static final int NULL_NAME = -1;
-
   /** Undefined node. */
   public static final int UNKNOWN = 0;
-
-  //--- Node Kind --------------------------------------------------------------
-
-  /** Node kind is element. */
-  public static final int ELEMENT_KIND = 1;
-
-  /** Node kind is attribute. */
-  public static final int ATTRIBUTE_KIND = 2;
-
-  /** Node kind is text. */
-  public static final int TEXT_KIND = 3;
-
-  /** Node kind is namespace. */
-  public static final int NAMESPACE_KIND = 4;
-
-  /** Node kind is processing instruction. */
-  public static final int PROCESSING_INSTRUCTION_KIND = 7;
-
-  /** Node kind is comment. */
-  public static final int COMMENT_KIND = 8;
-
-  /** Node kind is document root. */
-  public static final int DOCUMENT_ROOT_KIND = 9;
-
-  /** Node kind is fulltext root. */
-  public static final int FULLTEXT_ROOT_KIND = 13;
-
-  /** Node kind is fulltext. */
-  public static final int FULLTEXT_KIND = 14;
-
-  /** Node kind is fulltext leaf. */
-  public static final int FULLTEXT_LEAF_KIND = 15;
 
   /** Commit threshold. */
   public static final int COMMIT_THRESHOLD = 262144;
