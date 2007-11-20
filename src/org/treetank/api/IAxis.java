@@ -65,8 +65,19 @@ import java.util.Iterator;
  *  <pre>
  *   ...
  *   final IAxis axis = new ExampleAxis(rtx);
+ *   while (axis.hasNext()) {
+ *     // Move transaction cursor to do something.
+ *     axis.next();
+ *     System.out.println(rtx.getLocalPart());
+ *   }
+ *   ...
+ *  </pre>
+ *  <pre>
+ *   ...
+ *   final IAxis axis = new ExampleAxis(rtx);
  *   long count = 0L;
  *   while (axis.hasNext()) {
+ *     // Only count, do nothing with the transaction cursor.
  *     count += 1;
  *   }
  *   ...
