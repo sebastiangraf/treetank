@@ -22,7 +22,6 @@ import java.util.ArrayList;
 
 import org.treetank.api.IWriteTransaction;
 import org.treetank.utils.FastStack;
-import org.treetank.utils.TypedValue;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.LexicalHandler;
@@ -129,8 +128,7 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
             attr.getLocalName(i),
             attr.getURI(i),
             qNameToPrefix(attr.getQName(i)),
-            TypedValue.STRING_TYPE,
-            TypedValue.getBytes(attr.getValue(i)));
+            attr.getValue(i));
       }
 
     } catch (Exception e) {
@@ -208,13 +206,9 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
       // Insert text node and maintain stacks.
       long key;
       if (mWTX.isNullNodeKey(mLeftSiblingKeyStack.peek())) {
-        key =
-            mWTX.insertTextAsFirstChild(TypedValue.STRING_TYPE, TypedValue
-                .getBytes(text));
+        key = mWTX.insertTextAsFirstChild(text);
       } else {
-        key =
-            mWTX.insertTextAsRightSibling(TypedValue.STRING_TYPE, TypedValue
-                .getBytes(text));
+        key = mWTX.insertTextAsRightSibling(text);
       }
       mLeftSiblingKeyStack.pop();
       mLeftSiblingKeyStack.push(key);

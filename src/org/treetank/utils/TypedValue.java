@@ -49,6 +49,9 @@ public final class TypedValue {
   /** Node type is double. */
   public static final int DOUBLE_TYPE = 5;
 
+  /** Node type is boolean. */
+  public static final int BOOLEAN_TYPE = 6;
+
   /**
    * Hidden constructor.
    */
@@ -69,6 +72,8 @@ public final class TypedValue {
       return Integer.toString(parseInt(bytes));
     case TypedValue.LONG_TYPE:
       return Long.toString(parseLong(bytes));
+    case TypedValue.BOOLEAN_TYPE:
+      return Boolean.toString(parseBoolean(bytes));
     default:
       return parseString(bytes);
     }
@@ -89,6 +94,16 @@ public final class TypedValue {
           + e.getLocalizedMessage());
     }
     return string;
+  }
+
+  /**
+   * Parse boolean from given UTF-8 byte array.
+   * 
+   * @param bytes Byte array to parse int from.
+   * @return Boolean.
+   */
+  public static final boolean parseBoolean(final byte[] bytes) {
+    return (bytes[0] == 1);
   }
 
   /**
@@ -157,6 +172,23 @@ public final class TypedValue {
     } else if ((bytes[position - 1] & 128) != 0)
       value |= 0xFFFFFFFFFFFFFF00L;
     return value;
+  }
+
+  /**
+   * Get UTF-8 byte array from int. The given byte array yields a string
+   * representation if read with parseString().
+   * 
+   * @param value Int to encode as UTF-8 byte array.
+   * @return UTF-8-encoded byte array of int.
+   */
+  public static final byte[] getBytes(final boolean value) {
+    final byte[] bytes = new byte[1];
+    if (value) {
+      bytes[0] = 1;
+    } else {
+      bytes[0] = 0;
+    }
+    return bytes;
   }
 
   /**

@@ -34,9 +34,14 @@ public class TypedValueTest {
 
   @Test
   public void testEquals() {
-    assertEquals(false, TypedValue.equals(TypedValue.getBytes("foo"), TypedValue.getBytes("foobar")));
-    assertEquals(false, TypedValue.equals(TypedValue.getBytes("foo"), TypedValue.getBytes("bar")));
-    assertEquals(true, TypedValue.equals(TypedValue.getBytes("foo"), TypedValue.getBytes("foo")));
+    assertEquals(false, TypedValue.equals(
+        TypedValue.getBytes("foo"),
+        TypedValue.getBytes("foobar")));
+    assertEquals(false, TypedValue.equals(
+        TypedValue.getBytes("foo"),
+        TypedValue.getBytes("bar")));
+    assertEquals(true, TypedValue.equals(TypedValue.getBytes("foo"), TypedValue
+        .getBytes("foo")));
 
     assertEquals(true, TypedValue.equals("foo", TypedValue.getBytes("foo")));
     assertEquals(true, TypedValue.equals(TypedValue.getBytes("foo"), "foo"));
@@ -45,13 +50,16 @@ public class TypedValueTest {
 
   @Test
   public void testInt() {
-    assertEquals("0", TypedValue.atomize(TypedValue.INT_TYPE, TypedValue.getBytes(0)));
+    assertEquals("0", TypedValue.atomize(TypedValue.INT_TYPE, TypedValue
+        .getBytes(0)));
     assertEquals(0, TypedValue.parseInt(TypedValue.getBytes(0)));
 
-    assertEquals("1234", TypedValue.atomize(TypedValue.INT_TYPE, TypedValue.getBytes(1234)));
+    assertEquals("1234", TypedValue.atomize(TypedValue.INT_TYPE, TypedValue
+        .getBytes(1234)));
     assertEquals(1234, TypedValue.parseInt(TypedValue.getBytes(1234)));
 
-    assertEquals("4", TypedValue.atomize(TypedValue.INT_TYPE, TypedValue.getBytes(4)));
+    assertEquals("4", TypedValue.atomize(TypedValue.INT_TYPE, TypedValue
+        .getBytes(4)));
     assertEquals(4, TypedValue.parseInt(TypedValue.getBytes(4)));
 
     assertEquals(String.valueOf(Integer.MAX_VALUE), TypedValue.atomize(
@@ -60,10 +68,12 @@ public class TypedValueTest {
     assertEquals(Integer.MAX_VALUE, TypedValue.parseInt(TypedValue
         .getBytes(Integer.MAX_VALUE)));
 
-    assertEquals("-1234", TypedValue.atomize(TypedValue.INT_TYPE, TypedValue.getBytes(-1234)));
+    assertEquals("-1234", TypedValue.atomize(TypedValue.INT_TYPE, TypedValue
+        .getBytes(-1234)));
     assertEquals(-1234, TypedValue.parseInt(TypedValue.getBytes(-1234)));
 
-    assertEquals("-4", TypedValue.atomize(TypedValue.INT_TYPE, TypedValue.getBytes(-4)));
+    assertEquals("-4", TypedValue.atomize(TypedValue.INT_TYPE, TypedValue
+        .getBytes(-4)));
     assertEquals(-4, TypedValue.parseInt(TypedValue.getBytes(-4)));
 
     assertEquals(String.valueOf(Integer.MIN_VALUE + 1), TypedValue.atomize(
@@ -75,25 +85,30 @@ public class TypedValueTest {
 
   @Test
   public void testLong() {
-    assertEquals("0", TypedValue.atomize(TypedValue.LONG_TYPE, TypedValue.getBytes(0L)));
+    assertEquals("0", TypedValue.atomize(TypedValue.LONG_TYPE, TypedValue
+        .getBytes(0L)));
     assertEquals(0L, TypedValue.parseLong(TypedValue.getBytes(0L)));
 
-    assertEquals("1234", TypedValue.atomize(TypedValue.LONG_TYPE, TypedValue.getBytes(1234L)));
+    assertEquals("1234", TypedValue.atomize(TypedValue.LONG_TYPE, TypedValue
+        .getBytes(1234L)));
     assertEquals(1234L, TypedValue.parseLong(TypedValue.getBytes(1234L)));
 
-    assertEquals("4", TypedValue.atomize(TypedValue.LONG_TYPE, TypedValue.getBytes(4L)));
+    assertEquals("4", TypedValue.atomize(TypedValue.LONG_TYPE, TypedValue
+        .getBytes(4L)));
     assertEquals(4L, TypedValue.parseLong(TypedValue.getBytes(4L)));
 
     assertEquals(String.valueOf(Long.MAX_VALUE), TypedValue.atomize(
         TypedValue.LONG_TYPE,
         TypedValue.getBytes(Long.MAX_VALUE)));
-    assertEquals(Long.MAX_VALUE, TypedValue.parseLong(TypedValue.getBytes(Long.MAX_VALUE)));
+    assertEquals(Long.MAX_VALUE, TypedValue.parseLong(TypedValue
+        .getBytes(Long.MAX_VALUE)));
 
     assertEquals("-1234", TypedValue.atomize(TypedValue.LONG_TYPE, TypedValue
         .getBytes(-1234L)));
     assertEquals(-1234L, TypedValue.parseLong(TypedValue.getBytes(-1234L)));
 
-    assertEquals("-4", TypedValue.atomize(TypedValue.LONG_TYPE, TypedValue.getBytes(-4L)));
+    assertEquals("-4", TypedValue.atomize(TypedValue.LONG_TYPE, TypedValue
+        .getBytes(-4L)));
     assertEquals(-4L, TypedValue.parseLong(TypedValue.getBytes(-4L)));
 
     assertEquals(String.valueOf(Long.MIN_VALUE + 1), TypedValue.atomize(
@@ -101,6 +116,15 @@ public class TypedValueTest {
         TypedValue.getBytes(Long.MIN_VALUE + 1)));
     assertEquals(Long.MIN_VALUE + 1, TypedValue.parseLong(TypedValue
         .getBytes(Long.MIN_VALUE + 1)));
+  }
+
+  @Test
+  public void testBoolean() {
+    assertEquals("true", TypedValue.atomize(TypedValue.BOOLEAN_TYPE, TypedValue
+        .getBytes(true)));
+    assertEquals("false", TypedValue.atomize(
+        TypedValue.BOOLEAN_TYPE,
+        TypedValue.getBytes(false)));
   }
 
 }

@@ -100,6 +100,36 @@ public interface IWriteTransaction extends IReadTransaction {
   public long insertTextAsFirstChild(final int valueType, final byte[] value);
 
   /**
+   * Insert new text node as first child of currently selected node.
+   * The cursor is moved to the inserted node.
+   * 
+   * @param value Value of inserted node.
+   * @return Key of inserted node.
+   * already has a first child.
+   */
+  public long insertTextAsFirstChild(final String value);
+  
+  /**
+   * Insert new text node as first child of currently selected node.
+   * The cursor is moved to the inserted node.
+   * 
+   * @param value Value of inserted node.
+   * @return Key of inserted node.
+   * already has a first child.
+   */
+  public long insertTextAsFirstChild(final int value);
+  
+  /**
+   * Insert new text node as first child of currently selected node.
+   * The cursor is moved to the inserted node.
+   * 
+   * @param value Value of inserted node.
+   * @return Key of inserted node.
+   * already has a first child.
+   */
+  public long insertTextAsFirstChild(final long value);
+
+  /**
    * Insert new fulltext node as first child of currently selected node.
    * The cursor is moved to the inserted node.
    * 
@@ -136,6 +166,36 @@ public interface IWriteTransaction extends IReadTransaction {
   public long insertTextAsRightSibling(final int valueType, final byte[] value);
 
   /**
+   * Insert new element node as right sibling of currently selected node.
+   * The cursor is moved to the inserted node.
+   * 
+   * @param value Value of inserted node.
+   * @return Key of inserted node.
+   * the root node which is not allowed to have right siblings.
+   */
+  public long insertTextAsRightSibling(final String value);
+  
+  /**
+   * Insert new element node as right sibling of currently selected node.
+   * The cursor is moved to the inserted node.
+   * 
+   * @param value Value of inserted node.
+   * @return Key of inserted node.
+   * the root node which is not allowed to have right siblings.
+   */
+  public long insertTextAsRightSibling(final int value);
+  
+  /**
+   * Insert new element node as right sibling of currently selected node.
+   * The cursor is moved to the inserted node.
+   * 
+   * @param value Value of inserted node.
+   * @return Key of inserted node.
+   * the root node which is not allowed to have right siblings.
+   */
+  public long insertTextAsRightSibling(final long value);
+
+  /**
    * Insert new fulltext node as right sibling of currently selected node.
    * The cursor is moved to the inserted node.
    * 
@@ -161,6 +221,51 @@ public interface IWriteTransaction extends IReadTransaction {
       final String prefix,
       final int valueType,
       final byte[] value);
+
+  /**
+   * Insert attribute in currently selected node.
+   * The cursor is moved to the inserted node.
+   * 
+   * @param localPart Local part of inserted node.
+   * @param uri URI of inserted node.
+   * @param prefix Prefix of inserted node.
+   * @param value Value of inserted node.
+   */
+  public void insertAttribute(
+      final String localPart,
+      final String uri,
+      final String prefix,
+      final String value);
+  
+  /**
+   * Insert attribute in currently selected node.
+   * The cursor is moved to the inserted node.
+   * 
+   * @param localPart Local part of inserted node.
+   * @param uri URI of inserted node.
+   * @param prefix Prefix of inserted node.
+   * @param value Value of inserted node.
+   */
+  public void insertAttribute(
+      final String localPart,
+      final String uri,
+      final String prefix,
+      final int value);
+  
+  /**
+   * Insert attribute in currently selected node.
+   * The cursor is moved to the inserted node.
+   * 
+   * @param localPart Local part of inserted node.
+   * @param uri URI of inserted node.
+   * @param prefix Prefix of inserted node.
+   * @param value Value of inserted node.
+   */
+  public void insertAttribute(
+      final String localPart,
+      final String uri,
+      final String prefix,
+      final long value);
 
   /**
    * Insert namespace declaration in currently selected node.
