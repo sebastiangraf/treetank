@@ -26,75 +26,80 @@ public class UTFTest {
 
   @Test
   public void test() {
-    assertEquals("a", UTF.parseString(UTF.getBytes("a")));
-    assertEquals("foo", UTF.parseString(UTF.getBytes("foo")));
-    assertEquals("fö§", UTF.parseString(UTF.getBytes("fö§")));
-    assertEquals("", UTF.parseString(UTF.getBytes("")));
+    assertEquals("a", TypedValue.parseString(TypedValue.getBytes("a")));
+    assertEquals("foo", TypedValue.parseString(TypedValue.getBytes("foo")));
+    assertEquals("fö§", TypedValue.parseString(TypedValue.getBytes("fö§")));
+    assertEquals("", TypedValue.parseString(TypedValue.getBytes("")));
   }
 
   @Test
   public void testEquals() {
-    assertEquals(false, UTF.equals(UTF.getBytes("foo"), UTF.getBytes("foobar")));
-    assertEquals(false, UTF.equals(UTF.getBytes("foo"), UTF.getBytes("bar")));
-    assertEquals(true, UTF.equals(UTF.getBytes("foo"), UTF.getBytes("foo")));
+    assertEquals(false, TypedValue.equals(TypedValue.getBytes("foo"), TypedValue.getBytes("foobar")));
+    assertEquals(false, TypedValue.equals(TypedValue.getBytes("foo"), TypedValue.getBytes("bar")));
+    assertEquals(true, TypedValue.equals(TypedValue.getBytes("foo"), TypedValue.getBytes("foo")));
 
-    assertEquals(true, UTF.equals("foo", UTF.getBytes("foo")));
-    assertEquals(true, UTF.equals(UTF.getBytes("foo"), "foo"));
-    assertEquals(true, UTF.equals("foo", "foo"));
+    assertEquals(true, TypedValue.equals("foo", TypedValue.getBytes("foo")));
+    assertEquals(true, TypedValue.equals(TypedValue.getBytes("foo"), "foo"));
+    assertEquals(true, TypedValue.equals("foo", "foo"));
   }
 
   @Test
   public void testInt() {
-    assertEquals("0", UTF.parseString(UTF.getBytes(0)));
-    assertEquals(0, UTF.parseInt(UTF.getBytes(0)));
+    assertEquals("0", TypedValue.atomize(TypedValue.INT_TYPE, TypedValue.getBytes(0)));
+    assertEquals(0, TypedValue.parseInt(TypedValue.getBytes(0)));
 
-    assertEquals("1234", UTF.parseString(UTF.getBytes(1234)));
-    assertEquals(1234, UTF.parseInt(UTF.getBytes(1234)));
+    assertEquals("1234", TypedValue.atomize(TypedValue.INT_TYPE, TypedValue.getBytes(1234)));
+    assertEquals(1234, TypedValue.parseInt(TypedValue.getBytes(1234)));
 
-    assertEquals("4", UTF.parseString(UTF.getBytes(4)));
-    assertEquals(4, UTF.parseInt(UTF.getBytes(4)));
+    assertEquals("4", TypedValue.atomize(TypedValue.INT_TYPE, TypedValue.getBytes(4)));
+    assertEquals(4, TypedValue.parseInt(TypedValue.getBytes(4)));
 
-    assertEquals(String.valueOf(Integer.MAX_VALUE), UTF.parseString(UTF
+    assertEquals(String.valueOf(Integer.MAX_VALUE), TypedValue.atomize(
+        TypedValue.INT_TYPE,
+        TypedValue.getBytes(Integer.MAX_VALUE)));
+    assertEquals(Integer.MAX_VALUE, TypedValue.parseInt(TypedValue
         .getBytes(Integer.MAX_VALUE)));
-    assertEquals(Integer.MAX_VALUE, UTF.parseInt(UTF
-        .getBytes(Integer.MAX_VALUE)));
 
-    assertEquals("-1234", UTF.parseString(UTF.getBytes(-1234)));
-    assertEquals(-1234, UTF.parseInt(UTF.getBytes(-1234)));
+    assertEquals("-1234", TypedValue.atomize(TypedValue.INT_TYPE, TypedValue.getBytes(-1234)));
+    assertEquals(-1234, TypedValue.parseInt(TypedValue.getBytes(-1234)));
 
-    assertEquals("-4", UTF.parseString(UTF.getBytes(-4)));
-    assertEquals(-4, UTF.parseInt(UTF.getBytes(-4)));
+    assertEquals("-4", TypedValue.atomize(TypedValue.INT_TYPE, TypedValue.getBytes(-4)));
+    assertEquals(-4, TypedValue.parseInt(TypedValue.getBytes(-4)));
 
-    assertEquals(String.valueOf(Integer.MIN_VALUE + 1), UTF.parseString(UTF
-        .getBytes(Integer.MIN_VALUE + 1)));
-    assertEquals(Integer.MIN_VALUE + 1, UTF.parseInt(UTF
+    assertEquals(String.valueOf(Integer.MIN_VALUE + 1), TypedValue.atomize(
+        TypedValue.INT_TYPE,
+        TypedValue.getBytes(Integer.MIN_VALUE + 1)));
+    assertEquals(Integer.MIN_VALUE + 1, TypedValue.parseInt(TypedValue
         .getBytes(Integer.MIN_VALUE + 1)));
   }
 
   @Test
   public void testLong() {
-    assertEquals("0", UTF.parseString(UTF.getBytes(0L)));
-    assertEquals(0L, UTF.parseLong(UTF.getBytes(0L)));
+    assertEquals("0", TypedValue.atomize(TypedValue.LONG_TYPE, TypedValue.getBytes(0L)));
+    assertEquals(0L, TypedValue.parseLong(TypedValue.getBytes(0L)));
 
-    assertEquals("1234", UTF.parseString(UTF.getBytes(1234L)));
-    assertEquals(1234L, UTF.parseLong(UTF.getBytes(1234L)));
+    assertEquals("1234", TypedValue.atomize(TypedValue.LONG_TYPE, TypedValue.getBytes(1234L)));
+    assertEquals(1234L, TypedValue.parseLong(TypedValue.getBytes(1234L)));
 
-    assertEquals("4", UTF.parseString(UTF.getBytes(4L)));
-    assertEquals(4L, UTF.parseLong(UTF.getBytes(4L)));
+    assertEquals("4", TypedValue.atomize(TypedValue.LONG_TYPE, TypedValue.getBytes(4L)));
+    assertEquals(4L, TypedValue.parseLong(TypedValue.getBytes(4L)));
 
-    assertEquals(String.valueOf(Long.MAX_VALUE), UTF.parseString(UTF
-        .getBytes(Long.MAX_VALUE)));
-    assertEquals(Long.MAX_VALUE, UTF.parseLong(UTF.getBytes(Long.MAX_VALUE)));
+    assertEquals(String.valueOf(Long.MAX_VALUE), TypedValue.atomize(
+        TypedValue.LONG_TYPE,
+        TypedValue.getBytes(Long.MAX_VALUE)));
+    assertEquals(Long.MAX_VALUE, TypedValue.parseLong(TypedValue.getBytes(Long.MAX_VALUE)));
 
-    assertEquals("-1234", UTF.parseString(UTF.getBytes(-1234L)));
-    assertEquals(-1234L, UTF.parseLong(UTF.getBytes(-1234L)));
+    assertEquals("-1234", TypedValue.atomize(TypedValue.LONG_TYPE, TypedValue
+        .getBytes(-1234L)));
+    assertEquals(-1234L, TypedValue.parseLong(TypedValue.getBytes(-1234L)));
 
-    assertEquals("-4", UTF.parseString(UTF.getBytes(-4L)));
-    assertEquals(-4L, UTF.parseLong(UTF.getBytes(-4L)));
+    assertEquals("-4", TypedValue.atomize(TypedValue.LONG_TYPE, TypedValue.getBytes(-4L)));
+    assertEquals(-4L, TypedValue.parseLong(TypedValue.getBytes(-4L)));
 
-    assertEquals(String.valueOf(Long.MIN_VALUE + 1), UTF.parseString(UTF
-        .getBytes(Long.MIN_VALUE + 1)));
-    assertEquals(Long.MIN_VALUE + 1, UTF.parseLong(UTF
+    assertEquals(String.valueOf(Long.MIN_VALUE + 1), TypedValue.atomize(
+        TypedValue.LONG_TYPE,
+        TypedValue.getBytes(Long.MIN_VALUE + 1)));
+    assertEquals(Long.MIN_VALUE + 1, TypedValue.parseLong(TypedValue
         .getBytes(Long.MIN_VALUE + 1)));
   }
 

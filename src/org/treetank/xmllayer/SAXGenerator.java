@@ -26,7 +26,7 @@ import org.treetank.api.IAxis;
 import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastStack;
 import org.treetank.utils.IConstants;
-import org.treetank.utils.UTF;
+import org.treetank.utils.TypedValue;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -111,8 +111,8 @@ public final class SAXGenerator implements Runnable {
       attributes.addAttribute(rtx.getAttributeURI(index), rtx
           .getAttributeLocalPart(index), qName(
           rtx.getAttributePrefix(index),
-          rtx.getAttributeLocalPart(index)), "", UTF.parseString(rtx
-          .getAttributeValue(index)));
+          rtx.getAttributeLocalPart(index)), "", TypedValue.atomize(rtx
+          .getAttributeValueType(index), rtx.getAttributeValue(index)));
     }
 
     return attributes;
@@ -127,7 +127,8 @@ public final class SAXGenerator implements Runnable {
           .getPrefix(), rtx.getLocalPart()), visitAttributes(rtx));
       break;
     case IConstants.TEXT_KIND:
-      final char[] text = UTF.parseString(rtx.getValue()).toCharArray();
+      final char[] text =
+          TypedValue.atomize(rtx.getValueType(), rtx.getValue()).toCharArray();
       mHandler.characters(text, 0, text.length);
       break;
     default:

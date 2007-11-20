@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
-import org.treetank.utils.UTF;
+import org.treetank.utils.TypedValue;
 
 /**
  * <h1>NamePage</h1>
@@ -55,7 +55,7 @@ public final class NamePage extends AbstractPage {
     mNameMap = new HashMap<Integer, String>();
 
     for (int i = 0, l = in.readVarInt(); i < l; i++) {
-      mNameMap.put(in.readVarInt(), UTF.parseString(in.readByteArray()));
+      mNameMap.put(in.readVarInt(), TypedValue.parseString(in.readByteArray()));
     }
   }
 
@@ -100,7 +100,7 @@ public final class NamePage extends AbstractPage {
 
     for (final int key : mNameMap.keySet()) {
       out.writeVarInt(key);
-      out.writeByteArray(UTF.getBytes(mNameMap.get(key)));
+      out.writeByteArray(TypedValue.getBytes(mNameMap.get(key)));
     }
   }
 

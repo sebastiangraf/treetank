@@ -20,7 +20,7 @@ package org.treetank.axislayer;
 
 import org.treetank.api.IFilter;
 import org.treetank.api.IReadTransaction;
-import org.treetank.utils.UTF;
+import org.treetank.utils.TypedValue;
 
 /**
  * <h1>ValueAxisTest</h1>
@@ -52,7 +52,7 @@ public class ValueFilter extends AbstractFilter implements IFilter {
    * @param value Value to find.
    */
   public ValueFilter(final IReadTransaction rtx, final String value) {
-    this(rtx, UTF.getBytes(value));
+    this(rtx, TypedValue.getBytes(value));
   }
 
   /**
@@ -62,7 +62,7 @@ public class ValueFilter extends AbstractFilter implements IFilter {
    * @param value Value to find.
    */
   public ValueFilter(final IReadTransaction rtx, final int value) {
-    this(rtx, UTF.getBytes(value));
+    this(rtx, TypedValue.getBytes(value));
   }
 
   /**
@@ -72,14 +72,14 @@ public class ValueFilter extends AbstractFilter implements IFilter {
    * @param value Value to find.
    */
   public ValueFilter(final IReadTransaction rtx, final long value) {
-    this(rtx, UTF.getBytes(value));
+    this(rtx, TypedValue.getBytes(value));
   }
 
   /**
    * {@inheritDoc}
    */
   public final boolean filter() {
-    return ((getTransaction().isTextKind() || getTransaction().isAttributeKind()) && (UTF
+    return ((getTransaction().isTextKind() || getTransaction().isAttributeKind()) && (TypedValue
         .equals(getTransaction().getValue(), mValue)));
   }
 

@@ -31,9 +31,8 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.axislayer.DescendantAxis;
-import org.treetank.utils.IConstants;
 import org.treetank.utils.TestDocument;
-import org.treetank.utils.UTF;
+import org.treetank.utils.TypedValue;
 
 public class ThreadTest {
 
@@ -62,7 +61,7 @@ public class ThreadTest {
       taskExecutor.execute(new Task(session.beginReadTransaction(0L)));
       wtx = session.beginWriteTransaction();
       wtx.moveTo(10L);
-      wtx.setValue(IConstants.STRING_TYPE, UTF.getBytes("value" + i));
+      wtx.setValue(TypedValue.STRING_TYPE, TypedValue.getBytes("value" + i));
       wtx.commit();
       wtx.close();
     }
@@ -86,7 +85,7 @@ public class ThreadTest {
           // Nothing to do.
         }
         mRTX.moveTo(10L);
-        TestCase.assertEquals("bar", UTF.parseString(mRTX.getValue()));
+        TestCase.assertEquals("bar", TypedValue.parseString(mRTX.getValue()));
         mRTX.close();
       } catch (Exception e) {
         TestCase.fail(e.getLocalizedMessage());
