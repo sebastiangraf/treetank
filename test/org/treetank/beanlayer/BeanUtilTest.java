@@ -28,8 +28,7 @@ import org.junit.Test;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
-import org.treetank.utils.IConstants;
-import org.treetank.utils.UTF;
+import org.treetank.utils.TypedValue;
 
 public class BeanUtilTest {
 
@@ -148,7 +147,7 @@ public class BeanUtilTest {
     wtx.moveToDocumentRoot();
     final long expectedBeanKey = BeanUtil.write(wtx, expectedBean);
     wtx.insertElementAsFirstChild("subelement", "", "");
-    wtx.insertTextAsFirstChild(IConstants.STRING_TYPE, UTF
+    wtx.insertTextAsFirstChild(TypedValue.STRING_TYPE, TypedValue
         .getBytes("hello, world"));
 
     // Read bean.

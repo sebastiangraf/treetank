@@ -18,6 +18,8 @@
  
 TreeTank 4.18
 -------------
+ 2 Renamed UTF to TypedValue. Use TypedValue.atomize() to get the String
+   representation whatever type it is.
  1 Binary incompatibility with 4.17.
  0 Introducing value types to provide basic support for XMLSchema and XPath 2.0.
    This can, e.g., also be used to efficiently store an int instead of a

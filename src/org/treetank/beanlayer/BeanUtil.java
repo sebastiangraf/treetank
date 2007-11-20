@@ -25,8 +25,7 @@ import java.lang.reflect.Field;
 
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.utils.IConstants;
-import org.treetank.utils.UTF;
+import org.treetank.utils.TypedValue;
 
 /**
  * <h1>BeanUtil</h1>
@@ -141,25 +140,25 @@ public final class BeanUtil {
             field.set(target, rtx.getAttributeValue(index));
             break;
           case 64711720: // boolean
-            field.setBoolean(target, Boolean.parseBoolean(UTF.parseString(rtx
+            field.setBoolean(target, Boolean.parseBoolean(TypedValue.parseString(rtx
                 .getAttributeValue(index))));
             break;
           case 104431: // int
-            field.setInt(target, UTF.parseInt(rtx.getAttributeValue(index)));
+            field.setInt(target, TypedValue.parseInt(rtx.getAttributeValue(index)));
             break;
           case 3327612: // long
-            field.setLong(target, UTF.parseLong(rtx.getAttributeValue(index)));
+            field.setLong(target, TypedValue.parseLong(rtx.getAttributeValue(index)));
             break;
           case 97526364: // float
-            field.setFloat(target, Float.parseFloat(UTF.parseString(rtx
+            field.setFloat(target, Float.parseFloat(TypedValue.parseString(rtx
                 .getAttributeValue(index))));
             break;
           case -1325958191: // double
-            field.setDouble(target, Double.parseDouble(UTF.parseString(rtx
+            field.setDouble(target, Double.parseDouble(TypedValue.parseString(rtx
                 .getAttributeValue(index))));
             break;
           case 1195259493: // String
-            field.set(target, UTF.parseString(rtx.getAttributeValue(index)));
+            field.set(target, TypedValue.parseString(rtx.getAttributeValue(index)));
             break;
           default:
             throw new IllegalStateException(field.getType().getName());
@@ -248,22 +247,22 @@ public final class BeanUtil {
             bytes = (byte[]) field.get(object);
             break;
           case 64711720: // boolean
-            bytes = UTF.getBytes(field.get(object).toString());
+            bytes = TypedValue.getBytes(field.get(object).toString());
             break;
           case 104431: // int
-            bytes = UTF.getBytes(field.getInt(object));
+            bytes = TypedValue.getBytes(field.getInt(object));
             break;
           case 3327612: // long
-            bytes = UTF.getBytes(field.getLong(object));
+            bytes = TypedValue.getBytes(field.getLong(object));
             break;
           case 97526364: // float
-            bytes = UTF.getBytes(field.get(object).toString());
+            bytes = TypedValue.getBytes(field.get(object).toString());
             break;
           case -1325958191: // double
-            bytes = UTF.getBytes(field.get(object).toString());
+            bytes = TypedValue.getBytes(field.get(object).toString());
             break;
           case 1195259493: // String
-            bytes = UTF.getBytes((String) field.get(object));
+            bytes = TypedValue.getBytes((String) field.get(object));
             break;
           default:
             throw new IllegalStateException(field.getType().getName());
@@ -274,7 +273,7 @@ public final class BeanUtil {
               property.getName(),
               "",
               "",
-              IConstants.STRING_TYPE,
+              TypedValue.STRING_TYPE,
               bytes);
 
         }

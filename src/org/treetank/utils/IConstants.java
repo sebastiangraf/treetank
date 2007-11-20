@@ -158,28 +158,6 @@ public interface IConstants {
   /** Node kind is fulltext leaf. */
   public static final int FULLTEXT_LEAF_KIND = 15;
 
-  //--- Node type --------------------------------------------------------------
-
-  /** Node type is UTF-8 String. */
-  public static final int STRING_TYPE = 0;
-
-  /** Node type is raw byte[]. */
-  public static final int BYTEARRAY_TYPE = 1;
-
-  /** Node type is int. */
-  public static final int INT_TYPE = 2;
-
-  /** Node type is long. */
-  public static final int LONG_TYPE = 3;
-
-  /** Node type is float. */
-  public static final int FLOAT_TYPE = 4;
-
-  /** Node type is double. */
-  public static final int DOUBLE_TYPE = 5;
-
-  //--- XML Layer --------------------------------------------------------------
-
   /** Commit threshold. */
   public static final int COMMIT_THRESHOLD = 262144;
 

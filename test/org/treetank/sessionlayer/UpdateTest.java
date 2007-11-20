@@ -30,9 +30,8 @@ import org.junit.Test;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.utils.IConstants;
 import org.treetank.utils.TestDocument;
-import org.treetank.utils.UTF;
+import org.treetank.utils.TypedValue;
 
 public class UpdateTest {
 
@@ -63,7 +62,7 @@ public class UpdateTest {
     for (int i = 1; i <= 10; i++) {
       wtx = session.beginWriteTransaction();
       wtx.moveToDocumentRoot();
-      wtx.insertTextAsFirstChild(IConstants.STRING_TYPE, UTF.getBytes(Integer
+      wtx.insertTextAsFirstChild(TypedValue.STRING_TYPE, TypedValue.getBytes(Integer
           .toString(i)));
       wtx.commit();
       wtx.close();
@@ -131,7 +130,7 @@ public class UpdateTest {
     IWriteTransaction wtx = session.beginWriteTransaction();
 
     for (int i = 0; i < 256 * 256 + 1; i++) {
-      wtx.insertTextAsFirstChild(IConstants.STRING_TYPE, UTF.EMPTY);
+      wtx.insertTextAsFirstChild(TypedValue.STRING_TYPE, TypedValue.EMPTY);
     }
 
     TestCase.assertNotNull(wtx.moveTo(2L));

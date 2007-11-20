@@ -33,7 +33,7 @@ import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.utils.IConstants;
 import org.treetank.utils.TestDocument;
-import org.treetank.utils.UTF;
+import org.treetank.utils.TypedValue;
 
 public class SessionTest {
 
@@ -217,7 +217,7 @@ public class SessionTest {
     final IWriteTransaction wtx2 = session.beginWriteTransaction();
     assertEquals(1L, wtx2.getRevisionNumber());
     wtx2.moveTo(10L);
-    wtx2.setValue(IConstants.STRING_TYPE, UTF.getBytes("bar2"));
+    wtx2.setValue(TypedValue.STRING_TYPE, TypedValue.getBytes("bar2"));
 
     assertEquals(
         "bar",
@@ -261,7 +261,7 @@ public class SessionTest {
     final IWriteTransaction wtx2 = session2.beginWriteTransaction();
     assertEquals(1L, wtx2.getRevisionNumber());
     wtx2.moveTo(10L);
-    wtx2.setValue(IConstants.STRING_TYPE, UTF.getBytes("bar2"));
+    wtx2.setValue(TypedValue.STRING_TYPE, TypedValue.getBytes("bar2"));
 
     assertEquals(
         "bar",
