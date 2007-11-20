@@ -26,6 +26,7 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.nodelayer.AbstractNode;
 import org.treetank.pagelayer.UberPage;
 import org.treetank.utils.IConstants;
+import org.treetank.utils.TypedValue;
 
 /**
  * <h1>WriteTransaction</h1>
@@ -199,6 +200,30 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
+  public final synchronized long insertTextAsFirstChild(final String value) {
+    return insertTextAsFirstChild(TypedValue.STRING_TYPE, TypedValue
+        .getBytes(value));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final synchronized long insertTextAsFirstChild(final int value) {
+    return insertTextAsFirstChild(TypedValue.INT_TYPE, TypedValue
+        .getBytes(value));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final synchronized long insertTextAsFirstChild(final long value) {
+    return insertTextAsFirstChild(TypedValue.LONG_TYPE, TypedValue
+        .getBytes(value));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final synchronized long insertFullTextAsFirstChild(
       final int localPartKey) {
     return insertFirstChild(((WriteTransactionState) getTransactionState())
@@ -261,6 +286,30 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
+  public final synchronized long insertTextAsRightSibling(final String value) {
+    return insertTextAsRightSibling(TypedValue.STRING_TYPE, TypedValue
+        .getBytes(value));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final synchronized long insertTextAsRightSibling(final int value) {
+    return insertTextAsRightSibling(TypedValue.INT_TYPE, TypedValue
+        .getBytes(value));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final synchronized long insertTextAsRightSibling(final long value) {
+    return insertTextAsRightSibling(TypedValue.LONG_TYPE, TypedValue
+        .getBytes(value));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final synchronized long insertFullTextAsRightSibling(
       final int localPartKey) {
     return insertRightSibling(((WriteTransactionState) getTransactionState())
@@ -304,6 +353,42 @@ public final class WriteTransaction extends ReadTransaction
         ((WriteTransactionState) getTransactionState()).createNameKey(prefix),
         valueType,
         value);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final synchronized void insertAttribute(
+      final String localPart,
+      final String uri,
+      final String prefix,
+      final String value) {
+    insertAttribute(localPart, uri, prefix, TypedValue.STRING_TYPE, TypedValue
+        .getBytes(value));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final synchronized void insertAttribute(
+      final String localPart,
+      final String uri,
+      final String prefix,
+      final int value) {
+    insertAttribute(localPart, uri, prefix, TypedValue.INT_TYPE, TypedValue
+        .getBytes(value));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final synchronized void insertAttribute(
+      final String localPart,
+      final String uri,
+      final String prefix,
+      final long value) {
+    insertAttribute(localPart, uri, prefix, TypedValue.LONG_TYPE, TypedValue
+        .getBytes(value));
   }
 
   /**

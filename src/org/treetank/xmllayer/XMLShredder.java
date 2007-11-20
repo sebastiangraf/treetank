@@ -32,7 +32,6 @@ import org.treetank.sessionlayer.Session;
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.utils.FastStack;
 import org.treetank.utils.IConstants;
-import org.treetank.utils.TypedValue;
 
 public final class XMLShredder {
 
@@ -106,12 +105,9 @@ public final class XMLShredder {
 
           // Parse attributes.
           for (int i = 0, l = parser.getAttributeCount(); i < l; i++) {
-            wtx.insertAttribute(
-                parser.getAttributeLocalName(i),
-                parser.getAttributeNamespace(i),
-                parser.getAttributePrefix(i),
-                TypedValue.STRING_TYPE,
-                TypedValue.getBytes(parser.getAttributeValue(i)));
+            wtx.insertAttribute(parser.getAttributeLocalName(i), parser
+                .getAttributeNamespace(i), parser.getAttributePrefix(i), parser
+                .getAttributeValue(i));
           }
           break;
 
@@ -124,13 +120,9 @@ public final class XMLShredder {
           text = parser.getText().trim();
           if (text.length() > 0) {
             if (wtx.isNullNodeKey(leftSiblingKeyStack.peek())) {
-              key =
-                  wtx.insertTextAsFirstChild(TypedValue.STRING_TYPE, TypedValue
-                      .getBytes(text));
+              key = wtx.insertTextAsFirstChild(text);
             } else {
-              key =
-                  wtx.insertTextAsRightSibling(TypedValue.STRING_TYPE, TypedValue
-                      .getBytes(text));
+              key = wtx.insertTextAsRightSibling(text);
             }
             leftSiblingKeyStack.pop();
             leftSiblingKeyStack.push(key);

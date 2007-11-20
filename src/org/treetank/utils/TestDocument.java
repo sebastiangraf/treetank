@@ -66,6 +66,7 @@ public final class TestDocument {
           + "<p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b p:x=\"y\">"
           + "<c/>bar</b>oops3</p:a>";
 
+  /** String representation of test document without attributes. */
   public static final String XMLWITHOUTATTRIBUTES =
       "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
           + "<p:a>oops1<b>foo<c></c></b>oops2<b>"
@@ -89,28 +90,27 @@ public final class TestDocument {
     wtx.moveToDocumentRoot();
 
     wtx.insertElementAsFirstChild("a", "ns", "p");
-    wtx.insertAttribute("i", "", "", TypedValue.STRING_TYPE, TypedValue.getBytes("j"));
+    wtx.insertAttribute("i", "", "", "j");
     wtx.insertNamespace("ns", "p");
 
-    wtx.insertTextAsFirstChild(TypedValue.STRING_TYPE, TypedValue.getBytes("oops1"));
+    wtx.insertTextAsFirstChild("oops1");
 
     wtx.insertElementAsRightSibling("b", "", "");
 
-    wtx.insertTextAsFirstChild(TypedValue.STRING_TYPE, TypedValue.getBytes("foo"));
+    wtx.insertTextAsFirstChild("foo");
     wtx.insertElementAsRightSibling("c", "", "");
     wtx.moveToParent();
 
-    wtx.insertTextAsRightSibling(TypedValue.STRING_TYPE, TypedValue.getBytes("oops2"));
+    wtx.insertTextAsRightSibling("oops2");
 
     wtx.insertElementAsRightSibling("b", "", "");
-    wtx.insertAttribute("x", "ns", "p", TypedValue.STRING_TYPE, TypedValue
-        .getBytes("y"));
+    wtx.insertAttribute("x", "ns", "p", "y");
 
     wtx.insertElementAsFirstChild("c", "", "");
-    wtx.insertTextAsRightSibling(TypedValue.STRING_TYPE, TypedValue.getBytes("bar"));
+    wtx.insertTextAsRightSibling("bar");
     wtx.moveToParent();
 
-    wtx.insertTextAsRightSibling(TypedValue.STRING_TYPE, TypedValue.getBytes("oops3"));
+    wtx.insertTextAsRightSibling("oops3");
 
     wtx.moveToDocumentRoot();
 
@@ -128,23 +128,23 @@ public final class TestDocument {
 
     wtx.insertElementAsFirstChild("a", "ns", "p");
 
-    wtx.insertTextAsFirstChild(TypedValue.STRING_TYPE, TypedValue.getBytes("oops1"));
+    wtx.insertTextAsFirstChild("oops1");
 
     wtx.insertElementAsRightSibling("b", "", "");
 
-    wtx.insertTextAsFirstChild(TypedValue.STRING_TYPE, TypedValue.getBytes("foo"));
+    wtx.insertTextAsFirstChild("foo");
     wtx.insertElementAsRightSibling("c", "", "");
     wtx.moveToParent();
 
-    wtx.insertTextAsRightSibling(TypedValue.STRING_TYPE, TypedValue.getBytes("oops2"));
+    wtx.insertTextAsRightSibling("oops2");
 
     wtx.insertElementAsRightSibling("b", "", "");
 
     wtx.insertElementAsFirstChild("c", "", "");
-    wtx.insertTextAsRightSibling(TypedValue.STRING_TYPE, TypedValue.getBytes("bar"));
+    wtx.insertTextAsRightSibling("bar");
     wtx.moveToParent();
 
-    wtx.insertTextAsRightSibling(TypedValue.STRING_TYPE, TypedValue.getBytes("oops3"));
+    wtx.insertTextAsRightSibling("oops3");
 
     wtx.moveToDocumentRoot();
 
