@@ -137,31 +137,27 @@ public final class BeanUtil {
           // Switch according to field type.
           switch (field.getType().getCanonicalName().hashCode()) {
           case -1374008726: // byte[]
-            field.set(target, rtx.getAttributeValue(index));
+            field.set(target, rtx.getAttributeValueAsByteArray(index));
             break;
           case 64711720: // boolean
-            field.setBoolean(target, TypedValue.parseBoolean(rtx
-                .getAttributeValue(index)));
+            field.setBoolean(target, rtx.getAttributeValueAsBoolean(index));
             break;
           case 104431: // int
-            field.setInt(target, TypedValue.parseInt(rtx
-                .getAttributeValue(index)));
+            field.setInt(target, rtx.getAttributeValueAsInt(index));
             break;
           case 3327612: // long
-            field.setLong(target, TypedValue.parseLong(rtx
-                .getAttributeValue(index)));
+            field.setLong(target, rtx.getAttributeValueAsLong(index));
             break;
           case 97526364: // float
             field.setFloat(target, Float.parseFloat(TypedValue.parseString(rtx
-                .getAttributeValue(index))));
+                .getAttributeValueAsByteArray(index))));
             break;
           case -1325958191: // double
             field.setDouble(target, Double.parseDouble(TypedValue
-                .parseString(rtx.getAttributeValue(index))));
+                .parseString(rtx.getAttributeValueAsByteArray(index))));
             break;
           case 1195259493: // String
-            field.set(target, TypedValue.parseString(rtx
-                .getAttributeValue(index)));
+            field.set(target, rtx.getAttributeValueAsString(index));
             break;
           default:
             throw new IllegalStateException(field.getType().getName());

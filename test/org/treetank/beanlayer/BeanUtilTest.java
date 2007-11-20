@@ -25,11 +25,9 @@ import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
-import org.treetank.utils.TypedValue;
 
 public class BeanUtilTest {
 
@@ -148,8 +146,7 @@ public class BeanUtilTest {
     wtx.moveToDocumentRoot();
     final long expectedBeanKey = BeanUtil.write(wtx, expectedBean);
     wtx.insertElementAsFirstChild("subelement", "", "");
-    wtx.insertTextAsFirstChild(IReadTransaction.STRING_TYPE, TypedValue
-        .getBytes("hello, world"));
+    wtx.insertTextAsFirstChild("hello, world");
 
     // Read bean.
     wtx.moveTo(expectedBeanKey);

@@ -18,6 +18,8 @@
  
 TreeTank 4.18
 -------------
+ 4 Added convenience methods to IReadTransaction and IWriteTransaction to
+   access typed value.
  3 Moved KEY, KIND, and TYPE constants to IReadTransaction.
  2 Renamed UTF to TypedValue. Use TypedValue.atomize() to get the String
    representation whatever type it is.

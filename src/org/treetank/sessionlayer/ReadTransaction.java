@@ -345,9 +345,67 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final byte[] getAttributeValue(final int index) {
+  public final String getAttributeValueAsAtom(final int index) {
+    assertNotClosed();
+    return TypedValue.atomize(
+        mCurrentNode.getAttribute(index).getValueType(),
+        mCurrentNode.getAttribute(index).getValue());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final byte[] getAttributeValueAsByteArray(final int index) {
     assertNotClosed();
     return mCurrentNode.getAttribute(index).getValue();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final String getAttributeValueAsString(final int index) {
+    assertNotClosed();
+    if (mCurrentNode.getAttribute(index).getValueType() != STRING_TYPE) {
+      throw new IllegalStateException(
+          "Can not get string if type of value is not string.");
+    }
+    return TypedValue.parseString(mCurrentNode.getAttribute(index).getValue());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final int getAttributeValueAsInt(final int index) {
+    assertNotClosed();
+    if (mCurrentNode.getAttribute(index).getValueType() != INT_TYPE) {
+      throw new IllegalStateException(
+          "Can not get int if type of value is not int.");
+    }
+    return TypedValue.parseInt(mCurrentNode.getAttribute(index).getValue());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final long getAttributeValueAsLong(final int index) {
+    assertNotClosed();
+    if (mCurrentNode.getAttribute(index).getValueType() != LONG_TYPE) {
+      throw new IllegalStateException(
+          "Can not get long if type of value is not long.");
+    }
+    return TypedValue.parseLong(mCurrentNode.getAttribute(index).getValue());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final boolean getAttributeValueAsBoolean(final int index) {
+    assertNotClosed();
+    if (mCurrentNode.getAttribute(index).getValueType() != BOOLEAN_TYPE) {
+      throw new IllegalStateException(
+          "Can not get boolean if type of value is not boolean.");
+    }
+    return TypedValue.parseBoolean(mCurrentNode.getAttribute(index).getValue());
   }
 
   /**
@@ -513,7 +571,7 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final String getAtomizedValue() {
+  public final String getValueAsAtom() {
     assertNotClosed();
     return TypedValue.atomize(mCurrentNode.getValueType(), mCurrentNode
         .getValue());
@@ -561,6 +619,18 @@ public class ReadTransaction implements IReadTransaction {
           "Can not get long if type of value is not long.");
     }
     return TypedValue.parseLong(mCurrentNode.getValue());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final boolean getValueAsBoolean() {
+    assertNotClosed();
+    if (mCurrentNode.getValueType() != BOOLEAN_TYPE) {
+      throw new IllegalStateException(
+          "Can not get boolean if type of value is not boolean.");
+    }
+    return TypedValue.parseBoolean(mCurrentNode.getValue());
   }
 
   /**
