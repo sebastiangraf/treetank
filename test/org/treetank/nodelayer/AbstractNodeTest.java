@@ -28,9 +28,21 @@ public class AbstractNodeTest {
   public void testDocumentRootNode() {
 
     final AbstractNode node1 =
-        new TextNode(13L, 14L, 15L, 16L, new byte[] { (byte) 17, (byte) 18 });
+        new TextNode(
+            13L,
+            14L,
+            15L,
+            16L,
+            19,
+            new byte[] { (byte) 17, (byte) 18 });
     final AbstractNode node2 =
-        new TextNode(23L, 24L, 25L, 26L, new byte[] { (byte) 27, (byte) 28 });
+        new TextNode(
+            23L,
+            24L,
+            25L,
+            26L,
+            29,
+            new byte[] { (byte) 27, (byte) 28 });
 
     // Test hash.
     assertEquals(13, node1.hashCode());

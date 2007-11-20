@@ -92,7 +92,7 @@ public class XMLShredderTest {
           .nameForKey(rtx.getURIKey()));
       assertEquals(expectedTrx.nameForKey(expectedTrx.getPrefixKey()), rtx
           .nameForKey(rtx.getPrefixKey()));
-      if (expectedTrx.isText()) {
+      if (expectedTrx.isTextKind()) {
         assertEquals(new String(
             expectedTrx.getValue(),
             IConstants.DEFAULT_ENCODING), new String(

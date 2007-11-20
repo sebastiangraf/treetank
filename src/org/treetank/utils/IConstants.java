@@ -34,13 +34,13 @@ public interface IConstants {
   public static final int VERSION_MAJOR = 4;
 
   /** Minor version number of this release. */
-  public static final int VERSION_MINOR = 17;
+  public static final int VERSION_MINOR = 18;
 
   /** Last major version to which this version is binary compatible. */
   public static final int LAST_VERSION_MAJOR = 4;
 
   /** Last minor version to which this version is binary compatible. */
-  public static final int LAST_VERSION_MINOR = 14;
+  public static final int LAST_VERSION_MINOR = 17;
 
   //--- Varia ------------------------------------------------------------------
 
@@ -126,35 +126,57 @@ public interface IConstants {
   /** Undefined node. */
   public static final int UNKNOWN = 0;
 
-  /** INode kind is element. */
-  public static final int ELEMENT = 1;
+  //--- Node Kind --------------------------------------------------------------
 
-  /** INode kind is attribute. */
-  public static final int ATTRIBUTE = 2;
+  /** Node kind is element. */
+  public static final int ELEMENT_KIND = 1;
 
-  /** INode kind is text. */
-  public static final int TEXT = 3;
+  /** Node kind is attribute. */
+  public static final int ATTRIBUTE_KIND = 2;
 
-  /** INode kind is namespace. */
-  public static final int NAMESPACE = 4;
+  /** Node kind is text. */
+  public static final int TEXT_KIND = 3;
 
-  /** INode kind is processing instruction. */
-  public static final int PROCESSING_INSTRUCTION = 7;
+  /** Node kind is namespace. */
+  public static final int NAMESPACE_KIND = 4;
 
-  /** INode kind is comment. */
-  public static final int COMMENT = 8;
+  /** Node kind is processing instruction. */
+  public static final int PROCESSING_INSTRUCTION_KIND = 7;
 
-  /** INode kind is document root. */
-  public static final int DOCUMENT_ROOT = 9;
+  /** Node kind is comment. */
+  public static final int COMMENT_KIND = 8;
 
-  /** INode kind is fulltext root. */
-  public static final int FULLTEXT_ROOT = 13;
+  /** Node kind is document root. */
+  public static final int DOCUMENT_ROOT_KIND = 9;
 
-  /** INode kind is fulltext. */
-  public static final int FULLTEXT = 14;
+  /** Node kind is fulltext root. */
+  public static final int FULLTEXT_ROOT_KIND = 13;
 
-  /** INode kind is fulltext leaf. */
-  public static final int FULLTEXT_LEAF = 15;
+  /** Node kind is fulltext. */
+  public static final int FULLTEXT_KIND = 14;
+
+  /** Node kind is fulltext leaf. */
+  public static final int FULLTEXT_LEAF_KIND = 15;
+
+  //--- Node type --------------------------------------------------------------
+
+  /** Node type is UTF-8 String. */
+  public static final int STRING_TYPE = 0;
+
+  /** Node type is raw byte[]. */
+  public static final int BYTEARRAY_TYPE = 1;
+
+  /** Node type is int. */
+  public static final int INT_TYPE = 2;
+
+  /** Node type is long. */
+  public static final int LONG_TYPE = 3;
+
+  /** Node type is float. */
+  public static final int FLOAT_TYPE = 4;
+
+  /** Node type is double. */
+  public static final int DOUBLE_TYPE = 5;
 
   //--- XML Layer --------------------------------------------------------------
 

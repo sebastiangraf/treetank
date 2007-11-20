@@ -38,6 +38,9 @@ public final class AttributeNode extends AbstractNode {
   /** Key of prefix. */
   private int mPrefixKey;
 
+  /** Type of value. */
+  private int mValueType;
+
   /** Value of attribute. */
   private byte[] mValue;
 
@@ -48,6 +51,7 @@ public final class AttributeNode extends AbstractNode {
    * @param localPartKey Key of local part.
    * @param uriKey Key of URI.
    * @param prefixKey Key of prefix.
+   * @param valueType Type of attribute value.
    * @param value Value of attribute.
    */
   public AttributeNode(
@@ -55,11 +59,13 @@ public final class AttributeNode extends AbstractNode {
       final int localPartKey,
       final int uriKey,
       final int prefixKey,
+      final int valueType,
       final byte[] value) {
     super(nodeKey);
     mLocalPartKey = localPartKey;
     mURIKey = uriKey;
     mPrefixKey = prefixKey;
+    mValueType = valueType;
     mValue = value;
   }
 
@@ -73,6 +79,7 @@ public final class AttributeNode extends AbstractNode {
     mLocalPartKey = attribute.getLocalPartKey();
     mURIKey = attribute.getURIKey();
     mPrefixKey = attribute.getPrefixKey();
+    mValueType = attribute.getValueType();
     mValue = attribute.getValue();
   }
 
@@ -82,6 +89,7 @@ public final class AttributeNode extends AbstractNode {
     mLocalPartKey = in.readVarInt();
     mURIKey = in.readVarInt();
     mPrefixKey = in.readVarInt();
+    mValueType = in.readByte();
     mValue = in.readByteArray();
   }
 
@@ -161,6 +169,14 @@ public final class AttributeNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
+  public final int getValueType() {
+    return mValueType;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public final byte[] getValue() {
     return mValue;
   }
@@ -178,7 +194,7 @@ public final class AttributeNode extends AbstractNode {
    */
   @Override
   public final int getKind() {
-    return IConstants.ATTRIBUTE;
+    return IConstants.ATTRIBUTE_KIND;
   }
 
   /**
@@ -189,6 +205,7 @@ public final class AttributeNode extends AbstractNode {
     out.writeVarInt(mLocalPartKey);
     out.writeVarInt(mURIKey);
     out.writeVarInt(mPrefixKey);
+    out.writeByte((byte) mValueType);
     out.writeByteArray(mValue);
   }
 

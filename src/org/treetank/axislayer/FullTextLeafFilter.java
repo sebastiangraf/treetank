@@ -43,7 +43,7 @@ public class FullTextLeafFilter extends AbstractFilter implements IFilter {
    * {@inheritDoc}
    */
   public final boolean filter() {
-    return getTransaction().isFullTextLeaf();
+    return getTransaction().isFullTextLeafKind();
   }
 
 }

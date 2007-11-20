@@ -43,7 +43,7 @@ public class NodeFilter extends AbstractFilter implements IFilter {
    * {@inheritDoc}
    */
   public final boolean filter() {
-    return (getTransaction().isElement() || getTransaction().isText());
+    return (getTransaction().isElementKind() || getTransaction().isTextKind());
   }
 
 }

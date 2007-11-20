@@ -57,7 +57,7 @@ public class IReadTransactionTest {
     final IReadTransaction rtx = SESSION.beginReadTransaction();
 
     assertEquals(true, rtx.moveToDocumentRoot());
-    assertEquals(true, rtx.isDocumentRoot());
+    assertEquals(true, rtx.isDocumentRootKind());
     assertEquals(false, rtx.hasParent());
     assertEquals(false, rtx.hasLeftSibling());
     assertEquals(false, rtx.hasRightSibling());
@@ -71,7 +71,7 @@ public class IReadTransactionTest {
     final IReadTransaction rtx = SESSION.beginReadTransaction();
 
     assertEquals(true, rtx.moveToFullTextRoot());
-    assertEquals(true, rtx.isFullTextRoot());
+    assertEquals(true, rtx.isFullTextRootKind());
     assertEquals(false, rtx.hasParent());
     assertEquals(false, rtx.hasLeftSibling());
     assertEquals(false, rtx.hasRightSibling());

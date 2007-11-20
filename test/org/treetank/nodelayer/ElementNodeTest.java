@@ -38,7 +38,7 @@ public class ElementNodeTest {
     // Modify it.
     node1.incrementChildCount();
     node1.decrementChildCount();
-    node1.insertAttribute(21, 22, 23, new byte[] { (byte) 24, (byte) 24 });
+    node1.insertAttribute(21, 22, 23, 27, new byte[] { (byte) 24, (byte) 24 });
     node1.insertNamespace(25, 26);
 
     // Serialize and deserialize node.
@@ -62,7 +62,7 @@ public class ElementNodeTest {
     assertEquals(19, node3.getURIKey());
     assertEquals(20, node3.getPrefixKey());
     assertEquals(null, node3.getValue());
-    assertEquals(IConstants.ELEMENT, node3.getKind());
+    assertEquals(IConstants.ELEMENT_KIND, node3.getKind());
     assertEquals(true, node3.hasFirstChild());
     assertEquals(true, node3.hasParent());
     assertEquals(true, node3.hasLeftSibling());
@@ -79,6 +79,7 @@ public class ElementNodeTest {
     assertEquals(21, node3.getAttribute(0).getLocalPartKey());
     assertEquals(22, node3.getAttribute(0).getURIKey());
     assertEquals(23, node3.getAttribute(0).getPrefixKey());
+    assertEquals(27, node3.getAttribute(0).getValueType());
     assertEquals(2, node3.getAttribute(0).getValue().length);
 
     assertEquals(13L, node3.getNamespace(0).getNodeKey());

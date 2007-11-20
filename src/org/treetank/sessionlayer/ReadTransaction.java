@@ -124,7 +124,7 @@ public class ReadTransaction implements IReadTransaction {
     for (final char character : token.toCharArray()) {
       if (hasFirstChild()) {
         moveToFirstChild();
-        while (isFullText()
+        while (isFullTextKind()
             && (getLocalPartKey() != character)
             && hasRightSibling()) {
           moveToRightSibling();
@@ -337,6 +337,14 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
+  public final int getAttributeValueType(final int index) {
+    assertNotClosed();
+    return mCurrentNode.getAttribute(index).getValueType();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final byte[] getAttributeValue(final int index) {
     assertNotClosed();
     return mCurrentNode.getAttribute(index).getValue();
@@ -393,7 +401,7 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final boolean isDocumentRoot() {
+  public final boolean isDocumentRootKind() {
     assertNotClosed();
     return mCurrentNode.isDocumentRoot();
   }
@@ -401,7 +409,7 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final boolean isElement() {
+  public final boolean isElementKind() {
     assertNotClosed();
     return mCurrentNode.isElement();
   }
@@ -409,7 +417,7 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final boolean isAttribute() {
+  public final boolean isAttributeKind() {
     assertNotClosed();
     return mCurrentNode.isAttribute();
   }
@@ -417,7 +425,7 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final boolean isText() {
+  public final boolean isTextKind() {
     assertNotClosed();
     return mCurrentNode.isText();
   }
@@ -425,7 +433,7 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final boolean isFullText() {
+  public final boolean isFullTextKind() {
     assertNotClosed();
     return mCurrentNode.isFullText();
   }
@@ -433,7 +441,7 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final boolean isFullTextLeaf() {
+  public final boolean isFullTextLeafKind() {
     assertNotClosed();
     return mCurrentNode.isFullTextLeaf();
   }
@@ -441,7 +449,7 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final boolean isFullTextRoot() {
+  public final boolean isFullTextRootKind() {
     assertNotClosed();
     return mCurrentNode.isFullTextRoot();
   }
@@ -492,6 +500,14 @@ public class ReadTransaction implements IReadTransaction {
   public final String getPrefix() {
     assertNotClosed();
     return mTransactionState.getName(mCurrentNode.getPrefixKey());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final int getValueType() {
+    assertNotClosed();
+    return mCurrentNode.getValueType();
   }
 
   /**

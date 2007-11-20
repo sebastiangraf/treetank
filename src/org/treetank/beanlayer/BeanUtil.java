@@ -121,7 +121,7 @@ public final class BeanUtil {
     try {
 
       // Check whether node points to element with clazz name.
-      if (rtx.isElement()
+      if (rtx.isElementKind()
           && rtx.getLocalPart().equalsIgnoreCase(clazz.getSimpleName())) {
 
         target = clazz.newInstance();
@@ -300,7 +300,7 @@ public final class BeanUtil {
       final IWriteTransaction wtx,
       final Object object) {
     // Check whether node points to element with clazz name.
-    if (wtx.isElement()
+    if (wtx.isElementKind()
         && wtx.getLocalPart().equalsIgnoreCase(
             object.getClass().getSimpleName())) {
 

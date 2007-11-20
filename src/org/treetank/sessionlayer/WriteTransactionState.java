@@ -154,6 +154,7 @@ public final class WriteTransactionState extends ReadTransactionState {
         parentKey,
         leftSiblingKey,
         rightSiblingKey,
+        IConstants.STRING_TYPE,
         value));
   }
 

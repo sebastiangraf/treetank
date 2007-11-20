@@ -99,7 +99,7 @@ public final class FullTextRootNode extends AbstractNode {
    */
   @Override
   public final int getKind() {
-    return IConstants.FULLTEXT_ROOT;
+    return IConstants.FULLTEXT_ROOT_KIND;
   }
 
   /**

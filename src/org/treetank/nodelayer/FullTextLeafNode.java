@@ -198,7 +198,7 @@ public final class FullTextLeafNode extends AbstractNode {
    */
   @Override
   public final int getKind() {
-    return IConstants.FULLTEXT_LEAF;
+    return IConstants.FULLTEXT_LEAF_KIND;
   }
 
   /**

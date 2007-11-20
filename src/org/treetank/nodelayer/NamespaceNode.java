@@ -88,7 +88,7 @@ public final class NamespaceNode extends AbstractNode {
    */
   @Override
   public final int getKind() {
-    return IConstants.NAMESPACE;
+    return IConstants.NAMESPACE_KIND;
   }
 
   /**
