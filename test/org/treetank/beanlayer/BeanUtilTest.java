@@ -108,6 +108,35 @@ public class BeanUtilTest {
   }
 
   @Test
+  public void testWrongBean() throws Exception {
+
+    final ISession session = Session.beginSession(PATH);
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+
+    // Write bean.
+    final TestBean expectedBean = new TestBean();
+    expectedBean.setStringField(null);
+    expectedBean.setByteArrayField(null);
+    wtx.moveToDocumentRoot();
+    final long expectedBeanKey = BeanUtil.write(wtx, expectedBean);
+
+    // Read bean.
+    wtx.moveTo(expectedBeanKey);
+    try {
+      BeanUtil.read(wtx, Integer.class);
+      Assert
+          .fail("Should fail because Integer.class is not what was written before.");
+    } catch (Exception e) {
+      // Must fail.
+    }
+
+    wtx.abort();
+    wtx.close();
+    session.close();
+
+  }
+
+  @Test
   public void testSubelementBean() throws Exception {
 
     final ISession session = Session.beginSession(PATH);

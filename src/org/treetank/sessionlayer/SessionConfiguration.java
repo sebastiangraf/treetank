@@ -150,7 +150,7 @@ public final class SessionConfiguration {
         mVersionMinor = IConstants.VERSION_MINOR;
       }
     } catch (FileNotFoundException fnfe) {
-      throw new IllegalStateException("Could not find '" + mFileName + "'.");
+      throw new IllegalStateException("Could not find '" + mAbsolutePath + "'.");
     } catch (IOException ioe) {
       throw new IllegalStateException("Could not read from '"
           + mFileName

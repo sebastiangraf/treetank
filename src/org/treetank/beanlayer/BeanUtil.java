@@ -164,6 +164,10 @@ public final class BeanUtil {
             throw new IllegalStateException(field.getType().getName());
           }
         }
+      } else {
+        throw new IllegalStateException("Selected node does not contain a '"
+            + clazz.getSimpleName()
+            + "'");
       }
 
     } catch (Exception e) {
