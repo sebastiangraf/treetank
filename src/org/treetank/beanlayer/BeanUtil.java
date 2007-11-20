@@ -25,6 +25,7 @@ import java.lang.reflect.Field;
 
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.IWriteTransaction;
+import org.treetank.utils.IConstants;
 import org.treetank.utils.UTF;
 
 /**
@@ -269,7 +270,12 @@ public final class BeanUtil {
           }
 
           // Insert property as element with text.
-          wtx.insertAttribute(property.getName(), "", "", bytes);
+          wtx.insertAttribute(
+              property.getName(),
+              "",
+              "",
+              IConstants.STRING_TYPE,
+              bytes);
 
         }
       }
