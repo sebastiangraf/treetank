@@ -156,10 +156,10 @@ public class SessionTest {
     TestDocument.create(wtx);
 
     TestCase.assertNotNull(wtx.moveToDocumentRoot());
-    assertEquals(IConstants.DOCUMENT_ROOT, wtx.getKind());
+    assertEquals(IConstants.DOCUMENT_ROOT_KIND, wtx.getKind());
 
     TestCase.assertNotNull(wtx.moveToFirstChild());
-    assertEquals(IConstants.ELEMENT, wtx.getKind());
+    assertEquals(IConstants.ELEMENT_KIND, wtx.getKind());
     assertEquals("a", wtx.getLocalPart());
 
     wtx.abort();

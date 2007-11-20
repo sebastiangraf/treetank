@@ -46,7 +46,7 @@ public class AncestorAxis extends AbstractAxis implements IAxis {
    */
   public final boolean hasNext() {
     resetToLastKey();
-    if (!getTransaction().isDocumentRoot()
+    if (!getTransaction().isDocumentRootKind()
         && getTransaction().hasParent()
         && getTransaction().getParentKey() != IConstants.DOCUMENT_ROOT_KEY) {
       getTransaction().moveToParent();

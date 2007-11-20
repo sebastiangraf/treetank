@@ -38,7 +38,10 @@ public final class TextNode extends AbstractNode {
   /** Key of right sibling. */
   private long mRightSiblingKey;
 
-  /** Text value. */
+  /** Type of value. */
+  private int mValueType;
+
+  /** Typed value of node. */
   private byte[] mValue;
 
   /**
@@ -48,6 +51,7 @@ public final class TextNode extends AbstractNode {
    * @param parentKey Key of parent.
    * @param leftSiblingKey Key of left sibling.
    * @param rightSiblingKey Key of right sibling.
+   * @param valueType Type of value.
    * @param value Text value.
    */
   public TextNode(
@@ -55,11 +59,13 @@ public final class TextNode extends AbstractNode {
       final long parentKey,
       final long leftSiblingKey,
       final long rightSiblingKey,
+      final int valueType,
       final byte[] value) {
     super(nodeKey);
     mParentKey = parentKey;
     mLeftSiblingKey = leftSiblingKey;
     mRightSiblingKey = rightSiblingKey;
+    mValueType = valueType;
     mValue = value;
   }
 
@@ -73,6 +79,7 @@ public final class TextNode extends AbstractNode {
     mParentKey = node.getParentKey();
     mLeftSiblingKey = node.getLeftSiblingKey();
     mRightSiblingKey = node.getRightSiblingKey();
+    mValueType = node.getValueType();
     mValue = node.getValue();
   }
 
@@ -87,6 +94,7 @@ public final class TextNode extends AbstractNode {
     mParentKey = getNodeKey() - in.readVarLong();
     mLeftSiblingKey = in.readVarLong();
     mRightSiblingKey = in.readVarLong();
+    mValueType = in.readByte();
     mValue = in.readByteArray();
   }
 
@@ -175,7 +183,15 @@ public final class TextNode extends AbstractNode {
    */
   @Override
   public final int getKind() {
-    return IConstants.TEXT;
+    return IConstants.TEXT_KIND;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final int getValueType() {
+    return mValueType;
   }
 
   /**
@@ -202,6 +218,7 @@ public final class TextNode extends AbstractNode {
     out.writeVarLong(getNodeKey() - mParentKey);
     out.writeVarLong(mLeftSiblingKey);
     out.writeVarLong(mRightSiblingKey);
+    out.writeByte((byte) mValueType);
     out.writeByteArray(mValue);
   }
 

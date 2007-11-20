@@ -73,22 +73,22 @@ public final class NodePage extends AbstractPage {
       case IConstants.UNKNOWN:
         // Was null node, do nothing here.
         break;
-      case IConstants.DOCUMENT_ROOT:
+      case IConstants.DOCUMENT_ROOT_KIND:
         mNodes[offset] = new DocumentRootNode(in);
         break;
-      case IConstants.ELEMENT:
+      case IConstants.ELEMENT_KIND:
         mNodes[offset] = new ElementNode(keyBase + offset, in);
         break;
-      case IConstants.TEXT:
+      case IConstants.TEXT_KIND:
         mNodes[offset] = new TextNode(keyBase + offset, in);
         break;
-      case IConstants.FULLTEXT:
+      case IConstants.FULLTEXT_KIND:
         mNodes[offset] = new FullTextNode(keyBase + offset, in);
         break;
-      case IConstants.FULLTEXT_LEAF:
+      case IConstants.FULLTEXT_LEAF_KIND:
         mNodes[offset] = new FullTextLeafNode(keyBase + offset, in);
         break;
-      case IConstants.FULLTEXT_ROOT:
+      case IConstants.FULLTEXT_ROOT_KIND:
         mNodes[offset] = new FullTextRootNode(in);
         break;
       default:
@@ -116,24 +116,24 @@ public final class NodePage extends AbstractPage {
         case IConstants.UNKNOWN:
           // Was null node, do nothing here.
           break;
-        case IConstants.DOCUMENT_ROOT:
+        case IConstants.DOCUMENT_ROOT_KIND:
           mNodes[offset] =
               new DocumentRootNode(committedNodePage.mNodes[offset]);
           break;
-        case IConstants.ELEMENT:
+        case IConstants.ELEMENT_KIND:
           mNodes[offset] = new ElementNode(committedNodePage.mNodes[offset]);
           break;
-        case IConstants.TEXT:
+        case IConstants.TEXT_KIND:
           mNodes[offset] = new TextNode(committedNodePage.mNodes[offset]);
           break;
-        case IConstants.FULLTEXT:
+        case IConstants.FULLTEXT_KIND:
           mNodes[offset] = new FullTextNode(committedNodePage.mNodes[offset]);
           break;
-        case IConstants.FULLTEXT_LEAF:
+        case IConstants.FULLTEXT_LEAF_KIND:
           mNodes[offset] =
               new FullTextLeafNode(committedNodePage.mNodes[offset]);
           break;
-        case IConstants.FULLTEXT_ROOT:
+        case IConstants.FULLTEXT_ROOT_KIND:
           mNodes[offset] =
               new FullTextRootNode(committedNodePage.mNodes[offset]);
           break;

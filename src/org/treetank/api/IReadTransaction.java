@@ -312,6 +312,14 @@ public interface IReadTransaction {
   public String getAttributeURI(final int index);
 
   /**
+   * Get type of value of attribute at given index.
+   * 
+   * @param index Index of attribute [0..getAttributeCount()].
+   * @return Type of value of attribute at given index.
+   */
+  public int getAttributeValueType(final int index);
+
+  /**
    * Get value of attribute at given index.
    * 
    * @param index Index of attribute [0..getAttributeCount()].
@@ -370,49 +378,49 @@ public interface IReadTransaction {
    * 
    * @return True if it is the document root node, false else.
    */
-  public boolean isDocumentRoot();
+  public boolean isDocumentRootKind();
 
   /**
    * Is node a element?
    * 
    * @return True if node is element. False else.
    */
-  public boolean isElement();
+  public boolean isElementKind();
 
   /**
    * Is node a attribute?
    * 
    * @return True if node is attribute. False else.
    */
-  public boolean isAttribute();
+  public boolean isAttributeKind();
 
   /**
    * Is node a text?
    * 
    * @return True if node is text. False else.
    */
-  public boolean isText();
+  public boolean isTextKind();
 
   /**
    * Is node a full text?
    * 
    * @return True if node is full text. False else.
    */
-  public boolean isFullText();
+  public boolean isFullTextKind();
 
   /**
    * Is node a full text leaf?
    * 
    * @return True if node is full text leaf. False else.
    */
-  public boolean isFullTextLeaf();
+  public boolean isFullTextLeafKind();
 
   /**
    * Is node a full text root?
    * 
    * @return True if node is full text root. False else.
    */
-  public boolean isFullTextRoot();
+  public boolean isFullTextRootKind();
 
   /**
    * Get local part key of node.
@@ -457,6 +465,13 @@ public interface IReadTransaction {
    * @return Prefix of node.
    */
   public String getPrefix();
+
+  /**
+   * Get type of node value.
+   * 
+   * @return Type of node value.
+   */
+  public int getValueType();
 
   /**
    * Get value of node.

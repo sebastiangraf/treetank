@@ -50,7 +50,7 @@ public class NamespaceNodeTest {
     assertEquals(14, node2.getURIKey());
     assertEquals(15, node2.getPrefixKey());
     assertEquals(null, node2.getValue());
-    assertEquals(IConstants.NAMESPACE, node2.getKind());
+    assertEquals(IConstants.NAMESPACE_KIND, node2.getKind());
     assertEquals(false, node2.hasFirstChild());
     assertEquals(true, node2.hasParent());
     assertEquals(false, node2.hasLeftSibling());

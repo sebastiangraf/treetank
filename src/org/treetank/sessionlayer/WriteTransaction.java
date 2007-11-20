@@ -98,7 +98,7 @@ public final class WriteTransaction extends ReadTransaction
     for (final char character : token.toCharArray()) {
       if (hasFirstChild()) {
         moveToFirstChild();
-        while (isFullText()
+        while (isFullTextKind()
             && (getLocalPartKey() != character)
             && hasRightSibling()) {
           moveToRightSibling();
@@ -118,7 +118,7 @@ public final class WriteTransaction extends ReadTransaction
     if (hasFirstChild()) {
       // Make sure that full text nodes come first.
       moveToFirstChild();
-      while (isFullText() && hasRightSibling()) {
+      while (isFullTextKind() && hasRightSibling()) {
         moveToRightSibling();
       }
       insertFullTextLeafAsRightSibling(nodeKey);
@@ -142,12 +142,12 @@ public final class WriteTransaction extends ReadTransaction
     final long tokenKey = getNodeKey();
 
     // Remove node key from key list this token points to.
-    if (isFullText() && hasFirstChild()) {
+    if (isFullTextKind() && hasFirstChild()) {
       moveToFirstChild();
       while ((getFirstChildKey() != nodeKey) && hasRightSibling()) {
         moveToRightSibling();
       }
-      if (isFullTextLeaf() && getFirstChildKey() == nodeKey) {
+      if (isFullTextLeafKind() && getFirstChildKey() == nodeKey) {
         remove();
       }
     }
@@ -292,6 +292,7 @@ public final class WriteTransaction extends ReadTransaction
             .createNameKey(localPart),
         ((WriteTransactionState) getTransactionState()).createNameKey(uri),
         ((WriteTransactionState) getTransactionState()).createNameKey(prefix),
+        IConstants.STRING_TYPE,
         value);
   }
 
@@ -413,6 +414,7 @@ public final class WriteTransaction extends ReadTransaction
             .createNameKey(localPart),
         ((WriteTransactionState) getTransactionState()).createNameKey(uri),
         ((WriteTransactionState) getTransactionState()).createNameKey(prefix),
+        IConstants.STRING_TYPE,
         value);
   }
 

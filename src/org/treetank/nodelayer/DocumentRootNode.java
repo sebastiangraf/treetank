@@ -138,7 +138,7 @@ public final class DocumentRootNode extends AbstractNode {
    */
   @Override
   public final int getKind() {
-    return IConstants.DOCUMENT_ROOT;
+    return IConstants.DOCUMENT_ROOT_KIND;
   }
 
   /**

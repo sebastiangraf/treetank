@@ -212,7 +212,7 @@ public final class FullTextNode extends AbstractNode {
    */
   @Override
   public final int getKind() {
-    return IConstants.FULLTEXT;
+    return IConstants.FULLTEXT_KIND;
   }
 
   /**

@@ -121,12 +121,12 @@ public final class SAXGenerator implements Runnable {
   private final void emitNode(final IReadTransaction rtx) throws Exception {
     // Emit events of current node.
     switch (rtx.getKind()) {
-    case IConstants.ELEMENT:
+    case IConstants.ELEMENT_KIND:
       // Emit start element.
       mHandler.startElement(rtx.getURI(), rtx.getLocalPart(), qName(rtx
           .getPrefix(), rtx.getLocalPart()), visitAttributes(rtx));
       break;
-    case IConstants.TEXT:
+    case IConstants.TEXT_KIND:
       final char[] text = UTF.parseString(rtx.getValue()).toCharArray();
       mHandler.characters(text, 0, text.length);
       break;
@@ -165,7 +165,7 @@ public final class SAXGenerator implements Runnable {
       emitNode(rtx);
 
       // Emit corresponding end element or push it to stack.
-      if (rtx.isElement()) {
+      if (rtx.isElementKind()) {
         if (!rtx.hasFirstChild()) {
           emitEndElement(rtx);
         } else {

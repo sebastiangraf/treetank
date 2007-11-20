@@ -43,7 +43,7 @@ public class TextFilter extends AbstractFilter implements IFilter {
    * {@inheritDoc}
    */
   public final boolean filter() {
-    return getTransaction().isText();
+    return getTransaction().isTextKind();
   }
 
 }

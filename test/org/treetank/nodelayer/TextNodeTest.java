@@ -32,7 +32,13 @@ public class TextNodeTest {
 
     // Create empty node.
     final AbstractNode node1 =
-        new TextNode(13L, 14L, 15L, 16L, new byte[] { (byte) 17, (byte) 18 });
+        new TextNode(
+            13L,
+            14L,
+            15L,
+            16L,
+            19,
+            new byte[] { (byte) 17, (byte) 18 });
     final FastByteArrayWriter out = new FastByteArrayWriter();
 
     // Modify it.
@@ -56,11 +62,12 @@ public class TextNodeTest {
     assertEquals(0L, node3.getChildCount());
     assertEquals(0, node3.getAttributeCount());
     assertEquals(0, node3.getNamespaceCount());
+    assertEquals(19, node3.getValueType());
     assertEquals(IConstants.NULL_NAME, node3.getLocalPartKey());
     assertEquals(IConstants.NULL_NAME, node3.getURIKey());
     assertEquals(IConstants.NULL_NAME, node3.getPrefixKey());
     assertEquals(2, node3.getValue().length);
-    assertEquals(IConstants.TEXT, node3.getKind());
+    assertEquals(IConstants.TEXT_KIND, node3.getKind());
     assertEquals(false, node3.hasFirstChild());
     assertEquals(true, node3.hasParent());
     assertEquals(true, node3.hasLeftSibling());

@@ -309,9 +309,16 @@ public final class ElementNode extends AbstractNode {
       final int localPartKey,
       final int uriKey,
       final int prefixKey,
+      final int valueType,
       final byte[] value) {
     mAttributes[index] =
-        new AttributeNode(getNodeKey(), localPartKey, uriKey, prefixKey, value);
+        new AttributeNode(
+            getNodeKey(),
+            localPartKey,
+            uriKey,
+            prefixKey,
+            valueType,
+            value);
   }
 
   /**
@@ -322,6 +329,7 @@ public final class ElementNode extends AbstractNode {
       final int localPartKey,
       final int uriKey,
       final int prefixKey,
+      final int valueType,
       final byte[] value) {
 
     AttributeNode[] tmp = new AttributeNode[mAttributes.length + 1];
@@ -329,7 +337,13 @@ public final class ElementNode extends AbstractNode {
     mAttributes = tmp;
 
     mAttributes[mAttributes.length - 1] =
-        new AttributeNode(getNodeKey(), localPartKey, uriKey, prefixKey, value);
+        new AttributeNode(
+            getNodeKey(),
+            localPartKey,
+            uriKey,
+            prefixKey,
+            valueType,
+            value);
   }
 
   /**
@@ -378,7 +392,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final int getKind() {
-    return IConstants.ELEMENT;
+    return IConstants.ELEMENT_KIND;
   }
 
   /**

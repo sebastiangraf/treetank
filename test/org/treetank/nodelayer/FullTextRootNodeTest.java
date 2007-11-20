@@ -59,7 +59,7 @@ public class FullTextRootNodeTest {
     assertEquals(IConstants.NULL_NAME, node3.getURIKey());
     assertEquals(IConstants.NULL_NAME, node3.getPrefixKey());
     assertEquals(null, node3.getValue());
-    assertEquals(IConstants.FULLTEXT_ROOT, node3.getKind());
+    assertEquals(IConstants.FULLTEXT_ROOT_KIND, node3.getKind());
     assertEquals(false, node3.hasFirstChild());
     assertEquals(false, node3.hasParent());
     assertEquals(false, node3.hasLeftSibling());

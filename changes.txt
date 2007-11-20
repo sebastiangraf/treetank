@@ -16,6 +16,13 @@
  * $Id$
  */
  
+TreeTank 4.18
+-------------
+ 1 Binary incompatibility with 4.17.
+ 0 Introducing value types to provide basic support for XMLSchema and XPath 2.0.
+   This can, e.g., also be used to efficiently store an int instead of a
+   String.
+ 
 TreeTank 4.17
 -------------
 11 ISession now accepts maximum number of node modifications or elapsed

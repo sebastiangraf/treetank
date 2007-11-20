@@ -221,6 +221,10 @@ public abstract class AbstractNode implements Comparable<AbstractNode> {
     return IConstants.NULL_NAME;
   }
 
+  public int getValueType() {
+    return IConstants.UNKNOWN;
+  }
+
   /**
    * {@inheritDoc}
    */
@@ -261,6 +265,7 @@ public abstract class AbstractNode implements Comparable<AbstractNode> {
       final int localPartKey,
       final int uriKey,
       final int prefixKey,
+      final int valueType,
       final byte[] value) {
   }
 
@@ -268,6 +273,7 @@ public abstract class AbstractNode implements Comparable<AbstractNode> {
       final int localPartKey,
       final int uriKey,
       final int prefixKey,
+      final int valueType,
       final byte[] value) {
   }
 
