@@ -21,9 +21,9 @@ package org.treetank.nodelayer;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
-import org.treetank.utils.IConstants;
 
 public class DocumentRootNodeTest {
 
@@ -47,19 +47,19 @@ public class DocumentRootNodeTest {
     final AbstractNode node3 = new DocumentRootNode(node2);
 
     // Now compare.
-    assertEquals(IConstants.DOCUMENT_ROOT_KEY, node3.getNodeKey());
-    assertEquals(IConstants.NULL_KEY, node3.getParentKey());
-    assertEquals(IConstants.NULL_KEY, node3.getFirstChildKey());
-    assertEquals(IConstants.NULL_KEY, node3.getLeftSiblingKey());
-    assertEquals(IConstants.NULL_KEY, node3.getRightSiblingKey());
+    assertEquals(IReadTransaction.DOCUMENT_ROOT_KEY, node3.getNodeKey());
+    assertEquals(IReadTransaction.NULL_NODE_KEY, node3.getParentKey());
+    assertEquals(IReadTransaction.NULL_NODE_KEY, node3.getFirstChildKey());
+    assertEquals(IReadTransaction.NULL_NODE_KEY, node3.getLeftSiblingKey());
+    assertEquals(IReadTransaction.NULL_NODE_KEY, node3.getRightSiblingKey());
     assertEquals(0L, node3.getChildCount());
     assertEquals(0, node3.getAttributeCount());
     assertEquals(0, node3.getNamespaceCount());
-    assertEquals(IConstants.NULL_NAME, node3.getLocalPartKey());
-    assertEquals(IConstants.NULL_NAME, node3.getURIKey());
-    assertEquals(IConstants.NULL_NAME, node3.getPrefixKey());
+    assertEquals(IReadTransaction.NULL_NAME_KEY, node3.getLocalPartKey());
+    assertEquals(IReadTransaction.NULL_NAME_KEY, node3.getURIKey());
+    assertEquals(IReadTransaction.NULL_NAME_KEY, node3.getPrefixKey());
     assertEquals(null, node3.getValue());
-    assertEquals(IConstants.DOCUMENT_ROOT_KIND, node3.getKind());
+    assertEquals(IReadTransaction.DOCUMENT_ROOT_KIND, node3.getKind());
     assertEquals(false, node3.hasFirstChild());
     assertEquals(false, node3.hasParent());
     assertEquals(false, node3.hasLeftSibling());

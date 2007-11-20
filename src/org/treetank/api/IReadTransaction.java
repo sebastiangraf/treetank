@@ -91,6 +91,75 @@ package org.treetank.api;
  */
 public interface IReadTransaction {
 
+  // --- Keys ------------------------------------------------------------------
+
+  /** Null key for node references. */
+  public static final long NULL_NODE_KEY = -1L;
+
+  /** Null key for name references. */
+  public static final int NULL_NAME_KEY = -1;
+
+  /** Key of document root node. */
+  public static final long DOCUMENT_ROOT_KEY = 0L;
+
+  /** Key of full text root node. */
+  public static final long FULLTEXT_ROOT_KEY = 1L;
+
+  //--- Kinds ------------------------------------------------------------------
+
+  /** Node kind is element. */
+  public static final int ELEMENT_KIND = 1;
+
+  /** Node kind is attribute. */
+  public static final int ATTRIBUTE_KIND = 2;
+
+  /** Node kind is text. */
+  public static final int TEXT_KIND = 3;
+
+  /** Node kind is namespace. */
+  public static final int NAMESPACE_KIND = 4;
+
+  /** Node kind is processing instruction. */
+  public static final int PROCESSING_INSTRUCTION_KIND = 7;
+
+  /** Node kind is comment. */
+  public static final int COMMENT_KIND = 8;
+
+  /** Node kind is document root. */
+  public static final int DOCUMENT_ROOT_KIND = 9;
+
+  /** Node kind is fulltext root. */
+  public static final int FULLTEXT_ROOT_KIND = 13;
+
+  /** Node kind is fulltext. */
+  public static final int FULLTEXT_KIND = 14;
+
+  /** Node kind is fulltext leaf. */
+  public static final int FULLTEXT_LEAF_KIND = 15;
+
+  //--- Types ------------------------------------------------------------------
+
+  /** Node type is UTF-8 String. */
+  public static final int STRING_TYPE = 0;
+
+  /** Node type is raw byte[]. */
+  public static final int BYTEARRAY_TYPE = 1;
+
+  /** Node type is int. */
+  public static final int INT_TYPE = 2;
+
+  /** Node type is long. */
+  public static final int LONG_TYPE = 3;
+
+  /** Node type is float. */
+  public static final int FLOAT_TYPE = 4;
+
+  /** Node type is double. */
+  public static final int DOUBLE_TYPE = 5;
+
+  /** Node type is boolean. */
+  public static final int BOOLEAN_TYPE = 6;
+
   /**
    * What is the revision number of this IReadTransaction?
    * 
@@ -479,36 +548,6 @@ public interface IReadTransaction {
    * @return Value of node.
    */
   public byte[] getValue();
-
-  /**
-   * Is the name key the null key?
-   * 
-   * @param nameKey Name key to test for null key.
-   * @return True if the name key equals the null key.
-   */
-  public boolean isNullNameKey(final int nameKey);
-
-  /**
-   * Is the node key the null key?
-   * 
-   * @param nodeKey Node key to test for null key.
-   * @return True if the node key equals the null key.
-   */
-  public boolean isNullNodeKey(final long nodeKey);
-
-  /**
-   * Get the null node key.
-   * 
-   * @return The null node key.
-   */
-  public int getNullNameKey();
-
-  /**
-   * Get the null node key.
-   * 
-   * @return The null node key.
-   */
-  public long getNullNodeKey();
 
   /**
    * Get key for given name. This is used for efficient name testing.

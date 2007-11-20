@@ -18,6 +18,7 @@
  
 TreeTank 4.18
 -------------
+ 3 Moved KEY, KIND, and TYPE constants to IReadTransaction.
  2 Renamed UTF to TypedValue. Use TypedValue.atomize() to get the String
    representation whatever type it is.
  1 Binary incompatibility with 4.17.

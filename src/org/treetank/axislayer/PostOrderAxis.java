@@ -54,7 +54,7 @@ public class PostOrderAxis extends AbstractAxis implements IAxis {
   public final void reset(final long nodeKey) {
     super.reset(nodeKey);
     mLastParent = new FastStack<Long>();
-    mLastParent.push(getTransaction().getNullNodeKey());
+    mLastParent.push(IReadTransaction.NULL_NODE_KEY);
     mNextKey = nodeKey;
   }
 
@@ -64,7 +64,7 @@ public class PostOrderAxis extends AbstractAxis implements IAxis {
   public boolean hasNext() {
     resetToLastKey();
     long key = mNextKey;
-    if (!getTransaction().isNullNodeKey(key)) {
+    if (key != IReadTransaction.NULL_NODE_KEY) {
       getTransaction().moveTo(mNextKey);
       while (getTransaction().hasFirstChild() && key != mLastParent.peek()) {
         mLastParent.push(key);

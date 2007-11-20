@@ -61,7 +61,7 @@ public class ThreadTest {
       taskExecutor.execute(new Task(session.beginReadTransaction(0L)));
       wtx = session.beginWriteTransaction();
       wtx.moveTo(10L);
-      wtx.setValue(TypedValue.STRING_TYPE, TypedValue.getBytes("value" + i));
+      wtx.setValue(IReadTransaction.STRING_TYPE, TypedValue.getBytes("value" + i));
       wtx.commit();
       wtx.close();
     }

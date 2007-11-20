@@ -20,7 +20,6 @@ package org.treetank.sessionlayer;
 
 import org.treetank.api.IReadTransaction;
 import org.treetank.nodelayer.AbstractNode;
-import org.treetank.utils.IConstants;
 
 /**
  * <h1>ReadTransaction</h1>
@@ -56,7 +55,7 @@ public class ReadTransaction implements IReadTransaction {
     mSessionState = sessionState;
     mTransactionState = transactionState;
     mClosed = false;
-    mCurrentNode = getTransactionState().getNode(IConstants.DOCUMENT_ROOT_KEY);
+    mCurrentNode = getTransactionState().getNode(DOCUMENT_ROOT_KEY);
   }
 
   /**
@@ -93,7 +92,7 @@ public class ReadTransaction implements IReadTransaction {
       return true;
     }
     // Find node by its key.
-    if (nodeKey != IConstants.NULL_KEY) {
+    if (nodeKey != NULL_NODE_KEY) {
       final AbstractNode oldNode = mCurrentNode;
       try {
         mCurrentNode = mTransactionState.getNode(nodeKey);
@@ -147,14 +146,14 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final boolean moveToDocumentRoot() {
-    return moveTo(IConstants.DOCUMENT_ROOT_KEY);
+    return moveTo(DOCUMENT_ROOT_KEY);
   }
 
   /**
    * {@inheritDoc}
    */
   public final boolean moveToFullTextRoot() {
-    return moveTo(IConstants.FULLTEXT_ROOT_KEY);
+    return moveTo(FULLTEXT_ROOT_KEY);
   }
 
   /**
@@ -516,34 +515,6 @@ public class ReadTransaction implements IReadTransaction {
   public final byte[] getValue() {
     assertNotClosed();
     return mCurrentNode.getValue();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final boolean isNullNameKey(final int nameKey) {
-    return (nameKey == IConstants.NULL_NAME);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final boolean isNullNodeKey(final long nodeKey) {
-    return (nodeKey == IConstants.NULL_KEY);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final int getNullNameKey() {
-    return IConstants.NULL_NAME;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final long getNullNodeKey() {
-    return IConstants.NULL_KEY;
   }
 
   /**

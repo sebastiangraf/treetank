@@ -18,9 +18,9 @@
 
 package org.treetank.nodelayer;
 
+import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
-import org.treetank.utils.IConstants;
 
 /**
  * <h1>DocumentNode</h1>
@@ -42,8 +42,8 @@ public final class DocumentRootNode extends AbstractNode {
    * Constructor to create document node.
    */
   public DocumentRootNode() {
-    super(IConstants.DOCUMENT_ROOT_KEY);
-    mFirstChildKey = IConstants.NULL_KEY;
+    super(IReadTransaction.DOCUMENT_ROOT_KEY);
+    mFirstChildKey = IReadTransaction.NULL_NODE_KEY;
     mChildCount = 0;
   }
 
@@ -64,8 +64,8 @@ public final class DocumentRootNode extends AbstractNode {
    * @param in Byte input to read node from.
    */
   public DocumentRootNode(final FastByteArrayReader in) {
-    super(IConstants.DOCUMENT_ROOT_KEY);
-    mFirstChildKey = IConstants.DOCUMENT_ROOT_KEY - in.readVarLong();
+    super(IReadTransaction.DOCUMENT_ROOT_KEY);
+    mFirstChildKey = IReadTransaction.DOCUMENT_ROOT_KEY - in.readVarLong();
     mChildCount = in.readVarLong();
   }
 
@@ -82,7 +82,7 @@ public final class DocumentRootNode extends AbstractNode {
    */
   @Override
   public final boolean hasFirstChild() {
-    return (mFirstChildKey != IConstants.NULL_KEY);
+    return (mFirstChildKey != IReadTransaction.NULL_NODE_KEY);
   }
 
   /**
@@ -138,7 +138,7 @@ public final class DocumentRootNode extends AbstractNode {
    */
   @Override
   public final int getKind() {
-    return IConstants.DOCUMENT_ROOT_KIND;
+    return IReadTransaction.DOCUMENT_ROOT_KIND;
   }
 
   /**
@@ -146,7 +146,7 @@ public final class DocumentRootNode extends AbstractNode {
    */
   @Override
   public final void serialize(final FastByteArrayWriter out) {
-    out.writeVarLong(IConstants.DOCUMENT_ROOT_KEY - mFirstChildKey);
+    out.writeVarLong(IReadTransaction.DOCUMENT_ROOT_KEY - mFirstChildKey);
     out.writeVarLong(mChildCount);
   }
 

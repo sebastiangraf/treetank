@@ -18,6 +18,7 @@
 
 package org.treetank.nodelayer;
 
+import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayWriter;
 import org.treetank.utils.IConstants;
 
@@ -113,7 +114,7 @@ public abstract class AbstractNode implements Comparable<AbstractNode> {
    * {@inheritDoc}
    */
   public long getParentKey() {
-    return IConstants.NULL_KEY;
+    return IReadTransaction.NULL_NODE_KEY;
   }
 
   /**
@@ -127,7 +128,7 @@ public abstract class AbstractNode implements Comparable<AbstractNode> {
    * {@inheritDoc}
    */
   public long getFirstChildKey() {
-    return IConstants.NULL_KEY;
+    return IReadTransaction.NULL_NODE_KEY;
   }
 
   /**
@@ -141,7 +142,7 @@ public abstract class AbstractNode implements Comparable<AbstractNode> {
    * {@inheritDoc}
    */
   public long getLeftSiblingKey() {
-    return IConstants.NULL_KEY;
+    return IReadTransaction.NULL_NODE_KEY;
   }
 
   /**
@@ -155,7 +156,7 @@ public abstract class AbstractNode implements Comparable<AbstractNode> {
    * {@inheritDoc}
    */
   public long getRightSiblingKey() {
-    return IConstants.NULL_KEY;
+    return IReadTransaction.NULL_NODE_KEY;
   }
 
   /**
@@ -204,21 +205,21 @@ public abstract class AbstractNode implements Comparable<AbstractNode> {
    * {@inheritDoc}
    */
   public int getLocalPartKey() {
-    return IConstants.NULL_NAME;
+    return IReadTransaction.NULL_NAME_KEY;
   }
 
   /**
    * {@inheritDoc}
    */
   public int getURIKey() {
-    return IConstants.NULL_NAME;
+    return IReadTransaction.NULL_NAME_KEY;
   }
 
   /**
    * {@inheritDoc}
    */
   public int getPrefixKey() {
-    return IConstants.NULL_NAME;
+    return IReadTransaction.NULL_NAME_KEY;
   }
 
   public int getValueType() {

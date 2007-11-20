@@ -62,7 +62,7 @@ public class UpdateTest {
     for (int i = 1; i <= 10; i++) {
       wtx = session.beginWriteTransaction();
       wtx.moveToDocumentRoot();
-      wtx.insertTextAsFirstChild(TypedValue.STRING_TYPE, TypedValue.getBytes(Integer
+      wtx.insertTextAsFirstChild(IReadTransaction.STRING_TYPE, TypedValue.getBytes(Integer
           .toString(i)));
       wtx.commit();
       wtx.close();
@@ -130,7 +130,7 @@ public class UpdateTest {
     IWriteTransaction wtx = session.beginWriteTransaction();
 
     for (int i = 0; i < 256 * 256 + 1; i++) {
-      wtx.insertTextAsFirstChild(TypedValue.STRING_TYPE, TypedValue.EMPTY);
+      wtx.insertTextAsFirstChild(IReadTransaction.STRING_TYPE, TypedValue.EMPTY);
     }
 
     TestCase.assertNotNull(wtx.moveTo(2L));

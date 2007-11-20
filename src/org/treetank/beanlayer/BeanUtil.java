@@ -140,8 +140,8 @@ public final class BeanUtil {
             field.set(target, rtx.getAttributeValue(index));
             break;
           case 64711720: // boolean
-            field.setBoolean(target, TypedValue
-                .parseBoolean(rtx.getAttributeValue(index)));
+            field.setBoolean(target, TypedValue.parseBoolean(rtx
+                .getAttributeValue(index)));
             break;
           case 104431: // int
             field.setInt(target, TypedValue.parseInt(rtx
@@ -195,7 +195,7 @@ public final class BeanUtil {
       final IWriteTransaction wtx,
       final Object object) {
 
-    long beanKey = wtx.getNullNodeKey();
+    long beanKey = IReadTransaction.NULL_NODE_KEY;
 
     try {
 
@@ -245,35 +245,35 @@ public final class BeanUtil {
 
           // Switch according to field type.
           byte[] bytes = null;
-          int type = TypedValue.BYTEARRAY_TYPE;
+          int type = IReadTransaction.BYTEARRAY_TYPE;
           switch (field.getType().getCanonicalName().hashCode()) {
           case -1374008726: // byte[]
             bytes = (byte[]) field.get(object);
-            type = TypedValue.BYTEARRAY_TYPE;
+            type = IReadTransaction.BYTEARRAY_TYPE;
             break;
           case 64711720: // boolean
             bytes = TypedValue.getBytes(field.getBoolean(object));
-            type = TypedValue.BOOLEAN_TYPE;
+            type = IReadTransaction.BOOLEAN_TYPE;
             break;
           case 104431: // int
             bytes = TypedValue.getBytes(field.getInt(object));
-            type = TypedValue.INT_TYPE;
+            type = IReadTransaction.INT_TYPE;
             break;
           case 3327612: // long
             bytes = TypedValue.getBytes(field.getLong(object));
-            type = TypedValue.LONG_TYPE;
+            type = IReadTransaction.LONG_TYPE;
             break;
           case 97526364: // float
             bytes = TypedValue.getBytes(field.get(object).toString());
-            type = TypedValue.BYTEARRAY_TYPE;
+            type = IReadTransaction.BYTEARRAY_TYPE;
             break;
           case -1325958191: // double
             bytes = TypedValue.getBytes(field.get(object).toString());
-            type = TypedValue.BYTEARRAY_TYPE;
+            type = IReadTransaction.BYTEARRAY_TYPE;
             break;
           case 1195259493: // String
             bytes = TypedValue.getBytes((String) field.get(object));
-            type = TypedValue.STRING_TYPE;
+            type = IReadTransaction.STRING_TYPE;
             break;
           default:
             throw new IllegalStateException(field.getType().getName());

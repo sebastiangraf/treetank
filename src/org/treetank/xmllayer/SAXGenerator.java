@@ -25,7 +25,6 @@ import java.io.Writer;
 import org.treetank.api.IAxis;
 import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastStack;
-import org.treetank.utils.IConstants;
 import org.treetank.utils.TypedValue;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.helpers.AttributesImpl;
@@ -121,12 +120,12 @@ public final class SAXGenerator implements Runnable {
   private final void emitNode(final IReadTransaction rtx) throws Exception {
     // Emit events of current node.
     switch (rtx.getKind()) {
-    case IConstants.ELEMENT_KIND:
+    case IReadTransaction.ELEMENT_KIND:
       // Emit start element.
       mHandler.startElement(rtx.getURI(), rtx.getLocalPart(), qName(rtx
           .getPrefix(), rtx.getLocalPart()), visitAttributes(rtx));
       break;
-    case IConstants.TEXT_KIND:
+    case IReadTransaction.TEXT_KIND:
       final char[] text =
           TypedValue.atomize(rtx.getValueType(), rtx.getValue()).toCharArray();
       mHandler.characters(text, 0, text.length);

@@ -21,7 +21,7 @@ package org.treetank.nodelayer;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.treetank.utils.IConstants;
+import org.treetank.api.IReadTransaction;
 
 public class NamespaceNodeTest {
 
@@ -41,16 +41,16 @@ public class NamespaceNodeTest {
     // Now compare.
     assertEquals(13L, node2.getNodeKey());
     assertEquals(13L, node2.getParentKey());
-    assertEquals(IConstants.NULL_KEY, node2.getFirstChildKey());
-    assertEquals(IConstants.NULL_KEY, node2.getLeftSiblingKey());
-    assertEquals(IConstants.NULL_KEY, node2.getRightSiblingKey());
+    assertEquals(IReadTransaction.NULL_NODE_KEY, node2.getFirstChildKey());
+    assertEquals(IReadTransaction.NULL_NODE_KEY, node2.getLeftSiblingKey());
+    assertEquals(IReadTransaction.NULL_NODE_KEY, node2.getRightSiblingKey());
     assertEquals(0, node2.getChildCount());
     assertEquals(0, node2.getAttributeCount());
     assertEquals(0, node2.getNamespaceCount());
     assertEquals(14, node2.getURIKey());
     assertEquals(15, node2.getPrefixKey());
     assertEquals(null, node2.getValue());
-    assertEquals(IConstants.NAMESPACE_KIND, node2.getKind());
+    assertEquals(IReadTransaction.NAMESPACE_KIND, node2.getKind());
     assertEquals(false, node2.hasFirstChild());
     assertEquals(true, node2.hasParent());
     assertEquals(false, node2.hasLeftSibling());

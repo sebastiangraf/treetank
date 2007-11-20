@@ -18,9 +18,9 @@
 
 package org.treetank.nodelayer;
 
+import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
-import org.treetank.utils.IConstants;
 
 /**
  * <h1>FullTextRootNode</h1>
@@ -38,8 +38,8 @@ public final class FullTextRootNode extends AbstractNode {
    * Constructor to create full text root node.
    */
   public FullTextRootNode() {
-    super(IConstants.FULLTEXT_ROOT_KEY);
-    mFirstChildKey = IConstants.NULL_KEY;
+    super(IReadTransaction.FULLTEXT_ROOT_KEY);
+    mFirstChildKey = IReadTransaction.NULL_NODE_KEY;
   }
 
   /**
@@ -58,8 +58,8 @@ public final class FullTextRootNode extends AbstractNode {
    * @param in Byte input to read node from.
    */
   public FullTextRootNode(final FastByteArrayReader in) {
-    super(IConstants.FULLTEXT_ROOT_KEY);
-    mFirstChildKey = IConstants.FULLTEXT_ROOT_KEY - in.readVarLong();
+    super(IReadTransaction.FULLTEXT_ROOT_KEY);
+    mFirstChildKey = IReadTransaction.FULLTEXT_ROOT_KEY - in.readVarLong();
   }
 
   /**
@@ -75,7 +75,7 @@ public final class FullTextRootNode extends AbstractNode {
    */
   @Override
   public final boolean hasFirstChild() {
-    return (mFirstChildKey != IConstants.NULL_KEY);
+    return (mFirstChildKey != IReadTransaction.NULL_NODE_KEY);
   }
 
   /**
@@ -99,7 +99,7 @@ public final class FullTextRootNode extends AbstractNode {
    */
   @Override
   public final int getKind() {
-    return IConstants.FULLTEXT_ROOT_KIND;
+    return IReadTransaction.FULLTEXT_ROOT_KIND;
   }
 
   /**
@@ -107,7 +107,7 @@ public final class FullTextRootNode extends AbstractNode {
    */
   @Override
   public final void serialize(final FastByteArrayWriter out) {
-    out.writeVarLong(IConstants.FULLTEXT_ROOT_KEY - mFirstChildKey);
+    out.writeVarLong(IReadTransaction.FULLTEXT_ROOT_KEY - mFirstChildKey);
   }
 
   /**

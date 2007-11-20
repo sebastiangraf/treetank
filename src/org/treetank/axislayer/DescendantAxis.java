@@ -64,7 +64,7 @@ public class DescendantAxis extends AbstractAxis implements IAxis {
     resetToLastKey();
 
     // Fail if there is no node anymore.
-    if (getTransaction().isNullNodeKey(mNextKey)) {
+    if (mNextKey == IReadTransaction.NULL_NODE_KEY) {
       resetToStartKey();
       return false;
     }
@@ -93,7 +93,7 @@ public class DescendantAxis extends AbstractAxis implements IAxis {
     }
 
     // Then end.
-    mNextKey = getTransaction().getNullNodeKey();
+    mNextKey = IReadTransaction.NULL_NODE_KEY;
     return true;
   }
 

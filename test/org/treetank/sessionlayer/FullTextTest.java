@@ -29,7 +29,6 @@ import org.junit.Test;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.utils.IConstants;
 
 public class FullTextTest {
 
@@ -104,11 +103,13 @@ public class FullTextTest {
     final IReadTransaction rtx = session.beginReadTransaction();
 
     rtx.moveToFullTextRoot();
-    TestCase.assertEquals(IConstants.FULLTEXT_ROOT_KEY, rtx.getNodeKey());
-    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getParentKey());
+    TestCase.assertEquals(IReadTransaction.FULLTEXT_ROOT_KEY, rtx.getNodeKey());
+    TestCase.assertEquals(IReadTransaction.NULL_NODE_KEY, rtx.getParentKey());
     TestCase.assertEquals(2L, rtx.getFirstChildKey());
-    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getLeftSiblingKey());
-    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getRightSiblingKey());
+    TestCase.assertEquals(IReadTransaction.NULL_NODE_KEY, rtx
+        .getLeftSiblingKey());
+    TestCase.assertEquals(IReadTransaction.NULL_NODE_KEY, rtx
+        .getRightSiblingKey());
 
     rtx.moveToFirstChild();
     TestCase.assertEquals(13, rtx.getLocalPartKey());
@@ -117,10 +118,13 @@ public class FullTextTest {
     TestCase.assertEquals(false, rtx.hasLeftSibling());
     TestCase.assertEquals(false, rtx.hasRightSibling());
     TestCase.assertEquals(2L, rtx.getNodeKey());
-    TestCase.assertEquals(IConstants.FULLTEXT_ROOT_KEY, rtx.getParentKey());
+    TestCase.assertEquals(IReadTransaction.FULLTEXT_ROOT_KEY, rtx
+        .getParentKey());
     TestCase.assertEquals(3L, rtx.getFirstChildKey());
-    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getLeftSiblingKey());
-    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getRightSiblingKey());
+    TestCase.assertEquals(IReadTransaction.NULL_NODE_KEY, rtx
+        .getLeftSiblingKey());
+    TestCase.assertEquals(IReadTransaction.NULL_NODE_KEY, rtx
+        .getRightSiblingKey());
 
     rtx.moveToFirstChild();
     TestCase.assertEquals(14, rtx.getLocalPartKey());
@@ -130,8 +134,10 @@ public class FullTextTest {
     TestCase.assertEquals(true, rtx.hasRightSibling());
     TestCase.assertEquals(3L, rtx.getNodeKey());
     TestCase.assertEquals(2L, rtx.getParentKey());
-    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getFirstChildKey());
-    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getLeftSiblingKey());
+    TestCase.assertEquals(IReadTransaction.NULL_NODE_KEY, rtx
+        .getFirstChildKey());
+    TestCase.assertEquals(IReadTransaction.NULL_NODE_KEY, rtx
+        .getLeftSiblingKey());
     TestCase.assertEquals(4L, rtx.getRightSiblingKey());
 
     rtx.moveToRightSibling();
@@ -142,7 +148,8 @@ public class FullTextTest {
     TestCase.assertEquals(true, rtx.hasRightSibling());
     TestCase.assertEquals(4L, rtx.getNodeKey());
     TestCase.assertEquals(2L, rtx.getParentKey());
-    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getFirstChildKey());
+    TestCase.assertEquals(IReadTransaction.NULL_NODE_KEY, rtx
+        .getFirstChildKey());
     TestCase.assertEquals(3L, rtx.getLeftSiblingKey());
     TestCase.assertEquals(5L, rtx.getRightSiblingKey());
 
@@ -156,7 +163,8 @@ public class FullTextTest {
     TestCase.assertEquals(2L, rtx.getParentKey());
     TestCase.assertEquals(7L, rtx.getFirstChildKey());
     TestCase.assertEquals(4L, rtx.getLeftSiblingKey());
-    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getRightSiblingKey());
+    TestCase.assertEquals(IReadTransaction.NULL_NODE_KEY, rtx
+        .getRightSiblingKey());
 
     rtx.moveToFirstChild();
     TestCase.assertEquals(18, rtx.getLocalPartKey());
@@ -166,8 +174,10 @@ public class FullTextTest {
     TestCase.assertEquals(true, rtx.hasRightSibling());
     TestCase.assertEquals(7L, rtx.getNodeKey());
     TestCase.assertEquals(5L, rtx.getParentKey());
-    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getFirstChildKey());
-    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getLeftSiblingKey());
+    TestCase.assertEquals(IReadTransaction.NULL_NODE_KEY, rtx
+        .getFirstChildKey());
+    TestCase.assertEquals(IReadTransaction.NULL_NODE_KEY, rtx
+        .getLeftSiblingKey());
     TestCase.assertEquals(6L, rtx.getRightSiblingKey());
 
     rtx.moveToRightSibling();
@@ -178,9 +188,11 @@ public class FullTextTest {
     TestCase.assertEquals(false, rtx.hasRightSibling());
     TestCase.assertEquals(6L, rtx.getNodeKey());
     TestCase.assertEquals(5L, rtx.getParentKey());
-    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getFirstChildKey());
+    TestCase.assertEquals(IReadTransaction.NULL_NODE_KEY, rtx
+        .getFirstChildKey());
     TestCase.assertEquals(7L, rtx.getLeftSiblingKey());
-    TestCase.assertEquals(IConstants.NULL_KEY, rtx.getRightSiblingKey());
+    TestCase.assertEquals(IReadTransaction.NULL_NODE_KEY, rtx
+        .getRightSiblingKey());
 
     rtx.close();
 

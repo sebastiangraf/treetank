@@ -18,9 +18,9 @@
 
 package org.treetank.nodelayer;
 
+import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastByteArrayWriter;
-import org.treetank.utils.IConstants;
 
 /**
  * <h1>NamespaceNode</h1>
@@ -88,7 +88,7 @@ public final class NamespaceNode extends AbstractNode {
    */
   @Override
   public final int getKind() {
-    return IConstants.NAMESPACE_KIND;
+    return IReadTransaction.NAMESPACE_KIND;
   }
 
   /**
