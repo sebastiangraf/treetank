@@ -184,12 +184,15 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final synchronized long insertTextAsFirstChild(final byte[] value) {
+  public final synchronized long insertTextAsFirstChild(
+      final int valueType,
+      final byte[] value) {
     return insertFirstChild(((WriteTransactionState) getTransactionState())
         .createTextNode(
             getCurrentNode().getNodeKey(),
             IConstants.NULL_KEY,
             getCurrentNode().getFirstChildKey(),
+            valueType,
             value));
   }
 
@@ -243,10 +246,16 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final synchronized long insertTextAsRightSibling(final byte[] value) {
+  public final synchronized long insertTextAsRightSibling(
+      final int valueType,
+      final byte[] value) {
     return insertRightSibling(((WriteTransactionState) getTransactionState())
-        .createTextNode(getCurrentNode().getParentKey(), getCurrentNode()
-            .getNodeKey(), getCurrentNode().getRightSiblingKey(), value));
+        .createTextNode(
+            getCurrentNode().getParentKey(),
+            getCurrentNode().getNodeKey(),
+            getCurrentNode().getRightSiblingKey(),
+            valueType,
+            value));
   }
 
   /**
@@ -283,6 +292,7 @@ public final class WriteTransaction extends ReadTransaction
       final String localPart,
       final String uri,
       final String prefix,
+      final int valueType,
       final byte[] value) {
 
     assertNotClosed();
@@ -292,7 +302,7 @@ public final class WriteTransaction extends ReadTransaction
             .createNameKey(localPart),
         ((WriteTransactionState) getTransactionState()).createNameKey(uri),
         ((WriteTransactionState) getTransactionState()).createNameKey(prefix),
-        IConstants.STRING_TYPE,
+        valueType,
         value);
   }
 
@@ -404,6 +414,7 @@ public final class WriteTransaction extends ReadTransaction
       final String localPart,
       final String uri,
       final String prefix,
+      final int valueType,
       final byte[] value) {
 
     assertNotClosed();
@@ -414,7 +425,7 @@ public final class WriteTransaction extends ReadTransaction
             .createNameKey(localPart),
         ((WriteTransactionState) getTransactionState()).createNameKey(uri),
         ((WriteTransactionState) getTransactionState()).createNameKey(prefix),
-        IConstants.STRING_TYPE,
+        valueType,
         value);
   }
 
@@ -471,11 +482,14 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final synchronized void setValue(final byte[] value) {
+  public final synchronized void setValue(
+      final int valueType,
+      final byte[] value) {
 
     assertNotClosed();
 
-    prepareCurrentNode().setValue(value);
+    final AbstractNode node = prepareCurrentNode();
+    node.setValue(valueType, value);
   }
 
   /**

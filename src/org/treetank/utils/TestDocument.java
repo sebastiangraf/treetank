@@ -89,27 +89,28 @@ public final class TestDocument {
     wtx.moveToDocumentRoot();
 
     wtx.insertElementAsFirstChild("a", "ns", "p");
-    wtx.insertAttribute("i", "", "", UTF.getBytes("j"));
+    wtx.insertAttribute("i", "", "", IConstants.STRING_TYPE, UTF.getBytes("j"));
     wtx.insertNamespace("ns", "p");
 
-    wtx.insertTextAsFirstChild(UTF.getBytes("oops1"));
+    wtx.insertTextAsFirstChild(IConstants.STRING_TYPE, UTF.getBytes("oops1"));
 
     wtx.insertElementAsRightSibling("b", "", "");
 
-    wtx.insertTextAsFirstChild(UTF.getBytes("foo"));
+    wtx.insertTextAsFirstChild(IConstants.STRING_TYPE, UTF.getBytes("foo"));
     wtx.insertElementAsRightSibling("c", "", "");
     wtx.moveToParent();
 
-    wtx.insertTextAsRightSibling(UTF.getBytes("oops2"));
+    wtx.insertTextAsRightSibling(IConstants.STRING_TYPE, UTF.getBytes("oops2"));
 
     wtx.insertElementAsRightSibling("b", "", "");
-    wtx.insertAttribute("x", "ns", "p", UTF.getBytes("y"));
+    wtx.insertAttribute("x", "ns", "p", IConstants.STRING_TYPE, UTF
+        .getBytes("y"));
 
     wtx.insertElementAsFirstChild("c", "", "");
-    wtx.insertTextAsRightSibling(UTF.getBytes("bar"));
+    wtx.insertTextAsRightSibling(IConstants.STRING_TYPE, UTF.getBytes("bar"));
     wtx.moveToParent();
 
-    wtx.insertTextAsRightSibling(UTF.getBytes("oops3"));
+    wtx.insertTextAsRightSibling(IConstants.STRING_TYPE, UTF.getBytes("oops3"));
 
     wtx.moveToDocumentRoot();
 
@@ -127,23 +128,23 @@ public final class TestDocument {
 
     wtx.insertElementAsFirstChild("a", "ns", "p");
 
-    wtx.insertTextAsFirstChild(UTF.getBytes("oops1"));
+    wtx.insertTextAsFirstChild(IConstants.STRING_TYPE, UTF.getBytes("oops1"));
 
     wtx.insertElementAsRightSibling("b", "", "");
 
-    wtx.insertTextAsFirstChild(UTF.getBytes("foo"));
+    wtx.insertTextAsFirstChild(IConstants.STRING_TYPE, UTF.getBytes("foo"));
     wtx.insertElementAsRightSibling("c", "", "");
     wtx.moveToParent();
 
-    wtx.insertTextAsRightSibling(UTF.getBytes("oops2"));
+    wtx.insertTextAsRightSibling(IConstants.STRING_TYPE, UTF.getBytes("oops2"));
 
     wtx.insertElementAsRightSibling("b", "", "");
 
     wtx.insertElementAsFirstChild("c", "", "");
-    wtx.insertTextAsRightSibling(UTF.getBytes("bar"));
+    wtx.insertTextAsRightSibling(IConstants.STRING_TYPE, UTF.getBytes("bar"));
     wtx.moveToParent();
 
-    wtx.insertTextAsRightSibling(UTF.getBytes("oops3"));
+    wtx.insertTextAsRightSibling(IConstants.STRING_TYPE, UTF.getBytes("oops3"));
 
     wtx.moveToDocumentRoot();
 

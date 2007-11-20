@@ -92,11 +92,12 @@ public interface IWriteTransaction extends IReadTransaction {
    * Insert new text node as first child of currently selected node.
    * The cursor is moved to the inserted node.
    * 
+   * @param valueType Type of value.
    * @param value Value of inserted node.
    * @return Key of inserted node.
    * already has a first child.
    */
-  public long insertTextAsFirstChild(final byte[] value);
+  public long insertTextAsFirstChild(final int valueType, final byte[] value);
 
   /**
    * Insert new fulltext node as first child of currently selected node.
@@ -127,11 +128,12 @@ public interface IWriteTransaction extends IReadTransaction {
    * Insert new element node as right sibling of currently selected node.
    * The cursor is moved to the inserted node.
    * 
+   * @param valueType Type of inserted value.
    * @param value Value of inserted node.
    * @return Key of inserted node.
    * the root node which is not allowed to have right siblings.
    */
-  public long insertTextAsRightSibling(final byte[] value);
+  public long insertTextAsRightSibling(final int valueType, final byte[] value);
 
   /**
    * Insert new fulltext node as right sibling of currently selected node.
@@ -150,12 +152,14 @@ public interface IWriteTransaction extends IReadTransaction {
    * @param localPart Local part of inserted node.
    * @param uri URI of inserted node.
    * @param prefix Prefix of inserted node.
+   * @param valueType Type of value.
    * @param value Value of inserted node.
    */
   public void insertAttribute(
       final String localPart,
       final String uri,
       final String prefix,
+      final int valueType,
       final byte[] value);
 
   /**
@@ -185,6 +189,7 @@ public interface IWriteTransaction extends IReadTransaction {
    * @param localPart Local part of inserted node.
    * @param uri URI of inserted node.
    * @param prefix Prefix of inserted node.
+   * @param valueType Type of value.
    * @param value Value of inserted node.
    */
   public void setAttribute(
@@ -192,6 +197,7 @@ public interface IWriteTransaction extends IReadTransaction {
       final String localPart,
       final String uri,
       final String prefix,
+      final int valueType,
       final byte[] value);
 
   /**
@@ -230,9 +236,10 @@ public interface IWriteTransaction extends IReadTransaction {
   /**
    * Set value of node.
    * 
+   * @param valueType Type of value.
    * @param value New value of node.
    */
-  public void setValue(final byte[] value);
+  public void setValue(final int valueType, final byte[] value);
 
   /**
    * Commit all modifications of the exclusive write transaction. Even commit

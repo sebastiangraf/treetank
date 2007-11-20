@@ -106,9 +106,12 @@ public final class XMLShredder {
 
           // Parse attributes.
           for (int i = 0, l = parser.getAttributeCount(); i < l; i++) {
-            wtx.insertAttribute(parser.getAttributeLocalName(i), parser
-                .getAttributeNamespace(i), parser.getAttributePrefix(i), UTF
-                .getBytes(parser.getAttributeValue(i)));
+            wtx.insertAttribute(
+                parser.getAttributeLocalName(i),
+                parser.getAttributeNamespace(i),
+                parser.getAttributePrefix(i),
+                IConstants.STRING_TYPE,
+                UTF.getBytes(parser.getAttributeValue(i)));
           }
           break;
 
@@ -121,9 +124,13 @@ public final class XMLShredder {
           text = parser.getText().trim();
           if (text.length() > 0) {
             if (wtx.isNullNodeKey(leftSiblingKeyStack.peek())) {
-              key = wtx.insertTextAsFirstChild(UTF.getBytes(text));
+              key =
+                  wtx.insertTextAsFirstChild(IConstants.STRING_TYPE, UTF
+                      .getBytes(text));
             } else {
-              key = wtx.insertTextAsRightSibling(UTF.getBytes(text));
+              key =
+                  wtx.insertTextAsRightSibling(IConstants.STRING_TYPE, UTF
+                      .getBytes(text));
             }
             leftSiblingKeyStack.pop();
             leftSiblingKeyStack.push(key);

@@ -148,13 +148,14 @@ public final class WriteTransactionState extends ReadTransactionState {
       final long parentKey,
       final long leftSiblingKey,
       final long rightSiblingKey,
+      final int valueType,
       final byte[] value) {
     return createNode(new TextNode(
         getRevisionRootPage().getMaxNodeKey() + 1,
         parentKey,
         leftSiblingKey,
         rightSiblingKey,
-        IConstants.STRING_TYPE,
+        valueType,
         value));
   }
 

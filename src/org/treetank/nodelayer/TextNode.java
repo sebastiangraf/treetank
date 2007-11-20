@@ -206,7 +206,8 @@ public final class TextNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final void setValue(final byte[] value) {
+  public final void setValue(final int valueType, final byte[] value) {
+    mValueType = valueType;
     mValue = value;
   }
 

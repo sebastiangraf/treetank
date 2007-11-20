@@ -298,7 +298,7 @@ public abstract class AbstractNode implements Comparable<AbstractNode> {
   public void setURIKey(final int uriKey) {
   }
 
-  public void setValue(final byte[] value) {
+  public void setValue(final int valueType, final byte[] value) {
   }
 
   /**

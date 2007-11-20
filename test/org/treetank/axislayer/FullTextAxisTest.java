@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
+import org.treetank.utils.IConstants;
 import org.treetank.utils.UTF;
 
 public class FullTextAxisTest {
@@ -46,38 +47,35 @@ public class FullTextAxisTest {
 
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    final long nodeKey1 = wtx.insertTextAsFirstChild(UTF.getBytes("foo"));
-    final long nodeKey2 = wtx.insertTextAsRightSibling(UTF.getBytes("foo"));
+    final long nodeKey1 =
+        wtx.insertTextAsFirstChild(IConstants.STRING_TYPE, UTF.getBytes("foo"));
+    final long nodeKey2 =
+        wtx.insertTextAsRightSibling(IConstants.STRING_TYPE, UTF
+            .getBytes("foo"));
     final long tokenKey1 = wtx.insertToken("foo", nodeKey1);
     wtx.commit();
     final long tokenKey2 = wtx.insertToken("foo", nodeKey2);
     assertEquals(tokenKey1, tokenKey2);
 
     wtx.moveToDocumentRoot();
-    IAxisTest.testIAxisConventions(
-        new FullTextAxis(wtx, "foo"),
-        new long[] { nodeKey1, nodeKey2 });
+    IAxisTest.testIAxisConventions(new FullTextAxis(wtx, "foo"), new long[] {
+        nodeKey1,
+        nodeKey2 });
 
     wtx.moveToDocumentRoot();
-    IAxisTest.testIAxisConventions(
-        new FullTextAxis(wtx, "bar"),
-        new long[] {});
+    IAxisTest.testIAxisConventions(new FullTextAxis(wtx, "bar"), new long[] {});
 
     wtx.moveToDocumentRoot();
-    IAxisTest.testIAxisConventions(
-        new FullTextAxis(wtx, "ba"),
-        new long[] {});
+    IAxisTest.testIAxisConventions(new FullTextAxis(wtx, "ba"), new long[] {});
 
     wtx.moveToDocumentRoot();
-    IAxisTest.testIAxisConventions(
-        new FullTextAxis(wtx, "fo"),
-        new long[] {});
+    IAxisTest.testIAxisConventions(new FullTextAxis(wtx, "fo"), new long[] {});
 
     try {
       wtx.moveToDocumentRoot();
-      IAxisTest.testIAxisConventions(
-          new FullTextAxis(wtx, null),
-          new long[] { nodeKey1, nodeKey2 });
+      IAxisTest.testIAxisConventions(new FullTextAxis(wtx, null), new long[] {
+          nodeKey1,
+          nodeKey2 });
       TestCase.fail("Token of FullTextAxis() must not be null.");
     } catch (Exception e) {
       // Must catch.
@@ -85,9 +83,9 @@ public class FullTextAxisTest {
 
     try {
       wtx.moveToDocumentRoot();
-      IAxisTest.testIAxisConventions(
-          new FullTextAxis(wtx, ""),
-          new long[] { nodeKey1, nodeKey2 });
+      IAxisTest.testIAxisConventions(new FullTextAxis(wtx, ""), new long[] {
+          nodeKey1,
+          nodeKey2 });
       TestCase.fail("Token of FullTextAxis() must not be empty.");
     } catch (Exception e) {
       // Must catch.
@@ -104,8 +102,11 @@ public class FullTextAxisTest {
 
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    final long nodeKey1 = wtx.insertTextAsFirstChild(UTF.getBytes("foo"));
-    final long nodeKey2 = wtx.insertTextAsRightSibling(UTF.getBytes("foo"));
+    final long nodeKey1 =
+        wtx.insertTextAsFirstChild(IConstants.STRING_TYPE, UTF.getBytes("foo"));
+    final long nodeKey2 =
+        wtx.insertTextAsRightSibling(IConstants.STRING_TYPE, UTF
+            .getBytes("foo"));
     final long tokenKey1 = wtx.insertToken("foo", nodeKey1);
     wtx.commit();
     final long tokenKey2 = wtx.insertToken("foo", nodeKey2);
@@ -113,14 +114,12 @@ public class FullTextAxisTest {
     final long tokenKey3 = wtx.insertToken("bar", nodeKey2);
 
     wtx.moveToDocumentRoot();
-    IAxisTest.testIAxisConventions(
-        new FullTextAxis(wtx, "f*"),
-        new long[] { nodeKey1, nodeKey2 });
+    IAxisTest.testIAxisConventions(new FullTextAxis(wtx, "f*"), new long[] {
+        nodeKey1,
+        nodeKey2 });
 
     wtx.moveToDocumentRoot();
-    IAxisTest.testIAxisConventions(
-        new FullTextAxis(wtx, "x*"),
-        new long[] {});
+    IAxisTest.testIAxisConventions(new FullTextAxis(wtx, "x*"), new long[] {});
 
     wtx.abort();
     wtx.close();
@@ -133,17 +132,20 @@ public class FullTextAxisTest {
 
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    final long nodeKey1 = wtx.insertTextAsFirstChild(UTF.getBytes("foo"));
-    final long nodeKey2 = wtx.insertTextAsRightSibling(UTF.getBytes("foo"));
+    final long nodeKey1 =
+        wtx.insertTextAsFirstChild(IConstants.STRING_TYPE, UTF.getBytes("foo"));
+    final long nodeKey2 =
+        wtx.insertTextAsRightSibling(IConstants.STRING_TYPE, UTF
+            .getBytes("foo"));
     final long tokenKey1 = wtx.insertToken("foo", nodeKey1);
     wtx.commit();
     final long tokenKey2 = wtx.insertToken("foo", nodeKey2);
     assertEquals(tokenKey1, tokenKey2);
 
     wtx.moveToDocumentRoot();
-    IAxisTest.testIAxisConventions(
-        new FullTextAxis(wtx, "foo*"),
-        new long[] { nodeKey1, nodeKey2 });
+    IAxisTest.testIAxisConventions(new FullTextAxis(wtx, "foo*"), new long[] {
+        nodeKey1,
+        nodeKey2 });
 
     wtx.abort();
     wtx.close();
@@ -156,17 +158,20 @@ public class FullTextAxisTest {
 
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    final long nodeKey1 = wtx.insertTextAsFirstChild(UTF.getBytes("foo"));
-    final long nodeKey2 = wtx.insertTextAsRightSibling(UTF.getBytes("foo"));
+    final long nodeKey1 =
+        wtx.insertTextAsFirstChild(IConstants.STRING_TYPE, UTF.getBytes("foo"));
+    final long nodeKey2 =
+        wtx.insertTextAsRightSibling(IConstants.STRING_TYPE, UTF
+            .getBytes("foo"));
     final long tokenKey1 = wtx.insertToken("foo", nodeKey1);
     wtx.commit();
     final long tokenKey2 = wtx.insertToken("foo", nodeKey2);
     assertEquals(tokenKey1, tokenKey2);
 
     wtx.moveToDocumentRoot();
-    IAxisTest.testIAxisConventions(
-        new FullTextAxis(wtx, "*"),
-        new long[] { nodeKey1, nodeKey2 });
+    IAxisTest.testIAxisConventions(new FullTextAxis(wtx, "*"), new long[] {
+        nodeKey1,
+        nodeKey2 });
 
     wtx.abort();
     wtx.close();
