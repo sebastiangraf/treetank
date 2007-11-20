@@ -20,6 +20,7 @@ package org.treetank.sessionlayer;
 
 import org.treetank.api.IReadTransaction;
 import org.treetank.nodelayer.AbstractNode;
+import org.treetank.utils.TypedValue;
 
 /**
  * <h1>ReadTransaction</h1>
@@ -512,9 +513,54 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final byte[] getValue() {
+  public final String getAtomizedValue() {
+    assertNotClosed();
+    return TypedValue.atomize(mCurrentNode.getValueType(), mCurrentNode
+        .getValue());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final byte[] getValueAsByteArray() {
     assertNotClosed();
     return mCurrentNode.getValue();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final String getValueAsString() {
+    assertNotClosed();
+    if (mCurrentNode.getValueType() != STRING_TYPE) {
+      throw new IllegalStateException(
+          "Can not get string if type of value is not string.");
+    }
+    return TypedValue.parseString(mCurrentNode.getValue());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final int getValueAsInt() {
+    assertNotClosed();
+    if (mCurrentNode.getValueType() != INT_TYPE) {
+      throw new IllegalStateException(
+          "Can not get int if type of value is not int.");
+    }
+    return TypedValue.parseInt(mCurrentNode.getValue());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final long getValueAsLong() {
+    assertNotClosed();
+    if (mCurrentNode.getValueType() != LONG_TYPE) {
+      throw new IllegalStateException(
+          "Can not get long if type of value is not long.");
+    }
+    return TypedValue.parseLong(mCurrentNode.getValue());
   }
 
   /**
@@ -570,7 +616,7 @@ public class ReadTransaction implements IReadTransaction {
         + "\nwith name: "
         + localPart
         + "\nand value:"
-        + getValue();
+        + getValueAsByteArray();
   }
 
   /**

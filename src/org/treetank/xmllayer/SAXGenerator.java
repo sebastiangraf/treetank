@@ -126,8 +126,7 @@ public final class SAXGenerator implements Runnable {
           .getPrefix(), rtx.getLocalPart()), visitAttributes(rtx));
       break;
     case IReadTransaction.TEXT_KIND:
-      final char[] text =
-          TypedValue.atomize(rtx.getValueType(), rtx.getValue()).toCharArray();
+      final char[] text = rtx.getValueAsString().toCharArray();
       mHandler.characters(text, 0, text.length);
       break;
     default:
