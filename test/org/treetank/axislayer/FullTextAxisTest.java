@@ -26,11 +26,9 @@ import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
-import org.treetank.utils.TypedValue;
 
 public class FullTextAxisTest {
 
@@ -47,11 +45,8 @@ public class FullTextAxisTest {
 
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    final long nodeKey1 =
-        wtx.insertTextAsFirstChild(IReadTransaction.STRING_TYPE, TypedValue.getBytes("foo"));
-    final long nodeKey2 =
-        wtx.insertTextAsRightSibling(IReadTransaction.STRING_TYPE, TypedValue
-            .getBytes("foo"));
+    final long nodeKey1 = wtx.insertTextAsFirstChild("foo");
+    final long nodeKey2 = wtx.insertTextAsRightSibling("foo");
     final long tokenKey1 = wtx.insertToken("foo", nodeKey1);
     wtx.commit();
     final long tokenKey2 = wtx.insertToken("foo", nodeKey2);
@@ -102,11 +97,8 @@ public class FullTextAxisTest {
 
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    final long nodeKey1 =
-        wtx.insertTextAsFirstChild(IReadTransaction.STRING_TYPE, TypedValue.getBytes("foo"));
-    final long nodeKey2 =
-        wtx.insertTextAsRightSibling(IReadTransaction.STRING_TYPE, TypedValue
-            .getBytes("foo"));
+    final long nodeKey1 = wtx.insertTextAsFirstChild("foo");
+    final long nodeKey2 = wtx.insertTextAsRightSibling("foo");
     final long tokenKey1 = wtx.insertToken("foo", nodeKey1);
     wtx.commit();
     final long tokenKey2 = wtx.insertToken("foo", nodeKey2);
@@ -132,11 +124,8 @@ public class FullTextAxisTest {
 
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    final long nodeKey1 =
-        wtx.insertTextAsFirstChild(IReadTransaction.STRING_TYPE, TypedValue.getBytes("foo"));
-    final long nodeKey2 =
-        wtx.insertTextAsRightSibling(IReadTransaction.STRING_TYPE, TypedValue
-            .getBytes("foo"));
+    final long nodeKey1 = wtx.insertTextAsFirstChild("foo");
+    final long nodeKey2 = wtx.insertTextAsRightSibling("foo");
     final long tokenKey1 = wtx.insertToken("foo", nodeKey1);
     wtx.commit();
     final long tokenKey2 = wtx.insertToken("foo", nodeKey2);
@@ -158,11 +147,8 @@ public class FullTextAxisTest {
 
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    final long nodeKey1 =
-        wtx.insertTextAsFirstChild(IReadTransaction.STRING_TYPE, TypedValue.getBytes("foo"));
-    final long nodeKey2 =
-        wtx.insertTextAsRightSibling(IReadTransaction.STRING_TYPE, TypedValue
-            .getBytes("foo"));
+    final long nodeKey1 = wtx.insertTextAsFirstChild("foo");
+    final long nodeKey2 = wtx.insertTextAsRightSibling("foo");
     final long tokenKey1 = wtx.insertToken("foo", nodeKey1);
     wtx.commit();
     final long tokenKey2 = wtx.insertToken("foo", nodeKey2);

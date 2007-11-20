@@ -394,7 +394,47 @@ public interface IReadTransaction {
    * @param index Index of attribute [0..getAttributeCount()].
    * @return Value of attribute at given index.
    */
-  public byte[] getAttributeValue(final int index);
+  public String getAttributeValueAsAtom(final int index);
+
+  /**
+   * Get value of attribute at given index.
+   * 
+   * @param index Index of attribute [0..getAttributeCount()].
+   * @return Value of attribute at given index.
+   */
+  public byte[] getAttributeValueAsByteArray(final int index);
+
+  /**
+   * Get value of attribute at given index.
+   * 
+   * @param index Index of attribute [0..getAttributeCount()].
+   * @return Value of attribute at given index.
+   */
+  public String getAttributeValueAsString(final int index);
+
+  /**
+   * Get value of attribute at given index.
+   * 
+   * @param index Index of attribute [0..getAttributeCount()].
+   * @return Value of attribute at given index.
+   */
+  public int getAttributeValueAsInt(final int index);
+
+  /**
+   * Get value of attribute at given index.
+   * 
+   * @param index Index of attribute [0..getAttributeCount()].
+   * @return Value of attribute at given index.
+   */
+  public long getAttributeValueAsLong(final int index);
+
+  /**
+   * Get value of attribute at given index.
+   * 
+   * @param index Index of attribute [0..getAttributeCount()].
+   * @return Value of attribute at given index.
+   */
+  public boolean getAttributeValueAsBoolean(final int index);
 
   /**
    * Get namespace declaration count of currently selected node.
@@ -547,7 +587,7 @@ public interface IReadTransaction {
    * 
    * @return Atomized value of node.
    */
-  public String getAtomizedValue();
+  public String getValueAsAtom();
 
   /**
    * Get value of node.
@@ -576,6 +616,13 @@ public interface IReadTransaction {
    * @return Value of node.
    */
   public long getValueAsLong();
+
+  /**
+   * Get value of node.
+   * 
+   * @return Value of node.
+   */
+  public boolean getValueAsBoolean();
 
   /**
    * Get key for given name. This is used for efficient name testing.

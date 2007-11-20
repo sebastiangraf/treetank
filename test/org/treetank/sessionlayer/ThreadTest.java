@@ -32,7 +32,6 @@ import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.axislayer.DescendantAxis;
 import org.treetank.utils.TestDocument;
-import org.treetank.utils.TypedValue;
 
 public class ThreadTest {
 
@@ -61,8 +60,7 @@ public class ThreadTest {
       taskExecutor.execute(new Task(session.beginReadTransaction(0L)));
       wtx = session.beginWriteTransaction();
       wtx.moveTo(10L);
-      wtx.setValue(IReadTransaction.STRING_TYPE, TypedValue.getBytes("value"
-          + i));
+      wtx.setValue("value" + i);
       wtx.commit();
       wtx.close();
     }

@@ -224,6 +224,14 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
+  public final synchronized long insertTextAsFirstChild(final boolean value) {
+    return insertTextAsFirstChild(IReadTransaction.BOOLEAN_TYPE, TypedValue
+        .getBytes(value));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final synchronized long insertFullTextAsFirstChild(
       final int localPartKey) {
     return insertFirstChild(((WriteTransactionState) getTransactionState())
@@ -310,6 +318,14 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
+  public final synchronized long insertTextAsRightSibling(final boolean value) {
+    return insertTextAsRightSibling(IReadTransaction.BOOLEAN_TYPE, TypedValue
+        .getBytes(value));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final synchronized long insertFullTextAsRightSibling(
       final int localPartKey) {
     return insertRightSibling(((WriteTransactionState) getTransactionState())
@@ -363,8 +379,12 @@ public final class WriteTransaction extends ReadTransaction
       final String uri,
       final String prefix,
       final String value) {
-    insertAttribute(localPart, uri, prefix, IReadTransaction.STRING_TYPE, TypedValue
-        .getBytes(value));
+    insertAttribute(
+        localPart,
+        uri,
+        prefix,
+        IReadTransaction.STRING_TYPE,
+        TypedValue.getBytes(value));
   }
 
   /**
@@ -375,8 +395,12 @@ public final class WriteTransaction extends ReadTransaction
       final String uri,
       final String prefix,
       final int value) {
-    insertAttribute(localPart, uri, prefix, IReadTransaction.INT_TYPE, TypedValue
-        .getBytes(value));
+    insertAttribute(
+        localPart,
+        uri,
+        prefix,
+        IReadTransaction.INT_TYPE,
+        TypedValue.getBytes(value));
   }
 
   /**
@@ -387,8 +411,28 @@ public final class WriteTransaction extends ReadTransaction
       final String uri,
       final String prefix,
       final long value) {
-    insertAttribute(localPart, uri, prefix, IReadTransaction.LONG_TYPE, TypedValue
-        .getBytes(value));
+    insertAttribute(
+        localPart,
+        uri,
+        prefix,
+        IReadTransaction.LONG_TYPE,
+        TypedValue.getBytes(value));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final synchronized void insertAttribute(
+      final String localPart,
+      final String uri,
+      final String prefix,
+      final boolean value) {
+    insertAttribute(
+        localPart,
+        uri,
+        prefix,
+        IReadTransaction.BOOLEAN_TYPE,
+        TypedValue.getBytes(value));
   }
 
   /**
@@ -575,6 +619,34 @@ public final class WriteTransaction extends ReadTransaction
 
     final AbstractNode node = prepareCurrentNode();
     node.setValue(valueType, value);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final synchronized void setValue(final String value) {
+    setValue(STRING_TYPE, TypedValue.getBytes(value));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final synchronized void setValue(final int value) {
+    setValue(INT_TYPE, TypedValue.getBytes(value));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final synchronized void setValue(final long value) {
+    setValue(LONG_TYPE, TypedValue.getBytes(value));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final synchronized void setValue(final boolean value) {
+    setValue(BOOLEAN_TYPE, TypedValue.getBytes(value));
   }
 
   /**
