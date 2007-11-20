@@ -22,7 +22,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-public class UTFTest {
+public class TypedValueTest {
 
   @Test
   public void test() {
