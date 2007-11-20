@@ -31,7 +31,6 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.utils.TestDocument;
-import org.treetank.utils.TypedValue;
 
 public class UpdateTest {
 
@@ -62,15 +61,14 @@ public class UpdateTest {
     for (int i = 1; i <= 10; i++) {
       wtx = session.beginWriteTransaction();
       wtx.moveToDocumentRoot();
-      wtx.insertTextAsFirstChild(IReadTransaction.STRING_TYPE, TypedValue.getBytes(Integer
-          .toString(i)));
+      wtx.insertTextAsFirstChild(i);
       wtx.commit();
       wtx.close();
 
       rtx = session.beginReadTransaction();
       rtx.moveToDocumentRoot();
       rtx.moveToFirstChild();
-      assertEquals(Integer.toString(i), new String(rtx.getValue()));
+      assertEquals(i, rtx.getValueAsInt());
       assertEquals(i + 2L, rtx.getRevisionSize());
       assertEquals(i, rtx.getRevisionNumber());
       rtx.close();
@@ -79,7 +77,7 @@ public class UpdateTest {
     rtx = session.beginReadTransaction();
     rtx.moveToDocumentRoot();
     rtx.moveToFirstChild();
-    assertEquals(Integer.toString(10), new String(rtx.getValue()));
+    assertEquals(10, rtx.getValueAsInt());
     assertEquals(12L, rtx.getRevisionSize());
     assertEquals(10L, rtx.getRevisionNumber());
     rtx.close();
@@ -130,7 +128,7 @@ public class UpdateTest {
     IWriteTransaction wtx = session.beginWriteTransaction();
 
     for (int i = 0; i < 256 * 256 + 1; i++) {
-      wtx.insertTextAsFirstChild(IReadTransaction.STRING_TYPE, TypedValue.EMPTY);
+      wtx.insertTextAsFirstChild("");
     }
 
     TestCase.assertNotNull(wtx.moveTo(2L));

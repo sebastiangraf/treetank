@@ -210,21 +210,15 @@ public class SessionTest {
     final IReadTransaction rtx1 = session.beginReadTransaction();
     assertEquals(0L, rtx1.getRevisionNumber());
     rtx1.moveTo(10L);
-    assertEquals(
-        "bar",
-        new String(rtx1.getValue(), IConstants.DEFAULT_ENCODING));
+    assertEquals("bar", rtx1.getValueAsString());
 
     final IWriteTransaction wtx2 = session.beginWriteTransaction();
     assertEquals(1L, wtx2.getRevisionNumber());
     wtx2.moveTo(10L);
     wtx2.setValue(IReadTransaction.STRING_TYPE, TypedValue.getBytes("bar2"));
 
-    assertEquals(
-        "bar",
-        new String(rtx1.getValue(), IConstants.DEFAULT_ENCODING));
-    assertEquals("bar2", new String(
-        wtx2.getValue(),
-        IConstants.DEFAULT_ENCODING));
+    assertEquals("bar", rtx1.getValueAsString());
+    assertEquals("bar2", wtx2.getValueAsString());
 
     wtx2.abort();
     wtx2.close();
@@ -232,9 +226,7 @@ public class SessionTest {
     final IReadTransaction rtx2 = session.beginReadTransaction();
     assertEquals(0L, rtx2.getRevisionNumber());
     rtx2.moveTo(10L);
-    assertEquals(
-        "bar",
-        new String(rtx2.getValue(), IConstants.DEFAULT_ENCODING));
+    assertEquals("bar", rtx2.getValueAsString());
 
   }
 
@@ -254,21 +246,15 @@ public class SessionTest {
     final IReadTransaction rtx1 = session2.beginReadTransaction();
     assertEquals(0L, rtx1.getRevisionNumber());
     rtx1.moveTo(10L);
-    assertEquals(
-        "bar",
-        new String(rtx1.getValue(), IConstants.DEFAULT_ENCODING));
+    assertEquals("bar", rtx1.getValueAsString());
 
     final IWriteTransaction wtx2 = session2.beginWriteTransaction();
     assertEquals(1L, wtx2.getRevisionNumber());
     wtx2.moveTo(10L);
     wtx2.setValue(IReadTransaction.STRING_TYPE, TypedValue.getBytes("bar2"));
 
-    assertEquals(
-        "bar",
-        new String(rtx1.getValue(), IConstants.DEFAULT_ENCODING));
-    assertEquals("bar2", new String(
-        wtx2.getValue(),
-        IConstants.DEFAULT_ENCODING));
+    assertEquals("bar", rtx1.getValueAsString());
+    assertEquals("bar2", wtx2.getValueAsString());
 
     rtx1.close();
     wtx2.commit();
@@ -279,9 +265,7 @@ public class SessionTest {
     final IReadTransaction rtx2 = session3.beginReadTransaction();
     assertEquals(1L, rtx2.getRevisionNumber());
     rtx2.moveTo(10L);
-    assertEquals("bar2", new String(
-        rtx2.getValue(),
-        IConstants.DEFAULT_ENCODING));
+    assertEquals("bar2", rtx2.getValueAsString());
 
     rtx2.close();
     session3.close();

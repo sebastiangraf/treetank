@@ -80,7 +80,7 @@ public class ValueFilter extends AbstractFilter implements IFilter {
    */
   public final boolean filter() {
     return ((getTransaction().isTextKind() || getTransaction().isAttributeKind()) && (TypedValue
-        .equals(getTransaction().getValue(), mValue)));
+        .equals(getTransaction().getValueAsByteArray(), mValue)));
   }
 
 }

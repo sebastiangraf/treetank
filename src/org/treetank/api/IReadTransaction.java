@@ -543,11 +543,39 @@ public interface IReadTransaction {
   public int getValueType();
 
   /**
+   * Get atomized value of node.
+   * 
+   * @return Atomized value of node.
+   */
+  public String getAtomizedValue();
+
+  /**
    * Get value of node.
    * 
    * @return Value of node.
    */
-  public byte[] getValue();
+  public byte[] getValueAsByteArray();
+
+  /**
+   * Get value of node.
+   * 
+   * @return Value of node.
+   */
+  public String getValueAsString();
+
+  /**
+   * Get value of node.
+   * 
+   * @return Value of node.
+   */
+  public int getValueAsInt();
+
+  /**
+   * Get value of node.
+   * 
+   * @return Value of node.
+   */
+  public long getValueAsLong();
 
   /**
    * Get key for given name. This is used for efficient name testing.

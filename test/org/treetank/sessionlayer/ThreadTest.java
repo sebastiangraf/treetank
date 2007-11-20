@@ -61,7 +61,8 @@ public class ThreadTest {
       taskExecutor.execute(new Task(session.beginReadTransaction(0L)));
       wtx = session.beginWriteTransaction();
       wtx.moveTo(10L);
-      wtx.setValue(IReadTransaction.STRING_TYPE, TypedValue.getBytes("value" + i));
+      wtx.setValue(IReadTransaction.STRING_TYPE, TypedValue.getBytes("value"
+          + i));
       wtx.commit();
       wtx.close();
     }
@@ -85,7 +86,7 @@ public class ThreadTest {
           // Nothing to do.
         }
         mRTX.moveTo(10L);
-        TestCase.assertEquals("bar", TypedValue.parseString(mRTX.getValue()));
+        TestCase.assertEquals("bar", mRTX.getValueAsString());
         mRTX.close();
       } catch (Exception e) {
         TestCase.fail(e.getLocalizedMessage());

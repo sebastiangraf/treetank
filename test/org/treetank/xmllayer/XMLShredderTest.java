@@ -94,9 +94,9 @@ public class XMLShredderTest {
           .nameForKey(rtx.getPrefixKey()));
       if (expectedTrx.isTextKind()) {
         assertEquals(new String(
-            expectedTrx.getValue(),
+            expectedTrx.getValueAsByteArray(),
             IConstants.DEFAULT_ENCODING), new String(
-            rtx.getValue(),
+            rtx.getValueAsByteArray(),
             IConstants.DEFAULT_ENCODING));
       }
     }
