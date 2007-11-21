@@ -94,7 +94,7 @@ public final class WriteTransaction extends ReadTransaction
     // Make sure we always operate from the full text root node.
     moveToFullTextRoot();
 
-    // Add characters to inverted index consisting of a prefix tree.
+    // Add characters to inverted index, i.e., the prefix tree.
     long tokenKey = NULL_NODE_KEY;
     for (final char character : token.toCharArray()) {
       if (hasFirstChild()) {
