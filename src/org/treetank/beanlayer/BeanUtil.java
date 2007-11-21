@@ -137,15 +137,29 @@ public final class BeanUtil {
           // Switch according to field type.
           switch (field.getType().getCanonicalName().hashCode()) {
           case -1374008726: // byte[]
+            if (rtx.getAttributeValueType(index) != IReadTransaction.BYTEARRAY_TYPE) {
+              throw new IllegalStateException(
+                  "Type mismatch: should be byte[].");
+            }
             field.set(target, rtx.getAttributeValueAsByteArray(index));
             break;
           case 64711720: // boolean
+            if (rtx.getAttributeValueType(index) != IReadTransaction.BOOLEAN_TYPE) {
+              throw new IllegalStateException(
+                  "Type mismatch: should be boolean.");
+            }
             field.setBoolean(target, rtx.getAttributeValueAsBoolean(index));
             break;
           case 104431: // int
+            if (rtx.getAttributeValueType(index) != IReadTransaction.INT_TYPE) {
+              throw new IllegalStateException("Type mismatch: should be int.");
+            }
             field.setInt(target, rtx.getAttributeValueAsInt(index));
             break;
           case 3327612: // long
+            if (rtx.getAttributeValueType(index) != IReadTransaction.LONG_TYPE) {
+              throw new IllegalStateException("Type mismatch: should be long.");
+            }
             field.setLong(target, rtx.getAttributeValueAsLong(index));
             break;
           case 97526364: // float
@@ -157,6 +171,10 @@ public final class BeanUtil {
                 .parseString(rtx.getAttributeValueAsByteArray(index))));
             break;
           case 1195259493: // String
+            if (rtx.getAttributeValueType(index) != IReadTransaction.STRING_TYPE) {
+              throw new IllegalStateException(
+                  "Type mismatch: should be string.");
+            }
             field.set(target, rtx.getAttributeValueAsString(index));
             break;
           default:
@@ -335,6 +353,10 @@ public final class BeanUtil {
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
+    } else {
+      throw new IllegalStateException("Selected node does not contain a '"
+          + object.getClass().getSimpleName()
+          + "'");
     }
   }
 
