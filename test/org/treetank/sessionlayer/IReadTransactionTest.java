@@ -77,6 +77,12 @@ public class IReadTransactionTest {
     assertEquals(false, rtx.hasRightSibling());
     assertEquals(true, rtx.hasFirstChild());
 
+    assertEquals(true, rtx.moveToToken("foo"));
+    assertEquals(true, rtx.moveToToken("f"));
+    final long fKey = rtx.getNodeKey();
+    assertEquals(false, rtx.moveToToken("bar"));
+    assertEquals(fKey, rtx.getNodeKey());
+
     rtx.close();
   }
 
