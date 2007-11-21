@@ -151,12 +151,6 @@ public interface IReadTransaction {
   /** Node type is long. */
   public static final int LONG_TYPE = 3;
 
-  /** Node type is float. */
-  public static final int FLOAT_TYPE = 4;
-
-  /** Node type is double. */
-  public static final int DOUBLE_TYPE = 5;
-
   /** Node type is boolean. */
   public static final int BOOLEAN_TYPE = 6;
 
