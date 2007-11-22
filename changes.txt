@@ -18,6 +18,7 @@
  
 TreeTank 4.18
 -------------
+ 5 Reduced size of node and indirect pages to better support updates.
  4 Added convenience methods to IReadTransaction and IWriteTransaction to
    access typed values.
  3 Moved KEY, KIND, and TYPE constants to IReadTransaction.
