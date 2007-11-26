@@ -35,6 +35,7 @@ package org.treetank.api;
  * 
  * <p>
  *  <ol>
+ *   <li>Only a single thread accesses each IReadTransaction instance.</li>
  *   <li><strong>Precondition</strong> before moving cursor:
  *       <code>IReadTransaction.getNodeKey() == n</code>.</li>
  *   <li><strong>Postcondition</strong> after moving cursor:
