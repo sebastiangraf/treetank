@@ -39,14 +39,14 @@ public final class WriteTransaction extends ReadTransaction
     implements
     IWriteTransaction {
 
-  /** True enabled auto commit. */
-  private final boolean mAutoCommit;
-
   /** Maximum number of node modifications before auto commit. */
   private final int mMaxNodeCount;
 
   /** Scheduler to commit after mMaxTime seconds. */
   private ScheduledExecutorService mCommitScheduler;
+
+  /** Modification counter. */
+  private long mModificationCount;
 
   /**
    * Constructor.
@@ -63,16 +63,22 @@ public final class WriteTransaction extends ReadTransaction
       final int maxNodeCount,
       final int maxTime) {
     super(sessionState, transactionState);
-    mAutoCommit = ((maxNodeCount > 0) || (maxTime > 0));
-    mMaxNodeCount = maxNodeCount;
 
-    // Launch commit scheduler if auto commit is enabled.
+    // Do not accept negative values.
+    if ((maxNodeCount < 0) || (maxTime < 0)) {
+      throw new IllegalArgumentException("Negative arguments are not accepted.");
+    }
+
+    // Only auto commit by node modifications if it is more then 0.
+    mMaxNodeCount = maxNodeCount;
+    mModificationCount = 0L;
+
+    // Only auto commit by time if the time is more than 0 seconds.
     if (maxTime > 0) {
       mCommitScheduler = Executors.newScheduledThreadPool(1);
       mCommitScheduler.scheduleAtFixedRate(new Runnable() {
         public final void run() {
-          if (((WriteTransactionState) getTransactionState())
-              .getModificationCount() > 0) {
+          if (mModificationCount > 0) {
             commit();
           }
         }
@@ -90,6 +96,7 @@ public final class WriteTransaction extends ReadTransaction
       final long nodeKey) {
 
     assertNotClosed();
+    mModificationCount++;
 
     // Make sure we always operate from the full text root node.
     moveToFullTextRoot();
@@ -138,6 +145,7 @@ public final class WriteTransaction extends ReadTransaction
       final String token,
       final long nodeKey) {
     assertNotClosed();
+    mModificationCount++;
 
     moveToToken(token);
     final long tokenKey = getNodeKey();
@@ -361,6 +369,7 @@ public final class WriteTransaction extends ReadTransaction
       final byte[] value) {
 
     assertNotClosed();
+    mModificationCount++;
 
     prepareCurrentNode().insertAttribute(
         ((WriteTransactionState) getTransactionState())
@@ -443,6 +452,7 @@ public final class WriteTransaction extends ReadTransaction
       final String prefix) {
 
     assertNotClosed();
+    mModificationCount++;
 
     prepareCurrentNode().insertNamespace(
         ((WriteTransactionState) getTransactionState()).createNameKey(uri),
@@ -455,6 +465,7 @@ public final class WriteTransaction extends ReadTransaction
   public final synchronized void remove() {
 
     assertNotClosed();
+    mModificationCount++;
 
     if (getCurrentNode().isDocumentRoot() || getCurrentNode().isFullTextRoot()) {
       throw new IllegalStateException("Root node can not be removed.");
@@ -547,6 +558,7 @@ public final class WriteTransaction extends ReadTransaction
       final byte[] value) {
 
     assertNotClosed();
+    mModificationCount++;
 
     prepareCurrentNode().setAttribute(
         index,
@@ -567,6 +579,7 @@ public final class WriteTransaction extends ReadTransaction
       final String prefix) {
 
     assertNotClosed();
+    mModificationCount++;
 
     prepareCurrentNode().setNamespace(
         index,
@@ -580,6 +593,7 @@ public final class WriteTransaction extends ReadTransaction
   public final synchronized void setLocalPart(final String localPart) {
 
     assertNotClosed();
+    mModificationCount++;
 
     prepareCurrentNode().setLocalPartKey(
         ((WriteTransactionState) getTransactionState())
@@ -592,6 +606,7 @@ public final class WriteTransaction extends ReadTransaction
   public final synchronized void setURI(final String uri) {
 
     assertNotClosed();
+    mModificationCount++;
 
     prepareCurrentNode().setURIKey(
         ((WriteTransactionState) getTransactionState()).createNameKey(uri));
@@ -603,6 +618,7 @@ public final class WriteTransaction extends ReadTransaction
   public final synchronized void setPrefix(final String prefix) {
 
     assertNotClosed();
+    mModificationCount++;
 
     prepareCurrentNode().setPrefixKey(
         ((WriteTransactionState) getTransactionState()).createNameKey(prefix));
@@ -616,6 +632,7 @@ public final class WriteTransaction extends ReadTransaction
       final byte[] value) {
 
     assertNotClosed();
+    mModificationCount++;
 
     final AbstractNode node = prepareCurrentNode();
     node.setValue(valueType, value);
@@ -656,8 +673,7 @@ public final class WriteTransaction extends ReadTransaction
   public final synchronized void close() {
     if (!isClosed()) {
       // Make sure to commit all dirty data.
-      if (((WriteTransactionState) getTransactionState())
-          .getModificationCount() > 0) {
+      if (mModificationCount > 0) {
         commit();
       }
       // Make sure to cancel the periodic commit task if it was started.
@@ -692,7 +708,7 @@ public final class WriteTransaction extends ReadTransaction
     getSessionState().setLastCommittedUberPage(uberPage);
 
     // Reset modification counter.
-    ((WriteTransactionState) getTransactionState()).resetModificationCount();
+    mModificationCount = 0L;
 
     // Reset internal transaction state to new uber page.
     setTransactionState(getSessionState().getWriteTransactionState());
@@ -707,18 +723,16 @@ public final class WriteTransaction extends ReadTransaction
     assertNotClosed();
 
     // Reset modification counter.
-    ((WriteTransactionState) getTransactionState()).resetModificationCount();
+    mModificationCount = 0L;
 
     // Reset internal transaction state to last committed uber page.
     setTransactionState(getSessionState().getWriteTransactionState());
   }
 
   private final void intermediateCommitIfRequired() {
-    if (mAutoCommit
-        && ((WriteTransactionState) getTransactionState())
-            .getModificationCount() > mMaxNodeCount) {
+    assertNotClosed();
+    if ((mMaxNodeCount > 0) && (mModificationCount > mMaxNodeCount)) {
       commit();
-      ((WriteTransactionState) getTransactionState()).resetModificationCount();
     }
   }
 
@@ -734,6 +748,7 @@ public final class WriteTransaction extends ReadTransaction
   private final long insertFirstChild(final AbstractNode node) {
 
     assertNotClosed();
+    mModificationCount++;
     intermediateCommitIfRequired();
 
     setCurrentNode(node);
@@ -747,6 +762,7 @@ public final class WriteTransaction extends ReadTransaction
   private final long insertRightSibling(final AbstractNode node) {
 
     assertNotClosed();
+    mModificationCount++;
     intermediateCommitIfRequired();
 
     if (getCurrentNode().getNodeKey() == DOCUMENT_ROOT_KEY) {

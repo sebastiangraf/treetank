@@ -50,9 +50,6 @@ public final class WriteTransactionState extends ReadTransactionState {
   /** Page writer to serialize. */
   private PageWriter mPageWriter;
 
-  /** Counts calls of prepareNode(). */
-  private long mModificationCount;
-
   /**
    * Standard constructor.
    * 
@@ -68,7 +65,6 @@ public final class WriteTransactionState extends ReadTransactionState {
         .getLastCommittedRevisionKey());
     mPageWriter = new PageWriter(sessionConfiguration);
     setRevisionRootPage(prepareRevisionRootPage());
-    mModificationCount = 0L;
   }
 
   /**
@@ -81,26 +77,9 @@ public final class WriteTransactionState extends ReadTransactionState {
   }
 
   /**
-   * Getter for number of calls to prepareNode().
-   * 
-   * @return Number of calls to prepareNode().
-   */
-  protected final long getModificationCount() {
-    return mModificationCount;
-  }
-
-  /**
-   * Reset modification counter. 
-   */
-  protected final void resetModificationCount() {
-    mModificationCount = 0L;
-  }
-
-  /**
    * Prepare node for modifications (COW).
    */
   protected final AbstractNode prepareNode(final long nodeKey) {
-    mModificationCount += 1;
     return prepareNodePage(nodePageKey(nodeKey)).getNode(
         nodePageOffset(nodeKey));
   }
