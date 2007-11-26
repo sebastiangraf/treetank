@@ -21,32 +21,83 @@ package org.treetank.api;
 /**
  * <h1>IWriteTransaction</h1>
  * 
+ * <h2>Description</h2>
+ * 
  * <p>
- * Interface to access and modify nodes based on the
+ * Interface to access nodes based on the
  * Key/ParentKey/FirstChildKey/LeftSiblingKey/RightSiblingKey/ChildCount
  * encoding. This encoding keeps the children ordered but has no knowledge of
- * the global node ordering. Nodes must first be selected before they can be
- * read. Modifying methods always work from the current node and select the 
- * newly inserted node.
+ * the global node ordering. The underlying tree is accessed in a cursor-like
+ * fashion.
  * </p>
  * 
  * <p>
- * The interface has a single-threaded semantics, this is, each thread accessing
- * the ISession in a modifying way needs its own IWriteTransaction instance.
+ * Each commit at least adds <code>10kB</code> to the TreeTank file. It is
+ * thus recommended to work with the auto commit mode only committing after
+ * a given amount of node modifications or elapsed time. For very
+ * update-intensive data, a value of one million modifications and ten seconds
+ * is recommended. Note that this might require to increment to available
+ * heap.
  * </p>
- * 
- * <p>
- * Exceptions are only thrown if an internal error occurred which must be
- * resolved at a higher layer.
- * </p>
- * 
- * <h2>Description</h2>
  * 
  * <h2>Convention</h2>
  * 
+ * <p>
+ *  <ol>
+ *   <li>Only a single thread accesses the single IWriteTransaction
+ *       instance.</li>
+ *   <li><strong>Precondition</strong> before moving cursor:
+ *       <code>IWriteTransaction.getNodeKey() == n</code>.</li>
+ *   <li><strong>Postcondition</strong> after modifying the cursor:
+ *       <code>(IWriteTransaction.insertX() == m &&
+ *       IWriteTransaction.getNodeKey() == m)</code>.</li>
+ *  </ol>
+ * </p>
+ * 
  * <h2>User Example</h2>
  * 
+ * <p>
+ *  <pre>
+ *   // Without auto commit.
+ *   final IWriteTransaction wtx = session.beginWriteTransaction();
+ *   wtx.insertElementAsFirstChild("foo");
+ *   // Explicit forced commit.
+ *   wtx.commit();
+ *   wtx.close();
+ *   
+ *   // With auto commit after every 10th modification.
+ *   final IWriteTransaction wtx = session.beginWriteTransaction(10, 0);
+ *   wtx.insertElementAsFirstChild("foo");
+ *   // Implicit commit.
+ *   wtx.close();
+ *   
+ *   // With auto commit after every second.
+ *   final IWriteTransaction wtx = session.beginWriteTransaction(0, 1);
+ *   wtx.insertElementAsFirstChild("foo");
+ *   // Implicit commit.
+ *   wtx.close();
+ *   
+ *   // With auto commit after every 10th modification and every second.
+ *   final IWriteTransaction wtx = session.beginWriteTransaction(10, 1);
+ *   wtx.insertElementAsFirstChild("foo");
+ *   // Implicit commit.
+ *   wtx.close();
+ *  </pre>
+ * </p>
+ * 
  * <h2>Developer Example</h2>
+ * 
+ * <p>
+ *  <pre>
+ *   public final void someIWriteTransactionMethod() {
+ *     // This must be called to make sure the transaction is not closed.
+ *     assertNotClosed();
+ *     // This must be called to track the modifications.
+ *     mModificationCount++;
+ *     ...
+ *   }
+ *  </pre>
+ * </p>
  */
 public interface IWriteTransaction extends IReadTransaction {
 
