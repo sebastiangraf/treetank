@@ -32,7 +32,6 @@ import org.junit.Test;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.axislayer.DescendantAxis;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
 
@@ -59,8 +58,7 @@ public class SAXGeneratorTest {
       // Generate from this session.
       final Writer writer = new StringWriter();
       final IReadTransaction rtx = session.beginReadTransaction();
-      final SAXGenerator generator =
-          new SAXGenerator(new DescendantAxis(rtx, true), writer, false);
+      final SAXGenerator generator = new SAXGenerator(rtx, writer, false);
       generator.run();
       TestCase.assertEquals(TestDocument.XML, writer.toString());
       rtx.close();
@@ -85,8 +83,7 @@ public class SAXGeneratorTest {
       final Writer writer = new StringWriter();
       final IReadTransaction rtx = session.beginReadTransaction();
       Assert.assertEquals(true, rtx.moveTo(8L));
-      final SAXGenerator generator =
-          new SAXGenerator(new DescendantAxis(rtx, true), writer, false);
+      final SAXGenerator generator = new SAXGenerator(rtx, writer, false);
       generator.run();
       Assert.assertEquals(
           "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
