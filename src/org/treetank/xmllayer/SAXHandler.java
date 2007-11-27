@@ -69,7 +69,7 @@ public class SAXHandler extends DefaultHandler {
    */
   @Override
   public void startDocument() throws SAXException {
-    mLeftSiblingKeyStack.push(IReadTransaction.NULL_NODE_KEY);
+    mLeftSiblingKeyStack.push(mWTX.getLeftSiblingKey());
   }
 
   /**
