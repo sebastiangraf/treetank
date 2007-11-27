@@ -73,6 +73,7 @@ public class SAXHandlerTest {
     final ISession session = Session.beginSession(new File(PATH));
     final IWriteTransaction wrtx = session.beginWriteTransaction();
     parser.parse(inputSource, new SAXHandler(wrtx));
+    Assert.assertEquals(2L, wrtx.getNodeKey());
     wrtx.close();
 
     final IReadTransaction expectedTrx = expectedSession.beginReadTransaction();
@@ -114,6 +115,7 @@ public class SAXHandlerTest {
     final IWriteTransaction wtx2 = session.beginWriteTransaction();
     wtx2.moveTo(11L);
     parser.parse(inputSource, new SAXHandler(wtx2));
+    Assert.assertEquals(12L, wtx2.getNodeKey());
     wtx2.commit();
     wtx2.close();
 
