@@ -21,10 +21,13 @@ package org.treetank.xmllayer;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.StringWriter;
+import java.io.Writer;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.api.IReadTransaction;
@@ -91,4 +94,40 @@ public class SAXHandlerTest {
     session.close();
 
   }
+
+  @Test
+  public void testSAXHandlerWithSubtreeInsertion() throws Exception {
+
+    // Setup expected session.
+    final ISession session = Session.beginSession(EXPECTED_PATH);
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+    TestDocument.create(wtx);
+    wtx.commit();
+    wtx.close();
+
+    // Setup parsed session.
+    final SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+    saxParserFactory.setValidating(false);
+    saxParserFactory.setNamespaceAware(true);
+    final SAXParser parser = saxParserFactory.newSAXParser();
+    final InputSource inputSource = new InputSource("xml/test.xml");
+    final IWriteTransaction wtx2 = session.beginWriteTransaction();
+    wtx2.moveTo(11L);
+    parser.parse(inputSource, new SAXHandler(wtx2));
+    wtx2.commit();
+    wtx2.close();
+
+    final IReadTransaction rtx2 = session.beginReadTransaction();
+    final Writer writer = new StringWriter();
+    new SAXGenerator(rtx2, writer, false).run();
+    Assert.assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\""
+        + " standalone=\"yes\"?><p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/>"
+        + "</b>oops2<b p:x=\"y\"><c/>bar</b>oops3<p:a i=\"j\">oops1<b>foo<c/>"
+        + "</b>oops2<b p:x=\"y\"><c/>bar</b>oops3</p:a></p:a>", writer
+        .toString());
+    rtx2.close();
+
+    session.close();
+  }
+
 }
