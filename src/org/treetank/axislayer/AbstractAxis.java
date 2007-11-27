@@ -54,6 +54,9 @@ public abstract class AbstractAxis implements IAxis {
   /** Key of node where axis started. */
   private long mStartKey;
 
+  /** Include self? */
+  private final boolean mIncludeSelf;
+
   /**
    * Bind axis step to transaction.
    * 
@@ -61,6 +64,19 @@ public abstract class AbstractAxis implements IAxis {
    */
   public AbstractAxis(final IReadTransaction rtx) {
     mRTX = rtx;
+    mIncludeSelf = false;
+    reset(rtx.getNodeKey());
+  }
+
+  /**
+   * Bind axis step to transaction.
+   * 
+   * @param rtx Transaction to operate with.
+   * @param includeSelf Is self included?
+   */
+  public AbstractAxis(final IReadTransaction rtx, final boolean includeSelf) {
+    mRTX = rtx;
+    mIncludeSelf = includeSelf;
     reset(rtx.getNodeKey());
   }
 
@@ -115,7 +131,7 @@ public abstract class AbstractAxis implements IAxis {
    * @return Key of node where transaction was before the first call of
    *         hasNext().
    */
-  public final long resetToStartKey() {
+  protected final long resetToStartKey() {
     // No check beacause of IAxis Convention 4.
     mRTX.moveTo(mStartKey);
     mNext = false;
@@ -129,11 +145,29 @@ public abstract class AbstractAxis implements IAxis {
    * @return Key of node where transaction was after the last call of
    *         hasNext().
    */
-  public final long resetToLastKey() {
+  protected final long resetToLastKey() {
     // No check beacause of IAxis Convention 4.
     mRTX.moveTo(mKey);
     mNext = true;
     return mKey;
+  }
+
+  /**
+   * Get start key.
+   * 
+   * @return Start key.
+   */
+  protected final long getStartKey() {
+    return mStartKey;
+  }
+
+  /**
+   * Is self included?
+   * 
+   * @return True if self is included. False else.
+   */
+  protected final boolean isSelfIncluded() {
+    return mIncludeSelf;
   }
 
   /**

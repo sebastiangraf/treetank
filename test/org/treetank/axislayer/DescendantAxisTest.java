@@ -22,6 +22,7 @@ import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
@@ -77,6 +78,58 @@ public class DescendantAxisTest {
 
     wtx.moveTo(11L);
     IAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {});
+
+    wtx.abort();
+    wtx.close();
+    session.close();
+
+  }
+
+  @Test
+  public void testIterateIncludingSelf() {
+
+    // Build simple test tree.
+    final ISession session = Session.beginSession(PATH);
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+    TestDocument.create(wtx);
+
+    wtx.moveToDocumentRoot();
+    IAxisTest.testIAxisConventions(new DescendantAxis(wtx, true), new long[] {
+        IReadTransaction.DOCUMENT_ROOT_KEY,
+        2L,
+        3L,
+        4L,
+        5L,
+        6L,
+        7L,
+        8L,
+        9L,
+        10L,
+        11L });
+
+    wtx.moveTo(2L);
+    IAxisTest.testIAxisConventions(new DescendantAxis(wtx, true), new long[] {
+        2L,
+        3L,
+        4L,
+        5L,
+        6L,
+        7L,
+        8L,
+        9L,
+        10L,
+        11L });
+
+    wtx.moveTo(8L);
+    IAxisTest.testIAxisConventions(new DescendantAxis(wtx, true), new long[] {
+        8L,
+        9L,
+        10L });
+
+    wtx.moveTo(11L);
+    IAxisTest.testIAxisConventions(
+        new DescendantAxis(wtx, true),
+        new long[] { 11L });
 
     wtx.abort();
     wtx.close();

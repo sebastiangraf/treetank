@@ -26,6 +26,7 @@ import java.io.Writer;
 
 import junit.framework.TestCase;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.api.IReadTransaction;
@@ -59,9 +60,38 @@ public class SAXGeneratorTest {
       final Writer writer = new StringWriter();
       final IReadTransaction rtx = session.beginReadTransaction();
       final SAXGenerator generator =
-          new SAXGenerator(new DescendantAxis(rtx), writer, false);
+          new SAXGenerator(new DescendantAxis(rtx, true), writer, false);
       generator.run();
       TestCase.assertEquals(TestDocument.XML, writer.toString());
+      rtx.close();
+      session.close();
+    } catch (Exception e) {
+      e.printStackTrace();
+      fail(e.getLocalizedMessage());
+    }
+  }
+
+  @Test
+  public void testSAXSubtreeGenerator() {
+    try {
+      // Setup session.
+      final ISession session = Session.beginSession(PATH);
+      final IWriteTransaction wtx = session.beginWriteTransaction();
+      TestDocument.create(wtx);
+      wtx.commit();
+      wtx.close();
+
+      // Generate from this session.
+      final Writer writer = new StringWriter();
+      final IReadTransaction rtx = session.beginReadTransaction();
+      Assert.assertEquals(true, rtx.moveTo(8L));
+      final SAXGenerator generator =
+          new SAXGenerator(new DescendantAxis(rtx, true), writer, false);
+      generator.run();
+      Assert.assertEquals(
+          "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+              + "<b p:x=\"y\"><c/>bar</b>",
+          writer.toString());
       rtx.close();
       session.close();
     } catch (Exception e) {

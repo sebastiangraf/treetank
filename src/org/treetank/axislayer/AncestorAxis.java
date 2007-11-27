@@ -31,6 +31,8 @@ import org.treetank.api.IReadTransaction;
  */
 public class AncestorAxis extends AbstractAxis implements IAxis {
 
+  private boolean mFirst;
+
   /**
    * Constructor initializing internal state.
    * 
@@ -41,10 +43,36 @@ public class AncestorAxis extends AbstractAxis implements IAxis {
   }
 
   /**
+   * Constructor initializing internal state.
+   * 
+   * @param rtx Exclusive (immutable) trx to iterate with.
+   * @param includeSelf Is self included?
+   */
+  public AncestorAxis(final IReadTransaction rtx, final boolean includeSelf) {
+    super(rtx, includeSelf);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final void reset(final long nodeKey) {
+    super.reset(nodeKey);
+    mFirst = true;
+  }
+
+  /**
    * {@inheritDoc}
    */
   public final boolean hasNext() {
     resetToLastKey();
+
+    // Self
+    if (mFirst && isSelfIncluded()) {
+      mFirst = false;
+      return true;
+    }
+
     if (!getTransaction().isDocumentRootKind()
         && getTransaction().hasParent()
         && getTransaction().getParentKey() != IReadTransaction.DOCUMENT_ROOT_KEY) {
