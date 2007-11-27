@@ -18,6 +18,8 @@
  
 TreeTank 4.18
 -------------
+ 8 SAXGenerator now only accepting IReadTransaction. It will allways perform
+   a descendant-or self step on the currently selected node.
  7 Include self option for ancestor and descendant axis.
  6 Fixed bug with auto commit being triggered too often.
  5 Reduced size of node and indirect pages to better support updates.

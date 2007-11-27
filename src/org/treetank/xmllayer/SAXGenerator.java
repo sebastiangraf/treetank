@@ -23,6 +23,7 @@ import java.io.Writer;
 
 import org.treetank.api.IAxis;
 import org.treetank.api.IReadTransaction;
+import org.treetank.axislayer.DescendantAxis;
 import org.treetank.utils.FastStack;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -59,15 +60,15 @@ public final class SAXGenerator implements Runnable {
   /**
    * Constructor to bind to SAX content handler.
    * 
-   * @param axis Axis to operate with.
+   * @param rtx Transaction to perform descendant axis on.
    * @param contentHandler SAX content handler to fire SAX events to.
    * @param prettyPrint Is pretty print enabled?
    */
   public SAXGenerator(
-      final IAxis axis,
+      final IReadTransaction rtx,
       final ContentHandler contentHandler,
       final boolean prettyPrint) {
-    mAxis = axis;
+    mAxis = new DescendantAxis(rtx, true);
     mHandler = contentHandler;
     mPrettyPrint = prettyPrint;
     stack = new FastStack<Long>();
@@ -79,18 +80,18 @@ public final class SAXGenerator implements Runnable {
   /**
    * Constructor to write reconstructed XML to a specified Writer.
    * 
-   * @param axis IAxis to operate with.
+   * @param rtx Transaction to perform descendant axis on.
    * @param writer Output writer to write to.
    * @param prettyPrint Is pretty print enabled?
    */
   public SAXGenerator(
-      final IAxis axis,
+      final IReadTransaction rtx,
       final Writer writer,
       final boolean prettyPrint) {
     mHandler = null;
     mWriter = writer;
     mIsSerialize = true;
-    mAxis = axis;
+    mAxis = new DescendantAxis(rtx, true);
     mPrettyPrint = prettyPrint;
     stack = new FastStack<Long>();
   }
@@ -98,11 +99,11 @@ public final class SAXGenerator implements Runnable {
   /**
    * Constructor for printing the reconstructed XML to System.out.
    * 
-   * @param axis IAxis to work on.
+   * @param rtx Transaction to perform descendant step on.
    * @param prettyPrint Is pretty print required?
    */
-  public SAXGenerator(final IAxis axis, final boolean prettyPrint) {
-    this(axis, new PrintWriter(System.out), prettyPrint);
+  public SAXGenerator(final IReadTransaction rtx, final boolean prettyPrint) {
+    this(rtx, new PrintWriter(System.out), prettyPrint);
   }
 
   /**
