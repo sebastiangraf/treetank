@@ -18,7 +18,6 @@
 
 package org.treetank.xmllayer;
 
-import java.io.PipedOutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 
@@ -26,6 +25,7 @@ import org.treetank.api.IAxis;
 import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastStack;
 import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import com.sun.org.apache.xml.internal.serializer.Method;
@@ -38,29 +38,30 @@ import com.sun.org.apache.xml.internal.serializer.SerializerFactory;
  */
 public final class SAXGenerator implements Runnable {
 
-  protected ContentHandler mHandler;
+  /** Content handler to fire SAX events to. */
+  private ContentHandler mHandler;
 
-  private Writer mWriter;
+  /** Writer if serialization is active. */
+  private final Writer mWriter;
 
-  private boolean mIsSerialize = false;
+  /** Is output serialized? */
+  private final boolean mIsSerialize;
 
-  private final boolean mAsInputStream = false;
-
-  private PipedOutputStream mPipedOut;
-
+  /** Is pretty print active? */
   private final boolean mPrettyPrint;
 
   /** The nodeKey of the next node to visit. */
   private final IAxis mAxis;
 
+  /** Stack for end nodes. */
   private final FastStack<Long> stack;
 
   /**
-   * 'Callback' Constructor.
-   * <p>
-   * You'll get the SAX events emited during the roconstruction process. You can
-   * use these as input for your application.
-   * </p>
+   * Constructor to bind to SAX content handler.
+   * 
+   * @param axis Axis to operate with.
+   * @param contentHandler SAX content handler to fire SAX events to.
+   * @param prettyPrint Is pretty print enabled?
    */
   public SAXGenerator(
       final IAxis axis,
@@ -70,19 +71,23 @@ public final class SAXGenerator implements Runnable {
     mHandler = contentHandler;
     mPrettyPrint = prettyPrint;
     stack = new FastStack<Long>();
+    mIsSerialize = false;
+    mWriter = null;
 
   }
 
   /**
    * Constructor to write reconstructed XML to a specified Writer.
    * 
-   * @param aWriter
-   * @see java.io.Writer
+   * @param axis IAxis to operate with.
+   * @param writer Output writer to write to.
+   * @param prettyPrint Is pretty print enabled?
    */
   public SAXGenerator(
       final IAxis axis,
       final Writer writer,
       final boolean prettyPrint) {
+    mHandler = null;
     mWriter = writer;
     mIsSerialize = true;
     mAxis = axis;
@@ -91,16 +96,32 @@ public final class SAXGenerator implements Runnable {
   }
 
   /**
-   * Constructor for printing the reconstructed XML of global storage to stdout.
+   * Constructor for printing the reconstructed XML to System.out.
+   * 
+   * @param axis IAxis to work on.
+   * @param prettyPrint Is pretty print required?
    */
   public SAXGenerator(final IAxis axis, final boolean prettyPrint) {
     this(axis, new PrintWriter(System.out), prettyPrint);
   }
 
+  /**
+   * Build qualified name.
+   * 
+   * @param prefix Prefix of qualified name.
+   * @param localPart Local part of qualified name.
+   * @return Qualified name.
+   */
   private final String qName(final String prefix, final String localPart) {
     return (prefix.length() > 0 ? prefix + ":" + localPart : localPart);
   }
 
+  /**
+   * Visit attributes of given node.
+   * 
+   * @param rtx Transaction to read attributes from.
+   * @return SAX attributes implementation.
+   */
   private final AttributesImpl visitAttributes(final IReadTransaction rtx) {
 
     final AttributesImpl attributes = new AttributesImpl();
@@ -116,8 +137,13 @@ public final class SAXGenerator implements Runnable {
     return attributes;
   }
 
-  private final void emitNode(final IReadTransaction rtx) throws Exception {
-    // Emit events of current node.
+  /**
+   * Visit node.
+   * 
+   * @param rtx Transaction to read node from.
+   * @throws SAXException in case something went wrong.
+   */
+  private final void visitNode(final IReadTransaction rtx) throws SAXException {
     switch (rtx.getKind()) {
     case IReadTransaction.DOCUMENT_ROOT_KIND:
       // Ignore since startDocument was already emitted.
@@ -136,14 +162,25 @@ public final class SAXGenerator implements Runnable {
     }
   }
 
+  /**
+   * Emit pending end tag.
+   * 
+   * @param rtx Transaction to emit tag from.
+   * @throws SAXException if something went wrong.
+   */
   private final void emitEndElement(final IReadTransaction rtx)
-      throws Exception {
+      throws SAXException {
     mHandler.endElement(rtx.getURI(), rtx.getLocalPart(), qName(
         rtx.getPrefix(),
         rtx.getLocalPart()));
   }
 
-  private final void visitDocument() throws Exception {
+  /**
+   * Visit document by traversing over all given nodes found by the IAxis.
+   * 
+   * @throws SAXException if something went wrong.
+   */
+  private final void visitDocument() throws SAXException {
     final IReadTransaction rtx = mAxis.getTransaction();
     boolean closeElements = false;
 
@@ -163,7 +200,7 @@ public final class SAXGenerator implements Runnable {
         closeElements = false;
       }
 
-      emitNode(rtx);
+      visitNode(rtx);
 
       // Emit corresponding end element or push it to stack.
       if (rtx.isElementKind()) {
@@ -188,12 +225,15 @@ public final class SAXGenerator implements Runnable {
 
   }
 
+  /**
+   * {@inheritDoc}
+   */
   public void run() {
     try {
 
       // Start document.
       if (mIsSerialize) {
-        // Set up serializer, why here? XML Declaration.
+        // Immediately serialize XML.
         java.util.Properties props =
             OutputPropertiesFactory.getDefaultMethodProperties(Method.XML);
         props.setProperty("indent", mPrettyPrint ? "yes" : "no");
@@ -205,13 +245,7 @@ public final class SAXGenerator implements Runnable {
         props.setProperty("standalone", "yes");
 
         Serializer serializer = SerializerFactory.getSerializer(props);
-
-        if (mAsInputStream) {
-          serializer.setOutputStream(mPipedOut);
-          serializer.setWriter(new PrintWriter(System.err));
-        } else {
-          serializer.setWriter(mWriter);
-        }
+        serializer.setWriter(mWriter);
         mHandler = serializer.asContentHandler();
       }
 
@@ -219,10 +253,6 @@ public final class SAXGenerator implements Runnable {
       mHandler.startDocument();
       visitDocument();
       mHandler.endDocument();
-
-      if (mAsInputStream) {
-        mPipedOut.close();
-      }
 
     } catch (Exception e) {
       throw new RuntimeException(e);
