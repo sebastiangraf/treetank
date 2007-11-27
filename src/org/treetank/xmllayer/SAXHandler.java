@@ -25,7 +25,6 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.utils.FastStack;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -35,13 +34,13 @@ import org.xml.sax.helpers.DefaultHandler;
  * SAX handler shredding a complete XML document into an TreeTank storage.
  * </p>
  */
-public class SAXHandler extends DefaultHandler implements LexicalHandler {
+public class SAXHandler extends DefaultHandler {
 
   /** TreeTank write transaction. */
-  protected IWriteTransaction mWTX;
+  private final IWriteTransaction mWTX;
 
   /** Stack containing left sibling nodeKey of each level. */
-  protected FastStack<Long> mLeftSiblingKeyStack;
+  private final FastStack<Long> mLeftSiblingKeyStack;
 
   /** Aggregated pending text node. */
   private final StringBuilder mCharacters;
@@ -70,15 +69,7 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
    */
   @Override
   public void startDocument() throws SAXException {
-
-    try {
-
-      mLeftSiblingKeyStack.push(IReadTransaction.NULL_NODE_KEY);
-
-    } catch (Exception e) {
-      throw new SAXException(e);
-    }
-
+    mLeftSiblingKeyStack.push(IReadTransaction.NULL_NODE_KEY);
   }
 
   /**
@@ -91,49 +82,39 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
       final String qName,
       final Attributes attr) throws SAXException {
 
-    try {
+    // Insert text node.
+    insertPendingText();
 
-      // Insert text node.
-      insertPendingText();
+    // Insert element node and maintain stack.      
+    long key;
+    if (mLeftSiblingKeyStack.peek() == IReadTransaction.NULL_NODE_KEY) {
+      key =
+          mWTX.insertElementAsFirstChild(localName, uri, qNameToPrefix(qName));
 
-      // Insert element node and maintain stack.      
-      long key;
-      if (mLeftSiblingKeyStack.peek() == IReadTransaction.NULL_NODE_KEY) {
-        key =
-            mWTX
-                .insertElementAsFirstChild(localName, uri, qNameToPrefix(qName));
+    } else {
+      key =
+          mWTX
+              .insertElementAsRightSibling(localName, uri, qNameToPrefix(qName));
 
-      } else {
-        key =
-            mWTX.insertElementAsRightSibling(
-                localName,
-                uri,
-                qNameToPrefix(qName));
+    }
+    mLeftSiblingKeyStack.pop();
+    mLeftSiblingKeyStack.push(key);
+    mLeftSiblingKeyStack.push(IReadTransaction.NULL_NODE_KEY);
 
-      }
-      mLeftSiblingKeyStack.pop();
-      mLeftSiblingKeyStack.push(key);
+    // Insert uriKey nodes.
+    for (int i = 0, n = mPrefixList.size(); i < n; i++) {
+      //insert(IConstants.NAMESPACE, "", uriList.get(i), prefixList.get(i), "");
+    }
+    mPrefixList.clear();
+    mURIList.clear();
 
-      mLeftSiblingKeyStack.push(IReadTransaction.NULL_NODE_KEY);
-
-      // Insert uriKey nodes.
-      for (int i = 0, n = mPrefixList.size(); i < n; i++) {
-        //insert(IConstants.NAMESPACE, "", uriList.get(i), prefixList.get(i), "");
-      }
-      mPrefixList.clear();
-      mURIList.clear();
-
-      // Insert attribute nodes.
-      for (int i = 0, l = attr.getLength(); i < l; i++) {
-        mWTX.insertAttribute(
-            attr.getLocalName(i),
-            attr.getURI(i),
-            qNameToPrefix(attr.getQName(i)),
-            attr.getValue(i));
-      }
-
-    } catch (Exception e) {
-      throw new SAXException(e);
+    // Insert attribute nodes.
+    for (int i = 0, l = attr.getLength(); i < l; i++) {
+      mWTX.insertAttribute(
+          attr.getLocalName(i),
+          attr.getURI(i),
+          qNameToPrefix(attr.getQName(i)),
+          attr.getValue(i));
     }
   }
 
@@ -145,18 +126,9 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
       final String uri,
       final String localName,
       final String qName) throws SAXException {
-
-    try {
-
-      insertPendingText();
-
-      mLeftSiblingKeyStack.pop();
-
-      mWTX.moveTo(mLeftSiblingKeyStack.peek());
-
-    } catch (Exception e) {
-      throw new SAXException(e);
-    }
+    insertPendingText();
+    mLeftSiblingKeyStack.pop();
+    mWTX.moveTo(mLeftSiblingKeyStack.peek());
   }
 
   /**
@@ -165,21 +137,16 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
   @Override
   public void characters(final char[] ch, final int start, final int length)
       throws SAXException {
-
     mCharacters.append(ch, start, length);
 
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void processingInstruction(final String target, final String data)
       throws SAXException {
-    // Ignore it for now. If activated, some axis iterators must be adapted!
-    //    try {
-    //      insert(IConstants.PROCESSING_INSTRUCTION, target, "", "", data);
-    //      
-    //    } catch (Exception e) {
-    //      throw new SAXException(e);
-    //    }
   }
 
   /**
@@ -187,7 +154,6 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
    */
   @Override
   public void startPrefixMapping(String prefix, String uri) throws SAXException {
-
     mPrefixList.add(prefix);
     mURIList.add(uri);
   }
@@ -197,9 +163,9 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
    * 
    * @throws Exception of any kind.
    */
-  private final void insertPendingText() throws Exception {
+  private final void insertPendingText() {
 
-    String text = mCharacters.toString().trim();
+    final String text = mCharacters.toString().trim();
     mCharacters.setLength(0);
 
     if (text.length() > 0) {
@@ -225,52 +191,12 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
    * @return Prefix or empty string.
    */
   private final String qNameToPrefix(final String qName) {
-
-    int delimiter = qName.indexOf(":");
+    final int delimiter = qName.indexOf(":");
     if (delimiter > -1) {
       return qName.substring(0, delimiter);
     } else {
       return "";
     }
-  }
-
-  public final void comment(final char[] ch, final int start, final int length)
-      throws SAXException {
-    // TODO Auto-generated method stub
-
-  }
-
-  public final void endCDATA() throws SAXException {
-    // TODO Auto-generated method stub
-
-  }
-
-  public final void endDTD() throws SAXException {
-    // TODO Auto-generated method stub
-
-  }
-
-  public final void endEntity(final String name) throws SAXException {
-    // TODO Auto-generated method stub
-
-  }
-
-  public final void startCDATA() throws SAXException {
-    // TODO Auto-generated method stub
-
-  }
-
-  public final void startDTD(
-      final String name,
-      final String publicId,
-      final String systemId) throws SAXException {
-    //    System.out.print(name + "; ");
-    //    System.out.print(publicId + "; ");
-    //    System.out.println(systemId);
-  }
-
-  public final void startEntity(String name) throws SAXException {
-    //    System.out.println(name);
   }
 
 }
