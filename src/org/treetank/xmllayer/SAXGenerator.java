@@ -119,6 +119,9 @@ public final class SAXGenerator implements Runnable {
   private final void emitNode(final IReadTransaction rtx) throws Exception {
     // Emit events of current node.
     switch (rtx.getKind()) {
+    case IReadTransaction.DOCUMENT_ROOT_KIND:
+      // Ignore since startDocument was already emitted.
+      break;
     case IReadTransaction.ELEMENT_KIND:
       // Emit start element.
       mHandler.startElement(rtx.getURI(), rtx.getLocalPart(), qName(rtx
@@ -211,12 +214,10 @@ public final class SAXGenerator implements Runnable {
         }
         mHandler = serializer.asContentHandler();
       }
+
+      // Emit SAX document.
       mHandler.startDocument();
-
-      // Traverse all descendants in document order.
       visitDocument();
-
-      // End document.
       mHandler.endDocument();
 
       if (mAsInputStream) {
@@ -227,19 +228,5 @@ public final class SAXGenerator implements Runnable {
       throw new RuntimeException(e);
     }
   }
-
-  //  private final void debug() throws Exception {
-  //    System.out.println(">>> DEBUG >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-  //    System.out.println("nodeKey = " + rtx.getNodeKey());
-  //    System.out.println("nextKey = " + mNextKey);
-  //    System.out.print("rightSiblingKeyStack = { ");
-  //    for (int i = 0; i < mRightSiblingKeyStack.size(); i++) {
-  //      System.out.print(mRightSiblingKeyStack.get(i) + "; ");
-  //    }
-  //    System.out.println("}");
-  //    System.out.println("}");
-  //    System.out.println("attributeCount = " + rtx.getAttributeCount());
-  //    System.out.println("<<< DEBUG <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-  //  }
 
 }

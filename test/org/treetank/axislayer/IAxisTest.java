@@ -58,6 +58,9 @@ public class IAxisTest {
     for (final long nodeKey : axis) {
 
       // IAxis results.
+      if (offset >= expectedKeys.length) {
+        fail("More nodes found than expected.");
+      }
       keys[offset++] = rtx.getNodeKey();
 
       // IAxis Convention 2.

@@ -48,13 +48,27 @@ public class DescendantAxis extends AbstractAxis implements IAxis {
   }
 
   /**
+   * Constructor initializing internal state.
+   * 
+   * @param rtx Exclusive (immutable) trx to iterate with.
+   * @param includeSelf Is self included?
+   */
+  public DescendantAxis(final IReadTransaction rtx, final boolean includeSelf) {
+    super(rtx, includeSelf);
+  }
+
+  /**
    * {@inheritDoc}
    */
   @Override
   public final void reset(final long nodeKey) {
     super.reset(nodeKey);
     mRightSiblingKeyStack = new FastStack<Long>();
-    mNextKey = getTransaction().getFirstChildKey();
+    if (isSelfIncluded()) {
+      mNextKey = getTransaction().getNodeKey();
+    } else {
+      mNextKey = getTransaction().getFirstChildKey();
+    }
   }
 
   /**
@@ -70,6 +84,12 @@ public class DescendantAxis extends AbstractAxis implements IAxis {
     }
 
     getTransaction().moveTo(mNextKey);
+
+    // Fail if the subtree is finished.
+    if (getTransaction().getLeftSiblingKey() == getStartKey()) {
+      resetToStartKey();
+      return false;
+    }
 
     // Always follow first child if there is one.
     if (getTransaction().hasFirstChild()) {
