@@ -146,7 +146,7 @@ public abstract class AbstractAxis implements IAxis {
    *         hasNext().
    */
   protected final long resetToLastKey() {
-    // No check beacause of IAxis Convention 4.
+    // No check because of IAxis Convention 4.
     mRTX.moveTo(mKey);
     mNext = true;
     return mKey;
