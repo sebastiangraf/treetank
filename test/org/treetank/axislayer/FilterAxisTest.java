@@ -76,4 +76,30 @@ public class FilterAxisTest {
 
   }
 
+  @Test
+  public void testValueAndNameAxisTest() throws IOException {
+
+    // Build simple test tree.
+    final ISession session = Session.beginSession(PATH);
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+    TestDocument.create(wtx);
+
+    wtx.moveTo(2L);
+    IAxisTest.testIAxisConventions(new FilterAxis(
+        new AttributeAxis(wtx),
+        new NameFilter(wtx, "i"),
+        new ValueFilter(wtx, "j")), new long[] { 2L });
+
+    wtx.moveTo(8L);
+    IAxisTest.testIAxisConventions(new FilterAxis(
+        new AttributeAxis(wtx),
+        new NameFilter(wtx, "y"),
+        new ValueFilter(wtx, "y")), new long[] {});
+
+    wtx.abort();
+    wtx.close();
+    session.close();
+
+  }
+
 }
