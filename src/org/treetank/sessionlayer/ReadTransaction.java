@@ -41,6 +41,9 @@ public class ReadTransaction implements IReadTransaction {
   /** Strong reference to currently selected node. */
   private AbstractNode mCurrentNode;
 
+  /** Is the cursor currently pointing to an attribute? */
+  private boolean mIsAttribute;
+
   /** Tracks whether the transaction is closed. */
   private boolean mClosed;
 
@@ -55,8 +58,9 @@ public class ReadTransaction implements IReadTransaction {
       final ReadTransactionState transactionState) {
     mSessionState = sessionState;
     mTransactionState = transactionState;
-    mClosed = false;
     mCurrentNode = getTransactionState().getNode(DOCUMENT_ROOT_KEY);
+    mIsAttribute = false;
+    mClosed = false;
   }
 
   /**
@@ -88,12 +92,13 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final boolean moveTo(final long nodeKey) {
     assertNotClosed();
-    // Do nothing if this node is already selected.
-    if (mCurrentNode.getNodeKey() == nodeKey) {
-      return true;
-    }
-    // Find node by its key.
     if (nodeKey != NULL_NODE_KEY) {
+      // Do nothing if this node is already selected.
+      if (!mIsAttribute && mCurrentNode.getNodeKey() == nodeKey) {
+        return true;
+      }
+      mIsAttribute = false;
+      // Remember old node and fetch new one.
       final AbstractNode oldNode = mCurrentNode;
       try {
         mCurrentNode = mTransactionState.getNode(nodeKey);
@@ -192,6 +197,7 @@ public class ReadTransaction implements IReadTransaction {
     final AbstractNode attributeNode = mCurrentNode.getAttribute(index);
     if (attributeNode != null) {
       mCurrentNode = attributeNode;
+      mIsAttribute = true;
       return true;
     } else {
       return false;
