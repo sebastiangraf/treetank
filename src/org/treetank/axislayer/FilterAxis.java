@@ -34,7 +34,7 @@ public class FilterAxis extends AbstractAxis implements IAxis {
   private final IAxis mAxis;
 
   /** Test to apply to axis. */
-  private final IFilter mAxisFilter;
+  private final IFilter[] mAxisFilter;
 
   /**
    * Constructor initializing internal state.
@@ -42,7 +42,7 @@ public class FilterAxis extends AbstractAxis implements IAxis {
    * @param axis Axis to iterate over.
    * @param axisTest Test to perform for each node found with axis.
    */
-  public FilterAxis(final IAxis axis, final IFilter axisTest) {
+  public FilterAxis(final IAxis axis, final IFilter... axisTest) {
     super(axis.getTransaction());
     mAxis = axis;
     mAxisFilter = axisTest;
@@ -66,11 +66,16 @@ public class FilterAxis extends AbstractAxis implements IAxis {
     resetToLastKey();
     while (mAxis.hasNext()) {
       mAxis.next();
-      if (mAxisFilter.filter()) {
+      boolean filterResult = true;
+      for (final IFilter filter : mAxisFilter) {
+        filterResult = filterResult && filter.filter();
+      }
+      if (filterResult) {
         return true;
       }
     }
     resetToStartKey();
     return false;
   }
+  
 }
