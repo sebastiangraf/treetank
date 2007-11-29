@@ -49,8 +49,8 @@ public class NestedAxisTest {
     // Find descendants starting from nodeKey 0L (root).
     wtx.moveToDocumentRoot();
 
-    // XPath expression /a/b/text():
-    // Part: /a
+    // XPath expression /p:a/b/text():
+    // Part: /p:a
     final IAxis childA =
         new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "p:a"));
     // Part: /b
