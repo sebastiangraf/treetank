@@ -26,6 +26,7 @@ import java.io.IOException;
 
 import junit.framework.TestCase;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.api.IReadTransaction;
@@ -305,6 +306,46 @@ public class SessionTest {
     assertEquals(12L, rtx.getNodeCount());
     assertEquals(false, rtx.moveTo(12L));
     rtx.close();
+
+    session.close();
+  }
+
+  @Test
+  public void testAutoClose() throws IOException {
+
+    final ISession session = Session.beginSession(TEST_EXISTING_PATH);
+
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+    TestDocument.create(wtx);
+
+    final IReadTransaction rtx = session.beginReadTransaction();
+
+    session.close();
+  }
+
+  @Test
+  public void testTransactionCount() throws IOException {
+
+    final ISession session = Session.beginSession(TEST_EXISTING_PATH);
+
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+    Assert.assertEquals(1, session.getWriteTransactionCount());
+    Assert.assertEquals(0, session.getReadTransactionCount());
+    wtx.close();
+
+    final IReadTransaction rtx = session.beginReadTransaction();
+    Assert.assertEquals(0, session.getWriteTransactionCount());
+    Assert.assertEquals(1, session.getReadTransactionCount());
+
+    final IReadTransaction rtx1 = session.beginReadTransaction();
+    Assert.assertEquals(0, session.getWriteTransactionCount());
+    Assert.assertEquals(2, session.getReadTransactionCount());
+
+    rtx.close();
+    rtx1.close();
+
+    Assert.assertEquals(0, session.getWriteTransactionCount());
+    Assert.assertEquals(0, session.getReadTransactionCount());
 
     session.close();
   }

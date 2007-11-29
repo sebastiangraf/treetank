@@ -217,6 +217,20 @@ public final class Session implements ISession {
   /**
    * {@inheritDoc}
    */
+  public final int getReadTransactionCount() {
+    return mSessionState.getReadTransactionCount();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final int getWriteTransactionCount() {
+    return mSessionState.getWriteTransactionCount();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final void close() {
     if (!mClosed) {
       synchronized (SESSION_MAP) {
