@@ -49,7 +49,7 @@ public class NestedAxisTest {
     // Find descendants starting from nodeKey 0L (root).
     wtx.moveToDocumentRoot();
 
-    // XPath expression /p:a/b/text():
+    // XPath expression /p:a/b/text()
     // Part: /p:a
     final IAxis childA =
         new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "p:a"));
@@ -58,7 +58,7 @@ public class NestedAxisTest {
         new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "b"));
     // Part: /text()
     final IAxis text = new FilterAxis(new ChildAxis(wtx), new TextFilter(wtx));
-    // Part: /a/b/text():
+    // Part: /p:a/b/text()
     final IAxis axis = new NestedAxis(new NestedAxis(childA, childB), text);
 
     IAxisTest.testIAxisConventions(axis, new long[] { 5L, 10L });
@@ -80,8 +80,8 @@ public class NestedAxisTest {
     // Find descendants starting from nodeKey 0L (root).
     wtx.moveToDocumentRoot();
 
-    // XPath expression /a/b/@x:
-    // Part: /a
+    // XPath expression /[:a/b/@p:x]
+    // Part: /p:a
     final IAxis childA =
         new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "p:a"));
     // Part: /b
@@ -90,7 +90,7 @@ public class NestedAxisTest {
     // Part: /@x
     final IAxis attributeX =
         new FilterAxis(new AttributeAxis(wtx), new NameFilter(wtx, "p:x"));
-    // Part: /a/b/@x:
+    // Part: /p:a/b/@p:x
     final IAxis axis =
         new NestedAxis(new NestedAxis(childA, childB), attributeX);
 
@@ -101,28 +101,29 @@ public class NestedAxisTest {
     session.close();
 
   }
-  
+
   @Test
-  public void testChainedAxisTest3() {
+  public void testNestedAxisTest3() {
 
     // Build simple test tree.
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
 
-    // Find descendants starting from nodeKey 0L (root).
+    // Find desceFndants starting from nodeKey 0L (root).
     wtx.moveToDocumentRoot();
 
-    // XPath expression a/node():
-    // Part: /a
+    // XPath expression p:a/node():
+    // Part: /p:a
     final IAxis childA =
-        new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "a"));
+        new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "p:a"));
+
     // Part: /node()
-    final IAxis nodeTest =
-        new FilterAxis(new AttributeAxis(wtx), new NodeFilter(wtx));
-    // Part: /a/b/@x:
-    final IAxis axis =
-        new NestedAxis(childA, nodeTest);
+    final IAxis childNode =
+        new FilterAxis(new ChildAxis(wtx), new NodeFilter(wtx));
+
+    // Part: /p:a/node():
+    final IAxis axis = new NestedAxis(childA, childNode);
 
     IAxisTest.testIAxisConventions(axis, new long[] { 3L, 4L, 7L, 8L, 11L });
 
