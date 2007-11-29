@@ -101,5 +101,35 @@ public class NestedAxisTest {
     session.close();
 
   }
+  
+  @Test
+  public void testChainedAxisTest3() {
+
+    // Build simple test tree.
+    final ISession session = Session.beginSession(PATH);
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+    TestDocument.create(wtx);
+
+    // Find descendants starting from nodeKey 0L (root).
+    wtx.moveToDocumentRoot();
+
+    // XPath expression a/node():
+    // Part: /a
+    final IAxis childA =
+        new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "a"));
+    // Part: /node()
+    final IAxis nodeTest =
+        new FilterAxis(new AttributeAxis(wtx), new NodeFilter(wtx));
+    // Part: /a/b/@x:
+    final IAxis axis =
+        new NestedAxis(childA, nodeTest);
+
+    IAxisTest.testIAxisConventions(axis, new long[] { 3L, 4L, 7L, 8L, 11L });
+
+    wtx.abort();
+    wtx.close();
+    session.close();
+
+  }
 
 }
