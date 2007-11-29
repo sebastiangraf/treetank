@@ -75,7 +75,7 @@ public class XMLShredderTest {
     final Iterator<Long> expectedDescendants = new DescendantAxis(expectedTrx);
     final Iterator<Long> descendants = new DescendantAxis(rtx);
 
-    assertEquals(expectedTrx.getRevisionSize(), rtx.getRevisionSize());
+    assertEquals(expectedTrx.getNodeCount(), rtx.getNodeCount());
     while (expectedDescendants.hasNext() && descendants.hasNext()) {
       assertEquals(expectedTrx.getNodeKey(), rtx.getNodeKey());
       assertEquals(expectedTrx.getParentKey(), rtx.getParentKey());

@@ -18,6 +18,9 @@
  
 TreeTank 4.19
 -------------
+ 3 Renamed getRevisionSize() to getNodeCount() which is more expressive.
+ 2 Introduced transaction ID. This allows to close all open transactions during
+   ISession.close().
  1 Fixed bug with NestedAxis.
  0 Local part and prefix are no longer stored separately but as qualified name.
    Binary incompatibility with 4.18.

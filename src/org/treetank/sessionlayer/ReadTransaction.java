@@ -32,6 +32,9 @@ import org.treetank.utils.TypedValue;
  */
 public class ReadTransaction implements IReadTransaction {
 
+  /** ID of transaction. */
+  private final long mTransactionID;
+
   /** Session state this write transaction is bound to. */
   private SessionState mSessionState;
 
@@ -50,17 +53,27 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * Constructor.
    * 
+   * @param transactionID ID of transaction.
    * @param sessionState Session state to work with.
    * @param transactionState Transaction state to work with.
    */
   protected ReadTransaction(
+      final long transactionID,
       final SessionState sessionState,
       final ReadTransactionState transactionState) {
+    mTransactionID = transactionID;
     mSessionState = sessionState;
     mTransactionState = transactionState;
     mCurrentNode = getTransactionState().getNode(DOCUMENT_ROOT_KEY);
     mIsAttribute = false;
     mClosed = false;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final long getTransactionID() {
+    return mTransactionID;
   }
 
   /**
@@ -74,17 +87,17 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final long getRevisionSize() {
+  public final long getRevisionTimestamp() {
     assertNotClosed();
-    return mTransactionState.getRevisionRootPage().getRevisionSize();
+    return mTransactionState.getRevisionRootPage().getRevisionTimestamp();
   }
 
   /**
    * {@inheritDoc}
    */
-  public final long getRevisionTimestamp() {
+  public final long getNodeCount() {
     assertNotClosed();
-    return mTransactionState.getRevisionRootPage().getRevisionTimestamp();
+    return mTransactionState.getRevisionRootPage().getRevisionSize();
   }
 
   /**
@@ -632,7 +645,7 @@ public class ReadTransaction implements IReadTransaction {
       mTransactionState.close();
 
       // Callback on session to make sure everything is cleaned up.
-      mSessionState.closeReadTransaction();
+      mSessionState.closeReadTransaction(mTransactionID);
 
       // Immediately release all references.
       mSessionState = null;

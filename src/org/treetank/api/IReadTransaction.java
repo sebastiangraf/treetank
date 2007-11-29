@@ -156,6 +156,13 @@ public interface IReadTransaction {
   public static final int BOOLEAN_TYPE = 6;
 
   /**
+   * Get ID of transaction.
+   * 
+   * @return ID of transaction.
+   */
+  public long getTransactionID();
+
+  /**
    * What is the revision number of this IReadTransaction?
    * 
    * @return Immutable revision number of this IReadTransaction.
@@ -163,18 +170,18 @@ public interface IReadTransaction {
   public long getRevisionNumber();
 
   /**
-   * How many nodes are stored in the revision of this IReadTransaction?
-   * 
-   * @return Immutable number of nodes of this IReadTransaction.
-   */
-  public long getRevisionSize();
-
-  /**
    * UNIX-style timestamp of the commit of the revision.
    * 
    * @return Timestamp of revision commit.
    */
   public long getRevisionTimestamp();
+
+  /**
+   * How many nodes are stored in the revision of this IReadTransaction?
+   * 
+   * @return Immutable number of nodes of this IReadTransaction.
+   */
+  public long getNodeCount();
 
   // --- Node Selectors --------------------------------------------------------
 
