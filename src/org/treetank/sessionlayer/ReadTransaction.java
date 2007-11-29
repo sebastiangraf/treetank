@@ -92,11 +92,11 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final boolean moveTo(final long nodeKey) {
     assertNotClosed();
+    // Do nothing if this node is already selected.
+    if ((mCurrentNode.getNodeKey() == nodeKey) && !mIsAttribute) {
+      return true;
+    }
     if (nodeKey != NULL_NODE_KEY) {
-      // Do nothing if this node is already selected.
-      if (!mIsAttribute && mCurrentNode.getNodeKey() == nodeKey) {
-        return true;
-      }
       mIsAttribute = false;
       // Remember old node and fetch new one.
       final AbstractNode oldNode = mCurrentNode;
