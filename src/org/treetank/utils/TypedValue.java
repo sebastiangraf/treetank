@@ -56,7 +56,7 @@ public final class TypedValue {
     case IReadTransaction.BOOLEAN_TYPE:
       return Boolean.toString(parseBoolean(bytes));
     default:
-      return parseString(bytes);
+      return (bytes == null ? "" : parseString(bytes));
     }
   }
 
