@@ -48,12 +48,11 @@ public class AttributeAndNamespaceTest {
 
     wtx.moveTo(2L);
     TestCase.assertEquals(1, wtx.getAttributeCount());
-    TestCase.assertEquals("i", wtx.getAttributeLocalPart(0));
+    TestCase.assertEquals("i", wtx.getAttributeName(0));
 
     wtx.moveTo(8L);
     TestCase.assertEquals(1, wtx.getAttributeCount());
-    TestCase.assertEquals("x", wtx.getAttributeLocalPart(0));
-    TestCase.assertEquals("p", wtx.getAttributePrefix(0));
+    TestCase.assertEquals("p:x", wtx.getAttributeName(0));
     TestCase.assertEquals("ns", wtx.getAttributeURI(0));
 
     wtx.abort();

@@ -107,11 +107,11 @@ public final class WriteTransaction extends ReadTransaction
       if (hasFirstChild()) {
         moveToFirstChild();
         while (isFullTextKind()
-            && (getLocalPartKey() != character)
+            && (getNameKey() != character)
             && hasRightSibling()) {
           moveToRightSibling();
         }
-        if (getLocalPartKey() != character) {
+        if (getNameKey() != character) {
           moveToParent();
           tokenKey = insertFullTextAsFirstChild(character);
         } else {
@@ -174,9 +174,8 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final synchronized long insertElementAsFirstChild(
-      final String localPart,
-      final String uri,
-      final String prefix) {
+      final String name,
+      final String uri) {
     return insertFirstChild(((WriteTransactionState) getTransactionState())
         .createElementNode(
             getCurrentNode().getNodeKey(),
@@ -184,10 +183,8 @@ public final class WriteTransaction extends ReadTransaction
             NULL_NODE_KEY,
             getCurrentNode().getFirstChildKey(),
             ((WriteTransactionState) getTransactionState())
-                .createNameKey(localPart),
-            ((WriteTransactionState) getTransactionState()).createNameKey(uri),
-            ((WriteTransactionState) getTransactionState())
-                .createNameKey(prefix)));
+                .createNameKey(name),
+            ((WriteTransactionState) getTransactionState()).createNameKey(uri)));
   }
 
   /**
@@ -240,15 +237,14 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final synchronized long insertFullTextAsFirstChild(
-      final int localPartKey) {
+  public final synchronized long insertFullTextAsFirstChild(final int nameKey) {
     return insertFirstChild(((WriteTransactionState) getTransactionState())
         .createFullTextNode(
             getCurrentNode().getNodeKey(),
             NULL_NODE_KEY,
             NULL_NODE_KEY,
             getCurrentNode().getFirstChildKey(),
-            localPartKey));
+            nameKey));
   }
 
   /**
@@ -268,9 +264,8 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final synchronized long insertElementAsRightSibling(
-      final String localPart,
-      final String uri,
-      final String prefix) {
+      final String name,
+      final String uri) {
     return insertRightSibling(((WriteTransactionState) getTransactionState())
         .createElementNode(
             getCurrentNode().getParentKey(),
@@ -278,10 +273,8 @@ public final class WriteTransaction extends ReadTransaction
             getCurrentNode().getNodeKey(),
             getCurrentNode().getRightSiblingKey(),
             ((WriteTransactionState) getTransactionState())
-                .createNameKey(localPart),
-            ((WriteTransactionState) getTransactionState()).createNameKey(uri),
-            ((WriteTransactionState) getTransactionState())
-                .createNameKey(prefix)));
+                .createNameKey(name),
+            ((WriteTransactionState) getTransactionState()).createNameKey(uri)));
   }
 
   /**
@@ -334,15 +327,14 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final synchronized long insertFullTextAsRightSibling(
-      final int localPartKey) {
+  public final synchronized long insertFullTextAsRightSibling(final int nameKey) {
     return insertRightSibling(((WriteTransactionState) getTransactionState())
         .createFullTextNode(
             getCurrentNode().getParentKey(),
             NULL_NODE_KEY,
             getCurrentNode().getNodeKey(),
             getCurrentNode().getRightSiblingKey(),
-            localPartKey));
+            nameKey));
   }
 
   /**
@@ -362,9 +354,8 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final synchronized void insertAttribute(
-      final String localPart,
+      final String name,
       final String uri,
-      final String prefix,
       final int valueType,
       final byte[] value) {
 
@@ -373,9 +364,8 @@ public final class WriteTransaction extends ReadTransaction
 
     prepareCurrentNode().insertAttribute(
         ((WriteTransactionState) getTransactionState())
-            .createNameKey(localPart),
+            .createNameKey(name),
         ((WriteTransactionState) getTransactionState()).createNameKey(uri),
-        ((WriteTransactionState) getTransactionState()).createNameKey(prefix),
         valueType,
         value);
   }
@@ -384,64 +374,44 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final synchronized void insertAttribute(
-      final String localPart,
+      final String name,
       final String uri,
-      final String prefix,
       final String value) {
-    insertAttribute(
-        localPart,
-        uri,
-        prefix,
-        IReadTransaction.STRING_TYPE,
-        TypedValue.getBytes(value));
+    insertAttribute(name, uri, IReadTransaction.STRING_TYPE, TypedValue
+        .getBytes(value));
   }
 
   /**
    * {@inheritDoc}
    */
   public final synchronized void insertAttribute(
-      final String localPart,
+      final String name,
       final String uri,
-      final String prefix,
       final int value) {
-    insertAttribute(
-        localPart,
-        uri,
-        prefix,
-        IReadTransaction.INT_TYPE,
-        TypedValue.getBytes(value));
+    insertAttribute(name, uri, IReadTransaction.INT_TYPE, TypedValue
+        .getBytes(value));
   }
 
   /**
    * {@inheritDoc}
    */
   public final synchronized void insertAttribute(
-      final String localPart,
+      final String name,
       final String uri,
-      final String prefix,
       final long value) {
-    insertAttribute(
-        localPart,
-        uri,
-        prefix,
-        IReadTransaction.LONG_TYPE,
-        TypedValue.getBytes(value));
+    insertAttribute(name, uri, IReadTransaction.LONG_TYPE, TypedValue
+        .getBytes(value));
   }
 
   /**
    * {@inheritDoc}
    */
   public final synchronized void insertAttribute(
-      final String localPart,
+      final String name,
       final String uri,
-      final String prefix,
       final boolean value) {
-    insertAttribute(
-        localPart,
-        uri,
-        prefix,
-        IReadTransaction.BOOLEAN_TYPE,
-        TypedValue.getBytes(value));
+    insertAttribute(name, uri, IReadTransaction.BOOLEAN_TYPE, TypedValue
+        .getBytes(value));
   }
 
   /**
@@ -551,9 +521,8 @@ public final class WriteTransaction extends ReadTransaction
    */
   public final synchronized void setAttribute(
       final int index,
-      final String localPart,
+      final String name,
       final String uri,
-      final String prefix,
       final int valueType,
       final byte[] value) {
 
@@ -562,10 +531,8 @@ public final class WriteTransaction extends ReadTransaction
 
     prepareCurrentNode().setAttribute(
         index,
-        ((WriteTransactionState) getTransactionState())
-            .createNameKey(localPart),
+        ((WriteTransactionState) getTransactionState()).createNameKey(name),
         ((WriteTransactionState) getTransactionState()).createNameKey(uri),
-        ((WriteTransactionState) getTransactionState()).createNameKey(prefix),
         valueType,
         value);
   }
@@ -590,14 +557,13 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final synchronized void setLocalPart(final String localPart) {
+  public final synchronized void setName(final String name) {
 
     assertNotClosed();
     mModificationCount++;
 
-    prepareCurrentNode().setLocalPartKey(
-        ((WriteTransactionState) getTransactionState())
-            .createNameKey(localPart));
+    prepareCurrentNode().setNameKey(
+        ((WriteTransactionState) getTransactionState()).createNameKey(name));
   }
 
   /**
@@ -610,18 +576,6 @@ public final class WriteTransaction extends ReadTransaction
 
     prepareCurrentNode().setURIKey(
         ((WriteTransactionState) getTransactionState()).createNameKey(uri));
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final synchronized void setPrefix(final String prefix) {
-
-    assertNotClosed();
-    mModificationCount++;
-
-    prepareCurrentNode().setPrefixKey(
-        ((WriteTransactionState) getTransactionState()).createNameKey(prefix));
   }
 
   /**

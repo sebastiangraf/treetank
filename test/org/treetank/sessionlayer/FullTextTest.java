@@ -48,7 +48,7 @@ public class FullTextTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
 
     // Create token.
-    final long elementKey1 = wtx.insertElementAsFirstChild("foo", "", "");
+    final long elementKey1 = wtx.insertElementAsFirstChild("foo", "");
     final long tokenKey1 = wtx.insertToken("foo", elementKey1);
 
     // Move to token.
@@ -61,7 +61,7 @@ public class FullTextTest {
 
     // Insert another key for token.
     wtx.moveToDocumentRoot();
-    final long elementKey2 = wtx.insertElementAsFirstChild("foo", "", "");
+    final long elementKey2 = wtx.insertElementAsFirstChild("foo", "");
     final long tokenKey2 = wtx.insertToken("foo", elementKey2);
     Assert.assertEquals(tokenKey1, tokenKey2);
     Assert.assertEquals(true, wtx.moveToToken("foo"));
@@ -112,7 +112,7 @@ public class FullTextTest {
         .getRightSiblingKey());
 
     rtx.moveToFirstChild();
-    TestCase.assertEquals(13, rtx.getLocalPartKey());
+    TestCase.assertEquals(13, rtx.getNameKey());
     TestCase.assertEquals(true, rtx.hasParent());
     TestCase.assertEquals(true, rtx.hasFirstChild());
     TestCase.assertEquals(false, rtx.hasLeftSibling());
@@ -127,7 +127,7 @@ public class FullTextTest {
         .getRightSiblingKey());
 
     rtx.moveToFirstChild();
-    TestCase.assertEquals(14, rtx.getLocalPartKey());
+    TestCase.assertEquals(14, rtx.getNameKey());
     TestCase.assertEquals(true, rtx.hasParent());
     TestCase.assertEquals(false, rtx.hasFirstChild());
     TestCase.assertEquals(false, rtx.hasLeftSibling());
@@ -141,7 +141,7 @@ public class FullTextTest {
     TestCase.assertEquals(4L, rtx.getRightSiblingKey());
 
     rtx.moveToRightSibling();
-    TestCase.assertEquals(15, rtx.getLocalPartKey());
+    TestCase.assertEquals(15, rtx.getNameKey());
     TestCase.assertEquals(true, rtx.hasParent());
     TestCase.assertEquals(false, rtx.hasFirstChild());
     TestCase.assertEquals(true, rtx.hasLeftSibling());
@@ -154,7 +154,7 @@ public class FullTextTest {
     TestCase.assertEquals(5L, rtx.getRightSiblingKey());
 
     rtx.moveToRightSibling();
-    TestCase.assertEquals(16, rtx.getLocalPartKey());
+    TestCase.assertEquals(16, rtx.getNameKey());
     TestCase.assertEquals(true, rtx.hasParent());
     TestCase.assertEquals(true, rtx.hasFirstChild());
     TestCase.assertEquals(true, rtx.hasLeftSibling());
@@ -167,7 +167,7 @@ public class FullTextTest {
         .getRightSiblingKey());
 
     rtx.moveToFirstChild();
-    TestCase.assertEquals(18, rtx.getLocalPartKey());
+    TestCase.assertEquals(18, rtx.getNameKey());
     TestCase.assertEquals(true, rtx.hasParent());
     TestCase.assertEquals(false, rtx.hasFirstChild());
     TestCase.assertEquals(false, rtx.hasLeftSibling());
@@ -181,7 +181,7 @@ public class FullTextTest {
     TestCase.assertEquals(6L, rtx.getRightSiblingKey());
 
     rtx.moveToRightSibling();
-    TestCase.assertEquals(17, rtx.getLocalPartKey());
+    TestCase.assertEquals(17, rtx.getNameKey());
     TestCase.assertEquals(true, rtx.hasParent());
     TestCase.assertEquals(false, rtx.hasFirstChild());
     TestCase.assertEquals(true, rtx.hasLeftSibling());

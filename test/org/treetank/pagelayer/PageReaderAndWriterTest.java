@@ -56,7 +56,7 @@ public class PageReaderAndWriterTest {
 
     // Create node page with single node.
     final NodePage page1 = new NodePage(13L);
-    page1.setNode(3, new ElementNode(0L, 1L, 2L, 3L, 4L, 6, 7, 8));
+    page1.setNode(3, new ElementNode(0L, 1L, 2L, 3L, 4L, 6, 7));
     final PageReference pageReference = new PageReference();
 
     // Serialize node page.

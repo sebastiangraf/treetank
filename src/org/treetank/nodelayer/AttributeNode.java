@@ -29,14 +29,11 @@ import org.treetank.utils.FastByteArrayWriter;
  */
 public final class AttributeNode extends AbstractNode {
 
-  /** Key of local part. */
-  private int mLocalPartKey;
+  /** Key of qualified name. */
+  private int mNameKey;
 
   /** Key of URI. */
   private int mURIKey;
-
-  /** Key of prefix. */
-  private int mPrefixKey;
 
   /** Type of value. */
   private int mValueType;
@@ -48,23 +45,20 @@ public final class AttributeNode extends AbstractNode {
    * Constructor to create attribute.
    * 
    * @param nodeKey Key of node.
-   * @param localPartKey Key of local part.
+   * @param nameKey Key of qualified name.
    * @param uriKey Key of URI.
-   * @param prefixKey Key of prefix.
    * @param valueType Type of attribute value.
    * @param value Value of attribute.
    */
   public AttributeNode(
       final long nodeKey,
-      final int localPartKey,
+      final int nameKey,
       final int uriKey,
-      final int prefixKey,
       final int valueType,
       final byte[] value) {
     super(nodeKey);
-    mLocalPartKey = localPartKey;
+    mNameKey = nameKey;
     mURIKey = uriKey;
-    mPrefixKey = prefixKey;
     mValueType = valueType;
     mValue = value;
   }
@@ -76,9 +70,8 @@ public final class AttributeNode extends AbstractNode {
    */
   public AttributeNode(final AbstractNode attribute) {
     super(attribute.getNodeKey());
-    mLocalPartKey = attribute.getLocalPartKey();
+    mNameKey = attribute.getNameKey();
     mURIKey = attribute.getURIKey();
-    mPrefixKey = attribute.getPrefixKey();
     mValueType = attribute.getValueType();
     mValue = attribute.getValue();
   }
@@ -86,9 +79,8 @@ public final class AttributeNode extends AbstractNode {
   public AttributeNode(final long nodeKey, final FastByteArrayReader in) {
     super(nodeKey);
 
-    mLocalPartKey = in.readVarInt();
+    mNameKey = in.readVarInt();
     mURIKey = in.readVarInt();
-    mPrefixKey = in.readVarInt();
     mValueType = in.readByte();
     mValue = in.readByteArray();
   }
@@ -105,16 +97,16 @@ public final class AttributeNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final int getLocalPartKey() {
-    return mLocalPartKey;
+  public final int getNameKey() {
+    return mNameKey;
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public final void setLocalPartKey(final int localPartKey) {
-    this.mLocalPartKey = localPartKey;
+  public final void setNameKey(final int nameKey) {
+    this.mNameKey = nameKey;
   }
 
   /**
@@ -131,22 +123,6 @@ public final class AttributeNode extends AbstractNode {
   @Override
   public final long getParentKey() {
     return getNodeKey();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final int getPrefixKey() {
-    return mPrefixKey;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final void setPrefixKey(final int prefixKey) {
-    mPrefixKey = prefixKey;
   }
 
   /**
@@ -203,9 +179,8 @@ public final class AttributeNode extends AbstractNode {
    */
   @Override
   public final void serialize(final FastByteArrayWriter out) {
-    out.writeVarInt(mLocalPartKey);
+    out.writeVarInt(mNameKey);
     out.writeVarInt(mURIKey);
-    out.writeVarInt(mPrefixKey);
     out.writeByte((byte) mValueType);
     out.writeByteArray(mValue);
   }

@@ -122,7 +122,7 @@ public final class BeanUtil {
 
       // Check whether node points to element with clazz name.
       if (rtx.isElementKind()
-          && rtx.getLocalPart().equalsIgnoreCase(clazz.getSimpleName())) {
+          && rtx.getName().equalsIgnoreCase(clazz.getSimpleName())) {
 
         target = clazz.newInstance();
 
@@ -132,7 +132,7 @@ public final class BeanUtil {
           // Only fetch elements that contain a text.
           // Set (private) property.
           final Field field =
-              clazz.getDeclaredField(rtx.getAttributeLocalPart(index));
+              clazz.getDeclaredField(rtx.getAttributeName(index));
           field.setAccessible(true);
           // Switch according to field type.
           switch (field.getType().getCanonicalName().hashCode()) {
@@ -215,10 +215,7 @@ public final class BeanUtil {
 
       // Insert bean root element.
       beanKey =
-          wtx.insertElementAsFirstChild(
-              object.getClass().getSimpleName(),
-              "",
-              "");
+          wtx.insertElementAsFirstChild(object.getClass().getSimpleName(), "");
 
       // Find all fields.
       final BeanInfo info =
@@ -294,7 +291,7 @@ public final class BeanUtil {
           }
 
           // Insert property as element with text.
-          wtx.insertAttribute(property.getName(), "", "", type, bytes);
+          wtx.insertAttribute(property.getName(), "", type, bytes);
 
         }
       }
@@ -326,8 +323,7 @@ public final class BeanUtil {
       final Object object) {
     // Check whether node points to element with clazz name.
     if (wtx.isElementKind()
-        && wtx.getLocalPart().equalsIgnoreCase(
-            object.getClass().getSimpleName())) {
+        && wtx.getName().equalsIgnoreCase(object.getClass().getSimpleName())) {
 
       final long nodeKey = wtx.getNodeKey();
 

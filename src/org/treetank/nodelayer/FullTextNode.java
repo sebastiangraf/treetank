@@ -82,7 +82,7 @@ public final class FullTextNode extends AbstractNode {
     mFirstChildKey = node.getFirstChildKey();
     mLeftSiblingKey = node.getLeftSiblingKey();
     mRightSiblingKey = node.getRightSiblingKey();
-    mLocalPartKey = node.getLocalPartKey();
+    mLocalPartKey = node.getNameKey();
   }
 
   /**
@@ -219,7 +219,7 @@ public final class FullTextNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final int getLocalPartKey() {
+  public final int getNameKey() {
     return mLocalPartKey;
   }
 
@@ -227,7 +227,7 @@ public final class FullTextNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final void setLocalPartKey(final int localPartKey) {
+  public final void setNameKey(final int localPartKey) {
     mLocalPartKey = localPartKey;
   }
 

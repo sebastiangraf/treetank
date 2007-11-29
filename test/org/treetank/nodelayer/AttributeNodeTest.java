@@ -30,7 +30,7 @@ public class AttributeNodeTest {
 
     // Create empty node.
     final AbstractNode node1 =
-        new AttributeNode(13L, 14, 15, 16, 19, new byte[] {
+        new AttributeNode(13L, 14, 15, 19, new byte[] {
             (byte) 17,
             (byte) 18 });
 
@@ -50,9 +50,8 @@ public class AttributeNodeTest {
     assertEquals(0, node2.getChildCount());
     assertEquals(0, node2.getAttributeCount());
     assertEquals(0, node2.getNamespaceCount());
-    assertEquals(14, node2.getLocalPartKey());
+    assertEquals(14, node2.getNameKey());
     assertEquals(15, node2.getURIKey());
-    assertEquals(16, node2.getPrefixKey());
     assertEquals(19, node2.getValueType());
     assertEquals(2, node2.getValue().length);
     assertEquals(IReadTransaction.ATTRIBUTE_KIND, node2.getKind());

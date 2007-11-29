@@ -109,18 +109,16 @@ public final class WriteTransactionState extends ReadTransactionState {
       final long firstChildKey,
       final long leftSiblingKey,
       final long rightSiblingKey,
-      final int localPartKey,
-      final int uriKey,
-      final int prefixKey) {
+      final int nameKey,
+      final int uriKey) {
     return createNode(new ElementNode(
         getRevisionRootPage().getMaxNodeKey() + 1,
         parentKey,
         firstChildKey,
         leftSiblingKey,
         rightSiblingKey,
-        localPartKey,
-        uriKey,
-        prefixKey));
+        nameKey,
+        uriKey));
   }
 
   protected final TextNode createTextNode(
@@ -143,14 +141,14 @@ public final class WriteTransactionState extends ReadTransactionState {
       final long firstChildKey,
       final long leftSiblingKey,
       final long rightSiblingKey,
-      final int localPartKey) {
+      final int nameKey) {
     return createNode(new FullTextNode(
         getRevisionRootPage().getMaxNodeKey() + 1,
         parentKey,
         firstChildKey,
         leftSiblingKey,
         rightSiblingKey,
-        localPartKey));
+        nameKey));
   }
 
   protected final FullTextLeafNode createFullTextLeafNode(

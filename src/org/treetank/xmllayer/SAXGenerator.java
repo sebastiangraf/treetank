@@ -107,17 +107,6 @@ public final class SAXGenerator implements Runnable {
   }
 
   /**
-   * Build qualified name.
-   * 
-   * @param prefix Prefix of qualified name.
-   * @param localPart Local part of qualified name.
-   * @return Qualified name.
-   */
-  private final String qName(final String prefix, final String localPart) {
-    return (prefix.length() > 0 ? prefix + ":" + localPart : localPart);
-  }
-
-  /**
    * Visit attributes of given node.
    * 
    * @param rtx Transaction to read attributes from.
@@ -128,11 +117,8 @@ public final class SAXGenerator implements Runnable {
     final AttributesImpl attributes = new AttributesImpl();
 
     for (int index = 0, length = rtx.getAttributeCount(); index < length; index++) {
-      attributes.addAttribute(rtx.getAttributeURI(index), rtx
-          .getAttributeLocalPart(index), qName(
-          rtx.getAttributePrefix(index),
-          rtx.getAttributeLocalPart(index)), "", rtx
-          .getAttributeValueAsAtom(index));
+      attributes.addAttribute(rtx.getAttributeURI(index), "", rtx
+          .getAttributeName(index), "", rtx.getAttributeValueAsAtom(index));
     }
 
     return attributes;
@@ -151,8 +137,11 @@ public final class SAXGenerator implements Runnable {
       break;
     case IReadTransaction.ELEMENT_KIND:
       // Emit start element.
-      mHandler.startElement(rtx.getURI(), rtx.getLocalPart(), qName(rtx
-          .getPrefix(), rtx.getLocalPart()), visitAttributes(rtx));
+      mHandler.startElement(
+          rtx.getURI(),
+          "",
+          rtx.getName(),
+          visitAttributes(rtx));
       break;
     case IReadTransaction.TEXT_KIND:
       final char[] text = rtx.getValueAsString().toCharArray();
@@ -171,9 +160,7 @@ public final class SAXGenerator implements Runnable {
    */
   private final void emitEndElement(final IReadTransaction rtx)
       throws SAXException {
-    mHandler.endElement(rtx.getURI(), rtx.getLocalPart(), qName(
-        rtx.getPrefix(),
-        rtx.getLocalPart()));
+    mHandler.endElement(rtx.getURI(), "", rtx.getName());
   }
 
   /**

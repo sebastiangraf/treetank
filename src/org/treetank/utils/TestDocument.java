@@ -89,24 +89,24 @@ public final class TestDocument {
 
     wtx.moveToDocumentRoot();
 
-    wtx.insertElementAsFirstChild("a", "ns", "p");
-    wtx.insertAttribute("i", "", "", "j");
+    wtx.insertElementAsFirstChild("p:a", "ns");
+    wtx.insertAttribute("i", "", "j");
     wtx.insertNamespace("ns", "p");
 
     wtx.insertTextAsFirstChild("oops1");
 
-    wtx.insertElementAsRightSibling("b", "", "");
+    wtx.insertElementAsRightSibling("b", "");
 
     wtx.insertTextAsFirstChild("foo");
-    wtx.insertElementAsRightSibling("c", "", "");
+    wtx.insertElementAsRightSibling("c", "");
     wtx.moveToParent();
 
     wtx.insertTextAsRightSibling("oops2");
 
-    wtx.insertElementAsRightSibling("b", "", "");
-    wtx.insertAttribute("x", "ns", "p", "y");
+    wtx.insertElementAsRightSibling("b", "");
+    wtx.insertAttribute("p:x", "ns", "y");
 
-    wtx.insertElementAsFirstChild("c", "", "");
+    wtx.insertElementAsFirstChild("c", "");
     wtx.insertTextAsRightSibling("bar");
     wtx.moveToParent();
 
@@ -126,21 +126,21 @@ public final class TestDocument {
 
     wtx.moveToDocumentRoot();
 
-    wtx.insertElementAsFirstChild("a", "ns", "p");
+    wtx.insertElementAsFirstChild("p:a", "ns");
 
     wtx.insertTextAsFirstChild("oops1");
 
-    wtx.insertElementAsRightSibling("b", "", "");
+    wtx.insertElementAsRightSibling("b", "");
 
     wtx.insertTextAsFirstChild("foo");
-    wtx.insertElementAsRightSibling("c", "", "");
+    wtx.insertElementAsRightSibling("c", "");
     wtx.moveToParent();
 
     wtx.insertTextAsRightSibling("oops2");
 
-    wtx.insertElementAsRightSibling("b", "", "");
+    wtx.insertElementAsRightSibling("b", "");
 
-    wtx.insertElementAsFirstChild("c", "", "");
+    wtx.insertElementAsFirstChild("c", "");
     wtx.insertTextAsRightSibling("bar");
     wtx.moveToParent();
 

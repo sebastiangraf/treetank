@@ -204,14 +204,7 @@ public abstract class AbstractNode implements Comparable<AbstractNode> {
   /**
    * {@inheritDoc}
    */
-  public int getLocalPartKey() {
-    return IReadTransaction.NULL_NAME_KEY;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public int getURIKey() {
+  public int getNameKey() {
     return IReadTransaction.NULL_NAME_KEY;
   }
 
@@ -219,6 +212,13 @@ public abstract class AbstractNode implements Comparable<AbstractNode> {
    * {@inheritDoc}
    */
   public int getPrefixKey() {
+    return IReadTransaction.NULL_NAME_KEY;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public int getURIKey() {
     return IReadTransaction.NULL_NAME_KEY;
   }
 
@@ -263,17 +263,15 @@ public abstract class AbstractNode implements Comparable<AbstractNode> {
 
   public void setAttribute(
       final int index,
-      final int localPartKey,
+      final int nameKey,
       final int uriKey,
-      final int prefixKey,
       final int valueType,
       final byte[] value) {
   }
 
   public void insertAttribute(
-      final int localPartKey,
+      final int nameKey,
       final int uriKey,
-      final int prefixKey,
       final int valueType,
       final byte[] value) {
   }
@@ -290,7 +288,7 @@ public abstract class AbstractNode implements Comparable<AbstractNode> {
   public void setKind(final byte kind) {
   }
 
-  public void setLocalPartKey(final int localPartKey) {
+  public void setNameKey(final int nameKey) {
   }
 
   public void setPrefixKey(final int prefixKey) {

@@ -52,14 +52,11 @@ public final class ElementNode extends AbstractNode {
   /** Namespaces of node. */
   private AbstractNode[] mNamespaces;
 
-  /** Key of local part. */
-  private int mLocalPartKey;
+  /** Key of qualified name. */
+  private int mNameKey;
 
   /** Key of URI. */
   private int mURIKey;
-
-  /** Key of prefix. */
-  private int mPrefixKey;
 
   /**
    * Create new element node.
@@ -69,9 +66,8 @@ public final class ElementNode extends AbstractNode {
    * @param firstChildKey Key of first child.
    * @param leftSiblingKey Key of left sibling.
    * @param rightSiblingKey Key of right sibling.
-   * @param localPartKey Key of local part.
+   * @param nameKey Key of local part.
    * @param uriKey Key of URI.
-   * @param prefixKey Key of prefix.
    */
   public ElementNode(
       final long nodeKey,
@@ -79,9 +75,8 @@ public final class ElementNode extends AbstractNode {
       final long firstChildKey,
       final long leftSiblingKey,
       final long rightSiblingKey,
-      final int localPartKey,
-      final int uriKey,
-      final int prefixKey) {
+      final int nameKey,
+      final int uriKey) {
     super(nodeKey);
     mParentKey = parentKey;
     mFirstChildKey = firstChildKey;
@@ -90,9 +85,8 @@ public final class ElementNode extends AbstractNode {
     mChildCount = 0;
     mAttributes = new AttributeNode[0];
     mNamespaces = new NamespaceNode[0];
-    mLocalPartKey = localPartKey;
+    mNameKey = nameKey;
     mURIKey = uriKey;
-    mPrefixKey = prefixKey;
   }
 
   /**
@@ -115,9 +109,8 @@ public final class ElementNode extends AbstractNode {
     for (int i = 0, l = mNamespaces.length; i < l; i++) {
       mNamespaces[i] = new NamespaceNode(node.getNamespace(i));
     }
-    mLocalPartKey = node.getLocalPartKey();
+    mNameKey = node.getNameKey();
     mURIKey = node.getURIKey();
-    mPrefixKey = node.getPrefixKey();
   }
 
   /**
@@ -143,9 +136,8 @@ public final class ElementNode extends AbstractNode {
     for (int i = 0, l = mNamespaces.length; i < l; i++) {
       mNamespaces[i] = new NamespaceNode(getNodeKey(), in);
     }
-    mLocalPartKey = in.readVarInt();
+    mNameKey = in.readVarInt();
     mURIKey = in.readVarInt();
-    mPrefixKey = in.readVarInt();
   }
 
   /**
@@ -306,19 +298,12 @@ public final class ElementNode extends AbstractNode {
   @Override
   public final void setAttribute(
       final int index,
-      final int localPartKey,
+      final int nameKey,
       final int uriKey,
-      final int prefixKey,
       final int valueType,
       final byte[] value) {
     mAttributes[index] =
-        new AttributeNode(
-            getNodeKey(),
-            localPartKey,
-            uriKey,
-            prefixKey,
-            valueType,
-            value);
+        new AttributeNode(getNodeKey(), nameKey, uriKey, valueType, value);
   }
 
   /**
@@ -326,9 +311,8 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final void insertAttribute(
-      final int localPartKey,
+      final int nameKey,
       final int uriKey,
-      final int prefixKey,
       final int valueType,
       final byte[] value) {
 
@@ -337,13 +321,7 @@ public final class ElementNode extends AbstractNode {
     mAttributes = tmp;
 
     mAttributes[mAttributes.length - 1] =
-        new AttributeNode(
-            getNodeKey(),
-            localPartKey,
-            uriKey,
-            prefixKey,
-            valueType,
-            value);
+        new AttributeNode(getNodeKey(), nameKey, uriKey, valueType, value);
   }
 
   /**
@@ -399,32 +377,16 @@ public final class ElementNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final int getLocalPartKey() {
-    return mLocalPartKey;
+  public final int getNameKey() {
+    return mNameKey;
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public final void setLocalPartKey(final int localPartKey) {
-    mLocalPartKey = localPartKey;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final int getPrefixKey() {
-    return mPrefixKey;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final void setPrefixKey(final int prefixKey) {
-    mPrefixKey = prefixKey;
+  public final void setNameKey(final int localPartKey) {
+    mNameKey = localPartKey;
   }
 
   /**
@@ -461,9 +423,8 @@ public final class ElementNode extends AbstractNode {
     for (int i = 0, l = mNamespaces.length; i < l; i++) {
       mNamespaces[i].serialize(out);
     }
-    out.writeVarInt(mLocalPartKey);
+    out.writeVarInt(mNameKey);
     out.writeVarInt(mURIKey);
-    out.writeVarInt(mPrefixKey);
   }
 
   /**

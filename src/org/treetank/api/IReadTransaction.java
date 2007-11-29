@@ -64,7 +64,7 @@ package org.treetank.api;
  *   }
  *   
  *   // Access local part of element.
- *   if (rtx.isElement() && rtx.getLocalPart().equalsIgnoreCase("foo") {
+ *   if (rtx.isElement() && rtx.getName().equalsIgnoreCase("foo") {
  *     ...
  *   }
  *   
@@ -328,36 +328,20 @@ public interface IReadTransaction {
   public int getAttributeCount();
 
   /**
-   * Get local part key of attribute at given index.
+   * Get qualified name key of attribute at given index.
    * 
    * @param index Index of attribute [0..getAttributeCount()].
-   * @return Local part key of attribute at given index.
+   * @return Qualified name key of attribute at given index.
    */
-  public int getAttributeLocalPartKey(final int index);
+  public int getAttributeNameKey(final int index);
 
   /**
-   * Get local part of attribute at given index.
+   * Get qualified name of attribute at given index.
    * 
    * @param index Index of attribute [0..getAttributeCount()].
-   * @return Local part of attribute at given index.
+   * @return Qualified name of attribute at given index.
    */
-  public String getAttributeLocalPart(final int index);
-
-  /**
-   * Get prefix key of attribute at given index.
-   * 
-   * @param index Index of attribute [0..getAttributeCount()].
-   * @return Prefix key of attribute at given index.
-   */
-  public int getAttributePrefixKey(final int index);
-
-  /**
-   * Get prefix of attribute at given index.
-   * 
-   * @param index Index of attribute [0..getAttributeCount()].
-   * @return Prefix of attribute at given index.
-   */
-  public String getAttributePrefix(final int index);
+  public String getAttributeName(final int index);
 
   /**
    * Get URI key of attribute at given index.
@@ -527,18 +511,18 @@ public interface IReadTransaction {
   public boolean isFullTextRootKind();
 
   /**
-   * Get local part key of node.
+   * Get qualified name key of node.
    * 
-   * @return Local part key of node.
+   * @return Qualified name key of node.
    */
-  public int getLocalPartKey();
+  public int getNameKey();
 
   /**
-   * Get local part of node.
+   * Get qualified name of node.
    * 
-   * @return Local part of node.
+   * @return Qualified name of node.
    */
-  public String getLocalPart();
+  public String getName();
 
   /**
    * Get URI key of node. Note that this actually is an IRI but the
@@ -555,20 +539,6 @@ public interface IReadTransaction {
    * @return URI of node.
    */
   public String getURI();
-
-  /**
-   * Get prefix key of node.
-   * 
-   * @return Prefix key of node.
-   */
-  public int getPrefixKey();
-
-  /**
-   * Get prefix of node.
-   * 
-   * @return Prefix of node.
-   */
-  public String getPrefix();
 
   /**
    * Get type of node value.

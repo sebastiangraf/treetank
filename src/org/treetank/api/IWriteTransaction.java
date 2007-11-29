@@ -128,16 +128,12 @@ public interface IWriteTransaction extends IReadTransaction {
    * Insert new element node as first child of currently selected node.
    * The cursor is moved to the inserted node.
    * 
-   * @param localPart Local part of inserted node.
+   * @param name Qualified name of inserted node.
    * @param uri URI of inserted node.
-   * @param prefix Prefix of inserted node.
    * @return Key of inserted node.
    * already has a first child.
    */
-  public long insertElementAsFirstChild(
-      final String localPart,
-      final String uri,
-      final String prefix);
+  public long insertElementAsFirstChild(final String name, final String uri);
 
   /**
    * Insert new text node as first child of currently selected node.
@@ -194,26 +190,22 @@ public interface IWriteTransaction extends IReadTransaction {
    * Insert new fulltext node as first child of currently selected node.
    * The cursor is moved to the inserted node.
    * 
-   * @param localPartKey Local part key of inserted node.
+   * @param nameKey Name key of inserted node.
    * @return Key of inserted node.
    * already has a first child.
    */
-  public long insertFullTextAsFirstChild(final int localPartKey);
+  public long insertFullTextAsFirstChild(final int nameKey);
 
   /**
    * Insert new element node as right sibling of currently selected node.
    * The cursor is moved to the inserted node.
    * 
-   * @param localPart Local part of inserted node.
+   * @param name Qualified name of inserted node.
    * @param uri URI of inserted node.
-   * @param prefix Prefix of inserted node.
    * @return Key of inserted node.
    * already has a first child.
    */
-  public long insertElementAsRightSibling(
-      final String localPart,
-      final String uri,
-      final String prefix);
+  public long insertElementAsRightSibling(final String name, final String uri);
 
   /**
    * Insert new element node as right sibling of currently selected node.
@@ -270,26 +262,24 @@ public interface IWriteTransaction extends IReadTransaction {
    * Insert new fulltext node as right sibling of currently selected node.
    * The cursor is moved to the inserted node.
    * 
-   * @param localPartKey Local part key of inserted node.
+   * @param nameKey Name key of inserted node.
    * @return Key of inserted node.
    * already has a first child.
    */
-  public long insertFullTextAsRightSibling(final int localPartKey);
+  public long insertFullTextAsRightSibling(final int nameKey);
 
   /**
    * Insert attribute in currently selected node.
    * The cursor is moved to the inserted node.
    * 
-   * @param localPart Local part of inserted node.
+   * @param name Qualified name of inserted node.
    * @param uri URI of inserted node.
-   * @param prefix Prefix of inserted node.
    * @param valueType Type of value.
    * @param value Value of inserted node.
    */
   public void insertAttribute(
-      final String localPart,
+      final String name,
       final String uri,
-      final String prefix,
       final int valueType,
       final byte[] value);
 
@@ -297,60 +287,52 @@ public interface IWriteTransaction extends IReadTransaction {
    * Insert attribute in currently selected node.
    * The cursor is moved to the inserted node.
    * 
-   * @param localPart Local part of inserted node.
+   * @param name Qualified name of inserted node.
    * @param uri URI of inserted node.
-   * @param prefix Prefix of inserted node.
    * @param value Value of inserted node.
    */
   public void insertAttribute(
-      final String localPart,
+      final String name,
       final String uri,
-      final String prefix,
       final String value);
 
   /**
    * Insert attribute in currently selected node.
    * The cursor is moved to the inserted node.
    * 
-   * @param localPart Local part of inserted node.
+   * @param name Qualified name of inserted node.
    * @param uri URI of inserted node.
-   * @param prefix Prefix of inserted node.
    * @param value Value of inserted node.
    */
   public void insertAttribute(
-      final String localPart,
+      final String name,
       final String uri,
-      final String prefix,
       final int value);
 
   /**
    * Insert attribute in currently selected node.
    * The cursor is moved to the inserted node.
    * 
-   * @param localPart Local part of inserted node.
+   * @param name Qualified name of inserted node.
    * @param uri URI of inserted node.
-   * @param prefix Prefix of inserted node.
    * @param value Value of inserted node.
    */
   public void insertAttribute(
-      final String localPart,
+      final String name,
       final String uri,
-      final String prefix,
       final long value);
 
   /**
    * Insert attribute in currently selected node.
    * The cursor is moved to the inserted node.
    * 
-   * @param localPart Local part of inserted node.
+   * @param name Qualified name of inserted node.
    * @param uri URI of inserted node.
-   * @param prefix Prefix of inserted node.
    * @param value Value of inserted node.
    */
   public void insertAttribute(
-      final String localPart,
+      final String name,
       final String uri,
-      final String prefix,
       final boolean value);
 
   /**
@@ -377,17 +359,15 @@ public interface IWriteTransaction extends IReadTransaction {
    * Set an attribute of the currently selected node.
    * 
    * @param index Index of attribute to set.
-   * @param localPart Local part of inserted node.
+   * @param name Qualified name of inserted node.
    * @param uri URI of inserted node.
-   * @param prefix Prefix of inserted node.
    * @param valueType Type of value.
    * @param value Value of inserted node.
    */
   public void setAttribute(
       final int index,
-      final String localPart,
+      final String name,
       final String uri,
-      final String prefix,
       final int valueType,
       final byte[] value);
 
@@ -406,9 +386,9 @@ public interface IWriteTransaction extends IReadTransaction {
   /**
    * Set local part of node.
    * 
-   * @param localPart New local part of node.
+   * @param name New qualified name of node.
    */
-  public void setLocalPart(final String localPart);
+  public void setName(final String name);
 
   /**
    * Set URI of node.
@@ -416,13 +396,6 @@ public interface IWriteTransaction extends IReadTransaction {
    * @param uri New URI of node.
    */
   public void setURI(final String uri);
-
-  /**
-   * Set prefix of node.
-   * 
-   * @param prefix New prefix of node.
-   */
-  public void setPrefix(final String prefix);
 
   /**
    * Set value of node.
