@@ -51,6 +51,7 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * Constructor.
    * 
+   * @param transactionID ID of transaction.
    * @param sessionState State of the session.
    * @param transactionState State of this transaction.
    * @param maxNodeCount Maximum number of node modifications before auto
@@ -58,11 +59,12 @@ public final class WriteTransaction extends ReadTransaction
    * @param maxTime Maximum number of seconds before auto commit.
    */
   protected WriteTransaction(
+      final long transactionID,
       final SessionState sessionState,
       final WriteTransactionState transactionState,
       final int maxNodeCount,
       final int maxTime) {
-    super(sessionState, transactionState);
+    super(transactionID, sessionState, transactionState);
 
     // Do not accept negative values.
     if ((maxNodeCount < 0) || (maxTime < 0)) {
@@ -182,8 +184,7 @@ public final class WriteTransaction extends ReadTransaction
             NULL_NODE_KEY,
             NULL_NODE_KEY,
             getCurrentNode().getFirstChildKey(),
-            ((WriteTransactionState) getTransactionState())
-                .createNameKey(name),
+            ((WriteTransactionState) getTransactionState()).createNameKey(name),
             ((WriteTransactionState) getTransactionState()).createNameKey(uri)));
   }
 
@@ -272,8 +273,7 @@ public final class WriteTransaction extends ReadTransaction
             NULL_NODE_KEY,
             getCurrentNode().getNodeKey(),
             getCurrentNode().getRightSiblingKey(),
-            ((WriteTransactionState) getTransactionState())
-                .createNameKey(name),
+            ((WriteTransactionState) getTransactionState()).createNameKey(name),
             ((WriteTransactionState) getTransactionState()).createNameKey(uri)));
   }
 
@@ -363,8 +363,7 @@ public final class WriteTransaction extends ReadTransaction
     mModificationCount++;
 
     prepareCurrentNode().insertAttribute(
-        ((WriteTransactionState) getTransactionState())
-            .createNameKey(name),
+        ((WriteTransactionState) getTransactionState()).createNameKey(name),
         ((WriteTransactionState) getTransactionState()).createNameKey(uri),
         valueType,
         value);
@@ -637,7 +636,7 @@ public final class WriteTransaction extends ReadTransaction
       }
       // Release all state immediately.
       getTransactionState().close();
-      getSessionState().closeWriteTransaction();
+      getSessionState().closeWriteTransaction(getTransactionID());
       setSessionState(null);
       setTransactionState(null);
       setCurrentNode(null);

@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 
 import org.treetank.api.IReadTransaction;
@@ -58,6 +60,12 @@ public final class SessionState {
   /** Strong reference to uber page before the begin of a write transaction. */
   private UberPage mLastCommittedUberPage;
 
+  /** Remember all running transactions (both read and write). */
+  private Map<Long, IReadTransaction> mTransactionMap;
+
+  /** Random generator for transaction IDs. */
+  private Random mRandom;
+
   /**
    * Constructor to bind to a TreeTank file.
    * 
@@ -85,6 +93,8 @@ public final class SessionState {
 
     mSessionConfiguration = sessionConfiguration;
     RandomAccessFile file = null;
+    mTransactionMap = new ConcurrentHashMap<Long, IReadTransaction>();
+    mRandom = new Random();
 
     try {
 
@@ -170,39 +180,64 @@ public final class SessionState {
 
   protected final IReadTransaction beginReadTransaction(final long revisionKey) {
 
+    // Make sure not to exceed available number of read transactions.
     try {
       mReadSemaphore.acquire();
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
 
-    return new ReadTransaction(this, new ReadTransactionState(
-        mSessionConfiguration,
-        mPageCache,
-        mLastCommittedUberPage,
-        revisionKey));
+    // Create new read transaction.
+    final IReadTransaction rtx =
+        new ReadTransaction(
+            generateTransactionID(),
+            this,
+            new ReadTransactionState(
+                mSessionConfiguration,
+                mPageCache,
+                mLastCommittedUberPage,
+                revisionKey));
+
+    // Remember transaction for debugging and safe close.
+    if (mTransactionMap.put(rtx.getTransactionID(), rtx) != null) {
+      throw new IllegalStateException(
+          "ID generation is bogus because of duplicate ID.");
+    }
+
+    return rtx;
   }
 
   protected final IWriteTransaction beginWriteTransaction(
       final int maxNodeCount,
       final int maxTime) {
 
+    // Make sure not to exceed available number of write transactions.
     if (mWriteSemaphore.availablePermits() == 0) {
       throw new IllegalStateException(
           "There already is a running exclusive write transaction.");
     }
-
     try {
       mWriteSemaphore.acquire();
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
 
-    return new WriteTransaction(
-        this,
-        getWriteTransactionState(),
-        maxNodeCount,
-        maxTime);
+    // Create new write transaction.
+    final IWriteTransaction wtx =
+        new WriteTransaction(
+            generateTransactionID(),
+            this,
+            getWriteTransactionState(),
+            maxNodeCount,
+            maxTime);
+
+    // Remember transaction for debugging and safe close.
+    if (mTransactionMap.put(wtx.getTransactionID(), wtx) != null) {
+      throw new IllegalStateException(
+          "ID generation is bogus because of duplicate ID.");
+    }
+
+    return wtx;
   }
 
   protected final WriteTransactionState getWriteTransactionState() {
@@ -221,22 +256,24 @@ public final class SessionState {
     mLastCommittedUberPage = lastCommittedUberPage;
   }
 
-  protected final void closeWriteTransaction() {
+  protected final void closeWriteTransaction(final long transactionID) {
+    // Purge transaction from internal state.
+    mTransactionMap.remove(transactionID);
+    // Make new transactions available.
     mWriteSemaphore.release();
   }
 
-  protected final void closeReadTransaction() {
+  protected final void closeReadTransaction(final long transactionID) {
+    // Purge transaction from internal state.
+    mTransactionMap.remove(transactionID);
+    // Make new transactions available.
     mReadSemaphore.release();
   }
 
   protected final void close() {
-    if (mWriteSemaphore.drainPermits() != IConstants.MAX_WRITE_TRANSACTIONS) {
-      throw new IllegalStateException("Session can not be closed due to a"
-          + " running exclusive write transaction.");
-    }
-    if (mReadSemaphore.drainPermits() != IConstants.MAX_READ_TRANSACTIONS) {
-      throw new IllegalStateException("Session can not be closed due to one"
-          + " or more running share read transactions.");
+    // Forcibly close all open transactions.
+    for (final IReadTransaction rtx : mTransactionMap.values()) {
+      rtx.close();
     }
 
     // Immediately release all ressources.
@@ -245,6 +282,7 @@ public final class SessionState {
     mWriteSemaphore = null;
     mReadSemaphore = null;
     mLastCommittedUberPage = null;
+    mTransactionMap = null;
   }
 
   protected final SessionConfiguration getSessionConfiguration() {
@@ -262,6 +300,21 @@ public final class SessionState {
     } finally {
       super.finalize();
     }
+  }
+
+  /**
+   * Generate new unique ID for the transaction.
+   * 
+   * @return Generated unique ID.
+   */
+  private final long generateTransactionID() {
+    long id = mRandom.nextLong();
+    synchronized (mTransactionMap) {
+      while (mTransactionMap.containsKey(id)) {
+        id = mRandom.nextLong();
+      }
+    }
+    return id;
   }
 
 }
