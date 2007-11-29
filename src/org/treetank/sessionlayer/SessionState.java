@@ -174,6 +174,16 @@ public final class SessionState {
     }
   }
 
+  protected final int getReadTransactionCount() {
+    return (IConstants.MAX_READ_TRANSACTIONS - mReadSemaphore
+        .availablePermits());
+  }
+
+  protected final int getWriteTransactionCount() {
+    return (IConstants.MAX_WRITE_TRANSACTIONS - mWriteSemaphore
+        .availablePermits());
+  }
+
   protected final IReadTransaction beginReadTransaction() {
     return beginReadTransaction(mLastCommittedUberPage.getRevisionKey());
   }

@@ -128,11 +128,24 @@ public interface ISession {
   public IWriteTransaction beginWriteTransaction(
       final int maxNodeCount,
       final int maxTime);
-
+  
   /**
-   * Safely close session and immediately release all resources. A session
-   * can not be closed as long as there are running reading or writing
-   * transactions.
+   * Get number of running read transactions.
+   * 
+   * @return Number of running read transactions.
+   */
+  public int getReadTransactionCount();
+  
+  /**
+   * Get number of running write transactions.
+   * 
+   * @return Number of running write transactions.
+   */
+  public int getWriteTransactionCount();
+  
+  /**
+   * Safely close session and immediately release all resources. If there are
+   * running transactions, they will automatically be closed.
    * 
    * This is an idempotent operation and does nothing if the session is
    * already closed.
