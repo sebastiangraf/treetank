@@ -159,7 +159,7 @@ public class SessionTest {
 
     TestCase.assertNotNull(wtx.moveToFirstChild());
     assertEquals(IReadTransaction.ELEMENT_KIND, wtx.getKind());
-    assertEquals("a", wtx.getLocalPart());
+    assertEquals("p:a", wtx.getName());
 
     wtx.abort();
     wtx.close();

@@ -85,14 +85,17 @@ public final class XMLShredder {
 
         case XMLStreamConstants.START_ELEMENT:
 
+          final String name =
+              (parser.getPrefix() == null ? parser.getLocalName() : parser
+                  .getPrefix()
+                  + ":"
+                  + parser.getLocalName());
+
           if (leftSiblingKeyStack.peek() == IReadTransaction.NULL_NODE_KEY) {
-            key =
-                wtx.insertElementAsFirstChild(parser.getLocalName(), parser
-                    .getNamespaceURI(), parser.getPrefix());
+            key = wtx.insertElementAsFirstChild(name, parser.getNamespaceURI());
           } else {
             key =
-                wtx.insertElementAsRightSibling(parser.getLocalName(), parser
-                    .getNamespaceURI(), parser.getPrefix());
+                wtx.insertElementAsRightSibling(name, parser.getNamespaceURI());
           }
           leftSiblingKeyStack.pop();
           leftSiblingKeyStack.push(key);
@@ -106,9 +109,10 @@ public final class XMLShredder {
 
           // Parse attributes.
           for (int i = 0, l = parser.getAttributeCount(); i < l; i++) {
-            wtx.insertAttribute(parser.getAttributeLocalName(i), parser
-                .getAttributeNamespace(i), parser.getAttributePrefix(i), parser
-                .getAttributeValue(i));
+            wtx.insertAttribute(parser.getAttributePrefix(i)
+                + ":"
+                + parser.getAttributeLocalName(i), parser
+                .getAttributeNamespace(i), parser.getAttributeValue(i));
           }
           break;
 

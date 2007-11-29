@@ -39,7 +39,7 @@ public class NestedAxisTest {
   }
 
   @Test
-  public void testChainedAxisTest() {
+  public void testNestedAxisTest() {
 
     // Build simple test tree.
     final ISession session = Session.beginSession(PATH);
@@ -52,7 +52,7 @@ public class NestedAxisTest {
     // XPath expression /a/b/text():
     // Part: /a
     final IAxis childA =
-        new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "a"));
+        new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "p:a"));
     // Part: /b
     final IAxis childB =
         new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "b"));
@@ -70,7 +70,7 @@ public class NestedAxisTest {
   }
 
   @Test
-  public void testChainedAxisTest2() {
+  public void testNestedAxisTest2() {
 
     // Build simple test tree.
     final ISession session = Session.beginSession(PATH);
@@ -83,13 +83,13 @@ public class NestedAxisTest {
     // XPath expression /a/b/@x:
     // Part: /a
     final IAxis childA =
-        new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "a"));
+        new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "p:a"));
     // Part: /b
     final IAxis childB =
         new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "b"));
     // Part: /@x
     final IAxis attributeX =
-        new FilterAxis(new AttributeAxis(wtx), new NameFilter(wtx, "x"));
+        new FilterAxis(new AttributeAxis(wtx), new NameFilter(wtx, "p:x"));
     // Part: /a/b/@x:
     final IAxis axis =
         new NestedAxis(new NestedAxis(childA, childB), attributeX);

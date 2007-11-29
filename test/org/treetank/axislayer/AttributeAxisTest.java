@@ -68,15 +68,15 @@ public class AttributeAxisTest {
   public void testMultipleAttributes() {
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    final long nodeKey = wtx.insertElementAsFirstChild("foo", "", "");
-    wtx.insertAttribute("foo0", "", "", 0);
-    wtx.insertAttribute("foo1", "", "", 1);
-    wtx.insertAttribute("foo2", "", "", 2);
+    final long nodeKey = wtx.insertElementAsFirstChild("foo", "");
+    wtx.insertAttribute("foo0", "", 0);
+    wtx.insertAttribute("foo1", "", 1);
+    wtx.insertAttribute("foo2", "", 2);
 
     Assert.assertEquals(true, wtx.moveTo(nodeKey));
-    Assert.assertEquals("foo0", wtx.getAttributeLocalPart(0));
-    Assert.assertEquals("foo1", wtx.getAttributeLocalPart(1));
-    Assert.assertEquals("foo2", wtx.getAttributeLocalPart(2));
+    Assert.assertEquals("foo0", wtx.getAttributeName(0));
+    Assert.assertEquals("foo1", wtx.getAttributeName(1));
+    Assert.assertEquals("foo2", wtx.getAttributeName(2));
     Assert.assertEquals(0, wtx.getAttributeValueAsInt(0));
     Assert.assertEquals(1, wtx.getAttributeValueAsInt(1));
     Assert.assertEquals(2, wtx.getAttributeValueAsInt(2));
@@ -87,19 +87,19 @@ public class AttributeAxisTest {
     Assert.assertEquals(true, axis.hasNext());
     axis.next();
     Assert.assertEquals(nodeKey, wtx.getNodeKey());
-    Assert.assertEquals("foo0", wtx.getLocalPart());
+    Assert.assertEquals("foo0", wtx.getName());
     Assert.assertEquals(0, wtx.getValueAsInt());
 
     Assert.assertEquals(true, axis.hasNext());
     axis.next();
     Assert.assertEquals(nodeKey, wtx.getNodeKey());
-    Assert.assertEquals("foo1", wtx.getLocalPart());
+    Assert.assertEquals("foo1", wtx.getName());
     Assert.assertEquals(1, wtx.getValueAsInt());
 
     Assert.assertEquals(true, axis.hasNext());
     axis.next();
     Assert.assertEquals(nodeKey, wtx.getNodeKey());
-    Assert.assertEquals("foo2", wtx.getLocalPart());
+    Assert.assertEquals("foo2", wtx.getName());
     Assert.assertEquals(2, wtx.getValueAsInt());
 
     wtx.abort();

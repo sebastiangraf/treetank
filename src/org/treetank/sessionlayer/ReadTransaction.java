@@ -130,11 +130,11 @@ public class ReadTransaction implements IReadTransaction {
       if (hasFirstChild()) {
         moveToFirstChild();
         while (isFullTextKind()
-            && (getLocalPartKey() != character)
+            && (getNameKey() != character)
             && hasRightSibling()) {
           moveToRightSibling();
         }
-        contained = contained && (getLocalPartKey() == character);
+        contained = contained && (getNameKey() == character);
       } else {
         contained = false;
       }
@@ -295,33 +295,17 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final int getAttributeLocalPartKey(final int index) {
+  public final int getAttributeNameKey(final int index) {
     assertNotClosed();
-    return mCurrentNode.getAttribute(index).getLocalPartKey();
+    return mCurrentNode.getAttribute(index).getNameKey();
   }
 
   /**
    * {@inheritDoc}
    */
-  public final String getAttributeLocalPart(final int index) {
+  public final String getAttributeName(final int index) {
     assertNotClosed();
-    return nameForKey(mCurrentNode.getAttribute(index).getLocalPartKey());
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final int getAttributePrefixKey(final int index) {
-    assertNotClosed();
-    return mCurrentNode.getAttribute(index).getPrefixKey();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final String getAttributePrefix(final int index) {
-    assertNotClosed();
-    return nameForKey(mCurrentNode.getAttribute(index).getPrefixKey());
+    return nameForKey(mCurrentNode.getAttribute(index).getNameKey());
   }
 
   /**
@@ -521,17 +505,17 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final int getLocalPartKey() {
+  public final int getNameKey() {
     assertNotClosed();
-    return mCurrentNode.getLocalPartKey();
+    return mCurrentNode.getNameKey();
   }
 
   /**
    * {@inheritDoc}
    */
-  public final String getLocalPart() {
+  public final String getName() {
     assertNotClosed();
-    return mTransactionState.getName(mCurrentNode.getLocalPartKey());
+    return mTransactionState.getName(mCurrentNode.getNameKey());
   }
 
   /**
@@ -548,22 +532,6 @@ public class ReadTransaction implements IReadTransaction {
   public final String getURI() {
     assertNotClosed();
     return mTransactionState.getName(mCurrentNode.getURIKey());
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final int getPrefixKey() {
-    assertNotClosed();
-    return mCurrentNode.getPrefixKey();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final String getPrefix() {
-    assertNotClosed();
-    return mTransactionState.getName(mCurrentNode.getPrefixKey());
   }
 
   /**
@@ -681,16 +649,16 @@ public class ReadTransaction implements IReadTransaction {
   @Override
   public String toString() {
     assertNotClosed();
-    String localPart = "";
+    String name = "";
     try {
-      localPart = getLocalPart();
+      name = getName();
     } catch (Exception e) {
       throw new IllegalStateException(e);
     }
     return "Node "
         + this.getNodeKey()
         + "\nwith name: "
-        + localPart
+        + name
         + "\nand value:"
         + getValueAsByteArray();
   }

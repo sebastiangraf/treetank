@@ -31,14 +31,13 @@ public class ElementNodeTest {
   public void testElementNode() {
 
     // Create empty node.
-    final AbstractNode node1 =
-        new ElementNode(13L, 14L, 15L, 16L, 17L, 18, 19, 20);
+    final AbstractNode node1 = new ElementNode(13L, 14L, 15L, 16L, 17L, 18, 19);
     final FastByteArrayWriter out = new FastByteArrayWriter();
 
     // Modify it.
     node1.incrementChildCount();
     node1.decrementChildCount();
-    node1.insertAttribute(21, 22, 23, 27, new byte[] { (byte) 24, (byte) 24 });
+    node1.insertAttribute(21, 22, 27, new byte[] { (byte) 24, (byte) 24 });
     node1.insertNamespace(25, 26);
 
     // Serialize and deserialize node.
@@ -58,9 +57,8 @@ public class ElementNodeTest {
     assertEquals(0, node3.getChildCount());
     assertEquals(1, node3.getAttributeCount());
     assertEquals(1, node3.getNamespaceCount());
-    assertEquals(18, node3.getLocalPartKey());
+    assertEquals(18, node3.getNameKey());
     assertEquals(19, node3.getURIKey());
-    assertEquals(20, node3.getPrefixKey());
     assertEquals(null, node3.getValue());
     assertEquals(IReadTransaction.ELEMENT_KIND, node3.getKind());
     assertEquals(true, node3.hasFirstChild());
@@ -76,9 +74,8 @@ public class ElementNodeTest {
     assertEquals(false, node3.isText());
 
     assertEquals(13L, node3.getAttribute(0).getNodeKey());
-    assertEquals(21, node3.getAttribute(0).getLocalPartKey());
+    assertEquals(21, node3.getAttribute(0).getNameKey());
     assertEquals(22, node3.getAttribute(0).getURIKey());
-    assertEquals(23, node3.getAttribute(0).getPrefixKey());
     assertEquals(27, node3.getAttribute(0).getValueType());
     assertEquals(2, node3.getAttribute(0).getValue().length);
 

@@ -97,13 +97,13 @@ public class UpdateTest {
 
     wtx = session.beginWriteTransaction();
     TestCase.assertNotNull(wtx.moveToDocumentRoot());
-    assertEquals(2L, wtx.insertElementAsFirstChild("", "", ""));
+    assertEquals(2L, wtx.insertElementAsFirstChild("", ""));
 
-    assertEquals(3L, wtx.insertElementAsFirstChild("", "", ""));
-    assertEquals(4L, wtx.insertElementAsFirstChild("", "", ""));
+    assertEquals(3L, wtx.insertElementAsFirstChild("", ""));
+    assertEquals(4L, wtx.insertElementAsFirstChild("", ""));
 
     TestCase.assertNotNull(wtx.moveToParent());
-    assertEquals(5L, wtx.insertElementAsRightSibling("", "", ""));
+    assertEquals(5L, wtx.insertElementAsRightSibling("", ""));
 
     wtx.commit();
     wtx.close();
@@ -111,7 +111,7 @@ public class UpdateTest {
     final IWriteTransaction wtx2 = session.beginWriteTransaction();
 
     TestCase.assertNotNull(wtx2.moveToDocumentRoot());
-    assertEquals(6L, wtx2.insertElementAsFirstChild("", "", ""));
+    assertEquals(6L, wtx2.insertElementAsFirstChild("", ""));
 
     wtx2.commit();
     wtx2.close();

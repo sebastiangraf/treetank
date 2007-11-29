@@ -16,6 +16,11 @@
  * $Id$
  */
  
+TreeTank 4.19
+-------------
+ 0 Local part and prefix are no longer stored separately but as qualified name.
+   Binary incompatibility with 4.18.
+ 
 TreeTank 4.18
 -------------
 11 Added var arg to FilterAxis to allow for multiple filters.

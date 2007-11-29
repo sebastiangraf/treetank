@@ -86,12 +86,10 @@ public class XMLShredderTest {
       assertEquals(expectedTrx.getAttributeCount(), rtx.getAttributeCount());
       assertEquals(expectedTrx.getNamespaceCount(), rtx.getNamespaceCount());
       assertEquals(expectedTrx.getKind(), rtx.getKind());
-      assertEquals(expectedTrx.nameForKey(expectedTrx.getLocalPartKey()), rtx
-          .nameForKey(rtx.getLocalPartKey()));
+      assertEquals(expectedTrx.nameForKey(expectedTrx.getNameKey()), rtx
+          .nameForKey(rtx.getNameKey()));
       assertEquals(expectedTrx.nameForKey(expectedTrx.getURIKey()), rtx
           .nameForKey(rtx.getURIKey()));
-      assertEquals(expectedTrx.nameForKey(expectedTrx.getPrefixKey()), rtx
-          .nameForKey(rtx.getPrefixKey()));
       if (expectedTrx.isTextKind()) {
         assertEquals(new String(
             expectedTrx.getValueAsByteArray(),

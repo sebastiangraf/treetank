@@ -48,7 +48,7 @@ public class MultipleCommitTest {
     TestCase.assertEquals(2L, wtx.getRevisionSize());
     wtx.commit();
 
-    wtx.insertElementAsFirstChild("foo", "", "");
+    wtx.insertElementAsFirstChild("foo", "");
     TestCase.assertEquals(1L, wtx.getRevisionNumber());
     TestCase.assertEquals(3L, wtx.getRevisionSize());
     wtx.abort();

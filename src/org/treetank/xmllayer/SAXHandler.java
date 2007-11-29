@@ -88,13 +88,10 @@ public class SAXHandler extends DefaultHandler {
     // Insert element node and maintain stack.      
     long key;
     if (mLeftSiblingKeyStack.peek() == IReadTransaction.NULL_NODE_KEY) {
-      key =
-          mWTX.insertElementAsFirstChild(localName, uri, qNameToPrefix(qName));
+      key = mWTX.insertElementAsFirstChild(qName, uri);
 
     } else {
-      key =
-          mWTX
-              .insertElementAsRightSibling(localName, uri, qNameToPrefix(qName));
+      key = mWTX.insertElementAsRightSibling(qName, uri);
 
     }
     mLeftSiblingKeyStack.pop();
@@ -110,11 +107,7 @@ public class SAXHandler extends DefaultHandler {
 
     // Insert attribute nodes.
     for (int i = 0, l = attr.getLength(); i < l; i++) {
-      mWTX.insertAttribute(
-          attr.getLocalName(i),
-          attr.getURI(i),
-          qNameToPrefix(attr.getQName(i)),
-          attr.getValue(i));
+      mWTX.insertAttribute(attr.getQName(i), attr.getURI(i), attr.getValue(i));
     }
   }
 
@@ -182,21 +175,6 @@ public class SAXHandler extends DefaultHandler {
 
     }
 
-  }
-
-  /**
-   * Extract prefixKey out of qName if there is any.
-   * 
-   * @param qName Fully qualified name.
-   * @return Prefix or empty string.
-   */
-  private final String qNameToPrefix(final String qName) {
-    final int delimiter = qName.indexOf(":");
-    if (delimiter > -1) {
-      return qName.substring(0, delimiter);
-    } else {
-      return "";
-    }
   }
 
 }

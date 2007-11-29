@@ -145,7 +145,7 @@ public class BeanUtilTest {
     final TestBean expectedBean = new TestBean();
     wtx.moveToDocumentRoot();
     final long expectedBeanKey = BeanUtil.write(wtx, expectedBean);
-    wtx.insertElementAsFirstChild("subelement", "", "");
+    wtx.insertElementAsFirstChild("subelement", "");
     wtx.insertTextAsFirstChild("hello, world");
 
     // Read bean.
