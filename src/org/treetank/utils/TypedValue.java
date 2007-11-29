@@ -41,13 +41,17 @@ public final class TypedValue {
   }
 
   /**
-   * Atomize the byte[] according to its type.
+   * Atomize the byte[] according to its type. This will always yield a
+   * non-null string (even if the bytes are null).
    * 
    * @param valueType Type of value.
    * @param bytes Byte array of value.
    * @return Atomized value as string.
    */
   public static String atomize(final int valueType, final byte[] bytes) {
+    if (bytes == null) {
+      return "";
+    }
     switch (valueType) {
     case IReadTransaction.INT_TYPE:
       return Integer.toString(parseInt(bytes));
@@ -56,7 +60,7 @@ public final class TypedValue {
     case IReadTransaction.BOOLEAN_TYPE:
       return Boolean.toString(parseBoolean(bytes));
     default:
-      return (bytes == null ? "" : parseString(bytes));
+      return parseString(bytes);
     }
   }
 
