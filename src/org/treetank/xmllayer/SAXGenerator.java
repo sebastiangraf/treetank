@@ -179,6 +179,7 @@ public final class SAXGenerator implements Runnable {
         while (!stack.empty() && stack.peek() != rtx.getLeftSiblingKey()) {
           rtx.moveTo(stack.pop());
           emitEndElement(rtx);
+          rtx.moveTo(key);
         }
         if (!stack.empty()) {
           rtx.moveTo(stack.pop());

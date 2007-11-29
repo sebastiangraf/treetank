@@ -18,6 +18,7 @@
  
 TreeTank 4.19
 -------------
+ 4 Fixed critical bug in SAXGenerator emitting end elements too early.
  3 Renamed getRevisionSize() to getNodeCount() which is more expressive.
  2 Introduced transaction ID. This allows to close all open transactions during
    ISession.close().
