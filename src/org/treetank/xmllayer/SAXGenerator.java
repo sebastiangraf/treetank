@@ -55,7 +55,10 @@ public final class SAXGenerator implements Runnable {
   private final IAxis mAxis;
 
   /** Stack for end nodes. */
-  private final FastStack<Long> stack;
+  private final FastStack<Long> mStack;
+
+  /** Print xml:id. */
+  private final boolean mPrintXmlId;
 
   /**
    * Constructor to bind to SAX content handler.
@@ -68,13 +71,39 @@ public final class SAXGenerator implements Runnable {
       final IReadTransaction rtx,
       final ContentHandler contentHandler,
       final boolean prettyPrint) {
-    mAxis = new DescendantAxis(rtx, true);
-    mHandler = contentHandler;
-    mPrettyPrint = prettyPrint;
-    stack = new FastStack<Long>();
-    mIsSerialize = false;
-    mWriter = null;
+    this(rtx, null, contentHandler, prettyPrint, false);
+  }
+  
+  /**
+   * Constructor to bind to SAX content handler.
+   * 
+   * @param rtx Transaction to perform descendant axis on.
+   * @param contentHandler SAX content handler to fire SAX events to.
+   * @param prettyPrint Is pretty print enabled?
+   * @param printXmlId Is xml:id printed?
+   */
+  public SAXGenerator(
+      final IReadTransaction rtx,
+      final ContentHandler contentHandler,
+      final boolean prettyPrint,
+      final boolean printXmlId) {
+    this(rtx, null, contentHandler, prettyPrint, printXmlId);
+  }
 
+  /**
+   * Constructor to write reconstructed XML to a specified Writer.
+   * 
+   * @param rtx Transaction to perform descendant axis on.
+   * @param writer Output writer to write to.
+   * @param prettyPrint Is pretty print enabled?
+   * @param printXmlId Is xml:id printed?
+   */
+  public SAXGenerator(
+      final IReadTransaction rtx,
+      final Writer writer,
+      final boolean prettyPrint,
+      final boolean printXmlId) {
+    this(rtx, writer, null, prettyPrint, printXmlId);
   }
 
   /**
@@ -88,12 +117,29 @@ public final class SAXGenerator implements Runnable {
       final IReadTransaction rtx,
       final Writer writer,
       final boolean prettyPrint) {
-    mHandler = null;
-    mWriter = writer;
-    mIsSerialize = true;
+    this(rtx, writer, null, prettyPrint, false);
+  }
+
+  /**
+   * Constructor to write reconstructed XML to a specified Writer.
+   * 
+   * @param rtx Transaction to perform descendant axis on.
+   * @param writer Output writer to write to.
+   * @param prettyPrint Is pretty print enabled?
+   */
+  private SAXGenerator(
+      final IReadTransaction rtx,
+      final Writer writer,
+      final ContentHandler contentHandler,
+      final boolean prettyPrint,
+      final boolean printXmlId) {
     mAxis = new DescendantAxis(rtx, true);
+    mWriter = writer;
+    mHandler = contentHandler;
     mPrettyPrint = prettyPrint;
-    stack = new FastStack<Long>();
+    mStack = new FastStack<Long>();
+    mIsSerialize = (writer != null);
+    mPrintXmlId = printXmlId;
   }
 
   /**
@@ -116,6 +162,13 @@ public final class SAXGenerator implements Runnable {
 
     final AttributesImpl attributes = new AttributesImpl();
 
+    // Add virtual xml:id attribute.
+    if (mPrintXmlId) {
+      attributes.addAttribute("", "id", "xml:id", "", Long.toString(rtx
+          .getNodeKey()));
+    }
+
+    // Iterate over all persistent attributes.
     for (int index = 0, length = rtx.getAttributeCount(); index < length; index++) {
       attributes.addAttribute(rtx.getAttributeURI(index), "", rtx
           .getAttributeName(index), "", rtx.getAttributeValueAsAtom(index));
@@ -176,13 +229,13 @@ public final class SAXGenerator implements Runnable {
 
       // Emit all pending end elements.
       if (closeElements) {
-        while (!stack.empty() && stack.peek() != rtx.getLeftSiblingKey()) {
-          rtx.moveTo(stack.pop());
+        while (!mStack.empty() && mStack.peek() != rtx.getLeftSiblingKey()) {
+          rtx.moveTo(mStack.pop());
           emitEndElement(rtx);
           rtx.moveTo(key);
         }
-        if (!stack.empty()) {
-          rtx.moveTo(stack.pop());
+        if (!mStack.empty()) {
+          rtx.moveTo(mStack.pop());
           emitEndElement(rtx);
         }
         rtx.moveTo(key);
@@ -196,7 +249,7 @@ public final class SAXGenerator implements Runnable {
         if (!rtx.hasFirstChild()) {
           emitEndElement(rtx);
         } else {
-          stack.push(rtx.getNodeKey());
+          mStack.push(rtx.getNodeKey());
         }
       }
 
@@ -207,8 +260,8 @@ public final class SAXGenerator implements Runnable {
     }
 
     // Finally emit all pending end elements.
-    while (!stack.empty()) {
-      rtx.moveTo(stack.pop());
+    while (!mStack.empty()) {
+      rtx.moveTo(mStack.pop());
       emitEndElement(rtx);
     }
 
