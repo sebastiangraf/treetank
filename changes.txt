@@ -18,6 +18,9 @@
  
 TreeTank 4.19
 -------------
+ 7 Added ant task to generate JavaDoc.
+ 6 Added skeleton for TreeTankStream[Reader|Writer] implementing the
+   XMLStream[Reader|Writer] interfaces of StAX.
  5 Fixed critical bug in TypedValue.atomize().
  4 Fixed critical bug in SAXGenerator emitting end elements too early.
  3 Renamed getRevisionSize() to getNodeCount() which is more expressive.
