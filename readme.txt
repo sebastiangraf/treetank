@@ -35,6 +35,7 @@ TreeTank Coding Conventions
 + Spaces for tab: yes.
 + Subversion, JavaDoc, and other comments: Correct English sentences.
 
++ Implement according to roadmap.txt which is defined by the project lead.
 + Test driven development: Write test cases.
 + Change management: Append changes to changes.txt and increment revision
   in build.xml.
