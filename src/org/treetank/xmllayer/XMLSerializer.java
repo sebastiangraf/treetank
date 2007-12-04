@@ -18,6 +18,7 @@
 
 package org.treetank.xmllayer;
 
+import java.io.BufferedOutputStream;
 import java.io.OutputStream;
 
 import org.treetank.api.IAxis;
@@ -31,8 +32,9 @@ import org.treetank.utils.IConstants;
  * 
  * <p>
  * Most efficient way to serialize a subtree into an OutputStream. The encoding
- * always is UTF-8. The namespace 'tnk' 
- * must be declared before.
+ * always is UTF-8. Note that the OutputStream internally is wrapped by a
+ * BufferedOutputStream. There is no need to buffer it again outside of this
+ * class.
  * </p>
  */
 public final class XMLSerializer implements Runnable {
@@ -145,7 +147,7 @@ public final class XMLSerializer implements Runnable {
     mRTX = rtx;
     mAxis = new DescendantAxis(rtx, true);
     mStack = new FastStack<Long>();
-    mOut = out;
+    mOut = new BufferedOutputStream(out, 1024);
     mSerializeXMLDeclaration = serializeXMLDeclaration;
     mSerializeId = serializeId;
   }
@@ -205,6 +207,8 @@ public final class XMLSerializer implements Runnable {
       if (mSerializeXMLDeclaration) {
         write("</tnk:item></tnk:sequence>");
       }
+
+      mOut.flush();
 
     } catch (Exception e) {
       throw new RuntimeException(e);
