@@ -27,6 +27,7 @@ import javax.xml.stream.XMLStreamReader;
 import org.treetank.api.IAxis;
 import org.treetank.api.IReadTransaction;
 import org.treetank.axislayer.DescendantAxis;
+import org.treetank.utils.FastStack;
 
 /**
  * <h1>TreeTankStreamReader</h1>
@@ -44,6 +45,9 @@ public final class TreeTankStreamReader implements XMLStreamReader {
   /** Descendant-or-self axis used to traverse subtree. */
   private final IAxis mAxis;
 
+  /** Stack for reading end element. */
+  private final FastStack<Long> mStack;
+
   /**
    * Initialize XMLStreamReader implementation with transaction. The cursor
    * points to the node the XMLStreamReader starts to read.
@@ -53,13 +57,14 @@ public final class TreeTankStreamReader implements XMLStreamReader {
   public TreeTankStreamReader(final IReadTransaction rtx) {
     mRTX = rtx;
     mAxis = new DescendantAxis(rtx, true);
+    mStack = new FastStack<Long>();
   }
 
   /**
    * {@inheritDoc}
    */
   public final void close() throws XMLStreamException {
-
+    // Nothing to do here.
   }
 
   /**
@@ -73,7 +78,7 @@ public final class TreeTankStreamReader implements XMLStreamReader {
   /**
    * {@inheritDoc}
    */
-  public final String getAttributeLocalName(final int arg0) {
+  public final String getAttributeLocalName(final int index) {
     // TODO Auto-generated method stub
     return null;
   }
@@ -81,7 +86,7 @@ public final class TreeTankStreamReader implements XMLStreamReader {
   /**
    * {@inheritDoc}
    */
-  public final QName getAttributeName(final int arg0) {
+  public final QName getAttributeName(final int index) {
     // TODO Auto-generated method stub
     return null;
   }
@@ -89,7 +94,7 @@ public final class TreeTankStreamReader implements XMLStreamReader {
   /**
    * {@inheritDoc}
    */
-  public final String getAttributeNamespace(final int arg0) {
+  public final String getAttributeNamespace(final int index) {
     // TODO Auto-generated method stub
     return null;
   }
@@ -97,7 +102,7 @@ public final class TreeTankStreamReader implements XMLStreamReader {
   /**
    * {@inheritDoc}
    */
-  public final String getAttributePrefix(final int arg0) {
+  public final String getAttributePrefix(final int index) {
     // TODO Auto-generated method stub
     return null;
   }
@@ -105,7 +110,7 @@ public final class TreeTankStreamReader implements XMLStreamReader {
   /**
    * {@inheritDoc}
    */
-  public final String getAttributeType(final int arg0) {
+  public final String getAttributeType(final int index) {
     // TODO Auto-generated method stub
     return null;
   }
@@ -113,7 +118,7 @@ public final class TreeTankStreamReader implements XMLStreamReader {
   /**
    * {@inheritDoc}
    */
-  public final String getAttributeValue(final int arg0) {
+  public final String getAttributeValue(final int index) {
     // TODO Auto-generated method stub
     return null;
   }
@@ -121,7 +126,9 @@ public final class TreeTankStreamReader implements XMLStreamReader {
   /**
    * {@inheritDoc}
    */
-  public final String getAttributeValue(final String arg0, final String arg1) {
+  public final String getAttributeValue(
+      final String namespaceURI,
+      final String localName) {
     // TODO Auto-generated method stub
     return null;
   }
@@ -201,7 +208,7 @@ public final class TreeTankStreamReader implements XMLStreamReader {
   /**
    * {@inheritDoc}
    */
-  public final String getNamespacePrefix(final int arg0) {
+  public final String getNamespacePrefix(final int index) {
     // TODO Auto-generated method stub
     return null;
   }
@@ -217,7 +224,7 @@ public final class TreeTankStreamReader implements XMLStreamReader {
   /**
    * {@inheritDoc}
    */
-  public final String getNamespaceURI(final String arg0) {
+  public final String getNamespaceURI(final String prefix) {
     // TODO Auto-generated method stub
     return null;
   }
@@ -225,7 +232,7 @@ public final class TreeTankStreamReader implements XMLStreamReader {
   /**
    * {@inheritDoc}
    */
-  public final String getNamespaceURI(final int arg0) {
+  public final String getNamespaceURI(final int index) {
     // TODO Auto-generated method stub
     return null;
   }
@@ -257,8 +264,7 @@ public final class TreeTankStreamReader implements XMLStreamReader {
   /**
    * {@inheritDoc}
    */
-  public final Object getProperty(final String arg0)
-      throws IllegalArgumentException {
+  public final Object getProperty(final String name) {
     // TODO Auto-generated method stub
     return null;
   }
@@ -283,10 +289,10 @@ public final class TreeTankStreamReader implements XMLStreamReader {
    * {@inheritDoc}
    */
   public final int getTextCharacters(
-      final int arg0,
-      final char[] arg1,
-      final int arg2,
-      final int arg3) throws XMLStreamException {
+      final int sourceStart,
+      final char[] target,
+      final int targetStart,
+      final int length) throws XMLStreamException {
     // TODO Auto-generated method stub
     return 0;
   }
@@ -342,7 +348,7 @@ public final class TreeTankStreamReader implements XMLStreamReader {
   /**
    * {@inheritDoc}
    */
-  public final boolean isAttributeSpecified(final int arg0) {
+  public final boolean isAttributeSpecified(final int index) {
     // TODO Auto-generated method stub
     return false;
   }
@@ -406,8 +412,10 @@ public final class TreeTankStreamReader implements XMLStreamReader {
   /**
    * {@inheritDoc}
    */
-  public final void require(final int arg0, final String arg1, final String arg2)
-      throws XMLStreamException {
+  public final void require(
+      final int type,
+      final String namespaceURI,
+      final String localName) throws XMLStreamException {
     // TODO Auto-generated method stub
   }
 
