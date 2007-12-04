@@ -158,7 +158,8 @@ public final class XMLSerializer implements Runnable {
     try {
 
       if (mSerializeXMLDeclaration) {
-        write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+        write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+            + "<tnk:sequence xmlns:tnk=\"http://treetank.org\"><tnk:item>");
       }
 
       boolean closeElements = false;
@@ -199,6 +200,10 @@ public final class XMLSerializer implements Runnable {
       while (!mStack.empty()) {
         mRTX.moveTo(mStack.pop());
         emitEndElement();
+      }
+
+      if (mSerializeXMLDeclaration) {
+        write("</tnk:item></tnk:sequence>");
       }
 
     } catch (Exception e) {

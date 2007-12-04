@@ -55,7 +55,7 @@ public class XMLSerializerTest {
     final IReadTransaction rtx = session.beginReadTransaction();
     final XMLSerializer serializer = new XMLSerializer(rtx, out);
     serializer.run();
-    TestCase.assertEquals(TestDocument.XML, out.toString());
+    TestCase.assertEquals(TestDocument.XML_TANK, out.toString());
     rtx.close();
     session.close();
   }
