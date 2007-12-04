@@ -18,6 +18,9 @@
  
 TreeTank 4.19
 -------------
+ 9 Added raw name methods to access the UTF-8-encoded byte[] underlying a name.
+ 8 Added XMLSerializer which is the most efficient way to serialize a subtree
+   into an OutputStream. Required for web applications.
  7 Added ant task to generate JavaDoc.
  6 Added skeleton for TreeTankStream[Reader|Writer] implementing the
    XMLStream[Reader|Writer] interfaces of StAX.

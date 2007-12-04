@@ -351,6 +351,14 @@ public interface IReadTransaction {
   public String getAttributeName(final int index);
 
   /**
+   * Get qualified raw name of attribute at given index.
+   * 
+   * @param index Index of attribute [0..getAttributeCount()].
+   * @return Qualified raw name of attribute at given index.
+   */
+  public byte[] getAttributeRawName(final int index);
+
+  /**
    * Get URI key of attribute at given index.
    * 
    * @param index Index of attribute [0..getAttributeCount()].
@@ -532,6 +540,13 @@ public interface IReadTransaction {
   public String getName();
 
   /**
+   * Get qualified raw name of node.
+   * 
+   * @return Qualified raw name of node.
+   */
+  public byte[] getRawName();
+
+  /**
    * Get URI key of node. Note that this actually is an IRI but the
    * W3C decided to continue using URI not to confuse anyone.
    * 
@@ -608,9 +623,17 @@ public interface IReadTransaction {
    * Get name for key. This is used for efficient key testing.
    * 
    * @param key Key, i.e., local part key, URI key, or prefix key.
-   * @return Byte array containing name for given key.
+   * @return String containing name for given key.
    */
   public String nameForKey(final int key);
+
+  /**
+   * Get raw name for key. This is used for efficient key testing.
+   * 
+   * @param key Key, i.e., local part key, URI key, or prefix key.
+   * @return Byte array containing name for given key.
+   */
+  public byte[] rawNameForKey(final int key);
 
   /**
    * Close shared read transaction and immediately release all resources.

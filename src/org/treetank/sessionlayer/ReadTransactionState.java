@@ -130,6 +130,16 @@ public class ReadTransactionState {
   /**
    * {@inheritDoc}
    */
+  protected final byte[] getRawName(final int nameKey) {
+    if (mNamePage == null) {
+      mNamePage = dereferenceNamePage(mRevisionRootPage.getNamePageReference());
+    }
+    return mNamePage.getRawName(nameKey);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   protected void close() {
     mPageReader.close();
 
