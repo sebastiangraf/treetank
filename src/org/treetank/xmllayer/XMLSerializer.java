@@ -31,14 +31,72 @@ import org.treetank.utils.IConstants;
  * 
  * <p>
  * Most efficient way to serialize a subtree into an OutputStream. The encoding
- * always is UTF-8. THe XML declaration is not printed. The namespace 'tnk' 
+ * always is UTF-8. The namespace 'tnk' 
  * must be declared before.
  * </p>
  */
 public final class XMLSerializer implements Runnable {
 
-  /** Maximum size of internal builder buffer. */
-  private static final int MAX_BUILDER_LENGTH = 1;
+  /** Offset that must be added to digit to make it ASCII. */
+  private static final int ASCII_OFFSET = 48;
+
+  /** Precalculated powers of each available long digit. */
+  private static final long[] LONG_POWERS =
+      {
+          1L,
+          10L,
+          100L,
+          1000L,
+          10000L,
+          100000L,
+          1000000L,
+          10000000L,
+          100000000L,
+          1000000000L,
+          10000000000L,
+          100000000000L,
+          1000000000000L,
+          10000000000000L,
+          100000000000000L,
+          1000000000000000L,
+          10000000000000000L,
+          100000000000000000L,
+          1000000000000000000L };
+
+  /** " ". */
+  private static final int SPACE = 32;
+
+  /** "&lt;". */
+  private static final int OPEN = 60;
+
+  /** "&gt;". */
+  private static final int CLOSE = 62;
+
+  /** "/". */
+  private static final int SLASH = 47;
+
+  /** "=". */
+  private static final int EQUAL = 61;
+
+  /** "\"". */
+  private static final int QUOTE = 34;
+
+  /** "=\"". */
+  private static final byte[] EQUAL_QUOTE = new byte[] { EQUAL, QUOTE };
+
+  /** "&lt;/". */
+  private static final byte[] OPEN_SLASH = new byte[] { OPEN, SLASH };
+
+  /** "/&gt;". */
+  private static final byte[] SLASH_CLOSE = new byte[] { SLASH, CLOSE };
+
+  /** " tnk:id=\"". */
+  private static final byte[] TNK_ID =
+      new byte[] { SPACE, 116, 110, 107, 58, 105, 100, EQUAL, QUOTE };
+
+  /** " xmlns:". */
+  private static final byte[] XMLNS =
+      new byte[] { SPACE, 120, 109, 108, 110, 115, 58 };
 
   /** Transaction to read from (is the same as the mAxis). */
   private final IReadTransaction mRTX;
@@ -52,8 +110,23 @@ public final class XMLSerializer implements Runnable {
   /** OutputStream to write to. */
   private final OutputStream mOut;
 
-  /** StringBuilder as intermediate cache. */
-  private StringBuilder mBuilder;
+  /** Serialize XML declaration. */
+  private final boolean mSerializeXMLDeclaration;
+
+  /** Serialize tnk:id. */
+  private final boolean mSerializeId;
+
+  /**
+   * Initialize XMLStreamReader implementation with transaction. The cursor
+   * points to the node the XMLStreamReader starts to read. Do not serialize
+   * the tank ids.
+   * 
+   * @param rtx Transaction with cursor pointing to start node.
+   * @param out OutputStream to serialize UTF-8 XML to.
+   */
+  public XMLSerializer(final IReadTransaction rtx, final OutputStream out) {
+    this(rtx, out, true, false);
+  }
 
   /**
    * Initialize XMLStreamReader implementation with transaction. The cursor
@@ -61,13 +134,20 @@ public final class XMLSerializer implements Runnable {
    * 
    * @param rtx Transaction with cursor pointing to start node.
    * @param out OutputStream to serialize UTF-8 XML to.
+   * @param serializeXMLDeclaration Serialize XML declaration if true.
+   * @param serializeId Serialize tank id if true.
    */
-  public XMLSerializer(final IReadTransaction rtx, final OutputStream out) {
+  public XMLSerializer(
+      final IReadTransaction rtx,
+      final OutputStream out,
+      final boolean serializeXMLDeclaration,
+      final boolean serializeId) {
     mRTX = rtx;
     mAxis = new DescendantAxis(rtx, true);
     mStack = new FastStack<Long>();
     mOut = out;
-    mBuilder = new StringBuilder();
+    mSerializeXMLDeclaration = serializeXMLDeclaration;
+    mSerializeId = serializeId;
   }
 
   /**
@@ -76,6 +156,11 @@ public final class XMLSerializer implements Runnable {
   public final void run() {
 
     try {
+
+      if (mSerializeXMLDeclaration) {
+        write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+      }
+
       boolean closeElements = false;
 
       // Iterate over all nodes of the subtree including self.
@@ -116,9 +201,6 @@ public final class XMLSerializer implements Runnable {
         emitEndElement();
       }
 
-      // Flush remaining stuff in builder.
-      mOut.write(mBuilder.toString().getBytes(IConstants.DEFAULT_ENCODING));
-
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -132,68 +214,79 @@ public final class XMLSerializer implements Runnable {
     switch (mRTX.getKind()) {
     case IReadTransaction.ELEMENT_KIND:
       // Emit start element.
-      mBuilder.append("<");
-      mBuilder.append(mRTX.getName());
-      emitNamespaces();
-      emitAttributes();
+      mOut.write(OPEN);
+      mOut.write(mRTX.getRawName());
+      // Emit namespace declarations.
+      for (int index = 0, length = mRTX.getNamespaceCount(); index < length; index++) {
+        mOut.write(XMLNS);
+        write(mRTX.getNamespacePrefix(index));
+        mOut.write(EQUAL_QUOTE);
+        write(mRTX.getNamespaceURI(index));
+        mOut.write(QUOTE);
+      }
+      // Emit attributes.
+      // Add virtual tnk:id attribute.
+      if (mSerializeId) {
+        mOut.write(TNK_ID);
+        write(mRTX.getNodeKey());
+        mOut.write(QUOTE);
+      }
+
+      // Iterate over all persistent attributes.
+      for (int index = 0, length = mRTX.getAttributeCount(); index < length; index++) {
+        mOut.write(SPACE);
+        mOut.write(mRTX.getAttributeRawName(index));
+        mOut.write(EQUAL_QUOTE);
+        if (mRTX.getAttributeValueType(index) == IReadTransaction.STRING_TYPE) {
+          mOut.write(mRTX.getAttributeValueAsByteArray(index));
+        } else {
+          write(mRTX.getAttributeValueAsAtom(index));
+        }
+        mOut.write(QUOTE);
+      }
       if (mRTX.hasFirstChild()) {
-        mBuilder.append(">");
+        mOut.write(CLOSE);
       } else {
-        mBuilder.append("/>");
+        mOut.write(SLASH_CLOSE);
       }
       break;
     case IReadTransaction.TEXT_KIND:
       if (mRTX.getValueType() == IReadTransaction.STRING_TYPE) {
-        
+        mOut.write(mRTX.getValueAsByteArray());
+      } else {
+        write(mRTX.getValueAsAtom());
       }
-      mBuilder.append(mRTX.getValueAsAtom());
       break;
-    }
-    if (mBuilder.length() > MAX_BUILDER_LENGTH) {
-      mOut.write(mBuilder.toString().getBytes(IConstants.DEFAULT_ENCODING));
-      mBuilder = new StringBuilder();
     }
   }
 
   /**
    * Emit end element.
    */
-  private final void emitEndElement() {
-    mBuilder.append("</");
-    mBuilder.append(mRTX.getName());
-    mBuilder.append(">");
+  private final void emitEndElement() throws Exception {
+    mOut.write(OPEN_SLASH);
+    mOut.write(mRTX.getRawName());
+    mOut.write(CLOSE);
   }
 
   /**
-   * Emit attributes of start element.
+   * Write characters of string.
    */
-  private final void emitNamespaces() {
-    // Iterate over all persistent namespaces.
-    for (int index = 0, length = mRTX.getNamespaceCount(); index < length; index++) {
-      mBuilder.append(" xmlns:");
-      mBuilder.append(mRTX.getNamespacePrefix(index));
-      mBuilder.append("=\"");
-      mBuilder.append(mRTX.getNamespaceURI(index));
-      mBuilder.append("\"");
-    }
+  private final void write(final String string) throws Exception {
+    mOut.write(string.getBytes(IConstants.DEFAULT_ENCODING));
   }
 
   /**
-   * Emit attributes of start element.
+   * Write non-negative non-zero long as UTF-8 bytes.
    */
-  private final void emitAttributes() {
-    // Add virtual tnk:id attribute.
-    //    mBuilder.append(" tnk:id=\"");
-    //    mBuilder.append(mRTX.getNodeKey());
-    //    mBuilder.append("\"");
-
-    // Iterate over all persistent attributes.
-    for (int index = 0, length = mRTX.getAttributeCount(); index < length; index++) {
-      mBuilder.append(" ");
-      mBuilder.append(mRTX.getAttributeName(index));
-      mBuilder.append("=\"");
-      mBuilder.append(mRTX.getAttributeValueAsAtom(index));
-      mBuilder.append("\"");
+  private final void write(final long value) throws Exception {
+    final int length = (int) Math.log10((double) value);
+    int digit = 0;
+    long remainder = value;
+    for (int i = length; i >= 0; i--) {
+      digit = (byte) (remainder / LONG_POWERS[i]);
+      mOut.write((byte) (digit + ASCII_OFFSET));
+      remainder -= digit * LONG_POWERS[i];
     }
   }
 

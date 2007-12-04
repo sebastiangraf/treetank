@@ -37,12 +37,16 @@ public final class NamePage extends AbstractPage {
   /** Map the hash of a name to its name. */
   private final Map<Integer, String> mNameMap;
 
+  /** Map the hash of a name to its name. */
+  private final Map<Integer, byte[]> mRawNameMap;
+
   /**
    * Create name page.
    */
   public NamePage() {
     super(0);
     mNameMap = new HashMap<Integer, String>();
+    mRawNameMap = new HashMap<Integer, byte[]>();
   }
 
   /**
@@ -53,9 +57,13 @@ public final class NamePage extends AbstractPage {
   public NamePage(final FastByteArrayReader in) {
     super(0, in);
     mNameMap = new HashMap<Integer, String>();
+    mRawNameMap = new HashMap<Integer, byte[]>();
 
     for (int i = 0, l = in.readVarInt(); i < l; i++) {
-      mNameMap.put(in.readVarInt(), TypedValue.parseString(in.readByteArray()));
+      final int key = in.readVarInt();
+      final byte[] bytes = in.readByteArray();
+      mNameMap.put(key, TypedValue.parseString(bytes));
+      mRawNameMap.put(key, bytes);
     }
   }
 
@@ -67,6 +75,7 @@ public final class NamePage extends AbstractPage {
   public NamePage(final NamePage committedNamePage) {
     super(0, committedNamePage);
     mNameMap = new HashMap<Integer, String>(committedNamePage.mNameMap);
+    mRawNameMap = new HashMap<Integer, byte[]>(committedNamePage.mRawNameMap);
   }
 
   /**
@@ -80,6 +89,16 @@ public final class NamePage extends AbstractPage {
   }
 
   /**
+   * Get raw name belonging to name key.
+   * 
+   * @param key Name key identifying name.
+   * @return Raw name of name key.
+   */
+  public final byte[] getRawName(final int key) {
+    return mRawNameMap.get(key);
+  }
+
+  /**
    * Create name key given a name.
    * 
    * @param key Key for given name.
@@ -87,6 +106,7 @@ public final class NamePage extends AbstractPage {
    */
   public final void setName(final int key, final String name) {
     mNameMap.put(key, name);
+    mRawNameMap.put(key, TypedValue.getBytes(name));
   }
 
   /**

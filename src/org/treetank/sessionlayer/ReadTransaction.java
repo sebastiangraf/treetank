@@ -324,6 +324,14 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
+  public final byte[] getAttributeRawName(final int index) {
+    assertNotClosed();
+    return rawNameForKey(mCurrentNode.getAttribute(index).getNameKey());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final int getAttributeURIKey(final int index) {
     assertNotClosed();
     return mCurrentNode.getAttribute(index).getURIKey();
@@ -534,6 +542,14 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
+  public final byte[] getRawName() {
+    assertNotClosed();
+    return mTransactionState.getRawName(mCurrentNode.getNameKey());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final int getURIKey() {
     assertNotClosed();
     return mCurrentNode.getURIKey();
@@ -634,6 +650,14 @@ public class ReadTransaction implements IReadTransaction {
   public final String nameForKey(final int key) {
     assertNotClosed();
     return mTransactionState.getName(key);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final byte[] rawNameForKey(final int key) {
+    assertNotClosed();
+    return mTransactionState.getRawName(key);
   }
 
   /**
