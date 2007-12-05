@@ -18,6 +18,7 @@
  
 TreeTank 4.19
 -------------
+11 Value types now int to fully support XMLSchema.
 10 byte[] storing UTF-8 encoded String now also encodes internal predefined
    entities '&' and '<' to allow for XML-compliant byte-streaming.
  9 Added raw name methods to access the UTF-8-encoded byte[] underlying a name.

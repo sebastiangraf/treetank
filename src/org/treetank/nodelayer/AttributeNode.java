@@ -81,7 +81,7 @@ public final class AttributeNode extends AbstractNode {
 
     mNameKey = in.readVarInt();
     mURIKey = in.readVarInt();
-    mValueType = in.readByte();
+    mValueType = in.readVarInt();
     mValue = in.readByteArray();
   }
 
@@ -181,7 +181,7 @@ public final class AttributeNode extends AbstractNode {
   public final void serialize(final FastByteArrayWriter out) {
     out.writeVarInt(mNameKey);
     out.writeVarInt(mURIKey);
-    out.writeByte((byte) mValueType);
+    out.writeVarInt(mValueType);
     out.writeByteArray(mValue);
   }
 
