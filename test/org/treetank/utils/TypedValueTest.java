@@ -139,4 +139,10 @@ public class TypedValueTest {
     assertEquals("", TypedValue.atomize(IReadTransaction.STRING_TYPE, null));
   }
 
+  @Test
+  public void testEntityInString() {
+    assertEquals("<&", TypedValue.parseString(TypedValue.getBytes("<&")));
+    assertEquals(9, TypedValue.getBytes("<&").length);
+  }
+
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <project name="TreeTank" default="jar">
 
-	<property name="treetank.jar" value="treetank__V4.19.9.jar" />
+	<property name="treetank.jar" value="treetank__V4.19.10.jar" />
 
 	<property name="debuglevel" value="source,lines,vars" />
 	<property name="target" value="1.5" />
@@ -43,18 +43,13 @@
 		<delete dir="${classes.dir}" />
 		<delete file="${build.dir}/${treetank.jar}" />
 	</target>
-	
+
 	<target name="javadoc">
-		<javadoc
-		    destdir="doc"
-		    author="true"
-		    version="true"
-		    use="true"
-		    windowtitle="TreeTank API">
-		    <packageset dir="src">
-		        <include name="**"/>
-		    </packageset>
-        </javadoc>
-    </target>
+		<javadoc destdir="doc" author="true" version="true" use="true" windowtitle="TreeTank API">
+			<packageset dir="src">
+				<include name="**" />
+			</packageset>
+		</javadoc>
+	</target>
 
 </project>

@@ -73,7 +73,10 @@ public final class TypedValue {
   public static final String parseString(final byte[] bytes) {
     String string = null;
     try {
-      string = new String(bytes, IConstants.DEFAULT_ENCODING);
+      string =
+          new String(bytes, IConstants.DEFAULT_ENCODING)
+              .replace("&amp;", "&")
+              .replace("&lt;", "<");
     } catch (Exception e) {
       throw new RuntimeException("Could not convert byte[] to String: "
           + e.getLocalizedMessage());
@@ -270,7 +273,9 @@ public final class TypedValue {
       if (value == null || value.length() == 0) {
         bytes = EMPTY;
       } else {
-        bytes = value.getBytes(IConstants.DEFAULT_ENCODING);
+        bytes =
+            value.replace("&", "&amp;").replace("<", "&lt;").getBytes(
+                IConstants.DEFAULT_ENCODING);
       }
     } catch (Exception e) {
       throw new RuntimeException("Could not convert String to byte[]: "
