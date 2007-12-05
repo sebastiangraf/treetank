@@ -1,0 +1,106 @@
+<html>
+  <body>
+    <h1>Package REST Layer</h1>
+    <p>
+    This package contains a RESTful service wrapped around a TreeTank file.
+    </p>
+    <h2>RESTful Operations on TreeTank service</h2>
+    <p>
+      <table>
+        <tr>
+          <td><strong>Method</strong></td>
+          <td><strong>URL</strong></td>
+          <td><strong>Request Body</strong></td>
+          <td><strong>Response Body</strong></td>
+          <td><strong>Description</strong></td>
+        </tr>
+        <tr>
+          <td colspan="5"><strong>Id</strong></td>
+        </tr>
+        <tr>
+          <td>POST</td>
+          <td>http://{server}/{treetank}/id/{id}</td>
+          <td>{fragment}</td>
+          <td>{fragment-id}</td>
+          <td>Insert subtree {fragment} as first child of node {id}.</td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td>http://{server}/{treetank}/id/{id}</td>
+          <td></td>
+          <td>{fragment}</td>
+          <td>Get subtree {fragment} rooted at node {id}.</td>
+        </tr>
+        <tr>
+          <td>PUT</td>
+          <td>http://{server}/{treetank}/id/{id}</td>
+          <td>{fragment}</td>
+          <td></td>
+          <td>Replace subtree rooted at node {id} with subtree {fragment}.</td>
+        </tr>
+        <tr>
+          <td>DELETE</td>
+          <td>http://{server}/{treetank}/id/{id}</td>
+          <td></td>
+          <td></td>
+          <td>Remove subtree rooted at node {id}.</td>
+        </tr>
+        <tr>
+          <td colspan="5"><strong>XPath 2.0</strong></td>
+        </tr>
+        <tr>
+          <td>POST</td>
+          <td>http://{server}/{treetank}/xpath/{xpath}</td>
+          <td>{fragment}</td>
+          <td>{fragment-id}</td>
+          <td>Insert subtree {fragment} as first child of all nodes selected by {xpath}.</td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td>http://{server}/{treetank}/xpath/{xpath}</td>
+          <td></td>
+          <td>{fragments}</td>
+          <td>Get all subtrees {fragments} rooted at the nodes selected by {xpath}.</td>
+        </tr>
+        <tr>
+          <td>PUT</td>
+          <td>http://{server}/{treetank}/xpath/{xpath}</td>
+          <td>{fragment}</td>
+          <td></td>
+          <td>Replace subtree rooted at the nodes selected by {xpath} with subtree {fragment}.</td>
+        </tr>
+        <tr>
+          <td>DELETE</td>
+          <td>http://{server}/{treetank}/xpath/{xpath}</td>
+          <td></td>
+          <td></td>
+          <td>Remove all subtrees rooted at the nodes selected by {xpath}.</td>
+        </tr>
+        <tr>
+          <td colspan="5"><strong>Fulltext</strong></td>
+        </tr>
+        <tr>
+          <td>POST</td>
+          <td>http://{server}/{treetank}/fulltext/{token}</td>
+          <td>{id}</td>
+          <td>{token-id}</td>
+          <td>Add {id} to list of ids bound to {token}.</td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td>http://{server}/{treetank}/fulltext/{token}</td>
+          <td></td>
+          <td>{ids}</td>
+          <td>Get list of {ids} bound to {token}.</td>
+        </tr>
+        <tr>
+          <td>DELETE</td>
+          <td>http://{server}/{treetank}/fulltext/{token}</td>
+          <td>{id}</td>
+          <td></td>
+          <td>Remove {id} from list of ids bound to {token}.</td>
+        </tr>
+      </table>
+    </p>
+  </body>
+</html>

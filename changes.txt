@@ -18,6 +18,8 @@
  
 TreeTank 4.19
 -------------
+10 byte[] storing UTF-8 encoded String now also encodes internal predefined
+   entities '&' and '<' to allow for XML-compliant byte-streaming.
  9 Added raw name methods to access the UTF-8-encoded byte[] underlying a name.
  8 Added XMLSerializer which is the most efficient way to serialize a subtree
    into an OutputStream. Required for web applications.
