@@ -94,7 +94,7 @@ public final class TextNode extends AbstractNode {
     mParentKey = getNodeKey() - in.readVarLong();
     mLeftSiblingKey = in.readVarLong();
     mRightSiblingKey = in.readVarLong();
-    mValueType = in.readByte();
+    mValueType = in.readVarInt();
     mValue = in.readByteArray();
   }
 
@@ -219,7 +219,7 @@ public final class TextNode extends AbstractNode {
     out.writeVarLong(getNodeKey() - mParentKey);
     out.writeVarLong(mLeftSiblingKey);
     out.writeVarLong(mRightSiblingKey);
-    out.writeByte((byte) mValueType);
+    out.writeVarInt(mValueType);
     out.writeByteArray(mValue);
   }
 
