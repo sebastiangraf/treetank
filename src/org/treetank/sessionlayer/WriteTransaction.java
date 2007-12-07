@@ -663,8 +663,10 @@ public final class WriteTransaction extends ReadTransaction
     // Reset modification counter.
     mModificationCount = 0L;
 
+    getTransactionState().close();
+
     // Reset internal transaction state to new uber page.
-    setTransactionState(getSessionState().getWriteTransactionState());
+    setTransactionState(getSessionState().createWriteTransactionState());
 
   }
 
@@ -679,7 +681,7 @@ public final class WriteTransaction extends ReadTransaction
     mModificationCount = 0L;
 
     // Reset internal transaction state to last committed uber page.
-    setTransactionState(getSessionState().getWriteTransactionState());
+    setTransactionState(getSessionState().createWriteTransactionState());
   }
 
   private final void intermediateCommitIfRequired() {

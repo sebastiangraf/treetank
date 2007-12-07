@@ -18,6 +18,8 @@
  
 TreeTank 4.19
 -------------
+12 Fixed memory leak because the write transaction state is not properly closed
+   during an intermediate auto commit.
 11 Value types now int to fully support XMLSchema.
 10 byte[] storing UTF-8 encoded String now also encodes internal predefined
    entities '&' and '<' to allow for XML-compliant byte-streaming.

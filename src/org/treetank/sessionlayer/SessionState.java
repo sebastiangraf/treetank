@@ -185,7 +185,7 @@ public final class SessionState {
   }
 
   protected final IReadTransaction beginReadTransaction() {
-    return beginReadTransaction(mLastCommittedUberPage.getRevisionKey());
+    return beginReadTransaction(mLastCommittedUberPage.getRevisionNumber());
   }
 
   protected final IReadTransaction beginReadTransaction(final long revisionKey) {
@@ -237,7 +237,7 @@ public final class SessionState {
         new WriteTransaction(
             generateTransactionID(),
             this,
-            getWriteTransactionState(),
+            createWriteTransactionState(),
             maxNodeCount,
             maxTime);
 
@@ -250,7 +250,7 @@ public final class SessionState {
     return wtx;
   }
 
-  protected final WriteTransactionState getWriteTransactionState() {
+  protected final WriteTransactionState createWriteTransactionState() {
     return new WriteTransactionState(
         mSessionConfiguration,
         mPageCache,

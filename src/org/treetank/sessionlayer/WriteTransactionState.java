@@ -62,7 +62,7 @@ public final class WriteTransactionState extends ReadTransactionState {
       final Map<Long, AbstractPage> pageCache,
       final UberPage uberPage) {
     super(sessionConfiguration, pageCache, uberPage, uberPage
-        .getLastCommittedRevisionKey());
+        .getLastCommittedRevisionNumber());
     mPageWriter = new PageWriter(sessionConfiguration);
     setRevisionRootPage(prepareRevisionRootPage());
   }
@@ -369,13 +369,13 @@ public final class WriteTransactionState extends ReadTransactionState {
     // Prepare revision root page.
     final RevisionRootPage revisionRootPage =
         new RevisionRootPage(getRevisionRootPage(getUberPage()
-            .getLastCommittedRevisionKey()));
+            .getLastCommittedRevisionNumber()));
 
     // Prepare indirect tree to hold reference to prepared revision root page.
     final PageReference<RevisionRootPage> revisionRootPageReference =
         prepareLeafOfTree(
             getUberPage().getIndirectPageReference(),
-            getUberPage().getRevisionKey());
+            getUberPage().getRevisionNumber());
 
     // Link the prepared revision root page with the prepared indirect tree.
     revisionRootPageReference.setPage(revisionRootPage);

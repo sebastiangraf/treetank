@@ -147,7 +147,7 @@ public final class UberPage extends AbstractPage {
    * 
    * @return Key of last committed revision.
    */
-  public final long getLastCommittedRevisionKey() {
+  public final long getLastCommittedRevisionNumber() {
     if (mRevisionCount == IConstants.UBP_ROOT_REVISION_COUNT) {
       return IConstants.UBP_ROOT_REVISION_NUMBER;
     } else {
@@ -160,7 +160,7 @@ public final class UberPage extends AbstractPage {
    * 
    * @return Revision key.
    */
-  public final long getRevisionKey() {
+  public final long getRevisionNumber() {
     if (mRevisionCount == IConstants.UBP_ROOT_REVISION_COUNT) {
       return IConstants.UBP_ROOT_REVISION_NUMBER;
     } else {
