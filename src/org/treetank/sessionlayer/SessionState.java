@@ -188,7 +188,8 @@ public final class SessionState {
     return beginReadTransaction(mLastCommittedUberPage.getRevisionNumber());
   }
 
-  protected final IReadTransaction beginReadTransaction(final long revisionKey) {
+  protected final IReadTransaction beginReadTransaction(
+      final long revisionNumber) {
 
     // Make sure not to exceed available number of read transactions.
     try {
@@ -197,21 +198,28 @@ public final class SessionState {
       throw new RuntimeException(e);
     }
 
-    // Create new read transaction.
-    final IReadTransaction rtx =
-        new ReadTransaction(
-            generateTransactionID(),
-            this,
-            new ReadTransactionState(
-                mSessionConfiguration,
-                mPageCache,
-                mLastCommittedUberPage,
-                revisionKey));
+    IReadTransaction rtx = null;
+    try {
+      // Create new read transaction.
+      rtx =
+          new ReadTransaction(
+              generateTransactionID(),
+              this,
+              new ReadTransactionState(
+                  mSessionConfiguration,
+                  mPageCache,
+                  mLastCommittedUberPage,
+                  revisionNumber));
 
-    // Remember transaction for debugging and safe close.
-    if (mTransactionMap.put(rtx.getTransactionID(), rtx) != null) {
-      throw new IllegalStateException(
-          "ID generation is bogus because of duplicate ID.");
+      // Remember transaction for debugging and safe close.
+      if (mTransactionMap.put(rtx.getTransactionID(), rtx) != null) {
+        throw new IllegalStateException(
+            "ID generation is bogus because of duplicate ID.");
+      }
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Revision "
+          + revisionNumber
+          + " can not be found.");
     }
 
     return rtx;
