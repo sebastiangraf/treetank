@@ -102,5 +102,25 @@
         </tr>
       </table>
     </p>
+    <h2>Response of TreeTank service</h2>
+    <p>
+     The response of a RESTful TreeTank service should always look like:
+     <pre>
+     &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+     &lt;tnk:response xmlns:tnk="http://treetank.org"&gt;
+       &lt;tnk:sequence&gt;
+         &lt;tnk:item&gt; ... &lt;/tnk:item&gt;
+         &lt;tnk:item&gt; ... &lt;/tnk:item&gt;
+         ...
+         &lt;tnk:item&gt; ... &lt;/tnk:item&gt;
+       &lt;/tnk:sequence&gt;
+       &lt;tnk:info&gt;
+         &lt;tnk:time&gt;25ms&lt;/tnk:time&gt;
+         ...
+       &lt;/tnk:info&gt;
+     &lt;/tnk:response&gt;
+     </pre>
+     This is to transmit XPath and XQuery results which may contain
+     atomic values.
   </body>
 </html>

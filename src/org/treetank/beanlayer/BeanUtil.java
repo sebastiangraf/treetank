@@ -178,7 +178,11 @@ public final class BeanUtil {
             field.set(target, rtx.getAttributeValueAsString(index));
             break;
           default:
-            throw new IllegalStateException(field.getType().getName());
+            throw new IllegalStateException("Field '"
+                + field.getName()
+                + "' has an unsupported type ('"
+                + field.getType().getName()
+                + "')");
           }
         }
       } else {
@@ -287,7 +291,11 @@ public final class BeanUtil {
             type = IReadTransaction.STRING_TYPE;
             break;
           default:
-            throw new IllegalStateException(field.getType().getName());
+            throw new IllegalStateException("Field '"
+                + field.getName()
+                + "' has an unsupported type ('"
+                + field.getType().getName()
+                + "')");
           }
 
           // Insert property as element with text.
