@@ -21,6 +21,7 @@ package org.treetank.utils;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.util.AbstractMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -57,7 +58,7 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
    *
    */
   public FastWeakHashMap() {
-    mInternalMap = new ConcurrentHashMap<K, WeakReference<V>>();
+    mInternalMap = new concurrent.ConcurrentHashMap();
     mQueue = new ReferenceQueue();
   }
 
