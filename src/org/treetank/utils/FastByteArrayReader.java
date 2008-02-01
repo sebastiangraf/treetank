@@ -65,7 +65,7 @@ public final class FastByteArrayReader {
         if ((mBuffer[mPosition - 1] & 128) != 0) {
           value |= ((mBuffer[mPosition++] & 127)) << 21;
           if ((mBuffer[mPosition - 1] & 128) != 0) {
-            value |= ((mBuffer[mPosition++] & 255)) << 28;
+            value |= ((mBuffer[mPosition++] & 127)) << 28;
           } else if ((mBuffer[mPosition - 1] & 64) != 0)
             value |= 0xF0000000;
         } else if ((mBuffer[mPosition - 1] & 64) != 0)

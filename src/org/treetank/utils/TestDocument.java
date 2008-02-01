@@ -157,5 +157,42 @@ public final class TestDocument {
     wtx.moveToDocumentRoot();
 
   }
+  
+  /**
+   * Create simple test document containing all supported node kinds, but 
+   * ignoring their namespace prefixes.
+   * 
+   * @param wtx IWriteTransaction to write to.
+   */
+  public static void createWithoutNamespace(final IWriteTransaction wtx) {
+
+    wtx.moveToDocumentRoot();
+
+    wtx.insertElementAsFirstChild("a", "");
+    wtx.insertAttribute("i", "", "j");
+   
+
+    wtx.insertTextAsFirstChild("oops1");
+
+    wtx.insertElementAsRightSibling("b", "");
+
+    wtx.insertTextAsFirstChild("foo");
+    wtx.insertElementAsRightSibling("c", "");
+    wtx.moveToParent();
+
+    wtx.insertTextAsRightSibling("oops2");
+
+    wtx.insertElementAsRightSibling("b", "");
+    wtx.insertAttribute("x", "", "y");
+
+    wtx.insertElementAsFirstChild("c", "");
+    wtx.insertTextAsRightSibling("bar");
+    wtx.moveToParent();
+
+    wtx.insertTextAsRightSibling("oops3");
+
+    wtx.moveToDocumentRoot();
+
+  }
 
 }
