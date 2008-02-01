@@ -107,9 +107,11 @@ public final class XMLShredder {
                 .getNamespacePrefix(i));
           }
 
+
           // Parse attributes.
           for (int i = 0, l = parser.getAttributeCount(); i < l; i++) {
-            wtx.insertAttribute(parser.getAttributePrefix(i)
+            wtx.insertAttribute(parser.getAttributePrefix(i) == null 
+                ? parser.getAttributeLocalName(i) : parser.getAttributePrefix(i)
                 + ":"
                 + parser.getAttributeLocalName(i), parser
                 .getAttributeNamespace(i), parser.getAttributeValue(i));
