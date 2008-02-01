@@ -33,7 +33,9 @@ import org.junit.Test;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
+import org.treetank.axislayer.AttributeAxis;
 import org.treetank.axislayer.DescendantAxis;
+import org.treetank.axislayer.NestedAxis;
 import org.treetank.sessionlayer.Session;
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.utils.IConstants;
@@ -42,17 +44,25 @@ import org.treetank.utils.TestDocument;
 public class XMLShredderTest {
 
   public static final String XML = "xml" + File.separator + "test.xml";
+  public static final String XML2 = "xml" + File.separator + "test2.xml";
 
   public static final String PATH =
       "generated" + File.separator + "XMLShredderTest.tnk";
+  public static final String PATH2 =
+    "generated" + File.separator + "XMLShredderNSTest.tnk";
+  
 
   public static final String EXPECTED_PATH =
       "generated" + File.separator + "ExpectedXMLShredderTest.tnk";
+  public static final String EXPECTED_PATH2 =
+    "generated" + File.separator + "ExpectedXMLShredderNSTest.tnk";
 
   @BeforeClass
   public static void setUp() {
     Session.removeSession(PATH);
     Session.removeSession(EXPECTED_PATH);
+    Session.removeSession(PATH2);
+    Session.removeSession(EXPECTED_PATH2);
   }
 
   @Test
@@ -115,5 +125,48 @@ public class XMLShredderTest {
       // Must fail.
     }
   }
+  
+  @Test
+  public void testAttributesNSPrefix() throws IOException, XMLStreamException {
+
+    // Setup expected session.
+    final ISession expectedSession2 = Session.beginSession(EXPECTED_PATH2);
+    final IWriteTransaction expectedTrx2 =
+        expectedSession2.beginWriteTransaction();
+    TestDocument.createWithoutNamespace(expectedTrx2);
+    expectedTrx2.commit();
+
+    // Setup parsed session.
+    XMLShredder.shred(XML2, new SessionConfiguration(PATH2));
+
+    // Verify.
+    final ISession session = Session.beginSession(PATH2);
+    final IReadTransaction rtx = session.beginReadTransaction();
+    rtx.moveToDocumentRoot();
+    final Iterator<Long> expectedAttributes = new DescendantAxis(expectedTrx2);
+    final Iterator<Long> attributes = new DescendantAxis(rtx);
+
+    assertEquals(expectedTrx2.getNodeCount(), rtx.getNodeCount());
+    while (expectedAttributes.hasNext() && attributes.hasNext()) {
+      assertEquals(expectedTrx2.getNamespaceCount(), rtx.getNamespaceCount());
+      assertEquals(expectedTrx2.getAttributeCount(), rtx.getAttributeCount());
+      for (int i = 0; i < expectedTrx2.getAttributeCount(); i++) {
+        assertEquals(expectedTrx2.getAttributeName(i), rtx.getAttributeName(i));
+        assertEquals(expectedTrx2.getAttributeNameKey(i), 
+            rtx.getAttributeNameKey(i));
+        assertEquals(expectedTrx2.getAttributeURI(i), 
+            rtx.getAttributeURI(i));
+        
+        
+      }
+    }
+
+    expectedTrx2.close();
+    expectedSession2.close();
+    rtx.close();
+    session.close();
+
+  }
+
 
 }
