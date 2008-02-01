@@ -63,7 +63,7 @@ public final class FastByteArrayWriter {
         if (value > 1048575 || value < -1048576) {
           mBuffer[mSize - 1] |= 128;
           mBuffer[mSize++] = (byte) (value >> 21);
-          if (value > 268435455 || value < -268435456) {
+          if (value > 134217727 || value < -134217728) {
             mBuffer[mSize - 1] |= 128;
             mBuffer[mSize++] = (byte) (value >> 28);
           } else
