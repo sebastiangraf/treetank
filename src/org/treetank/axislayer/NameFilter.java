@@ -48,7 +48,8 @@ public class NameFilter extends AbstractFilter implements IFilter {
    * {@inheritDoc}
    */
   public final boolean filter() {
-    return ((getTransaction().isElementKind() || getTransaction().isAttributeKind()) && (getTransaction()
+    return ((getTransaction().isElementKind() 
+        || getTransaction().isAttributeKind()) && (getTransaction()
         .getNameKey() == mLocalPartKey));
   }
 }

@@ -75,7 +75,8 @@ public class AncestorAxis extends AbstractAxis implements IAxis {
 
     if (!getTransaction().isDocumentRootKind()
         && getTransaction().hasParent()
-        && getTransaction().getParentKey() != IReadTransaction.DOCUMENT_ROOT_KEY) {
+        && getTransaction().getParentKey() 
+          != IReadTransaction.DOCUMENT_ROOT_KEY) {
       getTransaction().moveToParent();
       return true;
     } else {
