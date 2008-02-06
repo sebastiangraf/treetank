@@ -49,7 +49,12 @@ public class PrecedingAxis extends AbstractAxis implements IAxis {
    * {@inheritDoc}
    */
   public final boolean hasNext() {
-
+    
+    //TODO: CAUTION: This step is not correctly implemented by now.
+    // ancestors of the context node must not be included in the result set.
+    // Additionally it has be checked, in which order the results are extracted.
+    
+    
     if (mIsFirst) {
       mIsFirst = false;
       if (getTransaction().isAttributeKind() 
