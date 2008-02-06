@@ -36,7 +36,7 @@ public class PrecedingSiblingAxisTest {
 
     wtx.moveTo(11L);
     IAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx), 
-        new long[] {3L, 4L, 7L, 8L});
+        new long[] {8L, 7L, 4L, 3L});
 
 
     wtx.moveTo(2L);
