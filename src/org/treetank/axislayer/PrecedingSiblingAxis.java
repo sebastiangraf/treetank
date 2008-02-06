@@ -16,8 +16,7 @@ public class PrecedingSiblingAxis extends AbstractAxis implements IAxis {
 
   
   private boolean mIsFirst;
-  private int mNumSibs;
-
+  
   /**
    * Constructor initializing internal state.
    * 
@@ -28,7 +27,6 @@ public class PrecedingSiblingAxis extends AbstractAxis implements IAxis {
 
     super(rtx);
     mIsFirst = true;
-    mNumSibs = -1;
    }
 
   /**
@@ -39,8 +37,7 @@ public class PrecedingSiblingAxis extends AbstractAxis implements IAxis {
 
     super.reset(nodeKey);
     mIsFirst = true;
-    mNumSibs = -1;
-    
+        
   }
 
   /**
@@ -49,6 +46,7 @@ public class PrecedingSiblingAxis extends AbstractAxis implements IAxis {
   public final boolean hasNext() {
     
     if (mIsFirst) {
+      mIsFirst = false;
     //if the context node is an attribute or namespace node, 
       //the following-sibling axis is empty
       if (getTransaction().isAttributeKind() 
@@ -61,32 +59,14 @@ public class PrecedingSiblingAxis extends AbstractAxis implements IAxis {
     
     resetToLastKey();
     
-    if (mIsFirst) {
-      mIsFirst = false;
-      
-      //if the context node is an attribute or namespace node, 
-      //the following-sibling axis is empty
-      
-      
-      if (getTransaction().hasLeftSibling()) {
-       
-        //go to first sibling in document order
-        while (getTransaction().hasLeftSibling()) {
-          getTransaction().moveToLeftSibling();
-          mNumSibs++;
-        }
-        return true;
-      }
+    if (getTransaction().hasLeftSibling()) {
+      getTransaction().moveToLeftSibling();
+      return true;
       
     } else {
-      if (mNumSibs-- > 0) {
-        getTransaction().moveToRightSibling();
-        return true;
-      }
+      resetToStartKey();
+      return false;
     }
-    resetToStartKey();
-    return false;
-    
   }
 
 

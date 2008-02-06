@@ -14,7 +14,6 @@ import org.treetank.api.IReadTransaction;
  */
 public class PrecedingAxis extends AbstractAxis implements IAxis {
 
-  private long mContextNode;
   private long mLastKey;
   private boolean mIsFirst;
   
@@ -27,7 +26,8 @@ public class PrecedingAxis extends AbstractAxis implements IAxis {
   public PrecedingAxis(final IReadTransaction rtx) {
 
     super(rtx);
-    mContextNode = getTransaction().getNodeKey();
+    mIsFirst = true;
+    mLastKey = getTransaction().getNodeKey();
     
     
     
@@ -40,8 +40,8 @@ public class PrecedingAxis extends AbstractAxis implements IAxis {
   public final void reset(final long nodeKey) {
 
     super.reset(nodeKey);
-    mContextNode = getTransaction().getNodeKey();
     mIsFirst = true;
+    mLastKey = getTransaction().getNodeKey();
 
   }
 
@@ -51,6 +51,7 @@ public class PrecedingAxis extends AbstractAxis implements IAxis {
   public final boolean hasNext() {
 
     if (mIsFirst) {
+      mIsFirst = false;
       if (getTransaction().isAttributeKind() 
       //   || getTransaction().isNamespaceKind()
       ) {
@@ -61,33 +62,21 @@ public class PrecedingAxis extends AbstractAxis implements IAxis {
     
     resetToLastKey();
     
-    if (mIsFirst) {
-      mIsFirst = false;
-      
-      
-      getTransaction().moveToDocumentRoot();
-      mLastKey = getTransaction().getNodeKey();
-      
-    } else {
-      //TODO: incrementing lastKey is not save in case of updates
-      if (!getTransaction().moveTo(++mLastKey)) {
-        resetToStartKey();
-        return false;
+    //TODO: This is not save in case of an update
+    // iterate in pre-order 
+    while (getTransaction().moveTo(--mLastKey)) {
+      if (getTransaction().isElementKind() 
+          || getTransaction().isDocumentRootKind()
+          || getTransaction().isTextKind()) {
+            return true;
       }
-    }
+    } 
     
-    if (getTransaction().getNodeKey() != mContextNode) {
-      if (!getTransaction().isElementKind() 
-          && !getTransaction().isDocumentRootKind()
-          && !getTransaction().isTextKind()) {
-        return hasNext();
-      } else {
-        return true;
-      }
-    } else {
-      resetToStartKey();
-      return false;
-    }    
+    resetToStartKey();
+    return false;
+    
+    
+        
   }
 
 }
