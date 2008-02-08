@@ -28,20 +28,20 @@ public class PrecedingAxisTest {
     wtx.moveTo(10L);
     IAxisTest
         .testIAxisConventions(new PrecedingAxis(wtx), 
-            new long[] {9L, 8L, 7L, 6L, 5L, 4L, 3L, 2L, 0L });
+            new long[] {9L, 7L, 6L, 5L, 4L, 3L});
 
     wtx.moveTo(4L);
     IAxisTest.testIAxisConventions(new PrecedingAxis(wtx), 
-        new long[] {3L, 2L, 0L});
+        new long[] {3L});
 
     wtx.moveTo(11L);
     IAxisTest.testIAxisConventions(new PrecedingAxis(wtx), 
-        new long[] {10L, 9L, 8L, 7L, 6L, 5L, 4L, 3L, 2L, 0L});
+        new long[] {10L, 9L, 8L, 7L, 6L, 5L, 4L, 3L});
 
 
     wtx.moveTo(2L);
     IAxisTest.testIAxisConventions(new PrecedingAxis(wtx), 
-        new long[] {0L});
+        new long[] {});
     
     wtx.moveTo(8L);
     wtx.moveToAttribute(0);
