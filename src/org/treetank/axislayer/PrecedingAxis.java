@@ -3,6 +3,7 @@ package org.treetank.axislayer;
 
 import org.treetank.api.IAxis;
 import org.treetank.api.IReadTransaction;
+import org.treetank.utils.FastStack;
 
 /**
  * <h1>PrecedingAxis</h1>
@@ -14,8 +15,10 @@ import org.treetank.api.IReadTransaction;
  */
 public class PrecedingAxis extends AbstractAxis implements IAxis {
 
-  private long mLastKey;
+  
   private boolean mIsFirst;
+  
+  private FastStack<Long> stack;
   
   /**
    * Constructor initializing internal state.
@@ -27,7 +30,7 @@ public class PrecedingAxis extends AbstractAxis implements IAxis {
 
     super(rtx);
     mIsFirst = true;
-    mLastKey = getTransaction().getNodeKey();
+   stack = new FastStack<Long>();
     
     
     
@@ -41,7 +44,7 @@ public class PrecedingAxis extends AbstractAxis implements IAxis {
 
     super.reset(nodeKey);
     mIsFirst = true;
-    mLastKey = getTransaction().getNodeKey();
+    stack = new FastStack<Long>();
 
   }
 
@@ -49,12 +52,9 @@ public class PrecedingAxis extends AbstractAxis implements IAxis {
    * {@inheritDoc}
    */
   public final boolean hasNext() {
+
     
-    //TODO: CAUTION: This step is not correctly implemented by now.
-    // ancestors of the context node must not be included in the result set.
-    // Additionally it has be checked, in which order the results are extracted.
-    
-    
+    //assure, that preceding is not evaluated on an attribute or a namespace
     if (mIsFirst) {
       mIsFirst = false;
       if (getTransaction().isAttributeKind() 
@@ -66,22 +66,62 @@ public class PrecedingAxis extends AbstractAxis implements IAxis {
       }
     
     resetToLastKey();
-    
-    //TODO: This is not save in case of an update
-    // iterate in pre-order 
-    while (getTransaction().moveTo(--mLastKey)) {
-      if (getTransaction().isElementKind() 
-          || getTransaction().isDocumentRootKind()
-          || getTransaction().isTextKind()) {
+        
+      
+    if (!stack.empty()) {
+      //return all nodes of the current subtree in reverse document order
+      getTransaction().moveTo(stack.pop());
+      return true;
+    } else {
+      
+      if (getTransaction().hasLeftSibling()) {
+        getTransaction().moveToLeftSibling();
+        //because this axis return the precedings in reverse document order, we
+        //need to travel to the node in the subtree, that comes last in document
+        //order.
+        getLastChild();
+        return true;
+          
+      } else {
+        while (getTransaction().hasParent()) {
+          //ancestors are not part of the preceding set
+          getTransaction().moveToParent();
+          if (getTransaction().hasLeftSibling()) {
+            getTransaction().moveToLeftSibling();
+            //move to last node in the subtree
+            getLastChild();
             return true;
+          }
+        }
       }
-    } 
+    }
     
     resetToStartKey();
     return false;
-    
-    
         
+  }
+  
+  
+  /**
+   * Moves the transaction to the node in the current subtree, that is last in 
+   * document order and pushes all other node key on a stack.
+   * At the end the stack contains all node keys except for the last one in
+   * reverse document order.
+   */
+  private void getLastChild() {
+    
+    if (getTransaction().hasFirstChild()) {
+      while (getTransaction().hasFirstChild()) {
+        stack.push(getTransaction().getNodeKey());
+        getTransaction().moveToFirstChild();
+      }
+    
+      while (getTransaction().hasRightSibling()) {
+        stack.push(getTransaction().getNodeKey());
+        getTransaction().moveToRightSibling();
+        getLastChild();
+      }
+    }
   }
 
 }
