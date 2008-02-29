@@ -58,7 +58,7 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
    *
    */
   public FastWeakHashMap() {
-    mInternalMap = new concurrent.ConcurrentHashMap();
+    mInternalMap = new org.treetank.concurrent.ConcurrentHashMap();
     mQueue = new ReferenceQueue();
   }
 
