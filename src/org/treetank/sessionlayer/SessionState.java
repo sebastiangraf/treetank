@@ -53,10 +53,10 @@ public final class SessionState {
   private Map<Long, AbstractPage> mPageCache;
 
   /** Write semaphore to assure only one exclusive write transaction exists. */
-  private concurrent.Semaphore mWriteSemaphore;
+  private org.treetank.concurrent.Semaphore mWriteSemaphore;
 
   /** Read semaphore to control running read transactions. */
-  private concurrent.Semaphore mReadSemaphore;
+  private org.treetank.concurrent.Semaphore mReadSemaphore;
 
   /** Strong reference to uber page before the begin of a write transaction. */
   private UberPage mLastCommittedUberPage;
@@ -94,7 +94,7 @@ public final class SessionState {
 
     mSessionConfiguration = sessionConfiguration;
     RandomAccessFile file = null;
-    mTransactionMap = new concurrent.ConcurrentHashMap();
+    mTransactionMap = new org.treetank.concurrent.ConcurrentHashMap();
     mRandom = new Random();
 
     try {
@@ -104,8 +104,8 @@ public final class SessionState {
 
       // Init session members.
       mPageCache = new FastWeakHashMap<Long, AbstractPage>();
-      mWriteSemaphore = new concurrent.Semaphore(IConstants.MAX_WRITE_TRANSACTIONS);
-      mReadSemaphore = new concurrent.Semaphore(IConstants.MAX_READ_TRANSACTIONS);
+      mWriteSemaphore = new org.treetank.concurrent.Semaphore(IConstants.MAX_WRITE_TRANSACTIONS);
+      mReadSemaphore = new org.treetank.concurrent.Semaphore(IConstants.MAX_READ_TRANSACTIONS);
       final PageReference<UberPage> uberPageReference =
           new PageReference<UberPage>();
       final PageReference<UberPage> secondaryUberPageReference =

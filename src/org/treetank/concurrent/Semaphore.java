@@ -13,7 +13,7 @@
   24Aug1999  dl               release(n): screen arguments
 */
 
-package concurrent;
+package org.treetank.concurrent;
 
 /**
  * Base class for counting semaphores.

@@ -12,7 +12,7 @@
    5Aug1998  dl               Added some convenient time constants
 */
 
-package concurrent;
+package org.treetank.concurrent;
 
 /**
  * Main interface for locks, gates, and conditions.

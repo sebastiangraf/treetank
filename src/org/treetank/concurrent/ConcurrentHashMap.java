@@ -23,7 +23,7 @@
   24oct2003  dl               Segment implements Serializable
 */
 
-package concurrent;
+package org.treetank.concurrent;
 
 import java.util.Map;
 import java.util.AbstractMap;
