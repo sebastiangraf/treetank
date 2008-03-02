@@ -29,7 +29,7 @@ package org.treetank.crypto;
  * being a multiple of four.
  * </p>
  */
-public final class SHA256 {
+public final class SHA1256 {
 
   /** Table of 64 4[B] round constants. */
   private static final int[] K =
