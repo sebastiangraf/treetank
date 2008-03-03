@@ -191,26 +191,114 @@ public class HmacSha256Test {
         toHexString(digest));
   }
 
+  /**
+   * Test parameter checks with HMAC-SHA-256.
+   */
+  @Test
+  public void testHmacSha256Parameter() {
+    final HmacSha256 hmac = new HmacSha256();
+    final byte[] key = new byte[32];
+    final byte[] message = new byte[64];
+    final byte[] digest = new byte[32];
+
+    try {
+      hmac.digest(null, message, 0, 64, digest);
+      Assert.fail("Must not accept null key.");
+    } catch (IllegalArgumentException e) {
+      // Must throw IllegalArgumentException.
+    }
+
+    try {
+      hmac.digest(new byte[33], message, 0, 64, digest);
+      Assert.fail("Must not accept null key.");
+    } catch (IllegalArgumentException e) {
+      // Must throw IllegalArgumentException.
+    }
+
+    try {
+      hmac.digest(key, null, 0, 64, digest);
+      Assert.fail("Must not accept null message.");
+    } catch (IllegalArgumentException e) {
+      // Must throw IllegalArgumentException.
+    }
+
+    try {
+      hmac.digest(key, message, -33, 64, digest);
+      Assert.fail("Must not accept negative offsets.");
+    } catch (IllegalArgumentException e) {
+      // Must throw IllegalArgumentException.
+    }
+
+    try {
+      hmac.digest(key, message, 0, -33, digest);
+      Assert.fail("Must not accept negative lengths.");
+    } catch (IllegalArgumentException e) {
+      // Must throw IllegalArgumentException.
+    }
+
+    try {
+      hmac.digest(key, message, 0, 33, digest);
+      Assert.fail("Must not accept lengths not being a multiple of 4.");
+    } catch (IllegalArgumentException e) {
+      // Must throw IllegalArgumentException.
+    }
+
+    try {
+      hmac.digest(key, message, 0, 333, digest);
+      Assert.fail("Must not accept lengths exceeding the message size.");
+    } catch (IllegalArgumentException e) {
+      // Must throw IllegalArgumentException.
+    }
+
+    try {
+      hmac.digest(key, message, 0, 64, null);
+      Assert.fail("Must not accept null digest.");
+    } catch (IllegalArgumentException e) {
+      // Must throw IllegalArgumentException.
+    }
+
+    try {
+      hmac.digest(key, message, 0, 64, new byte[33]);
+      Assert.fail("Must not accept digest with a size not equal to 32.");
+    } catch (IllegalArgumentException e) {
+      // Must throw IllegalArgumentException.
+    }
+
+  }
+
+  /**
+   * Test HMAC-SHA-256 implementation. Test vectors applied to an empty array
+   * with length being a multiple of 4. All test vectors verified with
+   * RFC 4231.
+   */
   @Test
   public void testHmacSha256() {
     final HmacSha256 hmac = new HmacSha256();
-    final byte[] key = new byte[32];
-    final byte[] message =
-        new byte[] {
-            (byte) 48,
-            (byte) 69,
-            (byte) 20,
-            (byte) 54,
-            (byte) 68,
-            (byte) 65,
-            (byte) 72,
-            (byte) 65 };
     final byte[] digest = new byte[32];
 
-    hmac.digest(key, message, 0, 64, digest);
-    Assert.assertEquals(
-        "F5A5FD42D16A20302798EF6ED309979B43003D2320D9F0E8EA9831A92759FB4B",
-        toHexString(digest));
+    hmac
+        .digest(
+            toByteArray("0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b000000000000000000000000"),
+            toByteArray("4869205468657265"),
+            0,
+            8,
+            digest);
+    Assert
+        .assertArrayEquals(
+            toByteArray("b0344c61d8db38535ca8afceaf0bf12b881dc200c9833da726e9376c2e32cff7"),
+            digest);
+
+    hmac
+        .digest(
+            toByteArray("4a65666500000000000000000000000000000000000000000000000000000000"),
+            toByteArray("7768617420646f2079612077616e7420666f72206e6f7468696e673f"),
+            0,
+            28,
+            digest);
+    Assert
+        .assertArrayEquals(
+            toByteArray("5bdcc146bf60754e6a042426089575c75a003f089d2739839dec58b964ec3843"),
+            digest);
   }
 
   /**
@@ -227,6 +315,23 @@ public class HmacSha256Test {
       buffer[j++] = HEX_DIGITS[k & 0x0F];
     }
     return new String(buffer);
+  }
+
+  /**
+   * Convert hexadecimal digits to byte array.
+   * 
+   * @param input Hexadecimal string.
+   * @return Byte array.
+   */
+  private static final byte[] toByteArray(final String input) {
+    final String upper = input.toUpperCase();
+    final byte[] buffer = new byte[input.length() >> 1];
+    for (int i = 0; i < buffer.length; i++) {
+      int d1 = Character.digit(upper.charAt(2 * i), 16);
+      int d2 = Character.digit(upper.charAt(2 * i + 1), 16);
+      buffer[i] = (byte) (d1 * 16 + d2);
+    }
+    return buffer;
   }
 
 }
