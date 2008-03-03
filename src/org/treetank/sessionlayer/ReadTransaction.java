@@ -730,7 +730,7 @@ public class ReadTransaction implements IReadTransaction {
    * 
    * @return The state of this transaction.
    */
-  protected final ReadTransactionState getTransactionState() {
+  public final ReadTransactionState getTransactionState() {
     return mTransactionState;
   }
 
@@ -749,7 +749,7 @@ public class ReadTransaction implements IReadTransaction {
    * 
    * @return The session state.
    */
-  protected final SessionState getSessionState() {
+  public final SessionState getSessionState() {
     return mSessionState;
   }
 
