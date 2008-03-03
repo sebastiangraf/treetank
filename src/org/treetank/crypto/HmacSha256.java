@@ -1,4 +1,5 @@
 package org.treetank.crypto;
+
 /**
  * <h1>SHA256</h1>
  * 
@@ -128,7 +129,9 @@ public final class HmacSha256 {
     int l = 0;
 
     // Load initial round vector.
-    System.arraycopy(H, 0, h, 0, 8);
+    for (i = 0; i < 8; i++) {
+      h[i] = H[i];
+    }
 
     // --- Main Loop -----------------------------------------------------------
     // Break message into 64[B] chunks for processing.
@@ -211,8 +214,10 @@ public final class HmacSha256 {
     int l = 0;
 
     // Load initial round vector.
-    System.arraycopy(H, 0, h1, 0, 8);
-    System.arraycopy(H, 0, h2, 0, 8);
+    for (i = 0; i < 8; i++) {
+      h1[i] = H[i];
+      h2[i] = H[i];
+    }
 
     // --- IPAD of Inner Hash --------------------------------------------------
     // Break 64[B] IPAD into 16 4[B] words for processing.
@@ -298,6 +303,86 @@ public final class HmacSha256 {
     // Build intermediate digest.
     buildDigest(h2, digest);
 
+  }
+
+  /**
+   * Stretch and salt given key to generate master key.
+   * 
+   * @param key
+   * @param salt
+   * @param r
+   * @param masterKey
+   */
+  public final void stretch(
+      final byte[] key,
+      final byte[] salt,
+      final int r,
+      final byte[] masterKey) {
+
+    // --- Setup ---------------------------------------------------------------
+    // Check arguments.
+    checkKey(key);
+    checkSalt(salt);
+
+    // Prepare round variables.
+    final int[] internalKey = new int[8];
+    final int[] internalSalt = new int[8];
+    final int[] h = new int[8];
+    final int[] w = new int[64];
+
+    int i, j;
+
+    for (i = 0, j = 0; i < 8; i++) {
+      internalKey[i] = loadWord(key, j);
+      internalSalt[i] = loadWord(salt, j);
+      j += 4;
+    }
+
+    // Run r rounds.
+    for (i = 0; i < r; i++) {
+
+      // --- First Block -------------------------------------------------------
+      for (j = 0; j < 8; j++) {
+        w[j] = h[j];
+        w[j + 8] = internalKey[j];
+        h[j] = H[j];
+      }
+      sha256(h, w);
+
+      // --- Padding -----------------------------------------------------------
+      for (j = 0; j < 8; j++) {
+        w[j] = internalSalt[j];
+      }
+      w[8] = 0x80000000;
+      w[9] = 0x00000000;
+      w[10] = 0x00000000;
+      w[11] = 0x00000000;
+      w[12] = 0x00000000;
+      w[13] = 0x00000000;
+      w[14] = 0x00000000;
+      w[15] = 0x00000300;
+      sha256(h, w);
+
+    }
+
+    // --- Teardown ------------------------------------------------------------
+    buildDigest(h, masterKey);
+
+  }
+
+  /**
+   * Make sure salt complies with specification.
+   * 
+   * @param salt Salt to check.
+   * @throws IllegalArgumentException if salt is null or its length is not
+   * 32.
+   */
+  private final void checkSalt(final byte[] salt) {
+    if (salt == null || (salt.length != 32)) {
+      throw new IllegalArgumentException("Salt="
+          + salt
+          + " does not comply with specification.");
+    }
   }
 
   /**
