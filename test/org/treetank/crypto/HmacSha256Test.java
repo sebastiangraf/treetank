@@ -191,18 +191,27 @@ public class HmacSha256Test {
         toHexString(digest));
   }
 
-  //  @Test
-  //  public void testHmacSha256() {
-  //    final HmacSha256 hmac = new HmacSha256();
-  //    final byte[] key = new byte[32];
-  //    final byte[] message = new byte[64];
-  //    final byte[] digest = new byte[32];
-  //
-  //    hmac.digest(key, message, 0, 64, digest);
-  //    Assert.assertEquals(
-  //        "F5A5FD42D16A20302798EF6ED309979B43003D2320D9F0E8EA9831A92759FB4B",
-  //        toHexString(digest));
-  //  }
+  @Test
+  public void testHmacSha256() {
+    final HmacSha256 hmac = new HmacSha256();
+    final byte[] key = new byte[32];
+    final byte[] message =
+        new byte[] {
+            (byte) 48,
+            (byte) 69,
+            (byte) 20,
+            (byte) 54,
+            (byte) 68,
+            (byte) 65,
+            (byte) 72,
+            (byte) 65 };
+    final byte[] digest = new byte[32];
+
+    hmac.digest(key, message, 0, 64, digest);
+    Assert.assertEquals(
+        "F5A5FD42D16A20302798EF6ED309979B43003D2320D9F0E8EA9831A92759FB4B",
+        toHexString(digest));
+  }
 
   /**
    * Convert byte array to hexadecimal digits.
