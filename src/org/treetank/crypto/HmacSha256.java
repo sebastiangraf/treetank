@@ -31,12 +31,6 @@ package org.treetank.crypto;
  */
 public final class HmacSha256 {
 
-  /** Block size.*/
-  private static final int BLOCK_SIZE = 64;
-
-  /** Digest size. */
-  private static final int DIGEST_SIZE = 32;
-
   /**
    * Calculate SHA-256 for a given message.
    * 
@@ -84,7 +78,7 @@ public final class HmacSha256 {
       }
       // Update digest.
       Sha256.digest(h, w);
-      r -= BLOCK_SIZE;
+      r -= 64;
     }
 
     // --- Padding -------------------------------------------------------------
@@ -183,7 +177,7 @@ public final class HmacSha256 {
       }
       // Update digest.
       Sha256.digest(h1, w);
-      r -= BLOCK_SIZE;
+      r -= 64;
     }
 
     // --- Padding of Inner Hash -----------------------------------------------
@@ -378,7 +372,7 @@ public final class HmacSha256 {
    * 32.
    */
   private final void checkDigest(final byte[] digest) {
-    if (digest == null || (digest.length != DIGEST_SIZE)) {
+    if (digest == null || (digest.length != 32)) {
       throw new IllegalArgumentException("Digest="
           + digest
           + " does not comply with specification.");
