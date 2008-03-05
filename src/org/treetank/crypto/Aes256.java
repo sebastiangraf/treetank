@@ -142,33 +142,30 @@ public final class Aes256 {
    * 
    * @param key 32[B] input byte array.
    * @return Encryption key.
-   * @throws IllegalArgumentException if the key is not of 32[B] or null.
    */
   public static final int[][] buildKey(final byte[] key) {
-
-    if ((key == null) || (key.length != 32)) {
-      throw new IllegalArgumentException("Key="
-          + key
-          + " does not comply with the specification.");
-    }
 
     final int[][] ke = new int[15][4];
     final int[] tk = new int[8];
 
-    int i, j;
+    int i = 0;
+    int j = 0;
+    int t = 0;
+    int tt = 0;
+    int rconpointer = 0;
 
-    for (i = 0, j = 0; i < 8;) {
-      tk[i++] =
+    for (i = 0, j = 0; i < 8; i++) {
+      tk[i] =
           key[j++] << 24
               | (key[j++] & 0xFF) << 16
               | (key[j++] & 0xFF) << 8
               | (key[j++] & 0xFF);
     }
-    int t = 0;
+
     for (j = 0; (j < 8) && (t < 60); j++, t++) {
       ke[t >> 2][t % 4] = tk[j];
     }
-    int tt, rconpointer = 0;
+
     while (t < 60) {
       tt = tk[7];
       tk[0] ^=
@@ -177,8 +174,8 @@ public final class Aes256 {
               ^ (S[tt & 0xFF] & 0xFF) << 8
               ^ (S[(tt >>> 24)] & 0xFF)
               ^ RCON[rconpointer++] << 24;
-      for (i = 1, j = 0; i < 4;) {
-        tk[i++] ^= tk[j++];
+      for (i = 1, j = 0; i < 4; i++, j++) {
+        tk[i] ^= tk[j];
       }
       tt = tk[3];
       tk[4] ^=
@@ -186,8 +183,8 @@ public final class Aes256 {
               ^ (S[(tt >>> 8) & 0xFF] & 0xFF) << 8
               ^ (S[(tt >>> 16) & 0xFF] & 0xFF) << 16
               ^ S[(tt >>> 24) & 0xFF] << 24;
-      for (j = 4, i = j + 1; i < 8;) {
-        tk[i++] ^= tk[j++];
+      for (j = 4, i = j + 1; i < 8; i++, j++) {
+        tk[i] ^= tk[j];
       }
       for (j = 0; (j < 8) && (t < 60); j++, t++) {
         ke[t >> 2][t % 4] = tk[j];
@@ -197,46 +194,39 @@ public final class Aes256 {
     return ke;
   }
 
+  public static final int[] buildNonce(final byte[] nonce) {
+    return new int[] {
+        nonce[0] << 24
+            | (nonce[1] & 0xFF) << 16
+            | (nonce[2] & 0xFF) << 8
+            | (nonce[3] & 0xFF),
+        nonce[4] << 24
+            | (nonce[5] & 0xFF) << 16
+            | (nonce[6] & 0xFF) << 8
+            | (nonce[7] & 0xFF) };
+  }
+
   /**
    * Encrypt given byte array.
    * 
-   * @param message Message to encrypt.
-   * @param i
-   * @param out
-   * @param j
+   * @param key 32[B] encryption key.
+   * @param nonce 16[B] nonce.
+   * @param counter 16[B] counter.
+   * @param keyStream 32[B] resulting key stream.
    */
   public static final void encrypt(
       final int[][] key,
-      final byte[] message,
-      final int offset,
-      final byte[] out,
-      final int j) {
+      final int[] nonce,
+      final long counter,
+      final byte[] keyStream) {
 
     int[] ker = key[0];
-    int io = offset;
-    int oo = j;
 
     // plaintext to ints + key
-    int t0 =
-        (message[io++] << 24
-            | (message[io++] & 0xFF) << 16
-            | (message[io++] & 0xFF) << 8 | (message[io++] & 0xFF))
-            ^ ker[0];
-    int t1 =
-        (message[io++] << 24
-            | (message[io++] & 0xFF) << 16
-            | (message[io++] & 0xFF) << 8 | (message[io++] & 0xFF))
-            ^ ker[1];
-    int t2 =
-        (message[io++] << 24
-            | (message[io++] & 0xFF) << 16
-            | (message[io++] & 0xFF) << 8 | (message[io++] & 0xFF))
-            ^ ker[2];
-    int t3 =
-        (message[io++] << 24
-            | (message[io++] & 0xFF) << 16
-            | (message[io++] & 0xFF) << 8 | (message[io++] & 0xFF))
-            ^ ker[3];
+    int t0 = nonce[0] ^ ker[0];
+    int t1 = nonce[1] ^ ker[1];
+    int t2 = ((int) (counter >>> 32)) ^ ker[2];
+    int t3 = ((int) counter) ^ ker[3];
 
     int a0, a1, a2, a3;
 
@@ -265,25 +255,25 @@ public final class Aes256 {
     // --- Round 14 ------------------------------------------------------------
     ker = key[14];
     int tt = ker[0];
-    out[oo++] = (byte) (S[(t0 >>> 24)] ^ (tt >>> 24));
-    out[oo++] = (byte) (S[(t1 >>> 16) & 0xFF] ^ (tt >>> 16));
-    out[oo++] = (byte) (S[(t2 >>> 8) & 0xFF] ^ (tt >>> 8));
-    out[oo++] = (byte) (S[t3 & 0xFF] ^ tt);
+    keyStream[0] = (byte) (S[(t0 >>> 24)] ^ (tt >>> 24));
+    keyStream[1] = (byte) (S[(t1 >>> 16) & 0xFF] ^ (tt >>> 16));
+    keyStream[2] = (byte) (S[(t2 >>> 8) & 0xFF] ^ (tt >>> 8));
+    keyStream[3] = (byte) (S[t3 & 0xFF] ^ tt);
     tt = ker[1];
-    out[oo++] = (byte) (S[(t1 >>> 24)] ^ (tt >>> 24));
-    out[oo++] = (byte) (S[(t2 >>> 16) & 0xFF] ^ (tt >>> 16));
-    out[oo++] = (byte) (S[(t3 >>> 8) & 0xFF] ^ (tt >>> 8));
-    out[oo++] = (byte) (S[t0 & 0xFF] ^ tt);
+    keyStream[4] = (byte) (S[(t1 >>> 24)] ^ (tt >>> 24));
+    keyStream[5] = (byte) (S[(t2 >>> 16) & 0xFF] ^ (tt >>> 16));
+    keyStream[6] = (byte) (S[(t3 >>> 8) & 0xFF] ^ (tt >>> 8));
+    keyStream[7] = (byte) (S[t0 & 0xFF] ^ tt);
     tt = ker[2];
-    out[oo++] = (byte) (S[(t2 >>> 24)] ^ (tt >>> 24));
-    out[oo++] = (byte) (S[(t3 >>> 16) & 0xFF] ^ (tt >>> 16));
-    out[oo++] = (byte) (S[(t0 >>> 8) & 0xFF] ^ (tt >>> 8));
-    out[oo++] = (byte) (S[t1 & 0xFF] ^ tt);
+    keyStream[8] = (byte) (S[(t2 >>> 24)] ^ (tt >>> 24));
+    keyStream[9] = (byte) (S[(t3 >>> 16) & 0xFF] ^ (tt >>> 16));
+    keyStream[10] = (byte) (S[(t0 >>> 8) & 0xFF] ^ (tt >>> 8));
+    keyStream[11] = (byte) (S[t1 & 0xFF] ^ tt);
     tt = ker[3];
-    out[oo++] = (byte) (S[(t3 >>> 24)] ^ (tt >>> 24));
-    out[oo++] = (byte) (S[(t0 >>> 16) & 0xFF] ^ (tt >>> 16));
-    out[oo++] = (byte) (S[(t1 >>> 8) & 0xFF] ^ (tt >>> 8));
-    out[oo++] = (byte) (S[t2 & 0xFF] ^ tt);
+    keyStream[12] = (byte) (S[(t3 >>> 24)] ^ (tt >>> 24));
+    keyStream[13] = (byte) (S[(t0 >>> 16) & 0xFF] ^ (tt >>> 16));
+    keyStream[14] = (byte) (S[(t1 >>> 8) & 0xFF] ^ (tt >>> 8));
+    keyStream[15] = (byte) (S[t2 & 0xFF] ^ tt);
 
   }
 
