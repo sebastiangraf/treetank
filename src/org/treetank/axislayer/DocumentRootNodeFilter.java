@@ -26,7 +26,7 @@ public class DocumentRootNodeFilter extends AbstractFilter implements IFilter {
    * {@inheritDoc}
    */
   public final boolean filter() {
-      return (getTransaction().isDocumentRootKind());
+      return getTransaction().isDocumentRootKind();
     }
 
 }

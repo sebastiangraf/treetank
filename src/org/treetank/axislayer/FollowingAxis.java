@@ -17,7 +17,7 @@ public class FollowingAxis extends AbstractAxis implements IAxis {
 
   private boolean mIsFirst;
   
-  private FastStack<Long> stack;
+  private FastStack<Long> rightSiblingStack;
 
   /**
    * Constructor initializing internal state.
@@ -29,7 +29,7 @@ public class FollowingAxis extends AbstractAxis implements IAxis {
 
     super(rtx);
     mIsFirst = true;
-    stack = new FastStack<Long>();
+    rightSiblingStack = new FastStack<Long>();
 
   }
 
@@ -41,7 +41,7 @@ public class FollowingAxis extends AbstractAxis implements IAxis {
 
     super.reset(nodeKey);
     mIsFirst = true;
-    stack = new FastStack<Long>();
+    rightSiblingStack = new FastStack<Long>();
 
   }
 
@@ -51,14 +51,12 @@ public class FollowingAxis extends AbstractAxis implements IAxis {
   public final boolean hasNext() {
     
   //assure, that preceding is not evaluated on an attribute or a namespace
-    if (mIsFirst) {
-      //TODO: do attributes have followings?
-        if (getTransaction().isAttributeKind() 
+    if (mIsFirst && getTransaction().isAttributeKind() 
             //   || getTransaction().isNamespaceKind()
                ) {
           resetToStartKey();
           return false;
-        }
+        
       }
       
      resetToLastKey();
@@ -74,7 +72,7 @@ public class FollowingAxis extends AbstractAxis implements IAxis {
         
         if (getTransaction().hasRightSibling()) {
           //push right sibling on a stack to reduce path traversal
-          stack.push(getTransaction().getRightSiblingKey());
+          rightSiblingStack.push(getTransaction().getRightSiblingKey());
         }
         return true;
       } else {
@@ -84,7 +82,7 @@ public class FollowingAxis extends AbstractAxis implements IAxis {
             if (getTransaction().hasRightSibling()) {
               getTransaction().moveToRightSibling();
               if (getTransaction().hasRightSibling()) {
-                stack.push(getTransaction().getRightSiblingKey());
+                rightSiblingStack.push(getTransaction().getRightSiblingKey());
               }
               return true;
             }
@@ -101,22 +99,14 @@ public class FollowingAxis extends AbstractAxis implements IAxis {
         getTransaction().moveToFirstChild();
         if (getTransaction().hasRightSibling()) {
         //push right sibling on a stack to reduce path traversal
-          stack.push(getTransaction().getRightSiblingKey());
+          rightSiblingStack.push(getTransaction().getRightSiblingKey());
         }
         
         return true;
       } else {
         
-        if (!stack.empty()) {
-          //get root key of sibling subtree
-          getTransaction().moveTo(stack.pop());
-          if (getTransaction().hasRightSibling()) {
-          //push right sibling on a stack to reduce path traversal
-            stack.push(getTransaction().getRightSiblingKey());
-          }
-          return true;
+        if (rightSiblingStack.empty()) {
           
-        } else {
         //Try to find the right sibling of one of the ancestors.
           while (getTransaction().hasParent()) {
             getTransaction().moveToParent();
@@ -124,11 +114,22 @@ public class FollowingAxis extends AbstractAxis implements IAxis {
               getTransaction().moveToRightSibling();
               if (getTransaction().hasRightSibling()) {
               //push right sibling on a stack to reduce path traversal
-                stack.push(getTransaction().getRightSiblingKey());
+                rightSiblingStack.push(getTransaction().getRightSiblingKey());
               }
               return true;
             }
           }
+          
+        } else {
+          
+        //get root key of sibling subtree
+          getTransaction().moveTo(rightSiblingStack.pop());
+          if (getTransaction().hasRightSibling()) {
+          //push right sibling on a stack to reduce path traversal
+            rightSiblingStack.push(getTransaction().getRightSiblingKey());
+          }
+          return true;
+        
         }
         resetToStartKey();
         return false;
