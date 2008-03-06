@@ -25,7 +25,7 @@ public class ElementFilter extends AbstractFilter implements IFilter {
    * {@inheritDoc}
    */
   public final boolean filter() {
-    return (getTransaction().isElementKind());
+    return getTransaction().isElementKind();
   }
 
 }
