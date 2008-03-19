@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <project name="TreeTank" default="jar">
-	
+
 	<property name="version" value="4.19.12" />
 
 	<property name="debuglevel" value="source,lines,vars" />
@@ -11,24 +11,26 @@
 	<property name="src.dir" value="src" />
 	<property name="test.dir" value="test" />
 	<property name="externals.dir" value="externals" />
-	
+
 	<property name="build.dir" value="generated/ant" />
 	<property name="classes.dir" value="${build.dir}/classes" />
 	<property name="doc.dir" value="${build.dir}/doc" />
+	<property name="junit.dir" value="${build.dir}/junit" />
 	<property name="treetank.jar" value="${build.dir}/treetank__V${version}.jar" />
 
 	<description> Ant build of the TreeTank project. </description>
+
+	<path id="jarset">
+		<pathelement location="${externals.dir}/wstx-asl__V3.1.1.jar" />
+		<pathelement location="${externals.dir}/stax-api__V1.0.1.jar" />
+		<pathelement location="${externals.dir}/junit__V4.4.jar" />
+	</path>
 
 	<!--
      | INIT: Initialize classpath and directories.
      \ -->
 	<target name="init" description="Initialize build directory and classpath.">
 		<mkdir dir="${classes.dir}" />
-		<path id="jarset">
-			<pathelement location="${externals.dir}/wstx-asl__V3.1.1.jar" />
-			<pathelement location="${externals.dir}/stax-api__V1.0.1.jar" />
-			<pathelement location="${externals.dir}/junit__V4.3.1.jar" />
-		</path>
 	</target>
 
 	<!--
@@ -39,8 +41,22 @@
 			<classpath refid="jarset" />
 		</javac>
 		<javac srcdir="${test.dir}" destdir="${classes.dir}">
-		    <classpath refid="jarset" />
+			<classpath refid="jarset" />
 		</javac>
+	</target>
+
+	<!--
+	 | TEST: Run all test cases.
+	 \ -->
+	<target name="test" description="Run all test cases.">
+		<junit printsummary="yes" haltonfailure="yes">
+			<formatter type="plain" />
+			<batchtest fork="yes" todir="${junit.dir}">
+				<fileset dir="${test.dir}">
+					<include name="**/*Test*.java" />
+				</fileset>
+			</batchtest>
+		</junit>
 	</target>
 
 	<!--
@@ -53,13 +69,6 @@
 	</target>
 
 	<!--
-	 | CLEAN: Remove all built stuff.
-	 \ -->
-	<target name="clean">
-		<delete dir="${build.dir}" />
-	</target>
-
-	<!--
 	 | JAVADOC: Generate java doc from source tree.
 	 \ -->
 	<target name="javadoc">
@@ -68,6 +77,13 @@
 				<include name="**" />
 			</packageset>
 		</javadoc>
+	</target>
+
+	<!--
+	 | CLEAN: Remove all built stuff.
+	 \ -->
+	<target name="clean">
+		<delete dir="${build.dir}" />
 	</target>
 
 </project>

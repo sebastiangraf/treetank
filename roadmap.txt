@@ -16,24 +16,6 @@
  * $Id$
  */
  
-31.12.2007
-----------
-+ TreeTankStream[Reader|Writer] - stable:
-  Implementation of the XMLStream[Reader|Writer] interfaces of STaX.
-  SAXGenerator will then be based on TreeTankStreamReader and
-  SAXHandler on TreeTankStreamWriter.
-  
-+ Encrypted primary and secondary beacon - stable:
-  The primary and secondary beacons currently are not encrypted.
-  
-+ XPathAxis - beta:
-  XPath 2.0 implementation accepting all expressions that evaluate to a
-  sequence of nodes (already) stored in TreeTank. This restriction is required 
-  because of the IAxis interface.
-  
-31.01.2008
-----------
-+ XPathAxis - stable:
-  XPath 2.0 implementation accepting all expressions that evaluate to a
-  sequence of nodes (already) stored in TreeTank. This restriction is required
-  because of the IAxis interface. Extensive test cases. Fully functional.
+01.06.2008:
+-----------
++ TreeTank 5 implementing TreeTank specification as described with the patent.
