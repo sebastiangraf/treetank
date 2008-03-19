@@ -1,51 +1,69 @@
 <?xml version="1.0"?>
 <project name="TreeTank" default="jar">
-
-	<property name="treetank.jar" value="treetank__V4.19.12.jar" />
+	
+	<property name="version" value="4.19.12" />
 
 	<property name="debuglevel" value="source,lines,vars" />
 	<property name="target" value="1.5" />
 	<property name="source" value="1.5" />
+	<property name="classpath" value="ant-classes" />
 
 	<property name="src.dir" value="src" />
-
-	<property name="classes.dir" value="generated/ant" />
+	<property name="test.dir" value="test" />
 	<property name="externals.dir" value="externals" />
-	<property name="build.dir" value="generated" />
-	<property name="classpath" value="ant-classes" />
+	
+	<property name="build.dir" value="generated/ant" />
+	<property name="classes.dir" value="${build.dir}/classes" />
+	<property name="doc.dir" value="${build.dir}/doc" />
+	<property name="treetank.jar" value="${build.dir}/treetank__V${version}.jar" />
 
 	<description> Ant build of the TreeTank project. </description>
 
+	<!--
+     | INIT: Initialize classpath and directories.
+     \ -->
 	<target name="init" description="Initialize build directory and classpath.">
-
 		<mkdir dir="${classes.dir}" />
-
 		<path id="jarset">
 			<pathelement location="${externals.dir}/wstx-asl__V3.1.1.jar" />
 			<pathelement location="${externals.dir}/stax-api__V1.0.1.jar" />
+			<pathelement location="${externals.dir}/junit__V4.3.1.jar" />
 		</path>
-
 	</target>
 
+	<!--
+	 | COMPILE: Compile source and test tree.
+	 \ -->
 	<target name="compile" depends="init" description="Build treetank.">
 		<javac srcdir="${src.dir}" destdir="${classes.dir}">
 			<classpath refid="jarset" />
 		</javac>
+		<javac srcdir="${test.dir}" destdir="${classes.dir}">
+		    <classpath refid="jarset" />
+		</javac>
 	</target>
 
+	<!--
+	 | JAR: Collect all classes from source tree into jar file.
+	 \ -->
 	<target name="jar" depends="compile" description="Build treetank JAR.">
 		<jar destfile="${treetank.jar}" basedir="${classes.dir}" update="true">
 			<fileset dir="${classes.dir}" includes="**/*.class" id="classes" />
 		</jar>
 	</target>
 
+	<!--
+	 | CLEAN: Remove all built stuff.
+	 \ -->
 	<target name="clean">
-		<delete dir="${classes.dir}" />
-		<delete file="${build.dir}/${treetank.jar}" />
+		<delete dir="${build.dir}" />
 	</target>
 
+	<!--
+	 | JAVADOC: Generate java doc from source tree.
+	 \ -->
 	<target name="javadoc">
-		<javadoc destdir="doc" author="true" version="true" use="true" windowtitle="TreeTank API">
+		<javadoc destdir="${doc.dir}" author="true" version="true" use="true" windowtitle="TreeTank API">
 			<packageset dir="src">
 				<include name="**" />
 			</packageset>
