@@ -15,7 +15,7 @@
 
 	<property name="build.dir" value="generated/ant" />
 	<property name="classes.dir" value="${build.dir}/classes" />
-	<property name="doc.dir" value="${build.dir}/doc" />
+	<property name="javadoc.dir" value="${build.dir}/javadoc" />
 	<property name="junit.dir" value="${build.dir}/junit" />
 	<property name="checkstyle.dir" value="${build.dir}/checkstyle" />
 	<property name="treetank.jar" value="${build.dir}/treetank__V${version}.jar" />
@@ -35,7 +35,7 @@
      \ -->
 	<target name="init" description="Initialize build directory and classpath.">
 		<mkdir dir="${classes.dir}" />
-		<mkdir dir="${doc.dir}" />
+		<mkdir dir="${javadoc.dir}" />
 		<mkdir dir="${junit.dir}" />
 		<mkdir dir="${checkstyle.dir}" />
 	</target>
@@ -98,7 +98,7 @@
 	 | JAVADOC: Generate java doc from source tree.
 	 \ -->
 	<target name="javadoc">
-		<javadoc destdir="${doc.dir}" author="true" version="true" use="true" windowtitle="TreeTank API">
+		<javadoc destdir="${javadoc.dir}" author="true" version="true" use="true" windowtitle="TreeTank API">
 			<packageset dir="src">
 				<include name="**" />
 			</packageset>
@@ -108,7 +108,7 @@
 	<!--
 	 | ALL: Create all reports and the jar.
 	 \ -->
-	<target name="all" depends="test,checkstyle,javadoc,jar">
+	<target name="all" depends="clean,init,test,checkstyle,javadoc,jar">
 	</target>
 
 	<!--
