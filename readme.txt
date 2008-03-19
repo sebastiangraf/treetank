@@ -19,11 +19,13 @@
 TreeTank Development Environment
 --------------------------------
 + J2SE 5.
-+ JUnit 4.3.1.
-+ Eclipse 3.3.2. or later.
-+ Subclipse 1.2.4. or later.
-+ Checkstyle 4.3.3. or later.
++ JUnit 4.4.
++ Checkstyle 4.4.
++ Eclipse 3.3.2.
++ Subclipse 1.2.4.
 + Spell Checker.
++ JamVM 1.5.1.
++ Classpath 0.91.
 
 TreeTank Coding Conventions
 ---------------------------
@@ -41,4 +43,6 @@ TreeTank Coding Conventions
   in build.xml.
 + Team collaboration: Checkout or update must not yield errors or failing tests.
 + Trunk maintenance: Work on branch until the project lead agrees to merge.
-+ Dependencies: No external dependencies (jar files) except JUnit and StAX.
++ Dependencies: No external dependencies (jar files) except 
+  JUnit, Checkstyle, and StAX.
++ The source and test code must be executable with jamvm at any time.

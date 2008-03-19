@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
 <project name="TreeTank" default="jar">
 
+	<description> Ant build of the TreeTank project. </description>
+
 	<property name="version" value="4.19.12" />
 
 	<property name="debuglevel" value="source,lines,vars" />
 	<property name="target" value="1.5" />
 	<property name="source" value="1.5" />
-	<property name="classpath" value="ant-classes" />
 
 	<property name="src.dir" value="src" />
 	<property name="test.dir" value="test" />
@@ -16,21 +17,27 @@
 	<property name="classes.dir" value="${build.dir}/classes" />
 	<property name="doc.dir" value="${build.dir}/doc" />
 	<property name="junit.dir" value="${build.dir}/junit" />
+	<property name="checkstyle.dir" value="${build.dir}/checkstyle" />
 	<property name="treetank.jar" value="${build.dir}/treetank__V${version}.jar" />
 
-	<description> Ant build of the TreeTank project. </description>
-
-	<path id="jarset">
+	<path id="classpath">
 		<pathelement location="${externals.dir}/wstx-asl__V3.1.1.jar" />
 		<pathelement location="${externals.dir}/stax-api__V1.0.1.jar" />
 		<pathelement location="${externals.dir}/junit__V4.4.jar" />
+		<pathelement location="${externals.dir}/checkstyle-all__V4.4.jar" />
+		<pathelement location="${classes.dir}" />
 	</path>
+
+	<taskdef resource="checkstyletask.properties" classpath="externals/checkstyle-all__V4.4.jar" />
 
 	<!--
      | INIT: Initialize classpath and directories.
      \ -->
 	<target name="init" description="Initialize build directory and classpath.">
 		<mkdir dir="${classes.dir}" />
+		<mkdir dir="${doc.dir}" />
+		<mkdir dir="${junit.dir}" />
+		<mkdir dir="${checkstyle.dir}" />
 	</target>
 
 	<!--
@@ -38,25 +45,44 @@
 	 \ -->
 	<target name="compile" depends="init" description="Build treetank.">
 		<javac srcdir="${src.dir}" destdir="${classes.dir}">
-			<classpath refid="jarset" />
+			<classpath refid="classpath" />
 		</javac>
 		<javac srcdir="${test.dir}" destdir="${classes.dir}">
-			<classpath refid="jarset" />
+			<classpath refid="classpath" />
 		</javac>
 	</target>
 
 	<!--
-	 | TEST: Run all test cases.
+	 | TEST: Run all test cases and create report.
 	 \ -->
-	<target name="test" description="Run all test cases.">
+	<target name="test" depends="compile" description="Run all test cases.">
 		<junit printsummary="yes" haltonfailure="yes">
-			<formatter type="plain" />
+			<classpath refid="classpath" />
+			<!-- <formatter type="brief" usefile="false" /> -->
+			<formatter type="xml" />
 			<batchtest fork="yes" todir="${junit.dir}">
 				<fileset dir="${test.dir}">
-					<include name="**/*Test*.java" />
+					<include name="**/*Test.java" />
 				</fileset>
 			</batchtest>
 		</junit>
+		<junitreport todir="${junit.dir}">
+			<fileset dir="${junit.dir}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="noframes" todir="${junit.dir}" />
+		</junitreport>
+	</target>
+
+	<!--
+	 | CHECKSTYLE: Run checkstyle abd create report.
+	 \ -->
+	<target name="checkstyle" depends="init" description="Run checkstyle.">
+		<checkstyle config="checkstyle.xml" failureProperty="checkstyle.failure" failOnViolation="false">
+			<formatter type="xml" tofile="${checkstyle.dir}/checkstyle_report.xml" />
+			<fileset dir="${src.dir}" includes="**/*.java" />
+		</checkstyle>
+		<xslt in="${checkstyle.dir}/checkstyle_report.xml" out="${checkstyle.dir}/index.html" style="checkstyle.xsl" />
 	</target>
 
 	<!--

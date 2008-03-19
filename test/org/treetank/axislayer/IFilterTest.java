@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 
 import org.junit.Before;
+import org.junit.Test;
 import org.treetank.api.IFilter;
 import org.treetank.api.IReadTransaction;
 import org.treetank.sessionlayer.Session;
@@ -51,6 +52,11 @@ public class IFilterTest {
     // IAxis Convention 2.
     assertEquals(startKey, rtx.getNodeKey());
 
+  }
+
+  @Test
+  public void testIFilterExample() {
+    // Do nothing. This class is only used with other test cases.
   }
 
 }
