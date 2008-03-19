@@ -3,8 +3,8 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="externals/stax-api__V1.0.1.jar"/>
 	<classpathentry kind="lib" path="externals/wstx-asl__V3.1.1.jar"/>
+	<classpathentry kind="lib" path="externals/junit__V4.4.jar"/>
 	<classpathentry kind="output" path="generated"/>
 </classpath>
