@@ -106,6 +106,12 @@
 	</target>
 
 	<!--
+	 | ALL: Create all reports and the jar.
+	 \ -->
+	<target name="all" depends="test,checkstyle,javadoc,jar">
+	</target>
+
+	<!--
 	 | CLEAN: Remove all built stuff.
 	 \ -->
 	<target name="clean">
