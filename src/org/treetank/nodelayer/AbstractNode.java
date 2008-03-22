@@ -18,6 +18,7 @@
 
 package org.treetank.nodelayer;
 
+import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
 import org.treetank.utils.FastByteArrayWriter;
 import org.treetank.utils.IConstants;
@@ -33,7 +34,7 @@ import org.treetank.utils.IConstants;
  * functionality.
  * </p>
  */
-public abstract class AbstractNode implements Comparable<AbstractNode> {
+public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
 
   /** Node key is common to all node kinds. */
   private long mNodeKey;

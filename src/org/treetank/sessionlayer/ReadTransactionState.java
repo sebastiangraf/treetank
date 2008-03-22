@@ -93,7 +93,7 @@ public class ReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  protected final RevisionRootPage getRevisionRootPage() {
+  public final RevisionRootPage getRevisionRootPage() {
     return mRevisionRootPage;
   }
 
@@ -170,14 +170,14 @@ public class ReadTransactionState {
   /**
    * @return The session configuration.
    */
-  protected final SessionConfiguration getSessionConfiguration() {
+  public final SessionConfiguration getSessionConfiguration() {
     return mSessionConfiguration;
   }
 
   /**
    * @return The page cache.
    */
-  protected final Map<Long, AbstractPage> getPageCache() {
+  public final Map<Long, AbstractPage> getPageCache() {
     return mPageCache;
   }
 
@@ -205,7 +205,7 @@ public class ReadTransactionState {
   /**
    * @return The uber page.
    */
-  protected final UberPage getUberPage() {
+  public final UberPage getUberPage() {
     return mUberPage;
   }
 
