@@ -18,6 +18,7 @@
 
 package org.treetank.sessionlayer;
 
+import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
 import org.treetank.nodelayer.AbstractNode;
 import org.treetank.utils.TypedValue;
@@ -103,7 +104,7 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final boolean moveTo(final long nodeKey) {
+  public boolean moveTo(final long nodeKey) {
     assertNotClosed();
     // Do nothing if this node is already selected.
     if ((mCurrentNode.getNodeKey() == nodeKey) && !mIsAttribute) {
@@ -776,8 +777,8 @@ public class ReadTransaction implements IReadTransaction {
    * 
    * @param currentNode The current node to set.
    */
-  protected final void setCurrentNode(final AbstractNode currentNode) {
-    mCurrentNode = currentNode;
+  protected final void setCurrentNode(final IItem currentNode) {
+    mCurrentNode = (AbstractNode) currentNode;
   }
 
 }
