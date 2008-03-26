@@ -38,19 +38,39 @@ import org.treetank.utils.TestDocument;
 public class SessionTest {
 
   public static final String NON_EXISTING_PATH =
-      "generated" + File.separator + "NonExistingSessionTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "NonExistingSessionTest.tnk";
 
   public static final String TEST_INSERT_CHILD_PATH =
-      "generated" + File.separator + "InsertChildSessionTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "InsertChildSessionTest.tnk";
 
   public static final String TEST_REVISION_PATH =
-      "generated" + File.separator + "RevisionSessionTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "RevisionSessionTest.tnk";
 
   public static final String TEST_SHREDDED_REVISION_PATH =
-      "generated" + File.separator + "ShreddedRevisionSessionTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "ShreddedRevisionSessionTest.tnk";
 
   public static final String TEST_EXISTING_PATH =
-      "generated" + File.separator + "ExistingSessionTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "ExistingSessionTest.tnk";
 
   @Before
   public void setUp() {

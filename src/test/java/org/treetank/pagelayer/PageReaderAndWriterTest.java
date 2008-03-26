@@ -35,7 +35,11 @@ import org.treetank.utils.IConstants;
 public class PageReaderAndWriterTest {
 
   private final static String PATH =
-      "generated" + File.separator + "PageWriterTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "PageReaderAndWriterTest.tnk";
 
   @Before
   public void setUp() {

@@ -30,7 +30,7 @@ import org.treetank.utils.TestDocument;
 public class ParentAxisTest {
 
   public static final String PATH =
-      "generated" + File.separator + "ParentAxisTest.tnk";
+      "target" + File.separator + "tnk" + File.separator + "ParentAxisTest.tnk";
 
   @Before
   public void setUp() {
@@ -45,12 +45,10 @@ public class ParentAxisTest {
     TestDocument.create(wtx);
 
     wtx.moveTo(4L);
-    IAxisTest
-        .testIAxisConventions(new ParentAxis(wtx), new long[] { 2L });
+    IAxisTest.testIAxisConventions(new ParentAxis(wtx), new long[] { 2L });
 
     wtx.moveTo(8L);
-    IAxisTest
-        .testIAxisConventions(new ParentAxis(wtx), new long[] { 2L });
+    IAxisTest.testIAxisConventions(new ParentAxis(wtx), new long[] { 2L });
 
     wtx.abort();
     wtx.close();

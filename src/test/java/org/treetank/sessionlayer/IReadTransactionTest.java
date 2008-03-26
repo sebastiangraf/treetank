@@ -33,7 +33,11 @@ import org.treetank.utils.TestDocument;
 public class IReadTransactionTest {
 
   public static final String PATH =
-      "generated" + File.separator + "IReadTransactionTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "IReadTransactionTest.tnk";
 
   public static ISession SESSION;
 

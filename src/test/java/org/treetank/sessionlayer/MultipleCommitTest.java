@@ -33,7 +33,11 @@ import org.treetank.utils.TestDocument;
 public class MultipleCommitTest {
 
   public static final String PATH =
-      "generated" + File.separator + "MultipleCommitTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "MultipleCommitTest.tnk";
 
   @Before
   public void setUp() {

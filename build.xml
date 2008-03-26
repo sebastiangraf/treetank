@@ -14,6 +14,7 @@
 	<property name="externals.dir" value="externals" />
 
 	<property name="build.dir" value="target/ant" />
+	<property name="tnk.dir" value="${build.dir}/tnk" />
 	<property name="classes.dir" value="${build.dir}/classes" />
 	<property name="javadoc.dir" value="${build.dir}/javadoc" />
 	<property name="junit.dir" value="${build.dir}/junit" />
@@ -37,6 +38,7 @@
 		<mkdir dir="${classes.dir}" />
 		<mkdir dir="${javadoc.dir}" />
 		<mkdir dir="${junit.dir}" />
+		<mkdir dir="${build.dir}/tnk" />
 		<mkdir dir="${checkstyle.dir}" />
 	</target>
 
@@ -58,7 +60,6 @@
 	<target name="test" depends="compile" description="Run all test cases.">
 		<junit printsummary="yes" haltonfailure="yes">
 			<classpath refid="classpath" />
-			<!-- <formatter type="brief" usefile="false" /> -->
 			<formatter type="xml" />
 			<batchtest fork="yes" todir="${junit.dir}">
 				<fileset dir="${test.dir}">
@@ -99,7 +100,7 @@
 	 \ -->
 	<target name="javadoc">
 		<javadoc destdir="${javadoc.dir}" author="true" version="true" use="true" windowtitle="TreeTank API">
-			<packageset dir="src">
+			<packageset dir="${src.dir}">
 				<include name="**" />
 			</packageset>
 		</javadoc>

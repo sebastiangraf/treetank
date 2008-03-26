@@ -12,7 +12,11 @@ import org.treetank.utils.TestDocument;
 public class PrecedingSiblingAxisTest {
 
   public static final String PATH =
-      "generated" + File.separator + "PrecedingSiblingAxisTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "PrecedingSiblingAxisTest.tnk";
 
   @Before
   public void setUp() {
@@ -26,27 +30,30 @@ public class PrecedingSiblingAxisTest {
     TestDocument.create(wtx);
 
     wtx.moveTo(10L);
-    IAxisTest
-        .testIAxisConventions(new PrecedingSiblingAxis(wtx), 
-            new long[] {9L});
+    IAxisTest.testIAxisConventions(
+        new PrecedingSiblingAxis(wtx),
+        new long[] { 9L });
 
     wtx.moveTo(4L);
-    IAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx), 
-        new long[] {3L});
+    IAxisTest.testIAxisConventions(
+        new PrecedingSiblingAxis(wtx),
+        new long[] { 3L });
 
     wtx.moveTo(11L);
-    IAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx), 
-        new long[] {8L, 7L, 4L, 3L});
-
+    IAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx), new long[] {
+        8L,
+        7L,
+        4L,
+        3L });
 
     wtx.moveTo(2L);
-    IAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx), 
-        new long[] {});
-    
+    IAxisTest
+        .testIAxisConventions(new PrecedingSiblingAxis(wtx), new long[] {});
+
     wtx.moveTo(8L);
     wtx.moveToAttribute(0);
-    IAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx), 
-        new long[] {});
+    IAxisTest
+        .testIAxisConventions(new PrecedingSiblingAxis(wtx), new long[] {});
 
     wtx.abort();
     wtx.close();
@@ -54,6 +61,4 @@ public class PrecedingSiblingAxisTest {
 
   }
 
- 
 }
-

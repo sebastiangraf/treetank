@@ -31,7 +31,7 @@ import org.treetank.utils.TestDocument;
 public class NestedAxisTest {
 
   public static final String PATH =
-      "generated" + File.separator + "ChainedAxisTest.tnk";
+      "target" + File.separator + "tnk" + File.separator + "NestedAxisTest.tnk";
 
   @Before
   public void setUp() {

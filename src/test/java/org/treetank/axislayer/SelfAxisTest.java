@@ -30,7 +30,7 @@ import org.treetank.utils.TestDocument;
 public class SelfAxisTest {
 
   public static final String PATH =
-      "generated" + File.separator + "SelfAxisTest.tnk";
+      "target" + File.separator + "tnk" + File.separator + "SelfAxisTest.tnk";
 
   @Before
   public void setUp() {

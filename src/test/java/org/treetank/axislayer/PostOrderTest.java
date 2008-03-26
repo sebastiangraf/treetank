@@ -30,7 +30,11 @@ import org.treetank.utils.TestDocument;
 public class PostOrderTest {
 
   public static final String PATH =
-      "generated" + File.separator + "PostOrderAxisTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "PostOrderTest.tnk";
 
   @Before
   public void setUp() {

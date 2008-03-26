@@ -40,21 +40,25 @@ import org.treetank.utils.TestDocument;
 import org.xml.sax.InputSource;
 
 public class SAXHandlerTest {
-  
+
   public static final String XML =
-    "src"
-        + File.separator
-        + "test"
-        + File.separator
-        + "resources"
-        + File.separator
-        + "test.xml";
+      "src"
+          + File.separator
+          + "test"
+          + File.separator
+          + "resources"
+          + File.separator
+          + "test.xml";
 
   public static final String PATH =
-      "generated" + File.separator + "SAXHandlerTest.tnk";
+      "target" + File.separator + "tnk" + File.separator + "SAXHandlerTest.tnk";
 
   public static final String EXPECTED_PATH =
-      "generated" + File.separator + "ExpectedSAXHandlerTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "ExpectedSAXHandlerTest.tnk";
 
   @Before
   public void setUp() {

@@ -31,7 +31,11 @@ import org.treetank.utils.TestDocument;
 public class DescendantAxisTest {
 
   public static final String PATH =
-      "generated" + File.separator + "DescendantAxisTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "DescendantAxisTest.tnk";
 
   @Before
   public void setUp() {

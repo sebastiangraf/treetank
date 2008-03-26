@@ -12,7 +12,11 @@ import org.treetank.utils.TestDocument;
 public class AttributeFilterTest {
 
   public static final String PATH =
-      "generated" + File.separator + "AttributeFilterTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "AttributeFilterTest.tnk";
 
   @Before
   public void setUp() {
@@ -36,7 +40,7 @@ public class AttributeFilterTest {
     wtx.moveTo(2L);
     wtx.moveToAttribute(0);
     IFilterTest.testIFilterConventions(new AttributeFilter(wtx), true);
-    
+
     wtx.moveTo(8L);
     wtx.moveToAttribute(0);
     IFilterTest.testIFilterConventions(new AttributeFilter(wtx), true);
