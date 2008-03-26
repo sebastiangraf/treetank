@@ -13,7 +13,7 @@
 	<property name="test.dir" value="src/test/java" />
 	<property name="externals.dir" value="externals" />
 
-	<property name="build.dir" value="target/ant" />
+	<property name="build.dir" value="target" />
 	<property name="tnk.dir" value="${build.dir}/tnk" />
 	<property name="classes.dir" value="${build.dir}/classes" />
 	<property name="javadoc.dir" value="${build.dir}/javadoc" />
@@ -38,7 +38,7 @@
 		<mkdir dir="${classes.dir}" />
 		<mkdir dir="${javadoc.dir}" />
 		<mkdir dir="${junit.dir}" />
-		<mkdir dir="${build.dir}/tnk" />
+		<mkdir dir="${tnk.dir}" />
 		<mkdir dir="${checkstyle.dir}" />
 	</target>
 
