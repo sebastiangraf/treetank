@@ -38,7 +38,11 @@ import org.treetank.utils.TestDocument;
 public class SAXGeneratorTest {
 
   public static final String PATH =
-      "generated" + File.separator + "SAXGeneratorTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "SAXGeneratorTest.tnk";
 
   @Before
   public void setUp() {

@@ -38,7 +38,7 @@ public class ThreadTest {
   public static final int WORKER_COUNT = 100;
 
   public static final String PATH =
-      "generated" + File.separator + "ThreadTest.tnk";
+      "target" + File.separator + "tnk" + File.separator + "ThreadTest.tnk";
 
   @Before
   public void setUp() {

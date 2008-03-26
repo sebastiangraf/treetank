@@ -60,16 +60,32 @@ public class XMLShredderTest {
           + "test2.xml";
 
   public static final String PATH =
-      "generated" + File.separator + "XMLShredderTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "XMLShredderTest.tnk";
 
   public static final String PATH2 =
-      "generated" + File.separator + "XMLShredderNSTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "XMLShredderNSTest.tnk";
 
   public static final String EXPECTED_PATH =
-      "generated" + File.separator + "ExpectedXMLShredderTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "ExpectedXMLShredderTest.tnk";
 
   public static final String EXPECTED_PATH2 =
-      "generated" + File.separator + "ExpectedXMLShredderNSTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "ExpectedXMLShredderNSTest.tnk";
 
   @BeforeClass
   public static void setUp() {

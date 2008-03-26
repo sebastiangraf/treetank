@@ -32,7 +32,11 @@ import org.treetank.utils.TestDocument;
 public class AttributeAxisTest {
 
   public static final String PATH =
-      "generated" + File.separator + "AttributeAxisTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "AttributeAxisTest.tnk";
 
   @Before
   public void setUp() {

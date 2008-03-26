@@ -31,7 +31,7 @@ import org.treetank.sessionlayer.Session;
 public class IFilterTest {
 
   public static final String PATH =
-      "generated" + File.separator + "IFilterTest.tnk";
+      "target" + File.separator + "tnk" + File.separator + "IFilterTest.tnk";
 
   @Before
   public void setUp() {

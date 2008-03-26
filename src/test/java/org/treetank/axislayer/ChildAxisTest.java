@@ -31,10 +31,18 @@ import org.treetank.utils.TestDocument;
 public class ChildAxisTest {
 
   public static final String TEST_ITERATE_PATH =
-      "generated" + File.separator + "ChildAxisTestIterate.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "ChildAxisTestIterate.tnk";
 
   public static final String TEST_PERSISTENT_PATH =
-      "generated" + File.separator + "ChildAxisTestPersistent.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "ChildAxisTestPersistent.tnk";
 
   @Before
   public void setUp() {
@@ -58,9 +66,7 @@ public class ChildAxisTest {
         11L });
 
     wtx.moveTo(4L);
-    IAxisTest.testIAxisConventions(new ChildAxis(wtx), new long[] {
-        5L,
-        6L });
+    IAxisTest.testIAxisConventions(new ChildAxis(wtx), new long[] { 5L, 6L });
 
     wtx.moveTo(11L);
     IAxisTest.testIAxisConventions(new ChildAxis(wtx), new long[] {});
@@ -93,9 +99,7 @@ public class ChildAxisTest {
         11L });
 
     rtx.moveTo(4L);
-    IAxisTest.testIAxisConventions(new ChildAxis(rtx), new long[] {
-        5L,
-        6L });
+    IAxisTest.testIAxisConventions(new ChildAxis(rtx), new long[] { 5L, 6L });
 
     rtx.moveTo(11L);
     IAxisTest.testIAxisConventions(new ChildAxis(rtx), new long[] {});

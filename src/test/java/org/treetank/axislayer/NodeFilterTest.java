@@ -30,7 +30,7 @@ import org.treetank.utils.TestDocument;
 public class NodeFilterTest {
 
   public static final String PATH =
-      "generated" + File.separator + "NodeFilterTest.tnk";
+      "target" + File.separator + "tnk" + File.separator + "NodeFilterTest.tnk";
 
   @Before
   public void setUp() {

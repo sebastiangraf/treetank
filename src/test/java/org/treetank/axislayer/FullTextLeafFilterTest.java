@@ -30,7 +30,11 @@ import org.treetank.utils.TestDocument;
 public class FullTextLeafFilterTest {
 
   public static final String PATH =
-      "generated" + File.separator + "FullTextLeafFilterTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "FullTextLeafFilterTest.tnk";
 
   @Before
   public void setUp() {

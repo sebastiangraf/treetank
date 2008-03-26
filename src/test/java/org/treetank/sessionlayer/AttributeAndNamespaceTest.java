@@ -32,7 +32,11 @@ import org.treetank.utils.TestDocument;
 public class AttributeAndNamespaceTest {
 
   public static final String PATH =
-      "generated" + File.separator + "AttributeAndNamespaceTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "AttributeAndNamespaceTest.tnk";
 
   @Before
   public void setUp() {

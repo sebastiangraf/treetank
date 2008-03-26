@@ -35,7 +35,7 @@ import org.treetank.utils.TestDocument;
 public class UpdateTest {
 
   public static final String PATH =
-      "generated" + File.separator + "UpdateTest.tnk";
+      "target" + File.separator + "tnk" + File.separator + "UpdateTest.tnk";
 
   @Before
   public void setUp() {

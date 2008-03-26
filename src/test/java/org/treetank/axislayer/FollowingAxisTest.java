@@ -6,14 +6,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.axislayer.FollowingAxis;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
 
 public class FollowingAxisTest {
 
   public static final String PATH =
-      "generated" + File.separator + "FollowingAxisTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "FollowingAxisTest.tnk";
 
   @Before
   public void setUp() {
@@ -27,31 +30,30 @@ public class FollowingAxisTest {
     TestDocument.create(wtx);
 
     wtx.moveTo(9L);
-    IAxisTest
-        .testIAxisConventions(new FollowingAxis(wtx), 
-            new long[] {10L, 11L});
+    IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {
+        10L,
+        11L });
 
     wtx.moveTo(4L);
-    IAxisTest.testIAxisConventions(new FollowingAxis(wtx), 
-        new long[] {7L, 8L, 9L, 10L, 11L});
+    IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {
+        7L,
+        8L,
+        9L,
+        10L,
+        11L });
 
     wtx.moveTo(11L);
-    IAxisTest.testIAxisConventions(new FollowingAxis(wtx), 
-        new long[] {});
-    
-    wtx.moveTo(2L);
-    IAxisTest.testIAxisConventions(new FollowingAxis(wtx), 
-        new long[] {});
+    IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {});
 
+    wtx.moveTo(2L);
+    IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {});
 
     wtx.moveToDocumentRoot();
-    IAxisTest.testIAxisConventions(new FollowingAxis(wtx), 
-        new long[] {});
-    
+    IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {});
+
     wtx.moveTo(8L);
     wtx.moveToAttribute(0);
-    IAxisTest.testIAxisConventions(new FollowingAxis(wtx), 
-        new long[] {});
+    IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {});
 
     wtx.abort();
     wtx.close();
@@ -59,7 +61,4 @@ public class FollowingAxisTest {
 
   }
 
- 
 }
-
-

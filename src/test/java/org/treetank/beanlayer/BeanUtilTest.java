@@ -32,7 +32,7 @@ import org.treetank.sessionlayer.Session;
 public class BeanUtilTest {
 
   public static final String PATH =
-      "generated" + File.separator + "BeanUtilTest.tnk";
+      "target" + File.separator + "tnk" + File.separator + "BeanUtilTest.tnk";
 
   @Before
   public void setUp() {

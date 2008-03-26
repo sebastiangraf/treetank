@@ -37,7 +37,7 @@ import org.treetank.utils.TestDocument;
 public class IAxisTest {
 
   public static final String PATH =
-      "generated" + File.separator + "IAxisTest.tnk";
+      "target" + File.separator + "tnk" + File.separator + "IAxisTest.tnk";
 
   @Before
   public void setUp() {

@@ -33,7 +33,7 @@ import org.treetank.api.IWriteTransaction;
 public class FullTextTest {
 
   public static final String PATH =
-      "generated" + File.separator + "FullTextTest.tnk";
+      "target" + File.separator + "tnk" + File.separator + "FullTextTest.tnk";
 
   @Before
   public void setUp() {
