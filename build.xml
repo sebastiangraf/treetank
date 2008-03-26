@@ -38,7 +38,6 @@
 		<mkdir dir="${classes.dir}" />
 		<mkdir dir="${javadoc.dir}" />
 		<mkdir dir="${junit.dir}" />
-		<mkdir dir="${tnk.dir}" />
 		<mkdir dir="${checkstyle.dir}" />
 	</target>
 
