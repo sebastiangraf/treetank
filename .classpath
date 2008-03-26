@@ -7,5 +7,5 @@
 	<classpathentry kind="lib" path="externals/wstx-asl__V3.1.1.jar"/>
 	<classpathentry kind="lib" path="externals/junit__V4.4.jar"/>
 	<classpathentry kind="lib" path="externals/checkstyle-all__V4.4.jar"/>
-	<classpathentry kind="output" path="generated"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>
