@@ -40,6 +40,15 @@ import org.treetank.utils.TestDocument;
 import org.xml.sax.InputSource;
 
 public class SAXHandlerTest {
+  
+  public static final String XML =
+    "src"
+        + File.separator
+        + "test"
+        + File.separator
+        + "resources"
+        + File.separator
+        + "test.xml";
 
   public static final String PATH =
       "generated" + File.separator + "SAXHandlerTest.tnk";
@@ -69,7 +78,7 @@ public class SAXHandlerTest {
     saxParserFactory.setValidating(false);
     saxParserFactory.setNamespaceAware(true);
     final SAXParser parser = saxParserFactory.newSAXParser();
-    final InputSource inputSource = new InputSource("xml/test.xml");
+    final InputSource inputSource = new InputSource(XML);
     final ISession session = Session.beginSession(new File(PATH));
     final IWriteTransaction wrtx = session.beginWriteTransaction();
     parser.parse(inputSource, new SAXHandler(wrtx));
@@ -111,7 +120,7 @@ public class SAXHandlerTest {
     saxParserFactory.setValidating(false);
     saxParserFactory.setNamespaceAware(true);
     final SAXParser parser = saxParserFactory.newSAXParser();
-    final InputSource inputSource = new InputSource("xml/test.xml");
+    final InputSource inputSource = new InputSource(XML);
     final IWriteTransaction wtx2 = session.beginWriteTransaction();
     wtx2.moveTo(11L);
     parser.parse(inputSource, new SAXHandler(wtx2));
