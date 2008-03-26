@@ -116,7 +116,12 @@
 	 | CLEAN: Remove all built stuff.
 	 \ -->
 	<target name="clean">
-		<delete dir="${build.dir}" />
+		<delete dir="${tnk.dir}/*" />
+		<delete dir="${classes.dir}" />
+		<delete dir="${javadoc.dir}" />
+		<delete dir="${junit.dir}" />
+		<delete dir="${checkstyle.dir}" />
+		<delete file="${treetank.jar}" />
 	</target>
 
 </project>
