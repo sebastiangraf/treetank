@@ -9,21 +9,4 @@
     <filter name="FileTypesFilter" enabled="true">
         <filter-data value="java"/>
     </filter>
-    <filter name="FilesFromPackage" enabled="false">
-        <filter-data value="src/de/unikn/inf/disy/idefix/blocklayer"/>
-        <filter-data value="src/de/unikn/inf/disy/idefix/datastructure"/>
-        <filter-data value="src/de/unikn/inf/disy/idefix/treelayer"/>
-        <filter-data value="src/de/unikn/inf/disy/idefix/utils"/>
-        <filter-data value="src/de/unikn/inf/disy/idefix/xmlfulltext"/>
-        <filter-data value="src/de/unikn/inf/disy/idefix/xmllayer"/>
-        <filter-data value="conf"/>
-        <filter-data value="test/de/unikn/inf/disy/idefix/blocklayer"/>
-        <filter-data value="test/de/unikn/inf/disy/idefix/datastructure"/>
-        <filter-data value="test/de/unikn/inf/disy/idefix/treelayer"/>
-        <filter-data value="test/de/unikn/inf/disy/idefix/xmlfulltext"/>
-        <filter-data value="test/de/unikn/inf/disy/idefix/xmllayer"/>
-        <filter-data value="bench"/>
-        <filter-data value="src"/>
-        <filter-data value="test"/>
-    </filter>
 </fileset-config>
