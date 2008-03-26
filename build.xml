@@ -9,11 +9,11 @@
 	<property name="target" value="1.5" />
 	<property name="source" value="1.5" />
 
-	<property name="src.dir" value="src" />
-	<property name="test.dir" value="test" />
+	<property name="src.dir" value="src/main/java" />
+	<property name="test.dir" value="src/test/java" />
 	<property name="externals.dir" value="externals" />
 
-	<property name="build.dir" value="generated/ant" />
+	<property name="build.dir" value="target/ant" />
 	<property name="classes.dir" value="${build.dir}/classes" />
 	<property name="javadoc.dir" value="${build.dir}/javadoc" />
 	<property name="junit.dir" value="${build.dir}/junit" />
@@ -78,11 +78,11 @@
 	 | CHECKSTYLE: Run checkstyle abd create report.
 	 \ -->
 	<target name="checkstyle" depends="init" description="Run checkstyle.">
-		<checkstyle config="checkstyle.xml" failureProperty="checkstyle.failure" failOnViolation="false">
+		<checkstyle config="src/main/resources/checkstyle.xml" failureProperty="checkstyle.failure" failOnViolation="false">
 			<formatter type="xml" tofile="${checkstyle.dir}/checkstyle_report.xml" />
 			<fileset dir="${src.dir}" includes="**/*.java" />
 		</checkstyle>
-		<xslt in="${checkstyle.dir}/checkstyle_report.xml" out="${checkstyle.dir}/index.html" style="checkstyle.xsl" />
+		<xslt in="${checkstyle.dir}/checkstyle_report.xml" out="${checkstyle.dir}/index.html" style="src/main/resources/checkstyle.xsl" />
 	</target>
 
 	<!--
