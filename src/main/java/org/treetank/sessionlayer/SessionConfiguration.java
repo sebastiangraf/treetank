@@ -97,6 +97,20 @@ public final class SessionConfiguration {
 
     // Set path and name.
     File file = new File(path);
+
+    // Make sure parent path exists.
+    File parentFile;
+    try {
+      parentFile = new File(file.getParentFile().getAbsolutePath());
+      if (!parentFile.exists()) {
+        parentFile.mkdirs();
+      }
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    } finally {
+      parentFile = null;
+    }
+
     mFileName = file.getName();
     mAbsolutePath = file.getAbsolutePath();
     file = null;
