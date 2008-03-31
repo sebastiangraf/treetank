@@ -43,7 +43,7 @@ public class ReadTransaction implements IReadTransaction {
   private ReadTransactionState mTransactionState;
 
   /** Strong reference to currently selected node. */
-  private AbstractNode mCurrentNode;
+  private IItem mCurrentNode;
 
   /** Is the cursor currently pointing to an attribute? */
   private boolean mIsAttribute;
@@ -113,7 +113,7 @@ public class ReadTransaction implements IReadTransaction {
     if (nodeKey != NULL_NODE_KEY) {
       mIsAttribute = false;
       // Remember old node and fetch new one.
-      final AbstractNode oldNode = mCurrentNode;
+      final IItem oldNode = mCurrentNode;
       try {
         mCurrentNode = mTransactionState.getNode(nodeKey);
       } catch (Exception e) {
@@ -136,7 +136,7 @@ public class ReadTransaction implements IReadTransaction {
   public final boolean moveToToken(final String token) {
     assertNotClosed();
 
-    final AbstractNode oldNode = mCurrentNode;
+    final IItem oldNode = mCurrentNode;
 
     moveToFullTextRoot();
     boolean contained = true;
@@ -768,7 +768,7 @@ public class ReadTransaction implements IReadTransaction {
    * 
    * @return The current node.
    */
-  protected final AbstractNode getCurrentNode() {
+  protected final IItem getCurrentNode() {
     return mCurrentNode;
   }
 
@@ -778,7 +778,7 @@ public class ReadTransaction implements IReadTransaction {
    * @param currentNode The current node to set.
    */
   protected final void setCurrentNode(final IItem currentNode) {
-    mCurrentNode = (AbstractNode) currentNode;
+    mCurrentNode = currentNode;
   }
 
 }
