@@ -23,7 +23,7 @@ public class CommentFilterTest {
     Session.removeSession(PATH);
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test  
   public void testIFilterConvetions() {
 
     // Build simple test tree.
@@ -39,11 +39,11 @@ public class CommentFilterTest {
 
     wtx.moveTo(2L);
     wtx.moveToAttribute(0);
-    IFilterTest.testIFilterConventions(new CommentFilter(wtx), true);
+    IFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
 
     wtx.moveTo(8L);
     wtx.moveToAttribute(0);
-    IFilterTest.testIFilterConventions(new CommentFilter(wtx), true);
+    IFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
 
     wtx.abort();
     wtx.close();

@@ -19,7 +19,8 @@ public class PIFilterTest {
     Session.removeSession(PATH);
   }
 
-  @Test(expected = IllegalStateException.class)
+ 
+  @Test
   public void testIFilterConvetions() {
 
     // Build simple test tree.
@@ -28,18 +29,18 @@ public class PIFilterTest {
     TestDocument.create(wtx);
 
     wtx.moveTo(8L);
-    IFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
+    IFilterTest.testIFilterConventions(new PIFilter(wtx), false);
 
     wtx.moveTo(3L);
-    IFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
+    IFilterTest.testIFilterConventions(new PIFilter(wtx), false);
 
     wtx.moveTo(2L);
     wtx.moveToAttribute(0);
-    IFilterTest.testIFilterConventions(new CommentFilter(wtx), true);
+    IFilterTest.testIFilterConventions(new PIFilter(wtx), false);
 
     wtx.moveTo(8L);
     wtx.moveToAttribute(0);
-    IFilterTest.testIFilterConventions(new CommentFilter(wtx), true);
+    IFilterTest.testIFilterConventions(new PIFilter(wtx), false);
 
     wtx.abort();
     wtx.close();
