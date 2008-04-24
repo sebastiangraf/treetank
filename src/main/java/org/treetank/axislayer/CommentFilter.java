@@ -25,8 +25,11 @@ import org.treetank.api.IReadTransaction;
      * {@inheritDoc}
      */
     public final boolean filter() {
-      throw new IllegalStateException("Comment filter is not implemented yet");
-     
+      return getTransaction().getKind() == 8;
+      
+      //TODO: As soon as an comment node is implemented, use the second version, 
+      //because this is much cleaner and more consistent to the other 
+      //node-filters.
       //return (getTransaction().isCommentKind());
     }
 
