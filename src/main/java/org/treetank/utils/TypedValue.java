@@ -315,4 +315,46 @@ public final class TypedValue {
     return equals(TypedValue.getBytes(value1), TypedValue.getBytes(value2));
   }
 
+  /**
+   * Get UTF-8 byte array from double. The given byte array yields a double
+   * if read with parseDouble().
+   * 
+   * @param value double value to encode as UTF-8 byte array.
+   * @return UTF-8-encoded byte array of double.
+   */
+  public static byte[] getBytes(final Double value) {
+    return value.toString().getBytes();
+  }
+
+  /**
+   * Get UTF-8 byte array from float. The given byte array yields a float
+   * if read with parseFloat().
+   * 
+   * @param value float to encode as UTF-8 byte array.
+   * @return UTF-8-encoded byte array of float.
+   */
+  public static byte[] getBytes(final Float value) {
+    return value.toString().getBytes();
+  }
+
+  /**
+   * Parse double from given UTF-8 byte array.
+   * 
+   * @param value Byte array to parse double from.
+   * @return double.
+   */
+  public static double parseDouble(final byte[] value) {
+    return Double.parseDouble(parseString(value));
+  }
+  
+  /**
+   * Parse float from given UTF-8 byte array.
+   * 
+   * @param value Byte array to parse float from.
+   * @return float.
+   */
+  public static float parseFloat(final byte[] value) {
+    return Float.parseFloat(parseString(value));
+  }
+
 }

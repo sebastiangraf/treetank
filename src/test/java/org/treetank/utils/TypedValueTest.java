@@ -18,7 +18,9 @@
 
 package org.treetank.utils;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 import org.treetank.api.IReadTransaction;
@@ -122,6 +124,54 @@ public class TypedValueTest {
         TypedValue.getBytes(Long.MIN_VALUE + 1)));
     assertEquals(Long.MIN_VALUE + 1, TypedValue.parseLong(TypedValue
         .getBytes(Long.MIN_VALUE + 1)));
+  }
+
+  @Test
+  public void testDouble() {
+
+    assertThat(0.0, is(TypedValue.parseDouble(TypedValue.getBytes(0.0))));
+
+    assertThat(1234.123, is(TypedValue.parseDouble(TypedValue
+        .getBytes(1234.123))));
+
+    assertThat(
+        4.00001,
+        is(TypedValue.parseDouble(TypedValue.getBytes(4.00001))));
+
+    assertThat(Double.MAX_VALUE, is(TypedValue.parseDouble(TypedValue
+        .getBytes(Double.MAX_VALUE))));
+
+    assertThat(-1234.5432, is(TypedValue.parseDouble(TypedValue
+        .getBytes(-1234.5432))));
+
+    assertThat(-4E-13, is(TypedValue.parseDouble(TypedValue.getBytes(-4E-13))));
+
+    assertThat(Double.MIN_VALUE + 1, is(TypedValue.parseDouble(TypedValue
+        .getBytes(Double.MIN_VALUE + 1))));
+  }
+
+  @Test
+  public void testFloat() {
+
+    assertThat(0.0f, is(TypedValue.parseFloat(TypedValue.getBytes(0.0f))));
+
+    assertThat(1234.123f, is(TypedValue.parseFloat(TypedValue
+        .getBytes(1234.123f))));
+
+    assertThat(4.00001f, is(TypedValue
+        .parseFloat(TypedValue.getBytes(4.00001f))));
+
+    assertThat(Float.MAX_VALUE, is(TypedValue.parseFloat(TypedValue
+        .getBytes(Float.MAX_VALUE))));
+
+    assertThat(-1234.5432f, is(TypedValue.parseFloat(TypedValue
+        .getBytes(-1234.5432f))));
+
+    assertThat(-4E-13f, 
+        is(TypedValue.parseFloat(TypedValue.getBytes(-4E-13f))));
+
+    assertThat(Float.MIN_VALUE + 1, is(TypedValue.parseFloat(TypedValue
+        .getBytes(Float.MIN_VALUE + 1))));
   }
 
   @Test

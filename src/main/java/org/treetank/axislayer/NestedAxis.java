@@ -63,6 +63,7 @@ public class NestedAxis extends AbstractAxis implements IAxis {
     if (mChildAxis != null) {
       mChildAxis.reset(nodeKey);
     }
+    mIsFirst = true;
   }
 
   /**
