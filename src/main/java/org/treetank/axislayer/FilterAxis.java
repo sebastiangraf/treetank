@@ -77,5 +77,15 @@ public class FilterAxis extends AbstractAxis implements IAxis {
     resetToStartKey();
     return false;
   }
+
+  /**
+   * Returns the inner axis.
+   * 
+   * @return the axis
+   */
+  public IAxis getAxis() {
+    
+    return mAxis;
+  }
   
 }
