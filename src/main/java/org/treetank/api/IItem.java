@@ -2,59 +2,201 @@ package org.treetank.api;
 
 import org.treetank.nodelayer.AbstractNode;
 
+/**
+ * <h1>IItem</h1>
+ * <p>
+ * Common interface for all item kinds. An item can be a node or an atomic 
+ * value.
+ * </p>
+ * 
+ * @author Tina Scherer
+ *
+ */
 public interface IItem {
 
-  long getNodeKey();
+  /**
+   * Gets unique node key.
+   * TODO: maybe this should be renamed in "getItemKey()"
+   * 
+   * @return node key
+   */
+  public long getNodeKey();
 
-  long getParentKey();
+  /**
+   * Gets key of the context item's parent.
+   * 
+   * @return parent key
+   */
+  public long getParentKey();
 
-  long getFirstChildKey();
+  /**
+   * Gets key of the context item's first child.
+   * 
+   * @return first child's key
+   */
+  public long getFirstChildKey();
 
-  long getLeftSiblingKey();
+  /**
+   * Gets key of the context item's left sibling.
+   * 
+   * @return left sibling key
+   */
+  public long getLeftSiblingKey();
 
-  long getRightSiblingKey();
+  /**
+   * Gets key of the context item's right sibling.
+   * 
+   * @return right sibling key
+   */
+  public long getRightSiblingKey();
 
-  AbstractNode getAttribute(int index);
+  /**
+   * Gets the nodes attribute with the specified index.
+   * 
+   * @param index  index of the attribute to get
+   * @return  attribute at index
+   */
+  public AbstractNode getAttribute(int index);
 
-  boolean hasParent();
-  
-  boolean hasFirstChild();
-  
-  boolean hasLeftSibling();
-  
-  boolean hasRightSibling();
+  /**
+   * Declares, whether the item has a parent.
+   * 
+   * @return true, if item has a parent
+   */
+  public boolean hasParent();
 
+  /**
+   * Declares, whether the item has a first child.
+   * 
+   * @return true, if item has a first child
+   */
+  public boolean hasFirstChild();
 
-  byte[] getValue();
+  /**
+   * Declares, whether the item has a left sibling.
+   * 
+   * @return true, if item has a left sibling
+   */
+  public boolean hasLeftSibling();
 
-  long getChildCount();
+  /**
+   * Declares, whether the item has a right sibling.
+   * 
+   * @return true, if item has a right sibling
+   */
+  public boolean hasRightSibling();
 
-  int getAttributeCount();
+  /**
+   * Return a byte array representation of the item's value.
+   * 
+   * @return returns the value of the item
+   */
+  public byte[] getValue();
 
-  int getNamespaceCount();
+  /**
+   * Gets the number of children of the item.
+   * 
+   * @return item's number of children
+   */
+  public long getChildCount();
 
-  AbstractNode getNamespace(int index);
+  /**
+   * Gets the number of attributes of the item.
+   * 
+   * @return item's number of attributes.
+   */
+  public int getAttributeCount();
 
-  int getKind();
+  /**
+   * Gets the number of namespaces of the item.
+   * 
+   * @return item's number of namespaces.
+   */
+  public int getNamespaceCount();
 
-  boolean isDocumentRoot();
+  /**
+   * Gets namespace of the item at the specified position.
+   * 
+   * @param index index of the namespace to get
+   * @return item's namespace at the given index
+   */
+  public AbstractNode getNamespace(final int index);
 
-  boolean isElement();
+  /**
+   * Gets the kind of the item (atomic value, element node, attribute node....).
+   * 
+   * @return kind of item
+   */
+  public int getKind();
 
-  boolean isAttribute();
+  /**
+   * Declares, whether the item is the document root.
+   * 
+   * @return true, if item is the document root
+   */
+  public boolean isDocumentRoot();
 
-  boolean isText();
+  /**
+   * Declares, whether the item an element node.
+   * 
+   * @return true, if item is an element node
+   */
+  public boolean isElement();
 
-  boolean isFullText();
+  /**
+   * Declares, whether the item an attribute node.
+   * 
+   * @return true, if item is an attribute node
+   */
+  public boolean isAttribute();
 
-  boolean isFullTextLeaf();
+  /**
+   * Declares, whether the item a text node.
+   * 
+   * @return true, if item is a text node
+   */
+  public boolean isText();
 
-  boolean isFullTextRoot();
+  /**
+   * Declares, whether the item a full text node.
+   * 
+   * @return true, if item is a full text node
+   */
+  public boolean isFullText();
 
-  int getNameKey();
+  /**
+   * Declares, whether the item a full text leaf.
+   * 
+   * @return true, if item is a full text leaf
+   */
+  public boolean isFullTextLeaf();
 
-  int getURIKey();
+  /**
+   * Declares, whether the item a full text root.
+   * 
+   * @return true, if item is a full text root
+   */
+  public boolean isFullTextRoot();
 
-  int getValueType();
+  /**
+   * Gets key of qualified name.
+   * 
+   * @return  key of qualified name
+   */
+  public int getNameKey();
+
+  /**
+   * Gets key of the URI.
+   * 
+   * @return URI key
+   */
+  public int getURIKey();
+
+  /**
+   * Gets value type of the item.
+   * 
+   * @return  value type
+   */
+  public int getValueType();
 
 }
