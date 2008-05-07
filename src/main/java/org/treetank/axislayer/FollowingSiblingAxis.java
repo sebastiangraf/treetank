@@ -64,10 +64,9 @@ public class FollowingSiblingAxis extends AbstractAxis implements IAxis {
     if (getTransaction().hasRightSibling()) {
       getTransaction().moveToRightSibling();
       return true;
-    } else {
-      resetToStartKey();
-      return false;
     }
+    resetToStartKey();
+    return false;
   }
 
 }

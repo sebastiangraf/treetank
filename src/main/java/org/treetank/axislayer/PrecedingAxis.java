@@ -1,4 +1,3 @@
-
 package org.treetank.axislayer;
 
 import org.treetank.api.IAxis;
@@ -15,11 +14,10 @@ import org.treetank.utils.FastStack;
  */
 public class PrecedingAxis extends AbstractAxis implements IAxis {
 
-  
   private boolean mIsFirst;
-  
-  private FastStack<Long> stack;
-  
+
+  private FastStack<Long> mStack;
+
   /**
    * Constructor initializing internal state.
    * 
@@ -30,10 +28,8 @@ public class PrecedingAxis extends AbstractAxis implements IAxis {
 
     super(rtx);
     mIsFirst = true;
-   stack = new FastStack<Long>();
-    
-    
-    
+    mStack = new FastStack<Long>();
+
   }
 
   /**
@@ -44,7 +40,7 @@ public class PrecedingAxis extends AbstractAxis implements IAxis {
 
     super.reset(nodeKey);
     mIsFirst = true;
-    stack = new FastStack<Long>();
+    mStack = new FastStack<Long>();
 
   }
 
@@ -53,55 +49,50 @@ public class PrecedingAxis extends AbstractAxis implements IAxis {
    */
   public final boolean hasNext() {
 
-    
     //assure, that preceding is not evaluated on an attribute or a namespace
     if (mIsFirst) {
       mIsFirst = false;
-      if (getTransaction().isAttributeKind() 
+      if (getTransaction().isAttributeKind()
       //   || getTransaction().isNamespaceKind()
       ) {
-          resetToStartKey();
-          return false;
-        }
-      }
-    
-    resetToLastKey();
-        
-      
-    if (!stack.empty()) {
-      //return all nodes of the current subtree in reverse document order
-      getTransaction().moveTo(stack.pop());
-      return true;
-    } else {
-      
-      if (getTransaction().hasLeftSibling()) {
-        getTransaction().moveToLeftSibling();
-        //because this axis return the precedings in reverse document order, we
-        //need to travel to the node in the subtree, that comes last in document
-        //order.
-        getLastChild();
-        return true;
-          
-      } else {
-        while (getTransaction().hasParent()) {
-          //ancestors are not part of the preceding set
-          getTransaction().moveToParent();
-          if (getTransaction().hasLeftSibling()) {
-            getTransaction().moveToLeftSibling();
-            //move to last node in the subtree
-            getLastChild();
-            return true;
-          }
-        }
+        resetToStartKey();
+        return false;
       }
     }
-    
+
+    resetToLastKey();
+
+    if (!mStack.empty()) {
+      //return all nodes of the current subtree in reverse document order
+      getTransaction().moveTo(mStack.pop());
+      return true;
+    }
+
+    if (getTransaction().hasLeftSibling()) {
+      getTransaction().moveToLeftSibling();
+      //because this axis return the precedings in reverse document order, we
+      //need to travel to the node in the subtree, that comes last in document
+      //order.
+      getLastChild();
+      return true;
+
+    }
+    while (getTransaction().hasParent()) {
+      //ancestors are not part of the preceding set
+      getTransaction().moveToParent();
+      if (getTransaction().hasLeftSibling()) {
+        getTransaction().moveToLeftSibling();
+        //move to last node in the subtree
+        getLastChild();
+        return true;
+      }
+    }
+
     resetToStartKey();
     return false;
-        
+
   }
-  
-  
+
   /**
    * Moves the transaction to the node in the current subtree, that is last in 
    * document order and pushes all other node key on a stack.
@@ -109,15 +100,15 @@ public class PrecedingAxis extends AbstractAxis implements IAxis {
    * reverse document order.
    */
   private void getLastChild() {
-    
+
     if (getTransaction().hasFirstChild()) {
       while (getTransaction().hasFirstChild()) {
-        stack.push(getTransaction().getNodeKey());
+        mStack.push(getTransaction().getNodeKey());
         getTransaction().moveToFirstChild();
       }
-    
+
       while (getTransaction().hasRightSibling()) {
-        stack.push(getTransaction().getNodeKey());
+        mStack.push(getTransaction().getNodeKey());
         getTransaction().moveToRightSibling();
         getLastChild();
       }
