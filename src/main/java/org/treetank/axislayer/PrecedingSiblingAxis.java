@@ -62,11 +62,9 @@ public class PrecedingSiblingAxis extends AbstractAxis implements IAxis {
     if (getTransaction().hasLeftSibling()) {
       getTransaction().moveToLeftSibling();
       return true;
-      
-    } else {
-      resetToStartKey();
-      return false;
     }
+    resetToStartKey();
+    return false;
   }
 
 

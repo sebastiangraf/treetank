@@ -79,10 +79,9 @@ public class AncestorAxis extends AbstractAxis implements IAxis {
           != IReadTransaction.DOCUMENT_ROOT_KEY) {
       getTransaction().moveToParent();
       return true;
-    } else {
-      resetToStartKey();
-      return false;
     }
+    resetToStartKey();
+    return false;
   }
 
 }

@@ -75,66 +75,61 @@ public class FollowingAxis extends AbstractAxis implements IAxis {
           rightSiblingStack.push(getTransaction().getRightSiblingKey());
         }
         return true;
-      } else {
-        //Try to find the right sibling of one of the ancestors.
-          while (getTransaction().hasParent()) {
-            getTransaction().moveToParent();
-            if (getTransaction().hasRightSibling()) {
-              getTransaction().moveToRightSibling();
-              if (getTransaction().hasRightSibling()) {
-                rightSiblingStack.push(getTransaction().getRightSiblingKey());
-              }
-              return true;
-            }
+      }
+      //Try to find the right sibling of one of the ancestors.
+      while (getTransaction().hasParent()) {
+        getTransaction().moveToParent();
+        if (getTransaction().hasRightSibling()) {
+          getTransaction().moveToRightSibling();
+          if (getTransaction().hasRightSibling()) {
+            rightSiblingStack.push(getTransaction().getRightSiblingKey());
           }
-        
+          return true;
+        }
       }
       //currentNode is last key in the document order
       resetToStartKey();
       return false;
       
-    } else {  //is not the first iteration
-      //step down the tree in document order
-      if (getTransaction().hasFirstChild()) {
-        getTransaction().moveToFirstChild();
+    }
+    //step down the tree in document order
+    if (getTransaction().hasFirstChild()) {
+      getTransaction().moveToFirstChild();
+      if (getTransaction().hasRightSibling()) {
+      //push right sibling on a stack to reduce path traversal
+        rightSiblingStack.push(getTransaction().getRightSiblingKey());
+      }
+      
+      return true;
+    }
+    if (rightSiblingStack.empty()) {
+      
+    //Try to find the right sibling of one of the ancestors.
+      while (getTransaction().hasParent()) {
+        getTransaction().moveToParent();
         if (getTransaction().hasRightSibling()) {
-        //push right sibling on a stack to reduce path traversal
-          rightSiblingStack.push(getTransaction().getRightSiblingKey());
-        }
-        
-        return true;
-      } else {
-        
-        if (rightSiblingStack.empty()) {
-          
-        //Try to find the right sibling of one of the ancestors.
-          while (getTransaction().hasParent()) {
-            getTransaction().moveToParent();
-            if (getTransaction().hasRightSibling()) {
-              getTransaction().moveToRightSibling();
-              if (getTransaction().hasRightSibling()) {
-              //push right sibling on a stack to reduce path traversal
-                rightSiblingStack.push(getTransaction().getRightSiblingKey());
-              }
-              return true;
-            }
-          }
-          
-        } else {
-          
-        //get root key of sibling subtree
-          getTransaction().moveTo(rightSiblingStack.pop());
+          getTransaction().moveToRightSibling();
           if (getTransaction().hasRightSibling()) {
           //push right sibling on a stack to reduce path traversal
             rightSiblingStack.push(getTransaction().getRightSiblingKey());
           }
           return true;
-        
         }
-        resetToStartKey();
-        return false;
       }
+      
+    } else {
+      
+    //get root key of sibling subtree
+      getTransaction().moveTo(rightSiblingStack.pop());
+      if (getTransaction().hasRightSibling()) {
+      //push right sibling on a stack to reduce path traversal
+        rightSiblingStack.push(getTransaction().getRightSiblingKey());
+      }
+      return true;
+    
     }
+    resetToStartKey();
+    return false;
   }
 
 }
