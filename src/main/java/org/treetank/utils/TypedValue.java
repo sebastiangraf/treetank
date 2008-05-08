@@ -48,21 +48,21 @@ public final class TypedValue {
    * @param bytes Byte array of value.
    * @return Atomized value as string.
    */
-  public static String atomize(final int valueType, final byte[] bytes) {
-    if (bytes == null) {
-      return "";
-    }
-    switch (valueType) {
-    case IReadTransaction.INT_TYPE:
-      return Integer.toString(parseInt(bytes));
-    case IReadTransaction.LONG_TYPE:
-      return Long.toString(parseLong(bytes));
-    case IReadTransaction.BOOLEAN_TYPE:
-      return Boolean.toString(parseBoolean(bytes));
-    default:
-      return parseString(bytes);
-    }
-  }
+//  public static String atomize(final int valueType, final byte[] bytes) {
+//    if (bytes == null) {
+//      return "";
+//    }
+//    switch (valueType) {
+//    case IReadTransaction.INT_TYPE:
+//      return Integer.toString(parseInt(bytes));
+//    case IReadTransaction.LONG_TYPE:
+//      return Long.toString(parseLong(bytes));
+//    case IReadTransaction.BOOLEAN_TYPE:
+//      return Boolean.toString(parseBoolean(bytes));
+//    default:
+//      return parseString(bytes);
+//    }
+//  }
 
   /**
    * Parse string from given UTF-8 byte array.

@@ -186,7 +186,8 @@ public final class WriteTransaction extends ReadTransaction
             getCurrentNode().getFirstChildKey(),
             ((WriteTransactionState) getTransactionState()).createNameKey(name),
             ((WriteTransactionState) getTransactionState()).createNameKey(uri),
-            UNTYPED));
+            ((WriteTransactionState) getTransactionState())
+                .createNameKey("xs:untyped")));
   }
 
   /**
@@ -208,8 +209,10 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final synchronized long insertTextAsFirstChild(final String value) {
-    return insertTextAsFirstChild(IReadTransaction.UNTYPED, TypedValue
-        .getBytes(value));
+    return insertTextAsFirstChild(
+        ((WriteTransactionState) getTransactionState())
+            .createNameKey("xs:untyped"),
+        TypedValue.getBytes(value));
   }
 
   /**
@@ -252,7 +255,7 @@ public final class WriteTransaction extends ReadTransaction
             getCurrentNode().getRightSiblingKey(),
             ((WriteTransactionState) getTransactionState()).createNameKey(name),
             ((WriteTransactionState) getTransactionState()).createNameKey(uri),
-            UNTYPED));
+            ((WriteTransactionState) getTransactionState()).createNameKey("xs:untyped")));
   }
 
   /**
@@ -274,7 +277,7 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final synchronized long insertTextAsRightSibling(final String value) {
-    return insertTextAsRightSibling(IReadTransaction.UNTYPED, TypedValue
+    return insertTextAsRightSibling(((WriteTransactionState) getTransactionState()).createNameKey("xs:untyped"), TypedValue
         .getBytes(value));
   }
 
@@ -330,7 +333,7 @@ public final class WriteTransaction extends ReadTransaction
       final String name,
       final String uri,
       final String value) {
-    insertAttribute(name, uri, IReadTransaction.UNTYPED, TypedValue
+    insertAttribute(name, uri, ((WriteTransactionState) getTransactionState()).createNameKey("xs:untypedAtomic"), TypedValue
         .getBytes(value));
   }
 
@@ -516,7 +519,7 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final synchronized void setValue(final String value) {
-    setValue(UNTYPED, TypedValue.getBytes(value));
+    setValue(((WriteTransactionState) getTransactionState()).createNameKey("xs:untyped"), TypedValue.getBytes(value));
   }
 
   /**
