@@ -138,23 +138,6 @@ public interface IReadTransaction {
   /** Node kind is fulltext leaf. */
   public static final int FULLTEXT_LEAF_KIND = 15;
 
-  //--- Types ------------------------------------------------------------------
-
-  /** Node type is untyped, i.e., serialised as UTF-8 String. */
-  public static final int UNTYPED = 0;
-
-  /** Node type is raw byte[]. */
-  public static final int BYTEARRAY_TYPE = 1;
-
-  /** Node type is int. */
-  public static final int INT_TYPE = 2;
-
-  /** Node type is long. */
-  public static final int LONG_TYPE = 3;
-
-  /** Node type is boolean. */
-  public static final int BOOLEAN_TYPE = 6;
-
   /**
    * Get ID of transaction.
    * 
