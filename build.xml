@@ -3,7 +3,7 @@
 
 	<description> Ant build of the TreeTank project. </description>
 
-	<property name="version" value="4.19.12" />
+	<property name="version" value="4.20.3" />
 
 	<property name="debuglevel" value="source,lines,vars" />
 	<property name="target" value="1.5" />

@@ -157,36 +157,6 @@ public interface IWriteTransaction extends IReadTransaction {
   public long insertTextAsFirstChild(final String value);
 
   /**
-   * Insert new text node as first child of currently selected node.
-   * The cursor is moved to the inserted node.
-   * 
-   * @param value Value of inserted node.
-   * @return Key of inserted node.
-   * already has a first child.
-   */
-  public long insertTextAsFirstChild(final int value);
-
-  /**
-   * Insert new text node as first child of currently selected node.
-   * The cursor is moved to the inserted node.
-   * 
-   * @param value Value of inserted node.
-   * @return Key of inserted node.
-   * already has a first child.
-   */
-  public long insertTextAsFirstChild(final long value);
-
-  /**
-   * Insert new text node as first child of currently selected node.
-   * The cursor is moved to the inserted node.
-   * 
-   * @param value Value of inserted node.
-   * @return Key of inserted node.
-   * already has a first child.
-   */
-  public long insertTextAsFirstChild(final boolean value);
-
-  /**
    * Insert new fulltext node as first child of currently selected node.
    * The cursor is moved to the inserted node.
    * 
@@ -229,36 +199,6 @@ public interface IWriteTransaction extends IReadTransaction {
   public long insertTextAsRightSibling(final String value);
 
   /**
-   * Insert new element node as right sibling of currently selected node.
-   * The cursor is moved to the inserted node.
-   * 
-   * @param value Value of inserted node.
-   * @return Key of inserted node.
-   * the root node which is not allowed to have right siblings.
-   */
-  public long insertTextAsRightSibling(final int value);
-
-  /**
-   * Insert new element node as right sibling of currently selected node.
-   * The cursor is moved to the inserted node.
-   * 
-   * @param value Value of inserted node.
-   * @return Key of inserted node.
-   * the root node which is not allowed to have right siblings.
-   */
-  public long insertTextAsRightSibling(final long value);
-
-  /**
-   * Insert new element node as right sibling of currently selected node.
-   * The cursor is moved to the inserted node.
-   * 
-   * @param value Value of inserted node.
-   * @return Key of inserted node.
-   * the root node which is not allowed to have right siblings.
-   */
-  public long insertTextAsRightSibling(final boolean value);
-
-  /**
    * Insert new fulltext node as right sibling of currently selected node.
    * The cursor is moved to the inserted node.
    * 
@@ -295,45 +235,6 @@ public interface IWriteTransaction extends IReadTransaction {
       final String name,
       final String uri,
       final String value);
-
-  /**
-   * Insert attribute in currently selected node.
-   * The cursor is moved to the inserted node.
-   * 
-   * @param name Qualified name of inserted node.
-   * @param uri URI of inserted node.
-   * @param value Value of inserted node.
-   */
-  public void insertAttribute(
-      final String name,
-      final String uri,
-      final int value);
-
-  /**
-   * Insert attribute in currently selected node.
-   * The cursor is moved to the inserted node.
-   * 
-   * @param name Qualified name of inserted node.
-   * @param uri URI of inserted node.
-   * @param value Value of inserted node.
-   */
-  public void insertAttribute(
-      final String name,
-      final String uri,
-      final long value);
-
-  /**
-   * Insert attribute in currently selected node.
-   * The cursor is moved to the inserted node.
-   * 
-   * @param name Qualified name of inserted node.
-   * @param uri URI of inserted node.
-   * @param value Value of inserted node.
-   */
-  public void insertAttribute(
-      final String name,
-      final String uri,
-      final boolean value);
 
   /**
    * Insert namespace declaration in currently selected node.
@@ -411,27 +312,6 @@ public interface IWriteTransaction extends IReadTransaction {
    * @param value New value of node.
    */
   public void setValue(final String value);
-
-  /**
-   * Set value of node.
-   * 
-   * @param value New value of node.
-   */
-  public void setValue(final int value);
-
-  /**
-   * Set value of node.
-   * 
-   * @param value New value of node.
-   */
-  public void setValue(final long value);
-
-  /**
-   * Set value of node.
-   * 
-   * @param value New value of node.
-   */
-  public void setValue(final boolean value);
 
   /**
    * Commit all modifications of the exclusive write transaction. Even commit

@@ -230,15 +230,15 @@ public class SessionTest {
     final IReadTransaction rtx1 = session.beginReadTransaction();
     assertEquals(0L, rtx1.getRevisionNumber());
     rtx1.moveTo(10L);
-    assertEquals("bar", rtx1.getValueAsString());
+    assertEquals("bar", rtx1.getValue());
 
     final IWriteTransaction wtx2 = session.beginWriteTransaction();
     assertEquals(1L, wtx2.getRevisionNumber());
     wtx2.moveTo(10L);
     wtx2.setValue("bar2");
 
-    assertEquals("bar", rtx1.getValueAsString());
-    assertEquals("bar2", wtx2.getValueAsString());
+    assertEquals("bar", rtx1.getValue());
+    assertEquals("bar2", wtx2.getValue());
 
     wtx2.abort();
     wtx2.close();
@@ -246,7 +246,7 @@ public class SessionTest {
     final IReadTransaction rtx2 = session.beginReadTransaction();
     assertEquals(0L, rtx2.getRevisionNumber());
     rtx2.moveTo(10L);
-    assertEquals("bar", rtx2.getValueAsString());
+    assertEquals("bar", rtx2.getValue());
 
   }
 
@@ -266,15 +266,15 @@ public class SessionTest {
     final IReadTransaction rtx1 = session2.beginReadTransaction();
     assertEquals(0L, rtx1.getRevisionNumber());
     rtx1.moveTo(10L);
-    assertEquals("bar", rtx1.getValueAsString());
+    assertEquals("bar", rtx1.getValue());
 
     final IWriteTransaction wtx2 = session2.beginWriteTransaction();
     assertEquals(1L, wtx2.getRevisionNumber());
     wtx2.moveTo(10L);
     wtx2.setValue("bar2");
 
-    assertEquals("bar", rtx1.getValueAsString());
-    assertEquals("bar2", wtx2.getValueAsString());
+    assertEquals("bar", rtx1.getValue());
+    assertEquals("bar2", wtx2.getValue());
 
     rtx1.close();
     wtx2.commit();
@@ -285,7 +285,7 @@ public class SessionTest {
     final IReadTransaction rtx2 = session3.beginReadTransaction();
     assertEquals(1L, rtx2.getRevisionNumber());
     rtx2.moveTo(10L);
-    assertEquals("bar2", rtx2.getValueAsString());
+    assertEquals("bar2", rtx2.getValue());
 
     rtx2.close();
     session3.close();

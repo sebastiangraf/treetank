@@ -57,6 +57,9 @@ public final class ElementNode extends AbstractNode {
 
   /** Key of URI. */
   private int mURIKey;
+  
+  /** Type of node. */
+  private int mType;
 
   /**
    * Create new element node.
@@ -76,7 +79,8 @@ public final class ElementNode extends AbstractNode {
       final long leftSiblingKey,
       final long rightSiblingKey,
       final int nameKey,
-      final int uriKey) {
+      final int uriKey,
+      final int type) {
     super(nodeKey);
     mParentKey = parentKey;
     mFirstChildKey = firstChildKey;
@@ -87,6 +91,7 @@ public final class ElementNode extends AbstractNode {
     mNamespaces = new NamespaceNode[0];
     mNameKey = nameKey;
     mURIKey = uriKey;
+    mType = type;
   }
 
   /**
@@ -111,6 +116,7 @@ public final class ElementNode extends AbstractNode {
     }
     mNameKey = node.getNameKey();
     mURIKey = node.getURIKey();
+    mType = node.getTypeKey();
   }
 
   /**
@@ -138,6 +144,7 @@ public final class ElementNode extends AbstractNode {
     }
     mNameKey = in.readVarInt();
     mURIKey = in.readVarInt();
+    mType = in.readVarInt();
   }
 
   /**
@@ -404,6 +411,22 @@ public final class ElementNode extends AbstractNode {
   public final void setURIKey(final int uriKey) {
     mURIKey = uriKey;
   }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final int getTypeKey() {
+    return mType;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final void setType(final int valueType) {
+    mType = valueType;
+  }
 
   /**
    * {@inheritDoc}
@@ -425,6 +448,7 @@ public final class ElementNode extends AbstractNode {
     }
     out.writeVarInt(mNameKey);
     out.writeVarInt(mURIKey);
+    out.writeVarInt(mType);
   }
 
   /**

@@ -246,10 +246,10 @@ public final class XMLSerializer implements Runnable {
         mOut.write(SPACE);
         mOut.write(mRTX.getAttributeRawName(index));
         mOut.write(EQUAL_QUOTE);
-        if (mRTX.getAttributeValueType(index) == IReadTransaction.STRING_TYPE) {
-          mOut.write(mRTX.getAttributeValueAsByteArray(index));
+        if (mRTX.getAttributeTypeKey(index) == IReadTransaction.UNTYPED) {
+          mOut.write(mRTX.getAttributeRawValue(index));
         } else {
-          write(mRTX.getAttributeValueAsAtom(index));
+          write(mRTX.getAttributeValue(index));
         }
         mOut.write(QUOTE);
       }
@@ -260,10 +260,10 @@ public final class XMLSerializer implements Runnable {
       }
       break;
     case IReadTransaction.TEXT_KIND:
-      if (mRTX.getValueType() == IReadTransaction.STRING_TYPE) {
-        mOut.write(mRTX.getValueAsByteArray());
+      if (mRTX.getTypeKey() == IReadTransaction.UNTYPED) {
+        mOut.write(mRTX.getRawValue());
       } else {
-        write(mRTX.getValueAsAtom());
+        write(mRTX.getValue());
       }
       break;
     }

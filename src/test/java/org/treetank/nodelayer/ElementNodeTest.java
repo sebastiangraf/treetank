@@ -31,7 +31,7 @@ public class ElementNodeTest {
   public void testElementNode() {
 
     // Create empty node.
-    final AbstractNode node1 = new ElementNode(13L, 14L, 15L, 16L, 17L, 18, 19);
+    final AbstractNode node1 = new ElementNode(13L, 14L, 15L, 16L, 17L, 18, 19, 0);
     final FastByteArrayWriter out = new FastByteArrayWriter();
 
     // Modify it.
@@ -76,7 +76,7 @@ public class ElementNodeTest {
     assertEquals(13L, node3.getAttribute(0).getNodeKey());
     assertEquals(21, node3.getAttribute(0).getNameKey());
     assertEquals(22, node3.getAttribute(0).getURIKey());
-    assertEquals(27, node3.getAttribute(0).getValueType());
+    assertEquals(27, node3.getAttribute(0).getTypeKey());
     assertEquals(2, node3.getAttribute(0).getValue().length);
 
     assertEquals(13L, node3.getNamespace(0).getNodeKey());

@@ -197,6 +197,6 @@ public interface IItem {
    * 
    * @return  value type
    */
-  public int getValueType();
+  public int getTypeKey();
 
 }

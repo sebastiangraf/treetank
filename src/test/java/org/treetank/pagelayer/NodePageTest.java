@@ -31,7 +31,7 @@ public class NodePageTest {
   public void testSerializeDeserialize() {
     final NodePage page1 = new NodePage(0L);
     assertEquals(0L, page1.getNodePageKey());
-    final ElementNode node1 = new ElementNode(0L, 1L, 2L, 3L, 4L, 6, 7);
+    final ElementNode node1 = new ElementNode(0L, 1L, 2L, 3L, 4L, 6, 7, 0);
     node1.insertAttribute(22, 23, 25, new byte[0]);
     assertEquals(0L, node1.getNodeKey());
     page1.setNode(0, node1);
@@ -53,7 +53,7 @@ public class NodePageTest {
     assertEquals(0L, page2.getNode(0).getAttribute(0).getParentKey());
     assertEquals(22, page2.getNode(0).getAttribute(0).getNameKey());
     assertEquals(23, page2.getNode(0).getAttribute(0).getURIKey());
-    assertEquals(25, page2.getNode(0).getAttribute(0).getValueType());
+    assertEquals(25, page2.getNode(0).getAttribute(0).getTypeKey());
     assertEquals(6, page2.getNode(0).getNameKey());
     assertEquals(7, page2.getNode(0).getURIKey());
 

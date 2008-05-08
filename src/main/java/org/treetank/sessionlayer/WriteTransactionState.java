@@ -110,7 +110,8 @@ public final class WriteTransactionState extends ReadTransactionState {
       final long leftSiblingKey,
       final long rightSiblingKey,
       final int nameKey,
-      final int uriKey) {
+      final int uriKey,
+      final int type) {
     return createNode(new ElementNode(
         getRevisionRootPage().getMaxNodeKey() + 1,
         parentKey,
@@ -118,7 +119,8 @@ public final class WriteTransactionState extends ReadTransactionState {
         leftSiblingKey,
         rightSiblingKey,
         nameKey,
-        uriKey));
+        uriKey,
+        type));
   }
 
   protected final TextNode createTextNode(

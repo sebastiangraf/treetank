@@ -16,6 +16,14 @@
  * $Id$
  */
  
+TreeTank 4.20
+-------------
+3  Removed bean layer as web service is main target.
+2  Names, types, and values are unified accessible by key, string, ar raw.
+1  Removed type-specific encodings. Use external classes to encode types within
+   byte arrays.
+0  No longer binary compatible.
+ 
 TreeTank 4.19
 -------------
 12 Fixed memory leak because the write transaction state is not properly closed

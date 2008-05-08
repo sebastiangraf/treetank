@@ -223,7 +223,7 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
     return IReadTransaction.NULL_NAME_KEY;
   }
 
-  public int getValueType() {
+  public int getTypeKey() {
     return IConstants.UNKNOWN;
   }
 
@@ -299,6 +299,9 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
   }
 
   public void setValue(final int valueType, final byte[] value) {
+  }
+  
+  public void setType(final int valueType) {
   }
 
   /**

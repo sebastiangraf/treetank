@@ -84,7 +84,7 @@ public class ThreadTest {
           // Nothing to do.
         }
         mRTX.moveTo(10L);
-        TestCase.assertEquals("bar", mRTX.getValueAsString());
+        TestCase.assertEquals("bar", mRTX.getValue());
         mRTX.close();
       } catch (Exception e) {
         TestCase.fail(e.getLocalizedMessage());

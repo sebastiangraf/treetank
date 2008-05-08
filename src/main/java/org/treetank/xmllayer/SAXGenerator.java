@@ -171,7 +171,7 @@ public final class SAXGenerator implements Runnable {
     // Iterate over all persistent attributes.
     for (int index = 0, length = rtx.getAttributeCount(); index < length; index++) {
       attributes.addAttribute(rtx.getAttributeURI(index), "", rtx
-          .getAttributeName(index), "", rtx.getAttributeValueAsAtom(index));
+          .getAttributeName(index), "", rtx.getAttributeValue(index));
     }
 
     return attributes;
@@ -197,7 +197,7 @@ public final class SAXGenerator implements Runnable {
           visitAttributes(rtx));
       break;
     case IReadTransaction.TEXT_KIND:
-      final char[] text = rtx.getValueAsString().toCharArray();
+      final char[] text = rtx.getValue().toCharArray();
       mHandler.characters(text, 0, text.length);
       break;
     default:
