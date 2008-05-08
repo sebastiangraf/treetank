@@ -186,7 +186,7 @@ public class TypedValueTest {
 
   @Test
   public void testNullBytesToAtom() {
-    assertEquals("", TypedValue.atomize(IReadTransaction.STRING_TYPE, null));
+    assertEquals("", TypedValue.atomize(IReadTransaction.UNTYPED, null));
   }
 
   @Test

@@ -35,8 +35,8 @@ public final class AttributeNode extends AbstractNode {
   /** Key of URI. */
   private int mURIKey;
 
-  /** Type of value. */
-  private int mValueType;
+  /** Type of node. */
+  private int mType;
 
   /** Value of attribute. */
   private byte[] mValue;
@@ -47,19 +47,19 @@ public final class AttributeNode extends AbstractNode {
    * @param nodeKey Key of node.
    * @param nameKey Key of qualified name.
    * @param uriKey Key of URI.
-   * @param valueType Type of attribute value.
+   * @param type Type of attribute value.
    * @param value Value of attribute.
    */
   public AttributeNode(
       final long nodeKey,
       final int nameKey,
       final int uriKey,
-      final int valueType,
+      final int type,
       final byte[] value) {
     super(nodeKey);
     mNameKey = nameKey;
     mURIKey = uriKey;
-    mValueType = valueType;
+    mType = type;
     mValue = value;
   }
 
@@ -72,7 +72,7 @@ public final class AttributeNode extends AbstractNode {
     super(attribute.getNodeKey());
     mNameKey = attribute.getNameKey();
     mURIKey = attribute.getURIKey();
-    mValueType = attribute.getValueType();
+    mType = attribute.getTypeKey();
     mValue = attribute.getValue();
   }
 
@@ -81,7 +81,7 @@ public final class AttributeNode extends AbstractNode {
 
     mNameKey = in.readVarInt();
     mURIKey = in.readVarInt();
-    mValueType = in.readVarInt();
+    mType = in.readVarInt();
     mValue = in.readByteArray();
   }
 
@@ -145,8 +145,8 @@ public final class AttributeNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final int getValueType() {
-    return mValueType;
+  public final int getTypeKey() {
+    return mType;
   }
 
   /**
@@ -162,8 +162,16 @@ public final class AttributeNode extends AbstractNode {
    */
   @Override
   public final void setValue(final int valueType, final byte[] value) {
-    mValueType = valueType;
+    mType = valueType;
     mValue = value;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final void setType(final int valueType) {
+    mType = valueType;
   }
 
   /**
@@ -181,7 +189,7 @@ public final class AttributeNode extends AbstractNode {
   public final void serialize(final FastByteArrayWriter out) {
     out.writeVarInt(mNameKey);
     out.writeVarInt(mURIKey);
-    out.writeVarInt(mValueType);
+    out.writeVarInt(mType);
     out.writeByteArray(mValue);
   }
 

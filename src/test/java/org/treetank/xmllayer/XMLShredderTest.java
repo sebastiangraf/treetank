@@ -132,9 +132,9 @@ public class XMLShredderTest {
           .nameForKey(rtx.getURIKey()));
       if (expectedTrx.isTextKind()) {
         assertEquals(new String(
-            expectedTrx.getValueAsByteArray(),
+            expectedTrx.getRawValue(),
             IConstants.DEFAULT_ENCODING), new String(
-            rtx.getValueAsByteArray(),
+            rtx.getRawValue(),
             IConstants.DEFAULT_ENCODING));
       }
     }

@@ -61,14 +61,14 @@ public class UpdateTest {
     for (int i = 1; i <= 10; i++) {
       wtx = session.beginWriteTransaction();
       wtx.moveToDocumentRoot();
-      wtx.insertTextAsFirstChild(i);
+      wtx.insertTextAsFirstChild(Integer.toString(i));
       wtx.commit();
       wtx.close();
 
       rtx = session.beginReadTransaction();
       rtx.moveToDocumentRoot();
       rtx.moveToFirstChild();
-      assertEquals(i, rtx.getValueAsInt());
+      assertEquals(Integer.toString(i), rtx.getValue());
       assertEquals(i + 2L, rtx.getNodeCount());
       assertEquals(i, rtx.getRevisionNumber());
       rtx.close();
@@ -77,7 +77,7 @@ public class UpdateTest {
     rtx = session.beginReadTransaction();
     rtx.moveToDocumentRoot();
     rtx.moveToFirstChild();
-    assertEquals(10, rtx.getValueAsInt());
+    assertEquals("10", rtx.getValue());
     assertEquals(12L, rtx.getNodeCount());
     assertEquals(10L, rtx.getRevisionNumber());
     rtx.close();

@@ -140,8 +140,8 @@ public interface IReadTransaction {
 
   //--- Types ------------------------------------------------------------------
 
-  /** Node type is UTF-8 String. */
-  public static final int STRING_TYPE = 0;
+  /** Node type is untyped, i.e., serialised as UTF-8 String. */
+  public static final int UNTYPED = 0;
 
   /** Node type is raw byte[]. */
   public static final int BYTEARRAY_TYPE = 1;
@@ -375,12 +375,28 @@ public interface IReadTransaction {
   public String getAttributeURI(final int index);
 
   /**
-   * Get type of value of attribute at given index.
+   * Get type key of value of attribute at given index.
    * 
    * @param index Index of attribute [0..getAttributeCount()].
-   * @return Type of value of attribute at given index.
+   * @return Type key of value of attribute at given index.
    */
-  public int getAttributeValueType(final int index);
+  public int getAttributeTypeKey(final int index);
+  
+  /**
+   * Get type string of value of attribute at given index.
+   * 
+   * @param index Index of attribute [0..getAttributeCount()].
+   * @return Type string of value of attribute at given index.
+   */
+  public String getAttributeType(final int index);
+  
+  /**
+   * Get raw type of value of attribute at given index.
+   * 
+   * @param index Index of attribute [0..getAttributeCount()].
+   * @return Type byte[] of value of attribute at given index.
+   */
+  public byte[] getAttributeRawType(final int index);
 
   /**
    * Get value of attribute at given index.
@@ -388,7 +404,7 @@ public interface IReadTransaction {
    * @param index Index of attribute [0..getAttributeCount()].
    * @return Value of attribute at given index.
    */
-  public String getAttributeValueAsAtom(final int index);
+  public byte[] getAttributeRawValue(final int index);
 
   /**
    * Get value of attribute at given index.
@@ -396,39 +412,7 @@ public interface IReadTransaction {
    * @param index Index of attribute [0..getAttributeCount()].
    * @return Value of attribute at given index.
    */
-  public byte[] getAttributeValueAsByteArray(final int index);
-
-  /**
-   * Get value of attribute at given index.
-   * 
-   * @param index Index of attribute [0..getAttributeCount()].
-   * @return Value of attribute at given index.
-   */
-  public String getAttributeValueAsString(final int index);
-
-  /**
-   * Get value of attribute at given index.
-   * 
-   * @param index Index of attribute [0..getAttributeCount()].
-   * @return Value of attribute at given index.
-   */
-  public int getAttributeValueAsInt(final int index);
-
-  /**
-   * Get value of attribute at given index.
-   * 
-   * @param index Index of attribute [0..getAttributeCount()].
-   * @return Value of attribute at given index.
-   */
-  public long getAttributeValueAsLong(final int index);
-
-  /**
-   * Get value of attribute at given index.
-   * 
-   * @param index Index of attribute [0..getAttributeCount()].
-   * @return Value of attribute at given index.
-   */
-  public boolean getAttributeValueAsBoolean(final int index);
+  public String getAttributeValue(final int index);
 
   /**
    * Get namespace declaration count of currently selected node.
@@ -563,53 +547,39 @@ public interface IReadTransaction {
   public String getURI();
 
   /**
+   * Get type key of node value.
+   * 
+   * @return Type of node value.
+   */
+  public int getTypeKey();
+  
+  /**
    * Get type of node value.
    * 
    * @return Type of node value.
    */
-  public int getValueType();
-
+  public String getType();
+  
   /**
-   * Get atomized value of node.
+   * Get raw type of node value.
    * 
-   * @return Atomized value of node.
+   * @return Type of node value.
    */
-  public String getValueAsAtom();
-
-  /**
-   * Get value of node.
-   * 
-   * @return Value of node.
-   */
-  public byte[] getValueAsByteArray();
+  public byte[] getRawType();
 
   /**
    * Get value of node.
    * 
    * @return Value of node.
    */
-  public String getValueAsString();
+  public byte[] getRawValue();
 
   /**
    * Get value of node.
    * 
    * @return Value of node.
    */
-  public int getValueAsInt();
-
-  /**
-   * Get value of node.
-   * 
-   * @return Value of node.
-   */
-  public long getValueAsLong();
-
-  /**
-   * Get value of node.
-   * 
-   * @return Value of node.
-   */
-  public boolean getValueAsBoolean();
+  public String getValue();
 
   /**
    * Get key for given name. This is used for efficient name testing.

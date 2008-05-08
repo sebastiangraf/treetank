@@ -185,7 +185,8 @@ public final class WriteTransaction extends ReadTransaction
             NULL_NODE_KEY,
             getCurrentNode().getFirstChildKey(),
             ((WriteTransactionState) getTransactionState()).createNameKey(name),
-            ((WriteTransactionState) getTransactionState()).createNameKey(uri)));
+            ((WriteTransactionState) getTransactionState()).createNameKey(uri),
+            UNTYPED));
   }
 
   /**
@@ -207,31 +208,7 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final synchronized long insertTextAsFirstChild(final String value) {
-    return insertTextAsFirstChild(IReadTransaction.STRING_TYPE, TypedValue
-        .getBytes(value));
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final synchronized long insertTextAsFirstChild(final int value) {
-    return insertTextAsFirstChild(IReadTransaction.INT_TYPE, TypedValue
-        .getBytes(value));
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final synchronized long insertTextAsFirstChild(final long value) {
-    return insertTextAsFirstChild(IReadTransaction.LONG_TYPE, TypedValue
-        .getBytes(value));
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final synchronized long insertTextAsFirstChild(final boolean value) {
-    return insertTextAsFirstChild(IReadTransaction.BOOLEAN_TYPE, TypedValue
+    return insertTextAsFirstChild(IReadTransaction.UNTYPED, TypedValue
         .getBytes(value));
   }
 
@@ -274,7 +251,8 @@ public final class WriteTransaction extends ReadTransaction
             getCurrentNode().getNodeKey(),
             getCurrentNode().getRightSiblingKey(),
             ((WriteTransactionState) getTransactionState()).createNameKey(name),
-            ((WriteTransactionState) getTransactionState()).createNameKey(uri)));
+            ((WriteTransactionState) getTransactionState()).createNameKey(uri),
+            UNTYPED));
   }
 
   /**
@@ -296,31 +274,7 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final synchronized long insertTextAsRightSibling(final String value) {
-    return insertTextAsRightSibling(IReadTransaction.STRING_TYPE, TypedValue
-        .getBytes(value));
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final synchronized long insertTextAsRightSibling(final int value) {
-    return insertTextAsRightSibling(IReadTransaction.INT_TYPE, TypedValue
-        .getBytes(value));
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final synchronized long insertTextAsRightSibling(final long value) {
-    return insertTextAsRightSibling(IReadTransaction.LONG_TYPE, TypedValue
-        .getBytes(value));
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final synchronized long insertTextAsRightSibling(final boolean value) {
-    return insertTextAsRightSibling(IReadTransaction.BOOLEAN_TYPE, TypedValue
+    return insertTextAsRightSibling(IReadTransaction.UNTYPED, TypedValue
         .getBytes(value));
   }
 
@@ -376,40 +330,7 @@ public final class WriteTransaction extends ReadTransaction
       final String name,
       final String uri,
       final String value) {
-    insertAttribute(name, uri, IReadTransaction.STRING_TYPE, TypedValue
-        .getBytes(value));
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final synchronized void insertAttribute(
-      final String name,
-      final String uri,
-      final int value) {
-    insertAttribute(name, uri, IReadTransaction.INT_TYPE, TypedValue
-        .getBytes(value));
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final synchronized void insertAttribute(
-      final String name,
-      final String uri,
-      final long value) {
-    insertAttribute(name, uri, IReadTransaction.LONG_TYPE, TypedValue
-        .getBytes(value));
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final synchronized void insertAttribute(
-      final String name,
-      final String uri,
-      final boolean value) {
-    insertAttribute(name, uri, IReadTransaction.BOOLEAN_TYPE, TypedValue
+    insertAttribute(name, uri, IReadTransaction.UNTYPED, TypedValue
         .getBytes(value));
   }
 
@@ -595,28 +516,7 @@ public final class WriteTransaction extends ReadTransaction
    * {@inheritDoc}
    */
   public final synchronized void setValue(final String value) {
-    setValue(STRING_TYPE, TypedValue.getBytes(value));
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final synchronized void setValue(final int value) {
-    setValue(INT_TYPE, TypedValue.getBytes(value));
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final synchronized void setValue(final long value) {
-    setValue(LONG_TYPE, TypedValue.getBytes(value));
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final synchronized void setValue(final boolean value) {
-    setValue(BOOLEAN_TYPE, TypedValue.getBytes(value));
+    setValue(UNTYPED, TypedValue.getBytes(value));
   }
 
   /**

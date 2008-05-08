@@ -72,7 +72,7 @@ public final class TreeTankDebugger {
             rtx.getRightSiblingKey(),
             rtx.getChildCount(),
             rtx.getName(),
-            rtx.isTextKind() ? rtx.getValueAsAtom() : "");
+            rtx.isTextKind() ? rtx.getValue() : "");
       }
     }
 
