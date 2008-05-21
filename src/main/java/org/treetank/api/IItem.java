@@ -13,6 +13,13 @@ import org.treetank.nodelayer.AbstractNode;
  *
  */
 public interface IItem {
+  
+  /**
+   * Sets unique node key.
+   * 
+   * @param key Unique (negative) key of item
+   */
+  public void setNodeKey(final long key);
 
   /**
    * Gets unique node key.
@@ -128,6 +135,13 @@ public interface IItem {
    * @return kind of item
    */
   public int getKind();
+  
+  /**
+   * Declaresm whether the item is a a node.
+   * 
+   * @return true if item is a node.
+   */
+  public boolean isNode();
 
   /**
    * Declares, whether the item is the document root.

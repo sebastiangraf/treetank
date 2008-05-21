@@ -191,9 +191,27 @@ public final class Session implements ISession {
   /**
    * {@inheritDoc}
    */
+  public final IReadTransaction beginReadTransaction(final ItemList itemList) {
+    assertNotClosed();
+    return mSessionState.beginReadTransaction(itemList);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final IReadTransaction beginReadTransaction(final long revisionKey) {
     assertNotClosed();
-    return mSessionState.beginReadTransaction(revisionKey);
+    return mSessionState.beginReadTransaction(revisionKey, null);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final IReadTransaction beginReadTransaction(
+      final long revisionKey,
+      final ItemList itemList) {
+    assertNotClosed();
+    return mSessionState.beginReadTransaction(revisionKey, itemList);
   }
 
   /**

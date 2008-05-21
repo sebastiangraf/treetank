@@ -62,7 +62,7 @@ public final class WriteTransactionState extends ReadTransactionState {
       final Map<Long, AbstractPage> pageCache,
       final UberPage uberPage) {
     super(sessionConfiguration, pageCache, uberPage, uberPage
-        .getLastCommittedRevisionNumber());
+        .getLastCommittedRevisionNumber(), null);
     mPageWriter = new PageWriter(sessionConfiguration);
     setRevisionRootPage(prepareRevisionRootPage());
   }

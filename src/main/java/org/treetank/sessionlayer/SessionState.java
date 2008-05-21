@@ -184,11 +184,16 @@ public final class SessionState {
   }
 
   protected final IReadTransaction beginReadTransaction() {
-    return beginReadTransaction(mLastCommittedUberPage.getRevisionNumber());
+    return beginReadTransaction(mLastCommittedUberPage.getRevisionNumber(), null);
+  }
+  
+  protected final IReadTransaction beginReadTransaction(final ItemList itemList) {
+    return beginReadTransaction(mLastCommittedUberPage.getRevisionNumber(), itemList);
   }
 
   protected final IReadTransaction beginReadTransaction(
-      final long revisionNumber) {
+      final long revisionNumber,
+      final ItemList itemList) {
 
     // Make sure not to exceed available number of read transactions.
     try {
@@ -208,7 +213,8 @@ public final class SessionState {
                   mSessionConfiguration,
                   mPageCache,
                   mLastCommittedUberPage,
-                  revisionNumber));
+                  revisionNumber,
+                  itemList));
 
       // Remember transaction for debugging and safe close.
       if (mTransactionMap.put(rtx.getTransactionID(), rtx) != null) {

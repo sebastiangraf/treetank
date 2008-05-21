@@ -18,6 +18,7 @@
  
 TreeTank 4.20
 -------------
+4  Added item list. Accessible through ISession.getReadTransaction(...).
 3  Removed bean layer as web service is main target.
 2  Names, types, and values are unified accessible by key, string, ar raw.
 1  Removed type-specific encodings. Use external classes to encode types within

@@ -51,6 +51,13 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
   /**
    * {@inheritDoc}
    */
+  public boolean isNode() {
+    return true;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public boolean isDocumentRoot() {
     return false;
   }
@@ -300,7 +307,7 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
 
   public void setValue(final int valueType, final byte[] value) {
   }
-  
+
   public void setType(final int valueType) {
   }
 
