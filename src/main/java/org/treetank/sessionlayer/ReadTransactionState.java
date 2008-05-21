@@ -20,7 +20,7 @@ package org.treetank.sessionlayer;
 
 import java.util.Map;
 
-import org.treetank.nodelayer.AbstractNode;
+import org.treetank.api.IItem;
 import org.treetank.pagelayer.AbstractPage;
 import org.treetank.pagelayer.IndirectPage;
 import org.treetank.pagelayer.NamePage;
@@ -68,6 +68,9 @@ public class ReadTransactionState {
   /** Cached name page of this revision. */
   private NamePage mNamePage;
 
+  /** Read-transaction-exclusive item list. */
+  private ItemList mItemList;
+
   /**
    * Standard constructor.
    * 
@@ -75,12 +78,14 @@ public class ReadTransactionState {
    * @param pageCache Shared page cache.
    * @param uberPage Uber page to start reading with.
    * @param revisionKey Key of revision to read from uber page.
+   * @param itemList List of non-persistent items.
    */
   protected ReadTransactionState(
       final SessionConfiguration sessionConfiguration,
       final Map<Long, AbstractPage> pageCache,
       final UberPage uberPage,
-      final long revisionKey) {
+      final long revisionKey,
+      final ItemList itemList) {
     mSessionConfiguration = sessionConfiguration;
     mPageCache = pageCache;
     mPageReader = new PageReader(sessionConfiguration);
@@ -88,6 +93,7 @@ public class ReadTransactionState {
     mRevisionRootPage = getRevisionRootPage(revisionKey);
     mNodePage = null;
     mNamePage = null;
+    mItemList = itemList;
   }
 
   /**
@@ -100,7 +106,18 @@ public class ReadTransactionState {
   /**
    * {@inheritDoc}
    */
-  protected final AbstractNode getNode(final long nodeKey) {
+  protected final IItem getNode(final long nodeKey) {
+
+    // Immediately return node from item list if node key negative.
+    if (nodeKey < 0) {
+      mNodePage = null;
+      if (mItemList == null) {
+        throw new IllegalStateException("NodeKey="
+            + nodeKey
+            + ": negative node key encountered but no item list available.");
+      }
+      return mItemList.getItem(nodeKey);
+    }
 
     // Calculate page and node part for given nodeKey.
     final long nodePageKey = nodePageKey(nodeKey);
@@ -151,6 +168,7 @@ public class ReadTransactionState {
     mRevisionRootPage = null;
     mNodePage = null;
     mNamePage = null;
+    mItemList = null;
   }
 
   /**

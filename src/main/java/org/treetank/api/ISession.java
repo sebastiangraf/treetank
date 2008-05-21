@@ -18,6 +18,8 @@
 
 package org.treetank.api;
 
+import org.treetank.sessionlayer.ItemList;
+
 /**
  * <h1>ISession</h1>
  * 
@@ -105,10 +107,29 @@ public interface ISession {
   /**
    * Begin a read-only transaction on the given revision key.
    * 
+   * @param itemList list of additional items.
+   * @return IReadTransaction instance.
+   */
+  public IReadTransaction beginReadTransaction(final ItemList itemList);
+
+  /**
+   * Begin a read-only transaction on the given revision key.
+   * 
    * @param revisionKey Revision key to read from.
    * @return IReadTransaction instance.
    */
   public IReadTransaction beginReadTransaction(final long revisionKey);
+
+  /**
+   * Begin a read-only transaction on the given revision key.
+   * 
+   * @param revisionKey Revision key to read from.
+   * @param itemList list of additional items.
+   * @return IReadTransaction instance.
+   */
+  public IReadTransaction beginReadTransaction(
+      final long revisionKey,
+      final ItemList itemList);
 
   /**
    * Begin exclusive read/write transaction without auto commit.
@@ -128,21 +149,21 @@ public interface ISession {
   public IWriteTransaction beginWriteTransaction(
       final int maxNodeCount,
       final int maxTime);
-  
+
   /**
    * Get number of running read transactions.
    * 
    * @return Number of running read transactions.
    */
   public int getReadTransactionCount();
-  
+
   /**
    * Get number of running write transactions.
    * 
    * @return Number of running write transactions.
    */
   public int getWriteTransactionCount();
-  
+
   /**
    * Safely close session and immediately release all resources. If there are
    * running transactions, they will automatically be closed.
