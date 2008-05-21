@@ -80,7 +80,7 @@ public final class TextNode extends AbstractNode {
     mLeftSiblingKey = node.getLeftSiblingKey();
     mRightSiblingKey = node.getRightSiblingKey();
     mType = node.getTypeKey();
-    mValue = node.getValue();
+    mValue = node.getRawValue();
   }
 
   /**
@@ -198,7 +198,7 @@ public final class TextNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final byte[] getValue() {
+  public final byte[] getRawValue() {
     return mValue;
   }
 

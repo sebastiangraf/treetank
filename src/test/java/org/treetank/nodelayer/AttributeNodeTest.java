@@ -53,7 +53,7 @@ public class AttributeNodeTest {
     assertEquals(14, node2.getNameKey());
     assertEquals(15, node2.getURIKey());
     assertEquals(19, node2.getTypeKey());
-    assertEquals(2, node2.getValue().length);
+    assertEquals(2, node2.getRawValue().length);
     assertEquals(IReadTransaction.ATTRIBUTE_KIND, node2.getKind());
     assertEquals(false, node2.hasFirstChild());
     assertEquals(true, node2.hasParent());

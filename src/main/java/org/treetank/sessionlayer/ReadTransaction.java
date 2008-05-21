@@ -380,7 +380,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final byte[] getAttributeRawValue(final int index) {
     assertNotClosed();
-    return mCurrentNode.getAttribute(index).getValue();
+    return mCurrentNode.getAttribute(index).getRawValue();
   }
 
   /**
@@ -388,7 +388,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final String getAttributeValue(final int index) {
     assertNotClosed();
-    return TypedValue.parseString(mCurrentNode.getAttribute(index).getValue());
+    return TypedValue.parseString(mCurrentNode.getAttribute(index).getRawValue());
   }
 
   /**
@@ -564,7 +564,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final byte[] getRawValue() {
     assertNotClosed();
-    return mCurrentNode.getValue();
+    return mCurrentNode.getRawValue();
   }
 
   /**
@@ -572,7 +572,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final String getValue() {
     assertNotClosed();
-    return TypedValue.parseString(mCurrentNode.getValue());
+    return TypedValue.parseString(mCurrentNode.getRawValue());
   }
 
   /**

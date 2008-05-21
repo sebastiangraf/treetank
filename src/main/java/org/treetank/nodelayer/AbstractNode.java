@@ -237,7 +237,7 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
   /**
    * {@inheritDoc}
    */
-  public byte[] getValue() {
+  public byte[] getRawValue() {
     return null;
   }
 

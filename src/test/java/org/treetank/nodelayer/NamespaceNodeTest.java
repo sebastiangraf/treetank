@@ -49,7 +49,7 @@ public class NamespaceNodeTest {
     assertEquals(0, node2.getNamespaceCount());
     assertEquals(14, node2.getURIKey());
     assertEquals(15, node2.getPrefixKey());
-    assertEquals(null, node2.getValue());
+    assertEquals(null, node2.getRawValue());
     assertEquals(IReadTransaction.NAMESPACE_KIND, node2.getKind());
     assertEquals(false, node2.hasFirstChild());
     assertEquals(true, node2.hasParent());
