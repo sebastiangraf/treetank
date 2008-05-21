@@ -19,6 +19,7 @@
 package org.treetank.sessionlayer;
 
 import org.treetank.api.IItem;
+import org.treetank.api.IItemList;
 import org.treetank.api.IReadTransaction;
 import org.treetank.nodelayer.AbstractNode;
 import org.treetank.utils.TypedValue;
@@ -596,6 +597,13 @@ public class ReadTransaction implements IReadTransaction {
   public final byte[] rawNameForKey(final int key) {
     assertNotClosed();
     return mTransactionState.getRawName(key);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final IItemList getItemList() {
+    return mTransactionState.getItemList();
   }
 
   /**

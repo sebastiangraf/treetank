@@ -21,6 +21,7 @@ package org.treetank.sessionlayer;
 import java.util.Map;
 
 import org.treetank.api.IItem;
+import org.treetank.api.IItemList;
 import org.treetank.pagelayer.AbstractPage;
 import org.treetank.pagelayer.IndirectPage;
 import org.treetank.pagelayer.NamePage;
@@ -69,7 +70,7 @@ public class ReadTransactionState {
   private NamePage mNamePage;
 
   /** Read-transaction-exclusive item list. */
-  private ItemList mItemList;
+  private IItemList mItemList;
 
   /**
    * Standard constructor.
@@ -85,7 +86,7 @@ public class ReadTransactionState {
       final Map<Long, AbstractPage> pageCache,
       final UberPage uberPage,
       final long revisionKey,
-      final ItemList itemList) {
+      final IItemList itemList) {
     mSessionConfiguration = sessionConfiguration;
     mPageCache = pageCache;
     mPageReader = new PageReader(sessionConfiguration);
@@ -225,6 +226,13 @@ public class ReadTransactionState {
    */
   public final UberPage getUberPage() {
     return mUberPage;
+  }
+
+  /**
+   * @return The item list.
+   */
+  public final IItemList getItemList() {
+    return mItemList;
   }
 
   /**

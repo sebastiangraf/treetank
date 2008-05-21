@@ -364,7 +364,7 @@ public interface IReadTransaction {
    * @return Type key of value of attribute at given index.
    */
   public int getAttributeTypeKey(final int index);
-  
+
   /**
    * Get type string of value of attribute at given index.
    * 
@@ -372,7 +372,7 @@ public interface IReadTransaction {
    * @return Type string of value of attribute at given index.
    */
   public String getAttributeType(final int index);
-  
+
   /**
    * Get raw type of value of attribute at given index.
    * 
@@ -535,14 +535,14 @@ public interface IReadTransaction {
    * @return Type of node value.
    */
   public int getTypeKey();
-  
+
   /**
    * Get type of node value.
    * 
    * @return Type of node value.
    */
   public String getType();
-  
+
   /**
    * Get raw type of node value.
    * 
@@ -587,6 +587,13 @@ public interface IReadTransaction {
    * @return Byte array containing name for given key.
    */
   public byte[] rawNameForKey(final int key);
+
+  /**
+   * Get item list containing volatile items such as atoms or fragments.
+   * 
+   * @return Item list.
+   */
+  public IItemList getItemList();
 
   /**
    * Close shared read transaction and immediately release all resources.

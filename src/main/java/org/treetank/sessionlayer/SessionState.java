@@ -21,12 +21,10 @@ package org.treetank.sessionlayer;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Semaphore;
 
+import org.treetank.api.IItemList;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.pagelayer.AbstractPage;
@@ -104,8 +102,12 @@ public final class SessionState {
 
       // Init session members.
       mPageCache = new FastWeakHashMap<Long, AbstractPage>();
-      mWriteSemaphore = new org.treetank.concurrent.Semaphore(IConstants.MAX_WRITE_TRANSACTIONS);
-      mReadSemaphore = new org.treetank.concurrent.Semaphore(IConstants.MAX_READ_TRANSACTIONS);
+      mWriteSemaphore =
+          new org.treetank.concurrent.Semaphore(
+              IConstants.MAX_WRITE_TRANSACTIONS);
+      mReadSemaphore =
+          new org.treetank.concurrent.Semaphore(
+              IConstants.MAX_READ_TRANSACTIONS);
       final PageReference<UberPage> uberPageReference =
           new PageReference<UberPage>();
       final PageReference<UberPage> secondaryUberPageReference =
@@ -184,16 +186,20 @@ public final class SessionState {
   }
 
   protected final IReadTransaction beginReadTransaction() {
-    return beginReadTransaction(mLastCommittedUberPage.getRevisionNumber(), null);
+    return beginReadTransaction(
+        mLastCommittedUberPage.getRevisionNumber(),
+        null);
   }
-  
-  protected final IReadTransaction beginReadTransaction(final ItemList itemList) {
-    return beginReadTransaction(mLastCommittedUberPage.getRevisionNumber(), itemList);
+
+  protected final IReadTransaction beginReadTransaction(final IItemList itemList) {
+    return beginReadTransaction(
+        mLastCommittedUberPage.getRevisionNumber(),
+        itemList);
   }
 
   protected final IReadTransaction beginReadTransaction(
       final long revisionNumber,
-      final ItemList itemList) {
+      final IItemList itemList) {
 
     // Make sure not to exceed available number of read transactions.
     try {

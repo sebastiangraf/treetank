@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.treetank.api.IItemList;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
@@ -191,7 +192,7 @@ public final class Session implements ISession {
   /**
    * {@inheritDoc}
    */
-  public final IReadTransaction beginReadTransaction(final ItemList itemList) {
+  public final IReadTransaction beginReadTransaction(final IItemList itemList) {
     assertNotClosed();
     return mSessionState.beginReadTransaction(itemList);
   }
@@ -209,7 +210,7 @@ public final class Session implements ISession {
    */
   public final IReadTransaction beginReadTransaction(
       final long revisionKey,
-      final ItemList itemList) {
+      final IItemList itemList) {
     assertNotClosed();
     return mSessionState.beginReadTransaction(revisionKey, itemList);
   }

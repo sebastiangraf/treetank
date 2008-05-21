@@ -16,13 +16,8 @@
  * $Id: SAXGenerator.java 4147 2008-05-08 07:58:28Z kramis $
  */
 
-package org.treetank.sessionlayer;
+package org.treetank.api;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.treetank.api.IItem;
-import org.treetank.api.IItemList;
 
 /**
  * <h1>ItemList</h1>
@@ -43,53 +38,26 @@ import org.treetank.api.IItemList;
  * 
  * @author Tina Scherer
  */
-public final class ItemList implements IItemList {
+public interface IItemList {
 
   /**
-   * Internal storage of items.
+   * Adds an item to the item list and assigns a unique item key to the item and
+   * return it. The item key is the negatived index of the item in the item list
+   * The key is negatived to make it distinguishable from a node
+   * 
+   * @param item
+   *          The item to add.
+   * @return The item key.
    */
-  private final List<IItem> mList;
+  public int addItem(final IItem item);
 
   /**
-   * Constructor. Initializes the list.
+   * Returns the item at a given index in the item list. If the given index is
+   * the item key, it has to be negated before.
+   * 
+   * @param key
+   *          key of the item, that should be returned
+   * @return item at the given index.
    */
-  public ItemList() {
-
-    mList = new ArrayList<IItem>();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public int addItem(final IItem item) {
-
-    final int key = mList.size();
-    item.setNodeKey(key);
-    // TODO: +2 is necessary, because key -1 is the NULL_NODE
-    final int itemKey = (key + 2) * (-1);
-    item.setNodeKey(itemKey);
-
-    mList.add(item);
-    return itemKey;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public IItem getItem(final long key) {
-
-    assert key <= Integer.MAX_VALUE;
-
-    int index = (int) key; //cast to integer, because the list only accepts int
-
-    if (index < 0) {
-      index = index * (-1);
-    }
-
-    // TODO: This is necessary, because key -1 is the NULL_NODE
-    index = index - 2;
-
-    return mList.get(index);
-  }
-
+  public IItem getItem(final long key);
 }
