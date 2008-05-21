@@ -18,8 +18,6 @@
 
 package org.treetank.api;
 
-import org.treetank.sessionlayer.ItemList;
-
 /**
  * <h1>ISession</h1>
  * 
@@ -110,7 +108,7 @@ public interface ISession {
    * @param itemList list of additional items.
    * @return IReadTransaction instance.
    */
-  public IReadTransaction beginReadTransaction(final ItemList itemList);
+  public IReadTransaction beginReadTransaction(final IItemList itemList);
 
   /**
    * Begin a read-only transaction on the given revision key.
@@ -129,7 +127,7 @@ public interface ISession {
    */
   public IReadTransaction beginReadTransaction(
       final long revisionKey,
-      final ItemList itemList);
+      final IItemList itemList);
 
   /**
    * Begin exclusive read/write transaction without auto commit.
