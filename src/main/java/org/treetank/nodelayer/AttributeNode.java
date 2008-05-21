@@ -73,7 +73,7 @@ public final class AttributeNode extends AbstractNode {
     mNameKey = attribute.getNameKey();
     mURIKey = attribute.getURIKey();
     mType = attribute.getTypeKey();
-    mValue = attribute.getValue();
+    mValue = attribute.getRawValue();
   }
 
   public AttributeNode(final long nodeKey, final FastByteArrayReader in) {
@@ -153,7 +153,7 @@ public final class AttributeNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final byte[] getValue() {
+  public final byte[] getRawValue() {
     return mValue;
   }
 

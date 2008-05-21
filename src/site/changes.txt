@@ -18,6 +18,7 @@
  
 TreeTank 4.20
 -------------
+5  Renamed IItem getValue to getRawValue as IItem always works with raw.
 4  Added item list. Accessible through ISession.getReadTransaction(...).
 3  Removed bean layer as web service is main target.
 2  Names, types, and values are unified accessible by key, string, ar raw.

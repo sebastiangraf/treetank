@@ -98,7 +98,7 @@ public interface IItem {
    * 
    * @return returns the value of the item
    */
-  public byte[] getValue();
+  public byte[] getRawValue();
 
   /**
    * Gets the number of children of the item.

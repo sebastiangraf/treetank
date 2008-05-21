@@ -59,7 +59,7 @@ public class ElementNodeTest {
     assertEquals(1, node3.getNamespaceCount());
     assertEquals(18, node3.getNameKey());
     assertEquals(19, node3.getURIKey());
-    assertEquals(null, node3.getValue());
+    assertEquals(null, node3.getRawValue());
     assertEquals(IReadTransaction.ELEMENT_KIND, node3.getKind());
     assertEquals(true, node3.hasFirstChild());
     assertEquals(true, node3.hasParent());
@@ -77,7 +77,7 @@ public class ElementNodeTest {
     assertEquals(21, node3.getAttribute(0).getNameKey());
     assertEquals(22, node3.getAttribute(0).getURIKey());
     assertEquals(27, node3.getAttribute(0).getTypeKey());
-    assertEquals(2, node3.getAttribute(0).getValue().length);
+    assertEquals(2, node3.getAttribute(0).getRawValue().length);
 
     assertEquals(13L, node3.getNamespace(0).getNodeKey());
     assertEquals(25, node3.getNamespace(0).getURIKey());

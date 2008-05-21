@@ -58,7 +58,7 @@ public class FullTextNodeTest {
     assertEquals(19, node3.getNameKey());
     assertEquals(IReadTransaction.NULL_NAME_KEY, node3.getURIKey());
     assertEquals(IReadTransaction.NULL_NAME_KEY, node3.getPrefixKey());
-    assertEquals(null, node3.getValue());
+    assertEquals(null, node3.getRawValue());
     assertEquals(IReadTransaction.FULLTEXT_KIND, node3.getKind());
     assertEquals(true, node3.hasFirstChild());
     assertEquals(true, node3.hasParent());
