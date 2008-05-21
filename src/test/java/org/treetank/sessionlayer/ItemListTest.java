@@ -52,13 +52,14 @@ public class ItemListTest {
     wtx.commit();
     wtx.close();
 
-    itemList.addItem(new TextNode(-2, 0, -1, -1, 0, null));
+    itemList.addItem(new TextNode(-3, 0, -1, -1, 0, null));
 
     final IReadTransaction rtx = session.beginReadTransaction(itemList);
-    rtx.moveTo(2);
+    Assert.assertEquals(true, rtx.moveTo(2));
     Assert.assertEquals(1, rtx.getAttributeCount());
-    rtx.moveTo(-2);
+    Assert.assertEquals(true, rtx.moveTo(-2));
     Assert.assertEquals(-2, rtx.getNodeKey());
+    Assert.assertEquals(false, rtx.moveTo(-3));
     rtx.close();
 
     session.close();
