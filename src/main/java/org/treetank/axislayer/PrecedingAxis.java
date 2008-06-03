@@ -75,8 +75,8 @@ public class PrecedingAxis extends AbstractAxis implements IAxis {
       //order.
       getLastChild();
       return true;
-
     }
+    
     while (getTransaction().hasParent()) {
       //ancestors are not part of the preceding set
       getTransaction().moveToParent();
@@ -100,17 +100,50 @@ public class PrecedingAxis extends AbstractAxis implements IAxis {
    * reverse document order.
    */
   private void getLastChild() {
+    
+    //nodekey of the root of the current subtree
+    final long parent = getTransaction().getNodeKey();
 
+    //traverse tree in pre order to the leftmost leaf of the subtree and push
+    //all nodes to the stack
     if (getTransaction().hasFirstChild()) {
       while (getTransaction().hasFirstChild()) {
         mStack.push(getTransaction().getNodeKey());
         getTransaction().moveToFirstChild();
       }
-
+      
+      //traverse all the siblings of the leftmost leave and all their 
+      //descendants and push all of them to the stack
       while (getTransaction().hasRightSibling()) {
         mStack.push(getTransaction().getNodeKey());
         getTransaction().moveToRightSibling();
         getLastChild();
+      }
+      
+      //step up the path till the root of the current subtree and process all
+      //right siblings and their descendants on each step
+      if (getTransaction().hasParent() 
+          && (getTransaction().getParentKey() != parent)) {
+        
+        mStack.push(getTransaction().getNodeKey());
+          while (getTransaction().hasParent() 
+              && (getTransaction().getParentKey() != parent)) {
+            
+            getTransaction().moveToParent();
+        
+            //traverse all the siblings of the leftmost leave and all their 
+            //descendants and push all of them to the stack
+            while (getTransaction().hasRightSibling()) {
+          
+              getTransaction().moveToRightSibling();
+              getLastChild();
+              mStack.push(getTransaction().getNodeKey());
+           }
+        }
+        
+          //set transaction to the node in the subtree that is last in document
+          //order
+        getTransaction().moveTo(mStack.pop());  
       }
     }
   }
