@@ -111,8 +111,8 @@ public final class PageWriter {
         mCipher = null;
         mSecretKeySpec = null;
       }
-
-      mCompressor = new Deflater(Deflater.DEFAULT_COMPRESSION);
+      
+      mCompressor = new Deflater(6);
       mWriter = new FastByteArrayWriter();
       mOut = new ByteArrayOutputStream();
       mTmp = new byte[BUFFER_SIZE];
