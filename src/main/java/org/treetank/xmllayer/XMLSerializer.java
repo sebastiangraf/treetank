@@ -95,9 +95,13 @@ public final class XMLSerializer implements Runnable {
   /** " tnk:id=\"". */
   private static final byte[] TNK_ID =
       new byte[] { SPACE, 116, 110, 107, 58, 105, 100, EQUAL, QUOTE };
+  
+  /** " xmlns=\"". */
+  private static final byte[] XMLNS =
+      new byte[] { SPACE, 120, 109, 108, 110, 115, EQUAL, QUOTE };
 
   /** " xmlns:". */
-  private static final byte[] XMLNS =
+  private static final byte[] XMLNS_COLON =
       new byte[] { SPACE, 120, 109, 108, 110, 115, 58 };
 
   /** Transaction to read from (is the same as the mAxis). */
@@ -227,11 +231,17 @@ public final class XMLSerializer implements Runnable {
       mOut.write(mRTX.getRawName());
       // Emit namespace declarations.
       for (int index = 0, length = mRTX.getNamespaceCount(); index < length; index++) {
-        mOut.write(XMLNS);
-        write(mRTX.getNamespacePrefix(index));
-        mOut.write(EQUAL_QUOTE);
-        write(mRTX.getNamespaceURI(index));
-        mOut.write(QUOTE);
+        if (mRTX.getNamespacePrefix(index).length() == 0) {
+          mOut.write(XMLNS);
+          write(mRTX.getNamespaceURI(index));
+          mOut.write(QUOTE);
+        } else {
+          mOut.write(XMLNS_COLON);
+          write(mRTX.getNamespacePrefix(index));
+          mOut.write(EQUAL_QUOTE);
+          write(mRTX.getNamespaceURI(index));
+          mOut.write(QUOTE);
+        }
       }
       // Emit attributes.
       // Add virtual tnk:id attribute.
