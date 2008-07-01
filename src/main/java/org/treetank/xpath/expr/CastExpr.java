@@ -1,0 +1,116 @@
+
+package org.treetank.xpath.expr;
+
+import org.treetank.api.IAxis;
+import org.treetank.api.IReadTransaction;
+import org.treetank.xpath.SingleType;
+import org.treetank.xpath.functions.XPathError;
+import org.treetank.xpath.functions.XPathError.ErrorType;
+import org.treetank.xpath.types.Type;
+
+/**
+ * <h1>CastExpr</h1>
+ * <p>
+ * The cast expression cast a given value into a given target type.
+ * </p>
+ * <p>
+ * Occasionally it is necessary to convert a value to a specific datatype. For
+ * this purpose, XPath provides a cast expression that creates a new value of a
+ * specific type based on an existing value. A cast expression takes two
+ * operands: an input expression and a target type. The type of the input
+ * expression is called the input or source type. The target type must be an
+ * atomic type that is in the in-scope schema types [err:XPST0051]. In addition,
+ * the target type cannot be xs:NOTATION or xs:anyAtomicType [err:XPST0080]. The
+ * optional occurrence indicator "?" denotes that an empty sequence is
+ * permitted. 
+ * </p>
+ * 
+ * @author Tina Scherer
+ */
+public class CastExpr extends AbstractExpression implements IAxis {
+
+
+  /** The input expression to cast to a specified target expression. */
+  private final IAxis mSourceExpr;
+
+  /** The type, to which the input expression will be casted to. */
+  private final Type mTargetType;
+
+  /** Defines, whether an empty sequence will be casted to any target type. */
+  private final boolean mPermitEmptySeq;
+
+  /**
+   * Constructor. Initializes the internal state.
+   * 
+   * @param rtx
+   *          Exclusive (immutable) trx to iterate with.
+   * @param inputExpr
+   *          input expression, that will be casted.
+   * @param target
+   *          Type the input expression will be casted to.
+   */
+  public CastExpr(final IReadTransaction rtx, final IAxis inputExpr,
+      final SingleType target) {
+
+    super(rtx);
+    mSourceExpr = inputExpr;
+    mTargetType = target.getAtomic();
+    mPermitEmptySeq = target.hasInterogation();
+
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void reset(final long nodeKey) {
+
+    super.reset(nodeKey);
+    if (mSourceExpr != null) {
+      mSourceExpr.reset(nodeKey);
+    }
+  }
+
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void evaluate() {
+
+    // atomic type must not be xs:anyAtomicType or xs:NOTATION
+    if (mTargetType == Type.ANY_ATOMIC_TYPE || mTargetType == Type.NOTATION) {
+      throw new XPathError(ErrorType.XPST0080);
+    }
+
+    if (mSourceExpr.hasNext()) {
+      
+      final Type sourceType = Type.getType(getTransaction().getTypeKey());
+      final String sourceValue = getTransaction().getValue();
+      
+      //cast source to target type, if possible
+      if (sourceType.isCastableTo(mTargetType, sourceValue)) {
+        throw new IllegalStateException("casts not implemented yet.");
+        //((XPathReadTransaction) getTransaction()).castTo(mTargetType);
+      }
+
+      // 2. if the result sequence of the input expression has more than one
+      // items, a type error is raised.
+      if (mSourceExpr.hasNext()) {
+        throw new XPathError(ErrorType.XPTY0004);
+      }
+
+    } else {
+      // 3. if is empty sequence:
+      if (!mPermitEmptySeq) {
+        // if '?' is specified after the target type, the result is an
+        // empty sequence (which means, nothing is changed),
+        // otherwise an error is raised.
+        throw new XPathError(ErrorType.XPTY0004);
+
+      }
+    }
+
+  }
+
+}
