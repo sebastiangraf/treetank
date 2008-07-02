@@ -16,27 +16,21 @@ public final class Device implements IDevice {
     }
   }
 
-  final public void read(
-      final long inDeviceOffset,
-      final int inDataOffset,
-      final int inDataLength,
-      final byte[] outData) {
+  final public byte[] read(final long offset, final int length) {
     try {
-      mFile.seek(inDeviceOffset);
-      mFile.readFully(outData, inDataOffset, inDataLength);
+      final byte[] buffer = new byte[length];
+      mFile.seek(offset);
+      mFile.readFully(buffer);
+      return buffer;
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
   }
 
-  final public void write(
-      final long inDeviceOffset,
-      final int inDataOffset,
-      final int inDataLength,
-      final byte[] inData) {
+  final public void write(final long offset, final byte[] buffer) {
     try {
-      mFile.seek(inDeviceOffset);
-      mFile.write(inData, inDataOffset, inDataLength);
+      mFile.seek(offset);
+      mFile.write(buffer);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -52,18 +46,10 @@ public final class Device implements IDevice {
     return size;
   }
 
-  final public void close() {
-    try {
-      mFile.close();
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-  }
-
   @Override
   protected void finalize() throws Throwable {
     try {
-      close();
+      mFile.close();
     } finally {
       super.finalize();
     }

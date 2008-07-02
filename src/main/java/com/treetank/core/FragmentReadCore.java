@@ -43,9 +43,9 @@ public final class FragmentReadCore implements IFragmentReadCore {
 
     try {
 
-      final byte[] fragment = new byte[fragmentReference.getLength()];
-      mDevice1.read(fragmentReference.getOffset(), 0, fragmentReference
-          .getLength(), fragment);
+      final byte[] fragment =
+          mDevice1.read(fragmentReference.getOffset(), fragmentReference
+              .getLength());
 
       mInflater.reset();
       mOut.reset();
@@ -62,15 +62,6 @@ public final class FragmentReadCore implements IFragmentReadCore {
       throw new RuntimeException("FragmentReadCore "
           + "could not read fragment due to: "
           + e.toString());
-    }
-  }
-
-  @Override
-  protected void finalize() throws Throwable {
-    try {
-      mDevice1.close();
-    } finally {
-      super.finalize();
     }
   }
 

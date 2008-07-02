@@ -31,26 +31,13 @@ public final class RevisionReadCore implements IRevisionReadCore {
 
     try {
 
-      final byte[] buffer = new byte[64];
-      final long deviceOffset = (revision << 6) + 960;
-      mDevice2.read(deviceOffset, 0, 64, buffer);
-
+      final byte[] buffer = mDevice2.read((revision << 6) + 960, 64);
       return new RevisionReference(buffer);
 
     } catch (Exception e) {
       throw new RuntimeException("RevisionReadCore "
           + "could not read revision due to: "
           + e.toString());
-    }
-  }
-
-  @Override
-  protected void finalize() throws Throwable {
-    try {
-      mDevice1.close();
-      mDevice2.close();
-    } finally {
-      super.finalize();
     }
   }
 

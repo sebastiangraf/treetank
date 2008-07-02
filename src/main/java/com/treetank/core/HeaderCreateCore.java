@@ -47,11 +47,11 @@ public final class HeaderCreateCore implements IHeaderCreateCore {
       System.arraycopy(configuration.serialise(), 0, header, 32, 448);
       System.arraycopy(authentication, 0, header, 480, 32);
 
-      mDevice1.write(0, 0, 512, header);
-      mDevice1.write(512, 0, 512, header);
+      mDevice1.write(0, header);
+      mDevice1.write(512, header);
 
-      mDevice2.write(0, 0, 512, header);
-      mDevice2.write(512, 0, 512, header);
+      mDevice2.write(0, header);
+      mDevice2.write(512, header);
 
     } catch (Exception e) {
       throw new RuntimeException("HeaderCreateCore "
@@ -61,16 +61,6 @@ public final class HeaderCreateCore implements IHeaderCreateCore {
           + e.toString());
     }
 
-  }
-
-  @Override
-  protected void finalize() throws Throwable {
-    try {
-      mDevice1.close();
-      mDevice2.close();
-    } finally {
-      super.finalize();
-    }
   }
 
 }
