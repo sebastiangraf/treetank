@@ -50,8 +50,8 @@ public final class RevisionWriteCore implements IRevisionWriteCore {
 
       final byte[] buffer = revisionReference.serialise();
 
-      mDevice1.write(mDevice1.size(), 0, 64, buffer);
-      mDevice2.write(mDevice2.size(), 0, 64, buffer);
+      mDevice1.write(mDevice1.size(), buffer);
+      mDevice2.write(mDevice2.size(), buffer);
 
       return revisionReference;
 
@@ -59,16 +59,6 @@ public final class RevisionWriteCore implements IRevisionWriteCore {
       throw new RuntimeException("RevisionWriteCore "
           + "could not write revision due to: "
           + e.toString());
-    }
-  }
-
-  @Override
-  protected void finalize() throws Throwable {
-    try {
-      mDevice1.close();
-      mDevice2.close();
-    } finally {
-      super.finalize();
     }
   }
 

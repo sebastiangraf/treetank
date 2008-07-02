@@ -2,20 +2,10 @@ package com.treetank.api;
 
 public interface IDevice {
 
-  public void read(
-      final long inDeviceOffset,
-      final int inDataOffset,
-      final int inDataLength,
-      final byte[] outData);
+  public byte[] read(final long offset, final int length);
 
-  public void write(
-      final long inDeviceOffset,
-      final int inDataOffset,
-      final int inDataLength,
-      final byte[] inData);
+  public void write(final long offset, final byte[] buffer);
 
   public long size();
-
-  public void close();
 
 }

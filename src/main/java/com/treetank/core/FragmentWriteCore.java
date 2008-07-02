@@ -54,7 +54,7 @@ public final class FragmentWriteCore implements IFragmentWriteCore {
       final long offset = mDevice1.size();
       final int length = buffer.length;
 
-      mDevice1.write(offset, 0, length, buffer);
+      mDevice1.write(offset, buffer);
 
       return new FragmentReference(offset, length);
 
@@ -62,15 +62,6 @@ public final class FragmentWriteCore implements IFragmentWriteCore {
       throw new RuntimeException("FragmentWriteCore "
           + "could not write fragment due to: "
           + e.toString());
-    }
-  }
-
-  @Override
-  protected void finalize() throws Throwable {
-    try {
-      mDevice1.close();
-    } finally {
-      super.finalize();
     }
   }
 

@@ -29,16 +29,10 @@ public final class HeaderLoadCore implements IHeaderLoadCore {
 
     try {
 
-      final byte[] header1 = new byte[512];
-      final byte[] header2 = new byte[512];
-      final byte[] header3 = new byte[512];
-      final byte[] header4 = new byte[512];
-
-      mDevice1.read(0, 0, 512, header1);
-      mDevice1.read(512, 0, 512, header2);
-
-      mDevice2.read(0, 0, 512, header3);
-      mDevice2.read(512, 0, 512, header4);
+      final byte[] header1 = mDevice1.read(0, 512);
+      final byte[] header2 = mDevice1.read(512, 512);
+      final byte[] header3 = mDevice2.read(0, 512);
+      final byte[] header4 = mDevice2.read(512, 512);
 
       for (int i = 0; i < 480; i++) {
         if ((header1[i] != header2[i])
@@ -74,16 +68,6 @@ public final class HeaderLoadCore implements IHeaderLoadCore {
           + e.toString());
     }
 
-  }
-
-  @Override
-  protected void finalize() throws Throwable {
-    try {
-      mDevice1.close();
-      mDevice2.close();
-    } finally {
-      super.finalize();
-    }
   }
 
 }
