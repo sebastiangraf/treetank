@@ -1727,7 +1727,7 @@ public final class XPathParser implements XPathConstants {
 
       // is at least decimal literal (could also be a double literal)
       if (mToken.getType() == Token.POINT) {
-        // TODO: not so nice
+        // TODO: not so nice, try to find a better solution
         boolean isDouble = mScanner.lookUpTokens(2).getType() == Token.E_NUMBER;
         value = parseDecimalLiteral(value);
         type = isDouble ? "xs:double" : "xs:decimal";

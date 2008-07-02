@@ -105,7 +105,7 @@ public abstract class AbstractComparator extends AbstractAxis implements IAxis,
         if (mOperand2.hasNext()) {
           final AtomicValue[] operand2 = atomize(mOperand2);
 
-          hook(operand1, operand2); // TODO
+          hook(operand1, operand2);
 
           // get comparison result
           final boolean resultValue = compare(operand1, operand2);

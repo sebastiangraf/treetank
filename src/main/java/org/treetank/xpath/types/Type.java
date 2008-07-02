@@ -1,4 +1,3 @@
-
 package org.treetank.xpath.types;
 
 import java.util.HashMap;
@@ -91,12 +90,14 @@ public enum Type {
           + "|(([0-9]+M) ([0-9]+(\\.[0-9]+)?S)?)"
           + "|(([0-9]+(\\.[0-9]+)?S))))?)"
           + "|((T(([0-9]+H([0-9]+M)?([0-9]+(\\.[0-9]+)?S)?)|(([0-9]+M) "
-          + "([0-9]+(\\.[0-9]+)?S)?)" + "|(([0-9]+(\\.[0-9]+)?S))))))?)"
+          + "([0-9]+(\\.[0-9]+)?S)?)"
+          + "|(([0-9]+(\\.[0-9]+)?S))))))?)"
           + "|((([0-9]+D(T(([0-9]+H([0-9]+M)?([0-9]+(\\.[0-9]+)?S)?)"
           + "|(([0-9]+M)([0-9]+(\\.[0-9]+)?S)?)"
           + "|(([0-9]+(\\.[0-9]+)?S))))?)"
           + "|((T(([0-9]+H([0-9]+M)?([0-9]+(\\.[0-9]+)?S)?)|(([0-9]+M)([0-9]+"
-          + "(\\.[0-9]+)?S)?)" + "|(([0-9]+(\\.[0-9]+)?S))))))))";
+          + "(\\.[0-9]+)?S)?)"
+          + "|(([0-9]+(\\.[0-9]+)?S))))))))";
     }
 
     /**
@@ -126,8 +127,10 @@ public enum Type {
 
       return (this == targetType
 
-      || DAY_TIME_DURATION == targetType || DURATION == targetType
-          || UNTYPED_ATOMIC == targetType || STRING == targetType || derivesFrom(targetType));
+          || DAY_TIME_DURATION == targetType
+          || DURATION == targetType
+          || UNTYPED_ATOMIC == targetType
+          || STRING == targetType || derivesFrom(targetType));
     }
   },
 
@@ -144,8 +147,10 @@ public enum Type {
 
       return (this == targetType
 
-      || YEAR_MONTH_DURATION == targetType || DURATION == targetType
-          || UNTYPED_ATOMIC == targetType || STRING == targetType || derivesFrom(targetType));
+          || YEAR_MONTH_DURATION == targetType
+          || DURATION == targetType
+          || UNTYPED_ATOMIC == targetType
+          || STRING == targetType || derivesFrom(targetType));
     }
   },
 
@@ -162,10 +167,15 @@ public enum Type {
     @Override
     public boolean castsTo(final Type targetType) {
 
-      return (this == targetType || TIME == targetType || DATE == targetType
-          || G_DAY == targetType || G_MONTH == targetType
-          || G_MONTH_DAY == targetType || G_YEAR == targetType
-          || G_YEAR_MONTH == targetType || UNTYPED_ATOMIC == targetType
+      return (this == targetType
+          || TIME == targetType
+          || DATE == targetType
+          || G_DAY == targetType
+          || G_MONTH == targetType
+          || G_MONTH_DAY == targetType
+          || G_YEAR == targetType
+          || G_YEAR_MONTH == targetType
+          || UNTYPED_ATOMIC == targetType
           || STRING == targetType || derivesFrom(targetType));
     }
   },
@@ -223,10 +233,14 @@ public enum Type {
     @Override
     public boolean castsTo(final Type targetType) {
 
-      return (this == targetType || DATE_TIME == targetType
-          || G_DAY == targetType || G_MONTH == targetType
-          || G_MONTH_DAY == targetType || G_YEAR == targetType
-          || G_YEAR_MONTH == targetType || UNTYPED_ATOMIC == targetType || STRING == targetType);
+      return (this == targetType
+          || DATE_TIME == targetType
+          || G_DAY == targetType
+          || G_MONTH == targetType
+          || G_MONTH_DAY == targetType
+          || G_YEAR == targetType
+          || G_YEAR_MONTH == targetType
+          || UNTYPED_ATOMIC == targetType || STRING == targetType);
     }
   },
 
@@ -253,7 +267,8 @@ public enum Type {
     @Override
     public boolean castsTo(final Type targetType) {
 
-      return (this == targetType || UNTYPED_ATOMIC == targetType
+      return (this == targetType
+          || UNTYPED_ATOMIC == targetType
           || STRING == targetType || derivesFrom(targetType));
     }
   },
@@ -280,7 +295,8 @@ public enum Type {
     @Override
     public boolean castsTo(final Type targetType) {
 
-      return (this == targetType || UNTYPED_ATOMIC == targetType
+      return (this == targetType
+          || UNTYPED_ATOMIC == targetType
           || STRING == targetType || derivesFrom(targetType));
     }
   },
@@ -306,7 +322,8 @@ public enum Type {
     @Override
     public boolean castsTo(final Type targetType) {
 
-      return (this == targetType || UNTYPED_ATOMIC == targetType
+      return (this == targetType
+          || UNTYPED_ATOMIC == targetType
           || STRING == targetType || derivesFrom(targetType));
     }
   },
@@ -332,7 +349,8 @@ public enum Type {
     @Override
     public boolean castsTo(final Type targetType) {
 
-      return (this == targetType || UNTYPED_ATOMIC == targetType
+      return (this == targetType
+          || UNTYPED_ATOMIC == targetType
           || STRING == targetType || derivesFrom(targetType));
     }
   },
@@ -357,7 +375,8 @@ public enum Type {
     @Override
     public boolean castsTo(final Type targetType) {
 
-      return (this == targetType || UNTYPED_ATOMIC == targetType
+      return (this == targetType
+          || UNTYPED_ATOMIC == targetType
           || STRING == targetType || derivesFrom(targetType));
     }
   },
@@ -382,9 +401,13 @@ public enum Type {
     @Override
     public boolean castsTo(final Type targetType) {
 
-      return (this == targetType || FLOAT == targetType || DOUBLE == targetType
-          || DECIMAL == targetType || INTEGER == targetType
-          || UNTYPED_ATOMIC == targetType || STRING == targetType || derivesFrom(targetType));
+      return (this == targetType
+          || FLOAT == targetType
+          || DOUBLE == targetType
+          || DECIMAL == targetType
+          || INTEGER == targetType
+          || UNTYPED_ATOMIC == targetType
+          || STRING == targetType || derivesFrom(targetType));
     }
 
   },
@@ -411,8 +434,10 @@ public enum Type {
     @Override
     public boolean castsTo(final Type targetType) {
 
-      return (this == targetType || HEX_BINARY == targetType
-          || UNTYPED_ATOMIC == targetType || STRING == targetType || derivesFrom(targetType));
+      return (this == targetType
+          || HEX_BINARY == targetType
+          || UNTYPED_ATOMIC == targetType
+          || STRING == targetType || derivesFrom(targetType));
     }
   },
 
@@ -437,8 +462,10 @@ public enum Type {
     @Override
     public boolean castsTo(final Type targetType) {
 
-      return (this == targetType || BASE_64_BINARY == targetType
-          || UNTYPED_ATOMIC == targetType || STRING == targetType || derivesFrom(targetType));
+      return (this == targetType
+          || BASE_64_BINARY == targetType
+          || UNTYPED_ATOMIC == targetType
+          || STRING == targetType || derivesFrom(targetType));
     }
   },
 
@@ -454,7 +481,8 @@ public enum Type {
     @Override
     public boolean castsTo(final Type targetType) {
 
-      return (this == targetType || UNTYPED_ATOMIC == targetType
+      return (this == targetType
+          || UNTYPED_ATOMIC == targetType
           || STRING == targetType || derivesFrom(targetType));
     }
   },
@@ -470,7 +498,8 @@ public enum Type {
     @Override
     public boolean castsTo(final Type targetType) {
 
-      return (this == targetType || UNTYPED_ATOMIC == targetType
+      return (this == targetType
+          || UNTYPED_ATOMIC == targetType
           || STRING == targetType || derivesFrom(targetType));
     }
   },
@@ -514,9 +543,12 @@ public enum Type {
     @Override
     public boolean castsTo(final Type targetType) {
 
-      return (this == targetType || DOUBLE == targetType
-          || DECIMAL == targetType || INTEGER == targetType
-          || BOOLEAN == targetType || UNTYPED_ATOMIC == targetType
+      return (this == targetType
+          || DOUBLE == targetType
+          || DECIMAL == targetType
+          || INTEGER == targetType
+          || BOOLEAN == targetType
+          || UNTYPED_ATOMIC == targetType
           || STRING == targetType || derivesFrom(targetType));
     }
 
@@ -544,9 +576,12 @@ public enum Type {
     @Override
     public boolean castsTo(final Type targetType) {
 
-      return (this == targetType || FLOAT == targetType
-          || DECIMAL == targetType || INTEGER == targetType
-          || BOOLEAN == targetType || UNTYPED_ATOMIC == targetType
+      return (this == targetType
+          || FLOAT == targetType
+          || DECIMAL == targetType
+          || INTEGER == targetType
+          || BOOLEAN == targetType
+          || UNTYPED_ATOMIC == targetType
           || STRING == targetType || derivesFrom(targetType));
     }
 
@@ -555,8 +590,9 @@ public enum Type {
   /** XML Schema type 'pDecimal'. */
   PDECIMAL(ANY_ATOMIC_TYPE, "xs:pDecimal", 4, true) {
 
-    private String facet = "(-|\\+)?(([0-9]+(.[0-9]*)?)"
-        + "|(.[0-9]+))((e|E)(-|\\+)?[0-9]+)?|-?INF|NaN|\\+INF";
+    private String facet =
+        "(-|\\+)?(([0-9]+(.[0-9]*)?)"
+            + "|(.[0-9]+))((e|E)(-|\\+)?[0-9]+)?|-?INF|NaN|\\+INF";
 
     /**
      * {@inheritDoc}
@@ -564,7 +600,8 @@ public enum Type {
     @Override
     public boolean castsTo(final Type targetType) {
 
-      return (this == targetType || UNTYPED_ATOMIC == targetType
+      return (this == targetType
+          || UNTYPED_ATOMIC == targetType
           || STRING == targetType || derivesFrom(targetType));
     }
   },
@@ -590,9 +627,13 @@ public enum Type {
     @Override
     public boolean castsTo(final Type targetType) {
 
-      return (this == targetType || FLOAT == targetType || DOUBLE == targetType
-          || INTEGER == targetType || BOOLEAN == targetType
-          || UNTYPED_ATOMIC == targetType || STRING == targetType || derivesFrom(targetType));
+      return (this == targetType
+          || FLOAT == targetType
+          || DOUBLE == targetType
+          || INTEGER == targetType
+          || BOOLEAN == targetType
+          || UNTYPED_ATOMIC == targetType
+          || STRING == targetType || derivesFrom(targetType));
     }
 
   },
@@ -621,9 +662,13 @@ public enum Type {
     @Override
     public boolean castsTo(final Type targetType) {
 
-      return (this == targetType || FLOAT == targetType || DOUBLE == targetType
-          || DECIMAL == targetType || BOOLEAN == targetType
-          || UNTYPED_ATOMIC == targetType || STRING == targetType || derivesFrom(targetType));
+      return (this == targetType
+          || FLOAT == targetType
+          || DOUBLE == targetType
+          || DECIMAL == targetType
+          || BOOLEAN == targetType
+          || UNTYPED_ATOMIC == targetType
+          || STRING == targetType || derivesFrom(targetType));
     }
 
   },
@@ -817,31 +862,6 @@ public enum Type {
   /** Defines whether the type is a primitive type. */
   private final boolean isPrimitive;
 
-  public static Map<String, Type> nameToKey;
-
-  public static Map<Integer, Type> KeyToType;
-
-  // public static Type getType(final String name) {
-  // final Type type = nameToKey.get(name);
-  // if (type != null) {
-  //      
-  // return type;
-  // } else {
-  // throw new IllegalStateException(name+ " is not a valid type.");
-  // }
-  // }
-
-  public static Type getType(final int key) {
-
-    final Type type = KeyToType.get(key);
-    if (type != null) {
-
-      return type;
-    } else {
-      throw new XPathError(ErrorType.XPST0051);
-    }
-  }
-
   /**
    * Constructor. Initializes the internal state.
    * 
@@ -854,8 +874,11 @@ public enum Type {
    * @param primitive
    *          true, of type is a primitive type
    */
-  private Type(final Type baseType, final String representation,
-      final int prec, final boolean primitive) {
+  private Type(
+      final Type baseType,
+      final String representation,
+      final int prec,
+      final boolean primitive) {
 
     derivedFrom = baseType;
     stringRepr = representation;
@@ -993,8 +1016,10 @@ public enum Type {
   public boolean isCastableTo(final Type targetType, final String value) {
 
     // casting to or from NOTATION or anySimpleType is not possible
-    if (targetType == NOTATION || this == NOTATION
-        || targetType == ANY_SIMPLE_TYPE || this == ANY_SIMPLE_TYPE) {
+    if (targetType == NOTATION
+        || this == NOTATION
+        || targetType == ANY_SIMPLE_TYPE
+        || this == ANY_SIMPLE_TYPE) {
       throw new XPathError(ErrorType.XPST0080);
     }
 
@@ -1006,8 +1031,10 @@ public enum Type {
     if (isPrimitive() && targetType.isPrimitive()) {
       // source and target types are both primitive atomic types
 
-      if (targetType == UNTYPED_ATOMIC || targetType == STRING
-          || castsTo(targetType) || targetType.facetIsSatisfiedBy(value)) {
+      if (targetType == UNTYPED_ATOMIC
+          || targetType == STRING
+          || castsTo(targetType)
+          || targetType.facetIsSatisfiedBy(value)) {
         return true;
       } else {
         throw new XPathError(ErrorType.XPTY0004);
@@ -1027,8 +1054,8 @@ public enum Type {
       // getPrimitiveBaseType(); //TODO: what is that??
 
       return (getPrimitiveBaseType().isCastableTo(
-          targetType.getPrimitiveBaseType(), value) && targetType
-          .facetIsSatisfiedBy(value));
+          targetType.getPrimitiveBaseType(),
+          value) && targetType.facetIsSatisfiedBy(value));
     }
 
     // throw new XPathError(ErrorType.XPTY0004);
@@ -1049,7 +1076,8 @@ public enum Type {
       return type; // real primitive type
     }
     if (type.precedence <= 3 && type != ANY_ATOMIC_TYPE) {
-      throw new IllegalStateException("Type " + type.stringRepr
+      throw new IllegalStateException("Type "
+          + type.stringRepr
           + " has no primitive base type.");
     }
 
@@ -1104,16 +1132,31 @@ public enum Type {
     return false;
   }
 
+  private static Map<Integer, Type> keyToType;
   static {
+
+    Map<String, Type> nameToKey;
+
     nameToKey = new HashMap<String, Type>();
     for (Type type : Type.values()) {
       nameToKey.put(type.getStringRepr(), type);
     }
 
-    KeyToType = new HashMap<Integer, Type>();
+    keyToType = new HashMap<Integer, Type>();
     for (Type type : Type.values()) {
-      KeyToType.put(type.getStringRepr().hashCode(), type);
+      keyToType.put(type.getStringRepr().hashCode(), type);
     }
+  }
+
+  public static Type getType(final int key) {
+
+    final Type type = keyToType.get(key);
+    if (type != null) {
+
+      return type;
+    }
+    throw new XPathError(ErrorType.XPST0051);
+
   }
 
 }
