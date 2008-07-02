@@ -66,7 +66,7 @@ public class FNBoolean extends AbstractFunction {
 
         if (type.derivesFrom(Type.BOOLEAN)) {
           value = Boolean.parseBoolean(rtx.getValue());
-          // value = TypedValue.parseBoolean(rtx.getRawValue()); //TODO
+          // value = TypedValue.parseBoolean(rtx.getRawValue());
         } else if (type.derivesFrom(Type.STRING)
             || type.derivesFrom(Type.ANY_URI)
             || type.derivesFrom(Type.UNTYPED_ATOMIC)) {

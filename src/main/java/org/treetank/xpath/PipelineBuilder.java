@@ -319,7 +319,7 @@ public final class PipelineBuilder {
       kind = CompKind.FO;
       axis = new NodeComp(rtx, operand1, operand2, kind);
     } else {
-      throw new IllegalStateException(comp + " is not a valid comparison.");// TODO
+      throw new IllegalStateException(comp + " is not a valid comparison.");
 
     }
 
@@ -371,7 +371,7 @@ public final class PipelineBuilder {
       axis = new ModOpAxis(rtx, operand1, operand2);
     } else {
       // TODO: unary operator
-      throw new IllegalStateException(operator + " is not a valid operator.");// TODO
+      throw new IllegalStateException(operator + " is not a valid operator.");
 
     }
 

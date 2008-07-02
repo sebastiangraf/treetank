@@ -47,7 +47,7 @@ public class IDivOpAxisTest {
     AbstractOpAxis axis = new IDivOpAxis(rtx, op1, op2);
     
     assertEquals(true, axis.hasNext());
-    //TODO: although getRawValue() returns [1], parseString returns ""
+    //note: although getRawValue() returns [1], parseString returns ""
 //    assertEquals(1, Integer.parseInt(TypedValue.parseString(rtx.getRawValue())));
     assertEquals(rtx.keyForName("xs:integer"), rtx.getTypeKey());
     assertEquals(false, axis.hasNext());
