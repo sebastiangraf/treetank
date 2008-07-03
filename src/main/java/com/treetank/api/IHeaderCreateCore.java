@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Marc Kramis, University of Konstanz
+ * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
  * 
  * Patent Pending.
  * 
@@ -13,11 +13,10 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id:license.txt 4014 2008-03-26 16:36:35Z kramis $
+ * $Id$
  */
 
 package com.treetank.api;
-
 
 public interface IHeaderCreateCore {
 
