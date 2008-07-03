@@ -13,11 +13,10 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id:RevisionReference.java 4237 2008-07-03 12:49:26Z kramis $
  */
 
 package com.treetank.shared;
-
 
 public final class RevisionReference {
 
@@ -38,12 +37,6 @@ public final class RevisionReference {
     mOffset = offset;
     mLength = length;
     mRevision = revision;
-  }
-
-  public RevisionReference(final byte[] buffer) {
-    mOffset = Serialiser.readLong(0, buffer);
-    mLength = Serialiser.readInt(8, buffer);
-    mRevision = Serialiser.readLong(12, buffer);
   }
 
   public final void setOffset(final long offset) {
@@ -70,12 +63,17 @@ public final class RevisionReference {
     return mRevision;
   }
 
-  public final byte[] serialise() {
-    final byte[] buffer = new byte[64];
-    Serialiser.writeLong(0, buffer, mOffset);
-    Serialiser.writeInt(8, buffer, mLength);
-    Serialiser.writeLong(12, buffer, mRevision);
-    return buffer;
+  public final void serialise(final ByteArrayWriter writer) {
+    writer.writeLong(mOffset);
+    writer.writeInt(mLength);
+    writer.writeLong(mRevision);
+    writer.writeByteArray(new byte[44]);
+  }
+
+  public final void deserialise(final ByteArrayReader reader) {
+    mOffset = reader.readLong();
+    mLength = reader.readInt();
+    mRevision = reader.readLong();
   }
 
   public final String toString() {

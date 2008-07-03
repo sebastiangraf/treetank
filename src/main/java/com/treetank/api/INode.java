@@ -18,16 +18,19 @@
 
 package com.treetank.api;
 
+import com.treetank.shared.ByteArrayReader;
 import com.treetank.shared.ByteArrayWriter;
 
-public interface IDevice {
+public interface INode {
 
-  public byte[] read(final long offset, final int length);
+  public int getType();
 
-  public void write(final long offset, final byte[] buffer);
+  public int getOffset();
 
-  public void write(final long offset, final ByteArrayWriter writer);
+  public long getRevision();
 
-  public long size();
+  public void serialise(final ByteArrayWriter writer);
+
+  public void deserialise(final ByteArrayReader reader);
 
 }

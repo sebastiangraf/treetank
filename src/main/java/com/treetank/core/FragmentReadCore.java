@@ -24,6 +24,7 @@ import java.util.zip.Inflater;
 import com.treetank.api.IDevice;
 import com.treetank.api.IFragmentReadCore;
 import com.treetank.device.Device;
+import com.treetank.shared.ByteArrayReader;
 import com.treetank.shared.Fragment;
 import com.treetank.shared.FragmentReference;
 
@@ -75,7 +76,10 @@ public final class FragmentReadCore implements IFragmentReadCore {
         mOut.write(mBuffer, 0, count);
       }
 
-      return new Fragment(mOut.toByteArray());
+      final Fragment f = new Fragment();
+      f.deserialise(new ByteArrayReader(mOut.toByteArray()));
+
+      return f;
 
     } catch (Exception e) {
       throw new RuntimeException("FragmentReadCore "

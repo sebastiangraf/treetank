@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id:Configuration.java 4237 2008-07-03 12:49:26Z kramis $
  */
 
 package com.treetank.shared;
@@ -30,10 +30,6 @@ public final class Configuration {
     mMaxRevision = maxRevision;
   }
 
-  public Configuration(final byte[] buffer, final long maxRevision) {
-    mMaxRevision = maxRevision;
-  }
-
   public final void incrementMaxRevision() {
     mMaxRevision += 1;
   }
@@ -42,9 +38,11 @@ public final class Configuration {
     return mMaxRevision;
   }
 
-  public final byte[] serialise() {
-    final byte[] buffer = new byte[448];
-    return buffer;
+  public final void serialise(final ByteArrayWriter writer) {
+    writer.writeByteArray(new byte[448]);
+  }
+
+  public final void deserialise(final ByteArrayReader reader) {
   }
 
   public final String toString() {

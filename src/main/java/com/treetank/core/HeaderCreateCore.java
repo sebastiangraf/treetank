@@ -23,6 +23,7 @@ import java.util.Random;
 import com.treetank.api.IDevice;
 import com.treetank.api.IHeaderCreateCore;
 import com.treetank.device.Device;
+import com.treetank.shared.ByteArrayWriter;
 import com.treetank.shared.Configuration;
 
 public final class HeaderCreateCore implements IHeaderCreateCore {
@@ -54,22 +55,21 @@ public final class HeaderCreateCore implements IHeaderCreateCore {
 
     try {
 
+      final ByteArrayWriter writer = new ByteArrayWriter();
       final byte[] salt = new byte[32];
       final byte[] authentication = new byte[32];
-      final byte[] header = new byte[512];
-
       final Random random = new Random();
+
       random.nextBytes(salt);
+      writer.writeByteArray(salt);
+      configuration.serialise(writer);
+      writer.writeByteArray(authentication);
 
-      System.arraycopy(salt, 0, header, 0, 32);
-      System.arraycopy(configuration.serialise(), 0, header, 32, 448);
-      System.arraycopy(authentication, 0, header, 480, 32);
+      mDevice1.write(0, writer);
+      mDevice1.write(512, writer);
 
-      mDevice1.write(0, header);
-      mDevice1.write(512, header);
-
-      mDevice2.write(0, header);
-      mDevice2.write(512, header);
+      mDevice2.write(0, writer);
+      mDevice2.write(512, writer);
 
     } catch (Exception e) {
       throw new RuntimeException("HeaderCreateCore "
