@@ -28,6 +28,7 @@ import com.treetank.api.IHeaderLoadCore;
 import com.treetank.api.IRevisionReadCore;
 import com.treetank.api.IRevisionWriteCore;
 import com.treetank.util.Configuration;
+import com.treetank.util.Fragment;
 import com.treetank.util.FragmentReference;
 import com.treetank.util.RevisionReference;
 
@@ -87,7 +88,7 @@ public final class Core implements ICore {
     new File(mDevice + ".tt2").delete();
   }
 
-  public final FragmentReference writeFragment(final byte[] fragment) {
+  public final FragmentReference writeFragment(final Fragment fragment) {
     return mFragmentWriteCore.writeFragment(fragment);
   }
 
@@ -119,7 +120,7 @@ public final class Core implements ICore {
     return mRevisionReadCore[core - 1].readRevision(revision);
   }
 
-  public final byte[] readFragment(
+  public final Fragment readFragment(
       final int core,
       final FragmentReference fragmentReference) {
     if ((core < 1) || (core > mReadCoreCount)) {
