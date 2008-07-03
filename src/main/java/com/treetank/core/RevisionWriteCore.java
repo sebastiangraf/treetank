@@ -21,6 +21,7 @@ package com.treetank.core;
 import com.treetank.api.IDevice;
 import com.treetank.api.IRevisionWriteCore;
 import com.treetank.device.Device;
+import com.treetank.shared.ByteArrayWriter;
 import com.treetank.shared.FragmentReference;
 import com.treetank.shared.RevisionReference;
 
@@ -66,10 +67,11 @@ public final class RevisionWriteCore implements IRevisionWriteCore {
               fragmentReference.getLength(),
               revision);
 
-      final byte[] buffer = revisionReference.serialise();
+      final ByteArrayWriter writer = new ByteArrayWriter();
+      revisionReference.serialise(writer);
 
-      mDevice1.write(mDevice1.size(), buffer);
-      mDevice2.write(mDevice2.size(), buffer);
+      mDevice1.write(mDevice1.size(), writer);
+      mDevice2.write(mDevice2.size(), writer);
 
       return revisionReference;
 

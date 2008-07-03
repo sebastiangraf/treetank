@@ -25,6 +25,7 @@ import org.junit.Test;
 import com.treetank.shared.Configuration;
 import com.treetank.shared.Fragment;
 import com.treetank.shared.FragmentReference;
+import com.treetank.shared.Node;
 import com.treetank.shared.RevisionReference;
 
 public class CoreTest {
@@ -52,11 +53,12 @@ public class CoreTest {
   @Test
   public void testWriteRead() {
     final Core tank = new Core(TANK, 1);
-
     tank.create();
 
-    final FragmentReference fragmentReference =
-        tank.writeFragment(new Fragment());
+    final Fragment fragment = new Fragment();
+    fragment.addNode(new Node(0, 1, 2));
+
+    final FragmentReference fragmentReference = tank.writeFragment(fragment);
     tank.writeRevision(fragmentReference);
 
     final RevisionReference newRevisionReference = tank.readRevision(1, 1);
@@ -65,10 +67,11 @@ public class CoreTest {
     Assert.assertEquals(fragmentReference.getLength(), newRevisionReference
         .getLength());
 
-//    final byte[] newFragment =
-//        tank.readFragment(1, new FragmentReference(newRevisionReference
-//            .getOffset(), newRevisionReference.getLength()));
-//    Assert.assertArrayEquals(fragment, newFragment);
+    final Fragment newFragment =
+        tank.readFragment(1, new FragmentReference(newRevisionReference
+            .getOffset(), newRevisionReference.getLength()));
+    Assert.assertEquals(fragment.getNodeCount(), newFragment.getNodeCount());
+    Assert.assertEquals(fragment.getNode(0).getRevision(), newFragment.getNode(
+        0).getRevision());
   }
-
 }

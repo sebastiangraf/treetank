@@ -21,6 +21,7 @@ package com.treetank.core;
 import com.treetank.api.IDevice;
 import com.treetank.api.IRevisionReadCore;
 import com.treetank.device.Device;
+import com.treetank.shared.ByteArrayReader;
 import com.treetank.shared.RevisionReference;
 
 public final class RevisionReadCore implements IRevisionReadCore {
@@ -49,8 +50,13 @@ public final class RevisionReadCore implements IRevisionReadCore {
 
     try {
 
-      final byte[] buffer = mDevice2.read((revision << 6) + 960, 64);
-      return new RevisionReference(buffer);
+      final ByteArrayReader reader =
+          new ByteArrayReader(mDevice2.read((revision << 6) + 960, 64));
+
+      final RevisionReference reference = new RevisionReference();
+      reference.deserialise(reader);
+
+      return reference;
 
     } catch (Exception e) {
       throw new RuntimeException("RevisionReadCore "

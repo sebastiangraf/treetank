@@ -73,10 +73,7 @@ public final class HeaderLoadCore implements IHeaderLoadCore {
         }
       }
 
-      final byte[] buffer = new byte[448];
-      System.arraycopy(header1, 32, buffer, 0, 448);
-
-      return new Configuration(buffer, ((mDevice2.size() - 960) >> 6) - 1);
+      return new Configuration(((mDevice2.size() - 960) >> 6) - 1);
 
     } catch (Exception e) {
       throw new RuntimeException("HeaderLoadCore "

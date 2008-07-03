@@ -13,11 +13,10 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id:FragmentReference.java 4237 2008-07-03 12:49:26Z kramis $
  */
 
 package com.treetank.shared;
-
 
 public final class FragmentReference {
 
@@ -32,11 +31,6 @@ public final class FragmentReference {
   public FragmentReference(final long offset, final int length) {
     mOffset = offset;
     mLength = length;
-  }
-
-  public FragmentReference(final byte[] buffer) {
-    mOffset = Serialiser.readLong(0, buffer);
-    mLength = Serialiser.readInt(8, buffer);
   }
 
   public final void setOffset(final long offset) {
@@ -55,11 +49,14 @@ public final class FragmentReference {
     return mLength;
   }
 
-  public final byte[] serialise() {
-    final byte[] buffer = new byte[12];
-    Serialiser.writeLong(0, buffer, mOffset);
-    Serialiser.writeInt(8, buffer, mLength);
-    return buffer;
+  public final void serialise(final ByteArrayWriter writer) {
+    writer.writeVarLong(mOffset);
+    writer.writeVarInt(mLength);
+  }
+
+  public final void deserialise(final ByteArrayReader reader) {
+    mOffset = reader.readVarLong();
+    mLength = reader.readVarInt();
   }
 
   public final String toString() {
