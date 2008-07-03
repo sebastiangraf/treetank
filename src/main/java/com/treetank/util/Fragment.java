@@ -16,32 +16,23 @@
  * $Id$
  */
 
-package com.treetank.api;
+package com.treetank.util;
 
-import com.treetank.util.Configuration;
-import com.treetank.util.Fragment;
-import com.treetank.util.FragmentReference;
-import com.treetank.util.RevisionReference;
+public final class Fragment {
 
-public interface ICore {
+  public Fragment() {
+  }
 
-  public void create();
+  public Fragment(final byte[] buffer) {
+  }
 
-  public void create(final Configuration configuration);
+  public final byte[] serialise() {
+    final byte[] buffer = new byte[666];
+    return buffer;
+  }
 
-  public Configuration load();
-
-  public void erase();
-
-  public FragmentReference writeFragment(final Fragment fragment);
-
-  public RevisionReference writeRevision(
-      final FragmentReference fragmentReference);
-
-  public RevisionReference readRevision(final int core, final long revision);
-
-  public Fragment readFragment(
-      final int core,
-      final FragmentReference fragmentReference);
+  public final String toString() {
+    return "Fragment()";
+  }
 
 }

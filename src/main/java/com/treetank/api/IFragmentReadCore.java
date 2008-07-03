@@ -18,10 +18,11 @@
 
 package com.treetank.api;
 
+import com.treetank.util.Fragment;
 import com.treetank.util.FragmentReference;
 
 public interface IFragmentReadCore {
 
-  public byte[] readFragment(final FragmentReference fragmentReference);
+  public Fragment readFragment(final FragmentReference fragmentReference);
 
 }

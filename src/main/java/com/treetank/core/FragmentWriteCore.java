@@ -24,6 +24,7 @@ import java.util.zip.Deflater;
 import com.treetank.api.IDevice;
 import com.treetank.api.IFragmentWriteCore;
 import com.treetank.device.Device;
+import com.treetank.util.Fragment;
 import com.treetank.util.FragmentReference;
 
 public final class FragmentWriteCore implements IFragmentWriteCore {
@@ -49,18 +50,18 @@ public final class FragmentWriteCore implements IFragmentWriteCore {
     mBuffer = new byte[8192];
   }
 
-  public final FragmentReference writeFragment(final byte[] fragment) {
+  public final FragmentReference writeFragment(final Fragment fragment) {
 
-    if ((fragment == null) || (fragment.length < 1)) {
+    if ((fragment == null)) {
       throw new IllegalArgumentException(
-          "Argument 'fragment' must not be null and longer than zero.");
+          "Argument 'fragment' must not be null.");
     }
 
     try {
 
       mDeflater.reset();
       mOut.reset();
-      mDeflater.setInput(fragment, 0, fragment.length);
+      mDeflater.setInput(fragment.serialise());
       mDeflater.finish();
       int count;
       while (!mDeflater.finished()) {
