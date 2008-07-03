@@ -18,7 +18,7 @@
 
 package com.treetank.api;
 
-import com.treetank.util.RevisionReference;
+import com.treetank.shared.RevisionReference;
 
 public interface IRevisionReadCore {
 

@@ -23,7 +23,7 @@ import java.util.Random;
 import com.treetank.api.IDevice;
 import com.treetank.api.IHeaderCreateCore;
 import com.treetank.device.Device;
-import com.treetank.util.Configuration;
+import com.treetank.shared.Configuration;
 
 public final class HeaderCreateCore implements IHeaderCreateCore {
 

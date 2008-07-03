@@ -18,8 +18,8 @@
 
 package com.treetank.api;
 
-import com.treetank.util.Fragment;
-import com.treetank.util.FragmentReference;
+import com.treetank.shared.Fragment;
+import com.treetank.shared.FragmentReference;
 
 public interface IFragmentReadCore {
 

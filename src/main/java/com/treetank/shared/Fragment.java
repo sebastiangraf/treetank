@@ -16,7 +16,7 @@
  * $Id$
  */
 
-package com.treetank.util;
+package com.treetank.shared;
 
 public final class Fragment {
 

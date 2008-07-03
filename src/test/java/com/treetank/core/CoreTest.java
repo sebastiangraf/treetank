@@ -22,10 +22,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.treetank.util.Configuration;
-import com.treetank.util.Fragment;
-import com.treetank.util.FragmentReference;
-import com.treetank.util.RevisionReference;
+import com.treetank.shared.Configuration;
+import com.treetank.shared.Fragment;
+import com.treetank.shared.FragmentReference;
+import com.treetank.shared.RevisionReference;
 
 public class CoreTest {
 

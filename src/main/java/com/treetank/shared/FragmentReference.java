@@ -16,7 +16,7 @@
  * $Id$
  */
 
-package com.treetank.util;
+package com.treetank.shared;
 
 
 public final class FragmentReference {
@@ -35,8 +35,8 @@ public final class FragmentReference {
   }
 
   public FragmentReference(final byte[] buffer) {
-    mOffset = SerialiserTool.readLong(0, buffer);
-    mLength = SerialiserTool.readInt(8, buffer);
+    mOffset = Serialiser.readLong(0, buffer);
+    mLength = Serialiser.readInt(8, buffer);
   }
 
   public final void setOffset(final long offset) {
@@ -57,8 +57,8 @@ public final class FragmentReference {
 
   public final byte[] serialise() {
     final byte[] buffer = new byte[12];
-    SerialiserTool.writeLong(0, buffer, mOffset);
-    SerialiserTool.writeInt(8, buffer, mLength);
+    Serialiser.writeLong(0, buffer, mOffset);
+    Serialiser.writeInt(8, buffer, mLength);
     return buffer;
   }
 

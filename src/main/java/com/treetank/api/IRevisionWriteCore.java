@@ -18,8 +18,8 @@
 
 package com.treetank.api;
 
-import com.treetank.util.FragmentReference;
-import com.treetank.util.RevisionReference;
+import com.treetank.shared.FragmentReference;
+import com.treetank.shared.RevisionReference;
 
 public interface IRevisionWriteCore {
 

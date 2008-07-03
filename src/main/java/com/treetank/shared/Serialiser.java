@@ -16,9 +16,9 @@
  * $Id$
  */
 
-package com.treetank.util;
+package com.treetank.shared;
 
-public final class SerialiserTool {
+public final class Serialiser {
 
   public static final void writeInt(
       final int offset,

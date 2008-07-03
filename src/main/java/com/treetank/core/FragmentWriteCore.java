@@ -24,8 +24,8 @@ import java.util.zip.Deflater;
 import com.treetank.api.IDevice;
 import com.treetank.api.IFragmentWriteCore;
 import com.treetank.device.Device;
-import com.treetank.util.Fragment;
-import com.treetank.util.FragmentReference;
+import com.treetank.shared.Fragment;
+import com.treetank.shared.FragmentReference;
 
 public final class FragmentWriteCore implements IFragmentWriteCore {
 
