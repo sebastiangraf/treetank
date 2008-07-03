@@ -21,8 +21,8 @@ package com.treetank.core;
 import com.treetank.api.IDevice;
 import com.treetank.api.IRevisionWriteCore;
 import com.treetank.device.Device;
-import com.treetank.util.FragmentReference;
-import com.treetank.util.RevisionReference;
+import com.treetank.shared.FragmentReference;
+import com.treetank.shared.RevisionReference;
 
 public final class RevisionWriteCore implements IRevisionWriteCore {
 

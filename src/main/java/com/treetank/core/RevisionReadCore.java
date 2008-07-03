@@ -21,7 +21,7 @@ package com.treetank.core;
 import com.treetank.api.IDevice;
 import com.treetank.api.IRevisionReadCore;
 import com.treetank.device.Device;
-import com.treetank.util.RevisionReference;
+import com.treetank.shared.RevisionReference;
 
 public final class RevisionReadCore implements IRevisionReadCore {
 

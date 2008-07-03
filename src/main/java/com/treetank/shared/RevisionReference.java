@@ -16,7 +16,7 @@
  * $Id$
  */
 
-package com.treetank.util;
+package com.treetank.shared;
 
 
 public final class RevisionReference {
@@ -41,9 +41,9 @@ public final class RevisionReference {
   }
 
   public RevisionReference(final byte[] buffer) {
-    mOffset = SerialiserTool.readLong(0, buffer);
-    mLength = SerialiserTool.readInt(8, buffer);
-    mRevision = SerialiserTool.readLong(12, buffer);
+    mOffset = Serialiser.readLong(0, buffer);
+    mLength = Serialiser.readInt(8, buffer);
+    mRevision = Serialiser.readLong(12, buffer);
   }
 
   public final void setOffset(final long offset) {
@@ -72,9 +72,9 @@ public final class RevisionReference {
 
   public final byte[] serialise() {
     final byte[] buffer = new byte[64];
-    SerialiserTool.writeLong(0, buffer, mOffset);
-    SerialiserTool.writeInt(8, buffer, mLength);
-    SerialiserTool.writeLong(12, buffer, mRevision);
+    Serialiser.writeLong(0, buffer, mOffset);
+    Serialiser.writeInt(8, buffer, mLength);
+    Serialiser.writeLong(12, buffer, mRevision);
     return buffer;
   }
 
