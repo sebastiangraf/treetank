@@ -28,8 +28,6 @@ import org.treetank.xpath.functions.XPathError.ErrorType;
 
 /**
  * Enum that represents the built-in-types of XPath 2.0.
- * 
- * @author Tina Scherer
  */
 public enum Type {
 
