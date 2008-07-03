@@ -21,10 +21,10 @@ package com.treetank.core;
 import java.io.ByteArrayOutputStream;
 import java.util.zip.Deflater;
 
-import com.treetank.api.FragmentReference;
 import com.treetank.api.IDevice;
 import com.treetank.api.IFragmentWriteCore;
 import com.treetank.device.Device;
+import com.treetank.util.FragmentReference;
 
 public final class FragmentWriteCore implements IFragmentWriteCore {
 

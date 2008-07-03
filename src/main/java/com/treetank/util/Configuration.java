@@ -16,7 +16,7 @@
  * $Id$
  */
 
-package com.treetank.api;
+package com.treetank.util;
 
 public final class Configuration {
 

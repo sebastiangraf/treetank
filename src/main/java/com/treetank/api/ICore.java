@@ -18,6 +18,10 @@
 
 package com.treetank.api;
 
+import com.treetank.util.Configuration;
+import com.treetank.util.FragmentReference;
+import com.treetank.util.RevisionReference;
+
 public interface ICore {
 
   public void create();
