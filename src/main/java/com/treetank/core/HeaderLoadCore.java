@@ -18,10 +18,10 @@
 
 package com.treetank.core;
 
-import com.treetank.api.Configuration;
 import com.treetank.api.IDevice;
 import com.treetank.api.IHeaderLoadCore;
 import com.treetank.device.Device;
+import com.treetank.util.Configuration;
 
 public final class HeaderLoadCore implements IHeaderLoadCore {
 

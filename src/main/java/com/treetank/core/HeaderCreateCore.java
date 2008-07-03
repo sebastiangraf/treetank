@@ -20,10 +20,10 @@ package com.treetank.core;
 
 import java.util.Random;
 
-import com.treetank.api.Configuration;
 import com.treetank.api.IDevice;
 import com.treetank.api.IHeaderCreateCore;
 import com.treetank.device.Device;
+import com.treetank.util.Configuration;
 
 public final class HeaderCreateCore implements IHeaderCreateCore {
 

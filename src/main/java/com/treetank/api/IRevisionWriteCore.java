@@ -18,6 +18,9 @@
 
 package com.treetank.api;
 
+import com.treetank.util.FragmentReference;
+import com.treetank.util.RevisionReference;
+
 public interface IRevisionWriteCore {
 
   public RevisionReference writeRevision(

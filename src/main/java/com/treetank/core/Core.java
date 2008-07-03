@@ -20,8 +20,6 @@ package com.treetank.core;
 
 import java.io.File;
 
-import com.treetank.api.Configuration;
-import com.treetank.api.FragmentReference;
 import com.treetank.api.ICore;
 import com.treetank.api.IFragmentReadCore;
 import com.treetank.api.IFragmentWriteCore;
@@ -29,7 +27,9 @@ import com.treetank.api.IHeaderCreateCore;
 import com.treetank.api.IHeaderLoadCore;
 import com.treetank.api.IRevisionReadCore;
 import com.treetank.api.IRevisionWriteCore;
-import com.treetank.api.RevisionReference;
+import com.treetank.util.Configuration;
+import com.treetank.util.FragmentReference;
+import com.treetank.util.RevisionReference;
 
 public final class Core implements ICore {
 

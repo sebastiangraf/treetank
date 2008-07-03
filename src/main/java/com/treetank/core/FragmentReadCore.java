@@ -21,10 +21,10 @@ package com.treetank.core;
 import java.io.ByteArrayOutputStream;
 import java.util.zip.Inflater;
 
-import com.treetank.api.FragmentReference;
 import com.treetank.api.IDevice;
 import com.treetank.api.IFragmentReadCore;
 import com.treetank.device.Device;
+import com.treetank.util.FragmentReference;
 
 public final class FragmentReadCore implements IFragmentReadCore {
 

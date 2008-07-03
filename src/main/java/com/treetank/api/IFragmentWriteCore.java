@@ -18,6 +18,8 @@
 
 package com.treetank.api;
 
+import com.treetank.util.FragmentReference;
+
 public interface IFragmentWriteCore {
 
   public FragmentReference writeFragment(final byte[] fragment);

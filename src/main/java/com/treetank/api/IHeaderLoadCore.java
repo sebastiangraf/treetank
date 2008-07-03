@@ -18,6 +18,8 @@
 
 package com.treetank.api;
 
+import com.treetank.util.Configuration;
+
 public interface IHeaderLoadCore {
 
   public Configuration load();

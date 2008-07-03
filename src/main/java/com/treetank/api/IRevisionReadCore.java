@@ -18,6 +18,8 @@
 
 package com.treetank.api;
 
+import com.treetank.util.RevisionReference;
+
 public interface IRevisionReadCore {
 
   public RevisionReference readRevision(final long revision);
