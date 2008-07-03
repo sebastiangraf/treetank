@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, Marc Kramis
+ * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: SAXGenerator.java 4147 2008-05-08 07:58:28Z kramis $
+ * $Id: $
  */
 
 package org.treetank.api;
@@ -36,8 +36,6 @@ package org.treetank.api;
  * negative long value (node key is always a positive long value). This value is
  * retrieved by negate their index in the internal data structure.
  * </p>
- * 
- * @author Tina Scherer
  */
 public interface IItemList {
 
