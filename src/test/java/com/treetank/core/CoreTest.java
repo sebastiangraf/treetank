@@ -23,10 +23,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.treetank.shared.Configuration;
+import com.treetank.shared.DeletedNode;
 import com.treetank.shared.Fragment;
 import com.treetank.shared.FragmentReference;
-import com.treetank.shared.Node;
 import com.treetank.shared.RevisionReference;
+import com.treetank.shared.RootNode;
 
 public class CoreTest {
 
@@ -56,7 +57,8 @@ public class CoreTest {
     tank.create();
 
     final Fragment fragment = new Fragment();
-    fragment.addNode(new Node(0, 1, 2));
+    fragment.addNode(new RootNode(1, 2, "Marc", "Foo."));
+    fragment.addNode(new DeletedNode(2, 2));
 
     final FragmentReference fragmentReference = tank.writeFragment(fragment);
     tank.writeRevision(fragmentReference);
@@ -71,7 +73,11 @@ public class CoreTest {
         tank.readFragment(1, new FragmentReference(newRevisionReference
             .getOffset(), newRevisionReference.getLength()));
     Assert.assertEquals(fragment.getNodeCount(), newFragment.getNodeCount());
-    Assert.assertEquals(fragment.getNode(0).getRevision(), newFragment.getNode(
-        0).getRevision());
+    Assert.assertEquals(fragment.getNode(1).getRevision(), newFragment.getNode(
+        1).getRevision());
+    Assert
+        .assertEquals("Marc", ((RootNode) newFragment.getNode(1)).getAuthor());
+    Assert.assertEquals(0, newFragment.getNode(2).getType());
   }
+
 }

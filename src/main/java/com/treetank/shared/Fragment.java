@@ -36,7 +36,12 @@ public final class Fragment {
   }
 
   public final INode getNode(final int index) {
-    return mNodeList.get(index);
+    for (final INode node : mNodeList) {
+      if (node.getOffset() == index) {
+        return node;
+      }
+    }
+    return null;
   }
 
   public final int getNodeCount() {
@@ -46,6 +51,7 @@ public final class Fragment {
   public final void serialise(final ByteArrayWriter writer) {
     writer.writeVarInt(mNodeList.size());
     for (final INode node : mNodeList) {
+      writer.writeVarInt(node.getType());
       node.serialise(writer);
     }
   }
@@ -53,7 +59,16 @@ public final class Fragment {
   public final void deserialise(final ByteArrayReader reader) {
     INode node = null;
     for (int i = 0, l = reader.readVarInt(); i < l; i++) {
-      node = new Node();
+      switch (reader.readVarInt()) {
+      case DeletedNode.TYPE:
+        node = new DeletedNode();
+        break;
+      case RootNode.TYPE:
+        node = new RootNode();
+        break;
+      default:
+        throw new IllegalStateException("Unknown node type encountered.");
+      }
       node.deserialise(reader);
       mNodeList.add(node);
     }

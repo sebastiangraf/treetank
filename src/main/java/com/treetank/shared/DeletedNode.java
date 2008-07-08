@@ -20,47 +20,32 @@ package com.treetank.shared;
 
 import com.treetank.api.INode;
 
-public abstract class Node implements INode {
+public final class DeletedNode extends Node implements INode {
 
-  private int mOffset;
+  public static final int TYPE = 0;
 
-  private long mRevision;
-
-  public Node() {
+  public DeletedNode() {
     this(0, 0);
   }
 
-  public Node(final int offset, final long revision) {
-    mOffset = offset;
-    mRevision = revision;
+  public DeletedNode(final int offset, final long revision) {
+    super(offset, revision);
   }
 
-  public final void setOffset(final int offset) {
-    mOffset = offset;
+  public final void serialise(final ByteArrayWriter buffer) {
+    super.serialise(buffer);
   }
 
-  public final void setRevsion(final long revision) {
-    mRevision = revision;
+  public final void deserialise(final ByteArrayReader buffer) {
+    super.deserialise(buffer);
   }
 
-  public final int getOffset() {
-    return mOffset;
+  public final int getType() {
+    return TYPE;
   }
 
-  public final long getRevision() {
-    return mRevision;
+  public final String toString() {
+    return "DeletedNode(" + getOffset() + ", " + getRevision() + ")";
   }
-
-  public void serialise(final ByteArrayWriter buffer) {
-    buffer.writeVarInt(mOffset);
-    buffer.writeVarLong(mRevision);
-  }
-
-  public void deserialise(final ByteArrayReader buffer) {
-    mOffset = buffer.readVarInt();
-    mRevision = buffer.readVarLong();
-  }
-
-  public abstract int getType();
 
 }

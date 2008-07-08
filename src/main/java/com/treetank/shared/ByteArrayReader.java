@@ -140,4 +140,16 @@ public final class ByteArrayReader {
     return byteArray;
   }
 
+  public final String readUtf() {
+    final byte[] value = readVarByteArray();
+    String string = null;
+    try {
+      string = new String(value, "UTF-8");
+    } catch (Exception e) {
+      throw new RuntimeException("Could not convert byte[] to String: "
+          + e.getLocalizedMessage());
+    }
+    return string;
+  }
+
 }
