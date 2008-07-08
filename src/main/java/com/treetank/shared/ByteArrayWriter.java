@@ -20,6 +20,8 @@ package com.treetank.shared;
 
 public final class ByteArrayWriter {
 
+  public static final byte[] EMPTY = new byte[0];
+
   private byte[] mBuffer;
 
   private int mSize;
@@ -142,6 +144,21 @@ public final class ByteArrayWriter {
     // Byte array.
     System.arraycopy(value, 0, mBuffer, mSize, value.length);
     mSize += value.length;
+  }
+
+  public final void writeUtf(final String value) {
+    byte[] bytes = null;
+    try {
+      if (value == null || value.length() == 0) {
+        bytes = EMPTY;
+      } else {
+        bytes = value.getBytes("UTF-8");
+      }
+    } catch (Exception e) {
+      throw new RuntimeException("Could not convert String to byte[]: "
+          + e.getLocalizedMessage());
+    }
+    writeVarByteArray(bytes);
   }
 
   public final byte[] getBytes() {
