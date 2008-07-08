@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: $
+ * $Id$
  */
 
 package org.treetank.xpath.expr;
@@ -35,12 +35,6 @@ import org.treetank.axislayer.AbstractAxis;
  */
 public class VariableAxis extends AbstractAxis implements IAxis {
 
-  // /**
-  // * The result values, the variable is bound to (that have been evaluated so
-  // * far).
-  // */
-  // private final List<Long> mValues;
-
   /** Sequence that defines the values, the variable is bound to. */
   private final IAxis bindingSeq;
 
@@ -57,7 +51,6 @@ public class VariableAxis extends AbstractAxis implements IAxis {
   public VariableAxis(final IReadTransaction rtx, final IAxis inSeq) {
 
     super(rtx);
-    // mValues = values;
     bindingSeq = inSeq;
     mVarRefs = new ArrayList<VarRefExpr>();
   }
@@ -83,7 +76,6 @@ public class VariableAxis extends AbstractAxis implements IAxis {
     resetToLastKey();
 
     if (bindingSeq.hasNext()) {
-      // mValues.add(getTransaction().getNodeKey());
       notifyObs();
       return true;
     }
