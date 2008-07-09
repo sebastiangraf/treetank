@@ -130,7 +130,6 @@ public final class TreeTankStreamWriter implements XMLStreamWriter {
    */
   public final void setDefaultNamespace(final String uri)
       throws XMLStreamException {
-    // TODO: Can it be null?
     ((NamespaceContextImpl) nspContext).setNamespace("", uri);
   }
 
@@ -288,9 +287,9 @@ public final class TreeTankStreamWriter implements XMLStreamWriter {
     if (prefix == null || prefix.equals("")) {
       if (!namespaceURI.equals("")) {
         throw new XMLStreamException("Prefix cannot be null or empty!");
-      } else {
-        mWTX.insertAttribute(localName, namespaceURI, value);
       }
+
+      mWTX.insertAttribute(localName, namespaceURI, value);
     }
 
     /*
@@ -307,10 +306,6 @@ public final class TreeTankStreamWriter implements XMLStreamWriter {
    * {@inheritDoc}
    */
   public final void writeCData(final String cdata) throws XMLStreamException {
-    // if (cdata == null) {
-    // throw new XMLStreamException("cdata cannot be null!");
-    // }
-    // TODO: currently not implemented?
     throw new UnsupportedOperationException(
         "Currently not supported by TreeTank.");
   }
@@ -608,6 +603,7 @@ public final class TreeTankStreamWriter implements XMLStreamWriter {
    *               The prefix to bind this namespace to
    * @param namespaceURI
    *               The uri to bind the default namespace to.
+   * @throws XMLStreamException 
    * @throws IllegalStateException
    *               If the current state does not allow Namespace writing.
    */
@@ -654,21 +650,26 @@ public final class TreeTankStreamWriter implements XMLStreamWriter {
   }
 
   /**
-   * Just calls writeStartDocument.
+   * Calls writeStartDocument.
+   * 
+   * @param version version-Attribute in XML-Prolog.
    */
   public final void writeStartDocument(final String version)
       throws XMLStreamException {
-    // TODO
     writeStartDocument();
   }
 
   /**
-   * Just calls writeStartDocument.
+   * Calls writeStartDocument.
+   * 
+   * @param version 
+   *                  version-Attribute in XML-Prolog.
+   * @param encoding
+   *                  encoding-Attribute in XML-Prolog.
    */
   public final void writeStartDocument(
       final String encoding,
       final String version) throws XMLStreamException {
-    // TODO Auto-generated method stub
     writeStartDocument();
   }
 
@@ -774,7 +775,7 @@ public final class TreeTankStreamWriter implements XMLStreamWriter {
    * @param localName
    *                  The localName of the element.
    * @throws IllegalStateException
-   *                  If localName or namespaceURI is null.
+   *                  If localName, namespaceURI or prefix is null.
    */
   public final void writeStartElement(
       final String prefix,
