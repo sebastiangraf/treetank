@@ -18,21 +18,30 @@
 
 package com.treetank.shared;
 
-import com.treetank.api.INode;
+import java.util.ArrayList;
+import java.util.List;
 
-public abstract class Node implements INode {
+import com.treetank.api.IPageReference;
+
+public class PageReference implements IPageReference {
 
   private int mIndex;
 
   private long mRevision;
 
-  public Node() {
+  private List<FragmentReference> mFragmentReferenceList;
+  
+  private FragmentReference mDirtyFragment;
+
+  public PageReference() {
     this(0, 0);
   }
 
-  public Node(final int index, final long revision) {
+  public PageReference(final int index, final long revision) {
     mIndex = index;
     mRevision = revision;
+    mFragmentReferenceList = new ArrayList<FragmentReference>();
+    mDirtyFragment = null;
   }
 
   public final void setIndex(final int index) {
@@ -51,16 +60,32 @@ public abstract class Node implements INode {
     return mRevision;
   }
 
+  public final int getFragmentReferenceCount() {
+    return mFragmentReferenceList.size();
+  }
+
+  public final FragmentReference getFragmentReference(final int index) {
+    return mFragmentReferenceList.get(index);
+  }
+
   public void serialise(final ByteArrayWriter writer) {
     writer.writeVarInt(mIndex);
     writer.writeVarLong(mRevision);
+    writer.writeVarInt(mFragmentReferenceList.size());
+    for (final FragmentReference fragmentReference : mFragmentReferenceList) {
+      fragmentReference.serialise(writer);
+    }
   }
 
   public void deserialise(final ByteArrayReader reader) {
     mIndex = reader.readVarInt();
     mRevision = reader.readVarLong();
+    FragmentReference fragmentReference = null;
+    for (int i = 0, l = reader.readVarInt(); i < l; i++) {
+      fragmentReference = new FragmentReference();
+      fragmentReference.deserialise(reader);
+      mFragmentReferenceList.add(fragmentReference);
+    }
   }
-
-  public abstract int getType();
 
 }
