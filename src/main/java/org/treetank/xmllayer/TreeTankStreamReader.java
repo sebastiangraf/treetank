@@ -86,9 +86,6 @@ public final class TreeTankStreamReader implements XMLStreamReader {
   /** Run next() once after endElements has been set to true. */
   private boolean firstRun = true;
 
-  /** Determines if it's the end of TreeTank. */
-  private boolean endOfTreeTank = false;
-
   /** Determines if it's an empty element. */
   private boolean isEmptyElement = false;
 
@@ -1106,11 +1103,7 @@ public final class TreeTankStreamReader implements XMLStreamReader {
   // Checked.
   public final int nextTag() {
     int event = 0;
-
-    // TODO: mNextKey wie setzen? 
-    // Und bei "oops1" starten nicht mögl. wegen next()-Methode 
-    // (if (mStartKey == mRTX.getLeftSiblingKey())) 
-
+    
     for (int i = 0; i != 2; i++) {
       if (hasNext()) {
         event = next();
