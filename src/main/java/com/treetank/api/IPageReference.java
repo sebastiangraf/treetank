@@ -16,36 +16,24 @@
  * $Id$
  */
 
-package com.treetank.shared;
+package com.treetank.api;
 
-import com.treetank.api.INode;
+import com.treetank.shared.ByteArrayReader;
+import com.treetank.shared.ByteArrayWriter;
+import com.treetank.shared.FragmentReference;
 
-public final class DeletedNode extends Node implements INode {
+public interface IPageReference {
 
-  public static final int TYPE = 0;
+  public int getIndex();
 
-  public DeletedNode() {
-    this(0, 0);
-  }
+  public long getRevision();
 
-  public DeletedNode(final int index, final long revision) {
-    super(index, revision);
-  }
+  public int getFragmentReferenceCount();
 
-  public final void serialise(final ByteArrayWriter writer) {
-    super.serialise(writer);
-  }
+  public FragmentReference getFragmentReference(int index);
 
-  public final void deserialise(final ByteArrayReader reader) {
-    super.deserialise(reader);
-  }
+  public void serialise(final ByteArrayWriter writer);
 
-  public final int getType() {
-    return TYPE;
-  }
-
-  public final String toString() {
-    return "DeletedNode(" + getIndex() + ", " + getRevision() + ")";
-  }
+  public void deserialise(final ByteArrayReader reader);
 
 }

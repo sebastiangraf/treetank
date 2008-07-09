@@ -25,7 +25,7 @@ public interface INode {
 
   public int getType();
 
-  public int getOffset();
+  public int getIndex();
 
   public long getRevision();
 

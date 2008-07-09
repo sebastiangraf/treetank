@@ -33,11 +33,11 @@ public final class RootNode extends Node implements INode {
   }
 
   public RootNode(
-      final int offset,
+      final int index,
       final long revision,
       final String author,
       final String comment) {
-    super(offset, revision);
+    super(index, revision);
     mAuthor = author;
     mComment = comment;
   }
@@ -75,7 +75,7 @@ public final class RootNode extends Node implements INode {
   }
 
   public final String toString() {
-    return "RootNode(" + getOffset() + ", " + getRevision() + ")";
+    return "RootNode(" + getIndex() + ", " + getRevision() + ")";
   }
 
 }
