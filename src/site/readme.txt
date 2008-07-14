@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id:readme.txt 4014 2008-03-26 16:36:35Z kramis $
  */
  
 TreeTank Development Environment
@@ -29,6 +29,8 @@ TreeTank Development Environment
 
 TreeTank Coding Conventions
 ---------------------------
++ Each source file belongs to exactly one author and must be set according to:
+  Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
 + Each source file must sport the ICS license header as defined in license.txt.
 + Apply project-specific formatter and import organizer to file before save.
 + File encoding: UTF-8.

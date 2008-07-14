@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, Marc Kramis, University of Konstanz
+ * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
  * 
  * Patent Pending.
  * 

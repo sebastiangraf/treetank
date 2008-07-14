@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, Marc Kramis
+ * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -17,8 +17,6 @@
  */
 
 package org.treetank.utils;
-
-import org.treetank.api.IReadTransaction;
 
 /**
  * <h1>UTF</h1>
@@ -48,22 +46,21 @@ public final class TypedValue {
    * @param bytes Byte array of value.
    * @return Atomized value as string.
    */
-//  public static String atomize(final int valueType, final byte[] bytes) {
-//    if (bytes == null) {
-//      return "";
-//    }
-//    switch (valueType) {
-//    case IReadTransaction.INT_TYPE:
-//      return Integer.toString(parseInt(bytes));
-//    case IReadTransaction.LONG_TYPE:
-//      return Long.toString(parseLong(bytes));
-//    case IReadTransaction.BOOLEAN_TYPE:
-//      return Boolean.toString(parseBoolean(bytes));
-//    default:
-//      return parseString(bytes);
-//    }
-//  }
-
+  //  public static String atomize(final int valueType, final byte[] bytes) {
+  //    if (bytes == null) {
+  //      return "";
+  //    }
+  //    switch (valueType) {
+  //    case IReadTransaction.INT_TYPE:
+  //      return Integer.toString(parseInt(bytes));
+  //    case IReadTransaction.LONG_TYPE:
+  //      return Long.toString(parseLong(bytes));
+  //    case IReadTransaction.BOOLEAN_TYPE:
+  //      return Boolean.toString(parseBoolean(bytes));
+  //    default:
+  //      return parseString(bytes);
+  //    }
+  //  }
   /**
    * Parse string from given UTF-8 byte array.
    * 
@@ -346,7 +343,7 @@ public final class TypedValue {
   public static double parseDouble(final byte[] value) {
     return Double.parseDouble(parseString(value));
   }
-  
+
   /**
    * Parse float from given UTF-8 byte array.
    * 
