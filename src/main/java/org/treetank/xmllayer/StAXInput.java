@@ -24,13 +24,9 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLStreamException;
 
-import org.junit.Assert;
-import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
-import org.treetank.utils.FastStack;
-import org.treetank.utils.IConstants;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -40,7 +36,7 @@ public class StAXInput extends DefaultHandler {
 
   /** TreeTankStreamWriter. */
   private TreeTankStreamWriter writer;
-  
+
   /** Namespace context. */
   private NamespaceContextImpl nspContext;
 
@@ -72,7 +68,7 @@ public class StAXInput extends DefaultHandler {
         String prefix = null;
 
         final int offset = qName.indexOf(":");
-        
+
         if (offset > 0) {
           prefix = qName.substring(0, offset - 1);
           writer.writeStartElement(prefix, localName, uri);
@@ -93,7 +89,7 @@ public class StAXInput extends DefaultHandler {
       e.printStackTrace();
     }
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -104,7 +100,7 @@ public class StAXInput extends DefaultHandler {
       final String qName) throws SAXException {
     writer.writeEndElement();
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -117,15 +113,17 @@ public class StAXInput extends DefaultHandler {
       e.printStackTrace();
     }
   }
- 
+
   /**
    * {@inheritDoc}
    */
   @Override
   public void startPrefixMapping(String prefix, String uri) throws SAXException {
-    ((NamespaceContextImpl) writer.getNamespaceContext()).setNamespace(prefix, uri);
+    ((NamespaceContextImpl) writer.getNamespaceContext()).setNamespace(
+        prefix,
+        uri);
   }
-  
+
   public static void main(final String[] args) {
     if (args.length < 2 || args.length > 3) {
       System.out.println("Usage: XMLInput input.xml output.tnk [key]");

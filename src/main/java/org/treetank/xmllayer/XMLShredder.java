@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, Marc Kramis
+ * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -107,11 +107,10 @@ public final class XMLShredder {
                 .getNamespacePrefix(i));
           }
 
-
           // Parse attributes.
           for (int i = 0, l = parser.getAttributeCount(); i < l; i++) {
-            wtx.insertAttribute(parser.getAttributePrefix(i) == null 
-                ? parser.getAttributeLocalName(i) : parser.getAttributePrefix(i)
+            wtx.insertAttribute(parser.getAttributePrefix(i) == null ? parser
+                .getAttributeLocalName(i) : parser.getAttributePrefix(i)
                 + ":"
                 + parser.getAttributeLocalName(i), parser
                 .getAttributeNamespace(i), parser.getAttributeValue(i));

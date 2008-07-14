@@ -2,7 +2,7 @@ License for com.treetank.*:
 ===========================
 
 /*
- * Copyright (c) 2008, University of Konstanz
+ * Copyright (c) 2008, Firstname Lastname (Kind of work), University of Konstanz
  * 
  * Patent Pending.
  * 
@@ -23,7 +23,7 @@ License for org.treetank.*:
 ===========================
 
 /*
- * Copyright (c) 2008, University of Konstanz
+ * Copyright (c) 2008, Firstname Lastname (Kind of work), University of Konstanz
  * 
  * Patent Pending.
  * 

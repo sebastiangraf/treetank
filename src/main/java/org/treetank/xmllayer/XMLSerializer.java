@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, Marc Kramis
+ * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -95,7 +95,7 @@ public final class XMLSerializer implements Runnable {
   /** " tnk:id=\"". */
   private static final byte[] TNK_ID =
       new byte[] { SPACE, 116, 110, 107, 58, 105, 100, EQUAL, QUOTE };
-  
+
   /** " xmlns=\"". */
   private static final byte[] XMLNS =
       new byte[] { SPACE, 120, 109, 108, 110, 115, EQUAL, QUOTE };
@@ -266,7 +266,7 @@ public final class XMLSerializer implements Runnable {
       }
       break;
     case IReadTransaction.TEXT_KIND:
-        mOut.write(mRTX.getRawValue());
+      mOut.write(mRTX.getRawValue());
       break;
     }
   }
