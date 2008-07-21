@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: IItemList.java 4246 2008-07-08 08:54:09Z scherer $
+ * $Id$
  */
 
 package org.treetank.api;
@@ -25,10 +25,6 @@ import org.treetank.nodelayer.AbstractNode;
  * <p>
  * Common interface for all item kinds. An item can be a node or an atomic 
  * value.
- * </p>
- * 
- * @author Tina Scherer
- *
  */
 public interface IItem {
   
