@@ -104,6 +104,9 @@ public class XPathAxisTest {
 
     IAxisTest.testIAxisConventions(new XPathAxis(rtx, "/p:a[@i]"),
         new long[] { 2L });
+    
+    IAxisTest.testIAxisConventions(new XPathAxis(rtx, "/p:a/@i"),
+        new long[] { 2L });
 
     IAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a/b[@p:x]"),
         new long[] { 8L });

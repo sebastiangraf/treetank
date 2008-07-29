@@ -22,41 +22,48 @@ import java.io.File;
 
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
+import org.treetank.sessionlayer.ItemList;
 import org.treetank.sessionlayer.Session;
-import org.treetank.xpath.XPathAxis;
+import org.treetank.sessionlayer.SessionConfiguration;
+import org.treetank.xmllayer.XMLShredder;
 
 public class TestClass {
 
-  public static final String PATH = "target" + File.separator
-      + "address.tnk";
+  public static final String XML =
+      "src"
+          + File.separator
+          + "test"
+          + File.separator
+          + "resources"
+          + File.separator
+          + "test.xml";
 
+  public static final String PATH =
+      "target" + File.separator + "tnk" + File.separator + "test.tnk";
 
   public static void main(String[] args) {
-    
-  
+
+    Session.removeSession(PATH);
+    XMLShredder.shred(XML, new SessionConfiguration(PATH));
+
     // Build simple test tree.
     final ISession session = Session.beginSession(PATH);
-    final IReadTransaction wtx = session.beginReadTransaction();
+    final IReadTransaction rtx = session.beginReadTransaction(new ItemList());
+    //    rtx.moveTo(17L);
 
-////    wtx.moveTo(17L);
-//    
-   String query = "//email";
-////    String query = "./email";
-////   String query = "lastname";
-////    IAxis axis = new XPathAxis(wtx, query);
-////
-////    System.out.println("Query: " + query);
-////    while (axis.hasNext()) {
-////      System.out.println(axis.next());
-////    }
-//
-//  
-    for (long key : new XPathAxis(wtx, query)) {
-//      System.out.println(key);
+    String query = "fn:count(//b)";
+
+    System.out.println("Query: " + query);
+    for (long key : new XPathAxis(rtx, query)) {
+      System.out.println(key);
+      System.out.println(rtx.getName());
+      System.out.println(rtx.getValue());
+      System.out.println(rtx.getType()); //will return null for atomic values TODO: adapt ReadTransaction
+
     }
-  
-  wtx.close();
-  session.close();
+
+    rtx.close();
+    session.close();
   }
 
 }
