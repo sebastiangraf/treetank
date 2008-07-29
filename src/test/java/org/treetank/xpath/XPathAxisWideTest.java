@@ -50,12 +50,12 @@ public class XPathAxisWideTest {
       "target" + File.separator + "tnk" + File.separator + "XPathWideTest.tnk";
 
   public static final String XML2 =
-      "src"
-          + File.separator
-          + "test"
-          + File.separator
-          + "resources"
-          + File.separator
+    "src"
+    + File.separator
+    + "test"
+    + File.separator
+    + "resources"
+    + File.separator
           + "shakespeare.xml";
 
   public static final String PATH2 =
@@ -78,6 +78,8 @@ public class XPathAxisWideTest {
     final ISession session = Session.beginSession(PATH);
     final IReadTransaction rtx = session.beginReadTransaction(new ItemList());
     rtx.moveToDocumentRoot();
+    
+ 
 
     IAxisTest.testIAxisConventions(
         new XPathAxis(rtx, "/mondial/continent[@id]"),
@@ -147,16 +149,25 @@ public class XPathAxisWideTest {
   }
 
   ////  lasts too long
-  //  @Test
-  //  public void testIterateShakespreare() throws IOException, XMLStreamException {
-  // // Setup parsed session.
-  //    XMLShredder.shred(XML2, new SessionConfiguration(PATH2));
-  //
-  //    // Verify.
-  //    final ISession session2 = Session.beginSession(PATH2);
-  //    final IReadTransaction rtx2 = session2.beginReadTransaction(new ItemList());
-  //    rtx2.moveToDocumentRoot();
-  //
+    @Test
+    public void testIterateShakespreare() throws IOException, XMLStreamException {
+   // Setup parsed session.
+      XMLShredder.shred(XML2, new SessionConfiguration(PATH2));
+  
+      // Verify.
+      final ISession session2 = Session.beginSession(PATH2);
+      final IReadTransaction rtx2 = session2.beginReadTransaction(new ItemList());
+      rtx2.moveToDocumentRoot();
+  
+      XPathStringTest.testIAxisConventions(new XPathAxis(rtx2, "fn:count(//PLAY)"), 
+          new String[]{"37"});
+          
+          XPathStringTest.testIAxisConventions(new XPathAxis(rtx2, "fn:count(//*)"), 
+              new String[]{"179619"});
+          
+          
+          XPathStringTest.testIAxisConventions(new XPathAxis(rtx2, "fn:count(/PLAYS/PLAY/PERSONAE)"), 
+              new String[]{"37"});
   //    
   //    final IAxis axis1 = new XPathAxis(rtx2, "//PERSONA");
   //    for (int i = 0; i < 969; i++) {
@@ -211,7 +222,7 @@ public class XPathAxisWideTest {
   //  assertEquals(false, axis7.hasNext());
   //  
   //
-  //    rtx2.close();
-  //    session2.close();
-  //  }
+      rtx2.close();
+      session2.close();
+    }
 }

@@ -20,8 +20,10 @@ package org.treetank.xpath;
 
 import java.io.File;
 
+import org.treetank.api.IAxis;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
+import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.ItemList;
 import org.treetank.sessionlayer.Session;
 import org.treetank.sessionlayer.SessionConfiguration;
@@ -34,21 +36,31 @@ public class ShreddFile {
           + File.separator
           + "test"
           + File.separator
-          + "ressources"
+          + "resources"
           + File.separator
-          + "test.xml";
+          + "content.xml";
 
   public static final String PATH =
       "target" + File.separator + "tnk" + File.separator + "test.tnk";
 
   public static void main(String[] args) {
+    Session.removeSession(PATH);
     // Setup parsed session.
     XMLShredder.shred(XML, new SessionConfiguration(PATH));
+    
 
     // Verify.
     final ISession session = Session.beginSession(PATH);
     final IReadTransaction rtx = session.beginReadTransaction(new ItemList());
+    final IWriteTransaction wtx = session.beginWriteTransaction();
     rtx.moveToDocumentRoot();
+    
+    final IAxis xpath = new XPathAxis(wtx, "/office:document-content/office:body/office:text/text:p");
+    for (long node: xpath) {
+      System.out.println(node);
+      wtx.moveTo(node);
+      wtx.remove();
+    }
 
   }
 
