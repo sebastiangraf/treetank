@@ -19,7 +19,7 @@
  * $Id$
  */
 
-#include "NativeComp.h"
+#include "NativeCompression.h"
 #include <jni.h>
 
 #include <sys/syscall.h>
