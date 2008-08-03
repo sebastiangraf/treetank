@@ -18,12 +18,10 @@
 
 package org.treetank.pagelayer;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
-import java.util.zip.Inflater;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -41,9 +39,6 @@ import org.treetank.utils.IConstants;
  * </p>
  */
 public final class PageReader {
-
-  /** Size of temporary buffer. */
-  private static final int BUFFER_SIZE = 8192;
 
   /** Random access mFile to work on. */
   private final RandomAccessFile mFile;
@@ -64,13 +59,7 @@ public final class PageReader {
   private final SecretKeySpec mSecretKeySpec;
 
   /** Inflater to decompress. */
-  private final Inflater mDecompressor;
-
-  /** Byte array output stream to hold temporary data. */
-  private final ByteArrayOutputStream mOut;
-
-  /** Temporary (de)compression array. */
-  private final byte[] mTmp;
+  private ICompression mDecompressor;
 
   /**
    * Constructor.
@@ -109,9 +98,12 @@ public final class PageReader {
         mSecretKeySpec = null;
       }
 
-      mDecompressor = new Inflater();
-      mOut = new ByteArrayOutputStream();
-      mTmp = new byte[BUFFER_SIZE];
+      try {
+        System.loadLibrary("Compression");
+        mDecompressor = new NativeCompression();
+      } catch (UnsatisfiedLinkError e) {
+        mDecompressor = new JavaCompression();
+      }
 
     } catch (Exception e) {
       throw new RuntimeException("Could not create page reader: "
@@ -163,15 +155,7 @@ public final class PageReader {
       }
 
       // Decompress page.
-      mDecompressor.reset();
-      mOut.reset();
-      mDecompressor.setInput(page);
-      int count;
-      while (!mDecompressor.finished()) {
-        count = mDecompressor.inflate(mTmp);
-        mOut.write(mTmp, 0, count);
-      }
-      page = mOut.toByteArray();
+      page = mDecompressor.decompress(page);
 
     } catch (Exception e) {
       throw new RuntimeException("Could not read page "
