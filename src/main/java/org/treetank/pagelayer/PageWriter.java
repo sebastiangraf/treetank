@@ -18,12 +18,10 @@
 
 package org.treetank.pagelayer;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
-import java.util.zip.Deflater;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -41,9 +39,6 @@ import org.treetank.utils.IConstants;
  * </p>
  */
 public final class PageWriter {
-
-  /** Size of temporary buffer. */
-  private static final int BUFFER_SIZE = 8192;
 
   /** Random access mFile to work on. */
   private final RandomAccessFile mFile;
@@ -64,16 +59,10 @@ public final class PageWriter {
   private final SecretKeySpec mSecretKeySpec;
 
   /** Compressor to compress the page. */
-  private final Deflater mCompressor;
+  private ICompression mCompressor;
 
   /** Fast Byte array mWriter to hold temporary data. */
   private final FastByteArrayWriter mWriter;
-
-  /** Byte array output stream to hold temporary data. */
-  private final ByteArrayOutputStream mOut;
-
-  /** Temporary (de)compression array. */
-  private final byte[] mTmp;
 
   /**
    * Constructor.
@@ -111,11 +100,15 @@ public final class PageWriter {
         mCipher = null;
         mSecretKeySpec = null;
       }
-      
-      mCompressor = new Deflater(6);
+
+      try {
+        System.loadLibrary("Compression");
+        mCompressor = new NativeCompression();
+      } catch (UnsatisfiedLinkError e) {
+        mCompressor = new JavaCompression();
+      }
+
       mWriter = new FastByteArrayWriter();
-      mOut = new ByteArrayOutputStream();
-      mTmp = new byte[BUFFER_SIZE];
 
     } catch (Exception e) {
       throw new RuntimeException("Could not create page writer: "
@@ -142,16 +135,7 @@ public final class PageWriter {
       byte[] page = mWriter.getBytes();
 
       // Compress page.
-      mCompressor.reset();
-      mOut.reset();
-      mCompressor.setInput(page, 0, mWriter.size());
-      mCompressor.finish();
-      int count;
-      while (!mCompressor.finished()) {
-        count = mCompressor.deflate(mTmp);
-        mOut.write(mTmp, 0, count);
-      }
-      page = mOut.toByteArray();
+      page = mCompressor.compress(page);
 
       // Checksum page.
       if (mIsChecksummed) {
