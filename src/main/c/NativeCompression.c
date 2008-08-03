@@ -31,11 +31,10 @@
 #include <stdio.h>
 #include <string.h>
 
-JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeComp_compress(JNIEnv *env, jobject o, jbyteArray jin)
+JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeCompression_compress(JNIEnv *env, jobject o, jbyteArray jin)
 {
 
   char           buffer[64000];
-  char           key[16];       
 
   unsigned char *in     = (unsigned char*)((*env)->GetByteArrayElements(env, jin, 0));
   int            length = (*env)->GetArrayLength(env, jin);
@@ -43,7 +42,27 @@ JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeComp_compress(JNI
   //memcpy(void * destination, void * source, size_t bytes);
   memcpy(&buffer, in, length);
 
-  syscall(306, &key, &buffer, &length);
+  syscall(306, 1, &buffer, &length);
+  
+  jbyteArray jout = (*env)->NewByteArray(env, length);
+  unsigned char *out = (unsigned char*)((*env)->GetByteArrayElements(env, jout, 0));
+  memcpy(out, &buffer, length);
+
+  return jout;
+}
+
+JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeCompression_decompress(JNIEnv *env, jobject o, jbyteArray jin)
+{
+
+  char           buffer[64000];
+
+  unsigned char *in     = (unsigned char*)((*env)->GetByteArrayElements(env, jin, 0));
+  int            length = (*env)->GetArrayLength(env, jin);
+  
+  //memcpy(void * destination, void * source, size_t bytes);
+  memcpy(&buffer, in, length);
+
+  syscall(306, 0, &buffer, &length);
   
   jbyteArray jout = (*env)->NewByteArray(env, length);
   unsigned char *out = (unsigned char*)((*env)->GetByteArrayElements(env, jout, 0));
