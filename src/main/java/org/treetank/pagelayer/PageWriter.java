@@ -131,11 +131,9 @@ public final class PageWriter {
       mWriter.reset();
       pageReference.getPage().serialize(mWriter);
 
-      // Prepare members.
-      byte[] page = mWriter.getBytes();
-
       // Compress page.
-      page = mCompressor.compress(page);
+      final byte[] page =
+          mCompressor.compress(mWriter.getBytes(), 0, mWriter.size());
 
       // Checksum page.
       if (mIsChecksummed) {
@@ -145,9 +143,9 @@ public final class PageWriter {
       }
 
       // Encrypt page.
-      if (mIsEncrypted) {
-        page = mCipher.doFinal(page);
-      }
+      //      if (mIsEncrypted) {
+      //        page = mCipher.doFinal(page);
+      //      }
 
       // Write page to mFile.
       final long start = mFile.length();

@@ -136,9 +136,9 @@ public final class PageReader {
       mFile.read(page);
 
       // Decrypt page.
-      if (mIsEncrypted) {
-        page = mCipher.doFinal(page);
-      }
+      //      if (mIsEncrypted) {
+      //        page = mCipher.doFinal(page);
+      //      }
 
       // Verify checksummed page.
       if (mIsChecksummed) {
@@ -155,7 +155,7 @@ public final class PageReader {
       }
 
       // Decompress page.
-      page = mDecompressor.decompress(page);
+      page = mDecompressor.decompress(page, 0, page.length);
 
     } catch (Exception e) {
       throw new RuntimeException("Could not read page "

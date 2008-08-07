@@ -19,11 +19,14 @@
 package org.treetank.pagelayer;
 
 public interface ICompression {
-  
+
   public final int BUFFER_SIZE = 8192;
 
-  public byte[] compress(final byte[] input);
-  
-  public byte[] decompress(final byte[] input);
+  public byte[] compress(final byte[] input, final int offset, final int length);
+
+  public byte[] decompress(
+      final byte[] input,
+      final int offset,
+      final int length);
 
 }
