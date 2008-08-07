@@ -10,18 +10,18 @@ extern "C" {
 /*
  * Class:     org_treetank_pagelayer_NativeCompression
  * Method:    compress
- * Signature: ([B)[B
+ * Signature: ([BII)[B
  */
 JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeCompression_compress
-  (JNIEnv *, jobject, jbyteArray);
+  (JNIEnv *, jobject, jbyteArray, jint, jint);
 
 /*
  * Class:     org_treetank_pagelayer_NativeCompression
  * Method:    decompress
- * Signature: ([B)[B
+ * Signature: ([BII)[B
  */
 JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeCompression_decompress
-  (JNIEnv *, jobject, jbyteArray);
+  (JNIEnv *, jobject, jbyteArray, jint, jint);
 
 #ifdef __cplusplus
 }

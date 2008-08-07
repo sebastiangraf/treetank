@@ -31,17 +31,17 @@
 #include <stdio.h>
 #include <string.h>
 
-JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeCompression_compress(JNIEnv *env, jobject o, jbyteArray jin)
+JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeCompression_compress(JNIEnv *env, jobject o, jbyteArray jin, jint off, jint len)
 {
 
   u_int8_t   buffer[64000];
   u_int8_t  *in     = (u_int8_t*)((*env)->GetByteArrayElements(env, jin, 0));
-  u_int32_t  length = (*env)->GetArrayLength(env, jin);
+  u_int32_t  length = len;
   
   memcpy(&buffer, in, length);
-
-  syscall(306, 1, &buffer, &length);
   
+  syscall(306, 1, &buffer, &length);
+    
   jbyteArray jout = (*env)->NewByteArray(env, length);
   u_int8_t  *out  = (u_int8_t *)((*env)->GetByteArrayElements(env, jout, 0));
   
@@ -50,12 +50,12 @@ JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeCompression_compr
   return jout;
 }
 
-JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeCompression_decompress(JNIEnv *env, jobject o, jbyteArray jin)
+JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeCompression_decompress(JNIEnv *env, jobject o, jbyteArray jin, jint off, jint len)
 {
 
   u_int8_t   buffer[64000];
   u_int8_t  *in     = (u_int8_t*)((*env)->GetByteArrayElements(env, jin, 0));
-  u_int32_t  length = (*env)->GetArrayLength(env, jin);
+  u_int32_t  length = len;
     
   memcpy(&buffer, in, length);
 
