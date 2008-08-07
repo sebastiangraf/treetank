@@ -27,6 +27,7 @@
 		<pathelement location="${externals.dir}/stax-api__V1.0.1.jar" />
 		<pathelement location="${externals.dir}/junit__V4.4.jar" />
 		<pathelement location="${externals.dir}/checkstyle-all__V4.4.jar" />
+		<pathelement location="${externals.dir}/Perfidix__V2.1.0.jar" />
 		<pathelement location="${classes.dir}" />
 	</path>
 
@@ -52,6 +53,12 @@
 		<javac srcdir="${test.dir}" destdir="${classes.dir}">
 			<classpath refid="classpath" />
 		</javac>
+		<javah
+		  outputFile="src/main/c/NativeCompression.h"
+		  classpath="${classes.dir}"
+		  verbose="yes">
+		    <class name="org.treetank.pagelayer.NativeCompression"/>
+		</javah>
 	</target>
 
 	<!--
