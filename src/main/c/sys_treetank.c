@@ -56,7 +56,7 @@
   
 /* --- Constants. --------------------------------------------------------- */
 
-#define TT_COMPRESSION_ALGORITHM CRYPTO_DEFLATE_COMP
+#define TT_COMPRESSION_ALGORITHM CRYPTO_LZS_COMP
 
 #define TT_COMPRESS 1
 #define TT_DECOMPRESS 0
