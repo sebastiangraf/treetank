@@ -63,10 +63,10 @@ public final class TestDocument {
   /** String representation of test document with TNK environment. */
   public static final String XML_TANK =
       "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-          + "<tnk:sequence xmlns:tnk=\"http://treetank.org\"><tnk:item>"
+          + "<rest:sequence xmlns:rest=\"REST\"><rest:item>"
           + "<p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b p:x=\"y\">"
           + "<c/>bar</b>oops3</p:a>"
-          + "</tnk:item></tnk:sequence>";
+          + "</rest:item></rest:sequence>";
 
   /** String representation of test document. */
   public static final String XML =
