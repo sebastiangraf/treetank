@@ -92,9 +92,9 @@ public final class XMLSerializer implements Runnable {
   /** "/&gt;". */
   private static final byte[] SLASH_CLOSE = new byte[] { SLASH, CLOSE };
 
-  /** " tnk:id=\"". */
-  private static final byte[] TNK_ID =
-      new byte[] { SPACE, 116, 110, 107, 58, 105, 100, EQUAL, QUOTE };
+  /** " rest:id=\"". */
+  private static final byte[] REST_ID =
+      new byte[] { SPACE, 114, 101, 115, 116, 58, 105, 100, EQUAL, QUOTE };
 
   /** " xmlns=\"". */
   private static final byte[] XMLNS =
@@ -119,7 +119,7 @@ public final class XMLSerializer implements Runnable {
   /** Serialize XML declaration. */
   private final boolean mSerializeXMLDeclaration;
 
-  /** Serialize tnk:id. */
+  /** Serialize rest:id. */
   private final boolean mSerializeId;
 
   /**
@@ -165,7 +165,7 @@ public final class XMLSerializer implements Runnable {
 
       if (mSerializeXMLDeclaration) {
         write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-            + "<tnk:sequence xmlns:tnk=\"http://treetank.org\"><tnk:item>");
+            + "<rest:sequence xmlns:rest=\"REST\"><rest:item>");
       }
 
       boolean closeElements = false;
@@ -209,7 +209,7 @@ public final class XMLSerializer implements Runnable {
       }
 
       if (mSerializeXMLDeclaration) {
-        write("</tnk:item></tnk:sequence>");
+        write("</rest:item></rest:sequence>");
       }
 
       mOut.flush();
@@ -244,9 +244,9 @@ public final class XMLSerializer implements Runnable {
         }
       }
       // Emit attributes.
-      // Add virtual tnk:id attribute.
+      // Add virtual rest:id attribute.
       if (mSerializeId) {
-        mOut.write(TNK_ID);
+        mOut.write(REST_ID);
         write(mRTX.getNodeKey());
         mOut.write(QUOTE);
       }
