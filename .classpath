@@ -8,5 +8,8 @@
 	<classpathentry kind="lib" path="externals/junit__V4.4.jar"/>
 	<classpathentry kind="lib" path="externals/checkstyle-all__V4.4.jar"/>
 	<classpathentry kind="lib" path="externals/Perfidix__V2.1.0.jar"/>
+	<classpathentry kind="lib" path="externals/jetty-util-6.1.6.jar"/>
+	<classpathentry kind="lib" path="externals/jetty-6.1.6.jar"/>
+	<classpathentry kind="lib" path="externals/servlet-api-2.5-6.1.6.jar"/>
 	<classpathentry kind="output" path="target/eclipse"/>
 </classpath>
