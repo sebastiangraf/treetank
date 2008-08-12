@@ -24,6 +24,7 @@ import org.treetank.api.IAxis;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
+import org.treetank.sessionlayer.ItemList;
 import org.treetank.sessionlayer.Session;
 import org.treetank.xmllayer.XMLSerializer;
 import org.treetank.xpath.XPathAxis;
@@ -67,7 +68,7 @@ public class TreeTankWrapper {
   public final boolean isValid(final long revision, final long id) {
     boolean isValid = false;
     try {
-      final IReadTransaction rtx = session.beginReadTransaction(revision);
+      final IReadTransaction rtx = session.beginReadTransaction(revision, new ItemList());
       isValid = rtx.moveTo(id);
       rtx.close();
     } catch (Exception e) {
@@ -80,7 +81,7 @@ public class TreeTankWrapper {
       final OutputStream out,
       final long revision,
       final long id) throws Exception {
-    final IReadTransaction rtx = session.beginReadTransaction(revision);
+    final IReadTransaction rtx = session.beginReadTransaction(revision, new ItemList());
     try {
       if (rtx.moveTo(id)) {
         out.write(BEGIN_REST_ITEM);
@@ -97,7 +98,7 @@ public class TreeTankWrapper {
       final long revision,
       final long id,
       final String expression) throws Exception {
-    final IReadTransaction rtx = session.beginReadTransaction(revision);
+    final IReadTransaction rtx = session.beginReadTransaction(revision, new ItemList());
     try {
       if (rtx.moveTo(id)) {
         final IAxis axis = new XPathAxis(rtx, expression);
