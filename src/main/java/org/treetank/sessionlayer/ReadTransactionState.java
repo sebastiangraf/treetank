@@ -232,7 +232,12 @@ public class ReadTransactionState {
    * @return The item list.
    */
   public final IItemList getItemList() {
-    return mItemList;
+    if (mItemList != null) {
+      return mItemList;
+    } else {
+      throw new IllegalStateException("No ItemList for transaction found.");
+    }
+    
   }
 
   /**
