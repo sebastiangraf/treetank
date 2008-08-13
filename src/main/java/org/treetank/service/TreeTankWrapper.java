@@ -112,6 +112,8 @@ public class TreeTankWrapper {
           out.write(END_REST_ITEM);
         }
       }
+    } catch (Exception e) {
+      e.printStackTrace();
     } finally {
       rtx.close();
     }
