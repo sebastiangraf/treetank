@@ -31,6 +31,8 @@ import org.treetank.xpath.XPathAxis;
 
 public class TreeTankWrapper {
 
+  final String UTF8 = "UTF-8";
+
   final byte[] BEGIN_REST_ITEM =
       { 60, 114, 101, 115, 116, 58, 105, 116, 101, 109, 62 };
 
@@ -41,6 +43,23 @@ public class TreeTankWrapper {
 
   public TreeTankWrapper(String path) {
     session = Session.beginSession(path);
+  }
+
+  public final void putText(final long id, final String value) {
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+    try {
+      if (wtx.moveTo(id)) {
+        wtx.setValue(value);
+        wtx.commit();
+      }
+    } catch (Exception e) {
+      wtx.abort();
+      throw new RuntimeException(
+          "Could not overwrite text node with id=" + id,
+          e);
+    } finally {
+      wtx.close();
+    }
   }
 
   public final void delete(final long id) {
@@ -68,7 +87,8 @@ public class TreeTankWrapper {
   public final boolean isValid(final long revision, final long id) {
     boolean isValid = false;
     try {
-      final IReadTransaction rtx = session.beginReadTransaction(revision, new ItemList());
+      final IReadTransaction rtx =
+          session.beginReadTransaction(revision, new ItemList());
       isValid = rtx.moveTo(id);
       rtx.close();
     } catch (Exception e) {
@@ -81,7 +101,8 @@ public class TreeTankWrapper {
       final OutputStream out,
       final long revision,
       final long id) throws Exception {
-    final IReadTransaction rtx = session.beginReadTransaction(revision, new ItemList());
+    final IReadTransaction rtx =
+        session.beginReadTransaction(revision, new ItemList());
     try {
       if (rtx.moveTo(id)) {
         out.write(BEGIN_REST_ITEM);
@@ -98,7 +119,8 @@ public class TreeTankWrapper {
       final long revision,
       final long id,
       final String expression) throws Exception {
-    final IReadTransaction rtx = session.beginReadTransaction(revision, new ItemList());
+    final IReadTransaction rtx =
+        session.beginReadTransaction(revision, new ItemList());
     try {
       if (rtx.moveTo(id)) {
         final IAxis axis = new XPathAxis(rtx, expression);
@@ -107,7 +129,7 @@ public class TreeTankWrapper {
           if (key >= 0) {
             new XMLSerializer(rtx, out, false, true).run();
           } else {
-            out.write(rtx.getValue().getBytes("UTF-8"));
+            out.write(rtx.getValue().getBytes(UTF8));
           }
           out.write(END_REST_ITEM);
         }
