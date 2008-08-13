@@ -18,7 +18,9 @@
 
 package org.treetank.service;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -31,6 +33,13 @@ import org.mortbay.jetty.Request;
 import org.mortbay.jetty.handler.AbstractHandler;
 
 public class IdHandler extends AbstractHandler {
+
+  private final byte[] CROSSDOMAIN =
+      ("<?xml version='1.0'?>"
+          + "<!DOCTYPE cross-domain-policy SYSTEM "
+          + "'http://www.macromedia.com/xml/dtds/cross-domain-policy.dtd'>"
+          + "<cross-domain-policy><allow-access-from domain='*' />"
+          + "</cross-domain-policy>").getBytes();
 
   private final Map<String, TreeTankWrapper> mServices;
 
@@ -56,16 +65,21 @@ public class IdHandler extends AbstractHandler {
     throw new IllegalStateException(httpStatusMessage);
   }
 
-  public void handle(
-      String target,
-      HttpServletRequest request,
-      HttpServletResponse response,
-      int dispatch) throws IOException, ServletException {
+  private final void handleFavicon(
+      final HttpServletRequest request,
+      final HttpServletResponse response) throws Exception {
+    // Do nothing.
+  }
 
-    // filter fancy stuff.
-    if (request.getRequestURI().equalsIgnoreCase("/favicon.ico")) {
-      error(response, 404, "Resource '/favicon.ico' not found.");
-    }
+  private final void handleCrossdomain(
+      final HttpServletRequest request,
+      final HttpServletResponse response) throws Exception {
+    response.getOutputStream().write(CROSSDOMAIN);
+  }
+
+  private final void handleTreeTank(
+      final HttpServletRequest request,
+      final HttpServletResponse response) throws Exception {
 
     // Initialise request with defaults.
     String serviceString = "default.tnk";
@@ -109,54 +123,82 @@ public class IdHandler extends AbstractHandler {
     response.setCharacterEncoding("UTF-8");
 
     final OutputStream out = response.getOutputStream();
+    long revision = -1L;
+    if (revisionString.equalsIgnoreCase("()")) {
+      revision = service.getLastRevisionNumber();
+    } else {
+      revision = Long.valueOf(revisionString);
+    }
+    final long id = Long.valueOf(idString);
+
+    // Process request.
+    if (service.isValid(revision, id)) {
+      out
+          .write(new String(
+              "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+                  + "<rest:response xmlns:rest=\"REST\"><rest:sequence rest:revision=\"")
+              .getBytes("UTF-8"));
+      out.write(Long.toString(revision).getBytes("UTF-8"));
+      out.write(new String("\">").getBytes("UTF-8"));
+
+      final long start = System.currentTimeMillis();
+
+      // Handle id.
+      if (request.getMethod().equalsIgnoreCase("get")) {
+        // --- GET ---------------------------------------------------------------
+        if (queryString == null) {
+          service.get(out, revision, id);
+        } else {
+          service.get(out, revision, id, queryString);
+        }
+      } else if (request.getMethod().equalsIgnoreCase("put")) {
+        // --- PUT ---------------------------------------------------------------
+        final InputStream in = request.getInputStream();
+        final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        final byte[] tmp = new byte[256];
+        int len = 0;
+        while ((len = in.read(tmp)) != -1) {
+          bout.write(tmp, 0, len);
+        }
+        service.putText(id, bout.toString());
+      } else {
+        error(response, 501, "Method not implemented.");
+      }
+
+      final long stop = System.currentTimeMillis();
+
+      out.write(new String("</rest:sequence><rest:time>").getBytes("UTF-8"));
+      out.write(new String(Long.toString(stop - start)).getBytes("UTF-8"));
+      out.write(new String("[ms]</rest:time></rest:response>")
+          .getBytes("UTF-8"));
+
+    } else {
+      error(response, 404, "Revision or id not found.");
+    }
+  }
+
+  public void handle(
+      String target,
+      HttpServletRequest request,
+      HttpServletResponse response,
+      int dispatch) throws IOException, ServletException {
 
     try {
-      long revision = -1L;
-      if (revisionString.equalsIgnoreCase("()")) {
-        revision = service.getLastRevisionNumber();
+
+      // Select request type.
+      if (request.getRequestURI().equalsIgnoreCase("/favicon.ico")) {
+        handleFavicon(request, response);
+      } else if (request.getRequestURI().equalsIgnoreCase("/crossdomain.xml")) {
+        handleCrossdomain(request, response);
       } else {
-        revision = Long.valueOf(revisionString);
+        handleTreeTank(request, response);
       }
 
-      long id = Long.valueOf(idString);
-
-      if (service.isValid(revision, id)) {
-        out
-            .write(new String(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-                    + "<rest:response xmlns:rest=\"REST\"><rest:sequence rest:revision=\"")
-                .getBytes("UTF-8"));
-        out.write(Long.toString(revision).getBytes("UTF-8"));
-        out.write(new String("\">").getBytes("UTF-8"));
-
-        final long start = System.currentTimeMillis();
-
-        // Handle id.
-        if (request.getMethod().equalsIgnoreCase("get")) {
-          // --- GET ---------------------------------------------------------------
-          if (queryString == null) {
-            service.get(out, revision, id);
-          } else {
-            service.get(out, revision, id, queryString);
-          }
-        } else {
-          error(response, 501, "Method not implemented.");
-        }
-
-        final long stop = System.currentTimeMillis();
-
-        out.write(new String("</rest:sequence><rest:time>").getBytes("UTF-8"));
-        out.write(new String(Long.toString(stop - start)).getBytes("UTF-8"));
-        out.write(new String("[ms]</rest:time></rest:response>")
-            .getBytes("UTF-8"));
-
-      } else {
-        error(response, 404, "Revision or id not found.");
-      }
     } catch (Exception e) {
       error(response, e);
     }
 
     ((Request) request).setHandled(true);
   }
+
 }
