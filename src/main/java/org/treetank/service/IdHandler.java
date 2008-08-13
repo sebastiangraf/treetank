@@ -145,14 +145,14 @@ public class IdHandler extends AbstractHandler {
 
       // Handle id.
       if (request.getMethod().equalsIgnoreCase("get")) {
-        // --- GET ---------------------------------------------------------------
+        // --- GET -------------------------------------------------------------
         if (queryString == null) {
           service.get(out, revision, id);
         } else {
           service.get(out, revision, id, queryString);
         }
-      } else if (request.getMethod().equalsIgnoreCase("put")) {
-        // --- PUT ---------------------------------------------------------------
+      } else if (request.getMethod().equalsIgnoreCase("post")) {
+        // --- POST ------------------------------------------------------------
         final InputStream in = request.getInputStream();
         final ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final byte[] tmp = new byte[256];
