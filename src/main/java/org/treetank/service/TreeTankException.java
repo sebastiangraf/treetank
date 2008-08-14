@@ -18,31 +18,33 @@
 
 package org.treetank.service;
 
-import java.util.Map;
+public final class TreeTankException extends Exception {
 
-import org.mortbay.jetty.Server;
-import org.treetank.concurrent.ConcurrentHashMap;
+  private final int mErrorCode;
 
-public class TankTankService {
+  private final String mErrorMessage;
 
-  /**
-   * @param args
-   */
-  public static void main(String[] args) {
+  public TreeTankException(final int errorCode, final String errorMessage) {
+    super();
+    mErrorCode = errorCode;
+    mErrorMessage = errorMessage;
+  }
 
-    try {
+  public TreeTankException(
+      final int errorCode,
+      final String errorMessage,
+      final Exception e) {
+    super(e);
+    mErrorCode = errorCode;
+    mErrorMessage = errorMessage;
+  }
 
-      final Map map = new ConcurrentHashMap();
+  public final int getErrorCode() {
+    return mErrorCode;
+  }
 
-      final Server server = new Server(8182);
-      server.setHandler(new TreeTankHandler(map));
-      server.start();
-
-    } catch (Exception e) {
-      e.printStackTrace();
-      System.exit(1);
-    }
-
+  public final String getErrorMessage() {
+    return mErrorMessage;
   }
 
 }

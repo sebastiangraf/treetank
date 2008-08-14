@@ -18,31 +18,21 @@
 
 package org.treetank.service;
 
-import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.mortbay.jetty.Server;
-import org.treetank.concurrent.ConcurrentHashMap;
+import org.mortbay.jetty.Request;
 
-public class TankTankService {
+public final class HelperFavicon {
 
-  /**
-   * @param args
-   */
-  public static void main(String[] args) {
-
+  public final void handle(
+      final HttpServletRequest request,
+      final HttpServletResponse response) throws TreeTankException {
     try {
-
-      final Map map = new ConcurrentHashMap();
-
-      final Server server = new Server(8182);
-      server.setHandler(new TreeTankHandler(map));
-      server.start();
-
+      ((Request) request).setHandled(true);
     } catch (Exception e) {
-      e.printStackTrace();
-      System.exit(1);
+      throw new TreeTankException(500, e.getMessage(), e);
     }
-
   }
 
 }
