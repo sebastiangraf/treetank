@@ -31,6 +31,10 @@
 #include <stdio.h>
 #include <string.h>
 
+/*
+ * gcc -shared -Wall -I/treetank/jre/include/ -o /treetank/service/libCompression.so NativeCompression.c
+ */
+
 JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeCompression_compress(JNIEnv *env, jobject o, jbyteArray jin, jint off, jint len)
 {
 

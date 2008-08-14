@@ -190,9 +190,9 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
   /* --- Cleanup for all conditions. -------------------------------------- */
   
 finish:
-
+  
   m_freem(operationPointer->crp_buf);
-
+ 
   if (operationPointer != NULL)
   {
     crypto_freereq(operationPointer);
