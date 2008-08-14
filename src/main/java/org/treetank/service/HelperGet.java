@@ -83,11 +83,11 @@ public final class HelperGet {
           mServices.put(serviceString, service);
         }
       }
-      long revision;
+      long revision = 0;
       if (revisionString.equalsIgnoreCase(LAST_REVISION)) {
-        revision = service.getLastRevisionNumber();
+        revision = service.getLastRevision();
       } else {
-        revision = Long.valueOf(revisionString);
+        revision = service.checkRevision(Long.valueOf(revisionString));
       }
       final long id = Long.valueOf(idString);
 
@@ -97,33 +97,28 @@ public final class HelperGet {
 
       // Write response body.
       final OutputStream out = response.getOutputStream();
-      if (service.isValid(revision, id)) {
 
-        final long start = System.currentTimeMillis();
+      final long start = System.currentTimeMillis();
 
-        out
-            .write(("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-                + "<rest:response xmlns:rest=\"REST\"><rest:sequence rest:revision=\"")
-                .getBytes(ENCODING));
-        out.write(Long.toString(revision).getBytes(ENCODING));
-        out.write(new String("\">").getBytes(ENCODING));
+      out
+          .write(("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+              + "<rest:response xmlns:rest=\"REST\"><rest:sequence rest:revision=\"")
+              .getBytes(ENCODING));
+      out.write(Long.toString(revision).getBytes(ENCODING));
+      out.write(new String("\">").getBytes(ENCODING));
 
-        // Handle.
-        if (queryString == null) {
-          service.get(out, revision, id);
-        } else {
-          service.get(out, revision, id, queryString);
-        }
-
-        // Time measurement
-        final long stop = System.currentTimeMillis();
-        out.write("</rest:sequence><rest:time>".getBytes(ENCODING));
-        out.write(Long.toString(stop - start).getBytes(ENCODING));
-        out.write("[ms]</rest:time></rest:response>".getBytes(ENCODING));
-
+      // Handle.
+      if (queryString == null) {
+        service.get(out, revision, id);
       } else {
-        throw new TreeTankException(404, "Revision or id not found.");
+        service.get(out, revision, id, queryString);
       }
+
+      // Time measurement
+      final long stop = System.currentTimeMillis();
+      out.write("</rest:sequence><rest:time>".getBytes(ENCODING));
+      out.write(Long.toString(stop - start).getBytes(ENCODING));
+      out.write("[ms]</rest:time></rest:response>".getBytes(ENCODING));
 
       ((Request) request).setHandled(true);
 
