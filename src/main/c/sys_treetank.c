@@ -35,7 +35,8 @@
   * 
   * The following steps allow to rebuild the OpenBSD kernel:
   * 1) Add following line to end of /usr/src/sys/kern/syscalls.master:
-  * 306	STD		{ int sys_treetank(u_int8_t operation, \
+  * 306	STD		{ int sys_treetank(u_int8_t core, \
+  *                u_int8_t operation, \
   *                u_int8_t *bufferPointer, \
   *                u_int32_t *lengthPointer); }
   * 2) Rebuild syscall entries:
@@ -72,7 +73,15 @@ int tt_callback(void *);
 
 /* --- Global variables. -------------------------------------------------- */
 
-static u_int64_t tt_sessionId = TT_NULL_SESSION;
+static u_int64_t tt_sessionId[] = {
+  TT_NULL_SESSION,
+  TT_NULL_SESSION,
+  TT_NULL_SESSION,
+  TT_NULL_SESSION,
+  TT_NULL_SESSION,
+  TT_NULL_SESSION,
+  TT_NULL_SESSION,
+  TT_NULL_SESSION };
 
 /* --- Code. -------------------------------------------------------------- */
 
@@ -92,7 +101,7 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
   
   /* --- Initialise session (if required). -------------------------------- */
     
-  if (tt_sessionId == TT_NULL_SESSION)
+  if (tt_sessionId[SCARG(argumentPointer, core)] == TT_NULL_SESSION)
   {
     struct cryptoini session;  
 
@@ -100,12 +109,12 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
     session.cri_alg = TT_COMPRESSION_ALGORITHM;
 
     if (crypto_newsession(
-	  &tt_sessionId,
+	  &(tt_sessionId[SCARG(argumentPointer, core)]),
       &session,
       0) != TT_OK)
     {
 	  error = TT_ERROR;
-      tt_sessionId = TT_NULL_SESSION;
+      tt_sessionId[SCARG(argumentPointer, core)] = TT_NULL_SESSION;
       printf("ERROR(sys_treetank.c): Could not allocate cryptoini.\n");
 	  goto finish;
     }
@@ -141,7 +150,7 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
     goto finish;
   }
 
-  operationPointer->crp_sid               = tt_sessionId;
+  operationPointer->crp_sid               = tt_sessionId[SCARG(argumentPointer, core)];
   operationPointer->crp_ilen              = *SCARG(argumentPointer, lengthPointer);
   operationPointer->crp_flags             = CRYPTO_F_IMBUF;
   operationPointer->crp_buf               = (caddr_t) packetPointer;
@@ -153,6 +162,7 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
     operationPointer->crp_desc->crd_flags = CRD_F_COMP;
   else
     operationPointer->crp_desc->crd_flags = 0;
+  operationPointer->crp_opaque            = &SCARG(argumentPointer, core);
   operationPointer->crp_callback          = (int (*) (struct cryptop *)) tt_callback;
    
   /* --- Synchronously dispatch crypto operation. ------------------------- */
@@ -214,7 +224,8 @@ tt_callback(void *op)
   
   if (operationPointer->crp_etype == EAGAIN)
   {
-    tt_sessionId = operationPointer->crp_sid;
+    tt_sessionId[* (int *) (operationPointer->crp_opaque)] 
+      = operationPointer->crp_sid;
 	operationPointer->crp_flags = CRYPTO_F_IMBUF;
 	return crypto_dispatch(operationPointer);
   }

@@ -28,6 +28,9 @@
 		<pathelement location="${externals.dir}/junit__V4.4.jar" />
 		<pathelement location="${externals.dir}/checkstyle-all__V4.4.jar" />
 		<pathelement location="${externals.dir}/Perfidix__V2.1.0.jar" />
+		<pathelement location="${externals.dir}/jetty-util-6.1.6.jar" />
+			<pathelement location="${externals.dir}/jetty-6.1.6.jar" />
+			<pathelement location="${externals.dir}/servlet-api-2.5-6.1.6.jar" />
 		<pathelement location="${classes.dir}" />
 	</path>
 

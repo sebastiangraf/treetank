@@ -35,7 +35,7 @@
  * gcc -shared -Wall -I/treetank/jre/include/ -o /treetank/service/libCompression.so NativeCompression.c
  */
 
-JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeCompression_compress(JNIEnv *env, jobject o, jbyteArray jin, jint off, jint len)
+JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeCompression_compress(JNIEnv *env, jobject o, jint core, jbyteArray jin, jint len)
 {
 
   u_int8_t   buffer[64000];
@@ -44,7 +44,7 @@ JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeCompression_compr
   
   memcpy(&buffer, in, length);
   
-  syscall(306, 1, &buffer, &length);
+  syscall(306, core, 1, &buffer, &length);
     
   jbyteArray jout = (*env)->NewByteArray(env, length);
   u_int8_t  *out  = (u_int8_t *)((*env)->GetByteArrayElements(env, jout, 0));
@@ -54,7 +54,7 @@ JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeCompression_compr
   return jout;
 }
 
-JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeCompression_decompress(JNIEnv *env, jobject o, jbyteArray jin, jint off, jint len)
+JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeCompression_decompress(JNIEnv *env, jobject o, jint core, jbyteArray jin, jint len)
 {
 
   u_int8_t   buffer[64000];
@@ -63,7 +63,7 @@ JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeCompression_decom
     
   memcpy(&buffer, in, length);
 
-  syscall(306, 0, &buffer, &length);
+  syscall(306, core, 0, &buffer, &length);
   
   jbyteArray jout = (*env)->NewByteArray(env, length);
   u_int8_t  *out  = (u_int8_t *)((*env)->GetByteArrayElements(env, jout, 0));
