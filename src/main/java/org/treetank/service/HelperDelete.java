@@ -92,18 +92,18 @@ public final class HelperDelete {
               + "<rest:response xmlns:rest=\"REST\"><rest:sequence rest:revision=\"")
               .getBytes(ENCODING));
       out.write(Long.toString(revision).getBytes(ENCODING));
-      out.write(new String("\"><rest:item rest:id=\"").getBytes(ENCODING));
-      out.write(Long.toString(id).getBytes(ENCODING));
       out.write(new String("\"/>").getBytes(ENCODING));
 
       // Time measurement
       final long stop = System.currentTimeMillis();
-      out.write("</rest:sequence><rest:time>".getBytes(ENCODING));
+      out.write("<rest:time>".getBytes(ENCODING));
       out.write(Long.toString(stop - start).getBytes(ENCODING));
       out.write("[ms]</rest:time></rest:response>".getBytes(ENCODING));
 
       ((Request) request).setHandled(true);
 
+    } catch (TreeTankException te) {
+      throw te;
     } catch (Exception e) {
       throw new TreeTankException(500, e.getMessage(), e);
     }

@@ -18,6 +18,7 @@
 
 package org.treetank.service;
 
+import java.io.IOException;
 import java.io.OutputStream;
 
 import org.treetank.api.IAxis;
@@ -45,76 +46,104 @@ public class TreeTankWrapper {
     session = Session.beginSession(path);
   }
 
-  public final long putText(final long id, final String value) {
-    final IWriteTransaction wtx = session.beginWriteTransaction();
-    final long revision = wtx.getRevisionNumber();
+  public final long putText(final long id, final String value)
+      throws TreeTankException {
+    IWriteTransaction wtx = null;
+    long revision = 0;
     try {
+      wtx = session.beginWriteTransaction();
+      revision = wtx.getRevisionNumber();
       if (wtx.moveTo(id)) {
         wtx.setValue(value);
         wtx.commit();
+      } else {
+        throw new TreeTankException(404, "Node with id=" + id + " not found.");
       }
-      wtx.close();
       return revision;
-    } catch (Exception e) {
+    } catch (TreeTankException te) {
       wtx.abort();
-      wtx.close();
-      throw new RuntimeException(
-          "Could not overwrite text node with id=" + id,
-          e);
+      throw te;
+    } finally {
+      if (wtx != null) {
+        wtx.close();
+      }
     }
   }
 
-  public final long delete(final long id) {
-    final IWriteTransaction wtx = session.beginWriteTransaction();
-    final long revision = wtx.getRevisionNumber();
+  public final long delete(final long id) throws TreeTankException {
+    IWriteTransaction wtx = null;
+    long revision = 0;
     try {
+      wtx = session.beginWriteTransaction();
+      revision = wtx.getRevisionNumber();
       if (wtx.moveTo(id)) {
         wtx.remove();
         wtx.commit();
+      } else {
+        throw new TreeTankException(404, "Node with id=" + id + " not found.");
       }
-      wtx.close();
       return revision;
-    } catch (Exception e) {
+    } catch (TreeTankException te) {
       wtx.abort();
-      wtx.close();
-      throw new RuntimeException("Could not delete node with id=" + id, e);
+      throw te;
+    } finally {
+      if (wtx != null) {
+        wtx.close();
+      }
     }
   }
 
-  public final long getLastRevisionNumber() {
-    final IReadTransaction rtx = session.beginReadTransaction();
-    final long lastRevisionNumber = rtx.getRevisionNumber();
-    rtx.close();
-    return lastRevisionNumber;
-  }
-
-  public final boolean isValid(final long revision, final long id) {
-    boolean isValid = false;
+  public final long getLastRevision() {
+    IReadTransaction rtx = null;
+    long lastRevision = 0;
     try {
-      final IReadTransaction rtx =
-          session.beginReadTransaction(revision, new ItemList());
-      isValid = rtx.moveTo(id);
-      rtx.close();
-    } catch (Exception e) {
-      isValid = false;
+      rtx = session.beginReadTransaction();
+      lastRevision = rtx.getRevisionNumber();
+    } finally {
+      if (rtx != null) {
+        rtx.close();
+      }
     }
-    return isValid;
+    return lastRevision;
+  }
+
+  public final long checkRevision(final long revision) throws TreeTankException {
+    IReadTransaction rtx = null;
+    long checkedRevision = revision;
+    try {
+      rtx = session.beginReadTransaction(revision);
+    } catch (Exception e) {
+      throw new TreeTankException(404, "Revision=" + revision + " not found.");
+    } finally {
+      if (rtx != null) {
+        rtx.close();
+      }
+    }
+    return checkedRevision;
   }
 
   public final void get(
       final OutputStream out,
       final long revision,
-      final long id) throws Exception {
-    final IReadTransaction rtx =
-        session.beginReadTransaction(revision, new ItemList());
+      final long id) throws TreeTankException {
+    IReadTransaction rtx = null;
     try {
+      rtx = session.beginReadTransaction(revision);
       if (rtx.moveTo(id)) {
         out.write(BEGIN_REST_ITEM);
         new XMLSerializer(rtx, out, false, true).run();
         out.write(END_REST_ITEM);
+      } else {
+        throw new TreeTankException(404, "Node with id=" + id + " not found.");
       }
+    } catch (TreeTankException te) {
+      throw te;
+    } catch (IOException ie) {
+      throw new TreeTankException(500, ie.getMessage(), ie);
     } finally {
-      rtx.close();
+      if (rtx != null) {
+        rtx.close();
+      }
     }
   }
 
@@ -122,10 +151,10 @@ public class TreeTankWrapper {
       final OutputStream out,
       final long revision,
       final long id,
-      final String expression) throws Exception {
-    final IReadTransaction rtx =
-        session.beginReadTransaction(revision, new ItemList());
+      final String expression) throws TreeTankException {
+    IReadTransaction rtx = null;
     try {
+      rtx = session.beginReadTransaction(revision, new ItemList());
       if (rtx.moveTo(id)) {
         final IAxis axis = new XPathAxis(rtx, expression);
         for (final long key : axis) {
@@ -137,11 +166,17 @@ public class TreeTankWrapper {
           }
           out.write(END_REST_ITEM);
         }
+      } else {
+        throw new TreeTankException(404, "Node with id=" + id + " not found.");
       }
-    } catch (Exception e) {
-      e.printStackTrace();
+    } catch (TreeTankException te) {
+      throw te;
+    } catch (IOException ie) {
+      throw new TreeTankException(500, ie.getMessage(), ie);
     } finally {
-      rtx.close();
+      if (rtx != null) {
+        rtx.close();
+      }
     }
   }
 
