@@ -45,35 +45,39 @@ public class TreeTankWrapper {
     session = Session.beginSession(path);
   }
 
-  public final void putText(final long id, final String value) {
+  public final long putText(final long id, final String value) {
     final IWriteTransaction wtx = session.beginWriteTransaction();
+    final long revision = wtx.getRevisionNumber();
     try {
       if (wtx.moveTo(id)) {
         wtx.setValue(value);
         wtx.commit();
       }
+      wtx.close();
+      return revision;
     } catch (Exception e) {
       wtx.abort();
+      wtx.close();
       throw new RuntimeException(
           "Could not overwrite text node with id=" + id,
           e);
-    } finally {
-      wtx.close();
     }
   }
 
-  public final void delete(final long id) {
+  public final long delete(final long id) {
     final IWriteTransaction wtx = session.beginWriteTransaction();
+    final long revision = wtx.getRevisionNumber();
     try {
       if (wtx.moveTo(id)) {
         wtx.remove();
         wtx.commit();
       }
+      wtx.close();
+      return revision;
     } catch (Exception e) {
       wtx.abort();
-      throw new RuntimeException("Could not delete node with id=" + id, e);
-    } finally {
       wtx.close();
+      throw new RuntimeException("Could not delete node with id=" + id, e);
     }
   }
 
