@@ -48,11 +48,11 @@ public class JavaCompression implements ICompression {
    * @param data data that should be compressed
    * @return compressed data, null if failed
    */
-  public byte[] compress(final byte[] data, final int offset, final int length) {
+  public byte[] compress(final int core, final byte[] buffer, final int length) {
     try {
       mCompressor.reset();
       mOut.reset();
-      mCompressor.setInput(data, offset, length);
+      mCompressor.setInput(buffer, 0, length);
       mCompressor.finish();
       int count;
       while (!mCompressor.finished()) {
@@ -71,11 +71,11 @@ public class JavaCompression implements ICompression {
    * @param data data that should be decompressed
    * @return Decompressed data, null if failed
    */
-  public byte[] decompress(final byte[] data, final int offset, final int length) {
+  public byte[] decompress(final int core, final byte[] buffer, final int length) {
     try {
       mDecompressor.reset();
       mOut.reset();
-      mDecompressor.setInput(data, offset, length);
+      mDecompressor.setInput(buffer, 0, length);
       int count;
       while (!mDecompressor.finished()) {
         count = mDecompressor.inflate(mTmp);

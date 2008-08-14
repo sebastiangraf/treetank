@@ -21,13 +21,13 @@ package org.treetank.pagelayer;
 public class NativeCompression implements ICompression {
 
   public synchronized native byte[] compress(
-      final byte[] input,
-      final int offset,
+      final int core,
+      final byte[] buffer,
       final int length);
 
   public synchronized native byte[] decompress(
-      final byte[] input,
-      final int offset,
+      final int core,
+      final byte[] buffer,
       final int length);
 
 }
