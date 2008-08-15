@@ -24,6 +24,8 @@ import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Set;
 
+import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
+
 /**
  * <h1>WeakHashMap</h1>
  * 
@@ -56,7 +58,7 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
    *
    */
   public FastWeakHashMap() {
-    mInternalMap = new org.treetank.concurrent.ConcurrentHashMap();
+    mInternalMap = new ConcurrentHashMap();
     mQueue = new ReferenceQueue();
   }
 

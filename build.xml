@@ -29,8 +29,9 @@
 		<pathelement location="${externals.dir}/checkstyle-all__V4.4.jar" />
 		<pathelement location="${externals.dir}/Perfidix__V2.1.0.jar" />
 		<pathelement location="${externals.dir}/jetty-util-6.1.6.jar" />
-			<pathelement location="${externals.dir}/jetty-6.1.6.jar" />
-			<pathelement location="${externals.dir}/servlet-api-2.5-6.1.6.jar" />
+		<pathelement location="${externals.dir}/jetty-6.1.6.jar" />
+		<pathelement location="${externals.dir}/servlet-api-2.5-6.1.6.jar" />
+		<pathelement location="${externals.dir}/backport-util-concurrent-3.1.jar" />
 		<pathelement location="${classes.dir}" />
 	</path>
 
@@ -56,11 +57,8 @@
 		<javac srcdir="${test.dir}" destdir="${classes.dir}">
 			<classpath refid="classpath" />
 		</javac>
-		<javah
-		  outputFile="src/main/c/NativeCompression.h"
-		  classpath="${classes.dir}"
-		  verbose="yes">
-		    <class name="org.treetank.pagelayer.NativeCompression"/>
+		<javah outputFile="src/main/c/NativeCompression.h" classpath="${classes.dir}" verbose="yes">
+			<class name="org.treetank.pagelayer.NativeCompression" />
 		</javah>
 	</target>
 

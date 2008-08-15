@@ -155,7 +155,7 @@ public final class PageReader {
       }
 
       // Decompress page.
-      page = mDecompressor.decompress(0, page, page.length);
+      page = mDecompressor.decompress(page, page.length);
 
     } catch (Exception e) {
       throw new RuntimeException("Could not read page "
