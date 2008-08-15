@@ -133,7 +133,7 @@ public final class PageWriter {
 
       // Compress page.
       final byte[] page =
-          mCompressor.compress(0, mWriter.getBytes(), mWriter.size());
+          mCompressor.compress(mWriter.getBytes(), mWriter.size());
 
       // Checksum page.
       if (mIsChecksummed) {

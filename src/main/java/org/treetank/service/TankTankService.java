@@ -21,7 +21,8 @@ package org.treetank.service;
 import java.util.Map;
 
 import org.mortbay.jetty.Server;
-import org.treetank.concurrent.ConcurrentHashMap;
+
+import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
 
 public class TankTankService {
 

@@ -35,6 +35,9 @@ import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.FastWeakHashMap;
 import org.treetank.utils.IConstants;
 
+import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
+import edu.emory.mathcs.backport.java.util.concurrent.Semaphore;
+
 /**
  * <h1>SessionState</h1>
  * 
@@ -51,10 +54,10 @@ public final class SessionState {
   private Map<Long, AbstractPage> mPageCache;
 
   /** Write semaphore to assure only one exclusive write transaction exists. */
-  private org.treetank.concurrent.Semaphore mWriteSemaphore;
+  private Semaphore mWriteSemaphore;
 
   /** Read semaphore to control running read transactions. */
-  private org.treetank.concurrent.Semaphore mReadSemaphore;
+  private Semaphore mReadSemaphore;
 
   /** Strong reference to uber page before the begin of a write transaction. */
   private UberPage mLastCommittedUberPage;
@@ -92,7 +95,7 @@ public final class SessionState {
 
     mSessionConfiguration = sessionConfiguration;
     RandomAccessFile file = null;
-    mTransactionMap = new org.treetank.concurrent.ConcurrentHashMap();
+    mTransactionMap = new ConcurrentHashMap();
     mRandom = new Random();
 
     try {
@@ -102,12 +105,8 @@ public final class SessionState {
 
       // Init session members.
       mPageCache = new FastWeakHashMap<Long, AbstractPage>();
-      mWriteSemaphore =
-          new org.treetank.concurrent.Semaphore(
-              IConstants.MAX_WRITE_TRANSACTIONS);
-      mReadSemaphore =
-          new org.treetank.concurrent.Semaphore(
-              IConstants.MAX_READ_TRANSACTIONS);
+      mWriteSemaphore = new Semaphore(IConstants.MAX_WRITE_TRANSACTIONS);
+      mReadSemaphore = new Semaphore(IConstants.MAX_READ_TRANSACTIONS);
       final PageReference<UberPage> uberPageReference =
           new PageReference<UberPage>();
       final PageReference<UberPage> secondaryUberPageReference =
@@ -178,11 +177,13 @@ public final class SessionState {
   }
 
   protected final int getReadTransactionCount() {
-    return (IConstants.MAX_READ_TRANSACTIONS - (int) mReadSemaphore.permits());
+    return (IConstants.MAX_READ_TRANSACTIONS - (int) mReadSemaphore
+        .availablePermits());
   }
 
   protected final int getWriteTransactionCount() {
-    return (IConstants.MAX_WRITE_TRANSACTIONS - (int) mWriteSemaphore.permits());
+    return (IConstants.MAX_WRITE_TRANSACTIONS - (int) mWriteSemaphore
+        .availablePermits());
   }
 
   protected final IReadTransaction beginReadTransaction() {
@@ -241,7 +242,7 @@ public final class SessionState {
       final int maxTime) {
 
     // Make sure not to exceed available number of write transactions.
-    if (mWriteSemaphore.permits() == 0) {
+    if (mWriteSemaphore.availablePermits() == 0) {
       throw new IllegalStateException(
           "There already is a running exclusive write transaction.");
     }

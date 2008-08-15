@@ -48,7 +48,7 @@ public class JavaCompression implements ICompression {
    * @param data data that should be compressed
    * @return compressed data, null if failed
    */
-  public byte[] compress(final int core, final byte[] buffer, final int length) {
+  public byte[] compress(final byte[] buffer, final int length) {
     try {
       mCompressor.reset();
       mOut.reset();
@@ -71,7 +71,7 @@ public class JavaCompression implements ICompression {
    * @param data data that should be decompressed
    * @return Decompressed data, null if failed
    */
-  public byte[] decompress(final int core, final byte[] buffer, final int length) {
+  public byte[] decompress(final byte[] buffer, final int length) {
     try {
       mDecompressor.reset();
       mOut.reset();

@@ -22,8 +22,8 @@ public interface ICompression {
 
   public final int BUFFER_SIZE = 8192;
 
-  public byte[] compress(final int core, final byte[] buffer, final int length);
+  public byte[] compress(final byte[] buffer, final int length);
 
-  public byte[] decompress(final int core, final byte[] buffer, final int length);
+  public byte[] decompress(final byte[] buffer, final int length);
 
 }
