@@ -141,7 +141,7 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
     operationPointer->crp_desc->crd_flags = CRD_F_COMP;
   else
     operationPointer->crp_desc->crd_flags = 0;
-  operationPointer->crp_opaque            = &SCARG(argumentPointer, core);
+  operationPointer->crp_opaque            = &tt_sessionId[SCARG(argumentPointer, core)];
   operationPointer->crp_callback          = (int (*) (struct cryptop *)) tt_callback;
    
   /* --- Synchronously dispatch crypto operation. ------------------------- */
@@ -203,8 +203,7 @@ tt_callback(void *op)
   
   if (operationPointer->crp_etype == EAGAIN)
   {
-    tt_sessionId[* (int *) (operationPointer->crp_opaque)] 
-      = operationPointer->crp_sid;
+    * (u_int64_t *) (operationPointer->crp_opaque) = operationPointer->crp_sid;
 	operationPointer->crp_flags = CRYPTO_F_IMBUF;
 	return crypto_dispatch(operationPointer);
   }
