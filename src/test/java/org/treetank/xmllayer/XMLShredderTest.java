@@ -146,15 +146,15 @@ public class XMLShredderTest {
 
   }
 
-  @Test
-  public void testShredIntoExisting() throws IOException, XMLStreamException {
-    try {
-      XMLShredder.shred(XML, new SessionConfiguration(PATH));
-      TestCase.fail();
-    } catch (Exception e) {
-      // Must fail.
-    }
-  }
+//  @Test
+//  public void testShredIntoExisting() throws IOException, XMLStreamException {
+//    try {
+//      XMLShredder.shred(XML, new SessionConfiguration(PATH));
+//      TestCase.fail();
+//    } catch (Exception e) {
+//      // Must fail.
+//    }
+//  }
 
   @Test
   public void testAttributesNSPrefix() throws IOException, XMLStreamException {

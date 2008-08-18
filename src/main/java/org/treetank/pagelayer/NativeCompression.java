@@ -18,14 +18,66 @@
 
 package org.treetank.pagelayer;
 
+import edu.emory.mathcs.backport.java.util.concurrent.ArrayBlockingQueue;
+import edu.emory.mathcs.backport.java.util.concurrent.BlockingQueue;
+
 public final class NativeCompression implements ICompression {
 
+  private static final BlockingQueue queue = new ArrayBlockingQueue(8);
+
+  static {
+    try {
+      queue.put(0);
+      queue.put(1);
+      queue.put(2);
+      queue.put(3);
+      queue.put(4);
+      queue.put(5);
+      queue.put(6);
+      queue.put(7);
+    } catch (Exception e) {
+      throw new RuntimeException("Could not allocate native compression cores.");
+    }
+  }
+
   public final byte[] compress(final byte[] buffer, final int length) {
-    return compress(0, buffer, length);
+    byte[] data = null;
+    int core = -1;
+    try {
+      core = (Integer) queue.take();
+      data = compress(core, buffer, length);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    } finally {
+      try {
+        if (core != -1) {
+          queue.put(core);
+        }
+      } catch (Exception ie) {
+        throw new RuntimeException(ie);
+      }
+    }
+    return data;
   }
 
   public final byte[] decompress(final byte[] buffer, final int length) {
-    return decompress(1, buffer, length);
+    byte[] data = null;
+    int core = -1;
+    try {
+      core = (Integer) queue.take();
+      data = decompress(core, buffer, length);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    } finally {
+      try {
+        if (core != -1) {
+          queue.put(core);
+        }
+      } catch (Exception ie) {
+        throw new RuntimeException(ie);
+      }
+    }
+    return data;
   }
 
   private native byte[] compress(
