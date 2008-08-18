@@ -19,16 +19,7 @@
  * $Id$
  */
 
-#include <sys/types.h>
-#include <sys/param.h>
-#include <sys/systm.h>
-#include <sys/kernel.h>
-#include <sys/proc.h>
-#include <sys/mount.h>
-#include <sys/syscallargs.h>
-#include <sys/ioctl.h>
-#include <sys/mbuf.h>
-#include <crypto/cryptodev.h>
+#include "sys_treetank.h"
 
 /** === TreeTank SysCall ====================================================
   * Used to TT_COMPRESS, encrypt, authenticate, and write buffer to device.
@@ -55,18 +46,6 @@
   * # reboot
   * ======================================================================= */
   
-/* --- Constants. --------------------------------------------------------- */
-
-#define TT_COMPRESSION_ALGORITHM CRYPTO_LZS_COMP
-
-#define TT_COMPRESS 1
-#define TT_DECOMPRESS 0
-
-#define TT_OK 0
-#define TT_ERROR 1
-
-#define TT_NULL_SESSION 0
-
 /* --- Function prototypes. ----------------------------------------------- */
 
 int tt_callback(void *);
