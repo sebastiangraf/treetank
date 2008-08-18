@@ -191,7 +191,9 @@ finish:
 }
 
 /*
- * Callback to retrieve result of crypto operation.
+ * Callback to retrieve result of crypto operation. The parameter (void *op)
+ * must be of (struct cryptop *) and the field (void * crp_opaque) must be of
+ * (u_int64_t *) and point to the cryptoini session identifier.
  */
 int
 tt_callback(void *op)
