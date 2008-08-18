@@ -21,6 +21,7 @@ package org.treetank.xmllayer;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.StringReader;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -35,6 +36,22 @@ import org.treetank.utils.FastStack;
 import org.treetank.utils.IConstants;
 
 public final class XMLShredder {
+
+  public final static void shred(
+      final long id,
+      final String content,
+      final ISession session) {
+    try {
+      final XMLInputFactory factory = XMLInputFactory.newInstance();
+      factory.setProperty(XMLInputFactory.IS_VALIDATING, true);
+      factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+      final XMLStreamReader parser =
+          factory.createXMLStreamReader(new StringReader(content));
+      shred(id, parser, session);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
 
   public final static void shred(
       final String xmlPath,
@@ -52,31 +69,41 @@ public final class XMLShredder {
       factory.setProperty(XMLInputFactory.IS_VALIDATING, isValidating);
       factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
       final XMLStreamReader parser = factory.createXMLStreamReader(in);
-      shred(parser, sessionConfiguration);
+      shred(0, parser, sessionConfiguration);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
   }
 
   public static final void shred(
+      final long id,
       final XMLStreamReader parser,
       final SessionConfiguration sessionConfiguration) {
+    final ISession session = Session.beginSession(sessionConfiguration);
+    shred(id, parser, session);
+    session.close();
+  }
+
+  public static final void shred(
+      final long id,
+      final XMLStreamReader parser,
+      final ISession session) {
 
     try {
-      final ISession session = Session.beginSession(sessionConfiguration);
       final IWriteTransaction wtx =
           session.beginWriteTransaction(IConstants.COMMIT_THRESHOLD, 0);
       final FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
 
       // Make sure that we do not shred into an existing TreeTank.
-      if (wtx.hasFirstChild()) {
-        throw new IllegalStateException(
-            "XMLShredder can not shred into an existing TreeTank.");
-      }
+      //      if (wtx.hasFirstChild()) {
+      //        throw new IllegalStateException(
+      //            "XMLShredder can not shred into an existing TreeTank.");
+      //      }
+      wtx.moveTo(id);
 
       long key;
       String text;
-      leftSiblingKeyStack.push(IReadTransaction.NULL_NODE_KEY);
+      leftSiblingKeyStack.push(wtx.getLeftSiblingKey());
 
       // Iterate over all nodes.
       while (parser.hasNext()) {
@@ -138,7 +165,6 @@ public final class XMLShredder {
         }
       }
       wtx.close();
-      session.close();
       parser.close();
     } catch (Exception e) {
       throw new RuntimeException(e);

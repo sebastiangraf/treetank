@@ -28,6 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.mortbay.jetty.Request;
 
 public final class HelperDelete {
+  
+  private static final String PATH = "/treetank/data/";
 
   private static final String CONTENT_TYPE = "application/xml";
 
@@ -69,7 +71,7 @@ public final class HelperDelete {
       synchronized (mServices) {
         service = mServices.get(serviceString);
         if (service == null) {
-          service = new TreeTankWrapper(serviceString + ".tnk");
+          service = new TreeTankWrapper(PATH + serviceString + ".tnk");
           mServices.put(serviceString, service);
         }
       }

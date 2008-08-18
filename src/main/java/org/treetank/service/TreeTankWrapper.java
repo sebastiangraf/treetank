@@ -28,6 +28,7 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.ItemList;
 import org.treetank.sessionlayer.Session;
 import org.treetank.xmllayer.XMLSerializer;
+import org.treetank.xmllayer.XMLShredder;
 import org.treetank.xpath.XPathAxis;
 
 public class TreeTankWrapper {
@@ -44,6 +45,17 @@ public class TreeTankWrapper {
 
   public TreeTankWrapper(String path) {
     session = Session.beginSession(path);
+  }
+
+  public final long post(final long id, final String value)
+      throws TreeTankException {
+    long result = 0;
+    try {
+      XMLShredder.shred(id, value, session);
+    } catch (Exception e) {
+      throw new TreeTankException(500, e.getMessage(), e);
+    }
+    return result;
   }
 
   public final long putText(final long id, final String value)

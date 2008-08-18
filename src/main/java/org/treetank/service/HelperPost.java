@@ -29,6 +29,8 @@ import org.mortbay.jetty.Request;
 
 public final class HelperPost {
 
+  private static final String PATH = "/treetank/data/";
+
   private static final String CONTENT_TYPE = "application/xml";
 
   private static final String ENCODING = "UTF-8";
@@ -70,43 +72,49 @@ public final class HelperPost {
       synchronized (mServices) {
         service = mServices.get(serviceString);
         if (service == null) {
-          service = new TreeTankWrapper(serviceString + ".tnk");
+          service = new TreeTankWrapper(PATH + serviceString + ".tnk");
           mServices.put(serviceString, service);
         }
       }
       final long id = Long.valueOf(idString);
 
-      // Make modifications.
-      final long revision = service.putText(id, requestBody);
-
-      // Write response header.
-      response.setContentType(CONTENT_TYPE);
-      response.setCharacterEncoding(ENCODING);
-
-      // Write response body.
-      final OutputStream out = response.getOutputStream();
-
-      final long start = System.currentTimeMillis();
-
-      out
-          .write(("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-              + "<rest:response xmlns:rest=\"REST\"><rest:sequence rest:revision=\"")
-              .getBytes(ENCODING));
-      out.write(Long.toString(revision).getBytes(ENCODING));
-      out.write(new String("\">").getBytes(ENCODING));
-
-      // Handle.
-      if (queryString == null) {
-        service.get(out, revision, id);
+      if (queryString.equalsIgnoreCase("insert")) {
+        service.post(id, requestBody);
       } else {
-        service.get(out, revision, id, queryString);
-      }
 
-      // Time measurement
-      final long stop = System.currentTimeMillis();
-      out.write("</rest:sequence><rest:time>".getBytes(ENCODING));
-      out.write(Long.toString(stop - start).getBytes(ENCODING));
-      out.write("[ms]</rest:time></rest:response>".getBytes(ENCODING));
+        // Make modifications.
+        final long revision = service.putText(id, requestBody);
+
+        // Write response header.
+        response.setContentType(CONTENT_TYPE);
+        response.setCharacterEncoding(ENCODING);
+
+        // Write response body.
+        final OutputStream out = response.getOutputStream();
+
+        final long start = System.currentTimeMillis();
+
+        out
+            .write(("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+                + "<rest:response xmlns:rest=\"REST\"><rest:sequence rest:revision=\"")
+                .getBytes(ENCODING));
+        out.write(Long.toString(revision).getBytes(ENCODING));
+        out.write(new String("\">").getBytes(ENCODING));
+
+        // Handle.
+        if (queryString == null) {
+          service.get(out, revision, id);
+        } else {
+          service.get(out, revision, id, queryString);
+        }
+
+        // Time measurement
+        final long stop = System.currentTimeMillis();
+        out.write("</rest:sequence><rest:time>".getBytes(ENCODING));
+        out.write(Long.toString(stop - start).getBytes(ENCODING));
+        out.write("[ms]</rest:time></rest:response>".getBytes(ENCODING));
+
+      }
 
       ((Request) request).setHandled(true);
 
