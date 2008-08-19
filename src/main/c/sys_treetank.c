@@ -36,6 +36,7 @@
   * 
   * 3) Add the following line in alphabetic order to /usr/src/sys/conf/files:
   * file kern/sys_treetank_compression.c
+  * file kern/sys_treetank_authentication.c
   * file kern/sys_treetank.c
   *
   * 4) Rebuild kernel:
@@ -50,10 +51,11 @@
 /* --- Function prototypes. ------------------------------------------------- */
 
 int sys_treetank_compression(u_int8_t, u_int8_t, u_int8_t *, u_int32_t *);
+int sys_treetank_authentication(u_int8_t, u_int8_t, u_int8_t *, u_int32_t *);
 
 /* --- Global variables. ---------------------------------------------------- */
 
-u_int8_t tt_buffer[8][32000];
+static u_int8_t tt_buffer[8][64000];
 
 /* --- Code. ---------------------------------------------------------------- */
 
@@ -76,7 +78,7 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
     tt_buffer[SCARG(argumentPointer, core)],
     *SCARG(argumentPointer, lengthPointer));
 
-  /* --- Perform compression. ----------------------------------------------- */
+  /* --- Perform operations. ------------------------------------------------ */
   
   if (sys_treetank_compression(
     SCARG(argumentPointer, core),
@@ -86,6 +88,17 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
   {
     error = TT_ERROR;
     printf("ERROR(sys_treetank.c): Could not perform compression.\n");
+    goto finish;
+  }
+  
+  if (sys_treetank_authentication(
+    SCARG(argumentPointer, core),
+    SCARG(argumentPointer, operation),
+    tt_buffer[SCARG(argumentPointer, core)],
+    SCARG(argumentPointer, lengthPointer)) != TT_OK)
+  {
+    error = TT_ERROR;
+    printf("ERROR(sys_treetank.c): Could not perform authentication.\n");
     goto finish;
   }
   

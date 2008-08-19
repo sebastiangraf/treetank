@@ -23,12 +23,12 @@
 
 /* --- Function prototypes. ------------------------------------------------- */
 
-int sys_treetank_compression(u_int8_t, u_int8_t, u_int8_t *, u_int32_t *);
-int sys_treetank_compression_callback(void *);
+int sys_treetank_authentication(u_int8_t, u_int8_t, u_int8_t *, u_int32_t *);
+int sys_treetank_authentication_callback(void *);
 
 /* --- Global variables. ---------------------------------------------------- */
 
-static u_int64_t tt_comp_sessionId[] = {
+static u_int64_t tt_auth_sessionId[] = {
   TT_NULL_SESSION,
   TT_NULL_SESSION,
   TT_NULL_SESSION,
@@ -37,12 +37,14 @@ static u_int64_t tt_comp_sessionId[] = {
   TT_NULL_SESSION,
   TT_NULL_SESSION,
   TT_NULL_SESSION };
+  
+static u_int8_t tt_auth_key[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 /*
- * Perform compression.
+ * Perform authentication.
  */
 int
-sys_treetank_compression(
+sys_treetank_authentication(
   u_int8_t core,
   u_int8_t operation,
   u_int8_t *bufferPointer,
@@ -57,21 +59,23 @@ sys_treetank_compression(
   
   /* --- Initialise session (if required). ---------------------------------- */
     
-  if (tt_comp_sessionId[core] == TT_NULL_SESSION)
+  if (tt_auth_sessionId[core] == TT_NULL_SESSION)
   {
     struct cryptoini session;  
 
     bzero(&session, sizeof(session));
-    session.cri_alg = TT_COMPRESSION_ALGORITHM;
+    session.cri_alg  = TT_AUTHENTICATION_ALGORITHM;
+    session.cri_klen = 160;
+    session.cri_key  = (caddr_t) &tt_auth_key;
 
     if (crypto_newsession(
-      &(tt_comp_sessionId[core]),
+      &(tt_auth_sessionId[core]),
       &session,
       0) != TT_OK)
     {
       error = TT_ERROR;
-      tt_comp_sessionId[core] = TT_NULL_SESSION;
-      printf("ERROR(sys_treetank_compression.c): Could not allocate cryptoini.\n");
+      tt_auth_sessionId[core] = TT_NULL_SESSION;
+      printf("ERROR(sys_treetank_authentication.c): Could not allocate cryptoini.\n");
       goto finish;
     }
     
@@ -83,7 +87,7 @@ sys_treetank_compression(
   if (packetPointer == NULL)
   {
     error = TT_ERROR;
-    printf("ERROR(sys_treetank_compression.c): Could not allocate mbuf.\n");
+    printf("ERROR(sys_treetank_authentication.c): Could not allocate mbuf.\n");
     goto finish;
   }
   
@@ -102,24 +106,20 @@ sys_treetank_compression(
   if (operationPointer == NULL)
   {
     error = TT_ERROR;
-    printf("ERROR(sys_treetank_compression.c): Could not allocate crypto.\n");
+    printf("ERROR(sys_treetank_authentication.c): Could not allocate crypto.\n");
     goto finish;
   }
 
-  operationPointer->crp_sid               = tt_comp_sessionId[core];
+  operationPointer->crp_sid               = tt_auth_sessionId[core];
   operationPointer->crp_ilen              = *lengthPointer;
   operationPointer->crp_flags             = CRYPTO_F_IMBUF;
   operationPointer->crp_buf               = (caddr_t) packetPointer;
-  operationPointer->crp_desc->crd_alg     = TT_COMPRESSION_ALGORITHM;
+  operationPointer->crp_desc->crd_alg     = TT_AUTHENTICATION_ALGORITHM;
   operationPointer->crp_desc->crd_skip    = 0;
   operationPointer->crp_desc->crd_len     = *lengthPointer;
   operationPointer->crp_desc->crd_inject  = 0;
-  if (operation == TT_WRITE)
-    operationPointer->crp_desc->crd_flags = CRD_F_COMP;
-  else
-    operationPointer->crp_desc->crd_flags = 0;
-  operationPointer->crp_opaque            = &tt_comp_sessionId[core];
-  operationPointer->crp_callback          = (int (*) (struct cryptop *)) sys_treetank_compression_callback;
+  operationPointer->crp_opaque            = &tt_auth_sessionId[core];
+  operationPointer->crp_callback          = (int (*) (struct cryptop *)) sys_treetank_authentication_callback;
    
   /* --- Synchronously dispatch crypto operation. --------------------------- */
   
@@ -127,32 +127,32 @@ sys_treetank_compression(
   
   while (!(operationPointer->crp_flags & CRYPTO_F_DONE))
   {
-    error = tsleep(operationPointer, PSOCK, "sys_treetank_compression", 0);
+    error = tsleep(operationPointer, PSOCK, "sys_treetank_authentication", 0);
   }
   
   if (error != TT_OK)
   {
-    printf("ERROR(sys_treetank_compression.c): Failed during tsleep.\n");
+    printf("ERROR(sys_treetank_authentication.c): Failed during tsleep.\n");
     goto finish;
   }
   
   if (operationPointer->crp_etype != TT_OK)
   {
     error = operationPointer->crp_etype;
-    printf("ERROR(sys_treetank_compression.c): Failed during crypto_dispatch.\n");
+    printf("ERROR(sys_treetank_authentication.c): Failed during crypto_dispatch.\n");
     goto finish;
   }
   
   /* --- Collect result from buffer. ---------------------------------------- */
   
-  *lengthPointer = operationPointer->crp_olen;
-  packetPointer = operationPointer->crp_buf;
+  //*lengthPointer = operationPointer->crp_olen;
+  //packetPointer = operationPointer->crp_buf;
   
-  m_copydata(
-    packetPointer,
-    0,
-    *lengthPointer,
-    bufferPointer);
+  //m_copydata(
+  //  packetPointer,
+  //  0,
+  //  *lengthPointer,
+  //  bufferPointer);
   
   /* --- Cleanup for all conditions. ---------------------------------------- */
   
@@ -174,7 +174,7 @@ finish:
  * (u_int64_t *) and point to the cryptoini session identifier.
  */
 int
-sys_treetank_compression_callback(void *op)
+sys_treetank_authentication_callback(void *op)
 {
   
   /* --- Check for migrated session identifier. ----------------------------- */
