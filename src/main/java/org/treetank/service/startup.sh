@@ -2,5 +2,5 @@
 
 while [ true ]
 do
-  /usr/local/jamvm/bin/jamvm -jar /home/TreeTankService.jar
+  /treetank/jre/bin/jamvm -Djava.library.path=/treetank/service -jar /treetank/service/TreeTankService.jar
 done

@@ -35,9 +35,10 @@
 /* --- Constants. ----------------------------------------------------------- */
 
 #define TT_COMPRESSION_ALGORITHM CRYPTO_LZS_COMP
+#define TT_AUTHENTICATION_ALGORITHM CRYPTO_SHA1_HMAC
 
-#define TT_COMPRESS 1
-#define TT_DECOMPRESS 0
+#define TT_WRITE 1
+#define TT_READ 0
 
 #define TT_OK 0
 #define TT_ERROR 1
