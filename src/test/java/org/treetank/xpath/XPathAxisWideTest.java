@@ -84,6 +84,8 @@ public class XPathAxisWideTest {
     IAxisTest.testIAxisConventions(
         new XPathAxis(rtx, "/mondial/continent[@id]"),
         new long[] { 3L, 4L, 5L, 6L, 7L });
+    
+   
 
     IAxisTest.testIAxisConventions(new XPathAxis(
         rtx,
@@ -161,6 +163,13 @@ public class XPathAxisWideTest {
   
       XPathStringTest.testIAxisConventions(new XPathAxis(rtx2, "fn:count(//PLAY)"), 
           new String[]{"37"});
+      
+      rtx2.moveTo(3L);
+      XPathStringTest.testIAxisConventions(new XPathAxis(rtx2, "fn:count(TITLE)"), 
+          new String[]{"1"});
+      
+      XPathStringTest.testIAxisConventions(new XPathAxis(rtx2, "fn:string(TITLE)"), 
+          new String[]{"The Tragedy of Antony and Cleopatra"});
           
           XPathStringTest.testIAxisConventions(new XPathAxis(rtx2, "fn:count(//*)"), 
               new String[]{"179619"});

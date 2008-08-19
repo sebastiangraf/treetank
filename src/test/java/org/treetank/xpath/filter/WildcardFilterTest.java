@@ -15,74 +15,67 @@
  * 
  * $Id$
  */
+
 package org.treetank.xpath.filter;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+
 import java.io.File;
-import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.axislayer.IAxisTest;
+import org.treetank.axislayer.IFilterTest;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
-import org.treetank.xpath.XPathAxis;
 
+public class WildcardFilterTest {
 
-/**
- * JUnit-test class to test the functionality of the DubFilter.
- * 
- * @author Tina Scherer
- * 
- */
-public class DubFilterTest {
-
-  public static final String PATH =
-      "generated" + File.separator + "DubFilterTest.tnk";
+  public static final String PATH = "target" + File.separator + "tnk"
+      + File.separator + "WildcardFilterTest.tnk";
 
   @Before
   public void setUp() {
-    
+
     Session.removeSession(PATH);
   }
 
-  
-  
   @Test
-  public void testDupElemination() throws IOException {
+  public void testIFilterConvetions() {
 
     // Build simple test tree.
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
 
+    wtx.moveTo(8L);
+    IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "b", true), true);
+    wtx.moveToAttribute(0);
+    try {
+        IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "p", false), true);
+        fail("Expected an Exception, because attributes are not supported.");
+    } catch (IllegalStateException e) {
+        assertThat(e.getMessage(), is("Wildcards are not supported in attribute names yet."));
+
+    }   
+    //IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "b", true), true);
     
+    
+//    wtx.moveTo(3L);
+//    IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
+
     wtx.moveTo(2L);
+    IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "p", false), true);
+    IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "a", true), true);
+    IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "c", true), false);
+    IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "b", false), false);
 
-    IAxisTest.testIAxisConventions(new XPathAxis(
-        wtx, "child::node()/parent::node()"), new long[] {2L});
-
-    
-    IAxisTest.testIAxisConventions(new XPathAxis(
-        wtx, "b/following-sibling::node()"), new long[] {7L, 8L, 11L});
-
-    
-    IAxisTest.testIAxisConventions(new XPathAxis(
-        wtx, "b/preceding::node()"), new long[] {3L, 7L, 6L, 5L, 4L});
-    
-    
-    
-    IAxisTest.testIAxisConventions(new XPathAxis(
-        wtx, "//c/ancestor::node()"), new long[] {4L, 2L, 8L});
-    
-    
     wtx.abort();
     wtx.close();
     session.close();
 
   }
-
 }
-
-
