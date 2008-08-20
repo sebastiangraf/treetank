@@ -116,7 +116,6 @@ sys_treetank_authentication(
   operationPointer->crp_desc->crd_skip    = 0;
   operationPointer->crp_desc->crd_len     = *lengthPointer;
   operationPointer->crp_desc->crd_inject  = 0;
-  operationPointer->crp_opaque            = &tt_auth_sessionId[core];
   operationPointer->crp_callback          = (int (*) (struct cryptop *)) sys_treetank_authentication_callback;
    
   /* --- Synchronously dispatch crypto operation. --------------------------- */

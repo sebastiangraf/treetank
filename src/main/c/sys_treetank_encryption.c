@@ -38,8 +38,8 @@ static u_int64_t tt_enc_sessionId[] = {
   TT_NULL_SESSION,
   TT_NULL_SESSION };
   
-static u_int8_t tt_enc_key[32];
-static u_int8_t tt_enc_iv[16];
+static u_int8_t tt_enc_key[32] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+static u_int8_t tt_enc_iv[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
 /*
  * Perform encryption.
@@ -121,11 +121,9 @@ sys_treetank_encryption(
   operationPointer->crp_desc->crd_inject  = 0;
   bcopy(tt_enc_iv, operationPointer->crp_desc->crd_iv, TT_BLOCK_LENGTH);
   if (operation == TT_WRITE)
-    operationPointer->crp_desc->crd_flags |= CRD_F_ENCRYPT;
+    operationPointer->crp_desc->crd_flags = CRD_F_ENCRYPT | CRD_F_IV_PRESENT | CRD_F_IV_EXPLICIT;
   else
-    operationPointer->crp_desc->crd_flags &= ~CRD_F_ENCRYPT;
-  operationPointer->crp_desc->crd_flags   |= CRD_F_IV_PRESENT | CRD_F_IV_EXPLICIT;
-  operationPointer->crp_opaque            = &tt_enc_sessionId[core];
+    operationPointer->crp_desc->crd_flags = 0 | CRD_F_IV_EXPLICIT;
   operationPointer->crp_callback          = (int (*) (struct cryptop *)) sys_treetank_encryption_callback;
    
   /* --- Synchronously dispatch crypto operation. --------------------------- */
@@ -149,14 +147,13 @@ sys_treetank_encryption(
   
   /* --- Collect result from buffer. ---------------------------------------- */
   
-  //*lengthPointer = operationPointer->crp_olen;
-  //packetPointer = operationPointer->crp_buf;
+  packetPointer = operationPointer->crp_buf;
   
-  //m_copydata(
-  //  packetPointer,
-  //  0,
-  //  *lengthPointer,
-  //  bufferPointer);
+  m_copydata(
+    packetPointer,
+    0,
+    *lengthPointer,
+    bufferPointer);
   
   /* --- Cleanup for all conditions. ---------------------------------------- */
   
