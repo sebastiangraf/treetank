@@ -43,7 +43,13 @@
   * 4) Comment out the following line from /usr/src/sys/arch/i386/conf/GENERIC:
   * glxsb* at pci?
   *
-  * 5) Rebuild kernel:
+  * 5) BUGFIX: Add the following after line 2325 
+       in /usr/src/sys/dev/pci/hifn7751.c:
+  * if ((crd->crd_flags & CRD_F_IV_PRESENT)
+  *    != 0)
+  *    continue;
+  *
+  * 6) Rebuild kernel:
   * # cd /usr/src/sys/arch/i386/conf
   * # config GENERIC
   * # cd ../compile/GENERIC

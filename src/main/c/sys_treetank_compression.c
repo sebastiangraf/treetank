@@ -114,7 +114,6 @@ sys_treetank_compression(
     operationPointer->crp_desc->crd_flags = CRD_F_COMP;
   else
     operationPointer->crp_desc->crd_flags = 0;
-  operationPointer->crp_opaque            = &tt_comp_sessionId[core];
   operationPointer->crp_callback          = (int (*) (struct cryptop *)) sys_treetank_compression_callback;
    
   /* --- Synchronously dispatch crypto operation. --------------------------- */
