@@ -36,10 +36,14 @@
   * 
   * 3) Add the following line in alphabetic order to /usr/src/sys/conf/files:
   * file kern/sys_treetank_compression.c
+  * file kern/sys_treetank_encryption.c
   * file kern/sys_treetank_authentication.c
   * file kern/sys_treetank.c
   *
-  * 4) Rebuild kernel:
+  * 4) Comment out the following line from /usr/src/sys/arch/i386/conf/GENERIC:
+  * glxsb* at pci?
+  *
+  * 5) Rebuild kernel:
   * # cd /usr/src/sys/arch/i386/conf
   * # config GENERIC
   * # cd ../compile/GENERIC
@@ -51,6 +55,7 @@
 /* --- Function prototypes. ------------------------------------------------- */
 
 int sys_treetank_compression(u_int8_t, u_int8_t, u_int8_t *, u_int32_t *);
+int sys_treetank_encryption(u_int8_t, u_int8_t, u_int8_t *, u_int32_t *);
 int sys_treetank_authentication(u_int8_t, u_int8_t, u_int8_t *, u_int32_t *);
 
 /* --- Global variables. ---------------------------------------------------- */
@@ -79,27 +84,71 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
     *SCARG(argumentPointer, lengthPointer));
 
   /* --- Perform operations. ------------------------------------------------ */
+    
+  if (SCARG(argumentPointer, operation) == TT_WRITE) {
   
-  if (sys_treetank_compression(
-    SCARG(argumentPointer, core),
-    SCARG(argumentPointer, operation),
-    tt_buffer[SCARG(argumentPointer, core)],
-    SCARG(argumentPointer, lengthPointer)) != TT_OK)
-  {
-    error = TT_ERROR;
-    printf("ERROR(sys_treetank.c): Could not perform compression.\n");
-    goto finish;
-  }
+      if (sys_treetank_compression(
+            SCARG(argumentPointer, core),
+            SCARG(argumentPointer, operation),
+            tt_buffer[SCARG(argumentPointer, core)],
+            SCARG(argumentPointer, lengthPointer)) != TT_OK) {
+        error = TT_ERROR;
+        printf("ERROR(sys_treetank.c): Could not perform compression.\n");
+        goto finish;
+      }
+      
+      if (sys_treetank_encryption(
+            SCARG(argumentPointer, core),
+            SCARG(argumentPointer, operation),
+            tt_buffer[SCARG(argumentPointer, core)],
+            SCARG(argumentPointer, lengthPointer)) != TT_OK) {
+        error = TT_ERROR;
+        printf("ERROR(sys_treetank.c): Could not perform encryption.\n");
+        goto finish;
+      }
+      
+      if (sys_treetank_authentication(
+            SCARG(argumentPointer, core),
+            SCARG(argumentPointer, operation),
+            tt_buffer[SCARG(argumentPointer, core)],
+            SCARG(argumentPointer, lengthPointer)) != TT_OK) {
+        error = TT_ERROR;
+        printf("ERROR(sys_treetank.c): Could not perform authentication.\n");
+        goto finish;
+      }
+      
+  } else {
   
-  if (sys_treetank_authentication(
-    SCARG(argumentPointer, core),
-    SCARG(argumentPointer, operation),
-    tt_buffer[SCARG(argumentPointer, core)],
-    SCARG(argumentPointer, lengthPointer)) != TT_OK)
-  {
-    error = TT_ERROR;
-    printf("ERROR(sys_treetank.c): Could not perform authentication.\n");
-    goto finish;
+      if (sys_treetank_authentication(
+            SCARG(argumentPointer, core),
+            SCARG(argumentPointer, operation),
+            tt_buffer[SCARG(argumentPointer, core)],
+            SCARG(argumentPointer, lengthPointer)) != TT_OK) {
+        error = TT_ERROR;
+        printf("ERROR(sys_treetank.c): Could not perform authentication.\n");
+        goto finish;
+      }
+      
+      if (sys_treetank_encryption(
+            SCARG(argumentPointer, core),
+            SCARG(argumentPointer, operation),
+            tt_buffer[SCARG(argumentPointer, core)],
+            SCARG(argumentPointer, lengthPointer)) != TT_OK) {
+        error = TT_ERROR;
+        printf("ERROR(sys_treetank.c): Could not perform encryption.\n");
+        goto finish;
+      }
+  
+      if (sys_treetank_compression(
+            SCARG(argumentPointer, core),
+            SCARG(argumentPointer, operation),
+            tt_buffer[SCARG(argumentPointer, core)],
+            SCARG(argumentPointer, lengthPointer)) != TT_OK) {
+        error = TT_ERROR;
+        printf("ERROR(sys_treetank.c): Could not perform compression.\n");
+        goto finish;
+      }
+  
   }
   
   /* --- Copy buffer to user space. ----------------------------------------- */

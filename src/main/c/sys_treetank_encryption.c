@@ -23,12 +23,12 @@
 
 /* --- Function prototypes. ------------------------------------------------- */
 
-int sys_treetank_authentication(u_int8_t, u_int8_t, u_int8_t *, u_int32_t *);
-int sys_treetank_authentication_callback(struct cryptop *op);
+int sys_treetank_encryption(u_int8_t, u_int8_t, u_int8_t *, u_int32_t *);
+int sys_treetank_encryption_callback(struct cryptop *op);
 
 /* --- Global variables. ---------------------------------------------------- */
 
-static u_int64_t tt_auth_sessionId[] = {
+static u_int64_t tt_enc_sessionId[] = {
   TT_NULL_SESSION,
   TT_NULL_SESSION,
   TT_NULL_SESSION,
@@ -38,13 +38,14 @@ static u_int64_t tt_auth_sessionId[] = {
   TT_NULL_SESSION,
   TT_NULL_SESSION };
   
-static u_int8_t tt_auth_key[32];
+static u_int8_t tt_enc_key[32];
+static u_int8_t tt_enc_iv[16];
 
 /*
- * Perform authentication.
+ * Perform encryption.
  */
 int
-sys_treetank_authentication(
+sys_treetank_encryption(
   u_int8_t core,
   u_int8_t operation,
   u_int8_t *bufferPointer,
@@ -59,21 +60,23 @@ sys_treetank_authentication(
   
   /* --- Initialise session (if required). ---------------------------------- */
     
-  if (tt_auth_sessionId[core] == TT_NULL_SESSION) {
+  if (tt_enc_sessionId[core] == TT_NULL_SESSION)
+  {
     struct cryptoini session;  
 
     bzero(&session, sizeof(session));
-    session.cri_alg  = TT_AUTHENTICATION_ALGORITHM;
+    session.cri_alg  = TT_ENCRYPTION_ALGORITHM;
     session.cri_klen = TT_KEY_LENGTH;
-    session.cri_key  = (caddr_t) &tt_auth_key;
-
+    session.cri_rnd  = TT_ROUNDS;
+    session.cri_key  = (caddr_t) &tt_enc_key;
+    
     if (crypto_newsession(
-          &(tt_auth_sessionId[core]),
+          &(tt_enc_sessionId[core]),
           &session,
           0) != TT_OK) {
       error = TT_ERROR;
-      tt_auth_sessionId[core] = TT_NULL_SESSION;
-      printf("ERROR(sys_treetank_authentication.c): Could not allocate cryptoini.\n");
+      tt_enc_sessionId[core] = TT_NULL_SESSION;
+      printf("ERROR(sys_treetank_encryption.c): Could not allocate cryptoini.\n");
       goto finish;
     }
     
@@ -84,7 +87,7 @@ sys_treetank_authentication(
   packetPointer = m_gethdr(M_DONTWAIT, MT_DATA);
   if (packetPointer == NULL) {
     error = TT_ERROR;
-    printf("ERROR(sys_treetank_authentication.c): Could not allocate mbuf.\n");
+    printf("ERROR(sys_treetank_encryption.c): Could not allocate mbuf.\n");
     goto finish;
   }
   
@@ -102,39 +105,45 @@ sys_treetank_authentication(
   operationPointer = crypto_getreq(1);
   if (operationPointer == NULL) {
     error = TT_ERROR;
-    printf("ERROR(sys_treetank_authentication.c): Could not allocate crypto.\n");
+    printf("ERROR(sys_treetank_encryption.c): Could not allocate crypto.\n");
     goto finish;
   }
 
-  operationPointer->crp_sid               = tt_auth_sessionId[core];
+  operationPointer->crp_sid               = tt_enc_sessionId[core];
   operationPointer->crp_ilen              = *lengthPointer;
   operationPointer->crp_flags             = CRYPTO_F_IMBUF;
   operationPointer->crp_buf               = (caddr_t) packetPointer;
-  operationPointer->crp_desc->crd_alg     = TT_AUTHENTICATION_ALGORITHM;
+  operationPointer->crp_desc->crd_alg     = TT_ENCRYPTION_ALGORITHM;
   operationPointer->crp_desc->crd_klen    = TT_KEY_LENGTH;
-  operationPointer->crp_desc->crd_key     = (caddr_t) &tt_auth_key;
+  operationPointer->crp_desc->crd_key     = (caddr_t) &tt_enc_key;
   operationPointer->crp_desc->crd_skip    = 0;
   operationPointer->crp_desc->crd_len     = *lengthPointer;
   operationPointer->crp_desc->crd_inject  = 0;
-  operationPointer->crp_opaque            = &tt_auth_sessionId[core];
-  operationPointer->crp_callback          = (int (*) (struct cryptop *)) sys_treetank_authentication_callback;
+  bcopy(tt_enc_iv, operationPointer->crp_desc->crd_iv, TT_BLOCK_LENGTH);
+  if (operation == TT_WRITE)
+    operationPointer->crp_desc->crd_flags |= CRD_F_ENCRYPT;
+  else
+    operationPointer->crp_desc->crd_flags &= ~CRD_F_ENCRYPT;
+  operationPointer->crp_desc->crd_flags   |= CRD_F_IV_PRESENT | CRD_F_IV_EXPLICIT;
+  operationPointer->crp_opaque            = &tt_enc_sessionId[core];
+  operationPointer->crp_callback          = (int (*) (struct cryptop *)) sys_treetank_encryption_callback;
    
   /* --- Synchronously dispatch crypto operation. --------------------------- */
   
   crypto_dispatch(operationPointer);
   
   while (!(operationPointer->crp_flags & CRYPTO_F_DONE)) {
-    error = tsleep(operationPointer, PSOCK, "sys_treetank_authentication", 0);
+    error = tsleep(operationPointer, PSOCK, "sys_treetank_encryption", 0);
   }
   
   if (error != TT_OK) {
-    printf("ERROR(sys_treetank_authentication.c): Failed during tsleep.\n");
+    printf("ERROR(sys_treetank_encryption.c): Failed during tsleep.\n");
     goto finish;
   }
   
   if (operationPointer->crp_etype != TT_OK) {
     error = operationPointer->crp_etype;
-    printf("ERROR(sys_treetank_authentication.c): Failed during crypto_dispatch.\n");
+    printf("ERROR(sys_treetank_encryption.c): Failed during crypto_dispatch.\n");
     goto finish;
   }
   
@@ -153,7 +162,7 @@ sys_treetank_authentication(
   
 finish:
 
-  if (packetPointer != NULL) 
+  if (packetPointer != NULL)
     m_freem(packetPointer);
  
   if (operationPointer != NULL)
@@ -166,7 +175,7 @@ finish:
  * Callback to retrieve result of crypto operation.
  */
 int
-sys_treetank_authentication_callback(struct cryptop *op)
+sys_treetank_encryption_callback(struct cryptop *op)
 {
   
   if (op->crp_etype == EAGAIN) {
