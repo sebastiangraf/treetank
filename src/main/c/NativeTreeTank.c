@@ -16,10 +16,10 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id:NativeTreeTank.c 4340 2008-08-21 06:25:17Z kramis $
  */
 
-#include "NativeCompression.h"
+#include "NativeTreeTank.h"
 #include <jni.h>
 
 #include <sys/syscall.h>
