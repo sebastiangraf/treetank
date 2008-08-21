@@ -99,8 +99,8 @@ public final class PageReader {
       }
 
       try {
-        System.loadLibrary("Compression");
-        mDecompressor = new NativeCompression();
+        System.loadLibrary("TreeTank");
+        mDecompressor = new NativeTreeTank();
       } catch (UnsatisfiedLinkError e) {
         mDecompressor = new JavaCompression();
       }

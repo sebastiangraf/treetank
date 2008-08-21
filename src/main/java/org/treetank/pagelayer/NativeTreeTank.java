@@ -21,7 +21,7 @@ package org.treetank.pagelayer;
 import edu.emory.mathcs.backport.java.util.concurrent.ArrayBlockingQueue;
 import edu.emory.mathcs.backport.java.util.concurrent.BlockingQueue;
 
-public final class NativeCompression implements ICompression {
+public final class NativeTreeTank implements ICompression {
 
   private static final BlockingQueue queue = new ArrayBlockingQueue(8);
 
@@ -45,7 +45,7 @@ public final class NativeCompression implements ICompression {
     int core = -1;
     try {
       core = (Integer) queue.take();
-      data = compress(core, buffer, length);
+      data = write(core, buffer, length);
     } catch (Exception e) {
       throw new RuntimeException(e);
     } finally {
@@ -65,7 +65,7 @@ public final class NativeCompression implements ICompression {
     int core = -1;
     try {
       core = (Integer) queue.take();
-      data = decompress(core, buffer, length);
+      data = read(core, buffer, length);
     } catch (Exception e) {
       throw new RuntimeException(e);
     } finally {
@@ -80,12 +80,12 @@ public final class NativeCompression implements ICompression {
     return data;
   }
 
-  private native byte[] compress(
+  private native byte[] write(
       final int core,
       final byte[] buffer,
       final int length);
 
-  private native byte[] decompress(
+  private native byte[] read(
       final int core,
       final byte[] buffer,
       final int length);
