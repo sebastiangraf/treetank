@@ -102,8 +102,8 @@ public final class PageWriter {
       }
 
       try {
-        System.loadLibrary("Compression");
-        mCompressor = new NativeCompression();
+        System.loadLibrary("TreeTank");
+        mCompressor = new NativeTreeTank();
       } catch (UnsatisfiedLinkError e) {
         mCompressor = new JavaCompression();
       }
