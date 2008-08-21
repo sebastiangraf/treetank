@@ -27,29 +27,32 @@
   *                u_int8_t operation, \
   *                u_int8_t *bufferPointer, \
   *                u_int32_t *lengthPointer); }
+  *
   * 2) Rebuild syscall entries:
   * # cd /usr/src/sys/kern
   * # make init_sysent.c at /usr/src/sys/kern
   * 
   * 3) Add the following line in alphabetic order to /usr/src/sys/conf/files:
-  * file kern/sys_treetank_compression.c
-  * file kern/sys_treetank_encryption.c
-  * file kern/sys_treetank_authentication.c
-  * file kern/sys_treetank.c
+  * file sys_treetank_compression.c
+  * file sys_treetank_encryption.c
+  * file sys_treetank_authentication.c
+  * file sys_treetank.c
   *
-  * 4) Comment out the following line from /usr/src/sys/arch/i386/conf/GENERIC:
-  * glxsb* at pci?
-  *
-  * 5) BUGFIX: Add the following after line 2325 
+  * 4) BUGFIX: Add the following after line 2325 
        in /usr/src/sys/dev/pci/hifn7751.c:
   * if ((crd->crd_flags & CRD_F_IV_PRESENT)
   *    != 0)
   *    continue;
   *
-  * 6) Rebuild kernel:
+  * 5) create GENERIC configuration:
   * # cd /usr/src/sys/arch/i386/conf
   * # config GENERIC
-  * # cd ../compile/GENERIC
+  *
+  * 6) Comment out the following line from /usr/src/sys/arch/i386/conf/GENERIC:
+  * glxsb* at pci?
+  *
+  * 7) Rebuild kernel:
+  * # cd /usr/src/sys/arch/i386/compile/GENERIC
   * # make clean && make depend && make
   * # make install
   * # reboot
