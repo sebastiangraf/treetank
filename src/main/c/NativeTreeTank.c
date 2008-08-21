@@ -3,10 +3,7 @@
  * 
  * Patent Pending.
  * 
- * Permission to use, copy, modify, and/or distribute this software for non-
- * commercial use with or without fee is hereby granted, provided that the 
- * above copyright notice, the patent notice, and this permission notice
- * appear in all copies.
+ * NO permission to use, copy, modify, and/or distribute this software.
  * 
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
@@ -16,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id:NativeTreeTank.c 4340 2008-08-21 06:25:17Z kramis $
+ * $Id$
  */
 
 #include "NativeTreeTank.h"
