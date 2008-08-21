@@ -32,10 +32,10 @@
 #include <string.h>
 
 /*
- * gcc -shared -Wall -I/treetank/jre/include/ -o /treetank/service/libCompression.so NativeCompression.c
+ * gcc -shared -Wall -I/treetank/jre/include/ -o /treetank/service/libTreeTank.so NativeTreeTank.c
  */
 
-JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeCompression_compress(JNIEnv *env, jobject o, jint core, jbyteArray jin, jint len)
+JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeTreeTank_write(JNIEnv *env, jobject o, jint core, jbyteArray jin, jint len)
 {
 
   u_int8_t   buffer[64000];
@@ -54,7 +54,7 @@ JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeCompression_compr
   return jout;
 }
 
-JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeCompression_decompress(JNIEnv *env, jobject o, jint core, jbyteArray jin, jint len)
+JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeTreeTank_read(JNIEnv *env, jobject o, jint core, jbyteArray jin, jint len)
 {
 
   u_int8_t   buffer[64000];

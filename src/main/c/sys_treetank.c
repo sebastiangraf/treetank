@@ -50,7 +50,7 @@
   *    continue;
   *
   * 6) Rebuild kernel:
-  * # cd /usr/src/sys/arch/i386/conf
+  * # cd /usr/src/sylss/arch/i386/conf
   * # config GENERIC
   * # cd ../compile/GENERIC
   * # make clean && make depend && make
