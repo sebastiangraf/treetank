@@ -54,6 +54,7 @@ sys_treetank_encryption(
 
   /* --- Local variables. --------------------------------------------------- */
   
+  u_int8_t        padding          = 0;
   int             error            = TT_OK;
   struct mbuf    *packetPointer    = NULL;
   struct cryptop *operationPointer = NULL;
@@ -80,6 +81,17 @@ sys_treetank_encryption(
       goto finish;
     }
     
+  }
+  
+  /* --- Assure padding as described by Schneier (only for encryption) ------ */
+  
+  if (operation == TT_WRITE) {
+    padding = TT_BLOCK_LENGTH - (*lengthPointer % TT_BLOCK_LENGTH);
+    if (padding == 0)
+      padding = TT_BLOCK_LENGTH;
+    bzero(bufferPointer + *lengthPointer, padding);
+    *lengthPointer += padding;
+    bufferPointer[*lengthPointer - 1] = padding;
   }
   
   /* --- Initialise buffer. ------------------------------------------------- */
@@ -154,6 +166,18 @@ sys_treetank_encryption(
     0,
     *lengthPointer,
     bufferPointer);
+    
+  /* --- Assure padding as described by Schneier (only for decryption) ------ */
+  
+  if (operation == TT_READ) {
+    padding = bufferPointer[*lengthPointer - 1];
+    if (padding < 1 || padding > TT_BLOCK_LENGTH) {
+      error = TT_ERROR;
+      printf("ERROR(sys_treetank_encryption.c): Failed during crypto_dispatch.\n");
+      goto finish;
+    }
+    *lengthPointer -= padding;
+  }
   
   /* --- Cleanup for all conditions. ---------------------------------------- */
   
