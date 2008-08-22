@@ -20,11 +20,6 @@ package org.treetank.pagelayer;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.zip.CRC32;
-import java.util.zip.Checksum;
-
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
 
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.utils.FastByteArrayReader;
@@ -43,21 +38,6 @@ public final class PageReader {
   /** Random access mFile to work on. */
   private final RandomAccessFile mFile;
 
-  /** Adler32 Checksum to assert integrity. */
-  private final Checksum mChecksum;
-
-  /** Do we use encryption? */
-  private final boolean mIsEncrypted;
-
-  /** Do we use checksumming? */
-  private final boolean mIsChecksummed;
-
-  /** Cipher to encrypt and decrypt blocks. */
-  private final Cipher mCipher;
-
-  /** Secret nodeKey to use for cryptographic operations. */
-  private final SecretKeySpec mSecretKeySpec;
-
   /** Inflater to decompress. */
   private ICompression mDecompressor;
 
@@ -75,28 +55,6 @@ public final class PageReader {
           new RandomAccessFile(
               sessionConfiguration.getAbsolutePath(),
               IConstants.READ_ONLY);
-
-      if (sessionConfiguration.isChecksummed()) {
-        mIsChecksummed = true;
-        mChecksum = new CRC32();
-      } else {
-        mIsChecksummed = false;
-        mChecksum = null;
-      }
-
-      if (sessionConfiguration.isEncrypted()) {
-        mIsEncrypted = true;
-        mCipher = Cipher.getInstance(IConstants.DEFAULT_ENCRYPTION_ALGORITHM);
-        mSecretKeySpec =
-            new SecretKeySpec(
-                sessionConfiguration.getEncryptionKey(),
-                IConstants.DEFAULT_ENCRYPTION_ALGORITHM);
-        mCipher.init(Cipher.DECRYPT_MODE, mSecretKeySpec);
-      } else {
-        mIsEncrypted = false;
-        mCipher = null;
-        mSecretKeySpec = null;
-      }
 
       try {
         System.loadLibrary("TreeTank");
@@ -134,25 +92,6 @@ public final class PageReader {
       mFile.seek(pageReference.getStart());
       page = new byte[pageReference.getLength()];
       mFile.read(page);
-
-      // Decrypt page.
-      //      if (mIsEncrypted) {
-      //        page = mCipher.doFinal(page);
-      //      }
-
-      // Verify checksummed page.
-      if (mIsChecksummed) {
-        mChecksum.reset();
-        mChecksum.update(page, 0, page.length);
-        if (mChecksum.getValue() != pageReference.getChecksum()) {
-          throw new Exception("Page checksum is not valid for start="
-              + pageReference.getStart()
-              + "; size="
-              + pageReference.getLength()
-              + "; checksum="
-              + pageReference.getChecksum());
-        }
-      }
 
       // Decompress page.
       page = mDecompressor.decompress(page, page.length);

@@ -20,11 +20,7 @@ package org.treetank.pagelayer;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.zip.CRC32;
-import java.util.zip.Checksum;
-
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
+import java.util.Arrays;
 
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.utils.FastByteArrayWriter;
@@ -43,26 +39,13 @@ public final class PageWriter {
   /** Random access mFile to work on. */
   private final RandomAccessFile mFile;
 
-  /** Adler32 Checksum to assert integrity. */
-  private final Checksum mChecksum;
-
-  /** Do we use encryption? */
-  private final boolean mIsEncrypted;
-
-  /** Do we use checksumming? */
-  private final boolean mIsChecksummed;
-
-  /** Cipher to encrypt and decrypt blocks. */
-  private final Cipher mCipher;
-
-  /** Secret nodeKey to use for cryptographic operations. */
-  private final SecretKeySpec mSecretKeySpec;
-
   /** Compressor to compress the page. */
   private ICompression mCompressor;
 
   /** Fast Byte array mWriter to hold temporary data. */
   private final FastByteArrayWriter mWriter;
+  
+  private final byte[] mReference;
 
   /**
    * Constructor.
@@ -79,28 +62,6 @@ public final class PageWriter {
               sessionConfiguration.getAbsolutePath(),
               IConstants.READ_WRITE);
 
-      if (sessionConfiguration.isChecksummed()) {
-        mIsChecksummed = true;
-        mChecksum = new CRC32();
-      } else {
-        mIsChecksummed = false;
-        mChecksum = null;
-      }
-
-      if (sessionConfiguration.isEncrypted()) {
-        mIsEncrypted = true;
-        mCipher = Cipher.getInstance(IConstants.DEFAULT_ENCRYPTION_ALGORITHM);
-        mSecretKeySpec =
-            new SecretKeySpec(
-                sessionConfiguration.getEncryptionKey(),
-                IConstants.DEFAULT_ENCRYPTION_ALGORITHM);
-        mCipher.init(Cipher.ENCRYPT_MODE, mSecretKeySpec);
-      } else {
-        mIsEncrypted = false;
-        mCipher = null;
-        mSecretKeySpec = null;
-      }
-
       try {
         System.loadLibrary("TreeTank");
         mCompressor = new NativeTreeTank();
@@ -109,6 +70,7 @@ public final class PageWriter {
       }
 
       mWriter = new FastByteArrayWriter();
+      mReference = new byte[24];
 
     } catch (Exception e) {
       throw new RuntimeException("Could not create page writer: "
@@ -127,30 +89,31 @@ public final class PageWriter {
 
     try {
 
-      // Serialize page.
+      // Serialise page.
       mWriter.reset();
       pageReference.getPage().serialize(mWriter);
 
+      // Initialise call to crypt.
+      final int size = mWriter.size();
+      //Arrays.fill(mReference, (byte) 0);
+      mReference[8] = (byte) (size >> 24);
+      mReference[9] = (byte) (size >> 16);
+      mReference[10] = (byte) (size >> 8);
+      mReference[11] = (byte) size;
+      final byte[] buffer = mWriter.getBytes();
+
       // Compress page.
-      final byte[] page =
-          mCompressor.compress(mWriter.getBytes(), mWriter.size());
-
-      // Checksum page.
-      if (mIsChecksummed) {
-        mChecksum.reset();
-        mChecksum.update(page, 0, page.length);
-        pageReference.setChecksum(mChecksum.getValue());
+      if (mCompressor.crypt(mReference, buffer) != 0) {
+        throw new Exception("Page crypto error.");
       }
-
-      // Encrypt page.
-      //      if (mIsEncrypted) {
-      //        page = mCipher.doFinal(page);
-      //      }
 
       // Write page to mFile.
       final long start = mFile.length();
       mFile.seek(start);
-      mFile.write(page);
+      mFile.write(buffer, 0, ((mReference[8] & 0xFF) << 24)
+          | ((mReference[9] & 0xFF) << 16)
+          | ((mReference[10] & 0xFF) << 8)
+          | (mReference[11] & 0xFF));
 
       // Remember page coordinates.
       pageReference.setStart(start);
