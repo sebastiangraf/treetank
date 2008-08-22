@@ -20,7 +20,6 @@ package org.treetank.pagelayer;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Arrays;
 
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.utils.FastByteArrayWriter;
@@ -44,7 +43,7 @@ public final class PageWriter {
 
   /** Fast Byte array mWriter to hold temporary data. */
   private final FastByteArrayWriter mWriter;
-  
+
   private final byte[] mReference;
 
   /**
@@ -95,7 +94,6 @@ public final class PageWriter {
 
       // Initialise call to crypt.
       final int size = mWriter.size();
-      //Arrays.fill(mReference, (byte) 0);
       mReference[8] = (byte) (size >> 24);
       mReference[9] = (byte) (size >> 16);
       mReference[10] = (byte) (size >> 8);
