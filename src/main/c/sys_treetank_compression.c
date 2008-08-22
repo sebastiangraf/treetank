@@ -20,7 +20,7 @@
 
 /* --- Function prototypes. ------------------------------------------------- */
 
-int sys_treetank_compression(u_int8_t, u_int8_t, u_int8_t *, u_int32_t *);
+int sys_treetank_compression(u_int8_t, u_int8_t, u_int32_t *, u_int8_t *);
 int sys_treetank_compression_callback(struct cryptop *op);
 
 /* --- Global variables. ---------------------------------------------------- */
@@ -42,8 +42,8 @@ int
 sys_treetank_compression(
   u_int8_t core,
   u_int8_t operation,
-  u_int8_t *bufferPointer,
-  u_int32_t *lengthPointer)
+  u_int32_t *lengthPointer,
+  u_int8_t *bufferPointer)
 {
 
   /* --- Local variables. --------------------------------------------------- */

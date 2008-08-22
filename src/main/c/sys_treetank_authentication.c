@@ -20,7 +20,7 @@
 
 /* --- Function prototypes. ------------------------------------------------- */
 
-int sys_treetank_authentication(u_int8_t, u_int8_t, u_int8_t *, u_int32_t *);
+int sys_treetank_authentication(u_int8_t, u_int8_t, u_int32_t *, u_int8_t *, u_int8_t *);
 int sys_treetank_authentication_callback(struct cryptop *op);
 
 /* --- Global variables. ---------------------------------------------------- */
@@ -44,8 +44,9 @@ int
 sys_treetank_authentication(
   u_int8_t core,
   u_int8_t operation,
-  u_int8_t *bufferPointer,
-  u_int32_t *lengthPointer)
+  u_int32_t *lengthPointer,
+  u_int8_t *hmacPointer,
+  u_int8_t *bufferPointer)
 {
 
   /* --- Local variables. --------------------------------------------------- */
@@ -136,14 +137,13 @@ sys_treetank_authentication(
   
   /* --- Collect result from buffer. ---------------------------------------- */
   
-  //*lengthPointer = operationPointer->crp_olen;
-  //packetPointer = operationPointer->crp_buf;
+  packetPointer = operationPointer->crp_buf;
   
-  //m_copydata(
-  //  packetPointer,
-  //  0,
-  //  *lengthPointer,
-  //  bufferPointer);
+  m_copydata(
+    packetPointer,
+    0,
+    TT_HMAC_LENGTH,
+    hmacPointer);
   
   /* --- Cleanup for all conditions. ---------------------------------------- */
   

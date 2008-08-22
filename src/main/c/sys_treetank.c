@@ -23,10 +23,11 @@
   * 
   * The following steps allow to rebuild the OpenBSD kernel:
   * 1) Add following line to end of /usr/src/sys/kern/syscalls.master:
-  * 306	STD		{ int sys_treetank(u_int8_t core, \
+  * 306	STD		{ int sys_treetank( \
+  *                u_int8_t core, \
   *                u_int8_t operation, \
-  *                u_int8_t *bufferPointer, \
-  *                u_int32_t *lengthPointer); }
+  *                u_int8_t *referencePointer, \
+  *                u_int8_t *bufferPointer); }
   *
   * 2) Rebuild syscall entries:
   * # cd /usr/src/sys/kern
@@ -60,13 +61,14 @@
   
 /* --- Function prototypes. ------------------------------------------------- */
 
-int sys_treetank_compression(u_int8_t, u_int8_t, u_int8_t *, u_int32_t *);
-int sys_treetank_encryption(u_int8_t, u_int8_t, u_int8_t *, u_int32_t *);
-int sys_treetank_authentication(u_int8_t, u_int8_t, u_int8_t *, u_int32_t *);
+int sys_treetank_compression(u_int8_t, u_int8_t, u_int32_t *, u_int8_t *);
+int sys_treetank_encryption(u_int8_t, u_int8_t, u_int32_t *, u_int8_t *);
+int sys_treetank_authentication(u_int8_t, u_int8_t, u_int32_t *, u_int8_t *, u_int8_t *);
 
 /* --- Global variables. ---------------------------------------------------- */
 
-static u_int8_t tt_buffer[8][64000];
+static u_int8_t tt_reference[TT_CORE_COUNT][TT_REFERENCE_LENGTH];
+static u_int8_t tt_buffer[TT_CORE_COUNT][TT_BUFFER_LENGTH];
 
 /* --- Code. ---------------------------------------------------------------- */
 
@@ -82,42 +84,61 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
   int                       error            = TT_OK;
   struct sys_treetank_args *argumentPointer  = v;
   
-  /* --- Copy buffer from user space. --------------------------------------- */
+  u_int8_t                  core             = SCARG(argumentPointer, core);
+  u_int8_t                  operation        = SCARG(argumentPointer, operation);
+  u_int8_t                 *referencePointer = SCARG(argumentPointer, referencePointer);
+  u_int8_t                 *bufferPointer    = SCARG(argumentPointer, bufferPointer);
+  
+  u_int64_t                *startPointer     = NULL;
+  u_int32_t                *lengthPointer    = NULL;
+  u_int8_t                 *hmacPointer      = NULL;
+  
+  /* --- Copy reference and buffer from user space. ------------------------- */
   
   copyin(
-    SCARG(argumentPointer, bufferPointer),
-    tt_buffer[SCARG(argumentPointer, core)],
-    *SCARG(argumentPointer, lengthPointer));
-
+    referencePointer,
+    tt_reference[core],
+    TT_REFERENCE_LENGTH);
+    
+  startPointer  = (u_int64_t *) (tt_reference[core] + TT_START_OFFSET);
+  lengthPointer = (u_int32_t *) (tt_reference[core] + TT_LENGTH_OFFSET);
+  hmacPointer   = (u_int8_t *) (tt_reference[core] + TT_HMAC_OFFSET);
+    
+  copyin(
+    bufferPointer,
+    tt_buffer[core],
+    *lengthPointer);
+    
   /* --- Perform operations. ------------------------------------------------ */
     
-  if (SCARG(argumentPointer, operation) == TT_WRITE) {
+  if (operation == TT_WRITE) {
   
       if (sys_treetank_compression(
-            SCARG(argumentPointer, core),
-            SCARG(argumentPointer, operation),
-            tt_buffer[SCARG(argumentPointer, core)],
-            SCARG(argumentPointer, lengthPointer)) != TT_OK) {
+            core,
+            operation,
+            lengthPointer,
+            tt_buffer[core]) != TT_OK) {
         error = TT_ERROR;
         printf("ERROR(sys_treetank.c): Could not perform compression.\n");
         goto finish;
       }
       
       if (sys_treetank_encryption(
-            SCARG(argumentPointer, core),
-            SCARG(argumentPointer, operation),
-            tt_buffer[SCARG(argumentPointer, core)],
-            SCARG(argumentPointer, lengthPointer)) != TT_OK) {
+            core,
+            operation,
+            lengthPointer,
+            tt_buffer[core]) != TT_OK) {
         error = TT_ERROR;
         printf("ERROR(sys_treetank.c): Could not perform encryption.\n");
         goto finish;
       }
       
       if (sys_treetank_authentication(
-            SCARG(argumentPointer, core),
-            SCARG(argumentPointer, operation),
-            tt_buffer[SCARG(argumentPointer, core)],
-            SCARG(argumentPointer, lengthPointer)) != TT_OK) {
+            core,
+            operation,
+            lengthPointer,
+            hmacPointer,
+            tt_buffer[core]) != TT_OK) {
         error = TT_ERROR;
         printf("ERROR(sys_treetank.c): Could not perform authentication.\n");
         goto finish;
@@ -126,30 +147,31 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
   } else {
   
       if (sys_treetank_authentication(
-            SCARG(argumentPointer, core),
-            SCARG(argumentPointer, operation),
-            tt_buffer[SCARG(argumentPointer, core)],
-            SCARG(argumentPointer, lengthPointer)) != TT_OK) {
+            core,
+            operation,
+            lengthPointer,
+            hmacPointer,
+            tt_buffer[core]) != TT_OK) {
         error = TT_ERROR;
         printf("ERROR(sys_treetank.c): Could not perform authentication.\n");
         goto finish;
       }
       
       if (sys_treetank_encryption(
-            SCARG(argumentPointer, core),
-            SCARG(argumentPointer, operation),
-            tt_buffer[SCARG(argumentPointer, core)],
-            SCARG(argumentPointer, lengthPointer)) != TT_OK) {
+            core,
+            operation,
+            lengthPointer,
+            tt_buffer[core]) != TT_OK) {
         error = TT_ERROR;
         printf("ERROR(sys_treetank.c): Could not perform encryption.\n");
         goto finish;
       }
   
       if (sys_treetank_compression(
-            SCARG(argumentPointer, core),
-            SCARG(argumentPointer, operation),
-            tt_buffer[SCARG(argumentPointer, core)],
-            SCARG(argumentPointer, lengthPointer)) != TT_OK) {
+            core,
+            operation,
+            lengthPointer,
+            tt_buffer[core]) != TT_OK) {
         error = TT_ERROR;
         printf("ERROR(sys_treetank.c): Could not perform compression.\n");
         goto finish;
@@ -157,12 +179,17 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
   
   }
   
-  /* --- Copy buffer to user space. ----------------------------------------- */
-	
+  /* --- Copy buffer and reference to user space. --------------------------- */
+  
   copyout(
-    tt_buffer[SCARG(argumentPointer, core)],
-    SCARG(argumentPointer, bufferPointer),
-    *SCARG(argumentPointer, lengthPointer));
+    tt_buffer[core],
+    bufferPointer,
+    *lengthPointer);
+    
+  copyout(
+    tt_reference[core],
+    referencePointer,
+    TT_REFERENCE_LENGTH);
   
   /* --- Cleanup for all conditions. ---------------------------------------- */
   
