@@ -31,6 +31,16 @@
 
 /* --- Constants. ----------------------------------------------------------- */
 
+#define TT_CORE_COUNT 8
+#define TT_REFERENCE_LENGTH 24
+#define TT_BUFFER_LENGTH 32768
+
+#define TT_WRITE 1
+#define TT_READ 0
+
+#define TT_OK 0
+#define TT_ERROR 1
+
 #define TT_COMPRESSION_ALGORITHM CRYPTO_LZS_COMP
 #define TT_ENCRYPTION_ALGORITHM CRYPTO_AES_CBC
 #define TT_AUTHENTICATION_ALGORITHM CRYPTO_SHA1_HMAC
@@ -39,10 +49,12 @@
 #define TT_BLOCK_LENGTH 16
 #define TT_ROUNDS 14
 
-#define TT_WRITE 1
-#define TT_READ 0
+#define TT_START_LENGTH 8
+#define TT_LENGTH_LENGTH 4
+#define TT_HMAC_LENGTH 12
 
-#define TT_OK 0
-#define TT_ERROR 1
+#define TT_START_OFFSET 0
+#define TT_LENGTH_OFFSET 8
+#define TT_HMAC_OFFSET 12
 
 #define TT_NULL_SESSION 0
