@@ -20,7 +20,7 @@
 
 /* --- Function prototypes. ------------------------------------------------- */
 
-int sys_treetank_authentication(u_int8_t, u_int8_t, u_int32_t *, u_int8_t *, u_int8_t *);
+int sys_treetank_authentication(u_int8_t, u_int8_t, u_int8_t *, u_int8_t *, u_int8_t *);
 int sys_treetank_authentication_callback(struct cryptop *op);
 
 /* --- Global variables. ---------------------------------------------------- */
@@ -44,7 +44,7 @@ int
 sys_treetank_authentication(
   u_int8_t core,
   u_int8_t operation,
-  u_int32_t *lengthPointer,
+  u_int8_t *lengthPointer,
   u_int8_t *hmacPointer,
   u_int8_t *bufferPointer)
 {
@@ -54,6 +54,7 @@ sys_treetank_authentication(
   int             error            = TT_OK;
   struct mbuf    *packetPointer    = NULL;
   struct cryptop *operationPointer = NULL;
+  u_int32_t       length           = TT_READ_INT(lengthPointer);
   
   /* --- Initialise session (if required). ---------------------------------- */
     
@@ -92,7 +93,7 @@ sys_treetank_authentication(
   m_copyback(
     packetPointer,
     0,
-    *lengthPointer,
+    length,
     bufferPointer);
 
   /* --- Initialise crypto operation. --------------------------------------- */
@@ -105,14 +106,14 @@ sys_treetank_authentication(
   }
 
   operationPointer->crp_sid               = tt_auth_sessionId[core];
-  operationPointer->crp_ilen              = *lengthPointer;
+  operationPointer->crp_ilen              = length;
   operationPointer->crp_flags             = CRYPTO_F_IMBUF;
   operationPointer->crp_buf               = (caddr_t) packetPointer;
   operationPointer->crp_desc->crd_alg     = TT_AUTHENTICATION_ALGORITHM;
   operationPointer->crp_desc->crd_klen    = TT_KEY_LENGTH;
   operationPointer->crp_desc->crd_key     = (caddr_t) &tt_auth_key;
   operationPointer->crp_desc->crd_skip    = 0;
-  operationPointer->crp_desc->crd_len     = *lengthPointer;
+  operationPointer->crp_desc->crd_len     = length;
   operationPointer->crp_desc->crd_inject  = 0;
   operationPointer->crp_callback          = (int (*) (struct cryptop *)) sys_treetank_authentication_callback;
    

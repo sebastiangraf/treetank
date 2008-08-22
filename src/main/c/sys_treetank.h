@@ -58,3 +58,15 @@
 #define TT_HMAC_OFFSET 12
 
 #define TT_NULL_SESSION 0
+
+#define TT_WRITE_INT(PTR, VAL) { \
+            (PTR)[0] = (u_int8_t) (VAL >> 24); \
+            (PTR)[1] = (u_int8_t) (VAL >> 16); \
+            (PTR)[2] = (u_int8_t) (VAL >>  8); \
+            (PTR)[3] = (u_int8_t)  VAL; }
+      
+#define TT_READ_INT(PTR) \
+           ((((PTR)[0] & 0xFF) << 24) \
+          | (((PTR)[1] & 0xFF) << 16) \
+          | (((PTR)[2] & 0xFF) <<  8) \
+          |  ((PTR)[3] & 0xFF))

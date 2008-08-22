@@ -61,9 +61,9 @@
   
 /* --- Function prototypes. ------------------------------------------------- */
 
-int sys_treetank_compression(u_int8_t, u_int8_t, u_int32_t *, u_int8_t *);
-int sys_treetank_encryption(u_int8_t, u_int8_t, u_int32_t *, u_int8_t *);
-int sys_treetank_authentication(u_int8_t, u_int8_t, u_int32_t *, u_int8_t *, u_int8_t *);
+int sys_treetank_compression(u_int8_t, u_int8_t, u_int8_t *, u_int8_t *);
+int sys_treetank_encryption(u_int8_t, u_int8_t, u_int8_t *, u_int8_t *);
+int sys_treetank_authentication(u_int8_t, u_int8_t, u_int8_t *, u_int8_t *, u_int8_t *);
 
 /* --- Global variables. ---------------------------------------------------- */
 
@@ -89,8 +89,8 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
   u_int8_t                 *referencePointer = SCARG(argumentPointer, referencePointer);
   u_int8_t                 *bufferPointer    = SCARG(argumentPointer, bufferPointer);
   
-  u_int64_t                *startPointer     = NULL;
-  u_int32_t                *lengthPointer    = NULL;
+  u_int8_t                 *startPointer     = NULL;
+  u_int8_t                 *lengthPointer    = NULL;
   u_int8_t                 *hmacPointer      = NULL;
   
   /* --- Copy reference and buffer from user space. ------------------------- */
@@ -100,14 +100,21 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
     tt_reference[core],
     TT_REFERENCE_LENGTH);
     
-  startPointer  = (u_int64_t *) (tt_reference[core] + TT_START_OFFSET);
-  lengthPointer = (u_int32_t *) (tt_reference[core] + TT_LENGTH_OFFSET);
-  hmacPointer   = (u_int8_t *) (tt_reference[core] + TT_HMAC_OFFSET);
+  startPointer  = tt_reference[core] + TT_START_OFFSET;
+  lengthPointer = tt_reference[core] + TT_LENGTH_OFFSET;
+  hmacPointer   = tt_reference[core] + TT_HMAC_OFFSET;
+  
+  if ((TT_READ_INT(lengthPointer) <= 0)
+      || (TT_READ_INT(lengthPointer) > TT_BUFFER_LENGTH)) {
+    error = TT_ERROR;
+    printf("ERROR(sys_treetank.c): Invalid length.\n");
+    goto finish;
+  }
     
   copyin(
     bufferPointer,
     tt_buffer[core],
-    *lengthPointer);
+    TT_READ_INT(lengthPointer));
     
   /* --- Perform operations. ------------------------------------------------ */
     
@@ -184,7 +191,7 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
   copyout(
     tt_buffer[core],
     bufferPointer,
-    *lengthPointer);
+    TT_READ_INT(lengthPointer));
     
   copyout(
     tt_reference[core],

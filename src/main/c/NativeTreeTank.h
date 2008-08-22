@@ -11,10 +11,10 @@ extern "C" {
 /*
  * Class:     org_treetank_pagelayer_NativeTreeTank
  * Method:    write
- * Signature: (I[BI)[B
+ * Signature: (I[B[B)I
  */
-JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeTreeTank_write
-  (JNIEnv *, jobject, jint, jbyteArray, jint);
+JNIEXPORT jint JNICALL Java_org_treetank_pagelayer_NativeTreeTank_write
+  (JNIEnv *, jobject, jint, jbyteArray, jbyteArray);
 
 /*
  * Class:     org_treetank_pagelayer_NativeTreeTank
