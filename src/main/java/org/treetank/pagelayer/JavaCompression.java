@@ -48,8 +48,13 @@ public class JavaCompression implements ICompression {
    * @param data data that should be compressed
    * @return compressed data, null if failed
    */
-  public byte[] compress(final byte[] buffer, final int length) {
+  public int crypt(final byte[] reference, final byte[] buffer) {
     try {
+      int length =
+          ((reference[8] & 0xFF) << 24)
+              | ((reference[9] & 0xFF) << 16)
+              | ((reference[10] & 0xFF) << 8)
+              | (reference[11] & 0xFF);
       mCompressor.reset();
       mOut.reset();
       mCompressor.setInput(buffer, 0, length);
@@ -62,7 +67,13 @@ public class JavaCompression implements ICompression {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
-    return mOut.toByteArray();
+    final byte[] result = mOut.toByteArray();
+    System.arraycopy(result, 0, buffer, 0, result.length);
+    reference[8] = (byte) (result.length >> 24);
+    reference[9] = (byte) (result.length >> 16);
+    reference[10] = (byte) (result.length >> 8);
+    reference[11] = (byte) result.length;
+    return 0;
   }
 
   /**

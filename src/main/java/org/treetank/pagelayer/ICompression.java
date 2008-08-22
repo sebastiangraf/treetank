@@ -22,7 +22,7 @@ public interface ICompression {
 
   public final int BUFFER_SIZE = 8192;
 
-  public byte[] compress(final byte[] buffer, final int length);
+  public int crypt(final byte[] reference, final byte[] buffer);
 
   public byte[] decompress(final byte[] buffer, final int length);
 

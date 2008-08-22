@@ -29,7 +29,7 @@ public final class FastByteArrayWriter {
    *
    */
   public FastByteArrayWriter() {
-    mBuffer = new byte[32];
+    mBuffer = new byte[32768];
     mSize = 0;
   }
 
