@@ -20,7 +20,7 @@
 
 /* --- Function prototypes. ------------------------------------------------- */
 
-int sys_treetank_compression(u_int8_t, u_int8_t, u_int32_t *, u_int8_t *);
+int sys_treetank_compression(u_int8_t, u_int8_t, u_int8_t *, u_int8_t *);
 int sys_treetank_compression_callback(struct cryptop *op);
 
 /* --- Global variables. ---------------------------------------------------- */
@@ -42,7 +42,7 @@ int
 sys_treetank_compression(
   u_int8_t core,
   u_int8_t operation,
-  u_int32_t *lengthPointer,
+  u_int8_t *lengthPointer,
   u_int8_t *bufferPointer)
 {
 
@@ -51,6 +51,7 @@ sys_treetank_compression(
   int             error            = TT_OK;
   struct mbuf    *packetPointer    = NULL;
   struct cryptop *operationPointer = NULL;
+  u_int32_t       length           = TT_READ_INT(lengthPointer);
   
   /* --- Initialise session (if required). ---------------------------------- */
     
@@ -87,7 +88,7 @@ sys_treetank_compression(
   m_copyback(
     packetPointer,
     0,
-    *lengthPointer,
+    length,
     bufferPointer);
 
   /* --- Initialise crypto operation. --------------------------------------- */
@@ -100,12 +101,12 @@ sys_treetank_compression(
   }
 
   operationPointer->crp_sid               = tt_comp_sessionId[core];
-  operationPointer->crp_ilen              = *lengthPointer;
+  operationPointer->crp_ilen              = length;
   operationPointer->crp_flags             = CRYPTO_F_IMBUF;
   operationPointer->crp_buf               = (caddr_t) packetPointer;
   operationPointer->crp_desc->crd_alg     = TT_COMPRESSION_ALGORITHM;
   operationPointer->crp_desc->crd_skip    = 0;
-  operationPointer->crp_desc->crd_len     = *lengthPointer;
+  operationPointer->crp_desc->crd_len     = length;
   operationPointer->crp_desc->crd_inject  = 0;
   if (operation == TT_WRITE)
     operationPointer->crp_desc->crd_flags = CRD_F_COMP;
@@ -134,13 +135,15 @@ sys_treetank_compression(
   
   /* --- Collect result from buffer. ---------------------------------------- */
   
-  *lengthPointer = operationPointer->crp_olen;
+  length = operationPointer->crp_olen;
   packetPointer = operationPointer->crp_buf;
+  
+  TT_WRITE_INT(lengthPointer, length);
   
   m_copydata(
     packetPointer,
     0,
-    *lengthPointer,
+    length,
     bufferPointer);
   
   /* --- Cleanup under any circumstance. ------------------------------------ */

@@ -20,7 +20,7 @@
 
 /* --- Function prototypes. ------------------------------------------------- */
 
-int sys_treetank_encryption(u_int8_t, u_int8_t, u_int32_t *, u_int8_t *);
+int sys_treetank_encryption(u_int8_t, u_int8_t, u_int8_t *, u_int8_t *);
 int sys_treetank_encryption_callback(struct cryptop *op);
 
 /* --- Global variables. ---------------------------------------------------- */
@@ -45,7 +45,7 @@ int
 sys_treetank_encryption(
   u_int8_t core,
   u_int8_t operation,
-  u_int32_t *lengthPointer,
+  u_int8_t *lengthPointer,
   u_int8_t *bufferPointer)
 {
 
@@ -55,6 +55,7 @@ sys_treetank_encryption(
   int             error            = TT_OK;
   struct mbuf    *packetPointer    = NULL;
   struct cryptop *operationPointer = NULL;
+  u_int32_t       length           = TT_READ_INT(lengthPointer);
   
   /* --- Initialise session (if required). ---------------------------------- */
     
@@ -83,12 +84,13 @@ sys_treetank_encryption(
   /* --- Assure padding as described by Schneier (only for encryption) ------ */
   
   if (operation == TT_WRITE) {
-    padding = TT_BLOCK_LENGTH - (*lengthPointer % TT_BLOCK_LENGTH);
+    padding = TT_BLOCK_LENGTH - (length % TT_BLOCK_LENGTH);
     if (padding == 0)
       padding = TT_BLOCK_LENGTH;
-    bzero(bufferPointer + *lengthPointer, padding);
-    *lengthPointer += padding;
-    bufferPointer[*lengthPointer - 1] = padding;
+    bzero(bufferPointer + length, padding);
+    length += padding;
+    bufferPointer[length - 1] = padding;
+    TT_WRITE_INT(lengthPointer, length);
   }
   
   /* --- Initialise buffer. ------------------------------------------------- */
@@ -106,7 +108,7 @@ sys_treetank_encryption(
   m_copyback(
     packetPointer,
     0,
-    *lengthPointer,
+    length,
     bufferPointer);
 
   /* --- Initialise crypto operation. --------------------------------------- */
@@ -119,14 +121,14 @@ sys_treetank_encryption(
   }
 
   operationPointer->crp_sid               = tt_enc_sessionId[core];
-  operationPointer->crp_ilen              = *lengthPointer;
+  operationPointer->crp_ilen              = length;
   operationPointer->crp_flags             = CRYPTO_F_IMBUF;
   operationPointer->crp_buf               = (caddr_t) packetPointer;
   operationPointer->crp_desc->crd_alg     = TT_ENCRYPTION_ALGORITHM;
   operationPointer->crp_desc->crd_klen    = TT_KEY_LENGTH;
   operationPointer->crp_desc->crd_key     = (caddr_t) &tt_enc_key;
   operationPointer->crp_desc->crd_skip    = 0;
-  operationPointer->crp_desc->crd_len     = *lengthPointer;
+  operationPointer->crp_desc->crd_len     = length;
   operationPointer->crp_desc->crd_inject  = 0;
   bcopy(tt_enc_iv, operationPointer->crp_desc->crd_iv, TT_BLOCK_LENGTH);
   if (operation == TT_WRITE)
@@ -161,19 +163,20 @@ sys_treetank_encryption(
   m_copydata(
     packetPointer,
     0,
-    *lengthPointer,
+    length,
     bufferPointer);
     
   /* --- Assure padding as described by Schneier (only for decryption) ------ */
   
   if (operation == TT_READ) {
-    padding = bufferPointer[*lengthPointer - 1];
+    padding = bufferPointer[length - 1];
     if (padding < 1 || padding > TT_BLOCK_LENGTH) {
       error = TT_ERROR;
       printf("ERROR(sys_treetank_encryption.c): Failed during crypto_dispatch.\n");
       goto finish;
     }
-    *lengthPointer -= padding;
+    length -= padding;
+    TT_WRITE_INT(lengthPointer, length);
   }
   
   /* --- Cleanup for all conditions. ---------------------------------------- */
