@@ -45,12 +45,12 @@
   *    != 0)
   *    continue;
   *
-  * 5) create GENERIC configuration:
+  * 5) Comment out the following line from /usr/src/sys/arch/i386/conf/GENERIC:
+  * glxsb* at pci?
+  *
+  * 6) create GENERIC configuration:
   * # cd /usr/src/sys/arch/i386/conf
   * # config GENERIC
-  *
-  * 6) Comment out the following line from /usr/src/sys/arch/i386/conf/GENERIC:
-  * glxsb* at pci?
   *
   * 7) Rebuild kernel:
   * # cd /usr/src/sys/arch/i386/compile/GENERIC
