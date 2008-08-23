@@ -43,7 +43,7 @@ JNIEXPORT jint JNICALL Java_org_treetank_pagelayer_NativeTreeTank_write(JNIEnv *
   return error;
 }
 
-JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeTreeTank_read(JNIEnv *env, jobject o, jint core, jobject jreference, jobject jbuffer)
+JNIEXPORT jint JNICALL Java_org_treetank_pagelayer_NativeTreeTank_read(JNIEnv *env, jobject o, jint core, jobject jreference, jobject jbuffer)
 {
   int       error            = 0;
   u_int8_t *referencePointer = (*env)->GetDirectBufferAddress(env, jreference);
