@@ -110,10 +110,6 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
     printf("ERROR(sys_treetank.c): Invalid length.\n");
     goto finish;
   }
-  
-  printf("Received %d\n", TT_READ_INT(lengthPointer));
-  
-  return (0);
     
   copyin(
     bufferPointer,
