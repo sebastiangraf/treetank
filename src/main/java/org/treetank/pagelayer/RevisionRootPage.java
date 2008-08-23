@@ -18,9 +18,9 @@
 
 package org.treetank.pagelayer;
 
+import java.nio.ByteBuffer;
+
 import org.treetank.sessionlayer.WriteTransactionState;
-import org.treetank.utils.FastByteArrayReader;
-import org.treetank.utils.FastByteArrayWriter;
 import org.treetank.utils.IConstants;
 
 /**
@@ -68,12 +68,12 @@ public final class RevisionRootPage extends AbstractPage {
    * @param in Input bytes.
    * @param revisionKey Key of revision.
    */
-  public RevisionRootPage(final FastByteArrayReader in, final long revisionKey) {
+  public RevisionRootPage(final ByteBuffer in, final long revisionKey) {
     super(2, in);
     mRevisionNumber = revisionKey;
-    mRevisionSize = in.readVarLong();
-    mMaxNodeKey = in.readVarLong();
-    mRevisionTimestamp = in.readVarLong();
+    mRevisionSize = in.getLong();
+    mMaxNodeKey = in.getLong();
+    mRevisionTimestamp = in.getLong();
   }
 
   /**
@@ -170,11 +170,11 @@ public final class RevisionRootPage extends AbstractPage {
    * {@inheritDoc}
    */
   @Override
-  public final void serialize(final FastByteArrayWriter out) {
+  public final void serialize(final ByteBuffer out) {
     super.serialize(out);
-    out.writeVarLong(mRevisionSize);
-    out.writeVarLong(mMaxNodeKey);
-    out.writeVarLong(mRevisionTimestamp);
+    out.putLong(mRevisionSize);
+    out.putLong(mMaxNodeKey);
+    out.putLong(mRevisionTimestamp);
   }
 
   /**

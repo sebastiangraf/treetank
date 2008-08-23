@@ -20,10 +20,10 @@ package org.treetank.nodelayer;
 
 import static org.junit.Assert.assertEquals;
 
+import java.nio.ByteBuffer;
+
 import org.junit.Test;
 import org.treetank.api.IReadTransaction;
-import org.treetank.utils.FastByteArrayReader;
-import org.treetank.utils.FastByteArrayWriter;
 
 public class FullTextRootNodeTest {
 
@@ -32,7 +32,7 @@ public class FullTextRootNodeTest {
 
     // Create empty node.
     final AbstractNode node1 = new FullTextRootNode();
-    final FastByteArrayWriter out = new FastByteArrayWriter();
+    final ByteBuffer out = ByteBuffer.allocate(1000);
 
     // Modify it.
     node1.incrementChildCount();
@@ -40,8 +40,8 @@ public class FullTextRootNodeTest {
 
     // Serialize and deserialize node.
     node1.serialize(out);
-    final FastByteArrayReader in = new FastByteArrayReader(out.getBytes());
-    final AbstractNode node2 = new FullTextRootNode(in);
+    out.position(0);
+    final AbstractNode node2 = new FullTextRootNode(out);
 
     // Clone node.
     final AbstractNode node3 = new FullTextRootNode(node2);

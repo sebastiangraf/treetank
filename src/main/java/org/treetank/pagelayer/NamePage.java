@@ -18,11 +18,10 @@
 
 package org.treetank.pagelayer;
 
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.treetank.utils.FastByteArrayReader;
-import org.treetank.utils.FastByteArrayWriter;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -54,14 +53,15 @@ public final class NamePage extends AbstractPage {
    * 
    * @param in Input bytes to read from.
    */
-  public NamePage(final FastByteArrayReader in) {
+  public NamePage(final ByteBuffer in) {
     super(0, in);
     mNameMap = new HashMap<Integer, String>();
     mRawNameMap = new HashMap<Integer, byte[]>();
 
-    for (int i = 0, l = in.readVarInt(); i < l; i++) {
-      final int key = in.readVarInt();
-      final byte[] bytes = in.readByteArray();
+    for (int i = 0, l = in.getInt(); i < l; i++) {
+      final int key = in.getInt();
+      final byte[] bytes = new byte[in.getInt()];
+      in.get(bytes);
       mNameMap.put(key, TypedValue.parseString(bytes));
       mRawNameMap.put(key, bytes);
     }
@@ -113,14 +113,16 @@ public final class NamePage extends AbstractPage {
    * {@inheritDoc}
    */
   @Override
-  public final void serialize(final FastByteArrayWriter out) {
+  public final void serialize(final ByteBuffer out) {
     super.serialize(out);
 
-    out.writeVarInt(mNameMap.size());
+    out.putInt(mNameMap.size());
 
     for (final int key : mNameMap.keySet()) {
-      out.writeVarInt(key);
-      out.writeByteArray(TypedValue.getBytes(mNameMap.get(key)));
+      out.putInt(key);
+      byte[] tmp = TypedValue.getBytes(mNameMap.get(key));
+      out.putInt(tmp.length);
+      out.put(tmp);
     }
   }
 

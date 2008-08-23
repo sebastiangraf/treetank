@@ -18,9 +18,9 @@
 
 package org.treetank.nodelayer;
 
+import java.nio.ByteBuffer;
+
 import org.treetank.api.IReadTransaction;
-import org.treetank.utils.FastByteArrayReader;
-import org.treetank.utils.FastByteArrayWriter;
 
 /**
  * <h1>TextNode</h1>
@@ -81,12 +81,12 @@ public final class FullTextLeafNode extends AbstractNode {
    * @param nodeKey Key of text node.
    * @param in Input bytes to read node from.
    */
-  public FullTextLeafNode(final long nodeKey, final FastByteArrayReader in) {
+  public FullTextLeafNode(final long nodeKey, final ByteBuffer in) {
     super(nodeKey);
-    mParentKey = getNodeKey() - in.readVarLong();
-    mFirstChildKey = getNodeKey() - in.readVarLong();
-    mLeftSiblingKey = getNodeKey() - in.readVarLong();
-    mRightSiblingKey = getNodeKey() - in.readVarLong();
+    mParentKey = getNodeKey() - in.getLong();
+    mFirstChildKey = getNodeKey() - in.getLong();
+    mLeftSiblingKey = getNodeKey() - in.getLong();
+    mRightSiblingKey = getNodeKey() - in.getLong();
   }
 
   /**
@@ -205,11 +205,11 @@ public final class FullTextLeafNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final void serialize(final FastByteArrayWriter out) {
-    out.writeVarLong(getNodeKey() - mParentKey);
-    out.writeVarLong(getNodeKey() - mFirstChildKey);
-    out.writeVarLong(getNodeKey() - mLeftSiblingKey);
-    out.writeVarLong(getNodeKey() - mRightSiblingKey);
+  public final void serialize(final ByteBuffer out) {
+    out.putLong(getNodeKey() - mParentKey);
+    out.putLong(getNodeKey() - mFirstChildKey);
+    out.putLong(getNodeKey() - mLeftSiblingKey);
+    out.putLong(getNodeKey() - mRightSiblingKey);
   }
 
   /**

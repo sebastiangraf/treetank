@@ -18,8 +18,7 @@
 
 package org.treetank.pagelayer;
 
-import org.treetank.utils.FastByteArrayReader;
-import org.treetank.utils.FastByteArrayWriter;
+import java.nio.ByteBuffer;
 
 /**
  * <h1>PageReference</h1>
@@ -91,8 +90,8 @@ public final class PageReference<T extends AbstractPage> {
    * 
    * @param in Input bytes.
    */
-  public PageReference(final FastByteArrayReader in) {
-    this(null, in.readVarLong(), in.readVarInt(), in.readVarLong());
+  public PageReference(final ByteBuffer in) {
+    this(null, in.getLong(), in.getInt(), in.getLong());
   }
 
   /**
@@ -204,10 +203,10 @@ public final class PageReference<T extends AbstractPage> {
    * 
    * @param out Output bytes that get written to a file.
    */
-  public final void serialize(final FastByteArrayWriter out) {
-    out.writeVarLong(mStart);
-    out.writeVarInt(mLength);
-    out.writeVarLong(mChecksum);
+  public final void serialize(final ByteBuffer out) {
+    out.putLong(mStart);
+    out.putInt(mLength);
+    out.putLong(mChecksum);
   }
 
   /**

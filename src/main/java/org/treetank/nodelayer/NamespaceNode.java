@@ -18,9 +18,9 @@
 
 package org.treetank.nodelayer;
 
+import java.nio.ByteBuffer;
+
 import org.treetank.api.IReadTransaction;
-import org.treetank.utils.FastByteArrayReader;
-import org.treetank.utils.FastByteArrayWriter;
 
 /**
  * <h1>NamespaceNode</h1>
@@ -60,11 +60,11 @@ public final class NamespaceNode extends AbstractNode {
     mPrefixKey = namespace.getPrefixKey();
   }
 
-  public NamespaceNode(final long nodeKey, final FastByteArrayReader in) {
+  public NamespaceNode(final long nodeKey, final ByteBuffer in) {
     super(nodeKey);
 
-    mURIKey = in.readVarInt();
-    mPrefixKey = in.readVarInt();
+    mURIKey = in.getInt();
+    mPrefixKey = in.getInt();
   }
 
   /**
@@ -127,9 +127,9 @@ public final class NamespaceNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final void serialize(final FastByteArrayWriter out) {
-    out.writeVarInt(mURIKey);
-    out.writeVarInt(mPrefixKey);
+  public final void serialize(final ByteBuffer out) {
+    out.putInt(mURIKey);
+    out.putInt(mPrefixKey);
   }
 
 }

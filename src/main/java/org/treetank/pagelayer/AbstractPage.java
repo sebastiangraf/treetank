@@ -18,9 +18,9 @@
 
 package org.treetank.pagelayer;
 
+import java.nio.ByteBuffer;
+
 import org.treetank.sessionlayer.WriteTransactionState;
-import org.treetank.utils.FastByteArrayReader;
-import org.treetank.utils.FastByteArrayWriter;
 
 /**
  * <h1>Page</h1>
@@ -64,10 +64,10 @@ public abstract class AbstractPage {
    * @param referenceCount Number of references of page.
    * @param in Input reader to read from.
    */
-  protected AbstractPage(final int referenceCount, final FastByteArrayReader in) {
+  protected AbstractPage(final int referenceCount, final ByteBuffer in) {
     this(false, referenceCount);
     for (int offset = 0; offset < referenceCount; offset++) {
-      if (in.readBoolean()) {
+      if (in.get() == 1) {
         mReferences[offset] = new PageReference(in);
       }
     }
@@ -143,13 +143,13 @@ public abstract class AbstractPage {
    * 
    * @param out Output stream.
    */
-  public void serialize(final FastByteArrayWriter out) {
+  public void serialize(final ByteBuffer out) {
     for (final PageReference<? extends AbstractPage> reference : mReferences) {
       if (reference != null) {
-        out.writeBoolean(true);
+        out.put((byte) 1);
         reference.serialize(out);
       } else {
-        out.writeBoolean(false);
+        out.put((byte) 0);
       }
     }
   }

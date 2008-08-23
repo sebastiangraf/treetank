@@ -20,9 +20,9 @@ package org.treetank.pagelayer;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 
 import org.treetank.sessionlayer.SessionConfiguration;
-import org.treetank.utils.FastByteArrayReader;
 import org.treetank.utils.IConstants;
 
 /**
@@ -76,7 +76,7 @@ public final class PageReader {
    * @return Byte array reader to read bytes from.o
    * @throws RuntimeException if there was an error during reading.
    */
-  public final FastByteArrayReader read(
+  public final ByteBuffer read(
       final PageReference<? extends AbstractPage> pageReference) {
 
     if (!pageReference.isCommitted()) {
@@ -104,7 +104,7 @@ public final class PageReader {
     }
 
     // Return reader required to instantiate and deserialize page.
-    return new FastByteArrayReader(page);
+    return ByteBuffer.wrap(page);
 
   }
 

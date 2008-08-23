@@ -18,9 +18,9 @@
 
 package org.treetank.nodelayer;
 
+import java.nio.ByteBuffer;
+
 import org.treetank.api.IReadTransaction;
-import org.treetank.utils.FastByteArrayReader;
-import org.treetank.utils.FastByteArrayWriter;
 
 /**
  * <h1>ElementNode</h1>
@@ -57,7 +57,7 @@ public final class ElementNode extends AbstractNode {
 
   /** Key of URI. */
   private int mURIKey;
-  
+
   /** Type of node. */
   private int mType;
 
@@ -125,26 +125,26 @@ public final class ElementNode extends AbstractNode {
    * @param nodeKey Key to assign to read element node.
    * @param in Input bytes to read from.
    */
-  public ElementNode(final long nodeKey, final FastByteArrayReader in) {
+  public ElementNode(final long nodeKey, final ByteBuffer in) {
     super(nodeKey);
 
     // Read according to node kind.
-    mParentKey = getNodeKey() - in.readVarLong();
-    mFirstChildKey = getNodeKey() - in.readVarLong();
-    mLeftSiblingKey = getNodeKey() - in.readVarLong();
-    mRightSiblingKey = getNodeKey() - in.readVarLong();
-    mChildCount = in.readVarLong();
-    mAttributes = new AttributeNode[in.readByte()];
+    mParentKey = getNodeKey() - in.getLong();
+    mFirstChildKey = getNodeKey() - in.getLong();
+    mLeftSiblingKey = getNodeKey() - in.getLong();
+    mRightSiblingKey = getNodeKey() - in.getLong();
+    mChildCount = in.getLong();
+    mAttributes = new AttributeNode[in.get()];
     for (int i = 0, l = mAttributes.length; i < l; i++) {
       mAttributes[i] = new AttributeNode(getNodeKey(), in);
     }
-    mNamespaces = new NamespaceNode[in.readByte()];
+    mNamespaces = new NamespaceNode[in.get()];
     for (int i = 0, l = mNamespaces.length; i < l; i++) {
       mNamespaces[i] = new NamespaceNode(getNodeKey(), in);
     }
-    mNameKey = in.readVarInt();
-    mURIKey = in.readVarInt();
-    mType = in.readVarInt();
+    mNameKey = in.getInt();
+    mURIKey = in.getInt();
+    mType = in.getInt();
   }
 
   /**
@@ -411,7 +411,7 @@ public final class ElementNode extends AbstractNode {
   public final void setURIKey(final int uriKey) {
     mURIKey = uriKey;
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -419,7 +419,7 @@ public final class ElementNode extends AbstractNode {
   public final int getTypeKey() {
     return mType;
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -432,23 +432,23 @@ public final class ElementNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final void serialize(final FastByteArrayWriter out) {
-    out.writeVarLong(getNodeKey() - mParentKey);
-    out.writeVarLong(getNodeKey() - mFirstChildKey);
-    out.writeVarLong(getNodeKey() - mLeftSiblingKey);
-    out.writeVarLong(getNodeKey() - mRightSiblingKey);
-    out.writeVarLong(mChildCount);
-    out.writeByte((byte) mAttributes.length);
+  public final void serialize(final ByteBuffer out) {
+    out.putLong(getNodeKey() - mParentKey);
+    out.putLong(getNodeKey() - mFirstChildKey);
+    out.putLong(getNodeKey() - mLeftSiblingKey);
+    out.putLong(getNodeKey() - mRightSiblingKey);
+    out.putLong(mChildCount);
+    out.put((byte) mAttributes.length);
     for (int i = 0, l = mAttributes.length; i < l; i++) {
       mAttributes[i].serialize(out);
     }
-    out.writeByte((byte) mNamespaces.length);
+    out.put((byte) mNamespaces.length);
     for (int i = 0, l = mNamespaces.length; i < l; i++) {
       mNamespaces[i].serialize(out);
     }
-    out.writeVarInt(mNameKey);
-    out.writeVarInt(mURIKey);
-    out.writeVarInt(mType);
+    out.putInt(mNameKey);
+    out.putInt(mURIKey);
+    out.putInt(mType);
   }
 
   /**

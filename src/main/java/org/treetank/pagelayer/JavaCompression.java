@@ -19,6 +19,7 @@
 package org.treetank.pagelayer;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
@@ -38,7 +39,7 @@ public class JavaCompression implements ICompression {
   public JavaCompression() {
     mCompressor = new Deflater();
     mDecompressor = new Inflater();
-    mTmp = new byte[BUFFER_SIZE];
+    mTmp = new byte[8192];
     mOut = new ByteArrayOutputStream();
   }
 
@@ -48,16 +49,15 @@ public class JavaCompression implements ICompression {
    * @param data data that should be compressed
    * @return compressed data, null if failed
    */
-  public int crypt(final byte[] reference, final byte[] buffer) {
+  public int crypt(final ByteBuffer reference, final ByteBuffer buffer) {
     try {
-      int length =
-          ((reference[8] & 0xFF) << 24)
-              | ((reference[9] & 0xFF) << 16)
-              | ((reference[10] & 0xFF) << 8)
-              | (reference[11] & 0xFF);
+      final int length = reference.getInt(8);
+      byte[] tmp = new byte[length];
+      buffer.rewind();
+      buffer.get(tmp);
       mCompressor.reset();
       mOut.reset();
-      mCompressor.setInput(buffer, 0, length);
+      mCompressor.setInput(tmp);
       mCompressor.finish();
       int count;
       while (!mCompressor.finished()) {
@@ -68,11 +68,10 @@ public class JavaCompression implements ICompression {
       throw new RuntimeException(e);
     }
     final byte[] result = mOut.toByteArray();
-    System.arraycopy(result, 0, buffer, 0, result.length);
-    reference[8] = (byte) (result.length >> 24);
-    reference[9] = (byte) (result.length >> 16);
-    reference[10] = (byte) (result.length >> 8);
-    reference[11] = (byte) result.length;
+    buffer.rewind();
+    buffer.put(result);
+    reference.position(8);
+    reference.putInt(result.length);
     return 0;
   }
 
