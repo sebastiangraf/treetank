@@ -151,87 +151,87 @@ public class XPathAxisWideTest {
   }
 
   ////  lasts too long
-    @Test
-    public void testIterateShakespreare() throws IOException, XMLStreamException {
-   // Setup parsed session.
-      XMLShredder.shred(XML2, new SessionConfiguration(PATH2));
-  
-      // Verify.
-      final ISession session2 = Session.beginSession(PATH2);
-      final IReadTransaction rtx2 = session2.beginReadTransaction(new ItemList());
-      rtx2.moveToDocumentRoot();
-  
-      XPathStringTest.testIAxisConventions(new XPathAxis(rtx2, "fn:count(//PLAY)"), 
-          new String[]{"37"});
-      
-      rtx2.moveTo(3L);
-      XPathStringTest.testIAxisConventions(new XPathAxis(rtx2, "fn:count(TITLE)"), 
-          new String[]{"1"});
-      
-      XPathStringTest.testIAxisConventions(new XPathAxis(rtx2, "fn:string(TITLE)"), 
-          new String[]{"The Tragedy of Antony and Cleopatra"});
-          
-          XPathStringTest.testIAxisConventions(new XPathAxis(rtx2, "fn:count(//*)"), 
-              new String[]{"179619"});
-          
-          
-          XPathStringTest.testIAxisConventions(new XPathAxis(rtx2, "fn:count(/PLAYS/PLAY/PERSONAE)"), 
-              new String[]{"37"});
-  //    
-  //    final IAxis axis1 = new XPathAxis(rtx2, "//PERSONA");
-  //    for (int i = 0; i < 969; i++) {
-  //      assertEquals(true, axis1.hasNext());
-  //      axis1.next();
-  //    }
-  //    assertEquals(false, axis1.hasNext());
-  //    
-  //  
-  //    
-  //    final IAxis axis2 = new XPathAxis(rtx2, "/PLAYS/PLAY//SPEECH");
-  //    for (int i = 0; i < 31014; i++) {
-  //      assertEquals(true, axis2.hasNext());
-  //      axis2.next();
-  //    }
-  //    assertEquals(false, axis2.hasNext());
-  //    
-  //    final IAxis axis3 = new XPathAxis(rtx2, "PLAYS/PLAY//STAGEDIR");
-  //    for (int i = 0; i < 6257; i++) {
-  //      assertEquals(true, axis3.hasNext());
-  //      axis3.next();
-  //    }
-  //    assertEquals(false, axis3.hasNext());
-  //    
-  //    
-  //    final IAxis axis4 = new XPathAxis(rtx2, "PLAYS/PLAY//STAGEDIR/text()");
-  //    for (int i = 0; i < 6257; i++) {
-  //      assertEquals(true, axis4.hasNext());
-  //      axis4.next();
-  //    }
-  //    assertEquals(false, axis4.hasNext());
-  //    
-  //    final IAxis axis5 = new XPathAxis(rtx2, "/PLAYS/PLAY//SCNDESCR");
-  //    for (int i = 0; i < 37; i++) {
-  //      assertEquals(true, axis5.hasNext());
-  //      axis5.next();
-  //    }
-  //    assertEquals(false, axis5.hasNext());
-  //  
-  //  final IAxis axis6 = new XPathAxis(rtx2, "//SPEECH/SPEAKER");
-  //  for (int i = 0; i < 31067; i++) {
-  //    assertEquals(true, axis6.hasNext());
-  //    axis6.next();
-  //  }
-  //  assertEquals(false, axis6.hasNext());
-  //  
-  //  final IAxis axis7 = new XPathAxis(rtx2, "PLAYS/PLAY");
-  //  for (int i = 0; i < 37; i++) {
-  //    assertEquals(true, axis7.hasNext());
-  //    axis7.next();
-  //  }
-  //  assertEquals(false, axis7.hasNext());
-  //  
-  //
-      rtx2.close();
-      session2.close();
-    }
+//    @Test
+//    public void testIterateShakespreare() throws IOException, XMLStreamException {
+//   // Setup parsed session.
+//      XMLShredder.shred(XML2, new SessionConfiguration(PATH2));
+//  
+//      // Verify.
+//      final ISession session2 = Session.beginSession(PATH2);
+//      final IReadTransaction rtx2 = session2.beginReadTransaction(new ItemList());
+//      rtx2.moveToDocumentRoot();
+//  
+//      XPathStringTest.testIAxisConventions(new XPathAxis(rtx2, "fn:count(//PLAY)"), 
+//          new String[]{"37"});
+//      
+//      rtx2.moveTo(3L);
+//      XPathStringTest.testIAxisConventions(new XPathAxis(rtx2, "fn:count(TITLE)"), 
+//          new String[]{"1"});
+//      
+//      XPathStringTest.testIAxisConventions(new XPathAxis(rtx2, "fn:string(TITLE)"), 
+//          new String[]{"The Tragedy of Antony and Cleopatra"});
+//          
+//          XPathStringTest.testIAxisConventions(new XPathAxis(rtx2, "fn:count(//*)"), 
+//              new String[]{"179619"});
+//          
+//          
+//          XPathStringTest.testIAxisConventions(new XPathAxis(rtx2, "fn:count(/PLAYS/PLAY/PERSONAE)"), 
+//              new String[]{"37"});
+//  //    
+//  //    final IAxis axis1 = new XPathAxis(rtx2, "//PERSONA");
+//  //    for (int i = 0; i < 969; i++) {
+//  //      assertEquals(true, axis1.hasNext());
+//  //      axis1.next();
+//  //    }
+//  //    assertEquals(false, axis1.hasNext());
+//  //    
+//  //  
+//  //    
+//  //    final IAxis axis2 = new XPathAxis(rtx2, "/PLAYS/PLAY//SPEECH");
+//  //    for (int i = 0; i < 31014; i++) {
+//  //      assertEquals(true, axis2.hasNext());
+//  //      axis2.next();
+//  //    }
+//  //    assertEquals(false, axis2.hasNext());
+//  //    
+//  //    final IAxis axis3 = new XPathAxis(rtx2, "PLAYS/PLAY//STAGEDIR");
+//  //    for (int i = 0; i < 6257; i++) {
+//  //      assertEquals(true, axis3.hasNext());
+//  //      axis3.next();
+//  //    }
+//  //    assertEquals(false, axis3.hasNext());
+//  //    
+//  //    
+//  //    final IAxis axis4 = new XPathAxis(rtx2, "PLAYS/PLAY//STAGEDIR/text()");
+//  //    for (int i = 0; i < 6257; i++) {
+//  //      assertEquals(true, axis4.hasNext());
+//  //      axis4.next();
+//  //    }
+//  //    assertEquals(false, axis4.hasNext());
+//  //    
+//  //    final IAxis axis5 = new XPathAxis(rtx2, "/PLAYS/PLAY//SCNDESCR");
+//  //    for (int i = 0; i < 37; i++) {
+//  //      assertEquals(true, axis5.hasNext());
+//  //      axis5.next();
+//  //    }
+//  //    assertEquals(false, axis5.hasNext());
+//  //  
+//  //  final IAxis axis6 = new XPathAxis(rtx2, "//SPEECH/SPEAKER");
+//  //  for (int i = 0; i < 31067; i++) {
+//  //    assertEquals(true, axis6.hasNext());
+//  //    axis6.next();
+//  //  }
+//  //  assertEquals(false, axis6.hasNext());
+//  //  
+//  //  final IAxis axis7 = new XPathAxis(rtx2, "PLAYS/PLAY");
+//  //  for (int i = 0; i < 37; i++) {
+//  //    assertEquals(true, axis7.hasNext());
+//  //    axis7.next();
+//  //  }
+//  //  assertEquals(false, axis7.hasNext());
+//  //  
+//  //
+//      rtx2.close();
+//      session2.close();
+//    }
 }

@@ -18,6 +18,8 @@
 
 package org.treetank.pagelayer;
 
+import java.nio.ByteBuffer;
+
 import edu.emory.mathcs.backport.java.util.concurrent.ArrayBlockingQueue;
 import edu.emory.mathcs.backport.java.util.concurrent.BlockingQueue;
 
@@ -40,7 +42,7 @@ public final class NativeTreeTank implements ICompression {
     }
   }
 
-  public final int crypt(final byte[] reference, final byte[] buffer) {
+  public final int crypt(final ByteBuffer reference, final ByteBuffer buffer) {
     int error = 0;
     int core = -1;
     try {
@@ -82,8 +84,8 @@ public final class NativeTreeTank implements ICompression {
 
   private native int write(
       final int core,
-      final byte[] reference,
-      final byte[] buffer);
+      final  ByteBuffer reference,
+      final ByteBuffer buffer);
 
   private native byte[] read(
       final int core,

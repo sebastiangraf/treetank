@@ -18,9 +18,9 @@
 
 package org.treetank.nodelayer;
 
+import java.nio.ByteBuffer;
+
 import org.treetank.api.IReadTransaction;
-import org.treetank.utils.FastByteArrayReader;
-import org.treetank.utils.FastByteArrayWriter;
 
 /**
  * <h1>TextNode</h1>
@@ -89,13 +89,14 @@ public final class TextNode extends AbstractNode {
    * @param nodeKey Key of text node.
    * @param in Input bytes to read node from.
    */
-  public TextNode(final long nodeKey, final FastByteArrayReader in) {
+  public TextNode(final long nodeKey, final ByteBuffer in) {
     super(nodeKey);
-    mParentKey = getNodeKey() - in.readVarLong();
-    mLeftSiblingKey = in.readVarLong();
-    mRightSiblingKey = in.readVarLong();
-    mType = in.readVarInt();
-    mValue = in.readByteArray();
+    mParentKey = getNodeKey() - in.getLong();
+    mLeftSiblingKey = in.getLong();
+    mRightSiblingKey = in.getLong();
+    mType = in.getInt();
+    mValue = new byte[in.getInt()];
+    in.get(mValue);
   }
 
   /**
@@ -210,7 +211,7 @@ public final class TextNode extends AbstractNode {
     mType = valueType;
     mValue = value;
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -223,12 +224,13 @@ public final class TextNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final void serialize(final FastByteArrayWriter out) {
-    out.writeVarLong(getNodeKey() - mParentKey);
-    out.writeVarLong(mLeftSiblingKey);
-    out.writeVarLong(mRightSiblingKey);
-    out.writeVarInt(mType);
-    out.writeByteArray(mValue);
+  public final void serialize(final ByteBuffer out) {
+    out.putLong(getNodeKey() - mParentKey);
+    out.putLong(mLeftSiblingKey);
+    out.putLong(mRightSiblingKey);
+    out.putInt(mType);
+    out.putInt(mValue.length);
+    out.put(mValue);
   }
 
   /**

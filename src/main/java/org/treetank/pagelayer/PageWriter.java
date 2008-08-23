@@ -20,9 +20,10 @@ package org.treetank.pagelayer;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 
 import org.treetank.sessionlayer.SessionConfiguration;
-import org.treetank.utils.FastByteArrayWriter;
 import org.treetank.utils.IConstants;
 
 /**
@@ -38,13 +39,16 @@ public final class PageWriter {
   /** Random access mFile to work on. */
   private final RandomAccessFile mFile;
 
+  /** File channel to support directly allocated ByteBuffer. */
+  private final FileChannel mChannel;
+
   /** Compressor to compress the page. */
   private ICompression mCompressor;
 
   /** Fast Byte array mWriter to hold temporary data. */
-  private final FastByteArrayWriter mWriter;
+  private final ByteBuffer mBuffer;
 
-  private final byte[] mReference;
+  private final ByteBuffer mReference;
 
   /**
    * Constructor.
@@ -60,6 +64,7 @@ public final class PageWriter {
           new RandomAccessFile(
               sessionConfiguration.getAbsolutePath(),
               IConstants.READ_WRITE);
+      mChannel = mFile.getChannel();
 
       try {
         System.loadLibrary("TreeTank");
@@ -68,8 +73,8 @@ public final class PageWriter {
         mCompressor = new JavaCompression();
       }
 
-      mWriter = new FastByteArrayWriter();
-      mReference = new byte[24];
+      mBuffer = ByteBuffer.allocateDirect(32768);
+      mReference = ByteBuffer.allocateDirect(24);
 
     } catch (Exception e) {
       throw new RuntimeException("Could not create page writer: "
@@ -88,36 +93,36 @@ public final class PageWriter {
 
     try {
 
+      // Prepare environment for write.
+      mBuffer.clear();
+      mReference.clear();
+
       // Serialise page.
-      mWriter.reset();
-      pageReference.getPage().serialize(mWriter);
+      pageReference.getPage().serialize(mBuffer);
+      int bufferLength = mBuffer.position();
+      mReference.putInt(8, bufferLength);
 
-      // Initialise call to crypt.
-      final int size = mWriter.size();
-      mReference[8] = (byte) (size >> 24);
-      mReference[9] = (byte) (size >> 16);
-      mReference[10] = (byte) (size >> 8);
-      mReference[11] = (byte) size;
-      final byte[] buffer = mWriter.getBytes();
-
-      // Compress page.
-      if (mCompressor.crypt(mReference, buffer) != 0) {
+      // Perform crypto operations.
+      if (mCompressor.crypt(mReference, mBuffer) != 0) {
         throw new Exception("Page crypto error.");
       }
+      bufferLength = mReference.getInt(8);
 
       // Write page to mFile.
-      final long start = mFile.length();
-      mFile.seek(start);
-      mFile.write(buffer, 0, ((mReference[8] & 0xFF) << 24)
-          | ((mReference[9] & 0xFF) << 16)
-          | ((mReference[10] & 0xFF) << 8)
-          | (mReference[11] & 0xFF));
-
+      final long fileSize = mChannel.size();
+      mBuffer.flip();
+      mChannel.position(fileSize);
+      int bytesWritten = 0;
+      while (bytesWritten < bufferLength) {
+        bytesWritten += mChannel.write(mBuffer);
+      }
+      
       // Remember page coordinates.
-      pageReference.setStart(start);
-      pageReference.setLength((int) (mFile.length() - start));
+      pageReference.setStart(fileSize);
+      pageReference.setLength(bufferLength);
 
     } catch (Exception e) {
+      e.printStackTrace();
       throw new RuntimeException("Could not write page "
           + pageReference
           + " due to: "
@@ -131,6 +136,7 @@ public final class PageWriter {
    */
   public final void close() {
     try {
+      mChannel.close();
       mFile.close();
     } catch (IOException e) {
       throw new RuntimeException(e);
@@ -145,6 +151,7 @@ public final class PageWriter {
   @Override
   protected void finalize() throws Throwable {
     try {
+      mChannel.close();
       mFile.close();
     } finally {
       super.finalize();

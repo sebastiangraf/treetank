@@ -20,10 +20,10 @@ package org.treetank.nodelayer;
 
 import static org.junit.Assert.assertEquals;
 
+import java.nio.ByteBuffer;
+
 import org.junit.Test;
 import org.treetank.api.IReadTransaction;
-import org.treetank.utils.FastByteArrayReader;
-import org.treetank.utils.FastByteArrayWriter;
 
 public class ElementNodeTest {
 
@@ -31,8 +31,9 @@ public class ElementNodeTest {
   public void testElementNode() {
 
     // Create empty node.
-    final AbstractNode node1 = new ElementNode(13L, 14L, 15L, 16L, 17L, 18, 19, 0);
-    final FastByteArrayWriter out = new FastByteArrayWriter();
+    final AbstractNode node1 =
+        new ElementNode(13L, 14L, 15L, 16L, 17L, 18, 19, 0);
+    final ByteBuffer out = ByteBuffer.allocate(1000);
 
     // Modify it.
     node1.incrementChildCount();
@@ -42,8 +43,8 @@ public class ElementNodeTest {
 
     // Serialize and deserialize node.
     node1.serialize(out);
-    final FastByteArrayReader in = new FastByteArrayReader(out.getBytes());
-    final AbstractNode node2 = new ElementNode(13L, in);
+    out.position(0);
+    final AbstractNode node2 = new ElementNode(13L, out);
 
     // Clone node.
     final AbstractNode node3 = node2; //new ElementNode(node2);

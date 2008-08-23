@@ -18,9 +18,9 @@
 
 package org.treetank.nodelayer;
 
+import java.nio.ByteBuffer;
+
 import org.treetank.api.IReadTransaction;
-import org.treetank.utils.FastByteArrayReader;
-import org.treetank.utils.FastByteArrayWriter;
 
 /**
  * <h1>AttributeNode</h1>
@@ -76,13 +76,14 @@ public final class AttributeNode extends AbstractNode {
     mValue = attribute.getRawValue();
   }
 
-  public AttributeNode(final long nodeKey, final FastByteArrayReader in) {
+  public AttributeNode(final long nodeKey, final ByteBuffer in) {
     super(nodeKey);
 
-    mNameKey = in.readVarInt();
-    mURIKey = in.readVarInt();
-    mType = in.readVarInt();
-    mValue = in.readByteArray();
+    mNameKey = in.getInt();
+    mURIKey = in.getInt();
+    mType = in.getInt();
+    mValue = new byte[in.getInt()];
+    in.get(mValue);
   }
 
   /**
@@ -165,7 +166,7 @@ public final class AttributeNode extends AbstractNode {
     mType = valueType;
     mValue = value;
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -186,11 +187,12 @@ public final class AttributeNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final void serialize(final FastByteArrayWriter out) {
-    out.writeVarInt(mNameKey);
-    out.writeVarInt(mURIKey);
-    out.writeVarInt(mType);
-    out.writeByteArray(mValue);
+  public final void serialize(final ByteBuffer out) {
+    out.putInt(mNameKey);
+    out.putInt(mURIKey);
+    out.putInt(mType);
+    out.putInt(mValue.length);
+    out.put(mValue);
   }
 
 }

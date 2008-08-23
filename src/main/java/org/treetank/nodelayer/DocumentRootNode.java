@@ -18,9 +18,9 @@
 
 package org.treetank.nodelayer;
 
+import java.nio.ByteBuffer;
+
 import org.treetank.api.IReadTransaction;
-import org.treetank.utils.FastByteArrayReader;
-import org.treetank.utils.FastByteArrayWriter;
 
 /**
  * <h1>DocumentNode</h1>
@@ -63,10 +63,10 @@ public final class DocumentRootNode extends AbstractNode {
    * 
    * @param in Byte input to read node from.
    */
-  public DocumentRootNode(final FastByteArrayReader in) {
+  public DocumentRootNode(final ByteBuffer in) {
     super(IReadTransaction.DOCUMENT_ROOT_KEY);
-    mFirstChildKey = IReadTransaction.DOCUMENT_ROOT_KEY - in.readVarLong();
-    mChildCount = in.readVarLong();
+    mFirstChildKey = IReadTransaction.DOCUMENT_ROOT_KEY - in.getLong();
+    mChildCount = in.getLong();
   }
 
   /**
@@ -145,9 +145,9 @@ public final class DocumentRootNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final void serialize(final FastByteArrayWriter out) {
-    out.writeVarLong(IReadTransaction.DOCUMENT_ROOT_KEY - mFirstChildKey);
-    out.writeVarLong(mChildCount);
+  public final void serialize(final ByteBuffer out) {
+    out.putLong(IReadTransaction.DOCUMENT_ROOT_KEY - mFirstChildKey);
+    out.putLong(mChildCount);
   }
 
   /**

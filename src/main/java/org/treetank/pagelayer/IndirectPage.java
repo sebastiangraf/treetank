@@ -18,7 +18,8 @@
 
 package org.treetank.pagelayer;
 
-import org.treetank.utils.FastByteArrayReader;
+import java.nio.ByteBuffer;
+
 import org.treetank.utils.IConstants;
 
 /**
@@ -42,7 +43,7 @@ public final class IndirectPage extends AbstractPage {
    * 
    * @param in Input bytes.
    */
-  public IndirectPage(final FastByteArrayReader in) {
+  public IndirectPage(final ByteBuffer in) {
     super(IConstants.INP_REFERENCE_COUNT, in);
   }
 
