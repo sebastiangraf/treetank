@@ -11,18 +11,18 @@ extern "C" {
 /*
  * Class:     org_treetank_pagelayer_NativeTreeTank
  * Method:    write
- * Signature: (I[B[B)I
+ * Signature: (ILjava/nio/ByteBuffer;Ljava/nio/ByteBuffer;)I
  */
 JNIEXPORT jint JNICALL Java_org_treetank_pagelayer_NativeTreeTank_write
-  (JNIEnv *, jobject, jint, jbyteArray, jbyteArray);
+  (JNIEnv *, jobject, jint, jobject, jobject);
 
 /*
  * Class:     org_treetank_pagelayer_NativeTreeTank
  * Method:    read
- * Signature: (I[BI)[B
+ * Signature: (ILjava/nio/ByteBuffer;Ljava/nio/ByteBuffer;)I
  */
-JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeTreeTank_read
-  (JNIEnv *, jobject, jint, jbyteArray, jint);
+JNIEXPORT jint JNICALL Java_org_treetank_pagelayer_NativeTreeTank_read
+  (JNIEnv *, jobject, jint, jobject, jobject);
 
 #ifdef __cplusplus
 }

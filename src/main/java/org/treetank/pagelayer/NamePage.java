@@ -60,7 +60,7 @@ public final class NamePage extends AbstractPage {
 
     for (int i = 0, l = in.getInt(); i < l; i++) {
       final int key = in.getInt();
-      final byte[] bytes = new byte[in.getInt()];
+      final byte[] bytes = new byte[in.get()];
       in.get(bytes);
       mNameMap.put(key, TypedValue.parseString(bytes));
       mRawNameMap.put(key, bytes);
@@ -121,7 +121,7 @@ public final class NamePage extends AbstractPage {
     for (final int key : mNameMap.keySet()) {
       out.putInt(key);
       byte[] tmp = TypedValue.getBytes(mNameMap.get(key));
-      out.putInt(tmp.length);
+      out.put((byte) tmp.length);
       out.put(tmp);
     }
   }

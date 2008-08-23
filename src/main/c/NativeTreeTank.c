@@ -28,63 +28,28 @@
 #include <stdio.h>
 #include <string.h>
 
-#define TT_WRITE_INT(PTR, VAL) { \
-            (PTR)[0] = (u_int8_t) (VAL >> 24); \
-            (PTR)[1] = (u_int8_t) (VAL >> 16); \
-            (PTR)[2] = (u_int8_t) (VAL >>  8); \
-            (PTR)[3] = (u_int8_t)  VAL; }
-      
-#define TT_READ_INT(PTR) \
-           ((((PTR)[0] & 0xFF) << 24) \
-          | (((PTR)[1] & 0xFF) << 16) \
-          | (((PTR)[2] & 0xFF) <<  8) \
-          |  ((PTR)[3] & 0xFF))
-
 /*
  * gcc -shared -Wall -I/treetank/jre/include/ -o /treetank/service/libTreeTank.so NativeTreeTank.c
  */
 
-JNIEXPORT jint JNICALL Java_org_treetank_pagelayer_NativeTreeTank_write(JNIEnv *env, jobject o, jint core, jbyteArray jreference, jbyteArray jbuffer)
+JNIEXPORT jint JNICALL Java_org_treetank_pagelayer_NativeTreeTank_write(JNIEnv *env, jobject o, jint core, jobject jreference, jobject jbuffer)
 {
-
-  int   error     = 0;
-  u_int8_t   ref[24];
-  u_int8_t   buf[32768];
-  u_int8_t *reference = (u_int8_t*)((*env)->GetByteArrayElements(env, jreference, 0));
-  u_int8_t *buffer    = (u_int8_t*)((*env)->GetByteArrayElements(env, jbuffer, 0));
+  int       error            = 0;
+  u_int8_t *referencePointer = (*env)->GetDirectBufferAddress(env, jreference);
+  u_int8_t *bufferPointer    = (*env)->GetDirectBufferAddress(env, jbuffer);
   
-  bzero(ref, 24);
-  TT_WRITE_INT(ref + 8, TT_READ_INT(reference + 8));
-  memcpy(&buf, buffer, TT_READ_INT(ref + 8));
-  
-  error = syscall(306, core, 1, &ref, &buf);
-  
-  memcpy(reference, &ref, 24);
-  memcpy(buffer, &buf, TT_READ_INT(ref + 8));
-    
-  (*env)->ReleaseByteArrayElements (env, jreference, reference, 0);
-  (*env)->ReleaseByteArrayElements (env, jbuffer, buffer, 0);
+  error = syscall(306, core, 1, referencePointer, bufferPointer);
 
   return error;
 }
 
-JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeTreeTank_read(JNIEnv *env, jobject o, jint core, jbyteArray jin, jint len)
+JNIEXPORT jbyteArray JNICALL Java_org_treetank_pagelayer_NativeTreeTank_read(JNIEnv *env, jobject o, jint core, jobject jreference, jobject jbuffer)
 {
-
-  u_int8_t   reference[24];
-  u_int8_t   buffer[32768];
-  u_int8_t  *in     = (u_int8_t*)((*env)->GetByteArrayElements(env, jin, 0));
+  int       error            = 0;
+  u_int8_t *referencePointer = (*env)->GetDirectBufferAddress(env, jreference);
+  u_int8_t *bufferPointer    = (*env)->GetDirectBufferAddress(env, jbuffer);
   
-  bzero(reference, 24);
-  TT_WRITE_INT(reference + 8, len);
-  memcpy(&buffer, in, TT_READ_INT(reference + 8));
+  error = syscall(306, core, 0, referencePointer, bufferPointer);
 
-  syscall(306, core, 0, &reference, &buffer);
-  
-  jbyteArray jout = (*env)->NewByteArray(env, TT_READ_INT(reference + 8));
-  u_int8_t  *out  = (u_int8_t *)((*env)->GetByteArrayElements(env, jout, 0));
-
-  memcpy(out, &buffer, TT_READ_INT(reference + 8));
-
-  return jout;
+  return error;
 }

@@ -24,6 +24,6 @@ public interface ICompression {
 
   public int crypt(final ByteBuffer reference, final ByteBuffer buffer);
 
-  public byte[] decompress(final byte[] buffer, final int length);
+  public int decrypt(final ByteBuffer reference, final ByteBuffer buffer);
 
 }

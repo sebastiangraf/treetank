@@ -45,9 +45,10 @@ public final class PageWriter {
   /** Compressor to compress the page. */
   private ICompression mCompressor;
 
-  /** Fast Byte array mWriter to hold temporary data. */
+  /** Temporary data buffer. */
   private final ByteBuffer mBuffer;
 
+  /** Temporary reference buffer. */
   private final ByteBuffer mReference;
 
   /**
@@ -73,8 +74,8 @@ public final class PageWriter {
         mCompressor = new JavaCompression();
       }
 
-      mBuffer = ByteBuffer.allocateDirect(32768);
-      mReference = ByteBuffer.allocateDirect(24);
+      mBuffer = ByteBuffer.allocateDirect(IConstants.BUFFER_SIZE);
+      mReference = ByteBuffer.allocateDirect(IConstants.REFERENCE_SIZE);
 
     } catch (Exception e) {
       throw new RuntimeException("Could not create page writer: "
@@ -108,15 +109,12 @@ public final class PageWriter {
       }
       bufferLength = mReference.getInt(8);
 
-      // Write page to mFile.
+      // Write page to file.
       final long fileSize = mChannel.size();
       mBuffer.flip();
       mChannel.position(fileSize);
-      int bytesWritten = 0;
-      while (bytesWritten < bufferLength) {
-        bytesWritten += mChannel.write(mBuffer);
-      }
-      
+      mChannel.write(mBuffer);
+
       // Remember page coordinates.
       pageReference.setStart(fileSize);
       pageReference.setLength(bufferLength);
@@ -136,8 +134,12 @@ public final class PageWriter {
    */
   public final void close() {
     try {
-      mChannel.close();
-      mFile.close();
+      if (mChannel != null) {
+        mChannel.close();
+      }
+      if (mFile != null) {
+        mFile.close();
+      }
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -151,8 +153,12 @@ public final class PageWriter {
   @Override
   protected void finalize() throws Throwable {
     try {
-      mChannel.close();
-      mFile.close();
+      if (mChannel != null) {
+        mChannel.close();
+      }
+      if (mFile != null) {
+        mFile.close();
+      }
     } finally {
       super.finalize();
     }

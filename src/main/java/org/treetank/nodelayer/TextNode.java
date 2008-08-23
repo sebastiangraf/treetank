@@ -95,7 +95,7 @@ public final class TextNode extends AbstractNode {
     mLeftSiblingKey = in.getLong();
     mRightSiblingKey = in.getLong();
     mType = in.getInt();
-    mValue = new byte[in.getInt()];
+    mValue = new byte[in.get()];
     in.get(mValue);
   }
 
@@ -229,7 +229,7 @@ public final class TextNode extends AbstractNode {
     out.putLong(mLeftSiblingKey);
     out.putLong(mRightSiblingKey);
     out.putInt(mType);
-    out.putInt(mValue.length);
+    out.put((byte) mValue.length);
     out.put(mValue);
   }
 

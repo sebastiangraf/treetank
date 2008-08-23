@@ -21,6 +21,7 @@ package org.treetank.pagelayer;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.utils.IConstants;
@@ -38,8 +39,17 @@ public final class PageReader {
   /** Random access mFile to work on. */
   private final RandomAccessFile mFile;
 
+  /** File channel to support directly allocated ByteBuffer. */
+  private final FileChannel mChannel;
+
   /** Inflater to decompress. */
   private ICompression mDecompressor;
+
+  /** Temporary data buffer. */
+  private final ByteBuffer mBuffer;
+
+  /** Temporary reference buffer. */
+  private final ByteBuffer mReference;
 
   /**
    * Constructor.
@@ -55,6 +65,7 @@ public final class PageReader {
           new RandomAccessFile(
               sessionConfiguration.getAbsolutePath(),
               IConstants.READ_ONLY);
+      mChannel = mFile.getChannel();
 
       try {
         System.loadLibrary("TreeTank");
@@ -62,6 +73,9 @@ public final class PageReader {
       } catch (UnsatisfiedLinkError e) {
         mDecompressor = new JavaCompression();
       }
+
+      mBuffer = ByteBuffer.allocateDirect(IConstants.BUFFER_SIZE);
+      mReference = ByteBuffer.allocateDirect(IConstants.REFERENCE_SIZE);
 
     } catch (Exception e) {
       throw new RuntimeException("Could not create page reader: "
@@ -83,18 +97,23 @@ public final class PageReader {
       throw new IllegalArgumentException("Page reference is invalid.");
     }
 
-    // Prepare members.
-    byte[] page;
-
     try {
 
-      // Read encrypted page from mFile.
-      mFile.seek(pageReference.getStart());
-      page = new byte[pageReference.getLength()];
-      mFile.read(page);
+      // Prepare environment for read.
+      mBuffer.clear();
+      mReference.clear();
+      mBuffer.limit(pageReference.getLength());
+      mReference.putInt(8, pageReference.getLength());
 
-      // Decompress page.
-      page = mDecompressor.decompress(page, page.length);
+      // Read page from file.
+      mChannel.position(pageReference.getStart());
+      mChannel.read(mBuffer);
+      mBuffer.flip();
+
+      // Perform crypto operations.
+      if (mDecompressor.decrypt(mReference, mBuffer) != 0) {
+        throw new Exception("Page crypto error.");
+      }
 
     } catch (Exception e) {
       throw new RuntimeException("Could not read page "
@@ -104,7 +123,8 @@ public final class PageReader {
     }
 
     // Return reader required to instantiate and deserialize page.
-    return ByteBuffer.wrap(page);
+    mBuffer.clear();
+    return mBuffer;
 
   }
 
@@ -113,7 +133,12 @@ public final class PageReader {
    */
   public final void close() {
     try {
-      mFile.close();
+      if (mChannel != null) {
+        mChannel.close();
+      }
+      if (mFile != null) {
+        mFile.close();
+      }
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -127,7 +152,12 @@ public final class PageReader {
   @Override
   protected void finalize() throws Throwable {
     try {
-      mFile.close();
+      if (mChannel != null) {
+        mChannel.close();
+      }
+      if (mFile != null) {
+        mFile.close();
+      }
     } finally {
       super.finalize();
     }
