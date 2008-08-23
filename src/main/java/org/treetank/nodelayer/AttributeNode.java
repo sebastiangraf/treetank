@@ -82,7 +82,7 @@ public final class AttributeNode extends AbstractNode {
     mNameKey = in.getInt();
     mURIKey = in.getInt();
     mType = in.getInt();
-    mValue = new byte[in.getInt()];
+    mValue = new byte[in.get()];
     in.get(mValue);
   }
 
@@ -191,7 +191,7 @@ public final class AttributeNode extends AbstractNode {
     out.putInt(mNameKey);
     out.putInt(mURIKey);
     out.putInt(mType);
-    out.putInt(mValue.length);
+    out.put((byte) mValue.length);
     out.put(mValue);
   }
 

@@ -70,8 +70,7 @@ public class JavaCompression implements ICompression {
     final byte[] result = mOut.toByteArray();
     buffer.rewind();
     buffer.put(result);
-    reference.position(8);
-    reference.putInt(result.length);
+    reference.putInt(8, result.length);
     return 0;
   }
 
@@ -81,11 +80,14 @@ public class JavaCompression implements ICompression {
    * @param data data that should be decompressed
    * @return Decompressed data, null if failed
    */
-  public byte[] decompress(final byte[] buffer, final int length) {
+  public int decrypt(final ByteBuffer reference, final ByteBuffer buffer) {
     try {
+      final int length = reference.getInt(8);
+      byte[] tmp = new byte[length];
+      buffer.get(tmp);
       mDecompressor.reset();
       mOut.reset();
-      mDecompressor.setInput(buffer, 0, length);
+      mDecompressor.setInput(tmp);
       int count;
       while (!mDecompressor.finished()) {
         count = mDecompressor.inflate(mTmp);
@@ -94,7 +96,11 @@ public class JavaCompression implements ICompression {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
-    return mOut.toByteArray();
+    final byte[] result = mOut.toByteArray();
+    buffer.clear();
+    buffer.put(result);
+    reference.putInt(8, result.length);
+    return 0;
   }
 
 }

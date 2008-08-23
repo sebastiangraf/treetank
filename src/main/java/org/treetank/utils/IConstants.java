@@ -64,6 +64,12 @@ public interface IConstants {
 
   /** Read-write random access file. */
   public static final String READ_WRITE = "rw";
+  
+  /** Size of write buffer. */
+  public static final int BUFFER_SIZE = 16384 << 1;
+  
+  /** Size of read buffer. */
+  public static final int REFERENCE_SIZE = 24;
 
   //--- Indirect Page ----------------------------------------------------------
 

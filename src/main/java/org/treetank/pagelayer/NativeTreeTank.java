@@ -43,7 +43,7 @@ public final class NativeTreeTank implements ICompression {
   }
 
   public final int crypt(final ByteBuffer reference, final ByteBuffer buffer) {
-    int error = 0;
+    int error = -1;
     int core = -1;
     try {
       core = (Integer) queue.take();
@@ -62,12 +62,12 @@ public final class NativeTreeTank implements ICompression {
     return error;
   }
 
-  public final byte[] decompress(final byte[] buffer, final int length) {
-    byte[] data = null;
+  public final int decrypt(final ByteBuffer reference, final ByteBuffer buffer) {
+    int error = -1;
     int core = -1;
     try {
       core = (Integer) queue.take();
-      data = read(core, buffer, length);
+      error = read(core, reference, buffer);
     } catch (Exception e) {
       throw new RuntimeException(e);
     } finally {
@@ -79,17 +79,17 @@ public final class NativeTreeTank implements ICompression {
         throw new RuntimeException(ie);
       }
     }
-    return data;
+    return error;
   }
 
   private native int write(
       final int core,
-      final  ByteBuffer reference,
+      final ByteBuffer reference,
       final ByteBuffer buffer);
 
-  private native byte[] read(
+  private native int read(
       final int core,
-      final byte[] buffer,
-      final int length);
+      final ByteBuffer reference,
+      final ByteBuffer buffer);
 
 }

@@ -20,10 +20,8 @@ package org.treetank.xpath;
 import java.io.File;
 import java.io.IOException;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.perfidix.AfterEachBenchRun;
 import org.perfidix.BeforeEachBenchRun;
 import org.perfidix.BenchClass;
 import org.treetank.api.IReadTransaction;
@@ -59,7 +57,6 @@ public class XMark {
   IReadTransaction rtx;
 
   @Before
-  @BeforeEachBenchRun
   public void setUp() {
 
     Session.removeSession(PATH);
@@ -68,38 +65,30 @@ public class XMark {
 
     // Verify.
     session = Session.beginSession(PATH);
-    rtx = session.beginReadTransaction(new ItemList());
-    rtx.moveToDocumentRoot();
   }
 
-  @After
-  @AfterEachBenchRun
-  public void tearDown() {
-
-    rtx.close();
-    session.close();
-  }
-
-  @Test
+//  @Test
   public void testQ1_10() throws IOException {
+    rtx = session.beginReadTransaction(new ItemList());
     XPathStringTest.testIAxisConventions(
         new XPathAxis(rtx, "/site/people/person[@id=\"person0\"]/name/text()"),
         new String[] { "Sinisa Farrel" });
+    rtx.close();
   }
 
-  @Test
+//  @Test
   public void testQ1() throws IOException {
-
+    rtx = session.beginReadTransaction(new ItemList());
     // Q1 The name of the person with ID 'person0' {projecting}
     XPathStringTest.testIAxisConventions(new XPathAxis(
         rtx,
         "for $b in /site/people/person[@id=\"person0\"] "
             + "return $b/name/text()"), new String[] { "Sinisa Farrel" });
-
+    rtx.close();
   }
 
-  @Test
-  public void testQ2() throws IOException {
+//  @Test
+//  public void testQ2() throws IOException {
     // // // Q2 Return the initial increases of all open auctions
     // // XPathStringTest.testIAxisConventions(new XPathAxis(rtx,
     // // "for $b in /site/open_auctions/open_auction return $b/bidder[1]"
@@ -139,21 +128,22 @@ public class XMark {
     // }
     // @Test
     // public void testQ4() throws IOException {
-  }
+//  }
 
-  @Test
+//  @Test
   public void testQ5() throws IOException {
-
+    rtx = session.beginReadTransaction(new ItemList());
     // Q5 How many sold items cost more than 40?
     XPathStringTest.testIAxisConventions(new XPathAxis(
         rtx,
         "fn:count(for $i in /site/closed_auctions/closed_auction[price/text() >= 40] "
             + "return $i/price)"), new String[] { "75" });
+    rtx.close();
   }
 
-  @Test
+//  @Test
   public void testQ6() throws IOException {
-
+    rtx = session.beginReadTransaction(new ItemList());
     // Q6 How many items are listed on all continents?
     XPathStringTest
         .testIAxisConventions(
@@ -161,11 +151,12 @@ public class XMark {
                 rtx,
                 "for $b in //site/regions return fn:count($b//item)"),
             new String[] { "217" });
+    rtx.close();
   }
 
-  @Test
+//  @Test
   public void testQ7() throws IOException {
-
+    rtx = session.beginReadTransaction(new ItemList());
     // Q7 How many pieces of prose are in our database?
     XPathStringTest.testIAxisConventions(
         new XPathAxis(
@@ -173,6 +164,7 @@ public class XMark {
             "for $p in /site return fn:count($p//description) + "
                 + "fn:count($p//annotation) + fn:count($p//emailaddress)"),
         new String[] { "916.0" }); // TODO: why double?
+    rtx.close();
   }
 
   // @Test
