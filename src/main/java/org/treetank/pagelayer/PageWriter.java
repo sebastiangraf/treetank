@@ -48,9 +48,6 @@ public final class PageWriter {
   /** Temporary data buffer. */
   private final ByteBuffer mBuffer;
 
-  /** Temporary reference buffer. */
-  private final ByteBuffer mReference;
-
   /**
    * Constructor.
    * 
@@ -75,7 +72,6 @@ public final class PageWriter {
       }
 
       mBuffer = ByteBuffer.allocateDirect(IConstants.BUFFER_SIZE);
-      mReference = ByteBuffer.allocateDirect(IConstants.REFERENCE_SIZE);
 
     } catch (Exception e) {
       throw new RuntimeException("Could not create page writer: "
@@ -96,18 +92,17 @@ public final class PageWriter {
 
       // Prepare environment for write.
       mBuffer.clear();
-      mReference.clear();
 
       // Serialise page.
       pageReference.getPage().serialize(mBuffer);
-      int bufferLength = mBuffer.position();
-      mReference.putInt(8, bufferLength);
+      final short inputLength = (short) mBuffer.position();
 
       // Perform crypto operations.
-      if (mCompressor.crypt(mReference, mBuffer) != 0) {
-        throw new Exception("Page crypto error.");
+      mBuffer.clear();
+      final short outputLength = mCompressor.crypt(inputLength, mBuffer);
+      if (outputLength == 0) {
+        throw new Exception("Page crypt error.");
       }
-      bufferLength = mReference.getInt(8);
 
       // Write page to file.
       final long fileSize = mChannel.size();
@@ -117,7 +112,7 @@ public final class PageWriter {
 
       // Remember page coordinates.
       pageReference.setStart(fileSize);
-      pageReference.setLength(bufferLength);
+      pageReference.setLength(outputLength);
 
     } catch (Exception e) {
       e.printStackTrace();

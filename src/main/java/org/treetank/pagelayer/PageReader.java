@@ -48,9 +48,6 @@ public final class PageReader {
   /** Temporary data buffer. */
   private final ByteBuffer mBuffer;
 
-  /** Temporary reference buffer. */
-  private final ByteBuffer mReference;
-
   /**
    * Constructor.
    * 
@@ -75,7 +72,6 @@ public final class PageReader {
       }
 
       mBuffer = ByteBuffer.allocateDirect(IConstants.BUFFER_SIZE);
-      mReference = ByteBuffer.allocateDirect(IConstants.REFERENCE_SIZE);
 
     } catch (Exception e) {
       throw new RuntimeException("Could not create page reader: "
@@ -100,10 +96,9 @@ public final class PageReader {
     try {
 
       // Prepare environment for read.
+      final short inputLength = (short) pageReference.getLength();
       mBuffer.clear();
-      mReference.clear();
-      mBuffer.limit(pageReference.getLength());
-      mReference.putInt(8, pageReference.getLength());
+      mBuffer.limit(inputLength);
 
       // Read page from file.
       mChannel.position(pageReference.getStart());
@@ -111,8 +106,10 @@ public final class PageReader {
       mBuffer.flip();
 
       // Perform crypto operations.
-      if (mDecompressor.decrypt(mReference, mBuffer) != 0) {
-        throw new Exception("Page crypto error.");
+      mBuffer.clear();
+      final short outputLength = mDecompressor.decrypt(inputLength, mBuffer);
+      if (outputLength == 0) {
+        throw new Exception("Page decrypt error.");
       }
 
     } catch (Exception e) {

@@ -35,7 +35,7 @@
           | (((PTR)[2] & 0xFF) <<  8) \
           |  ((PTR)[3] & 0xFF))
 
-#define LENGTH 79
+#define LENGTH 8569
 
 int
 main(void)
