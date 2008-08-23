@@ -16,6 +16,10 @@
  * $Id$
  */
  
+TreeTank 4.21
+-------------
+0  No longer binary compatible. Switched to ByteBuffer.
+ 
 TreeTank 4.20
 -------------
 8  Updated license to distinguish com.treetank and org.treetank packages.
