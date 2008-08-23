@@ -22,8 +22,8 @@ import java.nio.ByteBuffer;
 
 public interface ICompression {
 
-  public int crypt(final ByteBuffer reference, final ByteBuffer buffer);
+  public short crypt(final short length, final ByteBuffer buffer);
 
-  public int decrypt(final ByteBuffer reference, final ByteBuffer buffer);
+  public short decrypt(final short length, final ByteBuffer buffer);
 
 }

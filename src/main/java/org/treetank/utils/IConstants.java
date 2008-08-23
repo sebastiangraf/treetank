@@ -66,7 +66,7 @@ public interface IConstants {
   public static final String READ_WRITE = "rw";
   
   /** Size of write buffer. */
-  public static final int BUFFER_SIZE = 16384 << 1;
+  public static final int BUFFER_SIZE = 32767;
   
   /** Size of read buffer. */
   public static final int REFERENCE_SIZE = 24;

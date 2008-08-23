@@ -29,27 +29,26 @@
 #include <string.h>
 
 /*
- * gcc -shared -Wall -I/treetank/jre/include/ -o /treetank/service/libTreeTank.so NativeTreeTank.c
+ * gcc
+ *   -shared
+ *   -Wall
+ *   -I/treetank/jre/include/
+ *   -o /treetank/service/libTreeTank.so
+ *   NativeTreeTank.c
  */
 
-JNIEXPORT jint JNICALL Java_org_treetank_pagelayer_NativeTreeTank_write(JNIEnv *env, jobject o, jint core, jobject jreference, jobject jbuffer)
+JNIEXPORT jshort JNICALL Java_org_treetank_pagelayer_NativeTreeTank_syscall(
+  JNIEnv *env,
+  jobject o,
+  jbyte tank,
+  jbyte operation,
+  jshort length,
+  jobject buffer)
 {
-  int       error            = 0;
-  u_int8_t *referencePointer = (*env)->GetDirectBufferAddress(env, jreference);
-  u_int8_t *bufferPointer    = (*env)->GetDirectBufferAddress(env, jbuffer);
+  u_int16_t result    = 0;
+  u_int8_t *bufferPtr = (*env)->GetDirectBufferAddress(env, buffer);
   
-  error = syscall(306, core, 1, referencePointer, bufferPointer);
+  result = syscall(306, tank, operation, length, bufferPtr);
 
-  return error;
-}
-
-JNIEXPORT jint JNICALL Java_org_treetank_pagelayer_NativeTreeTank_read(JNIEnv *env, jobject o, jint core, jobject jreference, jobject jbuffer)
-{
-  int       error            = 0;
-  u_int8_t *referencePointer = (*env)->GetDirectBufferAddress(env, jreference);
-  u_int8_t *bufferPointer    = (*env)->GetDirectBufferAddress(env, jbuffer);
-  
-  error = syscall(306, core, 0, referencePointer, bufferPointer);
-
-  return error;
+  return result;
 }

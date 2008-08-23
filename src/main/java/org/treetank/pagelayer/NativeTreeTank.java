@@ -29,27 +29,27 @@ public final class NativeTreeTank implements ICompression {
 
   static {
     try {
-      queue.put(0);
-      queue.put(1);
-      queue.put(2);
-      queue.put(3);
-      queue.put(4);
-      queue.put(5);
-      queue.put(6);
-      queue.put(7);
+      queue.put((byte) 1);
+      queue.put((byte) 2);
+      queue.put((byte) 3);
+      queue.put((byte) 4);
+      queue.put((byte) 5);
+      queue.put((byte) 6);
+      queue.put((byte) 7);
+      queue.put((byte) 8);
     } catch (Exception e) {
       throw new RuntimeException("Could not allocate native compression cores.");
     }
   }
 
-  public final int crypt(final ByteBuffer reference, final ByteBuffer buffer) {
-    int error = -1;
-    int core = -1;
+  public final short crypt(final short length, final ByteBuffer buffer) {
+    short resultLength = (short) 0;
+    byte core = (byte) 0;
     try {
-      core = (Integer) queue.take();
-      error = write(core, reference, buffer);
+      core = (Byte) queue.take();
+      resultLength = syscall((byte) 1, core, length, buffer);
     } catch (Exception e) {
-      return 1;
+      return 0;
     } finally {
       try {
         if (core != -1) {
@@ -59,17 +59,17 @@ public final class NativeTreeTank implements ICompression {
         throw new RuntimeException(ie);
       }
     }
-    return error;
+    return resultLength;
   }
 
-  public final int decrypt(final ByteBuffer reference, final ByteBuffer buffer) {
-    int error = -1;
-    int core = -1;
+  public final short decrypt(final short length, final ByteBuffer buffer) {
+    short resultLength = (short) 0;
+    byte core = (byte) 0;
     try {
-      core = (Integer) queue.take();
-      error = read(core, reference, buffer);
+      core = (Byte) queue.take();
+      resultLength = syscall((byte) 1, core, length, buffer);
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      return 0;
     } finally {
       try {
         if (core != -1) {
@@ -79,17 +79,22 @@ public final class NativeTreeTank implements ICompression {
         throw new RuntimeException(ie);
       }
     }
-    return error;
+    return resultLength;
   }
 
-  private native int write(
-      final int core,
-      final ByteBuffer reference,
-      final ByteBuffer buffer);
-
-  private native int read(
-      final int core,
-      final ByteBuffer reference,
+  /**
+   * Call to sys_treetank.
+   * 
+   * @param tank TreeTank identifier in [1, ..., 256].
+   * @param operation Operation identifier in [1, ..., 256].
+   * @param length Length of input buffer in [1, ..., 32767].
+   * @param buffer Direct data exchange buffer.
+   * @return Length of output buffer in [1, ..., 32767] or error in [0].
+   */
+  private native short syscall(
+      final byte tank,
+      final byte operation,
+      final short length,
       final ByteBuffer buffer);
 
 }

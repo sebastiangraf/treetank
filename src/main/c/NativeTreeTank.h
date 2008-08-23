@@ -10,19 +10,11 @@ extern "C" {
 /* Inaccessible static: queue */
 /*
  * Class:     org_treetank_pagelayer_NativeTreeTank
- * Method:    write
- * Signature: (ILjava/nio/ByteBuffer;Ljava/nio/ByteBuffer;)I
+ * Method:    syscall
+ * Signature: (BBSLjava/nio/ByteBuffer;)S
  */
-JNIEXPORT jint JNICALL Java_org_treetank_pagelayer_NativeTreeTank_write
-  (JNIEnv *, jobject, jint, jobject, jobject);
-
-/*
- * Class:     org_treetank_pagelayer_NativeTreeTank
- * Method:    read
- * Signature: (ILjava/nio/ByteBuffer;Ljava/nio/ByteBuffer;)I
- */
-JNIEXPORT jint JNICALL Java_org_treetank_pagelayer_NativeTreeTank_read
-  (JNIEnv *, jobject, jint, jobject, jobject);
+JNIEXPORT jshort JNICALL Java_org_treetank_pagelayer_NativeTreeTank_syscall
+  (JNIEnv *, jobject, jbyte, jbyte, jshort, jobject);
 
 #ifdef __cplusplus
 }
