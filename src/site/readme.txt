@@ -49,3 +49,6 @@ TreeTank Coding Conventions
 + Dependencies: No external dependencies (jar files) except 
   JUnit, Checkstyle, StAX, Jetty, and Concurrent Backport.
 + The source and test code must be executable with jamvm at any time.
++ The folder target may only contain libTreeTank.so and treetank.jar. Whenever
+  the version of treetank changes, make sure to update these two files and only
+  commit when they are updated.
