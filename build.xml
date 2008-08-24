@@ -16,7 +16,6 @@
 	<property name="externals.dir" value="externals" />
 
 	<property name="build.dir" value="target" />
-	<property name="openbsd.dir" value="${build.dir}/openbsd" />
 	<property name="tnk.dir" value="${build.dir}/tnk" />
 	<property name="classes.dir" value="${build.dir}/classes" />
 	<property name="javadoc.dir" value="${build.dir}/javadoc" />
@@ -43,7 +42,6 @@
      | INIT: Initialize classpath and directories.
      \ -->
 	<target name="init" description="Initialize build directory and classpath.">
-		<mkdir dir="${openbsd.dir}" />
 		<mkdir dir="${tnk.dir}" />
 		<mkdir dir="${classes.dir}" />
 		<mkdir dir="${javadoc.dir}" />
@@ -134,7 +132,6 @@
 	 | CLEAN: Remove all built stuff.
 	 \ -->
 	<target name="clean">
-		<delete dir="${openbsd.dir}/*" />
 		<delete dir="${tnk.dir}/*" />
 		<delete dir="${classes.dir}" />
 		<delete dir="${javadoc.dir}" />

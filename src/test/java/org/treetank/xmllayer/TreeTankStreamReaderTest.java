@@ -38,8 +38,11 @@ import org.treetank.utils.TestDocument;
 public class TreeTankStreamReaderTest {
 
   public static final String PATH =
-    "target"
-    + File.separator + "TreeTankStreamReaderTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "TreeTankStreamReaderTest.tnk";
 
   public ISession session;
 

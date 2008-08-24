@@ -31,7 +31,7 @@ import com.treetank.shared.RootNode;
 
 public class CoreTest {
 
-  private static final String TANK = "target/CoreTest";
+  private static final String TANK = "target/tnk/CoreTest";
 
   @Before
   public void setUp() {
