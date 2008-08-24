@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id: JavaCompression.java 4358 2008-08-23 12:38:16Z kramis $
  */
 
 package org.treetank.pagelayer;
@@ -23,7 +23,7 @@ import java.nio.ByteBuffer;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
-public class JavaCompression implements ICompression {
+public class CryptoJavaImpl implements ICrypto {
 
   private final Deflater mCompressor;
 
@@ -36,7 +36,7 @@ public class JavaCompression implements ICompression {
   /**
    * Initialize compressor.
    */
-  public JavaCompression() {
+  public CryptoJavaImpl() {
     mCompressor = new Deflater();
     mDecompressor = new Inflater();
     mTmp = new byte[8192];

@@ -43,7 +43,7 @@ public final class PageWriter {
   private final FileChannel mChannel;
 
   /** Compressor to compress the page. */
-  private ICompression mCompressor;
+  private ICrypto mCompressor;
 
   /** Temporary data buffer. */
   private final ByteBuffer mBuffer;
@@ -66,9 +66,9 @@ public final class PageWriter {
 
       try {
         System.loadLibrary("TreeTank");
-        mCompressor = new NativeTreeTank();
+        mCompressor = new CryptoNativeImpl();
       } catch (UnsatisfiedLinkError e) {
-        mCompressor = new JavaCompression();
+        mCompressor = new CryptoJavaImpl();
       }
 
       mBuffer = ByteBuffer.allocateDirect(IConstants.BUFFER_SIZE);
