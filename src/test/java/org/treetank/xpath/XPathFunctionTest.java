@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: $
+ * $Id$
  */
 
 package org.treetank.xpath;
@@ -30,7 +30,6 @@ import org.treetank.sessionlayer.ItemList;
 import org.treetank.sessionlayer.Session;
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.xmllayer.XMLShredder;
-import org.treetank.xpath.XPathAxis;
 
 /**
  * Performes the XPathFunctionalityTest provided on 
@@ -42,12 +41,20 @@ import org.treetank.xpath.XPathAxis;
 public class XPathFunctionTest {
 
   public static final String XML =
-    "src"
+      "src"
           + File.separator
-          +"test" + File.separator + "resources" + File.separator + "alphabet.xml";
+          + "test"
+          + File.separator
+          + "resources"
+          + File.separator
+          + "alphabet.xml";
 
   public static final String PATH =
-      "target" + File.separator + "tnk" + File.separator + "XPathFTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "XPathFunctionTest.tnk";
 
   @Before
   public void setUp() {

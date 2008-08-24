@@ -13,8 +13,9 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: $
+ * $Id$
  */
+
 package org.treetank.xpath.expr;
 
 import static org.junit.Assert.assertEquals;
@@ -33,7 +34,6 @@ import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
 import org.treetank.xpath.XPathAxis;
 
-
 /**
  * JUnit-test class to test the functionality of the UnionAxis.
  * 
@@ -43,16 +43,14 @@ import org.treetank.xpath.XPathAxis;
 public class SomeExprTest {
 
   public static final String PATH =
-      "generated" + File.separator + "SomeExprTest.tnk";
+      "target" + File.separator + "tnk" + File.separator + "SomeExprTest.tnk";
 
   @Before
   public void setUp() {
-    
+
     Session.removeSession(PATH);
   }
 
-  
-  
   @Test
   public void testEveryExpr() throws IOException {
 
@@ -61,25 +59,28 @@ public class SomeExprTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
     IReadTransaction rtx = session.beginReadTransaction(new ItemList());
-    
 
-    final IAxis axis1 = new XPathAxis(rtx, "some $child in child::node() satisfies $child/@i");
+    final IAxis axis1 =
+        new XPathAxis(rtx, "some $child in child::node() satisfies $child/@i");
     assertEquals(true, axis1.hasNext());
     assertEquals(true, Boolean.parseBoolean(rtx.getValue()));
     assertEquals(false, axis1.hasNext());
-    
-    final IAxis axis2 = new XPathAxis(rtx, "some $child in child::node() satisfies $child/@abc");
+
+    final IAxis axis2 =
+        new XPathAxis(rtx, "some $child in child::node() satisfies $child/@abc");
     assertEquals(true, axis2.hasNext());
     assertEquals(false, Boolean.parseBoolean(rtx.getValue()));
     assertEquals(false, axis2.hasNext());
-    
+
     rtx.moveTo(2L);
-    final IAxis axis3 = new XPathAxis(rtx, 
-        "some $child in child::node() satisfies $child/attribute::attribute()");
+    final IAxis axis3 =
+        new XPathAxis(
+            rtx,
+            "some $child in child::node() satisfies $child/attribute::attribute()");
     assertEquals(true, axis3.hasNext());
     assertEquals(true, Boolean.parseBoolean(rtx.getValue()));
     assertEquals(false, axis3.hasNext());
-    
+
     rtx.close();
     wtx.abort();
     wtx.close();
@@ -88,5 +89,3 @@ public class SomeExprTest {
   }
 
 }
-
-

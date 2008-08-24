@@ -34,8 +34,12 @@ import org.treetank.utils.TestDocument;
 
 public class WildcardFilterTest {
 
-  public static final String PATH = "target" + File.separator + "tnk"
-      + File.separator + "WildcardFilterTest.tnk";
+  public static final String PATH =
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "WildcardFilterTest.tnk";
 
   @Before
   public void setUp() {
@@ -52,26 +56,37 @@ public class WildcardFilterTest {
     TestDocument.create(wtx);
 
     wtx.moveTo(8L);
-    IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "b", true), true);
+    IFilterTest
+        .testIFilterConventions(new WildcardFilter(wtx, "b", true), true);
     wtx.moveToAttribute(0);
     try {
-        IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "p", false), true);
-        fail("Expected an Exception, because attributes are not supported.");
+      IFilterTest.testIFilterConventions(
+          new WildcardFilter(wtx, "p", false),
+          true);
+      fail("Expected an Exception, because attributes are not supported.");
     } catch (IllegalStateException e) {
-        assertThat(e.getMessage(), is("Wildcards are not supported in attribute names yet."));
+      assertThat(
+          e.getMessage(),
+          is("Wildcards are not supported in attribute names yet."));
 
-    }   
+    }
     //IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "b", true), true);
-    
-    
-//    wtx.moveTo(3L);
-//    IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
+
+    //    wtx.moveTo(3L);
+    //    IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
 
     wtx.moveTo(2L);
-    IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "p", false), true);
-    IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "a", true), true);
-    IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "c", true), false);
-    IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "b", false), false);
+    IFilterTest.testIFilterConventions(
+        new WildcardFilter(wtx, "p", false),
+        true);
+    IFilterTest
+        .testIFilterConventions(new WildcardFilter(wtx, "a", true), true);
+    IFilterTest.testIFilterConventions(
+        new WildcardFilter(wtx, "c", true),
+        false);
+    IFilterTest.testIFilterConventions(
+        new WildcardFilter(wtx, "b", false),
+        false);
 
     wtx.abort();
     wtx.close();

@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: $
+ * $Id$
  */
 
 package org.treetank.xpath;
@@ -41,22 +41,24 @@ public class ShreddFile {
           + "content.xml";
 
   public static final String PATH =
-      "target" + File.separator + "tnk" + File.separator + "test.tnk";
+      "target" + File.separator + "tnk" + File.separator + "ShreddFile.tnk";
 
   public static void main(String[] args) {
     Session.removeSession(PATH);
     // Setup parsed session.
     XMLShredder.shred(XML, new SessionConfiguration(PATH));
-    
 
     // Verify.
     final ISession session = Session.beginSession(PATH);
     final IReadTransaction rtx = session.beginReadTransaction(new ItemList());
     final IWriteTransaction wtx = session.beginWriteTransaction();
     rtx.moveToDocumentRoot();
-    
-    final IAxis xpath = new XPathAxis(wtx, "/office:document-content/office:body/office:text/text:p");
-    for (long node: xpath) {
+
+    final IAxis xpath =
+        new XPathAxis(
+            wtx,
+            "/office:document-content/office:body/office:text/text:p");
+    for (long node : xpath) {
       System.out.println(node);
       wtx.moveTo(node);
       wtx.remove();

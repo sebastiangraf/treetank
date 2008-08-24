@@ -32,13 +32,15 @@ import org.treetank.axislayer.NodeFilter;
 import org.treetank.axislayer.TextFilter;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
-import org.treetank.xpath.filter.ItemFilter;
-import org.treetank.xpath.filter.NestedFilter;
 
 public class NestedFilterTest {
 
-  public static final String PATH = "target" + File.separator + "tnk"
-      + File.separator + "NestedFilterTest.tnk";
+  public static final String PATH =
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "NestedFilterTest.tnk";
 
   @Before
   public void setUp() {
@@ -56,24 +58,32 @@ public class NestedFilterTest {
 
     wtx.moveTo(8L);
     IFilterTest.testIFilterConventions(new NestedFilter(
-        wtx, new ItemFilter(wtx), new ElementFilter(wtx), 
+        wtx,
+        new ItemFilter(wtx),
+        new ElementFilter(wtx),
         new NameFilter(wtx, "b")), true);
-    IFilterTest.testIFilterConventions(
-        new NestedFilter(wtx, new ItemFilter(wtx), 
-            new AttributeFilter(wtx), new NameFilter(wtx, "b")), false);
+    IFilterTest.testIFilterConventions(new NestedFilter(
+        wtx,
+        new ItemFilter(wtx),
+        new AttributeFilter(wtx),
+        new NameFilter(wtx, "b")), false);
 
     wtx.moveTo(3L);
-    IFilterTest.testIFilterConventions(
-        new NestedFilter(wtx, new NodeFilter(wtx), 
-            new ElementFilter(wtx)), false);
-    IFilterTest.testIFilterConventions(
-        new NestedFilter(wtx, new NodeFilter(wtx), new TextFilter(wtx)), true);
+    IFilterTest.testIFilterConventions(new NestedFilter(
+        wtx,
+        new NodeFilter(wtx),
+        new ElementFilter(wtx)), false);
+    IFilterTest.testIFilterConventions(new NestedFilter(
+        wtx,
+        new NodeFilter(wtx),
+        new TextFilter(wtx)), true);
 
     wtx.moveTo(2L);
     wtx.moveToAttribute(0);
-    IFilterTest.testIFilterConventions(
-        new NestedFilter(wtx, new AttributeFilter(wtx), 
-            new NameFilter(wtx, "i")), true);
+    IFilterTest.testIFilterConventions(new NestedFilter(
+        wtx,
+        new AttributeFilter(wtx),
+        new NameFilter(wtx, "i")), true);
 
     wtx.abort();
     wtx.close();

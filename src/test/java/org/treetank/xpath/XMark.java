@@ -13,16 +13,15 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: $
+ * $Id$
  */
+
 package org.treetank.xpath;
 
 import java.io.File;
 import java.io.IOException;
 
 import org.junit.Before;
-import org.junit.Test;
-import org.perfidix.BeforeEachBenchRun;
 import org.perfidix.BenchClass;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
@@ -50,7 +49,7 @@ public class XMark {
           + "auction.xml";
 
   public static final String PATH =
-      "target" + File.separator + "tnk" + File.separator + "XPathFTest.tnk";
+      "target" + File.separator + "tnk" + File.separator + "XMark.tnk";
 
   ISession session;
 
@@ -67,7 +66,7 @@ public class XMark {
     session = Session.beginSession(PATH);
   }
 
-//  @Test
+  //  @Test
   public void testQ1_10() throws IOException {
     rtx = session.beginReadTransaction(new ItemList());
     XPathStringTest.testIAxisConventions(
@@ -76,7 +75,7 @@ public class XMark {
     rtx.close();
   }
 
-//  @Test
+  //  @Test
   public void testQ1() throws IOException {
     rtx = session.beginReadTransaction(new ItemList());
     // Q1 The name of the person with ID 'person0' {projecting}
@@ -87,50 +86,50 @@ public class XMark {
     rtx.close();
   }
 
-//  @Test
-//  public void testQ2() throws IOException {
-    // // // Q2 Return the initial increases of all open auctions
-    // // XPathStringTest.testIAxisConventions(new XPathAxis(rtx,
-    // // "for $b in /site/open_auctions/open_auction return $b/bidder[1]"
-    // // + "/increase/text()"), new String[] { "9.00", "42.00", "9.00",
-    // // "3.00", "6.00", "27.00", "7.50", "6.00", "3.00", "55.50", "15.00", "",
-    // // "10.50", "13.50", "28.50", "27.00", "3.00", "7.50", "", "30.00",
-    // // "16.50", "25.50", "21.00", "4.50", "9.00", "34.50", "21.00", "9.00",
-    // // "16.50", "", "55.50", "1.50", "", "15.00", "3.00", "22.50", "52.50",
-    // // "21.00", "4.50", "39.00", "3.00", "9.00", "", "", "", "16.50", "3.00",
-    // // "7.50", "", "27.00", "9.00", "51.00", "31.50", "12.00", "6.00",
-    // // "42.00", "21.00", "9.00", "52.50", "1.50", "", "4.50", "4.50", "6.00",
-    // // "55.50", "13.50", "10.50", "10.50", "25.50", "", "18.00", "15.00", "",
-    // // "39.00", "49.50", "15.00", "", "", "7.50", "13.50", "10.50", "3.00",
-    // // "6.00", "7.50", "39.00", "6.00", "21.00", "51.00", "16.50", "3.00",
-    // // "24.00", "15.00", "7.50", "22.50", "1.50", "15.00", "34.50", "15.00",
-    // // "7.50", "33.00", "6.00", "42.00", "10.50", "27.00", "7.50", "19.50",
-    // // "19.50", "30.00", "28.50", "6.00", "1.50", "46.50", "7.50", "3.00", "",
-    // // "31.50", "10.50", "1.50", "1.50", "9.00" });
-    //
-    // XPathStringTest.testIAxisConventions(new XPathAxis(rtx,
-    // "fn:count(for $b in /site/open_auctions/open_auction return $b/bidder[1]"
-    // + "/increase/text())"), new String[] { "106"}); // oder 120
-    //
-    //     XPathStringTest.testIAxisConventions(new XPathAxis(rtx,
-    //    "/site/open_auctions/open_auction/bidder[1]/increase/text()"), 
-    //    new String[] {"Sinisa Farrel"});
+  //  @Test
+  //  public void testQ2() throws IOException {
+  // // // Q2 Return the initial increases of all open auctions
+  // // XPathStringTest.testIAxisConventions(new XPathAxis(rtx,
+  // // "for $b in /site/open_auctions/open_auction return $b/bidder[1]"
+  // // + "/increase/text()"), new String[] { "9.00", "42.00", "9.00",
+  // // "3.00", "6.00", "27.00", "7.50", "6.00", "3.00", "55.50", "15.00", "",
+  // // "10.50", "13.50", "28.50", "27.00", "3.00", "7.50", "", "30.00",
+  // // "16.50", "25.50", "21.00", "4.50", "9.00", "34.50", "21.00", "9.00",
+  // // "16.50", "", "55.50", "1.50", "", "15.00", "3.00", "22.50", "52.50",
+  // // "21.00", "4.50", "39.00", "3.00", "9.00", "", "", "", "16.50", "3.00",
+  // // "7.50", "", "27.00", "9.00", "51.00", "31.50", "12.00", "6.00",
+  // // "42.00", "21.00", "9.00", "52.50", "1.50", "", "4.50", "4.50", "6.00",
+  // // "55.50", "13.50", "10.50", "10.50", "25.50", "", "18.00", "15.00", "",
+  // // "39.00", "49.50", "15.00", "", "", "7.50", "13.50", "10.50", "3.00",
+  // // "6.00", "7.50", "39.00", "6.00", "21.00", "51.00", "16.50", "3.00",
+  // // "24.00", "15.00", "7.50", "22.50", "1.50", "15.00", "34.50", "15.00",
+  // // "7.50", "33.00", "6.00", "42.00", "10.50", "27.00", "7.50", "19.50",
+  // // "19.50", "30.00", "28.50", "6.00", "1.50", "46.50", "7.50", "3.00", "",
+  // // "31.50", "10.50", "1.50", "1.50", "9.00" });
+  //
+  // XPathStringTest.testIAxisConventions(new XPathAxis(rtx,
+  // "fn:count(for $b in /site/open_auctions/open_auction return $b/bidder[1]"
+  // + "/increase/text())"), new String[] { "106"}); // oder 120
+  //
+  //     XPathStringTest.testIAxisConventions(new XPathAxis(rtx,
+  //    "/site/open_auctions/open_auction/bidder[1]/increase/text()"), 
+  //    new String[] {"Sinisa Farrel"});
 
-    //  
-    // @Test
-    // public void testQ3() throws IOException {
-    // // //Q3 Return the IDs of all open auctions whose current increase is at
-    // // least
-    // // //twice as high as the initial increase
-    // // XPathStringTest.testIAxisConventions(new XPathAxis(rtx,
-    // // "for $b in /site/open_auctions/open_auction return $b/bidder[1]"
-    // // + "/increase/text()"), new String[] {});
-    // }
-    // @Test
-    // public void testQ4() throws IOException {
-//  }
+  //  
+  // @Test
+  // public void testQ3() throws IOException {
+  // // //Q3 Return the IDs of all open auctions whose current increase is at
+  // // least
+  // // //twice as high as the initial increase
+  // // XPathStringTest.testIAxisConventions(new XPathAxis(rtx,
+  // // "for $b in /site/open_auctions/open_auction return $b/bidder[1]"
+  // // + "/increase/text()"), new String[] {});
+  // }
+  // @Test
+  // public void testQ4() throws IOException {
+  //  }
 
-//  @Test
+  //  @Test
   public void testQ5() throws IOException {
     rtx = session.beginReadTransaction(new ItemList());
     // Q5 How many sold items cost more than 40?
@@ -141,7 +140,7 @@ public class XMark {
     rtx.close();
   }
 
-//  @Test
+  //  @Test
   public void testQ6() throws IOException {
     rtx = session.beginReadTransaction(new ItemList());
     // Q6 How many items are listed on all continents?
@@ -154,7 +153,7 @@ public class XMark {
     rtx.close();
   }
 
-//  @Test
+  //  @Test
   public void testQ7() throws IOException {
     rtx = session.beginReadTransaction(new ItemList());
     // Q7 How many pieces of prose are in our database?

@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: $
+ * $Id$
  */
 package org.treetank.xpath.expr;
 
@@ -31,7 +31,6 @@ import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
 import org.treetank.xpath.XPathAxis;
 
-
 /**
  * JUnit-test class to test the functionality of the UnionAxis.
  * 
@@ -41,16 +40,18 @@ import org.treetank.xpath.XPathAxis;
 public class IntersectAxisTest {
 
   public static final String PATH =
-      "generated" + File.separator + "IntersectAxisTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "IntersectAxisTest.tnk";
 
   @Before
   public void setUp() {
-    
+
     Session.removeSession(PATH);
   }
 
-  
-  
   @Test
   public void testIntersect() throws IOException {
 
@@ -60,37 +61,39 @@ public class IntersectAxisTest {
     TestDocument.create(wtx);
     IReadTransaction rtx = session.beginReadTransaction(new ItemList());
 
-    
     rtx.moveTo(2L);
 
     IAxisTest.testIAxisConventions(new XPathAxis(
-        rtx, "child::node() intersect b"), 
-        new long[] {4L, 8L});
-    
-    IAxisTest.testIAxisConventions(new XPathAxis(
-        rtx, "child::node() intersect b intersect child::node()/@p:x"), 
-        new long[] {8L});
+        rtx,
+        "child::node() intersect b"), new long[] { 4L, 8L });
+
+    IAxisTest.testIAxisConventions(
+        new XPathAxis(
+            rtx,
+            "child::node() intersect b intersect child::node()/@p:x"),
+        new long[] { 8L });
+
+    IAxisTest.testIAxisConventions(
+        new XPathAxis(
+            rtx,
+            "child::node() intersect child::node()/attribute::p:x"),
+        new long[] { 8L });
+
+    IAxisTest.testIAxisConventions(
+        new XPathAxis(
+            rtx,
+            "child::node()/parent::node() intersect self::node()"),
+        new long[] { 2L });
 
     IAxisTest.testIAxisConventions(new XPathAxis(
-        rtx, "child::node() intersect child::node()/attribute::p:x"), 
-        new long[] {8L});
-   
-    
-    IAxisTest.testIAxisConventions(new XPathAxis(
-        rtx, "child::node()/parent::node() intersect self::node()"), 
-        new long[] {2L});
-    
-   
-    IAxisTest.testIAxisConventions(new XPathAxis(
-        rtx, "//node() intersect //text()"), 
-        new long[] {3L, 7L, 11L, 5L, 10L});
-    
+        rtx,
+        "//node() intersect //text()"), new long[] { 3L, 7L, 11L, 5L, 10L });
+
     rtx.moveTo(2L);
     IAxisTest.testIAxisConventions(new XPathAxis(
-        rtx, "b/preceding::node() intersect text()"), 
-        new long[] {3L, 7L});
+        rtx,
+        "b/preceding::node() intersect text()"), new long[] { 3L, 7L });
 
-    
     rtx.close();
     wtx.abort();
     wtx.close();
@@ -99,5 +102,3 @@ public class IntersectAxisTest {
   }
 
 }
-
-

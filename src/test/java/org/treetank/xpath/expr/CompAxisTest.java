@@ -13,14 +13,12 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: $
+ * $Id$
  */
 
 package org.treetank.xpath.expr;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.hamcrest.core.Is.is;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +32,6 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.ItemList;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
-import org.treetank.utils.TypedValue;
 import org.treetank.xpath.XPathAxis;
 
 /**
@@ -44,8 +41,8 @@ import org.treetank.xpath.XPathAxis;
  */
 public class CompAxisTest {
 
-  public static final String PATH = "generated" + File.separator
-      + "CompAxisTest.tnk";
+  public static final String PATH =
+      "target" + File.separator + "tnk" + File.separator + "CompAxisTest.tnk";
 
   @Before
   public void setUp() {
@@ -69,17 +66,17 @@ public class CompAxisTest {
     assertEquals(true, axis1.hasNext());
     assertEquals(true, Boolean.parseBoolean(rtx.getValue()));
     assertEquals(false, axis1.hasNext());
-    
+
     final IAxis axis2 = new XPathAxis(rtx, "(1, 2, 3) < (2, 3)");
     assertEquals(true, axis2.hasNext());
     assertEquals(true, Boolean.parseBoolean(rtx.getValue()));
     assertEquals(false, axis2.hasNext());
-    
+
     final IAxis axis3 = new XPathAxis(rtx, "(1, 2, 3) > (3, 4)");
     assertEquals(true, axis3.hasNext());
     assertEquals(false, Boolean.parseBoolean(rtx.getValue()));
     assertEquals(false, axis3.hasNext());
- 
+
     rtx.close();
     wtx.abort();
     wtx.close();

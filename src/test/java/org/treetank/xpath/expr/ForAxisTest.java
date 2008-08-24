@@ -13,8 +13,9 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: $
+ * $Id$
  */
+
 package org.treetank.xpath.expr;
 
 import static org.junit.Assert.assertEquals;
@@ -34,7 +35,6 @@ import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
 import org.treetank.xpath.XPathAxis;
 
-
 /**
  * JUnit-test class to test the functionality of the DubFilter.
  * 
@@ -44,19 +44,17 @@ import org.treetank.xpath.XPathAxis;
 public class ForAxisTest {
 
   public static final String PATH =
-      "generated" + File.separator + "ForAxisTest.tnk";
-  
+      "target" + File.separator + "tnk" + File.separator + "ForAxisTest.tnk";
+
   IAxis ifExpr, thenExpr, elseExpr;
 
   @Before
   public void setUp() {
-    
+
     Session.removeSession(PATH);
-    
+
   }
 
-  
-  
   @Test
   public void testFor() throws IOException {
 
@@ -66,52 +64,68 @@ public class ForAxisTest {
     TestDocument.create(wtx);
     IReadTransaction rtx = session.beginReadTransaction(new ItemList());
 
-    
     rtx.moveTo(2L);
-    
+
     IAxisTest.testIAxisConventions(new XPathAxis(
-        rtx, "for $a in child::text() return child::node()"), new long[] {
-      3L, 4L, 7L, 8L, 11L, 
-      3L, 4L, 7L, 8L, 11L, 
-      3L, 4L, 7L, 8L, 11L});
-    
+        rtx,
+        "for $a in child::text() return child::node()"), new long[] {
+        3L,
+        4L,
+        7L,
+        8L,
+        11L,
+        3L,
+        4L,
+        7L,
+        8L,
+        11L,
+        3L,
+        4L,
+        7L,
+        8L,
+        11L });
+
     IAxisTest.testIAxisConventions(new XPathAxis(
-        rtx, "for $a in child::node() return $a/node()"), 
-        new long[] {5L, 6L, 9L, 10L});
-    
+        rtx,
+        "for $a in child::node() return $a/node()"), new long[] {
+        5L,
+        6L,
+        9L,
+        10L });
+
     IAxisTest.testIAxisConventions(new XPathAxis(
-        rtx, "for $a in child::node() return $a/text()"), new long[] {5L, 10L});
-    
+        rtx,
+        "for $a in child::node() return $a/text()"), new long[] { 5L, 10L });
+
     IAxisTest.testIAxisConventions(new XPathAxis(
-        rtx, "for $a in child::node() return $a/c"), new long[] {6L, 9L});
-    
-//    IAxisTest.testIAxisConventions(new XPathAxis(
-//        rtx, "for $a in child::node(), $b in /node(), $c in ., $d in /c return $a/c"), 
-//        new long[] {6L, 9L});
-    
+        rtx,
+        "for $a in child::node() return $a/c"), new long[] { 6L, 9L });
+
+    //    IAxisTest.testIAxisConventions(new XPathAxis(
+    //        rtx, "for $a in child::node(), $b in /node(), $c in ., $d in /c return $a/c"), 
+    //        new long[] {6L, 9L});
+
     IAxisTest.testIAxisConventions(new XPathAxis(
-        rtx, "for $a in child::node() return $a[@p:x]"), new long[] {8L});
-   
-    
-    IAxisTest.testIAxisConventions(new XPathAxis(rtx, "for $a in . return $a"),
-        new long[] {2L});
-     
-    IAxis axis = new XPathAxis(rtx, 
-        "for $i in (10, 20), $j in (1, 2) return ($i + $j)");
+        rtx,
+        "for $a in child::node() return $a[@p:x]"), new long[] { 8L });
+
+    IAxisTest.testIAxisConventions(
+        new XPathAxis(rtx, "for $a in . return $a"),
+        new long[] { 2L });
+
+    IAxis axis =
+        new XPathAxis(rtx, "for $i in (10, 20), $j in (1, 2) return ($i + $j)");
     assertEquals(true, axis.hasNext());
-    
-//    assertEquals("11.0", xtx.getValue());
+
+    //    assertEquals("11.0", xtx.getValue());
     assertEquals(true, axis.hasNext());
     //assertThat(12.0, is(xtx.getValueAsDouble()));
     assertEquals(true, axis.hasNext());
-//    assertThat(21.0, is(xtx.getValueAsDouble()));
+    //    assertThat(21.0, is(xtx.getValueAsDouble()));
     assertEquals(true, axis.hasNext());
-//    assertThat(22.0, is(xtx.getValueAsDouble()));
+    //    assertThat(22.0, is(xtx.getValueAsDouble()));
     assertEquals(false, axis.hasNext());
-    
-    
-       
-      
+
     rtx.close();
     wtx.abort();
     wtx.close();
@@ -120,5 +134,3 @@ public class ForAxisTest {
   }
 
 }
-
-

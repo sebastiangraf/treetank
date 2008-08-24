@@ -41,8 +41,8 @@ import org.treetank.xpath.types.Type;
 
 public class IDivOpAxisTest {
 
-  public static final String PATH = "generated" + File.separator
-      + "IDivOpTest.tnk";
+  public static final String PATH =
+      "target" + File.separator + "tnk" + File.separator + "IDivOpTest.tnk";
 
   @Before
   public void setUp() throws Exception {
@@ -62,13 +62,13 @@ public class IDivOpAxisTest {
     IAxis op1 = new LiteralExpr(rtx, rtx.getItemList().addItem(item1));
     IAxis op2 = new LiteralExpr(rtx, rtx.getItemList().addItem(item2));
     AbstractOpAxis axis = new IDivOpAxis(rtx, op1, op2);
-    
+
     assertEquals(true, axis.hasNext());
     //note: although getRawValue() returns [1], parseString returns ""
-//    assertEquals(1, Integer.parseInt(TypedValue.parseString(rtx.getRawValue())));
+    //    assertEquals(1, Integer.parseInt(TypedValue.parseString(rtx.getRawValue())));
     assertEquals(rtx.keyForName("xs:integer"), rtx.getTypeKey());
     assertEquals(false, axis.hasNext());
-    
+
     rtx.close();
     session.close();
   }
@@ -83,23 +83,27 @@ public class IDivOpAxisTest {
     IAxis op2 = new SequenceAxis(rtx);
     AbstractOpAxis axis = new IDivOpAxis(rtx, op1, op2);
 
-    assertEquals(Type.INTEGER, axis.getReturnType(rtx.keyForName("xs:double"),
+    assertEquals(Type.INTEGER, axis.getReturnType(
+        rtx.keyForName("xs:double"),
         rtx.keyForName("xs:double")));
-    assertEquals(Type.INTEGER, axis.getReturnType(rtx.keyForName("xs:decimal"),
+    assertEquals(Type.INTEGER, axis.getReturnType(
+        rtx.keyForName("xs:decimal"),
         rtx.keyForName("xs:double")));
-    assertEquals(Type.INTEGER, axis.getReturnType(rtx.keyForName("xs:float"), rtx
-        .keyForName("xs:decimal")));
-    assertEquals(Type.INTEGER, axis.getReturnType(rtx.keyForName("xs:decimal"),
+    assertEquals(Type.INTEGER, axis.getReturnType(
+        rtx.keyForName("xs:float"),
+        rtx.keyForName("xs:decimal")));
+    assertEquals(Type.INTEGER, axis.getReturnType(
+        rtx.keyForName("xs:decimal"),
         rtx.keyForName("xs:integer")));
     // assertEquals(Type.INTEGER,
     // axis.getReturnType(rtx.keyForName("xs:integer"),
     // rtx.keyForName("xs:integer")));
-   
 
     Type type;
     try {
-      type = axis.getReturnType(rtx.keyForName("xs:dateTime"), rtx
-          .keyForName("xs:yearMonthDuration"));
+      type =
+          axis.getReturnType(rtx.keyForName("xs:dateTime"), rtx
+              .keyForName("xs:yearMonthDuration"));
       fail("Expected an XPathError-Exception.");
     } catch (XPathError e) {
       assertThat(
@@ -107,10 +111,11 @@ public class IDivOpAxisTest {
           is("err:XPTY0004 The type is not appropriate the expression or the "
               + "typedoes not match a required type as specified by the matching rules."));
     }
-    
+
     try {
-      type = axis.getReturnType(rtx.keyForName("xs:dateTime"),
-           rtx.keyForName("xs:double"));
+      type =
+          axis.getReturnType(rtx.keyForName("xs:dateTime"), rtx
+              .keyForName("xs:double"));
       fail("Expected an XPathError-Exception.");
     } catch (XPathError e) {
       assertThat(
@@ -118,10 +123,11 @@ public class IDivOpAxisTest {
           is("err:XPTY0004 The type is not appropriate the expression or the "
               + "typedoes not match a required type as specified by the matching rules."));
     }
-    
+
     try {
-      type = axis.getReturnType(rtx.keyForName("xs:string"), rtx
-          .keyForName("xs:yearMonthDuration"));
+      type =
+          axis.getReturnType(rtx.keyForName("xs:string"), rtx
+              .keyForName("xs:yearMonthDuration"));
       fail("Expected an XPathError-Exception.");
     } catch (XPathError e) {
       assertThat(
@@ -129,10 +135,11 @@ public class IDivOpAxisTest {
           is("err:XPTY0004 The type is not appropriate the expression or the "
               + "typedoes not match a required type as specified by the matching rules."));
     }
-    
+
     try {
-      type = axis.getReturnType(rtx.keyForName("xs:dateTime"), rtx
-          .keyForName("xs:IDREF"));
+      type =
+          axis.getReturnType(rtx.keyForName("xs:dateTime"), rtx
+              .keyForName("xs:IDREF"));
       fail("Expected an XPathError-Exception.");
     } catch (XPathError e) {
       assertThat(
@@ -140,7 +147,7 @@ public class IDivOpAxisTest {
           is("err:XPTY0004 The type is not appropriate the expression or the "
               + "typedoes not match a required type as specified by the matching rules."));
     }
-    
+
     rtx.close();
     session.close();
   }

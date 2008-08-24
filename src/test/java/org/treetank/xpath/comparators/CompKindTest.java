@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: $
+ * $Id$
  */
 
 package org.treetank.xpath.comparators;
@@ -24,7 +24,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import org.treetank.xpath.comparators.CompKind;
 import org.treetank.xpath.functions.XPathError;
 import org.treetank.xpath.types.Type;
 
@@ -64,20 +63,30 @@ public class CompKindTest {
     assertEquals(CompKind.EQ.compare("2.0", "2", Type.INTEGER), true);
     assertEquals(CompKind.EQ.compare("2.0", "2.01", Type.INTEGER), true);
     assertEquals(CompKind.EQ.compare("2.0", "4.0", Type.INTEGER), false);
-    assertEquals(CompKind.EQ.compare(Integer.toString(Integer.MAX_VALUE),
-        Integer.toString(Integer.MAX_VALUE), Type.INTEGER), true);
-    assertEquals(CompKind.EQ.compare(Integer.toString(Integer.MAX_VALUE),
-        Integer.toString(Integer.MIN_VALUE), Type.INTEGER), false);
+    assertEquals(CompKind.EQ.compare(
+        Integer.toString(Integer.MAX_VALUE),
+        Integer.toString(Integer.MAX_VALUE),
+        Type.INTEGER), true);
+    assertEquals(CompKind.EQ.compare(
+        Integer.toString(Integer.MAX_VALUE),
+        Integer.toString(Integer.MIN_VALUE),
+        Type.INTEGER), false);
 
     assertEquals(CompKind.EQ.compare("2.0", "2", Type.STRING), false);
     assertEquals(CompKind.EQ.compare("2.01", "2.01", Type.STRING), true);
-    assertEquals(CompKind.EQ.compare("bla bla blubb", "bla bla blubb",
+    assertEquals(CompKind.EQ.compare(
+        "bla bla blubb",
+        "bla bla blubb",
         Type.STRING), true);
 
-    assertEquals(CompKind.EQ.compare("www.uni-konstanz.de",
-        "www.uni-konstanz.de", Type.ANY_URI), true);
-    assertEquals(CompKind.EQ.compare("www.uni-konstanz.de/",
-        "www.uni-konstanz.de", Type.ANY_URI), false);
+    assertEquals(CompKind.EQ.compare(
+        "www.uni-konstanz.de",
+        "www.uni-konstanz.de",
+        Type.ANY_URI), true);
+    assertEquals(CompKind.EQ.compare(
+        "www.uni-konstanz.de/",
+        "www.uni-konstanz.de",
+        Type.ANY_URI), false);
 
     assertEquals(CompKind.EQ.compare("true", "false", Type.BOOLEAN), false);
     assertEquals(CompKind.EQ.compare("true", "true", Type.BOOLEAN), true);
@@ -98,7 +107,8 @@ public class CompKindTest {
 
     try {
       assertEquals(
-          CompKind.EQ.compare("2.0", "2.01", Type.YEAR_MONTH_DURATION), false);
+          CompKind.EQ.compare("2.0", "2.01", Type.YEAR_MONTH_DURATION),
+          false);
       fail("Expected exception");
     } catch (XPathError e) {
       assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate "
@@ -142,20 +152,30 @@ public class CompKindTest {
     assertEquals(CompKind.NE.compare("2.0", "2", Type.INTEGER), false);
     assertEquals(CompKind.NE.compare("2.0", "2.01", Type.INTEGER), false);
     assertEquals(CompKind.NE.compare("2.0", "4.0", Type.INTEGER), true);
-    assertEquals(CompKind.NE.compare(Integer.toString(Integer.MAX_VALUE),
-        Integer.toString(Integer.MAX_VALUE), Type.INTEGER), false);
-    assertEquals(CompKind.NE.compare(Integer.toString(Integer.MAX_VALUE),
-        Integer.toString(Integer.MIN_VALUE), Type.INTEGER), true);
+    assertEquals(CompKind.NE.compare(
+        Integer.toString(Integer.MAX_VALUE),
+        Integer.toString(Integer.MAX_VALUE),
+        Type.INTEGER), false);
+    assertEquals(CompKind.NE.compare(
+        Integer.toString(Integer.MAX_VALUE),
+        Integer.toString(Integer.MIN_VALUE),
+        Type.INTEGER), true);
 
     assertEquals(CompKind.NE.compare("2.0", "2", Type.STRING), true);
     assertEquals(CompKind.NE.compare("2.01", "2.01", Type.STRING), false);
-    assertEquals(CompKind.NE.compare("bla bla blubb", "bla bla blubb",
+    assertEquals(CompKind.NE.compare(
+        "bla bla blubb",
+        "bla bla blubb",
         Type.STRING), false);
 
-    assertEquals(CompKind.NE.compare("www.uni-konstanz.de",
-        "www.uni-konstanz.de", Type.ANY_URI), false);
-    assertEquals(CompKind.NE.compare("www.uni-konstanz.de/",
-        "www.uni-konstanz.de", Type.ANY_URI), true);
+    assertEquals(CompKind.NE.compare(
+        "www.uni-konstanz.de",
+        "www.uni-konstanz.de",
+        Type.ANY_URI), false);
+    assertEquals(CompKind.NE.compare(
+        "www.uni-konstanz.de/",
+        "www.uni-konstanz.de",
+        Type.ANY_URI), true);
 
     assertEquals(CompKind.NE.compare("false", "true", Type.BOOLEAN), true);
     assertEquals(CompKind.NE.compare("false", "false", Type.BOOLEAN), false);
@@ -176,7 +196,8 @@ public class CompKindTest {
 
     try {
       assertEquals(
-          CompKind.NE.compare("2.0", "2.01", Type.YEAR_MONTH_DURATION), true);
+          CompKind.NE.compare("2.0", "2.01", Type.YEAR_MONTH_DURATION),
+          true);
       fail("Expected exception");
     } catch (XPathError e) {
       assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate "
@@ -219,20 +240,30 @@ public class CompKindTest {
     assertEquals(CompKind.LT.compare("2.0", "2", Type.INTEGER), false);
     assertEquals(CompKind.LT.compare("2.0", "2.01", Type.INTEGER), false);
     assertEquals(CompKind.LT.compare("2.0", "4.0", Type.INTEGER), true);
-    assertEquals(CompKind.LT.compare(Integer.toString(Integer.MAX_VALUE),
-        Integer.toString(Integer.MAX_VALUE), Type.INTEGER), false);
-    assertEquals(CompKind.LT.compare(Integer.toString(Integer.MAX_VALUE),
-        Integer.toString(Integer.MIN_VALUE), Type.INTEGER), false);
+    assertEquals(CompKind.LT.compare(
+        Integer.toString(Integer.MAX_VALUE),
+        Integer.toString(Integer.MAX_VALUE),
+        Type.INTEGER), false);
+    assertEquals(CompKind.LT.compare(
+        Integer.toString(Integer.MAX_VALUE),
+        Integer.toString(Integer.MIN_VALUE),
+        Type.INTEGER), false);
 
     assertEquals(CompKind.LT.compare("2.0", "2", Type.STRING), false);
     assertEquals(CompKind.LT.compare("2.01", "2.01", Type.STRING), false);
-    assertEquals(CompKind.LT.compare("bla bla blubb", "bla bla blubb",
+    assertEquals(CompKind.LT.compare(
+        "bla bla blubb",
+        "bla bla blubb",
         Type.STRING), false);
 
-    assertEquals(CompKind.LT.compare("www.uni-konstanz.de",
-        "www.uni-konstanz.de", Type.ANY_URI), false);
-    assertEquals(CompKind.LT.compare("www.uni-konstanz.de",
-        "www.uni-konstanz.de/", Type.ANY_URI), true);
+    assertEquals(CompKind.LT.compare(
+        "www.uni-konstanz.de",
+        "www.uni-konstanz.de",
+        Type.ANY_URI), false);
+    assertEquals(CompKind.LT.compare(
+        "www.uni-konstanz.de",
+        "www.uni-konstanz.de/",
+        Type.ANY_URI), true);
 
     assertEquals(CompKind.LT.compare("false", "true", Type.BOOLEAN), true);
     assertEquals(CompKind.LT.compare("false", "false", Type.BOOLEAN), false);
@@ -245,7 +276,8 @@ public class CompKindTest {
     }
 
     try {
-      assertEquals(CompKind.LT.compare("2.0", "4.0", Type.YEAR_MONTH_DURATION),
+      assertEquals(
+          CompKind.LT.compare("2.0", "4.0", Type.YEAR_MONTH_DURATION),
           true);
       fail("Expected exception");
     } catch (IllegalStateException e) {
@@ -296,20 +328,30 @@ public class CompKindTest {
     assertEquals(CompKind.LE.compare("2.0", "2", Type.INTEGER), true);
     assertEquals(CompKind.LE.compare("2.0", "2.01", Type.INTEGER), true);
     assertEquals(CompKind.LE.compare("2.0", "4.0", Type.INTEGER), true);
-    assertEquals(CompKind.LE.compare(Integer.toString(Integer.MAX_VALUE),
-        Integer.toString(Integer.MAX_VALUE), Type.INTEGER), true);
-    assertEquals(CompKind.LE.compare(Integer.toString(Integer.MAX_VALUE),
-        Integer.toString(Integer.MIN_VALUE), Type.INTEGER), false);
+    assertEquals(CompKind.LE.compare(
+        Integer.toString(Integer.MAX_VALUE),
+        Integer.toString(Integer.MAX_VALUE),
+        Type.INTEGER), true);
+    assertEquals(CompKind.LE.compare(
+        Integer.toString(Integer.MAX_VALUE),
+        Integer.toString(Integer.MIN_VALUE),
+        Type.INTEGER), false);
 
     assertEquals(CompKind.LE.compare("2.0", "2", Type.STRING), false);
     assertEquals(CompKind.LE.compare("2.01", "2.01", Type.STRING), true);
-    assertEquals(CompKind.LE.compare("bla bla blubb", "bla bla blubb",
+    assertEquals(CompKind.LE.compare(
+        "bla bla blubb",
+        "bla bla blubb",
         Type.STRING), true);
 
-    assertEquals(CompKind.LE.compare("www.uni-konstanz.de",
-        "www.uni-konstanz.de", Type.ANY_URI), true);
-    assertEquals(CompKind.LE.compare("www.uni-konstanz.de",
-        "www.uni-konstanz.de/", Type.ANY_URI), true);
+    assertEquals(CompKind.LE.compare(
+        "www.uni-konstanz.de",
+        "www.uni-konstanz.de",
+        Type.ANY_URI), true);
+    assertEquals(CompKind.LE.compare(
+        "www.uni-konstanz.de",
+        "www.uni-konstanz.de/",
+        Type.ANY_URI), true);
 
     assertEquals(CompKind.LE.compare("true", "false", Type.BOOLEAN), false);
     assertEquals(CompKind.LE.compare("true", "true", Type.BOOLEAN), true);
@@ -322,7 +364,8 @@ public class CompKindTest {
     }
 
     try {
-      assertEquals(CompKind.LE.compare("2.0", "4.0", Type.YEAR_MONTH_DURATION),
+      assertEquals(
+          CompKind.LE.compare("2.0", "4.0", Type.YEAR_MONTH_DURATION),
           true);
       fail("Expected exception");
     } catch (IllegalStateException e) {
@@ -374,20 +417,30 @@ public class CompKindTest {
     assertEquals(CompKind.GT.compare("2.0", "2", Type.INTEGER), false);
     assertEquals(CompKind.GT.compare("2.0", "2.01", Type.INTEGER), false);
     assertEquals(CompKind.GT.compare("2.0", "4.0", Type.INTEGER), false);
-    assertEquals(CompKind.GT.compare(Integer.toString(Integer.MAX_VALUE),
-        Integer.toString(Integer.MAX_VALUE), Type.INTEGER), false);
-    assertEquals(CompKind.GT.compare(Integer.toString(Integer.MAX_VALUE),
-        Integer.toString(Integer.MIN_VALUE), Type.INTEGER), true);
+    assertEquals(CompKind.GT.compare(
+        Integer.toString(Integer.MAX_VALUE),
+        Integer.toString(Integer.MAX_VALUE),
+        Type.INTEGER), false);
+    assertEquals(CompKind.GT.compare(
+        Integer.toString(Integer.MAX_VALUE),
+        Integer.toString(Integer.MIN_VALUE),
+        Type.INTEGER), true);
 
     assertEquals(CompKind.GT.compare("2.0", "2", Type.STRING), true);
     assertEquals(CompKind.GT.compare("2.01", "2.01", Type.STRING), false);
-    assertEquals(CompKind.GT.compare("bla bla blubb", "bla bla blubb",
+    assertEquals(CompKind.GT.compare(
+        "bla bla blubb",
+        "bla bla blubb",
         Type.STRING), false);
 
-    assertEquals(CompKind.GT.compare("www.uni-konstanz.de",
-        "www.uni-konstanz.de", Type.ANY_URI), false);
-    assertEquals(CompKind.GT.compare("www.uni-konstanz.de",
-        "www.uni-konstanz.de/", Type.ANY_URI), false);
+    assertEquals(CompKind.GT.compare(
+        "www.uni-konstanz.de",
+        "www.uni-konstanz.de",
+        Type.ANY_URI), false);
+    assertEquals(CompKind.GT.compare(
+        "www.uni-konstanz.de",
+        "www.uni-konstanz.de/",
+        Type.ANY_URI), false);
 
     assertEquals(CompKind.GT.compare("false", "true", Type.BOOLEAN), false);
     assertEquals(CompKind.GT.compare("false", "false", Type.BOOLEAN), false);
@@ -400,7 +453,8 @@ public class CompKindTest {
     }
 
     try {
-      assertEquals(CompKind.GT.compare("2.0", "4.0", Type.YEAR_MONTH_DURATION),
+      assertEquals(
+          CompKind.GT.compare("2.0", "4.0", Type.YEAR_MONTH_DURATION),
           false);
       fail("Expected exception");
     } catch (IllegalStateException e) {
@@ -451,20 +505,30 @@ public class CompKindTest {
     assertEquals(CompKind.GE.compare("2.0", "2", Type.INTEGER), true);
     assertEquals(CompKind.GE.compare("2.0", "2.01", Type.INTEGER), true);
     assertEquals(CompKind.GE.compare("2.0", "4.0", Type.INTEGER), false);
-    assertEquals(CompKind.GE.compare(Integer.toString(Integer.MAX_VALUE),
-        Integer.toString(Integer.MAX_VALUE), Type.INTEGER), true);
-    assertEquals(CompKind.GE.compare(Integer.toString(Integer.MAX_VALUE),
-        Integer.toString(Integer.MIN_VALUE), Type.INTEGER), true);
+    assertEquals(CompKind.GE.compare(
+        Integer.toString(Integer.MAX_VALUE),
+        Integer.toString(Integer.MAX_VALUE),
+        Type.INTEGER), true);
+    assertEquals(CompKind.GE.compare(
+        Integer.toString(Integer.MAX_VALUE),
+        Integer.toString(Integer.MIN_VALUE),
+        Type.INTEGER), true);
 
     assertEquals(CompKind.GE.compare("2.0", "2", Type.STRING), true);
     assertEquals(CompKind.GE.compare("2.01", "2.01", Type.STRING), true);
-    assertEquals(CompKind.GE.compare("bla bla blubb", "bla bla blubb",
+    assertEquals(CompKind.GE.compare(
+        "bla bla blubb",
+        "bla bla blubb",
         Type.STRING), true);
 
-    assertEquals(CompKind.GE.compare("www.uni-konstanz.de",
-        "www.uni-konstanz.de", Type.ANY_URI), true);
-    assertEquals(CompKind.GE.compare("www.uni-konstanz.de",
-        "www.uni-konstanz.de/", Type.ANY_URI), false);
+    assertEquals(CompKind.GE.compare(
+        "www.uni-konstanz.de",
+        "www.uni-konstanz.de",
+        Type.ANY_URI), true);
+    assertEquals(CompKind.GE.compare(
+        "www.uni-konstanz.de",
+        "www.uni-konstanz.de/",
+        Type.ANY_URI), false);
 
     assertEquals(CompKind.GE.compare("false", "true", Type.BOOLEAN), false);
     assertEquals(CompKind.GE.compare("false", "false", Type.BOOLEAN), true);
@@ -477,7 +541,8 @@ public class CompKindTest {
     }
 
     try {
-      assertEquals(CompKind.GE.compare("2.0", "4.0", Type.YEAR_MONTH_DURATION),
+      assertEquals(
+          CompKind.GE.compare("2.0", "4.0", Type.YEAR_MONTH_DURATION),
           false);
       fail("Expected exception");
     } catch (IllegalStateException e) {
@@ -501,7 +566,8 @@ public class CompKindTest {
       assertEquals(CompKind.FO.compare("2.0", "2", Type.DATE), false);
       fail("Expected exception");
     } catch (IllegalStateException e) {
-      assertThat(e.getMessage(),
+      assertThat(
+          e.getMessage(),
           is("Evaluation of node comparisons not possible"));
     }
   }
@@ -513,7 +579,8 @@ public class CompKindTest {
       assertEquals(CompKind.PRE.compare("2.0", "2", Type.DATE), false);
       fail("Expected exception");
     } catch (IllegalStateException e) {
-      assertThat(e.getMessage(),
+      assertThat(
+          e.getMessage(),
           is("Evaluation of node comparisons not possible"));
     }
   }
@@ -532,10 +599,14 @@ public class CompKindTest {
     assertEquals(CompKind.IS.compare("2.0", "2", Type.INTEGER), true);
     assertEquals(CompKind.IS.compare("2.0", "2.01", Type.G_DAY), true);
     assertEquals(CompKind.IS.compare("2.0", "4.0", Type.INTEGER), false);
-    assertEquals(CompKind.IS.compare(Integer.toString(Integer.MAX_VALUE),
-        Integer.toString(Integer.MAX_VALUE), Type.INTEGER), true);
-    assertEquals(CompKind.IS.compare(Integer.toString(Integer.MAX_VALUE),
-        Integer.toString(Integer.MIN_VALUE), Type.INTEGER), false);
+    assertEquals(CompKind.IS.compare(
+        Integer.toString(Integer.MAX_VALUE),
+        Integer.toString(Integer.MAX_VALUE),
+        Type.INTEGER), true);
+    assertEquals(CompKind.IS.compare(
+        Integer.toString(Integer.MAX_VALUE),
+        Integer.toString(Integer.MIN_VALUE),
+        Type.INTEGER), false);
   }
 
 }

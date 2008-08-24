@@ -13,9 +13,12 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: $
+ * $Id$
  */
+
 package org.treetank.xpath.expr;
+
+import java.io.File;
 //
 //package org.treetank.extensions.xpath.functions;
 //
@@ -43,7 +46,10 @@ package org.treetank.xpath.expr;
 // */
 //public class OperatorAxisTest {
 //
-//  public static final String PATH = "generated" + File.separator
+//  public static final String PATH = "target"
+//    + File.separator
+//    + "tnk"
+//    + File.separator
 //      + "OperatorAxisTest.tnk";
 //
 //  @Before

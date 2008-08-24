@@ -27,12 +27,11 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.axislayer.IFilterTest;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
-import org.treetank.xpath.filter.ItemFilter;
 
 public class ItemFilterTest {
 
-  public static final String PATH = "target" + File.separator + "tnk"
-      + File.separator + "ItemFilterTest.tnk";
+  public static final String PATH =
+      "target" + File.separator + "tnk" + File.separator + "ItemFilterTest.tnk";
 
   @Before
   public void setUp() {
@@ -50,8 +49,7 @@ public class ItemFilterTest {
 
     wtx.moveTo(8L);
     IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
-    
-    
+
     wtx.moveTo(3L);
     IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
 

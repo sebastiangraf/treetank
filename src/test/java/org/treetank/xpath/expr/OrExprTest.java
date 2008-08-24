@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: $
+ * $Id$
  */
 
 package org.treetank.xpath.expr;
@@ -43,8 +43,8 @@ import org.treetank.xpath.functions.XPathError;
  */
 public class OrExprTest {
 
-  public static final String PATH = "generated" + File.separator
-      + "OrExprTest.tnk";
+  public static final String PATH =
+      "target" + File.separator + "tnk" + File.separator + "OrExprTest.tnk";
 
   IAxis ifExpr, thenExpr, elseExpr;
 
@@ -54,41 +54,41 @@ public class OrExprTest {
     Session.removeSession(PATH);
 
   }
-  
+
   @Test
   public void testOr() {
-    
+
     final ISession session = Session.beginSession(PATH);
     IReadTransaction rtx = session.beginReadTransaction(new ItemList());
-    
+
     long iTrue = rtx.getItemList().addItem(new AtomicValue(true));
     long iFalse = rtx.getItemList().addItem(new AtomicValue(false));
-    
+
     IAxis trueLit1 = new LiteralExpr(rtx, iTrue);
     IAxis trueLit2 = new LiteralExpr(rtx, iTrue);
     IAxis falseLit1 = new LiteralExpr(rtx, iFalse);
     IAxis falseLit2 = new LiteralExpr(rtx, iFalse);
-    
+
     IAxis axis1 = new OrExpr(rtx, trueLit1, trueLit2);
     assertEquals(true, axis1.hasNext());
     assertEquals(true, Boolean.parseBoolean(rtx.getValue()));
     assertEquals(false, axis1.hasNext());
-    
+
     IAxis axis2 = new OrExpr(rtx, trueLit1, falseLit1);
     assertEquals(true, axis2.hasNext());
     assertEquals(true, Boolean.parseBoolean(rtx.getValue()));
     assertEquals(false, axis2.hasNext());
-    
+
     IAxis axis3 = new OrExpr(rtx, falseLit1, trueLit1);
     assertEquals(true, axis3.hasNext());
     assertEquals(true, Boolean.parseBoolean(rtx.getValue()));
     assertEquals(false, axis3.hasNext());
-    
+
     IAxis axis4 = new OrExpr(rtx, falseLit1, falseLit2);
     assertEquals(true, axis4.hasNext());
     assertEquals(false, Boolean.parseBoolean(rtx.getValue()));
     assertEquals(false, axis4.hasNext());
-    
+
     rtx.close();
     session.close();
   }
@@ -137,7 +137,7 @@ public class OrExprTest {
     final IAxis axis6 = new XPathAxis(rtx, "1 eq 1 or (3 idiv 0 = 1)");
     assertEquals(true, axis6.hasNext());
     assertEquals(true, Boolean.parseBoolean(rtx.getValue()));
-      
+
     rtx.close();
     wtx.abort();
     wtx.close();

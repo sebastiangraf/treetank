@@ -13,33 +13,29 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: $
+ * $Id$
  */
+
 package org.treetank.xpath.comparators;
-
-import static org.junit.Assert.*;
-
-import org.junit.Test;
-
 
 public class GeneralCompTest {
 
-//  @Test
-//  public void testCompare() {
-//
-//    fail("Not yet implemented");
-//  }
-//
-//  @Test
-//  public void testAtomize() {
-//
-//    fail("Not yet implemented");
-//  }
-//
-//  @Test
-//  public void testGetType() {
-//
-//    fail("Not yet implemented");
-//  }
+  //  @Test
+  //  public void testCompare() {
+  //
+  //    fail("Not yet implemented");
+  //  }
+  //
+  //  @Test
+  //  public void testAtomize() {
+  //
+  //    fail("Not yet implemented");
+  //  }
+  //
+  //  @Test
+  //  public void testGetType() {
+  //
+  //    fail("Not yet implemented");
+  //  }
 
 }

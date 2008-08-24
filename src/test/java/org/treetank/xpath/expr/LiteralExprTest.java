@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: $
+ * $Id$
  */
 
 package org.treetank.xpath.expr;
@@ -44,13 +44,21 @@ import org.treetank.xpath.types.Type;
  */
 public class LiteralExprTest {
 
-  public static final String PATH = "generated" + File.separator
-      + "LiteralExprTest.tnk";
-  
+  public static final String PATH =
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "LiteralExprTest.tnk";
+
   IItem item1;
+
   IItem item2;
+
   IItemList list;
+
   int key1;
+
   int key2;
 
   @Before
@@ -59,7 +67,7 @@ public class LiteralExprTest {
     Session.removeSession(PATH);
     item1 = new AtomicValue(false);
     item2 = new AtomicValue(14, Type.INTEGER);
-        
+
   }
 
   @Test
@@ -70,11 +78,10 @@ public class LiteralExprTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
     IReadTransaction rtx = session.beginReadTransaction(new ItemList());
-    
+
     key1 = rtx.getItemList().addItem(item1);
     key2 = rtx.getItemList().addItem(item2);
 
-     
     final IAxis axis1 = new LiteralExpr(rtx, key1);
     assertEquals(true, axis1.hasNext());
     assertEquals(key1, rtx.getNodeKey());
@@ -82,7 +89,6 @@ public class LiteralExprTest {
     assertEquals(false, Boolean.parseBoolean(rtx.getValue()));
     assertEquals(false, axis1.hasNext());
 
-    
     final IAxis axis2 = new LiteralExpr(rtx, key2);
     assertEquals(true, axis2.hasNext());
     assertEquals(key2, rtx.getNodeKey());
