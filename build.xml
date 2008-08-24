@@ -21,7 +21,7 @@
 	<property name="javadoc.dir" value="${build.dir}/javadoc" />
 	<property name="junit.dir" value="${build.dir}/junit" />
 	<property name="checkstyle.dir" value="${build.dir}/checkstyle" />
-	<property name="treetank.jar" value="${build.dir}/treetank__V${version}.jar" />
+	<property name="treetank.jar" value="${build.dir}/treetank.jar" />
 
 	<path id="classpath">
 		<pathelement location="${externals.dir}/wstx-asl__V3.1.1.jar" />
