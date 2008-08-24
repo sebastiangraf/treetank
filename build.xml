@@ -10,11 +10,13 @@
 	<property name="target" value="1.5" />
 	<property name="source" value="1.5" />
 
-	<property name="src.dir" value="src/main/java" />
+	<property name="src.java.dir" value="src/main/java" />
+	<property name="src.openbsd.dir" value="src/main/openbsd" />
 	<property name="test.dir" value="src/test/java" />
 	<property name="externals.dir" value="externals" />
 
 	<property name="build.dir" value="target" />
+	<property name="openbsd.dir" value="${build.dir}/openbsd" />
 	<property name="tnk.dir" value="${build.dir}/tnk" />
 	<property name="classes.dir" value="${build.dir}/classes" />
 	<property name="javadoc.dir" value="${build.dir}/javadoc" />
@@ -41,6 +43,8 @@
      | INIT: Initialize classpath and directories.
      \ -->
 	<target name="init" description="Initialize build directory and classpath.">
+		<mkdir dir="${openbsd.dir}" />
+		<mkdir dir="${tnk.dir}" />
 		<mkdir dir="${classes.dir}" />
 		<mkdir dir="${javadoc.dir}" />
 		<mkdir dir="${junit.dir}" />
@@ -51,15 +55,12 @@
 	 | COMPILE: Compile source and test tree.
 	 \ -->
 	<target name="compile" depends="init" description="Build treetank.">
-		<javac srcdir="${src.dir}" destdir="${classes.dir}">
+		<javac srcdir="${src.java.dir}" destdir="${classes.dir}">
 			<classpath refid="classpath" />
 		</javac>
 		<javac srcdir="${test.dir}" destdir="${classes.dir}">
 			<classpath refid="classpath" />
 		</javac>
-		<javah outputFile="src/main/c/NativeTreeTank.h" classpath="${classes.dir}" verbose="yes">
-			<class name="org.treetank.pagelayer.NativeTreeTank" />
-		</javah>
 	</target>
 
 	<!--
@@ -89,7 +90,7 @@
 	<target name="checkstyle" depends="init" description="Run checkstyle.">
 		<checkstyle config="src/main/resources/checkstyle.xml" failureProperty="checkstyle.failure" failOnViolation="false">
 			<formatter type="xml" tofile="${checkstyle.dir}/checkstyle_report.xml" />
-			<fileset dir="${src.dir}" includes="**/*.java" />
+			<fileset dir="${src.java.dir}" includes="**/*.java" />
 		</checkstyle>
 		<xslt in="${checkstyle.dir}/checkstyle_report.xml" out="${checkstyle.dir}/index.html" style="src/main/resources/checkstyle.xsl" />
 	</target>
@@ -108,10 +109,19 @@
 	 \ -->
 	<target name="javadoc">
 		<javadoc destdir="${javadoc.dir}" author="true" version="true" use="true" windowtitle="TreeTank API">
-			<packageset dir="${src.dir}">
+			<packageset dir="${src.java.dir}">
 				<include name="**" />
 			</packageset>
 		</javadoc>
+	</target>
+
+	<!--
+	 | JAVAH: Build h file for native syscall.
+	 \ -->
+	<target name="javah" depends="compile" description="Build header for native syscall.">
+		<javah outputFile="${src.openbsd.dir}/NativeTreeTank.h" classpath="${classes.dir}" verbose="yes">
+			<class name="org.treetank.pagelayer.CryptoNativeImpl" />
+		</javah>
 	</target>
 
 	<!--
@@ -124,6 +134,7 @@
 	 | CLEAN: Remove all built stuff.
 	 \ -->
 	<target name="clean">
+		<delete dir="${openbsd.dir}/*" />
 		<delete dir="${tnk.dir}/*" />
 		<delete dir="${classes.dir}" />
 		<delete dir="${javadoc.dir}" />
