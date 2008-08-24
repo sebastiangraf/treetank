@@ -53,10 +53,18 @@ public class TreeTankStreamWriterTest {
           + "test.xml";
 
   public static final String PATH =
-      "target" + File.separator + "TreeTankStreamWriterTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "TreeTankStreamWriterTest.tnk";
 
   public static final String EXPECTED_PATH =
-      "target" + File.separator + "ExpectedStreamWriterTest.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "ExpectedStreamWriterTest.tnk";
 
   @Before
   public void setUp() {
