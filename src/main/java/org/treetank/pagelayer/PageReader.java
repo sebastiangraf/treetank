@@ -43,7 +43,7 @@ public final class PageReader {
   private final FileChannel mChannel;
 
   /** Inflater to decompress. */
-  private ICompression mDecompressor;
+  private ICrypto mDecompressor;
 
   /** Temporary data buffer. */
   private final ByteBuffer mBuffer;
@@ -66,9 +66,9 @@ public final class PageReader {
 
       try {
         System.loadLibrary("TreeTank");
-        mDecompressor = new NativeTreeTank();
+        mDecompressor = new CryptoNativeImpl();
       } catch (UnsatisfiedLinkError e) {
-        mDecompressor = new JavaCompression();
+        mDecompressor = new CryptoJavaImpl();
       }
 
       mBuffer = ByteBuffer.allocateDirect(IConstants.BUFFER_SIZE);

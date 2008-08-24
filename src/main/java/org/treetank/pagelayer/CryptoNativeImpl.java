@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
  * 
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
+ * Patent Pending.
+ * 
+ * NO permission to use, copy, modify, and/or distribute this software.
  * 
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
@@ -23,37 +23,35 @@ import java.nio.ByteBuffer;
 import edu.emory.mathcs.backport.java.util.concurrent.ArrayBlockingQueue;
 import edu.emory.mathcs.backport.java.util.concurrent.BlockingQueue;
 
-public final class NativeTreeTank implements ICompression {
+public final class CryptoNativeImpl implements ICrypto {
 
-  private static final BlockingQueue queue = new ArrayBlockingQueue(8);
+  private static final BlockingQueue coreQueue = new ArrayBlockingQueue(8);
 
   static {
     try {
-      queue.put((byte) 1);
-      queue.put((byte) 2);
-      queue.put((byte) 3);
-      queue.put((byte) 4);
-      queue.put((byte) 5);
-      queue.put((byte) 6);
-      queue.put((byte) 7);
-      queue.put((byte) 8);
+      for (int i = 1; i < 15; i++) {
+        coreQueue.put((byte) (i << 0x4));
+      }
     } catch (Exception e) {
+      coreQueue.clear();
       throw new RuntimeException("Could not allocate native compression cores.");
     }
   }
 
   public final short crypt(final short length, final ByteBuffer buffer) {
-    short resultLength = (short) 0;
-    byte core = (byte) 0;
+    short resultLength = (short) 0x0;
+    byte tank = (byte) 0x1;
+    byte command = 0x1;
+    byte core = 0x0;
     try {
-      core = (Byte) queue.take();
-      resultLength = syscall((byte) 1, core, length, buffer);
+      core = (Byte) coreQueue.take();
+      resultLength = syscall(tank, (byte) (command | core), length, buffer);
     } catch (Exception e) {
-      return 0;
+      return 0x0;
     } finally {
       try {
-        if (core != -1) {
-          queue.put(core);
+        if (core != 0x0) {
+          coreQueue.put(core);
         }
       } catch (Exception ie) {
         throw new RuntimeException(ie);
@@ -63,17 +61,19 @@ public final class NativeTreeTank implements ICompression {
   }
 
   public final short decrypt(final short length, final ByteBuffer buffer) {
-    short resultLength = (short) 0;
-    byte core = (byte) 0;
+    short resultLength = (short) 0x0;
+    byte tank = (byte) 0x1;
+    byte command = 0x2;
+    byte core = 0x0;
     try {
-      core = (Byte) queue.take();
-      resultLength = syscall((byte) 1, core, length, buffer);
+      core = (Byte) coreQueue.take();
+      resultLength = syscall(tank, (byte) (command | core), length, buffer);
     } catch (Exception e) {
-      return 0;
+      return 0x0;
     } finally {
       try {
-        if (core != -1) {
-          queue.put(core);
+        if (core != 0x0) {
+          coreQueue.put(core);
         }
       } catch (Exception ie) {
         throw new RuntimeException(ie);
@@ -87,8 +87,10 @@ public final class NativeTreeTank implements ICompression {
    * 
    * @param tank TreeTank identifier in [1, ..., 256].
    * @param operation Operation identifier in [1, ..., 256].
+   *        <code>(operation & 0xF)</code> = command in [1, ..., 16].
+   *        <code>(operation >> 0x4)</code> = core in [1, ..., 16].
    * @param length Length of input buffer in [1, ..., 32767].
-   * @param buffer Direct data exchange buffer.
+   * @param buffer Direct data exchange buffer != NULL.
    * @return Length of output buffer in [1, ..., 32767] or error in [0].
    */
   private native short syscall(

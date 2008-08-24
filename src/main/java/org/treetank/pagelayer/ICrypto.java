@@ -20,7 +20,7 @@ package org.treetank.pagelayer;
 
 import java.nio.ByteBuffer;
 
-public interface ICompression {
+public interface ICrypto {
 
   public short crypt(final short length, final ByteBuffer buffer);
 
