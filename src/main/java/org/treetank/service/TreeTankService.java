@@ -24,7 +24,7 @@ import org.mortbay.jetty.Server;
 
 import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
 
-public class TankTankService {
+public class TreeTankService {
 
   /**
    * @param args
