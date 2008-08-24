@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id:sys_treetank.c 4360 2008-08-24 11:17:12Z kramis $
  */
 
 #include "sys_treetank.h"
@@ -67,7 +67,6 @@ int sys_treetank_authentication(u_int8_t, u_int8_t, u_int8_t *, u_int8_t *, u_in
 
 /* --- Global variables. ---------------------------------------------------- */
 
-static u_int8_t tt_reference[TT_CORE_COUNT][TT_REFERENCE_LENGTH];
 static u_int8_t tt_buffer[TT_CORE_COUNT][TT_BUFFER_LENGTH];
 
 /* --- Code. ---------------------------------------------------------------- */
@@ -81,7 +80,7 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
 
   /* --- Local variables. --------------------------------------------------- */
   
-  int                       result           = TT_ERROR;
+  u_int16_t                 result           = TT_ERROR;
   struct sys_treetank_args *argumentPointer  = v;
   
   u_int8_t                  tank             = SCARG(argumentPointer, tank);
@@ -89,119 +88,127 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
   u_int16_t                 length           = SCARG(argumentPointer, length);
   u_int8_t                 *bufferPtr        = SCARG(argumentPointer, bufferPtr);
   
-  u_int8_t                 *startPointer     = NULL;
-  u_int8_t                 *lengthPointer    = NULL;
-  u_int8_t                 *hmacPointer      = NULL;
+  u_int8_t                  command          = operation & 0xF;
+  u_int8_t                  core             = operation >> 0x4;
   
-  /* --- Copy reference and buffer from user space. ------------------------- */
+  //u_int8_t                 *startPointer     = NULL;
+  //u_int8_t                 *lengthPointer    = NULL;
+  //u_int8_t                 *hmacPointer      = NULL;
   
-  copyin(
-    referencePointer,
-    tt_reference[core],
-    TT_REFERENCE_LENGTH);
-    
-  startPointer  = tt_reference[core] + TT_START_OFFSET;
-  lengthPointer = tt_reference[core] + TT_LENGTH_OFFSET;
-  hmacPointer   = tt_reference[core] + TT_HMAC_OFFSET;
+  /* --- Check arguments. --------------------------------------------------- */
   
-  if ((TT_READ_INT(lengthPointer) <= 0)
-      || (TT_READ_INT(lengthPointer) > TT_BUFFER_LENGTH)) {
-    error = TT_ERROR;
-    printf("ERROR(sys_treetank.c): Invalid length.\n");
+  if (tank == TT_ERROR) {
+    result = TT_ERROR;
+    printf("ERROR(sys_treetank.c): Invalid tank argument.\n");
     goto finish;
   }
-    
+  
+  if ((command == TT_ERROR) || (core == TT_ERROR)) {
+    result = TT_ERROR;
+    printf("ERROR(sys_treetank.c): Invalid operation argument.\n");
+    goto finish;
+  }
+  
+  if ((length == TT_ERROR) || (length > TT_BUFFER_LENGTH)) {
+    result = TT_ERROR;
+    printf("ERROR(sys_treetank.c): Invalid length argument.\n");
+    goto finish;
+  }
+  
+  if (bufferPtr == NULL) {
+    result = TT_ERROR;
+    printf("ERROR(sys_treetank.c): Invalid bufferPtr argument.\n");
+    goto finish;
+  }
+  
+  /* --- Copy buffer from user to kernel space. ----------------------------- */
+  
   copyin(
-    bufferPointer,
+    bufferPtr,
     tt_buffer[core],
-    TT_READ_INT(lengthPointer));
+    length);
     
   /* --- Perform operations. ------------------------------------------------ */
     
-  if (operation == TT_WRITE) {
+//  if (operation == TT_WRITE) {
+//  
+//      if (sys_treetank_compression(
+//            core,
+//            operation,
+//            lengthPointer,
+//            tt_buffer[core]) != TT_OK) {
+//        error = TT_ERROR;
+//        printf("ERROR(sys_treetank.c): Could not perform compression.\n");
+//        goto finish;
+//      }
+//      
+//      if (sys_treetank_encryption(
+//            core,
+//            operation,
+//            lengthPointer,
+//            tt_buffer[core]) != TT_OK) {
+//        error = TT_ERROR;
+//        printf("ERROR(sys_treetank.c): Could not perform encryption.\n");
+//        goto finish;
+//      }
+//      
+//      if (sys_treetank_authentication(
+//            core,
+//            operation,
+//            lengthPointer,
+//            hmacPointer,
+//            tt_buffer[core]) != TT_OK) {
+//        error = TT_ERROR;
+//        printf("ERROR(sys_treetank.c): Could not perform authentication.\n");
+//        goto finish;
+//      }
+//      
+//  } else {
+//  
+//      if (sys_treetank_authentication(
+//            core,
+//            operation,
+//            lengthPointer,
+//            hmacPointer,
+//            tt_buffer[core]) != TT_OK) {
+//        error = TT_ERROR;
+//        printf("ERROR(sys_treetank.c): Could not perform authentication.\n");
+//        goto finish;
+//      }
+//      
+//      if (sys_treetank_encryption(
+//            core,
+//            operation,
+//            lengthPointer,
+//            tt_buffer[core]) != TT_OK) {
+//        error = TT_ERROR;
+//        printf("ERROR(sys_treetank.c): Could not perform encryption.\n");
+//        goto finish;
+//      }
+//  
+//      if (sys_treetank_compression(
+//            core,
+//            operation,
+//            lengthPointer,
+//            tt_buffer[core]) != TT_OK) {
+//        error = TT_ERROR;
+//        printf("ERROR(sys_treetank.c): Could not perform compression.\n");
+//        goto finish;
+//      }
+//  
+//  }
   
-      if (sys_treetank_compression(
-            core,
-            operation,
-            lengthPointer,
-            tt_buffer[core]) != TT_OK) {
-        error = TT_ERROR;
-        printf("ERROR(sys_treetank.c): Could not perform compression.\n");
-        goto finish;
-      }
-      
-      if (sys_treetank_encryption(
-            core,
-            operation,
-            lengthPointer,
-            tt_buffer[core]) != TT_OK) {
-        error = TT_ERROR;
-        printf("ERROR(sys_treetank.c): Could not perform encryption.\n");
-        goto finish;
-      }
-      
-      if (sys_treetank_authentication(
-            core,
-            operation,
-            lengthPointer,
-            hmacPointer,
-            tt_buffer[core]) != TT_OK) {
-        error = TT_ERROR;
-        printf("ERROR(sys_treetank.c): Could not perform authentication.\n");
-        goto finish;
-      }
-      
-  } else {
-  
-      if (sys_treetank_authentication(
-            core,
-            operation,
-            lengthPointer,
-            hmacPointer,
-            tt_buffer[core]) != TT_OK) {
-        error = TT_ERROR;
-        printf("ERROR(sys_treetank.c): Could not perform authentication.\n");
-        goto finish;
-      }
-      
-      if (sys_treetank_encryption(
-            core,
-            operation,
-            lengthPointer,
-            tt_buffer[core]) != TT_OK) {
-        error = TT_ERROR;
-        printf("ERROR(sys_treetank.c): Could not perform encryption.\n");
-        goto finish;
-      }
-  
-      if (sys_treetank_compression(
-            core,
-            operation,
-            lengthPointer,
-            tt_buffer[core]) != TT_OK) {
-        error = TT_ERROR;
-        printf("ERROR(sys_treetank.c): Could not perform compression.\n");
-        goto finish;
-      }
-  
-  }
-  
-  /* --- Copy buffer and reference to user space. --------------------------- */
+  /* --- Copy buffer from kernel to user space. ----------------------------- */
   
   copyout(
     tt_buffer[core],
-    bufferPointer,
-    TT_READ_INT(lengthPointer));
-    
-  copyout(
-    tt_reference[core],
-    referencePointer,
-    TT_REFERENCE_LENGTH);
+    bufferPtr,
+    result);
   
   /* --- Cleanup for all conditions. ---------------------------------------- */
   
 finish:
   
-  return (error);
+  return (result);
   
 }

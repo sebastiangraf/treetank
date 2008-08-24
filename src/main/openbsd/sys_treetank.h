@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id:sys_treetank.h 4360 2008-08-24 11:17:12Z kramis $
  */
  
 /* --- Includes. ------------------------------------------------------------ */
@@ -32,10 +32,11 @@
 /* --- Constants. ----------------------------------------------------------- */
 
 #define TT_ERROR 0
-
-#define TT_CORE_COUNT 8
-#define TT_REFERENCE_LENGTH 24
+#define TT_CORE_COUNT 15
 #define TT_BUFFER_LENGTH 32767
+
+
+#define TT_REFERENCE_LENGTH 24
 
 #define TT_COMMAND_WRITE 1
 #define TT_COMMAND_READ 2

@@ -23,18 +23,6 @@
 #include <errno.h>
 #include <string.h>
 
-#define TT_WRITE_INT(PTR, VAL) { \
-            (PTR)[0] = (u_int8_t) (VAL >> 24); \
-            (PTR)[1] = (u_int8_t) (VAL >> 16); \
-            (PTR)[2] = (u_int8_t) (VAL >>  8); \
-            (PTR)[3] = (u_int8_t)  VAL; }
-      
-#define TT_READ_INT(PTR) \
-           ((((PTR)[0] & 0xFF) << 24) \
-          | (((PTR)[1] & 0xFF) << 16) \
-          | (((PTR)[2] & 0xFF) <<  8) \
-          |  ((PTR)[3] & 0xFF))
-
 #define LENGTH 8569
 
 int
@@ -42,10 +30,9 @@ main(void)
 {
 
   int i,fd;
-  u_int8_t reference[24];
+  u_int16_t length;
   u_int8_t buffer[1024];
   
-  bzero(&reference, sizeof(reference));
   bzero(&buffer, sizeof(buffer));
   
   buffer[0] = 1;
@@ -57,13 +44,13 @@ main(void)
   buffer[6] = 1;
   buffer[7] = 2;
   
-  TT_WRITE_INT(reference + 8, LENGTH);
+  length = LENGTH;
        
   //fd = open("output", O_RDWR | O_CREAT, 0);
   //write(fd, &buffer, length);
   //close(fd);
   
-  printf("Length before compression : %d\n", TT_READ_INT(reference + 8));
+  printf("Length before compression : %d\n", length);
   printf("Buffer before compression : '");
   for (i = 0; i < 32; i++)
   {
@@ -71,16 +58,9 @@ main(void)
   }
   printf("'\n");
   
-  syscall(306, 0, 1, &reference, &buffer);  /* compress */
+  length = syscall(306, 0x1, (0x1 | 0x10), length, &buffer);  /* compress */
   
-  printf("HMAC  : '");
-  for (i = 12; i < 24; i++)
-  {
-    printf("%x,", reference[i]);
-  }
-  printf("'\n");
-  
-  printf("Length after compression  : %d\n", TT_READ_INT(reference + 8));
+  printf("Length after compression  : %d\n", length);
   printf("Buffer after compression  : '");
   for (i = 0; i < 32; i++)
   {
@@ -88,9 +68,9 @@ main(void)
   }
   printf("'\n");
 
-  syscall(306, 0, 0, &reference, &buffer); /* decompress */
+  length = syscall(306, 0x1, (0x2 | 0x20), length, &buffer); /* decompress */
  
-  printf("Length after decompression: %d\n", TT_READ_INT(reference + 8));
+  printf("Length after decompression: %d\n", length);
   printf("Buffer after decompression: '");
   for (i = 0; i < 32; i++)
   {

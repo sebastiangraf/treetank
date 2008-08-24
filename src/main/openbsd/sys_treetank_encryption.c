@@ -13,10 +13,16 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id:sys_treetank_encryption.c 4360 2008-08-24 11:17:12Z kramis $
  */
 
 #include "sys_treetank.h"
+
+#define TT_OK 99
+#define TT_READ 111
+#define TT_WRITE 100
+#define TT_READ_INT(X) 0;
+#define TT_WRITE_INT(X,Y) ;
 
 /* --- Function prototypes. ------------------------------------------------- */
 
