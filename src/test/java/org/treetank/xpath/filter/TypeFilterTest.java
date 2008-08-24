@@ -15,6 +15,7 @@
  * 
  * $Id$
  */
+
 package org.treetank.xpath.filter;
 
 import static org.hamcrest.CoreMatchers.is;

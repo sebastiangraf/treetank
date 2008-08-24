@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: $
+ * $Id$
  */
 
 package org.treetank.xpath.expr;
@@ -48,13 +48,21 @@ import org.treetank.xpath.types.Type;
  */
 public class CastableExprTest {
 
-  public static final String PATH = "generated" + File.separator
-      + "CastableExprTest.tnk";
-  
+  public static final String PATH =
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "CastableExprTest.tnk";
+
   IItem item1;
+
   IItem item2;
+
   IItemList list;
+
   int key1;
+
   int key2;
 
   @Before
@@ -63,8 +71,7 @@ public class CastableExprTest {
     Session.removeSession(PATH);
     item1 = new AtomicValue(false);
     item2 = new AtomicValue(14, Type.INTEGER);
-    
-    
+
   }
 
   @Test
@@ -75,44 +82,43 @@ public class CastableExprTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
     IReadTransaction rtx = session.beginReadTransaction(new ItemList());
-   
+
     key1 = rtx.getItemList().addItem(item1);
     key2 = rtx.getItemList().addItem(item2);
-    
+
     final IAxis axis1 = new XPathAxis(rtx, "1 castable as xs:decimal");
     assertEquals(true, axis1.hasNext());
     assertEquals(rtx.keyForName("xs:boolean"), rtx.getTypeKey());
     assertEquals(true, Boolean.parseBoolean(rtx.getValue()));
     assertEquals(false, axis1.hasNext());
-    
+
     final IAxis axis2 = new XPathAxis(rtx, "10.0 castable as xs:anyAtomicType");
     try {
       assertEquals(true, axis2.hasNext());
     } catch (XPathError e) {
       assertThat(e.getMessage(), is("err:XPST0080 "
           + "Target type of a cast or castable expression must not be "
-        + "xs:NOTATION or xs:anyAtomicType."));
+          + "xs:NOTATION or xs:anyAtomicType."));
     }
-    
+
     //Token is not implemented yet.
-//    final IAxis axis3 = new XPathAxis(rtx, "\"hello\" castable as xs:token");
-//    assertEquals(true, axis3.hasNext());
-//    assertEquals(Type.BOOLEAN, rtx.getValueTypeAsType());
-//    assertEquals(true, rtx.getValueAsBoolean());
-//    assertEquals(false, axis3.hasNext());
-    
+    //    final IAxis axis3 = new XPathAxis(rtx, "\"hello\" castable as xs:token");
+    //    assertEquals(true, axis3.hasNext());
+    //    assertEquals(Type.BOOLEAN, rtx.getValueTypeAsType());
+    //    assertEquals(true, rtx.getValueAsBoolean());
+    //    assertEquals(false, axis3.hasNext());
+
     final IAxis axis4 = new XPathAxis(rtx, "\"hello\" castable as xs:string");
     assertEquals(true, axis4.hasNext());
     assertEquals(rtx.keyForName("xs:boolean"), rtx.getTypeKey());
     assertEquals(true, Boolean.parseBoolean(rtx.getValue()));
     assertEquals(false, axis4.hasNext());
-    
-//    final IAxis axis5 = new XPathAxis(rtx, "\"hello\" castable as xs:decimal");
-//    assertEquals(true, axis5.hasNext());
-//    assertEquals(rtx.keyForName("xs:boolean"), rtx.getTypeKey());
-//    assertEquals(true, Boolean.parseBoolean(rtx.getValue()));
-//    assertEquals(false, axis5.hasNext());
 
+    //    final IAxis axis5 = new XPathAxis(rtx, "\"hello\" castable as xs:decimal");
+    //    assertEquals(true, axis5.hasNext());
+    //    assertEquals(rtx.keyForName("xs:boolean"), rtx.getTypeKey());
+    //    assertEquals(true, Boolean.parseBoolean(rtx.getValue()));
+    //    assertEquals(false, axis5.hasNext());
 
     rtx.close();
     wtx.abort();

@@ -13,34 +13,28 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: $
+ * $Id$
  */
-package org.treetank.xpath.comparators;
 
-import static org.junit.Assert.*;
+package org.treetank.xpath.comparators;
 
 import java.io.File;
 
 import org.junit.Before;
-import org.junit.Test;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.ItemList;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
-import org.treetank.xpath.comparators.AbstractComparator;
-import org.treetank.xpath.comparators.CompKind;
-import org.treetank.xpath.comparators.NodeComp;
 import org.treetank.xpath.expr.LiteralExpr;
 
-
 public class ValueCompTest {
-  
+
   AbstractComparator comparator;
 
-  public static final String PATH = "generated" + File.separator
-      + "ValueCompTest.tnk";
+  public static final String PATH =
+      "target" + File.separator + "tnk" + File.separator + "ValueCompTest.tnk";
 
   ISession session;
 
@@ -61,28 +55,32 @@ public class ValueCompTest {
     // Find descendants starting from nodeKey 0L (root).
     wtx.moveToDocumentRoot();
     rtx = session.beginReadTransaction(new ItemList());
-    
-    comparator = new NodeComp(rtx, new LiteralExpr(rtx, -2), 
-        new LiteralExpr(rtx, -1), CompKind.EQ);
-    
+
+    comparator =
+        new NodeComp(
+            rtx,
+            new LiteralExpr(rtx, -2),
+            new LiteralExpr(rtx, -1),
+            CompKind.EQ);
+
   }
 
-//  @Test
-//  public void testCompare() {
-//
-//    fail("Not yet implemented");
-//  }
-//
-//  @Test
-//  public void testAtomize() {
-//
-//    fail("Not yet implemented");
-//  }
-//
-//  @Test
-//  public void testGetType() {
-//
-//    fail("Not yet implemented");
-//  }
+  //  @Test
+  //  public void testCompare() {
+  //
+  //    fail("Not yet implemented");
+  //  }
+  //
+  //  @Test
+  //  public void testAtomize() {
+  //
+  //    fail("Not yet implemented");
+  //  }
+  //
+  //  @Test
+  //  public void testGetType() {
+  //
+  //    fail("Not yet implemented");
+  //  }
 
 }

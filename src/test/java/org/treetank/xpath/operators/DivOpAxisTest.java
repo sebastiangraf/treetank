@@ -41,8 +41,8 @@ import org.treetank.xpath.types.Type;
 
 public class DivOpAxisTest {
 
-  public static final String PATH = "generated" + File.separator
-      + "DivOpTest.tnk";
+  public static final String PATH =
+      "target" + File.separator + "tnk" + File.separator + "DivOpTest.tnk";
 
   @Before
   public void setUp() throws Exception {
@@ -62,15 +62,16 @@ public class DivOpAxisTest {
     IAxis op1 = new LiteralExpr(rtx, rtx.getItemList().addItem(item1));
     IAxis op2 = new LiteralExpr(rtx, rtx.getItemList().addItem(item2));
     AbstractOpAxis axis = new DivOpAxis(rtx, op1, op2);
-    
+
     assertEquals(true, axis.hasNext());
     assertThat(0.5, is(Double.parseDouble(rtx.getValue())));
     assertEquals(rtx.keyForName("xs:double"), rtx.getTypeKey());
     assertEquals(false, axis.hasNext());
-    
+
     rtx.close();
     session.close();
   }
+
   @Test
   public final void testGetReturnType() {
 
@@ -81,13 +82,16 @@ public class DivOpAxisTest {
     IAxis op2 = new SequenceAxis(rtx);
     AbstractOpAxis axis = new DivOpAxis(rtx, op1, op2);
 
-    assertEquals(Type.DOUBLE, axis.getReturnType(rtx.keyForName("xs:double"),
+    assertEquals(Type.DOUBLE, axis.getReturnType(
+        rtx.keyForName("xs:double"),
         rtx.keyForName("xs:double")));
-    assertEquals(Type.DOUBLE, axis.getReturnType(rtx.keyForName("xs:decimal"),
+    assertEquals(Type.DOUBLE, axis.getReturnType(
+        rtx.keyForName("xs:decimal"),
         rtx.keyForName("xs:double")));
     assertEquals(Type.FLOAT, axis.getReturnType(rtx.keyForName("xs:float"), rtx
         .keyForName("xs:decimal")));
-    assertEquals(Type.DECIMAL, axis.getReturnType(rtx.keyForName("xs:decimal"),
+    assertEquals(Type.DECIMAL, axis.getReturnType(
+        rtx.keyForName("xs:decimal"),
         rtx.keyForName("xs:integer")));
     // assertEquals(Type.INTEGER,
     // axis.getReturnType(rtx.keyForName("xs:integer"),
@@ -105,8 +109,9 @@ public class DivOpAxisTest {
 
     Type type;
     try {
-      type = axis.getReturnType(rtx.keyForName("xs:dateTime"), rtx
-          .keyForName("xs:yearMonthDuration"));
+      type =
+          axis.getReturnType(rtx.keyForName("xs:dateTime"), rtx
+              .keyForName("xs:yearMonthDuration"));
       fail("Expected an XPathError-Exception.");
     } catch (XPathError e) {
       assertThat(
@@ -114,10 +119,11 @@ public class DivOpAxisTest {
           is("err:XPTY0004 The type is not appropriate the expression or the "
               + "typedoes not match a required type as specified by the matching rules."));
     }
-    
+
     try {
-      type = axis.getReturnType(rtx.keyForName("xs:dateTime"),
-           rtx.keyForName("xs:double"));
+      type =
+          axis.getReturnType(rtx.keyForName("xs:dateTime"), rtx
+              .keyForName("xs:double"));
       fail("Expected an XPathError-Exception.");
     } catch (XPathError e) {
       assertThat(
@@ -125,10 +131,11 @@ public class DivOpAxisTest {
           is("err:XPTY0004 The type is not appropriate the expression or the "
               + "typedoes not match a required type as specified by the matching rules."));
     }
-    
+
     try {
-      type = axis.getReturnType(rtx.keyForName("xs:string"), rtx
-          .keyForName("xs:yearMonthDuration"));
+      type =
+          axis.getReturnType(rtx.keyForName("xs:string"), rtx
+              .keyForName("xs:yearMonthDuration"));
       fail("Expected an XPathError-Exception.");
     } catch (XPathError e) {
       assertThat(
@@ -136,10 +143,11 @@ public class DivOpAxisTest {
           is("err:XPTY0004 The type is not appropriate the expression or the "
               + "typedoes not match a required type as specified by the matching rules."));
     }
-    
+
     try {
-      type = axis.getReturnType(rtx.keyForName("xs:dateTime"), rtx
-          .keyForName("xs:IDREF"));
+      type =
+          axis.getReturnType(rtx.keyForName("xs:dateTime"), rtx
+              .keyForName("xs:IDREF"));
       fail("Expected an XPathError-Exception.");
     } catch (XPathError e) {
       assertThat(
@@ -147,7 +155,7 @@ public class DivOpAxisTest {
           is("err:XPTY0004 The type is not appropriate the expression or the "
               + "typedoes not match a required type as specified by the matching rules."));
     }
-    
+
     rtx.close();
     session.close();
   }

@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: $
+ * $Id$
  */
 
 package org.treetank.xpath;
@@ -37,7 +37,6 @@ import org.treetank.axislayer.ParentAxis;
 import org.treetank.axislayer.SelfAxis;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
-import org.treetank.xpath.ExpressionSingle;
 import org.treetank.xpath.expr.UnionAxis;
 import org.treetank.xpath.filter.DupFilterAxis;
 
@@ -59,7 +58,7 @@ public class ExpressionSingleTest {
           + File.separator
           + "tnk"
           + File.separator
-          + "ChainBuilderTest.tnk";
+          + "ExpressionSingleTest.tnk";
 
   @Before
   public void setUp() {

@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: $
+ * $Id$
  */
 
 package org.treetank.xpath.comparators;
@@ -35,9 +35,6 @@ import org.treetank.sessionlayer.ItemList;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
 import org.treetank.xpath.AtomicValue;
-import org.treetank.xpath.comparators.AbstractComparator;
-import org.treetank.xpath.comparators.CompKind;
-import org.treetank.xpath.comparators.NodeComp;
 import org.treetank.xpath.expr.LiteralExpr;
 import org.treetank.xpath.functions.XPathError;
 import org.treetank.xpath.types.Type;
@@ -46,8 +43,8 @@ public class NodeCompTest {
 
   AbstractComparator comparator;
 
-  public static final String PATH = "generated" + File.separator
-      + "NodeCompTest.tnk";
+  public static final String PATH =
+      "target" + File.separator + "tnk" + File.separator + "NodeCompTest.tnk";
 
   ISession session;
 
@@ -69,8 +66,12 @@ public class NodeCompTest {
     wtx.moveToDocumentRoot();
     rtx = session.beginReadTransaction(new ItemList());
 
-    comparator = new NodeComp(rtx, new LiteralExpr(rtx, -2), new LiteralExpr(
-        rtx, -1), CompKind.IS);
+    comparator =
+        new NodeComp(
+            rtx,
+            new LiteralExpr(rtx, -2),
+            new LiteralExpr(rtx, -1),
+            CompKind.IS);
   }
 
   @After
@@ -93,8 +94,12 @@ public class NodeCompTest {
     assertEquals(true, comparator.compare(op3, op2));
 
     try {
-      comparator = new NodeComp(rtx, new LiteralExpr(rtx, -2), new LiteralExpr(
-          rtx, -1), CompKind.PRE);
+      comparator =
+          new NodeComp(
+              rtx,
+              new LiteralExpr(rtx, -2),
+              new LiteralExpr(rtx, -1),
+              CompKind.PRE);
       comparator.compare(op1, op2);
       fail("Expexcted not yet implemented exception.");
     } catch (IllegalStateException e) {
@@ -103,8 +108,12 @@ public class NodeCompTest {
     }
 
     try {
-      comparator = new NodeComp(rtx, new LiteralExpr(rtx, -2), new LiteralExpr(
-          rtx, -1), CompKind.FO);
+      comparator =
+          new NodeComp(
+              rtx,
+              new LiteralExpr(rtx, -2),
+              new LiteralExpr(rtx, -1),
+              CompKind.FO);
       comparator.compare(op1, op2);
       fail("Expexcted not yet implemented exception.");
     } catch (IllegalStateException e) {
@@ -116,7 +125,7 @@ public class NodeCompTest {
 
   @Test
   public void testAtomize() {
-    
+
     IAxis axis = new LiteralExpr(rtx, -2);
     axis.hasNext(); //this is needed, because hasNext() has already been called
     AtomicValue[] value = comparator.atomize(axis);
@@ -133,8 +142,7 @@ public class NodeCompTest {
           + " the typedoes not match a required type as specified by the "
           + "matching rules.", e.getMessage());
     }
-    
-    
+
   }
 
   @Test

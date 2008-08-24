@@ -13,19 +13,18 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: $
+ * $Id$
  */
 
 package org.treetank.xpath;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.hamcrest.CoreMatchers.is;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.treetank.utils.TypedValue;
-import org.treetank.xpath.AtomicValue;
 import org.treetank.xpath.types.Type;
 
 public class AtomicValueTest {
@@ -71,28 +70,26 @@ public class AtomicValueTest {
     assertThat(f.getDBL(), is(2.0d));
   }
 
-   @Test
-   public final void testGetFLT() {
-     assertThat(c.getFLT(), is((float) cVal));
+  @Test
+  public final void testGetFLT() {
+    assertThat(c.getFLT(), is((float) cVal));
 
-   }
-  
-   @Test
-   public final void testGetString() {
-    
-     assertThat(TypedValue.parseString(b.getRawValue()), is(bVal));     
-   }
-  
-   @Test
-   public final void testGetBool() {
-     assertEquals(true, e.getBool());
-        }
+  }
 
-  
-   @Test
-   public final void testGetStringValue() {
-     testGetString();
-   }
-  
+  @Test
+  public final void testGetString() {
+
+    assertThat(TypedValue.parseString(b.getRawValue()), is(bVal));
+  }
+
+  @Test
+  public final void testGetBool() {
+    assertEquals(true, e.getBool());
+  }
+
+  @Test
+  public final void testGetStringValue() {
+    testGetString();
+  }
 
 }

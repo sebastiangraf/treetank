@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: $
+ * $Id$
  */
 
 package org.treetank.xpath.expr;
@@ -34,7 +34,6 @@ import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
 import org.treetank.xpath.XPathAxis;
 
-
 /**
  * JUnit-test class to test the functionality of the VarRefExpr.
  * 
@@ -42,8 +41,8 @@ import org.treetank.xpath.XPathAxis;
  */
 public class VarRefExprTest {
 
-  public static final String PATH = "generated" + File.separator
-      + "VarRefExprTest.tnk";
+  public static final String PATH =
+      "target" + File.separator + "tnk" + File.separator + "VarRefExprTest.tnk";
 
   @Before
   public void setUp() {
@@ -59,35 +58,35 @@ public class VarRefExprTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestDocument.create(wtx);
     IReadTransaction rtx = session.beginReadTransaction(new ItemList());
-    
-     final IAxis axis = new XPathAxis(rtx, "for $a in b return $a");
-    
-     final VariableAxis variable = new VariableAxis(rtx, axis);
-     
-     final VarRefExpr axis1 = new VarRefExpr(rtx, variable);
-//     assertEquals(false, axis1.hasNext());
-   axis1.update(4L);
-   assertEquals(true, axis1.hasNext());
-   assertEquals(4L, rtx.getNodeKey());
-   axis1.update(11L);
-   assertEquals(true, axis1.hasNext());
-   assertEquals(11L, rtx.getNodeKey());
-   axis1.update(2L);
-   assertEquals(true, axis1.hasNext());
-   assertEquals(2L, rtx.getNodeKey());
-   assertEquals(false, axis1.hasNext());
-     
-     final VarRefExpr axis2 = new VarRefExpr(rtx, variable);
-//   assertEquals(false, axis2.hasNext());
-   axis2.update(9L);
-   assertEquals(true, axis2.hasNext());
-   assertEquals(9L, rtx.getNodeKey());
-   assertEquals(false, axis2.hasNext());
-   axis2.update(10L);
-   assertEquals(true, axis2.hasNext());
-   assertEquals(10L, rtx.getNodeKey());
-   assertEquals(false, axis2.hasNext());
-   
+
+    final IAxis axis = new XPathAxis(rtx, "for $a in b return $a");
+
+    final VariableAxis variable = new VariableAxis(rtx, axis);
+
+    final VarRefExpr axis1 = new VarRefExpr(rtx, variable);
+    //     assertEquals(false, axis1.hasNext());
+    axis1.update(4L);
+    assertEquals(true, axis1.hasNext());
+    assertEquals(4L, rtx.getNodeKey());
+    axis1.update(11L);
+    assertEquals(true, axis1.hasNext());
+    assertEquals(11L, rtx.getNodeKey());
+    axis1.update(2L);
+    assertEquals(true, axis1.hasNext());
+    assertEquals(2L, rtx.getNodeKey());
+    assertEquals(false, axis1.hasNext());
+
+    final VarRefExpr axis2 = new VarRefExpr(rtx, variable);
+    //   assertEquals(false, axis2.hasNext());
+    axis2.update(9L);
+    assertEquals(true, axis2.hasNext());
+    assertEquals(9L, rtx.getNodeKey());
+    assertEquals(false, axis2.hasNext());
+    axis2.update(10L);
+    assertEquals(true, axis2.hasNext());
+    assertEquals(10L, rtx.getNodeKey());
+    assertEquals(false, axis2.hasNext());
+
     rtx.close();
     wtx.abort();
     wtx.close();

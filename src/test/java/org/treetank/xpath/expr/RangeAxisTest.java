@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: $
+ * $Id$
  */
 
 package org.treetank.xpath.expr;
@@ -32,7 +32,6 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.ItemList;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.TestDocument;
-import org.treetank.utils.TypedValue;
 import org.treetank.xpath.XPathAxis;
 
 /**
@@ -42,8 +41,8 @@ import org.treetank.xpath.XPathAxis;
  */
 public class RangeAxisTest {
 
-  public static final String PATH = "generated" + File.separator
-      + "RangeAxisTest.tnk";
+  public static final String PATH =
+      "target" + File.separator + "tnk" + File.separator + "RangeAxisTest.tnk";
 
   @Before
   public void setUp() {
@@ -62,25 +61,25 @@ public class RangeAxisTest {
 
     // TODO: tests are false, because the integers are not converted correctly
     // from the byte array
-//    final IAxis axis1 = new XPathAxis(rtx, "1 to 4");
-//    assertEquals(true, axis1.hasNext());
-//    assertEquals(1, TypedValue.parseInt(rtx.getRawValue()));
-//    assertEquals(true, axis1.hasNext());
-//     assertEquals(2, TypedValue.parseInt(rtx.getRawValue()));
-//    assertEquals(true, axis1.hasNext());
-//     assertEquals(3, TypedValue.parseInt(rtx.getRawValue()));
-//    assertEquals(true, axis1.hasNext());
-//     assertEquals(4, TypedValue.parseInt(rtx.getRawValue()));
-//    assertEquals(false, axis1.hasNext());
-//
-//     final IAxis axis2 = new XPathAxis(rtx, "10 to 10");
-//     assertEquals(true, axis2.hasNext());
-//      assertEquals(10, TypedValue.parseInt(rtx.getRawValue()));
-//     assertEquals(false, axis2.hasNext());
+    //    final IAxis axis1 = new XPathAxis(rtx, "1 to 4");
+    //    assertEquals(true, axis1.hasNext());
+    //    assertEquals(1, TypedValue.parseInt(rtx.getRawValue()));
+    //    assertEquals(true, axis1.hasNext());
+    //     assertEquals(2, TypedValue.parseInt(rtx.getRawValue()));
+    //    assertEquals(true, axis1.hasNext());
+    //     assertEquals(3, TypedValue.parseInt(rtx.getRawValue()));
+    //    assertEquals(true, axis1.hasNext());
+    //     assertEquals(4, TypedValue.parseInt(rtx.getRawValue()));
+    //    assertEquals(false, axis1.hasNext());
+    //
+    //     final IAxis axis2 = new XPathAxis(rtx, "10 to 10");
+    //     assertEquals(true, axis2.hasNext());
+    //      assertEquals(10, TypedValue.parseInt(rtx.getRawValue()));
+    //     assertEquals(false, axis2.hasNext());
 
-     rtx.moveTo(2L);
-     final IAxis axis3 = new XPathAxis(rtx, "15 to 10");
-     assertEquals(false, axis3.hasNext());
+    rtx.moveTo(2L);
+    final IAxis axis3 = new XPathAxis(rtx, "15 to 10");
+    assertEquals(false, axis3.hasNext());
 
     rtx.close();
     wtx.abort();
