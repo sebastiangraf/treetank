@@ -99,7 +99,7 @@
 	 \ -->
 	<target name="jar" depends="compile" description="Build treetank JAR.">
 		<jar destfile="${build.dir}/treetank.jar" basedir="${classes.dir}" update="true">
-			<fileset dir="${classes.dir}" includes="**/*.class" id="classes" />
+			<fileset dir="${classes.dir}" includes="**/*.class" excludes="**/*Test.class" id="classes" />
 		</jar>
 	</target>
 

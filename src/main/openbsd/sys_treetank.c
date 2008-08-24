@@ -19,7 +19,7 @@
 #include "sys_treetank.h"
 
 /** === TreeTank SysCall =======================================================
-  * Used to TT_COMPRESS, encrypt, authenticate, and write buffer to device.
+  * Used to compress, encrypt, authenticate, and write buffer to file.
   * 
   * The following steps allow to rebuild the OpenBSD kernel:
   * 1) Add following line to end of /usr/src/sys/kern/syscalls.master:
@@ -123,6 +123,11 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
   
   /* --- Copy buffer from user to kernel space. ----------------------------- */
   
+  printf("tank=%d, ", tank);
+  printf("command=%d, ", command);
+  printf("core=%d, ", core);
+  printf("length=%d\n", length);
+  
   copyin(
     bufferPtr,
     tt_buffer[core],
@@ -200,6 +205,12 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
   
   /* --- Copy buffer from kernel to user space. ----------------------------- */
   
+  if ((result == TT_ERROR) || (result > TT_BUFFER_LENGTH)) {
+    result = TT_ERROR;
+    printf("ERROR(sys_treetank.c): Invalid result.\n");
+    goto finish;
+  }
+  
   copyout(
     tt_buffer[core],
     bufferPtr,
@@ -212,3 +223,13 @@ finish:
   return (result);
   
 }
+
+// Example for UIO:
+// tt_uioBufferVector.iov_base = &tt_uioBufferArray;
+// tt_uioBufferVector.iov_len  = sizeof(tt_uioBufferArray);
+// tt_uioBuffer.uio_iov        = &tt_uioBufferVector;
+// tt_uioBuffer.uio_iovcnt     = 1;
+// tt_uioBuffer.uio_offset     = 0;
+// tt_uioBuffer.uio_resid      = sizeof(tt_uioBufferArray);
+// tt_uioBuffer.uio_segflg     = UIO_SYSSPACE;
+// tt_uioBuffer.uio_procp      = p;
