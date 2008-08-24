@@ -21,7 +21,7 @@
 	<property name="javadoc.dir" value="${build.dir}/javadoc" />
 	<property name="junit.dir" value="${build.dir}/junit" />
 	<property name="checkstyle.dir" value="${build.dir}/checkstyle" />
-	<property name="treetank.jar" value="${build.dir}/treetank.jar" />
+	<property name="service.dir" value="${build.dir}/service" />
 
 	<path id="classpath">
 		<pathelement location="${externals.dir}/wstx-asl__V3.1.1.jar" />
@@ -47,6 +47,7 @@
 		<mkdir dir="${javadoc.dir}" />
 		<mkdir dir="${junit.dir}" />
 		<mkdir dir="${checkstyle.dir}" />
+		<mkdir dir="${service.dir}" />
 	</target>
 
 	<!--
@@ -97,7 +98,7 @@
 	 | JAR: Collect all classes from source tree into jar file.
 	 \ -->
 	<target name="jar" depends="compile" description="Build treetank JAR.">
-		<jar destfile="${treetank.jar}" basedir="${classes.dir}" update="true">
+		<jar destfile="${build.dir}/treetank.jar" basedir="${classes.dir}" update="true">
 			<fileset dir="${classes.dir}" includes="**/*.class" id="classes" />
 		</jar>
 	</target>
@@ -121,6 +122,25 @@
 			<class name="org.treetank.pagelayer.CryptoNativeImpl" />
 		</javah>
 	</target>
+	
+	<!--
+	 | SERVICE: Build service directory for deployment.
+	 \ -->
+	<target name="service" depends="jar" description="Build service directory.">
+        <copy file="${build.dir}/treetank.jar" tofile="${service.dir}/treetank.jar" />
+        <copy file="${build.dir}/libTreeTank.so" tofile="${service.dir}/libTreeTank.so" />
+        
+		<copy file="${src.openbsd.dir}/startup.sh" tofile="${service.dir}/startup.sh" />
+        
+		<copy file="${externals.dir}/wstx-asl__V3.1.1.jar" tofile="${service.dir}/wstx-asl.jar" />
+		<copy file="${externals.dir}/stax-api__V1.0.1.jar" tofile="${service.dir}/stax-api.jar" />
+        <copy file="${externals.dir}/jetty-util__V6.1.6.jar" tofile="${service.dir}/jetty-util.jar" />
+        <copy file="${externals.dir}/jetty__V6.1.6.jar" tofile="${service.dir}/jetty.jar" />
+        <copy file="${externals.dir}/servlet-api__V2.5.jar" tofile="${service.dir}/servlet-api.jar" />
+		<copy file="${externals.dir}/backport-util-concurrent__V3.1.jar" tofile="${service.dir}/backport-util-concurrent.jar" />
+		
+		<chmod file="${service.dir}/startup.sh" perm="u+x"/>
+	</target>
 
 	<!--
 	 | ALL: Create all reports and the jar.
@@ -132,12 +152,18 @@
 	 | CLEAN: Remove all built stuff.
 	 \ -->
 	<target name="clean">
-		<delete dir="${tnk.dir}/*" />
-		<delete dir="${classes.dir}" />
-		<delete dir="${javadoc.dir}" />
-		<delete dir="${junit.dir}" />
-		<delete dir="${checkstyle.dir}" />
-		<delete file="${treetank.jar}" />
+		<delete dir="${tnk.dir}" includes="**/*" includeemptydirs="true" />
+		<delete dir="${tnk.dir}" includeemptydirs="true" />
+		<delete dir="${classes.dir}" includes="**/*" includeemptydirs="true" />
+		<delete dir="${classes.dir}" includeemptydirs="true" />
+		<delete dir="${javadoc.dir}" includes="**/*" includeemptydirs="true" />
+	    <delete dir="${javadoc.dir}" includeemptydirs="true" />
+		<delete dir="${junit.dir}" includes="**/*" includeemptydirs="true" />
+		<delete dir="${junit.dir}" includeemptydirs="true" />
+		<delete dir="${checkstyle.dir}" includes="**/*" includeemptydirs="true" />
+		<delete dir="${checkstyle.dir}" includeemptydirs="true" />
+		<delete dir="${service.dir}" includes="**/*" includeemptydirs="true" />
+		<delete dir="${service.dir}" includeemptydirs="true" />
 	</target>
 
 </project>
