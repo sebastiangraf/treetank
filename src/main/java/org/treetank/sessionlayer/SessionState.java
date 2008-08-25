@@ -123,43 +123,47 @@ public final class SessionState {
         uberPageReference.setPage(mLastCommittedUberPage);
       } else {
 
+        byte[] tmp = new byte[IConstants.CHECKSUM_SIZE];
+
         // Read primary beacon.
         file.seek(IConstants.BEACON_START);
         uberPageReference.setStart(file.readLong());
         uberPageReference.setLength(file.readInt());
-        uberPageReference.setChecksum(file.readLong());
+        file.read(tmp);
+        uberPageReference.setChecksum(tmp);
 
         // Read secondary beacon.
         file.seek(file.length() - IConstants.BEACON_LENGTH);
         secondaryUberPageReference.setStart(file.readLong());
         secondaryUberPageReference.setLength(file.readInt());
-        secondaryUberPageReference.setChecksum(file.readLong());
+        file.read(tmp);
+        secondaryUberPageReference.setChecksum(tmp);
 
         // Beacon logic case 1.
-        if (uberPageReference.equals(secondaryUberPageReference)) {
+        //if (uberPageReference.equals(secondaryUberPageReference)) {
 
-          final ByteBuffer in =
-              new PageReader(mSessionConfiguration).read(uberPageReference);
-          mLastCommittedUberPage = new UberPage(in);
+        final ByteBuffer in =
+            new PageReader(mSessionConfiguration).read(uberPageReference);
+        mLastCommittedUberPage = new UberPage(in);
 
-          // Beacon logic case 2.
-        } else {
-          // TODO implement cases 2i, 2ii, and 2iii to be more robust!
-          throw new IllegalStateException(
-              "Inconsistent TreeTank file encountered. Primary start="
-                  + uberPageReference.getStart()
-                  + " size="
-                  + uberPageReference.getLength()
-                  + " checksum="
-                  + uberPageReference.getChecksum()
-                  + " secondary start="
-                  + secondaryUberPageReference.getStart()
-                  + " size="
-                  + secondaryUberPageReference.getLength()
-                  + " checksum="
-                  + secondaryUberPageReference.getChecksum());
-
-        }
+        // Beacon logic case 2.
+        //        } else {
+        //          // TODO implement cases 2i, 2ii, and 2iii to be more robust!
+        //          throw new IllegalStateException(
+        //              "Inconsistent TreeTank file encountered. Primary start="
+        //                  + uberPageReference.getStart()
+        //                  + " size="
+        //                  + uberPageReference.getLength()
+        //                  + " checksum="
+        //                  + "TODO"
+        //                  + " secondary start="
+        //                  + secondaryUberPageReference.getStart()
+        //                  + " size="
+        //                  + secondaryUberPageReference.getLength()
+        //                  + " checksum="
+        //                  + "TODO");
+        //
+        //        }
 
       }
 

@@ -20,6 +20,8 @@ package org.treetank.pagelayer;
 
 import java.nio.ByteBuffer;
 
+import org.treetank.utils.IConstants;
+
 /**
  * <h1>PageReference</h1>
  * 
@@ -44,13 +46,13 @@ public final class PageReference<T extends AbstractPage> {
   private int mLength;
 
   /** Checksum of serialized page. */
-  private long mChecksum;
+  private final byte[] mChecksum = new byte[IConstants.CHECKSUM_SIZE];
 
   /**
    * Default constructor setting up an uninitialized page reference.
    */
   public PageReference() {
-    this(null, -1L, -1, -1L);
+    this(null, -1L, -1, new byte[IConstants.CHECKSUM_SIZE]);
   }
 
   /**
@@ -78,11 +80,11 @@ public final class PageReference<T extends AbstractPage> {
       final T page,
       final long start,
       final int length,
-      final long checksum) {
+      final byte[] checksum) {
     mPage = page;
     mStart = start;
     mLength = length;
-    mChecksum = checksum;
+    System.arraycopy(checksum, 0, mChecksum, 0, IConstants.CHECKSUM_SIZE);
   }
 
   /**
@@ -91,7 +93,10 @@ public final class PageReference<T extends AbstractPage> {
    * @param in Input bytes.
    */
   public PageReference(final ByteBuffer in) {
-    this(null, in.getLong(), in.getInt(), in.getLong());
+    mPage = null;
+    mStart = in.getLong();
+    mLength = in.getInt();
+    in.get(mChecksum);
   }
 
   /**
@@ -131,8 +136,8 @@ public final class PageReference<T extends AbstractPage> {
    * 
    * @return Checksum of serialized page.
    */
-  public final long getChecksum() {
-    return mChecksum;
+  public final void getChecksum(final byte[] checksum) {
+    System.arraycopy(mChecksum, 0, checksum, 0, IConstants.CHECKSUM_SIZE);
   }
 
   /**
@@ -140,8 +145,8 @@ public final class PageReference<T extends AbstractPage> {
    * 
    * @param checksum Checksum of serialized page.
    */
-  public final void setChecksum(final long checksum) {
-    mChecksum = checksum;
+  public final void setChecksum(final byte[] checksum) {
+    System.arraycopy(checksum, 0, mChecksum, 0, IConstants.CHECKSUM_SIZE);
   }
 
   /**
@@ -206,7 +211,7 @@ public final class PageReference<T extends AbstractPage> {
   public final void serialize(final ByteBuffer out) {
     out.putLong(mStart);
     out.putInt(mLength);
-    out.putLong(mChecksum);
+    out.put(mChecksum);
   }
 
   /**
@@ -218,8 +223,13 @@ public final class PageReference<T extends AbstractPage> {
       return false;
     }
     final PageReference<T> pageReference = (PageReference<T>) object;
-    return ((mChecksum == pageReference.mChecksum)
-        && (mStart == pageReference.mStart) && (mLength == pageReference.mLength));
+    boolean checksumEquals = true;
+    byte[] tmp = new byte[IConstants.CHECKSUM_SIZE];
+    pageReference.getChecksum(tmp);
+    for (int i = 0; i < IConstants.CHECKSUM_SIZE; i++) {
+      checksumEquals &= (tmp[i] == mChecksum[i]);
+    }
+    return (checksumEquals && (mStart == pageReference.mStart) && (mLength == pageReference.mLength));
   }
 
   /**

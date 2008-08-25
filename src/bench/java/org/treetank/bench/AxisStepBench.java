@@ -29,7 +29,9 @@ import org.perfidix.Benchmark;
 import org.perfidix.visitor.AsciiTable;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
+import org.treetank.axislayer.ChildAxis;
 import org.treetank.axislayer.DescendantAxis;
+import org.treetank.sessionlayer.Session;
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.xmllayer.XMLShredder;
 
@@ -38,9 +40,9 @@ public class AxisStepBench {
 
   public final static int TASKS = 3;
 
-  public final static String XML_PATH = "xml/shakespeare.xml";
+  public final static String XML_PATH = "src/test/resources/shakespeare.xml";
 
-  public final static String TNK_PATH = "tnk/shakespeare.tnk";
+  public final static String TNK_PATH = "target/tnk/shakespeare.tnk";
 
   public final static byte[] TNK_KEY = null; // "1234567812345678".getBytes();
 
@@ -103,17 +105,17 @@ public class AxisStepBench {
   // session.close();
   // }
   //
-  // @Bench
-  // public void benchTreeTankChild() throws Exception {
-  //
-  // final ISession session = Session.beginSession(mSessionConfiguration);
-  // final IReadTransaction rtx = session.beginReadTransaction();
-  // for (final long key : new ChildAxis(rtx)) {
-  // // Do nothing.
-  // }
-  // rtx.close();
-  // session.close();
-  // }
+   @Bench
+   public void benchTreeTankChild() throws Exception {
+  
+   final ISession session = Session.beginSession(mSessionConfiguration);
+   final IReadTransaction rtx = session.beginReadTransaction();
+   for (final long key : new ChildAxis(rtx)) {
+   // Do nothing.
+   }
+   rtx.close();
+   session.close();
+   }
 
   public static void main(final String[] args) {
 
