@@ -30,8 +30,6 @@ public class TestTreeTankService {
    * @param args
    */
   public static void main(String[] args) {
-    
-    System.out.print("Start test ...");
 
     try {
 
@@ -41,33 +39,55 @@ public class TestTreeTankService {
       final ICrypto crypto = new CryptoNativeImpl();
 
       final Random r = new Random();
-      final byte[] b = new byte[32767];
-      r.nextBytes(b);
+      final byte[] referenceBuffer = new byte[32767];
+      r.nextBytes(referenceBuffer);
+      buffer.put(referenceBuffer);
 
-      final short length = 16574;
-      buffer.put(b);
-
-      final short cryptLength = crypto.crypt(length, buffer);
-
-      final short decryptLength = crypto.decrypt(cryptLength, buffer);
-
-      if (decryptLength != length) {
-        throw new Exception("Error: Length after decryption is wrong: "
-            + decryptLength);
-      }
-
-      buffer.rewind();
-      for (int i = 0; i < 32767; i++) {
-        if (buffer.get() != b[i]) {
-          throw new Exception("Error: Byte does not match at " + i);
-        }
-      }
-      
-      System.out.println(" SUCCESS.");
+      test(crypto, (short) 7, buffer, referenceBuffer);
+      test(crypto, (short) 32, buffer, referenceBuffer);
+      test(crypto, (short) 188, buffer, referenceBuffer);
+      test(crypto, (short) 1200, buffer, referenceBuffer);
+      test(crypto, (short) 4932, buffer, referenceBuffer);
+      test(crypto, (short) 8452, buffer, referenceBuffer);
+      test(crypto, (short) 10000, buffer, referenceBuffer);
 
     } catch (Exception e) {
-      e.printStackTrace();
+      System.out.println("FAILURE: " + e.getMessage());
     }
+
+  }
+
+  private static final void test(
+      final ICrypto crypto,
+      final short length,
+      final ByteBuffer buffer,
+      final byte[] referenceBuffer) throws Exception {
+
+    System.out.print("Test page length " + length + ": ");
+
+    final long start = System.currentTimeMillis();
+
+    final short cryptLength = crypto.crypt(length, buffer);
+    final short decryptLength = crypto.decrypt(cryptLength, buffer);
+
+    final long stop = System.currentTimeMillis();
+
+    if (decryptLength != length) {
+      throw new Exception("Error: Length after decryption is wrong: "
+          + decryptLength);
+    }
+
+    buffer.rewind();
+    for (int i = 0; i < decryptLength; i++) {
+      if (buffer.get() != referenceBuffer[i]) {
+        throw new Exception("Error: Byte does not match at " + i);
+      }
+    }
+
+    buffer.rewind();
+    buffer.put(referenceBuffer);
+
+    System.out.println((stop - start) + "[ms]: SUCCESS.");
 
   }
 
