@@ -37,13 +37,14 @@ JNIEXPORT jshort JNICALL Java_org_treetank_pagelayer_CryptoNativeImpl_syscall(
   jobject buffer)
 {
   jint   error     = 0x0;
+  jshort tmp       = length;
   jbyte *bufferPtr = (*env)->GetDirectBufferAddress(env, buffer);
   
-  error = syscall(306, tank, operation, &length, bufferPtr);
+  error = syscall(306, tank, operation, &tmp, bufferPtr);
   
   if (error != 0x0) {
     return 0x0;
   } else {
-    return length;
+    return tmp;
   }
 }
