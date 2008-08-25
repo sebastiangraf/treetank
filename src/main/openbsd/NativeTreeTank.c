@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id:NativeTreeTank.c 4360 2008-08-24 11:17:12Z kramis $
  */
 
 #include "NativeTreeTank.h"
@@ -45,10 +45,10 @@ JNIEXPORT jshort JNICALL Java_org_treetank_pagelayer_CryptoNativeImpl_syscall(
   jshort length,
   jobject buffer)
 {
-  u_int16_t result    = 0;
+  u_int16_t result    = 0x0;
   u_int8_t *bufferPtr = (*env)->GetDirectBufferAddress(env, buffer);
   
-  result = syscall(306, tank, operation, length, bufferPtr);
+  result = (u_int16_t) syscall(306, tank, operation, length, bufferPtr);
 
   return result;
 }

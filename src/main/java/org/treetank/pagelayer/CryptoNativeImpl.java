@@ -48,13 +48,13 @@ public final class CryptoNativeImpl implements ICrypto {
   }
 
   public final short crypt(final short length, final ByteBuffer buffer) {
-    short resultLength = ERROR;
+    short result = ERROR;
     byte tank = (byte) 0x1;
     byte command = COMMAND_WRITE;
     byte core = ERROR;
     try {
       core = (Byte) coreQueue.take();
-      resultLength = syscall(tank, (byte) (command | core), length, buffer);
+      result = syscall(tank, (byte) (command | core), length, buffer);
     } catch (Exception e) {
       return ERROR;
     } finally {
@@ -66,17 +66,17 @@ public final class CryptoNativeImpl implements ICrypto {
         throw new RuntimeException(ie);
       }
     }
-    return resultLength;
+    return result;
   }
 
   public final short decrypt(final short length, final ByteBuffer buffer) {
-    short resultLength = ERROR;
+    short result = ERROR;
     byte tank = (byte) 0x1;
     byte command = COMMAND_READ;
     byte core = ERROR;
     try {
       core = (Byte) coreQueue.take();
-      resultLength = syscall(tank, (byte) (command | core), length, buffer);
+      result = syscall(tank, (byte) (command | core), length, buffer);
     } catch (Exception e) {
       return ERROR;
     } finally {
@@ -88,7 +88,7 @@ public final class CryptoNativeImpl implements ICrypto {
         throw new RuntimeException(ie);
       }
     }
-    return resultLength;
+    return result;
   }
 
   /**

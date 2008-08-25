@@ -135,6 +135,7 @@
         <copy file="${build.dir}/libTreeTank.so" tofile="${service.dir}/libTreeTank.so" />
         
 		<copy file="${src.openbsd.dir}/startup.sh" tofile="${service.dir}/startup.sh" />
+		<copy file="${src.openbsd.dir}/test.sh" tofile="${service.dir}/test.sh" />
         
 		<copy file="${externals.dir}/wstx-asl__V3.1.1.jar" tofile="${service.dir}/wstx-asl.jar" />
 		<copy file="${externals.dir}/stax-api__V1.0.1.jar" tofile="${service.dir}/stax-api.jar" />
@@ -142,8 +143,6 @@
         <copy file="${externals.dir}/jetty__V6.1.6.jar" tofile="${service.dir}/jetty.jar" />
         <copy file="${externals.dir}/servlet-api__V2.5.jar" tofile="${service.dir}/servlet-api.jar" />
 		<copy file="${externals.dir}/backport-util-concurrent__V3.1.jar" tofile="${service.dir}/backport-util-concurrent.jar" />
-		
-		<chmod file="${service.dir}/startup.sh" perm="u+x"/>
 	</target>
 
 	<!--
