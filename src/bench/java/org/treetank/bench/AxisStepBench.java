@@ -34,7 +34,7 @@ import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.xmllayer.XMLShredder;
 
 @BenchClass(runs = 1)
-public class AxisStepBenchmark {
+public class AxisStepBench {
 
   public final static int TASKS = 3;
 
@@ -121,7 +121,7 @@ public class AxisStepBenchmark {
         .println("$Id:AxisStepBenchmark.java 1617 2006-10-12 17:32:13Z kramis $");
     try {
       Benchmark a = new Benchmark();
-      AxisStepBenchmark bench = new AxisStepBenchmark();
+      AxisStepBench bench = new AxisStepBench();
       a.add(bench);
       org.perfidix.Result r = a.run();
       AsciiTable v = new AsciiTable();

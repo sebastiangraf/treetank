@@ -16,7 +16,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id: Benchmark.java 4378 2008-08-25 07:40:39Z kramis $
  */
 
 package org.treetank.bench;
@@ -30,7 +30,7 @@ import org.treetank.sessionlayer.Session;
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.xmllayer.XMLShredder;
 
-public class Benchmark {
+public class SimpleBench {
 
   public final static int TASKS = 3;
 

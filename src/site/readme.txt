@@ -40,7 +40,8 @@ TreeTank Coding Conventions
 + Subversion, JavaDoc, and other comments: Correct English sentences.
 
 + Implement according to roadmap.txt which is defined by the project lead.
-+ Test driven development: Write test cases named to **/*Test.java
++ Test driven development: Write test cases named to **/*Test.java.
++ Bench driven development: Write bench cases named to **/*Bench.java.
 + Change management: Append changes to changes.txt and increment revision
   in build.xml.
 + Team collaboration: Checkout or update must not yield errors or failing tests.
