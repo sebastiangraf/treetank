@@ -48,7 +48,7 @@ public interface IConstants {
   public static final int BEACON_START = 10;
 
   /** Length of beacon in bytes. */
-  public static final int BEACON_LENGTH = 20;
+  public static final int BEACON_LENGTH = 24;
 
   /** Default internal encoding. */
   public static final String DEFAULT_ENCODING = "UTF-8";
@@ -70,6 +70,9 @@ public interface IConstants {
   
   /** Size of read buffer. */
   public static final int REFERENCE_SIZE = 24;
+  
+  /** Size of checksum. */
+  public static final int CHECKSUM_SIZE = 12;
 
   //--- Indirect Page ----------------------------------------------------------
 

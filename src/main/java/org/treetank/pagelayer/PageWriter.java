@@ -108,13 +108,17 @@ public final class PageWriter {
       mBuffer.clear();
       mBuffer.position(outputLength);
       mBuffer.flip();
-      mBuffer.position(24);
+      final byte[] checksum = new byte[IConstants.CHECKSUM_SIZE];
+      mBuffer.position(12);
+      mBuffer.get(checksum);
       mChannel.position(fileSize);
       mChannel.write(mBuffer);
 
       // Remember page coordinates.
       pageReference.setStart(fileSize);
       pageReference.setLength(outputLength - 24);
+      pageReference.setChecksum(checksum);
+      
 
     } catch (Exception e) {
       e.printStackTrace();

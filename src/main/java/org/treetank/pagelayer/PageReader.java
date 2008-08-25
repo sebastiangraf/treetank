@@ -96,10 +96,13 @@ public final class PageReader {
     try {
 
       // Prepare environment for read.
+      final byte[] checksum = new byte[IConstants.CHECKSUM_SIZE];
+      pageReference.getChecksum(checksum);
       final short inputLength = (short) (pageReference.getLength() + 24);
       mBuffer.clear();
       mBuffer.limit(inputLength);
-      mBuffer.position(24);
+      mBuffer.position(12);
+      mBuffer.put(checksum);
 
       // Read page from file.
       mChannel.position(pageReference.getStart());

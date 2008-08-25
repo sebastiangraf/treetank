@@ -34,9 +34,9 @@ public class SimpleBench {
 
   public final static int TASKS = 3;
 
-  public final static String XML_PATH = "xml/shakespeare.xml";
+  public final static String XML_PATH = "src/test/resources/shakespeare.xml";
 
-  public final static String TNK_PATH = "tnk/shakespeare.tnk";
+  public final static String TNK_PATH = "target/tnk/shakespeare.tnk";
 
   public final static byte[] TNK_KEY = null; // "1234567812345678".getBytes();
 

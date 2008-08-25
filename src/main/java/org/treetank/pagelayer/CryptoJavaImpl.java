@@ -23,6 +23,8 @@ import java.nio.ByteBuffer;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
+import org.treetank.utils.IConstants;
+
 public class CryptoJavaImpl implements ICrypto {
 
   private final Deflater mCompressor;
@@ -68,8 +70,10 @@ public class CryptoJavaImpl implements ICrypto {
       return 0;
     }
     final byte[] result = mOut.toByteArray();
+    final byte[] checksum = new byte[IConstants.CHECKSUM_SIZE];
     buffer.clear();
-    buffer.position(24);
+    buffer.position(12);
+    buffer.put(checksum);
     buffer.put(result);
     return (short) (result.length + 24);
   }
@@ -98,8 +102,10 @@ public class CryptoJavaImpl implements ICrypto {
       return 0;
     }
     final byte[] result = mOut.toByteArray();
+    final byte[] checksum = new byte[IConstants.CHECKSUM_SIZE];
     buffer.clear();
-    buffer.position(24);
+    buffer.position(12);
+    buffer.put(checksum);
     buffer.put(result);
     return (short) (result.length + 24);
   }
