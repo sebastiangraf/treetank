@@ -58,7 +58,7 @@ sys_treetank_encryption(
   /* --- Local variables. --------------------------------------------------- */
   
   u_int8_t        padding          = 0;
-  int             error            = TT_OK;
+  int             error            = TT_SYSCALL_SUCCESS;
   struct mbuf    *packetPointer    = NULL;
   struct cryptop *operationPointer = NULL;
   u_int32_t       length           = TT_READ_INT(lengthPointer);
@@ -78,8 +78,8 @@ sys_treetank_encryption(
     if (crypto_newsession(
           &(tt_enc_sessionId[core]),
           &session,
-          0) != TT_OK) {
-      error = TT_ERROR;
+          0) != TT_SYSCALL_SUCCESS) {
+      error = TT_SYSCALL_FAILURE;
       tt_enc_sessionId[core] = TT_NULL_SESSION;
       printf("ERROR(sys_treetank_encryption.c): Could not allocate cryptoini.\n");
       goto finish;
@@ -103,7 +103,7 @@ sys_treetank_encryption(
   
   packetPointer = m_gethdr(M_DONTWAIT, MT_DATA);
   if (packetPointer == NULL) {
-    error = TT_ERROR;
+    error = TT_SYSCALL_FAILURE;
     printf("ERROR(sys_treetank_encryption.c): Could not allocate mbuf.\n");
     goto finish;
   }
@@ -121,7 +121,7 @@ sys_treetank_encryption(
   
   operationPointer = crypto_getreq(1);
   if (operationPointer == NULL) {
-    error = TT_ERROR;
+    error = TT_SYSCALL_FAILURE;
     printf("ERROR(sys_treetank_encryption.c): Could not allocate crypto.\n");
     goto finish;
   }
@@ -151,12 +151,12 @@ sys_treetank_encryption(
     error = tsleep(operationPointer, PSOCK, "sys_treetank_encryption", 0);
   }
   
-  if (error != TT_OK) {
+  if (error != TT_SYSCALL_SUCCESS) {
     printf("ERROR(sys_treetank_encryption.c): Failed during tsleep.\n");
     goto finish;
   }
   
-  if (operationPointer->crp_etype != TT_OK) {
+  if (operationPointer->crp_etype != TT_SYSCALL_SUCCESS) {
     error = operationPointer->crp_etype;
     printf("ERROR(sys_treetank_encryption.c): Failed during crypto_dispatch.\n");
     goto finish;
@@ -177,7 +177,7 @@ sys_treetank_encryption(
   if (operation == TT_READ) {
     padding = bufferPointer[length - 1];
     if (padding < 1 || padding > TT_BLOCK_LENGTH) {
-      error = TT_ERROR;
+      error = TT_SYSCALL_FAILURE;
       printf("ERROR(sys_treetank_encryption.c): Failed during crypto_dispatch.\n");
       goto finish;
     }

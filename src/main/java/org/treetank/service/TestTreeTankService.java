@@ -30,35 +30,43 @@ public class TestTreeTankService {
    * @param args
    */
   public static void main(String[] args) {
-
-    System.loadLibrary("TreeTank");
-
-    final ByteBuffer buffer = ByteBuffer.allocateDirect(32767);
-    final ICrypto crypto = new CryptoNativeImpl();
-
-    final Random r = new Random();
-    final byte[] b = new byte[32767];
-    r.nextBytes(b);
-
-    final short length = 777;
-    buffer.put(b);
-
-    final short cryptLength = crypto.crypt(length, buffer);
-    System.out.print("cryptLength=" + cryptLength + "...");
     
-    final short decryptLength = crypto.decrypt(cryptLength, buffer);
-    System.out.println(" decryptLength=" + decryptLength + ".");
+    System.out.print("Start test ...");
 
-    if (decryptLength != length) {
-      System.out.println("Error: Length after decryption is wrong: " + decryptLength);
-    }
+    try {
 
-    buffer.rewind();
-    for (int i = 0; i < 32767; i++) {
-      if (buffer.get() != b[i]) {
-        System.out.println("Error: Byte does not match at " + i);
-        break;
+      System.loadLibrary("TreeTank");
+
+      final ByteBuffer buffer = ByteBuffer.allocateDirect(32767);
+      final ICrypto crypto = new CryptoNativeImpl();
+
+      final Random r = new Random();
+      final byte[] b = new byte[32767];
+      r.nextBytes(b);
+
+      final short length = 16574;
+      buffer.put(b);
+
+      final short cryptLength = crypto.crypt(length, buffer);
+
+      final short decryptLength = crypto.decrypt(cryptLength, buffer);
+
+      if (decryptLength != length) {
+        throw new Exception("Error: Length after decryption is wrong: "
+            + decryptLength);
       }
+
+      buffer.rewind();
+      for (int i = 0; i < 32767; i++) {
+        if (buffer.get() != b[i]) {
+          throw new Exception("Error: Byte does not match at " + i);
+        }
+      }
+      
+      System.out.println(" SUCCESS.");
+
+    } catch (Exception e) {
+      e.printStackTrace();
     }
 
   }

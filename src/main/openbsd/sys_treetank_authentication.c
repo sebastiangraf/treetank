@@ -56,7 +56,7 @@ sys_treetank_authentication(
 
   /* --- Local variables. --------------------------------------------------- */
   
-  int             error            = TT_OK;
+  int             error            = TT_SYSCALL_SUCCESS;
   struct mbuf    *packetPointer    = NULL;
   struct cryptop *operationPointer = NULL;
   u_int32_t       length           = TT_READ_INT(lengthPointer);
@@ -74,8 +74,8 @@ sys_treetank_authentication(
     if (crypto_newsession(
           &(tt_auth_sessionId[core]),
           &session,
-          0) != TT_OK) {
-      error = TT_ERROR;
+          0) != TT_SYSCALL_SUCCESS) {
+      error = TT_SYSCALL_FAILURE;
       tt_auth_sessionId[core] = TT_NULL_SESSION;
       printf("ERROR(sys_treetank_authentication.c): Could not allocate cryptoini.\n");
       goto finish;
@@ -87,7 +87,7 @@ sys_treetank_authentication(
   
   packetPointer = m_gethdr(M_DONTWAIT, MT_DATA);
   if (packetPointer == NULL) {
-    error = TT_ERROR;
+    error = TT_SYSCALL_FAILURE;
     printf("ERROR(sys_treetank_authentication.c): Could not allocate mbuf.\n");
     goto finish;
   }
@@ -105,7 +105,7 @@ sys_treetank_authentication(
   
   operationPointer = crypto_getreq(1);
   if (operationPointer == NULL) {
-    error = TT_ERROR;
+    error = TT_SYSCALL_FAILURE;
     printf("ERROR(sys_treetank_authentication.c): Could not allocate crypto.\n");
     goto finish;
   }
@@ -130,12 +130,12 @@ sys_treetank_authentication(
     error = tsleep(operationPointer, PSOCK, "sys_treetank_authentication", 0);
   }
   
-  if (error != TT_OK) {
+  if (error != TT_SYSCALL_SUCCESS) {
     printf("ERROR(sys_treetank_authentication.c): Failed during tsleep.\n");
     goto finish;
   }
   
-  if (operationPointer->crp_etype != TT_OK) {
+  if (operationPointer->crp_etype != TT_SYSCALL_SUCCESS) {
     error = operationPointer->crp_etype;
     printf("ERROR(sys_treetank_authentication.c): Failed during crypto_dispatch.\n");
     goto finish;
