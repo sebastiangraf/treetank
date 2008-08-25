@@ -28,9 +28,9 @@ public final class CryptoNativeImpl implements ICrypto {
   private static final int CORE_COUNT = 15;
 
   private static final byte ERROR = (byte) 0x0;
-  
+
   private static final byte COMMAND_WRITE = (byte) 0x1;
-  
+
   private static final byte COMMAND_READ = (byte) 0x2;
 
   private static final BlockingQueue coreQueue =
@@ -66,7 +66,7 @@ public final class CryptoNativeImpl implements ICrypto {
         throw new RuntimeException(ie);
       }
     }
-    return result;
+    return (short) result;
   }
 
   public final short decrypt(final short length, final ByteBuffer buffer) {
@@ -88,7 +88,7 @@ public final class CryptoNativeImpl implements ICrypto {
         throw new RuntimeException(ie);
       }
     }
-    return result;
+    return (short) result;
   }
 
   /**
