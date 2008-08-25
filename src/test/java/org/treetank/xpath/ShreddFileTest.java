@@ -29,7 +29,7 @@ import org.treetank.sessionlayer.Session;
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.xmllayer.XMLShredder;
 
-public class ShreddFile {
+public class ShreddFileTest {
 
   public static final String XML =
       "src"

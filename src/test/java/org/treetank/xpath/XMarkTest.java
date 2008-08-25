@@ -36,7 +36,7 @@ import org.treetank.xmllayer.XMLShredder;
  * @author Tina Scherer
  */
 @BenchClass(runs = 1)
-public class XMark {
+public class XMarkTest {
 
   // XMark 1 GB
   public static final String XML =
