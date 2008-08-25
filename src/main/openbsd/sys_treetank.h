@@ -29,21 +29,20 @@
 #include <sys/mbuf.h>
 #include <crypto/cryptodev.h>
 
-/* --- Constants. ----------------------------------------------------------- */
+/* --- Global constants. ---------------------------------------------------- */
 
-#define TT_SYSCALL_SUCCESS 0
-#define TT_SYSCALL_FAILURE 1
+#define TT_SYSCALL_SUCCESS 0x0
+#define TT_SYSCALL_FAILURE 0x1
 
-#define TT_NULL 0
+#define TT_NULL 0x0
 
 #define TT_CORE_COUNT 15
 #define TT_BUFFER_LENGTH 32767
 
+#define TT_COMMAND_WRITE 0x1
+#define TT_COMMAND_READ  0x2
 
 #define TT_REFERENCE_LENGTH 24
-
-#define TT_COMMAND_WRITE 1
-#define TT_COMMAND_READ 2
 
 #define TT_COMPRESSION_ALGORITHM CRYPTO_LZS_COMP
 #define TT_ENCRYPTION_ALGORITHM CRYPTO_AES_CBC
@@ -60,5 +59,3 @@
 #define TT_START_OFFSET 0
 #define TT_LENGTH_OFFSET 8
 #define TT_HMAC_OFFSET 12
-
-#define TT_NULL_SESSION 0

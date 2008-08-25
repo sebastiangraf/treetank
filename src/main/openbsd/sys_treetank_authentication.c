@@ -31,14 +31,10 @@ int sys_treetank_authentication_callback(struct cryptop *op);
 /* --- Global variables. ---------------------------------------------------- */
 
 static u_int64_t tt_auth_sessionId[] = {
-  TT_NULL_SESSION,
-  TT_NULL_SESSION,
-  TT_NULL_SESSION,
-  TT_NULL_SESSION,
-  TT_NULL_SESSION,
-  TT_NULL_SESSION,
-  TT_NULL_SESSION,
-  TT_NULL_SESSION };
+  TT_NULL, TT_NULL, TT_NULL, TT_NULL,
+  TT_NULL, TT_NULL, TT_NULL, TT_NULL,
+  TT_NULL, TT_NULL, TT_NULL, TT_NULL,
+  TT_NULL, TT_NULL, TT_NULL };
   
 static u_int8_t tt_auth_key[32];
 
@@ -63,7 +59,7 @@ sys_treetank_authentication(
   
   /* --- Initialise session (if required). ---------------------------------- */
     
-  if (tt_auth_sessionId[core] == TT_NULL_SESSION) {
+  if (tt_auth_sessionId[core] == TT_NULL) {
     struct cryptoini session;  
 
     bzero(&session, sizeof(session));
@@ -76,7 +72,7 @@ sys_treetank_authentication(
           &session,
           0) != TT_SYSCALL_SUCCESS) {
       error = TT_SYSCALL_FAILURE;
-      tt_auth_sessionId[core] = TT_NULL_SESSION;
+      tt_auth_sessionId[core] = TT_NULL;
       printf("ERROR(sys_treetank_authentication.c): Could not allocate cryptoini.\n");
       goto finish;
     }
