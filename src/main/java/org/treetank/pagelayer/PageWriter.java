@@ -88,12 +88,11 @@ public final class PageWriter {
   public final void write(
       final PageReference<? extends AbstractPage> pageReference) {
 
-    try {
-
-      // Prepare environment for write.
-      mBuffer.clear();
-
+    try {      
+      
       // Serialise page.
+      mBuffer.clear();
+      mBuffer.position(24);
       pageReference.getPage().serialize(mBuffer);
       final short inputLength = (short) mBuffer.position();
 
@@ -106,13 +105,16 @@ public final class PageWriter {
 
       // Write page to file.
       final long fileSize = mChannel.size();
+      mBuffer.clear();
+      mBuffer.position(outputLength);
       mBuffer.flip();
+      mBuffer.position(24);
       mChannel.position(fileSize);
       mChannel.write(mBuffer);
 
       // Remember page coordinates.
       pageReference.setStart(fileSize);
-      pageReference.setLength(outputLength);
+      pageReference.setLength(outputLength - 24);
 
     } catch (Exception e) {
       e.printStackTrace();

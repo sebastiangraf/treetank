@@ -39,7 +39,7 @@ public class CryptoJavaImpl implements ICrypto {
   public CryptoJavaImpl() {
     mCompressor = new Deflater();
     mDecompressor = new Inflater();
-    mTmp = new byte[8192];
+    mTmp = new byte[32767];
     mOut = new ByteArrayOutputStream();
   }
 
@@ -51,8 +51,9 @@ public class CryptoJavaImpl implements ICrypto {
    */
   public short crypt(final short length, final ByteBuffer buffer) {
     try {
-      byte[] tmp = new byte[length];
-      buffer.rewind();
+      byte[] tmp = new byte[length - 24];
+      buffer.clear();
+      buffer.position(24);
       buffer.get(tmp);
       mCompressor.reset();
       mOut.reset();
@@ -67,9 +68,10 @@ public class CryptoJavaImpl implements ICrypto {
       return 0;
     }
     final byte[] result = mOut.toByteArray();
-    buffer.rewind();
+    buffer.clear();
+    buffer.position(24);
     buffer.put(result);
-    return (short) result.length;
+    return (short) (result.length + 24);
   }
 
   /**
@@ -80,7 +82,9 @@ public class CryptoJavaImpl implements ICrypto {
    */
   public short decrypt(final short length, final ByteBuffer buffer) {
     try {
-      byte[] tmp = new byte[length];
+      byte[] tmp = new byte[length - 24];
+      buffer.clear();
+      buffer.position(24);
       buffer.get(tmp);
       mDecompressor.reset();
       mOut.reset();
@@ -95,8 +99,9 @@ public class CryptoJavaImpl implements ICrypto {
     }
     final byte[] result = mOut.toByteArray();
     buffer.clear();
+    buffer.position(24);
     buffer.put(result);
-    return (short) result.length;
+    return (short) (result.length + 24);
   }
 
 }
