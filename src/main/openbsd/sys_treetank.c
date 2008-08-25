@@ -80,7 +80,7 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
 
   /* --- Local variables. --------------------------------------------------- */
   
-  int                       error            = TT_ERROR;
+  int                       syscall          = TT_SYSCALL_SUCCESS;
   struct sys_treetank_args *argumentPointer  = v;
   
   u_int8_t                  tank             = SCARG(argumentPointer, tank);
@@ -97,36 +97,31 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
   
   /* --- Check arguments. --------------------------------------------------- */
   
-  if (tank == TT_ERROR) {
-    error = TT_ERROR;
+  if (tank == TT_NULL) {
+    syscall = TT_SYSCALL_FAILURE;
     printf("ERROR(sys_treetank.c): Invalid tank argument.\n");
     goto finish;
   }
   
-  if ((command == TT_ERROR) || (core == TT_ERROR)) {
-    error = TT_ERROR;
+  if ((command == TT_NULL) || (core == TT_NULL)) {
+    syscall = TT_SYSCALL_FAILURE;
     printf("ERROR(sys_treetank.c): Invalid operation argument.\n");
     goto finish;
   }
   
-  if ((*lengthPtr == TT_ERROR) || (*lengthPtr > TT_BUFFER_LENGTH)) {
-    error = TT_ERROR;
+  if ((lengthPtr == NULL) || (*lengthPtr == TT_NULL) || (*lengthPtr > TT_BUFFER_LENGTH)) {
+    syscall = TT_SYSCALL_FAILURE;
     printf("ERROR(sys_treetank.c): Invalid length argument.\n");
     goto finish;
   }
   
   if (bufferPtr == NULL) {
-    error = TT_ERROR;
+    syscall = TT_SYSCALL_FAILURE;
     printf("ERROR(sys_treetank.c): Invalid bufferPtr argument.\n");
     goto finish;
   }
   
   /* --- Copy buffer from user to kernel space. ----------------------------- */
-  
-  printf("tank=%d, ", tank);
-  printf("command=%d, ", command);
-  printf("core=%d, ", core);
-  printf("length=%d, ", *lengthPtr);
   
   copyin(
     bufferPtr,
@@ -205,8 +200,8 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
   
   /* --- Copy buffer from kernel to user space. ----------------------------- */
   
-  if ((*lengthPtr == TT_ERROR) || (*lengthPtr > TT_BUFFER_LENGTH)) {
-    error = TT_ERROR;
+  if ((*lengthPtr == TT_NULL) || (*lengthPtr > TT_BUFFER_LENGTH)) {
+    syscall = TT_SYSCALL_FAILURE;
     printf("ERROR(sys_treetank.c): Invalid result length.\n");
     goto finish;
   }
@@ -220,7 +215,7 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
   
 finish:
   
-  return (error);
+  return (syscall);
   
 }
 

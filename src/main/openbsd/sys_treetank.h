@@ -31,7 +31,11 @@
 
 /* --- Constants. ----------------------------------------------------------- */
 
-#define TT_ERROR 0
+#define TT_SYSCALL_SUCCESS 0
+#define TT_SYSCALL_FAILURE 1
+
+#define TT_NULL 0
+
 #define TT_CORE_COUNT 15
 #define TT_BUFFER_LENGTH 32767
 

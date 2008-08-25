@@ -53,7 +53,7 @@ sys_treetank_compression(
 
   /* --- Local variables. --------------------------------------------------- */
   
-  int             error            = TT_OK;
+  int             error            = TT_SYSCALL_SUCCESS;
   struct mbuf    *packetPointer    = NULL;
   struct cryptop *operationPointer = NULL;
   u_int32_t       length           = TT_READ_INT(lengthPointer);
@@ -69,8 +69,8 @@ sys_treetank_compression(
     if (crypto_newsession(
           &(tt_comp_sessionId[core]),
           &session,
-          0) != TT_OK) {
-      error = TT_ERROR;
+          0) != TT_SYSCALL_SUCCESS) {
+      error = TT_SYSCALL_FAILURE;
       tt_comp_sessionId[core] = TT_NULL_SESSION;
       printf("ERROR(sys_treetank_compression.c): Could not allocate cryptoini.\n");
       goto finish;
@@ -82,7 +82,7 @@ sys_treetank_compression(
   
   packetPointer = m_gethdr(M_DONTWAIT, MT_DATA);
   if (packetPointer == NULL) {
-    error = TT_ERROR;
+    error = TT_SYSCALL_FAILURE;
     printf("ERROR(sys_treetank_compression.c): Could not allocate mbuf.\n");
     goto finish;
   }
@@ -100,7 +100,7 @@ sys_treetank_compression(
   
   operationPointer = crypto_getreq(1);
   if (operationPointer == NULL) {
-    error = TT_ERROR;
+    error = TT_SYSCALL_FAILURE;
     printf("ERROR(sys_treetank_compression.c): Could not allocate crypto.\n");
     goto finish;
   }
@@ -127,7 +127,7 @@ sys_treetank_compression(
     error = tsleep(operationPointer, PSOCK, "sys_treetank_compression", 0);
   }
   
-  if (error != TT_OK) {
+  if (error != TT_SYSCALL_SUCCESS) {
     printf("ERROR(sys_treetank_compression.c): Failed during tsleep.\n");
     goto finish;
   }
