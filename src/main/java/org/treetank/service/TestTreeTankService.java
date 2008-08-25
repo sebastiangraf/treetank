@@ -52,7 +52,7 @@ public class TestTreeTankService {
       test(crypto, (short) 9000, buffer, referenceBuffer);
 
     } catch (Exception e) {
-      System.out.println("FAILURE: " + e.getMessage());
+      System.out.println(": FAILURE: " + e.getMessage());
     }
 
   }
@@ -71,12 +71,11 @@ public class TestTreeTankService {
     final short decryptLength = crypto.decrypt(cryptLength, buffer);
 
     final long stop = System.currentTimeMillis();
-    
+
     System.out.print("..." + cryptLength + "..." + decryptLength);
 
     if (decryptLength != length) {
-      throw new Exception("Error: Length after decryption is wrong: "
-          + decryptLength);
+      throw new Exception("Bad result length: " + decryptLength);
     }
 
     buffer.rewind();

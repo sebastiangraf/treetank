@@ -18,14 +18,9 @@
 
 #include "sys_treetank.h"
 
-#define TT_OK 99
-#define TT_WRITE 100
-#define TT_READ_INT(X) 0;
-#define TT_WRITE_INT(X,Y) ;
-
 /* --- Function prototypes. ------------------------------------------------- */
 
-int sys_treetank_authentication(u_int8_t, u_int8_t, u_int8_t *, u_int8_t *, u_int8_t *);
+int sys_treetank_authentication(u_int8_t, u_int8_t, u_int16_t *, u_int8_t *);
 int sys_treetank_authentication_callback(struct cryptop *op);
 
 /* --- Global variables. ---------------------------------------------------- */
@@ -34,28 +29,30 @@ static u_int64_t tt_auth_sessionId[] = {
   TT_NULL, TT_NULL, TT_NULL, TT_NULL,
   TT_NULL, TT_NULL, TT_NULL, TT_NULL,
   TT_NULL, TT_NULL, TT_NULL, TT_NULL,
-  TT_NULL, TT_NULL, TT_NULL };
-  
-static u_int8_t tt_auth_key[32];
+  TT_NULL, TT_NULL, TT_NULL };  
+static u_int8_t tt_auth_key[32] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+static u_int8_t tt_auth_hmac[TT_CORE_COUNT][TT_HMAC_LENGTH];
 
 /*
  * Perform authentication.
  */
 int
 sys_treetank_authentication(
-  u_int8_t core,
-  u_int8_t operation,
-  u_int8_t *lengthPointer,
-  u_int8_t *hmacPointer,
-  u_int8_t *bufferPointer)
+  u_int8_t   core,
+  u_int8_t   command,
+  u_int16_t *lengthPtr,
+  u_int8_t  *bufferPtr)
 {
 
   /* --- Local variables. --------------------------------------------------- */
   
-  int             error            = TT_SYSCALL_SUCCESS;
-  struct mbuf    *packetPointer    = NULL;
-  struct cryptop *operationPointer = NULL;
-  u_int32_t       length           = TT_READ_INT(lengthPointer);
+  int             syscall      = TT_SYSCALL_SUCCESS;
+  int             i            = 0x0;
+  struct mbuf    *packetPtr    = NULL;
+  struct cryptop *operationPtr = NULL;
+  u_int16_t       myLength     = *lengthPtr - TT_REFERENCE_LENGTH;
+  u_int8_t       *myHmacPtr    = bufferPtr + TT_HMAC_OFFSET;
+  u_int8_t       *myBufferPtr  = bufferPtr + TT_REFERENCE_LENGTH;
   
   /* --- Initialise session (if required). ---------------------------------- */
     
@@ -70,8 +67,8 @@ sys_treetank_authentication(
     if (crypto_newsession(
           &(tt_auth_sessionId[core]),
           &session,
-          0) != TT_SYSCALL_SUCCESS) {
-      error = TT_SYSCALL_FAILURE;
+          0x0) != TT_SYSCALL_SUCCESS) {
+      syscall = TT_SYSCALL_FAILURE;
       tt_auth_sessionId[core] = TT_NULL;
       printf("ERROR(sys_treetank_authentication.c): Could not allocate cryptoini.\n");
       goto finish;
@@ -81,83 +78,100 @@ sys_treetank_authentication(
   
   /* --- Initialise buffer. ------------------------------------------------- */
   
-  packetPointer = m_gethdr(M_DONTWAIT, MT_DATA);
-  if (packetPointer == NULL) {
-    error = TT_SYSCALL_FAILURE;
+  packetPtr = m_gethdr(M_DONTWAIT, MT_DATA);
+  if (packetPtr == NULL) {
+    syscall = TT_SYSCALL_FAILURE;
     printf("ERROR(sys_treetank_authentication.c): Could not allocate mbuf.\n");
     goto finish;
   }
   
-  packetPointer->m_pkthdr.len = 0;
-  packetPointer->m_len        = 0;
+  packetPtr->m_pkthdr.len = 0x0;
+  packetPtr->m_len        = 0x0;
     
   m_copyback(
-    packetPointer,
-    0,
-    length,
-    bufferPointer);
+    packetPtr,
+    0x0,
+    myLength,
+    myBufferPtr);
 
   /* --- Initialise crypto operation. --------------------------------------- */
   
-  operationPointer = crypto_getreq(1);
-  if (operationPointer == NULL) {
-    error = TT_SYSCALL_FAILURE;
+  operationPtr = crypto_getreq(0x1);
+  if (operationPtr == NULL) {
+    syscall = TT_SYSCALL_FAILURE;
     printf("ERROR(sys_treetank_authentication.c): Could not allocate crypto.\n");
     goto finish;
   }
 
-  operationPointer->crp_sid               = tt_auth_sessionId[core];
-  operationPointer->crp_ilen              = length;
-  operationPointer->crp_flags             = CRYPTO_F_IMBUF;
-  operationPointer->crp_buf               = (caddr_t) packetPointer;
-  operationPointer->crp_desc->crd_alg     = TT_AUTHENTICATION_ALGORITHM;
-  operationPointer->crp_desc->crd_klen    = TT_KEY_LENGTH;
-  operationPointer->crp_desc->crd_key     = (caddr_t) &tt_auth_key;
-  operationPointer->crp_desc->crd_skip    = 0;
-  operationPointer->crp_desc->crd_len     = length;
-  operationPointer->crp_desc->crd_inject  = 0;
-  operationPointer->crp_callback          = (int (*) (struct cryptop *)) sys_treetank_authentication_callback;
+  operationPtr->crp_sid               = tt_auth_sessionId[core];
+  operationPtr->crp_ilen              = myLength;
+  operationPtr->crp_flags             = CRYPTO_F_IMBUF;
+  operationPtr->crp_buf               = (caddr_t) packetPtr;
+  operationPtr->crp_desc->crd_alg     = TT_AUTHENTICATION_ALGORITHM;
+  operationPtr->crp_desc->crd_klen    = TT_KEY_LENGTH;
+  operationPtr->crp_desc->crd_key     = (caddr_t) &tt_auth_key;
+  operationPtr->crp_desc->crd_skip    = 0x0;
+  operationPtr->crp_desc->crd_len     = myLength;
+  operationPtr->crp_desc->crd_inject  = 0x0;
+  operationPtr->crp_callback          = 
+        (int (*) (struct cryptop *)) sys_treetank_authentication_callback;
    
   /* --- Synchronously dispatch crypto operation. --------------------------- */
   
-  crypto_dispatch(operationPointer);
+  crypto_dispatch(operationPtr);
   
-  while (!(operationPointer->crp_flags & CRYPTO_F_DONE)) {
-    error = tsleep(operationPointer, PSOCK, "sys_treetank_authentication", 0);
+  while (!(operationPtr->crp_flags & CRYPTO_F_DONE)) {
+    syscall = tsleep(operationPtr, PSOCK, "sys_treetank_authentication", 0x0);
   }
   
-  if (error != TT_SYSCALL_SUCCESS) {
+  if (syscall != TT_SYSCALL_SUCCESS) {
     printf("ERROR(sys_treetank_authentication.c): Failed during tsleep.\n");
     goto finish;
   }
   
-  if (operationPointer->crp_etype != TT_SYSCALL_SUCCESS) {
-    error = operationPointer->crp_etype;
+  if (operationPtr->crp_etype != TT_SYSCALL_SUCCESS) {
+    syscall = operationPtr->crp_etype;
     printf("ERROR(sys_treetank_authentication.c): Failed during crypto_dispatch.\n");
     goto finish;
   }
   
   /* --- Collect result from buffer. ---------------------------------------- */
   
-  packetPointer = operationPointer->crp_buf;
+  packetPtr = operationPtr->crp_buf;
   
-  m_copydata(
-    packetPointer,
-    0,
-    TT_HMAC_LENGTH,
-    hmacPointer);
+  if (command == TT_COMMAND_WRITE) {
+    m_copydata(
+      packetPtr,
+      0x0,
+      TT_HMAC_LENGTH,
+      myHmacPtr);
+  } else {
+    m_copydata(
+      packetPtr,
+      0x0,
+      TT_HMAC_LENGTH,
+      tt_auth_hmac[core]);
+    for (i = TT_HMAC_LENGTH - 0x1; i > 0x0; i--) {
+      if (tt_auth_hmac[core][i] != myHmacPtr[i]) {
+        *lengthPtr = 0x0;
+        syscall = TT_SYSCALL_FAILURE;
+        printf("ERROR(sys_treetank_authentication.c): Failed during crypto_dispatch.\n");
+        goto finish;
+      }
+    }
+  }
   
   /* --- Cleanup for all conditions. ---------------------------------------- */
   
 finish:
 
-  if (packetPointer != NULL) 
-    m_freem(packetPointer);
+  if (packetPtr != NULL) 
+    m_freem(packetPtr);
  
-  if (operationPointer != NULL)
-    crypto_freereq(operationPointer);
+  if (operationPtr != NULL)
+    crypto_freereq(operationPtr);
   
-  return (error);
+  return (syscall);
 }
 
 /*
@@ -173,6 +187,6 @@ sys_treetank_authentication_callback(struct cryptop *op)
   }
   
   wakeup(op);
-  return (TT_OK);
+  return (TT_SYSCALL_SUCCESS);
   
 }
