@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.utils.TestDocument;
+import org.treetank.utils.DocumentTest;
 
 public class IReadTransactionTest {
 
@@ -46,7 +46,7 @@ public class IReadTransactionTest {
     Session.removeSession(PATH);
     SESSION = Session.beginSession(PATH);
     final IWriteTransaction wtx = SESSION.beginWriteTransaction();
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
     wtx.insertToken("foo", IReadTransaction.NULL_NODE_KEY);
     wtx.close();
   }

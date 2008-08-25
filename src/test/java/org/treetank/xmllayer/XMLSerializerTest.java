@@ -29,7 +29,7 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
-import org.treetank.utils.TestDocument;
+import org.treetank.utils.DocumentTest;
 
 public class XMLSerializerTest {
 
@@ -50,7 +50,7 @@ public class XMLSerializerTest {
     // Setup session.
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
     wtx.commit();
     wtx.close();
 
@@ -59,7 +59,7 @@ public class XMLSerializerTest {
     final IReadTransaction rtx = session.beginReadTransaction();
     final XMLSerializer serializer = new XMLSerializer(rtx, out);
     serializer.run();
-    TestCase.assertEquals(TestDocument.XML_TANK, out.toString());
+    TestCase.assertEquals(DocumentTest.XML_TANK, out.toString());
     rtx.close();
     session.close();
   }

@@ -33,7 +33,7 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
-import org.treetank.utils.TestDocument;
+import org.treetank.utils.DocumentTest;
 
 public class SAXGeneratorTest {
 
@@ -55,7 +55,7 @@ public class SAXGeneratorTest {
       // Setup session.
       final ISession session = Session.beginSession(PATH);
       final IWriteTransaction wtx = session.beginWriteTransaction();
-      TestDocument.create(wtx);
+      DocumentTest.create(wtx);
       wtx.commit();
       wtx.close();
 
@@ -64,7 +64,7 @@ public class SAXGeneratorTest {
       final IReadTransaction rtx = session.beginReadTransaction();
       final SAXGenerator generator = new SAXGenerator(rtx, writer, false);
       generator.run();
-      TestCase.assertEquals(TestDocument.XML, writer.toString());
+      TestCase.assertEquals(DocumentTest.XML, writer.toString());
       rtx.close();
       session.close();
     } catch (Exception e) {
@@ -79,7 +79,7 @@ public class SAXGeneratorTest {
       // Setup session.
       final ISession session = Session.beginSession(PATH);
       final IWriteTransaction wtx = session.beginWriteTransaction();
-      TestDocument.create(wtx);
+      DocumentTest.create(wtx);
       wtx.commit();
       wtx.close();
 

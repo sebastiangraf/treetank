@@ -26,7 +26,7 @@ import org.treetank.api.IAxis;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
-import org.treetank.utils.TestDocument;
+import org.treetank.utils.DocumentTest;
 
 public class NestedAxisTest {
 
@@ -44,7 +44,7 @@ public class NestedAxisTest {
     // Build simple test tree.
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
 
     // Find descendants starting from nodeKey 0L (root).
     wtx.moveToDocumentRoot();
@@ -75,7 +75,7 @@ public class NestedAxisTest {
     // Build simple test tree.
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
 
     // Find descendants starting from nodeKey 0L (root).
     wtx.moveToDocumentRoot();
@@ -108,7 +108,7 @@ public class NestedAxisTest {
     // Build simple test tree.
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
 
     // Find desceFndants starting from nodeKey 0L (root).
     wtx.moveToDocumentRoot();

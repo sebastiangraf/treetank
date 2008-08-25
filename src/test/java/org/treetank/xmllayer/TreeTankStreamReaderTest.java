@@ -33,7 +33,7 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
-import org.treetank.utils.TestDocument;
+import org.treetank.utils.DocumentTest;
 
 public class TreeTankStreamReaderTest {
 
@@ -53,7 +53,7 @@ public class TreeTankStreamReaderTest {
     // Setup session.
     session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
     wtx.commit();
     wtx.close();
   }
@@ -64,7 +64,7 @@ public class TreeTankStreamReaderTest {
     final IReadTransaction rtx = session.beginReadTransaction();
 
     final String out = StAXOutput.output(new TreeTankStreamReader(rtx));
-    TestCase.assertEquals(TestDocument.XML, out);
+    TestCase.assertEquals(DocumentTest.XML, out);
 
     rtx.close();
     session.close();

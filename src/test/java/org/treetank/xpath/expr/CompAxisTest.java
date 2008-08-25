@@ -31,7 +31,7 @@ import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.ItemList;
 import org.treetank.sessionlayer.Session;
-import org.treetank.utils.TestDocument;
+import org.treetank.utils.DocumentTest;
 import org.treetank.xpath.XPathAxis;
 
 /**
@@ -56,7 +56,7 @@ public class CompAxisTest {
     // Build simple test tree.
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
     IReadTransaction rtx = session.beginReadTransaction(new ItemList());
 
     // Find descendants starting from nodeKey 0L (root).

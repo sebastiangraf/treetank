@@ -36,7 +36,7 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.axislayer.AbstractAxis;
 import org.treetank.axislayer.DescendantAxis;
 import org.treetank.sessionlayer.Session;
-import org.treetank.utils.TestDocument;
+import org.treetank.utils.DocumentTest;
 import org.xml.sax.InputSource;
 
 public class SAXHandlerTest {
@@ -73,7 +73,7 @@ public class SAXHandlerTest {
     final ISession expectedSession = Session.beginSession(EXPECTED_PATH);
     final IWriteTransaction expectedWTX =
         expectedSession.beginWriteTransaction();
-    TestDocument.create(expectedWTX);
+    DocumentTest.create(expectedWTX);
     expectedWTX.commit();
     expectedWTX.close();
 
@@ -115,7 +115,7 @@ public class SAXHandlerTest {
     // Setup expected session.
     final ISession session = Session.beginSession(EXPECTED_PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
     wtx.commit();
     wtx.close();
 

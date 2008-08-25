@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
-import org.treetank.utils.TestDocument;
+import org.treetank.utils.DocumentTest;
 
 public class ValueFilterTest {
 
@@ -47,7 +47,7 @@ public class ValueFilterTest {
     // Build simple test tree.
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
 
     wtx.moveTo(3L);
     IFilterTest.testIFilterConventions(new ValueFilter(wtx, "oops1"), true);

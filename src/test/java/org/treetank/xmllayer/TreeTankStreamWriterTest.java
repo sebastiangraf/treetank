@@ -37,7 +37,7 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.axislayer.AbstractAxis;
 import org.treetank.axislayer.DescendantAxis;
 import org.treetank.sessionlayer.Session;
-import org.treetank.utils.TestDocument;
+import org.treetank.utils.DocumentTest;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -83,7 +83,7 @@ public class TreeTankStreamWriterTest {
     final ISession expectedSession = Session.beginSession(EXPECTED_PATH);
     final IWriteTransaction expectedWTX =
         expectedSession.beginWriteTransaction();
-    TestDocument.create(expectedWTX);
+    DocumentTest.create(expectedWTX);
     expectedWTX.commit();
     expectedWTX.close();
 

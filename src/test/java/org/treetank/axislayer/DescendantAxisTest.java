@@ -26,7 +26,7 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
-import org.treetank.utils.TestDocument;
+import org.treetank.utils.DocumentTest;
 
 public class DescendantAxisTest {
 
@@ -48,7 +48,7 @@ public class DescendantAxisTest {
     // Build simple test tree.
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
 
     wtx.moveToDocumentRoot();
     IAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {
@@ -95,7 +95,7 @@ public class DescendantAxisTest {
     // Build simple test tree.
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
 
     wtx.moveToDocumentRoot();
     IAxisTest.testIAxisConventions(new DescendantAxis(wtx, true), new long[] {

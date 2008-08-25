@@ -31,7 +31,7 @@ import org.treetank.axislayer.NameFilter;
 import org.treetank.axislayer.NodeFilter;
 import org.treetank.axislayer.TextFilter;
 import org.treetank.sessionlayer.Session;
-import org.treetank.utils.TestDocument;
+import org.treetank.utils.DocumentTest;
 
 public class NestedFilterTest {
 
@@ -54,7 +54,7 @@ public class NestedFilterTest {
     // Build simple test tree.
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
 
     wtx.moveTo(8L);
     IFilterTest.testIFilterConventions(new NestedFilter(

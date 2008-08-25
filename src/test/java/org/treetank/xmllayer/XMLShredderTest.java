@@ -37,7 +37,7 @@ import org.treetank.axislayer.DescendantAxis;
 import org.treetank.sessionlayer.Session;
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.utils.IConstants;
-import org.treetank.utils.TestDocument;
+import org.treetank.utils.DocumentTest;
 
 public class XMLShredderTest {
 
@@ -102,7 +102,7 @@ public class XMLShredderTest {
     final ISession expectedSession = Session.beginSession(EXPECTED_PATH);
     final IWriteTransaction expectedTrx =
         expectedSession.beginWriteTransaction();
-    TestDocument.create(expectedTrx);
+    DocumentTest.create(expectedTrx);
     expectedTrx.commit();
 
     // Setup parsed session.
@@ -163,7 +163,7 @@ public class XMLShredderTest {
     final ISession expectedSession2 = Session.beginSession(EXPECTED_PATH2);
     final IWriteTransaction expectedTrx2 =
         expectedSession2.beginWriteTransaction();
-    TestDocument.createWithoutNamespace(expectedTrx2);
+    DocumentTest.createWithoutNamespace(expectedTrx2);
     expectedTrx2.commit();
 
     // Setup parsed session.
