@@ -63,7 +63,7 @@
 
 int sys_treetank_compression(u_int8_t, u_int8_t, u_int16_t *, u_int8_t *);
 int sys_treetank_encryption(u_int8_t, u_int8_t, u_int16_t *, u_int8_t *);
-int sys_treetank_authentication(u_int8_t, u_int8_t, u_int8_t *, u_int8_t *, u_int8_t *);
+int sys_treetank_authentication(u_int8_t, u_int8_t, u_int16_t *, u_int8_t *);
 
 /* --- Global variables. ---------------------------------------------------- */
 
@@ -144,7 +144,7 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
       printf("ERROR(sys_treetank.c): Could not perform compression.\n");
       goto finish;
     }
-      
+     
     if (sys_treetank_encryption(
           core,
           command,
@@ -155,16 +155,15 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
       goto finish;
     }
       
-//      if (sys_treetank_authentication(
-//            core,
-//            operation,
-//            lengthPointer,
-//            hmacPointer,
-//            tt_buffer[core]) != TT_OK) {
-//        error = TT_ERROR;
-//        printf("ERROR(sys_treetank.c): Could not perform authentication.\n");
-//        goto finish;
-//      }
+    if (sys_treetank_authentication(
+          core,
+          command,
+          lengthPtr,
+          tt_buffer[core]) != TT_SYSCALL_SUCCESS) {
+      syscall = TT_SYSCALL_FAILURE;
+      printf("ERROR(sys_treetank.c): Could not perform authentication.\n");
+      goto finish;
+    }
 
   } else if (command == TT_COMMAND_READ) {
   
@@ -174,16 +173,15 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
       goto finish;
     }
 
-//      if (sys_treetank_authentication(
-//            core,
-//            operation,
-//            lengthPointer,
-//            hmacPointer,
-//            tt_buffer[core]) != TT_OK) {
-//        error = TT_ERROR;
-//        printf("ERROR(sys_treetank.c): Could not perform authentication.\n");
-//        goto finish;
-//      }
+    if (sys_treetank_authentication(
+          core,
+          command,
+          lengthPtr,
+          tt_buffer[core]) != TT_SYSCALL_SUCCESS) {
+      syscall = TT_SYSCALL_FAILURE;
+      printf("ERROR(sys_treetank.c): Could not perform authentication.\n");
+      goto finish;
+    }
 
     if (sys_treetank_encryption(
           core,

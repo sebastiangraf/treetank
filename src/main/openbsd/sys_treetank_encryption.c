@@ -30,7 +30,6 @@ static u_int64_t tt_enc_sessionId[] = {
   TT_NULL, TT_NULL, TT_NULL, TT_NULL,
   TT_NULL, TT_NULL, TT_NULL, TT_NULL,
   TT_NULL, TT_NULL, TT_NULL };
-  
 static u_int8_t tt_enc_key[32] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 static u_int8_t tt_enc_iv[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
