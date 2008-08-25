@@ -28,15 +28,6 @@
 #include <stdio.h>
 #include <string.h>
 
-/*
- * gcc
- *   -shared
- *   -Wall
- *   -I/treetank/jre/include/
- *   -o /treetank/service/libTreeTank.so
- *   NativeTreeTank.c
- */
-
 JNIEXPORT jshort JNICALL Java_org_treetank_pagelayer_CryptoNativeImpl_syscall(
   JNIEnv *env,
   jobject o,
@@ -45,10 +36,10 @@ JNIEXPORT jshort JNICALL Java_org_treetank_pagelayer_CryptoNativeImpl_syscall(
   jshort length,
   jobject buffer)
 {
-  u_int16_t result    = 0x0;
+  jshort result    = 0x0;
   u_int8_t *bufferPtr = (*env)->GetDirectBufferAddress(env, buffer);
   
-  result = (u_int16_t) syscall(306, tank, operation, length, bufferPtr);
+  result = (jshort) syscall(306, tank, operation, length, bufferPtr);
 
   return result;
 }
