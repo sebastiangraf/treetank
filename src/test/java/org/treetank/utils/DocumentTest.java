@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id:TestDocument.java 4373 2008-08-25 07:24:30Z kramis $
  */
 
 package org.treetank.utils;
@@ -58,7 +58,7 @@ import org.treetank.api.IWriteTransaction;
  * 
  * </p>
  */
-public final class TestDocument {
+public final class DocumentTest {
 
   /** String representation of test document with TNK environment. */
   public static final String XML_TANK =
@@ -84,7 +84,7 @@ public final class TestDocument {
    * Hidden constructor.
    *
    */
-  private TestDocument() {
+  private DocumentTest() {
     // Hidden.
   }
 

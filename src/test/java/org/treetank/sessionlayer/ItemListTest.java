@@ -29,7 +29,7 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.nodelayer.TextNode;
-import org.treetank.utils.TestDocument;
+import org.treetank.utils.DocumentTest;
 
 public class ItemListTest {
 
@@ -48,7 +48,7 @@ public class ItemListTest {
 
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
     wtx.commit();
     wtx.close();
 

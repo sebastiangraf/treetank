@@ -19,14 +19,13 @@
 TreeTank Development Environment
 --------------------------------
 + J2SE 5.
-+ JamVM 1.5.1.
 + JUnit 4.4.
 + Checkstyle 4.4.
 + Eclipse 3.3.2.
 + Subclipse 1.2.4.
 + Spell Checker.
 + JamVM 1.5.1.
-+ Classpath 0.91.
++ Classpath 0.92.
 
 TreeTank Coding Conventions
 ---------------------------
@@ -41,7 +40,7 @@ TreeTank Coding Conventions
 + Subversion, JavaDoc, and other comments: Correct English sentences.
 
 + Implement according to roadmap.txt which is defined by the project lead.
-+ Test driven development: Write test cases.
++ Test driven development: Write test cases named to **/*Test.java
 + Change management: Append changes to changes.txt and increment revision
   in build.xml.
 + Team collaboration: Checkout or update must not yield errors or failing tests.

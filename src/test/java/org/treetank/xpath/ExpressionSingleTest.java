@@ -36,7 +36,7 @@ import org.treetank.axislayer.NestedAxis;
 import org.treetank.axislayer.ParentAxis;
 import org.treetank.axislayer.SelfAxis;
 import org.treetank.sessionlayer.Session;
-import org.treetank.utils.TestDocument;
+import org.treetank.utils.DocumentTest;
 import org.treetank.xpath.expr.UnionAxis;
 import org.treetank.xpath.filter.DupFilterAxis;
 
@@ -73,7 +73,7 @@ public class ExpressionSingleTest {
     // Build simple test tree.
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
 
     // test one axis
     IAxis self = new SelfAxis(wtx);
@@ -99,7 +99,7 @@ public class ExpressionSingleTest {
     // Build simple test tree.
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
 
     builder = new ExpressionSingle();
     builder.add(new ChildAxis(wtx));

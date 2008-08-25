@@ -27,7 +27,7 @@ import org.treetank.sessionlayer.Session;
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.xmllayer.XMLShredder;
 
-public class TestClassTest {
+public class ClassTest {
 
   public static final String XML =
       "src"

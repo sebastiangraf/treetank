@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.utils.TestDocument;
+import org.treetank.utils.DocumentTest;
 
 public class MultipleCommitTest {
 
@@ -68,7 +68,7 @@ public class MultipleCommitTest {
   public void testAutoCommit() {
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction(100, 1);
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
     wtx.close();
 
     final IReadTransaction rtx = session.beginReadTransaction();

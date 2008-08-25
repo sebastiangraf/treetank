@@ -33,7 +33,7 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.utils.IConstants;
-import org.treetank.utils.TestDocument;
+import org.treetank.utils.DocumentTest;
 
 public class SessionTest {
 
@@ -173,7 +173,7 @@ public class SessionTest {
 
     final IWriteTransaction wtx = session.beginWriteTransaction();
 
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
 
     TestCase.assertNotNull(wtx.moveToDocumentRoot());
     assertEquals(IReadTransaction.DOCUMENT_ROOT_KIND, wtx.getKind());
@@ -221,7 +221,7 @@ public class SessionTest {
     final ISession session = Session.beginSession(TEST_SHREDDED_REVISION_PATH);
 
     final IWriteTransaction wtx1 = session.beginWriteTransaction();
-    TestDocument.create(wtx1);
+    DocumentTest.create(wtx1);
     assertEquals(0L, wtx1.getRevisionNumber());
     assertEquals(12L, wtx1.getNodeCount());
     wtx1.commit();
@@ -256,7 +256,7 @@ public class SessionTest {
     final ISession session1 = Session.beginSession(TEST_EXISTING_PATH);
 
     final IWriteTransaction wtx1 = session1.beginWriteTransaction();
-    TestDocument.create(wtx1);
+    DocumentTest.create(wtx1);
     assertEquals(0L, wtx1.getRevisionNumber());
     wtx1.commit();
     wtx1.close();
@@ -298,7 +298,7 @@ public class SessionTest {
     final ISession session = Session.beginSession(TEST_EXISTING_PATH);
 
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
     wtx.commit();
     wtx.close();
     wtx.close();
@@ -319,7 +319,7 @@ public class SessionTest {
     final ISession session = Session.beginSession(TEST_EXISTING_PATH);
 
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
     wtx.close();
 
     final IReadTransaction rtx = session.beginReadTransaction();
@@ -336,7 +336,7 @@ public class SessionTest {
     final ISession session = Session.beginSession(TEST_EXISTING_PATH);
 
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
 
     final IReadTransaction rtx = session.beginReadTransaction();
 

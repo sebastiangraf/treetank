@@ -31,7 +31,7 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.axislayer.DescendantAxis;
-import org.treetank.utils.TestDocument;
+import org.treetank.utils.DocumentTest;
 
 public class ThreadTest {
 
@@ -51,7 +51,7 @@ public class ThreadTest {
     ISession session = Session.beginSession(PATH);
 
     IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
     wtx.commit();
     wtx.close();
 

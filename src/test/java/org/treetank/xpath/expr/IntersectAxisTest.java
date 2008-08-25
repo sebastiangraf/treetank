@@ -28,7 +28,7 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.axislayer.IAxisTest;
 import org.treetank.sessionlayer.ItemList;
 import org.treetank.sessionlayer.Session;
-import org.treetank.utils.TestDocument;
+import org.treetank.utils.DocumentTest;
 import org.treetank.xpath.XPathAxis;
 
 /**
@@ -58,7 +58,7 @@ public class IntersectAxisTest {
     // Build simple test tree.
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
     IReadTransaction rtx = session.beginReadTransaction(new ItemList());
 
     rtx.moveTo(2L);

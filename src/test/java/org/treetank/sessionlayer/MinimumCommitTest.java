@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.utils.TestDocument;
+import org.treetank.utils.DocumentTest;
 
 public class MinimumCommitTest {
 
@@ -58,7 +58,7 @@ public class MinimumCommitTest {
     session = Session.beginSession(PATH);
     wtx = session.beginWriteTransaction();
     TestCase.assertEquals(1L, wtx.getRevisionNumber());
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
     wtx.commit();
     wtx.close();
 

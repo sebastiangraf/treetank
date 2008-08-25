@@ -33,7 +33,7 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.axislayer.DescendantAxis;
 import org.treetank.sessionlayer.ItemList;
 import org.treetank.sessionlayer.Session;
-import org.treetank.utils.TestDocument;
+import org.treetank.utils.DocumentTest;
 import org.treetank.xpath.AtomicValue;
 import org.treetank.xpath.expr.LiteralExpr;
 import org.treetank.xpath.functions.XPathError;
@@ -60,7 +60,7 @@ public class NodeCompTest {
     // Build simple test tree.
     session = Session.beginSession(PATH);
     wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
 
     // Find descendants starting from nodeKey 0L (root).
     wtx.moveToDocumentRoot();

@@ -30,7 +30,7 @@ import org.junit.Test;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.utils.TestDocument;
+import org.treetank.utils.DocumentTest;
 
 public class UpdateTest {
 
@@ -144,7 +144,7 @@ public class UpdateTest {
   public void testRemoveDocument() throws IOException {
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
 
     try {
       wtx.moveToDocumentRoot();
@@ -163,7 +163,7 @@ public class UpdateTest {
   public void testRemoveDescendant() throws IOException {
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
 
     wtx.moveTo(2L);
     wtx.remove();

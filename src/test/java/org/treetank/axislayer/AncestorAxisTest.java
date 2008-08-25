@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
-import org.treetank.utils.TestDocument;
+import org.treetank.utils.DocumentTest;
 
 public class AncestorAxisTest {
 
@@ -45,7 +45,7 @@ public class AncestorAxisTest {
   public void testAxisConventions() {
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
 
     wtx.moveTo(9L);
     IAxisTest
@@ -70,7 +70,7 @@ public class AncestorAxisTest {
   public void testAxisConventionsIncludingSelf() {
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
-    TestDocument.create(wtx);
+    DocumentTest.create(wtx);
 
     wtx.moveTo(9L);
     IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true), new long[] {
