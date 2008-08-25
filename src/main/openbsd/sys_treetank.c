@@ -80,7 +80,7 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
 
   /* --- Local variables. --------------------------------------------------- */
   
-  u_int16_t                 result           = TT_ERROR;
+  int                       result           = TT_ERROR;
   struct sys_treetank_args *argumentPointer  = v;
   
   u_int8_t                  tank             = SCARG(argumentPointer, tank);
@@ -126,7 +126,7 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
   printf("tank=%d, ", tank);
   printf("command=%d, ", command);
   printf("core=%d, ", core);
-  printf("length=%d\n", length);
+  printf("length=%d, ", length);
   
   copyin(
     bufferPtr,
@@ -134,6 +134,9 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
     length);
     
   /* --- Perform operations. ------------------------------------------------ */
+  
+  result = length;
+  printf("result=%d\n", result);
     
 //  if (operation == TT_WRITE) {
 //  
