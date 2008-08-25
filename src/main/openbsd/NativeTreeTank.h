@@ -7,13 +7,21 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#undef org_treetank_pagelayer_CryptoNativeImpl_CORE_COUNT
+#define org_treetank_pagelayer_CryptoNativeImpl_CORE_COUNT 15L
+#undef org_treetank_pagelayer_CryptoNativeImpl_ERROR
+#define org_treetank_pagelayer_CryptoNativeImpl_ERROR 0L
+#undef org_treetank_pagelayer_CryptoNativeImpl_COMMAND_WRITE
+#define org_treetank_pagelayer_CryptoNativeImpl_COMMAND_WRITE 1L
+#undef org_treetank_pagelayer_CryptoNativeImpl_COMMAND_READ
+#define org_treetank_pagelayer_CryptoNativeImpl_COMMAND_READ 2L
 /* Inaccessible static: coreQueue */
 /*
  * Class:     org_treetank_pagelayer_CryptoNativeImpl
  * Method:    syscall
- * Signature: (BBSLjava/nio/ByteBuffer;)S
+ * Signature: (BBSLjava/nio/ByteBuffer;)I
  */
-JNIEXPORT jshort JNICALL Java_org_treetank_pagelayer_CryptoNativeImpl_syscall
+JNIEXPORT jint JNICALL Java_org_treetank_pagelayer_CryptoNativeImpl_syscall
   (JNIEnv *, jobject, jbyte, jbyte, jshort, jobject);
 
 #ifdef __cplusplus
