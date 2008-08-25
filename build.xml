@@ -13,6 +13,7 @@
 	<property name="src.java.dir" value="src/main/java" />
 	<property name="src.openbsd.dir" value="src/main/openbsd" />
 	<property name="test.dir" value="src/test/java" />
+	<property name="bench.dir" value="src/bench/java" />
 	<property name="externals.dir" value="externals" />
 
 	<property name="build.dir" value="target" />
@@ -60,6 +61,9 @@
 		<javac srcdir="${test.dir}" destdir="${classes.dir}">
 			<classpath refid="classpath" />
 		</javac>
+		<javac srcdir="${bench.dir}" destdir="${classes.dir}">
+		    <classpath refid="classpath" />
+		</javac>
 	</target>
 
 	<!--
@@ -99,7 +103,7 @@
 	 \ -->
 	<target name="jar" depends="compile" description="Build treetank JAR.">
 		<jar destfile="${build.dir}/treetank.jar" basedir="${classes.dir}" update="true">
-			<fileset dir="${classes.dir}" includes="**/*.class" excludes="**/*Test.class" id="classes" />
+			<fileset dir="${classes.dir}" includes="**/*.class" excludes="**/*Test.class,**/*Bench.class" id="classes" />
 		</jar>
 	</target>
 
