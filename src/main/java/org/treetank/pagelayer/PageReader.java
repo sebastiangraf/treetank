@@ -96,14 +96,14 @@ public final class PageReader {
     try {
 
       // Prepare environment for read.
-      final short inputLength = (short) pageReference.getLength();
+      final short inputLength = (short) (pageReference.getLength() + 24);
       mBuffer.clear();
       mBuffer.limit(inputLength);
+      mBuffer.position(24);
 
       // Read page from file.
       mChannel.position(pageReference.getStart());
       mChannel.read(mBuffer);
-      mBuffer.flip();
 
       // Perform crypto operations.
       mBuffer.clear();
@@ -121,6 +121,7 @@ public final class PageReader {
 
     // Return reader required to instantiate and deserialize page.
     mBuffer.clear();
+    mBuffer.position(24);
     return mBuffer;
 
   }
