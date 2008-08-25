@@ -61,8 +61,8 @@
   
 /* --- Function prototypes. ------------------------------------------------- */
 
-int sys_treetank_compression(u_int8_t, u_int8_t, u_int8_t *, u_int8_t *);
-int sys_treetank_encryption(u_int8_t, u_int8_t, u_int8_t *, u_int8_t *);
+int sys_treetank_compression(u_int8_t, u_int8_t, u_int16_t *, u_int8_t *);
+int sys_treetank_encryption(u_int8_t, u_int8_t, u_int16_t *, u_int8_t *);
 int sys_treetank_authentication(u_int8_t, u_int8_t, u_int8_t *, u_int8_t *, u_int8_t *);
 
 /* --- Global variables. ---------------------------------------------------- */
@@ -82,18 +82,12 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
   
   int                       syscall          = TT_SYSCALL_SUCCESS;
   struct sys_treetank_args *argumentPointer  = v;
-  
   u_int8_t                  tank             = SCARG(argumentPointer, tank);
   u_int8_t                  operation        = SCARG(argumentPointer, operation);
   u_int16_t                *lengthPtr        = SCARG(argumentPointer, lengthPtr);
   u_int8_t                 *bufferPtr        = SCARG(argumentPointer, bufferPtr);
-  
   u_int8_t                  command          = operation & 0xF;
   u_int8_t                  core             = operation >> 0x4;
-  
-  //u_int8_t                 *startPointer     = NULL;
-  //u_int8_t                 *lengthPointer    = NULL;
-  //u_int8_t                 *hmacPointer      = NULL;
   
   /* --- Check arguments. --------------------------------------------------- */
   
@@ -109,9 +103,12 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
     goto finish;
   }
   
-  if ((lengthPtr == NULL) || (*lengthPtr == TT_NULL) || (*lengthPtr > TT_BUFFER_LENGTH)) {
+  if (
+      (lengthPtr == NULL)
+      || (*lengthPtr == TT_NULL)
+      || (*lengthPtr > TT_BUFFER_LENGTH)) {
     syscall = TT_SYSCALL_FAILURE;
-    printf("ERROR(sys_treetank.c): Invalid length argument.\n");
+    printf("ERROR(sys_treetank.c): Invalid lengthPtr argument.\n");
     goto finish;
   }
   
@@ -130,28 +127,34 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
     
   /* --- Perform operations. ------------------------------------------------ */
     
-//  if (operation == TT_WRITE) {
-//  
-//      if (sys_treetank_compression(
-//            core,
-//            operation,
-//            lengthPointer,
-//            tt_buffer[core]) != TT_OK) {
-//        error = TT_ERROR;
-//        printf("ERROR(sys_treetank.c): Could not perform compression.\n");
-//        goto finish;
-//      }
-//      
-//      if (sys_treetank_encryption(
-//            core,
-//            operation,
-//            lengthPointer,
-//            tt_buffer[core]) != TT_OK) {
-//        error = TT_ERROR;
-//        printf("ERROR(sys_treetank.c): Could not perform encryption.\n");
-//        goto finish;
-//      }
-//      
+  if (command == TT_COMMAND_WRITE) {
+  
+    if (*lengthPtr < TT_REFERENCE_LENGTH) {
+      syscall = TT_SYSCALL_FAILURE;
+      printf("ERROR(sys_treetank.c): Invalid lengthPtr argument.\n");
+      goto finish;
+    }
+  
+    if (sys_treetank_compression(
+          core,
+          command,
+          lengthPtr,
+          tt_buffer[core]) != TT_SYSCALL_SUCCESS) {
+      syscall = TT_SYSCALL_FAILURE;
+      printf("ERROR(sys_treetank.c): Could not perform compression.\n");
+      goto finish;
+    }
+      
+    if (sys_treetank_encryption(
+          core,
+          command,
+          lengthPtr,
+          tt_buffer[core]) != TT_SYSCALL_SUCCESS) {
+      syscall = TT_SYSCALL_FAILURE;
+      printf("ERROR(sys_treetank.c): Could not perform encryption.\n");
+      goto finish;
+    }
+      
 //      if (sys_treetank_authentication(
 //            core,
 //            operation,
@@ -162,9 +165,15 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
 //        printf("ERROR(sys_treetank.c): Could not perform authentication.\n");
 //        goto finish;
 //      }
-//      
-//  } else {
-//  
+
+  } else if (command == TT_COMMAND_READ) {
+  
+    if (*lengthPtr < TT_REFERENCE_LENGTH) {
+      syscall = TT_SYSCALL_FAILURE;
+      printf("ERROR(sys_treetank.c): Invalid lengthPtr argument.\n");
+      goto finish;
+    }
+
 //      if (sys_treetank_authentication(
 //            core,
 //            operation,
@@ -175,34 +184,43 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
 //        printf("ERROR(sys_treetank.c): Could not perform authentication.\n");
 //        goto finish;
 //      }
-//      
-//      if (sys_treetank_encryption(
-//            core,
-//            operation,
-//            lengthPointer,
-//            tt_buffer[core]) != TT_OK) {
-//        error = TT_ERROR;
-//        printf("ERROR(sys_treetank.c): Could not perform encryption.\n");
-//        goto finish;
-//      }
-//  
-//      if (sys_treetank_compression(
-//            core,
-//            operation,
-//            lengthPointer,
-//            tt_buffer[core]) != TT_OK) {
-//        error = TT_ERROR;
-//        printf("ERROR(sys_treetank.c): Could not perform compression.\n");
-//        goto finish;
-//      }
-//  
-//  }
+
+    if (sys_treetank_encryption(
+          core,
+          command,
+          lengthPtr,
+          tt_buffer[core]) != TT_SYSCALL_SUCCESS) {
+      syscall = TT_SYSCALL_FAILURE;
+      printf("ERROR(sys_treetank.c): Could not perform encryption.\n");
+      goto finish;
+    }
+
+    if (sys_treetank_compression(
+          core,
+          command,
+          lengthPtr,
+          tt_buffer[core]) != TT_SYSCALL_SUCCESS) {
+      syscall = TT_SYSCALL_FAILURE;
+      printf("ERROR(sys_treetank.c): Could not perform compression.\n");
+      goto finish;
+    }
   
-  /* --- Copy buffer from kernel to user space. ----------------------------- */
+  } else {
   
-  if ((*lengthPtr == TT_NULL) || (*lengthPtr > TT_BUFFER_LENGTH)) {
     syscall = TT_SYSCALL_FAILURE;
-    printf("ERROR(sys_treetank.c): Invalid result length.\n");
+    printf("ERROR(sys_treetank.c): Invalid operation argument.\n");
+    goto finish;
+  
+  }
+  
+    /* --- Copy buffer from kernel to user space. ----------------------------- */
+  
+  if (
+      (lengthPtr == NULL)
+      || (*lengthPtr == TT_NULL)
+      || (*lengthPtr > TT_BUFFER_LENGTH)) {
+    syscall = TT_SYSCALL_FAILURE;
+    printf("ERROR(sys_treetank.c): Invalid lengthPtr result.\n");
     goto finish;
   }
   
@@ -211,7 +229,7 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
     bufferPtr,
     *lengthPtr);
   
-  /* --- Cleanup for all conditions. ---------------------------------------- */
+  /* --- Cleanup. ----------------------------------------------------------- */
   
 finish:
   

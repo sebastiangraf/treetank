@@ -43,13 +43,13 @@ public class TestTreeTankService {
       r.nextBytes(referenceBuffer);
       buffer.put(referenceBuffer);
 
-      test(crypto, (short) 7, buffer, referenceBuffer);
+      test(crypto, (short) 30, buffer, referenceBuffer);
       test(crypto, (short) 32, buffer, referenceBuffer);
       test(crypto, (short) 188, buffer, referenceBuffer);
       test(crypto, (short) 1200, buffer, referenceBuffer);
       test(crypto, (short) 4932, buffer, referenceBuffer);
       test(crypto, (short) 8452, buffer, referenceBuffer);
-      test(crypto, (short) 10000, buffer, referenceBuffer);
+      test(crypto, (short) 9000, buffer, referenceBuffer);
 
     } catch (Exception e) {
       System.out.println("FAILURE: " + e.getMessage());
@@ -63,7 +63,7 @@ public class TestTreeTankService {
       final ByteBuffer buffer,
       final byte[] referenceBuffer) throws Exception {
 
-    System.out.print("Test page length " + length + ": ");
+    System.out.print("Test page length: " + length);
 
     final long start = System.currentTimeMillis();
 
@@ -71,6 +71,8 @@ public class TestTreeTankService {
     final short decryptLength = crypto.decrypt(cryptLength, buffer);
 
     final long stop = System.currentTimeMillis();
+    
+    System.out.print("..." + cryptLength + "..." + decryptLength);
 
     if (decryptLength != length) {
       throw new Exception("Error: Length after decryption is wrong: "
@@ -78,7 +80,8 @@ public class TestTreeTankService {
     }
 
     buffer.rewind();
-    for (int i = 0; i < decryptLength; i++) {
+    buffer.position(24);
+    for (int i = 24; i < decryptLength; i++) {
       if (buffer.get() != referenceBuffer[i]) {
         throw new Exception("Error: Byte does not match at " + i);
       }
@@ -87,7 +90,7 @@ public class TestTreeTankService {
     buffer.rewind();
     buffer.put(referenceBuffer);
 
-    System.out.println((stop - start) + "[ms]: SUCCESS.");
+    System.out.println(": " + (stop - start) + "[ms]: SUCCESS.");
 
   }
 

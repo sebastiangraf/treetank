@@ -18,49 +18,41 @@
 
 #include "sys_treetank.h"
 
-#define TT_OK 99
-#define TT_WRITE 100
-#define TT_READ_INT(X) 0;
-#define TT_WRITE_INT(X,Y) ;
-
 /* --- Function prototypes. ------------------------------------------------- */
 
-int sys_treetank_compression(u_int8_t, u_int8_t, u_int8_t *, u_int8_t *);
+int sys_treetank_compression(u_int8_t, u_int8_t, u_int16_t *, u_int8_t *);
 int sys_treetank_compression_callback(struct cryptop *op);
 
 /* --- Global variables. ---------------------------------------------------- */
 
 static u_int64_t tt_comp_sessionId[] = {
-  TT_NULL_SESSION,
-  TT_NULL_SESSION,
-  TT_NULL_SESSION,
-  TT_NULL_SESSION,
-  TT_NULL_SESSION,
-  TT_NULL_SESSION,
-  TT_NULL_SESSION,
-  TT_NULL_SESSION };
+  TT_NULL, TT_NULL, TT_NULL, TT_NULL,
+  TT_NULL, TT_NULL, TT_NULL, TT_NULL,
+  TT_NULL, TT_NULL, TT_NULL, TT_NULL,
+  TT_NULL, TT_NULL, TT_NULL };
 
 /*
  * Perform compression.
  */
 int
 sys_treetank_compression(
-  u_int8_t core,
-  u_int8_t operation,
-  u_int8_t *lengthPointer,
-  u_int8_t *bufferPointer)
+  u_int8_t   core,
+  u_int8_t   command,
+  u_int16_t *lengthPtr,
+  u_int8_t  *bufferPtr)
 {
 
   /* --- Local variables. --------------------------------------------------- */
   
-  int             error            = TT_SYSCALL_SUCCESS;
-  struct mbuf    *packetPointer    = NULL;
-  struct cryptop *operationPointer = NULL;
-  u_int32_t       length           = TT_READ_INT(lengthPointer);
+  int             syscall      = TT_SYSCALL_SUCCESS;
+  struct mbuf    *packetPtr    = NULL;
+  struct cryptop *operationPtr = NULL;
+  u_int16_t       myLength     = *lengthPtr - TT_REFERENCE_LENGTH;
+  u_int8_t       *myBufferPtr  = bufferPtr + TT_REFERENCE_LENGTH;
   
   /* --- Initialise session (if required). ---------------------------------- */
     
-  if (tt_comp_sessionId[core] == TT_NULL_SESSION) {
+  if (tt_comp_sessionId[core] == TT_NULL) {
     struct cryptoini session;  
 
     bzero(&session, sizeof(session));
@@ -69,9 +61,9 @@ sys_treetank_compression(
     if (crypto_newsession(
           &(tt_comp_sessionId[core]),
           &session,
-          0) != TT_SYSCALL_SUCCESS) {
-      error = TT_SYSCALL_FAILURE;
-      tt_comp_sessionId[core] = TT_NULL_SESSION;
+          0x0) != TT_SYSCALL_SUCCESS) {
+      syscall = TT_SYSCALL_FAILURE;
+      tt_comp_sessionId[core] = TT_NULL;
       printf("ERROR(sys_treetank_compression.c): Could not allocate cryptoini.\n");
       goto finish;
     }
@@ -80,88 +72,89 @@ sys_treetank_compression(
   
   /* --- Initialise buffer. ------------------------------------------------- */
   
-  packetPointer = m_gethdr(M_DONTWAIT, MT_DATA);
-  if (packetPointer == NULL) {
-    error = TT_SYSCALL_FAILURE;
+  packetPtr = m_gethdr(M_DONTWAIT, MT_DATA);
+  if (packetPtr == NULL) {
+    syscall = TT_SYSCALL_FAILURE;
     printf("ERROR(sys_treetank_compression.c): Could not allocate mbuf.\n");
     goto finish;
   }
   
-  packetPointer->m_pkthdr.len = 0;
-  packetPointer->m_len        = 0;
+  packetPtr->m_pkthdr.len = 0x0;
+  packetPtr->m_len        = 0x0;
     
   m_copyback(
-    packetPointer,
-    0,
-    length,
-    bufferPointer);
+    packetPtr,
+    0x0,
+    myLength,
+    myBufferPtr);
 
   /* --- Initialise crypto operation. --------------------------------------- */
   
-  operationPointer = crypto_getreq(1);
-  if (operationPointer == NULL) {
-    error = TT_SYSCALL_FAILURE;
+  operationPtr = crypto_getreq(0x1);
+  if (operationPtr == NULL) {
+    syscall = TT_SYSCALL_FAILURE;
     printf("ERROR(sys_treetank_compression.c): Could not allocate crypto.\n");
     goto finish;
   }
 
-  operationPointer->crp_sid               = tt_comp_sessionId[core];
-  operationPointer->crp_ilen              = length;
-  operationPointer->crp_flags             = CRYPTO_F_IMBUF;
-  operationPointer->crp_buf               = (caddr_t) packetPointer;
-  operationPointer->crp_desc->crd_alg     = TT_COMPRESSION_ALGORITHM;
-  operationPointer->crp_desc->crd_skip    = 0;
-  operationPointer->crp_desc->crd_len     = length;
-  operationPointer->crp_desc->crd_inject  = 0;
-  if (operation == TT_WRITE)
-    operationPointer->crp_desc->crd_flags = CRD_F_COMP;
+  operationPtr->crp_sid               = tt_comp_sessionId[core];
+  operationPtr->crp_ilen              = myLength;
+  operationPtr->crp_flags             = CRYPTO_F_IMBUF;
+  operationPtr->crp_buf               = (caddr_t) packetPtr;
+  operationPtr->crp_desc->crd_alg     = TT_COMPRESSION_ALGORITHM;
+  operationPtr->crp_desc->crd_skip    = 0x0;
+  operationPtr->crp_desc->crd_len     = myLength;
+  operationPtr->crp_desc->crd_inject  = 0x0;
+  if (command == TT_COMMAND_WRITE)
+    operationPtr->crp_desc->crd_flags = CRD_F_COMP;
   else
-    operationPointer->crp_desc->crd_flags = 0;
-  operationPointer->crp_callback          = (int (*) (struct cryptop *)) sys_treetank_compression_callback;
+    operationPtr->crp_desc->crd_flags = 0x0;
+  operationPtr->crp_callback          = 
+        (int (*) (struct cryptop *)) sys_treetank_compression_callback;
    
   /* --- Synchronously dispatch crypto operation. --------------------------- */
   
-  crypto_dispatch(operationPointer);
+  crypto_dispatch(operationPtr);
   
-  while (!(operationPointer->crp_flags & CRYPTO_F_DONE)) {
-    error = tsleep(operationPointer, PSOCK, "sys_treetank_compression", 0);
+  while (!(operationPtr->crp_flags & CRYPTO_F_DONE)) {
+    syscall = tsleep(operationPtr, PSOCK, "sys_treetank_compression", 0x0);
   }
   
-  if (error != TT_SYSCALL_SUCCESS) {
+  if (syscall != TT_SYSCALL_SUCCESS) {
     printf("ERROR(sys_treetank_compression.c): Failed during tsleep.\n");
     goto finish;
   }
   
-  if (operationPointer->crp_etype != TT_OK) {
-    error = operationPointer->crp_etype;
+  if (operationPtr->crp_etype != TT_SYSCALL_SUCCESS) {
+    syscall = operationPtr->crp_etype;
     printf("ERROR(sys_treetank_compression.c): Failed during crypto_dispatch.\n");
     goto finish;
   }
   
   /* --- Collect result from buffer. ---------------------------------------- */
   
-  length = operationPointer->crp_olen;
-  packetPointer = operationPointer->crp_buf;
-  
-  TT_WRITE_INT(lengthPointer, length);
+  myLength = operationPtr->crp_olen;
+  packetPtr = operationPtr->crp_buf;
   
   m_copydata(
-    packetPointer,
-    0,
-    length,
-    bufferPointer);
+    packetPtr,
+    0x0,
+    myLength,
+    myBufferPtr);
+    
+  *lengthPtr = myLength + TT_REFERENCE_LENGTH;
   
   /* --- Cleanup under any circumstance. ------------------------------------ */
   
 finish:
 
-  if (packetPointer != NULL)
-    m_freem(packetPointer);
+  if (packetPtr != NULL)
+    m_freem(packetPtr);
  
-  if (operationPointer != NULL)
-    crypto_freereq(operationPointer);
+  if (operationPtr != NULL)
+    crypto_freereq(operationPtr);
   
-  return (error);
+  return (syscall);
 }
 
 /*
@@ -177,6 +170,6 @@ sys_treetank_compression_callback(struct cryptop *op)
   }
   
   wakeup(op);
-  return (TT_OK);
+  return (TT_SYSCALL_SUCCESS);
   
 }
