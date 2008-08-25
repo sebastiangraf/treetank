@@ -102,9 +102,7 @@
 	 | JAR: Collect all classes from source tree into jar file.
 	 \ -->
 	<target name="jar" depends="compile" description="Build treetank JAR.">
-		<jar destfile="${build.dir}/treetank.jar" basedir="${classes.dir}" update="true">
-			<fileset dir="${classes.dir}" includes="**/*.class" excludes="**/*Test.class,**/*Bench.class" id="classes" />
-		</jar>
+		<jar destfile="${build.dir}/treetank.jar" basedir="${classes.dir}" excludes="**/*Test.class,**/*Bench.class" update="true" />
 	</target>
 
 	<!--
