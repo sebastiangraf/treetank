@@ -24,10 +24,10 @@
   * The following steps allow to rebuild the OpenBSD kernel:
   * 1) Add following line to end of /usr/src/sys/kern/syscalls.master:
   * 306	STD		{ int sys_treetank( \
-  *                u_int8_t  tank, \
-  *                u_int8_t  operation, \
-  *                u_int16_t length, \
-  *                u_int8_t *bufferPtr); }
+  *                u_int8_t   tank, \
+  *                u_int8_t   operation, \
+  *                u_int16_t *lengthPtr, \
+  *                u_int8_t  *bufferPtr); }
   *
   * 2) Rebuild syscall entries:
   * # cd /usr/src/sys/kern
@@ -80,12 +80,12 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
 
   /* --- Local variables. --------------------------------------------------- */
   
-  int                       result           = TT_ERROR;
+  int                       error            = TT_ERROR;
   struct sys_treetank_args *argumentPointer  = v;
   
   u_int8_t                  tank             = SCARG(argumentPointer, tank);
   u_int8_t                  operation        = SCARG(argumentPointer, operation);
-  u_int16_t                 length           = SCARG(argumentPointer, length);
+  u_int16_t                *lengthPtr        = SCARG(argumentPointer, lengthPtr);
   u_int8_t                 *bufferPtr        = SCARG(argumentPointer, bufferPtr);
   
   u_int8_t                  command          = operation & 0xF;
@@ -98,25 +98,25 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
   /* --- Check arguments. --------------------------------------------------- */
   
   if (tank == TT_ERROR) {
-    result = TT_ERROR;
+    error = TT_ERROR;
     printf("ERROR(sys_treetank.c): Invalid tank argument.\n");
     goto finish;
   }
   
   if ((command == TT_ERROR) || (core == TT_ERROR)) {
-    result = TT_ERROR;
+    error = TT_ERROR;
     printf("ERROR(sys_treetank.c): Invalid operation argument.\n");
     goto finish;
   }
   
-  if ((length == TT_ERROR) || (length > TT_BUFFER_LENGTH)) {
-    result = TT_ERROR;
+  if ((*lengthPtr == TT_ERROR) || (*lengthPtr > TT_BUFFER_LENGTH)) {
+    error = TT_ERROR;
     printf("ERROR(sys_treetank.c): Invalid length argument.\n");
     goto finish;
   }
   
   if (bufferPtr == NULL) {
-    result = TT_ERROR;
+    error = TT_ERROR;
     printf("ERROR(sys_treetank.c): Invalid bufferPtr argument.\n");
     goto finish;
   }
@@ -126,17 +126,14 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
   printf("tank=%d, ", tank);
   printf("command=%d, ", command);
   printf("core=%d, ", core);
-  printf("length=%d, ", length);
+  printf("length=%d, ", *lengthPtr);
   
   copyin(
     bufferPtr,
     tt_buffer[core],
-    length);
+    *lengthPtr);
     
   /* --- Perform operations. ------------------------------------------------ */
-  
-  result = length;
-  printf("result=%d\n", result);
     
 //  if (operation == TT_WRITE) {
 //  
@@ -208,22 +205,22 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
   
   /* --- Copy buffer from kernel to user space. ----------------------------- */
   
-  if ((result == TT_ERROR) || (result > TT_BUFFER_LENGTH)) {
-    result = TT_ERROR;
-    printf("ERROR(sys_treetank.c): Invalid result.\n");
+  if ((*lengthPtr == TT_ERROR) || (*lengthPtr > TT_BUFFER_LENGTH)) {
+    error = TT_ERROR;
+    printf("ERROR(sys_treetank.c): Invalid result length.\n");
     goto finish;
   }
   
   copyout(
     tt_buffer[core],
     bufferPtr,
-    result);
+    *lengthPtr);
   
   /* --- Cleanup for all conditions. ---------------------------------------- */
   
 finish:
   
-  return (result);
+  return (error);
   
 }
 
