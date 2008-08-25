@@ -19,9 +19,9 @@ extern "C" {
 /*
  * Class:     org_treetank_pagelayer_CryptoNativeImpl
  * Method:    syscall
- * Signature: (BBSLjava/nio/ByteBuffer;)I
+ * Signature: (BBSLjava/nio/ByteBuffer;)S
  */
-JNIEXPORT jint JNICALL Java_org_treetank_pagelayer_CryptoNativeImpl_syscall
+JNIEXPORT jshort JNICALL Java_org_treetank_pagelayer_CryptoNativeImpl_syscall
   (JNIEnv *, jobject, jbyte, jbyte, jshort, jobject);
 
 #ifdef __cplusplus

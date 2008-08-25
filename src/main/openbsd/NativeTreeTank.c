@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <string.h>
 
-JNIEXPORT jint JNICALL Java_org_treetank_pagelayer_CryptoNativeImpl_syscall(
+JNIEXPORT jshort JNICALL Java_org_treetank_pagelayer_CryptoNativeImpl_syscall(
   JNIEnv *env,
   jobject o,
   jbyte tank,
@@ -36,10 +36,14 @@ JNIEXPORT jint JNICALL Java_org_treetank_pagelayer_CryptoNativeImpl_syscall(
   jshort length,
   jobject buffer)
 {
-  jint   result    = 0x0;
+  jint   error     = 0x0;
   jbyte *bufferPtr = (*env)->GetDirectBufferAddress(env, buffer);
   
-  result = syscall(306, tank, operation, length, bufferPtr);
-
-  return result;
+  error = syscall(306, tank, operation, &length, bufferPtr);
+  
+  if (error != 0x0) {
+    return 0x0;
+  } else {
+    return length;
+  }
 }
