@@ -25,11 +25,20 @@ import edu.emory.mathcs.backport.java.util.concurrent.BlockingQueue;
 
 public final class CryptoNativeImpl implements ICrypto {
 
-  private static final BlockingQueue coreQueue = new ArrayBlockingQueue(8);
+  private static final int CORE_COUNT = 15;
+
+  private static final byte ERROR = (byte) 0x0;
+  
+  private static final byte COMMAND_WRITE = (byte) 0x1;
+  
+  private static final byte COMMAND_READ = (byte) 0x2;
+
+  private static final BlockingQueue coreQueue =
+      new ArrayBlockingQueue(CORE_COUNT);
 
   static {
     try {
-      for (int i = 1; i < 15; i++) {
+      for (int i = 1; i < CORE_COUNT; i++) {
         coreQueue.put((byte) (i << 0x4));
       }
     } catch (Exception e) {
@@ -39,18 +48,18 @@ public final class CryptoNativeImpl implements ICrypto {
   }
 
   public final short crypt(final short length, final ByteBuffer buffer) {
-    short resultLength = (short) 0x0;
+    short resultLength = ERROR;
     byte tank = (byte) 0x1;
-    byte command = 0x1;
-    byte core = 0x0;
+    byte command = COMMAND_WRITE;
+    byte core = ERROR;
     try {
       core = (Byte) coreQueue.take();
       resultLength = syscall(tank, (byte) (command | core), length, buffer);
     } catch (Exception e) {
-      return 0x0;
+      return ERROR;
     } finally {
       try {
-        if (core != 0x0) {
+        if (core != ERROR) {
           coreQueue.put(core);
         }
       } catch (Exception ie) {
@@ -61,18 +70,18 @@ public final class CryptoNativeImpl implements ICrypto {
   }
 
   public final short decrypt(final short length, final ByteBuffer buffer) {
-    short resultLength = (short) 0x0;
+    short resultLength = ERROR;
     byte tank = (byte) 0x1;
-    byte command = 0x2;
-    byte core = 0x0;
+    byte command = COMMAND_READ;
+    byte core = ERROR;
     try {
       core = (Byte) coreQueue.take();
       resultLength = syscall(tank, (byte) (command | core), length, buffer);
     } catch (Exception e) {
-      return 0x0;
+      return ERROR;
     } finally {
       try {
-        if (core != 0x0) {
+        if (core != ERROR) {
           coreQueue.put(core);
         }
       } catch (Exception ie) {
