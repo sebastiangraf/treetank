@@ -35,6 +35,10 @@ public class TreeTankHandler extends AbstractHandler {
 
   private static final String POST = "POST";
 
+  private static final String PUT = "PUT";
+
+  private static final String DELETE = "DELETE";
+
   private static final String GET = "GET";
 
   private final HelperFavicon mHelperFavicon;
@@ -73,11 +77,11 @@ public class TreeTankHandler extends AbstractHandler {
       } else if (request.getMethod().equalsIgnoreCase(GET)) {
         mHelperGet.handle(request, response);
       } else if (request.getMethod().equalsIgnoreCase(POST)) {
-        if (request.getQueryString().equalsIgnoreCase("delete")) {
+        if (request.getQueryString().equalsIgnoreCase(DELETE)) {
           mHelperDelete.handle(request, response);
-        } else if (request.getQueryString().equalsIgnoreCase("insert")) {
+        } else if (request.getQueryString().equalsIgnoreCase(POST)) {
           mHelperPost.handle(request, response);
-        } else if (request.getQueryString().equalsIgnoreCase("update")) {
+        } else if (request.getQueryString().equalsIgnoreCase(PUT)) {
           mHelperPut.handle(request, response);
         } else {
           throw new TreeTankException(501, "Unknown operation.");
