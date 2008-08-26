@@ -20,6 +20,7 @@ package org.treetank.service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -28,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.mortbay.jetty.Request;
 
-public final class HelperPost {
+public final class HelperPut {
 
   private static final String PATH = "/treetank/data/";
 
@@ -38,7 +39,7 @@ public final class HelperPost {
 
   private final Map<String, TreeTankWrapper> mServices;
 
-  public HelperPost(final Map<String, TreeTankWrapper> map) {
+  public HelperPut(final Map<String, TreeTankWrapper> map) {
     mServices = map;
   }
 
@@ -89,7 +90,37 @@ public final class HelperPost {
       }
       final long id = Long.valueOf(idString);
 
-      service.post(id, requestBody);
+      // Make modifications.
+      final long revision = service.putText(id, requestBody);
+
+      // Write response header.
+      response.setContentType(CONTENT_TYPE);
+      response.setCharacterEncoding(ENCODING);
+
+      // Write response body.
+      final OutputStream out = response.getOutputStream();
+
+      final long start = System.currentTimeMillis();
+
+      out
+          .write(("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+              + "<rest:response xmlns:rest=\"REST\"><rest:sequence rest:revision=\"")
+              .getBytes(ENCODING));
+      out.write(Long.toString(revision).getBytes(ENCODING));
+      out.write(new String("\">").getBytes(ENCODING));
+
+      // Handle.
+      if (queryString == null) {
+        service.get(out, revision, id);
+      } else {
+        service.get(out, revision, id, queryString);
+      }
+
+      // Time measurement
+      final long stop = System.currentTimeMillis();
+      out.write("</rest:sequence><rest:time>".getBytes(ENCODING));
+      out.write(Long.toString(stop - start).getBytes(ENCODING));
+      out.write("[ms]</rest:time></rest:response>".getBytes(ENCODING));
 
       ((Request) request).setHandled(true);
 

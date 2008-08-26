@@ -18,9 +18,7 @@
 
 package org.treetank.service;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -47,6 +45,8 @@ public class TreeTankHandler extends AbstractHandler {
 
   private final HelperPost mHelperPost;
 
+  private final HelperPut mHelperPut;
+
   private final HelperDelete mHelperDelete;
 
   public TreeTankHandler(final Map<String, TreeTankWrapper> map) {
@@ -54,6 +54,7 @@ public class TreeTankHandler extends AbstractHandler {
     mHelperCrossdomain = new HelperCrossdomain();
     mHelperGet = new HelperGet(map);
     mHelperPost = new HelperPost(map);
+    mHelperPut = new HelperPut(map);
     mHelperDelete = new HelperDelete(map);
   }
 
@@ -72,19 +73,15 @@ public class TreeTankHandler extends AbstractHandler {
       } else if (request.getMethod().equalsIgnoreCase(GET)) {
         mHelperGet.handle(request, response);
       } else if (request.getMethod().equalsIgnoreCase(POST)) {
-        final InputStream in = request.getInputStream();
-        final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        final byte[] tmp = new byte[256];
-        int len = 0;
-        while ((len = in.read(tmp)) != -1) {
-          bout.write(tmp, 0, len);
-        }
-        if (bout.size() == 0) {
+        if (request.getQueryString().equalsIgnoreCase("delete")) {
           mHelperDelete.handle(request, response);
+        } else if (request.getQueryString().equalsIgnoreCase("insert")) {
+          mHelperPost.handle(request, response);
+        } else if (request.getQueryString().equalsIgnoreCase("update")) {
+          mHelperPut.handle(request, response);
         } else {
-          mHelperPost.handle(request, response, bout.toString());
+          throw new TreeTankException(501, "Unknown operation.");
         }
-        bout.close();
       } else {
         throw new TreeTankException(501, "Unknown operation.");
       }
