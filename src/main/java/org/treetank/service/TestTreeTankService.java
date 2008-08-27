@@ -34,13 +34,12 @@ public class TestTreeTankService {
 
     try {
 
-      System.loadLibrary("TreeTank");
-
       System.out.println("--- Test Java Crypto: ----------------------------------");
       final ICrypto javaCrypto = new CryptoJavaImpl();
       testCrypto(javaCrypto);
 
       System.out.println("--- Test Native Crypto: --------------------------------");
+      System.loadLibrary("TreeTank");
       final ICrypto nativeCrypto = new CryptoNativeImpl();
       testCrypto(nativeCrypto);
 

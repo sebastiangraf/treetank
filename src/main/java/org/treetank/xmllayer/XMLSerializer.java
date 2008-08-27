@@ -151,7 +151,7 @@ public final class XMLSerializer implements Runnable {
     mRTX = rtx;
     mAxis = new DescendantAxis(rtx, true);
     mStack = new FastStack<Long>();
-    mOut = new BufferedOutputStream(out, 1024);
+    mOut = new BufferedOutputStream(out, 4096);
     mSerializeXMLDeclaration = serializeXMLDeclaration;
     mSerializeId = serializeId;
   }
@@ -229,6 +229,7 @@ public final class XMLSerializer implements Runnable {
       // Emit start element.
       mOut.write(OPEN);
       mOut.write(mRTX.getRawName());
+      final long key = mRTX.getNodeKey();
       // Emit namespace declarations.
       for (int index = 0, length = mRTX.getNamespaceCount(); index < length; index++) {
         mRTX.moveToNamespace(index);
@@ -243,7 +244,7 @@ public final class XMLSerializer implements Runnable {
           write(mRTX.getURI());
           mOut.write(QUOTE);
         }
-        mRTX.moveToParent();
+        mRTX.moveTo(key);
       }
       // Emit attributes.
       // Add virtual rest:id attribute.
@@ -261,7 +262,7 @@ public final class XMLSerializer implements Runnable {
         mOut.write(EQUAL_QUOTE);
         mOut.write(mRTX.getRawValue());
         mOut.write(QUOTE);
-        mRTX.moveToParent();
+        mRTX.moveTo(key);
       }
       if (mRTX.hasFirstChild()) {
         mOut.write(CLOSE);

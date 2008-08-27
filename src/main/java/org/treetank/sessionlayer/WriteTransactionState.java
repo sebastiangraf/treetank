@@ -247,14 +247,6 @@ public final class WriteTransactionState extends ReadTransactionState {
 
       byte[] tmp = new byte[IConstants.CHECKSUM_SIZE];
 
-      // Write secondary beacon.
-      file.seek(file.length());
-      file.writeLong(uberPageReference.getStart());
-      file.writeInt(uberPageReference.getLength());
-      uberPageReference.getChecksum(tmp);
-      file.write(tmp);
-
-      // Write primary beacon.
       file.seek(IConstants.BEACON_START);
       file.writeLong(uberPageReference.getStart());
       file.writeInt(uberPageReference.getLength());

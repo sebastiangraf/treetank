@@ -88,8 +88,8 @@ public final class PageWriter {
   public final void write(
       final PageReference<? extends AbstractPage> pageReference) {
 
-    try {      
-      
+    try {
+
       // Serialise page.
       mBuffer.clear();
       mBuffer.position(24);
@@ -118,7 +118,6 @@ public final class PageWriter {
       pageReference.setStart(fileSize);
       pageReference.setLength(outputLength - 24);
       pageReference.setChecksum(checksum);
-      
 
     } catch (Exception e) {
       e.printStackTrace();

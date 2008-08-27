@@ -132,7 +132,7 @@ public final class XMLShredder {
           for (int i = 0, l = parser.getNamespaceCount(); i < l; i++) {
             wtx.insertNamespace(parser.getNamespaceURI(i), parser
                 .getNamespacePrefix(i));
-            wtx.moveToParent();
+            wtx.moveTo(key);
           }
 
           // Parse attributes.
@@ -142,7 +142,7 @@ public final class XMLShredder {
                 + ":"
                 + parser.getAttributeLocalName(i), parser
                 .getAttributeNamespace(i), parser.getAttributeValue(i));
-            wtx.moveToParent();
+            wtx.moveTo(key);
           }
           break;
 
