@@ -91,11 +91,11 @@ public final class TextNode extends AbstractNode {
    */
   public TextNode(final long nodeKey, final ByteBuffer in) {
     super(nodeKey);
-    mParentKey = getNodeKey() - in.getLong();
+    mParentKey = in.getLong();
     mLeftSiblingKey = in.getLong();
     mRightSiblingKey = in.getLong();
     mType = in.getInt();
-    mValue = new byte[in.get()];
+    mValue = new byte[in.getInt()];
     in.get(mValue);
   }
 
@@ -225,11 +225,11 @@ public final class TextNode extends AbstractNode {
    */
   @Override
   public final void serialize(final ByteBuffer out) {
-    out.putLong(getNodeKey() - mParentKey);
+    out.putLong(mParentKey);
     out.putLong(mLeftSiblingKey);
     out.putLong(mRightSiblingKey);
     out.putInt(mType);
-    out.put((byte) mValue.length);
+    out.putInt(mValue.length);
     out.put(mValue);
   }
 

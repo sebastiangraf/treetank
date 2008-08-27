@@ -19,6 +19,8 @@
 package org.treetank.nodelayer;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.treetank.api.IReadTransaction;
 
@@ -46,17 +48,11 @@ public final class ElementNode extends AbstractNode {
   /** Number of children including text and element nodes. */
   private long mChildCount;
 
-  /** Number of attributes. */
-  private int mAttributeCount;
-
-  /** Number of namespace declarations. */
-  private int mNamespaceCount;
-
   /** Keys of attributes. */
-  private long[] mAttributeKeys;
+  private List<Long> mAttributeKeys;
 
   /** Keys of namespace declarations. */
-  private long[] mNamespaceKeys;
+  private List<Long> mNamespaceKeys;
 
   /** Key of qualified name. */
   private int mNameKey;
@@ -93,10 +89,8 @@ public final class ElementNode extends AbstractNode {
     mLeftSiblingKey = leftSiblingKey;
     mRightSiblingKey = rightSiblingKey;
     mChildCount = 0;
-    mAttributeCount = 0;
-    mNamespaceCount = 0;
-    mAttributeKeys = new long[0];
-    mNamespaceKeys = new long[0];
+    mAttributeKeys = new ArrayList<Long>(0);
+    mNamespaceKeys = new ArrayList<Long>(0);
     mNameKey = nameKey;
     mURIKey = uriKey;
     mType = type;
@@ -114,15 +108,13 @@ public final class ElementNode extends AbstractNode {
     mLeftSiblingKey = node.getLeftSiblingKey();
     mRightSiblingKey = node.getRightSiblingKey();
     mChildCount = node.getChildCount();
-    mAttributeCount = node.getAttributeCount();
-    mNamespaceCount = node.getNamespaceCount();
-    mAttributeKeys = new long[mAttributeCount];
-    mNamespaceKeys = new long[mNamespaceCount];
-    for (int i = 0, l = mAttributeCount; i < l; i++) {
-      mAttributeKeys[i] = node.getAttributeKey(i);
+    mAttributeKeys = new ArrayList<Long>(node.getAttributeCount());
+    mNamespaceKeys = new ArrayList<Long>(node.getNamespaceCount());
+    for (int i = 0, l = node.getAttributeCount(); i < l; i++) {
+      mAttributeKeys.add(node.getAttributeKey(i));
     }
-    for (int i = 0, l = mNamespaceCount; i < l; i++) {
-      mNamespaceKeys[i] = node.getNamespaceKey(i);
+    for (int i = 0, l = node.getNamespaceCount(); i < l; i++) {
+      mNamespaceKeys.add(node.getNamespaceKey(i));
     }
     mNameKey = node.getNameKey();
     mURIKey = node.getURIKey();
@@ -139,20 +131,18 @@ public final class ElementNode extends AbstractNode {
     super(nodeKey);
 
     // Read according to node kind.
-    mParentKey = getNodeKey() - in.getLong();
-    mFirstChildKey = getNodeKey() - in.getLong();
-    mLeftSiblingKey = getNodeKey() - in.getLong();
-    mRightSiblingKey = getNodeKey() - in.getLong();
+    mParentKey = in.getLong();
+    mFirstChildKey = in.getLong();
+    mLeftSiblingKey = in.getLong();
+    mRightSiblingKey = in.getLong();
     mChildCount = in.getLong();
-    mAttributeCount = in.get();
-    mNamespaceCount = in.get();
-    mAttributeKeys = new long[mAttributeCount];
-    mNamespaceKeys = new long[mNamespaceCount];
-    for (int i = 0, l = mAttributeCount; i < l; i++) {
-      mAttributeKeys[i] = in.getLong();
+    mAttributeKeys = new ArrayList<Long>(0);
+    mNamespaceKeys = new ArrayList<Long>(0);
+    for (int i = 0, l = in.getInt(); i < l; i++) {
+      mAttributeKeys.add(in.getLong());
     }
-    for (int i = 0, l = mNamespaceCount; i < l; i++) {
-      mNamespaceKeys[i] = in.getLong();
+    for (int i = 0, l = in.getInt(); i < l; i++) {
+      mNamespaceKeys.add(in.getLong());
     }
     mNameKey = in.getInt();
     mURIKey = in.getInt();
@@ -300,7 +290,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final int getAttributeCount() {
-    return mAttributeCount;
+    return mAttributeKeys.size();
   }
 
   /**
@@ -308,7 +298,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final long getAttributeKey(final int index) {
-    return mAttributeKeys[index];
+    return mAttributeKeys.get(index);
   }
 
   /**
@@ -316,11 +306,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final void insertAttribute(final long attributeKey) {
-    mAttributeCount += 1;
-    final long[] tmp = new long[mAttributeCount];
-    System.arraycopy(mAttributeKeys, 0, tmp, 0, mAttributeCount - 1);
-    mAttributeKeys = tmp;
-    mAttributeKeys[mAttributeCount - 1] = attributeKey;
+    mAttributeKeys.add(attributeKey);
   }
 
   /**
@@ -328,7 +314,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final int getNamespaceCount() {
-    return mNamespaceCount;
+    return mNamespaceKeys.size();
   }
 
   /**
@@ -336,7 +322,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final long getNamespaceKey(final int index) {
-    return mNamespaceKeys[index];
+    return mNamespaceKeys.get(index);
   }
 
   /**
@@ -344,11 +330,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final void insertNamespace(final long namespaceKey) {
-    mNamespaceCount += 1;
-    final long[] tmp = new long[mNamespaceCount];
-    System.arraycopy(mNamespaceKeys, 0, tmp, 0, mNamespaceCount - 1);
-    mNamespaceKeys = tmp;
-    mNamespaceKeys[mNamespaceCount - 1] = namespaceKey;
+    mNamespaceKeys.add(namespaceKey);
   }
 
   /**
@@ -412,18 +394,18 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final void serialize(final ByteBuffer out) {
-    out.putLong(getNodeKey() - mParentKey);
-    out.putLong(getNodeKey() - mFirstChildKey);
-    out.putLong(getNodeKey() - mLeftSiblingKey);
-    out.putLong(getNodeKey() - mRightSiblingKey);
+    out.putLong(mParentKey);
+    out.putLong(mFirstChildKey);
+    out.putLong(mLeftSiblingKey);
+    out.putLong(mRightSiblingKey);
     out.putLong(mChildCount);
-    out.put((byte) mAttributeCount);
-    out.put((byte) mNamespaceCount);
-    for (int i = 0, l = mAttributeCount; i < l; i++) {
-      out.putLong(mAttributeKeys[i]);
+    out.putInt(mAttributeKeys.size());
+    for (int i = 0, l = mAttributeKeys.size(); i < l; i++) {
+      out.putLong(mAttributeKeys.get(i));
     }
-    for (int i = 0, l = mNamespaceCount; i < l; i++) {
-      out.putLong(mNamespaceKeys[i]);
+    out.putInt(mNamespaceKeys.size());
+    for (int i = 0, l = mNamespaceKeys.size(); i < l; i++) {
+      out.putLong(mNamespaceKeys.get(i));
     }
     out.putInt(mNameKey);
     out.putInt(mURIKey);

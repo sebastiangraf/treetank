@@ -73,6 +73,9 @@ public final class TreeTankDebugger {
             rtx.getChildCount(),
             rtx.getName(),
             rtx.isTextKind() ? rtx.getValue() : "");
+      } else {
+        System.out.println("ERROR while debugging.");
+        System.exit(1);
       }
     }
 
