@@ -37,6 +37,8 @@
   * file sys_treetank_compression.c
   * file sys_treetank_encryption.c
   * file sys_treetank_authentication.c
+  * file sys_treetank_write_fragment.c
+  * file sys_treetank_read_fragment.c
   * file sys_treetank.c
   *
   * 4) BUGFIX: Add the following after line 2325 
@@ -61,9 +63,8 @@
   
 /* --- Function prototypes. ------------------------------------------------- */
 
-int sys_treetank_compression(u_int8_t, u_int8_t, u_int16_t *, u_int8_t *);
-int sys_treetank_encryption(u_int8_t, u_int8_t, u_int16_t *, u_int8_t *);
-int sys_treetank_authentication(u_int8_t, u_int8_t, u_int16_t *, u_int8_t *);
+int sys_treetank_write_fragment(u_int8_t, u_int16_t *, u_int8_t *);
+int sys_treetank_read_fragment(u_int8_t, u_int16_t *, u_int8_t *);
 
 /* --- Global variables. ---------------------------------------------------- */
 
@@ -125,81 +126,28 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
     tt_buffer[core],
     *lengthPtr);
     
-  /* --- Perform operations. ------------------------------------------------ */
+  /* --- Select command. ---------------------------------------------------- */
   
   switch (command) {
     case TT_WRITE_FRAGMENT:
-        if (*lengthPtr < TT_REFERENCE_LENGTH) {
-          syscall = TT_SYSCALL_FAILURE;
-          printf("ERROR(sys_treetank.c): Invalid lengthPtr argument.\n");
-          goto finish;
-        }
-        if (sys_treetank_compression(
+        syscall = sys_treetank_write_fragment(
             core,
-            command,
             lengthPtr,
-            tt_buffer[core]) != TT_SYSCALL_SUCCESS) {
-          syscall = TT_SYSCALL_FAILURE;
-          printf("ERROR(sys_treetank.c): Could not perform compression.\n");
-          goto finish;
-        }
-        if (sys_treetank_encryption(
-            core,
-            command,
-            lengthPtr,
-            tt_buffer[core]) != TT_SYSCALL_SUCCESS) {
-          syscall = TT_SYSCALL_FAILURE;
-          printf("ERROR(sys_treetank.c): Could not perform encryption.\n");
-          goto finish;
-        }
-        if (sys_treetank_authentication(
-            core,
-            command,
-            lengthPtr,
-            tt_buffer[core]) != TT_SYSCALL_SUCCESS) {
-          syscall = TT_SYSCALL_FAILURE;
-          printf("ERROR(sys_treetank.c): Could not perform authentication.\n");
-          goto finish;
-        }
+            tt_buffer[core]);
         break;
     case TT_READ_FRAGMENT:
-        if (*lengthPtr < TT_REFERENCE_LENGTH) {
-          syscall = TT_SYSCALL_FAILURE;
-          printf("ERROR(sys_treetank.c): Invalid lengthPtr argument.\n");
-          goto finish;
-        }
-        if (sys_treetank_authentication(
+        syscall = sys_treetank_read_fragment(
             core,
-            command,
             lengthPtr,
-            tt_buffer[core]) != TT_SYSCALL_SUCCESS) {
-          syscall = TT_SYSCALL_FAILURE;
-          printf("ERROR(sys_treetank.c): Could not perform authentication.\n");
-          goto finish;
-        }
-        if (sys_treetank_encryption(
-            core,
-            command,
-            lengthPtr,
-            tt_buffer[core]) != TT_SYSCALL_SUCCESS) {
-          syscall = TT_SYSCALL_FAILURE;
-          printf("ERROR(sys_treetank.c): Could not perform encryption.\n");
-          goto finish;
-        }
-        if (sys_treetank_compression(
-            core,
-            command,
-            lengthPtr,
-            tt_buffer[core]) != TT_SYSCALL_SUCCESS) {
-          syscall = TT_SYSCALL_FAILURE;
-          printf("ERROR(sys_treetank.c): Could not perform compression.\n");
-          goto finish;
-        }
+            tt_buffer[core]);
         break;
     default:
         syscall = TT_SYSCALL_FAILURE;
-        printf("ERROR(sys_treetank.c): Invalid operation argument.\n");
-        goto finish;
+  }
+  
+  if (syscall == TT_SYSCALL_FAILURE) {
+    printf("ERROR(sys_treetank.c): Error during command execution.\n");
+    goto finish;
   }
   
   /* --- Copy buffer from kernel to user space. ----------------------------- */
