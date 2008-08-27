@@ -47,14 +47,21 @@
   *    != 0)
   *    continue;
   *
-  * 5) Comment out the following line from /usr/src/sys/arch/i386/conf/GENERIC:
+  * 5) BUGFIX: Replace the following in line 2365
+  *    in /usr/src/sys/dev/pci/hifn7751.c:
+  * if (crp->crp_flags & CRYPTO_F_IMBUF && (crp->crp_mac == NULL))
+  *    m_copyback(...);
+  * else if (crp->crp_mac != NULL)
+  *    bcopy(...);
+  *
+  * 6) Comment out the following line from /usr/src/sys/arch/i386/conf/GENERIC:
   * glxsb* at pci?
   *
-  * 6) create GENERIC configuration:
+  * 7) create GENERIC configuration:
   * # cd /usr/src/sys/arch/i386/conf
   * # config GENERIC
   *
-  * 7) Rebuild kernel:
+  * 8) Rebuild kernel:
   * # cd /usr/src/sys/arch/i386/compile/GENERIC
   * # make clean && make depend && make
   * # make install
