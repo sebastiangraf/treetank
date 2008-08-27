@@ -45,6 +45,12 @@ public final class ElementNode extends AbstractNode {
 
   /** Number of children including text and element nodes. */
   private long mChildCount;
+  
+  /** Number of attributes. */
+  private int mAttributeCount;
+  
+  /** Number of namespace declarations. */
+  private int mNamespaceCount;
 
   /** Attributes of node. */
   private AbstractNode[] mAttributes;
@@ -87,6 +93,8 @@ public final class ElementNode extends AbstractNode {
     mLeftSiblingKey = leftSiblingKey;
     mRightSiblingKey = rightSiblingKey;
     mChildCount = 0;
+    mAttributeCount = 0;
+    mNamespaceCount = 0;
     mAttributes = new AttributeNode[0];
     mNamespaces = new NamespaceNode[0];
     mNameKey = nameKey;
@@ -106,6 +114,8 @@ public final class ElementNode extends AbstractNode {
     mLeftSiblingKey = node.getLeftSiblingKey();
     mRightSiblingKey = node.getRightSiblingKey();
     mChildCount = node.getChildCount();
+    mAttributeCount = node.getAttributeCount();
+    mNamespaceCount = node.getNamespaceCount();
     mAttributes = new AttributeNode[node.getAttributeCount()];
     for (int i = 0, l = mAttributes.length; i < l; i++) {
       mAttributes[i] = new AttributeNode(node.getAttribute(i));
@@ -134,6 +144,8 @@ public final class ElementNode extends AbstractNode {
     mLeftSiblingKey = getNodeKey() - in.getLong();
     mRightSiblingKey = getNodeKey() - in.getLong();
     mChildCount = in.getLong();
+    mAttributeCount = in.getInt();
+    mNamespaceCount = in.getInt();
     mAttributes = new AttributeNode[in.get()];
     for (int i = 0, l = mAttributes.length; i < l; i++) {
       mAttributes[i] = new AttributeNode(getNodeKey(), in);
@@ -288,7 +300,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final int getAttributeCount() {
-    return mAttributes == null ? 0 : mAttributes.length;
+    return mAttributeCount;
   }
 
   /**
@@ -322,6 +334,8 @@ public final class ElementNode extends AbstractNode {
       final int uriKey,
       final int valueType,
       final byte[] value) {
+    
+    mAttributeCount += 1;
 
     AttributeNode[] tmp = new AttributeNode[mAttributes.length + 1];
     System.arraycopy(mAttributes, 0, tmp, 0, mAttributes.length);
@@ -336,7 +350,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final int getNamespaceCount() {
-    return mNamespaces == null ? 0 : mNamespaces.length;
+    return mNamespaceCount;
   }
 
   /**
@@ -364,6 +378,8 @@ public final class ElementNode extends AbstractNode {
   @Override
   public final void insertNamespace(final int uriKey, final int prefixKey) {
 
+    mNamespaceCount += 1;
+    
     NamespaceNode[] tmp = new NamespaceNode[mNamespaces.length + 1];
     System.arraycopy(mNamespaces, 0, tmp, 0, mNamespaces.length);
     mNamespaces = tmp;
@@ -438,6 +454,8 @@ public final class ElementNode extends AbstractNode {
     out.putLong(getNodeKey() - mLeftSiblingKey);
     out.putLong(getNodeKey() - mRightSiblingKey);
     out.putLong(mChildCount);
+    out.putInt(mAttributeCount);
+    out.putInt(mNamespaceCount);
     out.put((byte) mAttributes.length);
     for (int i = 0, l = mAttributes.length; i < l; i++) {
       mAttributes[i].serialize(out);
