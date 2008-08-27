@@ -25,8 +25,6 @@ import java.util.Map;
 import org.treetank.nodelayer.AbstractNode;
 import org.treetank.nodelayer.DocumentRootNode;
 import org.treetank.nodelayer.ElementNode;
-import org.treetank.nodelayer.FullTextLeafNode;
-import org.treetank.nodelayer.FullTextNode;
 import org.treetank.nodelayer.TextNode;
 import org.treetank.pagelayer.AbstractPage;
 import org.treetank.pagelayer.IndirectPage;
@@ -136,34 +134,6 @@ public final class WriteTransactionState extends ReadTransactionState {
         rightSiblingKey,
         valueType,
         value));
-  }
-
-  protected final FullTextNode createFullTextNode(
-      final long parentKey,
-      final long firstChildKey,
-      final long leftSiblingKey,
-      final long rightSiblingKey,
-      final int nameKey) {
-    return createNode(new FullTextNode(
-        getRevisionRootPage().getMaxNodeKey() + 1,
-        parentKey,
-        firstChildKey,
-        leftSiblingKey,
-        rightSiblingKey,
-        nameKey));
-  }
-
-  protected final FullTextLeafNode createFullTextLeafNode(
-      final long parentKey,
-      final long firstChildKey,
-      final long leftSiblingKey,
-      final long rightSiblingKey) {
-    return createNode(new FullTextLeafNode(
-        getRevisionRootPage().getMaxNodeKey() + 1,
-        parentKey,
-        firstChildKey,
-        leftSiblingKey,
-        rightSiblingKey));
   }
 
   /**

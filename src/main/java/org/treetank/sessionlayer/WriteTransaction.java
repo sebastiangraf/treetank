@@ -92,88 +92,6 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final synchronized long insertToken(
-      final String token,
-      final long nodeKey) {
-
-    assertNotClosed();
-    mModificationCount++;
-
-    // Make sure we always operate from the full text root node.
-    moveToFullTextRoot();
-
-    // Add characters to inverted index, i.e., the prefix tree.
-    long tokenKey = NULL_NODE_KEY;
-    for (final char character : token.toCharArray()) {
-      if (hasFirstChild()) {
-        moveToFirstChild();
-        while (isFullTextKind()
-            && (getNameKey() != character)
-            && hasRightSibling()) {
-          moveToRightSibling();
-        }
-        if (getNameKey() != character) {
-          moveToParent();
-          tokenKey = insertFullTextAsFirstChild(character);
-        } else {
-          tokenKey = getNodeKey();
-        }
-      } else {
-        tokenKey = insertFullTextAsFirstChild(character);
-      }
-    }
-
-    // Add key into list of keys containing the token.
-    if (hasFirstChild()) {
-      // Make sure that full text nodes come first.
-      moveToFirstChild();
-      while (isFullTextKind() && hasRightSibling()) {
-        moveToRightSibling();
-      }
-      insertFullTextLeafAsRightSibling(nodeKey);
-    } else {
-      insertFullTextLeafAsFirstChild(nodeKey);
-    }
-
-    return tokenKey;
-
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final synchronized void removeToken(
-      final String token,
-      final long nodeKey) {
-    assertNotClosed();
-    mModificationCount++;
-
-    moveToToken(token);
-    final long tokenKey = getNodeKey();
-
-    // Remove node key from key list this token points to.
-    if (isFullTextKind() && hasFirstChild()) {
-      moveToFirstChild();
-      while ((getFirstChildKey() != nodeKey) && hasRightSibling()) {
-        moveToRightSibling();
-      }
-      if (isFullTextLeafKind() && getFirstChildKey() == nodeKey) {
-        remove();
-      }
-    }
-
-    // Remove token or prefix of it if there are no other dependencies.
-    moveTo(tokenKey);
-    while (!hasFirstChild() && getNodeKey() != FULLTEXT_ROOT_KEY) {
-      final long parentKey = getParentKey();
-      remove();
-      moveTo(parentKey);
-    }
-  }
-
-  /**
-   * {@inheritDoc}
-   */
   public final synchronized long insertElementAsFirstChild(
       final String name,
       final String uri) {
@@ -217,32 +135,6 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final synchronized long insertFullTextAsFirstChild(final int nameKey) {
-    return insertFirstChild(((WriteTransactionState) getTransactionState())
-        .createFullTextNode(
-            getCurrentNode().getNodeKey(),
-            NULL_NODE_KEY,
-            NULL_NODE_KEY,
-            getCurrentNode().getFirstChildKey(),
-            nameKey));
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final synchronized long insertFullTextLeafAsFirstChild(
-      final long firstChildKey) {
-    return insertFirstChild(((WriteTransactionState) getTransactionState())
-        .createFullTextLeafNode(
-            getCurrentNode().getNodeKey(),
-            firstChildKey,
-            NULL_NODE_KEY,
-            getCurrentNode().getFirstChildKey()));
-  }
-
-  /**
-   * {@inheritDoc}
-   */
   public final synchronized long insertElementAsRightSibling(
       final String name,
       final String uri) {
@@ -281,32 +173,6 @@ public final class WriteTransaction extends ReadTransaction
         ((WriteTransactionState) getTransactionState())
             .createNameKey("xs:untyped"),
         TypedValue.getBytes(value));
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final synchronized long insertFullTextAsRightSibling(final int nameKey) {
-    return insertRightSibling(((WriteTransactionState) getTransactionState())
-        .createFullTextNode(
-            getCurrentNode().getParentKey(),
-            NULL_NODE_KEY,
-            getCurrentNode().getNodeKey(),
-            getCurrentNode().getRightSiblingKey(),
-            nameKey));
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final synchronized long insertFullTextLeafAsRightSibling(
-      final long firstChildKey) {
-    return insertRightSibling(((WriteTransactionState) getTransactionState())
-        .createFullTextLeafNode(
-            getCurrentNode().getParentKey(),
-            firstChildKey,
-            getCurrentNode().getNodeKey(),
-            getCurrentNode().getRightSiblingKey()));
   }
 
   /**
@@ -362,7 +228,7 @@ public final class WriteTransaction extends ReadTransaction
     assertNotClosed();
     mModificationCount++;
 
-    if (getCurrentNode().isDocumentRoot() || getCurrentNode().isFullTextRoot()) {
+    if (getCurrentNode().isDocumentRoot()) {
       throw new IllegalStateException("Root node can not be removed.");
     }
 

@@ -103,9 +103,6 @@ public interface IReadTransaction {
   /** Key of document root node. */
   public static final long DOCUMENT_ROOT_KEY = 0L;
 
-  /** Key of full text root node. */
-  public static final long FULLTEXT_ROOT_KEY = 1L;
-
   //--- Kinds ------------------------------------------------------------------
 
   /** Node kind is element. */
@@ -128,15 +125,6 @@ public interface IReadTransaction {
 
   /** Node kind is document root. */
   public static final int DOCUMENT_ROOT_KIND = 9;
-
-  /** Node kind is fulltext root. */
-  public static final int FULLTEXT_ROOT_KIND = 13;
-
-  /** Node kind is fulltext. */
-  public static final int FULLTEXT_KIND = 14;
-
-  /** Node kind is fulltext leaf. */
-  public static final int FULLTEXT_LEAF_KIND = 15;
 
   /**
    * Get ID of transaction.
@@ -177,28 +165,11 @@ public interface IReadTransaction {
   public boolean moveTo(final long nodeKey);
 
   /**
-   * Move cursor to token in full text index. Note that this might only be
-   * the prefix of a token. If the token can not be found, the cursor is
-   * left off at the full text root node.
-   * 
-   * @param token Token to find.
-   * @return True if the token is contained.
-   */
-  public boolean moveToToken(final String token);
-
-  /**
    * Move cursor to document root node.
    * 
    * @return True if the document root node is selected.
    */
   public boolean moveToDocumentRoot();
-
-  /**
-   * Move cursor to fulltext root node.
-   * 
-   * @return True if the full text root node is selected.
-   */
-  public boolean moveToFullTextRoot();
 
   /**
    * Move cursor to parent node of currently selected node.
@@ -470,27 +441,6 @@ public interface IReadTransaction {
    * @return True if node is text. False else.
    */
   public boolean isTextKind();
-
-  /**
-   * Is node a full text?
-   * 
-   * @return True if node is full text. False else.
-   */
-  public boolean isFullTextKind();
-
-  /**
-   * Is node a full text leaf?
-   * 
-   * @return True if node is full text leaf. False else.
-   */
-  public boolean isFullTextLeafKind();
-
-  /**
-   * Is node a full text root?
-   * 
-   * @return True if node is full text root. False else.
-   */
-  public boolean isFullTextRootKind();
 
   /**
    * Get qualified name key of node.

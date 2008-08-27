@@ -24,9 +24,6 @@ import org.treetank.api.IReadTransaction;
 import org.treetank.nodelayer.AbstractNode;
 import org.treetank.nodelayer.DocumentRootNode;
 import org.treetank.nodelayer.ElementNode;
-import org.treetank.nodelayer.FullTextLeafNode;
-import org.treetank.nodelayer.FullTextNode;
-import org.treetank.nodelayer.FullTextRootNode;
 import org.treetank.nodelayer.TextNode;
 import org.treetank.utils.IConstants;
 
@@ -83,15 +80,6 @@ public final class NodePage extends AbstractPage {
       case IReadTransaction.TEXT_KIND:
         mNodes[offset] = new TextNode(keyBase + offset, in);
         break;
-      case IReadTransaction.FULLTEXT_KIND:
-        mNodes[offset] = new FullTextNode(keyBase + offset, in);
-        break;
-      case IReadTransaction.FULLTEXT_LEAF_KIND:
-        mNodes[offset] = new FullTextLeafNode(keyBase + offset, in);
-        break;
-      case IReadTransaction.FULLTEXT_ROOT_KIND:
-        mNodes[offset] = new FullTextRootNode(in);
-        break;
       default:
         throw new IllegalStateException(
             "Unsupported node kind encountered during read: " + kind);
@@ -126,17 +114,6 @@ public final class NodePage extends AbstractPage {
           break;
         case IReadTransaction.TEXT_KIND:
           mNodes[offset] = new TextNode(committedNodePage.mNodes[offset]);
-          break;
-        case IReadTransaction.FULLTEXT_KIND:
-          mNodes[offset] = new FullTextNode(committedNodePage.mNodes[offset]);
-          break;
-        case IReadTransaction.FULLTEXT_LEAF_KIND:
-          mNodes[offset] =
-              new FullTextLeafNode(committedNodePage.mNodes[offset]);
-          break;
-        case IReadTransaction.FULLTEXT_ROOT_KIND:
-          mNodes[offset] =
-              new FullTextRootNode(committedNodePage.mNodes[offset]);
           break;
         default:
           throw new IllegalStateException(

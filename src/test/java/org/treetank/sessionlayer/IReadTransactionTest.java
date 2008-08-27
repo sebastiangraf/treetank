@@ -47,7 +47,6 @@ public class IReadTransactionTest {
     SESSION = Session.beginSession(PATH);
     final IWriteTransaction wtx = SESSION.beginWriteTransaction();
     DocumentTest.create(wtx);
-    wtx.insertToken("foo", IReadTransaction.NULL_NODE_KEY);
     wtx.close();
   }
 
@@ -66,26 +65,6 @@ public class IReadTransactionTest {
     assertEquals(false, rtx.hasLeftSibling());
     assertEquals(false, rtx.hasRightSibling());
     assertEquals(true, rtx.hasFirstChild());
-
-    rtx.close();
-  }
-
-  @Test
-  public void testFullTextRoot() {
-    final IReadTransaction rtx = SESSION.beginReadTransaction();
-
-    assertEquals(true, rtx.moveToFullTextRoot());
-    assertEquals(true, rtx.isFullTextRootKind());
-    assertEquals(false, rtx.hasParent());
-    assertEquals(false, rtx.hasLeftSibling());
-    assertEquals(false, rtx.hasRightSibling());
-    assertEquals(true, rtx.hasFirstChild());
-
-    assertEquals(true, rtx.moveToToken("foo"));
-    assertEquals(true, rtx.moveToToken("f"));
-    final long fKey = rtx.getNodeKey();
-    assertEquals(false, rtx.moveToToken("bar"));
-    assertEquals(fKey, rtx.getNodeKey());
 
     rtx.close();
   }
