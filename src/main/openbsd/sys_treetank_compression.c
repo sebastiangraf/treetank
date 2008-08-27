@@ -20,23 +20,15 @@
 
 /* --- Function prototypes. ------------------------------------------------- */
 
-int sys_treetank_compression(u_int8_t, u_int8_t, u_int16_t *, u_int8_t *);
-int sys_treetank_compression_callback(struct cryptop *op);
-
-/* --- Global variables. ---------------------------------------------------- */
-
-static u_int64_t tt_comp_sessionId[] = {
-  TT_NULL, TT_NULL, TT_NULL, TT_NULL,
-  TT_NULL, TT_NULL, TT_NULL, TT_NULL,
-  TT_NULL, TT_NULL, TT_NULL, TT_NULL,
-  TT_NULL, TT_NULL, TT_NULL };
+int sys_treetank_compression(u_int64_t, u_int8_t, u_int16_t *, u_int8_t *);
+int sys_treetank_callback(struct cryptop *op);
 
 /*
  * Perform compression.
  */
 int
 sys_treetank_compression(
-  u_int8_t   core,
+  u_int64_t  session,
   u_int8_t   command,
   u_int16_t *lengthPtr,
   u_int8_t  *bufferPtr)
@@ -49,26 +41,6 @@ sys_treetank_compression(
   struct cryptop *operationPtr = NULL;
   u_int16_t       myLength     = *lengthPtr - TT_REFERENCE_LENGTH;
   u_int8_t       *myBufferPtr  = bufferPtr + TT_REFERENCE_LENGTH;
-  
-  /* --- Initialise session (if required). ---------------------------------- */
-    
-  if (tt_comp_sessionId[core] == TT_NULL) {
-    struct cryptoini session;  
-
-    bzero(&session, sizeof(session));
-    session.cri_alg = TT_COMPRESSION_ALGORITHM;
-
-    if (crypto_newsession(
-          &(tt_comp_sessionId[core]),
-          &session,
-          0x0) != TT_SYSCALL_SUCCESS) {
-      syscall = TT_SYSCALL_FAILURE;
-      tt_comp_sessionId[core] = TT_NULL;
-      printf("ERROR(sys_treetank_compression.c): Could not allocate cryptoini.\n");
-      goto finish;
-    }
-    
-  }
   
   /* --- Initialise buffer. ------------------------------------------------- */
   
@@ -97,7 +69,7 @@ sys_treetank_compression(
     goto finish;
   }
 
-  operationPtr->crp_sid               = tt_comp_sessionId[core];
+  operationPtr->crp_sid               = session;
   operationPtr->crp_ilen              = myLength;
   operationPtr->crp_flags             = CRYPTO_F_IMBUF;
   operationPtr->crp_buf               = (caddr_t) packetPtr;
@@ -110,7 +82,7 @@ sys_treetank_compression(
   else
     operationPtr->crp_desc->crd_flags = 0x0;
   operationPtr->crp_callback          = 
-        (int (*) (struct cryptop *)) sys_treetank_compression_callback;
+        (int (*) (struct cryptop *)) sys_treetank_callback;
    
   /* --- Synchronously dispatch crypto operation. --------------------------- */
   
@@ -155,21 +127,4 @@ finish:
     crypto_freereq(operationPtr);
   
   return (syscall);
-}
-
-/*
- * Callback to retrieve result of crypto operation.
- */
-int
-sys_treetank_compression_callback(struct cryptop *op)
-{
-  
-  if (op->crp_etype == EAGAIN) {
-    op->crp_flags = CRYPTO_F_IMBUF;
-    return crypto_dispatch(op);
-  }
-  
-  wakeup(op);
-  return (TT_SYSCALL_SUCCESS);
-  
 }

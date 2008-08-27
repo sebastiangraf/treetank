@@ -63,12 +63,30 @@
   
 /* --- Function prototypes. ------------------------------------------------- */
 
-int sys_treetank_write_fragment(u_int8_t, u_int16_t *, u_int8_t *);
-int sys_treetank_read_fragment(u_int8_t, u_int16_t *, u_int8_t *);
+int sys_treetank_callback(struct cryptop *op);
+int sys_treetank_write_fragment(u_int64_t, u_int64_t, u_int64_t, u_int8_t, u_int16_t *, u_int8_t *);
+int sys_treetank_read_fragment(u_int64_t, u_int64_t, u_int64_t, u_int8_t, u_int16_t *, u_int8_t *);
 
 /* --- Global variables. ---------------------------------------------------- */
 
 static u_int8_t tt_buffer[TT_CORE_COUNT][TT_BUFFER_LENGTH];
+static u_int64_t tt_comp_sessionId[] = {
+  TT_NULL, TT_NULL, TT_NULL, TT_NULL,
+  TT_NULL, TT_NULL, TT_NULL, TT_NULL,
+  TT_NULL, TT_NULL, TT_NULL, TT_NULL,
+  TT_NULL, TT_NULL, TT_NULL };
+static u_int64_t tt_enc_sessionId[] = {
+  TT_NULL, TT_NULL, TT_NULL, TT_NULL,
+  TT_NULL, TT_NULL, TT_NULL, TT_NULL,
+  TT_NULL, TT_NULL, TT_NULL, TT_NULL,
+  TT_NULL, TT_NULL, TT_NULL };
+static u_int64_t tt_auth_sessionId[] = {
+  TT_NULL, TT_NULL, TT_NULL, TT_NULL,
+  TT_NULL, TT_NULL, TT_NULL, TT_NULL,
+  TT_NULL, TT_NULL, TT_NULL, TT_NULL,
+  TT_NULL, TT_NULL, TT_NULL };
+  
+static u_int8_t tt_key[32] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
 /* --- Code. ---------------------------------------------------------------- */
 
@@ -89,6 +107,7 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
   u_int8_t                 *bufferPtr        = SCARG(argumentPointer, bufferPtr);
   u_int8_t                  command          = operation & 0xF;
   u_int8_t                  core             = operation >> 0x4;
+  struct cryptoini          session;  
   
   /* --- Check arguments. --------------------------------------------------- */
   
@@ -119,6 +138,60 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
     goto finish;
   }
   
+  /* --- Initialise sessions. ----------------------------------------------- */
+  
+  if (tt_comp_sessionId[core] == TT_NULL) {
+    bzero(&session, sizeof(session));
+    session.cri_alg = TT_COMPRESSION_ALGORITHM;
+
+    if (crypto_newsession(
+          &(tt_comp_sessionId[core]),
+          &session,
+          0x0) != TT_SYSCALL_SUCCESS) {
+      syscall = TT_SYSCALL_FAILURE;
+      tt_comp_sessionId[core] = TT_NULL;
+      printf("ERROR(sys_treetank.c): Could not allocate cryptoini for compression.\n");
+      goto finish;
+    }
+  }
+  
+  if (tt_enc_sessionId[core] == TT_NULL)
+  {
+    bzero(&session, sizeof(session));
+    session.cri_alg  = TT_ENCRYPTION_ALGORITHM;
+    session.cri_klen = TT_KEY_LENGTH;
+    session.cri_rnd  = TT_ROUNDS;
+    session.cri_key  = (caddr_t) &tt_key;
+    
+    if (crypto_newsession(
+          &(tt_enc_sessionId[core]),
+          &session,
+          0x0) != TT_SYSCALL_SUCCESS) {
+      syscall = TT_SYSCALL_FAILURE;
+      tt_enc_sessionId[core] = TT_NULL;
+      printf("ERROR(sys_treetank.c): Could not allocate cryptoini for encryption.\n");
+      goto finish;
+    }
+    
+  }
+  
+  if (tt_auth_sessionId[core] == TT_NULL) {
+    bzero(&session, sizeof(session));
+    session.cri_alg  = TT_AUTHENTICATION_ALGORITHM;
+    session.cri_klen = TT_KEY_LENGTH;
+    session.cri_key  = (caddr_t) &tt_key;
+
+    if (crypto_newsession(
+          &(tt_auth_sessionId[core]),
+          &session,
+          0x0) != TT_SYSCALL_SUCCESS) {
+      syscall = TT_SYSCALL_FAILURE;
+      tt_auth_sessionId[core] = TT_NULL;
+      printf("ERROR(sys_treetank.c): Could not allocate cryptoini for authentication.\n");
+      goto finish;
+    }
+  }
+  
   /* --- Copy buffer from user to kernel space. ----------------------------- */
   
   copyin(
@@ -131,12 +204,18 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
   switch (command) {
     case TT_WRITE_FRAGMENT:
         syscall = sys_treetank_write_fragment(
+            tt_comp_sessionId[core],
+            tt_enc_sessionId[core],
+            tt_auth_sessionId[core],
             core,
             lengthPtr,
             tt_buffer[core]);
         break;
     case TT_READ_FRAGMENT:
         syscall = sys_treetank_read_fragment(
+            tt_comp_sessionId[core],
+            tt_enc_sessionId[core],
+            tt_auth_sessionId[core],
             core,
             lengthPtr,
             tt_buffer[core]);
@@ -171,6 +250,23 @@ sys_treetank(struct proc *p, void *v, register_t *retval)
 finish:
   
   return (syscall);
+  
+}
+
+/*
+ * Callback to retrieve result of crypto operation.
+ */
+int
+sys_treetank_callback(struct cryptop *op)
+{
+  
+  if (op->crp_etype == EAGAIN) {
+    op->crp_flags = CRYPTO_F_IMBUF;
+    return crypto_dispatch(op);
+  }
+  
+  wakeup(op);
+  return (TT_SYSCALL_SUCCESS);
   
 }
 
