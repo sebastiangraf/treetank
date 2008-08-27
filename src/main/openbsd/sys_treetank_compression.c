@@ -105,7 +105,7 @@ sys_treetank_compression(
   operationPtr->crp_desc->crd_skip    = 0x0;
   operationPtr->crp_desc->crd_len     = myLength;
   operationPtr->crp_desc->crd_inject  = 0x0;
-  if (command == TT_COMMAND_WRITE)
+  if (command == TT_WRITE_FRAGMENT)
     operationPtr->crp_desc->crd_flags = CRD_F_COMP;
   else
     operationPtr->crp_desc->crd_flags = 0x0;

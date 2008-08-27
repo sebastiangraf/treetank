@@ -29,9 +29,9 @@ public final class CryptoNativeImpl implements ICrypto {
 
   private static final byte ERROR = (byte) 0x0;
 
-  private static final byte COMMAND_WRITE = (byte) 0x1;
+  private static final byte TT_WRITE_FRAGMENT = (byte) 0x8;
 
-  private static final byte COMMAND_READ = (byte) 0x2;
+  private static final byte TT_READ_FRAGMENT = (byte) 0x9;
 
   private static final BlockingQueue coreQueue =
       new ArrayBlockingQueue(CORE_COUNT);
@@ -50,7 +50,7 @@ public final class CryptoNativeImpl implements ICrypto {
   public final short crypt(final short length, final ByteBuffer buffer) {
     short result = ERROR;
     byte tank = (byte) 0x1;
-    byte command = COMMAND_WRITE;
+    byte command = TT_WRITE_FRAGMENT;
     byte core = ERROR;
     try {
       core = (Byte) coreQueue.take();
@@ -72,7 +72,7 @@ public final class CryptoNativeImpl implements ICrypto {
   public final short decrypt(final short length, final ByteBuffer buffer) {
     short result = ERROR;
     byte tank = (byte) 0x1;
-    byte command = COMMAND_READ;
+    byte command = TT_READ_FRAGMENT;
     byte core = ERROR;
     try {
       core = (Byte) coreQueue.take();

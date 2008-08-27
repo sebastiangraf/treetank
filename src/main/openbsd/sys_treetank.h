@@ -39,8 +39,15 @@
 #define TT_CORE_COUNT 15
 #define TT_BUFFER_LENGTH 32767
 
-#define TT_COMMAND_WRITE 0x1
-#define TT_COMMAND_READ  0x2
+#define TT_CREATE_TANK    0x1
+#define TT_UPDATE_TANK    0x2
+#define TT_ERASE_TANK     0x3
+#define TT_OPEN_TANK      0x4
+#define TT_CLOSE_TANK     0x5
+#define TT_WRITE_REVISION 0x6
+#define TT_READ_REVISION  0x7
+#define TT_WRITE_FRAGMENT 0x8
+#define TT_READ_FRAGMENT  0x9
 
 #define TT_REFERENCE_LENGTH 24
 

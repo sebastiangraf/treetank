@@ -139,7 +139,7 @@ sys_treetank_authentication(
   
   packetPtr = operationPtr->crp_buf;
   
-  if (command == TT_COMMAND_WRITE) {
+  if (command == TT_WRITE_FRAGMENT) {
     m_copydata(
       packetPtr,
       0x0,

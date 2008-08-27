@@ -79,7 +79,7 @@ sys_treetank_encryption(
   
   /* --- Assure padding as described by Schneier (only for encryption) ------ */
   
-  if (command == TT_COMMAND_WRITE) {
+  if (command == TT_WRITE_FRAGMENT) {
     padding = TT_BLOCK_LENGTH - (myLength % TT_BLOCK_LENGTH);
     if (padding == 0x0)
       padding = TT_BLOCK_LENGTH;
@@ -127,7 +127,7 @@ sys_treetank_encryption(
   operationPtr->crp_desc->crd_len     = myLength;
   operationPtr->crp_desc->crd_inject  = 0x0;
   bcopy(tt_enc_iv, operationPtr->crp_desc->crd_iv, TT_BLOCK_LENGTH);
-  if (command == TT_COMMAND_WRITE)
+  if (command == TT_WRITE_FRAGMENT)
     operationPtr->crp_desc->crd_flags =
           CRD_F_ENCRYPT | CRD_F_IV_PRESENT | CRD_F_IV_EXPLICIT;
   else
@@ -167,7 +167,7 @@ sys_treetank_encryption(
     
   /* --- Assure padding as described by Schneier (only for decryption) ------ */
   
-  if (command == TT_COMMAND_READ) {
+  if (command == TT_READ_FRAGMENT) {
     padding = myBufferPtr[myLength - 0x1];
     if (padding < 0x1 || padding > TT_BLOCK_LENGTH) {
       syscall = TT_SYSCALL_FAILURE;
