@@ -21,6 +21,7 @@ package org.treetank.service;
 import java.nio.ByteBuffer;
 import java.util.Random;
 
+import org.treetank.pagelayer.CryptoJavaImpl;
 import org.treetank.pagelayer.CryptoNativeImpl;
 import org.treetank.pagelayer.ICrypto;
 
@@ -35,21 +36,13 @@ public class TestTreeTankService {
 
       System.loadLibrary("TreeTank");
 
-      final ByteBuffer buffer = ByteBuffer.allocateDirect(32767);
-      final ICrypto crypto = new CryptoNativeImpl();
+      System.out.println("--- Test Java Crypto: ----------------------------------");
+      final ICrypto javaCrypto = new CryptoJavaImpl();
+      testCrypto(javaCrypto);
 
-      final Random r = new Random();
-      final byte[] referenceBuffer = new byte[32767];
-      r.nextBytes(referenceBuffer);
-      buffer.put(referenceBuffer);
-
-      test(crypto, (short) 30, buffer, referenceBuffer);
-      test(crypto, (short) 32, buffer, referenceBuffer);
-      test(crypto, (short) 188, buffer, referenceBuffer);
-      test(crypto, (short) 1200, buffer, referenceBuffer);
-      test(crypto, (short) 4932, buffer, referenceBuffer);
-      test(crypto, (short) 8452, buffer, referenceBuffer);
-      test(crypto, (short) 9000, buffer, referenceBuffer);
+      System.out.println("--- Test Native Crypto: --------------------------------");
+      final ICrypto nativeCrypto = new CryptoNativeImpl();
+      testCrypto(nativeCrypto);
 
     } catch (Exception e) {
       System.out.println(": FAILURE: " + e.getMessage());
@@ -57,7 +50,24 @@ public class TestTreeTankService {
 
   }
 
-  private static final void test(
+  private static final void testCrypto(final ICrypto crypto) throws Exception {
+    final ByteBuffer buffer = ByteBuffer.allocateDirect(32767);
+
+    final Random r = new Random();
+    final byte[] referenceBuffer = new byte[32767];
+    r.nextBytes(referenceBuffer);
+    buffer.put(referenceBuffer);
+
+    testCryptDecrypt(crypto, (short) 30, buffer, referenceBuffer);
+    testCryptDecrypt(crypto, (short) 32, buffer, referenceBuffer);
+    testCryptDecrypt(crypto, (short) 188, buffer, referenceBuffer);
+    testCryptDecrypt(crypto, (short) 1200, buffer, referenceBuffer);
+    testCryptDecrypt(crypto, (short) 4932, buffer, referenceBuffer);
+    testCryptDecrypt(crypto, (short) 8452, buffer, referenceBuffer);
+    testCryptDecrypt(crypto, (short) 9000, buffer, referenceBuffer);
+  }
+
+  private static final void testCryptDecrypt(
       final ICrypto crypto,
       final short length,
       final ByteBuffer buffer,
