@@ -75,6 +75,7 @@ public class WildcardFilter extends AbstractFilter implements IFilter {
           getTransaction().moveToNamespace(i);
           int prefixKey = mKnownPartKey;
           if (getTransaction().getNameKey() == prefixKey) {
+            getTransaction().moveToParent();
             return true;
           }
           getTransaction().moveToParent();
