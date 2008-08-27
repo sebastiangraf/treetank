@@ -186,27 +186,6 @@ public interface IItem {
   public boolean isText();
 
   /**
-   * Declares, whether the item a full text node.
-   * 
-   * @return true, if item is a full text node
-   */
-  public boolean isFullText();
-
-  /**
-   * Declares, whether the item a full text leaf.
-   * 
-   * @return true, if item is a full text leaf
-   */
-  public boolean isFullTextLeaf();
-
-  /**
-   * Declares, whether the item a full text root.
-   * 
-   * @return true, if item is a full text root
-   */
-  public boolean isFullTextRoot();
-
-  /**
    * Gets key of qualified name.
    * 
    * @return  key of qualified name

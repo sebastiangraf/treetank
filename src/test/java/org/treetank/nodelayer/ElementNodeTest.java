@@ -69,9 +69,6 @@ public class ElementNodeTest {
     assertEquals(false, node3.isAttribute());
     assertEquals(false, node3.isDocumentRoot());
     assertEquals(true, node3.isElement());
-    assertEquals(false, node3.isFullText());
-    assertEquals(false, node3.isFullTextLeaf());
-    assertEquals(false, node3.isFullTextRoot());
     assertEquals(false, node3.isText());
 
     assertEquals(13L, node3.getAttribute(0).getNodeKey());
