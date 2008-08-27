@@ -58,9 +58,6 @@ public class NamespaceNodeTest {
     assertEquals(false, node2.isAttribute());
     assertEquals(false, node2.isDocumentRoot());
     assertEquals(false, node2.isElement());
-    assertEquals(false, node2.isFullText());
-    assertEquals(false, node2.isFullTextLeaf());
-    assertEquals(false, node2.isFullTextRoot());
     assertEquals(false, node2.isText());
 
   }

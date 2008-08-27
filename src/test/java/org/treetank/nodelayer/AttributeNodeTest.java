@@ -30,9 +30,7 @@ public class AttributeNodeTest {
 
     // Create empty node.
     final AbstractNode node1 =
-        new AttributeNode(13L, 14, 15, 19, new byte[] {
-            (byte) 17,
-            (byte) 18 });
+        new AttributeNode(13L, 14, 15, 19, new byte[] { (byte) 17, (byte) 18 });
 
     // Modify it.
     node1.incrementChildCount();
@@ -62,9 +60,6 @@ public class AttributeNodeTest {
     assertEquals(true, node2.isAttribute());
     assertEquals(false, node2.isDocumentRoot());
     assertEquals(false, node2.isElement());
-    assertEquals(false, node2.isFullText());
-    assertEquals(false, node2.isFullTextLeaf());
-    assertEquals(false, node2.isFullTextRoot());
     assertEquals(false, node2.isText());
 
   }

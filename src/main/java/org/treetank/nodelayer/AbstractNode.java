@@ -87,27 +87,6 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
   /**
    * {@inheritDoc}
    */
-  public boolean isFullText() {
-    return false;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public boolean isFullTextRoot() {
-    return false;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public boolean isFullTextLeaf() {
-    return false;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
   public final long getNodeKey() {
     return mNodeKey;
   }
