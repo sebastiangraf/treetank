@@ -25,7 +25,6 @@ import org.treetank.api.IAxis;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.sessionlayer.ItemList;
 import org.treetank.sessionlayer.Session;
 import org.treetank.xmllayer.XMLSerializer;
 import org.treetank.xmllayer.XMLShredder;
@@ -166,7 +165,7 @@ public class TreeTankWrapper {
       final String expression) throws TreeTankException {
     IReadTransaction rtx = null;
     try {
-      rtx = session.beginReadTransaction(revision, new ItemList());
+      rtx = session.beginReadTransaction(revision);
       if (rtx.moveTo(id)) {
         final IAxis axis = new XPathAxis(rtx, expression);
         for (final long key : axis) {

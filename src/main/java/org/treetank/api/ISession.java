@@ -105,29 +105,10 @@ public interface ISession {
   /**
    * Begin a read-only transaction on the given revision key.
    * 
-   * @param itemList list of additional items.
-   * @return IReadTransaction instance.
-   */
-  public IReadTransaction beginReadTransaction(final IItemList itemList);
-
-  /**
-   * Begin a read-only transaction on the given revision key.
-   * 
    * @param revisionKey Revision key to read from.
    * @return IReadTransaction instance.
    */
   public IReadTransaction beginReadTransaction(final long revisionKey);
-
-  /**
-   * Begin a read-only transaction on the given revision key.
-   * 
-   * @param revisionKey Revision key to read from.
-   * @param itemList list of additional items.
-   * @return IReadTransaction instance.
-   */
-  public IReadTransaction beginReadTransaction(
-      final long revisionKey,
-      final IItemList itemList);
 
   /**
    * Begin exclusive read/write transaction without auto commit.

@@ -27,7 +27,6 @@ import org.junit.Test;
 import org.treetank.api.IAxis;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
-import org.treetank.sessionlayer.ItemList;
 import org.treetank.sessionlayer.Session;
 
 public class XPathParserTest {
@@ -47,7 +46,7 @@ public class XPathParserTest {
     //Build simple test tree.
     final ISession session = Session.beginSession(PATH);
 
-    final IReadTransaction rtx = session.beginReadTransaction(new ItemList());
+    final IReadTransaction rtx = session.beginReadTransaction();
     rtx.moveTo(2L);
 
     IAxis axis;
@@ -97,7 +96,7 @@ public class XPathParserTest {
 
     // Build simple test tree.
     final ISession session = Session.beginSession(PATH);
-    final IReadTransaction rtx = session.beginReadTransaction(new ItemList());
+    final IReadTransaction rtx = session.beginReadTransaction();
 
     parser = new XPathParser(rtx, "/p:a");
     parser.parseQuery();

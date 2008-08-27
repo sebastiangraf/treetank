@@ -24,7 +24,6 @@ import org.junit.Before;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.sessionlayer.ItemList;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.DocumentTest;
 import org.treetank.xpath.expr.LiteralExpr;
@@ -54,7 +53,7 @@ public class ValueCompTest {
 
     // Find descendants starting from nodeKey 0L (root).
     wtx.moveToDocumentRoot();
-    rtx = session.beginReadTransaction(new ItemList());
+    rtx = session.beginReadTransaction();
 
     comparator =
         new NodeComp(
