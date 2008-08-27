@@ -56,7 +56,7 @@ public class NestedFilterTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     DocumentTest.create(wtx);
 
-    wtx.moveTo(8L);
+    wtx.moveTo(9L);
     IFilterTest.testIFilterConventions(new NestedFilter(
         wtx,
         new ItemFilter(wtx),
@@ -68,7 +68,7 @@ public class NestedFilterTest {
         new AttributeFilter(wtx),
         new NameFilter(wtx, "b")), false);
 
-    wtx.moveTo(3L);
+    wtx.moveTo(4L);
     IFilterTest.testIFilterConventions(new NestedFilter(
         wtx,
         new NodeFilter(wtx),
@@ -78,7 +78,7 @@ public class NestedFilterTest {
         new NodeFilter(wtx),
         new TextFilter(wtx)), true);
 
-    wtx.moveTo(2L);
+    wtx.moveTo(1L);
     wtx.moveToAttribute(0);
     IFilterTest.testIFilterConventions(new NestedFilter(
         wtx,

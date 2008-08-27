@@ -51,28 +51,28 @@ public class DocumentNodeAxisTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     DocumentTest.create(wtx);
 
-    wtx.moveTo(2L);
+    wtx.moveTo(1L);
     IAxisTest.testIAxisConventions(
         new DocumentNodeAxis(wtx),
         new long[] { IReadTransaction.DOCUMENT_ROOT_KEY });
 
-    wtx.moveTo(4L);
+    wtx.moveTo(5L);
     IAxisTest.testIAxisConventions(
         new DocumentNodeAxis(wtx),
         new long[] { IReadTransaction.DOCUMENT_ROOT_KEY });
 
-    wtx.moveTo(8L);
+    wtx.moveTo(9L);
     IAxisTest.testIAxisConventions(
         new DocumentNodeAxis(wtx),
         new long[] { IReadTransaction.DOCUMENT_ROOT_KEY });
 
-    wtx.moveTo(8L);
+    wtx.moveTo(9L);
     wtx.moveToAttribute(0);
     IAxisTest.testIAxisConventions(
         new DocumentNodeAxis(wtx),
         new long[] { IReadTransaction.DOCUMENT_ROOT_KEY });
 
-    wtx.moveTo(11L);
+    wtx.moveTo(13L);
     IAxisTest.testIAxisConventions(
         new DocumentNodeAxis(wtx),
         new long[] { IReadTransaction.DOCUMENT_ROOT_KEY });

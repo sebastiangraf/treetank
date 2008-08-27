@@ -60,38 +60,38 @@ public class IntersectAxisTest {
     DocumentTest.create(wtx);
     IReadTransaction rtx = session.beginReadTransaction();
 
-    rtx.moveTo(2L);
+    rtx.moveTo(1L);
 
     IAxisTest.testIAxisConventions(new XPathAxis(
         rtx,
-        "child::node() intersect b"), new long[] { 4L, 8L });
+        "child::node() intersect b"), new long[] { 5L, 9L });
 
     IAxisTest.testIAxisConventions(
         new XPathAxis(
             rtx,
-            "child::node() intersect b intersect child::node()/@p:x"),
-        new long[] { 8L });
+            "child::node() intersect b intersect child::node()[@p:x]"),
+        new long[] { 9L });
 
     IAxisTest.testIAxisConventions(
         new XPathAxis(
             rtx,
-            "child::node() intersect child::node()/attribute::p:x"),
-        new long[] { 8L });
+            "child::node() intersect child::node()[attribute::p:x]"),
+        new long[] { 9L });
 
     IAxisTest.testIAxisConventions(
         new XPathAxis(
             rtx,
             "child::node()/parent::node() intersect self::node()"),
-        new long[] { 2L });
+        new long[] { 1L });
 
     IAxisTest.testIAxisConventions(new XPathAxis(
         rtx,
-        "//node() intersect //text()"), new long[] { 3L, 7L, 11L, 5L, 10L });
+        "//node() intersect //text()"), new long[] { 4L, 8L, 13L, 6L, 12L });
 
-    rtx.moveTo(2L);
+    rtx.moveTo(1L);
     IAxisTest.testIAxisConventions(new XPathAxis(
         rtx,
-        "b/preceding::node() intersect text()"), new long[] { 3L, 7L });
+        "b/preceding::node() intersect text()"), new long[] { 4L, 8L });
 
     rtx.close();
     wtx.abort();

@@ -73,15 +73,15 @@ public class TypeFilterTest {
     final IAxis axis = new XPathAxis(rtx, "a");
     final IReadTransaction xtx = axis.getTransaction();
 
-    xtx.moveTo(8L);
+    xtx.moveTo(9L);
     IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untyped"), true);
     IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:long"), false);
 
-    xtx.moveTo(3L);
+    xtx.moveTo(4L);
     IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untyped"), true);
     IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:double"), false);
 
-    xtx.moveTo(2L);
+    xtx.moveTo(1L);
     xtx.moveToAttribute(0);
     IFilterTest.testIFilterConventions(
         new TypeFilter(xtx, "xs:untypedAtomic"),

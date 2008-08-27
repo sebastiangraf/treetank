@@ -52,35 +52,35 @@ public class DescendantAxisTest {
 
     wtx.moveToDocumentRoot();
     IAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {
-        2L,
-        3L,
+        1L,
+        4L,
+        5L,
+        6L,
+        7L,
+        8L,
+        9L, 
+        11L,
+        12L,
+        13L });
+
+    wtx.moveTo(1L);
+    IAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {
         4L,
         5L,
         6L,
         7L,
         8L,
         9L,
-        10L,
-        11L });
+        11L,
+        12L,
+        13L });
 
-    wtx.moveTo(2L);
+    wtx.moveTo(9L);
     IAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {
-        3L,
-        4L,
-        5L,
-        6L,
-        7L,
-        8L,
-        9L,
-        10L,
-        11L });
+        11L,
+        12L });
 
-    wtx.moveTo(8L);
-    IAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {
-        9L,
-        10L });
-
-    wtx.moveTo(11L);
+    wtx.moveTo(13L);
     IAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {});
 
     wtx.abort();
@@ -100,40 +100,40 @@ public class DescendantAxisTest {
     wtx.moveToDocumentRoot();
     IAxisTest.testIAxisConventions(new DescendantAxis(wtx, true), new long[] {
         IReadTransaction.DOCUMENT_ROOT_KEY,
-        2L,
-        3L,
+        1L,
         4L,
         5L,
         6L,
         7L,
         8L,
         9L,
-        10L,
-        11L });
+        11L,
+        12L,
+        13L });
 
-    wtx.moveTo(2L);
+    wtx.moveTo(1L);
     IAxisTest.testIAxisConventions(new DescendantAxis(wtx, true), new long[] {
-        2L,
-        3L,
-        4L,
-        5L,
-        6L,
-        7L,
-        8L,
-        9L,
-        10L,
-        11L });
+      1L,
+      4L,
+      5L,
+      6L,
+      7L,
+      8L,
+      9L,
+      11L,
+      12L,
+      13L });
 
-    wtx.moveTo(8L);
+    wtx.moveTo(9L);
     IAxisTest.testIAxisConventions(new DescendantAxis(wtx, true), new long[] {
-        8L,
         9L,
-        10L });
+        11L,
+        12L });
 
-    wtx.moveTo(11L);
+    wtx.moveTo(13L);
     IAxisTest.testIAxisConventions(
         new DescendantAxis(wtx, true),
-        new long[] { 11L });
+        new long[] { 13L });
 
     wtx.abort();
     wtx.close();

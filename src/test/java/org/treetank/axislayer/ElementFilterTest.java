@@ -52,30 +52,30 @@ public class ElementFilterTest {
     wtx.moveTo(0L);
     IFilterTest.testIFilterConventions(new ElementFilter(wtx), false);
 
-    wtx.moveTo(2L);
+    wtx.moveTo(1L);
     IFilterTest.testIFilterConventions(new ElementFilter(wtx), true);
 
-    wtx.moveTo(2L);
+    wtx.moveTo(1L);
     wtx.moveToAttribute(0);
-    IFilterTest.testIFilterConventions(new ElementFilter(wtx), false);
-
-    wtx.moveTo(3L);
     IFilterTest.testIFilterConventions(new ElementFilter(wtx), false);
 
     wtx.moveTo(4L);
-    IFilterTest.testIFilterConventions(new ElementFilter(wtx), true);
-
-    wtx.moveTo(5L);
     IFilterTest.testIFilterConventions(new ElementFilter(wtx), false);
 
-    wtx.moveTo(8L);
+    wtx.moveTo(5L);
     IFilterTest.testIFilterConventions(new ElementFilter(wtx), true);
 
-    wtx.moveTo(8L);
+    wtx.moveTo(6L);
+    IFilterTest.testIFilterConventions(new ElementFilter(wtx), false);
+
+    wtx.moveTo(9L);
+    IFilterTest.testIFilterConventions(new ElementFilter(wtx), true);
+
+    wtx.moveTo(9L);
     wtx.moveToAttribute(0);
     IFilterTest.testIFilterConventions(new ElementFilter(wtx), false);
 
-    wtx.moveTo(10L);
+    wtx.moveTo(12L);
     IFilterTest.testIFilterConventions(new ElementFilter(wtx), false);
 
     wtx.abort();

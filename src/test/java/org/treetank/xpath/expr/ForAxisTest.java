@@ -63,66 +63,66 @@ public class ForAxisTest {
     DocumentTest.create(wtx);
     IReadTransaction rtx = session.beginReadTransaction();
 
-    rtx.moveTo(2L);
+    rtx.moveTo(1L);
 
     IAxisTest.testIAxisConventions(new XPathAxis(
         rtx,
         "for $a in child::text() return child::node()"), new long[] {
-        3L,
         4L,
-        7L,
+        5L,
         8L,
-        11L,
-        3L,
+        9L,
+        13L,
         4L,
-        7L,
+        5L,
         8L,
-        11L,
-        3L,
+        9L,
+        13L,
         4L,
-        7L,
+        5L,
         8L,
-        11L });
+        9L,
+        13L});
 
     IAxisTest.testIAxisConventions(new XPathAxis(
         rtx,
         "for $a in child::node() return $a/node()"), new long[] {
-        5L,
         6L,
-        9L,
-        10L });
+        7L,
+        11L,
+        12L });
 
     IAxisTest.testIAxisConventions(new XPathAxis(
         rtx,
-        "for $a in child::node() return $a/text()"), new long[] { 5L, 10L });
+        "for $a in child::node() return $a/text()"), new long[] { 6L, 12L });
 
     IAxisTest.testIAxisConventions(new XPathAxis(
         rtx,
-        "for $a in child::node() return $a/c"), new long[] { 6L, 9L });
+        "for $a in child::node() return $a/c"), new long[] { 7L, 11L });
 
     //    IAxisTest.testIAxisConventions(new XPathAxis(
     //        rtx, "for $a in child::node(), $b in /node(), $c in ., $d in /c return $a/c"), 
-    //        new long[] {6L, 9L});
+    //        new long[] {7L, 11L});
 
     IAxisTest.testIAxisConventions(new XPathAxis(
         rtx,
-        "for $a in child::node() return $a[@p:x]"), new long[] { 8L });
+        "for $a in child::node() return $a[@p:x]"), new long[] { 9L });
 
     IAxisTest.testIAxisConventions(
         new XPathAxis(rtx, "for $a in . return $a"),
-        new long[] { 2L });
+        new long[] { 1L });
 
     IAxis axis =
         new XPathAxis(rtx, "for $i in (10, 20), $j in (1, 2) return ($i + $j)");
     assertEquals(true, axis.hasNext());
 
-    //    assertEquals("11.0", xtx.getValue());
+    assertEquals("11.0", rtx.getValue());
     assertEquals(true, axis.hasNext());
-    //assertThat(12.0, is(xtx.getValueAsDouble()));
+    assertEquals("12.0", rtx.getValue());
     assertEquals(true, axis.hasNext());
-    //    assertThat(21.0, is(xtx.getValueAsDouble()));
+    assertEquals("21.0", rtx.getValue());
     assertEquals(true, axis.hasNext());
-    //    assertThat(22.0, is(xtx.getValueAsDouble()));
+    assertEquals("22.0", rtx.getValue());
     assertEquals(false, axis.hasNext());
 
     rtx.close();

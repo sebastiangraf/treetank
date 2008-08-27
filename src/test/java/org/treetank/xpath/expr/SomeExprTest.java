@@ -71,7 +71,7 @@ public class SomeExprTest {
     assertEquals(false, Boolean.parseBoolean(rtx.getValue()));
     assertEquals(false, axis2.hasNext());
 
-    rtx.moveTo(2L);
+    rtx.moveTo(1L);
     final IAxis axis3 =
         new XPathAxis(
             rtx,

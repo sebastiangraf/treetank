@@ -101,7 +101,7 @@ public class OrExprTest {
     DocumentTest.create(wtx);
     IReadTransaction rtx = session.beginReadTransaction();
 
-    rtx.moveTo(2L);
+    rtx.moveTo(1L);
 
     final IAxis axis1 = new XPathAxis(rtx, "text() or node()");
     assertEquals(true, axis1.hasNext());

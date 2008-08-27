@@ -53,11 +53,11 @@ public class AttributeAxisTest {
     wtx.moveToDocumentRoot();
     IAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
 
-    wtx.moveTo(2L);
-    IAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] { 3L });
+    wtx.moveTo(1L);
+    IAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] { 2L });
 
-    wtx.moveTo(10L);
-    IAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] { 11L });
+    wtx.moveTo(9L);
+    IAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] { 10L });
 
     wtx.moveTo(12L);
     IAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});

@@ -49,12 +49,15 @@ public class ValueFilterTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     DocumentTest.create(wtx);
 
-    wtx.moveTo(3L);
+    wtx.moveTo(4L);
     IFilterTest.testIFilterConventions(new ValueFilter(wtx, "oops1"), true);
     IFilterTest.testIFilterConventions(new ValueFilter(wtx, "foo"), false);
 
-    wtx.moveTo(2L);
+    wtx.moveTo(1L);
     wtx.moveToAttribute(0);
+    IFilterTest.testIFilterConventions(new ValueFilter(wtx, "j"), true);
+
+    wtx.moveTo(2L);
     IFilterTest.testIFilterConventions(new ValueFilter(wtx, "j"), true);
 
     wtx.abort();

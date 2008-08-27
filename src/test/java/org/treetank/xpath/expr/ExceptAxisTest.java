@@ -50,19 +50,19 @@ public class ExceptAxisTest {
     DocumentTest.create(wtx);
     IReadTransaction rtx = session.beginReadTransaction();
 
-    rtx.moveTo(2L);
+    rtx.moveTo(1L);
 
     IAxisTest.testIAxisConventions(
         new XPathAxis(rtx, "child::node() except b"),
-        new long[] { 3L, 7L, 11L });
+        new long[] { 4L, 8L, 13L });
 
     IAxisTest.testIAxisConventions(new XPathAxis(
         rtx,
-        "child::node() except child::node()/attribute::p:x"), new long[] {
-        3L,
+        "child::node() except child::node()[attribute::p:x]"), new long[] {
         4L,
-        7L,
-        11L });
+        5L,
+        8L,
+        13L });
 
     IAxisTest.testIAxisConventions(new XPathAxis(
         rtx,
@@ -70,12 +70,12 @@ public class ExceptAxisTest {
 
     IAxisTest.testIAxisConventions(new XPathAxis(
         rtx,
-        "//node() except //text()"), new long[] { 2L, 4L, 8L, 6L, 9L });
+        "//node() except //text()"), new long[] { 1L, 5L, 9L, 7L, 11L });
 
-    rtx.moveTo(2L);
+    rtx.moveTo(1L);
     IAxisTest.testIAxisConventions(new XPathAxis(
         rtx,
-        "b/preceding::node() except text()"), new long[] { 6L, 5L, 4L });
+        "b/preceding::node() except text()"), new long[] { 7L, 6L, 5L });
 
     rtx.close();
     wtx.abort();

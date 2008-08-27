@@ -55,7 +55,7 @@ public class WildcardFilterTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     DocumentTest.create(wtx);
 
-    wtx.moveTo(8L);
+    wtx.moveTo(9L);
     IFilterTest
         .testIFilterConventions(new WildcardFilter(wtx, "b", true), true);
     wtx.moveToAttribute(0);
@@ -75,7 +75,7 @@ public class WildcardFilterTest {
     //    wtx.moveTo(3L);
     //    IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
 
-    wtx.moveTo(2L);
+    wtx.moveTo(1L);
     IFilterTest.testIFilterConventions(
         new WildcardFilter(wtx, "p", false),
         true);

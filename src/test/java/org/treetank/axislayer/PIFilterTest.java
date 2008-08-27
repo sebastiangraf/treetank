@@ -51,11 +51,11 @@ public class PIFilterTest {
     wtx.moveTo(3L);
     IFilterTest.testIFilterConventions(new PIFilter(wtx), false);
 
-    wtx.moveTo(2L);
+    wtx.moveTo(1L);
     wtx.moveToAttribute(0);
     IFilterTest.testIFilterConventions(new PIFilter(wtx), false);
 
-    wtx.moveTo(8L);
+    wtx.moveTo(9L);
     wtx.moveToAttribute(0);
     IFilterTest.testIFilterConventions(new PIFilter(wtx), false);
 

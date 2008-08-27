@@ -65,7 +65,7 @@ public class FunctionAxisTest {
     DocumentTest.create(wtx);
     IReadTransaction rtx = session.beginReadTransaction();
 
-    rtx.moveTo(2L);
+    rtx.moveTo(1L);
 
     final IAxis axis1 = new XPathAxis(rtx, "fn:count(text())");
     assertEquals(true, axis1.hasNext());
@@ -89,17 +89,20 @@ public class FunctionAxisTest {
     assertEquals("oops1 foo oops2 bar oops3", rtx.getValue());
     assertEquals(false, axis4.hasNext());
 
-    //    rtx.moveToAttribute(0);
-    //    final IAxis axis5 = new XPathAxis(rtx, "fn:string()");
-    //    assertEquals(true, axis5.hasNext());
-    //    assertEquals("j", rtx.getValue());
-    //    assertEquals(false, axis5.hasNext());
-
     final IAxis axis5 =
-        new XPathAxis(rtx, "fn:string(./attribute::attribute())");
+      new XPathAxis(rtx, "fn:string(./attribute::attribute())");
     assertEquals(true, axis5.hasNext());
     assertEquals("j", rtx.getValue());
     assertEquals(false, axis5.hasNext());
+    
+    rtx.moveToAttribute(0);
+    final IAxis axis6 = new XPathAxis(rtx, "fn:string()");
+    assertEquals(true, axis6.hasNext());
+    assertEquals("j", rtx.getValue());
+    assertEquals(false, axis6.hasNext());
+
+    
+    
 
     rtx.close();
     wtx.abort();

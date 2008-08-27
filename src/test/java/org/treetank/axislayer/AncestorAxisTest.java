@@ -47,17 +47,17 @@ public class AncestorAxisTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     DocumentTest.create(wtx);
 
-    wtx.moveTo(9L);
+    wtx.moveTo(12L);
     IAxisTest
-        .testIAxisConventions(new AncestorAxis(wtx), new long[] { 8L, 2L });
+        .testIAxisConventions(new AncestorAxis(wtx), new long[] { 9L, 1L });
 
     wtx.moveTo(4L);
-    IAxisTest.testIAxisConventions(new AncestorAxis(wtx), new long[] { 2L });
+    IAxisTest.testIAxisConventions(new AncestorAxis(wtx), new long[] { 1L });
 
-    wtx.moveTo(3L);
-    IAxisTest.testIAxisConventions(new AncestorAxis(wtx), new long[] { 2L });
+    wtx.moveTo(5L);
+    IAxisTest.testIAxisConventions(new AncestorAxis(wtx), new long[] { 1L });
 
-    wtx.moveTo(2L);
+    wtx.moveTo(1L);
     IAxisTest.testIAxisConventions(new AncestorAxis(wtx), new long[] {});
 
     wtx.abort();
@@ -72,26 +72,26 @@ public class AncestorAxisTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     DocumentTest.create(wtx);
 
-    wtx.moveTo(9L);
+    wtx.moveTo(11L);
     IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true), new long[] {
+        11L,
         9L,
-        8L,
-        2L });
+        1L });
+
+    wtx.moveTo(5L);
+    IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true), new long[] {
+        5L,
+        1L });
 
     wtx.moveTo(4L);
     IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true), new long[] {
         4L,
-        2L });
+        1L });
 
-    wtx.moveTo(3L);
-    IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true), new long[] {
-        3L,
-        2L });
-
-    wtx.moveTo(2L);
+    wtx.moveTo(1L);
     IAxisTest.testIAxisConventions(
         new AncestorAxis(wtx, true),
-        new long[] { 2L });
+        new long[] { 1L });
 
     wtx.abort();
     wtx.close();

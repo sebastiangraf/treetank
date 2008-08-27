@@ -49,7 +49,7 @@ public class FilterAxisTest {
     wtx.moveToDocumentRoot();
     IAxisTest.testIAxisConventions(new FilterAxis(
         new DescendantAxis(wtx),
-        new NameFilter(wtx, "b")), new long[] { 4L, 8L });
+        new NameFilter(wtx, "b")), new long[] { 5L, 9L });
 
     wtx.abort();
     wtx.close();
@@ -68,7 +68,7 @@ public class FilterAxisTest {
     wtx.moveToDocumentRoot();
     IAxisTest.testIAxisConventions(new FilterAxis(
         new DescendantAxis(wtx),
-        new ValueFilter(wtx, "foo")), new long[] { 5L });
+        new ValueFilter(wtx, "foo")), new long[] { 6L });
 
     wtx.abort();
     wtx.close();
@@ -84,13 +84,13 @@ public class FilterAxisTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     DocumentTest.create(wtx);
 
-    wtx.moveTo(2L);
+    wtx.moveTo(1L);
     IAxisTest.testIAxisConventions(new FilterAxis(
         new AttributeAxis(wtx),
         new NameFilter(wtx, "i"),
         new ValueFilter(wtx, "j")), new long[] { 2L });
 
-    wtx.moveTo(8L);
+    wtx.moveTo(9L);
     IAxisTest.testIAxisConventions(new FilterAxis(
         new AttributeAxis(wtx),
         new NameFilter(wtx, "y"),

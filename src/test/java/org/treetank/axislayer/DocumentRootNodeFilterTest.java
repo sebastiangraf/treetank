@@ -52,10 +52,10 @@ public class DocumentRootNodeFilterTest {
     wtx.moveTo(0L);
     IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), true);
 
-    wtx.moveTo(2L);
+    wtx.moveTo(1L);
     IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), false);
 
-    wtx.moveTo(2L);
+    wtx.moveTo(1L);
     wtx.moveToAttribute(0);
     IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), false);
 
@@ -68,17 +68,17 @@ public class DocumentRootNodeFilterTest {
     wtx.moveTo(5L);
     IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), false);
 
-    wtx.moveTo(8L);
+    wtx.moveTo(9L);
     IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), false);
 
-    wtx.moveTo(8L);
+    wtx.moveTo(9L);
     wtx.moveToAttribute(0);
     IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), false);
 
-    wtx.moveTo(10L);
+    wtx.moveTo(12L);
     IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), false);
 
-    wtx.moveTo(10L);
+    wtx.moveTo(13L);
     wtx.moveToDocumentRoot();
     IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), true);
 
