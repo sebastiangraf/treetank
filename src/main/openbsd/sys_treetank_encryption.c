@@ -20,16 +20,11 @@
 
 /* --- Function prototypes. ------------------------------------------------- */
 
-int sys_treetank_encryption(u_int8_t, u_int8_t, u_int16_t *, u_int8_t *);
-int sys_treetank_encryption_callback(struct cryptop *op);
+int sys_treetank_encryption(u_int64_t, u_int8_t, u_int16_t *, u_int8_t *);
+int sys_treetank_callback(struct cryptop *op);
 
 /* --- Global variables. ---------------------------------------------------- */
 
-static u_int64_t tt_enc_sessionId[] = {
-  TT_NULL, TT_NULL, TT_NULL, TT_NULL,
-  TT_NULL, TT_NULL, TT_NULL, TT_NULL,
-  TT_NULL, TT_NULL, TT_NULL, TT_NULL,
-  TT_NULL, TT_NULL, TT_NULL };
 static u_int8_t tt_enc_key[32] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 static u_int8_t tt_enc_iv[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
@@ -38,7 +33,7 @@ static u_int8_t tt_enc_iv[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
  */
 int
 sys_treetank_encryption(
-  u_int8_t   core,
+  u_int64_t  session,
   u_int8_t   command,
   u_int16_t *lengthPtr,
   u_int8_t  *bufferPtr)
@@ -52,30 +47,6 @@ sys_treetank_encryption(
   u_int8_t        padding      = 0x0;
   u_int16_t       myLength     = *lengthPtr - TT_REFERENCE_LENGTH;
   u_int8_t       *myBufferPtr  = bufferPtr + TT_REFERENCE_LENGTH;
-  
-  /* --- Initialise session (if required). ---------------------------------- */
-    
-  if (tt_enc_sessionId[core] == TT_NULL)
-  {
-    struct cryptoini session;  
-
-    bzero(&session, sizeof(session));
-    session.cri_alg  = TT_ENCRYPTION_ALGORITHM;
-    session.cri_klen = TT_KEY_LENGTH;
-    session.cri_rnd  = TT_ROUNDS;
-    session.cri_key  = (caddr_t) &tt_enc_key;
-    
-    if (crypto_newsession(
-          &(tt_enc_sessionId[core]),
-          &session,
-          0x0) != TT_SYSCALL_SUCCESS) {
-      syscall = TT_SYSCALL_FAILURE;
-      tt_enc_sessionId[core] = TT_NULL;
-      printf("ERROR(sys_treetank_encryption.c): Could not allocate cryptoini.\n");
-      goto finish;
-    }
-    
-  }
   
   /* --- Assure padding as described by Schneier (only for encryption) ------ */
   
@@ -116,7 +87,7 @@ sys_treetank_encryption(
     goto finish;
   }
 
-  operationPtr->crp_sid               = tt_enc_sessionId[core];
+  operationPtr->crp_sid               = session;
   operationPtr->crp_ilen              = myLength;
   operationPtr->crp_flags             = CRYPTO_F_IMBUF;
   operationPtr->crp_buf               = (caddr_t) packetPtr;
@@ -134,7 +105,7 @@ sys_treetank_encryption(
     operationPtr->crp_desc->crd_flags =
           0x0 | CRD_F_IV_EXPLICIT;
   operationPtr->crp_callback          = 
-        (int (*) (struct cryptop *)) sys_treetank_encryption_callback;
+        (int (*) (struct cryptop *)) sys_treetank_callback;
    
   /* --- Synchronously dispatch crypto operation. --------------------------- */
   
@@ -189,21 +160,4 @@ finish:
     crypto_freereq(operationPtr);
   
   return (syscall);
-}
-
-/*
- * Callback to retrieve result of crypto operation.
- */
-int
-sys_treetank_encryption_callback(struct cryptop *op)
-{
-  
-  if (op->crp_etype == EAGAIN) {
-    op->crp_flags = CRYPTO_F_IMBUF;
-    return crypto_dispatch(op);
-  }
-  
-  wakeup(op);
-  return (TT_SYSCALL_SUCCESS);
-  
 }

@@ -20,17 +20,20 @@
 
 /* --- Function prototypes. ------------------------------------------------- */
 
-int sys_treetank_write_fragment(u_int8_t, u_int16_t *, u_int8_t *);
+int sys_treetank_write_fragment(u_int64_t, u_int64_t, u_int64_t, u_int8_t, u_int16_t *, u_int8_t *);
 
-int sys_treetank_compression(u_int8_t, u_int8_t, u_int16_t *, u_int8_t *);
-int sys_treetank_encryption(u_int8_t, u_int8_t, u_int16_t *, u_int8_t *);
-int sys_treetank_authentication(u_int8_t, u_int8_t, u_int16_t *, u_int8_t *);
+int sys_treetank_compression(u_int64_t, u_int8_t, u_int16_t *, u_int8_t *);
+int sys_treetank_encryption(u_int64_t, u_int8_t, u_int16_t *, u_int8_t *);
+int sys_treetank_authentication(u_int64_t, u_int8_t, u_int16_t *, u_int8_t *);
 
 /* --- Global variables. ---------------------------------------------------- */
 
 /* --- Functions. ----------------------------------------------------------- */
 int
 sys_treetank_write_fragment(
+  u_int64_t  compSession,
+  u_int64_t  encSession,
+  u_int64_t  authSession,
   u_int8_t   core,
   u_int16_t *lengthPtr,
   u_int8_t  *bufferPtr)
@@ -49,7 +52,7 @@ sys_treetank_write_fragment(
   }
   
   if (sys_treetank_compression(
-      core,
+      compSession,
       TT_WRITE_FRAGMENT,
       lengthPtr,
       bufferPtr) != TT_SYSCALL_SUCCESS) {
@@ -59,7 +62,7 @@ sys_treetank_write_fragment(
   }
  
   if (sys_treetank_encryption(
-      core,
+      encSession,
       TT_WRITE_FRAGMENT,
       lengthPtr,
       bufferPtr) != TT_SYSCALL_SUCCESS) {
@@ -69,7 +72,7 @@ sys_treetank_write_fragment(
   }
  
   if (sys_treetank_authentication(
-      core,
+      authSession,
       TT_WRITE_FRAGMENT,
       lengthPtr,
       bufferPtr) != TT_SYSCALL_SUCCESS) {
