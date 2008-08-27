@@ -48,20 +48,20 @@ public class AttributeFilterTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     DocumentTest.create(wtx);
 
-    wtx.moveTo(8L);
+    wtx.moveTo(9L);
     IFilterTest.testIFilterConventions(new AttributeFilter(wtx), false);
 
-    wtx.moveTo(3L);
+    wtx.moveTo(4L);
     IFilterTest.testIFilterConventions(new AttributeFilter(wtx), false);
 
-    wtx.moveTo(2L);
+    wtx.moveTo(1L);
     wtx.moveToAttribute(0);
     IFilterTest.testIFilterConventions(new AttributeFilter(wtx), true);
 
-    wtx.moveTo(8L);
+    wtx.moveTo(9L);
     wtx.moveToAttribute(0);
     IFilterTest.testIFilterConventions(new AttributeFilter(wtx), true);
-
+    
     wtx.abort();
     wtx.close();
     session.close();

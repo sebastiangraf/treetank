@@ -47,7 +47,7 @@ public class ItemFilterTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     DocumentTest.create(wtx);
 
-    wtx.moveTo(8L);
+    wtx.moveTo(9L);
     IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
 
     wtx.moveTo(3L);

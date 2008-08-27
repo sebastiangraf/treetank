@@ -64,26 +64,26 @@ public class VarRefExprTest {
 
     final VarRefExpr axis1 = new VarRefExpr(rtx, variable);
     //     assertEquals(false, axis1.hasNext());
-    axis1.update(4L);
+    axis1.update(5L);
     assertEquals(true, axis1.hasNext());
-    assertEquals(4L, rtx.getNodeKey());
-    axis1.update(11L);
+    assertEquals(5L, rtx.getNodeKey());
+    axis1.update(13L);
     assertEquals(true, axis1.hasNext());
-    assertEquals(11L, rtx.getNodeKey());
-    axis1.update(2L);
+    assertEquals(13L, rtx.getNodeKey());
+    axis1.update(1L);
     assertEquals(true, axis1.hasNext());
-    assertEquals(2L, rtx.getNodeKey());
+    assertEquals(1L, rtx.getNodeKey());
     assertEquals(false, axis1.hasNext());
 
     final VarRefExpr axis2 = new VarRefExpr(rtx, variable);
     //   assertEquals(false, axis2.hasNext());
-    axis2.update(9L);
+    axis2.update(13L);
     assertEquals(true, axis2.hasNext());
-    assertEquals(9L, rtx.getNodeKey());
+    assertEquals(13L, rtx.getNodeKey());
     assertEquals(false, axis2.hasNext());
-    axis2.update(10L);
+    axis2.update(12L);
     assertEquals(true, axis2.hasNext());
-    assertEquals(10L, rtx.getNodeKey());
+    assertEquals(12L, rtx.getNodeKey());
     assertEquals(false, axis2.hasNext());
 
     rtx.close();

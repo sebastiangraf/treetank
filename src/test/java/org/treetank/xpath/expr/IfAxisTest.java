@@ -61,24 +61,24 @@ public class IfAxisTest {
     DocumentTest.create(wtx);
     IReadTransaction rtx = session.beginReadTransaction();
 
-    rtx.moveTo(2L);
+    rtx.moveTo(1L);
 
     IAxisTest.testIAxisConventions(new XPathAxis(
         rtx,
-        "if (text()) then . else child::node()"), new long[] { 2L });
+        "if (text()) then . else child::node()"), new long[] { 1L });
 
     IAxisTest.testIAxisConventions(new XPathAxis(
         rtx,
-        "if (node()) then . else child::node()"), new long[] { 2L });
+        "if (node()) then . else child::node()"), new long[] { 1L });
 
     IAxisTest.testIAxisConventions(new XPathAxis(
         rtx,
         "if (processing-instruction()) then . else child::node()"), new long[] {
-        3L,
         4L,
-        7L,
+        5L,
         8L,
-        11L });
+        9L,
+        13L });
 
     rtx.close();
     wtx.abort();

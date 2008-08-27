@@ -81,19 +81,19 @@ public class XPathAxisWideTest {
 
     IAxisTest.testIAxisConventions(
         new XPathAxis(rtx, "/mondial/continent[@id]"),
-        new long[] { 3L, 4L, 5L, 6L, 7L });
+        new long[] { 2L, 5L, 8L, 11L, 14L});
 
     IAxisTest.testIAxisConventions(new XPathAxis(
         rtx,
-        "mondial/continent[@name]"), new long[] { 3L, 4L, 5L, 6L, 7L });
+        "mondial/continent[@name]"), new long[] { 2L, 5L, 8L, 11L, 14L});
 
     IAxisTest.testIAxisConventions(new XPathAxis(
         rtx,
-        "mondial/continent[@id=\"f0_119\"]"), new long[] { 3L });
+        "mondial/continent[@id=\"f0_119\"]"), new long[] { 2L });
 
     IAxisTest.testIAxisConventions(new XPathAxis(
         rtx,
-        "/mondial/continent[@name = \"Africa\"]"), new long[] { 7L });
+        "/mondial/continent[@name = \"Africa\"]"), new long[] { 14L });
 
     final IAxis axis5 = new XPathAxis(rtx, "mondial/lake/node()");
     for (int i = 0; i < 61; i++) {

@@ -191,7 +191,7 @@ public final class WriteTransaction extends ReadTransaction
             ((WriteTransactionState) getTransactionState()).createNameKey(name),
             ((WriteTransactionState) getTransactionState()).createNameKey(uri),
             ((WriteTransactionState) getTransactionState())
-                .createNameKey("xs:untyped"),
+                .createNameKey("xs:untypedAtomic"),
             value));
   }
 

@@ -51,16 +51,16 @@ public class PostOrderTest {
 
     wtx.moveToDocumentRoot();
     IAxisTest.testIAxisConventions(new PostOrderAxis(wtx), new long[] {
-        3L,
-        5L,
-        6L,
         4L,
+        6L,
         7L,
-        9L,
-        10L,
+        5L,
         8L,
         11L,
-        2L,
+        12L,
+        9L,
+        13L,
+        1L,
         0L });
 
     wtx.abort();

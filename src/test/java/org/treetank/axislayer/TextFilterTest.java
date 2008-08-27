@@ -46,12 +46,15 @@ public class TextFilterTest {
     DocumentTest.create(wtx);
 
     wtx.moveTo(8L);
-    IFilterTest.testIFilterConventions(new TextFilter(wtx), false);
-
-    wtx.moveTo(3L);
     IFilterTest.testIFilterConventions(new TextFilter(wtx), true);
 
-    wtx.moveTo(2L);
+    wtx.moveTo(3L);
+    IFilterTest.testIFilterConventions(new TextFilter(wtx), false);
+    
+    wtx.moveTo(5L);
+    IFilterTest.testIFilterConventions(new TextFilter(wtx), false);
+
+    wtx.moveTo(1L);
     wtx.moveToAttribute(0);
     IFilterTest.testIFilterConventions(new TextFilter(wtx), false);
 

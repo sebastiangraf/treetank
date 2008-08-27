@@ -72,7 +72,7 @@ public class EveryExprTest {
     assertEquals(false, Boolean.parseBoolean(rtx.getValue()));
     assertEquals(false, axis2.hasNext());
 
-    rtx.moveTo(2L);
+    rtx.moveTo(1L);
     final IAxis axis3 =
         new XPathAxis(rtx, "every $child in child::element()"
             + " satisfies $child/attribute::attribute()");
@@ -80,7 +80,7 @@ public class EveryExprTest {
     assertEquals(false, Boolean.parseBoolean(rtx.getValue()));
     assertEquals(false, axis3.hasNext());
 
-    rtx.moveTo(2L);
+    rtx.moveTo(1L);
     final IAxis axis4 =
         new XPathAxis(
             rtx,

@@ -76,7 +76,7 @@ public class RangeAxisTest {
     //      assertEquals(10, TypedValue.parseInt(rtx.getRawValue()));
     //     assertEquals(false, axis2.hasNext());
 
-    rtx.moveTo(2L);
+    rtx.moveTo(1L);
     final IAxis axis3 = new XPathAxis(rtx, "15 to 10");
     assertEquals(false, axis3.hasNext());
 

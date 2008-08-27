@@ -45,13 +45,13 @@ public class NameFilterTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     DocumentTest.create(wtx);
 
-    wtx.moveTo(8L);
+    wtx.moveTo(9L);
     IFilterTest.testIFilterConventions(new NameFilter(wtx, "b"), true);
 
-    wtx.moveTo(3L);
+    wtx.moveTo(4L);
     IFilterTest.testIFilterConventions(new NameFilter(wtx, "b"), false);
 
-    wtx.moveTo(6L);
+    wtx.moveTo(7L);
     IFilterTest.testIFilterConventions(new NameFilter(wtx, "b"), false);
 
     wtx.abort();

@@ -57,18 +57,18 @@ public class ChildAxisTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     DocumentTest.create(wtx);
 
-    wtx.moveTo(2L);
+    wtx.moveTo(1L);
     IAxisTest.testIAxisConventions(new ChildAxis(wtx), new long[] {
-        3L,
         4L,
-        7L,
+        5L,
         8L,
-        11L });
+        9L,
+        13L });
 
-    wtx.moveTo(4L);
-    IAxisTest.testIAxisConventions(new ChildAxis(wtx), new long[] { 5L, 6L });
+    wtx.moveTo(5L);
+    IAxisTest.testIAxisConventions(new ChildAxis(wtx), new long[] { 6L, 7L });
 
-    wtx.moveTo(11L);
+    wtx.moveTo(13L);
     IAxisTest.testIAxisConventions(new ChildAxis(wtx), new long[] {});
 
     wtx.abort();
@@ -90,18 +90,18 @@ public class ChildAxisTest {
     final ISession session1 = Session.beginSession(TEST_PERSISTENT_PATH);
     final IReadTransaction rtx = session1.beginReadTransaction();
 
-    rtx.moveTo(2L);
+    rtx.moveTo(1L);
     IAxisTest.testIAxisConventions(new ChildAxis(rtx), new long[] {
-        3L,
         4L,
-        7L,
+        5L,
         8L,
-        11L });
+        9L,
+        13L });
 
-    rtx.moveTo(4L);
-    IAxisTest.testIAxisConventions(new ChildAxis(rtx), new long[] { 5L, 6L });
+    rtx.moveTo(5L);
+    IAxisTest.testIAxisConventions(new ChildAxis(rtx), new long[] { 6L, 7L });
 
-    rtx.moveTo(11L);
+    rtx.moveTo(13L);
     IAxisTest.testIAxisConventions(new ChildAxis(rtx), new long[] {});
 
     rtx.close();

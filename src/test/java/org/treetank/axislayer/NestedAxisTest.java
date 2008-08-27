@@ -61,7 +61,7 @@ public class NestedAxisTest {
     // Part: /p:a/b/text()
     final IAxis axis = new NestedAxis(new NestedAxis(childA, childB), text);
 
-    IAxisTest.testIAxisConventions(axis, new long[] { 5L, 10L });
+    IAxisTest.testIAxisConventions(axis, new long[] { 6L, 12L });
 
     wtx.abort();
     wtx.close();
@@ -94,7 +94,7 @@ public class NestedAxisTest {
     final IAxis axis =
         new NestedAxis(new NestedAxis(childA, childB), attributeX);
 
-    IAxisTest.testIAxisConventions(axis, new long[] { 8L });
+    IAxisTest.testIAxisConventions(axis, new long[] { 10L });
 
     wtx.abort();
     wtx.close();
@@ -125,7 +125,7 @@ public class NestedAxisTest {
     // Part: /p:a/node():
     final IAxis axis = new NestedAxis(childA, childNode);
 
-    IAxisTest.testIAxisConventions(axis, new long[] { 3L, 4L, 7L, 8L, 11L });
+    IAxisTest.testIAxisConventions(axis, new long[] { 4L, 5L, 8L, 9L, 13L });
 
     wtx.abort();
     wtx.close();

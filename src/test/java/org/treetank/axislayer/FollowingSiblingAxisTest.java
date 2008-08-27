@@ -50,26 +50,26 @@ public class FollowingSiblingAxisTest {
     wtx.moveTo(9L);
     IAxisTest.testIAxisConventions(
         new FollowingSiblingAxis(wtx),
-        new long[] { 10L });
+        new long[] { 13L });
+
+    wtx.moveTo(5L);
+    IAxisTest.testIAxisConventions(new FollowingSiblingAxis(wtx), new long[] {
+        8L,
+        9L,
+        13L });
 
     wtx.moveTo(4L);
     IAxisTest.testIAxisConventions(new FollowingSiblingAxis(wtx), new long[] {
-        7L,
+        5L,
         8L,
-        11L });
+        9L,
+        13L });
 
-    wtx.moveTo(3L);
-    IAxisTest.testIAxisConventions(new FollowingSiblingAxis(wtx), new long[] {
-        4L,
-        7L,
-        8L,
-        11L });
-
-    wtx.moveTo(2L);
+    wtx.moveTo(1L);
     IAxisTest
         .testIAxisConventions(new FollowingSiblingAxis(wtx), new long[] {});
 
-    wtx.moveTo(8L);
+    wtx.moveTo(9L);
     wtx.moveToAttribute(0);
     IAxisTest
         .testIAxisConventions(new FollowingSiblingAxis(wtx), new long[] {});

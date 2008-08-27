@@ -100,7 +100,7 @@ public class AndExprTest {
     DocumentTest.create(wtx);
     IReadTransaction rtx = session.beginReadTransaction();
 
-    rtx.moveTo(2L);
+    rtx.moveTo(1L);
 
     final IAxis axis1 = new XPathAxis(rtx, "text() and node()");
     assertEquals(true, axis1.hasNext());

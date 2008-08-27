@@ -47,29 +47,29 @@ public class FollowingAxisTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     DocumentTest.create(wtx);
 
-    wtx.moveTo(9L);
+    wtx.moveTo(11L);
     IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {
-        10L,
-        11L });
+        12L,
+        13L });
 
-    wtx.moveTo(4L);
+    wtx.moveTo(5L);
     IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {
-        7L,
         8L,
         9L,
-        10L,
-        11L });
+        11L,
+        12L,
+        13L });
 
-    wtx.moveTo(11L);
+    wtx.moveTo(13L);
     IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {});
 
-    wtx.moveTo(2L);
+    wtx.moveTo(1L);
     IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {});
 
     wtx.moveToDocumentRoot();
     IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {});
 
-    wtx.moveTo(8L);
+    wtx.moveTo(9L);
     wtx.moveToAttribute(0);
     IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {});
 
