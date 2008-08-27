@@ -101,27 +101,6 @@ package org.treetank.api;
  */
 public interface IWriteTransaction extends IReadTransaction {
 
-  //--- FullText Support -------------------------------------------------------
-
-  /**
-   * Index the given token occurring in the provided node key. The caller
-   * must make sure that the token is efficiently filtered and trimmed.
-   * 
-   * @param token Token to store (unmodified) in the inverted index.
-   * @param nodeKey Key of node which contains the token.
-   * @return Key of token (node key of full text node matching last character
-   *         of token).
-   */
-  public long insertToken(final String token, final long nodeKey);
-
-  /**
-   * Remove key from list under token.
-   * 
-   * @param token Token from which to remove key.
-   * @param nodeKey Key of node which contains the token.
-   */
-  public void removeToken(final String token, final long nodeKey);
-
   // --- Node Modifiers --------------------------------------------------------
 
   /**
@@ -157,16 +136,6 @@ public interface IWriteTransaction extends IReadTransaction {
   public long insertTextAsFirstChild(final String value);
 
   /**
-   * Insert new fulltext node as first child of currently selected node.
-   * The cursor is moved to the inserted node.
-   * 
-   * @param nameKey Name key of inserted node.
-   * @return Key of inserted node.
-   * already has a first child.
-   */
-  public long insertFullTextAsFirstChild(final int nameKey);
-
-  /**
    * Insert new element node as right sibling of currently selected node.
    * The cursor is moved to the inserted node.
    * 
@@ -197,16 +166,6 @@ public interface IWriteTransaction extends IReadTransaction {
    * the root node which is not allowed to have right siblings.
    */
   public long insertTextAsRightSibling(final String value);
-
-  /**
-   * Insert new fulltext node as right sibling of currently selected node.
-   * The cursor is moved to the inserted node.
-   * 
-   * @param nameKey Name key of inserted node.
-   * @return Key of inserted node.
-   * already has a first child.
-   */
-  public long insertFullTextAsRightSibling(final int nameKey);
 
   /**
    * Insert attribute in currently selected node.

@@ -132,49 +132,10 @@ public class ReadTransaction implements IReadTransaction {
   }
 
   /**
-   * {@inheritDoc}
-   */
-  public final boolean moveToToken(final String token) {
-    assertNotClosed();
-
-    final IItem oldNode = mCurrentNode;
-
-    moveToFullTextRoot();
-    boolean contained = true;
-    for (final char character : token.toCharArray()) {
-      if (hasFirstChild()) {
-        moveToFirstChild();
-        while (isFullTextKind()
-            && (getNameKey() != character)
-            && hasRightSibling()) {
-          moveToRightSibling();
-        }
-        contained = contained && (getNameKey() == character);
-      } else {
-        contained = false;
-      }
-    }
-
-    if (contained) {
-      return true;
-    } else {
-      mCurrentNode = oldNode;
-      return false;
-    }
-  }
-
-  /**
-   * {@inheritDoc}
-   */
+    * {@inheritDoc}
+    */
   public final boolean moveToDocumentRoot() {
     return moveTo(DOCUMENT_ROOT_KEY);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final boolean moveToFullTextRoot() {
-    return moveTo(FULLTEXT_ROOT_KEY);
   }
 
   /**
@@ -388,7 +349,9 @@ public class ReadTransaction implements IReadTransaction {
    */
   public final String getAttributeValue(final int index) {
     assertNotClosed();
-    return TypedValue.parseString(mCurrentNode.getAttribute(index).getRawValue());
+    return TypedValue.parseString(mCurrentNode
+        .getAttribute(index)
+        .getRawValue());
   }
 
   /**
@@ -469,30 +432,6 @@ public class ReadTransaction implements IReadTransaction {
   public final boolean isTextKind() {
     assertNotClosed();
     return mCurrentNode.isText();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final boolean isFullTextKind() {
-    assertNotClosed();
-    return mCurrentNode.isFullText();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final boolean isFullTextLeafKind() {
-    assertNotClosed();
-    return mCurrentNode.isFullTextLeaf();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final boolean isFullTextRootKind() {
-    assertNotClosed();
-    return mCurrentNode.isFullTextRoot();
   }
 
   /**

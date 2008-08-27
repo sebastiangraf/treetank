@@ -22,7 +22,6 @@ import java.nio.ByteBuffer;
 
 import org.treetank.api.IReadTransaction;
 import org.treetank.nodelayer.DocumentRootNode;
-import org.treetank.nodelayer.FullTextRootNode;
 import org.treetank.sessionlayer.WriteTransactionState;
 import org.treetank.utils.IConstants;
 
@@ -87,9 +86,6 @@ public final class UberPage extends AbstractPage {
     ndp.setNode(
         (int) IReadTransaction.DOCUMENT_ROOT_KEY,
         new DocumentRootNode());
-    ndp.setNode(
-        (int) IReadTransaction.FULLTEXT_ROOT_KEY,
-        new FullTextRootNode());
 
     rrp.incrementNodeCountAndMaxNodeKey();
     rrp.incrementNodeCountAndMaxNodeKey();
