@@ -78,7 +78,6 @@ public final class AttributeNode extends AbstractNode {
 
   public AttributeNode(final long nodeKey, final ByteBuffer in) {
     super(nodeKey);
-
     mNameKey = in.getInt();
     mURIKey = in.getInt();
     mType = in.getInt();
