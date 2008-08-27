@@ -31,7 +31,6 @@ import org.treetank.api.IAxis;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.axislayer.IAxisTest;
-import org.treetank.sessionlayer.ItemList;
 import org.treetank.sessionlayer.Session;
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.xmllayer.XMLShredder;
@@ -77,7 +76,7 @@ public class XPathAxisWideTest {
 
     // Verify.
     final ISession session = Session.beginSession(PATH);
-    final IReadTransaction rtx = session.beginReadTransaction(new ItemList());
+    final IReadTransaction rtx = session.beginReadTransaction();
     rtx.moveToDocumentRoot();
 
     IAxisTest.testIAxisConventions(

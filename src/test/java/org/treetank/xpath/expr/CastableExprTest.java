@@ -33,7 +33,6 @@ import org.treetank.api.IItemList;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
-import org.treetank.sessionlayer.ItemList;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.DocumentTest;
 import org.treetank.xpath.AtomicValue;
@@ -81,7 +80,7 @@ public class CastableExprTest {
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
     DocumentTest.create(wtx);
-    IReadTransaction rtx = session.beginReadTransaction(new ItemList());
+    IReadTransaction rtx = session.beginReadTransaction();
 
     key1 = rtx.getItemList().addItem(item1);
     key2 = rtx.getItemList().addItem(item2);

@@ -25,7 +25,6 @@ import org.junit.Before;
 import org.perfidix.BenchClass;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
-import org.treetank.sessionlayer.ItemList;
 import org.treetank.sessionlayer.Session;
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.xmllayer.XMLShredder;
@@ -68,7 +67,7 @@ public class XMarkTest {
 
   //  @Test
   public void testQ1_10() throws IOException {
-    rtx = session.beginReadTransaction(new ItemList());
+    rtx = session.beginReadTransaction();
     XPathStringTest.testIAxisConventions(
         new XPathAxis(rtx, "/site/people/person[@id=\"person0\"]/name/text()"),
         new String[] { "Sinisa Farrel" });
@@ -77,7 +76,7 @@ public class XMarkTest {
 
   //  @Test
   public void testQ1() throws IOException {
-    rtx = session.beginReadTransaction(new ItemList());
+    rtx = session.beginReadTransaction();
     // Q1 The name of the person with ID 'person0' {projecting}
     XPathStringTest.testIAxisConventions(new XPathAxis(
         rtx,
@@ -131,7 +130,7 @@ public class XMarkTest {
 
   //  @Test
   public void testQ5() throws IOException {
-    rtx = session.beginReadTransaction(new ItemList());
+    rtx = session.beginReadTransaction();
     // Q5 How many sold items cost more than 40?
     XPathStringTest.testIAxisConventions(new XPathAxis(
         rtx,
@@ -142,7 +141,7 @@ public class XMarkTest {
 
   //  @Test
   public void testQ6() throws IOException {
-    rtx = session.beginReadTransaction(new ItemList());
+    rtx = session.beginReadTransaction();
     // Q6 How many items are listed on all continents?
     XPathStringTest
         .testIAxisConventions(
@@ -155,7 +154,7 @@ public class XMarkTest {
 
   //  @Test
   public void testQ7() throws IOException {
-    rtx = session.beginReadTransaction(new ItemList());
+    rtx = session.beginReadTransaction();
     // Q7 How many pieces of prose are in our database?
     XPathStringTest.testIAxisConventions(
         new XPathAxis(

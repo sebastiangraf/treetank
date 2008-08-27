@@ -22,7 +22,6 @@ import java.io.File;
 
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
-import org.treetank.sessionlayer.ItemList;
 import org.treetank.sessionlayer.Session;
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.xmllayer.XMLShredder;
@@ -48,7 +47,7 @@ public class ClassTest {
 
     // Build simple test tree.
     final ISession session = Session.beginSession(PATH);
-    final IReadTransaction rtx = session.beginReadTransaction(new ItemList());
+    final IReadTransaction rtx = session.beginReadTransaction();
     //    rtx.moveTo(17L);
 
     String query = "fn:count(//b)";

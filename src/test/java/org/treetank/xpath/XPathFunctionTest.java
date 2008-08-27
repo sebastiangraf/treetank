@@ -26,7 +26,6 @@ import org.junit.Test;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.axislayer.IAxisTest;
-import org.treetank.sessionlayer.ItemList;
 import org.treetank.sessionlayer.Session;
 import org.treetank.sessionlayer.SessionConfiguration;
 import org.treetank.xmllayer.XMLShredder;
@@ -70,7 +69,7 @@ public class XPathFunctionTest {
 
     // Verify.
     final ISession session = Session.beginSession(PATH);
-    final IReadTransaction rtx = session.beginReadTransaction(new ItemList());
+    final IReadTransaction rtx = session.beginReadTransaction();
     rtx.moveToDocumentRoot();
 
     IAxisTest.testIAxisConventions(new XPathAxis(rtx, "//L/*"), new long[] {
@@ -135,7 +134,7 @@ public class XPathFunctionTest {
 
     // Verify.
     final ISession session = Session.beginSession(PATH);
-    final IReadTransaction rtx = session.beginReadTransaction(new ItemList());
+    final IReadTransaction rtx = session.beginReadTransaction();
     rtx.moveToDocumentRoot();
 
     IAxisTest.testIAxisConventions(
@@ -307,7 +306,7 @@ public class XPathFunctionTest {
 
     // Verify.
     final ISession session = Session.beginSession(PATH);
-    final IReadTransaction rtx = session.beginReadTransaction(new ItemList());
+    final IReadTransaction rtx = session.beginReadTransaction();
     rtx.moveToDocumentRoot();
 
     IAxisTest.testIAxisConventions(
@@ -355,7 +354,7 @@ public class XPathFunctionTest {
 
     // Verify.
     final ISession session = Session.beginSession(PATH);
-    final IReadTransaction rtx = session.beginReadTransaction(new ItemList());
+    final IReadTransaction rtx = session.beginReadTransaction();
     rtx.moveToDocumentRoot();
 
     IAxisTest.testIAxisConventions(

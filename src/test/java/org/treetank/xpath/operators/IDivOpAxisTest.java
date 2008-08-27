@@ -31,7 +31,6 @@ import org.treetank.api.IAxis;
 import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
-import org.treetank.sessionlayer.ItemList;
 import org.treetank.sessionlayer.Session;
 import org.treetank.xpath.AtomicValue;
 import org.treetank.xpath.expr.LiteralExpr;
@@ -55,7 +54,7 @@ public class IDivOpAxisTest {
   public final void testOperate() {
 
     final ISession session = Session.beginSession(PATH);
-    IReadTransaction rtx = session.beginReadTransaction(new ItemList());
+    IReadTransaction rtx = session.beginReadTransaction();
     IItem item1 = new AtomicValue(3.0, Type.DOUBLE);
     IItem item2 = new AtomicValue(2.0, Type.DOUBLE);
 
