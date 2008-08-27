@@ -74,7 +74,9 @@ public class AttributeAxisTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     final long nodeKey = wtx.insertElementAsFirstChild("foo", "");
     wtx.insertAttribute("foo0", "", "0");
+    wtx.moveTo(nodeKey);
     wtx.insertAttribute("foo1", "", "1");
+    wtx.moveTo(nodeKey);
     wtx.insertAttribute("foo2", "", "2");
 
     Assert.assertEquals(true, wtx.moveTo(nodeKey));
@@ -88,6 +90,7 @@ public class AttributeAxisTest {
     Assert.assertEquals("1", wtx.getValue());
     Assert.assertEquals("foo1", wtx.getName());
 
+    Assert.assertEquals(true, wtx.moveToParent());
     Assert.assertEquals(true, wtx.moveToAttribute(2));
     Assert.assertEquals("2", wtx.getValue());
     Assert.assertEquals("foo2", wtx.getName());
@@ -97,19 +100,19 @@ public class AttributeAxisTest {
 
     Assert.assertEquals(true, axis.hasNext());
     axis.next();
-    Assert.assertEquals(nodeKey, wtx.getNodeKey());
+    Assert.assertEquals(nodeKey+1, wtx.getNodeKey());
     Assert.assertEquals("foo0", wtx.getName());
     Assert.assertEquals("0", wtx.getValue());
 
     Assert.assertEquals(true, axis.hasNext());
     axis.next();
-    Assert.assertEquals(nodeKey, wtx.getNodeKey());
+    Assert.assertEquals(nodeKey+2, wtx.getNodeKey());
     Assert.assertEquals("foo1", wtx.getName());
     Assert.assertEquals("1", wtx.getValue());
 
     Assert.assertEquals(true, axis.hasNext());
     axis.next();
-    Assert.assertEquals(nodeKey, wtx.getNodeKey());
+    Assert.assertEquals(nodeKey+3, wtx.getNodeKey());
     Assert.assertEquals("foo2", wtx.getName());
     Assert.assertEquals("2", wtx.getValue());
 
