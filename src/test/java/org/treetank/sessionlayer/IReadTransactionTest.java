@@ -82,26 +82,26 @@ public class IReadTransactionTest {
     assertEquals(key, rtx.getNodeKey());
 
     assertEquals(rtx.hasFirstChild(), rtx.moveToFirstChild());
-    assertEquals(2L, rtx.getNodeKey());
+    assertEquals(1L, rtx.getNodeKey());
 
     assertEquals(false, rtx.moveTo(Integer.MAX_VALUE));
     assertEquals(false, rtx.moveTo(Integer.MIN_VALUE));
-    assertEquals(2L, rtx.getNodeKey());
+    assertEquals(1L, rtx.getNodeKey());
 
     assertEquals(rtx.hasRightSibling(), rtx.moveToRightSibling());
-    assertEquals(2L, rtx.getNodeKey());
+    assertEquals(1L, rtx.getNodeKey());
 
     assertEquals(rtx.hasFirstChild(), rtx.moveToFirstChild());
-    assertEquals(3L, rtx.getNodeKey());
-
-    assertEquals(rtx.hasRightSibling(), rtx.moveToRightSibling());
     assertEquals(4L, rtx.getNodeKey());
 
+    assertEquals(rtx.hasRightSibling(), rtx.moveToRightSibling());
+    assertEquals(5L, rtx.getNodeKey());
+
     assertEquals(rtx.hasLeftSibling(), rtx.moveToLeftSibling());
-    assertEquals(3L, rtx.getNodeKey());
+    assertEquals(4L, rtx.getNodeKey());
 
     assertEquals(rtx.hasParent(), rtx.moveToParent());
-    assertEquals(2L, rtx.getNodeKey());
+    assertEquals(1L, rtx.getNodeKey());
 
     rtx.close();
   }

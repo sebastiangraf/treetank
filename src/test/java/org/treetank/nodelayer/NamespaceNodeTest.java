@@ -29,7 +29,7 @@ public class NamespaceNodeTest {
   public void testNamespaceNode() {
 
     // Create empty node.
-    final AbstractNode node1 = new NamespaceNode(13L, 14, 15);
+    final AbstractNode node1 = new NamespaceNode(99L, 13L, 14, 15);
 
     // Modify it.
     node1.incrementChildCount();
@@ -39,7 +39,7 @@ public class NamespaceNodeTest {
     final AbstractNode node2 = new NamespaceNode(node1);
 
     // Now compare.
-    assertEquals(13L, node2.getNodeKey());
+    assertEquals(99L, node2.getNodeKey());
     assertEquals(13L, node2.getParentKey());
     assertEquals(IReadTransaction.NULL_NODE_KEY, node2.getFirstChildKey());
     assertEquals(IReadTransaction.NULL_NODE_KEY, node2.getLeftSiblingKey());
@@ -48,7 +48,7 @@ public class NamespaceNodeTest {
     assertEquals(0, node2.getAttributeCount());
     assertEquals(0, node2.getNamespaceCount());
     assertEquals(14, node2.getURIKey());
-    assertEquals(15, node2.getPrefixKey());
+    assertEquals(15, node2.getNameKey());
     assertEquals(null, node2.getRawValue());
     assertEquals(IReadTransaction.NAMESPACE_KIND, node2.getKind());
     assertEquals(false, node2.hasFirstChild());

@@ -207,6 +207,14 @@ public interface IReadTransaction {
    */
   public boolean moveToAttribute(final int index);
 
+  /**
+   * Move cursor to namespace declaration by its index.
+   * 
+   * @param index Index of attribute to move to.
+   * @return True if the namespace node is selected.
+   */
+  public boolean moveToNamespace(final int index);
+
   // --- Node Getters ----------------------------------------------------------
 
   /**
@@ -289,123 +297,11 @@ public interface IReadTransaction {
   public int getAttributeCount();
 
   /**
-   * Get qualified name key of attribute at given index.
-   * 
-   * @param index Index of attribute [0..getAttributeCount()].
-   * @return Qualified name key of attribute at given index.
-   */
-  public int getAttributeNameKey(final int index);
-
-  /**
-   * Get qualified name of attribute at given index.
-   * 
-   * @param index Index of attribute [0..getAttributeCount()].
-   * @return Qualified name of attribute at given index.
-   */
-  public String getAttributeName(final int index);
-
-  /**
-   * Get qualified raw name of attribute at given index.
-   * 
-   * @param index Index of attribute [0..getAttributeCount()].
-   * @return Qualified raw name of attribute at given index.
-   */
-  public byte[] getAttributeRawName(final int index);
-
-  /**
-   * Get URI key of attribute at given index.
-   * 
-   * @param index Index of attribute [0..getAttributeCount()].
-   * @return URI key of attribute at given index.
-   */
-  public int getAttributeURIKey(final int index);
-
-  /**
-   * Get URI of attribute at given index.
-   * 
-   * @param index Index of attribute [0..getAttributeCount()].
-   * @return URI of attribute at given index.
-   */
-  public String getAttributeURI(final int index);
-
-  /**
-   * Get type key of value of attribute at given index.
-   * 
-   * @param index Index of attribute [0..getAttributeCount()].
-   * @return Type key of value of attribute at given index.
-   */
-  public int getAttributeTypeKey(final int index);
-
-  /**
-   * Get type string of value of attribute at given index.
-   * 
-   * @param index Index of attribute [0..getAttributeCount()].
-   * @return Type string of value of attribute at given index.
-   */
-  public String getAttributeType(final int index);
-
-  /**
-   * Get raw type of value of attribute at given index.
-   * 
-   * @param index Index of attribute [0..getAttributeCount()].
-   * @return Type byte[] of value of attribute at given index.
-   */
-  public byte[] getAttributeRawType(final int index);
-
-  /**
-   * Get value of attribute at given index.
-   * 
-   * @param index Index of attribute [0..getAttributeCount()].
-   * @return Value of attribute at given index.
-   */
-  public byte[] getAttributeRawValue(final int index);
-
-  /**
-   * Get value of attribute at given index.
-   * 
-   * @param index Index of attribute [0..getAttributeCount()].
-   * @return Value of attribute at given index.
-   */
-  public String getAttributeValue(final int index);
-
-  /**
    * Get namespace declaration count of currently selected node.
    * 
    * @return Namespace declaration count of currently selected node.
    */
   public int getNamespaceCount();
-
-  /**
-   * Get prefix key of namespace at given index.
-   * 
-   * @param index Index of namespace [0..getNamespaceCount()].
-   * @return Prefix key of namespace at given index.
-   */
-  public int getNamespacePrefixKey(final int index);
-
-  /**
-   * Get prefix of namespace at given index.
-   * 
-   * @param index Index of namespace [0..getNamespaceCount()].
-   * @return Prefix of namespace at given index.
-   */
-  public String getNamespacePrefix(final int index);
-
-  /**
-   * Get URI key of namespace at given index.
-   * 
-   * @param index Index of namespace [0..getNamespaceCount()].
-   * @return URI key of namespace at given index.
-   */
-  public int getNamespaceURIKey(final int index);
-
-  /**
-   * Get URI of namespace at given index.
-   * 
-   * @param index Index of namespace [0..getNamespaceCount()].
-   * @return URI of namespace at given index.
-   */
-  public String getNamespaceURI(final int index);
 
   /**
    * Get kind of node.

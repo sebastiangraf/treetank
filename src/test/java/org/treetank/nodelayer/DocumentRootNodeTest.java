@@ -57,7 +57,7 @@ public class DocumentRootNodeTest {
     assertEquals(0, node3.getNamespaceCount());
     assertEquals(IReadTransaction.NULL_NAME_KEY, node3.getNameKey());
     assertEquals(IReadTransaction.NULL_NAME_KEY, node3.getURIKey());
-    assertEquals(IReadTransaction.NULL_NAME_KEY, node3.getPrefixKey());
+    assertEquals(IReadTransaction.NULL_NAME_KEY, node3.getNameKey());
     assertEquals(null, node3.getRawValue());
     assertEquals(IReadTransaction.DOCUMENT_ROOT_KIND, node3.getKind());
     assertEquals(false, node3.hasFirstChild());

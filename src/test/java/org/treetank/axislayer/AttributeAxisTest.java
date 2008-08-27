@@ -54,12 +54,12 @@ public class AttributeAxisTest {
     IAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
 
     wtx.moveTo(2L);
-    IAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] { 2L });
+    IAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] { 3L });
 
-    wtx.moveTo(8L);
-    IAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] { 8L });
+    wtx.moveTo(10L);
+    IAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] { 11L });
 
-    wtx.moveTo(11L);
+    wtx.moveTo(12L);
     IAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
 
     wtx.abort();
@@ -78,12 +78,19 @@ public class AttributeAxisTest {
     wtx.insertAttribute("foo2", "", "2");
 
     Assert.assertEquals(true, wtx.moveTo(nodeKey));
-    Assert.assertEquals("foo0", wtx.getAttributeName(0));
-    Assert.assertEquals("foo1", wtx.getAttributeName(1));
-    Assert.assertEquals("foo2", wtx.getAttributeName(2));
-    Assert.assertEquals("0", wtx.getAttributeValue(0));
-    Assert.assertEquals("1", wtx.getAttributeValue(1));
-    Assert.assertEquals("2", wtx.getAttributeValue(2));
+
+    Assert.assertEquals(true, wtx.moveToAttribute(0));
+    Assert.assertEquals("0", wtx.getValue());
+    Assert.assertEquals("foo0", wtx.getName());
+
+    Assert.assertEquals(true, wtx.moveToParent());
+    Assert.assertEquals(true, wtx.moveToAttribute(1));
+    Assert.assertEquals("1", wtx.getValue());
+    Assert.assertEquals("foo1", wtx.getName());
+
+    Assert.assertEquals(true, wtx.moveToAttribute(2));
+    Assert.assertEquals("2", wtx.getValue());
+    Assert.assertEquals("foo2", wtx.getName());
 
     Assert.assertEquals(true, wtx.moveTo(nodeKey));
     final IAxis axis = new AttributeAxis(wtx);

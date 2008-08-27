@@ -231,17 +231,19 @@ public final class XMLSerializer implements Runnable {
       mOut.write(mRTX.getRawName());
       // Emit namespace declarations.
       for (int index = 0, length = mRTX.getNamespaceCount(); index < length; index++) {
-        if (mRTX.getNamespacePrefix(index).length() == 0) {
+        mRTX.moveToNamespace(index);
+        if (mRTX.getName().length() == 0) {
           mOut.write(XMLNS);
-          write(mRTX.getNamespaceURI(index));
+          write(mRTX.getURI());
           mOut.write(QUOTE);
         } else {
           mOut.write(XMLNS_COLON);
-          write(mRTX.getNamespacePrefix(index));
+          write(mRTX.getName());
           mOut.write(EQUAL_QUOTE);
-          write(mRTX.getNamespaceURI(index));
+          write(mRTX.getURI());
           mOut.write(QUOTE);
         }
+        mRTX.moveToParent();
       }
       // Emit attributes.
       // Add virtual rest:id attribute.
@@ -253,11 +255,13 @@ public final class XMLSerializer implements Runnable {
 
       // Iterate over all persistent attributes.
       for (int index = 0, length = mRTX.getAttributeCount(); index < length; index++) {
+        mRTX.moveToAttribute(index);
         mOut.write(SPACE);
-        mOut.write(mRTX.getAttributeRawName(index));
+        mOut.write(mRTX.getRawName());
         mOut.write(EQUAL_QUOTE);
-        mOut.write(mRTX.getAttributeRawValue(index));
+        mOut.write(mRTX.getRawValue());
         mOut.write(QUOTE);
+        mRTX.moveToParent();
       }
       if (mRTX.hasFirstChild()) {
         mOut.write(CLOSE);

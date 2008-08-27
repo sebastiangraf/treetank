@@ -171,15 +171,15 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
   /**
    * {@inheritDoc}
    */
-  public AbstractNode getAttribute(final int index) {
-    return null;
+  public long getAttributeKey(final int index) {
+    return IReadTransaction.NULL_NODE_KEY;
   }
 
   /**
    * {@inheritDoc}
    */
-  public AbstractNode getNamespace(final int index) {
-    return null;
+  public long getNamespaceKey(final int index) {
+    return IReadTransaction.NULL_NODE_KEY;
   }
 
   /**
@@ -193,13 +193,6 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
    * {@inheritDoc}
    */
   public int getNameKey() {
-    return IReadTransaction.NULL_NAME_KEY;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public int getPrefixKey() {
     return IReadTransaction.NULL_NAME_KEY;
   }
 
@@ -249,37 +242,16 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
   public void decrementChildCount() {
   }
 
-  public void setAttribute(
-      final int index,
-      final int nameKey,
-      final int uriKey,
-      final int valueType,
-      final byte[] value) {
+  public void insertAttribute(final long attributeKey) {
   }
 
-  public void insertAttribute(
-      final int nameKey,
-      final int uriKey,
-      final int valueType,
-      final byte[] value) {
-  }
-
-  public void setNamespace(
-      final int index,
-      final int uriKey,
-      final int prefixKey) {
-  }
-
-  public void insertNamespace(final int uriKey, final int prefixKey) {
+  public void insertNamespace(final long namespaceKey) {
   }
 
   public void setKind(final byte kind) {
   }
 
   public void setNameKey(final int nameKey) {
-  }
-
-  public void setPrefixKey(final int prefixKey) {
   }
 
   public void setURIKey(final int uriKey) {

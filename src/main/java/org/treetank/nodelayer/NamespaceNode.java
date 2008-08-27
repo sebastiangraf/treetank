@@ -31,22 +31,30 @@ import org.treetank.api.IReadTransaction;
  */
 public final class NamespaceNode extends AbstractNode {
 
+  /** Key of parent. */
+  private long mParentKey;
+
   /** Key of URI. */
   private int mURIKey;
 
   /** Key of prefix. */
-  private int mPrefixKey;
+  private int mNameKey;
 
   /**
    * Create namespace node.
    * 
    * @param uriKey Key of URI.
-   * @param prefixKey Key of prefix.
+   * @param nameKey Key of prefix.
    */
-  public NamespaceNode(final long nodeKey, final int uriKey, final int prefixKey) {
+  public NamespaceNode(
+      final long nodeKey,
+      final long parentKey,
+      final int uriKey,
+      final int nameKey) {
     super(nodeKey);
+    mParentKey = parentKey;
     mURIKey = uriKey;
-    mPrefixKey = prefixKey;
+    mNameKey = nameKey;
   }
 
   /**
@@ -56,15 +64,16 @@ public final class NamespaceNode extends AbstractNode {
    */
   public NamespaceNode(final AbstractNode namespace) {
     super(namespace.getNodeKey());
+    mParentKey = namespace.getParentKey();
     mURIKey = namespace.getURIKey();
-    mPrefixKey = namespace.getPrefixKey();
+    mNameKey = namespace.getNameKey();
   }
 
   public NamespaceNode(final long nodeKey, final ByteBuffer in) {
     super(nodeKey);
-
+    mParentKey = in.getLong();
     mURIKey = in.getInt();
-    mPrefixKey = in.getInt();
+    mNameKey = in.getInt();
   }
 
   /**
@@ -80,7 +89,15 @@ public final class NamespaceNode extends AbstractNode {
    */
   @Override
   public final long getParentKey() {
-    return getNodeKey();
+    return mParentKey;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final void setParentKey(final long parentKey) {
+    mParentKey = parentKey;
   }
 
   /**
@@ -95,16 +112,16 @@ public final class NamespaceNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final int getPrefixKey() {
-    return mPrefixKey;
+  public final int getNameKey() {
+    return mNameKey;
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public final void setPrefixKey(final int prefixKey) {
-    mPrefixKey = prefixKey;
+  public final void setNameKey(final int nameKey) {
+    mNameKey = nameKey;
   }
 
   /**
@@ -128,8 +145,9 @@ public final class NamespaceNode extends AbstractNode {
    */
   @Override
   public final void serialize(final ByteBuffer out) {
+    out.putLong(mParentKey);
     out.putInt(mURIKey);
-    out.putInt(mPrefixKey);
+    out.putInt(mNameKey);
   }
 
 }

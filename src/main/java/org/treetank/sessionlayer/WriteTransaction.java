@@ -24,6 +24,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.treetank.api.IWriteTransaction;
 import org.treetank.nodelayer.AbstractNode;
+import org.treetank.nodelayer.AttributeNode;
+import org.treetank.nodelayer.NamespaceNode;
 import org.treetank.pagelayer.UberPage;
 import org.treetank.utils.TypedValue;
 
@@ -178,46 +180,48 @@ public final class WriteTransaction extends ReadTransaction
   /**
    * {@inheritDoc}
    */
-  public final synchronized void insertAttribute(
+  public final synchronized long insertAttribute(
       final String name,
       final String uri,
       final int valueType,
       final byte[] value) {
-
-    assertNotClosed();
-    mModificationCount++;
-
-    prepareCurrentNode().insertAttribute(
-        ((WriteTransactionState) getTransactionState()).createNameKey(name),
-        ((WriteTransactionState) getTransactionState()).createNameKey(uri),
-        valueType,
-        value);
+    return insertAttribute(((WriteTransactionState) getTransactionState())
+        .createAttributeNode(
+            getCurrentNode().getNodeKey(),
+            ((WriteTransactionState) getTransactionState()).createNameKey(name),
+            ((WriteTransactionState) getTransactionState()).createNameKey(uri),
+            ((WriteTransactionState) getTransactionState())
+                .createNameKey("xs:untyped"),
+            value));
   }
 
   /**
    * {@inheritDoc}
    */
-  public final synchronized void insertAttribute(
+  public final synchronized long insertAttribute(
       final String name,
       final String uri,
       final String value) {
-    insertAttribute(name, uri, ((WriteTransactionState) getTransactionState())
-        .createNameKey("xs:untypedAtomic"), TypedValue.getBytes(value));
+    return insertAttribute(
+        name,
+        uri,
+        ((WriteTransactionState) getTransactionState())
+            .createNameKey("xs:untypedAtomic"),
+        TypedValue.getBytes(value));
   }
 
   /**
    * {@inheritDoc}
    */
-  public final synchronized void insertNamespace(
+  public final synchronized long insertNamespace(
       final String uri,
       final String prefix) {
-
-    assertNotClosed();
-    mModificationCount++;
-
-    prepareCurrentNode().insertNamespace(
-        ((WriteTransactionState) getTransactionState()).createNameKey(uri),
-        ((WriteTransactionState) getTransactionState()).createNameKey(prefix));
+    return insertNamespace(((WriteTransactionState) getTransactionState())
+        .createNamespaceNode(
+            getCurrentNode().getNodeKey(),
+            ((WriteTransactionState) getTransactionState()).createNameKey(uri),
+            ((WriteTransactionState) getTransactionState())
+                .createNameKey(prefix)));
   }
 
   /**
@@ -305,44 +309,6 @@ public final class WriteTransaction extends ReadTransaction
 
     setCurrentNode(parent);
 
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final synchronized void setAttribute(
-      final int index,
-      final String name,
-      final String uri,
-      final int valueType,
-      final byte[] value) {
-
-    assertNotClosed();
-    mModificationCount++;
-
-    prepareCurrentNode().setAttribute(
-        index,
-        ((WriteTransactionState) getTransactionState()).createNameKey(name),
-        ((WriteTransactionState) getTransactionState()).createNameKey(uri),
-        valueType,
-        value);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final synchronized void setNamespace(
-      final int index,
-      final String uri,
-      final String prefix) {
-
-    assertNotClosed();
-    mModificationCount++;
-
-    prepareCurrentNode().setNamespace(
-        index,
-        ((WriteTransactionState) getTransactionState()).createNameKey(uri),
-        ((WriteTransactionState) getTransactionState()).createNameKey(prefix));
   }
 
   /**
@@ -501,6 +467,46 @@ public final class WriteTransaction extends ReadTransaction
     updateParentAfterInsert(false);
     updateLeftSibling();
     updateRightSibling();
+
+    return node.getNodeKey();
+  }
+
+  private final long insertAttribute(final AttributeNode node) {
+
+    assertNotClosed();
+    mModificationCount++;
+    intermediateCommitIfRequired();
+    
+    if (!getCurrentNode().isElement()) {
+      throw new IllegalStateException("Only element nodes can have attributes.");
+    }
+
+    setCurrentNode(node);
+
+    final AbstractNode parentNode =
+        ((WriteTransactionState) getTransactionState())
+            .prepareNode(node.getParentKey());
+    parentNode.insertAttribute(node.getNodeKey());
+
+    return node.getNodeKey();
+  }
+
+  private final long insertNamespace(final NamespaceNode node) {
+
+    assertNotClosed();
+    mModificationCount++;
+    intermediateCommitIfRequired();
+    
+    if (!getCurrentNode().isElement()) {
+      throw new IllegalStateException("Only element nodes can have attributes.");
+    }
+
+    setCurrentNode(node);
+
+    final AbstractNode parentNode =
+        ((WriteTransactionState) getTransactionState())
+            .prepareNode(node.getParentKey());
+    parentNode.insertNamespace(node.getNodeKey());
 
     return node.getNodeKey();
   }

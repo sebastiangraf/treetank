@@ -53,7 +53,7 @@ public class UpdateTest {
     wtx.close();
 
     IReadTransaction rtx = session.beginReadTransaction();
-    assertEquals(2L, rtx.getNodeCount());
+    assertEquals(1L, rtx.getNodeCount());
     assertEquals(0L, rtx.getRevisionNumber());
     rtx.close();
 
@@ -69,7 +69,7 @@ public class UpdateTest {
       rtx.moveToDocumentRoot();
       rtx.moveToFirstChild();
       assertEquals(Integer.toString(i), rtx.getValue());
-      assertEquals(i + 2L, rtx.getNodeCount());
+      assertEquals(i + 1L, rtx.getNodeCount());
       assertEquals(i, rtx.getRevisionNumber());
       rtx.close();
     }
@@ -78,7 +78,7 @@ public class UpdateTest {
     rtx.moveToDocumentRoot();
     rtx.moveToFirstChild();
     assertEquals("10", rtx.getValue());
-    assertEquals(12L, rtx.getNodeCount());
+    assertEquals(11L, rtx.getNodeCount());
     assertEquals(10L, rtx.getRevisionNumber());
     rtx.close();
 
@@ -97,13 +97,13 @@ public class UpdateTest {
 
     wtx = session.beginWriteTransaction();
     TestCase.assertNotNull(wtx.moveToDocumentRoot());
-    assertEquals(2L, wtx.insertElementAsFirstChild("", ""));
+    assertEquals(1L, wtx.insertElementAsFirstChild("", ""));
 
+    assertEquals(2L, wtx.insertElementAsFirstChild("", ""));
     assertEquals(3L, wtx.insertElementAsFirstChild("", ""));
-    assertEquals(4L, wtx.insertElementAsFirstChild("", ""));
 
     TestCase.assertNotNull(wtx.moveToParent());
-    assertEquals(5L, wtx.insertElementAsRightSibling("", ""));
+    assertEquals(4L, wtx.insertElementAsRightSibling("", ""));
 
     wtx.commit();
     wtx.close();
@@ -111,7 +111,7 @@ public class UpdateTest {
     final IWriteTransaction wtx2 = session.beginWriteTransaction();
 
     TestCase.assertNotNull(wtx2.moveToDocumentRoot());
-    assertEquals(6L, wtx2.insertElementAsFirstChild("", ""));
+    assertEquals(5L, wtx2.insertElementAsFirstChild("", ""));
 
     wtx2.commit();
     wtx2.close();

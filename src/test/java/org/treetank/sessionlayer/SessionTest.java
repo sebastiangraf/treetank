@@ -195,11 +195,11 @@ public class SessionTest {
 
     IReadTransaction rtx = session.beginReadTransaction();
     assertEquals(0L, rtx.getRevisionNumber());
-    assertEquals(2L, rtx.getNodeCount());
+    assertEquals(1L, rtx.getNodeCount());
 
     final IWriteTransaction wtx = session.beginWriteTransaction();
     assertEquals(0L, wtx.getRevisionNumber());
-    assertEquals(2L, wtx.getNodeCount());
+    assertEquals(1L, wtx.getNodeCount());
 
     // Commit and check.
     wtx.commit();
@@ -207,11 +207,11 @@ public class SessionTest {
     rtx = session.beginReadTransaction();
 
     assertEquals(IConstants.UBP_ROOT_REVISION_NUMBER, rtx.getRevisionNumber());
-    assertEquals(2L, rtx.getNodeCount());
+    assertEquals(1L, rtx.getNodeCount());
 
     final IReadTransaction rtx2 = session.beginReadTransaction();
     assertEquals(0L, rtx2.getRevisionNumber());
-    assertEquals(2L, rtx2.getNodeCount());
+    assertEquals(1L, rtx2.getNodeCount());
 
   }
 
@@ -223,18 +223,18 @@ public class SessionTest {
     final IWriteTransaction wtx1 = session.beginWriteTransaction();
     DocumentTest.create(wtx1);
     assertEquals(0L, wtx1.getRevisionNumber());
-    assertEquals(12L, wtx1.getNodeCount());
+    assertEquals(14L, wtx1.getNodeCount());
     wtx1.commit();
     wtx1.close();
 
     final IReadTransaction rtx1 = session.beginReadTransaction();
     assertEquals(0L, rtx1.getRevisionNumber());
-    rtx1.moveTo(10L);
+    rtx1.moveTo(12L);
     assertEquals("bar", rtx1.getValue());
 
     final IWriteTransaction wtx2 = session.beginWriteTransaction();
     assertEquals(1L, wtx2.getRevisionNumber());
-    wtx2.moveTo(10L);
+    wtx2.moveTo(12L);
     wtx2.setValue("bar2");
 
     assertEquals("bar", rtx1.getValue());
@@ -245,7 +245,7 @@ public class SessionTest {
 
     final IReadTransaction rtx2 = session.beginReadTransaction();
     assertEquals(0L, rtx2.getRevisionNumber());
-    rtx2.moveTo(10L);
+    rtx2.moveTo(12L);
     assertEquals("bar", rtx2.getValue());
 
   }
@@ -265,12 +265,12 @@ public class SessionTest {
     final ISession session2 = Session.beginSession(TEST_EXISTING_PATH);
     final IReadTransaction rtx1 = session2.beginReadTransaction();
     assertEquals(0L, rtx1.getRevisionNumber());
-    rtx1.moveTo(10L);
+    rtx1.moveTo(12L);
     assertEquals("bar", rtx1.getValue());
 
     final IWriteTransaction wtx2 = session2.beginWriteTransaction();
     assertEquals(1L, wtx2.getRevisionNumber());
-    wtx2.moveTo(10L);
+    wtx2.moveTo(12L);
     wtx2.setValue("bar2");
 
     assertEquals("bar", rtx1.getValue());
@@ -284,7 +284,7 @@ public class SessionTest {
     final ISession session3 = Session.beginSession(TEST_EXISTING_PATH);
     final IReadTransaction rtx2 = session3.beginReadTransaction();
     assertEquals(1L, rtx2.getRevisionNumber());
-    rtx2.moveTo(10L);
+    rtx2.moveTo(12L);
     assertEquals("bar2", rtx2.getValue());
 
     rtx2.close();
@@ -304,8 +304,8 @@ public class SessionTest {
     wtx.close();
 
     final IReadTransaction rtx = session.beginReadTransaction();
-    assertEquals(12L, rtx.getNodeCount());
-    assertEquals(false, rtx.moveTo(12L));
+    assertEquals(14L, rtx.getNodeCount());
+    assertEquals(false, rtx.moveTo(14L));
     rtx.close();
     rtx.close();
 
@@ -323,8 +323,8 @@ public class SessionTest {
     wtx.close();
 
     final IReadTransaction rtx = session.beginReadTransaction();
-    assertEquals(12L, rtx.getNodeCount());
-    assertEquals(false, rtx.moveTo(12L));
+    assertEquals(14L, rtx.getNodeCount());
+    assertEquals(false, rtx.moveTo(14L));
     rtx.close();
 
     session.close();

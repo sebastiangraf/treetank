@@ -65,7 +65,7 @@ public class TextNodeTest {
     assertEquals(19, node3.getTypeKey());
     assertEquals(IReadTransaction.NULL_NAME_KEY, node3.getNameKey());
     assertEquals(IReadTransaction.NULL_NAME_KEY, node3.getURIKey());
-    assertEquals(IReadTransaction.NULL_NAME_KEY, node3.getPrefixKey());
+    assertEquals(IReadTransaction.NULL_NAME_KEY, node3.getNameKey());
     assertEquals(2, node3.getRawValue().length);
     assertEquals(IReadTransaction.TEXT_KIND, node3.getKind());
     assertEquals(false, node3.hasFirstChild());

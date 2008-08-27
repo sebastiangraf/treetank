@@ -20,7 +20,6 @@ package org.treetank.xpath;
 
 import org.treetank.api.IItem;
 import org.treetank.api.IReadTransaction;
-import org.treetank.nodelayer.AbstractNode;
 import org.treetank.utils.TypedValue;
 import org.treetank.xpath.types.Type;
 
@@ -62,8 +61,6 @@ public class AtomicValue implements IItem {
     mType = type;
   }
 
-
- 
   /**
    * Constructor. Initializes the internal state.
    * 
@@ -71,13 +68,11 @@ public class AtomicValue implements IItem {
    *          the value of the Item
    */
   public AtomicValue(final boolean value) {
-    
+
     mValue = TypedValue.getBytes(Boolean.toString(value));
     mType = "xs:boolean".hashCode();
-   
+
   }
-
-
 
   /**
    * Constructor. Initializes the internal state.
@@ -89,11 +84,10 @@ public class AtomicValue implements IItem {
    */
   public AtomicValue(final Number value, final Type type) {
 
-    
     mValue = TypedValue.getBytes(value.toString());
     mType = type.getStringRepr().hashCode();
   }
-  
+
   /**
    * Constructor. Initializes the internal state.
    * 
@@ -104,14 +98,10 @@ public class AtomicValue implements IItem {
    */
   public AtomicValue(final String value, final Type type) {
 
-    
-  mValue = TypedValue.getBytes(value);
-  mType = type.getStringRepr().hashCode();
-}
+    mValue = TypedValue.getBytes(value);
+    mType = type.getStringRepr().hashCode();
+  }
 
-
-
- 
   /**
    * {@inheritDoc}
    */
@@ -120,7 +110,6 @@ public class AtomicValue implements IItem {
     mItemKey = itemKey;
   }
 
- 
   /**
    * {@inheritDoc}
    */
@@ -134,10 +123,9 @@ public class AtomicValue implements IItem {
    */
   public byte[] getRawValue() {
 
-    return mValue; 
+    return mValue;
   }
 
-  
   /**
    * {@inheritDoc}
    */
@@ -205,9 +193,9 @@ public class AtomicValue implements IItem {
   /**
    * {@inheritDoc}
    */
-  public AbstractNode getAttribute(final int index) {
+  public long getAttributeKey(final int index) {
 
-    return null;
+    return IReadTransaction.NULL_NODE_KEY;
   }
 
   /**
@@ -253,9 +241,9 @@ public class AtomicValue implements IItem {
   /**
    * {@inheritDoc}
    */
-  public AbstractNode getNamespace(final int index) {
+  public long getNamespaceKey(final int index) {
 
-    return null;
+    return IReadTransaction.NULL_NODE_KEY;
   }
 
   /**
@@ -336,14 +324,13 @@ public class AtomicValue implements IItem {
   public final int getTypeKey() {
     return mType;
   }
-  
+
   /**
    * {@inheritDoc}
    */
   public final String getType() {
     return Type.getType(mType).getStringRepr();
   }
-
 
   /**
    * Returns the atomic value as an integer.
@@ -354,7 +341,7 @@ public class AtomicValue implements IItem {
 
     return (int) getDBL();
   }
-  
+
   /**
    * Returns the atomic value as a boolean.
    * 
@@ -364,7 +351,7 @@ public class AtomicValue implements IItem {
 
     return Boolean.parseBoolean(TypedValue.parseString(mValue));
   }
-  
+
   /**
    * Returns the atomic value as a float.
    * 
@@ -374,7 +361,7 @@ public class AtomicValue implements IItem {
 
     return Float.parseFloat(TypedValue.parseString(mValue));
   }
-  
+
   /**
    * Returns the atomic value as a double.
    * 
@@ -385,8 +372,4 @@ public class AtomicValue implements IItem {
     return Double.parseDouble(TypedValue.parseString(mValue));
   }
 
-
-
-
-  
 }

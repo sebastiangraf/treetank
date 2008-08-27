@@ -43,17 +43,16 @@ import org.treetank.api.IWriteTransaction;
  *
  * <pre>
  * 0 doc()
- * 1 ft()
- * |-  2 &lt;p:a §p:ns &#64;i='j'&gt;
- *     |-  3 #oops1
- *     |-  4 &lt;b&gt;
- *     |   |-  5 #foo
- *     |   |-  6 &lt;c&gt;
- *     |-  7 #oops2
- *     |-  8 &lt;b &#64;p:x='y'&gt;
- *     |   |-  9 &lt;c&gt;
- *     |   |- 10 #bar
- *     |- 11 #oops3
+ * |-  1 &lt;p:a §p:ns &#64;i='j'&gt;
+ *     |-  4 #oops1
+ *     |-  5 &lt;b&gt;
+ *     |   |-  6 #foo
+ *     |   |-  7 &lt;c&gt;
+ *     |-  8 #oops2
+ *     |-  9 &lt;b &#64;p:x='y'&gt;
+ *     |   |- 11 &lt;c&gt;
+ *     |   |- 12 #bar
+ *     |- 13 #oops3
  * </pre>
  * 
  * </p>
@@ -99,7 +98,9 @@ public final class DocumentTest {
 
     wtx.insertElementAsFirstChild("p:a", "ns");
     wtx.insertAttribute("i", "", "j");
+    wtx.moveToParent();
     wtx.insertNamespace("ns", "p");
+    wtx.moveToParent();
 
     wtx.insertTextAsFirstChild("oops1");
 
@@ -108,18 +109,19 @@ public final class DocumentTest {
     wtx.insertTextAsFirstChild("foo");
     wtx.insertElementAsRightSibling("c", "");
     wtx.moveToParent();
-
+    
     wtx.insertTextAsRightSibling("oops2");
-
+    
     wtx.insertElementAsRightSibling("b", "");
     wtx.insertAttribute("p:x", "ns", "y");
+    wtx.moveToParent();
 
     wtx.insertElementAsFirstChild("c", "");
     wtx.insertTextAsRightSibling("bar");
     wtx.moveToParent();
 
     wtx.insertTextAsRightSibling("oops3");
-
+    
     wtx.moveToDocumentRoot();
 
   }
@@ -157,7 +159,7 @@ public final class DocumentTest {
     wtx.moveToDocumentRoot();
 
   }
-  
+
   /**
    * Create simple test document containing all supported node kinds, but 
    * ignoring their namespace prefixes.
@@ -170,7 +172,7 @@ public final class DocumentTest {
 
     wtx.insertElementAsFirstChild("a", "");
     wtx.insertAttribute("i", "", "j");
-   
+    wtx.moveToParent();
 
     wtx.insertTextAsFirstChild("oops1");
 
@@ -184,6 +186,7 @@ public final class DocumentTest {
 
     wtx.insertElementAsRightSibling("b", "");
     wtx.insertAttribute("x", "", "y");
+    wtx.moveToParent();
 
     wtx.insertElementAsFirstChild("c", "");
     wtx.insertTextAsRightSibling("bar");

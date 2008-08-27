@@ -18,8 +18,6 @@
 
 package org.treetank.api;
 
-import org.treetank.nodelayer.AbstractNode;
-
 /**
  * <h1>IItem</h1>
  * <p>
@@ -27,7 +25,7 @@ import org.treetank.nodelayer.AbstractNode;
  * value.
  */
 public interface IItem {
-  
+
   /**
    * Sets unique node key.
    * 
@@ -75,9 +73,9 @@ public interface IItem {
    * Gets the nodes attribute with the specified index.
    * 
    * @param index  index of the attribute to get
-   * @return  attribute at index
+   * @return  attribute key at index
    */
-  public AbstractNode getAttribute(int index);
+  public long getAttributeKey(int index);
 
   /**
    * Declares, whether the item has a parent.
@@ -139,9 +137,9 @@ public interface IItem {
    * Gets namespace of the item at the specified position.
    * 
    * @param index index of the namespace to get
-   * @return item's namespace at the given index
+   * @return item's namespace key at the given index
    */
-  public AbstractNode getNamespace(final int index);
+  public long getNamespaceKey(final int index);
 
   /**
    * Gets the kind of the item (atomic value, element node, attribute node....).
@@ -149,7 +147,7 @@ public interface IItem {
    * @return kind of item
    */
   public int getKind();
-  
+
   /**
    * Declaresm whether the item is a a node.
    * 

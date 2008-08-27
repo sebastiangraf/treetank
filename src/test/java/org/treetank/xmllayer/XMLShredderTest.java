@@ -26,8 +26,6 @@ import java.util.Iterator;
 
 import javax.xml.stream.XMLStreamException;
 
-import junit.framework.TestCase;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.treetank.api.IReadTransaction;
@@ -36,8 +34,8 @@ import org.treetank.api.IWriteTransaction;
 import org.treetank.axislayer.DescendantAxis;
 import org.treetank.sessionlayer.Session;
 import org.treetank.sessionlayer.SessionConfiguration;
-import org.treetank.utils.IConstants;
 import org.treetank.utils.DocumentTest;
+import org.treetank.utils.IConstants;
 
 public class XMLShredderTest {
 
@@ -146,15 +144,15 @@ public class XMLShredderTest {
 
   }
 
-//  @Test
-//  public void testShredIntoExisting() throws IOException, XMLStreamException {
-//    try {
-//      XMLShredder.shred(XML, new SessionConfiguration(PATH));
-//      TestCase.fail();
-//    } catch (Exception e) {
-//      // Must fail.
-//    }
-//  }
+  //  @Test
+  //  public void testShredIntoExisting() throws IOException, XMLStreamException {
+  //    try {
+  //      XMLShredder.shred(XML, new SessionConfiguration(PATH));
+  //      TestCase.fail();
+  //    } catch (Exception e) {
+  //      // Must fail.
+  //    }
+  //  }
 
   @Test
   public void testAttributesNSPrefix() throws IOException, XMLStreamException {
@@ -181,10 +179,9 @@ public class XMLShredderTest {
       assertEquals(expectedTrx2.getNamespaceCount(), rtx.getNamespaceCount());
       assertEquals(expectedTrx2.getAttributeCount(), rtx.getAttributeCount());
       for (int i = 0; i < expectedTrx2.getAttributeCount(); i++) {
-        assertEquals(expectedTrx2.getAttributeName(i), rtx.getAttributeName(i));
-        assertEquals(expectedTrx2.getAttributeNameKey(i), rtx
-            .getAttributeNameKey(i));
-        assertEquals(expectedTrx2.getAttributeURI(i), rtx.getAttributeURI(i));
+        assertEquals(expectedTrx2.getName(), rtx.getName());
+        assertEquals(expectedTrx2.getNameKey(), rtx.getNameKey());
+        assertEquals(expectedTrx2.getURI(), rtx.getURI());
 
       }
     }

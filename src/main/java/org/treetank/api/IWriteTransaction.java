@@ -175,8 +175,9 @@ public interface IWriteTransaction extends IReadTransaction {
    * @param uri URI of inserted node.
    * @param valueType Type of value.
    * @param value Value of inserted node.
+   * @return Key of inserted node.
    */
-  public void insertAttribute(
+  public long insertAttribute(
       final String name,
       final String uri,
       final int valueType,
@@ -189,8 +190,9 @@ public interface IWriteTransaction extends IReadTransaction {
    * @param name Qualified name of inserted node.
    * @param uri URI of inserted node.
    * @param value Value of inserted node.
+   * @return Key of inserted node.
    */
-  public void insertAttribute(
+  public long insertAttribute(
       final String name,
       final String uri,
       final String value);
@@ -200,9 +202,10 @@ public interface IWriteTransaction extends IReadTransaction {
    * The cursor is moved to the inserted node.
    * 
    * @param uri URI of inserted node.
-   * @param prefix Prefix of inserted node.
+   * @param name Prefix of inserted node.
+   * @return Key of inserted node.
    */
-  public void insertNamespace(final String uri, final String prefix);
+  public long insertNamespace(final String uri, final String name);
 
   /**
    * Remove currently selected node. This does automatically remove descendants.
@@ -214,34 +217,6 @@ public interface IWriteTransaction extends IReadTransaction {
   public void remove();
 
   //--- Node Setters -----------------------------------------------------------
-
-  /**
-   * Set an attribute of the currently selected node.
-   * 
-   * @param index Index of attribute to set.
-   * @param name Qualified name of inserted node.
-   * @param uri URI of inserted node.
-   * @param valueType Type of value.
-   * @param value Value of inserted node.
-   */
-  public void setAttribute(
-      final int index,
-      final String name,
-      final String uri,
-      final int valueType,
-      final byte[] value);
-
-  /**
-   * Set a namespace of the currently selected node.
-   * 
-   * @param index Index of attribute to set.
-   * @param uri URI of inserted node.
-   * @param prefix Prefix of inserted node.
-   */
-  public void setNamespace(
-      final int index,
-      final String uri,
-      final String prefix);
 
   /**
    * Set local part of node.
