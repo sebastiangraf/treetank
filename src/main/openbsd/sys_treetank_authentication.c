@@ -26,7 +26,6 @@ int sys_treetank_callback(struct cryptop *op);
 /* --- Global variables. ---------------------------------------------------- */
 
 static u_int8_t tt_auth_key[32] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-static u_int8_t tt_auth_hmac[TT_CORE_COUNT][TT_HMAC_LENGTH];
 
 /*
  * Perform authentication.
@@ -48,6 +47,7 @@ sys_treetank_authentication(
   u_int16_t       myLength     = *lengthPtr - TT_REFERENCE_LENGTH;
   u_int8_t       *myHmacPtr    = bufferPtr + TT_HMAC_OFFSET;
   u_int8_t       *myBufferPtr  = bufferPtr + TT_REFERENCE_LENGTH;
+  u_int8_t        hmac[TT_HMAC_LENGTH];
   
   /* --- Initialise buffer. ------------------------------------------------- */
   
@@ -86,6 +86,7 @@ sys_treetank_authentication(
   operationPtr->crp_desc->crd_skip    = 0x0;
   operationPtr->crp_desc->crd_len     = myLength;
   operationPtr->crp_desc->crd_inject  = 0x0;
+  operationPtr->crp_mac               = (caddr_t) &hmac;
   operationPtr->crp_callback          = 
         (int (*) (struct cryptop *)) sys_treetank_callback;
    
@@ -113,19 +114,10 @@ sys_treetank_authentication(
   packetPtr = operationPtr->crp_buf;
   
   if (command == TT_WRITE_FRAGMENT) {
-    m_copydata(
-      packetPtr,
-      0x0,
-      TT_HMAC_LENGTH,
-      myHmacPtr);
+    bcopy(hmac, myHmacPtr, TT_HMAC_LENGTH);
   } else {
-    m_copydata(
-      packetPtr,
-      0x0,
-      TT_HMAC_LENGTH,
-      tt_auth_hmac[0x0]);
     for (i = TT_HMAC_LENGTH - 0x1; i > 0x0; i--) {
-      if (tt_auth_hmac[0x0][i] != myHmacPtr[i]) {
+      if (hmac[i] != myHmacPtr[i]) {
         *lengthPtr = 0x0;
         syscall = TT_SYSCALL_FAILURE;
         printf("ERROR(sys_treetank_authentication.c): Failed during crypto_dispatch.\n");
