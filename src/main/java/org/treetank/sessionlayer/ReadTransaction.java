@@ -21,7 +21,6 @@ package org.treetank.sessionlayer;
 import org.treetank.api.IItem;
 import org.treetank.api.IItemList;
 import org.treetank.api.IReadTransaction;
-import org.treetank.nodelayer.AbstractNode;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -46,9 +45,6 @@ public class ReadTransaction implements IReadTransaction {
   /** Strong reference to currently selected node. */
   private IItem mCurrentNode;
 
-  /** Is the cursor currently pointing to an attribute? */
-  private boolean mIsAttribute;
-
   /** Tracks whether the transaction is closed. */
   private boolean mClosed;
 
@@ -67,7 +63,6 @@ public class ReadTransaction implements IReadTransaction {
     mSessionState = sessionState;
     mTransactionState = transactionState;
     mCurrentNode = getTransactionState().getNode(DOCUMENT_ROOT_KEY);
-    mIsAttribute = false;
     mClosed = false;
   }
 
@@ -107,12 +102,7 @@ public class ReadTransaction implements IReadTransaction {
    */
   public boolean moveTo(final long nodeKey) {
     assertNotClosed();
-    // Do nothing if this node is already selected.
-    if ((mCurrentNode.getNodeKey() == nodeKey) && !mIsAttribute) {
-      return true;
-    }
     if (nodeKey != NULL_NODE_KEY) {
-      mIsAttribute = false;
       // Remember old node and fetch new one.
       final IItem oldNode = mCurrentNode;
       try {
@@ -170,14 +160,14 @@ public class ReadTransaction implements IReadTransaction {
    * {@inheritDoc}
    */
   public final boolean moveToAttribute(final int index) {
-    final AbstractNode attributeNode = mCurrentNode.getAttribute(index);
-    if (attributeNode != null) {
-      mCurrentNode = attributeNode;
-      mIsAttribute = true;
-      return true;
-    } else {
-      return false;
-    }
+    return moveTo(mCurrentNode.getAttributeKey(index));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final boolean moveToNamespace(final int index) {
+    return moveTo(mCurrentNode.getNamespaceKey(index));
   }
 
   /**
@@ -271,127 +261,9 @@ public class ReadTransaction implements IReadTransaction {
   /**
    * {@inheritDoc}
    */
-  public final int getAttributeNameKey(final int index) {
-    assertNotClosed();
-    return mCurrentNode.getAttribute(index).getNameKey();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final String getAttributeName(final int index) {
-    assertNotClosed();
-    return nameForKey(mCurrentNode.getAttribute(index).getNameKey());
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final byte[] getAttributeRawName(final int index) {
-    assertNotClosed();
-    return rawNameForKey(mCurrentNode.getAttribute(index).getNameKey());
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final int getAttributeURIKey(final int index) {
-    assertNotClosed();
-    return mCurrentNode.getAttribute(index).getURIKey();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final String getAttributeURI(final int index) {
-    assertNotClosed();
-    return nameForKey(mCurrentNode.getAttribute(index).getURIKey());
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final int getAttributeTypeKey(final int index) {
-    assertNotClosed();
-    return mCurrentNode.getAttribute(index).getTypeKey();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final String getAttributeType(final int index) {
-    assertNotClosed();
-    return mTransactionState.getName(mCurrentNode
-        .getAttribute(index)
-        .getTypeKey());
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final byte[] getAttributeRawType(final int index) {
-    assertNotClosed();
-    return mTransactionState.getRawName(mCurrentNode
-        .getAttribute(index)
-        .getTypeKey());
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final byte[] getAttributeRawValue(final int index) {
-    assertNotClosed();
-    return mCurrentNode.getAttribute(index).getRawValue();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final String getAttributeValue(final int index) {
-    assertNotClosed();
-    return TypedValue.parseString(mCurrentNode
-        .getAttribute(index)
-        .getRawValue());
-  }
-
-  /**
-   * {@inheritDoc}
-   */
   public final int getNamespaceCount() {
     assertNotClosed();
     return mCurrentNode.getNamespaceCount();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final int getNamespacePrefixKey(final int index) {
-    assertNotClosed();
-    return mCurrentNode.getNamespace(index).getPrefixKey();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final String getNamespacePrefix(final int index) {
-    assertNotClosed();
-    return nameForKey(mCurrentNode.getNamespace(index).getPrefixKey());
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final int getNamespaceURIKey(final int index) {
-    assertNotClosed();
-    return mCurrentNode.getNamespace(index).getURIKey();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final String getNamespaceURI(final int index) {
-    assertNotClosed();
-    return nameForKey(mCurrentNode.getNamespace(index).getURIKey());
   }
 
   /**

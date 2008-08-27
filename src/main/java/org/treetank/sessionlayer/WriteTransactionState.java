@@ -23,8 +23,10 @@ import java.io.RandomAccessFile;
 import java.util.Map;
 
 import org.treetank.nodelayer.AbstractNode;
+import org.treetank.nodelayer.AttributeNode;
 import org.treetank.nodelayer.DocumentRootNode;
 import org.treetank.nodelayer.ElementNode;
+import org.treetank.nodelayer.NamespaceNode;
 import org.treetank.nodelayer.TextNode;
 import org.treetank.pagelayer.AbstractPage;
 import org.treetank.pagelayer.IndirectPage;
@@ -119,6 +121,32 @@ public final class WriteTransactionState extends ReadTransactionState {
         nameKey,
         uriKey,
         type));
+  }
+
+  protected final AttributeNode createAttributeNode(
+      final long parentKey,
+      final int nameKey,
+      final int uriKey,
+      final int type,
+      final byte[] value) {
+    return createNode(new AttributeNode(
+        getRevisionRootPage().getMaxNodeKey() + 1,
+        parentKey,
+        nameKey,
+        uriKey,
+        type,
+        value));
+  }
+
+  protected final NamespaceNode createNamespaceNode(
+      final long parentKey,
+      final int uriKey,
+      final int prefixKey) {
+    return createNode(new NamespaceNode(
+        getRevisionRootPage().getMaxNodeKey() + 1,
+        parentKey,
+        uriKey,
+        prefixKey));
   }
 
   protected final TextNode createTextNode(

@@ -32,27 +32,32 @@ public class NodePageTest {
     final NodePage page1 = new NodePage(0L);
     assertEquals(0L, page1.getNodePageKey());
     final ElementNode node1 = new ElementNode(0L, 1L, 2L, 3L, 4L, 6, 7, 0);
-    node1.insertAttribute(22, 23, 25, new byte[0]);
+    node1.insertAttribute(88L);
+    node1.insertAttribute(87L);
+    node1.insertNamespace(99L);
+    node1.insertNamespace(98L);
     assertEquals(0L, node1.getNodeKey());
     page1.setNode(0, node1);
 
     final ByteBuffer out = ByteBuffer.allocate(1000);
     page1.serialize(out);
+    final int position = out.position();
 
     out.position(0);
     final NodePage page2 = new NodePage(out, 0L);
+    assertEquals(position, out.position());
     assertEquals(0L, page2.getNode(0).getNodeKey());
     assertEquals(1L, page2.getNode(0).getParentKey());
     assertEquals(2L, page2.getNode(0).getFirstChildKey());
     assertEquals(3L, page2.getNode(0).getLeftSiblingKey());
     assertEquals(4L, page2.getNode(0).getRightSiblingKey());
     assertEquals(0L, page2.getNode(0).getChildCount());
-    assertEquals(1, page2.getNode(0).getAttributeCount());
-    assertEquals(0L, page2.getNode(0).getAttribute(0).getNodeKey());
-    assertEquals(0L, page2.getNode(0).getAttribute(0).getParentKey());
-    assertEquals(22, page2.getNode(0).getAttribute(0).getNameKey());
-    assertEquals(23, page2.getNode(0).getAttribute(0).getURIKey());
-    assertEquals(25, page2.getNode(0).getAttribute(0).getTypeKey());
+    assertEquals(2, page2.getNode(0).getAttributeCount());
+    assertEquals(2, page2.getNode(0).getNamespaceCount());
+    assertEquals(88L, page2.getNode(0).getAttributeKey(0));
+    assertEquals(87L, page2.getNode(0).getAttributeKey(1));
+    assertEquals(99L, page2.getNode(0).getNamespaceKey(0));
+    assertEquals(98L, page2.getNode(0).getNamespaceKey(1));
     assertEquals(6, page2.getNode(0).getNameKey());
     assertEquals(7, page2.getNode(0).getURIKey());
 

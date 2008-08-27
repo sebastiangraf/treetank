@@ -22,8 +22,10 @@ import java.nio.ByteBuffer;
 
 import org.treetank.api.IReadTransaction;
 import org.treetank.nodelayer.AbstractNode;
+import org.treetank.nodelayer.AttributeNode;
 import org.treetank.nodelayer.DocumentRootNode;
 import org.treetank.nodelayer.ElementNode;
+import org.treetank.nodelayer.NamespaceNode;
 import org.treetank.nodelayer.TextNode;
 import org.treetank.utils.IConstants;
 
@@ -77,6 +79,12 @@ public final class NodePage extends AbstractPage {
       case IReadTransaction.ELEMENT_KIND:
         mNodes[offset] = new ElementNode(keyBase + offset, in);
         break;
+      case IReadTransaction.ATTRIBUTE_KIND:
+        mNodes[offset] = new AttributeNode(keyBase + offset, in);
+        break;
+      case IReadTransaction.NAMESPACE_KIND:
+        mNodes[offset] = new NamespaceNode(keyBase + offset, in);
+        break;
       case IReadTransaction.TEXT_KIND:
         mNodes[offset] = new TextNode(keyBase + offset, in);
         break;
@@ -111,6 +119,12 @@ public final class NodePage extends AbstractPage {
           break;
         case IReadTransaction.ELEMENT_KIND:
           mNodes[offset] = new ElementNode(committedNodePage.mNodes[offset]);
+          break;
+        case IReadTransaction.ATTRIBUTE_KIND:
+          mNodes[offset] = new AttributeNode(committedNodePage.mNodes[offset]);
+          break;
+        case IReadTransaction.NAMESPACE_KIND:
+          mNodes[offset] = new NamespaceNode(committedNodePage.mNodes[offset]);
           break;
         case IReadTransaction.TEXT_KIND:
           mNodes[offset] = new TextNode(committedNodePage.mNodes[offset]);

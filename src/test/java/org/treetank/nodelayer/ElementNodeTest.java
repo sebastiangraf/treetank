@@ -38,8 +38,8 @@ public class ElementNodeTest {
     // Modify it.
     node1.incrementChildCount();
     node1.decrementChildCount();
-    node1.insertAttribute(21, 22, 27, new byte[] { (byte) 24, (byte) 24 });
-    node1.insertNamespace(25, 26);
+    node1.insertAttribute(98L);
+    node1.insertNamespace(99L);
 
     // Serialize and deserialize node.
     node1.serialize(out);
@@ -71,15 +71,9 @@ public class ElementNodeTest {
     assertEquals(true, node3.isElement());
     assertEquals(false, node3.isText());
 
-    assertEquals(13L, node3.getAttribute(0).getNodeKey());
-    assertEquals(21, node3.getAttribute(0).getNameKey());
-    assertEquals(22, node3.getAttribute(0).getURIKey());
-    assertEquals(27, node3.getAttribute(0).getTypeKey());
-    assertEquals(2, node3.getAttribute(0).getRawValue().length);
+    assertEquals(98L, node3.getAttributeKey(0));
 
-    assertEquals(13L, node3.getNamespace(0).getNodeKey());
-    assertEquals(25, node3.getNamespace(0).getURIKey());
-    assertEquals(26, node3.getNamespace(0).getPrefixKey());
+    assertEquals(99L, node3.getNamespaceKey(0));
 
   }
 

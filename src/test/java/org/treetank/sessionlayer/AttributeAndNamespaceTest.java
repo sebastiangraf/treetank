@@ -50,14 +50,16 @@ public class AttributeAndNamespaceTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     DocumentTest.create(wtx);
 
-    wtx.moveTo(2L);
+    wtx.moveTo(1L);
     TestCase.assertEquals(1, wtx.getAttributeCount());
-    TestCase.assertEquals("i", wtx.getAttributeName(0));
+    wtx.moveToAttribute(0);
+    TestCase.assertEquals("i", wtx.getName());
 
-    wtx.moveTo(8L);
+    wtx.moveTo(9L);
     TestCase.assertEquals(1, wtx.getAttributeCount());
-    TestCase.assertEquals("p:x", wtx.getAttributeName(0));
-    TestCase.assertEquals("ns", wtx.getAttributeURI(0));
+    wtx.moveToAttribute(0);
+    TestCase.assertEquals("p:x", wtx.getName());
+    TestCase.assertEquals("ns", wtx.getURI());
 
     wtx.abort();
     wtx.close();
@@ -72,10 +74,11 @@ public class AttributeAndNamespaceTest {
     final IWriteTransaction wtx = session.beginWriteTransaction();
     DocumentTest.create(wtx);
 
-    wtx.moveTo(2L);
+    wtx.moveTo(1L);
     TestCase.assertEquals(1, wtx.getNamespaceCount());
-    TestCase.assertEquals("p", wtx.getNamespacePrefix(0));
-    TestCase.assertEquals("ns", wtx.getNamespaceURI(0));
+    wtx.moveToNamespace(0);
+    TestCase.assertEquals("p", wtx.getName());
+    TestCase.assertEquals("ns", wtx.getURI());
 
     wtx.abort();
     wtx.close();

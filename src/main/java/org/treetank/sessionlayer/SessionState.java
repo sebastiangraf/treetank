@@ -133,11 +133,11 @@ public final class SessionState {
         uberPageReference.setChecksum(tmp);
 
         // Read secondary beacon.
-        file.seek(file.length() - IConstants.BEACON_LENGTH);
-        secondaryUberPageReference.setStart(file.readLong());
-        secondaryUberPageReference.setLength(file.readInt());
-        file.read(tmp);
-        secondaryUberPageReference.setChecksum(tmp);
+//        file.seek(file.length() - IConstants.BEACON_LENGTH);
+//        secondaryUberPageReference.setStart(file.readLong());
+//        secondaryUberPageReference.setLength(file.readInt());
+//        file.read(tmp);
+//        secondaryUberPageReference.setChecksum(tmp);
 
         // Beacon logic case 1.
         //if (uberPageReference.equals(secondaryUberPageReference)) {

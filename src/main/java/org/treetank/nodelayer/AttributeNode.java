@@ -29,6 +29,9 @@ import org.treetank.api.IReadTransaction;
  */
 public final class AttributeNode extends AbstractNode {
 
+  /** Key of parent node. */
+  private long mParentKey;
+
   /** Key of qualified name. */
   private int mNameKey;
 
@@ -52,11 +55,13 @@ public final class AttributeNode extends AbstractNode {
    */
   public AttributeNode(
       final long nodeKey,
+      final long parentKey,
       final int nameKey,
       final int uriKey,
       final int type,
       final byte[] value) {
     super(nodeKey);
+    mParentKey = parentKey;
     mNameKey = nameKey;
     mURIKey = uriKey;
     mType = type;
@@ -70,6 +75,7 @@ public final class AttributeNode extends AbstractNode {
    */
   public AttributeNode(final AbstractNode attribute) {
     super(attribute.getNodeKey());
+    mParentKey = attribute.getParentKey();
     mNameKey = attribute.getNameKey();
     mURIKey = attribute.getURIKey();
     mType = attribute.getTypeKey();
@@ -78,6 +84,7 @@ public final class AttributeNode extends AbstractNode {
 
   public AttributeNode(final long nodeKey, final ByteBuffer in) {
     super(nodeKey);
+    mParentKey = in.getLong();
     mNameKey = in.getInt();
     mURIKey = in.getInt();
     mType = in.getInt();
@@ -122,7 +129,15 @@ public final class AttributeNode extends AbstractNode {
    */
   @Override
   public final long getParentKey() {
-    return getNodeKey();
+    return mParentKey;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final void setParentKey(final long parentKey) {
+    mParentKey = parentKey;
   }
 
   /**
@@ -187,6 +202,7 @@ public final class AttributeNode extends AbstractNode {
    */
   @Override
   public final void serialize(final ByteBuffer out) {
+    out.putLong(mParentKey);
     out.putInt(mNameKey);
     out.putInt(mURIKey);
     out.putInt(mType);

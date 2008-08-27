@@ -35,7 +35,7 @@ import org.treetank.utils.DocumentTest;
 
 public class ThreadTest {
 
-  public static final int WORKER_COUNT = 100;
+  public static final int WORKER_COUNT = 50;
 
   public static final String PATH =
       "target" + File.separator + "tnk" + File.separator + "ThreadTest.tnk";
@@ -83,7 +83,7 @@ public class ThreadTest {
         for (final long key : new DescendantAxis(mRTX)) {
           // Nothing to do.
         }
-        mRTX.moveTo(10L);
+        mRTX.moveTo(12L);
         TestCase.assertEquals("bar", mRTX.getValue());
         mRTX.close();
       } catch (Exception e) {

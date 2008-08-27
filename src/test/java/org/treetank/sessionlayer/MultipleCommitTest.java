@@ -49,16 +49,16 @@ public class MultipleCommitTest {
     final ISession session = Session.beginSession(PATH);
     final IWriteTransaction wtx = session.beginWriteTransaction();
     TestCase.assertEquals(0L, wtx.getRevisionNumber());
-    TestCase.assertEquals(2L, wtx.getNodeCount());
+    TestCase.assertEquals(1L, wtx.getNodeCount());
     wtx.commit();
 
     wtx.insertElementAsFirstChild("foo", "");
     TestCase.assertEquals(1L, wtx.getRevisionNumber());
-    TestCase.assertEquals(3L, wtx.getNodeCount());
+    TestCase.assertEquals(2L, wtx.getNodeCount());
     wtx.abort();
 
     TestCase.assertEquals(1L, wtx.getRevisionNumber());
-    TestCase.assertEquals(2L, wtx.getNodeCount());
+    TestCase.assertEquals(1L, wtx.getNodeCount());
     wtx.close();
 
     session.close();
@@ -72,7 +72,7 @@ public class MultipleCommitTest {
     wtx.close();
 
     final IReadTransaction rtx = session.beginReadTransaction();
-    Assert.assertEquals(12, rtx.getNodeCount());
+    Assert.assertEquals(14, rtx.getNodeCount());
     rtx.close();
     session.close();
   }

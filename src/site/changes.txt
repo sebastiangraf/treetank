@@ -18,6 +18,8 @@
  
 TreeTank 4.21
 -------------
+1  Switched from inlined to standalone attributes and namespace
+   declarations.
 0  No longer binary compatible. Switched to ByteBuffer.
  
 TreeTank 4.20

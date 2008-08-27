@@ -30,7 +30,7 @@ public class AttributeNodeTest {
 
     // Create empty node.
     final AbstractNode node1 =
-        new AttributeNode(13L, 14, 15, 19, new byte[] { (byte) 17, (byte) 18 });
+        new AttributeNode(99L, 13L, 14, 15, 19, new byte[] { (byte) 17, (byte) 18 });
 
     // Modify it.
     node1.incrementChildCount();
@@ -40,7 +40,7 @@ public class AttributeNodeTest {
     final AbstractNode node2 = new AttributeNode(node1);
 
     // Now compare.
-    assertEquals(13L, node2.getNodeKey());
+    assertEquals(99L, node2.getNodeKey());
     assertEquals(13L, node2.getParentKey());
     assertEquals(IReadTransaction.NULL_NODE_KEY, node2.getFirstChildKey());
     assertEquals(IReadTransaction.NULL_NODE_KEY, node2.getLeftSiblingKey());
