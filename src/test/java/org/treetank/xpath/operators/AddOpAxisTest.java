@@ -92,9 +92,9 @@ public class AddOpAxisTest {
     assertEquals(Type.DECIMAL, axis.getReturnType(
         rtx.keyForName("xs:decimal"),
         rtx.keyForName("xs:integer")));
-    // assertEquals(Type.INTEGER,
-    // axis.getReturnType(rtx.keyForName("xs:integer"),
-    // rtx.keyForName("xs:integer")));
+//     assertEquals(Type.INTEGER,
+//     axis.getReturnType(rtx.keyForName("xs:integer"),
+//     rtx.keyForName("xs:integer")));
 
     assertEquals(Type.YEAR_MONTH_DURATION, axis.getReturnType(rtx
         .keyForName("xs:yearMonthDuration"), rtx
