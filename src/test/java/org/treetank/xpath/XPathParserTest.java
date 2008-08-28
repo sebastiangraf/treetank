@@ -66,24 +66,24 @@ public class XPathParserTest {
     axis = new XPathAxis(rtx, "12");
     assertEquals(true, axis.hasNext());
     assertEquals(rtx.keyForName("xs:integer"), rtx.getTypeKey());
-    // assertEquals("12", rtx.getValueAsInt());
+    assertEquals("12", rtx.getValue());
     assertEquals(false, axis.hasNext());
 
     axis = new XPathAxis(rtx, "12.5");
     assertEquals(true, axis.hasNext());
     assertEquals(rtx.keyForName("xs:decimal"), rtx.getTypeKey());
-    // assertEquals(12.5, rtx.getValueAsDouble());
+    assertEquals("12.5", rtx.getValue());
     assertEquals(false, axis.hasNext());
 
     axis = new XPathAxis(rtx, "12.5E2");
     assertEquals(true, axis.hasNext());
     assertEquals(rtx.keyForName("xs:double"), rtx.getTypeKey());
-    // assertEquals(12.5E2, rtx.getValueAsDouble());
+    assertEquals("12.5E2", rtx.getValue());
     assertEquals(false, axis.hasNext());
 
     axis = new XPathAxis(rtx, "1");
     assertEquals(true, axis.hasNext());
-    // assertEquals("1", rtx.getValueAsInt());
+    assertEquals("1", rtx.getValue());
     assertEquals(rtx.keyForName("xs:integer"), rtx.getTypeKey());
     assertEquals(false, axis.hasNext());
 
@@ -122,8 +122,8 @@ public class XPathParserTest {
     parser = new XPathParser(rtx, "child::element()");
     parser.parseQuery();
 
-    // parser = new XPathParser(rtx, ". treat as item()");
-    // parser.parseQuery();
+//    parser = new XPathParser(rtx, ". treat as item()");
+//    parser.parseQuery();
 
     parser = new XPathParser(rtx, "/b instance of item()");
     parser.parseQuery();

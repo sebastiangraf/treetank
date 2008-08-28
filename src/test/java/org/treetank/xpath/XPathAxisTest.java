@@ -112,6 +112,10 @@ public class XPathAxisTest {
     IAxisTest.testIAxisConventions(
         new XPathAxis(rtx, "/p:a/@i"),
         new long[] { 2L });
+    
+    IAxisTest.testIAxisConventions(
+        new XPathAxis(rtx, "/p:a/@i/@*"),
+        new long[] {});
 
     IAxisTest.testIAxisConventions(
         new XPathAxis(rtx, "p:a/b[@p:x]"),
@@ -178,11 +182,9 @@ public class XPathAxisTest {
     // and with no compatibility error, because value can not be converted to
     // string
     // from the byte array
-    // IAxisTest.testIAxisConventions(new XPathAxis(
-    // rtx, "p:a[(3.2 + 0.02) = 3.22]"), new long[] {1L});
+     IAxisTest.testIAxisConventions(new XPathAxis(
+     rtx, "p:a[(3.2 + 0.02) = 3.22]"), new long[] {1L});
 
-    // TODO: this is not working yet, because type is untyped -> ruls for cast
-    // to double
     IAxisTest.testIAxisConventions(
         new XPathAxis(rtx, "p:a[@i = \"j\"]"),
         new long[] { 1L });
@@ -191,8 +193,8 @@ public class XPathAxisTest {
         rtx,
         "descendant-or-self::node()[@p:x = \"y\"]"), new long[] { 9L });
 
-    // IAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[@i eq \"j\"]"),
-    // new long[] { 1L });
+//     IAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a[@i eq \"j\"]"),
+//     new long[] { 1L });
 
     IAxisTest.testIAxisConventions(
         new XPathAxis(rtx, "p:a[@i=\"k\"]"),

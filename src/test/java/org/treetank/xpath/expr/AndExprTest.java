@@ -19,6 +19,7 @@
 package org.treetank.xpath.expr;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 
@@ -32,6 +33,7 @@ import org.treetank.sessionlayer.Session;
 import org.treetank.utils.DocumentTest;
 import org.treetank.xpath.AtomicValue;
 import org.treetank.xpath.XPathAxis;
+import org.treetank.xpath.functions.XPathError;
 
 /**
  * JUnit-test class to test the functionality of the AndExpr.
@@ -123,14 +125,18 @@ public class AndExprTest {
     assertEquals(false, axis4.hasNext());
 
     //is never evaluated.
-    //    final IAxis axis5 = new XPathAxis(rtx, "1 eq 2 and (3 idiv 0 = 1)");
-    //    assertEquals(true, axis5.hasNext());
-    //    assertEquals(false, Boolean.parseBoolean(rtx.getValue()));
-    //    assertEquals(false, axis5.hasNext());
+    final IAxis axis5 = new XPathAxis(rtx, "1 eq 2 and (3 idiv 0 = 1)");
+    assertEquals(true, axis5.hasNext());
+    assertEquals(false, Boolean.parseBoolean(rtx.getValue()));
+    assertEquals(false, axis5.hasNext());
 
-    //    //TODO: should raise an dynamic error
-    //    final IAxis axis6 = new XPathAxis(rtx, "1 eq 1 and 3 idiv 0 = 1");
-    //    assertEquals(true, axis6.hasNext());
+    final IAxis axis6 = new XPathAxis(rtx, "1 eq 1 and 3 idiv 0 = 1");
+    try {
+      assertEquals(true, axis6.hasNext());
+      fail("Expected XPath exception, because of division by zero");
+    } catch(XPathError e) {
+      assertEquals("err:FOAR0001: Division by zero.", e.getMessage()); 
+    }
 
     rtx.close();
     wtx.abort();

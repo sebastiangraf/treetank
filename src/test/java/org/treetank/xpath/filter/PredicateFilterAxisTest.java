@@ -67,8 +67,9 @@ public class PredicateFilterAxisTest {
         new XPathAxis(rtx, "/p:a[@i]"),
         new long[] { 1L });
 
-    //    IAxisTest.testIAxisConventions(new XPathAxis(rtx, "p:a/b[@p:x]"),
-    //        new long[] { 8L });
+    IAxisTest.testIAxisConventions(
+        new XPathAxis(rtx, "p:a/b[@p:x]"),
+        new long[] { 9L });
 
     IAxisTest.testIAxisConventions(
         new XPathAxis(rtx, "p:a[text()]"),
@@ -132,9 +133,14 @@ public class PredicateFilterAxisTest {
         new XPathAxis(rtx, "child::*[text() or c]"),
         new long[] { 5l, 9L });
 
-    IAxisTest.testIAxisConventions(
-        new XPathAxis(rtx, "child::*[text() or c], /node(), //c"),
-        new long[] { 5l, 9L, 1L, 7L, 11L });
+    IAxisTest.testIAxisConventions(new XPathAxis(
+        rtx,
+        "child::*[text() or c], /node(), //c"), new long[] {
+        5l,
+        9L,
+        1L,
+        7L,
+        11L });
 
     rtx.close();
     wtx.abort();
