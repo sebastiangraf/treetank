@@ -56,9 +56,10 @@ public class AttributeAxis extends AbstractAxis implements IAxis {
    */
   public final boolean hasNext() {
     resetToLastKey();
-    //move back to element, if the current node is a parent and the axis is 
-    //actually based on an element
-    if (mNextIndex > 0 && getTransaction().isAttributeKind()) {
+    //move back to element, if there was already an attribute found. In this 
+    //case the current node was set to an attribute by resetToLastKey()
+    if (mNextIndex > 0) {
+      assert getTransaction().isAttributeKind();
       getTransaction().moveToParent();
     }
     if (mNextIndex < getTransaction().getAttributeCount()) {
