@@ -30,7 +30,7 @@ public final class HelperJavascript {
 
   private static final String PATH = "/treetank/service/";
 
-  private static final String CONTENT_TYPE = "text/plain";
+  private static final String CONTENT_TYPE = "text/ecmascript";
 
   private static final String ENCODING = "UTF-8";
 
