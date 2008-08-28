@@ -21,7 +21,6 @@ package org.treetank.sessionlayer;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.Random;
 
@@ -33,6 +32,7 @@ import org.treetank.pagelayer.PageReader;
 import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.UberPage;
 import org.treetank.utils.FastWeakHashMap;
+import org.treetank.utils.IByteBuffer;
 import org.treetank.utils.IConstants;
 
 import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
@@ -133,16 +133,16 @@ public final class SessionState {
         uberPageReference.setChecksum(tmp);
 
         // Read secondary beacon.
-//        file.seek(file.length() - IConstants.BEACON_LENGTH);
-//        secondaryUberPageReference.setStart(file.readLong());
-//        secondaryUberPageReference.setLength(file.readInt());
-//        file.read(tmp);
-//        secondaryUberPageReference.setChecksum(tmp);
+        //        file.seek(file.length() - IConstants.BEACON_LENGTH);
+        //        secondaryUberPageReference.setStart(file.readLong());
+        //        secondaryUberPageReference.setLength(file.readInt());
+        //        file.read(tmp);
+        //        secondaryUberPageReference.setChecksum(tmp);
 
         // Beacon logic case 1.
         //if (uberPageReference.equals(secondaryUberPageReference)) {
 
-        final ByteBuffer in =
+        final IByteBuffer in =
             new PageReader(mSessionConfiguration).read(uberPageReference);
         mLastCommittedUberPage = new UberPage(in);
 

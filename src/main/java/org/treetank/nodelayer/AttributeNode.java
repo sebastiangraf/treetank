@@ -18,9 +18,8 @@
 
 package org.treetank.nodelayer;
 
-import java.nio.ByteBuffer;
-
 import org.treetank.api.IReadTransaction;
+import org.treetank.utils.IByteBuffer;
 
 /**
  * <h1>AttributeNode</h1>
@@ -82,14 +81,13 @@ public final class AttributeNode extends AbstractNode {
     mValue = attribute.getRawValue();
   }
 
-  public AttributeNode(final long nodeKey, final ByteBuffer in) {
+  public AttributeNode(final long nodeKey, final IByteBuffer in) {
     super(nodeKey);
-    mParentKey = in.getLong();
-    mNameKey = in.getInt();
-    mURIKey = in.getInt();
-    mType = in.getInt();
-    mValue = new byte[in.getInt()];
-    in.get(mValue);
+    mParentKey = in.get();
+    mNameKey = (int) in.get();
+    mURIKey = (int) in.get();
+    mType = (int) in.get();
+    mValue = in.get((int) in.get());
   }
 
   /**
@@ -201,12 +199,12 @@ public final class AttributeNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final void serialize(final ByteBuffer out) {
-    out.putLong(mParentKey);
-    out.putInt(mNameKey);
-    out.putInt(mURIKey);
-    out.putInt(mType);
-    out.putInt(mValue.length);
+  public final void serialize(final IByteBuffer out) {
+    out.put(mParentKey);
+    out.put(mNameKey);
+    out.put(mURIKey);
+    out.put(mType);
+    out.put(mValue.length);
     out.put(mValue);
   }
 

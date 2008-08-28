@@ -18,11 +18,10 @@
 
 package org.treetank.pagelayer;
 
-import java.nio.ByteBuffer;
-
 import org.treetank.api.IReadTransaction;
 import org.treetank.nodelayer.DocumentRootNode;
 import org.treetank.sessionlayer.WriteTransactionState;
+import org.treetank.utils.IByteBuffer;
 import org.treetank.utils.IConstants;
 
 /**
@@ -96,9 +95,9 @@ public final class UberPage extends AbstractPage {
    * 
    * @param in Input bytes.
    */
-  public UberPage(final ByteBuffer in) {
+  public UberPage(final IByteBuffer in) {
     super(1, in);
-    mRevisionCount = in.getLong();
+    mRevisionCount = in.get();
     mBootstrap = false;
   }
 
@@ -184,9 +183,9 @@ public final class UberPage extends AbstractPage {
   /**
    * {@inheritDoc}
    */
-  public final void serialize(final ByteBuffer out) {
+  public final void serialize(final IByteBuffer out) {
     super.serialize(out);
-    out.putLong(mRevisionCount);
+    out.put(mRevisionCount);
   }
 
   /**

@@ -18,8 +18,6 @@
 
 package org.treetank.pagelayer;
 
-import java.nio.ByteBuffer;
-
 import org.treetank.api.IReadTransaction;
 import org.treetank.nodelayer.AbstractNode;
 import org.treetank.nodelayer.AttributeNode;
@@ -27,6 +25,7 @@ import org.treetank.nodelayer.DocumentRootNode;
 import org.treetank.nodelayer.ElementNode;
 import org.treetank.nodelayer.NamespaceNode;
 import org.treetank.nodelayer.TextNode;
+import org.treetank.utils.IByteBuffer;
 import org.treetank.utils.IConstants;
 
 /**
@@ -61,14 +60,14 @@ public final class NodePage extends AbstractPage {
    * @param in Input bytes to read page from.
    * @param nodePageKey Base key assigned to this node page.
    */
-  public NodePage(final ByteBuffer in, final long nodePageKey) {
+  public NodePage(final IByteBuffer in, final long nodePageKey) {
     super(0, in);
     mNodePageKey = nodePageKey;
     mNodes = new AbstractNode[IConstants.NDP_NODE_COUNT];
 
     final long keyBase = mNodePageKey << IConstants.NDP_NODE_COUNT_EXPONENT;
     for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
-      final int kind = in.get();
+      final int kind = (int) in.get();
       switch (kind) {
       case IConstants.UNKNOWN:
         // Was null node, do nothing here.
@@ -170,15 +169,15 @@ public final class NodePage extends AbstractPage {
    * {@inheritDoc}
    */
   @Override
-  public final void serialize(final ByteBuffer out) {
+  public final void serialize(final IByteBuffer out) {
     super.serialize(out);
 
     for (final AbstractNode node : mNodes) {
       if (node != null) {
-        out.put((byte) node.getKind());
+        out.put(node.getKind());
         node.serialize(out);
       } else {
-        out.put((byte) IConstants.UNKNOWN);
+        out.put(IConstants.UNKNOWN);
       }
     }
   }

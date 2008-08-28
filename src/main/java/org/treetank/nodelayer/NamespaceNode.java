@@ -18,9 +18,8 @@
 
 package org.treetank.nodelayer;
 
-import java.nio.ByteBuffer;
-
 import org.treetank.api.IReadTransaction;
+import org.treetank.utils.IByteBuffer;
 
 /**
  * <h1>NamespaceNode</h1>
@@ -69,11 +68,11 @@ public final class NamespaceNode extends AbstractNode {
     mNameKey = namespace.getNameKey();
   }
 
-  public NamespaceNode(final long nodeKey, final ByteBuffer in) {
+  public NamespaceNode(final long nodeKey, final IByteBuffer in) {
     super(nodeKey);
-    mParentKey = in.getLong();
-    mURIKey = in.getInt();
-    mNameKey = in.getInt();
+    mParentKey = in.get();
+    mURIKey = (int) in.get();
+    mNameKey = (int) in.get();
   }
 
   /**
@@ -144,10 +143,10 @@ public final class NamespaceNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final void serialize(final ByteBuffer out) {
-    out.putLong(mParentKey);
-    out.putInt(mURIKey);
-    out.putInt(mNameKey);
+  public final void serialize(final IByteBuffer out) {
+    out.put(mParentKey);
+    out.put(mURIKey);
+    out.put(mNameKey);
   }
 
 }

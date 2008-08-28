@@ -18,9 +18,8 @@
 
 package org.treetank.pagelayer;
 
-import java.nio.ByteBuffer;
-
 import org.treetank.sessionlayer.WriteTransactionState;
+import org.treetank.utils.IByteBuffer;
 
 /**
  * <h1>Page</h1>
@@ -64,7 +63,7 @@ public abstract class AbstractPage {
    * @param referenceCount Number of references of page.
    * @param in Input reader to read from.
    */
-  protected AbstractPage(final int referenceCount, final ByteBuffer in) {
+  protected AbstractPage(final int referenceCount, final IByteBuffer in) {
     this(false, referenceCount);
     for (int offset = 0; offset < referenceCount; offset++) {
       if (in.get() == 1) {
@@ -143,7 +142,7 @@ public abstract class AbstractPage {
    * 
    * @param out Output stream.
    */
-  public void serialize(final ByteBuffer out) {
+  public void serialize(final IByteBuffer out) {
     for (final PageReference<? extends AbstractPage> reference : mReferences) {
       if (reference != null) {
         out.put((byte) 1);

@@ -20,12 +20,13 @@ package org.treetank.pagelayer;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 
+import org.treetank.openbsd.ByteBufferNativeImpl;
 import org.treetank.openbsd.CryptoNativeImpl;
 import org.treetank.sessionlayer.SessionConfiguration;
+import org.treetank.utils.ByteBufferJavaImpl;
 import org.treetank.utils.CryptoJavaImpl;
+import org.treetank.utils.IByteBuffer;
 import org.treetank.utils.IConstants;
 import org.treetank.utils.ICrypto;
 
@@ -42,14 +43,11 @@ public final class PageWriter {
   /** Random access mFile to work on. */
   private final RandomAccessFile mFile;
 
-  /** File channel to support directly allocated ByteBuffer. */
-  private final FileChannel mChannel;
-
   /** Compressor to compress the page. */
   private ICrypto mCompressor;
 
   /** Temporary data buffer. */
-  private final ByteBuffer mBuffer;
+  private IByteBuffer mBuffer;
 
   /**
    * Constructor.
@@ -65,16 +63,15 @@ public final class PageWriter {
           new RandomAccessFile(
               sessionConfiguration.getAbsolutePath(),
               IConstants.READ_WRITE);
-      mChannel = mFile.getChannel();
 
       try {
         System.loadLibrary("TreeTank");
         mCompressor = new CryptoNativeImpl();
+        mBuffer = new ByteBufferNativeImpl(IConstants.BUFFER_SIZE);
       } catch (UnsatisfiedLinkError e) {
         mCompressor = new CryptoJavaImpl();
+        mBuffer = new ByteBufferJavaImpl(IConstants.BUFFER_SIZE);
       }
-
-      mBuffer = ByteBuffer.allocateDirect(IConstants.BUFFER_SIZE);
 
     } catch (Exception e) {
       throw new RuntimeException("Could not create page writer: "
@@ -94,28 +91,24 @@ public final class PageWriter {
     try {
 
       // Serialise page.
-      mBuffer.clear();
       mBuffer.position(24);
       pageReference.getPage().serialize(mBuffer);
       final short inputLength = (short) mBuffer.position();
 
       // Perform crypto operations.
-      mBuffer.clear();
+      mBuffer.position(0);
       final short outputLength = mCompressor.crypt(inputLength, mBuffer);
       if (outputLength == 0) {
         throw new Exception("Page crypt error.");
       }
 
       // Write page to file.
-      final long fileSize = mChannel.size();
-      mBuffer.clear();
-      mBuffer.position(outputLength);
-      mBuffer.flip();
-      final byte[] checksum = new byte[IConstants.CHECKSUM_SIZE];
       mBuffer.position(12);
-      mBuffer.get(checksum);
-      mChannel.position(fileSize);
-      mChannel.write(mBuffer);
+      final byte[] checksum = mBuffer.get(IConstants.CHECKSUM_SIZE);
+
+      final long fileSize = mFile.length();
+      mFile.seek(fileSize);
+      mFile.write(mBuffer.get(outputLength - 24));
 
       // Remember page coordinates.
       pageReference.setStart(fileSize);
@@ -137,9 +130,6 @@ public final class PageWriter {
    */
   public final void close() {
     try {
-      if (mChannel != null) {
-        mChannel.close();
-      }
       if (mFile != null) {
         mFile.close();
       }
@@ -156,9 +146,6 @@ public final class PageWriter {
   @Override
   protected void finalize() throws Throwable {
     try {
-      if (mChannel != null) {
-        mChannel.close();
-      }
       if (mFile != null) {
         mFile.close();
       }

@@ -18,8 +18,7 @@
 
 package org.treetank.openbsd;
 
-import java.nio.ByteBuffer;
-
+import org.treetank.utils.IByteBuffer;
 import org.treetank.utils.ICrypto;
 
 import edu.emory.mathcs.backport.java.util.concurrent.ArrayBlockingQueue;
@@ -49,7 +48,7 @@ public final class CryptoNativeImpl implements ICrypto {
     }
   }
 
-  public final short crypt(final short length, final ByteBuffer buffer) {
+  public final short crypt(final short length, final IByteBuffer buffer) {
     short result = ERROR;
     byte tank = (byte) 0x1;
     byte command = TT_WRITE_FRAGMENT;
@@ -71,7 +70,7 @@ public final class CryptoNativeImpl implements ICrypto {
     return (short) result;
   }
 
-  public final short decrypt(final short length, final ByteBuffer buffer) {
+  public final short decrypt(final short length, final IByteBuffer buffer) {
     short result = ERROR;
     byte tank = (byte) 0x1;
     byte command = TT_READ_FRAGMENT;
@@ -108,6 +107,6 @@ public final class CryptoNativeImpl implements ICrypto {
       final byte tank,
       final byte operation,
       final short length,
-      final ByteBuffer buffer);
+      final IByteBuffer buffer);
 
 }

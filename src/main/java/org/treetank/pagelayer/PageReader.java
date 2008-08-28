@@ -20,12 +20,13 @@ package org.treetank.pagelayer;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 
+import org.treetank.openbsd.ByteBufferNativeImpl;
 import org.treetank.openbsd.CryptoNativeImpl;
 import org.treetank.sessionlayer.SessionConfiguration;
+import org.treetank.utils.ByteBufferJavaImpl;
 import org.treetank.utils.CryptoJavaImpl;
+import org.treetank.utils.IByteBuffer;
 import org.treetank.utils.IConstants;
 import org.treetank.utils.ICrypto;
 
@@ -42,14 +43,11 @@ public final class PageReader {
   /** Random access mFile to work on. */
   private final RandomAccessFile mFile;
 
-  /** File channel to support directly allocated ByteBuffer. */
-  private final FileChannel mChannel;
-
   /** Inflater to decompress. */
   private ICrypto mDecompressor;
 
   /** Temporary data buffer. */
-  private final ByteBuffer mBuffer;
+  private IByteBuffer mBuffer;
 
   /**
    * Constructor.
@@ -65,16 +63,15 @@ public final class PageReader {
           new RandomAccessFile(
               sessionConfiguration.getAbsolutePath(),
               IConstants.READ_ONLY);
-      mChannel = mFile.getChannel();
 
       try {
         System.loadLibrary("TreeTank");
         mDecompressor = new CryptoNativeImpl();
+        mBuffer = new ByteBufferNativeImpl(IConstants.BUFFER_SIZE);
       } catch (UnsatisfiedLinkError e) {
         mDecompressor = new CryptoJavaImpl();
+        mBuffer = new ByteBufferJavaImpl(IConstants.BUFFER_SIZE);
       }
-
-      mBuffer = ByteBuffer.allocateDirect(IConstants.BUFFER_SIZE);
 
     } catch (Exception e) {
       throw new RuntimeException("Could not create page reader: "
@@ -89,7 +86,7 @@ public final class PageReader {
    * @return Byte array reader to read bytes from.o
    * @throws RuntimeException if there was an error during reading.
    */
-  public final ByteBuffer read(
+  public final IByteBuffer read(
       final PageReference<? extends AbstractPage> pageReference) {
 
     if (!pageReference.isCommitted()) {
@@ -102,17 +99,16 @@ public final class PageReader {
       final byte[] checksum = new byte[IConstants.CHECKSUM_SIZE];
       pageReference.getChecksum(checksum);
       final short inputLength = (short) (pageReference.getLength() + 24);
-      mBuffer.clear();
-      mBuffer.limit(inputLength);
       mBuffer.position(12);
       mBuffer.put(checksum);
 
       // Read page from file.
-      mChannel.position(pageReference.getStart());
-      mChannel.read(mBuffer);
+      final byte[] page = new byte[pageReference.getLength()];
+      mFile.seek(pageReference.getStart());
+      mFile.read(page);
+      mBuffer.put(page);
 
       // Perform crypto operations.
-      mBuffer.clear();
       final short outputLength = mDecompressor.decrypt(inputLength, mBuffer);
       if (outputLength == 0) {
         throw new Exception("Page decrypt error.");
@@ -126,7 +122,6 @@ public final class PageReader {
     }
 
     // Return reader required to instantiate and deserialize page.
-    mBuffer.clear();
     mBuffer.position(24);
     return mBuffer;
 
@@ -137,9 +132,6 @@ public final class PageReader {
    */
   public final void close() {
     try {
-      if (mChannel != null) {
-        mChannel.close();
-      }
       if (mFile != null) {
         mFile.close();
       }
@@ -156,9 +148,6 @@ public final class PageReader {
   @Override
   protected void finalize() throws Throwable {
     try {
-      if (mChannel != null) {
-        mChannel.close();
-      }
       if (mFile != null) {
         mFile.close();
       }
