@@ -22,16 +22,16 @@ import org.treetank.utils.IByteBuffer;
 
 public class ByteBufferNativeImpl implements IByteBuffer {
 
-  final long mAddress;
+  long mAddress;
 
-  final int mCapacity;
+  int mCapacity;
 
   int mPosition;
 
   public ByteBufferNativeImpl(final int capacity) {
-    mAddress = allocate(capacity);
     mCapacity = capacity;
     mPosition = 0;
+    allocate();
   }
 
   public final int position() {
@@ -53,14 +53,18 @@ public class ByteBufferNativeImpl implements IByteBuffer {
 
   public final native void put(final byte[] value);
 
-  private final native long allocate(final int capacity);
+  public final long getAddress() {
+    return mAddress;
+  }
 
-  private final native void free(final long address);
+  private final native void allocate();
+
+  private final native void free();
 
   @Override
   protected void finalize() throws Throwable {
     try {
-      free(mAddress);
+      free();
     } finally {
       super.finalize();
     }
