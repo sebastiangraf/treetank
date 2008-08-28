@@ -18,6 +18,8 @@
  
 TreeTank 4.21
 -------------
+3  Reworked name keys as the currently used hashes are far too big.
+2  Switched to IByteBuffer which is a variable-size ByteBuffer.
 1  Switched from inlined to standalone attributes and namespace
    declarations.
 0  No longer binary compatible. Switched to ByteBuffer.
