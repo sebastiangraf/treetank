@@ -56,17 +56,16 @@ public class AttributeAxis extends AbstractAxis implements IAxis {
    */
   public final boolean hasNext() {
     resetToLastKey();
-    if (mNextIndex > 0 && getTransaction().isAttributeKind()) {
+    if (getTransaction().isAttributeKind()) {
       getTransaction().moveToParent();
     }
     if (mNextIndex < getTransaction().getAttributeCount()) {
       getTransaction().moveToAttribute(mNextIndex);
       mNextIndex += 1;
       return true;
-    } else {
-      resetToStartKey();
-      return false;
     }
+    resetToStartKey();
+    return false;
   }
 
 }
