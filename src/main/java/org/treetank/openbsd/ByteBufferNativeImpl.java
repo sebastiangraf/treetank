@@ -45,21 +45,17 @@ public class ByteBufferNativeImpl implements IByteBuffer {
     mPosition = position;
   }
 
-  public final long get() {
-    return get(mAddress, mPosition);
-  }
+  public final native long get();
 
-  public final byte[] get(final int length) {
-    return getArray(mAddress, mPosition);
-  }
+  public final native byte[] get(final int length);
 
-  public final void put(final long value) {
-    put(mAddress, mPosition, value);
-  }
+  public final native void put(final long value);
 
-  public final void put(final byte[] value) {
-    putArray(mAddress, mPosition, value);
-  }
+  public final native void put(final byte[] value);
+
+  private final native long allocate(final int capacity);
+
+  private final native void free(final long address);
 
   @Override
   protected void finalize() throws Throwable {
@@ -69,23 +65,5 @@ public class ByteBufferNativeImpl implements IByteBuffer {
       super.finalize();
     }
   }
-
-  private final native long get(final long address, final int position);
-
-  private final native byte[] getArray(final long address, final int position);
-
-  private final native void put(
-      final long address,
-      final int position,
-      final long value);
-
-  private final native void putArray(
-      final long address,
-      final int position,
-      final byte[] value);
-
-  private final native long allocate(final int capacity);
-
-  private final native void free(final long address);
 
 }
