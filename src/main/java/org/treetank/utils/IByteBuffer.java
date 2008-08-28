@@ -19,25 +19,17 @@
 package org.treetank.utils;
 
 public interface IByteBuffer {
-  
+
   public int position();
-  
-  public void position(final int position);
 
-  public byte get();
+  public void position(int position);
 
-  public int getInt();
+  public long get();
 
-  public long getLong();
+  public byte[] getArray(int length);
 
-  public byte[] getByteArray();
+  public void put(long value);
 
-  public void put(final byte value);
-
-  public void putInt(final int value);
-
-  public void putLong(final long value);
-
-  public void putByteArray(final byte[] value);
+  public void putArray(byte[] value);
 
 }
