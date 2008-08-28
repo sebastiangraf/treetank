@@ -61,6 +61,9 @@ public class AttributeAxisTest {
 
     wtx.moveTo(12L);
     IAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
+    
+    wtx.moveTo(2L);
+    IAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
 
     wtx.abort();
     wtx.close();
