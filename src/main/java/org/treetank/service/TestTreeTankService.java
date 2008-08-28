@@ -47,15 +47,29 @@ public class TestTreeTankService {
       System.out
           .println("--- Test Native Crypto: --------------------------------");
       System.loadLibrary("TreeTank");
-      
-//      final IByteBuffer b = new ByteBufferNativeImpl(100);
-//      final byte[] t = new byte[] { 1, 2, 3};
-//      b.put(t);
-//      System.out.println(b.position());
-//      b.position(0);
-//      final byte[] tt = b.get(t.length);
-//      System.out.println(tt[0] + ", " + tt[1] + ", " + tt[2]);
-      
+
+      final IByteBuffer b = new ByteBufferNativeImpl(100);
+      b.put(13);
+      b.put(29991L);
+      b.put(Long.MAX_VALUE);
+      b.put(13923123L);
+      final IByteBuffer r = new ByteBufferJavaImpl(100);
+      r.put(13);
+      r.put(29991L);
+      r.put(Long.MAX_VALUE);
+      r.put(13923123L);
+      System.out.println("Position mismatch: is="
+          + b.position()
+          + " must="
+          + r.position());
+      b.position(0);
+      r.position(0);
+      System.out.println(b.get());
+      System.out.println(b.get());
+      System.out.println(b.get());
+      System.out.println(b.get());
+      System.out.println("Position is: " + b.position());
+
       final ICrypto nativeCrypto = new CryptoNativeImpl();
       final IByteBuffer nativeBuffer =
           new ByteBufferNativeImpl(IConstants.BUFFER_SIZE);

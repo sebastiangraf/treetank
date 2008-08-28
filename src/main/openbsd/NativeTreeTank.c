@@ -60,10 +60,8 @@ JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_allocate(
   jclass   class         = (*env)->GetObjectClass(env, obj);
   jfieldID addressField  = (*env)->GetFieldID(env, class, "mAddress", "J");
   jfieldID capacityField = (*env)->GetFieldID(env, class, "mCapacity", "I");
-  jfieldID positionField = (*env)->GetFieldID(env, class, "mPosition", "I");
   jlong    address       = (*env)->GetIntField(env, obj, addressField);
   jint     capacity      = (*env)->GetIntField(env, obj, capacityField);
-  jint     position      = (*env)->GetIntField(env, obj, positionField);
   
   // Work.
   address = malloc(capacity);
@@ -79,11 +77,7 @@ JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_free(
   // Setup.
   jclass   class         = (*env)->GetObjectClass(env, obj);
   jfieldID addressField  = (*env)->GetFieldID(env, class, "mAddress", "J");
-  jfieldID capacityField = (*env)->GetFieldID(env, class, "mCapacity", "I");
-  jfieldID positionField = (*env)->GetFieldID(env, class, "mPosition", "I");
   jlong    address       = (*env)->GetIntField(env, obj, addressField);
-  jint     capacity      = (*env)->GetIntField(env, obj, capacityField);
-  jint     position      = (*env)->GetIntField(env, obj, positionField);
   
   // Work.
   free(address);
@@ -97,32 +91,21 @@ JNIEXPORT jlong JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_get__(
   jobject obj)
 {
   // Setup.
-  jclass   class         = (*env)->GetObjectClass(env, obj);
-  jfieldID addressField  = (*env)->GetFieldID(env, class, "mAddress", "J");
-  jfieldID capacityField = (*env)->GetFieldID(env, class, "mCapacity", "I");
-  jfieldID positionField = (*env)->GetFieldID(env, class, "mPosition", "I");
-  jlong    address       = (*env)->GetIntField(env, obj, addressField);
-  jint     capacity      = (*env)->GetIntField(env, obj, capacityField);
-  jint     position      = (*env)->GetIntField(env, obj, positionField);
-  jbyte   *addressPtr    = (jbyte *) address;
-  jbyte    singleByte    = *(addressPtr + (position++));
-  jlong    value         = singleByte & 0x3F;
-  jint     shift         = 6;
-  jbyte    sign          = singleByte & 0x40;
+  jclass    class         = (*env)->GetObjectClass(env, obj);
+  jfieldID  addressField  = (*env)->GetFieldID(env, class, "mAddress", "J");
+  jfieldID  positionField = (*env)->GetFieldID(env, class, "mPosition", "I");
+  jlong     address       = (*env)->GetIntField(env, obj, addressField);
+  jint      position      = (*env)->GetIntField(env, obj, positionField);
+  jbyte    *addressPtr    = (jbyte *) address;
+  jbyte     singleByte    = *(addressPtr + (position++));
+  jlong     value         = singleByte & 0x7F;
+  jint      shift         = 7;
   
   // Work.
-  if ((singleByte & 0x80) != 0) {
+  while ((singleByte & 0x80) > 0) {
     singleByte = *(addressPtr + (position++));
-    value |= (singleByte & 0x3F) << shift;
+    value |= (((jlong) (singleByte & 0x7F)) << shift);
     shift += 7;
-  }
-  while ((singleByte & 0x80) != 0) {
-    singleByte = *(addressPtr + (position++));
-    value |= (singleByte & 0x7F) << shift;
-    shift += 7;
-  }
-  if (sign) {
-    value *= -1;
   }
   
   // Teardown.
@@ -138,10 +121,8 @@ JNIEXPORT jbyteArray JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_get_
   // Setup.
   jclass     class         = (*env)->GetObjectClass(env, obj);
   jfieldID   addressField  = (*env)->GetFieldID(env, class, "mAddress", "J");
-  jfieldID   capacityField = (*env)->GetFieldID(env, class, "mCapacity", "I");
   jfieldID   positionField = (*env)->GetFieldID(env, class, "mPosition", "I");
   jlong      address       = (*env)->GetIntField(env, obj, addressField);
-  jint       capacity      = (*env)->GetIntField(env, obj, capacityField);
   jint       position      = (*env)->GetIntField(env, obj, positionField);
   jbyte     *addressPtr    = (jbyte *) address;
   jbyteArray array         = (*env)->NewByteArray(env, length);
@@ -161,31 +142,22 @@ JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_put__J(
   jlong value)
 {
   // Setup.
-  jclass   class         = (*env)->GetObjectClass(env, obj);
-  jfieldID addressField  = (*env)->GetFieldID(env, class, "mAddress", "J");
-  jfieldID capacityField = (*env)->GetFieldID(env, class, "mCapacity", "I");
-  jfieldID positionField = (*env)->GetFieldID(env, class, "mPosition", "I");
-  jlong    address       = (*env)->GetIntField(env, obj, addressField);
-  jint     capacity      = (*env)->GetIntField(env, obj, capacityField);
-  jint     position      = (*env)->GetIntField(env, obj, positionField);
-  jbyte  * addressPtr    = (jbyte *) address;
-  jbyte    sign          = 0x0;
+  jclass    class         = (*env)->GetObjectClass(env, obj);
+  jfieldID  addressField  = (*env)->GetFieldID(env, class, "mAddress", "J");
+  jfieldID  positionField = (*env)->GetFieldID(env, class, "mPosition", "I");
+  jlong     address       = (*env)->GetIntField(env, obj, addressField);
+  jint      position      = (*env)->GetIntField(env, obj, positionField);
+  jbyte    *addressPtr    = (jbyte *) address;
+  jbyte     singleByte    = (jbyte) (value & 0x7F);
   
   // Work.
-  if (value < 0) {
-    sign = 0x40;
-    value *= -1;
-  }
-  if (((jbyte) (value & ~0x3F)) != 0) {
-    *(addressPtr + (position++)) = (jbyte) ((value & 0x3F) | sign | 0x80);
-    value >>= 6;
-    sign = 0x0;
-  }
-  while (((jbyte) (value & ~0x7F)) != 0) {
-    *(addressPtr + (position++)) = (jbyte) ((value & 0x7F) | 0x80);
+  value >>= 7;
+  while (value > 0) {
+    *(addressPtr + (position++)) = singleByte | 0x80;
+    singleByte = (jbyte) (value & 0x7F);
     value >>= 7;
   }
-  *(addressPtr + (position++)) = (jbyte) (value | sign);
+  *(addressPtr + (position++)) = singleByte;
   
   // Teardown.
   (*env)->SetIntField(env, obj, positionField, position);
@@ -199,10 +171,8 @@ JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_put___3B(
   // Setup.
   jclass     class         = (*env)->GetObjectClass(env, obj);
   jfieldID   addressField  = (*env)->GetFieldID(env, class, "mAddress", "J");
-  jfieldID   capacityField = (*env)->GetFieldID(env, class, "mCapacity", "I");
   jfieldID   positionField = (*env)->GetFieldID(env, class, "mPosition", "I");
   jlong      address       = (*env)->GetIntField(env, obj, addressField);
-  jint       capacity      = (*env)->GetIntField(env, obj, capacityField);
   jint       position      = (*env)->GetIntField(env, obj, positionField);
   jbyte     *addressPtr    = (jbyte *) address;
   jbyte     *arrayPtr      = (*env)->GetByteArrayElements(env, value, NULL);
