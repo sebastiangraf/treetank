@@ -16,9 +16,11 @@
  * $Id$
  */
 
-package org.treetank.pagelayer;
+package org.treetank.openbsd;
 
 import java.nio.ByteBuffer;
+
+import org.treetank.utils.ICrypto;
 
 import edu.emory.mathcs.backport.java.util.concurrent.ArrayBlockingQueue;
 import edu.emory.mathcs.backport.java.util.concurrent.BlockingQueue;

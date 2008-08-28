@@ -16,14 +16,13 @@
  * $Id: JavaCompression.java 4358 2008-08-23 12:38:16Z kramis $
  */
 
-package org.treetank.pagelayer;
+package org.treetank.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
-import org.treetank.utils.IConstants;
 
 public class CryptoJavaImpl implements ICrypto {
 

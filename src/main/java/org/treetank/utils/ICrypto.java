@@ -16,7 +16,7 @@
  * $Id$
  */
 
-package org.treetank.pagelayer;
+package org.treetank.utils;
 
 import java.nio.ByteBuffer;
 
