@@ -86,7 +86,7 @@ sys_treetank_authentication(
   operationPtr->crp_desc->crd_skip    = 0x0;
   operationPtr->crp_desc->crd_len     = myLength;
   operationPtr->crp_desc->crd_inject  = 0x0;
-  operationPtr->crp_mac               = (caddr_t) &hmac;
+  operationPtr->crp_mac               = (caddr_t) hmac;
   operationPtr->crp_callback          = 
         (int (*) (struct cryptop *)) sys_treetank_callback;
    
