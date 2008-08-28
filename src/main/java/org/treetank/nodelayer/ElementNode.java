@@ -18,11 +18,11 @@
 
 package org.treetank.nodelayer;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.treetank.api.IReadTransaction;
+import org.treetank.utils.IByteBuffer;
 
 /**
  * <h1>ElementNode</h1>
@@ -127,26 +127,26 @@ public final class ElementNode extends AbstractNode {
    * @param nodeKey Key to assign to read element node.
    * @param in Input bytes to read from.
    */
-  public ElementNode(final long nodeKey, final ByteBuffer in) {
+  public ElementNode(final long nodeKey, final IByteBuffer in) {
     super(nodeKey);
 
     // Read according to node kind.
-    mParentKey = in.getLong();
-    mFirstChildKey = in.getLong();
-    mLeftSiblingKey = in.getLong();
-    mRightSiblingKey = in.getLong();
-    mChildCount = in.getLong();
+    mParentKey = in.get();
+    mFirstChildKey = in.get();
+    mLeftSiblingKey = in.get();
+    mRightSiblingKey = in.get();
+    mChildCount = in.get();
     mAttributeKeys = new ArrayList<Long>(0);
     mNamespaceKeys = new ArrayList<Long>(0);
-    for (int i = 0, l = in.getInt(); i < l; i++) {
-      mAttributeKeys.add(in.getLong());
+    for (int i = 0, l = (int) in.get(); i < l; i++) {
+      mAttributeKeys.add(in.get());
     }
-    for (int i = 0, l = in.getInt(); i < l; i++) {
-      mNamespaceKeys.add(in.getLong());
+    for (int i = 0, l = (int) in.get(); i < l; i++) {
+      mNamespaceKeys.add(in.get());
     }
-    mNameKey = in.getInt();
-    mURIKey = in.getInt();
-    mType = in.getInt();
+    mNameKey = (int) in.get();
+    mURIKey = (int) in.get();
+    mType = (int) in.get();
   }
 
   /**
@@ -393,23 +393,23 @@ public final class ElementNode extends AbstractNode {
    * {@inheritDoc}
    */
   @Override
-  public final void serialize(final ByteBuffer out) {
-    out.putLong(mParentKey);
-    out.putLong(mFirstChildKey);
-    out.putLong(mLeftSiblingKey);
-    out.putLong(mRightSiblingKey);
-    out.putLong(mChildCount);
-    out.putInt(mAttributeKeys.size());
+  public final void serialize(final IByteBuffer out) {
+    out.put(mParentKey);
+    out.put(mFirstChildKey);
+    out.put(mLeftSiblingKey);
+    out.put(mRightSiblingKey);
+    out.put(mChildCount);
+    out.put(mAttributeKeys.size());
     for (int i = 0, l = mAttributeKeys.size(); i < l; i++) {
-      out.putLong(mAttributeKeys.get(i));
+      out.put(mAttributeKeys.get(i));
     }
-    out.putInt(mNamespaceKeys.size());
+    out.put(mNamespaceKeys.size());
     for (int i = 0, l = mNamespaceKeys.size(); i < l; i++) {
-      out.putLong(mNamespaceKeys.get(i));
+      out.put(mNamespaceKeys.get(i));
     }
-    out.putInt(mNameKey);
-    out.putInt(mURIKey);
-    out.putInt(mType);
+    out.put(mNameKey);
+    out.put(mURIKey);
+    out.put(mType);
   }
 
   /**

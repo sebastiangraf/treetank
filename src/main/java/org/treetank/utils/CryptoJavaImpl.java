@@ -19,10 +19,8 @@
 package org.treetank.utils;
 
 import java.io.ByteArrayOutputStream;
-import java.nio.ByteBuffer;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
-
 
 public class CryptoJavaImpl implements ICrypto {
 
@@ -50,12 +48,10 @@ public class CryptoJavaImpl implements ICrypto {
    * @param data data that should be compressed
    * @return compressed data, null if failed
    */
-  public short crypt(final short length, final ByteBuffer buffer) {
+  public short crypt(final short length, final IByteBuffer buffer) {
     try {
-      byte[] tmp = new byte[length - 24];
-      buffer.clear();
       buffer.position(24);
-      buffer.get(tmp);
+      byte[] tmp = buffer.get(length - 24);
       mCompressor.reset();
       mOut.reset();
       mCompressor.setInput(tmp);
@@ -70,11 +66,10 @@ public class CryptoJavaImpl implements ICrypto {
     }
     final byte[] result = mOut.toByteArray();
     final byte[] checksum = new byte[IConstants.CHECKSUM_SIZE];
-    buffer.clear();
     buffer.position(12);
     buffer.put(checksum);
     buffer.put(result);
-    return (short) (result.length + 24);
+    return (short) (buffer.position());
   }
 
   /**
@@ -83,12 +78,10 @@ public class CryptoJavaImpl implements ICrypto {
    * @param data data that should be decompressed
    * @return Decompressed data, null if failed
    */
-  public short decrypt(final short length, final ByteBuffer buffer) {
+  public short decrypt(final short length, final IByteBuffer buffer) {
     try {
-      byte[] tmp = new byte[length - 24];
-      buffer.clear();
       buffer.position(24);
-      buffer.get(tmp);
+      byte[] tmp = buffer.get(length - 24);
       mDecompressor.reset();
       mOut.reset();
       mDecompressor.setInput(tmp);
@@ -102,7 +95,6 @@ public class CryptoJavaImpl implements ICrypto {
     }
     final byte[] result = mOut.toByteArray();
     final byte[] checksum = new byte[IConstants.CHECKSUM_SIZE];
-    buffer.clear();
     buffer.position(12);
     buffer.put(checksum);
     buffer.put(result);

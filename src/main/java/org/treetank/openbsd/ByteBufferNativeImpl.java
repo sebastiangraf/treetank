@@ -18,47 +18,47 @@
 
 package org.treetank.openbsd;
 
-public class ByteBufferNativeImpl {
+import org.treetank.utils.IByteBuffer;
+
+public class ByteBufferNativeImpl implements IByteBuffer {
 
   final long mAddress;
 
   final int mCapacity;
 
+  int mPosition;
+
   public ByteBufferNativeImpl(final int capacity) {
     mAddress = allocate(capacity);
     mCapacity = capacity;
+    mPosition = 0;
   }
 
-  public final byte get(final int position) {
-    return get(mAddress, position);
+  public final int position() {
+    return mPosition;
   }
 
-  public final int getInt(final int position) {
-    return getInt(mAddress, position);
+  public final void position(final int position) {
+    if ((position >= mCapacity) || (position < 0)) {
+      throw new IllegalArgumentException("Position out of bounds.");
+    }
+    mPosition = position;
   }
 
-  public final long getLong(final int position) {
-    return getLong(mAddress, position);
+  public final long get() {
+    return get(mAddress, mPosition);
   }
 
-  public final byte[] getByteArray(final int position) {
-    return getByteArray(mAddress, position);
+  public final byte[] get(final int length) {
+    return getArray(mAddress, mPosition);
   }
 
-  public final void put(final int position, final byte value) {
-    put(mAddress, position, value);
+  public final void put(final long value) {
+    put(mAddress, mPosition, value);
   }
 
-  public final void putInt(final int position, final int value) {
-    putInt(mAddress, position, value);
-  }
-
-  public final void putLong(final int position, final long value) {
-    putLong(mAddress, position, value);
-  }
-
-  public final void putByteArray(final int position, final byte[] value) {
-    putByteArray(mAddress, position, value);
+  public final void put(final byte[] value) {
+    putArray(mAddress, mPosition, value);
   }
 
   @Override
@@ -70,32 +70,16 @@ public class ByteBufferNativeImpl {
     }
   }
 
-  private final native byte get(final long address, final int position);
+  private final native long get(final long address, final int position);
 
-  private final native int getInt(final long address, final int position);
-
-  private final native long getLong(final long address, final int position);
-
-  private final native byte[] getByteArray(
-      final long address,
-      final int position);
+  private final native byte[] getArray(final long address, final int position);
 
   private final native void put(
       final long address,
       final int position,
-      final byte value);
-
-  private final native void putInt(
-      final long address,
-      final int position,
-      final int value);
-
-  private final native void putLong(
-      final long address,
-      final int position,
       final long value);
 
-  private final native void putByteArray(
+  private final native void putArray(
       final long address,
       final int position,
       final byte[] value);

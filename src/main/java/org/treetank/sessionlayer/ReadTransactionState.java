@@ -18,7 +18,6 @@
 
 package org.treetank.sessionlayer;
 
-import java.nio.ByteBuffer;
 import java.util.Map;
 
 import org.treetank.api.IItem;
@@ -31,6 +30,7 @@ import org.treetank.pagelayer.PageReader;
 import org.treetank.pagelayer.PageReference;
 import org.treetank.pagelayer.RevisionRootPage;
 import org.treetank.pagelayer.UberPage;
+import org.treetank.utils.IByteBuffer;
 import org.treetank.utils.IConstants;
 
 /**
@@ -289,7 +289,7 @@ public class ReadTransactionState {
 
     // If there is no page, get it from the storage and cache it.
     if (page == null) {
-      final ByteBuffer in = mPageReader.read(reference);
+      final IByteBuffer in = mPageReader.read(reference);
       page = new NodePage(in, nodePageKey);
       mPageCache.put(reference.getStart(), page);
     }
@@ -317,7 +317,7 @@ public class ReadTransactionState {
 
     // If there is no page, get it from the storage and cache it.
     if (page == null) {
-      final ByteBuffer in = mPageReader.read(reference);
+      final IByteBuffer in = mPageReader.read(reference);
       page = new NamePage(in);
       mPageCache.put(reference.getStart(), page);
     }
@@ -344,7 +344,7 @@ public class ReadTransactionState {
 
     // If there is no page, get it from the storage and cache it.
     if (page == null) {
-      final ByteBuffer in = mPageReader.read(reference);
+      final IByteBuffer in = mPageReader.read(reference);
       page = new IndirectPage(in);
       mPageCache.put(reference.getStart(), page);
     }
@@ -373,7 +373,7 @@ public class ReadTransactionState {
 
     // If there is no page, get it from the storage and cache it.
     if (page == null) {
-      final ByteBuffer in = mPageReader.read(reference);
+      final IByteBuffer in = mPageReader.read(reference);
       page = new RevisionRootPage(in, revisionKey);
       mPageCache.put(reference.getStart(), page);
     }

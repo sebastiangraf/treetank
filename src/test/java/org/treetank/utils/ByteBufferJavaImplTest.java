@@ -76,11 +76,11 @@ public class ByteBufferJavaImplTest {
 
     final byte[] reference = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
     buffer.position(0);
-    buffer.putArray(reference);
+    buffer.put(reference);
     Assert.assertEquals(8, buffer.position());
 
     buffer.position(0);
-    final byte[] result = buffer.getArray(8);
+    final byte[] result = buffer.get(8);
     Assert.assertEquals(8, buffer.position());
     Assert.assertArrayEquals(reference, result);
   }

@@ -18,12 +18,14 @@
 
 package org.treetank.service;
 
-import java.nio.ByteBuffer;
 import java.util.Random;
 
-import org.treetank.openbsd.CryptoNativeImpl;
 import org.treetank.openbsd.ByteBufferNativeImpl;
+import org.treetank.openbsd.CryptoNativeImpl;
+import org.treetank.utils.ByteBufferJavaImpl;
 import org.treetank.utils.CryptoJavaImpl;
+import org.treetank.utils.IByteBuffer;
+import org.treetank.utils.IConstants;
 import org.treetank.utils.ICrypto;
 
 public class TestTreeTankService {
@@ -38,17 +40,17 @@ public class TestTreeTankService {
       System.out
           .println("--- Test Java Crypto: ----------------------------------");
       final ICrypto javaCrypto = new CryptoJavaImpl();
-      testCrypto(javaCrypto);
+      final IByteBuffer javaBuffer =
+          new ByteBufferJavaImpl(IConstants.BUFFER_SIZE);
+      testCrypto(javaCrypto, javaBuffer);
 
       System.out
           .println("--- Test Native Crypto: --------------------------------");
       System.loadLibrary("TreeTank");
       final ICrypto nativeCrypto = new CryptoNativeImpl();
-      testCrypto(nativeCrypto);
-
-      ByteBufferNativeImpl buf = new ByteBufferNativeImpl(100);
-      buf.put(33, (byte) -53);
-      System.out.println("Read: " + buf.get(33));
+      final IByteBuffer nativeBuffer =
+          new ByteBufferNativeImpl(IConstants.BUFFER_SIZE);
+      testCrypto(nativeCrypto, nativeBuffer);
 
     } catch (Exception e) {
       System.out.println(": FAILURE: " + e.getMessage());
@@ -56,12 +58,14 @@ public class TestTreeTankService {
 
   }
 
-  private static final void testCrypto(final ICrypto crypto) throws Exception {
-    final ByteBuffer buffer = ByteBuffer.allocateDirect(32767);
+  private static final void testCrypto(
+      final ICrypto crypto,
+      final IByteBuffer buffer) throws Exception {
 
     final Random r = new Random();
-    final byte[] referenceBuffer = new byte[32767];
+    final byte[] referenceBuffer = new byte[IConstants.BUFFER_SIZE - 24];
     r.nextBytes(referenceBuffer);
+    buffer.position(24);
     buffer.put(referenceBuffer);
 
     testCryptDecrypt(crypto, (short) 30, buffer, referenceBuffer);
@@ -76,14 +80,16 @@ public class TestTreeTankService {
   private static final void testCryptDecrypt(
       final ICrypto crypto,
       final short length,
-      final ByteBuffer buffer,
+      final IByteBuffer buffer,
       final byte[] referenceBuffer) throws Exception {
 
     System.out.print("Test page length: " + length);
 
     final long start = System.currentTimeMillis();
 
+    buffer.position(0);
     final short cryptLength = crypto.crypt(length, buffer);
+    buffer.position(0);
     final short decryptLength = crypto.decrypt(cryptLength, buffer);
 
     final long stop = System.currentTimeMillis();
@@ -94,15 +100,15 @@ public class TestTreeTankService {
       throw new Exception("Bad result length: " + decryptLength);
     }
 
-    buffer.rewind();
     buffer.position(24);
+    final byte[] tmp = buffer.get(referenceBuffer.length);
     for (int i = 24; i < decryptLength; i++) {
-      if (buffer.get() != referenceBuffer[i]) {
+      if (tmp[i] != referenceBuffer[i]) {
         throw new Exception("Error: Byte does not match at " + i);
       }
     }
 
-    buffer.rewind();
+    buffer.position(24);
     buffer.put(referenceBuffer);
 
     System.out.println(": " + (stop - start) + "[ms]: SUCCESS.");

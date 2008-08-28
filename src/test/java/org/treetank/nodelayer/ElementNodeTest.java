@@ -20,10 +20,10 @@ package org.treetank.nodelayer;
 
 import static org.junit.Assert.assertEquals;
 
-import java.nio.ByteBuffer;
-
 import org.junit.Test;
 import org.treetank.api.IReadTransaction;
+import org.treetank.utils.ByteBufferJavaImpl;
+import org.treetank.utils.IByteBuffer;
 
 public class ElementNodeTest {
 
@@ -33,7 +33,7 @@ public class ElementNodeTest {
     // Create empty node.
     final AbstractNode node1 =
         new ElementNode(13L, 14L, 15L, 16L, 17L, 18, 19, 0);
-    final ByteBuffer out = ByteBuffer.allocate(1000);
+    final IByteBuffer out = new ByteBufferJavaImpl(1000);
 
     // Modify it.
     node1.incrementChildCount();
