@@ -110,11 +110,7 @@ public final class HelperPut {
       out.write(new String("\">").getBytes(ENCODING));
 
       // Handle.
-      if (queryString == null) {
-        service.get(out, revision, id);
-      } else {
-        service.get(out, revision, id, queryString);
-      }
+      service.get(out, revision, id);
 
       // Time measurement
       final long stop = System.currentTimeMillis();

@@ -20,6 +20,7 @@ package org.treetank.service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -89,7 +90,32 @@ public final class HelperPost {
       }
       final long id = Long.valueOf(idString);
 
-      service.post(id, requestBody);
+      final long revision = service.post(id, requestBody);
+
+      // Write response header.
+      response.setContentType(CONTENT_TYPE);
+      response.setCharacterEncoding(ENCODING);
+
+      // Write response body.
+      final OutputStream out = response.getOutputStream();
+
+      final long start = System.currentTimeMillis();
+
+      out
+          .write(("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+              + "<rest:response xmlns:rest=\"REST\"><rest:sequence rest:revision=\"")
+              .getBytes(ENCODING));
+      out.write(Long.toString(revision).getBytes(ENCODING));
+      out.write(new String("\">").getBytes(ENCODING));
+
+      // Handle.
+      service.get(out, revision, id);
+
+      // Time measurement
+      final long stop = System.currentTimeMillis();
+      out.write("</rest:sequence><rest:time>".getBytes(ENCODING));
+      out.write(Long.toString(stop - start).getBytes(ENCODING));
+      out.write("[ms]</rest:time></rest:response>".getBytes(ENCODING));
 
       ((Request) request).setHandled(true);
 

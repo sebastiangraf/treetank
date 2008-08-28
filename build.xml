@@ -122,6 +122,7 @@
 	<target name="javah" depends="compile" description="Build header for native syscall.">
 		<javah outputFile="${src.openbsd.dir}/NativeTreeTank.h" classpath="${classes.dir}" verbose="yes">
 			<class name="org.treetank.pagelayer.CryptoNativeImpl" />
+			<class name="org.treetank.utils.FastByteBuffer" />
 		</javah>
 	</target>
 

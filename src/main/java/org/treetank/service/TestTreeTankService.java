@@ -24,6 +24,7 @@ import java.util.Random;
 import org.treetank.pagelayer.CryptoJavaImpl;
 import org.treetank.pagelayer.CryptoNativeImpl;
 import org.treetank.pagelayer.ICrypto;
+import org.treetank.utils.FastByteBuffer;
 
 public class TestTreeTankService {
 
@@ -34,14 +35,20 @@ public class TestTreeTankService {
 
     try {
 
-      System.out.println("--- Test Java Crypto: ----------------------------------");
+      System.out
+          .println("--- Test Java Crypto: ----------------------------------");
       final ICrypto javaCrypto = new CryptoJavaImpl();
       testCrypto(javaCrypto);
 
-      System.out.println("--- Test Native Crypto: --------------------------------");
+      System.out
+          .println("--- Test Native Crypto: --------------------------------");
       System.loadLibrary("TreeTank");
       final ICrypto nativeCrypto = new CryptoNativeImpl();
       testCrypto(nativeCrypto);
+
+      FastByteBuffer buf = new FastByteBuffer(100);
+      buf.put(33, (byte) -53);
+      System.out.println("Read: " + buf.get(33));
 
     } catch (Exception e) {
       System.out.println(": FAILURE: " + e.getMessage());
