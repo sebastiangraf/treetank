@@ -63,9 +63,9 @@ public class TestTreeTankService {
       final IByteBuffer buffer) throws Exception {
 
     final Random r = new Random();
-    final byte[] referenceBuffer = new byte[IConstants.BUFFER_SIZE - 24];
+    final byte[] referenceBuffer = new byte[IConstants.BUFFER_SIZE];
     r.nextBytes(referenceBuffer);
-    buffer.position(24);
+    buffer.position(0);
     buffer.put(referenceBuffer);
 
     testCryptDecrypt(crypto, (short) 30, buffer, referenceBuffer);
@@ -100,15 +100,16 @@ public class TestTreeTankService {
       throw new Exception("Bad result length: " + decryptLength);
     }
 
-    buffer.position(24);
+    buffer.position(0);
     final byte[] tmp = buffer.get(referenceBuffer.length);
+    buffer.position(0);
     for (int i = 24; i < decryptLength; i++) {
       if (tmp[i] != referenceBuffer[i]) {
         throw new Exception("Error: Byte does not match at " + i);
       }
     }
 
-    buffer.position(24);
+    buffer.position();
     buffer.put(referenceBuffer);
 
     System.out.println(": " + (stop - start) + "[ms]: SUCCESS.");
