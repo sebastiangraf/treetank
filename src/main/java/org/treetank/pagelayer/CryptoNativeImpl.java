@@ -102,7 +102,7 @@ public final class CryptoNativeImpl implements ICrypto {
    * @param buffer Direct data exchange buffer != NULL.
    * @return Length of output buffer in [1, ..., 32767] or error in [0].
    */
-  private native short syscall(
+  private final native short syscall(
       final byte tank,
       final byte operation,
       final short length,

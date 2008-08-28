@@ -25,7 +25,7 @@
 #include <fcntl.h>
 #include <err.h>
 #include <errno.h>
-#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 JNIEXPORT jshort JNICALL Java_org_treetank_pagelayer_CryptoNativeImpl_syscall(
@@ -47,4 +47,39 @@ JNIEXPORT jshort JNICALL Java_org_treetank_pagelayer_CryptoNativeImpl_syscall(
   } else {
     return tmp;
   }
+}
+
+JNIEXPORT jlong JNICALL Java_org_treetank_utils_FastByteBuffer_allocate(
+  JNIEnv *env,
+  jobject o,
+  jint capacity)
+{
+  return (caddr_t) malloc(capacity);
+}
+
+JNIEXPORT void JNICALL Java_org_treetank_utils_FastByteBuffer_free(
+  JNIEnv * env,
+  jobject o,
+  jlong address)
+{
+  free((caddr_t) address);
+}
+
+JNIEXPORT jbyte JNICALL Java_org_treetank_utils_FastByteBuffer_get(
+  JNIEnv * env,
+  jobject o,
+  jlong address,
+  jint position)
+{
+  return (jbyte) *((caddr_t) address + position);
+}
+
+JNIEXPORT void JNICALL Java_org_treetank_utils_FastByteBuffer_put(
+  JNIEnv * env,
+  jobject o,
+  jlong address,
+  jint position,
+  jbyte value)
+{
+  (jbyte) *((caddr_t) address + position) = value;
 }

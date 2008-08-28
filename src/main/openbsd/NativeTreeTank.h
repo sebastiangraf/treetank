@@ -11,10 +11,10 @@ extern "C" {
 #define org_treetank_pagelayer_CryptoNativeImpl_CORE_COUNT 15L
 #undef org_treetank_pagelayer_CryptoNativeImpl_ERROR
 #define org_treetank_pagelayer_CryptoNativeImpl_ERROR 0L
-#undef org_treetank_pagelayer_CryptoNativeImpl_COMMAND_WRITE
-#define org_treetank_pagelayer_CryptoNativeImpl_COMMAND_WRITE 1L
-#undef org_treetank_pagelayer_CryptoNativeImpl_COMMAND_READ
-#define org_treetank_pagelayer_CryptoNativeImpl_COMMAND_READ 2L
+#undef org_treetank_pagelayer_CryptoNativeImpl_TT_WRITE_FRAGMENT
+#define org_treetank_pagelayer_CryptoNativeImpl_TT_WRITE_FRAGMENT 8L
+#undef org_treetank_pagelayer_CryptoNativeImpl_TT_READ_FRAGMENT
+#define org_treetank_pagelayer_CryptoNativeImpl_TT_READ_FRAGMENT 9L
 /* Inaccessible static: coreQueue */
 /*
  * Class:     org_treetank_pagelayer_CryptoNativeImpl
@@ -23,6 +23,49 @@ extern "C" {
  */
 JNIEXPORT jshort JNICALL Java_org_treetank_pagelayer_CryptoNativeImpl_syscall
   (JNIEnv *, jobject, jbyte, jbyte, jshort, jobject);
+
+#ifdef __cplusplus
+}
+#endif
+#endif
+/* Header for class org_treetank_utils_FastByteBuffer */
+
+#ifndef _Included_org_treetank_utils_FastByteBuffer
+#define _Included_org_treetank_utils_FastByteBuffer
+#ifdef __cplusplus
+extern "C" {
+#endif
+/*
+ * Class:     org_treetank_utils_FastByteBuffer
+ * Method:    get
+ * Signature: (JI)B
+ */
+JNIEXPORT jbyte JNICALL Java_org_treetank_utils_FastByteBuffer_get
+  (JNIEnv *, jobject, jlong, jint);
+
+/*
+ * Class:     org_treetank_utils_FastByteBuffer
+ * Method:    put
+ * Signature: (JIB)V
+ */
+JNIEXPORT void JNICALL Java_org_treetank_utils_FastByteBuffer_put
+  (JNIEnv *, jobject, jlong, jint, jbyte);
+
+/*
+ * Class:     org_treetank_utils_FastByteBuffer
+ * Method:    allocate
+ * Signature: (I)J
+ */
+JNIEXPORT jlong JNICALL Java_org_treetank_utils_FastByteBuffer_allocate
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     org_treetank_utils_FastByteBuffer
+ * Method:    free
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_org_treetank_utils_FastByteBuffer_free
+  (JNIEnv *, jobject, jlong);
 
 #ifdef __cplusplus
 }
