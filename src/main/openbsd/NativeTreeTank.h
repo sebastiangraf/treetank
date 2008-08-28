@@ -19,10 +19,10 @@ extern "C" {
 /*
  * Class:     org_treetank_openbsd_CryptoNativeImpl
  * Method:    syscall
- * Signature: (BBSLorg/treetank/utils/IByteBuffer;)S
+ * Signature: (BBSJ)S
  */
 JNIEXPORT jshort JNICALL Java_org_treetank_openbsd_CryptoNativeImpl_syscall
-  (JNIEnv *, jobject, jbyte, jbyte, jshort, jobject);
+  (JNIEnv *, jobject, jbyte, jbyte, jshort, jlong);
 
 #ifdef __cplusplus
 }
@@ -70,18 +70,18 @@ JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_put___3B
 /*
  * Class:     org_treetank_openbsd_ByteBufferNativeImpl
  * Method:    allocate
- * Signature: (I)J
+ * Signature: ()V
  */
-JNIEXPORT jlong JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_allocate
-  (JNIEnv *, jobject, jint);
+JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_allocate
+  (JNIEnv *, jobject);
 
 /*
  * Class:     org_treetank_openbsd_ByteBufferNativeImpl
  * Method:    free
- * Signature: (J)V
+ * Signature: ()V
  */
 JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_free
-  (JNIEnv *, jobject, jlong);
+  (JNIEnv *, jobject);
 
 #ifdef __cplusplus
 }

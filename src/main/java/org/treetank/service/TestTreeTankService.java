@@ -47,6 +47,15 @@ public class TestTreeTankService {
       System.out
           .println("--- Test Native Crypto: --------------------------------");
       System.loadLibrary("TreeTank");
+      
+//      final IByteBuffer b = new ByteBufferNativeImpl(100);
+//      final byte[] t = new byte[] { 1, 2, 3};
+//      b.put(t);
+//      System.out.println(b.position());
+//      b.position(0);
+//      final byte[] tt = b.get(t.length);
+//      System.out.println(tt[0] + ", " + tt[1] + ", " + tt[2]);
+      
       final ICrypto nativeCrypto = new CryptoNativeImpl();
       final IByteBuffer nativeBuffer =
           new ByteBufferNativeImpl(IConstants.BUFFER_SIZE);
