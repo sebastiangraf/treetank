@@ -89,8 +89,8 @@ public final class ElementNode extends AbstractNode {
     mLeftSiblingKey = leftSiblingKey;
     mRightSiblingKey = rightSiblingKey;
     mChildCount = 0;
-    mAttributeKeys = new ArrayList<Long>(0);
-    mNamespaceKeys = new ArrayList<Long>(0);
+    mAttributeKeys = null;
+    mNamespaceKeys = null;
     mNameKey = nameKey;
     mURIKey = uriKey;
     mType = type;
@@ -108,13 +108,21 @@ public final class ElementNode extends AbstractNode {
     mLeftSiblingKey = node.getLeftSiblingKey();
     mRightSiblingKey = node.getRightSiblingKey();
     mChildCount = node.getChildCount();
-    mAttributeKeys = new ArrayList<Long>(node.getAttributeCount());
-    mNamespaceKeys = new ArrayList<Long>(node.getNamespaceCount());
-    for (int i = 0, l = node.getAttributeCount(); i < l; i++) {
-      mAttributeKeys.add(node.getAttributeKey(i));
+    if (node.getAttributeCount() > 0) {
+      mAttributeKeys = new ArrayList<Long>(node.getAttributeCount());
+      for (int i = 0, l = node.getAttributeCount(); i < l; i++) {
+        mAttributeKeys.add(node.getAttributeKey(i));
+      }
+    } else {
+      mAttributeKeys = null;
     }
-    for (int i = 0, l = node.getNamespaceCount(); i < l; i++) {
-      mNamespaceKeys.add(node.getNamespaceKey(i));
+    if (node.getNamespaceCount() > 0) {
+      mNamespaceKeys = new ArrayList<Long>(node.getNamespaceCount());
+      for (int i = 0, l = node.getNamespaceCount(); i < l; i++) {
+        mNamespaceKeys.add(node.getNamespaceKey(i));
+      }
+    } else {
+      mNamespaceKeys = null;
     }
     mNameKey = node.getNameKey();
     mURIKey = node.getURIKey();
@@ -136,13 +144,23 @@ public final class ElementNode extends AbstractNode {
     mLeftSiblingKey = in.get();
     mRightSiblingKey = in.get();
     mChildCount = in.get();
-    mAttributeKeys = new ArrayList<Long>(0);
-    mNamespaceKeys = new ArrayList<Long>(0);
-    for (int i = 0, l = (int) in.get(); i < l; i++) {
-      mAttributeKeys.add(in.get());
+    int count = (int) in.get();
+    if (count > 0) {
+      mAttributeKeys = new ArrayList<Long>(count);
+      for (int i = 0; i < count; i++) {
+        mAttributeKeys.add(in.get());
+      }
+    } else {
+      mAttributeKeys = null;
     }
-    for (int i = 0, l = (int) in.get(); i < l; i++) {
-      mNamespaceKeys.add(in.get());
+    count = (int) in.get();
+    if (count > 0) {
+      mNamespaceKeys = new ArrayList<Long>(count);
+      for (int i = 0; i < count; i++) {
+        mNamespaceKeys.add(in.get());
+      }
+    } else {
+      mNamespaceKeys = null;
     }
     mNameKey = (int) in.get();
     mURIKey = (int) in.get();
@@ -290,6 +308,9 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final int getAttributeCount() {
+    if (mAttributeKeys == null) {
+      return 0;
+    }
     return mAttributeKeys.size();
   }
 
@@ -298,6 +319,9 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final long getAttributeKey(final int index) {
+    if (mAttributeKeys == null) {
+      return IReadTransaction.NULL_NODE_KEY;
+    }
     return mAttributeKeys.get(index);
   }
 
@@ -306,6 +330,9 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final void insertAttribute(final long attributeKey) {
+    if (mAttributeKeys == null) {
+      mAttributeKeys = new ArrayList<Long>(1);
+    }
     mAttributeKeys.add(attributeKey);
   }
 
@@ -314,6 +341,9 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final int getNamespaceCount() {
+    if (mNamespaceKeys == null) {
+      return 0;
+    }
     return mNamespaceKeys.size();
   }
 
@@ -322,6 +352,9 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final long getNamespaceKey(final int index) {
+    if (mNamespaceKeys == null) {
+      return IReadTransaction.NULL_NODE_KEY;
+    }
     return mNamespaceKeys.get(index);
   }
 
@@ -330,6 +363,9 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final void insertNamespace(final long namespaceKey) {
+    if (mNamespaceKeys == null) {
+      mNamespaceKeys = new ArrayList<Long>(1);
+    }
     mNamespaceKeys.add(namespaceKey);
   }
 
@@ -399,13 +435,21 @@ public final class ElementNode extends AbstractNode {
     out.put(mLeftSiblingKey);
     out.put(mRightSiblingKey);
     out.put(mChildCount);
-    out.put(mAttributeKeys.size());
-    for (int i = 0, l = mAttributeKeys.size(); i < l; i++) {
-      out.put(mAttributeKeys.get(i));
+    if (mAttributeKeys != null) {
+      out.put(mAttributeKeys.size());
+      for (int i = 0, l = mAttributeKeys.size(); i < l; i++) {
+        out.put(mAttributeKeys.get(i));
+      }
+    } else {
+      out.put(0);
     }
-    out.put(mNamespaceKeys.size());
-    for (int i = 0, l = mNamespaceKeys.size(); i < l; i++) {
-      out.put(mNamespaceKeys.get(i));
+    if (mNamespaceKeys != null) {
+      out.put(mNamespaceKeys.size());
+      for (int i = 0, l = mNamespaceKeys.size(); i < l; i++) {
+        out.put(mNamespaceKeys.get(i));
+      }
+    } else {
+      out.put(0);
     }
     out.put(mNameKey);
     out.put(mURIKey);
