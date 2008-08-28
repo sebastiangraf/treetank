@@ -29,6 +29,8 @@ import org.mortbay.jetty.handler.AbstractHandler;
 
 public class TreeTankHandler extends AbstractHandler {
 
+  private static final String JAVASCRIPT = ".js";
+
   private static final String FAVICON = "/favicon.ico";
 
   private static final String CROSSDOMAIN = "/crossdomain.xml";
@@ -45,6 +47,8 @@ public class TreeTankHandler extends AbstractHandler {
 
   private final HelperCrossdomain mHelperCrossdomain;
 
+  private final HelperJavascript mHelperJavascript;
+
   private final HelperGet mHelperGet;
 
   private final HelperPost mHelperPost;
@@ -56,6 +60,7 @@ public class TreeTankHandler extends AbstractHandler {
   public TreeTankHandler(final Map<String, TreeTankWrapper> map) {
     mHelperFavicon = new HelperFavicon();
     mHelperCrossdomain = new HelperCrossdomain();
+    mHelperJavascript = new HelperJavascript();
     mHelperGet = new HelperGet(map);
     mHelperPost = new HelperPost(map);
     mHelperPut = new HelperPut(map);
@@ -74,6 +79,8 @@ public class TreeTankHandler extends AbstractHandler {
         mHelperFavicon.handle(request, response);
       } else if (request.getRequestURI().equalsIgnoreCase(CROSSDOMAIN)) {
         mHelperCrossdomain.handle(request, response);
+      } else if (request.getRequestURI().endsWith(JAVASCRIPT)) {
+        mHelperJavascript.handle(request, response);
       } else if (request.getMethod().equalsIgnoreCase(GET)) {
         mHelperGet.handle(request, response);
       } else if (request.getMethod().equalsIgnoreCase(POST)) {
