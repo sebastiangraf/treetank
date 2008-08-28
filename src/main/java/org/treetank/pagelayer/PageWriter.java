@@ -23,8 +23,11 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
+import org.treetank.openbsd.CryptoNativeImpl;
 import org.treetank.sessionlayer.SessionConfiguration;
+import org.treetank.utils.CryptoJavaImpl;
 import org.treetank.utils.IConstants;
+import org.treetank.utils.ICrypto;
 
 /**
  * <h1>PageWriter</h1>

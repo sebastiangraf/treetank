@@ -21,10 +21,10 @@ package org.treetank.service;
 import java.nio.ByteBuffer;
 import java.util.Random;
 
-import org.treetank.pagelayer.CryptoJavaImpl;
-import org.treetank.pagelayer.CryptoNativeImpl;
-import org.treetank.pagelayer.ICrypto;
-import org.treetank.utils.FastByteBuffer;
+import org.treetank.openbsd.CryptoNativeImpl;
+import org.treetank.openbsd.ByteBufferNativeImpl;
+import org.treetank.utils.CryptoJavaImpl;
+import org.treetank.utils.ICrypto;
 
 public class TestTreeTankService {
 
@@ -46,7 +46,7 @@ public class TestTreeTankService {
       final ICrypto nativeCrypto = new CryptoNativeImpl();
       testCrypto(nativeCrypto);
 
-      FastByteBuffer buf = new FastByteBuffer(100);
+      ByteBufferNativeImpl buf = new ByteBufferNativeImpl(100);
       buf.put(33, (byte) -53);
       System.out.println("Read: " + buf.get(33));
 

@@ -45,11 +45,59 @@ JNIEXPORT jbyte JNICALL Java_org_treetank_utils_FastByteBuffer_get
 
 /*
  * Class:     org_treetank_utils_FastByteBuffer
+ * Method:    getInt
+ * Signature: (JI)I
+ */
+JNIEXPORT jint JNICALL Java_org_treetank_utils_FastByteBuffer_getInt
+  (JNIEnv *, jobject, jlong, jint);
+
+/*
+ * Class:     org_treetank_utils_FastByteBuffer
+ * Method:    getLong
+ * Signature: (JI)J
+ */
+JNIEXPORT jlong JNICALL Java_org_treetank_utils_FastByteBuffer_getLong
+  (JNIEnv *, jobject, jlong, jint);
+
+/*
+ * Class:     org_treetank_utils_FastByteBuffer
+ * Method:    getByteArray
+ * Signature: (JI)[B
+ */
+JNIEXPORT jbyteArray JNICALL Java_org_treetank_utils_FastByteBuffer_getByteArray
+  (JNIEnv *, jobject, jlong, jint);
+
+/*
+ * Class:     org_treetank_utils_FastByteBuffer
  * Method:    put
  * Signature: (JIB)V
  */
 JNIEXPORT void JNICALL Java_org_treetank_utils_FastByteBuffer_put
   (JNIEnv *, jobject, jlong, jint, jbyte);
+
+/*
+ * Class:     org_treetank_utils_FastByteBuffer
+ * Method:    putInt
+ * Signature: (JII)V
+ */
+JNIEXPORT void JNICALL Java_org_treetank_utils_FastByteBuffer_putInt
+  (JNIEnv *, jobject, jlong, jint, jint);
+
+/*
+ * Class:     org_treetank_utils_FastByteBuffer
+ * Method:    putLong
+ * Signature: (JIJ)V
+ */
+JNIEXPORT void JNICALL Java_org_treetank_utils_FastByteBuffer_putLong
+  (JNIEnv *, jobject, jlong, jint, jlong);
+
+/*
+ * Class:     org_treetank_utils_FastByteBuffer
+ * Method:    putByteArray
+ * Signature: (JI[B)V
+ */
+JNIEXPORT void JNICALL Java_org_treetank_utils_FastByteBuffer_putByteArray
+  (JNIEnv *, jobject, jlong, jint, jbyteArray);
 
 /*
  * Class:     org_treetank_utils_FastByteBuffer
