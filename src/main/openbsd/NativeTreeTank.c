@@ -128,7 +128,7 @@ JNIEXPORT jbyteArray JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_get_
   jfieldID   positionField = (*env)->GetFieldID(env, class, "mPosition", "I");
   jlong      address       = (*env)->GetIntField(env, obj, addressField);
   jint       position      = (*env)->GetIntField(env, obj, positionField);
-  jbyte     *addressPtr    = (jbyte *) address;
+  jbyte     *addressPtr    = (jbyte *) address + position;
   jbyteArray array         = (*env)->NewByteArray(env, length);
   
   // Work.
@@ -184,7 +184,7 @@ JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_put___3B(
   jfieldID   positionField = (*env)->GetFieldID(env, class, "mPosition", "I");
   jlong      address       = (*env)->GetIntField(env, obj, addressField);
   jint       position      = (*env)->GetIntField(env, obj, positionField);
-  jbyte     *addressPtr    = (jbyte *) address;
+  jbyte     *addressPtr    = (jbyte *) address + position;
   jbyte     *arrayPtr      = (*env)->GetByteArrayElements(env, value, NULL);
   jint       length        = (*env)->GetArrayLength(env, value);
   
