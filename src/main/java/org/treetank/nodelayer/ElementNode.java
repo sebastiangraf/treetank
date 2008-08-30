@@ -152,20 +152,18 @@ public final class ElementNode extends AbstractNode {
     int count = (int) values[8];
     if (count > 0) {
       mAttributeKeys = new ArrayList<Long>(count);
+      long[] attributes = in.getAll(count);
       for (int i = 0; i < count; i++) {
-        mAttributeKeys.add(in.get());
+        mAttributeKeys.add(attributes[i]);
       }
-    } else {
-      mAttributeKeys = null;
     }
     count = (int) values[9];
     if (count > 0) {
       mNamespaceKeys = new ArrayList<Long>(count);
+      long[] namespaces = in.getAll(count);
       for (int i = 0; i < count; i++) {
-        mNamespaceKeys.add(in.get());
+        mNamespaceKeys.add(namespaces[i]);
       }
-    } else {
-      mNamespaceKeys = null;
     }
   }
 
@@ -444,14 +442,18 @@ public final class ElementNode extends AbstractNode {
         mAttributeKeys == null ? 0 : mAttributeKeys.size(),
         mNamespaceKeys == null ? 0 : mNamespaceKeys.size() });
     if (mAttributeKeys != null) {
+      long[] attributes = new long[mAttributeKeys.size()];
       for (int i = 0, l = mAttributeKeys.size(); i < l; i++) {
-        out.put(mAttributeKeys.get(i));
+        attributes[i] = mAttributeKeys.get(i);
       }
+      out.putAll(attributes);
     }
     if (mNamespaceKeys != null) {
+      long[] namespaces = new long[mNamespaceKeys.size()];
       for (int i = 0, l = mNamespaceKeys.size(); i < l; i++) {
-        out.put(mNamespaceKeys.get(i));
+        namespaces[i] = mNamespaceKeys.get(i);
       }
+      out.putAll(namespaces);
     }
   }
 

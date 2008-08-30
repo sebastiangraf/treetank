@@ -40,15 +40,23 @@ extern "C" {
  * Method:    get
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_get__
+JNIEXPORT jlong JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_get
   (JNIEnv *, jobject);
 
 /*
  * Class:     org_treetank_openbsd_ByteBufferNativeImpl
- * Method:    get
+ * Method:    getArray
  * Signature: (I)[B
  */
-JNIEXPORT jbyteArray JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_get__I
+JNIEXPORT jbyteArray JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_getArray
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     org_treetank_openbsd_ByteBufferNativeImpl
+ * Method:    getAll
+ * Signature: (I)[J
+ */
+JNIEXPORT jlongArray JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_getAll
   (JNIEnv *, jobject, jint);
 
 /*
@@ -56,16 +64,24 @@ JNIEXPORT jbyteArray JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_get_
  * Method:    put
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_put__J
+JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_put
   (JNIEnv *, jobject, jlong);
 
 /*
  * Class:     org_treetank_openbsd_ByteBufferNativeImpl
- * Method:    put
+ * Method:    putArray
  * Signature: ([B)V
  */
-JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_put___3B
+JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_putArray
   (JNIEnv *, jobject, jbyteArray);
+
+/*
+ * Class:     org_treetank_openbsd_ByteBufferNativeImpl
+ * Method:    putAll
+ * Signature: ([J)V
+ */
+JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_putAll
+  (JNIEnv *, jobject, jlongArray);
 
 /*
  * Class:     org_treetank_openbsd_ByteBufferNativeImpl
