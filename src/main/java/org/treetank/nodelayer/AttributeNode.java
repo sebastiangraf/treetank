@@ -83,7 +83,7 @@ public final class AttributeNode extends AbstractNode {
 
   public AttributeNode(final long nodeKey, final IByteBuffer in) {
     super(nodeKey);
-    mParentKey = in.get();
+    mParentKey = nodeKey - in.get();
     mNameKey = (int) in.get();
     mURIKey = (int) in.get();
     mType = (int) in.get();
@@ -200,7 +200,7 @@ public final class AttributeNode extends AbstractNode {
    */
   @Override
   public final void serialize(final IByteBuffer out) {
-    out.put(mParentKey);
+    out.put(getNodeKey() - mParentKey);
     out.put(mNameKey);
     out.put(mURIKey);
     out.put(mType);

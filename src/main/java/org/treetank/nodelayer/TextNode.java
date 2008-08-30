@@ -90,7 +90,7 @@ public final class TextNode extends AbstractNode {
    */
   public TextNode(final long nodeKey, final IByteBuffer in) {
     super(nodeKey);
-    mParentKey = in.get();
+    mParentKey = nodeKey - in.get();
     mLeftSiblingKey = in.get();
     mRightSiblingKey = in.get();
     mType = (int) in.get();
@@ -223,7 +223,7 @@ public final class TextNode extends AbstractNode {
    */
   @Override
   public final void serialize(final IByteBuffer out) {
-    out.put(mParentKey);
+    out.put(getNodeKey() - mParentKey);
     out.put(mLeftSiblingKey);
     out.put(mRightSiblingKey);
     out.put(mType);
