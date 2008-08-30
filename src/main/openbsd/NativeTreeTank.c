@@ -98,14 +98,18 @@ JNIEXPORT jlong JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_get__(
   jint      position      = (*env)->GetIntField(env, obj, positionField);
   jbyte    *addressPtr    = (jbyte *) address;
   jbyte     singleByte    = *(addressPtr + (position++));
-  jlong     value         = singleByte & 0x7F;
-  jint      shift         = 7;
+  jlong     value         = singleByte & 0x3F;
+  jint      shift         = 6;
+  jbyte     sign          = singleByte & 0x40;
   
   // Work.
   while ((singleByte & 0x80) > 0) {
     singleByte = *(addressPtr + (position++));
     value |= (((jlong) (singleByte & 0x7F)) << shift);
     shift += 7;
+  }
+  if (sign) {
+    value *= -1;
   }
   
   // Teardown.
@@ -148,10 +152,16 @@ JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_put__J(
   jlong     address       = (*env)->GetIntField(env, obj, addressField);
   jint      position      = (*env)->GetIntField(env, obj, positionField);
   jbyte    *addressPtr    = (jbyte *) address;
-  jbyte     singleByte    = (jbyte) (value & 0x7F);
+  jbyte     singleByte    = 0x0;
   
   // Work.
-  value >>= 7;
+  if (value < 0) {
+    value *= -1;
+    singleByte = (jbyte) ((value & 0x3F) | 0x40);
+  } else {
+    singleByte = (jbyte) (value & 0x3F);
+  }
+  value >>= 6;
   while (value > 0) {
     *(addressPtr + (position++)) = singleByte | 0x80;
     singleByte = (jbyte) (value & 0x7F);
