@@ -65,8 +65,9 @@ public abstract class AbstractPage {
    */
   protected AbstractPage(final int referenceCount, final IByteBuffer in) {
     this(false, referenceCount);
+    long[] values = in.getAll(referenceCount);
     for (int offset = 0; offset < referenceCount; offset++) {
-      if (in.get() == 1) {
+      if (values[offset] == 1) {
         mReferences[offset] = new PageReference(in);
       }
     }
@@ -143,12 +144,18 @@ public abstract class AbstractPage {
    * @param out Output stream.
    */
   public void serialize(final IByteBuffer out) {
+    long[] values = new long[mReferences.length];
+    for (int i = 0; i < mReferences.length; i++) {
+      if (mReferences[i] != null) {
+        values[i] = (byte) 1;
+      } else {
+        values[i] = (byte) 0;
+      }
+    }
+    out.putAll(values);
     for (final PageReference<? extends AbstractPage> reference : mReferences) {
       if (reference != null) {
-        out.put((byte) 1);
         reference.serialize(out);
-      } else {
-        out.put((byte) 0);
       }
     }
   }
