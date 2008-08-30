@@ -139,12 +139,17 @@ public final class ElementNode extends AbstractNode {
     super(nodeKey);
 
     // Read according to node kind.
-    mParentKey = nodeKey - in.get();
-    mFirstChildKey = in.get();
-    mLeftSiblingKey = in.get();
-    mRightSiblingKey = in.get();
-    mChildCount = in.get();
-    int count = (int) in.get();
+    long[] values = in.getAll(10);
+    mParentKey = nodeKey - values[0];
+    mFirstChildKey = values[1];
+    mLeftSiblingKey = values[2];
+    mRightSiblingKey = values[3];
+    mChildCount = values[4];
+    mNameKey = (int) values[5];
+    mURIKey = (int) values[6];
+    mType = (int) values[7];
+
+    int count = (int) values[8];
     if (count > 0) {
       mAttributeKeys = new ArrayList<Long>(count);
       for (int i = 0; i < count; i++) {
@@ -153,7 +158,7 @@ public final class ElementNode extends AbstractNode {
     } else {
       mAttributeKeys = null;
     }
-    count = (int) in.get();
+    count = (int) values[9];
     if (count > 0) {
       mNamespaceKeys = new ArrayList<Long>(count);
       for (int i = 0; i < count; i++) {
@@ -162,9 +167,6 @@ public final class ElementNode extends AbstractNode {
     } else {
       mNamespaceKeys = null;
     }
-    mNameKey = (int) in.get();
-    mURIKey = (int) in.get();
-    mType = (int) in.get();
   }
 
   /**
@@ -430,30 +432,27 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final void serialize(final IByteBuffer out) {
-    out.put(getNodeKey() - mParentKey);
-    out.put(mFirstChildKey);
-    out.put(mLeftSiblingKey);
-    out.put(mRightSiblingKey);
-    out.put(mChildCount);
+    out.putAll(new long[] {
+        getNodeKey() - mParentKey,
+        mFirstChildKey,
+        mLeftSiblingKey,
+        mRightSiblingKey,
+        mChildCount,
+        mNameKey,
+        mURIKey,
+        mType,
+        mAttributeKeys == null ? 0 : mAttributeKeys.size(),
+        mNamespaceKeys == null ? 0 : mNamespaceKeys.size() });
     if (mAttributeKeys != null) {
-      out.put(mAttributeKeys.size());
       for (int i = 0, l = mAttributeKeys.size(); i < l; i++) {
         out.put(mAttributeKeys.get(i));
       }
-    } else {
-      out.put(0);
     }
     if (mNamespaceKeys != null) {
-      out.put(mNamespaceKeys.size());
       for (int i = 0, l = mNamespaceKeys.size(); i < l; i++) {
         out.put(mNamespaceKeys.get(i));
       }
-    } else {
-      out.put(0);
     }
-    out.put(mNameKey);
-    out.put(mURIKey);
-    out.put(mType);
   }
 
   /**

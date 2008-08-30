@@ -90,11 +90,12 @@ public final class TextNode extends AbstractNode {
    */
   public TextNode(final long nodeKey, final IByteBuffer in) {
     super(nodeKey);
-    mParentKey = nodeKey - in.get();
-    mLeftSiblingKey = in.get();
-    mRightSiblingKey = in.get();
-    mType = (int) in.get();
-    mValue = in.get((int) in.get());
+    long[] values = in.getAll(5);
+    mParentKey = nodeKey - values[0];
+    mLeftSiblingKey = values[1];
+    mRightSiblingKey = values[2];
+    mType = (int) values[3];
+    mValue = in.getArray((int) values[4]);
   }
 
   /**
@@ -223,12 +224,13 @@ public final class TextNode extends AbstractNode {
    */
   @Override
   public final void serialize(final IByteBuffer out) {
-    out.put(getNodeKey() - mParentKey);
-    out.put(mLeftSiblingKey);
-    out.put(mRightSiblingKey);
-    out.put(mType);
-    out.put(mValue.length);
-    out.put(mValue);
+    out.putAll(new long[] {
+        getNodeKey() - mParentKey,
+        mLeftSiblingKey,
+        mRightSiblingKey,
+        mType,
+        mValue.length });
+    out.putArray(mValue);
   }
 
   /**

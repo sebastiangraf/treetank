@@ -26,10 +26,14 @@ public interface IByteBuffer {
 
   public long get();
 
-  public byte[] get(int length);
+  public byte[] getArray(int length);
+
+  public long[] getAll(int count);
 
   public void put(long value);
 
-  public void put(byte[] value);
+  public void putArray(byte[] value);
+
+  public void putAll(long[] values);
 
 }
