@@ -49,9 +49,13 @@ public class ByteBufferNativeImpl implements IByteBuffer {
 
   public final native byte[] getArray(final int length);
 
+  public final native long[] getAll(final int count);
+
   public final native void put(final long value);
 
   public final native void putArray(final byte[] value);
+
+  public final native void putAll(final long[] values);
 
   public final long getAddress() {
     return mAddress;

@@ -53,9 +53,66 @@ public class TestTreeTankService {
           new ByteBufferNativeImpl(IConstants.BUFFER_SIZE);
       testCrypto(nativeCrypto, nativeBuffer);
 
+      System.out
+          .println("--- Bench Native IByteBuffer: --------------------------");
+      benchSmallByteBuffer(nativeBuffer);
+      benchLargeByteBuffer(nativeBuffer);
+
     } catch (Exception e) {
       System.out.println(": FAILURE: " + e.getMessage());
     }
+
+  }
+
+  private static final void benchSmallByteBuffer(final IByteBuffer buffer)
+      throws Exception {
+
+    System.out.print("Bench small: ");
+
+    final Random r = new Random();
+
+    final long start = System.currentTimeMillis();
+
+    for (int j = 0; j < 1000; j++) {
+      buffer.position(0);
+      for (int i = 0; i < 10; i++) {
+        buffer.put(r.nextLong());
+      }
+      buffer.position(0);
+      for (int i = 0; i < 10; i++) {
+        buffer.get();
+      }
+    }
+
+    final long stop = System.currentTimeMillis();
+
+    System.out.println(": " + (stop - start) + "[ms]: SUCCESS.");
+
+  }
+
+  private static final void benchLargeByteBuffer(final IByteBuffer buffer)
+      throws Exception {
+
+    System.out.print("Bench large: ");
+
+    final Random r = new Random();
+
+    final long start = System.currentTimeMillis();
+
+    final long[] values = new long[10];
+    for (int j = 0; j < 1000; j++) {
+      buffer.position(0);
+      for (int i = 0; i < 10; i++) {
+        values[i] = r.nextLong();
+      }
+      buffer.putAll(values);
+      buffer.position(0);
+      buffer.getAll(10);
+    }
+
+    final long stop = System.currentTimeMillis();
+
+    System.out.println(": " + (stop - start) + "[ms]: SUCCESS.");
 
   }
 

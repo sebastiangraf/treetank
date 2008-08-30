@@ -68,6 +68,9 @@ JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_allocate(
   
   // Teardown.
   (*env)->SetLongField(env, obj, addressField, address);
+  (*env)->DeleteLocalRef(env, capacityField);
+  (*env)->DeleteLocalRef(env, addressField);
+  (*env)->DeleteLocalRef(env, class);
 }
 
 JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_free(
@@ -84,9 +87,34 @@ JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_free(
   
   // Teardown.
   (*env)->SetLongField(env, obj, addressField, 0);
+  (*env)->DeleteLocalRef(env, addressField);
+  (*env)->DeleteLocalRef(env, class);
 }
 
-JNIEXPORT jlong JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_get__(
+jlong get(
+  jbyte *addressPtr,
+  jint  *positionPtr)
+{
+  jbyte singleByte = *(addressPtr + *positionPtr);
+  jlong value      = singleByte & 0x3F;
+  jbyte sign       = singleByte & 0x40;
+  jint  shift      = 0x6;
+
+  *positionPtr += 1;
+  while ((singleByte & 0x80) > 0) {
+    singleByte = *(addressPtr + *positionPtr);
+    value |= (((jlong) (singleByte & 0x7F)) << shift);
+    *positionPtr += 1;
+    shift += 7;
+  }
+  if (sign) {
+    value *= -1;
+  }
+  
+  return value;
+}
+
+JNIEXPORT jlong JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_get(
   JNIEnv * env,
   jobject obj)
 {
@@ -97,27 +125,21 @@ JNIEXPORT jlong JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_get__(
   jlong     address       = (*env)->GetIntField(env, obj, addressField);
   jint      position      = (*env)->GetIntField(env, obj, positionField);
   jbyte    *addressPtr    = (jbyte *) address;
-  jbyte     singleByte    = *(addressPtr + (position++));
-  jlong     value         = singleByte & 0x3F;
-  jint      shift         = 6;
-  jbyte     sign          = singleByte & 0x40;
+  jlong     value         = 0x0;
   
   // Work.
-  while ((singleByte & 0x80) > 0) {
-    singleByte = *(addressPtr + (position++));
-    value |= (((jlong) (singleByte & 0x7F)) << shift);
-    shift += 7;
-  }
-  if (sign) {
-    value *= -1;
-  }
+  value = get(addressPtr, &position);
   
   // Teardown.
   (*env)->SetIntField(env, obj, positionField, position);
+  (*env)->DeleteLocalRef(env, positionField);
+  (*env)->DeleteLocalRef(env, addressField);
+  (*env)->DeleteLocalRef(env, class);
+  
   return value;
 }
 
-JNIEXPORT jbyteArray JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_get__I(
+JNIEXPORT jbyteArray JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_getArray(
   JNIEnv * env,
   jobject obj,
   jint length)
@@ -130,17 +152,81 @@ JNIEXPORT jbyteArray JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_get_
   jint       position      = (*env)->GetIntField(env, obj, positionField);
   jbyte     *addressPtr    = (jbyte *) address + position;
   jbyteArray array         = (*env)->NewByteArray(env, length);
-  
+  jlong     *arrayPtr      = (*env)->GetByteArrayElements(env, array, NULL);
+    
   // Work.
   (*env)->SetByteArrayRegion(env, array, 0, length, addressPtr);
   position += length;
   
   // Teardown.
   (*env)->SetIntField(env, obj, positionField, position);
+  (*env)->ReleaseByteArrayElements(env, array, arrayPtr, 0);
+  (*env)->DeleteLocalRef(env, positionField);
+  (*env)->DeleteLocalRef(env, addressField);
+  (*env)->DeleteLocalRef(env, class);
+  
   return array;
 }
 
-JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_put__J(
+JNIEXPORT jlongArray JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_getAll(
+  JNIEnv *env,
+  jobject obj,
+  jint count)
+{
+  // Setup.
+  jclass     class         = (*env)->GetObjectClass(env, obj);
+  jfieldID   addressField  = (*env)->GetFieldID(env, class, "mAddress", "J");
+  jfieldID   positionField = (*env)->GetFieldID(env, class, "mPosition", "I");
+  jlong      address       = (*env)->GetIntField(env, obj, addressField);
+  jint       position      = (*env)->GetIntField(env, obj, positionField);
+  jbyte     *addressPtr    = (jbyte *) address;
+  jlongArray array         = (*env)->NewLongArray(env, count);
+  jlong     *arrayPtr      = (*env)->GetLongArrayElements(env, array, NULL);
+  jlong      value         = 0x0;
+  jint       i             = 0x0;
+  
+  // Work.
+  for (i = 0; i < count; i++) {
+    *arrayPtr = get(addressPtr, &position);
+    arrayPtr += 1;
+  }
+  
+  // Teardown.
+  (*env)->SetIntField(env, obj, positionField, position);
+  (*env)->ReleaseByteArrayElements(env, array, arrayPtr, 0);
+  (*env)->DeleteLocalRef(env, positionField);
+  (*env)->DeleteLocalRef(env, addressField);
+  (*env)->DeleteLocalRef(env, class);
+  
+  return array;
+}
+
+void put(
+  jbyte *addressPtr,
+  jint  *positionPtr,
+  jlong  value)
+{
+  jbyte singleByte = 0x0;
+  
+  if (value < 0) {
+    value *= -1;
+    singleByte = (jbyte) ((value & 0x3F) | 0x40);
+  } else {
+    singleByte = (jbyte) (value & 0x3F);
+  }
+  value >>= 6;
+  while (value > 0) {
+    *(addressPtr + *positionPtr) = singleByte | 0x80;
+    singleByte = (jbyte) (value & 0x7F);
+    *positionPtr += 1;
+    value >>= 7;
+  }
+  *(addressPtr + *positionPtr) = singleByte;
+  *positionPtr += 1;
+  
+}
+
+JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_put(
   JNIEnv * env,
   jobject obj,
   jlong value)
@@ -152,28 +238,18 @@ JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_put__J(
   jlong     address       = (*env)->GetIntField(env, obj, addressField);
   jint      position      = (*env)->GetIntField(env, obj, positionField);
   jbyte    *addressPtr    = (jbyte *) address;
-  jbyte     singleByte    = 0x0;
   
   // Work.
-  if (value < 0) {
-    value *= -1;
-    singleByte = (jbyte) ((value & 0x3F) | 0x40);
-  } else {
-    singleByte = (jbyte) (value & 0x3F);
-  }
-  value >>= 6;
-  while (value > 0) {
-    *(addressPtr + (position++)) = singleByte | 0x80;
-    singleByte = (jbyte) (value & 0x7F);
-    value >>= 7;
-  }
-  *(addressPtr + (position++)) = singleByte;
+  put(addressPtr, &position, value);
   
   // Teardown.
   (*env)->SetIntField(env, obj, positionField, position);
+  (*env)->DeleteLocalRef(env, positionField);
+  (*env)->DeleteLocalRef(env, addressField);
+  (*env)->DeleteLocalRef(env, class);
 }
 
-JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_put___3B(
+JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_putArray(
   JNIEnv * env,
   jobject obj,
   jbyteArray value)
@@ -194,5 +270,40 @@ JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_put___3B(
   
   // Teardown.
   (*env)->SetIntField(env, obj, positionField, position);
-  (*env)->ReleaseByteArrayElements(env, value, arrayPtr, 0);
+  (*env)->ReleaseByteArrayElements(env, value, arrayPtr, JNI_ABORT);
+  (*env)->DeleteLocalRef(env, positionField);
+  (*env)->DeleteLocalRef(env, addressField);
+  (*env)->DeleteLocalRef(env, class);
+  (*env)->DeleteLocalRef(env, value);
+}
+
+JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_putAll(
+  JNIEnv *env,
+  jobject obj,
+  jlongArray values)
+{
+  // Setup.
+  jclass    class         = (*env)->GetObjectClass(env, obj);
+  jfieldID  addressField  = (*env)->GetFieldID(env, class, "mAddress", "J");
+  jfieldID  positionField = (*env)->GetFieldID(env, class, "mPosition", "I");
+  jlong     address       = (*env)->GetIntField(env, obj, addressField);
+  jint      position      = (*env)->GetIntField(env, obj, positionField);
+  jbyte    *addressPtr    = (jbyte *) address;
+  jlong    *arrayPtr      = (*env)->GetLongArrayElements(env, values, NULL);
+  jint      length        = (*env)->GetArrayLength(env, values);
+  jint      i             = 0x0;
+  
+  // Work.
+  for (i = 0; i < length; i++) {
+    put(addressPtr, &position, *arrayPtr);
+    arrayPtr += 1;
+  }
+  
+  // Teardown.
+  (*env)->SetIntField(env, obj, positionField, position);
+  (*env)->ReleaseLongArrayElements(env, values, arrayPtr, JNI_ABORT);
+  (*env)->DeleteLocalRef(env, positionField);
+  (*env)->DeleteLocalRef(env, addressField);
+  (*env)->DeleteLocalRef(env, class);
+  (*env)->DeleteLocalRef(env, values);
 }
