@@ -65,9 +65,11 @@ public final class NodePage extends AbstractPage {
     mNodePageKey = nodePageKey;
     mNodes = new AbstractNode[IConstants.NDP_NODE_COUNT];
 
+    long[] values = in.getAll(IConstants.NDP_NODE_COUNT);
+
     final long keyBase = mNodePageKey << IConstants.NDP_NODE_COUNT_EXPONENT;
     for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
-      final int kind = (int) in.get();
+      final int kind = (int) values[offset];
       switch (kind) {
       case IConstants.UNKNOWN:
         // Was null node, do nothing here.
@@ -172,12 +174,19 @@ public final class NodePage extends AbstractPage {
   public final void serialize(final IByteBuffer out) {
     super.serialize(out);
 
+    long[] values = new long[mNodes.length];
+    for (int i = 0; i < mNodes.length; i++) {
+      if (mNodes[i] != null) {
+        values[i] = mNodes[i].getKind();
+      } else {
+        values[i] = IConstants.UNKNOWN;
+      }
+    }
+    out.putAll(values);
+
     for (final AbstractNode node : mNodes) {
       if (node != null) {
-        out.put(node.getKind());
         node.serialize(out);
-      } else {
-        out.put(IConstants.UNKNOWN);
       }
     }
   }
