@@ -2,7 +2,7 @@
 
 while [ true ]
 do
-/treetank/jre/bin/jamvm\
+/treetank/jre/bin/jamvm -Xms128M -Xmx160M\
     -Djava.library.path=\
 /treetank/service\
     -classpath \
