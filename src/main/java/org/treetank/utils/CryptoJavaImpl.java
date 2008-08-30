@@ -38,7 +38,7 @@ public class CryptoJavaImpl implements ICrypto {
   public CryptoJavaImpl() {
     mCompressor = new Deflater();
     mDecompressor = new Inflater();
-    mTmp = new byte[32767];
+    mTmp = new byte[IConstants.BUFFER_SIZE];
     mOut = new ByteArrayOutputStream();
   }
 
