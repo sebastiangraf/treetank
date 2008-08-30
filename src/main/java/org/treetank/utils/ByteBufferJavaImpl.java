@@ -48,9 +48,15 @@ public final class ByteBufferJavaImpl implements IByteBuffer {
     mBuffer[mPosition++] = (byte) value;
   }
 
-  public final void put(byte[] value) {
+  public final void putArray(byte[] value) {
     System.arraycopy(value, 0, mBuffer, mPosition, value.length);
     mPosition += value.length;
+  }
+
+  public final void putAll(long[] values) {
+    for (int i = 0; i < values.length; i++) {
+      put(values[i]);
+    }
   }
 
   public final long get() {
@@ -63,11 +69,19 @@ public final class ByteBufferJavaImpl implements IByteBuffer {
     return value;
   }
 
-  public final byte[] get(int length) {
+  public final byte[] getArray(int length) {
     byte[] buffer = new byte[length];
     System.arraycopy(mBuffer, mPosition, buffer, 0, length);
     mPosition += length;
     return buffer;
+  }
+
+  public final long[] getAll(int count) {
+    long[] values = new long[count];
+    for (int i = 0; i < count; i++) {
+      values[i] = get();
+    }
+    return values;
   }
 
 }

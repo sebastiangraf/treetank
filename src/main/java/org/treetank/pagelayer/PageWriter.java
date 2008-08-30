@@ -104,11 +104,11 @@ public final class PageWriter {
 
       // Write page to file.
       mBuffer.position(12);
-      final byte[] checksum = mBuffer.get(IConstants.CHECKSUM_SIZE);
+      final byte[] checksum = mBuffer.getArray(IConstants.CHECKSUM_SIZE);
 
       final long fileSize = mFile.length();
       mFile.seek(fileSize);
-      mFile.write(mBuffer.get(outputLength - 24));
+      mFile.write(mBuffer.getArray(outputLength - 24));
 
       // Remember page coordinates.
       pageReference.setStart(fileSize);

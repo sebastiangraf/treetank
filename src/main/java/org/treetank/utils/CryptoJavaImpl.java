@@ -51,7 +51,7 @@ public class CryptoJavaImpl implements ICrypto {
   public short crypt(final short length, final IByteBuffer buffer) {
     try {
       buffer.position(24);
-      byte[] tmp = buffer.get(length - 24);
+      byte[] tmp = buffer.getArray(length - 24);
       mCompressor.reset();
       mOut.reset();
       mCompressor.setInput(tmp);
@@ -67,8 +67,8 @@ public class CryptoJavaImpl implements ICrypto {
     final byte[] result = mOut.toByteArray();
     final byte[] checksum = new byte[IConstants.CHECKSUM_SIZE];
     buffer.position(12);
-    buffer.put(checksum);
-    buffer.put(result);
+    buffer.putArray(checksum);
+    buffer.putArray(result);
     return (short) (buffer.position());
   }
 
@@ -81,7 +81,7 @@ public class CryptoJavaImpl implements ICrypto {
   public short decrypt(final short length, final IByteBuffer buffer) {
     try {
       buffer.position(24);
-      byte[] tmp = buffer.get(length - 24);
+      byte[] tmp = buffer.getArray(length - 24);
       mDecompressor.reset();
       mOut.reset();
       mDecompressor.setInput(tmp);
@@ -96,8 +96,8 @@ public class CryptoJavaImpl implements ICrypto {
     final byte[] result = mOut.toByteArray();
     final byte[] checksum = new byte[IConstants.CHECKSUM_SIZE];
     buffer.position(12);
-    buffer.put(checksum);
-    buffer.put(result);
+    buffer.putArray(checksum);
+    buffer.putArray(result);
     return (short) (result.length + 24);
   }
 

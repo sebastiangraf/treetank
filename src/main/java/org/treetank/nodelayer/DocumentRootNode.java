@@ -64,8 +64,9 @@ public final class DocumentRootNode extends AbstractNode {
    */
   public DocumentRootNode(final IByteBuffer in) {
     super(IReadTransaction.DOCUMENT_ROOT_KEY);
-    mFirstChildKey = in.get();
-    mChildCount = in.get();
+    long[] values = in.getAll(2);
+    mFirstChildKey = values[0];
+    mChildCount = values[1];
   }
 
   /**
@@ -145,8 +146,7 @@ public final class DocumentRootNode extends AbstractNode {
    */
   @Override
   public final void serialize(final IByteBuffer out) {
-    out.put(mFirstChildKey);
-    out.put(mChildCount);
+    out.putAll(new long[] { mFirstChildKey, mChildCount });
   }
 
   /**

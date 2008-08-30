@@ -100,13 +100,13 @@ public final class PageReader {
       pageReference.getChecksum(checksum);
       final short inputLength = (short) (pageReference.getLength() + 24);
       mBuffer.position(12);
-      mBuffer.put(checksum);
+      mBuffer.putArray(checksum);
 
       // Read page from file.
       final byte[] page = new byte[pageReference.getLength()];
       mFile.seek(pageReference.getStart());
       mFile.read(page);
-      mBuffer.put(page);
+      mBuffer.putArray(page);
 
       // Perform crypto operations.
       final short outputLength = mDecompressor.decrypt(inputLength, mBuffer);

@@ -93,9 +93,10 @@ public final class PageReference<T extends AbstractPage> {
    */
   public PageReference(final IByteBuffer in) {
     mPage = null;
-    mStart = in.get();
-    mLength = (int) in.get();
-    mChecksum = in.get(IConstants.CHECKSUM_SIZE);
+    long[] values = in.getAll(2);
+    mStart = values[0];
+    mLength = (int) values[1];
+    mChecksum = in.getArray(IConstants.CHECKSUM_SIZE);
   }
 
   /**
@@ -208,9 +209,8 @@ public final class PageReference<T extends AbstractPage> {
    * @param out Output bytes that get written to a file.
    */
   public final void serialize(final IByteBuffer out) {
-    out.put(mStart);
-    out.put(mLength);
-    out.put(mChecksum);
+    out.putAll(new long[] { mStart, mLength });
+    out.putArray(mChecksum);
   }
 
   /**

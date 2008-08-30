@@ -67,7 +67,7 @@ public class TestTreeTankService {
     final byte[] referenceBuffer = new byte[IConstants.BUFFER_SIZE];
     r.nextBytes(referenceBuffer);
     buffer.position(0);
-    buffer.put(referenceBuffer);
+    buffer.putArray(referenceBuffer);
 
     testCryptDecrypt(crypto, (short) 30, buffer, referenceBuffer);
     testCryptDecrypt(crypto, (short) 32, buffer, referenceBuffer);
@@ -102,7 +102,7 @@ public class TestTreeTankService {
     }
 
     buffer.position(0);
-    final byte[] tmp = buffer.get(referenceBuffer.length);
+    final byte[] tmp = buffer.getArray(referenceBuffer.length);
     buffer.position(0);
     for (int i = 24; i < decryptLength; i++) {
       if (tmp[i] != referenceBuffer[i]) {
@@ -111,7 +111,7 @@ public class TestTreeTankService {
     }
 
     buffer.position();
-    buffer.put(referenceBuffer);
+    buffer.putArray(referenceBuffer);
 
     System.out.println(": " + (stop - start) + "[ms]: SUCCESS.");
 
