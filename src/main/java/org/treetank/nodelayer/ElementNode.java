@@ -139,7 +139,7 @@ public final class ElementNode extends AbstractNode {
     super(nodeKey);
 
     // Read according to node kind.
-    mParentKey = in.get();
+    mParentKey = nodeKey - in.get();
     mFirstChildKey = in.get();
     mLeftSiblingKey = in.get();
     mRightSiblingKey = in.get();
@@ -430,7 +430,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final void serialize(final IByteBuffer out) {
-    out.put(mParentKey);
+    out.put(getNodeKey() - mParentKey);
     out.put(mFirstChildKey);
     out.put(mLeftSiblingKey);
     out.put(mRightSiblingKey);

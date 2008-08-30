@@ -70,7 +70,7 @@ public final class NamespaceNode extends AbstractNode {
 
   public NamespaceNode(final long nodeKey, final IByteBuffer in) {
     super(nodeKey);
-    mParentKey = in.get();
+    mParentKey = nodeKey - in.get();
     mURIKey = (int) in.get();
     mNameKey = (int) in.get();
   }
@@ -144,7 +144,7 @@ public final class NamespaceNode extends AbstractNode {
    */
   @Override
   public final void serialize(final IByteBuffer out) {
-    out.put(mParentKey);
+    out.put(getNodeKey() - mParentKey);
     out.put(mURIKey);
     out.put(mNameKey);
   }
