@@ -19,10 +19,10 @@ extern "C" {
 /*
  * Class:     org_treetank_openbsd_CryptoNativeImpl
  * Method:    syscall
- * Signature: (BBSJ)S
+ * Signature: (BBSI)S
  */
 JNIEXPORT jshort JNICALL Java_org_treetank_openbsd_CryptoNativeImpl_syscall
-  (JNIEnv *, jobject, jbyte, jbyte, jshort, jlong);
+  (JNIEnv *, jobject, jbyte, jbyte, jshort, jint);
 
 #ifdef __cplusplus
 }

@@ -117,6 +117,6 @@ public final class CryptoNativeImpl implements ICrypto {
       final byte tank,
       final byte operation,
       final short length,
-      final long address);
+      final int address);
 
 }
