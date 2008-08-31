@@ -69,6 +69,12 @@ public final class ByteBufferJavaImpl implements IByteBuffer {
     return value;
   }
 
+  public final void get(long[] values) {
+    for (int i = 0; i < values.length; i++) {
+      values[i] = get();
+    }
+  }
+
   public final byte[] getArray(int length) {
     byte[] buffer = new byte[length];
     System.arraycopy(mBuffer, mPosition, buffer, 0, length);

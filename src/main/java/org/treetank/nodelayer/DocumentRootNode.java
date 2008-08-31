@@ -31,19 +31,19 @@ import org.treetank.utils.IByteBuffer;
  */
 public final class DocumentRootNode extends AbstractNode {
 
-  /** Key of first child. */
-  private long mFirstChildKey;
+  private static final int SIZE = 3;
 
-  /** Child count including element and text nodes. */
-  private long mChildCount;
+  private static final int FIRST_CHILD_KEY = 1;
+
+  private static final int CHILD_COUNT = 2;
 
   /**
    * Constructor to create document node.
    */
   public DocumentRootNode() {
-    super(IReadTransaction.DOCUMENT_ROOT_KEY);
-    mFirstChildKey = IReadTransaction.NULL_NODE_KEY;
-    mChildCount = 0L;
+    super(SIZE, IReadTransaction.DOCUMENT_ROOT_KEY);
+    mData[FIRST_CHILD_KEY] = IReadTransaction.NULL_NODE_KEY;
+    mData[CHILD_COUNT] = 0L;
   }
 
   /**
@@ -52,9 +52,7 @@ public final class DocumentRootNode extends AbstractNode {
    * @param node Node to clone.
    */
   public DocumentRootNode(final AbstractNode node) {
-    super(node.getNodeKey());
-    mFirstChildKey = node.getFirstChildKey();
-    mChildCount = node.getChildCount();
+    super(node);
   }
 
   /**
@@ -63,10 +61,7 @@ public final class DocumentRootNode extends AbstractNode {
    * @param in Byte input to read node from.
    */
   public DocumentRootNode(final IByteBuffer in) {
-    super(IReadTransaction.DOCUMENT_ROOT_KEY);
-    long[] values = in.getAll(2);
-    mFirstChildKey = values[0];
-    mChildCount = values[1];
+    super(SIZE, IReadTransaction.DOCUMENT_ROOT_KEY, in);
   }
 
   /**
@@ -82,7 +77,7 @@ public final class DocumentRootNode extends AbstractNode {
    */
   @Override
   public final boolean hasFirstChild() {
-    return (mFirstChildKey != IReadTransaction.NULL_NODE_KEY);
+    return (mData[FIRST_CHILD_KEY] != IReadTransaction.NULL_NODE_KEY);
   }
 
   /**
@@ -90,7 +85,7 @@ public final class DocumentRootNode extends AbstractNode {
    */
   @Override
   public final long getFirstChildKey() {
-    return mFirstChildKey;
+    return mData[FIRST_CHILD_KEY];
   }
 
   /**
@@ -98,7 +93,7 @@ public final class DocumentRootNode extends AbstractNode {
    */
   @Override
   public final void setFirstChildKey(final long firstChildKey) {
-    mFirstChildKey = firstChildKey;
+    mData[FIRST_CHILD_KEY] = firstChildKey;
   }
 
   /**
@@ -106,7 +101,7 @@ public final class DocumentRootNode extends AbstractNode {
    */
   @Override
   public final long getChildCount() {
-    return mChildCount;
+    return mData[CHILD_COUNT];
   }
 
   /**
@@ -114,7 +109,7 @@ public final class DocumentRootNode extends AbstractNode {
    */
   @Override
   public final void setChildCount(final long childCount) {
-    mChildCount = childCount;
+    mData[CHILD_COUNT] = childCount;
   }
 
   /**
@@ -122,7 +117,7 @@ public final class DocumentRootNode extends AbstractNode {
    */
   @Override
   public final void incrementChildCount() {
-    mChildCount += 1;
+    mData[CHILD_COUNT] += 1;
   }
 
   /**
@@ -130,7 +125,7 @@ public final class DocumentRootNode extends AbstractNode {
    */
   @Override
   public final void decrementChildCount() {
-    mChildCount -= 1;
+    mData[CHILD_COUNT] -= 1;
   }
 
   /**
@@ -146,7 +141,7 @@ public final class DocumentRootNode extends AbstractNode {
    */
   @Override
   public final void serialize(final IByteBuffer out) {
-    out.putAll(new long[] { mFirstChildKey, mChildCount });
+    super.serialize(out);
   }
 
   /**
@@ -158,9 +153,9 @@ public final class DocumentRootNode extends AbstractNode {
         + "\n\tnodeKey: "
         + getNodeKey()
         + "\n\tchildcount: "
-        + mChildCount
+        + mData[CHILD_COUNT]
         + "\n\tfirstChildKey: "
-        + mFirstChildKey;
+        + mData[FIRST_CHILD_KEY];
   }
 
 }

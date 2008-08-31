@@ -30,14 +30,13 @@ import org.treetank.utils.IByteBuffer;
  */
 public final class NamespaceNode extends AbstractNode {
 
-  /** Key of parent. */
-  private long mParentKey;
+  private static final int SIZE = 4;
 
-  /** Key of URI. */
-  private int mURIKey;
+  private static final int PARENT_KEY = 1;
 
-  /** Key of prefix. */
-  private int mNameKey;
+  private static final int URI_KEY = 2;
+
+  private static final int NAME_KEY = 3;
 
   /**
    * Create namespace node.
@@ -50,10 +49,10 @@ public final class NamespaceNode extends AbstractNode {
       final long parentKey,
       final int uriKey,
       final int nameKey) {
-    super(nodeKey);
-    mParentKey = parentKey;
-    mURIKey = uriKey;
-    mNameKey = nameKey;
+    super(SIZE, nodeKey);
+    mData[PARENT_KEY] = nodeKey - parentKey;
+    mData[URI_KEY] = uriKey;
+    mData[NAME_KEY] = nameKey;
   }
 
   /**
@@ -62,18 +61,11 @@ public final class NamespaceNode extends AbstractNode {
    * @param namespace Namespace node to clone.
    */
   public NamespaceNode(final AbstractNode namespace) {
-    super(namespace.getNodeKey());
-    mParentKey = namespace.getParentKey();
-    mURIKey = namespace.getURIKey();
-    mNameKey = namespace.getNameKey();
+    super(namespace);
   }
 
   public NamespaceNode(final long nodeKey, final IByteBuffer in) {
-    super(nodeKey);
-    long[] values = in.getAll(3);
-    mParentKey = nodeKey - values[0];
-    mURIKey = (int) values[1];
-    mNameKey = (int) values[2];
+    super(SIZE, nodeKey, in);
   }
 
   /**
@@ -89,7 +81,7 @@ public final class NamespaceNode extends AbstractNode {
    */
   @Override
   public final long getParentKey() {
-    return mParentKey;
+    return mData[NODE_KEY] - mData[PARENT_KEY];
   }
 
   /**
@@ -97,7 +89,7 @@ public final class NamespaceNode extends AbstractNode {
    */
   @Override
   public final void setParentKey(final long parentKey) {
-    mParentKey = parentKey;
+    mData[PARENT_KEY] = mData[NODE_KEY] - parentKey;
   }
 
   /**
@@ -113,7 +105,7 @@ public final class NamespaceNode extends AbstractNode {
    */
   @Override
   public final int getNameKey() {
-    return mNameKey;
+    return (int) mData[NAME_KEY];
   }
 
   /**
@@ -121,7 +113,7 @@ public final class NamespaceNode extends AbstractNode {
    */
   @Override
   public final void setNameKey(final int nameKey) {
-    mNameKey = nameKey;
+    mData[NAME_KEY] = nameKey;
   }
 
   /**
@@ -129,7 +121,7 @@ public final class NamespaceNode extends AbstractNode {
    */
   @Override
   public final int getURIKey() {
-    return mURIKey;
+    return (int) mData[URI_KEY];
   }
 
   /**
@@ -137,7 +129,7 @@ public final class NamespaceNode extends AbstractNode {
    */
   @Override
   public final void setURIKey(final int uriKey) {
-    mURIKey = uriKey;
+    mData[URI_KEY] = uriKey;
   }
 
   /**
@@ -145,7 +137,7 @@ public final class NamespaceNode extends AbstractNode {
    */
   @Override
   public final void serialize(final IByteBuffer out) {
-    out.putAll(new long[] { getNodeKey() - mParentKey, mURIKey, mNameKey });
+    super.serialize(out);
   }
 
 }

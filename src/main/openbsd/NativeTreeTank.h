@@ -40,8 +40,16 @@ extern "C" {
  * Method:    get
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_get
+JNIEXPORT jlong JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_get__
   (JNIEnv *, jobject);
+
+/*
+ * Class:     org_treetank_openbsd_ByteBufferNativeImpl
+ * Method:    get
+ * Signature: ([J)V
+ */
+JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_get___3J
+  (JNIEnv *, jobject, jlongArray);
 
 /*
  * Class:     org_treetank_openbsd_ByteBufferNativeImpl

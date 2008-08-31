@@ -36,16 +36,40 @@ import org.treetank.utils.IConstants;
  */
 public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
 
+  protected static final int NODE_KEY = 0;
+
   /** Node key is common to all node kinds. */
-  private long mNodeKey;
+  protected long[] mData;
 
   /**
    * Constructor to set node key.
    * 
    * @param nodeKey Key of node.
    */
-  public AbstractNode(final long nodeKey) {
-    mNodeKey = nodeKey;
+  public AbstractNode(final int size, final long nodeKey) {
+    mData = new long[size];
+    mData[NODE_KEY] = nodeKey;
+  }
+
+  /**
+   * Constructor to set node key.
+   * 
+   * @param nodeKey Key of node.
+   */
+  public AbstractNode(final AbstractNode node) {
+    mData = new long[node.mData.length];
+    System.arraycopy(node.mData, 0, mData, 0, mData.length);
+  }
+
+  /**
+   * Read node.
+   * 
+   * @param nodeKey Key of text node.
+   * @param in Input bytes to read node from.
+   */
+  public AbstractNode(final int size, final long nodeKey, final IByteBuffer in) {
+    mData = new long[size];
+    in.get(mData);
   }
 
   /**
@@ -87,7 +111,7 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
    * {@inheritDoc}
    */
   public final long getNodeKey() {
-    return mNodeKey;
+    return mData[NODE_KEY];
   }
 
   /**
@@ -214,10 +238,11 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
   }
 
   public void serialize(final IByteBuffer out) {
+    out.putAll(mData);
   }
 
   public final void setNodeKey(final long nodeKey) {
-    mNodeKey = nodeKey;
+    mData[NODE_KEY] = nodeKey;
   }
 
   public void setParentKey(final long parentKey) {
@@ -267,7 +292,7 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
    */
   @Override
   public int hashCode() {
-    return (int) mNodeKey;
+    return (int) mData[NODE_KEY];
   }
 
   /**
@@ -275,7 +300,7 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
    */
   @Override
   public boolean equals(final Object obj) {
-    return ((obj != null) && (mNodeKey == ((AbstractNode) obj).getNodeKey()));
+    return ((obj != null) && (mData[NODE_KEY] == ((AbstractNode) obj).mData[NODE_KEY]));
   }
 
   /**
@@ -283,9 +308,9 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
    */
   public int compareTo(final AbstractNode node) {
     final long nodeKey = ((AbstractNode) node).getNodeKey();
-    if (mNodeKey < nodeKey) {
+    if (mData[NODE_KEY] < nodeKey) {
       return -1;
-    } else if (mNodeKey == nodeKey) {
+    } else if (mData[NODE_KEY] == nodeKey) {
       return 0;
     } else {
       return 1;
