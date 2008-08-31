@@ -83,9 +83,9 @@ public final class ElementNode extends AbstractNode {
       final int type) {
     super(SIZE, nodeKey);
     mData[PARENT_KEY] = nodeKey - parentKey;
-    mData[FIRST_CHILD_KEY] = firstChildKey;
-    mData[LEFT_SIBLING_KEY] = leftSiblingKey;
-    mData[RIGHT_SIBLING_KEY] = rightSiblingKey;
+    mData[FIRST_CHILD_KEY] = nodeKey - firstChildKey;
+    mData[LEFT_SIBLING_KEY] = nodeKey - leftSiblingKey;
+    mData[RIGHT_SIBLING_KEY] = nodeKey - rightSiblingKey;
     mData[CHILD_COUNT] = 0;
     mData[NAME_KEY] = nameKey;
     mData[URI_KEY] = uriKey;
@@ -179,7 +179,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final boolean hasFirstChild() {
-    return (mData[FIRST_CHILD_KEY] != IReadTransaction.NULL_NODE_KEY);
+    return ((mData[NODE_KEY] - mData[FIRST_CHILD_KEY]) != IReadTransaction.NULL_NODE_KEY);
   }
 
   /**
@@ -187,7 +187,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final long getFirstChildKey() {
-    return mData[FIRST_CHILD_KEY];
+    return mData[NODE_KEY] - mData[FIRST_CHILD_KEY];
   }
 
   /**
@@ -195,7 +195,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final void setFirstChildKey(final long firstChildKey) {
-    mData[FIRST_CHILD_KEY] = firstChildKey;
+    mData[FIRST_CHILD_KEY] = mData[NODE_KEY] - firstChildKey;
   }
 
   /**
@@ -203,7 +203,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final boolean hasLeftSibling() {
-    return (mData[LEFT_SIBLING_KEY] != IReadTransaction.NULL_NODE_KEY);
+    return ((mData[NODE_KEY] - mData[LEFT_SIBLING_KEY]) != IReadTransaction.NULL_NODE_KEY);
   }
 
   /**
@@ -211,7 +211,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final long getLeftSiblingKey() {
-    return mData[LEFT_SIBLING_KEY];
+    return mData[NODE_KEY] - mData[LEFT_SIBLING_KEY];
   }
 
   /**
@@ -219,7 +219,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final void setLeftSiblingKey(final long leftSiblingKey) {
-    mData[LEFT_SIBLING_KEY] = leftSiblingKey;
+    mData[LEFT_SIBLING_KEY] = mData[NODE_KEY] - leftSiblingKey;
   }
 
   /**
@@ -227,7 +227,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final boolean hasRightSibling() {
-    return (mData[RIGHT_SIBLING_KEY] != IReadTransaction.NULL_NODE_KEY);
+    return ((mData[NODE_KEY] - mData[RIGHT_SIBLING_KEY]) != IReadTransaction.NULL_NODE_KEY);
   }
 
   /**
@@ -235,7 +235,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final long getRightSiblingKey() {
-    return mData[RIGHT_SIBLING_KEY];
+    return mData[NODE_KEY] - mData[RIGHT_SIBLING_KEY];
   }
 
   /**
@@ -243,7 +243,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final void setRightSiblingKey(final long rightSiblingKey) {
-    mData[RIGHT_SIBLING_KEY] = rightSiblingKey;
+    mData[RIGHT_SIBLING_KEY] = mData[NODE_KEY] - rightSiblingKey;
   }
 
   /**
@@ -431,11 +431,11 @@ public final class ElementNode extends AbstractNode {
         + "\n\tparentKey: "
         + (mData[NODE_KEY] - mData[PARENT_KEY])
         + "\n\tfirstChildKey: "
-        + this.mData[FIRST_CHILD_KEY]
+        + (mData[NODE_KEY] - mData[FIRST_CHILD_KEY])
         + "\n\tleftSiblingKey: "
-        + this.mData[LEFT_SIBLING_KEY]
+        + (mData[NODE_KEY] - mData[LEFT_SIBLING_KEY])
         + "\n\trightSiblingKey: "
-        + this.mData[RIGHT_SIBLING_KEY];
+        + (mData[NODE_KEY] - mData[RIGHT_SIBLING_KEY]);
   }
 
 }
