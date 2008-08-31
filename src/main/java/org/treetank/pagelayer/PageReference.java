@@ -35,14 +35,15 @@ import org.treetank.utils.IConstants;
  */
 public final class PageReference<T extends AbstractPage> {
 
+  private static final int START = 0;
+
+  private static final int LENGTH = 1;
+
   /** In-memory deserialized page instance. */
   private T mPage;
 
   /** Start byte in file. */
-  private long mStart;
-
-  /** Length of serialized page in bytes. */
-  private int mLength;
+  private long[] mData = new long[2];
 
   /** Checksum of serialized page. */
   private byte[] mChecksum = new byte[IConstants.CHECKSUM_SIZE];
@@ -51,7 +52,7 @@ public final class PageReference<T extends AbstractPage> {
    * Default constructor setting up an uninitialized page reference.
    */
   public PageReference() {
-    this(null, -1L, -1, new byte[IConstants.CHECKSUM_SIZE]);
+    this(null, new long[] { -1L, -1L }, new byte[IConstants.CHECKSUM_SIZE]);
   }
 
   /**
@@ -60,11 +61,7 @@ public final class PageReference<T extends AbstractPage> {
    * @param pageReference Page reference to clone.
    */
   public PageReference(final PageReference<T> pageReference) {
-    this(
-        pageReference.mPage,
-        pageReference.mStart,
-        pageReference.mLength,
-        pageReference.mChecksum);
+    this(pageReference.mPage, pageReference.mData, pageReference.mChecksum);
   }
 
   /**
@@ -75,14 +72,10 @@ public final class PageReference<T extends AbstractPage> {
    * @param length Length of serialized page in bytes.
    * @param checksum Checksum of serialized page.
    */
-  public PageReference(
-      final T page,
-      final long start,
-      final int length,
-      final byte[] checksum) {
+  public PageReference(final T page, final long[] data, final byte[] checksum) {
     mPage = page;
-    mStart = start;
-    mLength = length;
+    mData[START] = data[START];
+    mData[LENGTH] = data[LENGTH];
     System.arraycopy(checksum, 0, mChecksum, 0, IConstants.CHECKSUM_SIZE);
   }
 
@@ -93,9 +86,7 @@ public final class PageReference<T extends AbstractPage> {
    */
   public PageReference(final IByteBuffer in) {
     mPage = null;
-    long[] values = in.getAll(2);
-    mStart = values[0];
-    mLength = (int) values[1];
+    in.get(mData);
     mChecksum = in.getArray(IConstants.CHECKSUM_SIZE);
   }
 
@@ -114,7 +105,7 @@ public final class PageReference<T extends AbstractPage> {
    * @return True if the page was committed.
    */
   public final boolean isCommitted() {
-    return (mStart != -1L);
+    return (mData[START] != -1L);
   }
 
   /**
@@ -173,7 +164,7 @@ public final class PageReference<T extends AbstractPage> {
    * @return Length of serialized page in bytes
    */
   public final int getLength() {
-    return mLength;
+    return (int) mData[LENGTH];
   }
 
   /**
@@ -182,7 +173,7 @@ public final class PageReference<T extends AbstractPage> {
    * @param length Length of serialized page in bytes.
    */
   public final void setLength(final int length) {
-    mLength = length;
+    mData[LENGTH] = length;
   }
 
   /**
@@ -191,7 +182,7 @@ public final class PageReference<T extends AbstractPage> {
    * @return Start offset in file.
    */
   public final long getStart() {
-    return mStart;
+    return mData[START];
   }
 
   /**
@@ -200,7 +191,7 @@ public final class PageReference<T extends AbstractPage> {
    * @param start Start byte offset in file.
    */
   public final void setStart(final long start) {
-    mStart = start;
+    mData[START] = start;
   }
 
   /**
@@ -209,7 +200,7 @@ public final class PageReference<T extends AbstractPage> {
    * @param out Output bytes that get written to a file.
    */
   public final void serialize(final IByteBuffer out) {
-    out.putAll(new long[] { mStart, mLength });
+    out.putAll(mData);
     out.putArray(mChecksum);
   }
 
@@ -228,7 +219,7 @@ public final class PageReference<T extends AbstractPage> {
     for (int i = 0; i < IConstants.CHECKSUM_SIZE; i++) {
       checksumEquals &= (tmp[i] == mChecksum[i]);
     }
-    return (checksumEquals && (mStart == pageReference.mStart) && (mLength == pageReference.mLength));
+    return (checksumEquals && (mData[START] == pageReference.mData[START]) && (mData[LENGTH] == pageReference.mData[LENGTH]));
   }
 
   /**
@@ -238,9 +229,9 @@ public final class PageReference<T extends AbstractPage> {
   public final String toString() {
     return super.toString()
         + ": start="
-        + mStart
+        + mData[START]
         + ", length="
-        + mLength
+        + mData[LENGTH]
         + ", checksum="
         + mChecksum
         + ", page=("
