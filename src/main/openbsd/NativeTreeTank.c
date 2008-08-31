@@ -114,7 +114,7 @@ jlong get(
   return value;
 }
 
-JNIEXPORT jlong JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_get(
+JNIEXPORT jlong JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_get__(
   JNIEnv * env,
   jobject obj)
 {
@@ -137,6 +137,37 @@ JNIEXPORT jlong JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_get(
   (*env)->DeleteLocalRef(env, class);
   
   return value;
+}
+
+JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_get___3J(
+  JNIEnv *env,
+  jobject obj,
+  jlongArray values)
+{
+  // Setup.
+  jclass    class         = (*env)->GetObjectClass(env, obj);
+  jfieldID  addressField  = (*env)->GetFieldID(env, class, "mAddress", "J");
+  jfieldID  positionField = (*env)->GetFieldID(env, class, "mPosition", "I");
+  jlong     address       = (*env)->GetIntField(env, obj, addressField);
+  jint      position      = (*env)->GetIntField(env, obj, positionField);
+  jbyte    *addressPtr    = (jbyte *) address;
+  jlong    *arrayPtr      = (*env)->GetLongArrayElements(env, values, NULL);
+  jint      length        = (*env)->GetArrayLength(env, values);
+  jint      i             = 0x0;
+  
+  // Work.
+  for (i = 0; i < length; i++) {
+    *arrayPtr = get(addressPtr, &position);
+    arrayPtr += 1;
+  }
+  
+  // Teardown.
+  (*env)->SetIntField(env, obj, positionField, position);
+  (*env)->ReleaseLongArrayElements(env, values, arrayPtr, 0);
+  (*env)->DeleteLocalRef(env, positionField);
+  (*env)->DeleteLocalRef(env, addressField);
+  (*env)->DeleteLocalRef(env, class);
+  (*env)->DeleteLocalRef(env, values);
 }
 
 JNIEXPORT jbyteArray JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_getArray(
@@ -193,7 +224,7 @@ JNIEXPORT jlongArray JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_getA
   
   // Teardown.
   (*env)->SetIntField(env, obj, positionField, position);
-  (*env)->ReleaseByteArrayElements(env, array, arrayPtr, 0);
+  (*env)->ReleaseLongArrayElements(env, array, arrayPtr, 0);
   (*env)->DeleteLocalRef(env, positionField);
   (*env)->DeleteLocalRef(env, addressField);
   (*env)->DeleteLocalRef(env, class);

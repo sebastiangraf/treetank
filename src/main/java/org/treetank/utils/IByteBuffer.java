@@ -25,6 +25,8 @@ public interface IByteBuffer {
   public void position(int position);
 
   public long get();
+  
+  public void get(long[] values);
 
   public byte[] getArray(int length);
 

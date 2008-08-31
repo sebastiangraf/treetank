@@ -33,35 +33,33 @@ import org.treetank.utils.IByteBuffer;
  */
 public final class ElementNode extends AbstractNode {
 
-  /** Key of parent node. */
-  private long mParentKey;
+  private static final int SIZE = 11;
 
-  /** Key of first child. */
-  private long mFirstChildKey;
+  private static final int PARENT_KEY = 1;
 
-  /** Key of left sibling. */
-  private long mLeftSiblingKey;
+  private static final int FIRST_CHILD_KEY = 2;
 
-  /** Key of right sibling. */
-  private long mRightSiblingKey;
+  private static final int LEFT_SIBLING_KEY = 3;
 
-  /** Number of children including text and element nodes. */
-  private long mChildCount;
+  private static final int RIGHT_SIBLING_KEY = 4;
+
+  private static final int CHILD_COUNT = 5;
+
+  private static final int NAME_KEY = 6;
+
+  private static final int URI_KEY = 7;
+
+  private static final int TYPE = 8;
+
+  private static final int ATTRIBUTE_COUNT = 9;
+
+  private static final int NAMESPACE_COUNT = 10;
 
   /** Keys of attributes. */
   private List<Long> mAttributeKeys;
 
   /** Keys of namespace declarations. */
   private List<Long> mNamespaceKeys;
-
-  /** Key of qualified name. */
-  private int mNameKey;
-
-  /** Key of URI. */
-  private int mURIKey;
-
-  /** Type of node. */
-  private int mType;
 
   /**
    * Create new element node.
@@ -83,17 +81,19 @@ public final class ElementNode extends AbstractNode {
       final int nameKey,
       final int uriKey,
       final int type) {
-    super(nodeKey);
-    mParentKey = parentKey;
-    mFirstChildKey = firstChildKey;
-    mLeftSiblingKey = leftSiblingKey;
-    mRightSiblingKey = rightSiblingKey;
-    mChildCount = 0;
+    super(SIZE, nodeKey);
+    mData[PARENT_KEY] = nodeKey - parentKey;
+    mData[FIRST_CHILD_KEY] = firstChildKey;
+    mData[LEFT_SIBLING_KEY] = leftSiblingKey;
+    mData[RIGHT_SIBLING_KEY] = rightSiblingKey;
+    mData[CHILD_COUNT] = 0;
+    mData[NAME_KEY] = nameKey;
+    mData[URI_KEY] = uriKey;
+    mData[TYPE] = type;
+    mData[ATTRIBUTE_COUNT] = 0;
+    mData[NAMESPACE_COUNT] = 0;
     mAttributeKeys = null;
     mNamespaceKeys = null;
-    mNameKey = nameKey;
-    mURIKey = uriKey;
-    mType = type;
   }
 
   /**
@@ -102,31 +102,19 @@ public final class ElementNode extends AbstractNode {
    * @param node Element node to clone.
    */
   public ElementNode(final AbstractNode node) {
-    super(node.getNodeKey());
-    mParentKey = node.getParentKey();
-    mFirstChildKey = node.getFirstChildKey();
-    mLeftSiblingKey = node.getLeftSiblingKey();
-    mRightSiblingKey = node.getRightSiblingKey();
-    mChildCount = node.getChildCount();
-    if (node.getAttributeCount() > 0) {
-      mAttributeKeys = new ArrayList<Long>(node.getAttributeCount());
-      for (int i = 0, l = node.getAttributeCount(); i < l; i++) {
+    super(node);
+    if (mData[ATTRIBUTE_COUNT] > 0) {
+      mAttributeKeys = new ArrayList<Long>((int) mData[ATTRIBUTE_COUNT]);
+      for (int i = 0, l = (int) mData[ATTRIBUTE_COUNT]; i < l; i++) {
         mAttributeKeys.add(node.getAttributeKey(i));
       }
-    } else {
-      mAttributeKeys = null;
     }
-    if (node.getNamespaceCount() > 0) {
-      mNamespaceKeys = new ArrayList<Long>(node.getNamespaceCount());
-      for (int i = 0, l = node.getNamespaceCount(); i < l; i++) {
+    if (mData[NAMESPACE_COUNT] > 0) {
+      mNamespaceKeys = new ArrayList<Long>((int) mData[NAMESPACE_COUNT]);
+      for (int i = 0, l = (int) mData[NAMESPACE_COUNT]; i < l; i++) {
         mNamespaceKeys.add(node.getNamespaceKey(i));
       }
-    } else {
-      mNamespaceKeys = null;
     }
-    mNameKey = node.getNameKey();
-    mURIKey = node.getURIKey();
-    mType = node.getTypeKey();
   }
 
   /**
@@ -136,32 +124,19 @@ public final class ElementNode extends AbstractNode {
    * @param in Input bytes to read from.
    */
   public ElementNode(final long nodeKey, final IByteBuffer in) {
-    super(nodeKey);
+    super(SIZE, nodeKey, in);
 
-    // Read according to node kind.
-    long[] values = in.getAll(10);
-    mParentKey = nodeKey - values[0];
-    mFirstChildKey = values[1];
-    mLeftSiblingKey = values[2];
-    mRightSiblingKey = values[3];
-    mChildCount = values[4];
-    mNameKey = (int) values[5];
-    mURIKey = (int) values[6];
-    mType = (int) values[7];
-
-    int count = (int) values[8];
-    if (count > 0) {
-      mAttributeKeys = new ArrayList<Long>(count);
-      long[] attributes = in.getAll(count);
-      for (int i = 0; i < count; i++) {
+    if (mData[ATTRIBUTE_COUNT] > 0) {
+      mAttributeKeys = new ArrayList<Long>((int) mData[ATTRIBUTE_COUNT]);
+      long[] attributes = in.getAll((int) mData[ATTRIBUTE_COUNT]);
+      for (int i = 0; i < mData[ATTRIBUTE_COUNT]; i++) {
         mAttributeKeys.add(attributes[i]);
       }
     }
-    count = (int) values[9];
-    if (count > 0) {
-      mNamespaceKeys = new ArrayList<Long>(count);
-      long[] namespaces = in.getAll(count);
-      for (int i = 0; i < count; i++) {
+    if (mData[NAMESPACE_COUNT] > 0) {
+      mNamespaceKeys = new ArrayList<Long>((int) mData[NAMESPACE_COUNT]);
+      long[] namespaces = in.getAll((int) mData[NAMESPACE_COUNT]);
+      for (int i = 0; i < mData[NAMESPACE_COUNT]; i++) {
         mNamespaceKeys.add(namespaces[i]);
       }
     }
@@ -180,7 +155,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final boolean hasParent() {
-    return (mParentKey != IReadTransaction.NULL_NODE_KEY);
+    return ((mData[NODE_KEY] - mData[PARENT_KEY]) != IReadTransaction.NULL_NODE_KEY);
   }
 
   /**
@@ -188,7 +163,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final long getParentKey() {
-    return mParentKey;
+    return mData[NODE_KEY] - mData[PARENT_KEY];
   }
 
   /**
@@ -196,7 +171,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final void setParentKey(final long parentKey) {
-    mParentKey = parentKey;
+    mData[PARENT_KEY] = mData[NODE_KEY] - parentKey;
   }
 
   /**
@@ -204,7 +179,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final boolean hasFirstChild() {
-    return (mFirstChildKey != IReadTransaction.NULL_NODE_KEY);
+    return (mData[FIRST_CHILD_KEY] != IReadTransaction.NULL_NODE_KEY);
   }
 
   /**
@@ -212,7 +187,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final long getFirstChildKey() {
-    return mFirstChildKey;
+    return mData[FIRST_CHILD_KEY];
   }
 
   /**
@@ -220,7 +195,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final void setFirstChildKey(final long firstChildKey) {
-    mFirstChildKey = firstChildKey;
+    mData[FIRST_CHILD_KEY] = firstChildKey;
   }
 
   /**
@@ -228,7 +203,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final boolean hasLeftSibling() {
-    return (mLeftSiblingKey != IReadTransaction.NULL_NODE_KEY);
+    return (mData[LEFT_SIBLING_KEY] != IReadTransaction.NULL_NODE_KEY);
   }
 
   /**
@@ -236,7 +211,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final long getLeftSiblingKey() {
-    return mLeftSiblingKey;
+    return mData[LEFT_SIBLING_KEY];
   }
 
   /**
@@ -244,7 +219,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final void setLeftSiblingKey(final long leftSiblingKey) {
-    mLeftSiblingKey = leftSiblingKey;
+    mData[LEFT_SIBLING_KEY] = leftSiblingKey;
   }
 
   /**
@@ -252,7 +227,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final boolean hasRightSibling() {
-    return (mRightSiblingKey != IReadTransaction.NULL_NODE_KEY);
+    return (mData[RIGHT_SIBLING_KEY] != IReadTransaction.NULL_NODE_KEY);
   }
 
   /**
@@ -260,7 +235,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final long getRightSiblingKey() {
-    return mRightSiblingKey;
+    return mData[RIGHT_SIBLING_KEY];
   }
 
   /**
@@ -268,7 +243,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final void setRightSiblingKey(final long rightSiblingKey) {
-    mRightSiblingKey = rightSiblingKey;
+    mData[RIGHT_SIBLING_KEY] = rightSiblingKey;
   }
 
   /**
@@ -276,7 +251,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final long getChildCount() {
-    return mChildCount;
+    return mData[CHILD_COUNT];
   }
 
   /**
@@ -284,7 +259,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final void setChildCount(final long childCount) {
-    mChildCount = childCount;
+    mData[CHILD_COUNT] = childCount;
   }
 
   /**
@@ -292,7 +267,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final void incrementChildCount() {
-    mChildCount += 1;
+    mData[CHILD_COUNT] += 1;
   }
 
   /**
@@ -300,7 +275,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final void decrementChildCount() {
-    mChildCount -= 1;
+    mData[CHILD_COUNT] -= 1;
   }
 
   /**
@@ -308,10 +283,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final int getAttributeCount() {
-    if (mAttributeKeys == null) {
-      return 0;
-    }
-    return mAttributeKeys.size();
+    return (int) mData[ATTRIBUTE_COUNT];
   }
 
   /**
@@ -334,6 +306,7 @@ public final class ElementNode extends AbstractNode {
       mAttributeKeys = new ArrayList<Long>(1);
     }
     mAttributeKeys.add(attributeKey);
+    mData[ATTRIBUTE_COUNT] += 1;
   }
 
   /**
@@ -341,10 +314,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final int getNamespaceCount() {
-    if (mNamespaceKeys == null) {
-      return 0;
-    }
-    return mNamespaceKeys.size();
+    return (int) mData[NAMESPACE_COUNT];
   }
 
   /**
@@ -367,6 +337,7 @@ public final class ElementNode extends AbstractNode {
       mNamespaceKeys = new ArrayList<Long>(1);
     }
     mNamespaceKeys.add(namespaceKey);
+    mData[NAMESPACE_COUNT] += 1;
   }
 
   /**
@@ -382,7 +353,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final int getNameKey() {
-    return mNameKey;
+    return (int) mData[NAME_KEY];
   }
 
   /**
@@ -390,7 +361,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final void setNameKey(final int localPartKey) {
-    mNameKey = localPartKey;
+    mData[NAME_KEY] = localPartKey;
   }
 
   /**
@@ -398,7 +369,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final int getURIKey() {
-    return mURIKey;
+    return (int) mData[URI_KEY];
   }
 
   /**
@@ -406,7 +377,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final void setURIKey(final int uriKey) {
-    mURIKey = uriKey;
+    mData[URI_KEY] = uriKey;
   }
 
   /**
@@ -414,7 +385,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final int getTypeKey() {
-    return mType;
+    return (int) mData[TYPE];
   }
 
   /**
@@ -422,7 +393,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final void setType(final int valueType) {
-    mType = valueType;
+    mData[TYPE] = valueType;
   }
 
   /**
@@ -430,17 +401,7 @@ public final class ElementNode extends AbstractNode {
    */
   @Override
   public final void serialize(final IByteBuffer out) {
-    out.putAll(new long[] {
-        getNodeKey() - mParentKey,
-        mFirstChildKey,
-        mLeftSiblingKey,
-        mRightSiblingKey,
-        mChildCount,
-        mNameKey,
-        mURIKey,
-        mType,
-        mAttributeKeys == null ? 0 : mAttributeKeys.size(),
-        mNamespaceKeys == null ? 0 : mNamespaceKeys.size() });
+    super.serialize(out);
     if (mAttributeKeys != null) {
       long[] attributes = new long[mAttributeKeys.size()];
       for (int i = 0, l = mAttributeKeys.size(); i < l; i++) {
@@ -466,15 +427,15 @@ public final class ElementNode extends AbstractNode {
         + "\n\tnodeKey: "
         + this.getNodeKey()
         + "\n\tchildcount: "
-        + this.mChildCount
+        + this.mData[CHILD_COUNT]
         + "\n\tparentKey: "
-        + this.mParentKey
+        + (mData[NODE_KEY] - mData[PARENT_KEY])
         + "\n\tfirstChildKey: "
-        + this.mFirstChildKey
+        + this.mData[FIRST_CHILD_KEY]
         + "\n\tleftSiblingKey: "
-        + this.mLeftSiblingKey
+        + this.mData[LEFT_SIBLING_KEY]
         + "\n\trightSiblingKey: "
-        + this.mRightSiblingKey;
+        + this.mData[RIGHT_SIBLING_KEY];
   }
 
 }

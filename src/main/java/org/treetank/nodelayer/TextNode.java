@@ -28,17 +28,17 @@ import org.treetank.utils.IByteBuffer;
  */
 public final class TextNode extends AbstractNode {
 
-  /** Key of parent node. */
-  private long mParentKey;
+  private static final int SIZE = 6;
 
-  /** Key of left sibling. */
-  private long mLeftSiblingKey;
+  private static final int PARENT_KEY = 1;
 
-  /** Key of right sibling. */
-  private long mRightSiblingKey;
+  private static final int LEFT_SIBLING_KEY = 2;
 
-  /** Type of node. */
-  private int mType;
+  private static final int RIGHT_SIBLING_KEY = 3;
+
+  private static final int TYPE = 4;
+
+  private static final int VALUE_LENGTH = 5;
 
   /** Typed value of node. */
   private byte[] mValue;
@@ -60,11 +60,12 @@ public final class TextNode extends AbstractNode {
       final long rightSiblingKey,
       final int type,
       final byte[] value) {
-    super(nodeKey);
-    mParentKey = parentKey;
-    mLeftSiblingKey = leftSiblingKey;
-    mRightSiblingKey = rightSiblingKey;
-    mType = type;
+    super(SIZE, nodeKey);
+    mData[PARENT_KEY] = nodeKey - parentKey;
+    mData[LEFT_SIBLING_KEY] = leftSiblingKey;
+    mData[RIGHT_SIBLING_KEY] = rightSiblingKey;
+    mData[TYPE] = type;
+    mData[VALUE_LENGTH] = value.length;
     mValue = value;
   }
 
@@ -74,11 +75,7 @@ public final class TextNode extends AbstractNode {
    * @param node Text node to clone.
    */
   public TextNode(final AbstractNode node) {
-    super(node.getNodeKey());
-    mParentKey = node.getParentKey();
-    mLeftSiblingKey = node.getLeftSiblingKey();
-    mRightSiblingKey = node.getRightSiblingKey();
-    mType = node.getTypeKey();
+    super(node);
     mValue = node.getRawValue();
   }
 
@@ -89,13 +86,8 @@ public final class TextNode extends AbstractNode {
    * @param in Input bytes to read node from.
    */
   public TextNode(final long nodeKey, final IByteBuffer in) {
-    super(nodeKey);
-    long[] values = in.getAll(5);
-    mParentKey = nodeKey - values[0];
-    mLeftSiblingKey = values[1];
-    mRightSiblingKey = values[2];
-    mType = (int) values[3];
-    mValue = in.getArray((int) values[4]);
+    super(SIZE, nodeKey, in);
+    mValue = in.getArray((int) mData[VALUE_LENGTH]);
   }
 
   /**
@@ -111,7 +103,7 @@ public final class TextNode extends AbstractNode {
    */
   @Override
   public final boolean hasParent() {
-    return (mParentKey != IReadTransaction.NULL_NODE_KEY);
+    return ((mData[NODE_KEY] - mData[PARENT_KEY]) != IReadTransaction.NULL_NODE_KEY);
   }
 
   /**
@@ -119,7 +111,7 @@ public final class TextNode extends AbstractNode {
    */
   @Override
   public final long getParentKey() {
-    return mParentKey;
+    return mData[NODE_KEY] - mData[PARENT_KEY];
   }
 
   /**
@@ -127,7 +119,7 @@ public final class TextNode extends AbstractNode {
    */
   @Override
   public final void setParentKey(final long parentKey) {
-    mParentKey = parentKey;
+    mData[PARENT_KEY] = mData[NODE_KEY] - parentKey;
   }
 
   /**
@@ -135,7 +127,7 @@ public final class TextNode extends AbstractNode {
    */
   @Override
   public final boolean hasLeftSibling() {
-    return (mLeftSiblingKey != IReadTransaction.NULL_NODE_KEY);
+    return (mData[LEFT_SIBLING_KEY] != IReadTransaction.NULL_NODE_KEY);
   }
 
   /**
@@ -143,7 +135,7 @@ public final class TextNode extends AbstractNode {
    */
   @Override
   public final long getLeftSiblingKey() {
-    return mLeftSiblingKey;
+    return mData[LEFT_SIBLING_KEY];
   }
 
   /**
@@ -151,7 +143,7 @@ public final class TextNode extends AbstractNode {
    */
   @Override
   public final void setLeftSiblingKey(final long leftSiblingKey) {
-    mLeftSiblingKey = leftSiblingKey;
+    mData[LEFT_SIBLING_KEY] = leftSiblingKey;
   }
 
   /**
@@ -159,7 +151,7 @@ public final class TextNode extends AbstractNode {
    */
   @Override
   public final boolean hasRightSibling() {
-    return (mRightSiblingKey != IReadTransaction.NULL_NODE_KEY);
+    return (mData[RIGHT_SIBLING_KEY] != IReadTransaction.NULL_NODE_KEY);
   }
 
   /**
@@ -167,7 +159,7 @@ public final class TextNode extends AbstractNode {
    */
   @Override
   public final long getRightSiblingKey() {
-    return mRightSiblingKey;
+    return mData[RIGHT_SIBLING_KEY];
   }
 
   /**
@@ -175,7 +167,7 @@ public final class TextNode extends AbstractNode {
    */
   @Override
   public final void setRightSiblingKey(final long rightSiblingKey) {
-    mRightSiblingKey = rightSiblingKey;
+    mData[RIGHT_SIBLING_KEY] = rightSiblingKey;
   }
 
   /**
@@ -191,7 +183,7 @@ public final class TextNode extends AbstractNode {
    */
   @Override
   public final int getTypeKey() {
-    return mType;
+    return (int) mData[TYPE];
   }
 
   /**
@@ -207,7 +199,8 @@ public final class TextNode extends AbstractNode {
    */
   @Override
   public final void setValue(final int valueType, final byte[] value) {
-    mType = valueType;
+    mData[TYPE] = valueType;
+    mData[VALUE_LENGTH] = value.length;
     mValue = value;
   }
 
@@ -216,7 +209,7 @@ public final class TextNode extends AbstractNode {
    */
   @Override
   public final void setType(final int valueType) {
-    mType = valueType;
+    mData[TYPE] = valueType;
   }
 
   /**
@@ -224,12 +217,7 @@ public final class TextNode extends AbstractNode {
    */
   @Override
   public final void serialize(final IByteBuffer out) {
-    out.putAll(new long[] {
-        getNodeKey() - mParentKey,
-        mLeftSiblingKey,
-        mRightSiblingKey,
-        mType,
-        mValue.length });
+    super.serialize(out);
     out.putArray(mValue);
   }
 
@@ -242,11 +230,11 @@ public final class TextNode extends AbstractNode {
         + "\n\tnodeKey: "
         + getNodeKey()
         + "\n\tparentKey: "
-        + mParentKey
+        + (mData[NODE_KEY] - mData[PARENT_KEY])
         + "\n\tleftSiblingKey: "
-        + mLeftSiblingKey
+        + mData[LEFT_SIBLING_KEY]
         + "\n\trightSiblingKey: "
-        + mRightSiblingKey;
+        + mData[RIGHT_SIBLING_KEY];
   }
 
 }

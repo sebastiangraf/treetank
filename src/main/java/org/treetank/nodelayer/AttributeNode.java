@@ -28,17 +28,17 @@ import org.treetank.utils.IByteBuffer;
  */
 public final class AttributeNode extends AbstractNode {
 
-  /** Key of parent node. */
-  private long mParentKey;
+  private static final int SIZE = 6;
 
-  /** Key of qualified name. */
-  private int mNameKey;
+  private static final int PARENT_KEY = 1;
 
-  /** Key of URI. */
-  private int mURIKey;
+  private static final int NAME_KEY = 2;
 
-  /** Type of node. */
-  private int mType;
+  private static final int URI_KEY = 3;
+
+  private static final int TYPE = 4;
+
+  private static final int VALUE_LENGTH = 5;
 
   /** Value of attribute. */
   private byte[] mValue;
@@ -59,11 +59,12 @@ public final class AttributeNode extends AbstractNode {
       final int uriKey,
       final int type,
       final byte[] value) {
-    super(nodeKey);
-    mParentKey = parentKey;
-    mNameKey = nameKey;
-    mURIKey = uriKey;
-    mType = type;
+    super(SIZE, nodeKey);
+    mData[PARENT_KEY] = nodeKey - parentKey;
+    mData[NAME_KEY] = nameKey;
+    mData[URI_KEY] = uriKey;
+    mData[TYPE] = type;
+    mData[VALUE_LENGTH] = value.length;
     mValue = value;
   }
 
@@ -73,22 +74,13 @@ public final class AttributeNode extends AbstractNode {
    * @param attribute Attribute to clone.
    */
   public AttributeNode(final AbstractNode attribute) {
-    super(attribute.getNodeKey());
-    mParentKey = attribute.getParentKey();
-    mNameKey = attribute.getNameKey();
-    mURIKey = attribute.getURIKey();
-    mType = attribute.getTypeKey();
+    super(attribute);
     mValue = attribute.getRawValue();
   }
 
   public AttributeNode(final long nodeKey, final IByteBuffer in) {
-    super(nodeKey);
-    long[] values = in.getAll(5);
-    mParentKey = nodeKey - values[0];
-    mNameKey = (int) values[1];
-    mURIKey = (int) values[2];
-    mType = (int) values[3];
-    mValue = in.getArray((int) values[4]);
+    super(SIZE, nodeKey, in);
+    mValue = in.getArray((int) mData[VALUE_LENGTH]);
   }
 
   /**
@@ -104,7 +96,7 @@ public final class AttributeNode extends AbstractNode {
    */
   @Override
   public final int getNameKey() {
-    return mNameKey;
+    return (int) mData[NAME_KEY];
   }
 
   /**
@@ -112,7 +104,7 @@ public final class AttributeNode extends AbstractNode {
    */
   @Override
   public final void setNameKey(final int nameKey) {
-    this.mNameKey = nameKey;
+    this.mData[NAME_KEY] = nameKey;
   }
 
   /**
@@ -128,7 +120,7 @@ public final class AttributeNode extends AbstractNode {
    */
   @Override
   public final long getParentKey() {
-    return mParentKey;
+    return mData[NODE_KEY] - mData[PARENT_KEY];
   }
 
   /**
@@ -136,7 +128,7 @@ public final class AttributeNode extends AbstractNode {
    */
   @Override
   public final void setParentKey(final long parentKey) {
-    mParentKey = parentKey;
+    mData[PARENT_KEY] = mData[NODE_KEY] - parentKey;
   }
 
   /**
@@ -144,7 +136,7 @@ public final class AttributeNode extends AbstractNode {
    */
   @Override
   public final int getURIKey() {
-    return mURIKey;
+    return (int) mData[URI_KEY];
   }
 
   /**
@@ -152,7 +144,7 @@ public final class AttributeNode extends AbstractNode {
    */
   @Override
   public final void setURIKey(final int uriKey) {
-    mURIKey = uriKey;
+    mData[URI_KEY] = uriKey;
   }
 
   /**
@@ -160,7 +152,7 @@ public final class AttributeNode extends AbstractNode {
    */
   @Override
   public final int getTypeKey() {
-    return mType;
+    return (int) mData[TYPE];
   }
 
   /**
@@ -176,7 +168,8 @@ public final class AttributeNode extends AbstractNode {
    */
   @Override
   public final void setValue(final int valueType, final byte[] value) {
-    mType = valueType;
+    mData[TYPE] = valueType;
+    mData[VALUE_LENGTH] = value.length;
     mValue = value;
   }
 
@@ -185,7 +178,7 @@ public final class AttributeNode extends AbstractNode {
    */
   @Override
   public final void setType(final int valueType) {
-    mType = valueType;
+    mData[TYPE] = valueType;
   }
 
   /**
@@ -201,12 +194,7 @@ public final class AttributeNode extends AbstractNode {
    */
   @Override
   public final void serialize(final IByteBuffer out) {
-    out.putAll(new long[] {
-        getNodeKey() - mParentKey,
-        mNameKey,
-        mURIKey,
-        mType,
-        mValue.length });
+    super.serialize(out);
     out.putArray(mValue);
   }
 
