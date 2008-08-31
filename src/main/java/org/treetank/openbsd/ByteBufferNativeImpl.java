@@ -22,7 +22,7 @@ import org.treetank.utils.IByteBuffer;
 
 public class ByteBufferNativeImpl implements IByteBuffer {
 
-  long mAddress;
+  int mAddress;
 
   int mCapacity;
 
@@ -46,7 +46,7 @@ public class ByteBufferNativeImpl implements IByteBuffer {
   }
 
   public final native long get();
-  
+
   public final native void get(final long[] values);
 
   public final native byte[] getArray(final int length);
@@ -59,7 +59,7 @@ public class ByteBufferNativeImpl implements IByteBuffer {
 
   public final native void putAll(final long[] values);
 
-  public final long getAddress() {
+  public final int getAddress() {
     return mAddress;
   }
 
