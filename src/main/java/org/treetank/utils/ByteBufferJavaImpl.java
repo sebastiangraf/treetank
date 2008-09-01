@@ -90,4 +90,8 @@ public final class ByteBufferJavaImpl implements IByteBuffer {
     return values;
   }
 
+  public final void close() {
+    // Nothing to do here.
+  }
+
 }

@@ -67,10 +67,16 @@ public class ByteBufferNativeImpl implements IByteBuffer {
 
   private final native void free();
 
+  public final void close() {
+    if (mAddress != 0) {
+      free();
+    }
+  }
+
   @Override
   protected void finalize() throws Throwable {
     try {
-      free();
+      close();
     } finally {
       super.finalize();
     }

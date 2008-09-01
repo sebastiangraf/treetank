@@ -130,6 +130,9 @@ public final class PageWriter {
    */
   public final void close() {
     try {
+      if (mBuffer != null) {
+        mBuffer.close();
+      }
       if (mFile != null) {
         mFile.close();
       }
@@ -146,9 +149,7 @@ public final class PageWriter {
   @Override
   protected void finalize() throws Throwable {
     try {
-      if (mFile != null) {
-        mFile.close();
-      }
+      close();
     } finally {
       super.finalize();
     }
