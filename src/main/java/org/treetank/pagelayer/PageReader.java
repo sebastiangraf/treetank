@@ -132,6 +132,9 @@ public final class PageReader {
    */
   public final void close() {
     try {
+      if (mBuffer != null) {
+        mBuffer.close();
+      }
       if (mFile != null) {
         mFile.close();
       }
@@ -148,9 +151,7 @@ public final class PageReader {
   @Override
   protected void finalize() throws Throwable {
     try {
-      if (mFile != null) {
-        mFile.close();
-      }
+      close();
     } finally {
       super.finalize();
     }
