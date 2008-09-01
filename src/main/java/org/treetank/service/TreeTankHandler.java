@@ -29,6 +29,8 @@ import org.mortbay.jetty.handler.AbstractHandler;
 
 public class TreeTankHandler extends AbstractHandler {
 
+  private static final String FLEX = ".swf";
+
   private static final String JAVASCRIPT = ".js";
 
   private static final String FAVICON = "/favicon.ico";
@@ -47,7 +49,9 @@ public class TreeTankHandler extends AbstractHandler {
 
   private final HelperCrossdomain mHelperCrossdomain;
 
-  private final HelperJavascript mHelperJavascript;
+  private final HelperFile mHelperJavascript;
+
+  private final HelperFile mHelperFlex;
 
   private final HelperGet mHelperGet;
 
@@ -60,7 +64,8 @@ public class TreeTankHandler extends AbstractHandler {
   public TreeTankHandler(final Map<String, TreeTankWrapper> map) {
     mHelperFavicon = new HelperFavicon();
     mHelperCrossdomain = new HelperCrossdomain();
-    mHelperJavascript = new HelperJavascript();
+    mHelperJavascript = new HelperFile("text/ecmascript");
+    mHelperFlex = new HelperFile("application/x-shockwave-flash");
     mHelperGet = new HelperGet(map);
     mHelperPost = new HelperPost(map);
     mHelperPut = new HelperPut(map);
@@ -81,6 +86,8 @@ public class TreeTankHandler extends AbstractHandler {
         mHelperCrossdomain.handle(request, response);
       } else if (request.getRequestURI().endsWith(JAVASCRIPT)) {
         mHelperJavascript.handle(request, response);
+      } else if (request.getRequestURI().endsWith(FLEX)) {
+        mHelperFlex.handle(request, response);
       } else if (request.getMethod().equalsIgnoreCase(GET)) {
         mHelperGet.handle(request, response);
       } else if (request.getMethod().equalsIgnoreCase(POST)) {

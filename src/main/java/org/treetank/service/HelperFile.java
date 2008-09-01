@@ -26,19 +26,23 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.mortbay.jetty.Request;
 
-public final class HelperJavascript {
+public final class HelperFile {
 
-  private static final String PATH = "/treetank/service/";
-
-  private static final String CONTENT_TYPE = "text/ecmascript";
+  private static final String PATH = "/treetank/data/";
 
   private static final String ENCODING = "UTF-8";
+
+  private final String mContentType;
+
+  public HelperFile(final String contentType) {
+    mContentType = contentType;
+  }
 
   public final void handle(
       final HttpServletRequest request,
       final HttpServletResponse response) throws TreeTankException {
     try {
-      response.setContentType(CONTENT_TYPE);
+      response.setContentType(mContentType);
       response.setCharacterEncoding(ENCODING);
 
       final File file = new File(PATH + request.getRequestURI());
