@@ -103,7 +103,8 @@ public final class XMLShredder {
 
       long key;
       String text;
-      leftSiblingKeyStack.push(wtx.getLeftSiblingKey());
+      leftSiblingKeyStack.push(IReadTransaction.NULL_NODE_KEY);
+      // leftSiblingKeyStack.push(wtx.getLeftSiblingKey());
 
       // Iterate over all nodes.
       while (parser.hasNext()) {
