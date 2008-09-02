@@ -59,6 +59,19 @@ public class XPathError extends RuntimeException {
     super(err.getMsg());
   }
 
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Throwable fillInStackTrace() {
+    //note: this prevents generation of the stack trace. In case of debugging 
+    //simply comment it out. The application's stack trace should be hidden from
+    //the user. In addition to that it's generation is costly in time and space.
+
+    return this;
+  }
+
   /**
    * Enumeration for all the XPath error types with their specified error
    * message.
@@ -80,8 +93,9 @@ public class XPathError extends RuntimeException {
         + "defined in A.1 EBNF."),
 
     /** XPath type error 0004. */
-    XPTY0004("err:XPTY0004 The type is not appropriate the expression or the " +
-    		"typedoes not match a required type as specified by the matching rules."),
+    XPTY0004(
+        "err:XPTY0004 The type is not appropriate the expression or the "
+            + "typedoes not match a required type as specified by the matching rules."),
 
     /** XPath static error 0005. */
     XPST0005(
@@ -113,10 +127,9 @@ public class XPathError extends RuntimeException {
     XPTY0020("err:XPTY0020 Context item in an axis step is not a node."),
 
     /** XPath dynamic error 0050. */
-    XPDY0050(
-        "err:XPDY0050 "
-            + "Dynamic type of the operand of a treat expression does not match"
-            + " the sequence type specified by the treat expression."),
+    XPDY0050("err:XPDY0050 "
+        + "Dynamic type of the operand of a treat expression does not match"
+        + " the sequence type specified by the treat expression."),
 
     /** XPath static error 0051. */
     XPST0051("err:XPST0051 "
@@ -133,25 +146,26 @@ public class XPathError extends RuntimeException {
         + "Namespace prefix cannot be expanded into a namespace URI by "
         + "using the statically known namespaces."),
 
-    FOCA0001("err:FOCA0001, Input value too large for decimal."), FOCA0002(
-        "err:FOCA0002, Invalid lexical value."), FOCA0003(
-        "err:FOCA0003, Input value too large for integer."), FOCA0005(
-        "err:FOCA0005, NaN supplied as float/double value."), FOCA0006(
-        "err:FOCA0006, String to be cast to decimal has too many digits of precision."), FOCH0001(
-        "err:FOCH0001, Code point not valid."), FOCH0002(
-        "err:FOCH0002, Unsupported collation."), FOCH0003(
-        "err:FOCH0003, Unsupported normalization form."), FORH0004(
-        "err:FOCH0004, Collation does not support collation units."), FODC0001(
-        "err:FODC0001, No context document."), FODC0002(
-        "err:FODC0002, Error retrieving resource."), FODC0003(
-        "err:FODC0003, Function stability not defined."), FODC0004(
-        "err:FODC0004, Invalid argument to fn:collection."), FODC0005(
-        "err:FODC0005, Invalid argument to fn:doc or fn:doc-available."), FODT0001(
-        "err:FODT0001, Overflow/underflow in date/time operation."), FODT0002(
-        "err:FODT0002, Overflow/underflow in duration operation."), FODT0003(
-        "err:FODT0003, Invalid timezone value."), FONS0004(
-        "err:FONS0004, No namespace found for prefix."), FONS0005(
-        "err:FONS0005, Base-uri not defined in the static context."),
+    FOCA0001("err:FOCA0001, Input value too large for decimal."),
+    FOCA0002("err:FOCA0002, Invalid lexical value."),
+    FOCA0003("err:FOCA0003, Input value too large for integer."),
+    FOCA0005("err:FOCA0005, NaN supplied as float/double value."),
+    FOCA0006(
+        "err:FOCA0006, String to be cast to decimal has too many digits of precision."),
+    FOCH0001("err:FOCH0001, Code point not valid."),
+    FOCH0002("err:FOCH0002, Unsupported collation."),
+    FOCH0003("err:FOCH0003, Unsupported normalization form."),
+    FORH0004("err:FOCH0004, Collation does not support collation units."),
+    FODC0001("err:FODC0001, No context document."),
+    FODC0002("err:FODC0002, Error retrieving resource."),
+    FODC0003("err:FODC0003, Function stability not defined."),
+    FODC0004("err:FODC0004, Invalid argument to fn:collection."),
+    FODC0005("err:FODC0005, Invalid argument to fn:doc or fn:doc-available."),
+    FODT0001("err:FODT0001, Overflow/underflow in date/time operation."),
+    FODT0002("err:FODT0002, Overflow/underflow in duration operation."),
+    FODT0003("err:FODT0003, Invalid timezone value."),
+    FONS0004("err:FONS0004, No namespace found for prefix."),
+    FONS0005("err:FONS0005, Base-uri not defined in the static context."),
     /**
      * XQuery and XPath Function and Operators error 0001. This error is raised
      * whenever an attempt is made to divide by zero.
@@ -161,21 +175,27 @@ public class XPathError extends RuntimeException {
      * XQuery and XPath Function and Operators error 0002. This error is raised
      * whenever numeric operations result in an overflow or underflow.
      */
-    FOAR0002("err:FOAR0002: Numeric operation overflow/underflow."), FOER0000(
-        "err:FOER0000: Unidentified error."), FORG0001(
-        "err:FORG0001, Invalid value for cast/constructor."), FORG0002(
-        "err:FORG0002, Invalid argument to fn:resolve-uri()."), FORG0003(
-        "err:FORG0003, fn:zero-or-one called with a sequence containing more than one item."), FORG0004(
-        "err:FORG0004, fn:one-or-more called with a sequence containing no items."), FORG0005(
+    FOAR0002("err:FOAR0002: Numeric operation overflow/underflow."),
+    FOER0000("err:FOER0000: Unidentified error."),
+    FORG0001("err:FORG0001, Invalid value for cast/constructor."),
+    FORG0002("err:FORG0002, Invalid argument to fn:resolve-uri()."),
+    FORG0003(
+        "err:FORG0003, fn:zero-or-one called with a sequence containing more than one item."),
+    FORG0004(
+        "err:FORG0004, fn:one-or-more called with a sequence containing no items."),
+    FORG0005(
         "err:FORG0005, fn:exactly-one called with a sequence containing zero or more than one item."),
     /** XQuery and XPath Function and Operators error 0006. */
-    FORG0006("err:FORG0006 Invalid argument type."), FORG0007(""), FORG0008(
-        "err:FORG0008, Both arguments to fn:dateTime have a specified timezone."), FORG0009(
-        "err:FORG0009, Error in resolving a relative URI against a base URI in fn:resolve-uri."), FORX0001(
-        "err:FORX0001, Invalid regular expression. flags"), FORX0002(
+    FORG0006("err:FORG0006 Invalid argument type."),
+    FORG0007(""),
+    FORG0008(
+        "err:FORG0008, Both arguments to fn:dateTime have a specified timezone."),
+    FORG0009(
+        "err:FORG0009, Error in resolving a relative URI against a base URI in fn:resolve-uri."),
+    FORX0001("err:FORX0001, Invalid regular expression. flags"), FORX0002(
         "err:FORX0002, Invalid regular expression."), FORX0003(
-        "err:FORX0003, Regular expression matches zero-length string."), FORX0004(
-        "err:FORX0004, Invalid replacement string."), FOTY0012(
+        "err:FORX0003, Regular expression matches zero-length string."),
+    FORX0004("err:FORX0004, Invalid replacement string."), FOTY0012(
         "err:FOTY0012, Argument node does not have a typed value."), ;
 
     /** error message. */
@@ -203,4 +223,5 @@ public class XPathError extends RuntimeException {
     }
 
   }
+
 }
