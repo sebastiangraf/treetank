@@ -48,6 +48,8 @@ public final class HelperGet {
       final HttpServletResponse response) throws TreeTankException {
 
     try {
+      
+      response.setBufferSize(8192);
 
       // Initialise request with defaults.
       String serviceString = "default.tnk";
@@ -121,6 +123,8 @@ public final class HelperGet {
       out.write("</rest:sequence><rest:time>".getBytes(ENCODING));
       out.write(Long.toString(stop - start).getBytes(ENCODING));
       out.write("[ms]</rest:time></rest:response>".getBytes(ENCODING));
+      
+      response.flushBuffer();
 
       ((Request) request).setHandled(true);
 

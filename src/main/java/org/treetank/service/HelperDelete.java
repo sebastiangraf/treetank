@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.mortbay.jetty.Request;
 
 public final class HelperDelete {
-  
+
   private static final String PATH = "/treetank/data/";
 
   private static final String CONTENT_TYPE = "application/xml";
@@ -46,6 +46,8 @@ public final class HelperDelete {
       final HttpServletResponse response) throws TreeTankException {
 
     try {
+
+      response.setBufferSize(8192);
 
       // Initialise request with defaults.
       String serviceString = "default.tnk";
@@ -101,6 +103,8 @@ public final class HelperDelete {
       out.write("<rest:time>".getBytes(ENCODING));
       out.write(Long.toString(stop - start).getBytes(ENCODING));
       out.write("[ms]</rest:time></rest:response>".getBytes(ENCODING));
+
+      response.flushBuffer();
 
       ((Request) request).setHandled(true);
 

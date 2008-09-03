@@ -49,6 +49,8 @@ public final class HelperPost {
 
     try {
 
+      response.setBufferSize(8192);
+
       // Initialise request with defaults.
       String serviceString = "default.tnk";
       String idString = "0";
@@ -116,6 +118,8 @@ public final class HelperPost {
       out.write("</rest:sequence><rest:time>".getBytes(ENCODING));
       out.write(Long.toString(stop - start).getBytes(ENCODING));
       out.write("[ms]</rest:time></rest:response>".getBytes(ENCODING));
+
+      response.flushBuffer();
 
       ((Request) request).setHandled(true);
 
