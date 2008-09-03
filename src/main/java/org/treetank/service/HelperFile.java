@@ -45,6 +45,8 @@ public final class HelperFile {
       response.setContentType(mContentType);
       response.setCharacterEncoding(ENCODING);
 
+      response.setBufferSize(8192);
+
       final File file = new File(PATH + request.getRequestURI());
       final FileInputStream fin = new FileInputStream(file);
       final byte[] tmp = new byte[4096];
@@ -53,6 +55,8 @@ public final class HelperFile {
         response.getOutputStream().write(tmp, 0, length);
       }
       fin.close();
+
+      response.flushBuffer();
 
       ((Request) request).setHandled(true);
     } catch (Exception e) {
