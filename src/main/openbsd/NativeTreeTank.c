@@ -78,6 +78,7 @@ finish:
   (*env)->DeleteLocalRef(env, capacityField);
   (*env)->DeleteLocalRef(env, addressField);
   (*env)->DeleteLocalRef(env, class);
+  return;
 }
 
 JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_free(
@@ -103,6 +104,7 @@ JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_free(
 finish:
   (*env)->DeleteLocalRef(env, addressField);
   (*env)->DeleteLocalRef(env, class);
+  return;
 }
 
 jlong get(
@@ -190,6 +192,7 @@ JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_get___3J(
   (*env)->DeleteLocalRef(env, addressField);
   (*env)->DeleteLocalRef(env, class);
   (*env)->DeleteLocalRef(env, values);
+  return;
 }
 
 JNIEXPORT jbyteArray JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_getArray(
@@ -303,7 +306,7 @@ void put(
   }
   *(addressPtr + *positionPtr) = singleByte;
   *positionPtr += 1;
-  
+  return;
 }
 
 JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_put(
@@ -327,6 +330,7 @@ JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_put(
   (*env)->DeleteLocalRef(env, positionField);
   (*env)->DeleteLocalRef(env, addressField);
   (*env)->DeleteLocalRef(env, class);
+  return;
 }
 
 JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_putArray(
@@ -363,6 +367,7 @@ JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_putArray(
   (*env)->DeleteLocalRef(env, addressField);
   (*env)->DeleteLocalRef(env, class);
   (*env)->DeleteLocalRef(env, value);
+  return;
 }
 
 JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_putAll(
@@ -402,4 +407,5 @@ JNIEXPORT void JNICALL Java_org_treetank_openbsd_ByteBufferNativeImpl_putAll(
   (*env)->DeleteLocalRef(env, addressField);
   (*env)->DeleteLocalRef(env, class);
   (*env)->DeleteLocalRef(env, values);
+  return;
 }
