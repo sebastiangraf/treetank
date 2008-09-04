@@ -4,8 +4,6 @@
 	<classpathentry kind="src" path="src/test/java"/>
 	<classpathentry kind="src" path="src/bench/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="externals/stax-api__V1.0.1.jar"/>
-	<classpathentry kind="lib" path="externals/wstx-asl__V3.1.1.jar"/>
 	<classpathentry kind="lib" path="externals/junit__V4.4.jar"/>
 	<classpathentry kind="lib" path="externals/checkstyle-all__V4.4.jar"/>
 	<classpathentry kind="lib" path="externals/Perfidix__V2.1.0.jar"/>
@@ -13,5 +11,7 @@
 	<classpathentry kind="lib" path="externals/jetty__V6.1.6.jar"/>
 	<classpathentry kind="lib" path="externals/jetty-util__V6.1.6.jar"/>
 	<classpathentry kind="lib" path="externals/servlet-api__V2.5.jar"/>
+	<classpathentry kind="lib" path="externals/wstx-asl__V3.1.1.jar"/>
+	<classpathentry kind="lib" path="externals/stax-api__V1.0.1.jar"/>
 	<classpathentry kind="output" path="target/eclipse"/>
 </classpath>
