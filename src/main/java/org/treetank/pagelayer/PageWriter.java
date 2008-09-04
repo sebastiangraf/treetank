@@ -68,6 +68,7 @@ public final class PageWriter {
         System.loadLibrary("TreeTank");
         mCompressor = new CryptoNativeImpl();
         mBuffer = new ByteBufferNativeImpl(IConstants.BUFFER_SIZE);
+        ((ByteBufferNativeImpl) mBuffer).allocate();
       } catch (UnsatisfiedLinkError e) {
         mCompressor = new CryptoJavaImpl();
         mBuffer = new ByteBufferJavaImpl(IConstants.BUFFER_SIZE);

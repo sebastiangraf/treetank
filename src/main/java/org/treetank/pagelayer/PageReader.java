@@ -68,6 +68,7 @@ public final class PageReader {
         System.loadLibrary("TreeTank");
         mDecompressor = new CryptoNativeImpl();
         mBuffer = new ByteBufferNativeImpl(IConstants.BUFFER_SIZE);
+        ((ByteBufferNativeImpl) mBuffer).allocate();
       } catch (UnsatisfiedLinkError e) {
         mDecompressor = new CryptoJavaImpl();
         mBuffer = new ByteBufferJavaImpl(IConstants.BUFFER_SIZE);

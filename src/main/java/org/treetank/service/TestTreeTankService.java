@@ -51,6 +51,7 @@ public class TestTreeTankService {
       final ICrypto nativeCrypto = new CryptoNativeImpl();
       final IByteBuffer nativeBuffer =
           new ByteBufferNativeImpl(IConstants.BUFFER_SIZE);
+      ((ByteBufferNativeImpl) nativeBuffer).allocate();
       testCrypto(nativeCrypto, nativeBuffer);
 
       System.out
