@@ -31,7 +31,6 @@ public class ByteBufferNativeImpl implements IByteBuffer {
   public ByteBufferNativeImpl(final int capacity) {
     mCapacity = capacity;
     mPosition = 0;
-    allocate();
   }
 
   public final int position() {
@@ -63,9 +62,9 @@ public class ByteBufferNativeImpl implements IByteBuffer {
     return mAddress;
   }
 
-  private final native void allocate();
+  public final native void allocate();
 
-  private final native void free();
+  public final native void free();
 
   public final void close() {
     if (mAddress != 0) {
