@@ -104,8 +104,11 @@ public class TreeTankHandler extends AbstractHandler {
         throw new TreeTankException(501, "Unknown operation.");
       }
 
-    } catch (TreeTankException e) {
-      response.sendError(e.getErrorCode(), e.getErrorMessage());
+    } catch (TreeTankException te) {
+      te.printStackTrace();
+      response.sendError(te.getErrorCode(), te.getErrorMessage());
+    } catch (Exception e) {
+      e.printStackTrace();
     }
 
   }
