@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
-import org.mortbay.jetty.security.SslSocketConnector;
+import org.mortbay.jetty.bio.SocketConnector;
 
 public class TreeTankService {
 
@@ -38,16 +38,15 @@ public class TreeTankService {
       final Map map = new ConcurrentHashMap();
 
       final Server server = new Server();
-      final Connector connector = new SslSocketConnector();
+      final Connector connector = new SocketConnector();
+      //      final Connector connector = new SslSocketConnector();
       final Handler handler = new TreeTankHandler(map);
 
-      ((SslSocketConnector) connector).setPort(8182);
-      ((SslSocketConnector) connector).setKeystore("keystore");
-      ((SslSocketConnector) connector).setPassword("keystore");
-
-      ((SslSocketConnector) connector).setKeystore("keystore");
-      ((SslSocketConnector) connector).setPassword("keystore");
-      ((SslSocketConnector) connector).setKeyPassword("keystore");
+      connector.setPort(8182);
+      //
+      //      ((SslSocketConnector) connector).setKeystore("keystore");
+      //      ((SslSocketConnector) connector).setPassword("keystore");
+      //      ((SslSocketConnector) connector).setKeyPassword("keystore");
 
       server.setConnectors(new Connector[] { connector });
       server.setHandler(handler);
