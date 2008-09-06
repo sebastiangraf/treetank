@@ -25,7 +25,7 @@ TreeTank Development Environment
 + Subclipse 1.2.4.
 + Spell Checker.
 + JamVM 1.5.1.
-+ Classpath 0.92.
++ Classpath 0.97.2.
 
 TreeTank Coding Conventions
 ---------------------------

@@ -19,10 +19,9 @@
 package org.treetank.service;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.mortbay.jetty.Server;
-
-import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
 
 public class TreeTankService {
 
