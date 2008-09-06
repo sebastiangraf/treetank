@@ -4,7 +4,7 @@
 
 	<description> Ant build of the TreeTank project. </description>
 
-	<property name="version" value="4.21.3" />
+	<property name="version" value="4.21.4" />
 
 	<property name="debuglevel" value="source,lines,vars" />
 	<property name="target" value="1.5" />
@@ -131,6 +131,7 @@
 	<target name="service" depends="jar" description="Build service directory.">
 		<copy file="${build.dir}/treetank.jar" tofile="${service.dir}/treetank.jar" />
 		<copy file="${build.dir}/libTreeTank.so" tofile="${service.dir}/libTreeTank.so" />
+		<copy file="${build.dir}/keystore" tofile="${service.dir}/keystore" />
 
 		<copy file="${src.openbsd.dir}/startup.sh" tofile="${service.dir}/startup.sh" />
 		<copy file="${src.openbsd.dir}/test.sh" tofile="${service.dir}/test.sh" />

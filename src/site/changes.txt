@@ -18,6 +18,7 @@
  
 TreeTank 4.21
 -------------
+4  Added keystore to service.
 3  Moved to latest classpath 0.97.2; Removed backport-concurrent dependency.
 2  Switched to IByteBuffer which is a variable-size ByteBuffer.
 1  Switched from inlined to standalone attributes and namespace
