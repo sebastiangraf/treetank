@@ -29,6 +29,14 @@ import org.mortbay.jetty.handler.AbstractHandler;
 
 public class TreeTankHandler extends AbstractHandler {
 
+  private static final String PNG = ".png";
+
+  private static final String JPEG = ".jpg";
+
+  private static final String GIF = ".gif";
+
+  private static final String STYLE = ".css";
+
   private static final String FLEX = ".swf";
 
   private static final String JAVASCRIPT = ".js";
@@ -53,6 +61,14 @@ public class TreeTankHandler extends AbstractHandler {
 
   private final HelperFile mHelperFlex;
 
+  private final HelperFile mHelperStyle;
+
+  private final HelperFile mHelperGif;
+
+  private final HelperFile mHelperJpeg;
+
+  private final HelperFile mHelperPng;
+
   private final HelperGet mHelperGet;
 
   private final HelperPost mHelperPost;
@@ -66,6 +82,10 @@ public class TreeTankHandler extends AbstractHandler {
     mHelperCrossdomain = new HelperCrossdomain();
     mHelperJavascript = new HelperFile("text/ecmascript");
     mHelperFlex = new HelperFile("application/x-shockwave-flash");
+    mHelperStyle = new HelperFile("text/css");
+    mHelperGif = new HelperFile("image/gif");
+    mHelperJpeg = new HelperFile("image/jpeg");
+    mHelperPng = new HelperFile("image/png");
     mHelperGet = new HelperGet(map);
     mHelperPost = new HelperPost(map);
     mHelperPut = new HelperPut(map);
@@ -88,6 +108,14 @@ public class TreeTankHandler extends AbstractHandler {
         mHelperJavascript.handle(request, response);
       } else if (request.getRequestURI().endsWith(FLEX)) {
         mHelperFlex.handle(request, response);
+      } else if (request.getRequestURI().endsWith(STYLE)) {
+        mHelperStyle.handle(request, response);
+      } else if (request.getRequestURI().endsWith(GIF)) {
+        mHelperGif.handle(request, response);
+      } else if (request.getRequestURI().endsWith(JPEG)) {
+        mHelperJpeg.handle(request, response);
+      } else if (request.getRequestURI().endsWith(PNG)) {
+        mHelperPng.handle(request, response);
       } else if (request.getMethod().equalsIgnoreCase(GET)) {
         mHelperGet.handle(request, response);
       } else if (request.getMethod().equalsIgnoreCase(POST)) {
