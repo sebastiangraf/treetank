@@ -4,7 +4,7 @@
 
 	<description> Ant build of the TreeTank project. </description>
 
-	<property name="version" value="4.21.2" />
+	<property name="version" value="4.21.3" />
 
 	<property name="debuglevel" value="source,lines,vars" />
 	<property name="target" value="1.5" />
@@ -33,7 +33,6 @@
 		<pathelement location="${externals.dir}/jetty-util__V6.1.6.jar" />
 		<pathelement location="${externals.dir}/jetty__V6.1.6.jar" />
 		<pathelement location="${externals.dir}/servlet-api__V2.5.jar" />
-		<pathelement location="${externals.dir}/backport-util-concurrent__V3.1.jar" />
 		<pathelement location="${classes.dir}" />
 	</path>
 
@@ -142,7 +141,6 @@
 		<copy file="${externals.dir}/jetty-util__V6.1.6.jar" tofile="${service.dir}/jetty-util.jar" />
 		<copy file="${externals.dir}/jetty__V6.1.6.jar" tofile="${service.dir}/jetty.jar" />
 		<copy file="${externals.dir}/servlet-api__V2.5.jar" tofile="${service.dir}/servlet-api.jar" />
-		<copy file="${externals.dir}/backport-util-concurrent__V3.1.jar" tofile="${service.dir}/backport-util-concurrent.jar" />
 	</target>
 
 	<!--

@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
 
 import org.treetank.api.IItemList;
 import org.treetank.api.IReadTransaction;
@@ -34,9 +36,6 @@ import org.treetank.pagelayer.UberPage;
 import org.treetank.utils.FastWeakHashMap;
 import org.treetank.utils.IByteBuffer;
 import org.treetank.utils.IConstants;
-
-import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
-import edu.emory.mathcs.backport.java.util.concurrent.Semaphore;
 
 /**
  * <h1>SessionState</h1>

@@ -18,11 +18,11 @@
 
 package org.treetank.openbsd;
 
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+
 import org.treetank.utils.IByteBuffer;
 import org.treetank.utils.ICrypto;
-
-import edu.emory.mathcs.backport.java.util.concurrent.ArrayBlockingQueue;
-import edu.emory.mathcs.backport.java.util.concurrent.BlockingQueue;
 
 public final class CryptoNativeImpl implements ICrypto {
 

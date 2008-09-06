@@ -23,8 +23,7 @@ import java.lang.ref.WeakReference;
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Set;
-
-import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <h1>WeakHashMap</h1>
