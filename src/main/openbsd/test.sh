@@ -1,6 +1,6 @@
 #!/bin/sh
 
-/treetank/jre/bin/jamvm -Xms128M -Xmx160M\
+/treetank/jre/bin/jamvm -Xms80M -Xmx80M\
     -Djava.library.path=\
 /treetank/service\
     -classpath \
