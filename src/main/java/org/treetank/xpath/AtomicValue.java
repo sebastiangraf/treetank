@@ -123,7 +123,7 @@ public class AtomicValue implements IItem {
    */
   public byte[] getRawValue() {
 
-    return mValue;
+    return mValue.clone();
   }
 
   /**

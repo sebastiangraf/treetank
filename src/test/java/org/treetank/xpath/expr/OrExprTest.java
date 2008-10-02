@@ -45,8 +45,6 @@ public class OrExprTest {
   public static final String PATH =
       "target" + File.separator + "tnk" + File.separator + "OrExprTest.tnk";
 
-  IAxis ifExpr, thenExpr, elseExpr;
-
   @Before
   public void setUp() {
 
