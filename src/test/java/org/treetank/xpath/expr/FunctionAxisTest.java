@@ -47,8 +47,6 @@ public class FunctionAxisTest {
           + File.separator
           + "FunctionAxisTest.tnk";
 
-  IAxis ifExpr, thenExpr, elseExpr;
-
   @Before
   public void setUp() {
 

@@ -89,7 +89,7 @@ public class FNBoolean extends AbstractFunction {
           value = (rtx.getValue().length() > 0);
         } else if (type.isNumericType()) {
           final double dValue = TypedValue.parseDouble(rtx.getRawValue());
-          value = !(dValue == Double.NaN || dValue == 0.0d);
+          value = !(Double.isNaN(dValue)|| dValue == 0.0d);
         } else {
           // for all other types throw error FORG0006
           throw new XPathError(ErrorType.FORG0006);

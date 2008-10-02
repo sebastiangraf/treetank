@@ -22,12 +22,15 @@ import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.perfidix.Bench;
+import org.perfidix.BenchClass;
 import org.treetank.api.IReadTransaction;
 import org.treetank.api.ISession;
 import org.treetank.api.IWriteTransaction;
 import org.treetank.sessionlayer.Session;
 import org.treetank.utils.DocumentTest;
 
+@BenchClass(runs = 1)
 public class ChildAxisTest {
 
   public static final String TEST_ITERATE_PATH =
@@ -51,6 +54,7 @@ public class ChildAxisTest {
   }
 
   @Test
+  @Bench(runs = 10)
   public void testIterate() {
 
     final ISession session = Session.beginSession(TEST_ITERATE_PATH);
@@ -78,6 +82,7 @@ public class ChildAxisTest {
   }
 
   @Test
+  @Bench(runs = 10)
   public void testPersistent() {
 
     final ISession session = Session.beginSession(TEST_PERSISTENT_PATH);

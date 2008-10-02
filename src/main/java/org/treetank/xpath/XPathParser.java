@@ -18,6 +18,7 @@
 
 package org.treetank.xpath;
 
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 import org.treetank.api.IAxis;
@@ -1522,9 +1523,9 @@ public final class XPathParser implements XPathConstants {
         if (!is(Token.CLOSE_BR, true)) {
             String stringLiteral;
             if (isQuote()) {
-                stringLiteral =
-                        (getTransaction().getItemList().getItem(
-                                parseStringLiteral()).getRawValue().toString());
+                final byte[] param = getTransaction().getItemList().getItem(
+                    parseStringLiteral()).getRawValue();
+                stringLiteral = Arrays.toString(param);
             } else {
                 stringLiteral = parseNCName();
             }

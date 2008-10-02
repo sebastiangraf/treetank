@@ -43,8 +43,6 @@ public class IfAxisTest {
   public static final String PATH =
       "target" + File.separator + "tnk" + File.separator + "IfAxisTest.tnk";
 
-  IAxis ifExpr, thenExpr, elseExpr;
-
   @Before
   public void setUp() {
 

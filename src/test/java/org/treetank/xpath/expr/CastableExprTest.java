@@ -58,8 +58,6 @@ public class CastableExprTest {
 
   IItem item2;
 
-  IItemList list;
-
   int key1;
 
   int key2;
