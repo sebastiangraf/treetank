@@ -28,10 +28,14 @@ public final class XPathWriteTransactionTest {
           + File.separator
           + "resources"
           + File.separator
-          + "auction.xml";
+          + "enwiki-revisions-test.xml";
 
   public static final String PATH =
-      "target" + File.separator + "tnk" + File.separator + "XMark.tnk";
+      "target"
+          + File.separator
+          + "tnk"
+          + File.separator
+          + "enwiki-revisions-test.tnk";
 
   ISession session;
 
@@ -52,7 +56,10 @@ public final class XPathWriteTransactionTest {
   @Test
   public void test() throws Exception {
     wtx.moveToDocumentRoot();
-    final XPathAxis xpa = new XPathAxis(wtx, "//*");
+    final XPathAxis xpa =
+        new XPathAxis(wtx, "//revision[./parent::page/title/text() = '"
+            + "AmericanSamoa"
+            + "']");
     if (!xpa.hasNext()) {
       fail();
     }
@@ -61,7 +68,7 @@ public final class XPathWriteTransactionTest {
 
   @After
   public void tearDown() {
-    wtx.abort();
+    //    wtx.abort();
     wtx.close();
     session.close();
   }
