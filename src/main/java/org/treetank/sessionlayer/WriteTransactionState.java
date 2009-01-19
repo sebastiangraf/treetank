@@ -62,7 +62,7 @@ public final class WriteTransactionState extends ReadTransactionState {
       final Map<Long, AbstractPage> pageCache,
       final UberPage uberPage) {
     super(sessionConfiguration, pageCache, uberPage, uberPage
-        .getLastCommittedRevisionNumber(), null);
+        .getLastCommittedRevisionNumber(), new ItemList());
     mPageWriter = new PageWriter(sessionConfiguration);
     setRevisionRootPage(prepareRevisionRootPage());
   }
@@ -271,6 +271,7 @@ public final class WriteTransactionState extends ReadTransactionState {
   /**
    * {@inheritDoc}
    */
+  @Override
   protected void close() {
     mPageWriter.close();
     mPageWriter = null;
@@ -333,7 +334,7 @@ public final class WriteTransactionState extends ReadTransactionState {
             nodePageKey);
 
     // Last level points to node page.
-    NodePage page = (NodePage) reference.getPage();
+    NodePage page = reference.getPage();
 
     if (!reference.isInstantiated()) {
       if (reference.isCommitted()) {
