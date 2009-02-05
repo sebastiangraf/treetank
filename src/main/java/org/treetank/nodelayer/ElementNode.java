@@ -71,6 +71,7 @@ public final class ElementNode extends AbstractNode {
    * @param rightSiblingKey Key of right sibling.
    * @param nameKey Key of local part.
    * @param uriKey Key of URI.
+   * @param type the type of the element.
    */
   public ElementNode(
       final long nodeKey,

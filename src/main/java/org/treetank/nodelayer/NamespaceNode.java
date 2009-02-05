@@ -40,9 +40,10 @@ public final class NamespaceNode extends AbstractNode {
 
   /**
    * Create namespace node.
-   * 
+   * @param nodeKey Key of this namespace
    * @param uriKey Key of URI.
    * @param nameKey Key of prefix.
+   * @param parentKey Key of the parent.
    */
   public NamespaceNode(
       final long nodeKey,
@@ -64,6 +65,11 @@ public final class NamespaceNode extends AbstractNode {
     super(namespace);
   }
 
+  /** 
+   * Constructor.
+   * @param nodeKey of the Key
+   * @param in byteBuffer with the relevant data.
+   */
   public NamespaceNode(final long nodeKey, final IByteBuffer in) {
     super(SIZE, nodeKey, in);
   }
