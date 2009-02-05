@@ -36,15 +36,17 @@ import org.treetank.utils.IConstants;
  */
 public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
 
+  /** standard NODE_KEY.*/
   protected static final int NODE_KEY = 0;
 
   /** Node key is common to all node kinds. */
-  protected long[] mData;
+  protected final long[] mData;
 
   /**
    * Constructor to set node key.
    * 
    * @param nodeKey Key of node.
+   * @param size Size of the data.
    */
   public AbstractNode(final int size, final long nodeKey) {
     mData = new long[size];
@@ -54,7 +56,7 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
   /**
    * Constructor to set node key.
    * 
-   * @param nodeKey Key of node.
+   * @param node to be set
    */
   public AbstractNode(final AbstractNode node) {
     mData = new long[node.mData.length];
@@ -66,6 +68,7 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
    * 
    * @param nodeKey Key of text node.
    * @param in Input bytes to read node from.
+   * @param size Size of the data.
    */
   public AbstractNode(final int size, final long nodeKey, final IByteBuffer in) {
     mData = new long[size];
@@ -226,6 +229,9 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
     return IReadTransaction.NULL_NAME_KEY;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   public int getTypeKey() {
     return IConstants.UNKNOWN;
   }
@@ -237,53 +243,115 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
     return null;
   }
 
+  /**
+   * Serializing the data.
+   * @param out target to serialize.
+   */
   public void serialize(final IByteBuffer out) {
     out.putAll(mData);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   public final void setNodeKey(final long nodeKey) {
     mData[NODE_KEY] = nodeKey;
   }
 
+  /**
+   * Setting the parent key.
+   * @param parentKey the key for the parent.
+   */
   public void setParentKey(final long parentKey) {
   }
 
+  /**
+   * Setting the first child key.
+   * @param firstChildKey the key for the first child.
+   */
   public void setFirstChildKey(final long firstChildKey) {
   }
 
+  /**
+   * Setting the left sibling key.
+   * @param leftSiblingKey the key for the left sibling.
+   */
   public void setLeftSiblingKey(final long leftSiblingKey) {
   }
 
+  /**
+   * Setting the right sibling key.
+   * @param rightSiblingKey the key for the right sibling.
+   */
   public void setRightSiblingKey(final long rightSiblingKey) {
   }
 
+  /**
+   * Setting the child count.
+   * @param childCount to be set.
+   */
   public void setChildCount(final long childCount) {
   }
 
+  /**
+   * Incrementing the child count.
+   */
   public void incrementChildCount() {
   }
 
+  /**
+   * Decrementing the child count.
+   */
   public void decrementChildCount() {
   }
 
+  /**
+   * Inserting attribute to this node.
+   * @param attributeKey to be inserted
+   */
   public void insertAttribute(final long attributeKey) {
   }
 
+  /**
+   * Inserting namespace to this node.
+   * @param namespaceKey to be added.
+   */
   public void insertNamespace(final long namespaceKey) {
   }
 
+  /**
+   * Setting the kind of this node.
+   * @param kind to be set.
+   */
   public void setKind(final byte kind) {
   }
 
+  /**
+   * Setting the name key for this node.
+   * @param nameKey to be set.
+   */
   public void setNameKey(final int nameKey) {
   }
 
+  /**
+   * Setting the uri for this node.
+   * @param uriKey to be set.
+   */
   public void setURIKey(final int uriKey) {
   }
 
+  /**
+   * Setting the value for this node.
+   * @param valueType type of value to be set.
+   * @param value the value to be set.
+   */
   public void setValue(final int valueType, final byte[] value) {
   }
 
+  /**
+   * Setting the type of this node.
+   * @param valueType to be set.
+   */
   public void setType(final int valueType) {
   }
 
@@ -307,7 +375,7 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
    * {@inheritDoc}
    */
   public int compareTo(final AbstractNode node) {
-    final long nodeKey = ((AbstractNode) node).getNodeKey();
+    final long nodeKey = (node).getNodeKey();
     if (mData[NODE_KEY] < nodeKey) {
       return -1;
     } else if (mData[NODE_KEY] == nodeKey) {

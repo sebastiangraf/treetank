@@ -47,6 +47,7 @@ public final class AttributeNode extends AbstractNode {
    * Constructor to create attribute.
    * 
    * @param nodeKey Key of node.
+   * @param parentKey Parent of this node.
    * @param nameKey Key of qualified name.
    * @param uriKey Key of URI.
    * @param type Type of attribute value.
@@ -78,6 +79,12 @@ public final class AttributeNode extends AbstractNode {
     mValue = attribute.getRawValue();
   }
 
+  /**
+   * 
+   * Constructor.
+   * @param nodeKey key for the attribute
+   * @param in buffer for the data
+   */
   public AttributeNode(final long nodeKey, final IByteBuffer in) {
     super(SIZE, nodeKey, in);
     mValue = in.getArray((int) mData[VALUE_LENGTH]);
