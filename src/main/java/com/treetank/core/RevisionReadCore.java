@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id: RevisionReadCore.java 4241 2008-07-03 14:43:08Z kramis $
  */
 
 package com.treetank.core;
@@ -26,43 +26,39 @@ import com.treetank.shared.RevisionReference;
 
 public final class RevisionReadCore implements IRevisionReadCore {
 
-  private final IDevice mDevice1;
+	private final IDevice mDevice;
 
-  private final IDevice mDevice2;
+	public RevisionReadCore(final String device) {
 
-  public RevisionReadCore(final String device) {
+		if ((device == null) || (device.length() < 1)) {
+			throw new IllegalArgumentException(
+					"Argument 'device' must not be null and longer than zero.");
+		}
 
-    if ((device == null) || (device.length() < 1)) {
-      throw new IllegalArgumentException(
-          "Argument 'device' must not be null and longer than zero.");
-    }
+		mDevice = new Device(device + ".tt2", "r");
+	}
 
-    mDevice1 = new Device(device + ".tt1", "r");
-    mDevice2 = new Device(device + ".tt2", "r");
-  }
+	public final RevisionReference readRevision(final long revision) {
 
-  public final RevisionReference readRevision(final long revision) {
+		if ((revision < 1)) {
+			throw new IllegalArgumentException(
+					"Argument 'revision' must be greater than zero.");
+		}
 
-    if ((revision < 1)) {
-      throw new IllegalArgumentException(
-          "Argument 'revision' must be greater than zero.");
-    }
+		try {
 
-    try {
+			final ByteArrayReader reader = new ByteArrayReader(mDevice.read(
+					(revision << 6) + 960, 64));
 
-      final ByteArrayReader reader =
-          new ByteArrayReader(mDevice2.read((revision << 6) + 960, 64));
+			final RevisionReference reference = new RevisionReference();
+			reference.deserialise(reader);
 
-      final RevisionReference reference = new RevisionReference();
-      reference.deserialise(reader);
+			return reference;
 
-      return reference;
-
-    } catch (Exception e) {
-      throw new RuntimeException("RevisionReadCore "
-          + "could not read revision due to: "
-          + e.toString());
-    }
-  }
+		} catch (Exception e) {
+			throw new RuntimeException("RevisionReadCore "
+					+ "could not read revision due to: " + e.toString());
+		}
+	}
 
 }

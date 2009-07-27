@@ -26,89 +26,90 @@ import com.treetank.api.IPageReference;
 
 public final class Fragment {
 
-  private final List<IPageReference> mPageReferenceList;
+	private final List<IPageReference> mPageReferenceList;
 
-  private final List<INode> mNodeList;
+	private final List<INode> mNodeList;
 
-  public Fragment() {
-    mPageReferenceList = new ArrayList<IPageReference>();
-    mNodeList = new ArrayList<INode>();
-  }
+	public Fragment() {
+		mPageReferenceList = new ArrayList<IPageReference>();
+		mNodeList = new ArrayList<INode>();
+	}
 
-  public final void addPageReference(final IPageReference pageReference) {
-    mPageReferenceList.add(pageReference);
-  }
+	public final void addPageReference(final IPageReference pageReference) {
+		mPageReferenceList.add(pageReference);
+	}
 
-  public final void addNode(final INode node) {
-    mNodeList.add(node);
-  }
+	public final void addNode(final INode node) {
+		mNodeList.add(node);
+	}
 
-  public final IPageReference getPageReference(final int index) {
-    for (final IPageReference pageReference : mPageReferenceList) {
-      if (pageReference.getIndex() == index) {
-        return pageReference;
-      }
-    }
-    return null;
-  }
+	public final IPageReference getPageReference(final int index) {
+		for (final IPageReference pageReference : mPageReferenceList) {
+			if (pageReference.getIndex() == index) {
+				return pageReference;
+			}
+		}
+		return null;
+	}
 
-  public final INode getNode(final int index) {
-    for (final INode node : mNodeList) {
-      if (node.getIndex() == index) {
-        return node;
-      }
-    }
-    return null;
-  }
+	public final INode getNode(final int index) {
+		for (final INode node : mNodeList) {
+			if (node.getIndex() == index) {
+				return node;
+			}
+		}
+		return null;
+	}
 
-  public final int getPageReferenceCount() {
-    return mPageReferenceList.size();
-  }
+	public final int getPageReferenceCount() {
+		return mPageReferenceList.size();
+	}
 
-  public final int getNodeCount() {
-    return mNodeList.size();
-  }
+	public final int getNodeCount() {
+		return mNodeList.size();
+	}
 
-  public final void serialise(final ByteArrayWriter writer) {
-    writer.writeVarInt(mPageReferenceList.size());
-    for (final IPageReference pageReference : mPageReferenceList) {
-      pageReference.serialise(writer);
-    }
+	public final void serialise(final ByteArrayWriter writer) {
+		writer.writeVarInt(mPageReferenceList.size());
+		for (final IPageReference pageReference : mPageReferenceList) {
+			pageReference.serialise(writer);
+		}
 
-    writer.writeVarInt(mNodeList.size());
-    for (final INode node : mNodeList) {
-      writer.writeVarInt(node.getType());
-      node.serialise(writer);
-    }
-  }
+		writer.writeVarInt(mNodeList.size());
+		for (final INode node : mNodeList) {
+			writer.writeVarInt(node.getType());
+			node.serialise(writer);
+		}
+	}
 
-  public final void deserialise(final ByteArrayReader reader) {
-    IPageReference pageReference = null;
-    for (int i = 0, l = reader.readVarInt(); i < l; i++) {
-      pageReference = new PageReference();
-      pageReference.deserialise(reader);
-      mPageReferenceList.add(pageReference);
-    }
+	public final void deserialise(final ByteArrayReader reader) {
+		IPageReference pageReference = null;
+		for (int i = 0, l = reader.readVarInt(); i < l; i++) {
+			pageReference = new PageReference();
+			pageReference.deserialise(reader);
+			mPageReferenceList.add(pageReference);
+		}
 
-    INode node = null;
-    for (int i = 0, l = reader.readVarInt(); i < l; i++) {
-      switch (reader.readVarInt()) {
-      case DeletedNode.TYPE:
-        node = new DeletedNode();
-        break;
-      case RootNode.TYPE:
-        node = new RootNode();
-        break;
-      default:
-        throw new IllegalStateException("Unknown node type encountered.");
-      }
-      node.deserialise(reader);
-      mNodeList.add(node);
-    }
-  }
+		INode node = null;
+		for (int i = 0, l = reader.readVarInt(); i < l; i++) {
+			switch (reader.readVarInt()) {
+			case DeletedNode.TYPE:
+				node = new DeletedNode();
+				break;
+			case RootNode.TYPE:
+				node = new RootNode();
+				break;
+			default:
+				throw new IllegalStateException(
+						"Unknown node type encountered.");
+			}
+			node.deserialise(reader);
+			mNodeList.add(node);
+		}
+	}
 
-  public final String toString() {
-    return "Fragment()";
-  }
+	public final String toString() {
+		return "Fragment()";
+	}
 
 }

@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id: RevisionWriteCore.java 4241 2008-07-03 14:43:08Z kramis $
  */
 
 package com.treetank.core;
@@ -27,59 +27,54 @@ import com.treetank.shared.RevisionReference;
 
 public final class RevisionWriteCore implements IRevisionWriteCore {
 
-  private final IDevice mDevice1;
+	private final IDevice mDevice1;
 
-  private final IDevice mDevice2;
+	private final IDevice mDevice2;
 
-  public RevisionWriteCore(final String device) {
+	public RevisionWriteCore(final String device) {
 
-    if (device == null || device.length() < 1) {
-      throw new IllegalArgumentException(
-          "Argument 'device' must not be null and longer than zero.");
-    }
+		if (device == null || device.length() < 1) {
+			throw new IllegalArgumentException(
+					"Argument 'device' must not be null and longer than zero.");
+		}
 
-    mDevice1 = new Device(device + ".tt1", "rw");
-    mDevice2 = new Device(device + ".tt2", "rw");
-  }
+		mDevice1 = new Device(device + ".tt1", "rw");
+		mDevice2 = new Device(device + ".tt2", "rw");
+	}
 
-  public final RevisionReference writeRevision(
-      final long revision,
-      final FragmentReference fragmentReference) {
+	public final RevisionReference writeRevision(final long revision,
+			final FragmentReference fragmentReference) {
 
-    if ((revision < 1)) {
-      throw new IllegalArgumentException(
-          "Argument 'revision' must be greater than zero.");
-    }
+		if ((revision < 1)) {
+			throw new IllegalArgumentException(
+					"Argument 'revision' must be greater than zero.");
+		}
 
-    if ((fragmentReference == null)
-        || (fragmentReference.getOffset() < 1)
-        || (fragmentReference.getLength() < 1)) {
-      throw new IllegalArgumentException(
-          "Argument 'fragmentReference' must not be null "
-              + "and offset and length must be greater than zero.");
-    }
+		if ((fragmentReference == null) || (fragmentReference.getOffset() < 1)
+				|| (fragmentReference.getLength() < 1)) {
+			throw new IllegalArgumentException(
+					"Argument 'fragmentReference' must not be null "
+							+ "and offset and length must be greater than zero.");
+		}
 
-    try {
+		try {
 
-      final RevisionReference revisionReference =
-          new RevisionReference(
-              fragmentReference.getOffset(),
-              fragmentReference.getLength(),
-              revision);
+			final RevisionReference revisionReference = new RevisionReference(
+					fragmentReference.getOffset(), fragmentReference
+							.getLength(), revision);
 
-      final ByteArrayWriter writer = new ByteArrayWriter();
-      revisionReference.serialise(writer);
+			final ByteArrayWriter writer = new ByteArrayWriter();
+			revisionReference.serialise(writer);
 
-      mDevice1.write(mDevice1.size(), writer);
-      mDevice2.write(mDevice2.size(), writer);
+			mDevice1.write(mDevice1.size(), writer);
+			mDevice2.write(mDevice2.size(), writer);
 
-      return revisionReference;
+			return revisionReference;
 
-    } catch (Exception e) {
-      throw new RuntimeException("RevisionWriteCore "
-          + "could not write revision due to: "
-          + e.toString());
-    }
-  }
+		} catch (Exception e) {
+			throw new RuntimeException("RevisionWriteCore "
+					+ "could not write revision due to: " + e.toString());
+		}
+	}
 
 }

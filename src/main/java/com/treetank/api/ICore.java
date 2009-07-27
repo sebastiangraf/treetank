@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id: ICore.java 4237 2008-07-03 12:49:26Z kramis $
  */
 
 package com.treetank.api;
@@ -25,23 +25,22 @@ import com.treetank.shared.RevisionReference;
 
 public interface ICore {
 
-  public void create();
+	public void create();
 
-  public void create(final Configuration configuration);
+	public void create(final Configuration configuration);
 
-  public Configuration load();
+	public Configuration load();
 
-  public void erase();
+	public void erase();
 
-  public FragmentReference writeFragment(final Fragment fragment);
+	public FragmentReference writeFragment(final Fragment fragment);
 
-  public RevisionReference writeRevision(
-      final FragmentReference fragmentReference);
+	public RevisionReference writeRevision(
+			final FragmentReference fragmentReference);
 
-  public RevisionReference readRevision(final int core, final long revision);
+	public RevisionReference readRevision(final int core, final long revision);
 
-  public Fragment readFragment(
-      final int core,
-      final FragmentReference fragmentReference);
+	public Fragment readFragment(final int core,
+			final FragmentReference fragmentReference);
 
 }

@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src/main/java"/>
-	<classpathentry kind="src" path="src/test/java"/>
-	<classpathentry kind="src" path="src/bench/java"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="externals/junit__V4.4.jar"/>
-	<classpathentry kind="lib" path="externals/checkstyle-all__V4.4.jar"/>
-	<classpathentry kind="lib" path="externals/Perfidix__V2.1.0.jar"/>
-	<classpathentry kind="lib" path="externals/jetty__V6.1.6.jar"/>
-	<classpathentry kind="lib" path="externals/jetty-util__V6.1.6.jar"/>
-	<classpathentry kind="lib" path="externals/servlet-api__V2.5.jar"/>
-	<classpathentry kind="lib" path="externals/wstx-asl__V3.1.1.jar"/>
-	<classpathentry kind="lib" path="externals/stax-api__V1.0.1.jar"/>
-	<classpathentry kind="output" path="target/eclipse"/>
+	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
+	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
+	<classpathentry excluding="**" kind="src" output="target/test-classes" path="src/test/resources"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/JVM 1.6.0"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>

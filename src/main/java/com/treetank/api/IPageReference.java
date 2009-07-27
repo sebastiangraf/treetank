@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id: IPageReference.java 4252 2008-07-09 08:33:19Z kramis $
  */
 
 package com.treetank.api;
@@ -24,16 +24,16 @@ import com.treetank.shared.FragmentReference;
 
 public interface IPageReference {
 
-  public int getIndex();
+	public int getIndex();
 
-  public long getRevision();
+	public long getRevision();
 
-  public int getFragmentReferenceCount();
+	public int getFragmentReferenceCount();
 
-  public FragmentReference getFragmentReference(int index);
+	public FragmentReference getFragmentReference(int index);
 
-  public void serialise(final ByteArrayWriter writer);
+	public void serialise(final ByteArrayWriter writer);
 
-  public void deserialise(final ByteArrayReader reader);
+	public void deserialise(final ByteArrayReader reader);
 
 }

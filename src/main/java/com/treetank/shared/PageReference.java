@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id: PageReference.java 4252 2008-07-09 08:33:19Z kramis $
  */
 
 package com.treetank.shared;
@@ -25,67 +25,67 @@ import com.treetank.api.IPageReference;
 
 public class PageReference implements IPageReference {
 
-  private int mIndex;
+	private int mIndex;
 
-  private long mRevision;
+	private long mRevision;
 
-  private List<FragmentReference> mFragmentReferenceList;
-  
-  private FragmentReference mDirtyFragment;
+	private List<FragmentReference> mFragmentReferenceList;
 
-  public PageReference() {
-    this(0, 0);
-  }
+	private FragmentReference mDirtyFragment;
 
-  public PageReference(final int index, final long revision) {
-    mIndex = index;
-    mRevision = revision;
-    mFragmentReferenceList = new ArrayList<FragmentReference>();
-    mDirtyFragment = null;
-  }
+	public PageReference() {
+		this(0, 0);
+	}
 
-  public final void setIndex(final int index) {
-    mIndex = index;
-  }
+	public PageReference(final int index, final long revision) {
+		mIndex = index;
+		mRevision = revision;
+		mFragmentReferenceList = new ArrayList<FragmentReference>();
+		mDirtyFragment = null;
+	}
 
-  public final void setRevsion(final long revision) {
-    mRevision = revision;
-  }
+	public final void setIndex(final int index) {
+		mIndex = index;
+	}
 
-  public final int getIndex() {
-    return mIndex;
-  }
+	public final void setRevsion(final long revision) {
+		mRevision = revision;
+	}
 
-  public final long getRevision() {
-    return mRevision;
-  }
+	public final int getIndex() {
+		return mIndex;
+	}
 
-  public final int getFragmentReferenceCount() {
-    return mFragmentReferenceList.size();
-  }
+	public final long getRevision() {
+		return mRevision;
+	}
 
-  public final FragmentReference getFragmentReference(final int index) {
-    return mFragmentReferenceList.get(index);
-  }
+	public final int getFragmentReferenceCount() {
+		return mFragmentReferenceList.size();
+	}
 
-  public void serialise(final ByteArrayWriter writer) {
-    writer.writeVarInt(mIndex);
-    writer.writeVarLong(mRevision);
-    writer.writeVarInt(mFragmentReferenceList.size());
-    for (final FragmentReference fragmentReference : mFragmentReferenceList) {
-      fragmentReference.serialise(writer);
-    }
-  }
+	public final FragmentReference getFragmentReference(final int index) {
+		return mFragmentReferenceList.get(index);
+	}
 
-  public void deserialise(final ByteArrayReader reader) {
-    mIndex = reader.readVarInt();
-    mRevision = reader.readVarLong();
-    FragmentReference fragmentReference = null;
-    for (int i = 0, l = reader.readVarInt(); i < l; i++) {
-      fragmentReference = new FragmentReference();
-      fragmentReference.deserialise(reader);
-      mFragmentReferenceList.add(fragmentReference);
-    }
-  }
+	public void serialise(final ByteArrayWriter writer) {
+		writer.writeVarInt(mIndex);
+		writer.writeVarLong(mRevision);
+		writer.writeVarInt(mFragmentReferenceList.size());
+		for (final FragmentReference fragmentReference : mFragmentReferenceList) {
+			fragmentReference.serialise(writer);
+		}
+	}
+
+	public void deserialise(final ByteArrayReader reader) {
+		mIndex = reader.readVarInt();
+		mRevision = reader.readVarLong();
+		FragmentReference fragmentReference = null;
+		for (int i = 0, l = reader.readVarInt(); i < l; i++) {
+			fragmentReference = new FragmentReference();
+			fragmentReference.deserialise(reader);
+			mFragmentReferenceList.add(fragmentReference);
+		}
+	}
 
 }

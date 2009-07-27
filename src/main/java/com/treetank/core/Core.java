@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id: Core.java 4237 2008-07-03 12:49:26Z kramis $
  */
 
 package com.treetank.core;
@@ -34,103 +34,94 @@ import com.treetank.shared.RevisionReference;
 
 public final class Core implements ICore {
 
-  private final String mDevice;
+	private final String mDevice;
 
-  private final int mReadCoreCount;
+	private final int mReadCoreCount;
 
-  private final IRevisionWriteCore mRevisionWriteCore;
+	private final IRevisionWriteCore mRevisionWriteCore;
 
-  private final IFragmentWriteCore mFragmentWriteCore;
+	private final IFragmentWriteCore mFragmentWriteCore;
 
-  private final IRevisionReadCore[] mRevisionReadCore;
+	private final IRevisionReadCore[] mRevisionReadCore;
 
-  private final IFragmentReadCore[] mFragmentReadCore;
+	private final IFragmentReadCore[] mFragmentReadCore;
 
-  private Configuration mConfiguration;
+	private Configuration mConfiguration;
 
-  public Core(final String device, final int readCoreCount) {
-    mDevice = device;
-    mReadCoreCount = readCoreCount;
+	public Core(final String device, final int readCoreCount) {
+		mDevice = device;
+		mReadCoreCount = readCoreCount;
 
-    mRevisionWriteCore = new RevisionWriteCore(device);
-    mFragmentWriteCore = new FragmentWriteCore(device);
+		mRevisionWriteCore = new RevisionWriteCore(device);
+		mFragmentWriteCore = new FragmentWriteCore(device);
 
-    mRevisionReadCore = new IRevisionReadCore[readCoreCount];
-    mFragmentReadCore = new IFragmentReadCore[readCoreCount];
-    for (int i = 0; i < readCoreCount; i++) {
-      mRevisionReadCore[i] = new RevisionReadCore(device);
-      mFragmentReadCore[i] = new FragmentReadCore(device);
-    }
-    mConfiguration = null;
-  }
+		mRevisionReadCore = new IRevisionReadCore[readCoreCount];
+		mFragmentReadCore = new IFragmentReadCore[readCoreCount];
+		for (int i = 0; i < readCoreCount; i++) {
+			mRevisionReadCore[i] = new RevisionReadCore(device);
+			mFragmentReadCore[i] = new FragmentReadCore(device);
+		}
+		mConfiguration = null;
+	}
 
-  public final void create() {
-    mConfiguration = new Configuration();
-    final IHeaderCreateCore headerCreateCore = new HeaderCreateCore(mDevice);
-    headerCreateCore.create(mConfiguration);
-  }
+	public final void create() {
+		mConfiguration = new Configuration();
+		final IHeaderCreateCore headerCreateCore = new HeaderCreateCore(mDevice);
+		headerCreateCore.create(mConfiguration);
+	}
 
-  public final void create(final Configuration configuration) {
-    mConfiguration = configuration;
-    final IHeaderCreateCore headerCreateCore = new HeaderCreateCore(mDevice);
-    headerCreateCore.create(configuration);
-  }
+	public final void create(final Configuration configuration) {
+		mConfiguration = configuration;
+		final IHeaderCreateCore headerCreateCore = new HeaderCreateCore(mDevice);
+		headerCreateCore.create(configuration);
+	}
 
-  public final Configuration load() {
-    final IHeaderLoadCore headerLoadCore = new HeaderLoadCore(mDevice);
-    mConfiguration = headerLoadCore.load();
-    return mConfiguration;
-  }
+	public final Configuration load() {
+		final IHeaderLoadCore headerLoadCore = new HeaderLoadCore(mDevice);
+		mConfiguration = headerLoadCore.load();
+		return mConfiguration;
+	}
 
-  public final void erase() {
-    mConfiguration = null;
-    new File(mDevice + ".tt1").delete();
-    new File(mDevice + ".tt2").delete();
-  }
+	public final void erase() {
+		mConfiguration = null;
+		new File(mDevice + ".tt1").delete();
+		new File(mDevice + ".tt2").delete();
+	}
 
-  public final FragmentReference writeFragment(final Fragment fragment) {
-    return mFragmentWriteCore.writeFragment(fragment);
-  }
+	public final FragmentReference writeFragment(final Fragment fragment) {
+		return mFragmentWriteCore.writeFragment(fragment);
+	}
 
-  public final RevisionReference writeRevision(
-      final FragmentReference fragmentReference) {
-    try {
-      final RevisionReference revisionReference =
-          mRevisionWriteCore.writeRevision(
-              mConfiguration.getMaxRevision() + 1,
-              fragmentReference);
-      mConfiguration.incrementMaxRevision();
-      return revisionReference;
-    } catch (Exception e) {
-      throw new RuntimeException("Could not write revision due to: "
-          + e.toString());
-    }
-  }
+	public final RevisionReference writeRevision(
+			final FragmentReference fragmentReference) {
+		try {
+			final RevisionReference revisionReference = mRevisionWriteCore
+					.writeRevision(mConfiguration.getMaxRevision() + 1,
+							fragmentReference);
+			mConfiguration.incrementMaxRevision();
+			return revisionReference;
+		} catch (Exception e) {
+			throw new RuntimeException("Could not write revision due to: "
+					+ e.toString());
+		}
+	}
 
-  public final RevisionReference readRevision(
-      final int core,
-      final long revision) {
-    if ((core < 1) || (core > mReadCoreCount)) {
-      throw new IllegalArgumentException("Argument 'core="
-          + core
-          + "' must be in [1,...,"
-          + (mReadCoreCount)
-          + "].");
-    }
-    return mRevisionReadCore[core - 1].readRevision(revision);
-  }
+	public final RevisionReference readRevision(final int core,
+			final long revision) {
+		if ((core < 1) || (core > mReadCoreCount)) {
+			throw new IllegalArgumentException("Argument 'core=" + core
+					+ "' must be in [1,...," + (mReadCoreCount) + "].");
+		}
+		return mRevisionReadCore[core - 1].readRevision(revision);
+	}
 
-  public final Fragment readFragment(
-      final int core,
-      final FragmentReference fragmentReference) {
-    if ((core < 1) || (core > mReadCoreCount)) {
-      throw new IllegalArgumentException("Argument 'core="
-          + core
-          + "' must be in [1,...,"
-          + (mReadCoreCount)
-          + "].");
-    }
-    return mFragmentReadCore[core - 1].readFragment(fragmentReference);
-  }
+	public final Fragment readFragment(final int core,
+			final FragmentReference fragmentReference) {
+		if ((core < 1) || (core > mReadCoreCount)) {
+			throw new IllegalArgumentException("Argument 'core=" + core
+					+ "' must be in [1,...," + (mReadCoreCount) + "].");
+		}
+		return mFragmentReadCore[core - 1].readFragment(fragmentReference);
+	}
 
 }

@@ -20,33 +20,33 @@ package com.treetank.shared;
 
 public final class Configuration {
 
-  private long mMaxRevision;
+	private long mMaxRevision;
 
-  public Configuration() {
-    this(0);
-  }
+	public Configuration() {
+		this(0);
+	}
 
-  public Configuration(final long maxRevision) {
-    mMaxRevision = maxRevision;
-  }
+	public Configuration(final long maxRevision) {
+		mMaxRevision = maxRevision;
+	}
 
-  public final void incrementMaxRevision() {
-    mMaxRevision += 1;
-  }
+	public final void incrementMaxRevision() {
+		mMaxRevision += 1;
+	}
 
-  public final long getMaxRevision() {
-    return mMaxRevision;
-  }
+	public final long getMaxRevision() {
+		return mMaxRevision;
+	}
 
-  public final void serialise(final ByteArrayWriter writer) {
-    writer.writeByteArray(new byte[448]);
-  }
+	public final void serialise(final ByteArrayWriter writer) {
+		writer.writeByteArray(new byte[448]);
+	}
 
-  public final void deserialise(final ByteArrayReader reader) {
-  }
+	public final void deserialise(final ByteArrayReader reader) {
+	}
 
-  public final String toString() {
-    return "Configuration(" + mMaxRevision + ")";
-  }
+	public final String toString() {
+		return "Configuration(" + mMaxRevision + ")";
+	}
 
 }

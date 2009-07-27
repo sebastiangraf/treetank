@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id: IRevisionReadCore.java 4237 2008-07-03 12:49:26Z kramis $
  */
 
 package com.treetank.api;
@@ -22,6 +22,6 @@ import com.treetank.shared.RevisionReference;
 
 public interface IRevisionReadCore {
 
-  public RevisionReference readRevision(final long revision);
+	public RevisionReference readRevision(final long revision);
 
 }

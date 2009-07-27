@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id: sys_treetank_write_fragment.c 4407 2008-08-27 09:09:44Z kramis $
  */
 
 #include "sys_treetank.h"

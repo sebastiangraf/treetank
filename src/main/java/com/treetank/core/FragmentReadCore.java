@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id: FragmentReadCore.java 4241 2008-07-03 14:43:08Z kramis $
  */
 
 package com.treetank.core;
@@ -30,62 +30,60 @@ import com.treetank.shared.FragmentReference;
 
 public final class FragmentReadCore implements IFragmentReadCore {
 
-  private final IDevice mDevice1;
+	private final IDevice mDevice1;
 
-  private final Inflater mInflater;
+	private final Inflater mInflater;
 
-  private final ByteArrayOutputStream mOut;
+	private final ByteArrayOutputStream mOut;
 
-  private final byte[] mBuffer;
+	private final byte[] mBuffer;
 
-  public FragmentReadCore(final String device) {
+	public FragmentReadCore(final String device) {
 
-    if ((device == null) || (device.length() < 1)) {
-      throw new IllegalArgumentException(
-          "Argument 'device' must not be null and longer than zero.");
-    }
+		if ((device == null) || (device.length() < 1)) {
+			throw new IllegalArgumentException(
+					"Argument 'device' must not be null and longer than zero.");
+		}
 
-    mDevice1 = new Device(device + ".tt1", "r");
-    mInflater = new Inflater();
-    mOut = new ByteArrayOutputStream();
-    mBuffer = new byte[8192];
-  }
+		mDevice1 = new Device(device + ".tt1", "r");
+		mInflater = new Inflater();
+		mOut = new ByteArrayOutputStream();
+		mBuffer = new byte[8192];
+	}
 
-  public final Fragment readFragment(final FragmentReference fragmentReference) {
+	public final Fragment readFragment(final FragmentReference fragmentReference) {
 
-    if ((fragmentReference == null)
-        || (fragmentReference.getOffset() < 1)
-        || (fragmentReference.getLength() < 1)) {
-      throw new IllegalArgumentException(
-          "Argument 'fragmentReference' must not be null "
-              + "and offset and length must be greater than zero.");
-    }
+		if ((fragmentReference == null) || (fragmentReference.getOffset() < 1)
+				|| (fragmentReference.getLength() < 1)) {
+			throw new IllegalArgumentException(
+					"Argument 'fragmentReference' must not be null "
+							+ "and offset and length must be greater than zero.");
+		}
 
-    try {
+		try {
 
-      final byte[] fragment =
-          mDevice1.read(fragmentReference.getOffset(), fragmentReference
-              .getLength());
+			final byte[] fragment = mDevice1.read(
+					fragmentReference.getOffset(), fragmentReference
+							.getLength());
 
-      mInflater.reset();
-      mOut.reset();
-      mInflater.setInput(fragment);
-      int count;
-      while (!mInflater.finished()) {
-        count = mInflater.inflate(mBuffer);
-        mOut.write(mBuffer, 0, count);
-      }
+			mInflater.reset();
+			mOut.reset();
+			mInflater.setInput(fragment);
+			int count;
+			while (!mInflater.finished()) {
+				count = mInflater.inflate(mBuffer);
+				mOut.write(mBuffer, 0, count);
+			}
 
-      final Fragment f = new Fragment();
-      f.deserialise(new ByteArrayReader(mOut.toByteArray()));
+			final Fragment f = new Fragment();
+			f.deserialise(new ByteArrayReader(mOut.toByteArray()));
 
-      return f;
+			return f;
 
-    } catch (Exception e) {
-      throw new RuntimeException("FragmentReadCore "
-          + "could not read fragment due to: "
-          + e.toString());
-    }
-  }
+		} catch (Exception e) {
+			throw new RuntimeException("FragmentReadCore "
+					+ "could not read fragment due to: " + e.toString());
+		}
+	}
 
 }
