@@ -92,6 +92,16 @@ public final class RevIndex {
 		}
 	}
 
+	public final void compact(final double threshold) {
+
+	}
+
+	/**
+	 * Inserting the next node in the document tree
+	 * 
+	 * @param docs
+	 *            stack with order to be inserted.
+	 */
 	public final void insertNextNode(final Stack<String> docs) {
 		indexRev = MetaTreeNavigator.getPersistentNumber(rtx);
 		if (rtx instanceof IWriteTransaction) {
@@ -179,7 +189,7 @@ public final class RevIndex {
 		if (rtx instanceof IWriteTransaction) {
 			final IWriteTransaction wtx = (IWriteTransaction) rtx;
 			wtx.commit();
-			// cleanUpStructure();
+//			cleanUpStructure();
 			indexRev = MetaTreeNavigator.adaptMetaTree(wtx, indexRev);
 			wtx.moveToDocumentRoot();
 			return indexRev;
@@ -257,29 +267,29 @@ public final class RevIndex {
 		return DocumentTreeNavigator.getDocElements(rtx);
 	}
 
-	// private final void checkAndUpdateLeafAttribute() {
-	// if (rtx instanceof IWriteTransaction) {
-	// final IWriteTransaction wtx = (IWriteTransaction) rtx;
-	// // if the leaf has already attributes, check against the last revs
-	// if (wtx.getNode().getAttributeCount() > 0) {
-	// wtx.moveToAttribute(0);
-	// final long indexRev = Long.parseLong(wtx
-	// .getValueOfCurrentNode());
-	// if (indexRev < this.indexRev + 1) {
-	// wtx.remove();
-	// wtx
-	// .insertAttribute(INDEXREV_ATTRIBUTEKEY, "",
-	// new StringBuilder().append(indexRev + 1)
-	// .toString());
-	// }
-	// } else {
-	// // ...or insert a new attribute
-	// wtx.insertAttribute(INDEXREV_ATTRIBUTEKEY, "",
-	// new StringBuilder().append(indexRev + 1).toString());
-	// }
-	// wtx.moveToParent();
-	// }
-	// }
+	private final void checkAndUpdateLeafAttribute() {
+		if (rtx instanceof IWriteTransaction) {
+			final IWriteTransaction wtx = (IWriteTransaction) rtx;
+			// if the leaf has already attributes, check against the last revs
+			if (wtx.getNode().getAttributeCount() > 0) {
+				wtx.moveToAttribute(0);
+				final long indexRev = Long.parseLong(wtx
+						.getValueOfCurrentNode());
+				if (indexRev < this.indexRev + 1) {
+					wtx.remove();
+					wtx
+							.insertAttribute(INDEXREV_ATTRIBUTEKEY, "",
+									new StringBuilder().append(indexRev + 1)
+											.toString());
+				}
+			} else {
+				// ...or insert a new attribute
+				wtx.insertAttribute(INDEXREV_ATTRIBUTEKEY, "",
+						new StringBuilder().append(indexRev + 1).toString());
+			}
+			wtx.moveToParent();
+		}
+	}
 
 	IReadTransaction getTrans() {
 		return rtx;

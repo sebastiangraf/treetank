@@ -7,7 +7,7 @@ import com.treetank.utils.FastWeakHashMap;
 import com.treetank.utils.IByteBuffer;
 import com.treetank.utils.IConstants;
 
-public class WeakNodePage extends NodePage {
+public class CachedNodePage extends NodePage {
 
 	private final PageReader mReader;
 
@@ -15,7 +15,7 @@ public class WeakNodePage extends NodePage {
 
 	private final Map<Integer, AbstractNode> refs;
 
-	public WeakNodePage(final PageReference<NodePage> page,
+	public CachedNodePage(final PageReference<NodePage> page,
 			final long nodePageKey, final PageReader reader) {
 		super(nodePageKey);
 		mReference = page;
