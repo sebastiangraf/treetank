@@ -35,7 +35,7 @@ import com.treetank.page.PageReference;
 import com.treetank.page.PageWriter;
 import com.treetank.page.RevisionRootPage;
 import com.treetank.page.UberPage;
-import com.treetank.page.WeakNodePage;
+import com.treetank.page.CachedNodePage;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.NamePageHash;
 
@@ -189,7 +189,7 @@ public final class WriteTransactionState extends ReadTransactionState {
 
 			// Make sure the reference tree does not grow beyond memory, but
 			// only if the reference it a real one, not a weak one
-			if (!(reference.getPage() instanceof WeakNodePage)) {
+			if (!(reference.getPage() instanceof CachedNodePage)) {
 				getPageCache().put(reference.getStart(), reference.getPage());
 			}
 
@@ -305,7 +305,7 @@ public final class WriteTransactionState extends ReadTransactionState {
 
 		if (!reference.isInstantiated()) {
 			if (reference.isCommitted()) {
-				page = new WeakNodePage(reference, nodePageKey, getPageReader());
+				page = new CachedNodePage(reference, nodePageKey, getPageReader());
 				reference.setPage(page);
 			} else {
 				page = new NodePage(nodePageKey);

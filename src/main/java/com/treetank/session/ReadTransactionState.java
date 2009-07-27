@@ -30,7 +30,7 @@ import com.treetank.page.PageReader;
 import com.treetank.page.PageReference;
 import com.treetank.page.RevisionRootPage;
 import com.treetank.page.UberPage;
-import com.treetank.page.WeakNodePage;
+import com.treetank.page.CachedNodePage;
 import com.treetank.utils.IByteBuffer;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.NamePageHash;
@@ -140,8 +140,8 @@ public class ReadTransactionState {
 		IItem returnVal;
 
 		// If nodePage is a weak one, the moveto is not cached
-		if (mNodePage instanceof WeakNodePage) {
-			returnVal = ((WeakNodePage) mNodePage).getWeakNode(nodePageOffset);
+		if (mNodePage instanceof CachedNodePage) {
+			returnVal = ((CachedNodePage) mNodePage).getWeakNode(nodePageOffset);
 		} else {
 			returnVal = mNodePage.getNode(nodePageOffset);
 		}
