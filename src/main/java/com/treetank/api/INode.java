@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id: INode.java 4252 2008-07-09 08:33:19Z kramis $
  */
 
 package com.treetank.api;
@@ -23,14 +23,14 @@ import com.treetank.shared.ByteArrayWriter;
 
 public interface INode {
 
-  public int getType();
+	public int getType();
 
-  public int getIndex();
+	public int getIndex();
 
-  public long getRevision();
+	public long getRevision();
 
-  public void serialise(final ByteArrayWriter writer);
+	public void serialise(final ByteArrayWriter writer);
 
-  public void deserialise(final ByteArrayReader reader);
+	public void deserialise(final ByteArrayReader reader);
 
 }

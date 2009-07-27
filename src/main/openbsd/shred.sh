@@ -7,4 +7,4 @@
 /treetank/service/wstx-asl.jar:\
 /treetank/service/stax-api.jar:\
 /treetank/service/treetank.jar:\
-    org.treetank.xmllayer.XMLShredder $1 $2
+    com.treetank.service.xml.XMLShredder $1 $2

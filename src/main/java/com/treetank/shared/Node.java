@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id: Node.java 4252 2008-07-09 08:33:19Z kramis $
  */
 
 package com.treetank.shared;
@@ -22,45 +22,45 @@ import com.treetank.api.INode;
 
 public abstract class Node implements INode {
 
-  private int mIndex;
+	private int mIndex;
 
-  private long mRevision;
+	private long mRevision;
 
-  public Node() {
-    this(0, 0);
-  }
+	public Node() {
+		this(0, 0);
+	}
 
-  public Node(final int index, final long revision) {
-    mIndex = index;
-    mRevision = revision;
-  }
+	public Node(final int index, final long revision) {
+		mIndex = index;
+		mRevision = revision;
+	}
 
-  public final void setIndex(final int index) {
-    mIndex = index;
-  }
+	public final void setIndex(final int index) {
+		mIndex = index;
+	}
 
-  public final void setRevsion(final long revision) {
-    mRevision = revision;
-  }
+	public final void setRevsion(final long revision) {
+		mRevision = revision;
+	}
 
-  public final int getIndex() {
-    return mIndex;
-  }
+	public final int getIndex() {
+		return mIndex;
+	}
 
-  public final long getRevision() {
-    return mRevision;
-  }
+	public final long getRevision() {
+		return mRevision;
+	}
 
-  public void serialise(final ByteArrayWriter writer) {
-    writer.writeVarInt(mIndex);
-    writer.writeVarLong(mRevision);
-  }
+	public void serialise(final ByteArrayWriter writer) {
+		writer.writeVarInt(mIndex);
+		writer.writeVarLong(mRevision);
+	}
 
-  public void deserialise(final ByteArrayReader reader) {
-    mIndex = reader.readVarInt();
-    mRevision = reader.readVarLong();
-  }
+	public void deserialise(final ByteArrayReader reader) {
+		mIndex = reader.readVarInt();
+		mRevision = reader.readVarLong();
+	}
 
-  public abstract int getType();
+	public abstract int getType();
 
 }

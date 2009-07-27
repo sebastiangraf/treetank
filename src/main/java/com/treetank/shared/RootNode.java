@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id: RootNode.java 4252 2008-07-09 08:33:19Z kramis $
  */
 
 package com.treetank.shared;
@@ -22,60 +22,57 @@ import com.treetank.api.INode;
 
 public final class RootNode extends Node implements INode {
 
-  public static final int TYPE = 1;
+	public static final int TYPE = 1;
 
-  private String mAuthor;
+	private String mAuthor;
 
-  private String mComment;
+	private String mComment;
 
-  public RootNode() {
-    this(0, 0, null, null);
-  }
+	public RootNode() {
+		this(0, 0, null, null);
+	}
 
-  public RootNode(
-      final int index,
-      final long revision,
-      final String author,
-      final String comment) {
-    super(index, revision);
-    mAuthor = author;
-    mComment = comment;
-  }
+	public RootNode(final int index, final long revision, final String author,
+			final String comment) {
+		super(index, revision);
+		mAuthor = author;
+		mComment = comment;
+	}
 
-  public final void setAuthor(final String author) {
-    mAuthor = author;
-  }
+	public final void setAuthor(final String author) {
+		mAuthor = author;
+	}
 
-  public final void setComment(final String comment) {
-    mComment = comment;
-  }
+	public final void setComment(final String comment) {
+		mComment = comment;
+	}
 
-  public final String getAuthor() {
-    return mAuthor;
-  }
+	public final String getAuthor() {
+		return mAuthor;
+	}
 
-  public final String getComment() {
-    return mComment;
-  }
+	public final String getComment() {
+		return mComment;
+	}
 
-  public final void serialise(final ByteArrayWriter buffer) {
-    super.serialise(buffer);
-    buffer.writeUtf(mAuthor);
-    buffer.writeUtf(mComment);
-  }
+	public final void serialise(final ByteArrayWriter buffer) {
+		super.serialise(buffer);
+		buffer.writeUtf(mAuthor);
+		buffer.writeUtf(mComment);
+	}
 
-  public final void deserialise(final ByteArrayReader buffer) {
-    super.deserialise(buffer);
-    mAuthor = buffer.readUtf();
-    mComment = buffer.readUtf();
-  }
+	public final void deserialise(final ByteArrayReader buffer) {
+		super.deserialise(buffer);
+		mAuthor = buffer.readUtf();
+		mComment = buffer.readUtf();
+	}
 
-  public final int getType() {
-    return TYPE;
-  }
+	public final int getType() {
+		return TYPE;
+	}
 
-  public final String toString() {
-    return "RootNode(" + getIndex() + ", " + getRevision() + ")";
-  }
+	public final String toString() {
+		return "RootNode(" + getIndex() + ", " + getRevision() + ")";
+	}
 
 }

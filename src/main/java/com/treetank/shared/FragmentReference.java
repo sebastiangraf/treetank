@@ -20,47 +20,47 @@ package com.treetank.shared;
 
 public final class FragmentReference {
 
-  private long mOffset;
+	private long mOffset;
 
-  private int mLength;
+	private int mLength;
 
-  public FragmentReference() {
-    this(0, 0);
-  }
+	public FragmentReference() {
+		this(0, 0);
+	}
 
-  public FragmentReference(final long offset, final int length) {
-    mOffset = offset;
-    mLength = length;
-  }
+	public FragmentReference(final long offset, final int length) {
+		mOffset = offset;
+		mLength = length;
+	}
 
-  public final void setOffset(final long offset) {
-    mOffset = offset;
-  }
+	public final void setOffset(final long offset) {
+		mOffset = offset;
+	}
 
-  public final void setLength(final int length) {
-    mLength = length;
-  }
+	public final void setLength(final int length) {
+		mLength = length;
+	}
 
-  public final long getOffset() {
-    return mOffset;
-  }
+	public final long getOffset() {
+		return mOffset;
+	}
 
-  public final int getLength() {
-    return mLength;
-  }
+	public final int getLength() {
+		return mLength;
+	}
 
-  public final void serialise(final ByteArrayWriter writer) {
-    writer.writeVarLong(mOffset);
-    writer.writeVarInt(mLength);
-  }
+	public final void serialise(final ByteArrayWriter writer) {
+		writer.writeVarLong(mOffset);
+		writer.writeVarInt(mLength);
+	}
 
-  public final void deserialise(final ByteArrayReader reader) {
-    mOffset = reader.readVarLong();
-    mLength = reader.readVarInt();
-  }
+	public final void deserialise(final ByteArrayReader reader) {
+		mOffset = reader.readVarLong();
+		mLength = reader.readVarInt();
+	}
 
-  public final String toString() {
-    return "FragmentReference(" + mOffset + ", " + mLength + ")";
-  }
+	public final String toString() {
+		return "FragmentReference(" + mOffset + ", " + mLength + ")";
+	}
 
 }

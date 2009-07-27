@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id: IFragmentReadCore.java 4237 2008-07-03 12:49:26Z kramis $
  */
 
 package com.treetank.api;
@@ -23,6 +23,6 @@ import com.treetank.shared.FragmentReference;
 
 public interface IFragmentReadCore {
 
-  public Fragment readFragment(final FragmentReference fragmentReference);
+	public Fragment readFragment(final FragmentReference fragmentReference);
 
 }

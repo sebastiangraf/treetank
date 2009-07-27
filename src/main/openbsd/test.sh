@@ -5,4 +5,4 @@
 /treetank/service\
     -classpath \
 /treetank/service/treetank.jar:\
-    org.treetank.service.TestTreeTankService
+    com.treetank.service.rest.TestTreeTankService

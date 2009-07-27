@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id: IDevice.java 4241 2008-07-03 14:43:08Z kramis $
  */
 
 package com.treetank.api;
@@ -22,12 +22,12 @@ import com.treetank.shared.ByteArrayWriter;
 
 public interface IDevice {
 
-  public byte[] read(final long offset, final int length);
+	public byte[] read(final long offset, final int length);
 
-  public void write(final long offset, final byte[] buffer);
+	public void write(final long offset, final byte[] buffer);
 
-  public void write(final long offset, final ByteArrayWriter writer);
+	public void write(final long offset, final ByteArrayWriter writer);
 
-  public long size();
+	public long size();
 
 }

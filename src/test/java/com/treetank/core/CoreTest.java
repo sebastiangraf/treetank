@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id: CoreTest.java 4367 2008-08-24 12:24:09Z kramis $
  */
 
 package com.treetank.core;
@@ -31,53 +31,56 @@ import com.treetank.shared.RootNode;
 
 public class CoreTest {
 
-  private static final String TANK = "target/tnk/CoreTest";
+	private static final String TANK = "target/tnk/CoreTest";
 
-  @Before
-  public void setUp() {
-    final Core tank = new Core(TANK, 1);
-    tank.erase();
-  }
+	@Before
+	public void setUp() {
+		final Core tank = new Core(TANK, 1);
+		tank.erase();
+	}
 
-  @Test
-  public void testCreateLoad() {
-    final Core tank = new Core(TANK, 1);
-    final Configuration configuration = new Configuration();
-    tank.create(configuration);
+	@Test
+	public void testCreateLoad() {
+		final Core tank = new Core(TANK, 1);
+		final Configuration configuration = new Configuration();
+		tank.create(configuration);
 
-    final Configuration newConfiguration = tank.load();
+		final Configuration newConfiguration = tank.load();
 
-    Assert.assertEquals(configuration.getMaxRevision(), newConfiguration
-        .getMaxRevision());
-  }
+		Assert.assertEquals(configuration.getMaxRevision(), newConfiguration
+				.getMaxRevision());
+	}
 
-  @Test
-  public void testWriteRead() {
-    final Core tank = new Core(TANK, 1);
-    tank.create();
+	@Test
+	public void testWriteRead() {
+		final Core tank = new Core(TANK, 1);
+		tank.create();
 
-    final Fragment fragment = new Fragment();
-    fragment.addNode(new RootNode(1, 2, "Marc", "Foo."));
-    fragment.addNode(new DeletedNode(2, 2));
+		final Fragment fragment = new Fragment();
+		fragment.addNode(new RootNode(1, 2, "Marc", "Foo."));
+		fragment.addNode(new DeletedNode(2, 2));
 
-    final FragmentReference fragmentReference = tank.writeFragment(fragment);
-    tank.writeRevision(fragmentReference);
+		final FragmentReference fragmentReference = tank
+				.writeFragment(fragment);
+		tank.writeRevision(fragmentReference);
 
-    final RevisionReference newRevisionReference = tank.readRevision(1, 1);
-    Assert.assertEquals(fragmentReference.getOffset(), newRevisionReference
-        .getOffset());
-    Assert.assertEquals(fragmentReference.getLength(), newRevisionReference
-        .getLength());
+		final RevisionReference newRevisionReference = tank.readRevision(1, 1);
+		Assert.assertEquals(fragmentReference.getOffset(), newRevisionReference
+				.getOffset());
+		Assert.assertEquals(fragmentReference.getLength(), newRevisionReference
+				.getLength());
 
-    final Fragment newFragment =
-        tank.readFragment(1, new FragmentReference(newRevisionReference
-            .getOffset(), newRevisionReference.getLength()));
-    Assert.assertEquals(fragment.getNodeCount(), newFragment.getNodeCount());
-    Assert.assertEquals(fragment.getNode(1).getRevision(), newFragment.getNode(
-        1).getRevision());
-    Assert
-        .assertEquals("Marc", ((RootNode) newFragment.getNode(1)).getAuthor());
-    Assert.assertEquals(0, newFragment.getNode(2).getType());
-  }
+		final Fragment newFragment = tank.readFragment(1,
+				new FragmentReference(newRevisionReference.getOffset(),
+						newRevisionReference.getLength()));
+		Assert
+				.assertEquals(fragment.getNodeCount(), newFragment
+						.getNodeCount());
+		Assert.assertEquals(fragment.getNode(1).getRevision(), newFragment
+				.getNode(1).getRevision());
+		Assert.assertEquals("Marc", ((RootNode) newFragment.getNode(1))
+				.getAuthor());
+		Assert.assertEquals(0, newFragment.getNode(2).getType());
+	}
 
 }

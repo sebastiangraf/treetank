@@ -12,5 +12,5 @@ do
 /treetank/service/jetty.jar:\
 /treetank/service/servlet-api.jar:\
 /treetank/service/treetank.jar:\
-    org.treetank.service.TreeTankService
+    com.treetank.service.rest.TreeTankService
 done

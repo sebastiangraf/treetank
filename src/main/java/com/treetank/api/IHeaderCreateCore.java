@@ -13,7 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id$
+ * $Id: IHeaderCreateCore.java 4237 2008-07-03 12:49:26Z kramis $
  */
 
 package com.treetank.api;
@@ -22,6 +22,6 @@ import com.treetank.shared.Configuration;
 
 public interface IHeaderCreateCore {
 
-  public void create(final Configuration configuration);
+	public void create(final Configuration configuration);
 
 }
