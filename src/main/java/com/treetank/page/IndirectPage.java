@@ -18,7 +18,8 @@
 
 package com.treetank.page;
 
-import com.treetank.utils.IByteBuffer;
+import java.nio.ByteBuffer;
+
 import com.treetank.utils.IConstants;
 
 /**
@@ -43,7 +44,7 @@ public final class IndirectPage extends AbstractPage {
 	 * @param in
 	 *            Input bytes.
 	 */
-	public IndirectPage(final IByteBuffer in) {
+	public IndirectPage(final ByteBuffer in) {
 		super(IConstants.INP_REFERENCE_COUNT, in);
 	}
 

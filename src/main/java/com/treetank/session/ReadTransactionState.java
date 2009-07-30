@@ -18,6 +18,7 @@
 
 package com.treetank.session;
 
+import java.nio.ByteBuffer;
 import java.util.Map;
 
 import com.treetank.api.IItem;
@@ -30,8 +31,6 @@ import com.treetank.page.PageReader;
 import com.treetank.page.PageReference;
 import com.treetank.page.RevisionRootPage;
 import com.treetank.page.UberPage;
-import com.treetank.page.CachedNodePage;
-import com.treetank.utils.IByteBuffer;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.NamePageHash;
 
@@ -140,12 +139,7 @@ public class ReadTransactionState {
 		IItem returnVal;
 
 		// If nodePage is a weak one, the moveto is not cached
-		if (mNodePage instanceof CachedNodePage) {
-			returnVal = ((CachedNodePage) mNodePage).getWeakNode(nodePageOffset);
-		} else {
-			returnVal = mNodePage.getNode(nodePageOffset);
-		}
-
+		returnVal = mNodePage.getNode(nodePageOffset);
 
 		return returnVal;
 
@@ -343,7 +337,7 @@ public class ReadTransactionState {
 
 		// If there is no page, get it from the storage and cache it.
 		if (page == null) {
-			final IByteBuffer in = mPageReader.read(reference);
+			final ByteBuffer in = mPageReader.read(reference);
 			page = new NodePage(in, nodePageKey);
 			mPageCache.put(reference.getStart(), page);
 		}
@@ -366,7 +360,7 @@ public class ReadTransactionState {
 
 		// If there is no page, get it from the storage and cache it.
 		if (page == null) {
-			final IByteBuffer in = mPageReader.read(reference);
+			final ByteBuffer in = mPageReader.read(reference);
 			page = new NamePage(in);
 			mPageCache.put(reference.getStart(), page);
 		}
@@ -388,7 +382,7 @@ public class ReadTransactionState {
 
 		// If there is no page, get it from the storage and cache it.
 		if (page == null) {
-			final IByteBuffer in = mPageReader.read(reference);
+			final ByteBuffer in = mPageReader.read(reference);
 			page = new IndirectPage(in);
 			mPageCache.put(reference.getStart(), page);
 		}
@@ -413,7 +407,7 @@ public class ReadTransactionState {
 
 		// If there is no page, get it from the storage and cache it.
 		if (page == null) {
-			final IByteBuffer in = mPageReader.read(reference);
+			final ByteBuffer in = mPageReader.read(reference);
 			page = new RevisionRootPage(in, revisionKey);
 			mPageCache.put(reference.getStart(), page);
 		}

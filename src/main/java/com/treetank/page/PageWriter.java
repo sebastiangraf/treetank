@@ -20,13 +20,10 @@ package com.treetank.page;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 
-import com.treetank.openbsd.ByteBufferNativeImpl;
-import com.treetank.openbsd.CryptoNativeImpl;
 import com.treetank.session.SessionConfiguration;
-import com.treetank.utils.ByteBufferJavaImpl;
 import com.treetank.utils.CryptoJavaImpl;
-import com.treetank.utils.IByteBuffer;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.ICrypto;
 
@@ -47,7 +44,7 @@ public final class PageWriter {
 	private ICrypto mCompressor;
 
 	/** Temporary data buffer. */
-	private IByteBuffer mBuffer;
+	private ByteBuffer mBuffer;
 
 	/**
 	 * Constructor.
@@ -65,15 +62,8 @@ public final class PageWriter {
 					sessionConfiguration.getAbsolutePath(),
 					IConstants.READ_WRITE);
 
-			try {
-				System.loadLibrary("TreeTank");
-				mCompressor = new CryptoNativeImpl();
-				mBuffer = new ByteBufferNativeImpl(IConstants.BUFFER_SIZE);
-				((ByteBufferNativeImpl) mBuffer).allocate();
-			} catch (UnsatisfiedLinkError e) {
-				mCompressor = new CryptoJavaImpl();
-				mBuffer = new ByteBufferJavaImpl(IConstants.BUFFER_SIZE);
-			}
+			mCompressor = new CryptoJavaImpl();
+			mBuffer = ByteBuffer.allocate(IConstants.BUFFER_SIZE);
 
 		} catch (Exception e) {
 			throw new RuntimeException("Could not create page writer: "
@@ -108,11 +98,18 @@ public final class PageWriter {
 
 			// Write page to file.
 			mBuffer.position(12);
-			final byte[] checksum = mBuffer.getArray(IConstants.CHECKSUM_SIZE);
+
+			final byte[] checksum = new byte[IConstants.CHECKSUM_SIZE];
+			for (int i = 0; i < checksum.length; i++) {
+				checksum[i] = mBuffer.get();
+			}
 
 			final long fileSize = mFile.length();
 			mFile.seek(fileSize);
-			mFile.write(mBuffer.getArray(outputLength - 24));
+			
+			final byte[] tmp = new byte[outputLength - 24];
+			mBuffer.get(tmp, 0, outputLength - 24);
+			mFile.write(tmp);
 
 			// Remember page coordinates.
 			pageReference.setStart(fileSize);
@@ -132,9 +129,6 @@ public final class PageWriter {
 	 */
 	public final void close() {
 		try {
-			if (mBuffer != null) {
-				mBuffer.close();
-			}
 			if (mFile != null) {
 				mFile.close();
 			}

@@ -18,10 +18,10 @@
 
 package com.treetank.page;
 
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.treetank.utils.IByteBuffer;
 import com.treetank.utils.TypedValue;
 
 /**
@@ -54,14 +54,17 @@ public final class NamePage extends AbstractPage {
 	 * @param in
 	 *            Input bytes to read from.
 	 */
-	public NamePage(final IByteBuffer in) {
+	public NamePage(final ByteBuffer in) {
 		super(0, in);
 		mNameMap = new HashMap<Integer, String>();
 		// mRawNameMap = new HashMap<Integer, byte[]>();
 
-		for (int i = 0, l = (int) in.get(); i < l; i++) {
-			final int key = (int) in.get();
-			final byte[] bytes = in.getArray((int) in.get());
+		for (int i = 0, l = (int) in.getLong(); i < l; i++) {
+			final int key = (int) in.getLong();
+			final byte[] bytes = new byte[(int) in.getLong()];
+			for (int j = 0; j < bytes.length; j++) {
+				bytes[j] = in.get();
+			}
 			mNameMap.put(key, TypedValue.parseString(bytes));
 			// mRawNameMap.put(key, bytes);
 		}
@@ -119,16 +122,19 @@ public final class NamePage extends AbstractPage {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public final void serialize(final IByteBuffer out) {
+	public final void serialize(final ByteBuffer out) {
 		super.serialize(out);
 
-		out.put(mNameMap.size());
+		out.putLong(mNameMap.size());
 
 		for (final int key : mNameMap.keySet()) {
-			out.put(key);
+			out.putLong(key);
 			byte[] tmp = TypedValue.getBytes(mNameMap.get(key));
-			out.put(tmp.length);
-			out.putArray(tmp);
+			out.putLong(tmp.length);
+			for (final byte byteVal : tmp) {
+				out.put(byteVal);
+			}
+
 		}
 	}
 

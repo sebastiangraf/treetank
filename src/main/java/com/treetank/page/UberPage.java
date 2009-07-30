@@ -18,10 +18,11 @@
 
 package com.treetank.page;
 
+import java.nio.ByteBuffer;
+
 import com.treetank.api.IReadTransaction;
 import com.treetank.node.DocumentRootNode;
 import com.treetank.session.WriteTransactionState;
-import com.treetank.utils.IByteBuffer;
 import com.treetank.utils.IConstants;
 
 /**
@@ -37,13 +38,13 @@ public final class UberPage extends AbstractPage {
 	private static final int INDIRECT_REFERENCE_OFFSET = 0;
 
 	/** Number of revisions. */
-	private long mRevisionCount;
+	private final long mRevisionCount;
 
 	/** True if this uber page is the uber page of a fresh TreeTank file. */
 	private boolean mBootstrap;
 
 	/**
-	 * Create uber page.
+	 * s Create uber page.
 	 */
 	public UberPage() {
 		super(1);
@@ -99,9 +100,9 @@ public final class UberPage extends AbstractPage {
 	 * @param in
 	 *            Input bytes.
 	 */
-	public UberPage(final IByteBuffer in) {
+	public UberPage(final ByteBuffer in) {
 		super(1, in);
-		mRevisionCount = in.get();
+		mRevisionCount = in.getLong();
 		mBootstrap = false;
 	}
 
@@ -188,9 +189,9 @@ public final class UberPage extends AbstractPage {
 	/**
 	 * {@inheritDoc}
 	 */
-	public final void serialize(final IByteBuffer out) {
+	public final void serialize(final ByteBuffer out) {
 		super.serialize(out);
-		out.put(mRevisionCount);
+		out.putLong(mRevisionCount);
 	}
 
 	/**

@@ -18,6 +18,8 @@
 
 package com.treetank.utils;
 
+import java.nio.ByteBuffer;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,10 +27,10 @@ public class ByteBufferJavaImplTest {
 
 	@Test
 	public void testBasics() {
-		final IByteBuffer buffer = new ByteBufferJavaImpl(100);
+		final ByteBuffer buffer = ByteBuffer.allocate(100);
 		Assert.assertEquals(0, buffer.position());
 		try {
-			buffer.position(100);
+			buffer.position(101);
 			Assert.fail();
 		} catch (IllegalArgumentException e) {
 			// Must throw IllegalArgumentException.
@@ -43,7 +45,7 @@ public class ByteBufferJavaImplTest {
 
 	@Test
 	public void testPutGet() {
-		final IByteBuffer buffer = new ByteBufferJavaImpl(100);
+		final ByteBuffer buffer = ByteBuffer.allocate(100);
 		// Byte.
 		buffer.position(0);
 		buffer.put((byte) 13);
@@ -54,35 +56,39 @@ public class ByteBufferJavaImplTest {
 		Assert.assertEquals(Byte.MAX_VALUE, buffer.get());
 		// Int.
 		buffer.position(0);
-		buffer.put(8192);
-		buffer.put(Integer.MAX_VALUE);
-		Assert.assertEquals(7, buffer.position());
+		buffer.putInt(8192);
+		buffer.putInt(Integer.MAX_VALUE);
+		Assert.assertEquals(8, buffer.position());
 		buffer.position(0);
-		Assert.assertEquals(8192, buffer.get());
-		Assert.assertEquals(Integer.MAX_VALUE, buffer.get());
+		Assert.assertEquals(8192, buffer.getInt());
+		Assert.assertEquals(Integer.MAX_VALUE, buffer.getInt());
 		// Long.
 		buffer.position(0);
-		buffer.put(819281928192L);
-		buffer.put(Long.MAX_VALUE);
-		Assert.assertEquals(15, buffer.position());
+		buffer.putLong(819281928192L);
+		buffer.putLong(Long.MAX_VALUE);
+		Assert.assertEquals(16, buffer.position());
 		buffer.position(0);
-		Assert.assertEquals(819281928192L, buffer.get());
-		Assert.assertEquals(Long.MAX_VALUE, buffer.get());
+		Assert.assertEquals(819281928192L, buffer.getLong());
+		Assert.assertEquals(Long.MAX_VALUE, buffer.getLong());
 	}
 
 	@Test
 	public void testPutGetArray() {
-		final IByteBuffer buffer = new ByteBufferJavaImpl(100);
+		final ByteBuffer buffer = ByteBuffer.allocate(100);
 
 		final byte[] reference = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
 		buffer.position(0);
-		buffer.putArray(reference);
+		for (final byte byteVal : reference) {
+			buffer.put(byteVal);
+		}
 		Assert.assertEquals(8, buffer.position());
 
 		buffer.position(0);
-		final byte[] result = buffer.getArray(8);
+		final byte[] result = new byte[8];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = buffer.get();
+		}
 		Assert.assertEquals(8, buffer.position());
 		Assert.assertArrayEquals(reference, result);
 	}
-
 }

@@ -18,7 +18,8 @@
 
 package com.treetank.page;
 
-import com.treetank.utils.IByteBuffer;
+import java.nio.ByteBuffer;
+
 import com.treetank.utils.IConstants;
 
 /**
@@ -90,10 +91,15 @@ public final class PageReference<T extends AbstractPage> {
 	 * @param in
 	 *            Input bytes.
 	 */
-	public PageReference(final IByteBuffer in) {
+	public PageReference(final ByteBuffer in) {
 		mPage = null;
-		in.get(mData);
-		mChecksum = in.getArray(IConstants.CHECKSUM_SIZE);
+		for (int i = 0; i < mData.length; i++) {
+			mData[i] = in.getLong();
+		}
+		mChecksum = new byte[IConstants.CHECKSUM_SIZE];
+		for (int i = 0; i < mChecksum.length; i++) {
+			mChecksum[i] = in.get();
+		}
 	}
 
 	/**
@@ -211,9 +217,13 @@ public final class PageReference<T extends AbstractPage> {
 	 * @param out
 	 *            Output bytes that get written to a file.
 	 */
-	public final void serialize(final IByteBuffer out) {
-		out.putAll(mData);
-		out.putArray(mChecksum);
+	public final void serialize(final ByteBuffer out) {
+		for (final long longVal : mData) {
+			out.putLong(longVal);
+		}
+		for (final byte byteVal : mChecksum) {
+			out.put(byteVal);
+		}
 	}
 
 	/**

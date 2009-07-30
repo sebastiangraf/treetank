@@ -18,8 +18,9 @@
 
 package com.treetank.node;
 
+import java.nio.ByteBuffer;
+
 import com.treetank.api.IReadTransaction;
-import com.treetank.utils.IByteBuffer;
 import com.treetank.utils.IConstants;
 
 /**
@@ -103,9 +104,12 @@ public final class TextNode extends AbstractNode {
 	 * @param in
 	 *            Input bytes to read node from.
 	 */
-	public TextNode(final long nodeKey, final IByteBuffer in) {
+	public TextNode(final long nodeKey, final ByteBuffer in) {
 		super(SIZE, nodeKey, in);
-		mValue = in.getArray((int) mData[VALUE_LENGTH]);
+		mValue = new byte[(int) mData[VALUE_LENGTH]];
+		for (int i = 0; i < mData[VALUE_LENGTH]; i++) {
+			mValue[i] = in.get();
+		}
 	}
 
 	/**
@@ -234,9 +238,11 @@ public final class TextNode extends AbstractNode {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public final void serialize(final IByteBuffer out) {
+	public final void serialize(final ByteBuffer out) {
 		super.serialize(out);
-		out.putArray(mValue);
+		for (final byte byteVal : mValue) {
+			out.put(byteVal);
+		}
 	}
 
 	/**

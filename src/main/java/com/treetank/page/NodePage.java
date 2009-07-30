@@ -18,6 +18,10 @@
 
 package com.treetank.page;
 
+import java.nio.ByteBuffer;
+
+import com.sleepycat.persist.model.Entity;
+import com.sleepycat.persist.model.PrimaryKey;
 import com.treetank.api.IReadTransaction;
 import com.treetank.node.AbstractNode;
 import com.treetank.node.AttributeNode;
@@ -25,7 +29,6 @@ import com.treetank.node.DocumentRootNode;
 import com.treetank.node.ElementNode;
 import com.treetank.node.NamespaceNode;
 import com.treetank.node.TextNode;
-import com.treetank.utils.IByteBuffer;
 import com.treetank.utils.IConstants;
 
 /**
@@ -35,9 +38,11 @@ import com.treetank.utils.IConstants;
  * A node page stores a set of nodes.
  * </p>
  */
+@Entity
 public class NodePage extends AbstractPage {
 
 	/** Key of node page. This is the base key of all contained nodes. */
+	@PrimaryKey
 	private final long mNodePageKey;
 
 	/** Array of nodes. This can have null nodes that were removed. */
@@ -63,12 +68,15 @@ public class NodePage extends AbstractPage {
 	 * @param nodePageKey
 	 *            Base key assigned to this node page.
 	 */
-	public NodePage(final IByteBuffer in, final long nodePageKey) {
+	public NodePage(final ByteBuffer in, final long nodePageKey) {
 		super(0, in);
 		mNodePageKey = nodePageKey;
 		mNodes = new AbstractNode[IConstants.NDP_NODE_COUNT];
 
-		long[] values = in.getAll(IConstants.NDP_NODE_COUNT);
+		final long[] values = new long[IConstants.NDP_NODE_COUNT];
+		for (int i = 0; i < values.length; i++) {
+			values[i] = in.getLong();
+		}
 
 		final long keyBase = mNodePageKey << IConstants.NDP_NODE_COUNT_EXPONENT;
 		for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
@@ -191,18 +199,16 @@ public class NodePage extends AbstractPage {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void serialize(final IByteBuffer out) {
+	public void serialize(final ByteBuffer out) {
 		super.serialize(out);
 
-		long[] values = new long[getNodes().length];
 		for (int i = 0; i < getNodes().length; i++) {
 			if (getNodes()[i] != null) {
-				values[i] = getNodes()[i].getKind();
+				out.putLong(getNodes()[i].getKind());
 			} else {
-				values[i] = IConstants.UNKNOWN;
+				out.putLong(IConstants.UNKNOWN);
 			}
 		}
-		out.putAll(values);
 
 		for (final AbstractNode node : getNodes()) {
 			if (node != null) {

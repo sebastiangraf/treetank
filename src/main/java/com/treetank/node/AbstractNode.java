@@ -18,9 +18,10 @@
 
 package com.treetank.node;
 
+import java.nio.ByteBuffer;
+
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
-import com.treetank.utils.IByteBuffer;
 import com.treetank.utils.IConstants;
 
 /**
@@ -75,9 +76,11 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
 	 * @param size
 	 *            Size of the data.
 	 */
-	public AbstractNode(final int size, final long nodeKey, final IByteBuffer in) {
+	public AbstractNode(final int size, final long nodeKey, final ByteBuffer in) {
 		mData = new long[size];
-		in.get(mData);
+		for (int i = 0; i < size; i++) {
+			mData[i] = in.getLong();
+		}
 	}
 
 	/**
@@ -254,8 +257,11 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
 	 * @param out
 	 *            target to serialize.
 	 */
-	public void serialize(final IByteBuffer out) {
-		out.putAll(mData);
+	public void serialize(final ByteBuffer out) {
+		for (final long longVal : mData) {
+			out.putLong(longVal);
+		}
+
 	}
 
 	/**

@@ -18,8 +18,9 @@
 
 package com.treetank.node;
 
+import java.nio.ByteBuffer;
+
 import com.treetank.api.IReadTransaction;
-import com.treetank.utils.IByteBuffer;
 
 /**
  * <h1>NamespaceNode</h1>
@@ -76,7 +77,7 @@ public final class NamespaceNode extends AbstractNode {
 	 * @param in
 	 *            byteBuffer with the relevant data.
 	 */
-	public NamespaceNode(final long nodeKey, final IByteBuffer in) {
+	public NamespaceNode(final long nodeKey, final ByteBuffer in) {
 		super(SIZE, nodeKey, in);
 	}
 
@@ -148,7 +149,7 @@ public final class NamespaceNode extends AbstractNode {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public final void serialize(final IByteBuffer out) {
+	public final void serialize(final ByteBuffer out) {
 		super.serialize(out);
 	}
 

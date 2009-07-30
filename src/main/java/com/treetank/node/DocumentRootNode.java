@@ -18,8 +18,9 @@
 
 package com.treetank.node;
 
+import java.nio.ByteBuffer;
+
 import com.treetank.api.IReadTransaction;
-import com.treetank.utils.IByteBuffer;
 
 /**
  * <h1>DocumentNode</h1>
@@ -62,7 +63,7 @@ public final class DocumentRootNode extends AbstractNode {
 	 * @param in
 	 *            Byte input to read node from.
 	 */
-	public DocumentRootNode(final IByteBuffer in) {
+	public DocumentRootNode(final ByteBuffer in) {
 		super(SIZE, IReadTransaction.DOCUMENT_ROOT_KEY, in);
 	}
 
@@ -142,7 +143,7 @@ public final class DocumentRootNode extends AbstractNode {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public final void serialize(final IByteBuffer out) {
+	public final void serialize(final ByteBuffer out) {
 		super.serialize(out);
 	}
 

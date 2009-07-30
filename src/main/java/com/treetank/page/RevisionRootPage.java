@@ -18,8 +18,9 @@
 
 package com.treetank.page;
 
+import java.nio.ByteBuffer;
+
 import com.treetank.session.WriteTransactionState;
-import com.treetank.utils.IByteBuffer;
 import com.treetank.utils.IConstants;
 
 /**
@@ -69,12 +70,12 @@ public final class RevisionRootPage extends AbstractPage {
 	 * @param revisionKey
 	 *            Key of revision.
 	 */
-	public RevisionRootPage(final IByteBuffer in, final long revisionKey) {
+	public RevisionRootPage(final ByteBuffer in, final long revisionKey) {
 		super(2, in);
 		mRevisionNumber = revisionKey;
-		mRevisionSize = in.get();
-		mMaxNodeKey = in.get();
-		mRevisionTimestamp = in.get();
+		mRevisionSize = in.getLong();
+		mMaxNodeKey = in.getLong();
+		mRevisionTimestamp = in.getLong();
 	}
 
 	/**
@@ -172,11 +173,11 @@ public final class RevisionRootPage extends AbstractPage {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public final void serialize(final IByteBuffer out) {
+	public final void serialize(final ByteBuffer out) {
 		super.serialize(out);
-		out.put(mRevisionSize);
-		out.put(mMaxNodeKey);
-		out.put(mRevisionTimestamp);
+		out.putLong(mRevisionSize);
+		out.putLong(mMaxNodeKey);
+		out.putLong(mRevisionTimestamp);
 	}
 
 	/**
