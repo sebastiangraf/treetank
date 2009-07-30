@@ -20,11 +20,11 @@ package com.treetank.page;
 
 import static org.junit.Assert.assertEquals;
 
+import java.nio.ByteBuffer;
+
 import org.junit.Test;
 
 import com.treetank.node.ElementNode;
-import com.treetank.utils.ByteBufferJavaImpl;
-import com.treetank.utils.IByteBuffer;
 
 public class NodePageTest {
 
@@ -40,7 +40,7 @@ public class NodePageTest {
 		assertEquals(0L, node1.getNodeKey());
 		page1.setNode(0, node1);
 
-		final IByteBuffer out = new ByteBufferJavaImpl(1000);
+		final ByteBuffer out =  ByteBuffer.allocate(1144);
 		page1.serialize(out);
 		final int position = out.position();
 

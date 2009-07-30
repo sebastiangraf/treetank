@@ -21,6 +21,7 @@ package com.treetank.session;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,7 +35,6 @@ import com.treetank.page.PageReader;
 import com.treetank.page.PageReference;
 import com.treetank.page.UberPage;
 import com.treetank.utils.FastWeakHashMap;
-import com.treetank.utils.IByteBuffer;
 import com.treetank.utils.IConstants;
 
 /**
@@ -140,7 +140,7 @@ public final class SessionState {
 				// Beacon logic case 1.
 				// if (uberPageReference.equals(secondaryUberPageReference)) {
 
-				final IByteBuffer in = new PageReader(mSessionConfiguration)
+				final ByteBuffer in = new PageReader(mSessionConfiguration)
 						.read(uberPageReference);
 				mLastCommittedUberPage = new UberPage(in);
 
@@ -222,6 +222,7 @@ public final class SessionState {
 						"ID generation is bogus because of duplicate ID.");
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException("Revision " + revisionNumber
 					+ " can not be found.");
 		}

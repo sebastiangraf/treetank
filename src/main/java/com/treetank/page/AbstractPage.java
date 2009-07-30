@@ -18,8 +18,9 @@
 
 package com.treetank.page;
 
+import java.nio.ByteBuffer;
+
 import com.treetank.session.WriteTransactionState;
-import com.treetank.utils.IByteBuffer;
 
 /**
  * <h1>Page</h1>
@@ -68,9 +69,12 @@ public abstract class AbstractPage {
 	 * @param in
 	 *            Input reader to read from.
 	 */
-	protected AbstractPage(final int referenceCount, final IByteBuffer in) {
+	protected AbstractPage(final int referenceCount, final ByteBuffer in) {
 		this(false, referenceCount);
-		long[] values = in.getAll(referenceCount);
+		final long[] values = new long[referenceCount];
+		for (int i = 0; i < values.length; i++) {
+			values[i] = in.getLong();
+		}
 		for (int offset = 0; offset < referenceCount; offset++) {
 			if (values[offset] == 1) {
 				getReferences()[offset] = new PageReference(in);
@@ -92,8 +96,8 @@ public abstract class AbstractPage {
 
 		for (int offset = 0; offset < referenceCount; offset++) {
 			if (committedPage.getReferences()[offset] != null) {
-				getReferences()[offset] = new PageReference(
-						committedPage.getReferences()[offset]);
+				getReferences()[offset] = new PageReference(committedPage
+						.getReferences()[offset]);
 			}
 		}
 	}
@@ -153,16 +157,15 @@ public abstract class AbstractPage {
 	 * @param out
 	 *            Output stream.
 	 */
-	public void serialize(final IByteBuffer out) {
-		long[] values = new long[getReferences().length];
+	public void serialize(final ByteBuffer out) {
 		for (int i = 0; i < getReferences().length; i++) {
 			if (getReferences()[i] != null) {
-				values[i] = (byte) 1;
+				out.putLong(1);
 			} else {
-				values[i] = (byte) 0;
+				out.putLong(0);
 			}
 		}
-		out.putAll(values);
+
 		for (final PageReference<? extends AbstractPage> reference : getReferences()) {
 			if (reference != null) {
 				reference.serialize(out);

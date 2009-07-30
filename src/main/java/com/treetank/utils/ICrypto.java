@@ -18,10 +18,12 @@
 
 package com.treetank.utils;
 
+import java.nio.ByteBuffer;
+
 public interface ICrypto {
 
-	public short crypt(final short length, final IByteBuffer buffer);
+	public short crypt(final short length, final ByteBuffer buffer);
 
-	public short decrypt(final short length, final IByteBuffer buffer);
+	public short decrypt(final short length, final ByteBuffer buffer);
 
 }

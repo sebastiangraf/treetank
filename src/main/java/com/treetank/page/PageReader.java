@@ -20,13 +20,10 @@ package com.treetank.page;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 
-import com.treetank.openbsd.ByteBufferNativeImpl;
-import com.treetank.openbsd.CryptoNativeImpl;
 import com.treetank.session.SessionConfiguration;
-import com.treetank.utils.ByteBufferJavaImpl;
 import com.treetank.utils.CryptoJavaImpl;
-import com.treetank.utils.IByteBuffer;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.ICrypto;
 
@@ -47,7 +44,7 @@ public final class PageReader {
 	private ICrypto mDecompressor;
 
 	/** Temporary data buffer. */
-	private IByteBuffer mBuffer;
+	private ByteBuffer mBuffer;
 
 	/**
 	 * Constructor.
@@ -65,15 +62,8 @@ public final class PageReader {
 					sessionConfiguration.getAbsolutePath(),
 					IConstants.READ_ONLY);
 
-			try {
-				System.loadLibrary("TreeTank");
-				mDecompressor = new CryptoNativeImpl();
-				mBuffer = new ByteBufferNativeImpl(IConstants.BUFFER_SIZE);
-				((ByteBufferNativeImpl) mBuffer).allocate();
-			} catch (UnsatisfiedLinkError e) {
-				mDecompressor = new CryptoJavaImpl();
-				mBuffer = new ByteBufferJavaImpl(IConstants.BUFFER_SIZE);
-			}
+			mDecompressor = new CryptoJavaImpl();
+			mBuffer = ByteBuffer.allocate(IConstants.BUFFER_SIZE);
 
 		} catch (Exception e) {
 			throw new RuntimeException("Could not create page reader: "
@@ -90,7 +80,7 @@ public final class PageReader {
 	 * @throws RuntimeException
 	 *             if there was an error during reading.
 	 */
-	public final IByteBuffer read(
+	public final ByteBuffer read(
 			final PageReference<? extends AbstractPage> pageReference) {
 
 		if (!pageReference.isCommitted()) {
@@ -104,13 +94,17 @@ public final class PageReader {
 			pageReference.getChecksum(checksum);
 			final short inputLength = (short) (pageReference.getLength() + 24);
 			mBuffer.position(12);
-			mBuffer.putArray(checksum);
+			for (final byte byteVal : checksum) {
+				mBuffer.put(byteVal);
+			}
 
 			// Read page from file.
 			final byte[] page = new byte[pageReference.getLength()];
 			mFile.seek(pageReference.getStart());
 			mFile.read(page);
-			mBuffer.putArray(page);
+			for (final byte byteVal : page) {
+				mBuffer.put(byteVal);
+			}
 
 			// Perform crypto operations.
 			final short outputLength = mDecompressor.decrypt(inputLength,
@@ -120,6 +114,7 @@ public final class PageReader {
 			}
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new RuntimeException("Could not read page " + pageReference
 					+ " due to: " + e.getLocalizedMessage());
 		}
@@ -135,9 +130,6 @@ public final class PageReader {
 	 */
 	public final void close() {
 		try {
-			if (mBuffer != null) {
-				mBuffer.close();
-			}
 			if (mFile != null) {
 				mFile.close();
 			}

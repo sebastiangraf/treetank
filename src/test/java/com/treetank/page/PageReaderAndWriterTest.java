@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +31,6 @@ import org.junit.Test;
 import com.treetank.node.ElementNode;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
-import com.treetank.utils.IByteBuffer;
 import com.treetank.utils.IConstants;
 
 public class PageReaderAndWriterTest {
@@ -70,7 +70,7 @@ public class PageReaderAndWriterTest {
 		// Deserialize node page.
 		final PageReader pageReader = new PageReader(new SessionConfiguration(
 				PATH));
-		final IByteBuffer in = pageReader.read(pageReference);
+		final ByteBuffer in = pageReader.read(pageReference);
 		final NodePage page2 = new NodePage(in, 0L);
 
 	}

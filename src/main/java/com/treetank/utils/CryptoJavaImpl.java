@@ -19,6 +19,7 @@
 package com.treetank.utils;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
@@ -49,10 +50,11 @@ public class CryptoJavaImpl implements ICrypto {
 	 *            data that should be compressed
 	 * @return compressed data, null if failed
 	 */
-	public short crypt(final short length, final IByteBuffer buffer) {
+	public short crypt(final short length, final ByteBuffer buffer) {
 		try {
 			buffer.position(24);
-			byte[] tmp = buffer.getArray(length - 24);
+			final byte[] tmp = new byte[length - 24];
+			buffer.get(tmp, 0, tmp.length);
 			mCompressor.reset();
 			mOut.reset();
 			mCompressor.setInput(tmp);
@@ -63,13 +65,18 @@ public class CryptoJavaImpl implements ICrypto {
 				mOut.write(mTmp, 0, count);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			return 0;
 		}
 		final byte[] result = mOut.toByteArray();
 		final byte[] checksum = new byte[IConstants.CHECKSUM_SIZE];
 		buffer.position(12);
-		buffer.putArray(checksum);
-		buffer.putArray(result);
+		for (final byte byteVal : checksum) {
+			buffer.put(byteVal);
+		}
+		for (final byte byteVal : result) {
+			buffer.put(byteVal);
+		}
 		return (short) (buffer.position());
 	}
 
@@ -80,10 +87,11 @@ public class CryptoJavaImpl implements ICrypto {
 	 *            data that should be decompressed
 	 * @return Decompressed data, null if failed
 	 */
-	public short decrypt(final short length, final IByteBuffer buffer) {
+	public short decrypt(final short length, final ByteBuffer buffer) {
 		try {
 			buffer.position(24);
-			byte[] tmp = buffer.getArray(length - 24);
+			final byte[] tmp = new byte[length - 24];
+			buffer.get(tmp, 0, tmp.length);
 			mDecompressor.reset();
 			mOut.reset();
 			mDecompressor.setInput(tmp);
@@ -93,13 +101,18 @@ public class CryptoJavaImpl implements ICrypto {
 				mOut.write(mTmp, 0, count);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			return 0;
 		}
 		final byte[] result = mOut.toByteArray();
 		final byte[] checksum = new byte[IConstants.CHECKSUM_SIZE];
 		buffer.position(12);
-		buffer.putArray(checksum);
-		buffer.putArray(result);
+		for (final byte byteVal : checksum) {
+			buffer.put(byteVal);
+		}
+		for (final byte byteVal : result) {
+			buffer.put(byteVal);
+		}
 		return (short) (result.length + 24);
 	}
 
