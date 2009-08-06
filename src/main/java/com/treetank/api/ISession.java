@@ -134,6 +134,37 @@ public interface ISession {
 	 * 
 	 * @return Number of running read transactions.
 	 */
+	
+
+	/**
+	 * Begin exclusive read/write transaction without auto commit.
+	 * 
+	 * @param transactionRootNodekey
+	 * 			Key of highest node in tree for this write transaction
+	 * 
+	 * @return IWriteTransaction instance.
+	 */
+	public IWriteTransaction beginWriteTransaction(long transactionRootNodekey);
+
+	/**
+	 * Begin exclusive read/write transaction with auto commit.
+	 * 
+	 * @param maxNodeCount
+	 *            Count of node modifications after which a commit is issued.
+	 * @param maxTime
+	 *            Time in seconds after which a commit is issued.
+	 * @param transactionRootNodekey
+	 * 			Key of highest node in tree for this write transaction
+	 * @return IWriteTransaction instance.
+	 */
+	public IWriteTransaction beginWriteTransaction(final int maxNodeCount,
+			final int maxTime, final long transactionRootNodekey);
+
+	/**
+	 * Get number of running read transactions.
+	 * 
+	 * @return Number of running read transactions.
+	 */
 	public int getReadTransactionCount();
 
 	/**

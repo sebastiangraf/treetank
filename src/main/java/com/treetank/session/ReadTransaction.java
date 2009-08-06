@@ -127,14 +127,14 @@ public class ReadTransaction implements IReadTransaction {
 	/**
 	 * {@inheritDoc}
 	 */
-	public final boolean moveToDocumentRoot() {
+	public boolean moveToDocumentRoot() {
 		return moveTo(DOCUMENT_ROOT_KEY);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public final boolean moveToParent() {
+	public boolean moveToParent() {
 		return moveTo(mCurrentNode.getParentKey());
 	}
 
@@ -148,14 +148,14 @@ public class ReadTransaction implements IReadTransaction {
 	/**
 	 * {@inheritDoc}
 	 */
-	public final boolean moveToLeftSibling() {
+	public boolean moveToLeftSibling() {
 		return moveTo(mCurrentNode.getLeftSiblingKey());
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public final boolean moveToRightSibling() {
+	public boolean moveToRightSibling() {
 		return moveTo(mCurrentNode.getRightSiblingKey());
 	}
 

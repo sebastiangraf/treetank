@@ -231,13 +231,8 @@ public final class SessionState {
 	}
 
 	protected final IWriteTransaction beginWriteTransaction(
-			final int maxNodeCount, final int maxTime) {
+			final int maxNodeCount, final int maxTime, long transactionRootNodekey) {
 
-		// Make sure not to exceed available number of write transactions.
-		if (mWriteSemaphore.availablePermits() == 0) {
-			throw new IllegalStateException(
-					"There already is a running exclusive write transaction.");
-		}
 		try {
 			mWriteSemaphore.acquire();
 		} catch (Exception e) {
@@ -245,9 +240,9 @@ public final class SessionState {
 		}
 
 		// Create new write transaction.
-		final IWriteTransaction wtx = new WriteTransaction(
+		final IWriteTransaction wtx = new SynchWriteTransaction(
 				generateTransactionID(), this, createWriteTransactionState(),
-				maxNodeCount, maxTime);
+				maxNodeCount, maxTime, transactionRootNodekey);
 
 		// Remember transaction for debugging and safe close.
 		if (mTransactionMap.put(wtx.getTransactionID(), wtx) != null) {

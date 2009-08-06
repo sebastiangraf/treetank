@@ -210,7 +210,24 @@ public final class Session implements ISession {
 	 */
 	public final IWriteTransaction beginWriteTransaction() {
 		assertNotClosed();
-		return mSessionState.beginWriteTransaction(0, 0);
+		return mSessionState.beginWriteTransaction(0, 0, 0);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public final IWriteTransaction beginWriteTransaction(
+			final int maxNodeCount, final int maxTime, long transactionRootNodekey) {
+		assertNotClosed();
+		return mSessionState.beginWriteTransaction(maxNodeCount, maxTime, transactionRootNodekey);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public final IWriteTransaction beginWriteTransaction(long transactionRootNodekey) {
+		assertNotClosed();
+		return mSessionState.beginWriteTransaction(0, 0, transactionRootNodekey);
 	}
 
 	/**
@@ -219,9 +236,9 @@ public final class Session implements ISession {
 	public final IWriteTransaction beginWriteTransaction(
 			final int maxNodeCount, final int maxTime) {
 		assertNotClosed();
-		return mSessionState.beginWriteTransaction(maxNodeCount, maxTime);
+		return mSessionState.beginWriteTransaction(maxNodeCount, maxTime, 0);
 	}
-
+	
 	/**
 	 * {@inheritDoc}
 	 */

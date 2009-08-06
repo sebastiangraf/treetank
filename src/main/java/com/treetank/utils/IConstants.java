@@ -113,7 +113,7 @@ public interface IConstants {
 	// -------------------------------------------------------------
 
 	/** Number of concurrent exclusive write transactions. */
-	public static final int MAX_WRITE_TRANSACTIONS = 1;
+	public static final int MAX_WRITE_TRANSACTIONS = 128;
 
 	/** Number of concurrent shared read transactions. */
 	public static final int MAX_READ_TRANSACTIONS = 128;
