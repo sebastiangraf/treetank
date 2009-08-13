@@ -1,0 +1,3 @@
+Bugs:
+- TT is not working with Windows because of RandomAccess File
+- "Compare to" is based on nodekeys, document order is not ensured with multiple commits 
