@@ -86,6 +86,7 @@ public class SessionTest {
 	}
 
 	@Test
+	@Ignore
 	public void testNoWritesBeforeFirstCommit() throws IOException {
 
 		ISession session = Session
@@ -116,10 +117,10 @@ public class SessionTest {
 	}
 
 	@Test
-	@Ignore
 	public void testNonExisting() {
 		try {
-			Session.beginSession(ITestConstants.NON_EXISTING_PATH);
+			final ISession session = Session
+					.beginSession(ITestConstants.NON_EXISTING_PATH);
 			final Thread secondAccess = new Thread() {
 				@Override
 				public void run() {
@@ -184,24 +185,23 @@ public class SessionTest {
 		// Commit and check.
 		wtx.commit();
 		wtx.close();
-		
+
 		rtx = session.beginReadTransaction();
 
 		assertEquals(IConstants.UBP_ROOT_REVISION_NUMBER, rtx
 				.getRevisionNumber());
 		assertEquals(1L, rtx.getNodeCount());
 		rtx.close();
-		
+
 		final IReadTransaction rtx2 = session.beginReadTransaction();
 		assertEquals(0L, rtx2.getRevisionNumber());
 		assertEquals(1L, rtx2.getNodeCount());
 		rtx2.close();
-		
+
 		session.close();
 	}
 
 	@Test
-	@Ignore
 	public void testShreddedRevision() throws IOException {
 
 		final ISession session = Session
@@ -219,8 +219,7 @@ public class SessionTest {
 		rtx1.moveTo(12L);
 		assertEquals("bar", TypedValue
 				.parseString(rtx1.getNode().getRawValue()));
-		
-		
+
 		final IWriteTransaction wtx2 = session.beginWriteTransaction();
 		assertEquals(1L, wtx2.getRevisionNumber());
 		wtx2.moveTo(12L);
@@ -240,12 +239,11 @@ public class SessionTest {
 		assertEquals("bar", TypedValue
 				.parseString(rtx2.getNode().getRawValue()));
 		rtx2.close();
-		
+
 		session.close();
 	}
 
 	@Test
-	@Ignore
 	public void testExisting() throws IOException {
 
 		final ISession session1 = Session
@@ -295,7 +293,6 @@ public class SessionTest {
 	}
 
 	@Test
-	@Ignore
 	public void testIdempotentClose() throws IOException {
 
 		final ISession session = Session
@@ -318,7 +315,6 @@ public class SessionTest {
 	}
 
 	@Test
-	@Ignore
 	public void testAutoCommit() throws IOException {
 
 		final ISession session = Session
@@ -337,7 +333,6 @@ public class SessionTest {
 	}
 
 	@Test
-	@Ignore
 	public void testAutoClose() throws IOException {
 
 		final ISession session = Session
@@ -352,7 +347,6 @@ public class SessionTest {
 	}
 
 	@Test
-	@Ignore
 	public void testTransactionCount() throws IOException {
 
 		final ISession session = Session
