@@ -25,7 +25,7 @@ public class TransactionLogCacheTest {
 		cache = new TransactionLogCache(new SessionConfiguration(
 				ITestConstants.PATH1));
 		for (int i = 0; i < pages.length; i++) {
-			final AbstractPage page = new NodePage(i);
+			final NodePage page = new NodePage(i);
 			pages[i] = page;
 			cache.put(i, page);
 		}

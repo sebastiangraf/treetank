@@ -18,10 +18,8 @@
 
 package com.treetank.page;
 
-import java.nio.ByteBuffer;
-
-import com.sleepycat.bind.tuple.TupleInput;
-import com.sleepycat.bind.tuple.TupleOutput;
+import com.treetank.io.ITTSink;
+import com.treetank.io.ITTSource;
 import com.treetank.session.WriteTransactionState;
 
 /**
@@ -36,11 +34,8 @@ public abstract class AbstractPage {
 	/** Page references. */
 	private final PageReference<? extends AbstractPage>[] mReferences;
 
-	/** True if page was created or cloned. False if it was read or committed. */
-	private boolean mDirty;
-
 	/**
-	 * Internal constructor to initialize instance.
+	 * Constructor to initialize instance.
 	 * 
 	 * @param dirty
 	 *            True if the page is created or cloned. False if read or
@@ -48,19 +43,8 @@ public abstract class AbstractPage {
 	 * @param referenceCount
 	 *            Number of references of page.
 	 */
-	private AbstractPage(final boolean dirty, final int referenceCount) {
-		mReferences = new PageReference<?>[referenceCount];
-		mDirty = dirty;
-	}
-
-	/**
-	 * Create constructor.
-	 * 
-	 * @param referenceCount
-	 *            Number of references of page.
-	 */
 	protected AbstractPage(final int referenceCount) {
-		this(true, referenceCount);
+		mReferences = new PageReference<?>[referenceCount];
 	}
 
 	/**
@@ -71,28 +55,15 @@ public abstract class AbstractPage {
 	 * @param in
 	 *            Input reader to read from.
 	 */
-	protected AbstractPage(final int referenceCount, final ByteBuffer in) {
-		this(false, referenceCount);
-		final long[] values = new long[referenceCount];
+	protected AbstractPage(final int referenceCount, final ITTSource in) {
+		this(referenceCount);
+		final int[] values = new int[referenceCount];
 		for (int i = 0; i < values.length; i++) {
-			values[i] = in.getLong();
+			values[i] = in.readInt();
 		}
 		for (int offset = 0; offset < referenceCount; offset++) {
 			if (values[offset] == 1) {
 				getReferences()[offset] = new PageReference(in);
-			}
-		}
-	}
-
-	protected AbstractPage(final int referenceCount, final TupleInput input) {
-		this(true, referenceCount);
-		final long[] values = new long[referenceCount];
-		for (int i = 0; i < values.length; i++) {
-			values[i] = input.readLong();
-		}
-		for (int offset = 0; offset < referenceCount; offset++) {
-			if (values[offset] == 1) {
-				getReferences()[offset] = new PageReference(input);
 			}
 		}
 	}
@@ -107,7 +78,7 @@ public abstract class AbstractPage {
 	 */
 	protected AbstractPage(final int referenceCount,
 			final AbstractPage committedPage) {
-		this(true, referenceCount);
+		this(referenceCount);
 
 		for (int offset = 0; offset < referenceCount; offset++) {
 			if (committedPage.getReferences()[offset] != null) {
@@ -115,15 +86,6 @@ public abstract class AbstractPage {
 						.getReferences()[offset]);
 			}
 		}
-	}
-
-	/**
-	 * Is this page dirty?
-	 * 
-	 * @return True if the page was created or cloned. False if it was read.
-	 */
-	public final boolean isDirty() {
-		return mDirty;
 	}
 
 	/**
@@ -163,7 +125,6 @@ public abstract class AbstractPage {
 		for (final PageReference<? extends AbstractPage> reference : getReferences()) {
 			state.commit(reference);
 		}
-		mDirty = false;
 	}
 
 	/**
@@ -172,28 +133,12 @@ public abstract class AbstractPage {
 	 * @param out
 	 *            Output stream.
 	 */
-	public void serialize(final ByteBuffer out) {
+	public void serialize(final ITTSink out) {
 		for (int i = 0; i < getReferences().length; i++) {
 			if (getReferences()[i] != null) {
-				out.putLong(1);
+				out.writeInt(1);
 			} else {
-				out.putLong(0);
-			}
-		}
-
-		for (final PageReference<? extends AbstractPage> reference : getReferences()) {
-			if (reference != null) {
-				reference.serialize(out);
-			}
-		}
-	}
-
-	public void serialize(final TupleOutput out) {
-		for (int i = 0; i < getReferences().length; i++) {
-			if (getReferences()[i] != null) {
-				out.writeLong(1);
-			} else {
-				out.writeLong(0);
+				out.writeInt(0);
 			}
 		}
 

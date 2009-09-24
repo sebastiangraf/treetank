@@ -32,7 +32,6 @@ import com.treetank.utils.TypedValue;
 
 public class AttributeAxisTest {
 
-
 	@Before
 	public void setUp() {
 		Session.removeSession(ITestConstants.PATH1);

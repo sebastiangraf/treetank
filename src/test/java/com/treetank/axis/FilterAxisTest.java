@@ -31,7 +31,6 @@ import com.treetank.utils.DocumentCreater;
 
 public class FilterAxisTest {
 
-
 	@Before
 	public void setUp() {
 		Session.removeSession(ITestConstants.PATH1);

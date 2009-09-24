@@ -44,7 +44,6 @@ import com.treetank.utils.TypedValue;
  */
 public class ForAxisTest {
 
-
 	@Before
 	public void setUp() {
 

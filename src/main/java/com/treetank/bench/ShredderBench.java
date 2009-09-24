@@ -11,18 +11,18 @@ import com.treetank.session.SessionConfiguration;
  */
 public final class ShredderBench {
 
-	private final static String fileName = "shakespeare";
-	private final static File xml = new File("src" + File.separator + "test"
-			+ File.separator + "resources" + File.separator + fileName + ".xml");
-	private final static File tnk = new File("target" + File.separator + "tnk"
-			+ File.separator + fileName + ".tnk");
+	private final static String FILENAME = "shakespeare";
+	private final static File XML = new File("src" + File.separator + "test"
+			+ File.separator + "resources" + File.separator + FILENAME + ".xml");
+	private final static File TNK = new File("target" + File.separator + "tnk"
+			+ File.separator + FILENAME + ".tnk");
 
 	public ShredderBench() {
-		tnk.delete();
+		TNK.delete();
 	}
 
 	public void shred() {
-		XMLShredder.shred(xml.getAbsolutePath(), new SessionConfiguration(tnk
+		XMLShredder.shred(XML.getAbsolutePath(), new SessionConfiguration(TNK
 				.getAbsolutePath()));
 
 	}

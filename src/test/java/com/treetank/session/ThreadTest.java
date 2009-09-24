@@ -39,7 +39,6 @@ public class ThreadTest {
 
 	public static final int WORKER_COUNT = 50;
 
-
 	@Before
 	public void setUp() {
 		Session.removeSession(ITestConstants.PATH1);

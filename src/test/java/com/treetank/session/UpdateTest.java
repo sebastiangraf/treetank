@@ -36,7 +36,6 @@ import com.treetank.utils.TypedValue;
 
 public class UpdateTest {
 
-
 	@Before
 	public void setUp() {
 		Session.removeSession(ITestConstants.PATH1);

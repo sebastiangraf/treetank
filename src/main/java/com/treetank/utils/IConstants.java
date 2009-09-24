@@ -32,22 +32,22 @@ public interface IConstants {
 	// ----------------------------------------------------------------
 
 	/** Major version number of this release. */
-	public static final int VERSION_MAJOR = 5;
+	public static final long VERSION_MAJOR = 5;
 
 	/** Minor version number of this release. */
-	public static final int VERSION_MINOR = 0;
+	public static final long VERSION_MINOR = 0;
 
 	/** Last major version to which this version is binary compatible. */
-	public static final int LAST_VERSION_MAJOR = 5;
+	public static final long LAST_VERSION_MAJOR = 5;
 
 	/** Last minor version to which this version is binary compatible. */
-	public static final int LAST_VERSION_MINOR = 0;
+	public static final long LAST_VERSION_MINOR = 0;
 
 	// --- Varia
 	// ------------------------------------------------------------------
 
 	/** Start of beacon. */
-	public static final int BEACON_START = 10;
+	public static final int BEACON_START = 18;
 
 	/** Length of beacon in bytes. */
 	public static final int BEACON_LENGTH = 24;
@@ -125,7 +125,7 @@ public interface IConstants {
 	public static final int UNKNOWN = 0;
 
 	/** Commit threshold. */
-//	public static final int COMMIT_THRESHOLD = 262144;
+	// public static final int COMMIT_THRESHOLD = 262144;
 	public static final int COMMIT_THRESHOLD = 131072;
 
 	/** Maximal length of textnodes before to be splitted */

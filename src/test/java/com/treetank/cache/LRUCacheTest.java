@@ -1,7 +1,8 @@
 package com.treetank.cache;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,7 +23,7 @@ public class LRUCacheTest {
 	public void setUp() {
 		cache = new LRUCache();
 		for (int i = 0; i < pages.length; i++) {
-			final AbstractPage page = new NodePage(i);
+			final NodePage page = new NodePage(i);
 			pages[i] = page;
 			cache.put(i, page);
 		}

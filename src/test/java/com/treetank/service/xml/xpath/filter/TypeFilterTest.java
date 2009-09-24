@@ -43,7 +43,6 @@ public class TypeFilterTest {
 	public static final String XML = "src" + File.separator + "test"
 			+ File.separator + "resources" + File.separator + "test.xml";
 
-
 	@Before
 	public void setUp() {
 

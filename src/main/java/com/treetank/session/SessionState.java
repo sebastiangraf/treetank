@@ -18,10 +18,6 @@
 
 package com.treetank.session;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,7 +26,9 @@ import java.util.concurrent.Semaphore;
 import com.treetank.api.IItemList;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.page.PageReader;
+import com.treetank.io.AbstractIOFactory;
+import com.treetank.io.IReader;
+import com.treetank.io.StorageProperties;
 import com.treetank.page.PageReference;
 import com.treetank.page.UberPage;
 import com.treetank.utils.IConstants;
@@ -62,6 +60,15 @@ public final class SessionState {
 	/** Random generator for transaction IDs. */
 	private Random mRandom;
 
+	/** Major version, reading from file */
+	private final long mVersionMajor;
+
+	/** Minor version, reading from file */
+	private final long mVersionMinor;
+
+	/** abstract factory for all interaction to the storage */
+	private final AbstractIOFactory fac;
+
 	/**
 	 * Constructor to bind to a TreeTank file.
 	 * 
@@ -89,86 +96,76 @@ public final class SessionState {
 	protected SessionState(final SessionConfiguration sessionConfiguration) {
 
 		mSessionConfiguration = sessionConfiguration;
-		RandomAccessFile file = null;
-		mTransactionMap = new ConcurrentHashMap();
+		mTransactionMap = new ConcurrentHashMap<Long, IReadTransaction>();
 		mRandom = new Random();
 
-		try {
+		// Init session members.
+		mWriteSemaphore = new Semaphore(IConstants.MAX_WRITE_TRANSACTIONS);
+		mReadSemaphore = new Semaphore(IConstants.MAX_READ_TRANSACTIONS);
+		final PageReference<UberPage> uberPageReference = new PageReference<UberPage>();
+		fac = AbstractIOFactory.getInstance(mSessionConfiguration);
+		StorageProperties props;
+		if (!fac.exists()) {
+			// Bootstrap uber page and make sure there already is a root
+			// node.
+			mLastCommittedUberPage = new UberPage();
+			uberPageReference.setPage(mLastCommittedUberPage);
+			props = new StorageProperties(IConstants.VERSION_MAJOR,
+					IConstants.VERSION_MINOR, sessionConfiguration
+							.isEncrypted(), sessionConfiguration
+							.isChecksummed());
+		} else {
+			final IReader reader = fac.getReader();
+			final PageReference<?> firstRef = reader.readFirstReference();
+			mLastCommittedUberPage = (UberPage) reader.read(firstRef);
+			props = reader.getProps();
+			reader.close();
+		}
 
-			// Make sure that the TreeTank file exists.
-			new File(mSessionConfiguration.getFileName()).createNewFile();
+		mVersionMajor = props.getVersionMajor();
+		mVersionMinor = props.getVersionMinor();
 
-			// Init session members.
-			mWriteSemaphore = new Semaphore(IConstants.MAX_WRITE_TRANSACTIONS);
-			mReadSemaphore = new Semaphore(IConstants.MAX_READ_TRANSACTIONS);
-			final PageReference<UberPage> uberPageReference = new PageReference<UberPage>();
-			final PageReference<UberPage> secondaryUberPageReference = new PageReference<UberPage>();
+		checkValidStorage(props);
 
-			file = new RandomAccessFile(
-					mSessionConfiguration.getFileName(),
-					IConstants.READ_WRITE);
+	}
 
-			if (file.length() == 0L) {
-				// Bootstrap uber page and make sure there already is a root
-				// node.
-				mLastCommittedUberPage = new UberPage();
-				uberPageReference.setPage(mLastCommittedUberPage);
-			} else {
+	private final void checkValidStorage(final StorageProperties props) {
 
-				byte[] tmp = new byte[IConstants.CHECKSUM_SIZE];
+		// Fail if an old TreeTank file is encountered.
+		if (mVersionMajor < IConstants.LAST_VERSION_MAJOR
+				|| mVersionMinor < IConstants.LAST_VERSION_MINOR) {
+			throw new IllegalStateException("'"
+					+ mSessionConfiguration.getAbsolutePath()
+					+ "' was created with TreeTank release " + mVersionMajor
+					+ "." + mVersionMinor
+					+ " and is incompatible with release "
+					+ IConstants.VERSION_MAJOR + "." + IConstants.VERSION_MINOR
+					+ ".");
+		}
 
-				// Read primary beacon.
-				file.seek(IConstants.BEACON_START);
-				uberPageReference.setStart(file.readLong());
-				uberPageReference.setLength(file.readInt());
-				file.read(tmp);
-				uberPageReference.setChecksum(tmp);
+		// Fail if the encryption info does not match.
+		if (props.getEncrypted() != (mSessionConfiguration.getEncryptionKey() != null)) {
+			throw new IllegalStateException("'"
+					+ mSessionConfiguration.getAbsolutePath()
+					+ "' encryption mode does not match "
+					+ "this session configuration.");
+		}
 
-				// Read secondary beacon.
-				// file.seek(file.length() - IConstants.BEACON_LENGTH);
-				// secondaryUberPageReference.setStart(file.readLong());
-				// secondaryUberPageReference.setLength(file.readInt());
-				// file.read(tmp);
-				// secondaryUberPageReference.setChecksum(tmp);
+		// Fail if the checksum info does not match.
+		if (props.getChecksummed() != mSessionConfiguration.isChecksummed()) {
+			throw new IllegalStateException("'"
+					+ mSessionConfiguration.getAbsolutePath()
+					+ "' checksum mode does not match "
+					+ "this session configuration.");
+		}
 
-				// Beacon logic case 1.
-				// if (uberPageReference.equals(secondaryUberPageReference)) {
-
-				final ByteBuffer in = new PageReader(mSessionConfiguration)
-						.read(uberPageReference);
-				mLastCommittedUberPage = new UberPage(in);
-
-				// Beacon logic case 2.
-				// } else {
-				// // TODO implement cases 2i, 2ii, and 2iii to be more robust!
-				// throw new IllegalStateException(
-				// "Inconsistent TreeTank file encountered. Primary start="
-				// + uberPageReference.getStart()
-				// + " size="
-				// + uberPageReference.getLength()
-				// + " checksum="
-				// + "TODO"
-				// + " secondary start="
-				// + secondaryUberPageReference.getStart()
-				// + " size="
-				// + secondaryUberPageReference.getLength()
-				// + " checksum="
-				// + "TODO");
-				//
-				// }
-
-			}
-
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (file != null) {
-				try {
-					file.close();
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-			}
+		// Make sure the encryption key is properly set.
+		if ((mSessionConfiguration.getEncryptionKey() != null)
+				&& (mSessionConfiguration.getEncryptionKey().length != IConstants.ENCRYPTION_KEY_LENGTH)) {
+			throw new IllegalArgumentException(
+					"Encryption key must either be null (encryption disabled) or "
+							+ IConstants.ENCRYPTION_KEY_LENGTH
+							+ " bytes long (encryption enabled).");
 		}
 	}
 
@@ -208,7 +205,8 @@ public final class SessionState {
 			// Create new read transaction.
 			rtx = new ReadTransaction(generateTransactionID(), this,
 					new ReadTransactionState(mSessionConfiguration,
-							mLastCommittedUberPage, revisionNumber, itemList));
+							mLastCommittedUberPage, revisionNumber, itemList,
+							fac.getReader()));
 
 			// Remember transaction for debugging and safe close.
 			if (mTransactionMap.put(rtx.getTransactionID(), rtx) != null) {
@@ -254,7 +252,7 @@ public final class SessionState {
 
 	protected final WriteTransactionState createWriteTransactionState() {
 		return new WriteTransactionState(mSessionConfiguration, new UberPage(
-				mLastCommittedUberPage));
+				mLastCommittedUberPage), fac.getWriter());
 	}
 
 	protected final UberPage getLastCommittedUberPage() {
@@ -292,6 +290,8 @@ public final class SessionState {
 		mReadSemaphore = null;
 		mLastCommittedUberPage = null;
 		mTransactionMap = null;
+
+		fac.closeStorage();
 	}
 
 	protected final SessionConfiguration getSessionConfiguration() {
@@ -325,6 +325,20 @@ public final class SessionState {
 			}
 		}
 		return id;
+	}
+
+	/**
+	 * @return the versionMajor
+	 */
+	protected long getVersionMajor() {
+		return mVersionMajor;
+	}
+
+	/**
+	 * @return the versionMinor
+	 */
+	protected long getVersionMinor() {
+		return mVersionMinor;
 	}
 
 }

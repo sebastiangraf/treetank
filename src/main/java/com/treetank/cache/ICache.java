@@ -19,6 +19,7 @@ package com.treetank.cache;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.page.AbstractPage;
+import com.treetank.page.NodePage;
 
 /**
  * Interface for all upcoming cache implementations. Can be a weak one, a
@@ -40,12 +41,12 @@ public interface ICache {
 	 * 
 	 * @param key
 	 *            the key for the requested {@link AbstractPage}
-	 * @return {@link AbstractPage} instance related to this key
+	 * @return {@link NodePage} instance related to this key
 	 */
-	public AbstractPage get(final long key);
+	public NodePage get(final long key);
 
 	/**
-	 * Putting an {@link AbstractPage} into the cache with a corresponding
+	 * Putting an {@link NodePage} into the cache with a corresponding
 	 * nodepagekey.
 	 * 
 	 * @param key
@@ -53,6 +54,6 @@ public interface ICache {
 	 * @param page
 	 *            should be putted in the cache as well.
 	 */
-	public void put(final long key, final AbstractPage page);
+	public void put(final long key, final NodePage page);
 
 }

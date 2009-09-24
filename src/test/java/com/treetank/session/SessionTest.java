@@ -136,7 +136,7 @@ public class SessionTest {
 			if (secondAccess.isAlive()) {
 				fail("Second access should have died!");
 			}
-
+			session.close();
 		} catch (final Exception e) {
 			fail(e.toString());
 			e.printStackTrace();
@@ -183,17 +183,21 @@ public class SessionTest {
 
 		// Commit and check.
 		wtx.commit();
-
+		wtx.close();
+		
 		rtx = session.beginReadTransaction();
 
 		assertEquals(IConstants.UBP_ROOT_REVISION_NUMBER, rtx
 				.getRevisionNumber());
 		assertEquals(1L, rtx.getNodeCount());
-
+		rtx.close();
+		
 		final IReadTransaction rtx2 = session.beginReadTransaction();
 		assertEquals(0L, rtx2.getRevisionNumber());
 		assertEquals(1L, rtx2.getNodeCount());
-
+		rtx2.close();
+		
+		session.close();
 	}
 
 	@Test
@@ -215,7 +219,8 @@ public class SessionTest {
 		rtx1.moveTo(12L);
 		assertEquals("bar", TypedValue
 				.parseString(rtx1.getNode().getRawValue()));
-
+		
+		
 		final IWriteTransaction wtx2 = session.beginWriteTransaction();
 		assertEquals(1L, wtx2.getRevisionNumber());
 		wtx2.moveTo(12L);
@@ -225,7 +230,7 @@ public class SessionTest {
 				.parseString(rtx1.getNode().getRawValue()));
 		assertEquals("bar2", TypedValue.parseString(wtx2.getNode()
 				.getRawValue()));
-
+		rtx1.close();
 		wtx2.abort();
 		wtx2.close();
 
@@ -234,7 +239,9 @@ public class SessionTest {
 		rtx2.moveTo(12L);
 		assertEquals("bar", TypedValue
 				.parseString(rtx2.getNode().getRawValue()));
-
+		rtx2.close();
+		
+		session.close();
 	}
 
 	@Test

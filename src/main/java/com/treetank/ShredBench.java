@@ -21,9 +21,10 @@ public final class ShredBench {
 	// Session.removeSession(new File("test100"));
 	// }
 	//
-	 public void remove1000() {
-	 Session.removeSession(new File("wikipedia"));
-	 }
+	public void remove1000() {
+		Session.removeSession(new File("test100"));
+	}
+
 	//
 	// @Bench(runs = 10, beforeEachRun = "remove10")
 	// public void shred10() {
@@ -35,10 +36,9 @@ public final class ShredBench {
 	// XMLShredder.shred("test100.xml", new SessionConfiguration("test100"));
 	// }
 
-	@Bench(runs = 1, beforeEachRun="remove1000")
+	@Bench(runs = 100, beforeEachRun = "remove1000")
 	public void shred1000() {
-		XMLShredder
-				.shred("wikipedia.xml", new SessionConfiguration("wikipedia"));
+		XMLShredder.shred("test100.xml", new SessionConfiguration("test100"));
 	}
 
 	/**

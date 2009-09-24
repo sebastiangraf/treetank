@@ -35,7 +35,6 @@ import com.treetank.utils.DocumentCreater;
 
 public class NestedFilterTest {
 
-
 	@Before
 	public void setUp() {
 

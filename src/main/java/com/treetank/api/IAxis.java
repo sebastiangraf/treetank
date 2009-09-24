@@ -135,13 +135,13 @@ public interface IAxis extends Iterator<Long>, Iterable<Long> {
 	 * @param nodeKey
 	 *            New start node key.
 	 */
-	public void reset(final long nodeKey);
+	void reset(final long nodeKey);
 
 	/**
 	 * Access transaction to which this axis is bound.
 	 * 
 	 * @return Transaction to which this axis is bound.
 	 */
-	public IReadTransaction getTransaction();
+	IReadTransaction getTransaction();
 
 }

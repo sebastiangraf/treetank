@@ -18,13 +18,11 @@
 
 package com.treetank.page;
 
-import java.nio.ByteBuffer;
-
-import com.sleepycat.bind.tuple.TupleInput;
-import com.sleepycat.bind.tuple.TupleOutput;
 import com.sleepycat.persist.model.Entity;
 import com.sleepycat.persist.model.PrimaryKey;
 import com.treetank.api.IReadTransaction;
+import com.treetank.io.ITTSink;
+import com.treetank.io.ITTSource;
 import com.treetank.node.AbstractNode;
 import com.treetank.node.AttributeNode;
 import com.treetank.node.DocumentRootNode;
@@ -70,67 +68,19 @@ public class NodePage extends AbstractPage {
 	 * @param nodePageKey
 	 *            Base key assigned to this node page.
 	 */
-	public NodePage(final TupleInput in) {
+	NodePage(final ITTSource in) {
 		super(0, in);
 		mNodePageKey = in.readLong();
 		mNodes = new AbstractNode[IConstants.NDP_NODE_COUNT];
 
-		final long[] values = new long[IConstants.NDP_NODE_COUNT];
+		final int[] values = new int[IConstants.NDP_NODE_COUNT];
 		for (int i = 0; i < values.length; i++) {
-			values[i] = in.readLong();
+			values[i] = in.readInt();
 		}
 
 		final long keyBase = mNodePageKey << IConstants.NDP_NODE_COUNT_EXPONENT;
 		for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
-			final int kind = (int) values[offset];
-			switch (kind) {
-			case IConstants.UNKNOWN:
-				// Was null node, do nothing here.
-				break;
-			case IReadTransaction.DOCUMENT_ROOT_KIND:
-				getNodes()[offset] = new DocumentRootNode(in);
-				break;
-			case IReadTransaction.ELEMENT_KIND:
-				getNodes()[offset] = new ElementNode(keyBase + offset, in);
-				break;
-			case IReadTransaction.ATTRIBUTE_KIND:
-				getNodes()[offset] = new AttributeNode(keyBase + offset, in);
-				break;
-			case IReadTransaction.NAMESPACE_KIND:
-				getNodes()[offset] = new NamespaceNode(keyBase + offset, in);
-				break;
-			case IReadTransaction.TEXT_KIND:
-				getNodes()[offset] = new TextNode(keyBase + offset, in);
-				break;
-			default:
-				throw new IllegalStateException(
-						"Unsupported node kind encountered during read: "
-								+ kind);
-			}
-		}
-	}
-
-	/**
-	 * Read node page.
-	 * 
-	 * @param in
-	 *            Input bytes to read page from.
-	 * @param nodePageKey
-	 *            Base key assigned to this node page.
-	 */
-	public NodePage(final ByteBuffer in, final long nodePageKey) {
-		super(0, in);
-		mNodePageKey = nodePageKey;
-		mNodes = new AbstractNode[IConstants.NDP_NODE_COUNT];
-
-		final long[] values = new long[IConstants.NDP_NODE_COUNT];
-		for (int i = 0; i < values.length; i++) {
-			values[i] = in.getLong();
-		}
-
-		final long keyBase = mNodePageKey << IConstants.NDP_NODE_COUNT_EXPONENT;
-		for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
-			final int kind = (int) values[offset];
+			final int kind = values[offset];
 			switch (kind) {
 			case IConstants.UNKNOWN:
 				// Was null node, do nothing here.
@@ -249,36 +199,15 @@ public class NodePage extends AbstractPage {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void serialize(final ByteBuffer out) {
-		super.serialize(out);
-
-		for (int i = 0; i < getNodes().length; i++) {
-			if (getNodes()[i] != null) {
-				out.putLong(getNodes()[i].getKind());
-			} else {
-				out.putLong(IConstants.UNKNOWN);
-			}
-		}
-
-		for (final AbstractNode node : getNodes()) {
-			if (node != null) {
-				node.serialize(out);
-			}
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void serialize(final TupleOutput out) {
+	public void serialize(final ITTSink out) {
+		out.writeInt(PageFactory.NODEPAGE);
 		super.serialize(out);
 		out.writeLong(mNodePageKey);
 		for (int i = 0; i < getNodes().length; i++) {
 			if (getNodes()[i] != null) {
-				out.writeLong(getNodes()[i].getKind());
+				out.writeInt(getNodes()[i].getKind());
 			} else {
-				out.writeLong(IConstants.UNKNOWN);
+				out.writeInt(IConstants.UNKNOWN);
 			}
 		}
 
@@ -295,7 +224,7 @@ public class NodePage extends AbstractPage {
 	@Override
 	public final String toString() {
 		String returnString = super.toString() + ": nodePageKey="
-				+ mNodePageKey + ", isDirty=" + isDirty() + " nodes: \n";
+				+ mNodePageKey + " nodes: \n";
 		for (final AbstractNode node : getNodes()) {
 			if (node != null) {
 				returnString = returnString + node.getNodeKey() + ",";

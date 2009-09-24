@@ -57,49 +57,49 @@ public interface ISession {
 	 * 
 	 * @return File name of TreeTank file.
 	 */
-	public String getFileName();
+	String getFileName();
 
 	/**
 	 * Get absolute path to TreeTank file.
 	 * 
 	 * @return Absolute path to TreeTank file.
 	 */
-	public String getAbsolutePath();
+	String getAbsolutePath();
 
 	/**
 	 * Tells whether the session is bound to an encrypted TreeTank file.
 	 * 
 	 * @return True if the TreeTank file is encrypted. False else.
 	 */
-	public boolean isEncrypted();
+	boolean isEncrypted();
 
 	/**
 	 * Tells whether the session is bound to a checksummed TreeTank file.
 	 * 
 	 * @return True if the TreeTank file is checksummed. False else.
 	 */
-	public boolean isChecksummed();
+	boolean isChecksummed();
 
 	/**
 	 * Get the major revision of the TreeTank version.
 	 * 
 	 * @return Major revision of TreeTank version.
 	 */
-	public int getVersionMajor();
+	long getVersionMajor();
 
 	/**
 	 * Get the minor revision of the TreeTank version.
 	 * 
 	 * @return Minor revision of TreeTank version.
 	 */
-	public int getVersionMinor();
+	long getVersionMinor();
 
 	/**
 	 * Begin a read-only transaction on the latest committed revision key.
 	 * 
 	 * @return IReadTransaction instance.
 	 */
-	public IReadTransaction beginReadTransaction();
+	IReadTransaction beginReadTransaction();
 
 	/**
 	 * Begin a read-only transaction on the given revision key.
@@ -108,14 +108,14 @@ public interface ISession {
 	 *            Revision key to read from.
 	 * @return IReadTransaction instance.
 	 */
-	public IReadTransaction beginReadTransaction(final long revisionKey);
+	IReadTransaction beginReadTransaction(final long revisionKey);
 
 	/**
 	 * Begin exclusive read/write transaction without auto commit.
 	 * 
 	 * @return IWriteTransaction instance.
 	 */
-	public IWriteTransaction beginWriteTransaction();
+	IWriteTransaction beginWriteTransaction();
 
 	/**
 	 * Begin exclusive read/write transaction with auto commit.
@@ -126,7 +126,7 @@ public interface ISession {
 	 *            Time in seconds after which a commit is issued.
 	 * @return IWriteTransaction instance.
 	 */
-	public IWriteTransaction beginWriteTransaction(final int maxNodeCount,
+	IWriteTransaction beginWriteTransaction(final int maxNodeCount,
 			final int maxTime);
 
 	/**
@@ -134,14 +134,14 @@ public interface ISession {
 	 * 
 	 * @return Number of running read transactions.
 	 */
-	public int getReadTransactionCount();
+	int getReadTransactionCount();
 
 	/**
 	 * Get number of running write transactions.
 	 * 
 	 * @return Number of running write transactions.
 	 */
-	public int getWriteTransactionCount();
+	int getWriteTransactionCount();
 
 	/**
 	 * Safely close session and immediately release all resources. If there are
@@ -150,6 +150,6 @@ public interface ISession {
 	 * This is an idempotent operation and does nothing if the session is
 	 * already closed.
 	 */
-	public void close();
+	void close();
 
 }

@@ -10,8 +10,8 @@ public class NamePageHashTest {
 	@Test
 	public void testGenerateHashCodes() {
 		final int[] hashes = { 70, 25 };
-		assertArrayEquals(hashes, NamePageHash.generateOffsets("foo"
-				.hashCode()));
+		assertArrayEquals(hashes, NamePageHash
+				.generateOffsets("foo".hashCode()));
 	}
 
 	@Test

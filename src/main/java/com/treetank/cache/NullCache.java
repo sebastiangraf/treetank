@@ -16,7 +16,7 @@
  */
 package com.treetank.cache;
 
-import com.treetank.page.AbstractPage;
+import com.treetank.page.NodePage;
 
 /**
  * Null cache, just for perfomance measurements. Caching nothing.
@@ -41,7 +41,7 @@ public class NullCache implements ICache {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public AbstractPage get(long key) {
+	public NodePage get(long key) {
 		return null;
 	}
 
@@ -49,7 +49,7 @@ public class NullCache implements ICache {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void put(long key, AbstractPage page) {
+	public void put(long key, NodePage page) {
 	}
 
 }

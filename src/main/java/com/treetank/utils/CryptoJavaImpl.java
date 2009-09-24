@@ -19,9 +19,10 @@
 package com.treetank.utils;
 
 import java.io.ByteArrayOutputStream;
-import java.nio.ByteBuffer;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
+
+import com.treetank.io.file.ByteBufferSinkAndSource;
 
 public class CryptoJavaImpl implements ICrypto {
 
@@ -50,7 +51,7 @@ public class CryptoJavaImpl implements ICrypto {
 	 *            data that should be compressed
 	 * @return compressed data, null if failed
 	 */
-	public short crypt(final short length, final ByteBuffer buffer) {
+	public short crypt(final short length, final ByteBufferSinkAndSource buffer) {
 		try {
 			buffer.position(24);
 			final byte[] tmp = new byte[length - 24];
@@ -72,10 +73,10 @@ public class CryptoJavaImpl implements ICrypto {
 		final byte[] checksum = new byte[IConstants.CHECKSUM_SIZE];
 		buffer.position(12);
 		for (final byte byteVal : checksum) {
-			buffer.put(byteVal);
+			buffer.writeByte(byteVal);
 		}
 		for (final byte byteVal : result) {
-			buffer.put(byteVal);
+			buffer.writeByte(byteVal);
 		}
 		return (short) (buffer.position());
 	}
@@ -87,7 +88,8 @@ public class CryptoJavaImpl implements ICrypto {
 	 *            data that should be decompressed
 	 * @return Decompressed data, null if failed
 	 */
-	public short decrypt(final short length, final ByteBuffer buffer) {
+	public short decrypt(final short length,
+			final ByteBufferSinkAndSource buffer) {
 		try {
 			buffer.position(24);
 			final byte[] tmp = new byte[length - 24];
@@ -108,10 +110,10 @@ public class CryptoJavaImpl implements ICrypto {
 		final byte[] checksum = new byte[IConstants.CHECKSUM_SIZE];
 		buffer.position(12);
 		for (final byte byteVal : checksum) {
-			buffer.put(byteVal);
+			buffer.writeByte(byteVal);
 		}
 		for (final byte byteVal : result) {
-			buffer.put(byteVal);
+			buffer.writeByte(byteVal);
 		}
 		return (short) (result.length + 24);
 	}

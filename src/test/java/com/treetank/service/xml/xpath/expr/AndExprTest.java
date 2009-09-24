@@ -44,7 +44,6 @@ import com.treetank.utils.TypedValue;
  */
 public class AndExprTest {
 
-
 	@Before
 	public void setUp() {
 

@@ -42,7 +42,6 @@ import com.treetank.utils.TypedValue;
  */
 public class InstanceOfExprTest {
 
-
 	@Before
 	public void setUp() {
 		Session.removeSession(ITestConstants.PATH1);

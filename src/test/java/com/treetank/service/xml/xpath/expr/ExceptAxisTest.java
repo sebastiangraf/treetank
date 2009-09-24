@@ -40,7 +40,6 @@ import com.treetank.utils.DocumentCreater;
  */
 public class ExceptAxisTest {
 
-
 	@Test
 	public void testExcept() throws IOException {
 		Session.removeSession(new File(ITestConstants.PATH1));

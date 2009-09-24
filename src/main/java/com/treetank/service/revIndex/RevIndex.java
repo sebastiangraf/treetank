@@ -189,7 +189,7 @@ public final class RevIndex {
 		if (rtx instanceof IWriteTransaction) {
 			final IWriteTransaction wtx = (IWriteTransaction) rtx;
 			wtx.commit();
-//			cleanUpStructure();
+			// cleanUpStructure();
 			indexRev = MetaTreeNavigator.adaptMetaTree(wtx, indexRev);
 			wtx.moveToDocumentRoot();
 			return indexRev;

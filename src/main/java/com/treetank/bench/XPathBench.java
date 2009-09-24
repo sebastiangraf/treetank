@@ -13,13 +13,13 @@ import com.treetank.session.SessionConfiguration;
 
 public class XPathBench {
 
-	private final static String fileName = "shakespeare";
-	private final static File xml = new File("src" + File.separator + "test"
-			+ File.separator + "resources" + File.separator + fileName + ".xml");
-	private final static File tnk = new File("target" + File.separator + "tnk"
-			+ File.separator + fileName + ".tnk");
-	private final static File indexTnk = new File("target" + File.separator
-			+ "tnk" + File.separator + "index" + fileName + ".tnk");
+	private final static String FILENAME = "shakespeare";
+	private final static File XML = new File("src" + File.separator + "test"
+			+ File.separator + "resources" + File.separator + FILENAME + ".xml");
+	private final static File TNK = new File("target" + File.separator + "TNK"
+			+ File.separator + FILENAME + ".tnk");
+	private final static File INDEXTNK = new File("target" + File.separator
+			+ "TNK" + File.separator + "index" + FILENAME + ".tnk");
 
 	public XPathBench() {
 	}
@@ -27,13 +27,13 @@ public class XPathBench {
 	public void query() {
 		final String query = "//ACT";
 
-		indexTnk.delete();
-		if (!tnk.exists()) {
-			XMLShredder.shred(xml.getAbsolutePath(), new SessionConfiguration(
-					tnk.getAbsolutePath()));
+		INDEXTNK.delete();
+		if (!TNK.exists()) {
+			XMLShredder.shred(XML.getAbsolutePath(), new SessionConfiguration(
+					TNK.getAbsolutePath()));
 		}
 		try {
-			final ISession session = Session.beginSession(tnk);
+			final ISession session = Session.beginSession(TNK);
 			final IReadTransaction rtx = session.beginReadTransaction();
 
 			final XPathParser parser = new XPathParser(rtx, query);

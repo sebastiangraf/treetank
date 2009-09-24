@@ -30,7 +30,6 @@ import com.treetank.session.Session;
 
 public class IFilterTest {
 
-
 	@Before
 	public void setUp() {
 		Session.removeSession(ITestConstants.PATH1);

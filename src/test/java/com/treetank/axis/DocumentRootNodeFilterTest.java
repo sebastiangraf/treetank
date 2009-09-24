@@ -29,7 +29,6 @@ import com.treetank.utils.DocumentCreater;
 
 public class DocumentRootNodeFilterTest {
 
-
 	@Before
 	public void setUp() {
 		Session.removeSession(ITestConstants.PATH1);

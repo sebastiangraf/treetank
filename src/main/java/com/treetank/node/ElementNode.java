@@ -18,13 +18,14 @@
 
 package com.treetank.node;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 import com.treetank.api.IReadTransaction;
+import com.treetank.io.ITTSink;
+import com.treetank.io.ITTSource;
 
 /**
  * <h1>ElementNode</h1>
@@ -132,20 +133,20 @@ public final class ElementNode extends AbstractNode {
 	 * @param in
 	 *            Input bytes to read from.
 	 */
-	public ElementNode(final long nodeKey, final ByteBuffer in) {
+	public ElementNode(final long nodeKey, final ITTSource in) {
 		super(SIZE, nodeKey, in);
 
 		if (mData[ATTRIBUTE_COUNT] > 0) {
 			mAttributeKeys = new ArrayList<Long>((int) mData[ATTRIBUTE_COUNT]);
 
 			for (int i = 0; i < mData[ATTRIBUTE_COUNT]; i++) {
-				mAttributeKeys.add(in.getLong());
+				mAttributeKeys.add(in.readLong());
 			}
 		}
 		if (mData[NAMESPACE_COUNT] > 0) {
 			mNamespaceKeys = new ArrayList<Long>((int) mData[NAMESPACE_COUNT]);
 			for (int i = 0; i < mData[NAMESPACE_COUNT]; i++) {
-				mNamespaceKeys.add(in.getLong());
+				mNamespaceKeys.add(in.readLong());
 			}
 		}
 	}
@@ -442,20 +443,20 @@ public final class ElementNode extends AbstractNode {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public final void serialize(final ByteBuffer out) {
+	public final void serialize(final ITTSink out) {
 		super.serialize(out);
 		if (mAttributeKeys != null) {
 			for (int i = 0, l = mAttributeKeys.size(); i < l; i++) {
-				out.putLong(mAttributeKeys.get(i));
+				out.writeLong(mAttributeKeys.get(i));
 			}
 		}
 		if (mNamespaceKeys != null) {
 			for (int i = 0, l = mNamespaceKeys.size(); i < l; i++) {
-				out.putLong(mNamespaceKeys.get(i));
+				out.writeLong(mNamespaceKeys.get(i));
 			}
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */

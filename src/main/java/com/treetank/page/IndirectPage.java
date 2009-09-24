@@ -18,9 +18,8 @@
 
 package com.treetank.page;
 
-import java.nio.ByteBuffer;
-
-import com.sleepycat.bind.tuple.TupleInput;
+import com.treetank.io.ITTSink;
+import com.treetank.io.ITTSource;
 import com.treetank.utils.IConstants;
 
 /**
@@ -31,16 +30,6 @@ import com.treetank.utils.IConstants;
  * </p>
  */
 public final class IndirectPage extends AbstractPage {
-
-	/**
-	 * Berkeley DB constructor
-	 * 
-	 * @param input
-	 *            a {@link TupleInput} object
-	 */
-	public IndirectPage(final TupleInput input) {
-		super(IConstants.INP_REFERENCE_COUNT, input);
-	}
 
 	/**
 	 * Create indirect page.
@@ -55,7 +44,7 @@ public final class IndirectPage extends AbstractPage {
 	 * @param in
 	 *            Input bytes.
 	 */
-	public IndirectPage(final ByteBuffer in) {
+	IndirectPage(final ITTSource in) {
 		super(IConstants.INP_REFERENCE_COUNT, in);
 	}
 
@@ -69,12 +58,10 @@ public final class IndirectPage extends AbstractPage {
 		super(IConstants.INP_REFERENCE_COUNT, page);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public final String toString() {
-		return super.toString() + ": isDirty=" + isDirty();
+	public void serialize(final ITTSink out) {
+		out.writeInt(PageFactory.INDIRCTPAGE);
+		super.serialize(out);
 	}
 
 }

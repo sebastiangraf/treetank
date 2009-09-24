@@ -80,13 +80,13 @@ public interface IFilter {
 	 * 
 	 * @return Transaction to which this filter is bound.
 	 */
-	public IReadTransaction getTransaction();
+	IReadTransaction getTransaction();
 
 	/**
 	 * Apply filter on current node of transaction.
 	 * 
 	 * @return True if node passes filter. False else.
 	 */
-	public boolean filter();
+	boolean filter();
 
 }

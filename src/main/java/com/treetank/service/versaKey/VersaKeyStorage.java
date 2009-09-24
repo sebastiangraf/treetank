@@ -8,7 +8,7 @@ import com.treetank.session.Session;
 
 /**
  * Implementing the VersayKey Storage
- *  
+ * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
@@ -24,6 +24,4 @@ class VersaKeyStorage implements IKeyStorage {
 		}
 	}
 
-	
-	
 }

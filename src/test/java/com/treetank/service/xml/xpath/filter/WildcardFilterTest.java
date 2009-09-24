@@ -34,7 +34,6 @@ import com.treetank.utils.DocumentCreater;
 
 public class WildcardFilterTest {
 
-
 	@Before
 	public void setUp() {
 

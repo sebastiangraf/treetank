@@ -121,15 +121,12 @@ public class AxisStepBench {
 
 	public static void main(final String[] args) {
 
-		System.out
-				.println("$Id:AxisStepBenchmark.java 1617 2006-10-12 17:32:13Z kramis $");
 		try {
 			Benchmark a = new Benchmark();
 			a.add(AxisStepBench.class);
 			BenchmarkResult r = a.run();
 			TabularSummaryOutput v = new TabularSummaryOutput();
 			v.visitBenchmark(r);
-			System.out.println(v.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

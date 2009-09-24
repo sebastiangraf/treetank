@@ -44,12 +44,11 @@ import com.treetank.utils.TypedValue;
  */
 public class LiteralExprTest {
 
-
 	private IItem item1;
 
-private	IItem item2;
+	private IItem item2;
 
-private	int key1;
+	private int key1;
 
 	private int key2;
 

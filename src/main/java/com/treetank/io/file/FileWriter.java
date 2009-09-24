@@ -1,69 +1,49 @@
-/*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
- * 
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- * 
- * $Id: PageWriter.java 4467 2008-09-04 18:57:58Z kramis $
- */
+package com.treetank.io.file;
 
-package com.treetank.page;
-
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
 
+import com.treetank.io.IWriter;
+import com.treetank.io.StorageProperties;
+import com.treetank.page.AbstractPage;
+import com.treetank.page.PageReference;
+import com.treetank.page.UberPage;
 import com.treetank.session.SessionConfiguration;
 import com.treetank.utils.CryptoJavaImpl;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.ICrypto;
 
 /**
- * <h1>PageWriter</h1>
+ * File Writer for providing read/write access for file as a treetank backend.
  * 
- * <p>
- * Each commit of the ISession creates one PageWriter instance to write to the
- * TreeTank file.
- * </p>
+ * @author Marc Kramis, Seabix
+ * @author Sebastian Graf, University of Konstanz
+ * 
  */
-public final class PageWriter {
+public class FileWriter implements IWriter {
 
 	/** Random access mFile to work on. */
 	private final RandomAccessFile mFile;
 
 	/** Compressor to compress the page. */
-	private ICrypto mCompressor;
+	private final ICrypto mCompressor;
 
 	/** Temporary data buffer. */
-	private ByteBuffer mBuffer;
+	private ByteBufferSinkAndSource mBuffer;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param sessionConfiguration
-	 *            Configuration of session we are bound to.
-	 * @throws RuntimeException
-	 *             if the PageWriter could not be instantiated.
-	 */
-	public PageWriter(final SessionConfiguration sessionConfiguration) {
+	private final FileReader reader;
 
+	public FileWriter(final SessionConfiguration paramConf) {
 		try {
-
-			mFile = new RandomAccessFile(
-					sessionConfiguration.getFileName(),
-					IConstants.READ_WRITE);
+			final File toRead = new File(paramConf.getAbsolutePath()
+					+ File.separatorChar + "tt.tnk");
+			mFile = new RandomAccessFile(toRead, IConstants.READ_WRITE);
 
 			mCompressor = new CryptoJavaImpl();
-			mBuffer = ByteBuffer.allocate(IConstants.BUFFER_SIZE);
+			mBuffer = new ByteBufferSinkAndSource();
+
+			reader = new FileReader(paramConf);
 
 		} catch (Exception e) {
 			throw new RuntimeException("Could not create page writer: "
@@ -86,7 +66,8 @@ public final class PageWriter {
 
 			// Serialise page.
 			mBuffer.position(24);
-			pageReference.getPage().serialize(mBuffer);
+			final AbstractPage page = pageReference.getPage();
+			page.serialize(mBuffer);
 			final short inputLength = (short) mBuffer.position();
 
 			// Perform crypto operations.
@@ -104,16 +85,19 @@ public final class PageWriter {
 				checksum[i] = mBuffer.get();
 			}
 
+			// Getting actual offset and appending to the end of the current
+			// file
 			final long fileSize = mFile.length();
 			mFile.seek(fileSize);
-			
+
 			final byte[] tmp = new byte[outputLength - 24];
 			mBuffer.get(tmp, 0, outputLength - 24);
 			mFile.write(tmp);
 
+			final FileKey key = new FileKey(fileSize, outputLength - 24);
+
 			// Remember page coordinates.
-			pageReference.setStart(fileSize);
-			pageReference.setLength(outputLength - 24);
+			pageReference.setKey(key);
 			pageReference.setChecksum(checksum);
 
 		} catch (Exception e) {
@@ -150,6 +134,50 @@ public final class PageWriter {
 		} finally {
 			super.finalize();
 		}
+	}
+
+	@Override
+	public void initializingStorage(final StorageProperties props) {
+		try {
+			mFile.setLength(IConstants.BEACON_START + IConstants.BEACON_LENGTH);
+			mFile.writeLong(props.getVersionMajor());
+			mFile.writeLong(props.getVersionMinor());
+			mFile.writeBoolean(props.getChecksummed());
+			mFile.writeBoolean(props.getEncrypted());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void writeBeacon(PageReference<UberPage> pageReference) {
+		byte[] tmp = new byte[IConstants.CHECKSUM_SIZE];
+		try {
+			mFile.seek(IConstants.BEACON_START);
+			final FileKey key = (FileKey) pageReference.getKey();
+			mFile.writeLong(key.getOffset());
+			mFile.writeInt(key.getLength());
+			pageReference.getChecksum(tmp);
+			mFile.write(tmp);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public StorageProperties getProps() {
+		return reader.getProps();
+	}
+
+	@Override
+	public AbstractPage read(PageReference<? extends AbstractPage> pageReference) {
+		return reader.read(pageReference);
+	}
+
+	@Override
+	public PageReference<?> readFirstReference() {
+
+		return reader.readFirstReference();
 	}
 
 }

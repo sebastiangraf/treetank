@@ -18,11 +18,11 @@
 
 package com.treetank.node;
 
-import java.nio.ByteBuffer;
-
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 import com.treetank.api.IReadTransaction;
+import com.treetank.io.ITTSink;
+import com.treetank.io.ITTSource;
 
 /**
  * <h1>AttributeNode</h1>
@@ -96,14 +96,14 @@ public final class AttributeNode extends AbstractNode {
 	 * @param in
 	 *            buffer for the data
 	 */
-	public AttributeNode(final long nodeKey, final ByteBuffer in) {
+	public AttributeNode(final long nodeKey, final ITTSource in) {
 		super(SIZE, nodeKey, in);
 		mValue = new byte[(int) mData[VALUE_LENGTH]];
 		for (int i = 0; i < mValue.length; i++) {
-			mValue[i] = in.get();
+			mValue[i] = in.readByte();
 		}
 	}
-	
+
 	/**
 	 * 
 	 * Constructor.
@@ -231,13 +231,12 @@ public final class AttributeNode extends AbstractNode {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public final void serialize(final ByteBuffer out) {
+	public final void serialize(final ITTSink out) {
 		super.serialize(out);
 		for (final byte byteVal : mValue) {
-			out.put(byteVal);
+			out.writeByte(byteVal);
 		}
 	}
-	
 
 	/**
 	 * {@inheritDoc}

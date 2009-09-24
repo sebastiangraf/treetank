@@ -43,7 +43,6 @@ import com.treetank.utils.TypedValue;
  */
 public class OrExprTest {
 
-
 	@Before
 	public void setUp() {
 

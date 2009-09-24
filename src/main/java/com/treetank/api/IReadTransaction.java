@@ -18,7 +18,6 @@
 
 package com.treetank.api;
 
-
 /**
  * <h1>IReadTransaction</h1>
  * 
@@ -101,81 +100,81 @@ public interface IReadTransaction {
 	// ------------------------------------------------------------------
 
 	/** Null key for node references. */
-	public static final long NULL_NODE_KEY = -1L;
+	static final long NULL_NODE_KEY = -1L;
 
 	/** Null key for name references. */
-	public static final int NULL_NAME_KEY = -1;
+	static final int NULL_NAME_KEY = -1;
 
 	/** Key of document root node. */
-	public static final long DOCUMENT_ROOT_KEY = 0L;
+	static final long DOCUMENT_ROOT_KEY = 0L;
 
 	// --- Kinds
 	// ------------------------------------------------------------------
 
 	/** Node kind is element. */
-	public static final int ELEMENT_KIND = 1;
+	static final int ELEMENT_KIND = 1;
 
 	/** Node kind is attribute. */
-	public static final int ATTRIBUTE_KIND = 2;
+	static final int ATTRIBUTE_KIND = 2;
 
 	/** Node kind is text. */
-	public static final int TEXT_KIND = 3;
+	static final int TEXT_KIND = 3;
 
 	/** Node kind is namespace. */
-	public static final int NAMESPACE_KIND = 4;
+	static final int NAMESPACE_KIND = 4;
 
 	/** Node kind is processing instruction. */
-	public static final int PROCESSING_INSTRUCTION_KIND = 7;
+	static final int PROCESSING_INSTRUCTION_KIND = 7;
 
 	/** Node kind is comment. */
-	public static final int COMMENT_KIND = 8;
+	static final int COMMENT_KIND = 8;
 
 	/** Node kind is document root. */
-	public static final int DOCUMENT_ROOT_KIND = 9;
+	static final int DOCUMENT_ROOT_KIND = 9;
 
 	/** String constants used by xpath. */
-	public static final String[] XPATHCONSTANTS = { "xs:anyType",
-			"xs:anySimpleType", "xs:anyAtomicType", "xs:untypedAtomic",
-			"xs:untyped", "xs:string", "xs:duration", "xs:yearMonthDuration",
-			"xs:dayTimeDuration", "xs:dateTime", "xs:time", "xs:date",
-			"xs:gYearMonth", "xs:gYear", "xs:gMonthDay", "xs:gDay",
-			"xs:gMonth", "xs:boolean", "xs:base64Binary", "xs:hexBinary",
-			"xs:anyURI", "xs:QName", "xs:NOTATION", "xs:float", "xs:double",
-			"xs:pDecimal", "xs:decimal", "xs:integer", "xs:long", "xs:int",
-			"xs:short", "xs:byte", "xs:nonPositiveInteger",
-			"xs:negativeInteger", "xs:nonNegativeInteger",
-			"xs:positiveInteger", "xs:unsignedLong", "xs:unsignedInt",
-			"xs:unsignedShort", "xs:unsignedByte", "xs:normalizedString",
-			"xs:token", "xs:language", "xs:name", "xs:NCName", "xs:ID",
-			"xs:IDREF", "xs:ENTITY", "xs:IDREFS", "xs:NMTOKEN", "xs:NMTOKENS", };
+	static final String[] XPATHCONSTANTS = { "xs:anyType", "xs:anySimpleType",
+			"xs:anyAtomicType", "xs:untypedAtomic", "xs:untyped", "xs:string",
+			"xs:duration", "xs:yearMonthDuration", "xs:dayTimeDuration",
+			"xs:dateTime", "xs:time", "xs:date", "xs:gYearMonth", "xs:gYear",
+			"xs:gMonthDay", "xs:gDay", "xs:gMonth", "xs:boolean",
+			"xs:base64Binary", "xs:hexBinary", "xs:anyURI", "xs:QName",
+			"xs:NOTATION", "xs:float", "xs:double", "xs:pDecimal",
+			"xs:decimal", "xs:integer", "xs:long", "xs:int", "xs:short",
+			"xs:byte", "xs:nonPositiveInteger", "xs:negativeInteger",
+			"xs:nonNegativeInteger", "xs:positiveInteger", "xs:unsignedLong",
+			"xs:unsignedInt", "xs:unsignedShort", "xs:unsignedByte",
+			"xs:normalizedString", "xs:token", "xs:language", "xs:name",
+			"xs:NCName", "xs:ID", "xs:IDREF", "xs:ENTITY", "xs:IDREFS",
+			"xs:NMTOKEN", "xs:NMTOKENS", };
 
 	/**
 	 * Get ID of transaction.
 	 * 
 	 * @return ID of transaction.
 	 */
-	public long getTransactionID();
+	long getTransactionID();
 
 	/**
 	 * What is the revision number of this IReadTransaction?
 	 * 
 	 * @return Immutable revision number of this IReadTransaction.
 	 */
-	public long getRevisionNumber();
+	long getRevisionNumber();
 
 	/**
 	 * UNIX-style timestamp of the commit of the revision.
 	 * 
 	 * @return Timestamp of revision commit.
 	 */
-	public long getRevisionTimestamp();
+	long getRevisionTimestamp();
 
 	/**
 	 * How many nodes are stored in the revision of this IReadTransaction?
 	 * 
 	 * @return Immutable number of nodes of this IReadTransaction.
 	 */
-	public long getNodeCount();
+	long getNodeCount();
 
 	// --- Node Selectors
 	// --------------------------------------------------------
@@ -187,42 +186,42 @@ public interface IReadTransaction {
 	 *            Key of node to select.
 	 * @return True if the node with the given node key is selected.
 	 */
-	public boolean moveTo(final long nodeKey);
+	boolean moveTo(final long nodeKey);
 
 	/**
 	 * Move cursor to document root node.
 	 * 
 	 * @return True if the document root node is selected.
 	 */
-	public boolean moveToDocumentRoot();
+	boolean moveToDocumentRoot();
 
 	/**
 	 * Move cursor to parent node of currently selected node.
 	 * 
 	 * @return True if the parent node is selected.
 	 */
-	public boolean moveToParent();
+	boolean moveToParent();
 
 	/**
 	 * Move cursor to first child node of currently selected node.
 	 * 
 	 * @return True if the first child node is selected.
 	 */
-	public boolean moveToFirstChild();
+	boolean moveToFirstChild();
 
 	/**
 	 * Move cursor to left sibling node of the currently selected node.
 	 * 
 	 * @return True if the left sibling node is selected.
 	 */
-	public boolean moveToLeftSibling();
+	boolean moveToLeftSibling();
 
 	/**
 	 * Move cursor to right sibling node of the currently selected node.
 	 * 
 	 * @return True if the right sibling node is selected.
 	 */
-	public boolean moveToRightSibling();
+	boolean moveToRightSibling();
 
 	/**
 	 * Move cursor to attribute by its index.
@@ -231,7 +230,7 @@ public interface IReadTransaction {
 	 *            Index of attribute to move to.
 	 * @return True if the attribute node is selected.
 	 */
-	public boolean moveToAttribute(final int index);
+	boolean moveToAttribute(final int index);
 
 	/**
 	 * Move cursor to namespace declaration by its index.
@@ -240,238 +239,30 @@ public interface IReadTransaction {
 	 *            Index of attribute to move to.
 	 * @return True if the namespace node is selected.
 	 */
-	public boolean moveToNamespace(final int index);
+	boolean moveToNamespace(final int index);
 
 	// --- Node Getters
 	// ----------------------------------------------------------
 
-	public String getValueOfCurrentNode();
-
-	public String getNameOfCurrentNode();
-
-	public String getURIOfCurrentNode();
-
-	public String getTypeOfCurrentNode();
+	/**
+	 * Getting the value of the current node
+	 */
+	String getValueOfCurrentNode();
 
 	/**
-	 * Get node key of currently selected node.
-	 * 
-	 * @return Node key of currently selected node.
+	 * Getting the name of the current node
 	 */
-	@Deprecated
-	public long getNodeKey();
+	String getNameOfCurrentNode();
 
 	/**
-	 * Is there a parent?
-	 * 
-	 * @return True if there is a parent. False else.
+	 * Getting the uri of the current node
 	 */
-	@Deprecated
-	public boolean hasParent();
+	String getURIOfCurrentNode();
 
 	/**
-	 * Get parent key of currently selected node.
-	 * 
-	 * @return Parent key of currently selected node.
+	 * Getting the type of the current node
 	 */
-	@Deprecated
-	public long getParentKey();
-
-	/**
-	 * Is there a first child?
-	 * 
-	 * @return True if there is a first child. False else.
-	 */
-	@Deprecated
-	public boolean hasFirstChild();
-
-	/**
-	 * Get first child key of currently selected node.
-	 * 
-	 * @return First child key of currently selected node.
-	 */
-	@Deprecated
-	public long getFirstChildKey();
-
-	/**
-	 * Is there a left sibling?
-	 * 
-	 * @return True if there is a left sibling. False else.
-	 */
-	@Deprecated
-	public boolean hasLeftSibling();
-
-	/**
-	 * Get left sibling key of currently selected node.
-	 * 
-	 * @return Left sibling key of currently selected node.
-	 */
-	@Deprecated
-	public long getLeftSiblingKey();
-
-	/**
-	 * Is there a right sibling?
-	 * 
-	 * @return True if there is a right sibling. False else.
-	 */
-	@Deprecated
-	public boolean hasRightSibling();
-
-	/**
-	 * Get right sibling key of currently selected node.
-	 * 
-	 * @return Right sibling key of currently selected node.
-	 */
-	@Deprecated
-	public long getRightSiblingKey();
-
-	/**
-	 * Get child count (including element and text nodes) of currently selected
-	 * node.
-	 * 
-	 * @return Child count of currently selected node.
-	 */
-	@Deprecated
-	public long getChildCount();
-
-	/**
-	 * Get attribute count (including attribute nodes) of currently selected
-	 * node.
-	 * 
-	 * @return Attribute count of currently selected node.
-	 */
-	@Deprecated
-	public int getAttributeCount();
-
-	/**
-	 * Get namespace declaration count of currently selected node.
-	 * 
-	 * @return Namespace declaration count of currently selected node.
-	 */
-	@Deprecated
-	public int getNamespaceCount();
-
-	/**
-	 * Get kind of node.
-	 * 
-	 * @return Kind of node.
-	 */
-	@Deprecated
-	public int getKind();
-
-	/**
-	 * Is this node the document root node?
-	 * 
-	 * @return True if it is the document root node, false else.
-	 */
-	@Deprecated
-	public boolean isDocumentRootKind();
-
-	/**
-	 * Is node a element?
-	 * 
-	 * @return True if node is element. False else.
-	 */
-	@Deprecated
-	public boolean isElementKind();
-
-	/**
-	 * Is node a attribute?
-	 * 
-	 * @return True if node is attribute. False else.
-	 */
-	@Deprecated
-	public boolean isAttributeKind();
-
-	/**
-	 * Is node a text?
-	 * 
-	 * @return True if node is text. False else.
-	 */
-	@Deprecated
-	public boolean isTextKind();
-
-	/**
-	 * Get qualified name key of node.
-	 * 
-	 * @return Qualified name key of node.
-	 */
-	@Deprecated
-	public int getNameKey();
-
-	/**
-	 * Get qualified name of node.
-	 * 
-	 * @return Qualified name of node.
-	 */
-	@Deprecated
-	public String getName();
-
-	/**
-	 * Get qualified raw name of node.
-	 * 
-	 * @return Qualified raw name of node.
-	 */
-	@Deprecated
-	public byte[] getRawName();
-
-	/**
-	 * Get URI key of node. Note that this actually is an IRI but the W3C
-	 * decided to continue using URI not to confuse anyone.
-	 * 
-	 * @return URI key of node.
-	 */
-	@Deprecated
-	public int getURIKey();
-
-	/**
-	 * Get URI of node. Note that this actually is an IRI but the W3C decided to
-	 * continue using URI not to confuse anyone.
-	 * 
-	 * @return URI of node.
-	 */
-	@Deprecated
-	public String getURI();
-
-	/**
-	 * Get type key of node value.
-	 * 
-	 * @return Type of node value.
-	 */
-	@Deprecated
-	public int getTypeKey();
-
-	/**
-	 * Get type of node value.
-	 * 
-	 * @return Type of node value.
-	 */
-	@Deprecated
-	public String getType();
-
-	/**
-	 * Get raw type of node value.
-	 * 
-	 * @return Type of node value.
-	 */
-	@Deprecated
-	public byte[] getRawType();
-
-	/**
-	 * Get value of node.
-	 * 
-	 * @return Value of node.
-	 */
-	@Deprecated
-	public byte[] getRawValue();
-
-	/**
-	 * Get value of node.
-	 * 
-	 * @return Value of node.
-	 */
-	@Deprecated
-	public String getValue();
+	String getTypeOfCurrentNode();
 
 	/**
 	 * Get key for given name. This is used for efficient name testing.
@@ -480,7 +271,7 @@ public interface IReadTransaction {
 	 *            Name, i.e., local part, URI, or prefix.
 	 * @return Internal key assigned to given name.
 	 */
-	public int keyForName(final String name);
+	int keyForName(final String name);
 
 	/**
 	 * Get name for key. This is used for efficient key testing.
@@ -489,7 +280,7 @@ public interface IReadTransaction {
 	 *            Key, i.e., local part key, URI key, or prefix key.
 	 * @return String containing name for given key.
 	 */
-	public String nameForKey(final int key);
+	String nameForKey(final int key);
 
 	/**
 	 * Get raw name for key. This is used for efficient key testing.
@@ -498,21 +289,21 @@ public interface IReadTransaction {
 	 *            Key, i.e., local part key, URI key, or prefix key.
 	 * @return Byte array containing name for given key.
 	 */
-	public byte[] rawNameForKey(final int key);
+	byte[] rawNameForKey(final int key);
 
 	/**
 	 * Get item list containing volatile items such as atoms or fragments.
 	 * 
 	 * @return Item list.
 	 */
-	public IItemList getItemList();
+	IItemList getItemList();
 
 	/**
 	 * Getting the current node but just as a {@link UnmodifiableNode}
 	 * 
 	 * @return the node but not modifiable
 	 */
-	public IItem getNode();
+	IItem getNode();
 
 	/**
 	 * Close shared read transaction and immediately release all resources.
@@ -520,6 +311,5 @@ public interface IReadTransaction {
 	 * This is an idempotent operation and does nothing if the transaction is
 	 * already closed.
 	 */
-	public void close();
-
+	void close();
 }

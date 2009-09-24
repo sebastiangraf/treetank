@@ -39,7 +39,6 @@ import com.treetank.utils.DocumentCreater;
  */
 public class DubFilterTest {
 
-
 	@Before
 	public void setUp() {
 

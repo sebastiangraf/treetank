@@ -18,11 +18,11 @@
 
 package com.treetank.node;
 
-import java.nio.ByteBuffer;
-
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 import com.treetank.api.IReadTransaction;
+import com.treetank.io.ITTSink;
+import com.treetank.io.ITTSource;
 
 /**
  * <h1>NamespaceNode</h1>
@@ -79,10 +79,10 @@ public final class NamespaceNode extends AbstractNode {
 	 * @param in
 	 *            byteBuffer with the relevant data.
 	 */
-	public NamespaceNode(final long nodeKey, final ByteBuffer in) {
+	public NamespaceNode(final long nodeKey, final ITTSource in) {
 		super(SIZE, nodeKey, in);
 	}
-	
+
 	/**
 	 * Constructor.
 	 * 
@@ -163,10 +163,10 @@ public final class NamespaceNode extends AbstractNode {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public final void serialize(final ByteBuffer out) {
+	public final void serialize(final ITTSink out) {
 		super.serialize(out);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */

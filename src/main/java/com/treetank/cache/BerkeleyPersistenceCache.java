@@ -25,9 +25,9 @@ import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
-import com.treetank.cache.berkeleyBinding.Value;
-import com.treetank.cache.berkeleyBinding.binding.ValueBinding;
+import com.treetank.io.berkeley.binding.AbstractPageBinding;
 import com.treetank.page.AbstractPage;
+import com.treetank.page.NodePage;
 import com.treetank.session.SessionConfiguration;
 
 /**
@@ -53,7 +53,7 @@ public class BerkeleyPersistenceCache extends AbstractPersistenceCache {
 	/**
 	 * Name for the database.
 	 */
-	private final static String name = "berkeleyCache";
+	private final static String NAME = "berkeleyCache";
 
 	/**
 	 * Binding for the key, which is the nodepage.
@@ -63,7 +63,7 @@ public class BerkeleyPersistenceCache extends AbstractPersistenceCache {
 	/**
 	 * Binding for the value which is a page with related Nodes.
 	 */
-	private final ValueBinding valueBinding;
+	private final AbstractPageBinding valueBinding;
 
 	/**
 	 * Constructor. Building up the berkeley db and setting necessary settings.
@@ -85,10 +85,10 @@ public class BerkeleyPersistenceCache extends AbstractPersistenceCache {
 			final DatabaseConfig dbConfig = new DatabaseConfig();
 			dbConfig.setAllowCreate(true);
 			dbConfig.setExclusiveCreate(true);
-			database = env.openDatabase(null, name, dbConfig);
+			database = env.openDatabase(null, NAME, dbConfig);
 
 			keyBinding = TupleBinding.getPrimitiveBinding(Long.class);
-			valueBinding = new ValueBinding();
+			valueBinding = new AbstractPageBinding();
 
 		} catch (final Exception e) {
 			throw new RuntimeException(e);
@@ -100,12 +100,12 @@ public class BerkeleyPersistenceCache extends AbstractPersistenceCache {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public final void put(final long key, final AbstractPage page) {
+	public final void put(final long key, final NodePage page) {
 		final DatabaseEntry valueEntry = new DatabaseEntry();
 		final DatabaseEntry keyEntry = new DatabaseEntry();
 
 		keyBinding.objectToEntry(key, keyEntry);
-		valueBinding.objectToEntry(new Value(page), valueEntry);
+		valueBinding.objectToEntry(page, valueEntry);
 		try {
 			database.put(null, keyEntry, valueEntry);
 		} catch (DatabaseException e) {
@@ -121,7 +121,7 @@ public class BerkeleyPersistenceCache extends AbstractPersistenceCache {
 	public final void clear() {
 		try {
 			database.close();
-			env.removeDatabase(null, name);
+			env.removeDatabase(null, NAME);
 			env.close();
 		} catch (final DatabaseException e) {
 			new RuntimeException(e);
@@ -133,7 +133,7 @@ public class BerkeleyPersistenceCache extends AbstractPersistenceCache {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public final AbstractPage get(final long key) {
+	public final NodePage get(final long key) {
 		final DatabaseEntry valueEntry = new DatabaseEntry();
 		final DatabaseEntry keyEntry = new DatabaseEntry();
 		keyBinding.objectToEntry(key, keyEntry);
@@ -141,9 +141,8 @@ public class BerkeleyPersistenceCache extends AbstractPersistenceCache {
 			final OperationStatus status = database.get(null, keyEntry,
 					valueEntry, LockMode.DEFAULT);
 			if (status == OperationStatus.SUCCESS) {
-				final Value val = valueBinding.entryToObject(valueEntry);
-				final AbstractPage page = val.getPage();
-				return page;
+				final AbstractPage val = valueBinding.entryToObject(valueEntry);
+				return (NodePage) val;
 			} else {
 				return null;
 			}

@@ -31,7 +31,6 @@ import com.treetank.utils.DocumentCreater;
 
 public class DocumentNodeAxisTest {
 
-
 	@Before
 	public void setUp() {
 
