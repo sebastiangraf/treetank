@@ -18,10 +18,8 @@
 
 package com.treetank.page;
 
-import java.nio.ByteBuffer;
-
-import com.sleepycat.bind.tuple.TupleInput;
-import com.sleepycat.bind.tuple.TupleOutput;
+import com.treetank.io.ITTSink;
+import com.treetank.io.ITTSource;
 import com.treetank.session.WriteTransactionState;
 import com.treetank.utils.IConstants;
 
@@ -72,23 +70,7 @@ public final class RevisionRootPage extends AbstractPage {
 	 * @param revisionKey
 	 *            Key of revision.
 	 */
-	public RevisionRootPage(final ByteBuffer in, final long revisionKey) {
-		super(2, in);
-		mRevisionNumber = revisionKey;
-		mRevisionSize = in.getLong();
-		mMaxNodeKey = in.getLong();
-		mRevisionTimestamp = in.getLong();
-	}
-
-	/**
-	 * Read revision root page.
-	 * 
-	 * @param in
-	 *            Input bytes.
-	 * @param revisionKey
-	 *            Key of revision.
-	 */
-	public RevisionRootPage(final TupleInput in) {
+	RevisionRootPage(final ITTSource in) {
 		super(2, in);
 		mRevisionNumber = in.readLong();
 		mRevisionSize = in.readLong();
@@ -115,7 +97,7 @@ public final class RevisionRootPage extends AbstractPage {
 	 * @return Name page reference.
 	 */
 	public final PageReference<NamePage> getNamePageReference() {
-		return (PageReference<NamePage>)getReference(NAME_REFERENCE_OFFSET);
+		return (PageReference<NamePage>) getReference(NAME_REFERENCE_OFFSET);
 	}
 
 	/**
@@ -124,7 +106,7 @@ public final class RevisionRootPage extends AbstractPage {
 	 * @return Indirect page reference.
 	 */
 	public final PageReference<IndirectPage> getIndirectPageReference() {
-		return (PageReference<IndirectPage>)getReference(INDIRECT_REFERENCE_OFFSET);
+		return (PageReference<IndirectPage>) getReference(INDIRECT_REFERENCE_OFFSET);
 	}
 
 	/**
@@ -191,18 +173,8 @@ public final class RevisionRootPage extends AbstractPage {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public final void serialize(final ByteBuffer out) {
-		super.serialize(out);
-		out.putLong(mRevisionSize);
-		out.putLong(mMaxNodeKey);
-		out.putLong(mRevisionTimestamp);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void serialize(final TupleOutput out) {
+	public final void serialize(final ITTSink out) {
+		out.writeInt(PageFactory.REVISIONROOTPAGE);
 		super.serialize(out);
 		out.writeLong(mRevisionNumber);
 		out.writeLong(mRevisionSize);
@@ -219,8 +191,7 @@ public final class RevisionRootPage extends AbstractPage {
 				+ ", revisionSize=" + mRevisionSize + ", revisionTimestamp="
 				+ mRevisionTimestamp + ", namePage=("
 				+ getReference(NAME_REFERENCE_OFFSET) + "), indirectPage=("
-				+ getReference(INDIRECT_REFERENCE_OFFSET) + "), isDirty="
-				+ isDirty();
+				+ getReference(INDIRECT_REFERENCE_OFFSET) + ")";
 	}
 
 }

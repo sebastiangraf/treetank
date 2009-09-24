@@ -20,10 +20,9 @@ package com.treetank.page;
 
 import static org.junit.Assert.assertEquals;
 
-import java.nio.ByteBuffer;
-
 import org.junit.Test;
 
+import com.treetank.io.file.ByteBufferSinkAndSource;
 import com.treetank.node.ElementNode;
 
 public class NodePageTest {
@@ -40,12 +39,12 @@ public class NodePageTest {
 		assertEquals(0L, node1.getNodeKey());
 		page1.setNode(0, node1);
 
-		final ByteBuffer out =  ByteBuffer.allocate(1144);
+		final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
 		page1.serialize(out);
 		final int position = out.position();
 
 		out.position(0);
-		final NodePage page2 = new NodePage(out, 0L);
+		final NodePage page2 = (NodePage) PageFactory.createPage(out);
 		assertEquals(position, out.position());
 		assertEquals(0L, page2.getNode(0).getNodeKey());
 		assertEquals(1L, page2.getNode(0).getParentKey());

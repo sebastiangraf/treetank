@@ -67,7 +67,8 @@ public class XMLShredderTest {
 	public void testSTAXShredder() throws IOException, XMLStreamException {
 
 		// Setup expected session.
-		final ISession expectedSession = Session.beginSession(ITestConstants.PATH1);
+		final ISession expectedSession = Session
+				.beginSession(ITestConstants.PATH1);
 		final IWriteTransaction expectedTrx = expectedSession
 				.beginWriteTransaction();
 		DocumentCreater.create(expectedTrx);
@@ -137,7 +138,8 @@ public class XMLShredderTest {
 	public void testAttributesNSPrefix() throws IOException, XMLStreamException {
 
 		// Setup expected session.
-		final ISession expectedSession2 = Session.beginSession(ITestConstants.PATH1);
+		final ISession expectedSession2 = Session
+				.beginSession(ITestConstants.PATH1);
 		final IWriteTransaction expectedTrx2 = expectedSession2
 				.beginWriteTransaction();
 		DocumentCreater.createWithoutNamespace(expectedTrx2);

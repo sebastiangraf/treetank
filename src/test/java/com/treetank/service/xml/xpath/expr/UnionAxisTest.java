@@ -40,7 +40,6 @@ import com.treetank.utils.DocumentCreater;
  */
 public class UnionAxisTest {
 
-
 	@Before
 	public void setUp() {
 

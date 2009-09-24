@@ -40,7 +40,6 @@ import com.treetank.utils.DocumentCreater;
  */
 public class IfAxisTest {
 
-
 	@Before
 	public void setUp() {
 

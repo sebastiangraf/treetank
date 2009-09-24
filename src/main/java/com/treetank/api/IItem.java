@@ -32,7 +32,7 @@ public interface IItem {
 	 * @param key
 	 *            Unique (negative) key of item
 	 */
-	public void setNodeKey(final long key);
+	void setNodeKey(final long key);
 
 	/**
 	 * Gets unique node key. TODO: maybe this should be renamed in
@@ -40,35 +40,35 @@ public interface IItem {
 	 * 
 	 * @return node key
 	 */
-	public long getNodeKey();
+	long getNodeKey();
 
 	/**
 	 * Gets key of the context item's parent.
 	 * 
 	 * @return parent key
 	 */
-	public long getParentKey();
+	long getParentKey();
 
 	/**
 	 * Gets key of the context item's first child.
 	 * 
 	 * @return first child's key
 	 */
-	public long getFirstChildKey();
+	long getFirstChildKey();
 
 	/**
 	 * Gets key of the context item's left sibling.
 	 * 
 	 * @return left sibling key
 	 */
-	public long getLeftSiblingKey();
+	long getLeftSiblingKey();
 
 	/**
 	 * Gets key of the context item's right sibling.
 	 * 
 	 * @return right sibling key
 	 */
-	public long getRightSiblingKey();
+	long getRightSiblingKey();
 
 	/**
 	 * Gets the nodes attribute with the specified index.
@@ -77,63 +77,63 @@ public interface IItem {
 	 *            index of the attribute to get
 	 * @return attribute key at index
 	 */
-	public long getAttributeKey(int index);
+	long getAttributeKey(int index);
 
 	/**
 	 * Declares, whether the item has a parent.
 	 * 
 	 * @return true, if item has a parent
 	 */
-	public boolean hasParent();
+	boolean hasParent();
 
 	/**
 	 * Declares, whether the item has a first child.
 	 * 
 	 * @return true, if item has a first child
 	 */
-	public boolean hasFirstChild();
+	boolean hasFirstChild();
 
 	/**
 	 * Declares, whether the item has a left sibling.
 	 * 
 	 * @return true, if item has a left sibling
 	 */
-	public boolean hasLeftSibling();
+	boolean hasLeftSibling();
 
 	/**
 	 * Declares, whether the item has a right sibling.
 	 * 
 	 * @return true, if item has a right sibling
 	 */
-	public boolean hasRightSibling();
+	boolean hasRightSibling();
 
 	/**
 	 * Return a byte array representation of the item's value.
 	 * 
 	 * @return returns the value of the item
 	 */
-	public byte[] getRawValue();
+	byte[] getRawValue();
 
 	/**
 	 * Gets the number of children of the item.
 	 * 
 	 * @return item's number of children
 	 */
-	public long getChildCount();
+	long getChildCount();
 
 	/**
 	 * Gets the number of attributes of the item.
 	 * 
 	 * @return item's number of attributes.
 	 */
-	public int getAttributeCount();
+	int getAttributeCount();
 
 	/**
 	 * Gets the number of namespaces of the item.
 	 * 
 	 * @return item's number of namespaces.
 	 */
-	public int getNamespaceCount();
+	int getNamespaceCount();
 
 	/**
 	 * Gets namespace of the item at the specified position.
@@ -142,7 +142,7 @@ public interface IItem {
 	 *            index of the namespace to get
 	 * @return item's namespace key at the given index
 	 */
-	public long getNamespaceKey(final int index);
+	long getNamespaceKey(final int index);
 
 	/**
 	 * Gets the kind of the item (atomic value, element node, attribute
@@ -150,62 +150,62 @@ public interface IItem {
 	 * 
 	 * @return kind of item
 	 */
-	public int getKind();
+	int getKind();
 
 	/**
 	 * Declaresm whether the item is a a node.
 	 * 
 	 * @return true if item is a node.
 	 */
-	public boolean isNode();
+	boolean isNode();
 
 	/**
 	 * Declares, whether the item is the document root.
 	 * 
 	 * @return true, if item is the document root
 	 */
-	public boolean isDocumentRoot();
+	boolean isDocumentRoot();
 
 	/**
 	 * Declares, whether the item an element node.
 	 * 
 	 * @return true, if item is an element node
 	 */
-	public boolean isElement();
+	boolean isElement();
 
 	/**
 	 * Declares, whether the item an attribute node.
 	 * 
 	 * @return true, if item is an attribute node
 	 */
-	public boolean isAttribute();
+	boolean isAttribute();
 
 	/**
 	 * Declares, whether the item a text node.
 	 * 
 	 * @return true, if item is a text node
 	 */
-	public boolean isText();
+	boolean isText();
 
 	/**
 	 * Gets key of qualified name.
 	 * 
 	 * @return key of qualified name
 	 */
-	public int getNameKey();
+	int getNameKey();
 
 	/**
 	 * Gets key of the URI.
 	 * 
 	 * @return URI key
 	 */
-	public int getURIKey();
+	int getURIKey();
 
 	/**
 	 * Gets value type of the item.
 	 * 
 	 * @return value type
 	 */
-	public int getTypeKey();
+	int getTypeKey();
 
 }

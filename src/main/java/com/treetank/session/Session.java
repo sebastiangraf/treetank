@@ -147,7 +147,7 @@ public final class Session implements ISession {
 	 */
 	public final String getFileName() {
 		assertNotClosed();
-		return mSessionState.getSessionConfiguration().getFileName();
+		return mSessionState.getSessionConfiguration().getAbsolutePath();
 	}
 
 	/**
@@ -177,17 +177,17 @@ public final class Session implements ISession {
 	/**
 	 * {@inheritDoc}
 	 */
-	public final int getVersionMajor() {
+	public final long getVersionMajor() {
 		assertNotClosed();
-		return mSessionState.getSessionConfiguration().getVersionMajor();
+		return mSessionState.getVersionMajor();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public final int getVersionMinor() {
+	public final long getVersionMinor() {
 		assertNotClosed();
-		return mSessionState.getSessionConfiguration().getVersionMinor();
+		return mSessionState.getVersionMinor();
 	}
 
 	/**

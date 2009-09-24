@@ -5,6 +5,10 @@ import java.util.Random;
 
 import org.perfidix.annotation.Bench;
 
+import com.sleepycat.je.Database;
+import com.sleepycat.je.DatabaseConfig;
+import com.sleepycat.je.Environment;
+import com.sleepycat.je.EnvironmentConfig;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.session.Session;
@@ -18,29 +22,21 @@ public class ExtremeInsertTest {
 	@Bench(runs = 10)
 	public void bench() {
 		try {
-			final File file = new File("/Volumes/Felice/bla");
+			final File file = new File("bla");
 			Session.removeSession(file);
 			long time = System.currentTimeMillis();
 			final ISession session = Session.beginSession(file);
-			final IWriteTransaction wtx = session.beginWriteTransaction();
-			int lastKey = 1;
-			long border = 100000000;
-			wtx.insertElementAsFirstChild("bly", "");
-			for (long i = 0; i < border; i++) {
-				//if (ran.nextBoolean()) {
-					wtx.insertElementAsFirstChild("bly", "");
-				//} else {
-					wtx.insertElementAsRightSibling("bly", "");
-				//}
-				lastKey++;
-//				wtx.moveTo(ran.nextInt(lastKey - 1) + 1);
-				if(i % 10000==0) {
-					System.out.println("Inserted nodes " + i);
-				}
-				
-			}
+			IWriteTransaction wtx = session.beginWriteTransaction();
 
+			wtx.insertElementAsFirstChild("bla", "");
 			wtx.commit();
+			wtx.close();
+			wtx = null;
+			wtx = session.beginWriteTransaction();
+			wtx.moveToFirstChild();
+			wtx.setName("bla2");
+			wtx.commit();
+
 			wtx.close();
 			session.close();
 			System.out.println(" done [" + (System.currentTimeMillis() - time)
@@ -58,7 +54,29 @@ public class ExtremeInsertTest {
 		// final TabularSummaryOutput output = new TabularSummaryOutput();
 		// output.visitBenchmark(res);
 		// System.out.println(output);
-		new ExtremeInsertTest().bench();
+
+		// new ExtremeInsertTest().bench();
+
+		try {
+
+			final File repoFile = new File("tt");
+			repoFile.mkdirs();
+
+			/* Create a new, transactional database environment */
+			final EnvironmentConfig config = new EnvironmentConfig();
+			config.setAllowCreate(true);
+			config.setLocking(false);
+			Environment env = new Environment(repoFile, config);
+
+			/* Make a database within that environment */
+			final DatabaseConfig dbConfig = new DatabaseConfig();
+			dbConfig.setAllowCreate(true);
+			dbConfig.setExclusiveCreate(true);
+			Database database = env.openDatabase(null, "tt", dbConfig);
+		} catch (final Exception e) {
+			throw new RuntimeException(e);
+
+		}
 	}
 
 	public static String getString() {

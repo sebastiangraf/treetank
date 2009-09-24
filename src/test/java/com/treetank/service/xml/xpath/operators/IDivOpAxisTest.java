@@ -40,7 +40,6 @@ import com.treetank.session.Session;
 
 public class IDivOpAxisTest {
 
-
 	@Before
 	public void setUp() throws Exception {
 

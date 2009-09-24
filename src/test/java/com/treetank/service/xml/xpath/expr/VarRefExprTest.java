@@ -41,7 +41,6 @@ import com.treetank.utils.DocumentCreater;
  */
 public class VarRefExprTest {
 
-
 	@Before
 	public void setUp() {
 

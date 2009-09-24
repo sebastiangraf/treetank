@@ -14,6 +14,7 @@ import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
 
 public class BerkeleyPersistentCacheTest {
+
 	private final AbstractPage[] pages = new AbstractPage[LRUCache.CACHE_CAPACITY + 1];
 
 	private ICache cache;
@@ -24,7 +25,7 @@ public class BerkeleyPersistentCacheTest {
 		cache = new BerkeleyPersistenceCache(new SessionConfiguration(
 				ITestConstants.PATH1));
 		for (int i = 0; i < pages.length; i++) {
-			final AbstractPage page = new NodePage(i);
+			final NodePage page = new NodePage(i);
 			pages[i] = page;
 			cache.put(i, page);
 		}

@@ -30,7 +30,6 @@ import com.treetank.utils.DocumentCreater;
 
 public class ItemFilterTest {
 
-
 	@Before
 	public void setUp() {
 

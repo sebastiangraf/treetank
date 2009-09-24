@@ -18,17 +18,15 @@
 
 package com.treetank.session;
 
-import java.nio.ByteBuffer;
-
 import com.treetank.api.IItem;
 import com.treetank.api.IItemList;
 import com.treetank.cache.ICache;
 import com.treetank.cache.RAMCache;
+import com.treetank.io.IReader;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.IndirectPage;
 import com.treetank.page.NamePage;
 import com.treetank.page.NodePage;
-import com.treetank.page.PageReader;
 import com.treetank.page.PageReference;
 import com.treetank.page.RevisionRootPage;
 import com.treetank.page.UberPage;
@@ -53,7 +51,7 @@ public class ReadTransactionState {
 	private SessionConfiguration mSessionConfiguration;
 
 	/** Page reader exclusively assigned to this transaction. */
-	private PageReader mPageReader;
+	private IReader mPageReader;
 
 	/** Uber page this transaction is bound to. */
 	private UberPage mUberPage;
@@ -83,14 +81,16 @@ public class ReadTransactionState {
 	 *            Key of revision to read from uber page.
 	 * @param itemList
 	 *            List of non-persistent items.
+	 * @param reader
+	 *            for this transaction
 	 */
 	protected ReadTransactionState(
 			final SessionConfiguration sessionConfiguration,
 			final UberPage uberPage, final long revisionKey,
-			final IItemList itemList) {
+			final IItemList itemList, final IReader reader) {
 		mCache = new RAMCache();
 		mSessionConfiguration = sessionConfiguration;
-		mPageReader = new PageReader(sessionConfiguration);
+		mPageReader = reader;
 		mUberPage = uberPage;
 		mRevisionRootPage = getRevisionRootPage(revisionKey);
 		mNamePage = getNamePage();
@@ -185,8 +185,7 @@ public class ReadTransactionState {
 
 		// If there is no page, get it from the storage and cache it.
 		if (page == null) {
-			final ByteBuffer in = mPageReader.read(ref);
-			page = new RevisionRootPage(in, revisionKey);
+			page = (RevisionRootPage) mPageReader.read(ref);
 		}
 
 		// Get revision root page which is the leaf of the indirect tree.
@@ -201,8 +200,7 @@ public class ReadTransactionState {
 
 		// If there is no page, get it from the storage and cache it.
 		if (page == null) {
-			final ByteBuffer in = mPageReader.read(namePageRef);
-			page = new NamePage(in);
+			page = (NamePage) mPageReader.read(namePageRef);
 		}
 
 		return page;
@@ -284,9 +282,8 @@ public class ReadTransactionState {
 
 		// If there is no page, get it from the storage and cache it.
 		if (page == null) {
-			final ByteBuffer in = mPageReader.read(reference);
-			page = new NodePage(in, nodePageKey);
-			mCache.put(reference.getStart(), page);
+			page = (NodePage) mPageReader.read(reference);
+			mCache.put(reference.getKey().getIdentifier(), page);
 		}
 
 		return page;
@@ -307,9 +304,8 @@ public class ReadTransactionState {
 
 		// If there is no page, get it from the storage and cache it.
 		if (page == null) {
-			final ByteBuffer in = mPageReader.read(reference);
-			page = new IndirectPage(in);
-			mCache.put(reference.getStart(), page);
+			page = (IndirectPage) mPageReader.read(reference);
+			reference.setPage(page);
 		}
 
 		return page;
@@ -322,7 +318,7 @@ public class ReadTransactionState {
 
 		// If there is no page, get it from the cache.
 		if (page == null) {
-			page = (N) mCache.get(reference.getStart());
+			page = (N) mCache.get(reference.getKey().getIdentifier());
 		}
 		return page;
 	}
@@ -348,7 +344,8 @@ public class ReadTransactionState {
 		for (int level = 0, height = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
 			offset = (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
 			levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
-			reference = dereferenceIndirectPage(reference).getReference(offset);
+			final AbstractPage page = dereferenceIndirectPage(reference);
+			reference = page.getReference(offset);
 		}
 
 		// Return reference to leaf of indirect tree.

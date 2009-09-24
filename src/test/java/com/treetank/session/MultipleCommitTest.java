@@ -35,7 +35,6 @@ import com.treetank.utils.DocumentCreater;
 
 public class MultipleCommitTest {
 
-
 	@Before
 	public void setUp() {
 		Session.removeSession(ITestConstants.PATH1);

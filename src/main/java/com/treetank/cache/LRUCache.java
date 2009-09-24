@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.treetank.page.AbstractPage;
+import com.treetank.page.NodePage;
 
 /**
  * An LRU cache, based on <code>LinkedHashMap</code>. This cache can hold an
@@ -40,7 +40,7 @@ public class LRUCache implements ICache {
 	/**
 	 * The collection to hold the maps.
 	 */
-	private LinkedHashMap<Long, AbstractPage> map;
+	private Map<Long, NodePage> map;
 
 	/**
 	 * The reference to the second cache.
@@ -57,13 +57,12 @@ public class LRUCache implements ICache {
 	 */
 	public LRUCache(final ICache paramSecondCache) {
 		secondCache = paramSecondCache;
-		map = new LinkedHashMap<Long, AbstractPage>(CACHE_CAPACITY) {
+		map = new LinkedHashMap<Long, NodePage>(CACHE_CAPACITY) {
 			// (an anonymous inner class)
 			private static final long serialVersionUID = 1;
 
 			@Override
-			protected boolean removeEldestEntry(
-					Map.Entry<Long, AbstractPage> eldest) {
+			protected boolean removeEldestEntry(Map.Entry<Long, NodePage> eldest) {
 				if (size() > CACHE_CAPACITY) {
 					secondCache.put(eldest.getKey(), eldest.getValue());
 					return true;
@@ -91,8 +90,8 @@ public class LRUCache implements ICache {
 	 * @return the value associated to this key, or null if no value with this
 	 *         key exists in the cache.
 	 */
-	public AbstractPage get(long key) {
-		AbstractPage page = map.get(key);
+	public NodePage get(long key) {
+		NodePage page = map.get(key);
 		if (page == null) {
 			page = secondCache.get(key);
 		}
@@ -109,7 +108,7 @@ public class LRUCache implements ICache {
 	 * @param value
 	 *            a value to be associated with the specified key.
 	 */
-	public void put(long key, AbstractPage value) {
+	public void put(long key, NodePage value) {
 		map.put(key, value);
 	}
 
@@ -136,8 +135,8 @@ public class LRUCache implements ICache {
 	 * 
 	 * @return a <code>Collection</code> with a copy of the cache content.
 	 */
-	public Collection<Map.Entry<Long, AbstractPage>> getAll() {
-		return new ArrayList<Map.Entry<Long, AbstractPage>>(map.entrySet());
+	public Collection<Map.Entry<Long, NodePage>> getAll() {
+		return new ArrayList<Map.Entry<Long, NodePage>>(map.entrySet());
 	}
 
 }

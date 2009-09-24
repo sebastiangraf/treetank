@@ -41,7 +41,6 @@ import com.treetank.utils.TypedValue;
 
 public class ModOpAxisTest {
 
-
 	@Before
 	public void setUp() throws Exception {
 

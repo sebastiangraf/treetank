@@ -16,7 +16,7 @@
  */
 package com.treetank.cache;
 
-import com.treetank.page.AbstractPage;
+import com.treetank.page.NodePage;
 import com.treetank.session.SessionConfiguration;
 
 /**
@@ -64,7 +64,7 @@ public class TransactionLogCache extends AbstractPersistenceCache {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public AbstractPage get(long key) {
+	public NodePage get(long key) {
 		return firstCache.get(key);
 	}
 
@@ -72,7 +72,7 @@ public class TransactionLogCache extends AbstractPersistenceCache {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void put(long key, AbstractPage page) {
+	public void put(long key, NodePage page) {
 		firstCache.put(key, page);
 	}
 

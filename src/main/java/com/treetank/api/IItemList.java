@@ -47,7 +47,7 @@ public interface IItemList {
 	 *            The item to add.
 	 * @return The item key.
 	 */
-	public int addItem(final IItem item);
+	int addItem(final IItem item);
 
 	/**
 	 * Returns the item at a given index in the item list. If the given index is
@@ -57,5 +57,5 @@ public interface IItemList {
 	 *            key of the item, that should be returned
 	 * @return item at the given index.
 	 */
-	public IItem getItem(final long key);
+	IItem getItem(final long key);
 }

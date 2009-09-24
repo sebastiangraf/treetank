@@ -18,12 +18,11 @@
 
 package com.treetank.page;
 
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.sleepycat.bind.tuple.TupleInput;
-import com.sleepycat.bind.tuple.TupleOutput;
+import com.treetank.io.ITTSink;
+import com.treetank.io.ITTSource;
 import com.treetank.utils.TypedValue;
 
 /**
@@ -56,36 +55,16 @@ public final class NamePage extends AbstractPage {
 	 * @param in
 	 *            Input bytes to read from.
 	 */
-	public NamePage(final ByteBuffer in) {
+	NamePage(final ITTSource in) {
 		super(0, in);
-		mNameMap = new HashMap<Integer, String>();
-		// mRawNameMap = new HashMap<Integer, byte[]>();
 
-		for (int i = 0, l = (int) in.getLong(); i < l; i++) {
-			final int key = (int) in.getLong();
-			final byte[] bytes = new byte[(int) in.getLong()];
-			for (int j = 0; j < bytes.length; j++) {
-				bytes[j] = in.get();
-			}
-			mNameMap.put(key, TypedValue.parseString(bytes));
-			// mRawNameMap.put(key, bytes);
-		}
-	}
+		int mapSize = in.readInt();
 
-	/**
-	 * Read name page.
-	 * 
-	 * @param in
-	 *            Input bytes to read from.
-	 */
-	public NamePage(final TupleInput in) {
-		super(0, in);
-		mNameMap = new HashMap<Integer, String>();
-		// mRawNameMap = new HashMap<Integer, byte[]>();
-
-		for (int i = 0, l = (int) in.readLong(); i < l; i++) {
-			final int key = (int) in.readLong();
-			final byte[] bytes = new byte[(int) in.readLong()];
+		mNameMap = new HashMap<Integer, String>(mapSize);
+		for (int i = 0, l = (int) mapSize; i < l; i++) {
+			final int key = in.readInt();
+			final int valSize = in.readInt();
+			final byte[] bytes = new byte[valSize];
 			for (int j = 0; j < bytes.length; j++) {
 				bytes[j] = in.readByte();
 			}
@@ -146,30 +125,16 @@ public final class NamePage extends AbstractPage {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public final void serialize(final ByteBuffer out) {
+	public final void serialize(final ITTSink out) {
+		out.writeInt(PageFactory.NAMEPAGE);
 		super.serialize(out);
 
-		out.putLong(mNameMap.size());
+		out.writeInt(mNameMap.size());
 
 		for (final int key : mNameMap.keySet()) {
-			out.putLong(key);
+			out.writeInt(key);
 			byte[] tmp = TypedValue.getBytes(mNameMap.get(key));
-			out.putLong(tmp.length);
-			for (final byte byteVal : tmp) {
-				out.put(byteVal);
-			}
-		}
-	}
-
-	public final void serialize(final TupleOutput out) {
-		super.serialize(out);
-
-		out.writeLong(mNameMap.size());
-
-		for (final int key : mNameMap.keySet()) {
-			out.writeLong(key);
-			byte[] tmp = TypedValue.getBytes(mNameMap.get(key));
-			out.writeLong(tmp.length);
+			out.writeInt(tmp.length);
 			for (final byte byteVal : tmp) {
 				out.writeByte(byteVal);
 			}
@@ -181,8 +146,7 @@ public final class NamePage extends AbstractPage {
 	 */
 	@Override
 	public final String toString() {
-		return super.toString() + ": nameCount=" + mNameMap.size()
-				+ ", isDirty=" + isDirty();
+		return super.toString() + ": nameCount=" + mNameMap.size();
 	}
 
 }

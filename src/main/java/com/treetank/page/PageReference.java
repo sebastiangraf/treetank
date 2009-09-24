@@ -18,10 +18,10 @@
 
 package com.treetank.page;
 
-import java.nio.ByteBuffer;
-
-import com.sleepycat.bind.tuple.TupleInput;
-import com.sleepycat.bind.tuple.TupleOutput;
+import com.treetank.io.AbstractKey;
+import com.treetank.io.ITTSink;
+import com.treetank.io.ITTSource;
+import com.treetank.io.KeyFactory;
 import com.treetank.utils.IConstants;
 
 /**
@@ -38,18 +38,14 @@ import com.treetank.utils.IConstants;
  */
 public final class PageReference<T extends AbstractPage> {
 
-	private static final int START = 0;
-
-	private static final int LENGTH = 1;
-
 	/** In-memory deserialized page instance. */
 	private T mPage;
-	
-	/**Corresponding key of the related node page*/
+
+	/** Corresponding mKey of the related node page */
 	private long nodePageKey = -1;
 
 	/** Start byte in file. */
-	private long[] mData = new long[2];
+	private AbstractKey mKey;
 
 	/** Checksum of serialized page. */
 	private byte[] mChecksum = new byte[IConstants.CHECKSUM_SIZE];
@@ -58,7 +54,7 @@ public final class PageReference<T extends AbstractPage> {
 	 * Default constructor setting up an uninitialized page reference.
 	 */
 	public PageReference() {
-		this(null, new long[] { -1L, -1L }, new byte[IConstants.CHECKSUM_SIZE]);
+		this(null, new NullKey(), new byte[IConstants.CHECKSUM_SIZE]);
 	}
 
 	/**
@@ -68,7 +64,7 @@ public final class PageReference<T extends AbstractPage> {
 	 *            Page reference to clone.
 	 */
 	public PageReference(final PageReference<T> pageReference) {
-		this(pageReference.mPage, pageReference.mData, pageReference.mChecksum);
+		this(pageReference.mPage, pageReference.mKey, pageReference.mChecksum);
 	}
 
 	/**
@@ -83,10 +79,10 @@ public final class PageReference<T extends AbstractPage> {
 	 * @param checksum
 	 *            Checksum of serialized page.
 	 */
-	public PageReference(final T page, final long[] data, final byte[] checksum) {
+	public PageReference(final T page, final AbstractKey key,
+			final byte[] checksum) {
 		mPage = page;
-		mData[START] = data[START];
-		mData[LENGTH] = data[LENGTH];
+		mKey = key;
 		System.arraycopy(checksum, 0, mChecksum, 0, IConstants.CHECKSUM_SIZE);
 	}
 
@@ -96,25 +92,12 @@ public final class PageReference<T extends AbstractPage> {
 	 * @param in
 	 *            Input bytes.
 	 */
-	public PageReference(final ByteBuffer in) {
+	public PageReference(final ITTSource in) {
 		mPage = null;
-		for (int i = 0; i < mData.length; i++) {
-			mData[i] = in.getLong();
-		}
+		mKey = KeyFactory.createKey(in);
 		mChecksum = new byte[IConstants.CHECKSUM_SIZE];
 		for (int i = 0; i < mChecksum.length; i++) {
-			mChecksum[i] = in.get();
-		}
-	}
-
-	public PageReference(final TupleInput arg0) {
-		mPage = null;
-		for (int i = 0; i < mData.length; i++) {
-			mData[i] = arg0.readLong();
-		}
-		mChecksum = new byte[IConstants.CHECKSUM_SIZE];
-		for (int i = 0; i < mChecksum.length; i++) {
-			mChecksum[i] = arg0.readByte();
+			mChecksum[i] = in.readByte();
 		}
 	}
 
@@ -133,22 +116,7 @@ public final class PageReference<T extends AbstractPage> {
 	 * @return True if the page was committed.
 	 */
 	public final boolean isCommitted() {
-		return (mData[START] != -1L);
-	}
-
-	/**
-	 * Is the in-memory page dirty?
-	 * 
-	 * @return True if the page is dirty.
-	 * @throws IllegalStateException
-	 *             of there is no in-memory instance.
-	 */
-	public final boolean isDirty() {
-		if (mPage != null) {
-			return mPage.isDirty();
-		} else {
-			throw new IllegalStateException("Page is not instantiated.");
-		}
+		return !(mKey instanceof NullKey);
 	}
 
 	/**
@@ -190,31 +158,12 @@ public final class PageReference<T extends AbstractPage> {
 	}
 
 	/**
-	 * Get the length of the serialized page in bytes.
-	 * 
-	 * @return Length of serialized page in bytes
-	 */
-	public final int getLength() {
-		return (int) mData[LENGTH];
-	}
-
-	/**
-	 * Set the length of the serialized page in bytes.
-	 * 
-	 * @param length
-	 *            Length of serialized page in bytes.
-	 */
-	public final void setLength(final int length) {
-		mData[LENGTH] = length;
-	}
-
-	/**
 	 * Get start byte offset in file.
 	 * 
 	 * @return Start offset in file.
 	 */
-	public final long getStart() {
-		return mData[START];
+	public final AbstractKey getKey() {
+		return mKey;
 	}
 
 	/**
@@ -223,8 +172,8 @@ public final class PageReference<T extends AbstractPage> {
 	 * @param start
 	 *            Start byte offset in file.
 	 */
-	public final void setStart(final long start) {
-		mData[START] = start;
+	public final void setKey(final AbstractKey key) {
+		this.mKey = key;
 	}
 
 	/**
@@ -233,19 +182,8 @@ public final class PageReference<T extends AbstractPage> {
 	 * @param out
 	 *            Output bytes that get written to a file.
 	 */
-	public final void serialize(final ByteBuffer out) {
-		for (final long longVal : mData) {
-			out.putLong(longVal);
-		}
-		for (final byte byteVal : mChecksum) {
-			out.put(byteVal);
-		}
-	}
-
-	public final void serialize(final TupleOutput out) {
-		for (final long longVal : mData) {
-			out.writeLong(longVal);
-		}
+	public final void serialize(final ITTSink out) {
+		mKey.serialize(out);
 		for (final byte byteVal : mChecksum) {
 			out.writeByte(byteVal);
 		}
@@ -266,7 +204,8 @@ public final class PageReference<T extends AbstractPage> {
 		for (int i = 0; i < IConstants.CHECKSUM_SIZE; i++) {
 			checksumEquals &= (tmp[i] == mChecksum[i]);
 		}
-		return (checksumEquals && (mData[START] == pageReference.mData[START]) && (mData[LENGTH] == pageReference.mData[LENGTH]));
+		boolean keyEquals = mKey == pageReference.mKey;
+		return (checksumEquals && keyEquals);
 	}
 
 	/**
@@ -274,13 +213,13 @@ public final class PageReference<T extends AbstractPage> {
 	 */
 	@Override
 	public final String toString() {
-		return super.toString() + ": start=" + mData[START] + ", length="
-				+ mData[LENGTH] + ", checksum=" + mChecksum + ", page=("
-				+ mPage + ")";
+		return super.toString() + ": key=" + mKey.toString() + ", checksum="
+				+ mChecksum + ", page=(" + mPage + ")";
 	}
 
 	/**
-	 * @param nodePageKey the nodePageKey to set
+	 * @param nodePageKey
+	 *            the nodePageKey to set
 	 */
 	public void setNodePageKey(long nodePageKey) {
 		this.nodePageKey = nodePageKey;
@@ -291,6 +230,15 @@ public final class PageReference<T extends AbstractPage> {
 	 */
 	public long getNodePageKey() {
 		return nodePageKey;
+	}
+
+	static class NullKey extends AbstractKey {
+
+		@Override
+		public long getIdentifier() {
+			return 0;
+		}
+
 	}
 
 }

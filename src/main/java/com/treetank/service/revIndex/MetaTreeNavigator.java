@@ -74,15 +74,17 @@ public final class MetaTreeNavigator {
 			}
 		}
 
-		wtx.insertAttribute(RevIndex.INDEXREV_ATTRIBUTEKEY, RevIndex.EMPTY_STRING,
-				new StringBuilder().append(indexRev + 1).toString());
-		wtx.moveToParent();
-		wtx.insertAttribute(RevIndex.FIRSTTTREV_ATTRIBUTEKEY, RevIndex.EMPTY_STRING,
-				new StringBuilder().append(lastRev + 1).toString());
-		wtx.moveToParent();
-		wtx.insertAttribute(RevIndex.LASTTTREV_ATTRIBUTEKEY, RevIndex.EMPTY_STRING,
-				new StringBuilder().append(wtx.getRevisionNumber() + 1)
+		wtx.insertAttribute(RevIndex.INDEXREV_ATTRIBUTEKEY,
+				RevIndex.EMPTY_STRING, new StringBuilder().append(indexRev + 1)
 						.toString());
+		wtx.moveToParent();
+		wtx.insertAttribute(RevIndex.FIRSTTTREV_ATTRIBUTEKEY,
+				RevIndex.EMPTY_STRING, new StringBuilder().append(lastRev + 1)
+						.toString());
+		wtx.moveToParent();
+		wtx.insertAttribute(RevIndex.LASTTTREV_ATTRIBUTEKEY,
+				RevIndex.EMPTY_STRING, new StringBuilder().append(
+						wtx.getRevisionNumber() + 1).toString());
 		wtx.moveToParent();
 		wtx.commit();
 

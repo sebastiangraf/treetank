@@ -33,7 +33,6 @@ import com.treetank.utils.DocumentCreater;
 @BenchClass(runs = 1)
 public class ChildAxisTest {
 
-
 	@Before
 	public void setUp() {
 		Session.removeSession(ITestConstants.PATH1);

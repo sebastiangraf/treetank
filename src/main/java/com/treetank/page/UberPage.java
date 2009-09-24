@@ -18,11 +18,9 @@
 
 package com.treetank.page;
 
-import java.nio.ByteBuffer;
-
-import com.sleepycat.bind.tuple.TupleInput;
-import com.sleepycat.bind.tuple.TupleOutput;
 import com.treetank.api.IReadTransaction;
+import com.treetank.io.ITTSink;
+import com.treetank.io.ITTSource;
 import com.treetank.node.DocumentRootNode;
 import com.treetank.session.WriteTransactionState;
 import com.treetank.utils.IConstants;
@@ -58,7 +56,7 @@ public final class UberPage extends AbstractPage {
 
 		// Initialize revision tree to guarantee that there is a revision root
 		// page.
-		IndirectPage page = null;
+		AbstractPage page = null;
 		PageReference reference = getReference(INDIRECT_REFERENCE_OFFSET);
 
 		// Remaining levels.
@@ -102,19 +100,7 @@ public final class UberPage extends AbstractPage {
 	 * @param in
 	 *            Input bytes.
 	 */
-	public UberPage(final ByteBuffer in) {
-		super(1, in);
-		mRevisionCount = in.getLong();
-		mBootstrap = false;
-	}
-	
-	/**
-	 * Read uber page.
-	 * 
-	 * @param in
-	 *            Input bytes.
-	 */
-	public UberPage(final TupleInput in) {
+	UberPage(final ITTSource in) {
 		super(1, in);
 		mRevisionCount = in.readLong();
 		mBootstrap = false;
@@ -144,7 +130,7 @@ public final class UberPage extends AbstractPage {
 	 * @return Indirect page reference.
 	 */
 	public final PageReference<IndirectPage> getIndirectPageReference() {
-		return (PageReference<IndirectPage>)getReference(INDIRECT_REFERENCE_OFFSET);
+		return (PageReference<IndirectPage>) getReference(INDIRECT_REFERENCE_OFFSET);
 	}
 
 	/**
@@ -203,15 +189,8 @@ public final class UberPage extends AbstractPage {
 	/**
 	 * {@inheritDoc}
 	 */
-	public final void serialize(final ByteBuffer out) {
-		super.serialize(out);
-		out.putLong(mRevisionCount);
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	public final void serialize(final TupleOutput out) {
+	public final void serialize(final ITTSink out) {
+		out.writeInt(PageFactory.UBERPAGE);
 		super.serialize(out);
 		out.writeLong(mRevisionCount);
 	}
@@ -223,7 +202,7 @@ public final class UberPage extends AbstractPage {
 	public final String toString() {
 		return super.toString() + ": revisionCount=" + mRevisionCount
 				+ ", indirectPage=(" + getReference(INDIRECT_REFERENCE_OFFSET)
-				+ "), isDirty=" + isDirty() + ", isBootstrap=" + mBootstrap;
+				+ "), isBootstrap=" + mBootstrap;
 	}
 
 }

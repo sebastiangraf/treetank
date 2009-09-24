@@ -42,7 +42,6 @@ import com.treetank.utils.TypedValue;
  */
 public class CompAxisTest {
 
-
 	@Before
 	public void setUp() {
 

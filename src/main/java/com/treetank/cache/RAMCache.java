@@ -16,7 +16,7 @@
  */
 package com.treetank.cache;
 
-import com.treetank.page.AbstractPage;
+import com.treetank.page.NodePage;
 import com.treetank.utils.FastWeakHashMap;
 
 /**
@@ -30,34 +30,34 @@ public final class RAMCache implements ICache {
 	/**
 	 * local instance
 	 */
-	private final FastWeakHashMap<Long, AbstractPage> map;
+	private final transient FastWeakHashMap<Long, NodePage> map;
 
 	/**
 	 * Simple constructor
 	 */
 	public RAMCache() {
 		super();
-		map = new FastWeakHashMap<Long, AbstractPage>();
+		map = new FastWeakHashMap<Long, NodePage>();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public final void clear() {
+	public void clear() {
 		map.clear();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public final AbstractPage get(final long key) {
+	public NodePage get(final long key) {
 		return map.get(key);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public final void put(final long key, final AbstractPage page) {
+	public void put(final long key, final NodePage page) {
 		map.put(key, page);
 	}
 

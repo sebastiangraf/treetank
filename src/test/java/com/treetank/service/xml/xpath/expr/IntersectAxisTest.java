@@ -39,7 +39,6 @@ import com.treetank.utils.DocumentCreater;
  */
 public class IntersectAxisTest {
 
-
 	@Before
 	public void setUp() {
 

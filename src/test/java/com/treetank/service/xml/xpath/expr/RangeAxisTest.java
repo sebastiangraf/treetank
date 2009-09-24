@@ -41,7 +41,6 @@ import com.treetank.utils.DocumentCreater;
  */
 public class RangeAxisTest {
 
-
 	@Before
 	public void setUp() {
 

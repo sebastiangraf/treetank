@@ -18,12 +18,11 @@
 
 package com.treetank.session;
 
-import java.io.IOException;
-import java.io.RandomAccessFile;
-
 import com.treetank.api.IItem;
 import com.treetank.cache.ICache;
 import com.treetank.cache.TransactionLogCache;
+import com.treetank.io.IWriter;
+import com.treetank.io.StorageProperties;
 import com.treetank.node.AbstractNode;
 import com.treetank.node.AttributeNode;
 import com.treetank.node.ElementNode;
@@ -34,7 +33,6 @@ import com.treetank.page.IndirectPage;
 import com.treetank.page.NamePage;
 import com.treetank.page.NodePage;
 import com.treetank.page.PageReference;
-import com.treetank.page.PageWriter;
 import com.treetank.page.RevisionRootPage;
 import com.treetank.page.UberPage;
 import com.treetank.utils.IConstants;
@@ -51,7 +49,7 @@ import com.treetank.utils.NamePageHash;
 public final class WriteTransactionState extends ReadTransactionState {
 
 	/** Page writer to serialize. */
-	private PageWriter mPageWriter;
+	private IWriter mPageWriter;
 
 	/**
 	 * Cache to store the changes in this writetransaction.
@@ -82,24 +80,19 @@ public final class WriteTransactionState extends ReadTransactionState {
 	 *            Shared nodePageReference cache.
 	 * @param uberPage
 	 *            Root of revision.
+	 * @param reader
+	 *            Reader of transaction
+	 * @param writer
+	 *            Writer where this transaction should write to
 	 */
 	protected WriteTransactionState(
 			final SessionConfiguration sessionConfiguration,
-			final UberPage uberPage) {
+			final UberPage uberPage, final IWriter writer) {
 		super(sessionConfiguration, uberPage, uberPage
-				.getLastCommittedRevisionNumber(), new ItemList());
+				.getLastCommittedRevisionNumber(), new ItemList(), writer);
 		log = new TransactionLogCache(sessionConfiguration);
-		mPageWriter = new PageWriter(sessionConfiguration);
+		mPageWriter = writer;
 		setRevisionRootPage(prepareRevisionRootPage());
-	}
-
-	/**
-	 * Getter for nodePageReference writer.
-	 * 
-	 * @return Page writer assigned to this transaction.
-	 */
-	protected final PageWriter getPageWriter() {
-		return mPageWriter;
 	}
 
 	/**
@@ -269,25 +262,13 @@ public final class WriteTransactionState extends ReadTransactionState {
 				}
 			}
 			reference.setPage(page);
-			if (page.isDirty()) {
-				// Recursively commit indirectely referenced pages and then
-				// write self.
-				page.commit(this);
+			// Recursively commit indirectely referenced pages and then
+			// write self.
+			page.commit(this);
 
-				mPageWriter.write(reference);
+			mPageWriter.write(reference);
 
-				reference.setPage(null);
-			}
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected final void commit(
-			final PageReference<? extends AbstractPage>[] references) {
-		for (int i = 0, l = references.length; i < l; i++) {
-			commit(references[i]);
+			reference.setPage(null);
 		}
 	}
 
@@ -297,47 +278,24 @@ public final class WriteTransactionState extends ReadTransactionState {
 		final PageReference<UberPage> uberPageReference = new PageReference<UberPage>();
 		final UberPage uberPage = getUberPage();
 
-		RandomAccessFile file = null;
-
-		try {
-			file = new RandomAccessFile(sessionConfiguration.getFileName(),
-					IConstants.READ_WRITE);
-
-			if (uberPage.isBootstrap()) {
-				file.setLength(IConstants.BEACON_START
-						+ IConstants.BEACON_LENGTH);
-				file.writeInt(getSessionConfiguration().getVersionMajor());
-				file.writeInt(getSessionConfiguration().getVersionMinor());
-				file.writeBoolean(getSessionConfiguration().isChecksummed());
-				file.writeBoolean(getSessionConfiguration().isEncrypted());
-			}
-
-			// Recursively write indirectely referenced pages.
-			uberPage.commit(this);
-
-			uberPageReference.setPage(uberPage);
-			mPageWriter.write(uberPageReference);
-			uberPageReference.setPage(null);
-
-			byte[] tmp = new byte[IConstants.CHECKSUM_SIZE];
-
-			file.seek(IConstants.BEACON_START);
-			file.writeLong(uberPageReference.getStart());
-			file.writeInt(uberPageReference.getLength());
-			uberPageReference.getChecksum(tmp);
-			file.write(tmp);
-
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (file != null) {
-				try {
-					file.close();
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-			}
+		if (uberPage.isBootstrap()) {
+			mPageWriter.initializingStorage(new StorageProperties(
+					IConstants.LAST_VERSION_MAJOR,
+					IConstants.LAST_VERSION_MINOR, sessionConfiguration
+							.isChecksummed(), sessionConfiguration
+							.isEncrypted()));
 		}
+
+		// Recursively write indirectely referenced pages.
+		uberPage.commit(this);
+
+		uberPageReference.setPage(uberPage);
+		mPageWriter.write(uberPageReference);
+		uberPageReference.setPage(null);
+
+		mPageWriter.writeBeacon(uberPageReference);
+
+		// mPageWriter.close();
 
 		return uberPage;
 	}
@@ -350,29 +308,22 @@ public final class WriteTransactionState extends ReadTransactionState {
 		log.clear();
 		mPageWriter.close();
 		mPageWriter = null;
-		super.close();
+//		super.close();
 	}
 
 	protected final IndirectPage prepareIndirectPage(
 			final PageReference<IndirectPage> reference) {
 
-		IndirectPage page = null;
-		if (page == null) {
-			if (!reference.isInstantiated()) {
-				if (reference.isCommitted()) {
-					page = new IndirectPage(dereferenceIndirectPage(reference));
-				} else {
-					page = new IndirectPage();
-				}
-				reference.setPage(page);
+		IndirectPage page = reference.getPage();
+		if (!reference.isInstantiated()) {
+			if (reference.isCommitted()) {
+				page = new IndirectPage(dereferenceIndirectPage(reference));
 			} else {
-				if (!reference.isDirty()) {
-					page = new IndirectPage(page);
-					reference.setPage(page);
-				} else {
-					page = reference.getPage();
-				}
+				page = new IndirectPage();
 			}
+			reference.setPage(page);
+		} else {
+			page = reference.getPage();
 		}
 		return page;
 	}
@@ -399,16 +350,10 @@ public final class WriteTransactionState extends ReadTransactionState {
 				}
 
 			} else {
-				if (!reference.isDirty()) {
-					page = new NodePage(page);
-					reference.setNodePageKey(nodePageKey);
-					log.put(nodePageKey, page);
-				} else {
-					page = reference.getPage();
-					reference.setNodePageKey(nodePageKey);
-					log.put(nodePageKey, page);
-					reference.setPage(null);
-				}
+				page = reference.getPage();
+				reference.setNodePageKey(nodePageKey);
+				log.put(nodePageKey, page);
+				reference.setPage(null);
 			}
 		}
 		this.nodePage = page;
@@ -472,11 +417,6 @@ public final class WriteTransactionState extends ReadTransactionState {
 				reference.setPage(page);
 			} else {
 				page = new NamePage();
-				reference.setPage(page);
-			}
-		} else {
-			if (!reference.isDirty()) {
-				page = new NamePage(page);
 				reference.setPage(page);
 			}
 		}

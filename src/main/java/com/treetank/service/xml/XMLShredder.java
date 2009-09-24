@@ -26,6 +26,7 @@ import java.nio.ByteBuffer;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import com.treetank.api.IReadTransaction;
@@ -77,21 +78,20 @@ public final class XMLShredder {
 	public static final void shred(final long id, final XMLStreamReader parser,
 			final ISession session) {
 
+		final IWriteTransaction wtx = session.beginWriteTransaction();
+		final FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
+
+		// Make sure that we do not shred into an existing TreeTank.
+		// if (wtx.hasFirstChild()) {
+		// throw new IllegalStateException(
+		// "XMLShredder can not shred into an existing TreeTank.");
+		// }
+		wtx.moveTo(id);
+
+		long key;
+		leftSiblingKeyStack.push(IReadTransaction.NULL_NODE_KEY);
+		// leftSiblingKeyStack.push(wtx.getLeftSiblingKey());
 		try {
-			final IWriteTransaction wtx = session.beginWriteTransaction();
-			final FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
-
-			// Make sure that we do not shred into an existing TreeTank.
-			// if (wtx.hasFirstChild()) {
-			// throw new IllegalStateException(
-			// "XMLShredder can not shred into an existing TreeTank.");
-			// }
-			wtx.moveTo(id);
-
-			long key;
-			leftSiblingKeyStack.push(IReadTransaction.NULL_NODE_KEY);
-			// leftSiblingKeyStack.push(wtx.getLeftSiblingKey());
-
 			// Iterate over all nodes.
 			while (parser.hasNext()) {
 
@@ -187,8 +187,9 @@ public final class XMLShredder {
 				}
 			}
 			wtx.close();
+
 			parser.close();
-		} catch (Exception e) {
+		} catch (XMLStreamException e) {
 			throw new RuntimeException(e);
 		}
 	}
