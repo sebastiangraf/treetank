@@ -40,7 +40,7 @@ public interface IWriter extends IReader {
 	 * @throws TreetankIOException
 	 *             exception if something bad happens
 	 */
-	void writeBeacon(final PageReference<UberPage> pageReference)
+	void writeBeacon(final PageReference<AbstractPage> pageReference)
 			throws TreetankIOException;
 
 	/**

@@ -11,7 +11,6 @@ import com.treetank.io.IWriter;
 import com.treetank.io.StorageProperties;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.PageReference;
-import com.treetank.page.UberPage;
 
 public class BerkeleyWriter implements IWriter {
 
@@ -126,7 +125,7 @@ public class BerkeleyWriter implements IWriter {
 	}
 
 	@Override
-	public void writeBeacon(PageReference<UberPage> pageReference) {
+	public void writeBeacon(PageReference<AbstractPage> pageReference) {
 
 		final DatabaseEntry keyEntry = new DatabaseEntry();
 		BerkeleyFactory.KEY.objectToEntry(BerkeleyKey.getFirstRevKey(),
