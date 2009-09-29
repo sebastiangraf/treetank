@@ -269,13 +269,13 @@ public final class TreeTankCommandoLineExplorer {
 					builder.append(currentRtx.nameForKey(currentRtx.getNode()
 							.getURIKey()));
 					break;
-				case IReadTransaction.PROCESSING_INSTRUCTION_KIND:
+				case IReadTransaction.PROCESSING_KIND:
 					builder.append("Processing instruction\n");
 					break;
 				case IReadTransaction.COMMENT_KIND:
 					builder.append("Comment\n");
 					break;
-				case IReadTransaction.DOCUMENT_ROOT_KIND:
+				case IReadTransaction.ROOT_KIND:
 					builder.append("Document Root\n");
 					break;
 				default:

@@ -8,16 +8,28 @@ import com.treetank.io.berkeley.TupleOutputSink;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.PageFactory;
 
-public class AbstractPageBinding extends TupleBinding<AbstractPage> {
+/**
+ * Binding for storing {@link AbstractPage} objects within the Berkeley DB.
+ * 
+ * @author Sebastian Graf, University of Konstanz
+ * 
+ */
+public final class AbstractPageBinding extends TupleBinding<AbstractPage> {
 
-	@Override
-	public AbstractPage entryToObject(final TupleInput arg0) {
-		return PageFactory.createPage(new TupleInputSource(arg0));
-	}
+    /**
+     *{@inheritDoc}
+     */
+    @Override
+    public AbstractPage entryToObject(final TupleInput arg0) {
+        return PageFactory.createPage(new TupleInputSource(arg0));
+    }
 
-	@Override
-	public void objectToEntry(final AbstractPage arg0, final TupleOutput arg1) {
-		arg0.serialize(new TupleOutputSink(arg1));
-	}
+    /**
+     *{@inheritDoc}
+     */
+    @Override
+    public void objectToEntry(final AbstractPage arg0, final TupleOutput arg1) {
+        arg0.serialize(new TupleOutputSink(arg1));
+    }
 
 }

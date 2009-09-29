@@ -11,29 +11,29 @@ import java.io.IOException;
  */
 public final class TreetankIOException extends IOException {
 
-	/**
-	 * serializable id
-	 */
-	private static final long serialVersionUID = 4099242625448155216L;
+    /**
+     * serializable id.
+     */
+    private static final long serialVersionUID = 4099242625448155216L;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param paramExc
-	 *            exception to be wrapped
-	 */
-	public TreetankIOException(final IOException paramExc) {
-		super(paramExc);
-	}
+    /**
+     * Constructor.
+     * 
+     * @param paramExc
+     *            exception to be wrapped
+     */
+    public TreetankIOException(final IOException paramExc) {
+        super(paramExc);
+    }
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param message
-	 *            for the overlaying {@link IOException}
-	 */
-	public TreetankIOException(final String message) {
-		super(message);
-	}
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            for the overlaying {@link IOException}
+     */
+    public TreetankIOException(final String message) {
+        super(message);
+    }
 
 }

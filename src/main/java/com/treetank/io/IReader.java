@@ -18,7 +18,7 @@ public interface IReader {
 	 * @throws TreetankIOException
 	 *             if somethind bad happens
 	 */
-	public StorageProperties getProps() throws TreetankIOException;
+	StorageProperties getProps() throws TreetankIOException;
 
 	/**
 	 * Getting the first reference of the {@link Uberpage}
@@ -27,7 +27,7 @@ public interface IReader {
 	 * @throws TreetankIOException
 	 *             if something bad happens
 	 */
-	public PageReference<?> readFirstReference() throws TreetankIOException;
+	PageReference<?> readFirstReference() throws TreetankIOException;
 
 	/**
 	 * Getting a reference for the given pointer
@@ -38,8 +38,7 @@ public interface IReader {
 	 * @throws TreetankIOException
 	 *             if something bad happens during read
 	 */
-	public AbstractPage read(
-			final PageReference<? extends AbstractPage> pageReference)
+	AbstractPage read(final PageReference<? extends AbstractPage> pageReference)
 			throws TreetankIOException;
 
 	/**
@@ -48,6 +47,6 @@ public interface IReader {
 	 * @throws TreetankIOException
 	 *             if something bad happens while access
 	 */
-	public void close() throws TreetankIOException;
+	void close() throws TreetankIOException;
 
 }

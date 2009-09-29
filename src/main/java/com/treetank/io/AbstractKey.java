@@ -15,7 +15,7 @@ package com.treetank.io;
 public abstract class AbstractKey {
 
 	/** all keys */
-	private final long[] keys;
+	private final transient long[] keys;
 
 	/**
 	 * Protected constructor, just setting the keys.
@@ -33,7 +33,9 @@ public abstract class AbstractKey {
 	 * @return the keys
 	 */
 	protected long[] getKeys() {
-		return keys;
+		final long[] returnKeys = new long[keys.length];
+		System.arraycopy(keys, 0, returnKeys, 0, keys.length);
+		return returnKeys;
 	}
 
 	/**
