@@ -23,6 +23,7 @@ import com.treetank.cache.ICache;
 import com.treetank.cache.TransactionLogCache;
 import com.treetank.io.IWriter;
 import com.treetank.io.StorageProperties;
+import com.treetank.io.TreetankIOException;
 import com.treetank.node.AbstractNode;
 import com.treetank.node.AttributeNode;
 import com.treetank.node.ElementNode;
@@ -266,14 +267,20 @@ public final class WriteTransactionState extends ReadTransactionState {
 			// write self.
 			page.commit(this);
 
-			mPageWriter.write(reference);
+			try {
+				mPageWriter.write(reference);
+			} catch (TreetankIOException e) {
+
+				throw new RuntimeException(e);
+			}
 
 			reference.setPage(null);
 		}
 	}
 
 	protected final UberPage commit(
-			final SessionConfiguration sessionConfiguration) {
+			final SessionConfiguration sessionConfiguration)
+			throws TreetankIOException {
 
 		final PageReference<UberPage> uberPageReference = new PageReference<UberPage>();
 		final UberPage uberPage = getUberPage();
@@ -306,9 +313,14 @@ public final class WriteTransactionState extends ReadTransactionState {
 	@Override
 	protected void close() {
 		log.clear();
-		mPageWriter.close();
+		try {
+			mPageWriter.close();
+		} catch (final TreetankIOException exc) {
+			throw new RuntimeException(exc);
+
+		}
 		mPageWriter = null;
-//		super.close();
+		// super.close();
 	}
 
 	protected final IndirectPage prepareIndirectPage(

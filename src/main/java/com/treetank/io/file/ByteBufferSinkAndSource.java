@@ -16,7 +16,8 @@ import com.treetank.utils.IConstants;
  */
 public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
 
-	private final ByteBuffer buffer;
+	/** internal buffer */
+	private transient final ByteBuffer buffer;
 
 	/**
 	 * Constructor
@@ -25,49 +26,84 @@ public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
 		buffer = ByteBuffer.allocate(IConstants.BUFFER_SIZE);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void writeByte(final byte byteVal) {
 		buffer.put(byteVal);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void writeLong(final long longVal) {
 		buffer.putLong(longVal);
 
 	}
 
+	/**
+	 * Setting position in buffer
+	 * 
+	 * @param val
+	 *            new position to set
+	 */
 	public void position(final int val) {
 		buffer.position(val);
 	}
 
+	/**
+	 * Getting position in buffer
+	 * 
+	 * @return position to get
+	 */
 	public int position() {
 		return buffer.position();
 	}
 
-	public byte get() {
-		return buffer.get();
-	}
-
+	/**
+	 * Getting more bytes and fill it in the buffer
+	 * 
+	 * @param dst
+	 *            to fill
+	 * @param offset
+	 *            offset in buffer
+	 * @param length
+	 *            length of bytes
+	 */
 	public void get(final byte[] dst, final int offset, final int length) {
 		buffer.get(dst, offset, length);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public byte readByte() {
 		return buffer.get();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public long readLong() {
 		return buffer.getLong();
 	}
 
+	/**
+	 *{@inheritDoc}
+	 */
 	@Override
-	public void writeInt(int intVal) {
+	public void writeInt(final int intVal) {
 		buffer.putInt(intVal);
 
 	}
 
+	/**
+	 *{@inheritDoc}
+	 */
 	@Override
 	public int readInt() {
 		return buffer.getInt();

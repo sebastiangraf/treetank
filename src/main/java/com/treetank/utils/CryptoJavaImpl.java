@@ -51,7 +51,7 @@ public class CryptoJavaImpl implements ICrypto {
 	 *            data that should be compressed
 	 * @return compressed data, null if failed
 	 */
-	public short crypt(final short length, final ByteBufferSinkAndSource buffer) {
+	public int crypt(final int length, final ByteBufferSinkAndSource buffer) {
 		try {
 			buffer.position(24);
 			final byte[] tmp = new byte[length - 24];
@@ -88,7 +88,7 @@ public class CryptoJavaImpl implements ICrypto {
 	 *            data that should be decompressed
 	 * @return Decompressed data, null if failed
 	 */
-	public short decrypt(final short length,
+	public int decrypt(final int length,
 			final ByteBufferSinkAndSource buffer) {
 		try {
 			buffer.position(24);

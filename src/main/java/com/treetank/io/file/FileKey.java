@@ -12,34 +12,58 @@ import com.treetank.io.KeyFactory;
  * @author Sebastian Graf, University of Konstnz
  * 
  */
-public class FileKey extends AbstractKey {
+public final class FileKey extends AbstractKey {
 
 	/**
-	 * Constructor
+	 * Constructor for {@link ITTSource}
 	 * 
 	 * @param in
+	 *            Source for Input
 	 */
-	public FileKey(final ITTSource in) {
-		super(in.readLong(), in.readLong());
+	public FileKey(final ITTSource inSource) {
+		super(inSource.readLong(), inSource.readLong());
 	}
 
+	/**
+	 * Constructor for direct data.
+	 * 
+	 * @param offset
+	 * @param length
+	 */
 	public FileKey(final long offset, final long length) {
 		super(offset, length);
 	}
 
-	public final int getLength() {
+	/**
+	 * Getting the length of the file fragment.
+	 * 
+	 * @return the length of the file fragment
+	 */
+	public int getLength() {
 		return (int) super.getKeys()[1];
 	}
 
-	public final long getOffset() {
+	/**
+	 * Getting the offset of the file fragment
+	 * 
+	 * @return the offset
+	 */
+	public long getOffset() {
 		return super.getKeys()[0];
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public long getIdentifier() {
 		return super.getKeys()[0];
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void serialize(final ITTSink out) {
 		out.writeInt(KeyFactory.FILEKIND);
 		super.serialize(out);

@@ -10,15 +10,30 @@ package com.treetank.io;
  */
 public final class StorageProperties {
 
-	
-	private final long versionMajor;
+	/** Member for versionMajor */
+	private transient final long versionMajor;
 
-	private final long versionMinor;
+	/** Member for versionMinor */
+	private transient final long versionMinor;
 
-	private final boolean checksummed;
+	/** Member for checksummed */
+	private transient final boolean checksummed;
 
-	private final boolean encrypted;
+	/** Member for encrypted */
+	private transient final boolean encrypted;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param paramVersionMajor
+	 *            parameter for the versionMajor
+	 * @param paramVersionMinor
+	 *            parameter for the versioninor
+	 * @param paramChecksummed
+	 *            parameter for the checksummed
+	 * @param paramEncrypted
+	 *            parameter for the parameter
+	 */
 	public StorageProperties(final long paramVersionMajor,
 			final long paramVersionMinor, final boolean paramChecksummed,
 			final boolean paramEncrypted) {
@@ -32,32 +47,35 @@ public final class StorageProperties {
 	/**
 	 * @return the versionMajor
 	 */
-	public final long getVersionMajor() {
+	public long getVersionMajor() {
 		return versionMajor;
 	}
 
 	/**
 	 * @return the versionMinor
 	 */
-	public final long getVersionMinor() {
+	public long getVersionMinor() {
 		return versionMinor;
 	}
 
 	/**
 	 * @return the checksummed
 	 */
-	public final boolean getChecksummed() {
+	public boolean isChecksummed() {
 		return checksummed;
 	}
 
 	/**
 	 * @return the encrypted
 	 */
-	public final boolean getEncrypted() {
+	public boolean isEncrypted() {
 		return encrypted;
 	}
 
-	public final String toString() {
+	/**
+	 * To String method for StorageProperties.
+	 */
+	public String toString() {
 		return new StringBuilder().append(versionMajor).append(versionMinor)
 				.append(checksummed).append(encrypted).toString();
 	}

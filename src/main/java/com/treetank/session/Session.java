@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+q * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -26,6 +26,7 @@ import java.util.Map;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.io.TreetankIOException;
 import com.treetank.utils.ItemList;
 
 /**
@@ -98,7 +99,13 @@ public final class Session implements ISession {
 		synchronized (SESSION_MAP) {
 			session = SESSION_MAP.get(sessionConfiguration.getAbsolutePath());
 			if (session == null) {
-				session = new Session(new SessionState(sessionConfiguration));
+				try {
+					session = new Session(
+							new SessionState(sessionConfiguration));
+				} catch (TreetankIOException e) {
+					throw new RuntimeException(e);
+
+				}
 				SESSION_MAP
 						.put(sessionConfiguration.getAbsolutePath(), session);
 			} else {
@@ -246,7 +253,11 @@ public final class Session implements ISession {
 				SESSION_MAP.remove(mSessionState.getSessionConfiguration()
 						.getAbsolutePath());
 			}
-			mSessionState.close();
+			try {
+				mSessionState.close();
+			} catch (TreetankIOException e) {
+				throw new RuntimeException(e);
+			}
 			mSessionState = null;
 			mClosed = true;
 		}
