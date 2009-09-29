@@ -23,107 +23,125 @@ import com.treetank.page.AbstractPage;
 import com.treetank.page.PageReference;
 import com.treetank.session.SessionConfiguration;
 
+/**
+ * Factory class to build up {@link IReader} {@link IWriter} instances for the
+ * Treetank Framework.
+ * 
+ * After all this class is implemented as a Singleton to hold one
+ * {@link BerkeleyFactory} per {@link SessionConfiguration}.
+ * 
+ * @author Sebastian Graf, University of Konstanz
+ * 
+ */
 public final class BerkeleyFactory extends AbstractIOFactory {
 
-	static final TupleBinding<AbstractKey> KEY = new KeyBinding();
+    /** Binding for {@link AbstractKey} */
+    static final TupleBinding<AbstractKey> KEY = new KeyBinding();
 
-	static final TupleBinding<StorageProperties> PROPS_VAL_B = new StoragePropTupleBinding();
-	static final TupleBinding<AbstractPage> PAGE_VAL_B = new AbstractPageBinding();
-	static final TupleBinding<PageReference<?>> FIRST_REV_VAL_B = new PageReferenceBinding();
-	static final TupleBinding<Long> DATAINFO_VAL_B = TupleBinding
-			.getPrimitiveBinding(Long.class);
+    /** Binding for {@link StorageProperties} */
+    static final TupleBinding<StorageProperties> PROPS_VAL_B = new StoragePropTupleBinding();
 
-	/**
-	 * Berkeley Environment for the database
-	 */
-	private final Environment env;
+    /** Binding for {@link AbstractPage} */
+    static final TupleBinding<AbstractPage> PAGE_VAL_B = new AbstractPageBinding();
 
-	/**
-	 * Database instance per session
-	 */
-	private final Database mDatabase;
+    /** Binding for {@link PageReference<AbstractPage>} */
+    static final TupleBinding<PageReference<AbstractPage>> FIRST_REV_VAL_B = new PageReferenceBinding();
 
-	/**
-	 * Name for the database.
-	 */
-	protected final static String NAME = "berkeleyDatabase";
+    /** Binding for {@link Long} */
+    static final TupleBinding<Long> DATAINFO_VAL_B = TupleBinding
+            .getPrimitiveBinding(Long.class);
 
-	/**
-	 * Concurrent storage for all avaliable databases in runtime
-	 */
-	private static Map<SessionConfiguration, BerkeleyFactory> fac = new ConcurrentHashMap<SessionConfiguration, BerkeleyFactory>();
+    /**
+     * Berkeley Environment for the database
+     */
+    private final Environment env;
 
-	private BerkeleyFactory(final SessionConfiguration paramSession) {
-		super(paramSession);
-		try {
+    /**
+     * Database instance per session
+     */
+    private final Database mDatabase;
 
-			final DatabaseConfig conf = new DatabaseConfig();
-			conf.setTransactional(true);
+    /**
+     * Name for the database.
+     */
+    protected final static String NAME = "berkeleyDatabase";
 
-			final EnvironmentConfig config = new EnvironmentConfig();
-			config.setTransactional(true);
+    /**
+     * Concurrent storage for all avaliable databases in runtime
+     */
+    private static Map<SessionConfiguration, BerkeleyFactory> fac = new ConcurrentHashMap<SessionConfiguration, BerkeleyFactory>();
 
-			final File repoFile = new File(paramSession + File.separator + "tt");
-			if (!repoFile.exists()) {
-				repoFile.mkdirs();
-				conf.setAllowCreate(true);
-				config.setAllowCreate(true);
-			}
+    private BerkeleyFactory(final SessionConfiguration paramSession) {
+        super(paramSession);
+        try {
 
-			env = new Environment(repoFile, config);
+            final DatabaseConfig conf = new DatabaseConfig();
+            conf.setTransactional(true);
 
-			mDatabase = env.openDatabase(null, NAME, conf);
+            final EnvironmentConfig config = new EnvironmentConfig();
+            config.setTransactional(true);
 
-		} catch (final Exception e) {
-			throw new RuntimeException(e);
+            final File repoFile = new File(paramSession + File.separator + "tt");
+            if (!repoFile.exists()) {
+                repoFile.mkdirs();
+                conf.setAllowCreate(true);
+                config.setAllowCreate(true);
+            }
 
-		}
-	}
+            env = new Environment(repoFile, config);
 
-	public static BerkeleyFactory getInstanceForBerkeley(
-			final SessionConfiguration conf) {
-		BerkeleyFactory fact = fac.get(conf);
-		if (fact == null) {
-			fact = new BerkeleyFactory(conf);
-			fac.put(conf, fact);
-		}
-		return fact;
-	}
+            mDatabase = env.openDatabase(null, NAME, conf);
 
-	public IReader getReader() {
-		try {
-			return new BerkeleyReader(env, mDatabase);
-		} catch (DatabaseException e) {
-			throw new RuntimeException(e);
-		}
-	}
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
 
-	@Override
-	public IWriter getWriter() {
-		return new BerkeleyWriter(env, mDatabase);
-	}
+        }
+    }
 
-	@Override
-	public void closeStorage() {
+    public static BerkeleyFactory getInstanceForBerkeley(
+            final SessionConfiguration conf) {
+        BerkeleyFactory fact = fac.get(conf);
+        if (fact == null) {
+            fact = new BerkeleyFactory(conf);
+            fac.put(conf, fact);
+        }
+        return fact;
+    }
 
-		try {
-			mDatabase.close();
-			// env.removeDatabase(null, NAME);
-			env.close();
-			fac.remove(this.config);
-		} catch (DatabaseException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public IReader getReader() {
+        try {
+            return new BerkeleyReader(env, mDatabase);
+        } catch (DatabaseException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	@Override
-	public boolean exists() {
-		try {
-			final boolean returnVal = mDatabase.count() > 0;
-			return returnVal;
-		} catch (DatabaseException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    @Override
+    public IWriter getWriter() {
+        return new BerkeleyWriter(env, mDatabase);
+    }
+
+    @Override
+    public void closeStorage() {
+
+        try {
+            mDatabase.close();
+            // env.removeDatabase(null, NAME);
+            env.close();
+            fac.remove(this.config);
+        } catch (DatabaseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public boolean exists() {
+        try {
+            final boolean returnVal = mDatabase.count() > 0;
+            return returnVal;
+        } catch (DatabaseException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }

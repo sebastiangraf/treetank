@@ -24,134 +24,133 @@ package com.treetank.bench;
 import java.io.File;
 
 import org.perfidix.Benchmark;
+import org.perfidix.annotation.BeforeFirstRun;
 import org.perfidix.annotation.Bench;
-import org.perfidix.annotation.BenchClass;
 import org.perfidix.ouput.TabularSummaryOutput;
 import org.perfidix.result.BenchmarkResult;
 
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
-import com.treetank.axis.ChildAxis;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
 
-@BenchClass(runs = 1)
 public class AxisStepBench {
 
-	public final static int TASKS = 3;
+    public final static int TASKS = 3;
 
-	public final static String XML_PATH = "src/test/resources/shakespeare.xml";
+    public final static String XML_PATH = "src/test/resources/shakespeare.xml";
 
-	public final static String TNK_PATH = "target/tnk/shakespeare.tnk";
+    public final static String TNK_PATH = "target/tnk/shakespeare.tnk";
 
-	public final static byte[] TNK_KEY = null; // "1234567812345678".getBytes();
+    public final static byte[] TNK_KEY = null; // "1234567812345678".getBytes();
 
-	public final static boolean TNK_CHECKSUM = false;
+    public final static boolean TNK_CHECKSUM = false;
 
-	private SessionConfiguration mSessionConfiguration;
+    private SessionConfiguration mSessionConfiguration;
 
-	@Bench(runs = 1)
-	public void benchShred() throws Exception {
+    @BeforeFirstRun
+    public void benchShred() {
 
-		new File(TNK_PATH).delete();
-		mSessionConfiguration = new SessionConfiguration(TNK_PATH, TNK_KEY,
-				TNK_CHECKSUM);
-		XMLShredder.shred(XML_PATH, mSessionConfiguration);
-	}
+        Session.removeSession(new File(TNK_PATH));
+        mSessionConfiguration = new SessionConfiguration(TNK_PATH, TNK_KEY,
+                TNK_CHECKSUM);
+        XMLShredder.shred(XML_PATH, mSessionConfiguration);
+    }
 
-	// @Bench
-	// public void benchTreeTankDescendant() throws Exception {
-	//
-	// final ISession session = Session.beginSession(mSessionConfiguration);
-	// final ExecutorService executor = Executors.newFixedThreadPool(TASKS);
-	// executor.execute(new DescendantStepTask(session));
-	// executor.shutdown();
-	// executor.awaitTermination(1000000, TimeUnit.SECONDS);
-	// session.close();
-	// }
-	//
-	// @Bench
-	// public void benchRandom() throws Exception {
-	//
-	// final ISession session = Session.beginSession(mSessionConfiguration);
-	// final IReadTransaction rtx = session.beginReadTransaction();
-	// final Random r = new Random();
-	//
-	// for (int i = 0; i < 10; i++) {
-	// rtx.moveTo(r.nextInt((int) rtx.getNodeCount()));
-	// }
-	//
-	// rtx.close();
-	// session.close();
-	// }
-	//
-	// @Bench
-	// public void benchConcurrentTreeTankDescendant() throws Exception {
-	//
-	// final ISession session = Session.beginSession(mSessionConfiguration);
-	// final ExecutorService executor = Executors.newFixedThreadPool(TASKS);
-	// try {
-	//
-	// for (int i = 0; i < TASKS; i++) {
-	// executor.execute(new DescendantStepTask(session));
-	// }
-	//
-	// executor.shutdown();
-	// executor.awaitTermination(1000000, TimeUnit.SECONDS);
-	//
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// session.close();
-	// }
-	//
-	@Bench
-	public void benchTreeTankChild() throws Exception {
+    @Bench(runs = 100)
+    public void benchTreeTankDescendant() {
 
-		final ISession session = Session.beginSession(mSessionConfiguration);
-		final IReadTransaction rtx = session.beginReadTransaction();
-		for (final long key : new ChildAxis(rtx)) {
-			// Do nothing.
-		}
-		rtx.close();
-		session.close();
-	}
+        final ISession session = Session.beginSession(mSessionConfiguration);
+        // final ExecutorService executor = Executors.newFixedThreadPool(TASKS);
+        // executor.execute(new DescendantStepTask(session));
+        // executor.shutdown();
+        // executor.awaitTermination(1000000, TimeUnit.SECONDS);
+        new DescendantStepTask(session).run();
+        session.close();
+    }
 
-	public static void main(final String[] args) {
+    // @Bench
+    // public void benchRandom() throws Exception {
+    //
+    // final ISession session = Session.beginSession(mSessionConfiguration);
+    // final IReadTransaction rtx = session.beginReadTransaction();
+    // final Random r = new Random();
+    //
+    // for (int i = 0; i < 10; i++) {
+    // rtx.moveTo(r.nextInt((int) rtx.getNodeCount()));
+    // }
+    //
+    // rtx.close();
+    // session.close();
+    // }
+    //
+    // @Bench
+    // public void benchConcurrentTreeTankDescendant() throws Exception {
+    //
+    // final ISession session = Session.beginSession(mSessionConfiguration);
+    // final ExecutorService executor = Executors.newFixedThreadPool(TASKS);
+    // try {
+    //
+    // for (int i = 0; i < TASKS; i++) {
+    // executor.execute(new DescendantStepTask(session));
+    // }
+    //
+    // executor.shutdown();
+    // executor.awaitTermination(1000000, TimeUnit.SECONDS);
+    //
+    // } catch (Exception e) {
+    // e.printStackTrace();
+    // }
+    // session.close();
+    // }
+    //
+    // @Bench(runs = 100)
+    // public void benchTreeTankChild() {
+    //
+    // final ISession session = Session.beginSession(mSessionConfiguration);
+    // final IReadTransaction rtx = session.beginReadTransaction();
+    // for (final long key : new ChildAxis(rtx)) {
+    // // Do nothing.
+    // }
+    // rtx.close();
+    // session.close();
+    // }
 
-		try {
-			Benchmark a = new Benchmark();
-			a.add(AxisStepBench.class);
-			BenchmarkResult r = a.run();
-			TabularSummaryOutput v = new TabularSummaryOutput();
-			v.visitBenchmark(r);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    public static void main(final String[] args) {
 
-	private class DescendantStepTask implements Runnable {
+        try {
+            Benchmark a = new Benchmark();
+            a.add(AxisStepBench.class);
+            BenchmarkResult r = a.run();
+            TabularSummaryOutput v = new TabularSummaryOutput();
+            v.visitBenchmark(r);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-		private final IReadTransaction mRTX;
+    private class DescendantStepTask implements Runnable {
 
-		public DescendantStepTask(final ISession session) throws Exception {
+        private final IReadTransaction mRTX;
 
-			mRTX = session.beginReadTransaction();
-		}
+        public DescendantStepTask(final ISession session) {
 
-		public void run() {
+            mRTX = session.beginReadTransaction();
+        }
 
-			try {
-				for (final long key : new DescendantAxis(mRTX)) {
-					// Do nothing
-				}
-				mRTX.close();
-			} catch (Exception e) {
-				throw new IllegalStateException(e);
-			}
-		}
-	}
+        public void run() {
+
+            try {
+                for (final long key : new DescendantAxis(mRTX)) {
+                    // Do nothing
+                }
+                mRTX.close();
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    }
 
 }

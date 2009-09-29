@@ -70,8 +70,8 @@ public abstract class AbstractIOFactory {
     public final static AbstractIOFactory getInstance(
             final SessionConfiguration conf) {
         // TODO fix that to use the conf file
-        // final StorageType type = StorageType.Berkeley;
-        final StorageType type = StorageType.File;
+         final StorageType type = StorageType.Berkeley;
+//        final StorageType type = StorageType.File;
         AbstractIOFactory fac = null;
         switch (type) {
         case File:
