@@ -23,6 +23,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import com.treetank.api.IWriteTransaction;
+import com.treetank.io.TreetankIOException;
 import com.treetank.node.AbstractNode;
 import com.treetank.node.AttributeNode;
 import com.treetank.node.ElementNode;
@@ -391,17 +392,21 @@ public final class WriteTransaction extends ReadTransaction implements
 		assertNotClosed();
 
 		// Commit uber page.
-		final UberPage uberPage = ((WriteTransactionState) getTransactionState())
-				.commit(getSessionState().getSessionConfiguration());
+		UberPage uberPage;
+		try {
+			uberPage = ((WriteTransactionState) getTransactionState())
+					.commit(getSessionState().getSessionConfiguration());
 
-		// Remember succesfully committed uber page in session state.
-		getSessionState().setLastCommittedUberPage(uberPage);
+			// Remember succesfully committed uber page in session state.
+			getSessionState().setLastCommittedUberPage(uberPage);
 
-		// Reset modification counter.
-		mModificationCount = 0L;
+			// Reset modification counter.
+			mModificationCount = 0L;
 
-		getTransactionState().close();
-
+			getTransactionState().close();
+		} catch (TreetankIOException e) {
+			throw new RuntimeException(e);
+		}
 		// Reset internal transaction state to new uber page.
 		setTransactionState(getSessionState().createWriteTransactionState());
 

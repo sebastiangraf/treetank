@@ -18,11 +18,14 @@
 
 package com.treetank.session;
 
+import javax.management.RuntimeErrorException;
+
 import com.treetank.api.IItem;
 import com.treetank.api.IItemList;
 import com.treetank.cache.ICache;
 import com.treetank.cache.RAMCache;
 import com.treetank.io.IReader;
+import com.treetank.io.TreetankIOException;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.IndirectPage;
 import com.treetank.page.NamePage;
@@ -159,7 +162,12 @@ public class ReadTransactionState {
 	 * {@inheritDoc}
 	 */
 	protected void close() {
-		mPageReader.close();
+		try {
+			mPageReader.close();
+		} catch (TreetankIOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		mCache.clear();
 
 		// Immediately release all references.
@@ -185,7 +193,11 @@ public class ReadTransactionState {
 
 		// If there is no page, get it from the storage and cache it.
 		if (page == null) {
-			page = (RevisionRootPage) mPageReader.read(ref);
+			try {
+				page = (RevisionRootPage) mPageReader.read(ref);
+			} catch (TreetankIOException e) {
+				throw new RuntimeException(e);
+			}
 		}
 
 		// Get revision root page which is the leaf of the indirect tree.
@@ -200,7 +212,11 @@ public class ReadTransactionState {
 
 		// If there is no page, get it from the storage and cache it.
 		if (page == null) {
-			page = (NamePage) mPageReader.read(namePageRef);
+			try {
+				page = (NamePage) mPageReader.read(namePageRef);
+			} catch (TreetankIOException e) {
+
+			}
 		}
 
 		return page;
@@ -282,7 +298,11 @@ public class ReadTransactionState {
 
 		// If there is no page, get it from the storage and cache it.
 		if (page == null) {
-			page = (NodePage) mPageReader.read(reference);
+			try {
+				page = (NodePage) mPageReader.read(reference);
+			} catch (TreetankIOException e) {
+				throw new RuntimeException(e);
+			}
 			mCache.put(reference.getKey().getIdentifier(), page);
 		}
 
@@ -304,7 +324,11 @@ public class ReadTransactionState {
 
 		// If there is no page, get it from the storage and cache it.
 		if (page == null) {
-			page = (IndirectPage) mPageReader.read(reference);
+			try {
+				page = (IndirectPage) mPageReader.read(reference);
+			} catch (TreetankIOException e) {
+				throw new RuntimeException(e);
+			}
 			reference.setPage(page);
 		}
 

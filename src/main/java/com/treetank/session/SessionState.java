@@ -28,7 +28,9 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.io.AbstractIOFactory;
 import com.treetank.io.IReader;
+import com.treetank.io.IWriter;
 import com.treetank.io.StorageProperties;
+import com.treetank.io.TreetankIOException;
 import com.treetank.page.PageReference;
 import com.treetank.page.UberPage;
 import com.treetank.utils.IConstants;
@@ -93,7 +95,8 @@ public final class SessionState {
 	 * @param sessionConfiguration
 	 *            Session configuration for the TreeTank.
 	 */
-	protected SessionState(final SessionConfiguration sessionConfiguration) {
+	protected SessionState(final SessionConfiguration sessionConfiguration)
+			throws TreetankIOException {
 
 		mSessionConfiguration = sessionConfiguration;
 		mTransactionMap = new ConcurrentHashMap<Long, IReadTransaction>();
@@ -144,7 +147,7 @@ public final class SessionState {
 		}
 
 		// Fail if the encryption info does not match.
-		if (props.getEncrypted() != (mSessionConfiguration.getEncryptionKey() != null)) {
+		if (props.isEncrypted() != (mSessionConfiguration.getEncryptionKey() != null)) {
 			throw new IllegalStateException("'"
 					+ mSessionConfiguration.getAbsolutePath()
 					+ "' encryption mode does not match "
@@ -152,7 +155,7 @@ public final class SessionState {
 		}
 
 		// Fail if the checksum info does not match.
-		if (props.getChecksummed() != mSessionConfiguration.isChecksummed()) {
+		if (props.isChecksummed() != mSessionConfiguration.isChecksummed()) {
 			throw new IllegalStateException("'"
 					+ mSessionConfiguration.getAbsolutePath()
 					+ "' checksum mode does not match "
@@ -251,8 +254,15 @@ public final class SessionState {
 	}
 
 	protected final WriteTransactionState createWriteTransactionState() {
+		IWriter writer;
+		try {
+			writer = fac.getWriter();
+		} catch (final TreetankIOException exc) {
+			throw new RuntimeException(exc);
+		}
+
 		return new WriteTransactionState(mSessionConfiguration, new UberPage(
-				mLastCommittedUberPage), fac.getWriter());
+				mLastCommittedUberPage), writer);
 	}
 
 	protected final UberPage getLastCommittedUberPage() {
@@ -278,7 +288,7 @@ public final class SessionState {
 		mReadSemaphore.release();
 	}
 
-	protected final void close() {
+	protected final void close() throws TreetankIOException {
 		// Forcibly close all open transactions.
 		for (final IReadTransaction rtx : mTransactionMap.values()) {
 			rtx.close();

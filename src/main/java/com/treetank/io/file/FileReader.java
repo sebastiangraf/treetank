@@ -1,12 +1,12 @@
 package com.treetank.io.file;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import com.treetank.io.IReader;
 import com.treetank.io.StorageProperties;
+import com.treetank.io.TreetankIOException;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.PageFactory;
 import com.treetank.page.PageReference;
@@ -36,17 +36,16 @@ public class FileReader implements IReader {
 	/** Temporary data buffer. */
 	private transient ByteBufferSinkAndSource mBuffer;
 
-	private transient final SessionConfiguration mConf;
-
 	/**
 	 * Constructor.
 	 * 
 	 * @param sessionConfiguration
 	 *            Configuration of session we are bound to.
-	 * @throws RuntimeException
-	 *             if the class could not be instantiated.
+	 * @throws TreetankIOException
+	 *             if something bad happens
 	 */
-	public FileReader(final SessionConfiguration paramConf) {
+	public FileReader(final SessionConfiguration paramConf)
+			throws TreetankIOException {
 
 		try {
 			final File toWrite = new File(paramConf.getAbsolutePath()
@@ -56,10 +55,8 @@ public class FileReader implements IReader {
 
 			mDecompressor = new CryptoJavaImpl();
 			mBuffer = new ByteBufferSinkAndSource();
-			mConf = paramConf;
-		} catch (Exception e) {
-			throw new RuntimeException("Could not create page reader: "
-					+ e.getLocalizedMessage());
+		} catch (final IOException exc) {
+			throw new TreetankIOException(exc);
 		}
 	}
 
@@ -69,11 +66,12 @@ public class FileReader implements IReader {
 	 * @param pageReference
 	 *            to read.
 	 * @return Byte array reader to read bytes from.o
-	 * @throws RuntimeException
+	 * @throws TreetankIOException
 	 *             if there was an error during reading.
 	 */
 	public final AbstractPage read(
-			final PageReference<? extends AbstractPage> pageReference) {
+			final PageReference<? extends AbstractPage> pageReference)
+			throws TreetankIOException {
 
 		if (!pageReference.isCommitted()) {
 			throw new IllegalArgumentException("Page reference is invalid.");
@@ -86,7 +84,7 @@ public class FileReader implements IReader {
 			// Prepare environment for read.
 			final byte[] checksum = new byte[IConstants.CHECKSUM_SIZE];
 			pageReference.getChecksum(checksum);
-			final short inputLength = (short) (fileKey.getLength() + 24);
+			final int inputLength = fileKey.getLength() + 24;
 			mBuffer.position(12);
 			for (final byte byteVal : checksum) {
 				mBuffer.writeByte(byteVal);
@@ -101,16 +99,14 @@ public class FileReader implements IReader {
 			}
 
 			// Perform crypto operations.
-			final short outputLength = mDecompressor.decrypt(inputLength,
-					mBuffer);
+			final int outputLength = mDecompressor
+					.decrypt(inputLength, mBuffer);
 			if (outputLength == 0) {
-				throw new Exception("Page decrypt error.");
+				throw new TreetankIOException("Page decrypt error.");
 			}
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException("Could not read page " + pageReference
-					+ " due to: " + e.getLocalizedMessage());
+		} catch (final IOException exc) {
+			throw new TreetankIOException(exc);
 		}
 
 		// Return reader required to instantiate and deserialize page.
@@ -120,10 +116,10 @@ public class FileReader implements IReader {
 	}
 
 	@Override
-	public PageReference<?> readFirstReference() {
+	public PageReference<?> readFirstReference() throws TreetankIOException {
 		final PageReference<UberPage> uberPageReference = new PageReference<UberPage>();
 		try {
-			byte[] tmp = new byte[IConstants.CHECKSUM_SIZE];
+			final byte[] tmp = new byte[IConstants.CHECKSUM_SIZE];
 
 			// Read primary beacon.
 			mFile.seek(IConstants.BEACON_START);
@@ -135,15 +131,13 @@ public class FileReader implements IReader {
 			uberPageReference.setChecksum(tmp);
 
 			return uberPageReference;
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException("Could not read page "
-					+ uberPageReference + " due to: " + e.getLocalizedMessage());
+		} catch (final IOException exc) {
+			throw new TreetankIOException(exc);
 		}
 	}
 
 	@Override
-	public StorageProperties getProps() {
+	public StorageProperties getProps() throws TreetankIOException {
 		try {
 
 			mFile.seek(0L);
@@ -154,22 +148,18 @@ public class FileReader implements IReader {
 
 			return new StorageProperties(localVersionMajor, localVersionMinor,
 					localChecksummed, localEncrypted);
-		} catch (FileNotFoundException fnfe) {
-			throw new IllegalStateException("Could not find '"
-					+ mConf.getAbsolutePath() + "'.");
-		} catch (IOException ioe) {
-			throw new IllegalStateException("Could not read from '"
-					+ mConf.getAbsolutePath() + "'.");
+		} catch (final IOException ioe) {
+			throw new TreetankIOException(ioe);
 		}
 
 	}
 
 	@Override
-	public void close() {
+	public void close() throws TreetankIOException {
 		try {
 			mFile.close();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+		} catch (final IOException exc) {
+			throw new TreetankIOException(exc);
 
 		}
 	}

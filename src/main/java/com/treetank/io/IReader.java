@@ -15,15 +15,19 @@ public interface IReader {
 	 * Getting the {@link StorageProperties} for the given storage;
 	 * 
 	 * @return the {@link StorageProperties} for this storage
+	 * @throws TreetankIOException
+	 *             if somethind bad happens
 	 */
-	public StorageProperties getProps();
+	public StorageProperties getProps() throws TreetankIOException;
 
 	/**
 	 * Getting the first reference of the {@link Uberpage}
 	 * 
-	 * @return
+	 * @return a {@link PageReference} with link to the first reference
+	 * @throws TreetankIOException
+	 *             if something bad happens
 	 */
-	public PageReference<?> readFirstReference();
+	public PageReference<?> readFirstReference() throws TreetankIOException;
 
 	/**
 	 * Getting a reference for the given pointer
@@ -31,13 +35,19 @@ public interface IReader {
 	 * @param pageReference
 	 *            the reference for the page to be determined
 	 * @return a {@link AbstractPage} as the base for a page
+	 * @throws TreetankIOException
+	 *             if something bad happens during read
 	 */
 	public AbstractPage read(
-			final PageReference<? extends AbstractPage> pageReference);
+			final PageReference<? extends AbstractPage> pageReference)
+			throws TreetankIOException;
 
 	/**
 	 * Closing the storage.
+	 * 
+	 * @throws TreetankIOException
+	 *             if something bad happens while access
 	 */
-	public void close();
+	public void close() throws TreetankIOException;
 
 }
