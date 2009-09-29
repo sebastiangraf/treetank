@@ -85,7 +85,7 @@ public class NodePage extends AbstractPage {
 			case IConstants.UNKNOWN:
 				// Was null node, do nothing here.
 				break;
-			case IReadTransaction.DOCUMENT_ROOT_KIND:
+			case IReadTransaction.ROOT_KIND:
 				getNodes()[offset] = new DocumentRootNode(in);
 				break;
 			case IReadTransaction.ELEMENT_KIND:
@@ -127,7 +127,7 @@ public class NodePage extends AbstractPage {
 				case IConstants.UNKNOWN:
 					// Was null node, do nothing here.
 					break;
-				case IReadTransaction.DOCUMENT_ROOT_KIND:
+				case IReadTransaction.ROOT_KIND:
 					getNodes()[offset] = new DocumentRootNode(committedNodePage
 							.getNodes()[offset]);
 					break;

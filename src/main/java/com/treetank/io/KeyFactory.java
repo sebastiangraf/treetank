@@ -16,6 +16,10 @@ public final class KeyFactory {
 	/** Constant to define the berkeley-keys */
 	public static final int BERKELEYKIND = 2;
 
+	private KeyFactory() {
+		// method to prohibit instantiation
+	}
+
 	/**
 	 * Simple create-method.
 	 * 
@@ -23,7 +27,7 @@ public final class KeyFactory {
 	 *            the input from the storage
 	 * @return the Key.
 	 */
-	public static final AbstractKey createKey(final ITTSource source) {
+	public static AbstractKey createKey(final ITTSource source) {
 		final int kind = source.readInt();
 		AbstractKey returnVal = null;
 		switch (kind) {
@@ -33,7 +37,11 @@ public final class KeyFactory {
 		case BERKELEYKIND:
 			returnVal = new BerkeleyKey(source);
 			break;
+		default:
+			throw new IllegalStateException(new StringBuilder("Kind ").append(
+					kind).append(" is not known").toString());
 		}
+
 		return returnVal;
 	}
 }

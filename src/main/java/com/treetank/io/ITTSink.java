@@ -17,7 +17,7 @@ public interface ITTSink {
 	 * @param longVal
 	 *            to be written
 	 */
-	public void writeLong(final long longVal);
+	void writeLong(final long longVal);
 
 	/**
 	 * Writing an int to the storage
@@ -25,7 +25,7 @@ public interface ITTSink {
 	 * @param intVal
 	 *            to be written
 	 */
-	public void writeInt(final int intVal);
+	void writeInt(final int intVal);
 
 	/**
 	 * Writing a byte to the storage
@@ -33,6 +33,6 @@ public interface ITTSink {
 	 * @param byteVal
 	 *            to be written
 	 */
-	public void writeByte(final byte byteVal);
+	void writeByte(final byte byteVal);
 
 }

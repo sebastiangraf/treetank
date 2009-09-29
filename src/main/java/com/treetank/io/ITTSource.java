@@ -17,20 +17,20 @@ public interface ITTSource {
 	 * @param longVal
 	 *            to be read
 	 */
-	public long readLong();
+	long readLong();
 
 	/**
 	 * Reading an byte to the storage
 	 * 
 	 * @param byte to be read
 	 */
-	public byte readByte();
+	byte readByte();
 
 	/**
 	 * Reading an int to the storage
 	 * 
 	 * @param int to be read
 	 */
-	public int readInt();
+	int readInt();
 
 }

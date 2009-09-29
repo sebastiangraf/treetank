@@ -100,40 +100,40 @@ public interface IReadTransaction {
 	// ------------------------------------------------------------------
 
 	/** Null key for node references. */
-	static final long NULL_NODE_KEY = -1L;
+	long NULL_NODE_KEY = -1L;
 
 	/** Null key for name references. */
-	static final int NULL_NAME_KEY = -1;
+	int NULL_NAME_KEY = -1;
 
 	/** Key of document root node. */
-	static final long DOCUMENT_ROOT_KEY = 0L;
+	long DOCUMENT_ROOT_KEY = 0L;
 
 	// --- Kinds
 	// ------------------------------------------------------------------
 
 	/** Node kind is element. */
-	static final int ELEMENT_KIND = 1;
+	int ELEMENT_KIND = 1;
 
 	/** Node kind is attribute. */
-	static final int ATTRIBUTE_KIND = 2;
+	int ATTRIBUTE_KIND = 2;
 
 	/** Node kind is text. */
-	static final int TEXT_KIND = 3;
+	int TEXT_KIND = 3;
 
 	/** Node kind is namespace. */
-	static final int NAMESPACE_KIND = 4;
+	int NAMESPACE_KIND = 4;
 
 	/** Node kind is processing instruction. */
-	static final int PROCESSING_INSTRUCTION_KIND = 7;
+	int PROCESSING_KIND = 7;
 
 	/** Node kind is comment. */
-	static final int COMMENT_KIND = 8;
+	int COMMENT_KIND = 8;
 
 	/** Node kind is document root. */
-	static final int DOCUMENT_ROOT_KIND = 9;
+	int ROOT_KIND = 9;
 
 	/** String constants used by xpath. */
-	static final String[] XPATHCONSTANTS = { "xs:anyType", "xs:anySimpleType",
+	String[] XPATHCONSTANTS = { "xs:anyType", "xs:anySimpleType",
 			"xs:anyAtomicType", "xs:untypedAtomic", "xs:untyped", "xs:string",
 			"xs:duration", "xs:yearMonthDuration", "xs:dayTimeDuration",
 			"xs:dateTime", "xs:time", "xs:date", "xs:gYearMonth", "xs:gYear",

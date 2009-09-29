@@ -18,7 +18,7 @@ public interface IWriter extends IReader {
 	 * 
 	 * @throw TreetankIOException if something bad happens
 	 */
-	public void initializingStorage(final StorageProperties props)
+	void initializingStorage(final StorageProperties props)
 			throws TreetankIOException;
 
 	/**
@@ -29,7 +29,7 @@ public interface IWriter extends IReader {
 	 * @throws TreetankIOException
 	 *             execption to be thrown if something bad happens
 	 */
-	public void write(final PageReference<? extends AbstractPage> pageReference)
+	void write(final PageReference<? extends AbstractPage> pageReference)
 			throws TreetankIOException;
 
 	/**
@@ -40,7 +40,7 @@ public interface IWriter extends IReader {
 	 * @throws TreetankIOException
 	 *             exception if something bad happens
 	 */
-	public void writeBeacon(final PageReference<UberPage> pageReference)
+	void writeBeacon(final PageReference<UberPage> pageReference)
 			throws TreetankIOException;
 
 	/**
@@ -49,6 +49,6 @@ public interface IWriter extends IReader {
 	 * @throws TreetankIOException
 	 *             if closing fails
 	 */
-	public void close() throws TreetankIOException;
+	void close() throws TreetankIOException;
 
 }

@@ -148,7 +148,7 @@ public final class DocumentRootNode extends AbstractNode {
 	 */
 	@Override
 	public final int getKind() {
-		return IReadTransaction.DOCUMENT_ROOT_KIND;
+		return IReadTransaction.ROOT_KIND;
 	}
 
 	/**

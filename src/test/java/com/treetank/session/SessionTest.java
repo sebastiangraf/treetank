@@ -155,7 +155,7 @@ public class SessionTest {
 		DocumentCreater.create(wtx);
 
 		TestCase.assertNotNull(wtx.moveToDocumentRoot());
-		assertEquals(IReadTransaction.DOCUMENT_ROOT_KIND, wtx.getNode()
+		assertEquals(IReadTransaction.ROOT_KIND, wtx.getNode()
 				.getKind());
 
 		TestCase.assertNotNull(wtx.moveToFirstChild());
