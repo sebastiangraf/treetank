@@ -68,10 +68,10 @@ public abstract class AbstractIOFactory {
      * @return an instance of this factory based on the kind in the conf
      */
     public final static AbstractIOFactory getInstance(
-            final SessionConfiguration conf) {
+            final SessionConfiguration conf) throws TreetankIOException {
         // TODO fix that to use the conf file
-         final StorageType type = StorageType.Berkeley;
-//        final StorageType type = StorageType.File;
+        // final StorageType type = StorageType.Berkeley;
+        final StorageType type = StorageType.File;
         AbstractIOFactory fac = null;
         switch (type) {
         case File:

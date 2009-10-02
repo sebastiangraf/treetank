@@ -15,6 +15,7 @@ import com.treetank.io.AbstractKey;
 import com.treetank.io.IReader;
 import com.treetank.io.IWriter;
 import com.treetank.io.StorageProperties;
+import com.treetank.io.TreetankIOException;
 import com.treetank.io.berkeley.binding.AbstractPageBinding;
 import com.treetank.io.berkeley.binding.KeyBinding;
 import com.treetank.io.berkeley.binding.PageReferenceBinding;
@@ -36,70 +37,70 @@ import com.treetank.session.SessionConfiguration;
 public final class BerkeleyFactory extends AbstractIOFactory {
 
     /** Binding for {@link AbstractKey} */
-    static final TupleBinding<AbstractKey> KEY = new KeyBinding();
+    public static final TupleBinding<AbstractKey> KEY = new KeyBinding();
 
     /** Binding for {@link StorageProperties} */
-    static final TupleBinding<StorageProperties> PROPS_VAL_B = new StoragePropTupleBinding();
+    public static final TupleBinding<StorageProperties> PROPS_VAL_B = new StoragePropTupleBinding();
 
     /** Binding for {@link AbstractPage} */
-    static final TupleBinding<AbstractPage> PAGE_VAL_B = new AbstractPageBinding();
+    public static final TupleBinding<AbstractPage> PAGE_VAL_B = new AbstractPageBinding();
 
     /** Binding for {@link PageReference<AbstractPage>} */
-    static final TupleBinding<PageReference<AbstractPage>> FIRST_REV_VAL_B = new PageReferenceBinding();
+    public static final TupleBinding<PageReference<AbstractPage>> FIRST_REV_VAL_B = new PageReferenceBinding();
 
     /** Binding for {@link Long} */
-    static final TupleBinding<Long> DATAINFO_VAL_B = TupleBinding
+    public static final TupleBinding<Long> DATAINFO_VAL_B = TupleBinding
             .getPrimitiveBinding(Long.class);
 
     /**
      * Berkeley Environment for the database
      */
-    private final Environment env;
+    private transient final Environment env;
 
     /**
      * Database instance per session
      */
-    private final Database mDatabase;
+    private transient final Database mDatabase;
 
     /**
      * Name for the database.
      */
-    protected final static String NAME = "berkeleyDatabase";
+    private final static String NAME = "berkeleyDatabase";
 
     /**
      * Concurrent storage for all avaliable databases in runtime
      */
     private static Map<SessionConfiguration, BerkeleyFactory> fac = new ConcurrentHashMap<SessionConfiguration, BerkeleyFactory>();
 
-    private BerkeleyFactory(final SessionConfiguration paramSession) {
+    private BerkeleyFactory(final SessionConfiguration paramSession)
+            throws TreetankIOException {
         super(paramSession);
+
+        final DatabaseConfig conf = new DatabaseConfig();
+        conf.setTransactional(true);
+
+        final EnvironmentConfig config = new EnvironmentConfig();
+        config.setTransactional(true);
+
+        final File repoFile = new File(paramSession + File.separator + "tt");
+        if (!repoFile.exists()) {
+            repoFile.mkdirs();
+            conf.setAllowCreate(true);
+            config.setAllowCreate(true);
+        }
+
         try {
-
-            final DatabaseConfig conf = new DatabaseConfig();
-            conf.setTransactional(true);
-
-            final EnvironmentConfig config = new EnvironmentConfig();
-            config.setTransactional(true);
-
-            final File repoFile = new File(paramSession + File.separator + "tt");
-            if (!repoFile.exists()) {
-                repoFile.mkdirs();
-                conf.setAllowCreate(true);
-                config.setAllowCreate(true);
-            }
-
             env = new Environment(repoFile, config);
 
             mDatabase = env.openDatabase(null, NAME, conf);
-
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-
+        } catch (final DatabaseException exc) {
+            throw new TreetankIOException(exc);
         }
+
     }
 
     public static BerkeleyFactory getInstanceForBerkeley(
-            final SessionConfiguration conf) {
+            final SessionConfiguration conf) throws TreetankIOException {
         BerkeleyFactory fact = fac.get(conf);
         if (fact == null) {
             fact = new BerkeleyFactory(conf);
@@ -108,39 +109,37 @@ public final class BerkeleyFactory extends AbstractIOFactory {
         return fact;
     }
 
-    public IReader getReader() {
+    public IReader getReader() throws TreetankIOException {
         try {
             return new BerkeleyReader(env, mDatabase);
-        } catch (DatabaseException e) {
-            throw new RuntimeException(e);
+        } catch (final DatabaseException exc) {
+            throw new TreetankIOException(exc);
         }
     }
 
     @Override
-    public IWriter getWriter() {
+    public IWriter getWriter() throws TreetankIOException {
         return new BerkeleyWriter(env, mDatabase);
     }
 
     @Override
-    public void closeStorage() {
+    public void closeStorage() throws TreetankIOException {
 
         try {
             mDatabase.close();
-            // env.removeDatabase(null, NAME);
             env.close();
             fac.remove(this.config);
-        } catch (DatabaseException e) {
-            throw new RuntimeException(e);
+        } catch (final DatabaseException exc) {
+            throw new RuntimeException(exc);
         }
     }
 
     @Override
-    public boolean exists() {
+    public boolean exists() throws TreetankIOException {
         try {
-            final boolean returnVal = mDatabase.count() > 0;
-            return returnVal;
-        } catch (DatabaseException e) {
-            throw new RuntimeException(e);
+            return mDatabase.count() > 0;
+        } catch (final DatabaseException exc) {
+            throw new TreetankIOException(exc);
         }
     }
 

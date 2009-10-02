@@ -24,7 +24,7 @@ public final class FileFactory extends AbstractIOFactory {
 	 * @param paramSession
 	 *            the location of the storage
 	 */
-	public FileFactory(final SessionConfiguration paramSession) {
+    public FileFactory(final SessionConfiguration paramSession) {
 		super(paramSession);
 	}
 
