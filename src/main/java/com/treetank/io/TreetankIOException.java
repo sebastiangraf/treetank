@@ -2,6 +2,8 @@ package com.treetank.io;
 
 import java.io.IOException;
 
+import com.sleepycat.je.DatabaseException;
+
 /**
  * All Treetank IO Exception are wrapped in this class. It inherits from
  * IOException since it is a Treetank IO Exception.
@@ -23,6 +25,16 @@ public final class TreetankIOException extends IOException {
      *            exception to be wrapped
      */
     public TreetankIOException(final IOException paramExc) {
+        super(paramExc);
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param paramExc
+     *            exception to be wrapped
+     */
+    public TreetankIOException(final DatabaseException paramExc) {
         super(paramExc);
     }
 
