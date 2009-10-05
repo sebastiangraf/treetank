@@ -9,168 +9,215 @@ import com.sleepycat.je.OperationStatus;
 import com.sleepycat.je.Transaction;
 import com.treetank.io.IWriter;
 import com.treetank.io.StorageProperties;
+import com.treetank.io.TreetankIOException;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.PageReference;
 
+/**
+ * This class represents an reading instance of the Treetank-Application
+ * implementing the {@link IWriter}-interface. It inherits and overrides some
+ * reader methods because of the transaction layer.
+ * 
+ * @author Sebastian Graf, University of Konstanz
+ * 
+ */
 public class BerkeleyWriter implements IWriter {
 
-	private final Database mDatabase;
+    /** Current {@link Database} to write to. */
+    private transient final Database mDatabase;
 
-	private Transaction mTxn;
+    /** Current {@link Transaction} to write with. */
+    private transient Transaction mTxn;
 
-	private final BerkeleyReader reader;
+    /** Current {@link BerkeleyReader} to read with. */
+    private transient final BerkeleyReader reader;
 
-	public BerkeleyWriter(final Environment env, final Database database) {
+    /**
+     * Simple constructor starting with an {@link Environment} and a
+     * {@link Database}.
+     * 
+     * @param env
+     *            for the write
+     * @param database
+     *            where the data should be written to
+     * @throws TreetankIOException
+     *             if something off happens
+     */
+    public BerkeleyWriter(final Environment env, final Database database)
+            throws TreetankIOException {
 
-		try {
-			mTxn = env.beginTransaction(null, null);
-			mDatabase = database;
-		} catch (DatabaseException e) {
-			throw new RuntimeException(e);
-		}
+        try {
+            mTxn = env.beginTransaction(null, null);
+            mDatabase = database;
+        } catch (final DatabaseException exc) {
+            throw new TreetankIOException(exc);
+        }
 
-		reader = new BerkeleyReader(env, database, mTxn);
-	}
+        reader = new BerkeleyReader(database, mTxn);
+    }
 
-	@Override
-	public void close() {
-		try {
-			mTxn.commit();
-		} catch (DatabaseException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() throws TreetankIOException {
+        try {
+            mTxn.commit();
+        } catch (final DatabaseException exc) {
+            throw new TreetankIOException(exc);
+        }
+    }
 
-	@Override
-	public void write(PageReference<? extends AbstractPage> pageReference) {
-		final AbstractPage page = pageReference.getPage();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(final PageReference<? extends AbstractPage> pageReference)
+            throws TreetankIOException {
+        final AbstractPage page = pageReference.getPage();
 
-		final DatabaseEntry valueEntry = new DatabaseEntry();
-		final DatabaseEntry keyEntry = new DatabaseEntry();
+        final DatabaseEntry valueEntry = new DatabaseEntry();
+        final DatabaseEntry keyEntry = new DatabaseEntry();
 
-		final BerkeleyKey key = new BerkeleyKey(getLastNodePage() + 1);
+        // TODO make this better
+        final BerkeleyKey key = new BerkeleyKey(getLastNodePage() + 1);
 
-		BerkeleyFactory.PAGE_VAL_B.objectToEntry(page, valueEntry);
-		BerkeleyFactory.KEY.objectToEntry(key, keyEntry);
+        BerkeleyFactory.PAGE_VAL_B.objectToEntry(page, valueEntry);
+        BerkeleyFactory.KEY.objectToEntry(key, keyEntry);
 
-		try {
-			final OperationStatus status = mDatabase.put(mTxn, keyEntry,
-					valueEntry);
-			if (status != OperationStatus.SUCCESS) {
-				System.err.println("Received status " + status);
-				throw new RuntimeException();
-			}
-			// printoutProps();
-		} catch (DatabaseException e) {
-			throw new RuntimeException(e);
-		}
-		setLastNodePage(key.getIdentifier());
-		pageReference.setKey(key);
+        try {
+            final OperationStatus status = mDatabase.put(mTxn, keyEntry,
+                    valueEntry);
+            if (status != OperationStatus.SUCCESS) {
+                throw new DatabaseException(new StringBuilder("Write of ")
+                        .append(pageReference.toString()).append(" failed!")
+                        .toString());
+            }
+        } catch (final DatabaseException exc) {
+            throw new TreetankIOException(exc);
+        }
+        setLastNodePage(key.getIdentifier());
+        pageReference.setKey(key);
 
-	}
+    }
 
-	private final void setLastNodePage(final Long data) {
-		final DatabaseEntry keyEntry = new DatabaseEntry();
-		final DatabaseEntry valueEntry = new DatabaseEntry();
+    /**
+     * Setting the last nodePage to the persistent storage.
+     * 
+     * @param data
+     *            key to be stored
+     */
+    private final void setLastNodePage(final Long data)
+            throws TreetankIOException {
+        final DatabaseEntry keyEntry = new DatabaseEntry();
+        final DatabaseEntry valueEntry = new DatabaseEntry();
 
-		final BerkeleyKey key = BerkeleyKey.getDataInfoKey();
-		BerkeleyFactory.KEY.objectToEntry(key, keyEntry);
-		BerkeleyFactory.DATAINFO_VAL_B.objectToEntry(data, valueEntry);
-		try {
-			mDatabase.put(mTxn, keyEntry, valueEntry);
+        final BerkeleyKey key = BerkeleyKey.getDataInfoKey();
+        BerkeleyFactory.KEY.objectToEntry(key, keyEntry);
+        BerkeleyFactory.DATAINFO_VAL_B.objectToEntry(data, valueEntry);
+        try {
+            mDatabase.put(mTxn, keyEntry, valueEntry);
 
-		} catch (final DatabaseException e) {
-			throw new RuntimeException(e);
-		}
-	}
+        } catch (final DatabaseException exc) {
+            throw new TreetankIOException(exc);
+        }
+    }
 
-	private final long getLastNodePage() {
-		final DatabaseEntry keyEntry = new DatabaseEntry();
-		final DatabaseEntry valueEntry = new DatabaseEntry();
+    /**
+     * Getting the last nodePage from the persistent storage.
+     * 
+     * @return the last nodepage-key
+     */
+    private final long getLastNodePage() throws TreetankIOException {
+        final DatabaseEntry keyEntry = new DatabaseEntry();
+        final DatabaseEntry valueEntry = new DatabaseEntry();
 
-		final BerkeleyKey key = BerkeleyKey.getDataInfoKey();
-		BerkeleyFactory.KEY.objectToEntry(key, keyEntry);
+        final BerkeleyKey key = BerkeleyKey.getDataInfoKey();
+        BerkeleyFactory.KEY.objectToEntry(key, keyEntry);
 
-		try {
-			final OperationStatus status = mDatabase.get(mTxn, keyEntry,
-					valueEntry, LockMode.DEFAULT);
-			Long val;
-			if (status == OperationStatus.SUCCESS) {
-				val = BerkeleyFactory.DATAINFO_VAL_B.entryToObject(valueEntry);
-			} else {
-				val = 0l;
-			}
-			return val;
-		} catch (final DatabaseException e) {
-			throw new RuntimeException(e);
-		}
+        try {
+            final OperationStatus status = mDatabase.get(mTxn, keyEntry,
+                    valueEntry, LockMode.DEFAULT);
+            Long val;
+            if (status == OperationStatus.SUCCESS) {
+                val = BerkeleyFactory.DATAINFO_VAL_B.entryToObject(valueEntry);
+            } else {
+                val = 0l;
+            }
+            return val;
+        } catch (final DatabaseException exc) {
+            throw new TreetankIOException(exc);
+        }
 
-	}
+    }
 
-	@Override
-	public void initializingStorage(final StorageProperties props) {
-		final DatabaseEntry valueEntry = new DatabaseEntry();
-		final DatabaseEntry keyEntry = new DatabaseEntry();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void initializingStorage(final StorageProperties props)
+            throws TreetankIOException {
+        final DatabaseEntry valueEntry = new DatabaseEntry();
+        final DatabaseEntry keyEntry = new DatabaseEntry();
 
-		BerkeleyFactory.KEY.objectToEntry(BerkeleyKey.getPropsKey(), keyEntry);
-		BerkeleyFactory.PROPS_VAL_B.objectToEntry(props, valueEntry);
+        BerkeleyFactory.KEY.objectToEntry(BerkeleyKey.getPropsKey(), keyEntry);
+        BerkeleyFactory.PROPS_VAL_B.objectToEntry(props, valueEntry);
 
-		try {
-			mDatabase.put(mTxn, keyEntry, valueEntry);
-			// printoutProps();
-		} catch (DatabaseException e) {
-			throw new RuntimeException(e);
-		}
+        try {
+            mDatabase.put(mTxn, keyEntry, valueEntry);
+        } catch (final DatabaseException exc) {
+            throw new TreetankIOException(exc);
+        }
 
-	}
+    }
 
-	@Override
-	public void writeBeacon(PageReference<AbstractPage> pageReference) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void writeBeacon(final PageReference<AbstractPage> pageReference)
+            throws TreetankIOException {
 
-		final DatabaseEntry keyEntry = new DatabaseEntry();
-		BerkeleyFactory.KEY.objectToEntry(BerkeleyKey.getFirstRevKey(),
-				keyEntry);
+        final DatabaseEntry keyEntry = new DatabaseEntry();
+        BerkeleyFactory.KEY.objectToEntry(BerkeleyKey.getFirstRevKey(),
+                keyEntry);
 
-		final DatabaseEntry valueEntry = new DatabaseEntry();
-		BerkeleyFactory.FIRST_REV_VAL_B
-				.objectToEntry(pageReference, valueEntry);
+        final DatabaseEntry valueEntry = new DatabaseEntry();
+        BerkeleyFactory.FIRST_REV_VAL_B
+                .objectToEntry(pageReference, valueEntry);
 
-		try {
-			mDatabase.put(mTxn, keyEntry, valueEntry);
-			// printoutProps();
-		} catch (DatabaseException e) {
-			throw new RuntimeException(e);
-		}
+        try {
+            mDatabase.put(mTxn, keyEntry, valueEntry);
+        } catch (final DatabaseException exc) {
+            throw new TreetankIOException(exc);
+        }
 
-	}
+    }
 
-	@Override
-	public StorageProperties getProps() {
-		return reader.getProps();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StorageProperties getProps() throws TreetankIOException {
+        return reader.getProps();
+    }
 
-	@Override
-	public AbstractPage read(PageReference<? extends AbstractPage> pageReference) {
-		return reader.read(pageReference);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AbstractPage read(
+            final PageReference<? extends AbstractPage> pageReference)
+            throws TreetankIOException {
+        return reader.read(pageReference);
+    }
 
-	@Override
-	public PageReference<?> readFirstReference() {
-		return reader.readFirstReference();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PageReference<?> readFirstReference() throws TreetankIOException {
+        return reader.readFirstReference();
+    }
 
-	// protected void printoutProps() throws DatabaseException {
-	// // DEBUGGING CODE
-	// final DatabaseEntry keyEntry2 = new DatabaseEntry();
-	// BerkeleyFactory.KEY.objectToEntry(BerkeleyKey.getPropsKey(), keyEntry2);
-	//
-	// final DatabaseEntry valueEntry2 = new DatabaseEntry();
-	// final OperationStatus status = mDatabase.get(mTxn, keyEntry2,
-	// valueEntry2, LockMode.DEFAULT);
-	// if (status == OperationStatus.SUCCESS) {
-	// final StorageProperties props2 = BerkeleyFactory.PROPS_VAL_B
-	// .entryToObject(valueEntry2);
-	// System.out.println(props2);
-	// }
-	// }
 }

@@ -72,6 +72,14 @@ public final class BerkeleyFactory extends AbstractIOFactory {
      */
     private static Map<SessionConfiguration, BerkeleyFactory> fac = new ConcurrentHashMap<SessionConfiguration, BerkeleyFactory>();
 
+    /**
+     * Private constructor.
+     * 
+     * @param paramSession
+     *            for the settings
+     * @throws TreetankIOException
+     *             of something odd happens while database-connection
+     */
     private BerkeleyFactory(final SessionConfiguration paramSession)
             throws TreetankIOException {
         super(paramSession);
@@ -99,6 +107,15 @@ public final class BerkeleyFactory extends AbstractIOFactory {
 
     }
 
+    /**
+     * Getting one instance for a setting
+     * 
+     * @param conf
+     *            setting for the database
+     * @return {@link BerkeleyFactory} normally
+     * @throws TreetankIOException
+     *             if something odd happens
+     */
     public static BerkeleyFactory getInstanceForBerkeley(
             final SessionConfiguration conf) throws TreetankIOException {
         BerkeleyFactory fact = fac.get(conf);
@@ -109,6 +126,10 @@ public final class BerkeleyFactory extends AbstractIOFactory {
         return fact;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public IReader getReader() throws TreetankIOException {
         try {
             return new BerkeleyReader(env, mDatabase);
@@ -117,11 +138,17 @@ public final class BerkeleyFactory extends AbstractIOFactory {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IWriter getWriter() throws TreetankIOException {
         return new BerkeleyWriter(env, mDatabase);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void closeStorage() throws TreetankIOException {
 
@@ -130,10 +157,13 @@ public final class BerkeleyFactory extends AbstractIOFactory {
             env.close();
             fac.remove(this.config);
         } catch (final DatabaseException exc) {
-            throw new RuntimeException(exc);
+            throw new TreetankIOException(exc);
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean exists() throws TreetankIOException {
         try {

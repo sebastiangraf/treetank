@@ -3,27 +3,49 @@ package com.treetank.io.berkeley;
 import com.sleepycat.bind.tuple.TupleOutput;
 import com.treetank.io.ITTSink;
 
-public class TupleOutputSink implements ITTSink {
+/**
+ * Simple wrapper as an {@link ITTSink} implemetation.
+ * 
+ * @author Sebastian Graf, University of Konstanz
+ * 
+ */
+public final class TupleOutputSink implements ITTSink {
 
-	private final TupleOutput output;
+    /** {@link TupleOutput} to be wrapped */
+    private transient final TupleOutput output;
 
-	public TupleOutputSink(final TupleOutput paramOutput) {
-		this.output = paramOutput;
-	}
+    /**
+     * Constructor.
+     * 
+     * @param paramOutput
+     *            to be wrapped
+     */
+    public TupleOutputSink(final TupleOutput paramOutput) {
+        this.output = paramOutput;
+    }
 
-	@Override
-	public final void writeByte(final byte byteVal) {
-		output.writeByte(byteVal);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void writeByte(final byte byteVal) {
+        output.writeByte(byteVal);
+    }
 
-	@Override
-	public final void writeLong(final long longVal) {
-		output.writeLong(longVal);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void writeLong(final long longVal) {
+        output.writeLong(longVal);
+    }
 
-	@Override
-	public void writeInt(int intVal) {
-		output.writeInt(intVal);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void writeInt(final int intVal) {
+        output.writeInt(intVal);
+    }
 
 }
