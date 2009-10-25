@@ -5,7 +5,7 @@
 	<groupId>treetank</groupId>
 	<artifactId>treetank</artifactId>
 	<name>treetank</name>
-	<version>4.22-SNAPSHOT</version>
+	<version>5.0</version>
 	<description>A native XML database</description>
 	<repositories>
 		<repository>
@@ -16,10 +16,10 @@
 		</repository>
 		<repository>
              <id>disy-repo</id>
-                        <name>Disy Java packages</name>
-                        <url>http://xen5.disy.inf.uni-konstanz.de/repo/repository</url>
-                        <layout>default</layout>
-                </repository>
+             <name>Disy Java packages</name>
+             <url>http://xen5.disy.inf.uni-konstanz.de/repo/repository</url>
+             <layout>default</layout>
+        </repository>
 	</repositories>
 	<reporting>
 		<plugins>
@@ -29,6 +29,20 @@
 			<plugin>
 				<artifactId>maven-surefire-report-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<sourceEncoding>utf-8</sourceEncoding>
+					<minimumTokens>100</minimumTokens>
+					<targetJdk>${compileSource}</targetJdk>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+			</plugin>
 		</plugins>
 	</reporting>
 	<build>
@@ -36,8 +50,8 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>${compileSource}</source>
+					<target>${compileSource}</target>
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
@@ -115,5 +129,9 @@
 		 <uniqueVersion>false</uniqueVersion>
   </snapshotRepository>
 </distributionManagement>
+<properties>
+		<compileSource>1.6</compileSource>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 </project>
 
