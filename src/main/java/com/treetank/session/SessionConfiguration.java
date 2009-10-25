@@ -21,6 +21,10 @@ package com.treetank.session;
 import java.io.File;
 import java.util.Arrays;
 
+import com.treetank.io.AbstractIOFactory;
+import com.treetank.io.AbstractIOFactory.StorageType;
+import com.treetank.utils.IConstants;
+
 /**
  * <h1>SessionConfiguration</h1>
  * 
@@ -34,158 +38,173 @@ import java.util.Arrays;
  */
 public final class SessionConfiguration {
 
-	/** Absolute path to .tnk file. */
-	private final String mAbsolutePath;
+    /** Absolute path to .tnk file. */
+    private final String mAbsolutePath;
 
-	/** Key of .tnk file or null. */
-	private final byte[] mEncryptionKey;
+    /** Key of .tnk file or null. */
+    private final byte[] mEncryptionKey;
 
-	/** Checksum algorithm. */
-	private final boolean mChecksummed;
+    /** Checksum algorithm. */
+    private final boolean mChecksummed;
 
-	/**
-	 * Convenience constructor binding to .tnk file without encryption or
-	 * end-to-end integrity.
-	 * 
-	 * @param path
-	 *            Path to .tnk file.
-	 */
-	public SessionConfiguration(final String path) {
-		this(path, null, false);
-	}
+    /** Used {@link StorageType} */
+    private final AbstractIOFactory.StorageType mType;
 
-	/**
-	 * Standard constructor binding to .tnk file with encryption but no
-	 * end-to-end integrity.
-	 * 
-	 * @param path
-	 *            Path to .tnk file.
-	 * @param encryptionKey
-	 *            Key to encrypt .tnk file with.
-	 */
-	public SessionConfiguration(final String path, final byte[] encryptionKey) {
-		this(path, encryptionKey, false);
-	}
+    /**
+     * Convenience constructor binding to .tnk file without encryption or
+     * end-to-end integrity.
+     * 
+     * @param path
+     *            Path to .tnk file.
+     */
+    public SessionConfiguration(final String path) {
+        this(path, null, false, IConstants.STORAGE_TYPE);
+    }
 
-	/**
-	 * Standard constructor binding to .tnk file with encryption.
-	 * 
-	 * @param path
-	 *            Path to .tnk file.
-	 * @param encryptionKey
-	 *            Key to encrypt .tnk file with.
-	 * @param checksummed
-	 *            Does the .tnk file uses end-to-end checksumming?
-	 */
-	public SessionConfiguration(final String path, final byte[] encryptionKey,
-			final boolean checksummed) {
+    /**
+     * Standard constructor binding to .tnk file with encryption but no
+     * end-to-end integrity.
+     * 
+     * @param path
+     *            Path to .tnk file.
+     * @param encryptionKey
+     *            Key to encrypt .tnk file with.
+     */
+    public SessionConfiguration(final String path, final byte[] encryptionKey) {
+        this(path, encryptionKey, false, IConstants.STORAGE_TYPE);
+    }
 
-		// Make sure the path is legal.
-		if (path == null) {
-			if (!new File(path).isDirectory()
-					&& new File(path).list().length > 0) {
-				throw new IllegalArgumentException(
-						"Path to TreeTank file must not be null and be an emtpy directory");
-			}
-		}
+    /**
+     * Standard constructor binding to .tnk file with encryption.
+     * 
+     * @param path
+     *            Path to .tnk file.
+     * @param encryptionKey
+     *            Key to encrypt .tnk file with.
+     * @param checksummed
+     *            Does the .tnk file uses end-to-end checksumming?
+     * @param which
+     *            storage {@link StorageType} should be used?
+     */
+    public SessionConfiguration(final String path, final byte[] encryptionKey,
+            final boolean checksummed, final AbstractIOFactory.StorageType type) {
 
-		// Set path and name.
-		File file = new File(path);
+        // Make sure the path is legal.
+        if (path == null) {
+            if (!new File(path).isDirectory()
+                    && new File(path).list().length > 0) {
+                throw new IllegalArgumentException(
+                        "Path to TreeTank file must not be null and be an emtpy directory");
+            }
+        }
 
-		// Make sure parent path exists.
-		file.mkdirs();
+        // Set path and name.
+        File file = new File(path);
 
-		mAbsolutePath = file.getAbsolutePath();
+        // Make sure parent path exists.
+        file.mkdirs();
 
-		mEncryptionKey = encryptionKey;
-		mChecksummed = checksummed;
-	}
+        mAbsolutePath = file.getAbsolutePath();
 
-	/**
-	 * Get absolute path to .tnk file.
-	 * 
-	 * @return Path to .tnk file.
-	 */
-	public final String getAbsolutePath() {
-		return mAbsolutePath;
-	}
+        mEncryptionKey = encryptionKey;
+        mChecksummed = checksummed;
+        mType = type;
+    }
 
-	/**
-	 * Is the .tnk file encrypted or not?
-	 * 
-	 * @return True if the .tnk file is encrypted. False else.
-	 */
-	public final boolean isEncrypted() {
-		return mEncryptionKey != null;
-	}
+    /**
+     * Get absolute path to .tnk file.
+     * 
+     * @return Path to .tnk file.
+     */
+    public final String getAbsolutePath() {
+        return mAbsolutePath;
+    }
 
-	/**
-	 * Get the encryption key of the .tnk file.
-	 * 
-	 * @return Encryption key to .tnk file.
-	 */
-	protected final byte[] getEncryptionKey() {
-		return mEncryptionKey;
-	}
+    /**
+     * Is the .tnk file encrypted or not?
+     * 
+     * @return True if the .tnk file is encrypted. False else.
+     */
+    public final boolean isEncrypted() {
+        return mEncryptionKey != null;
+    }
 
-	/**
-	 * Is the .tnk file checksummed or not?
-	 * 
-	 * @return True if the .tnk file is checksummed. False else.
-	 */
-	public final boolean isChecksummed() {
-		return mChecksummed;
-	}
+    /**
+     * Get the encryption key of the .tnk file.
+     * 
+     * @return Encryption key to .tnk file.
+     */
+    protected final byte[] getEncryptionKey() {
+        return mEncryptionKey;
+    }
 
-	/**
-	 * To String method
-	 * 
-	 * @return String with a string representation.
-	 */
-	public final String toString() {
-		return mAbsolutePath + File.separator;
-	}
+    /**
+     * Is the .tnk file checksummed or not?
+     * 
+     * @return True if the .tnk file is checksummed. False else.
+     */
+    public final boolean isChecksummed() {
+        return mChecksummed;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((mAbsolutePath == null) ? 0 : mAbsolutePath.hashCode());
-		result = prime * result + (mChecksummed ? 1231 : 1237);
-		result = prime * result + Arrays.hashCode(mEncryptionKey);
-		return result;
-	}
+    /**
+     * To String method
+     * 
+     * @return String with a string representation.
+     */
+    public final String toString() {
+        return mAbsolutePath + File.separator;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SessionConfiguration other = (SessionConfiguration) obj;
-		if (mAbsolutePath == null) {
-			if (other.mAbsolutePath != null)
-				return false;
-		} else if (!mAbsolutePath.equals(other.mAbsolutePath))
-			return false;
-		if (mChecksummed != other.mChecksummed)
-			return false;
-		if (!Arrays.equals(mEncryptionKey, other.mEncryptionKey))
-			return false;
-		return true;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((mAbsolutePath == null) ? 0 : mAbsolutePath.hashCode());
+        result = prime * result + (mChecksummed ? 1231 : 1237);
+        result = prime * result + Arrays.hashCode(mEncryptionKey);
+        return result;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        SessionConfiguration other = (SessionConfiguration) obj;
+        if (mAbsolutePath == null) {
+            if (other.mAbsolutePath != null)
+                return false;
+        } else if (!mAbsolutePath.equals(other.mAbsolutePath))
+            return false;
+        if (mChecksummed != other.mChecksummed)
+            return false;
+        if (!Arrays.equals(mEncryptionKey, other.mEncryptionKey))
+            return false;
+        return true;
+    }
+
+    /**
+     * Getting the {@link StorageType} for this configuration
+     * 
+     * @return the storageType for this configuration
+     */
+    public AbstractIOFactory.StorageType getType() {
+        return mType;
+    }
 
 }

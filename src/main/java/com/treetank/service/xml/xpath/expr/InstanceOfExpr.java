@@ -34,88 +34,88 @@ import com.treetank.utils.TypedValue;
  */
 public class InstanceOfExpr extends AbstractExpression implements IAxis {
 
-	/** The sequence to test. */
-	private final IAxis mInputExpr;
+    /** The sequence to test. */
+    private final IAxis mInputExpr;
 
-	/** The sequence type that the sequence needs to have to be an instance of. */
-	private final SequenceType mSequenceType;
+    /** The sequence type that the sequence needs to have to be an instance of. */
+    private final SequenceType mSequenceType;
 
-	/**
-	 * Constructor. Initializes the internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) trx to iterate with.
-	 * @param inputExpr
-	 *            input expression, to test
-	 * @param sequenceType
-	 *            sequence type to test whether the input sequence matches to.
-	 */
-	public InstanceOfExpr(final IReadTransaction rtx, final IAxis inputExpr,
-			final SequenceType sequenceType) {
+    /**
+     * Constructor. Initializes the internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
+     * @param inputExpr
+     *            input expression, to test
+     * @param sequenceType
+     *            sequence type to test whether the input sequence matches to.
+     */
+    public InstanceOfExpr(final IReadTransaction rtx, final IAxis inputExpr,
+            final SequenceType sequenceType) {
 
-		super(rtx);
-		mInputExpr = inputExpr;
-		mSequenceType = sequenceType;
-	}
+        super(rtx);
+        mInputExpr = inputExpr;
+        mSequenceType = sequenceType;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void reset(final long nodeKey) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reset(final long nodeKey) {
 
-		super.reset(nodeKey);
+        super.reset(nodeKey);
 
-		if (mInputExpr != null) {
-			mInputExpr.reset(nodeKey);
-		}
-	}
+        if (mInputExpr != null) {
+            mInputExpr.reset(nodeKey);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void evaluate() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void evaluate() {
 
-		boolean isInstanceOf;
+        boolean isInstanceOf;
 
-		if (mInputExpr.hasNext()) {
-			if (mSequenceType.isEmptySequence()) {
-				isInstanceOf = false;
-			} else {
+        if (mInputExpr.hasNext()) {
+            if (mSequenceType.isEmptySequence()) {
+                isInstanceOf = false;
+            } else {
 
-				isInstanceOf = mSequenceType.getFilter().filter();
-				switch (mSequenceType.getWildcard()) {
+                isInstanceOf = mSequenceType.getFilter().filter();
+                switch (mSequenceType.getWildcard()) {
 
-				case '*':
-				case '+':
-					// This seams to break the pipeline, but because the
-					// intermediate
-					// result are no longer used, it might be not that bad
-					while (mInputExpr.hasNext() && isInstanceOf) {
-						isInstanceOf = isInstanceOf
-								&& mSequenceType.getFilter().filter();
-					}
-					break;
-				default: // no wildcard, or '?'
-					// only one result item is allowed
-					isInstanceOf = isInstanceOf && !mInputExpr.hasNext();
-				}
-			}
+                case '*':
+                case '+':
+                    // This seams to break the pipeline, but because the
+                    // intermediate
+                    // result are no longer used, it might be not that bad
+                    while (mInputExpr.hasNext() && isInstanceOf) {
+                        isInstanceOf = isInstanceOf
+                                && mSequenceType.getFilter().filter();
+                    }
+                    break;
+                default: // no wildcard, or '?'
+                    // only one result item is allowed
+                    isInstanceOf = isInstanceOf && !mInputExpr.hasNext();
+                }
+            }
 
-		} else { // empty sequence
-			isInstanceOf = mSequenceType.isEmptySequence()
-					|| (mSequenceType.hasWildcard() && (mSequenceType
-							.getWildcard() == '?' || mSequenceType
-							.getWildcard() == '*'));
-		}
+        } else { // empty sequence
+            isInstanceOf = mSequenceType.isEmptySequence()
+                    || (mSequenceType.hasWildcard() && (mSequenceType
+                            .getWildcard() == '?' || mSequenceType
+                            .getWildcard() == '*'));
+        }
 
-		// create result item and move transaction to it.
-		int itemKey = getTransaction().getItemList().addItem(
-				new AtomicValue(TypedValue.getBytes(Boolean
-						.toString(isInstanceOf)), getTransaction().keyForName(
-						"xs:boolean")));
-		getTransaction().moveTo(itemKey);
+        // create result item and move transaction to it.
+        int itemKey = getTransaction().getItemList().addItem(
+                new AtomicValue(TypedValue.getBytes(Boolean
+                        .toString(isInstanceOf)), getTransaction().keyForName(
+                        "xs:boolean")));
+        getTransaction().moveTo(itemKey);
 
-	}
+    }
 }

@@ -1,5 +1,8 @@
 package com.treetank.io;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.treetank.io.berkeley.BerkeleyFactory;
 import com.treetank.io.file.FileFactory;
 import com.treetank.session.SessionConfiguration;
@@ -17,6 +20,11 @@ public abstract class AbstractIOFactory {
     public enum StorageType {
         File, Berkeley
     }
+
+    /**
+     * Concurrent storage for all avaliable databases in runtime
+     */
+    private final static Map<SessionConfiguration, AbstractIOFactory> FACTORIES = new ConcurrentHashMap<SessionConfiguration, AbstractIOFactory>();
 
     /**
      * Config for the session holding information about the location of the
@@ -58,7 +66,14 @@ public abstract class AbstractIOFactory {
      * @throws TreetankIOException
      *             exception to be throwns
      */
-    public abstract void closeStorage() throws TreetankIOException;
+    public final void closeStorage() throws TreetankIOException {
+        synchronized (this) {
+            closeConcreteStorage();
+            FACTORIES.remove(this.config);
+        }
+    }
+
+    protected abstract void closeConcreteStorage() throws TreetankIOException;
 
     /**
      * Getting an AbstractIOFactory instance.
@@ -69,23 +84,39 @@ public abstract class AbstractIOFactory {
      */
     public final static AbstractIOFactory getInstance(
             final SessionConfiguration conf) throws TreetankIOException {
-        // TODO fix that to use the conf file
-        // final StorageType type = StorageType.Berkeley;
-        final StorageType type = StorageType.File;
-        AbstractIOFactory fac = null;
-        switch (type) {
-        case File:
-            fac = new FileFactory(conf);
-            break;
-        case Berkeley:
-            fac = BerkeleyFactory.getInstanceForBerkeley(conf);
-            break;
-        default:
-            throw new IllegalArgumentException(new StringBuilder("Type ")
-                    .append(type.toString()).append(" not valid!").toString());
-        }
-        return fac;
+        synchronized (FACTORIES) {
+            AbstractIOFactory fac = null;
+            if (FACTORIES.containsKey(conf)) {
+                fac = FACTORIES.get(conf);
+            } else {
 
+                switch (conf.getType()) {
+                case File:
+                    fac = new FileFactory(conf);
+                    break;
+                case Berkeley:
+                    fac = new BerkeleyFactory(conf);
+                    break;
+                default:
+                    throw new IllegalArgumentException(new StringBuilder(
+                            "Type ").append(conf.getType().toString()).append(
+                            " not valid!").toString());
+                }
+                FACTORIES.put(conf, fac);
+            }
+            return fac;
+        }
+    }
+
+    /**
+     * Getting of all active {@link AbstractIOFactory} and related
+     * {@link SessionConfiguration}s.
+     * 
+     * @return a {@link Map} with the {@link SessionConfiguration} and
+     *         {@link AbstractIOFactory} pairs.
+     */
+    public final static Map<SessionConfiguration, AbstractIOFactory> getActiveFactories() {
+        return FACTORIES;
     }
 
     /**

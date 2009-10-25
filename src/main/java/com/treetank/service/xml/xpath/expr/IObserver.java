@@ -28,12 +28,12 @@ import com.treetank.api.IAxis;
  */
 public interface IObserver extends IAxis {
 
-	/**
-	 * This method is called whenever the observed axis is changed.
-	 * 
-	 * @param itemKey
-	 *            the item key of the current context item of the observed axis
-	 */
-	void update(final long itemKey);
+    /**
+     * This method is called whenever the observed axis is changed.
+     * 
+     * @param itemKey
+     *            the item key of the current context item of the observed axis
+     */
+    void update(final long itemKey);
 
 }

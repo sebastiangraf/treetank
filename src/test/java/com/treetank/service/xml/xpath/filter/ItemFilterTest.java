@@ -18,6 +18,8 @@
 
 package com.treetank.service.xml.xpath.filter;
 
+import static org.junit.Assert.fail;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,38 +27,41 @@ import com.treetank.ITestConstants;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.IFilterTest;
+import com.treetank.io.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
 
 public class ItemFilterTest {
 
-	@Before
-	public void setUp() {
+    @Before
+    public void setUp() {
 
-		Session.removeSession(ITestConstants.PATH1);
-	}
+        Session.removeSession(ITestConstants.PATH1);
+    }
 
-	@Test
-	public void testIFilterConvetions() {
+    @Test
+    public void testIFilterConvetions() {
+        try {
+            // Build simple test tree.
+            final ISession session = Session.beginSession(ITestConstants.PATH1);
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            DocumentCreater.create(wtx);
 
-		// Build simple test tree.
-		final ISession session = Session.beginSession(ITestConstants.PATH1);
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
+            wtx.moveTo(9L);
+            IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
 
-		wtx.moveTo(9L);
-		IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
+            wtx.moveTo(3L);
+            IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
 
-		wtx.moveTo(3L);
-		IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
+            wtx.moveTo(2L);
+            wtx.moveToAttribute(0);
+            IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
 
-		wtx.moveTo(2L);
-		wtx.moveToAttribute(0);
-		IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
-
-		wtx.abort();
-		wtx.close();
-		session.close();
-
-	}
+            wtx.abort();
+            wtx.close();
+            session.close();
+        } catch (final TreetankIOException exc) {
+            fail(exc.toString());
+        }
+    }
 }

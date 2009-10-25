@@ -42,64 +42,64 @@ import com.treetank.utils.TypedValue;
  */
 public class InstanceOfExprTest {
 
-	@Before
-	public void setUp() {
-		Session.removeSession(ITestConstants.PATH1);
-	}
+    @Before
+    public void setUp() {
+        Session.removeSession(ITestConstants.PATH1);
+    }
 
-	@Test
-	public void testInstanceOfExpr() throws IOException {
+    @Test
+    public void testInstanceOfExpr() throws IOException {
 
-		// Build simple test tree.
-		final ISession session = Session.beginSession(ITestConstants.PATH1);
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
-		wtx.commit();
-		IReadTransaction rtx = session.beginReadTransaction();
+        // Build simple test tree.
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        IReadTransaction rtx = session.beginReadTransaction();
 
-		final IAxis axis1 = new XPathAxis(rtx, "1 instance of xs:integer");
-		assertEquals(true, axis1.hasNext());
-		assertEquals(rtx.keyForName("xs:boolean"), rtx.getNode().getTypeKey());
-		assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
-				.getNode().getRawValue()))));
-		assertEquals(false, axis1.hasNext());
+        final IAxis axis1 = new XPathAxis(rtx, "1 instance of xs:integer");
+        assertEquals(true, axis1.hasNext());
+        assertEquals(rtx.keyForName("xs:boolean"), rtx.getNode().getTypeKey());
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
+                .getNode().getRawValue()))));
+        assertEquals(false, axis1.hasNext());
 
-		final IAxis axis2 = new XPathAxis(rtx,
-				"\"hallo\" instance of xs:integer");
-		assertEquals(true, axis2.hasNext());
-		assertEquals(rtx.keyForName("xs:boolean"), rtx.getNode().getTypeKey());
-		assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx
-				.getNode().getRawValue()))));
-		assertEquals(false, axis2.hasNext());
+        final IAxis axis2 = new XPathAxis(rtx,
+                "\"hallo\" instance of xs:integer");
+        assertEquals(true, axis2.hasNext());
+        assertEquals(rtx.keyForName("xs:boolean"), rtx.getNode().getTypeKey());
+        assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx
+                .getNode().getRawValue()))));
+        assertEquals(false, axis2.hasNext());
 
-		final IAxis axis3 = new XPathAxis(rtx,
-				"\"hallo\" instance of xs:string ?");
-		assertEquals(true, axis3.hasNext());
-		assertEquals(rtx.keyForName("xs:boolean"), rtx.getNode().getTypeKey());
-		assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
-				.getNode().getRawValue()))));
-		assertEquals(false, axis3.hasNext());
+        final IAxis axis3 = new XPathAxis(rtx,
+                "\"hallo\" instance of xs:string ?");
+        assertEquals(true, axis3.hasNext());
+        assertEquals(rtx.keyForName("xs:boolean"), rtx.getNode().getTypeKey());
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
+                .getNode().getRawValue()))));
+        assertEquals(false, axis3.hasNext());
 
-		final IAxis axis4 = new XPathAxis(rtx,
-				"\"hallo\" instance of xs:string +");
-		assertEquals(true, axis4.hasNext());
-		assertEquals(rtx.keyForName("xs:boolean"), rtx.getNode().getTypeKey());
-		assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
-				.getNode().getRawValue()))));
-		assertEquals(false, axis4.hasNext());
+        final IAxis axis4 = new XPathAxis(rtx,
+                "\"hallo\" instance of xs:string +");
+        assertEquals(true, axis4.hasNext());
+        assertEquals(rtx.keyForName("xs:boolean"), rtx.getNode().getTypeKey());
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
+                .getNode().getRawValue()))));
+        assertEquals(false, axis4.hasNext());
 
-		final IAxis axis5 = new XPathAxis(rtx,
-				"\"hallo\" instance of xs:string *");
-		assertEquals(true, axis5.hasNext());
-		assertEquals(rtx.keyForName("xs:boolean"), rtx.getNode().getTypeKey());
-		assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
-				.getNode().getRawValue()))));
-		assertEquals(false, axis5.hasNext());
+        final IAxis axis5 = new XPathAxis(rtx,
+                "\"hallo\" instance of xs:string *");
+        assertEquals(true, axis5.hasNext());
+        assertEquals(rtx.keyForName("xs:boolean"), rtx.getNode().getTypeKey());
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
+                .getNode().getRawValue()))));
+        assertEquals(false, axis5.hasNext());
 
-		rtx.close();
-		wtx.close();
-		session.close();
+        rtx.close();
+        wtx.close();
+        session.close();
 
-	}
+    }
 
 }

@@ -36,75 +36,75 @@ import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
  */
 public class UnionAxis extends AbstractAxis implements IAxis {
 
-	/** First operand sequence. */
-	private final IAxis mOp1;
+    /** First operand sequence. */
+    private final IAxis mOp1;
 
-	/** Second operand sequence. */
-	private final IAxis mOp2;
+    /** Second operand sequence. */
+    private final IAxis mOp2;
 
-	/**
-	 * Constructor. Initializes the internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) trx to iterate with.
-	 * @param operand1
-	 *            First operand
-	 * @param operand2
-	 *            Second operand
-	 */
-	public UnionAxis(final IReadTransaction rtx, final IAxis operand1,
-			final IAxis operand2) {
+    /**
+     * Constructor. Initializes the internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
+     * @param operand1
+     *            First operand
+     * @param operand2
+     *            Second operand
+     */
+    public UnionAxis(final IReadTransaction rtx, final IAxis operand1,
+            final IAxis operand2) {
 
-		super(rtx);
-		mOp1 = operand1;
-		mOp2 = operand2;
-	}
+        super(rtx);
+        mOp1 = operand1;
+        mOp2 = operand2;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void reset(final long nodeKey) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reset(final long nodeKey) {
 
-		super.reset(nodeKey);
+        super.reset(nodeKey);
 
-		if (mOp1 != null) {
-			mOp1.reset(nodeKey);
-		}
-		if (mOp2 != null) {
-			mOp2.reset(nodeKey);
-		}
-	}
+        if (mOp1 != null) {
+            mOp1.reset(nodeKey);
+        }
+        if (mOp2 != null) {
+            mOp2.reset(nodeKey);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean hasNext() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasNext() {
 
-		// first return all values of the first operand
-		while (mOp1.hasNext()) {
-			mOp1.next();
+        // first return all values of the first operand
+        while (mOp1.hasNext()) {
+            mOp1.next();
 
-			if (getTransaction().getNode().getNodeKey() < 0) { // only nodes are
-				// allowed
-				throw new XPathError(ErrorType.XPTY0004);
-			}
-			return true;
-		}
+            if (getTransaction().getNode().getNodeKey() < 0) { // only nodes are
+                // allowed
+                throw new XPathError(ErrorType.XPTY0004);
+            }
+            return true;
+        }
 
-		// then all values of the second operand.
-		while (mOp2.hasNext()) {
-			mOp2.next();
+        // then all values of the second operand.
+        while (mOp2.hasNext()) {
+            mOp2.next();
 
-			if (getTransaction().getNode().getNodeKey() < 0) { // only nodes are
-				// allowed
-				throw new XPathError(ErrorType.XPTY0004);
-			}
-			return true;
-		}
+            if (getTransaction().getNode().getNodeKey() < 0) { // only nodes are
+                // allowed
+                throw new XPathError(ErrorType.XPTY0004);
+            }
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
 }

@@ -42,75 +42,75 @@ import com.treetank.service.xml.xpath.expr.UnionAxis;
  */
 public class DupFilterAxis extends AbstractAxis {
 
-	/** Sequence that may contain duplicates. */
-	private final IAxis mAxis;
+    /** Sequence that may contain duplicates. */
+    private final IAxis mAxis;
 
-	/** Set that stores all already returned item keys. */
-	private final Set<Long> mDupSet;
+    /** Set that stores all already returned item keys. */
+    private final Set<Long> mDupSet;
 
-	/**
-	 * Defines whether next() has to be called for the dupAxis after calling
-	 * hasNext(). In some cases next() has already been called by another axis.
-	 */
-	private final boolean callNext;
+    /**
+     * Defines whether next() has to be called for the dupAxis after calling
+     * hasNext(). In some cases next() has already been called by another axis.
+     */
+    private final boolean callNext;
 
-	/**
-	 * Constructor. Initializes the internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) trx to iterate with.
-	 * @param dupAxis
-	 *            Sequence that may return duplicates.
-	 */
-	public DupFilterAxis(final IReadTransaction rtx, final IAxis dupAxis) {
+    /**
+     * Constructor. Initializes the internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
+     * @param dupAxis
+     *            Sequence that may return duplicates.
+     */
+    public DupFilterAxis(final IReadTransaction rtx, final IAxis dupAxis) {
 
-		super(rtx);
-		mAxis = dupAxis;
-		mDupSet = new HashSet<Long>();
-		// if the dupAxis is not one of the specified axis, 'next()' has
-		// explicitly
-		// be called for those axis after calling 'hasNext()'. For all other
-		// axis
-		// next() has already been called by another axis.
-		callNext = !(mAxis instanceof FilterAxis || mAxis instanceof NestedAxis || mAxis instanceof UnionAxis);
+        super(rtx);
+        mAxis = dupAxis;
+        mDupSet = new HashSet<Long>();
+        // if the dupAxis is not one of the specified axis, 'next()' has
+        // explicitly
+        // be called for those axis after calling 'hasNext()'. For all other
+        // axis
+        // next() has already been called by another axis.
+        callNext = !(mAxis instanceof FilterAxis || mAxis instanceof NestedAxis || mAxis instanceof UnionAxis);
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void reset(final long nodeKey) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void reset(final long nodeKey) {
 
-		super.reset(nodeKey);
-		if (mAxis != null) {
-			mAxis.reset(nodeKey);
-		}
-	}
+        super.reset(nodeKey);
+        if (mAxis != null) {
+            mAxis.reset(nodeKey);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final boolean hasNext() {
+    /**
+     * {@inheritDoc}
+     */
+    public final boolean hasNext() {
 
-		resetToLastKey();
+        resetToLastKey();
 
-		while (mAxis.hasNext()) {
+        while (mAxis.hasNext()) {
 
-			// call next(), if it was not already called for that axis.
-			if (callNext) {
-				mAxis.next();
-			}
+            // call next(), if it was not already called for that axis.
+            if (callNext) {
+                mAxis.next();
+            }
 
-			// add current item key to the set. If true is returned the item is
-			// no
-			// duplicate and can be returned by the duplicate filter.
-			if (mDupSet.add(getTransaction().getNode().getNodeKey())) {
-				return true;
-			}
-		}
+            // add current item key to the set. If true is returned the item is
+            // no
+            // duplicate and can be returned by the duplicate filter.
+            if (mDupSet.add(getTransaction().getNode().getNodeKey())) {
+                return true;
+            }
+        }
 
-		resetToStartKey();
-		return false;
-	}
+        resetToStartKey();
+        return false;
+    }
 }

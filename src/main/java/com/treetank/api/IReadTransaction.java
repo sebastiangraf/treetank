@@ -96,220 +96,220 @@ package com.treetank.api;
  */
 public interface IReadTransaction {
 
-	// --- Keys
-	// ------------------------------------------------------------------
+    // --- Keys
+    // ------------------------------------------------------------------
 
-	/** Null key for node references. */
-	long NULL_NODE_KEY = -1L;
+    /** Null key for node references. */
+    long NULL_NODE_KEY = -1L;
 
-	/** Null key for name references. */
-	int NULL_NAME_KEY = -1;
+    /** Null key for name references. */
+    int NULL_NAME_KEY = -1;
 
-	/** Key of document root node. */
-	long DOCUMENT_ROOT_KEY = 0L;
+    /** Key of document root node. */
+    long DOCUMENT_ROOT_KEY = 0L;
 
-	// --- Kinds
-	// ------------------------------------------------------------------
+    // --- Kinds
+    // ------------------------------------------------------------------
 
-	/** Node kind is element. */
-	int ELEMENT_KIND = 1;
+    /** Node kind is element. */
+    int ELEMENT_KIND = 1;
 
-	/** Node kind is attribute. */
-	int ATTRIBUTE_KIND = 2;
+    /** Node kind is attribute. */
+    int ATTRIBUTE_KIND = 2;
 
-	/** Node kind is text. */
-	int TEXT_KIND = 3;
+    /** Node kind is text. */
+    int TEXT_KIND = 3;
 
-	/** Node kind is namespace. */
-	int NAMESPACE_KIND = 4;
+    /** Node kind is namespace. */
+    int NAMESPACE_KIND = 4;
 
-	/** Node kind is processing instruction. */
-	int PROCESSING_KIND = 7;
+    /** Node kind is processing instruction. */
+    int PROCESSING_KIND = 7;
 
-	/** Node kind is comment. */
-	int COMMENT_KIND = 8;
+    /** Node kind is comment. */
+    int COMMENT_KIND = 8;
 
-	/** Node kind is document root. */
-	int ROOT_KIND = 9;
+    /** Node kind is document root. */
+    int ROOT_KIND = 9;
 
-	/** String constants used by xpath. */
-	String[] XPATHCONSTANTS = { "xs:anyType", "xs:anySimpleType",
-			"xs:anyAtomicType", "xs:untypedAtomic", "xs:untyped", "xs:string",
-			"xs:duration", "xs:yearMonthDuration", "xs:dayTimeDuration",
-			"xs:dateTime", "xs:time", "xs:date", "xs:gYearMonth", "xs:gYear",
-			"xs:gMonthDay", "xs:gDay", "xs:gMonth", "xs:boolean",
-			"xs:base64Binary", "xs:hexBinary", "xs:anyURI", "xs:QName",
-			"xs:NOTATION", "xs:float", "xs:double", "xs:pDecimal",
-			"xs:decimal", "xs:integer", "xs:long", "xs:int", "xs:short",
-			"xs:byte", "xs:nonPositiveInteger", "xs:negativeInteger",
-			"xs:nonNegativeInteger", "xs:positiveInteger", "xs:unsignedLong",
-			"xs:unsignedInt", "xs:unsignedShort", "xs:unsignedByte",
-			"xs:normalizedString", "xs:token", "xs:language", "xs:name",
-			"xs:NCName", "xs:ID", "xs:IDREF", "xs:ENTITY", "xs:IDREFS",
-			"xs:NMTOKEN", "xs:NMTOKENS", };
+    /** String constants used by xpath. */
+    String[] XPATHCONSTANTS = { "xs:anyType", "xs:anySimpleType",
+            "xs:anyAtomicType", "xs:untypedAtomic", "xs:untyped", "xs:string",
+            "xs:duration", "xs:yearMonthDuration", "xs:dayTimeDuration",
+            "xs:dateTime", "xs:time", "xs:date", "xs:gYearMonth", "xs:gYear",
+            "xs:gMonthDay", "xs:gDay", "xs:gMonth", "xs:boolean",
+            "xs:base64Binary", "xs:hexBinary", "xs:anyURI", "xs:QName",
+            "xs:NOTATION", "xs:float", "xs:double", "xs:pDecimal",
+            "xs:decimal", "xs:integer", "xs:long", "xs:int", "xs:short",
+            "xs:byte", "xs:nonPositiveInteger", "xs:negativeInteger",
+            "xs:nonNegativeInteger", "xs:positiveInteger", "xs:unsignedLong",
+            "xs:unsignedInt", "xs:unsignedShort", "xs:unsignedByte",
+            "xs:normalizedString", "xs:token", "xs:language", "xs:name",
+            "xs:NCName", "xs:ID", "xs:IDREF", "xs:ENTITY", "xs:IDREFS",
+            "xs:NMTOKEN", "xs:NMTOKENS", };
 
-	/**
-	 * Get ID of transaction.
-	 * 
-	 * @return ID of transaction.
-	 */
-	long getTransactionID();
+    /**
+     * Get ID of transaction.
+     * 
+     * @return ID of transaction.
+     */
+    long getTransactionID();
 
-	/**
-	 * What is the revision number of this IReadTransaction?
-	 * 
-	 * @return Immutable revision number of this IReadTransaction.
-	 */
-	long getRevisionNumber();
+    /**
+     * What is the revision number of this IReadTransaction?
+     * 
+     * @return Immutable revision number of this IReadTransaction.
+     */
+    long getRevisionNumber();
 
-	/**
-	 * UNIX-style timestamp of the commit of the revision.
-	 * 
-	 * @return Timestamp of revision commit.
-	 */
-	long getRevisionTimestamp();
+    /**
+     * UNIX-style timestamp of the commit of the revision.
+     * 
+     * @return Timestamp of revision commit.
+     */
+    long getRevisionTimestamp();
 
-	/**
-	 * How many nodes are stored in the revision of this IReadTransaction?
-	 * 
-	 * @return Immutable number of nodes of this IReadTransaction.
-	 */
-	long getNodeCount();
+    /**
+     * How many nodes are stored in the revision of this IReadTransaction?
+     * 
+     * @return Immutable number of nodes of this IReadTransaction.
+     */
+    long getNodeCount();
 
-	// --- Node Selectors
-	// --------------------------------------------------------
+    // --- Node Selectors
+    // --------------------------------------------------------
 
-	/**
-	 * Move cursor to a node by its node key.
-	 * 
-	 * @param nodeKey
-	 *            Key of node to select.
-	 * @return True if the node with the given node key is selected.
-	 */
-	boolean moveTo(final long nodeKey);
+    /**
+     * Move cursor to a node by its node key.
+     * 
+     * @param nodeKey
+     *            Key of node to select.
+     * @return True if the node with the given node key is selected.
+     */
+    boolean moveTo(final long nodeKey);
 
-	/**
-	 * Move cursor to document root node.
-	 * 
-	 * @return True if the document root node is selected.
-	 */
-	boolean moveToDocumentRoot();
+    /**
+     * Move cursor to document root node.
+     * 
+     * @return True if the document root node is selected.
+     */
+    boolean moveToDocumentRoot();
 
-	/**
-	 * Move cursor to parent node of currently selected node.
-	 * 
-	 * @return True if the parent node is selected.
-	 */
-	boolean moveToParent();
+    /**
+     * Move cursor to parent node of currently selected node.
+     * 
+     * @return True if the parent node is selected.
+     */
+    boolean moveToParent();
 
-	/**
-	 * Move cursor to first child node of currently selected node.
-	 * 
-	 * @return True if the first child node is selected.
-	 */
-	boolean moveToFirstChild();
+    /**
+     * Move cursor to first child node of currently selected node.
+     * 
+     * @return True if the first child node is selected.
+     */
+    boolean moveToFirstChild();
 
-	/**
-	 * Move cursor to left sibling node of the currently selected node.
-	 * 
-	 * @return True if the left sibling node is selected.
-	 */
-	boolean moveToLeftSibling();
+    /**
+     * Move cursor to left sibling node of the currently selected node.
+     * 
+     * @return True if the left sibling node is selected.
+     */
+    boolean moveToLeftSibling();
 
-	/**
-	 * Move cursor to right sibling node of the currently selected node.
-	 * 
-	 * @return True if the right sibling node is selected.
-	 */
-	boolean moveToRightSibling();
+    /**
+     * Move cursor to right sibling node of the currently selected node.
+     * 
+     * @return True if the right sibling node is selected.
+     */
+    boolean moveToRightSibling();
 
-	/**
-	 * Move cursor to attribute by its index.
-	 * 
-	 * @param index
-	 *            Index of attribute to move to.
-	 * @return True if the attribute node is selected.
-	 */
-	boolean moveToAttribute(final int index);
+    /**
+     * Move cursor to attribute by its index.
+     * 
+     * @param index
+     *            Index of attribute to move to.
+     * @return True if the attribute node is selected.
+     */
+    boolean moveToAttribute(final int index);
 
-	/**
-	 * Move cursor to namespace declaration by its index.
-	 * 
-	 * @param index
-	 *            Index of attribute to move to.
-	 * @return True if the namespace node is selected.
-	 */
-	boolean moveToNamespace(final int index);
+    /**
+     * Move cursor to namespace declaration by its index.
+     * 
+     * @param index
+     *            Index of attribute to move to.
+     * @return True if the namespace node is selected.
+     */
+    boolean moveToNamespace(final int index);
 
-	// --- Node Getters
-	// ----------------------------------------------------------
+    // --- Node Getters
+    // ----------------------------------------------------------
 
-	/**
-	 * Getting the value of the current node
-	 */
-	String getValueOfCurrentNode();
+    /**
+     * Getting the value of the current node
+     */
+    String getValueOfCurrentNode();
 
-	/**
-	 * Getting the name of the current node
-	 */
-	String getNameOfCurrentNode();
+    /**
+     * Getting the name of the current node
+     */
+    String getNameOfCurrentNode();
 
-	/**
-	 * Getting the uri of the current node
-	 */
-	String getURIOfCurrentNode();
+    /**
+     * Getting the uri of the current node
+     */
+    String getURIOfCurrentNode();
 
-	/**
-	 * Getting the type of the current node
-	 */
-	String getTypeOfCurrentNode();
+    /**
+     * Getting the type of the current node
+     */
+    String getTypeOfCurrentNode();
 
-	/**
-	 * Get key for given name. This is used for efficient name testing.
-	 * 
-	 * @param name
-	 *            Name, i.e., local part, URI, or prefix.
-	 * @return Internal key assigned to given name.
-	 */
-	int keyForName(final String name);
+    /**
+     * Get key for given name. This is used for efficient name testing.
+     * 
+     * @param name
+     *            Name, i.e., local part, URI, or prefix.
+     * @return Internal key assigned to given name.
+     */
+    int keyForName(final String name);
 
-	/**
-	 * Get name for key. This is used for efficient key testing.
-	 * 
-	 * @param key
-	 *            Key, i.e., local part key, URI key, or prefix key.
-	 * @return String containing name for given key.
-	 */
-	String nameForKey(final int key);
+    /**
+     * Get name for key. This is used for efficient key testing.
+     * 
+     * @param key
+     *            Key, i.e., local part key, URI key, or prefix key.
+     * @return String containing name for given key.
+     */
+    String nameForKey(final int key);
 
-	/**
-	 * Get raw name for key. This is used for efficient key testing.
-	 * 
-	 * @param key
-	 *            Key, i.e., local part key, URI key, or prefix key.
-	 * @return Byte array containing name for given key.
-	 */
-	byte[] rawNameForKey(final int key);
+    /**
+     * Get raw name for key. This is used for efficient key testing.
+     * 
+     * @param key
+     *            Key, i.e., local part key, URI key, or prefix key.
+     * @return Byte array containing name for given key.
+     */
+    byte[] rawNameForKey(final int key);
 
-	/**
-	 * Get item list containing volatile items such as atoms or fragments.
-	 * 
-	 * @return Item list.
-	 */
-	IItemList getItemList();
+    /**
+     * Get item list containing volatile items such as atoms or fragments.
+     * 
+     * @return Item list.
+     */
+    IItemList getItemList();
 
-	/**
-	 * Getting the current node but just as a {@link UnmodifiableNode}
-	 * 
-	 * @return the node but not modifiable
-	 */
-	IItem getNode();
+    /**
+     * Getting the current node but just as a {@link UnmodifiableNode}
+     * 
+     * @return the node but not modifiable
+     */
+    IItem getNode();
 
-	/**
-	 * Close shared read transaction and immediately release all resources.
-	 * 
-	 * This is an idempotent operation and does nothing if the transaction is
-	 * already closed.
-	 */
-	void close();
+    /**
+     * Close shared read transaction and immediately release all resources.
+     * 
+     * This is an idempotent operation and does nothing if the transaction is
+     * already closed.
+     */
+    void close();
 }

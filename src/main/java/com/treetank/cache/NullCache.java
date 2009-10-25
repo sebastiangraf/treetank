@@ -24,32 +24,34 @@ import com.treetank.page.NodePage;
  * @author Sebastian Graf, University of Konstanz.
  * 
  */
-public class NullCache implements ICache {
+public final class NullCache implements ICache {
 
-	protected NullCache() {
-		super();
-	}
+    protected NullCache() {
+        super();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void clear() {
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void clear() {
+        // Not used over here
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public NodePage get(long key) {
-		return null;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public NodePage get(final long key) {
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void put(long key, NodePage page) {
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void put(final long key, final NodePage page) {
+        // Not used over here
+    }
 
 }

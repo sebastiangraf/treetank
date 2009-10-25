@@ -37,62 +37,62 @@ import com.treetank.utils.TypedValue;
  */
 public class FNPosition extends AbstractFunction {
 
-	private Integer posCount;
+    private Integer posCount;
 
-	/**
-	 * Constructor.
-	 * 
-	 * Initializes internal state and do a statical analysis concerning the
-	 * function's arguments.
-	 * 
-	 * @param rtx
-	 *            Transaction to operate on
-	 * @param args
-	 *            List of function arguments
-	 * @param min
-	 *            min number of allowed function arguments
-	 * @param max
-	 *            max number of allowed function arguments
-	 * @param returnType
-	 *            the type that the function's result will have
-	 */
-	public FNPosition(final IReadTransaction rtx, final List<IAxis> args,
-			final int min, final int max, final int returnType) {
+    /**
+     * Constructor.
+     * 
+     * Initializes internal state and do a statical analysis concerning the
+     * function's arguments.
+     * 
+     * @param rtx
+     *            Transaction to operate on
+     * @param args
+     *            List of function arguments
+     * @param min
+     *            min number of allowed function arguments
+     * @param max
+     *            max number of allowed function arguments
+     * @param returnType
+     *            the type that the function's result will have
+     */
+    public FNPosition(final IReadTransaction rtx, final List<IAxis> args,
+            final int min, final int max, final int returnType) {
 
-		super(rtx, args, min, max, returnType);
-		posCount = 0;
-		if (getArgs().size() != 0) {
-			throw new IllegalStateException(
-					"This function is not supported yet.");
-		}
-	}
+        super(rtx, args, min, max, returnType);
+        posCount = 0;
+        if (getArgs().size() != 0) {
+            throw new IllegalStateException(
+                    "This function is not supported yet.");
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void reset(final long nodeKey) {
-		super.reset(nodeKey);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reset(final long nodeKey) {
+        super.reset(nodeKey);
+    }
 
-	/**
-	 * Resets the position counter. This is necessary, because the position of
-	 * the current item is not the position in the final result sequence, but an
-	 * intermediate result sequence.
-	 */
-	public void resetCounter() {
-		posCount = 0;
-	}
+    /**
+     * Resets the position counter. This is necessary, because the position of
+     * the current item is not the position in the final result sequence, but an
+     * intermediate result sequence.
+     */
+    public void resetCounter() {
+        posCount = 0;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected byte[] computeResult() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected byte[] computeResult() {
 
-		posCount++;
+        posCount++;
 
-		return TypedValue.getBytes(posCount.toString());
-	}
+        return TypedValue.getBytes(posCount.toString());
+    }
 
 }

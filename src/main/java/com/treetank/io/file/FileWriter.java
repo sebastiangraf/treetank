@@ -22,7 +22,7 @@ import com.treetank.utils.ICrypto;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class FileWriter implements IWriter {
+public final class FileWriter implements IWriter {
 
     /** Random access mFile to work on. */
     private transient final RandomAccessFile mFile;
@@ -67,7 +67,7 @@ public class FileWriter implements IWriter {
      * @throws RuntimeException
      *             due to errors during writing.
      */
-    public void write(final PageReference<? extends AbstractPage> pageReference)
+    public void write(final PageReference pageReference)
             throws TreetankIOException {
 
         // Serialise page.
@@ -114,7 +114,7 @@ public class FileWriter implements IWriter {
      * {@inheritDoc}
      */
     @Override
-    public final void close() throws TreetankIOException {
+    public void close() throws TreetankIOException {
         try {
             if (mFile != null) {
                 mFile.close();
@@ -143,7 +143,7 @@ public class FileWriter implements IWriter {
      * {@inheritDoc}
      */
     @Override
-    public void initializingStorage(final StorageProperties props)
+    public void setProps(final StorageProperties props)
             throws TreetankIOException {
         try {
             mFile.setLength(IConstants.BEACON_START + IConstants.BEACON_LENGTH);
@@ -151,6 +151,7 @@ public class FileWriter implements IWriter {
             mFile.writeLong(props.getVersionMinor());
             mFile.writeBoolean(props.isChecksummed());
             mFile.writeBoolean(props.isEncrypted());
+
         } catch (final IOException exc) {
             throw new TreetankIOException(exc);
         }
@@ -160,10 +161,20 @@ public class FileWriter implements IWriter {
      * {@inheritDoc}
      */
     @Override
-    public void writeBeacon(final PageReference<AbstractPage> pageReference)
+    public void writeFirstReference(final PageReference pageReference)
             throws TreetankIOException {
         final byte[] tmp = new byte[IConstants.CHECKSUM_SIZE];
         try {
+
+            // Check to writer ensure writing after the Beacon_Start
+            if (mFile.getFilePointer() < IConstants.BEACON_START
+                    + IConstants.BEACON_LENGTH) {
+                mFile.setLength(IConstants.BEACON_START
+                        + IConstants.BEACON_LENGTH);
+            }
+
+            write(pageReference);
+
             mFile.seek(IConstants.BEACON_START);
             final FileKey key = (FileKey) pageReference.getKey();
             mFile.writeLong(key.getOffset());
@@ -187,8 +198,7 @@ public class FileWriter implements IWriter {
      * {@inheritDoc}
      */
     @Override
-    public AbstractPage read(
-            final PageReference<? extends AbstractPage> pageReference)
+    public AbstractPage read(final PageReference pageReference)
             throws TreetankIOException {
         return reader.read(pageReference);
     }
@@ -197,8 +207,7 @@ public class FileWriter implements IWriter {
      * {@inheritDoc}
      */
     @Override
-    public PageReference<?> readFirstReference() throws TreetankIOException {
-
+    public PageReference readFirstReference() throws TreetankIOException {
         return reader.readFirstReference();
     }
 

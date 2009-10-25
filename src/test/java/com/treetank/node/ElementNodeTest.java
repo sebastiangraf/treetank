@@ -27,54 +27,54 @@ import com.treetank.io.file.ByteBufferSinkAndSource;
 
 public class ElementNodeTest {
 
-	@Test
-	public void testElementNode() {
+    @Test
+    public void testElementNode() {
 
-		// Create empty node.
-		final AbstractNode node1 = new ElementNode(13L, 14L, 15L, 16L, 17L, 18,
-				19, 0);
-		final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
+        // Create empty node.
+        final AbstractNode node1 = new ElementNode(13L, 14L, 15L, 16L, 17L, 18,
+                19, 0);
+        final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
 
-		// Modify it.
-		node1.incrementChildCount();
-		node1.decrementChildCount();
-		node1.insertAttribute(98L);
-		node1.insertNamespace(99L);
+        // Modify it.
+        node1.incrementChildCount();
+        node1.decrementChildCount();
+        node1.insertAttribute(98L);
+        node1.insertNamespace(99L);
 
-		// Serialize and deserialize node.
-		node1.serialize(out);
-		out.position(0);
-		final AbstractNode node2 = new ElementNode(13L, out);
+        // Serialize and deserialize node.
+        node1.serialize(out);
+        out.position(0);
+        final AbstractNode node2 = new ElementNode(13L, out);
 
-		// Clone node.
-		final AbstractNode node3 = node2; // new ElementNode(node2);
+        // Clone node.
+        final AbstractNode node3 = node2; // new ElementNode(node2);
 
-		// Now compare.
-		assertEquals(13L, node3.getNodeKey());
-		assertEquals(14L, node3.getParentKey());
-		assertEquals(15L, node3.getFirstChildKey());
-		assertEquals(16L, node3.getLeftSiblingKey());
-		assertEquals(17L, node3.getRightSiblingKey());
-		assertEquals(0, node3.getChildCount());
-		assertEquals(1, node3.getAttributeCount());
-		assertEquals(1, node3.getNamespaceCount());
-		assertEquals(18, node3.getNameKey());
-		assertEquals(19, node3.getURIKey());
-		assertEquals(null, node3.getRawValue());
-		assertEquals(IReadTransaction.ELEMENT_KIND, node3.getKind());
-		assertEquals(true, node3.hasFirstChild());
-		assertEquals(true, node3.hasParent());
-		assertEquals(true, node3.hasLeftSibling());
-		assertEquals(true, node3.hasRightSibling());
-		assertEquals(false, node3.isAttribute());
-		assertEquals(false, node3.isDocumentRoot());
-		assertEquals(true, node3.isElement());
-		assertEquals(false, node3.isText());
+        // Now compare.
+        assertEquals(13L, node3.getNodeKey());
+        assertEquals(14L, node3.getParentKey());
+        assertEquals(15L, node3.getFirstChildKey());
+        assertEquals(16L, node3.getLeftSiblingKey());
+        assertEquals(17L, node3.getRightSiblingKey());
+        assertEquals(0, node3.getChildCount());
+        assertEquals(1, node3.getAttributeCount());
+        assertEquals(1, node3.getNamespaceCount());
+        assertEquals(18, node3.getNameKey());
+        assertEquals(19, node3.getURIKey());
+        assertEquals(null, node3.getRawValue());
+        assertEquals(IReadTransaction.ELEMENT_KIND, node3.getKind());
+        assertEquals(true, node3.hasFirstChild());
+        assertEquals(true, node3.hasParent());
+        assertEquals(true, node3.hasLeftSibling());
+        assertEquals(true, node3.hasRightSibling());
+        assertEquals(false, node3.isAttribute());
+        assertEquals(false, node3.isDocumentRoot());
+        assertEquals(true, node3.isElement());
+        assertEquals(false, node3.isText());
 
-		assertEquals(98L, node3.getAttributeKey(0));
+        assertEquals(98L, node3.getAttributeKey(0));
 
-		assertEquals(99L, node3.getNamespaceKey(0));
+        assertEquals(99L, node3.getNamespaceKey(0));
 
-	}
+    }
 
 }

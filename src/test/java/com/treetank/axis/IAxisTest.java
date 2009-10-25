@@ -27,78 +27,83 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.io.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
 
 public class IAxisTest {
 
-	@Before
-	public void setUp() {
-		Session.removeSession(ITestConstants.PATH1);
-	}
+    @Before
+    public void setUp() {
+       TestHelper.removeAllFiles();
+    }
 
-	public static void testIAxisConventions(final IAxis axis,
-			final long[] expectedKeys) {
+    public static void testIAxisConventions(final IAxis axis,
+            final long[] expectedKeys) {
 
-		final IReadTransaction rtx = axis.getTransaction();
+        final IReadTransaction rtx = axis.getTransaction();
 
-		// IAxis Convention 1.
-		final long startKey = rtx.getNode().getNodeKey();
+        // IAxis Convention 1.
+        final long startKey = rtx.getNode().getNodeKey();
 
-		final long[] keys = new long[expectedKeys.length];
-		int offset = 0;
-		for (final long nodeKey : axis) {
+        final long[] keys = new long[expectedKeys.length];
+        int offset = 0;
+        while (axis.hasNext()) {
+            axis.next();
+            // IAxis results.
+            if (offset >= expectedKeys.length) {
+                fail("More nodes found than expected.");
+            }
+            keys[offset++] = rtx.getNode().getNodeKey();
 
-			// IAxis results.
-			if (offset >= expectedKeys.length) {
-				fail("More nodes found than expected.");
-			}
-			keys[offset++] = rtx.getNode().getNodeKey();
+            // IAxis Convention 2.
+            try {
+                axis.next();
+                fail("Should only allow to call next() once.");
+            } catch (Exception e) {
+                // Must throw exception.
+            }
 
-			// IAxis Convention 2.
-			try {
-				axis.next();
-				fail("Should only allow to call next() once.");
-			} catch (Exception e) {
-				// Must throw exception.
-			}
+            // IAxis Convention 3.
+            rtx.moveToDocumentRoot();
 
-			// IAxis Convention 3.
-			rtx.moveToDocumentRoot();
+        }
 
-		}
+        // IAxis Convention 5.
+        assertEquals(startKey, rtx.getNode().getNodeKey());
 
-		// IAxis Convention 5.
-		assertEquals(startKey, rtx.getNode().getNodeKey());
+        // IAxis results.
+        assertArrayEquals(expectedKeys, keys);
 
-		// IAxis results.
-		assertArrayEquals(expectedKeys, keys);
+    }
 
-	}
+    @Test
+    public void testIAxisUserExample() {
 
-	@Test
-	public void testIAxisUserExample() {
+        try { // Build simple test tree.
+            final ISession session = Session.beginSession(ITestConstants.PATH1);
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            DocumentCreater.create(wtx);
 
-		// Build simple test tree.
-		final ISession session = Session.beginSession(ITestConstants.PATH1);
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
+            wtx.moveToDocumentRoot();
+            final IAxis axis = new DescendantAxis(wtx);
+            long count = 0L;
+            while (axis.hasNext()) {
+                count += 1;
+            }
+            Assert.assertEquals(10L, count);
 
-		wtx.moveToDocumentRoot();
-		final IAxis axis = new DescendantAxis(wtx);
-		long count = 0L;
-		while (axis.hasNext()) {
-			count += 1;
-		}
-		Assert.assertEquals(10L, count);
-
-		wtx.abort();
-		wtx.close();
-		session.close();
-	}
+            wtx.abort();
+            wtx.close();
+            session.close();
+        } catch (final TreetankIOException exc) {
+            fail(exc.toString());
+        }
+    }
 
 }

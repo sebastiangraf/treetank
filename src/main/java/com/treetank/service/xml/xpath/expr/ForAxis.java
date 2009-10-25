@@ -47,82 +47,82 @@ import com.treetank.axis.AbstractAxis;
  */
 public class ForAxis extends AbstractAxis implements IAxis {
 
-	/** The range expression. */
-	private final IAxis mRange;
+    /** The range expression. */
+    private final IAxis mRange;
 
-	/** The result expression. */
-	private final AbstractAxis mReturn;
+    /** The result expression. */
+    private final AbstractAxis mReturn;
 
-	/** Defines, whether is first call of hasNext(). */
-	private boolean mIsFirst;
+    /** Defines, whether is first call of hasNext(). */
+    private boolean mIsFirst;
 
-	/**
-	 * Constructor. Initializes the internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) trx to iterate with.
-	 * @param range
-	 *            the range variable that holds the binding sequence
-	 * @param returnExpr
-	 *            the return expression of the for expression
-	 */
-	public ForAxis(final IReadTransaction rtx, final IAxis range,
-			final AbstractAxis returnExpr) {
+    /**
+     * Constructor. Initializes the internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
+     * @param range
+     *            the range variable that holds the binding sequence
+     * @param returnExpr
+     *            the return expression of the for expression
+     */
+    public ForAxis(final IReadTransaction rtx, final IAxis range,
+            final AbstractAxis returnExpr) {
 
-		super(rtx);
-		mRange = range;
-		mReturn = returnExpr;
-		mIsFirst = true;
-	}
+        super(rtx);
+        mRange = range;
+        mReturn = returnExpr;
+        mIsFirst = true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void reset(final long nodeKey) {
-		super.reset(nodeKey);
-		mIsFirst = true;
-		if (mRange != null) {
-			mRange.reset(nodeKey);
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reset(final long nodeKey) {
+        super.reset(nodeKey);
+        mIsFirst = true;
+        if (mRange != null) {
+            mRange.reset(nodeKey);
+        }
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean hasNext() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasNext() {
 
-		resetToLastKey();
+        resetToLastKey();
 
-		if (mIsFirst) {
-			// makes sure, that mRange.hasNext() is called before the return
-			// statement,
-			// on the first call
-			mIsFirst = false;
+        if (mIsFirst) {
+            // makes sure, that mRange.hasNext() is called before the return
+            // statement,
+            // on the first call
+            mIsFirst = false;
 
-		} else {
-			if (mReturn.hasNext()) {
-				return true;
-			}
-		}
+        } else {
+            if (mReturn.hasNext()) {
+                return true;
+            }
+        }
 
-		// check for more items in the binding sequence
-		while (mRange.hasNext()) {
-			mRange.next();
+        // check for more items in the binding sequence
+        while (mRange.hasNext()) {
+            mRange.next();
 
-			// TODO: resetTo startKey would be better here, but not accessible
-			// mReturn.resetToStartKey();
-			mReturn.reset(getStartKey());
-			if (mReturn.hasNext()) {
-				return true;
-			}
-		}
+            // TODO: resetTo startKey would be better here, but not accessible
+            // mReturn.resetToStartKey();
+            mReturn.reset(getStartKey());
+            if (mReturn.hasNext()) {
+                return true;
+            }
+        }
 
-		resetToStartKey();
-		return false;
+        resetToStartKey();
+        return false;
 
-	}
+    }
 
 }

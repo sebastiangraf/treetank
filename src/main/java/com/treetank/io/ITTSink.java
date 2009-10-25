@@ -11,28 +11,28 @@ package com.treetank.io;
  */
 public interface ITTSink {
 
-	/**
-	 * Writing a long to the storage
-	 * 
-	 * @param longVal
-	 *            to be written
-	 */
-	void writeLong(final long longVal);
+    /**
+     * Writing a long to the storage
+     * 
+     * @param longVal
+     *            to be written
+     */
+    void writeLong(final long longVal);
 
-	/**
-	 * Writing an int to the storage
-	 * 
-	 * @param intVal
-	 *            to be written
-	 */
-	void writeInt(final int intVal);
+    /**
+     * Writing an int to the storage
+     * 
+     * @param intVal
+     *            to be written
+     */
+    void writeInt(final int intVal);
 
-	/**
-	 * Writing a byte to the storage
-	 * 
-	 * @param byteVal
-	 *            to be written
-	 */
-	void writeByte(final byte byteVal);
+    /**
+     * Writing a byte to the storage
+     * 
+     * @param byteVal
+     *            to be written
+     */
+    void writeByte(final byte byteVal);
 
 }

@@ -1,9 +1,7 @@
 package com.treetank.io.berkeley;
 
 import com.treetank.io.AbstractKey;
-import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
-import com.treetank.io.KeyFactory;
 
 /**
  * Key for reference the data in the berkeley-db. The key is also the
@@ -71,12 +69,4 @@ public class BerkeleyKey extends AbstractKey {
         return super.getKeys()[0];
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void serialize(final ITTSink out) {
-        out.writeInt(KeyFactory.BERKELEYKIND);
-        super.serialize(out);
-    }
 }

@@ -30,40 +30,40 @@ import com.treetank.api.IReadTransaction;
  */
 public class SelfAxis extends AbstractAxis implements IAxis {
 
-	/** Track number of calls of next. */
-	private boolean mFirst;
+    /** Track number of calls of next. */
+    private boolean mFirst;
 
-	/**
-	 * Constructor initializing internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) trx to iterate with.
-	 */
-	public SelfAxis(final IReadTransaction rtx) {
-		super(rtx);
-	}
+    /**
+     * Constructor initializing internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
+     */
+    public SelfAxis(final IReadTransaction rtx) {
+        super(rtx);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void reset(final long nodeKey) {
-		super.reset(nodeKey);
-		mFirst = true;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void reset(final long nodeKey) {
+        super.reset(nodeKey);
+        mFirst = true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final boolean hasNext() {
-		resetToLastKey();
-		if (mFirst) {
-			mFirst = false;
-			return true;
-		} else {
-			resetToStartKey();
-			return false;
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public final boolean hasNext() {
+        resetToLastKey();
+        if (mFirst) {
+            mFirst = false;
+            return true;
+        } else {
+            resetToStartKey();
+            return false;
+        }
+    }
 
 }

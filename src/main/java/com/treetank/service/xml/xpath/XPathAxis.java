@@ -70,49 +70,49 @@ import com.treetank.axis.AbstractAxis;
  */
 public class XPathAxis extends AbstractAxis implements IAxis {
 
-	/** Axis holding the consecutive query execution plans of the query. */
-	private IAxis pipeline;
+    /** Axis holding the consecutive query execution plans of the query. */
+    private IAxis pipeline;
 
-	/**
-	 * <p>
-	 * Constructor initializing internal state.
-	 * </p>
-	 * <p>
-	 * Starts the query scanning and parsing and retrieves the builded query
-	 * execution plan from the parser.
-	 * </p>
-	 * 
-	 * @param rtx
-	 *            Transaction to operate with.
-	 * @param query
-	 *            XPath query to process.
-	 */
-	public XPathAxis(final IReadTransaction rtx, final String query) {
+    /**
+     * <p>
+     * Constructor initializing internal state.
+     * </p>
+     * <p>
+     * Starts the query scanning and parsing and retrieves the builded query
+     * execution plan from the parser.
+     * </p>
+     * 
+     * @param rtx
+     *            Transaction to operate with.
+     * @param query
+     *            XPath query to process.
+     */
+    public XPathAxis(final IReadTransaction rtx, final String query) {
 
-		super(rtx);
+        super(rtx);
 
-		// start parsing and get execution plans
-		final XPathParser parser = new XPathParser(getTransaction(), query);
-		parser.parseQuery();
-		pipeline = parser.getQueryPipeline();
+        // start parsing and get execution plans
+        final XPathParser parser = new XPathParser(getTransaction(), query);
+        parser.parseQuery();
+        pipeline = parser.getQueryPipeline();
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean hasNext() {
+    /**
+     * {@inheritDoc}
+     */
+    public boolean hasNext() {
 
-		resetToLastKey();
+        resetToLastKey();
 
-		if (pipeline.hasNext()) {
-			return true;
-		} else {
+        if (pipeline.hasNext()) {
+            return true;
+        } else {
 
-			resetToStartKey();
-			return false;
-		}
+            resetToStartKey();
+            return false;
+        }
 
-	}
+    }
 
 }

@@ -72,7 +72,7 @@ public class BerkeleyWriter implements IWriter {
      * {@inheritDoc}
      */
     @Override
-    public void write(final PageReference<? extends AbstractPage> pageReference)
+    public void write(final PageReference pageReference)
             throws TreetankIOException {
         final AbstractPage page = pageReference.getPage();
 
@@ -155,7 +155,7 @@ public class BerkeleyWriter implements IWriter {
      * {@inheritDoc}
      */
     @Override
-    public void initializingStorage(final StorageProperties props)
+    public void setProps(final StorageProperties props)
             throws TreetankIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
@@ -175,8 +175,9 @@ public class BerkeleyWriter implements IWriter {
      * {@inheritDoc}
      */
     @Override
-    public void writeBeacon(final PageReference<AbstractPage> pageReference)
+    public void writeFirstReference(final PageReference pageReference)
             throws TreetankIOException {
+        write(pageReference);
 
         final DatabaseEntry keyEntry = new DatabaseEntry();
         BerkeleyFactory.KEY.objectToEntry(BerkeleyKey.getFirstRevKey(),
@@ -206,8 +207,7 @@ public class BerkeleyWriter implements IWriter {
      * {@inheritDoc}
      */
     @Override
-    public AbstractPage read(
-            final PageReference<? extends AbstractPage> pageReference)
+    public AbstractPage read(final PageReference pageReference)
             throws TreetankIOException {
         return reader.read(pageReference);
     }
@@ -216,8 +216,59 @@ public class BerkeleyWriter implements IWriter {
      * {@inheritDoc}
      */
     @Override
-    public PageReference<?> readFirstReference() throws TreetankIOException {
+    public PageReference readFirstReference() throws TreetankIOException {
         return reader.readFirstReference();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((mDatabase == null) ? 0 : mDatabase.hashCode());
+        result = prime * result + ((mTxn == null) ? 0 : mTxn.hashCode());
+        result = prime * result + ((reader == null) ? 0 : reader.hashCode());
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        boolean returnVal = true;
+        if (obj == null) {
+            returnVal = false;
+        }
+        if (getClass() != obj.getClass()) {
+            returnVal = false;
+        }
+        final BerkeleyWriter other = (BerkeleyWriter) obj;
+        if (mDatabase == null) {
+            if (other.mDatabase != null) {
+                returnVal = false;
+            }
+        } else if (!mDatabase.equals(other.mDatabase)) {
+            returnVal = false;
+        }
+        if (mTxn == null) {
+            if (other.mTxn != null) {
+                returnVal = false;
+            }
+        } else if (!mTxn.equals(other.mTxn)) {
+            returnVal = false;
+        }
+        if (reader == null) {
+            if (other.reader != null) {
+                returnVal = false;
+            }
+        } else if (!reader.equals(other.reader)) {
+            returnVal = false;
+        }
+        return returnVal;
     }
 
 }

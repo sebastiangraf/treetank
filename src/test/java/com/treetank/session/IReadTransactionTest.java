@@ -19,6 +19,7 @@
 package com.treetank.session;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -28,75 +29,81 @@ import com.treetank.ITestConstants;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.io.TreetankIOException;
 import com.treetank.utils.DocumentCreater;
 
 public class IReadTransactionTest {
 
-	private static ISession session;
+    private static ISession session;
 
-	@BeforeClass
-	public static void setUp() {
-		Session.removeSession(ITestConstants.PATH1);
-		session = Session.beginSession(ITestConstants.PATH1);
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
-		wtx.close();
-	}
+    @BeforeClass
+    public static void setUp() {
+        try {
+            Session.removeSession(ITestConstants.PATH1);
+            session = Session.beginSession(ITestConstants.PATH1);
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            DocumentCreater.create(wtx);
+            wtx.commit();
+            wtx.close();
+        } catch (final TreetankIOException exc) {
+            fail(exc.toString());
+        }
+    }
 
-	@AfterClass
-	public static void tearDown() {
-		session.close();
-	}
+    @AfterClass
+    public static void tearDown() {
+        session.close();
+    }
 
-	@Test
-	public void testDocumentRoot() {
-		final IReadTransaction rtx = session.beginReadTransaction();
+    @Test
+    public void testDocumentRoot() {
+        final IReadTransaction rtx = session.beginReadTransaction();
 
-		assertEquals(true, rtx.moveToDocumentRoot());
-		assertEquals(true, rtx.getNode().isDocumentRoot());
-		assertEquals(false, rtx.getNode().hasParent());
-		assertEquals(false, rtx.getNode().hasLeftSibling());
-		assertEquals(false, rtx.getNode().hasRightSibling());
-		assertEquals(true, rtx.getNode().hasFirstChild());
+        assertEquals(true, rtx.moveToDocumentRoot());
+        assertEquals(true, rtx.getNode().isDocumentRoot());
+        assertEquals(false, rtx.getNode().hasParent());
+        assertEquals(false, rtx.getNode().hasLeftSibling());
+        assertEquals(false, rtx.getNode().hasRightSibling());
+        assertEquals(true, rtx.getNode().hasFirstChild());
 
-		rtx.close();
-	}
+        rtx.close();
+    }
 
-	@Test
-	public void testConventions() {
-		final IReadTransaction rtx = session.beginReadTransaction();
+    @Test
+    public void testConventions() {
+        final IReadTransaction rtx = session.beginReadTransaction();
 
-		// IReadTransaction Convention 1.
-		assertEquals(true, rtx.moveToDocumentRoot());
-		long key = rtx.getNode().getNodeKey();
+        // IReadTransaction Convention 1.
+        assertEquals(true, rtx.moveToDocumentRoot());
+        long key = rtx.getNode().getNodeKey();
 
-		// IReadTransaction Convention 2.
-		assertEquals(rtx.getNode().hasParent(), rtx.moveToParent());
-		assertEquals(key, rtx.getNode().getNodeKey());
+        // IReadTransaction Convention 2.
+        assertEquals(rtx.getNode().hasParent(), rtx.moveToParent());
+        assertEquals(key, rtx.getNode().getNodeKey());
 
-		assertEquals(rtx.getNode().hasFirstChild(), rtx.moveToFirstChild());
-		assertEquals(1L, rtx.getNode().getNodeKey());
+        assertEquals(rtx.getNode().hasFirstChild(), rtx.moveToFirstChild());
+        assertEquals(1L, rtx.getNode().getNodeKey());
 
-		assertEquals(false, rtx.moveTo(Integer.MAX_VALUE));
-		assertEquals(false, rtx.moveTo(Integer.MIN_VALUE));
-		assertEquals(1L, rtx.getNode().getNodeKey());
+        assertEquals(false, rtx.moveTo(Integer.MAX_VALUE));
+        assertEquals(false, rtx.moveTo(Integer.MIN_VALUE));
+        assertEquals(1L, rtx.getNode().getNodeKey());
 
-		assertEquals(rtx.getNode().hasRightSibling(), rtx.moveToRightSibling());
-		assertEquals(1L, rtx.getNode().getNodeKey());
+        assertEquals(rtx.getNode().hasRightSibling(), rtx.moveToRightSibling());
+        assertEquals(1L, rtx.getNode().getNodeKey());
 
-		assertEquals(rtx.getNode().hasFirstChild(), rtx.moveToFirstChild());
-		assertEquals(4L, rtx.getNode().getNodeKey());
+        assertEquals(rtx.getNode().hasFirstChild(), rtx.moveToFirstChild());
+        assertEquals(4L, rtx.getNode().getNodeKey());
 
-		assertEquals(rtx.getNode().hasRightSibling(), rtx.moveToRightSibling());
-		assertEquals(5L, rtx.getNode().getNodeKey());
+        assertEquals(rtx.getNode().hasRightSibling(), rtx.moveToRightSibling());
+        assertEquals(5L, rtx.getNode().getNodeKey());
 
-		assertEquals(rtx.getNode().hasLeftSibling(), rtx.moveToLeftSibling());
-		assertEquals(4L, rtx.getNode().getNodeKey());
+        assertEquals(rtx.getNode().hasLeftSibling(), rtx.moveToLeftSibling());
+        assertEquals(4L, rtx.getNode().getNodeKey());
 
-		assertEquals(rtx.getNode().hasParent(), rtx.moveToParent());
-		assertEquals(1L, rtx.getNode().getNodeKey());
+        assertEquals(rtx.getNode().hasParent(), rtx.moveToParent());
+        assertEquals(1L, rtx.getNode().getNodeKey());
 
-		rtx.close();
-	}
+        rtx.close();
+    }
 
 }

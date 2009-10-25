@@ -29,46 +29,46 @@ import com.treetank.api.IReadTransaction;
  */
 public class VarRefExpr extends AbstractExpression implements IAxis, IObserver {
 
-	/** Key of the item the variable is set to at the moment. */
-	private long mVarKey;
+    /** Key of the item the variable is set to at the moment. */
+    private long mVarKey;
 
-	/**
-	 * Constructor. Initializes the internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) trx to iterate with.
-	 * @param variable
-	 *            Reference the variable expression that computes the items the
-	 *            variable holds.
-	 */
-	public VarRefExpr(final IReadTransaction rtx, final VariableAxis variable) {
+    /**
+     * Constructor. Initializes the internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
+     * @param variable
+     *            Reference the variable expression that computes the items the
+     *            variable holds.
+     */
+    public VarRefExpr(final IReadTransaction rtx, final VariableAxis variable) {
 
-		super(rtx);
-		variable.addObserver(this);
-		mVarKey = -1;
+        super(rtx);
+        variable.addObserver(this);
+        mVarKey = -1;
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void update(final long varKey) {
+    /**
+     * {@inheritDoc}
+     */
+    public void update(final long varKey) {
 
-		mVarKey = varKey;
-		reset(mVarKey);
+        mVarKey = varKey;
+        reset(mVarKey);
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void evaluate() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void evaluate() {
 
-		// assure that the transaction is set to the current context item of the
-		// variable's binding sequence.
-		getTransaction().moveTo(mVarKey);
+        // assure that the transaction is set to the current context item of the
+        // variable's binding sequence.
+        getTransaction().moveTo(mVarKey);
 
-	}
+    }
 
 }

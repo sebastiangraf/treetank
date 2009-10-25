@@ -37,45 +37,45 @@ import com.treetank.utils.TypedValue;
  */
 public class FNCount extends AbstractFunction {
 
-	/**
-	 * Constructor.
-	 * 
-	 * Initializes internal state and do a statical analysis concerning the
-	 * function's arguments.
-	 * 
-	 * @param rtx
-	 *            Transaction to operate on
-	 * @param args
-	 *            List of function arguments
-	 * @param min
-	 *            min number of allowed function arguments
-	 * @param max
-	 *            max number of allowed function arguments
-	 * @param returnType
-	 *            the type that the function's result will have
-	 */
-	public FNCount(final IReadTransaction rtx, final List<IAxis> args,
-			final int min, final int max, final int returnType) {
+    /**
+     * Constructor.
+     * 
+     * Initializes internal state and do a statical analysis concerning the
+     * function's arguments.
+     * 
+     * @param rtx
+     *            Transaction to operate on
+     * @param args
+     *            List of function arguments
+     * @param min
+     *            min number of allowed function arguments
+     * @param max
+     *            max number of allowed function arguments
+     * @param returnType
+     *            the type that the function's result will have
+     */
+    public FNCount(final IReadTransaction rtx, final List<IAxis> args,
+            final int min, final int max, final int returnType) {
 
-		super(rtx, args, min, max, returnType);
-	}
+        super(rtx, args, min, max, returnType);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected byte[] computeResult() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected byte[] computeResult() {
 
-		final IAxis axis = getArgs().get(0);
+        final IAxis axis = getArgs().get(0);
 
-		Integer count = 0;
-		while (axis.hasNext()) {
-			axis.next();
-			count++;
-		}
+        Integer count = 0;
+        while (axis.hasNext()) {
+            axis.next();
+            count++;
+        }
 
-		return TypedValue.getBytes(count.toString());
+        return TypedValue.getBytes(count.toString());
 
-	}
+    }
 
 }

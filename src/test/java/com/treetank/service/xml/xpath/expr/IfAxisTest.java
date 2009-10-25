@@ -40,40 +40,40 @@ import com.treetank.utils.DocumentCreater;
  */
 public class IfAxisTest {
 
-	@Before
-	public void setUp() {
+    @Before
+    public void setUp() {
 
-		Session.removeSession(ITestConstants.PATH1);
+        Session.removeSession(ITestConstants.PATH1);
 
-	}
+    }
 
-	@Test
-	public void testIf() throws IOException {
+    @Test
+    public void testIf() throws IOException {
 
-		// Build simple test tree.
-		final ISession session = Session.beginSession(ITestConstants.PATH1);
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
-		wtx.commit();
-		IReadTransaction rtx = session.beginReadTransaction();
+        // Build simple test tree.
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        IReadTransaction rtx = session.beginReadTransaction();
 
-		rtx.moveTo(1L);
+        rtx.moveTo(1L);
 
-		IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-				"if (text()) then . else child::node()"), new long[] { 1L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                "if (text()) then . else child::node()"), new long[] { 1L });
 
-		IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-				"if (node()) then . else child::node()"), new long[] { 1L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                "if (node()) then . else child::node()"), new long[] { 1L });
 
-		IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-				"if (processing-instruction()) then . else child::node()"),
-				new long[] { 4L, 5L, 8L, 9L, 13L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                "if (processing-instruction()) then . else child::node()"),
+                new long[] { 4L, 5L, 8L, 9L, 13L });
 
-		rtx.close();
-		wtx.abort();
-		wtx.close();
-		session.close();
+        rtx.close();
+        wtx.abort();
+        wtx.close();
+        session.close();
 
-	}
+    }
 
 }

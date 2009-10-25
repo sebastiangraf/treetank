@@ -18,37 +18,43 @@
 
 package com.treetank.axis;
 
+import static org.junit.Assert.fail;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.io.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
 
 public class PostOrderTest {
 
-	@Before
-	public void setUp() {
-		Session.removeSession(ITestConstants.PATH1);
-	}
+    @Before
+    public void setUp() {
+       TestHelper.removeAllFiles();
+    }
 
-	@Test
-	public void testIterate() {
+    @Test
+    public void testIterate() {
+        try {
+            // Build simple test tree.
+            final ISession session = Session.beginSession(ITestConstants.PATH1);
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            DocumentCreater.create(wtx);
 
-		// Build simple test tree.
-		final ISession session = Session.beginSession(ITestConstants.PATH1);
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
+            wtx.moveToDocumentRoot();
+            IAxisTest.testIAxisConventions(new PostOrderAxis(wtx), new long[] {
+                    4L, 6L, 7L, 5L, 8L, 11L, 12L, 9L, 13L, 1L, 0L });
 
-		wtx.moveToDocumentRoot();
-		IAxisTest.testIAxisConventions(new PostOrderAxis(wtx), new long[] { 4L,
-				6L, 7L, 5L, 8L, 11L, 12L, 9L, 13L, 1L, 0L });
-
-		wtx.abort();
-		wtx.close();
-		session.close();
-
-	}
+            wtx.abort();
+            wtx.close();
+            session.close();
+        } catch (final TreetankIOException exc) {
+            fail(exc.toString());
+        }
+    }
 }

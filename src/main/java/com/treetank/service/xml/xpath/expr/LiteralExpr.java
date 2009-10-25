@@ -29,31 +29,31 @@ import com.treetank.api.IReadTransaction;
  */
 public class LiteralExpr extends AbstractExpression implements IAxis {
 
-	private final long mLiteralKey;
+    private final long mLiteralKey;
 
-	/**
-	 * Constructor. Initializes the internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) trx to iterate with.
-	 * @param itemKey
-	 *            itemKey of the literal
-	 */
-	public LiteralExpr(final IReadTransaction rtx, final long itemKey) {
-		super(rtx);
+    /**
+     * Constructor. Initializes the internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
+     * @param itemKey
+     *            itemKey of the literal
+     */
+    public LiteralExpr(final IReadTransaction rtx, final long itemKey) {
+        super(rtx);
 
-		mLiteralKey = itemKey;
-	}
+        mLiteralKey = itemKey;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void evaluate() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void evaluate() {
 
-		// set transaction to literal
-		getTransaction().moveTo(mLiteralKey);
+        // set transaction to literal
+        getTransaction().moveTo(mLiteralKey);
 
-	}
+    }
 
 }

@@ -11,26 +11,26 @@ package com.treetank.io;
  */
 public interface ITTSource {
 
-	/**
-	 * Reading a long to the storage
-	 * 
-	 * @param longVal
-	 *            to be read
-	 */
-	long readLong();
+    /**
+     * Reading a long to the storage
+     * 
+     * @param longVal
+     *            to be read
+     */
+    long readLong();
 
-	/**
-	 * Reading an byte to the storage
-	 * 
-	 * @param byte to be read
-	 */
-	byte readByte();
+    /**
+     * Reading an byte to the storage
+     * 
+     * @param byte to be read
+     */
+    byte readByte();
 
-	/**
-	 * Reading an int to the storage
-	 * 
-	 * @param int to be read
-	 */
-	int readInt();
+    /**
+     * Reading an int to the storage
+     * 
+     * @param int to be read
+     */
+    int readInt();
 
 }

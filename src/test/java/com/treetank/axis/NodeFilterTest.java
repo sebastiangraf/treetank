@@ -18,44 +18,50 @@
 
 package com.treetank.axis;
 
+import static org.junit.Assert.fail;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.io.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
 
 public class NodeFilterTest {
 
-	@Before
-	public void setUp() {
-		Session.removeSession(ITestConstants.PATH1);
-	}
+    @Before
+    public void setUp() {
+       TestHelper.removeAllFiles();
+    }
 
-	@Test
-	public void testIFilterConvetions() {
+    @Test
+    public void testIFilterConvetions() {
+        try {
+            // Build simple test tree.
+            final ISession session = Session.beginSession(ITestConstants.PATH1);
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            DocumentCreater.create(wtx);
 
-		// Build simple test tree.
-		final ISession session = Session.beginSession(ITestConstants.PATH1);
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
+            wtx.moveTo(9L);
+            IFilterTest.testIFilterConventions(new NodeFilter(wtx), true);
 
-		wtx.moveTo(9L);
-		IFilterTest.testIFilterConventions(new NodeFilter(wtx), true);
+            wtx.moveTo(4L);
+            IFilterTest.testIFilterConventions(new NodeFilter(wtx), true);
 
-		wtx.moveTo(4L);
-		IFilterTest.testIFilterConventions(new NodeFilter(wtx), true);
+            wtx.moveTo(1L);
+            wtx.moveToAttribute(0);
+            IFilterTest.testIFilterConventions(new NodeFilter(wtx), false);
 
-		wtx.moveTo(1L);
-		wtx.moveToAttribute(0);
-		IFilterTest.testIFilterConventions(new NodeFilter(wtx), false);
-
-		wtx.abort();
-		wtx.close();
-		session.close();
-
-	}
+            wtx.abort();
+            wtx.close();
+            session.close();
+        } catch (final TreetankIOException exc) {
+            fail(exc.toString());
+        }
+    }
 
 }

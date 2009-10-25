@@ -30,41 +30,41 @@ import com.treetank.utils.TypedValue;
 
 public class ClassInvocation {
 
-	public static final String XML = "src" + File.separator + "test"
-			+ File.separator + "resources" + File.separator + "test.xml";
+    public static final String XML = "src" + File.separator + "test"
+            + File.separator + "resources" + File.separator + "test.xml";
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 
-		Session.removeSession(ITestConstants.PATH1);
-		XMLShredder.shred(XML, new SessionConfiguration(ITestConstants.PATH1));
+        Session.removeSession(ITestConstants.PATH1);
+        XMLShredder.shred(XML, new SessionConfiguration(ITestConstants.PATH1));
 
-		// Build simple test tree.
-		final ISession session = Session.beginSession(ITestConstants.PATH1);
-		final IReadTransaction rtx = session.beginReadTransaction();
-		// rtx.moveTo(17L);
+        // Build simple test tree.
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IReadTransaction rtx = session.beginReadTransaction();
+        // rtx.moveTo(17L);
 
-		String query = "fn:count(//b)";
+        String query = "fn:count(//b)";
 
-		System.out.println("Query: " + query);
-		for (long key : new XPathAxis(rtx, query)) {
-			System.out.println(key);
-			System.out.println(rtx.nameForKey(rtx.getNode().getNameKey()));
-			System.out.println(TypedValue.parseString(rtx.getNode()
-					.getRawValue()));
-			System.out.println(rtx.nameForKey(rtx.getNode().getTypeKey())); // will
-			// return
-			// null
-			// for
-			// atomic
-			// values
-			// TODO:
-			// adapt
-			// ReadTransaction
+        System.out.println("Query: " + query);
+        for (long key : new XPathAxis(rtx, query)) {
+            System.out.println(key);
+            System.out.println(rtx.nameForKey(rtx.getNode().getNameKey()));
+            System.out.println(TypedValue.parseString(rtx.getNode()
+                    .getRawValue()));
+            System.out.println(rtx.nameForKey(rtx.getNode().getTypeKey())); // will
+            // return
+            // null
+            // for
+            // atomic
+            // values
+            // TODO:
+            // adapt
+            // ReadTransaction
 
-		}
+        }
 
-		rtx.close();
-		session.close();
-	}
+        rtx.close();
+        session.close();
+    }
 
 }

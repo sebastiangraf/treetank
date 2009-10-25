@@ -18,6 +18,8 @@
 
 package com.treetank.service.xml.xpath;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
 
 import com.treetank.ITestConstants;
@@ -25,36 +27,42 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.io.TreetankIOException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
 
 public class ShreddFileInvocation {
 
-	public static final String XML = "src" + File.separator + "test"
-			+ File.separator + "resources" + File.separator + "content.xml";
+    public static final String XML = "src" + File.separator + "test"
+            + File.separator + "resources" + File.separator + "content.xml";
 
-	public static void main(String[] args) {
-		Session.removeSession(ITestConstants.PATH1);
-		// Setup parsed session.
-		XMLShredder.shred(XML, new SessionConfiguration(ITestConstants.PATH1));
+    public static void main(String[] args) {
+        try {
+            Session.removeSession(ITestConstants.PATH1);
+            // Setup parsed session.
+            XMLShredder.shred(XML, new SessionConfiguration(
+                    ITestConstants.PATH1));
 
-		// Verify.
-		final ISession session = Session.beginSession(ITestConstants.PATH1);
-		final IReadTransaction rtx = session.beginReadTransaction();
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		rtx.moveToDocumentRoot();
+            // Verify.
+            final ISession session = Session.beginSession(ITestConstants.PATH1);
+            final IReadTransaction rtx = session.beginReadTransaction();
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            rtx.moveToDocumentRoot();
 
-		final IAxis xpath = new XPathAxis(wtx,
-				"/office:document-content/office:body/office:text/text:p");
-		for (long node : xpath) {
-			System.out.println(node);
-			wtx.moveTo(node);
-			wtx.remove();
-		}
-		wtx.close();
-		session.close();
+            final IAxis xpath = new XPathAxis(wtx,
+                    "/office:document-content/office:body/office:text/text:p");
+            for (long node : xpath) {
+                System.out.println(node);
+                wtx.moveTo(node);
+                wtx.remove();
+            }
+            wtx.close();
+            session.close();
+        } catch (final TreetankIOException exc) {
+            fail(exc.toString());
+        }
 
-	}
+    }
 
 }

@@ -45,53 +45,53 @@ import com.treetank.axis.AbstractFilter;
  */
 public class SchemaAttributeFilter extends AbstractFilter implements IFilter {
 
-	/** The specified name for the attribute. */
-	private final String attributeName;
+    /** The specified name for the attribute. */
+    private final String attributeName;
 
-	/**
-	 * Default constructor.
-	 * 
-	 * @param rtx
-	 *            Transaction this filter is bound to.
-	 * @param declaration
-	 *            attribute declaration in-scope attribute declaration to match
-	 *            the current node against.
-	 */
-	public SchemaAttributeFilter(final IReadTransaction rtx,
-			final String declaration) {
+    /**
+     * Default constructor.
+     * 
+     * @param rtx
+     *            Transaction this filter is bound to.
+     * @param declaration
+     *            attribute declaration in-scope attribute declaration to match
+     *            the current node against.
+     */
+    public SchemaAttributeFilter(final IReadTransaction rtx,
+            final String declaration) {
 
-		super(rtx);
-		attributeName = declaration;
-	}
+        super(rtx);
+        attributeName = declaration;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final boolean filter() {
+    /**
+     * {@inheritDoc}
+     */
+    public final boolean filter() {
 
-		return false;
+        return false;
 
-		// TODO: The result is only false, because support for schema
-		// information is
-		// not implemented in treetank yet. As soon as this situation changes it
-		// is
-		// necessary to change this method according to the following pseudo
-		// code:
-		//
-		// if (attributeName is NOT in in-scope-declaration) {
-		// throw new XPathError(ErrorType.XPST0008);
-		// } else {
-		// Type specifiedType = type of the attribute specified in the
-		// declaration
-		// return getTransaction().isAttributeKind()
-		// && getTransaction().getName().equals(attributeName)
-		// && (getTransaction().getValueTypeAsType() == specifiedType
-		// getTransaction.getValueTypeAsType().
-		// derivesFrom(specifiedDeclaration) );
-		// }
-		//
-		// See W3C's XPath 2.0 specification for more details
+        // TODO: The result is only false, because support for schema
+        // information is
+        // not implemented in treetank yet. As soon as this situation changes it
+        // is
+        // necessary to change this method according to the following pseudo
+        // code:
+        //
+        // if (attributeName is NOT in in-scope-declaration) {
+        // throw new XPathError(ErrorType.XPST0008);
+        // } else {
+        // Type specifiedType = type of the attribute specified in the
+        // declaration
+        // return getTransaction().isAttributeKind()
+        // && getTransaction().getName().equals(attributeName)
+        // && (getTransaction().getValueTypeAsType() == specifiedType
+        // getTransaction.getValueTypeAsType().
+        // derivesFrom(specifiedDeclaration) );
+        // }
+        //
+        // See W3C's XPath 2.0 specification for more details
 
-	}
+    }
 
 }

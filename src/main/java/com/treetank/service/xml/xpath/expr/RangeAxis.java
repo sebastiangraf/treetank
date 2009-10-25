@@ -45,89 +45,89 @@ import com.treetank.utils.TypedValue;
  */
 public class RangeAxis extends AbstractAxis implements IAxis {
 
-	/** The expression the range starts from. */
-	private final IAxis mFrom;
+    /** The expression the range starts from. */
+    private final IAxis mFrom;
 
-	/** The expression the range ends. */
-	private final IAxis mTo;
+    /** The expression the range ends. */
+    private final IAxis mTo;
 
-	/** Is it the first run of range axis? */
-	private boolean mFirst;
+    /** Is it the first run of range axis? */
+    private boolean mFirst;
 
-	/** The integer value the expression starts from. */
-	private int mStart;
+    /** The integer value the expression starts from. */
+    private int mStart;
 
-	/** The integer value the expression ends. */
-	private int mEnd;
+    /** The integer value the expression ends. */
+    private int mEnd;
 
-	/**
-	 * Constructor. Initializes the internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) trx to iterate with.
-	 * @param from
-	 *            start of the range
-	 * @param to
-	 *            the end of the range
-	 */
-	public RangeAxis(final IReadTransaction rtx, final IAxis from,
-			final IAxis to) {
+    /**
+     * Constructor. Initializes the internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
+     * @param from
+     *            start of the range
+     * @param to
+     *            the end of the range
+     */
+    public RangeAxis(final IReadTransaction rtx, final IAxis from,
+            final IAxis to) {
 
-		super(rtx);
-		mFrom = from;
-		mTo = to;
-		mFirst = true;
-	}
+        super(rtx);
+        mFrom = from;
+        mTo = to;
+        mFirst = true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean hasNext() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasNext() {
 
-		resetToLastKey();
+        resetToLastKey();
 
-		if (mFirst) {
-			mFirst = false;
-			if (mFrom.hasNext()
-					&& Type.getType(
-							mFrom.getTransaction().getNode().getTypeKey())
-							.derivesFrom(Type.INTEGER)) {
-				mStart = (int) Double.parseDouble(TypedValue.parseString(mFrom
-						.getTransaction().getNode().getRawValue()));
+        if (mFirst) {
+            mFirst = false;
+            if (mFrom.hasNext()
+                    && Type.getType(
+                            mFrom.getTransaction().getNode().getTypeKey())
+                            .derivesFrom(Type.INTEGER)) {
+                mStart = (int) Double.parseDouble(TypedValue.parseString(mFrom
+                        .getTransaction().getNode().getRawValue()));
 
-				if (mTo.hasNext()
-						&& Type.getType(
-								mTo.getTransaction().getNode().getTypeKey())
-								.derivesFrom(Type.INTEGER)) {
+                if (mTo.hasNext()
+                        && Type.getType(
+                                mTo.getTransaction().getNode().getTypeKey())
+                                .derivesFrom(Type.INTEGER)) {
 
-					mEnd = Integer.parseInt(TypedValue.parseString(mTo
-							.getTransaction().getNode().getRawValue()));
+                    mEnd = Integer.parseInt(TypedValue.parseString(mTo
+                            .getTransaction().getNode().getRawValue()));
 
-				} else {
-					// at least one operand is the empty sequence
-					resetToStartKey();
-					return false;
-				}
-			} else {
-				// at least one operand is the empty sequence
-				resetToStartKey();
-				return false;
-			}
-		}
+                } else {
+                    // at least one operand is the empty sequence
+                    resetToStartKey();
+                    return false;
+                }
+            } else {
+                // at least one operand is the empty sequence
+                resetToStartKey();
+                return false;
+            }
+        }
 
-		if (mStart <= mEnd) {
-			int itemKey = getTransaction().getItemList().addItem(
-					new AtomicValue(TypedValue.getBytes(Integer
-							.toString(mStart)), getTransaction().keyForName(
-							"xs:integer")));
-			getTransaction().moveTo(itemKey);
-			mStart++;
-			return true;
-		} else {
-			resetToStartKey();
-			return false;
-		}
-	}
+        if (mStart <= mEnd) {
+            int itemKey = getTransaction().getItemList().addItem(
+                    new AtomicValue(TypedValue.getBytes(Integer
+                            .toString(mStart)), getTransaction().keyForName(
+                            "xs:integer")));
+            getTransaction().moveTo(itemKey);
+            mStart++;
+            return true;
+        } else {
+            resetToStartKey();
+            return false;
+        }
+    }
 
 }

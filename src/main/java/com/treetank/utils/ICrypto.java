@@ -22,8 +22,8 @@ import com.treetank.io.file.ByteBufferSinkAndSource;
 
 public interface ICrypto {
 
-	public int crypt(final int length, final ByteBufferSinkAndSource buffer);
+    public int crypt(final int length, final ByteBufferSinkAndSource buffer);
 
-	public int decrypt(final int length, final ByteBufferSinkAndSource buffer);
+    public int decrypt(final int length, final ByteBufferSinkAndSource buffer);
 
 }

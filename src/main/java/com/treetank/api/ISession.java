@@ -18,6 +18,8 @@
 
 package com.treetank.api;
 
+import com.treetank.io.TreetankIOException;
+
 /**
  * <h1>ISession</h1>
  * 
@@ -42,7 +44,7 @@ package com.treetank.api;
  * 
  * // Session with encryption and end-to-end integrity.
  * final SessionConfiguration config = new SessionConfiguration(&quot;example.tnk&quot;,
- * 		&quot;exampleKey......&quot;.getBytes(), true);
+ *         &quot;exampleKey......&quot;.getBytes(), true);
  * final ISession session = Session.beginSession(config);
  * </pre>
  * 
@@ -52,104 +54,104 @@ package com.treetank.api;
  */
 public interface ISession {
 
-	/**
-	 * Get file name of TreeTank file.
-	 * 
-	 * @return File name of TreeTank file.
-	 */
-	String getFileName();
+    /**
+     * Get file name of TreeTank file.
+     * 
+     * @return File name of TreeTank file.
+     */
+    String getFileName();
 
-	/**
-	 * Get absolute path to TreeTank file.
-	 * 
-	 * @return Absolute path to TreeTank file.
-	 */
-	String getAbsolutePath();
+    /**
+     * Get absolute path to TreeTank file.
+     * 
+     * @return Absolute path to TreeTank file.
+     */
+    String getAbsolutePath();
 
-	/**
-	 * Tells whether the session is bound to an encrypted TreeTank file.
-	 * 
-	 * @return True if the TreeTank file is encrypted. False else.
-	 */
-	boolean isEncrypted();
+    /**
+     * Tells whether the session is bound to an encrypted TreeTank file.
+     * 
+     * @return True if the TreeTank file is encrypted. False else.
+     */
+    boolean isEncrypted();
 
-	/**
-	 * Tells whether the session is bound to a checksummed TreeTank file.
-	 * 
-	 * @return True if the TreeTank file is checksummed. False else.
-	 */
-	boolean isChecksummed();
+    /**
+     * Tells whether the session is bound to a checksummed TreeTank file.
+     * 
+     * @return True if the TreeTank file is checksummed. False else.
+     */
+    boolean isChecksummed();
 
-	/**
-	 * Get the major revision of the TreeTank version.
-	 * 
-	 * @return Major revision of TreeTank version.
-	 */
-	long getVersionMajor();
+    /**
+     * Get the major revision of the TreeTank version.
+     * 
+     * @return Major revision of TreeTank version.
+     */
+    long getVersionMajor();
 
-	/**
-	 * Get the minor revision of the TreeTank version.
-	 * 
-	 * @return Minor revision of TreeTank version.
-	 */
-	long getVersionMinor();
+    /**
+     * Get the minor revision of the TreeTank version.
+     * 
+     * @return Minor revision of TreeTank version.
+     */
+    long getVersionMinor();
 
-	/**
-	 * Begin a read-only transaction on the latest committed revision key.
-	 * 
-	 * @return IReadTransaction instance.
-	 */
-	IReadTransaction beginReadTransaction();
+    /**
+     * Begin a read-only transaction on the latest committed revision key.
+     * 
+     * @return IReadTransaction instance.
+     */
+    IReadTransaction beginReadTransaction();
 
-	/**
-	 * Begin a read-only transaction on the given revision key.
-	 * 
-	 * @param revisionKey
-	 *            Revision key to read from.
-	 * @return IReadTransaction instance.
-	 */
-	IReadTransaction beginReadTransaction(final long revisionKey);
+    /**
+     * Begin a read-only transaction on the given revision key.
+     * 
+     * @param revisionKey
+     *            Revision key to read from.
+     * @return IReadTransaction instance.
+     */
+    IReadTransaction beginReadTransaction(final long revisionKey);
 
-	/**
-	 * Begin exclusive read/write transaction without auto commit.
-	 * 
-	 * @return IWriteTransaction instance.
-	 */
-	IWriteTransaction beginWriteTransaction();
+    /**
+     * Begin exclusive read/write transaction without auto commit.
+     * 
+     * @return IWriteTransaction instance.
+     */
+    IWriteTransaction beginWriteTransaction() throws TreetankIOException ;
 
-	/**
-	 * Begin exclusive read/write transaction with auto commit.
-	 * 
-	 * @param maxNodeCount
-	 *            Count of node modifications after which a commit is issued.
-	 * @param maxTime
-	 *            Time in seconds after which a commit is issued.
-	 * @return IWriteTransaction instance.
-	 */
-	IWriteTransaction beginWriteTransaction(final int maxNodeCount,
-			final int maxTime);
+    /**
+     * Begin exclusive read/write transaction with auto commit.
+     * 
+     * @param maxNodeCount
+     *            Count of node modifications after which a commit is issued.
+     * @param maxTime
+     *            Time in seconds after which a commit is issued.
+     * @return IWriteTransaction instance.
+     */
+    IWriteTransaction beginWriteTransaction(final int maxNodeCount,
+            final int maxTime) throws TreetankIOException ;
 
-	/**
-	 * Get number of running read transactions.
-	 * 
-	 * @return Number of running read transactions.
-	 */
-	int getReadTransactionCount();
+    /**
+     * Get number of running read transactions.
+     * 
+     * @return Number of running read transactions.
+     */
+    int getReadTransactionCount();
 
-	/**
-	 * Get number of running write transactions.
-	 * 
-	 * @return Number of running write transactions.
-	 */
-	int getWriteTransactionCount();
+    /**
+     * Get number of running write transactions.
+     * 
+     * @return Number of running write transactions.
+     */
+    int getWriteTransactionCount();
 
-	/**
-	 * Safely close session and immediately release all resources. If there are
-	 * running transactions, they will automatically be closed.
-	 * 
-	 * This is an idempotent operation and does nothing if the session is
-	 * already closed.
-	 */
-	void close();
+    /**
+     * Safely close session and immediately release all resources. If there are
+     * running transactions, they will automatically be closed.
+     * 
+     * This is an idempotent operation and does nothing if the session is
+     * already closed.
+     */
+    void close();
 
 }

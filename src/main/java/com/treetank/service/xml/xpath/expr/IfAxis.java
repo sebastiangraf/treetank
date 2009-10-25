@@ -40,77 +40,77 @@ import com.treetank.service.xml.xpath.functions.Function;
  */
 public class IfAxis extends AbstractAxis implements IAxis {
 
-	private final IAxis mIf;
-	private final IAxis mThen;
-	private final IAxis mElse;
-	private boolean mFirst;
-	private IAxis mResult;
+    private final IAxis mIf;
+    private final IAxis mThen;
+    private final IAxis mElse;
+    private boolean mFirst;
+    private IAxis mResult;
 
-	/**
-	 * 
-	 * Constructor. Initializes the internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) trx to iterate with.
-	 * @param ifAxis
-	 *            Test expression
-	 * @param thenAxis
-	 *            Will be evaluated if test expression evaluates to true.
-	 * @param elseAxis
-	 *            Will be evaluated if test expression evaluates to false.
-	 */
-	public IfAxis(final IReadTransaction rtx, final IAxis ifAxis,
-			final IAxis thenAxis, final IAxis elseAxis) {
+    /**
+     * 
+     * Constructor. Initializes the internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
+     * @param ifAxis
+     *            Test expression
+     * @param thenAxis
+     *            Will be evaluated if test expression evaluates to true.
+     * @param elseAxis
+     *            Will be evaluated if test expression evaluates to false.
+     */
+    public IfAxis(final IReadTransaction rtx, final IAxis ifAxis,
+            final IAxis thenAxis, final IAxis elseAxis) {
 
-		super(rtx);
-		mIf = ifAxis;
-		mThen = thenAxis;
-		mElse = elseAxis;
-		mFirst = true;
-	}
+        super(rtx);
+        mIf = ifAxis;
+        mThen = thenAxis;
+        mElse = elseAxis;
+        mFirst = true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void reset(final long nodeKey) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reset(final long nodeKey) {
 
-		super.reset(nodeKey);
-		mFirst = true;
+        super.reset(nodeKey);
+        mFirst = true;
 
-		if (mIf != null) {
-			mIf.reset(nodeKey);
-		}
+        if (mIf != null) {
+            mIf.reset(nodeKey);
+        }
 
-		if (mThen != null) {
-			mThen.reset(nodeKey);
-		}
+        if (mThen != null) {
+            mThen.reset(nodeKey);
+        }
 
-		if (mElse != null) {
-			mElse.reset(nodeKey);
-		}
+        if (mElse != null) {
+            mElse.reset(nodeKey);
+        }
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean hasNext() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasNext() {
 
-		resetToLastKey();
+        resetToLastKey();
 
-		if (mFirst) {
-			mFirst = false;
-			mResult = (Function.ebv(mIf)) ? mThen : mElse;
-		}
+        if (mFirst) {
+            mFirst = false;
+            mResult = (Function.ebv(mIf)) ? mThen : mElse;
+        }
 
-		if (mResult.hasNext()) {
-			return true;
-		} else {
-			resetToStartKey();
-			return false;
-		}
-	}
+        if (mResult.hasNext()) {
+            return true;
+        } else {
+            resetToStartKey();
+            return false;
+        }
+    }
 
 }

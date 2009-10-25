@@ -15,35 +15,35 @@ import com.treetank.page.NodePage;
  */
 public class RAMCacheTest {
 
-	private final AbstractPage[] pages = new AbstractPage[25];
+    private final AbstractPage[] pages = new AbstractPage[25];
 
-	private ICache cache;
+    private ICache cache;
 
-	@Before
-	public void setUp() {
-		cache = new RAMCache();
-		for (int i = 0; i < pages.length; i++) {
-			cache.put(i, new NodePage(i));
-		}
-	}
+    @Before
+    public void setUp() {
+        cache = new RAMCache();
+        for (int i = 0; i < pages.length; i++) {
+            cache.put(i, new NodePage(i));
+        }
+    }
 
-	@Test
-	public void test() {
-		boolean foundAtLeastOne = false;
-		for (int i = 0; i < pages.length; i++) {
-			if (cache.get(i) != null) {
-				foundAtLeastOne = true;
-			}
-		}
-		assertTrue(foundAtLeastOne);
-		cache.clear();
-		foundAtLeastOne = false;
-		for (int i = 0; i < pages.length; i++) {
-			if (cache.get(i) != null) {
-				foundAtLeastOne = true;
-			}
-		}
-		assertFalse(foundAtLeastOne);
-	}
+    @Test
+    public void test() {
+        boolean foundAtLeastOne = false;
+        for (int i = 0; i < pages.length; i++) {
+            if (cache.get(i) != null) {
+                foundAtLeastOne = true;
+            }
+        }
+        assertTrue(foundAtLeastOne);
+        cache.clear();
+        foundAtLeastOne = false;
+        for (int i = 0; i < pages.length; i++) {
+            if (cache.get(i) != null) {
+                foundAtLeastOne = true;
+            }
+        }
+        assertFalse(foundAtLeastOne);
+    }
 
 }

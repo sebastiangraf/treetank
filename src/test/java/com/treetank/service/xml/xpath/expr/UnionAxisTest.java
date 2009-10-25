@@ -40,54 +40,54 @@ import com.treetank.utils.DocumentCreater;
  */
 public class UnionAxisTest {
 
-	@Before
-	public void setUp() {
+    @Before
+    public void setUp() {
 
-		Session.removeSession(ITestConstants.PATH1);
-	}
+        Session.removeSession(ITestConstants.PATH1);
+    }
 
-	@Test
-	public void testUnion() throws IOException {
+    @Test
+    public void testUnion() throws IOException {
 
-		// Build simple test tree.
-		final ISession session = Session.beginSession(ITestConstants.PATH1);
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
-		wtx.commit();
-		IReadTransaction rtx = session.beginReadTransaction();
+        // Build simple test tree.
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        IReadTransaction rtx = session.beginReadTransaction();
 
-		rtx.moveTo(1L);
+        rtx.moveTo(1L);
 
-		IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-				"child::node()/parent::node() union child::node()"),
-				new long[] { 1L, 4L, 5L, 8L, 9L, 13L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                "child::node()/parent::node() union child::node()"),
+                new long[] { 1L, 4L, 5L, 8L, 9L, 13L });
 
-		IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-				"child::node()/parent::node() | child::node()"), new long[] {
-				1L, 4L, 5L, 8L, 9L, 13L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                "child::node()/parent::node() | child::node()"), new long[] {
+                1L, 4L, 5L, 8L, 9L, 13L });
 
-		IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-				"child::node()/parent::node() | child::node() | self::node()"),
-				new long[] { 1L, 4L, 5L, 8L, 9L, 13L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                "child::node()/parent::node() | child::node() | self::node()"),
+                new long[] { 1L, 4L, 5L, 8L, 9L, 13L });
 
-		IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-				"child::node()/parent::node() | child::node() | self::node()"
-						+ "union parent::node()"), new long[] { 1L, 4L, 5L, 8L,
-				9L, 13L, 0L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                "child::node()/parent::node() | child::node() | self::node()"
+                        + "union parent::node()"), new long[] { 1L, 4L, 5L, 8L,
+                9L, 13L, 0L });
 
-		IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-				"b/preceding::node() union text() | descendant::node()"),
-				new long[] { 4L, 8L, 7L, 6L, 5L, 13L, 9L, 11L, 12L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                "b/preceding::node() union text() | descendant::node()"),
+                new long[] { 4L, 8L, 7L, 6L, 5L, 13L, 9L, 11L, 12L });
 
-		IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-				"//c/ancestor::node() | //node()"), new long[] { 5L, 1L, 9L,
-				4L, 8L, 13L, 6L, 7L, 11L, 12L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                "//c/ancestor::node() | //node()"), new long[] { 5L, 1L, 9L,
+                4L, 8L, 13L, 6L, 7L, 11L, 12L });
 
-		rtx.close();
-		wtx.abort();
-		wtx.close();
-		session.close();
+        rtx.close();
+        wtx.abort();
+        wtx.close();
+        session.close();
 
-	}
+    }
 
 }

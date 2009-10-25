@@ -59,151 +59,151 @@ import com.treetank.api.IWriteTransaction;
  */
 public final class DocumentCreater {
 
-	/** String representation of test document with TNK environment. */
-	public static final String XML_TANK = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-			// + "<rest:sequence xmlns:rest=\"REST\"><rest:item>"
-			+ "<p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b p:x=\"y\">"
-			+ "<c/>bar</b>oops3</p:a>";// + "</rest:item></rest:sequence>";
+    /** String representation of test document with TNK environment. */
+    public static final String XML_TANK = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+            // + "<rest:sequence xmlns:rest=\"REST\"><rest:item>"
+            + "<p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b p:x=\"y\">"
+            + "<c/>bar</b>oops3</p:a>";// + "</rest:item></rest:sequence>";
 
-	/** String representation of test document. */
-	public static final String XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-			+ "<p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b p:x=\"y\">"
-			+ "<c/>bar</b>oops3</p:a>";
+    /** String representation of test document. */
+    public static final String XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+            + "<p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b p:x=\"y\">"
+            + "<c/>bar</b>oops3</p:a>";
 
-	/** String representation of test document without attributes. */
-	public static final String XMLWITHOUTATTRIBUTES = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-			+ "<p:a>oops1<b>foo<c></c></b>oops2<b>"
-			+ "<c></c>bar</b>oops3</p:a>";
+    /** String representation of test document without attributes. */
+    public static final String XMLWITHOUTATTRIBUTES = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+            + "<p:a>oops1<b>foo<c></c></b>oops2<b>"
+            + "<c></c>bar</b>oops3</p:a>";
 
-	public static final String XML_INDEX = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-			+ "<t:o><t:oo><t:oop><t:oops><d:DOCUMENT_ROOT_KIND nodeID=\"0\"><d:p:a nodeID=\"1\">"
-			+ "<d:TEXT_KIND nodeID=\"4\"/></d:p:a></d:DOCUMENT_ROOT_KIND></t:oops></t:oop></t:oo>"
-			+ "</t:o><t:f><t:fo><t:foo><d:DOCUMENT_ROOT_KIND nodeID=\"0\"><d:p:a nodeID=\"1\">"
-			+ "<d:b nodeID=\"5\"><d:TEXT_KIND nodeID=\"6\"/></d:b></d:p:a></d:DOCUMENT_ROOT_KIND></t:foo>"
-			+ "</t:fo></t:f><t:b><t:ba><t:bar><d:DOCUMENT_ROOT_KIND nodeID=\"0\"><d:p:a nodeID=\"1\">"
-			+ "<d:b nodeID=\"9\"><d:TEXT_KIND nodeID=\"12\"/></d:b></d:p:a></d:DOCUMENT_ROOT_KIND></t:bar>"
-			+ "</t:ba></t:b>";
+    public static final String XML_INDEX = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+            + "<t:o><t:oo><t:oop><t:oops><d:DOCUMENT_ROOT_KIND nodeID=\"0\"><d:p:a nodeID=\"1\">"
+            + "<d:TEXT_KIND nodeID=\"4\"/></d:p:a></d:DOCUMENT_ROOT_KIND></t:oops></t:oop></t:oo>"
+            + "</t:o><t:f><t:fo><t:foo><d:DOCUMENT_ROOT_KIND nodeID=\"0\"><d:p:a nodeID=\"1\">"
+            + "<d:b nodeID=\"5\"><d:TEXT_KIND nodeID=\"6\"/></d:b></d:p:a></d:DOCUMENT_ROOT_KIND></t:foo>"
+            + "</t:fo></t:f><t:b><t:ba><t:bar><d:DOCUMENT_ROOT_KIND nodeID=\"0\"><d:p:a nodeID=\"1\">"
+            + "<d:b nodeID=\"9\"><d:TEXT_KIND nodeID=\"12\"/></d:b></d:p:a></d:DOCUMENT_ROOT_KIND></t:bar>"
+            + "</t:ba></t:b>";
 
-	/**
-	 * Hidden constructor.
-	 * 
-	 */
-	private DocumentCreater() {
-		// Hidden.
-	}
+    /**
+     * Hidden constructor.
+     * 
+     */
+    private DocumentCreater() {
+        // Hidden.
+    }
 
-	/**
-	 * Create simple test document containing all supported node kinds.
-	 * 
-	 * @param wtx
-	 *            IWriteTransaction to write to.
-	 */
-	public static void create(final IWriteTransaction wtx) {
+    /**
+     * Create simple test document containing all supported node kinds.
+     * 
+     * @param wtx
+     *            IWriteTransaction to write to.
+     */
+    public static void create(final IWriteTransaction wtx) {
 
-		wtx.moveToDocumentRoot();
+        wtx.moveToDocumentRoot();
 
-		wtx.insertElementAsFirstChild("p:a", "ns");
-		wtx.insertAttribute("i", "", "j");
-		wtx.moveToParent();
-		wtx.insertNamespace("ns", "p");
-		wtx.moveToParent();
+        wtx.insertElementAsFirstChild("p:a", "ns");
+        wtx.insertAttribute("i", "", "j");
+        wtx.moveToParent();
+        wtx.insertNamespace("ns", "p");
+        wtx.moveToParent();
 
-		wtx.insertTextAsFirstChild("oops1");
+        wtx.insertTextAsFirstChild("oops1");
 
-		wtx.insertElementAsRightSibling("b", "");
+        wtx.insertElementAsRightSibling("b", "");
 
-		wtx.insertTextAsFirstChild("foo");
-		wtx.insertElementAsRightSibling("c", "");
-		wtx.moveToParent();
+        wtx.insertTextAsFirstChild("foo");
+        wtx.insertElementAsRightSibling("c", "");
+        wtx.moveToParent();
 
-		wtx.insertTextAsRightSibling("oops2");
+        wtx.insertTextAsRightSibling("oops2");
 
-		wtx.insertElementAsRightSibling("b", "");
-		wtx.insertAttribute("p:x", "ns", "y");
-		wtx.moveToParent();
+        wtx.insertElementAsRightSibling("b", "");
+        wtx.insertAttribute("p:x", "ns", "y");
+        wtx.moveToParent();
 
-		wtx.insertElementAsFirstChild("c", "");
-		wtx.insertTextAsRightSibling("bar");
-		wtx.moveToParent();
+        wtx.insertElementAsFirstChild("c", "");
+        wtx.insertTextAsRightSibling("bar");
+        wtx.moveToParent();
 
-		wtx.insertTextAsRightSibling("oops3");
+        wtx.insertTextAsRightSibling("oops3");
 
-		wtx.moveToDocumentRoot();
+        wtx.moveToDocumentRoot();
 
-	}
+    }
 
-	/**
-	 * Create simple test document containing all supported node kinds except
-	 * the attributes.
-	 * 
-	 * @param wtx
-	 *            IWriteTransaction to write to.
-	 */
-	public static void createWithoutAttributes(final IWriteTransaction wtx) {
+    /**
+     * Create simple test document containing all supported node kinds except
+     * the attributes.
+     * 
+     * @param wtx
+     *            IWriteTransaction to write to.
+     */
+    public static void createWithoutAttributes(final IWriteTransaction wtx) {
 
-		wtx.moveToDocumentRoot();
+        wtx.moveToDocumentRoot();
 
-		wtx.insertElementAsFirstChild("p:a", "ns");
+        wtx.insertElementAsFirstChild("p:a", "ns");
 
-		wtx.insertTextAsFirstChild("oops1");
+        wtx.insertTextAsFirstChild("oops1");
 
-		wtx.insertElementAsRightSibling("b", "");
+        wtx.insertElementAsRightSibling("b", "");
 
-		wtx.insertTextAsFirstChild("foo");
-		wtx.insertElementAsRightSibling("c", "");
-		wtx.moveToParent();
+        wtx.insertTextAsFirstChild("foo");
+        wtx.insertElementAsRightSibling("c", "");
+        wtx.moveToParent();
 
-		wtx.insertTextAsRightSibling("oops2");
+        wtx.insertTextAsRightSibling("oops2");
 
-		wtx.insertElementAsRightSibling("b", "");
+        wtx.insertElementAsRightSibling("b", "");
 
-		wtx.insertElementAsFirstChild("c", "");
-		wtx.insertTextAsRightSibling("bar");
-		wtx.moveToParent();
+        wtx.insertElementAsFirstChild("c", "");
+        wtx.insertTextAsRightSibling("bar");
+        wtx.moveToParent();
 
-		wtx.insertTextAsRightSibling("oops3");
+        wtx.insertTextAsRightSibling("oops3");
 
-		wtx.moveToDocumentRoot();
+        wtx.moveToDocumentRoot();
 
-	}
+    }
 
-	/**
-	 * Create simple test document containing all supported node kinds, but
-	 * ignoring their namespace prefixes.
-	 * 
-	 * @param wtx
-	 *            IWriteTransaction to write to.
-	 */
-	public static void createWithoutNamespace(final IWriteTransaction wtx) {
+    /**
+     * Create simple test document containing all supported node kinds, but
+     * ignoring their namespace prefixes.
+     * 
+     * @param wtx
+     *            IWriteTransaction to write to.
+     */
+    public static void createWithoutNamespace(final IWriteTransaction wtx) {
 
-		wtx.moveToDocumentRoot();
+        wtx.moveToDocumentRoot();
 
-		wtx.insertElementAsFirstChild("a", "");
-		wtx.insertAttribute("i", "", "j");
-		wtx.moveToParent();
+        wtx.insertElementAsFirstChild("a", "");
+        wtx.insertAttribute("i", "", "j");
+        wtx.moveToParent();
 
-		wtx.insertTextAsFirstChild("oops1");
+        wtx.insertTextAsFirstChild("oops1");
 
-		wtx.insertElementAsRightSibling("b", "");
+        wtx.insertElementAsRightSibling("b", "");
 
-		wtx.insertTextAsFirstChild("foo");
-		wtx.insertElementAsRightSibling("c", "");
-		wtx.moveToParent();
+        wtx.insertTextAsFirstChild("foo");
+        wtx.insertElementAsRightSibling("c", "");
+        wtx.moveToParent();
 
-		wtx.insertTextAsRightSibling("oops2");
+        wtx.insertTextAsRightSibling("oops2");
 
-		wtx.insertElementAsRightSibling("b", "");
-		wtx.insertAttribute("x", "", "y");
-		wtx.moveToParent();
+        wtx.insertElementAsRightSibling("b", "");
+        wtx.insertAttribute("x", "", "y");
+        wtx.moveToParent();
 
-		wtx.insertElementAsFirstChild("c", "");
-		wtx.insertTextAsRightSibling("bar");
-		wtx.moveToParent();
+        wtx.insertElementAsFirstChild("c", "");
+        wtx.insertTextAsRightSibling("bar");
+        wtx.moveToParent();
 
-		wtx.insertTextAsRightSibling("oops3");
+        wtx.insertTextAsRightSibling("oops3");
 
-		wtx.moveToDocumentRoot();
+        wtx.moveToDocumentRoot();
 
-	}
+    }
 
 }

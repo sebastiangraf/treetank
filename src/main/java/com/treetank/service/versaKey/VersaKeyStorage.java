@@ -14,14 +14,14 @@ import com.treetank.session.Session;
  */
 class VersaKeyStorage implements IKeyStorage {
 
-	private final ISession session;
+    private final ISession session;
 
-	public VersaKeyStorage(final File paramStorage) {
-		try {
-			session = Session.beginSession(paramStorage);
-		} catch (final IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public VersaKeyStorage(final File paramStorage) {
+        try {
+            session = Session.beginSession(paramStorage);
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }

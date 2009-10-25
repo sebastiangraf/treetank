@@ -31,129 +31,131 @@ import com.treetank.session.WriteTransactionState;
  */
 public abstract class AbstractPage {
 
-	/** Page references. */
-	private final PageReference<? extends AbstractPage>[] mReferences;
+    /** Page references. */
+    private final PageReference[] mReferences;
 
-	/**
-	 * Constructor to initialize instance.
-	 * 
-	 * @param dirty
-	 *            True if the page is created or cloned. False if read or
-	 *            committed.
-	 * @param referenceCount
-	 *            Number of references of page.
-	 */
-	protected AbstractPage(final int referenceCount) {
-		mReferences = new PageReference<?>[referenceCount];
-	}
+    /**
+     * Constructor to initialize instance.
+     * 
+     * @param dirty
+     *            True if the page is created or cloned. False if read or
+     *            committed.
+     * @param referenceCount
+     *            Number of references of page.
+     */
+    protected AbstractPage(final int referenceCount) {
 
-	/**
-	 * Read constructor.
-	 * 
-	 * @param referenceCount
-	 *            Number of references of page.
-	 * @param in
-	 *            Input reader to read from.
-	 */
-	protected AbstractPage(final int referenceCount, final ITTSource in) {
-		this(referenceCount);
-		final int[] values = new int[referenceCount];
-		for (int i = 0; i < values.length; i++) {
-			values[i] = in.readInt();
-		}
-		for (int offset = 0; offset < referenceCount; offset++) {
-			if (values[offset] == 1) {
-				getReferences()[offset] = new PageReference(in);
-			}
-		}
-	}
+        mReferences = new PageReference[referenceCount];
+    }
 
-	/**
-	 * Clone constructor used for COW.
-	 * 
-	 * @param referenceCount
-	 *            Number of references of page.
-	 * @param committedPage
-	 *            Page to clone.
-	 */
-	protected AbstractPage(final int referenceCount,
-			final AbstractPage committedPage) {
-		this(referenceCount);
+    /**
+     * Read constructor.
+     * 
+     * @param referenceCount
+     *            Number of references of page.
+     * @param in
+     *            Input reader to read from.
+     */
+    protected AbstractPage(final int referenceCount, final ITTSource in) {
+        this(referenceCount);
+        final int[] values = new int[referenceCount];
+        for (int i = 0; i < values.length; i++) {
+            values[i] = in.readInt();
+        }
+        for (int offset = 0; offset < referenceCount; offset++) {
+            if (values[offset] == 1) {
+                getReferences()[offset] = new PageReference(in);
+            }
+        }
+    }
 
-		for (int offset = 0; offset < referenceCount; offset++) {
-			if (committedPage.getReferences()[offset] != null) {
-				getReferences()[offset] = new PageReference(committedPage
-						.getReferences()[offset]);
-			}
-		}
-	}
+    /**
+     * Clone constructor used for COW.
+     * 
+     * @param referenceCount
+     *            Number of references of page.
+     * @param committedPage
+     *            Page to clone.
+     */
+    protected AbstractPage(final int referenceCount,
+            final AbstractPage committedPage) {
+        this(referenceCount);
 
-	/**
-	 * Get page reference of given offset.
-	 * 
-	 * @param offset
-	 *            Offset of page reference.
-	 * @return PageReference at given offset.
-	 */
-	public final PageReference getReference(final int offset) {
-		if (getReferences()[offset] == null) {
-			getReferences()[offset] = new PageReference();
-		}
-		return getReferences()[offset];
-	}
+        for (int offset = 0; offset < referenceCount; offset++) {
+            if (committedPage.getReferences()[offset] != null) {
+                final PageReference ref = committedPage.getReferences()[offset];
+                getReferences()[offset] = new PageReference(ref);
+            }
+        }
+    }
 
-	/**
-	 * Set page reference at given offset.
-	 * 
-	 * @param offset
-	 *            Offset of page reference.
-	 * @param reference
-	 *            Page reference to set.
-	 */
-	public final void setReference(final int offset,
-			final PageReference<? extends AbstractPage> reference) {
-		getReferences()[offset] = reference;
-	}
+    /**
+     * Get page reference of given offset.
+     * 
+     * @param offset
+     *            Offset of page reference.
+     * @return PageReference at given offset.
+     */
+    public final PageReference getReference(final int offset) {
+        if (getReferences()[offset] == null) {
+            getReferences()[offset] = new PageReference();
+        }
+        return getReferences()[offset];
+    }
 
-	/**
-	 * Recursively call commit on all referenced pages.
-	 * 
-	 * @param state
-	 *            IWriteTransaction state.
-	 */
-	public void commit(final WriteTransactionState state) {
-		for (final PageReference<? extends AbstractPage> reference : getReferences()) {
-			state.commit(reference);
-		}
-	}
+    /**
+     * Set page reference at given offset.
+     * 
+     * @param offset
+     *            Offset of page reference.
+     * @param reference
+     *            Page reference to set.
+     */
+    public final void setReference(final int offset,
+            final PageReference reference) {
+        getReferences()[offset] = reference;
+    }
 
-	/**
-	 * Serialize page references into output.
-	 * 
-	 * @param out
-	 *            Output stream.
-	 */
-	public void serialize(final ITTSink out) {
-		for (int i = 0; i < getReferences().length; i++) {
-			if (getReferences()[i] != null) {
-				out.writeInt(1);
-			} else {
-				out.writeInt(0);
-			}
-		}
+    /**
+     * Recursively call commit on all referenced pages.
+     * 
+     * @param state
+     *            IWriteTransaction state.
+     */
 
-		for (final PageReference<? extends AbstractPage> reference : getReferences()) {
-			if (reference != null) {
-				reference.serialize(out);
-			}
-		}
-	}
+    public final void commit(final WriteTransactionState state) {
+        for (final PageReference reference : getReferences()) {
+            state.commit(reference);
+        }
+    }
 
-	/**
-	 * @return the mReferences
-	 */
-	public PageReference<? extends AbstractPage>[] getReferences() {
-		return mReferences;
-	}
+    /**
+     * Serialize page references into output.
+     * 
+     * @param out
+     *            Output stream.
+     */
+    public void serialize(final ITTSink out) {
+        for (int i = 0; i < getReferences().length; i++) {
+            if (getReferences()[i] != null) {
+                out.writeInt(1);
+            } else {
+                out.writeInt(0);
+            }
+        }
+
+        for (final PageReference reference : getReferences()) {
+            if (reference != null) {
+                reference.serialize(out);
+            }
+        }
+    }
+
+    /**
+     * @return the mReferences
+     */
+    public PageReference[] getReferences() {
+        return mReferences;
+    }
 
 }

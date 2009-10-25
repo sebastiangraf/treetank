@@ -31,29 +31,29 @@ import com.treetank.page.NodePage;
  * 
  */
 public interface ICache {
-	/**
-	 * Clearing the cache. That is removing all elements.
-	 */
-	public void clear();
+    /**
+     * Clearing the cache. That is removing all elements.
+     */
+    void clear();
 
-	/**
-	 * Getting a page related to a given nodepagekey.
-	 * 
-	 * @param key
-	 *            the key for the requested {@link AbstractPage}
-	 * @return {@link NodePage} instance related to this key
-	 */
-	public NodePage get(final long key);
+    /**
+     * Getting a page related to a given nodepagekey.
+     * 
+     * @param key
+     *            the key for the requested {@link AbstractPage}
+     * @return {@link NodePage} instance related to this key
+     */
+    NodePage get(final long key);
 
-	/**
-	 * Putting an {@link NodePage} into the cache with a corresponding
-	 * nodepagekey.
-	 * 
-	 * @param key
-	 *            for putting the page in the cache.
-	 * @param page
-	 *            should be putted in the cache as well.
-	 */
-	public void put(final long key, final NodePage page);
+    /**
+     * Putting an {@link NodePage} into the cache with a corresponding
+     * nodepagekey.
+     * 
+     * @param key
+     *            for putting the page in the cache.
+     * @param page
+     *            should be putted in the cache as well.
+     */
+    void put(final long key, final NodePage page);
 
 }

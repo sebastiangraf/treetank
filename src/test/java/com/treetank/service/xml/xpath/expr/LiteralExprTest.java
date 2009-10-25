@@ -44,57 +44,57 @@ import com.treetank.utils.TypedValue;
  */
 public class LiteralExprTest {
 
-	private IItem item1;
+    private IItem item1;
 
-	private IItem item2;
+    private IItem item2;
 
-	private int key1;
+    private int key1;
 
-	private int key2;
+    private int key2;
 
-	@Before
-	public void setUp() {
+    @Before
+    public void setUp() {
 
-		Session.removeSession(ITestConstants.PATH1);
-		item1 = new AtomicValue(false);
-		item2 = new AtomicValue(14, Type.INTEGER);
+        Session.removeSession(ITestConstants.PATH1);
+        item1 = new AtomicValue(false);
+        item2 = new AtomicValue(14, Type.INTEGER);
 
-	}
+    }
 
-	@Test
-	public void testLiteralExpr() throws IOException {
+    @Test
+    public void testLiteralExpr() throws IOException {
 
-		// Build simple test tree.
-		final ISession session = Session.beginSession(ITestConstants.PATH1);
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
-		wtx.commit();
-		IReadTransaction rtx = session.beginReadTransaction();
+        // Build simple test tree.
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        IReadTransaction rtx = session.beginReadTransaction();
 
-		key1 = rtx.getItemList().addItem(item1);
-		key2 = rtx.getItemList().addItem(item2);
+        key1 = rtx.getItemList().addItem(item1);
+        key2 = rtx.getItemList().addItem(item2);
 
-		final IAxis axis1 = new LiteralExpr(rtx, key1);
-		assertEquals(true, axis1.hasNext());
-		assertEquals(key1, rtx.getNode().getNodeKey());
-		assertEquals(rtx.keyForName("xs:boolean"), rtx.getNode().getTypeKey());
-		assertEquals(false, TypedValue.parseBoolean((rtx.getNode()
-				.getRawValue())));
-		assertEquals(false, axis1.hasNext());
+        final IAxis axis1 = new LiteralExpr(rtx, key1);
+        assertEquals(true, axis1.hasNext());
+        assertEquals(key1, rtx.getNode().getNodeKey());
+        assertEquals(rtx.keyForName("xs:boolean"), rtx.getNode().getTypeKey());
+        assertEquals(false, TypedValue.parseBoolean((rtx.getNode()
+                .getRawValue())));
+        assertEquals(false, axis1.hasNext());
 
-		final IAxis axis2 = new LiteralExpr(rtx, key2);
-		assertEquals(true, axis2.hasNext());
-		assertEquals(key2, rtx.getNode().getNodeKey());
-		assertEquals(rtx.keyForName("xs:integer"), rtx.getNode().getTypeKey());
-		assertEquals(14, (int) TypedValue.parseDouble(rtx.getNode()
-				.getRawValue()));
-		assertEquals(false, axis2.hasNext());
+        final IAxis axis2 = new LiteralExpr(rtx, key2);
+        assertEquals(true, axis2.hasNext());
+        assertEquals(key2, rtx.getNode().getNodeKey());
+        assertEquals(rtx.keyForName("xs:integer"), rtx.getNode().getTypeKey());
+        assertEquals(14, (int) TypedValue.parseDouble(rtx.getNode()
+                .getRawValue()));
+        assertEquals(false, axis2.hasNext());
 
-		rtx.close();
-		wtx.abort();
-		wtx.close();
-		session.close();
+        rtx.close();
+        wtx.abort();
+        wtx.close();
+        session.close();
 
-	}
+    }
 
 }

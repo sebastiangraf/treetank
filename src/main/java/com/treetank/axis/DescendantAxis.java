@@ -32,93 +32,93 @@ import com.treetank.utils.FastStack;
  */
 public class DescendantAxis extends AbstractAxis implements IAxis {
 
-	/** Stack for remembering next nodeKey in document order. */
-	private FastStack<Long> mRightSiblingKeyStack;
+    /** Stack for remembering next nodeKey in document order. */
+    private FastStack<Long> mRightSiblingKeyStack;
 
-	/** The nodeKey of the next node to visit. */
-	private long mNextKey;
+    /** The nodeKey of the next node to visit. */
+    private long mNextKey;
 
-	/**
-	 * Constructor initializing internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) trx to iterate with.
-	 */
-	public DescendantAxis(final IReadTransaction rtx) {
-		super(rtx);
-	}
+    /**
+     * Constructor initializing internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
+     */
+    public DescendantAxis(final IReadTransaction rtx) {
+        super(rtx);
+    }
 
-	/**
-	 * Constructor initializing internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) trx to iterate with.
-	 * @param includeSelf
-	 *            Is self included?
-	 */
-	public DescendantAxis(final IReadTransaction rtx, final boolean includeSelf) {
-		super(rtx, includeSelf);
-	}
+    /**
+     * Constructor initializing internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
+     * @param includeSelf
+     *            Is self included?
+     */
+    public DescendantAxis(final IReadTransaction rtx, final boolean includeSelf) {
+        super(rtx, includeSelf);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void reset(final long nodeKey) {
-		super.reset(nodeKey);
-		mRightSiblingKeyStack = new FastStack<Long>();
-		if (isSelfIncluded()) {
-			mNextKey = getTransaction().getNode().getNodeKey();
-		} else {
-			mNextKey = getTransaction().getNode().getFirstChildKey();
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void reset(final long nodeKey) {
+        super.reset(nodeKey);
+        mRightSiblingKeyStack = new FastStack<Long>();
+        if (isSelfIncluded()) {
+            mNextKey = getTransaction().getNode().getNodeKey();
+        } else {
+            mNextKey = getTransaction().getNode().getFirstChildKey();
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final boolean hasNext() {
-		resetToLastKey();
+    /**
+     * {@inheritDoc}
+     */
+    public final boolean hasNext() {
+        resetToLastKey();
 
-		// Fail if there is no node anymore.
-		if (mNextKey == IReadTransaction.NULL_NODE_KEY) {
-			resetToStartKey();
-			return false;
-		}
+        // Fail if there is no node anymore.
+        if (mNextKey == IReadTransaction.NULL_NODE_KEY) {
+            resetToStartKey();
+            return false;
+        }
 
-		getTransaction().moveTo(mNextKey);
+        getTransaction().moveTo(mNextKey);
 
-		// Fail if the subtree is finished.
-		if (getTransaction().getNode().getLeftSiblingKey() == getStartKey()) {
-			resetToStartKey();
-			return false;
-		}
+        // Fail if the subtree is finished.
+        if (getTransaction().getNode().getLeftSiblingKey() == getStartKey()) {
+            resetToStartKey();
+            return false;
+        }
 
-		// Always follow first child if there is one.
-		if (getTransaction().getNode().hasFirstChild()) {
-			mNextKey = getTransaction().getNode().getFirstChildKey();
-			if (getTransaction().getNode().hasRightSibling()) {
-				mRightSiblingKeyStack.push(getTransaction().getNode()
-						.getRightSiblingKey());
-			}
-			return true;
-		}
+        // Always follow first child if there is one.
+        if (getTransaction().getNode().hasFirstChild()) {
+            mNextKey = getTransaction().getNode().getFirstChildKey();
+            if (getTransaction().getNode().hasRightSibling()) {
+                mRightSiblingKeyStack.push(getTransaction().getNode()
+                        .getRightSiblingKey());
+            }
+            return true;
+        }
 
-		// Then follow right sibling if there is one.
-		if (getTransaction().getNode().hasRightSibling()) {
-			mNextKey = getTransaction().getNode().getRightSiblingKey();
-			return true;
-		}
+        // Then follow right sibling if there is one.
+        if (getTransaction().getNode().hasRightSibling()) {
+            mNextKey = getTransaction().getNode().getRightSiblingKey();
+            return true;
+        }
 
-		// Then follow right sibling on stack.
-		if (mRightSiblingKeyStack.size() > 0) {
-			mNextKey = mRightSiblingKeyStack.pop();
-			return true;
-		}
+        // Then follow right sibling on stack.
+        if (mRightSiblingKeyStack.size() > 0) {
+            mNextKey = mRightSiblingKeyStack.pop();
+            return true;
+        }
 
-		// Then end.
-		mNextKey = IReadTransaction.NULL_NODE_KEY;
-		return true;
-	}
+        // Then end.
+        mNextKey = IReadTransaction.NULL_NODE_KEY;
+        return true;
+    }
 
 }

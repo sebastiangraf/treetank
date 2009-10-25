@@ -99,7 +99,7 @@ import java.util.Iterator;
  * // Must extend &lt;code&gt;AbstractAxis&lt;/code&gt; and implement &lt;code&gt;IAxis&lt;/code&gt;.
  * public class ExampleAxis extends AbstractAxis implements IAxis {
  * 
- * 	public ExampleAxis(final IReadTransaction rtx) {
+ *     public ExampleAxis(final IReadTransaction rtx) {
  *       // Must be called as first.
  *       super(rtx);
  *       // Some code moving rtx.
@@ -108,19 +108,19 @@ import java.util.Iterator;
  *       resetToStartKey();
  *     }
  * 
- * 	public final boolean hasNext() {
- * 		// Must be called as first.
- * 		resetToLastKey();
- * 		if (getTransaction.hasParent) {
- * 			// Leave cursor in checked state before returning true.
- * 			getTransaction().moveToParent();
- * 			return true;
- * 		} else {
- * 			// Must be called before returning false.
- * 			resetToStartKey();
- * 			return false;
- * 		}
- * 	}
+ *     public final boolean hasNext() {
+ *         // Must be called as first.
+ *         resetToLastKey();
+ *         if (getTransaction.hasParent) {
+ *             // Leave cursor in checked state before returning true.
+ *             getTransaction().moveToParent();
+ *             return true;
+ *         } else {
+ *             // Must be called before returning false.
+ *             resetToStartKey();
+ *             return false;
+ *         }
+ *     }
  * 
  * }
  * </pre>
@@ -129,19 +129,19 @@ import java.util.Iterator;
  */
 public interface IAxis extends Iterator<Long>, Iterable<Long> {
 
-	/**
-	 * Reset axis to new start node key. Used for nesting.
-	 * 
-	 * @param nodeKey
-	 *            New start node key.
-	 */
-	void reset(final long nodeKey);
+    /**
+     * Reset axis to new start node key. Used for nesting.
+     * 
+     * @param nodeKey
+     *            New start node key.
+     */
+    void reset(final long nodeKey);
 
-	/**
-	 * Access transaction to which this axis is bound.
-	 * 
-	 * @return Transaction to which this axis is bound.
-	 */
-	IReadTransaction getTransaction();
+    /**
+     * Access transaction to which this axis is bound.
+     * 
+     * @return Transaction to which this axis is bound.
+     */
+    IReadTransaction getTransaction();
 
 }

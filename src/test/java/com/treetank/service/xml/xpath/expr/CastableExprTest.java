@@ -45,70 +45,70 @@ import com.treetank.utils.TypedValue;
  */
 public class CastableExprTest {
 
-	@Before
-	public void setUp() {
+    @Before
+    public void setUp() {
 
-		Session.removeSession(ITestConstants.PATH1);
+        Session.removeSession(ITestConstants.PATH1);
 
-	}
+    }
 
-	@Test
-	public void testCastableExpr() throws IOException {
+    @Test
+    public void testCastableExpr() throws IOException {
 
-		// Build simple test tree.
-		final ISession session = Session.beginSession(ITestConstants.PATH1);
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
-		wtx.commit();
-		IReadTransaction rtx = session.beginReadTransaction();
+        // Build simple test tree.
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        IReadTransaction rtx = session.beginReadTransaction();
 
-		final IAxis axis1 = new XPathAxis(rtx, "1 castable as xs:decimal");
-		assertEquals(true, axis1.hasNext());
-		assertEquals(rtx.keyForName("xs:boolean"), rtx.getNode().getTypeKey());
-		assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
-				.getNode().getRawValue()))));
-		assertEquals(false, axis1.hasNext());
+        final IAxis axis1 = new XPathAxis(rtx, "1 castable as xs:decimal");
+        assertEquals(true, axis1.hasNext());
+        assertEquals(rtx.keyForName("xs:boolean"), rtx.getNode().getTypeKey());
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
+                .getNode().getRawValue()))));
+        assertEquals(false, axis1.hasNext());
 
-		final IAxis axis2 = new XPathAxis(rtx,
-				"10.0 castable as xs:anyAtomicType");
-		try {
-			assertEquals(true, axis2.hasNext());
-		} catch (XPathError e) {
-			assertThat(
-					e.getMessage(),
-					is("err:XPST0080 "
-							+ "Target type of a cast or castable expression must not be "
-							+ "xs:NOTATION or xs:anyAtomicType."));
-		}
+        final IAxis axis2 = new XPathAxis(rtx,
+                "10.0 castable as xs:anyAtomicType");
+        try {
+            assertEquals(true, axis2.hasNext());
+        } catch (XPathError e) {
+            assertThat(
+                    e.getMessage(),
+                    is("err:XPST0080 "
+                            + "Target type of a cast or castable expression must not be "
+                            + "xs:NOTATION or xs:anyAtomicType."));
+        }
 
-		// Token is not implemented yet.
-		// final IAxis axis3 = new XPathAxis(rtx,
-		// "\"hello\" castable as xs:token");
-		// assertEquals(true, axis3.hasNext());
-		// assertEquals(Type.BOOLEAN, rtx.getValueTypeAsType());
-		// assertEquals(true, rtx.getValueAsBoolean());
-		// assertEquals(false, axis3.hasNext());
+        // Token is not implemented yet.
+        // final IAxis axis3 = new XPathAxis(rtx,
+        // "\"hello\" castable as xs:token");
+        // assertEquals(true, axis3.hasNext());
+        // assertEquals(Type.BOOLEAN, rtx.getValueTypeAsType());
+        // assertEquals(true, rtx.getValueAsBoolean());
+        // assertEquals(false, axis3.hasNext());
 
-		final IAxis axis4 = new XPathAxis(rtx,
-				"\"hello\" castable as xs:string");
-		assertEquals(true, axis4.hasNext());
-		assertEquals(rtx.keyForName("xs:boolean"), rtx.getNode().getTypeKey());
-		assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
-				.getNode().getRawValue()))));
-		assertEquals(false, axis4.hasNext());
+        final IAxis axis4 = new XPathAxis(rtx,
+                "\"hello\" castable as xs:string");
+        assertEquals(true, axis4.hasNext());
+        assertEquals(rtx.keyForName("xs:boolean"), rtx.getNode().getTypeKey());
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
+                .getNode().getRawValue()))));
+        assertEquals(false, axis4.hasNext());
 
-		// final IAxis axis5 = new XPathAxis(rtx,
-		// "\"hello\" castable as xs:decimal");
-		// assertEquals(true, axis5.hasNext());
-		// assertEquals(rtx.keyForName("xs:boolean"), rtx.getTypeKey());
-		// assertEquals(true, Boolean.parseBoolean(rtx.getValue()));
-		// assertEquals(false, axis5.hasNext());
+        // final IAxis axis5 = new XPathAxis(rtx,
+        // "\"hello\" castable as xs:decimal");
+        // assertEquals(true, axis5.hasNext());
+        // assertEquals(rtx.keyForName("xs:boolean"), rtx.getTypeKey());
+        // assertEquals(true, Boolean.parseBoolean(rtx.getValue()));
+        // assertEquals(false, axis5.hasNext());
 
-		rtx.close();
-		wtx.abort();
-		wtx.close();
-		session.close();
+        rtx.close();
+        wtx.abort();
+        wtx.close();
+        session.close();
 
-	}
+    }
 
 }

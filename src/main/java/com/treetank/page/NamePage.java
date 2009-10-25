@@ -23,6 +23,7 @@ import java.util.Map;
 
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
+import com.treetank.io.PagePersistenter;
 import com.treetank.utils.TypedValue;
 
 /**
@@ -34,119 +35,119 @@ import com.treetank.utils.TypedValue;
  */
 public final class NamePage extends AbstractPage {
 
-	/** Map the hash of a name to its name. */
-	private final Map<Integer, String> mNameMap;
+    /** Map the hash of a name to its name. */
+    private final Map<Integer, String> mNameMap;
 
-	// /** Map the hash of a name to its name. */
-	// private final Map<Integer, byte[]> mRawNameMap;
+    // /** Map the hash of a name to its name. */
+    // private final Map<Integer, byte[]> mRawNameMap;
 
-	/**
-	 * Create name page.
-	 */
-	public NamePage() {
-		super(0);
-		mNameMap = new HashMap<Integer, String>();
-		// mRawNameMap = new HashMap<Integer, byte[]>();
-	}
+    /**
+     * Create name page.
+     */
+    public NamePage() {
+        super(0);
+        mNameMap = new HashMap<Integer, String>();
+        // mRawNameMap = new HashMap<Integer, byte[]>();
+    }
 
-	/**
-	 * Read name page.
-	 * 
-	 * @param in
-	 *            Input bytes to read from.
-	 */
-	NamePage(final ITTSource in) {
-		super(0, in);
+    /**
+     * Read name page.
+     * 
+     * @param in
+     *            Input bytes to read from.
+     */
+    public NamePage(final ITTSource in) {
+        super(0, in);
 
-		int mapSize = in.readInt();
+        int mapSize = in.readInt();
 
-		mNameMap = new HashMap<Integer, String>(mapSize);
-		for (int i = 0, l = (int) mapSize; i < l; i++) {
-			final int key = in.readInt();
-			final int valSize = in.readInt();
-			final byte[] bytes = new byte[valSize];
-			for (int j = 0; j < bytes.length; j++) {
-				bytes[j] = in.readByte();
-			}
-			mNameMap.put(key, TypedValue.parseString(bytes));
-			// mRawNameMap.put(key, bytes);
-		}
-	}
+        mNameMap = new HashMap<Integer, String>(mapSize);
+        for (int i = 0, l = (int) mapSize; i < l; i++) {
+            final int key = in.readInt();
+            final int valSize = in.readInt();
+            final byte[] bytes = new byte[valSize];
+            for (int j = 0; j < bytes.length; j++) {
+                bytes[j] = in.readByte();
+            }
+            mNameMap.put(key, TypedValue.parseString(bytes));
+            // mRawNameMap.put(key, bytes);
+        }
+    }
 
-	/**
-	 * Clone name page.
-	 * 
-	 * @param committedNamePage
-	 *            Page to clone.
-	 */
-	public NamePage(final NamePage committedNamePage) {
-		super(0, committedNamePage);
-		mNameMap = new HashMap<Integer, String>(committedNamePage.mNameMap);
-		// mRawNameMap = new HashMap<Integer, byte[]>(
-		// committedNamePage.mRawNameMap);
-	}
+    /**
+     * Clone name page.
+     * 
+     * @param committedNamePage
+     *            Page to clone.
+     */
+    public NamePage(final NamePage committedNamePage) {
+        super(0, committedNamePage);
+        mNameMap = new HashMap<Integer, String>(committedNamePage.mNameMap);
+        // mRawNameMap = new HashMap<Integer, byte[]>(
+        // committedNamePage.mRawNameMap);
+    }
 
-	/**
-	 * Get name belonging to name key.
-	 * 
-	 * @param key
-	 *            Name key identifying name.
-	 * @return Name of name key.
-	 */
-	public final String getName(final int key) {
-		return mNameMap.get(key);
-	}
+    /**
+     * Get name belonging to name key.
+     * 
+     * @param key
+     *            Name key identifying name.
+     * @return Name of name key.
+     */
+    public final String getName(final int key) {
+        return mNameMap.get(key);
+    }
 
-	/**
-	 * Get raw name belonging to name key.
-	 * 
-	 * @param key
-	 *            Name key identifying name.
-	 * @return Raw name of name key.
-	 */
-	public final byte[] getRawName(final int key) {
-		return TypedValue.getBytes(mNameMap.get(key));
-	}
+    /**
+     * Get raw name belonging to name key.
+     * 
+     * @param key
+     *            Name key identifying name.
+     * @return Raw name of name key.
+     */
+    public final byte[] getRawName(final int key) {
+        return TypedValue.getBytes(mNameMap.get(key));
+    }
 
-	/**
-	 * Create name key given a name.
-	 * 
-	 * @param key
-	 *            Key for given name.
-	 * @param name
-	 *            Name to create key for.
-	 */
-	public final void setName(final int key, final String name) {
-		mNameMap.put(key, name);
-		// mRawNameMap.put(key, TypedValue.getBytes(name));
-	}
+    /**
+     * Create name key given a name.
+     * 
+     * @param key
+     *            Key for given name.
+     * @param name
+     *            Name to create key for.
+     */
+    public final void setName(final int key, final String name) {
+        mNameMap.put(key, name);
+        // mRawNameMap.put(key, TypedValue.getBytes(name));
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void serialize(final ITTSink out) {
-		out.writeInt(PageFactory.NAMEPAGE);
-		super.serialize(out);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void serialize(final ITTSink out) {
+        out.writeInt(PagePersistenter.NAMEPAGE);
+        super.serialize(out);
 
-		out.writeInt(mNameMap.size());
+        out.writeInt(mNameMap.size());
 
-		for (final int key : mNameMap.keySet()) {
-			out.writeInt(key);
-			byte[] tmp = TypedValue.getBytes(mNameMap.get(key));
-			out.writeInt(tmp.length);
-			for (final byte byteVal : tmp) {
-				out.writeByte(byteVal);
-			}
-		}
-	}
+        for (final int key : mNameMap.keySet()) {
+            out.writeInt(key);
+            byte[] tmp = TypedValue.getBytes(mNameMap.get(key));
+            out.writeInt(tmp.length);
+            for (final byte byteVal : tmp) {
+                out.writeByte(byteVal);
+            }
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final String toString() {
-		return super.toString() + ": nameCount=" + mNameMap.size();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final String toString() {
+        return super.toString() + ": nameCount=" + mNameMap.size();
+    }
 
 }

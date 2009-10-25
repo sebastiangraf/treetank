@@ -30,93 +30,93 @@ import com.treetank.api.IFilter;
  */
 public class SequenceType {
 
-	private final boolean mIsEmptySequence;
+    private final boolean mIsEmptySequence;
 
-	private final IFilter mFilter;
+    private final IFilter mFilter;
 
-	private final boolean mHasWildcard;
+    private final boolean mHasWildcard;
 
-	private final char mWildcard;
+    private final char mWildcard;
 
-	/**
-	 * Constructor with no arguments means, the sequence type is the empty
-	 * sequence.
-	 */
-	public SequenceType() {
+    /**
+     * Constructor with no arguments means, the sequence type is the empty
+     * sequence.
+     */
+    public SequenceType() {
 
-		mIsEmptySequence = true;
-		mHasWildcard = false;
-		mWildcard = ' ';
-		mFilter = null;
-	}
+        mIsEmptySequence = true;
+        mHasWildcard = false;
+        mWildcard = ' ';
+        mFilter = null;
+    }
 
-	/**
-	 * Constructor. Sequence type is an ItemType.
-	 * 
-	 * @param filter
-	 *            item type filter
-	 */
-	public SequenceType(final IFilter filter) {
+    /**
+     * Constructor. Sequence type is an ItemType.
+     * 
+     * @param filter
+     *            item type filter
+     */
+    public SequenceType(final IFilter filter) {
 
-		mIsEmptySequence = false;
-		mFilter = filter;
-		mHasWildcard = false;
-		mWildcard = ' ';
-	}
+        mIsEmptySequence = false;
+        mFilter = filter;
+        mHasWildcard = false;
+        mWildcard = ' ';
+    }
 
-	/**
-	 * Constructor. Sequence type is an ItemType with an wildcard. <li>'ItemType
-	 * ?' means the sequence has zero or one items that are of the ItemType</li>
-	 * <li>'ItemType +' means the sequence one or more items that are of the
-	 * ItemType</li> <li>'ItemType *' means the sequence has zero or more items
-	 * that are of the ItemType</li>
-	 * 
-	 * @param filter
-	 *            item type filter
-	 * @param wildcard
-	 *            either '*', '?' or '+'
-	 */
-	public SequenceType(final IFilter filter, final char wildcard) {
+    /**
+     * Constructor. Sequence type is an ItemType with an wildcard. <li>'ItemType
+     * ?' means the sequence has zero or one items that are of the ItemType</li>
+     * <li>'ItemType +' means the sequence one or more items that are of the
+     * ItemType</li> <li>'ItemType *' means the sequence has zero or more items
+     * that are of the ItemType</li>
+     * 
+     * @param filter
+     *            item type filter
+     * @param wildcard
+     *            either '*', '?' or '+'
+     */
+    public SequenceType(final IFilter filter, final char wildcard) {
 
-		mIsEmptySequence = false;
-		mFilter = filter;
-		mHasWildcard = true;
-		mWildcard = wildcard;
-	}
+        mIsEmptySequence = false;
+        mFilter = filter;
+        mHasWildcard = true;
+        mWildcard = wildcard;
+    }
 
-	/**
-	 * 
-	 * @return true, if sequence is the empty sequence
-	 */
-	public boolean isEmptySequence() {
+    /**
+     * 
+     * @return true, if sequence is the empty sequence
+     */
+    public boolean isEmptySequence() {
 
-		return mIsEmptySequence;
-	}
+        return mIsEmptySequence;
+    }
 
-	/**
-	 * @return the ItemType test
-	 */
-	public IFilter getFilter() {
+    /**
+     * @return the ItemType test
+     */
+    public IFilter getFilter() {
 
-		return mFilter;
-	}
+        return mFilter;
+    }
 
-	/**
-	 * @return true, if a wildcard is present
-	 */
-	public boolean hasWildcard() {
+    /**
+     * @return true, if a wildcard is present
+     */
+    public boolean hasWildcard() {
 
-		return mHasWildcard;
-	}
+        return mHasWildcard;
+    }
 
-	/**
-	 * Returns the wildcard's char representation.
-	 * 
-	 * @return wildcard sign
-	 */
-	public char getWildcard() {
+    /**
+     * Returns the wildcard's char representation.
+     * 
+     * @return wildcard sign
+     */
+    public char getWildcard() {
 
-		return mWildcard;
-	}
+        return mWildcard;
+    }
 
 }

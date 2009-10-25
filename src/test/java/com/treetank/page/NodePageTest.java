@@ -22,45 +22,46 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import com.treetank.io.PagePersistenter;
 import com.treetank.io.file.ByteBufferSinkAndSource;
 import com.treetank.node.ElementNode;
 
 public class NodePageTest {
 
-	@Test
-	public void testSerializeDeserialize() {
-		final NodePage page1 = new NodePage(0L);
-		assertEquals(0L, page1.getNodePageKey());
-		final ElementNode node1 = new ElementNode(0L, 1L, 2L, 3L, 4L, 6, 7, 0);
-		node1.insertAttribute(88L);
-		node1.insertAttribute(87L);
-		node1.insertNamespace(99L);
-		node1.insertNamespace(98L);
-		assertEquals(0L, node1.getNodeKey());
-		page1.setNode(0, node1);
+    @Test
+    public void testSerializeDeserialize() {
+        final NodePage page1 = new NodePage(0L);
+        assertEquals(0L, page1.getNodePageKey());
+        final ElementNode node1 = new ElementNode(0L, 1L, 2L, 3L, 4L, 6, 7, 0);
+        node1.insertAttribute(88L);
+        node1.insertAttribute(87L);
+        node1.insertNamespace(99L);
+        node1.insertNamespace(98L);
+        assertEquals(0L, node1.getNodeKey());
+        page1.setNode(0, node1);
 
-		final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
-		page1.serialize(out);
-		final int position = out.position();
+        final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
+        page1.serialize(out);
+        final int position = out.position();
 
-		out.position(0);
-		final NodePage page2 = (NodePage) PageFactory.createPage(out);
-		assertEquals(position, out.position());
-		assertEquals(0L, page2.getNode(0).getNodeKey());
-		assertEquals(1L, page2.getNode(0).getParentKey());
-		assertEquals(2L, page2.getNode(0).getFirstChildKey());
-		assertEquals(3L, page2.getNode(0).getLeftSiblingKey());
-		assertEquals(4L, page2.getNode(0).getRightSiblingKey());
-		assertEquals(0L, page2.getNode(0).getChildCount());
-		assertEquals(2, page2.getNode(0).getAttributeCount());
-		assertEquals(2, page2.getNode(0).getNamespaceCount());
-		assertEquals(88L, page2.getNode(0).getAttributeKey(0));
-		assertEquals(87L, page2.getNode(0).getAttributeKey(1));
-		assertEquals(99L, page2.getNode(0).getNamespaceKey(0));
-		assertEquals(98L, page2.getNode(0).getNamespaceKey(1));
-		assertEquals(6, page2.getNode(0).getNameKey());
-		assertEquals(7, page2.getNode(0).getURIKey());
+        out.position(0);
+        final NodePage page2 = (NodePage) PagePersistenter.createPage(out);
+        assertEquals(position, out.position());
+        assertEquals(0L, page2.getNode(0).getNodeKey());
+        assertEquals(1L, page2.getNode(0).getParentKey());
+        assertEquals(2L, page2.getNode(0).getFirstChildKey());
+        assertEquals(3L, page2.getNode(0).getLeftSiblingKey());
+        assertEquals(4L, page2.getNode(0).getRightSiblingKey());
+        assertEquals(0L, page2.getNode(0).getChildCount());
+        assertEquals(2, page2.getNode(0).getAttributeCount());
+        assertEquals(2, page2.getNode(0).getNamespaceCount());
+        assertEquals(88L, page2.getNode(0).getAttributeKey(0));
+        assertEquals(87L, page2.getNode(0).getAttributeKey(1));
+        assertEquals(99L, page2.getNode(0).getNamespaceKey(0));
+        assertEquals(98L, page2.getNode(0).getNamespaceKey(1));
+        assertEquals(6, page2.getNode(0).getNameKey());
+        assertEquals(7, page2.getNode(0).getURIKey());
 
-	}
+    }
 
 }

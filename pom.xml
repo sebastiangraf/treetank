@@ -2,9 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<groupId>treetank</groupId>
 	<artifactId>treetank</artifactId>
 	<name>treetank</name>
-	<version>4.21</version>
+	<version>4.22-SNAPSHOT</version>
 	<description>A native XML database</description>
 	<repositories>
 		<repository>
@@ -13,6 +14,12 @@
 			<url>http://download.oracle.com/maven</url>
 			<layout>default</layout>
 		</repository>
+		<repository>
+             <id>disy-repo</id>
+                        <name>Disy Java packages</name>
+                        <url>http://xen5.disy.inf.uni-konstanz.de/repo/repository</url>
+                        <layout>default</layout>
+                </repository>
 	</repositories>
 	<reporting>
 		<plugins>
@@ -79,14 +86,14 @@
 			<version>6.0.2</version>
 		</dependency>
 		<dependency>
-			<groupId>servletapi</groupId>
+			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 			<version>2.4</version>
 		</dependency>
 		<dependency>
-			<groupId>org</groupId>
+			<groupId>org.perfidix</groupId>
 			<artifactId>perfidix</artifactId>
-			<version>3.4</version>
+			<version>3.6</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>
@@ -94,6 +101,19 @@
 			<version>1.1.1</version>
 		</dependency>
 	</dependencies>
-	<groupId>com</groupId>
+		<distributionManagement>
+  <repository>
+    <id>xen5</id>
+    <name>Xen5 Repository</name>
+        <url>scp://xen5.disy.inf.uni-konstanz.de/home/disyadmin/internalRepo/repository</url>
+		<uniqueVersion>false</uniqueVersion>
+  </repository>
+  <snapshotRepository>
+    <id>xen5</id>
+    <name>Xen5 SnapshotRepository</name>
+         <url>scp://xen5.disy.inf.uni-konstanz.de/home/disyadmin/internalRepo/snapshotRepository</url>
+		 <uniqueVersion>false</uniqueVersion>
+  </snapshotRepository>
+</distributionManagement>
 </project>
 

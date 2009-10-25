@@ -9,24 +9,24 @@ package com.treetank.utils;
  */
 public final class NamePageHash {
 
-	/**
-	 * Private Constructor, class should be instantiated
-	 */
-	private NamePageHash() {
-	}
+    /**
+     * Private Constructor, class should be instantiated
+     */
+    private NamePageHash() {
+    }
 
-	public static final int[] generateOffsets(final int stringKey) {
-		final int[] returnval = new int[2];
-		returnval[0] = stringKey & 127;
+    public static final int[] generateOffsets(final int stringKey) {
+        final int[] returnval = new int[2];
+        returnval[0] = stringKey & 127;
 
-		// final int secondKey = stringKey*(stringKey+3) % 67;
-		returnval[1] = (stringKey >> 7) & 127;
-		return returnval;
+        // final int secondKey = stringKey*(stringKey+3) % 67;
+        returnval[1] = (stringKey >> 7) & 127;
+        return returnval;
 
-	}
+    }
 
-	public static final int generateHashForString(final String string) {
-		return string.hashCode();
-	}
+    public static final int generateHashForString(final String string) {
+        return string.hashCode();
+    }
 
 }

@@ -31,110 +31,110 @@ package com.treetank.utils;
  */
 public final class FastStack<E> {
 
-	/** Internal array to store stack elements. */
-	private E[] mStack;
+    /** Internal array to store stack elements. */
+    private E[] mStack;
 
-	/** Current size of stack. */
-	private int mSize;
+    /** Current size of stack. */
+    private int mSize;
 
-	/**
-	 * Constructor.
-	 * 
-	 */
-	@SuppressWarnings("unchecked")
-	public FastStack() {
-		mStack = (E[]) new Object[16];
-		mSize = 0;
-	}
+    /**
+     * Constructor.
+     * 
+     */
+    @SuppressWarnings("unchecked")
+    public FastStack() {
+        mStack = (E[]) new Object[16];
+        mSize = 0;
+    }
 
-	/**
-	 * Place new element on top of stack. This might require to double the size
-	 * of the internal array.
-	 * 
-	 * @param element
-	 *            Element to push.
-	 */
-	@SuppressWarnings("unchecked")
-	public final void push(final E element) {
-		if (mStack.length == mSize) {
-			E[] biggerStack = (E[]) new Object[mStack.length << 1];
-			System.arraycopy(mStack, 0, biggerStack, 0, mStack.length);
-			mStack = biggerStack;
-		}
-		mStack[mSize++] = element;
-	}
+    /**
+     * Place new element on top of stack. This might require to double the size
+     * of the internal array.
+     * 
+     * @param element
+     *            Element to push.
+     */
+    @SuppressWarnings("unchecked")
+    public final void push(final E element) {
+        if (mStack.length == mSize) {
+            E[] biggerStack = (E[]) new Object[mStack.length << 1];
+            System.arraycopy(mStack, 0, biggerStack, 0, mStack.length);
+            mStack = biggerStack;
+        }
+        mStack[mSize++] = element;
+    }
 
-	/**
-	 * Get the element on top of the stack. The internal array performs boundary
-	 * checks.
-	 * 
-	 * @return Topmost stack element.
-	 */
-	public final E peek() {
-		return mStack[mSize - 1];
-	}
+    /**
+     * Get the element on top of the stack. The internal array performs boundary
+     * checks.
+     * 
+     * @return Topmost stack element.
+     */
+    public final E peek() {
+        return mStack[mSize - 1];
+    }
 
-	/**
-	 * Get element at given position in stack. The internal array performs
-	 * boundary checks.
-	 * 
-	 * @param position
-	 *            Position in stack from where to get the element.
-	 * @return Stack element at given position.
-	 */
-	public final E get(final int position) {
-		return mStack[position];
-	}
+    /**
+     * Get element at given position in stack. The internal array performs
+     * boundary checks.
+     * 
+     * @param position
+     *            Position in stack from where to get the element.
+     * @return Stack element at given position.
+     */
+    public final E get(final int position) {
+        return mStack[position];
+    }
 
-	/**
-	 * Remove topmost element from stack.
-	 * 
-	 * @return Removed topmost element of stack.
-	 */
-	public final E pop() {
-		return mStack[--mSize];
-	}
+    /**
+     * Remove topmost element from stack.
+     * 
+     * @return Removed topmost element of stack.
+     */
+    public final E pop() {
+        return mStack[--mSize];
+    }
 
-	/**
-	 * Reset the stack.
-	 * 
-	 */
-	public final void clear() {
-		mSize = 0;
-	}
+    /**
+     * Reset the stack.
+     * 
+     */
+    public final void clear() {
+        mSize = 0;
+    }
 
-	/**
-	 * Get the current size of the stack.
-	 * 
-	 * @return Current size of stack.
-	 */
-	public final int size() {
-		return mSize;
-	}
+    /**
+     * Get the current size of the stack.
+     * 
+     * @return Current size of stack.
+     */
+    public final int size() {
+        return mSize;
+    }
 
-	/**
-	 * Is the stack empty?
-	 * 
-	 * @return True if there are no elements anymore. False else.
-	 */
-	public final boolean empty() {
-		return (mSize == 0);
-	}
+    /**
+     * Is the stack empty?
+     * 
+     * @return True if there are no elements anymore. False else.
+     */
+    public final boolean empty() {
+        return (mSize == 0);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toString() {
-		final StringBuilder builder = new StringBuilder("[");
-		for (int i = 0; i < mSize; i++) {
-			builder.append(mStack[i]);
-			if (i < mSize) {
-				builder.append(",");
-			}
-		}
-		builder.append("]");
-		return builder.toString();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder("[");
+        for (int i = 0; i < mSize; i++) {
+            builder.append(mStack[i]);
+            if (i < mSize) {
+                builder.append(",");
+            }
+        }
+        builder.append("]");
+        return builder.toString();
+    }
 
 }

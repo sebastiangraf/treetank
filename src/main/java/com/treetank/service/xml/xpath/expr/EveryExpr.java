@@ -39,72 +39,72 @@ import com.treetank.utils.TypedValue;
  */
 public class EveryExpr extends AbstractExpression implements IAxis {
 
-	private final List<IAxis> mVars;
+    private final List<IAxis> mVars;
 
-	private final IAxis mSatisfy;
+    private final IAxis mSatisfy;
 
-	/**
-	 * Constructor. Initializes the internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) trx to iterate with.
-	 * @param vars
-	 *            Variables for which the condition must be satisfied
-	 * @param satisfy
-	 *            condition every item of the variable results must satisfy in
-	 *            order to evaluate expression to true
-	 */
-	public EveryExpr(final IReadTransaction rtx, final List<IAxis> vars,
-			final IAxis satisfy) {
+    /**
+     * Constructor. Initializes the internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
+     * @param vars
+     *            Variables for which the condition must be satisfied
+     * @param satisfy
+     *            condition every item of the variable results must satisfy in
+     *            order to evaluate expression to true
+     */
+    public EveryExpr(final IReadTransaction rtx, final List<IAxis> vars,
+            final IAxis satisfy) {
 
-		super(rtx);
-		mVars = vars;
-		mSatisfy = satisfy;
-	}
+        super(rtx);
+        mVars = vars;
+        mSatisfy = satisfy;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void reset(final long nodeKey) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reset(final long nodeKey) {
 
-		super.reset(nodeKey);
-		if (mVars != null) {
-			for (IAxis axis : mVars) {
-				axis.reset(nodeKey);
-			}
-		}
+        super.reset(nodeKey);
+        if (mVars != null) {
+            for (IAxis axis : mVars) {
+                axis.reset(nodeKey);
+            }
+        }
 
-		if (mSatisfy != null) {
-			mSatisfy.reset(nodeKey);
-		}
-	}
+        if (mSatisfy != null) {
+            mSatisfy.reset(nodeKey);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void evaluate() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void evaluate() {
 
-		boolean satisfiesCond = true;
+        boolean satisfiesCond = true;
 
-		for (IAxis axis : mVars) {
-			while (axis.hasNext()) {
-				axis.next();
-				if (!mSatisfy.hasNext()) {
-					// condition is not satisfied for this item -> expression is
-					// false
-					satisfiesCond = false;
-					break;
-				}
-			}
-		}
-		int itemKey = getTransaction().getItemList().addItem(
-				new AtomicValue(TypedValue.getBytes(Boolean
-						.toString(satisfiesCond)), getTransaction().keyForName(
-						"xs:boolean")));
-		getTransaction().moveTo(itemKey);
+        for (IAxis axis : mVars) {
+            while (axis.hasNext()) {
+                axis.next();
+                if (!mSatisfy.hasNext()) {
+                    // condition is not satisfied for this item -> expression is
+                    // false
+                    satisfiesCond = false;
+                    break;
+                }
+            }
+        }
+        int itemKey = getTransaction().getItemList().addItem(
+                new AtomicValue(TypedValue.getBytes(Boolean
+                        .toString(satisfiesCond)), getTransaction().keyForName(
+                        "xs:boolean")));
+        getTransaction().moveTo(itemKey);
 
-	}
+    }
 
 }

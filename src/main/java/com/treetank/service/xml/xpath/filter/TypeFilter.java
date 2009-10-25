@@ -34,44 +34,44 @@ import com.treetank.service.xml.xpath.types.Type;
  */
 public class TypeFilter extends AbstractFilter implements IFilter {
 
-	private final int mType;
+    private final int mType;
 
-	/**
-	 * Constructor. Initializes the internal state.
-	 * 
-	 * @param rtx
-	 *            Transaction this filter is bound to.
-	 * @param type
-	 *            Type to match
-	 */
-	public TypeFilter(final IReadTransaction rtx, final int type) {
-		super(rtx);
-		mType = type;
+    /**
+     * Constructor. Initializes the internal state.
+     * 
+     * @param rtx
+     *            Transaction this filter is bound to.
+     * @param type
+     *            Type to match
+     */
+    public TypeFilter(final IReadTransaction rtx, final int type) {
+        super(rtx);
+        mType = type;
 
-		// TODO: not really good solution
-		if (Type.getType(mType) == null) {
-			throw new XPathError(ErrorType.XPST0051);
-		}
-	}
+        // TODO: not really good solution
+        if (Type.getType(mType) == null) {
+            throw new XPathError(ErrorType.XPST0051);
+        }
+    }
 
-	/**
-	 * Constructor. Initializes the internal state.
-	 * 
-	 * @param rtx
-	 *            Transaction this filter is bound to.
-	 * @param typeName
-	 *            Name of the type to match
-	 */
-	public TypeFilter(final IReadTransaction rtx, final String typeName) {
-		this(rtx, rtx.keyForName(typeName));
+    /**
+     * Constructor. Initializes the internal state.
+     * 
+     * @param rtx
+     *            Transaction this filter is bound to.
+     * @param typeName
+     *            Name of the type to match
+     */
+    public TypeFilter(final IReadTransaction rtx, final String typeName) {
+        this(rtx, rtx.keyForName(typeName));
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final boolean filter() {
-		return getTransaction().getNode().getTypeKey() == mType;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public final boolean filter() {
+        return getTransaction().getNode().getTypeKey() == mType;
+    }
 
 }

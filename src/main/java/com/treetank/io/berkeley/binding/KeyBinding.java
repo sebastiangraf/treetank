@@ -4,7 +4,7 @@ import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 import com.treetank.io.AbstractKey;
-import com.treetank.io.KeyFactory;
+import com.treetank.io.KeyPersistenter;
 import com.treetank.io.berkeley.BerkeleyKey;
 import com.treetank.io.berkeley.TupleInputSource;
 import com.treetank.io.berkeley.TupleOutputSink;
@@ -23,7 +23,7 @@ public final class KeyBinding extends TupleBinding<AbstractKey> {
      */
     @Override
     public AbstractKey entryToObject(final TupleInput arg0) {
-        return KeyFactory.createKey(new TupleInputSource(arg0));
+        return KeyPersistenter.createKey(new TupleInputSource(arg0));
     }
 
     /**
@@ -31,6 +31,6 @@ public final class KeyBinding extends TupleBinding<AbstractKey> {
      */
     @Override
     public void objectToEntry(final AbstractKey arg0, final TupleOutput arg1) {
-        arg0.serialize(new TupleOutputSink(arg1));
+        KeyPersistenter.serializeKey(new TupleOutputSink(arg1), arg0);
     }
 }

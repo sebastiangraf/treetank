@@ -16,22 +16,23 @@
  * $Id: HelperFavicon.java 4322 2008-08-14 09:56:29Z kramis $
  */
 
-package com.treetank.service.rest;
+package com.treetank.service.rest.helper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.mortbay.jetty.Request;
+import com.treetank.service.rest.HandledHttpServletRequest;
+import com.treetank.service.rest.TreeTankException;
 
 public final class HelperFavicon {
 
-	public final void handle(final HttpServletRequest request,
-			final HttpServletResponse response) throws TreeTankException {
-		try {
-			((Request) request).setHandled(true);
-		} catch (Exception e) {
-			throw new TreeTankException(500, e.getMessage(), e);
-		}
-	}
+    public final void handle(final HttpServletRequest request,
+            final HttpServletResponse response) throws TreeTankException {
+        try {
+            ((HandledHttpServletRequest) request).setHandled(true);
+        } catch (Exception e) {
+            throw new TreeTankException(500, e.getMessage(), e);
+        }
+    }
 
 }

@@ -18,6 +18,8 @@
 
 package com.treetank.service.xml;
 
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayOutputStream;
 
 import junit.framework.TestCase;
@@ -29,33 +31,37 @@ import com.treetank.ITestConstants;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.io.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
 
 public class XMLSerializerTest {
 
-	@Before
-	public void setUp() {
-		Session.removeSession(ITestConstants.PATH1);
-	}
+    @Before
+    public void setUp() {
+        Session.removeSession(ITestConstants.PATH1);
+    }
 
-	@Test
-	public void testXMLSerializer() {
-		// Setup session.
-		final ISession session = Session.beginSession(ITestConstants.PATH1);
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
-		wtx.commit();
-		wtx.close();
+    @Test
+    public void testXMLSerializer() {
+        try { // Setup session.
+            final ISession session = Session.beginSession(ITestConstants.PATH1);
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            DocumentCreater.create(wtx);
+            wtx.commit();
+            wtx.close();
 
-		// Generate from this session.
-		final ByteArrayOutputStream out = new ByteArrayOutputStream();
-		final IReadTransaction rtx = session.beginReadTransaction();
-		final XMLSerializer serializer = new XMLSerializer(rtx, out);
-		serializer.run();
-		TestCase.assertEquals(DocumentCreater.XML_TANK, out.toString());
-		rtx.close();
-		session.close();
-	}
+            // Generate from this session.
+            final ByteArrayOutputStream out = new ByteArrayOutputStream();
+            final IReadTransaction rtx = session.beginReadTransaction();
+            final XMLSerializer serializer = new XMLSerializer(rtx, out);
+            serializer.run();
+            TestCase.assertEquals(DocumentCreater.XML_TANK, out.toString());
+            rtx.close();
+            session.close();
+        } catch (final TreetankIOException exc) {
+            fail(exc.toString());
+        }
+    }
 
 }

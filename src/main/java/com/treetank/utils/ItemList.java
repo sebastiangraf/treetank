@@ -43,52 +43,52 @@ import com.treetank.api.IItemList;
  */
 public final class ItemList implements IItemList {
 
-	/**
-	 * Internal storage of items.
-	 */
-	private final List<IItem> mList;
+    /**
+     * Internal storage of items.
+     */
+    private final List<IItem> mList;
 
-	/**
-	 * Constructor. Initializes the list.
-	 */
-	public ItemList() {
+    /**
+     * Constructor. Initializes the list.
+     */
+    public ItemList() {
 
-		mList = new ArrayList<IItem>();
-	}
+        mList = new ArrayList<IItem>();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public int addItem(final IItem item) {
+    /**
+     * {@inheritDoc}
+     */
+    public int addItem(final IItem item) {
 
-		final int key = mList.size();
-		item.setNodeKey(key);
-		// TODO: +2 is necessary, because key -1 is the NULL_NODE
-		final int itemKey = (key + 2) * (-1);
-		item.setNodeKey(itemKey);
+        final int key = mList.size();
+        item.setNodeKey(key);
+        // TODO: +2 is necessary, because key -1 is the NULL_NODE
+        final int itemKey = (key + 2) * (-1);
+        item.setNodeKey(itemKey);
 
-		mList.add(item);
-		return itemKey;
-	}
+        mList.add(item);
+        return itemKey;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public IItem getItem(final long key) {
+    /**
+     * {@inheritDoc}
+     */
+    public IItem getItem(final long key) {
 
-		assert key <= Integer.MAX_VALUE;
+        assert key <= Integer.MAX_VALUE;
 
-		int index = (int) key; // cast to integer, because the list only accepts
-		// int
+        int index = (int) key; // cast to integer, because the list only accepts
+        // int
 
-		if (index < 0) {
-			index = index * (-1);
-		}
+        if (index < 0) {
+            index = index * (-1);
+        }
 
-		// TODO: This is necessary, because key -1 is the NULL_NODE
-		index = index - 2;
+        // TODO: This is necessary, because key -1 is the NULL_NODE
+        index = index - 2;
 
-		return mList.get(index);
-	}
+        return mList.get(index);
+    }
 
 }

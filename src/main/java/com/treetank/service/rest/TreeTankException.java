@@ -18,31 +18,40 @@
 
 package com.treetank.service.rest;
 
+import com.treetank.io.TreetankIOException;
+
 public final class TreeTankException extends Exception {
+    private static final long serialVersionUID = 1L;
 
-	private final int mErrorCode;
+    private final int mErrorCode;
 
-	private final String mErrorMessage;
+    private final String mErrorMessage;
 
-	public TreeTankException(final int errorCode, final String errorMessage) {
-		super();
-		mErrorCode = errorCode;
-		mErrorMessage = errorMessage;
-	}
+    public TreeTankException(final TreetankIOException error) {
+        super(error);
+        mErrorCode = 500;
+        mErrorMessage = error.toString();
+    }
 
-	public TreeTankException(final int errorCode, final String errorMessage,
-			final Exception e) {
-		super(e);
-		mErrorCode = errorCode;
-		mErrorMessage = errorMessage;
-	}
+    public TreeTankException(final int errorCode, final String errorMessage) {
+        super();
+        mErrorCode = errorCode;
+        mErrorMessage = errorMessage;
+    }
 
-	public final int getErrorCode() {
-		return mErrorCode;
-	}
+    public TreeTankException(final int errorCode, final String errorMessage,
+            final Exception e) {
+        super(e);
+        mErrorCode = errorCode;
+        mErrorMessage = errorMessage;
+    }
 
-	public final String getErrorMessage() {
-		return mErrorMessage;
-	}
+    public final int getErrorCode() {
+        return mErrorCode;
+    }
+
+    public final String getErrorMessage() {
+        return mErrorMessage;
+    }
 
 }

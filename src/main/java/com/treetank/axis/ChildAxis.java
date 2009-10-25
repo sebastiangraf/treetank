@@ -31,44 +31,44 @@ import com.treetank.api.IReadTransaction;
  */
 public class ChildAxis extends AbstractAxis implements IAxis {
 
-	/** Has another child node. */
-	private boolean mFirst;
+    /** Has another child node. */
+    private boolean mFirst;
 
-	/**
-	 * Constructor initializing internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) trx to iterate with.
-	 */
-	public ChildAxis(final IReadTransaction rtx) {
-		super(rtx);
-	}
+    /**
+     * Constructor initializing internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
+     */
+    public ChildAxis(final IReadTransaction rtx) {
+        super(rtx);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void reset(final long nodeKey) {
-		super.reset(nodeKey);
-		mFirst = true;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void reset(final long nodeKey) {
+        super.reset(nodeKey);
+        mFirst = true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final boolean hasNext() {
-		resetToLastKey();
-		if (!mFirst && getTransaction().getNode().hasRightSibling()) {
-			getTransaction().moveToRightSibling();
-			return true;
-		} else if (mFirst && getTransaction().getNode().hasFirstChild()) {
-			mFirst = false;
-			getTransaction().moveToFirstChild();
-			return true;
-		} else {
-			resetToStartKey();
-			return false;
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public final boolean hasNext() {
+        resetToLastKey();
+        if (!mFirst && getTransaction().getNode().hasRightSibling()) {
+            getTransaction().moveToRightSibling();
+            return true;
+        } else if (mFirst && getTransaction().getNode().hasFirstChild()) {
+            mFirst = false;
+            getTransaction().moveToFirstChild();
+            return true;
+        } else {
+            resetToStartKey();
+            return false;
+        }
+    }
 
 }

@@ -32,6 +32,7 @@ import org.perfidix.result.BenchmarkResult;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.DescendantAxis;
+import com.treetank.io.AbstractIOFactory;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
@@ -55,7 +56,7 @@ public class AxisStepBench {
 
         Session.removeSession(new File(TNK_PATH));
         mSessionConfiguration = new SessionConfiguration(TNK_PATH, TNK_KEY,
-                TNK_CHECKSUM);
+                TNK_CHECKSUM, AbstractIOFactory.StorageType.Berkeley);
         XMLShredder.shred(XML_PATH, mSessionConfiguration);
     }
 

@@ -30,27 +30,27 @@ import com.treetank.api.IReadTransaction;
  */
 public class CommentFilter extends AbstractFilter implements IFilter {
 
-	/**
-	 * Default constructor.
-	 * 
-	 * @param rtx
-	 *            Transaction this filter is bound to.
-	 */
-	public CommentFilter(final IReadTransaction rtx) {
-		super(rtx);
-	}
+    /**
+     * Default constructor.
+     * 
+     * @param rtx
+     *            Transaction this filter is bound to.
+     */
+    public CommentFilter(final IReadTransaction rtx) {
+        super(rtx);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final boolean filter() {
-		return getTransaction().getNode().getKind() == 8;
+    /**
+     * {@inheritDoc}
+     */
+    public final boolean filter() {
+        return getTransaction().getNode().getKind() == 8;
 
-		// TODO: As soon as an comment node is implemented, use the second
-		// version,
-		// because this is much cleaner and more consistent to the other
-		// node-filters.
-		// return (getTransaction().isCommentKind());
-	}
+        // TODO: As soon as an comment node is implemented, use the second
+        // version,
+        // because this is much cleaner and more consistent to the other
+        // node-filters.
+        // return (getTransaction().isCommentKind());
+    }
 
 }

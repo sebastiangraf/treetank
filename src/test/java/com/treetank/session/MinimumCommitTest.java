@@ -33,59 +33,59 @@ import com.treetank.utils.DocumentCreater;
 
 public class MinimumCommitTest {
 
-	@Before
-	public void setUp() {
-		Session.removeSession(ITestConstants.PATH1);
-	}
+    @Before
+    public void setUp() {
+        Session.removeSession(ITestConstants.PATH1);
+    }
 
-	@Test
-	public void test() throws IOException {
+    @Test
+    public void test() throws IOException {
 
-		ISession session = Session.beginSession(ITestConstants.PATH1);
-		IWriteTransaction wtx = session.beginWriteTransaction();
-		TestCase.assertEquals(0L, wtx.getRevisionNumber());
-		wtx.commit();
+        ISession session = Session.beginSession(ITestConstants.PATH1);
+        IWriteTransaction wtx = session.beginWriteTransaction();
+        TestCase.assertEquals(0L, wtx.getRevisionNumber());
+        wtx.commit();
 
-		wtx.close();
-		session.close();
+        wtx.close();
+        session.close();
 
-		session = Session.beginSession(ITestConstants.PATH1);
-		wtx = session.beginWriteTransaction();
-		TestCase.assertEquals(1L, wtx.getRevisionNumber());
-		DocumentCreater.create(wtx);
-		wtx.commit();
-		wtx.close();
+        session = Session.beginSession(ITestConstants.PATH1);
+        wtx = session.beginWriteTransaction();
+        TestCase.assertEquals(1L, wtx.getRevisionNumber());
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        wtx.close();
 
-		wtx = session.beginWriteTransaction();
-		TestCase.assertEquals(2L, wtx.getRevisionNumber());
-		wtx.commit();
-		wtx.close();
+        wtx = session.beginWriteTransaction();
+        TestCase.assertEquals(2L, wtx.getRevisionNumber());
+        wtx.commit();
+        wtx.close();
 
-		IReadTransaction rtx = session.beginReadTransaction();
-		TestCase.assertEquals(2L, rtx.getRevisionNumber());
-		rtx.close();
-		session.close();
+        IReadTransaction rtx = session.beginReadTransaction();
+        TestCase.assertEquals(2L, rtx.getRevisionNumber());
+        rtx.close();
+        session.close();
 
-	}
+    }
 
-	@Test
-	public void testTimestamp() throws IOException {
+    @Test
+    public void testTimestamp() throws IOException {
 
-		ISession session = Session.beginSession(ITestConstants.PATH1);
-		IWriteTransaction wtx = session.beginWriteTransaction();
-		TestCase.assertEquals(0L, wtx.getRevisionTimestamp());
-		wtx.commit();
-		wtx.close();
+        ISession session = Session.beginSession(ITestConstants.PATH1);
+        IWriteTransaction wtx = session.beginWriteTransaction();
+        TestCase.assertEquals(0L, wtx.getRevisionTimestamp());
+        wtx.commit();
+        wtx.close();
 
-		IReadTransaction rtx = session.beginReadTransaction();
-		if (rtx.getRevisionTimestamp() >= (System.currentTimeMillis() + 1)) {
-			TestCase
-					.fail("Committed revision timestamp must be smaller than now.");
-		}
-		rtx.close();
+        IReadTransaction rtx = session.beginReadTransaction();
+        if (rtx.getRevisionTimestamp() >= (System.currentTimeMillis() + 1)) {
+            TestCase
+                    .fail("Committed revision timestamp must be smaller than now.");
+        }
+        rtx.close();
 
-		session.close();
+        session.close();
 
-	}
+    }
 
 }

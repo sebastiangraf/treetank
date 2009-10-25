@@ -30,27 +30,27 @@ import com.treetank.api.IReadTransaction;
  */
 public class PIFilter extends AbstractFilter implements IFilter {
 
-	/**
-	 * Default constructor.
-	 * 
-	 * @param rtx
-	 *            Transaction this filter is bound to.
-	 */
-	public PIFilter(final IReadTransaction rtx) {
-		super(rtx);
-	}
+    /**
+     * Default constructor.
+     * 
+     * @param rtx
+     *            Transaction this filter is bound to.
+     */
+    public PIFilter(final IReadTransaction rtx) {
+        super(rtx);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final boolean filter() {
+    /**
+     * {@inheritDoc}
+     */
+    public final boolean filter() {
 
-		return getTransaction().getNode().getKind() == 7;
+        return getTransaction().getNode().getKind() == 7;
 
-		// TODO: As soon as an PI-node is implemented, use the second version,
-		// because this is much cleaner and more consistent to the other
-		// node-filters.
-		// return (getTransaction().isPIKind());
-	}
+        // TODO: As soon as an PI-node is implemented, use the second version,
+        // because this is much cleaner and more consistent to the other
+        // node-filters.
+        // return (getTransaction().isPIKind());
+    }
 
 }

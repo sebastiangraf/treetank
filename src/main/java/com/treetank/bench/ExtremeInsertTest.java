@@ -1,4 +1,4 @@
-package com.treetank;
+package com.treetank.bench;
 
 import java.io.File;
 import java.util.Random;

@@ -41,55 +41,55 @@ import com.treetank.utils.DocumentCreater;
  */
 public class VarRefExprTest {
 
-	@Before
-	public void setUp() {
+    @Before
+    public void setUp() {
 
-		Session.removeSession(ITestConstants.PATH1);
-	}
+        Session.removeSession(ITestConstants.PATH1);
+    }
 
-	@Test
-	public void testEveryExpr() throws IOException {
+    @Test
+    public void testEveryExpr() throws IOException {
 
-		// Build simple test tree.
-		final ISession session = Session.beginSession(ITestConstants.PATH1);
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
-		wtx.commit();
-		IReadTransaction rtx = session.beginReadTransaction();
+        // Build simple test tree.
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        IReadTransaction rtx = session.beginReadTransaction();
 
-		final IAxis axis = new XPathAxis(rtx, "for $a in b return $a");
+        final IAxis axis = new XPathAxis(rtx, "for $a in b return $a");
 
-		final VariableAxis variable = new VariableAxis(rtx, axis);
+        final VariableAxis variable = new VariableAxis(rtx, axis);
 
-		final VarRefExpr axis1 = new VarRefExpr(rtx, variable);
-		// assertEquals(false, axis1.hasNext());
-		axis1.update(5L);
-		assertEquals(true, axis1.hasNext());
-		assertEquals(5L, rtx.getNode().getNodeKey());
-		axis1.update(13L);
-		assertEquals(true, axis1.hasNext());
-		assertEquals(13L, rtx.getNode().getNodeKey());
-		axis1.update(1L);
-		assertEquals(true, axis1.hasNext());
-		assertEquals(1L, rtx.getNode().getNodeKey());
-		assertEquals(false, axis1.hasNext());
+        final VarRefExpr axis1 = new VarRefExpr(rtx, variable);
+        // assertEquals(false, axis1.hasNext());
+        axis1.update(5L);
+        assertEquals(true, axis1.hasNext());
+        assertEquals(5L, rtx.getNode().getNodeKey());
+        axis1.update(13L);
+        assertEquals(true, axis1.hasNext());
+        assertEquals(13L, rtx.getNode().getNodeKey());
+        axis1.update(1L);
+        assertEquals(true, axis1.hasNext());
+        assertEquals(1L, rtx.getNode().getNodeKey());
+        assertEquals(false, axis1.hasNext());
 
-		final VarRefExpr axis2 = new VarRefExpr(rtx, variable);
-		// assertEquals(false, axis2.hasNext());
-		axis2.update(13L);
-		assertEquals(true, axis2.hasNext());
-		assertEquals(13L, rtx.getNode().getNodeKey());
-		assertEquals(false, axis2.hasNext());
-		axis2.update(12L);
-		assertEquals(true, axis2.hasNext());
-		assertEquals(12L, rtx.getNode().getNodeKey());
-		assertEquals(false, axis2.hasNext());
+        final VarRefExpr axis2 = new VarRefExpr(rtx, variable);
+        // assertEquals(false, axis2.hasNext());
+        axis2.update(13L);
+        assertEquals(true, axis2.hasNext());
+        assertEquals(13L, rtx.getNode().getNodeKey());
+        assertEquals(false, axis2.hasNext());
+        axis2.update(12L);
+        assertEquals(true, axis2.hasNext());
+        assertEquals(12L, rtx.getNode().getNodeKey());
+        assertEquals(false, axis2.hasNext());
 
-		rtx.close();
-		wtx.abort();
-		wtx.close();
-		session.close();
+        rtx.close();
+        wtx.abort();
+        wtx.close();
+        session.close();
 
-	}
+    }
 
 }

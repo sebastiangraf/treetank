@@ -25,8 +25,8 @@ import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
+import com.treetank.io.TreetankIOException;
 import com.treetank.io.berkeley.binding.AbstractPageBinding;
-import com.treetank.page.AbstractPage;
 import com.treetank.page.NodePage;
 import com.treetank.session.SessionConfiguration;
 
@@ -38,117 +38,116 @@ import com.treetank.session.SessionConfiguration;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class BerkeleyPersistenceCache extends AbstractPersistenceCache {
+public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
 
-	/**
-	 * Berkeley database
-	 */
-	private final Database database;
+    /**
+     * Berkeley database
+     */
+    private transient final Database database;
 
-	/**
-	 * Berkeley Environment for the database
-	 */
-	private final Environment env;
+    /**
+     * Berkeley Environment for the database
+     */
+    private transient final Environment env;
 
-	/**
-	 * Name for the database.
-	 */
-	private final static String NAME = "berkeleyCache";
+    /**
+     * Name for the database.
+     */
+    private transient final static String NAME = "berkeleyCache";
 
-	/**
-	 * Binding for the key, which is the nodepage.
-	 */
-	private final TupleBinding<Long> keyBinding;
+    /**
+     * Binding for the key, which is the nodepage.
+     */
+    private transient final TupleBinding<Long> keyBinding;
 
-	/**
-	 * Binding for the value which is a page with related Nodes.
-	 */
-	private final AbstractPageBinding valueBinding;
+    /**
+     * Binding for the value which is a page with related Nodes.
+     */
+    private transient final AbstractPageBinding valueBinding;
 
-	/**
-	 * Constructor. Building up the berkeley db and setting necessary settings.
-	 * 
-	 * @param sessionConfig
-	 *            the place where the berkeley db is stored.
-	 */
-	public BerkeleyPersistenceCache(final SessionConfiguration sessionConfig) {
-		super(sessionConfig);
-		try {
+    /**
+     * Constructor. Building up the berkeley db and setting necessary settings.
+     * 
+     * @param sessionConfig
+     *            the place where the berkeley db is stored.
+     */
+    public BerkeleyPersistenceCache(final SessionConfiguration sessionConfig)
+            throws TreetankIOException {
+        super(sessionConfig);
+        try {
 
-			/* Create a new, transactional database environment */
-			final EnvironmentConfig config = new EnvironmentConfig();
-			config.setAllowCreate(true);
-			config.setLocking(false);
-			env = new Environment(persistentCachePlace, config);
+            /* Create a new, transactional database environment */
+            final EnvironmentConfig config = new EnvironmentConfig();
+            config.setAllowCreate(true);
+            config.setLocking(false);
+            env = new Environment(place, config);
 
-			/* Make a database within that environment */
-			final DatabaseConfig dbConfig = new DatabaseConfig();
-			dbConfig.setAllowCreate(true);
-			dbConfig.setExclusiveCreate(true);
-			database = env.openDatabase(null, NAME, dbConfig);
+            /* Make a database within that environment */
+            final DatabaseConfig dbConfig = new DatabaseConfig();
+            dbConfig.setAllowCreate(true);
+            dbConfig.setExclusiveCreate(true);
+            database = env.openDatabase(null, NAME, dbConfig);
 
-			keyBinding = TupleBinding.getPrimitiveBinding(Long.class);
-			valueBinding = new AbstractPageBinding();
+            keyBinding = TupleBinding.getPrimitiveBinding(Long.class);
+            valueBinding = new AbstractPageBinding();
 
-		} catch (final Exception e) {
-			throw new RuntimeException(e);
+        } catch (final DatabaseException exc) {
+            throw new TreetankIOException(exc);
 
-		}
-	}
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void put(final long key, final NodePage page) {
-		final DatabaseEntry valueEntry = new DatabaseEntry();
-		final DatabaseEntry keyEntry = new DatabaseEntry();
+    /**
+     * {@inheritDoc}
+     */
+    public void putPersistent(final long key, final NodePage page)
+            throws TreetankIOException {
+        final DatabaseEntry valueEntry = new DatabaseEntry();
+        final DatabaseEntry keyEntry = new DatabaseEntry();
 
-		keyBinding.objectToEntry(key, keyEntry);
-		valueBinding.objectToEntry(page, valueEntry);
-		try {
-			database.put(null, keyEntry, valueEntry);
-		} catch (DatabaseException e) {
-			new RuntimeException(e);
-		}
+        keyBinding.objectToEntry(key, keyEntry);
+        valueBinding.objectToEntry(page, valueEntry);
+        try {
+            database.put(null, keyEntry, valueEntry);
+        } catch (final DatabaseException exc) {
+            throw new TreetankIOException(exc);
+        }
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void clear() {
-		try {
-			database.close();
-			env.removeDatabase(null, NAME);
-			env.close();
-		} catch (final DatabaseException e) {
-			new RuntimeException(e);
-		}
-		super.clear();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void clearPersistent() throws TreetankIOException {
+        try {
+            database.close();
+            env.removeDatabase(null, NAME);
+            env.close();
+        } catch (final DatabaseException exc) {
+            throw new TreetankIOException(exc);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final NodePage get(final long key) {
-		final DatabaseEntry valueEntry = new DatabaseEntry();
-		final DatabaseEntry keyEntry = new DatabaseEntry();
-		keyBinding.objectToEntry(key, keyEntry);
-		try {
-			final OperationStatus status = database.get(null, keyEntry,
-					valueEntry, LockMode.DEFAULT);
-			if (status == OperationStatus.SUCCESS) {
-				final AbstractPage val = valueBinding.entryToObject(valueEntry);
-				return (NodePage) val;
-			} else {
-				return null;
-			}
-		} catch (final DatabaseException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public NodePage getPersistent(final long key) throws TreetankIOException {
+        final DatabaseEntry valueEntry = new DatabaseEntry();
+        final DatabaseEntry keyEntry = new DatabaseEntry();
+        keyBinding.objectToEntry(key, keyEntry);
+        try {
+            final OperationStatus status = database.get(null, keyEntry,
+                    valueEntry, LockMode.DEFAULT);
+            NodePage val = null;
+            if (status == OperationStatus.SUCCESS) {
+                val = (NodePage) valueBinding.entryToObject(valueEntry);
+            }
+            return val;
+        } catch (final DatabaseException exc) {
+            throw new TreetankIOException(exc);
+        }
+    }
 
 }

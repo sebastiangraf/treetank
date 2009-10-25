@@ -1,8 +1,6 @@
 package com.treetank.io.berkeley;
 
 import java.io.File;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.je.Database;
@@ -18,7 +16,7 @@ import com.treetank.io.StorageProperties;
 import com.treetank.io.TreetankIOException;
 import com.treetank.io.berkeley.binding.AbstractPageBinding;
 import com.treetank.io.berkeley.binding.KeyBinding;
-import com.treetank.io.berkeley.binding.PageReferenceBinding;
+import com.treetank.io.berkeley.binding.PageReferenceUberPageBinding;
 import com.treetank.io.berkeley.binding.StoragePropTupleBinding;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.PageReference;
@@ -46,7 +44,7 @@ public final class BerkeleyFactory extends AbstractIOFactory {
     public static final TupleBinding<AbstractPage> PAGE_VAL_B = new AbstractPageBinding();
 
     /** Binding for {@link PageReference<AbstractPage>} */
-    public static final TupleBinding<PageReference<AbstractPage>> FIRST_REV_VAL_B = new PageReferenceBinding();
+    public static final TupleBinding<PageReference> FIRST_REV_VAL_B = new PageReferenceUberPageBinding();
 
     /** Binding for {@link Long} */
     public static final TupleBinding<Long> DATAINFO_VAL_B = TupleBinding
@@ -68,11 +66,6 @@ public final class BerkeleyFactory extends AbstractIOFactory {
     private final static String NAME = "berkeleyDatabase";
 
     /**
-     * Concurrent storage for all avaliable databases in runtime
-     */
-    private static Map<SessionConfiguration, BerkeleyFactory> fac = new ConcurrentHashMap<SessionConfiguration, BerkeleyFactory>();
-
-    /**
      * Private constructor.
      * 
      * @param paramSession
@@ -80,7 +73,7 @@ public final class BerkeleyFactory extends AbstractIOFactory {
      * @throws TreetankIOException
      *             of something odd happens while database-connection
      */
-    private BerkeleyFactory(final SessionConfiguration paramSession)
+    public BerkeleyFactory(final SessionConfiguration paramSession)
             throws TreetankIOException {
         super(paramSession);
 
@@ -108,25 +101,6 @@ public final class BerkeleyFactory extends AbstractIOFactory {
     }
 
     /**
-     * Getting one instance for a setting
-     * 
-     * @param conf
-     *            setting for the database
-     * @return {@link BerkeleyFactory} normally
-     * @throws TreetankIOException
-     *             if something odd happens
-     */
-    public static BerkeleyFactory getInstanceForBerkeley(
-            final SessionConfiguration conf) throws TreetankIOException {
-        BerkeleyFactory fact = fac.get(conf);
-        if (fact == null) {
-            fact = new BerkeleyFactory(conf);
-            fac.put(conf, fact);
-        }
-        return fact;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -150,12 +124,11 @@ public final class BerkeleyFactory extends AbstractIOFactory {
      * {@inheritDoc}
      */
     @Override
-    public void closeStorage() throws TreetankIOException {
+    public void closeConcreteStorage() throws TreetankIOException {
 
         try {
             mDatabase.close();
             env.close();
-            fac.remove(this.config);
         } catch (final DatabaseException exc) {
             throw new TreetankIOException(exc);
         }
