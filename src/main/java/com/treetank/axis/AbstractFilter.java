@@ -30,29 +30,29 @@ import com.treetank.api.IReadTransaction;
  */
 public abstract class AbstractFilter implements IFilter {
 
-	/** Iterate over transaction exclusive to this step. */
-	private final IReadTransaction mRTX;
+    /** Iterate over transaction exclusive to this step. */
+    private final IReadTransaction mRTX;
 
-	/**
-	 * Bind axis step to transaction.
-	 * 
-	 * @param rtx
-	 *            Transaction to operate with.
-	 */
-	public AbstractFilter(final IReadTransaction rtx) {
-		mRTX = rtx;
-	}
+    /**
+     * Bind axis step to transaction.
+     * 
+     * @param rtx
+     *            Transaction to operate with.
+     */
+    public AbstractFilter(final IReadTransaction rtx) {
+        mRTX = rtx;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public IReadTransaction getTransaction() {
-		return mRTX;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public IReadTransaction getTransaction() {
+        return mRTX;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public abstract boolean filter();
+    /**
+     * {@inheritDoc}
+     */
+    public abstract boolean filter();
 
 }

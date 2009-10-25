@@ -14,45 +14,34 @@ package com.treetank.io;
  */
 public abstract class AbstractKey {
 
-	/** all keys */
-	private final transient long[] keys;
+    /** all keys */
+    private final transient long[] keys;
 
-	/**
-	 * Protected constructor, just setting the keys.
-	 * 
-	 * @param paramKeys
-	 *            setting the keys.
-	 */
-	protected AbstractKey(final long... paramKeys) {
-		keys = paramKeys;
-	}
+    /**
+     * Protected constructor, just setting the keys.
+     * 
+     * @param paramKeys
+     *            setting the keys.
+     */
+    protected AbstractKey(final long... paramKeys) {
+        keys = paramKeys;
+    }
 
-	/**
-	 * Getting all keys
-	 * 
-	 * @return the keys
-	 */
-	protected long[] getKeys() {
-		final long[] returnKeys = new long[keys.length];
-		System.arraycopy(keys, 0, returnKeys, 0, keys.length);
-		return returnKeys;
-	}
+    /**
+     * Getting all keys
+     * 
+     * @return the keys
+     */
+    protected long[] getKeys() {
+        final long[] returnKeys = new long[keys.length];
+        System.arraycopy(keys, 0, returnKeys, 0, keys.length);
+        return returnKeys;
+    }
 
-	/**
-	 * Serializing the keys.
-	 * 
-	 * @param out
-	 */
-	public void serialize(final ITTSink out) {
-		for (long key : keys) {
-			out.writeLong(key);
-		}
-	}
-
-	/**
-	 * Getting the primary one.
-	 * 
-	 * @return the key which is profmaly
-	 */
-	public abstract long getIdentifier();
+    /**
+     * Getting the primary one.
+     * 
+     * @return the key which is profmaly
+     */
+    public abstract long getIdentifier();
 }

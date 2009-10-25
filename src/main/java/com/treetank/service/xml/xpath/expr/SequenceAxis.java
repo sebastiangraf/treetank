@@ -37,74 +37,74 @@ import com.treetank.axis.AbstractAxis;
  */
 public class SequenceAxis extends AbstractAxis implements IAxis {
 
-	private final List<IAxis> mSeq;
-	private IAxis mCurrent;
-	private int num;
+    private final List<IAxis> mSeq;
+    private IAxis mCurrent;
+    private int num;
 
-	/**
-	 * 
-	 * Constructor. Initializes the internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) trx to iterate with.
-	 * @param axis
-	 *            The singleExpressions contained by the sequence
-	 */
-	public SequenceAxis(final IReadTransaction rtx, final IAxis... axis) {
+    /**
+     * 
+     * Constructor. Initializes the internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
+     * @param axis
+     *            The singleExpressions contained by the sequence
+     */
+    public SequenceAxis(final IReadTransaction rtx, final IAxis... axis) {
 
-		super(rtx);
-		mSeq = Arrays.asList(axis);
-		num = 0;
-	}
+        super(rtx);
+        mSeq = Arrays.asList(axis);
+        num = 0;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void reset(final long nodeKey) {
-		super.reset(nodeKey);
-		if (mSeq != null) {
-			for (IAxis ax : mSeq) {
-				ax.reset(nodeKey);
-			}
-		}
-		mCurrent = null;
-		num = 0;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reset(final long nodeKey) {
+        super.reset(nodeKey);
+        if (mSeq != null) {
+            for (IAxis ax : mSeq) {
+                ax.reset(nodeKey);
+            }
+        }
+        mCurrent = null;
+        num = 0;
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean hasNext() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasNext() {
 
-		resetToLastKey();
+        resetToLastKey();
 
-		if (mCurrent != null) {
+        if (mCurrent != null) {
 
-			if (mCurrent.hasNext()) {
-				return true;
-			} else {
-				// necessary, because previous hasNext() changes state
-				resetToLastKey();
-			}
-		}
+            if (mCurrent.hasNext()) {
+                return true;
+            } else {
+                // necessary, because previous hasNext() changes state
+                resetToLastKey();
+            }
+        }
 
-		while (num < mSeq.size()) {
+        while (num < mSeq.size()) {
 
-			mCurrent = mSeq.get(num++);
+            mCurrent = mSeq.get(num++);
 
-			// mCurrent.getTransaction().moveTo(getTransaction().getNodeKey());
-			mCurrent.reset(getTransaction().getNode().getNodeKey());
-			if (mCurrent.hasNext()) {
-				return true;
-			}
-		}
+            // mCurrent.getTransaction().moveTo(getTransaction().getNodeKey());
+            mCurrent.reset(getTransaction().getNode().getNodeKey());
+            if (mCurrent.hasNext()) {
+                return true;
+            }
+        }
 
-		resetToStartKey();
-		return false;
+        resetToStartKey();
+        return false;
 
-	}
+    }
 
 }

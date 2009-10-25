@@ -32,53 +32,53 @@ import com.treetank.utils.DocumentCreater;
 
 public class AttributeAndNamespaceTest {
 
-	@Before
-	public void setUp() {
-		Session.removeSession(ITestConstants.PATH1);
-	}
+    @Before
+    public void setUp() {
+        Session.removeSession(ITestConstants.PATH1);
+    }
 
-	@Test
-	public void testAttribute() throws IOException {
+    @Test
+    public void testAttribute() throws IOException {
 
-		final ISession session = Session.beginSession(ITestConstants.PATH1);
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
 
-		wtx.moveTo(1L);
-		TestCase.assertEquals(1, wtx.getNode().getAttributeCount());
-		wtx.moveToAttribute(0);
-		TestCase.assertEquals("i", wtx.nameForKey(wtx.getNode().getNameKey()));
+        wtx.moveTo(1L);
+        TestCase.assertEquals(1, wtx.getNode().getAttributeCount());
+        wtx.moveToAttribute(0);
+        TestCase.assertEquals("i", wtx.nameForKey(wtx.getNode().getNameKey()));
 
-		wtx.moveTo(9L);
-		TestCase.assertEquals(1, wtx.getNode().getAttributeCount());
-		wtx.moveToAttribute(0);
-		TestCase
-				.assertEquals("p:x", wtx.nameForKey(wtx.getNode().getNameKey()));
-		TestCase.assertEquals("ns", wtx.nameForKey(wtx.getNode().getURIKey()));
+        wtx.moveTo(9L);
+        TestCase.assertEquals(1, wtx.getNode().getAttributeCount());
+        wtx.moveToAttribute(0);
+        TestCase
+                .assertEquals("p:x", wtx.nameForKey(wtx.getNode().getNameKey()));
+        TestCase.assertEquals("ns", wtx.nameForKey(wtx.getNode().getURIKey()));
 
-		wtx.abort();
-		wtx.close();
-		session.close();
+        wtx.abort();
+        wtx.close();
+        session.close();
 
-	}
+    }
 
-	@Test
-	public void testNamespace() throws IOException {
+    @Test
+    public void testNamespace() throws IOException {
 
-		final ISession session = Session.beginSession(ITestConstants.PATH1);
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
 
-		wtx.moveTo(1L);
-		TestCase.assertEquals(1, wtx.getNode().getNamespaceCount());
-		wtx.moveToNamespace(0);
-		TestCase.assertEquals("p", wtx.nameForKey(wtx.getNode().getNameKey()));
-		TestCase.assertEquals("ns", wtx.nameForKey(wtx.getNode().getURIKey()));
+        wtx.moveTo(1L);
+        TestCase.assertEquals(1, wtx.getNode().getNamespaceCount());
+        wtx.moveToNamespace(0);
+        TestCase.assertEquals("p", wtx.nameForKey(wtx.getNode().getNameKey()));
+        TestCase.assertEquals("ns", wtx.nameForKey(wtx.getNode().getURIKey()));
 
-		wtx.abort();
-		wtx.close();
-		session.close();
+        wtx.abort();
+        wtx.close();
+        session.close();
 
-	}
+    }
 
 }

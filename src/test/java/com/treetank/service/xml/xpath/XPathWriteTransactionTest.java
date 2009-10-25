@@ -11,6 +11,7 @@ import org.junit.Test;
 import com.treetank.ITestConstants;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.io.TreetankIOException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
@@ -23,45 +24,49 @@ import com.treetank.session.SessionConfiguration;
  */
 public final class XPathWriteTransactionTest {
 
-	public static final String XML = "src" + File.separator + "test"
-			+ File.separator + "resources" + File.separator
-			+ "enwiki-revisions-test.xml";
+    public static final String XML = "src" + File.separator + "test"
+            + File.separator + "resources" + File.separator
+            + "enwiki-revisions-test.xml";
 
-	private ISession session;
+    private ISession session;
 
-	private IWriteTransaction wtx;
+    private IWriteTransaction wtx;
 
-	@Before
-	public void setUp() {
+    @Before
+    public void setUp() {
+        try {
+            Session.removeSession(ITestConstants.PATH1);
+            // Build simple test tree.
+            XMLShredder.shred(XML, new SessionConfiguration(
+                    ITestConstants.PATH1));
 
-		Session.removeSession(ITestConstants.PATH1);
-		// Build simple test tree.
-		XMLShredder.shred(XML, new SessionConfiguration(ITestConstants.PATH1));
+            // Verify.
+            session = Session.beginSession(ITestConstants.PATH1);
+            wtx = session.beginWriteTransaction();
+        } catch (final TreetankIOException exc) {
+            fail(exc.toString());
+        }
+    }
 
-		// Verify.
-		session = Session.beginSession(ITestConstants.PATH1);
-		wtx = session.beginWriteTransaction();
-	}
+    @Test
+    public void test() throws Exception {
+        wtx.moveToDocumentRoot();
+        // final XPathAxis xpa =
+        // new XPathAxis(wtx, "//revision[./parent::page/title/text() = '"
+        // + "AmericanSamoa"
+        // + "']");
+        final XPathAxis xpa = new XPathAxis(wtx, "//revision");
+        if (!xpa.hasNext()) {
+            fail();
+        }
 
-	@Test
-	public void test() throws Exception {
-		wtx.moveToDocumentRoot();
-		// final XPathAxis xpa =
-		// new XPathAxis(wtx, "//revision[./parent::page/title/text() = '"
-		// + "AmericanSamoa"
-		// + "']");
-		final XPathAxis xpa = new XPathAxis(wtx, "//revision");
-		if (!xpa.hasNext()) {
-			fail();
-		}
+    }
 
-	}
-
-	@After
-	public void tearDown() {
-		// wtx.abort();
-		wtx.close();
-		session.close();
-	}
+    @After
+    public void tearDown() {
+        // wtx.abort();
+        wtx.close();
+        session.close();
+    }
 
 }

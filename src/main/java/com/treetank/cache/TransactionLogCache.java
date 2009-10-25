@@ -16,6 +16,7 @@
  */
 package com.treetank.cache;
 
+import com.treetank.io.TreetankIOException;
 import com.treetank.page.NodePage;
 import com.treetank.session.SessionConfiguration;
 
@@ -26,54 +27,51 @@ import com.treetank.session.SessionConfiguration;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class TransactionLogCache extends AbstractPersistenceCache {
+public final class TransactionLogCache extends AbstractPersistenceCache {
 
-	/**
-	 * RAM-Based first cache
-	 */
-	private final LRUCache firstCache;
+    /**
+     * RAM-Based first cache
+     */
+    private transient final LRUCache firstCache;
 
-	/**
-	 * Persistent second cache
-	 */
-	private final BerkeleyPersistenceCache secondCache;
+    /**
+     * Constructor including the {@link SessionConfiguration} for persistent
+     * storage.
+     * 
+     * @param paramConfig
+     *            the config for having a storage-place
+     */
+    public TransactionLogCache(final SessionConfiguration paramConfig)
+            throws TreetankIOException {
+        super(paramConfig);
+        final BerkeleyPersistenceCache secondCache = new BerkeleyPersistenceCache(
+                paramConfig);
+        firstCache = new LRUCache(secondCache);
+    }
 
-	/**
-	 * Constructor including the {@link SessionConfiguration} for persistent
-	 * storage.
-	 * 
-	 * @param paramConfig
-	 *            the config for having a storage-place
-	 */
-	public TransactionLogCache(final SessionConfiguration paramConfig) {
-		super(paramConfig);
-		secondCache = new BerkeleyPersistenceCache(paramConfig);
-		firstCache = new LRUCache(secondCache);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void clearPersistent() throws TreetankIOException {
+        firstCache.clear();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void clear() {
-		firstCache.clear();
-		super.clear();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public NodePage getPersistent(final long key) throws TreetankIOException {
+        return firstCache.get(key);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public NodePage get(long key) {
-		return firstCache.get(key);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void put(long key, NodePage page) {
-		firstCache.put(key, page);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void putPersistent(final long key, final NodePage page)
+            throws TreetankIOException {
+        firstCache.put(key, page);
+    }
 
 }

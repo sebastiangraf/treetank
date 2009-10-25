@@ -32,128 +32,128 @@ import com.treetank.utils.FastStack;
  */
 public class FollowingAxis extends AbstractAxis implements IAxis {
 
-	private boolean mIsFirst;
+    private boolean mIsFirst;
 
-	private FastStack<Long> rightSiblingStack;
+    private FastStack<Long> rightSiblingStack;
 
-	/**
-	 * Constructor initializing internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) trx to iterate with.
-	 */
-	public FollowingAxis(final IReadTransaction rtx) {
+    /**
+     * Constructor initializing internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
+     */
+    public FollowingAxis(final IReadTransaction rtx) {
 
-		super(rtx);
-		mIsFirst = true;
-		rightSiblingStack = new FastStack<Long>();
+        super(rtx);
+        mIsFirst = true;
+        rightSiblingStack = new FastStack<Long>();
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void reset(final long nodeKey) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void reset(final long nodeKey) {
 
-		super.reset(nodeKey);
-		mIsFirst = true;
-		rightSiblingStack = new FastStack<Long>();
+        super.reset(nodeKey);
+        mIsFirst = true;
+        rightSiblingStack = new FastStack<Long>();
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final boolean hasNext() {
+    /**
+     * {@inheritDoc}
+     */
+    public final boolean hasNext() {
 
-		// assure, that preceding is not evaluated on an attribute or a
-		// namespace
-		if (mIsFirst && getTransaction().getNode().isAttribute()
-		// || getTransaction().isNamespaceKind()
-		) {
-			resetToStartKey();
-			return false;
+        // assure, that preceding is not evaluated on an attribute or a
+        // namespace
+        if (mIsFirst && getTransaction().getNode().isAttribute()
+        // || getTransaction().isNamespaceKind()
+        ) {
+            resetToStartKey();
+            return false;
 
-		}
+        }
 
-		resetToLastKey();
+        resetToLastKey();
 
-		if (mIsFirst) {
-			mIsFirst = false;
-			// the first following is either a right sibling, or the right
-			// sibling of
-			// the first ancestor that has a right sibling.
-			// note: ancestors and descendants are no following node!
-			if (getTransaction().getNode().hasRightSibling()) {
-				getTransaction().moveToRightSibling();
+        if (mIsFirst) {
+            mIsFirst = false;
+            // the first following is either a right sibling, or the right
+            // sibling of
+            // the first ancestor that has a right sibling.
+            // note: ancestors and descendants are no following node!
+            if (getTransaction().getNode().hasRightSibling()) {
+                getTransaction().moveToRightSibling();
 
-				if (getTransaction().getNode().hasRightSibling()) {
-					// push right sibling on a stack to reduce path traversal
-					rightSiblingStack.push(getTransaction().getNode()
-							.getRightSiblingKey());
-				}
-				return true;
-			}
-			// Try to find the right sibling of one of the ancestors.
-			while (getTransaction().getNode().hasParent()) {
-				getTransaction().moveToParent();
-				if (getTransaction().getNode().hasRightSibling()) {
-					getTransaction().moveToRightSibling();
-					if (getTransaction().getNode().hasRightSibling()) {
-						rightSiblingStack.push(getTransaction().getNode()
-								.getRightSiblingKey());
-					}
-					return true;
-				}
-			}
-			// currentNode is last key in the document order
-			resetToStartKey();
-			return false;
+                if (getTransaction().getNode().hasRightSibling()) {
+                    // push right sibling on a stack to reduce path traversal
+                    rightSiblingStack.push(getTransaction().getNode()
+                            .getRightSiblingKey());
+                }
+                return true;
+            }
+            // Try to find the right sibling of one of the ancestors.
+            while (getTransaction().getNode().hasParent()) {
+                getTransaction().moveToParent();
+                if (getTransaction().getNode().hasRightSibling()) {
+                    getTransaction().moveToRightSibling();
+                    if (getTransaction().getNode().hasRightSibling()) {
+                        rightSiblingStack.push(getTransaction().getNode()
+                                .getRightSiblingKey());
+                    }
+                    return true;
+                }
+            }
+            // currentNode is last key in the document order
+            resetToStartKey();
+            return false;
 
-		}
-		// step down the tree in document order
-		if (getTransaction().getNode().hasFirstChild()) {
-			getTransaction().moveToFirstChild();
-			if (getTransaction().getNode().hasRightSibling()) {
-				// push right sibling on a stack to reduce path traversal
-				rightSiblingStack.push(getTransaction().getNode()
-						.getRightSiblingKey());
-			}
+        }
+        // step down the tree in document order
+        if (getTransaction().getNode().hasFirstChild()) {
+            getTransaction().moveToFirstChild();
+            if (getTransaction().getNode().hasRightSibling()) {
+                // push right sibling on a stack to reduce path traversal
+                rightSiblingStack.push(getTransaction().getNode()
+                        .getRightSiblingKey());
+            }
 
-			return true;
-		}
-		if (rightSiblingStack.empty()) {
+            return true;
+        }
+        if (rightSiblingStack.empty()) {
 
-			// Try to find the right sibling of one of the ancestors.
-			while (getTransaction().getNode().hasParent()) {
-				getTransaction().moveToParent();
-				if (getTransaction().getNode().hasRightSibling()) {
-					getTransaction().moveToRightSibling();
-					if (getTransaction().getNode().hasRightSibling()) {
-						// push right sibling on a stack to reduce path
-						// traversal
-						rightSiblingStack.push(getTransaction().getNode()
-								.getRightSiblingKey());
-					}
-					return true;
-				}
-			}
+            // Try to find the right sibling of one of the ancestors.
+            while (getTransaction().getNode().hasParent()) {
+                getTransaction().moveToParent();
+                if (getTransaction().getNode().hasRightSibling()) {
+                    getTransaction().moveToRightSibling();
+                    if (getTransaction().getNode().hasRightSibling()) {
+                        // push right sibling on a stack to reduce path
+                        // traversal
+                        rightSiblingStack.push(getTransaction().getNode()
+                                .getRightSiblingKey());
+                    }
+                    return true;
+                }
+            }
 
-		} else {
+        } else {
 
-			// get root key of sibling subtree
-			getTransaction().moveTo(rightSiblingStack.pop());
-			if (getTransaction().getNode().hasRightSibling()) {
-				// push right sibling on a stack to reduce path traversal
-				rightSiblingStack.push(getTransaction().getNode()
-						.getRightSiblingKey());
-			}
-			return true;
+            // get root key of sibling subtree
+            getTransaction().moveTo(rightSiblingStack.pop());
+            if (getTransaction().getNode().hasRightSibling()) {
+                // push right sibling on a stack to reduce path traversal
+                rightSiblingStack.push(getTransaction().getNode()
+                        .getRightSiblingKey());
+            }
+            return true;
 
-		}
-		resetToStartKey();
-		return false;
-	}
+        }
+        resetToStartKey();
+        return false;
+    }
 
 }

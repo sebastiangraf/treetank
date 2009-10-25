@@ -18,6 +18,8 @@
 
 package com.treetank.session;
 
+import java.util.Stack;
+
 import com.treetank.api.IItem;
 import com.treetank.cache.ICache;
 import com.treetank.cache.TransactionLogCache;
@@ -60,7 +62,7 @@ public final class WriteTransactionState extends ReadTransactionState {
     /**
      * Last references to the Nodepage-reference
      */
-    private PageReference<NodePage> nodePageReference;
+    private PageReference nodePageReference;
 
     /**
      * Last reference to the nodepage
@@ -88,7 +90,8 @@ public final class WriteTransactionState extends ReadTransactionState {
      */
     protected WriteTransactionState(
             final SessionConfiguration sessionConfiguration,
-            final UberPage uberPage, final IWriter writer) {
+            final UberPage uberPage, final IWriter writer)
+            throws TreetankIOException {
         super(sessionConfiguration, uberPage, uberPage
                 .getLastCommittedRevisionNumber(), new ItemList(), writer);
         log = new TransactionLogCache(sessionConfiguration);
@@ -237,7 +240,7 @@ public final class WriteTransactionState extends ReadTransactionState {
         final String string = (name == null ? "" : name);
         final int nameKey = NamePageHash.generateHashForString(string);
 
-        final PageReference<NamePage> namePageReference = getRevisionRootPage()
+        final PageReference namePageReference = getRevisionRootPage()
                 .getNamePageReference();
         final NamePage namePage = prepareNamePage(namePageReference);
 
@@ -282,25 +285,82 @@ public final class WriteTransactionState extends ReadTransactionState {
             final SessionConfiguration sessionConfiguration)
             throws TreetankIOException {
 
-        final PageReference<AbstractPage> uberPageReference = new PageReference<AbstractPage>();
+        final PageReference uberPageReference = new PageReference();
         final UberPage uberPage = getUberPage();
+        uberPageReference.setPage(uberPage);
 
         if (uberPage.isBootstrap()) {
-            mPageWriter.initializingStorage(new StorageProperties(
+            mPageWriter.setProps(new StorageProperties(
                     IConstants.LAST_VERSION_MAJOR,
                     IConstants.LAST_VERSION_MINOR, sessionConfiguration
                             .isChecksummed(), sessionConfiguration
                             .isEncrypted()));
         }
 
+        // // // /////////////
+        // // // New code starts here
+        // // // /////////////
+        // final Stack<PageReference> refs = new Stack<PageReference>();
+        // refs.push(uberPageReference);
+        //
+        // final Stack<Integer> refIndex = new Stack<Integer>();
+        // refIndex.push(0);
+        // refIndex.push(0);
+        //
+        // do {
+        //
+        // assert refs.size() + 1 == refIndex.size();
+        //
+        // // Getting the next ref
+        // final PageReference currentRef = refs.peek();
+        // final int currentIndex = refIndex.pop();
+        //
+        // // Check if referenced page is valid, if not, continue
+        // AbstractPage page = log.get(currentRef.getNodePageKey());
+        // boolean continueFlag = true;
+        // if (page == null) {
+        // if (currentRef.isInstantiated()) {
+        // page = currentRef.getPage();
+        // } else {
+        // continueFlag = false;
+        // }
+        // } else {
+        // currentRef.setPage(page);
+        // }
+        //
+        // if (continueFlag) {
+        //
+        // if (currentIndex + 1 <= page.getReferences().length) {
+        // // go down
+        //
+        // refIndex.push(currentIndex + 1);
+        //
+        // refs.push(page.getReference(currentIndex));
+        // refIndex.push(0);
+        //
+        // } else {
+        //
+        // mPageWriter.write(currentRef);
+        // refs.pop();
+        // }
+        //
+        // } // ref is not designated to be serialized
+        // else {
+        // refs.pop();
+        // }
+        //
+        // } while (!refs.empty());
+        //
+        // // // ///////////////
+        // // // New code ends here
+        // // // ///////////////
+
         // Recursively write indirectely referenced pages.
         uberPage.commit(this);
 
         uberPageReference.setPage(uberPage);
-        mPageWriter.write(uberPageReference);
+        mPageWriter.writeFirstReference(uberPageReference);
         uberPageReference.setPage(null);
-
-        mPageWriter.writeBeacon(uberPageReference);
 
         // mPageWriter.close();
 
@@ -324,18 +384,19 @@ public final class WriteTransactionState extends ReadTransactionState {
     }
 
     protected final IndirectPage prepareIndirectPage(
-            final PageReference<IndirectPage> reference) {
+            final PageReference reference) {
 
-        IndirectPage page = reference.getPage();
+        IndirectPage page = (IndirectPage) reference.getPage();
         if (!reference.isInstantiated()) {
             if (reference.isCommitted()) {
-                page = new IndirectPage(dereferenceIndirectPage(reference));
+                page = new IndirectPage(
+                        (IndirectPage) dereferenceIndirectPage(reference));
             } else {
                 page = new IndirectPage();
             }
             reference.setPage(page);
         } else {
-            page = reference.getPage();
+            page = (IndirectPage) reference.getPage();
         }
         return page;
     }
@@ -343,8 +404,8 @@ public final class WriteTransactionState extends ReadTransactionState {
     protected final NodePage prepareNodePage(final long nodePageKey) {
 
         // Indirect reference.
-        PageReference<NodePage> reference = prepareLeafOfTree(
-                getRevisionRootPage().getIndirectPageReference(), nodePageKey);
+        PageReference reference = prepareLeafOfTree(getRevisionRootPage()
+                .getIndirectPageReference(), nodePageKey);
 
         // Last level points to node nodePageReference.
         NodePage page = (NodePage) log.get(reference.getNodePageKey());
@@ -362,7 +423,7 @@ public final class WriteTransactionState extends ReadTransactionState {
                 }
 
             } else {
-                page = reference.getPage();
+                page = (NodePage) reference.getPage();
                 reference.setNodePageKey(nodePageKey);
                 log.put(nodePageKey, page);
                 reference.setPage(null);
@@ -386,7 +447,7 @@ public final class WriteTransactionState extends ReadTransactionState {
 
         // Prepare indirect tree to hold reference to prepared revision root
         // nodePageReference.
-        final PageReference<RevisionRootPage> revisionRootPageReference = prepareLeafOfTree(
+        final PageReference revisionRootPageReference = prepareLeafOfTree(
                 getUberPage().getIndirectPageReference(), getUberPage()
                         .getRevisionNumber());
 
@@ -399,7 +460,7 @@ public final class WriteTransactionState extends ReadTransactionState {
     }
 
     protected final PageReference prepareLeafOfTree(
-            final PageReference<IndirectPage> startReference, final long key) {
+            final PageReference startReference, final long key) {
 
         // Initial state pointing to the indirect nodePageReference of level 0.
         PageReference reference = startReference;
@@ -418,10 +479,9 @@ public final class WriteTransactionState extends ReadTransactionState {
         return reference;
     }
 
-    protected final NamePage prepareNamePage(
-            final PageReference<NamePage> reference) {
+    protected final NamePage prepareNamePage(final PageReference reference) {
 
-        NamePage page = reference.getPage();
+        NamePage page = (NamePage) reference.getPage();
 
         if (!reference.isInstantiated()) {
             if (reference.isCommitted()) {

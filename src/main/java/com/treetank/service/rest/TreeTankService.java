@@ -28,35 +28,35 @@ import org.mortbay.jetty.bio.SocketConnector;
 
 public class TreeTankService {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
+    /**
+     * @param args
+     */
+    public static void main(String[] args) {
 
-		try {
+        try {
 
-			final Map map = new ConcurrentHashMap();
+            final Map<String, TreeTankWrapper> map = new ConcurrentHashMap<String, TreeTankWrapper>();
 
-			final Server server = new Server();
-			final Connector connector = new SocketConnector();
-			// final Connector connector = new SslSocketConnector();
-			final Handler handler = new TreeTankHandler(map);
+            final Server server = new Server();
+            final Connector connector = new SocketConnector();
+            // final Connector connector = new SslSocketConnector();
+            final Handler handler = new TreeTankHandler(map);
 
-			connector.setPort(8182);
-			//
-			// ((SslSocketConnector) connector).setKeystore("keystore");
-			// ((SslSocketConnector) connector).setPassword("keystore");
-			// ((SslSocketConnector) connector).setKeyPassword("keystore");
+            connector.setPort(8182);
+            //
+            // ((SslSocketConnector) connector).setKeystore("keystore");
+            // ((SslSocketConnector) connector).setPassword("keystore");
+            // ((SslSocketConnector) connector).setKeyPassword("keystore");
 
-			server.setConnectors(new Connector[] { connector });
-			server.setHandler(handler);
-			server.start();
+            server.setConnectors(new Connector[] { connector });
+            server.setHandler(handler);
+            server.start();
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
 
-	}
+    }
 
 }

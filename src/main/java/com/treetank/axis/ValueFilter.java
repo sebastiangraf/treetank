@@ -31,65 +31,65 @@ import com.treetank.utils.TypedValue;
  */
 public class ValueFilter extends AbstractFilter implements IFilter {
 
-	/** Value test to do. */
-	private final byte[] mValue;
+    /** Value test to do. */
+    private final byte[] mValue;
 
-	/**
-	 * Constructor initializing internal state.
-	 * 
-	 * @param rtx
-	 *            Transaction to bind filter to.
-	 * @param value
-	 *            Value to find.
-	 */
-	public ValueFilter(final IReadTransaction rtx, final byte[] value) {
-		super(rtx);
-		mValue = value;
-	}
+    /**
+     * Constructor initializing internal state.
+     * 
+     * @param rtx
+     *            Transaction to bind filter to.
+     * @param value
+     *            Value to find.
+     */
+    public ValueFilter(final IReadTransaction rtx, final byte[] value) {
+        super(rtx);
+        mValue = value;
+    }
 
-	/**
-	 * Constructor initializing internal state.
-	 * 
-	 * @param rtx
-	 *            Transaction to bind filter to.
-	 * @param value
-	 *            Value to find.
-	 */
-	public ValueFilter(final IReadTransaction rtx, final String value) {
-		this(rtx, TypedValue.getBytes(value));
-	}
+    /**
+     * Constructor initializing internal state.
+     * 
+     * @param rtx
+     *            Transaction to bind filter to.
+     * @param value
+     *            Value to find.
+     */
+    public ValueFilter(final IReadTransaction rtx, final String value) {
+        this(rtx, TypedValue.getBytes(value));
+    }
 
-	/**
-	 * Constructor initializing internal state.
-	 * 
-	 * @param rtx
-	 *            Transaction to bind filter to.
-	 * @param value
-	 *            Value to find.
-	 */
-	public ValueFilter(final IReadTransaction rtx, final int value) {
-		this(rtx, TypedValue.getBytes(value));
-	}
+    /**
+     * Constructor initializing internal state.
+     * 
+     * @param rtx
+     *            Transaction to bind filter to.
+     * @param value
+     *            Value to find.
+     */
+    public ValueFilter(final IReadTransaction rtx, final int value) {
+        this(rtx, TypedValue.getBytes(value));
+    }
 
-	/**
-	 * Constructor initializing internal state.
-	 * 
-	 * @param rtx
-	 *            Transaction to bind filter to.
-	 * @param value
-	 *            Value to find.
-	 */
-	public ValueFilter(final IReadTransaction rtx, final long value) {
-		this(rtx, TypedValue.getBytes(value));
-	}
+    /**
+     * Constructor initializing internal state.
+     * 
+     * @param rtx
+     *            Transaction to bind filter to.
+     * @param value
+     *            Value to find.
+     */
+    public ValueFilter(final IReadTransaction rtx, final long value) {
+        this(rtx, TypedValue.getBytes(value));
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final boolean filter() {
-		return ((getTransaction().getNode().isText() || getTransaction()
-				.getNode().isAttribute()) && (TypedValue.equals(
-				getTransaction().getNode().getRawValue(), mValue)));
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public final boolean filter() {
+        return ((getTransaction().getNode().isText() || getTransaction()
+                .getNode().isAttribute()) && (TypedValue.equals(
+                getTransaction().getNode().getRawValue(), mValue)));
+    }
 
 }

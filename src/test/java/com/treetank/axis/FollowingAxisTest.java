@@ -18,53 +18,64 @@
 
 package com.treetank.axis;
 
+import static org.junit.Assert.fail;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.io.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
 
 public class FollowingAxisTest {
+    @Before
+    public void setUp() {
+       TestHelper.removeAllFiles();
+    }
 
-	@Before
-	public void setUp() {
-		Session.removeSession(ITestConstants.PATH1);
-	}
+    @Test
+    public void testAxisConventions() {
+        try {
+            final ISession session = Session.beginSession(ITestConstants.PATH1);
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            DocumentCreater.create(wtx);
 
-	@Test
-	public void testAxisConventions() {
-		final ISession session = Session.beginSession(ITestConstants.PATH1);
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
+            wtx.moveTo(11L);
+            IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {
+                    12L, 13L });
 
-		wtx.moveTo(11L);
-		IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {
-				12L, 13L });
+            wtx.moveTo(5L);
+            IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {
+                    8L, 9L, 11L, 12L, 13L });
 
-		wtx.moveTo(5L);
-		IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] { 8L,
-				9L, 11L, 12L, 13L });
+            wtx.moveTo(13L);
+            IAxisTest.testIAxisConventions(new FollowingAxis(wtx),
+                    new long[] {});
 
-		wtx.moveTo(13L);
-		IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {});
+            wtx.moveTo(1L);
+            IAxisTest.testIAxisConventions(new FollowingAxis(wtx),
+                    new long[] {});
 
-		wtx.moveTo(1L);
-		IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {});
+            wtx.moveToDocumentRoot();
+            IAxisTest.testIAxisConventions(new FollowingAxis(wtx),
+                    new long[] {});
 
-		wtx.moveToDocumentRoot();
-		IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {});
+            wtx.moveTo(9L);
+            wtx.moveToAttribute(0);
+            IAxisTest.testIAxisConventions(new FollowingAxis(wtx),
+                    new long[] {});
 
-		wtx.moveTo(9L);
-		wtx.moveToAttribute(0);
-		IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {});
+            wtx.abort();
+            wtx.close();
+            session.close();
+        } catch (final TreetankIOException exc) {
+            fail(exc.toString());
+        }
 
-		wtx.abort();
-		wtx.close();
-		session.close();
-
-	}
+    }
 
 }

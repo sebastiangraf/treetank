@@ -30,113 +30,114 @@ import com.treetank.page.NodePage;
  * 
  * @author Sebastian Graf, University of Konstanz
  */
-public class LRUCache implements ICache {
+public final class LRUCache implements ICache {
 
-	/**
-	 * Capacity of the cache. Number of stored pages
-	 */
-	protected final static int CACHE_CAPACITY = 10;
+    /**
+     * Capacity of the cache. Number of stored pages
+     */
+    final static int CACHE_CAPACITY = 10;
 
-	/**
-	 * The collection to hold the maps.
-	 */
-	private Map<Long, NodePage> map;
+    /**
+     * The collection to hold the maps.
+     */
+    private transient final Map<Long, NodePage> map;
 
-	/**
-	 * The reference to the second cache.
-	 */
-	private final ICache secondCache;
+    /**
+     * The reference to the second cache.
+     */
+    private transient final ICache secondCache;
 
-	/**
-	 * Creates a new LRU cache.
-	 * 
-	 * @param paramSecondCache
-	 *            the reference to the second cache where the data is stored
-	 *            when it gets removed from the first one.
-	 * 
-	 */
-	public LRUCache(final ICache paramSecondCache) {
-		secondCache = paramSecondCache;
-		map = new LinkedHashMap<Long, NodePage>(CACHE_CAPACITY) {
-			// (an anonymous inner class)
-			private static final long serialVersionUID = 1;
+    /**
+     * Creates a new LRU cache.
+     * 
+     * @param paramSecondCache
+     *            the reference to the second cache where the data is stored
+     *            when it gets removed from the first one.
+     * 
+     */
+    public LRUCache(final ICache paramSecondCache) {
+        secondCache = paramSecondCache;
+        map = new LinkedHashMap<Long, NodePage>(CACHE_CAPACITY) {
+            // (an anonymous inner class)
+            private static final long serialVersionUID = 1;
 
-			@Override
-			protected boolean removeEldestEntry(Map.Entry<Long, NodePage> eldest) {
-				if (size() > CACHE_CAPACITY) {
-					secondCache.put(eldest.getKey(), eldest.getValue());
-					return true;
-				} else {
-					return false;
-				}
+            @Override
+            protected boolean removeEldestEntry(
+                    final Map.Entry<Long, NodePage> eldest) {
+                boolean returnVal = false;
+                if (size() > CACHE_CAPACITY) {
+                    secondCache.put(eldest.getKey(), eldest.getValue());
+                    returnVal = true;
+                }
+                return returnVal;
 
-			}
-		};
-	}
+            }
+        };
+    }
 
-	/**
-	 * Constructor with no second cache.
-	 */
-	public LRUCache() {
-		this(new NullCache());
-	}
+    /**
+     * Constructor with no second cache.
+     */
+    public LRUCache() {
+        this(new NullCache());
+    }
 
-	/**
-	 * Retrieves an entry from the cache.<br>
-	 * The retrieved entry becomes the MRU (most recently used) entry.
-	 * 
-	 * @param key
-	 *            the key whose associated value is to be returned.
-	 * @return the value associated to this key, or null if no value with this
-	 *         key exists in the cache.
-	 */
-	public NodePage get(long key) {
-		NodePage page = map.get(key);
-		if (page == null) {
-			page = secondCache.get(key);
-		}
-		return page;
-	}
+    /**
+     * Retrieves an entry from the cache.<br>
+     * The retrieved entry becomes the MRU (most recently used) entry.
+     * 
+     * @param key
+     *            the key whose associated value is to be returned.
+     * @return the value associated to this key, or null if no value with this
+     *         key exists in the cache.
+     */
+    public NodePage get(final long key) {
+        NodePage page = map.get(key);
+        if (page == null) {
+            page = secondCache.get(key);
+        }
+        return page;
+    }
 
-	/**
-	 * 
-	 * Adds an entry to this cache. If the cache is full, the LRU (least
-	 * recently used) entry is dropped.
-	 * 
-	 * @param key
-	 *            the key with which the specified value is to be associated.
-	 * @param value
-	 *            a value to be associated with the specified key.
-	 */
-	public void put(long key, NodePage value) {
-		map.put(key, value);
-	}
+    /**
+     * 
+     * Adds an entry to this cache. If the cache is full, the LRU (least
+     * recently used) entry is dropped.
+     * 
+     * @param key
+     *            the key with which the specified value is to be associated.
+     * @param value
+     *            a value to be associated with the specified key.
+     */
+    public void put(final long key, final NodePage value) {
+        map.put(key, value);
+    }
 
-	/**
-	 * Clears the cache.
-	 */
-	public void clear() {
-		map.clear();
-		secondCache.clear();
-	}
+    /**
+     * Clears the cache.
+     */
+    public void clear() {
+        map.clear();
+        secondCache.clear();
+    }
 
-	/**
-	 * Returns the number of used entries in the cache.
-	 * 
-	 * @return the number of entries currently in the cache.
-	 */
-	public int usedEntries() {
-		return map.size();
-	}
+    /**
+     * Returns the number of used entries in the cache.
+     * 
+     * @return the number of entries currently in the cache.
+     */
+    public int usedEntries() {
+        return map.size();
+    }
 
-	/**
-	 * Returns a <code>Collection</code> that contains a copy of all cache
-	 * entries.
-	 * 
-	 * @return a <code>Collection</code> with a copy of the cache content.
-	 */
-	public Collection<Map.Entry<Long, NodePage>> getAll() {
-		return new ArrayList<Map.Entry<Long, NodePage>>(map.entrySet());
-	}
+    /**
+     * Returns a <code>Collection</code> that contains a copy of all cache
+     * entries.
+     * 
+     * @return a <code>Collection</code> with a copy of the cache content.
+     */
+    public Collection<Map.Entry<Long, NodePage>> getAll() {
+        return new ArrayList<Map.Entry<Long, NodePage>>(map.entrySet());
+    }
 
 }

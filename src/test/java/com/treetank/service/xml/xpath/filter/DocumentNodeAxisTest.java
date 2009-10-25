@@ -18,6 +18,8 @@
 
 package com.treetank.service.xml.xpath.filter;
 
+import static org.junit.Assert.fail;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,49 +28,52 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.IAxisTest;
+import com.treetank.io.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
 
 public class DocumentNodeAxisTest {
 
-	@Before
-	public void setUp() {
+    @Before
+    public void setUp() {
 
-		Session.removeSession(ITestConstants.PATH1);
-	}
+        Session.removeSession(ITestConstants.PATH1);
+    }
 
-	@Test
-	public void testIterate() {
+    @Test
+    public void testIterate() {
+        try {
+            final ISession session = Session.beginSession(ITestConstants.PATH1);
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            DocumentCreater.create(wtx);
 
-		final ISession session = Session.beginSession(ITestConstants.PATH1);
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
+            wtx.moveTo(1L);
+            IAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx),
+                    new long[] { IReadTransaction.DOCUMENT_ROOT_KEY });
 
-		wtx.moveTo(1L);
-		IAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx),
-				new long[] { IReadTransaction.DOCUMENT_ROOT_KEY });
+            wtx.moveTo(5L);
+            IAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx),
+                    new long[] { IReadTransaction.DOCUMENT_ROOT_KEY });
 
-		wtx.moveTo(5L);
-		IAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx),
-				new long[] { IReadTransaction.DOCUMENT_ROOT_KEY });
+            wtx.moveTo(9L);
+            IAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx),
+                    new long[] { IReadTransaction.DOCUMENT_ROOT_KEY });
 
-		wtx.moveTo(9L);
-		IAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx),
-				new long[] { IReadTransaction.DOCUMENT_ROOT_KEY });
+            wtx.moveTo(9L);
+            wtx.moveToAttribute(0);
+            IAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx),
+                    new long[] { IReadTransaction.DOCUMENT_ROOT_KEY });
 
-		wtx.moveTo(9L);
-		wtx.moveToAttribute(0);
-		IAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx),
-				new long[] { IReadTransaction.DOCUMENT_ROOT_KEY });
+            wtx.moveTo(13L);
+            IAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx),
+                    new long[] { IReadTransaction.DOCUMENT_ROOT_KEY });
 
-		wtx.moveTo(13L);
-		IAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx),
-				new long[] { IReadTransaction.DOCUMENT_ROOT_KEY });
-
-		wtx.abort();
-		wtx.close();
-		session.close();
-
-	}
+            wtx.abort();
+            wtx.close();
+            session.close();
+        } catch (final TreetankIOException exc) {
+            fail(exc.toString());
+        }
+    }
 
 }

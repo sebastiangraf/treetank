@@ -23,36 +23,35 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
-import com.treetank.session.Session;
 
 public class IFilterTest {
 
-	@Before
-	public void setUp() {
-		Session.removeSession(ITestConstants.PATH1);
-	}
+    @Before
+    public void setUp() {
+       TestHelper.removeAllFiles();
+    }
 
-	public static void testIFilterConventions(final IFilter filter,
-			final boolean expected) {
+    public static void testIFilterConventions(final IFilter filter,
+            final boolean expected) {
 
-		final IReadTransaction rtx = filter.getTransaction();
+        final IReadTransaction rtx = filter.getTransaction();
 
-		// IFilter Convention 1.
-		final long startKey = rtx.getNode().getNodeKey();
+        // IFilter Convention 1.
+        final long startKey = rtx.getNode().getNodeKey();
 
-		assertEquals(expected, filter.filter());
+        assertEquals(expected, filter.filter());
 
-		// IAxis Convention 2.
-		assertEquals(startKey, rtx.getNode().getNodeKey());
+        // IAxis Convention 2.
+        assertEquals(startKey, rtx.getNode().getNodeKey());
 
-	}
+    }
 
-	@Test
-	public void testIFilterExample() {
-		// Do nothing. This class is only used with other test cases.
-	}
+    @Test
+    public void testIFilterExample() {
+        // Do nothing. This class is only used with other test cases.
+    }
 
 }

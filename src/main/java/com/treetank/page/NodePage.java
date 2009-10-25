@@ -23,6 +23,7 @@ import com.sleepycat.persist.model.PrimaryKey;
 import com.treetank.api.IReadTransaction;
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
+import com.treetank.io.PagePersistenter;
 import com.treetank.node.AbstractNode;
 import com.treetank.node.AttributeNode;
 import com.treetank.node.DocumentRootNode;
@@ -41,203 +42,203 @@ import com.treetank.utils.IConstants;
 @Entity
 public class NodePage extends AbstractPage {
 
-	/** Key of node page. This is the base key of all contained nodes. */
-	@PrimaryKey
-	private final long mNodePageKey;
+    /** Key of node page. This is the base key of all contained nodes. */
+    @PrimaryKey
+    private final long mNodePageKey;
 
-	/** Array of nodes. This can have null nodes that were removed. */
-	private final AbstractNode[] mNodes;
+    /** Array of nodes. This can have null nodes that were removed. */
+    private final AbstractNode[] mNodes;
 
-	/**
-	 * Create node page.
-	 * 
-	 * @param nodePageKey
-	 *            Base key assigned to this node page.
-	 */
-	public NodePage(final long nodePageKey) {
-		super(0);
-		mNodePageKey = nodePageKey;
-		mNodes = new AbstractNode[IConstants.NDP_NODE_COUNT];
-	}
+    /**
+     * Create node page.
+     * 
+     * @param nodePageKey
+     *            Base key assigned to this node page.
+     */
+    public NodePage(final long nodePageKey) {
+        super(0);
+        mNodePageKey = nodePageKey;
+        mNodes = new AbstractNode[IConstants.NDP_NODE_COUNT];
+    }
 
-	/**
-	 * Read node page.
-	 * 
-	 * @param in
-	 *            Input bytes to read page from.
-	 * @param nodePageKey
-	 *            Base key assigned to this node page.
-	 */
-	NodePage(final ITTSource in) {
-		super(0, in);
-		mNodePageKey = in.readLong();
-		mNodes = new AbstractNode[IConstants.NDP_NODE_COUNT];
+    /**
+     * Read node page.
+     * 
+     * @param in
+     *            Input bytes to read page from.
+     * @param nodePageKey
+     *            Base key assigned to this node page.
+     */
+    public NodePage(final ITTSource in) {
+        super(0, in);
+        mNodePageKey = in.readLong();
+        mNodes = new AbstractNode[IConstants.NDP_NODE_COUNT];
 
-		final int[] values = new int[IConstants.NDP_NODE_COUNT];
-		for (int i = 0; i < values.length; i++) {
-			values[i] = in.readInt();
-		}
+        final int[] values = new int[IConstants.NDP_NODE_COUNT];
+        for (int i = 0; i < values.length; i++) {
+            values[i] = in.readInt();
+        }
 
-		final long keyBase = mNodePageKey << IConstants.NDP_NODE_COUNT_EXPONENT;
-		for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
-			final int kind = values[offset];
-			switch (kind) {
-			case IConstants.UNKNOWN:
-				// Was null node, do nothing here.
-				break;
-			case IReadTransaction.ROOT_KIND:
-				getNodes()[offset] = new DocumentRootNode(in);
-				break;
-			case IReadTransaction.ELEMENT_KIND:
-				getNodes()[offset] = new ElementNode(keyBase + offset, in);
-				break;
-			case IReadTransaction.ATTRIBUTE_KIND:
-				getNodes()[offset] = new AttributeNode(keyBase + offset, in);
-				break;
-			case IReadTransaction.NAMESPACE_KIND:
-				getNodes()[offset] = new NamespaceNode(keyBase + offset, in);
-				break;
-			case IReadTransaction.TEXT_KIND:
-				getNodes()[offset] = new TextNode(keyBase + offset, in);
-				break;
-			default:
-				throw new IllegalStateException(
-						"Unsupported node kind encountered during read: "
-								+ kind);
-			}
-		}
-	}
+        final long keyBase = mNodePageKey << IConstants.NDP_NODE_COUNT_EXPONENT;
+        for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
+            final int kind = values[offset];
+            switch (kind) {
+            case IConstants.UNKNOWN:
+                // Was null node, do nothing here.
+                break;
+            case IReadTransaction.ROOT_KIND:
+                getNodes()[offset] = new DocumentRootNode(in);
+                break;
+            case IReadTransaction.ELEMENT_KIND:
+                getNodes()[offset] = new ElementNode(keyBase + offset, in);
+                break;
+            case IReadTransaction.ATTRIBUTE_KIND:
+                getNodes()[offset] = new AttributeNode(keyBase + offset, in);
+                break;
+            case IReadTransaction.NAMESPACE_KIND:
+                getNodes()[offset] = new NamespaceNode(keyBase + offset, in);
+                break;
+            case IReadTransaction.TEXT_KIND:
+                getNodes()[offset] = new TextNode(keyBase + offset, in);
+                break;
+            default:
+                throw new IllegalStateException(
+                        "Unsupported node kind encountered during read: "
+                                + kind);
+            }
+        }
+    }
 
-	/**
-	 * Clone node page.
-	 * 
-	 * @param committedNodePage
-	 *            Node page to clone.
-	 */
-	public NodePage(final NodePage committedNodePage) {
-		super(0, committedNodePage);
-		mNodePageKey = committedNodePage.mNodePageKey;
-		mNodes = new AbstractNode[IConstants.NDP_NODE_COUNT];
+    /**
+     * Clone node page.
+     * 
+     * @param committedNodePage
+     *            Node page to clone.
+     */
+    public NodePage(final NodePage committedNodePage) {
+        super(0, committedNodePage);
+        mNodePageKey = committedNodePage.mNodePageKey;
+        mNodes = new AbstractNode[IConstants.NDP_NODE_COUNT];
 
-		// Deep-copy all nodes.
-		for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
-			if (committedNodePage.getNodes()[offset] != null) {
-				final int kind = committedNodePage.getNodes()[offset].getKind();
-				switch (kind) {
-				case IConstants.UNKNOWN:
-					// Was null node, do nothing here.
-					break;
-				case IReadTransaction.ROOT_KIND:
-					getNodes()[offset] = new DocumentRootNode(committedNodePage
-							.getNodes()[offset]);
-					break;
-				case IReadTransaction.ELEMENT_KIND:
-					getNodes()[offset] = new ElementNode(committedNodePage
-							.getNodes()[offset]);
-					break;
-				case IReadTransaction.ATTRIBUTE_KIND:
-					getNodes()[offset] = new AttributeNode(committedNodePage
-							.getNodes()[offset]);
-					break;
-				case IReadTransaction.NAMESPACE_KIND:
-					getNodes()[offset] = new NamespaceNode(committedNodePage
-							.getNodes()[offset]);
-					break;
-				case IReadTransaction.TEXT_KIND:
-					getNodes()[offset] = new TextNode(committedNodePage
-							.getNodes()[offset]);
-					break;
-				default:
-					throw new IllegalStateException(
-							"Unsupported node kind encountered during clone: "
-									+ kind);
-				}
-			}
-		}
-	}
+        // Deep-copy all nodes.
+        for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
+            if (committedNodePage.getNodes()[offset] != null) {
+                final int kind = committedNodePage.getNodes()[offset].getKind();
+                switch (kind) {
+                case IConstants.UNKNOWN:
+                    // Was null node, do nothing here.
+                    break;
+                case IReadTransaction.ROOT_KIND:
+                    getNodes()[offset] = new DocumentRootNode(committedNodePage
+                            .getNodes()[offset]);
+                    break;
+                case IReadTransaction.ELEMENT_KIND:
+                    getNodes()[offset] = new ElementNode(committedNodePage
+                            .getNodes()[offset]);
+                    break;
+                case IReadTransaction.ATTRIBUTE_KIND:
+                    getNodes()[offset] = new AttributeNode(committedNodePage
+                            .getNodes()[offset]);
+                    break;
+                case IReadTransaction.NAMESPACE_KIND:
+                    getNodes()[offset] = new NamespaceNode(committedNodePage
+                            .getNodes()[offset]);
+                    break;
+                case IReadTransaction.TEXT_KIND:
+                    getNodes()[offset] = new TextNode(committedNodePage
+                            .getNodes()[offset]);
+                    break;
+                default:
+                    throw new IllegalStateException(
+                            "Unsupported node kind encountered during clone: "
+                                    + kind);
+                }
+            }
+        }
+    }
 
-	public NodePage(final PageReference<NodePage> realPageReference,
-			final long nodePageKey) {
-		super(0, realPageReference.getPage());
-		mNodePageKey = nodePageKey;
-		mNodes = new AbstractNode[IConstants.NDP_NODE_COUNT];
-	}
+    public NodePage(final PageReference realPageReference,
+            final long nodePageKey) {
+        super(0, realPageReference.getPage());
+        mNodePageKey = nodePageKey;
+        mNodes = new AbstractNode[IConstants.NDP_NODE_COUNT];
+    }
 
-	/**
-	 * Get key of node page.
-	 * 
-	 * @return Node page key.
-	 */
-	public final long getNodePageKey() {
-		return mNodePageKey;
-	}
+    /**
+     * Get key of node page.
+     * 
+     * @return Node page key.
+     */
+    public final long getNodePageKey() {
+        return mNodePageKey;
+    }
 
-	/**
-	 * Get node at a given offset.
-	 * 
-	 * @param offset
-	 *            Offset of node within local node page.
-	 * @return Node at given offset.
-	 */
-	public AbstractNode getNode(final int offset) {
-		return getNodes()[offset];
-	}
+    /**
+     * Get node at a given offset.
+     * 
+     * @param offset
+     *            Offset of node within local node page.
+     * @return Node at given offset.
+     */
+    public AbstractNode getNode(final int offset) {
+        return getNodes()[offset];
+    }
 
-	/**
-	 * Overwrite a single node at a given offset.
-	 * 
-	 * @param offset
-	 *            Offset of node to overwrite in this node page.
-	 * @param node
-	 *            Node to store at given nodeOffset.
-	 */
-	public void setNode(final int offset, final AbstractNode node) {
-		getNodes()[offset] = node;
-	}
+    /**
+     * Overwrite a single node at a given offset.
+     * 
+     * @param offset
+     *            Offset of node to overwrite in this node page.
+     * @param node
+     *            Node to store at given nodeOffset.
+     */
+    public void setNode(final int offset, final AbstractNode node) {
+        getNodes()[offset] = node;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void serialize(final ITTSink out) {
-		out.writeInt(PageFactory.NODEPAGE);
-		super.serialize(out);
-		out.writeLong(mNodePageKey);
-		for (int i = 0; i < getNodes().length; i++) {
-			if (getNodes()[i] != null) {
-				out.writeInt(getNodes()[i].getKind());
-			} else {
-				out.writeInt(IConstants.UNKNOWN);
-			}
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void serialize(final ITTSink out) {
+        out.writeInt(PagePersistenter.NODEPAGE);
+        super.serialize(out);
+        out.writeLong(mNodePageKey);
+        for (int i = 0; i < getNodes().length; i++) {
+            if (getNodes()[i] != null) {
+                out.writeInt(getNodes()[i].getKind());
+            } else {
+                out.writeInt(IConstants.UNKNOWN);
+            }
+        }
 
-		for (final AbstractNode node : getNodes()) {
-			if (node != null) {
-				node.serialize(out);
-			}
-		}
-	}
+        for (final AbstractNode node : getNodes()) {
+            if (node != null) {
+                node.serialize(out);
+            }
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final String toString() {
-		String returnString = super.toString() + ": nodePageKey="
-				+ mNodePageKey + " nodes: \n";
-		for (final AbstractNode node : getNodes()) {
-			if (node != null) {
-				returnString = returnString + node.getNodeKey() + ",";
-			}
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final String toString() {
+        String returnString = super.toString() + ": nodePageKey="
+                + mNodePageKey + " nodes: \n";
+        for (final AbstractNode node : getNodes()) {
+            if (node != null) {
+                returnString = returnString + node.getNodeKey() + ",";
+            }
+        }
 
-		return returnString;
-	}
+        return returnString;
+    }
 
-	/**
-	 * @return the mNodes
-	 */
-	protected AbstractNode[] getNodes() {
-		return mNodes;
-	}
+    /**
+     * @return the mNodes
+     */
+    protected AbstractNode[] getNodes() {
+        return mNodes;
+    }
 }

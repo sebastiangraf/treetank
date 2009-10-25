@@ -18,6 +18,8 @@
 
 package com.treetank.service.xml.xpath.filter;
 
+import static org.junit.Assert.fail;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,47 +32,50 @@ import com.treetank.axis.IFilterTest;
 import com.treetank.axis.NameFilter;
 import com.treetank.axis.NodeFilter;
 import com.treetank.axis.TextFilter;
+import com.treetank.io.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
 
 public class NestedFilterTest {
 
-	@Before
-	public void setUp() {
+    @Before
+    public void setUp() {
 
-		Session.removeSession(ITestConstants.PATH1);
-	}
+        Session.removeSession(ITestConstants.PATH1);
+    }
 
-	@Test
-	public void testIFilterConvetions() {
+    @Test
+    public void testIFilterConvetions() {
+        try {
+            // Build simple test tree.
+            final ISession session = Session.beginSession(ITestConstants.PATH1);
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            DocumentCreater.create(wtx);
 
-		// Build simple test tree.
-		final ISession session = Session.beginSession(ITestConstants.PATH1);
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
+            wtx.moveTo(9L);
+            IFilterTest.testIFilterConventions(new NestedFilter(wtx,
+                    new ItemFilter(wtx), new ElementFilter(wtx),
+                    new NameFilter(wtx, "b")), true);
+            IFilterTest.testIFilterConventions(new NestedFilter(wtx,
+                    new ItemFilter(wtx), new AttributeFilter(wtx),
+                    new NameFilter(wtx, "b")), false);
 
-		wtx.moveTo(9L);
-		IFilterTest.testIFilterConventions(new NestedFilter(wtx,
-				new ItemFilter(wtx), new ElementFilter(wtx), new NameFilter(
-						wtx, "b")), true);
-		IFilterTest.testIFilterConventions(new NestedFilter(wtx,
-				new ItemFilter(wtx), new AttributeFilter(wtx), new NameFilter(
-						wtx, "b")), false);
+            wtx.moveTo(4L);
+            IFilterTest.testIFilterConventions(new NestedFilter(wtx,
+                    new NodeFilter(wtx), new ElementFilter(wtx)), false);
+            IFilterTest.testIFilterConventions(new NestedFilter(wtx,
+                    new NodeFilter(wtx), new TextFilter(wtx)), true);
 
-		wtx.moveTo(4L);
-		IFilterTest.testIFilterConventions(new NestedFilter(wtx,
-				new NodeFilter(wtx), new ElementFilter(wtx)), false);
-		IFilterTest.testIFilterConventions(new NestedFilter(wtx,
-				new NodeFilter(wtx), new TextFilter(wtx)), true);
+            wtx.moveTo(1L);
+            wtx.moveToAttribute(0);
+            IFilterTest.testIFilterConventions(new NestedFilter(wtx,
+                    new AttributeFilter(wtx), new NameFilter(wtx, "i")), true);
 
-		wtx.moveTo(1L);
-		wtx.moveToAttribute(0);
-		IFilterTest.testIFilterConventions(new NestedFilter(wtx,
-				new AttributeFilter(wtx), new NameFilter(wtx, "i")), true);
-
-		wtx.abort();
-		wtx.close();
-		session.close();
-
-	}
+            wtx.abort();
+            wtx.close();
+            session.close();
+        } catch (final TreetankIOException exc) {
+            fail(exc.toString());
+        }
+    }
 }

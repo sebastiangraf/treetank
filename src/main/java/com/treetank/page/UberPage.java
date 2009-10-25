@@ -21,8 +21,8 @@ package com.treetank.page;
 import com.treetank.api.IReadTransaction;
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
+import com.treetank.io.PagePersistenter;
 import com.treetank.node.DocumentRootNode;
-import com.treetank.session.WriteTransactionState;
 import com.treetank.utils.IConstants;
 
 /**
@@ -34,175 +34,176 @@ import com.treetank.utils.IConstants;
  */
 public final class UberPage extends AbstractPage {
 
-	/** Offset of indirect page reference. */
-	private static final int INDIRECT_REFERENCE_OFFSET = 0;
+    /** Offset of indirect page reference. */
+    private static final int INDIRECT_REFERENCE_OFFSET = 0;
 
-	/** Number of revisions. */
-	private final long mRevisionCount;
+    /** Number of revisions. */
+    private final long mRevisionCount;
 
-	/** True if this uber page is the uber page of a fresh TreeTank file. */
-	private boolean mBootstrap;
+    /** True if this uber page is the uber page of a fresh TreeTank file. */
+    private boolean mBootstrap;
 
-	/**
-	 * s Create uber page.
-	 */
-	public UberPage() {
-		super(1);
-		mRevisionCount = IConstants.UBP_ROOT_REVISION_COUNT;
-		mBootstrap = true;
+    /**
+     * s Create uber page.
+     */
+    public UberPage() {
+        super(1);
+        mRevisionCount = IConstants.UBP_ROOT_REVISION_COUNT;
+        mBootstrap = true;
 
-		// --- Create revision tree
-		// ------------------------------------------------
+        // --- Create revision tree
+        // ------------------------------------------------
 
-		// Initialize revision tree to guarantee that there is a revision root
-		// page.
-		AbstractPage page = null;
-		PageReference reference = getReference(INDIRECT_REFERENCE_OFFSET);
+        // Initialize revision tree to guarantee that there is a revision root
+        // page.
+        AbstractPage page = null;
+        PageReference reference = getReference(INDIRECT_REFERENCE_OFFSET);
 
-		// Remaining levels.
-		for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
-			page = new IndirectPage();
-			reference.setPage(page);
-			reference = page.getReference(0);
-		}
+        // Remaining levels.
+        for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
+            page = new IndirectPage();
+            reference.setPage(page);
+            reference = page.getReference(0);
+        }
 
-		RevisionRootPage rrp = new RevisionRootPage();
-		reference.setPage(rrp);
+        RevisionRootPage rrp = new RevisionRootPage();
+        reference.setPage(rrp);
 
-		// --- Create node tree
-		// ----------------------------------------------------
+        // --- Create node tree
+        // ----------------------------------------------------
 
-		// Initialize revision tree to guarantee that there is a revision root
-		// page.
-		page = null;
-		reference = rrp.getIndirectPageReference();
+        // Initialize revision tree to guarantee that there is a revision root
+        // page.
+        page = null;
+        reference = rrp.getIndirectPageReference();
 
-		// Remaining levels.
-		for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
-			page = new IndirectPage();
-			reference.setPage(page);
-			reference = page.getReference(0);
-		}
+        // Remaining levels.
+        for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
+            page = new IndirectPage();
+            reference.setPage(page);
+            reference = page.getReference(0);
+        }
 
-		NodePage ndp = new NodePage(IConstants.ROOT_PAGE_KEY);
-		reference.setPage(ndp);
+        NodePage ndp = new NodePage(IConstants.ROOT_PAGE_KEY);
+        reference.setPage(ndp);
 
-		ndp.setNode((int) IReadTransaction.DOCUMENT_ROOT_KEY,
-				new DocumentRootNode());
+        ndp.setNode((int) IReadTransaction.DOCUMENT_ROOT_KEY,
+                new DocumentRootNode());
 
-		rrp.incrementNodeCountAndMaxNodeKey();
+        rrp.incrementNodeCountAndMaxNodeKey();
 
-	}
+    }
 
-	/**
-	 * Read uber page.
-	 * 
-	 * @param in
-	 *            Input bytes.
-	 */
-	UberPage(final ITTSource in) {
-		super(1, in);
-		mRevisionCount = in.readLong();
-		mBootstrap = false;
-	}
+    /**
+     * Read uber page.
+     * 
+     * @param in
+     *            Input bytes.
+     */
+    public UberPage(final ITTSource in) {
+        super(1, in);
+        mRevisionCount = in.readLong();
+        mBootstrap = false;
+    }
 
-	/**
-	 * Clone uber page.
-	 * 
-	 * @param committedUberPage
-	 *            Page to clone.
-	 */
-	public UberPage(final UberPage committedUberPage) {
-		super(1, committedUberPage);
-		if (committedUberPage.isBootstrap()) {
-			mRevisionCount = committedUberPage.mRevisionCount;
-			mBootstrap = committedUberPage.mBootstrap;
-		} else {
-			mRevisionCount = committedUberPage.mRevisionCount + 1;
-			mBootstrap = false;
-		}
+    /**
+     * Clone uber page.
+     * 
+     * @param committedUberPage
+     *            Page to clone.
+     */
+    public UberPage(final UberPage committedUberPage) {
+        super(1, committedUberPage);
+        if (committedUberPage.isBootstrap()) {
+            mRevisionCount = committedUberPage.mRevisionCount;
+            mBootstrap = committedUberPage.mBootstrap;
+        } else {
+            mRevisionCount = committedUberPage.mRevisionCount + 1;
+            mBootstrap = false;
+        }
 
-	}
+    }
 
-	/**
-	 * Get indirect page reference.
-	 * 
-	 * @return Indirect page reference.
-	 */
-	public final PageReference<IndirectPage> getIndirectPageReference() {
-		return (PageReference<IndirectPage>) getReference(INDIRECT_REFERENCE_OFFSET);
-	}
+    /**
+     * Get indirect page reference.
+     * 
+     * @return Indirect page reference.
+     */
+    public final PageReference getIndirectPageReference() {
+        return getReference(INDIRECT_REFERENCE_OFFSET);
+    }
 
-	/**
-	 * Get number of revisions.
-	 * 
-	 * @return Number of revisions.
-	 */
-	public final long getRevisionCount() {
-		return mRevisionCount;
-	}
+    /**
+     * Get number of revisions.
+     * 
+     * @return Number of revisions.
+     */
+    public final long getRevisionCount() {
+        return mRevisionCount;
+    }
 
-	/**
-	 * Get key of last committed revision.
-	 * 
-	 * @return Key of last committed revision.
-	 */
-	public final long getLastCommittedRevisionNumber() {
-		if (mRevisionCount == IConstants.UBP_ROOT_REVISION_COUNT) {
-			return IConstants.UBP_ROOT_REVISION_NUMBER;
-		} else {
-			return mRevisionCount - 2;
-		}
-	}
+    /**
+     * Get key of last committed revision.
+     * 
+     * @return Key of last committed revision.
+     */
+    public final long getLastCommittedRevisionNumber() {
+        if (mRevisionCount == IConstants.UBP_ROOT_REVISION_COUNT) {
+            return IConstants.UBP_ROOT_REVISION_NUMBER;
+        } else {
+            return mRevisionCount - 2;
+        }
+    }
 
-	/**
-	 * Get revision key of current in-memory state.
-	 * 
-	 * @return Revision key.
-	 */
-	public final long getRevisionNumber() {
-		if (mRevisionCount == IConstants.UBP_ROOT_REVISION_COUNT) {
-			return IConstants.UBP_ROOT_REVISION_NUMBER;
-		} else {
-			return mRevisionCount - 1;
-		}
-	}
+    /**
+     * Get revision key of current in-memory state.
+     * 
+     * @return Revision key.
+     */
+    public final long getRevisionNumber() {
+        if (mRevisionCount == IConstants.UBP_ROOT_REVISION_COUNT) {
+            return IConstants.UBP_ROOT_REVISION_NUMBER;
+        } else {
+            return mRevisionCount - 1;
+        }
+    }
 
-	/**
-	 * Flag to indicate whether this uber page is the first ever.
-	 * 
-	 * @return True if this uber page is the first one of the TreeTank file.
-	 */
-	public final boolean isBootstrap() {
-		return mBootstrap;
-	}
+    /**
+     * Flag to indicate whether this uber page is the first ever.
+     * 
+     * @return True if this uber page is the first one of the TreeTank file.
+     */
+    public final boolean isBootstrap() {
+        return mBootstrap;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void commit(final WriteTransactionState state) {
-		super.commit(state);
-		mBootstrap = false;
-	}
+//    /**
+//     * {@inheritDoc}
+//     */
+//    @Override
+//    public final void commit(final WriteTransactionState state) {
+//        super.commit(state);
+//        mBootstrap = false;
+//    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final void serialize(final ITTSink out) {
-		out.writeInt(PageFactory.UBERPAGE);
-		super.serialize(out);
-		out.writeLong(mRevisionCount);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public final void serialize(final ITTSink out) {
+        mBootstrap = false;
+        out.writeInt(PagePersistenter.UBERPAGE);
+        super.serialize(out);
+        out.writeLong(mRevisionCount);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final String toString() {
-		return super.toString() + ": revisionCount=" + mRevisionCount
-				+ ", indirectPage=(" + getReference(INDIRECT_REFERENCE_OFFSET)
-				+ "), isBootstrap=" + mBootstrap;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final String toString() {
+        return super.toString() + ": revisionCount=" + mRevisionCount
+                + ", indirectPage=(" + getReference(INDIRECT_REFERENCE_OFFSET)
+                + "), isBootstrap=" + mBootstrap;
+    }
 
 }

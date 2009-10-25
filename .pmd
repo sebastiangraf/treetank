@@ -100,10 +100,6 @@
             <ruleset>Naming Rules</ruleset>
         </rule>
         <rule>
-            <name>AvoidFinalLocalVariable</name>
-            <ruleset>Controversial Rules</ruleset>
-        </rule>
-        <rule>
             <name>AvoidInstanceofChecksInCatchClause</name>
             <ruleset>Design Rules</ruleset>
         </rule>
@@ -262,10 +258,6 @@
         <rule>
             <name>CouplingBetweenObjects</name>
             <ruleset>Coupling Rules</ruleset>
-        </rule>
-        <rule>
-            <name>CyclomaticComplexity</name>
-            <ruleset>Code Size Rules</ruleset>
         </rule>
         <rule>
             <name>DefaultLabelNotLastInSwitchStmt</name>
@@ -594,10 +586,6 @@
         <rule>
             <name>NoPackage</name>
             <ruleset>Naming Rules</ruleset>
-        </rule>
-        <rule>
-            <name>NPathComplexity</name>
-            <ruleset>Code Size Rules</ruleset>
         </rule>
         <rule>
             <name>NullAssignment</name>

@@ -46,91 +46,91 @@ import com.treetank.utils.TypedValue;
  */
 public class CastableExpr extends AbstractExpression implements IAxis {
 
-	/** The input expression to cast to a specified target expression. */
-	private final IAxis mSourceExpr;
+    /** The input expression to cast to a specified target expression. */
+    private final IAxis mSourceExpr;
 
-	/** The type, to which the input expression should be cast to. */
-	private final Type mTargetType;
+    /** The type, to which the input expression should be cast to. */
+    private final Type mTargetType;
 
-	/** Defines, whether an empty sequence can be casted to any target type. */
-	private final boolean mPermitEmptySeq;
+    /** Defines, whether an empty sequence can be casted to any target type. */
+    private final boolean mPermitEmptySeq;
 
-	/**
-	 * Constructor. Initializes the internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) trx to iterate with.
-	 * @param inputExpr
-	 *            input expression, that's castablity will be tested.
-	 * @param target
-	 *            Type to test, whether the input expression can be casted to.
-	 */
-	public CastableExpr(final IReadTransaction rtx, final IAxis inputExpr,
-			final SingleType target) {
+    /**
+     * Constructor. Initializes the internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
+     * @param inputExpr
+     *            input expression, that's castablity will be tested.
+     * @param target
+     *            Type to test, whether the input expression can be casted to.
+     */
+    public CastableExpr(final IReadTransaction rtx, final IAxis inputExpr,
+            final SingleType target) {
 
-		super(rtx);
-		mSourceExpr = inputExpr;
-		mTargetType = target.getAtomic();
-		mPermitEmptySeq = target.hasInterogation();
+        super(rtx);
+        mSourceExpr = inputExpr;
+        mTargetType = target.getAtomic();
+        mPermitEmptySeq = target.hasInterogation();
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void reset(final long nodeKey) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reset(final long nodeKey) {
 
-		super.reset(nodeKey);
-		if (mSourceExpr != null) {
-			mSourceExpr.reset(nodeKey);
-		}
-	}
+        super.reset(nodeKey);
+        if (mSourceExpr != null) {
+            mSourceExpr.reset(nodeKey);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void evaluate() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void evaluate() {
 
-		// defines if current item is castable to the target type, or not
-		boolean isCastable;
+        // defines if current item is castable to the target type, or not
+        boolean isCastable;
 
-		// atomic type must not be xs:anyAtomicType or xs:NOTATION
-		if (mTargetType == Type.ANY_ATOMIC_TYPE || mTargetType == Type.NOTATION) {
-			throw new XPathError(ErrorType.XPST0080);
-		}
+        // atomic type must not be xs:anyAtomicType or xs:NOTATION
+        if (mTargetType == Type.ANY_ATOMIC_TYPE || mTargetType == Type.NOTATION) {
+            throw new XPathError(ErrorType.XPST0080);
+        }
 
-		if (mSourceExpr.hasNext()) { // result sequence > 0
+        if (mSourceExpr.hasNext()) { // result sequence > 0
 
-			final Type sourceType = Type.getType(getTransaction().getNode()
-					.getTypeKey());
-			final String sourceValue = TypedValue.parseString(getTransaction()
-					.getNode().getRawValue());
+            final Type sourceType = Type.getType(getTransaction().getNode()
+                    .getTypeKey());
+            final String sourceValue = TypedValue.parseString(getTransaction()
+                    .getNode().getRawValue());
 
-			// determine castability
-			isCastable = sourceType.isCastableTo(mTargetType, sourceValue);
+            // determine castability
+            isCastable = sourceType.isCastableTo(mTargetType, sourceValue);
 
-			// if the result sequence of the input expression has more than one
-			// item, a type error is raised.
-			if (mSourceExpr.hasNext()) { // result sequence > 1
-				throw new XPathError(ErrorType.XPTY0004);
-			}
+            // if the result sequence of the input expression has more than one
+            // item, a type error is raised.
+            if (mSourceExpr.hasNext()) { // result sequence > 1
+                throw new XPathError(ErrorType.XPTY0004);
+            }
 
-		} else { // result sequence = 0 (empty sequence)
+        } else { // result sequence = 0 (empty sequence)
 
-			// empty sequence is allowed.
-			isCastable = mPermitEmptySeq;
+            // empty sequence is allowed.
+            isCastable = mPermitEmptySeq;
 
-		}
+        }
 
-		// create result item and move transaction to it.
-		int itemKey = getTransaction().getItemList().addItem(
-				new AtomicValue(TypedValue.getBytes(Boolean
-						.toString(isCastable)), getTransaction().keyForName(
-						"xs:boolean")));
-		getTransaction().moveTo(itemKey);
+        // create result item and move transaction to it.
+        int itemKey = getTransaction().getItemList().addItem(
+                new AtomicValue(TypedValue.getBytes(Boolean
+                        .toString(isCastable)), getTransaction().keyForName(
+                        "xs:boolean")));
+        getTransaction().moveTo(itemKey);
 
-	}
+    }
 
 }

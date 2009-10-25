@@ -24,33 +24,33 @@ import org.junit.Test;
 
 public class TypedValueTest {
 
-	@Test
-	public void test() {
-		assertEquals("a", TypedValue.parseString(TypedValue.getBytes("a")));
-		assertEquals("foo", TypedValue.parseString(TypedValue.getBytes("foo")));
-		assertEquals("fö§", TypedValue.parseString(TypedValue.getBytes("fö§")));
-		assertEquals("", TypedValue.parseString(TypedValue.getBytes("")));
-	}
+    @Test
+    public void test() {
+        assertEquals("a", TypedValue.parseString(TypedValue.getBytes("a")));
+        assertEquals("foo", TypedValue.parseString(TypedValue.getBytes("foo")));
+        assertEquals("fö§", TypedValue.parseString(TypedValue.getBytes("fö§")));
+        assertEquals("", TypedValue.parseString(TypedValue.getBytes("")));
+    }
 
-	@Test
-	public void testEquals() {
-		assertEquals(false, TypedValue.equals(TypedValue.getBytes("foo"),
-				TypedValue.getBytes("foobar")));
-		assertEquals(false, TypedValue.equals(TypedValue.getBytes("foo"),
-				TypedValue.getBytes("bar")));
-		assertEquals(true, TypedValue.equals(TypedValue.getBytes("foo"),
-				TypedValue.getBytes("foo")));
+    @Test
+    public void testEquals() {
+        assertEquals(false, TypedValue.equals(TypedValue.getBytes("foo"),
+                TypedValue.getBytes("foobar")));
+        assertEquals(false, TypedValue.equals(TypedValue.getBytes("foo"),
+                TypedValue.getBytes("bar")));
+        assertEquals(true, TypedValue.equals(TypedValue.getBytes("foo"),
+                TypedValue.getBytes("foo")));
 
-		assertEquals(true, TypedValue.equals("foo", TypedValue.getBytes("foo")));
-		assertEquals(true, TypedValue.equals(TypedValue.getBytes("foo"), "foo"));
-		assertEquals(true, TypedValue.equals("foo", "foo"));
-	}
+        assertEquals(true, TypedValue.equals("foo", TypedValue.getBytes("foo")));
+        assertEquals(true, TypedValue.equals(TypedValue.getBytes("foo"), "foo"));
+        assertEquals(true, TypedValue.equals("foo", "foo"));
+    }
 
-	@Test
-	public void testEntityInString() {
-		final byte[] bytes = TypedValue.getBytes("<&");
-		assertEquals("<&", TypedValue.parseString(bytes));
-		assertEquals(9, TypedValue.getBytes("<&").length);
-	}
+    @Test
+    public void testEntityInString() {
+        final byte[] bytes = TypedValue.getBytes("<&");
+        assertEquals("<&", TypedValue.parseString(bytes));
+        assertEquals(9, TypedValue.getBytes("<&").length);
+    }
 
 }

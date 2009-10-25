@@ -29,77 +29,77 @@ import com.treetank.api.IAxis;
  */
 public class NestedAxis extends AbstractAxis implements IAxis {
 
-	/** Parent axis. */
-	private final IAxis mParentAxis;
+    /** Parent axis. */
+    private final IAxis mParentAxis;
 
-	/** Child axis to apply to each node found with parent axis. */
-	private final IAxis mChildAxis;
+    /** Child axis to apply to each node found with parent axis. */
+    private final IAxis mChildAxis;
 
-	/** Is it the first run of parent axis? */
-	private boolean mIsFirst;
+    /** Is it the first run of parent axis? */
+    private boolean mIsFirst;
 
-	/**
-	 * Constructor initializing internal state.
-	 * 
-	 * @param parentAxis
-	 *            Inner nested axis.
-	 * @param childAxis
-	 *            Outer nested axis.
-	 */
-	public NestedAxis(final IAxis parentAxis, final IAxis childAxis) {
-		super(parentAxis.getTransaction());
-		mParentAxis = parentAxis;
-		mChildAxis = childAxis;
-		mIsFirst = true;
-	}
+    /**
+     * Constructor initializing internal state.
+     * 
+     * @param parentAxis
+     *            Inner nested axis.
+     * @param childAxis
+     *            Outer nested axis.
+     */
+    public NestedAxis(final IAxis parentAxis, final IAxis childAxis) {
+        super(parentAxis.getTransaction());
+        mParentAxis = parentAxis;
+        mChildAxis = childAxis;
+        mIsFirst = true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void reset(final long nodeKey) {
-		super.reset(nodeKey);
-		if (mParentAxis != null) {
-			mParentAxis.reset(nodeKey);
-		}
-		if (mChildAxis != null) {
-			mChildAxis.reset(nodeKey);
-		}
-		mIsFirst = true;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void reset(final long nodeKey) {
+        super.reset(nodeKey);
+        if (mParentAxis != null) {
+            mParentAxis.reset(nodeKey);
+        }
+        if (mChildAxis != null) {
+            mChildAxis.reset(nodeKey);
+        }
+        mIsFirst = true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final boolean hasNext() {
-		resetToLastKey();
+    /**
+     * {@inheritDoc}
+     */
+    public final boolean hasNext() {
+        resetToLastKey();
 
-		// Make sure that parent axis is moved for the first time.
-		if (mIsFirst) {
-			mIsFirst = false;
-			if (mParentAxis.hasNext()) {
-				mChildAxis.reset(mParentAxis.next());
-			} else {
-				resetToStartKey();
-				return false;
-			}
-		}
+        // Make sure that parent axis is moved for the first time.
+        if (mIsFirst) {
+            mIsFirst = false;
+            if (mParentAxis.hasNext()) {
+                mChildAxis.reset(mParentAxis.next());
+            } else {
+                resetToStartKey();
+                return false;
+            }
+        }
 
-		// Execute child axis for each node found with parent axis.
-		boolean hasNext = false;
-		while (!(hasNext = mChildAxis.hasNext())) {
-			if (mParentAxis.hasNext()) {
-				mChildAxis.reset(mParentAxis.next());
-			} else {
-				break;
-			}
-		}
-		if (hasNext) {
-			mChildAxis.next();
-			return true;
-		}
+        // Execute child axis for each node found with parent axis.
+        boolean hasNext = false;
+        while (!(hasNext = mChildAxis.hasNext())) {
+            if (mParentAxis.hasNext()) {
+                mChildAxis.reset(mParentAxis.next());
+            } else {
+                break;
+            }
+        }
+        if (hasNext) {
+            mChildAxis.next();
+            return true;
+        }
 
-		resetToStartKey();
-		return false;
-	}
+        resetToStartKey();
+        return false;
+    }
 }

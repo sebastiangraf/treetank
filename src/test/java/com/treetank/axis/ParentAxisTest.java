@@ -18,42 +18,51 @@
 
 package com.treetank.axis;
 
+import static org.junit.Assert.fail;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.io.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
 
 public class ParentAxisTest {
 
-	@Before
-	public void setUp() {
-		Session.removeSession(ITestConstants.PATH1);
-	}
+    @Before
+    public void setUp() {
+       TestHelper.removeAllFiles();
+    }
 
-	@Test
-	public void testIterate() {
+    @Test
+    public void testIterate() {
+        try {
+            final ISession session = Session.beginSession(ITestConstants.PATH1);
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            DocumentCreater.create(wtx);
 
-		final ISession session = Session.beginSession(ITestConstants.PATH1);
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
+            wtx.moveTo(5L);
+            IAxisTest.testIAxisConventions(new ParentAxis(wtx),
+                    new long[] { 1L });
 
-		wtx.moveTo(5L);
-		IAxisTest.testIAxisConventions(new ParentAxis(wtx), new long[] { 1L });
+            wtx.moveTo(8L);
+            IAxisTest.testIAxisConventions(new ParentAxis(wtx),
+                    new long[] { 1L });
 
-		wtx.moveTo(8L);
-		IAxisTest.testIAxisConventions(new ParentAxis(wtx), new long[] { 1L });
+            wtx.moveTo(10L);
+            IAxisTest.testIAxisConventions(new ParentAxis(wtx),
+                    new long[] { 9L });
 
-		wtx.moveTo(10L);
-		IAxisTest.testIAxisConventions(new ParentAxis(wtx), new long[] { 9L });
-
-		wtx.abort();
-		wtx.close();
-		session.close();
-
-	}
+            wtx.abort();
+            wtx.close();
+            session.close();
+        } catch (final TreetankIOException exc) {
+            fail(exc.toString());
+        }
+    }
 
 }

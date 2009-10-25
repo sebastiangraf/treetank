@@ -26,96 +26,95 @@ import com.treetank.io.file.ByteBufferSinkAndSource;
 
 public class CryptoJavaImpl implements ICrypto {
 
-	private final Deflater mCompressor;
+    private final Deflater mCompressor;
 
-	private final Inflater mDecompressor;
+    private final Inflater mDecompressor;
 
-	private final byte[] mTmp;
+    private final byte[] mTmp;
 
-	private final ByteArrayOutputStream mOut;
+    private final ByteArrayOutputStream mOut;
 
-	/**
-	 * Initialize compressor.
-	 */
-	public CryptoJavaImpl() {
-		mCompressor = new Deflater();
-		mDecompressor = new Inflater();
-		mTmp = new byte[IConstants.BUFFER_SIZE];
-		mOut = new ByteArrayOutputStream();
-	}
+    /**
+     * Initialize compressor.
+     */
+    public CryptoJavaImpl() {
+        mCompressor = new Deflater();
+        mDecompressor = new Inflater();
+        mTmp = new byte[IConstants.BUFFER_SIZE];
+        mOut = new ByteArrayOutputStream();
+    }
 
-	/**
-	 * Compress data.
-	 * 
-	 * @param data
-	 *            data that should be compressed
-	 * @return compressed data, null if failed
-	 */
-	public int crypt(final int length, final ByteBufferSinkAndSource buffer) {
-		try {
-			buffer.position(24);
-			final byte[] tmp = new byte[length - 24];
-			buffer.get(tmp, 0, tmp.length);
-			mCompressor.reset();
-			mOut.reset();
-			mCompressor.setInput(tmp);
-			mCompressor.finish();
-			int count;
-			while (!mCompressor.finished()) {
-				count = mCompressor.deflate(mTmp);
-				mOut.write(mTmp, 0, count);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return 0;
-		}
-		final byte[] result = mOut.toByteArray();
-		final byte[] checksum = new byte[IConstants.CHECKSUM_SIZE];
-		buffer.position(12);
-		for (final byte byteVal : checksum) {
-			buffer.writeByte(byteVal);
-		}
-		for (final byte byteVal : result) {
-			buffer.writeByte(byteVal);
-		}
-		return (short) (buffer.position());
-	}
+    /**
+     * Compress data.
+     * 
+     * @param data
+     *            data that should be compressed
+     * @return compressed data, null if failed
+     */
+    public int crypt(final int length, final ByteBufferSinkAndSource buffer) {
+        try {
+            buffer.position(24);
+            final byte[] tmp = new byte[length - 24];
+            buffer.get(tmp, 0, tmp.length);
+            mCompressor.reset();
+            mOut.reset();
+            mCompressor.setInput(tmp);
+            mCompressor.finish();
+            int count;
+            while (!mCompressor.finished()) {
+                count = mCompressor.deflate(mTmp);
+                mOut.write(mTmp, 0, count);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+        final byte[] result = mOut.toByteArray();
+        final byte[] checksum = new byte[IConstants.CHECKSUM_SIZE];
+        buffer.position(12);
+        for (final byte byteVal : checksum) {
+            buffer.writeByte(byteVal);
+        }
+        for (final byte byteVal : result) {
+            buffer.writeByte(byteVal);
+        }
+        return (short) (buffer.position());
+    }
 
-	/**
-	 * Decompress data.
-	 * 
-	 * @param data
-	 *            data that should be decompressed
-	 * @return Decompressed data, null if failed
-	 */
-	public int decrypt(final int length,
-			final ByteBufferSinkAndSource buffer) {
-		try {
-			buffer.position(24);
-			final byte[] tmp = new byte[length - 24];
-			buffer.get(tmp, 0, tmp.length);
-			mDecompressor.reset();
-			mOut.reset();
-			mDecompressor.setInput(tmp);
-			int count;
-			while (!mDecompressor.finished()) {
-				count = mDecompressor.inflate(mTmp);
-				mOut.write(mTmp, 0, count);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return 0;
-		}
-		final byte[] result = mOut.toByteArray();
-		final byte[] checksum = new byte[IConstants.CHECKSUM_SIZE];
-		buffer.position(12);
-		for (final byte byteVal : checksum) {
-			buffer.writeByte(byteVal);
-		}
-		for (final byte byteVal : result) {
-			buffer.writeByte(byteVal);
-		}
-		return (short) (result.length + 24);
-	}
+    /**
+     * Decompress data.
+     * 
+     * @param data
+     *            data that should be decompressed
+     * @return Decompressed data, null if failed
+     */
+    public int decrypt(final int length, final ByteBufferSinkAndSource buffer) {
+        try {
+            buffer.position(24);
+            final byte[] tmp = new byte[length - 24];
+            buffer.get(tmp, 0, tmp.length);
+            mDecompressor.reset();
+            mOut.reset();
+            mDecompressor.setInput(tmp);
+            int count;
+            while (!mDecompressor.finished()) {
+                count = mDecompressor.inflate(mTmp);
+                mOut.write(mTmp, 0, count);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+        final byte[] result = mOut.toByteArray();
+        final byte[] checksum = new byte[IConstants.CHECKSUM_SIZE];
+        buffer.position(12);
+        for (final byte byteVal : checksum) {
+            buffer.writeByte(byteVal);
+        }
+        for (final byte byteVal : result) {
+            buffer.writeByte(byteVal);
+        }
+        return (short) (result.length + 24);
+    }
 
 }

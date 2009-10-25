@@ -38,88 +38,88 @@ import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
  */
 public class ExceptAxis extends AbstractAxis implements IAxis {
 
-	/** First operand sequence. */
-	private final IAxis mOp1;
+    /** First operand sequence. */
+    private final IAxis mOp1;
 
-	/** Second operand sequence. */
-	private final IAxis mOp2;
+    /** Second operand sequence. */
+    private final IAxis mOp2;
 
-	/**
-	 * Set that is used to determine, whether an item of the first operand is
-	 * also contained in the result set of the second operand.
-	 */
-	private final Set<Long> mDupSet;
+    /**
+     * Set that is used to determine, whether an item of the first operand is
+     * also contained in the result set of the second operand.
+     */
+    private final Set<Long> mDupSet;
 
-	/**
-	 * Constructor. Initializes the internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) trx to iterate with.
-	 * @param operand1
-	 *            First operand
-	 * @param operand2
-	 *            Second operand
-	 */
-	public ExceptAxis(final IReadTransaction rtx, final IAxis operand1,
-			final IAxis operand2) {
+    /**
+     * Constructor. Initializes the internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
+     * @param operand1
+     *            First operand
+     * @param operand2
+     *            Second operand
+     */
+    public ExceptAxis(final IReadTransaction rtx, final IAxis operand1,
+            final IAxis operand2) {
 
-		super(rtx);
-		mOp1 = operand1;
-		mOp2 = operand2;
-		mDupSet = new HashSet<Long>();
+        super(rtx);
+        mOp1 = operand1;
+        mOp2 = operand2;
+        mDupSet = new HashSet<Long>();
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void reset(final long nodeKey) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reset(final long nodeKey) {
 
-		super.reset(nodeKey);
-		if (mDupSet != null) {
-			mDupSet.clear();
-		}
+        super.reset(nodeKey);
+        if (mDupSet != null) {
+            mDupSet.clear();
+        }
 
-		if (mOp1 != null) {
-			mOp1.reset(nodeKey);
-		}
-		if (mOp2 != null) {
-			mOp2.reset(nodeKey);
-		}
-	}
+        if (mOp1 != null) {
+            mOp1.reset(nodeKey);
+        }
+        if (mOp2 != null) {
+            mOp2.reset(nodeKey);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean hasNext() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasNext() {
 
-		// first all items of the second operand are stored in the set.
-		while (mOp2.hasNext()) {
-			if (getTransaction().getNode().getNodeKey() < 0) { // only nodes are
-				// allowed
-				throw new XPathError(ErrorType.XPTY0004);
-			}
-			mDupSet.add(getTransaction().getNode().getNodeKey());
-		}
+        // first all items of the second operand are stored in the set.
+        while (mOp2.hasNext()) {
+            if (getTransaction().getNode().getNodeKey() < 0) { // only nodes are
+                // allowed
+                throw new XPathError(ErrorType.XPTY0004);
+            }
+            mDupSet.add(getTransaction().getNode().getNodeKey());
+        }
 
-		while (mOp1.hasNext()) {
-			if (getTransaction().getNode().getNodeKey() < 0) { // only nodes are
-				// allowed
-				throw new XPathError(ErrorType.XPTY0004);
-			}
+        while (mOp1.hasNext()) {
+            if (getTransaction().getNode().getNodeKey() < 0) { // only nodes are
+                // allowed
+                throw new XPathError(ErrorType.XPTY0004);
+            }
 
-			// return true, if node is not already in the set, which means, that
-			// it is
-			// not also an item of the result set of the second operand
-			// sequence.
-			if (mDupSet.add(getTransaction().getNode().getNodeKey())) {
-				return true;
-			}
-		}
+            // return true, if node is not already in the set, which means, that
+            // it is
+            // not also an item of the result set of the second operand
+            // sequence.
+            if (mDupSet.add(getTransaction().getNode().getNodeKey())) {
+                return true;
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
 }

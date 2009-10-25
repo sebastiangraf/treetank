@@ -37,63 +37,63 @@ import com.treetank.axis.AbstractAxis;
  */
 public abstract class AbstractExpression extends AbstractAxis implements IAxis {
 
-	/** Defines, whether hasNext() has already been called. */
-	private boolean mIsFirst;
+    /** Defines, whether hasNext() has already been called. */
+    private boolean mIsFirst;
 
-	/**
-	 * Constructor. Initializes the internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) trx to iterate with.
-	 */
-	public AbstractExpression(final IReadTransaction rtx) {
+    /**
+     * Constructor. Initializes the internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
+     */
+    public AbstractExpression(final IReadTransaction rtx) {
 
-		super(rtx);
-		mIsFirst = true;
+        super(rtx);
+        mIsFirst = true;
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void reset(final long nodeKey) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reset(final long nodeKey) {
 
-		super.reset(nodeKey);
-		mIsFirst = true;
-	}
+        super.reset(nodeKey);
+        mIsFirst = true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean hasNext() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasNext() {
 
-		resetToLastKey();
+        resetToLastKey();
 
-		if (mIsFirst) {
-			mIsFirst = false;
+        if (mIsFirst) {
+            mIsFirst = false;
 
-			// evaluate expression
-			evaluate();
+            // evaluate expression
+            evaluate();
 
-			return true;
-		} else {
+            return true;
+        } else {
 
-			// only the first call yields to true, all further calls will yield
-			// to
-			// false. Calling hasNext() makes no sense, since evaluating the
-			// expression on the same input would always return the same result.
-			resetToStartKey();
-			return false;
-		}
+            // only the first call yields to true, all further calls will yield
+            // to
+            // false. Calling hasNext() makes no sense, since evaluating the
+            // expression on the same input would always return the same result.
+            resetToStartKey();
+            return false;
+        }
 
-	}
+    }
 
-	/**
-	 * Performs the expression dependent evaluation of the expression. (Template
-	 * method)
-	 */
-	protected abstract void evaluate();
+    /**
+     * Performs the expression dependent evaluation of the expression. (Template
+     * method)
+     */
+    protected abstract void evaluate();
 
 }

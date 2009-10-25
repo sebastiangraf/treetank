@@ -32,55 +32,55 @@ import com.treetank.service.xml.xpath.types.Type;
  */
 public class SingleType {
 
-	private Type mAtomicType;
+    private Type mAtomicType;
 
-	private final boolean mhasInterogation;
+    private final boolean mhasInterogation;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param atomic
-	 *            string representation of the atomic value
-	 * @param intero
-	 *            true, if interrogation sign is present
-	 */
-	public SingleType(final String atomic, final boolean intero) {
+    /**
+     * Constructor.
+     * 
+     * @param atomic
+     *            string representation of the atomic value
+     * @param intero
+     *            true, if interrogation sign is present
+     */
+    public SingleType(final String atomic, final boolean intero) {
 
-		// get atomic type
-		mAtomicType = null; // TODO. = null is not good style
-		for (Type type : Type.values()) {
-			if (type.getStringRepr().equals(atomic)) {
-				mAtomicType = type;
-				break;
-			}
-		}
+        // get atomic type
+        mAtomicType = null; // TODO. = null is not good style
+        for (Type type : Type.values()) {
+            if (type.getStringRepr().equals(atomic)) {
+                mAtomicType = type;
+                break;
+            }
+        }
 
-		if (mAtomicType == null) {
-			throw new XPathError(ErrorType.XPST0051);
-		}
+        if (mAtomicType == null) {
+            throw new XPathError(ErrorType.XPST0051);
+        }
 
-		mhasInterogation = intero;
-	}
+        mhasInterogation = intero;
+    }
 
-	/**
-	 * Gets the atomic type.
-	 * 
-	 * @return atomic type.
-	 */
-	public Type getAtomic() {
+    /**
+     * Gets the atomic type.
+     * 
+     * @return atomic type.
+     */
+    public Type getAtomic() {
 
-		return mAtomicType;
-	}
+        return mAtomicType;
+    }
 
-	/**
-	 * Specifies, whether interrogation sign is present and therefore the empty
-	 * sequence is valid too.
-	 * 
-	 * @return true, if interrogation sign is present.
-	 */
-	public boolean hasInterogation() {
+    /**
+     * Specifies, whether interrogation sign is present and therefore the empty
+     * sequence is valid too.
+     * 
+     * @return true, if interrogation sign is present.
+     */
+    public boolean hasInterogation() {
 
-		return mhasInterogation;
-	}
+        return mhasInterogation;
+    }
 
 }

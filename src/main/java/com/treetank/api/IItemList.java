@@ -38,24 +38,24 @@ package com.treetank.api;
  */
 public interface IItemList {
 
-	/**
-	 * Adds an item to the item list and assigns a unique item key to the item
-	 * and return it. The item key is the negatived index of the item in the
-	 * item list The key is negatived to make it distinguishable from a node
-	 * 
-	 * @param item
-	 *            The item to add.
-	 * @return The item key.
-	 */
-	int addItem(final IItem item);
+    /**
+     * Adds an item to the item list and assigns a unique item key to the item
+     * and return it. The item key is the negatived index of the item in the
+     * item list The key is negatived to make it distinguishable from a node
+     * 
+     * @param item
+     *            The item to add.
+     * @return The item key.
+     */
+    int addItem(final IItem item);
 
-	/**
-	 * Returns the item at a given index in the item list. If the given index is
-	 * the item key, it has to be negated before.
-	 * 
-	 * @param key
-	 *            key of the item, that should be returned
-	 * @return item at the given index.
-	 */
-	IItem getItem(final long key);
+    /**
+     * Returns the item at a given index in the item list. If the given index is
+     * the item key, it has to be negated before.
+     * 
+     * @param key
+     *            key of the item, that should be returned
+     * @return item at the given index.
+     */
+    IItem getItem(final long key);
 }

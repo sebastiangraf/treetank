@@ -18,6 +18,8 @@
 
 package com.treetank.api;
 
+import com.treetank.io.TreetankIOException;
+
 /**
  * <h1>IWriteTransaction</h1>
  * 
@@ -103,178 +105,178 @@ package com.treetank.api;
  */
 public interface IWriteTransaction extends IReadTransaction {
 
-	// --- Node Modifiers
-	// --------------------------------------------------------
+    // --- Node Modifiers
+    // --------------------------------------------------------
 
-	/**
-	 * Insert new element node as first child of currently selected node. The
-	 * cursor is moved to the inserted node.
-	 * 
-	 * @param name
-	 *            Qualified name of inserted node.
-	 * @param uri
-	 *            URI of inserted node.
-	 * @return Key of inserted node. already has a first child.
-	 */
-	long insertElementAsFirstChild(final String name, final String uri);
+    /**
+     * Insert new element node as first child of currently selected node. The
+     * cursor is moved to the inserted node.
+     * 
+     * @param name
+     *            Qualified name of inserted node.
+     * @param uri
+     *            URI of inserted node.
+     * @return Key of inserted node. already has a first child.
+     */
+    long insertElementAsFirstChild(final String name, final String uri);
 
-	/**
-	 * Insert new text node as first child of currently selected node. The
-	 * cursor is moved to the inserted node.
-	 * 
-	 * @param valueType
-	 *            Type of value.
-	 * @param value
-	 *            Value of inserted node.
-	 * @return Key of inserted node. already has a first child.
-	 */
-	long insertTextAsFirstChild(final int valueType, final byte[] value);
+    /**
+     * Insert new text node as first child of currently selected node. The
+     * cursor is moved to the inserted node.
+     * 
+     * @param valueType
+     *            Type of value.
+     * @param value
+     *            Value of inserted node.
+     * @return Key of inserted node. already has a first child.
+     */
+    long insertTextAsFirstChild(final int valueType, final byte[] value);
 
-	/**
-	 * Insert new text node as first child of currently selected node. The
-	 * cursor is moved to the inserted node.
-	 * 
-	 * @param value
-	 *            Value of inserted node.
-	 * @return Key of inserted node. already has a first child.
-	 */
-	long insertTextAsFirstChild(final String value);
+    /**
+     * Insert new text node as first child of currently selected node. The
+     * cursor is moved to the inserted node.
+     * 
+     * @param value
+     *            Value of inserted node.
+     * @return Key of inserted node. already has a first child.
+     */
+    long insertTextAsFirstChild(final String value);
 
-	/**
-	 * Insert new element node as right sibling of currently selected node. The
-	 * cursor is moved to the inserted node.
-	 * 
-	 * @param name
-	 *            Qualified name of inserted node.
-	 * @param uri
-	 *            URI of inserted node.
-	 * @return Key of inserted node. already has a first child.
-	 */
-	long insertElementAsRightSibling(final String name, final String uri);
+    /**
+     * Insert new element node as right sibling of currently selected node. The
+     * cursor is moved to the inserted node.
+     * 
+     * @param name
+     *            Qualified name of inserted node.
+     * @param uri
+     *            URI of inserted node.
+     * @return Key of inserted node. already has a first child.
+     */
+    long insertElementAsRightSibling(final String name, final String uri);
 
-	/**
-	 * Insert new element node as right sibling of currently selected node. The
-	 * cursor is moved to the inserted node.
-	 * 
-	 * @param valueType
-	 *            Type of value.
-	 * @param value
-	 *            Value of inserted node.
-	 * @return Key of inserted node. the root node which is not allowed to have
-	 *         right siblings.
-	 */
-	long insertTextAsRightSibling(final int valueType, final byte[] value);
+    /**
+     * Insert new element node as right sibling of currently selected node. The
+     * cursor is moved to the inserted node.
+     * 
+     * @param valueType
+     *            Type of value.
+     * @param value
+     *            Value of inserted node.
+     * @return Key of inserted node. the root node which is not allowed to have
+     *         right siblings.
+     */
+    long insertTextAsRightSibling(final int valueType, final byte[] value);
 
-	/**
-	 * Insert new element node as right sibling of currently selected node. The
-	 * cursor is moved to the inserted node.
-	 * 
-	 * @param value
-	 *            Value of inserted node.
-	 * @return Key of inserted node. the root node which is not allowed to have
-	 *         right siblings.
-	 */
-	long insertTextAsRightSibling(final String value);
+    /**
+     * Insert new element node as right sibling of currently selected node. The
+     * cursor is moved to the inserted node.
+     * 
+     * @param value
+     *            Value of inserted node.
+     * @return Key of inserted node. the root node which is not allowed to have
+     *         right siblings.
+     */
+    long insertTextAsRightSibling(final String value);
 
-	/**
-	 * Insert attribute in currently selected node. The cursor is moved to the
-	 * inserted node.
-	 * 
-	 * @param name
-	 *            Qualified name of inserted node.
-	 * @param uri
-	 *            URI of inserted node.
-	 * @param valueType
-	 *            Type of value.
-	 * @param value
-	 *            Value of inserted node.
-	 * @return Key of inserted node.
-	 */
-	long insertAttribute(final String name, final String uri,
-			final int valueType, final byte[] value);
+    /**
+     * Insert attribute in currently selected node. The cursor is moved to the
+     * inserted node.
+     * 
+     * @param name
+     *            Qualified name of inserted node.
+     * @param uri
+     *            URI of inserted node.
+     * @param valueType
+     *            Type of value.
+     * @param value
+     *            Value of inserted node.
+     * @return Key of inserted node.
+     */
+    long insertAttribute(final String name, final String uri,
+            final int valueType, final byte[] value);
 
-	/**
-	 * Insert attribute in currently selected node. The cursor is moved to the
-	 * inserted node.
-	 * 
-	 * @param name
-	 *            Qualified name of inserted node.
-	 * @param uri
-	 *            URI of inserted node.
-	 * @param value
-	 *            Value of inserted node.
-	 * @return Key of inserted node.
-	 */
-	long insertAttribute(final String name, final String uri, final String value);
+    /**
+     * Insert attribute in currently selected node. The cursor is moved to the
+     * inserted node.
+     * 
+     * @param name
+     *            Qualified name of inserted node.
+     * @param uri
+     *            URI of inserted node.
+     * @param value
+     *            Value of inserted node.
+     * @return Key of inserted node.
+     */
+    long insertAttribute(final String name, final String uri, final String value);
 
-	/**
-	 * Insert namespace declaration in currently selected node. The cursor is
-	 * moved to the inserted node.
-	 * 
-	 * @param uri
-	 *            URI of inserted node.
-	 * @param name
-	 *            Prefix of inserted node.
-	 * @return Key of inserted node.
-	 */
-	long insertNamespace(final String uri, final String name);
+    /**
+     * Insert namespace declaration in currently selected node. The cursor is
+     * moved to the inserted node.
+     * 
+     * @param uri
+     *            URI of inserted node.
+     * @param name
+     *            Prefix of inserted node.
+     * @return Key of inserted node.
+     */
+    long insertNamespace(final String uri, final String name);
 
-	/**
-	 * Remove currently selected node. This does automatically remove
-	 * descendants.
-	 * 
-	 * The cursor is located at the former right sibling. If there was no right
-	 * sibling, it is located at the former left sibling. If there was no left
-	 * sibling, it is located at the former parent.
-	 */
-	void remove();
+    /**
+     * Remove currently selected node. This does automatically remove
+     * descendants.
+     * 
+     * The cursor is located at the former right sibling. If there was no right
+     * sibling, it is located at the former left sibling. If there was no left
+     * sibling, it is located at the former parent.
+     */
+    void remove();
 
-	// --- Node Setters
-	// -----------------------------------------------------------
+    // --- Node Setters
+    // -----------------------------------------------------------
 
-	/**
-	 * Set local part of node.
-	 * 
-	 * @param name
-	 *            New qualified name of node.
-	 */
-	void setName(final String name);
+    /**
+     * Set local part of node.
+     * 
+     * @param name
+     *            New qualified name of node.
+     */
+    void setName(final String name);
 
-	/**
-	 * Set URI of node.
-	 * 
-	 * @param uri
-	 *            New URI of node.
-	 */
-	void setURI(final String uri);
+    /**
+     * Set URI of node.
+     * 
+     * @param uri
+     *            New URI of node.
+     */
+    void setURI(final String uri);
 
-	/**
-	 * Set value of node.
-	 * 
-	 * @param valueType
-	 *            Type of value.
-	 * @param value
-	 *            New value of node.
-	 */
-	void setValue(final int valueType, final byte[] value);
+    /**
+     * Set value of node.
+     * 
+     * @param valueType
+     *            Type of value.
+     * @param value
+     *            New value of node.
+     */
+    void setValue(final int valueType, final byte[] value);
 
-	/**
-	 * Set value of node.
-	 * 
-	 * @param value
-	 *            New value of node.
-	 */
-	void setValue(final String value);
+    /**
+     * Set value of node.
+     * 
+     * @param value
+     *            New value of node.
+     */
+    void setValue(final String value);
 
-	/**
-	 * Commit all modifications of the exclusive write transaction. Even commit
-	 * if there are no modification at all.
-	 */
-	void commit();
+    /**
+     * Commit all modifications of the exclusive write transaction. Even commit
+     * if there are no modification at all.
+     */
+    void commit() throws TreetankIOException;
 
-	/**
-	 * Abort all modifications of the exclusive write transaction.
-	 */
-	void abort();
+    /**
+     * Abort all modifications of the exclusive write transaction.
+     */
+    void abort() throws TreetankIOException;
 
 }

@@ -35,76 +35,76 @@ import com.treetank.axis.AbstractAxis;
  */
 public class VariableAxis extends AbstractAxis implements IAxis {
 
-	/** Sequence that defines the values, the variable is bound to. */
-	private final IAxis bindingSeq;
+    /** Sequence that defines the values, the variable is bound to. */
+    private final IAxis bindingSeq;
 
-	private final List<VarRefExpr> mVarRefs;
+    private final List<VarRefExpr> mVarRefs;
 
-	/**
-	 * Constructor. Initializes the internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) trx to iterate with.
-	 * @param inSeq
-	 *            sequence, the variable is bound to.
-	 */
-	public VariableAxis(final IReadTransaction rtx, final IAxis inSeq) {
+    /**
+     * Constructor. Initializes the internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
+     * @param inSeq
+     *            sequence, the variable is bound to.
+     */
+    public VariableAxis(final IReadTransaction rtx, final IAxis inSeq) {
 
-		super(rtx);
-		bindingSeq = inSeq;
-		mVarRefs = new ArrayList<VarRefExpr>();
-	}
+        super(rtx);
+        bindingSeq = inSeq;
+        mVarRefs = new ArrayList<VarRefExpr>();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void reset(final long nodeKey) {
-		super.reset(nodeKey);
-		if (bindingSeq != null) {
-			bindingSeq.reset(nodeKey);
-		}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reset(final long nodeKey) {
+        super.reset(nodeKey);
+        if (bindingSeq != null) {
+            bindingSeq.reset(nodeKey);
+        }
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean hasNext() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasNext() {
 
-		resetToLastKey();
+        resetToLastKey();
 
-		if (bindingSeq.hasNext()) {
-			notifyObs();
-			return true;
-		}
+        if (bindingSeq.hasNext()) {
+            notifyObs();
+            return true;
+        }
 
-		resetToStartKey();
-		return false;
+        resetToStartKey();
+        return false;
 
-	}
+    }
 
-	/**
-	 * Tell all observers that the a new item of the binding sequence has been
-	 * evaluated.
-	 */
-	private void notifyObs() {
+    /**
+     * Tell all observers that the a new item of the binding sequence has been
+     * evaluated.
+     */
+    private void notifyObs() {
 
-		for (VarRefExpr varRef : mVarRefs) {
-			varRef.update(getTransaction().getNode().getNodeKey());
-		}
-	}
+        for (VarRefExpr varRef : mVarRefs) {
+            varRef.update(getTransaction().getNode().getNodeKey());
+        }
+    }
 
-	/**
-	 * Add an observer to the list.
-	 * 
-	 * @param observer
-	 *            axis that wants to be notified of any change of this axis
-	 */
-	public void addObserver(final VarRefExpr observer) {
+    /**
+     * Add an observer to the list.
+     * 
+     * @param observer
+     *            axis that wants to be notified of any change of this axis
+     */
+    public void addObserver(final VarRefExpr observer) {
 
-		mVarRefs.add(observer);
-	}
+        mVarRefs.add(observer);
+    }
 
 }

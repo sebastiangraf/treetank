@@ -30,22 +30,22 @@ import com.treetank.api.IReadTransaction;
  */
 public class NodeFilter extends AbstractFilter implements IFilter {
 
-	/**
-	 * Default constructor.
-	 * 
-	 * @param rtx
-	 *            Transaction this filter is bound to.
-	 */
-	public NodeFilter(final IReadTransaction rtx) {
-		super(rtx);
-	}
+    /**
+     * Default constructor.
+     * 
+     * @param rtx
+     *            Transaction this filter is bound to.
+     */
+    public NodeFilter(final IReadTransaction rtx) {
+        super(rtx);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final boolean filter() {
-		return (getTransaction().getNode().isElement() || getTransaction()
-				.getNode().isText());
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public final boolean filter() {
+        return (getTransaction().getNode().isElement() || getTransaction()
+                .getNode().isText());
+    }
 
 }

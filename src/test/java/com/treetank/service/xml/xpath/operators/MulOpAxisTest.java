@@ -41,118 +41,118 @@ import com.treetank.utils.TypedValue;
 
 public class MulOpAxisTest {
 
-	@Before
-	public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
 
-		Session.removeSession(ITestConstants.PATH1);
+        Session.removeSession(ITestConstants.PATH1);
 
-	}
+    }
 
-	@Test
-	public final void testOperate() {
+    @Test
+    public final void testOperate() {
 
-		final ISession session = Session.beginSession(ITestConstants.PATH1);
-		IReadTransaction rtx = session.beginReadTransaction();
-		IItem item1 = new AtomicValue(3.0, Type.DOUBLE);
-		IItem item2 = new AtomicValue(2.0, Type.DOUBLE);
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        IReadTransaction rtx = session.beginReadTransaction();
+        IItem item1 = new AtomicValue(3.0, Type.DOUBLE);
+        IItem item2 = new AtomicValue(2.0, Type.DOUBLE);
 
-		IAxis op1 = new LiteralExpr(rtx, rtx.getItemList().addItem(item1));
-		IAxis op2 = new LiteralExpr(rtx, rtx.getItemList().addItem(item2));
-		AbstractOpAxis axis = new MulOpAxis(rtx, op1, op2);
+        IAxis op1 = new LiteralExpr(rtx, rtx.getItemList().addItem(item1));
+        IAxis op2 = new LiteralExpr(rtx, rtx.getItemList().addItem(item2));
+        AbstractOpAxis axis = new MulOpAxis(rtx, op1, op2);
 
-		assertEquals(true, axis.hasNext());
-		assertThat(6.0, is(Double.parseDouble(TypedValue.parseString(rtx
-				.getNode().getRawValue()))));
-		assertEquals(rtx.keyForName("xs:double"), rtx.getNode().getTypeKey());
-		assertEquals(false, axis.hasNext());
+        assertEquals(true, axis.hasNext());
+        assertThat(6.0, is(Double.parseDouble(TypedValue.parseString(rtx
+                .getNode().getRawValue()))));
+        assertEquals(rtx.keyForName("xs:double"), rtx.getNode().getTypeKey());
+        assertEquals(false, axis.hasNext());
 
-		rtx.close();
-		session.close();
-	}
+        rtx.close();
+        session.close();
+    }
 
-	@Test
-	public final void testGetReturnType() {
+    @Test
+    public final void testGetReturnType() {
 
-		final ISession session = Session.beginSession(ITestConstants.PATH1);
-		IReadTransaction rtx = session.beginReadTransaction();
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        IReadTransaction rtx = session.beginReadTransaction();
 
-		IAxis op1 = new SequenceAxis(rtx);
-		IAxis op2 = new SequenceAxis(rtx);
-		AbstractOpAxis axis = new MulOpAxis(rtx, op1, op2);
+        IAxis op1 = new SequenceAxis(rtx);
+        IAxis op2 = new SequenceAxis(rtx);
+        AbstractOpAxis axis = new MulOpAxis(rtx, op1, op2);
 
-		assertEquals(Type.DOUBLE, axis.getReturnType(rtx
-				.keyForName("xs:double"), rtx.keyForName("xs:double")));
-		assertEquals(Type.DOUBLE, axis.getReturnType(rtx
-				.keyForName("xs:decimal"), rtx.keyForName("xs:double")));
-		assertEquals(Type.FLOAT, axis.getReturnType(rtx.keyForName("xs:float"),
-				rtx.keyForName("xs:decimal")));
-		assertEquals(Type.DECIMAL, axis.getReturnType(rtx
-				.keyForName("xs:decimal"), rtx.keyForName("xs:integer")));
-		// assertEquals(Type.INTEGER,
-		// axis.getReturnType(rtx.keyForName("xs:integer"),
-		// rtx.keyForName("xs:integer")));
-		assertEquals(Type.YEAR_MONTH_DURATION, axis.getReturnType(rtx
-				.keyForName("xs:yearMonthDuration"), rtx
-				.keyForName("xs:double")));
-		assertEquals(Type.YEAR_MONTH_DURATION, axis.getReturnType(rtx
-				.keyForName("xs:integer"), rtx
-				.keyForName("xs:yearMonthDuration")));
-		assertEquals(Type.DAY_TIME_DURATION, axis.getReturnType(rtx
-				.keyForName("xs:dayTimeDuration"), rtx.keyForName("xs:double")));
-		assertEquals(Type.DAY_TIME_DURATION, axis
-				.getReturnType(rtx.keyForName("xs:integer"), rtx
-						.keyForName("xs:dayTimeDuration")));
+        assertEquals(Type.DOUBLE, axis.getReturnType(rtx
+                .keyForName("xs:double"), rtx.keyForName("xs:double")));
+        assertEquals(Type.DOUBLE, axis.getReturnType(rtx
+                .keyForName("xs:decimal"), rtx.keyForName("xs:double")));
+        assertEquals(Type.FLOAT, axis.getReturnType(rtx.keyForName("xs:float"),
+                rtx.keyForName("xs:decimal")));
+        assertEquals(Type.DECIMAL, axis.getReturnType(rtx
+                .keyForName("xs:decimal"), rtx.keyForName("xs:integer")));
+        // assertEquals(Type.INTEGER,
+        // axis.getReturnType(rtx.keyForName("xs:integer"),
+        // rtx.keyForName("xs:integer")));
+        assertEquals(Type.YEAR_MONTH_DURATION, axis.getReturnType(rtx
+                .keyForName("xs:yearMonthDuration"), rtx
+                .keyForName("xs:double")));
+        assertEquals(Type.YEAR_MONTH_DURATION, axis.getReturnType(rtx
+                .keyForName("xs:integer"), rtx
+                .keyForName("xs:yearMonthDuration")));
+        assertEquals(Type.DAY_TIME_DURATION, axis.getReturnType(rtx
+                .keyForName("xs:dayTimeDuration"), rtx.keyForName("xs:double")));
+        assertEquals(Type.DAY_TIME_DURATION, axis
+                .getReturnType(rtx.keyForName("xs:integer"), rtx
+                        .keyForName("xs:dayTimeDuration")));
 
-		try {
+        try {
 
-			axis.getReturnType(rtx.keyForName("xs:dateTime"), rtx
-					.keyForName("xs:yearMonthDuration"));
-			fail("Expected an XPathError-Exception.");
-		} catch (XPathError e) {
-			assertThat(
-					e.getMessage(),
-					is("err:XPTY0004 The type is not appropriate the expression or the "
-							+ "typedoes not match a required type as specified by the matching rules."));
-		}
+            axis.getReturnType(rtx.keyForName("xs:dateTime"), rtx
+                    .keyForName("xs:yearMonthDuration"));
+            fail("Expected an XPathError-Exception.");
+        } catch (XPathError e) {
+            assertThat(
+                    e.getMessage(),
+                    is("err:XPTY0004 The type is not appropriate the expression or the "
+                            + "typedoes not match a required type as specified by the matching rules."));
+        }
 
-		try {
+        try {
 
-			axis.getReturnType(rtx.keyForName("xs:dateTime"), rtx
-					.keyForName("xs:double"));
-			fail("Expected an XPathError-Exception.");
-		} catch (XPathError e) {
-			assertThat(
-					e.getMessage(),
-					is("err:XPTY0004 The type is not appropriate the expression or the "
-							+ "typedoes not match a required type as specified by the matching rules."));
-		}
+            axis.getReturnType(rtx.keyForName("xs:dateTime"), rtx
+                    .keyForName("xs:double"));
+            fail("Expected an XPathError-Exception.");
+        } catch (XPathError e) {
+            assertThat(
+                    e.getMessage(),
+                    is("err:XPTY0004 The type is not appropriate the expression or the "
+                            + "typedoes not match a required type as specified by the matching rules."));
+        }
 
-		try {
+        try {
 
-			axis.getReturnType(rtx.keyForName("xs:string"), rtx
-					.keyForName("xs:yearMonthDuration"));
-			fail("Expected an XPathError-Exception.");
-		} catch (XPathError e) {
-			assertThat(
-					e.getMessage(),
-					is("err:XPTY0004 The type is not appropriate the expression or the "
-							+ "typedoes not match a required type as specified by the matching rules."));
-		}
+            axis.getReturnType(rtx.keyForName("xs:string"), rtx
+                    .keyForName("xs:yearMonthDuration"));
+            fail("Expected an XPathError-Exception.");
+        } catch (XPathError e) {
+            assertThat(
+                    e.getMessage(),
+                    is("err:XPTY0004 The type is not appropriate the expression or the "
+                            + "typedoes not match a required type as specified by the matching rules."));
+        }
 
-		try {
+        try {
 
-			axis.getReturnType(rtx.keyForName("xs:yearMonthDuration"), rtx
-					.keyForName("xs:yearMonthDuration"));
-			fail("Expected an XPathError-Exception.");
-		} catch (XPathError e) {
-			assertThat(
-					e.getMessage(),
-					is("err:XPTY0004 The type is not appropriate the expression or the "
-							+ "typedoes not match a required type as specified by the matching rules."));
-		}
+            axis.getReturnType(rtx.keyForName("xs:yearMonthDuration"), rtx
+                    .keyForName("xs:yearMonthDuration"));
+            fail("Expected an XPathError-Exception.");
+        } catch (XPathError e) {
+            assertThat(
+                    e.getMessage(),
+                    is("err:XPTY0004 The type is not appropriate the expression or the "
+                            + "typedoes not match a required type as specified by the matching rules."));
+        }
 
-		rtx.close();
-		session.close();
-	}
+        rtx.close();
+        session.close();
+    }
 
 }

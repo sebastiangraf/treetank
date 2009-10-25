@@ -20,7 +20,7 @@ package com.treetank.page;
 
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
-import com.treetank.session.WriteTransactionState;
+import com.treetank.io.PagePersistenter;
 import com.treetank.utils.IConstants;
 
 /**
@@ -33,165 +33,167 @@ import com.treetank.utils.IConstants;
  */
 public final class RevisionRootPage extends AbstractPage {
 
-	/** Offset of name page reference. */
-	private static final int NAME_REFERENCE_OFFSET = 0;
+    /** Offset of name page reference. */
+    private static final int NAME_REFERENCE_OFFSET = 0;
 
-	/** Offset of indirect page reference. */
-	private static final int INDIRECT_REFERENCE_OFFSET = 1;
+    /** Offset of indirect page reference. */
+    private static final int INDIRECT_REFERENCE_OFFSET = 1;
 
-	/** Key of revision. */
-	private final long mRevisionNumber;
+    /** Key of revision. */
+    private final long mRevisionNumber;
 
-	/** Number of nodes of this revision. */
-	private long mRevisionSize;
+    /** Number of nodes of this revision. */
+    private long mRevisionSize;
 
-	/** Last allocated node key. */
-	private long mMaxNodeKey;
+    /** Last allocated node key. */
+    private long mMaxNodeKey;
 
-	/** Timestamp of revision. */
-	private long mRevisionTimestamp;
+    /** Timestamp of revision. */
+    private long mRevisionTimestamp;
 
-	/**
-	 * Create revision root page.
-	 */
-	public RevisionRootPage() {
-		super(2);
-		mRevisionNumber = IConstants.UBP_ROOT_REVISION_NUMBER;
-		mRevisionSize = 0L;
-		getReference(NAME_REFERENCE_OFFSET).setPage(new NamePage());
-		mMaxNodeKey = -1L;
-	}
+    /**
+     * Create revision root page.
+     */
+    public RevisionRootPage() {
+        super(2);
+        mRevisionNumber = IConstants.UBP_ROOT_REVISION_NUMBER;
+        mRevisionSize = 0L;
+        final PageReference ref = getReference(NAME_REFERENCE_OFFSET);
+        ref.setPage(new NamePage());
+        mMaxNodeKey = -1L;
+    }
 
-	/**
-	 * Read revision root page.
-	 * 
-	 * @param in
-	 *            Input bytes.
-	 * @param revisionKey
-	 *            Key of revision.
-	 */
-	RevisionRootPage(final ITTSource in) {
-		super(2, in);
-		mRevisionNumber = in.readLong();
-		mRevisionSize = in.readLong();
-		mMaxNodeKey = in.readLong();
-		mRevisionTimestamp = in.readLong();
-	}
+    /**
+     * Read revision root page.
+     * 
+     * @param in
+     *            Input bytes.
+     * @param revisionKey
+     *            Key of revision.
+     */
+    public RevisionRootPage(final ITTSource in) {
+        super(2, in);
+        mRevisionNumber = in.readLong();
+        mRevisionSize = in.readLong();
+        mMaxNodeKey = in.readLong();
+        mRevisionTimestamp = in.readLong();
+    }
 
-	/**
-	 * Clone revision root page.
-	 * 
-	 * @param committedRevisionRootPage
-	 *            Page to clone.
-	 */
-	public RevisionRootPage(final RevisionRootPage committedRevisionRootPage) {
-		super(2, committedRevisionRootPage);
-		mRevisionNumber = committedRevisionRootPage.mRevisionNumber + 1;
-		mRevisionSize = committedRevisionRootPage.mRevisionSize;
-		mMaxNodeKey = committedRevisionRootPage.mMaxNodeKey;
-	}
+    /**
+     * Clone revision root page.
+     * 
+     * @param committedRevisionRootPage
+     *            Page to clone.
+     */
+    public RevisionRootPage(final RevisionRootPage committedRevisionRootPage) {
+        super(2, committedRevisionRootPage);
+        mRevisionNumber = committedRevisionRootPage.mRevisionNumber + 1;
+        mRevisionSize = committedRevisionRootPage.mRevisionSize;
+        mMaxNodeKey = committedRevisionRootPage.mMaxNodeKey;
+    }
 
-	/**
-	 * Get name page reference.
-	 * 
-	 * @return Name page reference.
-	 */
-	public final PageReference<NamePage> getNamePageReference() {
-		return (PageReference<NamePage>) getReference(NAME_REFERENCE_OFFSET);
-	}
+    /**
+     * Get name page reference.
+     * 
+     * @return Name page reference.
+     */
+    public final PageReference getNamePageReference() {
+        return getReference(NAME_REFERENCE_OFFSET);
+    }
 
-	/**
-	 * Get indirect page reference.
-	 * 
-	 * @return Indirect page reference.
-	 */
-	public final PageReference<IndirectPage> getIndirectPageReference() {
-		return (PageReference<IndirectPage>) getReference(INDIRECT_REFERENCE_OFFSET);
-	}
+    /**
+     * Get indirect page reference.
+     * 
+     * @return Indirect page reference.
+     */
+    public final PageReference getIndirectPageReference() {
+        return getReference(INDIRECT_REFERENCE_OFFSET);
+    }
 
-	/**
-	 * Get number of revision.
-	 * 
-	 * @return Revision number.
-	 */
-	public final long getRevisionNumber() {
-		return mRevisionNumber;
-	}
+    /**
+     * Get number of revision.
+     * 
+     * @return Revision number.
+     */
+    public final long getRevisionNumber() {
+        return mRevisionNumber;
+    }
 
-	/**
-	 * Get size of revision, i.e., the node count visible in this revision.
-	 * 
-	 * @return Revision size.
-	 */
-	public final long getRevisionSize() {
-		return mRevisionSize;
-	}
+    /**
+     * Get size of revision, i.e., the node count visible in this revision.
+     * 
+     * @return Revision size.
+     */
+    public final long getRevisionSize() {
+        return mRevisionSize;
+    }
 
-	/**
-	 * Get timestamp of revision.
-	 * 
-	 * @return Revision timestamp.
-	 */
-	public final long getRevisionTimestamp() {
-		return mRevisionTimestamp;
-	}
+    /**
+     * Get timestamp of revision.
+     * 
+     * @return Revision timestamp.
+     */
+    public final long getRevisionTimestamp() {
+        return mRevisionTimestamp;
+    }
 
-	/**
-	 * Get last allocated node key.
-	 * 
-	 * @return Last allocated node key.
-	 */
-	public final long getMaxNodeKey() {
-		return mMaxNodeKey;
-	}
+    /**
+     * Get last allocated node key.
+     * 
+     * @return Last allocated node key.
+     */
+    public final long getMaxNodeKey() {
+        return mMaxNodeKey;
+    }
 
-	/**
-	 * Decrement number of nodes by one.
-	 */
-	public final void decrementNodeCount() {
-		mRevisionSize -= 1;
-	}
+    /**
+     * Decrement number of nodes by one.
+     */
+    public final void decrementNodeCount() {
+        mRevisionSize -= 1;
+    }
 
-	/**
-	 * Increment number of nodes by one while allocating another key.
-	 */
-	public final void incrementNodeCountAndMaxNodeKey() {
-		mRevisionSize += 1;
-		mMaxNodeKey += 1;
-	}
+    /**
+     * Increment number of nodes by one while allocating another key.
+     */
+    public final void incrementNodeCountAndMaxNodeKey() {
+        mRevisionSize += 1;
+        mMaxNodeKey += 1;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void commit(final WriteTransactionState state) {
-		super.commit(state);
-		mRevisionTimestamp = System.currentTimeMillis();
-	}
+    // /**
+    // * {@inheritDoc}
+    // */
+    // @Override
+    // public final void commit(final WriteTransactionState state) {
+    // super.commit(state);
+    // mRevisionTimestamp = System.currentTimeMillis();
+    // }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void serialize(final ITTSink out) {
-		out.writeInt(PageFactory.REVISIONROOTPAGE);
-		super.serialize(out);
-		out.writeLong(mRevisionNumber);
-		out.writeLong(mRevisionSize);
-		out.writeLong(mMaxNodeKey);
-		out.writeLong(mRevisionTimestamp);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void serialize(final ITTSink out) {
+        mRevisionTimestamp = System.currentTimeMillis();
+        out.writeInt(PagePersistenter.REVISIONROOTPAGE);
+        super.serialize(out);
+        out.writeLong(mRevisionNumber);
+        out.writeLong(mRevisionSize);
+        out.writeLong(mMaxNodeKey);
+        out.writeLong(mRevisionTimestamp);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final String toString() {
-		return super.toString() + ": revisionKey=" + mRevisionNumber
-				+ ", revisionSize=" + mRevisionSize + ", revisionTimestamp="
-				+ mRevisionTimestamp + ", namePage=("
-				+ getReference(NAME_REFERENCE_OFFSET) + "), indirectPage=("
-				+ getReference(INDIRECT_REFERENCE_OFFSET) + ")";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final String toString() {
+        return super.toString() + ": revisionKey=" + mRevisionNumber
+                + ", revisionSize=" + mRevisionSize + ", revisionTimestamp="
+                + mRevisionTimestamp + ", namePage=("
+                + getReference(NAME_REFERENCE_OFFSET) + "), indirectPage=("
+                + getReference(INDIRECT_REFERENCE_OFFSET) + ")";
+    }
 
 }

@@ -32,6 +32,7 @@ import javax.xml.stream.XMLStreamReader;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.io.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
 import com.treetank.utils.FastStack;
@@ -40,180 +41,183 @@ import com.treetank.utils.TypedValue;
 
 public final class XMLShredder {
 
-	public final static void shred(final long id, final String content,
-			final ISession session) {
-		try {
-			final XMLInputFactory factory = XMLInputFactory.newInstance();
-			factory.setProperty(XMLInputFactory.IS_VALIDATING, true);
-			factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
-			final XMLStreamReader parser = factory
-					.createXMLStreamReader(new StringReader(content));
-			shred(id, parser, session);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public final static void shred(final long id, final String content,
+            final ISession session) {
+        try {
+            final XMLInputFactory factory = XMLInputFactory.newInstance();
+            factory.setProperty(XMLInputFactory.IS_VALIDATING, true);
+            factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+            final XMLStreamReader parser = factory
+                    .createXMLStreamReader(new StringReader(content));
+            shred(id, parser, session);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	public final static void shred(final String xmlPath,
-			final SessionConfiguration sessionConfiguration) {
-		try {
-			final InputStream in = new FileInputStream(xmlPath);
-			final XMLInputFactory factory = XMLInputFactory.newInstance();
-			factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
-			final XMLStreamReader parser = factory.createXMLStreamReader(in);
-			shred(0, parser, sessionConfiguration);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		}
-	}
+    public final static void shred(final String xmlPath,
+            final SessionConfiguration sessionConfiguration) {
+        try {
+            final InputStream in = new FileInputStream(xmlPath);
+            final XMLInputFactory factory = XMLInputFactory.newInstance();
+            factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+            final XMLStreamReader parser = factory.createXMLStreamReader(in);
+            shred(0, parser, sessionConfiguration);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
 
-	public static final void shred(final long id, final XMLStreamReader parser,
-			final SessionConfiguration sessionConfiguration) {
-		final ISession session = Session.beginSession(sessionConfiguration);
-		shred(id, parser, session);
-		session.close();
-	}
+    public static final void shred(final long id, final XMLStreamReader parser,
+            final SessionConfiguration sessionConfiguration) {
+        final ISession session = Session.beginSession(sessionConfiguration);
+        shred(id, parser, session);
+        session.close();
+    }
 
-	public static final void shred(final long id, final XMLStreamReader parser,
-			final ISession session) {
+    public static final void shred(final long id, final XMLStreamReader parser,
+            final ISession session) {
+        try {
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            final FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
 
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		final FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
+            // Make sure that we do not shred into an existing TreeTank.
+            // if (wtx.hasFirstChild()) {
+            // throw new IllegalStateException(
+            // "XMLShredder can not shred into an existing TreeTank.");
+            // }
+            wtx.moveTo(id);
 
-		// Make sure that we do not shred into an existing TreeTank.
-		// if (wtx.hasFirstChild()) {
-		// throw new IllegalStateException(
-		// "XMLShredder can not shred into an existing TreeTank.");
-		// }
-		wtx.moveTo(id);
+            long key;
+            leftSiblingKeyStack.push(IReadTransaction.NULL_NODE_KEY);
+            // leftSiblingKeyStack.push(wtx.getLeftSiblingKey());
 
-		long key;
-		leftSiblingKeyStack.push(IReadTransaction.NULL_NODE_KEY);
-		// leftSiblingKeyStack.push(wtx.getLeftSiblingKey());
-		try {
-			// Iterate over all nodes.
-			while (parser.hasNext()) {
+            // Iterate over all nodes.
+            while (parser.hasNext()) {
 
-				switch (parser.next()) {
+                switch (parser.next()) {
 
-				case XMLStreamConstants.START_ELEMENT:
+                case XMLStreamConstants.START_ELEMENT:
 
-					final String name = ((parser.getPrefix() == null || parser
-							.getPrefix().length() == 0) ? parser.getLocalName()
-							: parser.getPrefix() + ":" + parser.getLocalName());
+                    final String name = ((parser.getPrefix() == null || parser
+                            .getPrefix().length() == 0) ? parser.getLocalName()
+                            : parser.getPrefix() + ":" + parser.getLocalName());
 
-					if (leftSiblingKeyStack.peek() == IReadTransaction.NULL_NODE_KEY) {
-						key = wtx.insertElementAsFirstChild(name, parser
-								.getNamespaceURI());
-					} else {
-						key = wtx.insertElementAsRightSibling(name, parser
-								.getNamespaceURI());
-					}
-					leftSiblingKeyStack.pop();
-					leftSiblingKeyStack.push(key);
-					leftSiblingKeyStack.push(IReadTransaction.NULL_NODE_KEY);
+                    if (leftSiblingKeyStack.peek() == IReadTransaction.NULL_NODE_KEY) {
+                        key = wtx.insertElementAsFirstChild(name, parser
+                                .getNamespaceURI());
+                    } else {
+                        key = wtx.insertElementAsRightSibling(name, parser
+                                .getNamespaceURI());
+                    }
+                    leftSiblingKeyStack.pop();
+                    leftSiblingKeyStack.push(key);
+                    leftSiblingKeyStack.push(IReadTransaction.NULL_NODE_KEY);
 
-					// Parse namespaces.
-					for (int i = 0, l = parser.getNamespaceCount(); i < l; i++) {
-						wtx.insertNamespace(parser.getNamespaceURI(i), parser
-								.getNamespacePrefix(i));
-						wtx.moveTo(key);
-					}
+                    // Parse namespaces.
+                    for (int i = 0, l = parser.getNamespaceCount(); i < l; i++) {
+                        wtx.insertNamespace(parser.getNamespaceURI(i), parser
+                                .getNamespacePrefix(i));
+                        wtx.moveTo(key);
+                    }
 
-					// Parse attributes.
-					for (int i = 0, l = parser.getAttributeCount(); i < l; i++) {
-						wtx
-								.insertAttribute(
-										(parser.getAttributePrefix(i) == null || parser
-												.getAttributePrefix(i).length() == 0) ? parser
-												.getAttributeLocalName(i)
-												: parser.getAttributePrefix(i)
-														+ ":"
-														+ parser
-																.getAttributeLocalName(i),
-										parser.getAttributeNamespace(i), parser
-												.getAttributeValue(i));
-						wtx.moveTo(key);
-					}
-					break;
+                    // Parse attributes.
+                    for (int i = 0, l = parser.getAttributeCount(); i < l; i++) {
+                        wtx
+                                .insertAttribute(
+                                        (parser.getAttributePrefix(i) == null || parser
+                                                .getAttributePrefix(i).length() == 0) ? parser
+                                                .getAttributeLocalName(i)
+                                                : parser.getAttributePrefix(i)
+                                                        + ":"
+                                                        + parser
+                                                                .getAttributeLocalName(i),
+                                        parser.getAttributeNamespace(i), parser
+                                                .getAttributeValue(i));
+                        wtx.moveTo(key);
+                    }
+                    break;
 
-				case XMLStreamConstants.END_ELEMENT:
-					leftSiblingKeyStack.pop();
-					wtx.moveTo(leftSiblingKeyStack.peek());
-					break;
+                case XMLStreamConstants.END_ELEMENT:
+                    leftSiblingKeyStack.pop();
+                    wtx.moveTo(leftSiblingKeyStack.peek());
+                    break;
 
-				case XMLStreamConstants.CHARACTERS:
-					final String text = parser.getText().trim();
-					final ByteBuffer textByteBuffer = ByteBuffer
-							.wrap(TypedValue.getBytes(text));
-					int length = textByteBuffer.array().length;
-					if (textByteBuffer.array().length > 0) {
-						int beginIndex = 0;
-						do {
-							byte[] toWrite = null;
-							if (length >= IConstants.MAX_TEXTNODE_LENGTH) {
-								toWrite = new byte[IConstants.MAX_TEXTNODE_LENGTH];
-								// toWrite = text.substring(beginIndex,
-								// beginIndex
-								// + IConstants.MAX_TEXTNODE_LENGTH);
-							} else {
-								toWrite = new byte[length];
-								// toWrite = text.substring(beginIndex, text
-								// .length());
-							}
-							for (int i = 0; i < toWrite.length; i++) {
-								toWrite[i] = textByteBuffer.get();
-							}
+                case XMLStreamConstants.CHARACTERS:
+                    final String text = parser.getText().trim();
+                    final ByteBuffer textByteBuffer = ByteBuffer
+                            .wrap(TypedValue.getBytes(text));
+                    int length = textByteBuffer.array().length;
+                    if (textByteBuffer.array().length > 0) {
+                        int beginIndex = 0;
+                        do {
+                            byte[] toWrite = null;
+                            if (length >= IConstants.MAX_TEXTNODE_LENGTH) {
+                                toWrite = new byte[IConstants.MAX_TEXTNODE_LENGTH];
+                                // toWrite = text.substring(beginIndex,
+                                // beginIndex
+                                // + IConstants.MAX_TEXTNODE_LENGTH);
+                            } else {
+                                toWrite = new byte[length];
+                                // toWrite = text.substring(beginIndex, text
+                                // .length());
+                            }
+                            for (int i = 0; i < toWrite.length; i++) {
+                                toWrite[i] = textByteBuffer.get();
+                            }
 
-							if (leftSiblingKeyStack.peek() == IReadTransaction.NULL_NODE_KEY) {
-								key = wtx.insertTextAsFirstChild(wtx
-										.keyForName("xs:untyped"), toWrite);
-							} else {
-								key = wtx.insertTextAsRightSibling(wtx
-										.keyForName("xs:untyped"), toWrite);
-							}
+                            if (leftSiblingKeyStack.peek() == IReadTransaction.NULL_NODE_KEY) {
+                                key = wtx.insertTextAsFirstChild(wtx
+                                        .keyForName("xs:untyped"), toWrite);
+                            } else {
+                                key = wtx.insertTextAsRightSibling(wtx
+                                        .keyForName("xs:untyped"), toWrite);
+                            }
 
-							leftSiblingKeyStack.pop();
-							leftSiblingKeyStack.push(key);
+                            leftSiblingKeyStack.pop();
+                            leftSiblingKeyStack.push(key);
 
-							beginIndex = beginIndex
-									+ IConstants.MAX_TEXTNODE_LENGTH;
-							length = length - IConstants.MAX_TEXTNODE_LENGTH;
-						} while (length > 0);
-					}
-					break;
+                            beginIndex = beginIndex
+                                    + IConstants.MAX_TEXTNODE_LENGTH;
+                            length = length - IConstants.MAX_TEXTNODE_LENGTH;
+                        } while (length > 0);
+                    }
+                    break;
 
-				}
-			}
-			wtx.close();
+                }
+            }
+            wtx.commit();
+            wtx.close();
 
-			parser.close();
-		} catch (XMLStreamException e) {
-			throw new RuntimeException(e);
-		}
-	}
+            parser.close();
+        } catch (final XMLStreamException exc1) {
+            throw new IllegalStateException(exc1);
+        } catch (final TreetankIOException exc2) {
+            throw new IllegalStateException(exc2);
+        }
+    }
 
-	public static final void main(String[] args) {
-		if (args.length < 2 || args.length > 3) {
-			System.out.println("Usage: XMLShredder input.xml output.tnk [key]");
-			System.exit(1);
-		}
+    public static final void main(String[] args) {
+        if (args.length < 2 || args.length > 3) {
+            System.out.println("Usage: XMLShredder input.xml output.tnk [key]");
+            System.exit(1);
+        }
 
-		try {
-			System.out.print("Shredding '" + args[0] + "' to '" + args[1]
-					+ "' ... ");
-			long time = System.currentTimeMillis();
-			new File(args[1]).delete();
-			XMLShredder.shred(args[0],
-					args.length == 2 ? new SessionConfiguration(args[1])
-							: new SessionConfiguration(args[1], args[2]
-									.getBytes()));
-			System.out.println(" done [" + (System.currentTimeMillis() - time)
-					+ "ms].");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+        try {
+            System.out.print("Shredding '" + args[0] + "' to '" + args[1]
+                    + "' ... ");
+            long time = System.currentTimeMillis();
+            new File(args[1]).delete();
+            XMLShredder.shred(args[0],
+                    args.length == 2 ? new SessionConfiguration(args[1])
+                            : new SessionConfiguration(args[1], args[2]
+                                    .getBytes()));
+            System.out.println(" done [" + (System.currentTimeMillis() - time)
+                    + "ms].");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }

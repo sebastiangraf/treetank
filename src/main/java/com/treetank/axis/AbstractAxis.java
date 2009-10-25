@@ -42,140 +42,140 @@ import com.treetank.api.IReadTransaction;
  */
 public abstract class AbstractAxis implements IAxis {
 
-	/** Iterate over transaction exclusive to this step. */
-	private final IReadTransaction mRTX;
+    /** Iterate over transaction exclusive to this step. */
+    private final IReadTransaction mRTX;
 
-	/** Key of last found node. */
-	private long mKey;
+    /** Key of last found node. */
+    private long mKey;
 
-	/** Make sure next() can only be called after hasNext(). */
-	private boolean mNext;
+    /** Make sure next() can only be called after hasNext(). */
+    private boolean mNext;
 
-	/** Key of node where axis started. */
-	private long mStartKey;
+    /** Key of node where axis started. */
+    private long mStartKey;
 
-	/** Include self? */
-	private final boolean mIncludeSelf;
+    /** Include self? */
+    private final boolean mIncludeSelf;
 
-	/**
-	 * Bind axis step to transaction.
-	 * 
-	 * @param rtx
-	 *            Transaction to operate with.
-	 */
-	public AbstractAxis(final IReadTransaction rtx) {
-		mRTX = rtx;
-		mIncludeSelf = false;
-		reset(rtx.getNode().getNodeKey());
-	}
+    /**
+     * Bind axis step to transaction.
+     * 
+     * @param rtx
+     *            Transaction to operate with.
+     */
+    public AbstractAxis(final IReadTransaction rtx) {
+        mRTX = rtx;
+        mIncludeSelf = false;
+        reset(rtx.getNode().getNodeKey());
+    }
 
-	/**
-	 * Bind axis step to transaction.
-	 * 
-	 * @param rtx
-	 *            Transaction to operate with.
-	 * @param includeSelf
-	 *            Is self included?
-	 */
-	public AbstractAxis(final IReadTransaction rtx, final boolean includeSelf) {
-		mRTX = rtx;
-		mIncludeSelf = includeSelf;
-		reset(rtx.getNode().getNodeKey());
-	}
+    /**
+     * Bind axis step to transaction.
+     * 
+     * @param rtx
+     *            Transaction to operate with.
+     * @param includeSelf
+     *            Is self included?
+     */
+    public AbstractAxis(final IReadTransaction rtx, final boolean includeSelf) {
+        mRTX = rtx;
+        mIncludeSelf = includeSelf;
+        reset(rtx.getNode().getNodeKey());
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final Iterator<Long> iterator() {
-		return this;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public final Iterator<Long> iterator() {
+        return this;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final Long next() {
-		if (!mNext) {
-			throw new IllegalStateException(
-					"IAxis.next() must be called exactely once after hasNext()"
-							+ " evaluated to true.");
-		}
-		mKey = mRTX.getNode().getNodeKey();
-		mNext = false;
-		return mKey;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public final Long next() {
+        if (!mNext) {
+            throw new IllegalStateException(
+                    "IAxis.next() must be called exactely once after hasNext()"
+                            + " evaluated to true.");
+        }
+        mKey = mRTX.getNode().getNodeKey();
+        mNext = false;
+        return mKey;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final void remove() {
-		throw new UnsupportedOperationException();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public final void remove() {
+        throw new UnsupportedOperationException();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void reset(final long nodeKey) {
-		mStartKey = nodeKey;
-		mKey = nodeKey;
-		mNext = false;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void reset(final long nodeKey) {
+        mStartKey = nodeKey;
+        mKey = nodeKey;
+        mNext = false;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final IReadTransaction getTransaction() {
-		return mRTX;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public final IReadTransaction getTransaction() {
+        return mRTX;
+    }
 
-	/**
-	 * Make sure the transaction points to the node it started with. This must
-	 * be called just before hasNext() == false.
-	 * 
-	 * @return Key of node where transaction was before the first call of
-	 *         hasNext().
-	 */
-	protected final long resetToStartKey() {
-		// No check beacause of IAxis Convention 4.
-		mRTX.moveTo(mStartKey);
-		mNext = false;
-		return mStartKey;
-	}
+    /**
+     * Make sure the transaction points to the node it started with. This must
+     * be called just before hasNext() == false.
+     * 
+     * @return Key of node where transaction was before the first call of
+     *         hasNext().
+     */
+    protected final long resetToStartKey() {
+        // No check beacause of IAxis Convention 4.
+        mRTX.moveTo(mStartKey);
+        mNext = false;
+        return mStartKey;
+    }
 
-	/**
-	 * Make sure the transaction points to the node after the last hasNext().
-	 * This must be called first in hasNext().
-	 * 
-	 * @return Key of node where transaction was after the last call of
-	 *         hasNext().
-	 */
-	protected final long resetToLastKey() {
-		// No check because of IAxis Convention 4.
-		mRTX.moveTo(mKey);
-		mNext = true;
-		return mKey;
-	}
+    /**
+     * Make sure the transaction points to the node after the last hasNext().
+     * This must be called first in hasNext().
+     * 
+     * @return Key of node where transaction was after the last call of
+     *         hasNext().
+     */
+    protected final long resetToLastKey() {
+        // No check because of IAxis Convention 4.
+        mRTX.moveTo(mKey);
+        mNext = true;
+        return mKey;
+    }
 
-	/**
-	 * Get start key.
-	 * 
-	 * @return Start key.
-	 */
-	protected final long getStartKey() {
-		return mStartKey;
-	}
+    /**
+     * Get start key.
+     * 
+     * @return Start key.
+     */
+    protected final long getStartKey() {
+        return mStartKey;
+    }
 
-	/**
-	 * Is self included?
-	 * 
-	 * @return True if self is included. False else.
-	 */
-	protected final boolean isSelfIncluded() {
-		return mIncludeSelf;
-	}
+    /**
+     * Is self included?
+     * 
+     * @return True if self is included. False else.
+     */
+    protected final boolean isSelfIncluded() {
+        return mIncludeSelf;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public abstract boolean hasNext();
+    /**
+     * {@inheritDoc}
+     */
+    public abstract boolean hasNext();
 
 }

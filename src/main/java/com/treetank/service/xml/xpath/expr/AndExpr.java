@@ -63,64 +63,64 @@ import com.treetank.utils.TypedValue;
  */
 public class AndExpr extends AbstractExpression implements IAxis {
 
-	/** First operand of the logical expression. */
-	private final IAxis mOp1;
+    /** First operand of the logical expression. */
+    private final IAxis mOp1;
 
-	/** Second operand of the logical expression. */
-	private final IAxis mOp2;
+    /** Second operand of the logical expression. */
+    private final IAxis mOp2;
 
-	/**
-	 * Constructor. Initializes the internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) transaction to iterate with.
-	 * @param operand1
-	 *            First operand
-	 * @param operand2
-	 *            Second operand
-	 */
-	public AndExpr(final IReadTransaction rtx, final IAxis operand1,
-			final IAxis operand2) {
+    /**
+     * Constructor. Initializes the internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) transaction to iterate with.
+     * @param operand1
+     *            First operand
+     * @param operand2
+     *            Second operand
+     */
+    public AndExpr(final IReadTransaction rtx, final IAxis operand1,
+            final IAxis operand2) {
 
-		super(rtx);
-		mOp1 = operand1;
-		mOp2 = operand2;
+        super(rtx);
+        mOp1 = operand1;
+        mOp2 = operand2;
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void reset(final long nodeKey) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reset(final long nodeKey) {
 
-		super.reset(nodeKey);
-		if (mOp1 != null) {
-			mOp1.reset(nodeKey);
-		}
-		if (mOp2 != null) {
-			mOp2.reset(nodeKey);
-		}
-	}
+        super.reset(nodeKey);
+        if (mOp1 != null) {
+            mOp1.reset(nodeKey);
+        }
+        if (mOp2 != null) {
+            mOp2.reset(nodeKey);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void evaluate() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void evaluate() {
 
-		// first find the effective boolean values of the two operands, then
-		// determine value of the and-expression and store it in an item
-		final boolean result = Function.ebv(mOp1) && Function.ebv(mOp2);
-		// note: the error handling is implicitly done by the fnBoolean()
-		// function.
+        // first find the effective boolean values of the two operands, then
+        // determine value of the and-expression and store it in an item
+        final boolean result = Function.ebv(mOp1) && Function.ebv(mOp2);
+        // note: the error handling is implicitly done by the fnBoolean()
+        // function.
 
-		// add result item to list and set the item as the current item
-		int itemKey = getTransaction().getItemList().addItem(
-				new AtomicValue(TypedValue.getBytes(Boolean.toString(result)),
-						getTransaction().keyForName("xs:boolean")));
-		getTransaction().moveTo(itemKey);
+        // add result item to list and set the item as the current item
+        int itemKey = getTransaction().getItemList().addItem(
+                new AtomicValue(TypedValue.getBytes(Boolean.toString(result)),
+                        getTransaction().keyForName("xs:boolean")));
+        getTransaction().moveTo(itemKey);
 
-	}
+    }
 
 }

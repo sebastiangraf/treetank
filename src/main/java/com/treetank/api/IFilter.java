@@ -59,15 +59,15 @@ package com.treetank.api;
  * // Must extend &lt;code&gt;AbstractFilter&lt;/code&gt; and implement &lt;code&gt;IFilter&lt;/code&gt;.
  * public class ExampleFilter extends AbstractFilter implements IFilter {
  * 
- * 	public ExampleFilter(final IReadTransaction rtx) {
- * 		// Must be called as first.
- * 		super(rtx);
- * 	}
+ *     public ExampleFilter(final IReadTransaction rtx) {
+ *         // Must be called as first.
+ *         super(rtx);
+ *     }
  * 
- * 	public final boolean filter() {
- * 		// Do not move cursor.
- * 		return (getTransaction().isSelected());
- * 	}
+ *     public final boolean filter() {
+ *         // Do not move cursor.
+ *         return (getTransaction().isSelected());
+ *     }
  * }
  * </pre>
  * 
@@ -75,18 +75,18 @@ package com.treetank.api;
  */
 public interface IFilter {
 
-	/**
-	 * Access transaction to which this filter is bound.
-	 * 
-	 * @return Transaction to which this filter is bound.
-	 */
-	IReadTransaction getTransaction();
+    /**
+     * Access transaction to which this filter is bound.
+     * 
+     * @return Transaction to which this filter is bound.
+     */
+    IReadTransaction getTransaction();
 
-	/**
-	 * Apply filter on current node of transaction.
-	 * 
-	 * @return True if node passes filter. False else.
-	 */
-	boolean filter();
+    /**
+     * Apply filter on current node of transaction.
+     * 
+     * @return True if node passes filter. False else.
+     */
+    boolean filter();
 
 }

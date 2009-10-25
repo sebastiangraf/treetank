@@ -38,39 +38,39 @@ import com.treetank.utils.TypedValue;
 
 public class AbstractOpAxisTest {
 
-	@Before
-	public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
 
-		Session.removeSession(ITestConstants.PATH1);
+        Session.removeSession(ITestConstants.PATH1);
 
-	}
+    }
 
-	@Test
-	public final void testHasNext() {
+    @Test
+    public final void testHasNext() {
 
-		final ISession session = Session.beginSession(ITestConstants.PATH1);
-		IReadTransaction rtx = session.beginReadTransaction();
-		IItem item1 = new AtomicValue(1.0, Type.DOUBLE);
-		IItem item2 = new AtomicValue(2.0, Type.DOUBLE);
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        IReadTransaction rtx = session.beginReadTransaction();
+        IItem item1 = new AtomicValue(1.0, Type.DOUBLE);
+        IItem item2 = new AtomicValue(2.0, Type.DOUBLE);
 
-		IAxis op1 = new LiteralExpr(rtx, rtx.getItemList().addItem(item1));
-		IAxis op2 = new LiteralExpr(rtx, rtx.getItemList().addItem(item2));
-		AbstractOpAxis axis = new DivOpAxis(rtx, op1, op2);
+        IAxis op1 = new LiteralExpr(rtx, rtx.getItemList().addItem(item1));
+        IAxis op2 = new LiteralExpr(rtx, rtx.getItemList().addItem(item2));
+        AbstractOpAxis axis = new DivOpAxis(rtx, op1, op2);
 
-		assertEquals(true, axis.hasNext());
-		assertEquals(rtx.keyForName("xs:double"), rtx.getNode().getTypeKey());
-		assertEquals(false, axis.hasNext());
+        assertEquals(true, axis.hasNext());
+        assertEquals(rtx.keyForName("xs:double"), rtx.getNode().getTypeKey());
+        assertEquals(false, axis.hasNext());
 
-		// here both operands are the empty sequence
-		axis = new DivOpAxis(rtx, op1, op2);
-		assertEquals(true, axis.hasNext());
-		assertThat(Double.NaN, is(TypedValue.parseDouble(rtx.getNode()
-				.getRawValue())));
-		assertEquals(rtx.keyForName("xs:double"), rtx.getNode().getTypeKey());
-		assertEquals(false, axis.hasNext());
-		rtx.close();
-		session.close();
+        // here both operands are the empty sequence
+        axis = new DivOpAxis(rtx, op1, op2);
+        assertEquals(true, axis.hasNext());
+        assertThat(Double.NaN, is(TypedValue.parseDouble(rtx.getNode()
+                .getRawValue())));
+        assertEquals(rtx.keyForName("xs:double"), rtx.getNode().getTypeKey());
+        assertEquals(false, axis.hasNext());
+        rtx.close();
+        session.close();
 
-	}
+    }
 
 }

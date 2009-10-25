@@ -32,49 +32,49 @@ import com.treetank.utils.TypedValue;
 
 public class XPathStringChecker {
 
-	@Before
-	public void setUp() {
-		Session.removeSession(ITestConstants.PATH1);
-	}
+    @Before
+    public void setUp() {
+        Session.removeSession(ITestConstants.PATH1);
+    }
 
-	public static void testIAxisConventions(final IAxis axis,
-			final String[] expectedValues) {
+    public static void testIAxisConventions(final IAxis axis,
+            final String[] expectedValues) {
 
-		final IReadTransaction rtx = axis.getTransaction();
+        final IReadTransaction rtx = axis.getTransaction();
 
-		// IAxis Convention 1.
-		final long startKey = rtx.getNode().getNodeKey();
+        // IAxis Convention 1.
+        final long startKey = rtx.getNode().getNodeKey();
 
-		final String[] strValues = new String[expectedValues.length];
-		int offset = 0;
-		for (final long nodeKey : axis) {
+        final String[] strValues = new String[expectedValues.length];
+        int offset = 0;
+        for (final long nodeKey : axis) {
 
-			// IAxis results.
-			if (offset >= expectedValues.length) {
-				fail("More nodes found than expected.");
-			}
-			strValues[offset++] = TypedValue.parseString(rtx.getNode()
-					.getRawValue());
+            // IAxis results.
+            if (offset >= expectedValues.length) {
+                fail("More nodes found than expected.");
+            }
+            strValues[offset++] = TypedValue.parseString(rtx.getNode()
+                    .getRawValue());
 
-			// IAxis Convention 2.
-			try {
-				axis.next();
-				fail("Should only allow to call next() once.");
-			} catch (Exception e) {
-				// Must throw exception.
-			}
+            // IAxis Convention 2.
+            try {
+                axis.next();
+                fail("Should only allow to call next() once.");
+            } catch (Exception e) {
+                // Must throw exception.
+            }
 
-			// IAxis Convention 3.
-			rtx.moveToDocumentRoot();
+            // IAxis Convention 3.
+            rtx.moveToDocumentRoot();
 
-		}
+        }
 
-		// IAxis Convention 5.
-		assertEquals(startKey, rtx.getNode().getNodeKey());
+        // IAxis Convention 5.
+        assertEquals(startKey, rtx.getNode().getNodeKey());
 
-		// IAxis results.
-		assertArrayEquals(expectedValues, strValues);
+        // IAxis results.
+        assertArrayEquals(expectedValues, strValues);
 
-	}
+    }
 
 }

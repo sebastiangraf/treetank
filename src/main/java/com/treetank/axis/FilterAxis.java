@@ -30,64 +30,64 @@ import com.treetank.api.IFilter;
  */
 public class FilterAxis extends AbstractAxis implements IAxis {
 
-	/** Axis to test. */
-	private final IAxis mAxis;
+    /** Axis to test. */
+    private final IAxis mAxis;
 
-	/** Test to apply to axis. */
-	private final IFilter[] mAxisFilter;
+    /** Test to apply to axis. */
+    private final IFilter[] mAxisFilter;
 
-	/**
-	 * Constructor initializing internal state.
-	 * 
-	 * @param axis
-	 *            Axis to iterate over.
-	 * @param axisTest
-	 *            Test to perform for each node found with axis.
-	 */
-	public FilterAxis(final IAxis axis, final IFilter... axisTest) {
-		super(axis.getTransaction());
-		mAxis = axis;
-		mAxisFilter = axisTest;
-	}
+    /**
+     * Constructor initializing internal state.
+     * 
+     * @param axis
+     *            Axis to iterate over.
+     * @param axisTest
+     *            Test to perform for each node found with axis.
+     */
+    public FilterAxis(final IAxis axis, final IFilter... axisTest) {
+        super(axis.getTransaction());
+        mAxis = axis;
+        mAxisFilter = axisTest;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void reset(final long nodeKey) {
-		super.reset(nodeKey);
-		if (mAxis != null) {
-			mAxis.reset(nodeKey);
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void reset(final long nodeKey) {
+        super.reset(nodeKey);
+        if (mAxis != null) {
+            mAxis.reset(nodeKey);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final boolean hasNext() {
-		resetToLastKey();
-		while (mAxis.hasNext()) {
-			mAxis.next();
-			boolean filterResult = true;
-			for (final IFilter filter : mAxisFilter) {
-				filterResult = filterResult && filter.filter();
-			}
-			if (filterResult) {
-				return true;
-			}
-		}
-		resetToStartKey();
-		return false;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public final boolean hasNext() {
+        resetToLastKey();
+        while (mAxis.hasNext()) {
+            mAxis.next();
+            boolean filterResult = true;
+            for (final IFilter filter : mAxisFilter) {
+                filterResult = filterResult && filter.filter();
+            }
+            if (filterResult) {
+                return true;
+            }
+        }
+        resetToStartKey();
+        return false;
+    }
 
-	/**
-	 * Returns the inner axis.
-	 * 
-	 * @return the axis
-	 */
-	public IAxis getAxis() {
+    /**
+     * Returns the inner axis.
+     * 
+     * @return the axis
+     */
+    public IAxis getAxis() {
 
-		return mAxis;
-	}
+        return mAxis;
+    }
 
 }

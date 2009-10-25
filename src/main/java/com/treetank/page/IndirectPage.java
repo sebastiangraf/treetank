@@ -20,6 +20,7 @@ package com.treetank.page;
 
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
+import com.treetank.io.PagePersistenter;
 import com.treetank.utils.IConstants;
 
 /**
@@ -31,37 +32,37 @@ import com.treetank.utils.IConstants;
  */
 public final class IndirectPage extends AbstractPage {
 
-	/**
-	 * Create indirect page.
-	 */
-	public IndirectPage() {
-		super(IConstants.INP_REFERENCE_COUNT);
-	}
+    /**
+     * Create indirect page.
+     */
+    public IndirectPage() {
+        super(IConstants.INP_REFERENCE_COUNT);
+    }
 
-	/**
-	 * Read indirect page.
-	 * 
-	 * @param in
-	 *            Input bytes.
-	 */
-	IndirectPage(final ITTSource in) {
-		super(IConstants.INP_REFERENCE_COUNT, in);
-	}
+    /**
+     * Read indirect page.
+     * 
+     * @param in
+     *            Input bytes.
+     */
+    public IndirectPage(final ITTSource in) {
+        super(IConstants.INP_REFERENCE_COUNT, in);
+    }
 
-	/**
-	 * Clone indirect page.
-	 * 
-	 * @param page
-	 *            Page to clone.
-	 */
-	public IndirectPage(final IndirectPage page) {
-		super(IConstants.INP_REFERENCE_COUNT, page);
-	}
+    /**
+     * Clone indirect page.
+     * 
+     * @param page
+     *            Page to clone.
+     */
+    public IndirectPage(final IndirectPage page) {
+        super(IConstants.INP_REFERENCE_COUNT, page);
+    }
 
-	@Override
-	public void serialize(final ITTSink out) {
-		out.writeInt(PageFactory.INDIRCTPAGE);
-		super.serialize(out);
-	}
+    @Override
+    public void serialize(final ITTSink out) {
+        out.writeInt(PagePersistenter.INDIRCTPAGE);
+        super.serialize(out);
+    }
 
 }

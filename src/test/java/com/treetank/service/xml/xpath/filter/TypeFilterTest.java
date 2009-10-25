@@ -40,64 +40,64 @@ import com.treetank.session.SessionConfiguration;
 
 public class TypeFilterTest {
 
-	public static final String XML = "src" + File.separator + "test"
-			+ File.separator + "resources" + File.separator + "test.xml";
+    public static final String XML = "src" + File.separator + "test"
+            + File.separator + "resources" + File.separator + "test.xml";
 
-	@Before
-	public void setUp() {
+    @Before
+    public void setUp() {
 
-		Session.removeSession(ITestConstants.PATH1);
-	}
+        Session.removeSession(ITestConstants.PATH1);
+    }
 
-	@Test
-	public void testIFilterConvetions() {
+    @Test
+    public void testIFilterConvetions() {
 
-		// Build simple test tree.
-		// final ISession session = Session.beginSession(PATH);
-		// final IWriteTransaction wtx = session.beginWriteTransaction();
-		// TestDocument.create(wtx);
-		//    
+        // Build simple test tree.
+        // final ISession session = Session.beginSession(PATH);
+        // final IWriteTransaction wtx = session.beginWriteTransaction();
+        // TestDocument.create(wtx);
+        //    
 
-		XMLShredder.shred(XML, new SessionConfiguration(ITestConstants.PATH1));
+        XMLShredder.shred(XML, new SessionConfiguration(ITestConstants.PATH1));
 
-		// Verify.
-		final ISession session = Session.beginSession(ITestConstants.PATH1);
-		final IReadTransaction rtx = session.beginReadTransaction();
-		final IAxis axis = new XPathAxis(rtx, "a");
-		final IReadTransaction xtx = axis.getTransaction();
+        // Verify.
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IReadTransaction rtx = session.beginReadTransaction();
+        final IAxis axis = new XPathAxis(rtx, "a");
+        final IReadTransaction xtx = axis.getTransaction();
 
-		xtx.moveTo(9L);
-		IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untyped"),
-				true);
-		IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:long"),
-				false);
+        xtx.moveTo(9L);
+        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untyped"),
+                true);
+        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:long"),
+                false);
 
-		xtx.moveTo(4L);
-		IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untyped"),
-				true);
-		IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:double"),
-				false);
+        xtx.moveTo(4L);
+        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untyped"),
+                true);
+        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:double"),
+                false);
 
-		xtx.moveTo(1L);
-		xtx.moveToAttribute(0);
-		IFilterTest.testIFilterConventions(new TypeFilter(xtx,
-				"xs:untypedAtomic"), true);
+        xtx.moveTo(1L);
+        xtx.moveToAttribute(0);
+        IFilterTest.testIFilterConventions(new TypeFilter(xtx,
+                "xs:untypedAtomic"), true);
 
-		IFilterTest.testIFilterConventions(new TypeFilter(xtx,
-				"xs:anyAtomicType"), false);
-		try {
-			IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:bla"),
-					false);
-			fail("Expected a Type not found error.");
-		} catch (XPathError e) {
-			assertThat(e.getMessage(), is("err:XPST0051 "
-					+ "Type is not defined in the in-scope schema types as an "
-					+ "atomic type."));
-		}
+        IFilterTest.testIFilterConventions(new TypeFilter(xtx,
+                "xs:anyAtomicType"), false);
+        try {
+            IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:bla"),
+                    false);
+            fail("Expected a Type not found error.");
+        } catch (XPathError e) {
+            assertThat(e.getMessage(), is("err:XPST0051 "
+                    + "Type is not defined in the in-scope schema types as an "
+                    + "atomic type."));
+        }
 
-		xtx.close();
-		rtx.close();
-		session.close();
+        xtx.close();
+        rtx.close();
+        session.close();
 
-	}
+    }
 }

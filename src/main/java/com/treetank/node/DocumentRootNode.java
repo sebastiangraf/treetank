@@ -34,145 +34,145 @@ import com.treetank.io.ITTSource;
  */
 public final class DocumentRootNode extends AbstractNode {
 
-	private static final int SIZE = 3;
+    private static final int SIZE = 3;
 
-	private static final int FIRST_CHILD_KEY = 1;
+    private static final int FIRST_CHILD_KEY = 1;
 
-	private static final int CHILD_COUNT = 2;
+    private static final int CHILD_COUNT = 2;
 
-	/**
-	 * Constructor to create document node.
-	 */
-	public DocumentRootNode() {
-		super(SIZE, IReadTransaction.DOCUMENT_ROOT_KEY);
-		mData[FIRST_CHILD_KEY] = IReadTransaction.NULL_NODE_KEY;
-		mData[CHILD_COUNT] = 0L;
-	}
+    /**
+     * Constructor to create document node.
+     */
+    public DocumentRootNode() {
+        super(SIZE, IReadTransaction.DOCUMENT_ROOT_KEY);
+        mData[FIRST_CHILD_KEY] = IReadTransaction.NULL_NODE_KEY;
+        mData[CHILD_COUNT] = 0L;
+    }
 
-	/**
-	 * Clone document node.
-	 * 
-	 * @param node
-	 *            Node to clone.
-	 */
-	public DocumentRootNode(final AbstractNode node) {
-		super(node);
-	}
+    /**
+     * Clone document node.
+     * 
+     * @param node
+     *            Node to clone.
+     */
+    public DocumentRootNode(final AbstractNode node) {
+        super(node);
+    }
 
-	/**
-	 * Read document node.
-	 * 
-	 * @param in
-	 *            Byte input to read node from.
-	 */
-	public DocumentRootNode(final ITTSource in) {
-		super(SIZE, IReadTransaction.DOCUMENT_ROOT_KEY, in);
-	}
+    /**
+     * Read document node.
+     * 
+     * @param in
+     *            Byte input to read node from.
+     */
+    public DocumentRootNode(final ITTSource in) {
+        super(SIZE, IReadTransaction.DOCUMENT_ROOT_KEY, in);
+    }
 
-	/**
-	 * Read document node.
-	 * 
-	 * @param in
-	 *            Byte input to read node from.
-	 */
-	public DocumentRootNode(final TupleInput in) {
-		super(SIZE, IReadTransaction.DOCUMENT_ROOT_KEY, in);
-	}
+    /**
+     * Read document node.
+     * 
+     * @param in
+     *            Byte input to read node from.
+     */
+    public DocumentRootNode(final TupleInput in) {
+        super(SIZE, IReadTransaction.DOCUMENT_ROOT_KEY, in);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final boolean isDocumentRoot() {
-		return true;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final boolean isDocumentRoot() {
+        return true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final boolean hasFirstChild() {
-		return (mData[FIRST_CHILD_KEY] != IReadTransaction.NULL_NODE_KEY);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final boolean hasFirstChild() {
+        return (mData[FIRST_CHILD_KEY] != IReadTransaction.NULL_NODE_KEY);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final long getFirstChildKey() {
-		return mData[FIRST_CHILD_KEY];
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final long getFirstChildKey() {
+        return mData[FIRST_CHILD_KEY];
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void setFirstChildKey(final long firstChildKey) {
-		mData[FIRST_CHILD_KEY] = firstChildKey;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void setFirstChildKey(final long firstChildKey) {
+        mData[FIRST_CHILD_KEY] = firstChildKey;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final long getChildCount() {
-		return mData[CHILD_COUNT];
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final long getChildCount() {
+        return mData[CHILD_COUNT];
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void setChildCount(final long childCount) {
-		mData[CHILD_COUNT] = childCount;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void setChildCount(final long childCount) {
+        mData[CHILD_COUNT] = childCount;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void incrementChildCount() {
-		mData[CHILD_COUNT] += 1;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void incrementChildCount() {
+        mData[CHILD_COUNT] += 1;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void decrementChildCount() {
-		mData[CHILD_COUNT] -= 1;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void decrementChildCount() {
+        mData[CHILD_COUNT] -= 1;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final int getKind() {
-		return IReadTransaction.ROOT_KIND;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final int getKind() {
+        return IReadTransaction.ROOT_KIND;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void serialize(final ITTSink out) {
-		super.serialize(out);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void serialize(final ITTSink out) {
+        super.serialize(out);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void serialize(final TupleOutput out) {
-		super.serialize(out);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void serialize(final TupleOutput out) {
+        super.serialize(out);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toString() {
-		return "DocumentRootNode " + super.toString();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "DocumentRootNode " + super.toString();
+    }
 
 }
