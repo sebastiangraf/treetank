@@ -1,5 +1,6 @@
 package com.treetank.io;
 
+import com.treetank.exception.TreetankIOException;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.PageReference;
 

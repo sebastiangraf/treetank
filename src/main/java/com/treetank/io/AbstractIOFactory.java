@@ -3,6 +3,7 @@ package com.treetank.io;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.treetank.exception.TreetankIOException;
 import com.treetank.io.berkeley.BerkeleyFactory;
 import com.treetank.io.file.FileFactory;
 import com.treetank.session.SessionConfiguration;

@@ -20,6 +20,7 @@ package com.treetank.service.xml;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.ByteBuffer;
@@ -32,7 +33,8 @@ import javax.xml.stream.XMLStreamReader;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.io.TreetankIOException;
+import com.treetank.exception.TreetankFrameworkException;
+import com.treetank.exception.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
 import com.treetank.utils.FastStack;
@@ -41,45 +43,53 @@ import com.treetank.utils.TypedValue;
 
 public final class XMLShredder {
 
-    public final static void shred(final long id, final String content,
-            final ISession session) {
+    public final static long shred(final long id, final String content,
+            final ISession session) throws TreetankFrameworkException {
         try {
             final XMLInputFactory factory = XMLInputFactory.newInstance();
             factory.setProperty(XMLInputFactory.IS_VALIDATING, true);
             factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
             final XMLStreamReader parser = factory
                     .createXMLStreamReader(new StringReader(content));
-            shred(id, parser, session);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            final long revision = shred(id, parser, session);
+            return revision;
+        } catch (final XMLStreamException exc) {
+            throw new TreetankFrameworkException(exc);
         }
+
     }
 
-    public final static void shred(final String xmlPath,
-            final SessionConfiguration sessionConfiguration) {
+    public final static long shred(final String xmlPath,
+            final SessionConfiguration sessionConfiguration)
+            throws TreetankFrameworkException {
         try {
             final InputStream in = new FileInputStream(xmlPath);
             final XMLInputFactory factory = XMLInputFactory.newInstance();
             factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
             final XMLStreamReader parser = factory.createXMLStreamReader(in);
-            shred(0, parser, sessionConfiguration);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            final long revision = shred(0, parser, sessionConfiguration);
+            return revision;
+        } catch (final FileNotFoundException exc) {
+            throw new TreetankFrameworkException(exc);
+        } catch (final XMLStreamException exc) {
+            throw new TreetankFrameworkException(exc);
         }
     }
 
-    public static final void shred(final long id, final XMLStreamReader parser,
-            final SessionConfiguration sessionConfiguration) {
+    public static final long shred(final long id, final XMLStreamReader parser,
+            final SessionConfiguration sessionConfiguration)
+            throws TreetankFrameworkException {
         final ISession session = Session.beginSession(sessionConfiguration);
-        shred(id, parser, session);
+        final long revision = shred(id, parser, session);
         session.close();
+        return revision;
     }
 
-    public static final void shred(final long id, final XMLStreamReader parser,
-            final ISession session) {
+    public static final long shred(final long id, final XMLStreamReader parser,
+            final ISession session) throws TreetankFrameworkException {
         try {
             final IWriteTransaction wtx = session.beginWriteTransaction();
+            final long revision = wtx.getRevisionNumber();
             final FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
 
             // Make sure that we do not shred into an existing TreeTank.
@@ -191,10 +201,11 @@ public final class XMLShredder {
             wtx.close();
 
             parser.close();
+            return revision + 1;
         } catch (final XMLStreamException exc1) {
-            throw new IllegalStateException(exc1);
+            throw new TreetankFrameworkException(exc1);
         } catch (final TreetankIOException exc2) {
-            throw new IllegalStateException(exc2);
+            throw new TreetankFrameworkException(exc2);
         }
     }
 

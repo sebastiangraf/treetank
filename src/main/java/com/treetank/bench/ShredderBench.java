@@ -2,6 +2,7 @@ package com.treetank.bench;
 
 import java.io.File;
 
+import com.treetank.exception.TreetankFrameworkException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.SessionConfiguration;
 
@@ -22,8 +23,13 @@ public final class ShredderBench {
     }
 
     public void shred() {
-        XMLShredder.shred(XML.getAbsolutePath(), new SessionConfiguration(TNK
-                .getAbsolutePath()));
+        try {
+            XMLShredder.shred(XML.getAbsolutePath(), new SessionConfiguration(TNK
+                    .getAbsolutePath()));
+        } catch (TreetankFrameworkException e) {
+
+            e.printStackTrace();
+        }
 
     }
 

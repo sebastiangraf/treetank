@@ -18,7 +18,7 @@
 
 package com.treetank.service.xml.xpath.expr;
 
-import java.io.IOException;
+import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +28,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.IAxisTest;
+import com.treetank.exception.TreetankFrameworkException;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
@@ -48,32 +49,38 @@ public class IfAxisTest {
     }
 
     @Test
-    public void testIf() throws IOException {
+    public void testIf() {
+        try {
+            // Build simple test tree.
+            final ISession session = Session.beginSession(ITestConstants.PATH1);
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            DocumentCreater.create(wtx);
+            wtx.commit();
+            IReadTransaction rtx = session.beginReadTransaction();
 
-        // Build simple test tree.
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        IReadTransaction rtx = session.beginReadTransaction();
+            rtx.moveTo(1L);
 
-        rtx.moveTo(1L);
+            IAxisTest
+                    .testIAxisConventions(new XPathAxis(rtx,
+                            "if (text()) then . else child::node()"),
+                            new long[] { 1L });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                "if (text()) then . else child::node()"), new long[] { 1L });
+            IAxisTest
+                    .testIAxisConventions(new XPathAxis(rtx,
+                            "if (node()) then . else child::node()"),
+                            new long[] { 1L });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                "if (node()) then . else child::node()"), new long[] { 1L });
+            IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                    "if (processing-instruction()) then . else child::node()"),
+                    new long[] { 4L, 5L, 8L, 9L, 13L });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                "if (processing-instruction()) then . else child::node()"),
-                new long[] { 4L, 5L, 8L, 9L, 13L });
-
-        rtx.close();
-        wtx.abort();
-        wtx.close();
-        session.close();
-
+            rtx.close();
+            wtx.abort();
+            wtx.close();
+            session.close();
+        } catch (final TreetankFrameworkException exc) {
+            fail(exc.toString());
+        }
     }
 
 }

@@ -25,4 +25,7 @@ public interface ITestConstants {
 
     public static final String TEST_EXISTING_PATH = "/tmp" + File.separator
             + "tnk" + File.separator + "ExistingSessionTest";
+
+    public static final String REST_SERVICE1 = "test1";
+    public static final String REST_SERVICE2 = "test2";
 }

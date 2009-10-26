@@ -11,7 +11,8 @@ import org.junit.Test;
 import com.treetank.ITestConstants;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.io.TreetankIOException;
+import com.treetank.exception.TreetankFrameworkException;
+import com.treetank.exception.TreetankIOException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
@@ -43,7 +44,7 @@ public final class XPathWriteTransactionTest {
             // Verify.
             session = Session.beginSession(ITestConstants.PATH1);
             wtx = session.beginWriteTransaction();
-        } catch (final TreetankIOException exc) {
+        } catch (final TreetankFrameworkException exc) {
             fail(exc.toString());
         }
     }

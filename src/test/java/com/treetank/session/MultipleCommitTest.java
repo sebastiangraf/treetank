@@ -32,7 +32,7 @@ import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.axis.PostOrderAxis;
-import com.treetank.io.TreetankIOException;
+import com.treetank.exception.TreetankIOException;
 import com.treetank.utils.DocumentCreater;
 
 public class MultipleCommitTest {

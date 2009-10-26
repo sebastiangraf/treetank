@@ -18,7 +18,7 @@
 
 package com.treetank.api;
 
-import com.treetank.io.TreetankIOException;
+import com.treetank.exception.TreetankIOException;
 
 /**
  * <h1>IWriteTransaction</h1>

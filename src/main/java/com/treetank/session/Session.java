@@ -26,7 +26,7 @@ import java.util.Map;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.io.TreetankIOException;
+import com.treetank.exception.TreetankIOException;
 import com.treetank.utils.ItemList;
 
 /**

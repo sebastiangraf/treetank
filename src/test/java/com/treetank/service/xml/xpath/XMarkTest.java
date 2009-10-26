@@ -18,6 +18,8 @@
 
 package com.treetank.service.xml.xpath;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -29,6 +31,7 @@ import org.perfidix.annotation.BenchClass;
 import com.treetank.ITestConstants;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
+import com.treetank.exception.TreetankFrameworkException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
@@ -51,14 +54,18 @@ public class XMarkTest {
 
     @Before
     public void setUp() {
+        try {
+            Session.removeSession(ITestConstants.PATH1);
+            // Build simple test tree.
+            XMLShredder.shred(XML, new SessionConfiguration(
+                    ITestConstants.PATH1));
 
-        Session.removeSession(ITestConstants.PATH1);
-        // Build simple test tree.
-        XMLShredder.shred(XML, new SessionConfiguration(ITestConstants.PATH1));
-
-        // Verify.
-        session = Session.beginSession(ITestConstants.PATH1);
-        rtx = session.beginReadTransaction();
+            // Verify.
+            session = Session.beginSession(ITestConstants.PATH1);
+            rtx = session.beginReadTransaction();
+        } catch (final TreetankFrameworkException exc) {
+            fail(exc.toString());
+        }
     }
 
     @After

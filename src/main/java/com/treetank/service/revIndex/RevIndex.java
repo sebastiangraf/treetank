@@ -8,7 +8,8 @@ import java.util.Stack;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.io.TreetankIOException;
+import com.treetank.exception.TreetankFrameworkException;
+import com.treetank.exception.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.NamePageHash;
@@ -73,9 +74,10 @@ public final class RevIndex {
      * 
      * @param paramIndexFolder
      *            folder to be access.
-     * @throws IOException
+     * @throws TreetankFrameworkException
      */
-    public RevIndex(final File index, final long rev) throws IOException {
+    public RevIndex(final File index, final long rev)
+            throws TreetankFrameworkException, IOException {
         indexSession = Session.beginSession(index);
         if (rev < 0) {
             rtx = indexSession.beginWriteTransaction(

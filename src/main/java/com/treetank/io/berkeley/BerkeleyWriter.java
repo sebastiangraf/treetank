@@ -7,9 +7,9 @@ import com.sleepycat.je.Environment;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
 import com.sleepycat.je.Transaction;
+import com.treetank.exception.TreetankIOException;
 import com.treetank.io.IWriter;
 import com.treetank.io.StorageProperties;
-import com.treetank.io.TreetankIOException;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.PageReference;
 

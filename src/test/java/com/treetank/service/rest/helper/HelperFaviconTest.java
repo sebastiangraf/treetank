@@ -5,9 +5,9 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.treetank.exception.TreetankRestException;
 import com.treetank.service.rest.TestRequestWrapper;
 import com.treetank.service.rest.TestResponseWrapper;
-import com.treetank.service.rest.TreeTankException;
 
 public class HelperFaviconTest {
 
@@ -30,7 +30,7 @@ public class HelperFaviconTest {
                 null);
         try {
             toTest.handle(request, response);
-        } catch (final TreeTankException e) {
+        } catch (final TreetankRestException e) {
             fail(e.toString());
         }
     }

@@ -29,7 +29,7 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.io.TreetankIOException;
+import com.treetank.exception.TreetankFrameworkException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.service.xml.xpath.functions.XPathError;
@@ -148,7 +148,7 @@ public class AndExprTest {
             wtx.abort();
             wtx.close();
             session.close();
-        } catch (final TreetankIOException exc) {
+        } catch (final TreetankFrameworkException exc) {
             fail(exc.toString());
         }
 

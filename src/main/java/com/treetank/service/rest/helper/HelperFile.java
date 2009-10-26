@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.mortbay.jetty.Request;
 
-import com.treetank.service.rest.TreeTankException;
+import com.treetank.exception.TreetankRestException;
 import com.treetank.utils.IConstants;
 
 public final class HelperFile {
@@ -40,7 +40,7 @@ public final class HelperFile {
     }
 
     public final void handle(final HttpServletRequest request,
-            final HttpServletResponse response) throws TreeTankException {
+            final HttpServletResponse response) throws TreetankRestException {
         try {
             response.setContentType(mContentType);
             response.setCharacterEncoding(IConstants.DEFAULT_ENCODING);
@@ -61,7 +61,7 @@ public final class HelperFile {
             ((Request) request).setHandled(true);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new TreeTankException(500, e.getMessage(), e);
+            throw new TreetankRestException(500, e.getMessage(), e);
         }
     }
 

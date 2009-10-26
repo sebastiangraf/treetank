@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.mortbay.jetty.Request;
 
-import com.treetank.service.rest.TreeTankException;
+import com.treetank.exception.TreetankRestException;
 import com.treetank.service.rest.TreeTankWrapper;
 import com.treetank.utils.IConstants;
 
@@ -46,7 +46,7 @@ public final class HelperPut {
     }
 
     public final void handle(final HttpServletRequest request,
-            final HttpServletResponse response) throws TreeTankException {
+            final HttpServletResponse response) throws TreetankRestException {
 
         try {
 
@@ -126,10 +126,10 @@ public final class HelperPut {
 
             ((Request) request).setHandled(true);
 
-        } catch (TreeTankException te) {
+        } catch (TreetankRestException te) {
             throw te;
         } catch (Exception e) {
-            throw new TreeTankException(500, e.getMessage(), e);
+            throw new TreetankRestException(500, e.getMessage(), e);
         }
 
     }

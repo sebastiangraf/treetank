@@ -5,9 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import com.treetank.exception.TreetankIOException;
 import com.treetank.io.IWriter;
 import com.treetank.io.StorageProperties;
-import com.treetank.io.TreetankIOException;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.PageReference;
 import com.treetank.session.SessionConfiguration;

@@ -28,7 +28,7 @@ import com.treetank.TestHelper;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.io.TreetankIOException;
+import com.treetank.exception.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
 

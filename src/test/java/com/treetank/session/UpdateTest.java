@@ -19,9 +19,7 @@
 package com.treetank.session;
 
 import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-
+import static org.junit.Assert.fail;
 import junit.framework.TestCase;
 
 import org.junit.Before;
@@ -31,10 +29,9 @@ import com.treetank.ITestConstants;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.io.TreetankIOException;
+import com.treetank.exception.TreetankFrameworkException;
 import com.treetank.utils.DocumentCreater;
 import com.treetank.utils.TypedValue;
-import static org.junit.Assert.fail;
 
 public class UpdateTest {
 
@@ -94,90 +91,103 @@ public class UpdateTest {
     }
 
     @Test
-    public void testInsertPath() throws IOException {
-
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
-
-        IWriteTransaction wtx = session.beginWriteTransaction();
-        wtx.commit();
-        wtx.close();
-
-        wtx = session.beginWriteTransaction();
-        TestCase.assertNotNull(wtx.moveToDocumentRoot());
-        assertEquals(1L, wtx.insertElementAsFirstChild("", ""));
-
-        assertEquals(2L, wtx.insertElementAsFirstChild("", ""));
-        assertEquals(3L, wtx.insertElementAsFirstChild("", ""));
-
-        TestCase.assertNotNull(wtx.moveToParent());
-        assertEquals(4L, wtx.insertElementAsRightSibling("", ""));
-
-        wtx.commit();
-        wtx.close();
-
-        final IWriteTransaction wtx2 = session.beginWriteTransaction();
-
-        TestCase.assertNotNull(wtx2.moveToDocumentRoot());
-        assertEquals(5L, wtx2.insertElementAsFirstChild("", ""));
-
-        wtx2.commit();
-        wtx2.close();
-
-        session.close();
-    }
-
-    @Test
-    public void testPageBoundary() throws IOException {
-
-        ISession session = Session.beginSession(ITestConstants.PATH1);
-
-        // Document root.
-        IWriteTransaction wtx = session.beginWriteTransaction();
-
-        for (int i = 0; i < 256 * 256 + 1; i++) {
-            wtx.insertTextAsFirstChild("");
-        }
-
-        TestCase.assertNotNull(wtx.moveTo(2L));
-        assertEquals(2L, wtx.getNode().getNodeKey());
-
-        wtx.abort();
-        wtx.close();
-        session.close();
-
-    }
-
-    @Test
-    public void testRemoveDocument() throws IOException {
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
-
+    public void testInsertPath() {
         try {
-            wtx.moveToDocumentRoot();
-            wtx.remove();
-            TestCase.fail();
-        } catch (Exception e) {
-            // Must fail.
-        }
+            final ISession session = Session.beginSession(ITestConstants.PATH1);
 
-        wtx.abort();
-        wtx.close();
-        session.close();
+            IWriteTransaction wtx = session.beginWriteTransaction();
+            wtx.commit();
+            wtx.close();
+
+            wtx = session.beginWriteTransaction();
+            TestCase.assertNotNull(wtx.moveToDocumentRoot());
+            assertEquals(1L, wtx.insertElementAsFirstChild("", ""));
+
+            assertEquals(2L, wtx.insertElementAsFirstChild("", ""));
+            assertEquals(3L, wtx.insertElementAsFirstChild("", ""));
+
+            TestCase.assertNotNull(wtx.moveToParent());
+            assertEquals(4L, wtx.insertElementAsRightSibling("", ""));
+
+            wtx.commit();
+            wtx.close();
+
+            final IWriteTransaction wtx2 = session.beginWriteTransaction();
+
+            TestCase.assertNotNull(wtx2.moveToDocumentRoot());
+            assertEquals(5L, wtx2.insertElementAsFirstChild("", ""));
+
+            wtx2.commit();
+            wtx2.close();
+
+            session.close();
+        } catch (final TreetankFrameworkException exc) {
+            fail(exc.toString());
+        }
     }
 
     @Test
-    public void testRemoveDescendant() throws IOException {
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
+    public void testPageBoundary() {
+        try {
+            ISession session = Session.beginSession(ITestConstants.PATH1);
 
-        wtx.moveTo(2L);
-        wtx.remove();
+            // Document root.
+            IWriteTransaction wtx = session.beginWriteTransaction();
 
-        wtx.abort();
-        wtx.close();
-        session.close();
+            for (int i = 0; i < 256 * 256 + 1; i++) {
+                wtx.insertTextAsFirstChild("");
+            }
+
+            TestCase.assertNotNull(wtx.moveTo(2L));
+            assertEquals(2L, wtx.getNode().getNodeKey());
+
+            wtx.abort();
+            wtx.close();
+            session.close();
+        } catch (final TreetankFrameworkException exc) {
+            fail(exc.toString());
+        }
+    }
+
+    @Test
+    public void testRemoveDocument() {
+        try {
+            final ISession session = Session.beginSession(ITestConstants.PATH1);
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            DocumentCreater.create(wtx);
+
+            try {
+                wtx.moveToDocumentRoot();
+                wtx.remove();
+                TestCase.fail();
+            } catch (Exception e) {
+                // Must fail.
+            }
+
+            wtx.abort();
+            wtx.close();
+            session.close();
+        } catch (final TreetankFrameworkException exc) {
+            fail(exc.toString());
+        }
+    }
+
+    @Test
+    public void testRemoveDescendant() {
+        try {
+            final ISession session = Session.beginSession(ITestConstants.PATH1);
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            DocumentCreater.create(wtx);
+
+            wtx.moveTo(2L);
+            wtx.remove();
+
+            wtx.abort();
+            wtx.close();
+            session.close();
+        } catch (final TreetankFrameworkException exc) {
+            fail(exc.toString());
+        }
     }
 
 }

@@ -19,6 +19,7 @@
 package com.treetank.service.xml.xpath.expr;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
@@ -31,6 +32,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.IAxisTest;
+import com.treetank.exception.TreetankFrameworkException;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
@@ -53,66 +55,69 @@ public class ForAxisTest {
 
     @Test
     public void testFor() throws IOException {
+        try {
+            // Build simple test tree.
+            final ISession session = Session.beginSession(ITestConstants.PATH1);
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            DocumentCreater.create(wtx);
+            wtx.commit();
+            IReadTransaction rtx = session.beginReadTransaction();
 
-        // Build simple test tree.
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        IReadTransaction rtx = session.beginReadTransaction();
+            rtx.moveTo(1L);
 
-        rtx.moveTo(1L);
+            IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                    "for $a in child::text() return child::node()"),
+                    new long[] { 4L, 5L, 8L, 9L, 13L, 4L, 5L, 8L, 9L, 13L, 4L,
+                            5L, 8L, 9L, 13L });
 
-        IAxisTest
-                .testIAxisConventions(new XPathAxis(rtx,
-                        "for $a in child::text() return child::node()"),
-                        new long[] { 4L, 5L, 8L, 9L, 13L, 4L, 5L, 8L, 9L, 13L,
-                                4L, 5L, 8L, 9L, 13L });
+            IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                    "for $a in child::node() return $a/node()"), new long[] {
+                    6L, 7L, 11L, 12L });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                "for $a in child::node() return $a/node()"), new long[] { 6L,
-                7L, 11L, 12L });
+            IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                    "for $a in child::node() return $a/text()"), new long[] {
+                    6L, 12L });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                "for $a in child::node() return $a/text()"), new long[] { 6L,
-                12L });
+            IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                    "for $a in child::node() return $a/c"), new long[] { 7L,
+                    11L });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                "for $a in child::node() return $a/c"), new long[] { 7L, 11L });
+            // IAxisTest.testIAxisConventions(new XPathAxis(
+            // rtx,
+            // "for $a in child::node(), $b in /node(), $c in ., $d in /c return $a/c"),
+            // new long[] {7L, 11L});
 
-        // IAxisTest.testIAxisConventions(new XPathAxis(
-        // rtx,
-        // "for $a in child::node(), $b in /node(), $c in ., $d in /c return $a/c"),
-        // new long[] {7L, 11L});
+            IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                    "for $a in child::node() return $a[@p:x]"),
+                    new long[] { 9L });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                "for $a in child::node() return $a[@p:x]"), new long[] { 9L });
+            IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                    "for $a in . return $a"), new long[] { 1L });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                "for $a in . return $a"), new long[] { 1L });
+            IAxis axis = new XPathAxis(rtx,
+                    "for $i in (10, 20), $j in (1, 2) return ($i + $j)");
+            assertEquals(true, axis.hasNext());
 
-        IAxis axis = new XPathAxis(rtx,
-                "for $i in (10, 20), $j in (1, 2) return ($i + $j)");
-        assertEquals(true, axis.hasNext());
+            assertEquals("11.0", TypedValue.parseString(rtx.getNode()
+                    .getRawValue()));
+            assertEquals(true, axis.hasNext());
+            assertEquals("12.0", TypedValue.parseString(rtx.getNode()
+                    .getRawValue()));
+            assertEquals(true, axis.hasNext());
+            assertEquals("21.0", TypedValue.parseString(rtx.getNode()
+                    .getRawValue()));
+            assertEquals(true, axis.hasNext());
+            assertEquals("22.0", TypedValue.parseString(rtx.getNode()
+                    .getRawValue()));
+            assertEquals(false, axis.hasNext());
 
-        assertEquals("11.0", TypedValue
-                .parseString(rtx.getNode().getRawValue()));
-        assertEquals(true, axis.hasNext());
-        assertEquals("12.0", TypedValue
-                .parseString(rtx.getNode().getRawValue()));
-        assertEquals(true, axis.hasNext());
-        assertEquals("21.0", TypedValue
-                .parseString(rtx.getNode().getRawValue()));
-        assertEquals(true, axis.hasNext());
-        assertEquals("22.0", TypedValue
-                .parseString(rtx.getNode().getRawValue()));
-        assertEquals(false, axis.hasNext());
-
-        rtx.close();
-        wtx.abort();
-        wtx.close();
-        session.close();
-
+            rtx.close();
+            wtx.abort();
+            wtx.close();
+            session.close();
+        } catch (final TreetankFrameworkException exc) {
+            fail(exc.toString());
+        }
     }
 
 }
