@@ -1,10 +1,5 @@
 package com.treetank.service.versaKey;
 
-import java.io.File;
-import java.io.IOException;
-
-import com.treetank.api.ISession;
-import com.treetank.session.Session;
 
 /**
  * Implementing the VersayKey Storage
@@ -14,14 +9,14 @@ import com.treetank.session.Session;
  */
 class VersaKeyStorage implements IKeyStorage {
 
-    private final ISession session;
-
-    public VersaKeyStorage(final File paramStorage) {
-        try {
-            session = Session.beginSession(paramStorage);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    // private final ISession session;
+    //
+    // public VersaKeyStorage(final File paramStorage) {
+    // try {
+    // session = Session.beginSession(paramStorage);
+    // } catch (final IOException e) {
+    // throw new RuntimeException(e);
+    // }
+    // }
 
 }

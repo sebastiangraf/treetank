@@ -2040,7 +2040,7 @@ public enum FuncDef {
      * 2.4.3 Effective Boolean ValueXP
      * </p>
      */
-    BOOEAN("fn:boolean", AbstractFunction.class, 1, 1, "xs:boolean"),
+    BOOLEAN("fn:boolean", AbstractFunction.class, 1, 1, "xs:boolean"),
 
     // /**
     // * <p>

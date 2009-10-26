@@ -798,12 +798,12 @@ public final class PipelineBuilder {
         final Integer returnType = transaction.keyForName(func.getReturnType());
 
         // parameter types of the function's constructor
-        final Class[] paramTypes = { IReadTransaction.class, List.class,
+        final Class<?>[] paramTypes = { IReadTransaction.class, List.class,
                 Integer.TYPE, Integer.TYPE, Integer.TYPE };
 
         try {
             // instantiate function class with right constructor
-            final Constructor cons = function.getConstructor(paramTypes);
+            final Constructor<?> cons = function.getConstructor(paramTypes);
             final IAxis axis = (IAxis) cons.newInstance(transaction, args, min,
                     max, returnType);
 
