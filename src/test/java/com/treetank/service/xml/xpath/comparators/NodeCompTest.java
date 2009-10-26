@@ -26,12 +26,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
-import com.treetank.io.TreetankIOException;
+import com.treetank.exception.TreetankIOException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.expr.LiteralExpr;
 import com.treetank.service.xml.xpath.functions.XPathError;
@@ -52,7 +53,7 @@ public class NodeCompTest {
     @Before
     public void setUp() {
         try {
-            Session.removeSession(ITestConstants.PATH1);
+            TestHelper.removeAllFiles();
 
             // Build simple test tree.
             session = Session.beginSession(ITestConstants.PATH1);

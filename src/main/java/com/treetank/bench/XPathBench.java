@@ -1,7 +1,6 @@
 package com.treetank.bench;
 
 import java.io.File;
-import java.io.IOException;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
@@ -26,13 +25,13 @@ public class XPathBench {
 
     public void query() {
         final String query = "//ACT";
-
-        INDEXTNK.delete();
-        if (!TNK.exists()) {
-            XMLShredder.shred(XML.getAbsolutePath(), new SessionConfiguration(
-                    TNK.getAbsolutePath()));
-        }
         try {
+            INDEXTNK.delete();
+            if (!TNK.exists()) {
+                XMLShredder.shred(XML.getAbsolutePath(),
+                        new SessionConfiguration(TNK.getAbsolutePath()));
+            }
+
             final ISession session = Session.beginSession(TNK);
             final IReadTransaction rtx = session.beginReadTransaction();
 
@@ -45,7 +44,7 @@ public class XPathBench {
 
             rtx.close();
             session.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

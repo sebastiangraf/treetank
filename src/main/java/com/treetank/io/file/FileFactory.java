@@ -4,10 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import com.treetank.exception.TreetankIOException;
 import com.treetank.io.AbstractIOFactory;
 import com.treetank.io.IReader;
 import com.treetank.io.IWriter;
-import com.treetank.io.TreetankIOException;
 import com.treetank.session.SessionConfiguration;
 
 /**

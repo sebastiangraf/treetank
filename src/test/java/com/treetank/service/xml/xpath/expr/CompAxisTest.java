@@ -19,8 +19,7 @@
 package com.treetank.service.xml.xpath.expr;
 
 import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
+import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +29,7 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.exception.TreetankFrameworkException;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
@@ -49,41 +49,43 @@ public class CompAxisTest {
     }
 
     @Test
-    public void testComp() throws IOException {
+    public void testComp() {
+        try {
+            // Build simple test tree.
+            final ISession session = Session.beginSession(ITestConstants.PATH1);
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            DocumentCreater.create(wtx);
+            wtx.commit();
+            IReadTransaction rtx = session.beginReadTransaction();
 
-        // Build simple test tree.
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        IReadTransaction rtx = session.beginReadTransaction();
+            // Find descendants starting from nodeKey 0L (root).
+            rtx.moveToDocumentRoot();
 
-        // Find descendants starting from nodeKey 0L (root).
-        rtx.moveToDocumentRoot();
+            final IAxis axis1 = new XPathAxis(rtx, "1.0 = 1.0");
+            assertEquals(true, axis1.hasNext());
+            assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
+                    .getNode().getRawValue()))));
+            assertEquals(false, axis1.hasNext());
 
-        final IAxis axis1 = new XPathAxis(rtx, "1.0 = 1.0");
-        assertEquals(true, axis1.hasNext());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
-                .getNode().getRawValue()))));
-        assertEquals(false, axis1.hasNext());
+            final IAxis axis2 = new XPathAxis(rtx, "(1, 2, 3) < (2, 3)");
+            assertEquals(true, axis2.hasNext());
+            assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
+                    .getNode().getRawValue()))));
+            assertEquals(false, axis2.hasNext());
 
-        final IAxis axis2 = new XPathAxis(rtx, "(1, 2, 3) < (2, 3)");
-        assertEquals(true, axis2.hasNext());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
-                .getNode().getRawValue()))));
-        assertEquals(false, axis2.hasNext());
+            final IAxis axis3 = new XPathAxis(rtx, "(1, 2, 3) > (3, 4)");
+            assertEquals(true, axis3.hasNext());
+            assertEquals(false, Boolean.parseBoolean(TypedValue
+                    .parseString((rtx.getNode().getRawValue()))));
+            assertEquals(false, axis3.hasNext());
 
-        final IAxis axis3 = new XPathAxis(rtx, "(1, 2, 3) > (3, 4)");
-        assertEquals(true, axis3.hasNext());
-        assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx
-                .getNode().getRawValue()))));
-        assertEquals(false, axis3.hasNext());
-
-        rtx.close();
-        wtx.abort();
-        wtx.close();
-        session.close();
-
+            rtx.close();
+            wtx.abort();
+            wtx.close();
+            session.close();
+        } catch (final TreetankFrameworkException exc) {
+            fail(exc.toString());
+        }
     }
 
 }

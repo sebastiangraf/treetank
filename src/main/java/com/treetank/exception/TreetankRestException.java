@@ -16,31 +16,44 @@
  * $Id: TreeTankException.java 4322 2008-08-14 09:56:29Z kramis $
  */
 
-package com.treetank.service.rest;
+package com.treetank.exception;
 
-import com.treetank.io.TreetankIOException;
+import javax.servlet.ServletException;
 
-public final class TreeTankException extends Exception {
+/**
+ * Exception for the Rest-Interface to communicate with the server. Handling
+ * normal http-errors.
+ * 
+ * @author Georgios Giannakarras, University of Konstanz
+ * 
+ */
+public final class TreetankRestException extends ServletException {
     private static final long serialVersionUID = 1L;
 
+    /** HTTP-Error code to encapsulate*/
     private final int mErrorCode;
 
+    /** Error message for more specification*/
     private final String mErrorMessage;
 
-    public TreeTankException(final TreetankIOException error) {
+    /**
+     * Constructor, just getting 
+     * @param error
+     */
+    public TreetankRestException(final TreetankIOException error) {
         super(error);
         mErrorCode = 500;
         mErrorMessage = error.toString();
     }
 
-    public TreeTankException(final int errorCode, final String errorMessage) {
+    public TreetankRestException(final int errorCode, final String errorMessage) {
         super();
         mErrorCode = errorCode;
         mErrorMessage = errorMessage;
     }
 
-    public TreeTankException(final int errorCode, final String errorMessage,
-            final Exception e) {
+    public TreetankRestException(final int errorCode,
+            final String errorMessage, final Exception e) {
         super(e);
         mErrorCode = errorCode;
         mErrorMessage = errorMessage;

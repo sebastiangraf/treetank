@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
-import com.treetank.io.TreetankIOException;
+import com.treetank.exception.TreetankIOException;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.NodePage;
 import com.treetank.session.Session;

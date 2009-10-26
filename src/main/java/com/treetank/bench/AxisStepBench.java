@@ -53,11 +53,14 @@ public class AxisStepBench {
 
     @BeforeFirstRun
     public void benchShred() {
-
-        Session.removeSession(new File(TNK_PATH));
-        mSessionConfiguration = new SessionConfiguration(TNK_PATH, TNK_KEY,
-                TNK_CHECKSUM, AbstractIOFactory.StorageType.Berkeley);
-        XMLShredder.shred(XML_PATH, mSessionConfiguration);
+        try {
+            Session.removeSession(new File(TNK_PATH));
+            mSessionConfiguration = new SessionConfiguration(TNK_PATH, TNK_KEY,
+                    TNK_CHECKSUM, AbstractIOFactory.StorageType.Berkeley);
+            XMLShredder.shred(XML_PATH, mSessionConfiguration);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Bench(runs = 100)

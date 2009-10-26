@@ -4,10 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import com.treetank.exception.TreetankIOException;
 import com.treetank.io.IReader;
 import com.treetank.io.PagePersistenter;
 import com.treetank.io.StorageProperties;
-import com.treetank.io.TreetankIOException;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.PageReference;
 import com.treetank.page.UberPage;

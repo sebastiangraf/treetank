@@ -1,4 +1,4 @@
-package com.treetank.io;
+package com.treetank.exception;
 
 import java.io.IOException;
 
@@ -11,7 +11,7 @@ import com.sleepycat.je.DatabaseException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class TreetankIOException extends IOException {
+public final class TreetankIOException extends TreetankFrameworkException {
 
     /**
      * serializable id.

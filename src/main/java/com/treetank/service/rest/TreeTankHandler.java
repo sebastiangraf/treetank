@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.handler.AbstractHandler;
 
+import com.treetank.exception.TreetankRestException;
 import com.treetank.service.rest.helper.HelperCrossdomain;
 import com.treetank.service.rest.helper.HelperDelete;
 import com.treetank.service.rest.helper.HelperFavicon;
@@ -134,13 +135,13 @@ public class TreeTankHandler extends AbstractHandler {
                 } else if (request.getQueryString().equalsIgnoreCase(PUT)) {
                     mHelperPut.handle(request, response);
                 } else {
-                    throw new TreeTankException(501, "Unknown operation.");
+                    throw new TreetankRestException(501, "Unknown operation.");
                 }
             } else {
-                throw new TreeTankException(501, "Unknown operation.");
+                throw new TreetankRestException(501, "Unknown operation.");
             }
 
-        } catch (TreeTankException te) {
+        } catch (TreetankRestException te) {
             te.printStackTrace();
             response.sendError(te.getErrorCode(), te.getErrorMessage());
         } catch (Exception e) {

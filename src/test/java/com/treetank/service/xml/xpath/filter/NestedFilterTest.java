@@ -32,7 +32,7 @@ import com.treetank.axis.IFilterTest;
 import com.treetank.axis.NameFilter;
 import com.treetank.axis.NodeFilter;
 import com.treetank.axis.TextFilter;
-import com.treetank.io.TreetankIOException;
+import com.treetank.exception.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
 

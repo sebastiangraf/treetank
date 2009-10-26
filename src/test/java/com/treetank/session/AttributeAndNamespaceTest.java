@@ -18,8 +18,7 @@
 
 package com.treetank.session;
 
-import java.io.IOException;
-
+import static org.junit.Assert.fail;
 import junit.framework.TestCase;
 
 import org.junit.Before;
@@ -28,6 +27,7 @@ import org.junit.Test;
 import com.treetank.ITestConstants;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.exception.TreetankFrameworkException;
 import com.treetank.utils.DocumentCreater;
 
 public class AttributeAndNamespaceTest {
@@ -38,47 +38,56 @@ public class AttributeAndNamespaceTest {
     }
 
     @Test
-    public void testAttribute() throws IOException {
+    public void testAttribute() {
+        try {
+            final ISession session = Session.beginSession(ITestConstants.PATH1);
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            DocumentCreater.create(wtx);
 
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
+            wtx.moveTo(1L);
+            TestCase.assertEquals(1, wtx.getNode().getAttributeCount());
+            wtx.moveToAttribute(0);
+            TestCase.assertEquals("i", wtx.nameForKey(wtx.getNode()
+                    .getNameKey()));
 
-        wtx.moveTo(1L);
-        TestCase.assertEquals(1, wtx.getNode().getAttributeCount());
-        wtx.moveToAttribute(0);
-        TestCase.assertEquals("i", wtx.nameForKey(wtx.getNode().getNameKey()));
+            wtx.moveTo(9L);
+            TestCase.assertEquals(1, wtx.getNode().getAttributeCount());
+            wtx.moveToAttribute(0);
+            TestCase.assertEquals("p:x", wtx.nameForKey(wtx.getNode()
+                    .getNameKey()));
+            TestCase.assertEquals("ns", wtx.nameForKey(wtx.getNode()
+                    .getURIKey()));
 
-        wtx.moveTo(9L);
-        TestCase.assertEquals(1, wtx.getNode().getAttributeCount());
-        wtx.moveToAttribute(0);
-        TestCase
-                .assertEquals("p:x", wtx.nameForKey(wtx.getNode().getNameKey()));
-        TestCase.assertEquals("ns", wtx.nameForKey(wtx.getNode().getURIKey()));
-
-        wtx.abort();
-        wtx.close();
-        session.close();
+            wtx.abort();
+            wtx.close();
+            session.close();
+        } catch (final TreetankFrameworkException exc) {
+            fail(exc.toString());
+        }
 
     }
 
     @Test
-    public void testNamespace() throws IOException {
+    public void testNamespace() {
+        try {
+            final ISession session = Session.beginSession(ITestConstants.PATH1);
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            DocumentCreater.create(wtx);
 
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
+            wtx.moveTo(1L);
+            TestCase.assertEquals(1, wtx.getNode().getNamespaceCount());
+            wtx.moveToNamespace(0);
+            TestCase.assertEquals("p", wtx.nameForKey(wtx.getNode()
+                    .getNameKey()));
+            TestCase.assertEquals("ns", wtx.nameForKey(wtx.getNode()
+                    .getURIKey()));
 
-        wtx.moveTo(1L);
-        TestCase.assertEquals(1, wtx.getNode().getNamespaceCount());
-        wtx.moveToNamespace(0);
-        TestCase.assertEquals("p", wtx.nameForKey(wtx.getNode().getNameKey()));
-        TestCase.assertEquals("ns", wtx.nameForKey(wtx.getNode().getURIKey()));
-
-        wtx.abort();
-        wtx.close();
-        session.close();
-
+            wtx.abort();
+            wtx.close();
+            session.close();
+        } catch (final TreetankFrameworkException exc) {
+            fail(exc.toString());
+        }
     }
 
 }

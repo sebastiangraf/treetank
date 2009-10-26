@@ -18,7 +18,7 @@ package com.treetank.cache;
 
 import java.io.File;
 
-import com.treetank.io.TreetankIOException;
+import com.treetank.exception.TreetankIOException;
 import com.treetank.page.NodePage;
 import com.treetank.session.SessionConfiguration;
 

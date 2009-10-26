@@ -7,6 +7,7 @@ import static org.junit.Assert.fail;
 import java.util.Map;
 
 import com.treetank.ITestConstants;
+import com.treetank.exception.TreetankIOException;
 import com.treetank.io.AbstractIOFactory.StorageType;
 import com.treetank.page.PageReference;
 import com.treetank.page.UberPage;

@@ -19,8 +19,7 @@
 package com.treetank.service.xml.xpath.expr;
 
 import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
+import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +29,7 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.exception.TreetankFrameworkException;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
@@ -48,43 +48,45 @@ public class RangeAxisTest {
     }
 
     @Test
-    public void testRangeExpr() throws IOException {
+    public void testRangeExpr() {
+        try {
+            // Build simple test tree.
+            final ISession session = Session.beginSession(ITestConstants.PATH1);
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            DocumentCreater.create(wtx);
+            wtx.commit();
+            IReadTransaction rtx = session.beginReadTransaction();
 
-        // Build simple test tree.
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        IReadTransaction rtx = session.beginReadTransaction();
+            // TODO: tests are false, because the integers are not converted
+            // correctly
+            // from the byte array
+            // final IAxis axis1 = new XPathAxis(rtx, "1 to 4");
+            // assertEquals(true, axis1.hasNext());
+            // assertEquals(1, TypedValue.parseInt(rtx.getRawValue()));
+            // assertEquals(true, axis1.hasNext());
+            // assertEquals(2, TypedValue.parseInt(rtx.getRawValue()));
+            // assertEquals(true, axis1.hasNext());
+            // assertEquals(3, TypedValue.parseInt(rtx.getRawValue()));
+            // assertEquals(true, axis1.hasNext());
+            // assertEquals(4, TypedValue.parseInt(rtx.getRawValue()));
+            // assertEquals(false, axis1.hasNext());
+            //
+            // final IAxis axis2 = new XPathAxis(rtx, "10 to 10");
+            // assertEquals(true, axis2.hasNext());
+            // assertEquals(10, TypedValue.parseInt(rtx.getRawValue()));
+            // assertEquals(false, axis2.hasNext());
 
-        // TODO: tests are false, because the integers are not converted
-        // correctly
-        // from the byte array
-        // final IAxis axis1 = new XPathAxis(rtx, "1 to 4");
-        // assertEquals(true, axis1.hasNext());
-        // assertEquals(1, TypedValue.parseInt(rtx.getRawValue()));
-        // assertEquals(true, axis1.hasNext());
-        // assertEquals(2, TypedValue.parseInt(rtx.getRawValue()));
-        // assertEquals(true, axis1.hasNext());
-        // assertEquals(3, TypedValue.parseInt(rtx.getRawValue()));
-        // assertEquals(true, axis1.hasNext());
-        // assertEquals(4, TypedValue.parseInt(rtx.getRawValue()));
-        // assertEquals(false, axis1.hasNext());
-        //
-        // final IAxis axis2 = new XPathAxis(rtx, "10 to 10");
-        // assertEquals(true, axis2.hasNext());
-        // assertEquals(10, TypedValue.parseInt(rtx.getRawValue()));
-        // assertEquals(false, axis2.hasNext());
+            rtx.moveTo(1L);
+            final IAxis axis3 = new XPathAxis(rtx, "15 to 10");
+            assertEquals(false, axis3.hasNext());
 
-        rtx.moveTo(1L);
-        final IAxis axis3 = new XPathAxis(rtx, "15 to 10");
-        assertEquals(false, axis3.hasNext());
-
-        rtx.close();
-        wtx.abort();
-        wtx.close();
-        session.close();
-
+            rtx.close();
+            wtx.abort();
+            wtx.close();
+            session.close();
+        } catch (final TreetankFrameworkException exc) {
+            fail(exc.toString());
+        }
     }
 
 }

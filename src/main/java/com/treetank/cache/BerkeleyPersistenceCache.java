@@ -25,7 +25,7 @@ import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
-import com.treetank.io.TreetankIOException;
+import com.treetank.exception.TreetankIOException;
 import com.treetank.io.berkeley.binding.AbstractPageBinding;
 import com.treetank.page.NodePage;
 import com.treetank.session.SessionConfiguration;

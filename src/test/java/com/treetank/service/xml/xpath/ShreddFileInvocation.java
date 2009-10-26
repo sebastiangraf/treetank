@@ -27,7 +27,7 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.io.TreetankIOException;
+import com.treetank.exception.TreetankFrameworkException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
@@ -59,7 +59,7 @@ public class ShreddFileInvocation {
             }
             wtx.close();
             session.close();
-        } catch (final TreetankIOException exc) {
+        } catch (final TreetankFrameworkException exc) {
             fail(exc.toString());
         }
 

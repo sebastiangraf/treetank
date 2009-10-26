@@ -18,6 +18,8 @@
 
 package com.treetank.service.xml.xpath;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -28,6 +30,7 @@ import com.treetank.ITestConstants;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.IAxisTest;
+import com.treetank.exception.TreetankFrameworkException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
@@ -46,9 +49,14 @@ public class XPathFunctionTest {
 
     @Before
     public void setUp() {
-        Session.removeSession(ITestConstants.PATH1);
-        // Build simple test tree.
-        XMLShredder.shred(XML, new SessionConfiguration(ITestConstants.PATH1));
+        try {
+            Session.removeSession(ITestConstants.PATH1);
+            // Build simple test tree.
+            XMLShredder.shred(XML, new SessionConfiguration(
+                    ITestConstants.PATH1));
+        } catch (final TreetankFrameworkException exc) {
+            fail(exc.toString());
+        }
     }
 
     @Test

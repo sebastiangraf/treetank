@@ -23,8 +23,8 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.treetank.exception.TreetankRestException;
 import com.treetank.service.rest.HandledHttpServletRequest;
-import com.treetank.service.rest.TreeTankException;
 import com.treetank.utils.IConstants;
 
 public final class HelperCrossdomain {
@@ -38,14 +38,14 @@ public final class HelperCrossdomain {
             + "</cross-domain-policy>").getBytes();
 
     public final void handle(final HttpServletRequest request,
-            final HttpServletResponse response) throws TreeTankException {
+            final HttpServletResponse response) throws TreetankRestException {
         try {
             response.setContentType(CONTENT_TYPE);
             response.setCharacterEncoding(IConstants.DEFAULT_ENCODING);
             response.getOutputStream().write(CROSSDOMAIN);
             ((HandledHttpServletRequest) request).setHandled(true);
         } catch (final IOException e) {
-            throw new TreeTankException(500, e.getMessage(), e);
+            throw new TreetankRestException(500, e.getMessage(), e);
         }
     }
 

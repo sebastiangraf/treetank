@@ -21,17 +21,17 @@ package com.treetank.service.rest.helper;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.treetank.exception.TreetankRestException;
 import com.treetank.service.rest.HandledHttpServletRequest;
-import com.treetank.service.rest.TreeTankException;
 
 public final class HelperFavicon {
 
     public final void handle(final HttpServletRequest request,
-            final HttpServletResponse response) throws TreeTankException {
+            final HttpServletResponse response) throws TreetankRestException {
         try {
             ((HandledHttpServletRequest) request).setHandled(true);
         } catch (Exception e) {
-            throw new TreeTankException(500, e.getMessage(), e);
+            throw new TreetankRestException(500, e.getMessage(), e);
         }
     }
 

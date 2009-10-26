@@ -19,18 +19,19 @@
 package com.treetank.service.xml.xpath.expr;
 
 import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
+import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.IAxis;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.exception.TreetankFrameworkException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.types.Type;
 import com.treetank.session.Session;
@@ -54,47 +55,50 @@ public class LiteralExprTest {
 
     @Before
     public void setUp() {
-
-        Session.removeSession(ITestConstants.PATH1);
+        TestHelper.removeAllFiles();
         item1 = new AtomicValue(false);
         item2 = new AtomicValue(14, Type.INTEGER);
 
     }
 
     @Test
-    public void testLiteralExpr() throws IOException {
+    public void testLiteralExpr() {
+        try {
+            // Build simple test tree.
+            final ISession session = Session.beginSession(ITestConstants.PATH1);
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            DocumentCreater.create(wtx);
+            wtx.commit();
+            IReadTransaction rtx = session.beginReadTransaction();
 
-        // Build simple test tree.
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        IReadTransaction rtx = session.beginReadTransaction();
+            key1 = rtx.getItemList().addItem(item1);
+            key2 = rtx.getItemList().addItem(item2);
 
-        key1 = rtx.getItemList().addItem(item1);
-        key2 = rtx.getItemList().addItem(item2);
+            final IAxis axis1 = new LiteralExpr(rtx, key1);
+            assertEquals(true, axis1.hasNext());
+            assertEquals(key1, rtx.getNode().getNodeKey());
+            assertEquals(rtx.keyForName("xs:boolean"), rtx.getNode()
+                    .getTypeKey());
+            assertEquals(false, TypedValue.parseBoolean((rtx.getNode()
+                    .getRawValue())));
+            assertEquals(false, axis1.hasNext());
 
-        final IAxis axis1 = new LiteralExpr(rtx, key1);
-        assertEquals(true, axis1.hasNext());
-        assertEquals(key1, rtx.getNode().getNodeKey());
-        assertEquals(rtx.keyForName("xs:boolean"), rtx.getNode().getTypeKey());
-        assertEquals(false, TypedValue.parseBoolean((rtx.getNode()
-                .getRawValue())));
-        assertEquals(false, axis1.hasNext());
+            final IAxis axis2 = new LiteralExpr(rtx, key2);
+            assertEquals(true, axis2.hasNext());
+            assertEquals(key2, rtx.getNode().getNodeKey());
+            assertEquals(rtx.keyForName("xs:integer"), rtx.getNode()
+                    .getTypeKey());
+            assertEquals(14, (int) TypedValue.parseDouble(rtx.getNode()
+                    .getRawValue()));
+            assertEquals(false, axis2.hasNext());
 
-        final IAxis axis2 = new LiteralExpr(rtx, key2);
-        assertEquals(true, axis2.hasNext());
-        assertEquals(key2, rtx.getNode().getNodeKey());
-        assertEquals(rtx.keyForName("xs:integer"), rtx.getNode().getTypeKey());
-        assertEquals(14, (int) TypedValue.parseDouble(rtx.getNode()
-                .getRawValue()));
-        assertEquals(false, axis2.hasNext());
-
-        rtx.close();
-        wtx.abort();
-        wtx.close();
-        session.close();
-
+            rtx.close();
+            wtx.abort();
+            wtx.close();
+            session.close();
+        } catch (final TreetankFrameworkException exc) {
+            fail(exc.toString());
+        }
     }
 
 }
