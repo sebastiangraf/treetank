@@ -280,29 +280,29 @@ public final class RevIndex {
         return DocumentTreeNavigator.getDocElements(rtx);
     }
 
-    private final void checkAndUpdateLeafAttribute() {
-        if (rtx instanceof IWriteTransaction) {
-            final IWriteTransaction wtx = (IWriteTransaction) rtx;
-            // if the leaf has already attributes, check against the last revs
-            if (wtx.getNode().getAttributeCount() > 0) {
-                wtx.moveToAttribute(0);
-                final long indexRev = Long.parseLong(wtx
-                        .getValueOfCurrentNode());
-                if (indexRev < this.indexRev + 1) {
-                    wtx.remove();
-                    wtx
-                            .insertAttribute(INDEXREV_ATTRIBUTEKEY, "",
-                                    new StringBuilder().append(indexRev + 1)
-                                            .toString());
-                }
-            } else {
-                // ...or insert a new attribute
-                wtx.insertAttribute(INDEXREV_ATTRIBUTEKEY, "",
-                        new StringBuilder().append(indexRev + 1).toString());
-            }
-            wtx.moveToParent();
-        }
-    }
+    // private final void checkAndUpdateLeafAttribute() {
+    // if (rtx instanceof IWriteTransaction) {
+    // final IWriteTransaction wtx = (IWriteTransaction) rtx;
+    // // if the leaf has already attributes, check against the last revs
+    // if (wtx.getNode().getAttributeCount() > 0) {
+    // wtx.moveToAttribute(0);
+    // final long indexRev = Long.parseLong(wtx
+    // .getValueOfCurrentNode());
+    // if (indexRev < this.indexRev + 1) {
+    // wtx.remove();
+    // wtx
+    // .insertAttribute(INDEXREV_ATTRIBUTEKEY, "",
+    // new StringBuilder().append(indexRev + 1)
+    // .toString());
+    // }
+    // } else {
+    // // ...or insert a new attribute
+    // wtx.insertAttribute(INDEXREV_ATTRIBUTEKEY, "",
+    // new StringBuilder().append(indexRev + 1).toString());
+    // }
+    // wtx.moveToParent();
+    // }
+    // }
 
     IReadTransaction getTrans() {
         return rtx;

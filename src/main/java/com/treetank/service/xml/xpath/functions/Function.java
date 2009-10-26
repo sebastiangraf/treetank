@@ -29,11 +29,10 @@ import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
 import com.treetank.service.xml.xpath.types.Type;
 import com.treetank.utils.TypedValue;
 
-@Deprecated
 public class Function {
 
     public static boolean ebv(final IAxis axis) {
-        FuncDef ebv = FuncDef.BOOEAN;
+        FuncDef ebv = FuncDef.BOOLEAN;
         List<IAxis> param = new ArrayList<IAxis>();
         param.add(axis);
         IAxis bAxis = new FNBoolean(axis.getTransaction(), param, ebv.getMin(),

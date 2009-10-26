@@ -45,8 +45,8 @@ import com.treetank.axis.AbstractFilter;
  */
 public class SchemaAttributeFilter extends AbstractFilter implements IFilter {
 
-    /** The specified name for the attribute. */
-    private final String attributeName;
+    // /** The specified name for the attribute. */
+    // private final String attributeName;
 
     /**
      * Default constructor.
@@ -61,7 +61,7 @@ public class SchemaAttributeFilter extends AbstractFilter implements IFilter {
             final String declaration) {
 
         super(rtx);
-        attributeName = declaration;
+        // attributeName = declaration;
     }
 
     /**

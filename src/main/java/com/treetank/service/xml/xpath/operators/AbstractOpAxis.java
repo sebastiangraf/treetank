@@ -25,8 +25,6 @@ import com.treetank.axis.AbstractAxis;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.XPathConstants;
 import com.treetank.service.xml.xpath.functions.Function;
-import com.treetank.service.xml.xpath.functions.XPathError;
-import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
 import com.treetank.service.xml.xpath.types.Type;
 
 /**
@@ -165,9 +163,9 @@ public abstract class AbstractOpAxis extends AbstractAxis implements IAxis,
             atom = new AtomicValue(rtx.getNode().getRawValue(), type);
         }
 
-        if (!XPATH_10_COMP && operand.hasNext()) {
-            throw new XPathError(ErrorType.XPTY0004);
-        }
+        // if (!XPATH_10_COMP && operand.hasNext()) {
+        // throw new XPathError(ErrorType.XPTY0004);
+        // }
 
         return atom;
     }

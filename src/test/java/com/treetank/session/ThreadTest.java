@@ -30,6 +30,7 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
+import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -50,6 +51,7 @@ public class ThreadTest {
     public void tearDown() {
         TestHelper.closeEverything();
     }
+
     @Test
     public void testThreads() throws Exception {
 
@@ -86,9 +88,11 @@ public class ThreadTest {
 
         public void run() {
             try {
-                for (final long key : new DescendantAxis(mRTX)) {
-                    // Nothing to do.
+                final IAxis axis = new DescendantAxis(mRTX);
+                while (axis.hasNext()) {
+                    axis.next();
                 }
+
                 mRTX.moveTo(12L);
                 TestCase.assertEquals("bar", TypedValue.parseString(mRTX
                         .getNode().getRawValue()));

@@ -50,8 +50,8 @@ import com.treetank.axis.AbstractFilter;
  */
 public class SchemaElementFilter extends AbstractFilter implements IFilter {
 
-    /** The specified name for the element. */
-    private final String elementName;
+    // /** The specified name for the element. */
+    // private final String elementName;
 
     /**
      * Default constructor.
@@ -66,7 +66,7 @@ public class SchemaElementFilter extends AbstractFilter implements IFilter {
             final String declaration) {
 
         super(rtx);
-        elementName = declaration;
+        // elementName = declaration;
     }
 
     /**

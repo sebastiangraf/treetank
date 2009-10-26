@@ -577,8 +577,8 @@ public enum Type {
     /** XML Schema type 'pDecimal'. */
     PDECIMAL(ANY_ATOMIC_TYPE, "xs:pDecimal", 4, true) {
 
-        private String facet = "(-|\\+)?(([0-9]+(.[0-9]*)?)"
-                + "|(.[0-9]+))((e|E)(-|\\+)?[0-9]+)?|-?INF|NaN|\\+INF";
+        // private String facet = "(-|\\+)?(([0-9]+(.[0-9]*)?)"
+        // + "|(.[0-9]+))((e|E)(-|\\+)?[0-9]+)?|-?INF|NaN|\\+INF";
 
         /**
          * {@inheritDoc}
