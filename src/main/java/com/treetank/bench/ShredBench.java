@@ -23,7 +23,12 @@ public final class ShredBench {
     // }
     //
     public void remove1000() {
-        Session.removeSession(new File("test100"));
+        Session.closeSession("test100");
+        try {
+            Session.removeSession(new File("test100"));
+        } catch (final TreetankFrameworkException e) {
+            e.printStackTrace();
+        }
     }
 
     //

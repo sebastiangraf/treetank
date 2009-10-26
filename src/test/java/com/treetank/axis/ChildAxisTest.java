@@ -20,6 +20,7 @@ package com.treetank.axis;
 
 import static org.junit.Assert.fail;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.perfidix.annotation.Bench;
@@ -38,7 +39,7 @@ import com.treetank.utils.DocumentCreater;
 public class ChildAxisTest {
     @Before
     public void setUp() {
-       TestHelper.removeAllFiles();
+        TestHelper.deleteEverything();
     }
 
     @Test
@@ -101,4 +102,8 @@ public class ChildAxisTest {
 
     }
 
+    @After
+    public void tearDown() {
+        TestHelper.closeEverything();
+    }
 }

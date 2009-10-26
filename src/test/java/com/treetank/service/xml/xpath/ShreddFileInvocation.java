@@ -23,6 +23,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
@@ -39,7 +40,7 @@ public class ShreddFileInvocation {
 
     public static void main(String[] args) {
         try {
-            Session.removeSession(ITestConstants.PATH1);
+            TestHelper.deleteEverything();
             // Setup parsed session.
             XMLShredder.shred(XML, new SessionConfiguration(
                     ITestConstants.PATH1));
@@ -59,6 +60,7 @@ public class ShreddFileInvocation {
             }
             wtx.close();
             session.close();
+            TestHelper.closeEverything();
         } catch (final TreetankFrameworkException exc) {
             fail(exc.toString());
         }

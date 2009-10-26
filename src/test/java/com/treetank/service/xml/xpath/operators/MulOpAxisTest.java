@@ -23,10 +23,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.IAxis;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
@@ -42,10 +44,13 @@ import com.treetank.utils.TypedValue;
 public class MulOpAxisTest {
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
+        TestHelper.deleteEverything();
+    }
 
-        Session.removeSession(ITestConstants.PATH1);
-
+    @After
+    public void tearDown() {
+        TestHelper.closeEverything();
     }
 
     @Test

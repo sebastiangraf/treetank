@@ -26,12 +26,14 @@ import java.io.IOException;
 
 import junit.framework.TestCase;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -45,11 +47,12 @@ public class SessionTest {
 
     @Before
     public void setUp() {
-        Session.removeSession(ITestConstants.NON_EXISTING_PATH);
-        Session.removeSession(ITestConstants.TEST_INSERT_CHILD_PATH);
-        Session.removeSession(ITestConstants.TEST_REVISION_PATH);
-        Session.removeSession(ITestConstants.TEST_SHREDDED_REVISION_PATH);
-        Session.removeSession(ITestConstants.TEST_EXISTING_PATH);
+        TestHelper.deleteEverything();
+    }
+
+    @After
+    public void tearDown() {
+        TestHelper.closeEverything();
     }
 
     @Test

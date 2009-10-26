@@ -20,6 +20,7 @@ package com.treetank.axis;
 
 import static org.junit.Assert.fail;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,7 +36,7 @@ public class NameFilterTest {
 
     @Before
     public void setUp() {
-       TestHelper.removeAllFiles();
+        TestHelper.deleteEverything();
     }
 
     @Test
@@ -61,6 +62,11 @@ public class NameFilterTest {
         } catch (final TreetankIOException exc) {
             fail(exc.toString());
         }
+    }
+
+    @After
+    public void tearDown() {
+        TestHelper.closeEverything();
     }
 
 }

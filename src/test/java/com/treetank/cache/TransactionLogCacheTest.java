@@ -3,16 +3,14 @@ package com.treetank.cache;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import java.io.File;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.NodePage;
-import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
 
 public class TransactionLogCacheTest {
@@ -24,7 +22,7 @@ public class TransactionLogCacheTest {
     @Before
     public void setUp() {
         try {
-            Session.removeSession(new File(ITestConstants.PATH1));
+            TestHelper.deleteEverything();
             cache = new TransactionLogCache(new SessionConfiguration(
                     ITestConstants.PATH1));
             for (int i = 0; i < pages.length; i++) {
@@ -45,5 +43,10 @@ public class TransactionLogCacheTest {
             assertEquals(page1.getNodePageKey(), page2.getNodePageKey());
         }
         cache.clear();
+    }
+
+    @Test
+    public void tearDown() {
+        TestHelper.closeEverything();
     }
 }

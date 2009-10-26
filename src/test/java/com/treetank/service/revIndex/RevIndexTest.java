@@ -8,10 +8,12 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.util.Stack;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
@@ -25,7 +27,7 @@ public class RevIndexTest {
 
     @Before
     public void setUp() throws Exception {
-        Session.removeSession(ITestConstants.PATH1);
+        TestHelper.deleteEverything();
         index = new RevIndex(new File(ITestConstants.PATH1), -1);
     }
 
@@ -225,6 +227,11 @@ public class RevIndexTest {
 
         rtx.close();
         session.close();
+    }
+    
+    @After
+    public void tearDown(){
+        TestHelper.closeEverything();
     }
 
 }

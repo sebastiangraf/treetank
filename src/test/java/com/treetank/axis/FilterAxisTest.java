@@ -20,6 +20,7 @@ package com.treetank.axis;
 
 import static org.junit.Assert.fail;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,7 +35,7 @@ import com.treetank.utils.DocumentCreater;
 public class FilterAxisTest {
     @Before
     public void setUp() {
-        TestHelper.removeAllFiles();
+        TestHelper.deleteEverything();
     }
 
     @Test
@@ -106,4 +107,8 @@ public class FilterAxisTest {
 
     }
 
+    @After
+    public void tearDown() {
+        TestHelper.closeEverything();
+    }
 }

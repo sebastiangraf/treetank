@@ -21,10 +21,12 @@ package com.treetank.session;
 import static org.junit.Assert.fail;
 import junit.framework.TestCase;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -35,8 +37,14 @@ public class MinimumCommitTest {
 
     @Before
     public void setUp() {
-        Session.removeSession(ITestConstants.PATH1);
+        TestHelper.deleteEverything();
     }
+
+    @After
+    public void tearDown() {
+        TestHelper.closeEverything();
+    }
+
 
     @Test
     public void test() {

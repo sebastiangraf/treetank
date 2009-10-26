@@ -20,6 +20,7 @@ package com.treetank.axis;
 
 import static org.junit.Assert.fail;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,7 +35,7 @@ import com.treetank.utils.DocumentCreater;
 public class FollowingAxisTest {
     @Before
     public void setUp() {
-       TestHelper.removeAllFiles();
+        TestHelper.deleteEverything();
     }
 
     @Test
@@ -76,6 +77,11 @@ public class FollowingAxisTest {
             fail(exc.toString());
         }
 
+    }
+
+    @After
+    public void tearDown() {
+        TestHelper.closeEverything();
     }
 
 }

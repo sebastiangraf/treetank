@@ -53,7 +53,7 @@ public class NodeCompTest {
     @Before
     public void setUp() {
         try {
-            TestHelper.removeAllFiles();
+            TestHelper.deleteEverything();
 
             // Build simple test tree.
             session = Session.beginSession(ITestConstants.PATH1);
@@ -79,6 +79,7 @@ public class NodeCompTest {
             wtx.abort();
             wtx.close();
             session.close();
+            TestHelper.closeEverything();
         } catch (final TreetankIOException exc) {
             fail(exc.toString());
         }

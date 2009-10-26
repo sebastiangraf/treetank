@@ -22,10 +22,12 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.IFilterTest;
@@ -37,8 +39,12 @@ public class WildcardFilterTest {
 
     @Before
     public void setUp() {
+        TestHelper.deleteEverything();
+    }
 
-        Session.removeSession(ITestConstants.PATH1);
+    @After
+    public void tearDown() {
+        TestHelper.closeEverything();
     }
 
     @Test

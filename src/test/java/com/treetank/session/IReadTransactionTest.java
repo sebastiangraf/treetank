@@ -21,38 +21,40 @@ package com.treetank.session;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TreetankFrameworkException;
 import com.treetank.utils.DocumentCreater;
 
 public class IReadTransactionTest {
 
-    private static ISession session;
+    private ISession session;
 
-    @BeforeClass
-    public static void setUp() {
+    @Before
+    public void setUp() {
         try {
-            Session.removeSession(ITestConstants.PATH1);
+            TestHelper.deleteEverything();
             session = Session.beginSession(ITestConstants.PATH1);
             final IWriteTransaction wtx = session.beginWriteTransaction();
             DocumentCreater.create(wtx);
             wtx.commit();
             wtx.close();
-        } catch (final TreetankIOException exc) {
+        } catch (final TreetankFrameworkException exc) {
             fail(exc.toString());
         }
     }
 
-    @AfterClass
-    public static void tearDown() {
+    @After
+    public void tearDown() {
         session.close();
+        TestHelper.closeEverything();
     }
 
     @Test
