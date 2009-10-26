@@ -24,11 +24,14 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.junit.After;
@@ -41,6 +44,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
+import com.treetank.exception.TreetankFrameworkException;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
 import com.treetank.utils.DocumentCreater;
@@ -130,8 +134,10 @@ public class XMLShredderTest {
             expectedSession.close();
             rtx.close();
             session.close();
-        } catch (Exception e) {
-            fail();
+        } catch (final TreetankFrameworkException exc) {
+            fail(exc.toString());
+        } catch (final UnsupportedEncodingException exc) {
+            fail(exc.toString());
         }
 
     }
@@ -193,8 +199,8 @@ public class XMLShredderTest {
             expectedSession2.close();
             rtx.close();
             session.close();
-        } catch (Exception e) {
-            fail();
+        } catch (final TreetankFrameworkException exc) {
+            fail(exc.toString());
         }
     }
 
@@ -241,8 +247,12 @@ public class XMLShredderTest {
             }
 
             assertEquals(xmlBuilder.toString(), tnkString);
-        } catch (Exception e) {
-            fail();
+        } catch (final TreetankFrameworkException exc) {
+            fail(exc.toString());
+        } catch (final FileNotFoundException exc) {
+            fail(exc.toString());
+        } catch (final XMLStreamException exc) {
+            fail(exc.toString());
         }
     }
 

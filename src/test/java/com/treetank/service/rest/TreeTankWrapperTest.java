@@ -58,6 +58,7 @@ public class TreeTankWrapperTest {
      * . Inserting just content to the wrapper at the root node.
      */
     @Test
+    @Ignore
     public void testPost1() {
         try {
             wrapper.post(0, DocumentCreater.XML);
