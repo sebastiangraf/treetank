@@ -1,5 +1,6 @@
 package com.treetank.io;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
@@ -7,14 +8,13 @@ import static org.junit.Assert.fail;
 import java.util.Map;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.AbstractIOFactory.StorageType;
 import com.treetank.page.PageReference;
 import com.treetank.page.UberPage;
-import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
 import com.treetank.utils.IConstants;
-import static org.junit.Assert.assertEquals;
 
 /**
  * Helper class for testing the io interfaces
@@ -51,9 +51,7 @@ public final class IOTestHelper {
 
                 // Closing all storages
                 fac.closeStorage();
-
-                // Deleting all locations
-                Session.removeSession(conf.getAbsolutePath());
+                TestHelper.deleteEverything();
             }
 
         } catch (final TreetankIOException exc) {

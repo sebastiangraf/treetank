@@ -22,19 +22,24 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import org.junit.After;
 import org.junit.Before;
 
-import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
-import com.treetank.session.Session;
 import com.treetank.utils.TypedValue;
 
 public class XPathStringChecker {
 
     @Before
     public void setUp() {
-        Session.removeSession(ITestConstants.PATH1);
+        TestHelper.deleteEverything();
+    }
+
+    @After
+    public void tearDown() {
+        TestHelper.closeEverything();
     }
 
     public static void testIAxisConventions(final IAxis axis,
@@ -47,8 +52,8 @@ public class XPathStringChecker {
 
         final String[] strValues = new String[expectedValues.length];
         int offset = 0;
-        for (final long nodeKey : axis) {
-
+        while (axis.hasNext()) {
+            axis.next();
             // IAxis results.
             if (offset >= expectedValues.length) {
                 fail("More nodes found than expected.");

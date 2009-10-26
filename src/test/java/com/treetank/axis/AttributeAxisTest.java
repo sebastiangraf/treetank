@@ -20,6 +20,7 @@ package com.treetank.axis;
 
 import static org.junit.Assert.fail;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +39,7 @@ public class AttributeAxisTest {
 
     @Before
     public void setUp() {
-       TestHelper.removeAllFiles();
+        TestHelper.deleteEverything();
     }
 
     @Test
@@ -145,4 +146,8 @@ public class AttributeAxisTest {
         }
     }
 
+    @After
+    public void tearDown() {
+        TestHelper.closeEverything();
+    }
 }

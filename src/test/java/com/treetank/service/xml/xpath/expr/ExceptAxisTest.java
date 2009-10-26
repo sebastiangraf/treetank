@@ -20,11 +20,12 @@ package com.treetank.service.xml.xpath.expr;
 
 import static org.junit.Assert.fail;
 
-import java.io.File;
-
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -41,11 +42,19 @@ import com.treetank.utils.DocumentCreater;
  * 
  */
 public class ExceptAxisTest {
+    @Before
+    public void setUp() {
+        TestHelper.deleteEverything();
+    }
+
+    @After
+    public void tearDown() {
+        TestHelper.closeEverything();
+    }
 
     @Test
     public void testExcept() {
         try {
-            Session.removeSession(new File(ITestConstants.PATH1));
             // Build simple test tree.
             final ISession session = Session.beginSession(ITestConstants.PATH1);
             final IWriteTransaction wtx = session.beginWriteTransaction();

@@ -12,7 +12,7 @@ public class RestTestHelper {
     }
 
     public static Map<String, TreeTankWrapper> getTestInstances() {
-        TestHelper.removeAllFiles();
+        TestHelper.deleteEverything();
         final TreeTankWrapper wrapper1 = new TreeTankWrapper(
                 ITestConstants.PATH1);
         final TreeTankWrapper wrapper2 = new TreeTankWrapper(

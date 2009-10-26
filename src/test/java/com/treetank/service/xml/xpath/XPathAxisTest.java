@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -51,7 +52,7 @@ public class XPathAxisTest {
     @Before
     public void setUp() {
         try {
-            Session.removeSession(ITestConstants.PATH1);
+            TestHelper.deleteEverything();
 
             // Build simple test tree.
             session = Session.beginSession(ITestConstants.PATH1);
@@ -71,6 +72,7 @@ public class XPathAxisTest {
 
         rtx.close();
         session.close();
+        TestHelper.closeEverything();
     }
 
     @Test

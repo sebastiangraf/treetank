@@ -23,10 +23,12 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
@@ -49,8 +51,12 @@ public class ForAxisTest {
     @Before
     public void setUp() {
 
-        Session.removeSession(ITestConstants.PATH1);
+        TestHelper.deleteEverything();
+    }
 
+    @After
+    public void tearDown() {
+        TestHelper.closeEverything();
     }
 
     @Test

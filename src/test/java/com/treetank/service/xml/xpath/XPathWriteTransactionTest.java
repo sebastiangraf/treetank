@@ -9,10 +9,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankFrameworkException;
-import com.treetank.exception.TreetankIOException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
@@ -36,7 +36,7 @@ public final class XPathWriteTransactionTest {
     @Before
     public void setUp() {
         try {
-            Session.removeSession(ITestConstants.PATH1);
+            TestHelper.deleteEverything();
             // Build simple test tree.
             XMLShredder.shred(XML, new SessionConfiguration(
                     ITestConstants.PATH1));
@@ -50,7 +50,7 @@ public final class XPathWriteTransactionTest {
     }
 
     @Test
-    public void test() throws Exception {
+    public void test() {
         wtx.moveToDocumentRoot();
         // final XPathAxis xpa =
         // new XPathAxis(wtx, "//revision[./parent::page/title/text() = '"
@@ -68,6 +68,7 @@ public final class XPathWriteTransactionTest {
         // wtx.abort();
         wtx.close();
         session.close();
+        TestHelper.closeEverything();
     }
 
 }

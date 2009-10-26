@@ -32,7 +32,7 @@ public class TreeTankWrapperTest {
 
     @Before
     public void setUp() {
-        TestHelper.removeAllFiles();
+        TestHelper.deleteEverything();
         try {
             testContent = Session.beginSession(ITestConstants.PATH1);
             final IWriteTransaction wtx = testContent.beginWriteTransaction();

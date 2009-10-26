@@ -23,10 +23,12 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.IOException;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.IAxisTest;
@@ -50,13 +52,18 @@ public class XPathFunctionTest {
     @Before
     public void setUp() {
         try {
-            Session.removeSession(ITestConstants.PATH1);
+            TestHelper.deleteEverything();
             // Build simple test tree.
             XMLShredder.shred(XML, new SessionConfiguration(
                     ITestConstants.PATH1));
         } catch (final TreetankFrameworkException exc) {
             fail(exc.toString());
         }
+    }
+
+    @After
+    public void tearDown() {
+        TestHelper.closeEverything();
     }
 
     @Test

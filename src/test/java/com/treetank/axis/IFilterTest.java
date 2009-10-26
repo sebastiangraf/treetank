@@ -20,6 +20,7 @@ package com.treetank.axis;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,7 +32,7 @@ public class IFilterTest {
 
     @Before
     public void setUp() {
-       TestHelper.removeAllFiles();
+        TestHelper.deleteEverything();
     }
 
     public static void testIFilterConventions(final IFilter filter,
@@ -54,4 +55,8 @@ public class IFilterTest {
         // Do nothing. This class is only used with other test cases.
     }
 
+    @After
+    public void tearDown() {
+        TestHelper.closeEverything();
+    }
 }

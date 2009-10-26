@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.perfidix.annotation.BenchClass;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.exception.TreetankFrameworkException;
@@ -55,7 +56,7 @@ public class XMarkTest {
     @Before
     public void setUp() {
         try {
-            Session.removeSession(ITestConstants.PATH1);
+            TestHelper.deleteEverything();
             // Build simple test tree.
             XMLShredder.shred(XML, new SessionConfiguration(
                     ITestConstants.PATH1));
@@ -72,6 +73,7 @@ public class XMarkTest {
     public void tearDown() {
         rtx.close();
         session.close();
+        TestHelper.closeEverything();
     }
 
     @Test

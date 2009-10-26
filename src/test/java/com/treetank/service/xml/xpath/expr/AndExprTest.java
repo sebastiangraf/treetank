@@ -21,10 +21,12 @@ package com.treetank.service.xml.xpath.expr;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
@@ -47,9 +49,12 @@ public class AndExprTest {
 
     @Before
     public void setUp() {
+        TestHelper.deleteEverything();
+    }
 
-        Session.removeSession(ITestConstants.PATH1);
-
+    @After
+    public void tearDown() {
+        TestHelper.closeEverything();
     }
 
     @Test

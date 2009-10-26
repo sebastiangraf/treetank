@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.treetank.exception.TreetankFrameworkException;
 import com.treetank.session.Session;
 
 /**
@@ -27,12 +28,28 @@ public final class TestHelper {
     }
 
     @Ignore
-    public static final void removeAllFiles() {
+    public static final void deleteEverything() {
         try {
             Session.removeSession(ITestConstants.PATH1);
-        } catch (final Exception exc) {
+            Session.removeSession(ITestConstants.PATH2);
+            Session.removeSession(ITestConstants.NON_EXISTING_PATH);
+            Session.removeSession(ITestConstants.TEST_INSERT_CHILD_PATH);
+            Session.removeSession(ITestConstants.TEST_REVISION_PATH);
+            Session.removeSession(ITestConstants.TEST_SHREDDED_REVISION_PATH);
+            Session.removeSession(ITestConstants.TEST_EXISTING_PATH);
+        } catch (final TreetankFrameworkException exc) {
             fail(exc.toString());
         }
     }
 
+    @Ignore
+    public static final void closeEverything() {
+        Session.closeSession(ITestConstants.PATH1);
+        Session.closeSession(ITestConstants.PATH2);
+        Session.closeSession(ITestConstants.NON_EXISTING_PATH);
+        Session.closeSession(ITestConstants.TEST_INSERT_CHILD_PATH);
+        Session.closeSession(ITestConstants.TEST_REVISION_PATH);
+        Session.closeSession(ITestConstants.TEST_SHREDDED_REVISION_PATH);
+        Session.closeSession(ITestConstants.TEST_EXISTING_PATH);
+    }
 }

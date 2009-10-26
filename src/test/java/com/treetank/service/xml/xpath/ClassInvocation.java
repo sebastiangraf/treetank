@@ -23,6 +23,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.exception.TreetankFrameworkException;
@@ -38,7 +39,7 @@ public class ClassInvocation {
 
     public static void main(String[] args) {
         try {
-            Session.removeSession(ITestConstants.PATH1);
+            TestHelper.deleteEverything();
             XMLShredder.shred(XML, new SessionConfiguration(
                     ITestConstants.PATH1));
 
@@ -69,6 +70,7 @@ public class ClassInvocation {
 
             rtx.close();
             session.close();
+            TestHelper.closeEverything();
         } catch (final TreetankFrameworkException exc) {
             fail(exc.toString());
         }

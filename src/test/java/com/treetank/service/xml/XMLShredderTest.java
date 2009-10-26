@@ -31,10 +31,12 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -56,10 +58,14 @@ public class XMLShredderTest {
     public static final String XML3 = "src" + File.separator + "test"
             + File.separator + "resources" + File.separator + "test3.xml";
 
-    @BeforeClass
-    public static void setUp() {
-        Session.removeSession(ITestConstants.PATH1);
-        Session.removeSession(ITestConstants.PATH2);
+    @Before
+    public void setUp() {
+        TestHelper.deleteEverything();
+    }
+
+    @After
+    public void tearDown() {
+        TestHelper.closeEverything();
     }
 
     @Test

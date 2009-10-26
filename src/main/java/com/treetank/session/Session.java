@@ -26,6 +26,7 @@ import java.util.Map;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.exception.TreetankFrameworkException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.utils.ItemList;
 
@@ -124,7 +125,8 @@ public final class Session implements ISession {
      * @param file
      *            TreeTank file to remove.
      */
-    public static final void removeSession(final File file) {
+    public static final void removeSession(final File file)
+            throws TreetankFrameworkException {
         removeSession(file.getAbsolutePath());
     }
 
@@ -134,18 +136,30 @@ public final class Session implements ISession {
      * @param path
      *            TreeTank file to remove.
      */
-    public static final void removeSession(final String path) {
+    public static final void removeSession(final String path)
+            throws TreetankFrameworkException {
         synchronized (SESSION_MAP) {
             ISession session = SESSION_MAP.get(path);
             if (session == null) {
                 if (new File(path).exists() && !recursiveDelete(new File(path))) {
-                    throw new RuntimeException("Could not delete file '" + path
-                            + "'");
+                    throw new TreetankIOException(new StringBuilder(
+                            "Could not delete file '").append(path).append("'")
+                            .toString());
                 }
             } else {
-                throw new IllegalStateException(
-                        "There already is a session bound to '" + path + "'");
+                throw new TreetankFrameworkException(new StringBuilder(
+                        "There already is a session bound to '").append(path)
+                        .append("'").toString());
             }
+        }
+    }
+
+    /**
+     * Closing all open Sessions.
+     */
+    public static final void closeSession(final String path) {
+        synchronized (SESSION_MAP) {
+            SESSION_MAP.remove(path);
         }
     }
 

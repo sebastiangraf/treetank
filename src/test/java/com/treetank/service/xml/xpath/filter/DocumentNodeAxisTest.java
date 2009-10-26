@@ -20,10 +20,12 @@ package com.treetank.service.xml.xpath.filter;
 
 import static org.junit.Assert.fail;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -36,8 +38,12 @@ public class DocumentNodeAxisTest {
 
     @Before
     public void setUp() {
+        TestHelper.deleteEverything();
+    }
 
-        Session.removeSession(ITestConstants.PATH1);
+    @After
+    public void tearDown() {
+        TestHelper.closeEverything();
     }
 
     @Test

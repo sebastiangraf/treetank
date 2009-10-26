@@ -22,6 +22,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +41,7 @@ public class IAxisTest {
 
     @Before
     public void setUp() {
-       TestHelper.removeAllFiles();
+        TestHelper.deleteEverything();
     }
 
     public static void testIAxisConventions(final IAxis axis,
@@ -105,5 +106,8 @@ public class IAxisTest {
             fail(exc.toString());
         }
     }
-
+    @After
+    public void tearDown() {
+        TestHelper.closeEverything();
+    }
 }
