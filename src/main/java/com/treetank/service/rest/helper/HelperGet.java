@@ -93,7 +93,14 @@ public final class HelperGet {
             if (revisionString.equalsIgnoreCase(LAST_REVISION)) {
                 revision = service.getLastRevision();
             } else {
-                revision = service.checkRevision(Long.valueOf(revisionString));
+                final long lastRevision = service.getLastRevision();
+                revision = Long.valueOf(revisionString);
+                if (lastRevision < revision) {
+                    throw new TreetankRestException(404, new StringBuilder(
+                            "Revision=").append(revision).append(" not found.")
+                            .toString());
+                }
+
             }
             final long id = Long.valueOf(idString);
 

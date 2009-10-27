@@ -25,6 +25,7 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.exception.TreetankFrameworkException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankRestException;
 import com.treetank.service.xml.XMLSerializer;
@@ -81,9 +82,10 @@ public final class TreeTankWrapper {
         long revNumber = -1;
         try {
             revNumber = XMLShredder.shred(id, value, session);
-        } catch (Exception e) {
-            throw new TreetankRestException(500, e.getMessage(), e);
+        } catch (final TreetankFrameworkException exc) {
+            throw new TreetankRestException(500, exc.getMessage(), exc);
         }
+
         return revNumber;
     }
 
@@ -187,31 +189,6 @@ public final class TreeTankWrapper {
     }
 
     /**
-     * Checking if revision is valid.
-     * 
-     * @param revision
-     *            to be checked
-     * @return the revision if valid
-     * @throws TreetankRestException
-     *             if revision is not existing
-     */
-    public long checkRevision(final long revision) throws TreetankRestException {
-        IReadTransaction rtx = null;
-        long checkedRevision = revision;
-        try {
-            rtx = session.beginReadTransaction(revision);
-        } catch (Exception e) {
-            throw new TreetankRestException(404, "Revision=" + revision
-                    + " not found.");
-        } finally {
-            if (rtx != null) {
-                rtx.close();
-            }
-        }
-        return checkedRevision;
-    }
-
-    /**
      * Getting part of the xml as OutputStream.
      * 
      * @param out
@@ -235,9 +212,9 @@ public final class TreeTankWrapper {
                 throw new TreetankRestException(404, "Node with id=" + id
                         + " not found.");
             }
-        } catch (TreetankRestException te) {
+        } catch (final TreetankRestException te) {
             throw te;
-        } catch (IOException ie) {
+        } catch (final IOException ie) {
             throw new TreetankRestException(500, ie.getMessage(), ie);
         } finally {
             if (rtx != null) {

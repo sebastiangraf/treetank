@@ -47,7 +47,6 @@ public final class XMLShredder {
             final ISession session) throws TreetankFrameworkException {
         try {
             final XMLInputFactory factory = XMLInputFactory.newInstance();
-            factory.setProperty(XMLInputFactory.IS_VALIDATING, true);
             factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
             final XMLStreamReader parser = factory
                     .createXMLStreamReader(new StringReader(content));
@@ -201,7 +200,7 @@ public final class XMLShredder {
             wtx.close();
 
             parser.close();
-            return revision + 1;
+            return revision;
         } catch (final XMLStreamException exc1) {
             throw new TreetankFrameworkException(exc1);
         } catch (final TreetankIOException exc2) {

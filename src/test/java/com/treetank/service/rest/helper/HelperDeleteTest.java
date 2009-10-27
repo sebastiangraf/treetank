@@ -26,9 +26,8 @@ public class HelperDeleteTest {
      * .
      */
     @Test
-    @Ignore
     public void testHandle() {
-
+        System.out.println();
     }
 
     @After

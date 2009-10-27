@@ -110,7 +110,7 @@ public final class XMLSerializer implements Runnable {
     private final boolean mSerializeXMLDeclaration;
 
     /** Serialize rest:id. */
-    private final boolean mSerializeId;
+    private final boolean mSerializeRest;
 
     /**
      * Initialize XMLStreamReader implementation with transaction. The cursor
@@ -136,17 +136,17 @@ public final class XMLSerializer implements Runnable {
      *            OutputStream to serialize UTF-8 XML to.
      * @param serializeXMLDeclaration
      *            Serialize XML declaration if true.
-     * @param serializeId
+     * @param serializeRest
      *            Serialize tank id if true.
      */
     public XMLSerializer(final IReadTransaction rtx, final OutputStream out,
-            final boolean serializeXMLDeclaration, final boolean serializeId) {
+            final boolean serializeXMLDeclaration, final boolean serializeRest) {
         mRTX = rtx;
         mAxis = new DescendantAxis(rtx, true);
         mStack = new FastStack<Long>();
         mOut = new BufferedOutputStream(out, 4096);
         mSerializeXMLDeclaration = serializeXMLDeclaration;
-        mSerializeId = serializeId;
+        mSerializeRest = serializeRest;
     }
 
     /**
@@ -155,10 +155,10 @@ public final class XMLSerializer implements Runnable {
     public final void run() {
         try {
             if (mSerializeXMLDeclaration) {
-
-                write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-                /* + "<rest:sequence xmlns:rest=\"REST\"><rest:item>" */);
-
+                write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+            }
+            if (mSerializeRest) {
+                write("<rest:sequence xmlns:rest=\"REST\"><rest:item>");
             }
 
             boolean closeElements = false;
@@ -207,9 +207,9 @@ public final class XMLSerializer implements Runnable {
                 emitEndElement();
             }
 
-            // if (mSerializeXMLDeclaration) {
-            // write("</rest:item></rest:sequence>");
-            // }
+            if (mSerializeRest) {
+                write("</rest:item></rest:sequence>");
+            }
 
             mOut.flush();
         } catch (UnsupportedEncodingException e) {
@@ -249,7 +249,7 @@ public final class XMLSerializer implements Runnable {
             }
             // Emit attributes.
             // Add virtual rest:id attribute.
-            if (mSerializeId) {
+            if (mSerializeRest) {
                 mOut.write(REST_ID);
                 write(mRTX.getNode().getNodeKey());
                 mOut.write(QUOTE);
