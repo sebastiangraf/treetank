@@ -21,7 +21,6 @@ package com.treetank.service.xml.xpath;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.junit.After;
 import org.junit.Before;
@@ -32,7 +31,7 @@ import com.treetank.TestHelper;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.IAxisTest;
-import com.treetank.exception.TreetankFrameworkException;
+import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
@@ -56,7 +55,7 @@ public class XPathFunctionTest {
             // Build simple test tree.
             XMLShredder.shred(XML, new SessionConfiguration(
                     ITestConstants.PATH1));
-        } catch (final TreetankFrameworkException exc) {
+        } catch (final TreetankException exc) {
             fail(exc.toString());
         }
     }
@@ -67,7 +66,7 @@ public class XPathFunctionTest {
     }
 
     @Test
-    public void testA_Axes() throws IOException {
+    public void testA_Axes() throws TreetankException {
 
         // Verify.
         final ISession session = Session.beginSession(ITestConstants.PATH1);
@@ -119,7 +118,7 @@ public class XPathFunctionTest {
     }
 
     @Test
-    public void testP_Filters() throws IOException {
+    public void testP_Filters() throws TreetankException {
 
         // Verify.
         final ISession session = Session.beginSession(ITestConstants.PATH1);
@@ -188,7 +187,7 @@ public class XPathFunctionTest {
     }
 
     @Test
-    public void testT_NodeTests() throws IOException {
+    public void testT_NodeTests() throws TreetankException {
 
         // Verify.
         final ISession session = Session.beginSession(ITestConstants.PATH1);
@@ -225,7 +224,7 @@ public class XPathFunctionTest {
     }
 
     @Test
-    public void testQ_Operators() throws IOException {
+    public void testQ_Operators() throws TreetankException {
 
         // Verify.
         final ISession session = Session.beginSession(ITestConstants.PATH1);

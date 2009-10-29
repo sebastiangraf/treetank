@@ -33,7 +33,7 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankFrameworkException;
+import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.service.xml.xpath.functions.XPathError;
 import com.treetank.session.Session;
@@ -115,7 +115,7 @@ public class CastableExprTest {
             wtx.abort();
             wtx.close();
             session.close();
-        } catch (final TreetankFrameworkException exc) {
+        } catch (final TreetankException exc) {
             fail(exc.toString());
         }
     }

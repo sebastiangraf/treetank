@@ -177,14 +177,14 @@ public final class UberPage extends AbstractPage {
         return mBootstrap;
     }
 
-//    /**
-//     * {@inheritDoc}
-//     */
-//    @Override
-//    public final void commit(final WriteTransactionState state) {
-//        super.commit(state);
-//        mBootstrap = false;
-//    }
+    // /**
+    // * {@inheritDoc}
+    // */
+    // @Override
+    // public final void commit(final WriteTransactionState state) {
+    // super.commit(state);
+    // mBootstrap = false;
+    // }
 
     /**
      * {@inheritDoc}

@@ -18,10 +18,7 @@
 
 package com.treetank.service.xml.xpath;
 
-import static org.junit.Assert.fail;
-
 import java.io.File;
-import java.io.IOException;
 
 import org.junit.After;
 import org.junit.Before;
@@ -32,7 +29,7 @@ import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
-import com.treetank.exception.TreetankFrameworkException;
+import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
@@ -54,30 +51,25 @@ public class XMarkTest {
     private IReadTransaction rtx;
 
     @Before
-    public void setUp() {
-        try {
-            TestHelper.deleteEverything();
-            // Build simple test tree.
-            XMLShredder.shred(XML, new SessionConfiguration(
-                    ITestConstants.PATH1));
+    public void setUp() throws TreetankException {
+        TestHelper.deleteEverything();
+        // Build simple test tree.
+        XMLShredder.shred(XML, new SessionConfiguration(ITestConstants.PATH1));
 
-            // Verify.
-            session = Session.beginSession(ITestConstants.PATH1);
-            rtx = session.beginReadTransaction();
-        } catch (final TreetankFrameworkException exc) {
-            fail(exc.toString());
-        }
+        // Verify.
+        session = Session.beginSession(ITestConstants.PATH1);
+        rtx = session.beginReadTransaction();
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         rtx.close();
         session.close();
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testQ1_10() throws IOException {
+    public void testQ1_10() throws TreetankException {
 
         XPathStringChecker.testIAxisConventions(new XPathAxis(rtx,
                 "/site/people/person[@id=\"person0\"]/name/text()"),
@@ -86,7 +78,7 @@ public class XMarkTest {
     }
 
     @Test
-    public void testQ1() throws IOException {
+    public void testQ1() throws TreetankException {
 
         // Q1 The name of the person with ID 'person0' {projecting}
         XPathStringChecker.testIAxisConventions(new XPathAxis(rtx,
@@ -141,7 +133,7 @@ public class XMarkTest {
     // }
 
     @Test
-    public void testQ5() throws IOException {
+    public void testQ5() throws TreetankException {
 
         // Q5 How many sold items cost more than 40?
         XPathStringChecker.testIAxisConventions(new XPathAxis(rtx,
@@ -151,7 +143,7 @@ public class XMarkTest {
     }
 
     @Test
-    public void testQ6() throws IOException {
+    public void testQ6() throws TreetankException {
 
         // Q6 How many items are listed on all continents?
         XPathStringChecker.testIAxisConventions(new XPathAxis(rtx,
@@ -161,7 +153,7 @@ public class XMarkTest {
     }
 
     @Test
-    public void testQ7() throws IOException {
+    public void testQ7() throws TreetankException {
 
         // Q7 How many pieces of prose are in our database?
         XPathStringChecker

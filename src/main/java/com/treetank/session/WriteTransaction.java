@@ -23,7 +23,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import com.treetank.api.IWriteTransaction;
+import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TreetankUsageException;
 import com.treetank.node.AbstractNode;
 import com.treetank.node.AttributeNode;
 import com.treetank.node.ElementNode;
@@ -366,11 +368,11 @@ public final class WriteTransaction extends ReadTransaction implements
      * {@inheritDoc}
      */
     @Override
-    public final synchronized void close() {
+    public final synchronized void close() throws TreetankException {
         if (!isClosed()) {
             // Make sure to commit all dirty data.
             if (mModificationCount > 0) {
-                throw new IllegalStateException(
+                throw new TreetankUsageException(
                         "Must commit/abort transaction first");
             }
             // Make sure to cancel the periodic commit task if it was started.

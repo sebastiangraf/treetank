@@ -18,8 +18,6 @@
 
 package com.treetank.axis;
 
-import static org.junit.Assert.fail;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +29,7 @@ import com.treetank.TestHelper;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TreetankException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
 
@@ -44,44 +42,36 @@ public class ChildAxisTest {
 
     @Test
     @Bench(runs = 10)
-    public void testIterate() {
-        try {
-            final ISession session = Session.beginSession(ITestConstants.PATH1);
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
+    public void testIterate() throws TreetankException {
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
 
-            wtx.moveTo(1L);
-            IAxisTest.testIAxisConventions(new ChildAxis(wtx), new long[] { 4L,
-                    5L, 8L, 9L, 13L });
+        wtx.moveTo(1L);
+        IAxisTest.testIAxisConventions(new ChildAxis(wtx), new long[] { 4L, 5L,
+                8L, 9L, 13L });
 
-            wtx.moveTo(5L);
-            IAxisTest.testIAxisConventions(new ChildAxis(wtx), new long[] { 6L,
-                    7L });
+        wtx.moveTo(5L);
+        IAxisTest.testIAxisConventions(new ChildAxis(wtx),
+                new long[] { 6L, 7L });
 
-            wtx.moveTo(13L);
-            IAxisTest.testIAxisConventions(new ChildAxis(wtx), new long[] {});
+        wtx.moveTo(13L);
+        IAxisTest.testIAxisConventions(new ChildAxis(wtx), new long[] {});
 
-            wtx.abort();
-            wtx.close();
-            session.close();
-        } catch (final TreetankIOException exc) {
-            fail(exc.toString());
-        }
+        wtx.abort();
+        wtx.close();
+        session.close();
     }
 
     @Test
     @Bench(runs = 10)
-    public void testPersistent() {
-        try {
-            final ISession session = Session.beginSession(ITestConstants.PATH1);
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
-            wtx.commit();
-            wtx.close();
-            session.close();
-        } catch (final TreetankIOException exc) {
-            fail(exc.toString());
-        }
+    public void testPersistent() throws TreetankException {
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        wtx.close();
+        session.close();
 
         final ISession session1 = Session.beginSession(ITestConstants.PATH1);
         final IReadTransaction rtx = session1.beginReadTransaction();

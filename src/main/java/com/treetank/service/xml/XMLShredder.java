@@ -33,7 +33,7 @@ import javax.xml.stream.XMLStreamReader;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankFrameworkException;
+import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
@@ -44,7 +44,7 @@ import com.treetank.utils.TypedValue;
 public final class XMLShredder {
 
     public final static long shred(final long id, final String content,
-            final ISession session) throws TreetankFrameworkException {
+            final ISession session) throws TreetankException {
         try {
             final XMLInputFactory factory = XMLInputFactory.newInstance();
             factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
@@ -53,14 +53,14 @@ public final class XMLShredder {
             final long revision = shred(id, parser, session);
             return revision;
         } catch (final XMLStreamException exc) {
-            throw new TreetankFrameworkException(exc);
+            throw new TreetankIOException(exc);
         }
 
     }
 
     public final static long shred(final String xmlPath,
             final SessionConfiguration sessionConfiguration)
-            throws TreetankFrameworkException {
+            throws TreetankException {
         try {
             final InputStream in = new FileInputStream(xmlPath);
             final XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -69,15 +69,15 @@ public final class XMLShredder {
             final long revision = shred(0, parser, sessionConfiguration);
             return revision;
         } catch (final FileNotFoundException exc) {
-            throw new TreetankFrameworkException(exc);
+            throw new TreetankIOException(exc);
         } catch (final XMLStreamException exc) {
-            throw new TreetankFrameworkException(exc);
+            throw new TreetankIOException(exc);
         }
     }
 
     public static final long shred(final long id, final XMLStreamReader parser,
             final SessionConfiguration sessionConfiguration)
-            throws TreetankFrameworkException {
+            throws TreetankException {
         final ISession session = Session.beginSession(sessionConfiguration);
         final long revision = shred(id, parser, session);
         session.close();
@@ -85,7 +85,7 @@ public final class XMLShredder {
     }
 
     public static final long shred(final long id, final XMLStreamReader parser,
-            final ISession session) throws TreetankFrameworkException {
+            final ISession session) throws TreetankException {
         try {
             final IWriteTransaction wtx = session.beginWriteTransaction();
             final long revision = wtx.getRevisionNumber();
@@ -202,9 +202,7 @@ public final class XMLShredder {
             parser.close();
             return revision;
         } catch (final XMLStreamException exc1) {
-            throw new TreetankFrameworkException(exc1);
-        } catch (final TreetankIOException exc2) {
-            throw new TreetankFrameworkException(exc2);
+            throw new TreetankIOException(exc1);
         }
     }
 

@@ -26,7 +26,9 @@ import java.util.concurrent.Semaphore;
 import com.treetank.api.IItemList;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TreetankUsageException;
 import com.treetank.io.AbstractIOFactory;
 import com.treetank.io.IReader;
 import com.treetank.io.IWriter;
@@ -182,19 +184,21 @@ public final class SessionState {
                 .availablePermits());
     }
 
-    protected final IReadTransaction beginReadTransaction() {
+    protected final IReadTransaction beginReadTransaction()
+            throws TreetankException {
         return beginReadTransaction(mLastCommittedUberPage.getRevisionNumber(),
                 null);
     }
 
     protected final IReadTransaction beginReadTransaction(
-            final IItemList itemList) {
+            final IItemList itemList) throws TreetankException {
         return beginReadTransaction(mLastCommittedUberPage.getRevisionNumber(),
                 itemList);
     }
 
     protected final IReadTransaction beginReadTransaction(
-            final long revisionNumber, final IItemList itemList) {
+            final long revisionNumber, final IItemList itemList)
+            throws TreetankException {
 
         // Make sure not to exceed available number of read transactions.
         try {
@@ -204,24 +208,17 @@ public final class SessionState {
         }
 
         IReadTransaction rtx = null;
-        try {
-            // Create new read transaction.
-            rtx = new ReadTransaction(generateTransactionID(), this,
-                    new ReadTransactionState(mSessionConfiguration,
-                            mLastCommittedUberPage, revisionNumber, itemList,
-                            fac.getReader()));
+        // Create new read transaction.
+        rtx = new ReadTransaction(generateTransactionID(), this,
+                new ReadTransactionState(mSessionConfiguration,
+                        mLastCommittedUberPage, revisionNumber, itemList, fac
+                                .getReader()));
 
-            // Remember transaction for debugging and safe close.
-            if (mTransactionMap.put(rtx.getTransactionID(), rtx) != null) {
-                throw new IllegalStateException(
-                        "ID generation is bogus because of duplicate ID.");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new IllegalArgumentException("Revision " + revisionNumber
-                    + " can not be found.");
+        // Remember transaction for debugging and safe close.
+        if (mTransactionMap.put(rtx.getTransactionID(), rtx) != null) {
+            throw new TreetankUsageException(
+                    "ID generation is bogus because of duplicate ID.");
         }
-
         return rtx;
     }
 
@@ -290,7 +287,7 @@ public final class SessionState {
         mReadSemaphore.release();
     }
 
-    protected final void close() throws TreetankIOException {
+    protected final void close() throws TreetankException {
         // Forcibly close all open transactions.
         for (final IReadTransaction rtx : mTransactionMap.values()) {
             rtx.close();

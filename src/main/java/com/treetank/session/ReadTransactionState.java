@@ -88,7 +88,8 @@ public class ReadTransactionState {
     protected ReadTransactionState(
             final SessionConfiguration sessionConfiguration,
             final UberPage uberPage, final long revisionKey,
-            final IItemList itemList, final IReader reader) {
+            final IItemList itemList, final IReader reader)
+            throws TreetankIOException {
         mCache = new RAMCache();
         mSessionConfiguration = sessionConfiguration;
         mPageReader = reader;
@@ -184,18 +185,15 @@ public class ReadTransactionState {
      *            Key of revision to find revision root page for.
      * @return Revision root page of this revision key.
      */
-    protected final RevisionRootPage getRevisionRootPage(final long revisionKey) {
+    protected final RevisionRootPage getRevisionRootPage(final long revisionKey)
+            throws TreetankIOException {
         final PageReference ref = dereferenceLeafOfTree(mUberPage
                 .getIndirectPageReference(), revisionKey);
         RevisionRootPage page = (RevisionRootPage) dereferencePage(ref);
 
         // If there is no page, get it from the storage and cache it.
         if (page == null) {
-            try {
-                page = (RevisionRootPage) mPageReader.read(ref);
-            } catch (TreetankIOException e) {
-                throw new RuntimeException(e);
-            }
+            page = (RevisionRootPage) mPageReader.read(ref);
         }
 
         // Get revision root page which is the leaf of the indirect tree.

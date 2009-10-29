@@ -44,7 +44,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
-import com.treetank.exception.TreetankFrameworkException;
+import com.treetank.exception.TreetankException;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
 import com.treetank.utils.DocumentCreater;
@@ -134,7 +134,7 @@ public class XMLShredderTest {
             expectedSession.close();
             rtx.close();
             session.close();
-        } catch (final TreetankFrameworkException exc) {
+        } catch (final TreetankException exc) {
             fail(exc.toString());
         } catch (final UnsupportedEncodingException exc) {
             fail(exc.toString());
@@ -199,7 +199,7 @@ public class XMLShredderTest {
             expectedSession2.close();
             rtx.close();
             session.close();
-        } catch (final TreetankFrameworkException exc) {
+        } catch (final TreetankException exc) {
             fail(exc.toString());
         }
     }
@@ -247,7 +247,7 @@ public class XMLShredderTest {
             }
 
             assertEquals(xmlBuilder.toString(), tnkString);
-        } catch (final TreetankFrameworkException exc) {
+        } catch (final TreetankException exc) {
             fail(exc.toString());
         } catch (final FileNotFoundException exc) {
             fail(exc.toString());

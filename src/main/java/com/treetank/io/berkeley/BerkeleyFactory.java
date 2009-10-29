@@ -125,7 +125,6 @@ public final class BerkeleyFactory extends AbstractIOFactory {
      */
     @Override
     public void closeConcreteStorage() throws TreetankIOException {
-
         try {
             mDatabase.close();
             env.close();

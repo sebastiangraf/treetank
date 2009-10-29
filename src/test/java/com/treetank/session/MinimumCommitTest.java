@@ -30,7 +30,7 @@ import com.treetank.TestHelper;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankFrameworkException;
+import com.treetank.exception.TreetankException;
 import com.treetank.utils.DocumentCreater;
 
 public class MinimumCommitTest {
@@ -44,7 +44,6 @@ public class MinimumCommitTest {
     public void tearDown() {
         TestHelper.closeEverything();
     }
-
 
     @Test
     public void test() {
@@ -73,7 +72,7 @@ public class MinimumCommitTest {
             TestCase.assertEquals(2L, rtx.getRevisionNumber());
             rtx.close();
             session.close();
-        } catch (final TreetankFrameworkException exc) {
+        } catch (final TreetankException exc) {
             fail(exc.toString());
         }
 
@@ -96,7 +95,7 @@ public class MinimumCommitTest {
             rtx.close();
 
             session.close();
-        } catch (final TreetankFrameworkException exc) {
+        } catch (final TreetankException exc) {
             fail(exc.toString());
         }
 

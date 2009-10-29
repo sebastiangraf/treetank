@@ -46,11 +46,10 @@ public final class PagePersistenter {
     }
 
     public static void serializePage(final ITTSink sink, final AbstractPage page) {
-    
-        
+
         if (page instanceof NodePage) {
             sink.writeInt(PagePersistenter.NODEPAGE);
-            
+
         } else if (page instanceof IndirectPage) {
             sink.writeInt(PagePersistenter.INDIRCTPAGE);
 
@@ -70,6 +69,4 @@ public final class PagePersistenter {
 
     }
 
-    
-    
 }

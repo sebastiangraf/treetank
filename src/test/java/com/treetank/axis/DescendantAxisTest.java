@@ -18,8 +18,6 @@
 
 package com.treetank.axis;
 
-import static org.junit.Assert.fail;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +27,7 @@ import com.treetank.TestHelper;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TreetankException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
 
@@ -41,68 +39,59 @@ public class DescendantAxisTest {
     }
 
     @Test
-    public void testIterate() {
-        try {
-            // Build simple test tree.
-            final ISession session = Session.beginSession(ITestConstants.PATH1);
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
+    public void testIterate() throws TreetankException {
+        // Build simple test tree.
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
 
-            wtx.moveToDocumentRoot();
-            IAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {
-                    1L, 4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L });
+        wtx.moveToDocumentRoot();
+        IAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {
+                1L, 4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L });
 
-            wtx.moveTo(1L);
-            IAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {
-                    4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L });
+        wtx.moveTo(1L);
+        IAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {
+                4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L });
 
-            wtx.moveTo(9L);
-            IAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {
-                    11L, 12L });
+        wtx.moveTo(9L);
+        IAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {
+                11L, 12L });
 
-            wtx.moveTo(13L);
-            IAxisTest.testIAxisConventions(new DescendantAxis(wtx),
-                    new long[] {});
+        wtx.moveTo(13L);
+        IAxisTest.testIAxisConventions(new DescendantAxis(wtx), new long[] {});
 
-            wtx.abort();
-            wtx.close();
-            session.close();
-        } catch (final TreetankIOException exc) {
-            fail(exc.toString());
-        }
+        wtx.abort();
+        wtx.close();
+        session.close();
     }
 
     @Test
-    public void testIterateIncludingSelf() {
-        try {
-            // Build simple test tree.
-            final ISession session = Session.beginSession(ITestConstants.PATH1);
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
+    public void testIterateIncludingSelf() throws TreetankException {
+        // Build simple test tree.
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
 
-            wtx.moveToDocumentRoot();
-            IAxisTest.testIAxisConventions(new DescendantAxis(wtx, true),
-                    new long[] { IReadTransaction.DOCUMENT_ROOT_KEY, 1L, 4L,
-                            5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L });
+        wtx.moveToDocumentRoot();
+        IAxisTest.testIAxisConventions(new DescendantAxis(wtx, true),
+                new long[] { IReadTransaction.DOCUMENT_ROOT_KEY, 1L, 4L, 5L,
+                        6L, 7L, 8L, 9L, 11L, 12L, 13L });
 
-            wtx.moveTo(1L);
-            IAxisTest.testIAxisConventions(new DescendantAxis(wtx, true),
-                    new long[] { 1L, 4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L });
+        wtx.moveTo(1L);
+        IAxisTest.testIAxisConventions(new DescendantAxis(wtx, true),
+                new long[] { 1L, 4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L });
 
-            wtx.moveTo(9L);
-            IAxisTest.testIAxisConventions(new DescendantAxis(wtx, true),
-                    new long[] { 9L, 11L, 12L });
+        wtx.moveTo(9L);
+        IAxisTest.testIAxisConventions(new DescendantAxis(wtx, true),
+                new long[] { 9L, 11L, 12L });
 
-            wtx.moveTo(13L);
-            IAxisTest.testIAxisConventions(new DescendantAxis(wtx, true),
-                    new long[] { 13L });
+        wtx.moveTo(13L);
+        IAxisTest.testIAxisConventions(new DescendantAxis(wtx, true),
+                new long[] { 13L });
 
-            wtx.abort();
-            wtx.close();
-            session.close();
-        } catch (final TreetankIOException exc) {
-            fail(exc.toString());
-        }
+        wtx.abort();
+        wtx.close();
+        session.close();
 
     }
 

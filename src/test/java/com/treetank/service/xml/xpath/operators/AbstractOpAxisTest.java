@@ -32,6 +32,7 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
+import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.expr.LiteralExpr;
 import com.treetank.service.xml.xpath.types.Type;
@@ -51,7 +52,7 @@ public class AbstractOpAxisTest {
     }
 
     @Test
-    public final void testHasNext() {
+    public final void testHasNext() throws TreetankException {
 
         final ISession session = Session.beginSession(ITestConstants.PATH1);
         IReadTransaction rtx = session.beginReadTransaction();

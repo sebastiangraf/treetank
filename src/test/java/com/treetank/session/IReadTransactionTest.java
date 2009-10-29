@@ -19,7 +19,6 @@
 package com.treetank.session;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.Before;
@@ -30,7 +29,7 @@ import com.treetank.TestHelper;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankFrameworkException;
+import com.treetank.exception.TreetankException;
 import com.treetank.utils.DocumentCreater;
 
 public class IReadTransactionTest {
@@ -38,27 +37,23 @@ public class IReadTransactionTest {
     private ISession session;
 
     @Before
-    public void setUp() {
-        try {
-            TestHelper.deleteEverything();
-            session = Session.beginSession(ITestConstants.PATH1);
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
-            wtx.commit();
-            wtx.close();
-        } catch (final TreetankFrameworkException exc) {
-            fail(exc.toString());
-        }
+    public void setUp() throws TreetankException {
+        TestHelper.deleteEverything();
+        session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        wtx.close();
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         session.close();
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testDocumentRoot() {
+    public void testDocumentRoot() throws TreetankException {
         final IReadTransaction rtx = session.beginReadTransaction();
 
         assertEquals(true, rtx.moveToDocumentRoot());
@@ -72,7 +67,7 @@ public class IReadTransactionTest {
     }
 
     @Test
-    public void testConventions() {
+    public void testConventions() throws TreetankException {
         final IReadTransaction rtx = session.beginReadTransaction();
 
         // IReadTransaction Convention 1.

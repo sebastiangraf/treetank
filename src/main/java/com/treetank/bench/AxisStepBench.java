@@ -32,6 +32,7 @@ import org.perfidix.result.BenchmarkResult;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.DescendantAxis;
+import com.treetank.exception.TreetankException;
 import com.treetank.io.AbstractIOFactory;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
@@ -71,8 +72,13 @@ public class AxisStepBench {
         // executor.execute(new DescendantStepTask(session));
         // executor.shutdown();
         // executor.awaitTermination(1000000, TimeUnit.SECONDS);
-        new DescendantStepTask(session).run();
-        session.close();
+        try {
+            new DescendantStepTask(session).run();
+
+            session.close();
+        } catch (final TreetankException exc) {
+
+        }
     }
 
     // @Bench
@@ -139,7 +145,8 @@ public class AxisStepBench {
 
         private final IReadTransaction mRTX;
 
-        public DescendantStepTask(final ISession session) {
+        public DescendantStepTask(final ISession session)
+                throws TreetankException {
 
             mRTX = session.beginReadTransaction();
         }

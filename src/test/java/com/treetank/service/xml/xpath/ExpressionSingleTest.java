@@ -39,7 +39,7 @@ import com.treetank.axis.FollowingSiblingAxis;
 import com.treetank.axis.NestedAxis;
 import com.treetank.axis.ParentAxis;
 import com.treetank.axis.SelfAxis;
-import com.treetank.exception.TreetankFrameworkException;
+import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.xpath.expr.UnionAxis;
 import com.treetank.service.xml.xpath.filter.DupFilterAxis;
 import com.treetank.session.Session;
@@ -87,7 +87,7 @@ public class ExpressionSingleTest {
             wtx.abort();
             wtx.close();
             session.close();
-        } catch (final TreetankFrameworkException exc) {
+        } catch (final TreetankException exc) {
             fail(exc.toString());
         }
     }
@@ -140,7 +140,7 @@ public class ExpressionSingleTest {
             wtx.abort();
             wtx.close();
             session.close();
-        } catch (final TreetankFrameworkException exc) {
+        } catch (final TreetankException exc) {
             fail(exc.toString());
         }
 

@@ -5,7 +5,7 @@ import static org.junit.Assert.fail;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.treetank.exception.TreetankFrameworkException;
+import com.treetank.exception.TreetankException;
 import com.treetank.session.Session;
 
 /**
@@ -37,7 +37,7 @@ public final class TestHelper {
             Session.removeSession(ITestConstants.TEST_REVISION_PATH);
             Session.removeSession(ITestConstants.TEST_SHREDDED_REVISION_PATH);
             Session.removeSession(ITestConstants.TEST_EXISTING_PATH);
-        } catch (final TreetankFrameworkException exc) {
+        } catch (final TreetankException exc) {
             fail(exc.toString());
         }
     }
