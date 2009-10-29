@@ -25,8 +25,7 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankFrameworkException;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankRestException;
 import com.treetank.service.xml.XMLSerializer;
 import com.treetank.service.xml.XMLShredder;
@@ -82,7 +81,7 @@ public final class TreeTankWrapper {
         long revNumber = -1;
         try {
             revNumber = XMLShredder.shred(id, value, session);
-        } catch (final TreetankFrameworkException exc) {
+        } catch (final TreetankException exc) {
             throw new TreetankRestException(500, exc.getMessage(), exc);
         }
 
@@ -118,15 +117,19 @@ public final class TreeTankWrapper {
         } catch (final TreetankRestException te) {
             try {
                 wtx.abort();
-            } catch (final TreetankIOException exc) {
+            } catch (final TreetankException exc) {
                 throw new TreetankRestException(exc);
             }
             throw te;
-        } catch (final TreetankIOException exc) {
+        } catch (final TreetankException exc) {
             throw new TreetankRestException(exc);
         } finally {
             if (wtx != null) {
-                wtx.close();
+                try {
+                    wtx.close();
+                } catch (final TreetankException exc) {
+                    throw new TreetankRestException(exc);
+                }
             }
         }
     }
@@ -156,15 +159,19 @@ public final class TreeTankWrapper {
         } catch (final TreetankRestException te) {
             try {
                 wtx.abort();
-            } catch (final TreetankIOException exc) {
+            } catch (final TreetankException exc) {
                 throw new TreetankRestException(exc);
             }
             throw te;
-        } catch (final TreetankIOException exc) {
+        } catch (final TreetankException exc) {
             throw new TreetankRestException(exc);
         } finally {
             if (wtx != null) {
-                wtx.close();
+                try {
+                    wtx.close();
+                } catch (final TreetankException exc) {
+                    throw new TreetankRestException(exc);
+                }
             }
         }
     }
@@ -174,15 +181,21 @@ public final class TreeTankWrapper {
      * 
      * @return getting the last revision call;
      */
-    public long getLastRevision() {
+    public long getLastRevision() throws TreetankRestException {
         IReadTransaction rtx = null;
         long lastRevision = 0;
         try {
             rtx = session.beginReadTransaction();
             lastRevision = rtx.getRevisionNumber();
+        } catch (final TreetankException exc) {
+            throw new TreetankRestException(exc);
         } finally {
             if (rtx != null) {
-                rtx.close();
+                try {
+                    rtx.close();
+                } catch (final TreetankException exc) {
+                    throw new TreetankRestException(exc);
+                }
             }
         }
         return lastRevision;
@@ -212,13 +225,18 @@ public final class TreeTankWrapper {
                 throw new TreetankRestException(404, "Node with id=" + id
                         + " not found.");
             }
-        } catch (final TreetankRestException te) {
-            throw te;
+
+        } catch (final TreetankException ie) {
+            throw new TreetankRestException(500, ie.getMessage(), ie);
         } catch (final IOException ie) {
             throw new TreetankRestException(500, ie.getMessage(), ie);
         } finally {
             if (rtx != null) {
-                rtx.close();
+                try {
+                    rtx.close();
+                } catch (final TreetankException exc) {
+                    throw new TreetankRestException(exc);
+                }
             }
         }
     }
@@ -256,13 +274,17 @@ public final class TreeTankWrapper {
                 throw new TreetankRestException(404, "Node with id=" + id
                         + " not found.");
             }
-        } catch (TreetankRestException te) {
-            throw te;
+        } catch (final TreetankException ie) {
+            throw new TreetankRestException(500, ie.getMessage(), ie);
         } catch (IOException ie) {
             throw new TreetankRestException(500, ie.getMessage(), ie);
         } finally {
             if (rtx != null) {
-                rtx.close();
+                try {
+                    rtx.close();
+                } catch (final TreetankException exc) {
+                    throw new TreetankRestException(exc);
+                }
             }
         }
     }
@@ -270,8 +292,13 @@ public final class TreeTankWrapper {
     /**
      * Closing the wrapper
      */
-    public void close() {
-        session.close();
+    public void close() throws TreetankRestException {
+        try {
+            session.close();
+        } catch (final TreetankException exc) {
+            throw new TreetankRestException(exc);
+        }
+
     }
 
 }

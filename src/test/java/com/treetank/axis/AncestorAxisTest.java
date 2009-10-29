@@ -26,10 +26,9 @@ import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TreetankException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
-import static org.junit.Assert.fail;
 
 public class AncestorAxisTest {
 
@@ -39,66 +38,57 @@ public class AncestorAxisTest {
     }
 
     @Test
-    public void testAxisConventions() {
-        try {
-            final ISession session = Session.beginSession(ITestConstants.PATH1);
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
+    public void testAxisConventions() throws TreetankException {
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
 
-            wtx.moveTo(12L);
-            IAxisTest.testIAxisConventions(new AncestorAxis(wtx), new long[] {
-                    9L, 1L });
+        wtx.moveTo(12L);
+        IAxisTest.testIAxisConventions(new AncestorAxis(wtx), new long[] { 9L,
+                1L });
 
-            wtx.moveTo(4L);
-            IAxisTest.testIAxisConventions(new AncestorAxis(wtx),
-                    new long[] { 1L });
+        wtx.moveTo(4L);
+        IAxisTest
+                .testIAxisConventions(new AncestorAxis(wtx), new long[] { 1L });
 
-            wtx.moveTo(5L);
-            IAxisTest.testIAxisConventions(new AncestorAxis(wtx),
-                    new long[] { 1L });
+        wtx.moveTo(5L);
+        IAxisTest
+                .testIAxisConventions(new AncestorAxis(wtx), new long[] { 1L });
 
-            wtx.moveTo(1L);
-            IAxisTest
-                    .testIAxisConventions(new AncestorAxis(wtx), new long[] {});
+        wtx.moveTo(1L);
+        IAxisTest.testIAxisConventions(new AncestorAxis(wtx), new long[] {});
 
-            wtx.abort();
-            wtx.close();
-            session.close();
-        } catch (final TreetankIOException exc) {
-            fail(exc.toString());
-        }
+        wtx.abort();
+        wtx.close();
+        session.close();
 
     }
 
     @Test
-    public void testAxisConventionsIncludingSelf() {
-        try {
-            final ISession session = Session.beginSession(ITestConstants.PATH1);
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
+    public void testAxisConventionsIncludingSelf() throws TreetankException {
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
 
-            wtx.moveTo(11L);
-            IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true),
-                    new long[] { 11L, 9L, 1L });
+        wtx.moveTo(11L);
+        IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true), new long[] {
+                11L, 9L, 1L });
 
-            wtx.moveTo(5L);
-            IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true),
-                    new long[] { 5L, 1L });
+        wtx.moveTo(5L);
+        IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true), new long[] {
+                5L, 1L });
 
-            wtx.moveTo(4L);
-            IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true),
-                    new long[] { 4L, 1L });
+        wtx.moveTo(4L);
+        IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true), new long[] {
+                4L, 1L });
 
-            wtx.moveTo(1L);
-            IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true),
-                    new long[] { 1L });
+        wtx.moveTo(1L);
+        IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true),
+                new long[] { 1L });
 
-            wtx.abort();
-            wtx.close();
-            session.close();
-        } catch (TreetankIOException exc) {
-            fail(exc.toString());
-        }
+        wtx.abort();
+        wtx.close();
+        session.close();
 
     }
 

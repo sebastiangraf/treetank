@@ -33,7 +33,7 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TreetankException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
 
@@ -84,28 +84,25 @@ public class IAxisTest {
     }
 
     @Test
-    public void testIAxisUserExample() {
+    public void testIAxisUserExample() throws TreetankException {
 
-        try { // Build simple test tree.
-            final ISession session = Session.beginSession(ITestConstants.PATH1);
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
 
-            wtx.moveToDocumentRoot();
-            final IAxis axis = new DescendantAxis(wtx);
-            long count = 0L;
-            while (axis.hasNext()) {
-                count += 1;
-            }
-            Assert.assertEquals(10L, count);
-
-            wtx.abort();
-            wtx.close();
-            session.close();
-        } catch (final TreetankIOException exc) {
-            fail(exc.toString());
+        wtx.moveToDocumentRoot();
+        final IAxis axis = new DescendantAxis(wtx);
+        long count = 0L;
+        while (axis.hasNext()) {
+            count += 1;
         }
+        Assert.assertEquals(10L, count);
+
+        wtx.abort();
+        wtx.close();
+        session.close();
     }
+
     @After
     public void tearDown() {
         TestHelper.closeEverything();

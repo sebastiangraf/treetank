@@ -30,7 +30,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.IAxisTest;
-import com.treetank.exception.TreetankFrameworkException;
+import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
@@ -48,10 +48,12 @@ public class UnionAxisTest {
 
         TestHelper.deleteEverything();
     }
+
     @After
-    public void tearDown(){
+    public void tearDown() {
         TestHelper.closeEverything();
     }
+
     @Test
     public void testUnion() {
         try {
@@ -95,7 +97,7 @@ public class UnionAxisTest {
             wtx.abort();
             wtx.close();
             session.close();
-        } catch (final TreetankFrameworkException exc) {
+        } catch (final TreetankException exc) {
             fail(exc.toString());
         }
     }

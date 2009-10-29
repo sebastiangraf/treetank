@@ -29,7 +29,7 @@ import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankFrameworkException;
+import com.treetank.exception.TreetankException;
 import com.treetank.utils.DocumentCreater;
 
 public class AttributeAndNamespaceTest {
@@ -68,7 +68,7 @@ public class AttributeAndNamespaceTest {
             wtx.abort();
             wtx.close();
             session.close();
-        } catch (final TreetankFrameworkException exc) {
+        } catch (final TreetankException exc) {
             fail(exc.toString());
         }
 
@@ -92,7 +92,7 @@ public class AttributeAndNamespaceTest {
             wtx.abort();
             wtx.close();
             session.close();
-        } catch (final TreetankFrameworkException exc) {
+        } catch (final TreetankException exc) {
             fail(exc.toString());
         }
     }

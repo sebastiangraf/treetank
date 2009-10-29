@@ -30,6 +30,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.IAxisTest;
+import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
@@ -47,7 +48,7 @@ public class DocumentNodeAxisTest {
     }
 
     @Test
-    public void testIterate() {
+    public void testIterate() throws TreetankException {
         try {
             final ISession session = Session.beginSession(ITestConstants.PATH1);
             final IWriteTransaction wtx = session.beginWriteTransaction();

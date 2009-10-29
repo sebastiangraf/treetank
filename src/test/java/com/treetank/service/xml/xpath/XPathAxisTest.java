@@ -18,8 +18,6 @@
 
 package com.treetank.service.xml.xpath;
 
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 
 import org.junit.After;
@@ -32,7 +30,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.IAxisTest;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TreetankException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
 
@@ -50,25 +48,21 @@ public class XPathAxisTest {
     private IReadTransaction rtx;
 
     @Before
-    public void setUp() {
-        try {
-            TestHelper.deleteEverything();
+    public void setUp() throws TreetankException {
+        TestHelper.deleteEverything();
 
-            // Build simple test tree.
-            session = Session.beginSession(ITestConstants.PATH1);
-            wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
-            wtx.commit();
-            wtx.close();
-            // Find descendants starting from nodeKey 0L (root).
-            rtx = session.beginReadTransaction();
-        } catch (final TreetankIOException exc) {
-            fail(exc.toString());
-        }
+        // Build simple test tree.
+        session = Session.beginSession(ITestConstants.PATH1);
+        wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        wtx.close();
+        // Find descendants starting from nodeKey 0L (root).
+        rtx = session.beginReadTransaction();
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
 
         rtx.close();
         session.close();
@@ -76,7 +70,7 @@ public class XPathAxisTest {
     }
 
     @Test
-    public void testSteps() throws IOException {
+    public void testSteps() {
 
         IAxisTest.testIAxisConventions(new XPathAxis(rtx, "/text:p/b"),
                 new long[] {});
@@ -100,7 +94,7 @@ public class XPathAxisTest {
     }
 
     @Test
-    public void testAttributes() throws IOException {
+    public void testAttributes() {
 
         // Find descendants starting from nodeKey 0L (root).
         rtx.moveToDocumentRoot();
@@ -189,8 +183,7 @@ public class XPathAxisTest {
     }
 
     @Test
-    public void testNodeTests() throws IOException {
-
+    public void testNodeTests() {
         // Find descendants starting from nodeKey 0L (root).
         rtx.moveToDocumentRoot();
 
@@ -209,7 +202,7 @@ public class XPathAxisTest {
     }
 
     @Test
-    public void testDescendant() throws IOException {
+    public void testDescendant() {
 
         // Find descendants starting from nodeKey 0L (root).
         rtx.moveToDocumentRoot();
@@ -235,7 +228,7 @@ public class XPathAxisTest {
     }
 
     @Test
-    public void testAncestor() throws IOException {
+    public void testAncestor() {
 
         // Find ancestor starting from nodeKey 8L.
         rtx.moveTo(11L);
@@ -257,7 +250,7 @@ public class XPathAxisTest {
     }
 
     @Test
-    public void testParent() throws IOException {
+    public void testParent() {
 
         // Find ancestor starting from nodeKey 8L.
         rtx.moveTo(9L);
@@ -278,7 +271,7 @@ public class XPathAxisTest {
     }
 
     @Test
-    public void testSelf() throws IOException {
+    public void testSelf() {
 
         // Find ancestor starting from nodeKey 8L.
         rtx.moveTo(1L);
@@ -304,7 +297,7 @@ public class XPathAxisTest {
     }
 
     @Test
-    public void testPosition() throws IOException {
+    public void testPosition() {
 
         // Find descendants starting from nodeKey 0L (root).
         rtx.moveTo(1L);
@@ -325,7 +318,7 @@ public class XPathAxisTest {
 
     //
     @Test
-    public void testDupElemination() throws IOException {
+    public void testDupElemination() {
 
         // Find descendants starting from nodeKey 0L (root).
         rtx.moveTo(1L);
@@ -345,7 +338,7 @@ public class XPathAxisTest {
     }
 
     @Test
-    public void testUnabbreviate() throws IOException {
+    public void testUnabbreviate() {
 
         // Find descendants starting from nodeKey 0L (root).
         rtx.moveTo(1L);
@@ -425,7 +418,7 @@ public class XPathAxisTest {
     }
 
     @Test
-    public void testMultiExpr() throws IOException {
+    public void testMultiExpr() {
 
         rtx.moveTo(1L);
 

@@ -5,7 +5,6 @@ package com.treetank.service.rest.helper;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.treetank.TestHelper;

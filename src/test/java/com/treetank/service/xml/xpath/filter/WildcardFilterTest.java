@@ -31,6 +31,7 @@ import com.treetank.TestHelper;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.IFilterTest;
+import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
@@ -48,7 +49,7 @@ public class WildcardFilterTest {
     }
 
     @Test
-    public void testIFilterConvetions() {
+    public void testIFilterConvetions() throws TreetankException {
         try {
             // Build simple test tree.
             final ISession session = Session.beginSession(ITestConstants.PATH1);

@@ -18,7 +18,7 @@
 
 package com.treetank.api;
 
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TreetankException;
 
 /**
  * <h1>ISession</h1>
@@ -101,7 +101,7 @@ public interface ISession {
      * 
      * @return IReadTransaction instance.
      */
-    IReadTransaction beginReadTransaction();
+    IReadTransaction beginReadTransaction() throws TreetankException;
 
     /**
      * Begin a read-only transaction on the given revision key.
@@ -110,14 +110,15 @@ public interface ISession {
      *            Revision key to read from.
      * @return IReadTransaction instance.
      */
-    IReadTransaction beginReadTransaction(final long revisionKey);
+    IReadTransaction beginReadTransaction(final long revisionKey)
+            throws TreetankException;
 
     /**
      * Begin exclusive read/write transaction without auto commit.
      * 
      * @return IWriteTransaction instance.
      */
-    IWriteTransaction beginWriteTransaction() throws TreetankIOException ;
+    IWriteTransaction beginWriteTransaction() throws TreetankException;
 
     /**
      * Begin exclusive read/write transaction with auto commit.
@@ -129,7 +130,7 @@ public interface ISession {
      * @return IWriteTransaction instance.
      */
     IWriteTransaction beginWriteTransaction(final int maxNodeCount,
-            final int maxTime) throws TreetankIOException ;
+            final int maxTime) throws TreetankException;
 
     /**
      * Get number of running read transactions.
@@ -152,6 +153,6 @@ public interface ISession {
      * This is an idempotent operation and does nothing if the session is
      * already closed.
      */
-    void close();
+    void close() throws TreetankException;
 
 }

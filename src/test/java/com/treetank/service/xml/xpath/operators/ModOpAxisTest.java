@@ -33,6 +33,7 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
+import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.expr.LiteralExpr;
 import com.treetank.service.xml.xpath.expr.SequenceAxis;
@@ -54,7 +55,7 @@ public class ModOpAxisTest {
     }
 
     @Test
-    public final void testOperate() {
+    public final void testOperate() throws TreetankException {
 
         final ISession session = Session.beginSession(ITestConstants.PATH1);
         IReadTransaction rtx = session.beginReadTransaction();
@@ -75,7 +76,7 @@ public class ModOpAxisTest {
     }
 
     @Test
-    public final void testGetReturnType() {
+    public final void testGetReturnType() throws TreetankException {
 
         final ISession session = Session.beginSession(ITestConstants.PATH1);
         IReadTransaction rtx = session.beginReadTransaction();

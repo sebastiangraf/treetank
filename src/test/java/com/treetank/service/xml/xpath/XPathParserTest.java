@@ -20,8 +20,6 @@ package com.treetank.service.xml.xpath;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +29,7 @@ import com.treetank.TestHelper;
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
+import com.treetank.exception.TreetankException;
 import com.treetank.session.Session;
 import com.treetank.utils.TypedValue;
 
@@ -49,7 +48,7 @@ public class XPathParserTest {
     }
 
     @Test
-    public void testLiterals() throws IOException {
+    public void testLiterals() throws TreetankException {
 
         // Build simple test tree.
         final ISession session = Session.beginSession(ITestConstants.PATH1);
@@ -104,7 +103,7 @@ public class XPathParserTest {
     }
 
     @Test
-    public void testEBNF() throws IOException {
+    public void testEBNF() throws TreetankException {
 
         // Build simple test tree.
         final ISession session = Session.beginSession(ITestConstants.PATH1);

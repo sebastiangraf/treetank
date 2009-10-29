@@ -34,6 +34,7 @@ import com.treetank.axis.IFilterTest;
 import com.treetank.axis.NameFilter;
 import com.treetank.axis.NodeFilter;
 import com.treetank.axis.TextFilter;
+import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
@@ -51,7 +52,7 @@ public class NestedFilterTest {
     }
 
     @Test
-    public void testIFilterConvetions() {
+    public void testIFilterConvetions() throws TreetankException {
         try {
             // Build simple test tree.
             final ISession session = Session.beginSession(ITestConstants.PATH1);

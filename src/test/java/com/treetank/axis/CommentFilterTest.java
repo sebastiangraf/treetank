@@ -18,8 +18,6 @@
 
 package com.treetank.axis;
 
-import static org.junit.Assert.fail;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +26,7 @@ import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TreetankException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
 
@@ -40,33 +38,29 @@ public class CommentFilterTest {
     }
 
     @Test
-    public void testIFilterConvetions() {
-        try {
-            // Build simple test tree.
-            final ISession session = Session.beginSession(ITestConstants.PATH1);
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
+    public void testIFilterConvetions() throws TreetankException {
+        // Build simple test tree.
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
 
-            wtx.moveTo(9L);
-            IFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
+        wtx.moveTo(9L);
+        IFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
 
-            wtx.moveTo(4L);
-            IFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
+        wtx.moveTo(4L);
+        IFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
 
-            wtx.moveTo(1L);
-            wtx.moveToAttribute(0);
-            IFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
+        wtx.moveTo(1L);
+        wtx.moveToAttribute(0);
+        IFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
 
-            wtx.moveTo(9L);
-            wtx.moveToAttribute(0);
-            IFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
+        wtx.moveTo(9L);
+        wtx.moveToAttribute(0);
+        IFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
 
-            wtx.abort();
-            wtx.close();
-            session.close();
-        } catch (final TreetankIOException exc) {
-            fail(exc.toString());
-        }
+        wtx.abort();
+        wtx.close();
+        session.close();
     }
 
     @After

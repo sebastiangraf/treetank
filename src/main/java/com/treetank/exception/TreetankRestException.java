@@ -30,17 +30,18 @@ import javax.servlet.ServletException;
 public final class TreetankRestException extends ServletException {
     private static final long serialVersionUID = 1L;
 
-    /** HTTP-Error code to encapsulate*/
+    /** HTTP-Error code to encapsulate */
     private final int mErrorCode;
 
-    /** Error message for more specification*/
+    /** Error message for more specification */
     private final String mErrorMessage;
 
     /**
-     * Constructor, just getting 
+     * Constructor, just getting
+     * 
      * @param error
      */
-    public TreetankRestException(final TreetankIOException error) {
+    public TreetankRestException(final TreetankException error) {
         super(error);
         mErrorCode = 500;
         mErrorMessage = error.toString();

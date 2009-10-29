@@ -31,6 +31,7 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.session.Session;
@@ -57,7 +58,7 @@ public class FunctionAxisTest {
     }
 
     @Test
-    public void testFunctions() {
+    public void testFunctions() throws TreetankException {
         try {
             // Build simple test tree.
             final ISession session = Session.beginSession(ITestConstants.PATH1);

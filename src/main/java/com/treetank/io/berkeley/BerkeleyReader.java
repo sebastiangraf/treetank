@@ -86,8 +86,7 @@ public class BerkeleyReader implements IReader {
      * {@inheritDoc}
      */
     @Override
-    public AbstractPage read(
-            final PageReference pageReference)
+    public AbstractPage read(final PageReference pageReference)
             throws TreetankIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
@@ -113,8 +112,7 @@ public class BerkeleyReader implements IReader {
      * {@inheritDoc}
      */
     @Override
-    public PageReference readFirstReference()
-            throws TreetankIOException {
+    public PageReference readFirstReference() throws TreetankIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
         BerkeleyFactory.KEY.objectToEntry(BerkeleyKey.getFirstRevKey(),

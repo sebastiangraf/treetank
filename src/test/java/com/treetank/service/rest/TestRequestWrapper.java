@@ -1,5 +1,7 @@
 package com.treetank.service.rest;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -15,8 +17,6 @@ import javax.servlet.http.HttpSession;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-
 public class TestRequestWrapper implements HandledHttpServletRequest {
 
     private final boolean handled;
@@ -26,7 +26,7 @@ public class TestRequestWrapper implements HandledHttpServletRequest {
     }
 
     public TestRequestWrapper() {
-       this(false);
+        this(false);
     }
 
     @Override

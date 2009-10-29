@@ -18,8 +18,6 @@
 
 package com.treetank.axis;
 
-import static org.junit.Assert.fail;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +26,7 @@ import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TreetankException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
 
@@ -40,30 +38,23 @@ public class ParentAxisTest {
     }
 
     @Test
-    public void testIterate() {
-        try {
-            final ISession session = Session.beginSession(ITestConstants.PATH1);
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
+    public void testIterate() throws TreetankException {
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
 
-            wtx.moveTo(5L);
-            IAxisTest.testIAxisConventions(new ParentAxis(wtx),
-                    new long[] { 1L });
+        wtx.moveTo(5L);
+        IAxisTest.testIAxisConventions(new ParentAxis(wtx), new long[] { 1L });
 
-            wtx.moveTo(8L);
-            IAxisTest.testIAxisConventions(new ParentAxis(wtx),
-                    new long[] { 1L });
+        wtx.moveTo(8L);
+        IAxisTest.testIAxisConventions(new ParentAxis(wtx), new long[] { 1L });
 
-            wtx.moveTo(10L);
-            IAxisTest.testIAxisConventions(new ParentAxis(wtx),
-                    new long[] { 9L });
+        wtx.moveTo(10L);
+        IAxisTest.testIAxisConventions(new ParentAxis(wtx), new long[] { 9L });
 
-            wtx.abort();
-            wtx.close();
-            session.close();
-        } catch (final TreetankIOException exc) {
-            fail(exc.toString());
-        }
+        wtx.abort();
+        wtx.close();
+        session.close();
     }
 
     @After

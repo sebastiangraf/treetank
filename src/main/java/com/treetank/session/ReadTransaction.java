@@ -21,6 +21,7 @@ package com.treetank.session;
 import com.treetank.api.IItem;
 import com.treetank.api.IItemList;
 import com.treetank.api.IReadTransaction;
+import com.treetank.exception.TreetankException;
 import com.treetank.utils.NamePageHash;
 import com.treetank.utils.TypedValue;
 
@@ -173,8 +174,6 @@ public class ReadTransaction implements IReadTransaction {
         return moveTo(mCurrentNode.getNamespaceKey(index));
     }
 
-
-
     /**
      * {@inheritDoc}
      */
@@ -241,7 +240,7 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
-    public void close() {
+    public void close() throws TreetankException {
         if (!mClosed) {
             // Close own state.
             mTransactionState.close();

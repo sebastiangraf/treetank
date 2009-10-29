@@ -20,6 +20,7 @@ package com.treetank.utils;
 
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
+import com.treetank.exception.TreetankException;
 import com.treetank.session.Session;
 
 /**
@@ -42,47 +43,53 @@ public final class TreeTankDebugger {
      * {@inheritDoc}
      */
     public static void main(final String... args) {
-        if (args.length != 1) {
-            System.out.println("Usage: TreeTankDebugger <file>");
-            System.exit(1);
-        }
-
-        final ISession session = Session.beginSession(args[0]);
-        final IReadTransaction rtx = session.beginReadTransaction();
-
-        // Print header.
-        System.out.println("TreeTank '" + session.getFileName() + "':");
-        System.out
-                .println("----------------------------------------------------------------------------------------------------------");
-        System.out
-                .println("|   K|    PK|    FCK|    LSK|    RSK|     CC| Name                       | Value                         |");
-        System.out
-                .println("----------------------------------------------------------------------------------------------------------");
-
-        // Print node by node.
-        final long size = rtx.getNodeCount();
-        for (long i = 0; i < size; i++) {
-            if (rtx.moveTo(i)) {
-                System.out
-                        .printf(
-                                "|%4d|\t%4d|\t%4d|\t%4d|\t%4d|\t%4d|\t%-25s|\t%-25s|\n",
-                                rtx.getNode().getNodeKey(), rtx.getNode()
-                                        .getParentKey(), rtx.getNode()
-                                        .getFirstChildKey(), rtx.getNode()
-                                        .getLeftSiblingKey(), rtx.getNode()
-                                        .getRightSiblingKey(), rtx.getNode()
-                                        .getChildCount(), rtx.nameForKey(rtx
-                                        .getNode().getNameKey()), rtx.getNode()
-                                        .isText() ? TypedValue.parseString(rtx
-                                        .getNode().getRawValue()) : "");
-            } else {
-                System.out.println("ERROR while debugging.");
+        try {
+            if (args.length != 1) {
+                System.out.println("Usage: TreeTankDebugger <file>");
                 System.exit(1);
             }
+
+            final ISession session = Session.beginSession(args[0]);
+            final IReadTransaction rtx = session.beginReadTransaction();
+
+            // Print header.
+            System.out.println("TreeTank '" + session.getFileName() + "':");
+            System.out
+                    .println("----------------------------------------------------------------------------------------------------------");
+            System.out
+                    .println("|   K|    PK|    FCK|    LSK|    RSK|     CC| Name                       | Value                         |");
+            System.out
+                    .println("----------------------------------------------------------------------------------------------------------");
+
+            // Print node by node.
+            final long size = rtx.getNodeCount();
+            for (long i = 0; i < size; i++) {
+                if (rtx.moveTo(i)) {
+                    System.out
+                            .printf(
+                                    "|%4d|\t%4d|\t%4d|\t%4d|\t%4d|\t%4d|\t%-25s|\t%-25s|\n",
+                                    rtx.getNode().getNodeKey(), rtx.getNode()
+                                            .getParentKey(), rtx.getNode()
+                                            .getFirstChildKey(), rtx.getNode()
+                                            .getLeftSiblingKey(), rtx.getNode()
+                                            .getRightSiblingKey(), rtx
+                                            .getNode().getChildCount(), rtx
+                                            .nameForKey(rtx.getNode()
+                                                    .getNameKey()), rtx
+                                            .getNode().isText() ? TypedValue
+                                            .parseString(rtx.getNode()
+                                                    .getRawValue()) : "");
+                } else {
+                    System.out.println("ERROR while debugging.");
+                    System.exit(1);
+                }
+            }
+
+            rtx.close();
+            session.close();
+        } catch (final TreetankException exc) {
+            exc.printStackTrace();
+            System.exit(-1);
         }
-
-        rtx.close();
-        session.close();
     }
-
 }

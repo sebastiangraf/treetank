@@ -22,7 +22,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.IOException;
 
 import junit.framework.TestCase;
 
@@ -37,7 +36,7 @@ import com.treetank.TestHelper;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankFrameworkException;
+import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.utils.DocumentCreater;
 import com.treetank.utils.IConstants;
@@ -56,7 +55,7 @@ public class SessionTest {
     }
 
     @Test
-    public void testClosed() throws IOException {
+    public void testClosed() throws TreetankException {
 
         ISession session = Session
                 .beginSession(ITestConstants.TEST_INSERT_CHILD_PATH);
@@ -92,42 +91,36 @@ public class SessionTest {
 
     @Test
     @Ignore
-    public void testNoWritesBeforeFirstCommit() {
-        try {
-            ISession session = Session
-                    .beginSession(ITestConstants.TEST_INSERT_CHILD_PATH);
-            assertEquals(0L, new File(ITestConstants.TEST_INSERT_CHILD_PATH
-                    + File.separator + "tt.tnk").length());
-            session.close();
-            assertEquals(0L, new File(ITestConstants.TEST_INSERT_CHILD_PATH
-                    + File.separator + "tt.tnk").length());
+    public void testNoWritesBeforeFirstCommit() throws TreetankException {
+        ISession session = Session
+                .beginSession(ITestConstants.TEST_INSERT_CHILD_PATH);
+        assertEquals(0L, new File(ITestConstants.TEST_INSERT_CHILD_PATH
+                + File.separator + "tt.tnk").length());
+        session.close();
+        assertEquals(0L, new File(ITestConstants.TEST_INSERT_CHILD_PATH
+                + File.separator + "tt.tnk").length());
 
-            session = Session
-                    .beginSession(ITestConstants.TEST_INSERT_CHILD_PATH);
-            assertEquals(0L, new File(ITestConstants.TEST_INSERT_CHILD_PATH
-                    + File.separator + "tt.tnk").length());
+        session = Session.beginSession(ITestConstants.TEST_INSERT_CHILD_PATH);
+        assertEquals(0L, new File(ITestConstants.TEST_INSERT_CHILD_PATH
+                + File.separator + "tt.tnk").length());
 
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            wtx.commit();
-            wtx.close();
-            session.close();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        wtx.commit();
+        wtx.close();
+        session.close();
 
-            session = Session
-                    .beginSession(ITestConstants.TEST_INSERT_CHILD_PATH);
-            final IReadTransaction rtx = session.beginReadTransaction();
-            rtx.close();
-            session.close();
+        session = Session.beginSession(ITestConstants.TEST_INSERT_CHILD_PATH);
+        final IReadTransaction rtx = session.beginReadTransaction();
+        rtx.close();
+        session.close();
 
-            TestCase.assertNotSame(0L, new File(
-                    ITestConstants.TEST_INSERT_CHILD_PATH + File.separator
-                            + "tt.tnk").length());
-        } catch (final TreetankFrameworkException exc) {
-            fail(exc.toString());
-        }
+        TestCase.assertNotSame(0L, new File(
+                ITestConstants.TEST_INSERT_CHILD_PATH + File.separator
+                        + "tt.tnk").length());
     }
 
     @Test
-    public void testNonExisting() {
+    public void testNonExisting() throws TreetankException {
         try {
             final ISession session = Session
                     .beginSession(ITestConstants.NON_EXISTING_PATH);
@@ -173,7 +166,7 @@ public class SessionTest {
             wtx.abort();
             wtx.close();
             session.close();
-        } catch (final TreetankFrameworkException exc) {
+        } catch (final TreetankException exc) {
             fail(exc.toString());
         }
     }
@@ -209,7 +202,7 @@ public class SessionTest {
             rtx2.close();
 
             session.close();
-        } catch (final TreetankFrameworkException exc) {
+        } catch (final TreetankException exc) {
             fail(exc.toString());
         }
     }
@@ -254,7 +247,7 @@ public class SessionTest {
             rtx2.close();
 
             session.close();
-        } catch (final TreetankFrameworkException exc) {
+        } catch (final TreetankException exc) {
             fail(exc.toString());
         }
     }
@@ -305,7 +298,7 @@ public class SessionTest {
 
             rtx2.close();
             session3.close();
-        } catch (final TreetankFrameworkException exc) {
+        } catch (final TreetankException exc) {
             fail(exc.toString());
         }
 
@@ -331,13 +324,13 @@ public class SessionTest {
 
             session.close();
             session.close();
-        } catch (final TreetankFrameworkException exc) {
+        } catch (final TreetankException exc) {
             fail(exc.toString());
         }
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testAutoCommit() throws IllegalStateException {
+    @Test(expected = TreetankException.class)
+    public void testAutoCommit() throws TreetankException {
 
         final ISession session = Session
                 .beginSession(ITestConstants.TEST_EXISTING_PATH);
@@ -375,7 +368,7 @@ public class SessionTest {
             session.beginReadTransaction();
 
             session.close();
-        } catch (final TreetankFrameworkException exc) {
+        } catch (final TreetankException exc) {
             fail(exc.toString());
         }
     }
@@ -406,7 +399,7 @@ public class SessionTest {
             Assert.assertEquals(0, session.getReadTransactionCount());
 
             session.close();
-        } catch (final TreetankFrameworkException exc) {
+        } catch (final TreetankException exc) {
             fail(exc.toString());
         }
     }

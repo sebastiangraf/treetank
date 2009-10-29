@@ -18,6 +18,8 @@
 
 package com.treetank.api;
 
+import com.treetank.exception.TreetankException;
+
 /**
  * <h1>IReadTransaction</h1>
  * 
@@ -311,5 +313,5 @@ public interface IReadTransaction {
      * This is an idempotent operation and does nothing if the transaction is
      * already closed.
      */
-    void close();
+    void close() throws TreetankException;
 }

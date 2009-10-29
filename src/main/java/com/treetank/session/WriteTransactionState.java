@@ -18,8 +18,6 @@
 
 package com.treetank.session;
 
-import java.util.Stack;
-
 import com.treetank.api.IItem;
 import com.treetank.cache.ICache;
 import com.treetank.cache.TransactionLogCache;
@@ -434,7 +432,8 @@ public final class WriteTransactionState extends ReadTransactionState {
         return page;
     }
 
-    protected final RevisionRootPage prepareRevisionRootPage() {
+    protected final RevisionRootPage prepareRevisionRootPage()
+            throws TreetankIOException {
 
         if (getUberPage().isBootstrap()) {
             return getRevisionRootPage();

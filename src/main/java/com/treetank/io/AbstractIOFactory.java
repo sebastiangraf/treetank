@@ -68,10 +68,8 @@ public abstract class AbstractIOFactory {
      *             exception to be throwns
      */
     public final void closeStorage() throws TreetankIOException {
-        synchronized (this) {
-            closeConcreteStorage();
-            FACTORIES.remove(this.config);
-        }
+        closeConcreteStorage();
+        FACTORIES.remove(this.config);
     }
 
     protected abstract void closeConcreteStorage() throws TreetankIOException;
@@ -85,28 +83,26 @@ public abstract class AbstractIOFactory {
      */
     public final static AbstractIOFactory getInstance(
             final SessionConfiguration conf) throws TreetankIOException {
-        synchronized (FACTORIES) {
-            AbstractIOFactory fac = null;
-            if (FACTORIES.containsKey(conf)) {
-                fac = FACTORIES.get(conf);
-            } else {
+        AbstractIOFactory fac = null;
+        if (FACTORIES.containsKey(conf)) {
+            fac = FACTORIES.get(conf);
+        } else {
 
-                switch (conf.getType()) {
-                case File:
-                    fac = new FileFactory(conf);
-                    break;
-                case Berkeley:
-                    fac = new BerkeleyFactory(conf);
-                    break;
-                default:
-                    throw new IllegalArgumentException(new StringBuilder(
-                            "Type ").append(conf.getType().toString()).append(
-                            " not valid!").toString());
-                }
-                FACTORIES.put(conf, fac);
+            switch (conf.getType()) {
+            case File:
+                fac = new FileFactory(conf);
+                break;
+            case Berkeley:
+                fac = new BerkeleyFactory(conf);
+                break;
+            default:
+                throw new IllegalArgumentException(new StringBuilder("Type ")
+                        .append(conf.getType().toString())
+                        .append(" not valid!").toString());
             }
-            return fac;
+            FACTORIES.put(conf, fac);
         }
+        return fac;
     }
 
     /**

@@ -2,6 +2,8 @@ package com.treetank.exception;
 
 import java.io.IOException;
 
+import javax.xml.stream.XMLStreamException;
+
 import com.sleepycat.je.DatabaseException;
 
 /**
@@ -11,12 +13,22 @@ import com.sleepycat.je.DatabaseException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class TreetankIOException extends TreetankFrameworkException {
+public final class TreetankIOException extends TreetankException {
 
     /**
      * serializable id.
      */
     private static final long serialVersionUID = 4099242625448155216L;
+
+    /**
+     * Constructor.
+     * 
+     * @param paramExc
+     *            exception to be wrapped
+     */
+    public TreetankIOException(final XMLStreamException paramExc) {
+        super(paramExc);
+    }
 
     /**
      * Constructor.

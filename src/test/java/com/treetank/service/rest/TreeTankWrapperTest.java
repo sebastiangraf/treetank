@@ -16,6 +16,7 @@ import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
+import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankRestException;
 import com.treetank.service.xml.XMLSerializer;
 import com.treetank.session.Session;
@@ -32,7 +33,7 @@ public class TreeTankWrapperTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankRestException {
         wrapper.close();
         TestHelper.closeEverything();
     }
@@ -150,14 +151,19 @@ public class TreeTankWrapperTest {
     }
 
     protected final static void testContent(final String contentToCheck) {
-        final ISession session = Session.beginSession(ITestConstants.PATH2);
-        final IReadTransaction rtx = session.beginReadTransaction();
-        final ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        new XMLSerializer(rtx, stream).run();
-        final String content = new String(stream.toByteArray());
-        rtx.close();
-        session.close();
-        assertEquals(contentToCheck, content);
+        try {
+            final ISession session = Session.beginSession(ITestConstants.PATH2);
+            final IReadTransaction rtx = session.beginReadTransaction();
+            final ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            new XMLSerializer(rtx, stream).run();
+            final String content = new String(stream.toByteArray());
+            rtx.close();
+            session.close();
+            assertEquals(contentToCheck, content);
+        } catch (final TreetankException exc) {
+            exc.printStackTrace();
+            fail();
+        }
     }
 
 }

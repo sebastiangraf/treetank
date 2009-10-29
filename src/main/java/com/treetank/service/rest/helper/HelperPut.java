@@ -110,7 +110,8 @@ public final class HelperPut {
                     .write(("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
                             + "<rest:response xmlns:rest=\"REST\"><rest:sequence rest:revision=\"")
                             .getBytes(IConstants.DEFAULT_ENCODING));
-            out.write(Long.toString(revision).getBytes(IConstants.DEFAULT_ENCODING));
+            out.write(Long.toString(revision).getBytes(
+                    IConstants.DEFAULT_ENCODING));
             out.write(new String("\">").getBytes(IConstants.DEFAULT_ENCODING));
 
             // Handle.
@@ -118,9 +119,12 @@ public final class HelperPut {
 
             // Time measurement
             final long stop = System.currentTimeMillis();
-            out.write("</rest:sequence><rest:time>".getBytes(IConstants.DEFAULT_ENCODING));
-            out.write(Long.toString(stop - start).getBytes(IConstants.DEFAULT_ENCODING));
-            out.write("[ms]</rest:time></rest:response>".getBytes(IConstants.DEFAULT_ENCODING));
+            out.write("</rest:sequence><rest:time>"
+                    .getBytes(IConstants.DEFAULT_ENCODING));
+            out.write(Long.toString(stop - start).getBytes(
+                    IConstants.DEFAULT_ENCODING));
+            out.write("[ms]</rest:time></rest:response>"
+                    .getBytes(IConstants.DEFAULT_ENCODING));
 
             response.flushBuffer();
 

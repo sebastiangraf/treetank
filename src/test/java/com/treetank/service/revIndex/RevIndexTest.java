@@ -19,6 +19,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
+import com.treetank.exception.TreetankException;
 import com.treetank.session.Session;
 
 public class RevIndexTest {
@@ -196,7 +197,7 @@ public class RevIndexTest {
     }
 
     @Test
-    public void testMetaRev() {
+    public void testMetaRev() throws TreetankException {
         final long index1 = index.finishIndexInput();
         final long index2 = index.finishIndexInput();
         assertEquals(1, index1);
@@ -228,9 +229,9 @@ public class RevIndexTest {
         rtx.close();
         session.close();
     }
-    
+
     @After
-    public void tearDown(){
+    public void tearDown() {
         TestHelper.closeEverything();
     }
 

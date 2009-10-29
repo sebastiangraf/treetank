@@ -31,6 +31,7 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.XPathAxis;
@@ -58,7 +59,7 @@ public class OrExprTest {
     }
 
     @Test
-    public void testOr() {
+    public void testOr() throws TreetankException {
 
         final ISession session = Session.beginSession(ITestConstants.PATH1);
         IReadTransaction rtx = session.beginReadTransaction();
@@ -100,7 +101,7 @@ public class OrExprTest {
     }
 
     @Test
-    public void testOrQuery() {
+    public void testOrQuery() throws TreetankException {
         try {
             // Build simple test tree.
             final ISession session = Session.beginSession(ITestConstants.PATH1);

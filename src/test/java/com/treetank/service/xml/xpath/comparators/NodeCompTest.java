@@ -32,7 +32,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.expr.LiteralExpr;
 import com.treetank.service.xml.xpath.functions.XPathError;
@@ -51,38 +51,30 @@ public class NodeCompTest {
     private IReadTransaction rtx;
 
     @Before
-    public void setUp() {
-        try {
-            TestHelper.deleteEverything();
+    public void setUp() throws TreetankException {
+        TestHelper.deleteEverything();
 
-            // Build simple test tree.
-            session = Session.beginSession(ITestConstants.PATH1);
-            wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
+        // Build simple test tree.
+        session = Session.beginSession(ITestConstants.PATH1);
+        wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
 
-            // Find descendants starting from nodeKey 0L (root).
-            wtx.commit();
-            wtx.moveToDocumentRoot();
-            rtx = session.beginReadTransaction();
+        // Find descendants starting from nodeKey 0L (root).
+        wtx.commit();
+        wtx.moveToDocumentRoot();
+        rtx = session.beginReadTransaction();
 
-            comparator = new NodeComp(rtx, new LiteralExpr(rtx, -2),
-                    new LiteralExpr(rtx, -1), CompKind.IS);
-        } catch (final TreetankIOException exc) {
-            fail(exc.toString());
-        }
+        comparator = new NodeComp(rtx, new LiteralExpr(rtx, -2),
+                new LiteralExpr(rtx, -1), CompKind.IS);
     }
 
     @After
-    public void tearDown() {
-        try {
-            rtx.close();
-            wtx.abort();
-            wtx.close();
-            session.close();
-            TestHelper.closeEverything();
-        } catch (final TreetankIOException exc) {
-            fail(exc.toString());
-        }
+    public void tearDown() throws TreetankException {
+        rtx.close();
+        wtx.abort();
+        wtx.close();
+        session.close();
+        TestHelper.closeEverything();
     }
 
     @Test
