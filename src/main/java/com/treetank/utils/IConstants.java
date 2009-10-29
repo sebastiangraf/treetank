@@ -79,7 +79,7 @@ public interface IConstants {
     public static final int CHECKSUM_SIZE = 12;
 
     /** Default storage */
-    public static final StorageType STORAGE_TYPE = StorageType.File;
+    public static final StorageType STORAGE_TYPE = StorageType.Berkeley;
 
     // --- Indirect Page
     // ----------------------------------------------------------

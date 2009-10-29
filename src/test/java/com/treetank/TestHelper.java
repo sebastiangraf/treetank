@@ -28,7 +28,7 @@ public final class TestHelper {
     }
 
     @Ignore
-    public static final void deleteEverything() {
+    public synchronized static final void deleteEverything() {
         try {
             Session.removeSession(ITestConstants.PATH1);
             Session.removeSession(ITestConstants.PATH2);
@@ -43,7 +43,7 @@ public final class TestHelper {
     }
 
     @Ignore
-    public static final void closeEverything() {
+    public synchronized static final void closeEverything() {
         Session.closeSession(ITestConstants.PATH1);
         Session.closeSession(ITestConstants.PATH2);
         Session.closeSession(ITestConstants.NON_EXISTING_PATH);
