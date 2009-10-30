@@ -2,6 +2,7 @@ package com.treetank.service.revIndex;
 
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.utils.NamePageHash;
 
@@ -17,7 +18,7 @@ public final class MetaTreeNavigator {
      * @return the index of the treetank
      */
     static final long getIndexRev(final IReadTransaction rtx,
-            final long indexRev) {
+            final long indexRev) throws TreetankException {
         moveToMetaRevRoot(rtx);
 
         long ttRev = -1;
@@ -54,7 +55,8 @@ public final class MetaTreeNavigator {
         return ttRev;
     }
 
-    static long adaptMetaTree(final IWriteTransaction wtx, final long revision) {
+    static long adaptMetaTree(final IWriteTransaction wtx, final long revision)
+            throws TreetankException {
         moveToMetaRevRoot(wtx);
         long indexRev = revision;
         wtx.insertElementAsFirstChild(RevIndex.META_ELEMENT, "");
@@ -98,7 +100,8 @@ public final class MetaTreeNavigator {
 
     }
 
-    static long getPersistentNumber(final IReadTransaction rtx) {
+    static long getPersistentNumber(final IReadTransaction rtx)
+            throws TreetankException {
         moveToMetaRevRoot(rtx);
         long indexRev = -1;
         if (!rtx.getNode().hasFirstChild()) {
@@ -121,7 +124,8 @@ public final class MetaTreeNavigator {
     /**
      * Moving to meta rec root. Inserting basic structure if not
      */
-    private static final void moveToMetaRevRoot(final IReadTransaction rtx) {
+    private static final void moveToMetaRevRoot(final IReadTransaction rtx)
+            throws TreetankException {
         rtx.moveToDocumentRoot();
         if (!rtx.getNode().hasFirstChild()) {
             RevIndex.initialiseBasicStructure(rtx);

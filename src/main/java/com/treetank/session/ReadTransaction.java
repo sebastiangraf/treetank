@@ -22,6 +22,7 @@ import com.treetank.api.IItem;
 import com.treetank.api.IItemList;
 import com.treetank.api.IReadTransaction;
 import com.treetank.exception.TreetankException;
+import com.treetank.exception.TreetankIOException;
 import com.treetank.utils.NamePageHash;
 import com.treetank.utils.TypedValue;
 
@@ -62,7 +63,8 @@ public class ReadTransaction implements IReadTransaction {
      */
     protected ReadTransaction(final long transactionID,
             final SessionState sessionState,
-            final ReadTransactionState transactionState) {
+            final ReadTransactionState transactionState)
+            throws TreetankIOException {
         mTransactionID = transactionID;
         mSessionState = sessionState;
         mTransactionState = transactionState;

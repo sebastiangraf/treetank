@@ -106,7 +106,8 @@ public final class WriteTransactionState extends ReadTransactionState {
      *            key of the node to be modified
      * @return an {@link AbstractNode} instance
      */
-    protected final AbstractNode prepareNodeForModification(final long nodeKey) {
+    protected final AbstractNode prepareNodeForModification(final long nodeKey)
+            throws TreetankIOException {
         if (nodePageReference != null || nodePage != null || node != null) {
             throw new IllegalStateException();
         }
@@ -147,7 +148,8 @@ public final class WriteTransactionState extends ReadTransactionState {
      *            node to add.
      * @return Unmodified node from parameter for convenience.
      */
-    protected final <N extends AbstractNode> N createNode(final N node) {
+    protected final <N extends AbstractNode> N createNode(final N node)
+            throws TreetankIOException {
         // Allocate node key and increment node count.
         getRevisionRootPage().incrementNodeCountAndMaxNodeKey();
         // Prepare node nodePageReference (COW).
@@ -168,7 +170,7 @@ public final class WriteTransactionState extends ReadTransactionState {
     protected final ElementNode createElementNode(final long parentKey,
             final long firstChildKey, final long leftSiblingKey,
             final long rightSiblingKey, final int nameKey, final int uriKey,
-            final int type) {
+            final int type) throws TreetankIOException {
         return createNode(new ElementNode(
                 getRevisionRootPage().getMaxNodeKey() + 1, parentKey,
                 firstChildKey, leftSiblingKey, rightSiblingKey, nameKey,
@@ -177,20 +179,20 @@ public final class WriteTransactionState extends ReadTransactionState {
 
     protected final AttributeNode createAttributeNode(final long parentKey,
             final int nameKey, final int uriKey, final int type,
-            final byte[] value) {
+            final byte[] value) throws TreetankIOException {
         return createNode(new AttributeNode(getRevisionRootPage()
                 .getMaxNodeKey() + 1, parentKey, nameKey, uriKey, type, value));
     }
 
     protected final NamespaceNode createNamespaceNode(final long parentKey,
-            final int uriKey, final int prefixKey) {
+            final int uriKey, final int prefixKey) throws TreetankIOException {
         return createNode(new NamespaceNode(getRevisionRootPage()
                 .getMaxNodeKey() + 1, parentKey, uriKey, prefixKey));
     }
 
     protected final TextNode createTextNode(final long parentKey,
             final long leftSiblingKey, final long rightSiblingKey,
-            final int valueType, final byte[] value) {
+            final int valueType, final byte[] value) throws TreetankIOException {
         return createNode(new TextNode(
                 getRevisionRootPage().getMaxNodeKey() + 1, parentKey,
                 leftSiblingKey, rightSiblingKey, valueType, value));
@@ -199,7 +201,8 @@ public final class WriteTransactionState extends ReadTransactionState {
     /**
      * {@inheritDoc}
      */
-    protected final void removeNode(final AbstractNode node) {
+    protected final void removeNode(final AbstractNode node)
+            throws TreetankIOException {
         getRevisionRootPage().decrementNodeCount();
         final NodePage page = prepareNodePage(nodePageKey(node.getNodeKey()));
         page.setNode(nodePageOffset(node.getNodeKey()), null);
@@ -213,7 +216,7 @@ public final class WriteTransactionState extends ReadTransactionState {
     /**
      * {@inheritDoc}
      */
-    protected IItem getNode(final long nodeKey) {
+    protected IItem getNode(final long nodeKey) throws TreetankIOException {
 
         // Calculate page and node part for given nodeKey.
         final long nodePageKey = nodePageKey(nodeKey);
@@ -399,7 +402,8 @@ public final class WriteTransactionState extends ReadTransactionState {
         return page;
     }
 
-    protected final NodePage prepareNodePage(final long nodePageKey) {
+    protected final NodePage prepareNodePage(final long nodePageKey)
+            throws TreetankIOException {
 
         // Indirect reference.
         PageReference reference = prepareLeafOfTree(getRevisionRootPage()

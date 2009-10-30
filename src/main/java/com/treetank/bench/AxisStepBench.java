@@ -65,7 +65,7 @@ public class AxisStepBench {
     }
 
     @Bench(runs = 100)
-    public void benchTreeTankDescendant() {
+    public void benchTreeTankDescendant() throws TreetankException {
 
         final ISession session = Session.beginSession(mSessionConfiguration);
         // final ExecutorService executor = Executors.newFixedThreadPool(TASKS);

@@ -27,7 +27,7 @@ public class TreeTankWrapperTest {
     private TreeTankWrapper wrapper;
 
     @Before
-    public void setUp() {
+    public void setUp() throws TreetankRestException {
         TestHelper.deleteEverything();
         wrapper = new TreeTankWrapper(ITestConstants.PATH2);
     }

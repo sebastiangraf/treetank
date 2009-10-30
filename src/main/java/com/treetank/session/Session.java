@@ -71,7 +71,7 @@ public final class Session implements ISession {
      *             if there is a problem with opening the given file.
      */
     public static final ISession beginSession(final File file)
-            throws IOException {
+            throws TreetankIOException {
         return beginSession(file.getAbsolutePath());
     }
 
@@ -82,7 +82,8 @@ public final class Session implements ISession {
      *            Path to TreeTank file.
      * @return New session bound to given TreeTank file.
      */
-    public static final ISession beginSession(final String path) {
+    public static final ISession beginSession(final String path)
+            throws TreetankIOException {
         return beginSession(new SessionConfiguration(path));
     }
 
@@ -94,20 +95,15 @@ public final class Session implements ISession {
      * @return New session bound to given TreeTank file.
      */
     public static final ISession beginSession(
-            final SessionConfiguration sessionConfiguration) {
+            final SessionConfiguration sessionConfiguration)
+            throws TreetankIOException {
 
         ISession session = null;
 
         synchronized (SESSION_MAP) {
             session = SESSION_MAP.get(sessionConfiguration.getAbsolutePath());
             if (session == null) {
-                try {
-                    session = new Session(
-                            new SessionState(sessionConfiguration));
-                } catch (TreetankIOException e) {
-                    throw new RuntimeException(e);
-
-                }
+                session = new Session(new SessionState(sessionConfiguration));
                 SESSION_MAP
                         .put(sessionConfiguration.getAbsolutePath(), session);
             } else {

@@ -110,16 +110,10 @@ public class ReadTransactionState {
     /**
      * {@inheritDoc}
      */
-    protected IItem getNode(final long nodeKey) {
+    protected IItem getNode(final long nodeKey) throws TreetankIOException {
 
         // Immediately return node from item list if node key negative.
         if (nodeKey < 0) {
-            if (mItemList == null) {
-                throw new IllegalStateException(
-                        "NodeKey="
-                                + nodeKey
-                                + ": negative node key encountered but no item list available.");
-            }
             return mItemList.getItem(nodeKey);
         }
 
@@ -132,10 +126,8 @@ public class ReadTransactionState {
                 mRevisionRootPage.getIndirectPageReference(), nodePageKey),
                 nodePageKey);
 
-        IItem returnVal;
-
         // If nodePage is a weak one, the moveto is not cached
-        returnVal = page.getNode(nodePageOffset);
+        final IItem returnVal = page.getNode(nodePageOffset);
 
         return returnVal;
 
@@ -288,17 +280,13 @@ public class ReadTransactionState {
      * @return Dereferenced page.
      */
     protected final NodePage dereferenceNodePage(final PageReference reference,
-            final long nodePageKey) {
+            final long nodePageKey) throws TreetankIOException {
 
         NodePage page = (NodePage) dereferencePage(reference);
 
         // If there is no page, get it from the storage and cache it.
         if (page == null) {
-            try {
-                page = (NodePage) mPageReader.read(reference);
-            } catch (TreetankIOException e) {
-                throw new RuntimeException(e);
-            }
+            page = (NodePage) mPageReader.read(reference);
             mCache.put(reference.getKey().getIdentifier(), page);
         }
 
