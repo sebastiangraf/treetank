@@ -61,7 +61,6 @@ public class BerkeleyReader implements IReader {
     /**
      * {@inheritDoc}
      */
-    @Override
     public StorageProperties getProps() throws TreetankIOException {
         try {
 
@@ -85,7 +84,6 @@ public class BerkeleyReader implements IReader {
     /**
      * {@inheritDoc}
      */
-    @Override
     public AbstractPage read(final PageReference pageReference)
             throws TreetankIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
@@ -111,7 +109,6 @@ public class BerkeleyReader implements IReader {
     /**
      * {@inheritDoc}
      */
-    @Override
     public PageReference readFirstReference() throws TreetankIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
@@ -140,7 +137,6 @@ public class BerkeleyReader implements IReader {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void close() throws TreetankIOException {
         try {
             mTxn.abort();
