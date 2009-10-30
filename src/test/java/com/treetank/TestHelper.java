@@ -28,7 +28,7 @@ public final class TestHelper {
     }
 
     @Ignore
-    public synchronized static final void deleteEverything() {
+    public static final void deleteEverything() {
         try {
             Session.removeSession(ITestConstants.PATH1);
             Session.removeSession(ITestConstants.PATH2);
@@ -43,13 +43,13 @@ public final class TestHelper {
     }
 
     @Ignore
-    public synchronized static final void closeEverything() {
-        Session.closeSession(ITestConstants.PATH1);
-        Session.closeSession(ITestConstants.PATH2);
-        Session.closeSession(ITestConstants.NON_EXISTING_PATH);
-        Session.closeSession(ITestConstants.TEST_INSERT_CHILD_PATH);
-        Session.closeSession(ITestConstants.TEST_REVISION_PATH);
-        Session.closeSession(ITestConstants.TEST_SHREDDED_REVISION_PATH);
-        Session.closeSession(ITestConstants.TEST_EXISTING_PATH);
+    public static final void closeEverything() {
+//        Session.closeSession(ITestConstants.PATH1);
+//        Session.closeSession(ITestConstants.PATH2);
+//        Session.closeSession(ITestConstants.NON_EXISTING_PATH);
+//        Session.closeSession(ITestConstants.TEST_INSERT_CHILD_PATH);
+//        Session.closeSession(ITestConstants.TEST_REVISION_PATH);
+//        Session.closeSession(ITestConstants.TEST_SHREDDED_REVISION_PATH);
+//        Session.closeSession(ITestConstants.TEST_EXISTING_PATH);
     }
 }
