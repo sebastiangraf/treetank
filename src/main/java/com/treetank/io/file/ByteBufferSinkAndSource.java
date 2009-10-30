@@ -29,7 +29,6 @@ public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void writeByte(final byte byteVal) {
         buffer.put(byteVal);
     }
@@ -37,7 +36,6 @@ public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void writeLong(final long longVal) {
         buffer.putLong(longVal);
 
@@ -79,7 +77,6 @@ public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
     /**
      * {@inheritDoc}
      */
-    @Override
     public byte readByte() {
         return buffer.get();
     }
@@ -87,7 +84,6 @@ public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
     /**
      * {@inheritDoc}
      */
-    @Override
     public long readLong() {
         return buffer.getLong();
     }
@@ -95,7 +91,6 @@ public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
     /**
      *{@inheritDoc}
      */
-    @Override
     public void writeInt(final int intVal) {
         buffer.putInt(intVal);
 
@@ -104,7 +99,6 @@ public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
     /**
      *{@inheritDoc}
      */
-    @Override
     public int readInt() {
         return buffer.getInt();
     }

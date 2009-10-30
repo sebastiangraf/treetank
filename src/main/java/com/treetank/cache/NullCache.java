@@ -33,7 +33,6 @@ public final class NullCache implements ICache {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void clear() {
         // Not used over here
     }
@@ -41,7 +40,6 @@ public final class NullCache implements ICache {
     /**
      * {@inheritDoc}
      */
-    @Override
     public NodePage get(final long key) {
         return null;
     }
@@ -49,7 +47,6 @@ public final class NullCache implements ICache {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void put(final long key, final NodePage page) {
         // Not used over here
     }

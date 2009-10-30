@@ -59,7 +59,6 @@ public class BerkeleyWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void close() throws TreetankIOException {
         try {
             mTxn.commit();
@@ -71,7 +70,6 @@ public class BerkeleyWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void write(final PageReference pageReference)
             throws TreetankIOException {
         final AbstractPage page = pageReference.getPage();
@@ -154,7 +152,6 @@ public class BerkeleyWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void setProps(final StorageProperties props)
             throws TreetankIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
@@ -174,7 +171,6 @@ public class BerkeleyWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void writeFirstReference(final PageReference pageReference)
             throws TreetankIOException {
         write(pageReference);
@@ -198,7 +194,6 @@ public class BerkeleyWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    @Override
     public StorageProperties getProps() throws TreetankIOException {
         return reader.getProps();
     }
@@ -206,7 +201,6 @@ public class BerkeleyWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    @Override
     public AbstractPage read(final PageReference pageReference)
             throws TreetankIOException {
         return reader.read(pageReference);
@@ -215,7 +209,6 @@ public class BerkeleyWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    @Override
     public PageReference readFirstReference() throws TreetankIOException {
         return reader.readFirstReference();
     }

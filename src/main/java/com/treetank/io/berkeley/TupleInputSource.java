@@ -27,7 +27,6 @@ public final class TupleInputSource implements ITTSource {
     /**
      * {@inheritDoc}
      */
-    @Override
     public byte readByte() {
         return input.readByte();
     }
@@ -35,7 +34,6 @@ public final class TupleInputSource implements ITTSource {
     /**
      * {@inheritDoc}
      */
-    @Override
     public long readLong() {
         return input.readLong();
     }
@@ -43,7 +41,6 @@ public final class TupleInputSource implements ITTSource {
     /**
      * {@inheritDoc}
      */
-    @Override
     public int readInt() {
         return input.readInt();
     }

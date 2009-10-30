@@ -113,7 +113,6 @@ public final class FileReader implements IReader {
 
     }
 
-    @Override
     public PageReference readFirstReference() throws TreetankIOException {
         final PageReference uberPageReference = new PageReference();
         try {
@@ -144,7 +143,6 @@ public final class FileReader implements IReader {
         }
     }
 
-    @Override
     public StorageProperties getProps() throws TreetankIOException {
         try {
 
@@ -162,7 +160,6 @@ public final class FileReader implements IReader {
 
     }
 
-    @Override
     public void close() throws TreetankIOException {
         try {
             mFile.close();
