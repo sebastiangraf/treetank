@@ -27,7 +27,6 @@ public final class TupleOutputSink implements ITTSink {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void writeByte(final byte byteVal) {
         output.writeByte(byteVal);
     }
@@ -35,7 +34,6 @@ public final class TupleOutputSink implements ITTSink {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void writeLong(final long longVal) {
         output.writeLong(longVal);
     }
@@ -43,7 +41,6 @@ public final class TupleOutputSink implements ITTSink {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void writeInt(final int intVal) {
         output.writeInt(intVal);
     }

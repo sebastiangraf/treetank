@@ -70,7 +70,6 @@ public abstract class AbstractPersistenceCache implements ICache {
     /**
      * {@inheritDoc}
      * */
-    @Override
     public final void clear() {
         try {
             clearPersistent();
@@ -86,7 +85,6 @@ public abstract class AbstractPersistenceCache implements ICache {
     /**
      * {@inheritDoc}
      * */
-    @Override
     public final NodePage get(final long key) {
         try {
             return getPersistent(key);

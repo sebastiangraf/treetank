@@ -113,7 +113,6 @@ public final class FileWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void close() throws TreetankIOException {
         try {
             if (mFile != null) {
@@ -142,7 +141,6 @@ public final class FileWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void setProps(final StorageProperties props)
             throws TreetankIOException {
         try {
@@ -160,7 +158,6 @@ public final class FileWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void writeFirstReference(final PageReference pageReference)
             throws TreetankIOException {
         final byte[] tmp = new byte[IConstants.CHECKSUM_SIZE];
@@ -189,7 +186,6 @@ public final class FileWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    @Override
     public StorageProperties getProps() throws TreetankIOException {
         return reader.getProps();
     }
@@ -197,7 +193,6 @@ public final class FileWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    @Override
     public AbstractPage read(final PageReference pageReference)
             throws TreetankIOException {
         return reader.read(pageReference);
@@ -206,7 +201,6 @@ public final class FileWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    @Override
     public PageReference readFirstReference() throws TreetankIOException {
         return reader.readFirstReference();
     }
