@@ -80,11 +80,6 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>javax.xml.stream</groupId>
-			<artifactId>stax-api</artifactId>
-			<version>1.0-2</version>
-		</dependency>
-		<dependency>
 			<groupId>com.sleepycat</groupId>
 			<artifactId>je</artifactId>
 			<version>3.3.75</version>
@@ -136,7 +131,7 @@
   </snapshotRepository>
 </distributionManagement>
 <properties>
-		<compileSource>1.5</compileSource>
+		<compileSource>1.6</compileSource>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 </project>
