@@ -5,13 +5,15 @@ import java.util.Map;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
+import com.treetank.exception.TreetankRestException;
 
 public class RestTestHelper {
 
     private RestTestHelper() {
     }
 
-    public static Map<String, TreeTankWrapper> getTestInstances() {
+    public static Map<String, TreeTankWrapper> getTestInstances()
+            throws TreetankRestException {
         TestHelper.deleteEverything();
         final TreeTankWrapper wrapper1 = new TreeTankWrapper(
                 ITestConstants.PATH1);

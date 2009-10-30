@@ -9,6 +9,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.treetank.TestHelper;
+import com.treetank.exception.TreetankRestException;
 import com.treetank.service.rest.RestTestHelper;
 
 public class HelperDeleteTest {
@@ -16,7 +17,7 @@ public class HelperDeleteTest {
     private HelperDelete toTest;
 
     @Before
-    public void setUp() {
+    public void setUp() throws TreetankRestException {
         toTest = new HelperDelete(RestTestHelper.getTestInstances());
     }
 

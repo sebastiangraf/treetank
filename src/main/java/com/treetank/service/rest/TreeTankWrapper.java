@@ -26,6 +26,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
+import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankRestException;
 import com.treetank.service.xml.XMLSerializer;
 import com.treetank.service.xml.XMLShredder;
@@ -61,8 +62,13 @@ public final class TreeTankWrapper {
      * @param path
      *            to be bound to.
      */
-    public TreeTankWrapper(final String path) {
-        session = Session.beginSession(path);
+    public TreeTankWrapper(final String path) throws TreetankRestException {
+
+        try {
+            session = Session.beginSession(path);
+        } catch (final TreetankIOException exc) {
+            throw new TreetankRestException(exc);
+        }
     }
 
     /**

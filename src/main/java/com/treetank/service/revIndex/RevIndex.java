@@ -76,8 +76,7 @@ public final class RevIndex {
      *            folder to be access.
      * @throws TreetankException
      */
-    public RevIndex(final File index, final long rev) throws TreetankException,
-            IOException {
+    public RevIndex(final File index, final long rev) throws TreetankException {
         indexSession = Session.beginSession(index);
         if (rev < 0) {
             rtx = indexSession.beginWriteTransaction(
@@ -105,7 +104,8 @@ public final class RevIndex {
      * @param docs
      *            stack with order to be inserted.
      */
-    public final void insertNextNode(final Stack<String> docs) {
+    public final void insertNextNode(final Stack<String> docs)
+            throws TreetankException {
         indexRev = MetaTreeNavigator.getPersistentNumber(rtx);
         if (rtx instanceof IWriteTransaction) {
             final IWriteTransaction wtx = (IWriteTransaction) rtx;
@@ -122,7 +122,8 @@ public final class RevIndex {
      * @param names
      *            elements of the document to be indexed
      */
-    public final void insertNextTermForCurrentNode(final String term) {
+    public final void insertNextTermForCurrentNode(final String term)
+            throws TreetankException {
         // check if rtx is instance of WriteTransaction
         if (rtx instanceof IWriteTransaction) {
             final IWriteTransaction wtx = (IWriteTransaction) rtx;
@@ -188,7 +189,7 @@ public final class RevIndex {
      * 
      * @return the index revision number.
      */
-    public final long finishIndexInput() {
+    public final long finishIndexInput() throws TreetankException {
         if (rtx instanceof IWriteTransaction) {
             final IWriteTransaction wtx = (IWriteTransaction) rtx;
             try {
@@ -264,7 +265,8 @@ public final class RevIndex {
      *            to be searched in the trie structure
      * @return the root for the document key
      */
-    public final long getDocRootForTerm(final String term) {
+    public final long getDocRootForTerm(final String term)
+            throws TreetankException {
         return TrieNavigator.getDocRootInTrie(rtx, term);
 
     }
@@ -312,7 +314,8 @@ public final class RevIndex {
     /**
      * Initialising basic structure.
      */
-    static final void initialiseBasicStructure(final IReadTransaction rtx) {
+    static final void initialiseBasicStructure(final IReadTransaction rtx)
+            throws TreetankException {
         if (rtx instanceof IWriteTransaction) {
             final IWriteTransaction wtx = (IWriteTransaction) rtx;
             wtx.moveToDocumentRoot();

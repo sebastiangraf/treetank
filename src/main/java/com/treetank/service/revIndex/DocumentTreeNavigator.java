@@ -4,13 +4,14 @@ import java.util.Stack;
 
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.exception.TreetankException;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.NamePageHash;
 
 public final class DocumentTreeNavigator {
 
     static long adaptDocTree(final IWriteTransaction wtx,
-            final Stack<String> names) {
+            final Stack<String> names) throws TreetankException {
         moveToDocumentStructureRoot(wtx);
         long currentDocKey = IConstants.UNKNOWN;
         // iterating over all names in hierarchical order
@@ -81,7 +82,7 @@ public final class DocumentTreeNavigator {
      * Moving to documentstructure root
      */
     private static final void moveToDocumentStructureRoot(
-            final IReadTransaction rtx) {
+            final IReadTransaction rtx) throws TreetankException {
         rtx.moveToDocumentRoot();
         if (!rtx.getNode().hasFirstChild()) {
             RevIndex.initialiseBasicStructure(rtx);

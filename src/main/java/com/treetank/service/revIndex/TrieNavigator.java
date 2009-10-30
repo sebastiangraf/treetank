@@ -2,6 +2,8 @@ package com.treetank.service.revIndex;
 
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.exception.TreetankException;
+import com.treetank.exception.TreetankIOException;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.NamePageHash;
 
@@ -17,7 +19,8 @@ final class TrieNavigator {
      * @param term
      *            to be inserted
      */
-    static void adaptTrie(final IWriteTransaction wtx, final String term) {
+    static void adaptTrie(final IWriteTransaction wtx, final String term)
+            throws TreetankException {
         moveToTrieRoot(wtx);
         int endIndexOfTerm = 1;
         String current = "";
@@ -68,7 +71,8 @@ final class TrieNavigator {
         }
     }
 
-    static long getDocRootInTrie(final IReadTransaction rtx, final String term) {
+    static long getDocRootInTrie(final IReadTransaction rtx, final String term)
+            throws TreetankException {
         moveToTrieRoot(rtx);
         long returnVal = IConstants.UNKNOWN;
         StringBuilder toSearch = new StringBuilder();
@@ -117,7 +121,8 @@ final class TrieNavigator {
      * Private method to the root of the trie. Inserting basic structure if not
      * avaliable.
      */
-    private static final void moveToTrieRoot(final IReadTransaction rtx) {
+    private static final void moveToTrieRoot(final IReadTransaction rtx)
+            throws TreetankException {
         rtx.moveToDocumentRoot();
         if (!rtx.getNode().hasFirstChild()) {
             RevIndex.initialiseBasicStructure(rtx);
