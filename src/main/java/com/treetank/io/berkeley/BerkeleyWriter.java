@@ -32,6 +32,8 @@ public class BerkeleyWriter implements IWriter {
     /** Current {@link BerkeleyReader} to read with. */
     private transient final BerkeleyReader reader;
 
+    private long nodepagekey;
+
     /**
      * Simple constructor starting with an {@link Environment} and a
      * {@link Database}.
@@ -49,6 +51,7 @@ public class BerkeleyWriter implements IWriter {
         try {
             mTxn = env.beginTransaction(null, null);
             mDatabase = database;
+            nodepagekey = getLastNodePage();
         } catch (final DatabaseException exc) {
             throw new TreetankIOException(exc);
         }
@@ -61,6 +64,7 @@ public class BerkeleyWriter implements IWriter {
      */
     public void close() throws TreetankIOException {
         try {
+            setLastNodePage(nodepagekey);
             mTxn.commit();
         } catch (final DatabaseException exc) {
             throw new TreetankIOException(exc);
@@ -78,7 +82,8 @@ public class BerkeleyWriter implements IWriter {
         final DatabaseEntry keyEntry = new DatabaseEntry();
 
         // TODO make this better
-        final BerkeleyKey key = new BerkeleyKey(getLastNodePage() + 1);
+        nodepagekey++;
+        final BerkeleyKey key = new BerkeleyKey(nodepagekey);
 
         BerkeleyFactory.PAGE_VAL_B.objectToEntry(page, valueEntry);
         BerkeleyFactory.KEY.objectToEntry(key, keyEntry);
@@ -94,7 +99,6 @@ public class BerkeleyWriter implements IWriter {
         } catch (final DatabaseException exc) {
             throw new TreetankIOException(exc);
         }
-        setLastNodePage(key.getIdentifier());
         pageReference.setKey(key);
 
     }
