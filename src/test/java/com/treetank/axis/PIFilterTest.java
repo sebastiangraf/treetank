@@ -33,7 +33,7 @@ import com.treetank.utils.DocumentCreater;
 public class PIFilterTest {
 
     @Before
-    public void setUp() {
+    public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
     }
 
@@ -64,7 +64,7 @@ public class PIFilterTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
 

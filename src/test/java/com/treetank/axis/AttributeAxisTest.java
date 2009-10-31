@@ -36,7 +36,7 @@ import com.treetank.utils.TypedValue;
 public class AttributeAxisTest {
 
     @Before
-    public void setUp() {
+    public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
     }
 
@@ -128,7 +128,7 @@ public class AttributeAxisTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
 }

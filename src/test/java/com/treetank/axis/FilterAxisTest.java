@@ -18,8 +18,6 @@
 
 package com.treetank.axis;
 
-import static org.junit.Assert.fail;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,81 +32,69 @@ import com.treetank.utils.DocumentCreater;
 
 public class FilterAxisTest {
     @Before
-    public void setUp() {
+    public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
     }
 
     @Test
-    public void testNameAxisTest() {
-        try {
-            // Build simple test tree.
-            final ISession session = Session.beginSession(ITestConstants.PATH1);
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
+    public void testNameAxisTest() throws TreetankException {
+        // Build simple test tree.
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
 
-            wtx.moveToDocumentRoot();
-            IAxisTest.testIAxisConventions(new FilterAxis(new DescendantAxis(
-                    wtx), new NameFilter(wtx, "b")), new long[] { 5L, 9L });
+        wtx.moveToDocumentRoot();
+        IAxisTest.testIAxisConventions(new FilterAxis(new DescendantAxis(wtx),
+                new NameFilter(wtx, "b")), new long[] { 5L, 9L });
 
-            wtx.abort();
-            wtx.close();
-            session.close();
-        } catch (final TreetankException exc) {
-            fail(exc.toString());
-        }
+        wtx.abort();
+        wtx.close();
+        session.close();
 
     }
 
     @Test
-    public void testValueAxisTest() {
-        try {
-            // Build simple test tree.
-            final ISession session = Session.beginSession(ITestConstants.PATH1);
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
+    public void testValueAxisTest() throws TreetankException {
+        // Build simple test tree.
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
 
-            wtx.moveToDocumentRoot();
-            IAxisTest.testIAxisConventions(new FilterAxis(new DescendantAxis(
-                    wtx), new ValueFilter(wtx, "foo")), new long[] { 6L });
+        wtx.moveToDocumentRoot();
+        IAxisTest.testIAxisConventions(new FilterAxis(new DescendantAxis(wtx),
+                new ValueFilter(wtx, "foo")), new long[] { 6L });
 
-            wtx.abort();
-            wtx.close();
-            session.close();
-        } catch (final TreetankException exc) {
-            fail(exc.toString());
-        }
+        wtx.abort();
+        wtx.close();
+        session.close();
 
     }
 
     @Test
-    public void testValueAndNameAxisTest() {
-        try {
-            // Build simple test tree.
-            final ISession session = Session.beginSession(ITestConstants.PATH1);
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
+    public void testValueAndNameAxisTest() throws TreetankException {
+        // Build simple test tree.
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
 
-            wtx.moveTo(1L);
-            IAxisTest.testIAxisConventions(new FilterAxis(
-                    new AttributeAxis(wtx), new NameFilter(wtx, "i"),
-                    new ValueFilter(wtx, "j")), new long[] { 2L });
+        wtx.moveTo(1L);
+        IAxisTest.testIAxisConventions(new FilterAxis(new AttributeAxis(wtx),
+                new NameFilter(wtx, "i"), new ValueFilter(wtx, "j")),
+                new long[] { 2L });
 
-            wtx.moveTo(9L);
-            IAxisTest.testIAxisConventions(new FilterAxis(
-                    new AttributeAxis(wtx), new NameFilter(wtx, "y"),
-                    new ValueFilter(wtx, "y")), new long[] {});
+        wtx.moveTo(9L);
+        IAxisTest.testIAxisConventions(new FilterAxis(new AttributeAxis(wtx),
+                new NameFilter(wtx, "y"), new ValueFilter(wtx, "y")),
+                new long[] {});
 
-            wtx.abort();
-            wtx.close();
-            session.close();
-        } catch (final TreetankException exc) {
-            fail(exc.toString());
-        }
+        wtx.abort();
+        wtx.close();
+        session.close();
 
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
 }

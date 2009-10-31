@@ -33,7 +33,7 @@ import com.treetank.utils.DocumentCreater;
 public class PrecedingSiblingAxisTest {
 
     @Before
-    public void setUp() {
+    public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
     }
 
@@ -70,7 +70,7 @@ public class PrecedingSiblingAxisTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
 }

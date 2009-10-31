@@ -48,12 +48,12 @@ import com.treetank.utils.TypedValue;
 public class AndExprTest {
 
     @Before
-    public void setUp() {
+    public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
 
@@ -99,63 +99,59 @@ public class AndExprTest {
     }
 
     @Test
-    public void testAndQuery() {
+    public void testAndQuery() throws TreetankException {
+        // Build simple test tree.
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        IReadTransaction rtx = session.beginReadTransaction();
+
+        rtx.moveTo(1L);
+
+        final IAxis axis1 = new XPathAxis(rtx, "text() and node()");
+        assertEquals(true, axis1.hasNext());
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
+                .getNode().getRawValue()))));
+        assertEquals(false, axis1.hasNext());
+
+        final IAxis axis2 = new XPathAxis(rtx, "comment() and node()");
+        assertEquals(true, axis2.hasNext());
+        assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx
+                .getNode().getRawValue()))));
+        assertEquals(false, axis2.hasNext());
+
+        final IAxis axis3 = new XPathAxis(rtx, "1 eq 1 and 2 eq 2");
+        assertEquals(true, axis3.hasNext());
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
+                .getNode().getRawValue()))));
+        assertEquals(false, axis3.hasNext());
+
+        final IAxis axis4 = new XPathAxis(rtx, "1 eq 1 and 2 eq 3");
+        assertEquals(true, axis4.hasNext());
+        assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx
+                .getNode().getRawValue()))));
+        assertEquals(false, axis4.hasNext());
+
+        // is never evaluated.
+        final IAxis axis5 = new XPathAxis(rtx, "1 eq 2 and (3 idiv 0 = 1)");
+        assertEquals(true, axis5.hasNext());
+        assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx
+                .getNode().getRawValue()))));
+        assertEquals(false, axis5.hasNext());
+
+        final IAxis axis6 = new XPathAxis(rtx, "1 eq 1 and 3 idiv 0 = 1");
         try {
-            // Build simple test tree.
-            final ISession session = Session.beginSession(ITestConstants.PATH1);
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
-            wtx.commit();
-            IReadTransaction rtx = session.beginReadTransaction();
-
-            rtx.moveTo(1L);
-
-            final IAxis axis1 = new XPathAxis(rtx, "text() and node()");
-            assertEquals(true, axis1.hasNext());
-            assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
-                    .getNode().getRawValue()))));
-            assertEquals(false, axis1.hasNext());
-
-            final IAxis axis2 = new XPathAxis(rtx, "comment() and node()");
-            assertEquals(true, axis2.hasNext());
-            assertEquals(false, Boolean.parseBoolean(TypedValue
-                    .parseString((rtx.getNode().getRawValue()))));
-            assertEquals(false, axis2.hasNext());
-
-            final IAxis axis3 = new XPathAxis(rtx, "1 eq 1 and 2 eq 2");
-            assertEquals(true, axis3.hasNext());
-            assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
-                    .getNode().getRawValue()))));
-            assertEquals(false, axis3.hasNext());
-
-            final IAxis axis4 = new XPathAxis(rtx, "1 eq 1 and 2 eq 3");
-            assertEquals(true, axis4.hasNext());
-            assertEquals(false, Boolean.parseBoolean(TypedValue
-                    .parseString((rtx.getNode().getRawValue()))));
-            assertEquals(false, axis4.hasNext());
-
-            // is never evaluated.
-            final IAxis axis5 = new XPathAxis(rtx, "1 eq 2 and (3 idiv 0 = 1)");
-            assertEquals(true, axis5.hasNext());
-            assertEquals(false, Boolean.parseBoolean(TypedValue
-                    .parseString((rtx.getNode().getRawValue()))));
-            assertEquals(false, axis5.hasNext());
-
-            final IAxis axis6 = new XPathAxis(rtx, "1 eq 1 and 3 idiv 0 = 1");
-            try {
-                assertEquals(true, axis6.hasNext());
-                fail("Expected XPath exception, because of division by zero");
-            } catch (XPathError e) {
-                assertEquals("err:FOAR0001: Division by zero.", e.getMessage());
-            }
-
-            rtx.close();
-            wtx.abort();
-            wtx.close();
-            session.close();
-        } catch (final TreetankException exc) {
-            fail(exc.toString());
+            assertEquals(true, axis6.hasNext());
+            fail("Expected XPath exception, because of division by zero");
+        } catch (XPathError e) {
+            assertEquals("err:FOAR0001: Division by zero.", e.getMessage());
         }
+
+        rtx.close();
+        wtx.abort();
+        wtx.close();
+        session.close();
 
     }
 

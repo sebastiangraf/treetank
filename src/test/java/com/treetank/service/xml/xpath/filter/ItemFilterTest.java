@@ -18,8 +18,6 @@
 
 package com.treetank.service.xml.xpath.filter;
 
-import static org.junit.Assert.fail;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,45 +28,40 @@ import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.IFilterTest;
 import com.treetank.exception.TreetankException;
-import com.treetank.exception.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
 
 public class ItemFilterTest {
 
     @Before
-    public void setUp() {
+    public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
 
     @Test
     public void testIFilterConvetions() throws TreetankException {
-        try {
-            // Build simple test tree.
-            final ISession session = Session.beginSession(ITestConstants.PATH1);
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
+        // Build simple test tree.
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
 
-            wtx.moveTo(9L);
-            IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
+        wtx.moveTo(9L);
+        IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
 
-            wtx.moveTo(3L);
-            IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
+        wtx.moveTo(3L);
+        IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
 
-            wtx.moveTo(2L);
-            wtx.moveToAttribute(0);
-            IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
+        wtx.moveTo(2L);
+        wtx.moveToAttribute(0);
+        IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
 
-            wtx.abort();
-            wtx.close();
-            session.close();
-        } catch (final TreetankIOException exc) {
-            fail(exc.toString());
-        }
+        wtx.abort();
+        wtx.close();
+        session.close();
     }
 }

@@ -1,7 +1,6 @@
 package com.treetank.service.revIndex;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Stack;
 

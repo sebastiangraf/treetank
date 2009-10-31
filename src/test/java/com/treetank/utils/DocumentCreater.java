@@ -99,40 +99,37 @@ public final class DocumentCreater {
      * @param wtx
      *            IWriteTransaction to write to.
      */
-    public static void create(final IWriteTransaction wtx) {
-        try {
-            wtx.moveToDocumentRoot();
+    public static void create(final IWriteTransaction wtx)
+            throws TreetankException {
+        wtx.moveToDocumentRoot();
 
-            wtx.insertElementAsFirstChild("p:a", "ns");
-            wtx.insertAttribute("i", "", "j");
-            wtx.moveToParent();
-            wtx.insertNamespace("ns", "p");
-            wtx.moveToParent();
+        wtx.insertElementAsFirstChild("p:a", "ns");
+        wtx.insertAttribute("i", "", "j");
+        wtx.moveToParent();
+        wtx.insertNamespace("ns", "p");
+        wtx.moveToParent();
 
-            wtx.insertTextAsFirstChild("oops1");
+        wtx.insertTextAsFirstChild("oops1");
 
-            wtx.insertElementAsRightSibling("b", "");
+        wtx.insertElementAsRightSibling("b", "");
 
-            wtx.insertTextAsFirstChild("foo");
-            wtx.insertElementAsRightSibling("c", "");
-            wtx.moveToParent();
+        wtx.insertTextAsFirstChild("foo");
+        wtx.insertElementAsRightSibling("c", "");
+        wtx.moveToParent();
 
-            wtx.insertTextAsRightSibling("oops2");
+        wtx.insertTextAsRightSibling("oops2");
 
-            wtx.insertElementAsRightSibling("b", "");
-            wtx.insertAttribute("p:x", "ns", "y");
-            wtx.moveToParent();
+        wtx.insertElementAsRightSibling("b", "");
+        wtx.insertAttribute("p:x", "ns", "y");
+        wtx.moveToParent();
 
-            wtx.insertElementAsFirstChild("c", "");
-            wtx.insertTextAsRightSibling("bar");
-            wtx.moveToParent();
+        wtx.insertElementAsFirstChild("c", "");
+        wtx.insertTextAsRightSibling("bar");
+        wtx.moveToParent();
 
-            wtx.insertTextAsRightSibling("oops3");
+        wtx.insertTextAsRightSibling("oops3");
 
-            wtx.moveToDocumentRoot();
-        } catch (final TreetankException exc) {
-            throw new RuntimeException(exc);
-        }
+        wtx.moveToDocumentRoot();
     }
 
     /**
@@ -142,34 +139,31 @@ public final class DocumentCreater {
      * @param wtx
      *            IWriteTransaction to write to.
      */
-    public static void createWithoutAttributes(final IWriteTransaction wtx) {
-        try {
-            wtx.moveToDocumentRoot();
+    public static void createWithoutAttributes(final IWriteTransaction wtx)
+            throws TreetankException {
+        wtx.moveToDocumentRoot();
 
-            wtx.insertElementAsFirstChild("p:a", "ns");
+        wtx.insertElementAsFirstChild("p:a", "ns");
 
-            wtx.insertTextAsFirstChild("oops1");
+        wtx.insertTextAsFirstChild("oops1");
 
-            wtx.insertElementAsRightSibling("b", "");
+        wtx.insertElementAsRightSibling("b", "");
 
-            wtx.insertTextAsFirstChild("foo");
-            wtx.insertElementAsRightSibling("c", "");
-            wtx.moveToParent();
+        wtx.insertTextAsFirstChild("foo");
+        wtx.insertElementAsRightSibling("c", "");
+        wtx.moveToParent();
 
-            wtx.insertTextAsRightSibling("oops2");
+        wtx.insertTextAsRightSibling("oops2");
 
-            wtx.insertElementAsRightSibling("b", "");
+        wtx.insertElementAsRightSibling("b", "");
 
-            wtx.insertElementAsFirstChild("c", "");
-            wtx.insertTextAsRightSibling("bar");
-            wtx.moveToParent();
+        wtx.insertElementAsFirstChild("c", "");
+        wtx.insertTextAsRightSibling("bar");
+        wtx.moveToParent();
 
-            wtx.insertTextAsRightSibling("oops3");
+        wtx.insertTextAsRightSibling("oops3");
 
-            wtx.moveToDocumentRoot();
-        } catch (final TreetankException exc) {
-            throw new RuntimeException(exc);
-        }
+        wtx.moveToDocumentRoot();
     }
 
     /**
@@ -179,38 +173,35 @@ public final class DocumentCreater {
      * @param wtx
      *            IWriteTransaction to write to.
      */
-    public static void createWithoutNamespace(final IWriteTransaction wtx) {
-        try {
-            wtx.moveToDocumentRoot();
+    public static void createWithoutNamespace(final IWriteTransaction wtx)
+            throws TreetankException {
+        wtx.moveToDocumentRoot();
 
-            wtx.insertElementAsFirstChild("a", "");
-            wtx.insertAttribute("i", "", "j");
-            wtx.moveToParent();
+        wtx.insertElementAsFirstChild("a", "");
+        wtx.insertAttribute("i", "", "j");
+        wtx.moveToParent();
 
-            wtx.insertTextAsFirstChild("oops1");
+        wtx.insertTextAsFirstChild("oops1");
 
-            wtx.insertElementAsRightSibling("b", "");
+        wtx.insertElementAsRightSibling("b", "");
 
-            wtx.insertTextAsFirstChild("foo");
-            wtx.insertElementAsRightSibling("c", "");
-            wtx.moveToParent();
+        wtx.insertTextAsFirstChild("foo");
+        wtx.insertElementAsRightSibling("c", "");
+        wtx.moveToParent();
 
-            wtx.insertTextAsRightSibling("oops2");
+        wtx.insertTextAsRightSibling("oops2");
 
-            wtx.insertElementAsRightSibling("b", "");
-            wtx.insertAttribute("x", "", "y");
-            wtx.moveToParent();
+        wtx.insertElementAsRightSibling("b", "");
+        wtx.insertAttribute("x", "", "y");
+        wtx.moveToParent();
 
-            wtx.insertElementAsFirstChild("c", "");
-            wtx.insertTextAsRightSibling("bar");
-            wtx.moveToParent();
+        wtx.insertElementAsFirstChild("c", "");
+        wtx.insertTextAsRightSibling("bar");
+        wtx.moveToParent();
 
-            wtx.insertTextAsRightSibling("oops3");
+        wtx.insertTextAsRightSibling("oops3");
 
-            wtx.moveToDocumentRoot();
-        } catch (final TreetankException exc) {
-            throw new RuntimeException(exc);
-        }
+        wtx.moveToDocumentRoot();
     }
 
 }

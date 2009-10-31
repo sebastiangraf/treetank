@@ -19,7 +19,6 @@
 package com.treetank.service.xml.xpath.expr;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.Before;
@@ -45,63 +44,59 @@ import com.treetank.utils.TypedValue;
 public class EveryExprTest {
 
     @Before
-    public void setUp() {
+    public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testEveryExpr() {
-        try {
-            // Build simple test tree.
-            final ISession session = Session.beginSession(ITestConstants.PATH1);
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
-            wtx.commit();
-            IReadTransaction rtx = session.beginReadTransaction();
+    public void testEveryExpr() throws TreetankException {
+        // Build simple test tree.
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        IReadTransaction rtx = session.beginReadTransaction();
 
-            final IAxis axis1 = new XPathAxis(rtx,
-                    "every $child in child::node()" + "satisfies $child/@i");
-            assertEquals(true, axis1.hasNext());
-            assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
-                    .getNode().getRawValue()))));
-            assertEquals(false, axis1.hasNext());
+        final IAxis axis1 = new XPathAxis(rtx, "every $child in child::node()"
+                + "satisfies $child/@i");
+        assertEquals(true, axis1.hasNext());
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
+                .getNode().getRawValue()))));
+        assertEquals(false, axis1.hasNext());
 
-            final IAxis axis2 = new XPathAxis(rtx,
-                    "every $child in child::node()" + "satisfies $child/@abc");
-            assertEquals(true, axis2.hasNext());
-            assertEquals(false, Boolean.parseBoolean(TypedValue
-                    .parseString((rtx.getNode().getRawValue()))));
-            assertEquals(false, axis2.hasNext());
+        final IAxis axis2 = new XPathAxis(rtx, "every $child in child::node()"
+                + "satisfies $child/@abc");
+        assertEquals(true, axis2.hasNext());
+        assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx
+                .getNode().getRawValue()))));
+        assertEquals(false, axis2.hasNext());
 
-            rtx.moveTo(1L);
-            final IAxis axis3 = new XPathAxis(rtx,
-                    "every $child in child::element()"
-                            + " satisfies $child/attribute::attribute()");
-            assertEquals(true, axis3.hasNext());
-            assertEquals(false, Boolean.parseBoolean(TypedValue
-                    .parseString((rtx.getNode().getRawValue()))));
-            assertEquals(false, axis3.hasNext());
+        rtx.moveTo(1L);
+        final IAxis axis3 = new XPathAxis(rtx,
+                "every $child in child::element()"
+                        + " satisfies $child/attribute::attribute()");
+        assertEquals(true, axis3.hasNext());
+        assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx
+                .getNode().getRawValue()))));
+        assertEquals(false, axis3.hasNext());
 
-            rtx.moveTo(1L);
-            final IAxis axis4 = new XPathAxis(rtx,
-                    "every $child in child::element() satisfies $child/child::c");
-            assertEquals(true, axis4.hasNext());
-            assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
-                    .getNode().getRawValue()))));
-            assertEquals(false, axis4.hasNext());
+        rtx.moveTo(1L);
+        final IAxis axis4 = new XPathAxis(rtx,
+                "every $child in child::element() satisfies $child/child::c");
+        assertEquals(true, axis4.hasNext());
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
+                .getNode().getRawValue()))));
+        assertEquals(false, axis4.hasNext());
 
-            rtx.close();
-            wtx.abort();
-            wtx.close();
-            session.close();
-        } catch (final TreetankException exc) {
-            fail(exc.toString());
-        }
+        rtx.close();
+        wtx.abort();
+        wtx.close();
+        session.close();
     }
 
 }

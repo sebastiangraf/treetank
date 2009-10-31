@@ -33,7 +33,7 @@ import com.treetank.utils.DocumentCreater;
 public class AncestorAxisTest {
 
     @Before
-    public void setUp() {
+    public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
     }
 
@@ -93,7 +93,7 @@ public class AncestorAxisTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
 }

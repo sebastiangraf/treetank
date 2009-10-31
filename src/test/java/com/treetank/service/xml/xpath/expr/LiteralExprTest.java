@@ -19,7 +19,6 @@
 package com.treetank.service.xml.xpath.expr;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.Before;
@@ -55,7 +54,7 @@ public class LiteralExprTest {
     private int key2;
 
     @Before
-    public void setUp() {
+    public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
         item1 = new AtomicValue(false);
         item2 = new AtomicValue(14, Type.INTEGER);
@@ -63,7 +62,7 @@ public class LiteralExprTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
 

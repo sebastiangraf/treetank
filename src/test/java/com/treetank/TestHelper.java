@@ -1,7 +1,5 @@
 package com.treetank;
 
-import static org.junit.Assert.fail;
-
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -28,28 +26,24 @@ public final class TestHelper {
     }
 
     @Ignore
-    public static final void deleteEverything() {
-        try {
-            Session.removeSession(ITestConstants.PATH1);
-            Session.removeSession(ITestConstants.PATH2);
-            Session.removeSession(ITestConstants.NON_EXISTING_PATH);
-            Session.removeSession(ITestConstants.TEST_INSERT_CHILD_PATH);
-            Session.removeSession(ITestConstants.TEST_REVISION_PATH);
-            Session.removeSession(ITestConstants.TEST_SHREDDED_REVISION_PATH);
-            Session.removeSession(ITestConstants.TEST_EXISTING_PATH);
-        } catch (final TreetankException exc) {
-            fail(exc.toString());
-        }
+    public static final void deleteEverything() throws TreetankException {
+        Session.removeSession(ITestConstants.PATH1);
+        Session.removeSession(ITestConstants.PATH2);
+        Session.removeSession(ITestConstants.NON_EXISTING_PATH);
+        Session.removeSession(ITestConstants.TEST_INSERT_CHILD_PATH);
+        Session.removeSession(ITestConstants.TEST_REVISION_PATH);
+        Session.removeSession(ITestConstants.TEST_SHREDDED_REVISION_PATH);
+        Session.removeSession(ITestConstants.TEST_EXISTING_PATH);
     }
 
     @Ignore
-    public static final void closeEverything() {
-//        Session.closeSession(ITestConstants.PATH1);
-//        Session.closeSession(ITestConstants.PATH2);
-//        Session.closeSession(ITestConstants.NON_EXISTING_PATH);
-//        Session.closeSession(ITestConstants.TEST_INSERT_CHILD_PATH);
-//        Session.closeSession(ITestConstants.TEST_REVISION_PATH);
-//        Session.closeSession(ITestConstants.TEST_SHREDDED_REVISION_PATH);
-//        Session.closeSession(ITestConstants.TEST_EXISTING_PATH);
+    public static final void closeEverything() throws TreetankException {
+        // Session.closeSession(ITestConstants.PATH1);
+        // Session.closeSession(ITestConstants.PATH2);
+        // Session.closeSession(ITestConstants.NON_EXISTING_PATH);
+        // Session.closeSession(ITestConstants.TEST_INSERT_CHILD_PATH);
+        // Session.closeSession(ITestConstants.TEST_REVISION_PATH);
+        // Session.closeSession(ITestConstants.TEST_SHREDDED_REVISION_PATH);
+        // Session.closeSession(ITestConstants.TEST_EXISTING_PATH);
     }
 }

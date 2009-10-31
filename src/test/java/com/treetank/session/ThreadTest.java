@@ -35,6 +35,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
+import com.treetank.exception.TreetankException;
 import com.treetank.utils.DocumentCreater;
 import com.treetank.utils.TypedValue;
 
@@ -43,12 +44,12 @@ public class ThreadTest {
     public static final int WORKER_COUNT = 50;
 
     @Before
-    public void setUp() {
+    public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
 

@@ -3,7 +3,6 @@ package com.treetank.service.revIndex;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.util.Stack;
@@ -33,167 +32,157 @@ public class RevIndexTest {
     }
 
     @Test
-    public void testTrie() {
-        try {
-            TrieNavigator
-                    .adaptTrie((IWriteTransaction) index.getTrans(), "bla");
-            TrieNavigator.adaptTrie((IWriteTransaction) index.getTrans(),
-                    "blubb");
-            ((IWriteTransaction) index.getTrans()).commit();
-            index.close();
+    public void testTrie() throws TreetankException {
+        TrieNavigator.adaptTrie((IWriteTransaction) index.getTrans(), "bla");
+        TrieNavigator.adaptTrie((IWriteTransaction) index.getTrans(), "blubb");
+        ((IWriteTransaction) index.getTrans()).commit();
+        index.close();
 
-            // check
-            final ISession session = Session.beginSession(ITestConstants.PATH1);
-            final IReadTransaction rtx = session.beginReadTransaction();
-            rtx.moveToDocumentRoot();
-            rtx.moveToFirstChild();
-            rtx.moveToRightSibling();
-            final IAxis desc = new DescendantAxis(rtx);
+        // check
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IReadTransaction rtx = session.beginReadTransaction();
+        rtx.moveToDocumentRoot();
+        rtx.moveToFirstChild();
+        rtx.moveToRightSibling();
+        final IAxis desc = new DescendantAxis(rtx);
 
-            assertTrue(desc.hasNext());
-            assertTrue(rtx.moveTo(desc.next()));
-            assertTrue(rtx.getNameOfCurrentNode().equals("t"));
+        assertTrue(desc.hasNext());
+        assertTrue(rtx.moveTo(desc.next()));
+        assertTrue(rtx.getNameOfCurrentNode().equals("t"));
 
-            assertTrue(rtx.moveToAttribute(0));
-            assertTrue(rtx.getValueOfCurrentNode().equals("b"));
-            assertTrue(rtx.moveToParent());
+        assertTrue(rtx.moveToAttribute(0));
+        assertTrue(rtx.getValueOfCurrentNode().equals("b"));
+        assertTrue(rtx.moveToParent());
 
-            assertTrue(desc.hasNext());
-            assertTrue(rtx.moveTo(desc.next()));
-            assertTrue(rtx.getNameOfCurrentNode().equals("t"));
+        assertTrue(desc.hasNext());
+        assertTrue(rtx.moveTo(desc.next()));
+        assertTrue(rtx.getNameOfCurrentNode().equals("t"));
 
-            assertTrue(rtx.moveToAttribute(0));
-            assertTrue(rtx.getValueOfCurrentNode().equals("bl"));
-            assertTrue(rtx.moveToParent());
+        assertTrue(rtx.moveToAttribute(0));
+        assertTrue(rtx.getValueOfCurrentNode().equals("bl"));
+        assertTrue(rtx.moveToParent());
 
-            assertTrue(desc.hasNext());
-            assertTrue(rtx.moveTo(desc.next()));
-            assertTrue(rtx.getNameOfCurrentNode().equals("t"));
+        assertTrue(desc.hasNext());
+        assertTrue(rtx.moveTo(desc.next()));
+        assertTrue(rtx.getNameOfCurrentNode().equals("t"));
 
-            assertTrue(rtx.moveToAttribute(0));
-            assertTrue(rtx.getValueOfCurrentNode().equals("bla"));
-            assertTrue(rtx.moveToParent());
+        assertTrue(rtx.moveToAttribute(0));
+        assertTrue(rtx.getValueOfCurrentNode().equals("bla"));
+        assertTrue(rtx.moveToParent());
 
-            assertTrue(desc.hasNext());
-            assertTrue(rtx.moveTo(desc.next()));
-            assertTrue(rtx.getNameOfCurrentNode().equals("t"));
+        assertTrue(desc.hasNext());
+        assertTrue(rtx.moveTo(desc.next()));
+        assertTrue(rtx.getNameOfCurrentNode().equals("t"));
 
-            assertTrue(rtx.moveToAttribute(0));
-            assertTrue(rtx.getValueOfCurrentNode().equals("blu"));
-            assertTrue(rtx.moveToParent());
+        assertTrue(rtx.moveToAttribute(0));
+        assertTrue(rtx.getValueOfCurrentNode().equals("blu"));
+        assertTrue(rtx.moveToParent());
 
-            assertTrue(desc.hasNext());
-            assertTrue(rtx.moveTo(desc.next()));
-            assertTrue(rtx.getNameOfCurrentNode().equals("t"));
+        assertTrue(desc.hasNext());
+        assertTrue(rtx.moveTo(desc.next()));
+        assertTrue(rtx.getNameOfCurrentNode().equals("t"));
 
-            assertTrue(rtx.moveToAttribute(0));
-            assertTrue(rtx.getValueOfCurrentNode().equals("blub"));
-            assertTrue(rtx.moveToParent());
+        assertTrue(rtx.moveToAttribute(0));
+        assertTrue(rtx.getValueOfCurrentNode().equals("blub"));
+        assertTrue(rtx.moveToParent());
 
-            assertTrue(desc.hasNext());
-            assertTrue(rtx.moveTo(desc.next()));
-            assertTrue(rtx.getNameOfCurrentNode().equals("t"));
+        assertTrue(desc.hasNext());
+        assertTrue(rtx.moveTo(desc.next()));
+        assertTrue(rtx.getNameOfCurrentNode().equals("t"));
 
-            assertTrue(rtx.moveToAttribute(0));
-            assertTrue(rtx.getValueOfCurrentNode().equals("blubb"));
-            assertTrue(rtx.moveToParent());
+        assertTrue(rtx.moveToAttribute(0));
+        assertTrue(rtx.getValueOfCurrentNode().equals("blubb"));
+        assertTrue(rtx.moveToParent());
 
-            assertFalse(desc.hasNext());
-            rtx.close();
-            session.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        }
+        assertFalse(desc.hasNext());
+        rtx.close();
+        session.close();
     }
 
     @Test
-    public void testDocument() throws Exception {
-        try {
-            final Stack<String> uuids1 = new Stack<String>();
-            uuids1.push("bla");
-            uuids1.push("bl");
-            uuids1.push("b");
+    public void testDocument() throws TreetankException {
+        final Stack<String> uuids1 = new Stack<String>();
+        uuids1.push("bla");
+        uuids1.push("bl");
+        uuids1.push("b");
 
-            final Stack<String> uuids2 = new Stack<String>();
-            uuids2.push("blubb");
-            uuids2.push("blub");
-            uuids2.push("blu");
-            uuids2.push("bl");
-            uuids2.push("b");
+        final Stack<String> uuids2 = new Stack<String>();
+        uuids2.push("blubb");
+        uuids2.push("blub");
+        uuids2.push("blu");
+        uuids2.push("bl");
+        uuids2.push("b");
 
-            DocumentTreeNavigator.adaptDocTree((IWriteTransaction) index
-                    .getTrans(), (Stack<String>) uuids1.clone());
-            index.finishIndexInput();
+        DocumentTreeNavigator.adaptDocTree(
+                (IWriteTransaction) index.getTrans(), (Stack<String>) uuids1
+                        .clone());
+        index.finishIndexInput();
 
-            DocumentTreeNavigator.adaptDocTree((IWriteTransaction) index
-                    .getTrans(), (Stack<String>) uuids2.clone());
-            index.close();
+        DocumentTreeNavigator.adaptDocTree(
+                (IWriteTransaction) index.getTrans(), (Stack<String>) uuids2
+                        .clone());
+        index.close();
 
-            // check
-            final ISession session = Session.beginSession(ITestConstants.PATH1);
-            final IReadTransaction rtx = session.beginReadTransaction();
-            rtx.moveToFirstChild();
-            rtx.moveToRightSibling();
-            rtx.moveToRightSibling();
-            final IAxis desc = new DescendantAxis(rtx);
+        // check
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IReadTransaction rtx = session.beginReadTransaction();
+        rtx.moveToFirstChild();
+        rtx.moveToRightSibling();
+        rtx.moveToRightSibling();
+        final IAxis desc = new DescendantAxis(rtx);
 
-            assertTrue(desc.hasNext());
-            assertTrue(rtx.moveTo(desc.next()));
-            assertTrue(rtx.getNameOfCurrentNode().equals("d"));
+        assertTrue(desc.hasNext());
+        assertTrue(rtx.moveTo(desc.next()));
+        assertTrue(rtx.getNameOfCurrentNode().equals("d"));
 
-            assertTrue(rtx.moveToAttribute(0));
-            assertTrue(rtx.getValueOfCurrentNode().equals("b"));
-            assertTrue(rtx.moveToParent());
+        assertTrue(rtx.moveToAttribute(0));
+        assertTrue(rtx.getValueOfCurrentNode().equals("b"));
+        assertTrue(rtx.moveToParent());
 
-            assertTrue(desc.hasNext());
-            assertTrue(rtx.moveTo(desc.next()));
-            assertTrue(rtx.getNameOfCurrentNode().equals("d"));
+        assertTrue(desc.hasNext());
+        assertTrue(rtx.moveTo(desc.next()));
+        assertTrue(rtx.getNameOfCurrentNode().equals("d"));
 
-            assertTrue(rtx.moveToAttribute(0));
-            assertTrue(rtx.getValueOfCurrentNode().equals("bl"));
-            assertTrue(rtx.moveToParent());
+        assertTrue(rtx.moveToAttribute(0));
+        assertTrue(rtx.getValueOfCurrentNode().equals("bl"));
+        assertTrue(rtx.moveToParent());
 
-            assertTrue(desc.hasNext());
-            assertTrue(rtx.moveTo(desc.next()));
-            assertTrue(rtx.getNameOfCurrentNode().equals("d"));
+        assertTrue(desc.hasNext());
+        assertTrue(rtx.moveTo(desc.next()));
+        assertTrue(rtx.getNameOfCurrentNode().equals("d"));
 
-            assertTrue(rtx.moveToAttribute(0));
-            assertTrue(rtx.getValueOfCurrentNode().equals("bla"));
-            assertTrue(rtx.moveToParent());
+        assertTrue(rtx.moveToAttribute(0));
+        assertTrue(rtx.getValueOfCurrentNode().equals("bla"));
+        assertTrue(rtx.moveToParent());
 
-            assertTrue(desc.hasNext());
-            assertTrue(rtx.moveTo(desc.next()));
-            assertTrue(rtx.getNameOfCurrentNode().equals("d"));
+        assertTrue(desc.hasNext());
+        assertTrue(rtx.moveTo(desc.next()));
+        assertTrue(rtx.getNameOfCurrentNode().equals("d"));
 
-            assertTrue(rtx.moveToAttribute(0));
-            assertTrue(rtx.getValueOfCurrentNode().equals("blu"));
-            assertTrue(rtx.moveToParent());
+        assertTrue(rtx.moveToAttribute(0));
+        assertTrue(rtx.getValueOfCurrentNode().equals("blu"));
+        assertTrue(rtx.moveToParent());
 
-            assertTrue(desc.hasNext());
-            assertTrue(rtx.moveTo(desc.next()));
-            assertTrue(rtx.getNameOfCurrentNode().equals("d"));
+        assertTrue(desc.hasNext());
+        assertTrue(rtx.moveTo(desc.next()));
+        assertTrue(rtx.getNameOfCurrentNode().equals("d"));
 
-            assertTrue(rtx.moveToAttribute(0));
-            assertTrue(rtx.getValueOfCurrentNode().equals("blub"));
-            assertTrue(rtx.moveToParent());
+        assertTrue(rtx.moveToAttribute(0));
+        assertTrue(rtx.getValueOfCurrentNode().equals("blub"));
+        assertTrue(rtx.moveToParent());
 
-            assertTrue(desc.hasNext());
-            assertTrue(rtx.moveTo(desc.next()));
-            assertTrue(rtx.getNameOfCurrentNode().equals("d"));
+        assertTrue(desc.hasNext());
+        assertTrue(rtx.moveTo(desc.next()));
+        assertTrue(rtx.getNameOfCurrentNode().equals("d"));
 
-            assertTrue(rtx.moveToAttribute(0));
-            assertTrue(rtx.getValueOfCurrentNode().equals("blubb"));
-            assertTrue(rtx.moveToParent());
+        assertTrue(rtx.moveToAttribute(0));
+        assertTrue(rtx.getValueOfCurrentNode().equals("blubb"));
+        assertTrue(rtx.moveToParent());
 
-            assertFalse(desc.hasNext());
+        assertFalse(desc.hasNext());
 
-            rtx.close();
-            session.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        }
+        rtx.close();
+        session.close();
     }
 
     @Test
@@ -231,7 +220,7 @@ public class RevIndexTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
 

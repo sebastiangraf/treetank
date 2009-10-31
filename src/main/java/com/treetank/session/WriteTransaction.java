@@ -222,7 +222,7 @@ public final class WriteTransaction extends ReadTransaction implements
     /**
      * {@inheritDoc}
      */
-    public final synchronized void remove() throws TreetankIOException {
+    public final synchronized void remove() throws TreetankException {
 
         assertNotClosed();
         mModificationCount++;
@@ -235,7 +235,7 @@ public final class WriteTransaction extends ReadTransaction implements
         node = (AbstractNode) getCurrentNode();
 
         if (getCurrentNode().isDocumentRoot()) {
-            throw new IllegalStateException("Root node can not be removed.");
+            throw new TreetankUsageException("Root node can not be removed.");
         } else if (getCurrentNode().isElement()) {
 
             node = (AbstractNode) getCurrentNode();

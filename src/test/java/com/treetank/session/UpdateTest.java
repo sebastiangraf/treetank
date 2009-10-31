@@ -19,7 +19,7 @@
 package com.treetank.session;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertTrue;
 import junit.framework.TestCase;
 
 import org.junit.After;
@@ -32,168 +32,165 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
+import com.treetank.exception.TreetankUsageException;
 import com.treetank.utils.DocumentCreater;
 import com.treetank.utils.TypedValue;
 
 public class UpdateTest {
 
     @Before
-    public void setUp() {
+    public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testInsertChild() {
-        try {
-            ISession session = Session.beginSession(ITestConstants.PATH1);
+    public void testInsertChild() throws TreetankException {
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
 
-            // Document root.
-            IWriteTransaction wtx = session.beginWriteTransaction();
+        // Document root.
+        IWriteTransaction wtx = session.beginWriteTransaction();
+        wtx.commit();
+        wtx.close();
+
+        IReadTransaction rtx = session.beginReadTransaction();
+        assertEquals(1L, rtx.getNodeCount());
+        assertEquals(0L, rtx.getRevisionNumber());
+        rtx.close();
+
+        // Insert 100 children.
+        for (int i = 1; i <= 10; i++) {
+            wtx = session.beginWriteTransaction();
+            wtx.moveToDocumentRoot();
+            wtx.insertTextAsFirstChild(Integer.toString(i));
             wtx.commit();
             wtx.close();
-
-            IReadTransaction rtx = session.beginReadTransaction();
-            assertEquals(1L, rtx.getNodeCount());
-            assertEquals(0L, rtx.getRevisionNumber());
-            rtx.close();
-
-            // Insert 100 children.
-            for (int i = 1; i <= 10; i++) {
-                wtx = session.beginWriteTransaction();
-                wtx.moveToDocumentRoot();
-                wtx.insertTextAsFirstChild(Integer.toString(i));
-                wtx.commit();
-                wtx.close();
-
-                rtx = session.beginReadTransaction();
-                rtx.moveToDocumentRoot();
-                rtx.moveToFirstChild();
-                assertEquals(Integer.toString(i), TypedValue.parseString(rtx
-                        .getNode().getRawValue()));
-                assertEquals(i + 1L, rtx.getNodeCount());
-                assertEquals(i, rtx.getRevisionNumber());
-                rtx.close();
-            }
 
             rtx = session.beginReadTransaction();
             rtx.moveToDocumentRoot();
             rtx.moveToFirstChild();
-            assertEquals("10", TypedValue.parseString(rtx.getNode()
-                    .getRawValue()));
-            assertEquals(11L, rtx.getNodeCount());
-            assertEquals(10L, rtx.getRevisionNumber());
+            assertEquals(Integer.toString(i), TypedValue.parseString(rtx
+                    .getNode().getRawValue()));
+            assertEquals(i + 1L, rtx.getNodeCount());
+            assertEquals(i, rtx.getRevisionNumber());
             rtx.close();
-
-            session.close();
-        } catch (final Exception exc) {
-            exc.printStackTrace();
         }
+
+        rtx = session.beginReadTransaction();
+        rtx.moveToDocumentRoot();
+        rtx.moveToFirstChild();
+        assertEquals("10", TypedValue.parseString(rtx.getNode().getRawValue()));
+        assertEquals(11L, rtx.getNodeCount());
+        assertEquals(10L, rtx.getRevisionNumber());
+        rtx.close();
+
+        session.close();
 
     }
 
     @Test
-    public void testInsertPath() {
-        try {
-            final ISession session = Session.beginSession(ITestConstants.PATH1);
+    public void testInsertPath() throws TreetankException {
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
 
-            IWriteTransaction wtx = session.beginWriteTransaction();
-            wtx.commit();
-            wtx.close();
+        IWriteTransaction wtx = session.beginWriteTransaction();
+        wtx.commit();
+        wtx.close();
 
-            wtx = session.beginWriteTransaction();
-            TestCase.assertNotNull(wtx.moveToDocumentRoot());
-            assertEquals(1L, wtx.insertElementAsFirstChild("", ""));
+        wtx = session.beginWriteTransaction();
+        TestCase.assertNotNull(wtx.moveToDocumentRoot());
+        assertEquals(1L, wtx.insertElementAsFirstChild("", ""));
 
-            assertEquals(2L, wtx.insertElementAsFirstChild("", ""));
-            assertEquals(3L, wtx.insertElementAsFirstChild("", ""));
+        assertEquals(2L, wtx.insertElementAsFirstChild("", ""));
+        assertEquals(3L, wtx.insertElementAsFirstChild("", ""));
 
-            TestCase.assertNotNull(wtx.moveToParent());
-            assertEquals(4L, wtx.insertElementAsRightSibling("", ""));
+        TestCase.assertNotNull(wtx.moveToParent());
+        assertEquals(4L, wtx.insertElementAsRightSibling("", ""));
 
-            wtx.commit();
-            wtx.close();
+        wtx.commit();
+        wtx.close();
 
-            final IWriteTransaction wtx2 = session.beginWriteTransaction();
+        final IWriteTransaction wtx2 = session.beginWriteTransaction();
 
-            TestCase.assertNotNull(wtx2.moveToDocumentRoot());
-            assertEquals(5L, wtx2.insertElementAsFirstChild("", ""));
+        TestCase.assertNotNull(wtx2.moveToDocumentRoot());
+        assertEquals(5L, wtx2.insertElementAsFirstChild("", ""));
 
-            wtx2.commit();
-            wtx2.close();
+        wtx2.commit();
+        wtx2.close();
 
-            session.close();
-        } catch (final TreetankException exc) {
-            fail(exc.toString());
-        }
+        session.close();
+
     }
 
     @Test
-    public void testPageBoundary() {
-        try {
-            ISession session = Session.beginSession(ITestConstants.PATH1);
+    public void testPageBoundary() throws TreetankException {
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
 
-            // Document root.
-            IWriteTransaction wtx = session.beginWriteTransaction();
+        // Document root.
+        final IWriteTransaction wtx = session.beginWriteTransaction();
 
-            for (int i = 0; i < 256 * 256 + 1; i++) {
-                wtx.insertTextAsFirstChild("");
-            }
-
-            TestCase.assertNotNull(wtx.moveTo(2L));
-            assertEquals(2L, wtx.getNode().getNodeKey());
-
-            wtx.abort();
-            wtx.close();
-            session.close();
-        } catch (final TreetankException exc) {
-            fail(exc.toString());
+        for (int i = 0; i < 256 * 256 + 1; i++) {
+            wtx.insertTextAsFirstChild("");
         }
+
+        TestCase.assertNotNull(wtx.moveTo(2L));
+        assertEquals(2L, wtx.getNode().getNodeKey());
+
+        wtx.abort();
+        wtx.close();
+        session.close();
     }
 
-    @Test
-    public void testRemoveDocument() {
+    @Test(expected = TreetankUsageException.class)
+    public void testRemoveDocument() throws TreetankException {
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+
+        wtx.moveToDocumentRoot();
+        TreetankException excToFire = null;
         try {
-            final ISession session = Session.beginSession(ITestConstants.PATH1);
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
-
-            try {
-                wtx.moveToDocumentRoot();
-                wtx.remove();
-                TestCase.fail();
-            } catch (Exception e) {
-                // Must fail.
-            }
-
-            wtx.abort();
-            wtx.close();
-            session.close();
-        } catch (final TreetankException exc) {
-            fail(exc.toString());
-        }
-    }
-
-    @Test
-    public void testRemoveDescendant() {
-        try {
-            final ISession session = Session.beginSession(ITestConstants.PATH1);
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
-
-            wtx.moveTo(2L);
             wtx.remove();
-
-            wtx.abort();
-            wtx.close();
-            session.close();
         } catch (final TreetankException exc) {
-            fail(exc.toString());
+            excToFire = exc;
         }
+        wtx.abort();
+        wtx.close();
+        session.close();
+        if (excToFire != null) {
+            throw excToFire;
+        }
+
+    }
+
+    @Test
+    public void testRemoveDescendant() throws TreetankException {
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        wtx.moveTo(5L);
+        wtx.remove();
+        wtx.commit();
+        wtx.close();
+        final IReadTransaction rtx = session.beginReadTransaction();
+        assertEquals(0, rtx.getNode().getNodeKey());
+        assertTrue(rtx.moveToFirstChild());
+        assertEquals(1, rtx.getNode().getNodeKey());
+        assertEquals(4, rtx.getNode().getChildCount());
+        assertTrue(rtx.moveToFirstChild());
+        assertEquals(4, rtx.getNode().getNodeKey());
+        assertTrue(rtx.moveToRightSibling());
+        assertEquals(8, rtx.getNode().getNodeKey());
+        assertTrue(rtx.moveToRightSibling());
+        assertEquals(9, rtx.getNode().getNodeKey());
+        assertTrue(rtx.moveToRightSibling());
+        assertEquals(13, rtx.getNode().getNodeKey());
+        rtx.close();
+        session.close();
     }
 
 }
