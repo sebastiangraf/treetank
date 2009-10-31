@@ -20,6 +20,7 @@ package com.treetank.axis;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.After;
@@ -36,7 +37,6 @@ import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
-import static org.junit.Assert.assertTrue;
 
 public class IAxisTest {
 
