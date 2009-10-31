@@ -254,7 +254,8 @@ public final class WriteTransactionState extends ReadTransactionState {
     /**
      * {@inheritDoc}
      */
-    public final void commit(final PageReference reference) {
+    public final void commit(final PageReference reference)
+            throws TreetankIOException {
         AbstractPage page;
 
         if (reference != null) {
@@ -271,12 +272,7 @@ public final class WriteTransactionState extends ReadTransactionState {
             // write self.
             page.commit(this);
 
-            try {
-                mPageWriter.write(reference);
-            } catch (TreetankIOException e) {
-
-                throw new RuntimeException(e);
-            }
+            mPageWriter.write(reference);
 
             reference.setPage(null);
         }

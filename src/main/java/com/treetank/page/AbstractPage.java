@@ -18,6 +18,7 @@
 
 package com.treetank.page;
 
+import com.treetank.exception.TreetankIOException;
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
 import com.treetank.session.WriteTransactionState;
@@ -123,7 +124,8 @@ public abstract class AbstractPage {
      *            IWriteTransaction state.
      */
 
-    public final void commit(final WriteTransactionState state) {
+    public final void commit(final WriteTransactionState state)
+            throws TreetankIOException {
         for (final PageReference reference : getReferences()) {
             state.commit(reference);
         }
