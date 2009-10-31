@@ -82,6 +82,7 @@ public final class BerkeleyFactory extends AbstractIOFactory {
 
         final EnvironmentConfig config = new EnvironmentConfig();
         config.setTransactional(true);
+        config.setCacheSize(1024 * 1024);
 
         final File repoFile = new File(paramSession + File.separator + "tt");
         if (!repoFile.exists()) {
