@@ -86,14 +86,6 @@ public final class DocumentCreater {
             + "</t:ba></t:b>";
 
     /**
-     * Hidden constructor.
-     * 
-     */
-    private DocumentCreater() {
-        // Hidden.
-    }
-
-    /**
      * Create simple test document containing all supported node kinds.
      * 
      * @param wtx
@@ -132,39 +124,39 @@ public final class DocumentCreater {
         wtx.moveToDocumentRoot();
     }
 
-    /**
-     * Create simple test document containing all supported node kinds except
-     * the attributes.
-     * 
-     * @param wtx
-     *            IWriteTransaction to write to.
-     */
-    public static void createWithoutAttributes(final IWriteTransaction wtx)
-            throws TreetankException {
-        wtx.moveToDocumentRoot();
-
-        wtx.insertElementAsFirstChild("p:a", "ns");
-
-        wtx.insertTextAsFirstChild("oops1");
-
-        wtx.insertElementAsRightSibling("b", "");
-
-        wtx.insertTextAsFirstChild("foo");
-        wtx.insertElementAsRightSibling("c", "");
-        wtx.moveToParent();
-
-        wtx.insertTextAsRightSibling("oops2");
-
-        wtx.insertElementAsRightSibling("b", "");
-
-        wtx.insertElementAsFirstChild("c", "");
-        wtx.insertTextAsRightSibling("bar");
-        wtx.moveToParent();
-
-        wtx.insertTextAsRightSibling("oops3");
-
-        wtx.moveToDocumentRoot();
-    }
+    // /**
+    // * Create simple test document containing all supported node kinds except
+    // * the attributes.
+    // *
+    // * @param wtx
+    // * IWriteTransaction to write to.
+    // */
+    // public static void createWithoutAttributes(final IWriteTransaction wtx)
+    // throws TreetankException {
+    // wtx.moveToDocumentRoot();
+    //
+    // wtx.insertElementAsFirstChild("p:a", "ns");
+    //
+    // wtx.insertTextAsFirstChild("oops1");
+    //
+    // wtx.insertElementAsRightSibling("b", "");
+    //
+    // wtx.insertTextAsFirstChild("foo");
+    // wtx.insertElementAsRightSibling("c", "");
+    // wtx.moveToParent();
+    //
+    // wtx.insertTextAsRightSibling("oops2");
+    //
+    // wtx.insertElementAsRightSibling("b", "");
+    //
+    // wtx.insertElementAsFirstChild("c", "");
+    // wtx.insertTextAsRightSibling("bar");
+    // wtx.moveToParent();
+    //
+    // wtx.insertTextAsRightSibling("oops3");
+    //
+    // wtx.moveToDocumentRoot();
+    // }
 
     /**
      * Create simple test document containing all supported node kinds, but

@@ -36,6 +36,7 @@ import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
+import static org.junit.Assert.assertTrue;
 
 public class IAxisTest {
 
@@ -57,16 +58,14 @@ public class IAxisTest {
         while (axis.hasNext()) {
             axis.next();
             // IAxis results.
-            if (offset >= expectedKeys.length) {
-                fail("More nodes found than expected.");
-            }
+            assertTrue(offset < expectedKeys.length);
             keys[offset++] = rtx.getNode().getNodeKey();
 
             // IAxis Convention 2.
             try {
                 axis.next();
                 fail("Should only allow to call next() once.");
-            } catch (Exception e) {
+            } catch (final IllegalStateException exc) {
                 // Must throw exception.
             }
 
