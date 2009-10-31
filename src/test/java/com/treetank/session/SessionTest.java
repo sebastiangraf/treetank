@@ -45,12 +45,12 @@ import com.treetank.utils.TypedValue;
 public class SessionTest {
 
     @Before
-    public void setUp() {
+    public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
 

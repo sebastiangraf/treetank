@@ -18,8 +18,6 @@
 
 package com.treetank.service.xml.xpath.filter;
 
-import static org.junit.Assert.fail;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,43 +41,40 @@ import com.treetank.utils.DocumentCreater;
 public class DubFilterTest {
 
     @Before
-    public void setUp() {
+    public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testDupElemination() {
-        try {
-            // Build simple test tree.
-            final ISession session = Session.beginSession(ITestConstants.PATH1);
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
+    public void testDupElemination() throws TreetankException {
+        // Build simple test tree.
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
 
-            wtx.moveTo(1L);
+        wtx.moveTo(1L);
 
-            IAxisTest.testIAxisConventions(new XPathAxis(wtx,
-                    "child::node()/parent::node()"), new long[] { 1L });
+        IAxisTest.testIAxisConventions(new XPathAxis(wtx,
+                "child::node()/parent::node()"), new long[] { 1L });
 
-            IAxisTest.testIAxisConventions(new XPathAxis(wtx,
-                    "b/following-sibling::node()"), new long[] { 8L, 9L, 13L });
+        IAxisTest.testIAxisConventions(new XPathAxis(wtx,
+                "b/following-sibling::node()"), new long[] { 8L, 9L, 13L });
 
-            IAxisTest.testIAxisConventions(new XPathAxis(wtx,
-                    "b/preceding::node()"), new long[] { 4L, 8L, 7L, 6L, 5L });
+        IAxisTest.testIAxisConventions(
+                new XPathAxis(wtx, "b/preceding::node()"), new long[] { 4L, 8L,
+                        7L, 6L, 5L });
 
-            IAxisTest.testIAxisConventions(new XPathAxis(wtx,
-                    "//c/ancestor::node()"), new long[] { 5L, 1L, 9L });
+        IAxisTest.testIAxisConventions(new XPathAxis(wtx,
+                "//c/ancestor::node()"), new long[] { 5L, 1L, 9L });
 
-            wtx.abort();
-            wtx.close();
-            session.close();
-        } catch (final TreetankException exc) {
-            fail(exc.toString());
-        }
+        wtx.abort();
+        wtx.close();
+        session.close();
     }
 
 }

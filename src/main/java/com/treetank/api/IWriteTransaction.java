@@ -18,6 +18,7 @@
 
 package com.treetank.api;
 
+import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 
 /**
@@ -236,7 +237,7 @@ public interface IWriteTransaction extends IReadTransaction {
      * sibling, it is located at the former left sibling. If there was no left
      * sibling, it is located at the former parent.
      */
-    void remove() throws TreetankIOException;
+    void remove() throws TreetankException;
 
     // --- Node Setters
     // -----------------------------------------------------------

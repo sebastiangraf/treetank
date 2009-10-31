@@ -34,7 +34,7 @@ import com.treetank.utils.DocumentCreater;
 public class NestedAxisTest {
 
     @Before
-    public void setUp() {
+    public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
     }
 
@@ -130,7 +130,7 @@ public class NestedAxisTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
 }

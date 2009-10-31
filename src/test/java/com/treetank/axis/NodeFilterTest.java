@@ -33,7 +33,7 @@ import com.treetank.utils.DocumentCreater;
 public class NodeFilterTest {
 
     @Before
-    public void setUp() {
+    public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
     }
 
@@ -60,7 +60,7 @@ public class NodeFilterTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
 

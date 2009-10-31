@@ -18,7 +18,6 @@
 
 package com.treetank.session;
 
-import static org.junit.Assert.fail;
 import junit.framework.TestCase;
 
 import org.junit.After;
@@ -36,68 +35,60 @@ import com.treetank.utils.DocumentCreater;
 public class MinimumCommitTest {
 
     @Before
-    public void setUp() {
+    public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
 
     @Test
-    public void test() {
-        try {
-            ISession session = Session.beginSession(ITestConstants.PATH1);
-            IWriteTransaction wtx = session.beginWriteTransaction();
-            TestCase.assertEquals(0L, wtx.getRevisionNumber());
-            wtx.commit();
+    public void test() throws TreetankException {
+        ISession session = Session.beginSession(ITestConstants.PATH1);
+        IWriteTransaction wtx = session.beginWriteTransaction();
+        TestCase.assertEquals(0L, wtx.getRevisionNumber());
+        wtx.commit();
 
-            wtx.close();
-            session.close();
+        wtx.close();
+        session.close();
 
-            session = Session.beginSession(ITestConstants.PATH1);
-            wtx = session.beginWriteTransaction();
-            TestCase.assertEquals(1L, wtx.getRevisionNumber());
-            DocumentCreater.create(wtx);
-            wtx.commit();
-            wtx.close();
+        session = Session.beginSession(ITestConstants.PATH1);
+        wtx = session.beginWriteTransaction();
+        TestCase.assertEquals(1L, wtx.getRevisionNumber());
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        wtx.close();
 
-            wtx = session.beginWriteTransaction();
-            TestCase.assertEquals(2L, wtx.getRevisionNumber());
-            wtx.commit();
-            wtx.close();
+        wtx = session.beginWriteTransaction();
+        TestCase.assertEquals(2L, wtx.getRevisionNumber());
+        wtx.commit();
+        wtx.close();
 
-            IReadTransaction rtx = session.beginReadTransaction();
-            TestCase.assertEquals(2L, rtx.getRevisionNumber());
-            rtx.close();
-            session.close();
-        } catch (final TreetankException exc) {
-            fail(exc.toString());
-        }
+        IReadTransaction rtx = session.beginReadTransaction();
+        TestCase.assertEquals(2L, rtx.getRevisionNumber());
+        rtx.close();
+        session.close();
 
     }
 
     @Test
-    public void testTimestamp() {
-        try {
-            ISession session = Session.beginSession(ITestConstants.PATH1);
-            IWriteTransaction wtx = session.beginWriteTransaction();
-            TestCase.assertEquals(0L, wtx.getRevisionTimestamp());
-            wtx.commit();
-            wtx.close();
+    public void testTimestamp() throws TreetankException {
+        ISession session = Session.beginSession(ITestConstants.PATH1);
+        IWriteTransaction wtx = session.beginWriteTransaction();
+        TestCase.assertEquals(0L, wtx.getRevisionTimestamp());
+        wtx.commit();
+        wtx.close();
 
-            IReadTransaction rtx = session.beginReadTransaction();
-            if (rtx.getRevisionTimestamp() >= (System.currentTimeMillis() + 1)) {
-                TestCase
-                        .fail("Committed revision timestamp must be smaller than now.");
-            }
-            rtx.close();
-
-            session.close();
-        } catch (final TreetankException exc) {
-            fail(exc.toString());
+        IReadTransaction rtx = session.beginReadTransaction();
+        if (rtx.getRevisionTimestamp() >= (System.currentTimeMillis() + 1)) {
+            TestCase
+                    .fail("Committed revision timestamp must be smaller than now.");
         }
+        rtx.close();
+
+        session.close();
 
     }
 

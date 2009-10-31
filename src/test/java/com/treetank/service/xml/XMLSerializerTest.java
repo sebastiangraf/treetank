@@ -18,8 +18,6 @@
 
 package com.treetank.service.xml;
 
-import static org.junit.Assert.fail;
-
 import java.io.ByteArrayOutputStream;
 
 import junit.framework.TestCase;
@@ -34,42 +32,37 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
-import com.treetank.exception.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
 
 public class XMLSerializerTest {
 
     @Before
-    public void setUp() {
+    public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
 
     @Test
     public void testXMLSerializer() throws TreetankException {
-        try { // Setup session.
-            final ISession session = Session.beginSession(ITestConstants.PATH1);
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
-            wtx.commit();
-            wtx.close();
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        wtx.close();
 
-            // Generate from this session.
-            final ByteArrayOutputStream out = new ByteArrayOutputStream();
-            final IReadTransaction rtx = session.beginReadTransaction();
-            final XMLSerializer serializer = new XMLSerializer(rtx, out);
-            serializer.run();
-            TestCase.assertEquals(DocumentCreater.XML_TANK, out.toString());
-            rtx.close();
-            session.close();
-        } catch (final TreetankIOException exc) {
-            fail(exc.toString());
-        }
+        // Generate from this session.
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final IReadTransaction rtx = session.beginReadTransaction();
+        final XMLSerializer serializer = new XMLSerializer(rtx, out);
+        serializer.run();
+        TestCase.assertEquals(DocumentCreater.XML_TANK, out.toString());
+        rtx.close();
+        session.close();
     }
 
 }

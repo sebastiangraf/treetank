@@ -18,8 +18,6 @@
 
 package com.treetank.service.xml.xpath.expr;
 
-import static org.junit.Assert.fail;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,62 +42,56 @@ import com.treetank.utils.DocumentCreater;
 public class UnionAxisTest {
 
     @Before
-    public void setUp() {
+    public void setUp() throws TreetankException {
 
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testUnion() {
-        try {
-            // Build simple test tree.
-            final ISession session = Session.beginSession(ITestConstants.PATH1);
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
-            wtx.commit();
-            IReadTransaction rtx = session.beginReadTransaction();
+    public void testUnion() throws TreetankException {
+        // Build simple test tree.
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        IReadTransaction rtx = session.beginReadTransaction();
 
-            rtx.moveTo(1L);
+        rtx.moveTo(1L);
 
-            IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                    "child::node()/parent::node() union child::node()"),
-                    new long[] { 1L, 4L, 5L, 8L, 9L, 13L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                "child::node()/parent::node() union child::node()"),
+                new long[] { 1L, 4L, 5L, 8L, 9L, 13L });
 
-            IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                    "child::node()/parent::node() | child::node()"),
-                    new long[] { 1L, 4L, 5L, 8L, 9L, 13L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                "child::node()/parent::node() | child::node()"), new long[] {
+                1L, 4L, 5L, 8L, 9L, 13L });
 
-            IAxisTest
-                    .testIAxisConventions(
-                            new XPathAxis(rtx,
-                                    "child::node()/parent::node() | child::node() | self::node()"),
-                            new long[] { 1L, 4L, 5L, 8L, 9L, 13L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                "child::node()/parent::node() | child::node() | self::node()"),
+                new long[] { 1L, 4L, 5L, 8L, 9L, 13L });
 
-            IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                    "child::node()/parent::node() | child::node() | self::node()"
-                            + "union parent::node()"), new long[] { 1L, 4L, 5L,
-                    8L, 9L, 13L, 0L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                "child::node()/parent::node() | child::node() | self::node()"
+                        + "union parent::node()"), new long[] { 1L, 4L, 5L, 8L,
+                9L, 13L, 0L });
 
-            IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                    "b/preceding::node() union text() | descendant::node()"),
-                    new long[] { 4L, 8L, 7L, 6L, 5L, 13L, 9L, 11L, 12L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                "b/preceding::node() union text() | descendant::node()"),
+                new long[] { 4L, 8L, 7L, 6L, 5L, 13L, 9L, 11L, 12L });
 
-            IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                    "//c/ancestor::node() | //node()"), new long[] { 5L, 1L,
-                    9L, 4L, 8L, 13L, 6L, 7L, 11L, 12L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                "//c/ancestor::node() | //node()"), new long[] { 5L, 1L, 9L,
+                4L, 8L, 13L, 6L, 7L, 11L, 12L });
 
-            rtx.close();
-            wtx.abort();
-            wtx.close();
-            session.close();
-        } catch (final TreetankException exc) {
-            fail(exc.toString());
-        }
+        rtx.close();
+        wtx.abort();
+        wtx.close();
+        session.close();
     }
 
 }

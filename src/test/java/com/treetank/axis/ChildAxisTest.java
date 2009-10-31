@@ -36,7 +36,7 @@ import com.treetank.utils.DocumentCreater;
 @BenchClass(runs = 1)
 public class ChildAxisTest {
     @Before
-    public void setUp() {
+    public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
     }
 
@@ -93,7 +93,7 @@ public class ChildAxisTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
 }

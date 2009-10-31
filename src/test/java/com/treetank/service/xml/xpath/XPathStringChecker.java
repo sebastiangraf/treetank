@@ -28,17 +28,18 @@ import org.junit.Before;
 import com.treetank.TestHelper;
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.exception.TreetankException;
 import com.treetank.utils.TypedValue;
 
 public class XPathStringChecker {
 
     @Before
-    public void setUp() {
+    public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
 

@@ -33,7 +33,7 @@ import com.treetank.utils.DocumentCreater;
 public class PostOrderTest {
 
     @Before
-    public void setUp() {
+    public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
     }
 
@@ -54,7 +54,7 @@ public class PostOrderTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
 }

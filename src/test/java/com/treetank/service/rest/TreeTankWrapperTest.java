@@ -27,13 +27,13 @@ public class TreeTankWrapperTest {
     private TreeTankWrapper wrapper;
 
     @Before
-    public void setUp() throws TreetankRestException {
+    public void setUp() throws TreetankException, TreetankRestException {
         TestHelper.deleteEverything();
         wrapper = new TreeTankWrapper(ITestConstants.PATH2);
     }
 
     @After
-    public void tearDown() throws TreetankRestException {
+    public void tearDown() throws TreetankRestException, TreetankException {
         wrapper.close();
         TestHelper.closeEverything();
     }

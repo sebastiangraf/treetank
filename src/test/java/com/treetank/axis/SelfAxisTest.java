@@ -33,7 +33,7 @@ import com.treetank.utils.DocumentCreater;
 public class SelfAxisTest {
 
     @Before
-    public void setUp() {
+    public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
     }
 
@@ -55,7 +55,7 @@ public class SelfAxisTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
 }

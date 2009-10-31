@@ -18,8 +18,6 @@
 
 package com.treetank.service.xml.xpath;
 
-import static org.junit.Assert.fail;
-
 import java.io.File;
 
 import org.junit.After;
@@ -49,19 +47,14 @@ public class XPathFunctionTest {
             + File.separator + "resources" + File.separator + "alphabet.xml";
 
     @Before
-    public void setUp() {
-        try {
-            TestHelper.deleteEverything();
-            // Build simple test tree.
-            XMLShredder.shred(XML, new SessionConfiguration(
-                    ITestConstants.PATH1));
-        } catch (final TreetankException exc) {
-            fail(exc.toString());
-        }
+    public void setUp() throws TreetankException {
+        TestHelper.deleteEverything();
+        // Build simple test tree.
+        XMLShredder.shred(XML, new SessionConfiguration(ITestConstants.PATH1));
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
 

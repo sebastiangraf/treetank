@@ -27,11 +27,12 @@ import org.junit.Test;
 import com.treetank.TestHelper;
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
+import com.treetank.exception.TreetankException;
 
 public class IFilterTest {
 
     @Before
-    public void setUp() {
+    public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
     }
 
@@ -56,7 +57,7 @@ public class IFilterTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
 }
