@@ -131,16 +131,54 @@ public class XMLShredderTest {
 
     }
 
-    // @Test
-    // public void testShredIntoExisting() throws IOException,
-    // XMLStreamException {
-    // try {
-    // XMLShredder.shred(XML, new SessionConfiguration(PATH));
-    // TestCase.fail();
-    // } catch (Exception e) {
-    // // Must fail.
-    // }
-    // }
+    @Test
+    public void testShredIntoExisting() throws XMLStreamException,
+            TreetankException, UnsupportedEncodingException {
+        XMLShredder.shred(XML, new SessionConfiguration(ITestConstants.PATH1));
+        XMLShredder.shred(XML, new SessionConfiguration(ITestConstants.PATH1));
+
+        // Setup expected session.
+        final ISession expectedSession = Session
+                .beginSession(ITestConstants.PATH2);
+        final IWriteTransaction expectedTrx = expectedSession
+                .beginWriteTransaction();
+        DocumentCreater.create(expectedTrx);
+        expectedTrx.commit();
+        expectedTrx.moveToDocumentRoot();
+
+        // Verify.
+        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IReadTransaction rtx = session.beginReadTransaction();
+
+        final Iterator<Long> descendants = new DescendantAxis(rtx);
+        final Iterator<Long> expectedDescendants = new DescendantAxis(
+                expectedTrx);
+
+        while (expectedDescendants.hasNext()) {
+            expectedDescendants.next();
+            descendants.hasNext();
+            descendants.next();
+            assertEquals(expectedTrx.getNameOfCurrentNode(), rtx
+                    .getNameOfCurrentNode());
+        }
+
+        expectedTrx.moveToDocumentRoot();
+        final Iterator<Long> expectedDescendants2 = new DescendantAxis(
+                expectedTrx);
+        while (expectedDescendants2.hasNext()) {
+            expectedDescendants2.next();
+            descendants.hasNext();
+            descendants.next();
+            assertEquals(expectedTrx.getNameOfCurrentNode(), rtx
+                    .getNameOfCurrentNode());
+        }
+
+        expectedTrx.close();
+        expectedSession.close();
+        rtx.close();
+        session.close();
+
+    }
 
     @Test
     public void testAttributesNSPrefix() throws TreetankException {

@@ -91,11 +91,6 @@ public final class XMLShredder {
             final long revision = wtx.getRevisionNumber();
             final FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
 
-            // Make sure that we do not shred into an existing TreeTank.
-            // if (wtx.hasFirstChild()) {
-            // throw new IllegalStateException(
-            // "XMLShredder can not shred into an existing TreeTank.");
-            // }
             wtx.moveTo(id);
 
             long key;

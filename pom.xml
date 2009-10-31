@@ -80,6 +80,11 @@
 	</build>
 	<dependencies>
 		<dependency>
+             <groupId>org.mortbay.jetty</groupId>
+             <artifactId>jetty</artifactId>
+             <version>6.1.20</version>
+		</dependency>
+		<dependency>
 			<groupId>com.sleepycat</groupId>
 			<artifactId>je</artifactId>
 			<version>3.3.87</version>
@@ -89,16 +94,6 @@
 			<artifactId>junit</artifactId>
 			<version>4.4</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>jetty</groupId>
-			<artifactId>jetty</artifactId>
-			<version>6.0.2</version>
-		</dependency>
-		<dependency>
-			<groupId>jetty</groupId>
-			<artifactId>jetty-util</artifactId>
-			<version>6.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
