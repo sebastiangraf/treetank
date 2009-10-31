@@ -134,8 +134,10 @@ public class XMLShredderTest {
     @Test
     public void testShredIntoExisting() throws XMLStreamException,
             TreetankException, UnsupportedEncodingException {
-        XMLShredder.shred(XML, new SessionConfiguration(ITestConstants.PATH1));
-        XMLShredder.shred(XML, new SessionConfiguration(ITestConstants.PATH1));
+        assertEquals(0, XMLShredder.shred(XML, new SessionConfiguration(
+                ITestConstants.PATH1)));
+        assertEquals(1, XMLShredder.shred(XML, new SessionConfiguration(
+                ITestConstants.PATH1)));
 
         // Setup expected session.
         final ISession expectedSession = Session
