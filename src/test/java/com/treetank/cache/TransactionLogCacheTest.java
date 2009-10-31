@@ -3,6 +3,7 @@ package com.treetank.cache;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -45,7 +46,7 @@ public class TransactionLogCacheTest {
         cache.clear();
     }
 
-    @Test
+    @After
     public void tearDown() {
         TestHelper.closeEverything();
     }
