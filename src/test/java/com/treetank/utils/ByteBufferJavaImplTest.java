@@ -25,22 +25,25 @@ import org.junit.Test;
 
 public class ByteBufferJavaImplTest {
 
-    @Test
-    public void testBasics() {
+    @Test(expected = IllegalArgumentException.class)
+    public void testBasics() throws IllegalArgumentException {
         final ByteBuffer buffer = ByteBuffer.allocate(100);
         Assert.assertEquals(0, buffer.position());
+        final IllegalArgumentException[] excsToFire = new IllegalArgumentException[2];
         try {
             buffer.position(101);
-            Assert.fail();
-        } catch (IllegalArgumentException e) {
-            // Must throw IllegalArgumentException.
+        } catch (final IllegalArgumentException exc) {
+            excsToFire[0] = exc;
         }
         try {
             buffer.position(-100);
-            Assert.fail();
-        } catch (IllegalArgumentException e) {
-            // Must throw IllegalArgumentException.
+        } catch (final IllegalArgumentException exc) {
+            excsToFire[1] = exc;
         }
+        if (excsToFire[0] != null && excsToFire[1] != null) {
+            throw excsToFire[0];
+        }
+
     }
 
     @Test

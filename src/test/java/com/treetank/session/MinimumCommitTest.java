@@ -18,8 +18,8 @@
 
 package com.treetank.session;
 
-import junit.framework.TestCase;
-
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,7 +48,7 @@ public class MinimumCommitTest {
     public void test() throws TreetankException {
         ISession session = Session.beginSession(ITestConstants.PATH1);
         IWriteTransaction wtx = session.beginWriteTransaction();
-        TestCase.assertEquals(0L, wtx.getRevisionNumber());
+        assertEquals(0L, wtx.getRevisionNumber());
         wtx.commit();
 
         wtx.close();
@@ -56,18 +56,18 @@ public class MinimumCommitTest {
 
         session = Session.beginSession(ITestConstants.PATH1);
         wtx = session.beginWriteTransaction();
-        TestCase.assertEquals(1L, wtx.getRevisionNumber());
+        assertEquals(1L, wtx.getRevisionNumber());
         DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
 
         wtx = session.beginWriteTransaction();
-        TestCase.assertEquals(2L, wtx.getRevisionNumber());
+        assertEquals(2L, wtx.getRevisionNumber());
         wtx.commit();
         wtx.close();
 
         IReadTransaction rtx = session.beginReadTransaction();
-        TestCase.assertEquals(2L, rtx.getRevisionNumber());
+        assertEquals(2L, rtx.getRevisionNumber());
         rtx.close();
         session.close();
 
@@ -77,15 +77,12 @@ public class MinimumCommitTest {
     public void testTimestamp() throws TreetankException {
         ISession session = Session.beginSession(ITestConstants.PATH1);
         IWriteTransaction wtx = session.beginWriteTransaction();
-        TestCase.assertEquals(0L, wtx.getRevisionTimestamp());
+        assertEquals(0L, wtx.getRevisionTimestamp());
         wtx.commit();
         wtx.close();
 
         IReadTransaction rtx = session.beginReadTransaction();
-        if (rtx.getRevisionTimestamp() >= (System.currentTimeMillis() + 1)) {
-            TestCase
-                    .fail("Committed revision timestamp must be smaller than now.");
-        }
+        assertTrue(rtx.getRevisionTimestamp() < (System.currentTimeMillis() + 1));
         rtx.close();
 
         session.close();

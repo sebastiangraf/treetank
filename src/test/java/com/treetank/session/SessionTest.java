@@ -120,213 +120,190 @@ public class SessionTest {
     }
 
     @Test
-    public void testNonExisting() throws TreetankException {
-        try {
-            final ISession session = Session
-                    .beginSession(ITestConstants.NON_EXISTING_PATH);
-            final Thread secondAccess = new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        Session.beginSession(ITestConstants.NON_EXISTING_PATH);
-                        fail();
-                    } catch (final Exception e) {
-                        // Must catch to pass test.
-                    }
+    public void testNonExisting() throws TreetankException,
+            InterruptedException {
+        final ISession session = Session
+                .beginSession(ITestConstants.NON_EXISTING_PATH);
+        final Thread secondAccess = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Session.beginSession(ITestConstants.NON_EXISTING_PATH);
+                    fail();
+                } catch (final Exception e) {
+                    // Must catch to pass test.
                 }
-            };
-            secondAccess.start();
-            Thread.sleep(100);
-            if (secondAccess.isAlive()) {
-                fail("Second access should have died!");
             }
-            session.close();
-        } catch (final InterruptedException exc2) {
-            fail(exc2.toString());
+        };
+        secondAccess.start();
+        Thread.sleep(100);
+        if (secondAccess.isAlive()) {
+            fail("Second access should have died!");
         }
+        session.close();
     }
 
     @Test
-    public void testInsertChild() {
-        try {
-            final ISession session = Session
-                    .beginSession(ITestConstants.TEST_INSERT_CHILD_PATH);
+    public void testInsertChild() throws TreetankException {
+        final ISession session = Session
+                .beginSession(ITestConstants.TEST_INSERT_CHILD_PATH);
 
-            final IWriteTransaction wtx = session.beginWriteTransaction();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
 
-            DocumentCreater.create(wtx);
+        DocumentCreater.create(wtx);
 
-            TestCase.assertNotNull(wtx.moveToDocumentRoot());
-            assertEquals(IReadTransaction.ROOT_KIND, wtx.getNode().getKind());
+        TestCase.assertNotNull(wtx.moveToDocumentRoot());
+        assertEquals(IReadTransaction.ROOT_KIND, wtx.getNode().getKind());
 
-            TestCase.assertNotNull(wtx.moveToFirstChild());
-            assertEquals(IReadTransaction.ELEMENT_KIND, wtx.getNode().getKind());
-            assertEquals("p:a", wtx.nameForKey(wtx.getNode().getNameKey()));
+        TestCase.assertNotNull(wtx.moveToFirstChild());
+        assertEquals(IReadTransaction.ELEMENT_KIND, wtx.getNode().getKind());
+        assertEquals("p:a", wtx.nameForKey(wtx.getNode().getNameKey()));
 
-            wtx.abort();
-            wtx.close();
-            session.close();
-        } catch (final TreetankException exc) {
-            fail(exc.toString());
-        }
+        wtx.abort();
+        wtx.close();
+        session.close();
     }
 
     @Test
-    public void testRevision() {
-        try {
-            final ISession session = Session
-                    .beginSession(ITestConstants.TEST_REVISION_PATH);
+    public void testRevision() throws TreetankException {
+        final ISession session = Session
+                .beginSession(ITestConstants.TEST_REVISION_PATH);
 
-            IReadTransaction rtx = session.beginReadTransaction();
-            assertEquals(0L, rtx.getRevisionNumber());
-            assertEquals(1L, rtx.getNodeCount());
+        IReadTransaction rtx = session.beginReadTransaction();
+        assertEquals(0L, rtx.getRevisionNumber());
+        assertEquals(1L, rtx.getNodeCount());
 
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            assertEquals(0L, wtx.getRevisionNumber());
-            assertEquals(1L, wtx.getNodeCount());
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        assertEquals(0L, wtx.getRevisionNumber());
+        assertEquals(1L, wtx.getNodeCount());
 
-            // Commit and check.
-            wtx.commit();
-            wtx.close();
+        // Commit and check.
+        wtx.commit();
+        wtx.close();
 
-            rtx = session.beginReadTransaction();
+        rtx = session.beginReadTransaction();
 
-            assertEquals(IConstants.UBP_ROOT_REVISION_NUMBER, rtx
-                    .getRevisionNumber());
-            assertEquals(1L, rtx.getNodeCount());
-            rtx.close();
+        assertEquals(IConstants.UBP_ROOT_REVISION_NUMBER, rtx
+                .getRevisionNumber());
+        assertEquals(1L, rtx.getNodeCount());
+        rtx.close();
 
-            final IReadTransaction rtx2 = session.beginReadTransaction();
-            assertEquals(0L, rtx2.getRevisionNumber());
-            assertEquals(1L, rtx2.getNodeCount());
-            rtx2.close();
+        final IReadTransaction rtx2 = session.beginReadTransaction();
+        assertEquals(0L, rtx2.getRevisionNumber());
+        assertEquals(1L, rtx2.getNodeCount());
+        rtx2.close();
 
-            session.close();
-        } catch (final TreetankException exc) {
-            fail(exc.toString());
-        }
+        session.close();
     }
 
     @Test
-    public void testShreddedRevision() {
-        try {
-            final ISession session = Session
-                    .beginSession(ITestConstants.TEST_SHREDDED_REVISION_PATH);
+    public void testShreddedRevision() throws TreetankException {
+        final ISession session = Session
+                .beginSession(ITestConstants.TEST_SHREDDED_REVISION_PATH);
 
-            final IWriteTransaction wtx1 = session.beginWriteTransaction();
-            DocumentCreater.create(wtx1);
-            assertEquals(0L, wtx1.getRevisionNumber());
-            assertEquals(14L, wtx1.getNodeCount());
-            wtx1.commit();
-            wtx1.close();
+        final IWriteTransaction wtx1 = session.beginWriteTransaction();
+        DocumentCreater.create(wtx1);
+        assertEquals(0L, wtx1.getRevisionNumber());
+        assertEquals(14L, wtx1.getNodeCount());
+        wtx1.commit();
+        wtx1.close();
 
-            final IReadTransaction rtx1 = session.beginReadTransaction();
-            assertEquals(0L, rtx1.getRevisionNumber());
-            rtx1.moveTo(12L);
-            assertEquals("bar", TypedValue.parseString(rtx1.getNode()
-                    .getRawValue()));
+        final IReadTransaction rtx1 = session.beginReadTransaction();
+        assertEquals(0L, rtx1.getRevisionNumber());
+        rtx1.moveTo(12L);
+        assertEquals("bar", TypedValue
+                .parseString(rtx1.getNode().getRawValue()));
 
-            final IWriteTransaction wtx2 = session.beginWriteTransaction();
-            assertEquals(1L, wtx2.getRevisionNumber());
-            wtx2.moveTo(12L);
-            wtx2.setValue("bar2");
+        final IWriteTransaction wtx2 = session.beginWriteTransaction();
+        assertEquals(1L, wtx2.getRevisionNumber());
+        wtx2.moveTo(12L);
+        wtx2.setValue("bar2");
 
-            assertEquals("bar", TypedValue.parseString(rtx1.getNode()
-                    .getRawValue()));
-            assertEquals("bar2", TypedValue.parseString(wtx2.getNode()
-                    .getRawValue()));
-            rtx1.close();
-            wtx2.abort();
-            wtx2.close();
+        assertEquals("bar", TypedValue
+                .parseString(rtx1.getNode().getRawValue()));
+        assertEquals("bar2", TypedValue.parseString(wtx2.getNode()
+                .getRawValue()));
+        rtx1.close();
+        wtx2.abort();
+        wtx2.close();
 
-            final IReadTransaction rtx2 = session.beginReadTransaction();
-            assertEquals(0L, rtx2.getRevisionNumber());
-            rtx2.moveTo(12L);
-            assertEquals("bar", TypedValue.parseString(rtx2.getNode()
-                    .getRawValue()));
-            rtx2.close();
+        final IReadTransaction rtx2 = session.beginReadTransaction();
+        assertEquals(0L, rtx2.getRevisionNumber());
+        rtx2.moveTo(12L);
+        assertEquals("bar", TypedValue
+                .parseString(rtx2.getNode().getRawValue()));
+        rtx2.close();
 
-            session.close();
-        } catch (final TreetankException exc) {
-            fail(exc.toString());
-        }
+        session.close();
     }
 
     @Test
-    public void testExisting() {
-        try {
-            final ISession session1 = Session
-                    .beginSession(ITestConstants.TEST_EXISTING_PATH);
+    public void testExisting() throws TreetankException {
+        final ISession session1 = Session
+                .beginSession(ITestConstants.TEST_EXISTING_PATH);
 
-            final IWriteTransaction wtx1 = session1.beginWriteTransaction();
-            DocumentCreater.create(wtx1);
-            assertEquals(0L, wtx1.getRevisionNumber());
-            wtx1.commit();
-            wtx1.close();
-            session1.close();
+        final IWriteTransaction wtx1 = session1.beginWriteTransaction();
+        DocumentCreater.create(wtx1);
+        assertEquals(0L, wtx1.getRevisionNumber());
+        wtx1.commit();
+        wtx1.close();
+        session1.close();
 
-            final ISession session2 = Session
-                    .beginSession(ITestConstants.TEST_EXISTING_PATH);
-            final IReadTransaction rtx1 = session2.beginReadTransaction();
-            assertEquals(0L, rtx1.getRevisionNumber());
-            rtx1.moveTo(12L);
-            assertEquals("bar", TypedValue.parseString(rtx1.getNode()
-                    .getRawValue()));
+        final ISession session2 = Session
+                .beginSession(ITestConstants.TEST_EXISTING_PATH);
+        final IReadTransaction rtx1 = session2.beginReadTransaction();
+        assertEquals(0L, rtx1.getRevisionNumber());
+        rtx1.moveTo(12L);
+        assertEquals("bar", TypedValue
+                .parseString(rtx1.getNode().getRawValue()));
 
-            final IWriteTransaction wtx2 = session2.beginWriteTransaction();
-            assertEquals(1L, wtx2.getRevisionNumber());
-            wtx2.moveTo(12L);
-            wtx2.setValue("bar2");
+        final IWriteTransaction wtx2 = session2.beginWriteTransaction();
+        assertEquals(1L, wtx2.getRevisionNumber());
+        wtx2.moveTo(12L);
+        wtx2.setValue("bar2");
 
-            assertEquals("bar", TypedValue.parseString(rtx1.getNode()
-                    .getRawValue()));
-            assertEquals("bar2", TypedValue.parseString(wtx2.getNode()
-                    .getRawValue()));
+        assertEquals("bar", TypedValue
+                .parseString(rtx1.getNode().getRawValue()));
+        assertEquals("bar2", TypedValue.parseString(wtx2.getNode()
+                .getRawValue()));
 
-            rtx1.close();
-            wtx2.commit();
-            wtx2.close();
-            session2.close();
+        rtx1.close();
+        wtx2.commit();
+        wtx2.close();
+        session2.close();
 
-            final ISession session3 = Session
-                    .beginSession(ITestConstants.TEST_EXISTING_PATH);
-            final IReadTransaction rtx2 = session3.beginReadTransaction();
-            assertEquals(1L, rtx2.getRevisionNumber());
-            rtx2.moveTo(12L);
-            assertEquals("bar2", TypedValue.parseString(rtx2.getNode()
-                    .getRawValue()));
+        final ISession session3 = Session
+                .beginSession(ITestConstants.TEST_EXISTING_PATH);
+        final IReadTransaction rtx2 = session3.beginReadTransaction();
+        assertEquals(1L, rtx2.getRevisionNumber());
+        rtx2.moveTo(12L);
+        assertEquals("bar2", TypedValue.parseString(rtx2.getNode()
+                .getRawValue()));
 
-            rtx2.close();
-            session3.close();
-        } catch (final TreetankException exc) {
-            fail(exc.toString());
-        }
+        rtx2.close();
+        session3.close();
 
     }
 
     @Test
-    public void testIdempotentClose() {
-        try {
-            final ISession session = Session
-                    .beginSession(ITestConstants.TEST_EXISTING_PATH);
+    public void testIdempotentClose() throws TreetankException {
+        final ISession session = Session
+                .beginSession(ITestConstants.TEST_EXISTING_PATH);
 
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
-            wtx.commit();
-            wtx.close();
-            wtx.close();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        wtx.close();
+        wtx.close();
 
-            final IReadTransaction rtx = session.beginReadTransaction();
-            assertEquals(14L, rtx.getNodeCount());
-            assertEquals(false, rtx.moveTo(14L));
-            rtx.close();
-            rtx.close();
+        final IReadTransaction rtx = session.beginReadTransaction();
+        assertEquals(14L, rtx.getNodeCount());
+        assertEquals(false, rtx.moveTo(14L));
+        rtx.close();
+        rtx.close();
 
-            session.close();
-            session.close();
-        } catch (final TreetankException exc) {
-            fail(exc.toString());
-        }
+        session.close();
+        session.close();
     }
 
     @Test(expected = TreetankException.class)
@@ -342,66 +319,50 @@ public class SessionTest {
             DocumentCreater.create(wtx);
 
             session.close();
-        } catch (final TreetankIOException exc) {
-            fail();
-        } catch (final IllegalStateException exc2) {
-            throw exc2;
         } finally {
-            try {
-                wtx.abort();
-            } catch (final TreetankIOException exc3) {
-                throw new RuntimeException(exc3);
-            }
+            wtx.abort();
             session.close();
         }
     }
 
     @Test
-    public void testAutoClose() {
-        try {
-            final ISession session = Session
-                    .beginSession(ITestConstants.TEST_EXISTING_PATH);
+    public void testAutoClose() throws TreetankException {
+        final ISession session = Session
+                .beginSession(ITestConstants.TEST_EXISTING_PATH);
 
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            DocumentCreater.create(wtx);
-            wtx.commit();
-            session.beginReadTransaction();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        session.beginReadTransaction();
 
-            session.close();
-        } catch (final TreetankException exc) {
-            fail(exc.toString());
-        }
+        session.close();
     }
 
     @Test
-    public void testTransactionCount() {
-        try {
-            final ISession session = Session
-                    .beginSession(ITestConstants.TEST_EXISTING_PATH);
+    public void testTransactionCount() throws TreetankException {
+        final ISession session = Session
+                .beginSession(ITestConstants.TEST_EXISTING_PATH);
 
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            Assert.assertEquals(1, session.getWriteTransactionCount());
-            Assert.assertEquals(0, session.getReadTransactionCount());
-            wtx.close();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        Assert.assertEquals(1, session.getWriteTransactionCount());
+        Assert.assertEquals(0, session.getReadTransactionCount());
+        wtx.close();
 
-            final IReadTransaction rtx = session.beginReadTransaction();
-            Assert.assertEquals(0, session.getWriteTransactionCount());
-            Assert.assertEquals(1, session.getReadTransactionCount());
+        final IReadTransaction rtx = session.beginReadTransaction();
+        Assert.assertEquals(0, session.getWriteTransactionCount());
+        Assert.assertEquals(1, session.getReadTransactionCount());
 
-            final IReadTransaction rtx1 = session.beginReadTransaction();
-            Assert.assertEquals(0, session.getWriteTransactionCount());
-            Assert.assertEquals(2, session.getReadTransactionCount());
+        final IReadTransaction rtx1 = session.beginReadTransaction();
+        Assert.assertEquals(0, session.getWriteTransactionCount());
+        Assert.assertEquals(2, session.getReadTransactionCount());
 
-            rtx.close();
-            rtx1.close();
+        rtx.close();
+        rtx1.close();
 
-            Assert.assertEquals(0, session.getWriteTransactionCount());
-            Assert.assertEquals(0, session.getReadTransactionCount());
+        Assert.assertEquals(0, session.getWriteTransactionCount());
+        Assert.assertEquals(0, session.getReadTransactionCount());
 
-            session.close();
-        } catch (final TreetankException exc) {
-            fail(exc.toString());
-        }
+        session.close();
     }
 
 }
