@@ -16,21 +16,20 @@ import org.junit.Test;
 
 public final class TestResponseWrapper implements HttpServletResponse {
 
-    private final String contentType;
-    private final String encoding;
-    private final List<Byte> buffer;
-    private final byte[] content;
-
-    public TestResponseWrapper(final String paramContentType,
-            final String paramEncoding, final byte[] paramContent) {
-        this.contentType = paramContentType;
-        this.encoding = paramEncoding;
-        buffer = new ArrayList<Byte>();
-        content = paramContent;
-    }
+    private String contentType;
+    private String encoding;
+    private List<Byte> buffer;
+    private byte[] content;
 
     public TestResponseWrapper() {
-        this("", "", null);
+        buffer = new ArrayList<Byte>();
+    }
+
+    public void setClassParams(final String paramContentType,
+            final String paramEncoding, final byte[] paramContent) {
+        contentType = paramContentType;
+        encoding = paramEncoding;
+        content = paramContent;
     }
 
     public void addCookie(Cookie arg0) {

@@ -19,14 +19,14 @@ import org.junit.Test;
 
 public class TestRequestWrapper implements HandledHttpServletRequest {
 
-    private final boolean handled;
-
-    public TestRequestWrapper(final boolean paramHandled) {
-        this.handled = paramHandled;
-    }
+    private boolean handled;
 
     public TestRequestWrapper() {
-        this(false);
+
+    }
+
+    public void setClassParam(final boolean paramHandled) {
+        this.handled = paramHandled;
     }
 
     public String getAuthType() {
