@@ -29,10 +29,11 @@ public class HelperCrossdomainTest {
      */
     @Test
     public void testHandle() {
-        final TestRequestWrapper request = new TestRequestWrapper(true);
-        final TestResponseWrapper response = new TestResponseWrapper(
-                HelperCrossdomain.CONTENT_TYPE, IConstants.DEFAULT_ENCODING,
-                HelperCrossdomain.CROSSDOMAIN);
+        final TestRequestWrapper request = new TestRequestWrapper();
+        request.setClassParam(true);
+        final TestResponseWrapper response = new TestResponseWrapper();
+        response.setClassParams(HelperCrossdomain.CONTENT_TYPE,
+                IConstants.DEFAULT_ENCODING, HelperCrossdomain.CROSSDOMAIN);
         try {
             toTest.handle(request, response);
         } catch (final TreetankRestException e) {

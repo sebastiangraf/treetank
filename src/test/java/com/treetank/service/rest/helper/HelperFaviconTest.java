@@ -25,9 +25,10 @@ public class HelperFaviconTest {
      */
     @Test
     public void testHandle() {
-        final TestRequestWrapper request = new TestRequestWrapper(true);
-        final TestResponseWrapper response = new TestResponseWrapper("", "",
-                null);
+        final TestRequestWrapper request = new TestRequestWrapper();
+        request.setClassParam(true);
+        final TestResponseWrapper response = new TestResponseWrapper();
+        response.setClassParams("", "", null);
         try {
             toTest.handle(request, response);
         } catch (final TreetankRestException e) {
