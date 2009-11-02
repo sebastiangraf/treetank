@@ -301,9 +301,9 @@ public interface IReadTransaction {
     IItemList getItemList();
 
     /**
-     * Getting the current node but just as a {@link UnmodifiableNode}
+     * Getting the current node.
      * 
-     * @return the node but not modifiable
+     * @return the node
      */
     IItem getNode();
 

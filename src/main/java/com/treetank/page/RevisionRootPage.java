@@ -68,8 +68,6 @@ public final class RevisionRootPage extends AbstractPage {
      * 
      * @param in
      *            Input bytes.
-     * @param revisionKey
-     *            Key of revision.
      */
     public RevisionRootPage(final ITTSource in) {
         super(2, in);

@@ -22,7 +22,7 @@ public interface IReader {
     StorageProperties getProps() throws TreetankIOException;
 
     /**
-     * Getting the first reference of the {@link Uberpage}
+     * Getting the first reference of the <code>Uberpage</code>
      * 
      * @return a {@link PageReference} with link to the first reference
      * @throws TreetankIOException

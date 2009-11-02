@@ -14,22 +14,21 @@ public interface ITTSource {
     /**
      * Reading a long to the storage
      * 
-     * @param longVal
-     *            to be read
+     * @return the next long of the source
      */
     long readLong();
 
     /**
      * Reading an byte to the storage
      * 
-     * @param byte to be read
+     * @return the next byte of the source
      */
     byte readByte();
 
     /**
      * Reading an int to the storage
      * 
-     * @param int to be read
+     * @return the next int of the source
      */
     int readInt();
 

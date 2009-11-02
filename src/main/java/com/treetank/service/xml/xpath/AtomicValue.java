@@ -288,7 +288,9 @@ public class AtomicValue implements IItem {
     }
 
     /**
-     * {@inheritDoc}
+     * Check if is fulltext
+     * 
+     * @return true if fulltext, false otherwise
      */
     public boolean isFullText() {
 
@@ -296,7 +298,9 @@ public class AtomicValue implements IItem {
     }
 
     /**
-     * {@inheritDoc}
+     * Test if the lead is tes
+     * 
+     * @return true if fulltest leaf, false otherwise
      */
     public boolean isFullTextLeaf() {
 
@@ -304,7 +308,9 @@ public class AtomicValue implements IItem {
     }
 
     /**
-     * {@inheritDoc}
+     * Test if the root is full text
+     * 
+     * @return true if fulltest root, false otherwise
      */
     public boolean isFullTextRoot() {
 
@@ -327,7 +333,9 @@ public class AtomicValue implements IItem {
     }
 
     /**
-     * {@inheritDoc}
+     * Getting the type of the value
+     * 
+     * @return the type of this value
      */
     public final String getType() {
         return Type.getType(mType).getStringRepr();

@@ -83,8 +83,8 @@ public final class SessionConfiguration {
      *            Key to encrypt .tnk file with.
      * @param checksummed
      *            Does the .tnk file uses end-to-end checksumming?
-     * @param which
-     *            storage {@link StorageType} should be used?
+     * @param type
+     *            which storage {@link StorageType} should be used?
      */
     public SessionConfiguration(final String path, final byte[] encryptionKey,
             final boolean checksummed, final AbstractIOFactory.StorageType type) {

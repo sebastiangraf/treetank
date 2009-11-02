@@ -15,7 +15,7 @@ public final class FileKey extends AbstractKey {
     /**
      * Constructor for {@link ITTSource}
      * 
-     * @param in
+     * @param inSource
      *            Source for Input
      */
     public FileKey(final ITTSource inSource) {
