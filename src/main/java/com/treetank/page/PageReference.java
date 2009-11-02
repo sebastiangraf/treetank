@@ -34,7 +34,7 @@ import com.treetank.utils.IConstants;
  * instance of the deserialized page.
  * </p>
  * 
- * @param <T>
+ * 
  */
 public final class PageReference {
 
@@ -72,10 +72,9 @@ public final class PageReference {
      * 
      * @param page
      *            In-memory deserialized page instance.
-     * @param start
-     *            Start byte of serialized page.
-     * @param length
-     *            Length of serialized page in bytes.
+     * @param key
+     *            {@link AbstractKey} of the page to be referenced in the
+     *            persistent storage
      * @param checksum
      *            Checksum of serialized page.
      */
@@ -122,7 +121,8 @@ public final class PageReference {
     /**
      * Get the checksum of the serialized page.
      * 
-     * @return Checksum of serialized page.
+     * @param checksum
+     *            getting the checksum of the page in this byte array
      */
     public final void getChecksum(final byte[] checksum) {
         System.arraycopy(mChecksum, 0, checksum, 0, IConstants.CHECKSUM_SIZE);
@@ -169,8 +169,8 @@ public final class PageReference {
     /**
      * Set start byte offset in file.
      * 
-     * @param start
-     *            Start byte offset in file.
+     * @param key
+     *            Key of this reference set by the persistent storage
      */
     public final void setKey(final AbstractKey key) {
         this.mKey = key;

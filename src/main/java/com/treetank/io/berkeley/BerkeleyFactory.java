@@ -43,7 +43,7 @@ public final class BerkeleyFactory extends AbstractIOFactory {
     /** Binding for {@link AbstractPage} */
     public static final TupleBinding<AbstractPage> PAGE_VAL_B = new AbstractPageBinding();
 
-    /** Binding for {@link PageReference<AbstractPage>} */
+    /** Binding for {@link PageReference} */
     public static final TupleBinding<PageReference> FIRST_REV_VAL_B = new PageReferenceUberPageBinding();
 
     /** Binding for {@link Long} */

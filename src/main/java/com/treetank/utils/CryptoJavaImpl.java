@@ -47,7 +47,9 @@ public class CryptoJavaImpl implements ICrypto {
     /**
      * Compress data.
      * 
-     * @param data
+     * @param length
+     *            of the data to be compressed
+     * @param buffer
      *            data that should be compressed
      * @return compressed data, null if failed
      */
@@ -84,8 +86,10 @@ public class CryptoJavaImpl implements ICrypto {
     /**
      * Decompress data.
      * 
-     * @param data
+     * @param buffer
      *            data that should be decompressed
+     * @param length
+     *            of the data to be decompressed
      * @return Decompressed data, null if failed
      */
     public int decrypt(final int length, final ByteBufferSinkAndSource buffer) {

@@ -345,7 +345,8 @@ public final class ElementNode extends AbstractNode {
     }
 
     /**
-     * {@inheritDoc}
+     * Removing an attribute
+     * @param attributeKey the key of the attribute to be removed
      */
     public final void removeAttribute(final long attributeKey) {
         mAttributeKeys.remove(attributeKey);

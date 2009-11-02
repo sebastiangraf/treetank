@@ -38,9 +38,6 @@ public abstract class AbstractPage {
     /**
      * Constructor to initialize instance.
      * 
-     * @param dirty
-     *            True if the page is created or cloned. False if read or
-     *            committed.
      * @param referenceCount
      *            Number of references of page.
      */

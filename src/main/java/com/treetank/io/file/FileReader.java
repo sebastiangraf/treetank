@@ -39,7 +39,7 @@ public final class FileReader implements IReader {
     /**
      * Constructor.
      * 
-     * @param sessionConfiguration
+     * @param paramConf
      *            Configuration of session we are bound to.
      * @throws TreetankIOException
      *             if something bad happens

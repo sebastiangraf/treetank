@@ -23,7 +23,7 @@ public abstract class TreetankException extends Exception {
     /**
      * Constructor to encapsulate everything which wants to blame
      * 
-     * @param exc
+     * @param message
      *            to encapsulate
      */
     public TreetankException(final String message) {

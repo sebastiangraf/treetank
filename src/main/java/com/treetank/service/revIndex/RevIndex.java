@@ -68,12 +68,15 @@ public final class RevIndex {
     private final IReadTransaction rtx;
 
     /**
-     * Private constructor, Access should take place over
-     * {@link RevIndex#getIndex(File)}.
+     * Constructor
      * 
-     * @param paramIndexFolder
+     * 
+     * @param index
      *            folder to be access.
+     * @param rev
+     *            revision to be accessed
      * @throws TreetankException
+     *             if any access to Treetank fails
      */
     public RevIndex(final File index, final long rev) throws TreetankException {
         indexSession = Session.beginSession(index);
@@ -118,8 +121,6 @@ public final class RevIndex {
      * 
      * @param term
      *            the term to be indexed.
-     * @param names
-     *            elements of the document to be indexed
      */
     public final void insertNextTermForCurrentNode(final String term)
             throws TreetankException {

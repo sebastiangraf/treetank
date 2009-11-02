@@ -66,8 +66,6 @@ public class NodePage extends AbstractPage {
      * 
      * @param in
      *            Input bytes to read page from.
-     * @param nodePageKey
-     *            Base key assigned to this node page.
      */
     public NodePage(final ITTSource in) {
         super(0, in);

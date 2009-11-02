@@ -77,12 +77,8 @@ public final class WriteTransactionState extends ReadTransactionState {
      * 
      * @param sessionConfiguration
      *            Configuration of session.
-     * @param pageCache
-     *            Shared nodePageReference cache.
      * @param uberPage
      *            Root of revision.
-     * @param reader
-     *            Reader of transaction
      * @param writer
      *            Writer where this transaction should write to
      */
@@ -199,7 +195,12 @@ public final class WriteTransactionState extends ReadTransactionState {
     }
 
     /**
-     * {@inheritDoc}
+     * Removing a node from the storage
+     * 
+     * @param node
+     *            to be removed
+     * @throws TreetankIOException
+     *             if the removal fails
      */
     protected final void removeNode(final AbstractNode node)
             throws TreetankIOException {
@@ -235,7 +236,11 @@ public final class WriteTransactionState extends ReadTransactionState {
     }
 
     /**
-     * {@inheritDoc}
+     * Creating a namekey for a given name
+     * 
+     * @param name
+     *            for which the key should be created.
+     * @return an int, representing the namekey
      */
     protected final int createNameKey(final String name) {
         final String string = (name == null ? "" : name);
@@ -252,7 +257,13 @@ public final class WriteTransactionState extends ReadTransactionState {
     }
 
     /**
-     * {@inheritDoc}
+     * Committing a a writetransaction. This method is recursivly invoked by all
+     * {@link PageReference}s.
+     * 
+     * @param reference
+     *            to be commited
+     * @throws TreetankIOException
+     *             if the write fails
      */
     public final void commit(final PageReference reference)
             throws TreetankIOException {

@@ -16,7 +16,7 @@ public interface IWriter extends IReader {
     /**
      * Initializing the storage if the {@link UberPage} is bootstraped.
      * 
-     * @throw TreetankIOException if something bad happens
+     * @throws TreetankIOException if something bad happens
      */
     void setProps(final StorageProperties props) throws TreetankIOException;
 

@@ -40,7 +40,10 @@ public final class TreeTankDebugger {
     }
 
     /**
-     * {@inheritDoc}
+     * Simple public static void main to start.
+     * 
+     * @param args
+     *            must be a filepath to the file evaluated
      */
     public static void main(final String... args) {
         try {

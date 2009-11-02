@@ -74,8 +74,6 @@ public class ReadTransactionState {
      * 
      * @param sessionConfiguration
      *            Configuration of session.
-     * @param pageCache
-     *            Shared page cache.
      * @param uberPage
      *            Uber page to start reading with.
      * @param revisionKey
@@ -84,6 +82,8 @@ public class ReadTransactionState {
      *            List of non-persistent items.
      * @param reader
      *            for this transaction
+     * @throws TreetankIOException
+     *             if the read of the persistent storage fails
      */
     protected ReadTransactionState(
             final SessionConfiguration sessionConfiguration,
@@ -101,14 +101,22 @@ public class ReadTransactionState {
     }
 
     /**
-     * {@inheritDoc}
+     * Getting the current {@link RevisionRootPage}
+     * 
+     * @return the current {@link RevisionRootPage}
      */
     public final RevisionRootPage getRevisionRootPage() {
         return mRevisionRootPage;
     }
 
     /**
-     * {@inheritDoc}
+     * Getting the node related to the given node key
+     * 
+     * @param nodeKey
+     *            searched for
+     * @return the related Node
+     * @throws TreetankIOException
+     *             if the read to the persistent storage fails
      */
     protected IItem getNode(final long nodeKey) throws TreetankIOException {
 
@@ -134,7 +142,11 @@ public class ReadTransactionState {
     }
 
     /**
-     * {@inheritDoc}
+     * Getting the name corresponding to the given key
+     * 
+     * @param nameKey
+     *            for the term searched
+     * @return the name
      */
     protected String getName(final int nameKey) {
         return mNamePage.getName(nameKey);
@@ -142,7 +154,11 @@ public class ReadTransactionState {
     }
 
     /**
-     * {@inheritDoc}
+     * Getting the raw name related to the name key
+     * 
+     * @param nameKey
+     *            for the raw name searched
+     * @return a byte array containing the raw name
      */
     protected final byte[] getRawName(final int nameKey) {
         return mNamePage.getRawName(nameKey);
@@ -150,15 +166,13 @@ public class ReadTransactionState {
     }
 
     /**
-     * {@inheritDoc}
+     * Closing this Readtransaction.
+     * 
+     * @throws TreetankIOException
+     *             if the closing to the persistent storage fails.
      */
-    protected void close() {
-        try {
-            mPageReader.close();
-        } catch (TreetankIOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    protected void close() throws TreetankIOException {
+        mPageReader.close();
         mCache.clear();
 
         // Immediately release all references.
