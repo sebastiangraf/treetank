@@ -4,10 +4,42 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>treetank</groupId>
 	<artifactId>treetank</artifactId>
-	<name>treetank</name>
-	<version>5.0</version>
 	<packaging>jar</packaging>
-	<description>A native XML database</description>
+	<name>treetank</name>
+	<version>5.0.0</version>
+	<description>Treetank is a fully java-implemented native XML-Database. 
+	It supports cursorlike access to all nodes stored in the tree plus XPath 2.0 as query engine. Furthermore, Treetank is completely versionable. That means that each update-operation results in a new version. 
+	These versions can be easily retrieved within the database itself.</description>
+	<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/disy/forschung/treetank/</url>
+	<organization>
+		<name>University of Konstanz, Distributed Systems Lab</name>
+		<url>http://www.informatik.uni-konstanz.de/ags/disy/
+		</url>
+	</organization>
+	<developers>
+		<developer>
+			<name>Marc Kramis</name>
+			<email>marc.kramis@seabix.com</email>
+			<roles>
+				<role>Architect</role>
+			</roles>
+			<url>http://www.seabix.com</url>
+			<organization>Seabix GmbH</organization>
+			<timezone>+1</timezone>
+		</developer>
+		<developer>
+			<name>Sebastian Graf</name>
+			<email>Sebastian.Graf@uni-konstanz.de</email>
+			<roles>
+				<role>Project Manager</role>
+				<role>Developer</role>
+			</roles>
+			<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/Verteilte-Systeme/mitglieder/Sebastian-Graf</url>
+			<organization>University of Konstanz, Distributed Systems Lab</organization>
+			<organizationUrl>http://www.informatik.uni-konstanz.de/ags/disy/</organizationUrl>
+			<timezone>+1</timezone>
+		</developer>
+	</developers>
 	<repositories>
 		<repository>
 			<id>oracleReleases</id>
@@ -76,6 +108,30 @@
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -116,23 +172,23 @@
 			<version>1.1.1</version>
 		</dependency>
 	</dependencies>
-<distributionManagement>
-  <repository>
-    <id>xen5</id>
-    <name>Xen5 Repository</name>
-        <url>scp://xen5.disy.inf.uni-konstanz.de/home/disyadmin/internalRepo/repository</url>
-		<uniqueVersion>false</uniqueVersion>
-  </repository>
-  <snapshotRepository>
-    <id>xen5</id>
-    <name>Xen5 SnapshotRepository</name>
-         <url>scp://xen5.disy.inf.uni-konstanz.de/home/disyadmin/internalRepo/snapshotRepository</url>
-		 <uniqueVersion>false</uniqueVersion>
-  </snapshotRepository>
-</distributionManagement>
-<properties>
+	<distributionManagement>
+  		<repository>
+    		<id>xen5</id>
+    		<name>Xen5 Repository</name>
+        	<url>scp://xen5.disy.inf.uni-konstanz.de/home/disyadmin/internalRepo/repository</url>
+			<uniqueVersion>false</uniqueVersion>
+  		</repository>
+  		<snapshotRepository>
+    		<id>xen5</id>
+    		<name>Xen5 SnapshotRepository</name>
+         	<url>scp://xen5.disy.inf.uni-konstanz.de/home/disyadmin/internalRepo/snapshotRepository</url>
+			<uniqueVersion>false</uniqueVersion>
+ 		</snapshotRepository>
+	</distributionManagement>
+	<properties>
 		<compileSource>1.6</compileSource>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
+	</properties>	
 </project>
 
