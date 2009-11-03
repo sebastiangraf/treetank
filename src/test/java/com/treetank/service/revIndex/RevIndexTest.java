@@ -100,6 +100,7 @@ public class RevIndexTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testDocument() throws TreetankException {
         final Stack<String> uuids1 = new Stack<String>();
         uuids1.push("bla");

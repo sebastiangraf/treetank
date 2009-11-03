@@ -29,6 +29,7 @@ import org.perfidix.annotation.Bench;
 import org.perfidix.ouput.TabularSummaryOutput;
 import org.perfidix.result.BenchmarkResult;
 
+import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.DescendantAxis;
@@ -154,8 +155,9 @@ public class AxisStepBench {
         public void run() {
 
             try {
-                for (final long key : new DescendantAxis(mRTX)) {
-                    // Do nothing
+                final IAxis axis = new DescendantAxis(mRTX);
+                while (axis.hasNext()) {
+                    axis.next();
                 }
                 mRTX.close();
             } catch (Exception e) {

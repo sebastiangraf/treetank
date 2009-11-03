@@ -38,7 +38,9 @@ public class XPathBench {
             final XPathParser parser = new XPathParser(rtx, query);
             parser.parseQuery();
             final IAxis axis = parser.getQueryPipeline();
-            for (final long key : axis) {
+
+            while (axis.hasNext()) {
+                axis.next();
                 System.out.println(rtx.getNameOfCurrentNode());
             }
 

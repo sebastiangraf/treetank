@@ -118,12 +118,12 @@ public final class IOTestHelper {
 
     }
 
-    public static void testReadWriteNodePageStructure(
-            final SessionConfiguration conf) throws TreetankException {
-        final AbstractIOFactory fac = AbstractIOFactory.getInstance(conf);
-        final PageReference pageRef1 = new PageReference();
-        final UberPage page1 = new UberPage();
-        pageRef1.setPage(page1);
-
-    }
+    // public static void testReadWriteNodePageStructure(
+    // final SessionConfiguration conf) throws TreetankException {
+    // final AbstractIOFactory fac = AbstractIOFactory.getInstance(conf);
+    // final PageReference pageRef1 = new PageReference();
+    // final UberPage page1 = new UberPage();
+    // pageRef1.setPage(page1);
+    //
+    // }
 }

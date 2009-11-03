@@ -11,15 +11,14 @@ import org.junit.Test;
 import com.treetank.TestHelper;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankRestException;
-import com.treetank.service.rest.RestTestHelper;
 
 public class HelperDeleteTest {
 
-    private HelperDelete toTest;
+    // private HelperDelete toTest;
 
     @Before
     public void setUp() throws TreetankRestException, TreetankException {
-        toTest = new HelperDelete(RestTestHelper.getTestInstances());
+        // toTest = new HelperDelete(RestTestHelper.getTestInstances());
     }
 
     /**
