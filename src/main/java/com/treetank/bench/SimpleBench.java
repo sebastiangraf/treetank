@@ -23,6 +23,7 @@ package com.treetank.bench;
 
 import java.io.File;
 
+import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.ChildAxis;
@@ -62,8 +63,9 @@ public class SimpleBench {
             final ISession session = Session
                     .beginSession(mSessionConfiguration);
             final IReadTransaction rtx = session.beginReadTransaction();
-            for (final long key : new ChildAxis(rtx)) {
-                // Do nothing
+            final IAxis axis = new ChildAxis(rtx);
+            while (axis.hasNext()) {
+                axis.next();
             }
             rtx.close();
             session.close();
