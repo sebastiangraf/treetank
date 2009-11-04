@@ -35,7 +35,7 @@ public final class TreeTankCommandoLineExplorer {
      *            the line to be analysed
      * @return the corresponding file
      */
-    private static final File findFile(final String commandLine) {
+    private static File findFile(final String commandLine) {
         final String[] command = commandLine.split(COMMANDDELIM);
         if (command.length != 2) {
             return null;

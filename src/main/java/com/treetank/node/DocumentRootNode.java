@@ -19,7 +19,6 @@
 package com.treetank.node;
 
 import com.treetank.api.IReadTransaction;
-import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
 
 /**
@@ -137,22 +136,6 @@ public final class DocumentRootNode extends AbstractNode {
     @Override
     public int getKind() {
         return IReadTransaction.ROOT_KIND;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void serialize(final ITTSink out) {
-        super.serialize(out);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return "DocumentRootNode " + super.toString();
     }
 
 }

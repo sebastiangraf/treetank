@@ -134,7 +134,7 @@ public final class SessionState {
 
     }
 
-    private final void checkValidStorage(final StorageProperties props) {
+    private void checkValidStorage(final StorageProperties props) {
 
         // Fail if an old TreeTank file is encountered.
         if (mVersionMajor < IConstants.LAST_VERSION_MAJOR
@@ -174,31 +174,29 @@ public final class SessionState {
         }
     }
 
-    protected final int getReadTransactionCount() {
+    protected int getReadTransactionCount() {
         return (IConstants.MAX_READ_TRANSACTIONS - (int) mReadSemaphore
                 .availablePermits());
     }
 
-    protected final int getWriteTransactionCount() {
+    protected int getWriteTransactionCount() {
         return (IConstants.MAX_WRITE_TRANSACTIONS - (int) mWriteSemaphore
                 .availablePermits());
     }
 
-    protected final IReadTransaction beginReadTransaction()
-            throws TreetankException {
+    protected IReadTransaction beginReadTransaction() throws TreetankException {
         return beginReadTransaction(mLastCommittedUberPage.getRevisionNumber(),
                 null);
     }
 
-    protected final IReadTransaction beginReadTransaction(
-            final IItemList itemList) throws TreetankException {
+    protected IReadTransaction beginReadTransaction(final IItemList itemList)
+            throws TreetankException {
         return beginReadTransaction(mLastCommittedUberPage.getRevisionNumber(),
                 itemList);
     }
 
-    protected final IReadTransaction beginReadTransaction(
-            final long revisionNumber, final IItemList itemList)
-            throws TreetankException {
+    protected IReadTransaction beginReadTransaction(final long revisionNumber,
+            final IItemList itemList) throws TreetankException {
 
         // Make sure not to exceed available number of read transactions.
         try {
@@ -222,9 +220,8 @@ public final class SessionState {
         return rtx;
     }
 
-    protected final IWriteTransaction beginWriteTransaction(
-            final int maxNodeCount, final int maxTime)
-            throws TreetankIOException {
+    protected IWriteTransaction beginWriteTransaction(final int maxNodeCount,
+            final int maxTime) throws TreetankIOException {
 
         // Make sure not to exceed available number of write transactions.
         if (mWriteSemaphore.availablePermits() == 0) {
@@ -251,7 +248,7 @@ public final class SessionState {
         return wtx;
     }
 
-    protected final WriteTransactionState createWriteTransactionState()
+    protected WriteTransactionState createWriteTransactionState()
             throws TreetankIOException {
         IWriter writer;
         try {
@@ -264,30 +261,29 @@ public final class SessionState {
                 mLastCommittedUberPage), writer);
     }
 
-    protected final UberPage getLastCommittedUberPage() {
+    protected UberPage getLastCommittedUberPage() {
         return mLastCommittedUberPage;
     }
 
-    protected final void setLastCommittedUberPage(
-            final UberPage lastCommittedUberPage) {
+    protected void setLastCommittedUberPage(final UberPage lastCommittedUberPage) {
         mLastCommittedUberPage = lastCommittedUberPage;
     }
 
-    protected final void closeWriteTransaction(final long transactionID) {
+    protected void closeWriteTransaction(final long transactionID) {
         // Purge transaction from internal state.
         mTransactionMap.remove(transactionID);
         // Make new transactions available.
         mWriteSemaphore.release();
     }
 
-    protected final void closeReadTransaction(final long transactionID) {
+    protected void closeReadTransaction(final long transactionID) {
         // Purge transaction from internal state.
         mTransactionMap.remove(transactionID);
         // Make new transactions available.
         mReadSemaphore.release();
     }
 
-    protected final void close() throws TreetankException {
+    protected void close() throws TreetankException {
         // Forcibly close all open transactions.
         for (final IReadTransaction rtx : mTransactionMap.values()) {
             rtx.close();
@@ -303,7 +299,7 @@ public final class SessionState {
         fac.closeStorage();
     }
 
-    protected final SessionConfiguration getSessionConfiguration() {
+    protected SessionConfiguration getSessionConfiguration() {
         return mSessionConfiguration;
     }
 
@@ -326,7 +322,7 @@ public final class SessionState {
      * 
      * @return Generated unique ID.
      */
-    private final long generateTransactionID() {
+    private long generateTransactionID() {
         long id = mRandom.nextLong();
         synchronized (mTransactionMap) {
             while (mTransactionMap.containsKey(id)) {

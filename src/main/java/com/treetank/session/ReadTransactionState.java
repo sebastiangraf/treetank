@@ -206,7 +206,7 @@ public class ReadTransactionState {
         return page;
     }
 
-    protected final NamePage getNamePage() {
+    protected final NamePage getNamePage() throws TreetankIOException {
         final PageReference namePageRef = mRevisionRootPage
                 .getNamePageReference();
 
@@ -214,11 +214,7 @@ public class ReadTransactionState {
 
         // If there is no page, get it from the storage and cache it.
         if (page == null) {
-            try {
-                page = (NamePage) mPageReader.read(namePageRef);
-            } catch (TreetankIOException e) {
-
-            }
+            page = (NamePage) mPageReader.read(namePageRef);
         }
 
         return page;

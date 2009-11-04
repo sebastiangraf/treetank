@@ -94,7 +94,7 @@ public final class NamePage extends AbstractPage {
      *            Name key identifying name.
      * @return Name of name key.
      */
-    public final String getName(final int key) {
+    public String getName(final int key) {
         return mNameMap.get(key);
     }
 
@@ -105,7 +105,7 @@ public final class NamePage extends AbstractPage {
      *            Name key identifying name.
      * @return Raw name of name key.
      */
-    public final byte[] getRawName(final int key) {
+    public byte[] getRawName(final int key) {
         return TypedValue.getBytes(mNameMap.get(key));
     }
 
@@ -117,7 +117,7 @@ public final class NamePage extends AbstractPage {
      * @param name
      *            Name to create key for.
      */
-    public final void setName(final int key, final String name) {
+    public void setName(final int key, final String name) {
         mNameMap.put(key, name);
         // mRawNameMap.put(key, TypedValue.getBytes(name));
     }
@@ -126,7 +126,7 @@ public final class NamePage extends AbstractPage {
      * {@inheritDoc}
      */
     @Override
-    public final void serialize(final ITTSink out) {
+    public void serialize(final ITTSink out) {
         out.writeInt(PagePersistenter.NAMEPAGE);
         super.serialize(out);
 
@@ -146,7 +146,7 @@ public final class NamePage extends AbstractPage {
      * {@inheritDoc}
      */
     @Override
-    public final String toString() {
+    public String toString() {
         return super.toString() + ": nameCount=" + mNameMap.size();
     }
 

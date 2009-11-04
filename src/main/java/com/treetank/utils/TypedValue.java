@@ -71,7 +71,7 @@ public final class TypedValue {
      *            Byte array to parse string from.
      * @return String.
      */
-    public static final String parseString(final byte[] bytes) {
+    public static String parseString(final byte[] bytes) {
         try {
 
             final String intermediateString = new String(bytes,
@@ -207,7 +207,7 @@ public final class TypedValue {
      *            Byte array to parse int from.
      * @return Boolean.
      */
-    public static final boolean parseBoolean(final byte[] bytes) {
+    public static boolean parseBoolean(final byte[] bytes) {
         return (bytes[0] == 1);
     }
 
@@ -218,7 +218,7 @@ public final class TypedValue {
      *            Byte array to parse int from.
      * @return Int.
      */
-    public static final int parseInt(final byte[] bytes) {
+    public static int parseInt(final byte[] bytes) {
         int position = 0;
         int value = ((bytes[position++] & 127));
         if ((bytes[position - 1] & 128) != 0) {
@@ -247,7 +247,7 @@ public final class TypedValue {
      *            Byte array to parse long from.
      * @return Long.
      */
-    public static final long parseLong(final byte[] bytes) {
+    public static long parseLong(final byte[] bytes) {
         int position = 1;
         long value = (long) (bytes[position++] & 255);
         if (bytes[position - 2] > 1) {
@@ -289,7 +289,7 @@ public final class TypedValue {
      *            Int to encode as UTF-8 byte array.
      * @return UTF-8-encoded byte array of int.
      */
-    public static final byte[] getBytes(final boolean value) {
+    public static byte[] getBytes(final boolean value) {
         final byte[] bytes = new byte[1];
         if (value) {
             bytes[0] = 1;
@@ -307,7 +307,7 @@ public final class TypedValue {
      *            Int to encode as UTF-8 byte array.
      * @return UTF-8-encoded byte array of int.
      */
-    public static final byte[] getBytes(final int value) {
+    public static byte[] getBytes(final int value) {
         final byte[] tmpBytes = new byte[5];
         int position = 0;
         tmpBytes[position++] = (byte) (value);
@@ -344,7 +344,7 @@ public final class TypedValue {
      *            Long to encode as UTF-8 byte array.
      * @return UTF-8-encoded byte array of long.
      */
-    public static final byte[] getBytes(final long value) {
+    public static byte[] getBytes(final long value) {
         final byte[] tmpBytes = new byte[9];
         int position = 1;
         tmpBytes[position++] = (byte) value;
@@ -390,7 +390,7 @@ public final class TypedValue {
      *            String to encode as UTF-8 byte array.
      * @return UTF-8-encoded byte array of string.
      */
-    public static final byte[] getBytes(final String value) {
+    public static byte[] getBytes(final String value) {
         byte[] bytes = null;
         try {
             if (value == null || value.length() == 0) {
@@ -422,7 +422,7 @@ public final class TypedValue {
         return bytes;
     }
 
-    public static final boolean equals(final byte[] value1, final byte[] value2) {
+    public static boolean equals(final byte[] value1, final byte[] value2) {
         // Fail if one is null.
         if ((value1 == null) || (value2 == null)) {
             return false;
@@ -441,15 +441,15 @@ public final class TypedValue {
         return true;
     }
 
-    public static final boolean equals(final byte[] value1, final String value2) {
+    public static boolean equals(final byte[] value1, final String value2) {
         return equals(value1, TypedValue.getBytes(value2));
     }
 
-    public static final boolean equals(final String value1, final byte[] value2) {
+    public static boolean equals(final String value1, final byte[] value2) {
         return equals(TypedValue.getBytes(value1), value2);
     }
 
-    public static final boolean equals(final String value1, final String value2) {
+    public static boolean equals(final String value1, final String value2) {
         return equals(TypedValue.getBytes(value1), TypedValue.getBytes(value2));
     }
 

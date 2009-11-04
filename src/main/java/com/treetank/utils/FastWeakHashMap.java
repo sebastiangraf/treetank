@@ -67,7 +67,7 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
      * {@inheritDoc}
      */
     @Override
-    public final V get(final Object key) {
+    public V get(final Object key) {
         V value = null;
         final WeakReference<V> weakReference = mInternalMap.get(key);
         if (weakReference != null) {
@@ -86,7 +86,7 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
      * {@inheritDoc}
      */
     @Override
-    public final V put(final K key, final V value) {
+    public V put(final K key, final V value) {
         processQueue();
         mInternalMap.put(key, new WeakValue<V>(value, key, mQueue));
         return null;
@@ -96,7 +96,7 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
      * {@inheritDoc}
      */
     @Override
-    public final V remove(final Object key) {
+    public V remove(final Object key) {
         processQueue();
         mInternalMap.remove(key);
         return null;
@@ -106,7 +106,7 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
      * {@inheritDoc}
      */
     @Override
-    public final synchronized void clear() {
+    public synchronized void clear() {
         processQueue();
         mInternalMap.clear();
     }
@@ -115,7 +115,7 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
      * {@inheritDoc}
      */
     @Override
-    public final int size() {
+    public int size() {
         processQueue();
         return mInternalMap.size();
     }
@@ -124,7 +124,7 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
      * {@inheritDoc}
      */
     @Override
-    public final Set<Map.Entry<K, V>> entrySet() {
+    public Set<Map.Entry<K, V>> entrySet() {
         throw new UnsupportedOperationException();
     }
 
@@ -133,7 +133,7 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
      * queue.
      * 
      */
-    private final void processQueue() {
+    private void processQueue() {
         WeakValue<V> weakValue;
         while ((weakValue = (WeakValue<V>) mQueue.poll()) != null) {
             mInternalMap.remove(weakValue.key);
@@ -144,7 +144,7 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
      * Internal subclass to store keys and values for more convenient lookups.
      */
     @SuppressWarnings("hiding")
-    private final class WeakValue<V> extends WeakReference<V> {
+    private class WeakValue<V> extends WeakReference<V> {
         private final K key;
 
         /**

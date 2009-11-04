@@ -19,7 +19,6 @@ q * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
 package com.treetank.session;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,7 +69,7 @@ public final class Session implements ISession {
      * @throws IOException
      *             if there is a problem with opening the given file.
      */
-    public static final ISession beginSession(final File file)
+    public static ISession beginSession(final File file)
             throws TreetankIOException {
         return beginSession(file.getAbsolutePath());
     }
@@ -82,7 +81,7 @@ public final class Session implements ISession {
      *            Path to TreeTank file.
      * @return New session bound to given TreeTank file.
      */
-    public static final ISession beginSession(final String path)
+    public static ISession beginSession(final String path)
             throws TreetankIOException {
         return beginSession(new SessionConfiguration(path));
     }
@@ -94,7 +93,7 @@ public final class Session implements ISession {
      *            Configuration of session.
      * @return New session bound to given TreeTank file.
      */
-    public static final ISession beginSession(
+    public static ISession beginSession(
             final SessionConfiguration sessionConfiguration)
             throws TreetankIOException {
 
@@ -122,8 +121,7 @@ public final class Session implements ISession {
      * @param file
      *            TreeTank file to remove.
      */
-    public static final void removeSession(final File file)
-            throws TreetankException {
+    public static void removeSession(final File file) throws TreetankException {
         removeSession(file.getAbsolutePath());
     }
 
@@ -133,7 +131,7 @@ public final class Session implements ISession {
      * @param path
      *            TreeTank file to remove.
      */
-    public static final void removeSession(final String path)
+    public static void removeSession(final String path)
             throws TreetankException {
         synchronized (SESSION_MAP) {
             ISession session = SESSION_MAP.get(path);
@@ -154,7 +152,7 @@ public final class Session implements ISession {
     /**
      * Closing all open Sessions.
      */
-    public static final void closeSession(final String path) {
+    public static void closeSession(final String path) {
         synchronized (SESSION_MAP) {
             SESSION_MAP.remove(path);
         }
@@ -163,7 +161,7 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    public final String getFileName() {
+    public String getFileName() {
         assertNotClosed();
         return mSessionState.getSessionConfiguration().getAbsolutePath();
     }
@@ -171,7 +169,7 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    public final String getAbsolutePath() {
+    public String getAbsolutePath() {
         assertNotClosed();
         return mSessionState.getSessionConfiguration().getAbsolutePath();
     }
@@ -179,7 +177,7 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    public final boolean isEncrypted() {
+    public boolean isEncrypted() {
         assertNotClosed();
         return mSessionState.getSessionConfiguration().isEncrypted();
     }
@@ -187,7 +185,7 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    public final boolean isChecksummed() {
+    public boolean isChecksummed() {
         assertNotClosed();
         return mSessionState.getSessionConfiguration().isChecksummed();
     }
@@ -195,7 +193,7 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    public final long getVersionMajor() {
+    public long getVersionMajor() {
         assertNotClosed();
         return mSessionState.getVersionMajor();
     }
@@ -203,7 +201,7 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    public final long getVersionMinor() {
+    public long getVersionMinor() {
         assertNotClosed();
         return mSessionState.getVersionMinor();
     }
@@ -211,8 +209,7 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    public final IReadTransaction beginReadTransaction()
-            throws TreetankException {
+    public IReadTransaction beginReadTransaction() throws TreetankException {
         assertNotClosed();
         return mSessionState.beginReadTransaction(new ItemList());
     }
@@ -220,7 +217,7 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    public final IReadTransaction beginReadTransaction(final long revisionKey)
+    public IReadTransaction beginReadTransaction(final long revisionKey)
             throws TreetankException {
         assertNotClosed();
         return mSessionState.beginReadTransaction(revisionKey, new ItemList());
@@ -229,8 +226,7 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    public final IWriteTransaction beginWriteTransaction()
-            throws TreetankException {
+    public IWriteTransaction beginWriteTransaction() throws TreetankException {
         assertNotClosed();
         return mSessionState.beginWriteTransaction(0, 0);
     }
@@ -238,8 +234,8 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    public final IWriteTransaction beginWriteTransaction(
-            final int maxNodeCount, final int maxTime) throws TreetankException {
+    public IWriteTransaction beginWriteTransaction(final int maxNodeCount,
+            final int maxTime) throws TreetankException {
         assertNotClosed();
         return mSessionState.beginWriteTransaction(maxNodeCount, maxTime);
     }
@@ -247,21 +243,21 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    public final int getReadTransactionCount() {
+    public int getReadTransactionCount() {
         return mSessionState.getReadTransactionCount();
     }
 
     /**
      * {@inheritDoc}
      */
-    public final int getWriteTransactionCount() {
+    public int getWriteTransactionCount() {
         return mSessionState.getWriteTransactionCount();
     }
 
     /**
      * {@inheritDoc}
      */
-    public final void close() throws TreetankException {
+    public void close() throws TreetankException {
         if (!mClosed) {
             synchronized (SESSION_MAP) {
                 SESSION_MAP.remove(mSessionState.getSessionConfiguration()
@@ -291,13 +287,13 @@ public final class Session implements ISession {
     /**
      * Make sure that the session is not yet closed when calling this method.
      */
-    private final void assertNotClosed() {
+    private void assertNotClosed() {
         if (mClosed) {
             throw new IllegalStateException("Session is already closed.");
         }
     }
 
-    private final static boolean recursiveDelete(final File file) {
+    private static boolean recursiveDelete(final File file) {
         if (file.isDirectory()) {
             for (final File child : file.listFiles()) {
                 if (!recursiveDelete(child)) {

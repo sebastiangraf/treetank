@@ -15,7 +15,7 @@ public final class NamePageHash {
     private NamePageHash() {
     }
 
-    public static final int[] generateOffsets(final int stringKey) {
+    public static int[] generateOffsets(final int stringKey) {
         final int[] returnval = new int[2];
         returnval[0] = stringKey & 127;
 
@@ -25,7 +25,7 @@ public final class NamePageHash {
 
     }
 
-    public static final int generateHashForString(final String string) {
+    public static int generateHashForString(final String string) {
         return string.hashCode();
     }
 

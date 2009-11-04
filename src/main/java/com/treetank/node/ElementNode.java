@@ -430,12 +430,4 @@ public final class ElementNode extends AbstractNode {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return "ElementNode " + super.toString();
-    }
-
 }

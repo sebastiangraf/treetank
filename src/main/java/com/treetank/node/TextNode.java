@@ -243,12 +243,4 @@ public final class TextNode extends AbstractNode {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return "TextNode " + super.toString();
-    }
-
 }

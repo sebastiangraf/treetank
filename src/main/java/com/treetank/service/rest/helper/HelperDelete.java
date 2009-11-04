@@ -41,7 +41,7 @@ public final class HelperDelete {
         mServices = map;
     }
 
-    public final void handle(final HttpServletRequest request,
+    public void handle(final HttpServletRequest request,
             final HttpServletResponse response) throws TreetankRestException {
 
         try {

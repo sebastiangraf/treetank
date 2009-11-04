@@ -105,7 +105,7 @@ public final class WriteTransaction extends ReadTransaction implements
     /**
      * {@inheritDoc}
      */
-    public final synchronized long insertElementAsFirstChild(final String name,
+    public synchronized long insertElementAsFirstChild(final String name,
             final String uri) throws TreetankIOException {
         return insertFirstChild(((WriteTransactionState) getTransactionState())
                 .createElementNode(getCurrentNode().getNodeKey(),
@@ -122,7 +122,7 @@ public final class WriteTransaction extends ReadTransaction implements
     /**
      * {@inheritDoc}
      */
-    public final synchronized long insertTextAsFirstChild(final int valueType,
+    public synchronized long insertTextAsFirstChild(final int valueType,
             final byte[] value) throws TreetankIOException {
         return insertFirstChild(((WriteTransactionState) getTransactionState())
                 .createTextNode(getCurrentNode().getNodeKey(), NULL_NODE_KEY,
@@ -132,7 +132,7 @@ public final class WriteTransaction extends ReadTransaction implements
     /**
      * {@inheritDoc}
      */
-    public final synchronized long insertTextAsFirstChild(final String value)
+    public synchronized long insertTextAsFirstChild(final String value)
             throws TreetankIOException {
         return insertTextAsFirstChild(
                 ((WriteTransactionState) getTransactionState())
@@ -143,8 +143,8 @@ public final class WriteTransaction extends ReadTransaction implements
     /**
      * {@inheritDoc}
      */
-    public final synchronized long insertElementAsRightSibling(
-            final String name, final String uri) throws TreetankIOException {
+    public synchronized long insertElementAsRightSibling(final String name,
+            final String uri) throws TreetankIOException {
         return insertRightSibling(((WriteTransactionState) getTransactionState())
                 .createElementNode(getCurrentNode().getParentKey(),
                         NULL_NODE_KEY, getCurrentNode().getNodeKey(),
@@ -160,8 +160,8 @@ public final class WriteTransaction extends ReadTransaction implements
     /**
      * {@inheritDoc}
      */
-    public final synchronized long insertTextAsRightSibling(
-            final int valueType, final byte[] value) throws TreetankIOException {
+    public synchronized long insertTextAsRightSibling(final int valueType,
+            final byte[] value) throws TreetankIOException {
         return insertRightSibling(((WriteTransactionState) getTransactionState())
                 .createTextNode(getCurrentNode().getParentKey(),
                         getCurrentNode().getNodeKey(), getCurrentNode()
@@ -171,7 +171,7 @@ public final class WriteTransaction extends ReadTransaction implements
     /**
      * {@inheritDoc}
      */
-    public final synchronized long insertTextAsRightSibling(final String value)
+    public synchronized long insertTextAsRightSibling(final String value)
             throws TreetankIOException {
         return insertTextAsRightSibling(
                 ((WriteTransactionState) getTransactionState())
@@ -182,7 +182,7 @@ public final class WriteTransaction extends ReadTransaction implements
     /**
      * {@inheritDoc}
      */
-    public final synchronized long insertAttribute(final String name,
+    public synchronized long insertAttribute(final String name,
             final String uri, final int valueType, final byte[] value)
             throws TreetankIOException {
         return insertAttribute(((WriteTransactionState) getTransactionState())
@@ -198,7 +198,7 @@ public final class WriteTransaction extends ReadTransaction implements
     /**
      * {@inheritDoc}
      */
-    public final synchronized long insertAttribute(final String name,
+    public synchronized long insertAttribute(final String name,
             final String uri, final String value) throws TreetankIOException {
         return insertAttribute(name, uri,
                 ((WriteTransactionState) getTransactionState())
@@ -209,7 +209,7 @@ public final class WriteTransaction extends ReadTransaction implements
     /**
      * {@inheritDoc}
      */
-    public final synchronized long insertNamespace(final String uri,
+    public synchronized long insertNamespace(final String uri,
             final String prefix) throws TreetankIOException {
         return insertNamespace(((WriteTransactionState) getTransactionState())
                 .createNamespaceNode(getCurrentNode().getNodeKey(),
@@ -222,7 +222,7 @@ public final class WriteTransaction extends ReadTransaction implements
     /**
      * {@inheritDoc}
      */
-    public final synchronized void remove() throws TreetankException {
+    public synchronized void remove() throws TreetankException {
 
         assertNotClosed();
         mModificationCount++;
@@ -313,7 +313,7 @@ public final class WriteTransaction extends ReadTransaction implements
     /**
      * {@inheritDoc}
      */
-    public final synchronized void setName(final String name)
+    public synchronized void setName(final String name)
             throws TreetankIOException {
 
         assertNotClosed();
@@ -332,7 +332,7 @@ public final class WriteTransaction extends ReadTransaction implements
     /**
      * {@inheritDoc}
      */
-    public final synchronized void setURI(final String uri)
+    public synchronized void setURI(final String uri)
             throws TreetankIOException {
 
         assertNotClosed();
@@ -349,8 +349,8 @@ public final class WriteTransaction extends ReadTransaction implements
     /**
      * {@inheritDoc}
      */
-    public final synchronized void setValue(final int valueType,
-            final byte[] value) throws TreetankIOException {
+    public synchronized void setValue(final int valueType, final byte[] value)
+            throws TreetankIOException {
 
         assertNotClosed();
         mModificationCount++;
@@ -365,7 +365,7 @@ public final class WriteTransaction extends ReadTransaction implements
     /**
      * {@inheritDoc}
      */
-    public final synchronized void setValue(final String value)
+    public synchronized void setValue(final String value)
             throws TreetankIOException {
         setValue(((WriteTransactionState) getTransactionState())
                 .createNameKey("xs:untyped"), TypedValue.getBytes(value));
@@ -375,7 +375,7 @@ public final class WriteTransaction extends ReadTransaction implements
      * {@inheritDoc}
      */
     @Override
-    public final synchronized void close() throws TreetankException {
+    public synchronized void close() throws TreetankException {
         if (!isClosed()) {
             // Make sure to commit all dirty data.
             if (mModificationCount > 0) {
@@ -401,7 +401,7 @@ public final class WriteTransaction extends ReadTransaction implements
     /**
      * {@inheritDoc}
      */
-    public final synchronized void commit() throws TreetankIOException {
+    public synchronized void commit() throws TreetankIOException {
 
         assertNotClosed();
 
@@ -429,7 +429,7 @@ public final class WriteTransaction extends ReadTransaction implements
     /**
      * {@inheritDoc}
      */
-    public final synchronized void abort() throws TreetankIOException {
+    public synchronized void abort() throws TreetankIOException {
 
         assertNotClosed();
 
@@ -442,15 +442,14 @@ public final class WriteTransaction extends ReadTransaction implements
         setTransactionState(getSessionState().createWriteTransactionState());
     }
 
-    private final void intermediateCommitIfRequired()
-            throws TreetankIOException {
+    private void intermediateCommitIfRequired() throws TreetankIOException {
         assertNotClosed();
         if ((mMaxNodeCount > 0) && (mModificationCount > mMaxNodeCount)) {
             commit();
         }
     }
 
-    private final long insertFirstChild(final AbstractNode node)
+    private long insertFirstChild(final AbstractNode node)
             throws TreetankIOException {
 
         assertNotClosed();
@@ -465,7 +464,7 @@ public final class WriteTransaction extends ReadTransaction implements
         return node.getNodeKey();
     }
 
-    private final long insertRightSibling(final AbstractNode node)
+    private long insertRightSibling(final AbstractNode node)
             throws TreetankIOException {
 
         assertNotClosed();
@@ -485,7 +484,7 @@ public final class WriteTransaction extends ReadTransaction implements
         return node.getNodeKey();
     }
 
-    private final long insertAttribute(final AttributeNode node)
+    private long insertAttribute(final AttributeNode node)
             throws TreetankIOException {
 
         assertNotClosed();
@@ -507,7 +506,7 @@ public final class WriteTransaction extends ReadTransaction implements
         return node.getNodeKey();
     }
 
-    private final long insertNamespace(final NamespaceNode node)
+    private long insertNamespace(final NamespaceNode node)
             throws TreetankIOException {
 
         assertNotClosed();
@@ -529,7 +528,7 @@ public final class WriteTransaction extends ReadTransaction implements
         return node.getNodeKey();
     }
 
-    private final void updateParentAfterInsert(final boolean updateFirstChild)
+    private void updateParentAfterInsert(final boolean updateFirstChild)
             throws TreetankIOException {
         final AbstractNode parentNode = setUpNodeModification(getCurrentNode()
                 .getParentKey());
@@ -541,7 +540,7 @@ public final class WriteTransaction extends ReadTransaction implements
 
     }
 
-    private final void updateRightSibling() throws TreetankIOException {
+    private void updateRightSibling() throws TreetankIOException {
         if (getCurrentNode().hasRightSibling()) {
             final AbstractNode rightSiblingNode = setUpNodeModification(getCurrentNode()
                     .getRightSiblingKey());
@@ -551,7 +550,7 @@ public final class WriteTransaction extends ReadTransaction implements
         }
     }
 
-    private final void updateLeftSibling() throws TreetankIOException {
+    private void updateLeftSibling() throws TreetankIOException {
         final AbstractNode leftSiblingNode = setUpNodeModification(getCurrentNode()
                 .getLeftSiblingKey());
         leftSiblingNode.setRightSiblingKey(getCurrentNode().getNodeKey());
@@ -559,14 +558,14 @@ public final class WriteTransaction extends ReadTransaction implements
 
     }
 
-    private final AbstractNode setUpNodeModification(final long nodeKey)
+    private AbstractNode setUpNodeModification(final long nodeKey)
             throws TreetankIOException {
         final AbstractNode modNode = ((WriteTransactionState) getTransactionState())
                 .prepareNodeForModification(nodeKey);
         return modNode;
     }
 
-    private final void tearDownNodeModification(final AbstractNode node)
+    private void tearDownNodeModification(final AbstractNode node)
             throws TreetankIOException {
         ((WriteTransactionState) getTransactionState())
                 .finishNodeModification(node);

@@ -53,12 +53,8 @@ public class SchemaAttributeFilter extends AbstractFilter implements IFilter {
      * 
      * @param rtx
      *            Transaction this filter is bound to.
-     * @param declaration
-     *            attribute declaration in-scope attribute declaration to match
-     *            the current node against.
      */
-    public SchemaAttributeFilter(final IReadTransaction rtx,
-            final String declaration) {
+    public SchemaAttributeFilter(final IReadTransaction rtx) {
 
         super(rtx);
         // attributeName = declaration;
