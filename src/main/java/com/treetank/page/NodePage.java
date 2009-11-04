@@ -77,7 +77,6 @@ public class NodePage extends AbstractPage {
             values[i] = in.readInt();
         }
 
-        final long keyBase = mNodePageKey << IConstants.NDP_NODE_COUNT_EXPONENT;
         for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
             final int kind = values[offset];
             switch (kind) {
@@ -88,16 +87,16 @@ public class NodePage extends AbstractPage {
                 getNodes()[offset] = new DocumentRootNode(in);
                 break;
             case IReadTransaction.ELEMENT_KIND:
-                getNodes()[offset] = new ElementNode(keyBase + offset, in);
+                getNodes()[offset] = new ElementNode(in);
                 break;
             case IReadTransaction.ATTRIBUTE_KIND:
-                getNodes()[offset] = new AttributeNode(keyBase + offset, in);
+                getNodes()[offset] = new AttributeNode(in);
                 break;
             case IReadTransaction.NAMESPACE_KIND:
-                getNodes()[offset] = new NamespaceNode(keyBase + offset, in);
+                getNodes()[offset] = new NamespaceNode(in);
                 break;
             case IReadTransaction.TEXT_KIND:
-                getNodes()[offset] = new TextNode(keyBase + offset, in);
+                getNodes()[offset] = new TextNode(in);
                 break;
             default:
                 throw new IllegalStateException(

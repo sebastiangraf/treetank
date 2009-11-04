@@ -73,13 +73,9 @@ public class AxisStepBench {
         // executor.execute(new DescendantStepTask(session));
         // executor.shutdown();
         // executor.awaitTermination(1000000, TimeUnit.SECONDS);
-        try {
-            new DescendantStepTask(session).run();
+        new DescendantStepTask(session).run();
 
-            session.close();
-        } catch (final TreetankException exc) {
-
-        }
+        session.close();
     }
 
     // @Bench

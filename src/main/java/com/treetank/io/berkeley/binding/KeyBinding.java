@@ -5,13 +5,11 @@ import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 import com.treetank.io.AbstractKey;
 import com.treetank.io.KeyPersistenter;
-import com.treetank.io.berkeley.BerkeleyKey;
 import com.treetank.io.berkeley.TupleInputSource;
 import com.treetank.io.berkeley.TupleOutputSink;
 
 /**
- * Class to store {@link AbstractKey} objects (or better {@link BerkeleyKey}
- * objects) in the BerkeleyDB.
+ * Class to store {@link AbstractKey} objects in the BerkeleyDB.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 

@@ -18,8 +18,6 @@
 
 package com.treetank.node;
 
-import com.sleepycat.bind.tuple.TupleInput;
-import com.sleepycat.bind.tuple.TupleOutput;
 import com.treetank.api.IReadTransaction;
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
@@ -66,17 +64,7 @@ public final class DocumentRootNode extends AbstractNode {
      *            Byte input to read node from.
      */
     public DocumentRootNode(final ITTSource in) {
-        super(SIZE, IReadTransaction.DOCUMENT_ROOT_KEY, in);
-    }
-
-    /**
-     * Read document node.
-     * 
-     * @param in
-     *            Byte input to read node from.
-     */
-    public DocumentRootNode(final TupleInput in) {
-        super(SIZE, IReadTransaction.DOCUMENT_ROOT_KEY, in);
+        super(SIZE, in);
     }
 
     /**
@@ -156,14 +144,6 @@ public final class DocumentRootNode extends AbstractNode {
      */
     @Override
     public final void serialize(final ITTSink out) {
-        super.serialize(out);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final void serialize(final TupleOutput out) {
         super.serialize(out);
     }
 

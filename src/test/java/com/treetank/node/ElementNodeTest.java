@@ -44,7 +44,7 @@ public class ElementNodeTest {
         // Serialize and deserialize node.
         node1.serialize(out);
         out.position(0);
-        final AbstractNode node2 = new ElementNode(13L, out);
+        final AbstractNode node2 = new ElementNode(out);
 
         // Clone node.
         final AbstractNode node3 = node2; // new ElementNode(node2);

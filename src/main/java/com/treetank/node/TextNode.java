@@ -18,8 +18,6 @@
 
 package com.treetank.node;
 
-import com.sleepycat.bind.tuple.TupleInput;
-import com.sleepycat.bind.tuple.TupleOutput;
 import com.treetank.api.IReadTransaction;
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
@@ -106,24 +104,8 @@ public final class TextNode extends AbstractNode {
      * @param in
      *            Input bytes to read node from.
      */
-    public TextNode(final long nodeKey, final ITTSource in) {
-        super(SIZE, nodeKey, in);
-        mValue = new byte[(int) mData[VALUE_LENGTH]];
-        for (int i = 0; i < mData[VALUE_LENGTH]; i++) {
-            mValue[i] = in.readByte();
-        }
-    }
-
-    /**
-     * Read text node.
-     * 
-     * @param nodeKey
-     *            Key of text node.
-     * @param in
-     *            Input bytes to read node from.
-     */
-    public TextNode(final long nodeKey, final TupleInput in) {
-        super(SIZE, nodeKey, in);
+    public TextNode(final ITTSource in) {
+        super(SIZE, in);
         mValue = new byte[(int) mData[VALUE_LENGTH]];
         for (int i = 0; i < mData[VALUE_LENGTH]; i++) {
             mValue[i] = in.readByte();
@@ -257,17 +239,6 @@ public final class TextNode extends AbstractNode {
      */
     @Override
     public final void serialize(final ITTSink out) {
-        super.serialize(out);
-        for (final byte byteVal : mValue) {
-            out.writeByte(byteVal);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final void serialize(final TupleOutput out) {
         super.serialize(out);
         for (final byte byteVal : mValue) {
             out.writeByte(byteVal);
