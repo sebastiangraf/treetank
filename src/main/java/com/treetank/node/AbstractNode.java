@@ -69,8 +69,6 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
     /**
      * Read node.
      * 
-     * @param nodeKey
-     *            Key of text node.
      * @param in
      *            Input bytes to read node from.
      * @param size

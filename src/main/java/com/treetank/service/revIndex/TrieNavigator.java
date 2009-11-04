@@ -120,7 +120,7 @@ final class TrieNavigator {
      * Private method to the root of the trie. Inserting basic structure if not
      * avaliable.
      */
-    private static final void moveToTrieRoot(final IReadTransaction rtx)
+    private static void moveToTrieRoot(final IReadTransaction rtx)
             throws TreetankException {
         rtx.moveToDocumentRoot();
         if (!rtx.getNode().hasFirstChild()) {

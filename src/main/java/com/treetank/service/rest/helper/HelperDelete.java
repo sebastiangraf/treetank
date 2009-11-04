@@ -35,8 +35,6 @@ public final class HelperDelete {
 
     private static final String PATH = "/treetank/data/";
 
-    private static final String CONTENT_TYPE = "application/xml";
-
     private final Map<String, TreeTankWrapper> mServices;
 
     public HelperDelete(final Map<String, TreeTankWrapper> map) {
@@ -85,7 +83,7 @@ public final class HelperDelete {
             final long revision = service.delete(id);
 
             // Write response header.
-            response.setContentType(CONTENT_TYPE);
+            response.setContentType(RESTConstants.CONTENT_TYPE.getContent());
             response.setCharacterEncoding(IConstants.DEFAULT_ENCODING);
 
             // Write response body.

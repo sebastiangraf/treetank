@@ -71,7 +71,7 @@ public final class DocumentRootNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final boolean isDocumentRoot() {
+    public boolean isDocumentRoot() {
         return true;
     }
 
@@ -79,7 +79,7 @@ public final class DocumentRootNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final boolean hasFirstChild() {
+    public boolean hasFirstChild() {
         return (mData[FIRST_CHILD_KEY] != IReadTransaction.NULL_NODE_KEY);
     }
 
@@ -87,7 +87,7 @@ public final class DocumentRootNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final long getFirstChildKey() {
+    public long getFirstChildKey() {
         return mData[FIRST_CHILD_KEY];
     }
 
@@ -95,7 +95,7 @@ public final class DocumentRootNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void setFirstChildKey(final long firstChildKey) {
+    public void setFirstChildKey(final long firstChildKey) {
         mData[FIRST_CHILD_KEY] = firstChildKey;
     }
 
@@ -103,7 +103,7 @@ public final class DocumentRootNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final long getChildCount() {
+    public long getChildCount() {
         return mData[CHILD_COUNT];
     }
 
@@ -111,7 +111,7 @@ public final class DocumentRootNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void setChildCount(final long childCount) {
+    public void setChildCount(final long childCount) {
         mData[CHILD_COUNT] = childCount;
     }
 
@@ -119,7 +119,7 @@ public final class DocumentRootNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void incrementChildCount() {
+    public void incrementChildCount() {
         mData[CHILD_COUNT] += 1;
     }
 
@@ -127,7 +127,7 @@ public final class DocumentRootNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void decrementChildCount() {
+    public void decrementChildCount() {
         mData[CHILD_COUNT] -= 1;
     }
 
@@ -135,7 +135,7 @@ public final class DocumentRootNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final int getKind() {
+    public int getKind() {
         return IReadTransaction.ROOT_KIND;
     }
 
@@ -143,7 +143,7 @@ public final class DocumentRootNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void serialize(final ITTSink out) {
+    public void serialize(final ITTSink out) {
         super.serialize(out);
     }
 

@@ -18,7 +18,7 @@ public final class KeySingletonsHandler {
      *            path to the key storage
      * @return the {@link KeySingletonsHandler}
      */
-    public final static synchronized IKeyStorage getInstance(final File file) {
+    public static synchronized IKeyStorage getInstance(final File file) {
         if (!singletonInstance.containsKey(file)) {
             // final VersaKeyStorage organiser = new VersaKeyStorage(file);
             // singletonInstance.put(file, organiser);

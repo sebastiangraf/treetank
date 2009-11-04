@@ -155,12 +155,12 @@ public class TreeTankWrapperTest {
             final ISession session = Session.beginSession(ITestConstants.PATH2);
             final IReadTransaction rtx = session.beginReadTransaction();
             final ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            new XMLSerializer(rtx, stream).run();
+            new XMLSerializer(rtx, stream).call();
             final String content = new String(stream.toByteArray());
             rtx.close();
             session.close();
             assertEquals(contentToCheck, content);
-        } catch (final TreetankException exc) {
+        } catch (final Exception exc) {
             exc.printStackTrace();
             fail();
         }

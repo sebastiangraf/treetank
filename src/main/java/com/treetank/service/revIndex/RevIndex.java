@@ -96,7 +96,7 @@ public final class RevIndex {
         }
     }
 
-    public final void compact(final double threshold) {
+    public void compact(final double threshold) {
 
     }
 
@@ -106,7 +106,7 @@ public final class RevIndex {
      * @param docs
      *            stack with order to be inserted.
      */
-    public final void insertNextNode(final Stack<String> docs)
+    public void insertNextNode(final Stack<String> docs)
             throws TreetankException {
         indexRev = MetaTreeNavigator.getPersistentNumber(rtx);
         if (rtx instanceof IWriteTransaction) {
@@ -122,7 +122,7 @@ public final class RevIndex {
      * @param term
      *            the term to be indexed.
      */
-    public final void insertNextTermForCurrentNode(final String term)
+    public void insertNextTermForCurrentNode(final String term)
             throws TreetankException {
         // check if rtx is instance of WriteTransaction
         if (rtx instanceof IWriteTransaction) {
@@ -189,7 +189,7 @@ public final class RevIndex {
      * 
      * @return the index revision number.
      */
-    public final long finishIndexInput() throws TreetankException {
+    public long finishIndexInput() throws TreetankException {
         if (rtx instanceof IWriteTransaction) {
             final IWriteTransaction wtx = (IWriteTransaction) rtx;
             try {
@@ -208,7 +208,7 @@ public final class RevIndex {
     /**
      * Closing the index structure. No automatic commit is performed.
      */
-    public final void close() {
+    public void close() {
         if (rtx instanceof IWriteTransaction) {
             try {
                 ((IWriteTransaction) rtx).commit();
@@ -230,7 +230,7 @@ public final class RevIndex {
      *            the root of the document-root structure
      * @return the results as a list of nodes
      */
-    public final LinkedList<Long> getDocumentsForDocRoot(final long docLong) {
+    public LinkedList<Long> getDocumentsForDocRoot(final long docLong) {
 
         final LinkedList<Long> returnVal = new LinkedList<Long>();
         rtx.moveTo(docLong);
@@ -265,8 +265,7 @@ public final class RevIndex {
      *            to be searched in the trie structure
      * @return the root for the document key
      */
-    public final long getDocRootForTerm(final String term)
-            throws TreetankException {
+    public long getDocRootForTerm(final String term) throws TreetankException {
         return TrieNavigator.getDocRootInTrie(rtx, term);
 
     }
@@ -278,7 +277,7 @@ public final class RevIndex {
      *            the key in the structure
      * @return a stack containing all the ancestors
      */
-    public final Stack<String> getAncestors(final long key) {
+    public Stack<String> getAncestors(final long key) {
         this.rtx.moveTo(key);
         return DocumentTreeNavigator.getDocElements(rtx);
     }
@@ -314,7 +313,7 @@ public final class RevIndex {
     /**
      * Initialising basic structure.
      */
-    static final void initialiseBasicStructure(final IReadTransaction rtx)
+    static void initialiseBasicStructure(final IReadTransaction rtx)
             throws TreetankException {
         if (rtx instanceof IWriteTransaction) {
             final IWriteTransaction wtx = (IWriteTransaction) rtx;

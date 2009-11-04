@@ -95,7 +95,7 @@ public final class RevisionRootPage extends AbstractPage {
      * 
      * @return Name page reference.
      */
-    public final PageReference getNamePageReference() {
+    public PageReference getNamePageReference() {
         return getReference(NAME_REFERENCE_OFFSET);
     }
 
@@ -104,7 +104,7 @@ public final class RevisionRootPage extends AbstractPage {
      * 
      * @return Indirect page reference.
      */
-    public final PageReference getIndirectPageReference() {
+    public PageReference getIndirectPageReference() {
         return getReference(INDIRECT_REFERENCE_OFFSET);
     }
 
@@ -113,7 +113,7 @@ public final class RevisionRootPage extends AbstractPage {
      * 
      * @return Revision number.
      */
-    public final long getRevisionNumber() {
+    public long getRevisionNumber() {
         return mRevisionNumber;
     }
 
@@ -122,7 +122,7 @@ public final class RevisionRootPage extends AbstractPage {
      * 
      * @return Revision size.
      */
-    public final long getRevisionSize() {
+    public long getRevisionSize() {
         return mRevisionSize;
     }
 
@@ -131,7 +131,7 @@ public final class RevisionRootPage extends AbstractPage {
      * 
      * @return Revision timestamp.
      */
-    public final long getRevisionTimestamp() {
+    public long getRevisionTimestamp() {
         return mRevisionTimestamp;
     }
 
@@ -140,21 +140,21 @@ public final class RevisionRootPage extends AbstractPage {
      * 
      * @return Last allocated node key.
      */
-    public final long getMaxNodeKey() {
+    public long getMaxNodeKey() {
         return mMaxNodeKey;
     }
 
     /**
      * Decrement number of nodes by one.
      */
-    public final void decrementNodeCount() {
+    public void decrementNodeCount() {
         mRevisionSize -= 1;
     }
 
     /**
      * Increment number of nodes by one while allocating another key.
      */
-    public final void incrementNodeCountAndMaxNodeKey() {
+    public void incrementNodeCountAndMaxNodeKey() {
         mRevisionSize += 1;
         mMaxNodeKey += 1;
     }
@@ -172,7 +172,7 @@ public final class RevisionRootPage extends AbstractPage {
      * {@inheritDoc}
      */
     @Override
-    public final void serialize(final ITTSink out) {
+    public void serialize(final ITTSink out) {
         mRevisionTimestamp = System.currentTimeMillis();
         out.writeInt(PagePersistenter.REVISIONROOTPAGE);
         super.serialize(out);
@@ -186,7 +186,7 @@ public final class RevisionRootPage extends AbstractPage {
      * {@inheritDoc}
      */
     @Override
-    public final String toString() {
+    public String toString() {
         return super.toString() + ": revisionKey=" + mRevisionNumber
                 + ", revisionSize=" + mRevisionSize + ", revisionTimestamp="
                 + mRevisionTimestamp + ", namePage=("

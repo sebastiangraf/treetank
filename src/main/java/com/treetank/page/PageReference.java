@@ -105,7 +105,7 @@ public final class PageReference {
      * 
      * @return True if the reference points to an in-memory instance.
      */
-    public final boolean isInstantiated() {
+    public boolean isInstantiated() {
         return (mPage != null);
     }
 
@@ -114,7 +114,7 @@ public final class PageReference {
      * 
      * @return True if the page was committed.
      */
-    public final boolean isCommitted() {
+    public boolean isCommitted() {
         return mKey != null;
     }
 
@@ -124,7 +124,7 @@ public final class PageReference {
      * @param checksum
      *            getting the checksum of the page in this byte array
      */
-    public final void getChecksum(final byte[] checksum) {
+    public void getChecksum(final byte[] checksum) {
         System.arraycopy(mChecksum, 0, checksum, 0, IConstants.CHECKSUM_SIZE);
     }
 
@@ -134,7 +134,7 @@ public final class PageReference {
      * @param checksum
      *            Checksum of serialized page.
      */
-    public final void setChecksum(final byte[] checksum) {
+    public void setChecksum(final byte[] checksum) {
         System.arraycopy(checksum, 0, mChecksum, 0, IConstants.CHECKSUM_SIZE);
     }
 
@@ -143,7 +143,7 @@ public final class PageReference {
      * 
      * @return In-memory instance of deserialized page.
      */
-    public final AbstractPage getPage() {
+    public AbstractPage getPage() {
         return mPage;
     }
 
@@ -153,7 +153,7 @@ public final class PageReference {
      * @param page
      *            Deserialized page.
      */
-    public final void setPage(final AbstractPage page) {
+    public void setPage(final AbstractPage page) {
         mPage = page;
     }
 
@@ -162,7 +162,7 @@ public final class PageReference {
      * 
      * @return Start offset in file.
      */
-    public final AbstractKey getKey() {
+    public AbstractKey getKey() {
         return mKey;
     }
 
@@ -172,7 +172,7 @@ public final class PageReference {
      * @param key
      *            Key of this reference set by the persistent storage
      */
-    public final void setKey(final AbstractKey key) {
+    public void setKey(final AbstractKey key) {
         this.mKey = key;
     }
 
@@ -182,37 +182,45 @@ public final class PageReference {
      * @param out
      *            Output bytes that get written to a file.
      */
-    public final void serialize(final ITTSink out) {
+    public void serialize(final ITTSink out) {
         KeyPersistenter.serializeKey(out, mKey);
         for (final byte byteVal : mChecksum) {
             out.writeByte(byteVal);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final boolean equals(final Object object) {
-        if (!(object instanceof PageReference)) {
-            return false;
-        }
-        final PageReference pageReference = (PageReference) object;
-        boolean checksumEquals = true;
-        byte[] tmp = new byte[IConstants.CHECKSUM_SIZE];
-        pageReference.getChecksum(tmp);
-        for (int i = 0; i < IConstants.CHECKSUM_SIZE; i++) {
-            checksumEquals &= (tmp[i] == mChecksum[i]);
-        }
-        boolean keyEquals = mKey == pageReference.mKey;
-        return (checksumEquals && keyEquals);
-    }
+    // /**
+    // * {@inheritDoc}
+    // */
+    // @Override
+    // public boolean equals(final Object object) {
+    // if (!(object instanceof PageReference)) {
+    // return false;
+    // }
+    // final PageReference pageReference = (PageReference) object;
+    // boolean checksumEquals = true;
+    // byte[] tmp = new byte[IConstants.CHECKSUM_SIZE];
+    // pageReference.getChecksum(tmp);
+    // for (int i = 0; i < IConstants.CHECKSUM_SIZE; i++) {
+    // checksumEquals &= (tmp[i] == mChecksum[i]);
+    // }
+    // boolean keyEquals = mKey == pageReference.mKey;
+    // return (checksumEquals && keyEquals);
+    // }
+    //
+    // /**
+    // * {@inheritDoc}
+    // */
+    // @Override
+    // public int hashCode() {
+    //
+    // }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final String toString() {
+    public String toString() {
         final StringBuilder builder = new StringBuilder(super.toString());
         if (this.mKey != null) {
             builder.append(": key=");

@@ -72,8 +72,6 @@ public final class NamespaceNode extends AbstractNode {
     /**
      * Constructor.
      * 
-     * @param nodeKey
-     *            of the Key
      * @param in
      *            byteBuffer with the relevant data.
      */
@@ -85,7 +83,7 @@ public final class NamespaceNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final boolean hasParent() {
+    public boolean hasParent() {
         return true;
     }
 
@@ -93,7 +91,7 @@ public final class NamespaceNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final long getParentKey() {
+    public long getParentKey() {
         return mData[NODE_KEY] - mData[PARENT_KEY];
     }
 
@@ -101,7 +99,7 @@ public final class NamespaceNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void setParentKey(final long parentKey) {
+    public void setParentKey(final long parentKey) {
         mData[PARENT_KEY] = mData[NODE_KEY] - parentKey;
     }
 
@@ -109,7 +107,7 @@ public final class NamespaceNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final int getKind() {
+    public int getKind() {
         return IReadTransaction.NAMESPACE_KIND;
     }
 
@@ -117,7 +115,7 @@ public final class NamespaceNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final int getNameKey() {
+    public int getNameKey() {
         return (int) mData[NAME_KEY];
     }
 
@@ -125,7 +123,7 @@ public final class NamespaceNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void setNameKey(final int nameKey) {
+    public void setNameKey(final int nameKey) {
         mData[NAME_KEY] = nameKey;
     }
 
@@ -133,7 +131,7 @@ public final class NamespaceNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final int getURIKey() {
+    public int getURIKey() {
         return (int) mData[URI_KEY];
     }
 
@@ -141,7 +139,7 @@ public final class NamespaceNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void setURIKey(final int uriKey) {
+    public void setURIKey(final int uriKey) {
         mData[URI_KEY] = uriKey;
     }
 
@@ -149,12 +147,12 @@ public final class NamespaceNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void serialize(final ITTSink out) {
+    public void serialize(final ITTSink out) {
         super.serialize(out);
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         return "NamespaceNode " + super.toString();
     }
 

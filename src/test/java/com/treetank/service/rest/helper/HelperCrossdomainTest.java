@@ -3,8 +3,6 @@
  */
 package com.treetank.service.rest.helper;
 
-import static org.junit.Assert.fail;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,17 +26,14 @@ public class HelperCrossdomainTest {
      * .
      */
     @Test
-    public void testHandle() {
+    public void testHandle() throws TreetankRestException {
         final TestRequestWrapper request = new TestRequestWrapper();
         request.setClassParam(true);
         final TestResponseWrapper response = new TestResponseWrapper();
-        response.setClassParams(HelperCrossdomain.CONTENT_TYPE,
-                IConstants.DEFAULT_ENCODING, HelperCrossdomain.CROSSDOMAIN);
-        try {
-            toTest.handle(request, response);
-        } catch (final TreetankRestException e) {
-            fail(e.toString());
-        }
+        response.setClassParams(RESTConstants.CONTENT_TYPE.getContent(),
+                IConstants.DEFAULT_ENCODING, RESTConstants.CROSSDOMAIN
+                        .getContent().getBytes());
+        toTest.handle(request, response);
 
     }
 }
