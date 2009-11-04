@@ -18,8 +18,6 @@
 
 package com.treetank.node;
 
-import com.sleepycat.bind.tuple.TupleInput;
-import com.sleepycat.bind.tuple.TupleOutput;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.io.ITTSink;
@@ -78,24 +76,7 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
      * @param size
      *            Size of the data.
      */
-    public AbstractNode(final int size, final long nodeKey, final ITTSource in) {
-        mData = new long[size];
-        for (int i = 0; i < size; i++) {
-            mData[i] = in.readLong();
-        }
-    }
-
-    /**
-     * Read node.
-     * 
-     * @param nodeKey
-     *            Key of text node.
-     * @param in
-     *            Input bytes to read node from.
-     * @param size
-     *            Size of the data.
-     */
-    public AbstractNode(final int size, final long nodeKey, final TupleInput in) {
+    public AbstractNode(final int size, final ITTSource in) {
         mData = new long[size];
         for (int i = 0; i < size; i++) {
             mData[i] = in.readLong();
@@ -281,18 +262,6 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
             out.writeLong(longVal);
         }
 
-    }
-
-    /**
-     * Serializing the data.
-     * 
-     * @param out
-     *            target to serialize.
-     */
-    public void serialize(final TupleOutput out) {
-        for (final long longVal : mData) {
-            out.writeLong(longVal);
-        }
     }
 
     /**

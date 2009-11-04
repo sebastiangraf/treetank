@@ -37,7 +37,7 @@ public final class TreetankRestException extends ServletException {
     private final String mErrorMessage;
 
     /**
-     * Constructor, just getting
+     * Constructor, just getting a {@link TreetankException}
      * 
      * @param error
      */
@@ -47,12 +47,30 @@ public final class TreetankRestException extends ServletException {
         mErrorMessage = error.toString();
     }
 
+    /**
+     * Constructor, receiving the error code and an errorMessage
+     * 
+     * @param errorCode
+     *            the errorCode to encapsulate
+     * @param errorMessage
+     *            the errormessage to encapsulate
+     */
     public TreetankRestException(final int errorCode, final String errorMessage) {
         super();
         mErrorCode = errorCode;
         mErrorMessage = errorMessage;
     }
 
+    /**
+     * Constructor, encapusulating an errorCode, a message and a Exception
+     * 
+     * @param errorCode
+     *            to be encapsulated
+     * @param errorMessage
+     *            to be encapsulated
+     * @param e
+     *            to be encapsulated
+     */
     public TreetankRestException(final int errorCode,
             final String errorMessage, final Exception e) {
         super(e);
@@ -60,11 +78,21 @@ public final class TreetankRestException extends ServletException {
         mErrorMessage = errorMessage;
     }
 
-    public final int getErrorCode() {
+    /**
+     * Getter of the error code
+     * 
+     * @return getting the error
+     */
+    public int getErrorCode() {
         return mErrorCode;
     }
 
-    public final String getErrorMessage() {
+    /**
+     * Getting the error message
+     * 
+     * @return the error message
+     */
+    public String getErrorMessage() {
         return mErrorMessage;
     }
 

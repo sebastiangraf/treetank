@@ -16,16 +16,14 @@
  */
 package com.treetank.cache;
 
-import com.treetank.api.IReadTransaction;
-import com.treetank.api.IWriteTransaction;
-import com.treetank.page.AbstractPage;
 import com.treetank.page.NodePage;
 
 /**
  * Interface for all upcoming cache implementations. Can be a weak one, a
  * LRU-based one or a persistent. However, clear, put and get must to be
- * provided. Instances of this class are used with {@link IReadTransaction}s as
- * well as with {@link IWriteTransaction}s.
+ * provided. Instances of this class are used with
+ * <code> IReadTransactions</code> as well as with
+ * <code>IWriteTransactions</code>.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
@@ -40,7 +38,7 @@ public interface ICache {
      * Getting a page related to a given nodepagekey.
      * 
      * @param key
-     *            the key for the requested {@link AbstractPage}
+     *            the key for the requested {@link NodePage}
      * @return {@link NodePage} instance related to this key
      */
     NodePage get(final long key);

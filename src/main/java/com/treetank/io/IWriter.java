@@ -2,7 +2,6 @@ package com.treetank.io;
 
 import com.treetank.exception.TreetankIOException;
 import com.treetank.page.PageReference;
-import com.treetank.page.UberPage;
 
 /**
  * Interface to provide the abstract layer related to write access of the
@@ -14,9 +13,10 @@ import com.treetank.page.UberPage;
 public interface IWriter extends IReader {
 
     /**
-     * Initializing the storage if the {@link UberPage} is bootstraped.
+     * Initializing the storage if the <code>UberPage</code> is bootstraped.
      * 
-     * @throws TreetankIOException if something bad happens
+     * @throws TreetankIOException
+     *             if something bad happens
      */
     void setProps(final StorageProperties props) throws TreetankIOException;
 

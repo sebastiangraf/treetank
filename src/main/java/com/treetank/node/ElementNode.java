@@ -21,8 +21,6 @@ package com.treetank.node;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sleepycat.bind.tuple.TupleInput;
-import com.sleepycat.bind.tuple.TupleOutput;
 import com.treetank.api.IReadTransaction;
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
@@ -133,34 +131,8 @@ public final class ElementNode extends AbstractNode {
      * @param in
      *            Input bytes to read from.
      */
-    public ElementNode(final long nodeKey, final ITTSource in) {
-        super(SIZE, nodeKey, in);
-
-        if (mData[ATTRIBUTE_COUNT] > 0) {
-            mAttributeKeys = new ArrayList<Long>((int) mData[ATTRIBUTE_COUNT]);
-
-            for (int i = 0; i < mData[ATTRIBUTE_COUNT]; i++) {
-                mAttributeKeys.add(in.readLong());
-            }
-        }
-        if (mData[NAMESPACE_COUNT] > 0) {
-            mNamespaceKeys = new ArrayList<Long>((int) mData[NAMESPACE_COUNT]);
-            for (int i = 0; i < mData[NAMESPACE_COUNT]; i++) {
-                mNamespaceKeys.add(in.readLong());
-            }
-        }
-    }
-
-    /**
-     * Read element node.
-     * 
-     * @param nodeKey
-     *            Key to assign to read element node.
-     * @param in
-     *            Input bytes to read from.
-     */
-    public ElementNode(final long nodeKey, final TupleInput in) {
-        super(SIZE, nodeKey, in);
+    public ElementNode(final ITTSource in) {
+        super(SIZE, in);
 
         if (mData[ATTRIBUTE_COUNT] > 0) {
             mAttributeKeys = new ArrayList<Long>((int) mData[ATTRIBUTE_COUNT]);
@@ -346,7 +318,9 @@ public final class ElementNode extends AbstractNode {
 
     /**
      * Removing an attribute
-     * @param attributeKey the key of the attribute to be removed
+     * 
+     * @param attributeKey
+     *            the key of the attribute to be removed
      */
     public final void removeAttribute(final long attributeKey) {
         mAttributeKeys.remove(attributeKey);
@@ -445,24 +419,6 @@ public final class ElementNode extends AbstractNode {
      */
     @Override
     public final void serialize(final ITTSink out) {
-        super.serialize(out);
-        if (mAttributeKeys != null) {
-            for (int i = 0, l = mAttributeKeys.size(); i < l; i++) {
-                out.writeLong(mAttributeKeys.get(i));
-            }
-        }
-        if (mNamespaceKeys != null) {
-            for (int i = 0, l = mNamespaceKeys.size(); i < l; i++) {
-                out.writeLong(mNamespaceKeys.get(i));
-            }
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final void serialize(final TupleOutput out) {
         super.serialize(out);
         if (mAttributeKeys != null) {
             for (int i = 0, l = mAttributeKeys.size(); i < l; i++) {

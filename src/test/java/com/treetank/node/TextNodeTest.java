@@ -42,7 +42,7 @@ public class TextNodeTest {
         // Serialize and deserialize node.
         node1.serialize(out);
         out.position(0);
-        final AbstractNode node2 = new TextNode(13L, out);
+        final AbstractNode node2 = new TextNode(out);
 
         // Clone node.
         final AbstractNode node3 = new TextNode(node2);
