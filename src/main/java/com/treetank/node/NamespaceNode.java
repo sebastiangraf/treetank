@@ -19,7 +19,6 @@
 package com.treetank.node;
 
 import com.treetank.api.IReadTransaction;
-import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
 
 /**
@@ -141,19 +140,6 @@ public final class NamespaceNode extends AbstractNode {
     @Override
     public void setURIKey(final int uriKey) {
         mData[URI_KEY] = uriKey;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void serialize(final ITTSink out) {
-        super.serialize(out);
-    }
-
-    @Override
-    public String toString() {
-        return "NamespaceNode " + super.toString();
     }
 
 }

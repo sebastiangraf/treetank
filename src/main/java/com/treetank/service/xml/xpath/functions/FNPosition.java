@@ -68,14 +68,6 @@ public class FNPosition extends AbstractFunction {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void reset(final long nodeKey) {
-        super.reset(nodeKey);
-    }
-
-    /**
      * Resets the position counter. This is necessary, because the position of
      * the current item is not the position in the final result sequence, but an
      * intermediate result sequence.

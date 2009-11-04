@@ -217,9 +217,4 @@ public final class AttributeNode extends AbstractNode {
         }
     }
 
-    @Override
-    public String toString() {
-        return "AttributeNode " + super.toString();
-    }
-
 }

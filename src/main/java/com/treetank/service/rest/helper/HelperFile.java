@@ -39,7 +39,7 @@ public final class HelperFile {
         mContentType = contentType;
     }
 
-    public final void handle(final HttpServletRequest request,
+    public void handle(final HttpServletRequest request,
             final HttpServletResponse response) throws TreetankRestException {
         try {
             response.setContentType(mContentType);

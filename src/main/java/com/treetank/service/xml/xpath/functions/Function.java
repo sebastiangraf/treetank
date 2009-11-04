@@ -312,10 +312,8 @@ public class Function {
 
         boolean result = true;
 
-        if (axis.hasNext()) {
-            if (axis.hasNext()) { // more than one result
-                throw new XPathError(ErrorType.FORG0003);
-            }
+        if (axis.hasNext() && axis.hasNext()) { // more than one result
+            throw new XPathError(ErrorType.FORG0003);
         }
 
         int itemKey = rtx.getItemList().addItem(new AtomicValue(result));

@@ -57,13 +57,9 @@ public class SchemaElementFilter extends AbstractFilter implements IFilter {
      * Default constructor.
      * 
      * @param rtx
-     *            Transaction this filter is bound to.
-     * @param declaration
-     *            Element declaration in-scope Element declaration to match the
-     *            current node against.
+     *            Transaction this filter is bound to..
      */
-    public SchemaElementFilter(final IReadTransaction rtx,
-            final String declaration) {
+    public SchemaElementFilter(final IReadTransaction rtx) {
 
         super(rtx);
         // elementName = declaration;

@@ -423,10 +423,13 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
 
     @Override
     public String toString() {
-        return "\n\tnode key: " + getNodeKey() + "\n\tchildcount: "
-                + getChildCount() + "\n\tparentKey: " + getParentKey()
-                + "\n\tfirstChildKey: " + getFirstChildKey()
-                + "\n\tleftSiblingKey: " + getLeftSiblingKey()
-                + "\n\trightSiblingKey: " + getRightSiblingKey() + "\n";
+        return new StringBuilder(this.getClass().getName()).append(
+                "\n\tnode key: ").append(getNodeKey()).append(
+                "\n\tchildcount: ").append(getChildCount()).append(
+                "\n\tparentKey: ").append(getParentKey()).append(
+                "\n\tfirstChildKey: ").append(getFirstChildKey()).append(
+                "\n\tleftSiblingKey: ").append(getLeftSiblingKey()).append(
+                "\n\trightSiblingKey: ").append(getRightSiblingKey()).append(
+                "\n").toString();
     }
 }

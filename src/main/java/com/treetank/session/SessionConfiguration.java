@@ -22,7 +22,6 @@ import java.io.File;
 import java.util.Arrays;
 
 import com.treetank.io.AbstractIOFactory;
-import com.treetank.io.AbstractIOFactory.StorageType;
 import com.treetank.utils.IConstants;
 
 /**
@@ -84,22 +83,20 @@ public final class SessionConfiguration {
      * @param checksummed
      *            Does the .tnk file uses end-to-end checksumming?
      * @param type
-     *            which storage {@link StorageType} should be used?
+     *            which storage <code>StorageType</code> should be used?
      */
     public SessionConfiguration(final String path, final byte[] encryptionKey,
             final boolean checksummed, final AbstractIOFactory.StorageType type) {
 
         // Make sure the path is legal.
-        if (path == null) {
-            if (!new File(path).isDirectory()
-                    && new File(path).list().length > 0) {
-                throw new IllegalArgumentException(
-                        "Path to TreeTank file must not be null and be an emtpy directory");
-            }
+        if (path == null
+                && (!new File(path).isDirectory() && new File(path).list().length > 0)) {
+            throw new IllegalArgumentException(
+                    "Path to TreeTank file must not be null and be an emtpy directory");
         }
 
         // Set path and name.
-        File file = new File(path);
+        final File file = new File(path);
 
         // Make sure parent path exists.
         file.mkdirs();
@@ -116,7 +113,7 @@ public final class SessionConfiguration {
      * 
      * @return Path to .tnk file.
      */
-    public final String getAbsolutePath() {
+    public String getAbsolutePath() {
         return mAbsolutePath;
     }
 
@@ -125,7 +122,7 @@ public final class SessionConfiguration {
      * 
      * @return True if the .tnk file is encrypted. False else.
      */
-    public final boolean isEncrypted() {
+    public boolean isEncrypted() {
         return mEncryptionKey != null;
     }
 
@@ -134,7 +131,7 @@ public final class SessionConfiguration {
      * 
      * @return Encryption key to .tnk file.
      */
-    protected final byte[] getEncryptionKey() {
+    protected byte[] getEncryptionKey() {
         return mEncryptionKey;
     }
 
@@ -143,7 +140,7 @@ public final class SessionConfiguration {
      * 
      * @return True if the .tnk file is checksummed. False else.
      */
-    public final boolean isChecksummed() {
+    public boolean isChecksummed() {
         return mChecksummed;
     }
 
@@ -152,14 +149,12 @@ public final class SessionConfiguration {
      * 
      * @return String with a string representation.
      */
-    public final String toString() {
+    public String toString() {
         return mAbsolutePath + File.separator;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#hashCode()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public int hashCode() {
@@ -172,10 +167,8 @@ public final class SessionConfiguration {
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#equals(java.lang.Object)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public boolean equals(Object obj) {
@@ -199,7 +192,7 @@ public final class SessionConfiguration {
     }
 
     /**
-     * Getting the {@link StorageType} for this configuration
+     * Getting the <code>StorageType</code> for this configuration
      * 
      * @return the storageType for this configuration
      */

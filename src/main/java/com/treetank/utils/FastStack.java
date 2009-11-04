@@ -55,7 +55,7 @@ public final class FastStack<E> {
      *            Element to push.
      */
     @SuppressWarnings("unchecked")
-    public final void push(final E element) {
+    public void push(final E element) {
         if (mStack.length == mSize) {
             E[] biggerStack = (E[]) new Object[mStack.length << 1];
             System.arraycopy(mStack, 0, biggerStack, 0, mStack.length);
@@ -70,7 +70,7 @@ public final class FastStack<E> {
      * 
      * @return Topmost stack element.
      */
-    public final E peek() {
+    public E peek() {
         return mStack[mSize - 1];
     }
 
@@ -82,7 +82,7 @@ public final class FastStack<E> {
      *            Position in stack from where to get the element.
      * @return Stack element at given position.
      */
-    public final E get(final int position) {
+    public E get(final int position) {
         return mStack[position];
     }
 
@@ -91,7 +91,7 @@ public final class FastStack<E> {
      * 
      * @return Removed topmost element of stack.
      */
-    public final E pop() {
+    public E pop() {
         return mStack[--mSize];
     }
 
@@ -99,7 +99,7 @@ public final class FastStack<E> {
      * Reset the stack.
      * 
      */
-    public final void clear() {
+    public void clear() {
         mSize = 0;
     }
 
@@ -108,7 +108,7 @@ public final class FastStack<E> {
      * 
      * @return Current size of stack.
      */
-    public final int size() {
+    public int size() {
         return mSize;
     }
 
@@ -117,7 +117,7 @@ public final class FastStack<E> {
      * 
      * @return True if there are no elements anymore. False else.
      */
-    public final boolean empty() {
+    public boolean empty() {
         return (mSize == 0);
     }
 
