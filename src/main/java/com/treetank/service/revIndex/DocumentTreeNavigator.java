@@ -64,7 +64,7 @@ public final class DocumentTreeNavigator {
         return currentDocKey;
     }
 
-    static final Stack<String> getDocElements(final IReadTransaction rtx) {
+    static Stack<String> getDocElements(final IReadTransaction rtx) {
         final Stack<String> returnVal = new Stack<String>();
         do {
             rtx.moveToAttribute(0);
@@ -81,8 +81,8 @@ public final class DocumentTreeNavigator {
     /**
      * Moving to documentstructure root
      */
-    private static final void moveToDocumentStructureRoot(
-            final IReadTransaction rtx) throws TreetankException {
+    private static void moveToDocumentStructureRoot(final IReadTransaction rtx)
+            throws TreetankException {
         rtx.moveToDocumentRoot();
         if (!rtx.getNode().hasFirstChild()) {
             RevIndex.initialiseBasicStructure(rtx);

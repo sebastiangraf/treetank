@@ -99,8 +99,6 @@ public final class TextNode extends AbstractNode {
     /**
      * Read text node.
      * 
-     * @param nodeKey
-     *            Key of text node.
      * @param in
      *            Input bytes to read node from.
      */
@@ -116,7 +114,7 @@ public final class TextNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final boolean isText() {
+    public boolean isText() {
         return true;
     }
 
@@ -124,7 +122,7 @@ public final class TextNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final boolean hasParent() {
+    public boolean hasParent() {
         return ((mData[NODE_KEY] - mData[PARENT_KEY]) != IReadTransaction.NULL_NODE_KEY);
     }
 
@@ -132,7 +130,7 @@ public final class TextNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final long getParentKey() {
+    public long getParentKey() {
         return mData[NODE_KEY] - mData[PARENT_KEY];
     }
 
@@ -140,7 +138,7 @@ public final class TextNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void setParentKey(final long parentKey) {
+    public void setParentKey(final long parentKey) {
         mData[PARENT_KEY] = mData[NODE_KEY] - parentKey;
     }
 
@@ -148,7 +146,7 @@ public final class TextNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final boolean hasLeftSibling() {
+    public boolean hasLeftSibling() {
         return (mData[LEFT_SIBLING_KEY] != IReadTransaction.NULL_NODE_KEY);
     }
 
@@ -156,7 +154,7 @@ public final class TextNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final long getLeftSiblingKey() {
+    public long getLeftSiblingKey() {
         return mData[LEFT_SIBLING_KEY];
     }
 
@@ -164,7 +162,7 @@ public final class TextNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void setLeftSiblingKey(final long leftSiblingKey) {
+    public void setLeftSiblingKey(final long leftSiblingKey) {
         mData[LEFT_SIBLING_KEY] = leftSiblingKey;
     }
 
@@ -172,7 +170,7 @@ public final class TextNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final boolean hasRightSibling() {
+    public boolean hasRightSibling() {
         return (mData[RIGHT_SIBLING_KEY] != IReadTransaction.NULL_NODE_KEY);
     }
 
@@ -180,7 +178,7 @@ public final class TextNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final long getRightSiblingKey() {
+    public long getRightSiblingKey() {
         return mData[RIGHT_SIBLING_KEY];
     }
 
@@ -188,7 +186,7 @@ public final class TextNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void setRightSiblingKey(final long rightSiblingKey) {
+    public void setRightSiblingKey(final long rightSiblingKey) {
         mData[RIGHT_SIBLING_KEY] = rightSiblingKey;
     }
 
@@ -196,7 +194,7 @@ public final class TextNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final int getKind() {
+    public int getKind() {
         return IReadTransaction.TEXT_KIND;
     }
 
@@ -204,7 +202,7 @@ public final class TextNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final int getTypeKey() {
+    public int getTypeKey() {
         return (int) mData[TYPE];
     }
 
@@ -212,7 +210,7 @@ public final class TextNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final byte[] getRawValue() {
+    public byte[] getRawValue() {
         return mValue;
     }
 
@@ -220,7 +218,7 @@ public final class TextNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void setValue(final int valueType, final byte[] value) {
+    public void setValue(final int valueType, final byte[] value) {
         mData[TYPE] = valueType;
         mData[VALUE_LENGTH] = value.length;
         mValue = value;
@@ -230,7 +228,7 @@ public final class TextNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void setType(final int valueType) {
+    public void setType(final int valueType) {
         mData[TYPE] = valueType;
     }
 
@@ -238,7 +236,7 @@ public final class TextNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void serialize(final ITTSink out) {
+    public void serialize(final ITTSink out) {
         super.serialize(out);
         for (final byte byteVal : mValue) {
             out.writeByte(byteVal);

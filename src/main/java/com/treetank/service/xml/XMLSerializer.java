@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.Callable;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
@@ -43,7 +44,7 @@ import com.treetank.utils.IConstants;
  * class.
  * </p>
  */
-public final class XMLSerializer implements Runnable {
+public final class XMLSerializer implements Callable<Void> {
 
     /** Offset that must be added to digit to make it ASCII. */
     private static final int ASCII_OFFSET = 48;
@@ -152,71 +153,64 @@ public final class XMLSerializer implements Runnable {
     /**
      * {@inheritDoc}
      */
-    public final void run() {
-        try {
-            if (mSerializeXMLDeclaration) {
-                write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
-            }
-            if (mSerializeRest) {
-                write("<rest:sequence xmlns:rest=\"REST\"><rest:item>");
-            }
-
-            boolean closeElements = false;
-
-            // Iterate over all nodes of the subtree including self.
-            for (final long key : mAxis) {
-
-                // Emit all pending end elements.
-                if (closeElements) {
-                    while (!mStack.empty()
-                            && mStack.peek() != mRTX.getNode()
-                                    .getLeftSiblingKey()) {
-                        mRTX.moveTo(mStack.pop());
-                        emitEndElement();
-                        mRTX.moveTo(key);
-                    }
-                    if (!mStack.empty()) {
-                        mRTX.moveTo(mStack.pop());
-                        emitEndElement();
-                    }
-                    mRTX.moveTo(key);
-                    closeElements = false;
-                }
-
-                // Emit node.
-                emitNode();
-
-                // Push end element to stack if we are a start element with
-                // children.
-                if (mRTX.getNode().isElement()
-                        && mRTX.getNode().hasFirstChild()) {
-                    mStack.push(mRTX.getNode().getNodeKey());
-                }
-
-                // Remember to emit all pending end elements from stack if
-                // required.
-                if (!mRTX.getNode().hasFirstChild()
-                        && !mRTX.getNode().hasRightSibling()) {
-                    closeElements = true;
-                }
-            }
-
-            // Finally emit all pending end elements.
-            while (!mStack.empty()) {
-                mRTX.moveTo(mStack.pop());
-                emitEndElement();
-            }
-
-            if (mSerializeRest) {
-                write("</rest:item></rest:sequence>");
-            }
-
-            mOut.flush();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+    public Void call() throws Exception {
+        if (mSerializeXMLDeclaration) {
+            write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
         }
+        if (mSerializeRest) {
+            write("<rest:sequence xmlns:rest=\"REST\"><rest:item>");
+        }
+
+        boolean closeElements = false;
+
+        // Iterate over all nodes of the subtree including self.
+        for (final long key : mAxis) {
+
+            // Emit all pending end elements.
+            if (closeElements) {
+                while (!mStack.empty()
+                        && mStack.peek() != mRTX.getNode().getLeftSiblingKey()) {
+                    mRTX.moveTo(mStack.pop());
+                    emitEndElement();
+                    mRTX.moveTo(key);
+                }
+                if (!mStack.empty()) {
+                    mRTX.moveTo(mStack.pop());
+                    emitEndElement();
+                }
+                mRTX.moveTo(key);
+                closeElements = false;
+            }
+
+            // Emit node.
+            emitNode();
+
+            // Push end element to stack if we are a start element with
+            // children.
+            if (mRTX.getNode().isElement() && mRTX.getNode().hasFirstChild()) {
+                mStack.push(mRTX.getNode().getNodeKey());
+            }
+
+            // Remember to emit all pending end elements from stack if
+            // required.
+            if (!mRTX.getNode().hasFirstChild()
+                    && !mRTX.getNode().hasRightSibling()) {
+                closeElements = true;
+            }
+        }
+
+        // Finally emit all pending end elements.
+        while (!mStack.empty()) {
+            mRTX.moveTo(mStack.pop());
+            emitEndElement();
+        }
+
+        if (mSerializeRest) {
+            write("</rest:item></rest:sequence>");
+        }
+
+        mOut.flush();
+        return null;
     }
 
     /**
@@ -224,7 +218,7 @@ public final class XMLSerializer implements Runnable {
      * 
      * @throws IOException
      */
-    private final void emitNode() throws IOException {
+    private void emitNode() throws IOException {
         switch (mRTX.getNode().getKind()) {
         case IReadTransaction.ELEMENT_KIND:
             // Emit start element.
@@ -287,7 +281,7 @@ public final class XMLSerializer implements Runnable {
      * 
      * @throws IOException
      */
-    private final void emitEndElement() throws IOException {
+    private void emitEndElement() throws IOException {
         mOut.write(OPEN_SLASH);
         mOut.write(mRTX.rawNameForKey(mRTX.getNode().getNameKey()));
         mOut.write(CLOSE);
@@ -299,7 +293,7 @@ public final class XMLSerializer implements Runnable {
      * @throws IOException
      * @throws UnsupportedEncodingException
      */
-    private final void write(final String string)
+    private void write(final String string)
             throws UnsupportedEncodingException, IOException {
         mOut.write(string.getBytes(IConstants.DEFAULT_ENCODING));
     }
@@ -309,7 +303,7 @@ public final class XMLSerializer implements Runnable {
      * 
      * @throws IOException
      */
-    private final void write(final long value) throws IOException {
+    private void write(final long value) throws IOException {
         final int length = (int) Math.log10((double) value);
         int digit = 0;
         long remainder = value;
@@ -348,7 +342,7 @@ public final class XMLSerializer implements Runnable {
         final IReadTransaction rtx = session.beginReadTransaction();
 
         final XMLSerializer serializer = new XMLSerializer(rtx, output);
-        serializer.run();
+        serializer.call();
         rtx.close();
         session.close();
 

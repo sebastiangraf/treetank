@@ -89,8 +89,6 @@ public final class AttributeNode extends AbstractNode {
      * 
      * Constructor.
      * 
-     * @param nodeKey
-     *            key for the attribute
      * @param in
      *            buffer for the data
      */
@@ -106,7 +104,7 @@ public final class AttributeNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final boolean isAttribute() {
+    public boolean isAttribute() {
         return true;
     }
 
@@ -114,7 +112,7 @@ public final class AttributeNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final int getNameKey() {
+    public int getNameKey() {
         return (int) mData[NAME_KEY];
     }
 
@@ -122,7 +120,7 @@ public final class AttributeNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void setNameKey(final int nameKey) {
+    public void setNameKey(final int nameKey) {
         this.mData[NAME_KEY] = nameKey;
     }
 
@@ -130,7 +128,7 @@ public final class AttributeNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final boolean hasParent() {
+    public boolean hasParent() {
         return true;
     }
 
@@ -138,7 +136,7 @@ public final class AttributeNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final long getParentKey() {
+    public long getParentKey() {
         return mData[NODE_KEY] - mData[PARENT_KEY];
     }
 
@@ -146,7 +144,7 @@ public final class AttributeNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void setParentKey(final long parentKey) {
+    public void setParentKey(final long parentKey) {
         mData[PARENT_KEY] = mData[NODE_KEY] - parentKey;
     }
 
@@ -154,7 +152,7 @@ public final class AttributeNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final int getURIKey() {
+    public int getURIKey() {
         return (int) mData[URI_KEY];
     }
 
@@ -162,7 +160,7 @@ public final class AttributeNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void setURIKey(final int uriKey) {
+    public void setURIKey(final int uriKey) {
         mData[URI_KEY] = uriKey;
     }
 
@@ -170,7 +168,7 @@ public final class AttributeNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final int getTypeKey() {
+    public int getTypeKey() {
         return (int) mData[TYPE];
     }
 
@@ -178,7 +176,7 @@ public final class AttributeNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final byte[] getRawValue() {
+    public byte[] getRawValue() {
         return mValue;
     }
 
@@ -186,7 +184,7 @@ public final class AttributeNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void setValue(final int valueType, final byte[] value) {
+    public void setValue(final int valueType, final byte[] value) {
         mData[TYPE] = valueType;
         mData[VALUE_LENGTH] = value.length;
         mValue = value;
@@ -196,7 +194,7 @@ public final class AttributeNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void setType(final int valueType) {
+    public void setType(final int valueType) {
         mData[TYPE] = valueType;
     }
 
@@ -204,7 +202,7 @@ public final class AttributeNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final int getKind() {
+    public int getKind() {
         return IReadTransaction.ATTRIBUTE_KIND;
     }
 
@@ -212,7 +210,7 @@ public final class AttributeNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void serialize(final ITTSink out) {
+    public void serialize(final ITTSink out) {
         super.serialize(out);
         for (final byte byteVal : mValue) {
             out.writeByte(byteVal);
@@ -220,7 +218,7 @@ public final class AttributeNode extends AbstractNode {
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         return "AttributeNode " + super.toString();
     }
 

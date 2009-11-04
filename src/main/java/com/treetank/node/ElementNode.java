@@ -126,8 +126,6 @@ public final class ElementNode extends AbstractNode {
     /**
      * Read element node.
      * 
-     * @param nodeKey
-     *            Key to assign to read element node.
      * @param in
      *            Input bytes to read from.
      */
@@ -153,7 +151,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final boolean isElement() {
+    public boolean isElement() {
         return true;
     }
 
@@ -161,7 +159,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final boolean hasParent() {
+    public boolean hasParent() {
         return ((mData[NODE_KEY] - mData[PARENT_KEY]) != IReadTransaction.NULL_NODE_KEY);
     }
 
@@ -169,7 +167,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final long getParentKey() {
+    public long getParentKey() {
         return mData[NODE_KEY] - mData[PARENT_KEY];
     }
 
@@ -177,7 +175,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void setParentKey(final long parentKey) {
+    public void setParentKey(final long parentKey) {
         mData[PARENT_KEY] = mData[NODE_KEY] - parentKey;
     }
 
@@ -185,7 +183,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final boolean hasFirstChild() {
+    public boolean hasFirstChild() {
         return ((mData[NODE_KEY] - mData[FIRST_CHILD_KEY]) != IReadTransaction.NULL_NODE_KEY);
     }
 
@@ -193,7 +191,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final long getFirstChildKey() {
+    public long getFirstChildKey() {
         return mData[NODE_KEY] - mData[FIRST_CHILD_KEY];
     }
 
@@ -201,7 +199,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void setFirstChildKey(final long firstChildKey) {
+    public void setFirstChildKey(final long firstChildKey) {
         mData[FIRST_CHILD_KEY] = mData[NODE_KEY] - firstChildKey;
     }
 
@@ -209,7 +207,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final boolean hasLeftSibling() {
+    public boolean hasLeftSibling() {
         return ((mData[NODE_KEY] - mData[LEFT_SIBLING_KEY]) != IReadTransaction.NULL_NODE_KEY);
     }
 
@@ -217,7 +215,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final long getLeftSiblingKey() {
+    public long getLeftSiblingKey() {
         return mData[NODE_KEY] - mData[LEFT_SIBLING_KEY];
     }
 
@@ -225,7 +223,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void setLeftSiblingKey(final long leftSiblingKey) {
+    public void setLeftSiblingKey(final long leftSiblingKey) {
         mData[LEFT_SIBLING_KEY] = mData[NODE_KEY] - leftSiblingKey;
     }
 
@@ -233,7 +231,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final boolean hasRightSibling() {
+    public boolean hasRightSibling() {
         return ((mData[NODE_KEY] - mData[RIGHT_SIBLING_KEY]) != IReadTransaction.NULL_NODE_KEY);
     }
 
@@ -241,7 +239,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final long getRightSiblingKey() {
+    public long getRightSiblingKey() {
         return mData[NODE_KEY] - mData[RIGHT_SIBLING_KEY];
     }
 
@@ -249,7 +247,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void setRightSiblingKey(final long rightSiblingKey) {
+    public void setRightSiblingKey(final long rightSiblingKey) {
         mData[RIGHT_SIBLING_KEY] = mData[NODE_KEY] - rightSiblingKey;
     }
 
@@ -257,7 +255,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final long getChildCount() {
+    public long getChildCount() {
         return mData[CHILD_COUNT];
     }
 
@@ -265,7 +263,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void setChildCount(final long childCount) {
+    public void setChildCount(final long childCount) {
         mData[CHILD_COUNT] = childCount;
     }
 
@@ -273,7 +271,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void incrementChildCount() {
+    public void incrementChildCount() {
         mData[CHILD_COUNT] += 1;
     }
 
@@ -281,7 +279,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void decrementChildCount() {
+    public void decrementChildCount() {
         mData[CHILD_COUNT] -= 1;
     }
 
@@ -289,7 +287,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final int getAttributeCount() {
+    public int getAttributeCount() {
         return (int) mData[ATTRIBUTE_COUNT];
     }
 
@@ -297,7 +295,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final long getAttributeKey(final int index) {
+    public long getAttributeKey(final int index) {
         if (mAttributeKeys == null) {
             return IReadTransaction.NULL_NODE_KEY;
         }
@@ -308,7 +306,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void insertAttribute(final long attributeKey) {
+    public void insertAttribute(final long attributeKey) {
         if (mAttributeKeys == null) {
             mAttributeKeys = new ArrayList<Long>(1);
         }
@@ -322,7 +320,7 @@ public final class ElementNode extends AbstractNode {
      * @param attributeKey
      *            the key of the attribute to be removed
      */
-    public final void removeAttribute(final long attributeKey) {
+    public void removeAttribute(final long attributeKey) {
         mAttributeKeys.remove(attributeKey);
         mData[ATTRIBUTE_COUNT] -= 1;
     }
@@ -331,7 +329,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final int getNamespaceCount() {
+    public int getNamespaceCount() {
         return (int) mData[NAMESPACE_COUNT];
     }
 
@@ -339,7 +337,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final long getNamespaceKey(final int index) {
+    public long getNamespaceKey(final int index) {
         if (mNamespaceKeys == null) {
             return IReadTransaction.NULL_NODE_KEY;
         }
@@ -350,7 +348,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void insertNamespace(final long namespaceKey) {
+    public void insertNamespace(final long namespaceKey) {
         if (mNamespaceKeys == null) {
             mNamespaceKeys = new ArrayList<Long>(1);
         }
@@ -362,7 +360,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final int getKind() {
+    public int getKind() {
         return IReadTransaction.ELEMENT_KIND;
     }
 
@@ -370,7 +368,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final int getNameKey() {
+    public int getNameKey() {
         return (int) mData[NAME_KEY];
     }
 
@@ -378,7 +376,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void setNameKey(final int localPartKey) {
+    public void setNameKey(final int localPartKey) {
         mData[NAME_KEY] = localPartKey;
     }
 
@@ -386,7 +384,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final int getURIKey() {
+    public int getURIKey() {
         return (int) mData[URI_KEY];
     }
 
@@ -394,7 +392,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void setURIKey(final int uriKey) {
+    public void setURIKey(final int uriKey) {
         mData[URI_KEY] = uriKey;
     }
 
@@ -402,7 +400,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final int getTypeKey() {
+    public int getTypeKey() {
         return (int) mData[TYPE];
     }
 
@@ -410,7 +408,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void setType(final int valueType) {
+    public void setType(final int valueType) {
         mData[TYPE] = valueType;
     }
 
@@ -418,7 +416,7 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public final void serialize(final ITTSink out) {
+    public void serialize(final ITTSink out) {
         super.serialize(out);
         if (mAttributeKeys != null) {
             for (int i = 0, l = mAttributeKeys.size(); i < l; i++) {

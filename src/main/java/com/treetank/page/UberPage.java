@@ -129,7 +129,7 @@ public final class UberPage extends AbstractPage {
      * 
      * @return Indirect page reference.
      */
-    public final PageReference getIndirectPageReference() {
+    public PageReference getIndirectPageReference() {
         return getReference(INDIRECT_REFERENCE_OFFSET);
     }
 
@@ -138,7 +138,7 @@ public final class UberPage extends AbstractPage {
      * 
      * @return Number of revisions.
      */
-    public final long getRevisionCount() {
+    public long getRevisionCount() {
         return mRevisionCount;
     }
 
@@ -147,7 +147,7 @@ public final class UberPage extends AbstractPage {
      * 
      * @return Key of last committed revision.
      */
-    public final long getLastCommittedRevisionNumber() {
+    public long getLastCommittedRevisionNumber() {
         if (mRevisionCount == IConstants.UBP_ROOT_REVISION_COUNT) {
             return IConstants.UBP_ROOT_REVISION_NUMBER;
         } else {
@@ -160,7 +160,7 @@ public final class UberPage extends AbstractPage {
      * 
      * @return Revision key.
      */
-    public final long getRevisionNumber() {
+    public long getRevisionNumber() {
         if (mRevisionCount == IConstants.UBP_ROOT_REVISION_COUNT) {
             return IConstants.UBP_ROOT_REVISION_NUMBER;
         } else {
@@ -173,7 +173,7 @@ public final class UberPage extends AbstractPage {
      * 
      * @return True if this uber page is the first one of the TreeTank file.
      */
-    public final boolean isBootstrap() {
+    public boolean isBootstrap() {
         return mBootstrap;
     }
 
@@ -189,7 +189,7 @@ public final class UberPage extends AbstractPage {
     /**
      * {@inheritDoc}
      */
-    public final void serialize(final ITTSink out) {
+    public void serialize(final ITTSink out) {
         mBootstrap = false;
         out.writeInt(PagePersistenter.UBERPAGE);
         super.serialize(out);
@@ -200,7 +200,7 @@ public final class UberPage extends AbstractPage {
      * {@inheritDoc}
      */
     @Override
-    public final String toString() {
+    public String toString() {
         return super.toString() + ": revisionCount=" + mRevisionCount
                 + ", indirectPage=(" + getReference(INDIRECT_REFERENCE_OFFSET)
                 + "), isBootstrap=" + mBootstrap;

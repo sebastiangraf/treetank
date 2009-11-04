@@ -48,7 +48,7 @@ public class XMLSerializerTest {
     }
 
     @Test
-    public void testXMLSerializer() throws TreetankException {
+    public void testXMLSerializer() throws Exception {
         final ISession session = Session.beginSession(ITestConstants.PATH1);
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -59,7 +59,7 @@ public class XMLSerializerTest {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final IReadTransaction rtx = session.beginReadTransaction();
         final XMLSerializer serializer = new XMLSerializer(rtx, out);
-        serializer.run();
+        serializer.call();
         TestCase.assertEquals(DocumentCreater.XML_TANK, out.toString());
         rtx.close();
         session.close();

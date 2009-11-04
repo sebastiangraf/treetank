@@ -27,22 +27,31 @@ import com.treetank.exception.TreetankRestException;
 import com.treetank.service.rest.HandledHttpServletRequest;
 import com.treetank.utils.IConstants;
 
+/**
+ * Helper for the Crossdomain-Request.
+ * 
+ * @author Georgios Giannakaras, University of Konstanz
+ * 
+ */
 public final class HelperCrossdomain {
 
-    protected static final String CONTENT_TYPE = "application/xml";
-
-    protected static final byte[] CROSSDOMAIN = ("<?xml version='1.0'?>"
-            + "<!DOCTYPE cross-domain-policy SYSTEM "
-            + "'http://www.macromedia.com/xml/dtds/cross-domain-policy.dtd'>"
-            + "<cross-domain-policy><allow-access-from domain='*' />"
-            + "</cross-domain-policy>").getBytes();
-
-    public final void handle(final HttpServletRequest request,
+    /**
+     * Helping just for cross domain requests
+     * 
+     * @param request
+     *            to handle
+     * @param response
+     *            to give back
+     * @throws TreetankRestException
+     *             if any weird happen
+     */
+    public void handle(final HttpServletRequest request,
             final HttpServletResponse response) throws TreetankRestException {
         try {
-            response.setContentType(CONTENT_TYPE);
+            response.setContentType(RESTConstants.CONTENT_TYPE.getContent());
             response.setCharacterEncoding(IConstants.DEFAULT_ENCODING);
-            response.getOutputStream().write(CROSSDOMAIN);
+            response.getOutputStream().write(
+                    RESTConstants.CROSSDOMAIN.getContent().getBytes());
             ((HandledHttpServletRequest) request).setHandled(true);
         } catch (final IOException e) {
             throw new TreetankRestException(500, e.getMessage(), e);

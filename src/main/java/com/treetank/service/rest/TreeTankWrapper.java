@@ -18,7 +18,6 @@
 
 package com.treetank.service.rest;
 
-import java.io.IOException;
 import java.io.OutputStream;
 
 import com.treetank.api.IAxis;
@@ -40,7 +39,7 @@ import com.treetank.session.Session;
  * Bound to a given path, this class encapsulates all Treetank-Commands to make
  * it access for the Rest.
  * 
- * @author Georgios Gianakarras, University of Konstanz
+ * @author Georgios Giannakaras, University of Konstanz
  * 
  */
 public final class TreeTankWrapper {
@@ -225,16 +224,14 @@ public final class TreeTankWrapper {
             rtx = session.beginReadTransaction(revision);
             if (rtx.moveTo(id)) {
                 out.write(BEGIN_REST_ITEM);
-                new XMLSerializer(rtx, out, false, true).run();
+                new XMLSerializer(rtx, out, false, true).call();
                 out.write(END_REST_ITEM);
             } else {
                 throw new TreetankRestException(404, "Node with id=" + id
                         + " not found.");
             }
 
-        } catch (final TreetankException ie) {
-            throw new TreetankRestException(500, ie.getMessage(), ie);
-        } catch (final IOException ie) {
+        } catch (final Exception ie) {
             throw new TreetankRestException(500, ie.getMessage(), ie);
         } finally {
             if (rtx != null) {
@@ -270,7 +267,7 @@ public final class TreeTankWrapper {
                 for (final long key : axis) {
                     out.write(BEGIN_REST_ITEM);
                     if (key >= 0) {
-                        new XMLSerializer(rtx, out, false, true).run();
+                        new XMLSerializer(rtx, out, false, true).call();
                     } else {
                         out.write(rtx.getNode().getRawValue());
                     }
@@ -280,9 +277,7 @@ public final class TreeTankWrapper {
                 throw new TreetankRestException(404, "Node with id=" + id
                         + " not found.");
             }
-        } catch (final TreetankException ie) {
-            throw new TreetankRestException(500, ie.getMessage(), ie);
-        } catch (IOException ie) {
+        } catch (Exception ie) {
             throw new TreetankRestException(500, ie.getMessage(), ie);
         } finally {
             if (rtx != null) {

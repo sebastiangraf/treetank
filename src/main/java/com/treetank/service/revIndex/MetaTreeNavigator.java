@@ -17,8 +17,8 @@ public final class MetaTreeNavigator {
      *            the rev of the index
      * @return the index of the treetank
      */
-    static final long getIndexRev(final IReadTransaction rtx,
-            final long indexRev) throws TreetankException {
+    static long getIndexRev(final IReadTransaction rtx, final long indexRev)
+            throws TreetankException {
         moveToMetaRevRoot(rtx);
 
         long ttRev = -1;
@@ -124,7 +124,7 @@ public final class MetaTreeNavigator {
     /**
      * Moving to meta rec root. Inserting basic structure if not
      */
-    private static final void moveToMetaRevRoot(final IReadTransaction rtx)
+    private static void moveToMetaRevRoot(final IReadTransaction rtx)
             throws TreetankException {
         rtx.moveToDocumentRoot();
         if (!rtx.getNode().hasFirstChild()) {

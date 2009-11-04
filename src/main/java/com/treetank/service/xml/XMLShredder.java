@@ -43,7 +43,7 @@ import com.treetank.utils.TypedValue;
 
 public final class XMLShredder {
 
-    public final static long shred(final long id, final String content,
+    public static long shred(final long id, final String content,
             final ISession session) throws TreetankException {
         try {
             final XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -58,7 +58,7 @@ public final class XMLShredder {
 
     }
 
-    public final static long shred(final String xmlPath,
+    public static long shred(final String xmlPath,
             final SessionConfiguration sessionConfiguration)
             throws TreetankException {
         try {
@@ -75,7 +75,7 @@ public final class XMLShredder {
         }
     }
 
-    public static final long shred(final long id, final XMLStreamReader parser,
+    public static long shred(final long id, final XMLStreamReader parser,
             final SessionConfiguration sessionConfiguration)
             throws TreetankException {
         final ISession session = Session.beginSession(sessionConfiguration);
@@ -84,7 +84,7 @@ public final class XMLShredder {
         return revision;
     }
 
-    public static final long shred(final long id, final XMLStreamReader parser,
+    public static long shred(final long id, final XMLStreamReader parser,
             final ISession session) throws TreetankException {
         try {
             final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -201,26 +201,21 @@ public final class XMLShredder {
         }
     }
 
-    public static final void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         if (args.length < 2 || args.length > 3) {
             System.out.println("Usage: XMLShredder input.xml output.tnk [key]");
             System.exit(1);
         }
 
-        try {
-            System.out.print("Shredding '" + args[0] + "' to '" + args[1]
-                    + "' ... ");
-            long time = System.currentTimeMillis();
-            new File(args[1]).delete();
-            XMLShredder.shred(args[0],
-                    args.length == 2 ? new SessionConfiguration(args[1])
-                            : new SessionConfiguration(args[1], args[2]
-                                    .getBytes()));
-            System.out.println(" done [" + (System.currentTimeMillis() - time)
-                    + "ms].");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        System.out.print("Shredding '" + args[0] + "' to '" + args[1]
+                + "' ... ");
+        long time = System.currentTimeMillis();
+        new File(args[1]).delete();
+        XMLShredder.shred(args[0], args.length == 2 ? new SessionConfiguration(
+                args[1])
+                : new SessionConfiguration(args[1], args[2].getBytes()));
+        System.out.println(" done [" + (System.currentTimeMillis() - time)
+                + "ms].");
     }
 
 }
