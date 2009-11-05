@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.mortbay.jetty.Request;
 
 import com.treetank.exception.TreetankRestException;
+import com.treetank.service.rest.RESTConstants;
 import com.treetank.service.rest.TreeTankWrapper;
 import com.treetank.utils.IConstants;
 
@@ -75,20 +76,14 @@ public final class HelperPut {
 
             // Get service.
             TreeTankWrapper service = null;
-            synchronized (mServices) {
-                service = mServices.get(serviceString);
-                if (service == null) {
-                    service = new TreeTankWrapper(PATH + serviceString + ".tnk");
-                    mServices.put(serviceString, service);
-                }
-            }
             final long id = Long.valueOf(idString);
 
             // Make modifications.
             final long revision = service.putText(id, requestBody);
 
             // Write response header.
-            response.setContentType(CONTENT_TYPE);
+            response.setContentType(RESTConstants.CONTENT_TYPE
+                    .getStringContent());
             response.setCharacterEncoding(IConstants.DEFAULT_ENCODING);
 
             // Write response body.
