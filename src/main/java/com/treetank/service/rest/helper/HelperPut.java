@@ -35,16 +35,6 @@ import com.treetank.utils.IConstants;
 
 public final class HelperPut {
 
-    private static final String PATH = "/treetank/data/";
-
-    private static final String CONTENT_TYPE = "application/xml";
-
-    private final Map<String, TreeTankWrapper> mServices;
-
-    public HelperPut(final Map<String, TreeTankWrapper> map) {
-        mServices = map;
-    }
-
     public void handle(final HttpServletRequest request,
             final HttpServletResponse response) throws TreetankRestException {
 

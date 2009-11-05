@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.mortbay.jetty.Request;
 
 import com.treetank.exception.TreetankRestException;
+import com.treetank.service.rest.RESTConstants;
 import com.treetank.service.rest.TreeTankWrapper;
 import com.treetank.utils.IConstants;
 
@@ -83,7 +84,7 @@ public final class HelperDelete {
             final long revision = service.delete(id);
 
             // Write response header.
-            response.setContentType(RESTConstants.CONTENT_TYPE.getContent());
+            response.setContentType(RESTConstants.CONTENT_TYPE.getStringContent());
             response.setCharacterEncoding(IConstants.DEFAULT_ENCODING);
 
             // Write response body.

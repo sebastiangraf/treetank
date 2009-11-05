@@ -15,11 +15,11 @@ import javax.servlet.http.HttpSession;
 
 import org.mortbay.jetty.Request;
 
-public class HandledJettyServletRequest implements HandledHttpServletRequest {
+public class HandledRequest implements IHandledRequest {
 
     private final Request request;
 
-    public HandledJettyServletRequest(final Request paramRequest) {
+    public HandledRequest(final Request paramRequest) {
         this.request = paramRequest;
     }
 
