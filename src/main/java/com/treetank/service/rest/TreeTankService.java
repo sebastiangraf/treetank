@@ -18,8 +18,7 @@
 
 package com.treetank.service.rest;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.io.File;
 
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Handler;
@@ -35,12 +34,12 @@ public class TreeTankService {
 
         try {
 
-            final Map<String, TreeTankWrapper> map = new ConcurrentHashMap<String, TreeTankWrapper>();
+            final File file = new File(args[1]);
 
             final Server server = new Server();
             final Connector connector = new SocketConnector();
             // final Connector connector = new SslSocketConnector();
-            final Handler handler = new TreeTankHandler(map);
+            final Handler handler = TreeTankHandler.getHandler(file);
 
             connector.setPort(8182);
             //

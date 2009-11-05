@@ -18,8 +18,10 @@
 
 package com.treetank.service.rest;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -28,111 +30,102 @@ import javax.servlet.http.HttpServletResponse;
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.handler.AbstractHandler;
 
+import com.treetank.api.ISession;
+import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankRestException;
-import com.treetank.service.rest.helper.HelperCrossdomain;
 import com.treetank.service.rest.helper.HelperDelete;
-import com.treetank.service.rest.helper.HelperFavicon;
-import com.treetank.service.rest.helper.HelperFile;
 import com.treetank.service.rest.helper.HelperGet;
 import com.treetank.service.rest.helper.HelperPost;
 import com.treetank.service.rest.helper.HelperPut;
+import com.treetank.session.Session;
+import com.treetank.utils.IConstants;
 
 public class TreeTankHandler extends AbstractHandler {
 
-    private static final String PNG = ".png";
+    private HelperGet mHelperGet;
 
-    private static final String JPEG = ".jpg";
+    private HelperPost mHelperPost;
 
-    private static final String GIF = ".gif";
+    private HelperPut mHelperPut;
 
-    private static final String STYLE = ".css";
+    private HelperDelete mHelperDelete;
 
-    private static final String FLEX = ".swf";
+    private final static ConcurrentHashMap<File, TreeTankHandler> instancesPerFile = new ConcurrentHashMap<File, TreeTankHandler>();
 
-    private static final String JAVASCRIPT = ".js";
+    private final ISession session;
 
-    private static final String FAVICON = "/favicon.ico";
+    private final File path;
 
-    private static final String CROSSDOMAIN = "/crossdomain.xml";
-
-    private static final String POST = "POST";
-
-    private static final String PUT = "PUT";
-
-    private static final String DELETE = "DELETE";
-
-    private static final String GET = "GET";
-
-    private final HelperFavicon mHelperFavicon;
-
-    private final HelperCrossdomain mHelperCrossdomain;
-
-    private final HelperFile mHelperJavascript;
-
-    private final HelperFile mHelperFlex;
-
-    private final HelperFile mHelperStyle;
-
-    private final HelperFile mHelperGif;
-
-    private final HelperFile mHelperJpeg;
-
-    private final HelperFile mHelperPng;
-
-    private final HelperGet mHelperGet;
-
-    private final HelperPost mHelperPost;
-
-    private final HelperPut mHelperPut;
-
-    private final HelperDelete mHelperDelete;
-
-    public TreeTankHandler(final Map<String, TreeTankWrapper> map) {
-        mHelperFavicon = new HelperFavicon();
-        mHelperCrossdomain = new HelperCrossdomain();
-        mHelperJavascript = new HelperFile("text/ecmascript");
-        mHelperFlex = new HelperFile("application/x-shockwave-flash");
-        mHelperStyle = new HelperFile("text/css");
-        mHelperGif = new HelperFile("image/gif");
-        mHelperJpeg = new HelperFile("image/jpeg");
-        mHelperPng = new HelperFile("image/png");
-        mHelperGet = new HelperGet(map);
-        mHelperPost = new HelperPost(map);
-        mHelperPut = new HelperPut(map);
-        mHelperDelete = new HelperDelete(map);
+    private TreeTankHandler(final File paramPath) throws TreetankIOException {
+        session = Session.beginSession(paramPath);
+        path = paramPath;
     }
 
-    public void handle(String target, HttpServletRequest paramRequest,
-            HttpServletResponse response, int dispatch) throws IOException,
-            ServletException {
-        final HandledJettyServletRequest request = new HandledJettyServletRequest(
+    /**
+     * Public singleton getter. This method works multithreaded for all
+     * accessing threads.
+     * 
+     * @param file
+     *            the session to be bound. If not existing, a new session will
+     *            be opened.
+     * @return an instance of this class
+     * @throws TreetankIOException
+     *             if the opening fails
+     */
+    public static TreeTankHandler getHandler(final File file)
+            throws TreetankIOException {
+        return instancesPerFile.putIfAbsent(file, new TreeTankHandler(file));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void handle(final String target,
+            final HttpServletRequest paramRequest,
+            final HttpServletResponse response, final int dispatch)
+            throws IOException, ServletException {
+        final HandledRequest request = new HandledRequest(
                 (Request) paramRequest);
         try {
 
-            if (request.getRequestURI().equalsIgnoreCase(FAVICON)) {
-                mHelperFavicon.handle(request, response);
-            } else if (request.getRequestURI().equalsIgnoreCase(CROSSDOMAIN)) {
-                mHelperCrossdomain.handle(request, response);
-            } else if (request.getRequestURI().endsWith(JAVASCRIPT)) {
-                mHelperJavascript.handle(request, response);
-            } else if (request.getRequestURI().endsWith(FLEX)) {
-                mHelperFlex.handle(request, response);
-            } else if (request.getRequestURI().endsWith(STYLE)) {
-                mHelperStyle.handle(request, response);
-            } else if (request.getRequestURI().endsWith(GIF)) {
-                mHelperGif.handle(request, response);
-            } else if (request.getRequestURI().endsWith(JPEG)) {
-                mHelperJpeg.handle(request, response);
-            } else if (request.getRequestURI().endsWith(PNG)) {
-                mHelperPng.handle(request, response);
-            } else if (request.getMethod().equalsIgnoreCase(GET)) {
+            if (request.getRequestURI().equalsIgnoreCase(
+                    RESTConstants.FAVICONPATH.getStringContent())) {
+                request.setHandled(true);
+            } else if (request.getRequestURI().equalsIgnoreCase(
+                    RESTConstants.CROSSDOMAINPATH.getStringContent())) {
+                handleCrossDomain(request, response);
+            } else if (request.getRequestURI().endsWith(
+                    RESTConstants.JAVASCRIPT.getStringContent())) {
+                handleFile(request, response);
+            } else if (request.getRequestURI().endsWith(
+                    RESTConstants.FLEX.getStringContent())) {
+                handleFile(request, response);
+            } else if (request.getRequestURI().endsWith(
+                    RESTConstants.STYLE.getStringContent())) {
+                handleFile(request, response);
+            } else if (request.getRequestURI().endsWith(
+                    RESTConstants.GIF.getStringContent())) {
+                handleFile(request, response);
+            } else if (request.getRequestURI().endsWith(
+                    RESTConstants.JPEG.getStringContent())) {
+                handleFile(request, response);
+            } else if (request.getRequestURI().endsWith(
+                    RESTConstants.PNG.getStringContent())) {
+                handleFile(request, response);
+            } else if (request.getMethod().equalsIgnoreCase(
+                    RESTConstants.GET.getStringContent())) {
                 mHelperGet.handle(request, response);
-            } else if (request.getMethod().equalsIgnoreCase(POST)) {
-                if (request.getQueryString().equalsIgnoreCase(DELETE)) {
+            } else if (request.getMethod().equalsIgnoreCase(
+                    RESTConstants.POST.getStringContent())) {
+                if (request.getQueryString().equalsIgnoreCase(
+                        RESTConstants.DELETE.getStringContent())) {
                     mHelperDelete.handle(request, response);
-                } else if (request.getQueryString().equalsIgnoreCase(POST)) {
+                } else if (request.getQueryString().equalsIgnoreCase(
+                        RESTConstants.POST.getStringContent())) {
                     mHelperPost.handle(request, response);
-                } else if (request.getQueryString().equalsIgnoreCase(PUT)) {
+                } else if (request.getQueryString().equalsIgnoreCase(
+                        RESTConstants.PUT.getStringContent())) {
                     mHelperPut.handle(request, response);
                 } else {
                     throw new TreetankRestException(501, "Unknown operation.");
@@ -141,13 +134,69 @@ public class TreeTankHandler extends AbstractHandler {
                 throw new TreetankRestException(501, "Unknown operation.");
             }
 
-        } catch (TreetankRestException te) {
-            te.printStackTrace();
-            response.sendError(te.getErrorCode(), te.getErrorMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (final TreetankRestException exc) {
+            exc.printStackTrace();
+            response.sendError(exc.getErrorCode(), exc.getErrorMessage());
         }
+    }
 
+    /**
+     * Helping just for cross domain requests
+     * 
+     * @param request
+     *            to handle
+     * @param response
+     *            to give back
+     * @throws TreetankRestException
+     *             if any weird happen
+     */
+    private void handleCrossDomain(final HandledRequest request,
+            final HttpServletResponse response) throws TreetankRestException {
+        try {
+            response.setContentType(RESTConstants.CONTENT_TYPE
+                    .getStringContent());
+            response.setCharacterEncoding(IConstants.DEFAULT_ENCODING);
+            response.getOutputStream().write(
+                    RESTConstants.CROSSDOMAIN.getStringContent().getBytes());
+            request.setHandled(true);
+        } catch (final IOException exc) {
+            throw new TreetankRestException(500, exc.getMessage(), exc);
+        }
+    }
+
+    /**
+     * Helping just for file requests
+     * 
+     * @param request
+     *            to handle
+     * @param response
+     *            to give back
+     * @throws TreetankRestException
+     *             if any weird happen
+     */
+    private void handleFile(final HandledRequest request,
+            final HttpServletResponse response) throws TreetankRestException {
+        response.setContentType(RESTConstants.CONTENT_TYPE.getStringContent());
+        response.setCharacterEncoding(IConstants.DEFAULT_ENCODING);
+        response.setBufferSize(RESTConstants.BUFFER_SIZE.getIntContent());
+        try {
+            final File file = new File(path.getAbsoluteFile()
+                    + request.getRequestURI());
+            final FileInputStream fin = new FileInputStream(file);
+            final byte[] tmp = new byte[RESTConstants.BUFFER_SIZE
+                    .getIntContent() / 2];
+            int length = 0;
+            while ((length = fin.read(tmp)) != -1) {
+                response.getOutputStream().write(tmp, 0, length);
+            }
+            fin.close();
+
+            response.flushBuffer();
+
+            request.setHandled(true);
+        } catch (final IOException exc) {
+            throw new TreetankRestException(500, exc.getMessage(), exc);
+        }
     }
 
 }
