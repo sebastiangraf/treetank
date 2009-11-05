@@ -17,7 +17,7 @@ import javax.servlet.http.HttpSession;
 
 import org.junit.Test;
 
-public class TestRequestWrapper implements HandledHttpServletRequest {
+public class TestRequestWrapper implements IHandledRequest {
 
     private boolean handled;
 
