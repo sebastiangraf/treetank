@@ -96,7 +96,7 @@
 					</descriptors>
 					<archive>
 						<manifest>
-							<mainClass>com.treetank.service.xml.XMLShredder</mainClass>
+							<mainClass>com.treetank.bench.ExtremeInsertTest</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
