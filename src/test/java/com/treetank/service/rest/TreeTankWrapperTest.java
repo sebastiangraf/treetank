@@ -69,11 +69,11 @@ public class TreeTankWrapperTest {
      * .
      */
     @Test
-    public void testPutText() throws TreetankRestException {
+    public void testPut() throws TreetankRestException {
         wrapper.post(0, DocumentCreater.XML);
-        wrapper.put(10, "bla");
+        wrapper.put(9, DocumentCreater.XML);
         wrapper.close();
-        testContent("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b p:x=\"bla\"><c/>bar</b>oops3</p:a>");
+        testContent("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b><p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b p:x=\"y\"><c/>bar</b>oops3</p:a></b>oops3</p:a>");
     }
 
     /**
