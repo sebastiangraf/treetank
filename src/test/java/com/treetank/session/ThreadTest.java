@@ -18,6 +18,7 @@
 
 package com.treetank.session;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -66,7 +67,7 @@ public class ThreadTest {
         ExecutorService taskExecutor = Executors
                 .newFixedThreadPool(WORKER_COUNT);
         for (int i = 0; i < WORKER_COUNT; i++) {
-            taskExecutor.execute(new Task(session.beginReadTransaction(0L)));
+            taskExecutor.submit(new Task(session.beginReadTransaction(i)));
             wtx = session.beginWriteTransaction();
             wtx.moveTo(10L);
             wtx.setValue("value" + i);
@@ -79,7 +80,7 @@ public class ThreadTest {
         session.close();
     }
 
-    private class Task implements Runnable {
+    private class Task implements Callable<Void> {
 
         private IReadTransaction mRTX;
 
@@ -87,20 +88,17 @@ public class ThreadTest {
             mRTX = rtx;
         }
 
-        public void run() {
-            try {
-                final IAxis axis = new DescendantAxis(mRTX);
-                while (axis.hasNext()) {
-                    axis.next();
-                }
-
-                mRTX.moveTo(12L);
-                TestCase.assertEquals("bar", TypedValue.parseString(mRTX
-                        .getNode().getRawValue()));
-                mRTX.close();
-            } catch (Exception e) {
-                TestCase.fail(e.getLocalizedMessage());
+        public Void call() throws Exception {
+            final IAxis axis = new DescendantAxis(mRTX);
+            while (axis.hasNext()) {
+                axis.next();
             }
+
+            mRTX.moveTo(12L);
+            TestCase.assertEquals("bar", TypedValue.parseString(mRTX.getNode()
+                    .getRawValue()));
+            mRTX.close();
+            return null;
         }
     }
 
