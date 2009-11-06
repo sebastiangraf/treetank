@@ -1,6 +1,5 @@
 package com.treetank.service.revIndex;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -181,40 +180,6 @@ public class RevIndexTest {
         assertTrue(rtx.moveToParent());
 
         assertFalse(desc.hasNext());
-
-        rtx.close();
-        session.close();
-    }
-
-    @Test
-    public void testMetaRev() throws TreetankException {
-        final long index1 = index.finishIndexInput();
-        final long index2 = index.finishIndexInput();
-        assertEquals(1, index1);
-        assertEquals(2, index2);
-        index.close();
-
-        ISession session = null;
-        IReadTransaction rtx = null;
-        session = Session.beginSession(ITestConstants.PATH1);
-        rtx = session.beginReadTransaction();
-
-        final IAxis desc = new DescendantAxis(rtx);
-        assertTrue(desc.hasNext());
-        assertTrue(rtx.moveTo(desc.next()));
-        assertTrue(rtx.getNameOfCurrentNode().equals("metaRevRoot"));
-
-        assertTrue(desc.hasNext());
-        assertTrue(rtx.moveTo(desc.next()));
-        assertTrue(rtx.getNameOfCurrentNode().equals("indexRevision"));
-
-        assertTrue(desc.hasNext());
-        assertTrue(rtx.moveTo(desc.next()));
-        assertTrue(rtx.getNameOfCurrentNode().equals("indexRevision"));
-
-        assertTrue(desc.hasNext());
-        assertTrue(rtx.moveTo(desc.next()));
-        assertTrue(rtx.getNameOfCurrentNode().equals("trieRoot"));
 
         rtx.close();
         session.close();
