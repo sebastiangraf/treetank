@@ -132,7 +132,5 @@ public interface IConstants {
     /** Commit threshold. */
     public static final int COMMIT_THRESHOLD = 262144;
 
-    /** Maximal length of textnodes before to be splitted */
-    public static final int MAX_TEXTNODE_LENGTH = 128;
 
 }

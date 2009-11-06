@@ -11,8 +11,9 @@ import com.treetank.session.Session;
 
 public class ExtremeInsertTest {
 
-    private static int NUM_CHARS = 3;
-    private static int ELEMENTS = 100000;
+    private static int NUM_CHARS = 4;
+    private static int NUM_CHARS2 = 30000;
+    private static int ELEMENTS = 1000000;
     private static final Random ran = new Random(0l);
     public static String chars = "abcdefghijklmonpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
@@ -26,12 +27,33 @@ public class ExtremeInsertTest {
             IWriteTransaction wtx = session.beginWriteTransaction();
             wtx.insertElementAsFirstChild(getString(), "");
             for (int i = 0; i < ELEMENTS; i++) {
+
                 if (ran.nextBoolean()) {
-                    wtx.insertElementAsFirstChild(getString(), "");
+                    if (ran.nextBoolean()) {
+                        wtx.insertElementAsFirstChild(getString(), "");
+                    } else {
+                        wtx.insertElementAsRightSibling(getString(), "");
+                    }
+                    while (ran.nextBoolean()) {
+                        wtx.insertAttribute(getString(), getString(),
+                                getString());
+                        wtx.moveToParent();
+                    }
+                    while (ran.nextBoolean()) {
+                        wtx.insertNamespace(getString(), getString());
+                        wtx.moveToParent();
+                    }
                 } else {
-                    wtx.insertElementAsRightSibling(getString(), "");
+                    if (ran.nextBoolean()) {
+                        wtx.insertTextAsFirstChild(getStringForVal());
+                    } else {
+                        wtx.insertTextAsRightSibling(getStringForVal());
+                    }
                 }
 
+                if (ran.nextBoolean()) {
+                    wtx.commit();
+                }
             }
             wtx.commit();
             wtx.close();
@@ -48,13 +70,27 @@ public class ExtremeInsertTest {
         // final BenchmarkResult res = bench.run();
         // final TabularSummaryOutput output = new TabularSummaryOutput();
         // output.visitBenchmark(res);
-        ELEMENTS = Integer.parseInt(args[0]);
+        if (args.length > 0) {
+            ELEMENTS = Integer.parseInt(args[0]);
+        }
+        final long time = System.currentTimeMillis();
         new ExtremeInsertTest().bench();
+        System.out.println(System.currentTimeMillis() - time + "[ms]");
 
     }
 
     public static String getString() {
         char[] buf = new char[NUM_CHARS];
+
+        for (int i = 0; i < buf.length; i++) {
+            buf[i] = chars.charAt(ran.nextInt(chars.length()));
+        }
+
+        return new String(buf);
+    }
+
+    public static String getStringForVal() {
+        char[] buf = new char[NUM_CHARS2];
 
         for (int i = 0; i < buf.length; i++) {
             buf[i] = chars.charAt(ran.nextInt(chars.length()));

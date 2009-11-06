@@ -21,7 +21,6 @@ package com.treetank.node;
 import com.treetank.api.IReadTransaction;
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
-import com.treetank.utils.IConstants;
 
 /**
  * <h1>TextNode</h1>
@@ -67,11 +66,6 @@ public final class TextNode extends AbstractNode {
             final long leftSiblingKey, final long rightSiblingKey,
             final int type, final byte[] value) {
         super(SIZE, nodeKey);
-        if (value.length > IConstants.MAX_TEXTNODE_LENGTH) {
-            throw new IllegalArgumentException(
-                    "Only handling textnodes with length <= "
-                            + IConstants.MAX_TEXTNODE_LENGTH);
-        }
         mData[PARENT_KEY] = nodeKey - parentKey;
         mData[LEFT_SIBLING_KEY] = leftSiblingKey;
         mData[RIGHT_SIBLING_KEY] = rightSiblingKey;
@@ -88,11 +82,6 @@ public final class TextNode extends AbstractNode {
      */
     public TextNode(final AbstractNode node) {
         super(node);
-        if (node.getRawValue().length > IConstants.MAX_TEXTNODE_LENGTH) {
-            throw new IllegalArgumentException(
-                    "Only handling textnodes with length <= "
-                            + IConstants.MAX_TEXTNODE_LENGTH);
-        }
         mValue = node.getRawValue();
     }
 
