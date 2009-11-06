@@ -11,9 +11,9 @@ import com.treetank.session.Session;
 
 public class ExtremeInsertTest {
 
-    private static int NUM_CHARS = 4;
+    private static int NUM_CHARS = 3;
     private static int NUM_CHARS2 = 30000;
-    private static int ELEMENTS = 1000000;
+    private static int ELEMENTS = 100000;
     private static final Random ran = new Random(0l);
     public static String chars = "abcdefghijklmonpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
@@ -51,9 +51,6 @@ public class ExtremeInsertTest {
                     }
                 }
 
-                if (ran.nextBoolean()) {
-                    wtx.commit();
-                }
             }
             wtx.commit();
             wtx.close();
