@@ -6,9 +6,7 @@ import java.io.InputStreamReader;
 
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
-import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
-import com.treetank.session.SessionConfiguration;
 
 /**
  * This class acts as a commando line interface to navigate through a treetank
@@ -54,36 +52,24 @@ public final class TreeTankCommandoLineExplorer {
     public static void main(final String[] args) throws Exception {
         ISession session = null;
         IReadTransaction rtx = null;
-        switch (args.length) {
-        case 0:
-            session = null;
-            rtx = null;
-            break;
-        case 1:
-            if (args[0].endsWith("tnk")) {
-                final File file = new File(args[0]);
-                session = Session.beginSession(file);
-                rtx = session.beginReadTransaction();
+        if (args.length > 0) {
 
-            } else if (args[0].endsWith("xml")) {
-                final String tmpTnkFile = "/tmp/temp.tnk";
-                new File(tmpTnkFile).delete();
-                XMLShredder
-                        .shred(args[0], new SessionConfiguration(tmpTnkFile));
-                final File file = new File(tmpTnkFile);
-                session = Session.beginSession(file);
-                rtx = session.beginReadTransaction();
-
-            } else {
-                System.out
-                        .println("Usage: java TreeTankCommandoLineExplorer [\"tnk-file\" | \"xml-file\"]");
-                System.exit(-1);
+            long revision = 0;
+            if (args.length > 1) {
+                revision = Long.parseLong(args[1]);
             }
-            break;
-        default:
+
+            final File file = new File(args[0]);
+            session = Session.beginSession(file);
+            if (revision != 0) {
+                rtx = session.beginWriteTransaction();
+            } else {
+                rtx = session.beginReadTransaction(revision);
+            }
+        } else {
             System.out
-                    .println("Usage: java TreeTankCommandoLineExplorer [\"tnk-file\"]");
-            System.exit(1);
+                    .println("Usage: java TreeTankCommandoLineExplorer \"tnk-file\" [revision] (if revision not given, explorer works in write mode");
+            System.exit(-1);
         }
 
         try {
