@@ -18,9 +18,13 @@
 
 package com.treetank.service.rest;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.ServletException;
@@ -30,35 +34,21 @@ import javax.servlet.http.HttpServletResponse;
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.handler.AbstractHandler;
 
-import com.treetank.api.ISession;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankRestException;
-import com.treetank.service.rest.helper.HelperDelete;
-import com.treetank.service.rest.helper.HelperGet;
-import com.treetank.service.rest.helper.HelperPost;
-import com.treetank.service.rest.helper.HelperPut;
-import com.treetank.session.Session;
 import com.treetank.utils.IConstants;
 
 public class TreeTankHandler extends AbstractHandler {
 
-    private HelperGet mHelperGet;
+    private static final ConcurrentHashMap<File, TreeTankHandler> instancesPerFile = new ConcurrentHashMap<File, TreeTankHandler>();
 
-    private HelperPost mHelperPost;
-
-    private HelperPut mHelperPut;
-
-    private HelperDelete mHelperDelete;
-
-    private final static ConcurrentHashMap<File, TreeTankHandler> instancesPerFile = new ConcurrentHashMap<File, TreeTankHandler>();
-
-    private final ISession session;
+    private final ConcurrentHashMap<File, TreeTankWrapper> sessions;
 
     private final File path;
 
     private TreeTankHandler(final File paramPath) throws TreetankIOException {
-        session = Session.beginSession(paramPath);
         path = paramPath;
+        sessions = new ConcurrentHashMap<File, TreeTankWrapper>();
     }
 
     /**
@@ -88,7 +78,7 @@ public class TreeTankHandler extends AbstractHandler {
         final HandledRequest request = new HandledRequest(
                 (Request) paramRequest);
         try {
-
+            handleResponseHeader(response);
             if (request.getRequestURI().equalsIgnoreCase(
                     RESTConstants.FAVICONPATH.getStringContent())) {
                 request.setHandled(true);
@@ -115,25 +105,25 @@ public class TreeTankHandler extends AbstractHandler {
                 handleFile(request, response);
             } else if (request.getMethod().equalsIgnoreCase(
                     RESTConstants.GET.getStringContent())) {
-                mHelperGet.handle(request, response);
+                handleGet(request, response);
             } else if (request.getMethod().equalsIgnoreCase(
                     RESTConstants.POST.getStringContent())) {
                 if (request.getQueryString().equalsIgnoreCase(
                         RESTConstants.DELETE.getStringContent())) {
-                    mHelperDelete.handle(request, response);
+                    handleDelete(request, response);
                 } else if (request.getQueryString().equalsIgnoreCase(
                         RESTConstants.POST.getStringContent())) {
-                    mHelperPost.handle(request, response);
+                    handlePost(request, response);
                 } else if (request.getQueryString().equalsIgnoreCase(
                         RESTConstants.PUT.getStringContent())) {
-                    mHelperPut.handle(request, response);
+                    handlePut(request, response);
                 } else {
                     throw new TreetankRestException(501, "Unknown operation.");
                 }
             } else {
                 throw new TreetankRestException(501, "Unknown operation.");
             }
-
+            request.setHandled(true);
         } catch (final TreetankRestException exc) {
             exc.printStackTrace();
             response.sendError(exc.getErrorCode(), exc.getErrorMessage());
@@ -153,12 +143,9 @@ public class TreeTankHandler extends AbstractHandler {
     private void handleCrossDomain(final HandledRequest request,
             final HttpServletResponse response) throws TreetankRestException {
         try {
-            response.setContentType(RESTConstants.CONTENT_TYPE
-                    .getStringContent());
-            response.setCharacterEncoding(IConstants.DEFAULT_ENCODING);
             response.getOutputStream().write(
                     RESTConstants.CROSSDOMAIN.getStringContent().getBytes());
-            request.setHandled(true);
+
         } catch (final IOException exc) {
             throw new TreetankRestException(500, exc.getMessage(), exc);
         }
@@ -176,9 +163,6 @@ public class TreeTankHandler extends AbstractHandler {
      */
     private void handleFile(final HandledRequest request,
             final HttpServletResponse response) throws TreetankRestException {
-        response.setContentType(RESTConstants.CONTENT_TYPE.getStringContent());
-        response.setCharacterEncoding(IConstants.DEFAULT_ENCODING);
-        response.setBufferSize(RESTConstants.BUFFER_SIZE.getIntContent());
         try {
             final File file = new File(path.getAbsoluteFile()
                     + request.getRequestURI());
@@ -192,11 +176,269 @@ public class TreeTankHandler extends AbstractHandler {
             fin.close();
 
             response.flushBuffer();
-
-            request.setHandled(true);
         } catch (final IOException exc) {
             throw new TreetankRestException(500, exc.getMessage(), exc);
         }
+    }
+
+    /**
+     * Helping just for delete requests
+     * 
+     * @param request
+     *            to handle
+     * @param response
+     *            to give back
+     * @throws TreetankRestException
+     *             if any weird happen
+     */
+    private void handleDelete(final HandledRequest request,
+            final HttpServletResponse response) throws TreetankRestException {
+
+        // Parse request URI.
+        final StringTokenizer tokenizer = new StringTokenizer(request
+                .getRequestURI(), "/");
+        if (tokenizer.countTokens() != 2) {
+            throw new TreetankRestException(
+                    500,
+                    new StringBuilder(
+                            "DELETE should consist out of 2 params: Ressource and ID, Following Tokens were found: ")
+                            .append(tokenizer.toString()).toString());
+        }
+
+        final File resource = getRessource(tokenizer.nextToken());
+        final long key = Long.parseLong(tokenizer.nextToken());
+
+        final TreeTankWrapper session = sessions.putIfAbsent(resource,
+                new TreeTankWrapper(resource.getAbsolutePath()));
+        final long revision = session.delete(key);
+
+        OutputStream out;
+        try {
+            out = response.getOutputStream();
+
+            // Write response body.
+            handleResponseBodyFirstPart(out, revision);
+            handleResponseBodyLastPart(out);
+            out.flush();
+        } catch (final IOException exc) {
+            throw new TreetankRestException(500, exc.getMessage(), exc);
+        }
+
+    }
+
+    /**
+     * Helping just for get requests
+     * 
+     * @param request
+     *            to handle
+     * @param response
+     *            to give back
+     * @throws TreetankRestException
+     *             if any weird happen
+     */
+    private void handlePut(final HandledRequest request,
+            final HttpServletResponse response) throws TreetankRestException {
+        // Parse request URI.
+        final StringTokenizer tokenizer = new StringTokenizer(request
+                .getRequestURI(), "/");
+
+        // Initialise request with defaults.
+        long key = 0;
+
+        if (tokenizer.countTokens() < 1) {
+            throw new TreetankRestException(500, new StringBuilder(
+                    "Put should consist at least out of 1 params.").toString());
+        }
+        final File resource = getRessource(tokenizer.nextToken());
+        if (tokenizer.hasMoreTokens()) {
+            key = Long.parseLong(tokenizer.nextToken());
+        }
+        try {
+            final TreeTankWrapper session = sessions.putIfAbsent(resource,
+                    new TreeTankWrapper(resource.getAbsolutePath()));
+            final String content = getContent(request);
+            final long revision = session.put(key, content);
+            final OutputStream out = response.getOutputStream();
+            handleResponseBodyFirstPart(out, revision);
+            session.get(out, revision, key);
+            handleResponseBodyLastPart(out);
+        } catch (final IOException exc) {
+            throw new TreetankRestException(500, exc.getMessage(), exc);
+        }
+
+    }
+
+    /**
+     * Helping just for get requests
+     * 
+     * @param request
+     *            to handle
+     * @param response
+     *            to give back
+     * @throws TreetankRestException
+     *             if any weird happen
+     */
+    private void handlePost(final HandledRequest request,
+            final HttpServletResponse response) throws TreetankRestException {
+
+        // Parse request URI.
+        final StringTokenizer tokenizer = new StringTokenizer(request
+                .getRequestURI(), "/");
+
+        // Initialise request with defaults.
+        long key = 0;
+
+        if (tokenizer.countTokens() < 1) {
+            throw new TreetankRestException(500, new StringBuilder(
+                    "Post should consist at least out of 1 params.").toString());
+        }
+        final File resource = getRessource(tokenizer.nextToken());
+        if (tokenizer.hasMoreTokens()) {
+            key = Long.parseLong(tokenizer.nextToken());
+        }
+        try {
+            final TreeTankWrapper session = sessions.putIfAbsent(resource,
+                    new TreeTankWrapper(resource.getAbsolutePath()));
+            final String content = getContent(request);
+            final long revision = session.post(key, content);
+            final OutputStream out = response.getOutputStream();
+            handleResponseBodyFirstPart(out, revision);
+            session.get(out, revision, key);
+            handleResponseBodyLastPart(out);
+        } catch (final IOException exc) {
+            throw new TreetankRestException(500, exc.getMessage(), exc);
+        }
+
+    }
+
+    /**
+     * Helping just for get requests
+     * 
+     * @param request
+     *            to handle
+     * @param response
+     *            to give back
+     * @throws TreetankRestException
+     *             if any weird happen
+     */
+    private void handleGet(final HandledRequest request,
+            final HttpServletResponse response) throws TreetankRestException {
+
+        // Parse request URI.
+        final StringTokenizer tokenizer = new StringTokenizer(request
+                .getRequestURI(), "/");
+
+        // Initialise request with defaults.
+        String revisionString = RESTConstants.LAST_REVISION.getStringContent();
+        long key = 0;
+        String queryString = "";
+
+        if (tokenizer.countTokens() < 1) {
+            throw new TreetankRestException(500, new StringBuilder(
+                    "Get should consist at least out of 1 params.").toString());
+        }
+        final File resource = getRessource(tokenizer.nextToken());
+        if (tokenizer.hasMoreTokens()) {
+            revisionString = tokenizer.nextToken();
+            if (revisionString.length() > 2) {
+                revisionString = revisionString.substring(1, revisionString
+                        .length() - 1);
+            }
+        }
+        if (tokenizer.hasMoreTokens()) {
+            key = Long.parseLong(tokenizer.nextToken());
+        }
+        queryString = request.getQueryString();
+        if (queryString != null) {
+            queryString = queryString.replace("%22", "\"").replace("%20", " ");
+        }
+        final TreeTankWrapper session = sessions.putIfAbsent(resource,
+                new TreeTankWrapper(resource.getAbsolutePath()));
+
+        long revision = 0;
+        if (revisionString.equalsIgnoreCase(RESTConstants.LAST_REVISION
+                .getStringContent())) {
+            revision = session.getLastRevision();
+        } else {
+            final long lastRevision = session.getLastRevision();
+            revision = Long.valueOf(revisionString);
+            if (lastRevision < revision) {
+                throw new TreetankRestException(404, new StringBuilder(
+                        "Revision=").append(revision).append(" not found.")
+                        .toString());
+            }
+        }
+
+        OutputStream out;
+        try {
+            out = response.getOutputStream();
+
+            // Write response body.
+            handleResponseBodyFirstPart(out, revision);
+
+            // Handle.
+            if (queryString == null) {
+                session.get(out, revision, key);
+            } else {
+                session.get(out, revision, key, queryString);
+            }
+            handleResponseBodyLastPart(out);
+        } catch (final IOException exc) {
+            throw new TreetankRestException(500, exc.getMessage(), exc);
+        }
+
+    }
+
+    private void handleResponseBodyFirstPart(final OutputStream out,
+            final long revision) throws TreetankRestException {
+        try {
+            out
+                    .write(("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+                            + "<rest:response xmlns:rest=\"REST\"><rest:sequence rest:revision=\"")
+                            .getBytes(IConstants.DEFAULT_ENCODING));
+            out.write(Long.toString(revision).getBytes(
+                    IConstants.DEFAULT_ENCODING));
+            out.write(new String("\"/>").getBytes(IConstants.DEFAULT_ENCODING));
+        } catch (final IOException exc) {
+            throw new TreetankRestException(500, exc.getMessage(), exc);
+        }
+    }
+
+    private void handleResponseBodyLastPart(final OutputStream out)
+            throws TreetankRestException {
+        try {
+            out.write(new String("</rest:response>")
+                    .getBytes(IConstants.DEFAULT_ENCODING));
+            out.flush();
+        } catch (final IOException exc) {
+            throw new TreetankRestException(500, exc.getMessage(), exc);
+        }
+    }
+
+    private void handleResponseHeader(final HttpServletResponse response) {
+        response.setBufferSize(RESTConstants.BUFFER_SIZE.getIntContent());
+        response.setContentType(RESTConstants.CONTENT_TYPE.getStringContent());
+        response.setCharacterEncoding(IConstants.DEFAULT_ENCODING);
+    }
+
+    private File getRessource(final String ressource) {
+        return new File(new StringBuilder(path.getAbsolutePath()).append(
+                File.separator).append(ressource).toString());
+    }
+
+    private String getContent(final HandledRequest request) throws IOException {
+        // Get request body.
+        final InputStream in = request.getInputStream();
+        final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        final byte[] tmp = new byte[256];
+        int len = 0;
+        while ((len = in.read(tmp)) != -1) {
+            bout.write(tmp, 0, len);
+        }
+        final String requestBody = bout.toString();
+        bout.close();
+        return requestBody;
+
     }
 
 }

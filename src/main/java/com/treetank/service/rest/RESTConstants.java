@@ -41,7 +41,9 @@ public enum RESTConstants {
     /** Favicon-Path */
     FAVICONPATH("/favicon.ico", -1),
     /** CROSSDOMAIN-Path */
-    CROSSDOMAINPATH("/crossdomain.xml", -1);
+    CROSSDOMAINPATH("/crossdomain.xml", -1),
+    /** Last revision of REST Interface */
+    LAST_REVISION("()", -1);
 
     /**
      * string content of the constant

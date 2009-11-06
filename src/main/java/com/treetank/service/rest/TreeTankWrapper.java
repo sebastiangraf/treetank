@@ -94,7 +94,8 @@ public final class TreeTankWrapper {
     }
 
     /**
-     * Putting some text in the structure.
+     * Putting some data in the structure. This results in deleting the old
+     * content and putting in the new one.
      * 
      * @param id
      *            of the node where the value should be changed
@@ -104,28 +105,17 @@ public final class TreeTankWrapper {
      * @throws TreetankRestException
      *             of anything weird occurs
      */
-    public long putText(final long id, final String value)
+    public long put(final long id, final String value)
             throws TreetankRestException {
         IWriteTransaction wtx = null;
         try {
             wtx = session.beginWriteTransaction();
-            final long revision = wtx.getRevisionNumber();
-            if (wtx.moveTo(id)) {
-                wtx.setValue(value);
-                wtx.commit();
-            } else {
-                throw new TreetankRestException(404, new StringBuilder(
-                        "Node with id=").append(id).append(" not found.")
-                        .toString());
-            }
+            wtx.moveTo(id);
+            wtx.remove();
+            wtx.commit();
+            wtx.close();
+            final long revision = XMLShredder.shred(id, value, session);
             return revision;
-        } catch (final TreetankRestException te) {
-            try {
-                wtx.abort();
-            } catch (final TreetankException exc) {
-                throw new TreetankRestException(exc);
-            }
-            throw te;
         } catch (final TreetankException exc) {
             throw new TreetankRestException(exc);
         } finally {
