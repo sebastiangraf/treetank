@@ -84,15 +84,7 @@ public final class RevIndex {
             rtx = indexSession.beginWriteTransaction(
                     IConstants.COMMIT_THRESHOLD, 0);
         } else {
-            final IReadTransaction rtx = indexSession.beginReadTransaction();
-            long ttRev = MetaTreeNavigator.getIndexRev(rtx, rev);
-            final long bla = rtx.getRevisionNumber();
-            // TODO quick fix, has to be verified!!
-            if (ttRev > bla) {
-                ttRev = bla;
-            }
-            rtx.close();
-            this.rtx = indexSession.beginReadTransaction(ttRev);
+            this.rtx = indexSession.beginReadTransaction(rev);
         }
     }
 
@@ -108,7 +100,6 @@ public final class RevIndex {
      */
     public void insertNextNode(final Stack<String> docs)
             throws TreetankException {
-        indexRev = MetaTreeNavigator.getPersistentNumber(rtx);
         if (rtx instanceof IWriteTransaction) {
             final IWriteTransaction wtx = (IWriteTransaction) rtx;
             currentDocKey = DocumentTreeNavigator.adaptDocTree(wtx, docs);
@@ -197,7 +188,6 @@ public final class RevIndex {
             } catch (final TreetankIOException exc) {
                 throw new IllegalStateException(exc);
             }
-            indexRev = MetaTreeNavigator.adaptMetaTree(wtx, indexRev);
             wtx.moveToDocumentRoot();
             return indexRev;
         } else {
