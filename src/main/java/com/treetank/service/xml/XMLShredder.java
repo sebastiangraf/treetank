@@ -38,7 +38,6 @@ import com.treetank.exception.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
 import com.treetank.utils.FastStack;
-import com.treetank.utils.IConstants;
 import com.treetank.utils.TypedValue;
 
 public final class XMLShredder {
@@ -152,40 +151,21 @@ public final class XMLShredder {
                     final String text = parser.getText().trim();
                     final ByteBuffer textByteBuffer = ByteBuffer
                             .wrap(TypedValue.getBytes(text));
-                    int length = textByteBuffer.array().length;
                     if (textByteBuffer.array().length > 0) {
-                        int beginIndex = 0;
-                        do {
-                            byte[] toWrite = null;
-                            if (length >= IConstants.MAX_TEXTNODE_LENGTH) {
-                                toWrite = new byte[IConstants.MAX_TEXTNODE_LENGTH];
-                                // toWrite = text.substring(beginIndex,
-                                // beginIndex
-                                // + IConstants.MAX_TEXTNODE_LENGTH);
-                            } else {
-                                toWrite = new byte[length];
-                                // toWrite = text.substring(beginIndex, text
-                                // .length());
-                            }
-                            for (int i = 0; i < toWrite.length; i++) {
-                                toWrite[i] = textByteBuffer.get();
-                            }
 
-                            if (leftSiblingKeyStack.peek() == IReadTransaction.NULL_NODE_KEY) {
-                                key = wtx.insertTextAsFirstChild(wtx
-                                        .keyForName("xs:untyped"), toWrite);
-                            } else {
-                                key = wtx.insertTextAsRightSibling(wtx
-                                        .keyForName("xs:untyped"), toWrite);
-                            }
+                        if (leftSiblingKeyStack.peek() == IReadTransaction.NULL_NODE_KEY) {
+                            key = wtx.insertTextAsFirstChild(wtx
+                                    .keyForName("xs:untyped"), textByteBuffer
+                                    .array());
+                        } else {
+                            key = wtx.insertTextAsRightSibling(wtx
+                                    .keyForName("xs:untyped"), textByteBuffer
+                                    .array());
+                        }
 
-                            leftSiblingKeyStack.pop();
-                            leftSiblingKeyStack.push(key);
+                        leftSiblingKeyStack.pop();
+                        leftSiblingKeyStack.push(key);
 
-                            beginIndex = beginIndex
-                                    + IConstants.MAX_TEXTNODE_LENGTH;
-                            length = length - IConstants.MAX_TEXTNODE_LENGTH;
-                        } while (length > 0);
                     }
                     break;
 
