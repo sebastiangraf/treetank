@@ -236,7 +236,7 @@ public final class WriteTransaction extends ReadTransaction implements
 
         if (getCurrentNode().isDocumentRoot()) {
             throw new TreetankUsageException("Root node can not be removed.");
-        } else if (getCurrentNode().isElement()) {
+        } else if (getCurrentNode().isElement() || getCurrentNode().isText()) {
 
             node = (AbstractNode) getCurrentNode();
             if (node.hasLeftSibling()) {

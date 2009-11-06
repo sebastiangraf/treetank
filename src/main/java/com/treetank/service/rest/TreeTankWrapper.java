@@ -111,7 +111,27 @@ public final class TreeTankWrapper {
         try {
             wtx = session.beginWriteTransaction();
             wtx.moveTo(id);
-            wtx.remove();
+
+            if (wtx.moveToFirstChild()) {
+                do {
+                    wtx.remove();
+                } while (wtx.getNode().getNodeKey() != id);
+            }
+            final long attCount = wtx.getNode().getAttributeCount();
+            if (attCount > 0) {
+                for (int i = 0; i < attCount; i++) {
+                    wtx.moveToAttribute(i);
+                    wtx.remove();
+                }
+            }
+            final long namespaceCount = wtx.getNode().getNamespaceCount();
+            if (namespaceCount > 0) {
+                for (int i = 0; i < namespaceCount; i++) {
+                    wtx.moveToNamespace(i);
+                    wtx.remove();
+                }
+            }
+
             wtx.commit();
             wtx.close();
             final long revision = XMLShredder.shred(id, value, session);
