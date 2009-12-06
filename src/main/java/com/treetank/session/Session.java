@@ -19,8 +19,8 @@ q * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
 package com.treetank.session;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
@@ -29,6 +29,7 @@ import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankUsageException;
 import com.treetank.utils.ItemList;
+import com.treetank.utils.StorageConstants;
 
 /**
  * <h1>Session</h1>
@@ -41,7 +42,7 @@ import com.treetank.utils.ItemList;
 public final class Session implements ISession {
 
     /** Central repository of all running sessions. */
-    private static final Map<String, ISession> SESSION_MAP = new HashMap<String, ISession>();
+    private static final ConcurrentMap<File, ISession> SESSION_MAP = new ConcurrentHashMap<File, ISession>();
 
     /** Session state. */
     private SessionState mSessionState;
@@ -66,12 +67,13 @@ public final class Session implements ISession {
      * @param file
      *            TreeTank file to bind new session to.
      * @return New session bound to given TreeTank file.
-     * @throws IOException
-     *             if there is a problem with opening the given file.
+     * @throws TreetankException
+     *             if a session was already bound or the persistent storage is
+     *             not accessable
      */
     public static ISession beginSession(final File file)
-            throws TreetankIOException {
-        return beginSession(file.getAbsolutePath());
+            throws TreetankException {
+        return beginSession(new SessionConfiguration(file));
     }
 
     /**
@@ -80,10 +82,13 @@ public final class Session implements ISession {
      * @param path
      *            Path to TreeTank file.
      * @return New session bound to given TreeTank file.
+     * @throws TreetankException
+     *             if a session was already bound or the persistent storage is
+     *             not accessable
      */
     public static ISession beginSession(final String path)
-            throws TreetankIOException {
-        return beginSession(new SessionConfiguration(path));
+            throws TreetankException {
+        return beginSession(new SessionConfiguration(new File(path)));
     }
 
     /**
@@ -92,27 +97,23 @@ public final class Session implements ISession {
      * @param sessionConfiguration
      *            Configuration of session.
      * @return New session bound to given TreeTank file.
+     * @throws TreetankException
+     *             if a session was already bound or the persistent storage is
+     *             not accessable
      */
     public static ISession beginSession(
             final SessionConfiguration sessionConfiguration)
-            throws TreetankIOException {
+            throws TreetankException {
 
-        ISession session = null;
-
-        synchronized (SESSION_MAP) {
-            session = SESSION_MAP.get(sessionConfiguration.getAbsolutePath());
-            if (session == null) {
-                session = new Session(new SessionState(sessionConfiguration));
-                SESSION_MAP
-                        .put(sessionConfiguration.getAbsolutePath(), session);
-            } else {
-                throw new IllegalStateException(
-                        "There already is a session bound to "
-                                + sessionConfiguration.getAbsolutePath());
-            }
+        if (SESSION_MAP.putIfAbsent(sessionConfiguration.getFile(),
+                new Session(new SessionState(sessionConfiguration))) != null) {
+            throw new TreetankUsageException(new StringBuilder(
+                    "There was already a session bound to ").append(
+                    sessionConfiguration.getFile().getAbsolutePath())
+                    .toString());
         }
 
-        return session;
+        return SESSION_MAP.get(sessionConfiguration.getFile());
     }
 
     /**
@@ -122,7 +123,20 @@ public final class Session implements ISession {
      *            TreeTank file to remove.
      */
     public static void removeSession(final File file) throws TreetankException {
-        removeSession(file.getAbsolutePath());
+        synchronized (SESSION_MAP) {
+            ISession session = SESSION_MAP.get(file);
+            if (session == null) {
+                if (file.exists() && !StorageConstants.recursiveDelete(file)) {
+                    throw new TreetankIOException(new StringBuilder(
+                            "Could not delete file '").append(file).append("'")
+                            .toString());
+                }
+            } else {
+                throw new TreetankUsageException(new StringBuilder(
+                        "There already is a session bound to '").append(file)
+                        .append("'").toString());
+            }
+        }
     }
 
     /**
@@ -133,37 +147,40 @@ public final class Session implements ISession {
      */
     public static void removeSession(final String path)
             throws TreetankException {
+        removeSession(new File(path));
+    }
+
+    /**
+     * Closing all open Sessions.
+     * 
+     * @throws TreetankException
+     *             if something weird happen
+     */
+    public static void closeSession(final File file) throws TreetankException {
         synchronized (SESSION_MAP) {
-            ISession session = SESSION_MAP.get(path);
-            if (session == null) {
-                if (new File(path).exists() && !recursiveDelete(new File(path))) {
-                    throw new TreetankIOException(new StringBuilder(
-                            "Could not delete file '").append(path).append("'")
-                            .toString());
-                }
-            } else {
-                throw new TreetankUsageException(new StringBuilder(
-                        "There already is a session bound to '").append(path)
-                        .append("'").toString());
+            final ISession session = SESSION_MAP.remove(file);
+            if (session != null) {
+                session.close();
             }
         }
     }
 
     /**
      * Closing all open Sessions.
+     * 
+     * @throws TreetankException
+     *             if something weird happen
      */
-    public static void closeSession(final String path) {
-        synchronized (SESSION_MAP) {
-            SESSION_MAP.remove(path);
-        }
+    public static void closeSession(final String path) throws TreetankException {
+        closeSession(new File(path));
     }
 
     /**
      * {@inheritDoc}
      */
-    public String getFileName() {
+    public File getFile() {
         assertNotClosed();
-        return mSessionState.getSessionConfiguration().getAbsolutePath();
+        return mSessionState.getSessionConfiguration().getFile();
     }
 
     /**
@@ -171,23 +188,8 @@ public final class Session implements ISession {
      */
     public String getAbsolutePath() {
         assertNotClosed();
-        return mSessionState.getSessionConfiguration().getAbsolutePath();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isEncrypted() {
-        assertNotClosed();
-        return mSessionState.getSessionConfiguration().isEncrypted();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isChecksummed() {
-        assertNotClosed();
-        return mSessionState.getSessionConfiguration().isChecksummed();
+        return mSessionState.getSessionConfiguration().getFile()
+                .getAbsolutePath();
     }
 
     /**
@@ -259,10 +261,8 @@ public final class Session implements ISession {
      */
     public void close() throws TreetankException {
         if (!mClosed) {
-            synchronized (SESSION_MAP) {
-                SESSION_MAP.remove(mSessionState.getSessionConfiguration()
-                        .getAbsolutePath());
-            }
+            SESSION_MAP.remove(mSessionState.getSessionConfiguration()
+                    .getFile());
             mSessionState.close();
             mSessionState = null;
             mClosed = true;
@@ -293,15 +293,10 @@ public final class Session implements ISession {
         }
     }
 
-    private static boolean recursiveDelete(final File file) {
-        if (file.isDirectory()) {
-            for (final File child : file.listFiles()) {
-                if (!recursiveDelete(child)) {
-                    return false;
-                }
-            }
-        }
-        return file.delete();
+    public String toString() {
+        return new StringBuilder("Session: ").append(
+                mSessionState.getSessionConfiguration().getFile()).toString();
+
     }
 
 }

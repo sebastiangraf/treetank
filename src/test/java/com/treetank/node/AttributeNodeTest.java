@@ -22,7 +22,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.treetank.api.IReadTransaction;
+import com.treetank.utils.ENodes;
+import com.treetank.utils.FixedProperties;
 
 public class AttributeNodeTest {
 
@@ -43,9 +44,12 @@ public class AttributeNodeTest {
         // Now compare.
         assertEquals(99L, node2.getNodeKey());
         assertEquals(13L, node2.getParentKey());
-        assertEquals(IReadTransaction.NULL_NODE_KEY, node2.getFirstChildKey());
-        assertEquals(IReadTransaction.NULL_NODE_KEY, node2.getLeftSiblingKey());
-        assertEquals(IReadTransaction.NULL_NODE_KEY, node2.getRightSiblingKey());
+        assertEquals(FixedProperties.NULL_NODE_KEY.getStandardProperty(), node2
+                .getFirstChildKey());
+        assertEquals(FixedProperties.NULL_NODE_KEY.getStandardProperty(), node2
+                .getLeftSiblingKey());
+        assertEquals(FixedProperties.NULL_NODE_KEY.getStandardProperty(), node2
+                .getRightSiblingKey());
         assertEquals(0, node2.getChildCount());
         assertEquals(0, node2.getAttributeCount());
         assertEquals(0, node2.getNamespaceCount());
@@ -53,7 +57,7 @@ public class AttributeNodeTest {
         assertEquals(15, node2.getURIKey());
         assertEquals(19, node2.getTypeKey());
         assertEquals(2, node2.getRawValue().length);
-        assertEquals(IReadTransaction.ATTRIBUTE_KIND, node2.getKind());
+        assertEquals(ENodes.ATTRIBUTE_KIND, node2.getKind());
         assertEquals(false, node2.hasFirstChild());
         assertEquals(true, node2.hasParent());
         assertEquals(false, node2.hasLeftSibling());

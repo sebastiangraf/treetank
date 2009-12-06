@@ -9,6 +9,7 @@ import com.treetank.exception.TreetankIOException;
 import com.treetank.io.IWriter;
 import com.treetank.io.StorageProperties;
 import com.treetank.page.AbstractPage;
+import com.treetank.page.PagePersistenter;
 import com.treetank.page.PageReference;
 import com.treetank.session.SessionConfiguration;
 import com.treetank.utils.CryptoJavaImpl;
@@ -42,12 +43,10 @@ public final class FileWriter implements IWriter {
      * @param paramConf
      *            the path to the storage
      */
-    public FileWriter(final SessionConfiguration paramConf)
-            throws TreetankIOException {
-        final File toRead = new File(paramConf.getAbsolutePath()
-                + File.separatorChar + "tt.tnk");
+    public FileWriter(final SessionConfiguration paramConf,
+            final File concreteStorage) throws TreetankIOException {
         try {
-            mFile = new RandomAccessFile(toRead, IConstants.READ_WRITE);
+            mFile = new RandomAccessFile(concreteStorage, IConstants.READ_WRITE);
         } catch (final FileNotFoundException fileExc) {
             throw new TreetankIOException(fileExc);
         }
@@ -55,7 +54,7 @@ public final class FileWriter implements IWriter {
         mCompressor = new CryptoJavaImpl();
         mBuffer = new ByteBufferSinkAndSource();
 
-        reader = new FileReader(paramConf);
+        reader = new FileReader(paramConf, concreteStorage);
 
     }
 
@@ -73,7 +72,7 @@ public final class FileWriter implements IWriter {
         // Serialise page.
         mBuffer.position(24);
         final AbstractPage page = pageReference.getPage();
-        page.serialize(mBuffer);
+        PagePersistenter.serializePage(mBuffer, page);
         final int inputLength = mBuffer.position();
 
         // Perform crypto operations.
@@ -116,6 +115,7 @@ public final class FileWriter implements IWriter {
     public void close() throws TreetankIOException {
         try {
             if (mFile != null) {
+                reader.close();
                 mFile.close();
             }
         } catch (final IOException e) {
@@ -147,8 +147,6 @@ public final class FileWriter implements IWriter {
             mFile.setLength(IConstants.BEACON_START + IConstants.BEACON_LENGTH);
             mFile.writeLong(props.getVersionMajor());
             mFile.writeLong(props.getVersionMinor());
-            mFile.writeBoolean(props.isChecksummed());
-            mFile.writeBoolean(props.isEncrypted());
 
         } catch (final IOException exc) {
             throw new TreetankIOException(exc);

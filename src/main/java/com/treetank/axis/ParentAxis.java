@@ -20,6 +20,7 @@ package com.treetank.axis;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.utils.FixedProperties;
 
 /**
  * <h1>ParentAxis</h1>
@@ -60,7 +61,8 @@ public class ParentAxis extends AbstractAxis implements IAxis {
         if (!getTransaction().getNode().isDocumentRoot()
                 && mFirst
                 && getTransaction().getNode().hasParent()
-                && getTransaction().getNode().getParentKey() != IReadTransaction.DOCUMENT_ROOT_KEY) {
+                && getTransaction().getNode().getParentKey() != (Long) FixedProperties.ROOT_NODE_KEY
+                        .getStandardProperty()) {
             mFirst = false;
             getTransaction().moveToParent();
             return true;

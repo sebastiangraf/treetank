@@ -19,8 +19,9 @@
 package com.treetank.service.xml.xpath;
 
 import com.treetank.api.IItem;
-import com.treetank.api.IReadTransaction;
 import com.treetank.service.xml.xpath.types.Type;
+import com.treetank.utils.ENodes;
+import com.treetank.utils.FixedProperties;
 import com.treetank.utils.NamePageHash;
 import com.treetank.utils.TypedValue;
 
@@ -132,7 +133,7 @@ public class AtomicValue implements IItem {
      */
     public long getFirstChildKey() {
 
-        return IReadTransaction.NULL_NODE_KEY;
+        return (Integer) FixedProperties.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -140,7 +141,7 @@ public class AtomicValue implements IItem {
      */
     public long getLeftSiblingKey() {
 
-        return IReadTransaction.NULL_NODE_KEY;
+        return (Integer) FixedProperties.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -148,7 +149,7 @@ public class AtomicValue implements IItem {
      */
     public long getParentKey() {
 
-        return IReadTransaction.NULL_NODE_KEY;
+        return (Integer) FixedProperties.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -156,7 +157,7 @@ public class AtomicValue implements IItem {
      */
     public long getRightSiblingKey() {
 
-        return IReadTransaction.NULL_NODE_KEY;
+        return (Integer) FixedProperties.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -196,7 +197,7 @@ public class AtomicValue implements IItem {
      */
     public long getAttributeKey(final int index) {
 
-        return IReadTransaction.NULL_NODE_KEY;
+        return (Integer) FixedProperties.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -226,9 +227,9 @@ public class AtomicValue implements IItem {
     /**
      * {@inheritDoc}
      */
-    public int getKind() {
+    public ENodes getKind() {
 
-        return 0;
+        return ENodes.UNKOWN_KIND;
     }
 
     /**
@@ -244,7 +245,7 @@ public class AtomicValue implements IItem {
      */
     public long getNamespaceKey(final int index) {
 
-        return IReadTransaction.NULL_NODE_KEY;
+        return (Integer) FixedProperties.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -379,6 +380,18 @@ public class AtomicValue implements IItem {
     public double getDBL() {
 
         return Double.parseDouble(TypedValue.parseString(mValue));
+    }
+
+    /**
+     * To String method
+     * 
+     * @return String String representation of this node
+     */
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append("Atomic Value: ");
+        builder.append(new String(mValue));
+        return builder.toString();
     }
 
 }

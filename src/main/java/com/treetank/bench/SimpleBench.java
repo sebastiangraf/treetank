@@ -27,7 +27,6 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.ChildAxis;
-import com.treetank.io.AbstractIOFactory;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
@@ -48,13 +47,10 @@ public class SimpleBench {
 
     public static void main(final String[] args) {
 
-        System.out
-                .println("$Id:AxisStepBenchmark.java 1617 2006-10-12 17:32:13Z kramis $");
         try {
             long start = System.currentTimeMillis();
             new File(TNK_PATH).delete();
-            mSessionConfiguration = new SessionConfiguration(TNK_PATH, TNK_KEY,
-                    TNK_CHECKSUM, AbstractIOFactory.StorageType.Berkeley);
+            mSessionConfiguration = new SessionConfiguration(new File(TNK_PATH));
             XMLShredder.shred(XML_PATH, mSessionConfiguration);
             long stop = System.currentTimeMillis();
             System.out.println("Time to shred shakespeare.xml: "

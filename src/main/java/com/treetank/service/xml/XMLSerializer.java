@@ -220,7 +220,7 @@ public final class XMLSerializer implements Callable<Void> {
      */
     private void emitNode() throws IOException {
         switch (mRTX.getNode().getKind()) {
-        case IReadTransaction.ELEMENT_KIND:
+        case ELEMENT_KIND:
             // Emit start element.
             mOut.write(OPEN);
             mOut.write(mRTX.rawNameForKey(mRTX.getNode().getNameKey()));
@@ -270,7 +270,7 @@ public final class XMLSerializer implements Callable<Void> {
                 mOut.write(SLASH_CLOSE);
             }
             break;
-        case IReadTransaction.TEXT_KIND:
+        case TEXT_KIND:
             mOut.write(mRTX.getNode().getRawValue());
             break;
         }

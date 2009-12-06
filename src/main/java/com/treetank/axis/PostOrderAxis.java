@@ -21,6 +21,7 @@ package com.treetank.axis;
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.utils.FastStack;
+import com.treetank.utils.FixedProperties;
 
 /**
  * <h1>PostOrder</h1>
@@ -54,7 +55,8 @@ public class PostOrderAxis extends AbstractAxis implements IAxis {
     public final void reset(final long nodeKey) {
         super.reset(nodeKey);
         mLastParent = new FastStack<Long>();
-        mLastParent.push(IReadTransaction.NULL_NODE_KEY);
+        mLastParent.push((Long) FixedProperties.NULL_NODE_KEY
+                .getStandardProperty());
         mNextKey = nodeKey;
     }
 
@@ -64,7 +66,7 @@ public class PostOrderAxis extends AbstractAxis implements IAxis {
     public boolean hasNext() {
         resetToLastKey();
         long key = mNextKey;
-        if (key != IReadTransaction.NULL_NODE_KEY) {
+        if (key != (Long) FixedProperties.NULL_NODE_KEY.getStandardProperty()) {
             getTransaction().moveTo(mNextKey);
             while (getTransaction().getNode().hasFirstChild()
                     && key != mLastParent.peek()) {

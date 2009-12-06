@@ -21,9 +21,10 @@ package com.treetank.node;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.treetank.api.IReadTransaction;
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
+import com.treetank.utils.ENodes;
+import com.treetank.utils.FixedProperties;
 
 /**
  * <h1>ElementNode</h1>
@@ -107,7 +108,7 @@ public final class ElementNode extends AbstractNode {
      * @param node
      *            Element node to clone.
      */
-    public ElementNode(final AbstractNode node) {
+    protected ElementNode(final AbstractNode node) {
         super(node);
         if (mData[ATTRIBUTE_COUNT] > 0) {
             mAttributeKeys = new ArrayList<Long>((int) mData[ATTRIBUTE_COUNT]);
@@ -129,7 +130,7 @@ public final class ElementNode extends AbstractNode {
      * @param in
      *            Input bytes to read from.
      */
-    public ElementNode(final ITTSource in) {
+    protected ElementNode(final ITTSource in) {
         super(SIZE, in);
 
         if (mData[ATTRIBUTE_COUNT] > 0) {
@@ -160,7 +161,8 @@ public final class ElementNode extends AbstractNode {
      */
     @Override
     public boolean hasParent() {
-        return ((mData[NODE_KEY] - mData[PARENT_KEY]) != IReadTransaction.NULL_NODE_KEY);
+        return ((mData[NODE_KEY] - mData[PARENT_KEY]) != (Long) FixedProperties.NULL_NODE_KEY
+                .getStandardProperty());
     }
 
     /**
@@ -184,7 +186,8 @@ public final class ElementNode extends AbstractNode {
      */
     @Override
     public boolean hasFirstChild() {
-        return ((mData[NODE_KEY] - mData[FIRST_CHILD_KEY]) != IReadTransaction.NULL_NODE_KEY);
+        return ((mData[NODE_KEY] - mData[FIRST_CHILD_KEY]) != (Long) FixedProperties.NULL_NODE_KEY
+                .getStandardProperty());
     }
 
     /**
@@ -208,7 +211,8 @@ public final class ElementNode extends AbstractNode {
      */
     @Override
     public boolean hasLeftSibling() {
-        return ((mData[NODE_KEY] - mData[LEFT_SIBLING_KEY]) != IReadTransaction.NULL_NODE_KEY);
+        return ((mData[NODE_KEY] - mData[LEFT_SIBLING_KEY]) != (Long) FixedProperties.NULL_NODE_KEY
+                .getStandardProperty());
     }
 
     /**
@@ -232,7 +236,8 @@ public final class ElementNode extends AbstractNode {
      */
     @Override
     public boolean hasRightSibling() {
-        return ((mData[NODE_KEY] - mData[RIGHT_SIBLING_KEY]) != IReadTransaction.NULL_NODE_KEY);
+        return ((mData[NODE_KEY] - mData[RIGHT_SIBLING_KEY]) != (Long) FixedProperties.NULL_NODE_KEY
+                .getStandardProperty());
     }
 
     /**
@@ -297,7 +302,7 @@ public final class ElementNode extends AbstractNode {
     @Override
     public long getAttributeKey(final int index) {
         if (mAttributeKeys == null) {
-            return IReadTransaction.NULL_NODE_KEY;
+            return (Long) FixedProperties.NULL_NODE_KEY.getStandardProperty();
         }
         return mAttributeKeys.get(index);
     }
@@ -339,7 +344,7 @@ public final class ElementNode extends AbstractNode {
     @Override
     public long getNamespaceKey(final int index) {
         if (mNamespaceKeys == null) {
-            return IReadTransaction.NULL_NODE_KEY;
+            return (Long) FixedProperties.NULL_NODE_KEY.getStandardProperty();
         }
         return mNamespaceKeys.get(index);
     }
@@ -360,8 +365,8 @@ public final class ElementNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public int getKind() {
-        return IReadTransaction.ELEMENT_KIND;
+    public ENodes getKind() {
+        return ENodes.ELEMENT_KIND;
     }
 
     /**

@@ -120,7 +120,7 @@ public interface IWriteTransaction extends IReadTransaction {
      * @return Key of inserted node. already has a first child.
      */
     long insertElementAsFirstChild(final String name, final String uri)
-            throws TreetankIOException;
+            throws TreetankException;
 
     /**
      * Insert new text node as first child of currently selected node. The
@@ -133,7 +133,7 @@ public interface IWriteTransaction extends IReadTransaction {
      * @return Key of inserted node. already has a first child.
      */
     long insertTextAsFirstChild(final int valueType, final byte[] value)
-            throws TreetankIOException;
+            throws TreetankException;
 
     /**
      * Insert new text node as first child of currently selected node. The
@@ -143,7 +143,7 @@ public interface IWriteTransaction extends IReadTransaction {
      *            Value of inserted node.
      * @return Key of inserted node. already has a first child.
      */
-    long insertTextAsFirstChild(final String value) throws TreetankIOException;
+    long insertTextAsFirstChild(final String value) throws TreetankException;
 
     /**
      * Insert new element node as right sibling of currently selected node. The
@@ -156,7 +156,7 @@ public interface IWriteTransaction extends IReadTransaction {
      * @return Key of inserted node. already has a first child.
      */
     long insertElementAsRightSibling(final String name, final String uri)
-            throws TreetankIOException;
+            throws TreetankException;
 
     /**
      * Insert new element node as right sibling of currently selected node. The
@@ -170,7 +170,7 @@ public interface IWriteTransaction extends IReadTransaction {
      *         right siblings.
      */
     long insertTextAsRightSibling(final int valueType, final byte[] value)
-            throws TreetankIOException;
+            throws TreetankException;
 
     /**
      * Insert new element node as right sibling of currently selected node. The
@@ -181,8 +181,7 @@ public interface IWriteTransaction extends IReadTransaction {
      * @return Key of inserted node. the root node which is not allowed to have
      *         right siblings.
      */
-    long insertTextAsRightSibling(final String value)
-            throws TreetankIOException;
+    long insertTextAsRightSibling(final String value) throws TreetankException;
 
     /**
      * Insert attribute in currently selected node. The cursor is moved to the
@@ -199,7 +198,7 @@ public interface IWriteTransaction extends IReadTransaction {
      * @return Key of inserted node.
      */
     long insertAttribute(final String name, final String uri,
-            final int valueType, final byte[] value) throws TreetankIOException;
+            final int valueType, final byte[] value) throws TreetankException;
 
     /**
      * Insert attribute in currently selected node. The cursor is moved to the
@@ -214,7 +213,7 @@ public interface IWriteTransaction extends IReadTransaction {
      * @return Key of inserted node.
      */
     long insertAttribute(final String name, final String uri, final String value)
-            throws TreetankIOException;
+            throws TreetankException;
 
     /**
      * Insert namespace declaration in currently selected node. The cursor is
@@ -227,7 +226,7 @@ public interface IWriteTransaction extends IReadTransaction {
      * @return Key of inserted node.
      */
     long insertNamespace(final String uri, final String name)
-            throws TreetankIOException;
+            throws TreetankException;
 
     /**
      * Remove currently selected node. This does automatically remove

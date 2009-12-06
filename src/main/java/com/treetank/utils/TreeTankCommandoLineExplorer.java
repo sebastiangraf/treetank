@@ -224,12 +224,12 @@ public final class TreeTankCommandoLineExplorer {
                     final String parameter) {
                 final StringBuilder builder = new StringBuilder("Kind: ");
                 switch (currentRtx.getNode().getKind()) {
-                case IReadTransaction.ELEMENT_KIND:
+                case ELEMENT_KIND:
                     builder.append("Element\n");
                     builder.append(currentRtx.nameForKey(currentRtx.getNode()
                             .getNameKey()));
                     break;
-                case IReadTransaction.ATTRIBUTE_KIND:
+                case ATTRIBUTE_KIND:
                     builder.append("Attribute\n");
                     builder.append(currentRtx.nameForKey(currentRtx.getNode()
                             .getNameKey()));
@@ -237,12 +237,12 @@ public final class TreeTankCommandoLineExplorer {
                     builder.append(TypedValue.parseString(currentRtx.getNode()
                             .getRawValue()));
                     break;
-                case IReadTransaction.TEXT_KIND:
+                case TEXT_KIND:
                     builder.append("Text\n");
                     builder.append(TypedValue.parseString(currentRtx.getNode()
                             .getRawValue()));
                     break;
-                case IReadTransaction.NAMESPACE_KIND:
+                case NAMESPACE_KIND:
                     builder.append("Namespace\n");
                     if (currentRtx
                             .nameForKey(currentRtx.getNode().getNameKey())
@@ -254,13 +254,13 @@ public final class TreeTankCommandoLineExplorer {
                     builder.append(currentRtx.nameForKey(currentRtx.getNode()
                             .getURIKey()));
                     break;
-                case IReadTransaction.PROCESSING_KIND:
+                case PROCESSING_KIND:
                     builder.append("Processing instruction\n");
                     break;
-                case IReadTransaction.COMMENT_KIND:
+                case COMMENT_KIND:
                     builder.append("Comment\n");
                     break;
-                case IReadTransaction.ROOT_KIND:
+                case ROOT_KIND:
                     builder.append("Document Root\n");
                     break;
                 default:

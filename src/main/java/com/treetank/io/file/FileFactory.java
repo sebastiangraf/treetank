@@ -1,14 +1,13 @@
 package com.treetank.io.file;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
 
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.AbstractIOFactory;
 import com.treetank.io.IReader;
 import com.treetank.io.IWriter;
 import com.treetank.session.SessionConfiguration;
+import com.treetank.utils.StorageConstants;
 
 /**
  * Factory to provide File access as a backend.
@@ -17,6 +16,9 @@ import com.treetank.session.SessionConfiguration;
  * 
  */
 public final class FileFactory extends AbstractIOFactory {
+
+    /** private constant for fileName */
+    private final static String FILENAME = "tt.tnk";
 
     /**
      * Constructor
@@ -33,7 +35,7 @@ public final class FileFactory extends AbstractIOFactory {
      */
     @Override
     public IReader getReader() throws TreetankIOException {
-        return new FileReader(super.config);
+        return new FileReader(super.config, getConcreteStorage());
     }
 
     /**
@@ -41,7 +43,7 @@ public final class FileFactory extends AbstractIOFactory {
      */
     @Override
     public IWriter getWriter() throws TreetankIOException {
-        return new FileWriter(super.config);
+        return new FileWriter(super.config, getConcreteStorage());
     }
 
     /**
@@ -52,23 +54,19 @@ public final class FileFactory extends AbstractIOFactory {
         // not used over here
     }
 
+    protected final File getConcreteStorage() {
+        return new File(super.config.getFile(), new StringBuilder(
+                StorageConstants.TT.getFile().getName()).append(File.separator)
+                .append(FILENAME).toString());
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public boolean exists() throws TreetankIOException {
-        try {
-            final File file = new File(super.config.getAbsolutePath()
-                    + File.separatorChar + "tt.tnk");
-            boolean returnVal = false;
-            if (file.exists()) {
-                returnVal = new RandomAccessFile(file, "r").length() > 0;
-            }
-            return returnVal;
-        } catch (final IOException exc) {
-            throw new TreetankIOException(exc);
-        }
-
+        final File file = getConcreteStorage();
+        boolean returnVal = file.length() > 0;
+        return returnVal;
     }
-
 }

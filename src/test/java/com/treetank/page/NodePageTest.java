@@ -22,7 +22,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.treetank.io.PagePersistenter;
 import com.treetank.io.file.ByteBufferSinkAndSource;
 import com.treetank.node.ElementNode;
 
@@ -30,7 +29,7 @@ public class NodePageTest {
 
     @Test
     public void testSerializeDeserialize() {
-        final NodePage page1 = new NodePage(0L);
+        final NodePage page1 = new NodePage(0L, 0L);
         assertEquals(0L, page1.getNodePageKey());
         final ElementNode node1 = new ElementNode(0L, 1L, 2L, 3L, 4L, 6, 7, 0);
         node1.insertAttribute(88L);
@@ -41,7 +40,7 @@ public class NodePageTest {
         page1.setNode(0, node1);
 
         final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
-        page1.serialize(out);
+        PagePersistenter.serializePage(out, page1);
         final int position = out.position();
 
         out.position(0);

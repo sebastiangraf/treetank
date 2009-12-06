@@ -136,7 +136,7 @@ public class UpdateTest {
             wtx.insertTextAsFirstChild("");
         }
 
-        TestCase.assertNotNull(wtx.moveTo(2L));
+        assertTrue(wtx.moveTo(2L));
         assertEquals(2L, wtx.getNode().getNodeKey());
 
         wtx.abort();
@@ -151,17 +151,15 @@ public class UpdateTest {
         DocumentCreater.create(wtx);
 
         wtx.moveToDocumentRoot();
-        TreetankException excToFire = null;
+
         try {
             wtx.remove();
-        } catch (final TreetankException exc) {
-            excToFire = exc;
-        }
-        wtx.abort();
-        wtx.close();
-        session.close();
-        if (excToFire != null) {
-            throw excToFire;
+
+            session.close();
+        } finally {
+            wtx.abort();
+            wtx.close();
+            session.close();
         }
 
     }

@@ -21,8 +21,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.treetank.page.NodePage;
-
 /**
  * An LRU cache, based on <code>LinkedHashMap</code>. This cache can hold an
  * possible second cache as a second layer for example for storing data in a
@@ -40,7 +38,7 @@ public final class LRUCache implements ICache {
     /**
      * The collection to hold the maps.
      */
-    private transient final Map<Long, NodePage> map;
+    private transient final Map<Long, NodePageContainer> map;
 
     /**
      * The reference to the second cache.
@@ -57,13 +55,13 @@ public final class LRUCache implements ICache {
      */
     public LRUCache(final ICache paramSecondCache) {
         secondCache = paramSecondCache;
-        map = new LinkedHashMap<Long, NodePage>(CACHE_CAPACITY) {
+        map = new LinkedHashMap<Long, NodePageContainer>(CACHE_CAPACITY) {
             // (an anonymous inner class)
             private static final long serialVersionUID = 1;
 
             @Override
             protected boolean removeEldestEntry(
-                    final Map.Entry<Long, NodePage> eldest) {
+                    final Map.Entry<Long, NodePageContainer> eldest) {
                 boolean returnVal = false;
                 if (size() > CACHE_CAPACITY) {
                     secondCache.put(eldest.getKey(), eldest.getValue());
@@ -91,8 +89,8 @@ public final class LRUCache implements ICache {
      * @return the value associated to this key, or null if no value with this
      *         key exists in the cache.
      */
-    public NodePage get(final long key) {
-        NodePage page = map.get(key);
+    public NodePageContainer get(final long key) {
+        NodePageContainer page = map.get(key);
         if (page == null) {
             page = secondCache.get(key);
         }
@@ -109,7 +107,7 @@ public final class LRUCache implements ICache {
      * @param value
      *            a value to be associated with the specified key.
      */
-    public void put(final long key, final NodePage value) {
+    public void put(final long key, final NodePageContainer value) {
         map.put(key, value);
     }
 
@@ -136,8 +134,8 @@ public final class LRUCache implements ICache {
      * 
      * @return a <code>Collection</code> with a copy of the cache content.
      */
-    public Collection<Map.Entry<Long, NodePage>> getAll() {
-        return new ArrayList<Map.Entry<Long, NodePage>>(map.entrySet());
+    public Collection<Map.Entry<Long, NodePageContainer>> getAll() {
+        return new ArrayList<Map.Entry<Long, NodePageContainer>>(map.entrySet());
     }
 
 }

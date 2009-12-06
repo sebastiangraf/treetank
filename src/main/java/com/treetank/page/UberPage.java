@@ -18,11 +18,10 @@
 
 package com.treetank.page;
 
-import com.treetank.api.IReadTransaction;
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
-import com.treetank.io.PagePersistenter;
 import com.treetank.node.DocumentRootNode;
+import com.treetank.utils.FixedProperties;
 import com.treetank.utils.IConstants;
 
 /**
@@ -47,7 +46,7 @@ public final class UberPage extends AbstractPage {
      * s Create uber page.
      */
     public UberPage() {
-        super(1);
+        super(1, IConstants.UBP_ROOT_REVISION_NUMBER);
         mRevisionCount = IConstants.UBP_ROOT_REVISION_COUNT;
         mBootstrap = true;
 
@@ -61,7 +60,7 @@ public final class UberPage extends AbstractPage {
 
         // Remaining levels.
         for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
-            page = new IndirectPage();
+            page = new IndirectPage(IConstants.UBP_ROOT_REVISION_NUMBER);
             reference.setPage(page);
             reference = page.getReference(0);
         }
@@ -79,17 +78,16 @@ public final class UberPage extends AbstractPage {
 
         // Remaining levels.
         for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
-            page = new IndirectPage();
+            page = new IndirectPage(IConstants.UBP_ROOT_REVISION_NUMBER);
             reference.setPage(page);
             reference = page.getReference(0);
         }
 
-        NodePage ndp = new NodePage(IConstants.ROOT_PAGE_KEY);
+        NodePage ndp = new NodePage((Long) FixedProperties.ROOT_PAGE_KEY
+                .getStandardProperty(), IConstants.UBP_ROOT_REVISION_NUMBER);
         reference.setPage(ndp);
 
-        ndp.setNode((int) IReadTransaction.DOCUMENT_ROOT_KEY,
-                new DocumentRootNode());
-
+        ndp.setNode(0, new DocumentRootNode());
         rrp.incrementNodeCountAndMaxNodeKey();
 
     }
@@ -100,7 +98,7 @@ public final class UberPage extends AbstractPage {
      * @param in
      *            Input bytes.
      */
-    public UberPage(final ITTSource in) {
+    protected UberPage(final ITTSource in) {
         super(1, in);
         mRevisionCount = in.readLong();
         mBootstrap = false;
@@ -189,9 +187,8 @@ public final class UberPage extends AbstractPage {
     /**
      * {@inheritDoc}
      */
-    public void serialize(final ITTSink out) {
+    protected void serialize(final ITTSink out) {
         mBootstrap = false;
-        out.writeInt(PagePersistenter.UBERPAGE);
         super.serialize(out);
         out.writeLong(mRevisionCount);
     }

@@ -24,13 +24,13 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.IAxisTest;
 import com.treetank.exception.TreetankException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
+import com.treetank.utils.FixedProperties;
 
 public class DocumentNodeAxisTest {
 
@@ -52,24 +52,29 @@ public class DocumentNodeAxisTest {
 
         wtx.moveTo(1L);
         IAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx),
-                new long[] { IReadTransaction.DOCUMENT_ROOT_KEY });
+                new long[] { (Long) FixedProperties.ROOT_PAGE_KEY
+                        .getStandardProperty() });
 
         wtx.moveTo(5L);
         IAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx),
-                new long[] { IReadTransaction.DOCUMENT_ROOT_KEY });
+                new long[] { (Long) FixedProperties.ROOT_PAGE_KEY
+                        .getStandardProperty() });
 
         wtx.moveTo(9L);
         IAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx),
-                new long[] { IReadTransaction.DOCUMENT_ROOT_KEY });
+                new long[] { (Long) FixedProperties.ROOT_PAGE_KEY
+                        .getStandardProperty() });
 
         wtx.moveTo(9L);
         wtx.moveToAttribute(0);
         IAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx),
-                new long[] { IReadTransaction.DOCUMENT_ROOT_KEY });
+                new long[] { (Long) FixedProperties.ROOT_PAGE_KEY
+                        .getStandardProperty() });
 
         wtx.moveTo(13L);
         IAxisTest.testIAxisConventions(new DocumentNodeAxis(wtx),
-                new long[] { IReadTransaction.DOCUMENT_ROOT_KEY });
+                new long[] { (Long) FixedProperties.ROOT_PAGE_KEY
+                        .getStandardProperty() });
 
         wtx.abort();
         wtx.close();

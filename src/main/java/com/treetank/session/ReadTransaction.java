@@ -23,6 +23,7 @@ import com.treetank.api.IItemList;
 import com.treetank.api.IReadTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
+import com.treetank.utils.FixedProperties;
 import com.treetank.utils.NamePageHash;
 import com.treetank.utils.TypedValue;
 
@@ -68,7 +69,8 @@ public class ReadTransaction implements IReadTransaction {
         mTransactionID = transactionID;
         mSessionState = sessionState;
         mTransactionState = transactionState;
-        mCurrentNode = getTransactionState().getNode(DOCUMENT_ROOT_KEY);
+        mCurrentNode = getTransactionState().getNode(
+                (Long) FixedProperties.ROOT_NODE_KEY.getStandardProperty());
         mClosed = false;
     }
 
@@ -82,25 +84,26 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
-    public final long getRevisionNumber() {
+    public final long getRevisionNumber() throws TreetankIOException {
         assertNotClosed();
-        return mTransactionState.getRevisionRootPage().getRevisionNumber();
+        return mTransactionState.getActualRevisionRootPage().getRevision();
     }
 
     /**
      * {@inheritDoc}
      */
-    public final long getRevisionTimestamp() {
+    public final long getRevisionTimestamp() throws TreetankIOException {
         assertNotClosed();
-        return mTransactionState.getRevisionRootPage().getRevisionTimestamp();
+        return mTransactionState.getActualRevisionRootPage()
+                .getRevisionTimestamp();
     }
 
     /**
      * {@inheritDoc}
      */
-    public final long getNodeCount() {
+    public final long getNodeCount() throws TreetankIOException {
         assertNotClosed();
-        return mTransactionState.getRevisionRootPage().getRevisionSize();
+        return mTransactionState.getActualRevisionRootPage().getRevisionSize();
     }
 
     /**
@@ -108,7 +111,8 @@ public class ReadTransaction implements IReadTransaction {
      */
     public boolean moveTo(final long nodeKey) {
         assertNotClosed();
-        if (nodeKey != NULL_NODE_KEY) {
+        if (nodeKey != (Long) FixedProperties.NULL_NODE_KEY
+                .getStandardProperty()) {
             // Remember old node and fetch new one.
             final IItem oldNode = mCurrentNode;
             try {
@@ -131,7 +135,8 @@ public class ReadTransaction implements IReadTransaction {
      * {@inheritDoc}
      */
     public final boolean moveToDocumentRoot() {
-        return moveTo(DOCUMENT_ROOT_KEY);
+        return moveTo((Long) FixedProperties.ROOT_NODE_KEY
+                .getStandardProperty());
     }
 
     /**
@@ -265,19 +270,24 @@ public class ReadTransaction implements IReadTransaction {
     @Override
     public String toString() {
         assertNotClosed();
-        // String name = "";
-        // try {
-        // name = getName();
-        // } catch (Exception e) {
-        // throw new IllegalStateException(e);
-        // }
-        // return "Node "
-        // + this.getNodeKey()
-        // + "\nwith name: "
-        // + name
-        // + "\nand value:"
-        // + getRawValue();
-        return mCurrentNode.toString();
+        final StringBuilder builder = new StringBuilder();
+        if (getNode().isAttribute() || getNode().isElement()) {
+            builder.append("Name of Node: ");
+            builder.append(getNameOfCurrentNode());
+            builder.append("\n");
+        }
+        if (getNode().isAttribute() || getNode().isText()) {
+            builder.append("Value of Node: ");
+            builder.append(getValueOfCurrentNode());
+            builder.append("\n");
+        }
+        if (getNode().isDocumentRoot()) {
+            builder.append("Node is DocumentRoot");
+            builder.append("\n");
+        }
+        builder.append(getNode().toString());
+
+        return builder.toString();
     }
 
     /**

@@ -19,10 +19,15 @@
 package com.treetank.session;
 
 import java.io.File;
-import java.util.Arrays;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
-import com.treetank.io.AbstractIOFactory;
-import com.treetank.utils.IConstants;
+import com.treetank.exception.TreetankException;
+import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TreetankUsageException;
+import com.treetank.utils.SettableProperties;
+import com.treetank.utils.StorageConstants;
 
 /**
  * <h1>SessionConfiguration</h1>
@@ -37,111 +42,58 @@ import com.treetank.utils.IConstants;
  */
 public final class SessionConfiguration {
 
-    /** Absolute path to .tnk file. */
-    private final String mAbsolutePath;
+    /** Absolute path to .tnk directory. */
+    private final File mFile;
 
-    /** Key of .tnk file or null. */
-    private final byte[] mEncryptionKey;
-
-    /** Checksum algorithm. */
-    private final boolean mChecksummed;
-
-    /** Used {@link StorageType} */
-    private final AbstractIOFactory.StorageType mType;
+    /** Props to hold all related data */
+    private final Properties mProps;
 
     /**
-     * Convenience constructor binding to .tnk file without encryption or
+     * Convenience constructor binding to .tnk folder without encryption or
      * end-to-end integrity.
      * 
      * @param path
-     *            Path to .tnk file.
+     *            Path to .tnk folder.
      */
-    public SessionConfiguration(final String path) {
-        this(path, null, false, IConstants.STORAGE_TYPE);
+    public SessionConfiguration(final File file) throws TreetankUsageException {
+        this(file, new StandardProperties().getProps());
     }
 
-    /**
-     * Standard constructor binding to .tnk file with encryption but no
-     * end-to-end integrity.
-     * 
-     * @param path
-     *            Path to .tnk file.
-     * @param encryptionKey
-     *            Key to encrypt .tnk file with.
-     */
-    public SessionConfiguration(final String path, final byte[] encryptionKey) {
-        this(path, encryptionKey, false, IConstants.STORAGE_TYPE);
-    }
-
-    /**
-     * Standard constructor binding to .tnk file with encryption.
-     * 
-     * @param path
-     *            Path to .tnk file.
-     * @param encryptionKey
-     *            Key to encrypt .tnk file with.
-     * @param checksummed
-     *            Does the .tnk file uses end-to-end checksumming?
-     * @param type
-     *            which storage <code>StorageType</code> should be used?
-     */
-    public SessionConfiguration(final String path, final byte[] encryptionKey,
-            final boolean checksummed, final AbstractIOFactory.StorageType type) {
-
-        // Make sure the path is legal.
-        if (path == null
-                && (!new File(path).isDirectory() && new File(path).list().length > 0)) {
-            throw new IllegalArgumentException(
-                    "Path to TreeTank file must not be null and be an emtpy directory");
+    public SessionConfiguration(final File file, final Properties props)
+            throws TreetankUsageException {
+        this.mFile = file;
+        this.mProps = new Properties();
+        for (final SettableProperties enumProps : SettableProperties.values()) {
+            if (props.containsKey(enumProps.getName())) {
+                this.getProps().put(enumProps.getName(),
+                        props.get(enumProps.getName()));
+            } else {
+                this.getProps().put(enumProps.getName(),
+                        enumProps.getStandardProperty());
+            }
         }
 
-        // Set path and name.
-        final File file = new File(path);
+        validateAndBuildPath(file);
+    }
 
-        // Make sure parent path exists.
-        file.mkdirs();
+    public SessionConfiguration(final File file, final File propFile)
+            throws TreetankException {
+        this(file, new Properties());
+        try {
+            getProps().load(new FileInputStream(propFile));
+        } catch (final IOException exc) {
+            throw new TreetankIOException(exc);
+        }
 
-        mAbsolutePath = file.getAbsolutePath();
-
-        mEncryptionKey = encryptionKey;
-        mChecksummed = checksummed;
-        mType = type;
     }
 
     /**
-     * Get absolute path to .tnk file.
+     * Get tnk folder.
      * 
-     * @return Path to .tnk file.
+     * @return Path to tnk folder.
      */
-    public String getAbsolutePath() {
-        return mAbsolutePath;
-    }
-
-    /**
-     * Is the .tnk file encrypted or not?
-     * 
-     * @return True if the .tnk file is encrypted. False else.
-     */
-    public boolean isEncrypted() {
-        return mEncryptionKey != null;
-    }
-
-    /**
-     * Get the encryption key of the .tnk file.
-     * 
-     * @return Encryption key to .tnk file.
-     */
-    protected byte[] getEncryptionKey() {
-        return mEncryptionKey;
-    }
-
-    /**
-     * Is the .tnk file checksummed or not?
-     * 
-     * @return True if the .tnk file is checksummed. False else.
-     */
-    public boolean isChecksummed() {
-        return mChecksummed;
+    public File getFile() {
+        return mFile;
     }
 
     /**
@@ -150,7 +102,80 @@ public final class SessionConfiguration {
      * @return String with a string representation.
      */
     public String toString() {
-        return mAbsolutePath + File.separator;
+        return mFile.getAbsolutePath() + File.separator;
+    }
+
+    /**
+     * Checking if path is valid
+     * 
+     * @param file
+     * @return
+     */
+    private static void validateAndBuildPath(final File file)
+            throws TreetankUsageException {
+        boolean createTransactionLog = false;
+        boolean createStorage = false;
+
+        final File transactionLog = new File(file,
+                StorageConstants.TRANSACTIONLOG.getFile().getName());
+        final File storage = new File(file, StorageConstants.TT.getFile()
+                .getName());
+        if (file == null) {
+            throw new TreetankUsageException(
+                    "Path to TreeTank file must not be null");
+        } else {
+            if (!file.exists()) {
+                file.mkdirs();
+                createTransactionLog = true;
+                createStorage = true;
+            } else {
+                if (file.isDirectory()) {
+                    final File[] files = file.listFiles();
+                    if (files != null) {
+                        boolean foundTransactionLog = false;
+                        boolean foundStorage = false;
+                        for (File child : files) {
+                            if (child.equals(transactionLog)) {
+                                foundTransactionLog = true;
+                            } else if (child.equals(storage)) {
+                                foundStorage = true;
+                            } else {
+                                throw new TreetankUsageException(
+                                        "Path to TreeTank file must be a directory with defined transactionlog/storage structure");
+                            }
+                            createTransactionLog = !foundTransactionLog;
+                            createStorage = !foundStorage;
+                        }
+
+                    } else {
+                        createTransactionLog = true;
+                        createStorage = true;
+                    }
+                } else {
+                    throw new TreetankUsageException(
+                            "Path to TreeTank file must be n a directory");
+                }
+            }
+        }
+        if (createTransactionLog) {
+            if (!transactionLog.mkdir()) {
+                throw new TreetankUsageException(
+                        "Path to TreeTank file must a directory");
+            }
+        } else {
+            final File[] files = transactionLog.listFiles();
+            if (files != null) {
+                for (final File child : files) {
+                    StorageConstants.recursiveDelete(child);
+                }
+            }
+        }
+        if (createStorage) {
+            if (!storage.mkdir()) {
+                throw new TreetankUsageException(
+                        "Path to TreeTank file must a directory");
+            }
+        }
     }
 
     /**
@@ -160,10 +185,7 @@ public final class SessionConfiguration {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((mAbsolutePath == null) ? 0 : mAbsolutePath.hashCode());
-        result = prime * result + (mChecksummed ? 1231 : 1237);
-        result = prime * result + Arrays.hashCode(mEncryptionKey);
+        result = prime * result + ((mFile == null) ? 0 : mFile.hashCode());
         return result;
     }
 
@@ -179,25 +201,34 @@ public final class SessionConfiguration {
         if (getClass() != obj.getClass())
             return false;
         SessionConfiguration other = (SessionConfiguration) obj;
-        if (mAbsolutePath == null) {
-            if (other.mAbsolutePath != null)
+        if (mFile == null) {
+            if (other.mFile != null)
                 return false;
-        } else if (!mAbsolutePath.equals(other.mAbsolutePath))
-            return false;
-        if (mChecksummed != other.mChecksummed)
-            return false;
-        if (!Arrays.equals(mEncryptionKey, other.mEncryptionKey))
+        } else if (!mFile.equals(other.mFile))
             return false;
         return true;
     }
 
-    /**
-     * Getting the <code>StorageType</code> for this configuration
-     * 
-     * @return the storageType for this configuration
-     */
-    public AbstractIOFactory.StorageType getType() {
-        return mType;
+    public Properties getProps() {
+        return mProps;
+    }
+
+    private static class StandardProperties {
+
+        private final Properties props;
+
+        StandardProperties() {
+            props = new Properties();
+
+            for (SettableProperties prop : SettableProperties.values()) {
+                getProps().put(prop.getName(), prop.getStandardProperty());
+            }
+        }
+
+        public Properties getProps() {
+            return props;
+        }
+
     }
 
 }

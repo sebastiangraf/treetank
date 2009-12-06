@@ -5,7 +5,7 @@ import java.util.Stack;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
-import com.treetank.utils.IConstants;
+import com.treetank.utils.ENodes;
 import com.treetank.utils.NamePageHash;
 
 public final class DocumentTreeNavigator {
@@ -13,7 +13,7 @@ public final class DocumentTreeNavigator {
     static long adaptDocTree(final IWriteTransaction wtx,
             final Stack<String> names) throws TreetankException {
         moveToDocumentStructureRoot(wtx);
-        long currentDocKey = IConstants.UNKNOWN;
+        long currentDocKey = ENodes.UNKOWN_KIND.getNodeIdentifier();
         // iterating over all names in hierarchical order
         while (!names.empty()) {
             final String name = names.pop();

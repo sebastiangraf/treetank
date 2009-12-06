@@ -25,7 +25,7 @@ public final class ShredderBench {
     public void shred() {
         try {
             XMLShredder.shred(XML.getAbsolutePath(), new SessionConfiguration(
-                    TNK.getAbsolutePath()));
+                    TNK));
         } catch (TreetankException e) {
 
             e.printStackTrace();

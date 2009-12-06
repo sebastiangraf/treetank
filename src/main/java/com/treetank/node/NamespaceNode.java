@@ -18,8 +18,8 @@
 
 package com.treetank.node;
 
-import com.treetank.api.IReadTransaction;
 import com.treetank.io.ITTSource;
+import com.treetank.utils.ENodes;
 
 /**
  * <h1>NamespaceNode</h1>
@@ -64,7 +64,7 @@ public final class NamespaceNode extends AbstractNode {
      * @param namespace
      *            Namespace node to clone.
      */
-    public NamespaceNode(final AbstractNode namespace) {
+    protected NamespaceNode(final AbstractNode namespace) {
         super(namespace);
     }
 
@@ -74,7 +74,7 @@ public final class NamespaceNode extends AbstractNode {
      * @param in
      *            byteBuffer with the relevant data.
      */
-    public NamespaceNode(final ITTSource in) {
+    protected NamespaceNode(final ITTSource in) {
         super(SIZE, in);
     }
 
@@ -106,8 +106,8 @@ public final class NamespaceNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public int getKind() {
-        return IReadTransaction.NAMESPACE_KIND;
+    public ENodes getKind() {
+        return ENodes.NAMESPACE_KIND;
     }
 
     /**

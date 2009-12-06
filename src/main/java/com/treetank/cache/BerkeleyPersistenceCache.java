@@ -26,8 +26,6 @@ import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
 import com.treetank.exception.TreetankIOException;
-import com.treetank.io.berkeley.binding.AbstractPageBinding;
-import com.treetank.page.NodePage;
 import com.treetank.session.SessionConfiguration;
 
 /**
@@ -63,16 +61,19 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
     /**
      * Binding for the value which is a page with related Nodes.
      */
-    private transient final AbstractPageBinding valueBinding;
+    private transient final NodePageContainerBinding valueBinding;
 
     /**
      * Constructor. Building up the berkeley db and setting necessary settings.
      * 
      * @param sessionConfig
      *            the place where the berkeley db is stored.
+     * @param revision
+     *            revision number, needed to reconstruct the sliding window in
+     *            the correct way
      */
-    public BerkeleyPersistenceCache(final SessionConfiguration sessionConfig)
-            throws TreetankIOException {
+    public BerkeleyPersistenceCache(final SessionConfiguration sessionConfig,
+            final long revision) throws TreetankIOException {
         super(sessionConfig);
         try {
 
@@ -89,7 +90,7 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
             database = env.openDatabase(null, NAME, dbConfig);
 
             keyBinding = TupleBinding.getPrimitiveBinding(Long.class);
-            valueBinding = new AbstractPageBinding();
+            valueBinding = new NodePageContainerBinding();
 
         } catch (final DatabaseException exc) {
             throw new TreetankIOException(exc);
@@ -100,7 +101,7 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
     /**
      * {@inheritDoc}
      */
-    public void putPersistent(final long key, final NodePage page)
+    public void putPersistent(final long key, final NodePageContainer page)
             throws TreetankIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
@@ -133,16 +134,17 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
      * {@inheritDoc}
      */
     @Override
-    public NodePage getPersistent(final long key) throws TreetankIOException {
+    public NodePageContainer getPersistent(final long key)
+            throws TreetankIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
         keyBinding.objectToEntry(key, keyEntry);
         try {
             final OperationStatus status = database.get(null, keyEntry,
                     valueEntry, LockMode.DEFAULT);
-            NodePage val = null;
+            NodePageContainer val = null;
             if (status == OperationStatus.SUCCESS) {
-                val = (NodePage) valueBinding.entryToObject(valueEntry);
+                val = valueBinding.entryToObject(valueEntry);
             }
             return val;
         } catch (final DatabaseException exc) {

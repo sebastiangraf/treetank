@@ -44,7 +44,7 @@ public class CommentFilter extends AbstractFilter implements IFilter {
      * {@inheritDoc}
      */
     public final boolean filter() {
-        return getTransaction().getNode().getKind() == 8;
+        return getTransaction().getNode().getKind().getNodeIdentifier() == 8;
 
         // TODO: As soon as an comment node is implemented, use the second
         // version,

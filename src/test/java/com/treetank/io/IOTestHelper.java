@@ -5,15 +5,18 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
 import java.util.Map;
+import java.util.Properties;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
 import com.treetank.exception.TreetankException;
+import com.treetank.exception.TreetankUsageException;
 import com.treetank.io.AbstractIOFactory.StorageType;
 import com.treetank.page.PageReference;
 import com.treetank.page.UberPage;
 import com.treetank.session.SessionConfiguration;
-import com.treetank.utils.IConstants;
+import com.treetank.utils.FixedProperties;
+import com.treetank.utils.SettableProperties;
 
 /**
  * Helper class for testing the io interfaces
@@ -32,9 +35,13 @@ public final class IOTestHelper {
      * @param type
      *            for the the {@link SessionConfiguration} should be generated
      * @return a suitable {@link SessionConfiguration}
+     * @throws TreetankUsageException
      */
-    public static SessionConfiguration createConf(final StorageType type) {
-        return new SessionConfiguration(ITestConstants.PATH1, null, false, type);
+    public static SessionConfiguration createConf(final StorageType type)
+            throws TreetankUsageException {
+        final Properties props = new Properties();
+        props.put(SettableProperties.STORAGE_TYPE, type);
+        return new SessionConfiguration(ITestConstants.PATH1, props);
     }
 
     /**
@@ -74,7 +81,10 @@ public final class IOTestHelper {
     public static void testPropsReadWrite(final SessionConfiguration conf)
             throws TreetankException {
         final StorageProperties props = new StorageProperties(
-                IConstants.VERSION_MAJOR, IConstants.VERSION_MINOR, true, true);
+                (Integer) FixedProperties.LAST_VERSION_MAJOR
+                        .getStandardProperty(),
+                (Integer) FixedProperties.LAST_VERSION_MINOR
+                        .getStandardProperty());
 
         final AbstractIOFactory fac = AbstractIOFactory.getInstance(conf);
         // same instance check

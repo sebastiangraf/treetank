@@ -44,7 +44,7 @@ public final class PageReference {
     /** Corresponding mKey of the related node page */
     private long nodePageKey = -1;
 
-    /** Start byte in file. */
+    /** Key in persistent storage */
     private AbstractKey mKey;
 
     /** Checksum of serialized page. */

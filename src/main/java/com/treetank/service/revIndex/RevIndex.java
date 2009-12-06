@@ -12,6 +12,7 @@ import com.treetank.exception.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.NamePageHash;
+import com.treetank.utils.SettableProperties;
 
 /**
  * Revisioned Index Structure. Consisting of a trie and a document-trie. Both
@@ -82,7 +83,8 @@ public final class RevIndex {
         indexSession = Session.beginSession(index);
         if (rev < 0) {
             rtx = indexSession.beginWriteTransaction(
-                    IConstants.COMMIT_THRESHOLD, 0);
+                    (Integer) SettableProperties.COMMIT_THRESHOLD
+                            .getStandardProperty(), 0);
         } else {
             this.rtx = indexSession.beginReadTransaction(rev);
         }

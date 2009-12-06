@@ -24,12 +24,12 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
+import com.treetank.utils.FixedProperties;
 
 public class DescendantAxisTest {
 
@@ -74,8 +74,10 @@ public class DescendantAxisTest {
 
         wtx.moveToDocumentRoot();
         IAxisTest.testIAxisConventions(new DescendantAxis(wtx, true),
-                new long[] { IReadTransaction.DOCUMENT_ROOT_KEY, 1L, 4L, 5L,
-                        6L, 7L, 8L, 9L, 11L, 12L, 13L });
+                new long[] {
+                        (Long) FixedProperties.ROOT_NODE_KEY
+                                .getStandardProperty(), 1L, 4L, 5L, 6L, 7L, 8L,
+                        9L, 11L, 12L, 13L });
 
         wtx.moveTo(1L);
         IAxisTest.testIAxisConventions(new DescendantAxis(wtx, true),

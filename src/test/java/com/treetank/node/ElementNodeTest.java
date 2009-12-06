@@ -22,8 +22,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.treetank.api.IReadTransaction;
 import com.treetank.io.file.ByteBufferSinkAndSource;
+import com.treetank.utils.ENodes;
 
 public class ElementNodeTest {
 
@@ -61,7 +61,7 @@ public class ElementNodeTest {
         assertEquals(18, node3.getNameKey());
         assertEquals(19, node3.getURIKey());
         assertEquals(null, node3.getRawValue());
-        assertEquals(IReadTransaction.ELEMENT_KIND, node3.getKind());
+        assertEquals(ENodes.ELEMENT_KIND, node3.getKind());
         assertEquals(true, node3.hasFirstChild());
         assertEquals(true, node3.hasParent());
         assertEquals(true, node3.hasLeftSibling());

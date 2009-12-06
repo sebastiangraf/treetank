@@ -18,6 +18,8 @@
 
 package com.treetank.api;
 
+import com.treetank.utils.ENodes;
+
 /**
  * <h1>IItem</h1>
  * <p>
@@ -150,7 +152,7 @@ public interface IItem {
      * 
      * @return kind of item
      */
-    int getKind();
+    ENodes getKind();
 
     /**
      * Declaresm whether the item is a a node.

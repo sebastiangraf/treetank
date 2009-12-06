@@ -35,15 +35,19 @@ public abstract class AbstractPage {
     /** Page references. */
     private final PageReference[] mReferences;
 
+    /** revision of this page */
+    private final long mRevision;
+
     /**
      * Constructor to initialize instance.
      * 
      * @param referenceCount
      *            Number of references of page.
      */
-    protected AbstractPage(final int referenceCount) {
+    protected AbstractPage(final int referenceCount, final long revision) {
 
         mReferences = new PageReference[referenceCount];
+        mRevision = revision;
     }
 
     /**
@@ -55,7 +59,7 @@ public abstract class AbstractPage {
      *            Input reader to read from.
      */
     protected AbstractPage(final int referenceCount, final ITTSource in) {
-        this(referenceCount);
+        this(referenceCount, in.readLong());
         final int[] values = new int[referenceCount];
         for (int i = 0; i < values.length; i++) {
             values[i] = in.readInt();
@@ -77,7 +81,7 @@ public abstract class AbstractPage {
      */
     protected AbstractPage(final int referenceCount,
             final AbstractPage committedPage) {
-        this(referenceCount);
+        this(referenceCount, committedPage.getRevision() + 1);
 
         for (int offset = 0; offset < referenceCount; offset++) {
             if (committedPage.getReferences()[offset] != null) {
@@ -134,7 +138,8 @@ public abstract class AbstractPage {
      * @param out
      *            Output stream.
      */
-    public void serialize(final ITTSink out) {
+    protected void serialize(final ITTSink out) {
+        out.writeLong(mRevision);
         for (int i = 0; i < getReferences().length; i++) {
             if (getReferences()[i] != null) {
                 out.writeInt(1);
@@ -155,6 +160,33 @@ public abstract class AbstractPage {
      */
     public PageReference[] getReferences() {
         return mReferences;
+    }
+
+    /**
+     * @return the mRevision
+     */
+    public final long getRevision() {
+        return mRevision;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        if (getReferences().length > 0) {
+            builder.append("References: ");
+            for (final PageReference ref : getReferences()) {
+                if (ref != null) {
+                    builder.append(ref.getKey().getIdentifier()).append(",");
+                    ;
+                }
+            }
+        } else {
+            builder.append("No references");
+        }
+        return builder.toString();
     }
 
 }

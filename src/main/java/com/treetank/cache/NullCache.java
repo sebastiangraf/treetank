@@ -16,8 +16,6 @@
  */
 package com.treetank.cache;
 
-import com.treetank.page.NodePage;
-
 /**
  * Null cache, just for perfomance measurements. Caching nothing.
  * 
@@ -26,7 +24,7 @@ import com.treetank.page.NodePage;
  */
 public final class NullCache implements ICache {
 
-    protected NullCache() {
+    public NullCache() {
         super();
     }
 
@@ -40,14 +38,14 @@ public final class NullCache implements ICache {
     /**
      * {@inheritDoc}
      */
-    public NodePage get(final long key) {
+    public NodePageContainer get(final long key) {
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void put(final long key, final NodePage page) {
+    public void put(final long key, final NodePageContainer page) {
         // Not used over here
     }
 

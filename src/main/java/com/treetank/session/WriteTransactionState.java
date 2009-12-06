@@ -20,6 +20,7 @@ package com.treetank.session;
 
 import com.treetank.api.IItem;
 import com.treetank.cache.ICache;
+import com.treetank.cache.NodePageContainer;
 import com.treetank.cache.TransactionLogCache;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.IWriter;
@@ -28,6 +29,7 @@ import com.treetank.node.AbstractNode;
 import com.treetank.node.AttributeNode;
 import com.treetank.node.ElementNode;
 import com.treetank.node.NamespaceNode;
+import com.treetank.node.NodePersistenter;
 import com.treetank.node.TextNode;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.IndirectPage;
@@ -36,9 +38,12 @@ import com.treetank.page.NodePage;
 import com.treetank.page.PageReference;
 import com.treetank.page.RevisionRootPage;
 import com.treetank.page.UberPage;
+import com.treetank.utils.FixedProperties;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.ItemList;
 import com.treetank.utils.NamePageHash;
+import com.treetank.utils.SettableProperties;
+import com.treetank.utils.SlidingSnapshot;
 
 /**
  * <h1>WriteTransactionState</h1>
@@ -50,7 +55,7 @@ import com.treetank.utils.NamePageHash;
 public final class WriteTransactionState extends ReadTransactionState {
 
     /** Page writer to serialize. */
-    private IWriter mPageWriter;
+    private final IWriter mPageWriter;
 
     /**
      * Cache to store the changes in this writetransaction.
@@ -58,14 +63,12 @@ public final class WriteTransactionState extends ReadTransactionState {
     private final ICache log;
 
     /**
-     * Last references to the Nodepage-reference
+     * Last references to the Nodepage, needed for pre/postcondition check
      */
-    private PageReference nodePageReference;
+    private NodePageContainer nodePageCon;
 
-    /**
-     * Last reference to the nodepage
-     */
-    private NodePage nodePage;
+    /** Last reference to the actual revRoot */
+    private final RevisionRootPage mCurrentRevRoot;
 
     /**
      * Standard constructor.
@@ -83,9 +86,11 @@ public final class WriteTransactionState extends ReadTransactionState {
             throws TreetankIOException {
         super(sessionConfiguration, uberPage, uberPage
                 .getLastCommittedRevisionNumber(), new ItemList(), writer);
-        log = new TransactionLogCache(sessionConfiguration);
+        mCurrentRevRoot = prepareActualRevisionRootPage();
+        log = new TransactionLogCache(sessionConfiguration, mCurrentRevRoot
+                .getRevision());
         mPageWriter = writer;
-        setRevisionRootPage(prepareRevisionRootPage());
+
     }
 
     /**
@@ -99,12 +104,22 @@ public final class WriteTransactionState extends ReadTransactionState {
      */
     protected AbstractNode prepareNodeForModification(final long nodeKey)
             throws TreetankIOException {
-        if (nodePageReference != null || nodePage != null) {
+        if (nodePageCon != null) {
             throw new IllegalStateException();
         }
-        final NodePage page = prepareNodePage(nodePageKey(nodeKey));
 
-        final AbstractNode node = page.getNode(nodePageOffset(nodeKey));
+        final long nodePageKey = nodePageKey(nodeKey);
+        final int nodePageOffset = nodePageOffset(nodeKey);
+        prepareNodePage(nodePageKey);
+
+        AbstractNode node = this.nodePageCon.getModified().getNode(
+                nodePageOffset);
+        if (node == null) {
+            final AbstractNode oldNode = this.nodePageCon.getComplete()
+                    .getNode(nodePageOffset);
+            node = NodePersistenter.createNode(oldNode);
+            this.nodePageCon.getModified().setNode(nodePageOffset, node);
+        }
         return node;
     }
 
@@ -116,14 +131,14 @@ public final class WriteTransactionState extends ReadTransactionState {
      *            the node to be modified.
      */
     protected void finishNodeModification(final AbstractNode node) {
-        if (nodePageReference == null || nodePage == null || node == null) {
+        final long nodePageKey = nodePageKey(node.getNodeKey());
+        if (nodePageCon == null || node == null || log.get(nodePageKey) == null) {
             throw new IllegalStateException();
         }
-        if (nodePage instanceof NodePage && !nodePageReference.isInstantiated()) {
-            log.put(nodePageReference.getNodePageKey(), nodePage);
-        }
-        this.nodePage = null;
-        this.nodePageReference = null;
+
+        log.put(nodePageKey, nodePageCon);
+
+        this.nodePageCon = null;
 
     }
 
@@ -140,18 +155,15 @@ public final class WriteTransactionState extends ReadTransactionState {
     protected <N extends AbstractNode> N createNode(final N node)
             throws TreetankIOException {
         // Allocate node key and increment node count.
-        getRevisionRootPage().incrementNodeCountAndMaxNodeKey();
+        mCurrentRevRoot.incrementNodeCountAndMaxNodeKey();
         // Prepare node nodePageReference (COW).
-        final long nodePageKey = nodePageKey(getRevisionRootPage()
-                .getMaxNodeKey());
-        final NodePage page = prepareNodePage(nodePageKey);
-        page.setNode(nodePageOffset(getRevisionRootPage().getMaxNodeKey()),
-                node);
-        if (nodePage instanceof NodePage && !nodePageReference.isInstantiated()) {
-            log.put(nodePageKey, nodePage);
-        }
-        nodePage = null;
-        nodePageReference = null;
+        final long nodeKey = mCurrentRevRoot.getMaxNodeKey();
+        final long nodePageKey = nodePageKey(nodeKey);
+        final int nodePageOffset = nodePageOffset(nodeKey);
+        prepareNodePage(nodePageKey);
+        final NodePage page = nodePageCon.getModified();
+        page.setNode(nodePageOffset, node);
+        finishNodeModification(node);
 
         return node;
     }
@@ -160,31 +172,31 @@ public final class WriteTransactionState extends ReadTransactionState {
             final long firstChildKey, final long leftSiblingKey,
             final long rightSiblingKey, final int nameKey, final int uriKey,
             final int type) throws TreetankIOException {
-        return createNode(new ElementNode(
-                getRevisionRootPage().getMaxNodeKey() + 1, parentKey,
-                firstChildKey, leftSiblingKey, rightSiblingKey, nameKey,
-                uriKey, type));
+        return createNode(new ElementNode(mCurrentRevRoot.getMaxNodeKey() + 1,
+                parentKey, firstChildKey, leftSiblingKey, rightSiblingKey,
+                nameKey, uriKey, type));
     }
 
     protected AttributeNode createAttributeNode(final long parentKey,
             final int nameKey, final int uriKey, final int type,
             final byte[] value) throws TreetankIOException {
-        return createNode(new AttributeNode(getRevisionRootPage()
-                .getMaxNodeKey() + 1, parentKey, nameKey, uriKey, type, value));
+        return createNode(new AttributeNode(
+                mCurrentRevRoot.getMaxNodeKey() + 1, parentKey, nameKey,
+                uriKey, type, value));
     }
 
     protected NamespaceNode createNamespaceNode(final long parentKey,
             final int uriKey, final int prefixKey) throws TreetankIOException {
-        return createNode(new NamespaceNode(getRevisionRootPage()
-                .getMaxNodeKey() + 1, parentKey, uriKey, prefixKey));
+        return createNode(new NamespaceNode(
+                mCurrentRevRoot.getMaxNodeKey() + 1, parentKey, uriKey,
+                prefixKey));
     }
 
     protected TextNode createTextNode(final long parentKey,
             final long leftSiblingKey, final long rightSiblingKey,
             final int valueType, final byte[] value) throws TreetankIOException {
-        return createNode(new TextNode(
-                getRevisionRootPage().getMaxNodeKey() + 1, parentKey,
-                leftSiblingKey, rightSiblingKey, valueType, value));
+        return createNode(new TextNode(mCurrentRevRoot.getMaxNodeKey() + 1,
+                parentKey, leftSiblingKey, rightSiblingKey, valueType, value));
     }
 
     /**
@@ -197,14 +209,18 @@ public final class WriteTransactionState extends ReadTransactionState {
      */
     protected void removeNode(final AbstractNode node)
             throws TreetankIOException {
-        getRevisionRootPage().decrementNodeCount();
-        final NodePage page = prepareNodePage(nodePageKey(node.getNodeKey()));
-        page.setNode(nodePageOffset(node.getNodeKey()), null);
-        if (nodePage instanceof NodePage && !nodePageReference.isInstantiated()) {
-            log.put(nodePageReference.getNodePageKey(), nodePage);
-        }
-        nodePage = null;
-        nodePageReference = null;
+        mCurrentRevRoot.decrementNodeCount();
+        final long nodePageKey = nodePageKey(node.getNodeKey());
+        prepareNodePage(nodePageKey);
+        // TODO check if null is working with sliding snapshot
+        // I doubt it since there has to be some kind of placeholder for the
+        // node to let the sliding snapshot know that the null is not only a
+        // missing element
+        nodePageCon.getModified().setNode(nodePageOffset(node.getNodeKey()),
+                null);
+        finishNodeModification(node);
+
+        nodePageCon = null;
     }
 
     /**
@@ -216,16 +232,37 @@ public final class WriteTransactionState extends ReadTransactionState {
         final long nodePageKey = nodePageKey(nodeKey);
         final int nodePageOffset = nodePageOffset(nodeKey);
 
-        // Fetch node page if it is not yet in the state cache.
-        final PageReference reference = dereferenceLeafOfTree(
-                getRevisionRootPage().getIndirectPageReference(), nodePageKey);
-        NodePage page = (NodePage) log.get(nodePageKey);
-        if (page == null) {
-            page = (NodePage) dereferenceNodePage(reference, nodePageKey);
+        NodePageContainer pageCont = log.get(nodePageKey);
+        if (pageCont == null) {
+            return super.getNode(nodeKey);
+        } else if (pageCont.getModified().getNode(nodePageOffset) == null) {
+            return pageCont.getComplete().getNode(nodePageOffset);
+        } else {
+            return pageCont.getModified().getNode(nodePageOffset);
         }
 
-        final IItem returnVal = page.getNode(nodePageOffset);
+    }
+
+    /**
+     * Getting the name corresponding to the given key
+     * 
+     * @param nameKey
+     *            for the term searched
+     * @return the name
+     */
+    protected String getName(final int nameKey) {
+        final NamePage currentNamePage = (NamePage) mCurrentRevRoot
+                .getNamePageReference().getPage();
+        String returnVal;
+        // if currentNamePage == null -> state was commited and no
+        // prepareNodepage was invoked yet
+        if (currentNamePage == null || currentNamePage.getName(nameKey) == null) {
+            returnVal = super.getName(nameKey);
+        } else {
+            returnVal = currentNamePage.getName(nameKey);
+        }
         return returnVal;
+
     }
 
     /**
@@ -241,9 +278,7 @@ public final class WriteTransactionState extends ReadTransactionState {
         final String string = (name == null ? "" : name);
         final int nameKey = NamePageHash.generateHashForString(string);
 
-        final PageReference namePageReference = getRevisionRootPage()
-                .getNamePageReference();
-        final NamePage namePage = prepareNamePage(namePageReference);
+        final NamePage namePage = prepareNamePage();
 
         if (namePage.getName(nameKey) == null) {
             namePage.setName(nameKey, string);
@@ -262,10 +297,13 @@ public final class WriteTransactionState extends ReadTransactionState {
      */
     public void commit(final PageReference reference)
             throws TreetankIOException {
-        AbstractPage page;
+        AbstractPage page = null;
 
         if (reference != null) {
-            page = log.get(reference.getNodePageKey());
+            final NodePageContainer cont = log.get(reference.getNodePageKey());
+            if (cont != null) {
+                page = cont.getModified();
+            }
             if (page == null) {
                 if (!reference.isInstantiated()) {
                     return;
@@ -273,6 +311,7 @@ public final class WriteTransactionState extends ReadTransactionState {
                     page = reference.getPage();
                 }
             }
+
             reference.setPage(page);
             // Recursively commit indirectely referenced pages and then
             // write self.
@@ -293,10 +332,10 @@ public final class WriteTransactionState extends ReadTransactionState {
 
         if (uberPage.isBootstrap()) {
             mPageWriter.setProps(new StorageProperties(
-                    IConstants.LAST_VERSION_MAJOR,
-                    IConstants.LAST_VERSION_MINOR, sessionConfiguration
-                            .isChecksummed(), sessionConfiguration
-                            .isEncrypted()));
+                    (Integer) FixedProperties.VERSION_MAJOR
+                            .getStandardProperty(),
+                    (Integer) FixedProperties.VERSION_MINOR
+                            .getStandardProperty()));
         }
 
         // // // /////////////
@@ -377,13 +416,13 @@ public final class WriteTransactionState extends ReadTransactionState {
      */
     @Override
     protected void close() throws TreetankIOException {
+        // super.close();
         log.clear();
         mPageWriter.close();
-        mPageWriter = null;
-        // super.close();
     }
 
-    protected IndirectPage prepareIndirectPage(final PageReference reference) {
+    protected IndirectPage prepareIndirectPage(final PageReference reference)
+            throws TreetankIOException {
 
         IndirectPage page = (IndirectPage) reference.getPage();
         if (!reference.isInstantiated()) {
@@ -391,7 +430,8 @@ public final class WriteTransactionState extends ReadTransactionState {
                 page = new IndirectPage(
                         (IndirectPage) dereferenceIndirectPage(reference));
             } else {
-                page = new IndirectPage();
+                page = new IndirectPage(getUberPage().getRevision());
+
             }
             reference.setPage(page);
         } else {
@@ -400,70 +440,75 @@ public final class WriteTransactionState extends ReadTransactionState {
         return page;
     }
 
-    protected NodePage prepareNodePage(final long nodePageKey)
+    protected NodePageContainer prepareNodePage(final long nodePageKey)
             throws TreetankIOException {
 
-        // Indirect reference.
-        PageReference reference = prepareLeafOfTree(getRevisionRootPage()
-                .getIndirectPageReference(), nodePageKey);
-
         // Last level points to node nodePageReference.
-        NodePage page = (NodePage) log.get(reference.getNodePageKey());
-        if (page == null) {
+        NodePageContainer cont = log.get(nodePageKey);
+        if (cont == null) {
+
+            // Indirect reference.
+            PageReference reference = prepareLeafOfTree(mCurrentRevRoot
+                    .getIndirectPageReference(), nodePageKey);
+
             if (!reference.isInstantiated()) {
+
                 if (reference.isCommitted()) {
-                    page = new NodePage(dereferenceNodePage(reference,
-                            nodePageKey));
-                    reference.setNodePageKey(nodePageKey);
-                    log.put(nodePageKey, page);
+                    cont = dereferenceNodePageForModification(nodePageKey);
                 } else {
-                    page = new NodePage(nodePageKey);
-                    reference.setNodePageKey(nodePageKey);
-                    log.put(nodePageKey, page);
+                    cont = new NodePageContainer(new NodePage(nodePageKey,
+                            getActualRevisionRootPage().getRevision()));
                 }
 
             } else {
-                page = (NodePage) reference.getPage();
-                reference.setNodePageKey(nodePageKey);
-                log.put(nodePageKey, page);
+                // TODO Nodepage is just used as bootstrap-begin. Perhaps this
+                // can be done otherwise
+                final NodePage page = (NodePage) reference.getPage();
+                cont = new NodePageContainer(page);
+
                 reference.setPage(null);
             }
+
+            reference.setNodePageKey(nodePageKey);
+            log.put(nodePageKey, cont);
         }
-        this.nodePage = page;
-        this.nodePageReference = reference;
-        return page;
+        nodePageCon = cont;
+        return cont;
     }
 
-    protected RevisionRootPage prepareRevisionRootPage()
+    private RevisionRootPage prepareActualRevisionRootPage()
             throws TreetankIOException {
 
         if (getUberPage().isBootstrap()) {
-            return getRevisionRootPage();
+            return super.getActualRevisionRootPage();
+        } else {
+
+            // Prepare revision root nodePageReference.
+            final RevisionRootPage revisionRootPage = new RevisionRootPage(
+                    super.getActualRevisionRootPage());
+
+            // Prepare indirect tree to hold reference to prepared revision root
+            // nodePageReference.
+            final PageReference revisionRootPageReference = prepareLeafOfTree(
+                    getUberPage().getIndirectPageReference(), getUberPage()
+                            .getRevisionNumber());
+
+            // Link the prepared revision root nodePageReference with the
+            // prepared
+            // indirect tree.
+            revisionRootPageReference.setPage(revisionRootPage);
+
+            // Return prepared revision root nodePageReference.
+            return revisionRootPage;
         }
-
-        // Prepare revision root nodePageReference.
-        final RevisionRootPage revisionRootPage = new RevisionRootPage(
-                getRevisionRootPage(getUberPage()
-                        .getLastCommittedRevisionNumber()));
-
-        // Prepare indirect tree to hold reference to prepared revision root
-        // nodePageReference.
-        final PageReference revisionRootPageReference = prepareLeafOfTree(
-                getUberPage().getIndirectPageReference(), getUberPage()
-                        .getRevisionNumber());
-
-        // Link the prepared revision root nodePageReference with the prepared
-        // indirect tree.
-        revisionRootPageReference.setPage(revisionRootPage);
-
-        // Return prepared revision root nodePageReference.
-        return revisionRootPage;
     }
 
     protected PageReference prepareLeafOfTree(
-            final PageReference startReference, final long key) {
+            final PageReference startReference, final long key)
+            throws TreetankIOException {
 
         // Initial state pointing to the indirect nodePageReference of level 0.
+
         PageReference reference = startReference;
         int offset = 0;
         long levelKey = key;
@@ -474,28 +519,56 @@ public final class WriteTransactionState extends ReadTransactionState {
             levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
             final IndirectPage page = prepareIndirectPage(reference);
             reference = page.getReference(offset);
+
         }
 
         // Return reference to leaf of indirect tree.
         return reference;
     }
 
-    protected NamePage prepareNamePage(final PageReference reference)
-            throws TreetankIOException {
+    protected NamePage prepareNamePage() throws TreetankIOException {
 
-        NamePage page = (NamePage) reference.getPage();
-
-        if (!reference.isInstantiated()) {
-            if (reference.isCommitted()) {
+        final PageReference ref = mCurrentRevRoot.getNamePageReference();
+        NamePage page = (NamePage) ref.getPage();
+        if (page == null) {
+            if (ref.isCommitted()) {
                 page = new NamePage(getNamePage());
-                reference.setPage(page);
+                ref.setPage(page);
             } else {
-                page = new NamePage();
-                reference.setPage(page);
+                page = new NamePage(getActualRevisionRootPage().getRevision());
+                ref.setPage(page);
             }
         }
 
         return page;
+    }
+
+    /**
+     * Dereference node page reference.
+     * 
+     * @param reference
+     *            Reference to dereference.
+     * @param nodePageKey
+     *            Key of node page.
+     * @return Dereferenced page.
+     */
+    private final NodePageContainer dereferenceNodePageForModification(
+            final long nodePageKey) throws TreetankIOException {
+        final long rev = mCurrentRevRoot.getRevision();
+        final NodePage[] revs = getSnapshotPages(nodePageKey);
+
+        return SlidingSnapshot.combinePagesForModification(revs, rev,
+                (Integer) getSessionConfiguration().getProps().get(
+                        SettableProperties.SNAPSHOT_WINDOW.getName()));
+    }
+
+    /**
+     * Current reference to actual rev-root page
+     * 
+     * @return the current revision root page
+     */
+    protected RevisionRootPage getActualRevisionRootPage() {
+        return this.mCurrentRevRoot;
     }
 
 }
