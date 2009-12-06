@@ -35,6 +35,7 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
@@ -229,6 +230,7 @@ public class XMLShredderTest {
     }
 
     @Test
+    @Ignore
     public void testShreddingLargeText() throws TreetankException,
             FileNotFoundException, XMLStreamException {
         final ISession session = Session.beginSession(ITestConstants.PATH2);

@@ -5,9 +5,12 @@ import java.io.File;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
+import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
+import com.sleepycat.je.LockMode;
+import com.sleepycat.je.OperationStatus;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.AbstractIOFactory;
 import com.treetank.io.AbstractKey;
@@ -21,6 +24,7 @@ import com.treetank.io.berkeley.binding.StoragePropTupleBinding;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.PageReference;
 import com.treetank.session.SessionConfiguration;
+import com.treetank.utils.StorageConstants;
 
 /**
  * Factory class to build up {@link IReader} {@link IWriter} instances for the
@@ -84,9 +88,11 @@ public final class BerkeleyFactory extends AbstractIOFactory {
         config.setTransactional(true);
         config.setCacheSize(1024 * 1024);
 
-        final File repoFile = new File(paramSession + File.separator + "tt");
-        if (!repoFile.exists()) {
-            repoFile.mkdirs();
+        final File repoFile = new File(paramSession.getFile(),
+                StorageConstants.TT.getFile().getName());
+        if (repoFile.listFiles().length == 0
+                || (repoFile.listFiles().length == 1 && "tt.tnk"
+                        .equals(repoFile.listFiles()[0].getName()))) {
             conf.setAllowCreate(true);
             config.setAllowCreate(true);
         }
@@ -139,11 +145,25 @@ public final class BerkeleyFactory extends AbstractIOFactory {
      */
     @Override
     public boolean exists() throws TreetankIOException {
+        final DatabaseEntry valueEntry = new DatabaseEntry();
+        final DatabaseEntry keyEntry = new DatabaseEntry();
+        boolean returnVal = false;
         try {
-            return mDatabase.count() > 0;
+            final IReader reader = new BerkeleyReader(env, mDatabase);
+            BerkeleyFactory.KEY.objectToEntry(BerkeleyKey.getFirstRevKey(),
+                    keyEntry);
+
+            final OperationStatus status = mDatabase.get(null, keyEntry,
+                    valueEntry, LockMode.DEFAULT);
+            if (status == OperationStatus.SUCCESS) {
+                returnVal = true;
+            }
+            reader.close();
         } catch (final DatabaseException exc) {
             throw new TreetankIOException(exc);
         }
+        return returnVal;
+
     }
 
 }

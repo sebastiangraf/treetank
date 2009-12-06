@@ -21,6 +21,7 @@ package com.treetank.axis;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
@@ -41,6 +42,7 @@ public class AttributeAxisTest {
     }
 
     @Test
+    @Ignore
     public void testIterate() throws TreetankException {
         final ISession session = Session.beginSession(ITestConstants.PATH1);
         final IWriteTransaction wtx = session.beginWriteTransaction();

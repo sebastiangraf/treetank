@@ -34,7 +34,6 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TreetankException;
-import com.treetank.io.AbstractIOFactory;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
@@ -42,10 +41,11 @@ import com.treetank.session.SessionConfiguration;
 public class AxisStepBench {
 
     public final static int TASKS = 3;
-
-    public final static String XML_PATH = "src/test/resources/shakespeare.xml";
-
-    public final static String TNK_PATH = "target/tnk/shakespeare.tnk";
+    private final static String FILENAME = "shakespeare";
+    private final static File XML = new File("src" + File.separator + "test"
+            + File.separator + "resources" + File.separator + FILENAME + ".xml");
+    private final static File TNK = new File("target" + File.separator + "tnk"
+            + File.separator + FILENAME + ".tnk");
 
     public final static byte[] TNK_KEY = null; // "1234567812345678".getBytes();
 
@@ -56,10 +56,9 @@ public class AxisStepBench {
     @BeforeFirstRun
     public void benchShred() {
         try {
-            Session.removeSession(new File(TNK_PATH));
-            mSessionConfiguration = new SessionConfiguration(TNK_PATH, TNK_KEY,
-                    TNK_CHECKSUM, AbstractIOFactory.StorageType.Berkeley);
-            XMLShredder.shred(XML_PATH, mSessionConfiguration);
+            Session.removeSession(TNK);
+            mSessionConfiguration = new SessionConfiguration(TNK);
+            XMLShredder.shred(XML.getAbsolutePath(), mSessionConfiguration);
         } catch (Exception e) {
             e.printStackTrace();
         }

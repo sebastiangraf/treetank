@@ -1,11 +1,7 @@
-package com.treetank.io;
+package com.treetank.page;
 
-import com.treetank.page.AbstractPage;
-import com.treetank.page.IndirectPage;
-import com.treetank.page.NamePage;
-import com.treetank.page.NodePage;
-import com.treetank.page.RevisionRootPage;
-import com.treetank.page.UberPage;
+import com.treetank.io.ITTSink;
+import com.treetank.io.ITTSource;
 
 public final class PagePersistenter {
 
@@ -66,7 +62,7 @@ public final class PagePersistenter {
             throw new IllegalStateException(new StringBuilder("Page ").append(
                     page.getClass()).append(" cannot be serialized").toString());
         }
-
+        page.serialize(sink);
     }
 
 }

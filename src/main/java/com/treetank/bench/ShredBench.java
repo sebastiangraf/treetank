@@ -23,8 +23,9 @@ public final class ShredBench {
     // }
     //
     public void remove1000() {
-        Session.closeSession("test100");
+
         try {
+            Session.closeSession("test100");
             Session.removeSession(new File("test100"));
         } catch (final TreetankException e) {
             e.printStackTrace();
@@ -45,8 +46,8 @@ public final class ShredBench {
     @Bench(runs = 100, beforeEachRun = "remove1000")
     public void shred1000() {
         try {
-            XMLShredder.shred("test100.xml",
-                    new SessionConfiguration("test100"));
+            XMLShredder.shred("test100.xml", new SessionConfiguration(new File(
+                    "test100")));
         } catch (TreetankException e) {
             e.printStackTrace();
         }

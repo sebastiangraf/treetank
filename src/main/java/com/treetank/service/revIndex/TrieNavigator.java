@@ -3,7 +3,7 @@ package com.treetank.service.revIndex;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
-import com.treetank.utils.IConstants;
+import com.treetank.utils.ENodes;
 import com.treetank.utils.NamePageHash;
 
 final class TrieNavigator {
@@ -73,7 +73,7 @@ final class TrieNavigator {
     static long getDocRootInTrie(final IReadTransaction rtx, final String term)
             throws TreetankException {
         moveToTrieRoot(rtx);
-        long returnVal = IConstants.UNKNOWN;
+        long returnVal = ENodes.UNKOWN_KIND.getNodeIdentifier();
         StringBuilder toSearch = new StringBuilder();
         for (int i = 0; i < term.length(); i++) {
             if (rtx.moveToFirstChild()) {

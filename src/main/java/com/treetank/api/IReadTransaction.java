@@ -19,6 +19,7 @@
 package com.treetank.api;
 
 import com.treetank.exception.TreetankException;
+import com.treetank.exception.TreetankIOException;
 
 /**
  * <h1>IReadTransaction</h1>
@@ -98,42 +99,6 @@ import com.treetank.exception.TreetankException;
  */
 public interface IReadTransaction {
 
-    // --- Keys
-    // ------------------------------------------------------------------
-
-    /** Null key for node references. */
-    long NULL_NODE_KEY = -1L;
-
-    /** Null key for name references. */
-    int NULL_NAME_KEY = -1;
-
-    /** Key of document root node. */
-    long DOCUMENT_ROOT_KEY = 0L;
-
-    // --- Kinds
-    // ------------------------------------------------------------------
-
-    /** Node kind is element. */
-    int ELEMENT_KIND = 1;
-
-    /** Node kind is attribute. */
-    int ATTRIBUTE_KIND = 2;
-
-    /** Node kind is text. */
-    int TEXT_KIND = 3;
-
-    /** Node kind is namespace. */
-    int NAMESPACE_KIND = 4;
-
-    /** Node kind is processing instruction. */
-    int PROCESSING_KIND = 7;
-
-    /** Node kind is comment. */
-    int COMMENT_KIND = 8;
-
-    /** Node kind is document root. */
-    int ROOT_KIND = 9;
-
     /** String constants used by xpath. */
     String[] XPATHCONSTANTS = { "xs:anyType", "xs:anySimpleType",
             "xs:anyAtomicType", "xs:untypedAtomic", "xs:untyped", "xs:string",
@@ -162,21 +127,21 @@ public interface IReadTransaction {
      * 
      * @return Immutable revision number of this IReadTransaction.
      */
-    long getRevisionNumber();
+    long getRevisionNumber() throws TreetankIOException;
 
     /**
      * UNIX-style timestamp of the commit of the revision.
      * 
      * @return Timestamp of revision commit.
      */
-    long getRevisionTimestamp();
+    long getRevisionTimestamp() throws TreetankIOException;
 
     /**
      * How many nodes are stored in the revision of this IReadTransaction?
      * 
      * @return Immutable number of nodes of this IReadTransaction.
      */
-    long getNodeCount();
+    long getNodeCount() throws TreetankIOException;
 
     // --- Node Selectors
     // --------------------------------------------------------

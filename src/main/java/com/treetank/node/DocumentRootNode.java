@@ -18,8 +18,9 @@
 
 package com.treetank.node;
 
-import com.treetank.api.IReadTransaction;
 import com.treetank.io.ITTSource;
+import com.treetank.utils.ENodes;
+import com.treetank.utils.FixedProperties;
 
 /**
  * <h1>DocumentNode</h1>
@@ -41,8 +42,9 @@ public final class DocumentRootNode extends AbstractNode {
      * Constructor to create document node.
      */
     public DocumentRootNode() {
-        super(SIZE, IReadTransaction.DOCUMENT_ROOT_KEY);
-        mData[FIRST_CHILD_KEY] = IReadTransaction.NULL_NODE_KEY;
+        super(SIZE, (Long) FixedProperties.ROOT_NODE_KEY.getStandardProperty());
+        mData[FIRST_CHILD_KEY] = (Long) FixedProperties.NULL_NODE_KEY
+                .getStandardProperty();
         mData[CHILD_COUNT] = 0L;
     }
 
@@ -52,7 +54,7 @@ public final class DocumentRootNode extends AbstractNode {
      * @param node
      *            Node to clone.
      */
-    public DocumentRootNode(final AbstractNode node) {
+    protected DocumentRootNode(final AbstractNode node) {
         super(node);
     }
 
@@ -62,7 +64,7 @@ public final class DocumentRootNode extends AbstractNode {
      * @param in
      *            Byte input to read node from.
      */
-    public DocumentRootNode(final ITTSource in) {
+    protected DocumentRootNode(final ITTSource in) {
         super(SIZE, in);
     }
 
@@ -79,7 +81,8 @@ public final class DocumentRootNode extends AbstractNode {
      */
     @Override
     public boolean hasFirstChild() {
-        return (mData[FIRST_CHILD_KEY] != IReadTransaction.NULL_NODE_KEY);
+        return (mData[FIRST_CHILD_KEY] != (Long) FixedProperties.NULL_NODE_KEY
+                .getStandardProperty());
     }
 
     /**
@@ -134,8 +137,8 @@ public final class DocumentRootNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public int getKind() {
-        return IReadTransaction.ROOT_KIND;
+    public ENodes getKind() {
+        return ENodes.ROOT_KIND;
     }
 
 }

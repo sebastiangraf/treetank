@@ -23,7 +23,6 @@ import java.util.Map;
 
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
-import com.treetank.io.PagePersistenter;
 import com.treetank.utils.TypedValue;
 
 /**
@@ -44,8 +43,8 @@ public final class NamePage extends AbstractPage {
     /**
      * Create name page.
      */
-    public NamePage() {
-        super(0);
+    public NamePage(final long revision) {
+        super(0, revision);
         mNameMap = new HashMap<Integer, String>();
         // mRawNameMap = new HashMap<Integer, byte[]>();
     }
@@ -56,7 +55,7 @@ public final class NamePage extends AbstractPage {
      * @param in
      *            Input bytes to read from.
      */
-    public NamePage(final ITTSource in) {
+    protected NamePage(final ITTSource in) {
         super(0, in);
 
         int mapSize = in.readInt();
@@ -126,8 +125,7 @@ public final class NamePage extends AbstractPage {
      * {@inheritDoc}
      */
     @Override
-    public void serialize(final ITTSink out) {
-        out.writeInt(PagePersistenter.NAMEPAGE);
+    protected void serialize(final ITTSink out) {
         super.serialize(out);
 
         out.writeInt(mNameMap.size());
@@ -148,6 +146,10 @@ public final class NamePage extends AbstractPage {
     @Override
     public String toString() {
         return super.toString() + ": nameCount=" + mNameMap.size();
+    }
+
+    public Map<Integer, String> getNameMap() {
+        return mNameMap;
     }
 
 }

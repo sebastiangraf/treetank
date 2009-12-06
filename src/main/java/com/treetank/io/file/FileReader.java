@@ -6,9 +6,9 @@ import java.io.RandomAccessFile;
 
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.IReader;
-import com.treetank.io.PagePersistenter;
 import com.treetank.io.StorageProperties;
 import com.treetank.page.AbstractPage;
+import com.treetank.page.PagePersistenter;
 import com.treetank.page.PageReference;
 import com.treetank.page.UberPage;
 import com.treetank.session.SessionConfiguration;
@@ -44,14 +44,15 @@ public final class FileReader implements IReader {
      * @throws TreetankIOException
      *             if something bad happens
      */
-    public FileReader(final SessionConfiguration paramConf)
-            throws TreetankIOException {
+    public FileReader(final SessionConfiguration paramConf,
+            final File concreteStorage) throws TreetankIOException {
 
         try {
-            final File toWrite = new File(paramConf.getAbsolutePath()
-                    + File.separatorChar + "tt.tnk");
-            toWrite.createNewFile();
-            mFile = new RandomAccessFile(toWrite, IConstants.READ_ONLY);
+            if (!concreteStorage.exists()) {
+                concreteStorage.createNewFile();
+            }
+
+            mFile = new RandomAccessFile(concreteStorage, IConstants.READ_ONLY);
 
             mDecompressor = new CryptoJavaImpl();
             mBuffer = new ByteBufferSinkAndSource();
@@ -73,7 +74,7 @@ public final class FileReader implements IReader {
             throws TreetankIOException {
 
         if (!pageReference.isCommitted()) {
-            throw new IllegalArgumentException("Page reference is invalid.");
+            return null;
         }
 
         try {
@@ -149,11 +150,8 @@ public final class FileReader implements IReader {
             mFile.seek(0L);
             final long localVersionMajor = mFile.readLong();
             final long localVersionMinor = mFile.readLong();
-            final boolean localChecksummed = mFile.readBoolean();
-            final boolean localEncrypted = mFile.readBoolean();
 
-            return new StorageProperties(localVersionMajor, localVersionMinor,
-                    localChecksummed, localEncrypted);
+            return new StorageProperties(localVersionMajor, localVersionMinor);
         } catch (final IOException ioe) {
             throw new TreetankIOException(ioe);
         }

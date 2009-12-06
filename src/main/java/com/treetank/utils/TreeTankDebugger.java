@@ -56,7 +56,7 @@ public final class TreeTankDebugger {
             final IReadTransaction rtx = session.beginReadTransaction();
 
             // Print header.
-            System.out.println("TreeTank '" + session.getFileName() + "':");
+            System.out.println("TreeTank '" + session.getFile() + "':");
             System.out
                     .println("----------------------------------------------------------------------------------------------------------");
             System.out

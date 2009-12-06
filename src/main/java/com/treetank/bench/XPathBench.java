@@ -29,7 +29,7 @@ public class XPathBench {
             INDEXTNK.delete();
             if (!TNK.exists()) {
                 XMLShredder.shred(XML.getAbsolutePath(),
-                        new SessionConfiguration(TNK.getAbsolutePath()));
+                        new SessionConfiguration(TNK));
             }
 
             final ISession session = Session.beginSession(TNK);

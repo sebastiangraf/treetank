@@ -35,7 +35,8 @@ import com.treetank.io.IWriter;
 import com.treetank.io.StorageProperties;
 import com.treetank.page.PageReference;
 import com.treetank.page.UberPage;
-import com.treetank.utils.IConstants;
+import com.treetank.utils.FixedProperties;
+import com.treetank.utils.SettableProperties;
 
 /**
  * <h1>SessionState</h1>
@@ -98,16 +99,21 @@ public final class SessionState {
      *            Session configuration for the TreeTank.
      */
     protected SessionState(final SessionConfiguration sessionConfiguration)
-            throws TreetankIOException {
+            throws TreetankException {
 
         mSessionConfiguration = sessionConfiguration;
         mTransactionMap = new ConcurrentHashMap<Long, IReadTransaction>();
         mRandom = new Random();
 
         // Init session members.
-        mWriteSemaphore = new Semaphore(IConstants.MAX_WRITE_TRANSACTIONS);
-        mReadSemaphore = new Semaphore(IConstants.MAX_READ_TRANSACTIONS);
+        mWriteSemaphore = new Semaphore(
+                (Integer) SettableProperties.MAX_WRITE_TRANSACTIONS
+                        .getStandardProperty());
+        mReadSemaphore = new Semaphore(
+                (Integer) SettableProperties.MAX_READ_TRANSACTIONS
+                        .getStandardProperty());
         final PageReference uberPageReference = new PageReference();
+
         fac = AbstractIOFactory.getInstance(mSessionConfiguration);
         StorageProperties props;
         if (!fac.exists()) {
@@ -115,10 +121,12 @@ public final class SessionState {
             // node.
             mLastCommittedUberPage = new UberPage();
             uberPageReference.setPage(mLastCommittedUberPage);
-            props = new StorageProperties(IConstants.VERSION_MAJOR,
-                    IConstants.VERSION_MINOR, sessionConfiguration
-                            .isEncrypted(), sessionConfiguration
-                            .isChecksummed());
+
+            props = new StorageProperties(
+                    (Integer) FixedProperties.VERSION_MAJOR
+                            .getStandardProperty(),
+                    (Integer) FixedProperties.VERSION_MINOR
+                            .getStandardProperty());
         } else {
             final IReader reader = fac.getReader();
             final PageReference firstRef = reader.readFirstReference();
@@ -134,53 +142,37 @@ public final class SessionState {
 
     }
 
-    private void checkValidStorage(final StorageProperties props) {
+    private void checkValidStorage(final StorageProperties props)
+            throws TreetankUsageException {
 
         // Fail if an old TreeTank file is encountered.
-        if (mVersionMajor < IConstants.LAST_VERSION_MAJOR
-                || mVersionMinor < IConstants.LAST_VERSION_MINOR) {
-            throw new IllegalStateException("'"
-                    + mSessionConfiguration.getAbsolutePath()
-                    + "' was created with TreeTank release " + mVersionMajor
-                    + "." + mVersionMinor
-                    + " and is incompatible with release "
-                    + IConstants.VERSION_MAJOR + "." + IConstants.VERSION_MINOR
-                    + ".");
+        if (mVersionMajor < (Integer) FixedProperties.VERSION_MAJOR
+                .getStandardProperty()
+                || mVersionMinor < (Integer) FixedProperties.VERSION_MINOR
+                        .getStandardProperty()) {
+            throw new TreetankUsageException(new StringBuilder("'").append(
+                    mSessionConfiguration.getFile().getAbsolutePath()).append(
+                    "' was created with TreeTank release ").append(
+                    mVersionMajor).append(".").append(mVersionMinor).append(
+                    " and is incompatible with release ").append(
+                    FixedProperties.VERSION_MAJOR.getStandardProperty())
+                    .append(".").append(
+                            (Integer) FixedProperties.VERSION_MINOR
+                                    .getStandardProperty()).append(".")
+                    .toString());
         }
 
-        // Fail if the encryption info does not match.
-        if (props.isEncrypted() != (mSessionConfiguration.getEncryptionKey() != null)) {
-            throw new IllegalStateException("'"
-                    + mSessionConfiguration.getAbsolutePath()
-                    + "' encryption mode does not match "
-                    + "this session configuration.");
-        }
-
-        // Fail if the checksum info does not match.
-        if (props.isChecksummed() != mSessionConfiguration.isChecksummed()) {
-            throw new IllegalStateException("'"
-                    + mSessionConfiguration.getAbsolutePath()
-                    + "' checksum mode does not match "
-                    + "this session configuration.");
-        }
-
-        // Make sure the encryption key is properly set.
-        if ((mSessionConfiguration.getEncryptionKey() != null)
-                && (mSessionConfiguration.getEncryptionKey().length != IConstants.ENCRYPTION_KEY_LENGTH)) {
-            throw new IllegalArgumentException(
-                    "Encryption key must either be null (encryption disabled) or "
-                            + IConstants.ENCRYPTION_KEY_LENGTH
-                            + " bytes long (encryption enabled).");
-        }
     }
 
     protected int getReadTransactionCount() {
-        return (IConstants.MAX_READ_TRANSACTIONS - (int) mReadSemaphore
+        return ((Integer) SettableProperties.MAX_READ_TRANSACTIONS
+                .getStandardProperty() - (int) mReadSemaphore
                 .availablePermits());
     }
 
     protected int getWriteTransactionCount() {
-        return (IConstants.MAX_WRITE_TRANSACTIONS - (int) mWriteSemaphore
+        return ((Integer) SettableProperties.MAX_WRITE_TRANSACTIONS
+                .getStandardProperty() - (int) mWriteSemaphore
                 .availablePermits());
     }
 
@@ -286,6 +278,9 @@ public final class SessionState {
     protected void close() throws TreetankException {
         // Forcibly close all open transactions.
         for (final IReadTransaction rtx : mTransactionMap.values()) {
+            if (rtx instanceof IWriteTransaction) {
+                ((IWriteTransaction) rtx).abort();
+            }
             rtx.close();
         }
 

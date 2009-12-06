@@ -45,7 +45,7 @@ public class PIFilter extends AbstractFilter implements IFilter {
      */
     public final boolean filter() {
 
-        return getTransaction().getNode().getKind() == 7;
+        return getTransaction().getNode().getKind().getNodeIdentifier() == 7;
 
         // TODO: As soon as an PI-node is implemented, use the second version,
         // because this is much cleaner and more consistent to the other

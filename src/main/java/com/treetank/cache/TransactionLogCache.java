@@ -17,7 +17,6 @@
 package com.treetank.cache;
 
 import com.treetank.exception.TreetankIOException;
-import com.treetank.page.NodePage;
 import com.treetank.session.SessionConfiguration;
 
 /**
@@ -41,11 +40,11 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
      * @param paramConfig
      *            the config for having a storage-place
      */
-    public TransactionLogCache(final SessionConfiguration paramConfig)
-            throws TreetankIOException {
+    public TransactionLogCache(final SessionConfiguration paramConfig,
+            final long revision) throws TreetankIOException {
         super(paramConfig);
         final BerkeleyPersistenceCache secondCache = new BerkeleyPersistenceCache(
-                paramConfig);
+                paramConfig, revision);
         firstCache = new LRUCache(secondCache);
     }
 
@@ -61,7 +60,8 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
      * {@inheritDoc}
      */
     @Override
-    public NodePage getPersistent(final long key) throws TreetankIOException {
+    public NodePageContainer getPersistent(final long key)
+            throws TreetankIOException {
         return firstCache.get(key);
     }
 
@@ -69,7 +69,7 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
      * {@inheritDoc}
      */
     @Override
-    public void putPersistent(final long key, final NodePage page)
+    public void putPersistent(final long key, final NodePageContainer page)
             throws TreetankIOException {
         firstCache.put(key, page);
     }

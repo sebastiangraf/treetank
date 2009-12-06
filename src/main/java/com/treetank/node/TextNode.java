@@ -18,9 +18,10 @@
 
 package com.treetank.node;
 
-import com.treetank.api.IReadTransaction;
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
+import com.treetank.utils.ENodes;
+import com.treetank.utils.FixedProperties;
 
 /**
  * <h1>TextNode</h1>
@@ -80,7 +81,7 @@ public final class TextNode extends AbstractNode {
      * @param node
      *            Text node to clone.
      */
-    public TextNode(final AbstractNode node) {
+    protected TextNode(final AbstractNode node) {
         super(node);
         mValue = node.getRawValue();
     }
@@ -91,7 +92,7 @@ public final class TextNode extends AbstractNode {
      * @param in
      *            Input bytes to read node from.
      */
-    public TextNode(final ITTSource in) {
+    protected TextNode(final ITTSource in) {
         super(SIZE, in);
         mValue = new byte[(int) mData[VALUE_LENGTH]];
         for (int i = 0; i < mData[VALUE_LENGTH]; i++) {
@@ -112,7 +113,8 @@ public final class TextNode extends AbstractNode {
      */
     @Override
     public boolean hasParent() {
-        return ((mData[NODE_KEY] - mData[PARENT_KEY]) != IReadTransaction.NULL_NODE_KEY);
+        return ((mData[NODE_KEY] - mData[PARENT_KEY]) != (Long) FixedProperties.NULL_NODE_KEY
+                .getStandardProperty());
     }
 
     /**
@@ -136,7 +138,8 @@ public final class TextNode extends AbstractNode {
      */
     @Override
     public boolean hasLeftSibling() {
-        return (mData[LEFT_SIBLING_KEY] != IReadTransaction.NULL_NODE_KEY);
+        return (mData[LEFT_SIBLING_KEY] != (Long) FixedProperties.NULL_NODE_KEY
+                .getStandardProperty());
     }
 
     /**
@@ -160,7 +163,8 @@ public final class TextNode extends AbstractNode {
      */
     @Override
     public boolean hasRightSibling() {
-        return (mData[RIGHT_SIBLING_KEY] != IReadTransaction.NULL_NODE_KEY);
+        return (mData[RIGHT_SIBLING_KEY] != (Long) FixedProperties.NULL_NODE_KEY
+                .getStandardProperty());
     }
 
     /**
@@ -183,8 +187,8 @@ public final class TextNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public int getKind() {
-        return IReadTransaction.TEXT_KIND;
+    public ENodes getKind() {
+        return ENodes.TEXT_KIND;
     }
 
     /**

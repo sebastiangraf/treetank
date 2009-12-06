@@ -38,10 +38,10 @@ public interface ICache {
      * Getting a page related to a given nodepagekey.
      * 
      * @param key
-     *            the key for the requested {@link NodePage}
-     * @return {@link NodePage} instance related to this key
+     *            the key for the requested {@link NodePageContainer}
+     * @return {@link NodePageContainer} instance related to this key
      */
-    NodePage get(final long key);
+    NodePageContainer get(final long key);
 
     /**
      * Putting an {@link NodePage} into the cache with a corresponding
@@ -52,6 +52,6 @@ public interface ICache {
      * @param page
      *            should be putted in the cache as well.
      */
-    void put(final long key, final NodePage page);
+    void put(final long key, final NodePageContainer page);
 
 }

@@ -16,12 +16,6 @@ public final class StorageProperties {
     /** Member for versionMinor */
     private transient final long versionMinor;
 
-    /** Member for checksummed */
-    private transient final boolean checksummed;
-
-    /** Member for encrypted */
-    private transient final boolean encrypted;
-
     /**
      * Constructor
      * 
@@ -35,12 +29,9 @@ public final class StorageProperties {
      *            parameter for the parameter
      */
     public StorageProperties(final long paramVersionMajor,
-            final long paramVersionMinor, final boolean paramChecksummed,
-            final boolean paramEncrypted) {
+            final long paramVersionMinor) {
         this.versionMajor = paramVersionMajor;
         this.versionMinor = paramVersionMinor;
-        this.checksummed = paramChecksummed;
-        this.encrypted = paramEncrypted;
 
     }
 
@@ -59,25 +50,11 @@ public final class StorageProperties {
     }
 
     /**
-     * @return the checksummed
-     */
-    public boolean isChecksummed() {
-        return checksummed;
-    }
-
-    /**
-     * @return the encrypted
-     */
-    public boolean isEncrypted() {
-        return encrypted;
-    }
-
-    /**
      * To String method for StorageProperties.
      */
     public String toString() {
         return new StringBuilder().append(versionMajor).append(versionMinor)
-                .append(checksummed).append(encrypted).toString();
+                .toString();
     }
 
     /**
@@ -87,8 +64,6 @@ public final class StorageProperties {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (checksummed ? 1231 : 1237);
-        result = prime * result + (encrypted ? 1231 : 1237);
         result = prime * result + (int) (versionMajor ^ (versionMajor >>> 32));
         result = prime * result + (int) (versionMinor ^ (versionMinor >>> 32));
         return result;
@@ -107,12 +82,6 @@ public final class StorageProperties {
             returnVal = false;
         }
         final StorageProperties other = (StorageProperties) obj;
-        if (checksummed != other.checksummed) {
-            returnVal = false;
-        }
-        if (encrypted != other.encrypted) {
-            returnVal = false;
-        }
         if (versionMajor != other.versionMajor) {
             returnVal = false;
         }

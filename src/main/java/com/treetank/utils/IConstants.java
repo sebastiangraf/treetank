@@ -18,8 +18,6 @@
 
 package com.treetank.utils;
 
-import com.treetank.io.AbstractIOFactory.StorageType;
-
 /**
  * <h1>IConstants</h1>
  * 
@@ -29,21 +27,6 @@ import com.treetank.io.AbstractIOFactory.StorageType;
  * </p>
  */
 public interface IConstants {
-
-    // --- Version
-    // ----------------------------------------------------------------
-
-    /** Major version number of this release. */
-    public static final long VERSION_MAJOR = 5;
-
-    /** Minor version number of this release. */
-    public static final long VERSION_MINOR = 0;
-
-    /** Last major version to which this version is binary compatible. */
-    public static final long LAST_VERSION_MAJOR = 5;
-
-    /** Last minor version to which this version is binary compatible. */
-    public static final long LAST_VERSION_MINOR = 0;
 
     // --- Varia
     // ------------------------------------------------------------------
@@ -56,9 +39,6 @@ public interface IConstants {
 
     /** Default internal encoding. */
     public static final String DEFAULT_ENCODING = "UTF-8";
-
-    /** Default encryption algorithm. */
-    public static final String DEFAULT_ENCRYPTION_ALGORITHM = "AES";
 
     /** Length of encryption key. */
     public static final int ENCRYPTION_KEY_LENGTH = 16;
@@ -77,9 +57,6 @@ public interface IConstants {
 
     /** Size of checksum. */
     public static final int CHECKSUM_SIZE = 12;
-
-    /** Default storage */
-    public static final StorageType STORAGE_TYPE = StorageType.Berkeley;
 
     // --- Indirect Page
     // ----------------------------------------------------------
@@ -113,24 +90,5 @@ public interface IConstants {
 
     /** 2^NDP_NODE_COUNT_EXPONENT = NDP_NODE_COUNT. */
     public static final int NDP_NODE_COUNT_EXPONENT = 7;
-
-    // --- Node Layer
-    // -------------------------------------------------------------
-
-    /** Number of concurrent exclusive write transactions. */
-    public static final int MAX_WRITE_TRANSACTIONS = 1;
-
-    /** Number of concurrent shared read transactions. */
-    public static final int MAX_READ_TRANSACTIONS = 128;
-
-    /** Root node page key constant. */
-    public static final long ROOT_PAGE_KEY = 0L;
-
-    /** Undefined node. */
-    public static final int UNKNOWN = 0;
-
-    /** Commit threshold. */
-    public static final int COMMIT_THRESHOLD = 262144;
-
 
 }

@@ -19,8 +19,8 @@ package com.treetank.cache;
 import java.io.File;
 
 import com.treetank.exception.TreetankIOException;
-import com.treetank.page.NodePage;
 import com.treetank.session.SessionConfiguration;
+import com.treetank.utils.StorageConstants;
 
 /**
  * Abstract class for holding all persistence caches. Each instance of this
@@ -40,7 +40,7 @@ public abstract class AbstractPersistenceCache implements ICache {
     /**
      * Counter to give every instance a different place
      */
-    private static int counter = 0; // NOPMD by Sebastian Graf on 05.10.09 11:16
+    private static int counter = 0;
 
     /**
      * Constructor with the place to store the data
@@ -50,16 +50,17 @@ public abstract class AbstractPersistenceCache implements ICache {
      *            the data.
      */
     protected AbstractPersistenceCache(final SessionConfiguration paramConfig) {
-        place = new File(paramConfig.getAbsolutePath() + File.separator
-                + "transactionLog" + File.separator + counter);
-        place.mkdirs();
+        place = new File(paramConfig.getFile(), new StringBuilder(
+                StorageConstants.TRANSACTIONLOG.getFile().getName()).append(
+                File.separator).append(counter).toString());
+        place.mkdir();
         counter++;
     }
 
     /**
      * {@inheritDoc}
      */
-    public final void put(final long key, final NodePage page) {
+    public final void put(final long key, final NodePageContainer page) {
         try {
             putPersistent(key, page);
         } catch (final TreetankIOException exc) {
@@ -85,7 +86,7 @@ public abstract class AbstractPersistenceCache implements ICache {
     /**
      * {@inheritDoc}
      * */
-    public final NodePage get(final long key) {
+    public final NodePageContainer get(final long key) {
         try {
             return getPersistent(key);
         } catch (final TreetankIOException exc) {
@@ -111,8 +112,8 @@ public abstract class AbstractPersistenceCache implements ICache {
      * @throws TreetankIOException
      *             if something odd happens
      */
-    public abstract void putPersistent(final long key, final NodePage page)
-            throws TreetankIOException;
+    public abstract void putPersistent(final long key,
+            final NodePageContainer page) throws TreetankIOException;
 
     /**
      * Getting a NodePage from the persistent cache
@@ -123,7 +124,7 @@ public abstract class AbstractPersistenceCache implements ICache {
      * @throws TreetankIOException
      *             if something odd happens.
      */
-    public abstract NodePage getPersistent(final long key)
+    public abstract NodePageContainer getPersistent(final long key)
             throws TreetankIOException;
 
 }

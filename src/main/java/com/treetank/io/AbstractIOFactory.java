@@ -7,6 +7,7 @@ import com.treetank.exception.TreetankIOException;
 import com.treetank.io.berkeley.BerkeleyFactory;
 import com.treetank.io.file.FileFactory;
 import com.treetank.session.SessionConfiguration;
+import com.treetank.utils.SettableProperties;
 
 /**
  * Abstract Factory to build up a concrete storage for the data. The Abstract
@@ -87,8 +88,9 @@ public abstract class AbstractIOFactory {
         if (FACTORIES.containsKey(conf)) {
             fac = FACTORIES.get(conf);
         } else {
-
-            switch (conf.getType()) {
+            final AbstractIOFactory.StorageType storageType = (AbstractIOFactory.StorageType) conf
+                    .getProps().get(SettableProperties.STORAGE_TYPE.getName());
+            switch (storageType) {
             case File:
                 fac = new FileFactory(conf);
                 break;
@@ -97,8 +99,8 @@ public abstract class AbstractIOFactory {
                 break;
             default:
                 throw new IllegalArgumentException(new StringBuilder("Type ")
-                        .append(conf.getType().toString())
-                        .append(" not valid!").toString());
+                        .append(storageType.toString()).append(" not valid!")
+                        .toString());
             }
             FACTORIES.put(conf, fac);
         }

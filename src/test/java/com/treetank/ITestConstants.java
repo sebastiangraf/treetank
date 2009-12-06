@@ -4,27 +4,35 @@ import java.io.File;
 
 public interface ITestConstants {
 
-    public static final String PATH1 = "/tmp" + File.separator + "tnk"
-            + File.separator + "path1";
+    public static final File PATH1 = new File(new StringBuilder(File.separator)
+            .append("tmp").append(File.separator).append("tnk").append(
+                    File.separator).append("path1").toString());
 
-    public static final String PATH2 = "/tmp" + File.separator + "tnk"
-            + File.separator + "path2";
+    public static final File PATH2 = new File(new StringBuilder(File.separator)
+            .append("tmp").append(File.separator).append("tnk").append(
+                    File.separator).append("path2").toString());
 
-    public static final String NON_EXISTING_PATH = "/tmp" + File.separator
-            + "tnk" + File.separator + "NonExistingSessionTest";
+    public static final File NON_EXISTING_PATH = new File(new StringBuilder(
+            File.separator).append("tmp").append(File.separator).append("tnk")
+            .append(File.separator).append("NonExistingSessionTest").toString());
 
-    public static final String TEST_INSERT_CHILD_PATH = "/tmp" + File.separator
-            + "tnk" + File.separator + "InsertChildSessionTest";
+    public static final File TEST_INSERT_CHILD_PATH = new File(
+            new StringBuilder(File.separator).append("tmp").append(
+                    File.separator).append("tnk").append(File.separator)
+                    .append("InsertChildSessionTest").toString());
 
-    public static final String TEST_REVISION_PATH = "/tmp" + File.separator
-            + "tnk" + File.separator + "RevisionSessionTest";
+    public static final File TEST_REVISION_PATH = new File(new StringBuilder(
+            File.separator).append("tmp").append(File.separator).append("tnk")
+            .append(File.separator).append("RevisionSessionTest").toString());
 
-    public static final String TEST_SHREDDED_REVISION_PATH = "/tmp"
-            + File.separator + "tnk" + File.separator
-            + "ShreddedRevisionSessionTest";
+    public static final File TEST_SHREDDED_REVISION_PATH = new File(
+            new StringBuilder(File.separator).append("tmp").append(
+                    File.separator).append("tnk").append(File.separator)
+                    .append("ShreddedRevisionSessionTest").toString());
 
-    public static final String TEST_EXISTING_PATH = "/tmp" + File.separator
-            + "tnk" + File.separator + "ExistingSessionTest";
+    public static final File TEST_EXISTING_PATH = new File(new StringBuilder(
+            File.separator).append("tmp").append(File.separator).append("tnk")
+            .append(File.separator).append("ExistingSessionTest").toString());
 
     public static final String REST_SERVICE1 = "test1";
     public static final String REST_SERVICE2 = "test2";

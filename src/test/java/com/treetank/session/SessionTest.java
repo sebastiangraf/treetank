@@ -38,6 +38,7 @@ import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.utils.DocumentCreater;
+import com.treetank.utils.ENodes;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.TypedValue;
 
@@ -61,7 +62,7 @@ public class SessionTest {
         session.close();
 
         try {
-            session.getAbsolutePath();
+            session.getFile();
             TestCase.fail();
         } catch (Exception e) {
             // Must fail.
@@ -81,7 +82,7 @@ public class SessionTest {
         session.close();
 
         try {
-            session.getAbsolutePath();
+            session.getFile();
             TestCase.fail();
         } catch (Exception e) {
             // Must fail.
@@ -152,10 +153,10 @@ public class SessionTest {
         DocumentCreater.create(wtx);
 
         TestCase.assertNotNull(wtx.moveToDocumentRoot());
-        assertEquals(IReadTransaction.ROOT_KIND, wtx.getNode().getKind());
+        assertEquals(ENodes.ROOT_KIND, wtx.getNode().getKind());
 
         TestCase.assertNotNull(wtx.moveToFirstChild());
-        assertEquals(IReadTransaction.ELEMENT_KIND, wtx.getNode().getKind());
+        assertEquals(ENodes.ELEMENT_KIND, wtx.getNode().getKind());
         assertEquals("p:a", wtx.nameForKey(wtx.getNode().getNameKey()));
 
         wtx.abort();
@@ -305,23 +306,18 @@ public class SessionTest {
         session.close();
     }
 
-    @Test(expected = TreetankException.class)
+    @Test
     public void testAutoCommit() throws TreetankException {
 
         final ISession session = Session
                 .beginSession(ITestConstants.TEST_EXISTING_PATH);
 
         IWriteTransaction wtx = null;
-        try {
-            wtx = session.beginWriteTransaction();
+        wtx = session.beginWriteTransaction();
 
-            DocumentCreater.create(wtx);
+        DocumentCreater.create(wtx);
 
-            session.close();
-        } finally {
-            wtx.abort();
-            session.close();
-        }
+        session.close();
     }
 
     @Test

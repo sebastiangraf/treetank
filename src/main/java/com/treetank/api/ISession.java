@@ -18,6 +18,8 @@
 
 package com.treetank.api;
 
+import java.io.File;
+
 import com.treetank.exception.TreetankException;
 
 /**
@@ -59,28 +61,7 @@ public interface ISession {
      * 
      * @return File name of TreeTank file.
      */
-    String getFileName();
-
-    /**
-     * Get absolute path to TreeTank file.
-     * 
-     * @return Absolute path to TreeTank file.
-     */
-    String getAbsolutePath();
-
-    /**
-     * Tells whether the session is bound to an encrypted TreeTank file.
-     * 
-     * @return True if the TreeTank file is encrypted. False else.
-     */
-    boolean isEncrypted();
-
-    /**
-     * Tells whether the session is bound to a checksummed TreeTank file.
-     * 
-     * @return True if the TreeTank file is checksummed. False else.
-     */
-    boolean isChecksummed();
+    File getFile();
 
     /**
      * Get the major revision of the TreeTank version.

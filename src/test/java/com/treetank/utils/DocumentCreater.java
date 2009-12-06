@@ -18,6 +18,8 @@
 
 package com.treetank.utils;
 
+import static org.junit.Assert.assertTrue;
+
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 
@@ -93,13 +95,13 @@ public final class DocumentCreater {
      */
     public static void create(final IWriteTransaction wtx)
             throws TreetankException {
-        wtx.moveToDocumentRoot();
+        assertTrue(wtx.moveToDocumentRoot());
 
         wtx.insertElementAsFirstChild("p:a", "ns");
         wtx.insertAttribute("i", "", "j");
-        wtx.moveToParent();
+        assertTrue(wtx.moveToParent());
         wtx.insertNamespace("ns", "p");
-        wtx.moveToParent();
+        assertTrue(wtx.moveToParent());
 
         wtx.insertTextAsFirstChild("oops1");
 
@@ -107,17 +109,17 @@ public final class DocumentCreater {
 
         wtx.insertTextAsFirstChild("foo");
         wtx.insertElementAsRightSibling("c", "");
-        wtx.moveToParent();
+        assertTrue(wtx.moveToParent());
 
         wtx.insertTextAsRightSibling("oops2");
 
         wtx.insertElementAsRightSibling("b", "");
         wtx.insertAttribute("p:x", "ns", "y");
-        wtx.moveToParent();
+        assertTrue(wtx.moveToParent());
 
         wtx.insertElementAsFirstChild("c", "");
         wtx.insertTextAsRightSibling("bar");
-        wtx.moveToParent();
+        assertTrue(wtx.moveToParent());
 
         wtx.insertTextAsRightSibling("oops3");
 

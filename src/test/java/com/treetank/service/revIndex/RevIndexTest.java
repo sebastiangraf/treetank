@@ -3,7 +3,6 @@ package com.treetank.service.revIndex;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.util.Stack;
 
 import org.junit.After;
@@ -27,7 +26,7 @@ public class RevIndexTest {
     @Before
     public void setUp() throws Exception {
         TestHelper.deleteEverything();
-        index = new RevIndex(new File(ITestConstants.PATH1), -1);
+        index = new RevIndex(ITestConstants.PATH1, -1);
     }
 
     @Test

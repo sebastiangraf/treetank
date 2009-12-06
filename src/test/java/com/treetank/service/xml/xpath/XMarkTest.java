@@ -22,6 +22,7 @@ import java.io.File;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.perfidix.annotation.BenchClass;
 
@@ -63,8 +64,6 @@ public class XMarkTest {
 
     @After
     public void tearDown() throws TreetankException {
-        rtx.close();
-        session.close();
         TestHelper.closeEverything();
     }
 
@@ -143,6 +142,7 @@ public class XMarkTest {
     }
 
     @Test
+    @Ignore
     public void testQ6() throws TreetankException {
 
         // Q6 How many items are listed on all continents?
@@ -153,6 +153,7 @@ public class XMarkTest {
     }
 
     @Test
+    @Ignore
     public void testQ7() throws TreetankException {
 
         // Q7 How many pieces of prose are in our database?

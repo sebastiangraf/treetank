@@ -18,9 +18,9 @@
 
 package com.treetank.node;
 
-import com.treetank.api.IReadTransaction;
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
+import com.treetank.utils.ENodes;
 
 /**
  * <h1>AttributeNode</h1>
@@ -80,7 +80,7 @@ public final class AttributeNode extends AbstractNode {
      * @param attribute
      *            Attribute to clone.
      */
-    public AttributeNode(final AbstractNode attribute) {
+    protected AttributeNode(final AbstractNode attribute) {
         super(attribute);
         mValue = attribute.getRawValue();
     }
@@ -92,7 +92,7 @@ public final class AttributeNode extends AbstractNode {
      * @param in
      *            buffer for the data
      */
-    public AttributeNode(final ITTSource in) {
+    protected AttributeNode(final ITTSource in) {
         super(SIZE, in);
         mValue = new byte[(int) mData[VALUE_LENGTH]];
         for (int i = 0; i < mValue.length; i++) {
@@ -202,8 +202,8 @@ public final class AttributeNode extends AbstractNode {
      * {@inheritDoc}
      */
     @Override
-    public int getKind() {
-        return IReadTransaction.ATTRIBUTE_KIND;
+    public ENodes getKind() {
+        return ENodes.ATTRIBUTE_KIND;
     }
 
     /**

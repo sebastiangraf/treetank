@@ -18,18 +18,13 @@
 
 package com.treetank.page;
 
-import com.sleepycat.persist.model.Entity;
-import com.sleepycat.persist.model.PrimaryKey;
-import com.treetank.api.IReadTransaction;
+import java.util.Arrays;
+
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
-import com.treetank.io.PagePersistenter;
 import com.treetank.node.AbstractNode;
-import com.treetank.node.AttributeNode;
-import com.treetank.node.DocumentRootNode;
-import com.treetank.node.ElementNode;
-import com.treetank.node.NamespaceNode;
-import com.treetank.node.TextNode;
+import com.treetank.node.NodePersistenter;
+import com.treetank.utils.ENodes;
 import com.treetank.utils.IConstants;
 
 /**
@@ -39,11 +34,9 @@ import com.treetank.utils.IConstants;
  * A node page stores a set of nodes.
  * </p>
  */
-@Entity
 public class NodePage extends AbstractPage {
 
     /** Key of node page. This is the base key of all contained nodes. */
-    @PrimaryKey
     private final long mNodePageKey;
 
     /** Array of nodes. This can have null nodes that were removed. */
@@ -55,8 +48,8 @@ public class NodePage extends AbstractPage {
      * @param nodePageKey
      *            Base key assigned to this node page.
      */
-    public NodePage(final long nodePageKey) {
-        super(0);
+    public NodePage(final long nodePageKey, final long revision) {
+        super(0, revision);
         mNodePageKey = nodePageKey;
         mNodes = new AbstractNode[IConstants.NDP_NODE_COUNT];
     }
@@ -67,7 +60,7 @@ public class NodePage extends AbstractPage {
      * @param in
      *            Input bytes to read page from.
      */
-    public NodePage(final ITTSource in) {
+    protected NodePage(final ITTSource in) {
         super(0, in);
         mNodePageKey = in.readLong();
         mNodes = new AbstractNode[IConstants.NDP_NODE_COUNT];
@@ -79,30 +72,8 @@ public class NodePage extends AbstractPage {
 
         for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
             final int kind = values[offset];
-            switch (kind) {
-            case IConstants.UNKNOWN:
-                // Was null node, do nothing here.
-                break;
-            case IReadTransaction.ROOT_KIND:
-                getNodes()[offset] = new DocumentRootNode(in);
-                break;
-            case IReadTransaction.ELEMENT_KIND:
-                getNodes()[offset] = new ElementNode(in);
-                break;
-            case IReadTransaction.ATTRIBUTE_KIND:
-                getNodes()[offset] = new AttributeNode(in);
-                break;
-            case IReadTransaction.NAMESPACE_KIND:
-                getNodes()[offset] = new NamespaceNode(in);
-                break;
-            case IReadTransaction.TEXT_KIND:
-                getNodes()[offset] = new TextNode(in);
-                break;
-            default:
-                throw new IllegalStateException(
-                        "Unsupported node kind encountered during read: "
-                                + kind);
-            }
+            getNodes()[offset] = NodePersistenter.createNode(in, kind);
+
         }
     }
 
@@ -112,53 +83,17 @@ public class NodePage extends AbstractPage {
      * @param committedNodePage
      *            Node page to clone.
      */
-    public NodePage(final NodePage committedNodePage) {
+    protected NodePage(final NodePage committedNodePage) {
         super(0, committedNodePage);
         mNodePageKey = committedNodePage.mNodePageKey;
         mNodes = new AbstractNode[IConstants.NDP_NODE_COUNT];
-
         // Deep-copy all nodes.
         for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
-            if (committedNodePage.getNodes()[offset] != null) {
-                final int kind = committedNodePage.getNodes()[offset].getKind();
-                switch (kind) {
-                case IConstants.UNKNOWN:
-                    // Was null node, do nothing here.
-                    break;
-                case IReadTransaction.ROOT_KIND:
-                    getNodes()[offset] = new DocumentRootNode(committedNodePage
-                            .getNodes()[offset]);
-                    break;
-                case IReadTransaction.ELEMENT_KIND:
-                    getNodes()[offset] = new ElementNode(committedNodePage
-                            .getNodes()[offset]);
-                    break;
-                case IReadTransaction.ATTRIBUTE_KIND:
-                    getNodes()[offset] = new AttributeNode(committedNodePage
-                            .getNodes()[offset]);
-                    break;
-                case IReadTransaction.NAMESPACE_KIND:
-                    getNodes()[offset] = new NamespaceNode(committedNodePage
-                            .getNodes()[offset]);
-                    break;
-                case IReadTransaction.TEXT_KIND:
-                    getNodes()[offset] = new TextNode(committedNodePage
-                            .getNodes()[offset]);
-                    break;
-                default:
-                    throw new IllegalStateException(
-                            "Unsupported node kind encountered during clone: "
-                                    + kind);
-                }
+            final AbstractNode node = committedNodePage.getNodes()[offset];
+            if (node != null) {
+                getNodes()[offset] = NodePersistenter.createNode(node);
             }
         }
-    }
-
-    public NodePage(final PageReference realPageReference,
-            final long nodePageKey) {
-        super(0, realPageReference.getPage());
-        mNodePageKey = nodePageKey;
-        mNodes = new AbstractNode[IConstants.NDP_NODE_COUNT];
     }
 
     /**
@@ -197,15 +132,14 @@ public class NodePage extends AbstractPage {
      * {@inheritDoc}
      */
     @Override
-    public void serialize(final ITTSink out) {
-        out.writeInt(PagePersistenter.NODEPAGE);
+    protected void serialize(final ITTSink out) {
         super.serialize(out);
         out.writeLong(mNodePageKey);
         for (int i = 0; i < getNodes().length; i++) {
             if (getNodes()[i] != null) {
-                out.writeInt(getNodes()[i].getKind());
+                out.writeInt(getNodes()[i].getKind().getNodeIdentifier());
             } else {
-                out.writeInt(IConstants.UNKNOWN);
+                out.writeInt(ENodes.UNKOWN_KIND.getNodeIdentifier());
             }
         }
 
@@ -221,21 +155,50 @@ public class NodePage extends AbstractPage {
      */
     @Override
     public final String toString() {
-        String returnString = super.toString() + ": nodePageKey="
-                + mNodePageKey + " nodes: \n";
+        final StringBuilder returnString = new StringBuilder();
+        returnString.append(": nodePageKey=");
+        returnString.append(mNodePageKey);
+        returnString.append(" nodes: \n");
         for (final AbstractNode node : getNodes()) {
             if (node != null) {
-                returnString = returnString + node.getNodeKey() + ",";
+                returnString.append(node.getNodeKey());
+                returnString.append(",");
             }
         }
-
-        return returnString;
+        returnString.append("\n");
+        return returnString.toString();
     }
 
     /**
      * @return the mNodes
      */
-    protected AbstractNode[] getNodes() {
+    public AbstractNode[] getNodes() {
         return mNodes;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int) (mNodePageKey ^ (mNodePageKey >>> 32));
+        result = prime * result + Arrays.hashCode(mNodes);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        NodePage other = (NodePage) obj;
+        if (mNodePageKey != other.mNodePageKey)
+            return false;
+        if (!Arrays.equals(mNodes, other.mNodes))
+            return false;
+        return true;
+    }
+
 }

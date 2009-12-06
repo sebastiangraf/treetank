@@ -30,7 +30,6 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
@@ -38,6 +37,7 @@ import com.treetank.exception.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
 import com.treetank.utils.FastStack;
+import com.treetank.utils.FixedProperties;
 import com.treetank.utils.TypedValue;
 
 public final class XMLShredder {
@@ -93,7 +93,8 @@ public final class XMLShredder {
             wtx.moveTo(id);
 
             long key;
-            leftSiblingKeyStack.push(IReadTransaction.NULL_NODE_KEY);
+            leftSiblingKeyStack.push((Long) FixedProperties.NULL_NODE_KEY
+                    .getStandardProperty());
             // leftSiblingKeyStack.push(wtx.getLeftSiblingKey());
 
             // Iterate over all nodes.
@@ -107,7 +108,8 @@ public final class XMLShredder {
                             .getPrefix().length() == 0) ? parser.getLocalName()
                             : parser.getPrefix() + ":" + parser.getLocalName());
 
-                    if (leftSiblingKeyStack.peek() == IReadTransaction.NULL_NODE_KEY) {
+                    if (leftSiblingKeyStack.peek() == (Long) FixedProperties.NULL_NODE_KEY
+                            .getStandardProperty()) {
                         key = wtx.insertElementAsFirstChild(name, parser
                                 .getNamespaceURI());
                     } else {
@@ -116,7 +118,9 @@ public final class XMLShredder {
                     }
                     leftSiblingKeyStack.pop();
                     leftSiblingKeyStack.push(key);
-                    leftSiblingKeyStack.push(IReadTransaction.NULL_NODE_KEY);
+                    leftSiblingKeyStack
+                            .push((Long) FixedProperties.NULL_NODE_KEY
+                                    .getStandardProperty());
 
                     // Parse namespaces.
                     for (int i = 0, l = parser.getNamespaceCount(); i < l; i++) {
@@ -153,7 +157,8 @@ public final class XMLShredder {
                             .wrap(TypedValue.getBytes(text));
                     if (textByteBuffer.array().length > 0) {
 
-                        if (leftSiblingKeyStack.peek() == IReadTransaction.NULL_NODE_KEY) {
+                        if (leftSiblingKeyStack.peek() == (Long) FixedProperties.NULL_NODE_KEY
+                                .getStandardProperty()) {
                             key = wtx.insertTextAsFirstChild(wtx
                                     .keyForName("xs:untyped"), textByteBuffer
                                     .array());
@@ -183,19 +188,17 @@ public final class XMLShredder {
 
     public static void main(String[] args) throws Exception {
         if (args.length < 2 || args.length > 3) {
-            System.out.println("Usage: XMLShredder input.xml output.tnk [key]");
+            System.out.println("Usage: XMLShredder input.xml output.tnk");
             System.exit(1);
         }
 
         System.out.print("Shredding '" + args[0] + "' to '" + args[1]
                 + "' ... ");
         long time = System.currentTimeMillis();
-        new File(args[1]).delete();
-        XMLShredder.shred(args[0], args.length == 2 ? new SessionConfiguration(
-                args[1])
-                : new SessionConfiguration(args[1], args[2].getBytes()));
+        final File target = new File(args[1]);
+        target.delete();
+        XMLShredder.shred(args[0], new SessionConfiguration(target));
         System.out.println(" done [" + (System.currentTimeMillis() - time)
                 + "ms].");
     }
-
 }

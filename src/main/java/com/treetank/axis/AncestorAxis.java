@@ -20,6 +20,7 @@ package com.treetank.axis;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.utils.FixedProperties;
 
 /**
  * <h1>AncestorAxis</h1>
@@ -78,7 +79,8 @@ public class AncestorAxis extends AbstractAxis implements IAxis {
 
         if (!getTransaction().getNode().isDocumentRoot()
                 && getTransaction().getNode().hasParent()
-                && getTransaction().getNode().getParentKey() != IReadTransaction.DOCUMENT_ROOT_KEY) {
+                && getTransaction().getNode().getParentKey() != (Long) FixedProperties.ROOT_NODE_KEY
+                        .getStandardProperty()) {
             getTransaction().moveToParent();
             return true;
         }

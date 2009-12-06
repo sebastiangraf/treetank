@@ -20,7 +20,6 @@ package com.treetank.page;
 
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
-import com.treetank.io.PagePersistenter;
 import com.treetank.utils.IConstants;
 
 /**
@@ -35,8 +34,8 @@ public final class IndirectPage extends AbstractPage {
     /**
      * Create indirect page.
      */
-    public IndirectPage() {
-        super(IConstants.INP_REFERENCE_COUNT);
+    public IndirectPage(final long revision) {
+        super(IConstants.INP_REFERENCE_COUNT, revision);
     }
 
     /**
@@ -45,7 +44,7 @@ public final class IndirectPage extends AbstractPage {
      * @param in
      *            Input bytes.
      */
-    public IndirectPage(final ITTSource in) {
+    protected IndirectPage(final ITTSource in) {
         super(IConstants.INP_REFERENCE_COUNT, in);
     }
 
@@ -60,8 +59,7 @@ public final class IndirectPage extends AbstractPage {
     }
 
     @Override
-    public void serialize(final ITTSink out) {
-        out.writeInt(PagePersistenter.INDIRCTPAGE);
+    protected void serialize(final ITTSink out) {
         super.serialize(out);
     }
 

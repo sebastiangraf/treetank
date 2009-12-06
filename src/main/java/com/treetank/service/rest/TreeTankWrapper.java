@@ -18,6 +18,7 @@
 
 package com.treetank.service.rest;
 
+import java.io.File;
 import java.io.OutputStream;
 
 import com.treetank.api.IAxis;
@@ -25,7 +26,6 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
-import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankRestException;
 import com.treetank.service.xml.XMLSerializer;
 import com.treetank.service.xml.XMLShredder;
@@ -58,14 +58,14 @@ public final class TreeTankWrapper {
     /**
      * Constructor, just binding the treetank to this service.
      * 
-     * @param path
+     * @param file
      *            to be bound to.
      */
-    public TreeTankWrapper(final String path) throws TreetankRestException {
+    public TreeTankWrapper(final File file) throws TreetankRestException {
 
         try {
-            session = Session.beginSession(path);
-        } catch (final TreetankIOException exc) {
+            session = Session.beginSession(file);
+        } catch (final TreetankException exc) {
             throw new TreetankRestException(exc);
         }
     }

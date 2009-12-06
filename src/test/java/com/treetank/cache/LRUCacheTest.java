@@ -6,8 +6,8 @@ import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.treetank.page.AbstractPage;
 import com.treetank.page.NodePage;
+import com.treetank.utils.SettableProperties;
 
 /**
  * @author Sebastian Graf, University of Konstanz
@@ -15,7 +15,8 @@ import com.treetank.page.NodePage;
  */
 public class LRUCacheTest {
 
-    private final AbstractPage[] pages = new AbstractPage[LRUCache.CACHE_CAPACITY + 1];
+    private final NodePage[][] pages = new NodePage[LRUCache.CACHE_CAPACITY + 1][(Integer) SettableProperties.SNAPSHOT_WINDOW
+            .getStandardProperty() + 1];
 
     private ICache cache;
 
@@ -23,19 +24,29 @@ public class LRUCacheTest {
     public void setUp() {
         cache = new LRUCache();
         for (int i = 0; i < pages.length; i++) {
-            final NodePage page = new NodePage(i);
-            pages[i] = page;
-            cache.put(i, page);
+            final NodePage page = new NodePage(i, 0);
+            final NodePage[] revs = new NodePage[(Integer) SettableProperties.SNAPSHOT_WINDOW
+                    .getStandardProperty()];
+
+            for (int j = 0; j < (Integer) SettableProperties.SNAPSHOT_WINDOW
+                    .getStandardProperty(); j++) {
+                pages[i][j + 1] = new NodePage(i, 0);
+                revs[j] = pages[i][j + 1];
+            }
+            pages[i][0] = page;
+            cache.put(i, new NodePageContainer(page));
         }
     }
 
     @Test
     public void test() {
-        for (int i = 1; i <= LRUCache.CACHE_CAPACITY; i++) {
-            assertEquals(pages[i], cache.get(i));
+        for (int i = 1; i < pages.length; i++) {
+            final NodePageContainer cont = cache.get(i);
+            final NodePage current = cont.getComplete();
+            assertEquals(pages[i][0], current);
         }
 
-        final AbstractPage page = cache.get(0);
+        final NodePageContainer page = cache.get(0);
         assertNull(page);
 
     }

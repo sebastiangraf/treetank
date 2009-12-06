@@ -209,7 +209,7 @@ public class TreeTankHandler extends AbstractHandler {
         final long key = Long.parseLong(tokenizer.nextToken());
 
         final TreeTankWrapper session = sessions.putIfAbsent(resource,
-                new TreeTankWrapper(resource.getAbsolutePath()));
+                new TreeTankWrapper(resource));
         final long revision = session.delete(key);
 
         OutputStream out;
@@ -255,7 +255,7 @@ public class TreeTankHandler extends AbstractHandler {
         }
         try {
             final TreeTankWrapper session = sessions.putIfAbsent(resource,
-                    new TreeTankWrapper(resource.getAbsolutePath()));
+                    new TreeTankWrapper(resource));
             final String content = getContent(request);
             final long revision = session.put(key, content);
             final OutputStream out = response.getOutputStream();
@@ -298,7 +298,7 @@ public class TreeTankHandler extends AbstractHandler {
         }
         try {
             final TreeTankWrapper session = sessions.putIfAbsent(resource,
-                    new TreeTankWrapper(resource.getAbsolutePath()));
+                    new TreeTankWrapper(resource));
             final String content = getContent(request);
             final long revision = session.post(key, content);
             final OutputStream out = response.getOutputStream();
@@ -353,7 +353,7 @@ public class TreeTankHandler extends AbstractHandler {
             queryString = queryString.replace("%22", "\"").replace("%20", " ");
         }
         final TreeTankWrapper session = sessions.putIfAbsent(resource,
-                new TreeTankWrapper(resource.getAbsolutePath()));
+                new TreeTankWrapper(resource));
 
         long revision = 0;
         if (revisionString.equalsIgnoreCase(RESTConstants.LAST_REVISION

@@ -31,6 +31,7 @@ import com.treetank.node.AttributeNode;
 import com.treetank.node.ElementNode;
 import com.treetank.node.NamespaceNode;
 import com.treetank.page.UberPage;
+import com.treetank.utils.FixedProperties;
 import com.treetank.utils.TypedValue;
 
 /**
@@ -109,7 +110,10 @@ public final class WriteTransaction extends ReadTransaction implements
             final String uri) throws TreetankIOException {
         return insertFirstChild(((WriteTransactionState) getTransactionState())
                 .createElementNode(getCurrentNode().getNodeKey(),
-                        NULL_NODE_KEY, NULL_NODE_KEY, getCurrentNode()
+                        (Long) FixedProperties.NULL_NODE_KEY
+                                .getStandardProperty(),
+                        (Long) FixedProperties.NULL_NODE_KEY
+                                .getStandardProperty(), getCurrentNode()
                                 .getFirstChildKey(),
                         ((WriteTransactionState) getTransactionState())
                                 .createNameKey(name),
@@ -125,8 +129,10 @@ public final class WriteTransaction extends ReadTransaction implements
     public synchronized long insertTextAsFirstChild(final int valueType,
             final byte[] value) throws TreetankIOException {
         return insertFirstChild(((WriteTransactionState) getTransactionState())
-                .createTextNode(getCurrentNode().getNodeKey(), NULL_NODE_KEY,
-                        getCurrentNode().getFirstChildKey(), valueType, value));
+                .createTextNode(getCurrentNode().getNodeKey(),
+                        (Long) FixedProperties.NULL_NODE_KEY
+                                .getStandardProperty(), getCurrentNode()
+                                .getFirstChildKey(), valueType, value));
     }
 
     /**
@@ -144,11 +150,13 @@ public final class WriteTransaction extends ReadTransaction implements
      * {@inheritDoc}
      */
     public synchronized long insertElementAsRightSibling(final String name,
-            final String uri) throws TreetankIOException {
+            final String uri) throws TreetankException {
         return insertRightSibling(((WriteTransactionState) getTransactionState())
                 .createElementNode(getCurrentNode().getParentKey(),
-                        NULL_NODE_KEY, getCurrentNode().getNodeKey(),
-                        getCurrentNode().getRightSiblingKey(),
+                        (Long) FixedProperties.NULL_NODE_KEY
+                                .getStandardProperty(), getCurrentNode()
+                                .getNodeKey(), getCurrentNode()
+                                .getRightSiblingKey(),
                         ((WriteTransactionState) getTransactionState())
                                 .createNameKey(name),
                         ((WriteTransactionState) getTransactionState())
@@ -161,7 +169,7 @@ public final class WriteTransaction extends ReadTransaction implements
      * {@inheritDoc}
      */
     public synchronized long insertTextAsRightSibling(final int valueType,
-            final byte[] value) throws TreetankIOException {
+            final byte[] value) throws TreetankException {
         return insertRightSibling(((WriteTransactionState) getTransactionState())
                 .createTextNode(getCurrentNode().getParentKey(),
                         getCurrentNode().getNodeKey(), getCurrentNode()
@@ -172,7 +180,7 @@ public final class WriteTransaction extends ReadTransaction implements
      * {@inheritDoc}
      */
     public synchronized long insertTextAsRightSibling(final String value)
-            throws TreetankIOException {
+            throws TreetankException {
         return insertTextAsRightSibling(
                 ((WriteTransactionState) getTransactionState())
                         .createNameKey("xs:untyped"), TypedValue
@@ -260,7 +268,9 @@ public final class WriteTransaction extends ReadTransaction implements
                 if (rightSibling != null) {
                     leftSibling.setRightSiblingKey(rightSibling.getNodeKey());
                 } else {
-                    leftSibling.setRightSiblingKey(NULL_NODE_KEY);
+                    leftSibling
+                            .setRightSiblingKey((Long) FixedProperties.NULL_NODE_KEY
+                                    .getStandardProperty());
                 }
                 tearDownNodeModification(leftSibling);
             }
@@ -271,7 +281,9 @@ public final class WriteTransaction extends ReadTransaction implements
                 if (leftSibling != null) {
                     rightSibling.setLeftSiblingKey(leftSibling.getNodeKey());
                 } else {
-                    rightSibling.setLeftSiblingKey(NULL_NODE_KEY);
+                    rightSibling
+                            .setLeftSiblingKey((Long) FixedProperties.NULL_NODE_KEY
+                                    .getStandardProperty());
                 }
                 tearDownNodeModification(rightSibling);
             }
@@ -283,7 +295,9 @@ public final class WriteTransaction extends ReadTransaction implements
                 if (rightSibling != null) {
                     parent.setFirstChildKey(rightSibling.getNodeKey());
                 } else {
-                    parent.setFirstChildKey(NULL_NODE_KEY);
+                    parent
+                            .setFirstChildKey((Long) FixedProperties.NULL_NODE_KEY
+                                    .getStandardProperty());
                 }
             }
             tearDownNodeModification(parent);
@@ -465,14 +479,15 @@ public final class WriteTransaction extends ReadTransaction implements
     }
 
     private long insertRightSibling(final AbstractNode node)
-            throws TreetankIOException {
+            throws TreetankException {
 
         assertNotClosed();
         mModificationCount++;
         intermediateCommitIfRequired();
 
-        if (getCurrentNode().getNodeKey() == DOCUMENT_ROOT_KEY) {
-            throw new IllegalStateException("Root node can not have siblings.");
+        if (getCurrentNode().getNodeKey() == (Long) FixedProperties.ROOT_NODE_KEY
+                .getStandardProperty()) {
+            throw new TreetankUsageException("Root node can not have siblings.");
         }
 
         setCurrentNode(node);
@@ -515,7 +530,7 @@ public final class WriteTransaction extends ReadTransaction implements
 
         if (!getCurrentNode().isElement()) {
             throw new IllegalStateException(
-                    "Only element nodes can have attributes.");
+                    "Only element nodes can have namespaces.");
         }
 
         setCurrentNode(node);

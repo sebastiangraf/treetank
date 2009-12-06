@@ -20,7 +20,6 @@ package com.treetank.page;
 
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
-import com.treetank.io.PagePersistenter;
 import com.treetank.utils.IConstants;
 
 /**
@@ -39,9 +38,6 @@ public final class RevisionRootPage extends AbstractPage {
     /** Offset of indirect page reference. */
     private static final int INDIRECT_REFERENCE_OFFSET = 1;
 
-    /** Key of revision. */
-    private final long mRevisionNumber;
-
     /** Number of nodes of this revision. */
     private long mRevisionSize;
 
@@ -55,11 +51,10 @@ public final class RevisionRootPage extends AbstractPage {
      * Create revision root page.
      */
     public RevisionRootPage() {
-        super(2);
-        mRevisionNumber = IConstants.UBP_ROOT_REVISION_NUMBER;
+        super(2, IConstants.UBP_ROOT_REVISION_NUMBER);
         mRevisionSize = 0L;
         final PageReference ref = getReference(NAME_REFERENCE_OFFSET);
-        ref.setPage(new NamePage());
+        ref.setPage(new NamePage(IConstants.UBP_ROOT_REVISION_NUMBER));
         mMaxNodeKey = -1L;
     }
 
@@ -69,9 +64,8 @@ public final class RevisionRootPage extends AbstractPage {
      * @param in
      *            Input bytes.
      */
-    public RevisionRootPage(final ITTSource in) {
+    protected RevisionRootPage(final ITTSource in) {
         super(2, in);
-        mRevisionNumber = in.readLong();
         mRevisionSize = in.readLong();
         mMaxNodeKey = in.readLong();
         mRevisionTimestamp = in.readLong();
@@ -85,7 +79,6 @@ public final class RevisionRootPage extends AbstractPage {
      */
     public RevisionRootPage(final RevisionRootPage committedRevisionRootPage) {
         super(2, committedRevisionRootPage);
-        mRevisionNumber = committedRevisionRootPage.mRevisionNumber + 1;
         mRevisionSize = committedRevisionRootPage.mRevisionSize;
         mMaxNodeKey = committedRevisionRootPage.mMaxNodeKey;
     }
@@ -106,15 +99,6 @@ public final class RevisionRootPage extends AbstractPage {
      */
     public PageReference getIndirectPageReference() {
         return getReference(INDIRECT_REFERENCE_OFFSET);
-    }
-
-    /**
-     * Get number of revision.
-     * 
-     * @return Revision number.
-     */
-    public long getRevisionNumber() {
-        return mRevisionNumber;
     }
 
     /**
@@ -172,11 +156,9 @@ public final class RevisionRootPage extends AbstractPage {
      * {@inheritDoc}
      */
     @Override
-    public void serialize(final ITTSink out) {
+    protected void serialize(final ITTSink out) {
         mRevisionTimestamp = System.currentTimeMillis();
-        out.writeInt(PagePersistenter.REVISIONROOTPAGE);
         super.serialize(out);
-        out.writeLong(mRevisionNumber);
         out.writeLong(mRevisionSize);
         out.writeLong(mMaxNodeKey);
         out.writeLong(mRevisionTimestamp);
@@ -187,9 +169,8 @@ public final class RevisionRootPage extends AbstractPage {
      */
     @Override
     public String toString() {
-        return super.toString() + ": revisionKey=" + mRevisionNumber
-                + ", revisionSize=" + mRevisionSize + ", revisionTimestamp="
-                + mRevisionTimestamp + ", namePage=("
+        return super.toString() + " revisionSize=" + mRevisionSize
+                + ", revisionTimestamp=" + mRevisionTimestamp + ", namePage=("
                 + getReference(NAME_REFERENCE_OFFSET) + "), indirectPage=("
                 + getReference(INDIRECT_REFERENCE_OFFSET) + ")";
     }

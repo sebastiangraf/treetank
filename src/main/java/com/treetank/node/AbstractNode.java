@@ -19,10 +19,10 @@
 package com.treetank.node;
 
 import com.treetank.api.IItem;
-import com.treetank.api.IReadTransaction;
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
-import com.treetank.utils.IConstants;
+import com.treetank.utils.ENodes;
+import com.treetank.utils.FixedProperties;
 
 /**
  * <h1>AbstractNode</h1>
@@ -43,7 +43,7 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
     protected final long[] mData;
 
     /**
-     * Constructor to set node key.
+     * Constructor for inserting node.
      * 
      * @param nodeKey
      *            Key of node.
@@ -56,25 +56,25 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
     }
 
     /**
-     * Constructor to set node key.
+     * Constructor for modification of existing node.
      * 
      * @param node
      *            to be set
      */
-    public AbstractNode(final AbstractNode node) {
+    protected AbstractNode(final AbstractNode node) {
         mData = new long[node.mData.length];
         System.arraycopy(node.mData, 0, mData, 0, mData.length);
     }
 
     /**
-     * Read node.
+     * Constructor for read only access of nodes
      * 
      * @param in
      *            Input bytes to read node from.
      * @param size
      *            Size of the data.
      */
-    public AbstractNode(final int size, final ITTSource in) {
+    protected AbstractNode(final int size, final ITTSource in) {
         mData = new long[size];
         for (int i = 0; i < size; i++) {
             mData[i] = in.readLong();
@@ -134,7 +134,7 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
      * {@inheritDoc}
      */
     public long getParentKey() {
-        return IReadTransaction.NULL_NODE_KEY;
+        return (Long) FixedProperties.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -148,7 +148,7 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
      * {@inheritDoc}
      */
     public long getFirstChildKey() {
-        return IReadTransaction.NULL_NODE_KEY;
+        return (Long) FixedProperties.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -162,7 +162,7 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
      * {@inheritDoc}
      */
     public long getLeftSiblingKey() {
-        return IReadTransaction.NULL_NODE_KEY;
+        return (Long) FixedProperties.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -176,7 +176,7 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
      * {@inheritDoc}
      */
     public long getRightSiblingKey() {
-        return IReadTransaction.NULL_NODE_KEY;
+        return (Long) FixedProperties.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -204,42 +204,42 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
      * {@inheritDoc}
      */
     public long getAttributeKey(final int index) {
-        return IReadTransaction.NULL_NODE_KEY;
+        return (Long) FixedProperties.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
      * {@inheritDoc}
      */
     public long getNamespaceKey(final int index) {
-        return IReadTransaction.NULL_NODE_KEY;
+        return (Long) FixedProperties.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
      * {@inheritDoc}
      */
-    public int getKind() {
-        return IConstants.UNKNOWN;
+    public ENodes getKind() {
+        return ENodes.UNKOWN_KIND;
     }
 
     /**
      * {@inheritDoc}
      */
     public int getNameKey() {
-        return IReadTransaction.NULL_NAME_KEY;
+        return (Integer) FixedProperties.NULL_INT_KEY.getStandardProperty();
     }
 
     /**
      * {@inheritDoc}
      */
     public int getURIKey() {
-        return IReadTransaction.NULL_NAME_KEY;
+        return (Integer) FixedProperties.NULL_INT_KEY.getStandardProperty();
     }
 
     /**
      * {@inheritDoc}
      */
     public int getTypeKey() {
-        return IConstants.UNKNOWN;
+        return (Integer) FixedProperties.NULL_INT_KEY.getStandardProperty();
     }
 
     /**

@@ -22,8 +22,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.treetank.api.IReadTransaction;
 import com.treetank.io.file.ByteBufferSinkAndSource;
+import com.treetank.utils.ENodes;
+import com.treetank.utils.FixedProperties;
 
 public class TextNodeTest {
 
@@ -50,18 +51,22 @@ public class TextNodeTest {
         // Now compare.
         assertEquals(13L, node3.getNodeKey());
         assertEquals(14L, node3.getParentKey());
-        assertEquals(IReadTransaction.NULL_NODE_KEY, node3.getFirstChildKey());
+        assertEquals(FixedProperties.NULL_NODE_KEY.getStandardProperty(), node3
+                .getFirstChildKey());
         assertEquals(15L, node3.getLeftSiblingKey());
         assertEquals(16L, node3.getRightSiblingKey());
         assertEquals(0L, node3.getChildCount());
         assertEquals(0, node3.getAttributeCount());
         assertEquals(0, node3.getNamespaceCount());
         assertEquals(19, node3.getTypeKey());
-        assertEquals(IReadTransaction.NULL_NAME_KEY, node3.getNameKey());
-        assertEquals(IReadTransaction.NULL_NAME_KEY, node3.getURIKey());
-        assertEquals(IReadTransaction.NULL_NAME_KEY, node3.getNameKey());
+        assertEquals(FixedProperties.NULL_INT_KEY.getStandardProperty(), node3
+                .getNameKey());
+        assertEquals(FixedProperties.NULL_INT_KEY.getStandardProperty(), node3
+                .getURIKey());
+        assertEquals(FixedProperties.NULL_INT_KEY.getStandardProperty(), node3
+                .getNameKey());
         assertEquals(2, node3.getRawValue().length);
-        assertEquals(IReadTransaction.TEXT_KIND, node3.getKind());
+        assertEquals(ENodes.TEXT_KIND, node3.getKind());
         assertEquals(false, node3.hasFirstChild());
         assertEquals(true, node3.hasParent());
         assertEquals(true, node3.hasLeftSibling());

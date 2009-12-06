@@ -6,8 +6,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.treetank.page.AbstractPage;
 import com.treetank.page.NodePage;
+import com.treetank.utils.SettableProperties;
 
 /**
  * @author Sebastian Graf, University of Konstanz
@@ -15,7 +15,8 @@ import com.treetank.page.NodePage;
  */
 public class RAMCacheTest {
 
-    private final AbstractPage[] pages = new AbstractPage[25];
+    private final NodePage[][] pages = new NodePage[LRUCache.CACHE_CAPACITY + 1][(Integer) SettableProperties.SNAPSHOT_WINDOW
+            .getStandardProperty() + 1];
 
     private ICache cache;
 
@@ -23,7 +24,17 @@ public class RAMCacheTest {
     public void setUp() {
         cache = new RAMCache();
         for (int i = 0; i < pages.length; i++) {
-            cache.put(i, new NodePage(i));
+            final NodePage page = new NodePage(i, 0);
+            final NodePage[] revs = new NodePage[(Integer) SettableProperties.SNAPSHOT_WINDOW
+                    .getStandardProperty()];
+
+            for (int j = 0; j < (Integer) SettableProperties.SNAPSHOT_WINDOW
+                    .getStandardProperty(); j++) {
+                pages[i][j + 1] = new NodePage(i, 0);
+                revs[j] = pages[i][j + 1];
+            }
+            pages[i][0] = page;
+            cache.put(i, new NodePageContainer(page));
         }
     }
 

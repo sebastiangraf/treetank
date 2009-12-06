@@ -23,10 +23,7 @@ public final class StoragePropTupleBinding extends
 
         final long versionMajor = arg0.readLong();
         final long versionMinor = arg0.readLong();
-        final boolean checksummed = arg0.readBoolean();
-        final boolean encrypted = arg0.readBoolean();
-        return new StorageProperties(versionMajor, versionMinor, checksummed,
-                encrypted);
+        return new StorageProperties(versionMajor, versionMinor);
     }
 
     /**
@@ -38,7 +35,5 @@ public final class StoragePropTupleBinding extends
 
         arg1.writeLong(arg0.getVersionMajor());
         arg1.writeLong(arg0.getVersionMinor());
-        arg1.writeBoolean(arg0.isChecksummed());
-        arg1.writeBoolean(arg0.isEncrypted());
     }
 }
