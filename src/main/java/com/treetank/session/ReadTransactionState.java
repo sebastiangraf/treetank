@@ -37,9 +37,9 @@ import com.treetank.page.NodePage;
 import com.treetank.page.PageReference;
 import com.treetank.page.RevisionRootPage;
 import com.treetank.page.UberPage;
+import com.treetank.utils.ERevisioning;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.SettableProperties;
-import com.treetank.utils.SlidingSnapshot;
 
 /**
  * <h1>ReadTransactionState</h1>
@@ -134,7 +134,9 @@ public class ReadTransactionState {
             final NodePage[] revs = getSnapshotPages(nodePageKey);
 
             // Build up the complete page.
-            final NodePage completePage = SlidingSnapshot.combinePages(revs);
+            final NodePage completePage = ((ERevisioning) getSessionConfiguration()
+                    .getProps().get(SettableProperties.REVISION_TYPE.getName()))
+                    .combinePages(revs);
             cont = new NodePageContainer(completePage);
             mCache.put(nodePageKey, cont);
         }

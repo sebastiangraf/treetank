@@ -46,7 +46,7 @@ public class SlidingSnapshotTest {
         for (int i = 0; i < pages.length; i++) {
             pages[i] = getNodePage(0, i * 32, (i * 32) + 32);
         }
-        final NodePage page = SlidingSnapshot.combinePages(pages);
+        final NodePage page = ERevisioning.SLIDING_SNAPSHOT.combinePages(pages);
         for (int i = 0; i < pages.length; i++) {
             for (int j = i * 32; j < (i * 32) + 32; j++) {
                 assertEquals(pages[i].getNode(j), page.getNode(j));
@@ -63,7 +63,7 @@ public class SlidingSnapshotTest {
             borders[i] = random.nextInt(32) + ((i - 1) * 32);
             pages[i] = getNodePage(0, borders[i], (i * 32) + 32);
         }
-        final NodePage page = SlidingSnapshot.combinePages(pages);
+        final NodePage page = ERevisioning.SLIDING_SNAPSHOT.combinePages(pages);
         for (int i = 0; i < pages.length; i++) {
             for (int j = i * 32; j < (i * 32) + 32; j++) {
                 assertEquals(pages[i].getNode(j), page.getNode(j));

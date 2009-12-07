@@ -14,6 +14,9 @@ public enum SettableProperties {
     /** Default storage */
     STORAGE_TYPE("storageType", StorageType.Berkeley),
 
+    /** Revision properties */
+    REVISION_TYPE("revisionType", ERevisioning.SLIDING_SNAPSHOT),
+
     /** Number of concurrent exclusive write transactions. */
     MAX_WRITE_TRANSACTIONS("maximalWriteTransactions", 1),
     /** Number of concurrent shared read transactions. */
