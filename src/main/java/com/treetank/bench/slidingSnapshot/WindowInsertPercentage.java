@@ -283,7 +283,7 @@ public class WindowInsertPercentage {
 
     }
 
-    private final static int RUNS = 5;
+    private final static int RUNS = 1;
     private final static AbstractMeter[] METERS = {
             new TimeMeter(Time.MilliSeconds),
             new PercentageFileSizeMeter(new File(CommonStuff.PATH1, "tt")) };
@@ -338,9 +338,9 @@ public class WindowInsertPercentage {
             case WindowRan:
                 return length / window1Ran;
             case IncSeq:
-                return length / inc1Ran;
-            case IncRan:
                 return length / inc1Seq;
+            case IncRan:
+                return length / inc1Ran;
             default:
                 return 0;
             }
