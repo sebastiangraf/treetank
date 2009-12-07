@@ -59,7 +59,7 @@ public class SizeInsert {
             props.put(SettableProperties.SNAPSHOT_WINDOW.getName(),
                     REVISION_MILESTONES);
             props.put(SettableProperties.REVISION_TYPE,
-                    ERevisioning.INCREMENTEL);
+                    ERevisioning.INCREMENTAL);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
             session = Session.beginSession(conf);
@@ -155,7 +155,7 @@ public class SizeInsert {
             props.put(SettableProperties.SNAPSHOT_WINDOW.getName(),
                     REVISION_MILESTONES);
             props.put(SettableProperties.REVISION_TYPE,
-                    ERevisioning.INCREMENTEL);
+                    ERevisioning.INCREMENTAL);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
             session = Session.beginSession(conf);
