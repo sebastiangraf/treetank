@@ -283,7 +283,7 @@ public class WindowInsertPercentage {
 
     }
 
-    private final static int RUNS = 1;
+    private final static int RUNS = 5;
     private final static AbstractMeter[] METERS = {
             new TimeMeter(Time.MilliSeconds),
             new PercentageFileSizeMeter(new File(CommonStuff.PATH1, "tt")) };
