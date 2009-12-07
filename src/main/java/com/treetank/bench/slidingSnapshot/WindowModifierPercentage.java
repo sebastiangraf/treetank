@@ -73,7 +73,7 @@ public class WindowModifierPercentage {
     @Bench
     public void benchIncSeq() {
         try {
-            kind = Kind.IncRan;
+            kind = Kind.IncSeq;
             props.put(SettableProperties.REVISION_TYPE.getName(),
                     ERevisioning.INCREMENTAL);
             final SessionConfiguration conf = new SessionConfiguration(
@@ -123,7 +123,7 @@ public class WindowModifierPercentage {
     @Bench
     public void benchIncRan() {
         try {
-            kind = Kind.IncSeq;
+            kind = Kind.IncRan;
             props.put(SettableProperties.REVISION_TYPE.getName(),
                     ERevisioning.INCREMENTAL);
             final SessionConfiguration conf = new SessionConfiguration(
@@ -318,7 +318,7 @@ public class WindowModifierPercentage {
 
     }
 
-    private final static int RUNS = 1;
+    private final static int RUNS = 5;
     private final static AbstractMeter[] METERS = {
             new TimeMeter(Time.MilliSeconds),
             new PercentageFileSizeMeter(new File(CommonStuff.PATH1, "tt")) };
