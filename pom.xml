@@ -96,7 +96,7 @@
 					</descriptors>
 					<archive>
 						<manifest>
-							<mainClass>com.treetank.bench.slidingSnapshot.PercentageSizeInsert</mainClass>
+							<mainClass>com.treetank.bench.slidingSnapshot.PercentageSizeModifier</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
