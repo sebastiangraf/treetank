@@ -16,14 +16,13 @@ import org.perfidix.ouput.AbstractOutput;
 import org.perfidix.ouput.CSVOutput;
 import org.perfidix.result.BenchmarkResult;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
+import com.treetank.utils.ERevisioning;
 import com.treetank.utils.SettableProperties;
 import com.treetank.utils.StorageConstants;
 
@@ -38,7 +37,6 @@ public class SizeModifier {
     @BeforeBenchClass
     public void setUp() {
         try {
-            Session.removeSession(CommonStuff.PATH1);
             Session.removeSession(CommonStuff.PATH2);
             Session.removeSession(CommonStuff.PATH3);
             Session.removeSession(CommonStuff.PATH4);
@@ -52,108 +50,11 @@ public class SizeModifier {
         try {
             wtx.close();
             session.close();
-            Session.removeSession(CommonStuff.PATH1);
             Session.removeSession(CommonStuff.PATH2);
             Session.removeSession(CommonStuff.PATH3);
             Session.removeSession(CommonStuff.PATH4);
         } catch (TreetankException exc) {
 
-        }
-    }
-
-    @Bench(beforeEachRun = "beforeSeq1")
-    public void benchSeq1() {
-        try {
-            final Properties props = new Properties();
-            props.put(SettableProperties.SNAPSHOT_WINDOW.getName(), 1);
-            final SessionConfiguration conf = new SessionConfiguration(
-                    CommonStuff.PATH1, props);
-            session = Session.beginSession(conf);
-            wtx = session.beginWriteTransaction();
-            for (int i = 0; i < MODIFIERNUMBER; i++) {
-                do {
-                    long nextKey = 0;
-                    do {
-                        nextKey = CommonStuff.ran.nextLong();
-                        if (nextKey < 0) {
-                            nextKey = nextKey * -1;
-                        }
-                        nextKey = nextKey % wtx.getNodeCount();
-                    } while (nextKey == 0);
-
-                    wtx.moveTo(nextKey);
-
-                } while (!wtx.getNode().isElement());
-
-                final IAxis axis = new DescendantAxis(wtx);
-                while (axis.hasNext()) {
-                    axis.next();
-                    if (wtx.getNode().isElement()) {
-                        wtx.setName(CommonStuff.getString());
-                    } else {
-                        wtx.setValue(CommonStuff.getString());
-                    }
-                    i++;
-                    if (CommonStuff.ran.nextInt(100) < mProb) {
-                        wtx.commit();
-                    }
-                    if (i >= MODIFIERNUMBER) {
-                        break;
-                    }
-
-                }
-            }
-            wtx.commit();
-        } catch (TreetankException exc) {
-            exc.printStackTrace();
-        }
-    }
-
-    @Bench(beforeEachRun = "beforeSeq4")
-    public void benchSeq4() {
-        try {
-            final Properties props = new Properties();
-            props.put(SettableProperties.SNAPSHOT_WINDOW.getName(), 4);
-            final SessionConfiguration conf = new SessionConfiguration(
-                    CommonStuff.PATH2, props);
-            session = Session.beginSession(conf);
-            wtx = session.beginWriteTransaction();
-            for (int i = 0; i < MODIFIERNUMBER; i++) {
-                do {
-                    long nextKey = 0;
-                    do {
-                        nextKey = CommonStuff.ran.nextLong();
-                        if (nextKey < 0) {
-                            nextKey = nextKey * -1;
-                        }
-                        nextKey = nextKey % wtx.getNodeCount();
-                    } while (nextKey == 0);
-
-                    wtx.moveTo(nextKey);
-
-                } while (!wtx.getNode().isElement());
-
-                final IAxis axis = new DescendantAxis(wtx);
-                while (axis.hasNext()) {
-                    axis.next();
-                    if (wtx.getNode().isElement()) {
-                        wtx.setName(CommonStuff.getString());
-                    } else {
-                        wtx.setValue(CommonStuff.getString());
-                    }
-                    i++;
-                    if (CommonStuff.ran.nextInt(100) < mProb) {
-                        wtx.commit();
-                    }
-                    if (i >= MODIFIERNUMBER) {
-                        break;
-                    }
-
-                }
-            }
-            wtx.commit();
-        } catch (TreetankException exc) {
-            exc.printStackTrace();
         }
     }
 
@@ -228,16 +129,45 @@ public class SizeModifier {
         }
     }
 
-    public void beforeSeq1() {
+    @Bench(beforeEachRun = "beforeInc")
+    public void benchRandomInc() {
         try {
-            XMLShredder.shred(CommonStuff.XMLPath.getAbsolutePath(),
-                    new SessionConfiguration(CommonStuff.PATH1));
+            final Properties props = new Properties();
+            props.put(SettableProperties.SNAPSHOT_WINDOW.getName(), 4);
+            props.put(SettableProperties.REVISION_TYPE,
+                    ERevisioning.INCREMENTAL);
+            final SessionConfiguration conf = new SessionConfiguration(
+                    CommonStuff.PATH2, props);
+            session = Session.beginSession(conf);
+            wtx = session.beginWriteTransaction();
+            for (int i = 0; i < MODIFIERNUMBER; i++) {
+                long nextKey = 0;
+                do {
+                    nextKey = CommonStuff.ran.nextLong();
+                    if (nextKey < 0) {
+                        nextKey = nextKey * -1;
+                    }
+                    nextKey = nextKey % wtx.getNodeCount();
+                } while (nextKey == 0);
+
+                wtx.moveTo(nextKey);
+                if (wtx.getNode().isElement()) {
+                    wtx.setName(CommonStuff.getString());
+                } else {
+                    wtx.setValue(CommonStuff.getString());
+                }
+
+                if (CommonStuff.ran.nextInt(100) < mProb) {
+                    wtx.commit();
+                }
+            }
+            wtx.commit();
         } catch (TreetankException exc) {
             exc.printStackTrace();
         }
     }
 
-    public void beforeSeq4() {
+    public void beforeInc() {
         try {
             XMLShredder.shred(CommonStuff.XMLPath.getAbsolutePath(),
                     new SessionConfiguration(CommonStuff.PATH2));
