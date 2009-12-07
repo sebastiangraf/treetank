@@ -133,10 +133,14 @@ public class ReadTransactionState {
         if (cont == null) {
             final NodePage[] revs = getSnapshotPages(nodePageKey);
 
+            final int mileStoneRevision = (Integer) getSessionConfiguration()
+                    .getProps().get(
+                            SettableProperties.SNAPSHOT_WINDOW.getName());
+
             // Build up the complete page.
             final NodePage completePage = ((ERevisioning) getSessionConfiguration()
                     .getProps().get(SettableProperties.REVISION_TYPE.getName()))
-                    .combinePages(revs);
+                    .combinePages(revs, mileStoneRevision);
             cont = new NodePageContainer(completePage);
             mCache.put(nodePageKey, cont);
         }
