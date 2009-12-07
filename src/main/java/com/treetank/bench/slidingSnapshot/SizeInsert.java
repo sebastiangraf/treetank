@@ -30,6 +30,9 @@ public class SizeInsert {
 
     private static int NODE_SET_SIZE = 0;
 
+    private final static int WINDOW_SIZE = 4;
+    private final static int REVISION_MILESTONES = 4;
+
     private IWriteTransaction wtx;
     private ISession session;
 
@@ -53,7 +56,8 @@ public class SizeInsert {
     public void benchSeqInc() {
         try {
             final Properties props = new Properties();
-            props.put(SettableProperties.SNAPSHOT_WINDOW.getName(), 10);
+            props.put(SettableProperties.SNAPSHOT_WINDOW.getName(),
+                    REVISION_MILESTONES);
             props.put(SettableProperties.REVISION_TYPE,
                     ERevisioning.INCREMENTEL);
             final SessionConfiguration conf = new SessionConfiguration(
@@ -115,7 +119,9 @@ public class SizeInsert {
     public void benchSeq4() {
         try {
             final Properties props = new Properties();
-            props.put(SettableProperties.SNAPSHOT_WINDOW.getName(), 4);
+            props
+                    .put(SettableProperties.SNAPSHOT_WINDOW.getName(),
+                            WINDOW_SIZE);
             props.put(SettableProperties.REVISION_TYPE,
                     ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
@@ -146,7 +152,8 @@ public class SizeInsert {
     public void benchRandomInc() {
         try {
             final Properties props = new Properties();
-            props.put(SettableProperties.SNAPSHOT_WINDOW.getName(), 10);
+            props.put(SettableProperties.SNAPSHOT_WINDOW.getName(),
+                    REVISION_MILESTONES);
             props.put(SettableProperties.REVISION_TYPE,
                     ERevisioning.INCREMENTEL);
             final SessionConfiguration conf = new SessionConfiguration(
@@ -228,7 +235,9 @@ public class SizeInsert {
     public void benchRandom4() {
         try {
             final Properties props = new Properties();
-            props.put(SettableProperties.SNAPSHOT_WINDOW.getName(), 4);
+            props
+                    .put(SettableProperties.SNAPSHOT_WINDOW.getName(),
+                            WINDOW_SIZE);
             props.put(SettableProperties.REVISION_TYPE,
                     ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
