@@ -29,7 +29,7 @@ import com.treetank.utils.StorageConstants;
 
 public class PercentageSizeModifier {
 
-    private final static int mProb = 20;
+    private final static int mProb = 80;
 
     private static int MODIFIERNUMBER = 0;
 
