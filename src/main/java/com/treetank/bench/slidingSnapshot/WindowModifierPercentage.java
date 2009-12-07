@@ -22,6 +22,7 @@ import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankUsageException;
+import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
 import com.treetank.utils.ERevisioning;
@@ -51,10 +52,11 @@ public class WindowModifierPercentage {
     @BeforeEachRun
     public void setUp() {
         try {
-            Session.removeSession(CommonStuff.PATH0);
+            Session.removeSession(CommonStuff.PATH1);
         } catch (TreetankException exc) {
-
+            exc.printStackTrace();
         }
+
     }
 
     @AfterEachRun
@@ -76,6 +78,7 @@ public class WindowModifierPercentage {
                     ERevisioning.INCREMENTAL);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
+            XMLShredder.shred(CommonStuff.XMLPath.getAbsolutePath(), conf);
             session = Session.beginSession(conf);
             wtx = session.beginWriteTransaction();
 
@@ -125,6 +128,7 @@ public class WindowModifierPercentage {
                     ERevisioning.INCREMENTAL);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
+            XMLShredder.shred(CommonStuff.XMLPath.getAbsolutePath(), conf);
             session = Session.beginSession(conf);
             wtx = session.beginWriteTransaction();
             wtx.insertElementAsFirstChild(CommonStuff.getString(), "");
@@ -161,6 +165,7 @@ public class WindowModifierPercentage {
                     ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
+            XMLShredder.shred(CommonStuff.XMLPath.getAbsolutePath(), conf);
             session = Session.beginSession(conf);
             wtx = session.beginWriteTransaction();
 
@@ -210,6 +215,7 @@ public class WindowModifierPercentage {
                     ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
+            XMLShredder.shred(CommonStuff.XMLPath.getAbsolutePath(), conf);
             session = Session.beginSession(conf);
             wtx = session.beginWriteTransaction();
             wtx.insertElementAsFirstChild(CommonStuff.getString(), "");
@@ -312,7 +318,7 @@ public class WindowModifierPercentage {
 
     }
 
-    private final static int RUNS = 5;
+    private final static int RUNS = 1;
     private final static AbstractMeter[] METERS = {
             new TimeMeter(Time.MilliSeconds),
             new PercentageFileSizeMeter(new File(CommonStuff.PATH1, "tt")) };
