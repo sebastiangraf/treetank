@@ -12,7 +12,7 @@ import com.treetank.io.AbstractIOFactory.StorageType;
 public enum SettableProperties {
 
     /** Default storage */
-    STORAGE_TYPE("storageType", StorageType.Berkeley),
+    STORAGE_TYPE("storageType", StorageType.File),
 
     /** Revision properties */
     REVISION_TYPE("revisionType", ERevisioning.INCREMENTAL),

@@ -279,7 +279,7 @@ public class WindowInsertPercentage {
         window1Seq = seqWindowSize / RUNS;
         window1Ran = ranWindowSize / RUNS;
         inc1Ran = ranIncSize / RUNS;
-        inc1Ran = seqIncSize / RUNS;
+        inc1Seq = seqIncSize / RUNS;
 
     }
 

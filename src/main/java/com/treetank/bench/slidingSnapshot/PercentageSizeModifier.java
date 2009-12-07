@@ -33,7 +33,7 @@ public class PercentageSizeModifier {
 
     private static int MODIFIERNUMBER = 0;
 
-    private final static int FACTOR = 1;
+    private final static int FACTOR = 10;
 
     private IWriteTransaction wtx;
     private ISession session;
@@ -83,7 +83,7 @@ public class PercentageSizeModifier {
                     nextKey = nextKey
                             % (FACTOR * IConstants.INP_REFERENCE_COUNT);
                 } while (nextKey == 0);
-
+ 
                 wtx.moveTo(nextKey);
                 if (wtx.getNode().isElement()) {
                     wtx.setName(CommonStuff.getString());
