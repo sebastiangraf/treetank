@@ -11,7 +11,8 @@ public enum ERevisioning {
 
     SLIDING_SNAPSHOT {
         @Override
-        public NodePage combinePages(NodePage[] pages) {
+        public NodePage combinePages(final NodePage[] pages,
+                final int mileStoneRevision) {
             final long nodePageKey = pages[0].getNodePageKey();
             final NodePage returnVal = new NodePage(nodePageKey, pages[0]
                     .getRevision());
@@ -29,12 +30,13 @@ public enum ERevisioning {
         }
 
         @Override
-        public NodePageContainer combinePagesForModification(NodePage[] pages,
-                long revision, int snapshotWindow) {
+        public NodePageContainer combinePagesForModification(
+                final NodePage[] pages, final int mileStoneRevision) {
 
             final long nodePageKey = pages[0].getNodePageKey();
-            final NodePage[] returnVal = { new NodePage(nodePageKey, revision),
-                    new NodePage(nodePageKey, revision) };
+            final NodePage[] returnVal = {
+                    new NodePage(nodePageKey, pages[0].getRevision() + 1),
+                    new NodePage(nodePageKey, pages[0].getRevision() + 1) };
 
             final Set<Integer> nodesSet = new TreeSet<Integer>();
 
@@ -46,7 +48,7 @@ public enum ERevisioning {
                             && returnVal[0].getNode(i) == null) {
                         returnVal[0].setNode(i, pages[j].getNode(i));
 
-                        if (pages.length == snapshotWindow) {
+                        if (pages.length == mileStoneRevision) {
                             if (j < pages.length - 1) {
                                 nodesSet.add(i);
                             } else {
@@ -68,7 +70,8 @@ public enum ERevisioning {
     },
     INCREMENTEL {
         @Override
-        public NodePage combinePages(NodePage[] pages) {
+        public NodePage combinePages(final NodePage[] pages,
+                final int mileStoneRevision) {
             final long nodePageKey = pages[0].getNodePageKey();
             final NodePage returnVal = new NodePage(nodePageKey, pages[0]
                     .getRevision());
@@ -79,17 +82,21 @@ public enum ERevisioning {
                         returnVal.setNode(i, page.getNode(i));
                     }
                 }
+                if (page.getRevision() % mileStoneRevision == 0) {
+                    break;
+                }
             }
 
             return returnVal;
         }
 
         @Override
-        public NodePageContainer combinePagesForModification(NodePage[] pages,
-                long revision, int revisionToFullDump) {
+        public NodePageContainer combinePagesForModification(
+                final NodePage[] pages, final int revisionToFullDump) {
             final long nodePageKey = pages[0].getNodePageKey();
-            final NodePage[] returnVal = { new NodePage(nodePageKey, revision),
-                    new NodePage(nodePageKey, revision) };
+            final NodePage[] returnVal = {
+                    new NodePage(nodePageKey, pages[0].getRevision() + 1),
+                    new NodePage(nodePageKey, pages[0].getRevision() + 1) };
 
             for (int j = 0; j < pages.length; j++) {
                 assert pages[j].getNodePageKey() == nodePageKey;
@@ -99,7 +106,7 @@ public enum ERevisioning {
                             && returnVal[0].getNode(i) == null) {
                         returnVal[0].setNode(i, pages[j].getNode(i));
 
-                        if (revision % revisionToFullDump == 0) {
+                        if (returnVal[0].getRevision() % revisionToFullDump == 0) {
                             returnVal[1].setNode(i, NodePersistenter
                                     .createNode(pages[j].getNode(i)));
                         }
@@ -116,10 +123,10 @@ public enum ERevisioning {
     private ERevisioning() {
     }
 
-    public abstract NodePage combinePages(final NodePage[] pages);
+    public abstract NodePage combinePages(final NodePage[] pages,
+            final int mileStoneRevision);
 
     public abstract NodePageContainer combinePagesForModification(
-            final NodePage[] pages, final long revision,
-            final int snapshotWindow);
+            final NodePage[] pages, final int mileStoneRevision);
 
 }

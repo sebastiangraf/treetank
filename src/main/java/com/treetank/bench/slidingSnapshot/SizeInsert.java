@@ -20,6 +20,7 @@ import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
+import com.treetank.utils.ERevisioning;
 import com.treetank.utils.SettableProperties;
 import com.treetank.utils.StorageConstants;
 
@@ -49,10 +50,43 @@ public class SizeInsert {
     }
 
     @Bench
+    public void benchSeqInc() {
+        try {
+            final Properties props = new Properties();
+            props.put(SettableProperties.SNAPSHOT_WINDOW.getName(), 10);
+            props.put(SettableProperties.REVISION_TYPE,
+                    ERevisioning.INCREMENTEL);
+            final SessionConfiguration conf = new SessionConfiguration(
+                    CommonStuff.PATH1, props);
+            session = Session.beginSession(conf);
+            wtx = session.beginWriteTransaction();
+            wtx.insertElementAsFirstChild(CommonStuff.getString(), "");
+            for (int i = 0; i < NODE_SET_SIZE; i++) {
+                if (CommonStuff.ran.nextBoolean()) {
+                    wtx.insertElementAsFirstChild(CommonStuff.getString(), "");
+
+                } else {
+                    wtx
+                            .insertElementAsRightSibling(CommonStuff
+                                    .getString(), "");
+                }
+                if (CommonStuff.ran.nextInt(100) < mProb) {
+                    wtx.commit();
+                }
+            }
+            wtx.commit();
+        } catch (TreetankException exc) {
+            exc.printStackTrace();
+        }
+    }
+
+    @Bench
     public void benchSeq1() {
         try {
             final Properties props = new Properties();
             props.put(SettableProperties.SNAPSHOT_WINDOW.getName(), 1);
+            props.put(SettableProperties.REVISION_TYPE,
+                    ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
             session = Session.beginSession(conf);
@@ -82,6 +116,8 @@ public class SizeInsert {
         try {
             final Properties props = new Properties();
             props.put(SettableProperties.SNAPSHOT_WINDOW.getName(), 4);
+            props.put(SettableProperties.REVISION_TYPE,
+                    ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
             session = Session.beginSession(conf);
@@ -107,10 +143,53 @@ public class SizeInsert {
     }
 
     @Bench
+    public void benchRandomInc() {
+        try {
+            final Properties props = new Properties();
+            props.put(SettableProperties.SNAPSHOT_WINDOW.getName(), 10);
+            props.put(SettableProperties.REVISION_TYPE,
+                    ERevisioning.INCREMENTEL);
+            final SessionConfiguration conf = new SessionConfiguration(
+                    CommonStuff.PATH1, props);
+            session = Session.beginSession(conf);
+            wtx = session.beginWriteTransaction();
+            wtx.insertElementAsFirstChild(CommonStuff.getString(), "");
+            for (int i = 0; i < NODE_SET_SIZE; i++) {
+                if (CommonStuff.ran.nextBoolean()) {
+                    wtx.insertElementAsFirstChild(CommonStuff.getString(), "");
+
+                } else {
+                    wtx
+                            .insertElementAsRightSibling(CommonStuff
+                                    .getString(), "");
+                }
+                if (CommonStuff.ran.nextInt(100) < mProb) {
+                    wtx.commit();
+                }
+                long nextKey = 0;
+                do {
+                    nextKey = CommonStuff.ran.nextLong();
+                    if (nextKey < 0) {
+                        nextKey = nextKey * -1;
+                    }
+                    nextKey = nextKey % wtx.getNodeCount();
+                } while (nextKey == 0);
+
+                wtx.moveTo(nextKey);
+            }
+            wtx.commit();
+        } catch (TreetankException exc) {
+            exc.printStackTrace();
+        }
+    }
+
+    @Bench
     public void benchRandom1() {
         try {
             final Properties props = new Properties();
             props.put(SettableProperties.SNAPSHOT_WINDOW.getName(), 1);
+            props.put(SettableProperties.REVISION_TYPE,
+                    ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
             session = Session.beginSession(conf);
@@ -150,6 +229,8 @@ public class SizeInsert {
         try {
             final Properties props = new Properties();
             props.put(SettableProperties.SNAPSHOT_WINDOW.getName(), 4);
+            props.put(SettableProperties.REVISION_TYPE,
+                    ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
             session = Session.beginSession(conf);
@@ -222,7 +303,7 @@ public class SizeInsert {
 
     }
 
-    private final static int RUNS = 5;
+    private final static int RUNS = 1;
     private final static AbstractMeter[] METERS = {
             new TimeMeter(Time.MilliSeconds),
             new FileSizeMeter(CommonStuff.PATH1) };

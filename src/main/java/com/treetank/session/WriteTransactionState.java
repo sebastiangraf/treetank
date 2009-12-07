@@ -457,7 +457,7 @@ public final class WriteTransactionState extends ReadTransactionState {
                     cont = dereferenceNodePageForModification(nodePageKey);
                 } else {
                     cont = new NodePageContainer(new NodePage(nodePageKey,
-                            getActualRevisionRootPage().getRevision()));
+                            IConstants.UBP_ROOT_REVISION_NUMBER));
                 }
 
             } else {
@@ -554,12 +554,11 @@ public final class WriteTransactionState extends ReadTransactionState {
      */
     private final NodePageContainer dereferenceNodePageForModification(
             final long nodePageKey) throws TreetankIOException {
-        final long rev = mCurrentRevRoot.getRevision();
         final NodePage[] revs = getSnapshotPages(nodePageKey);
 
         return ((ERevisioning) getSessionConfiguration().getProps().get(
                 SettableProperties.REVISION_TYPE.getName()))
-                .combinePagesForModification(revs, rev,
+                .combinePagesForModification(revs,
                         (Integer) getSessionConfiguration().getProps().get(
                                 SettableProperties.SNAPSHOT_WINDOW.getName()));
     }
