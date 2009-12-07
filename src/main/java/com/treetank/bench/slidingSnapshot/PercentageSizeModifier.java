@@ -140,7 +140,7 @@ public class PercentageSizeModifier {
     }
 
     @Bench(beforeEachRun = "beforeInc")
-    public void benchInc() {
+    public void benchRandomInc() {
         try {
             final Properties props = new Properties();
             props.put(SettableProperties.SNAPSHOT_WINDOW.getName(), 4);
