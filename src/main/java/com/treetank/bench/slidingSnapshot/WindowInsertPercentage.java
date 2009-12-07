@@ -22,6 +22,7 @@ import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankUsageException;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
+import com.treetank.utils.ERevisioning;
 import com.treetank.utils.SettableProperties;
 import com.treetank.utils.StorageConstants;
 
@@ -37,8 +38,14 @@ public class WindowInsertPercentage {
 
     private static long window1Seq;
     private static long window1Ran;
+    private static long inc1Seq;
+    private static long inc1Ran;
 
-    static boolean currentSeq = true;
+    enum Kind {
+        WindowSeq, WindowRan, IncSeq, IncRan
+    }
+
+    private static Kind kind;
 
     @BeforeEachRun
     public void setUp() {
@@ -61,9 +68,52 @@ public class WindowInsertPercentage {
     }
 
     @Bench
-    public void benchSeq() {
+    public void benchIncRan() {
         try {
-            currentSeq = true;
+            kind = Kind.IncRan;
+            props.put(SettableProperties.REVISION_TYPE.getName(),
+                    ERevisioning.INCREMENTAL);
+            final SessionConfiguration conf = new SessionConfiguration(
+                    CommonStuff.PATH1, props);
+            session = Session.beginSession(conf);
+            wtx = session.beginWriteTransaction();
+            wtx.insertElementAsFirstChild(CommonStuff.getString(), "");
+            for (int i = 0; i < NODE_SET_SIZE; i++) {
+                if (CommonStuff.ran.nextBoolean()) {
+                    wtx.insertElementAsFirstChild(CommonStuff.getString(), "");
+
+                } else {
+                    wtx
+                            .insertElementAsRightSibling(CommonStuff
+                                    .getString(), "");
+                }
+                if (CommonStuff.ran.nextInt(100) < mProb) {
+                    wtx.commit();
+                }
+
+                long nextKey = 0;
+                do {
+                    nextKey = CommonStuff.ran.nextLong();
+                    if (nextKey < 0) {
+                        nextKey = nextKey * -1;
+                    }
+                    nextKey = nextKey % wtx.getNodeCount();
+                } while (nextKey == 0);
+
+                wtx.moveTo(nextKey);
+            }
+            wtx.commit();
+        } catch (Exception exc) {
+            exc.printStackTrace();
+        }
+    }
+
+    @Bench
+    public void benchIncSeq() {
+        try {
+            kind = Kind.IncSeq;
+            props.put(SettableProperties.REVISION_TYPE.getName(),
+                    ERevisioning.INCREMENTAL);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
             session = Session.beginSession(conf);
@@ -89,9 +139,41 @@ public class WindowInsertPercentage {
     }
 
     @Bench
-    public void benchRandom() {
+    public void benchWindowSeq() {
         try {
-            currentSeq = false;
+            kind = Kind.WindowSeq;
+            props.put(SettableProperties.REVISION_TYPE.getName(),
+                    ERevisioning.SLIDING_SNAPSHOT);
+            final SessionConfiguration conf = new SessionConfiguration(
+                    CommonStuff.PATH1, props);
+            session = Session.beginSession(conf);
+            wtx = session.beginWriteTransaction();
+            wtx.insertElementAsFirstChild(CommonStuff.getString(), "");
+            for (int i = 0; i < NODE_SET_SIZE; i++) {
+                if (CommonStuff.ran.nextBoolean()) {
+                    wtx.insertElementAsFirstChild(CommonStuff.getString(), "");
+
+                } else {
+                    wtx
+                            .insertElementAsRightSibling(CommonStuff
+                                    .getString(), "");
+                }
+                if (CommonStuff.ran.nextInt(100) < mProb) {
+                    wtx.commit();
+                }
+            }
+            wtx.commit();
+        } catch (Exception exc) {
+            exc.printStackTrace();
+        }
+    }
+
+    @Bench
+    public void benchWindowRan() {
+        try {
+            kind = Kind.WindowRan;
+            props.put(SettableProperties.REVISION_TYPE.getName(),
+                    ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
             session = Session.beginSession(conf);
@@ -162,24 +244,42 @@ public class WindowInsertPercentage {
     private final static void prepare100Percentage() {
         props = new Properties();
         props.put(SettableProperties.SNAPSHOT_WINDOW.getName(), 1);
-        long seqSizes = 0;
-        long ranSizes = 0;
+        long seqWindowSize = 0;
+        long ranWindowSize = 0;
+        long seqIncSize = 0;
+        long ranIncSize = 0;
         final WindowInsertPercentage insert = new WindowInsertPercentage();
         for (int i = 0; i < RUNS; i++) {
-            insert.benchSeq();
+            insert.benchWindowSeq();
             final long lengthSeq = CommonStuff.computeLength(new File(
                     CommonStuff.PATH1, "tt"));
-            seqSizes = seqSizes + lengthSeq;
+            seqWindowSize = seqWindowSize + lengthSeq;
             insert.tearDown();
-            insert.benchRandom();
+
+            insert.benchWindowRan();
             final long lengthRan = CommonStuff.computeLength(new File(
                     CommonStuff.PATH1, "tt"));
-            ranSizes = ranSizes + lengthRan;
+            ranWindowSize = ranWindowSize + lengthRan;
             insert.tearDown();
+
+            insert.benchIncSeq();
+            final long lengthIncSeq = CommonStuff.computeLength(new File(
+                    CommonStuff.PATH1, "tt"));
+            seqIncSize = seqIncSize + lengthIncSeq;
+            insert.tearDown();
+
+            insert.benchIncRan();
+            final long lengthIncRan = CommonStuff.computeLength(new File(
+                    CommonStuff.PATH1, "tt"));
+            ranIncSize = ranIncSize + lengthIncRan;
+            insert.tearDown();
+
         }
 
-        window1Seq = seqSizes / RUNS;
-        window1Ran = ranSizes / RUNS;
+        window1Seq = seqWindowSize / RUNS;
+        window1Ran = ranWindowSize / RUNS;
+        inc1Ran = ranIncSize / RUNS;
+        inc1Ran = seqIncSize / RUNS;
 
     }
 
@@ -232,12 +332,17 @@ public class WindowInsertPercentage {
         @Override
         public double getValue() {
             double length = computeLength(mFile);
-            if (currentSeq) {
-                final double bla = length / window1Seq;
-                return bla;
-            } else {
-                final double bla = length / window1Ran;
-                return bla;
+            switch (kind) {
+            case WindowSeq:
+                return length / window1Seq;
+            case WindowRan:
+                return length / window1Ran;
+            case IncSeq:
+                return length / inc1Ran;
+            case IncRan:
+                return length / inc1Seq;
+            default:
+                return 0;
             }
 
         }

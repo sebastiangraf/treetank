@@ -68,7 +68,7 @@ public enum ERevisioning {
 
         }
     },
-    INCREMENTEL {
+    INCREMENTAL {
         @Override
         public NodePage combinePages(final NodePage[] pages,
                 final int mileStoneRevision) {
