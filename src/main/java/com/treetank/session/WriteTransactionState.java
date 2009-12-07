@@ -38,12 +38,12 @@ import com.treetank.page.NodePage;
 import com.treetank.page.PageReference;
 import com.treetank.page.RevisionRootPage;
 import com.treetank.page.UberPage;
+import com.treetank.utils.ERevisioning;
 import com.treetank.utils.FixedProperties;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.ItemList;
 import com.treetank.utils.NamePageHash;
 import com.treetank.utils.SettableProperties;
-import com.treetank.utils.SlidingSnapshot;
 
 /**
  * <h1>WriteTransactionState</h1>
@@ -557,9 +557,11 @@ public final class WriteTransactionState extends ReadTransactionState {
         final long rev = mCurrentRevRoot.getRevision();
         final NodePage[] revs = getSnapshotPages(nodePageKey);
 
-        return SlidingSnapshot.combinePagesForModification(revs, rev,
-                (Integer) getSessionConfiguration().getProps().get(
-                        SettableProperties.SNAPSHOT_WINDOW.getName()));
+        return ((ERevisioning) getSessionConfiguration().getProps().get(
+                SettableProperties.REVISION_TYPE.getName()))
+                .combinePagesForModification(revs, rev,
+                        (Integer) getSessionConfiguration().getProps().get(
+                                SettableProperties.SNAPSHOT_WINDOW.getName()));
     }
 
     /**
