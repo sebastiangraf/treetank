@@ -15,7 +15,7 @@ public enum SettableProperties {
     STORAGE_TYPE("storageType", StorageType.File),
 
     /** Revision properties */
-    REVISION_TYPE("revisionType", ERevisioning.INCREMENTAL),
+    REVISION_TYPE("revisionType", ERevisioning.SLIDING_SNAPSHOT),
 
     /** Number of concurrent exclusive write transactions. */
     MAX_WRITE_TRANSACTIONS("maximalWriteTransactions", 1),

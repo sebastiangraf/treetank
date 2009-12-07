@@ -1,6 +1,7 @@
 package com.treetank.bench.slidingSnapshot;
 
 import java.io.File;
+import java.util.Properties;
 
 import org.perfidix.AbstractConfig;
 import org.perfidix.Benchmark;
@@ -15,14 +16,15 @@ import org.perfidix.ouput.AbstractOutput;
 import org.perfidix.ouput.CSVOutput;
 import org.perfidix.result.BenchmarkResult;
 
-import com.treetank.api.IAxis;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
+import com.treetank.utils.ERevisioning;
+import com.treetank.utils.IConstants;
+import com.treetank.utils.SettableProperties;
 import com.treetank.utils.StorageConstants;
 
 public class CommitThresholdModifier {
@@ -30,6 +32,8 @@ public class CommitThresholdModifier {
     private static int mProb = 1;
 
     private static int MOD_SIZE = 3000;
+
+    private final static int FACTOR = 10;
 
     private IWriteTransaction wtx;
     private ISession session;
@@ -57,11 +61,88 @@ public class CommitThresholdModifier {
     }
 
     @Bench
-    public void benchSeq() {
+    public void benchRandomIncFactor() {
         try {
-            session = Session.beginSession(CommonStuff.PATH1);
+            final Properties props = new Properties();
+            props.put(SettableProperties.REVISION_TYPE.getName(),
+                    ERevisioning.INCREMENTAL);
+            final SessionConfiguration conf = new SessionConfiguration(
+                    CommonStuff.PATH1, props);
+            session = Session.beginSession(conf);
             wtx = session.beginWriteTransaction();
+            wtx.insertElementAsFirstChild(CommonStuff.getString(), "");
+            for (int i = 0; i < MOD_SIZE; i++) {
+                do {
+                    long nextKey = 0;
+                    do {
+                        nextKey = CommonStuff.ran.nextLong();
+                        if (nextKey < 0) {
+                            nextKey = nextKey * -1;
+                        }
+                        nextKey = nextKey
+                                % (FACTOR * IConstants.INP_REFERENCE_COUNT);
+                    } while (nextKey == 0);
 
+                    wtx.moveTo(nextKey);
+                } while (!wtx.getNode().isElement());
+                wtx.setName(CommonStuff.getString());
+                if (CommonStuff.ran.nextInt(100) < mProb) {
+                    wtx.commit();
+                }
+            }
+            wtx.commit();
+        } catch (TreetankException exc) {
+            exc.printStackTrace();
+        }
+    }
+
+    @Bench
+    public void benchRandomWindowFactor() {
+        try {
+            final Properties props = new Properties();
+            props.put(SettableProperties.REVISION_TYPE.getName(),
+                    ERevisioning.SLIDING_SNAPSHOT);
+            final SessionConfiguration conf = new SessionConfiguration(
+                    CommonStuff.PATH1, props);
+            session = Session.beginSession(conf);
+            wtx = session.beginWriteTransaction();
+            wtx.insertElementAsFirstChild(CommonStuff.getString(), "");
+            for (int i = 0; i < MOD_SIZE; i++) {
+                do {
+                    long nextKey = 0;
+                    do {
+                        nextKey = CommonStuff.ran.nextLong();
+                        if (nextKey < 0) {
+                            nextKey = nextKey * -1;
+                        }
+                        nextKey = nextKey
+                                % (FACTOR * IConstants.INP_REFERENCE_COUNT);
+                    } while (nextKey == 0);
+
+                    wtx.moveTo(nextKey);
+                } while (!wtx.getNode().isElement());
+                wtx.setName(CommonStuff.getString());
+                if (CommonStuff.ran.nextInt(100) < mProb) {
+                    wtx.commit();
+                }
+            }
+            wtx.commit();
+        } catch (TreetankException exc) {
+            exc.printStackTrace();
+        }
+    }
+
+    @Bench
+    public void benchRandomIncFull() {
+        try {
+            final Properties props = new Properties();
+            props.put(SettableProperties.REVISION_TYPE.getName(),
+                    ERevisioning.INCREMENTAL);
+            final SessionConfiguration conf = new SessionConfiguration(
+                    CommonStuff.PATH1, props);
+            session = Session.beginSession(conf);
+            wtx = session.beginWriteTransaction();
+            wtx.insertElementAsFirstChild(CommonStuff.getString(), "");
             for (int i = 0; i < MOD_SIZE; i++) {
                 do {
                     long nextKey = 0;
@@ -74,24 +155,10 @@ public class CommitThresholdModifier {
                     } while (nextKey == 0);
 
                     wtx.moveTo(nextKey);
-
                 } while (!wtx.getNode().isElement());
-
-                final IAxis axis = new DescendantAxis(wtx);
-                while (axis.hasNext()) {
-                    axis.next();
-                    if (wtx.getNode().isElement()) {
-                        wtx.setName(CommonStuff.getString());
-                        i++;
-                        if (CommonStuff.ran.nextInt(100) < mProb) {
-                            wtx.commit();
-                        }
-                        if (i >= MOD_SIZE) {
-                            break;
-                        }
-
-                    }
-
+                wtx.setName(CommonStuff.getString());
+                if (CommonStuff.ran.nextInt(100) < mProb) {
+                    wtx.commit();
                 }
             }
             wtx.commit();
@@ -101,9 +168,14 @@ public class CommitThresholdModifier {
     }
 
     @Bench
-    public void benchRandom() {
+    public void benchRandomWindowFull() {
         try {
-            session = Session.beginSession(CommonStuff.PATH1);
+            final Properties props = new Properties();
+            props.put(SettableProperties.REVISION_TYPE.getName(),
+                    ERevisioning.SLIDING_SNAPSHOT);
+            final SessionConfiguration conf = new SessionConfiguration(
+                    CommonStuff.PATH1, props);
+            session = Session.beginSession(conf);
             wtx = session.beginWriteTransaction();
             wtx.insertElementAsFirstChild(CommonStuff.getString(), "");
             for (int i = 0; i < MOD_SIZE; i++) {
