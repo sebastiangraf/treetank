@@ -8,10 +8,10 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.constants.ESettable;
 import com.treetank.exception.TreetankException;
 import com.treetank.page.NodePage;
 import com.treetank.session.SessionConfiguration;
+import com.treetank.settings.ESettable;
 
 public class TransactionLogCacheTest {
 

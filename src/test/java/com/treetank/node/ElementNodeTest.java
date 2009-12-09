@@ -22,8 +22,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.treetank.constants.ENodes;
 import com.treetank.io.file.ByteBufferSinkAndSource;
+import com.treetank.settings.ENodes;
 
 public class ElementNodeTest {
 

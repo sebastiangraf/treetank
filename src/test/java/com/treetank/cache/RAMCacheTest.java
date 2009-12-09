@@ -6,8 +6,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.treetank.constants.ESettable;
 import com.treetank.page.NodePage;
+import com.treetank.settings.ESettable;
 
 /**
  * @author Sebastian Graf, University of Konstanz

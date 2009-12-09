@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.treetank.constants;
+package com.treetank.settings;
 
 import java.io.File;
 

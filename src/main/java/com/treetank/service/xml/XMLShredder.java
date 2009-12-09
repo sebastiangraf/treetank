@@ -32,11 +32,11 @@ import javax.xml.stream.XMLStreamReader;
 
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.constants.EFixed;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
+import com.treetank.settings.EFixed;
 import com.treetank.utils.FastStack;
 import com.treetank.utils.TypedValue;
 

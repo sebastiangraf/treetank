@@ -23,11 +23,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import com.treetank.constants.ESettable;
-import com.treetank.constants.EStoragePaths;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankUsageException;
+import com.treetank.settings.ESettable;
+import com.treetank.settings.EStoragePaths;
 
 /**
  * <h1>SessionConfiguration</h1>

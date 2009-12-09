@@ -26,8 +26,6 @@ import java.util.concurrent.Semaphore;
 import com.treetank.api.IItemList;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.constants.EFixed;
-import com.treetank.constants.ESettable;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankUsageException;
@@ -37,6 +35,8 @@ import com.treetank.io.IWriter;
 import com.treetank.io.StorageProperties;
 import com.treetank.page.PageReference;
 import com.treetank.page.UberPage;
+import com.treetank.settings.EFixed;
+import com.treetank.settings.ESettable;
 
 /**
  * <h1>SessionState</h1>

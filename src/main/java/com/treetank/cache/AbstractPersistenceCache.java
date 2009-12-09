@@ -18,9 +18,9 @@ package com.treetank.cache;
 
 import java.io.File;
 
-import com.treetank.constants.EStoragePaths;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.session.SessionConfiguration;
+import com.treetank.settings.EStoragePaths;
 
 /**
  * Abstract class for holding all persistence caches. Each instance of this

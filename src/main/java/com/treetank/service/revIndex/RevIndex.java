@@ -7,10 +7,10 @@ import java.util.Stack;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.constants.ESettable;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.session.Session;
+import com.treetank.settings.ESettable;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.NamePageHash;
 

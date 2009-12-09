@@ -23,7 +23,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import com.treetank.api.IWriteTransaction;
-import com.treetank.constants.EFixed;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankUsageException;
@@ -32,6 +31,7 @@ import com.treetank.node.AttributeNode;
 import com.treetank.node.ElementNode;
 import com.treetank.node.NamespaceNode;
 import com.treetank.page.UberPage;
+import com.treetank.settings.EFixed;
 import com.treetank.utils.TypedValue;
 
 /**

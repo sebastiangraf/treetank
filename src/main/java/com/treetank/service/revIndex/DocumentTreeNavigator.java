@@ -4,8 +4,8 @@ import java.util.Stack;
 
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.constants.ENodes;
 import com.treetank.exception.TreetankException;
+import com.treetank.settings.ENodes;
 import com.treetank.utils.NamePageHash;
 
 public final class DocumentTreeNavigator {

@@ -26,9 +26,9 @@ import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.constants.EFixed;
 import com.treetank.exception.TreetankException;
 import com.treetank.session.Session;
+import com.treetank.settings.EFixed;
 import com.treetank.utils.DocumentCreater;
 
 public class DescendantAxisTest {

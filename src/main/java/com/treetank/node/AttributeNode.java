@@ -18,9 +18,9 @@
 
 package com.treetank.node;
 
-import com.treetank.constants.ENodes;
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
+import com.treetank.settings.ENodes;
 
 /**
  * <h1>AttributeNode</h1>
