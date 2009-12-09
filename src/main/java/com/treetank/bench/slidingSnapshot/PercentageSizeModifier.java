@@ -20,7 +20,7 @@ import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.constants.ERevisioning;
 import com.treetank.constants.ESettable;
-import com.treetank.constants.EStorage;
+import com.treetank.constants.EStoragePaths;
 import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
@@ -66,7 +66,7 @@ public class PercentageSizeModifier {
     public void benchRandom1() {
         try {
             final Properties props = new Properties();
-            props.put(ESettable.SNAPSHOT_WINDOW.getName(), 1);
+            props.put(ESettable.MILESTONE_REVISION.getName(), 1);
             props.put(ESettable.REVISION_TYPE,
                     ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
@@ -104,7 +104,7 @@ public class PercentageSizeModifier {
     public void benchRandom4() {
         try {
             final Properties props = new Properties();
-            props.put(ESettable.SNAPSHOT_WINDOW.getName(), 4);
+            props.put(ESettable.MILESTONE_REVISION.getName(), 4);
             props.put(ESettable.REVISION_TYPE,
                     ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
@@ -143,7 +143,7 @@ public class PercentageSizeModifier {
     public void benchRandomInc() {
         try {
             final Properties props = new Properties();
-            props.put(ESettable.SNAPSHOT_WINDOW.getName(), 4);
+            props.put(ESettable.MILESTONE_REVISION.getName(), 4);
             props.put(ESettable.REVISION_TYPE,
                     ERevisioning.INCREMENTAL);
             final SessionConfiguration conf = new SessionConfiguration(
@@ -206,7 +206,7 @@ public class PercentageSizeModifier {
     }
 
     public static void main(final String[] args) {
-        EStorage.recursiveDelete(CommonStuff.RESULTFOLDER);
+        EStoragePaths.recursiveDelete(CommonStuff.RESULTFOLDER);
         CommonStuff.RESULTFOLDER.mkdirs();
         for (int i = 0; i < 30000; i = i + 1000) {
             MODIFIERNUMBER = i;

@@ -27,7 +27,7 @@ public enum ESettable {
     /** Commit threshold. */
     COMMIT_THRESHOLD("commitThreshold", 262144),
     /** Window of Sliding Snapshot */
-    SNAPSHOT_WINDOW("snapshotWindow", 4);
+    MILESTONE_REVISION("milestoneRevision", 4);
 
     private final String mName;
     private final Object mStandardProperty;

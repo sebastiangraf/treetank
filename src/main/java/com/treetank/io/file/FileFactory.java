@@ -2,7 +2,7 @@ package com.treetank.io.file;
 
 import java.io.File;
 
-import com.treetank.constants.EStorage;
+import com.treetank.constants.EStoragePaths;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.AbstractIOFactory;
 import com.treetank.io.IReader;
@@ -56,7 +56,7 @@ public final class FileFactory extends AbstractIOFactory {
 
     protected final File getConcreteStorage() {
         return new File(super.config.getFile(), new StringBuilder(
-                EStorage.TT.getFile().getName()).append(File.separator)
+                EStoragePaths.TT.getFile().getName()).append(File.separator)
                 .append(FILENAME).toString());
     }
 

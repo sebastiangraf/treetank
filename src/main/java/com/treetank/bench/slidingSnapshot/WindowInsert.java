@@ -18,7 +18,7 @@ import org.perfidix.result.BenchmarkResult;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.constants.ESettable;
-import com.treetank.constants.EStorage;
+import com.treetank.constants.EStoragePaths;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankUsageException;
 import com.treetank.session.Session;
@@ -116,11 +116,11 @@ public class WindowInsert {
     }
 
     public static void main(final String[] args) throws TreetankUsageException {
-        EStorage.recursiveDelete(CommonStuff.RESULTFOLDER);
+        EStoragePaths.recursiveDelete(CommonStuff.RESULTFOLDER);
         CommonStuff.RESULTFOLDER.mkdirs();
         for (int i = 1; i <= 100; i++) {
             props = new Properties();
-            props.put(ESettable.SNAPSHOT_WINDOW.getName(), i);
+            props.put(ESettable.MILESTONE_REVISION.getName(), i);
 
             final WindowInsert toBench = new WindowInsert();
             final Benchmark benchmark = new Benchmark(new BenchmarkConfig());

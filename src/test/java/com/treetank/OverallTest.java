@@ -35,7 +35,7 @@ public final class OverallTest {
     @Test
     public void testXML() throws TreetankException {
 
-        for (int i = 0; i < (Integer) ESettable.SNAPSHOT_WINDOW
+        for (int i = 0; i < (Integer) ESettable.MILESTONE_REVISION
                 .getStandardProperty() * 2; i++) {
             final ISession session = Session.beginSession(ITestConstants.PATH1);
             final IWriteTransaction wtx = session.beginWriteTransaction();

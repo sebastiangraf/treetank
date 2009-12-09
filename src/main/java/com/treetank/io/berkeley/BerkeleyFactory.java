@@ -11,7 +11,7 @@ import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
-import com.treetank.constants.EStorage;
+import com.treetank.constants.EStoragePaths;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.AbstractIOFactory;
 import com.treetank.io.AbstractKey;
@@ -89,7 +89,7 @@ public final class BerkeleyFactory extends AbstractIOFactory {
         config.setCacheSize(1024 * 1024);
 
         final File repoFile = new File(paramSession.getFile(),
-                EStorage.TT.getFile().getName());
+                EStoragePaths.TT.getFile().getName());
         if (repoFile.listFiles().length == 0
                 || (repoFile.listFiles().length == 1 && "tt.tnk"
                         .equals(repoFile.listFiles()[0].getName()))) {

@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import com.treetank.constants.ESettable;
-import com.treetank.constants.EStorage;
+import com.treetank.constants.EStoragePaths;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankUsageException;
@@ -73,7 +73,7 @@ public final class SessionConfiguration {
             }
         }
 
-        validateAndBuildPath(file);
+        EStoragePaths.validateAndBuildPath(file);
     }
 
     public SessionConfiguration(final File file, final File propFile)
@@ -103,79 +103,6 @@ public final class SessionConfiguration {
      */
     public String toString() {
         return mFile.getAbsolutePath() + File.separator;
-    }
-
-    /**
-     * Checking if path is valid
-     * 
-     * @param file
-     * @return
-     */
-    private static void validateAndBuildPath(final File file)
-            throws TreetankUsageException {
-        boolean createTransactionLog = false;
-        boolean createStorage = false;
-
-        final File transactionLog = new File(file,
-                EStorage.TRANSACTIONLOG.getFile().getName());
-        final File storage = new File(file, EStorage.TT.getFile()
-                .getName());
-        if (file == null) {
-            throw new TreetankUsageException(
-                    "Path to TreeTank file must not be null");
-        } else {
-            if (!file.exists()) {
-                file.mkdirs();
-                createTransactionLog = true;
-                createStorage = true;
-            } else {
-                if (file.isDirectory()) {
-                    final File[] files = file.listFiles();
-                    if (files != null) {
-                        boolean foundTransactionLog = false;
-                        boolean foundStorage = false;
-                        for (File child : files) {
-                            if (child.equals(transactionLog)) {
-                                foundTransactionLog = true;
-                            } else if (child.equals(storage)) {
-                                foundStorage = true;
-                            } else {
-                                throw new TreetankUsageException(
-                                        "Path to TreeTank file must be a directory with defined transactionlog/storage structure");
-                            }
-                            createTransactionLog = !foundTransactionLog;
-                            createStorage = !foundStorage;
-                        }
-
-                    } else {
-                        createTransactionLog = true;
-                        createStorage = true;
-                    }
-                } else {
-                    throw new TreetankUsageException(
-                            "Path to TreeTank file must be n a directory");
-                }
-            }
-        }
-        if (createTransactionLog) {
-            if (!transactionLog.mkdir()) {
-                throw new TreetankUsageException(
-                        "Path to TreeTank file must a directory");
-            }
-        } else {
-            final File[] files = transactionLog.listFiles();
-            if (files != null) {
-                for (final File child : files) {
-                    EStorage.recursiveDelete(child);
-                }
-            }
-        }
-        if (createStorage) {
-            if (!storage.mkdir()) {
-                throw new TreetankUsageException(
-                        "Path to TreeTank file must a directory");
-            }
-        }
     }
 
     /**

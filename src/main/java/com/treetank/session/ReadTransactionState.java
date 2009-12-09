@@ -135,7 +135,7 @@ public class ReadTransactionState {
 
             final int mileStoneRevision = (Integer) getSessionConfiguration()
                     .getProps().get(
-                            ESettable.SNAPSHOT_WINDOW.getName());
+                            ESettable.MILESTONE_REVISION.getName());
 
             // Build up the complete page.
             final NodePage completePage = ((ERevisioning) getSessionConfiguration()
@@ -277,7 +277,7 @@ public class ReadTransactionState {
                     }
                 }
                 if (refs.size() == (Integer) mSessionConfiguration.getProps()
-                        .get(ESettable.SNAPSHOT_WINDOW.getName())) {
+                        .get(ESettable.MILESTONE_REVISION.getName())) {
                     break;
                 }
 

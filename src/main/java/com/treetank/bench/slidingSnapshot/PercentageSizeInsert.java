@@ -19,7 +19,7 @@ import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.constants.ERevisioning;
 import com.treetank.constants.ESettable;
-import com.treetank.constants.EStorage;
+import com.treetank.constants.EStoragePaths;
 import com.treetank.exception.TreetankException;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
@@ -58,7 +58,7 @@ public class PercentageSizeInsert {
     public void benchRandomInc() {
         try {
             final Properties props = new Properties();
-            props.put(ESettable.SNAPSHOT_WINDOW.getName(),
+            props.put(ESettable.MILESTONE_REVISION.getName(),
                     REVISION_MILESTONES);
             props.put(ESettable.REVISION_TYPE,
                     ERevisioning.INCREMENTAL);
@@ -101,7 +101,7 @@ public class PercentageSizeInsert {
     public void benchRandom1() {
         try {
             final Properties props = new Properties();
-            props.put(ESettable.SNAPSHOT_WINDOW.getName(), 1);
+            props.put(ESettable.MILESTONE_REVISION.getName(), 1);
             props.put(ESettable.REVISION_TYPE,
                     ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
@@ -144,7 +144,7 @@ public class PercentageSizeInsert {
         try {
             final Properties props = new Properties();
             props
-                    .put(ESettable.SNAPSHOT_WINDOW.getName(),
+                    .put(ESettable.MILESTONE_REVISION.getName(),
                             WINDOW_SIZE);
             props.put(ESettable.REVISION_TYPE,
                     ERevisioning.SLIDING_SNAPSHOT);
@@ -184,7 +184,7 @@ public class PercentageSizeInsert {
     }
 
     public static void main(final String[] args) {
-        EStorage.recursiveDelete(CommonStuff.RESULTFOLDER);
+        EStoragePaths.recursiveDelete(CommonStuff.RESULTFOLDER);
         CommonStuff.RESULTFOLDER.mkdirs();
         for (int i = 0; i < 30000; i = i + 1000) {
             NODE_SET_SIZE = i;

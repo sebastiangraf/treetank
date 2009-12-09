@@ -560,7 +560,7 @@ public final class WriteTransactionState extends ReadTransactionState {
                 ESettable.REVISION_TYPE.getName()))
                 .combinePagesForModification(revs,
                         (Integer) getSessionConfiguration().getProps().get(
-                                ESettable.SNAPSHOT_WINDOW.getName()));
+                                ESettable.MILESTONE_REVISION.getName()));
     }
 
     /**
