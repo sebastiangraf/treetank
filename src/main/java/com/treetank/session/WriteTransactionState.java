@@ -218,6 +218,8 @@ public final class WriteTransactionState extends ReadTransactionState {
         // missing element
         nodePageCon.getModified().setNode(nodePageOffset(node.getNodeKey()),
                 null);
+        nodePageCon.getComplete().setNode(nodePageOffset(node.getNodeKey()),
+                null);
         finishNodeModification(node);
 
         nodePageCon = null;
@@ -332,10 +334,8 @@ public final class WriteTransactionState extends ReadTransactionState {
 
         if (uberPage.isBootstrap()) {
             mPageWriter.setProps(new StorageProperties(
-                    (Integer) EFixed.VERSION_MAJOR
-                            .getStandardProperty(),
-                    (Integer) EFixed.VERSION_MINOR
-                            .getStandardProperty()));
+                    (Integer) EFixed.VERSION_MAJOR.getStandardProperty(),
+                    (Integer) EFixed.VERSION_MINOR.getStandardProperty()));
         }
 
         // // // /////////////

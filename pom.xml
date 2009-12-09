@@ -6,7 +6,7 @@
 	<artifactId>treetank</artifactId>
 	<packaging>jar</packaging>
 	<name>treetank</name>
-	<version>5.1.1-SNAPSHOT</version>
+	<version>5.2-SNAPSHOT</version>
 	<description>Treetank is a fully java-implemented native XML-Database. 
 	It supports cursorlike access to all nodes stored in the tree plus XPath 2.0 as query engine. Furthermore, Treetank is completely versionable. That means that each update-operation results in a new version. 
 	These versions can be easily retrieved within the database itself.</description>
@@ -108,7 +108,7 @@
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
-			<!--<plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
 				<executions>
@@ -119,7 +119,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>-->
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>

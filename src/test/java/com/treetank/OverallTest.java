@@ -82,6 +82,10 @@ public final class OverallTest {
                 wtx.moveToParent();
             }
         }
+        final long key = wtx.getNode().getNodeKey();
+        wtx.remove();
+        wtx.insertElementAsFirstChild(getString(), "");
+        wtx.moveTo(key);
         wtx.commit();
         wtx.close();
         session.close();
