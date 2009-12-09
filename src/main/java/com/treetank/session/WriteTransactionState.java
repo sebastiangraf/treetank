@@ -22,6 +22,9 @@ import com.treetank.api.IItem;
 import com.treetank.cache.ICache;
 import com.treetank.cache.NodePageContainer;
 import com.treetank.cache.TransactionLogCache;
+import com.treetank.constants.EFixed;
+import com.treetank.constants.ERevisioning;
+import com.treetank.constants.ESettable;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.IWriter;
 import com.treetank.io.StorageProperties;
@@ -38,12 +41,9 @@ import com.treetank.page.NodePage;
 import com.treetank.page.PageReference;
 import com.treetank.page.RevisionRootPage;
 import com.treetank.page.UberPage;
-import com.treetank.utils.ERevisioning;
-import com.treetank.utils.FixedProperties;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.ItemList;
 import com.treetank.utils.NamePageHash;
-import com.treetank.utils.SettableProperties;
 
 /**
  * <h1>WriteTransactionState</h1>
@@ -332,9 +332,9 @@ public final class WriteTransactionState extends ReadTransactionState {
 
         if (uberPage.isBootstrap()) {
             mPageWriter.setProps(new StorageProperties(
-                    (Integer) FixedProperties.VERSION_MAJOR
+                    (Integer) EFixed.VERSION_MAJOR
                             .getStandardProperty(),
-                    (Integer) FixedProperties.VERSION_MINOR
+                    (Integer) EFixed.VERSION_MINOR
                             .getStandardProperty()));
         }
 
@@ -557,10 +557,10 @@ public final class WriteTransactionState extends ReadTransactionState {
         final NodePage[] revs = getSnapshotPages(nodePageKey);
 
         return ((ERevisioning) getSessionConfiguration().getProps().get(
-                SettableProperties.REVISION_TYPE.getName()))
+                ESettable.REVISION_TYPE.getName()))
                 .combinePagesForModification(revs,
                         (Integer) getSessionConfiguration().getProps().get(
-                                SettableProperties.SNAPSHOT_WINDOW.getName()));
+                                ESettable.SNAPSHOT_WINDOW.getName()));
     }
 
     /**

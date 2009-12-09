@@ -20,8 +20,8 @@ package com.treetank.axis;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.constants.EFixed;
 import com.treetank.utils.FastStack;
-import com.treetank.utils.FixedProperties;
 
 /**
  * <h1>DescendantAxis</h1>
@@ -82,7 +82,7 @@ public class DescendantAxis extends AbstractAxis implements IAxis {
         resetToLastKey();
 
         // Fail if there is no node anymore.
-        if (mNextKey == (Long) FixedProperties.NULL_NODE_KEY
+        if (mNextKey == (Long) EFixed.NULL_NODE_KEY
                 .getStandardProperty()) {
             resetToStartKey();
             return false;
@@ -119,7 +119,7 @@ public class DescendantAxis extends AbstractAxis implements IAxis {
         }
 
         // Then end.
-        mNextKey = (Long) FixedProperties.NULL_NODE_KEY.getStandardProperty();
+        mNextKey = (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
         return true;
     }
 

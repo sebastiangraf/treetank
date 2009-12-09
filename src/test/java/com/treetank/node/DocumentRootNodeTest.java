@@ -22,9 +22,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import com.treetank.constants.EFixed;
+import com.treetank.constants.ENodes;
 import com.treetank.io.file.ByteBufferSinkAndSource;
-import com.treetank.utils.ENodes;
-import com.treetank.utils.FixedProperties;
 
 public class DocumentRootNodeTest {
 
@@ -48,24 +48,24 @@ public class DocumentRootNodeTest {
         final AbstractNode node3 = new DocumentRootNode(node2);
 
         // Now compare.
-        assertEquals(FixedProperties.ROOT_NODE_KEY.getStandardProperty(), node3
+        assertEquals(EFixed.ROOT_NODE_KEY.getStandardProperty(), node3
                 .getNodeKey());
-        assertEquals(FixedProperties.NULL_NODE_KEY.getStandardProperty(), node3
+        assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(), node3
                 .getParentKey());
-        assertEquals(FixedProperties.NULL_NODE_KEY.getStandardProperty(), node3
+        assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(), node3
                 .getFirstChildKey());
-        assertEquals(FixedProperties.NULL_NODE_KEY.getStandardProperty(), node3
+        assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(), node3
                 .getLeftSiblingKey());
-        assertEquals(FixedProperties.NULL_NODE_KEY.getStandardProperty(), node3
+        assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(), node3
                 .getRightSiblingKey());
         assertEquals(0L, node3.getChildCount());
         assertEquals(0, node3.getAttributeCount());
         assertEquals(0, node3.getNamespaceCount());
-        assertEquals(FixedProperties.NULL_INT_KEY.getStandardProperty(), node3
+        assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(), node3
                 .getNameKey());
-        assertEquals(FixedProperties.NULL_INT_KEY.getStandardProperty(), node3
+        assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(), node3
                 .getURIKey());
-        assertEquals(FixedProperties.NULL_INT_KEY.getStandardProperty(), node3
+        assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(), node3
                 .getNameKey());
         assertEquals(null, node3.getRawValue());
         assertEquals(ENodes.ROOT_KIND, node3.getKind());

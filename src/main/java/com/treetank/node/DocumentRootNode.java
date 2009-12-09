@@ -18,9 +18,9 @@
 
 package com.treetank.node;
 
+import com.treetank.constants.EFixed;
+import com.treetank.constants.ENodes;
 import com.treetank.io.ITTSource;
-import com.treetank.utils.ENodes;
-import com.treetank.utils.FixedProperties;
 
 /**
  * <h1>DocumentNode</h1>
@@ -42,8 +42,8 @@ public final class DocumentRootNode extends AbstractNode {
      * Constructor to create document node.
      */
     public DocumentRootNode() {
-        super(SIZE, (Long) FixedProperties.ROOT_NODE_KEY.getStandardProperty());
-        mData[FIRST_CHILD_KEY] = (Long) FixedProperties.NULL_NODE_KEY
+        super(SIZE, (Long) EFixed.ROOT_NODE_KEY.getStandardProperty());
+        mData[FIRST_CHILD_KEY] = (Long) EFixed.NULL_NODE_KEY
                 .getStandardProperty();
         mData[CHILD_COUNT] = 0L;
     }
@@ -81,7 +81,7 @@ public final class DocumentRootNode extends AbstractNode {
      */
     @Override
     public boolean hasFirstChild() {
-        return (mData[FIRST_CHILD_KEY] != (Long) FixedProperties.NULL_NODE_KEY
+        return (mData[FIRST_CHILD_KEY] != (Long) EFixed.NULL_NODE_KEY
                 .getStandardProperty());
     }
 

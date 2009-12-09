@@ -1,6 +1,6 @@
-package com.treetank.utils;
+package com.treetank.constants;
 
-public enum FixedProperties {
+public enum EFixed {
 
     // --- File Version
     // ----------------------------------------------------------------
@@ -27,7 +27,7 @@ public enum FixedProperties {
     private final String mName;
     private final Object mStandardProperty;
 
-    private FixedProperties(final String name, final Object standardProperty) {
+    private EFixed(final String name, final Object standardProperty) {
         this.mName = name;
         this.mStandardProperty = standardProperty;
     }

@@ -23,11 +23,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import com.treetank.constants.ESettable;
+import com.treetank.constants.EStorage;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankUsageException;
-import com.treetank.utils.SettableProperties;
-import com.treetank.utils.StorageConstants;
 
 /**
  * <h1>SessionConfiguration</h1>
@@ -63,7 +63,7 @@ public final class SessionConfiguration {
             throws TreetankUsageException {
         this.mFile = file;
         this.mProps = new Properties();
-        for (final SettableProperties enumProps : SettableProperties.values()) {
+        for (final ESettable enumProps : ESettable.values()) {
             if (props.containsKey(enumProps.getName())) {
                 this.getProps().put(enumProps.getName(),
                         props.get(enumProps.getName()));
@@ -117,8 +117,8 @@ public final class SessionConfiguration {
         boolean createStorage = false;
 
         final File transactionLog = new File(file,
-                StorageConstants.TRANSACTIONLOG.getFile().getName());
-        final File storage = new File(file, StorageConstants.TT.getFile()
+                EStorage.TRANSACTIONLOG.getFile().getName());
+        final File storage = new File(file, EStorage.TT.getFile()
                 .getName());
         if (file == null) {
             throw new TreetankUsageException(
@@ -166,7 +166,7 @@ public final class SessionConfiguration {
             final File[] files = transactionLog.listFiles();
             if (files != null) {
                 for (final File child : files) {
-                    StorageConstants.recursiveDelete(child);
+                    EStorage.recursiveDelete(child);
                 }
             }
         }
@@ -220,7 +220,7 @@ public final class SessionConfiguration {
         StandardProperties() {
             props = new Properties();
 
-            for (SettableProperties prop : SettableProperties.values()) {
+            for (ESettable prop : ESettable.values()) {
                 getProps().put(prop.getName(), prop.getStandardProperty());
             }
         }

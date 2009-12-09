@@ -1,4 +1,4 @@
-package com.treetank.utils;
+package com.treetank.constants;
 
 import java.util.Set;
 import java.util.TreeSet;

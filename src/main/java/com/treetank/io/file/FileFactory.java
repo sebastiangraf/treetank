@@ -2,12 +2,12 @@ package com.treetank.io.file;
 
 import java.io.File;
 
+import com.treetank.constants.EStorage;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.AbstractIOFactory;
 import com.treetank.io.IReader;
 import com.treetank.io.IWriter;
 import com.treetank.session.SessionConfiguration;
-import com.treetank.utils.StorageConstants;
 
 /**
  * Factory to provide File access as a backend.
@@ -56,7 +56,7 @@ public final class FileFactory extends AbstractIOFactory {
 
     protected final File getConcreteStorage() {
         return new File(super.config.getFile(), new StringBuilder(
-                StorageConstants.TT.getFile().getName()).append(File.separator)
+                EStorage.TT.getFile().getName()).append(File.separator)
                 .append(FILENAME).toString());
     }
 

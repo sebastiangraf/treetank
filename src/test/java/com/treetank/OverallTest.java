@@ -9,12 +9,12 @@ import org.junit.Test;
 
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.constants.ENodes;
+import com.treetank.constants.ESettable;
 import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
-import com.treetank.utils.ENodes;
-import com.treetank.utils.SettableProperties;
 
 public final class OverallTest {
 
@@ -35,7 +35,7 @@ public final class OverallTest {
     @Test
     public void testXML() throws TreetankException {
 
-        for (int i = 0; i < (Integer) SettableProperties.SNAPSHOT_WINDOW
+        for (int i = 0; i < (Integer) ESettable.SNAPSHOT_WINDOW
                 .getStandardProperty() * 2; i++) {
             final ISession session = Session.beginSession(ITestConstants.PATH1);
             final IWriteTransaction wtx = session.beginWriteTransaction();

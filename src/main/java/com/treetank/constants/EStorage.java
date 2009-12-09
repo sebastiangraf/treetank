@@ -1,15 +1,16 @@
 /**
  * 
  */
-package com.treetank.utils;
+package com.treetank.constants;
 
 import java.io.File;
 
 /**
- * @author sebi
+ * @author Sebastian Graf, University of Konstanz
+ * 
  * 
  */
-public enum StorageConstants {
+public enum EStorage {
 
     /** Folder for storage of data */
     TT( new File("tt")),
@@ -19,7 +20,7 @@ public enum StorageConstants {
 
     private final File mFile;
 
-    private StorageConstants(final File file) {
+    private EStorage(final File file) {
         mFile = file;
     }
 

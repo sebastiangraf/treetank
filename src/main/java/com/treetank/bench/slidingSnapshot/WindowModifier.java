@@ -20,13 +20,13 @@ import com.treetank.api.IAxis;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
+import com.treetank.constants.ESettable;
+import com.treetank.constants.EStorage;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankUsageException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
-import com.treetank.utils.SettableProperties;
-import com.treetank.utils.StorageConstants;
 
 public class WindowModifier {
 
@@ -140,11 +140,11 @@ public class WindowModifier {
     }
 
     public static void main(final String[] args) throws TreetankUsageException {
-        StorageConstants.recursiveDelete(CommonStuff.RESULTFOLDER);
+        EStorage.recursiveDelete(CommonStuff.RESULTFOLDER);
         CommonStuff.RESULTFOLDER.mkdirs();
         for (int i = 1; i <= 34; i++) {
             props = new Properties();
-            props.put(SettableProperties.SNAPSHOT_WINDOW.getName(), i);
+            props.put(ESettable.SNAPSHOT_WINDOW.getName(), i);
 
             final WindowModifier toBench = new WindowModifier();
             final Benchmark benchmark = new Benchmark(new BenchmarkConfig());

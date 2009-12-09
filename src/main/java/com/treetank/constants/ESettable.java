@@ -1,4 +1,4 @@
-package com.treetank.utils;
+package com.treetank.constants;
 
 import com.treetank.io.AbstractIOFactory.StorageType;
 
@@ -9,7 +9,7 @@ import com.treetank.io.AbstractIOFactory.StorageType;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public enum SettableProperties {
+public enum ESettable {
 
     /** Default storage */
     STORAGE_TYPE("storageType", StorageType.File),
@@ -32,7 +32,7 @@ public enum SettableProperties {
     private final String mName;
     private final Object mStandardProperty;
 
-    private SettableProperties(final String name, final Object standardProperty) {
+    private ESettable(final String name, final Object standardProperty) {
         this.mName = name;
         this.mStandardProperty = standardProperty;
     }

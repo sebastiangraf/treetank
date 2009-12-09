@@ -18,10 +18,10 @@
 
 package com.treetank.node;
 
+import com.treetank.constants.EFixed;
+import com.treetank.constants.ENodes;
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
-import com.treetank.utils.ENodes;
-import com.treetank.utils.FixedProperties;
 
 /**
  * <h1>TextNode</h1>
@@ -113,7 +113,7 @@ public final class TextNode extends AbstractNode {
      */
     @Override
     public boolean hasParent() {
-        return ((mData[NODE_KEY] - mData[PARENT_KEY]) != (Long) FixedProperties.NULL_NODE_KEY
+        return ((mData[NODE_KEY] - mData[PARENT_KEY]) != (Long) EFixed.NULL_NODE_KEY
                 .getStandardProperty());
     }
 
@@ -138,7 +138,7 @@ public final class TextNode extends AbstractNode {
      */
     @Override
     public boolean hasLeftSibling() {
-        return (mData[LEFT_SIBLING_KEY] != (Long) FixedProperties.NULL_NODE_KEY
+        return (mData[LEFT_SIBLING_KEY] != (Long) EFixed.NULL_NODE_KEY
                 .getStandardProperty());
     }
 
@@ -163,7 +163,7 @@ public final class TextNode extends AbstractNode {
      */
     @Override
     public boolean hasRightSibling() {
-        return (mData[RIGHT_SIBLING_KEY] != (Long) FixedProperties.NULL_NODE_KEY
+        return (mData[RIGHT_SIBLING_KEY] != (Long) EFixed.NULL_NODE_KEY
                 .getStandardProperty());
     }
 

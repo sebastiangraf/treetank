@@ -19,9 +19,9 @@
 package com.treetank.service.xml.xpath;
 
 import com.treetank.api.IItem;
+import com.treetank.constants.EFixed;
+import com.treetank.constants.ENodes;
 import com.treetank.service.xml.xpath.types.Type;
-import com.treetank.utils.ENodes;
-import com.treetank.utils.FixedProperties;
 import com.treetank.utils.NamePageHash;
 import com.treetank.utils.TypedValue;
 
@@ -133,7 +133,7 @@ public class AtomicValue implements IItem {
      */
     public long getFirstChildKey() {
 
-        return (Integer) FixedProperties.NULL_NODE_KEY.getStandardProperty();
+        return (Integer) EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -141,7 +141,7 @@ public class AtomicValue implements IItem {
      */
     public long getLeftSiblingKey() {
 
-        return (Integer) FixedProperties.NULL_NODE_KEY.getStandardProperty();
+        return (Integer) EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -149,7 +149,7 @@ public class AtomicValue implements IItem {
      */
     public long getParentKey() {
 
-        return (Integer) FixedProperties.NULL_NODE_KEY.getStandardProperty();
+        return (Integer) EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -157,7 +157,7 @@ public class AtomicValue implements IItem {
      */
     public long getRightSiblingKey() {
 
-        return (Integer) FixedProperties.NULL_NODE_KEY.getStandardProperty();
+        return (Integer) EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -197,7 +197,7 @@ public class AtomicValue implements IItem {
      */
     public long getAttributeKey(final int index) {
 
-        return (Integer) FixedProperties.NULL_NODE_KEY.getStandardProperty();
+        return (Integer) EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -245,7 +245,7 @@ public class AtomicValue implements IItem {
      */
     public long getNamespaceKey(final int index) {
 
-        return (Integer) FixedProperties.NULL_NODE_KEY.getStandardProperty();
+        return (Integer) EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**

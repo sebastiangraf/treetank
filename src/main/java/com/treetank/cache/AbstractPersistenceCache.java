@@ -18,9 +18,9 @@ package com.treetank.cache;
 
 import java.io.File;
 
+import com.treetank.constants.EStorage;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.session.SessionConfiguration;
-import com.treetank.utils.StorageConstants;
 
 /**
  * Abstract class for holding all persistence caches. Each instance of this
@@ -51,7 +51,7 @@ public abstract class AbstractPersistenceCache implements ICache {
      */
     protected AbstractPersistenceCache(final SessionConfiguration paramConfig) {
         place = new File(paramConfig.getFile(), new StringBuilder(
-                StorageConstants.TRANSACTIONLOG.getFile().getName()).append(
+                EStorage.TRANSACTIONLOG.getFile().getName()).append(
                 File.separator).append(counter).toString());
         place.mkdir();
         counter++;
