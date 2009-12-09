@@ -22,8 +22,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.treetank.utils.ENodes;
-import com.treetank.utils.FixedProperties;
+import com.treetank.constants.EFixed;
+import com.treetank.constants.ENodes;
 
 public class NamespaceNodeTest {
 
@@ -43,11 +43,11 @@ public class NamespaceNodeTest {
         // Now compare.
         assertEquals(99L, node2.getNodeKey());
         assertEquals(13L, node2.getParentKey());
-        assertEquals(FixedProperties.NULL_NODE_KEY.getStandardProperty(), node2
+        assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(), node2
                 .getFirstChildKey());
-        assertEquals(FixedProperties.NULL_NODE_KEY.getStandardProperty(), node2
+        assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(), node2
                 .getLeftSiblingKey());
-        assertEquals(FixedProperties.NULL_NODE_KEY.getStandardProperty(), node2
+        assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(), node2
                 .getRightSiblingKey());
         assertEquals(0, node2.getChildCount());
         assertEquals(0, node2.getAttributeCount());

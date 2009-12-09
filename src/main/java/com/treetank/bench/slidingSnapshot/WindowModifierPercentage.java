@@ -20,14 +20,14 @@ import com.treetank.api.IAxis;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
+import com.treetank.constants.ERevisioning;
+import com.treetank.constants.ESettable;
+import com.treetank.constants.EStorage;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankUsageException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
-import com.treetank.utils.ERevisioning;
-import com.treetank.utils.SettableProperties;
-import com.treetank.utils.StorageConstants;
 
 public class WindowModifierPercentage {
     private final static int mProb = 20;
@@ -74,7 +74,7 @@ public class WindowModifierPercentage {
     public void benchIncSeq() {
         try {
             kind = Kind.IncSeq;
-            props.put(SettableProperties.REVISION_TYPE.getName(),
+            props.put(ESettable.REVISION_TYPE.getName(),
                     ERevisioning.INCREMENTAL);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
@@ -124,7 +124,7 @@ public class WindowModifierPercentage {
     public void benchIncRan() {
         try {
             kind = Kind.IncRan;
-            props.put(SettableProperties.REVISION_TYPE.getName(),
+            props.put(ESettable.REVISION_TYPE.getName(),
                     ERevisioning.INCREMENTAL);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
@@ -161,7 +161,7 @@ public class WindowModifierPercentage {
     public void benchWindowSeq() {
         try {
             kind = Kind.WindowSeq;
-            props.put(SettableProperties.REVISION_TYPE.getName(),
+            props.put(ESettable.REVISION_TYPE.getName(),
                     ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
@@ -211,7 +211,7 @@ public class WindowModifierPercentage {
     public void benchWindowRan() {
         try {
             kind = Kind.WindowRan;
-            props.put(SettableProperties.REVISION_TYPE.getName(),
+            props.put(ESettable.REVISION_TYPE.getName(),
                     ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
@@ -245,14 +245,14 @@ public class WindowModifierPercentage {
     }
 
     public static void main(final String[] args) throws TreetankUsageException {
-        StorageConstants.recursiveDelete(CommonStuff.RESULTFOLDER);
+        EStorage.recursiveDelete(CommonStuff.RESULTFOLDER);
         CommonStuff.RESULTFOLDER.mkdirs();
 
         prepare100Percentage();
 
         for (int i = 1; i <= 100; i++) {
             props = new Properties();
-            props.put(SettableProperties.SNAPSHOT_WINDOW.getName(), i);
+            props.put(ESettable.SNAPSHOT_WINDOW.getName(), i);
 
             final WindowModifierPercentage toBench = new WindowModifierPercentage();
             final Benchmark benchmark = new Benchmark(new BenchmarkConfig());
@@ -278,7 +278,7 @@ public class WindowModifierPercentage {
 
     private final static void prepare100Percentage() {
         props = new Properties();
-        props.put(SettableProperties.SNAPSHOT_WINDOW.getName(), 1);
+        props.put(ESettable.SNAPSHOT_WINDOW.getName(), 1);
         long seqWindowSize = 0;
         long ranWindowSize = 0;
         long seqIncSize = 0;

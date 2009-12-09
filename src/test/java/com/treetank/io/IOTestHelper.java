@@ -9,14 +9,14 @@ import java.util.Properties;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
+import com.treetank.constants.EFixed;
+import com.treetank.constants.ESettable;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankUsageException;
 import com.treetank.io.AbstractIOFactory.StorageType;
 import com.treetank.page.PageReference;
 import com.treetank.page.UberPage;
 import com.treetank.session.SessionConfiguration;
-import com.treetank.utils.FixedProperties;
-import com.treetank.utils.SettableProperties;
 
 /**
  * Helper class for testing the io interfaces
@@ -40,7 +40,7 @@ public final class IOTestHelper {
     public static SessionConfiguration createConf(final StorageType type)
             throws TreetankUsageException {
         final Properties props = new Properties();
-        props.put(SettableProperties.STORAGE_TYPE, type);
+        props.put(ESettable.STORAGE_TYPE, type);
         return new SessionConfiguration(ITestConstants.PATH1, props);
     }
 
@@ -81,9 +81,9 @@ public final class IOTestHelper {
     public static void testPropsReadWrite(final SessionConfiguration conf)
             throws TreetankException {
         final StorageProperties props = new StorageProperties(
-                (Integer) FixedProperties.LAST_VERSION_MAJOR
+                (Integer) EFixed.LAST_VERSION_MAJOR
                         .getStandardProperty(),
-                (Integer) FixedProperties.LAST_VERSION_MINOR
+                (Integer) EFixed.LAST_VERSION_MINOR
                         .getStandardProperty());
 
         final AbstractIOFactory fac = AbstractIOFactory.getInstance(conf);

@@ -28,6 +28,8 @@ import com.treetank.api.IItemList;
 import com.treetank.cache.ICache;
 import com.treetank.cache.NodePageContainer;
 import com.treetank.cache.RAMCache;
+import com.treetank.constants.ERevisioning;
+import com.treetank.constants.ESettable;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.IReader;
 import com.treetank.page.AbstractPage;
@@ -37,9 +39,7 @@ import com.treetank.page.NodePage;
 import com.treetank.page.PageReference;
 import com.treetank.page.RevisionRootPage;
 import com.treetank.page.UberPage;
-import com.treetank.utils.ERevisioning;
 import com.treetank.utils.IConstants;
-import com.treetank.utils.SettableProperties;
 
 /**
  * <h1>ReadTransactionState</h1>
@@ -135,11 +135,11 @@ public class ReadTransactionState {
 
             final int mileStoneRevision = (Integer) getSessionConfiguration()
                     .getProps().get(
-                            SettableProperties.SNAPSHOT_WINDOW.getName());
+                            ESettable.SNAPSHOT_WINDOW.getName());
 
             // Build up the complete page.
             final NodePage completePage = ((ERevisioning) getSessionConfiguration()
-                    .getProps().get(SettableProperties.REVISION_TYPE.getName()))
+                    .getProps().get(ESettable.REVISION_TYPE.getName()))
                     .combinePages(revs, mileStoneRevision);
             cont = new NodePageContainer(completePage);
             mCache.put(nodePageKey, cont);
@@ -277,7 +277,7 @@ public class ReadTransactionState {
                     }
                 }
                 if (refs.size() == (Integer) mSessionConfiguration.getProps()
-                        .get(SettableProperties.SNAPSHOT_WINDOW.getName())) {
+                        .get(ESettable.SNAPSHOT_WINDOW.getName())) {
                     break;
                 }
 

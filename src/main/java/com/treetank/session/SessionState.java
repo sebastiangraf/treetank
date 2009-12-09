@@ -26,6 +26,8 @@ import java.util.concurrent.Semaphore;
 import com.treetank.api.IItemList;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.constants.EFixed;
+import com.treetank.constants.ESettable;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankUsageException;
@@ -35,8 +37,6 @@ import com.treetank.io.IWriter;
 import com.treetank.io.StorageProperties;
 import com.treetank.page.PageReference;
 import com.treetank.page.UberPage;
-import com.treetank.utils.FixedProperties;
-import com.treetank.utils.SettableProperties;
 
 /**
  * <h1>SessionState</h1>
@@ -107,10 +107,10 @@ public final class SessionState {
 
         // Init session members.
         mWriteSemaphore = new Semaphore(
-                (Integer) SettableProperties.MAX_WRITE_TRANSACTIONS
+                (Integer) ESettable.MAX_WRITE_TRANSACTIONS
                         .getStandardProperty());
         mReadSemaphore = new Semaphore(
-                (Integer) SettableProperties.MAX_READ_TRANSACTIONS
+                (Integer) ESettable.MAX_READ_TRANSACTIONS
                         .getStandardProperty());
         final PageReference uberPageReference = new PageReference();
 
@@ -123,9 +123,9 @@ public final class SessionState {
             uberPageReference.setPage(mLastCommittedUberPage);
 
             props = new StorageProperties(
-                    (Integer) FixedProperties.VERSION_MAJOR
+                    (Integer) EFixed.VERSION_MAJOR
                             .getStandardProperty(),
-                    (Integer) FixedProperties.VERSION_MINOR
+                    (Integer) EFixed.VERSION_MINOR
                             .getStandardProperty());
         } else {
             final IReader reader = fac.getReader();
@@ -146,18 +146,18 @@ public final class SessionState {
             throws TreetankUsageException {
 
         // Fail if an old TreeTank file is encountered.
-        if (mVersionMajor < (Integer) FixedProperties.VERSION_MAJOR
+        if (mVersionMajor < (Integer) EFixed.VERSION_MAJOR
                 .getStandardProperty()
-                || mVersionMinor < (Integer) FixedProperties.VERSION_MINOR
+                || mVersionMinor < (Integer) EFixed.VERSION_MINOR
                         .getStandardProperty()) {
             throw new TreetankUsageException(new StringBuilder("'").append(
                     mSessionConfiguration.getFile().getAbsolutePath()).append(
                     "' was created with TreeTank release ").append(
                     mVersionMajor).append(".").append(mVersionMinor).append(
                     " and is incompatible with release ").append(
-                    FixedProperties.VERSION_MAJOR.getStandardProperty())
+                    EFixed.VERSION_MAJOR.getStandardProperty())
                     .append(".").append(
-                            (Integer) FixedProperties.VERSION_MINOR
+                            (Integer) EFixed.VERSION_MINOR
                                     .getStandardProperty()).append(".")
                     .toString());
         }
@@ -165,13 +165,13 @@ public final class SessionState {
     }
 
     protected int getReadTransactionCount() {
-        return ((Integer) SettableProperties.MAX_READ_TRANSACTIONS
+        return ((Integer) ESettable.MAX_READ_TRANSACTIONS
                 .getStandardProperty() - (int) mReadSemaphore
                 .availablePermits());
     }
 
     protected int getWriteTransactionCount() {
-        return ((Integer) SettableProperties.MAX_WRITE_TRANSACTIONS
+        return ((Integer) ESettable.MAX_WRITE_TRANSACTIONS
                 .getStandardProperty() - (int) mWriteSemaphore
                 .availablePermits());
     }

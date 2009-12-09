@@ -3,11 +3,11 @@ package com.treetank.io;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.treetank.constants.ESettable;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.berkeley.BerkeleyFactory;
 import com.treetank.io.file.FileFactory;
 import com.treetank.session.SessionConfiguration;
-import com.treetank.utils.SettableProperties;
 
 /**
  * Abstract Factory to build up a concrete storage for the data. The Abstract
@@ -89,7 +89,7 @@ public abstract class AbstractIOFactory {
             fac = FACTORIES.get(conf);
         } else {
             final AbstractIOFactory.StorageType storageType = (AbstractIOFactory.StorageType) conf
-                    .getProps().get(SettableProperties.STORAGE_TYPE.getName());
+                    .getProps().get(ESettable.STORAGE_TYPE.getName());
             switch (storageType) {
             case File:
                 fac = new FileFactory(conf);

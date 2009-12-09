@@ -2,8 +2,8 @@ package com.treetank.service.revIndex;
 
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.constants.ENodes;
 import com.treetank.exception.TreetankException;
-import com.treetank.utils.ENodes;
 import com.treetank.utils.NamePageHash;
 
 final class TrieNavigator {

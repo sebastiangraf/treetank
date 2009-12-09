@@ -19,10 +19,10 @@
 package com.treetank.node;
 
 import com.treetank.api.IItem;
+import com.treetank.constants.EFixed;
+import com.treetank.constants.ENodes;
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
-import com.treetank.utils.ENodes;
-import com.treetank.utils.FixedProperties;
 
 /**
  * <h1>AbstractNode</h1>
@@ -134,7 +134,7 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
      * {@inheritDoc}
      */
     public long getParentKey() {
-        return (Long) FixedProperties.NULL_NODE_KEY.getStandardProperty();
+        return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -148,7 +148,7 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
      * {@inheritDoc}
      */
     public long getFirstChildKey() {
-        return (Long) FixedProperties.NULL_NODE_KEY.getStandardProperty();
+        return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -162,7 +162,7 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
      * {@inheritDoc}
      */
     public long getLeftSiblingKey() {
-        return (Long) FixedProperties.NULL_NODE_KEY.getStandardProperty();
+        return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -176,7 +176,7 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
      * {@inheritDoc}
      */
     public long getRightSiblingKey() {
-        return (Long) FixedProperties.NULL_NODE_KEY.getStandardProperty();
+        return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -204,14 +204,14 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
      * {@inheritDoc}
      */
     public long getAttributeKey(final int index) {
-        return (Long) FixedProperties.NULL_NODE_KEY.getStandardProperty();
+        return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
      * {@inheritDoc}
      */
     public long getNamespaceKey(final int index) {
-        return (Long) FixedProperties.NULL_NODE_KEY.getStandardProperty();
+        return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -225,21 +225,21 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
      * {@inheritDoc}
      */
     public int getNameKey() {
-        return (Integer) FixedProperties.NULL_INT_KEY.getStandardProperty();
+        return (Integer) EFixed.NULL_INT_KEY.getStandardProperty();
     }
 
     /**
      * {@inheritDoc}
      */
     public int getURIKey() {
-        return (Integer) FixedProperties.NULL_INT_KEY.getStandardProperty();
+        return (Integer) EFixed.NULL_INT_KEY.getStandardProperty();
     }
 
     /**
      * {@inheritDoc}
      */
     public int getTypeKey() {
-        return (Integer) FixedProperties.NULL_INT_KEY.getStandardProperty();
+        return (Integer) EFixed.NULL_INT_KEY.getStandardProperty();
     }
 
     /**

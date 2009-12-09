@@ -18,10 +18,10 @@
 
 package com.treetank.page;
 
+import com.treetank.constants.EFixed;
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
 import com.treetank.node.DocumentRootNode;
-import com.treetank.utils.FixedProperties;
 import com.treetank.utils.IConstants;
 
 /**
@@ -83,7 +83,7 @@ public final class UberPage extends AbstractPage {
             reference = page.getReference(0);
         }
 
-        NodePage ndp = new NodePage((Long) FixedProperties.ROOT_PAGE_KEY
+        NodePage ndp = new NodePage((Long) EFixed.ROOT_PAGE_KEY
                 .getStandardProperty(), IConstants.UBP_ROOT_REVISION_NUMBER);
         reference.setPage(ndp);
 

@@ -7,12 +7,12 @@ import java.util.Stack;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.constants.ESettable;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.NamePageHash;
-import com.treetank.utils.SettableProperties;
 
 /**
  * Revisioned Index Structure. Consisting of a trie and a document-trie. Both
@@ -83,7 +83,7 @@ public final class RevIndex {
         indexSession = Session.beginSession(index);
         if (rev < 0) {
             rtx = indexSession.beginWriteTransaction(
-                    (Integer) SettableProperties.COMMIT_THRESHOLD
+                    (Integer) ESettable.COMMIT_THRESHOLD
                             .getStandardProperty(), 0);
         } else {
             this.rtx = indexSession.beginReadTransaction(rev);

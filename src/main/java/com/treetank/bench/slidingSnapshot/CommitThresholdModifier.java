@@ -18,14 +18,14 @@ import org.perfidix.result.BenchmarkResult;
 
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.constants.ERevisioning;
+import com.treetank.constants.ESettable;
+import com.treetank.constants.EStorage;
 import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
-import com.treetank.utils.ERevisioning;
 import com.treetank.utils.IConstants;
-import com.treetank.utils.SettableProperties;
-import com.treetank.utils.StorageConstants;
 
 public class CommitThresholdModifier {
 
@@ -64,7 +64,7 @@ public class CommitThresholdModifier {
     public void benchRandomIncFactor() {
         try {
             final Properties props = new Properties();
-            props.put(SettableProperties.REVISION_TYPE.getName(),
+            props.put(ESettable.REVISION_TYPE.getName(),
                     ERevisioning.INCREMENTAL);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
@@ -100,7 +100,7 @@ public class CommitThresholdModifier {
     public void benchRandomWindowFactor() {
         try {
             final Properties props = new Properties();
-            props.put(SettableProperties.REVISION_TYPE.getName(),
+            props.put(ESettable.REVISION_TYPE.getName(),
                     ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
@@ -136,7 +136,7 @@ public class CommitThresholdModifier {
     public void benchRandomIncFull() {
         try {
             final Properties props = new Properties();
-            props.put(SettableProperties.REVISION_TYPE.getName(),
+            props.put(ESettable.REVISION_TYPE.getName(),
                     ERevisioning.INCREMENTAL);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
@@ -171,7 +171,7 @@ public class CommitThresholdModifier {
     public void benchRandomWindowFull() {
         try {
             final Properties props = new Properties();
-            props.put(SettableProperties.REVISION_TYPE.getName(),
+            props.put(ESettable.REVISION_TYPE.getName(),
                     ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
@@ -203,7 +203,7 @@ public class CommitThresholdModifier {
     }
 
     public static void main(final String[] args) {
-        StorageConstants.recursiveDelete(CommonStuff.RESULTFOLDER);
+        EStorage.recursiveDelete(CommonStuff.RESULTFOLDER);
         CommonStuff.RESULTFOLDER.mkdirs();
         for (int i = 1; i <= 100; i++) {
             mProb = i;

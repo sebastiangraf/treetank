@@ -20,11 +20,11 @@ package com.treetank.page;
 
 import java.util.Arrays;
 
+import com.treetank.constants.ENodes;
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
 import com.treetank.node.AbstractNode;
 import com.treetank.node.NodePersistenter;
-import com.treetank.utils.ENodes;
 import com.treetank.utils.IConstants;
 
 /**

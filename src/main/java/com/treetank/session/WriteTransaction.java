@@ -23,6 +23,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import com.treetank.api.IWriteTransaction;
+import com.treetank.constants.EFixed;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankUsageException;
@@ -31,7 +32,6 @@ import com.treetank.node.AttributeNode;
 import com.treetank.node.ElementNode;
 import com.treetank.node.NamespaceNode;
 import com.treetank.page.UberPage;
-import com.treetank.utils.FixedProperties;
 import com.treetank.utils.TypedValue;
 
 /**
@@ -110,9 +110,9 @@ public final class WriteTransaction extends ReadTransaction implements
             final String uri) throws TreetankIOException {
         return insertFirstChild(((WriteTransactionState) getTransactionState())
                 .createElementNode(getCurrentNode().getNodeKey(),
-                        (Long) FixedProperties.NULL_NODE_KEY
+                        (Long) EFixed.NULL_NODE_KEY
                                 .getStandardProperty(),
-                        (Long) FixedProperties.NULL_NODE_KEY
+                        (Long) EFixed.NULL_NODE_KEY
                                 .getStandardProperty(), getCurrentNode()
                                 .getFirstChildKey(),
                         ((WriteTransactionState) getTransactionState())
@@ -130,7 +130,7 @@ public final class WriteTransaction extends ReadTransaction implements
             final byte[] value) throws TreetankIOException {
         return insertFirstChild(((WriteTransactionState) getTransactionState())
                 .createTextNode(getCurrentNode().getNodeKey(),
-                        (Long) FixedProperties.NULL_NODE_KEY
+                        (Long) EFixed.NULL_NODE_KEY
                                 .getStandardProperty(), getCurrentNode()
                                 .getFirstChildKey(), valueType, value));
     }
@@ -153,7 +153,7 @@ public final class WriteTransaction extends ReadTransaction implements
             final String uri) throws TreetankException {
         return insertRightSibling(((WriteTransactionState) getTransactionState())
                 .createElementNode(getCurrentNode().getParentKey(),
-                        (Long) FixedProperties.NULL_NODE_KEY
+                        (Long) EFixed.NULL_NODE_KEY
                                 .getStandardProperty(), getCurrentNode()
                                 .getNodeKey(), getCurrentNode()
                                 .getRightSiblingKey(),
@@ -269,7 +269,7 @@ public final class WriteTransaction extends ReadTransaction implements
                     leftSibling.setRightSiblingKey(rightSibling.getNodeKey());
                 } else {
                     leftSibling
-                            .setRightSiblingKey((Long) FixedProperties.NULL_NODE_KEY
+                            .setRightSiblingKey((Long) EFixed.NULL_NODE_KEY
                                     .getStandardProperty());
                 }
                 tearDownNodeModification(leftSibling);
@@ -282,7 +282,7 @@ public final class WriteTransaction extends ReadTransaction implements
                     rightSibling.setLeftSiblingKey(leftSibling.getNodeKey());
                 } else {
                     rightSibling
-                            .setLeftSiblingKey((Long) FixedProperties.NULL_NODE_KEY
+                            .setLeftSiblingKey((Long) EFixed.NULL_NODE_KEY
                                     .getStandardProperty());
                 }
                 tearDownNodeModification(rightSibling);
@@ -296,7 +296,7 @@ public final class WriteTransaction extends ReadTransaction implements
                     parent.setFirstChildKey(rightSibling.getNodeKey());
                 } else {
                     parent
-                            .setFirstChildKey((Long) FixedProperties.NULL_NODE_KEY
+                            .setFirstChildKey((Long) EFixed.NULL_NODE_KEY
                                     .getStandardProperty());
                 }
             }
@@ -485,7 +485,7 @@ public final class WriteTransaction extends ReadTransaction implements
         mModificationCount++;
         intermediateCommitIfRequired();
 
-        if (getCurrentNode().getNodeKey() == (Long) FixedProperties.ROOT_NODE_KEY
+        if (getCurrentNode().getNodeKey() == (Long) EFixed.ROOT_NODE_KEY
                 .getStandardProperty()) {
             throw new TreetankUsageException("Root node can not have siblings.");
         }

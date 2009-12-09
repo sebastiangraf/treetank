@@ -11,6 +11,7 @@ import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
+import com.treetank.constants.EStorage;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.AbstractIOFactory;
 import com.treetank.io.AbstractKey;
@@ -24,7 +25,6 @@ import com.treetank.io.berkeley.binding.StoragePropTupleBinding;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.PageReference;
 import com.treetank.session.SessionConfiguration;
-import com.treetank.utils.StorageConstants;
 
 /**
  * Factory class to build up {@link IReader} {@link IWriter} instances for the
@@ -89,7 +89,7 @@ public final class BerkeleyFactory extends AbstractIOFactory {
         config.setCacheSize(1024 * 1024);
 
         final File repoFile = new File(paramSession.getFile(),
-                StorageConstants.TT.getFile().getName());
+                EStorage.TT.getFile().getName());
         if (repoFile.listFiles().length == 0
                 || (repoFile.listFiles().length == 1 && "tt.tnk"
                         .equals(repoFile.listFiles()[0].getName()))) {

@@ -32,12 +32,12 @@ import javax.xml.stream.XMLStreamReader;
 
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.constants.EFixed;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
 import com.treetank.utils.FastStack;
-import com.treetank.utils.FixedProperties;
 import com.treetank.utils.TypedValue;
 
 public final class XMLShredder {
@@ -93,7 +93,7 @@ public final class XMLShredder {
             wtx.moveTo(id);
 
             long key;
-            leftSiblingKeyStack.push((Long) FixedProperties.NULL_NODE_KEY
+            leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
                     .getStandardProperty());
             // leftSiblingKeyStack.push(wtx.getLeftSiblingKey());
 
@@ -108,7 +108,7 @@ public final class XMLShredder {
                             .getPrefix().length() == 0) ? parser.getLocalName()
                             : parser.getPrefix() + ":" + parser.getLocalName());
 
-                    if (leftSiblingKeyStack.peek() == (Long) FixedProperties.NULL_NODE_KEY
+                    if (leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
                             .getStandardProperty()) {
                         key = wtx.insertElementAsFirstChild(name, parser
                                 .getNamespaceURI());
@@ -119,7 +119,7 @@ public final class XMLShredder {
                     leftSiblingKeyStack.pop();
                     leftSiblingKeyStack.push(key);
                     leftSiblingKeyStack
-                            .push((Long) FixedProperties.NULL_NODE_KEY
+                            .push((Long) EFixed.NULL_NODE_KEY
                                     .getStandardProperty());
 
                     // Parse namespaces.
@@ -157,7 +157,7 @@ public final class XMLShredder {
                             .wrap(TypedValue.getBytes(text));
                     if (textByteBuffer.array().length > 0) {
 
-                        if (leftSiblingKeyStack.peek() == (Long) FixedProperties.NULL_NODE_KEY
+                        if (leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
                                 .getStandardProperty()) {
                             key = wtx.insertTextAsFirstChild(wtx
                                     .keyForName("xs:untyped"), textByteBuffer

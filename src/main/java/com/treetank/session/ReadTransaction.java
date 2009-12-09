@@ -21,9 +21,9 @@ package com.treetank.session;
 import com.treetank.api.IItem;
 import com.treetank.api.IItemList;
 import com.treetank.api.IReadTransaction;
+import com.treetank.constants.EFixed;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
-import com.treetank.utils.FixedProperties;
 import com.treetank.utils.NamePageHash;
 import com.treetank.utils.TypedValue;
 
@@ -70,7 +70,7 @@ public class ReadTransaction implements IReadTransaction {
         mSessionState = sessionState;
         mTransactionState = transactionState;
         mCurrentNode = getTransactionState().getNode(
-                (Long) FixedProperties.ROOT_NODE_KEY.getStandardProperty());
+                (Long) EFixed.ROOT_NODE_KEY.getStandardProperty());
         mClosed = false;
     }
 
@@ -111,7 +111,7 @@ public class ReadTransaction implements IReadTransaction {
      */
     public boolean moveTo(final long nodeKey) {
         assertNotClosed();
-        if (nodeKey != (Long) FixedProperties.NULL_NODE_KEY
+        if (nodeKey != (Long) EFixed.NULL_NODE_KEY
                 .getStandardProperty()) {
             // Remember old node and fetch new one.
             final IItem oldNode = mCurrentNode;
@@ -135,7 +135,7 @@ public class ReadTransaction implements IReadTransaction {
      * {@inheritDoc}
      */
     public final boolean moveToDocumentRoot() {
-        return moveTo((Long) FixedProperties.ROOT_NODE_KEY
+        return moveTo((Long) EFixed.ROOT_NODE_KEY
                 .getStandardProperty());
     }
 

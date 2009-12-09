@@ -18,14 +18,14 @@ import org.perfidix.result.BenchmarkResult;
 
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.constants.ERevisioning;
+import com.treetank.constants.ESettable;
+import com.treetank.constants.EStorage;
 import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
-import com.treetank.utils.ERevisioning;
 import com.treetank.utils.IConstants;
-import com.treetank.utils.SettableProperties;
-import com.treetank.utils.StorageConstants;
 
 public class PercentageSizeModifier {
 
@@ -66,8 +66,8 @@ public class PercentageSizeModifier {
     public void benchRandom1() {
         try {
             final Properties props = new Properties();
-            props.put(SettableProperties.SNAPSHOT_WINDOW.getName(), 1);
-            props.put(SettableProperties.REVISION_TYPE,
+            props.put(ESettable.SNAPSHOT_WINDOW.getName(), 1);
+            props.put(ESettable.REVISION_TYPE,
                     ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
@@ -104,8 +104,8 @@ public class PercentageSizeModifier {
     public void benchRandom4() {
         try {
             final Properties props = new Properties();
-            props.put(SettableProperties.SNAPSHOT_WINDOW.getName(), 4);
-            props.put(SettableProperties.REVISION_TYPE,
+            props.put(ESettable.SNAPSHOT_WINDOW.getName(), 4);
+            props.put(ESettable.REVISION_TYPE,
                     ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH2, props);
@@ -143,8 +143,8 @@ public class PercentageSizeModifier {
     public void benchRandomInc() {
         try {
             final Properties props = new Properties();
-            props.put(SettableProperties.SNAPSHOT_WINDOW.getName(), 4);
-            props.put(SettableProperties.REVISION_TYPE,
+            props.put(ESettable.SNAPSHOT_WINDOW.getName(), 4);
+            props.put(ESettable.REVISION_TYPE,
                     ERevisioning.INCREMENTAL);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH3, props);
@@ -206,7 +206,7 @@ public class PercentageSizeModifier {
     }
 
     public static void main(final String[] args) {
-        StorageConstants.recursiveDelete(CommonStuff.RESULTFOLDER);
+        EStorage.recursiveDelete(CommonStuff.RESULTFOLDER);
         CommonStuff.RESULTFOLDER.mkdirs();
         for (int i = 0; i < 30000; i = i + 1000) {
             MODIFIERNUMBER = i;
