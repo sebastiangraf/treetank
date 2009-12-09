@@ -7,12 +7,12 @@ import java.util.Properties;
 
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.constants.ESettable;
-import com.treetank.constants.EStoragePaths;
 import com.treetank.exception.TreetankUsageException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
+import com.treetank.settings.ESettable;
+import com.treetank.settings.EStoragePaths;
 
 public class RevisionWindowUpdate {
 

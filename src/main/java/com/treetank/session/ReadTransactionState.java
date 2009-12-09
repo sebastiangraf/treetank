@@ -28,8 +28,6 @@ import com.treetank.api.IItemList;
 import com.treetank.cache.ICache;
 import com.treetank.cache.NodePageContainer;
 import com.treetank.cache.RAMCache;
-import com.treetank.constants.ERevisioning;
-import com.treetank.constants.ESettable;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.IReader;
 import com.treetank.page.AbstractPage;
@@ -39,6 +37,8 @@ import com.treetank.page.NodePage;
 import com.treetank.page.PageReference;
 import com.treetank.page.RevisionRootPage;
 import com.treetank.page.UberPage;
+import com.treetank.settings.ERevisioning;
+import com.treetank.settings.ESettable;
 import com.treetank.utils.IConstants;
 
 /**

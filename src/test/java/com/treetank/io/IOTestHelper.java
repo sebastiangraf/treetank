@@ -9,14 +9,14 @@ import java.util.Properties;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.constants.EFixed;
-import com.treetank.constants.ESettable;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankUsageException;
 import com.treetank.io.AbstractIOFactory.StorageType;
 import com.treetank.page.PageReference;
 import com.treetank.page.UberPage;
 import com.treetank.session.SessionConfiguration;
+import com.treetank.settings.EFixed;
+import com.treetank.settings.ESettable;
 
 /**
  * Helper class for testing the io interfaces

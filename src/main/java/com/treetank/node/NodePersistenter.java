@@ -1,7 +1,7 @@
 package com.treetank.node;
 
-import com.treetank.constants.ENodes;
 import com.treetank.io.ITTSource;
+import com.treetank.settings.ENodes;
 
 public final class NodePersistenter {
 

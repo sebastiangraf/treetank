@@ -21,9 +21,9 @@ package com.treetank.session;
 import com.treetank.api.IItem;
 import com.treetank.api.IItemList;
 import com.treetank.api.IReadTransaction;
-import com.treetank.constants.EFixed;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
+import com.treetank.settings.EFixed;
 import com.treetank.utils.NamePageHash;
 import com.treetank.utils.TypedValue;
 

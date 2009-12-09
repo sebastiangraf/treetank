@@ -19,9 +19,9 @@
 package com.treetank.service.xml.xpath;
 
 import com.treetank.api.IItem;
-import com.treetank.constants.EFixed;
-import com.treetank.constants.ENodes;
 import com.treetank.service.xml.xpath.types.Type;
+import com.treetank.settings.EFixed;
+import com.treetank.settings.ENodes;
 import com.treetank.utils.NamePageHash;
 import com.treetank.utils.TypedValue;
 

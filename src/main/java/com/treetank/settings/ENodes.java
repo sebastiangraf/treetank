@@ -1,4 +1,4 @@
-package com.treetank.constants;
+package com.treetank.settings;
 
 /**
  * Enumeration for different nodes. All nodes are determined by a unique id.

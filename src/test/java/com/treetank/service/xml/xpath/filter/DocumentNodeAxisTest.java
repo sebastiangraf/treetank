@@ -27,9 +27,9 @@ import com.treetank.TestHelper;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.IAxisTest;
-import com.treetank.constants.EFixed;
 import com.treetank.exception.TreetankException;
 import com.treetank.session.Session;
+import com.treetank.settings.EFixed;
 import com.treetank.utils.DocumentCreater;
 
 public class DocumentNodeAxisTest {

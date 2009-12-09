@@ -1,4 +1,4 @@
-package com.treetank.constants;
+package com.treetank.settings;
 
 public enum EFixed {
 

@@ -18,7 +18,7 @@
 
 package com.treetank.api;
 
-import com.treetank.constants.ENodes;
+import com.treetank.settings.ENodes;
 
 /**
  * <h1>IItem</h1>

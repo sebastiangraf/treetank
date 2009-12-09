@@ -9,9 +9,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.treetank.TestHelper;
-import com.treetank.constants.ERevisioning;
-import com.treetank.constants.ESettable;
 import com.treetank.page.NodePage;
+import com.treetank.settings.ERevisioning;
+import com.treetank.settings.ESettable;
 
 public class SlidingSnapshotTest {
 

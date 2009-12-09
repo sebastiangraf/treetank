@@ -20,7 +20,7 @@ package com.treetank.axis;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
-import com.treetank.constants.EFixed;
+import com.treetank.settings.EFixed;
 import com.treetank.utils.FastStack;
 
 /**

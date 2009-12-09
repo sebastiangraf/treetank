@@ -18,10 +18,10 @@
 
 package com.treetank.page;
 
-import com.treetank.constants.EFixed;
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
 import com.treetank.node.DocumentRootNode;
+import com.treetank.settings.EFixed;
 import com.treetank.utils.IConstants;
 
 /**

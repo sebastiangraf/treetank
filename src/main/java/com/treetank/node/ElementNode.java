@@ -21,10 +21,10 @@ package com.treetank.node;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.treetank.constants.EFixed;
-import com.treetank.constants.ENodes;
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
+import com.treetank.settings.EFixed;
+import com.treetank.settings.ENodes;
 
 /**
  * <h1>ElementNode</h1>
