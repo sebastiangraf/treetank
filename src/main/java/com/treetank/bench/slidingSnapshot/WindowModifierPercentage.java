@@ -22,7 +22,7 @@ import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.constants.ERevisioning;
 import com.treetank.constants.ESettable;
-import com.treetank.constants.EStorage;
+import com.treetank.constants.EStoragePaths;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankUsageException;
 import com.treetank.service.xml.XMLShredder;
@@ -245,14 +245,14 @@ public class WindowModifierPercentage {
     }
 
     public static void main(final String[] args) throws TreetankUsageException {
-        EStorage.recursiveDelete(CommonStuff.RESULTFOLDER);
+        EStoragePaths.recursiveDelete(CommonStuff.RESULTFOLDER);
         CommonStuff.RESULTFOLDER.mkdirs();
 
         prepare100Percentage();
 
         for (int i = 1; i <= 100; i++) {
             props = new Properties();
-            props.put(ESettable.SNAPSHOT_WINDOW.getName(), i);
+            props.put(ESettable.MILESTONE_REVISION.getName(), i);
 
             final WindowModifierPercentage toBench = new WindowModifierPercentage();
             final Benchmark benchmark = new Benchmark(new BenchmarkConfig());
@@ -278,7 +278,7 @@ public class WindowModifierPercentage {
 
     private final static void prepare100Percentage() {
         props = new Properties();
-        props.put(ESettable.SNAPSHOT_WINDOW.getName(), 1);
+        props.put(ESettable.MILESTONE_REVISION.getName(), 1);
         long seqWindowSize = 0;
         long ranWindowSize = 0;
         long seqIncSize = 0;

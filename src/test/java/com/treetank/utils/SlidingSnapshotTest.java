@@ -49,7 +49,7 @@ public class SlidingSnapshotTest {
             pages[i] = getNodePage(0, i * 32, (i * 32) + 32);
         }
         final NodePage page = ERevisioning.SLIDING_SNAPSHOT.combinePages(pages,
-                (Integer) ESettable.SNAPSHOT_WINDOW
+                (Integer) ESettable.MILESTONE_REVISION
                         .getStandardProperty());
         for (int i = 0; i < pages.length; i++) {
             for (int j = i * 32; j < (i * 32) + 32; j++) {
@@ -68,7 +68,7 @@ public class SlidingSnapshotTest {
             pages[i] = getNodePage(0, borders[i], (i * 32) + 32);
         }
         final NodePage page = ERevisioning.SLIDING_SNAPSHOT.combinePages(pages,
-                (Integer) ESettable.SNAPSHOT_WINDOW
+                (Integer) ESettable.MILESTONE_REVISION
                         .getStandardProperty());
         for (int i = 0; i < pages.length; i++) {
             for (int j = i * 32; j < (i * 32) + 32; j++) {

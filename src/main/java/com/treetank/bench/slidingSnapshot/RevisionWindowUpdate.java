@@ -8,7 +8,7 @@ import java.util.Properties;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.constants.ESettable;
-import com.treetank.constants.EStorage;
+import com.treetank.constants.EStoragePaths;
 import com.treetank.exception.TreetankUsageException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
@@ -35,10 +35,10 @@ public class RevisionWindowUpdate {
     public static void begin() {
         try {
             final Properties props1 = new Properties();
-            props1.put(ESettable.SNAPSHOT_WINDOW.getName(), 1);
+            props1.put(ESettable.MILESTONE_REVISION.getName(), 1);
 
             final Properties props2 = new Properties();
-            props2.put(ESettable.SNAPSHOT_WINDOW.getName(), 4);
+            props2.put(ESettable.MILESTONE_REVISION.getName(), 4);
 
             Session.removeSession(CommonStuff.PATH1);
             Session.removeSession(CommonStuff.PATH2);
@@ -133,7 +133,7 @@ public class RevisionWindowUpdate {
     }
 
     public static void main(final String[] args) throws TreetankUsageException {
-        EStorage.recursiveDelete(CommonStuff.RESULTFOLDER);
+        EStoragePaths.recursiveDelete(CommonStuff.RESULTFOLDER);
         CommonStuff.RESULTFOLDER.mkdirs();
 
         begin();

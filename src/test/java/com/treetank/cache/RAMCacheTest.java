@@ -15,7 +15,7 @@ import com.treetank.page.NodePage;
  */
 public class RAMCacheTest {
 
-    private final NodePage[][] pages = new NodePage[LRUCache.CACHE_CAPACITY + 1][(Integer) ESettable.SNAPSHOT_WINDOW
+    private final NodePage[][] pages = new NodePage[LRUCache.CACHE_CAPACITY + 1][(Integer) ESettable.MILESTONE_REVISION
             .getStandardProperty() + 1];
 
     private ICache cache;
@@ -25,10 +25,10 @@ public class RAMCacheTest {
         cache = new RAMCache();
         for (int i = 0; i < pages.length; i++) {
             final NodePage page = new NodePage(i, 0);
-            final NodePage[] revs = new NodePage[(Integer) ESettable.SNAPSHOT_WINDOW
+            final NodePage[] revs = new NodePage[(Integer) ESettable.MILESTONE_REVISION
                     .getStandardProperty()];
 
-            for (int j = 0; j < (Integer) ESettable.SNAPSHOT_WINDOW
+            for (int j = 0; j < (Integer) ESettable.MILESTONE_REVISION
                     .getStandardProperty(); j++) {
                 pages[i][j + 1] = new NodePage(i, 0);
                 revs[j] = pages[i][j + 1];

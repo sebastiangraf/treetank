@@ -16,7 +16,7 @@ import org.perfidix.result.BenchmarkResult;
 
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.constants.EStorage;
+import com.treetank.constants.EStoragePaths;
 import com.treetank.exception.TreetankException;
 import com.treetank.session.Session;
 
@@ -101,7 +101,7 @@ public class CommitThresholdInsert {
     }
 
     public static void main(final String[] args) {
-        EStorage.recursiveDelete(CommonStuff.RESULTFOLDER);
+        EStoragePaths.recursiveDelete(CommonStuff.RESULTFOLDER);
         CommonStuff.RESULTFOLDER.mkdirs();
         for (int i = 1; i <= 100; i++) {
             mProb = i;

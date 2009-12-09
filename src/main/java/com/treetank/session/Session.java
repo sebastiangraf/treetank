@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentMap;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.constants.EStorage;
+import com.treetank.constants.EStoragePaths;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankUsageException;
@@ -126,7 +126,7 @@ public final class Session implements ISession {
         synchronized (SESSION_MAP) {
             ISession session = SESSION_MAP.get(file);
             if (session == null) {
-                if (file.exists() && !EStorage.recursiveDelete(file)) {
+                if (file.exists() && !EStoragePaths.recursiveDelete(file)) {
                     throw new TreetankIOException(new StringBuilder(
                             "Could not delete file '").append(file).append("'")
                             .toString());

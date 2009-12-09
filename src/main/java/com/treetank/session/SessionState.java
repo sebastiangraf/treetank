@@ -110,8 +110,7 @@ public final class SessionState {
                 (Integer) ESettable.MAX_WRITE_TRANSACTIONS
                         .getStandardProperty());
         mReadSemaphore = new Semaphore(
-                (Integer) ESettable.MAX_READ_TRANSACTIONS
-                        .getStandardProperty());
+                (Integer) ESettable.MAX_READ_TRANSACTIONS.getStandardProperty());
         final PageReference uberPageReference = new PageReference();
 
         fac = AbstractIOFactory.getInstance(mSessionConfiguration);
@@ -122,11 +121,9 @@ public final class SessionState {
             mLastCommittedUberPage = new UberPage();
             uberPageReference.setPage(mLastCommittedUberPage);
 
-            props = new StorageProperties(
-                    (Integer) EFixed.VERSION_MAJOR
-                            .getStandardProperty(),
-                    (Integer) EFixed.VERSION_MINOR
-                            .getStandardProperty());
+            props = new StorageProperties((Integer) EFixed.VERSION_MAJOR
+                    .getStandardProperty(), (Integer) EFixed.VERSION_MINOR
+                    .getStandardProperty());
         } else {
             final IReader reader = fac.getReader();
             final PageReference firstRef = reader.readFirstReference();
@@ -155,8 +152,8 @@ public final class SessionState {
                     "' was created with TreeTank release ").append(
                     mVersionMajor).append(".").append(mVersionMinor).append(
                     " and is incompatible with release ").append(
-                    EFixed.VERSION_MAJOR.getStandardProperty())
-                    .append(".").append(
+                    EFixed.VERSION_MAJOR.getStandardProperty()).append(".")
+                    .append(
                             (Integer) EFixed.VERSION_MINOR
                                     .getStandardProperty()).append(".")
                     .toString());
@@ -165,8 +162,7 @@ public final class SessionState {
     }
 
     protected int getReadTransactionCount() {
-        return ((Integer) ESettable.MAX_READ_TRANSACTIONS
-                .getStandardProperty() - (int) mReadSemaphore
+        return ((Integer) ESettable.MAX_READ_TRANSACTIONS.getStandardProperty() - (int) mReadSemaphore
                 .availablePermits());
     }
 
@@ -330,6 +326,7 @@ public final class SessionState {
     /**
      * @return the versionMajor
      */
+    @Deprecated
     protected long getVersionMajor() {
         return mVersionMajor;
     }
@@ -337,6 +334,7 @@ public final class SessionState {
     /**
      * @return the versionMinor
      */
+    @Deprecated
     protected long getVersionMinor() {
         return mVersionMinor;
     }

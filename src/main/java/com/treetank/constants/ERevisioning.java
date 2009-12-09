@@ -7,9 +7,24 @@ import com.treetank.cache.NodePageContainer;
 import com.treetank.node.NodePersistenter;
 import com.treetank.page.NodePage;
 
+/**
+ * Enum for providing different revision algorithms. Each kind must implement
+ * one method to reconstruct NodePages for Modification and for Reading.
+ * 
+ * @author Sebastian Graf, University of Konstanz
+ * 
+ */
 public enum ERevisioning {
 
+    /**
+     * Sliding Snapshot. A fixed number of revisions is needed to reconstruct a
+     * NodePage.
+     */
     SLIDING_SNAPSHOT {
+
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public NodePage combinePages(final NodePage[] pages,
                 final int mileStoneRevision) {
@@ -24,11 +39,12 @@ public enum ERevisioning {
                     }
                 }
             }
-
             return returnVal;
-
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public NodePageContainer combinePagesForModification(
                 final NodePage[] pages, final int mileStoneRevision) {
@@ -61,14 +77,21 @@ public enum ERevisioning {
                     }
                 }
             }
-
             final NodePageContainer cont = new NodePageContainer(returnVal[0],
                     returnVal[1]);
             return cont;
-
         }
     },
+
+    /**
+     * Incremental Revisioning. Each Revision can be reconstructed with the help
+     * of a the last full-dump plus the incremental steps between.
+     */
     INCREMENTAL {
+        
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public NodePage combinePages(final NodePage[] pages,
                 final int mileStoneRevision) {
@@ -90,6 +113,9 @@ public enum ERevisioning {
             return returnVal;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public NodePageContainer combinePagesForModification(
                 final NodePage[] pages, final int revisionToFullDump) {
@@ -120,12 +146,30 @@ public enum ERevisioning {
         }
     };
 
-    private ERevisioning() {
-    }
-
+    /**
+     * Method to reconstruct a complete NodePage with the help of party filled
+     * pages plus a revision-delta which determines the necessary steps back.
+     * 
+     * @param pages
+     *            the base of the complete Nodepage
+     * @param mileStoneRevision
+     *            the revision needed to build up the complete milestone.
+     * @return the complete NodePage
+     */
     public abstract NodePage combinePages(final NodePage[] pages,
             final int mileStoneRevision);
 
+    /**
+     * Method to reconstruct a complete NodePage for reading as well as a
+     * NodePage for serializing with the Nodes to write already on there.
+     * 
+     * @param pages
+     *            the base of the complete Nodepage
+     * @param mileStoneRevision
+     *            the revision needed to build up the complete milestone.
+     * @return a NodePageContainer holding a complete NodePage for reading a one
+     *         for writing
+     */
     public abstract NodePageContainer combinePagesForModification(
             final NodePage[] pages, final int mileStoneRevision);
 
