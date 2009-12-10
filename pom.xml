@@ -11,6 +11,11 @@
 	It supports cursorlike access to all nodes stored in the tree plus XPath 2.0 as query engine. Furthermore, Treetank is completely versionable. That means that each update-operation results in a new version. 
 	These versions can be easily retrieved within the database itself.</description>
 	<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/disy/forschung/treetank/</url>
+	<scm>
+    	<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk</connection>
+    	<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk</developerConnection>
+    	<url>https://svn.uni-konstanz.de/disy/Treetank</url>
+  	</scm>
 	<organization>
 		<name>University of Konstanz, Distributed Systems Lab</name>
 		<url>http://www.informatik.uni-konstanz.de/ags/disy/
