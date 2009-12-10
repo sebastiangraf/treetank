@@ -25,8 +25,8 @@ import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
+import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankIOException;
-import com.treetank.session.SessionConfiguration;
 
 /**
  * Berkeley implementation of a persistent cache. That means that all data is

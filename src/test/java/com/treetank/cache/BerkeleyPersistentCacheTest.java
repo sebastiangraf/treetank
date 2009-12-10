@@ -8,9 +8,9 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
+import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankException;
 import com.treetank.page.NodePage;
-import com.treetank.session.SessionConfiguration;
 import com.treetank.settings.EDatabaseSetting;
 
 public class BerkeleyPersistentCacheTest {

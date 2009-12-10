@@ -2,11 +2,11 @@ package com.treetank.io.file;
 
 import java.io.File;
 
+import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.AbstractIOFactory;
 import com.treetank.io.IReader;
 import com.treetank.io.IWriter;
-import com.treetank.session.SessionConfiguration;
 import com.treetank.settings.EStoragePaths;
 
 /**

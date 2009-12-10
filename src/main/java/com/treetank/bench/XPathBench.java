@@ -2,13 +2,13 @@ package com.treetank.bench;
 
 import java.io.File;
 
+import com.treetank.access.Session;
+import com.treetank.access.SessionConfiguration;
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.service.xml.xpath.XPathParser;
-import com.treetank.session.Session;
-import com.treetank.session.SessionConfiguration;
 
 public class XPathBench {
 

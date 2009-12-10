@@ -16,7 +16,7 @@
  * $Id: UpdateTest.java 4413 2008-08-27 16:59:32Z kramis $
  */
 
-package com.treetank.session;
+package com.treetank.access;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -28,6 +28,7 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
+import com.treetank.access.Session;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;

@@ -13,17 +13,13 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: ThreadTest.java 4413 2008-08-27 16:59:32Z kramis $
+ * $Id: MinimumCommitTest.java 4376 2008-08-25 07:27:39Z kramis $
  */
 
-package com.treetank.session;
+package com.treetank.access;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
@@ -31,18 +27,14 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.api.IAxis;
+import com.treetank.access.Session;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TreetankException;
 import com.treetank.utils.DocumentCreater;
-import com.treetank.utils.TypedValue;
 
-public class ThreadTest {
-
-    public static final int WORKER_COUNT = 50;
+public class MinimumCommitTest {
 
     @Before
     public void setUp() throws TreetankException {
@@ -55,51 +47,48 @@ public class ThreadTest {
     }
 
     @Test
-    public void testThreads() throws Exception {
-
+    public void test() throws TreetankException {
         ISession session = Session.beginSession(ITestConstants.PATH1);
-
         IWriteTransaction wtx = session.beginWriteTransaction();
+        assertEquals(0L, wtx.getRevisionNumber());
+        wtx.commit();
+
+        wtx.close();
+        session.close();
+
+        session = Session.beginSession(ITestConstants.PATH1);
+        wtx = session.beginWriteTransaction();
+        assertEquals(1L, wtx.getRevisionNumber());
         DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
 
-        ExecutorService taskExecutor = Executors
-                .newFixedThreadPool(WORKER_COUNT);
-        for (int i = 0; i < WORKER_COUNT; i++) {
-            taskExecutor.submit(new Task(session.beginReadTransaction(i)));
-            wtx = session.beginWriteTransaction();
-            wtx.moveTo(10L);
-            wtx.setValue("value" + i);
-            wtx.commit();
-            wtx.close();
-        }
-        taskExecutor.shutdown();
-        taskExecutor.awaitTermination(1000000, TimeUnit.SECONDS);
+        wtx = session.beginWriteTransaction();
+        assertEquals(2L, wtx.getRevisionNumber());
+        wtx.commit();
+        wtx.close();
 
+        IReadTransaction rtx = session.beginReadTransaction();
+        assertEquals(2L, rtx.getRevisionNumber());
+        rtx.close();
         session.close();
+
     }
 
-    private class Task implements Callable<Void> {
+    @Test
+    public void testTimestamp() throws TreetankException {
+        ISession session = Session.beginSession(ITestConstants.PATH1);
+        IWriteTransaction wtx = session.beginWriteTransaction();
+        assertEquals(0L, wtx.getRevisionTimestamp());
+        wtx.commit();
+        wtx.close();
 
-        private IReadTransaction mRTX;
+        IReadTransaction rtx = session.beginReadTransaction();
+        assertTrue(rtx.getRevisionTimestamp() < (System.currentTimeMillis() + 1));
+        rtx.close();
 
-        public Task(final IReadTransaction rtx) {
-            mRTX = rtx;
-        }
+        session.close();
 
-        public Void call() throws Exception {
-            final IAxis axis = new DescendantAxis(mRTX);
-            while (axis.hasNext()) {
-                axis.next();
-            }
-
-            mRTX.moveTo(12L);
-            TestCase.assertEquals("bar", TypedValue.parseString(mRTX.getNode()
-                    .getRawValue()));
-            mRTX.close();
-            return null;
-        }
     }
 
 }

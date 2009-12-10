@@ -18,10 +18,10 @@
 
 package com.treetank.utils;
 
+import com.treetank.access.Session;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.exception.TreetankException;
-import com.treetank.session.Session;
 
 /**
  * <h1>TreeTankDebugger</h1>

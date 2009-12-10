@@ -30,6 +30,8 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
+import com.treetank.access.Session;
+import com.treetank.access.SessionConfiguration;
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
@@ -38,8 +40,6 @@ import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.service.xml.xpath.functions.XPathError;
-import com.treetank.session.Session;
-import com.treetank.session.SessionConfiguration;
 
 public class TypeFilterTest {
 

@@ -16,8 +16,8 @@
  */
 package com.treetank.cache;
 
+import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankIOException;
-import com.treetank.session.SessionConfiguration;
 
 /**
  * Transactionlog for storing all upcoming nodes in either the ram cache or a

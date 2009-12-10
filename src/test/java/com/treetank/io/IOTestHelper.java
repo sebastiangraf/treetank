@@ -9,12 +9,12 @@ import java.util.Properties;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
+import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankUsageException;
 import com.treetank.io.AbstractIOFactory.StorageType;
 import com.treetank.page.PageReference;
 import com.treetank.page.UberPage;
-import com.treetank.session.SessionConfiguration;
 import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.EFixed;
 

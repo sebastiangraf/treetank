@@ -21,6 +21,7 @@ package com.treetank.service.rest;
 import java.io.File;
 import java.io.OutputStream;
 
+import com.treetank.access.Session;
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
@@ -30,7 +31,6 @@ import com.treetank.exception.TreetankRestException;
 import com.treetank.service.xml.XMLSerializer;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.service.xml.xpath.XPathAxis;
-import com.treetank.session.Session;
 
 /**
  * This class wraps a treetank instance to make it accessable with the help of

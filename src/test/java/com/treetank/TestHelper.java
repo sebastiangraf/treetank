@@ -5,10 +5,10 @@ import java.util.Random;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.treetank.access.Session;
 import com.treetank.exception.TreetankException;
 import com.treetank.node.ElementNode;
 import com.treetank.page.NodePage;
-import com.treetank.session.Session;
 
 /**
  * 

@@ -4,10 +4,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankException;
 import com.treetank.io.IOTestHelper;
 import com.treetank.io.AbstractIOFactory.StorageType;
-import com.treetank.session.SessionConfiguration;
 
 public class FileTest {
 
