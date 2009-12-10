@@ -20,8 +20,8 @@ import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
+import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.ERevisioning;
-import com.treetank.settings.ESettable;
 import com.treetank.settings.EStoragePaths;
 
 public class SizeInsert {
@@ -56,9 +56,9 @@ public class SizeInsert {
     public void benchSeqInc() {
         try {
             final Properties props = new Properties();
-            props.put(ESettable.MILESTONE_REVISION.getName(),
+            props.put(EDatabaseSetting.MILESTONE_REVISION.getName(),
                     REVISION_MILESTONES);
-            props.put(ESettable.REVISION_TYPE,
+            props.put(EDatabaseSetting.REVISION_TYPE.getName(),
                     ERevisioning.INCREMENTAL);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
@@ -88,8 +88,8 @@ public class SizeInsert {
     public void benchSeq1() {
         try {
             final Properties props = new Properties();
-            props.put(ESettable.MILESTONE_REVISION.getName(), 1);
-            props.put(ESettable.REVISION_TYPE,
+            props.put(EDatabaseSetting.MILESTONE_REVISION.getName(), 1);
+            props.put(EDatabaseSetting.REVISION_TYPE.getName(),
                     ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
@@ -120,9 +120,9 @@ public class SizeInsert {
         try {
             final Properties props = new Properties();
             props
-                    .put(ESettable.MILESTONE_REVISION.getName(),
+                    .put(EDatabaseSetting.MILESTONE_REVISION.getName(),
                             WINDOW_SIZE);
-            props.put(ESettable.REVISION_TYPE,
+            props.put(EDatabaseSetting.REVISION_TYPE.getName(),
                     ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
@@ -152,9 +152,9 @@ public class SizeInsert {
     public void benchRandomInc() {
         try {
             final Properties props = new Properties();
-            props.put(ESettable.MILESTONE_REVISION.getName(),
+            props.put(EDatabaseSetting.MILESTONE_REVISION.getName(),
                     REVISION_MILESTONES);
-            props.put(ESettable.REVISION_TYPE,
+            props.put(EDatabaseSetting.REVISION_TYPE.getName(),
                     ERevisioning.INCREMENTAL);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
@@ -194,8 +194,8 @@ public class SizeInsert {
     public void benchRandom1() {
         try {
             final Properties props = new Properties();
-            props.put(ESettable.MILESTONE_REVISION.getName(), 1);
-            props.put(ESettable.REVISION_TYPE,
+            props.put(EDatabaseSetting.MILESTONE_REVISION.getName(), 1);
+            props.put(EDatabaseSetting.REVISION_TYPE.getName(),
                     ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
@@ -236,9 +236,9 @@ public class SizeInsert {
         try {
             final Properties props = new Properties();
             props
-                    .put(ESettable.MILESTONE_REVISION.getName(),
+                    .put(EDatabaseSetting.MILESTONE_REVISION.getName(),
                             WINDOW_SIZE);
-            props.put(ESettable.REVISION_TYPE,
+            props.put(EDatabaseSetting.REVISION_TYPE.getName(),
                     ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);

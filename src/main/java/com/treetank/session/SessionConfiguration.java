@@ -26,7 +26,8 @@ import java.util.Properties;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankUsageException;
-import com.treetank.settings.ESettable;
+import com.treetank.settings.EDatabaseSetting;
+import com.treetank.settings.ESessionSetting;
 import com.treetank.settings.EStoragePaths;
 
 /**
@@ -63,7 +64,16 @@ public final class SessionConfiguration {
             throws TreetankUsageException {
         this.mFile = file;
         this.mProps = new Properties();
-        for (final ESettable enumProps : ESettable.values()) {
+        for (final ESessionSetting enumProps : ESessionSetting.values()) {
+            if (props.containsKey(enumProps.getName())) {
+                this.getProps().put(enumProps.getName(),
+                        props.get(enumProps.getName()));
+            } else {
+                this.getProps().put(enumProps.getName(),
+                        enumProps.getStandardProperty());
+            }
+        }
+        for (final EDatabaseSetting enumProps : EDatabaseSetting.values()) {
             if (props.containsKey(enumProps.getName())) {
                 this.getProps().put(enumProps.getName(),
                         props.get(enumProps.getName()));
@@ -147,8 +157,11 @@ public final class SessionConfiguration {
         StandardProperties() {
             props = new Properties();
 
-            for (ESettable prop : ESettable.values()) {
+            for (ESessionSetting prop : ESessionSetting.values()) {
                 getProps().put(prop.getName(), prop.getStandardProperty());
+            }
+            for (EDatabaseSetting dbProp : EDatabaseSetting.values()) {
+                getProps().put(dbProp.getName(), dbProp.getStandardProperty());
             }
         }
 

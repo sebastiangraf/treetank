@@ -22,8 +22,8 @@ import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
+import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.ERevisioning;
-import com.treetank.settings.ESettable;
 import com.treetank.settings.EStoragePaths;
 
 public class SizeModifier {
@@ -62,7 +62,7 @@ public class SizeModifier {
     public void benchRandom1() {
         try {
             final Properties props = new Properties();
-            props.put(ESettable.MILESTONE_REVISION.getName(), 1);
+            props.put(EDatabaseSetting.MILESTONE_REVISION.getName(), 1);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH3, props);
             session = Session.beginSession(conf);
@@ -97,7 +97,7 @@ public class SizeModifier {
     public void benchRandom4() {
         try {
             final Properties props = new Properties();
-            props.put(ESettable.MILESTONE_REVISION.getName(), 4);
+            props.put(EDatabaseSetting.MILESTONE_REVISION.getName(), 4);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH4, props);
             session = Session.beginSession(conf);
@@ -133,8 +133,8 @@ public class SizeModifier {
     public void benchRandomInc() {
         try {
             final Properties props = new Properties();
-            props.put(ESettable.MILESTONE_REVISION.getName(), 4);
-            props.put(ESettable.REVISION_TYPE,
+            props.put(EDatabaseSetting.MILESTONE_REVISION.getName(), 4);
+            props.put(EDatabaseSetting.REVISION_TYPE.getName(),
                     ERevisioning.INCREMENTAL);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH2, props);

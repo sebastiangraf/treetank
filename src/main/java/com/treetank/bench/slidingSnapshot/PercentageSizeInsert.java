@@ -20,8 +20,8 @@ import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
+import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.ERevisioning;
-import com.treetank.settings.ESettable;
 import com.treetank.settings.EStoragePaths;
 import com.treetank.utils.IConstants;
 
@@ -58,10 +58,8 @@ public class PercentageSizeInsert {
     public void benchRandomInc() {
         try {
             final Properties props = new Properties();
-            props.put(ESettable.MILESTONE_REVISION.getName(),
-                    REVISION_MILESTONES);
-            props.put(ESettable.REVISION_TYPE,
-                    ERevisioning.INCREMENTAL);
+            props.put(EDatabaseSetting.MILESTONE_REVISION.getName(), REVISION_MILESTONES);
+            props.put(EDatabaseSetting.REVISION_TYPE.getName(), ERevisioning.INCREMENTAL);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
             session = Session.beginSession(conf);
@@ -101,8 +99,8 @@ public class PercentageSizeInsert {
     public void benchRandom1() {
         try {
             final Properties props = new Properties();
-            props.put(ESettable.MILESTONE_REVISION.getName(), 1);
-            props.put(ESettable.REVISION_TYPE,
+            props.put(EDatabaseSetting.MILESTONE_REVISION.getName(), 1);
+            props.put(EDatabaseSetting.REVISION_TYPE.getName(),
                     ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
@@ -143,10 +141,8 @@ public class PercentageSizeInsert {
     public void benchRandom4() {
         try {
             final Properties props = new Properties();
-            props
-                    .put(ESettable.MILESTONE_REVISION.getName(),
-                            WINDOW_SIZE);
-            props.put(ESettable.REVISION_TYPE,
+            props.put(EDatabaseSetting.MILESTONE_REVISION.getName(), WINDOW_SIZE);
+            props.put(EDatabaseSetting.REVISION_TYPE.getName(),
                     ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);

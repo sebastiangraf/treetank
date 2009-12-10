@@ -15,8 +15,8 @@ import com.treetank.io.AbstractIOFactory.StorageType;
 import com.treetank.page.PageReference;
 import com.treetank.page.UberPage;
 import com.treetank.session.SessionConfiguration;
+import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.EFixed;
-import com.treetank.settings.ESettable;
 
 /**
  * Helper class for testing the io interfaces
@@ -40,7 +40,7 @@ public final class IOTestHelper {
     public static SessionConfiguration createConf(final StorageType type)
             throws TreetankUsageException {
         final Properties props = new Properties();
-        props.put(ESettable.STORAGE_TYPE, type);
+        props.put(EDatabaseSetting.REVISION_TYPE.getName(), type);
         return new SessionConfiguration(ITestConstants.PATH1, props);
     }
 

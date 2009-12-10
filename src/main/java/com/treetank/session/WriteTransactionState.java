@@ -38,9 +38,9 @@ import com.treetank.page.NodePage;
 import com.treetank.page.PageReference;
 import com.treetank.page.RevisionRootPage;
 import com.treetank.page.UberPage;
+import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.EFixed;
 import com.treetank.settings.ERevisioning;
-import com.treetank.settings.ESettable;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.ItemList;
 import com.treetank.utils.NamePageHash;
@@ -557,10 +557,10 @@ public final class WriteTransactionState extends ReadTransactionState {
         final NodePage[] revs = getSnapshotPages(nodePageKey);
 
         return ((ERevisioning) getSessionConfiguration().getProps().get(
-                ESettable.REVISION_TYPE.getName()))
+                EDatabaseSetting.REVISION_TYPE.getName()))
                 .combinePagesForModification(revs,
                         (Integer) getSessionConfiguration().getProps().get(
-                                ESettable.MILESTONE_REVISION.getName()));
+                                EDatabaseSetting.MILESTONE_REVISION.getName()));
     }
 
     /**

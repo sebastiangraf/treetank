@@ -25,7 +25,7 @@ import com.treetank.exception.TreetankUsageException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
-import com.treetank.settings.ESettable;
+import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.EStoragePaths;
 
 public class WindowModifier {
@@ -144,7 +144,7 @@ public class WindowModifier {
         CommonStuff.RESULTFOLDER.mkdirs();
         for (int i = 1; i <= 34; i++) {
             props = new Properties();
-            props.put(ESettable.MILESTONE_REVISION.getName(), i);
+            props.put(EDatabaseSetting.MILESTONE_REVISION.getName(), i);
 
             final WindowModifier toBench = new WindowModifier();
             final Benchmark benchmark = new Benchmark(new BenchmarkConfig());

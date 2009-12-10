@@ -37,8 +37,8 @@ import com.treetank.page.NodePage;
 import com.treetank.page.PageReference;
 import com.treetank.page.RevisionRootPage;
 import com.treetank.page.UberPage;
+import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.ERevisioning;
-import com.treetank.settings.ESettable;
 import com.treetank.utils.IConstants;
 
 /**
@@ -135,11 +135,11 @@ public class ReadTransactionState {
 
             final int mileStoneRevision = (Integer) getSessionConfiguration()
                     .getProps().get(
-                            ESettable.MILESTONE_REVISION.getName());
+                            EDatabaseSetting.MILESTONE_REVISION.getName());
 
             // Build up the complete page.
             final NodePage completePage = ((ERevisioning) getSessionConfiguration()
-                    .getProps().get(ESettable.REVISION_TYPE.getName()))
+                    .getProps().get(EDatabaseSetting.REVISION_TYPE.getName()))
                     .combinePages(revs, mileStoneRevision);
             cont = new NodePageContainer(completePage);
             mCache.put(nodePageKey, cont);
@@ -277,7 +277,7 @@ public class ReadTransactionState {
                     }
                 }
                 if (refs.size() == (Integer) mSessionConfiguration.getProps()
-                        .get(ESettable.MILESTONE_REVISION.getName())) {
+                        .get(EDatabaseSetting.MILESTONE_REVISION.getName())) {
                     break;
                 }
 
