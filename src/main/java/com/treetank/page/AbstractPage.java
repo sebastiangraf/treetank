@@ -18,10 +18,10 @@
 
 package com.treetank.page;
 
+import com.treetank.access.WriteTransactionState;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
-import com.treetank.session.WriteTransactionState;
 
 /**
  * <h1>Page</h1>

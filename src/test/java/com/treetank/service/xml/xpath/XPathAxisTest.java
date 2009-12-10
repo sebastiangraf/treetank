@@ -26,12 +26,12 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
+import com.treetank.access.Session;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.IAxisTest;
 import com.treetank.exception.TreetankException;
-import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
 
 /**

@@ -16,7 +16,7 @@
  * $Id: SessionState.java 4470 2008-09-06 15:24:52Z kramis $
  */
 
-package com.treetank.session;
+package com.treetank.access;
 
 import java.util.Map;
 import java.util.Random;

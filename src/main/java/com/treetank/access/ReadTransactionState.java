@@ -16,7 +16,7 @@
  * $Id: ReadTransactionState.java 4424 2008-08-28 09:15:01Z kramis $
  */
 
-package com.treetank.session;
+package com.treetank.access;
 
 import java.util.ArrayList;
 import java.util.HashSet;

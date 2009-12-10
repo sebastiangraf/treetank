@@ -15,12 +15,12 @@ import org.perfidix.ouput.AbstractOutput;
 import org.perfidix.ouput.CSVOutput;
 import org.perfidix.result.BenchmarkResult;
 
+import com.treetank.access.Session;
+import com.treetank.access.SessionConfiguration;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankUsageException;
-import com.treetank.session.Session;
-import com.treetank.session.SessionConfiguration;
 import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.EStoragePaths;
 

@@ -14,10 +14,10 @@ import org.perfidix.ouput.AbstractOutput;
 import org.perfidix.ouput.CSVOutput;
 import org.perfidix.result.BenchmarkResult;
 
+import com.treetank.access.Session;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
-import com.treetank.session.Session;
 import com.treetank.settings.EStoragePaths;
 
 public class CommitThresholdInsert {

@@ -28,6 +28,7 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
+import com.treetank.access.Session;
 import com.treetank.api.IAxis;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
@@ -36,7 +37,6 @@ import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.expr.LiteralExpr;
 import com.treetank.service.xml.xpath.types.Type;
-import com.treetank.session.Session;
 import com.treetank.utils.TypedValue;
 
 public class AbstractOpAxisTest {

@@ -18,8 +18,8 @@ package com.treetank.cache;
 
 import java.io.File;
 
+import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankIOException;
-import com.treetank.session.SessionConfiguration;
 import com.treetank.settings.EStoragePaths;
 
 /**

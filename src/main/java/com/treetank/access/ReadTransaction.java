@@ -16,7 +16,7 @@
  * $Id: ReadTransaction.java 4413 2008-08-27 16:59:32Z kramis $
  */
 
-package com.treetank.session;
+package com.treetank.access;
 
 import com.treetank.api.IItem;
 import com.treetank.api.IItemList;

@@ -7,12 +7,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.treetank.access.Session;
+import com.treetank.access.SessionConfiguration;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.XMLShredder;
-import com.treetank.session.Session;
-import com.treetank.session.SessionConfiguration;
 import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.ENodes;
 

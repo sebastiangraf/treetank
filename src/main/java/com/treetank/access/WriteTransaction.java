@@ -16,7 +16,7 @@
  * $Id: WriteTransaction.java 4417 2008-08-27 21:19:26Z scherer $
  */
 
-package com.treetank.session;
+package com.treetank.access;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.IReader;
 import com.treetank.io.StorageProperties;
@@ -11,7 +12,6 @@ import com.treetank.page.AbstractPage;
 import com.treetank.page.PagePersistenter;
 import com.treetank.page.PageReference;
 import com.treetank.page.UberPage;
-import com.treetank.session.SessionConfiguration;
 import com.treetank.utils.CryptoJavaImpl;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.ICrypto;

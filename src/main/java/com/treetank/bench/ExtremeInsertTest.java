@@ -5,9 +5,9 @@ import java.util.Random;
 
 import org.perfidix.annotation.Bench;
 
+import com.treetank.access.Session;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.session.Session;
 
 public class ExtremeInsertTest {
 

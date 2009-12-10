@@ -16,7 +16,7 @@
  * $Id: SessionConfiguration.java 4258 2008-07-14 16:45:28Z kramis $
  */
 
-package com.treetank.session;
+package com.treetank.access;
 
 import java.io.File;
 import java.io.FileInputStream;

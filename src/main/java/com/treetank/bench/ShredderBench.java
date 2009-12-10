@@ -2,9 +2,9 @@ package com.treetank.bench;
 
 import java.io.File;
 
+import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.XMLShredder;
-import com.treetank.session.SessionConfiguration;
 
 /**
  * 

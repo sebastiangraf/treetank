@@ -11,6 +11,7 @@ import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
+import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.AbstractIOFactory;
 import com.treetank.io.AbstractKey;
@@ -23,7 +24,6 @@ import com.treetank.io.berkeley.binding.PageReferenceUberPageBinding;
 import com.treetank.io.berkeley.binding.StoragePropTupleBinding;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.PageReference;
-import com.treetank.session.SessionConfiguration;
 import com.treetank.settings.EStoragePaths;
 
 /**

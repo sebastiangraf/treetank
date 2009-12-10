@@ -16,7 +16,7 @@
  * $Id: WriteTransactionState.java 4543 2009-01-19 09:02:51Z graf $
  */
 
-package com.treetank.session;
+package com.treetank.access;
 
 import com.treetank.api.IItem;
 import com.treetank.cache.ICache;

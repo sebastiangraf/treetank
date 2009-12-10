@@ -16,7 +16,7 @@ q * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
  * $Id: Session.java 4410 2008-08-27 13:42:43Z kramis $
  */
 
-package com.treetank.session;
+package com.treetank.access;
 
 import java.io.File;
 import java.util.concurrent.ConcurrentHashMap;

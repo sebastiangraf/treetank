@@ -4,12 +4,12 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.Stack;
 
+import com.treetank.access.Session;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
-import com.treetank.session.Session;
 import com.treetank.settings.ESessionSetting;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.NamePageHash;

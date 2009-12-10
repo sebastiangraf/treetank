@@ -26,11 +26,11 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.Callable;
 
+import com.treetank.access.Session;
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.DescendantAxis;
-import com.treetank.session.Session;
 import com.treetank.utils.FastStack;
 import com.treetank.utils.IConstants;
 

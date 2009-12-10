@@ -14,12 +14,12 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
+import com.treetank.access.Session;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankRestException;
 import com.treetank.service.xml.XMLSerializer;
-import com.treetank.session.Session;
 import com.treetank.utils.DocumentCreater;
 
 public class TreeTankWrapperTest {

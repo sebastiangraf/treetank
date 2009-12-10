@@ -60,21 +60,27 @@ public interface ISession {
      * Get file name of TreeTank file.
      * 
      * @return File name of TreeTank file.
+     * @deprecated Use IDatabase.getFile instead.
      */
+    @Deprecated
     File getFile();
 
     /**
      * Get the major revision of the TreeTank version.
      * 
      * @return Major revision of TreeTank version.
+     * @deprecated Use IDatabase.getVersion instead.
      */
+    @Deprecated
     long getVersionMajor();
 
     /**
      * Get the minor revision of the TreeTank version.
      * 
      * @return Minor revision of TreeTank version.
+     * @deprecated Use IDatabase.getVersion instead.
      */
+    @Deprecated
     long getVersionMinor();
 
     /**
