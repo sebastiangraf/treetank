@@ -36,7 +36,7 @@ import com.treetank.io.StorageProperties;
 import com.treetank.page.PageReference;
 import com.treetank.page.UberPage;
 import com.treetank.settings.EFixed;
-import com.treetank.settings.ESettable;
+import com.treetank.settings.ESessionSetting;
 
 /**
  * <h1>SessionState</h1>
@@ -107,10 +107,10 @@ public final class SessionState {
 
         // Init session members.
         mWriteSemaphore = new Semaphore(
-                (Integer) ESettable.MAX_WRITE_TRANSACTIONS
+                (Integer) ESessionSetting.MAX_WRITE_TRANSACTIONS
                         .getStandardProperty());
         mReadSemaphore = new Semaphore(
-                (Integer) ESettable.MAX_READ_TRANSACTIONS.getStandardProperty());
+                (Integer) ESessionSetting.MAX_READ_TRANSACTIONS.getStandardProperty());
         final PageReference uberPageReference = new PageReference();
 
         fac = AbstractIOFactory.getInstance(mSessionConfiguration);
@@ -162,12 +162,12 @@ public final class SessionState {
     }
 
     protected int getReadTransactionCount() {
-        return ((Integer) ESettable.MAX_READ_TRANSACTIONS.getStandardProperty() - (int) mReadSemaphore
+        return ((Integer) ESessionSetting.MAX_READ_TRANSACTIONS.getStandardProperty() - (int) mReadSemaphore
                 .availablePermits());
     }
 
     protected int getWriteTransactionCount() {
-        return ((Integer) ESettable.MAX_WRITE_TRANSACTIONS
+        return ((Integer) ESessionSetting.MAX_WRITE_TRANSACTIONS
                 .getStandardProperty() - (int) mWriteSemaphore
                 .availablePermits());
     }

@@ -13,8 +13,8 @@ import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
+import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.ENodes;
-import com.treetank.settings.ESettable;
 
 public final class OverallTest {
 
@@ -35,8 +35,7 @@ public final class OverallTest {
     @Test
     public void testXML() throws TreetankException {
 
-        for (int i = 0; i < (Integer) ESettable.MILESTONE_REVISION
-                .getStandardProperty() * 2; i++) {
+        for (int i = 0; i < (Integer) EDatabaseSetting.MILESTONE_REVISION.getStandardProperty() * 2; i++) {
             final ISession session = Session.beginSession(ITestConstants.PATH1);
             final IWriteTransaction wtx = session.beginWriteTransaction();
             if (wtx.moveToFirstChild()) {

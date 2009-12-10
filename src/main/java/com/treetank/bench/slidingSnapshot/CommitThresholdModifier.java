@@ -22,8 +22,8 @@ import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
+import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.ERevisioning;
-import com.treetank.settings.ESettable;
 import com.treetank.settings.EStoragePaths;
 import com.treetank.utils.IConstants;
 
@@ -64,8 +64,7 @@ public class CommitThresholdModifier {
     public void benchRandomIncFactor() {
         try {
             final Properties props = new Properties();
-            props.put(ESettable.REVISION_TYPE.getName(),
-                    ERevisioning.INCREMENTAL);
+            props.put(EDatabaseSetting.REVISION_TYPE, ERevisioning.INCREMENTAL);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
             session = Session.beginSession(conf);
@@ -100,7 +99,7 @@ public class CommitThresholdModifier {
     public void benchRandomWindowFactor() {
         try {
             final Properties props = new Properties();
-            props.put(ESettable.REVISION_TYPE.getName(),
+            props.put(EDatabaseSetting.REVISION_TYPE,
                     ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
@@ -136,8 +135,7 @@ public class CommitThresholdModifier {
     public void benchRandomIncFull() {
         try {
             final Properties props = new Properties();
-            props.put(ESettable.REVISION_TYPE.getName(),
-                    ERevisioning.INCREMENTAL);
+            props.put(EDatabaseSetting.REVISION_TYPE, ERevisioning.INCREMENTAL);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
             session = Session.beginSession(conf);
@@ -171,7 +169,7 @@ public class CommitThresholdModifier {
     public void benchRandomWindowFull() {
         try {
             final Properties props = new Properties();
-            props.put(ESettable.REVISION_TYPE.getName(),
+            props.put(EDatabaseSetting.REVISION_TYPE,
                     ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);

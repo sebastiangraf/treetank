@@ -10,8 +10,8 @@ import org.junit.Test;
 
 import com.treetank.TestHelper;
 import com.treetank.page.NodePage;
+import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.ERevisioning;
-import com.treetank.settings.ESettable;
 
 public class SlidingSnapshotTest {
 
@@ -49,8 +49,7 @@ public class SlidingSnapshotTest {
             pages[i] = getNodePage(0, i * 32, (i * 32) + 32);
         }
         final NodePage page = ERevisioning.SLIDING_SNAPSHOT.combinePages(pages,
-                (Integer) ESettable.MILESTONE_REVISION
-                        .getStandardProperty());
+                (Integer) EDatabaseSetting.MILESTONE_REVISION.getStandardProperty());
         for (int i = 0; i < pages.length; i++) {
             for (int j = i * 32; j < (i * 32) + 32; j++) {
                 assertEquals(pages[i].getNode(j), page.getNode(j));
@@ -68,8 +67,7 @@ public class SlidingSnapshotTest {
             pages[i] = getNodePage(0, borders[i], (i * 32) + 32);
         }
         final NodePage page = ERevisioning.SLIDING_SNAPSHOT.combinePages(pages,
-                (Integer) ESettable.MILESTONE_REVISION
-                        .getStandardProperty());
+                (Integer) EDatabaseSetting.MILESTONE_REVISION.getStandardProperty());
         for (int i = 0; i < pages.length; i++) {
             for (int j = i * 32; j < (i * 32) + 32; j++) {
                 assertEquals(pages[i].getNode(j), page.getNode(j));

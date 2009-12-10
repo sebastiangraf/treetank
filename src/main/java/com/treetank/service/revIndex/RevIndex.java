@@ -10,7 +10,7 @@ import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.session.Session;
-import com.treetank.settings.ESettable;
+import com.treetank.settings.ESessionSetting;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.NamePageHash;
 
@@ -83,7 +83,7 @@ public final class RevIndex {
         indexSession = Session.beginSession(index);
         if (rev < 0) {
             rtx = indexSession.beginWriteTransaction(
-                    (Integer) ESettable.COMMIT_THRESHOLD
+                    (Integer) ESessionSetting.COMMIT_THRESHOLD
                             .getStandardProperty(), 0);
         } else {
             this.rtx = indexSession.beginReadTransaction(rev);

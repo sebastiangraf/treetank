@@ -22,8 +22,8 @@ import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
+import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.ERevisioning;
-import com.treetank.settings.ESettable;
 import com.treetank.settings.EStoragePaths;
 import com.treetank.utils.IConstants;
 
@@ -66,8 +66,8 @@ public class PercentageSizeModifier {
     public void benchRandom1() {
         try {
             final Properties props = new Properties();
-            props.put(ESettable.MILESTONE_REVISION.getName(), 1);
-            props.put(ESettable.REVISION_TYPE,
+            props.put(EDatabaseSetting.MILESTONE_REVISION.getName(), 1);
+            props.put(EDatabaseSetting.REVISION_TYPE.getName(),
                     ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
@@ -83,7 +83,7 @@ public class PercentageSizeModifier {
                     nextKey = nextKey
                             % (FACTOR * IConstants.INP_REFERENCE_COUNT);
                 } while (nextKey == 0);
- 
+
                 wtx.moveTo(nextKey);
                 if (wtx.getNode().isElement()) {
                     wtx.setName(CommonStuff.getString());
@@ -104,8 +104,8 @@ public class PercentageSizeModifier {
     public void benchRandom4() {
         try {
             final Properties props = new Properties();
-            props.put(ESettable.MILESTONE_REVISION.getName(), 4);
-            props.put(ESettable.REVISION_TYPE,
+            props.put(EDatabaseSetting.MILESTONE_REVISION.getName(), 4);
+            props.put(EDatabaseSetting.REVISION_TYPE.getName(),
                     ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH2, props);
@@ -143,9 +143,8 @@ public class PercentageSizeModifier {
     public void benchRandomInc() {
         try {
             final Properties props = new Properties();
-            props.put(ESettable.MILESTONE_REVISION.getName(), 4);
-            props.put(ESettable.REVISION_TYPE,
-                    ERevisioning.INCREMENTAL);
+            props.put(EDatabaseSetting.MILESTONE_REVISION.getName(), 4);
+            props.put(EDatabaseSetting.REVISION_TYPE.getName(), ERevisioning.INCREMENTAL);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH3, props);
             session = Session.beginSession(conf);

@@ -22,8 +22,8 @@ import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankUsageException;
 import com.treetank.session.Session;
 import com.treetank.session.SessionConfiguration;
+import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.ERevisioning;
-import com.treetank.settings.ESettable;
 import com.treetank.settings.EStoragePaths;
 
 public class WindowInsertPercentage {
@@ -71,7 +71,7 @@ public class WindowInsertPercentage {
     public void benchIncRan() {
         try {
             kind = Kind.IncRan;
-            props.put(ESettable.REVISION_TYPE.getName(),
+            props.put(EDatabaseSetting.REVISION_TYPE.getName(),
                     ERevisioning.INCREMENTAL);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
@@ -112,7 +112,7 @@ public class WindowInsertPercentage {
     public void benchIncSeq() {
         try {
             kind = Kind.IncSeq;
-            props.put(ESettable.REVISION_TYPE.getName(),
+            props.put(EDatabaseSetting.REVISION_TYPE.getName(),
                     ERevisioning.INCREMENTAL);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
@@ -142,7 +142,7 @@ public class WindowInsertPercentage {
     public void benchWindowSeq() {
         try {
             kind = Kind.WindowSeq;
-            props.put(ESettable.REVISION_TYPE.getName(),
+            props.put(EDatabaseSetting.REVISION_TYPE.getName(),
                     ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
@@ -172,7 +172,7 @@ public class WindowInsertPercentage {
     public void benchWindowRan() {
         try {
             kind = Kind.WindowRan;
-            props.put(ESettable.REVISION_TYPE.getName(),
+            props.put(EDatabaseSetting.REVISION_TYPE.getName(),
                     ERevisioning.SLIDING_SNAPSHOT);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
@@ -217,7 +217,7 @@ public class WindowInsertPercentage {
 
         for (int i = 1; i <= 100; i++) {
             props = new Properties();
-            props.put(ESettable.MILESTONE_REVISION.getName(), i);
+            props.put(EDatabaseSetting.MILESTONE_REVISION.getName(), i);
 
             final WindowInsertPercentage toBench = new WindowInsertPercentage();
             final Benchmark benchmark = new Benchmark(new BenchmarkConfig());
@@ -243,7 +243,7 @@ public class WindowInsertPercentage {
 
     private final static void prepare100Percentage() {
         props = new Properties();
-        props.put(ESettable.MILESTONE_REVISION.getName(), 1);
+        props.put(EDatabaseSetting.MILESTONE_REVISION.getName(), 1);
         long seqWindowSize = 0;
         long ranWindowSize = 0;
         long seqIncSize = 0;
