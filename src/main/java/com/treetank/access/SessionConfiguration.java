@@ -26,9 +26,7 @@ import java.util.Properties;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankUsageException;
-import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.ESessionSetting;
-import com.treetank.settings.EStoragePaths;
 
 /**
  * <h1>SessionConfiguration</h1>
@@ -43,9 +41,6 @@ import com.treetank.settings.EStoragePaths;
  */
 public final class SessionConfiguration {
 
-    /** Absolute path to .tnk directory. */
-    private final File mFile;
-
     /** Props to hold all related data */
     private final Properties mProps;
 
@@ -56,13 +51,12 @@ public final class SessionConfiguration {
      * @param path
      *            Path to .tnk folder.
      */
-    public SessionConfiguration(final File file) throws TreetankUsageException {
-        this(file, new StandardProperties().getProps());
+    public SessionConfiguration() throws TreetankUsageException {
+        this(new StandardProperties().getProps());
     }
 
-    public SessionConfiguration(final File file, final Properties props)
+    public SessionConfiguration(final Properties props)
             throws TreetankUsageException {
-        this.mFile = file;
         this.mProps = new Properties();
         for (final ESessionSetting enumProps : ESessionSetting.values()) {
             if (props.containsKey(enumProps.getName())) {
@@ -73,77 +67,17 @@ public final class SessionConfiguration {
                         enumProps.getStandardProperty());
             }
         }
-        for (final EDatabaseSetting enumProps : EDatabaseSetting.values()) {
-            if (props.containsKey(enumProps.getName())) {
-                this.getProps().put(enumProps.getName(),
-                        props.get(enumProps.getName()));
-            } else {
-                this.getProps().put(enumProps.getName(),
-                        enumProps.getStandardProperty());
-            }
-        }
 
-        EStoragePaths.validateAndBuildPath(file);
     }
 
-    public SessionConfiguration(final File file, final File propFile)
-            throws TreetankException {
-        this(file, new Properties());
+    public SessionConfiguration(final File propFile) throws TreetankException {
+        this(new Properties());
         try {
             getProps().load(new FileInputStream(propFile));
         } catch (final IOException exc) {
             throw new TreetankIOException(exc);
         }
 
-    }
-
-    /**
-     * Get tnk folder.
-     * 
-     * @return Path to tnk folder.
-     */
-    public File getFile() {
-        return mFile;
-    }
-
-    /**
-     * To String method
-     * 
-     * @return String with a string representation.
-     */
-    public String toString() {
-        return mFile.getAbsolutePath() + File.separator;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((mFile == null) ? 0 : mFile.hashCode());
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        SessionConfiguration other = (SessionConfiguration) obj;
-        if (mFile == null) {
-            if (other.mFile != null)
-                return false;
-        } else if (!mFile.equals(other.mFile))
-            return false;
-        return true;
     }
 
     public Properties getProps() {
@@ -159,9 +93,6 @@ public final class SessionConfiguration {
 
             for (ESessionSetting prop : ESessionSetting.values()) {
                 getProps().put(prop.getName(), prop.getStandardProperty());
-            }
-            for (EDatabaseSetting dbProp : EDatabaseSetting.values()) {
-                getProps().put(dbProp.getName(), dbProp.getStandardProperty());
             }
         }
 

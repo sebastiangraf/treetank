@@ -12,27 +12,33 @@ import com.treetank.io.AbstractIOFactory.StorageType;
 public enum EDatabaseSetting {
 
     /** Default storage */
-    STORAGE_TYPE("storageType", StorageType.File),
+    STORAGE_TYPE(StorageType.File.name()),
 
     /** Revision properties */
-    REVISION_TYPE("revisionType", ERevisioning.SLIDING_SNAPSHOT),
+    REVISION_TYPE(ERevisioning.SLIDING_SNAPSHOT.name()),
 
     /** Window of Sliding Snapshot */
-    MILESTONE_REVISION("milestoneRevision", 4);
+    MILESTONE_REVISION("4"),
 
-    private final String mName;
-    private final Object mStandardProperty;
+    /** version major identifier for binary compatibility */
+    VERSION_MAJOR("5"),
 
-    private EDatabaseSetting(final String name, final Object standardProperty) {
-        this.mName = name;
+    /** version minor identifier for binary compatibility */
+    VERSION_MINOR("2"),
+
+    /** version fix identifier for binary compatibility */
+    VERSION_FIX("0"),
+
+    /** Checksum for settings */
+    CHECKSUM("0");
+
+    private final String mStandardProperty;
+
+    private EDatabaseSetting(final String standardProperty) {
         this.mStandardProperty = standardProperty;
     }
 
-    public String getName() {
-        return mName;
-    }
-
-    public Object getStandardProperty() {
+    public String getStandardProperty() {
         return mStandardProperty;
     }
 

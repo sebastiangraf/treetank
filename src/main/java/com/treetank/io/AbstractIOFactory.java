@@ -89,7 +89,7 @@ public abstract class AbstractIOFactory {
             fac = FACTORIES.get(conf);
         } else {
             final AbstractIOFactory.StorageType storageType = (AbstractIOFactory.StorageType) conf
-                    .getProps().get(EDatabaseSetting.STORAGE_TYPE.getName());
+                    .getProps().get(EDatabaseSetting.STORAGE_TYPE.name());
             switch (storageType) {
             case File:
                 fac = new FileFactory(conf);
