@@ -25,4 +25,14 @@ public interface IDatabase {
      */
     File getFile();
 
+    /**
+     * Get the version of the TreeTank. The layout is as follows
+     * int[0]: version major
+     * int[1]: version minor
+     * int[2]: version fix
+     * 
+     * @return Minor revision of TreeTank version.
+     */
+    int[] getVersion();
+
 }

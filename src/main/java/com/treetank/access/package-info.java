@@ -1,10 +1,10 @@
-<html>
-  <body>
-    <h1>Session Layer</h1>
+/**
+<h1>Access to Treetank</h1>
     <p>
-      The session semantics is as follows:
-      <li>There can only be a single Session instance per JVM and TreeTank file.
-      <li>There can only be a single WriteTransaction instance per session.
+      The access semantics is as follows:
+      <li>There can only be a single Database instance per JVM and TreeTank directory.
+      <li>There can only be a single Session instance per JVM and Database
+      <li>There can only be a single WriteTransaction instance per Session.
       <li>There can be multiple ReadTransaction instances per session.
     </p>
     <p>
@@ -50,7 +50,7 @@
           wtx.insertElementAsFirstChild("foo", "", "");
           ...
           wtx.commit();
-        } catch (Exception e) {
+        } catch (TreetankException e) {
           wtx.abort();
           throw new RuntimeException(e);
         } finally {
@@ -59,5 +59,9 @@
         session.close(); // Might also stand in the finally...        
       </pre>
     </p>
-  </body>
-</html>
+ *
+ * @author Marc Kramis, University of Konstanz
+ * @author Sebastian Graf, University of Konstanz
+ */
+package com.treetank.access;
+

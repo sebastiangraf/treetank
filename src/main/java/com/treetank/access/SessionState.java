@@ -65,12 +65,6 @@ public final class SessionState {
     /** Random generator for transaction IDs. */
     private Random mRandom;
 
-    /** Major version, reading from file */
-    private final long mVersionMajor;
-
-    /** Minor version, reading from file */
-    private final long mVersionMinor;
-
     /** abstract factory for all interaction to the storage */
     private final AbstractIOFactory fac;
 
@@ -110,7 +104,8 @@ public final class SessionState {
                 (Integer) ESessionSetting.MAX_WRITE_TRANSACTIONS
                         .getStandardProperty());
         mReadSemaphore = new Semaphore(
-                (Integer) ESessionSetting.MAX_READ_TRANSACTIONS.getStandardProperty());
+                (Integer) ESessionSetting.MAX_READ_TRANSACTIONS
+                        .getStandardProperty());
         final PageReference uberPageReference = new PageReference();
 
         fac = AbstractIOFactory.getInstance(mSessionConfiguration);
@@ -139,30 +134,9 @@ public final class SessionState {
 
     }
 
-    private void checkValidStorage(final StorageProperties props)
-            throws TreetankUsageException {
-
-        // Fail if an old TreeTank file is encountered.
-        if (mVersionMajor < (Integer) EFixed.VERSION_MAJOR
-                .getStandardProperty()
-                || mVersionMinor < (Integer) EFixed.VERSION_MINOR
-                        .getStandardProperty()) {
-            throw new TreetankUsageException(new StringBuilder("'").append(
-                    mSessionConfiguration.getFile().getAbsolutePath()).append(
-                    "' was created with TreeTank release ").append(
-                    mVersionMajor).append(".").append(mVersionMinor).append(
-                    " and is incompatible with release ").append(
-                    EFixed.VERSION_MAJOR.getStandardProperty()).append(".")
-                    .append(
-                            (Integer) EFixed.VERSION_MINOR
-                                    .getStandardProperty()).append(".")
-                    .toString());
-        }
-
-    }
-
     protected int getReadTransactionCount() {
-        return ((Integer) ESessionSetting.MAX_READ_TRANSACTIONS.getStandardProperty() - (int) mReadSemaphore
+        return ((Integer) ESessionSetting.MAX_READ_TRANSACTIONS
+                .getStandardProperty() - (int) mReadSemaphore
                 .availablePermits());
     }
 
@@ -189,8 +163,9 @@ public final class SessionState {
         // Make sure not to exceed available number of read transactions.
         try {
             mReadSemaphore.acquire();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (InterruptedException exc) {
+            throw new TreetankException(exc) {
+            };
         }
 
         IReadTransaction rtx = null;
@@ -321,22 +296,6 @@ public final class SessionState {
             }
         }
         return id;
-    }
-
-    /**
-     * @return the versionMajor
-     */
-    @Deprecated
-    protected long getVersionMajor() {
-        return mVersionMajor;
-    }
-
-    /**
-     * @return the versionMinor
-     */
-    @Deprecated
-    protected long getVersionMinor() {
-        return mVersionMinor;
     }
 
 }
