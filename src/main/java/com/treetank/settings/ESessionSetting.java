@@ -10,26 +10,20 @@ package com.treetank.settings;
 public enum ESessionSetting {
 
     /** Number of concurrent exclusive write transactions. */
-    MAX_WRITE_TRANSACTIONS("maximalWriteTransactions", 1),
+    MAX_WRITE_TRANSACTIONS("1"),
     /** Number of concurrent shared read transactions. */
-    MAX_READ_TRANSACTIONS("maximalReadTransactions", 128),
+    MAX_READ_TRANSACTIONS("128"),
     /** Commit threshold. */
-    COMMIT_THRESHOLD("commitThreshold", 262144);
+    COMMIT_THRESHOLD("262144");
 
-    private final String mName;
-    private final Object mStandardProperty;
+    private final String mValue;
 
-    private ESessionSetting(final String name, final Object standardProperty) {
-        this.mName = name;
-        this.mStandardProperty = standardProperty;
+    private ESessionSetting(final String value) {
+        this.mValue = value;
     }
 
-    public String getName() {
-        return mName;
-    }
-
-    public Object getStandardProperty() {
-        return mStandardProperty;
+    public String getValue() {
+        return mValue;
     }
 
 }

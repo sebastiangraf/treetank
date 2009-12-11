@@ -16,6 +16,7 @@
  */
 package com.treetank.cache;
 
+import com.treetank.access.DatabaseConfiguration;
 import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankIOException;
 
@@ -40,7 +41,7 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
      * @param paramConfig
      *            the config for having a storage-place
      */
-    public TransactionLogCache(final SessionConfiguration paramConfig,
+    public TransactionLogCache(final DatabaseConfiguration paramConfig,
             final long revision) throws TreetankIOException {
         super(paramConfig);
         final BerkeleyPersistenceCache secondCache = new BerkeleyPersistenceCache(

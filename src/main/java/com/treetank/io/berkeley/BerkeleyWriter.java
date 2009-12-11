@@ -9,7 +9,6 @@ import com.sleepycat.je.OperationStatus;
 import com.sleepycat.je.Transaction;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.IWriter;
-import com.treetank.io.StorageProperties;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.PageReference;
 
@@ -156,25 +155,6 @@ public class BerkeleyWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    public void setProps(final StorageProperties props)
-            throws TreetankIOException {
-        final DatabaseEntry valueEntry = new DatabaseEntry();
-        final DatabaseEntry keyEntry = new DatabaseEntry();
-
-        BerkeleyFactory.KEY.objectToEntry(BerkeleyKey.getPropsKey(), keyEntry);
-        BerkeleyFactory.PROPS_VAL_B.objectToEntry(props, valueEntry);
-
-        try {
-            mDatabase.put(mTxn, keyEntry, valueEntry);
-        } catch (final DatabaseException exc) {
-            throw new TreetankIOException(exc);
-        }
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public void writeFirstReference(final PageReference pageReference)
             throws TreetankIOException {
         write(pageReference);
@@ -193,13 +173,6 @@ public class BerkeleyWriter implements IWriter {
             throw new TreetankIOException(exc);
         }
 
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StorageProperties getProps() throws TreetankIOException {
-        return reader.getProps();
     }
 
     /**

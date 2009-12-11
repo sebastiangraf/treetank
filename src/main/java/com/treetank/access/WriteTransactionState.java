@@ -24,7 +24,6 @@ import com.treetank.cache.NodePageContainer;
 import com.treetank.cache.TransactionLogCache;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.IWriter;
-import com.treetank.io.StorageProperties;
 import com.treetank.node.AbstractNode;
 import com.treetank.node.AttributeNode;
 import com.treetank.node.ElementNode;
@@ -39,7 +38,6 @@ import com.treetank.page.PageReference;
 import com.treetank.page.RevisionRootPage;
 import com.treetank.page.UberPage;
 import com.treetank.settings.EDatabaseSetting;
-import com.treetank.settings.EFixed;
 import com.treetank.settings.ERevisioning;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.ItemList;
@@ -81,13 +79,14 @@ public final class WriteTransactionState extends ReadTransactionState {
      *            Writer where this transaction should write to
      */
     protected WriteTransactionState(
+            final DatabaseConfiguration databaseConfiguration,
             final SessionConfiguration sessionConfiguration,
             final UberPage uberPage, final IWriter writer)
             throws TreetankIOException {
-        super(sessionConfiguration, uberPage, uberPage
+        super(databaseConfiguration, sessionConfiguration, uberPage, uberPage
                 .getLastCommittedRevisionNumber(), new ItemList(), writer);
         mCurrentRevRoot = prepareActualRevisionRootPage();
-        log = new TransactionLogCache(sessionConfiguration, mCurrentRevRoot
+        log = new TransactionLogCache(databaseConfiguration, mCurrentRevRoot
                 .getRevision());
         mPageWriter = writer;
 
@@ -332,12 +331,6 @@ public final class WriteTransactionState extends ReadTransactionState {
         final UberPage uberPage = getUberPage();
         uberPageReference.setPage(uberPage);
 
-        if (uberPage.isBootstrap()) {
-            mPageWriter.setProps(new StorageProperties(
-                    (Integer) EFixed.VERSION_MAJOR.getStandardProperty(),
-                    (Integer) EFixed.VERSION_MINOR.getStandardProperty()));
-        }
-
         // // // /////////////
         // // // New code starts here
         // // // /////////////
@@ -555,12 +548,14 @@ public final class WriteTransactionState extends ReadTransactionState {
     private final NodePageContainer dereferenceNodePageForModification(
             final long nodePageKey) throws TreetankIOException {
         final NodePage[] revs = getSnapshotPages(nodePageKey);
+        final ERevisioning revision = ERevisioning
+                .valueOf(getDatabaseConfiguration().getProps().getProperty(
+                        EDatabaseSetting.REVISION_TYPE.name()));
+        final int mileStoneRevision = Integer
+                .parseInt(getDatabaseConfiguration().getProps().getProperty(
+                        EDatabaseSetting.MILESTONE_REVISION.name()));
 
-        return ((ERevisioning) getSessionConfiguration().getProps().get(
-                EDatabaseSetting.REVISION_TYPE.getName()))
-                .combinePagesForModification(revs,
-                        (Integer) getSessionConfiguration().getProps().get(
-                                EDatabaseSetting.MILESTONE_REVISION.getName()));
+        return revision.combinePagesForModification(revs, mileStoneRevision);
     }
 
     /**

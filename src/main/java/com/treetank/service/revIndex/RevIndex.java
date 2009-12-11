@@ -4,13 +4,13 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.Stack;
 
-import com.treetank.access.Session;
+import com.treetank.access.Database;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
-import com.treetank.settings.ESessionSetting;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.NamePageHash;
 
@@ -80,11 +80,10 @@ public final class RevIndex {
      *             if any access to Treetank fails
      */
     public RevIndex(final File index, final long rev) throws TreetankException {
-        indexSession = Session.beginSession(index);
+        final IDatabase db = Database.openDatabase(index);
+        indexSession = db.getSession();
         if (rev < 0) {
-            rtx = indexSession.beginWriteTransaction(
-                    (Integer) ESessionSetting.COMMIT_THRESHOLD
-                            .getStandardProperty(), 0);
+            rtx = indexSession.beginWriteTransaction();
         } else {
             this.rtx = indexSession.beginReadTransaction(rev);
         }

@@ -7,7 +7,6 @@ import java.io.RandomAccessFile;
 import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.IReader;
-import com.treetank.io.StorageProperties;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.PagePersistenter;
 import com.treetank.page.PageReference;
@@ -142,20 +141,6 @@ public final class FileReader implements IReader {
         } catch (final IOException exc) {
             throw new TreetankIOException(exc);
         }
-    }
-
-    public StorageProperties getProps() throws TreetankIOException {
-        try {
-
-            mFile.seek(0L);
-            final long localVersionMajor = mFile.readLong();
-            final long localVersionMinor = mFile.readLong();
-
-            return new StorageProperties(localVersionMajor, localVersionMinor);
-        } catch (final IOException ioe) {
-            throw new TreetankIOException(ioe);
-        }
-
     }
 
     public void close() throws TreetankIOException {

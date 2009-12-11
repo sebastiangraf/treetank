@@ -2,9 +2,7 @@ package com.treetank.access;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 
 import com.treetank.api.IDatabase;
@@ -28,17 +26,20 @@ public final class Database implements IDatabase {
     /** Central repository of all running sessions. */
     private static final ConcurrentMap<File, Database> DATABASEMAP = new ConcurrentHashMap<File, Database>();
 
-    private final Queue<ISession> mSessions;
+    /** Queue with all session registered */
+    private final ISession mSessions;
 
+    /** DatabaseConfiguration with fixed settings */
     private final DatabaseConfiguration mDatabaseConfiguration;
 
     /**
      * Private constructor
      */
-    private Database(final DatabaseConfiguration conf) throws TreetankException {
-        this.mDatabaseConfiguration = conf;
-        mSessions = new ConcurrentLinkedQueue<ISession>();
+    private Database(final DatabaseConfiguration databaseConf,
+            final SessionConfiguration sessionConf) throws TreetankException {
+        this.mDatabaseConfiguration = databaseConf;
         checkStorage();
+        mSessions = new Session(databaseConf, sessionConf);
     }
 
     /**
@@ -112,8 +113,13 @@ public final class Database implements IDatabase {
      */
     public static IDatabase openDatabase(final File file)
             throws TreetankException {
+        if (!file.exists() && !createDatabase(new DatabaseConfiguration(file))) {
+            throw new TreetankUsageException(new StringBuilder(
+                    "DB could not be created at location ").append(file)
+                    .toString());
+        }
         return DATABASEMAP.putIfAbsent(file, new Database(
-                new DatabaseConfiguration(file)));
+                new DatabaseConfiguration(file), new SessionConfiguration()));
     }
 
     /**
@@ -125,11 +131,13 @@ public final class Database implements IDatabase {
      * @return the database
      * @throws TreetankException
      */
-    public boolean closeDatabase(final Database db) throws TreetankException {
-        for (final ISession session : mSessions) {
-            session.close();
-        }
-        return DATABASEMAP.remove(db.getFile(), db);
+    public void close() throws TreetankException {
+        mSessions.close();
+        DATABASEMAP.remove(getFile(), this);
+    }
+
+    public ISession getSession() {
+        return mSessions;
     }
 
     /**

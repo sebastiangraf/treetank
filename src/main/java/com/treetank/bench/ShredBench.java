@@ -7,9 +7,7 @@ import org.perfidix.annotation.Bench;
 import org.perfidix.ouput.TabularSummaryOutput;
 import org.perfidix.result.BenchmarkResult;
 
-import com.treetank.access.Session;
-import com.treetank.access.SessionConfiguration;
-import com.treetank.exception.TreetankException;
+import com.treetank.access.Database;
 import com.treetank.service.xml.XMLShredder;
 
 public final class ShredBench {
@@ -24,12 +22,7 @@ public final class ShredBench {
     //
     public void remove1000() {
 
-        try {
-            Session.closeSession("test100");
-            Session.removeSession(new File("test100"));
-        } catch (final TreetankException e) {
-            e.printStackTrace();
-        }
+        Database.truncateDatabase(new File("test100"));
     }
 
     //
@@ -46,9 +39,8 @@ public final class ShredBench {
     @Bench(runs = 100, beforeEachRun = "remove1000")
     public void shred1000() {
         try {
-            XMLShredder.shred("test100.xml", new SessionConfiguration(new File(
-                    "test100")));
-        } catch (TreetankException e) {
+            XMLShredder.main("test100.xml", "test100");
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

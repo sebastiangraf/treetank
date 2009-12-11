@@ -25,7 +25,7 @@ import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
-import com.treetank.access.SessionConfiguration;
+import com.treetank.access.DatabaseConfiguration;
 import com.treetank.exception.TreetankIOException;
 
 /**
@@ -72,7 +72,7 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
      *            revision number, needed to reconstruct the sliding window in
      *            the correct way
      */
-    public BerkeleyPersistenceCache(final SessionConfiguration sessionConfig,
+    public BerkeleyPersistenceCache(final DatabaseConfiguration sessionConfig,
             final long revision) throws TreetankIOException {
         super(sessionConfig);
         try {

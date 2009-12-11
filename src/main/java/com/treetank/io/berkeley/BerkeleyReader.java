@@ -9,7 +9,6 @@ import com.sleepycat.je.OperationStatus;
 import com.sleepycat.je.Transaction;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.IReader;
-import com.treetank.io.StorageProperties;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.PageReference;
 import com.treetank.page.UberPage;
@@ -56,29 +55,6 @@ public class BerkeleyReader implements IReader {
     public BerkeleyReader(final Environment env, final Database database)
             throws DatabaseException {
         this(database, env.beginTransaction(null, null));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StorageProperties getProps() throws TreetankIOException {
-        try {
-
-            final DatabaseEntry keyEntry = new DatabaseEntry();
-            BerkeleyFactory.KEY.objectToEntry(BerkeleyKey.getPropsKey(),
-                    keyEntry);
-
-            final DatabaseEntry valueEntry = new DatabaseEntry();
-            mDatabase.get(mTxn, keyEntry, valueEntry, LockMode.DEFAULT);
-            final StorageProperties props = BerkeleyFactory.PROPS_VAL_B
-                    .entryToObject(valueEntry);
-
-            return props;
-
-        } catch (final DatabaseException exc) {
-            throw new TreetankIOException(exc);
-        }
-
     }
 
     /**

@@ -5,7 +5,8 @@ import java.util.Random;
 
 import org.perfidix.annotation.Bench;
 
-import com.treetank.access.Session;
+import com.treetank.access.Database;
+import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 
@@ -21,9 +22,10 @@ public class ExtremeInsertTest {
     public void bench() {
         try {
             final File file = new File("bla");
-            // Session.removeSession(file);
+            Database.truncateDatabase(file);
+            final IDatabase db = Database.openDatabase(file);
 
-            final ISession session = Session.beginSession(file);
+            final ISession session = db.getSession();
             IWriteTransaction wtx = session.beginWriteTransaction();
             wtx.insertElementAsFirstChild(getString(), "");
             for (int i = 0; i < ELEMENTS; i++) {

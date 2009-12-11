@@ -18,6 +18,7 @@ package com.treetank.cache;
 
 import java.io.File;
 
+import com.treetank.access.DatabaseConfiguration;
 import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.settings.EStoragePaths;
@@ -49,7 +50,7 @@ public abstract class AbstractPersistenceCache implements ICache {
      *            {@link SessionConfiguration} which holds the place to store
      *            the data.
      */
-    protected AbstractPersistenceCache(final SessionConfiguration paramConfig) {
+    protected AbstractPersistenceCache(final DatabaseConfiguration paramConfig) {
         place = new File(paramConfig.getFile(), new StringBuilder(
                 EStoragePaths.TRANSACTIONLOG.getFile().getName()).append(
                 File.separator).append(counter).toString());

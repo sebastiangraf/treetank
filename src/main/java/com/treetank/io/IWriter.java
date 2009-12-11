@@ -13,14 +13,6 @@ import com.treetank.page.PageReference;
 public interface IWriter extends IReader {
 
     /**
-     * Initializing the storage if the <code>UberPage</code> is bootstraped.
-     * 
-     * @throws TreetankIOException
-     *             if something bad happens
-     */
-    void setProps(final StorageProperties props) throws TreetankIOException;
-
-    /**
      * Writing a page related to the reference
      * 
      * @param pageReference

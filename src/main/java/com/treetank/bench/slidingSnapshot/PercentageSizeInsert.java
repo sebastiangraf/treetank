@@ -15,14 +15,14 @@ import org.perfidix.ouput.AbstractOutput;
 import org.perfidix.ouput.CSVOutput;
 import org.perfidix.result.BenchmarkResult;
 
-import com.treetank.access.Session;
-import com.treetank.access.SessionConfiguration;
+import com.treetank.access.Database;
+import com.treetank.access.DatabaseConfiguration;
+import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.ERevisioning;
-import com.treetank.settings.EStoragePaths;
 import com.treetank.utils.IConstants;
 
 public class PercentageSizeInsert {
@@ -32,11 +32,12 @@ public class PercentageSizeInsert {
 
     private final static int FACTOR = 1;
 
-    private final static int WINDOW_SIZE = 4;
-    private final static int REVISION_MILESTONES = 4;
+    private final static String WINDOW_SIZE = "4";
+    private final static String REVISION_MILESTONES = "4";
 
     private IWriteTransaction wtx;
     private ISession session;
+    private IDatabase database;
 
     // @BeforeBenchClass
     // public void setUp() {
@@ -48,7 +49,8 @@ public class PercentageSizeInsert {
         try {
             wtx.close();
             session.close();
-            Session.removeSession(CommonStuff.PATH1);
+            database.close();
+            Database.truncateDatabase(CommonStuff.PATH1);
         } catch (TreetankException exc) {
 
         }
@@ -58,11 +60,15 @@ public class PercentageSizeInsert {
     public void benchRandomInc() {
         try {
             final Properties props = new Properties();
-            props.put(EDatabaseSetting.MILESTONE_REVISION.getName(), REVISION_MILESTONES);
-            props.put(EDatabaseSetting.REVISION_TYPE.getName(), ERevisioning.INCREMENTAL);
-            final SessionConfiguration conf = new SessionConfiguration(
+            props.setProperty(EDatabaseSetting.MILESTONE_REVISION.name(),
+                    REVISION_MILESTONES);
+            props.put(EDatabaseSetting.REVISION_TYPE.name(),
+                    ERevisioning.INCREMENTAL);
+            final DatabaseConfiguration conf = new DatabaseConfiguration(
                     CommonStuff.PATH1, props);
-            session = Session.beginSession(conf);
+            Database.createDatabase(conf);
+            database = Database.openDatabase(CommonStuff.PATH1);
+            session = database.getSession();
             wtx = session.beginWriteTransaction();
             wtx.insertElementAsFirstChild(CommonStuff.getString(), "");
             for (int i = 0; i < NODE_SET_SIZE; i++) {
@@ -99,12 +105,14 @@ public class PercentageSizeInsert {
     public void benchRandom1() {
         try {
             final Properties props = new Properties();
-            props.put(EDatabaseSetting.MILESTONE_REVISION.getName(), 1);
-            props.put(EDatabaseSetting.REVISION_TYPE.getName(),
-                    ERevisioning.SLIDING_SNAPSHOT);
-            final SessionConfiguration conf = new SessionConfiguration(
+            props.setProperty(EDatabaseSetting.MILESTONE_REVISION.name(), "1");
+            props.setProperty(EDatabaseSetting.REVISION_TYPE.name(),
+                    ERevisioning.SLIDING_SNAPSHOT.name());
+            final DatabaseConfiguration conf = new DatabaseConfiguration(
                     CommonStuff.PATH1, props);
-            session = Session.beginSession(conf);
+            Database.createDatabase(conf);
+            database = Database.openDatabase(CommonStuff.PATH1);
+            session = database.getSession();
             wtx = session.beginWriteTransaction();
             wtx.insertElementAsFirstChild(CommonStuff.getString(), "");
             for (int i = 0; i < NODE_SET_SIZE; i++) {
@@ -141,12 +149,15 @@ public class PercentageSizeInsert {
     public void benchRandom4() {
         try {
             final Properties props = new Properties();
-            props.put(EDatabaseSetting.MILESTONE_REVISION.getName(), WINDOW_SIZE);
-            props.put(EDatabaseSetting.REVISION_TYPE.getName(),
-                    ERevisioning.SLIDING_SNAPSHOT);
-            final SessionConfiguration conf = new SessionConfiguration(
+            props.setProperty(EDatabaseSetting.MILESTONE_REVISION.name(),
+                    WINDOW_SIZE);
+            props.setProperty(EDatabaseSetting.REVISION_TYPE.name(),
+                    ERevisioning.SLIDING_SNAPSHOT.name());
+            final DatabaseConfiguration conf = new DatabaseConfiguration(
                     CommonStuff.PATH1, props);
-            session = Session.beginSession(conf);
+            Database.createDatabase(conf);
+            database = Database.openDatabase(CommonStuff.PATH1);
+            session = database.getSession();
             wtx = session.beginWriteTransaction();
             wtx.insertElementAsFirstChild(CommonStuff.getString(), "");
             for (int i = 0; i < NODE_SET_SIZE; i++) {
@@ -180,7 +191,7 @@ public class PercentageSizeInsert {
     }
 
     public static void main(final String[] args) {
-        EStoragePaths.recursiveDelete(CommonStuff.RESULTFOLDER);
+        CommonStuff.recursiveDelete(CommonStuff.RESULTFOLDER);
         CommonStuff.RESULTFOLDER.mkdirs();
         for (int i = 0; i < 30000; i = i + 1000) {
             NODE_SET_SIZE = i;

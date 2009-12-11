@@ -4,7 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 
-import com.treetank.access.Session;
+import com.treetank.access.Database;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -52,6 +53,7 @@ public final class TreeTankCommandoLineExplorer {
      *             of any kind
      */
     public static void main(final String[] args) throws Exception {
+        IDatabase database = null;
         ISession session = null;
         IReadTransaction rtx = null;
         if (args.length > 0) {
@@ -62,7 +64,8 @@ public final class TreeTankCommandoLineExplorer {
             }
 
             final File file = new File(args[0]);
-            session = Session.beginSession(file);
+            database = Database.openDatabase(file);
+            session = database.getSession();
             if (revision != 0) {
                 rtx = session.beginWriteTransaction();
             } else {
@@ -95,7 +98,8 @@ public final class TreeTankCommandoLineExplorer {
                     }
                     final File file = findFile(line);
                     if (file != null) {
-                        session = Session.beginSession(file);
+                        database = Database.openDatabase(file);
+                        session = database.getSession();
                         rtx = session.beginReadTransaction();
                         System.out.println(command.executeCommand(rtx));
                     } else {

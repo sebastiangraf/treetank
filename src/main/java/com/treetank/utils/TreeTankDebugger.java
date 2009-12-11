@@ -18,7 +18,10 @@
 
 package com.treetank.utils;
 
-import com.treetank.access.Session;
+import java.io.File;
+
+import com.treetank.access.Database;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.exception.TreetankException;
@@ -52,11 +55,12 @@ public final class TreeTankDebugger {
                 System.exit(1);
             }
 
-            final ISession session = Session.beginSession(args[0]);
+            final IDatabase database = Database.openDatabase(new File(args[0]));
+            final ISession session = database.getSession();
             final IReadTransaction rtx = session.beginReadTransaction();
 
             // Print header.
-            System.out.println("TreeTank '" + session.getFile() + "':");
+            System.out.println("TreeTank '" + database.getFile() + "':");
             System.out
                     .println("----------------------------------------------------------------------------------------------------------");
             System.out

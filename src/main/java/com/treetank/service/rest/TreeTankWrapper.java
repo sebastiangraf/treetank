@@ -20,9 +20,14 @@ package com.treetank.service.rest;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.io.StringReader;
 
-import com.treetank.access.Session;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
+import com.treetank.access.Database;
 import com.treetank.api.IAxis;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -64,7 +69,8 @@ public final class TreeTankWrapper {
     public TreeTankWrapper(final File file) throws TreetankRestException {
 
         try {
-            session = Session.beginSession(file);
+            final IDatabase db = Database.openDatabase(file);
+            session = db.getSession();
         } catch (final TreetankException exc) {
             throw new TreetankRestException(exc);
         }
@@ -85,12 +91,24 @@ public final class TreeTankWrapper {
             throws TreetankRestException {
         long revNumber = -1;
         try {
-            revNumber = XMLShredder.shred(id, value, session);
-        } catch (final TreetankException exc) {
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            wtx.moveTo(id);
+            shredString(wtx, value);
+        } catch (final Exception exc) {
             throw new TreetankRestException(500, exc.getMessage(), exc);
         }
 
         return revNumber;
+    }
+
+    private long shredString(final IWriteTransaction wtx, final String value)
+            throws Exception {
+        final XMLInputFactory factory = XMLInputFactory.newInstance();
+        factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+        final XMLStreamReader parser = factory
+                .createXMLStreamReader(new StringReader(value));
+        final XMLShredder shredder = new XMLShredder(wtx, parser);
+        return shredder.call();
     }
 
     /**
@@ -132,11 +150,11 @@ public final class TreeTankWrapper {
                 }
             }
 
+            final long revision = shredString(wtx, value);
             wtx.commit();
             wtx.close();
-            final long revision = XMLShredder.shred(id, value, session);
             return revision;
-        } catch (final TreetankException exc) {
+        } catch (final Exception exc) {
             throw new TreetankRestException(exc);
         } finally {
             if (wtx != null) {

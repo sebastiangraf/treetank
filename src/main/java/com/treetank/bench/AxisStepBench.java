@@ -29,9 +29,9 @@ import org.perfidix.annotation.Bench;
 import org.perfidix.ouput.TabularSummaryOutput;
 import org.perfidix.result.BenchmarkResult;
 
-import com.treetank.access.Session;
-import com.treetank.access.SessionConfiguration;
+import com.treetank.access.Database;
 import com.treetank.api.IAxis;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.DescendantAxis;
@@ -51,14 +51,11 @@ public class AxisStepBench {
 
     public final static boolean TNK_CHECKSUM = false;
 
-    private SessionConfiguration mSessionConfiguration;
-
     @BeforeFirstRun
     public void benchShred() {
         try {
-            Session.removeSession(TNK);
-            mSessionConfiguration = new SessionConfiguration(TNK);
-            XMLShredder.shred(XML.getAbsolutePath(), mSessionConfiguration);
+            Database.truncateDatabase(TNK);
+            XMLShredder.main(XML.getAbsolutePath(), TNK.getAbsolutePath());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -66,8 +63,8 @@ public class AxisStepBench {
 
     @Bench(runs = 100)
     public void benchTreeTankDescendant() throws TreetankException {
-
-        final ISession session = Session.beginSession(mSessionConfiguration);
+        final IDatabase db = Database.openDatabase(TNK);
+        final ISession session = db.getSession();
         // final ExecutorService executor = Executors.newFixedThreadPool(TASKS);
         // executor.execute(new DescendantStepTask(session));
         // executor.shutdown();

@@ -60,4 +60,15 @@ public class CommonStuff {
         return new String(buf);
     }
 
+    public static boolean recursiveDelete(final File file) {
+        if (file.isDirectory()) {
+            for (final File child : file.listFiles()) {
+                if (!recursiveDelete(child)) {
+                    return false;
+                }
+            }
+        }
+        return file.delete();
+    }
+    
 }

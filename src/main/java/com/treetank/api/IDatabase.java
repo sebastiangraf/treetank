@@ -2,6 +2,7 @@ package com.treetank.api;
 
 import java.io.File;
 
+import com.treetank.exception.TreetankException;
 import com.treetank.settings.EDatabaseSetting;
 
 /**
@@ -26,13 +27,20 @@ public interface IDatabase {
     File getFile();
 
     /**
-     * Get the version of the TreeTank. The layout is as follows
-     * int[0]: version major
-     * int[1]: version minor
-     * int[2]: version fix
+     * Get the version of the TreeTank. The layout is as follows int[0]: version
+     * major int[1]: version minor int[2]: version fix
      * 
      * @return Minor revision of TreeTank version.
      */
     int[] getVersion();
+
+    /**
+     * Getting the session associated within this database.
+     * 
+     * @return the database
+     */
+    ISession getSession();
+
+    void close() throws TreetankException;
 
 }

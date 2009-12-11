@@ -13,15 +13,6 @@ import com.treetank.page.PageReference;
 public interface IReader {
 
     /**
-     * Getting the {@link StorageProperties} for the given storage;
-     * 
-     * @return the {@link StorageProperties} for this storage
-     * @throws TreetankIOException
-     *             if somethind bad happens
-     */
-    StorageProperties getProps() throws TreetankIOException;
-
-    /**
      * Getting the first reference of the <code>Uberpage</code>
      * 
      * @return a {@link PageReference} with link to the first reference
