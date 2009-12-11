@@ -2,6 +2,7 @@ package com.treetank.io.file;
 
 import java.io.File;
 
+import com.treetank.access.DatabaseConfiguration;
 import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.AbstractIOFactory;
@@ -26,8 +27,9 @@ public final class FileFactory extends AbstractIOFactory {
      * @param paramSession
      *            the location of the storage
      */
-    public FileFactory(final SessionConfiguration paramSession) {
-        super(paramSession);
+    public FileFactory(final DatabaseConfiguration paramDatabase,
+            final SessionConfiguration paramSession) {
+        super(paramDatabase, paramSession);
     }
 
     /**
@@ -35,7 +37,7 @@ public final class FileFactory extends AbstractIOFactory {
      */
     @Override
     public IReader getReader() throws TreetankIOException {
-        return new FileReader(super.config, getConcreteStorage());
+        return new FileReader(super.sessionConfig, getConcreteStorage());
     }
 
     /**
@@ -43,7 +45,7 @@ public final class FileFactory extends AbstractIOFactory {
      */
     @Override
     public IWriter getWriter() throws TreetankIOException {
-        return new FileWriter(super.config, getConcreteStorage());
+        return new FileWriter(super.sessionConfig, getConcreteStorage());
     }
 
     /**
@@ -55,7 +57,7 @@ public final class FileFactory extends AbstractIOFactory {
     }
 
     protected final File getConcreteStorage() {
-        return new File(super.config.getFile(), new StringBuilder(
+        return new File(super.databaseConfig.getFile(), new StringBuilder(
                 EStoragePaths.TT.getFile().getName()).append(File.separator)
                 .append(FILENAME).toString());
     }

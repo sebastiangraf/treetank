@@ -59,12 +59,12 @@ public final class SessionConfiguration {
             throws TreetankUsageException {
         this.mProps = new Properties();
         for (final ESessionSetting enumProps : ESessionSetting.values()) {
-            if (props.containsKey(enumProps.getName())) {
-                this.getProps().put(enumProps.getName(),
-                        props.get(enumProps.getName()));
+            if (props.containsKey(enumProps.name())) {
+                this.getProps().setProperty(enumProps.name(),
+                        props.getProperty(enumProps.getValue()));
             } else {
-                this.getProps().put(enumProps.getName(),
-                        enumProps.getStandardProperty());
+                this.getProps().setProperty(enumProps.name(),
+                        enumProps.getValue());
             }
         }
 
@@ -92,7 +92,7 @@ public final class SessionConfiguration {
             props = new Properties();
 
             for (ESessionSetting prop : ESessionSetting.values()) {
-                getProps().put(prop.getName(), prop.getStandardProperty());
+                getProps().put(prop.name(), prop.getValue());
             }
         }
 

@@ -32,10 +32,8 @@ import com.treetank.exception.TreetankUsageException;
 import com.treetank.io.AbstractIOFactory;
 import com.treetank.io.IReader;
 import com.treetank.io.IWriter;
-import com.treetank.io.StorageProperties;
 import com.treetank.page.PageReference;
 import com.treetank.page.UberPage;
-import com.treetank.settings.EFixed;
 import com.treetank.settings.ESessionSetting;
 
 /**
@@ -47,14 +45,17 @@ import com.treetank.settings.ESessionSetting;
  */
 public final class SessionState {
 
+    /** Database configuration. */
+    private final DatabaseConfiguration mDatabaseConfiguration;
+
     /** Session configuration. */
-    private SessionConfiguration mSessionConfiguration;
+    private final SessionConfiguration mSessionConfiguration;
 
     /** Write semaphore to assure only one exclusive write transaction exists. */
-    private Semaphore mWriteSemaphore;
+    private final Semaphore mWriteSemaphore;
 
     /** Read semaphore to control running read transactions. */
-    private Semaphore mReadSemaphore;
+    private final Semaphore mReadSemaphore;
 
     /** Strong reference to uber page before the begin of a write transaction. */
     private UberPage mLastCommittedUberPage;
@@ -63,7 +64,7 @@ public final class SessionState {
     private Map<Long, IReadTransaction> mTransactionMap;
 
     /** Random generator for transaction IDs. */
-    private Random mRandom;
+    private final Random mRandom;
 
     /** abstract factory for all interaction to the storage */
     private final AbstractIOFactory fac;
@@ -71,79 +72,52 @@ public final class SessionState {
     /**
      * Constructor to bind to a TreeTank file.
      * 
-     * <p>
-     * The beacon logic works as follows:
-     * 
-     * <ol>
-     * <li><code>Primary beacon == secondary beacon</code>: OK.</li>
-     * <li><code>Primary beacon != secondary beacon</code>: try to recover...
-     * <ol type="i">
-     * <li><code>Checksum(uberpage) == primary beacon</code>: truncate file and
-     * write secondary beacon - OK.</li>
-     * <li><code>Checksum(uberpage) == secondary beacon</code>: write primary
-     * beacon - OK.</li>
-     * <li><code>Checksum(uberpage) != secondary beacon 
-     *        != primary beacon</code>: NOK.</li>
-     * </ol>
-     * </li>
-     * </ol>
-     * </p>
-     * 
      * @param sessionConfiguration
      *            Session configuration for the TreeTank.
      */
-    protected SessionState(final SessionConfiguration sessionConfiguration)
+    protected SessionState(final DatabaseConfiguration databaseConfiguration,
+            final SessionConfiguration sessionConfiguration)
             throws TreetankException {
-
+        mDatabaseConfiguration = databaseConfiguration;
         mSessionConfiguration = sessionConfiguration;
         mTransactionMap = new ConcurrentHashMap<Long, IReadTransaction>();
         mRandom = new Random();
 
         // Init session members.
-        mWriteSemaphore = new Semaphore(
-                (Integer) ESessionSetting.MAX_WRITE_TRANSACTIONS
-                        .getStandardProperty());
-        mReadSemaphore = new Semaphore(
-                (Integer) ESessionSetting.MAX_READ_TRANSACTIONS
-                        .getStandardProperty());
+        mWriteSemaphore = new Semaphore(Integer.parseInt(sessionConfiguration
+                .getProps().getProperty(
+                        ESessionSetting.MAX_WRITE_TRANSACTIONS.name())));
+        mReadSemaphore = new Semaphore(Integer.parseInt(sessionConfiguration
+                .getProps().getProperty(
+                        ESessionSetting.MAX_READ_TRANSACTIONS.name())));
         final PageReference uberPageReference = new PageReference();
 
-        fac = AbstractIOFactory.getInstance(mSessionConfiguration);
-        StorageProperties props;
+        fac = AbstractIOFactory.getInstance(mDatabaseConfiguration, mSessionConfiguration);
         if (!fac.exists()) {
             // Bootstrap uber page and make sure there already is a root
             // node.
             mLastCommittedUberPage = new UberPage();
             uberPageReference.setPage(mLastCommittedUberPage);
 
-            props = new StorageProperties((Integer) EFixed.VERSION_MAJOR
-                    .getStandardProperty(), (Integer) EFixed.VERSION_MINOR
-                    .getStandardProperty());
         } else {
             final IReader reader = fac.getReader();
             final PageReference firstRef = reader.readFirstReference();
             mLastCommittedUberPage = (UberPage) firstRef.getPage();
-            props = reader.getProps();
             reader.close();
         }
-
-        mVersionMajor = props.getVersionMajor();
-        mVersionMinor = props.getVersionMinor();
-
-        checkValidStorage(props);
 
     }
 
     protected int getReadTransactionCount() {
-        return ((Integer) ESessionSetting.MAX_READ_TRANSACTIONS
-                .getStandardProperty() - (int) mReadSemaphore
-                .availablePermits());
+        return Integer.parseInt(mSessionConfiguration.getProps().getProperty(
+                ESessionSetting.MAX_READ_TRANSACTIONS.name()))
+                - mReadSemaphore.availablePermits();
     }
 
     protected int getWriteTransactionCount() {
-        return ((Integer) ESessionSetting.MAX_WRITE_TRANSACTIONS
-                .getStandardProperty() - (int) mWriteSemaphore
-                .availablePermits());
+        return Integer.parseInt(mSessionConfiguration.getProps().getProperty(
+                ESessionSetting.MAX_WRITE_TRANSACTIONS.name()))
+                - mWriteSemaphore.availablePermits();
     }
 
     protected IReadTransaction beginReadTransaction() throws TreetankException {
@@ -163,17 +137,18 @@ public final class SessionState {
         // Make sure not to exceed available number of read transactions.
         try {
             mReadSemaphore.acquire();
-        } catch (InterruptedException exc) {
+        } catch (final InterruptedException exc) {
             throw new TreetankException(exc) {
+                private static final long serialVersionUID = 1L;
             };
         }
 
         IReadTransaction rtx = null;
         // Create new read transaction.
         rtx = new ReadTransaction(generateTransactionID(), this,
-                new ReadTransactionState(mSessionConfiguration,
-                        mLastCommittedUberPage, revisionNumber, itemList, fac
-                                .getReader()));
+                new ReadTransactionState(mDatabaseConfiguration,
+                        mSessionConfiguration, mLastCommittedUberPage,
+                        revisionNumber, itemList, fac.getReader()));
 
         // Remember transaction for debugging and safe close.
         if (mTransactionMap.put(rtx.getTransactionID(), rtx) != null) {
@@ -220,8 +195,9 @@ public final class SessionState {
             throw new RuntimeException(exc);
         }
 
-        return new WriteTransactionState(mSessionConfiguration, new UberPage(
-                mLastCommittedUberPage), writer);
+        return new WriteTransactionState(mDatabaseConfiguration,
+                mSessionConfiguration, new UberPage(mLastCommittedUberPage),
+                writer);
     }
 
     protected UberPage getLastCommittedUberPage() {
@@ -256,9 +232,6 @@ public final class SessionState {
         }
 
         // Immediately release all ressources.
-        mSessionConfiguration = null;
-        mWriteSemaphore = null;
-        mReadSemaphore = null;
         mLastCommittedUberPage = null;
         mTransactionMap = null;
 

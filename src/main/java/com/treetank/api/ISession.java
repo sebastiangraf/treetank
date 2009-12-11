@@ -18,8 +18,6 @@
 
 package com.treetank.api;
 
-import java.io.File;
-
 import com.treetank.exception.TreetankException;
 
 /**

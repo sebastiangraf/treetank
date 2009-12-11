@@ -14,11 +14,11 @@ import org.perfidix.ouput.AbstractOutput;
 import org.perfidix.ouput.CSVOutput;
 import org.perfidix.result.BenchmarkResult;
 
-import com.treetank.access.Session;
+import com.treetank.access.Database;
+import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
-import com.treetank.settings.EStoragePaths;
 
 public class CommitThresholdInsert {
 
@@ -28,6 +28,7 @@ public class CommitThresholdInsert {
 
     private IWriteTransaction wtx;
     private ISession session;
+    private IDatabase database;
 
     // @BeforeBenchClass
     // public void setUp() {
@@ -39,7 +40,8 @@ public class CommitThresholdInsert {
         try {
             wtx.close();
             session.close();
-            Session.removeSession(CommonStuff.PATH1);
+            database.close();
+            Database.truncateDatabase(CommonStuff.PATH1);
         } catch (TreetankException exc) {
 
         }
@@ -48,7 +50,8 @@ public class CommitThresholdInsert {
     @Bench
     public void benchSeq() {
         try {
-            session = Session.beginSession(CommonStuff.PATH1);
+            database = Database.openDatabase(CommonStuff.PATH1);
+            session = database.getSession();
             wtx = session.beginWriteTransaction();
             wtx.insertElementAsFirstChild(getString(), "");
             for (int i = 0; i < NODE_SET_SIZE; i++) {
@@ -71,8 +74,8 @@ public class CommitThresholdInsert {
     @Bench
     public void benchRandom() {
         try {
-            session = Session.beginSession(CommonStuff.PATH1);
-            wtx = session.beginWriteTransaction();
+            database = Database.openDatabase(CommonStuff.PATH1);
+            session = database.getSession();
             wtx.insertElementAsFirstChild(getString(), "");
             for (int i = 0; i < NODE_SET_SIZE; i++) {
                 if (CommonStuff.ran.nextBoolean()) {
@@ -101,7 +104,7 @@ public class CommitThresholdInsert {
     }
 
     public static void main(final String[] args) {
-        EStoragePaths.recursiveDelete(CommonStuff.RESULTFOLDER);
+        CommonStuff.recursiveDelete(CommonStuff.RESULTFOLDER);
         CommonStuff.RESULTFOLDER.mkdirs();
         for (int i = 1; i <= 100; i++) {
             mProb = i;

@@ -59,6 +59,9 @@ public class ReadTransactionState {
     /** Session configuration. */
     private final SessionConfiguration mSessionConfiguration;
 
+    /** Database configuration */
+    private final DatabaseConfiguration mDatabaseConfiguration;
+
     /** Page reader exclusively assigned to this transaction. */
     private final IReader mPageReader;
 
@@ -82,6 +85,8 @@ public class ReadTransactionState {
      * 
      * @param sessionConfiguration
      *            Configuration of session.
+     * @param databaseConfiguration
+     *            Configuration of database.
      * @param uberPage
      *            Uber page to start reading with.
      * @param revisionKey
@@ -94,12 +99,14 @@ public class ReadTransactionState {
      *             if the read of the persistent storage fails
      */
     protected ReadTransactionState(
+            final DatabaseConfiguration databaseConfiguration,
             final SessionConfiguration sessionConfiguration,
             final UberPage uberPage, final long revisionKey,
             final IItemList itemList, final IReader reader)
             throws TreetankIOException {
         mCache = new RAMCache();
         mSessionConfiguration = sessionConfiguration;
+        mDatabaseConfiguration = databaseConfiguration;
         mPageReader = reader;
         mUberPage = uberPage;
         mRevision = revisionKey;
@@ -133,14 +140,17 @@ public class ReadTransactionState {
         if (cont == null) {
             final NodePage[] revs = getSnapshotPages(nodePageKey);
 
-            final int mileStoneRevision = (Integer) getSessionConfiguration()
-                    .getProps().get(
-                            EDatabaseSetting.MILESTONE_REVISION.getName());
+            final int mileStoneRevision = Integer
+                    .parseInt(mDatabaseConfiguration.getProps().getProperty(
+                            EDatabaseSetting.MILESTONE_REVISION
+                                    .getStandardProperty()));
 
             // Build up the complete page.
-            final NodePage completePage = ((ERevisioning) getSessionConfiguration()
-                    .getProps().get(EDatabaseSetting.REVISION_TYPE.getName()))
-                    .combinePages(revs, mileStoneRevision);
+            final ERevisioning revision = ERevisioning
+                    .valueOf(mDatabaseConfiguration.getProps().getProperty(
+                            EDatabaseSetting.REVISION_TYPE.name()));
+            final NodePage completePage = revision.combinePages(revs,
+                    mileStoneRevision);
             cont = new NodePageContainer(completePage);
             mCache.put(nodePageKey, cont);
         }
@@ -221,13 +231,6 @@ public class ReadTransactionState {
     }
 
     /**
-     * @return The session configuration.
-     */
-    protected final SessionConfiguration getSessionConfiguration() {
-        return mSessionConfiguration;
-    }
-
-    /**
      * @return The uber page.
      */
     protected final UberPage getUberPage() {
@@ -276,8 +279,9 @@ public class ReadTransactionState {
                         keys.add(ref.getKey().getIdentifier());
                     }
                 }
-                if (refs.size() == (Integer) mSessionConfiguration.getProps()
-                        .get(EDatabaseSetting.MILESTONE_REVISION.getName())) {
+                if (refs.size() == Integer.parseInt(mSessionConfiguration
+                        .getProps().getProperty(
+                                EDatabaseSetting.MILESTONE_REVISION.name()))) {
                     break;
                 }
 
@@ -378,6 +382,14 @@ public class ReadTransactionState {
             throws TreetankIOException {
         // TODO evaluate to cache the page
         return loadRevRoot(mRevision);
+    }
+
+    protected SessionConfiguration getSessionConfiguration() {
+        return mSessionConfiguration;
+    }
+
+    protected DatabaseConfiguration getDatabaseConfiguration() {
+        return mDatabaseConfiguration;
     }
 
     /**

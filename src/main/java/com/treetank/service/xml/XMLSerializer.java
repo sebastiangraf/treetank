@@ -19,17 +19,13 @@
 package com.treetank.service.xml;
 
 import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.Callable;
 
-import com.treetank.access.Session;
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
-import com.treetank.api.ISession;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.utils.FastStack;
 import com.treetank.utils.IConstants;
@@ -312,43 +308,6 @@ public final class XMLSerializer implements Callable<Void> {
             mOut.write((byte) (digit + ASCII_OFFSET));
             remainder -= digit * LONG_POWERS[i];
         }
-    }
-
-    /**
-     * Invocation of this class from external.
-     * 
-     * @param args
-     *            first arg is mandatory: tnk-file; second arg is optional:
-     *            xml-output, system.out otherwise
-     * @throws Exception
-     *             of any kind
-     */
-    public static void main(final String[] args) throws Exception {
-        OutputStream output = null;
-        switch (args.length) {
-        case 1:
-            output = System.out;
-            break;
-        case 2:
-            output = new FileOutputStream(new File(args[1]));
-            break;
-        default:
-            System.out
-                    .println("Usage: java XMLSerializer \"tnk-file\" [\"xml-file\"]");
-            System.exit(1);
-        }
-
-        final ISession session = Session.beginSession(new File(args[0]));
-        final IReadTransaction rtx = session.beginReadTransaction();
-
-        final XMLSerializer serializer = new XMLSerializer(rtx, output);
-        serializer.call();
-        rtx.close();
-        session.close();
-
-        output.flush();
-        output.close();
-
     }
 
 }

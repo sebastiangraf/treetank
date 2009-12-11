@@ -16,15 +16,15 @@ import org.perfidix.ouput.AbstractOutput;
 import org.perfidix.ouput.CSVOutput;
 import org.perfidix.result.BenchmarkResult;
 
-import com.treetank.access.Session;
-import com.treetank.access.SessionConfiguration;
+import com.treetank.access.Database;
+import com.treetank.access.DatabaseConfiguration;
+import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.ERevisioning;
-import com.treetank.settings.EStoragePaths;
 import com.treetank.utils.IConstants;
 
 public class CommitThresholdModifier {
@@ -37,13 +37,14 @@ public class CommitThresholdModifier {
 
     private IWriteTransaction wtx;
     private ISession session;
+    private IDatabase database;
 
     @BeforeEachRun
     public void setUp() {
         try {
-            XMLShredder.shred(CommonStuff.XMLPath.getAbsolutePath(),
-                    new SessionConfiguration(CommonStuff.PATH1));
-        } catch (TreetankException exc) {
+            XMLShredder.main(CommonStuff.XMLPath.getAbsolutePath(),
+                    CommonStuff.PATH1.getAbsolutePath());
+        } catch (Exception exc) {
             exc.printStackTrace();
         }
 
@@ -54,7 +55,8 @@ public class CommitThresholdModifier {
         try {
             wtx.close();
             session.close();
-            Session.removeSession(CommonStuff.PATH1);
+            database.close();
+            Database.truncateDatabase(CommonStuff.PATH1);
         } catch (TreetankException exc) {
 
         }
@@ -64,10 +66,12 @@ public class CommitThresholdModifier {
     public void benchRandomIncFactor() {
         try {
             final Properties props = new Properties();
-            props.put(EDatabaseSetting.REVISION_TYPE, ERevisioning.INCREMENTAL);
-            final SessionConfiguration conf = new SessionConfiguration(
+            props.setProperty(EDatabaseSetting.REVISION_TYPE.name(), ERevisioning.INCREMENTAL.name());
+            final DatabaseConfiguration dbConf = new DatabaseConfiguration(
                     CommonStuff.PATH1, props);
-            session = Session.beginSession(conf);
+            Database.createDatabase(dbConf);
+            database = Database.openDatabase(CommonStuff.PATH1);
+            session = database.getSession();
             wtx = session.beginWriteTransaction();
             wtx.insertElementAsFirstChild(CommonStuff.getString(), "");
             for (int i = 0; i < MOD_SIZE; i++) {
@@ -99,11 +103,13 @@ public class CommitThresholdModifier {
     public void benchRandomWindowFactor() {
         try {
             final Properties props = new Properties();
-            props.put(EDatabaseSetting.REVISION_TYPE,
-                    ERevisioning.SLIDING_SNAPSHOT);
-            final SessionConfiguration conf = new SessionConfiguration(
+            props.setProperty(EDatabaseSetting.REVISION_TYPE.name(),
+                    ERevisioning.SLIDING_SNAPSHOT.name());
+            final DatabaseConfiguration dbConf = new DatabaseConfiguration(
                     CommonStuff.PATH1, props);
-            session = Session.beginSession(conf);
+            Database.createDatabase(dbConf);
+            database = Database.openDatabase(CommonStuff.PATH1);
+            session = database.getSession();
             wtx = session.beginWriteTransaction();
             wtx.insertElementAsFirstChild(CommonStuff.getString(), "");
             for (int i = 0; i < MOD_SIZE; i++) {
@@ -135,10 +141,12 @@ public class CommitThresholdModifier {
     public void benchRandomIncFull() {
         try {
             final Properties props = new Properties();
-            props.put(EDatabaseSetting.REVISION_TYPE, ERevisioning.INCREMENTAL);
-            final SessionConfiguration conf = new SessionConfiguration(
+            props.setProperty(EDatabaseSetting.REVISION_TYPE.name(), ERevisioning.INCREMENTAL.name());
+            final DatabaseConfiguration dbConf = new DatabaseConfiguration(
                     CommonStuff.PATH1, props);
-            session = Session.beginSession(conf);
+            Database.createDatabase(dbConf);
+            database = Database.openDatabase(CommonStuff.PATH1);
+            session = database.getSession();
             wtx = session.beginWriteTransaction();
             wtx.insertElementAsFirstChild(CommonStuff.getString(), "");
             for (int i = 0; i < MOD_SIZE; i++) {
@@ -169,11 +177,13 @@ public class CommitThresholdModifier {
     public void benchRandomWindowFull() {
         try {
             final Properties props = new Properties();
-            props.put(EDatabaseSetting.REVISION_TYPE,
-                    ERevisioning.SLIDING_SNAPSHOT);
-            final SessionConfiguration conf = new SessionConfiguration(
+            props.setProperty(EDatabaseSetting.REVISION_TYPE.name(),
+                    ERevisioning.SLIDING_SNAPSHOT.name());
+            final DatabaseConfiguration dbConf = new DatabaseConfiguration(
                     CommonStuff.PATH1, props);
-            session = Session.beginSession(conf);
+            Database.createDatabase(dbConf);
+            database = Database.openDatabase(CommonStuff.PATH1);
+            session = database.getSession();
             wtx = session.beginWriteTransaction();
             wtx.insertElementAsFirstChild(CommonStuff.getString(), "");
             for (int i = 0; i < MOD_SIZE; i++) {
@@ -201,7 +211,7 @@ public class CommitThresholdModifier {
     }
 
     public static void main(final String[] args) {
-        EStoragePaths.recursiveDelete(CommonStuff.RESULTFOLDER);
+        CommonStuff.recursiveDelete(CommonStuff.RESULTFOLDER);
         CommonStuff.RESULTFOLDER.mkdirs();
         for (int i = 1; i <= 100; i++) {
             mProb = i;

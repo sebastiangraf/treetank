@@ -16,9 +16,12 @@ import org.perfidix.ouput.AbstractOutput;
 import org.perfidix.ouput.CSVOutput;
 import org.perfidix.result.BenchmarkResult;
 
+import com.treetank.access.Database;
+import com.treetank.access.DatabaseConfiguration;
 import com.treetank.access.Session;
 import com.treetank.access.SessionConfiguration;
 import com.treetank.api.IAxis;
+import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
@@ -37,6 +40,7 @@ public class WindowModifierPercentage {
 
     private IWriteTransaction wtx;
     private ISession session;
+    private IDatabase database;
 
     private static long window1Seq;
     private static long window1Ran;
@@ -51,11 +55,7 @@ public class WindowModifierPercentage {
 
     @BeforeEachRun
     public void setUp() {
-        try {
-            Session.removeSession(CommonStuff.PATH1);
-        } catch (TreetankException exc) {
-            exc.printStackTrace();
-        }
+        Database.truncateDatabase(CommonStuff.PATH1);
 
     }
 
@@ -64,8 +64,9 @@ public class WindowModifierPercentage {
         try {
             wtx.close();
             session.close();
-            Session.removeSession(CommonStuff.PATH1);
-        } catch (TreetankException exc) {
+            database.close();
+            Database.truncateDatabase(CommonStuff.PATH1);
+        } catch (Exception exc) {
 
         }
     }
@@ -74,10 +75,11 @@ public class WindowModifierPercentage {
     public void benchIncSeq() {
         try {
             kind = Kind.IncSeq;
-            props.put(EDatabaseSetting.REVISION_TYPE.getName(), ERevisioning.INCREMENTAL);
-            final SessionConfiguration conf = new SessionConfiguration(
+            props.setProperty(EDatabaseSetting.REVISION_TYPE.name(),
+                    ERevisioning.INCREMENTAL.name());
+            final DatabaseConfiguration conf = new DatabaseConfiguration(
                     CommonStuff.PATH1, props);
-            XMLShredder.shred(CommonStuff.XMLPath.getAbsolutePath(), conf);
+            XMLShredder.main(CommonStuff.XMLPath.getAbsolutePath(), conf);
             session = Session.beginSession(conf);
             wtx = session.beginWriteTransaction();
 
@@ -123,7 +125,8 @@ public class WindowModifierPercentage {
     public void benchIncRan() {
         try {
             kind = Kind.IncRan;
-            props.put(EDatabaseSetting.REVISION_TYPE.getName(), ERevisioning.INCREMENTAL);
+            props.put(EDatabaseSetting.REVISION_TYPE.getName(),
+                    ERevisioning.INCREMENTAL);
             final SessionConfiguration conf = new SessionConfiguration(
                     CommonStuff.PATH1, props);
             XMLShredder.shred(CommonStuff.XMLPath.getAbsolutePath(), conf);

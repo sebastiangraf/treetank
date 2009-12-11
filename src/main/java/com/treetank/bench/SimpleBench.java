@@ -23,9 +23,9 @@ package com.treetank.bench;
 
 import java.io.File;
 
-import com.treetank.access.Session;
-import com.treetank.access.SessionConfiguration;
+import com.treetank.access.Database;
 import com.treetank.api.IAxis;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.ChildAxis;
@@ -37,27 +37,25 @@ public class SimpleBench {
 
     public final static String XML_PATH = "src/test/resources/shakespeare.xml";
 
-    public final static String TNK_PATH = "/treetank/data/shakespeare.tnk";
+    public final static String TNK_PATH = "/tmp/tnk/data/shakespeare.tnk";
 
     public final static byte[] TNK_KEY = null; // "1234567812345678".getBytes();
 
     public final static boolean TNK_CHECKSUM = false;
 
-    private static SessionConfiguration mSessionConfiguration;
-
     public static void main(final String[] args) {
 
         try {
             long start = System.currentTimeMillis();
-            new File(TNK_PATH).delete();
-            mSessionConfiguration = new SessionConfiguration(new File(TNK_PATH));
-            XMLShredder.shred(XML_PATH, mSessionConfiguration);
+            Database.truncateDatabase(new File(TNK_PATH));
+            XMLShredder.main(XML_PATH, TNK_PATH);
             long stop = System.currentTimeMillis();
             System.out.println("Time to shred shakespeare.xml: "
                     + (stop - start) + "[ms]");
 
-            final ISession session = Session
-                    .beginSession(mSessionConfiguration);
+            final IDatabase db = Database.openDatabase(new File(TNK_PATH));
+
+            final ISession session = db.getSession();
             final IReadTransaction rtx = session.beginReadTransaction();
             final IAxis axis = new ChildAxis(rtx);
             while (axis.hasNext()) {

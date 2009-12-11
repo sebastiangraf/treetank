@@ -8,7 +8,6 @@ import java.io.RandomAccessFile;
 import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.IWriter;
-import com.treetank.io.StorageProperties;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.PagePersistenter;
 import com.treetank.page.PageReference;
@@ -141,21 +140,6 @@ public final class FileWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    public void setProps(final StorageProperties props)
-            throws TreetankIOException {
-        try {
-            mFile.setLength(IConstants.BEACON_START + IConstants.BEACON_LENGTH);
-            mFile.writeLong(props.getVersionMajor());
-            mFile.writeLong(props.getVersionMinor());
-
-        } catch (final IOException exc) {
-            throw new TreetankIOException(exc);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public void writeFirstReference(final PageReference pageReference)
             throws TreetankIOException {
         final byte[] tmp = new byte[IConstants.CHECKSUM_SIZE];
@@ -179,13 +163,6 @@ public final class FileWriter implements IWriter {
         } catch (final IOException exc) {
             throw new TreetankIOException(exc);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StorageProperties getProps() throws TreetankIOException {
-        return reader.getProps();
     }
 
     /**

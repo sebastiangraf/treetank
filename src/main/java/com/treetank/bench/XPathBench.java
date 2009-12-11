@@ -2,9 +2,9 @@ package com.treetank.bench;
 
 import java.io.File;
 
-import com.treetank.access.Session;
-import com.treetank.access.SessionConfiguration;
+import com.treetank.access.Database;
 import com.treetank.api.IAxis;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.service.xml.XMLShredder;
@@ -28,11 +28,14 @@ public class XPathBench {
         try {
             INDEXTNK.delete();
             if (!TNK.exists()) {
-                XMLShredder.shred(XML.getAbsolutePath(),
-                        new SessionConfiguration(TNK));
+                final String[] args = { XML.getAbsolutePath(),
+                        TNK.getAbsolutePath() };
+                XMLShredder.main(args);
             }
 
-            final ISession session = Session.beginSession(TNK);
+            final IDatabase db = Database.openDatabase(TNK);
+
+            final ISession session = db.getSession();
             final IReadTransaction rtx = session.beginReadTransaction();
 
             final XPathParser parser = new XPathParser(rtx, query);

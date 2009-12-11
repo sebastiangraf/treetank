@@ -41,7 +41,7 @@ public final class TreetankRestException extends ServletException {
      * 
      * @param error
      */
-    public TreetankRestException(final TreetankException error) {
+    public TreetankRestException(final Exception error) {
         super(error);
         mErrorCode = 500;
         mErrorMessage = error.toString();

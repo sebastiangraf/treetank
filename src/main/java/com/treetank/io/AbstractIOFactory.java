@@ -3,6 +3,7 @@ package com.treetank.io;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.treetank.access.DatabaseConfiguration;
 import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.berkeley.BerkeleyFactory;
@@ -32,7 +33,9 @@ public abstract class AbstractIOFactory {
      * Config for the session holding information about the location of the
      * storage
      */
-    protected final transient SessionConfiguration config;
+    protected final transient SessionConfiguration sessionConfig;
+
+    protected final transient DatabaseConfiguration databaseConfig;
 
     /**
      * Protected constructor, just setting the sessionconfiguration.
@@ -40,8 +43,10 @@ public abstract class AbstractIOFactory {
      * @param paramSession
      *            to be set
      */
-    protected AbstractIOFactory(final SessionConfiguration paramSession) {
-        config = paramSession;
+    protected AbstractIOFactory(final DatabaseConfiguration paramDatabase,
+            final SessionConfiguration paramSession) {
+        sessionConfig = paramSession;
+        databaseConfig = paramDatabase;
     }
 
     /**
@@ -70,7 +75,7 @@ public abstract class AbstractIOFactory {
      */
     public final void closeStorage() throws TreetankIOException {
         closeConcreteStorage();
-        FACTORIES.remove(this.config);
+        FACTORIES.remove(this.sessionConfig);
     }
 
     protected abstract void closeConcreteStorage() throws TreetankIOException;
@@ -83,26 +88,28 @@ public abstract class AbstractIOFactory {
      * @return an instance of this factory based on the kind in the conf
      */
     public final static AbstractIOFactory getInstance(
-            final SessionConfiguration conf) throws TreetankIOException {
+            final DatabaseConfiguration databaseConf,
+            final SessionConfiguration sessionConf) throws TreetankIOException {
         AbstractIOFactory fac = null;
-        if (FACTORIES.containsKey(conf)) {
-            fac = FACTORIES.get(conf);
+        if (FACTORIES.containsKey(sessionConf)) {
+            fac = FACTORIES.get(sessionConf);
         } else {
-            final AbstractIOFactory.StorageType storageType = (AbstractIOFactory.StorageType) conf
-                    .getProps().get(EDatabaseSetting.STORAGE_TYPE.name());
+            final AbstractIOFactory.StorageType storageType = AbstractIOFactory.StorageType
+                    .valueOf(databaseConf.getProps().getProperty(
+                            EDatabaseSetting.STORAGE_TYPE.name()));
             switch (storageType) {
             case File:
-                fac = new FileFactory(conf);
+                fac = new FileFactory(databaseConf, sessionConf);
                 break;
             case Berkeley:
-                fac = new BerkeleyFactory(conf);
+                fac = new BerkeleyFactory(databaseConf, sessionConf);
                 break;
             default:
                 throw new IllegalArgumentException(new StringBuilder("Type ")
                         .append(storageType.toString()).append(" not valid!")
                         .toString());
             }
-            FACTORIES.put(conf, fac);
+            FACTORIES.put(sessionConf, fac);
         }
         return fac;
     }

@@ -11,17 +11,16 @@ import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
+import com.treetank.access.DatabaseConfiguration;
 import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.AbstractIOFactory;
 import com.treetank.io.AbstractKey;
 import com.treetank.io.IReader;
 import com.treetank.io.IWriter;
-import com.treetank.io.StorageProperties;
 import com.treetank.io.berkeley.binding.AbstractPageBinding;
 import com.treetank.io.berkeley.binding.KeyBinding;
 import com.treetank.io.berkeley.binding.PageReferenceUberPageBinding;
-import com.treetank.io.berkeley.binding.StoragePropTupleBinding;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.PageReference;
 import com.treetank.settings.EStoragePaths;
@@ -40,9 +39,6 @@ public final class BerkeleyFactory extends AbstractIOFactory {
 
     /** Binding for {@link AbstractKey} */
     public static final TupleBinding<AbstractKey> KEY = new KeyBinding();
-
-    /** Binding for {@link StorageProperties} */
-    public static final TupleBinding<StorageProperties> PROPS_VAL_B = new StoragePropTupleBinding();
 
     /** Binding for {@link AbstractPage} */
     public static final TupleBinding<AbstractPage> PAGE_VAL_B = new AbstractPageBinding();
@@ -77,9 +73,9 @@ public final class BerkeleyFactory extends AbstractIOFactory {
      * @throws TreetankIOException
      *             of something odd happens while database-connection
      */
-    public BerkeleyFactory(final SessionConfiguration paramSession)
-            throws TreetankIOException {
-        super(paramSession);
+    public BerkeleyFactory(final DatabaseConfiguration paramDatabase,
+            final SessionConfiguration paramSession) throws TreetankIOException {
+        super(paramDatabase, paramSession);
 
         final DatabaseConfig conf = new DatabaseConfig();
         conf.setTransactional(true);
@@ -88,7 +84,7 @@ public final class BerkeleyFactory extends AbstractIOFactory {
         config.setTransactional(true);
         config.setCacheSize(1024 * 1024);
 
-        final File repoFile = new File(paramSession.getFile(),
+        final File repoFile = new File(paramDatabase.getFile(),
                 EStoragePaths.TT.getFile().getName());
         if (repoFile.listFiles().length == 0
                 || (repoFile.listFiles().length == 1 && "tt.tnk"
