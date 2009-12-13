@@ -30,9 +30,9 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Session;
-import com.treetank.access.SessionConfiguration;
+import com.treetank.access.Database;
 import com.treetank.api.IAxis;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.IFilterTest;
@@ -57,16 +57,17 @@ public class TypeFilterTest {
     }
 
     @Test
-    public void testIFilterConvetions() throws TreetankException {
+    public void testIFilterConvetions() throws Exception {
 
         // Build simple test tree.
         // final ISession session = Session.beginSession(PATH);
         // final IWriteTransaction wtx = session.beginWriteTransaction();
         // TestDocument.create(wtx);
-        XMLShredder.shred(XML, new SessionConfiguration(ITestConstants.PATH1));
+        XMLShredder.main(XML, ITestConstants.PATH1.getAbsolutePath());
 
         // Verify.
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
         final IAxis axis = new XPathAxis(rtx, "a");
         final IReadTransaction xtx = axis.getTransaction();
@@ -103,6 +104,7 @@ public class TypeFilterTest {
         xtx.close();
         rtx.close();
         session.close();
+        database.close();
 
     }
 }

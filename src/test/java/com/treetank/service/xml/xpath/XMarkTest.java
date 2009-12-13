@@ -28,8 +28,8 @@ import org.perfidix.annotation.BenchClass;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Session;
-import com.treetank.access.SessionConfiguration;
+import com.treetank.access.Database;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.exception.TreetankException;
@@ -47,18 +47,21 @@ public class XMarkTest {
     private static final String XML = "src" + File.separator + "test"
             + File.separator + "resources" + File.separator + "auction.xml";
 
+    private IDatabase database;
+
     private ISession session;
 
     private IReadTransaction rtx;
 
     @Before
-    public void setUp() throws TreetankException {
+    public void setUp() throws Exception {
         TestHelper.deleteEverything();
         // Build simple test tree.
-        XMLShredder.shred(XML, new SessionConfiguration(ITestConstants.PATH1));
+        XMLShredder.main(XML, ITestConstants.PATH1.getAbsolutePath());
 
         // Verify.
-        session = Session.beginSession(ITestConstants.PATH1);
+        database = Database.openDatabase(ITestConstants.PATH1);
+        session = database.getSession();
         rtx = session.beginReadTransaction();
     }
 

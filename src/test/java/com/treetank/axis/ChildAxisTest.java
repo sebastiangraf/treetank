@@ -26,7 +26,8 @@ import org.perfidix.annotation.BenchClass;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Session;
+import com.treetank.access.Database;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -43,7 +44,8 @@ public class ChildAxisTest {
     @Test
     @Bench(runs = 10)
     public void testIterate() throws TreetankException {
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
 
@@ -61,20 +63,20 @@ public class ChildAxisTest {
         wtx.abort();
         wtx.close();
         session.close();
+        database.close();
     }
 
     @Test
     @Bench(runs = 10)
     public void testPersistent() throws TreetankException {
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
-        session.close();
 
-        final ISession session1 = Session.beginSession(ITestConstants.PATH1);
-        final IReadTransaction rtx = session1.beginReadTransaction();
+        final IReadTransaction rtx = session.beginReadTransaction();
 
         rtx.moveTo(1L);
         IAxisTest.testIAxisConventions(new ChildAxis(rtx), new long[] { 4L, 5L,
@@ -88,7 +90,8 @@ public class ChildAxisTest {
         IAxisTest.testIAxisConventions(new ChildAxis(rtx), new long[] {});
 
         rtx.close();
-        session1.close();
+        session.close();
+        database.close();
 
     }
 

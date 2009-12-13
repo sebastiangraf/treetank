@@ -22,15 +22,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.junit.After;
@@ -40,8 +34,8 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Session;
-import com.treetank.access.SessionConfiguration;
+import com.treetank.access.Database;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -73,21 +67,22 @@ public class XMLShredderTest {
     }
 
     @Test
-    public void testSTAXShredder() throws TreetankException,
-            UnsupportedEncodingException {
+    public void testSTAXShredder() throws Exception {
         // Setup expected session.
-        final ISession expectedSession = Session
-                .beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+
+        final ISession expectedSession = database.getSession();
         final IWriteTransaction expectedTrx = expectedSession
                 .beginWriteTransaction();
         DocumentCreater.create(expectedTrx);
         expectedTrx.commit();
 
         // Setup parsed session.
-        XMLShredder.shred(XML, new SessionConfiguration(ITestConstants.PATH2));
+        XMLShredder.main(XML, ITestConstants.PATH2.getAbsolutePath());
 
         // Verify.
-        final ISession session = Session.beginSession(ITestConstants.PATH2);
+        final IDatabase database2 = Database.openDatabase(ITestConstants.PATH2);
+        final ISession session = database2.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
         rtx.moveToDocumentRoot();
         final Iterator<Long> expectedDescendants = new DescendantAxis(
@@ -133,16 +128,24 @@ public class XMLShredderTest {
     }
 
     @Test
-    public void testShredIntoExisting() throws XMLStreamException,
-            TreetankException, UnsupportedEncodingException {
-        assertEquals(0, XMLShredder.shred(XML, new SessionConfiguration(
-                ITestConstants.PATH1)));
-        assertEquals(1, XMLShredder.shred(XML, new SessionConfiguration(
-                ITestConstants.PATH1)));
+    public void testShredIntoExisting() throws Exception {
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final XMLShredder shredder = new XMLShredder(wtx, XMLShredder
+                .createReader(new File(XML)));
+        shredder.call();
+        assertEquals(0, wtx.getRevisionNumber());
+        final XMLShredder shredder2 = new XMLShredder(wtx, XMLShredder
+                .createReader(new File(XML)));
+        shredder2.call();
+        assertEquals(1, wtx.getRevisionNumber());
+        wtx.close();
 
         // Setup expected session.
-        final ISession expectedSession = Session
-                .beginSession(ITestConstants.PATH2);
+        final IDatabase database2 = Database.openDatabase(ITestConstants.PATH2);
+        final ISession expectedSession = database2.getSession();
+
         final IWriteTransaction expectedTrx = expectedSession
                 .beginWriteTransaction();
         DocumentCreater.create(expectedTrx);
@@ -150,7 +153,6 @@ public class XMLShredderTest {
         expectedTrx.moveToDocumentRoot();
 
         // Verify.
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
         final IReadTransaction rtx = session.beginReadTransaction();
 
         final Iterator<Long> descendants = new DescendantAxis(rtx);
@@ -180,25 +182,33 @@ public class XMLShredderTest {
         expectedSession.close();
         rtx.close();
         session.close();
+        database.close();
+        database2.close();
 
     }
 
     @Test
-    public void testAttributesNSPrefix() throws TreetankException {
+    public void testAttributesNSPrefix() throws Exception {
         // Setup expected session.
-        final ISession expectedSession2 = Session
-                .beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession expectedSession2 = database.getSession();
         final IWriteTransaction expectedTrx2 = expectedSession2
                 .beginWriteTransaction();
         DocumentCreater.createWithoutNamespace(expectedTrx2);
         expectedTrx2.commit();
 
         // Setup parsed session.
-        XMLShredder.shred(XML2, new SessionConfiguration(ITestConstants.PATH2));
+        final IDatabase database2 = Database.openDatabase(ITestConstants.PATH2);
+        final ISession session2 = database2.getSession();
+        final IWriteTransaction wtx = session2.beginWriteTransaction();
+        final XMLShredder shredder = new XMLShredder(wtx, XMLShredder
+                .createReader(new File(XML2)));
+        shredder.call();
+        wtx.commit();
+        wtx.close();
 
         // Verify.
-        final ISession session = Session.beginSession(ITestConstants.PATH2);
-        final IReadTransaction rtx = session.beginReadTransaction();
+        final IReadTransaction rtx = session2.beginReadTransaction();
         rtx.moveToDocumentRoot();
         final Iterator<Long> expectedAttributes = new DescendantAxis(
                 expectedTrx2);
@@ -226,21 +236,21 @@ public class XMLShredderTest {
         expectedTrx2.close();
         expectedSession2.close();
         rtx.close();
-        session.close();
+        session2.close();
+        database.close();
+        database2.close();
     }
 
     @Test
     @Ignore
-    public void testShreddingLargeText() throws TreetankException,
-            FileNotFoundException, XMLStreamException {
-        final ISession session = Session.beginSession(ITestConstants.PATH2);
-
-        final InputStream in = new FileInputStream(XML3);
-        final XMLInputFactory factory = XMLInputFactory.newInstance();
-        factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
-        final XMLStreamReader parser = factory.createXMLStreamReader(in);
-
-        XMLShredder.shred(0, parser, session);
+    public void testShreddingLargeText() throws Exception {
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH2);
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final XMLShredder shredder = new XMLShredder(wtx, XMLShredder
+                .createReader(new File(XML3)));
+        shredder.call();
+        wtx.close();
 
         final IReadTransaction rtx = session.beginReadTransaction();
         assertTrue(rtx.moveToFirstChild());
@@ -257,8 +267,8 @@ public class XMLShredderTest {
         rtx.close();
         session.close();
 
-        final InputStream in2 = new FileInputStream(XML3);
-        final XMLStreamReader validater = factory.createXMLStreamReader(in2);
+        final XMLStreamReader validater = XMLShredder.createReader(new File(
+                XML3));
         final StringBuilder xmlBuilder = new StringBuilder();
         while (validater.hasNext()) {
             switch (validater.next()) {

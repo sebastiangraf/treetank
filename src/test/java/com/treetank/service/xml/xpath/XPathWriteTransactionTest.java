@@ -10,8 +10,8 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Session;
-import com.treetank.access.SessionConfiguration;
+import com.treetank.access.Database;
+import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
@@ -33,14 +33,17 @@ public final class XPathWriteTransactionTest {
 
     private IWriteTransaction wtx;
 
+    private IDatabase database;
+
     @Before
-    public void setUp() throws TreetankException {
+    public void setUp() throws Exception {
         TestHelper.deleteEverything();
         // Build simple test tree.
-        XMLShredder.shred(XML, new SessionConfiguration(ITestConstants.PATH1));
+        XMLShredder.main(XML, ITestConstants.PATH1.getAbsolutePath());
 
         // Verify.
-        session = Session.beginSession(ITestConstants.PATH1);
+        database = Database.openDatabase(ITestConstants.PATH1);
+        session = database.getSession();
         wtx = session.beginWriteTransaction();
     }
 
@@ -63,6 +66,7 @@ public final class XPathWriteTransactionTest {
         // wtx.abort();
         wtx.close();
         session.close();
+        database.close();
         TestHelper.closeEverything();
     }
 

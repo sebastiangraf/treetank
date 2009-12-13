@@ -26,7 +26,7 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Session;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -35,26 +35,29 @@ import com.treetank.utils.DocumentCreater;
 
 public class IReadTransactionTest {
 
-    private ISession session;
+    private IDatabase database;
 
     @Before
     public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
-        session = Session.beginSession(ITestConstants.PATH1);
+        database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
+        session.close();
     }
 
     @After
     public void tearDown() throws TreetankException {
-        session.close();
+        database.close();
         TestHelper.closeEverything();
     }
 
     @Test
     public void testDocumentRoot() throws TreetankException {
+        final ISession session = database.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
 
         assertEquals(true, rtx.moveToDocumentRoot());
@@ -69,6 +72,7 @@ public class IReadTransactionTest {
 
     @Test
     public void testConventions() throws TreetankException {
+        final ISession session = database.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
 
         // IReadTransaction Convention 1.

@@ -30,8 +30,9 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Session;
+import com.treetank.access.Database;
 import com.treetank.api.IAxis;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -85,7 +86,8 @@ public class IAxisTest {
     @Test
     public void testIAxisUserExample() throws TreetankException {
 
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
 
@@ -100,6 +102,7 @@ public class IAxisTest {
         wtx.abort();
         wtx.close();
         session.close();
+        database.close();
     }
 
     @After

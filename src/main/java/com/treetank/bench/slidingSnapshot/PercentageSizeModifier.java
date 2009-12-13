@@ -16,15 +16,15 @@ import org.perfidix.ouput.AbstractOutput;
 import org.perfidix.ouput.CSVOutput;
 import org.perfidix.result.BenchmarkResult;
 
-import com.treetank.access.Session;
-import com.treetank.access.SessionConfiguration;
+import com.treetank.access.Database;
+import com.treetank.access.DatabaseConfiguration;
+import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.ERevisioning;
-import com.treetank.settings.EStoragePaths;
 import com.treetank.utils.IConstants;
 
 public class PercentageSizeModifier {
@@ -37,16 +37,13 @@ public class PercentageSizeModifier {
 
     private IWriteTransaction wtx;
     private ISession session;
+    private IDatabase database;
 
     @BeforeBenchClass
     public void setUp() {
-        try {
-            Session.removeSession(CommonStuff.PATH1);
-            Session.removeSession(CommonStuff.PATH2);
-            Session.removeSession(CommonStuff.PATH3);
-        } catch (final TreetankException exc) {
-            exc.printStackTrace();
-        }
+        Database.truncateDatabase(CommonStuff.PATH1);
+        Database.truncateDatabase(CommonStuff.PATH2);
+        Database.truncateDatabase(CommonStuff.PATH3);
     }
 
     @AfterEachRun
@@ -54,9 +51,10 @@ public class PercentageSizeModifier {
         try {
             wtx.close();
             session.close();
-            Session.removeSession(CommonStuff.PATH1);
-            Session.removeSession(CommonStuff.PATH2);
-            Session.removeSession(CommonStuff.PATH3);
+            database.close();
+            Database.truncateDatabase(CommonStuff.PATH1);
+            Database.truncateDatabase(CommonStuff.PATH2);
+            Database.truncateDatabase(CommonStuff.PATH3);
         } catch (TreetankException exc) {
 
         }
@@ -66,12 +64,14 @@ public class PercentageSizeModifier {
     public void benchRandom1() {
         try {
             final Properties props = new Properties();
-            props.put(EDatabaseSetting.MILESTONE_REVISION.getName(), 1);
-            props.put(EDatabaseSetting.REVISION_TYPE.getName(),
-                    ERevisioning.SLIDING_SNAPSHOT);
-            final SessionConfiguration conf = new SessionConfiguration(
+            props.setProperty(EDatabaseSetting.MILESTONE_REVISION.name(), "1");
+            props.setProperty(EDatabaseSetting.REVISION_TYPE.name(),
+                    ERevisioning.SLIDING_SNAPSHOT.name());
+            final DatabaseConfiguration conf = new DatabaseConfiguration(
                     CommonStuff.PATH1, props);
-            session = Session.beginSession(conf);
+            Database.createDatabase(conf);
+            database = Database.openDatabase(CommonStuff.PATH1);
+            session = database.getSession();
             wtx = session.beginWriteTransaction();
             for (int i = 0; i < MODIFIERNUMBER; i++) {
                 long nextKey = 0;
@@ -104,12 +104,14 @@ public class PercentageSizeModifier {
     public void benchRandom4() {
         try {
             final Properties props = new Properties();
-            props.put(EDatabaseSetting.MILESTONE_REVISION.getName(), 4);
-            props.put(EDatabaseSetting.REVISION_TYPE.getName(),
-                    ERevisioning.SLIDING_SNAPSHOT);
-            final SessionConfiguration conf = new SessionConfiguration(
-                    CommonStuff.PATH2, props);
-            session = Session.beginSession(conf);
+            props.setProperty(EDatabaseSetting.MILESTONE_REVISION.name(), "4");
+            props.setProperty(EDatabaseSetting.REVISION_TYPE.name(),
+                    ERevisioning.SLIDING_SNAPSHOT.name());
+            final DatabaseConfiguration conf = new DatabaseConfiguration(
+                    CommonStuff.PATH1, props);
+            Database.createDatabase(conf);
+            database = Database.openDatabase(CommonStuff.PATH1);
+            session = database.getSession();
             wtx = session.beginWriteTransaction();
             for (int i = 0; i < MODIFIERNUMBER; i++) {
                 long nextKey = 0;
@@ -143,11 +145,14 @@ public class PercentageSizeModifier {
     public void benchRandomInc() {
         try {
             final Properties props = new Properties();
-            props.put(EDatabaseSetting.MILESTONE_REVISION.getName(), 4);
-            props.put(EDatabaseSetting.REVISION_TYPE.getName(), ERevisioning.INCREMENTAL);
-            final SessionConfiguration conf = new SessionConfiguration(
-                    CommonStuff.PATH3, props);
-            session = Session.beginSession(conf);
+            props.setProperty(EDatabaseSetting.MILESTONE_REVISION.name(), "4");
+            props.setProperty(EDatabaseSetting.REVISION_TYPE.name(),
+                    ERevisioning.INCREMENTAL.name());
+            final DatabaseConfiguration conf = new DatabaseConfiguration(
+                    CommonStuff.PATH1, props);
+            Database.createDatabase(conf);
+            database = Database.openDatabase(CommonStuff.PATH1);
+            session = database.getSession();
             wtx = session.beginWriteTransaction();
             for (int i = 0; i < MODIFIERNUMBER; i++) {
                 long nextKey = 0;
@@ -179,33 +184,33 @@ public class PercentageSizeModifier {
 
     public void beforeRan1() {
         try {
-            XMLShredder.shred(CommonStuff.XMLPath.getAbsolutePath(),
-                    new SessionConfiguration(CommonStuff.PATH1));
-        } catch (TreetankException exc) {
-            exc.printStackTrace();
+            XMLShredder.main(CommonStuff.XMLPath.getAbsolutePath(),
+                    CommonStuff.PATH1.getAbsolutePath());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     public void beforeRan4() {
         try {
-            XMLShredder.shred(CommonStuff.XMLPath.getAbsolutePath(),
-                    new SessionConfiguration(CommonStuff.PATH2));
-        } catch (TreetankException exc) {
-            exc.printStackTrace();
+            XMLShredder.main(CommonStuff.XMLPath.getAbsolutePath(),
+                    CommonStuff.PATH2.getAbsolutePath());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     public void beforeInc() {
         try {
-            XMLShredder.shred(CommonStuff.XMLPath.getAbsolutePath(),
-                    new SessionConfiguration(CommonStuff.PATH3));
-        } catch (TreetankException exc) {
-            exc.printStackTrace();
+            XMLShredder.main(CommonStuff.XMLPath.getAbsolutePath(),
+                    CommonStuff.PATH3.getAbsolutePath());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     public static void main(final String[] args) {
-        EStoragePaths.recursiveDelete(CommonStuff.RESULTFOLDER);
+        CommonStuff.recursiveDelete(CommonStuff.RESULTFOLDER);
         CommonStuff.RESULTFOLDER.mkdirs();
         for (int i = 0; i < 30000; i = i + 1000) {
             MODIFIERNUMBER = i;

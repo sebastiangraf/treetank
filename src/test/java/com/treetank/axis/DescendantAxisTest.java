@@ -24,7 +24,8 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Session;
+import com.treetank.access.Database;
+import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
@@ -41,7 +42,8 @@ public class DescendantAxisTest {
     @Test
     public void testIterate() throws TreetankException {
         // Build simple test tree.
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
 
@@ -63,21 +65,21 @@ public class DescendantAxisTest {
         wtx.abort();
         wtx.close();
         session.close();
+        database.close();
     }
 
     @Test
     public void testIterateIncludingSelf() throws TreetankException {
         // Build simple test tree.
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
 
         wtx.moveToDocumentRoot();
         IAxisTest.testIAxisConventions(new DescendantAxis(wtx, true),
-                new long[] {
-                        (Long) EFixed.ROOT_NODE_KEY
-                                .getStandardProperty(), 1L, 4L, 5L, 6L, 7L, 8L,
-                        9L, 11L, 12L, 13L });
+                new long[] { (Long) EFixed.ROOT_NODE_KEY.getStandardProperty(),
+                        1L, 4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L });
 
         wtx.moveTo(1L);
         IAxisTest.testIAxisConventions(new DescendantAxis(wtx, true),
@@ -94,7 +96,7 @@ public class DescendantAxisTest {
         wtx.abort();
         wtx.close();
         session.close();
-
+        database.close();
     }
 
     @After

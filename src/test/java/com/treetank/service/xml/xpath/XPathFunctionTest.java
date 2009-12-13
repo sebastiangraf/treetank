@@ -26,8 +26,8 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Session;
-import com.treetank.access.SessionConfiguration;
+import com.treetank.access.Database;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.IAxisTest;
@@ -47,10 +47,10 @@ public class XPathFunctionTest {
             + File.separator + "resources" + File.separator + "alphabet.xml";
 
     @Before
-    public void setUp() throws TreetankException {
+    public void setUp() throws Exception {
         TestHelper.deleteEverything();
         // Build simple test tree.
-        XMLShredder.shred(XML, new SessionConfiguration(ITestConstants.PATH1));
+        XMLShredder.main(XML, ITestConstants.PATH1.getAbsolutePath());
     }
 
     @After
@@ -62,7 +62,8 @@ public class XPathFunctionTest {
     public void testA_Axes() throws TreetankException {
 
         // Verify.
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
         rtx.moveToDocumentRoot();
 
@@ -107,6 +108,7 @@ public class XPathFunctionTest {
 
         rtx.close();
         session.close();
+        database.close();
 
     }
 
@@ -114,7 +116,8 @@ public class XPathFunctionTest {
     public void testP_Filters() throws TreetankException {
 
         // Verify.
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
         rtx.moveToDocumentRoot();
 
@@ -176,14 +179,15 @@ public class XPathFunctionTest {
 
         rtx.close();
         session.close();
-
+        database.close();
     }
 
     @Test
     public void testT_NodeTests() throws TreetankException {
 
         // Verify.
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
         rtx.moveToDocumentRoot();
 
@@ -213,14 +217,15 @@ public class XPathFunctionTest {
 
         rtx.close();
         session.close();
-
+        database.close();
     }
 
     @Test
     public void testQ_Operators() throws TreetankException {
 
         // Verify.
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
         rtx.moveToDocumentRoot();
 
@@ -273,6 +278,7 @@ public class XPathFunctionTest {
 
         rtx.close();
         session.close();
+        database.close();
 
     }
     //

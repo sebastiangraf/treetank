@@ -24,13 +24,12 @@ import java.io.File;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Session;
-import com.treetank.access.SessionConfiguration;
+import com.treetank.access.Database;
 import com.treetank.api.IAxis;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.XMLShredder;
 
 public class ShreddFileInvocation {
@@ -42,11 +41,12 @@ public class ShreddFileInvocation {
         try {
             TestHelper.deleteEverything();
             // Setup parsed session.
-            XMLShredder.shred(XML, new SessionConfiguration(
-                    ITestConstants.PATH1));
+            XMLShredder.main(XML, ITestConstants.PATH1.getAbsolutePath());
 
             // Verify.
-            final ISession session = Session.beginSession(ITestConstants.PATH1);
+            final IDatabase database = Database
+                    .openDatabase(ITestConstants.PATH1);
+            final ISession session = database.getSession();
             final IReadTransaction rtx = session.beginReadTransaction();
             final IWriteTransaction wtx = session.beginWriteTransaction();
             rtx.moveToDocumentRoot();
@@ -60,8 +60,9 @@ public class ShreddFileInvocation {
             }
             wtx.close();
             session.close();
+            database.close();
             TestHelper.closeEverything();
-        } catch (final TreetankException exc) {
+        } catch (final Exception exc) {
             fail(exc.toString());
         }
 

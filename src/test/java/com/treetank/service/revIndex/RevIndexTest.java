@@ -11,8 +11,9 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Session;
+import com.treetank.access.Database;
 import com.treetank.api.IAxis;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -37,7 +38,8 @@ public class RevIndexTest {
         index.close();
 
         // check
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
         rtx.moveToDocumentRoot();
         rtx.moveToFirstChild();
@@ -95,6 +97,7 @@ public class RevIndexTest {
         assertFalse(desc.hasNext());
         rtx.close();
         session.close();
+        database.close();
     }
 
     @Test
@@ -123,7 +126,8 @@ public class RevIndexTest {
         index.close();
 
         // check
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
         rtx.moveToFirstChild();
         rtx.moveToRightSibling();
@@ -182,6 +186,7 @@ public class RevIndexTest {
 
         rtx.close();
         session.close();
+        database.close();
     }
 
     @After

@@ -26,8 +26,9 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Session;
+import com.treetank.access.Database;
 import com.treetank.api.IAxis;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.exception.TreetankException;
@@ -51,9 +52,10 @@ public class XPathParserTest {
     public void testLiterals() throws TreetankException {
 
         // Build simple test tree.
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
-
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
+
         rtx.moveTo(2L);
 
         IAxis axis;
@@ -100,13 +102,15 @@ public class XPathParserTest {
 
         rtx.close();
         session.close();
+        database.close();
     }
 
     @Test
     public void testEBNF() throws TreetankException {
 
         // Build simple test tree.
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
 
         parser = new XPathParser(rtx, "/p:a");
@@ -142,6 +146,7 @@ public class XPathParserTest {
 
         rtx.close();
         session.close();
+        database.close();
 
     }
 

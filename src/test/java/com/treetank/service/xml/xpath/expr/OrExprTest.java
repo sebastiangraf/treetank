@@ -27,8 +27,9 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Session;
+import com.treetank.access.Database;
 import com.treetank.api.IAxis;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -60,7 +61,8 @@ public class OrExprTest {
     @Test
     public void testOr() throws TreetankException {
 
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
         IReadTransaction rtx = session.beginReadTransaction();
 
         long iTrue = rtx.getItemList().addItem(new AtomicValue(true));
@@ -97,12 +99,14 @@ public class OrExprTest {
 
         rtx.close();
         session.close();
+        database.close();
     }
 
     @Test
     public void testOrQuery() throws TreetankException {
         // Build simple test tree.
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
@@ -154,6 +158,7 @@ public class OrExprTest {
         wtx.abort();
         wtx.close();
         session.close();
+        database.close();
 
     }
 

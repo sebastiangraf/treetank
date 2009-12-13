@@ -29,8 +29,9 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Session;
+import com.treetank.access.Database;
 import com.treetank.api.IAxis;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
@@ -57,7 +58,8 @@ public class MulOpAxisTest {
     @Test
     public final void testOperate() throws TreetankException {
 
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
         IReadTransaction rtx = session.beginReadTransaction();
         IItem item1 = new AtomicValue(3.0, Type.DOUBLE);
         IItem item2 = new AtomicValue(2.0, Type.DOUBLE);
@@ -74,12 +76,14 @@ public class MulOpAxisTest {
 
         rtx.close();
         session.close();
+        database.close();
     }
 
     @Test
     public final void testGetReturnType() throws TreetankException {
 
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
         IReadTransaction rtx = session.beginReadTransaction();
 
         IAxis op1 = new SequenceAxis(rtx);
@@ -159,6 +163,7 @@ public class MulOpAxisTest {
 
         rtx.close();
         session.close();
+        database.close();
     }
 
 }
