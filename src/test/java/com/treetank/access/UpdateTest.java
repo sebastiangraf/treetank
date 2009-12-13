@@ -28,7 +28,7 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Session;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -51,9 +51,9 @@ public class UpdateTest {
 
     @Test
     public void testInsertChild() throws TreetankException {
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
 
-        // Document root.
         IWriteTransaction wtx = session.beginWriteTransaction();
         wtx.commit();
         wtx.close();
@@ -90,14 +90,17 @@ public class UpdateTest {
         rtx.close();
 
         session.close();
+        database.close();
 
     }
 
     @Test
     public void testInsertPath() throws TreetankException {
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
 
         IWriteTransaction wtx = session.beginWriteTransaction();
+
         wtx.commit();
         wtx.close();
 
@@ -123,15 +126,17 @@ public class UpdateTest {
         wtx2.close();
 
         session.close();
+        database.close();
 
     }
 
     @Test
     public void testPageBoundary() throws TreetankException {
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
 
         // Document root.
-        final IWriteTransaction wtx = session.beginWriteTransaction();
 
         for (int i = 0; i < 256 * 256 + 1; i++) {
             wtx.insertTextAsFirstChild("");
@@ -143,11 +148,14 @@ public class UpdateTest {
         wtx.abort();
         wtx.close();
         session.close();
+        database.close();
     }
 
     @Test(expected = TreetankUsageException.class)
     public void testRemoveDocument() throws TreetankException {
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
+
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
 
@@ -157,17 +165,20 @@ public class UpdateTest {
             wtx.remove();
 
             session.close();
+            database.close();
         } finally {
             wtx.abort();
             wtx.close();
             session.close();
+            database.close();
         }
 
     }
 
     @Test
     public void testRemoveDescendant() throws TreetankException {
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
@@ -190,6 +201,7 @@ public class UpdateTest {
         assertEquals(13, rtx.getNode().getNodeKey());
         rtx.close();
         session.close();
+        database.close();
     }
 
 }

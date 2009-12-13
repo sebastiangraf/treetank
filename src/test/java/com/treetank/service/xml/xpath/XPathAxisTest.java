@@ -26,7 +26,8 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Session;
+import com.treetank.access.Database;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -41,6 +42,8 @@ import com.treetank.utils.DocumentCreater;
  */
 public class XPathAxisTest {
 
+    private IDatabase database;
+
     private ISession session;
 
     private IWriteTransaction wtx;
@@ -52,7 +55,8 @@ public class XPathAxisTest {
         TestHelper.deleteEverything();
 
         // Build simple test tree.
-        session = Session.beginSession(ITestConstants.PATH1);
+        database = Database.openDatabase(ITestConstants.PATH1);
+        session = database.getSession();
         wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
@@ -66,6 +70,7 @@ public class XPathAxisTest {
 
         rtx.close();
         session.close();
+        database.close();
         TestHelper.closeEverything();
     }
 

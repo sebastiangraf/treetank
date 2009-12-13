@@ -5,8 +5,8 @@ import java.util.Random;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.treetank.access.Database;
 import com.treetank.access.Session;
-import com.treetank.exception.TreetankException;
 import com.treetank.node.ElementNode;
 import com.treetank.page.NodePage;
 
@@ -22,6 +22,7 @@ public final class TestHelper {
 
     public final static Random random = new Random();
 
+    
     @Test
     public void testDummy() {
         // Just empty to ensure maven running
@@ -29,30 +30,27 @@ public final class TestHelper {
 
     @Ignore
     public static final void deleteEverything() {
-        try {
-            Session.removeSession(ITestConstants.PATH1);
-            Session.removeSession(ITestConstants.PATH2);
-            Session.removeSession(ITestConstants.NON_EXISTING_PATH);
-            Session.removeSession(ITestConstants.TEST_INSERT_CHILD_PATH);
-            Session.removeSession(ITestConstants.TEST_REVISION_PATH);
-            Session.removeSession(ITestConstants.TEST_SHREDDED_REVISION_PATH);
-            Session.removeSession(ITestConstants.TEST_EXISTING_PATH);
-        } catch (TreetankException e) {
-            e.printStackTrace();
-        }
+        Database.truncateDatabase(ITestConstants.PATH1);
+        Database.truncateDatabase(ITestConstants.PATH2);
+        Database.truncateDatabase(ITestConstants.NON_EXISTING_PATH);
+        Database.truncateDatabase(ITestConstants.TEST_INSERT_CHILD_PATH);
+        Database.truncateDatabase(ITestConstants.TEST_REVISION_PATH);
+        Database.truncateDatabase(ITestConstants.TEST_SHREDDED_REVISION_PATH);
+        Database.truncateDatabase(ITestConstants.TEST_EXISTING_PATH);
 
     }
 
     @Ignore
     public static final void closeEverything() {
         try {
-            Session.closeSession(ITestConstants.PATH1);
-            Session.closeSession(ITestConstants.PATH2);
-            Session.closeSession(ITestConstants.NON_EXISTING_PATH);
-            Session.closeSession(ITestConstants.TEST_INSERT_CHILD_PATH);
-            Session.closeSession(ITestConstants.TEST_REVISION_PATH);
-            Session.closeSession(ITestConstants.TEST_SHREDDED_REVISION_PATH);
-            Session.closeSession(ITestConstants.TEST_EXISTING_PATH);
+            Database.forceCloseDatabase(ITestConstants.PATH1);
+            Database.forceCloseDatabase(ITestConstants.PATH2);
+            Database.forceCloseDatabase(ITestConstants.NON_EXISTING_PATH);
+            Database.forceCloseDatabase(ITestConstants.TEST_INSERT_CHILD_PATH);
+            Database.forceCloseDatabase(ITestConstants.TEST_REVISION_PATH);
+            Database
+                    .forceCloseDatabase(ITestConstants.TEST_SHREDDED_REVISION_PATH);
+            Database.forceCloseDatabase(ITestConstants.TEST_EXISTING_PATH);
         } catch (Exception e) {
             e.printStackTrace();
         }

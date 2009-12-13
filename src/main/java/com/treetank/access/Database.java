@@ -123,6 +123,22 @@ public final class Database implements IDatabase {
     }
 
     /**
+     * This method forces the Database to close an existing instance.
+     * 
+     * @param file
+     *            where the database should be closed
+     * @throws TreetankException
+     *             if something weird happens while closing
+     */
+    public static void forceCloseDatabase(final File file)
+            throws TreetankException {
+        final IDatabase database = DATABASEMAP.remove(file);
+        if (database != null) {
+            database.close();
+        }
+    }
+
+    /**
      * Closing a database. All {@link ISession} instances within this database
      * are closed.
      * 

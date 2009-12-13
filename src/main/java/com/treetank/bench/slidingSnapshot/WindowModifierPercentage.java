@@ -1,7 +1,12 @@
 package com.treetank.bench.slidingSnapshot;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Properties;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
 
 import org.perfidix.AbstractConfig;
 import org.perfidix.Benchmark;
@@ -18,19 +23,15 @@ import org.perfidix.result.BenchmarkResult;
 
 import com.treetank.access.Database;
 import com.treetank.access.DatabaseConfiguration;
-import com.treetank.access.Session;
-import com.treetank.access.SessionConfiguration;
 import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
-import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankUsageException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.ERevisioning;
-import com.treetank.settings.EStoragePaths;
 
 public class WindowModifierPercentage {
     private final static int mProb = 20;
@@ -79,9 +80,19 @@ public class WindowModifierPercentage {
                     ERevisioning.INCREMENTAL.name());
             final DatabaseConfiguration conf = new DatabaseConfiguration(
                     CommonStuff.PATH1, props);
-            XMLShredder.main(CommonStuff.XMLPath.getAbsolutePath(), conf);
-            session = Session.beginSession(conf);
+            Database.createDatabase(conf);
+            database = Database.openDatabase(CommonStuff.PATH1);
+            session = database.getSession();
             wtx = session.beginWriteTransaction();
+
+            final InputStream in = new FileInputStream(CommonStuff.XMLPath
+                    .getAbsolutePath());
+            final XMLInputFactory factory = XMLInputFactory.newInstance();
+            factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+            final XMLStreamReader parser = factory.createXMLStreamReader(in);
+            final XMLShredder shredder = new XMLShredder(wtx, parser);
+            shredder.call();
+            wtx.commit();
 
             for (int i = 0; i < MOD_SIZE; i++) {
                 do {
@@ -116,7 +127,7 @@ public class WindowModifierPercentage {
                 }
             }
             wtx.commit();
-        } catch (TreetankException exc) {
+        } catch (Exception exc) {
             exc.printStackTrace();
         }
     }
@@ -125,14 +136,23 @@ public class WindowModifierPercentage {
     public void benchIncRan() {
         try {
             kind = Kind.IncRan;
-            props.put(EDatabaseSetting.REVISION_TYPE.getName(),
-                    ERevisioning.INCREMENTAL);
-            final SessionConfiguration conf = new SessionConfiguration(
+            props.setProperty(EDatabaseSetting.REVISION_TYPE.name(),
+                    ERevisioning.INCREMENTAL.name());
+            final DatabaseConfiguration conf = new DatabaseConfiguration(
                     CommonStuff.PATH1, props);
-            XMLShredder.shred(CommonStuff.XMLPath.getAbsolutePath(), conf);
-            session = Session.beginSession(conf);
+            Database.createDatabase(conf);
+            database = Database.openDatabase(CommonStuff.PATH1);
+            session = database.getSession();
             wtx = session.beginWriteTransaction();
-            wtx.insertElementAsFirstChild(CommonStuff.getString(), "");
+
+            final InputStream in = new FileInputStream(CommonStuff.XMLPath
+                    .getAbsolutePath());
+            final XMLInputFactory factory = XMLInputFactory.newInstance();
+            factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+            final XMLStreamReader parser = factory.createXMLStreamReader(in);
+            final XMLShredder shredder = new XMLShredder(wtx, parser);
+            shredder.call();
+            wtx.commit();
             for (int i = 0; i < MOD_SIZE; i++) {
                 do {
                     long nextKey = 0;
@@ -153,7 +173,7 @@ public class WindowModifierPercentage {
                 }
             }
             wtx.commit();
-        } catch (TreetankException exc) {
+        } catch (Exception exc) {
             exc.printStackTrace();
         }
     }
@@ -162,13 +182,23 @@ public class WindowModifierPercentage {
     public void benchWindowSeq() {
         try {
             kind = Kind.WindowSeq;
-            props.put(EDatabaseSetting.REVISION_TYPE.getName(),
+            props.put(EDatabaseSetting.REVISION_TYPE.name(),
                     ERevisioning.SLIDING_SNAPSHOT);
-            final SessionConfiguration conf = new SessionConfiguration(
+            final DatabaseConfiguration conf = new DatabaseConfiguration(
                     CommonStuff.PATH1, props);
-            XMLShredder.shred(CommonStuff.XMLPath.getAbsolutePath(), conf);
-            session = Session.beginSession(conf);
+            Database.createDatabase(conf);
+            database = Database.openDatabase(CommonStuff.PATH1);
+            session = database.getSession();
             wtx = session.beginWriteTransaction();
+
+            final InputStream in = new FileInputStream(CommonStuff.XMLPath
+                    .getAbsolutePath());
+            final XMLInputFactory factory = XMLInputFactory.newInstance();
+            factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+            final XMLStreamReader parser = factory.createXMLStreamReader(in);
+            final XMLShredder shredder = new XMLShredder(wtx, parser);
+            shredder.call();
+            wtx.commit();
 
             for (int i = 0; i < MOD_SIZE; i++) {
                 do {
@@ -203,7 +233,7 @@ public class WindowModifierPercentage {
                 }
             }
             wtx.commit();
-        } catch (TreetankException exc) {
+        } catch (Exception exc) {
             exc.printStackTrace();
         }
     }
@@ -212,14 +242,23 @@ public class WindowModifierPercentage {
     public void benchWindowRan() {
         try {
             kind = Kind.WindowRan;
-            props.put(EDatabaseSetting.REVISION_TYPE.getName(),
+            props.put(EDatabaseSetting.REVISION_TYPE.name(),
                     ERevisioning.SLIDING_SNAPSHOT);
-            final SessionConfiguration conf = new SessionConfiguration(
+            final DatabaseConfiguration conf = new DatabaseConfiguration(
                     CommonStuff.PATH1, props);
-            XMLShredder.shred(CommonStuff.XMLPath.getAbsolutePath(), conf);
-            session = Session.beginSession(conf);
+            Database.createDatabase(conf);
+            database = Database.openDatabase(CommonStuff.PATH1);
+            session = database.getSession();
             wtx = session.beginWriteTransaction();
-            wtx.insertElementAsFirstChild(CommonStuff.getString(), "");
+
+            final InputStream in = new FileInputStream(CommonStuff.XMLPath
+                    .getAbsolutePath());
+            final XMLInputFactory factory = XMLInputFactory.newInstance();
+            factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+            final XMLStreamReader parser = factory.createXMLStreamReader(in);
+            final XMLShredder shredder = new XMLShredder(wtx, parser);
+            shredder.call();
+            wtx.commit();
             for (int i = 0; i < MOD_SIZE; i++) {
                 do {
                     long nextKey = 0;
@@ -240,20 +279,20 @@ public class WindowModifierPercentage {
                 }
             }
             wtx.commit();
-        } catch (TreetankException exc) {
+        } catch (Exception exc) {
             exc.printStackTrace();
         }
     }
 
     public static void main(final String[] args) throws TreetankUsageException {
-        EStoragePaths.recursiveDelete(CommonStuff.RESULTFOLDER);
+        CommonStuff.recursiveDelete(CommonStuff.RESULTFOLDER);
         CommonStuff.RESULTFOLDER.mkdirs();
 
         prepare100Percentage();
 
         for (int i = 1; i <= 100; i++) {
             props = new Properties();
-            props.put(EDatabaseSetting.MILESTONE_REVISION.getName(), i);
+            props.put(EDatabaseSetting.MILESTONE_REVISION.name(), i);
 
             final WindowModifierPercentage toBench = new WindowModifierPercentage();
             final Benchmark benchmark = new Benchmark(new BenchmarkConfig());
@@ -279,7 +318,7 @@ public class WindowModifierPercentage {
 
     private final static void prepare100Percentage() {
         props = new Properties();
-        props.put(EDatabaseSetting.MILESTONE_REVISION.getName(), 1);
+        props.put(EDatabaseSetting.MILESTONE_REVISION.name(), 1);
         long seqWindowSize = 0;
         long ranWindowSize = 0;
         long seqIncSize = 0;

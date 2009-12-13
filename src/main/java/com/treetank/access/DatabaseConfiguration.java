@@ -38,7 +38,7 @@ public class DatabaseConfiguration {
      *             valid
      */
     public DatabaseConfiguration(final File file) throws TreetankException {
-        this(file, EStoragePaths.DBSETTINGS.getFile());
+        this(file, new File(file, EStoragePaths.DBSETTINGS.getFile().getName()));
     }
 
     /**
@@ -75,26 +75,34 @@ public class DatabaseConfiguration {
         mFile = file;
         mProps = new Properties();
         final Properties loadProps = new Properties();
+
         try {
-            loadProps.load(new FileInputStream(propFile));
+            if (!propFile.exists()) {
+                propFile.getParentFile().mkdirs();
+                propFile.createNewFile();
+                buildUpProperties(mProps);
+            } else {
+                loadProps.load(new FileInputStream(propFile));
+                buildUpProperties(loadProps);
+
+                // Check if property file comes from external
+                if ((propFile.getName().equals(
+                        EStoragePaths.DBSETTINGS.getFile().getName()) && propFile
+                        .getParentFile().equals(file))
+                        // and check if the loaded checksum is valid
+                        && !getProps().getProperty(
+                                EDatabaseSetting.CHECKSUM.name()).equals(
+                                Integer.toString(this.hashCode()))) {
+                    throw new TreetankUsageException(new StringBuilder(
+                            "Checksums differ: Loaded ").append(
+                            getProps().toString()).append(" and expected ")
+                            .append(this.toString()).toString());
+
+                }
+            }
         } catch (final IOException exc) {
             throw new TreetankIOException(exc);
         }
-        buildUpProperties(loadProps);
-
-        // Check if database was existing. If so, check against the checksum
-        if ((propFile.getName().equals(
-                EStoragePaths.DBSETTINGS.getFile().getName()) && propFile
-                .getParentFile().equals(file))
-                && !getProps().getProperty(EDatabaseSetting.CHECKSUM.name())
-                        .equals(Integer.toString(this.hashCode()))) {
-            throw new TreetankUsageException(new StringBuilder(
-                    "Checksums differ: Loaded ").append(getProps().toString())
-                    .append(" and expected ").append(this.toString())
-                    .toString());
-
-        }
-
     }
 
     /**

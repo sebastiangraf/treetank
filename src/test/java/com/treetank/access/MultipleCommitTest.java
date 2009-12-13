@@ -18,6 +18,7 @@
 
 package com.treetank.access;
 
+import static org.junit.Assert.assertEquals;
 import junit.framework.TestCase;
 
 import org.junit.After;
@@ -27,8 +28,8 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Session;
 import com.treetank.api.IAxis;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -51,7 +52,8 @@ public class MultipleCommitTest {
 
     @Test
     public void test() throws TreetankException {
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         TestCase.assertEquals(0L, wtx.getRevisionNumber());
         TestCase.assertEquals(1L, wtx.getNodeCount());
@@ -67,11 +69,13 @@ public class MultipleCommitTest {
         wtx.close();
 
         session.close();
+        database.close();
     }
 
     @Test
     public void testAutoCommit() throws TreetankException {
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction(100, 1);
         DocumentCreater.create(wtx);
         wtx.commit();
@@ -81,11 +85,13 @@ public class MultipleCommitTest {
         Assert.assertEquals(14, rtx.getNodeCount());
         rtx.close();
         session.close();
+        database.close();
     }
 
     @Test
     public void testAttributeRemove() throws TreetankException {
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
@@ -118,7 +124,8 @@ public class MultipleCommitTest {
         }
         wtx.close();
         session.close();
-        Assert.assertEquals(0, attrTouch);
+        database.close();
+        assertEquals(0, attrTouch);
 
     }
 

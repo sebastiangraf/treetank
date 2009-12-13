@@ -27,7 +27,7 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Session;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -48,7 +48,8 @@ public class MinimumCommitTest {
 
     @Test
     public void test() throws TreetankException {
-        ISession session = Session.beginSession(ITestConstants.PATH1);
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        ISession session = database.getSession();
         IWriteTransaction wtx = session.beginWriteTransaction();
         assertEquals(0L, wtx.getRevisionNumber());
         wtx.commit();
@@ -56,7 +57,7 @@ public class MinimumCommitTest {
         wtx.close();
         session.close();
 
-        session = Session.beginSession(ITestConstants.PATH1);
+        session = database.getSession();
         wtx = session.beginWriteTransaction();
         assertEquals(1L, wtx.getRevisionNumber());
         DocumentCreater.create(wtx);
@@ -72,22 +73,25 @@ public class MinimumCommitTest {
         assertEquals(2L, rtx.getRevisionNumber());
         rtx.close();
         session.close();
+        database.close();
 
     }
 
     @Test
     public void testTimestamp() throws TreetankException {
-        ISession session = Session.beginSession(ITestConstants.PATH1);
-        IWriteTransaction wtx = session.beginWriteTransaction();
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
         assertEquals(0L, wtx.getRevisionTimestamp());
         wtx.commit();
         wtx.close();
 
-        IReadTransaction rtx = session.beginReadTransaction();
+        final IReadTransaction rtx = session.beginReadTransaction();
         assertTrue(rtx.getRevisionTimestamp() < (System.currentTimeMillis() + 1));
         rtx.close();
 
         session.close();
+        database.close();
 
     }
 

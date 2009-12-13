@@ -20,6 +20,7 @@ package com.treetank.service.xml;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.concurrent.Callable;
@@ -161,13 +162,8 @@ public final class XMLShredder implements Callable<Long> {
         final IDatabase db = Database.openDatabase(target);
         final ISession session = db.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
-
-        final InputStream in = new FileInputStream(args[0]);
-        final XMLInputFactory factory = XMLInputFactory.newInstance();
-        factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
-        final XMLStreamReader parser = factory.createXMLStreamReader(in);
-
-        final XMLShredder shredder = new XMLShredder(wtx, parser);
+        final XMLStreamReader reader = createReader(new File(args[0]));
+        final XMLShredder shredder = new XMLShredder(wtx, reader);
         shredder.call();
 
         wtx.close();
@@ -177,4 +173,14 @@ public final class XMLShredder implements Callable<Long> {
         System.out.println(" done [" + (System.currentTimeMillis() - time)
                 + "ms].");
     }
+
+    public static XMLStreamReader createReader(final File file)
+            throws IOException, XMLStreamException {
+        final InputStream in = new FileInputStream(file);
+        final XMLInputFactory factory = XMLInputFactory.newInstance();
+        factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+        final XMLStreamReader parser = factory.createXMLStreamReader(in);
+        return parser;
+    }
+
 }

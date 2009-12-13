@@ -9,6 +9,7 @@ import java.util.Properties;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
+import com.treetank.access.DatabaseConfiguration;
 import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankUsageException;
@@ -16,7 +17,6 @@ import com.treetank.io.AbstractIOFactory.StorageType;
 import com.treetank.page.PageReference;
 import com.treetank.page.UberPage;
 import com.treetank.settings.EDatabaseSetting;
-import com.treetank.settings.EFixed;
 
 /**
  * Helper class for testing the io interfaces
@@ -30,6 +30,21 @@ public final class IOTestHelper {
     }
 
     /**
+     * Static method to get {@link DatabaseConfiguration}
+     * 
+     * @param type
+     *            for the the {@link DatabaseConfiguration} should be generated
+     * @return a suitable {@link DatabaseConfiguration}
+     * @throws TreetankUsageException
+     */
+    public static DatabaseConfiguration createDBConf(final StorageType type)
+            throws TreetankUsageException {
+        final Properties props = new Properties();
+        props.setProperty(EDatabaseSetting.REVISION_TYPE.name(), type.name());
+        return new DatabaseConfiguration(ITestConstants.PATH1, props);
+    }
+
+    /**
      * Static method to get {@link SessionConfiguration}
      * 
      * @param type
@@ -37,11 +52,9 @@ public final class IOTestHelper {
      * @return a suitable {@link SessionConfiguration}
      * @throws TreetankUsageException
      */
-    public static SessionConfiguration createConf(final StorageType type)
+    public static SessionConfiguration createSessionConf()
             throws TreetankUsageException {
-        final Properties props = new Properties();
-        props.put(EDatabaseSetting.REVISION_TYPE.getName(), type);
-        return new SessionConfiguration(ITestConstants.PATH1, props);
+        return new SessionConfiguration();
     }
 
     /**
@@ -67,44 +80,26 @@ public final class IOTestHelper {
      * @param conf
      *            to be tested
      */
-    public static void testFactory(final SessionConfiguration conf)
-            throws TreetankException {
-        final AbstractIOFactory fac1 = AbstractIOFactory.getInstance(conf);
-        final AbstractIOFactory fac2 = AbstractIOFactory.getInstance(conf);
+    public static void testFactory(final DatabaseConfiguration dbConf,
+            final SessionConfiguration sessionConf) throws TreetankException {
+        final AbstractIOFactory fac1 = AbstractIOFactory.getInstance(dbConf,
+                sessionConf);
+        final AbstractIOFactory fac2 = AbstractIOFactory.getInstance(dbConf,
+                sessionConf);
         assertSame(fac1, fac2);
         fac1.closeStorage();
-        final AbstractIOFactory fac3 = AbstractIOFactory.getInstance(conf);
+        final AbstractIOFactory fac3 = AbstractIOFactory.getInstance(dbConf,
+                sessionConf);
         assertNotSame(fac1, fac3);
         fac3.closeStorage();
     }
 
-    public static void testPropsReadWrite(final SessionConfiguration conf)
-            throws TreetankException {
-        final StorageProperties props = new StorageProperties(
-                (Integer) EFixed.LAST_VERSION_MAJOR
-                        .getStandardProperty(),
-                (Integer) EFixed.LAST_VERSION_MINOR
-                        .getStandardProperty());
+    public static void testReadWriteFirstRef(
+            final DatabaseConfiguration dbConf,
+            final SessionConfiguration sessionConf) throws TreetankException {
 
-        final AbstractIOFactory fac = AbstractIOFactory.getInstance(conf);
-        // same instance check
-        final IWriter writer = fac.getWriter();
-        writer.setProps(props);
-        final StorageProperties props2 = writer.getProps();
-        assertEquals(props, props2);
-        writer.close();
-
-        // new instance check
-        final IReader reader = fac.getReader();
-        assertEquals(props, reader.getProps());
-        reader.close();
-
-    }
-
-    public static void testReadWriteFirstRef(final SessionConfiguration conf)
-            throws TreetankException {
-
-        final AbstractIOFactory fac = AbstractIOFactory.getInstance(conf);
+        final AbstractIOFactory fac = AbstractIOFactory.getInstance(dbConf,
+                sessionConf);
         final PageReference pageRef1 = new PageReference();
         final UberPage page1 = new UberPage();
         pageRef1.setPage(page1);

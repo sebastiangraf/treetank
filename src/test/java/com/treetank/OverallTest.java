@@ -3,12 +3,14 @@ package com.treetank;
 import java.io.File;
 import java.util.Random;
 
+import javax.xml.stream.XMLStreamReader;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.treetank.access.Session;
-import com.treetank.access.SessionConfiguration;
+import com.treetank.access.Database;
+import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
@@ -33,10 +35,14 @@ public final class OverallTest {
     }
 
     @Test
-    public void testXML() throws TreetankException {
+    public void testXML() throws Exception {
 
-        for (int i = 0; i < (Integer) EDatabaseSetting.MILESTONE_REVISION.getStandardProperty() * 2; i++) {
-            final ISession session = Session.beginSession(ITestConstants.PATH1);
+        for (int i = 0; i < Integer
+                .parseInt(EDatabaseSetting.MILESTONE_REVISION
+                        .getStandardProperty()) * 2; i++) {
+            final IDatabase database = Database
+                    .openDatabase(ITestConstants.PATH1);
+            final ISession session = database.getSession();
             final IWriteTransaction wtx = session.beginWriteTransaction();
             if (wtx.moveToFirstChild()) {
                 wtx.remove();
@@ -44,18 +50,24 @@ public final class OverallTest {
             } else {
                 wtx.abort();
             }
+
+            final XMLStreamReader reader = XMLShredder.createReader(new File(
+                    XML));
+            final XMLShredder shredder = new XMLShredder(wtx, reader);
+            shredder.call();
+
             wtx.close();
             session.close();
-            XMLShredder.shred(XML, new SessionConfiguration(
-                    ITestConstants.PATH1));
+            database.close();
+
         }
     }
 
     @Test
     public void testBullshitInsert() throws TreetankException {
-
-        final ISession session = Session.beginSession(ITestConstants.PATH1);
-        IWriteTransaction wtx = session.beginWriteTransaction();
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
         wtx.insertElementAsFirstChild(getString(), "");
         for (int i = 0; i < ELEMENTS; i++) {
             if (ran.nextBoolean()) {

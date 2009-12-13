@@ -14,7 +14,8 @@ import org.junit.Test;
 
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Session;
+import com.treetank.access.Database;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.exception.TreetankException;
@@ -152,13 +153,16 @@ public class TreeTankWrapperTest {
 
     protected final static void testContent(final String contentToCheck) {
         try {
-            final ISession session = Session.beginSession(ITestConstants.PATH2);
+            final IDatabase database = Database
+                    .openDatabase(ITestConstants.PATH2);
+            final ISession session = database.getSession();
             final IReadTransaction rtx = session.beginReadTransaction();
             final ByteArrayOutputStream stream = new ByteArrayOutputStream();
             new XMLSerializer(rtx, stream).call();
             final String content = new String(stream.toByteArray());
             rtx.close();
             session.close();
+            database.close();
             assertEquals(contentToCheck, content);
         } catch (final Exception exc) {
             exc.printStackTrace();
