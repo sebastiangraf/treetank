@@ -93,7 +93,8 @@ public final class TreeTankWrapper {
         try {
             final IWriteTransaction wtx = session.beginWriteTransaction();
             wtx.moveTo(id);
-            shredString(wtx, value);
+            revNumber = shredString(wtx, value);
+            wtx.close();
         } catch (final Exception exc) {
             throw new TreetankRestException(500, exc.getMessage(), exc);
         }

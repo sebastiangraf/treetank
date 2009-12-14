@@ -136,6 +136,7 @@ public class XMLShredderTest {
                 .createReader(new File(XML)));
         shredder.call();
         assertEquals(1, wtx.getRevisionNumber());
+        wtx.moveToDocumentRoot();
         final XMLShredder shredder2 = new XMLShredder(wtx, XMLShredder
                 .createReader(new File(XML)));
         shredder2.call();
