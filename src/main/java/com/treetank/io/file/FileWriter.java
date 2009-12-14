@@ -92,12 +92,13 @@ public final class FileWriter implements IWriter {
             // Getting actual offset and appending to the end of the current
             // file
             final long fileSize = mFile.length();
-            mFile.seek(fileSize);
-
+            final long offset = fileSize == 0 ? IConstants.BEACON_START
+                    + IConstants.BEACON_LENGTH : fileSize;
+            mFile.seek(offset);
             final byte[] tmp = new byte[outputLength - 24];
             mBuffer.get(tmp, 0, outputLength - 24);
             mFile.write(tmp);
-            final FileKey key = new FileKey(fileSize, outputLength - 24);
+            final FileKey key = new FileKey(offset, outputLength - 24);
 
             // Remember page coordinates.
             pageReference.setKey(key);

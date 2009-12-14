@@ -77,9 +77,7 @@ public class DatabaseConfiguration {
         final Properties loadProps = new Properties();
 
         try {
-            if (!propFile.exists()) {
-                propFile.getParentFile().mkdirs();
-                propFile.createNewFile();
+            if (!propFile.exists() || propFile.length() == 0) {
                 buildUpProperties(mProps);
             } else {
                 loadProps.load(new FileInputStream(propFile));

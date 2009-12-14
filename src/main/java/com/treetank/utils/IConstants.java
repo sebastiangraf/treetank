@@ -32,7 +32,7 @@ public interface IConstants {
     // ------------------------------------------------------------------
 
     /** Start of beacon. */
-    public static final int BEACON_START = 18;
+    public static final int BEACON_START = 0;
 
     /** Length of beacon in bytes. */
     public static final int BEACON_LENGTH = 24;

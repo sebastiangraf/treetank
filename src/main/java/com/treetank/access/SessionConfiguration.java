@@ -61,7 +61,7 @@ public final class SessionConfiguration {
         for (final ESessionSetting enumProps : ESessionSetting.values()) {
             if (props.containsKey(enumProps.name())) {
                 this.getProps().setProperty(enumProps.name(),
-                        props.getProperty(enumProps.getValue()));
+                        props.getProperty(enumProps.name()));
             } else {
                 this.getProps().setProperty(enumProps.name(),
                         enumProps.getValue());

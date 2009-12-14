@@ -143,7 +143,7 @@ public class ReadTransactionState {
             final int mileStoneRevision = Integer
                     .parseInt(mDatabaseConfiguration.getProps().getProperty(
                             EDatabaseSetting.MILESTONE_REVISION
-                                    .getStandardProperty()));
+                                    .name()));
 
             // Build up the complete page.
             final ERevisioning revision = ERevisioning
@@ -279,7 +279,7 @@ public class ReadTransactionState {
                         keys.add(ref.getKey().getIdentifier());
                     }
                 }
-                if (refs.size() == Integer.parseInt(mSessionConfiguration
+                if (refs.size() == Integer.parseInt(mDatabaseConfiguration
                         .getProps().getProperty(
                                 EDatabaseSetting.MILESTONE_REVISION.name()))) {
                     break;

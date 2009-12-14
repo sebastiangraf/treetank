@@ -135,11 +135,11 @@ public class XMLShredderTest {
         final XMLShredder shredder = new XMLShredder(wtx, XMLShredder
                 .createReader(new File(XML)));
         shredder.call();
-        assertEquals(0, wtx.getRevisionNumber());
+        assertEquals(1, wtx.getRevisionNumber());
         final XMLShredder shredder2 = new XMLShredder(wtx, XMLShredder
                 .createReader(new File(XML)));
         shredder2.call();
-        assertEquals(1, wtx.getRevisionNumber());
+        assertEquals(2, wtx.getRevisionNumber());
         wtx.close();
 
         // Setup expected session.

@@ -130,7 +130,6 @@ public class SessionTest {
                 .openDatabase(ITestConstants.NON_EXISTING_PATH);
         assertTrue(database == database2);
         database.close();
-        database2.close();
     }
 
     @Test

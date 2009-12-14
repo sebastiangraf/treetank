@@ -39,8 +39,14 @@ public interface IDatabase {
      * 
      * @return the database
      */
-    ISession getSession();
+    ISession getSession() throws TreetankException;
 
+    /**
+     * Closing the database for further operations
+     * 
+     * @throws TreetankException
+     *             if close is not valid
+     */
     void close() throws TreetankException;
 
 }
