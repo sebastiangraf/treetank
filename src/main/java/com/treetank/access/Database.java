@@ -79,6 +79,7 @@ public final class Database implements IDatabase {
                     }
                 }
             }
+            returnVal = conf.serialize();
             // if something was not correct, delete the partly created
             // substructure
             if (!returnVal) {

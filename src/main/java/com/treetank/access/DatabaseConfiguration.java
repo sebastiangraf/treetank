@@ -88,9 +88,10 @@ public class DatabaseConfiguration {
                         EStoragePaths.DBSETTINGS.getFile().getName()) && propFile
                         .getParentFile().equals(file))
                         // and check if the loaded checksum is valid
-                        && !getProps().getProperty(
+                        && !loadProps.getProperty(
                                 EDatabaseSetting.CHECKSUM.name()).equals(
                                 Integer.toString(this.hashCode()))) {
+                    final Integer hashCode = this.hashCode();
                     throw new TreetankUsageException(new StringBuilder(
                             "Checksums differ: Loaded ").append(
                             getProps().toString()).append(" and expected ")
@@ -115,12 +116,14 @@ public class DatabaseConfiguration {
     private void buildUpProperties(final Properties props)
             throws TreetankUsageException {
         for (final EDatabaseSetting enumProps : EDatabaseSetting.values()) {
-            if (props.containsKey(enumProps.name())) {
-                this.getProps().setProperty(enumProps.name(),
-                        props.getProperty(enumProps.name()));
-            } else {
-                this.getProps().setProperty(enumProps.name(),
-                        enumProps.getStandardProperty());
+            if (enumProps != EDatabaseSetting.CHECKSUM) {
+                if (props.containsKey(enumProps.name())) {
+                    this.getProps().setProperty(enumProps.name(),
+                            props.getProperty(enumProps.name()));
+                } else {
+                    this.getProps().setProperty(enumProps.name(),
+                            enumProps.getStandardProperty());
+                }
             }
         }
 
@@ -148,16 +151,26 @@ public class DatabaseConfiguration {
     /**
      * Serializing the data
      */
-    public void serialize() throws TreetankIOException {
+    public boolean serialize() {
         try {
             final Integer hashCode = this.hashCode();
-            getProps().setProperty("checksum", Integer.toString(hashCode));
-
+            getProps().setProperty(EDatabaseSetting.CHECKSUM.name(),
+                    Integer.toString(hashCode));
             getProps().store(
-                    new FileOutputStream(EStoragePaths.DBSETTINGS.getFile()),
-                    "");
+                    new FileOutputStream(new File(mFile,
+                            EStoragePaths.DBSETTINGS.getFile().getName())), "");
         } catch (final IOException exc) {
-            throw new TreetankIOException(exc);
+            return false;
         }
+        return true;
     }
+
+    public int hashCode() {
+        return mProps.hashCode();
+    }
+
+    public boolean equals(final Object obj) {
+        return mProps.equals(obj);
+    }
+
 }

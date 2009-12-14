@@ -86,6 +86,9 @@ public final class BerkeleyFactory extends AbstractIOFactory {
 
         final File repoFile = new File(paramDatabase.getFile(),
                 EStoragePaths.TT.getFile().getName());
+        if (!repoFile.exists()) {
+            repoFile.mkdirs();
+        }
         if (repoFile.listFiles().length == 0
                 || (repoFile.listFiles().length == 1 && "tt.tnk"
                         .equals(repoFile.listFiles()[0].getName()))) {
