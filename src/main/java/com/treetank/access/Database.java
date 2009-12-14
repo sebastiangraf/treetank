@@ -27,10 +27,13 @@ public final class Database implements IDatabase {
     private static final ConcurrentMap<File, Database> DATABASEMAP = new ConcurrentHashMap<File, Database>();
 
     /** Queue with all session registered */
-    private final ISession mSessions;
+    private ISession mSession;
 
     /** DatabaseConfiguration with fixed settings */
-    private final DatabaseConfiguration mDatabaseConfiguration;
+    private DatabaseConfiguration mDatabaseConfiguration;
+
+    /** SessionConfiguration with variable settings */
+    private SessionConfiguration mSessionConfiguration;
 
     /**
      * Private constructor
@@ -38,8 +41,8 @@ public final class Database implements IDatabase {
     private Database(final DatabaseConfiguration databaseConf,
             final SessionConfiguration sessionConf) throws TreetankException {
         this.mDatabaseConfiguration = databaseConf;
+        this.mSessionConfiguration = sessionConf;
         checkStorage();
-        mSessions = new Session(databaseConf, sessionConf);
     }
 
     /**
@@ -63,10 +66,12 @@ public final class Database implements IDatabase {
                 returnVal = file.mkdirs();
                 if (returnVal) {
                     for (EStoragePaths paths : EStoragePaths.values()) {
+                        final File toCreate = new File(conf.getFile(), paths
+                                .getFile().getName());
                         if (paths.isFolder()) {
-                            returnVal = paths.getFile().mkdir();
+                            returnVal = toCreate.mkdir();
                         } else {
-                            returnVal = paths.getFile().createNewFile();
+                            returnVal = toCreate.createNewFile();
                         }
                         if (!returnVal) {
                             break;
@@ -118,8 +123,12 @@ public final class Database implements IDatabase {
                     "DB could not be created at location ").append(file)
                     .toString());
         }
-        return DATABASEMAP.putIfAbsent(file, new Database(
+        IDatabase database = DATABASEMAP.putIfAbsent(file, new Database(
                 new DatabaseConfiguration(file), new SessionConfiguration()));
+        if (database == null) {
+            database = DATABASEMAP.get(file);
+        }
+        return database;
     }
 
     /**
@@ -148,12 +157,27 @@ public final class Database implements IDatabase {
      * @throws TreetankException
      */
     public void close() throws TreetankException {
-        mSessions.close();
-        DATABASEMAP.remove(getFile(), this);
+        if (mSession != null) {
+            mSession.close();
+        }
+        if (mDatabaseConfiguration != null) {
+            DATABASEMAP.remove(getFile(), this);
+        }
+        this.mDatabaseConfiguration = null;
     }
 
-    public ISession getSession() {
-        return mSessions;
+    /**
+     * {@inheritDoc}
+     * 
+     * @throws TreetankException
+     */
+    @Override
+    public ISession getSession() throws TreetankException {
+        if (mSession == null || mSession.isClosed()) {
+            mSession = new Session(this.mDatabaseConfiguration,
+                    this.mSessionConfiguration);
+        }
+        return mSession;
     }
 
     /**

@@ -136,4 +136,9 @@ public final class Session implements ISession {
         }
     }
 
+    @Override
+    public boolean isClosed() {
+        return mClosed;
+    }
+
 }

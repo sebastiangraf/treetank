@@ -92,7 +92,8 @@ public final class SessionState {
                         ESessionSetting.MAX_READ_TRANSACTIONS.name())));
         final PageReference uberPageReference = new PageReference();
 
-        fac = AbstractIOFactory.getInstance(mDatabaseConfiguration, mSessionConfiguration);
+        fac = AbstractIOFactory.getInstance(mDatabaseConfiguration,
+                mSessionConfiguration);
         if (!fac.exists()) {
             // Bootstrap uber page and make sure there already is a root
             // node.
@@ -189,11 +190,7 @@ public final class SessionState {
     protected WriteTransactionState createWriteTransactionState()
             throws TreetankIOException {
         IWriter writer;
-        try {
-            writer = fac.getWriter();
-        } catch (final TreetankIOException exc) {
-            throw new RuntimeException(exc);
-        }
+        writer = fac.getWriter();
 
         return new WriteTransactionState(mDatabaseConfiguration,
                 mSessionConfiguration, new UberPage(mLastCommittedUberPage),
