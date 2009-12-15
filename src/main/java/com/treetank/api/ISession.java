@@ -26,31 +26,32 @@ import com.treetank.exception.TreetankException;
  * <h2>Description</h2>
  * 
  * <p>
- * Each TreeTank file is bound to one instance implementing
+ * Each <code>IDatabase</code> is bound to one instance implementing
  * <code>ISession</code>. Transactions can then be started from this instance.
  * There can only be one <code>IWriteTransaction</code> at the time. However,
  * multiple <code>IReadTransactions</code> can coexist concurrently.
  * </p>
  * 
- * <h2>Convention</h2>
  * 
  * <h2>User Example</h2>
  * 
  * <p>
  * 
  * <pre>
- * // Simple session without encryption or end-to-end integrity.
- * final ISession session = Session.beginSession(&quot;example.tnk&quot;);
+ * // Simple session with standards as defined in <code>EDatabaseSetting</code> and <code>ESessionSetting</code>. 
+ * final IDatabase database = Database.openDatabase(&quot;example.tnk&quot;);
+ * final ISession session = database.getSession()
  * 
- * // Session with encryption and end-to-end integrity.
- * final SessionConfiguration config = new SessionConfiguration(&quot;example.tnk&quot;,
- *         &quot;exampleKey......&quot;.getBytes(), true);
- * final ISession session = Session.beginSession(config);
+ * // Session with lower commit-threshold
+ * final Properties sessionProps = new Properties();
+ * sessionProps.setProperty(ESessionSetting.COMMIT_THRESHOLD.name(), "32");
+ * final SessionConfiguration config = new SessionConfiguration(sessionProps);
+ * final ISession session = Database.openDatabase(&quot;example&quot;, config);
  * </pre>
  * 
  * </p>
  * 
- * <h2>Developer Example</h2>
+ * 
  */
 public interface ISession {
 

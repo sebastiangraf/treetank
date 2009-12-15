@@ -56,7 +56,7 @@ package com.treetank.api;
  * <p>
  * 
  * <pre>
- * // Must extend &lt;code&gt;AbstractFilter&lt;/code&gt; and implement &lt;code&gt;IFilter&lt;/code&gt;.
+ * // Must extend <code>AbstractFilter</code> and implement <code>IFilter</code>.
  * public class ExampleFilter extends AbstractFilter implements IFilter {
  * 
  *     public ExampleFilter(final IReadTransaction rtx) {
