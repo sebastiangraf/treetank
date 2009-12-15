@@ -32,12 +32,9 @@ import com.treetank.settings.ESessionSetting;
  * <h1>SessionConfiguration</h1>
  * 
  * <p>
- * Holds the session-wide settings that can not change.
+ * Holds the session-wide settings that can not change. This included stuff like
+ * commit-threshold and number of usable write/read transactions
  * 
- * The following logic applies:
- * <li>If the encryption key is null, no encryption is used.</li>
- * <li>If the checksum algorithm is null, no checksumming is used.</li>
- * </p>
  */
 public final class SessionConfiguration {
 
@@ -45,16 +42,22 @@ public final class SessionConfiguration {
     private final Properties mProps;
 
     /**
-     * Convenience constructor binding to .tnk folder without encryption or
-     * end-to-end integrity.
+     * Convenience constructor using the standard settings.
      * 
-     * @param path
-     *            Path to .tnk folder.
      */
     public SessionConfiguration() throws TreetankUsageException {
-        this(new StandardProperties().getProps());
+        this(new Properties());
     }
 
+    /**
+     * Constructor using specified properties. Every property which is not
+     * specified is set by the standard-one
+     * 
+     * @param props
+     *            to be specified
+     * @throws TreetankUsageException
+     *             if session could not be established
+     */
     public SessionConfiguration(final Properties props)
             throws TreetankUsageException {
         this.mProps = new Properties();
@@ -70,6 +73,15 @@ public final class SessionConfiguration {
 
     }
 
+    /**
+     * Constructor using specified properties stored in a file. Every property
+     * which is not specified is set by the standard-one
+     * 
+     * @param propFile
+     *            to be specified
+     * @throws TreetankUsageException
+     *             if session could not be established
+     */
     public SessionConfiguration(final File propFile) throws TreetankException {
         this(new Properties());
         try {
@@ -80,26 +92,14 @@ public final class SessionConfiguration {
 
     }
 
+    /**
+     * Getting the properties set in this configuration. All properties must
+     * refer to <code>ESessionSetting</code>.
+     * 
+     * @return the properties to this session
+     */
     public Properties getProps() {
         return mProps;
-    }
-
-    private static class StandardProperties {
-
-        private final Properties props;
-
-        StandardProperties() {
-            props = new Properties();
-
-            for (ESessionSetting prop : ESessionSetting.values()) {
-                getProps().put(prop.name(), prop.getValue());
-            }
-        }
-
-        public Properties getProps() {
-            return props;
-        }
-
     }
 
 }

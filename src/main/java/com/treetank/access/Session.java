@@ -43,8 +43,10 @@ public final class Session implements ISession {
     /**
      * Hidden constructor.
      * 
-     * @param sessionState
-     *            State assigned to session.
+     * @param databaseConf
+     *            DatabaseConfiguration for general setting about the storage
+     * @param sessionConf SessionConfiguration for handling this specific
+     *        session
      * @throws TreetankException
      */
     protected Session(final DatabaseConfiguration databaseConf,

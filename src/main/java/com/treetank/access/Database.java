@@ -168,10 +168,8 @@ public final class Database implements IDatabase {
      * Closing a database. All {@link ISession} instances within this database
      * are closed.
      * 
-     * @param db
-     *            database to be closed
-     * @return the database
      * @throws TreetankException
+     *             if close is not successful.
      */
     public void close() throws TreetankException {
         if (mSession != null) {
