@@ -108,7 +108,7 @@ public final class Database implements IDatabase {
     }
 
     /**
-     * Open database. A database can be opened only one. Afterwards the
+     * Open database. A database can be opened only once. Afterwards the
      * singleton instance bound to the File is given back.
      * 
      * @param file
@@ -119,13 +119,29 @@ public final class Database implements IDatabase {
      */
     public static IDatabase openDatabase(final File file)
             throws TreetankException {
+        return openDatabase(file, new SessionConfiguration());
+    }
+
+    /**
+     * Open database. A database can be opened only once. Afterwards the
+     * singleton instance bound to the File is given back.
+     * 
+     * @param file
+     *            where the database is located sessionConf a
+     *            {@link SessionConfiguration} object to set up the session
+     * @return {@link IDatabase} instance.
+     * @throws TreetankException
+     *             if something odd happens
+     */
+    public static IDatabase openDatabase(final File file,
+            final SessionConfiguration sessionConf) throws TreetankException {
         if (!file.exists() && !createDatabase(new DatabaseConfiguration(file))) {
             throw new TreetankUsageException(new StringBuilder(
                     "DB could not be created at location ").append(file)
                     .toString());
         }
         IDatabase database = DATABASEMAP.putIfAbsent(file, new Database(
-                new DatabaseConfiguration(file), new SessionConfiguration()));
+                new DatabaseConfiguration(file), sessionConf));
         if (database == null) {
             database = DATABASEMAP.get(file);
         }
