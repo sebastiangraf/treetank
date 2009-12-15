@@ -47,8 +47,6 @@ public final class IOTestHelper {
     /**
      * Static method to get {@link SessionConfiguration}
      * 
-     * @param type
-     *            for the the {@link SessionConfiguration} should be generated
      * @return a suitable {@link SessionConfiguration}
      * @throws TreetankUsageException
      */
@@ -77,7 +75,9 @@ public final class IOTestHelper {
     /**
      * Testing the get and remove in the Factory methods.
      * 
-     * @param conf
+     * @param dbConf
+     *            to be tested
+     * @param sessionConf
      *            to be tested
      */
     public static void testFactory(final DatabaseConfiguration dbConf,

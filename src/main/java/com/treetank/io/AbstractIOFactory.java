@@ -83,8 +83,10 @@ public abstract class AbstractIOFactory {
     /**
      * Getting an AbstractIOFactory instance.
      * 
-     * @param conf
+     * @param databaseConf
      *            with settings for the storage.
+     * @param sessionConf
+     *            with settings for the session
      * @return an instance of this factory based on the kind in the conf
      */
     public final static AbstractIOFactory getInstance(

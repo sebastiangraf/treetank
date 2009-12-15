@@ -255,8 +255,6 @@ public class ReadTransactionState {
     /**
      * Dereference node page reference.
      * 
-     * @param reference
-     *            Reference to dereference.
      * @param nodePageKey
      *            Key of node page.
      * @return Dereferenced page.

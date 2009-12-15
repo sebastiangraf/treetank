@@ -11,7 +11,6 @@ import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
-import com.treetank.utils.IConstants;
 import com.treetank.utils.NamePageHash;
 
 /**
@@ -249,12 +248,14 @@ public final class RevIndex {
     /**
      * Getting the root of the document tree structure for a given term. The
      * search start at the root of the trie and searches the whole term in the
-     * trie. If nothing is found, the {@link IConstants#UNKNOWN} key is given
+     * trie. If nothing is found, the <code>ENodes.UNKOWN</code> key is given
      * back.
      * 
      * @param term
      *            to be searched in the trie structure
      * @return the root for the document key
+     * @throws TreetankException
+     *             for handling treetank errors
      */
     public long getDocRootForTerm(final String term) throws TreetankException {
         return TrieNavigator.getDocRootInTrie(rtx, term);
