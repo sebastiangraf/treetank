@@ -81,6 +81,7 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
             final EnvironmentConfig config = new EnvironmentConfig();
             config.setAllowCreate(true);
             config.setLocking(false);
+            config.setCacheSize(1024 * 1024);
             env = new Environment(place, config);
 
             /* Make a database within that environment */
