@@ -1,4 +1,4 @@
-package com.treetank.utils;
+package com.treetank.settings;
 
 import static com.treetank.TestHelper.getNodePage;
 import static com.treetank.TestHelper.random;
@@ -13,7 +13,7 @@ import com.treetank.page.NodePage;
 import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.ERevisioning;
 
-public class SlidingSnapshotTest {
+public class ERevisioningTest {
 
     @Before
     public void setUp() {
