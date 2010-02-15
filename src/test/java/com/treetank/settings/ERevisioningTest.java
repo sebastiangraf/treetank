@@ -43,10 +43,10 @@ public class ERevisioningTest {
     // }
 
     @Test
-    public void testCombinePages() {
+    public void testIncrementalCombinePages() {
         final NodePage[] pages = new NodePage[4];
         for (int i = 0; i < pages.length; i++) {
-            pages[i] = getNodePage(0, i * 32, (i * 32) + 32);
+            pages[i] = getNodePage(pages.length - i - 1, i * 32, (i * 32) + 32);
         }
         final NodePage page = ERevisioning.SLIDING_SNAPSHOT.combinePages(pages,
                 Integer.parseInt(EDatabaseSetting.MILESTONE_REVISION
@@ -59,13 +59,50 @@ public class ERevisioningTest {
     }
 
     @Test
-    public void testCombineOverlappingPages() {
+    public void testIncrementalCombineOverlappingPages() {
         final NodePage[] pages = new NodePage[4];
         final int[] borders = new int[4];
         pages[0] = getNodePage(0, 0, 32);
         for (int i = 1; i < pages.length; i++) {
             borders[i] = random.nextInt(32) + ((i - 1) * 32);
-            pages[i] = getNodePage(0, borders[i], (i * 32) + 32);
+            pages[i] = getNodePage(pages.length - i - 1, borders[i],
+                    (i * 32) + 32);
+        }
+        final NodePage page = ERevisioning.SLIDING_SNAPSHOT.combinePages(pages,
+                Integer.parseInt(EDatabaseSetting.MILESTONE_REVISION
+                        .getStandardProperty()));
+        for (int i = 0; i < pages.length; i++) {
+            for (int j = i * 32; j < (i * 32) + 32; j++) {
+                assertEquals(pages[i].getNode(j), page.getNode(j));
+            }
+        }
+    }
+
+    @Test
+    public void testSnapshotCombinePages() {
+        final NodePage[] pages = new NodePage[4];
+        for (int i = 0; i < pages.length; i++) {
+            pages[i] = getNodePage(pages.length - i - 1, i * 32, (i * 32) + 32);
+        }
+        final NodePage page = ERevisioning.SLIDING_SNAPSHOT.combinePages(pages,
+                Integer.parseInt(EDatabaseSetting.MILESTONE_REVISION
+                        .getStandardProperty()));
+        for (int i = 0; i < pages.length; i++) {
+            for (int j = i * 32; j < (i * 32) + 32; j++) {
+                assertEquals(pages[i].getNode(j), page.getNode(j));
+            }
+        }
+    }
+
+    @Test
+    public void testSnapshotCombineOverlappingPages() {
+        final NodePage[] pages = new NodePage[4];
+        final int[] borders = new int[4];
+        pages[0] = getNodePage(0, 0, 32);
+        for (int i = 1; i < pages.length; i++) {
+            borders[i] = random.nextInt(32) + ((i - 1) * 32);
+            pages[i] = getNodePage(pages.length - i - 1, borders[i],
+                    (i * 32) + 32);
         }
         final NodePage page = ERevisioning.SLIDING_SNAPSHOT.combinePages(pages,
                 Integer.parseInt(EDatabaseSetting.MILESTONE_REVISION
