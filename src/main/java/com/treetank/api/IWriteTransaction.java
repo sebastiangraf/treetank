@@ -287,4 +287,9 @@ public interface IWriteTransaction extends IReadTransaction {
      */
     void abort() throws TreetankIOException;
 
+    /**
+     * Closing current WriteTransaction
+     */
+    void close() throws TreetankException;
+
 }
