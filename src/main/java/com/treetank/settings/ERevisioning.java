@@ -17,6 +17,34 @@ import com.treetank.page.NodePage;
 public enum ERevisioning {
 
     /**
+     * Differential. Only the diffs are stored related to the last milestone
+     * revision
+     */
+    DIFFERENTIAL {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public NodePage combinePages(final NodePage[] pages,
+                final int mileStoneRevision) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public NodePageContainer combinePagesForModification(
+                final NodePage[] pages, final int mileStoneRevision) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+    },
+
+    /**
      * Sliding Snapshot. A fixed number of revisions is needed to reconstruct a
      * NodePage.
      */
@@ -88,7 +116,7 @@ public enum ERevisioning {
      * of a the last full-dump plus the incremental steps between.
      */
     INCREMENTAL {
-        
+
         /**
          * {@inheritDoc}
          */
