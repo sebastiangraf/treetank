@@ -23,6 +23,22 @@ public class ERevisioningTest {
     }
 
     @Test
+    public void testFulldumpCombinePages() {
+        final NodePage[] pages = new NodePage[2];
+        pages[0] = getNodePage(1, 0, 128);
+        pages[1] = getNodePage(0, 0, 128);
+
+        final NodePage page = ERevisioning.FULLDUMP.combinePages(pages, Integer
+                .parseInt(EDatabaseSetting.REVISION_TO_RESTORE
+                        .getStandardProperty()));
+
+        for (int j = 0; j < page.getNodes().length; j++) {
+            assertEquals(pages[0].getNode(j), page.getNode(j));
+        }
+
+    }
+
+    @Test
     public void testDifferentialCombinePages() {
         final NodePage[] pages = prepareNormal(4);
         final NodePage page = ERevisioning.DIFFERENTIAL.combinePages(pages,

@@ -17,6 +17,54 @@ import com.treetank.page.NodePage;
 public enum ERevisioning {
 
     /**
+     * FullDump, Just dumping the complete older revision.
+     */
+    FULLDUMP {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public NodePage combinePages(final NodePage[] pages,
+                final int revToRestore) {
+            final long nodePageKey = pages[0].getNodePageKey();
+            final NodePage returnVal = new NodePage(nodePageKey, pages[0]
+                    .getRevision());
+
+            for (int i = 0; i < pages[0].getNodes().length; i++) {
+                returnVal.setNode(i, pages[0].getNode(i));
+            }
+
+            return returnVal;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public NodePageContainer combinePagesForModification(
+                final NodePage[] pages, final int mileStoneRevision) {
+            final long nodePageKey = pages[0].getNodePageKey();
+            final NodePage[] returnVal = {
+                    new NodePage(nodePageKey, pages[0].getRevision() + 1),
+                    new NodePage(nodePageKey, pages[0].getRevision() + 1) };
+
+            for (int i = 0; i < pages[0].getNodes().length; i++) {
+                returnVal[0].setNode(i, pages[0].getNode(i));
+                if (pages[0].getNode(i) != null) {
+                    returnVal[1].setNode(i, NodePersistenter
+                            .createNode(pages[0].getNode(i)));
+                }
+            }
+
+            final NodePageContainer cont = new NodePageContainer(returnVal[0],
+                    returnVal[1]);
+            return cont;
+        }
+
+    },
+
+    /**
      * Differential. Only the diffs are stored related to the last milestone
      * revision
      */
