@@ -31,17 +31,16 @@ public class ERevisioningTest {
         final NodePage page = ERevisioning.DIFFERENTIAL.combinePages(pages,
                 Integer.parseInt(EDatabaseSetting.REVISION_TO_RESTORE
                         .getStandardProperty()));
-        checkCombined(pages, page);
+
+        for (int j = 0; j < 32; j++) {
+            assertEquals(pages[0].getNode(j), page.getNode(j));
+        }
+        for (int j = 32; j < page.getNodes().length; j++) {
+            assertEquals(pages[3].getNode(j), page.getNode(j));
+        }
+
     }
 
-    @Test
-    public void testDifferentialCombineOverlappingPages() {
-        final NodePage[] pages = prepareOverlapping(4);
-        final NodePage page = ERevisioning.DIFFERENTIAL.combinePages(pages,
-                Integer.parseInt(EDatabaseSetting.REVISION_TO_RESTORE
-                        .getStandardProperty()));
-        checkCombined(pages, page);
-    }
 
     @Test
     public void testIncrementalCombinePages() {
@@ -52,14 +51,6 @@ public class ERevisioningTest {
         checkCombined(pages, page);
     }
 
-    @Test
-    public void testIncrementalCombineOverlappingPages() {
-        final NodePage[] pages = prepareOverlapping(4);
-        final NodePage page = ERevisioning.INCREMENTAL.combinePages(pages,
-                Integer.parseInt(EDatabaseSetting.REVISION_TO_RESTORE
-                        .getStandardProperty()));
-        checkCombined(pages, page);
-    }
 
     @Test
     public void testSnapshotCombinePages() {
@@ -70,36 +61,27 @@ public class ERevisioningTest {
         checkCombined(pages, page);
     }
 
-    @Test
-    public void testSnapshotCombineOverlappingPages() {
-        final NodePage[] pages = prepareOverlapping(4);
-        final NodePage page = ERevisioning.SLIDING_SNAPSHOT.combinePages(pages,
-                Integer.parseInt(EDatabaseSetting.REVISION_TO_RESTORE
-                        .getStandardProperty()));
-        checkCombined(pages, page);
-
-    }
 
     private static NodePage[] prepareNormal(final int length) {
         final NodePage[] pages = new NodePage[length];
-        for (int i = 0; i < pages.length; i++) {
+        pages[pages.length - 1] = getNodePage(0, 0, 128);
+        for (int i = 0; i < pages.length - 1; i++) {
             pages[i] = getNodePage(pages.length - i - 1, i * 32, (i * 32) + 32);
         }
         return pages;
     }
 
-    private static NodePage[] prepareOverlapping(final int length) {
-        final NodePage[] pages = new NodePage[length];
-        final int[] borders = new int[4];
-        pages[0] = getNodePage(0, 0, 32);
-        for (int i = 1; i < pages.length; i++) {
-            borders[i] = random.nextInt(32) + ((i - 1) * 32);
-            pages[i] = getNodePage(pages.length - i - 1, borders[i],
-                    (i * 32) + 32);
-        }
-        return pages;
-
-    }
+    // private static NodePage[] prepareOverlapping(final int length) {
+    // final NodePage[] pages = new NodePage[length];
+    // final int[] borders = new int[4];
+    // pages[pages.length - 1] = getNodePage(0, 0, 128);
+    // for (int i = 0; i < pages.length - 1; i++) {
+    // borders[i] = random.nextInt(32) + ((i) * 32);
+    // pages[i] = getNodePage(pages.length - i, borders[i], (i * 32) + 32);
+    // }
+    // return pages;
+    //
+    // }
 
     private static void checkCombined(final NodePage[] toCheck,
             final NodePage page) {

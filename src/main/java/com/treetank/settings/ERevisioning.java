@@ -33,7 +33,7 @@ public enum ERevisioning {
                     .getRevision());
             final NodePage latest = pages[0];
 
-            NodePage referencePage = null;
+            NodePage referencePage = pages[0];
 
             for (int i = 1; i < pages.length; i++) {
                 if (pages[i].getRevision() % revToRestore == 0) {
@@ -73,7 +73,7 @@ public enum ERevisioning {
                             .getNode(i)));
                 }
             } else {
-                NodePage referencePage = null;
+                NodePage referencePage = pages[0];
                 for (int i = 1; i < pages.length; i++) {
                     if (pages[i].getRevision() % revToRestore == 0) {
                         referencePage = pages[i];
