@@ -18,7 +18,7 @@ public enum EDatabaseSetting {
     REVISION_TYPE(ERevisioning.SLIDING_SNAPSHOT.name()),
 
     /** Window of Sliding Snapshot */
-    MILESTONE_REVISION("4"),
+    REVISION_TO_RESTORE("4"),
 
     /** version major identifier for binary compatibility */
     VERSION_MAJOR("5"),
