@@ -15,7 +15,7 @@ public enum EDatabaseSetting {
     STORAGE_TYPE(StorageType.Berkeley.name()),
 
     /** Revision properties */
-    REVISION_TYPE(ERevisioning.DIFFERENTIAL.name()),
+    REVISION_TYPE(ERevisioning.SLIDING_SNAPSHOT.name()),
 
     /** Window of Sliding Snapshot */
     REVISION_TO_RESTORE("4"),

@@ -1,7 +1,6 @@
 package com.treetank.settings;
 
 import static com.treetank.TestHelper.getNodePage;
-import static com.treetank.TestHelper.random;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.After;
@@ -10,8 +9,6 @@ import org.junit.Test;
 
 import com.treetank.TestHelper;
 import com.treetank.page.NodePage;
-import com.treetank.settings.EDatabaseSetting;
-import com.treetank.settings.ERevisioning;
 
 public class ERevisioningTest {
 
@@ -41,7 +38,6 @@ public class ERevisioningTest {
 
     }
 
-
     @Test
     public void testIncrementalCombinePages() {
         final NodePage[] pages = prepareNormal(4);
@@ -51,7 +47,6 @@ public class ERevisioningTest {
         checkCombined(pages, page);
     }
 
-
     @Test
     public void testSnapshotCombinePages() {
         final NodePage[] pages = prepareNormal(4);
@@ -60,7 +55,6 @@ public class ERevisioningTest {
                         .getStandardProperty()));
         checkCombined(pages, page);
     }
-
 
     private static NodePage[] prepareNormal(final int length) {
         final NodePage[] pages = new NodePage[length];

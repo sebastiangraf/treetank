@@ -65,28 +65,30 @@ public enum ERevisioning {
                     new NodePage(nodePageKey, pages[0].getRevision() + 1) };
 
             final NodePage latest = pages[0];
-            // make complete version since revisionToFullDump is reached
-            if (latest.getRevision() + 1 % revToRestore == 0) {
-                for (int i = 0; i < latest.getNodes().length; i++) {
-                    returnVal[0].setNode(i, latest.getNode(i));
-                    returnVal[1].setNode(i, NodePersistenter.createNode(latest
-                            .getNode(i)));
+            NodePage fullDump = pages[0];
+            for (int i = 1; i < pages.length; i++) {
+                if (pages[i].getRevision() % revToRestore == 0) {
+                    fullDump = pages[i];
+                    break;
                 }
-            } else {
-                NodePage referencePage = pages[0];
-                for (int i = 1; i < pages.length; i++) {
-                    if (pages[i].getRevision() % revToRestore == 0) {
-                        referencePage = pages[i];
-                        break;
+            }
+
+            // iterate through all nodes
+            for (int j = 0; j < returnVal[0].getNodes().length; j++) {
+                if (latest.getNode(j) != null) {
+                    returnVal[0].setNode(j, latest.getNode(j));
+                    returnVal[1].setNode(j, NodePersistenter.createNode(latest
+                            .getNode(j)));
+                } else {
+                    if (fullDump.getNode(j) != null) {
+                        returnVal[0].setNode(j, fullDump.getNode(j));
+                        if ((latest.getRevision() + 1) % revToRestore == 0) {
+                            returnVal[1].setNode(j, NodePersistenter
+                                    .createNode(fullDump.getNode(j)));
+                        }
                     }
                 }
-                for (int i = 0; i < referencePage.getNodes().length; i++) {
-                    if (latest.getNode(i) != null) {
-                        returnVal[0].setNode(i, latest.getNode(i));
-                    } else {
-                        returnVal[0].setNode(i, referencePage.getNode(i));
-                    }
-                }
+
             }
 
             final NodePageContainer cont = new NodePageContainer(returnVal[0],
