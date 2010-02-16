@@ -28,8 +28,8 @@ public class ERevisioningTest {
     @Test
     public void testDifferentialCombinePages() {
         final NodePage[] pages = prepareNormal(4);
-        final NodePage page = ERevisioning.SLIDING_SNAPSHOT.combinePages(pages,
-                Integer.parseInt(EDatabaseSetting.MILESTONE_REVISION
+        final NodePage page = ERevisioning.DIFFERENTIAL.combinePages(pages,
+                Integer.parseInt(EDatabaseSetting.REVISION_TO_RESTORE
                         .getStandardProperty()));
         checkCombined(pages, page);
     }
@@ -37,8 +37,8 @@ public class ERevisioningTest {
     @Test
     public void testDifferentialCombineOverlappingPages() {
         final NodePage[] pages = prepareOverlapping(4);
-        final NodePage page = ERevisioning.SLIDING_SNAPSHOT.combinePages(pages,
-                Integer.parseInt(EDatabaseSetting.MILESTONE_REVISION
+        final NodePage page = ERevisioning.DIFFERENTIAL.combinePages(pages,
+                Integer.parseInt(EDatabaseSetting.REVISION_TO_RESTORE
                         .getStandardProperty()));
         checkCombined(pages, page);
     }
@@ -46,8 +46,8 @@ public class ERevisioningTest {
     @Test
     public void testIncrementalCombinePages() {
         final NodePage[] pages = prepareNormal(4);
-        final NodePage page = ERevisioning.SLIDING_SNAPSHOT.combinePages(pages,
-                Integer.parseInt(EDatabaseSetting.MILESTONE_REVISION
+        final NodePage page = ERevisioning.INCREMENTAL.combinePages(pages,
+                Integer.parseInt(EDatabaseSetting.REVISION_TO_RESTORE
                         .getStandardProperty()));
         checkCombined(pages, page);
     }
@@ -55,8 +55,8 @@ public class ERevisioningTest {
     @Test
     public void testIncrementalCombineOverlappingPages() {
         final NodePage[] pages = prepareOverlapping(4);
-        final NodePage page = ERevisioning.SLIDING_SNAPSHOT.combinePages(pages,
-                Integer.parseInt(EDatabaseSetting.MILESTONE_REVISION
+        final NodePage page = ERevisioning.INCREMENTAL.combinePages(pages,
+                Integer.parseInt(EDatabaseSetting.REVISION_TO_RESTORE
                         .getStandardProperty()));
         checkCombined(pages, page);
     }
@@ -65,7 +65,7 @@ public class ERevisioningTest {
     public void testSnapshotCombinePages() {
         final NodePage[] pages = prepareNormal(4);
         final NodePage page = ERevisioning.SLIDING_SNAPSHOT.combinePages(pages,
-                Integer.parseInt(EDatabaseSetting.MILESTONE_REVISION
+                Integer.parseInt(EDatabaseSetting.REVISION_TO_RESTORE
                         .getStandardProperty()));
         checkCombined(pages, page);
     }
@@ -74,7 +74,7 @@ public class ERevisioningTest {
     public void testSnapshotCombineOverlappingPages() {
         final NodePage[] pages = prepareOverlapping(4);
         final NodePage page = ERevisioning.SLIDING_SNAPSHOT.combinePages(pages,
-                Integer.parseInt(EDatabaseSetting.MILESTONE_REVISION
+                Integer.parseInt(EDatabaseSetting.REVISION_TO_RESTORE
                         .getStandardProperty()));
         checkCombined(pages, page);
 

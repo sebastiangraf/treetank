@@ -38,7 +38,7 @@ public final class OverallTest {
     public void testXML() throws Exception {
 
         for (int i = 0; i < Integer
-                .parseInt(EDatabaseSetting.MILESTONE_REVISION
+                .parseInt(EDatabaseSetting.REVISION_TO_RESTORE
                         .getStandardProperty()) * 2; i++) {
             final IDatabase database = Database
                     .openDatabase(ITestConstants.PATH1);

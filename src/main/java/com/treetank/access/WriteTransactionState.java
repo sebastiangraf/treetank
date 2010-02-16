@@ -553,7 +553,7 @@ public final class WriteTransactionState extends ReadTransactionState {
                         EDatabaseSetting.REVISION_TYPE.name()));
         final int mileStoneRevision = Integer
                 .parseInt(getDatabaseConfiguration().getProps().getProperty(
-                        EDatabaseSetting.MILESTONE_REVISION.name()));
+                        EDatabaseSetting.REVISION_TO_RESTORE.name()));
 
         return revision.combinePagesForModification(revs, mileStoneRevision);
     }
