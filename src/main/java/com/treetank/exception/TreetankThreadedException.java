@@ -21,4 +21,14 @@ public final class TreetankThreadedException extends TreetankException {
         super(exc);
     }
 
+    /**
+     * Exception for weird thread behaviour.
+     * 
+     * @param message
+     *            to be stored
+     */
+    public TreetankThreadedException(final String message) {
+        super(message);
+    }
+
 }
