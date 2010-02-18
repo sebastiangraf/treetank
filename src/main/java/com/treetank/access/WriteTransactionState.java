@@ -56,14 +56,10 @@ public final class WriteTransactionState extends ReadTransactionState {
     /** Page writer to serialize. */
     private final IWriter mPageWriter;
 
-    /**
-     * Cache to store the changes in this writetransaction.
-     */
+    /** Cache to store the changes in this writetransaction. */
     private final ICache log;
 
-    /**
-     * Last references to the Nodepage, needed for pre/postcondition check
-     */
+    /** Last references to the Nodepage, needed for pre/postcondition check */
     private NodePageContainer nodePageCon;
 
     /** Last reference to the actual revRoot */
@@ -576,6 +572,17 @@ public final class WriteTransactionState extends ReadTransactionState {
      */
     protected RevisionRootPage getActualRevisionRootPage() {
         return this.mCurrentRevRoot;
+    }
+
+    /**
+     * Updating a container in this transaction state
+     * 
+     * @param cont to be updated
+     */
+    protected void updateDateContainer(final NodePageContainer cont) {
+        synchronized(log){
+            
+        }
     }
 
 }

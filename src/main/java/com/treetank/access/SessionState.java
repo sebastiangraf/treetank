@@ -322,15 +322,17 @@ public final class SessionState {
     class LogSyncer implements Callable<Void> {
 
         final WriteTransactionState state;
+        final NodePageContainer cont;
 
         LogSyncer(final WriteTransactionState paramState,
-                final NodePageContainer cont) {
+                final NodePageContainer paramCont) {
             state = paramState;
+            cont = paramCont;
         }
 
         @Override
         public Void call() throws Exception {
-
+            state.updateDateContainer(cont);
             return null;
         }
 
