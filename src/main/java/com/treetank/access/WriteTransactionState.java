@@ -72,6 +72,9 @@ public final class WriteTransactionState extends ReadTransactionState {
     /** State of session for synchronizing against other writetrans */
     private final SessionState mSessionState;
 
+    /** ID for current transaction */
+    private final long transactionID;
+
     /**
      * Standard constructor.
      * 
@@ -85,7 +88,8 @@ public final class WriteTransactionState extends ReadTransactionState {
     protected WriteTransactionState(
             final DatabaseConfiguration databaseConfiguration,
             final SessionState sessionState, final UberPage uberPage,
-            final IWriter writer) throws TreetankIOException {
+            final IWriter writer, final long paramId)
+            throws TreetankIOException {
         super(databaseConfiguration, uberPage, uberPage
                 .getLastCommittedRevisionNumber(), new ItemList(), writer);
         mCurrentRevRoot = prepareActualRevisionRootPage();
@@ -93,6 +97,7 @@ public final class WriteTransactionState extends ReadTransactionState {
         log = new TransactionLogCache(databaseConfiguration, mCurrentRevRoot
                 .getRevision());
         mPageWriter = writer;
+        transactionID = paramId;
 
     }
 
@@ -322,7 +327,9 @@ public final class WriteTransactionState extends ReadTransactionState {
             page.commit(this);
             mPageWriter.write(reference);
             reference.setPage(null);
-            mSessionState.syncLogs(cont);
+            if (cont != null) {
+                mSessionState.syncLogs(cont, transactionID);
+            }
         }
     }
 
@@ -399,6 +406,7 @@ public final class WriteTransactionState extends ReadTransactionState {
         mPageWriter.writeFirstReference(uberPageReference);
         uberPageReference.setPage(null);
 
+        mSessionState.waitForFinishedSync(transactionID);
         // mPageWriter.close();
         mSessionState.mCommitLock.unlock();
         return uberPage;
