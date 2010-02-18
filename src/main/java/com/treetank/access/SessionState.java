@@ -80,6 +80,9 @@ public final class SessionState {
     /** Remember the write seperatly because of the concurrent writes */
     private final Map<Long, WriteTransactionState> mWriteTransactionStateMap;
 
+    /** Storing all return futures from the sync process */
+    private final Map<Long, Map<Long, Collection<Future<Void>>>> mSyncTransactionsReturns;
+
     /** abstract factory for all interaction to the storage */
     private final AbstractIOFactory fac;
 
@@ -99,6 +102,8 @@ public final class SessionState {
         mSessionConfiguration = sessionConfiguration;
         mTransactionMap = new ConcurrentHashMap<Long, IReadTransaction>();
         mWriteTransactionStateMap = new ConcurrentHashMap<Long, WriteTransactionState>();
+        mSyncTransactionsReturns = new ConcurrentHashMap<Long, Map<Long, Collection<Future<Void>>>>();
+
         transactionIDCounter = new AtomicLong();
         mCommitLock = new ReentrantLock(true);
 
@@ -194,7 +199,7 @@ public final class SessionState {
         }
 
         final long currentID = transactionIDCounter.incrementAndGet();
-        final WriteTransactionState wtxState = createWriteTransactionState();
+        final WriteTransactionState wtxState = createWriteTransactionState(currentID);
 
         // Create new write transaction.
         final IWriteTransaction wtx = new WriteTransaction(currentID, this,
@@ -210,35 +215,57 @@ public final class SessionState {
         return wtx;
     }
 
-    protected WriteTransactionState createWriteTransactionState()
+    protected WriteTransactionState createWriteTransactionState(final long id)
             throws TreetankIOException {
         final IWriter writer = fac.getWriter();
 
         return new WriteTransactionState(mDatabaseConfiguration, this,
-                new UberPage(mLastCommittedUberPage), writer);
+                new UberPage(mLastCommittedUberPage), writer, id);
     }
 
     protected final synchronized void syncLogs(
-            final NodePageContainer contToSync)
+            final NodePageContainer contToSync, final long transactionId)
             throws TreetankThreadedException {
-        // final ExecutorService exec = Executors.newCachedThreadPool();
-        // final Collection<Future<Void>> returnVals = new
-        // ArrayList<Future<Void>>();
-        // for (final WriteTransactionState state : mWriteTransactionStateMap
-        // .values()) {
-        // returnVals.add(exec.submit(new LogSyncer(state, contToSync)));
-        // }
-        //
-        // for (final Future<Void> returnVal : returnVals) {
-        // try {
-        // returnVal.get();
-        // } catch (final InterruptedException exc) {
-        // throw new TreetankThreadedException(exc);
-        // } catch (final ExecutionException exc) {
-        // throw new TreetankThreadedException(exc);
-        // }
-        // }
+        final ExecutorService exec = Executors.newCachedThreadPool();
+        final Collection<Future<Void>> returnVals = new ArrayList<Future<Void>>();
+        for (final Long key : mWriteTransactionStateMap.keySet()) {
+            if (key != transactionId) {
+                returnVals.add(exec.submit(new LogSyncer(
+                        mWriteTransactionStateMap.get(key), contToSync)));
+            }
+        }
 
+        if (!mSyncTransactionsReturns.containsKey(transactionId)) {
+            mSyncTransactionsReturns.put(transactionId,
+                    new ConcurrentHashMap<Long, Collection<Future<Void>>>());
+        }
+
+        if (mSyncTransactionsReturns.get(transactionId).put(
+                contToSync.getComplete().getNodePageKey(), returnVals) != null) {
+            throw new TreetankThreadedException(
+                    "only one commit and therefore sync per id and nodepage is allowed!");
+        }
+
+    }
+
+    protected final synchronized void waitForFinishedSync(
+            final long transactionKey) throws TreetankThreadedException {
+        final Map<Long, Collection<Future<Void>>> completeVals = mSyncTransactionsReturns
+                .remove(transactionKey);
+        if (completeVals != null) {
+            for (final Collection<Future<Void>> singleVals : completeVals
+                    .values()) {
+                for (final Future<Void> returnVal : singleVals) {
+                    try {
+                        returnVal.get();
+                    } catch (final InterruptedException exc) {
+                        throw new TreetankThreadedException(exc);
+                    } catch (final ExecutionException exc) {
+                        throw new TreetankThreadedException(exc);
+                    }
+                }
+            }
+        }
     }
 
     protected void setLastCommittedUberPage(final UberPage lastCommittedUberPage) {

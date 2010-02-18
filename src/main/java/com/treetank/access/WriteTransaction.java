@@ -423,7 +423,8 @@ public final class WriteTransaction extends ReadTransaction implements
 
         getTransactionState().close();
         // Reset internal transaction state to new uber page.
-        setTransactionState(getSessionState().createWriteTransactionState());
+        setTransactionState(getSessionState().createWriteTransactionState(
+                getTransactionID()));
 
     }
 
@@ -440,7 +441,8 @@ public final class WriteTransaction extends ReadTransaction implements
         getTransactionState().close();
 
         // Reset internal transaction state to last committed uber page.
-        setTransactionState(getSessionState().createWriteTransactionState());
+        setTransactionState(getSessionState().createWriteTransactionState(
+                getTransactionID()));
     }
 
     private void intermediateCommitIfRequired() throws TreetankException {
