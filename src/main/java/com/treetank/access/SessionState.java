@@ -58,11 +58,17 @@ public final class SessionState {
     /** Read semaphore to control running read transactions. */
     private final Semaphore mReadSemaphore;
 
+    /** Semaphore for blocking the commit */
+    protected final Semaphore mCommitSemaphore;
+
     /** Strong reference to uber page before the begin of a write transaction. */
     private UberPage mLastCommittedUberPage;
 
     /** Remember all running transactions (both read and write). */
-    private Map<Long, IReadTransaction> mTransactionMap;
+    private final Map<Long, IReadTransaction> mTransactionMap;
+
+    /** Remember the write seperatly because of the concurrent writes */
+    private final Map<Long, IWriteTransaction> mWriteTransactionMap;
 
     /** abstract factory for all interaction to the storage */
     private final AbstractIOFactory fac;
@@ -82,7 +88,9 @@ public final class SessionState {
         mDatabaseConfiguration = databaseConfiguration;
         mSessionConfiguration = sessionConfiguration;
         mTransactionMap = new ConcurrentHashMap<Long, IReadTransaction>();
+        mWriteTransactionMap = new ConcurrentHashMap<Long, IWriteTransaction>();
         transactionIDCounter = new AtomicLong();
+        mCommitSemaphore = new Semaphore(1);
 
         // Init session members.
         mWriteSemaphore = new Semaphore(Integer.parseInt(sessionConfiguration
@@ -193,9 +201,8 @@ public final class SessionState {
             throws TreetankIOException {
         final IWriter writer = fac.getWriter();
 
-        return new WriteTransactionState(mDatabaseConfiguration,
-                mSessionConfiguration, new UberPage(mLastCommittedUberPage),
-                writer);
+        return new WriteTransactionState(mDatabaseConfiguration, this,
+                new UberPage(mLastCommittedUberPage), writer);
     }
 
     protected UberPage getLastCommittedUberPage() {
@@ -209,6 +216,8 @@ public final class SessionState {
     protected void closeWriteTransaction(final long transactionID) {
         // Purge transaction from internal state.
         mTransactionMap.remove(transactionID);
+        // Removing the write from the own internal mapping
+        mWriteTransactionMap.remove(transactionID);
         // Make new transactions available.
         mWriteSemaphore.release();
     }
@@ -231,7 +240,8 @@ public final class SessionState {
 
         // Immediately release all ressources.
         mLastCommittedUberPage = null;
-        mTransactionMap = null;
+        mTransactionMap.clear();
+        mWriteTransactionMap.clear();
 
         fac.closeStorage();
     }
