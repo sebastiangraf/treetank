@@ -19,15 +19,16 @@
 package com.treetank.access;
 
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicLong;
 
 import com.treetank.api.IItemList;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TreetankThreadedException;
 import com.treetank.exception.TreetankUsageException;
 import com.treetank.io.AbstractIOFactory;
 import com.treetank.io.IReader;
@@ -63,11 +64,11 @@ public final class SessionState {
     /** Remember all running transactions (both read and write). */
     private Map<Long, IReadTransaction> mTransactionMap;
 
-    /** Random generator for transaction IDs. */
-    private final Random mRandom;
-
     /** abstract factory for all interaction to the storage */
     private final AbstractIOFactory fac;
+
+    /** Atomic counter for concurrent generation of transaction id */
+    private final AtomicLong transactionIDCounter;
 
     /**
      * Constructor to bind to a TreeTank file.
@@ -81,7 +82,7 @@ public final class SessionState {
         mDatabaseConfiguration = databaseConfiguration;
         mSessionConfiguration = sessionConfiguration;
         mTransactionMap = new ConcurrentHashMap<Long, IReadTransaction>();
-        mRandom = new Random();
+        transactionIDCounter = new AtomicLong();
 
         // Init session members.
         mWriteSemaphore = new Semaphore(Integer.parseInt(sessionConfiguration
@@ -146,7 +147,7 @@ public final class SessionState {
 
         IReadTransaction rtx = null;
         // Create new read transaction.
-        rtx = new ReadTransaction(generateTransactionID(), this,
+        rtx = new ReadTransaction(transactionIDCounter.incrementAndGet(), this,
                 new ReadTransactionState(mDatabaseConfiguration,
                         mSessionConfiguration, mLastCommittedUberPage,
                         revisionNumber, itemList, fac.getReader()));
@@ -160,7 +161,7 @@ public final class SessionState {
     }
 
     protected IWriteTransaction beginWriteTransaction(final int maxNodeCount,
-            final int maxTime) throws TreetankIOException {
+            final int maxTime) throws TreetankException {
 
         // Make sure not to exceed available number of write transactions.
         if (mWriteSemaphore.availablePermits() == 0) {
@@ -169,13 +170,14 @@ public final class SessionState {
         }
         try {
             mWriteSemaphore.acquire();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (final InterruptedException exc) {
+            throw new TreetankThreadedException(exc);
+
         }
 
         // Create new write transaction.
-        final IWriteTransaction wtx = new WriteTransaction(
-                generateTransactionID(), this, createWriteTransactionState(),
+        final IWriteTransaction wtx = new WriteTransaction(transactionIDCounter
+                .incrementAndGet(), this, createWriteTransactionState(),
                 maxNodeCount, maxTime);
 
         // Remember transaction for debugging and safe close.
@@ -189,8 +191,7 @@ public final class SessionState {
 
     protected WriteTransactionState createWriteTransactionState()
             throws TreetankIOException {
-        IWriter writer;
-        writer = fac.getWriter();
+        final IWriter writer = fac.getWriter();
 
         return new WriteTransactionState(mDatabaseConfiguration,
                 mSessionConfiguration, new UberPage(mLastCommittedUberPage),
@@ -251,21 +252,6 @@ public final class SessionState {
         } finally {
             super.finalize();
         }
-    }
-
-    /**
-     * Generate new unique ID for the transaction.
-     * 
-     * @return Generated unique ID.
-     */
-    private long generateTransactionID() {
-        long id = mRandom.nextLong();
-        synchronized (mTransactionMap) {
-            while (mTransactionMap.containsKey(id)) {
-                id = mRandom.nextLong();
-            }
-        }
-        return id;
     }
 
 }

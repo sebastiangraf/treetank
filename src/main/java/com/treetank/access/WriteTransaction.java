@@ -70,13 +70,12 @@ public final class WriteTransaction extends ReadTransaction implements
     protected WriteTransaction(final long transactionID,
             final SessionState sessionState,
             final WriteTransactionState transactionState,
-            final int maxNodeCount, final int maxTime)
-            throws TreetankIOException {
+            final int maxNodeCount, final int maxTime) throws TreetankException {
         super(transactionID, sessionState, transactionState);
 
         // Do not accept negative values.
         if ((maxNodeCount < 0) || (maxTime < 0)) {
-            throw new IllegalArgumentException(
+            throw new TreetankUsageException(
                     "Negative arguments are not accepted.");
         }
 
@@ -110,11 +109,9 @@ public final class WriteTransaction extends ReadTransaction implements
             final String uri) throws TreetankIOException {
         return insertFirstChild(((WriteTransactionState) getTransactionState())
                 .createElementNode(getCurrentNode().getNodeKey(),
-                        (Long) EFixed.NULL_NODE_KEY
-                                .getStandardProperty(),
-                        (Long) EFixed.NULL_NODE_KEY
-                                .getStandardProperty(), getCurrentNode()
-                                .getFirstChildKey(),
+                        (Long) EFixed.NULL_NODE_KEY.getStandardProperty(),
+                        (Long) EFixed.NULL_NODE_KEY.getStandardProperty(),
+                        getCurrentNode().getFirstChildKey(),
                         ((WriteTransactionState) getTransactionState())
                                 .createNameKey(name),
                         ((WriteTransactionState) getTransactionState())
@@ -130,9 +127,8 @@ public final class WriteTransaction extends ReadTransaction implements
             final byte[] value) throws TreetankIOException {
         return insertFirstChild(((WriteTransactionState) getTransactionState())
                 .createTextNode(getCurrentNode().getNodeKey(),
-                        (Long) EFixed.NULL_NODE_KEY
-                                .getStandardProperty(), getCurrentNode()
-                                .getFirstChildKey(), valueType, value));
+                        (Long) EFixed.NULL_NODE_KEY.getStandardProperty(),
+                        getCurrentNode().getFirstChildKey(), valueType, value));
     }
 
     /**
@@ -153,9 +149,8 @@ public final class WriteTransaction extends ReadTransaction implements
             final String uri) throws TreetankException {
         return insertRightSibling(((WriteTransactionState) getTransactionState())
                 .createElementNode(getCurrentNode().getParentKey(),
-                        (Long) EFixed.NULL_NODE_KEY
-                                .getStandardProperty(), getCurrentNode()
-                                .getNodeKey(), getCurrentNode()
+                        (Long) EFixed.NULL_NODE_KEY.getStandardProperty(),
+                        getCurrentNode().getNodeKey(), getCurrentNode()
                                 .getRightSiblingKey(),
                         ((WriteTransactionState) getTransactionState())
                                 .createNameKey(name),
@@ -268,9 +263,8 @@ public final class WriteTransaction extends ReadTransaction implements
                 if (rightSibling != null) {
                     leftSibling.setRightSiblingKey(rightSibling.getNodeKey());
                 } else {
-                    leftSibling
-                            .setRightSiblingKey((Long) EFixed.NULL_NODE_KEY
-                                    .getStandardProperty());
+                    leftSibling.setRightSiblingKey((Long) EFixed.NULL_NODE_KEY
+                            .getStandardProperty());
                 }
                 tearDownNodeModification(leftSibling);
             }
@@ -281,9 +275,8 @@ public final class WriteTransaction extends ReadTransaction implements
                 if (leftSibling != null) {
                     rightSibling.setLeftSiblingKey(leftSibling.getNodeKey());
                 } else {
-                    rightSibling
-                            .setLeftSiblingKey((Long) EFixed.NULL_NODE_KEY
-                                    .getStandardProperty());
+                    rightSibling.setLeftSiblingKey((Long) EFixed.NULL_NODE_KEY
+                            .getStandardProperty());
                 }
                 tearDownNodeModification(rightSibling);
             }
@@ -295,9 +288,8 @@ public final class WriteTransaction extends ReadTransaction implements
                 if (rightSibling != null) {
                     parent.setFirstChildKey(rightSibling.getNodeKey());
                 } else {
-                    parent
-                            .setFirstChildKey((Long) EFixed.NULL_NODE_KEY
-                                    .getStandardProperty());
+                    parent.setFirstChildKey((Long) EFixed.NULL_NODE_KEY
+                            .getStandardProperty());
                 }
             }
             tearDownNodeModification(parent);
@@ -421,20 +413,16 @@ public final class WriteTransaction extends ReadTransaction implements
 
         // Commit uber page.
         UberPage uberPage;
-        try {
-            uberPage = ((WriteTransactionState) getTransactionState())
-                    .commit(getSessionState().getSessionConfiguration());
+        uberPage = ((WriteTransactionState) getTransactionState())
+                .commit(getSessionState().getSessionConfiguration());
 
-            // Remember succesfully committed uber page in session state.
-            getSessionState().setLastCommittedUberPage(uberPage);
+        // Remember succesfully committed uber page in session state.
+        getSessionState().setLastCommittedUberPage(uberPage);
 
-            // Reset modification counter.
-            mModificationCount = 0L;
+        // Reset modification counter.
+        mModificationCount = 0L;
 
-            getTransactionState().close();
-        } catch (TreetankIOException e) {
-            throw new RuntimeException(e);
-        }
+        getTransactionState().close();
         // Reset internal transaction state to new uber page.
         setTransactionState(getSessionState().createWriteTransactionState());
 
