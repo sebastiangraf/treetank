@@ -22,7 +22,9 @@ import com.treetank.api.IItem;
 import com.treetank.cache.ICache;
 import com.treetank.cache.NodePageContainer;
 import com.treetank.cache.TransactionLogCache;
+import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TreetankThreadedException;
 import com.treetank.io.IWriter;
 import com.treetank.node.AbstractNode;
 import com.treetank.node.AttributeNode;
@@ -68,6 +70,9 @@ public final class WriteTransactionState extends ReadTransactionState {
     /** Last reference to the actual revRoot */
     private final RevisionRootPage mCurrentRevRoot;
 
+    /** State of session for synchronizing against other writetrans */
+    private final SessionState mSessionState;
+
     /**
      * Standard constructor.
      * 
@@ -80,12 +85,13 @@ public final class WriteTransactionState extends ReadTransactionState {
      */
     protected WriteTransactionState(
             final DatabaseConfiguration databaseConfiguration,
-            final SessionConfiguration sessionConfiguration,
-            final UberPage uberPage, final IWriter writer)
-            throws TreetankIOException {
-        super(databaseConfiguration, sessionConfiguration, uberPage, uberPage
-                .getLastCommittedRevisionNumber(), new ItemList(), writer);
+            final SessionState sessionState, final UberPage uberPage,
+            final IWriter writer) throws TreetankIOException {
+        super(databaseConfiguration, sessionState.getSessionConfiguration(),
+                uberPage, uberPage.getLastCommittedRevisionNumber(),
+                new ItemList(), writer);
         mCurrentRevRoot = prepareActualRevisionRootPage();
+        mSessionState = sessionState;
         log = new TransactionLogCache(databaseConfiguration, mCurrentRevRoot
                 .getRevision());
         mPageWriter = writer;
@@ -324,8 +330,13 @@ public final class WriteTransactionState extends ReadTransactionState {
         }
     }
 
-    protected UberPage commit(final SessionConfiguration sessionConfiguration)
-            throws TreetankIOException {
+    protected UberPage commit() throws TreetankException {
+
+        try {
+            mSessionState.mCommitSemaphore.acquire();
+        } catch (final InterruptedException exc) {
+            throw new TreetankThreadedException(exc);
+        }
 
         final PageReference uberPageReference = new PageReference();
         final UberPage uberPage = getUberPage();
@@ -397,7 +408,7 @@ public final class WriteTransactionState extends ReadTransactionState {
         uberPageReference.setPage(null);
 
         // mPageWriter.close();
-
+        mSessionState.mCommitSemaphore.release();
         return uberPage;
     }
 

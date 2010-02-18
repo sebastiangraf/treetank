@@ -91,7 +91,7 @@ public final class WriteTransaction extends ReadTransaction implements
                     if (mModificationCount > 0) {
                         try {
                             commit();
-                        } catch (final TreetankIOException exc) {
+                        } catch (final TreetankException exc) {
                             throw new IllegalStateException(exc);
                         }
                     }
@@ -106,7 +106,7 @@ public final class WriteTransaction extends ReadTransaction implements
      * {@inheritDoc}
      */
     public synchronized long insertElementAsFirstChild(final String name,
-            final String uri) throws TreetankIOException {
+            final String uri) throws TreetankException {
         return insertFirstChild(((WriteTransactionState) getTransactionState())
                 .createElementNode(getCurrentNode().getNodeKey(),
                         (Long) EFixed.NULL_NODE_KEY.getStandardProperty(),
@@ -124,7 +124,7 @@ public final class WriteTransaction extends ReadTransaction implements
      * {@inheritDoc}
      */
     public synchronized long insertTextAsFirstChild(final int valueType,
-            final byte[] value) throws TreetankIOException {
+            final byte[] value) throws TreetankException {
         return insertFirstChild(((WriteTransactionState) getTransactionState())
                 .createTextNode(getCurrentNode().getNodeKey(),
                         (Long) EFixed.NULL_NODE_KEY.getStandardProperty(),
@@ -135,7 +135,7 @@ public final class WriteTransaction extends ReadTransaction implements
      * {@inheritDoc}
      */
     public synchronized long insertTextAsFirstChild(final String value)
-            throws TreetankIOException {
+            throws TreetankException {
         return insertTextAsFirstChild(
                 ((WriteTransactionState) getTransactionState())
                         .createNameKey("xs:untyped"), TypedValue
@@ -187,7 +187,7 @@ public final class WriteTransaction extends ReadTransaction implements
      */
     public synchronized long insertAttribute(final String name,
             final String uri, final int valueType, final byte[] value)
-            throws TreetankIOException {
+            throws TreetankException {
         return insertAttribute(((WriteTransactionState) getTransactionState())
                 .createAttributeNode(getCurrentNode().getNodeKey(),
                         ((WriteTransactionState) getTransactionState())
@@ -202,7 +202,7 @@ public final class WriteTransaction extends ReadTransaction implements
      * {@inheritDoc}
      */
     public synchronized long insertAttribute(final String name,
-            final String uri, final String value) throws TreetankIOException {
+            final String uri, final String value) throws TreetankException {
         return insertAttribute(name, uri,
                 ((WriteTransactionState) getTransactionState())
                         .createNameKey("xs:untypedAtomic"), TypedValue
@@ -213,7 +213,7 @@ public final class WriteTransaction extends ReadTransaction implements
      * {@inheritDoc}
      */
     public synchronized long insertNamespace(final String uri,
-            final String prefix) throws TreetankIOException {
+            final String prefix) throws TreetankException {
         return insertNamespace(((WriteTransactionState) getTransactionState())
                 .createNamespaceNode(getCurrentNode().getNodeKey(),
                         ((WriteTransactionState) getTransactionState())
@@ -407,14 +407,13 @@ public final class WriteTransaction extends ReadTransaction implements
     /**
      * {@inheritDoc}
      */
-    public synchronized void commit() throws TreetankIOException {
+    public synchronized void commit() throws TreetankException {
 
         assertNotClosed();
 
         // Commit uber page.
         UberPage uberPage;
-        uberPage = ((WriteTransactionState) getTransactionState())
-                .commit(getSessionState().getSessionConfiguration());
+        uberPage = ((WriteTransactionState) getTransactionState()).commit();
 
         // Remember succesfully committed uber page in session state.
         getSessionState().setLastCommittedUberPage(uberPage);
@@ -444,7 +443,7 @@ public final class WriteTransaction extends ReadTransaction implements
         setTransactionState(getSessionState().createWriteTransactionState());
     }
 
-    private void intermediateCommitIfRequired() throws TreetankIOException {
+    private void intermediateCommitIfRequired() throws TreetankException {
         assertNotClosed();
         if ((mMaxNodeCount > 0) && (mModificationCount > mMaxNodeCount)) {
             commit();
@@ -452,7 +451,7 @@ public final class WriteTransaction extends ReadTransaction implements
     }
 
     private long insertFirstChild(final AbstractNode node)
-            throws TreetankIOException {
+            throws TreetankException {
 
         assertNotClosed();
         mModificationCount++;
@@ -488,7 +487,7 @@ public final class WriteTransaction extends ReadTransaction implements
     }
 
     private long insertAttribute(final AttributeNode node)
-            throws TreetankIOException {
+            throws TreetankException {
 
         assertNotClosed();
         mModificationCount++;
@@ -510,7 +509,7 @@ public final class WriteTransaction extends ReadTransaction implements
     }
 
     private long insertNamespace(final NamespaceNode node)
-            throws TreetankIOException {
+            throws TreetankException {
 
         assertNotClosed();
         mModificationCount++;
