@@ -280,7 +280,7 @@ public interface IWriteTransaction extends IReadTransaction {
      * Commit all modifications of the exclusive write transaction. Even commit
      * if there are no modification at all.
      */
-    void commit() throws TreetankException;
+    void commit() throws TreetankIOException;
 
     /**
      * Abort all modifications of the exclusive write transaction.
