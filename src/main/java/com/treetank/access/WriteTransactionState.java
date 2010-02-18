@@ -85,9 +85,8 @@ public final class WriteTransactionState extends ReadTransactionState {
             final DatabaseConfiguration databaseConfiguration,
             final SessionState sessionState, final UberPage uberPage,
             final IWriter writer) throws TreetankIOException {
-        super(databaseConfiguration, sessionState.getSessionConfiguration(),
-                uberPage, uberPage.getLastCommittedRevisionNumber(),
-                new ItemList(), writer);
+        super(databaseConfiguration, uberPage, uberPage
+                .getLastCommittedRevisionNumber(), new ItemList(), writer);
         mCurrentRevRoot = prepareActualRevisionRootPage();
         mSessionState = sessionState;
         log = new TransactionLogCache(databaseConfiguration, mCurrentRevRoot
@@ -321,9 +320,7 @@ public final class WriteTransactionState extends ReadTransactionState {
             // Recursively commit indirectely referenced pages and then
             // write self.
             page.commit(this);
-
             mPageWriter.write(reference);
-
             reference.setPage(null);
         }
     }

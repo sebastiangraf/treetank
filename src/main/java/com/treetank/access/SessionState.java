@@ -48,20 +48,20 @@ import com.treetank.settings.ESessionSetting;
  */
 public final class SessionState {
 
-    /** Database configuration. */
-    private final DatabaseConfiguration mDatabaseConfiguration;
+    /** Lock for blocking the commit */
+    protected final Lock mCommitLock;
 
     /** Session configuration. */
-    private final SessionConfiguration mSessionConfiguration;
+    protected final SessionConfiguration mSessionConfiguration;
+
+    /** Database configuration. */
+    private final DatabaseConfiguration mDatabaseConfiguration;
 
     /** Write semaphore to assure only one exclusive write transaction exists. */
     private final Semaphore mWriteSemaphore;
 
     /** Read semaphore to control running read transactions. */
     private final Semaphore mReadSemaphore;
-
-    /** Lock for blocking the commit */
-    protected final Lock mCommitLock;
 
     /** Strong reference to uber page before the begin of a write transaction. */
     private UberPage mLastCommittedUberPage;
@@ -70,7 +70,7 @@ public final class SessionState {
     private final Map<Long, IReadTransaction> mTransactionMap;
 
     /** Remember the write seperatly because of the concurrent writes */
-    private final Map<Long, IWriteTransaction> mWriteTransactionMap;
+    private final Map<Long, WriteTransactionState> mWriteTransactionStateMap;
 
     /** abstract factory for all interaction to the storage */
     private final AbstractIOFactory fac;
@@ -90,7 +90,7 @@ public final class SessionState {
         mDatabaseConfiguration = databaseConfiguration;
         mSessionConfiguration = sessionConfiguration;
         mTransactionMap = new ConcurrentHashMap<Long, IReadTransaction>();
-        mWriteTransactionMap = new ConcurrentHashMap<Long, IWriteTransaction>();
+        mWriteTransactionStateMap = new ConcurrentHashMap<Long, WriteTransactionState>();
         transactionIDCounter = new AtomicLong();
         mCommitLock = new ReentrantLock(true);
 
@@ -159,8 +159,8 @@ public final class SessionState {
         // Create new read transaction.
         rtx = new ReadTransaction(transactionIDCounter.incrementAndGet(), this,
                 new ReadTransactionState(mDatabaseConfiguration,
-                        mSessionConfiguration, mLastCommittedUberPage,
-                        revisionNumber, itemList, fac.getReader()));
+                        mLastCommittedUberPage, revisionNumber, itemList, fac
+                                .getReader()));
 
         // Remember transaction for debugging and safe close.
         if (mTransactionMap.put(rtx.getTransactionID(), rtx) != null) {
@@ -185,14 +185,17 @@ public final class SessionState {
 
         }
 
+        final long currentID = transactionIDCounter.incrementAndGet();
+        final WriteTransactionState wtxState = createWriteTransactionState();
+
         // Create new write transaction.
-        final IWriteTransaction wtx = new WriteTransaction(transactionIDCounter
-                .incrementAndGet(), this, createWriteTransactionState(),
-                maxNodeCount, maxTime);
+        final IWriteTransaction wtx = new WriteTransaction(currentID, this,
+                wtxState, maxNodeCount, maxTime);
 
         // Remember transaction for debugging and safe close.
-        if (mTransactionMap.put(wtx.getTransactionID(), wtx) != null) {
-            throw new IllegalStateException(
+        if (mTransactionMap.put(currentID, wtx) != null
+                || mWriteTransactionStateMap.put(currentID, wtxState) != null) {
+            throw new TreetankThreadedException(
                     "ID generation is bogus because of duplicate ID.");
         }
 
@@ -219,7 +222,7 @@ public final class SessionState {
         // Purge transaction from internal state.
         mTransactionMap.remove(transactionID);
         // Removing the write from the own internal mapping
-        mWriteTransactionMap.remove(transactionID);
+        mWriteTransactionStateMap.remove(transactionID);
         // Make new transactions available.
         mWriteSemaphore.release();
     }
@@ -243,13 +246,9 @@ public final class SessionState {
         // Immediately release all ressources.
         mLastCommittedUberPage = null;
         mTransactionMap.clear();
-        mWriteTransactionMap.clear();
+        mWriteTransactionStateMap.clear();
 
         fac.closeStorage();
-    }
-
-    protected SessionConfiguration getSessionConfiguration() {
-        return mSessionConfiguration;
     }
 
     /**

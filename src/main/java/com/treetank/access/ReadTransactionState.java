@@ -56,9 +56,6 @@ import com.treetank.utils.IConstants;
  */
 public class ReadTransactionState {
 
-    /** Session configuration. */
-    private final SessionConfiguration mSessionConfiguration;
-
     /** Database configuration */
     private final DatabaseConfiguration mDatabaseConfiguration;
 
@@ -100,12 +97,10 @@ public class ReadTransactionState {
      */
     protected ReadTransactionState(
             final DatabaseConfiguration databaseConfiguration,
-            final SessionConfiguration sessionConfiguration,
             final UberPage uberPage, final long revisionKey,
             final IItemList itemList, final IReader reader)
             throws TreetankIOException {
         mCache = new RAMCache();
-        mSessionConfiguration = sessionConfiguration;
         mDatabaseConfiguration = databaseConfiguration;
         mPageReader = reader;
         mUberPage = uberPage;
@@ -142,8 +137,7 @@ public class ReadTransactionState {
 
             final int mileStoneRevision = Integer
                     .parseInt(mDatabaseConfiguration.getProps().getProperty(
-                            EDatabaseSetting.REVISION_TO_RESTORE
-                                    .name()));
+                            EDatabaseSetting.REVISION_TO_RESTORE.name()));
 
             // Build up the complete page.
             final ERevisioning revision = ERevisioning
@@ -380,10 +374,6 @@ public class ReadTransactionState {
             throws TreetankIOException {
         // TODO evaluate to cache the page
         return loadRevRoot(mRevision);
-    }
-
-    protected SessionConfiguration getSessionConfiguration() {
-        return mSessionConfiguration;
     }
 
     protected DatabaseConfiguration getDatabaseConfiguration() {
