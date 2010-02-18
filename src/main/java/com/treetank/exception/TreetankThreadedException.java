@@ -1,5 +1,7 @@
 package com.treetank.exception;
 
+import java.util.concurrent.ExecutionException;
+
 /**
  * This class holds all exceptions which can occure with the usage of
  * multithreaded exceptions.
@@ -29,6 +31,16 @@ public final class TreetankThreadedException extends TreetankException {
      */
     public TreetankThreadedException(final String message) {
         super(message);
+    }
+
+    /**
+     * Constructor for execution exception exceptions
+     * 
+     * @param exc
+     *            tp be stored
+     */
+    public TreetankThreadedException(final ExecutionException exc) {
+        super(exc);
     }
 
 }

@@ -22,6 +22,7 @@ import com.treetank.api.IItem;
 import com.treetank.cache.ICache;
 import com.treetank.cache.NodePageContainer;
 import com.treetank.cache.TransactionLogCache;
+import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.IWriter;
 import com.treetank.node.AbstractNode;
@@ -299,8 +300,7 @@ public final class WriteTransactionState extends ReadTransactionState {
      * @throws TreetankIOException
      *             if the write fails
      */
-    public void commit(final PageReference reference)
-            throws TreetankIOException {
+    public void commit(final PageReference reference) throws TreetankException {
         AbstractPage page = null;
 
         if (reference != null) {
@@ -322,10 +322,11 @@ public final class WriteTransactionState extends ReadTransactionState {
             page.commit(this);
             mPageWriter.write(reference);
             reference.setPage(null);
+            mSessionState.syncLogs(cont);
         }
     }
 
-    protected UberPage commit() throws TreetankIOException {
+    protected UberPage commit() throws TreetankException {
 
         mSessionState.mCommitLock.lock();
 

@@ -18,8 +18,15 @@
 
 package com.treetank.access;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
@@ -28,6 +35,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import com.treetank.api.IItemList;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.cache.NodePageContainer;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankThreadedException;
@@ -210,8 +218,27 @@ public final class SessionState {
                 new UberPage(mLastCommittedUberPage), writer);
     }
 
-    protected UberPage getLastCommittedUberPage() {
-        return mLastCommittedUberPage;
+    protected final synchronized void syncLogs(
+            final NodePageContainer contToSync)
+            throws TreetankThreadedException {
+        // final ExecutorService exec = Executors.newCachedThreadPool();
+        // final Collection<Future<Void>> returnVals = new
+        // ArrayList<Future<Void>>();
+        // for (final WriteTransactionState state : mWriteTransactionStateMap
+        // .values()) {
+        // returnVals.add(exec.submit(new LogSyncer(state, contToSync)));
+        // }
+        //
+        // for (final Future<Void> returnVal : returnVals) {
+        // try {
+        // returnVal.get();
+        // } catch (final InterruptedException exc) {
+        // throw new TreetankThreadedException(exc);
+        // } catch (final ExecutionException exc) {
+        // throw new TreetankThreadedException(exc);
+        // }
+        // }
+
     }
 
     protected void setLastCommittedUberPage(final UberPage lastCommittedUberPage) {
@@ -263,6 +290,23 @@ public final class SessionState {
         } finally {
             super.finalize();
         }
+    }
+
+    class LogSyncer implements Callable<Void> {
+
+        final WriteTransactionState state;
+
+        LogSyncer(final WriteTransactionState paramState,
+                final NodePageContainer cont) {
+            state = paramState;
+        }
+
+        @Override
+        public Void call() throws Exception {
+
+            return null;
+        }
+
     }
 
 }
