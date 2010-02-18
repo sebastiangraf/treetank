@@ -407,7 +407,7 @@ public final class WriteTransaction extends ReadTransaction implements
     /**
      * {@inheritDoc}
      */
-    public synchronized void commit() throws TreetankException {
+    public synchronized void commit() throws TreetankIOException {
 
         assertNotClosed();
 

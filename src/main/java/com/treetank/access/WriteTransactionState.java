@@ -22,9 +22,7 @@ import com.treetank.api.IItem;
 import com.treetank.cache.ICache;
 import com.treetank.cache.NodePageContainer;
 import com.treetank.cache.TransactionLogCache;
-import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
-import com.treetank.exception.TreetankThreadedException;
 import com.treetank.io.IWriter;
 import com.treetank.node.AbstractNode;
 import com.treetank.node.AttributeNode;
@@ -330,13 +328,9 @@ public final class WriteTransactionState extends ReadTransactionState {
         }
     }
 
-    protected UberPage commit() throws TreetankException {
+    protected UberPage commit() throws TreetankIOException {
 
-        try {
-            mSessionState.mCommitSemaphore.acquire();
-        } catch (final InterruptedException exc) {
-            throw new TreetankThreadedException(exc);
-        }
+        mSessionState.mCommitLock.lock();
 
         final PageReference uberPageReference = new PageReference();
         final UberPage uberPage = getUberPage();
@@ -408,7 +402,7 @@ public final class WriteTransactionState extends ReadTransactionState {
         uberPageReference.setPage(null);
 
         // mPageWriter.close();
-        mSessionState.mCommitSemaphore.release();
+        mSessionState.mCommitLock.unlock();
         return uberPage;
     }
 

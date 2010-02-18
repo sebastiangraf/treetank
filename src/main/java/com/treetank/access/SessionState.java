@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.treetank.api.IItemList;
 import com.treetank.api.IReadTransaction;
@@ -58,8 +60,8 @@ public final class SessionState {
     /** Read semaphore to control running read transactions. */
     private final Semaphore mReadSemaphore;
 
-    /** Semaphore for blocking the commit */
-    protected final Semaphore mCommitSemaphore;
+    /** Lock for blocking the commit */
+    protected final Lock mCommitLock;
 
     /** Strong reference to uber page before the begin of a write transaction. */
     private UberPage mLastCommittedUberPage;
@@ -90,7 +92,7 @@ public final class SessionState {
         mTransactionMap = new ConcurrentHashMap<Long, IReadTransaction>();
         mWriteTransactionMap = new ConcurrentHashMap<Long, IWriteTransaction>();
         transactionIDCounter = new AtomicLong();
-        mCommitSemaphore = new Semaphore(1);
+        mCommitLock = new ReentrantLock(true);
 
         // Init session members.
         mWriteSemaphore = new Semaphore(Integer.parseInt(sessionConfiguration
