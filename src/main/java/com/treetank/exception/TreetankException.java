@@ -1,6 +1,7 @@
 package com.treetank.exception;
 
 /**
+ * Exception to hold all relevant failures upcoming from Treetank.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
