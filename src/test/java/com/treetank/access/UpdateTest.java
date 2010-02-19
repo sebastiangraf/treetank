@@ -59,7 +59,6 @@ public class UpdateTest {
         wtx.close();
 
         IReadTransaction rtx = session.beginReadTransaction();
-        assertEquals(1L, rtx.getNodeCount());
         assertEquals(0L, rtx.getRevisionNumber());
         rtx.close();
 
@@ -76,7 +75,6 @@ public class UpdateTest {
             rtx.moveToFirstChild();
             assertEquals(Integer.toString(i), TypedValue.parseString(rtx
                     .getNode().getRawValue()));
-            assertEquals(i + 1L, rtx.getNodeCount());
             assertEquals(i, rtx.getRevisionNumber());
             rtx.close();
         }
@@ -85,7 +83,6 @@ public class UpdateTest {
         rtx.moveToDocumentRoot();
         rtx.moveToFirstChild();
         assertEquals("10", TypedValue.parseString(rtx.getNode().getRawValue()));
-        assertEquals(11L, rtx.getNodeCount());
         assertEquals(10L, rtx.getRevisionNumber());
         rtx.close();
 

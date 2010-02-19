@@ -101,14 +101,6 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
-    public final long getNodeCount() throws TreetankIOException {
-        assertNotClosed();
-        return mTransactionState.getActualRevisionRootPage().getRevisionSize();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public boolean moveTo(final long nodeKey) {
         assertNotClosed();
         if (nodeKey != (Long) EFixed.NULL_NODE_KEY.getStandardProperty()) {

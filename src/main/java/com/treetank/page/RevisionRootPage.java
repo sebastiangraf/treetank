@@ -129,17 +129,9 @@ public final class RevisionRootPage extends AbstractPage {
     }
 
     /**
-     * Decrement number of nodes by one.
-     */
-    public void decrementNodeCount() {
-        mRevisionSize -= 1;
-    }
-
-    /**
      * Increment number of nodes by one while allocating another key.
      */
-    public void incrementNodeCountAndMaxNodeKey() {
-        mRevisionSize += 1;
+    public void incrementMaxNodeKey() {
         mMaxNodeKey += 1;
     }
 

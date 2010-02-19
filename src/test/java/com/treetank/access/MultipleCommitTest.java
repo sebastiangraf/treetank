@@ -22,7 +22,6 @@ import static org.junit.Assert.assertEquals;
 import junit.framework.TestCase;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -56,16 +55,17 @@ public class MultipleCommitTest {
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         TestCase.assertEquals(0L, wtx.getRevisionNumber());
-        TestCase.assertEquals(1L, wtx.getNodeCount());
+
         wtx.commit();
 
         wtx.insertElementAsFirstChild("foo", "");
         TestCase.assertEquals(1L, wtx.getRevisionNumber());
-        TestCase.assertEquals(2L, wtx.getNodeCount());
+        wtx.moveTo(1);
+        assertEquals("foo", wtx.getNameOfCurrentNode());
         wtx.abort();
 
         TestCase.assertEquals(1L, wtx.getRevisionNumber());
-        TestCase.assertEquals(1L, wtx.getNodeCount());
+
         wtx.close();
 
         session.close();
@@ -82,10 +82,30 @@ public class MultipleCommitTest {
         wtx.close();
 
         final IReadTransaction rtx = session.beginReadTransaction();
-        Assert.assertEquals(14, rtx.getNodeCount());
         rtx.close();
         session.close();
         database.close();
+    }
+
+    @Test
+    public void testRemove() throws TreetankException {
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        TestCase.assertEquals(1L, wtx.getRevisionNumber());
+
+        wtx.moveToDocumentRoot();
+        wtx.moveToFirstChild();
+        wtx.remove();
+        wtx.commit();
+        TestCase.assertEquals(2L, wtx.getRevisionNumber());
+
+        wtx.close();
+        session.close();
+        database.close();
+
     }
 
     @Test

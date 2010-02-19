@@ -164,11 +164,9 @@ public class SessionTest {
 
         IReadTransaction rtx = session.beginReadTransaction();
         assertEquals(0L, rtx.getRevisionNumber());
-        assertEquals(1L, rtx.getNodeCount());
 
         final IWriteTransaction wtx = session.beginWriteTransaction();
         assertEquals(0L, wtx.getRevisionNumber());
-        assertEquals(1L, wtx.getNodeCount());
 
         // Commit and check.
         wtx.commit();
@@ -178,12 +176,10 @@ public class SessionTest {
 
         assertEquals(IConstants.UBP_ROOT_REVISION_NUMBER, rtx
                 .getRevisionNumber());
-        assertEquals(1L, rtx.getNodeCount());
         rtx.close();
 
         final IReadTransaction rtx2 = session.beginReadTransaction();
         assertEquals(0L, rtx2.getRevisionNumber());
-        assertEquals(1L, rtx2.getNodeCount());
         rtx2.close();
 
         session.close();
@@ -198,7 +194,6 @@ public class SessionTest {
         final IWriteTransaction wtx1 = session.beginWriteTransaction();
         DocumentCreater.create(wtx1);
         assertEquals(0L, wtx1.getRevisionNumber());
-        assertEquals(14L, wtx1.getNodeCount());
         wtx1.commit();
         wtx1.close();
 
@@ -295,7 +290,6 @@ public class SessionTest {
         wtx.close();
 
         final IReadTransaction rtx = session.beginReadTransaction();
-        assertEquals(14L, rtx.getNodeCount());
         assertEquals(false, rtx.moveTo(14L));
         rtx.close();
         rtx.close();

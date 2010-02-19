@@ -136,13 +136,6 @@ public interface IReadTransaction {
      */
     long getRevisionTimestamp() throws TreetankIOException;
 
-    /**
-     * How many nodes are stored in the revision of this IReadTransaction?
-     * 
-     * @return Immutable number of nodes of this IReadTransaction.
-     */
-    long getNodeCount() throws TreetankIOException;
-
     // --- Node Selectors
     // --------------------------------------------------------
 
