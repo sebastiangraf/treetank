@@ -410,6 +410,7 @@ public final class WriteTransaction extends ReadTransaction implements
     @Override
     public void revertTo(final long revision) throws TreetankException {
         assertNotClosed();
+        getSessionState().assertValidRevision(revision);
         getTransactionState().close();
         // Reset internal transaction state to new uber page.
         setTransactionState(getSessionState().createWriteTransactionState(

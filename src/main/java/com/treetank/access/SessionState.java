@@ -200,8 +200,7 @@ public final class SessionState {
 
         final long currentID = transactionIDCounter.incrementAndGet();
         final WriteTransactionState wtxState = createWriteTransactionState(
-                currentID, mLastCommittedUberPage
-                        .getRevisionNumber());
+                currentID, mLastCommittedUberPage.getRevisionNumber());
 
         // Create new write transaction.
         final IWriteTransaction wtx = new WriteTransaction(currentID, this,
@@ -338,6 +337,17 @@ public final class SessionState {
             return null;
         }
 
+    }
+
+    protected void assertValidRevision(final long rev)
+            throws TreetankUsageException {
+        if (rev < 0) {
+            throw new TreetankUsageException("Revision must be at least 0");
+        } else if (rev > mLastCommittedUberPage.getRevision() - 1) {
+            throw new TreetankUsageException(new StringBuilder(
+                    "Revision must not be bigger than ").append(
+                    mLastCommittedUberPage.getRevision()).toString());
+        }
     }
 
 }
