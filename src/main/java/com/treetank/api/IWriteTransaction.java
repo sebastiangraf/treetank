@@ -289,7 +289,8 @@ public interface IWriteTransaction extends IReadTransaction {
 
     /**
      * Reverting all changes to the revision defined. This command has to be
-     * finalized with a commit
+     * finalized with a commit. A revert is always bound to a
+     * {@link IReadTransaction#moveToDocumentRoot()}.
      * 
      * @param revision
      *            revert for the revision

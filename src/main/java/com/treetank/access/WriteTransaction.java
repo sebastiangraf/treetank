@@ -417,6 +417,7 @@ public final class WriteTransaction extends ReadTransaction implements
                 getTransactionID(), revision));
         // Reset modification counter.
         mModificationCount = 0L;
+        moveToDocumentRoot();
 
     }
 
