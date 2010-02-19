@@ -63,7 +63,7 @@ public final class WriteTransactionState extends ReadTransactionState {
     private NodePageContainer nodePageCon;
 
     /** Last reference to the actual revRoot */
-    private final RevisionRootPage mCurrentRevRoot;
+    private final RevisionRootPage mNewRoot;
 
     /** State of session for synchronizing against other writetrans */
     private final SessionState mSessionState;
@@ -88,9 +88,10 @@ public final class WriteTransactionState extends ReadTransactionState {
             throws TreetankIOException {
         super(databaseConfiguration, uberPage, uberPage
                 .getLastCommittedRevisionNumber(), new ItemList(), writer);
-        mCurrentRevRoot = prepareActualRevisionRootPage();
+        mNewRoot = prepareActualRevisionRootPage(super
+                .getActualRevisionRootPage().getRevision());
         mSessionState = sessionState;
-        log = new TransactionLogCache(databaseConfiguration, mCurrentRevRoot
+        log = new TransactionLogCache(databaseConfiguration, mNewRoot
                 .getRevision());
         mPageWriter = writer;
         transactionID = paramId;
@@ -159,9 +160,9 @@ public final class WriteTransactionState extends ReadTransactionState {
     protected <N extends AbstractNode> N createNode(final N node)
             throws TreetankIOException {
         // Allocate node key and increment node count.
-        mCurrentRevRoot.incrementNodeCountAndMaxNodeKey();
+        mNewRoot.incrementNodeCountAndMaxNodeKey();
         // Prepare node nodePageReference (COW).
-        final long nodeKey = mCurrentRevRoot.getMaxNodeKey();
+        final long nodeKey = mNewRoot.getMaxNodeKey();
         final long nodePageKey = nodePageKey(nodeKey);
         final int nodePageOffset = nodePageOffset(nodeKey);
         prepareNodePage(nodePageKey);
@@ -176,7 +177,7 @@ public final class WriteTransactionState extends ReadTransactionState {
             final long firstChildKey, final long leftSiblingKey,
             final long rightSiblingKey, final int nameKey, final int uriKey,
             final int type) throws TreetankIOException {
-        return createNode(new ElementNode(mCurrentRevRoot.getMaxNodeKey() + 1,
+        return createNode(new ElementNode(mNewRoot.getMaxNodeKey() + 1,
                 parentKey, firstChildKey, leftSiblingKey, rightSiblingKey,
                 nameKey, uriKey, type));
     }
@@ -184,23 +185,21 @@ public final class WriteTransactionState extends ReadTransactionState {
     protected AttributeNode createAttributeNode(final long parentKey,
             final int nameKey, final int uriKey, final int type,
             final byte[] value) throws TreetankIOException {
-        return createNode(new AttributeNode(
-                mCurrentRevRoot.getMaxNodeKey() + 1, parentKey, nameKey,
-                uriKey, type, value));
+        return createNode(new AttributeNode(mNewRoot.getMaxNodeKey() + 1,
+                parentKey, nameKey, uriKey, type, value));
     }
 
     protected NamespaceNode createNamespaceNode(final long parentKey,
             final int uriKey, final int prefixKey) throws TreetankIOException {
-        return createNode(new NamespaceNode(
-                mCurrentRevRoot.getMaxNodeKey() + 1, parentKey, uriKey,
-                prefixKey));
+        return createNode(new NamespaceNode(mNewRoot.getMaxNodeKey() + 1,
+                parentKey, uriKey, prefixKey));
     }
 
     protected TextNode createTextNode(final long parentKey,
             final long leftSiblingKey, final long rightSiblingKey,
             final int valueType, final byte[] value) throws TreetankIOException {
-        return createNode(new TextNode(mCurrentRevRoot.getMaxNodeKey() + 1,
-                parentKey, leftSiblingKey, rightSiblingKey, valueType, value));
+        return createNode(new TextNode(mNewRoot.getMaxNodeKey() + 1, parentKey,
+                leftSiblingKey, rightSiblingKey, valueType, value));
     }
 
     /**
@@ -213,7 +212,7 @@ public final class WriteTransactionState extends ReadTransactionState {
      */
     protected void removeNode(final AbstractNode node)
             throws TreetankIOException {
-        mCurrentRevRoot.decrementNodeCount();
+        mNewRoot.decrementNodeCount();
         final long nodePageKey = nodePageKey(node.getNodeKey());
         prepareNodePage(nodePageKey);
         // TODO check if null is working with sliding snapshot
@@ -257,7 +256,7 @@ public final class WriteTransactionState extends ReadTransactionState {
      * @return the name
      */
     protected String getName(final int nameKey) {
-        final NamePage currentNamePage = (NamePage) mCurrentRevRoot
+        final NamePage currentNamePage = (NamePage) mNewRoot
                 .getNamePageReference().getPage();
         String returnVal;
         // if currentNamePage == null -> state was commited and no
@@ -284,7 +283,8 @@ public final class WriteTransactionState extends ReadTransactionState {
         final String string = (name == null ? "" : name);
         final int nameKey = NamePageHash.generateHashForString(string);
 
-        final NamePage namePage = prepareNamePage();
+        final NamePage namePage = (NamePage) mNewRoot.getNamePageReference()
+                .getPage();
 
         if (namePage.getName(nameKey) == null) {
             namePage.setName(nameKey, string);
@@ -448,7 +448,7 @@ public final class WriteTransactionState extends ReadTransactionState {
         if (cont == null) {
 
             // Indirect reference.
-            PageReference reference = prepareLeafOfTree(mCurrentRevRoot
+            PageReference reference = prepareLeafOfTree(mNewRoot
                     .getIndirectPageReference(), nodePageKey);
 
             if (!reference.isInstantiated()) {
@@ -476,16 +476,16 @@ public final class WriteTransactionState extends ReadTransactionState {
         return cont;
     }
 
-    private RevisionRootPage prepareActualRevisionRootPage()
+    private RevisionRootPage prepareActualRevisionRootPage(final long revision)
             throws TreetankIOException {
 
         if (getUberPage().isBootstrap()) {
-            return super.getActualRevisionRootPage();
+            return super.loadRevRoot(revision);
         } else {
 
             // Prepare revision root nodePageReference.
             final RevisionRootPage revisionRootPage = new RevisionRootPage(
-                    super.getActualRevisionRootPage());
+                    super.loadRevRoot(revision));
 
             // Prepare indirect tree to hold reference to prepared revision root
             // nodePageReference.
@@ -494,9 +494,12 @@ public final class WriteTransactionState extends ReadTransactionState {
                             .getRevisionNumber());
 
             // Link the prepared revision root nodePageReference with the
-            // prepared
-            // indirect tree.
+            // prepared indirect tree.
             revisionRootPageReference.setPage(revisionRootPage);
+
+            revisionRootPage.getNamePageReference().setPage(
+                    (NamePage) super.getActualRevisionRootPage()
+                            .getNamePageReference().getPage());
 
             // Return prepared revision root nodePageReference.
             return revisionRootPage;
@@ -524,23 +527,6 @@ public final class WriteTransactionState extends ReadTransactionState {
 
         // Return reference to leaf of indirect tree.
         return reference;
-    }
-
-    protected NamePage prepareNamePage() throws TreetankIOException {
-
-        final PageReference ref = mCurrentRevRoot.getNamePageReference();
-        NamePage page = (NamePage) ref.getPage();
-        if (page == null) {
-            if (ref.isCommitted()) {
-                page = new NamePage(getNamePage());
-                ref.setPage(page);
-            } else {
-                page = new NamePage(getActualRevisionRootPage().getRevision());
-                ref.setPage(page);
-            }
-        }
-
-        return page;
     }
 
     /**
@@ -571,17 +557,19 @@ public final class WriteTransactionState extends ReadTransactionState {
      * @return the current revision root page
      */
     protected RevisionRootPage getActualRevisionRootPage() {
-        return this.mCurrentRevRoot;
+        return this.mNewRoot;
     }
 
     /**
      * Updating a container in this transaction state
      * 
-     * @param cont to be updated
+     * @param cont
+     *            to be updated
      */
     protected void updateDateContainer(final NodePageContainer cont) {
-        synchronized(log){
-            
+        synchronized (log) {
+            //TODO implement for MultiWriteTrans
+            //Refer to issue #203
         }
     }
 

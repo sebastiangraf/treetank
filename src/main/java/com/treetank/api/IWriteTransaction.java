@@ -288,6 +288,15 @@ public interface IWriteTransaction extends IReadTransaction {
     void abort() throws TreetankIOException;
 
     /**
+     * Reverting all changes to the revision defined. This command has to be
+     * finalized with a commit
+     * 
+     * @param revision
+     *            revert for the revision
+     */
+    void revertTo(final long revision) throws TreetankException;
+
+    /**
      * Closing current WriteTransaction
      */
     void close() throws TreetankException;
