@@ -22,6 +22,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
+import com.treetank.exception.TreetankUsageException;
 import com.treetank.utils.ItemList;
 
 /**
@@ -45,8 +46,8 @@ public final class Session implements ISession {
      * 
      * @param databaseConf
      *            DatabaseConfiguration for general setting about the storage
-     * @param sessionConf SessionConfiguration for handling this specific
-     *        session
+     * @param sessionConf
+     *            SessionConfiguration for handling this specific session
      * @throws TreetankException
      */
     protected Session(final DatabaseConfiguration databaseConf,
@@ -69,6 +70,7 @@ public final class Session implements ISession {
     public IReadTransaction beginReadTransaction(final long revisionKey)
             throws TreetankException {
         assertNotClosed();
+        mSessionState.assertValidRevision(revisionKey);
         return mSessionState.beginReadTransaction(revisionKey, new ItemList());
     }
 
