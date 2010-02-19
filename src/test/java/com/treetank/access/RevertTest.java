@@ -10,6 +10,7 @@ import org.junit.Test;
 import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
 import com.treetank.api.IDatabase;
+import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
@@ -51,13 +52,23 @@ public final class RevertTest {
         wtx.revertTo(0);
         TestCase.assertEquals(1L, wtx.getRevisionNumber());
         assertEquals(1, wtx.getNode().getChildCount());
+        wtx.moveToFirstChild();
+        wtx.remove();
+        assertEquals(0, wtx.getNode().getChildCount());
         wtx.commit();
         TestCase.assertEquals(2L, wtx.getRevisionNumber());
-        assertEquals(1, wtx.getNode().getChildCount());
+        assertEquals(0, wtx.getNode().getChildCount());
         wtx.close();
+
+        final IReadTransaction rtxRev0 = session.beginReadTransaction(0);
+        final IReadTransaction rtxRev1 = session.beginReadTransaction(1);
+        assertEquals(1, rtxRev0.getNode().getChildCount());
+        assertEquals(0, rtxRev1.getNode().getChildCount());
+
+        rtxRev0.close();
+        rtxRev1.close();
 
         session.close();
         database.close();
     }
-
 }
