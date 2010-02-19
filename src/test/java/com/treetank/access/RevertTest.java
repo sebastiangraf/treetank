@@ -34,12 +34,12 @@ public final class RevertTest {
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         TestCase.assertEquals(0L, wtx.getRevisionNumber());
-        TestCase.assertEquals(1L, wtx.getNodeCount());
+
 
         DocumentCreater.create(wtx);
         wtx.commit();
         TestCase.assertEquals(1L, wtx.getRevisionNumber());
-        TestCase.assertEquals(14L, wtx.getNodeCount());
+
 
         wtx.moveToDocumentRoot();
         wtx.moveToFirstChild();
@@ -48,17 +48,17 @@ public final class RevertTest {
 
         wtx.moveToDocumentRoot();
         TestCase.assertEquals(2L, wtx.getRevisionNumber());
-        TestCase.assertEquals(1L, wtx.getNodeCount());
+
 
         wtx.revertTo(0);
         TestCase.assertEquals(1L, wtx.getRevisionNumber());
-        TestCase.assertEquals(1L, wtx.getNodeCount());
+
         wtx.abort();
         TestCase.assertEquals(1L, wtx.getRevisionNumber());
-        TestCase.assertEquals(14L, wtx.getNodeCount());
+
 
         TestCase.assertEquals(1L, wtx.getRevisionNumber());
-        TestCase.assertEquals(1L, wtx.getNodeCount());
+
         wtx.close();
 
         session.close();

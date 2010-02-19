@@ -88,7 +88,7 @@ public final class UberPage extends AbstractPage {
         reference.setPage(ndp);
 
         ndp.setNode(0, new DocumentRootNode());
-        rrp.incrementNodeCountAndMaxNodeKey();
+        rrp.incrementMaxNodeKey();
 
     }
 

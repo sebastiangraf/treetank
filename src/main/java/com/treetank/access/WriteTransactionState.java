@@ -157,7 +157,7 @@ public final class WriteTransactionState extends ReadTransactionState {
     protected <N extends AbstractNode> N createNode(final N node)
             throws TreetankIOException {
         // Allocate node key and increment node count.
-        mNewRoot.incrementNodeCountAndMaxNodeKey();
+        mNewRoot.incrementMaxNodeKey();
         // Prepare node nodePageReference (COW).
         final long nodeKey = mNewRoot.getMaxNodeKey();
         final long nodePageKey = nodePageKey(nodeKey);
@@ -209,7 +209,6 @@ public final class WriteTransactionState extends ReadTransactionState {
      */
     protected void removeNode(final AbstractNode node)
             throws TreetankIOException {
-        mNewRoot.decrementNodeCount();
         final long nodePageKey = nodePageKey(node.getNodeKey());
         prepareNodePage(nodePageKey);
         // TODO check if null is working with sliding snapshot
