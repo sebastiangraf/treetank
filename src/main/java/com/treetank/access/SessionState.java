@@ -199,7 +199,9 @@ public final class SessionState {
         }
 
         final long currentID = transactionIDCounter.incrementAndGet();
-        final WriteTransactionState wtxState = createWriteTransactionState(currentID);
+        final WriteTransactionState wtxState = createWriteTransactionState(
+                currentID, mLastCommittedUberPage
+                        .getRevisionNumber());
 
         // Create new write transaction.
         final IWriteTransaction wtx = new WriteTransaction(currentID, this,
@@ -215,12 +217,12 @@ public final class SessionState {
         return wtx;
     }
 
-    protected WriteTransactionState createWriteTransactionState(final long id)
-            throws TreetankIOException {
+    protected WriteTransactionState createWriteTransactionState(final long id,
+            final long revision) throws TreetankIOException {
         final IWriter writer = fac.getWriter();
 
         return new WriteTransactionState(mDatabaseConfiguration, this,
-                new UberPage(mLastCommittedUberPage), writer, id);
+                new UberPage(mLastCommittedUberPage), writer, id, revision);
     }
 
     protected final synchronized void syncLogs(

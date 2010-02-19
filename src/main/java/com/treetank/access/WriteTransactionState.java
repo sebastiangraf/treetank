@@ -84,15 +84,12 @@ public final class WriteTransactionState extends ReadTransactionState {
     protected WriteTransactionState(
             final DatabaseConfiguration databaseConfiguration,
             final SessionState sessionState, final UberPage uberPage,
-            final IWriter writer, final long paramId)
+            final IWriter writer, final long paramId, final long revision)
             throws TreetankIOException {
-        super(databaseConfiguration, uberPage, uberPage
-                .getLastCommittedRevisionNumber(), new ItemList(), writer);
-        mNewRoot = prepareActualRevisionRootPage(super
-                .getActualRevisionRootPage().getRevision());
+        super(databaseConfiguration, uberPage, revision, new ItemList(), writer);
+        mNewRoot = prepareActualRevisionRootPage(revision);
         mSessionState = sessionState;
-        log = new TransactionLogCache(databaseConfiguration, mNewRoot
-                .getRevision());
+        log = new TransactionLogCache(databaseConfiguration, revision);
         mPageWriter = writer;
         transactionID = paramId;
 
@@ -568,8 +565,8 @@ public final class WriteTransactionState extends ReadTransactionState {
      */
     protected void updateDateContainer(final NodePageContainer cont) {
         synchronized (log) {
-            //TODO implement for MultiWriteTrans
-            //Refer to issue #203
+            // TODO implement for MultiWriteTrans
+            // Refer to issue #203
         }
     }
 
