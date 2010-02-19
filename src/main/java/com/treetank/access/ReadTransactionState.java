@@ -66,16 +66,13 @@ public class ReadTransactionState {
     private final UberPage mUberPage;
 
     /** Cached name page of this revision. */
-    private final NamePage mNamePage;
+    private final RevisionRootPage mRootPage;
 
     /** Read-transaction-exclusive item list. */
     private final IItemList mItemList;
 
     /** Internal reference to cache */
     private final ICache mCache;
-
-    /** Actual revision */
-    private final long mRevision;
 
     /**
      * Standard constructor.
@@ -86,7 +83,7 @@ public class ReadTransactionState {
      *            Configuration of database.
      * @param uberPage
      *            Uber page to start reading with.
-     * @param revisionKey
+     * @param revision
      *            Key of revision to read from uber page.
      * @param itemList
      *            List of non-persistent items.
@@ -97,15 +94,15 @@ public class ReadTransactionState {
      */
     protected ReadTransactionState(
             final DatabaseConfiguration databaseConfiguration,
-            final UberPage uberPage, final long revisionKey,
+            final UberPage uberPage, final long revision,
             final IItemList itemList, final IReader reader)
             throws TreetankIOException {
         mCache = new RAMCache();
         mDatabaseConfiguration = databaseConfiguration;
         mPageReader = reader;
         mUberPage = uberPage;
-        mRevision = revisionKey;
-        mNamePage = getNamePage();
+        mRootPage = loadRevRoot(revision);
+        initializeNamePage();
         mItemList = itemList;
 
     }
@@ -162,7 +159,8 @@ public class ReadTransactionState {
      * @return the name
      */
     protected String getName(final int nameKey) {
-        return mNamePage.getName(nameKey);
+        return ((NamePage) mRootPage.getNamePageReference().getPage())
+                .getName(nameKey);
 
     }
 
@@ -174,7 +172,8 @@ public class ReadTransactionState {
      * @return a byte array containing the raw name
      */
     protected final byte[] getRawName(final int nameKey) {
-        return mNamePage.getRawName(nameKey);
+        return ((NamePage) mRootPage.getNamePageReference().getPage())
+                .getRawName(nameKey);
 
     }
 
@@ -215,13 +214,11 @@ public class ReadTransactionState {
         return page;
     }
 
-    protected final NamePage getNamePage() throws TreetankIOException {
-        final PageReference ref = loadRevRoot(mRevision).getNamePageReference();
-        NamePage namepage = (NamePage) ref.getPage();
-        if (namepage == null) {
-            namepage = (NamePage) mPageReader.read(ref);
+    protected final void initializeNamePage() throws TreetankIOException {
+        final PageReference ref = mRootPage.getNamePageReference();
+        if (ref.getPage() == null) {
+            ref.setPage((NamePage) mPageReader.read(ref));
         }
-        return namepage;
     }
 
     /**
@@ -260,7 +257,7 @@ public class ReadTransactionState {
         final List<PageReference> refs = new ArrayList<PageReference>();
         final Set<Long> keys = new HashSet<Long>();
 
-        for (long i = mRevision; i >= 0; i--) {
+        for (long i = mRootPage.getRevision(); i >= 0; i--) {
             final PageReference ref = dereferenceLeafOfTree(loadRevRoot(i)
                     .getIndirectPageReference(), nodePageKey);
             if (ref != null && (ref.getPage() != null || ref.getKey() != null)) {
@@ -372,10 +369,14 @@ public class ReadTransactionState {
      */
     protected RevisionRootPage getActualRevisionRootPage()
             throws TreetankIOException {
-        // TODO evaluate to cache the page
-        return loadRevRoot(mRevision);
+        return mRootPage;
     }
 
+    /**
+     * Getting the {@link DatabaseConfiguration} addicted to this state.
+     * 
+     * @return the {@link DatabaseConfiguration} bound to this state
+     */
     protected DatabaseConfiguration getDatabaseConfiguration() {
         return mDatabaseConfiguration;
     }

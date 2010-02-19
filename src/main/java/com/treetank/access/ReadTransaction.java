@@ -111,8 +111,7 @@ public class ReadTransaction implements IReadTransaction {
      */
     public boolean moveTo(final long nodeKey) {
         assertNotClosed();
-        if (nodeKey != (Long) EFixed.NULL_NODE_KEY
-                .getStandardProperty()) {
+        if (nodeKey != (Long) EFixed.NULL_NODE_KEY.getStandardProperty()) {
             // Remember old node and fetch new one.
             final IItem oldNode = mCurrentNode;
             try {
@@ -135,8 +134,7 @@ public class ReadTransaction implements IReadTransaction {
      * {@inheritDoc}
      */
     public final boolean moveToDocumentRoot() {
-        return moveTo((Long) EFixed.ROOT_NODE_KEY
-                .getStandardProperty());
+        return moveTo((Long) EFixed.ROOT_NODE_KEY.getStandardProperty());
     }
 
     /**

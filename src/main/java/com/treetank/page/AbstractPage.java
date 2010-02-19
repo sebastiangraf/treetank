@@ -81,8 +81,8 @@ public abstract class AbstractPage {
      */
     protected AbstractPage(final int referenceCount,
             final AbstractPage committedPage) {
-        this(referenceCount, committedPage.getRevision() + 1);
 
+        this(referenceCount, committedPage.getRevision() + 1);
         for (int offset = 0; offset < referenceCount; offset++) {
             if (committedPage.getReferences()[offset] != null) {
                 final PageReference ref = committedPage.getReferences()[offset];

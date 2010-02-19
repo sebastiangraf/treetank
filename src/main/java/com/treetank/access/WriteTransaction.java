@@ -30,6 +30,7 @@ import com.treetank.node.AbstractNode;
 import com.treetank.node.AttributeNode;
 import com.treetank.node.ElementNode;
 import com.treetank.node.NamespaceNode;
+import com.treetank.page.RevisionRootPage;
 import com.treetank.page.UberPage;
 import com.treetank.settings.EFixed;
 import com.treetank.utils.TypedValue;
@@ -407,13 +408,25 @@ public final class WriteTransaction extends ReadTransaction implements
     /**
      * {@inheritDoc}
      */
+    @Override
+    public void revertTo(final long revision) throws TreetankException {
+        assertNotClosed();
+        final RevisionRootPage revertedPage = getTransactionState()
+                .loadRevRoot(revision);
+        
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public synchronized void commit() throws TreetankException {
 
         assertNotClosed();
 
         // Commit uber page.
-        UberPage uberPage;
-        uberPage = ((WriteTransactionState) getTransactionState()).commit();
+        UberPage uberPage = ((WriteTransactionState) getTransactionState())
+                .commit();
 
         // Remember succesfully committed uber page in session state.
         getSessionState().setLastCommittedUberPage(uberPage);
@@ -574,4 +587,5 @@ public final class WriteTransaction extends ReadTransaction implements
         ((WriteTransactionState) getTransactionState())
                 .finishNodeModification(node);
     }
+
 }
