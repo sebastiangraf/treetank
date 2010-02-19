@@ -30,7 +30,6 @@ import com.treetank.node.AbstractNode;
 import com.treetank.node.AttributeNode;
 import com.treetank.node.ElementNode;
 import com.treetank.node.NamespaceNode;
-import com.treetank.page.RevisionRootPage;
 import com.treetank.page.UberPage;
 import com.treetank.settings.EFixed;
 import com.treetank.utils.TypedValue;
@@ -411,9 +410,12 @@ public final class WriteTransaction extends ReadTransaction implements
     @Override
     public void revertTo(final long revision) throws TreetankException {
         assertNotClosed();
-        final RevisionRootPage revertedPage = getTransactionState()
-                .loadRevRoot(revision);
-        
+        getTransactionState().close();
+        // Reset internal transaction state to new uber page.
+        setTransactionState(getSessionState().createWriteTransactionState(
+                getTransactionID(), revision));
+        // Reset modification counter.
+        mModificationCount = 0L;
 
     }
 
@@ -437,7 +439,7 @@ public final class WriteTransaction extends ReadTransaction implements
         getTransactionState().close();
         // Reset internal transaction state to new uber page.
         setTransactionState(getSessionState().createWriteTransactionState(
-                getTransactionID()));
+                getTransactionID(), getRevisionNumber()));
 
     }
 
@@ -453,9 +455,14 @@ public final class WriteTransaction extends ReadTransaction implements
 
         getTransactionState().close();
 
+        long revisionToSet = 0;
+        if (!getTransactionState().getUberPage().isBootstrap()) {
+            revisionToSet = getRevisionNumber() - 1;
+        }
+
         // Reset internal transaction state to last committed uber page.
         setTransactionState(getSessionState().createWriteTransactionState(
-                getTransactionID()));
+                getTransactionID(), revisionToSet));
     }
 
     private void intermediateCommitIfRequired() throws TreetankException {

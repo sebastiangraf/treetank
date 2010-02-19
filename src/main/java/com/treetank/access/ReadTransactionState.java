@@ -199,11 +199,10 @@ public class ReadTransactionState {
     protected final RevisionRootPage loadRevRoot(final long revisionKey)
             throws TreetankIOException {
 
-        RevisionRootPage page;
 
         final PageReference ref = dereferenceLeafOfTree(mUberPage
                 .getIndirectPageReference(), revisionKey);
-        page = (RevisionRootPage) ref.getPage();
+        RevisionRootPage page = (RevisionRootPage) ref.getPage();
 
         // If there is no page, get it from the storage and cache it.
         if (page == null) {
