@@ -9,7 +9,7 @@ import com.treetank.utils.IConstants;
 /**
  * This class represents the byte input/output mechanism for File-access. After
  * all, it is just a simple wrapper for the ByteBuffer and exists only for
- * convinience reasons.
+ * convenience reasons.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
@@ -17,7 +17,7 @@ import com.treetank.utils.IConstants;
 public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
 
     /** internal buffer */
-    private transient final ByteBuffer buffer;
+    private transient ByteBuffer buffer;
 
     /**
      * Constructor
@@ -30,6 +30,7 @@ public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
      * {@inheritDoc}
      */
     public void writeByte(final byte byteVal) {
+        checkAndIncrease(1);
         buffer.put(byteVal);
     }
 
@@ -37,6 +38,7 @@ public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
      * {@inheritDoc}
      */
     public void writeLong(final long longVal) {
+        checkAndIncrease(8);
         buffer.putLong(longVal);
 
     }
@@ -92,6 +94,7 @@ public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
      *{@inheritDoc}
      */
     public void writeInt(final int intVal) {
+        checkAndIncrease(4);
         buffer.putInt(intVal);
 
     }
@@ -101,6 +104,24 @@ public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
      */
     public int readInt() {
         return buffer.getInt();
+    }
+
+    /**
+     * Checking of length is sufficient, if not, increase the bytebuffer
+     * 
+     * @param length
+     *            for the bytes which have to be inserted
+     */
+    private void checkAndIncrease(final int length) {
+        final int position = buffer.position();
+        if (buffer.position() + length >= buffer.capacity()) {
+            buffer.position(0);
+            final ByteBuffer newBuffer = ByteBuffer.allocate(buffer.capacity()
+                    + IConstants.BUFFER_SIZE);
+            newBuffer.put(buffer);
+            buffer = newBuffer;
+            buffer.position(position);
+        }
     }
 
 }

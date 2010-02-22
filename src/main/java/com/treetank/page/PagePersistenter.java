@@ -37,6 +37,9 @@ public final class PagePersistenter {
         case REVISIONROOTPAGE:
             returnVal = new RevisionRootPage(source);
             break;
+        default:
+            throw new IllegalStateException(
+                    "Invalid Kind of Nodes. Something went wrong in the serialization/deserialization");
         }
         return returnVal;
     }

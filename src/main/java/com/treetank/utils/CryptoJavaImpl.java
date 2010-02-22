@@ -80,7 +80,7 @@ public class CryptoJavaImpl implements ICrypto {
         for (final byte byteVal : result) {
             buffer.writeByte(byteVal);
         }
-        return (short) (buffer.position());
+        return buffer.position();
     }
 
     /**
@@ -118,7 +118,7 @@ public class CryptoJavaImpl implements ICrypto {
         for (final byte byteVal : result) {
             buffer.writeByte(byteVal);
         }
-        return (short) (result.length + 24);
+        return result.length + 24;
     }
 
 }

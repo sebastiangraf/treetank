@@ -241,7 +241,6 @@ public class XMLShredderTest {
     }
 
     @Test
-    @Ignore
     public void testShreddingLargeText() throws Exception {
         final IDatabase database = Database.openDatabase(ITestConstants.PATH2);
         final ISession session = database.getSession();
