@@ -12,10 +12,10 @@
 	These versions can be easily retrieved within the database itself.</description>
 	<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/disy/forschung/treetank/</url>
 	<scm>
-    	<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk</connection>
-    	<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk</developerConnection>
-    	<url>https://svn.uni-konstanz.de/disy/Treetank</url>
-  	</scm>
+		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk</connection>
+		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk</developerConnection>
+		<url>https://svn.uni-konstanz.de/disy/Treetank</url>
+	</scm>
 	<organization>
 		<name>University of Konstanz, Distributed Systems Lab</name>
 		<url>http://www.informatik.uni-konstanz.de/ags/disy/
@@ -53,11 +53,11 @@
 			<layout>default</layout>
 		</repository>
 		<repository>
-             <id>disy-repo</id>
-             <name>Disy Java packages</name>
-             <url>http://xen5.disy.inf.uni-konstanz.de/repo/repository</url>
-             <layout>default</layout>
-        </repository>
+			<id>disy-repo</id>
+			<name>Disy Java packages</name>
+			<url>http://xen5.disy.inf.uni-konstanz.de/repo/repository</url>
+			<layout>default</layout>
+		</repository>
 	</repositories>
 	<reporting>
 		<plugins>
@@ -120,7 +120,7 @@
 					<execution>
 						<id>attach-sources</id>
 						<goals>
-							<goal>jar</goal>
+							<goal>test-jar</goal>
 						</goals>
 					</execution>
 				</executions>
@@ -129,14 +129,14 @@
 	</build>
 	<dependencies>
 		<dependency>
-             <groupId>org.mortbay.jetty</groupId>
-             <artifactId>jetty</artifactId>
-             <version>6.1.21</version>
+			<groupId>org.mortbay.jetty</groupId>
+			<artifactId>jetty</artifactId>
+			<version>6.1.21</version>
 		</dependency>
 		<dependency>
-             <groupId>org.mortbay.jetty</groupId>
-             <artifactId>jetty-util</artifactId>
-             <version>6.1.21</version>
+			<groupId>org.mortbay.jetty</groupId>
+			<artifactId>jetty-util</artifactId>
+			<version>6.1.21</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sleepycat</groupId>
@@ -150,10 +150,10 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-             <groupId>org.mortbay.jetty</groupId>
-             <artifactId>jetty-servlet-tester</artifactId>
-             <version>6.1.21</version>
-             <scope>test</scope>
+			<groupId>org.mortbay.jetty</groupId>
+			<artifactId>jetty-servlet-tester</artifactId>
+			<version>6.1.21</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -172,22 +172,22 @@
 		</dependency>
 	</dependencies>
 	<distributionManagement>
-  		<repository>
-    		<id>xen5</id>
-    		<name>Xen5 Repository</name>
-        	<url>scp://xen5.disy.inf.uni-konstanz.de/home/disyadmin/internalRepo/repository</url>
+		<repository>
+			<id>xen5</id>
+			<name>Xen5 Repository</name>
+			<url>scp://xen5.disy.inf.uni-konstanz.de/home/disyadmin/internalRepo/repository</url>
 			<uniqueVersion>false</uniqueVersion>
-  		</repository>
-  		<snapshotRepository>
-    		<id>xen5</id>
-    		<name>Xen5 SnapshotRepository</name>
-         	<url>scp://xen5.disy.inf.uni-konstanz.de/home/disyadmin/internalRepo/snapshotRepository</url>
+		</repository>
+		<snapshotRepository>
+			<id>xen5</id>
+			<name>Xen5 SnapshotRepository</name>
+			<url>scp://xen5.disy.inf.uni-konstanz.de/home/disyadmin/internalRepo/snapshotRepository</url>
 			<uniqueVersion>false</uniqueVersion>
- 		</snapshotRepository>
+		</snapshotRepository>
 	</distributionManagement>
 	<properties>
 		<compileSource>1.6</compileSource>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>	
+	</properties>
 </project>
 
