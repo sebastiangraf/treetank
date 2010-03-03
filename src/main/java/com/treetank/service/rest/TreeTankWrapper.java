@@ -108,7 +108,7 @@ public final class TreeTankWrapper {
         factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
         final XMLStreamReader parser = factory
                 .createXMLStreamReader(new StringReader(value));
-        final XMLShredder shredder = new XMLShredder(wtx, parser);
+        final XMLShredder shredder = new XMLShredder(wtx, parser, true);
         return shredder.call();
     }
 

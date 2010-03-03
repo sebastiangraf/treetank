@@ -53,7 +53,7 @@ public final class OverallTest {
 
             final XMLStreamReader reader = XMLShredder.createReader(new File(
                     XML));
-            final XMLShredder shredder = new XMLShredder(wtx, reader);
+            final XMLShredder shredder = new XMLShredder(wtx, reader, true);
             shredder.call();
 
             wtx.close();

@@ -29,7 +29,6 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.treetank.ITestConstants;
@@ -132,12 +131,13 @@ public class XMLShredderTest {
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLShredder shredder = new XMLShredder(wtx, XMLShredder
-                .createReader(new File(XML)));
+                .createReader(new File(XML)), true);
         shredder.call();
         assertEquals(1, wtx.getRevisionNumber());
         wtx.moveToDocumentRoot();
+        wtx.moveToFirstChild();
         final XMLShredder shredder2 = new XMLShredder(wtx, XMLShredder
-                .createReader(new File(XML)));
+                .createReader(new File(XML)), false);
         shredder2.call();
         assertEquals(2, wtx.getRevisionNumber());
         wtx.close();
@@ -202,7 +202,7 @@ public class XMLShredderTest {
         final ISession session2 = database2.getSession();
         final IWriteTransaction wtx = session2.beginWriteTransaction();
         final XMLShredder shredder = new XMLShredder(wtx, XMLShredder
-                .createReader(new File(XML2)));
+                .createReader(new File(XML2)), true);
         shredder.call();
         wtx.commit();
         wtx.close();
@@ -246,7 +246,7 @@ public class XMLShredderTest {
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLShredder shredder = new XMLShredder(wtx, XMLShredder
-                .createReader(new File(XML3)));
+                .createReader(new File(XML3)), true);
         shredder.call();
         wtx.close();
 

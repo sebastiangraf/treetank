@@ -36,18 +36,33 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TreetankUsageException;
 import com.treetank.settings.EFixed;
 import com.treetank.utils.FastStack;
 import com.treetank.utils.TypedValue;
 
+/**
+ * 
+ * Thiss class appends a given {@link XMLStreamReader} to a writetransaction.
+ * The content of the stream is added as a subtree. Based on a boolean which
+ * indentifies the point of insertion, the subtree is either added as subtree or
+ * as rightsibling
+ * 
+ * @author Marc Kramis, Seabix
+ * @author Sebastian Graf, University of Konstanz
+ * 
+ */
 public final class XMLShredder implements Callable<Long> {
 
     private final IWriteTransaction mWtx;
     private final XMLStreamReader mReader;
+    private final boolean mFirstChildAppend;
 
-    public XMLShredder(final IWriteTransaction wtx, final XMLStreamReader reader) {
+    public XMLShredder(final IWriteTransaction wtx,
+            final XMLStreamReader reader, final boolean addAsFirstChild) {
         mWtx = wtx;
         mReader = reader;
+        mFirstChildAppend = addAsFirstChild;
     }
 
     public Long call() throws Exception {
@@ -58,7 +73,7 @@ public final class XMLShredder implements Callable<Long> {
             long key;
             leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
                     .getStandardProperty());
-            // leftSiblingKeyStack.push(wtx.getLeftSiblingKey());
+            boolean firstElement = true;
 
             // Iterate over all nodes.
             while (mReader.hasNext()) {
@@ -72,14 +87,27 @@ public final class XMLShredder implements Callable<Long> {
                             .getLocalName() : mReader.getPrefix() + ":"
                             + mReader.getLocalName());
 
-                    if (leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
-                            .getStandardProperty()) {
-                        key = mWtx.insertElementAsFirstChild(name, mReader
-                                .getNamespaceURI());
-                    } else {
+                    if (firstElement && !mFirstChildAppend) {
+                        if (mWtx.getNode().isDocumentRoot()) {
+                            throw new TreetankUsageException(
+                                    "Subtree can not be inserted as sibling of Root");
+                        }
                         key = mWtx.insertElementAsRightSibling(name, mReader
                                 .getNamespaceURI());
+                    } else {
+
+                        if (leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
+                                .getStandardProperty()) {
+                            key = mWtx.insertElementAsFirstChild(name, mReader
+                                    .getNamespaceURI());
+                        } else {
+                            key = mWtx.insertElementAsRightSibling(name,
+                                    mReader.getNamespaceURI());
+                        }
                     }
+
+                    firstElement = false;
+
                     leftSiblingKeyStack.pop();
                     leftSiblingKeyStack.push(key);
                     leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
@@ -163,7 +191,7 @@ public final class XMLShredder implements Callable<Long> {
         final ISession session = db.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLStreamReader reader = createReader(new File(args[0]));
-        final XMLShredder shredder = new XMLShredder(wtx, reader);
+        final XMLShredder shredder = new XMLShredder(wtx, reader, true);
         shredder.call();
 
         wtx.close();
