@@ -54,8 +54,8 @@ public final class IndirectPage extends AbstractPage {
      * @param page
      *            Page to clone.
      */
-    public IndirectPage(final IndirectPage page) {
-        super(IConstants.INP_REFERENCE_COUNT, page);
+    public IndirectPage(final IndirectPage page, final long revisionToUse) {
+        super(IConstants.INP_REFERENCE_COUNT, page, revisionToUse);
     }
 
     @Override

@@ -79,8 +79,8 @@ public final class NamePage extends AbstractPage {
      * @param committedNamePage
      *            Page to clone.
      */
-    public NamePage(final NamePage committedNamePage) {
-        super(0, committedNamePage);
+    public NamePage(final NamePage committedNamePage, final long revisionToUse) {
+        super(0, committedNamePage, revisionToUse);
         mNameMap = new HashMap<Integer, String>(committedNamePage.mNameMap);
         // mRawNameMap = new HashMap<Integer, byte[]>(
         // committedNamePage.mRawNameMap);

@@ -110,8 +110,8 @@ public final class UberPage extends AbstractPage {
      * @param committedUberPage
      *            Page to clone.
      */
-    public UberPage(final UberPage committedUberPage) {
-        super(1, committedUberPage);
+    public UberPage(final UberPage committedUberPage, final long revisionToUse) {
+        super(1, committedUberPage, revisionToUse);
         if (committedUberPage.isBootstrap()) {
             mRevisionCount = committedUberPage.mRevisionCount;
             mBootstrap = committedUberPage.mBootstrap;

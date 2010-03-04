@@ -77,8 +77,9 @@ public final class RevisionRootPage extends AbstractPage {
      * @param committedRevisionRootPage
      *            Page to clone.
      */
-    public RevisionRootPage(final RevisionRootPage committedRevisionRootPage) {
-        super(2, committedRevisionRootPage);
+    public RevisionRootPage(final RevisionRootPage committedRevisionRootPage,
+            final long revisionToUse) {
+        super(2, committedRevisionRootPage, revisionToUse);
         mRevisionSize = committedRevisionRootPage.mRevisionSize;
         mMaxNodeKey = committedRevisionRootPage.mMaxNodeKey;
     }

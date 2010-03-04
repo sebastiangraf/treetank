@@ -80,9 +80,9 @@ public abstract class AbstractPage {
      *            Page to clone.
      */
     protected AbstractPage(final int referenceCount,
-            final AbstractPage committedPage) {
+            final AbstractPage committedPage, final long revision) {
 
-        this(referenceCount, committedPage.getRevision() + 1);
+        this(referenceCount, revision);
         for (int offset = 0; offset < referenceCount; offset++) {
             if (committedPage.getReferences()[offset] != null) {
                 final PageReference ref = committedPage.getReferences()[offset];
