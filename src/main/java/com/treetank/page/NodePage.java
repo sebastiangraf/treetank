@@ -83,8 +83,9 @@ public class NodePage extends AbstractPage {
      * @param committedNodePage
      *            Node page to clone.
      */
-    protected NodePage(final NodePage committedNodePage) {
-        super(0, committedNodePage);
+    protected NodePage(final NodePage committedNodePage,
+            final long revisionToUse) {
+        super(0, committedNodePage, revisionToUse);
         mNodePageKey = committedNodePage.mNodePageKey;
         mNodes = new AbstractNode[IConstants.NDP_NODE_COUNT];
         // Deep-copy all nodes.

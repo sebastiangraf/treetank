@@ -424,7 +424,8 @@ public final class WriteTransactionState extends ReadTransactionState {
         if (!reference.isInstantiated()) {
             if (reference.isCommitted()) {
                 page = new IndirectPage(
-                        (IndirectPage) dereferenceIndirectPage(reference));
+                        (IndirectPage) dereferenceIndirectPage(reference),
+                        mNewRoot.getRevision() + 1);
             } else {
                 page = new IndirectPage(getUberPage().getRevision());
 
@@ -481,7 +482,7 @@ public final class WriteTransactionState extends ReadTransactionState {
 
             // Prepare revision root nodePageReference.
             final RevisionRootPage revisionRootPage = new RevisionRootPage(
-                    super.loadRevRoot(revision));
+                    super.loadRevRoot(revision), revision + 1);
 
             // Prepare indirect tree to hold reference to prepared revision root
             // nodePageReference.

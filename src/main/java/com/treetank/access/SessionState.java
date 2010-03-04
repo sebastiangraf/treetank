@@ -221,7 +221,8 @@ public final class SessionState {
         final IWriter writer = fac.getWriter();
 
         return new WriteTransactionState(mDatabaseConfiguration, this,
-                new UberPage(mLastCommittedUberPage), writer, id, revision);
+                new UberPage(mLastCommittedUberPage, revision + 1), writer, id,
+                revision);
     }
 
     protected final synchronized void syncLogs(
