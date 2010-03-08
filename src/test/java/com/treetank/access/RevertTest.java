@@ -54,7 +54,7 @@ public final class RevertTest {
         wtx.close();
 
         wtx = session.beginWriteTransaction();
-        assertEquals(2L, wtx.getRevisionNumber());
+        assertEquals(3L, wtx.getRevisionNumber());
         wtx.close();
 
         session.close();
