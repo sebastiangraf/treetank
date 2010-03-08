@@ -199,9 +199,12 @@ public class ReadTransactionState {
     protected final RevisionRootPage loadRevRoot(final long revisionKey)
             throws TreetankIOException {
 
-
         final PageReference ref = dereferenceLeafOfTree(mUberPage
                 .getIndirectPageReference(), revisionKey);
+        if (ref.getPage() == null && ref.getKey() == null) {
+            throw new TreetankIOException(
+                    "Revision will not be loaded since neither the key nor the page is referencable.");
+        }
         RevisionRootPage page = (RevisionRootPage) ref.getPage();
 
         // If there is no page, get it from the storage and cache it.

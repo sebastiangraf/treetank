@@ -84,12 +84,15 @@ public final class WriteTransactionState extends ReadTransactionState {
     protected WriteTransactionState(
             final DatabaseConfiguration databaseConfiguration,
             final SessionState sessionState, final UberPage uberPage,
-            final IWriter writer, final long paramId, final long revision)
+            final IWriter writer, final long paramId,
+            final long representRevision, final long storeRevision)
             throws TreetankIOException {
-        super(databaseConfiguration, uberPage, revision, new ItemList(), writer);
-        mNewRoot = prepareActualRevisionRootPage(revision);
+        super(databaseConfiguration, uberPage, representRevision,
+                new ItemList(), writer);
+        mNewRoot = preparePreviousRevisionRootPage(representRevision,
+                storeRevision);
         mSessionState = sessionState;
-        log = new TransactionLogCache(databaseConfiguration, revision);
+        log = new TransactionLogCache(databaseConfiguration, storeRevision);
         mPageWriter = writer;
         transactionID = paramId;
 
@@ -473,16 +476,17 @@ public final class WriteTransactionState extends ReadTransactionState {
         return cont;
     }
 
-    private RevisionRootPage prepareActualRevisionRootPage(final long revision)
+    private RevisionRootPage preparePreviousRevisionRootPage(
+            final long baseRevision, final long representRevision)
             throws TreetankIOException {
 
         if (getUberPage().isBootstrap()) {
-            return super.loadRevRoot(revision);
+            return super.loadRevRoot(baseRevision);
         } else {
 
             // Prepare revision root nodePageReference.
             final RevisionRootPage revisionRootPage = new RevisionRootPage(
-                    super.loadRevRoot(revision), revision + 1);
+                    super.loadRevRoot(baseRevision), representRevision + 1);
 
             // Prepare indirect tree to hold reference to prepared revision root
             // nodePageReference.
