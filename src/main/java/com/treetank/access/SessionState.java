@@ -346,7 +346,7 @@ public final class SessionState {
             throws TreetankUsageException {
         if (rev < 0) {
             throw new TreetankUsageException("Revision must be at least 0");
-        } else if (rev > mLastCommittedUberPage.getRevision() - 1) {
+        } else if (rev > mLastCommittedUberPage.getRevision()) {
             throw new TreetankUsageException(new StringBuilder(
                     "Revision must not be bigger than ").append(
                     mLastCommittedUberPage.getRevision()).toString());
