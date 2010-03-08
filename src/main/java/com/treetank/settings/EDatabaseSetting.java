@@ -12,10 +12,10 @@ import com.treetank.io.AbstractIOFactory.StorageType;
 public enum EDatabaseSetting {
 
     /** Default storage */
-    STORAGE_TYPE(StorageType.Berkeley.name()),
+    STORAGE_TYPE(StorageType.File.name()),
 
     /** Revision properties */
-    REVISION_TYPE(ERevisioning.SLIDING_SNAPSHOT.name()),
+    REVISION_TYPE(ERevisioning.INCREMENTAL.name()),
 
     /** Window of Sliding Snapshot */
     REVISION_TO_RESTORE("4"),
