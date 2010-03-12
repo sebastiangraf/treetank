@@ -23,6 +23,7 @@ public final class OverallTest {
     private static int NUM_CHARS = 3;
     private static int ELEMENTS = 1000;
     private static int COMMITPERCENTAGE = 20;
+    private static int REMOVEPERCENTAGE = 20;
     private static final Random ran = new Random(0l);
     public static String chars = "abcdefghijklm";
 
@@ -88,6 +89,51 @@ public final class OverallTest {
                 wtx.commit();
             }
             wtx.moveTo(ran.nextInt(i + 1) + 1);
+            // TODO Check if reference check can occur on "=="
+            if (wtx.getNode().getKind() != ENodes.ELEMENT_KIND) {
+                wtx.moveToParent();
+            }
+        }
+        final long key = wtx.getNode().getNodeKey();
+        wtx.remove();
+        wtx.insertElementAsFirstChild(getString(), "");
+        wtx.moveTo(key);
+        wtx.commit();
+        wtx.close();
+        session.close();
+    }
+
+    @Test
+    public void testBullshitWithRemove() throws TreetankException {
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        wtx.insertElementAsFirstChild(getString(), "");
+        for (int i = 0; i < ELEMENTS; i++) {
+            if (ran.nextBoolean()) {
+                wtx.insertElementAsFirstChild(getString(), "");
+            } else {
+                wtx.insertElementAsRightSibling(getString(), "");
+            }
+            while (ran.nextBoolean()) {
+                wtx.insertAttribute(getString(), getString(), getString());
+                wtx.moveToParent();
+            }
+            while (ran.nextBoolean()) {
+                wtx.insertNamespace(getString(), getString());
+                wtx.moveToParent();
+            }
+
+            if (ran.nextInt(100) < REMOVEPERCENTAGE) {
+                wtx.remove();
+            }
+
+            if (ran.nextInt(100) < COMMITPERCENTAGE) {
+                wtx.commit();
+            }
+            do {
+                wtx.moveTo(ran.nextInt(i + 1) + 1);
+            } while (wtx.getNode() == null);
             // TODO Check if reference check can occur on "=="
             if (wtx.getNode().getKind() != ENodes.ELEMENT_KIND) {
                 wtx.moveToParent();
