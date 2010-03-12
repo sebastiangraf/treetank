@@ -22,7 +22,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import com.treetank.api.IAxis;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankUsageException;
@@ -230,18 +232,16 @@ public final class WriteTransaction extends ReadTransaction implements
         assertNotClosed();
         mModificationCount++;
         // Remember all related nodes.
-        AbstractNode node = null;
+        final AbstractNode node = (AbstractNode) getCurrentNode();
         AbstractNode leftSibling = null;
         AbstractNode rightSibling = null;
         AbstractNode parent = null;
 
-        node = (AbstractNode) getCurrentNode();
-
-        if (getCurrentNode().isDocumentRoot()) {
+        if (node.isDocumentRoot()) {
             throw new TreetankUsageException("Root node can not be removed.");
-        } else if (getCurrentNode().isElement() || getCurrentNode().isText()) {
+        } else if (node.isElement() || node.isText()) {
 
-            node = (AbstractNode) getCurrentNode();
+            // getting the neighbourhood
             if (node.hasLeftSibling()) {
                 moveToLeftSibling();
                 leftSibling = (AbstractNode) getCurrentNode();
@@ -253,6 +253,29 @@ public final class WriteTransaction extends ReadTransaction implements
             }
             moveToParent();
             parent = (AbstractNode) getCurrentNode();
+            moveTo(node.getNodeKey());
+
+            // removing subtree
+            final IAxis desc = new DescendantAxis(this);
+            while (desc.hasNext()) {
+                desc.next();
+                ((WriteTransactionState) getTransactionState())
+                        .removeNode((AbstractNode) this.getCurrentNode());
+            }
+            // removing attributes
+            moveTo(node.getNodeKey());
+            for (int i = 0; i < node.getAttributeCount(); i++) {
+                moveTo(node.getAttributeKey(i));
+                ((WriteTransactionState) getTransactionState())
+                        .removeNode((AbstractNode) this.getCurrentNode());
+            }
+            // removing namespaces
+            moveTo(node.getNodeKey());
+            for (int i = 0; i < node.getNamespaceCount(); i++) {
+                moveTo(node.getNamespaceKey(i));
+                ((WriteTransactionState) getTransactionState())
+                        .removeNode((AbstractNode) this.getCurrentNode());
+            }
 
             // Remove old node.
             ((WriteTransactionState) getTransactionState()).removeNode(node);
@@ -414,8 +437,7 @@ public final class WriteTransaction extends ReadTransaction implements
         getTransactionState().close();
         // Reset internal transaction state to new uber page.
         setTransactionState(getSessionState().createWriteTransactionState(
-                getTransactionID(),revision,
-                getRevisionNumber() - 1));
+                getTransactionID(), revision, getRevisionNumber() - 1));
         // Reset modification counter.
         mModificationCount = 0L;
         moveToDocumentRoot();
