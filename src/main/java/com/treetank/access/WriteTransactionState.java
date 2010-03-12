@@ -122,6 +122,9 @@ public final class WriteTransactionState extends ReadTransactionState {
         if (node == null) {
             final AbstractNode oldNode = this.nodePageCon.getComplete()
                     .getNode(nodePageOffset);
+            if (oldNode == null) {
+                throw new IllegalStateException();
+            }
             node = NodePersistenter.createNode(oldNode);
             this.nodePageCon.getModified().setNode(nodePageOffset, node);
         }

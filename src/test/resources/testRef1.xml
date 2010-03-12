@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<p:a xmlns:p="ns" ttid="1" i="j">
+	oops1
+	<b ttid="5">
+		foo
+		<c ttid="7" />
+	</b>
+	oops2
+	<b ttid="9" p:x="y">
+		<c ttid="11" />
+		bar
+	</b>
+	oops3
+</p:a>
