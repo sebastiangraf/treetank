@@ -58,7 +58,7 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    public IReadTransaction beginReadTransaction() throws TreetankException {
+    public synchronized IReadTransaction beginReadTransaction() throws TreetankException {
         assertNotClosed();
         return mSessionState.beginReadTransaction(new ItemList());
     }
@@ -66,7 +66,7 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    public IReadTransaction beginReadTransaction(final long revisionKey)
+    public synchronized IReadTransaction beginReadTransaction(final long revisionKey)
             throws TreetankException {
         assertNotClosed();
         mSessionState.assertValidRevision(revisionKey);
@@ -76,7 +76,7 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    public IWriteTransaction beginWriteTransaction() throws TreetankException {
+    public synchronized IWriteTransaction beginWriteTransaction() throws TreetankException {
         assertNotClosed();
         return mSessionState.beginWriteTransaction(0, 0);
     }
@@ -84,7 +84,7 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    public IWriteTransaction beginWriteTransaction(final int maxNodeCount,
+    public synchronized IWriteTransaction beginWriteTransaction(final int maxNodeCount,
             final int maxTime) throws TreetankException {
         assertNotClosed();
         return mSessionState.beginWriteTransaction(maxNodeCount, maxTime);
@@ -93,21 +93,21 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    public int getReadTransactionCount() {
+    public synchronized int getReadTransactionCount() {
         return mSessionState.getReadTransactionCount();
     }
 
     /**
      * {@inheritDoc}
      */
-    public int getWriteTransactionCount() {
+    public synchronized int getWriteTransactionCount() {
         return mSessionState.getWriteTransactionCount();
     }
 
     /**
      * {@inheritDoc}
      */
-    public void close() throws TreetankException {
+    public synchronized void close() throws TreetankException {
         if (!mClosed) {
             mSessionState.close();
             mSessionState = null;
@@ -125,7 +125,7 @@ public final class Session implements ISession {
     }
 
     @Override
-    public boolean isClosed() {
+    public synchronized boolean isClosed() {
         return mClosed;
     }
 

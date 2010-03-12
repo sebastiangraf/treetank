@@ -55,8 +55,8 @@ public final class Database implements IDatabase {
      * @throws TreetankIOException
      *             if something odd happens within the creation process.
      */
-    public static boolean createDatabase(final DatabaseConfiguration conf)
-            throws TreetankIOException {
+    public synchronized static boolean createDatabase(
+            final DatabaseConfiguration conf) throws TreetankIOException {
         try {
             final File file = conf.getFile();
             boolean returnVal = true;
@@ -99,7 +99,7 @@ public final class Database implements IDatabase {
      *            the database at this path should be deleted.
      * @return true if removal is successful, false otherwise
      */
-    public static boolean truncateDatabase(final File file) {
+    public synchronized static boolean truncateDatabase(final File file) {
         if (DATABASEMAP.containsKey(file)) {
             return false;
         } else {
@@ -117,7 +117,7 @@ public final class Database implements IDatabase {
      * @throws TreetankException
      *             if something odd happens
      */
-    public static IDatabase openDatabase(final File file)
+    public synchronized static IDatabase openDatabase(final File file)
             throws TreetankException {
         return openDatabase(file, new SessionConfiguration());
     }
@@ -133,7 +133,7 @@ public final class Database implements IDatabase {
      * @throws TreetankException
      *             if something odd happens
      */
-    public static IDatabase openDatabase(final File file,
+    public synchronized static IDatabase openDatabase(final File file,
             final SessionConfiguration sessionConf) throws TreetankException {
         if (!file.exists() && !createDatabase(new DatabaseConfiguration(file))) {
             throw new TreetankUsageException(new StringBuilder(
@@ -156,7 +156,7 @@ public final class Database implements IDatabase {
      * @throws TreetankException
      *             if something weird happens while closing
      */
-    public static void forceCloseDatabase(final File file)
+    public synchronized static void forceCloseDatabase(final File file)
             throws TreetankException {
         final IDatabase database = DATABASEMAP.remove(file);
         if (database != null) {
@@ -171,7 +171,7 @@ public final class Database implements IDatabase {
      * @throws TreetankException
      *             if close is not successful.
      */
-    public  void close() throws TreetankException {
+    public synchronized void close() throws TreetankException {
         if (mSession != null) {
             mSession.close();
         }
@@ -187,7 +187,7 @@ public final class Database implements IDatabase {
      * @throws TreetankException
      */
     @Override
-    public ISession getSession() throws TreetankException {
+    public synchronized ISession getSession() throws TreetankException {
         if (mSession == null || mSession.isClosed()) {
             mSession = new Session(this.mDatabaseConfiguration,
                     this.mSessionConfiguration);
@@ -199,7 +199,7 @@ public final class Database implements IDatabase {
      * {@inheritDoc}
      */
     @Override
-    public File getFile() {
+    public synchronized File getFile() {
         return mDatabaseConfiguration.getFile();
     }
 
@@ -207,7 +207,7 @@ public final class Database implements IDatabase {
      * {@inheritDoc}
      */
     @Override
-    public int[] getVersion() {
+    public synchronized int[] getVersion() {
         final int[] versions = new int[3];
         versions[0] = Integer.parseInt(mDatabaseConfiguration.getProps()
                 .getProperty(EDatabaseSetting.VERSION_MAJOR.name()));
