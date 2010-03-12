@@ -116,21 +116,6 @@ public final class Session implements ISession {
     }
 
     /**
-     * Required to close file handle.
-     * 
-     * @throws Throwable
-     *             if the finalization of the superclass does not work.
-     */
-    @Override
-    protected void finalize() throws Throwable {
-        try {
-            close();
-        } finally {
-            super.finalize();
-        }
-    }
-
-    /**
      * Make sure that the session is not yet closed when calling this method.
      */
     private void assertNotClosed() {
