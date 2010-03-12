@@ -62,9 +62,51 @@ public class XMLSerializerTest {
         final IReadTransaction rtx = session.beginReadTransaction();
         final XMLSerializer serializer = new XMLSerializer(rtx, out);
         serializer.call();
-        TestCase.assertEquals(DocumentCreater.XML_TANK, out.toString());
+        TestCase.assertEquals(DocumentCreater.XML, out.toString());
         rtx.close();
         session.close();
         database.close();
     }
+
+    @Test
+    public void testRestSerializer() throws Exception {
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        wtx.close();
+
+        // Generate from this session.
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final IReadTransaction rtx = session.beginReadTransaction();
+        final XMLSerializer serializer = new XMLSerializer(rtx, out, true, true);
+        serializer.call();
+        TestCase.assertEquals(DocumentCreater.REST, out.toString());
+        rtx.close();
+        session.close();
+        database.close();
+    }
+
+    @Test
+    public void testIDSerializer() throws Exception {
+        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        wtx.close();
+
+        // Generate from this session.
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final IReadTransaction rtx = session.beginReadTransaction();
+        final XMLSerializer serializer = new XMLSerializer(rtx, out, true,
+                false, true);
+        serializer.call();
+        TestCase.assertEquals(DocumentCreater.ID, out.toString());
+        rtx.close();
+        session.close();
+        database.close();
+    }
+
 }

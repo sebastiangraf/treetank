@@ -125,7 +125,7 @@ public class TreeTankWrapperTest {
      */
     @Test
     public void testGetOutputStreamLongLong() throws TreetankRestException {
-        final String content = "<rest:item><rest:sequence xmlns:rest=\"REST\"><rest:item><p:a xmlns:p=\"ns\" rest:id=\"1\" i=\"j\">oops1<b rest:id=\"5\">foo<c rest:id=\"7\"/></b>oops2<b rest:id=\"9\" p:x=\"y\"><c rest:id=\"11\"/>bar</b>oops3</p:a></rest:item></rest:sequence></rest:item>";
+        final String content = "<rest:item><rest:sequence xmlns:rest=\"REST\"><rest:item><p:a xmlns:p=\"ns\" rest:ttid=\"1\" i=\"j\">oops1<b rest:ttid=\"5\">foo<c rest:ttid=\"7\"/></b>oops2<b rest:ttid=\"9\" p:x=\"y\"><c rest:ttid=\"11\"/>bar</b>oops3</p:a></rest:item></rest:sequence></rest:item>";
         wrapper.post(0, DocumentCreater.XML);
         final ByteArrayOutputStream stream = new ByteArrayOutputStream();
         wrapper.get(stream, 0, 0);
@@ -142,7 +142,7 @@ public class TreeTankWrapperTest {
     @Test
     public void testGetOutputStreamLongLongString()
             throws TreetankRestException {
-        final String content = "<rest:item><rest:sequence xmlns:rest=\"REST\"><rest:item><c rest:id=\"7\"/></rest:item></rest:sequence></rest:item><rest:item><rest:sequence xmlns:rest=\"REST\"><rest:item><c rest:id=\"11\"/></rest:item></rest:sequence></rest:item>";
+        final String content = "<rest:item><rest:sequence xmlns:rest=\"REST\"><rest:item><c rest:ttid=\"7\"/></rest:item></rest:sequence></rest:item><rest:item><rest:sequence xmlns:rest=\"REST\"><rest:item><c rest:ttid=\"11\"/></rest:item></rest:sequence></rest:item>";
         wrapper.post(0, DocumentCreater.XML);
         final ByteArrayOutputStream stream = new ByteArrayOutputStream();
         wrapper.get(stream, 0, 0, "descendant-or-self::b/child::*");

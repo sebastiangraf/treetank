@@ -42,9 +42,8 @@ import com.treetank.utils.FastStack;
 import com.treetank.utils.TypedValue;
 
 /**
- * 
- * Thiss class appends a given {@link XMLStreamReader} to a writetransaction.
- * The content of the stream is added as a subtree. Based on a boolean which
+ * This class appends a given {@link XMLStreamReader} to a writetransaction. The
+ * content of the stream is added as a subtree. Based on a boolean which
  * indentifies the point of insertion, the subtree is either added as subtree or
  * as rightsibling
  * 
@@ -57,12 +56,20 @@ public final class XMLShredder implements Callable<Long> {
     private final IWriteTransaction mWtx;
     private final XMLStreamReader mReader;
     private final boolean mFirstChildAppend;
+    private final boolean mInsertOnlyModified;
 
     public XMLShredder(final IWriteTransaction wtx,
             final XMLStreamReader reader, final boolean addAsFirstChild) {
+        this(wtx, reader, addAsFirstChild, false);
+    }
+
+    public XMLShredder(final IWriteTransaction wtx,
+            final XMLStreamReader reader, final boolean addAsFirstChild,
+            final boolean insertOnlyModified) {
         mWtx = wtx;
         mReader = reader;
         mFirstChildAppend = addAsFirstChild;
+        mInsertOnlyModified = insertOnlyModified;
     }
 
     public Long call() throws Exception {

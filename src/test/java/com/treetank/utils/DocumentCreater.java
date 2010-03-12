@@ -62,11 +62,17 @@ import com.treetank.exception.TreetankException;
  */
 public final class DocumentCreater {
 
-    /** String representation of test document with TNK environment. */
-    public static final String XML_TANK = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-            // + "<rest:sequence xmlns:rest=\"REST\"><rest:item>"
-            + "<p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b p:x=\"y\">"
-            + "<c/>bar</b>oops3</p:a>";// + "</rest:item></rest:sequence>";
+    /** String representation of ID */
+    public static final String ID = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><p:a xmlns:p=\"ns\" "
+            + "ttid=\"1\" i=\"j\">oops1<b ttid=\"5\">foo<c ttid=\"7\"/></b>oops2<b ttid=\"9\" p:x=\"y\">"
+            + "<c ttid=\"11\"/>bar</b>oops3</p:a>";
+
+    /** String representation of rest */
+    public static final String REST = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+            + "<rest:sequence xmlns:rest=\"REST\"><rest:item>"
+            + "<p:a xmlns:p=\"ns\" rest:ttid=\"1\" i=\"j\">oops1<b rest:ttid=\"5\">foo<c rest:ttid=\"7\"/></b>oops2<b rest:ttid=\"9\" p:x=\"y\">"
+            + "<c rest:ttid=\"11\"/>bar</b>oops3</p:a>"
+            + "</rest:item></rest:sequence>";
 
     /** String representation of test document. */
     public static final String XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
