@@ -171,7 +171,7 @@ public final class Database implements IDatabase {
      * @throws TreetankException
      *             if close is not successful.
      */
-    public void close() throws TreetankException {
+    public  void close() throws TreetankException {
         if (mSession != null) {
             mSession.close();
         }
