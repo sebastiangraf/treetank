@@ -38,14 +38,15 @@ import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankUsageException;
 import com.treetank.settings.EFixed;
+import com.treetank.settings.EXMLSerializing;
 import com.treetank.utils.FastStack;
 import com.treetank.utils.TypedValue;
 
 /**
- * This class appends a given {@link XMLStreamReader} to a writetransaction. The
- * content of the stream is added as a subtree. Based on a boolean which
- * indentifies the point of insertion, the subtree is either added as subtree or
- * as rightsibling
+ * This class appends a given {@link XMLStreamReader} to a
+ * {@link IWriteTransaction}. The content of the stream is added as a subtree.
+ * Based on a boolean which identifies the point of insertion, the subtree is
+ * either added as subtree or as rightsibling
  * 
  * @author Marc Kramis, Seabix
  * @author Sebastian Graf, University of Konstanz
@@ -58,11 +59,39 @@ public final class XMLShredder implements Callable<Long> {
     private final boolean mFirstChildAppend;
     private final boolean mInsertOnlyModified;
 
+    /**
+     * Normal constructor to invoke a shredding process on a existing
+     * {@link WriteTransaction}
+     * 
+     * @param wtx
+     *            where the new XML Fragment should be placed
+     * @param reader
+     *            of the XML Fragment
+     * @param addAsFirstChild
+     *            if the insert is occuring on a node in an existing tree.
+     *            <code>false</code> is not possible when wtx is on root node.
+     */
     public XMLShredder(final IWriteTransaction wtx,
             final XMLStreamReader reader, final boolean addAsFirstChild) {
         this(wtx, reader, addAsFirstChild, false);
     }
 
+    /**
+     * Normal constructor to invoke a shredding process on a existing
+     * {@link WriteTransaction}
+     * 
+     * @param wtx
+     *            where the new XML Fragment should be placed
+     * @param reader
+     *            of the XML Fragment
+     * @param addAsFirstChild
+     *            if the insert is occuring on a node in an existing tree.
+     *            <code>false</code> is not possible when wtx is on root node.
+     * @param insertOnlyModified
+     *            if true, only modified nodes are updated in the structure.
+     *            Note that this method is time consuming and makes only use of
+     *            the {@link EXMLSerializing#ID} tag when used.
+     */
     public XMLShredder(final IWriteTransaction wtx,
             final XMLStreamReader reader, final boolean addAsFirstChild,
             final boolean insertOnlyModified) {
@@ -72,6 +101,9 @@ public final class XMLShredder implements Callable<Long> {
         mInsertOnlyModified = insertOnlyModified;
     }
 
+    /**
+     * Invoking the shredder.
+     */
     public Long call() throws Exception {
         try {
             final long revision = mWtx.getRevisionNumber();
