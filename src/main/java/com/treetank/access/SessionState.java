@@ -308,20 +308,20 @@ public final class SessionState {
 
         fac.closeStorage();
     }
-
-    /**
-     * Required to close file handle.
-     * 
-     * @throws Throwable
-     *             if the finalization of the superclass does not work.
-     */
-    protected void finalize() throws Throwable {
-        try {
-            close();
-        } finally {
-            super.finalize();
-        }
-    }
+//
+//    /**
+//     * Required to close file handle.
+//     * 
+//     * @throws Throwable
+//     *             if the finalization of the superclass does not work.
+//     */
+//    protected void finalize() throws Throwable {
+//        try {
+//            close();
+//        } finally {
+//            super.finalize();
+//        }
+//    }
 
     class LogSyncer implements Callable<Void> {
 
