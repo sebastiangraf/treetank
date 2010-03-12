@@ -79,9 +79,13 @@ public final class XMLSerializer implements Callable<Void> {
     /** "/&gt;". */
     private static final byte[] SLASH_CLOSE = new byte[] { SLASH, CLOSE };
 
-    /** " rest:id=\"". */
-    private static final byte[] REST_ID = new byte[] { SPACE, 114, 101, 115,
-            116, 58, 105, 100, EQUAL, QUOTE };
+    /** " rest:"". */
+    private static final byte[] REST_PREFIX = new byte[] { SPACE, 114, 101,
+            115, 116, 58 };
+
+    /** "ttid=\"". */
+    private static final byte[] ID = new byte[] { 116, 116, 105, 100, EQUAL,
+            QUOTE };
 
     /** " xmlns=\"". */
     private static final byte[] XMLNS = new byte[] { SPACE, 120, 109, 108, 110,
@@ -106,8 +110,11 @@ public final class XMLSerializer implements Callable<Void> {
     /** Serialize XML declaration. */
     private final boolean mSerializeXMLDeclaration;
 
-    /** Serialize rest:id. */
+    /** Serialize rest header and closer and rest:id */
     private final boolean mSerializeRest;
+
+    /** Serialize id */
+    private final boolean mSerializeId;
 
     /**
      * Initialize XMLStreamReader implementation with transaction. The cursor
@@ -120,7 +127,34 @@ public final class XMLSerializer implements Callable<Void> {
      *            OutputStream to serialize UTF-8 XML to.
      */
     public XMLSerializer(final IReadTransaction rtx, final OutputStream out) {
-        this(rtx, out, true, false);
+        this(rtx, out, true, false, false);
+    }
+
+    /**
+     * Initialize XMLStreamReader implementation with transaction. The cursor
+     * points to the node the XMLStreamReader starts to read.
+     * 
+     * @param rtx
+     *            Transaction with cursor pointing to start node.
+     * @param out
+     *            OutputStream to serialize UTF-8 XML to.
+     * @param serializeXMLDeclaration
+     *            Serialize XML declaration if true.
+     * @param serializeRest
+     *            Serialize rest if true.
+     * @param serializeId
+     *            Serialize id if true.
+     */
+    public XMLSerializer(final IReadTransaction rtx, final OutputStream out,
+            final boolean serializeXMLDeclaration, final boolean serializeRest,
+            final boolean serializeId) {
+        mRTX = rtx;
+        mAxis = new DescendantAxis(rtx, true);
+        mStack = new FastStack<Long>();
+        mOut = new BufferedOutputStream(out, 4096);
+        mSerializeXMLDeclaration = serializeXMLDeclaration;
+        mSerializeRest = serializeRest;
+        mSerializeId = serializeId;
     }
 
     /**
@@ -138,12 +172,7 @@ public final class XMLSerializer implements Callable<Void> {
      */
     public XMLSerializer(final IReadTransaction rtx, final OutputStream out,
             final boolean serializeXMLDeclaration, final boolean serializeRest) {
-        mRTX = rtx;
-        mAxis = new DescendantAxis(rtx, true);
-        mStack = new FastStack<Long>();
-        mOut = new BufferedOutputStream(out, 4096);
-        mSerializeXMLDeclaration = serializeXMLDeclaration;
-        mSerializeRest = serializeRest;
+        this(rtx, out, serializeXMLDeclaration, serializeRest, serializeRest);
     }
 
     /**
@@ -239,8 +268,13 @@ public final class XMLSerializer implements Callable<Void> {
             }
             // Emit attributes.
             // Add virtual rest:id attribute.
-            if (mSerializeRest) {
-                mOut.write(REST_ID);
+            if (mSerializeId) {
+                if (mSerializeRest) {
+                    mOut.write(REST_PREFIX);
+                } else {
+                    mOut.write(SPACE);
+                }
+                mOut.write(ID);
                 write(mRTX.getNode().getNodeKey());
                 mOut.write(QUOTE);
             }
