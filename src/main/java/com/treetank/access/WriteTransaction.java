@@ -231,29 +231,13 @@ public final class WriteTransaction extends ReadTransaction implements
 
         assertNotClosed();
         mModificationCount++;
-        // Remember all related nodes.
         final AbstractNode node = (AbstractNode) getCurrentNode();
-        AbstractNode leftSibling = null;
-        AbstractNode rightSibling = null;
-        AbstractNode parent = null;
 
-        if (node.isDocumentRoot()) {
+        if (getCurrentNode().isDocumentRoot()) {
             throw new TreetankUsageException("Root node can not be removed.");
-        } else if (node.isElement() || node.isText()) {
+        } else if (getCurrentNode().isElement() || getCurrentNode().isText()) {
 
-            // getting the neighbourhood
-            if (node.hasLeftSibling()) {
-                moveToLeftSibling();
-                leftSibling = (AbstractNode) getCurrentNode();
-                moveToRightSibling();
-            }
-            if (node.hasRightSibling()) {
-                moveToRightSibling();
-                rightSibling = (AbstractNode) getCurrentNode();
-            }
-            moveToParent();
-            parent = (AbstractNode) getCurrentNode();
-            moveTo(node.getNodeKey());
+            adaptNeighbours(node, null);
 
             // removing subtree
             final IAxis desc = new DescendantAxis(this);
@@ -280,59 +264,24 @@ public final class WriteTransaction extends ReadTransaction implements
             // Remove old node.
             ((WriteTransactionState) getTransactionState()).removeNode(node);
 
-            // Adapt left sibling node if there is one.
-            if (leftSibling != null) {
-                leftSibling = setUpNodeModification(leftSibling.getNodeKey());
-                if (rightSibling != null) {
-                    leftSibling.setRightSiblingKey(rightSibling.getNodeKey());
-                } else {
-                    leftSibling.setRightSiblingKey((Long) EFixed.NULL_NODE_KEY
-                            .getStandardProperty());
-                }
-                tearDownNodeModification(leftSibling);
-            }
-
-            // Adapt right sibling node if there is one.
-            if (rightSibling != null) {
-                rightSibling = setUpNodeModification(rightSibling.getNodeKey());
-                if (leftSibling != null) {
-                    rightSibling.setLeftSiblingKey(leftSibling.getNodeKey());
-                } else {
-                    rightSibling.setLeftSiblingKey((Long) EFixed.NULL_NODE_KEY
-                            .getStandardProperty());
-                }
-                tearDownNodeModification(rightSibling);
-            }
-
-            // Adapt parent.
-            parent = setUpNodeModification(parent.getNodeKey());
-            parent.decrementChildCount();
-            if (parent.getFirstChildKey() == node.getNodeKey()) {
-                if (rightSibling != null) {
-                    parent.setFirstChildKey(rightSibling.getNodeKey());
-                } else {
-                    parent.setFirstChildKey((Long) EFixed.NULL_NODE_KEY
-                            .getStandardProperty());
-                }
-            }
-            tearDownNodeModification(parent);
-
             // Set current node.
-            if (rightSibling != null) {
-                setCurrentNode(rightSibling);
+            if (node.hasRightSibling()) {
+                moveTo(node.getRightSiblingKey());
                 return;
             }
 
-            if (leftSibling != null) {
-                setCurrentNode(leftSibling);
+            if (node.hasLeftSibling()) {
+                moveTo(node.getLeftSiblingKey());
                 return;
             }
 
-            setCurrentNode(parent);
+            moveTo(node.getParentKey());
+
         } else if (getCurrentNode().isAttribute()) {
             moveToParent();
 
-            parent = setUpNodeModification(getCurrentNode().getNodeKey());
+            AbstractNode parent = setUpNodeModification(getCurrentNode()
+                    .getNodeKey());
             ((ElementNode) parent).removeAttribute(node.getNodeKey());
             tearDownNodeModification(parent);
         }
@@ -604,6 +553,121 @@ public final class WriteTransaction extends ReadTransaction implements
                 .getLeftSiblingKey());
         leftSiblingNode.setRightSiblingKey(getCurrentNode().getNodeKey());
         tearDownNodeModification(leftSiblingNode);
+
+    }
+
+    private void adaptNeighbours(final AbstractNode oldNode,
+            final AbstractNode newNode) throws TreetankIOException {
+
+        // Remember all related nodes.
+        AbstractNode leftSibling = null;
+        AbstractNode rightSibling = null;
+        AbstractNode parent = null;
+        AbstractNode firstChild = null;
+
+        // getting the neighbourhood
+        if (oldNode.hasLeftSibling()) {
+            moveToLeftSibling();
+            leftSibling = (AbstractNode) getCurrentNode();
+            moveToRightSibling();
+        }
+        if (oldNode.hasRightSibling()) {
+            moveToRightSibling();
+            rightSibling = (AbstractNode) getCurrentNode();
+            moveToLeftSibling();
+        }
+        if (!moveToParent()) {
+            throw new IllegalStateException("Node has no parent!");
+        }
+        parent = (AbstractNode) getCurrentNode();
+        moveTo(oldNode.getNodeKey());
+        if (oldNode.hasFirstChild()) {
+            moveToFirstChild();
+            firstChild = (AbstractNode) getCurrentNode();
+        }
+        moveTo(oldNode.getNodeKey());
+
+        // Adapt left sibling node if there is one.
+        if (leftSibling != null) {
+            leftSibling = setUpNodeModification(leftSibling.getNodeKey());
+            if (newNode == null) {
+                if (rightSibling != null) {
+                    leftSibling.setRightSiblingKey(rightSibling.getNodeKey());
+                } else {
+                    leftSibling.setRightSiblingKey((Long) EFixed.NULL_NODE_KEY
+                            .getStandardProperty());
+                }
+            } else {
+                leftSibling.setRightSiblingKey(newNode.getNodeKey());
+                newNode.setLeftSiblingKey(leftSibling.getNodeKey());
+            }
+            tearDownNodeModification(leftSibling);
+        }
+
+        // Adapt right sibling node if there is one.
+        if (rightSibling != null) {
+            rightSibling = setUpNodeModification(rightSibling.getNodeKey());
+            if (newNode == null) {
+                if (leftSibling != null) {
+                    rightSibling.setLeftSiblingKey(leftSibling.getNodeKey());
+                } else {
+                    rightSibling.setLeftSiblingKey((Long) EFixed.NULL_NODE_KEY
+                            .getStandardProperty());
+                }
+            } else {
+                rightSibling.setLeftSiblingKey(newNode.getNodeKey());
+                newNode.setRightSiblingKey(rightSibling.getNodeKey());
+            }
+            tearDownNodeModification(rightSibling);
+        }
+
+        // Adapt parent.
+        parent = setUpNodeModification(parent.getNodeKey());
+        if (newNode == null) {
+            parent.decrementChildCount();
+        }
+        if (parent.getFirstChildKey() == oldNode.getNodeKey()) {
+            if (newNode == null) {
+                if (rightSibling != null) {
+                    parent.setFirstChildKey(rightSibling.getNodeKey());
+                } else {
+                    parent.setFirstChildKey((Long) EFixed.NULL_NODE_KEY
+                            .getStandardProperty());
+                }
+            } else {
+                parent.setFirstChildKey(newNode.getNodeKey());
+            }
+        }
+        tearDownNodeModification(parent);
+
+        // adapt associated nodes
+        if (newNode != null) {
+            if (firstChild != null) {
+                newNode.setFirstChildKey(firstChild.getNodeKey());
+                AbstractNode node = firstChild;
+                do {
+                    node = setUpNodeModification(node.getNodeKey());
+                    node.setParentKey(newNode.getNodeKey());
+                    tearDownNodeModification(node);
+                } while (moveToRightSibling());
+            }
+            // setting the attributes and namespaces
+            for (int i = 0; i < oldNode.getAttributeCount(); i++) {
+                newNode.insertAttribute(oldNode.getAttributeKey(i));
+                AbstractNode node = setUpNodeModification(oldNode
+                        .getAttributeKey(i));
+                node.setParentKey(newNode.getNodeKey());
+                tearDownNodeModification(node);
+            }
+            for (int i = 0; i < oldNode.getNamespaceCount(); i++) {
+                newNode.insertNamespace(oldNode.getNamespaceKey(i));
+                AbstractNode node = setUpNodeModification(oldNode
+                        .getNamespaceKey(i));
+                node.setParentKey(newNode.getNodeKey());
+                tearDownNodeModification(node);
+            }
+            newNode.setChildCount(oldNode.getChildCount());
+        }
 
     }
 
