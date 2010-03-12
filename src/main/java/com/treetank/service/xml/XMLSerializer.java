@@ -27,6 +27,7 @@ import java.util.concurrent.Callable;
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.DescendantAxis;
+import com.treetank.settings.EXMLSerializing;
 import com.treetank.utils.FastStack;
 import com.treetank.utils.IConstants;
 
@@ -51,49 +52,6 @@ public final class XMLSerializer implements Callable<Void> {
             10000000000L, 100000000000L, 1000000000000L, 10000000000000L,
             100000000000000L, 1000000000000000L, 10000000000000000L,
             100000000000000000L, 1000000000000000000L };
-
-    /** " ". */
-    private static final int SPACE = 32;
-
-    /** "&lt;". */
-    private static final int OPEN = 60;
-
-    /** "&gt;". */
-    private static final int CLOSE = 62;
-
-    /** "/". */
-    private static final int SLASH = 47;
-
-    /** "=". */
-    private static final int EQUAL = 61;
-
-    /** "\"". */
-    private static final int QUOTE = 34;
-
-    /** "=\"". */
-    private static final byte[] EQUAL_QUOTE = new byte[] { EQUAL, QUOTE };
-
-    /** "&lt;/". */
-    private static final byte[] OPEN_SLASH = new byte[] { OPEN, SLASH };
-
-    /** "/&gt;". */
-    private static final byte[] SLASH_CLOSE = new byte[] { SLASH, CLOSE };
-
-    /** " rest:"". */
-    private static final byte[] REST_PREFIX = new byte[] { SPACE, 114, 101,
-            115, 116, 58 };
-
-    /** "ttid=\"". */
-    private static final byte[] ID = new byte[] { 116, 116, 105, 100, EQUAL,
-            QUOTE };
-
-    /** " xmlns=\"". */
-    private static final byte[] XMLNS = new byte[] { SPACE, 120, 109, 108, 110,
-            115, EQUAL, QUOTE };
-
-    /** " xmlns:". */
-    private static final byte[] XMLNS_COLON = new byte[] { SPACE, 120, 109,
-            108, 110, 115, 58 };
 
     /** Transaction to read from (is the same as the mAxis). */
     private final IReadTransaction mRTX;
@@ -247,22 +205,22 @@ public final class XMLSerializer implements Callable<Void> {
         switch (mRTX.getNode().getKind()) {
         case ELEMENT_KIND:
             // Emit start element.
-            mOut.write(OPEN);
+            mOut.write(EXMLSerializing.OPEN.getBytes());
             mOut.write(mRTX.rawNameForKey(mRTX.getNode().getNameKey()));
             final long key = mRTX.getNode().getNodeKey();
             // Emit namespace declarations.
             for (int index = 0, length = mRTX.getNode().getNamespaceCount(); index < length; index++) {
                 mRTX.moveToNamespace(index);
                 if (mRTX.nameForKey(mRTX.getNode().getNameKey()).length() == 0) {
-                    mOut.write(XMLNS);
+                    mOut.write(EXMLSerializing.XMLNS.getBytes());
                     write(mRTX.nameForKey(mRTX.getNode().getURIKey()));
-                    mOut.write(QUOTE);
+                    mOut.write(EXMLSerializing.QUOTE.getBytes());
                 } else {
-                    mOut.write(XMLNS_COLON);
+                    mOut.write(EXMLSerializing.XMLNS_COLON.getBytes());
                     write(mRTX.nameForKey(mRTX.getNode().getNameKey()));
-                    mOut.write(EQUAL_QUOTE);
+                    mOut.write(EXMLSerializing.EQUAL_QUOTE.getBytes());
                     write(mRTX.nameForKey(mRTX.getNode().getURIKey()));
-                    mOut.write(QUOTE);
+                    mOut.write(EXMLSerializing.QUOTE.getBytes());
                 }
                 mRTX.moveTo(key);
             }
@@ -270,13 +228,13 @@ public final class XMLSerializer implements Callable<Void> {
             // Add virtual rest:id attribute.
             if (mSerializeId) {
                 if (mSerializeRest) {
-                    mOut.write(REST_PREFIX);
+                    mOut.write(EXMLSerializing.REST_PREFIX.getBytes());
                 } else {
-                    mOut.write(SPACE);
+                    mOut.write(EXMLSerializing.SPACE.getBytes());
                 }
-                mOut.write(ID);
+                mOut.write(EXMLSerializing.ID.getBytes());
                 write(mRTX.getNode().getNodeKey());
-                mOut.write(QUOTE);
+                mOut.write(EXMLSerializing.QUOTE.getBytes());
             }
 
             // Iterate over all persistent attributes.
@@ -287,17 +245,17 @@ public final class XMLSerializer implements Callable<Void> {
                     System.out.println(nodeKey);
                     System.out.println(mRTX.getNode().getNodeKey());
                 }
-                mOut.write(SPACE);
+                mOut.write(EXMLSerializing.SPACE.getBytes());
                 mOut.write(mRTX.rawNameForKey(mRTX.getNode().getNameKey()));
-                mOut.write(EQUAL_QUOTE);
+                mOut.write(EXMLSerializing.EQUAL_QUOTE.getBytes());
                 mOut.write(mRTX.getNode().getRawValue());
-                mOut.write(QUOTE);
+                mOut.write(EXMLSerializing.QUOTE.getBytes());
                 mRTX.moveTo(key);
             }
             if (mRTX.getNode().hasFirstChild()) {
-                mOut.write(CLOSE);
+                mOut.write(EXMLSerializing.CLOSE.getBytes());
             } else {
-                mOut.write(SLASH_CLOSE);
+                mOut.write(EXMLSerializing.SLASH_CLOSE.getBytes());
             }
             break;
         case TEXT_KIND:
@@ -312,9 +270,9 @@ public final class XMLSerializer implements Callable<Void> {
      * @throws IOException
      */
     private void emitEndElement() throws IOException {
-        mOut.write(OPEN_SLASH);
+        mOut.write(EXMLSerializing.OPEN_SLASH.getBytes());
         mOut.write(mRTX.rawNameForKey(mRTX.getNode().getNameKey()));
-        mOut.write(CLOSE);
+        mOut.write(EXMLSerializing.CLOSE.getBytes());
     }
 
     /**
