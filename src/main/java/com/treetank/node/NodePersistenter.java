@@ -35,6 +35,9 @@ public final class NodePersistenter {
         case TEXT_KIND:
             returnVal = new TextNode(source);
             break;
+        case DELETE_KIND:
+            returnVal = new DeletedNode(source);
+            break;
         default:
             throw new IllegalStateException(
                     "Unsupported node kind encountered during read: " + kind);
@@ -65,6 +68,9 @@ public final class NodePersistenter {
             break;
         case TEXT_KIND:
             returnVal = new TextNode(source);
+            break;
+        case DELETE_KIND:
+            returnVal = new DeletedNode(source);
             break;
         default:
             throw new IllegalStateException(

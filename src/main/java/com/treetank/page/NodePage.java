@@ -73,7 +73,6 @@ public class NodePage extends AbstractPage {
         for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
             final int kind = values[offset];
             getNodes()[offset] = NodePersistenter.createNode(in, kind);
-
         }
     }
 
@@ -138,7 +137,8 @@ public class NodePage extends AbstractPage {
         out.writeLong(mNodePageKey);
         for (int i = 0; i < getNodes().length; i++) {
             if (getNodes()[i] != null) {
-                out.writeInt(getNodes()[i].getKind().getNodeIdentifier());
+                final int kind = getNodes()[i].getKind().getNodeIdentifier();
+                out.writeInt(kind);
             } else {
                 out.writeInt(ENodes.UNKOWN_KIND.getNodeIdentifier());
             }

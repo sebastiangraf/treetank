@@ -27,6 +27,7 @@ import com.treetank.exception.TreetankIOException;
 import com.treetank.io.IWriter;
 import com.treetank.node.AbstractNode;
 import com.treetank.node.AttributeNode;
+import com.treetank.node.DeletedNode;
 import com.treetank.node.ElementNode;
 import com.treetank.node.NamespaceNode;
 import com.treetank.node.NodePersistenter;
@@ -217,17 +218,14 @@ public final class WriteTransactionState extends ReadTransactionState {
             throws TreetankIOException {
         final long nodePageKey = nodePageKey(node.getNodeKey());
         prepareNodePage(nodePageKey);
-        // TODO check if null is working with sliding snapshot
-        // I doubt it since there has to be some kind of placeholder for the
-        // node to let the sliding snapshot know that the null is not only a
-        // missing element
+        final DeletedNode delNode = new DeletedNode(node.getNodeKey());
+
         nodePageCon.getModified().setNode(nodePageOffset(node.getNodeKey()),
-                null);
+                delNode);
         nodePageCon.getComplete().setNode(nodePageOffset(node.getNodeKey()),
-                null);
+                delNode);
         finishNodeModification(node);
 
-        nodePageCon = null;
     }
 
     /**
@@ -243,9 +241,12 @@ public final class WriteTransactionState extends ReadTransactionState {
         if (pageCont == null) {
             return super.getNode(nodeKey);
         } else if (pageCont.getModified().getNode(nodePageOffset) == null) {
-            return pageCont.getComplete().getNode(nodePageOffset);
+            final IItem item = pageCont.getComplete().getNode(nodePageOffset);
+            return checkItemIfDeleted(item);
+
         } else {
-            return pageCont.getModified().getNode(nodePageOffset);
+            final IItem item = pageCont.getModified().getNode(nodePageOffset);
+            return checkItemIfDeleted(item);
         }
 
     }

@@ -39,7 +39,7 @@ public final class PagePersistenter {
             break;
         default:
             throw new IllegalStateException(
-                    "Invalid Kind of Nodes. Something went wrong in the serialization/deserialization");
+                    "Invalid Kind of Page. Something went wrong in the serialization/deserialization");
         }
         return returnVal;
     }
