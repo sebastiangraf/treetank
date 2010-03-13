@@ -136,6 +136,13 @@ public interface IReadTransaction {
      */
     long getRevisionTimestamp() throws TreetankIOException;
 
+    /**
+     * Getting the maximum nodekey avaliable in this revision.
+     * 
+     * @return the maximum nodekey
+     */
+    long getMaxNodeKey() throws TreetankIOException;
+
     // --- Node Selectors
     // --------------------------------------------------------
 

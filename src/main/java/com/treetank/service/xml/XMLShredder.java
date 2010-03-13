@@ -32,9 +32,12 @@ import javax.xml.stream.XMLStreamReader;
 
 import com.treetank.access.Database;
 import com.treetank.access.DatabaseConfiguration;
+import com.treetank.access.WriteTransaction;
+import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankUsageException;
@@ -128,7 +131,6 @@ public final class XMLShredder implements Callable<Long> {
             insertNewContent();
         } else {
             updateOnly();
-
         }
 
         mWtx.commit();
@@ -136,8 +138,97 @@ public final class XMLShredder implements Callable<Long> {
 
     }
 
-    private void updateOnly() {
+    private void updateOnly() throws TreetankException {
+        try {
+            FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
 
+            leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
+                    .getStandardProperty());
+
+            final long maxNodeKey = mWtx.getMaxNodeKey();
+
+            // Iterate over all nodes.
+            while (mReader.hasNext()) {
+                switch (mReader.next()) {
+
+                case XMLStreamConstants.START_ELEMENT:
+                    long key = (Long) EFixed.NULL_NODE_KEY
+                            .getStandardProperty();
+                    // Search for attribute with ID.
+                    for (int i = 0, l = mReader.getAttributeCount(); i < l; i++) {
+                        final String idString = mReader
+                                .getAttributeLocalName(i);
+                        // TODO Make this better
+                        if (idString.equals(new String(EXMLSerializing.ID
+                                .getBytes()))) {
+                            key = Long.parseLong(mReader.getAttributeValue(i));
+                            break;
+                        }
+                    }
+                    if (key != (Long) EFixed.NULL_NODE_KEY
+                            .getStandardProperty()) {
+                        throw new TreetankUsageException(
+                                new StringBuilder("Element ")
+                                        .append(mReader.getLocalName())
+                                        .append(
+                                                " is missing the key-attribute while modifying existing structure!")
+                                        .toString());
+                    }
+                    
+                    
+                    
+
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    break;
+
+                case XMLStreamConstants.CHARACTERS:
+                    break;
+                }
+
+            }
+
+        } catch (final XMLStreamException exc1) {
+            throw new TreetankIOException(exc1);
+        }
+
+    }
+
+    private final void insertNewContent() throws TreetankException {
+        try {
+
+            FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
+
+            leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
+                    .getStandardProperty());
+            boolean firstElement = true;
+
+            // Iterate over all nodes.
+            while (mReader.hasNext()) {
+
+                switch (mReader.next()) {
+
+                case XMLStreamConstants.START_ELEMENT:
+                    leftSiblingKeyStack = addNewElement(firstElement,
+                            leftSiblingKeyStack);
+                    firstElement = false;
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    leftSiblingKeyStack.pop();
+                    mWtx.moveTo(leftSiblingKeyStack.peek());
+                    break;
+
+                case XMLStreamConstants.CHARACTERS:
+                    leftSiblingKeyStack = addNewText(leftSiblingKeyStack);
+                    break;
+                }
+            }
+
+        } catch (final XMLStreamException exc1) {
+            throw new TreetankIOException(exc1);
+        }
     }
 
     private final FastStack<Long> addNewElement(final boolean firstElement,
@@ -216,42 +307,6 @@ public final class XMLShredder implements Callable<Long> {
 
         }
         return leftSiblingKeyStack;
-    }
-
-    private final void insertNewContent() throws TreetankException {
-        try {
-
-            FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
-
-            leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
-                    .getStandardProperty());
-            boolean firstElement = true;
-
-            // Iterate over all nodes.
-            while (mReader.hasNext()) {
-
-                switch (mReader.next()) {
-
-                case XMLStreamConstants.START_ELEMENT:
-                    leftSiblingKeyStack = addNewElement(firstElement,
-                            leftSiblingKeyStack);
-                    firstElement = false;
-                    break;
-
-                case XMLStreamConstants.END_ELEMENT:
-                    leftSiblingKeyStack.pop();
-                    mWtx.moveTo(leftSiblingKeyStack.peek());
-                    break;
-
-                case XMLStreamConstants.CHARACTERS:
-                    leftSiblingKeyStack = addNewText(leftSiblingKeyStack);
-                    break;
-                }
-            }
-
-        } catch (final XMLStreamException exc1) {
-            throw new TreetankIOException(exc1);
-        }
     }
 
     public static void main(String... args) throws Exception {

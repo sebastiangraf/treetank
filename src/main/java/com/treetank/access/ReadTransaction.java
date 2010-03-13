@@ -370,4 +370,13 @@ public class ReadTransaction implements IReadTransaction {
         return this.mCurrentNode;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getMaxNodeKey() throws TreetankIOException {
+        return getTransactionState().getActualRevisionRootPage()
+                .getMaxNodeKey();
+    }
+
 }
