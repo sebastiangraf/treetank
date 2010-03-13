@@ -30,6 +30,7 @@ import com.treetank.cache.NodePageContainer;
 import com.treetank.cache.RAMCache;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.IReader;
+import com.treetank.node.DeletedNode;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.IndirectPage;
 import com.treetank.page.NamePage;
@@ -147,8 +148,22 @@ public class ReadTransactionState {
         }
         // If nodePage is a weak one, the moveto is not cached
         final IItem returnVal = cont.getComplete().getNode(nodePageOffset);
-        return returnVal;
+        return checkItemIfDeleted(returnVal);
+    }
 
+    /**
+     * Method to check if an {@link IItem} is a deleted one
+     * 
+     * @param toCheck
+     *            of the IItem
+     * @return the item if it is valid, null otherwise
+     */
+    protected final IItem checkItemIfDeleted(final IItem toCheck) {
+        if (toCheck instanceof DeletedNode) {
+            return null;
+        } else {
+            return toCheck;
+        }
     }
 
     /**

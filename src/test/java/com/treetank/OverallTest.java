@@ -7,6 +7,7 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.treetank.access.Database;
@@ -65,78 +66,62 @@ public final class OverallTest {
     }
 
     @Test
-    public void testBullshitInsert() throws TreetankException {
+    public void testJustEverything() throws TreetankException {
         final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         wtx.insertElementAsFirstChild(getString(), "");
         for (int i = 0; i < ELEMENTS; i++) {
             if (ran.nextBoolean()) {
-                wtx.insertElementAsFirstChild(getString(), "");
-
+                switch (wtx.getNode().getKind()) {
+                case ELEMENT_KIND:
+                    wtx.setName(getString());
+                    wtx.setURI(getString());
+                    break;
+                case ATTRIBUTE_KIND:
+                    wtx.setName(getString());
+                    wtx.setURI(getString());
+                    wtx.setValue(getString());
+                    break;
+                case NAMESPACE_KIND:
+                    wtx.setName(getString());
+                    wtx.setURI(getString());
+                    break;
+                case TEXT_KIND:
+                    wtx.setValue(getString());
+                    break;
+                default:
+                }
             } else {
-                wtx.insertElementAsRightSibling(getString(), "");
-            }
-            // while (ran.nextBoolean()) {
-            // wtx.insertAttribute(getString(), getString(), getString());
-            // wtx.moveToParent();
-            // }
-            // while (ran.nextBoolean()) {
-            // wtx.insertNamespace(getString(), getString());
-            // wtx.moveToParent();
-            // }
-            if (ran.nextInt(100) < COMMITPERCENTAGE) {
-                wtx.commit();
-            }
-            wtx.moveTo(ran.nextInt(i + 1) + 1);
-            // TODO Check if reference check can occur on "=="
-            if (wtx.getNode().getKind() != ENodes.ELEMENT_KIND) {
-                wtx.moveToParent();
-            }
-        }
-        final long key = wtx.getNode().getNodeKey();
-        wtx.remove();
-        wtx.insertElementAsFirstChild(getString(), "");
-        wtx.moveTo(key);
-        wtx.commit();
-        wtx.close();
-        session.close();
-    }
+                if (ran.nextBoolean()) {
+                    wtx.insertElementAsFirstChild(getString(), "");
+                } else {
+                    wtx.insertElementAsRightSibling(getString(), "");
+                }
+                while (ran.nextBoolean()) {
+                    wtx.insertAttribute(getString(), getString(), getString());
+                    wtx.moveToParent();
+                }
+                while (ran.nextBoolean()) {
+                    wtx.insertNamespace(getString(), getString());
+                    wtx.moveToParent();
+                }
 
-    @Test
-    public void testBullshitWithRemove() throws TreetankException {
-        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
-        final ISession session = database.getSession();
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        wtx.insertElementAsFirstChild(getString(), "");
-        for (int i = 0; i < ELEMENTS; i++) {
-            if (ran.nextBoolean()) {
-                wtx.insertElementAsFirstChild(getString(), "");
-            } else {
-                wtx.insertElementAsRightSibling(getString(), "");
-            }
-            while (ran.nextBoolean()) {
-                wtx.insertAttribute(getString(), getString(), getString());
-                wtx.moveToParent();
-            }
-            while (ran.nextBoolean()) {
-                wtx.insertNamespace(getString(), getString());
-                wtx.moveToParent();
-            }
+                if (ran.nextInt(100) < REMOVEPERCENTAGE) {
+                    wtx.remove();
+                }
 
-            if (ran.nextInt(100) < REMOVEPERCENTAGE) {
-                wtx.remove();
-            }
-
-            if (ran.nextInt(100) < COMMITPERCENTAGE) {
-                wtx.commit();
-            }
-            do {
-                wtx.moveTo(ran.nextInt(i + 1) + 1);
-            } while (wtx.getNode() == null);
-            // TODO Check if reference check can occur on "=="
-            if (wtx.getNode().getKind() != ENodes.ELEMENT_KIND) {
-                wtx.moveToParent();
+                if (ran.nextInt(100) < COMMITPERCENTAGE) {
+                    wtx.commit();
+                }
+                do {
+                    final int newKey = ran.nextInt(i + 1) + 1;
+                    wtx.moveTo(newKey);
+                } while (wtx.getNode() == null);
+                // TODO Check if reference check can occur on "=="
+                if (wtx.getNode().getKind() != ENodes.ELEMENT_KIND) {
+                    wtx.moveToParent();
+                }
             }
         }
         final long key = wtx.getNode().getNodeKey();

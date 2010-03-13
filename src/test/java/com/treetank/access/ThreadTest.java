@@ -67,11 +67,13 @@ public class ThreadTest {
 
         ExecutorService taskExecutor = Executors
                 .newFixedThreadPool(WORKER_COUNT);
+        long newKey = 10L;
         for (int i = 0; i < WORKER_COUNT; i++) {
             taskExecutor.submit(new Task(session.beginReadTransaction(i)));
             wtx = session.beginWriteTransaction();
-            wtx.moveTo(10L);
+            wtx.moveTo(newKey);
             wtx.setValue("value" + i);
+            newKey = wtx.getNode().getNodeKey();
             wtx.commit();
             wtx.close();
         }

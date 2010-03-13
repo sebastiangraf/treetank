@@ -96,7 +96,11 @@ public final class AttributeNode extends AbstractNode {
         super(SIZE, in);
         mValue = new byte[(int) mData[VALUE_LENGTH]];
         for (int i = 0; i < mValue.length; i++) {
-            mValue[i] = in.readByte();
+            try {
+                mValue[i] = in.readByte();
+            } catch (IndexOutOfBoundsException exc) {
+                System.out.print("");
+            }
         }
     }
 

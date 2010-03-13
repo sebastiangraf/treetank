@@ -23,6 +23,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import com.treetank.api.IAxis;
+import com.treetank.api.IItem;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TreetankException;
@@ -240,29 +241,14 @@ public final class WriteTransaction extends ReadTransaction implements
             adaptNeighbours(node, null);
 
             // removing subtree
-            final IAxis desc = new DescendantAxis(this);
+            final IAxis desc = new DescendantAxis(this, false);
             while (desc.hasNext()) {
                 desc.next();
-                ((WriteTransactionState) getTransactionState())
-                        .removeNode((AbstractNode) this.getCurrentNode());
-            }
-            // removing attributes
-            moveTo(node.getNodeKey());
-            for (int i = 0; i < node.getAttributeCount(); i++) {
-                moveTo(node.getAttributeKey(i));
-                ((WriteTransactionState) getTransactionState())
-                        .removeNode((AbstractNode) this.getCurrentNode());
-            }
-            // removing namespaces
-            moveTo(node.getNodeKey());
-            for (int i = 0; i < node.getNamespaceCount(); i++) {
-                moveTo(node.getNamespaceKey(i));
-                ((WriteTransactionState) getTransactionState())
-                        .removeNode((AbstractNode) this.getCurrentNode());
-            }
+                removeIncludingRelated();
 
-            // Remove old node.
-            ((WriteTransactionState) getTransactionState()).removeNode(node);
+            }
+            moveTo(node.getNodeKey());
+            removeIncludingRelated();
 
             // Set current node.
             if (node.hasRightSibling()) {
@@ -288,6 +274,26 @@ public final class WriteTransaction extends ReadTransaction implements
 
     }
 
+    private final void removeIncludingRelated() throws TreetankIOException {
+        final IItem node = getCurrentNode();
+        // removing attributes
+        for (int i = 0; i < node.getAttributeCount(); i++) {
+            moveTo(node.getAttributeKey(i));
+            ((WriteTransactionState) getTransactionState())
+                    .removeNode((AbstractNode) this.getCurrentNode());
+        }
+        // removing namespaces
+        moveTo(node.getNodeKey());
+        for (int i = 0; i < node.getNamespaceCount(); i++) {
+            moveTo(node.getNamespaceKey(i));
+            ((WriteTransactionState) getTransactionState())
+                    .removeNode((AbstractNode) this.getCurrentNode());
+        }
+        // Remove old node.
+        ((WriteTransactionState) getTransactionState())
+                .removeNode((AbstractNode) node);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -297,13 +303,14 @@ public final class WriteTransaction extends ReadTransaction implements
         assertNotClosed();
         mModificationCount++;
 
-        final AbstractNode node = setUpNodeModification(getCurrentNode()
-                .getNodeKey());
+        final AbstractNode oldNode = (AbstractNode) getCurrentNode();
+        final AbstractNode newNode = createNodeToModify(oldNode);
 
-        node.setNameKey(((WriteTransactionState) getTransactionState())
+        adaptNeighbours(oldNode, newNode);
+        newNode.setNameKey(((WriteTransactionState) getTransactionState())
                 .createNameKey(name));
-        setCurrentNode(node);
-        tearDownNodeModification(node);
+        ((WriteTransactionState) getTransactionState()).removeNode(oldNode);
+        setCurrentNode(newNode);
 
     }
 
@@ -316,12 +323,14 @@ public final class WriteTransaction extends ReadTransaction implements
         assertNotClosed();
         mModificationCount++;
 
-        final AbstractNode node = setUpNodeModification(getCurrentNode()
-                .getNodeKey());
-        node.setURIKey(((WriteTransactionState) getTransactionState())
+        final AbstractNode oldNode = (AbstractNode) getCurrentNode();
+        final AbstractNode newNode = createNodeToModify(oldNode);
+
+        adaptNeighbours(oldNode, newNode);
+        newNode.setURIKey(((WriteTransactionState) getTransactionState())
                 .createNameKey(uri));
-        setCurrentNode(node);
-        tearDownNodeModification(node);
+        ((WriteTransactionState) getTransactionState()).removeNode(oldNode);
+        setCurrentNode(newNode);
     }
 
     /**
@@ -333,11 +342,14 @@ public final class WriteTransaction extends ReadTransaction implements
         assertNotClosed();
         mModificationCount++;
 
-        final AbstractNode node = setUpNodeModification(getCurrentNode()
-                .getNodeKey());
-        node.setValue(valueType, value);
-        setCurrentNode(node);
-        tearDownNodeModification(node);
+        final AbstractNode oldNode = (AbstractNode) getCurrentNode();
+        final AbstractNode newNode = createNodeToModify(oldNode);
+
+        adaptNeighbours(oldNode, newNode);
+        newNode.setValue(valueType, value);
+        ((WriteTransactionState) getTransactionState()).removeNode(oldNode);
+        setCurrentNode(newNode);
+
     }
 
     /**
@@ -347,6 +359,40 @@ public final class WriteTransaction extends ReadTransaction implements
             throws TreetankIOException {
         setValue(((WriteTransactionState) getTransactionState())
                 .createNameKey("xs:untyped"), TypedValue.getBytes(value));
+    }
+
+    private final AbstractNode createNodeToModify(final AbstractNode oldNode)
+            throws TreetankIOException {
+        AbstractNode newNode = null;
+        switch (oldNode.getKind()) {
+        case ELEMENT_KIND:
+            newNode = ((WriteTransactionState) getTransactionState())
+                    .createElementNode(oldNode.getParentKey(), oldNode
+                            .getFirstChildKey(), oldNode.getLeftSiblingKey(),
+                            oldNode.getRightSiblingKey(), oldNode.getNameKey(),
+                            oldNode.getURIKey(), oldNode.getTypeKey());
+            break;
+        case ATTRIBUTE_KIND:
+            newNode = ((WriteTransactionState) getTransactionState())
+                    .createAttributeNode(oldNode.getParentKey(), oldNode
+                            .getNameKey(), oldNode.getURIKey(), oldNode
+                            .getTypeKey(), oldNode.getRawValue());
+            break;
+        case NAMESPACE_KIND:
+            newNode = ((WriteTransactionState) getTransactionState())
+                    .createNamespaceNode(oldNode.getParentKey(), oldNode
+                            .getURIKey(), oldNode.getNameKey());
+            break;
+
+        case TEXT_KIND:
+            newNode = ((WriteTransactionState) getTransactionState())
+                    .createTextNode(oldNode.getNodeKey(), oldNode
+                            .getLeftSiblingKey(), oldNode.getRightSiblingKey(),
+                            oldNode.getTypeKey(), oldNode.getRawValue());
+            break;
+
+        }
+        return newNode;
     }
 
     /**
@@ -599,7 +645,6 @@ public final class WriteTransaction extends ReadTransaction implements
                 }
             } else {
                 leftSibling.setRightSiblingKey(newNode.getNodeKey());
-                newNode.setLeftSiblingKey(leftSibling.getNodeKey());
             }
             tearDownNodeModification(leftSibling);
         }
@@ -616,7 +661,6 @@ public final class WriteTransaction extends ReadTransaction implements
                 }
             } else {
                 rightSibling.setLeftSiblingKey(newNode.getNodeKey());
-                newNode.setRightSiblingKey(rightSibling.getNodeKey());
             }
             tearDownNodeModification(rightSibling);
         }
@@ -643,10 +687,10 @@ public final class WriteTransaction extends ReadTransaction implements
         // adapt associated nodes
         if (newNode != null) {
             if (firstChild != null) {
-                newNode.setFirstChildKey(firstChild.getNodeKey());
-                AbstractNode node = firstChild;
+                setCurrentNode(firstChild);
                 do {
-                    node = setUpNodeModification(node.getNodeKey());
+                    final AbstractNode node = setUpNodeModification(getCurrentNode()
+                            .getNodeKey());
                     node.setParentKey(newNode.getNodeKey());
                     tearDownNodeModification(node);
                 } while (moveToRightSibling());

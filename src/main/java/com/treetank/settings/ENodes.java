@@ -23,7 +23,9 @@ public enum ENodes {
     /** Node kind is comment. */
     COMMENT_KIND(6),
     /** Node kind is document root. */
-    ROOT_KIND(7);
+    ROOT_KIND(7),
+    /** Node kind is document root. */
+    DELETE_KIND(8);
 
     /** Identifier */
     private final int mKind;
@@ -80,6 +82,9 @@ public enum ENodes {
             break;
         case 7:
             returnVal = ROOT_KIND;
+            break;
+        case 8:
+            returnVal = DELETE_KIND;
             break;
         default:
             returnVal = null;
