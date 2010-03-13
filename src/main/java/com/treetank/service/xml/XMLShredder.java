@@ -35,6 +35,7 @@ import com.treetank.access.DatabaseConfiguration;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankUsageException;
 import com.treetank.settings.EFixed;
@@ -70,9 +71,13 @@ public final class XMLShredder implements Callable<Long> {
      * @param addAsFirstChild
      *            if the insert is occuring on a node in an existing tree.
      *            <code>false</code> is not possible when wtx is on root node.
+     * @throws TreetankUsageException
+     *             if insertasfirstChild && updateOnly is both true OR if wtx is
+     *             not pointing to doc-root and updateOnly= true
      */
     public XMLShredder(final IWriteTransaction wtx,
-            final XMLStreamReader reader, final boolean addAsFirstChild) {
+            final XMLStreamReader reader, final boolean addAsFirstChild)
+            throws TreetankUsageException {
         this(wtx, reader, addAsFirstChild, false);
     }
 
@@ -87,29 +92,137 @@ public final class XMLShredder implements Callable<Long> {
      * @param addAsFirstChild
      *            if the insert is occuring on a node in an existing tree.
      *            <code>false</code> is not possible when wtx is on root node.
-     * @param insertOnlyModified
+     * @param updateOnly
      *            if true, only modified nodes are updated in the structure.
      *            Note that this method is time consuming and makes only use of
      *            the {@link EXMLSerializing#ID} tag when used.
+     * @throws TreetankUsageException
+     *             if insertasfirstChild && updateOnly is both true OR if wtx is
+     *             not pointing to doc-root and updateOnly= true
      */
     public XMLShredder(final IWriteTransaction wtx,
             final XMLStreamReader reader, final boolean addAsFirstChild,
-            final boolean insertOnlyModified) {
+            final boolean updateOnly) throws TreetankUsageException {
         mWtx = wtx;
         mReader = reader;
+        if (addAsFirstChild && updateOnly) {
+            throw new TreetankUsageException(
+                    "Either add as firstChild or update current structure");
+        }
+        if (updateOnly && !wtx.getNode().isDocumentRoot()) {
+            throw new TreetankUsageException(
+                    "WriteTransaction must point to doc-root at the beginning!");
+        }
         mFirstChildAppend = addAsFirstChild;
-        mInsertOnlyModified = insertOnlyModified;
+        mInsertOnlyModified = updateOnly;
+
     }
 
     /**
      * Invoking the shredder.
      */
     public Long call() throws Exception {
-        try {
-            final long revision = mWtx.getRevisionNumber();
-            final FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
+        final long revision = mWtx.getRevisionNumber();
 
-            long key;
+        if (!mInsertOnlyModified) {
+            insertNewContent();
+        } else {
+            updateOnly();
+
+        }
+
+        mWtx.commit();
+        return revision;
+
+    }
+
+    private void updateOnly() {
+
+    }
+
+    private final FastStack<Long> addNewElement(final boolean firstElement,
+            final FastStack<Long> leftSiblingKeyStack) throws TreetankException {
+        long key;
+        final String name = ((mReader.getPrefix() == null || mReader
+                .getPrefix().length() == 0) ? mReader.getLocalName() : mReader
+                .getPrefix()
+                + ":" + mReader.getLocalName());
+
+        if (firstElement && !mFirstChildAppend) {
+            if (mWtx.getNode().isDocumentRoot()) {
+                throw new TreetankUsageException(
+                        "Subtree can not be inserted as sibling of Root");
+            }
+            key = mWtx.insertElementAsRightSibling(name, mReader
+                    .getNamespaceURI());
+        } else {
+
+            if (leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
+                    .getStandardProperty()) {
+                key = mWtx.insertElementAsFirstChild(name, mReader
+                        .getNamespaceURI());
+            } else {
+                key = mWtx.insertElementAsRightSibling(name, mReader
+                        .getNamespaceURI());
+            }
+        }
+
+        leftSiblingKeyStack.pop();
+        leftSiblingKeyStack.push(key);
+        leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
+                .getStandardProperty());
+
+        // Parse namespaces.
+        for (int i = 0, l = mReader.getNamespaceCount(); i < l; i++) {
+            mWtx.insertNamespace(mReader.getNamespaceURI(i), mReader
+                    .getNamespacePrefix(i));
+            mWtx.moveTo(key);
+        }
+
+        // Parse attributes.
+        for (int i = 0, l = mReader.getAttributeCount(); i < l; i++) {
+            mWtx.insertAttribute(
+                    (mReader.getAttributePrefix(i) == null || mReader
+                            .getAttributePrefix(i).length() == 0) ? mReader
+                            .getAttributeLocalName(i) : mReader
+                            .getAttributePrefix(i)
+                            + ":" + mReader.getAttributeLocalName(i), mReader
+                            .getAttributeNamespace(i), mReader
+                            .getAttributeValue(i));
+            mWtx.moveTo(key);
+        }
+        return leftSiblingKeyStack;
+    }
+
+    private final FastStack<Long> addNewText(
+            final FastStack<Long> leftSiblingKeyStack) throws TreetankException {
+        final String text = mReader.getText().trim();
+        long key;
+        final ByteBuffer textByteBuffer = ByteBuffer.wrap(TypedValue
+                .getBytes(text));
+        if (textByteBuffer.array().length > 0) {
+
+            if (leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
+                    .getStandardProperty()) {
+                key = mWtx.insertTextAsFirstChild(
+                        mWtx.keyForName("xs:untyped"), textByteBuffer.array());
+            } else {
+                key = mWtx.insertTextAsRightSibling(mWtx
+                        .keyForName("xs:untyped"), textByteBuffer.array());
+            }
+
+            leftSiblingKeyStack.pop();
+            leftSiblingKeyStack.push(key);
+
+        }
+        return leftSiblingKeyStack;
+    }
+
+    private final void insertNewContent() throws TreetankException {
+        try {
+
+            FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
+
             leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
                     .getStandardProperty());
             boolean firstElement = true;
@@ -120,60 +233,9 @@ public final class XMLShredder implements Callable<Long> {
                 switch (mReader.next()) {
 
                 case XMLStreamConstants.START_ELEMENT:
-
-                    final String name = ((mReader.getPrefix() == null || mReader
-                            .getPrefix().length() == 0) ? mReader
-                            .getLocalName() : mReader.getPrefix() + ":"
-                            + mReader.getLocalName());
-
-                    if (firstElement && !mFirstChildAppend) {
-                        if (mWtx.getNode().isDocumentRoot()) {
-                            throw new TreetankUsageException(
-                                    "Subtree can not be inserted as sibling of Root");
-                        }
-                        key = mWtx.insertElementAsRightSibling(name, mReader
-                                .getNamespaceURI());
-                    } else {
-
-                        if (leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
-                                .getStandardProperty()) {
-                            key = mWtx.insertElementAsFirstChild(name, mReader
-                                    .getNamespaceURI());
-                        } else {
-                            key = mWtx.insertElementAsRightSibling(name,
-                                    mReader.getNamespaceURI());
-                        }
-                    }
-
+                    leftSiblingKeyStack = addNewElement(firstElement,
+                            leftSiblingKeyStack);
                     firstElement = false;
-
-                    leftSiblingKeyStack.pop();
-                    leftSiblingKeyStack.push(key);
-                    leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
-                            .getStandardProperty());
-
-                    // Parse namespaces.
-                    for (int i = 0, l = mReader.getNamespaceCount(); i < l; i++) {
-                        mWtx.insertNamespace(mReader.getNamespaceURI(i),
-                                mReader.getNamespacePrefix(i));
-                        mWtx.moveTo(key);
-                    }
-
-                    // Parse attributes.
-                    for (int i = 0, l = mReader.getAttributeCount(); i < l; i++) {
-                        mWtx
-                                .insertAttribute(
-                                        (mReader.getAttributePrefix(i) == null || mReader
-                                                .getAttributePrefix(i).length() == 0) ? mReader
-                                                .getAttributeLocalName(i)
-                                                : mReader.getAttributePrefix(i)
-                                                        + ":"
-                                                        + mReader
-                                                                .getAttributeLocalName(i),
-                                        mReader.getAttributeNamespace(i),
-                                        mReader.getAttributeValue(i));
-                        mWtx.moveTo(key);
-                    }
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
@@ -182,33 +244,11 @@ public final class XMLShredder implements Callable<Long> {
                     break;
 
                 case XMLStreamConstants.CHARACTERS:
-                    final String text = mReader.getText().trim();
-                    final ByteBuffer textByteBuffer = ByteBuffer
-                            .wrap(TypedValue.getBytes(text));
-                    if (textByteBuffer.array().length > 0) {
-
-                        if (leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
-                                .getStandardProperty()) {
-                            key = mWtx.insertTextAsFirstChild(mWtx
-                                    .keyForName("xs:untyped"), textByteBuffer
-                                    .array());
-                        } else {
-                            key = mWtx.insertTextAsRightSibling(mWtx
-                                    .keyForName("xs:untyped"), textByteBuffer
-                                    .array());
-                        }
-
-                        leftSiblingKeyStack.pop();
-                        leftSiblingKeyStack.push(key);
-
-                    }
+                    leftSiblingKeyStack = addNewText(leftSiblingKeyStack);
                     break;
-
                 }
             }
-            mWtx.commit();
 
-            return revision;
         } catch (final XMLStreamException exc1) {
             throw new TreetankIOException(exc1);
         }
