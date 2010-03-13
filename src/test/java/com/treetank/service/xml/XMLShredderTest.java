@@ -291,7 +291,7 @@ public class XMLShredderTest {
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLShredder shredder = new XMLShredder(wtx, XMLShredder
-                .createReader(new File(XMLREF1)), true, true);
+                .createReader(new File(XMLREF1)), true, false);
         shredder.call();
         assertEquals(1, wtx.getRevisionNumber());
         wtx.moveToDocumentRoot();
