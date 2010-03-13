@@ -184,6 +184,11 @@
 		</dependency>
 	</dependencies>
 	<distributionManagement>
+		<site>
+			<id>xen5</id>
+			<name>Xen5 Projet sites</name>
+			<url>scp://xen5.disy.inf.uni-konstanz.de/home/disyadmin/doku/${version}</url>
+		</site>
 		<repository>
 			<id>xen5</id>
 			<name>Xen5 Repository</name>
