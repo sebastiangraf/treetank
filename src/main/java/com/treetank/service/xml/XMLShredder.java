@@ -175,6 +175,11 @@ public final class XMLShredder implements Callable<Long> {
                                         .toString());
                     }
                     
+                    //Check against existing TT-Node
+                    
+                    //Check against missing TT-Node
+                    
+                    
                     
                     
 
