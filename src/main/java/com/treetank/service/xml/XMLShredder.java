@@ -148,49 +148,12 @@ public final class XMLShredder implements Callable<Long> {
             final long maxNodeKey = mWtx.getMaxNodeKey();
 
             // Iterate over all nodes.
-            while (mReader.hasNext()) {
-                switch (mReader.next()) {
-
-                case XMLStreamConstants.START_ELEMENT:
-                    long key = (Long) EFixed.NULL_NODE_KEY
-                            .getStandardProperty();
-                    // Search for attribute with ID.
-                    for (int i = 0, l = mReader.getAttributeCount(); i < l; i++) {
-                        final String idString = mReader
-                                .getAttributeLocalName(i);
-                        // TODO Make this better
-                        if (idString.equals(new String(EXMLSerializing.ID
-                                .getBytes()))) {
-                            key = Long.parseLong(mReader.getAttributeValue(i));
-                            break;
-                        }
-                    }
-                    if (key != (Long) EFixed.NULL_NODE_KEY
-                            .getStandardProperty()) {
-                        throw new TreetankUsageException(
-                                new StringBuilder("Element ")
-                                        .append(mReader.getLocalName())
-                                        .append(
-                                                " is missing the key-attribute while modifying existing structure!")
-                                        .toString());
-                    }
-                    
-                    //Check against existing TT-Node
-                    
-                    //Check against missing TT-Node
-                    
-                    
-                    
-                    
-
-                    break;
-
-                case XMLStreamConstants.END_ELEMENT:
-                    break;
-
-                case XMLStreamConstants.CHARACTERS:
-                    break;
-                }
+            while (mReader.hasNext() && mWtx.getNode().getNodeKey() < maxNodeKey) {
+                
+                
+                
+                
+                
 
             }
 
