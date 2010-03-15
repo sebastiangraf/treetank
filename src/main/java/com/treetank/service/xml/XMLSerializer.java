@@ -19,13 +19,18 @@
 package com.treetank.service.xml;
 
 import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.Callable;
 
+import com.treetank.access.Database;
 import com.treetank.api.IAxis;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
+import com.treetank.api.ISession;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.settings.EXMLSerializing;
 import com.treetank.utils.FastStack;
@@ -300,6 +305,35 @@ public final class XMLSerializer implements Callable<Void> {
             mOut.write((byte) (digit + ASCII_OFFSET));
             remainder -= digit * LONG_POWERS[i];
         }
+    }
+
+    public static void main(String... args) throws Exception {
+        if (args.length < 2 || args.length > 3) {
+            System.out.println("Usage: XMLSerializer input.tnk output.xml");
+            System.exit(1);
+        }
+
+        System.out.print("Serializing '" + args[0] + "' to '" + args[1]
+                + "' ... ");
+        long time = System.currentTimeMillis();
+        final File target = new File(args[1]);
+        target.delete();
+        final FileOutputStream outputStream = new FileOutputStream(target);
+
+        final IDatabase db = Database.openDatabase(new File(args[0]));
+        final ISession session = db.getSession();
+        final IReadTransaction rtx = session.beginReadTransaction();
+        final XMLSerializer serializer = new XMLSerializer(rtx, outputStream,
+                true, false, true);
+        serializer.call();
+
+        rtx.close();
+        session.close();
+        db.close();
+        outputStream.close();
+
+        System.out.println(" done [" + (System.currentTimeMillis() - time)
+                + "ms].");
     }
 
 }
