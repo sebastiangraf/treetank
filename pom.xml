@@ -16,6 +16,10 @@
 		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk</developerConnection>
 		<url>https://svn.uni-konstanz.de/disy/Treetank</url>
 	</scm>
+	<issueManagement>
+		<system>Redmine</system>
+		<url>https://projects.uni-konstanz.de/projects/treetank/</url>
+	</issueManagement>
 	<ciManagement>
 		<system>hudson</system>
 		<url>http://xen4.disy.inf.uni-konstanz.de:8080</url>
