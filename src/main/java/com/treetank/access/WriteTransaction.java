@@ -128,6 +128,7 @@ public final class WriteTransaction extends ReadTransaction implements
     /**
      * {@inheritDoc}
      */
+    @Deprecated
     public synchronized long insertElementAsFirstChild(final String name,
             final String uri) throws TreetankException {
         return insertElementAsFirstChild(buildQName(uri, name));
@@ -158,6 +159,7 @@ public final class WriteTransaction extends ReadTransaction implements
     /**
      * {@inheritDoc}
      */
+    @Deprecated
     public synchronized long insertElementAsRightSibling(final String name,
             final String uri) throws TreetankException {
 
@@ -220,6 +222,7 @@ public final class WriteTransaction extends ReadTransaction implements
     /**
      * {@inheritDoc}
      */
+    @Deprecated
     public synchronized long insertAttribute(final String name,
             final String uri, final String value) throws TreetankException {
         final QName qname = buildQName(uri, name);
