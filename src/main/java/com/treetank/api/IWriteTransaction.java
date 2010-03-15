@@ -120,7 +120,7 @@ public interface IWriteTransaction extends IReadTransaction {
      * @param uri
      *            URI of inserted node.
      * @return Key of inserted node. already has a first child.
-     * @deprecated Use {@link insertElementAsFirstChild(final QName name}
+     * @deprecated Use {@link insertElementAsFirstChild(final QName name)}
      *             instead;
      */
     @Deprecated
@@ -169,7 +169,7 @@ public interface IWriteTransaction extends IReadTransaction {
      * @param uri
      *            URI of inserted node.
      * @return Key of inserted node. already has a first child.
-     * @deprecated Use {@link insertElementAsRightSibling(final QName name}
+     * @deprecated Use {@link insertElementAsFirstChild(final QName name)}
      *             instead;
      */
     @Deprecated

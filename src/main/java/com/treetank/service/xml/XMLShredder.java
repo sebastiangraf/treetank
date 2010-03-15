@@ -158,6 +158,7 @@ public final class XMLShredder implements Callable<Long> {
             while (mReader.hasNext()
                     && mWtx.getNode().getNodeKey() < maxNodeKey) {
                 // checking for actual
+                
 
             }
 
