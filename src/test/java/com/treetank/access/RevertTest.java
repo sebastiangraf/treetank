@@ -2,6 +2,8 @@ package com.treetank.access;
 
 import static org.junit.Assert.assertEquals;
 
+import javax.xml.namespace.QName;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +43,7 @@ public final class RevertTest {
         wtx = session.beginWriteTransaction();
         assertEquals(1L, wtx.getRevisionNumber());
         wtx.moveToFirstChild();
-        wtx.insertElementAsFirstChild("bla", "");
+        wtx.insertElementAsFirstChild(new QName("bla"));
         wtx.commit();
         assertEquals(2L, wtx.getRevisionNumber());
         wtx.close();

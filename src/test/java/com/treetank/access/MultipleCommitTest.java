@@ -19,6 +19,9 @@
 package com.treetank.access;
 
 import static org.junit.Assert.assertEquals;
+
+import javax.xml.namespace.QName;
+
 import junit.framework.TestCase;
 
 import org.junit.After;
@@ -58,7 +61,7 @@ public class MultipleCommitTest {
 
         wtx.commit();
 
-        wtx.insertElementAsFirstChild("foo", "");
+        wtx.insertElementAsFirstChild(new QName("foo"));
         TestCase.assertEquals(1L, wtx.getRevisionNumber());
         wtx.moveTo(1);
         assertEquals("foo", wtx.getNameOfCurrentNode());

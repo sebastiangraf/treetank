@@ -20,6 +20,8 @@ package com.treetank.utils;
 
 import static org.junit.Assert.assertTrue;
 
+import javax.xml.namespace.QName;
+
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 
@@ -103,27 +105,27 @@ public final class DocumentCreater {
             throws TreetankException {
         assertTrue(wtx.moveToDocumentRoot());
 
-        wtx.insertElementAsFirstChild("p:a", "ns");
-        wtx.insertAttribute("i", "", "j");
+        wtx.insertElementAsFirstChild(new QName("ns", "a", "p"));
+        wtx.insertAttribute(new QName("i"), "j");
         assertTrue(wtx.moveToParent());
         wtx.insertNamespace("ns", "p");
         assertTrue(wtx.moveToParent());
 
         wtx.insertTextAsFirstChild("oops1");
 
-        wtx.insertElementAsRightSibling("b", "");
+        wtx.insertElementAsRightSibling(new QName("b"));
 
         wtx.insertTextAsFirstChild("foo");
-        wtx.insertElementAsRightSibling("c", "");
+        wtx.insertElementAsRightSibling(new QName("c"));
         assertTrue(wtx.moveToParent());
 
         wtx.insertTextAsRightSibling("oops2");
 
-        wtx.insertElementAsRightSibling("b", "");
-        wtx.insertAttribute("p:x", "ns", "y");
+        wtx.insertElementAsRightSibling(new QName("b"));
+        wtx.insertAttribute(new QName("ns", "x", "p"), "y");
         assertTrue(wtx.moveToParent());
 
-        wtx.insertElementAsFirstChild("c", "");
+        wtx.insertElementAsFirstChild(new QName("c"));
         wtx.insertTextAsRightSibling("bar");
         assertTrue(wtx.moveToParent());
 
@@ -177,25 +179,25 @@ public final class DocumentCreater {
             throws TreetankException {
         wtx.moveToDocumentRoot();
 
-        wtx.insertElementAsFirstChild("a", "");
-        wtx.insertAttribute("i", "", "j");
+        wtx.insertElementAsFirstChild(new QName("a"));
+        wtx.insertAttribute(new QName("i"), "j");
         wtx.moveToParent();
 
         wtx.insertTextAsFirstChild("oops1");
 
-        wtx.insertElementAsRightSibling("b", "");
+        wtx.insertElementAsRightSibling(new QName("b"));
 
         wtx.insertTextAsFirstChild("foo");
-        wtx.insertElementAsRightSibling("c", "");
+        wtx.insertElementAsRightSibling(new QName("c"));
         wtx.moveToParent();
 
         wtx.insertTextAsRightSibling("oops2");
 
-        wtx.insertElementAsRightSibling("b", "");
-        wtx.insertAttribute("x", "", "y");
+        wtx.insertElementAsRightSibling(new QName("b"));
+        wtx.insertAttribute(new QName("x"), "y");
         wtx.moveToParent();
 
-        wtx.insertElementAsFirstChild("c", "");
+        wtx.insertElementAsFirstChild(new QName("c"));
         wtx.insertTextAsRightSibling("bar");
         wtx.moveToParent();
 
@@ -203,5 +205,4 @@ public final class DocumentCreater {
 
         wtx.moveToDocumentRoot();
     }
-
 }
