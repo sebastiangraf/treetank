@@ -146,20 +146,109 @@ public final class XMLShredder implements Callable<Long> {
 
     private void updateOnly() throws TreetankException {
         try {
-            FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
-
-            leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
-                    .getStandardProperty());
-
+            // setting the maxNodeKey for the compare-wtx
             final long maxNodeKey = mWtx.getMaxNodeKey();
 
-            final XMLEvent event = mReader.nextEvent();
-            // Iterate over all nodes.
-            while (mReader.hasNext()
-                    && mWtx.getNode().getNodeKey() < maxNodeKey) {
-                // checking for actual
-                
+            // setting up leftsib-Stack. This one is only for convinience and
+            // does nothing in fact.
+            FastStack<Long> leftSiblingKeyStackForXML = new FastStack<Long>();
+            leftSiblingKeyStackForXML.push((Long) EFixed.NULL_NODE_KEY
+                    .getStandardProperty());
 
+            // setup up of first element of the data
+            XMLEvent event = mReader.nextEvent();
+            mWtx.moveToDocumentRoot();
+            // if no content is in the XML, a normal insertNewContent is
+            // executed, so search for the first key available
+            long startkey = (Long) EFixed.ROOT_NODE_KEY.getStandardProperty() + 1;
+            while (!mWtx.moveTo(startkey)) {
+                startkey++;
+            }
+            // if no search beyond EFixed.ROOT_NODE_KEY is valid, just insert
+            // the new content.
+            if (mWtx.getNode().isDocumentRoot()) {
+                insertNewContent();
+            }
+            // if node was found, make a sync against the current structure
+            else {
+
+                // Iterate over all nodes.(
+                do {
+
+                    switch (event.getEventType()) {
+                    case XMLStreamConstants.START_ELEMENT:
+                        // Searching for the attribute with the id at the
+                        // current node
+                        long id = (Long) EFixed.NULL_NODE_KEY
+                                .getStandardProperty();
+                        for (Iterator<?> it = ((StartElement) event)
+                                .getAttributes(); it.hasNext();) {
+                            final Attribute attribute = (Attribute) it.next();
+                            final String attributeName = new String(
+                                    EXMLSerializing.ID.getBytes());
+                            // checking for id-attribute
+                            if (attribute.getName().getLocalPart().equals(
+                                    attributeName)) {
+                                id = Long.parseLong(attribute.getValue());
+                                break;
+                            }
+                        }
+
+                        // found id tag
+                        if (id != (Long) EFixed.NULL_NODE_KEY
+                                .getStandardProperty()) {
+                            // moving transaction to key;
+                            if (!mWtx.moveTo(id)) {
+                                mWtx.abort();
+                                throw new TreetankUsageException(
+                                        new StringBuilder("Move to ")
+                                                .append(id)
+                                                .append(" not successful.")
+                                                .append(
+                                                        " That means that the revisioned file is not suitable to the databasae")
+                                                .toString());
+                            }
+                            // TODO insert the rest
+
+                        }
+                        // not finding any id tag -> just appending the node as
+                        // a new one based on the original XML and the current
+                        // mWtx-position
+                        else {
+                            mWtx.moveTo(leftSiblingKeyStackForXML.peek());
+                            leftSiblingKeyStackForXML = addNewElement(false,
+                                    leftSiblingKeyStackForXML,
+                                    (StartElement) event);
+                        }
+                        break;
+                    case XMLStreamConstants.CHARACTERS:
+                        final String valFromXML = ((Characters) event)
+                                .getData().trim();
+                        // if wtx is text and equal to the val, do no insert ->
+                        // insert if unequal, identification takes place on the
+                        // node
+                        if (!(mWtx.getNode().isText() && mWtx
+                                .getValueOfCurrentNode().equals(valFromXML))) {
+
+                            leftSiblingKeyStackForXML = addNewText(
+                                    leftSiblingKeyStackForXML,
+                                    (Characters) event);
+                        } else {
+                            leftSiblingKeyStackForXML.pop();
+                            leftSiblingKeyStackForXML.push(mWtx.getNode()
+                                    .getNodeKey());
+                        }
+                        break;
+                    case XMLStreamConstants.END_ELEMENT:
+                        leftSiblingKeyStackForXML.pop();
+                        mWtx.moveTo(leftSiblingKeyStackForXML.peek());
+                        break;
+                    }// end switch
+
+                    // parsing the next event
+                    event = mReader.nextEvent();
+                } while (mReader.hasNext()
+                        && mWtx.getNode().getNodeKey() < maxNodeKey);
             }
 
         } catch (final XMLStreamException exc1) {
