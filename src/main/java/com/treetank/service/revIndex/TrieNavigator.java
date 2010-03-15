@@ -1,5 +1,7 @@
 package com.treetank.service.revIndex;
 
+import javax.xml.namespace.QName;
+
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
@@ -30,10 +32,9 @@ final class TrieNavigator {
             // ..navigate through the trie by inserting directly the prefix
             // if no firstchild is present in the trie...
             if (!wtx.moveToFirstChild()) {
-                wtx.insertElementAsFirstChild(RevIndex.TRIE_ELEMENT,
-                        RevIndex.EMPTY_STRING);
-                wtx.insertAttribute(RevIndex.TRIE_PREFIX_ATTRIBUTEKEY,
-                        RevIndex.EMPTY_STRING, current);
+                wtx.insertElementAsFirstChild(new QName(RevIndex.TRIE_ELEMENT));
+                wtx.insertAttribute(
+                        new QName(RevIndex.TRIE_PREFIX_ATTRIBUTEKEY), current);
                 wtx.moveToParent();
             }
             boolean found = false;
@@ -58,10 +59,11 @@ final class TrieNavigator {
             } while (wtx.moveToRightSibling());
             // ...of not, insert it...
             if (!found) {
-                wtx.insertElementAsRightSibling(RevIndex.TRIE_ELEMENT,
-                        RevIndex.EMPTY_STRING);
-                wtx.insertAttribute(RevIndex.TRIE_PREFIX_ATTRIBUTEKEY,
-                        RevIndex.EMPTY_STRING, current);
+                wtx
+                        .insertElementAsRightSibling(new QName(
+                                RevIndex.TRIE_ELEMENT));
+                wtx.insertAttribute(
+                        new QName(RevIndex.TRIE_PREFIX_ATTRIBUTEKEY), current);
                 wtx.moveToParent();
             }
             // ..and adapt the prefix with the next letter from the trie..

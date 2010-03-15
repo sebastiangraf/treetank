@@ -22,6 +22,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import javax.xml.namespace.QName;
+
 import com.treetank.api.IAxis;
 import com.treetank.api.IItem;
 import com.treetank.api.IWriteTransaction;
@@ -108,19 +110,27 @@ public final class WriteTransaction extends ReadTransaction implements
     /**
      * {@inheritDoc}
      */
-    public synchronized long insertElementAsFirstChild(final String name,
-            final String uri) throws TreetankException {
+    public synchronized long insertElementAsFirstChild(final QName qname)
+            throws TreetankException {
         return insertFirstChild(((WriteTransactionState) getTransactionState())
                 .createElementNode(getCurrentNode().getNodeKey(),
                         (Long) EFixed.NULL_NODE_KEY.getStandardProperty(),
                         (Long) EFixed.NULL_NODE_KEY.getStandardProperty(),
                         getCurrentNode().getFirstChildKey(),
                         ((WriteTransactionState) getTransactionState())
-                                .createNameKey(name),
+                                .createNameKey(buildName(qname)),
                         ((WriteTransactionState) getTransactionState())
-                                .createNameKey(uri),
+                                .createNameKey(qname.getNamespaceURI()),
                         ((WriteTransactionState) getTransactionState())
                                 .createNameKey("xs:untyped")));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public synchronized long insertElementAsFirstChild(final String name,
+            final String uri) throws TreetankException {
+        return insertElementAsFirstChild(buildQName(uri, name));
     }
 
     /**
@@ -150,15 +160,22 @@ public final class WriteTransaction extends ReadTransaction implements
      */
     public synchronized long insertElementAsRightSibling(final String name,
             final String uri) throws TreetankException {
+
+        return insertElementAsRightSibling(buildQName(uri, name));
+
+    }
+
+    public synchronized long insertElementAsRightSibling(final QName qname)
+            throws TreetankException {
         return insertRightSibling(((WriteTransactionState) getTransactionState())
                 .createElementNode(getCurrentNode().getParentKey(),
                         (Long) EFixed.NULL_NODE_KEY.getStandardProperty(),
                         getCurrentNode().getNodeKey(), getCurrentNode()
                                 .getRightSiblingKey(),
                         ((WriteTransactionState) getTransactionState())
-                                .createNameKey(name),
+                                .createNameKey(buildName(qname)),
                         ((WriteTransactionState) getTransactionState())
-                                .createNameKey(uri),
+                                .createNameKey(qname.getNamespaceURI()),
                         ((WriteTransactionState) getTransactionState())
                                 .createNameKey("xs:untyped")));
     }
@@ -185,20 +202,19 @@ public final class WriteTransaction extends ReadTransaction implements
                         .getBytes(value));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public synchronized long insertAttribute(final String name,
-            final String uri, final int valueType, final byte[] value)
-            throws TreetankException {
+    public synchronized long insertAttribute(final QName qname,
+            final String value) throws TreetankException {
+
         return insertAttribute(((WriteTransactionState) getTransactionState())
                 .createAttributeNode(getCurrentNode().getNodeKey(),
                         ((WriteTransactionState) getTransactionState())
-                                .createNameKey(name),
+                                .createNameKey(buildName(qname)),
                         ((WriteTransactionState) getTransactionState())
-                                .createNameKey(uri),
+                                .createNameKey(qname.getNamespaceURI()),
                         ((WriteTransactionState) getTransactionState())
-                                .createNameKey("xs:untypedAtomic"), value));
+                                .createNameKey("xs:untypedAtomic"), TypedValue
+                                .getBytes(value)));
+
     }
 
     /**
@@ -206,10 +222,9 @@ public final class WriteTransaction extends ReadTransaction implements
      */
     public synchronized long insertAttribute(final String name,
             final String uri, final String value) throws TreetankException {
-        return insertAttribute(name, uri,
-                ((WriteTransactionState) getTransactionState())
-                        .createNameKey("xs:untypedAtomic"), TypedValue
-                        .getBytes(value));
+        final QName qname = buildQName(uri, name);
+
+        return insertAttribute(qname, value);
     }
 
     /**
@@ -483,6 +498,27 @@ public final class WriteTransaction extends ReadTransaction implements
         // Reset internal transaction state to last committed uber page.
         setTransactionState(getSessionState().createWriteTransactionState(
                 getTransactionID(), revisionToSet, revisionToSet));
+    }
+
+    private final QName buildQName(final String uri, final String name) {
+        QName qname;
+        if (name.contains(":")) {
+            qname = new QName(uri, name.split(":")[1], name.split(":")[0]);
+        } else {
+            qname = new QName(uri, name, "");
+        }
+        return qname;
+    }
+
+    private final String buildName(final QName qname) {
+        String name;
+        if (qname.getPrefix().isEmpty()) {
+            name = qname.getLocalPart();
+        } else {
+            name = new StringBuilder(qname.getPrefix()).append(":").append(
+                    qname.getLocalPart()).toString();
+        }
+        return name;
     }
 
     private void intermediateCommitIfRequired() throws TreetankException {

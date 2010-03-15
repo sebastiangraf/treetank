@@ -18,6 +18,8 @@
 
 package com.treetank.axis;
 
+import javax.xml.namespace.QName;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -78,12 +80,12 @@ public class AttributeAxisTest {
         final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
-        final long nodeKey = wtx.insertElementAsFirstChild("foo", "");
-        wtx.insertAttribute("foo0", "", "0");
+        final long nodeKey = wtx.insertElementAsFirstChild(new QName("foo"));
+        wtx.insertAttribute(new QName("foo0"), "0");
         wtx.moveTo(nodeKey);
-        wtx.insertAttribute("foo1", "", "1");
+        wtx.insertAttribute(new QName("foo1"), "1");
         wtx.moveTo(nodeKey);
-        wtx.insertAttribute("foo2", "", "2");
+        wtx.insertAttribute(new QName("foo2"), "2");
 
         Assert.assertEquals(true, wtx.moveTo(nodeKey));
 

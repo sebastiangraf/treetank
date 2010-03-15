@@ -18,6 +18,8 @@
 
 package com.treetank.api;
 
+import javax.xml.namespace.QName;
+
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 
@@ -118,9 +120,22 @@ public interface IWriteTransaction extends IReadTransaction {
      * @param uri
      *            URI of inserted node.
      * @return Key of inserted node. already has a first child.
+     * @deprecated Use {@link insertElementAsFirstChild(final QName name}
+     *             instead;
      */
+    @Deprecated
     long insertElementAsFirstChild(final String name, final String uri)
             throws TreetankException;
+
+    /**
+     * Insert new element node as first child of currently selected node. The
+     * cursor is moved to the inserted node.
+     * 
+     * @param qname
+     *            Qualified name of inserted node.
+     * @return Key of inserted node. already has a first child.
+     */
+    long insertElementAsFirstChild(final QName qname) throws TreetankException;
 
     /**
      * Insert new text node as first child of currently selected node. The
@@ -154,8 +169,22 @@ public interface IWriteTransaction extends IReadTransaction {
      * @param uri
      *            URI of inserted node.
      * @return Key of inserted node. already has a first child.
+     * @deprecated Use {@link insertElementAsRightSibling(final QName name}
+     *             instead;
      */
+    @Deprecated
     long insertElementAsRightSibling(final String name, final String uri)
+            throws TreetankException;
+
+    /**
+     * Insert new element node as right sibling of currently selected node. The
+     * cursor is moved to the inserted node.
+     * 
+     * @param qname
+     *            name of the new node
+     * @return Key of inserted node. already has a first child.
+     */
+    long insertElementAsRightSibling(final QName qname)
             throws TreetankException;
 
     /**
@@ -191,28 +220,26 @@ public interface IWriteTransaction extends IReadTransaction {
      *            Qualified name of inserted node.
      * @param uri
      *            URI of inserted node.
-     * @param valueType
-     *            Type of value.
      * @param value
      *            Value of inserted node.
      * @return Key of inserted node.
+     * @Deprecated use insertAttribute(QName, String) instead
      */
-    long insertAttribute(final String name, final String uri,
-            final int valueType, final byte[] value) throws TreetankException;
+    @Deprecated
+    long insertAttribute(final String name, final String uri, final String value)
+            throws TreetankException;
 
     /**
      * Insert attribute in currently selected node. The cursor is moved to the
      * inserted node.
      * 
-     * @param name
-     *            Qualified name of inserted node.
-     * @param uri
-     *            URI of inserted node.
+     * @param QName
+     *            qname
      * @param value
      *            Value of inserted node.
      * @return Key of inserted node.
      */
-    long insertAttribute(final String name, final String uri, final String value)
+    long insertAttribute(final QName qname, final String value)
             throws TreetankException;
 
     /**

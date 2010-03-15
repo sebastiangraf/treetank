@@ -3,11 +3,11 @@ package com.treetank;
 import java.io.File;
 import java.util.Random;
 
-import javax.xml.stream.XMLStreamReader;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventReader;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.treetank.access.Database;
@@ -53,8 +53,8 @@ public final class OverallTest {
                 wtx.abort();
             }
 
-            final XMLStreamReader reader = XMLShredder.createReader(new File(
-                    XML));
+            final XMLEventReader reader = XMLShredder
+                    .createReader(new File(XML));
             final XMLShredder shredder = new XMLShredder(wtx, reader, true);
             shredder.call();
 
@@ -70,7 +70,7 @@ public final class OverallTest {
         final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
-        wtx.insertElementAsFirstChild(getString(), "");
+        wtx.insertElementAsFirstChild(new QName(getString()));
         for (int i = 0; i < ELEMENTS; i++) {
             if (ran.nextBoolean()) {
                 switch (wtx.getNode().getKind()) {
@@ -94,12 +94,12 @@ public final class OverallTest {
                 }
             } else {
                 if (ran.nextBoolean()) {
-                    wtx.insertElementAsFirstChild(getString(), "");
+                    wtx.insertElementAsFirstChild(new QName(getString()));
                 } else {
-                    wtx.insertElementAsRightSibling(getString(), "");
+                    wtx.insertElementAsRightSibling(new QName(getString()));
                 }
                 while (ran.nextBoolean()) {
-                    wtx.insertAttribute(getString(), getString(), getString());
+                    wtx.insertAttribute(new QName(getString()), getString());
                     wtx.moveToParent();
                 }
                 while (ran.nextBoolean()) {
@@ -126,7 +126,7 @@ public final class OverallTest {
         }
         final long key = wtx.getNode().getNodeKey();
         wtx.remove();
-        wtx.insertElementAsFirstChild(getString(), "");
+        wtx.insertElementAsFirstChild(new QName(getString()));
         wtx.moveTo(key);
         wtx.commit();
         wtx.close();

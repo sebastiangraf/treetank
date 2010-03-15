@@ -2,6 +2,8 @@ package com.treetank.service.revIndex;
 
 import java.util.Stack;
 
+import javax.xml.namespace.QName;
+
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
@@ -21,10 +23,10 @@ public final class DocumentTreeNavigator {
             // if firstChild is not existing,...
             if (!wtx.moveToFirstChild()) {
                 // ..inserting it...
-                wtx.insertElementAsFirstChild(RevIndex.DOCUMENT_ELEMENT,
-                        RevIndex.EMPTY_STRING);
-                wtx.insertAttribute(RevIndex.DOCUMENT_NODE_ATTIBUTEKEY,
-                        RevIndex.EMPTY_STRING, name);
+                wtx.insertElementAsFirstChild(new QName(
+                        RevIndex.DOCUMENT_ELEMENT));
+                wtx.insertAttribute(new QName(
+                        RevIndex.DOCUMENT_NODE_ATTIBUTEKEY), name);
                 wtx.moveToParent();
             }
             // Check if there was already a document on the sibling axis...
@@ -52,10 +54,10 @@ public final class DocumentTreeNavigator {
             } while (wtx.moveToRightSibling());
             // ...if there hasn't be an element, insert the
             if (!found) {
-                wtx.insertElementAsRightSibling(RevIndex.DOCUMENT_ELEMENT,
-                        RevIndex.EMPTY_STRING);
-                wtx.insertAttribute(RevIndex.DOCUMENT_NODE_ATTIBUTEKEY,
-                        RevIndex.EMPTY_STRING, name);
+                wtx.insertElementAsRightSibling(new QName(
+                        RevIndex.DOCUMENT_ELEMENT));
+                wtx.insertAttribute(new QName(
+                        RevIndex.DOCUMENT_NODE_ATTIBUTEKEY), name);
                 wtx.moveToParent();
 
                 currentDocKey = wtx.getNode().getNodeKey();

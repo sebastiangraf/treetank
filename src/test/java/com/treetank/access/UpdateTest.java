@@ -20,6 +20,9 @@ package com.treetank.access;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import javax.xml.namespace.QName;
+
 import junit.framework.TestCase;
 
 import org.junit.After;
@@ -103,13 +106,13 @@ public class UpdateTest {
 
         wtx = session.beginWriteTransaction();
         TestCase.assertNotNull(wtx.moveToDocumentRoot());
-        assertEquals(1L, wtx.insertElementAsFirstChild("", ""));
+        assertEquals(1L, wtx.insertElementAsFirstChild(new QName("")));
 
-        assertEquals(2L, wtx.insertElementAsFirstChild("", ""));
-        assertEquals(3L, wtx.insertElementAsFirstChild("", ""));
+        assertEquals(2L, wtx.insertElementAsFirstChild(new QName("")));
+        assertEquals(3L, wtx.insertElementAsFirstChild(new QName("")));
 
         TestCase.assertNotNull(wtx.moveToParent());
-        assertEquals(4L, wtx.insertElementAsRightSibling("", ""));
+        assertEquals(4L, wtx.insertElementAsRightSibling(new QName("")));
 
         wtx.commit();
         wtx.close();
@@ -117,7 +120,7 @@ public class UpdateTest {
         final IWriteTransaction wtx2 = session.beginWriteTransaction();
 
         TestCase.assertNotNull(wtx2.moveToDocumentRoot());
-        assertEquals(5L, wtx2.insertElementAsFirstChild("", ""));
+        assertEquals(5L, wtx2.insertElementAsFirstChild(new QName("")));
 
         wtx2.commit();
         wtx2.close();

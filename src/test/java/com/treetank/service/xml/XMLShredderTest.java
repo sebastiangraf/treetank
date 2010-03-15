@@ -24,8 +24,10 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.util.Iterator;
 
+import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.events.Characters;
+import javax.xml.stream.events.XMLEvent;
 
 import org.junit.After;
 import org.junit.Before;
@@ -268,13 +270,14 @@ public class XMLShredderTest {
         rtx.close();
         session.close();
 
-        final XMLStreamReader validater = XMLShredder.createReader(new File(
-                XML3));
+        final XMLEventReader validater = XMLShredder
+                .createReader(new File(XML3));
         final StringBuilder xmlBuilder = new StringBuilder();
         while (validater.hasNext()) {
-            switch (validater.next()) {
+            final XMLEvent event = validater.nextEvent();
+            switch (event.getEventType()) {
             case XMLStreamConstants.CHARACTERS:
-                final String text = validater.getText().trim();
+                final String text = ((Characters) event).getData().trim();
                 if (text.length() > 0) {
                     xmlBuilder.append(text);
                 }

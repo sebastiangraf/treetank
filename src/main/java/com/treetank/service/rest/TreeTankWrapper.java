@@ -22,8 +22,8 @@ import java.io.File;
 import java.io.OutputStream;
 import java.io.StringReader;
 
+import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
 
 import com.treetank.access.Database;
 import com.treetank.api.IAxis;
@@ -106,8 +106,8 @@ public final class TreeTankWrapper {
             throws Exception {
         final XMLInputFactory factory = XMLInputFactory.newInstance();
         factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
-        final XMLStreamReader parser = factory
-                .createXMLStreamReader(new StringReader(value));
+        final XMLEventReader parser = factory
+                .createXMLEventReader(new StringReader(value));
         final XMLShredder shredder = new XMLShredder(wtx, parser, true);
         return shredder.call();
     }

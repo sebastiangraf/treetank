@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.Stack;
 
+import javax.xml.namespace.QName;
+
 import com.treetank.access.Database;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
@@ -125,8 +127,8 @@ public final class RevIndex {
             // If the trienode has no child, insert the root for the
             // references..
             if (!wtx.moveToFirstChild()) {
-                wtx.insertElementAsFirstChild(DOCUMENTS_REF_ROOTELEMENT,
-                        EMPTY_STRING);
+                wtx.insertElementAsFirstChild(new QName(
+                        DOCUMENTS_REF_ROOTELEMENT));
             } else
             // ..otherwise go to the first child..
             {
@@ -144,8 +146,8 @@ public final class RevIndex {
                 // if no document reference root was found, insert it, otherwise
                 // go for it.
                 if (!found) {
-                    wtx.insertElementAsFirstChild(DOCUMENTS_REF_ROOTELEMENT,
-                            EMPTY_STRING);
+                    wtx.insertElementAsFirstChild(new QName(
+                            DOCUMENTS_REF_ROOTELEMENT));
                 }
 
             }
@@ -159,14 +161,14 @@ public final class RevIndex {
                 if (lastKey != currentDocKey) {
                     wtx.moveToParent();
                     wtx.moveToParent();
-                    wtx.insertElementAsFirstChild(
-                            DOCUMENTREFERENCE_ELEMENTNAME, EMPTY_STRING);
+                    wtx.insertElementAsFirstChild(new QName(
+                            DOCUMENTREFERENCE_ELEMENTNAME));
                     wtx.insertTextAsFirstChild(new StringBuilder().append(
                             currentDocKey).toString());
                 }
             } else {
-                wtx.insertElementAsFirstChild(DOCUMENTREFERENCE_ELEMENTNAME,
-                        EMPTY_STRING);
+                wtx.insertElementAsFirstChild(new QName(
+                        DOCUMENTREFERENCE_ELEMENTNAME, EMPTY_STRING));
                 wtx.insertTextAsFirstChild(new StringBuilder().append(
                         currentDocKey).toString());
             }
@@ -310,9 +312,11 @@ public final class RevIndex {
         if (rtx instanceof IWriteTransaction) {
             final IWriteTransaction wtx = (IWriteTransaction) rtx;
             wtx.moveToDocumentRoot();
-            wtx.insertElementAsFirstChild(METAROOT_ELEMENTNAME, "");
-            wtx.insertElementAsRightSibling(TRIEROOT_ELEMENTNAME, "");
-            wtx.insertElementAsRightSibling(DOCUMENTROOT_ELEMENTNAME, "");
+            wtx.insertElementAsFirstChild(new QName(METAROOT_ELEMENTNAME));
+            wtx.insertElementAsRightSibling(new QName(TRIEROOT_ELEMENTNAME));
+            wtx
+                    .insertElementAsRightSibling(new QName(
+                            DOCUMENTROOT_ELEMENTNAME));
             try {
                 wtx.commit();
             } catch (TreetankIOException exc) {

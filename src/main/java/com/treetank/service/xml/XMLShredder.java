@@ -23,21 +23,27 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.Iterator;
 import java.util.concurrent.Callable;
 
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.Characters;
+import javax.xml.stream.events.Namespace;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
 
 import com.treetank.access.Database;
 import com.treetank.access.DatabaseConfiguration;
 import com.treetank.access.WriteTransaction;
-import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankUsageException;
@@ -59,7 +65,7 @@ import com.treetank.utils.TypedValue;
 public final class XMLShredder implements Callable<Long> {
 
     private final IWriteTransaction mWtx;
-    private final XMLStreamReader mReader;
+    private final XMLEventReader mReader;
     private final boolean mFirstChildAppend;
     private final boolean mInsertOnlyModified;
 
@@ -79,7 +85,7 @@ public final class XMLShredder implements Callable<Long> {
      *             not pointing to doc-root and updateOnly= true
      */
     public XMLShredder(final IWriteTransaction wtx,
-            final XMLStreamReader reader, final boolean addAsFirstChild)
+            final XMLEventReader reader, final boolean addAsFirstChild)
             throws TreetankUsageException {
         this(wtx, reader, addAsFirstChild, false);
     }
@@ -104,7 +110,7 @@ public final class XMLShredder implements Callable<Long> {
      *             not pointing to doc-root and updateOnly= true
      */
     public XMLShredder(final IWriteTransaction wtx,
-            final XMLStreamReader reader, final boolean addAsFirstChild,
+            final XMLEventReader reader, final boolean addAsFirstChild,
             final boolean updateOnly) throws TreetankUsageException {
         mWtx = wtx;
         mReader = reader;
@@ -147,13 +153,11 @@ public final class XMLShredder implements Callable<Long> {
 
             final long maxNodeKey = mWtx.getMaxNodeKey();
 
+            final XMLEvent event = mReader.nextEvent();
             // Iterate over all nodes.
-            while (mReader.hasNext() && mWtx.getNode().getNodeKey() < maxNodeKey) {
-                
-                
-                
-                
-                
+            while (mReader.hasNext()
+                    && mWtx.getNode().getNodeKey() < maxNodeKey) {
+                // checking for actual
 
             }
 
@@ -175,11 +179,12 @@ public final class XMLShredder implements Callable<Long> {
             // Iterate over all nodes.
             while (mReader.hasNext()) {
 
-                switch (mReader.next()) {
+                final XMLEvent event = mReader.nextEvent();
+                switch (event.getEventType()) {
 
                 case XMLStreamConstants.START_ELEMENT:
                     leftSiblingKeyStack = addNewElement(firstElement,
-                            leftSiblingKeyStack);
+                            leftSiblingKeyStack, (StartElement) event);
                     firstElement = false;
                     break;
 
@@ -189,7 +194,8 @@ public final class XMLShredder implements Callable<Long> {
                     break;
 
                 case XMLStreamConstants.CHARACTERS:
-                    leftSiblingKeyStack = addNewText(leftSiblingKeyStack);
+                    leftSiblingKeyStack = addNewText(leftSiblingKeyStack,
+                            (Characters) event);
                     break;
                 }
             }
@@ -200,29 +206,25 @@ public final class XMLShredder implements Callable<Long> {
     }
 
     private final FastStack<Long> addNewElement(final boolean firstElement,
-            final FastStack<Long> leftSiblingKeyStack) throws TreetankException {
+            final FastStack<Long> leftSiblingKeyStack, final StartElement event)
+            throws TreetankException {
         long key;
-        final String name = ((mReader.getPrefix() == null || mReader
-                .getPrefix().length() == 0) ? mReader.getLocalName() : mReader
-                .getPrefix()
-                + ":" + mReader.getLocalName());
+
+        final QName name = event.getName();
 
         if (firstElement && !mFirstChildAppend) {
             if (mWtx.getNode().isDocumentRoot()) {
                 throw new TreetankUsageException(
                         "Subtree can not be inserted as sibling of Root");
             }
-            key = mWtx.insertElementAsRightSibling(name, mReader
-                    .getNamespaceURI());
+            key = mWtx.insertElementAsRightSibling(name);
         } else {
 
             if (leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
                     .getStandardProperty()) {
-                key = mWtx.insertElementAsFirstChild(name, mReader
-                        .getNamespaceURI());
+                key = mWtx.insertElementAsFirstChild(name);
             } else {
-                key = mWtx.insertElementAsRightSibling(name, mReader
-                        .getNamespaceURI());
+                key = mWtx.insertElementAsRightSibling(name);
             }
         }
 
@@ -232,30 +234,26 @@ public final class XMLShredder implements Callable<Long> {
                 .getStandardProperty());
 
         // Parse namespaces.
-        for (int i = 0, l = mReader.getNamespaceCount(); i < l; i++) {
-            mWtx.insertNamespace(mReader.getNamespaceURI(i), mReader
-                    .getNamespacePrefix(i));
+        for (Iterator<?> it = event.getNamespaces(); it.hasNext();) {
+            final Namespace namespace = (Namespace) it.next();
+            mWtx.insertNamespace(namespace.getNamespaceURI(), namespace
+                    .getPrefix());
             mWtx.moveTo(key);
         }
 
         // Parse attributes.
-        for (int i = 0, l = mReader.getAttributeCount(); i < l; i++) {
-            mWtx.insertAttribute(
-                    (mReader.getAttributePrefix(i) == null || mReader
-                            .getAttributePrefix(i).length() == 0) ? mReader
-                            .getAttributeLocalName(i) : mReader
-                            .getAttributePrefix(i)
-                            + ":" + mReader.getAttributeLocalName(i), mReader
-                            .getAttributeNamespace(i), mReader
-                            .getAttributeValue(i));
+        for (Iterator<?> it = event.getAttributes(); it.hasNext();) {
+            final Attribute attribute = (Attribute) it.next();
+            mWtx.insertAttribute(attribute.getName(), attribute.getValue());
             mWtx.moveTo(key);
         }
         return leftSiblingKeyStack;
     }
 
     private final FastStack<Long> addNewText(
-            final FastStack<Long> leftSiblingKeyStack) throws TreetankException {
-        final String text = mReader.getText().trim();
+            final FastStack<Long> leftSiblingKeyStack, final Characters event)
+            throws TreetankException {
+        final String text = event.getData().trim();
         long key;
         final ByteBuffer textByteBuffer = ByteBuffer.wrap(TypedValue
                 .getBytes(text));
@@ -292,7 +290,7 @@ public final class XMLShredder implements Callable<Long> {
         final IDatabase db = Database.openDatabase(target);
         final ISession session = db.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
-        final XMLStreamReader reader = createReader(new File(args[0]));
+        final XMLEventReader reader = createReader(new File(args[0]));
         final XMLShredder shredder = new XMLShredder(wtx, reader, true);
         shredder.call();
 
@@ -304,12 +302,12 @@ public final class XMLShredder implements Callable<Long> {
                 + "ms].");
     }
 
-    public static XMLStreamReader createReader(final File file)
+    public static XMLEventReader createReader(final File file)
             throws IOException, XMLStreamException {
         final InputStream in = new FileInputStream(file);
         final XMLInputFactory factory = XMLInputFactory.newInstance();
         factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
-        final XMLStreamReader parser = factory.createXMLStreamReader(in);
+        final XMLEventReader parser = factory.createXMLEventReader(in);
         return parser;
     }
 
