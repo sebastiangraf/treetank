@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:y="http://www.yworks.com/xml/graphml"
+	ttid="1"
+	xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd">
+	<key ttid="6" id="d0" for="graphml" yfiles.type="resources" />
+	<key ttid="10" id="d1" attr.type="string" for="node" attr.name="url" />
+	<key ttid="15" id="d2" attr.type="string" for="node" attr.name="description" />
+	<key ttid="20" id="d3" for="node" yfiles.type="nodegraphics" />
+	<key ttid="24" id="d4" attr.type="string" for="edge" attr.name="url" />
+	<key ttid="29" id="d5" attr.type="string" for="edge" attr.name="description" />
+	<key ttid="34" id="d6" for="edge" yfiles.type="edgegraphics" />
+	<graph ttid="38" id="G" parse.nodes="5" parse.edges="8"
+		edgedefault="directed">
+		<node ttid="43" id="n0">
+			<data ttid="45" key="d2" />
+			<data ttid="47" key="d3">
+				<y:ShapeNode ttid="49">
+					<y:Geometry ttid="50" height="30.0" width="30.0" y="-27.5"
+						x="-562.0" />
+					<y:Fill ttid="55" color="#FFCC00" transparent="false" />
+					<y:BorderStyle ttid="58" color="#000000" width="1.0"
+						type="line" />
+					<y:NodeLabel ttid="62" alignment="center"
+						autoSizePolicy="content" textColor="#000000" visible="true"
+						width="11.22998046875" fontStyle="plain" fontSize="13" height="19.92626953125"
+						modelName="internal" hasBackgroundColor="false" fontFamily="Dialog"
+						y="5.036865234375" modelPosition="c" x="9.385009765625"
+						hasLineColor="false">0</y:NodeLabel>
+					<y:Shape ttid="79" type="rectangle" />
+				</y:ShapeNode>
+			</data>
+		</node>
+		<node ttid="81" id="n1">
+			<data ttid="83" key="d2" />
+			<data ttid="85" key="d3">
+				<y:ShapeNode ttid="87">
+					<y:Geometry ttid="88" height="30.0" width="30.0" y="-28.5"
+						x="-314.0" />
+					<y:Fill ttid="93" color="#FFCC00" transparent="false" />
+					<y:BorderStyle ttid="96" color="#000000" width="1.0"
+						type="line" />
+					<y:NodeLabel ttid="100" alignment="center"
+						autoSizePolicy="content" textColor="#000000" visible="true"
+						width="11.22998046875" fontStyle="plain" fontSize="13" height="19.92626953125"
+						modelName="internal" hasBackgroundColor="false" fontFamily="Dialog"
+						y="5.036865234375" modelPosition="c" x="9.385009765625"
+						hasLineColor="false">0</y:NodeLabel>
+					<y:Shape ttid="117" type="rectangle" />
+				</y:ShapeNode>
+			</data>
+		</node>
+		<node ttid="119" id="n2">
+			<data ttid="121" key="d2" />
+			<data ttid="123" key="d3">
+				<y:ShapeNode ttid="125">
+					<y:Geometry ttid="126" height="30.0" width="30.0" y="-231.5"
+						x="-564.0" />
+					<y:Fill ttid="131" color="#FFCC00" transparent="false" />
+					<y:BorderStyle ttid="134" color="#000000" width="1.0"
+						type="line" />
+					<y:NodeLabel ttid="138" alignment="center"
+						autoSizePolicy="content" textColor="#000000" visible="true"
+						width="11.22998046875" fontStyle="plain" fontSize="13" height="19.92626953125"
+						modelName="internal" hasBackgroundColor="false" fontFamily="Dialog"
+						y="5.036865234375" modelPosition="c" x="9.385009765625"
+						hasLineColor="false">0</y:NodeLabel>
+					<y:Shape ttid="155" type="rectangle" />
+				</y:ShapeNode>
+			</data>
+		</node>
+		<node ttid="157" id="n3">
+			<data ttid="159" key="d2" />
+			<data ttid="161" key="d3">
+				<y:ShapeNode ttid="163">
+					<y:Geometry ttid="164" height="30.0" width="30.0" y="-234.5"
+						x="-313.0" />
+					<y:Fill ttid="169" color="#FFCC00" transparent="false" />
+					<y:BorderStyle ttid="172" color="#000000" width="1.0"
+						type="line" />
+					<y:NodeLabel ttid="176" alignment="center"
+						autoSizePolicy="content" textColor="#000000" visible="true"
+						width="11.22998046875" fontStyle="plain" fontSize="13" height="19.92626953125"
+						modelName="internal" hasBackgroundColor="false" fontFamily="Dialog"
+						y="5.036865234375" modelPosition="c" x="9.385009765625"
+						hasLineColor="false">0</y:NodeLabel>
+					<y:Shape ttid="193" type="rectangle" />
+				</y:ShapeNode>
+			</data>
+		</node>
+		<node ttid="195" id="n4">
+			<data ttid="197" key="d2" />
+			<data ttid="199" key="d3">
+				<y:ShapeNode ttid="201">
+					<y:Geometry ttid="202" height="30.0" width="30.0" y="121.5"
+						x="-437.0" />
+					<y:Fill ttid="207" color="#FFCC00" transparent="false" />
+					<y:BorderStyle ttid="210" color="#000000" width="1.0"
+						type="line" />
+					<y:NodeLabel ttid="214" alignment="center"
+						autoSizePolicy="content" textColor="#000000" visible="true"
+						width="11.22998046875" fontStyle="plain" fontSize="13" height="19.92626953125"
+						modelName="internal" hasBackgroundColor="false" fontFamily="Dialog"
+						y="5.036865234375" modelPosition="c" x="9.385009765625"
+						hasLineColor="false">0</y:NodeLabel>
+					<y:Shape ttid="231" type="rectangle" />
+				</y:ShapeNode>
+			</data>
+		</node>
+		<edge id="e1" source="n0" target="n2">
+			<data key="d5" />
+			<data key="d6">
+				<y:PolyLineEdge>
+					<y:Path ty="0.0" tx="0.0" sy="0.0" sx="0.0" />
+					<y:LineStyle color="#000000" width="1.0"
+						type="line" />
+					<y:Arrows source="none" target="standard" />
+					<y:BendStyle smoothed="false" />
+				</y:PolyLineEdge>
+			</data>
+		</edge>
+	</graph>
+	<data ttid="233" key="d0">
+		<y:Resources ttid="235" />
+	</data>
+</graphml>
