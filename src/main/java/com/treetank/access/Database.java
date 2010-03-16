@@ -136,9 +136,8 @@ public final class Database implements IDatabase {
     public synchronized static IDatabase openDatabase(final File file,
             final SessionConfiguration sessionConf) throws TreetankException {
         if (!file.exists() && !createDatabase(new DatabaseConfiguration(file))) {
-            throw new TreetankUsageException(new StringBuilder(
-                    "DB could not be created at location ").append(file)
-                    .toString());
+            throw new TreetankUsageException(
+                    "DB could not be created at location", file.toString());
         }
         IDatabase database = DATABASEMAP.putIfAbsent(file, new Database(
                 new DatabaseConfiguration(file), sessionConf));
@@ -240,10 +239,8 @@ public final class Database implements IDatabase {
         final int compareStructure = EStoragePaths.compareStructure(getFile());
         if (compareStructure != 0) {
             throw new TreetankUsageException(
-                    new StringBuilder(
-                            "Storage has no valid storage structure. Compared to the specification, storage has ")
-                            .append(compareStructure).append(" elements!")
-                            .toString());
+                    "Storage has no valid storage structure. Compared to the specification, storage has",
+                    Integer.toString(compareStructure), "elements!");
         }
         final int[] versions = new int[3];
         versions[0] = Integer.parseInt(EDatabaseSetting.VERSION_MAJOR
@@ -254,23 +251,22 @@ public final class Database implements IDatabase {
                 .getStandardProperty());
         final int[] storedVersions = getVersion();
         if (storedVersions[0] < versions[0]) {
-            throw new TreetankUsageException(new StringBuilder(
-                    "Version Major expected: ").append(storedVersions[0])
-                    .append(" but was ").append(versions[0]).toString());
+            throw new TreetankUsageException("Version Major expected:", Integer
+                    .toString(storedVersions[0]), "but was", Integer
+                    .toString(versions[0]));
         } else {
             if (storedVersions[1] < versions[1]) {
-                throw new TreetankUsageException(new StringBuilder(
-                        "Version Minor expected: ").append(storedVersions[1])
-                        .append(" but was ").append(versions[1]).toString());
+                throw new TreetankUsageException("Version Minor expected:",
+                        Integer.toString(storedVersions[1]), "but was", Integer
+                                .toString(versions[1]));
             } else {
                 if (storedVersions[2] < versions[2]) {
-                    throw new TreetankUsageException(new StringBuilder(
-                            "Version Fix expected: ").append(storedVersions[2])
-                            .append(" but was ").append(versions[2]).toString());
+                    throw new TreetankUsageException("Version Fix expected:",
+                            Integer.toString(storedVersions[2]), "but was",
+                            Integer.toString(versions[2]));
                 }
             }
         }
 
     }
-
 }

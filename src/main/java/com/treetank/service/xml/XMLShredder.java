@@ -23,7 +23,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import javax.xml.namespace.QName;
@@ -114,10 +116,6 @@ public final class XMLShredder implements Callable<Long> {
             final boolean updateOnly) throws TreetankUsageException {
         mWtx = wtx;
         mReader = reader;
-        if (addAsFirstChild && updateOnly) {
-            throw new TreetankUsageException(
-                    "Either add as firstChild or update current structure");
-        }
         if (updateOnly && !wtx.getNode().isDocumentRoot()) {
             throw new TreetankUsageException(
                     "WriteTransaction must point to doc-root at the beginning!");
@@ -146,6 +144,9 @@ public final class XMLShredder implements Callable<Long> {
 
     private void updateOnly() throws TreetankException {
         try {
+
+            final Set<Long> visitedKeys = new HashSet<Long>();
+
             // setting the maxNodeKey for the compare-wtx
             final long maxNodeKey = mWtx.getMaxNodeKey();
 
@@ -158,22 +159,23 @@ public final class XMLShredder implements Callable<Long> {
             // setup up of first element of the data
             XMLEvent event = mReader.nextEvent();
             mWtx.moveToDocumentRoot();
-            // if no content is in the XML, a normal insertNewContent is
-            // executed, so search for the first key available
-            long startkey = (Long) EFixed.ROOT_NODE_KEY.getStandardProperty() + 1;
-            while (!mWtx.moveTo(startkey)) {
-                startkey++;
-            }
-            // if no search beyond EFixed.ROOT_NODE_KEY is valid, just insert
-            // the new content.
-            if (mWtx.getNode().isDocumentRoot()) {
-                insertNewContent();
-            }
-            // if node was found, make a sync against the current structure
-            else {
+
+            // if structure already exists, make a sync against the current
+            // structure
+            if (mWtx.getMaxNodeKey() != 0) {
+
+                // find the start key for the update operation
+                long startkey = (Long) EFixed.ROOT_NODE_KEY
+                        .getStandardProperty() + 1;
+                while (!mWtx.moveTo(startkey)) {
+                    startkey++;
+                }
 
                 // Iterate over all nodes.(
                 do {
+
+                    // storing the visited key
+                    visitedKeys.add(mWtx.getNode().getNodeKey());
 
                     switch (event.getEventType()) {
                     case XMLStreamConstants.START_ELEMENT:
@@ -200,15 +202,12 @@ public final class XMLShredder implements Callable<Long> {
                             // moving transaction to key;
                             if (!mWtx.moveTo(id)) {
                                 mWtx.abort();
-                                throw new TreetankUsageException(
-                                        new StringBuilder("Move to ")
-                                                .append(id)
-                                                .append(" not successful.")
-                                                .append(
-                                                        " That means that the revisioned file is not suitable to the databasae")
-                                                .toString());
+                                throw new TreetankUsageException("Move to",
+                                        Long.toString(id), "not successful.",
+                                        "That means that the revisioned file is not suitable to the databasae");
                             }
-                            // TODO insert the rest
+
+                            // check against namespaces, attributes and text
 
                         }
                         // not finding any id tag -> just appending the node as
@@ -249,6 +248,10 @@ public final class XMLShredder implements Callable<Long> {
                     event = mReader.nextEvent();
                 } while (mReader.hasNext()
                         && mWtx.getNode().getNodeKey() < maxNodeKey);
+            } // if no content is in the XML, a normal insertNewContent is
+            // executed
+            else {
+                insertNewContent();
             }
 
         } catch (final XMLStreamException exc1) {

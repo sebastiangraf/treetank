@@ -308,20 +308,21 @@ public final class SessionState {
 
         fac.closeStorage();
     }
-//
-//    /**
-//     * Required to close file handle.
-//     * 
-//     * @throws Throwable
-//     *             if the finalization of the superclass does not work.
-//     */
-//    protected void finalize() throws Throwable {
-//        try {
-//            close();
-//        } finally {
-//            super.finalize();
-//        }
-//    }
+
+    //
+    // /**
+    // * Required to close file handle.
+    // *
+    // * @throws Throwable
+    // * if the finalization of the superclass does not work.
+    // */
+    // protected void finalize() throws Throwable {
+    // try {
+    // close();
+    // } finally {
+    // super.finalize();
+    // }
+    // }
 
     class LogSyncer implements Callable<Void> {
 
@@ -347,9 +348,9 @@ public final class SessionState {
         if (rev < 0) {
             throw new TreetankUsageException("Revision must be at least 0");
         } else if (rev > mLastCommittedUberPage.getRevision()) {
-            throw new TreetankUsageException(new StringBuilder(
-                    "Revision must not be bigger than ").append(
-                    mLastCommittedUberPage.getRevision()).toString());
+            throw new TreetankUsageException(
+                    "Revision must not be bigger than", Long
+                            .toString(mLastCommittedUberPage.getRevision()));
         }
     }
 

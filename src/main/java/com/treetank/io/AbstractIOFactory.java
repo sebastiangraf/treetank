@@ -107,9 +107,8 @@ public abstract class AbstractIOFactory {
                 fac = new BerkeleyFactory(databaseConf, sessionConf);
                 break;
             default:
-                throw new IllegalArgumentException(new StringBuilder("Type ")
-                        .append(storageType.toString()).append(" not valid!")
-                        .toString());
+                throw new TreetankIOException("Type", storageType.toString(),
+                        "not valid!");
             }
             FACTORIES.put(sessionConf, fac);
         }

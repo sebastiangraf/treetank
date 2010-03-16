@@ -29,7 +29,7 @@ public final class TreetankThreadedException extends TreetankException {
      * @param message
      *            to be stored
      */
-    public TreetankThreadedException(final String message) {
+    public TreetankThreadedException(final String... message) {
         super(message);
     }
 
