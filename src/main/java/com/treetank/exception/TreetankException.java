@@ -22,13 +22,40 @@ public abstract class TreetankException extends Exception {
     }
 
     /**
-     * Constructor to encapsulate everything which wants to blame
+     * Constructor
+     * 
+     * @param builder
+     *            , convinience for super-constructor
+     */
+    private TreetankException(final StringBuilder message) {
+        super(message.toString());
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param the
+     *            message as string, they are concatenated with spaces in
+     *            between
+     */
+    public TreetankException(final String... message) {
+        this(concat(message));
+    }
+
+    /**
+     * Util method to provide StringBuilder functionality;
      * 
      * @param message
-     *            to encapsulate
+     *            to be concatenated
+     * @return the StringBuilder for the combined string
      */
-    public TreetankException(final String message) {
-        super(message);
+    private final static StringBuilder concat(final String... message) {
+        final StringBuilder builder = new StringBuilder();
+        for (final String mess : message) {
+            builder.append(mess);
+            builder.append(" ");
+        }
+        return builder;
     }
 
 }

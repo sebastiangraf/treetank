@@ -56,7 +56,7 @@ public final class TreetankIOException extends TreetankException {
      * @param message
      *            for the overlaying {@link IOException}
      */
-    public TreetankIOException(final String message) {
+    public TreetankIOException(final String... message) {
         super(message);
     }
 

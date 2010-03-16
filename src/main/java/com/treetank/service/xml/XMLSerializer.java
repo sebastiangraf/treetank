@@ -238,6 +238,7 @@ public final class XMLSerializer implements Callable<Void> {
                     mOut.write(EXMLSerializing.SPACE.getBytes());
                 }
                 mOut.write(EXMLSerializing.ID.getBytes());
+                mOut.write(EXMLSerializing.EQUAL_QUOTE.getBytes());
                 write(mRTX.getNode().getNodeKey());
                 mOut.write(EXMLSerializing.QUOTE.getBytes());
             }

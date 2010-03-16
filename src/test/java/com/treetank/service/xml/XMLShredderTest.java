@@ -57,8 +57,8 @@ public class XMLShredderTest {
     public static final String XML3 = "src" + File.separator + "test"
             + File.separator + "resources" + File.separator + "test3.xml";
 
-    public static final String XMLREF1 = "src" + File.separator + "test"
-            + File.separator + "resources" + File.separator + "testRef1.xml";
+    public static final String XMLREFFOLDER = "src" + File.separator + "test"
+            + File.separator + "resources" + File.separator + "revXMLs";
 
     @Before
     public void setUp() throws TreetankException {
@@ -292,46 +292,53 @@ public class XMLShredderTest {
     public void testShreddingModifiedExisting() throws Exception {
         final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
         final ISession session = database.getSession();
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        final XMLShredder shredder = new XMLShredder(wtx, XMLShredder
-                .createReader(new File(XMLREF1)), true, false);
-        shredder.call();
-        assertEquals(1, wtx.getRevisionNumber());
-        wtx.moveToDocumentRoot();
-
-        wtx.close();
-
-        // Setup expected session.
-        final IDatabase database2 = Database.openDatabase(ITestConstants.PATH2);
-        final ISession expectedSession = database2.getSession();
-
-        final IWriteTransaction expectedTrx = expectedSession
-                .beginWriteTransaction();
-        DocumentCreater.create(expectedTrx);
-        expectedTrx.commit();
-        expectedTrx.moveToDocumentRoot();
-
-        // Verify.
-        final IReadTransaction rtx = session.beginReadTransaction();
-
-        final Iterator<Long> descendants = new DescendantAxis(rtx);
-        final Iterator<Long> expectedDescendants = new DescendantAxis(
-                expectedTrx);
-
-        while (expectedDescendants.hasNext()) {
-            expectedDescendants.next();
-            descendants.hasNext();
-            descendants.next();
-            assertEquals(expectedTrx.getNameOfCurrentNode(), rtx
-                    .getNameOfCurrentNode());
+        final File folder = new File(XMLREFFOLDER);
+        int i = 1;
+        for (final File file : folder.listFiles()) {
+            if (file.getName().endsWith(".xml")) {
+                final IWriteTransaction wtx = session.beginWriteTransaction();
+                final XMLShredder shredder = new XMLShredder(wtx, XMLShredder
+                        .createReader(file), true, true);
+                shredder.call();
+                assertEquals(i, wtx.getRevisionNumber());
+                i++;
+                wtx.moveToDocumentRoot();
+                wtx.close();
+            }
         }
 
-        expectedTrx.close();
-        expectedSession.close();
-        rtx.close();
+        // // Setup expected session.
+        // final IDatabase database2 =
+        // Database.openDatabase(ITestConstants.PATH2);
+        // final ISession expectedSession = database2.getSession();
+        //
+        // final IWriteTransaction expectedTrx = expectedSession
+        // .beginWriteTransaction();
+        // DocumentCreater.create(expectedTrx);
+        // expectedTrx.commit();
+        // expectedTrx.moveToDocumentRoot();
+        //
+        // // Verify.
+        // final IReadTransaction rtx = session.beginReadTransaction();
+        //
+        // final Iterator<Long> descendants = new DescendantAxis(rtx);
+        // final Iterator<Long> expectedDescendants = new DescendantAxis(
+        // expectedTrx);
+        //
+        // while (expectedDescendants.hasNext()) {
+        // expectedDescendants.next();
+        // descendants.hasNext();
+        // descendants.next();
+        // assertEquals(expectedTrx.getNameOfCurrentNode(), rtx
+        // .getNameOfCurrentNode());
+        // }
+        //
+        // expectedTrx.close();
+        // expectedSession.close();
+        // rtx.close();
         session.close();
         database.close();
-        database2.close();
+        // database2.close();
     }
 
 }

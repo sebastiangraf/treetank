@@ -91,10 +91,9 @@ public class DatabaseConfiguration {
                         && !loadProps.getProperty(
                                 EDatabaseSetting.CHECKSUM.name()).equals(
                                 Integer.toString(this.hashCode()))) {
-                    throw new TreetankUsageException(new StringBuilder(
-                            "Checksums differ: Loaded ").append(
-                            getProps().toString()).append(" and expected ")
-                            .append(this.toString()).toString());
+                    throw new TreetankUsageException(
+                            "Checksums differ: Loaded", getProps().toString(),
+                            "and expected", this.toString());
 
                 }
             }

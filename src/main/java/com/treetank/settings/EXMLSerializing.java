@@ -38,8 +38,8 @@ public enum EXMLSerializing {
     /** " rest:"". */
     REST_PREFIX(SPACE.getBytes(), new byte[] { 114, 101, 115, 116, 58 }),
 
-    /** "ttid=\"". */
-    ID(new byte[] { 116, 116, 105, 100 }, EQUAL.getBytes(), QUOTE.getBytes()),
+    /** "ttid". */
+    ID(new byte[] { 116, 116, 105, 100 }),
 
     /** " xmlns=\"". */
     XMLNS(SPACE.getBytes(), new byte[] { 120, 109, 108, 110, 115 }, EQUAL
