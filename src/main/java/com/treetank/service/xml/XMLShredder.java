@@ -87,6 +87,37 @@ public final class XMLShredder implements Callable<Long> {
      *             not pointing to doc-root and updateOnly= true
      */
     public XMLShredder(final IWriteTransaction wtx,
+            final XMLStreamReader reader, final boolean addAsFirstChild)
+            throws TreetankUsageException {
+        this(wtx, getReader(reader), addAsFirstChild, false);
+    }
+
+    private final static XMLEventReader getReader(
+            final XMLStreamReader eventReader) throws TreetankUsageException {
+        XMLInputFactory fac = XMLInputFactory.newInstance();
+        try {
+            return fac.createXMLEventReader(eventReader);
+        } catch (final XMLStreamException exc) {
+            throw new TreetankUsageException(exc.toString());
+        }
+    }
+
+    /**
+     * Normal constructor to invoke a shredding process on a existing
+     * {@link WriteTransaction}
+     * 
+     * @param wtx
+     *            where the new XML Fragment should be placed
+     * @param reader
+     *            of the XML Fragment
+     * @param addAsFirstChild
+     *            if the insert is occuring on a node in an existing tree.
+     *            <code>false</code> is not possible when wtx is on root node.
+     * @throws TreetankUsageException
+     *             if insertasfirstChild && updateOnly is both true OR if wtx is
+     *             not pointing to doc-root and updateOnly= true
+     */
+    public XMLShredder(final IWriteTransaction wtx,
             final XMLEventReader reader, final boolean addAsFirstChild)
             throws TreetankUsageException {
         this(wtx, reader, addAsFirstChild, false);
