@@ -23,8 +23,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -92,11 +94,21 @@ public final class XMLShredder implements Callable<Long> {
         this(wtx, getReader(reader), addAsFirstChild, false);
     }
 
+    /**
+     * Static convencience method to provide still a stream interface for
+     * treetank
+     * 
+     * @param streamReader
+     *            for streams as an input
+     * @return {@link XMLEventReader} as return since Treetank works with this
+     *         internally
+     * @throws TreetankUsageException
+     */
     private final static XMLEventReader getReader(
-            final XMLStreamReader eventReader) throws TreetankUsageException {
+            final XMLStreamReader streamReader) throws TreetankUsageException {
         XMLInputFactory fac = XMLInputFactory.newInstance();
         try {
-            return fac.createXMLEventReader(eventReader);
+            return fac.createXMLEventReader(streamReader);
         } catch (final XMLStreamException exc) {
             throw new TreetankUsageException(exc.toString());
         }
@@ -181,10 +193,10 @@ public final class XMLShredder implements Callable<Long> {
             // setting the maxNodeKey for the compare-wtx
             final long maxNodeKey = mWtx.getMaxNodeKey();
 
-            // setting up leftsib-Stack. This one is only for convinience and
-            // does nothing in fact.
-            FastStack<Long> leftSiblingKeyStackForXML = new FastStack<Long>();
-            leftSiblingKeyStackForXML.push((Long) EFixed.NULL_NODE_KEY
+            // setting up boolean-Stack. This stack is for holding the current
+            // position to determine if an insertasright-sib should occure.F
+            FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
+            leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
                     .getStandardProperty());
 
             // setup up of first element of the data
@@ -238,18 +250,19 @@ public final class XMLShredder implements Callable<Long> {
                                         "That means that the revisioned file is not suitable to the databasae");
                             }
 
-                            // check against namespaces, attributes and text
-
+                            // TODO node check: Since setName is now resulting
+                            // in new node, this one should be obsolete but a
+                            // little bit integrity should not be the problem
+                            checkElement((StartElement) event);
                         }
                         // not finding any id tag -> just appending the node as
                         // a new one based on the original XML and the current
                         // mWtx-position
                         else {
-                            mWtx.moveTo(leftSiblingKeyStackForXML.peek());
-                            leftSiblingKeyStackForXML = addNewElement(false,
-                                    leftSiblingKeyStackForXML,
-                                    (StartElement) event);
+                            leftSiblingKeyStack = addNewElement(false,
+                                    leftSiblingKeyStack, (StartElement) event);
                         }
+
                         break;
                     case XMLStreamConstants.CHARACTERS:
                         final String valFromXML = ((Characters) event)
@@ -257,21 +270,34 @@ public final class XMLShredder implements Callable<Long> {
                         // if wtx is text and equal to the val, do no insert ->
                         // insert if unequal, identification takes place on the
                         // node
-                        if (!(mWtx.getNode().isText() && mWtx
-                                .getValueOfCurrentNode().equals(valFromXML))) {
-
-                            leftSiblingKeyStackForXML = addNewText(
-                                    leftSiblingKeyStackForXML,
-                                    (Characters) event);
+                        if (mWtx.moveToFirstChild()) {
+                            boolean found = false;
+                            do {
+                                if (!(mWtx.getNode().isText() && mWtx
+                                        .getValueOfCurrentNode().equals(
+                                                valFromXML))) {
+                                    found = true;
+                                }
+                                if (!found) {
+                                    leftSiblingKeyStack.push(mWtx.getNode()
+                                            .getNodeKey());
+                                    leftSiblingKeyStack = addNewText(
+                                            leftSiblingKeyStack,
+                                            (Characters) event);
+                                }
+                            } while (mWtx.moveToRightSibling());
+                            mWtx.moveToParent();
                         } else {
-                            leftSiblingKeyStackForXML.pop();
-                            leftSiblingKeyStackForXML.push(mWtx.getNode()
-                                    .getNodeKey());
+                            leftSiblingKeyStack
+                                    .push((Long) EFixed.ROOT_NODE_KEY
+                                            .getStandardProperty());
+                            leftSiblingKeyStack = addNewText(
+                                    leftSiblingKeyStack, (Characters) event);
                         }
+
                         break;
                     case XMLStreamConstants.END_ELEMENT:
-                        leftSiblingKeyStackForXML.pop();
-                        mWtx.moveTo(leftSiblingKeyStackForXML.peek());
+//                        mWtx.moveTo(leftSiblingKeyStack.pop());
                         break;
                     }// end switch
 
@@ -284,6 +310,8 @@ public final class XMLShredder implements Callable<Long> {
             else {
                 insertNewContent();
             }
+
+            System.out.println();
 
         } catch (final XMLStreamException exc1) {
             throw new TreetankIOException(exc1);
@@ -323,7 +351,7 @@ public final class XMLShredder implements Callable<Long> {
                     break;
                 }
             }
-
+            System.out.println();
         } catch (final XMLStreamException exc1) {
             throw new TreetankIOException(exc1);
         }
@@ -397,6 +425,36 @@ public final class XMLShredder implements Callable<Long> {
 
         }
         return leftSiblingKeyStack;
+    }
+
+    private final boolean checkElement(final StartElement event) {
+        for (Iterator<?> it = event.getAttributes(); it.hasNext();) {
+            final Attribute attribute = (Attribute) it.next();
+            final int bla = 0;
+        }
+
+        for (Iterator<?> it = event.getNamespaces(); it.hasNext();) {
+            final Namespace namespace = (Namespace) it.next();
+            final int bla = 0;
+        }
+        return true;
+
+        // final Map<QName, String> eventAttMap = new HashMap<QName, String>();
+        // final Map<QName, String> xmlAttMap = new HashMap<QName, String>();
+        // for (Iterator<?> it = event.getAttributes(); it.hasNext();) {
+        // final Attribute attribute = (Attribute) it.next();
+        // eventAttMap.put(attribute.getName(), attribute.getValue());
+        // }
+        // final long currentNode = mWtx.getNode().getNodeKey();
+        // for (int i = 0; i < mWtx.getNode().getAttributeCount(); i++) {
+        // mWtx.moveTo(mWtx.getNode().getAttributeKey(i));
+        // eventAttMap.put(mWtx.getNameOfCurrentNode(), mWtx
+        // .getValueOfCurrentNode());
+        // mWtx.moveTo(currentNode);
+        // }
+        //
+        // return false;
+
     }
 
     public static void main(String... args) throws Exception {

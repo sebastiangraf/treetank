@@ -503,17 +503,17 @@ public final class WriteTransaction extends ReadTransaction implements
                 getTransactionID(), revisionToSet, revisionToSet));
     }
 
-    private final QName buildQName(final String uri, final String name) {
+    public static final QName buildQName(final String uri, final String name) {
         QName qname;
         if (name.contains(":")) {
             qname = new QName(uri, name.split(":")[1], name.split(":")[0]);
         } else {
-            qname = new QName(uri, name, "");
+            qname = new QName(uri, name);
         }
         return qname;
     }
 
-    private final String buildName(final QName qname) {
+    public static final String buildName(final QName qname) {
         String name;
         if (qname.getPrefix().isEmpty()) {
             name = qname.getLocalPart();
