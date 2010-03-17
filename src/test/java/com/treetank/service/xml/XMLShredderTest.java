@@ -290,7 +290,6 @@ public class XMLShredderTest {
     }
 
     @Test
-    @Ignore
     public void testShreddingModifiedExisting() throws Exception {
         final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
         final ISession session = database.getSession();
