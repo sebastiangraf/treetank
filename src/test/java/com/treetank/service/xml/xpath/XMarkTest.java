@@ -145,7 +145,6 @@ public class XMarkTest {
     }
 
     @Test
-    @Ignore
     public void testQ6() throws TreetankException {
 
         // Q6 How many items are listed on all continents?
@@ -156,7 +155,6 @@ public class XMarkTest {
     }
 
     @Test
-    @Ignore
     public void testQ7() throws TreetankException {
 
         // Q7 How many pieces of prose are in our database?

@@ -503,27 +503,6 @@ public final class WriteTransaction extends ReadTransaction implements
                 getTransactionID(), revisionToSet, revisionToSet));
     }
 
-    public static final QName buildQName(final String uri, final String name) {
-        QName qname;
-        if (name.contains(":")) {
-            qname = new QName(uri, name.split(":")[1], name.split(":")[0]);
-        } else {
-            qname = new QName(uri, name);
-        }
-        return qname;
-    }
-
-    public static final String buildName(final QName qname) {
-        String name;
-        if (qname.getPrefix().isEmpty()) {
-            name = qname.getLocalPart();
-        } else {
-            name = new StringBuilder(qname.getPrefix()).append(":").append(
-                    qname.getLocalPart()).toString();
-        }
-        return name;
-    }
-
     private void intermediateCommitIfRequired() throws TreetankException {
         assertNotClosed();
         if ((mMaxNodeCount > 0) && (mModificationCount > mMaxNodeCount)) {

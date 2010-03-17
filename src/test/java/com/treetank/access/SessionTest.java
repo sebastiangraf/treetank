@@ -19,6 +19,10 @@
 package com.treetank.access;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+
 import junit.framework.TestCase;
 
 import org.junit.After;
@@ -38,7 +42,6 @@ import com.treetank.settings.ENodes;
 import com.treetank.utils.DocumentCreater;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.TypedValue;
-import static org.junit.Assert.assertTrue;
 
 public class SessionTest {
 
@@ -118,7 +121,7 @@ public class SessionTest {
         //
         // TestCase.assertNotSame(0L, new File(
         // ITestConstants.TEST_INSERT_CHILD_PATH + File.separator
-        // + "tt.tnk").length());
+        //          + "tt.tnk").length());
     }
 
     @Test

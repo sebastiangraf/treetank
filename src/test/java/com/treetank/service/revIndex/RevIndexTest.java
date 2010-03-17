@@ -48,7 +48,7 @@ public class RevIndexTest {
 
         assertTrue(desc.hasNext());
         assertTrue(rtx.moveTo(desc.next()));
-        assertTrue(rtx.getNameOfCurrentNode().equals("t"));
+        assertTrue(rtx.getQNameOfCurrentNode().getLocalPart().equals("t"));
 
         assertTrue(rtx.moveToAttribute(0));
         assertTrue(rtx.getValueOfCurrentNode().equals("b"));
@@ -56,7 +56,7 @@ public class RevIndexTest {
 
         assertTrue(desc.hasNext());
         assertTrue(rtx.moveTo(desc.next()));
-        assertTrue(rtx.getNameOfCurrentNode().equals("t"));
+        assertTrue(rtx.getQNameOfCurrentNode().getLocalPart().equals("t"));
 
         assertTrue(rtx.moveToAttribute(0));
         assertTrue(rtx.getValueOfCurrentNode().equals("bl"));
@@ -64,7 +64,7 @@ public class RevIndexTest {
 
         assertTrue(desc.hasNext());
         assertTrue(rtx.moveTo(desc.next()));
-        assertTrue(rtx.getNameOfCurrentNode().equals("t"));
+        assertTrue(rtx.getQNameOfCurrentNode().getLocalPart().equals("t"));
 
         assertTrue(rtx.moveToAttribute(0));
         assertTrue(rtx.getValueOfCurrentNode().equals("bla"));
@@ -72,7 +72,7 @@ public class RevIndexTest {
 
         assertTrue(desc.hasNext());
         assertTrue(rtx.moveTo(desc.next()));
-        assertTrue(rtx.getNameOfCurrentNode().equals("t"));
+        assertTrue(rtx.getQNameOfCurrentNode().getLocalPart().equals("t"));
 
         assertTrue(rtx.moveToAttribute(0));
         assertTrue(rtx.getValueOfCurrentNode().equals("blu"));
@@ -80,7 +80,7 @@ public class RevIndexTest {
 
         assertTrue(desc.hasNext());
         assertTrue(rtx.moveTo(desc.next()));
-        assertTrue(rtx.getNameOfCurrentNode().equals("t"));
+        assertTrue(rtx.getQNameOfCurrentNode().getLocalPart().equals("t"));
 
         assertTrue(rtx.moveToAttribute(0));
         assertTrue(rtx.getValueOfCurrentNode().equals("blub"));
@@ -88,7 +88,7 @@ public class RevIndexTest {
 
         assertTrue(desc.hasNext());
         assertTrue(rtx.moveTo(desc.next()));
-        assertTrue(rtx.getNameOfCurrentNode().equals("t"));
+        assertTrue(rtx.getQNameOfCurrentNode().getLocalPart().equals("t"));
 
         assertTrue(rtx.moveToAttribute(0));
         assertTrue(rtx.getValueOfCurrentNode().equals("blubb"));
@@ -136,7 +136,7 @@ public class RevIndexTest {
 
         assertTrue(desc.hasNext());
         assertTrue(rtx.moveTo(desc.next()));
-        assertTrue(rtx.getNameOfCurrentNode().equals("d"));
+        assertTrue(rtx.getQNameOfCurrentNode().getLocalPart().equals("d"));
 
         assertTrue(rtx.moveToAttribute(0));
         assertTrue(rtx.getValueOfCurrentNode().equals("b"));
@@ -144,7 +144,7 @@ public class RevIndexTest {
 
         assertTrue(desc.hasNext());
         assertTrue(rtx.moveTo(desc.next()));
-        assertTrue(rtx.getNameOfCurrentNode().equals("d"));
+        assertTrue(rtx.getQNameOfCurrentNode().getLocalPart().equals("d"));
 
         assertTrue(rtx.moveToAttribute(0));
         assertTrue(rtx.getValueOfCurrentNode().equals("bl"));
@@ -152,7 +152,7 @@ public class RevIndexTest {
 
         assertTrue(desc.hasNext());
         assertTrue(rtx.moveTo(desc.next()));
-        assertTrue(rtx.getNameOfCurrentNode().equals("d"));
+        assertTrue(rtx.getQNameOfCurrentNode().getLocalPart().equals("d"));
 
         assertTrue(rtx.moveToAttribute(0));
         assertTrue(rtx.getValueOfCurrentNode().equals("bla"));
@@ -160,7 +160,7 @@ public class RevIndexTest {
 
         assertTrue(desc.hasNext());
         assertTrue(rtx.moveTo(desc.next()));
-        assertTrue(rtx.getNameOfCurrentNode().equals("d"));
+        assertTrue(rtx.getQNameOfCurrentNode().getLocalPart().equals("d"));
 
         assertTrue(rtx.moveToAttribute(0));
         assertTrue(rtx.getValueOfCurrentNode().equals("blu"));
@@ -168,7 +168,7 @@ public class RevIndexTest {
 
         assertTrue(desc.hasNext());
         assertTrue(rtx.moveTo(desc.next()));
-        assertTrue(rtx.getNameOfCurrentNode().equals("d"));
+        assertTrue(rtx.getQNameOfCurrentNode().getLocalPart().equals("d"));
 
         assertTrue(rtx.moveToAttribute(0));
         assertTrue(rtx.getValueOfCurrentNode().equals("blub"));
@@ -176,7 +176,7 @@ public class RevIndexTest {
 
         assertTrue(desc.hasNext());
         assertTrue(rtx.moveTo(desc.next()));
-        assertTrue(rtx.getNameOfCurrentNode().equals("d"));
+        assertTrue(rtx.getQNameOfCurrentNode().getLocalPart().equals("d"));
 
         assertTrue(rtx.moveToAttribute(0));
         assertTrue(rtx.getValueOfCurrentNode().equals("blubb"));

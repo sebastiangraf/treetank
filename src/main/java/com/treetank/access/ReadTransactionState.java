@@ -174,6 +174,7 @@ public class ReadTransactionState {
      * @return the name
      */
     protected String getName(final int nameKey) {
+
         return ((NamePage) mRootPage.getNamePageReference().getPage())
                 .getName(nameKey);
 
