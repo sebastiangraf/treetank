@@ -45,7 +45,6 @@ public class AttributeAxisTest {
     }
 
     @Test
-    @Ignore
     public void testIterate() throws TreetankException {
         final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
         final ISession session = database.getSession();

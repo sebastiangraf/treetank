@@ -87,7 +87,9 @@ public final class XMLShredder implements Callable<Long> {
      * @throws TreetankUsageException
      *             if insertasfirstChild && updateOnly is both true OR if wtx is
      *             not pointing to doc-root and updateOnly= true
+     * @deprecated use constructor with XMLEventReader instead
      */
+    @Deprecated
     public XMLShredder(final IWriteTransaction wtx,
             final XMLStreamReader reader, final boolean addAsFirstChild)
             throws TreetankUsageException {
@@ -297,7 +299,7 @@ public final class XMLShredder implements Callable<Long> {
 
                         break;
                     case XMLStreamConstants.END_ELEMENT:
-//                        mWtx.moveTo(leftSiblingKeyStack.pop());
+                        // mWtx.moveTo(leftSiblingKeyStack.pop());
                         break;
                     }// end switch
 
@@ -310,8 +312,6 @@ public final class XMLShredder implements Callable<Long> {
             else {
                 insertNewContent();
             }
-
-            System.out.println();
 
         } catch (final XMLStreamException exc1) {
             throw new TreetankIOException(exc1);
@@ -351,7 +351,6 @@ public final class XMLShredder implements Callable<Long> {
                     break;
                 }
             }
-            System.out.println();
         } catch (final XMLStreamException exc1) {
             throw new TreetankIOException(exc1);
         }

@@ -18,6 +18,8 @@
 
 package com.treetank.access;
 
+import javax.xml.namespace.QName;
+
 import com.treetank.api.IItem;
 import com.treetank.api.IItemList;
 import com.treetank.api.IReadTransaction;
@@ -182,17 +184,30 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
-    public final String getNameOfCurrentNode() {
+    public final QName getQNameOfCurrentNode() {
         assertNotClosed();
-        return mTransactionState.getName(mCurrentNode.getNameKey());
+        final String name = mTransactionState
+                .getName(mCurrentNode.getNameKey());
+        final String uri = mTransactionState.getName(mCurrentNode.getURIKey());
+        return name == null ? null : buildQName(uri, name);
     }
 
     /**
      * {@inheritDoc}
      */
+    @Deprecated
+    public final String getNameOfCurrentNode() {
+        final QName qname = getQNameOfCurrentNode();
+        return qname == null ? null : WriteTransaction.buildName(qname);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Deprecated
     public final String getURIOfCurrentNode() {
-        assertNotClosed();
-        return mTransactionState.getName(mCurrentNode.getURIKey());
+        final QName qname = getQNameOfCurrentNode();
+        return qname == null ? null : qname.getNamespaceURI();
     }
 
     /**
@@ -377,6 +392,45 @@ public class ReadTransaction implements IReadTransaction {
     public long getMaxNodeKey() throws TreetankIOException {
         return getTransactionState().getActualRevisionRootPage()
                 .getMaxNodeKey();
+    }
+
+    /**
+     * Building QName out of uri and name. The name can have the prefix denoted
+     * with ":";
+     * 
+     * @param uri
+     *            the namespaceuri
+     * @param name
+     *            the name including a possible prefix
+     * @return the QName obj
+     */
+    public static final QName buildQName(final String uri, final String name) {
+        QName qname;
+        if (name.contains(":")) {
+            qname = new QName(uri, name.split(":")[1], name.split(":")[0]);
+        } else {
+            qname = new QName(uri, name);
+        }
+        return qname;
+    }
+
+    /**
+     * Building name consisting out of prefix and name. NamespaceUri is not used
+     * over here.
+     * 
+     * @param qname
+     *            the QName of an element
+     * @return a string with [prefix:]localname
+     */
+    public static final String buildName(final QName qname) {
+        String name;
+        if (qname.getPrefix().isEmpty()) {
+            name = qname.getLocalPart();
+        } else {
+            name = new StringBuilder(qname.getPrefix()).append(":").append(
+                    qname.getLocalPart()).toString();
+        }
+        return name;
     }
 
 }

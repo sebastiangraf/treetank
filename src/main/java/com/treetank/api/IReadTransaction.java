@@ -18,6 +18,8 @@
 
 package com.treetank.api;
 
+import javax.xml.namespace.QName;
+
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 
@@ -217,13 +219,22 @@ public interface IReadTransaction {
     String getValueOfCurrentNode();
 
     /**
+     * Getting the name of a current node
+     * 
+     * @return
+     */
+    QName getQNameOfCurrentNode();
+
+    /**
      * Getting the name of the current node
      */
+    @Deprecated
     String getNameOfCurrentNode();
 
     /**
      * Getting the uri of the current node
      */
+    @Deprecated
     String getURIOfCurrentNode();
 
     /**
