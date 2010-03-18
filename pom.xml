@@ -212,7 +212,7 @@
 		<site>
 			<id>xen5</id>
 			<name>Xen5 Project sites</name>
-			<url>scp://xen5.disy.inf.uni-konstanz.de/home/mavenadmin/doku/${project.version}</url>
+			<url>scp://xen5.disy.inf.uni-konstanz.de/home/mavenadmin/doku/treetank/treetank/${project.version}</url>
 		</site>
 		<repository>
 			<id>xen5</id>
