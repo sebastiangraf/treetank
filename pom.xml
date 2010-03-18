@@ -211,19 +211,19 @@
 	<distributionManagement>
 		<site>
 			<id>xen5</id>
-			<name>Xen5 Projet sites</name>
-			<url>scp://xen5.disy.inf.uni-konstanz.de/home/disyadmin/doku/${project.version}</url>
+			<name>Xen5 Project sites</name>
+			<url>scp://xen5.disy.inf.uni-konstanz.de/home/mavenadmin/doku/${project.version}</url>
 		</site>
 		<repository>
 			<id>xen5</id>
 			<name>Xen5 Repository</name>
-			<url>scp://xen5.disy.inf.uni-konstanz.de/home/disyadmin/internalRepo/repository</url>
+			<url>scp://xen5.disy.inf.uni-konstanz.de/home/mavenadmin/internalRepo/repository</url>
 			<uniqueVersion>false</uniqueVersion>
 		</repository>
 		<snapshotRepository>
 			<id>xen5</id>
 			<name>Xen5 SnapshotRepository</name>
-			<url>scp://xen5.disy.inf.uni-konstanz.de/home/disyadmin/internalRepo/snapshotRepository</url>
+			<url>scp://xen5.disy.inf.uni-konstanz.de/home/mavenadmin/internalRepo/snapshotRepository</url>
 			<uniqueVersion>false</uniqueVersion>
 		</snapshotRepository>
 	</distributionManagement>
