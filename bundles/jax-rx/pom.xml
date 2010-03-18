@@ -8,8 +8,10 @@
 		<relativePath>../../parent/pom.xml</relativePath>
 	</parent>
 
+	<packaging>jar</packaging>
 	<groupId>treetank</groupId>
 	<artifactId>jax-rx</artifactId>
+	<name>treetank-jax-rx</name>
 	<version>5.3.4-SNAPSHOT</version>
 	<description>This project give the jax-rx interface to jax-rx.
 	</description>
