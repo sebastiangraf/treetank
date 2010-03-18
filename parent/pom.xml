@@ -3,17 +3,24 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>treetank</groupId>
-	<artifactId>builder</artifactId>
+	<artifactId>treetank</artifactId>
 	<packaging>pom</packaging>
 	<name>treetank</name>
 	<version>5.3.4-SNAPSHOT</version>
-	<description>Treetank is a fully java-implemented native XML-Database. 
-	It supports cursorlike access to all nodes stored in the tree plus XPath 2.0 as query engine. Furthermore, Treetank is completely versionable. That means that each update-operation results in a new version. 
-	These versions can be easily retrieved within the database itself.</description>
-	<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/disy/forschung/treetank/</url>
+	<description>Treetank is a fully java-implemented native XML-Database.
+		It supports cursorlike access to all nodes stored in the tree plus
+		XPath 2.0 as query engine. Furthermore, Treetank is completely
+		versionable. That means that each update-operation results in a new
+		version.
+		These versions can be easily retrieved within the database itself.
+	</description>
+	<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/disy/forschung/treetank/
+	</url>
 	<scm>
-		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk</developerConnection>
+		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk
+		</connection>
+		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk
+		</developerConnection>
 		<url>https://svn.uni-konstanz.de/disy/Treetank</url>
 	</scm>
 	<issueManagement>
@@ -47,9 +54,12 @@
 				<role>Project Manager</role>
 				<role>Developer</role>
 			</roles>
-			<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/Verteilte-Systeme/mitglieder/Sebastian-Graf</url>
-			<organization>University of Konstanz, Distributed Systems Lab</organization>
-			<organizationUrl>http://www.informatik.uni-konstanz.de/ags/disy/</organizationUrl>
+			<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/Verteilte-Systeme/mitglieder/Sebastian-Graf
+			</url>
+			<organization>University of Konstanz, Distributed Systems Lab
+			</organization>
+			<organizationUrl>http://www.informatik.uni-konstanz.de/ags/disy/
+			</organizationUrl>
 			<timezone>+1</timezone>
 		</developer>
 	</developers>
@@ -114,7 +124,8 @@
 					</descriptors>
 					<archive>
 						<manifest>
-							<mainClass>com.treetank.bench.slidingSnapshot.CommitThresholdModifier</mainClass>
+							<mainClass>com.treetank.bench.slidingSnapshot.CommitThresholdModifier
+							</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -212,18 +223,21 @@
 		<site>
 			<id>xen5</id>
 			<name>Xen5 Project sites</name>
-			<url>scp://xen5.disy.inf.uni-konstanz.de/home/mavenadmin/doku/treetank/treetank/${project.version}</url>
+			<url>scp://xen5.disy.inf.uni-konstanz.de/home/mavenadmin/doku/treetank/treetank/${project.version}
+			</url>
 		</site>
 		<repository>
 			<id>xen5</id>
 			<name>Xen5 Repository</name>
-			<url>scp://xen5.disy.inf.uni-konstanz.de/home/mavenadmin/internalRepo/repository</url>
+			<url>scp://xen5.disy.inf.uni-konstanz.de/home/mavenadmin/internalRepo/repository
+			</url>
 			<uniqueVersion>false</uniqueVersion>
 		</repository>
 		<snapshotRepository>
 			<id>xen5</id>
 			<name>Xen5 SnapshotRepository</name>
-			<url>scp://xen5.disy.inf.uni-konstanz.de/home/mavenadmin/internalRepo/snapshotRepository</url>
+			<url>scp://xen5.disy.inf.uni-konstanz.de/home/mavenadmin/internalRepo/snapshotRepository
+			</url>
 			<uniqueVersion>false</uniqueVersion>
 		</snapshotRepository>
 	</distributionManagement>
@@ -231,9 +245,5 @@
 		<compileSource>1.6</compileSource>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	<modules>
-		<module>core</module>
-		<module>core</module>
-	</modules>
 </project>
 
