@@ -5,7 +5,7 @@
 	<groupId>treetank</groupId>
 	<artifactId>builder</artifactId>
 	<packaging>pom</packaging>
-	<name>treetank</name>
+	<name>treetank-builder</name>
 	<version>5.3.4-SNAPSHOT</version>
 	<description>Treetank is a fully java-implemented native XML-Database. 
 	It supports cursorlike access to all nodes stored in the tree plus XPath 2.0 as query engine. Furthermore, Treetank is completely versionable. That means that each update-operation results in a new version. 
@@ -53,166 +53,11 @@
 			<timezone>+1</timezone>
 		</developer>
 	</developers>
-	<repositories>
-		<repository>
-			<id>oracleReleases</id>
-			<name>Oracle Released Java Packages</name>
-			<url>http://download.oracle.com/maven</url>
-			<layout>default</layout>
-		</repository>
-		<repository>
-			<id>disy-repo</id>
-			<name>Disy Java packages</name>
-			<url>http://xen5.disy.inf.uni-konstanz.de/repo/repository</url>
-			<layout>default</layout>
-		</repository>
-	</repositories>
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.6.1</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-report-plugin</artifactId>
-				<version>2.5</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-pmd-plugin</artifactId>
-				<version>2.3</version>
-				<configuration>
-					<sourceEncoding>utf-8</sourceEncoding>
-					<minimumTokens>100</minimumTokens>
-					<targetJdk>${compileSource}</targetJdk>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jxr-plugin</artifactId>
-				<version>2.1</version>
-			</plugin>
-		</plugins>
-	</reporting>
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>${compileSource}</source>
-					<target>${compileSource}</target>
-					<encoding>UTF-8</encoding>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<descriptors>
-						<descriptor>src/main/assembly/jarAssembly.xml</descriptor>
-					</descriptors>
-					<archive>
-						<manifest>
-							<mainClass>com.treetank.bench.slidingSnapshot.CommitThresholdModifier</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.2</version>
-				<configuration>
-					<encoding>UTF-8</encoding>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>test-jar</goal>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.2</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>test-jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-	<dependencies>
-		<dependency>
-			<groupId>org.mortbay.jetty</groupId>
-			<artifactId>jetty</artifactId>
-			<version>6.1.22</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mortbay.jetty</groupId>
-			<artifactId>jetty-util</artifactId>
-			<version>6.1.22</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sleepycat</groupId>
-			<artifactId>je</artifactId>
-			<version>3.3.87</version>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.7</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mortbay.jetty</groupId>
-			<artifactId>jetty-servlet-tester</artifactId>
-			<version>6.1.22</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-		</dependency>
-		<dependency>
-			<groupId>org.perfidix</groupId>
-			<artifactId>perfidix</artifactId>
-			<version>3.6.2</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>jaxrx</groupId>
-			<artifactId>jaxrx</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<dependency>
-			<!-- the client implementation of JAX-RS for testing purposes-->
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-client</artifactId>
-			<version>1.0.2</version>
-		</dependency>
-	</dependencies>
 	<distributionManagement>
 		<site>
 			<id>xen5</id>
 			<name>Xen5 Project sites</name>
-			<url>scp://xen5.disy.inf.uni-konstanz.de/home/mavenadmin/doku/treetank/treetank/${project.version}</url>
+			<url>scp://xen5.disy.inf.uni-konstanz.de/home/mavenadmin/doku/${project.groupId}/${project.artifactId}/${project.version}</url>
 		</site>
 		<repository>
 			<id>xen5</id>
@@ -232,8 +77,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<modules>
-		<module>core</module>
-		<module>core</module>
+		<module>bundles/core</module>
+		<module>bundles/jax-rx</module>
 	</modules>
 </project>
 
