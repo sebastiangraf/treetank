@@ -191,7 +191,7 @@
 			<version>2.5</version>
 		</dependency>
 		<dependency>
-			<groupId>org.perfidix</groupId>
+			<groupId>perfidix</groupId>
 			<artifactId>perfidix</artifactId>
 			<version>3.6.2</version>
 		</dependency>
@@ -201,9 +201,9 @@
 			<version>1.1.1</version>
 		</dependency>
 		<dependency>
-			<groupId>jaxrx</groupId>
-			<artifactId>jaxrx</artifactId>
-			<version>1.0.0</version>
+			<groupId>jax-rx</groupId>
+			<artifactId>jax-rx</artifactId>
+			<version>1.0.1</version>
 		</dependency>
 		<dependency>
 			<!-- the client implementation of JAX-RS for testing purposes-->
