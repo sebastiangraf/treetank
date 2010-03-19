@@ -9,10 +9,10 @@
 		<relativePath>../../parent/pom.xml</relativePath>
 	</parent>
 
-	<packaging>jar</packaging>
 	<groupId>treetank</groupId>
 	<artifactId>core</artifactId>
 	<version>5.3.4-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>treetank-core</name>
 	<description>Treetank is a fully java-implemented native XML-Database.
 		It supports cursorlike access to all nodes stored in the tree plus

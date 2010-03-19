@@ -15,6 +15,14 @@
 	<version>1.2.0-SNAPSHOT</version>
 	<description>This project give the jax-rx interface to jax-rx.
 	</description>
+	<repositories>
+		<repository>
+			<id>javamaven2</id>
+			<name>Repository for Maven2</name>
+			<url>http://download.java.net/maven/2</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>treetank</groupId>
