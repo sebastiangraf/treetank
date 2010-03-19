@@ -78,8 +78,8 @@
 	</properties>
 	<modules>
 		<module>parent</module>
-		<module>bundles/core</module>
-		<module>bundles/jax-rx</module>
+		<module>bundles/treetank-core</module>
+		<module>bundles/treetank-jax-rx</module>
 	</modules>
 </project>
 
