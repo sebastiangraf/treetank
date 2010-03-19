@@ -69,6 +69,24 @@
 			<url>http://xen5.disy.inf.uni-konstanz.de/repo/repository</url>
 			<layout>default</layout>
 		</repository>
+		<repository>
+			<id>disy-repo-snapshot</id>
+			<name>Disy Java packages</name>
+			<url>http://xen5.disy.inf.uni-konstanz.de/repo/snapshotRepository</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>disy-internal-repo</id>
+			<name>Disy Java packages</name>
+			<url>http://xen5.disy.inf.uni-konstanz.de/internalRepo/repository</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>disy-internal-repo-snapshot</id>
+			<name>Disy Java packages</name>
+			<url>http://xen5.disy.inf.uni-konstanz.de/internalRepo/snapshotRepository</url>
+			<layout>default</layout>
+		</repository>
 	</repositories>
 	<reporting>
 		<plugins>
