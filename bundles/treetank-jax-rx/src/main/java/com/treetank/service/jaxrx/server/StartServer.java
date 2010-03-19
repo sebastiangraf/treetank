@@ -28,7 +28,7 @@ public final class StartServer {
      */
     public static void main(final String[] args) {
         System.setProperty("org.jaxrx.implementation",
-                "org.treetank.rest.implementation");
+                "com.treetank.service.jaxrx.implementation");
         System.setProperty("org.jaxrx.systemName", "treetank");
         System.setProperty("org.jaxrx.serverport", "8093");
         System.setProperty("org.jaxrx.additionalResources",
