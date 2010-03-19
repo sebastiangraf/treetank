@@ -12,41 +12,41 @@ import org.jaxrx.constants.URLConstants;
  */
 public final class RESTProps {
 
-    /**
-     * This class has a lazy constructor.
-     */
-    private RESTProps() {
-        // i do nothing
-        // constructor only exists to meet pmd requirements
-    }
+	/**
+	 * This class has a lazy constructor.
+	 */
+	private RESTProps() {
+		// i do nothing
+		// constructor only exists to meet pmd requirements
+	}
 
-    /**
-     * The path where the databases will be stored.
-     */
-    public final static transient String STOREDBPATH = System
-            .getProperty("user.home")
-            + File.separatorChar + "xml-databases";
-//     public final static transient String STOREDBPATH = "/tmp/tt";
+	/**
+	 * The path where the databases will be stored.
+	 */
+	public final static transient String STOREDBPATH = System
+			.getProperty("user.home")
+			+ File.separatorChar + "xml-databases";
+	// public final static transient String STOREDBPATH = "/tmp/tt";
 
-    /**
-     * The tnk ending.
-     */
-    public final static transient String TNKEND = ".tnk";
+	/**
+	 * The tnk ending.
+	 */
+	public final static transient String TNKEND = ".tnk";
 
-    /**
-     * The collection ending.
-     */
-    public final static transient String COLEND = ".col";
+	/**
+	 * The collection ending.
+	 */
+	public final static transient String COLEND = ".col";
 
-    /**
-     * Name of id itself
-     */
-    public static final String NODEID = "{id}";
+	/**
+	 * Name of id itself
+	 */
+	public static final String NODEID = "{id}";
 
-    /**
-     * The path of the resource specified by its node id.
-     */
-    public static final String IDPATH = URLConstants.RESOURCEPATH + "/"
-            + NODEID;
+	/**
+	 * The path of the resource specified by its node id.
+	 */
+	public static final String IDPATH = URLConstants.RESOURCEPATH + "/"
+			+ NODEID;
 
 }
