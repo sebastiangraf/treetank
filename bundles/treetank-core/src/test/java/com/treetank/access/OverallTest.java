@@ -1,4 +1,4 @@
-package com.treetank;
+package com.treetank.access;
 
 import java.io.File;
 import java.util.Random;
@@ -10,6 +10,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.treetank.ITestConstants;
+import com.treetank.TestHelper;
 import com.treetank.access.Database;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
