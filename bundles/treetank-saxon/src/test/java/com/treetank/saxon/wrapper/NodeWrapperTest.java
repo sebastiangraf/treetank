@@ -157,10 +157,11 @@ public class NodeWrapperTest {
         // Iterate over expected result and the actual result and compare it.
         for (int j = 0; j < test.size(); j++) {
           final IReadTransaction rtx = test.get(j);
-
+          final QName qName = test.get(j).getQNameOfCurrentNode();
+          
           if (rtx.getNode().isElement()) {
             TestCase
-                .assertEquals(expRes[j], test.get(j).getNameOfCurrentNode());
+                .assertEquals(expRes[j], qName.getPrefix()+":"+qName.getLocalPart());
           } else if (rtx.getNode().isText()) {
             TestCase.assertEquals(expRes[j], test
                 .get(j)

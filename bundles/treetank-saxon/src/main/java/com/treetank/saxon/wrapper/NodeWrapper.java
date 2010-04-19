@@ -1,5 +1,7 @@
 package com.treetank.saxon.wrapper;
 
+import javax.xml.namespace.QName;
+
 import net.sf.saxon.Configuration;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.om.Axis;
@@ -45,6 +47,12 @@ import com.treetank.axis.TextFilter;
 import com.treetank.exception.TreetankException;
 import com.treetank.settings.ENodes;
 
+/**
+ * Wraps a Treetank node.
+ * 
+ * @author johannes
+ *
+ */
 public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
 	/** Write Transaction. */
@@ -67,6 +75,9 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 	
 	/** Treetank node. */
 	protected final IItem node;
+	
+	/** QName of current node. */
+	protected final QName qName;
 
 	/**
 	 * A node in the XML parse tree. Wrap a TreeTank node.
@@ -91,6 +102,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 		nodeKind = mRTX.getNode().getKind();
 		mKey = mRTX.getNode().getNodeKey();
 		node = mRTX.getNode();
+		qName = mRTX.getQNameOfCurrentNode();
 	}
 
 	/**
@@ -206,14 +218,10 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 			for (int i = 0; i < atts; i++) {
 				mRTX.moveToAttribute(i);
 
-				String localPart = mRTX.getValueOfCurrentNode();
-
-				if (localPart.indexOf(':') > 0) {
-					localPart = localPart.substring(localPart.indexOf(':') + 1);
-				}
+				final String localPart = qName.getLocalPart();
 
 				if (local.equals(localPart)
-						&& uri.equals(mRTX.getURIOfCurrentNode())) {
+						&& uri.equals(qName.getNamespaceURI())) {
 					attVal = mRTX.getValueOfCurrentNode();
 					break;
 				}
@@ -231,30 +239,6 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 	 * @see net.sf.saxon.om.NodeInfo#getBaseURI()
 	 */
 	public String getBaseURI() {
-		// String baseURI = null;
-		//
-		// NodeInfo node = this;
-		// if (getNodeKind() != IWriteTransaction.ELEMENT_KIND) {
-		// node = node.getParent();
-		// }
-		//
-		// // Look for an xml:base attribute.
-		// while (node != null) {
-		// final String xmlbase =
-		// node.getAttributeValue(StandardNames.XML_BASE);
-		// if (xmlbase != null) {
-		// baseURI = xmlbase;
-		// break;
-		// }
-		// node = node.getParent();
-		// }
-		//
-		// // If not found, return the base URI of the document node.
-		// if (baseURI == null) {
-		// baseURI = mDocWrapper.getBaseURI();
-		// }
-		//
-		// return baseURI;
 		mRTX.moveTo(mKey);
 		String baseURI = getAttributeValue(StandardNames.XML_BASE);
 
@@ -300,7 +284,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 			for (int i = 0; i < count; i++) {
 				mRTX.moveTo(i);
 				final String prefix = getPrefix();
-				final String uri = mRTX.getURIOfCurrentNode();
+				final String uri = qName.getNamespaceURI();
 				mRTX.moveTo(mKey);
 
 				result[n++] = pool.allocateNamespaceCode(prefix, uri);
@@ -332,7 +316,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 		case ELEMENT_KIND:
 		case ATTRIBUTE_KIND:
 			mRTX.moveTo(mKey);
-			dName = mRTX.getNameOfCurrentNode();
+			dName = getPrefix()+":"+qName.getLocalPart();
 			break;
 		case NAMESPACE_KIND:
 		case PROCESSING_KIND:
@@ -399,13 +383,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 		switch (nodeKind) {
 		case ELEMENT_KIND:
 		case ATTRIBUTE_KIND:
-			final String mQName = mRTX.getNameOfCurrentNode();
-			if (mQName.indexOf(':') == -1) {
-			  localPart = mQName;
-			} else {
-				localPart = mQName.substring(mQName.indexOf(':') + 1);
-			}
-
+		  localPart = qName.getLocalPart();
 			break;
 		default:
 			// Do nothing.
@@ -482,12 +460,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 		switch (nodeKind) {
 		case ELEMENT_KIND:
 		case ATTRIBUTE_KIND:
-			mRTX.moveTo(mKey);
-			final String mQName = mRTX.getNameOfCurrentNode();
-			if (mQName.indexOf(':') != -1) {
-				prefix = mQName.substring(0, mQName.indexOf(':'));
-			}
-
+		  prefix = qName.getPrefix();
 			break;
 		default:
 			/*
@@ -576,18 +549,6 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 		mRTX.moveTo(mKey);
 
 		return fsb.condense().toString();
-		// final IWriteTransaction RTX = rtx;
-		// final ByteArrayOutputStream out = new ByteArrayOutputStream();
-		// XMLSerializer serializer = new XMLSerializer(RTX, out, false, false);
-		//
-		// try {
-		// serializer.call();
-		// // RTX.close();
-		// } catch (Exception e) {
-		// logger.warn("Serialization failed: " + e.getMessage(), e);
-		// }
-		//
-		// return out.toString();
 	}
 
 	/**
@@ -625,13 +586,12 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 	 *         string.
 	 */
 	public String getURI() {
-		mRTX.moveTo(mKey);
 		String URI = "";
 
 		switch (nodeKind) {
 		case ELEMENT_KIND:
 		case ATTRIBUTE_KIND:
-			URI = mRTX.getURIOfCurrentNode();
+			URI = qName.getNamespaceURI();
 			break;
 		default:
 			// Do nothing.
