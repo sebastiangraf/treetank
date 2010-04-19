@@ -1,126 +1,26 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>treetank</artifactId>
+		<groupId>treetank</groupId>
+		<version>5.3.4-SNAPSHOT</version>
+		<relativePath>../../parent/pom.xml</relativePath>
+	</parent>
+	
 	<groupId>treetank</groupId>
 	<artifactId>saxon</artifactId>
-
-	<!--
-		This one is for the version. Each release should get an own version.
-		Snapshots (in progress version) are tagged with the suffix "SNAPSHOT"
-	-->
-	<version>1.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
-
-	<!-- Name of the Project...-->
-	<name>saxon</name>
-
-	<!--
-		Link to our disy-repo, treetank and perfidix is located over here
-	-->
+	<name>treetank-saxon</name>
+	<version>1.0.0-SNAPSHOT</version>
+	<description>Saxon binding.</description>
 	<repositories>
 		<repository>
-			<id>disy-repo</id>
-			<name>Disy Java Packages</name>
-			<url>http://xen5.disy.inf.uni-konstanz.de/repo/repository/</url>
-			<layout>default</layout>
-		</repository>
-		<repository>
-			<id>disy-repo-snapshot</id>
-			<name>Disy Java Packages - Snapshot</name>
-			<url>http://xen5.disy.inf.uni-konstanz.de/repo/snapshotRepository/</url>
-			<layout>default</layout>
-		</repository>
-		<repository>
-			<id>disy-repo-internal</id>
-			<name>Disy Java Packages - Internal</name>
-			<url>http://xen5.disy.inf.uni-konstanz.de/internalRepo/repository/</url>
-			<layout>default</layout>
-		</repository>
-		<repository>
-			<id>disy-repo-internal-snapshot</id>
-			<name>Disy Java Packages - Internal - Snapshot</name>
-			<url>http://xen5.disy.inf.uni-konstanz.de/internalRepo/snapshotRepository/</url>
-			<layout>default</layout>
+			<id>javamaven2</id>
+			<name>Repository for Maven2</name>
+			<url>http://download.java.net/maven/2</url>
 		</repository>
 	</repositories>
-
-	<!--
-		This one is for generating a site with "mvn site". At the moment the
-		sites consists out of a javadoc, the sourcecode and summaries about
-		test results
-	-->
-	<reporting>
-		<plugins>
-			<plugin>
-				<artifactId>maven-javadoc-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<artifactId>maven-surefire-report-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-pmd-plugin</artifactId>
-				<version>2.3</version>
-				<configuration>
-					<sourceEncoding>utf-8</sourceEncoding>
-					<minimumTokens>100</minimumTokens>
-					<targetJdk>${compileSource}</targetJdk>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jxr-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</reporting>
-
-	<!--
-		This one is for the build cycle: compilation, testing, packaging and
-		so on
-	-->
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>${compileSource}</source>
-					<target>${compileSource}</target>
-					<encoding>UTF-8</encoding>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.2</version>
-				<configuration>
-					<encoding>UTF-8</encoding>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
 
 	<dependencies>
 		<dependency>
@@ -147,35 +47,4 @@
 			<version>9.2</version>
 		</dependency>
 	</dependencies>
-
-	<distributionManagement>
-		<site>
-			<id>xen5</id>
-			<name>Xen5 Project sites</name>
-			<url>scp://xen5.disy.inf.uni-konstanz.de/home/mavenadmin/doku/${project.groupId}/${project.artifactId}/${project.version}</url>
-		</site>
-		<repository>
-			<id>xen5</id>
-			<name>Xen5 Repository</name>
-			<url>scp://xen5.disy.inf.uni-konstanz.de/home/mavenadmin/internalRepo/repository
-			</url>
-			<uniqueVersion>false</uniqueVersion>
-		</repository>
-		<snapshotRepository>
-			<id>xen5</id>
-			<name>Xen5 SnapshotRepository</name>
-			<url>scp://xen5.disy.inf.uni-konstanz.de/home/mavenadmin/internalRepo/snapshotRepository
-			</url>
-			<uniqueVersion>false</uniqueVersion>
-		</snapshotRepository>
-	</distributionManagement>
-
-	<!--
-		Global properties for this project: compilation with java 1.6 and
-		UTF-8 encoding for all files
-	-->
-	<properties>
-		<compileSource>1.6</compileSource>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
 </project>

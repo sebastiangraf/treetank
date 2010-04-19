@@ -165,7 +165,7 @@ public class MutableNodeWrapper extends NodeWrapper implements MutableNodeInfo {
     if (before) {
       mWTX.moveToParent();
 
-      final String uri = mWTX.getURIOfCurrentNode();
+      final String uri = mWTX.getQNameOfCurrentNode().getNamespaceURI();
       final String prefix = getPrefix();
 
       for (final NodeInfo node : source) {
