@@ -19,13 +19,13 @@ import com.treetank.saxon.wrapper.DocumentWrapper;
 import com.treetank.saxon.wrapper.NodeWrapper;
 
 /**
- * 
  * <h1>XPath Evaluator</h1>
  * 
  * <p>The XPath evaluator takes an XPath expression and evaluates the expression
  * against a wrapped Treetank document.</p>
  * 
  * @author johannes
+ * 
  */
 public class XPathEvaluator implements Callable<XPathSelector> {
 
@@ -51,7 +51,7 @@ public class XPathEvaluator implements Callable<XPathSelector> {
   public XPathEvaluator(final String expression, final ISession session, final File file) {
     mExpression = expression;
     mSession = session;
-    mTarget = file;  
+    mTarget = file;
   }
 
   @Override
@@ -70,7 +70,7 @@ public class XPathEvaluator implements Callable<XPathSelector> {
       XdmItem booksDoc = builder.build(doc);
       selector = xpath.compile(mExpression).load();
       selector.setContextItem(booksDoc);
-    } catch (SaxonApiException e) {
+    } catch (final SaxonApiException e) {
       LOGGER.error("Saxon Exception: " + e.getMessage(), e);
     }
     

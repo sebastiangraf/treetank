@@ -31,7 +31,7 @@ import com.treetank.exception.TreetankException;
 import com.treetank.saxon.utils.DocNamespaceContext;
 import com.treetank.utils.DocumentCreater;
 
-public class NodeWrapperTest {
+public class TestNodeWrapper {
 
   /** TreeTank session. */
   private static ISession session;
@@ -43,7 +43,7 @@ public class NodeWrapperTest {
   private static Configuration config;
 
   /** Logger. */
-  private static Log logger = LogFactory.getLog(NodeWrapperTest.class);
+  private static Log logger = LogFactory.getLog(TestNodeWrapper.class);
 
   /** Path to test file. */
   private File test =

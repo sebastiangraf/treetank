@@ -66,17 +66,17 @@ public class XSLTEvaluator implements Callable<Serializer> {
     Serializer out = null;
     
     try {
-      exp = comp.compile(new StreamSource(new File("styles/books.xsl")));
+      exp = comp.compile(new StreamSource(new File(mStylesheet)));
       source = proc.newDocumentBuilder().build(mDoc);
       out = new Serializer();
       out.setOutputProperty(Serializer.Property.METHOD, "html");
       out.setOutputProperty(Serializer.Property.INDENT, "yes");
       out.setOutputStream(mOut);
-      XsltTransformer trans = exp.load();
+      final XsltTransformer trans = exp.load();
       trans.setInitialContextNode(source);
       trans.setDestination(out);
       trans.transform();
-    } catch (SaxonApiException e) {
+    } catch (final SaxonApiException e) {
       LOGGER.error("Saxon exception: " + e.getMessage(), e);
     }
     
