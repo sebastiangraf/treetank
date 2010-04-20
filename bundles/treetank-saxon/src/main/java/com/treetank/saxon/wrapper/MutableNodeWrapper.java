@@ -142,11 +142,11 @@ public class MutableNodeWrapper extends NodeWrapper implements MutableNodeInfo {
       for (final NodeInfo node : source) {
         try {
           if (first) {
-            mWTX
-                .insertElementAsFirstChild(node.getDisplayName(), node.getURI());
+            mWTX.insertElementAsFirstChild(new QName(node.getURI(), node
+                .getLocalPart(), node.getPrefix()));
           } else {
-            mWTX.insertElementAsRightSibling(node.getDisplayName(), node
-                .getURI());
+            mWTX.insertElementAsRightSibling(new QName(node.getURI(), node
+                .getLocalPart(), node.getPrefix()));
           }
         } catch (TreetankException e) {
           LOGGER.error("Insertion of element failed: " + e.getMessage(), e);
@@ -170,7 +170,8 @@ public class MutableNodeWrapper extends NodeWrapper implements MutableNodeInfo {
 
       for (final NodeInfo node : source) {
         try {
-          mWTX.insertElementAsFirstChild(node.getDisplayName(), node.getURI());
+          mWTX.insertElementAsFirstChild(new QName(node.getURI(), node
+              .getLocalPart(), node.getPrefix()));
 
           if (inherit) {
             mWTX.insertNamespace(uri, prefix);
