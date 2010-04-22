@@ -28,9 +28,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Database;
+import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
@@ -43,68 +42,69 @@ import com.treetank.service.xml.xpath.functions.XPathError;
 
 public class TypeFilterTest {
 
-    public static final String XML = "src" + File.separator + "test"
-            + File.separator + "resources" + File.separator + "test.xml";
+	public static final String XML = "src" + File.separator + "test"
+			+ File.separator + "resources" + File.separator + "test.xml";
 
-    @Before
-    public void setUp() throws TreetankException {
-        TestHelper.deleteEverything();
-    }
+	@Before
+	public void setUp() throws TreetankException {
+		TestHelper.deleteEverything();
+	}
 
-    @After
-    public void tearDown() throws TreetankException {
-        TestHelper.closeEverything();
-    }
+	@After
+	public void tearDown() throws TreetankException {
+		TestHelper.closeEverything();
+	}
 
-    @Test
-    public void testIFilterConvetions() throws Exception {
+	@Test
+	public void testIFilterConvetions() throws Exception {
 
-        // Build simple test tree.
-        // final ISession session = Session.beginSession(PATH);
-        // final IWriteTransaction wtx = session.beginWriteTransaction();
-        // TestDocument.create(wtx);
-        XMLShredder.main(XML, ITestConstants.PATH1.getAbsolutePath());
+		// Build simple test tree.
+		// final ISession session = Session.beginSession(PATH);
+		// final IWriteTransaction wtx = session.beginWriteTransaction();
+		// TestDocument.create(wtx);
+		XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
 
-        // Verify.
-        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
-        final ISession session = database.getSession();
-        final IReadTransaction rtx = session.beginReadTransaction();
-        final IAxis axis = new XPathAxis(rtx, "a");
-        final IReadTransaction xtx = axis.getTransaction();
+		// Verify.
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
+		final ISession session = database.getSession();
+		final IReadTransaction rtx = session.beginReadTransaction();
+		final IAxis axis = new XPathAxis(rtx, "a");
+		final IReadTransaction xtx = axis.getTransaction();
 
-        xtx.moveTo(9L);
-        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untyped"),
-                true);
-        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:long"),
-                false);
+		xtx.moveTo(9L);
+		IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untyped"),
+				true);
+		IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:long"),
+				false);
 
-        xtx.moveTo(4L);
-        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untyped"),
-                true);
-        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:double"),
-                false);
+		xtx.moveTo(4L);
+		IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untyped"),
+				true);
+		IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:double"),
+				false);
 
-        xtx.moveTo(1L);
-        xtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new TypeFilter(xtx,
-                "xs:untypedAtomic"), true);
+		xtx.moveTo(1L);
+		xtx.moveToAttribute(0);
+		IFilterTest.testIFilterConventions(new TypeFilter(xtx,
+				"xs:untypedAtomic"), true);
 
-        IFilterTest.testIFilterConventions(new TypeFilter(xtx,
-                "xs:anyAtomicType"), false);
-        try {
-            IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:bla"),
-                    false);
-            fail("Expected a Type not found error.");
-        } catch (XPathError e) {
-            assertThat(e.getMessage(), is("err:XPST0051 "
-                    + "Type is not defined in the in-scope schema types as an "
-                    + "atomic type."));
-        }
+		IFilterTest.testIFilterConventions(new TypeFilter(xtx,
+				"xs:anyAtomicType"), false);
+		try {
+			IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:bla"),
+					false);
+			fail("Expected a Type not found error.");
+		} catch (XPathError e) {
+			assertThat(e.getMessage(), is("err:XPST0051 "
+					+ "Type is not defined in the in-scope schema types as an "
+					+ "atomic type."));
+		}
 
-        xtx.close();
-        rtx.close();
-        session.close();
-        database.close();
+		xtx.close();
+		rtx.close();
+		session.close();
+		database.close();
 
-    }
+	}
 }

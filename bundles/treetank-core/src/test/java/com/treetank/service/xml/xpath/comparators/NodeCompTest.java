@@ -25,9 +25,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Database;
+import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
@@ -43,104 +42,104 @@ import com.treetank.utils.DocumentCreater;
 
 public class NodeCompTest {
 
-    private AbstractComparator comparator;
+	private AbstractComparator comparator;
 
-    private IDatabase database;
+	private IDatabase database;
 
-    private ISession session;
+	private ISession session;
 
-    private IWriteTransaction wtx;
+	private IWriteTransaction wtx;
 
-    private IReadTransaction rtx;
+	private IReadTransaction rtx;
 
-    @Before
-    public void setUp() throws TreetankException {
-        TestHelper.deleteEverything();
+	@Before
+	public void setUp() throws TreetankException {
+		TestHelper.deleteEverything();
 
-        // Build simple test tree.
-        database = Database.openDatabase(ITestConstants.PATH1);
-        session = database.getSession();
-        wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
+		// Build simple test tree.
+		database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+		session = database.getSession();
+		wtx = session.beginWriteTransaction();
+		DocumentCreater.create(wtx);
 
-        // Find descendants starting from nodeKey 0L (root).
-        wtx.commit();
-        wtx.moveToDocumentRoot();
-        rtx = session.beginReadTransaction();
+		// Find descendants starting from nodeKey 0L (root).
+		wtx.commit();
+		wtx.moveToDocumentRoot();
+		rtx = session.beginReadTransaction();
 
-        comparator = new NodeComp(rtx, new LiteralExpr(rtx, -2),
-                new LiteralExpr(rtx, -1), CompKind.IS);
-    }
+		comparator = new NodeComp(rtx, new LiteralExpr(rtx, -2),
+				new LiteralExpr(rtx, -1), CompKind.IS);
+	}
 
-    @After
-    public void tearDown() throws TreetankException {
-        rtx.close();
-        wtx.abort();
-        wtx.close();
-        session.close();
-        database.close();
-        TestHelper.closeEverything();
-    }
+	@After
+	public void tearDown() throws TreetankException {
+		rtx.close();
+		wtx.abort();
+		wtx.close();
+		session.close();
+		database.close();
+		TestHelper.closeEverything();
+	}
 
-    @Test
-    public void testCompare() {
+	@Test
+	public void testCompare() {
 
-        AtomicValue[] op1 = { new AtomicValue(2, Type.INTEGER) };
-        AtomicValue[] op2 = { new AtomicValue(3, Type.INTEGER) };
-        AtomicValue[] op3 = { new AtomicValue(3, Type.INTEGER) };
+		AtomicValue[] op1 = { new AtomicValue(2, Type.INTEGER) };
+		AtomicValue[] op2 = { new AtomicValue(3, Type.INTEGER) };
+		AtomicValue[] op3 = { new AtomicValue(3, Type.INTEGER) };
 
-        assertEquals(false, comparator.compare(op1, op2));
-        assertEquals(true, comparator.compare(op3, op2));
+		assertEquals(false, comparator.compare(op1, op2));
+		assertEquals(true, comparator.compare(op3, op2));
 
-        try {
-            comparator = new NodeComp(rtx, new LiteralExpr(rtx, -2),
-                    new LiteralExpr(rtx, -1), CompKind.PRE);
-            comparator.compare(op1, op2);
-            fail("Expexcted not yet implemented exception.");
-        } catch (IllegalStateException e) {
-            assertEquals("Evaluation of node comparisons not possible", e
-                    .getMessage());
-        }
+		try {
+			comparator = new NodeComp(rtx, new LiteralExpr(rtx, -2),
+					new LiteralExpr(rtx, -1), CompKind.PRE);
+			comparator.compare(op1, op2);
+			fail("Expexcted not yet implemented exception.");
+		} catch (IllegalStateException e) {
+			assertEquals("Evaluation of node comparisons not possible", e
+					.getMessage());
+		}
 
-        try {
-            comparator = new NodeComp(rtx, new LiteralExpr(rtx, -2),
-                    new LiteralExpr(rtx, -1), CompKind.FO);
-            comparator.compare(op1, op2);
-            fail("Expexcted not yet implemented exception.");
-        } catch (IllegalStateException e) {
-            assertEquals("Evaluation of node comparisons not possible", e
-                    .getMessage());
-        }
+		try {
+			comparator = new NodeComp(rtx, new LiteralExpr(rtx, -2),
+					new LiteralExpr(rtx, -1), CompKind.FO);
+			comparator.compare(op1, op2);
+			fail("Expexcted not yet implemented exception.");
+		} catch (IllegalStateException e) {
+			assertEquals("Evaluation of node comparisons not possible", e
+					.getMessage());
+		}
 
-    }
+	}
 
-    @Test
-    public void testAtomize() {
+	@Test
+	public void testAtomize() {
 
-        IAxis axis = new LiteralExpr(rtx, -2);
-        axis.hasNext(); // this is needed, because hasNext() has already been
-        // called
-        AtomicValue[] value = comparator.atomize(axis);
-        assertEquals(value.length, 1);
-        assertEquals(rtx.getNode().getNodeKey(), value[0].getNodeKey());
-        assertEquals("xs:integer", value[0].getType());
+		IAxis axis = new LiteralExpr(rtx, -2);
+		axis.hasNext(); // this is needed, because hasNext() has already been
+		// called
+		AtomicValue[] value = comparator.atomize(axis);
+		assertEquals(value.length, 1);
+		assertEquals(rtx.getNode().getNodeKey(), value[0].getNodeKey());
+		assertEquals("xs:integer", value[0].getType());
 
-        try {
-            axis = new DescendantAxis(rtx, false);
-            axis.hasNext();
-            comparator.atomize(axis);
-        } catch (XPathError e) {
-            assertEquals(
-                    "err:XPTY0004 The type is not appropriate the expression or"
-                            + " the typedoes not match a required type as specified by the "
-                            + "matching rules.", e.getMessage());
-        }
+		try {
+			axis = new DescendantAxis(rtx, false);
+			axis.hasNext();
+			comparator.atomize(axis);
+		} catch (XPathError e) {
+			assertEquals(
+					"err:XPTY0004 The type is not appropriate the expression or"
+							+ " the typedoes not match a required type as specified by the "
+							+ "matching rules.", e.getMessage());
+		}
 
-    }
+	}
 
-    @Test
-    public void testGetType() {
+	@Test
+	public void testGetType() {
 
-        assertEquals(Type.INTEGER, comparator.getType(123, 2435));
-    }
+		assertEquals(Type.INTEGER, comparator.getType(123, 2435));
+	}
 }

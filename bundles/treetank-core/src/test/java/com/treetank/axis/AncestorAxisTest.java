@@ -22,9 +22,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Database;
+import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -33,70 +32,72 @@ import com.treetank.utils.DocumentCreater;
 
 public class AncestorAxisTest {
 
-    @Before
-    public void setUp() throws TreetankException {
-        TestHelper.deleteEverything();
-    }
+	@Before
+	public void setUp() throws TreetankException {
+		TestHelper.deleteEverything();
+	}
 
-    @Test
-    public void testAxisConventions() throws TreetankException {
-        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
-        final ISession session = database.getSession();
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
+	@Test
+	public void testAxisConventions() throws TreetankException {
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
+		final ISession session = database.getSession();
+		final IWriteTransaction wtx = session.beginWriteTransaction();
+		DocumentCreater.create(wtx);
 
-        wtx.moveTo(12L);
-        IAxisTest.testIAxisConventions(new AncestorAxis(wtx), new long[] { 9L,
-                1L });
+		wtx.moveTo(12L);
+		IAxisTest.testIAxisConventions(new AncestorAxis(wtx), new long[] { 9L,
+				1L });
 
-        wtx.moveTo(4L);
-        IAxisTest
-                .testIAxisConventions(new AncestorAxis(wtx), new long[] { 1L });
+		wtx.moveTo(4L);
+		IAxisTest
+				.testIAxisConventions(new AncestorAxis(wtx), new long[] { 1L });
 
-        wtx.moveTo(5L);
-        IAxisTest
-                .testIAxisConventions(new AncestorAxis(wtx), new long[] { 1L });
+		wtx.moveTo(5L);
+		IAxisTest
+				.testIAxisConventions(new AncestorAxis(wtx), new long[] { 1L });
 
-        wtx.moveTo(1L);
-        IAxisTest.testIAxisConventions(new AncestorAxis(wtx), new long[] {});
+		wtx.moveTo(1L);
+		IAxisTest.testIAxisConventions(new AncestorAxis(wtx), new long[] {});
 
-        wtx.abort();
-        wtx.close();
-        session.close();
-        database.close();
-    }
+		wtx.abort();
+		wtx.close();
+		session.close();
+		database.close();
+	}
 
-    @Test
-    public void testAxisConventionsIncludingSelf() throws TreetankException {
-        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
-        final ISession session = database.getSession();
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
+	@Test
+	public void testAxisConventionsIncludingSelf() throws TreetankException {
+		final IDatabase database = TestHelper.getDatabase(PATHS.PATH1
+				.getFile());
+		final ISession session = database.getSession();
+		final IWriteTransaction wtx = session.beginWriteTransaction();
+		DocumentCreater.create(wtx);
 
-        wtx.moveTo(11L);
-        IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true), new long[] {
-                11L, 9L, 1L });
+		wtx.moveTo(11L);
+		IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true), new long[] {
+				11L, 9L, 1L });
 
-        wtx.moveTo(5L);
-        IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true), new long[] {
-                5L, 1L });
+		wtx.moveTo(5L);
+		IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true), new long[] {
+				5L, 1L });
 
-        wtx.moveTo(4L);
-        IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true), new long[] {
-                4L, 1L });
+		wtx.moveTo(4L);
+		IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true), new long[] {
+				4L, 1L });
 
-        wtx.moveTo(1L);
-        IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true),
-                new long[] { 1L });
+		wtx.moveTo(1L);
+		IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true),
+				new long[] { 1L });
 
-        wtx.abort();
-        wtx.close();
-        session.close();
-        database.close();
-    }
+		wtx.abort();
+		wtx.close();
+		session.close();
+		database.close();
+	}
 
-    @After
-    public void tearDown() throws TreetankException {
-        TestHelper.closeEverything();
-    }
+	@After
+	public void tearDown() throws TreetankException {
+		TestHelper.closeEverything();
+	}
 }

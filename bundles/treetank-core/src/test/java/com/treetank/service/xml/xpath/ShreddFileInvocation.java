@@ -22,9 +22,8 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 
-import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Database;
+import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
@@ -34,38 +33,38 @@ import com.treetank.service.xml.XMLShredder;
 
 public class ShreddFileInvocation {
 
-    public static final String XML = "src" + File.separator + "test"
-            + File.separator + "resources" + File.separator + "content.xml";
+	public static final String XML = "src" + File.separator + "test"
+			+ File.separator + "resources" + File.separator + "content.xml";
 
-    public static void main(String[] args) {
-        try {
-            TestHelper.deleteEverything();
-            // Setup parsed session.
-            XMLShredder.main(XML, ITestConstants.PATH1.getAbsolutePath());
+	public static void main(String[] args) {
+		try {
+			TestHelper.deleteEverything();
+			// Setup parsed session.
+			XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
 
-            // Verify.
-            final IDatabase database = Database
-                    .openDatabase(ITestConstants.PATH1);
-            final ISession session = database.getSession();
-            final IReadTransaction rtx = session.beginReadTransaction();
-            final IWriteTransaction wtx = session.beginWriteTransaction();
-            rtx.moveToDocumentRoot();
+			// Verify.
+			final IDatabase database = TestHelper.getDatabase(PATHS.PATH1
+					.getFile());
+			final ISession session = database.getSession();
+			final IReadTransaction rtx = session.beginReadTransaction();
+			final IWriteTransaction wtx = session.beginWriteTransaction();
+			rtx.moveToDocumentRoot();
 
-            final IAxis xpath = new XPathAxis(wtx,
-                    "/office:document-content/office:body/office:text/text:p");
-            for (long node : xpath) {
-                System.out.println(node);
-                wtx.moveTo(node);
-                wtx.remove();
-            }
-            wtx.close();
-            session.close();
-            database.close();
-            TestHelper.closeEverything();
-        } catch (final Exception exc) {
-            fail(exc.toString());
-        }
+			final IAxis xpath = new XPathAxis(wtx,
+					"/office:document-content/office:body/office:text/text:p");
+			for (long node : xpath) {
+				System.out.println(node);
+				wtx.moveTo(node);
+				wtx.remove();
+			}
+			wtx.close();
+			session.close();
+			database.close();
+			TestHelper.closeEverything();
+		} catch (final Exception exc) {
+			fail(exc.toString());
+		}
 
-    }
+	}
 
 }

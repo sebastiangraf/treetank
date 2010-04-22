@@ -22,9 +22,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Database;
+import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -33,70 +32,71 @@ import com.treetank.utils.DocumentCreater;
 
 public class DocumentRootNodeFilterTest {
 
-    @Before
-    public void setUp() throws TreetankException {
-        TestHelper.deleteEverything();
-    }
+	@Before
+	public void setUp() throws TreetankException {
+		TestHelper.deleteEverything();
+	}
 
-    @Test
-    public void testIFilterConvetions() throws TreetankException {
-        // Build simple test tree.
-        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
-        final ISession session = database.getSession();
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
+	@Test
+	public void testIFilterConvetions() throws TreetankException {
+		// Build simple test tree.
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
+		final ISession session = database.getSession();
+		final IWriteTransaction wtx = session.beginWriteTransaction();
+		DocumentCreater.create(wtx);
 
-        wtx.moveTo(0L);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
-                true);
+		wtx.moveTo(0L);
+		IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
+				true);
 
-        wtx.moveTo(1L);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
-                false);
+		wtx.moveTo(1L);
+		IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
+				false);
 
-        wtx.moveTo(1L);
-        wtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
-                false);
+		wtx.moveTo(1L);
+		wtx.moveToAttribute(0);
+		IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
+				false);
 
-        wtx.moveTo(3L);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
-                false);
+		wtx.moveTo(3L);
+		IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
+				false);
 
-        wtx.moveTo(4L);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
-                false);
+		wtx.moveTo(4L);
+		IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
+				false);
 
-        wtx.moveTo(5L);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
-                false);
+		wtx.moveTo(5L);
+		IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
+				false);
 
-        wtx.moveTo(9L);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
-                false);
+		wtx.moveTo(9L);
+		IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
+				false);
 
-        wtx.moveTo(9L);
-        wtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
-                false);
+		wtx.moveTo(9L);
+		wtx.moveToAttribute(0);
+		IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
+				false);
 
-        wtx.moveTo(12L);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
-                false);
+		wtx.moveTo(12L);
+		IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
+				false);
 
-        wtx.moveTo(13L);
-        wtx.moveToDocumentRoot();
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
-                true);
+		wtx.moveTo(13L);
+		wtx.moveToDocumentRoot();
+		IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
+				true);
 
-        wtx.abort();
-        wtx.close();
-        session.close();
-        database.close();
-    }
+		wtx.abort();
+		wtx.close();
+		session.close();
+		database.close();
+	}
 
-    @After
-    public void tearDown() throws TreetankException {
-        TestHelper.closeEverything();
-    }
+	@After
+	public void tearDown() throws TreetankException {
+		TestHelper.closeEverything();
+	}
 }

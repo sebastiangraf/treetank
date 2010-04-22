@@ -28,8 +28,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
+import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
@@ -55,8 +55,7 @@ public class SessionTest {
 	@Test
 	public void testClosed() throws TreetankException {
 
-		IDatabase database = Database
-				.openDatabase(ITestConstants.TEST_INSERT_CHILD_PATH);
+		IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
 		database.close();
 
 		try {
@@ -65,8 +64,7 @@ public class SessionTest {
 		} catch (Exception e) {
 			// Must fail.
 		}
-
-		database = Database.openDatabase(ITestConstants.TEST_INSERT_CHILD_PATH);
+		database = TestHelper.getDatabase(PATHS.PATH1.getFile());
 		final ISession session = database.getSession();
 		IReadTransaction rtx = session.beginReadTransaction();
 		rtx.close();
@@ -124,18 +122,18 @@ public class SessionTest {
 	@Test
 	public void testNonExisting() throws TreetankException,
 			InterruptedException {
-		final IDatabase database = Database
-				.openDatabase(ITestConstants.NON_EXISTING_PATH);
-		final IDatabase database2 = Database
-				.openDatabase(ITestConstants.NON_EXISTING_PATH);
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
+		final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH1
+				.getFile());
 		assertTrue(database == database2);
 		database.close();
 	}
 
 	@Test
 	public void testInsertChild() throws TreetankException {
-		final IDatabase database = Database
-				.openDatabase(ITestConstants.TEST_INSERT_CHILD_PATH);
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
 
 		final ISession session = database.getSession();
 
@@ -158,8 +156,8 @@ public class SessionTest {
 
 	@Test
 	public void testRevision() throws TreetankException {
-		final IDatabase database = Database
-				.openDatabase(ITestConstants.TEST_REVISION_PATH);
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
 		final ISession session = database.getSession();
 
 		IReadTransaction rtx = session.beginReadTransaction();
@@ -187,8 +185,8 @@ public class SessionTest {
 
 	@Test
 	public void testShreddedRevision() throws TreetankException {
-		final IDatabase database = Database
-				.openDatabase(ITestConstants.TEST_SHREDDED_REVISION_PATH);
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
 		final ISession session = database.getSession();
 
 		final IWriteTransaction wtx1 = session.beginWriteTransaction();
@@ -229,8 +227,8 @@ public class SessionTest {
 
 	@Test
 	public void testExisting() throws TreetankException {
-		final IDatabase database = Database
-				.openDatabase(ITestConstants.TEST_EXISTING_PATH);
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
 		final ISession session1 = database.getSession();
 
 		final IWriteTransaction wtx1 = session1.beginWriteTransaction();
@@ -263,8 +261,8 @@ public class SessionTest {
 		session2.close();
 		database.close();
 
-		final IDatabase database2 = Database
-				.openDatabase(ITestConstants.TEST_EXISTING_PATH);
+		final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH1
+				.getFile());
 		final ISession session3 = database2.getSession();
 		final IReadTransaction rtx2 = session3.beginReadTransaction();
 		assertEquals(1L, rtx2.getRevisionNumber());
@@ -280,8 +278,8 @@ public class SessionTest {
 
 	@Test
 	public void testIdempotentClose() throws TreetankException {
-		final IDatabase database = Database
-				.openDatabase(ITestConstants.TEST_EXISTING_PATH);
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
 		final ISession session = database.getSession();
 		final IWriteTransaction wtx = session.beginWriteTransaction();
 		DocumentCreater.create(wtx);
@@ -304,8 +302,8 @@ public class SessionTest {
 	@Test
 	public void testAutoCommit() throws TreetankException {
 
-		final IDatabase database = Database
-				.openDatabase(ITestConstants.TEST_EXISTING_PATH);
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
 		final ISession session = database.getSession();
 
 		final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -317,8 +315,8 @@ public class SessionTest {
 
 	@Test
 	public void testAutoClose() throws TreetankException {
-		final IDatabase database = Database
-				.openDatabase(ITestConstants.TEST_EXISTING_PATH);
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
 		final ISession session = database.getSession();
 
 		final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -331,8 +329,8 @@ public class SessionTest {
 
 	@Test
 	public void testTransactionCount() throws TreetankException {
-		final IDatabase database = Database
-				.openDatabase(ITestConstants.TEST_EXISTING_PATH);
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
 		final ISession session = database.getSession();
 
 		final IWriteTransaction wtx = session.beginWriteTransaction();

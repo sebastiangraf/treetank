@@ -25,9 +25,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Database;
+import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
@@ -45,7 +44,8 @@ public class AttributeAxisTest {
 
 	@Test
 	public void testIterate() throws TreetankException {
-		final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
 		final ISession session = database.getSession();
 		final IWriteTransaction wtx = session.beginWriteTransaction();
 		DocumentCreater.create(wtx);
@@ -75,7 +75,8 @@ public class AttributeAxisTest {
 
 	@Test
 	public void testMultipleAttributes() throws TreetankException {
-		final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
 		final ISession session = database.getSession();
 		final IWriteTransaction wtx = session.beginWriteTransaction();
 		final long nodeKey = wtx.insertElementAsFirstChild(new QName("foo"));
