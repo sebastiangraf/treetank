@@ -22,9 +22,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Database;
+import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -35,58 +34,59 @@ import com.treetank.utils.DocumentCreater;
 
 public class DocumentNodeAxisTest {
 
-    @Before
-    public void setUp() throws TreetankException {
-        TestHelper.deleteEverything();
-    }
+	@Before
+	public void setUp() throws TreetankException {
+		TestHelper.deleteEverything();
+	}
 
-    @After
-    public void tearDown() throws TreetankException {
-        TestHelper.closeEverything();
-    }
+	@After
+	public void tearDown() throws TreetankException {
+		TestHelper.closeEverything();
+	}
 
-    @Test
-    public void testIterate() throws TreetankException {
-        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
-        final ISession session = database.getSession();
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
+	@Test
+	public void testIterate() throws TreetankException {
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
+		final ISession session = database.getSession();
+		final IWriteTransaction wtx = session.beginWriteTransaction();
+		DocumentCreater.create(wtx);
 
-        wtx.moveTo(1L);
-        IAxisTest
-                .testIAxisConventions(new DocumentNodeAxis(wtx),
-                        new long[] { (Long) EFixed.ROOT_PAGE_KEY
-                                .getStandardProperty() });
+		wtx.moveTo(1L);
+		IAxisTest
+				.testIAxisConventions(new DocumentNodeAxis(wtx),
+						new long[] { (Long) EFixed.ROOT_PAGE_KEY
+								.getStandardProperty() });
 
-        wtx.moveTo(5L);
-        IAxisTest
-                .testIAxisConventions(new DocumentNodeAxis(wtx),
-                        new long[] { (Long) EFixed.ROOT_PAGE_KEY
-                                .getStandardProperty() });
+		wtx.moveTo(5L);
+		IAxisTest
+				.testIAxisConventions(new DocumentNodeAxis(wtx),
+						new long[] { (Long) EFixed.ROOT_PAGE_KEY
+								.getStandardProperty() });
 
-        wtx.moveTo(9L);
-        IAxisTest
-                .testIAxisConventions(new DocumentNodeAxis(wtx),
-                        new long[] { (Long) EFixed.ROOT_PAGE_KEY
-                                .getStandardProperty() });
+		wtx.moveTo(9L);
+		IAxisTest
+				.testIAxisConventions(new DocumentNodeAxis(wtx),
+						new long[] { (Long) EFixed.ROOT_PAGE_KEY
+								.getStandardProperty() });
 
-        wtx.moveTo(9L);
-        wtx.moveToAttribute(0);
-        IAxisTest
-                .testIAxisConventions(new DocumentNodeAxis(wtx),
-                        new long[] { (Long) EFixed.ROOT_PAGE_KEY
-                                .getStandardProperty() });
+		wtx.moveTo(9L);
+		wtx.moveToAttribute(0);
+		IAxisTest
+				.testIAxisConventions(new DocumentNodeAxis(wtx),
+						new long[] { (Long) EFixed.ROOT_PAGE_KEY
+								.getStandardProperty() });
 
-        wtx.moveTo(13L);
-        IAxisTest
-                .testIAxisConventions(new DocumentNodeAxis(wtx),
-                        new long[] { (Long) EFixed.ROOT_PAGE_KEY
-                                .getStandardProperty() });
+		wtx.moveTo(13L);
+		IAxisTest
+				.testIAxisConventions(new DocumentNodeAxis(wtx),
+						new long[] { (Long) EFixed.ROOT_PAGE_KEY
+								.getStandardProperty() });
 
-        wtx.abort();
-        wtx.close();
-        session.close();
-        database.close();
-    }
+		wtx.abort();
+		wtx.close();
+		session.close();
+		database.close();
+	}
 
 }

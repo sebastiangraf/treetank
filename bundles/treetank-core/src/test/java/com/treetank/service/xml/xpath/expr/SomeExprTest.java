@@ -24,9 +24,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Database;
+import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
@@ -38,59 +37,58 @@ import com.treetank.utils.DocumentCreater;
 import com.treetank.utils.TypedValue;
 
 /**
- * JUnit-test class to test the functionality of the UnionAxis.
- * 
  * @author Tina Scherer
  * 
  */
 public class SomeExprTest {
-    @Before
-    public void setUp() throws TreetankException {
+	@Before
+	public void setUp() throws TreetankException {
 
-        TestHelper.deleteEverything();
-    }
+		TestHelper.deleteEverything();
+	}
 
-    @After
-    public void tearDown() throws TreetankException {
-        TestHelper.closeEverything();
-    }
+	@After
+	public void tearDown() throws TreetankException {
+		TestHelper.closeEverything();
+	}
 
-    @Test
-    public void testEveryExpr() throws TreetankException {
-        // Build simple test tree.
-        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
-        final ISession session = database.getSession();
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        IReadTransaction rtx = session.beginReadTransaction();
+	@Test
+	public void testEveryExpr() throws TreetankException {
+		// Build simple test tree.
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
+		final ISession session = database.getSession();
+		final IWriteTransaction wtx = session.beginWriteTransaction();
+		DocumentCreater.create(wtx);
+		wtx.commit();
+		IReadTransaction rtx = session.beginReadTransaction();
 
-        final IAxis axis1 = new XPathAxis(rtx,
-                "some $child in child::node() satisfies $child/@i");
-        assertEquals(true, axis1.hasNext());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
-                .getNode().getRawValue()))));
-        assertEquals(false, axis1.hasNext());
+		final IAxis axis1 = new XPathAxis(rtx,
+				"some $child in child::node() satisfies $child/@i");
+		assertEquals(true, axis1.hasNext());
+		assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
+				.getNode().getRawValue()))));
+		assertEquals(false, axis1.hasNext());
 
-        final IAxis axis2 = new XPathAxis(rtx,
-                "some $child in child::node() satisfies $child/@abc");
-        assertEquals(true, axis2.hasNext());
-        assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx
-                .getNode().getRawValue()))));
-        assertEquals(false, axis2.hasNext());
+		final IAxis axis2 = new XPathAxis(rtx,
+				"some $child in child::node() satisfies $child/@abc");
+		assertEquals(true, axis2.hasNext());
+		assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx
+				.getNode().getRawValue()))));
+		assertEquals(false, axis2.hasNext());
 
-        rtx.moveTo(1L);
-        final IAxis axis3 = new XPathAxis(rtx,
-                "some $child in child::node() satisfies $child/attribute::attribute()");
-        assertEquals(true, axis3.hasNext());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
-                .getNode().getRawValue()))));
-        assertEquals(false, axis3.hasNext());
+		rtx.moveTo(1L);
+		final IAxis axis3 = new XPathAxis(rtx,
+				"some $child in child::node() satisfies $child/attribute::attribute()");
+		assertEquals(true, axis3.hasNext());
+		assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
+				.getNode().getRawValue()))));
+		assertEquals(false, axis3.hasNext());
 
-        rtx.close();
-        wtx.close();
-        session.close();
-        database.close();
-    }
+		rtx.close();
+		wtx.close();
+		session.close();
+		database.close();
+	}
 
 }

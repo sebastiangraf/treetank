@@ -28,8 +28,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
+import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
@@ -54,7 +54,8 @@ public class MultipleCommitTest {
 
 	@Test
 	public void test() throws TreetankException {
-		final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
 		final ISession session = database.getSession();
 		final IWriteTransaction wtx = session.beginWriteTransaction();
 		TestCase.assertEquals(0L, wtx.getRevisionNumber());
@@ -77,7 +78,8 @@ public class MultipleCommitTest {
 
 	@Test
 	public void testAutoCommit() throws TreetankException {
-		final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
 		final ISession session = database.getSession();
 		final IWriteTransaction wtx = session.beginWriteTransaction(100, 1);
 		DocumentCreater.create(wtx);
@@ -92,7 +94,8 @@ public class MultipleCommitTest {
 
 	@Test
 	public void testRemove() throws TreetankException {
-		final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
 		final ISession session = database.getSession();
 		final IWriteTransaction wtx = session.beginWriteTransaction();
 		DocumentCreater.create(wtx);
@@ -113,7 +116,8 @@ public class MultipleCommitTest {
 
 	@Test
 	public void testAttributeRemove() throws TreetankException {
-		final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
 		final ISession session = database.getSession();
 		final IWriteTransaction wtx = session.beginWriteTransaction();
 		DocumentCreater.create(wtx);

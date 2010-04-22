@@ -24,9 +24,8 @@ import org.junit.Test;
 import org.perfidix.annotation.Bench;
 import org.perfidix.annotation.BenchClass;
 
-import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Database;
+import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
@@ -36,67 +35,69 @@ import com.treetank.utils.DocumentCreater;
 
 @BenchClass(runs = 1)
 public class ChildAxisTest {
-    @Before
-    public void setUp() throws TreetankException {
-        TestHelper.deleteEverything();
-    }
+	@Before
+	public void setUp() throws TreetankException {
+		TestHelper.deleteEverything();
+	}
 
-    @Test
-    @Bench(runs = 10)
-    public void testIterate() throws TreetankException {
-        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
-        final ISession session = database.getSession();
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
+	@Test
+	@Bench(runs = 10)
+	public void testIterate() throws TreetankException {
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
+		final ISession session = database.getSession();
+		final IWriteTransaction wtx = session.beginWriteTransaction();
+		DocumentCreater.create(wtx);
 
-        wtx.moveTo(1L);
-        IAxisTest.testIAxisConventions(new ChildAxis(wtx), new long[] { 4L, 5L,
-                8L, 9L, 13L });
+		wtx.moveTo(1L);
+		IAxisTest.testIAxisConventions(new ChildAxis(wtx), new long[] { 4L, 5L,
+				8L, 9L, 13L });
 
-        wtx.moveTo(5L);
-        IAxisTest.testIAxisConventions(new ChildAxis(wtx),
-                new long[] { 6L, 7L });
+		wtx.moveTo(5L);
+		IAxisTest.testIAxisConventions(new ChildAxis(wtx),
+				new long[] { 6L, 7L });
 
-        wtx.moveTo(13L);
-        IAxisTest.testIAxisConventions(new ChildAxis(wtx), new long[] {});
+		wtx.moveTo(13L);
+		IAxisTest.testIAxisConventions(new ChildAxis(wtx), new long[] {});
 
-        wtx.abort();
-        wtx.close();
-        session.close();
-        database.close();
-    }
+		wtx.abort();
+		wtx.close();
+		session.close();
+		database.close();
+	}
 
-    @Test
-    @Bench(runs = 10)
-    public void testPersistent() throws TreetankException {
-        final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
-        final ISession session = database.getSession();
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
-        wtx.commit();
-        wtx.close();
+	@Test
+	@Bench(runs = 10)
+	public void testPersistent() throws TreetankException {
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
+		final ISession session = database.getSession();
+		final IWriteTransaction wtx = session.beginWriteTransaction();
+		DocumentCreater.create(wtx);
+		wtx.commit();
+		wtx.close();
 
-        final IReadTransaction rtx = session.beginReadTransaction();
+		final IReadTransaction rtx = session.beginReadTransaction();
 
-        rtx.moveTo(1L);
-        IAxisTest.testIAxisConventions(new ChildAxis(rtx), new long[] { 4L, 5L,
-                8L, 9L, 13L });
+		rtx.moveTo(1L);
+		IAxisTest.testIAxisConventions(new ChildAxis(rtx), new long[] { 4L, 5L,
+				8L, 9L, 13L });
 
-        rtx.moveTo(5L);
-        IAxisTest.testIAxisConventions(new ChildAxis(rtx),
-                new long[] { 6L, 7L });
+		rtx.moveTo(5L);
+		IAxisTest.testIAxisConventions(new ChildAxis(rtx),
+				new long[] { 6L, 7L });
 
-        rtx.moveTo(13L);
-        IAxisTest.testIAxisConventions(new ChildAxis(rtx), new long[] {});
+		rtx.moveTo(13L);
+		IAxisTest.testIAxisConventions(new ChildAxis(rtx), new long[] {});
 
-        rtx.close();
-        session.close();
-        database.close();
+		rtx.close();
+		session.close();
+		database.close();
 
-    }
+	}
 
-    @After
-    public void tearDown() throws TreetankException {
-        TestHelper.closeEverything();
-    }
+	@After
+	public void tearDown() throws TreetankException {
+		TestHelper.closeEverything();
+	}
 }

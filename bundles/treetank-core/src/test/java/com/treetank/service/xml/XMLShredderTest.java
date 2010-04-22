@@ -33,9 +33,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Database;
+import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
@@ -73,7 +72,8 @@ public class XMLShredderTest {
 	@Test
 	public void testSTAXShredder() throws Exception {
 		// Setup expected session.
-		final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
 
 		final ISession expectedSession = database.getSession();
 		final IWriteTransaction expectedTrx = expectedSession
@@ -82,10 +82,11 @@ public class XMLShredderTest {
 		expectedTrx.commit();
 
 		// Setup parsed session.
-		XMLShredder.main(XML, ITestConstants.PATH2.getAbsolutePath());
+		XMLShredder.main(XML, PATHS.PATH2.getFile().getAbsolutePath());
 
 		// Verify.
-		final IDatabase database2 = Database.openDatabase(ITestConstants.PATH2);
+		final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2
+				.getFile());
 		final ISession session = database2.getSession();
 		final IReadTransaction rtx = session.beginReadTransaction();
 		rtx.moveToDocumentRoot();
@@ -132,7 +133,8 @@ public class XMLShredderTest {
 
 	@Test
 	public void testShredIntoExisting() throws Exception {
-		final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
 		final ISession session = database.getSession();
 		final IWriteTransaction wtx = session.beginWriteTransaction();
 		final XMLShredder shredder = new XMLShredder(wtx, XMLShredder
@@ -148,7 +150,8 @@ public class XMLShredderTest {
 		wtx.close();
 
 		// Setup expected session.
-		final IDatabase database2 = Database.openDatabase(ITestConstants.PATH2);
+		final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2
+				.getFile());
 		final ISession expectedSession = database2.getSession();
 
 		final IWriteTransaction expectedTrx = expectedSession
@@ -195,7 +198,8 @@ public class XMLShredderTest {
 	@Test
 	public void testAttributesNSPrefix() throws Exception {
 		// Setup expected session.
-		final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
 		final ISession expectedSession2 = database.getSession();
 		final IWriteTransaction expectedTrx2 = expectedSession2
 				.beginWriteTransaction();
@@ -203,7 +207,8 @@ public class XMLShredderTest {
 		expectedTrx2.commit();
 
 		// Setup parsed session.
-		final IDatabase database2 = Database.openDatabase(ITestConstants.PATH2);
+		final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2
+				.getFile());
 		final ISession session2 = database2.getSession();
 		final IWriteTransaction wtx = session2.beginWriteTransaction();
 		final XMLShredder shredder = new XMLShredder(wtx, XMLShredder
@@ -247,7 +252,8 @@ public class XMLShredderTest {
 
 	@Test
 	public void testShreddingLargeText() throws Exception {
-		final IDatabase database = Database.openDatabase(ITestConstants.PATH2);
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH2.getFile());
 		final ISession session = database.getSession();
 		final IWriteTransaction wtx = session.beginWriteTransaction();
 		final XMLShredder shredder = new XMLShredder(wtx, XMLShredder
@@ -290,7 +296,8 @@ public class XMLShredderTest {
 
 	@Test
 	public void testShreddingModifiedExisting() throws Exception {
-		final IDatabase database = Database.openDatabase(ITestConstants.PATH1);
+		final IDatabase database = TestHelper
+				.getDatabase(PATHS.PATH1.getFile());
 		final ISession session = database.getSession();
 		final File folder = new File(XMLREFFOLDER);
 		int i = 1;

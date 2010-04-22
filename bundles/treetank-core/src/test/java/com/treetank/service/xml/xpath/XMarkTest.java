@@ -25,9 +25,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.perfidix.annotation.BenchClass;
 
-import com.treetank.ITestConstants;
 import com.treetank.TestHelper;
-import com.treetank.access.Database;
+import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
@@ -56,10 +55,10 @@ public class XMarkTest {
 	public void setUp() throws Exception {
 		TestHelper.deleteEverything();
 		// Build simple test tree.
-		XMLShredder.main(XML, ITestConstants.PATH1.getAbsolutePath());
+		XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
 
 		// Verify.
-		database = Database.openDatabase(ITestConstants.PATH1);
+		database = TestHelper.getDatabase(PATHS.PATH1.getFile());
 		session = database.getSession();
 		rtx = session.beginReadTransaction();
 	}
