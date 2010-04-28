@@ -80,6 +80,7 @@
 		<module>parent</module>
 		<module>bundles/treetank-core</module>
 		<module>bundles/treetank-jax-rx</module>
+		<module>bundles/treetank-saxon</module>
 	</modules>
 </project>
 
