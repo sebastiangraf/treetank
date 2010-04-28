@@ -3,19 +3,18 @@ package com.treetank.saxon.evaluator;
 import java.io.File;
 import java.util.concurrent.Callable;
 
+import net.sf.saxon.Configuration;
+import net.sf.saxon.s9api.Processor;
+import net.sf.saxon.s9api.SaxonApiException;
+import net.sf.saxon.s9api.XQueryCompiler;
+import net.sf.saxon.s9api.XQueryExecutable;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.treetank.api.ISession;
 import com.treetank.saxon.wrapper.DocumentWrapper;
 import com.treetank.saxon.wrapper.NodeWrapper;
-
-import net.sf.saxon.Configuration;
-import net.sf.saxon.s9api.Processor;
-import net.sf.saxon.s9api.SAXDestination;
-import net.sf.saxon.s9api.SaxonApiException;
-import net.sf.saxon.s9api.XQueryCompiler;
-import net.sf.saxon.s9api.XQueryExecutable;
 
 /**
  * <h1>XQuery evaluator.</h1>
