@@ -66,7 +66,6 @@ public class XQueryEvaluator implements Callable<OutputStream> {
     try {
       final Processor proc = new Processor(false);
       final Configuration config = proc.getUnderlyingConfiguration();
-      final NamePool np = config.getNamePool();
       final NodeWrapper doc =
         (NodeWrapper) new DocumentWrapper(mSession, config, mTarget
             .getAbsolutePath()).wrap();
@@ -75,7 +74,7 @@ public class XQueryEvaluator implements Callable<OutputStream> {
       
       final Serializer out = new Serializer();
       out.setOutputProperty(Serializer.Property.METHOD, "xml");
-      out.setOutputProperty(Serializer.Property.INDENT, "yes");
+//      out.setOutputProperty(Serializer.Property.INDENT, "yes");
       out.setOutputProperty(Serializer.Property.OMIT_XML_DECLARATION, "yes");
       out.setOutputStream(mOut);
       
