@@ -501,6 +501,20 @@ public class TestNodeWrapper {
   public void testB2S9Api() throws Exception {
     final XQueryEvaluator xqe =
         new XQueryEvaluator(
+            "//b[2]",
+            session,
+            test.getAbsoluteFile(),
+            new ByteArrayOutputStream());
+    final String result = xqe.call().toString();
+    
+    TestCase.assertNotNull(result);
+    TestCase.assertEquals("<b xmlns:p=\"ns\" p:x=\"y\"><c/>bar</b>", result);
+  }
+  
+  @Test
+  public void testB2StringS9Api() throws Exception {
+    final XQueryEvaluator xqe =
+        new XQueryEvaluator(
             "fn:string(//b[2])",
             session,
             test.getAbsoluteFile(),

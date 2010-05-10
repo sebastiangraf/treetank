@@ -46,5 +46,10 @@
 			<artifactId>saxon</artifactId>
 			<version>9.2</version>
 		</dependency>
+	  <dependency>
+			<groupId>jtidy</groupId>
+			<artifactId>jtidy</artifactId>
+			<version>4aug2000r7-dev</version>
+		</dependency>
 	</dependencies>
 </project>
