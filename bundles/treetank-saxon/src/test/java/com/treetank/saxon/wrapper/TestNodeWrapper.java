@@ -1,5 +1,6 @@
 package com.treetank.saxon.wrapper;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -28,6 +29,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
+import com.treetank.saxon.evaluator.XQueryEvaluator;
 import com.treetank.saxon.utils.DocNamespaceContext;
 import com.treetank.utils.DocumentCreater;
 
@@ -493,5 +495,19 @@ public class TestNodeWrapper {
     TestCase.assertNotNull(result);
     TestCase.assertEquals("b", result.get(0).getQNameOfCurrentNode().getLocalPart());
     TestCase.assertEquals("b", result.get(1).getQNameOfCurrentNode().getLocalPart());
+  }
+  
+  @Test
+  public void testB2S9Api() throws Exception {
+    final XQueryEvaluator xqe =
+        new XQueryEvaluator(
+            "fn:string(//b[2])",
+            session,
+            test.getAbsoluteFile(),
+            new ByteArrayOutputStream());
+    final String result = xqe.call().toString();
+    
+    TestCase.assertNotNull(result);
+    TestCase.assertEquals("bar", result);
   }
 }
