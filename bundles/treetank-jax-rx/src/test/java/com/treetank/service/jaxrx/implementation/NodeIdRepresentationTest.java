@@ -21,7 +21,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.jaxrx.core.JaxRxException;
 import org.jaxrx.core.QueryParameter;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Attr;
