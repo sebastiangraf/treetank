@@ -5,7 +5,7 @@
 		<artifactId>treetank</artifactId>
 		<groupId>treetank</groupId>
 		<version>5.3.4-SNAPSHOT</version>
-		<relativePath>../../parent/pom.xml</relativePath>
+		<relativePath>../treetank/parent/pom.xml</relativePath>
 	</parent>
 
 	<groupId>treetank</groupId>
@@ -34,7 +34,7 @@
 		<dependency>
 			<groupId>jax-rx</groupId>
 			<artifactId>jax-rx</artifactId>
-			<version>1.0.1</version>
+			<version>1.2</version>
 		</dependency>
 		<dependency>
 			<!-- the client implementation of JAX-RS for testing purposes-->

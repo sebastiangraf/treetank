@@ -2,8 +2,6 @@ package com.treetank.service.jaxrx.util;
 
 import java.io.File;
 
-import org.jaxrx.constants.URLConstants;
-
 /**
  * This class specifies the properties of this RESTful approach.
  * 
@@ -37,16 +35,5 @@ public final class RESTProps {
 	 * The collection ending.
 	 */
 	public final static transient String COLEND = ".col";
-
-	/**
-	 * Name of id itself
-	 */
-	public static final String NODEID = "{id}";
-
-	/**
-	 * The path of the resource specified by its node id.
-	 */
-	public static final String IDPATH = URLConstants.RESOURCEPATH + "/"
-			+ NODEID;
 
 }
