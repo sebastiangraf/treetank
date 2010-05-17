@@ -19,7 +19,7 @@ import com.treetank.exception.TreetankIOException;
 import com.treetank.service.xml.XMLShredder;
 
 /**
- * <h1>Shredder</h1>
+ * <h1>Shredder files.</h1>
  * 
  * <p>Shredder all XML files in a directory either recursively within 
  * subdirectories or not.</p>
@@ -27,10 +27,10 @@ import com.treetank.service.xml.XMLShredder;
  * @author lichtenb
  *
  */
-public final class CreateTNKs {
+public final class ShredderFiles {
 
   /** Logger. */
-  private static final Log LOGGER = LogFactory.getLog(CreateTNKs.class);
+  private static final Log LOGGER = LogFactory.getLog(ShredderFiles.class);
 
   /**
    * Main method. 
@@ -85,7 +85,7 @@ public final class CreateTNKs {
   private static void shredder(final File file) {
     final File source = file.getAbsoluteFile();
     final File target =
-        new File(source.toString().substring(0, (int) source.length() - 4));
+        new File(source.toString().substring(0, source.toString().length()-4));
 
     Database.truncateDatabase(target);
     try {
