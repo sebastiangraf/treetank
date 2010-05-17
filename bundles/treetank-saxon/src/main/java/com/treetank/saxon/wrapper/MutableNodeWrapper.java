@@ -144,6 +144,7 @@ public class MutableNodeWrapper extends NodeWrapper implements MutableNodeInfo {
           if (first) {
             mWTX.insertElementAsFirstChild(new QName(node.getURI(), node
                 .getLocalPart(), node.getPrefix()));
+            first = false;
           } else {
             mWTX.insertElementAsRightSibling(new QName(node.getURI(), node
                 .getLocalPart(), node.getPrefix()));

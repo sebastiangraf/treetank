@@ -21,17 +21,17 @@ import com.treetank.settings.ENodes;
 public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
 
   /** Base URI of the document. */
-  protected String mBaseURI;
+  protected static String mBaseURI;
 
   /** Saxon configuration. */
-  protected Configuration mConfig;
+  protected static Configuration mConfig;
 
   /** Unique document number. */
-  protected int documentNumber;
+  protected static int documentNumber;
 
   /** Treetank session. */
   private final ISession mSession;
-
+  
   /**
    * Wrap a Treetank document.
    * 
@@ -77,7 +77,7 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
    * {@inheritDoc}
    */
   public String[] getUnparsedEntity(String arg0) {
-    return null;
+    throw new UnsupportedOperationException("Currently not supported by Treetank!");
   }
 
   /**
@@ -100,7 +100,7 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
   public NodeInfo selectID(final String ID, final boolean getParent) {
     for (final long key : new DescendantAxis(mRTX, true)) {
       if (mRTX.getNode().isElement()) {
-        int attCount = mRTX.getNode().getAttributeCount();
+        final int attCount = mRTX.getNode().getAttributeCount();
 
         if (attCount > 0) {
           final long nodeKey = mRTX.getNode().getNodeKey();

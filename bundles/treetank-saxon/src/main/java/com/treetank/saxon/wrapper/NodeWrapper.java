@@ -59,7 +59,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
   protected static IReadTransaction mRTX;
 
   /** Kind of current node. */
-  protected ENodes nodeKind;
+  protected static ENodes nodeKind;
 
   /** Document wrapper. */
   protected DocumentWrapper mDocWrapper;
@@ -68,16 +68,16 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
   protected static final Log LOGGER = LogFactory.getLog(NodeWrapper.class);
 
   /** Key of node. */
-  protected final long mKey;
+  protected transient final long mKey;
 
   /** Treetank session. */
-  private final ISession mSession;
+  private transient final ISession mSession;
 
   /** Treetank node. */
-  protected final IItem node;
+  protected transient final IItem node;
 
   /** QName of current node. */
-  protected final QName qName;
+  protected transient final QName qName;
 
   /**
    * A node in the XML parse tree. Wrap a TreeTank node.
