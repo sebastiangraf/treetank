@@ -59,10 +59,10 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
   protected static IReadTransaction mRTX;
 
   /** Kind of current node. */
-  protected static ENodes nodeKind;
+  protected transient ENodes nodeKind;
 
   /** Document wrapper. */
-  protected DocumentWrapper mDocWrapper;
+  protected transient DocumentWrapper mDocWrapper;
 
   /** Logger. */
   protected static final Log LOGGER = LogFactory.getLog(NodeWrapper.class);
