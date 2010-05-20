@@ -56,7 +56,7 @@ import com.treetank.settings.ENodes;
 public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
   /** Write Transaction. */
-  protected static IReadTransaction mRTX;
+  protected transient static IReadTransaction mRTX;
 
   /** Kind of current node. */
   protected transient ENodes nodeKind;

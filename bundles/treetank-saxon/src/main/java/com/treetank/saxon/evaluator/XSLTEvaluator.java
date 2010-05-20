@@ -9,6 +9,11 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.treetank.api.ISession;
+import com.treetank.saxon.wrapper.DocumentWrapper;
+import com.treetank.saxon.wrapper.NodeWrapper;
+
+import net.sf.saxon.Configuration;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SaxonApiException;
@@ -30,31 +35,77 @@ import net.sf.saxon.s9api.XsltTransformer;
 public class XSLTEvaluator implements Callable<Serializer> {
 
   /** Logger. */
-  private final static Log LOGGER = LogFactory.getLog("XSLTEvaluator.class");
-  
-  /** Wrapped root node. */
-  private final NodeInfo mDoc;
+  private static final Log LOGGER =
+      LogFactory.getLog("com.treetank.saxon.evaluator.XSLTEvaluator.class");
 
-  /** Path to stylesheet. */
-  private final String mStylesheet;
+  /** Stylesheet file. */
+  private transient final File mStylesheet;
 
   /** Resulting stream of the transformation. */
-  private final OutputStream mOut;
+  private transient final OutputStream mOut;
+
+  /** 
+   * Serializer to specify serialization output properties and the destination 
+   * of the Transformation. 
+   */
+  private transient Serializer mSerializer;
+  
+  /** Target file to which the stylesheet has to be applied. */
+  private transient final File mTarget;
+
+  /** Treetank session. */
+  private transient final ISession mSession;
+  
+  /**
+   * Constructor.
+   * 
+   * @param session 
+   *                    Treetank session.
+   * @param file
+   *                    Treetank storage to which the stylesheet has to be 
+   *                    applied.
+   * @param stylesheet 
+   *                    Path to stylesheet.
+   * @param out 
+   *                    Resulting stream of the transformation.
+   */
+  public XSLTEvaluator(
+      final ISession session,
+      final File file,
+      final File stylesheet,
+      final OutputStream out) {
+    mSession = session;
+    mTarget = file;
+    mStylesheet = stylesheet;
+    mOut = out;
+  }
 
   /**
    * Constructor.
    * 
-   * @param doc Root node of the wrapped tree.
-   * @param stylesheet Path to stylesheet.
-   * @param out Resulting stream of the transformation.
+   * @param session 
+   *                    Treetank session.
+   * @param file
+   *                    Treetank storage to which the stylesheet has to be 
+   *                    applied.
+   * @param stylesheet 
+   *                    Path to stylesheet.
+   * @param out 
+   *                    Resulting stream of the transformation.
+   * @param serializer  
+   *                    Serializer, for which one can specify output properties.
    */
-  XSLTEvaluator(
-      final NodeInfo doc,
-      final String stylesheet,
-      final OutputStream out) {
-    mDoc = doc;
+  public XSLTEvaluator(
+      final ISession session,
+      final File file,
+      final File stylesheet,
+      final OutputStream out,
+      final Serializer serializer) {
+    mSession = session;
+    mTarget = file;
     mStylesheet = stylesheet;
     mOut = out;
+    mSerializer = serializer;
   }
 
   @Override
@@ -63,24 +114,31 @@ public class XSLTEvaluator implements Callable<Serializer> {
     final XsltCompiler comp = proc.newXsltCompiler();
     XsltExecutable exp;
     XdmNode source;
-    Serializer out = null;
-    
+
     try {
-      exp = comp.compile(new StreamSource(new File(mStylesheet)));
-      source = proc.newDocumentBuilder().build(mDoc);
-      out = new Serializer();
-      out.setOutputProperty(Serializer.Property.METHOD, "html");
-      out.setOutputProperty(Serializer.Property.INDENT, "yes");
-      out.setOutputStream(mOut);
+      final Configuration config = proc.getUnderlyingConfiguration();
+      final NodeWrapper doc =
+          (NodeWrapper) new DocumentWrapper(mSession, config, mTarget
+              .getAbsolutePath()).wrap();
+      exp = comp.compile(new StreamSource(mStylesheet));
+      source = proc.newDocumentBuilder().build(doc);
+
+      if (mSerializer == null) {
+        final Serializer out = new Serializer();
+        out.setOutputProperty(Serializer.Property.METHOD, "html");
+        out.setOutputStream(mOut);
+        mSerializer = out;
+      }
+      
       final XsltTransformer trans = exp.load();
       trans.setInitialContextNode(source);
-      trans.setDestination(out);
+      trans.setDestination(mSerializer);
       trans.transform();
     } catch (final SaxonApiException e) {
       LOGGER.error("Saxon exception: " + e.getMessage(), e);
     }
-    
-    return out;
+
+    return mSerializer;
   }
 
 }
