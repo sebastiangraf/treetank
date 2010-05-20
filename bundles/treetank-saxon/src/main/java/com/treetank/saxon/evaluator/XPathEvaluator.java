@@ -30,13 +30,13 @@ import com.treetank.saxon.wrapper.NodeWrapper;
 public class XPathEvaluator implements Callable<XPathSelector> {
 
   /** An XPath expression. */
-  private final String mExpression;
+  private transient final String mExpression;
 
   /** Target of query. */
-  private final File mTarget;
+  private transient final File mTarget;
   
   /** Treetank session. */
-  private final ISession mSession;
+  private transient final ISession mSession;
 
   /** Logger. */
   private static final Log LOGGER = LogFactory.getLog(XPathEvaluator.class);
@@ -62,12 +62,11 @@ public class XPathEvaluator implements Callable<XPathSelector> {
       (NodeWrapper) new DocumentWrapper(mSession, config, mTarget
           .getAbsolutePath()).wrap();
     final XPathCompiler xpath = proc.newXPathCompiler();
-
     final DocumentBuilder builder = proc.newDocumentBuilder();
     XPathSelector selector = null;
  
     try {
-      XdmItem booksDoc = builder.build(doc);
+      final XdmItem booksDoc = builder.build(doc);
       selector = xpath.compile(mExpression).load();
       selector.setContextItem(booksDoc);
     } catch (final SaxonApiException e) {

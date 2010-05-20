@@ -19,6 +19,8 @@ import com.treetank.settings.ENodes;
  * 
  * Implements all methods which modify the (existing) tree.
  * 
+ * TODO: full implementation.
+ * 
  * @author johannes
  *
  */

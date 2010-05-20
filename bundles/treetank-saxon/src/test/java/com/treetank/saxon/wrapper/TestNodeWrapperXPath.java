@@ -30,22 +30,27 @@ import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.saxon.evaluator.XQueryEvaluator;
-import com.treetank.saxon.utils.DocNamespaceContext;
 import com.treetank.utils.DocumentCreater;
 
-public class TestNodeWrapper {
+/**
+ * Test XPath 
+ * 
+ * @author johannes
+ *
+ */
+public class TestNodeWrapperXPath {
 
   /** TreeTank session. */
-  private static ISession session;
+  private transient static ISession session;
 
   /** XPath expression. */
-  private static XPath xpe;
+  private transient static XPath xpe;
 
   /** Saxon configuration. */
-  private static Configuration config;
+  private transient static Configuration config;
 
   /** Logger. */
-  private static Log logger = LogFactory.getLog(TestNodeWrapper.class);
+  private static final Log logger = LogFactory.getLog(TestNodeWrapperXPath.class);
 
   /** Path to test file. */
   private File test =
@@ -495,33 +500,5 @@ public class TestNodeWrapper {
     TestCase.assertNotNull(result);
     TestCase.assertEquals("b", result.get(0).getQNameOfCurrentNode().getLocalPart());
     TestCase.assertEquals("b", result.get(1).getQNameOfCurrentNode().getLocalPart());
-  }
-  
-  @Test
-  public void testB2S9Api() throws Exception {
-    final XQueryEvaluator xqe =
-        new XQueryEvaluator(
-            "//b[2]",
-            session,
-            test.getAbsoluteFile(),
-            new ByteArrayOutputStream());
-    final String result = xqe.call().toString();
-    
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals("<b xmlns:p=\"ns\" p:x=\"y\"><c/>bar</b>", result);
-  }
-  
-  @Test
-  public void testB2StringS9Api() throws Exception {
-    final XQueryEvaluator xqe =
-        new XQueryEvaluator(
-            "fn:string(//b[2])",
-            session,
-            test.getAbsoluteFile(),
-            new ByteArrayOutputStream());
-    final String result = xqe.call().toString();
-    
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals("bar", result);
   }
 }
