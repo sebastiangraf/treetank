@@ -1,7 +1,14 @@
 package com.treetank.saxon.wrapper;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Iterator;
+
+import junit.framework.TestCase;
 
 import net.sf.saxon.s9api.Serializer;
 
@@ -27,7 +34,7 @@ import com.treetank.utils.DocumentCreater;
  * @author johannes
  *
  */
-public class TestNodeWrapperS9ApiXSLT {
+public final class TestNodeWrapperS9ApiXSLT {
 
   /** Treetank session on Treetank test document. */
   private transient static ISession sessionTest;
@@ -64,7 +71,7 @@ public class TestNodeWrapperS9ApiXSLT {
 
   @Ignore("Not Ready to Run")
   @Test
-  public void test() {
+  public void testA() throws IOException {
     final File stylesheet =
         new File("src"
             + File.separator
@@ -72,16 +79,44 @@ public class TestNodeWrapperS9ApiXSLT {
             + File.separator
             + "resources"
             + File.separator
-            + "style"
+            + "styles"
             + File.separator
-            + "style1");
+            + "books.xsl");
+    
+    final File books =
+      new File("src"
+          + File.separator
+          + "test"
+          + File.separator
+          + "resources"
+          + File.separator
+          + "data"
+          + File.separator
+          + "books.xml");
+    
     final Serializer serializer =
         new XSLTEvaluator(
             sessionTest,
-            TEST,
+            books,
             stylesheet,
             new ByteArrayOutputStream()).call();
-    serializer.toString();
-    
+ 
+    // Check against books html file.
+    final BufferedReader in = new BufferedReader(new FileReader("src"
+        + File.separator
+        + "test"
+        + File.separator
+        + "resources"
+        + File.separator
+        + "output"
+        + File.separator
+        + "books1.html"));  
+    final StringBuilder sBuilder = new StringBuilder();
+    for (String line = in.readLine(); line != null; line = in.readLine()) {
+      sBuilder.append(line.trim()); 
+    }
+    in.close();
+
+    TestCase.assertEquals(sBuilder.toString(), serializer.toString());    
   }
 }
