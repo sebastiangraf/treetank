@@ -3,6 +3,7 @@ package com.treetank.saxon.wrapper;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
@@ -32,7 +33,7 @@ import com.treetank.service.xml.XMLShredder;
  * @author johannes
  *
  */
-public class TestNodeWrapperS9ApiXQuery {
+public final class TestNodeWrapperS9ApiXQuery {
 
   /** Treetank session on Treetank test document. */
   private transient static ISession sessionTest;
@@ -65,6 +66,9 @@ public class TestNodeWrapperS9ApiXQuery {
 
     Database.truncateDatabase(booksTNK);
     try {
+      // Database with berkeley db and incremental revisioning
+      final Properties dbProps = new Properties();
+
       Database.createDatabase(new DatabaseConfiguration(booksTNK));
 
       final IDatabase database = Database.openDatabase(booksTNK);

@@ -1,6 +1,5 @@
 package com.treetank.saxon.wrapper;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -25,20 +24,20 @@ import org.junit.Test;
 
 import com.treetank.access.Database;
 import com.treetank.api.IDatabase;
+import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
-import com.treetank.saxon.evaluator.XQueryEvaluator;
 import com.treetank.utils.DocumentCreater;
 
 /**
- * Test XPath 
+ * Test XPath Java API.
  * 
  * @author johannes
  *
  */
-public class TestNodeWrapperXPath {
+public final class TestNodeWrapperXPath {
 
   /** TreeTank session. */
   private transient static ISession session;
@@ -89,6 +88,7 @@ public class TestNodeWrapperXPath {
 
   @AfterClass
   public static void tearDown() throws Exception {
+    session.close();
     Database.forceCloseDatabase(new File(new StringBuilder(File.separator)
         .append("tmp")
         .append(File.separator)
@@ -155,25 +155,30 @@ public class TestNodeWrapperXPath {
       TestCase.assertNotNull(result);
 
       if (xpathConstants[i].equals(XPathConstants.NODESET)) {
-        ArrayList<IReadTransaction> test =
-            (ArrayList<IReadTransaction>) result[i];
+        ArrayList<IItem> test =
+            (ArrayList<IItem>) result[i];
 
         final String res = (String) expectedResults[i];
         final String[] expRes = res.split(" ");
 
         // Iterate over expected result and the actual result and compare it.
         for (int j = 0; j < test.size(); j++) {
-          final IReadTransaction rtx = test.get(j);
-          final QName qName = test.get(j).getQNameOfCurrentNode();
+          final IItem item = test.get(j);
+          
+          final IReadTransaction rtx = session.beginReadTransaction();
+          rtx.moveTo(item.getNodeKey());
+          
+          final QName qName = rtx.getQNameOfCurrentNode();
           
           if (rtx.getNode().isElement()) {
             TestCase
                 .assertEquals(expRes[j], qName.getPrefix()+":"+qName.getLocalPart());
           } else if (rtx.getNode().isText()) {
-            TestCase.assertEquals(expRes[j], test
-                .get(j)
+            TestCase.assertEquals(expRes[j], rtx
                 .getValueOfCurrentNode());
           }
+          
+          rtx.close();
         }
       } else {
         TestCase.assertEquals(expectedResults[i], result[i]);
@@ -442,14 +447,19 @@ public class TestNodeWrapperXPath {
             .getAbsolutePath()).wrap();
 
     // Execute XPath.
-    final ArrayList<IReadTransaction> result =
-        (ArrayList<IReadTransaction>) findLine.evaluate(
+    final ArrayList<IItem> result =
+        (ArrayList<IItem>) findLine.evaluate(
             doc,
             XPathConstants.NODESET);
     TestCase.assertNotNull(result);
-    TestCase.assertEquals("oops1", result.get(0).getValueOfCurrentNode());
-    TestCase.assertEquals("oops2", result.get(1).getValueOfCurrentNode());
-    TestCase.assertEquals("oops3", result.get(2).getValueOfCurrentNode());
+    
+    final IReadTransaction rtx = session.beginReadTransaction();
+    rtx.moveTo(result.get(0).getNodeKey());
+    TestCase.assertEquals("oops1", rtx.getValueOfCurrentNode());
+    rtx.moveTo(result.get(1).getNodeKey());
+    TestCase.assertEquals("oops2", rtx.getValueOfCurrentNode());
+    rtx.moveTo(result.get(2).getNodeKey());
+    TestCase.assertEquals("oops3", rtx.getValueOfCurrentNode());
   }
   
   @Test
@@ -494,11 +504,18 @@ public class TestNodeWrapperXPath {
             .getAbsolutePath()).wrap();
 
     // Execute XPath.
-    final ArrayList<IReadTransaction> result =
-        (ArrayList<IReadTransaction>) findLine.evaluate(doc, XPathConstants.NODESET);
+    final ArrayList<IItem> result =
+        (ArrayList<IItem>) findLine.evaluate(doc, XPathConstants.NODESET);
 
     TestCase.assertNotNull(result);
-    TestCase.assertEquals("b", result.get(0).getQNameOfCurrentNode().getLocalPart());
-    TestCase.assertEquals("b", result.get(1).getQNameOfCurrentNode().getLocalPart());
+    TestCase.assertEquals(5, result.get(0).getNodeKey());
+    TestCase.assertEquals(9, result.get(1).getNodeKey());
+    
+    final IReadTransaction rtx = session.beginReadTransaction();
+    rtx.moveTo(result.get(0).getNodeKey());
+    TestCase.assertEquals("b", rtx.getQNameOfCurrentNode().getLocalPart());
+    
+    rtx.moveTo(result.get(1).getNodeKey());
+    TestCase.assertEquals("b", rtx.getQNameOfCurrentNode().getLocalPart());
   }
 }

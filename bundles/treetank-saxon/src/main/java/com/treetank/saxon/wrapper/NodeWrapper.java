@@ -827,14 +827,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
    * @see net.sf.saxon.om.VirtualNode#getUnderlyingNode()
    */
   public Object getUnderlyingNode() {
-    IReadTransaction rtx = null;
-    try {
-      rtx = mSession.beginReadTransaction();
-      rtx.moveTo(mKey);
-    } catch (TreetankException e) {
-      LOGGER.error("Treetank error: " + e.getMessage(), e);
-    }
-    return rtx;
+    return node;
   }
 
   /**

@@ -30,7 +30,7 @@ import com.treetank.utils.DocumentCreater;
  * @author johannes
  *
  */
-public class TestNodeWrapperS9ApiXPath {
+public final class TestNodeWrapperS9ApiXPath {
 
   /** Treetank session on Treetank test document. */
   private transient static ISession sessionTest;
