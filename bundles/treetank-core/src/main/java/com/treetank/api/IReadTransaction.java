@@ -278,4 +278,6 @@ public interface IReadTransaction {
 	 * already closed.
 	 */
 	void close() throws TreetankException;
+	
+	boolean isClosed();
 }
