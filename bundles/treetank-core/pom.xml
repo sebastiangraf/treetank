@@ -11,7 +11,7 @@
 
 	<groupId>treetank</groupId>
 	<artifactId>core</artifactId>
-	<version>5.3.5-SNAPSHOT</version>
+	<version>5.3.4-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>treetank-core</name>
 	<description>Treetank is a fully java-implemented native XML-Database.
