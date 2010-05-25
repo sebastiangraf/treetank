@@ -21,62 +21,69 @@ import com.treetank.saxon.wrapper.NodeWrapper;
 /**
  * <h1>XQuery evaluator</h1>
  * 
- * <p>Evaluates an XQuery expression and returns the result to a content handler.</p>
+ * <p>
+ * Evaluates an XQuery expression and returns the result to a content handler.
+ * </p>
  * 
- * @author johannes
- *
+ * @author Johannes Lichtenberger, University of Konstanz
+ * 
  */
 public class SAXXQueryEvaluator implements Callable<SAXDestination> {
 
-  /** Logger. */
-  private static final Log LOGGER = LogFactory.getLog(SAXXQueryEvaluator.class);
-  
-  /** XQuery expression. */
-  private final String mExpression;
-  
-  /** Target of query. */
-  private final File mTarget;
-  
-  /** Treetank session. */
-  private final ISession mSession;
+	/** Logger. */
+	private static final Log LOGGER = LogFactory
+			.getLog(SAXXQueryEvaluator.class);
 
-  /** SAX receiver. */
-  private final ContentHandler mHandler;
+	/** XQuery expression. */
+	private final String mExpression;
 
-  /**
-   * Constructor.
-   * 
-   * @param expression XQuery expression.
-   * @param session Treetank session.
-   * @param file Target Treetank storage.
-   * @param handler SAX content handler.
-   */
-  public SAXXQueryEvaluator(final String expression, final ISession session, final File file, final ContentHandler handler) {
-    mExpression = expression;
-    mSession = session;
-    mTarget = file;
-    mHandler = handler;
-  }
+	/** Target of query. */
+	private final File mTarget;
 
-  @Override
-  public SAXDestination call() {
-    final SAXDestination destination = new SAXDestination(mHandler);
-    
-    try {
-      final Processor proc = new Processor(false);
-      final Configuration config = proc.getUnderlyingConfiguration();
-      final NodeWrapper doc =
-        (NodeWrapper) new DocumentWrapper(mSession, config, mTarget
-            .getAbsolutePath()).wrap();
-      final XQueryCompiler comp = proc.newXQueryCompiler();
-      final XQueryExecutable exp = comp.compile(mExpression);
-      final net.sf.saxon.s9api.XQueryEvaluator exe = exp.load();
-      exe.setSource(doc);
-      exe.run(destination);
-    } catch (final SaxonApiException e) {
-      LOGGER.error("Saxon Exception: " + e.getMessage(), e);
-    }
+	/** Treetank session. */
+	private final ISession mSession;
 
-    return destination;
-  }
+	/** SAX receiver. */
+	private final ContentHandler mHandler;
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param expression
+	 *            XQuery expression.
+	 * @param session
+	 *            Treetank session.
+	 * @param file
+	 *            Target Treetank storage.
+	 * @param handler
+	 *            SAX content handler.
+	 */
+	public SAXXQueryEvaluator(final String expression, final ISession session,
+			final File file, final ContentHandler handler) {
+		mExpression = expression;
+		mSession = session;
+		mTarget = file;
+		mHandler = handler;
+	}
+
+	@Override
+	public SAXDestination call() {
+		final SAXDestination destination = new SAXDestination(mHandler);
+
+		try {
+			final Processor proc = new Processor(false);
+			final Configuration config = proc.getUnderlyingConfiguration();
+			final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(mSession,
+					config, mTarget.getAbsolutePath()).wrap();
+			final XQueryCompiler comp = proc.newXQueryCompiler();
+			final XQueryExecutable exp = comp.compile(mExpression);
+			final net.sf.saxon.s9api.XQueryEvaluator exe = exp.load();
+			exe.setSource(doc);
+			exe.run(destination);
+		} catch (final SaxonApiException e) {
+			LOGGER.error("Saxon Exception: " + e.getMessage(), e);
+		}
+
+		return destination;
+	}
 }

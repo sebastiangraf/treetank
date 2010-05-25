@@ -8,6 +8,7 @@ import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.NamePool;
 import net.sf.saxon.om.NodeInfo;
 
+import com.treetank.api.IAxis;
 import com.treetank.api.ISession;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.settings.ENodes;
@@ -15,166 +16,167 @@ import com.treetank.settings.ENodes;
 /**
  * Wraps a Treetank document (represents the root node).
  * 
- * @author johannes
- *
+ * @author Johannes Lichtenberger, University of Konstanz
+ * 
  */
 public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
 
-  /** Base URI of the document. */
-  protected static String mBaseURI;
+	/** Base URI of the document. */
+	protected static String M_BASE_URI;
 
-  /** Saxon configuration. */
-  protected static Configuration mConfig;
+	/** Saxon configuration. */
+	protected static Configuration mConfig;
 
-  /** Unique document number. */
-  protected static int documentNumber;
+	/** Unique document number. */
+	protected static int documentNumber;
 
-  /** Treetank session. */
-  private final ISession mSession;
-  
-  /**
-   * Wrap a Treetank document.
-   * 
-   * @param session
-   *            Treetank session.
-   * @param config
-   *            Configuration used.
-   * @param baseURI
-   *            BaseURI of the document (PATH).
-   */
-  public DocumentWrapper(
-      final ISession session,
-      final Configuration config,
-      final String baseURI) {
-    super(session, 0);
-    mSession = session;
-    nodeKind = ENodes.ROOT_KIND;
-    mBaseURI = baseURI;
-    mDocWrapper = this;
-    setConfiguration(config);
-  }
+	/** Treetank session. */
+	private final ISession mSession;
 
-  /**
-   * Wrap a node in the Treetank document.
-   * 
-   * @return The wrapped Treetank transaction in form of a NodeInfo object.
-   */
-  public NodeInfo wrap() {
-    return makeWrapper(mSession, this, 0);
-  }
+	/**
+	 * Wrap a Treetank document.
+	 * 
+	 * @param session
+	 *            Treetank session.
+	 * @param config
+	 *            Configuration used.
+	 * @param baseURI
+	 *            BaseURI of the document (PATH).
+	 */
+	public DocumentWrapper(final ISession session, final Configuration config,
+			final String baseURI) {
+		super(session, 0);
+		mSession = session;
+		nodeKind = ENodes.ROOT_KIND;
+		M_BASE_URI = baseURI;
+		mDocWrapper = this;
+		setConfiguration(config);
+	}
 
-  /**
-  * Wrap a node in the Treetank document.
-  * 
-  * @param nodeKey Node key to start wrapping.
-  * @return The wrapping NodeWrapper object.
-  */
-  public NodeInfo wrap(final long nodeKey) {
-    return makeWrapper(mSession, this, nodeKey);
-  }
+	/**
+	 * Wrap a node in the Treetank document.
+	 * 
+	 * @return The wrapped Treetank transaction in form of a NodeInfo object.
+	 */
+	public NodeInfo wrap() {
+		return makeWrapper(mSession, this, 0);
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  public String[] getUnparsedEntity(String arg0) {
-    throw new UnsupportedOperationException("Currently not supported by Treetank!");
-  }
+	/**
+	 * Wrap a node in the Treetank document.
+	 * 
+	 * @param nodeKey
+	 *            Node key to start wrapping.
+	 * @return The wrapping NodeWrapper object.
+	 */
+	public NodeInfo wrap(final long nodeKey) {
+		return makeWrapper(mSession, this, nodeKey);
+	}
 
-  /**
-   * Get the unparsed entity with a given name.
-   * 
-   * @param name
-   *            The name of the entity.
-   * @return null: TreeTank does not provide access to unparsed entities.
-   */
-  @SuppressWarnings("unchecked")
-  public Iterator<String> getUnparsedEntityNames() {
-    return (Iterator<String>) Collections.EMPTY_LIST.iterator();
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	public String[] getUnparsedEntity(String arg0) {
+		throw new UnsupportedOperationException(
+				"Currently not supported by Treetank!");
+	}
 
-  /**
-   * {@inheritDoc}
-   * 
-   * No check if the attribute is unique among all nodes and on the element.
-   */
-  public NodeInfo selectID(final String ID, final boolean getParent) {
-    for (final long key : new DescendantAxis(mRTX, true)) {
-      if (mRTX.getNode().isElement()) {
-        final int attCount = mRTX.getNode().getAttributeCount();
+	/**
+	 * Get the unparsed entity with a given name.
+	 * 
+	 * @param name
+	 *            The name of the entity.
+	 * @return null: TreeTank does not provide access to unparsed entities.
+	 */
+	@SuppressWarnings("unchecked")
+	public Iterator<String> getUnparsedEntityNames() {
+		return (Iterator<String>) Collections.EMPTY_LIST.iterator();
+	}
 
-        if (attCount > 0) {
-          final long nodeKey = mRTX.getNode().getNodeKey();
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * No check if the attribute is unique among all nodes and on the element.
+	 */
+	public NodeInfo selectID(final String ID, final boolean getParent) {
+		final IAxis axis = new DescendantAxis(mRTX, true);
+		while (axis.hasNext()) {
+			if (mRTX.getNode().isElement()) {
+				final int attCount = mRTX.getNode().getAttributeCount();
 
-          for (int index = 0; index < attCount; index++) {
-            mRTX.moveToAttribute(index);
+				if (attCount > 0) {
+					final long nodeKey = mRTX.getNode().getNodeKey();
 
-            if ("xml:id".equalsIgnoreCase(mRTX
-                .getQNameOfCurrentNode()
-                .getLocalPart())
-                && ID.equals(mRTX.getValueOfCurrentNode())) {
-              if (getParent) {
-                mRTX.moveToParent();
-                return wrap(mRTX.getNode().getNodeKey());
-              } else {
-                return wrap(mRTX.getNode().getNodeKey());
-              }
-            }
+					for (int index = 0; index < attCount; index++) {
+						mRTX.moveToAttribute(index);
 
-            mRTX.moveTo(nodeKey);
-          }
-        }
-      }
-    }
+						if ("xml:id".equalsIgnoreCase(mRTX
+								.getQNameOfCurrentNode().getLocalPart())
+								&& ID.equals(mRTX.getValueOfCurrentNode())) {
+							if (getParent) {
+								mRTX.moveToParent();
+								return wrap(mRTX.getNode().getNodeKey());
+							} else {
+								return wrap(mRTX.getNode().getNodeKey());
+							}
+						}
 
-    return null;
-  }
+						mRTX.moveTo(nodeKey);
+					}
+				}
+			}
+			axis.next();
+		}
 
-  /**
-   * Get the name pool used for the names in this document.
-   */
-  public NamePool getNamePool() {
-    return mConfig.getNamePool();
-  }
+		return null;
+	}
 
-  /**
-   * Set the configuration (containing the name pool used for all names in
-   * this document). Calling this method allocates a unique number to the
-   * document (unique within the Configuration); this will form the basis for
-   * testing node identity.
-   * 
-   * @param config
-   *            The configuration.
-   */
-  public void setConfiguration(final Configuration config) {
-    mConfig = config;
-    documentNumber =
-        config.getDocumentNumberAllocator().allocateDocumentNumber();
-  }
+	/**
+	 * Get the name pool used for the names in this document.
+	 */
+	public NamePool getNamePool() {
+		return mConfig.getNamePool();
+	}
 
-  /**
-   * Get the configuration previously set using setConfiguration (or the
-   * default configuraton allocated automatically).
-   */
-  public Configuration getConfiguration() {
-    return mConfig;
-  }
+	/**
+	 * Set the configuration (containing the name pool used for all names in
+	 * this document). Calling this method allocates a unique number to the
+	 * document (unique within the Configuration); this will form the basis for
+	 * testing node identity.
+	 * 
+	 * @param config
+	 *            The configuration.
+	 */
+	public void setConfiguration(final Configuration config) {
+		mConfig = config;
+		documentNumber = config.getDocumentNumberAllocator()
+				.allocateDocumentNumber();
+	}
 
-  /**
-   * Return BaseURI of the current document.
-   * 
-   * @return BaseURI.
-   */
-  public String getBaseURI() {
-    return mBaseURI;
-  }
+	/**
+	 * Get the configuration previously set using setConfiguration (or the
+	 * default configuraton allocated automatically).
+	 */
+	public Configuration getConfiguration() {
+		return mConfig;
+	}
 
-  /**
-   * Set the baseURI of the current document.
-   * 
-   * @param baseURI
-   *            Usually the absoulte path of the document.
-   */
-  protected void setBaseURI(final String baseURI) {
-    mBaseURI = baseURI;
-  }
+	/**
+	 * Return BaseURI of the current document.
+	 * 
+	 * @return BaseURI.
+	 */
+	public String getBaseURI() {
+		return M_BASE_URI;
+	}
+
+	/**
+	 * Set the baseURI of the current document.
+	 * 
+	 * @param baseURI
+	 *            Usually the absoulte path of the document.
+	 */
+	protected void setBaseURI(final String baseURI) {
+		M_BASE_URI = baseURI;
+	}
 }

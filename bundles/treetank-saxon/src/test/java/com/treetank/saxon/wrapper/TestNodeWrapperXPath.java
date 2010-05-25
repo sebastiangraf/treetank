@@ -1,8 +1,9 @@
 package com.treetank.saxon.wrapper;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 
+import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.xpath.XPath;
@@ -16,12 +17,12 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.om.NamespaceConstant;
 import net.sf.saxon.xpath.XPathFactoryImpl;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
+import com.treetank.TestHelper;
 import com.treetank.access.Database;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IItem;
@@ -34,488 +35,497 @@ import com.treetank.utils.DocumentCreater;
 /**
  * Test XPath Java API.
  * 
- * @author johannes
- *
+ * @author Johannes Lichtenberger, University of Konstanz
+ * 
  */
 public final class TestNodeWrapperXPath {
 
-  /** TreeTank session. */
-  private transient static ISession session;
-
-  /** XPath expression. */
-  private transient static XPath xpe;
-
-  /** Saxon configuration. */
-  private transient static Configuration config;
-
-  /** Logger. */
-  private static final Log logger = LogFactory.getLog(TestNodeWrapperXPath.class);
-
-  /** Path to test file. */
-  private File test =
-      new File(new StringBuilder(File.separator)
-          .append("tmp")
-          .append(File.separator)
-          .append("tnk")
-          .append(File.separator)
-          .append("path1")
-          .toString());
-
-  @Before
-  public void setUp() throws TreetankException {
-    Database.truncateDatabase(test);
-    final IDatabase database = Database.openDatabase(test);
-    session = database.getSession();
-    final IWriteTransaction wtx = session.beginWriteTransaction();
-    DocumentCreater.create(wtx);
-    wtx.commit();
-    wtx.close();
-
-    // Saxon setup.
-    System.setProperty(
-        "javax.xml.xpath.XPathFactory:" + NamespaceConstant.OBJECT_MODEL_SAXON,
-        "net.sf.saxon.xpath.XPathFactoryImpl");
-
-    try {
-      XPathFactory xpf =
-          XPathFactory.newInstance(NamespaceConstant.OBJECT_MODEL_SAXON);
-      xpe = xpf.newXPath();
-      config = ((XPathFactoryImpl) xpf).getConfiguration();
-    } catch (XPathFactoryConfigurationException e) {
-      logger.warn("XPathConfigurationException: " + e.getMessage(), e);
-    }
-  }
-
-  @AfterClass
-  public static void tearDown() throws Exception {
-    session.close();
-    Database.forceCloseDatabase(new File(new StringBuilder(File.separator)
-        .append("tmp")
-        .append(File.separator)
-        .append("tnk")
-        .append(File.separator)
-        .append("path1")
-        .toString()));
-  }
-
-  /**
-   * XPath tests.
-   * 
-   * @param expressions
-   *            Expressions, which are used.
-   * @param doc
-   *            The test document.
-   * @param expectedResults
-   *            Expected result for each expression.
-   * @param result
-   *            Array with the result types for each expression.
-   * @param xpathConstants
-   *            XPathConstants for each expression.
-   * @param namespaces
-   *            Array of boolean values for each expression.
-   * @param namespace
-   *            The namespace Context, which is used.
-   * @throws Exception
-   *             Any Exception which maybe occurs.
-   */
-  @SuppressWarnings("unchecked")
-  public void test(
-      final String[] expressions,
-      final Object doc,
-      final Object[] expectedResults,
-      Object[] result,
-      final QName[] xpathConstants,
-      final boolean[] namespaces,
-      final Object namespace) throws Exception {
-
-    // For every expected result.
-    for (int i = 0; i < expectedResults.length; i++) {
-
-      // If namespace is required.
-      if (namespaces[i]) {
-        xpe.setNamespaceContext((NamespaceContext) namespace);
-      }
-
-      final XPathExpression findLine = xpe.compile(expressions[i]);
-
-      // Cast the evaluated value.
-      if (xpathConstants[i].equals(XPathConstants.NODESET)) {
-        result[i] = findLine.evaluate(doc, xpathConstants[i]);
-      } else if (xpathConstants[i].equals(XPathConstants.STRING)) {
-        result[i] = (String) findLine.evaluate(doc, xpathConstants[i]);
-      } else if (xpathConstants[i].equals(XPathConstants.NUMBER)) {
-        result[i] =
-            Double.parseDouble(findLine
-                .evaluate(doc, xpathConstants[i])
-                .toString());
-      } else {
-        throw new IllegalStateException("Unknown XPathConstant!");
-      }
-
-      TestCase.assertNotNull(result);
-
-      if (xpathConstants[i].equals(XPathConstants.NODESET)) {
-        ArrayList<IItem> test =
-            (ArrayList<IItem>) result[i];
-
-        final String res = (String) expectedResults[i];
-        final String[] expRes = res.split(" ");
-
-        // Iterate over expected result and the actual result and compare it.
-        for (int j = 0; j < test.size(); j++) {
-          final IItem item = test.get(j);
-          
-          final IReadTransaction rtx = session.beginReadTransaction();
-          rtx.moveTo(item.getNodeKey());
-          
-          final QName qName = rtx.getQNameOfCurrentNode();
-          
-          if (rtx.getNode().isElement()) {
-            TestCase
-                .assertEquals(expRes[j], qName.getPrefix()+":"+qName.getLocalPart());
-          } else if (rtx.getNode().isText()) {
-            TestCase.assertEquals(expRes[j], rtx
-                .getValueOfCurrentNode());
-          }
-          
-          rtx.close();
-        }
-      } else {
-        TestCase.assertEquals(expectedResults[i], result[i]);
-      }
-    }
-  }
-
-  @Test
-  public void testExample() throws Exception {
-
-    final String[] expressions =
-        {
-            "count(//b)",
-            "count(//p:a)",
-            "//p:a/@i",
-            "//p:a/@p:i",
-            "//b[1]/text()",
-            "//b[2]",
-            "//b[1]",
-            "//b[2]/text()",
-            "//p:a/text()" };
-
-    final NodeWrapper doc =
-        (NodeWrapper) new DocumentWrapper(session, config, test
-            .getAbsolutePath()).wrap();
-
-    final Object[] expectedResults = { 2D, 1D, "j", "", "foo",
-    // "<b p:x=\"y\"><c/>bar</b>",
-        "bar",
-        "foo",
-        // "<b>foo<c/></b>",
-        "bar",
-        "oops1 oops2 oops3" };
-
-    Object[] result = { "", "", "", 0D, "", "", "", "", "" };
-
-    final QName[] xpathConstants =
-        {
-            XPathConstants.NUMBER,
-            XPathConstants.NUMBER,
-            XPathConstants.STRING,
-            XPathConstants.STRING,
-            XPathConstants.STRING,
-            XPathConstants.STRING,
-            XPathConstants.STRING,
-            XPathConstants.STRING,
-            XPathConstants.NODESET, };
-
-    final boolean[] namespaces =
-        { false, true, true, false, false, false, false, false, true };
-
-    test(
-        expressions,
-        doc,
-        expectedResults,
-        result,
-        xpathConstants,
-        namespaces,
-        new DocNamespaceContext());
-  }
-
-  @Test
-  public void testElementBCount() throws Exception {
-
-    final XPathExpression findLine = xpe.compile("count(//b)");
-    final NodeWrapper doc =
-        (NodeWrapper) new DocumentWrapper(session, config, test
-            .getAbsolutePath()).wrap();
-
-    // Execute XPath.
-    final double result =
-        Double.parseDouble(findLine
-            .evaluate(doc, XPathConstants.NUMBER)
-            .toString());
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals(2.0, result);
-  }
-
-  @Test
-  public void testElementACount() throws Exception {
-
-    final XPathExpression findLine = xpe.compile("count(//a)");
-    final NodeWrapper doc =
-        (NodeWrapper) new DocumentWrapper(session, config, test
-            .getAbsolutePath()).wrap();
-
-    // Execute XPath.
-    final double result =
-        Double.parseDouble(findLine
-            .evaluate(doc, XPathConstants.NUMBER)
-            .toString());
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals(0.0, result);
-  }
-
-  @Test
-  public void testNamespaceElementCount() throws Exception {
-    xpe.setNamespaceContext(new DocNamespaceContext());
-    final XPathExpression findLine = xpe.compile("count(//p:a)");
-    final NodeWrapper doc =
-        (NodeWrapper) new DocumentWrapper(session, config, test
-            .getAbsolutePath()).wrap();
-
-    // Execute XPath.
-    final double result =
-        Double.parseDouble(findLine
-            .evaluate(doc, XPathConstants.NUMBER)
-            .toString());
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals(1.0, result);
-  }
-
-  @Test
-  public void testAttributeCount() throws Exception {
-    xpe.setNamespaceContext(new DocNamespaceContext());
-    final XPathExpression findLine = xpe.compile("count(//p:a/@i)");
-    final NodeWrapper doc =
-        (NodeWrapper) new DocumentWrapper(session, config, test
-            .getAbsolutePath()).wrap();
-
-    // Execute XPath.
-    final double result =
-        Double.parseDouble(findLine
-            .evaluate(doc, XPathConstants.NUMBER)
-            .toString());
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals(1.0, result);
-  }
-
-  @Test
-  public void testNamespaceAttributeCount() throws Exception {
-    xpe.setNamespaceContext(new DocNamespaceContext());
-    final XPathExpression findLine = xpe.compile("count(//p:a/@p:i)");
-    final NodeWrapper doc =
-        (NodeWrapper) new DocumentWrapper(session, config, test
-            .getAbsolutePath()).wrap();
-
-    // Execute XPath.
-    final double result =
-        Double.parseDouble(findLine
-            .evaluate(doc, XPathConstants.NUMBER)
-            .toString());
-
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals(0D, result);
-  }
-
-  @Test
-  public void testAttributeValue() throws Exception {
-    xpe.setNamespaceContext(new DocNamespaceContext());
-    final XPathExpression findLine = xpe.compile("//p:a/@i");
-    final NodeWrapper doc =
-        (NodeWrapper) new DocumentWrapper(session, config, test
-            .getAbsolutePath()).wrap();
-
-    // Execute XPath.
-    final String result =
-        findLine.evaluate(doc, XPathConstants.STRING).toString();
-
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals("j", result);
-  }
-
-  @Test
-  public void testNamespaceAttributeValue() throws Exception {
-    xpe.setNamespaceContext(new DocNamespaceContext());
-    final XPathExpression findLine = xpe.compile("//p:a/@p:i");
-    final NodeWrapper doc =
-        (NodeWrapper) new DocumentWrapper(session, config, test
-            .getAbsolutePath()).wrap();
-
-    // Execute XPath.
-    final String result =
-        findLine.evaluate(doc, XPathConstants.STRING).toString();
-
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals("", result);
-  }
-
-  @Test
-  public void testText() throws Exception {
-    final XPathExpression findLine = xpe.compile("//b[1]/text()");
-    final NodeWrapper doc =
-        (NodeWrapper) new DocumentWrapper(session, config, test
-            .getAbsolutePath()).wrap();
-
-    // Execute XPath.
-    final String result =
-        (String) findLine.evaluate(doc, XPathConstants.STRING);
-
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals("foo", result);
-  }
-
-  @Test
-  public void testText1() throws Exception {
-    xpe.setNamespaceContext(new DocNamespaceContext());
-    final XPathExpression findLine = xpe.compile("//p:a[1]/text()[1]");
-    final NodeWrapper doc =
-        (NodeWrapper) new DocumentWrapper(session, config, test
-            .getAbsolutePath()).wrap();
-
-    // Execute XPath.
-    final String result =
-        (String) findLine.evaluate(doc, XPathConstants.STRING);
-
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals("oops1", result);
-  }
-
-  @Test
-  public void testDefaultNamespaceText1() throws Exception {
-    xpe.setNamespaceContext(new DocNamespaceContext());
-    final XPathExpression findLine = xpe.compile("//p:a/text()[1]");
-    final NodeWrapper doc =
-        (NodeWrapper) new DocumentWrapper(session, config, test
-            .getAbsolutePath()).wrap();
-
-    // Execute XPath.
-    final String result =
-        (String) findLine.evaluate(doc, XPathConstants.STRING);
-
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals("oops1", result);
-  }
-
-  @Test
-  public void testDefaultNamespaceText2() throws Exception {
-    xpe.setNamespaceContext(new DocNamespaceContext());
-    final XPathExpression findLine = xpe.compile("//p:a/text()[2]");
-    final NodeWrapper doc =
-        (NodeWrapper) new DocumentWrapper(session, config, test
-            .getAbsolutePath()).wrap();
-
-    // Execute XPath.
-    final String result =
-        (String) findLine.evaluate(doc, XPathConstants.STRING);
-
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals("oops2", result);
-  }
-  
-  @Test
-  public void testDefaultNamespaceText3() throws Exception {
-    xpe.setNamespaceContext(new DocNamespaceContext());
-    final XPathExpression findLine = xpe.compile("//p:a/text()[3]");
-    final NodeWrapper doc =
-        (NodeWrapper) new DocumentWrapper(session, config, test
-            .getAbsolutePath()).wrap();
-
-    // Execute XPath.
-    final String result =
-        (String) findLine.evaluate(doc, XPathConstants.STRING);
-
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals("oops3", result);
-  }
-  
-  @SuppressWarnings("unchecked")
-  @Test
-  public void testDefaultNamespaceTextAll() throws Exception {
-    xpe.setNamespaceContext(new DocNamespaceContext());
-    final XPathExpression findLine = xpe.compile("//p:a/text()");
-    final NodeWrapper doc =
-        (NodeWrapper) new DocumentWrapper(session, config, test
-            .getAbsolutePath()).wrap();
-
-    // Execute XPath.
-    final ArrayList<IItem> result =
-        (ArrayList<IItem>) findLine.evaluate(
-            doc,
-            XPathConstants.NODESET);
-    TestCase.assertNotNull(result);
-    
-    final IReadTransaction rtx = session.beginReadTransaction();
-    rtx.moveTo(result.get(0).getNodeKey());
-    TestCase.assertEquals("oops1", rtx.getValueOfCurrentNode());
-    rtx.moveTo(result.get(1).getNodeKey());
-    TestCase.assertEquals("oops2", rtx.getValueOfCurrentNode());
-    rtx.moveTo(result.get(2).getNodeKey());
-    TestCase.assertEquals("oops3", rtx.getValueOfCurrentNode());
-  }
-  
-  @Test
-  public void testB1() throws Exception {
-    xpe.setNamespaceContext(new DocNamespaceContext());
-    final XPathExpression findLine = xpe.compile("//b[1]");
-    final NodeWrapper doc =
-        (NodeWrapper) new DocumentWrapper(session, config, test
-            .getAbsolutePath()).wrap();
-
-    // Execute XPath.
-    final String result =
-        (String) findLine.evaluate(doc, XPathConstants.STRING);
-
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals("foo", result);
-  }
-  
-  @Test
-  public void testB2() throws Exception {
-    xpe.setNamespaceContext(new DocNamespaceContext());
-    final XPathExpression findLine = xpe.compile("//b[2]");
-    final NodeWrapper doc =
-        (NodeWrapper) new DocumentWrapper(session, config, test
-            .getAbsolutePath()).wrap();
-
-    // Execute XPath.
-    final String result =
-        (String) findLine.evaluate(doc, XPathConstants.STRING);
-
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals("bar", result);
-  }
-  
-  @SuppressWarnings("unchecked")
-  @Test
-  public void testBAll() throws Exception {
-    xpe.setNamespaceContext(new DocNamespaceContext());
-    final XPathExpression findLine = xpe.compile("//b");
-    final NodeWrapper doc =
-        (NodeWrapper) new DocumentWrapper(session, config, test
-            .getAbsolutePath()).wrap();
-
-    // Execute XPath.
-    final ArrayList<IItem> result =
-        (ArrayList<IItem>) findLine.evaluate(doc, XPathConstants.NODESET);
-
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals(5, result.get(0).getNodeKey());
-    TestCase.assertEquals(9, result.get(1).getNodeKey());
-    
-    final IReadTransaction rtx = session.beginReadTransaction();
-    rtx.moveTo(result.get(0).getNodeKey());
-    TestCase.assertEquals("b", rtx.getQNameOfCurrentNode().getLocalPart());
-    
-    rtx.moveTo(result.get(1).getNodeKey());
-    TestCase.assertEquals("b", rtx.getQNameOfCurrentNode().getLocalPart());
-  }
+	/** TreeTank session. */
+	private transient static ISession session;
+
+	/** XPath expression. */
+	private transient static XPath xpe;
+
+	/** Saxon configuration. */
+	private transient static Configuration config;
+
+	@Before
+	public void setUp() throws TreetankException,
+			XPathFactoryConfigurationException {
+		Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
+		final IDatabase database = Database.openDatabase(TestHelper.PATHS.PATH1
+				.getFile());
+		session = database.getSession();
+		final IWriteTransaction wtx = session.beginWriteTransaction();
+		DocumentCreater.create(wtx);
+		wtx.commit();
+		wtx.close();
+
+		// Saxon setup.
+		System.setProperty("javax.xml.xpath.XPathFactory:"
+				+ NamespaceConstant.OBJECT_MODEL_SAXON,
+				"net.sf.saxon.xpath.XPathFactoryImpl");
+
+		XPathFactory xpf = XPathFactory
+				.newInstance(NamespaceConstant.OBJECT_MODEL_SAXON);
+		xpe = xpf.newXPath();
+		config = ((XPathFactoryImpl) xpf).getConfiguration();
+	}
+
+	@AfterClass
+	public static void tearDown() throws Exception {
+		session.close();
+		Database.forceCloseDatabase(TestHelper.PATHS.PATH1.getFile());
+	}
+
+	/**
+	 * XPath tests.
+	 * 
+	 * @param expressions
+	 *            Expressions, which are used.
+	 * @param doc
+	 *            The test document.
+	 * @param expectedResults
+	 *            Expected result for each expression.
+	 * @param result
+	 *            Array with the result types for each expression.
+	 * @param xpathConstants
+	 *            XPathConstants for each expression.
+	 * @param namespaces
+	 *            Array of boolean values for each expression.
+	 * @param namespace
+	 *            The namespace Context, which is used.
+	 * @throws Exception
+	 *             Any Exception which maybe occurs.
+	 */
+	@SuppressWarnings("unchecked")
+	@Ignore("Not a test, utility method only")
+	public void test(final String[] expressions, final Object doc,
+			final Object[] expectedResults, Object[] result,
+			final QName[] xpathConstants, final boolean[] namespaces,
+			final Object namespace) throws Exception {
+
+		// For every expected result.
+		for (int i = 0; i < expectedResults.length; i++) {
+
+			// If namespace is required.
+			if (namespaces[i]) {
+				xpe.setNamespaceContext((NamespaceContext) namespace);
+			}
+
+			final XPathExpression findLine = xpe.compile(expressions[i]);
+
+			// Cast the evaluated value.
+			if (xpathConstants[i].equals(XPathConstants.NODESET)) {
+				result[i] = findLine.evaluate(doc, xpathConstants[i]);
+			} else if (xpathConstants[i].equals(XPathConstants.STRING)) {
+				result[i] = (String) findLine.evaluate(doc, xpathConstants[i]);
+			} else if (xpathConstants[i].equals(XPathConstants.NUMBER)) {
+				result[i] = Double.parseDouble(findLine.evaluate(doc,
+						xpathConstants[i]).toString());
+			} else {
+				throw new IllegalStateException("Unknown XPathConstant!");
+			}
+
+			TestCase.assertNotNull(result);
+
+			if (xpathConstants[i].equals(XPathConstants.NODESET)) {
+				final ArrayList<IItem> test = (ArrayList<IItem>) result[i];
+
+				final String res = (String) expectedResults[i];
+				final String[] expRes = res.split(" ");
+
+				// Iterate over expected result and the actual result and
+				// compare it.
+				for (int j = 0; j < test.size(); j++) {
+					final IItem item = test.get(j);
+
+					final IReadTransaction rtx = session.beginReadTransaction();
+					rtx.moveTo(item.getNodeKey());
+
+					final QName qName = rtx.getQNameOfCurrentNode();
+
+					if (rtx.getNode().isElement()) {
+						TestCase.assertEquals(expRes[j], qName.getPrefix()
+								+ ":" + qName.getLocalPart());
+					} else if (rtx.getNode().isText()) {
+						TestCase.assertEquals(expRes[j], rtx
+								.getValueOfCurrentNode());
+					}
+
+					rtx.close();
+				}
+			} else {
+				TestCase.assertEquals(expectedResults[i], result[i]);
+			}
+		}
+	}
+
+	@Test
+	public void testExample() throws Exception {
+
+		final String[] expressions = { "count(//b)", "count(//p:a)",
+				"//p:a/@i", "//p:a/@p:i", "//b[1]/text()", "//b[2]", "//b[1]",
+				"//b[2]/text()", "//p:a/text()" };
+
+		final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(session,
+				config, TestHelper.PATHS.PATH1.getFile().getAbsolutePath())
+				.wrap();
+
+		final Object[] expectedResults = { 2D, 1D, "j", "", "foo",
+		// "<b p:x=\"y\"><c/>bar</b>",
+				"bar", "foo",
+				// "<b>foo<c/></b>",
+				"bar", "oops1 oops2 oops3" };
+
+		Object[] result = { "", "", "", 0D, "", "", "", "", "" };
+
+		final QName[] xpathConstants = { XPathConstants.NUMBER,
+				XPathConstants.NUMBER, XPathConstants.STRING,
+				XPathConstants.STRING, XPathConstants.STRING,
+				XPathConstants.STRING, XPathConstants.STRING,
+				XPathConstants.STRING, XPathConstants.NODESET, };
+
+		final boolean[] namespaces = { false, true, true, false, false, false,
+				false, false, true };
+
+		test(expressions, doc, expectedResults, result, xpathConstants,
+				namespaces, new DocNamespaceContext());
+	}
+
+	@Test
+	public void testElementBCount() throws Exception {
+
+		final XPathExpression findLine = xpe.compile("count(//b)");
+		final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(session,
+				config, TestHelper.PATHS.PATH1.getFile().getAbsolutePath())
+				.wrap();
+
+		// Execute XPath.
+		final double result = Double.parseDouble(findLine.evaluate(doc,
+				XPathConstants.NUMBER).toString());
+		TestCase.assertNotNull(result);
+		TestCase.assertEquals(2.0, result);
+	}
+
+	@Test
+	public void testElementACount() throws Exception {
+
+		final XPathExpression findLine = xpe.compile("count(//a)");
+		final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(session,
+				config, TestHelper.PATHS.PATH1.getFile().getAbsolutePath())
+				.wrap();
+
+		// Execute XPath.
+		final double result = Double.parseDouble(findLine.evaluate(doc,
+				XPathConstants.NUMBER).toString());
+		TestCase.assertNotNull(result);
+		TestCase.assertEquals(0.0, result);
+	}
+
+	@Test
+	public void testNamespaceElementCount() throws Exception {
+		xpe.setNamespaceContext(new DocNamespaceContext());
+		final XPathExpression findLine = xpe.compile("count(//p:a)");
+		final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(session,
+				config, TestHelper.PATHS.PATH1.getFile().getAbsolutePath())
+				.wrap();
+
+		// Execute XPath.
+		final double result = Double.parseDouble(findLine.evaluate(doc,
+				XPathConstants.NUMBER).toString());
+		TestCase.assertNotNull(result);
+		TestCase.assertEquals(1.0, result);
+	}
+
+	@Test
+	public void testAttributeCount() throws Exception {
+		xpe.setNamespaceContext(new DocNamespaceContext());
+		final XPathExpression findLine = xpe.compile("count(//p:a/@i)");
+		final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(session,
+				config, TestHelper.PATHS.PATH1.getFile().getAbsolutePath())
+				.wrap();
+
+		// Execute XPath.
+		final double result = Double.parseDouble(findLine.evaluate(doc,
+				XPathConstants.NUMBER).toString());
+		TestCase.assertNotNull(result);
+		TestCase.assertEquals(1.0, result);
+	}
+
+	@Test
+	public void testNamespaceAttributeCount() throws Exception {
+		xpe.setNamespaceContext(new DocNamespaceContext());
+		final XPathExpression findLine = xpe.compile("count(//p:a/@p:i)");
+		final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(session,
+				config, TestHelper.PATHS.PATH1.getFile().getAbsolutePath())
+				.wrap();
+
+		// Execute XPath.
+		final double result = Double.parseDouble(findLine.evaluate(doc,
+				XPathConstants.NUMBER).toString());
+
+		TestCase.assertNotNull(result);
+		TestCase.assertEquals(0D, result);
+	}
+
+	@Test
+	public void testAttributeValue() throws Exception {
+		xpe.setNamespaceContext(new DocNamespaceContext());
+		final XPathExpression findLine = xpe.compile("//p:a/@i");
+		final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(session,
+				config, TestHelper.PATHS.PATH1.getFile().getAbsolutePath())
+				.wrap();
+
+		// Execute XPath.
+		final String result = findLine.evaluate(doc, XPathConstants.STRING)
+				.toString();
+
+		TestCase.assertNotNull(result);
+		TestCase.assertEquals("j", result);
+	}
+
+	@Test
+	public void testNamespaceAttributeValue() throws Exception {
+		xpe.setNamespaceContext(new DocNamespaceContext());
+		final XPathExpression findLine = xpe.compile("//p:a/@p:i");
+		final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(session,
+				config, TestHelper.PATHS.PATH1.getFile().getAbsolutePath())
+				.wrap();
+
+		// Execute XPath.
+		final String result = findLine.evaluate(doc, XPathConstants.STRING)
+				.toString();
+
+		TestCase.assertNotNull(result);
+		TestCase.assertEquals("", result);
+	}
+
+	@Test
+	public void testText() throws Exception {
+		final XPathExpression findLine = xpe.compile("//b[1]/text()");
+		final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(session,
+				config, TestHelper.PATHS.PATH1.getFile().getAbsolutePath())
+				.wrap();
+
+		// Execute XPath.
+		final String result = (String) findLine.evaluate(doc,
+				XPathConstants.STRING);
+
+		TestCase.assertNotNull(result);
+		TestCase.assertEquals("foo", result);
+	}
+
+	@Test
+	public void testText1() throws Exception {
+		xpe.setNamespaceContext(new DocNamespaceContext());
+		final XPathExpression findLine = xpe.compile("//p:a[1]/text()[1]");
+		final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(session,
+				config, TestHelper.PATHS.PATH1.getFile().getAbsolutePath())
+				.wrap();
+
+		// Execute XPath.
+		final String result = (String) findLine.evaluate(doc,
+				XPathConstants.STRING);
+
+		TestCase.assertNotNull(result);
+		TestCase.assertEquals("oops1", result);
+	}
+
+	@Test
+	public void testDefaultNamespaceText1() throws Exception {
+		xpe.setNamespaceContext(new DocNamespaceContext());
+		final XPathExpression findLine = xpe.compile("//p:a/text()[1]");
+		final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(session,
+				config, TestHelper.PATHS.PATH1.getFile().getAbsolutePath())
+				.wrap();
+
+		// Execute XPath.
+		final String result = (String) findLine.evaluate(doc,
+				XPathConstants.STRING);
+
+		TestCase.assertNotNull(result);
+		TestCase.assertEquals("oops1", result);
+	}
+
+	@Test
+	public void testDefaultNamespaceText2() throws Exception {
+		xpe.setNamespaceContext(new DocNamespaceContext());
+		final XPathExpression findLine = xpe.compile("//p:a/text()[2]");
+		final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(session,
+				config, TestHelper.PATHS.PATH1.getFile().getAbsolutePath())
+				.wrap();
+
+		// Execute XPath.
+		final String result = (String) findLine.evaluate(doc,
+				XPathConstants.STRING);
+
+		TestCase.assertNotNull(result);
+		TestCase.assertEquals("oops2", result);
+	}
+
+	@Test
+	public void testDefaultNamespaceText3() throws Exception {
+		xpe.setNamespaceContext(new DocNamespaceContext());
+		final XPathExpression findLine = xpe.compile("//p:a/text()[3]");
+		final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(session,
+				config, TestHelper.PATHS.PATH1.getFile().getAbsolutePath())
+				.wrap();
+
+		// Execute XPath.
+		final String result = (String) findLine.evaluate(doc,
+				XPathConstants.STRING);
+
+		TestCase.assertNotNull(result);
+		TestCase.assertEquals("oops3", result);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testDefaultNamespaceTextAll() throws Exception {
+		xpe.setNamespaceContext(new DocNamespaceContext());
+		final XPathExpression findLine = xpe.compile("//p:a/text()");
+		final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(session,
+				config, TestHelper.PATHS.PATH1.getFile().getAbsolutePath())
+				.wrap();
+
+		// Execute XPath.
+		final ArrayList<IItem> result = (ArrayList<IItem>) findLine.evaluate(
+				doc, XPathConstants.NODESET);
+		TestCase.assertNotNull(result);
+
+		final IReadTransaction rtx = session.beginReadTransaction();
+		rtx.moveTo(result.get(0).getNodeKey());
+		TestCase.assertEquals("oops1", rtx.getValueOfCurrentNode());
+		rtx.moveTo(result.get(1).getNodeKey());
+		TestCase.assertEquals("oops2", rtx.getValueOfCurrentNode());
+		rtx.moveTo(result.get(2).getNodeKey());
+		TestCase.assertEquals("oops3", rtx.getValueOfCurrentNode());
+	}
+
+	@Test
+	public void testB1() throws Exception {
+		xpe.setNamespaceContext(new DocNamespaceContext());
+		final XPathExpression findLine = xpe.compile("//b[1]");
+		final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(session,
+				config, TestHelper.PATHS.PATH1.getFile().getAbsolutePath())
+				.wrap();
+
+		// Execute XPath.
+		final String result = (String) findLine.evaluate(doc,
+				XPathConstants.STRING);
+
+		TestCase.assertNotNull(result);
+		TestCase.assertEquals("foo", result);
+	}
+
+	@Test
+	public void testB2() throws Exception {
+		xpe.setNamespaceContext(new DocNamespaceContext());
+		final XPathExpression findLine = xpe.compile("//b[2]");
+		final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(session,
+				config, TestHelper.PATHS.PATH1.getFile().getAbsolutePath())
+				.wrap();
+
+		// Execute XPath.
+		final String result = (String) findLine.evaluate(doc,
+				XPathConstants.STRING);
+
+		TestCase.assertNotNull(result);
+		TestCase.assertEquals("bar", result);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testBAll() throws Exception {
+		xpe.setNamespaceContext(new DocNamespaceContext());
+		final XPathExpression findLine = xpe.compile("//b");
+		final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(session,
+				config, TestHelper.PATHS.PATH1.getFile().getAbsolutePath())
+				.wrap();
+
+		// Execute XPath.
+		final ArrayList<IItem> result = (ArrayList<IItem>) findLine.evaluate(
+				doc, XPathConstants.NODESET);
+
+		TestCase.assertNotNull(result);
+		TestCase.assertEquals(5, result.get(0).getNodeKey());
+		TestCase.assertEquals(9, result.get(1).getNodeKey());
+
+		final IReadTransaction rtx = session.beginReadTransaction();
+		rtx.moveTo(result.get(0).getNodeKey());
+		TestCase.assertEquals("b", rtx.getQNameOfCurrentNode().getLocalPart());
+
+		rtx.moveTo(result.get(1).getNodeKey());
+		TestCase.assertEquals("b", rtx.getQNameOfCurrentNode().getLocalPart());
+	}
+
+	/**
+	 * <h1>Namespace Context</h1>
+	 * 
+	 * <p>
+	 * Namespace Context to test the NodeInfo implementation (
+	 * <code>NodeWrapper</code>). It's written for the test document which is
+	 * written via <code></code>.
+	 * </p>
+	 * 
+	 * @author Johannes Lichtenberger, University of Konstanz
+	 */
+	static class DocNamespaceContext implements NamespaceContext {
+
+		/**
+		 * Get the Namespace URI.
+		 * 
+		 * @param prefix
+		 *            Prefix of the current node.
+		 * @return Return the Namespace URI.
+		 * @throws IllegalArgumentException
+		 *             if prefix is null.
+		 */
+		public String getNamespaceURI(final String prefix) {
+			if (prefix == null) {
+				throw new IllegalArgumentException("Prefix may not be null!");
+			} else if (prefix == XMLConstants.DEFAULT_NS_PREFIX) {
+				return XMLConstants.NULL_NS_URI;
+			} else if (prefix == XMLConstants.XML_NS_PREFIX) {
+				return XMLConstants.XML_NS_URI;
+			} else if (prefix == XMLConstants.XMLNS_ATTRIBUTE) {
+				return XMLConstants.XMLNS_ATTRIBUTE_NS_URI;
+			} else if ("p".equals(prefix)) {
+				return "ns";
+			} else {
+				return XMLConstants.NULL_NS_URI;
+			}
+		}
+
+		/**
+		 * Get the prefix of the namespace.
+		 * 
+		 * @param namespace
+		 *            Namespace of the current node.
+		 * @return "p" if the Namespace equals "ns", otherwise returns null.
+		 */
+		public String getPrefix(final String namespace) {
+			if (namespace == null) {
+				throw new IllegalArgumentException("Namespace may not be null!");
+			} else if (XMLConstants.XML_NS_URI.equals(namespace)) {
+				return XMLConstants.XML_NS_PREFIX;
+			} else if (XMLConstants.XMLNS_ATTRIBUTE_NS_URI.equals(namespace)) {
+				return XMLConstants.XMLNS_ATTRIBUTE;
+			} else if (namespace.equals("ns")) {
+				return "p";
+			} else {
+				return null;
+			}
+		}
+
+		/**
+		 * Not needed/supported (only one prefix exists for a NS_URI).
+		 */
+		public Iterator<String> getPrefixes(final String namespace) {
+			throw new UnsupportedOperationException(
+					"Currently not needed by the test document!");
+		}
+	}
+
 }
