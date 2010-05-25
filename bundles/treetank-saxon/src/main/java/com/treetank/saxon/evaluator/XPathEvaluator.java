@@ -24,7 +24,7 @@ import com.treetank.saxon.wrapper.NodeWrapper;
  * <p>The XPath evaluator takes an XPath expression and evaluates the expression
  * against a wrapped Treetank document.</p>
  * 
- * @author johannes
+ * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
 public class XPathEvaluator implements Callable<XPathSelector> {
