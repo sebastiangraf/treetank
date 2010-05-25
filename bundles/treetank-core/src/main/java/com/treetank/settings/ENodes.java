@@ -17,15 +17,17 @@ public enum ENodes {
     /** Node kind is text. */
     TEXT_KIND(3),
     /** Node kind is namespace. */
-    NAMESPACE_KIND(4),
+    NAMESPACE_KIND(13),
     /** Node kind is processing instruction. */
-    PROCESSING_KIND(5),
+    PROCESSING_KIND(7),
     /** Node kind is comment. */
-    COMMENT_KIND(6),
+    COMMENT_KIND(8),
     /** Node kind is document root. */
-    ROOT_KIND(7),
-    /** Node kind is document root. */
-    DELETE_KIND(8);
+    ROOT_KIND(9),
+    /** Whitespace text*/
+    WHITESPACE_KIND(4),
+    /** Node kind is deleted node. */
+    DELETE_KIND(5);
 
     /** Identifier */
     private final int mKind;
@@ -71,20 +73,23 @@ public enum ENodes {
         case 3:
             returnVal = TEXT_KIND;
             break;
-        case 4:
+        case 13:
             returnVal = NAMESPACE_KIND;
             break;
-        case 5:
+        case 7:
             returnVal = PROCESSING_KIND;
             break;
-        case 6:
+        case 8:
             returnVal = COMMENT_KIND;
             break;
-        case 7:
+        case 9:
             returnVal = ROOT_KIND;
             break;
-        case 8:
+        case 5:
             returnVal = DELETE_KIND;
+            break;
+        case 4:
+            returnVal = WHITESPACE_KIND;
             break;
         default:
             returnVal = null;
