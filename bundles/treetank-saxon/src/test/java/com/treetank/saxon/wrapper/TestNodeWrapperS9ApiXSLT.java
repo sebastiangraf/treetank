@@ -41,24 +41,25 @@ import com.treetank.utils.DocumentCreater;
  */
 public final class TestNodeWrapperS9ApiXSLT {
 
-  /** Treetank session on Treetank test document. */
-  private transient static ISession sessionTest;
-
-  @Before
-  public void setUp() throws TreetankException {
-    Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
-    final IDatabase database =
-        Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
-    sessionTest = database.getSession();
-    final IWriteTransaction wtx = sessionTest.beginWriteTransaction();
-    DocumentCreater.create(wtx);
-    wtx.commit();
-    wtx.close();
-  }
+//  /** Treetank session on Treetank test document. */
+//  private transient static ISession sessionTest;
+//
+//  @Before
+//  public void setUp() throws TreetankException {
+//    Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
+//    final IDatabase database =
+//        Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
+//    sessionTest = database.getSession();
+//    final IWriteTransaction wtx = sessionTest.beginWriteTransaction();
+//    DocumentCreater.create(wtx);
+//    wtx.commit();
+//    wtx.close();
+//  }
 
   @After
   public void tearDown() throws TreetankException {
     Database.forceCloseDatabase(TestHelper.PATHS.PATH1.getFile());
+    Database.forceCloseDatabase(TestHelper.PATHS.PATH2.getFile());
   }
 
   @Test
@@ -89,9 +90,6 @@ public final class TestNodeWrapperS9ApiXSLT {
     saxonTransform(books, stylesheet);
 
     Database.truncateDatabase(TestHelper.PATHS.PATH2.getFile());
-    Database.createDatabase(new DatabaseConfiguration(TestHelper.PATHS.PATH1
-        .getFile()));
-
     final IDatabase database =
         Database.openDatabase(TestHelper.PATHS.PATH2.getFile());
     final ISession sessionBooks = database.getSession();
