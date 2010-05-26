@@ -31,6 +31,8 @@
   <p>
     Code example for use with XQueryEvaluator
     <code><pre>
+      final File file = new File("src" + File.separator + "test"
+             + File.separator + "resources" + File.separator + "testfile");
       Database.truncateDatabase(file);
       final IDatabase database = Database.openDatabase(file);
       final ISession session = database.getSession(); 
@@ -47,6 +49,8 @@
   <p>
     Code example for use with XQueryEvaluatorOutputStream:
     <code><pre>
+      final File file = new File("src" + File.separator + "test"
+         + File.separator + "resources" + File.separator + "testfile");
       Database.truncateDatabase(file);
       final IDatabase database = Database.openDatabase(file);
       final ISession session = database.getSession();   
@@ -65,7 +69,7 @@
   </p>
   <p>
     Code example for use with XQueryEvaluatorSAXHandler:
-    <code><pre>    
+    <code><pre>  
       final StringBuilder strBuilder = new StringBuilder();
       final ContentHandler contHandler = new XMLFilterImpl() {
 
@@ -100,6 +104,8 @@
         }
       };
 
+      final File file = new File("src" + File.separator + "test"
+             + File.separator + "resources" + File.separator + "testfile");
       Database.truncateDatabase(file);
       final IDatabase database = Database.openDatabase(file);
       final ISession session = database.getSession();   
@@ -116,6 +122,21 @@
   <p>
     Code example for use with XSLTEvaluator:
     <code><pre>
+      final File file = new File("src" + File.separator + "test"
+         + File.separator + "resources" + File.separator + "testfile");
+      final File stylesheet = new File("src" + File.separator + "test"
+         + File.separator + "resources" + File.separator + "stylesheet.xsl");
+      final IDatabase database = Database.openDatabase(file);
+      final ISession session = database.getSession();
+      
+      final Serializer serializer =
+        new XSLTEvaluator(
+            session,
+            file,
+            stylesheet,
+            new ByteArrayOutputStream()).call();
+      
+      System.out.prinln(serializer.getOutputDestination.toString());
     </pre></code>
   </p>
  *
