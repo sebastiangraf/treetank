@@ -45,8 +45,6 @@ import com.treetank.axis.PrecedingAxis;
 import com.treetank.axis.PrecedingSiblingAxis;
 import com.treetank.axis.TextFilter;
 import com.treetank.exception.TreetankException;
-import com.treetank.node.AbstractNode;
-import com.treetank.node.ElementNode;
 import com.treetank.settings.ENodes;
 
 /**
@@ -278,9 +276,9 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
       for (int i = 0; i < atts; i++) {
         mRTX.moveToAttribute(i);
 
-        final String localPart = qName.getLocalPart();
+        final String localPart = mRTX.getQNameOfCurrentNode().getLocalPart();
 
-        if (local.equals(localPart) && uri.equals(qName.getNamespaceURI())) {
+        if (local.equals(localPart) && uri.equals(mRTX.getQNameOfCurrentNode().getNamespaceURI())) {
           attVal = mRTX.getValueOfCurrentNode();
           break;
         }
