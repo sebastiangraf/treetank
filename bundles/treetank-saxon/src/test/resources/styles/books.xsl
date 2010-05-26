@@ -19,7 +19,7 @@
 <xsl:template match="/">
 
     <html>
-    <xsl:comment>Generated at <xsl:value-of select="$now"/></xsl:comment>
+    <!-- <xsl:comment>Generated at <xsl:value-of select="$now"/></xsl:comment> -->
 
     <xsl:call-template name="header">
         <xsl:with-param name="title" select="'Book List'"/>
@@ -128,7 +128,7 @@
     </div>
 </xsl:template>
 
-<xsl:template match="CATEGORY" >
+<!-- <xsl:template match="CATEGORY" >
     <h4>CATEGORY <xsl:number value="position()" format="I"/></h4>
     <table>
     <xsl:for-each select="@*">
@@ -139,7 +139,7 @@
     </xsl:for-each>
     </table>
     <hr/>
-</xsl:template>
+</xsl:template> -->
 
 </xsl:transform>	
 <!-- Stylus Studio meta-information - (c)1998-2004. Sonic Software Corporation. All rights reserved.

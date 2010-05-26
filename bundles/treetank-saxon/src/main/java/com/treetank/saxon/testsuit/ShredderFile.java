@@ -49,6 +49,7 @@ public final class ShredderFile {
     final File target = new File(args[1]);
     
     shredder(source, target);
+    System.out.println("Shreddered!");
   }
   
   /**
@@ -81,6 +82,8 @@ public final class ShredderFile {
       LOGGER.error(e.getMessage(), e);
     } catch (Exception e) {
       LOGGER.error(e.getMessage(), e);
+    } finally {
+      
     }
   }
 }
