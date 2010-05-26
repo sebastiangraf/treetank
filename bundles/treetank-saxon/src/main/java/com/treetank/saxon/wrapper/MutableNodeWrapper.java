@@ -15,12 +15,16 @@ import com.treetank.exception.TreetankException;
 import com.treetank.settings.ENodes;
 
 /**
- * Currently not used. For use with XQuery Update. Requires a "commercial" Saxon
- * license.
+ * <h1>MutableNodeWrapper</h1>
  * 
- * Implements all methods which modify the (existing) tree.
+ * <p>Implements all methods which are needed to create a modifiable Saxon
+ * internal node. Therefore it wraps Treetank's nodes into the appropriate
+ * format.</p>
  * 
- * TODO: full implementation.
+ * <p><strong>Currently not used.</strong> For use with XQuery Update and 
+ * requires a "commercial" Saxon license. Furthermore as of now not stable and 
+ * doesn't support third party applications. Needs to be fully implemented and 
+ * tested.</p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 

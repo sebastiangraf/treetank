@@ -7,10 +7,6 @@ import javax.xml.stream.XMLEventReader;
 
 import junit.framework.TestCase;
 
-import net.sf.saxon.s9api.XPathSelector;
-import net.sf.saxon.s9api.XdmItem;
-import net.sf.saxon.s9api.XdmValue;
-
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +18,6 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
-import com.treetank.saxon.evaluator.XQueryEvaluator;
 import com.treetank.saxon.evaluator.XQueryEvaluatorOutputStream;
 import com.treetank.service.xml.XMLShredder;
 
@@ -32,7 +27,7 @@ import com.treetank.service.xml.XMLShredder;
  * @author johannes
  * 
  */
-public final class TestNodeWrapperS9ApiXQuery {
+public final class TestNodeWrapperS9ApiXQueryOutputStream {
 
   /** Treetank session on books document. */
   private transient static ISession sessionBooks;
@@ -74,61 +69,47 @@ public final class TestNodeWrapperS9ApiXQuery {
 
   @Test
   public void testWhereBooks() {
-    final XdmValue value =
-        new XQueryEvaluator(
+    final XQueryEvaluatorOutputStream xqe =
+        new XQueryEvaluatorOutputStream(
             "for $x in /bookstore/book where $x/price>30 return $x/title",
             sessionBooks,
-            TestHelper.PATHS.PATH1.getFile().getAbsoluteFile()).call();
-
-    final StringBuilder strBuilder = new StringBuilder();
-
-    for (final XdmItem item : value) {
-      strBuilder.append(item.toString());
-    }
-
+            TestHelper.PATHS.PATH1.getFile().getAbsoluteFile(),
+            new ByteArrayOutputStream());
+    final String result = xqe.call().toString();
     TestCase
         .assertEquals(
             "<title lang=\"en\">XQuery Kick Start</title><title lang=\"en\">Learning XML</title>",
-            strBuilder.toString());
+            result);
   }
 
   @Test
   public void testOrderByBooks() {
-    final XdmValue value =
-        new XQueryEvaluator(
+    final XQueryEvaluatorOutputStream xqe =
+        new XQueryEvaluatorOutputStream(
             "for $x in /bookstore/book where $x/price>30 order by $x/title return $x/title",
             sessionBooks,
-            TestHelper.PATHS.PATH1.getFile().getAbsoluteFile()).call();
-
-    final StringBuilder strBuilder = new StringBuilder();
-
-    for (final XdmItem item : value) {
-      strBuilder.append(item.toString());
-    }
-
+            TestHelper.PATHS.PATH1.getFile().getAbsoluteFile(),
+            new ByteArrayOutputStream());
+    final String result = xqe.call().toString();
     TestCase
         .assertEquals(
             "<title lang=\"en\">Learning XML</title><title lang=\"en\">XQuery Kick Start</title>",
-            strBuilder.toString());
+            result);
   }
 
   @Test
   public void testFLOWR() {
-    final XdmValue value =
-        new XQueryEvaluator(
+    final XQueryEvaluatorOutputStream xqe =
+        new XQueryEvaluatorOutputStream(
             "for $x in /bookstore/book let $y := $x/price where $y>30 order by $x/title return $x/title",
             sessionBooks,
-            TestHelper.PATHS.PATH1.getFile().getAbsoluteFile()).call();
-    final StringBuilder strBuilder = new StringBuilder();
-
-    for (final XdmItem item : value) {
-      strBuilder.append(item.toString());
-    }
-
+            TestHelper.PATHS.PATH1.getFile().getAbsoluteFile(),
+            new ByteArrayOutputStream());
+    final String result = xqe.call().toString();
     TestCase
         .assertEquals(
             "<title lang=\"en\">Learning XML</title><title lang=\"en\">XQuery Kick Start</title>",
-            strBuilder.toString());
+            result);
   }
 
 }

@@ -6,15 +6,7 @@ import java.util.concurrent.Callable;
 
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import com.treetank.api.ISession;
-import com.treetank.saxon.wrapper.DocumentWrapper;
-import com.treetank.saxon.wrapper.NodeWrapper;
-
 import net.sf.saxon.Configuration;
-import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.Serializer;
@@ -22,6 +14,13 @@ import net.sf.saxon.s9api.XdmNode;
 import net.sf.saxon.s9api.XsltCompiler;
 import net.sf.saxon.s9api.XsltExecutable;
 import net.sf.saxon.s9api.XsltTransformer;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.treetank.api.ISession;
+import com.treetank.saxon.wrapper.DocumentWrapper;
+import com.treetank.saxon.wrapper.NodeWrapper;
 
 /**
  * <h1>XSLT Evaluator</h1>
