@@ -1,67 +1,124 @@
 /**
-<h1>Access to Treetank</h1>
-    <p>
-      The access semantics is as follows:
-      <li>There can only be a single Database instance per JVM and TreeTank directory.
-      <li>There can only be a single Session instance per JVM and Database
-      <li>There can only be a single WriteTransaction instance per Session.
-      <li>There can be multiple ReadTransaction instances per session.
-    </p>
-    <p>
-      Code examples:
-      <pre>
-        final ISession someSession = Session.beginSession("example.tnk");
-        final ISession otherSession = Session.beginSession("other.tnk");
+<h1>Evaluators to simplify Saxon access.</h1>
+  <p>
+    Implemented as Callables, therefore can be used in ThreadPools.
+  </p>
+  <p>
+    Code example for use with XPathEvaluator:
+    <code><pre>
+      Database.truncateDatabase(file);
+      final IDatabase database = Database.openDatabase(file);
+      final ISession session = database.getSession();   
+      final XPathSelector selector = new XPathEvaluator(QUERYSTRING,
+        session, file).call();
+
+      final StringBuilder strBuilder = new StringBuilder();
+
+      for (final XdmItem item : selector) {
+        strBuilder.append(item.toString());
+      }
         
-        //! final ISession concurrentSession = Session.beginSessoin("other.tnk");
-        //! Error: There already is a session bound to "other.tnk" (otherSession).
+      System.out.println(strBuilder.toString());
+    </pre></code>
+    
+    You can do everything you like with the resulting items. The method <em>
+    getStringValue()</em> of the item get's the string value from the underlying 
+    node type. In case of an element it concatenates all descending text-nodes.
+    To get the underlying node, which is a Treetank item instead of a Saxon item
+    can be retrieved by using the identically named method <em>
+    getUnderlyingNode()</em>.
+  </p>
+  <p>
+    Code example for use with XQueryEvaluator
+    <code><pre>
+      Database.truncateDatabase(file);
+      final IDatabase database = Database.openDatabase(file);
+      final ISession session = database.getSession(); 
+      
+      final StringBuilder strBuilder = new StringBuilder();
+
+      for (final XdmItem item : value) {
+        strBuilder.append(item.toString());
+      }
+      
+      System.out.println(strBuilder.toString());
+    </pre></code>
+  </p>
+  <p>
+    Code example for use with XQueryEvaluatorOutputStream:
+    <code><pre>
+      Database.truncateDatabase(file);
+      final IDatabase database = Database.openDatabase(file);
+      final ISession session = database.getSession();   
+      final XQueryEvaluator xqe =
+        new XQueryEvaluator(
+          XQUERYSTRING,
+          session,
+          file,
+          new ByteArrayOutputStream());
+      final String result = xqe.call().toString();
         
-        final IWriteTransaction someWTX = someSession.beginWriteTransaction();
-        final IWriteTransaction otherWTX = otherSession.beginWriteTransaction();
-        
-        //! final IWriteTransaction concurrentWTX = otherSession.beginWriteTransaction();
-        //! Error: There already is a write transaction running (wtx).
-        
-        final IReadTransaction someRTX = someSession.beginReadTransaction();
-        final IReadTransaction someConcurrentRTX = someSession.beginReadTransaction();
-        
-        //! otherSession.close();
-        //! Error: All transactions must be closed first.
-        
-        otherWTX.commit();
-        otherWTX.abort();
-        otherWTX.commit();
-        otherWTX.close();
-        otherSession.close();
-        
-        someWTX.abort();
-        someWTX.close();
-        someRTX.close();
-        someConcurrentRTX.close();
-        someSession.close();
-      </pre>
-    </p>
-    <p>
-      Best practice to safely manipulate a TreeTank:
-      <pre>
-        final ISession session = Session.beginSession("example.tnk");
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        try {
-          wtx.insertElementAsFirstChild("foo", "", "");
-          ...
-          wtx.commit();
-        } catch (TreetankException e) {
-          wtx.abort();
-          throw new RuntimeException(e);
-        } finally {
-          wtx.close();
+      System.out.println(result);
+    </pre></code>
+    
+    Note that you can use other output streams as well.
+  </p>
+  <p>
+    Code example for use with XQueryEvaluatorSAXHandler:
+    <code><pre>    
+      final StringBuilder strBuilder = new StringBuilder();
+      final ContentHandler contHandler = new XMLFilterImpl() {
+
+        @Override
+        public void startElement(
+          final String uri,
+          final String localName,
+          final String qName,
+          final Attributes atts) throws SAXException {
+          strBuilder.append("<" + localName);
+
+          for (int i = 0; i < atts.getLength(); i++) {
+            strBuilder.append(" " + atts.getQName(i));
+            strBuilder.append("=\"" + atts.getValue(i) + "\"");
+          }
+
+          strBuilder.append(">");
         }
-        session.close(); // Might also stand in the finally...        
-      </pre>
-    </p>
+
+        @Override
+        public void endElement(String uri, String localName, String qName)
+            throws SAXException {
+          strBuilder.append("</" + localName + ">");
+        }
+
+        @Override
+        public void characters(final char[] ch, final int start, final int length)
+            throws SAXException {
+          for (int i = start; i < start + length; i++) {
+            strBuilder.append(ch[i]);
+          }
+        }
+      };
+
+      Database.truncateDatabase(file);
+      final IDatabase database = Database.openDatabase(file);
+      final ISession session = database.getSession();   
+
+      new XQueryEvaluatorSAXHandler(
+          XQUERYSTRING,
+          session,
+          file,
+          contHandler).call();
+          
+      System.out.println(strBuilder.toString());
+    </pre></code>
+  </p>
+  <p>
+    Code example for use with XSLTEvaluator:
+    <code><pre>
+    </pre></code>
+  </p>
  *
- * @author Marc Kramis, University of Konstanz
- * @author Sebastian Graf, University of Konstanz
+ * @author Johannes Lichtenberger, University of Konstanz
  */
 package com.treetank.saxon.evaluator;
-

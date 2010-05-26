@@ -14,7 +14,11 @@ import com.treetank.axis.DescendantAxis;
 import com.treetank.settings.ENodes;
 
 /**
- * Wraps a Treetank document (represents the root node).
+ * <h1>DocumentWrapper</h1>
+ * 
+ * <p>Wraps a Treetank document and represents a document node. Therefore it
+ * implements Saxon's DocumentInfo core interface and also represents a Node in
+ * Saxon's internal node implementation. Thus it extends <tt>NodeWrapper</tt>.</p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
