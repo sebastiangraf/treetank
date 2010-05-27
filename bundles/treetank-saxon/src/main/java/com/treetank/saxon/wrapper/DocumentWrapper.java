@@ -26,16 +26,16 @@ import com.treetank.settings.ENodes;
 public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
 
 	/** Base URI of the document. */
-	protected static String M_BASE_URI;
+	protected transient String mBaseURI;
 
 	/** Saxon configuration. */
-	protected static Configuration mConfig;
+	protected transient Configuration mConfig;
 
 	/** Unique document number. */
 	protected static int documentNumber;
 
 	/** Treetank session. */
-	private final ISession mSession;
+	private transient final ISession mSession;
 
 	/**
 	 * Wrap a Treetank document.
@@ -52,7 +52,7 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
 		super(session, 0);
 		mSession = session;
 		nodeKind = ENodes.ROOT_KIND;
-		M_BASE_URI = baseURI;
+		mBaseURI = baseURI;
 		mDocWrapper = this;
 		setConfiguration(config);
 	}
@@ -171,7 +171,7 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
 	 * @return BaseURI.
 	 */
 	public String getBaseURI() {
-		return M_BASE_URI;
+		return mBaseURI;
 	}
 
 	/**
@@ -181,6 +181,6 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
 	 *            Usually the absoulte path of the document.
 	 */
 	protected void setBaseURI(final String baseURI) {
-		M_BASE_URI = baseURI;
+		mBaseURI = baseURI;
 	}
 }
