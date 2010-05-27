@@ -13,7 +13,6 @@ import net.sf.saxon.s9api.XQueryExecutable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xml.sax.ContentHandler;
-import org.xml.sax.helpers.DefaultHandler;
 
 import com.treetank.api.ISession;
 import com.treetank.saxon.wrapper.DocumentWrapper;

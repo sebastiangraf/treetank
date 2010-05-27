@@ -63,7 +63,6 @@ public final class TestNodeWrapperS9ApiXSLT {
   }
 
   @Test
-  @Ignore
   public void testA() throws Exception {
     final File stylesheet =
         new File("src"

@@ -1,13 +1,10 @@
 package com.treetank.saxon.wrapper;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import javax.xml.stream.XMLEventReader;
 
 import junit.framework.TestCase;
-
-import net.sf.saxon.s9api.XPathSelector;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmValue;
 
@@ -23,7 +20,6 @@ import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.saxon.evaluator.XQueryEvaluator;
-import com.treetank.saxon.evaluator.XQueryEvaluatorOutputStream;
 import com.treetank.service.xml.XMLShredder;
 
 /**
