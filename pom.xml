@@ -22,7 +22,7 @@
 	</issueManagement>
 	<ciManagement>
 		<system>hudson</system>
-		<url>http://xen4.disy.inf.uni-konstanz.de:8080</url>
+		<url>http://xen5.disy.inf.uni-konstanz.de:8080/hudson</url>
 	</ciManagement>
 	<organization>
 		<name>University of Konstanz, Distributed Systems Lab</name>
@@ -54,21 +54,14 @@
 		</developer>
 	</developers>
 	<distributionManagement>
-		<site>
-			<id>xen5</id>
-			<name>Xen5 Project sites</name>
-			<url>scp://xen5.disy.inf.uni-konstanz.de/home/mavenadmin/doku/${project.groupId}/${project.artifactId}/${project.version}</url>
-		</site>
 		<repository>
-			<id>xen5</id>
-			<name>Xen5 Repository</name>
-			<url>scp://xen5.disy.inf.uni-konstanz.de/home/mavenadmin/internalRepo/repository</url>
+			<id>disyInternal</id>
+			<url>http://xen5.disy.inf.uni-konstanz.de:8080/archiva/repository/disyInternal/</url>
 			<uniqueVersion>false</uniqueVersion>
 		</repository>
 		<snapshotRepository>
-			<id>xen5</id>
-			<name>Xen5 SnapshotRepository</name>
-			<url>scp://xen5.disy.inf.uni-konstanz.de/home/mavenadmin/internalRepo/snapshotRepository</url>
+			<id>disyInternalSnapshot</id>
+			<url>http://xen5.disy.inf.uni-konstanz.de:8080/archiva/repository/disyInternalSnapshot/</url>
 			<uniqueVersion>false</uniqueVersion>
 		</snapshotRepository>
 	</distributionManagement>
