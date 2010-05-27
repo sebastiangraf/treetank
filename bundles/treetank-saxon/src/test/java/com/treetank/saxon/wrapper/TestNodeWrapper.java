@@ -264,6 +264,11 @@ public class TestNodeWrapper {
     iterator = node.iterateAxis(Axis.NAMESPACE);    
     NamespaceNodeImpl namespace = (NamespaceNodeImpl) iterator.next();
     
+    /*
+     *  Elements have always the default xml:NamespaceConstant.XML namespace, so 
+     *  we have to search if "ns" is found somewhere in the iterator (order
+     *  unpredictable because it's implemented with a HashMap internally).
+     */
     while (!"ns".equals(namespace.getStringValueCS()) && namespace != null) {
       namespace = (NamespaceNodeImpl) iterator.next();
     }

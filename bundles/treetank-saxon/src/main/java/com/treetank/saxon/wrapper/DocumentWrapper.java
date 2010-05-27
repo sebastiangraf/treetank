@@ -79,8 +79,10 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
 
 	/**
 	 * {@inheritDoc}
+	 * 
+	 * @see net.sf.saxon.om.DocumentInfo#getUnparsedEntity(String name)
 	 */
-	public String[] getUnparsedEntity(String arg0) {
+	public String[] getUnparsedEntity(final String name) {
 		throw new UnsupportedOperationException(
 				"Currently not supported by Treetank!");
 	}
