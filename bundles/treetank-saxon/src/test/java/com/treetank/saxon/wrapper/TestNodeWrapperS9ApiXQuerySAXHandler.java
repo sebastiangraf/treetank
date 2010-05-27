@@ -1,15 +1,10 @@
 package com.treetank.saxon.wrapper;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.util.Iterator;
 
 import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.events.Attribute;
 
 import junit.framework.TestCase;
-
-import net.sf.saxon.s9api.SAXDestination;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -17,7 +12,6 @@ import org.junit.Test;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 import com.treetank.TestHelper;
@@ -27,7 +21,6 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
-import com.treetank.saxon.evaluator.XQueryEvaluatorOutputStream;
 import com.treetank.saxon.evaluator.XQueryEvaluatorSAXHandler;
 import com.treetank.service.xml.XMLShredder;
 

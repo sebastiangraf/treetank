@@ -1,10 +1,8 @@
 package com.treetank.saxon.wrapper;
 
 import java.io.File;
-import java.io.IOException;
 
 import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLStreamException;
 
 import junit.framework.TestCase;
 import net.sf.saxon.Configuration;
@@ -19,7 +17,6 @@ import net.sf.saxon.value.UntypedAtomicValue;
 import net.sf.saxon.value.Value;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -27,12 +24,10 @@ import org.junit.Test;
 
 import com.treetank.TestHelper;
 import com.treetank.access.Database;
-import com.treetank.access.DatabaseConfiguration;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
-import com.treetank.exception.TreetankIOException;
 import com.treetank.service.xml.XMLShredder;
 import com.treetank.utils.DocumentCreater;
 
