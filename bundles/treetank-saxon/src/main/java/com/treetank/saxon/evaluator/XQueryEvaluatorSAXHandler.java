@@ -21,7 +21,7 @@ import com.treetank.saxon.wrapper.NodeWrapper;
 /**
  * <h1>XQuery evaluator</h1>
  * 
- * <p>Evaluates an XQuery expression and returns the result to a content 
+ * <p>Evaluates an XQuery expression and returns the result to a given content 
  * handler.</p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz

@@ -21,7 +21,8 @@ import com.treetank.saxon.wrapper.NodeWrapper;
 /**
  * <h1>XQuery evaluator</h1>
  * 
- * <p>Evaluates an XQuery expression.</p>
+ * <p>Evaluates an XQuery expression against a Treetank storage and returns
+ * an XdmValue instance, which corresponds to zero or more XdmItems.</p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 

@@ -21,7 +21,8 @@ import com.treetank.saxon.wrapper.NodeWrapper;
 /**
  * <h1>XQuery evaluator</h1>
  * 
- * <p>Evaluates an XQuery expression.</p>
+ * <p>Evaluates an XQuery expression against a Treetank storage. Output is 
+ * available through an output stream.</p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
