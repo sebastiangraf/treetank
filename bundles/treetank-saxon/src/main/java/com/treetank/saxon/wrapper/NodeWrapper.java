@@ -355,15 +355,14 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
    * @see net.sf.saxon.om.NodeInfo#getDeclaredNamespaces(int[])
    */
   public int[] getDeclaredNamespaces(final int[] buffer) {
-    mRTX.moveTo(mKey);
+    int[] retVal = null;
     if (nodeKind == ENodes.ELEMENT_KIND) {
       final int count = mRTX.getNode().getNamespaceCount();
 
       if (count == 0) {
-        return EMPTY_NAMESPACE_LIST;
+        retVal = EMPTY_NAMESPACE_LIST;
       } else {
-
-        int[] result =
+        retVal =
             (buffer == null || count > buffer.length ? new int[count] : buffer);
         final NamePool pool = getNamePool();
         int n = 0;
@@ -371,25 +370,23 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         for (int i = 0; i < count; i++) {
           mRTX.moveTo(i);
           final String prefix = getPrefix();
-          final String uri = qName.getNamespaceURI();
+          final String uri = getURI();
           mRTX.moveTo(mKey);
 
-          result[n++] = pool.allocateNamespaceCode(prefix, uri);
+          retVal[n++] = pool.allocateNamespaceCode(prefix, uri);
         }
 
         /*
          * If the supplied array is larger than required, then the first
          * unused entry will be set to -1.
          */
-        if (count < result.length) {
-          result[count] = -1;
+        if (count < retVal.length) {
+          retVal[count] = -1;
         }
-
-        return result;
       }
     }
 
-    return new int[0];
+    return retVal;
   }
 
   /**
@@ -698,7 +695,6 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
    * @see net.sf.saxon.om.NodeInfo#hasChildNodes()
    */
   public boolean hasChildNodes() {
-    mRTX.moveTo(mKey);
     return mRTX.getNode().getChildCount() > 0;
   }
 
@@ -712,21 +708,23 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
   }
 
   /**
-   * Not supported.
+   * {@inheritDoc}
    * 
    * @see net.sf.saxon.om.NodeInfo#isIdref()
    */
   public boolean isIdref() {
-    return false;
+    throw new UnsupportedOperationException("Currently not supported by Treetank!");
+//    return false;
   }
 
   /**
-   * Not supported.
+   * {@inheritDoc}
    * 
    * @see net.sf.saxon.om.NodeInfo#isNilled()
    */
   public boolean isNilled() {
-    return false;
+    throw new UnsupportedOperationException("Currently not supported by Treetank!");
+//    return false;
   }
 
   /**
