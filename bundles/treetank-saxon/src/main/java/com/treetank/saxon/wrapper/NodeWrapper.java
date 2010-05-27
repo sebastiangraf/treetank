@@ -19,8 +19,10 @@ import net.sf.saxon.om.SingletonIterator;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.om.VirtualNode;
 import net.sf.saxon.pattern.AnyNodeTest;
+import net.sf.saxon.pattern.NameTest;
 import net.sf.saxon.pattern.NodeTest;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.type.Type;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.StringValue;
 import net.sf.saxon.value.UntypedAtomicValue;
@@ -162,14 +164,16 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
    * @see net.sf.saxon.om.NodeInfo#atomize()
    */
   public Value atomize() throws XPathException {
-    StringValue value = null;
+    Value value = null;
 
     switch (nodeKind) {
     case COMMENT_KIND:
     case PROCESSING_KIND:
+      // The content as an instance of the xs:string data type.
       value = new StringValue(getStringValueCS());
       break;
     default:
+      // The content as an instance of the xdt:untypedAtomic data type.
       value = new UntypedAtomicValue(getStringValueCS());
     }
 
@@ -183,7 +187,6 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
    */
   // TODO compareTo von AbstractNode nehmen
   public int compareOrder(final NodeInfo node) {
-    mRTX.moveTo(mKey);
     int retVal;
 
     // Should be in the same document.
@@ -219,7 +222,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     //    case PROCESSING_KIND:
     //		new AbstractNode(1, mKey);
 
-    if (((NodeWrapper) node).mKey > mKey) {
+    else if (((NodeWrapper) node).mKey > mKey) {
       retVal = -1;
     } else if (((NodeWrapper) node).mKey == mKey) {
       retVal = 0;
@@ -266,26 +269,37 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
   public String getAttributeValue(final int fingerprint) {
     String attVal = null;
 
-    if (nodeKind == ENodes.ELEMENT_KIND) {
-      final NamePool pool = mDocWrapper.getNamePool();
-      final String uri = pool.getURI(fingerprint);
-      final String local = pool.getLocalName(fingerprint);
+    final NameTest test =
+        new NameTest(Type.ATTRIBUTE, fingerprint, getNamePool());
+    final AxisIterator iterator = iterateAxis(Axis.ATTRIBUTE, test);
+    final NodeInfo attribute = (NodeInfo) iterator.next();
 
-      final long atts = mRTX.getNode().getAttributeCount();
-
-      for (int i = 0; i < atts; i++) {
-        mRTX.moveToAttribute(i);
-
-        final String localPart = mRTX.getQNameOfCurrentNode().getLocalPart();
-
-        if (local.equals(localPart) && uri.equals(mRTX.getQNameOfCurrentNode().getNamespaceURI())) {
-          attVal = mRTX.getValueOfCurrentNode();
-          break;
-        }
-
-        mRTX.moveTo(mKey);
-      }
+    if (attribute != null) {
+      attVal = attribute.getStringValue();
     }
+
+    mRTX.moveTo(mKey);
+
+    //    if (nodeKind == ENodes.ELEMENT_KIND) {
+    //      final NamePool pool = mDocWrapper.getNamePool();
+    //      final String uri = pool.getURI(fingerprint);
+    //      final String local = pool.getLocalName(fingerprint);
+    //
+    //      final String namespURI = getURI();
+    //      final String localPart = getLocalPart();
+    //
+    //      final long atts = mRTX.getNode().getAttributeCount();
+    //
+    //      for (int i = 0; i < atts; i++) {
+    //        mRTX.moveToAttribute(i);
+    //
+    //        if (local.equals(localPart) && uri.equals(namespURI)) {
+    //          attVal = mRTX.getValueOfCurrentNode();
+    //          mRTX.moveTo(mKey);
+    //          break;
+    //        }
+    //      }
+    //    }
 
     return attVal;
   }
@@ -296,8 +310,19 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
    * @see net.sf.saxon.om.NodeInfo#getBaseURI()
    */
   public String getBaseURI() {
-    mRTX.moveTo(mKey);
-    String baseURI = getAttributeValue(StandardNames.XML_BASE);
+    String baseURI = null;
+
+    NodeInfo node = this;
+    // Search for baseURI in parent nodes (xml:base="").
+    while (node != null) {
+      baseURI = getAttributeValue(StandardNames.XML_BASE);
+
+      if (baseURI == null) {
+        node = node.getParent();
+      } else {
+        break;
+      }
+    }
 
     if (baseURI == null) {
       baseURI = mDocWrapper.getBaseURI();
@@ -378,8 +403,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     switch (nodeKind) {
     case ELEMENT_KIND:
     case ATTRIBUTE_KIND:
-      mRTX.moveTo(mKey);
-      dName = getPrefix() + ":" + qName.getLocalPart();
+      dName = getPrefix() + ":" + getLocalPart();
       break;
     case NAMESPACE_KIND:
     case PROCESSING_KIND:
@@ -398,7 +422,6 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
    * @see net.sf.saxon.om.NodeInfo#getDocumentNumber()
    */
   public long getDocumentNumber() {
-    mRTX.moveTo(mKey);
     return mDocWrapper.getBaseURI().hashCode();
   }
 
@@ -417,13 +440,16 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
    * @see net.sf.saxon.om.NodeInfo#getFingerprint()
    */
   public int getFingerprint() {
-    final int nameCount = getNameCode();
+    int retVal;
 
+    final int nameCount = getNameCode();
     if (nameCount == -1) {
-      return -1;
+      retVal = -1;
     } else {
-      return nameCount & 0xfffff;
+      retVal = nameCount & 0xfffff;
     }
+
+    return retVal;
   }
 
   /**
@@ -467,7 +493,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     case ELEMENT_KIND:
     case ATTRIBUTE_KIND:
     case PROCESSING_KIND:
-    case NAMESPACE_KIND:
+      //    case NAMESPACE_KIND:
       nameCode =
           mDocWrapper.getNamePool().allocate(
               getPrefix(),
@@ -475,7 +501,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
               getLocalPart());
       break;
     default:
-      // Do nothing.
+      // text, comment, document and namespace nodes.
     }
 
     return nameCode;
@@ -567,20 +593,23 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     switch (nodeKind) {
     case ROOT_KIND:
     case ELEMENT_KIND:
-      return expandString();
+      mValue = expandString();
+      break;
     case ATTRIBUTE_KIND:
-      mValue = mRTX.getValueOfCurrentNode();
-      return emptyIfNull(mValue);
+      mValue = emptyIfNull(mRTX.getValueOfCurrentNode());
+      break;
     case TEXT_KIND:
       mValue = mRTX.getValueOfCurrentNode();
-      return mValue;
+      break;
     case COMMENT_KIND:
     case PROCESSING_KIND:
-      mValue = mRTX.getValueOfCurrentNode();
-      return emptyIfNull(mValue);
+      mValue = emptyIfNull(mRTX.getValueOfCurrentNode());
+      break;
     default:
-      return "";
+      mValue = "";
     }
+
+    return mValue;
   }
 
   /**
@@ -603,7 +632,6 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     final FilterAxis axis =
         new FilterAxis(new DescendantAxis(mRTX), new TextFilter(mRTX));
     final FastStringBuffer fsb = new FastStringBuffer(FastStringBuffer.SMALL);
-    fsb.append("");
 
     while (axis.hasNext()) {
       if (mRTX.getNode().isText()) {
@@ -622,8 +650,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
    * @see net.sf.saxon.om.NodeInfo#getSystemId()
    */
   public String getSystemId() {
-    mRTX.moveTo(mKey);
-    return DocumentWrapper.M_BASE_URI;
+    return mDocWrapper.getBaseURI();
   }
 
   /**
@@ -632,7 +659,6 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
    * @return UNTYPED or UNTYPED_ATOMIC.
    */
   public int getTypeAnnotation() {
-    mRTX.moveTo(mKey);
     int type = 0;
     if (nodeKind == ENodes.ATTRIBUTE_KIND) {
       type = StandardNames.XS_UNTYPED_ATOMIC;
@@ -643,12 +669,9 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
   }
 
   /**
-   * Get the URI part of the name of this node. This is the URI corresponding
-   * to the prefix, or the URI of the default namespace if appropriate.
+   * {@inheritDoc}
    * 
-   * @return The URI of the namespace of this node. For an unnamed node,
-   *         return null. For a node with an empty prefix, return an empty
-   *         string.
+   * @see net.sf.saxon.om.NodeInfo#getURI()
    */
   public String getURI() {
     String URI = "";
@@ -656,7 +679,10 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     switch (nodeKind) {
     case ELEMENT_KIND:
     case ATTRIBUTE_KIND:
-      URI = qName.getNamespaceURI();
+    case NAMESPACE_KIND:
+      if (!"".equals(qName.getPrefix())) {
+        URI = qName.getNamespaceURI();
+      }
       break;
     default:
       // Do nothing.
@@ -709,11 +735,15 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
    * @see net.sf.saxon.om.NodeInfo#isSameNodeInfo(NodeInfo)
    */
   public boolean isSameNodeInfo(final NodeInfo other) {
+    boolean retVal;
+
     if (!(other instanceof NodeInfo)) {
-      return false;
+      retVal = false;
+    } else {
+      retVal = ((NodeWrapper) other).mKey == mKey;
     }
 
-    return ((NodeWrapper) other).mKey == mKey;
+    return retVal;
   }
 
   /**
