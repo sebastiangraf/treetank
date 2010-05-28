@@ -27,6 +27,7 @@
     
     <body leftmargin="100" >
     <xsl:apply-templates/>
+
     </body>
     </html>
 </xsl:template>
@@ -35,9 +36,9 @@
     <xsl:param name="title" select="'Default Title'"/>
     <head>
       <xsl:choose>
-      <xsl:when test="not($title)">
+      <xsl:when test="$title">
         <title><xsl:value-of select="$title"/></title>
-      </xsl:when>
+		  </xsl:when>
       <xsl:otherwise>
         <title>Untitled</title>
       </xsl:otherwise>
@@ -55,6 +56,7 @@
       <ul>
         <xsl:for-each select="$top-authors-books">
           <li><xsl:value-of select="TITLE"/></li>
+
         </xsl:for-each>
       </ul>
     
@@ -77,6 +79,7 @@
     <xsl:apply-templates select="BOOKS" mode="by-author"/>
 
     <h2>A complete list of books, grouped by category</h2>
+
     <xsl:apply-templates select="BOOKS" mode="by-category"/>
 
     <h2>List of categories</h2>
@@ -88,6 +91,7 @@
 </xsl:template>   
 
 <xsl:template match="BOOKS" mode="by-author">
+
     <div>
     <xsl:for-each-group select="ITEM" group-by="AUTHOR">
     <xsl:sort select="AUTHOR" order="ascending"/>
@@ -96,6 +100,7 @@
         <table>
         <xsl:for-each select="current-group()">
             <tr>
+
               <td width="100" valign="top"><xsl:number value="position()" format="i"/></td>
               <td>
                 TITLE: <xsl:value-of select="TITLE"/><br/>
@@ -104,6 +109,7 @@
               </td>
             </tr>
         </xsl:for-each>
+
         </table>
         <hr/>
     </xsl:for-each-group>
@@ -114,6 +120,7 @@
     <div>
     <xsl:for-each-group select="ITEM" group-by="@CAT">
     <xsl:sort select="id(@CAT)/@DESC" order="ascending"/>
+
     <xsl:sort select="TITLE" order="ascending"/>
     <h3>CATEGORY: <xsl:value-of select="id(@CAT)/@DESC" /></h3>
         <ol>
@@ -122,16 +129,28 @@
                 TITLE: <xsl:value-of select="TITLE"/>
             </li>                
         </xsl:for-each>
+
         </ol>
         <hr/>
     </xsl:for-each-group>
     </div>
 </xsl:template>
 
+<xsl:template match="CATEGORY" >
+    <h4>CATEGORY <xsl:number value="position()" format="I"/></h4>
+    <ul>
+    <xsl:for-each select="@*">
+        <li><xsl:value-of select="name(.)"/></li>
+    </xsl:for-each>
+    </ul>
+    <hr/>
+</xsl:template>
+
 <!-- <xsl:template match="CATEGORY" >
     <h4>CATEGORY <xsl:number value="position()" format="I"/></h4>
     <table>
     <xsl:for-each select="@*">
+
         <tr>
           <td><xsl:value-of select="name(.)"/></td>
           <td><xsl:value-of select="."/></td>
@@ -142,6 +161,7 @@
 </xsl:template> -->
 
 </xsl:transform>	
+
 <!-- Stylus Studio meta-information - (c)1998-2004. Sonic Software Corporation. All rights reserved.
 <metaInformation>
 <scenarios ><scenario default="yes" name="render books.xml" userelativepaths="yes" externalpreview="no" url="..\data\books.xml" htmlbaseurl="" outputurl="" processortype="saxon8" profilemode="0" profiledepth="" profilelength="" urlprofilexml="" commandline="" additionalpath="" additionalclasspath="" postprocessortype="none" postprocesscommandline="" postprocessadditionalpath="" postprocessgeneratedext=""/></scenarios><MapperMetaTag><MapperInfo srcSchemaPathIsRelative="yes" srcSchemaInterpretAsXML="no" destSchemaPath="" destSchemaRoot="" destSchemaPathIsRelative="yes" destSchemaInterpretAsXML="no"/><MapperBlockPosition></MapperBlockPosition></MapperMetaTag>

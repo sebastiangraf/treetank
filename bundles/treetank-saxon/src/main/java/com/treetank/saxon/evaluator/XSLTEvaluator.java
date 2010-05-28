@@ -73,10 +73,7 @@ public class XSLTEvaluator implements Callable<Serializer> {
       final File file,
       final File stylesheet,
       final OutputStream out) {
-    mSession = session;
-    mTarget = file;
-    mStylesheet = stylesheet;
-    mOut = out;
+    this(session, file, stylesheet, out, null);
   }
 
   /**
@@ -124,9 +121,12 @@ public class XSLTEvaluator implements Callable<Serializer> {
 
       if (mSerializer == null) {
         final Serializer out = new Serializer();
-        out.setOutputProperty(Serializer.Property.METHOD, "html");
+        out.setOutputProperty(Serializer.Property.METHOD, "xml");
+        out.setOutputProperty(Serializer.Property.INDENT, "yes");
         out.setOutputStream(mOut);
         mSerializer = out;
+      } else {
+        mSerializer.setOutputStream(mOut);
       }
       
       final XsltTransformer trans = exp.load();
