@@ -112,7 +112,7 @@ public class TestNodeWrapperS9ApiXQuerySAXHandler {
         "for $x in /bookstore/book where $x/price>30 return $x/title",
         sessionBooks,
         TestHelper.PATHS.PATH1.getFile().getAbsoluteFile(),
-        contHandler).call();
+        contHandler).run();
 
     TestCase
         .assertEquals(

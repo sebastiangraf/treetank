@@ -114,7 +114,7 @@
           XQUERYSTRING,
           session,
           file,
-          contHandler).call();
+          contHandler).run();
           
       System.out.println(strBuilder.toString());
     </pre></code>
@@ -129,14 +129,16 @@
       final IDatabase database = Database.openDatabase(file);
       final ISession session = database.getSession();
       
-      final Serializer serializer =
+      final OutputStream out = new ByteArrayOutputStream();
+      
+      final OutputStream out =
         new XSLTEvaluator(
             session,
             file,
             stylesheet,
-            new ByteArrayOutputStream()).call();
+            out).call();
       
-      System.out.prinln(serializer.getOutputDestination.toString());
+      System.out.prinln(out.toString());
     </pre></code>
   </p>
  *

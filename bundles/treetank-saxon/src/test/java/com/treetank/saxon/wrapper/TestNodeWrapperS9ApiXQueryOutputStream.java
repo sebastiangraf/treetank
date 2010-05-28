@@ -2,6 +2,7 @@ package com.treetank.saxon.wrapper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.OutputStream;
 
 import javax.xml.stream.XMLEventReader;
 
@@ -69,13 +70,13 @@ public final class TestNodeWrapperS9ApiXQueryOutputStream {
 
   @Test
   public void testWhereBooks() {
-    final XQueryEvaluatorOutputStream xqe =
-        new XQueryEvaluatorOutputStream(
-            "for $x in /bookstore/book where $x/price>30 return $x/title",
-            sessionBooks,
-            TestHelper.PATHS.PATH1.getFile().getAbsoluteFile(),
-            new ByteArrayOutputStream());
-    final String result = xqe.call().toString();
+    final OutputStream out = new ByteArrayOutputStream();
+    new XQueryEvaluatorOutputStream(
+        "for $x in /bookstore/book where $x/price>30 return $x/title",
+        sessionBooks,
+        TestHelper.PATHS.PATH1.getFile().getAbsoluteFile(),
+        out).run();
+    final String result = out.toString();
     TestCase
         .assertEquals(
             "<title lang=\"en\">XQuery Kick Start</title><title lang=\"en\">Learning XML</title>",
@@ -84,13 +85,13 @@ public final class TestNodeWrapperS9ApiXQueryOutputStream {
 
   @Test
   public void testOrderByBooks() {
-    final XQueryEvaluatorOutputStream xqe =
-        new XQueryEvaluatorOutputStream(
-            "for $x in /bookstore/book where $x/price>30 order by $x/title return $x/title",
-            sessionBooks,
-            TestHelper.PATHS.PATH1.getFile().getAbsoluteFile(),
-            new ByteArrayOutputStream());
-    final String result = xqe.call().toString();
+    final OutputStream out = new ByteArrayOutputStream();
+    new XQueryEvaluatorOutputStream(
+        "for $x in /bookstore/book where $x/price>30 order by $x/title return $x/title",
+        sessionBooks,
+        TestHelper.PATHS.PATH1.getFile().getAbsoluteFile(),
+        out).run();
+    final String result = out.toString();
     TestCase
         .assertEquals(
             "<title lang=\"en\">Learning XML</title><title lang=\"en\">XQuery Kick Start</title>",
@@ -99,13 +100,13 @@ public final class TestNodeWrapperS9ApiXQueryOutputStream {
 
   @Test
   public void testFLOWR() {
-    final XQueryEvaluatorOutputStream xqe =
-        new XQueryEvaluatorOutputStream(
-            "for $x in /bookstore/book let $y := $x/price where $y>30 order by $x/title return $x/title",
-            sessionBooks,
-            TestHelper.PATHS.PATH1.getFile().getAbsoluteFile(),
-            new ByteArrayOutputStream());
-    final String result = xqe.call().toString();
+    final OutputStream out = new ByteArrayOutputStream();
+    new XQueryEvaluatorOutputStream(
+        "for $x in /bookstore/book let $y := $x/price where $y>30 order by $x/title return $x/title",
+        sessionBooks,
+        TestHelper.PATHS.PATH1.getFile().getAbsoluteFile(),
+        out).run();
+    final String result = out.toString();
     TestCase
         .assertEquals(
             "<title lang=\"en\">Learning XML</title><title lang=\"en\">XQuery Kick Start</title>",

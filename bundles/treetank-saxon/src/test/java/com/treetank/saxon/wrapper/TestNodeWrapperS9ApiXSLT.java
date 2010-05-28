@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.transform.stream.StreamSource;
@@ -98,16 +99,16 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
 
   @Test
   public void testWithoutSerializer() throws Exception {
-    final Serializer serialize =
-        new XSLTEvaluator(
-            sessionBooks,
-            BOOKS,
-            STYLESHEET,
-            new ByteArrayOutputStream()).call();
+    final OutputStream out =
+      new XSLTEvaluator(
+      sessionBooks,
+      BOOKS,
+      STYLESHEET,
+      new ByteArrayOutputStream()).call();
 
     final StringBuilder sBuilder = readFile();
 
-    final Diff diff = new Diff(sBuilder.toString(), serialize.getOutputDestination().toString());
+    final Diff diff = new Diff(sBuilder.toString(), out.toString());
     diff.overrideElementQualifier(new RecursiveElementNameAndTextQualifier());
     
     assertTrue(diff.toString(), diff.similar());
@@ -119,17 +120,17 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
     serializer.setOutputProperty(Serializer.Property.METHOD, "xml");
     serializer.setOutputProperty(Serializer.Property.INDENT, "yes");
 
-    final Serializer serialize =
+    final OutputStream out =
         new XSLTEvaluator(
-            sessionBooks,
-            BOOKS,
-            STYLESHEET,
-            new ByteArrayOutputStream(),
-            serializer).call();
+        sessionBooks,
+        BOOKS,
+        STYLESHEET,
+        new ByteArrayOutputStream(),
+        serializer).call();
 
     final StringBuilder sBuilder = readFile();
 
-    final Diff diff = new Diff(sBuilder.toString(), serialize.getOutputDestination().toString());
+    final Diff diff = new Diff(sBuilder.toString(), out.toString());
     diff.overrideElementQualifier(new RecursiveElementNameAndTextQualifier());
     
     assertTrue(diff.toString(), diff.similar());

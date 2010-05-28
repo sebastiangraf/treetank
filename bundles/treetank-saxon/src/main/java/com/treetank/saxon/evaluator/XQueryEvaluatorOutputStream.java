@@ -27,7 +27,7 @@ import com.treetank.saxon.wrapper.NodeWrapper;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public class XQueryEvaluatorOutputStream implements Callable<OutputStream> {
+public class XQueryEvaluatorOutputStream implements Runnable {
 
 	/** Logger. */
 	private static final Log LOGGER = LogFactory
@@ -89,9 +89,7 @@ public class XQueryEvaluatorOutputStream implements Callable<OutputStream> {
 	}
 
 	@Override
-	public OutputStream call() {
-		OutputStream outStream = null;
-
+	public void run() {
 		try {
 			final Processor proc = new Processor(false);
 			final Configuration config = proc.getUnderlyingConfiguration();
@@ -112,12 +110,8 @@ public class XQueryEvaluatorOutputStream implements Callable<OutputStream> {
 			final net.sf.saxon.s9api.XQueryEvaluator exe = exp.load();
 			exe.setSource(doc);
 			exe.run(mSerializer);
-
-			outStream = (OutputStream) mSerializer.getOutputDestination();
 		} catch (final SaxonApiException e) {
 			LOGGER.error("Saxon Exception: " + e.getMessage(), e);
 		}
-
-		return outStream;
 	}
 }
