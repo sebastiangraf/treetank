@@ -31,7 +31,7 @@ import com.treetank.saxon.wrapper.NodeWrapper;
  * @author johannes
  *
  */
-public class XSLTEvaluator implements Callable<Serializer> {
+public class XSLTEvaluator implements Callable<OutputStream> {
 
   /** Logger. */
   private static final Log LOGGER =
@@ -105,7 +105,7 @@ public class XSLTEvaluator implements Callable<Serializer> {
   }
 
   @Override
-  public Serializer call() {
+  public OutputStream call() {
     final Processor proc = new Processor(false);
     final XsltCompiler comp = proc.newXsltCompiler();
     XsltExecutable exp;
@@ -137,7 +137,7 @@ public class XSLTEvaluator implements Callable<Serializer> {
       LOGGER.error("Saxon exception: " + e.getMessage(), e);
     }
 
-    return mSerializer;
+    return mOut;
   }
 
 }

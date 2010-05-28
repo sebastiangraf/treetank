@@ -27,7 +27,7 @@ import com.treetank.saxon.wrapper.NodeWrapper;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public class XQueryEvaluatorSAXHandler implements Callable<ContentHandler> {
+public class XQueryEvaluatorSAXHandler implements Runnable {
 
 	/** Logger. */
 	private static final Log LOGGER = LogFactory
@@ -66,7 +66,7 @@ public class XQueryEvaluatorSAXHandler implements Callable<ContentHandler> {
 	}
 
 	@Override
-	public ContentHandler call() {
+	public void run() {
 	  try {
 			final Processor proc = new Processor(false);
 			final Configuration config = proc.getUnderlyingConfiguration();
@@ -80,7 +80,5 @@ public class XQueryEvaluatorSAXHandler implements Callable<ContentHandler> {
 		} catch (final SaxonApiException e) {
 			LOGGER.error("Saxon Exception: " + e.getMessage(), e);
 		}
-
-		return mHandler;
 	}
 }
