@@ -25,7 +25,9 @@ import com.treetank.saxon.evaluator.XQueryEvaluatorSAXHandler;
 import com.treetank.service.xml.XMLShredder;
 
 /**
+ * <h1>TestNodeWrapperS9ApiXQueryHandler</h1>
  * 
+ * <p>Test the NodeWrapper with Saxon's S9Api for XQuery.</p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  *
