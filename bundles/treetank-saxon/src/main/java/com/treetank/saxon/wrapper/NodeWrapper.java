@@ -311,14 +311,16 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 	 * @see net.sf.saxon.om.NodeInfo#getBaseURI()
 	 */
 	public String getBaseURI() {
+		mRTX.moveTo(mKey);
 		String baseURI = null;
 
 		NodeInfo node = this;
-		// Search for baseURI in parent nodes (xml:base="").
+
 		while (node != null) {
-			baseURI = getAttributeValue(StandardNames.XML_BASE);
+			baseURI = node.getAttributeValue(StandardNames.XML_BASE);
 
 			if (baseURI == null) {
+				// Search for baseURI in parent node (xml:base="").
 				node = node.getParent();
 			} else {
 				break;
@@ -526,6 +528,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 	 * @see net.sf.saxon.om.NodeInfo#getParent()
 	 */
 	public NodeInfo getParent() {
+		mRTX.moveTo(mKey);
 		if (mRTX.getNode().hasParent()) {
 			// Parent transaction.
 			final NodeInfo mParent = makeWrapper(mDocWrapper, mRTX.getNode()

@@ -122,14 +122,14 @@ public class TestNodeWrapper {
 				attribute.getLocalPart());
 
 		// Only supported on element nodes.
-		node = (NodeWrapper) node.getParent();
+//		node = (NodeWrapper) node.getParent();
 
 		TestCase.assertEquals("j", node.getAttributeValue(attribute
 				.getFingerprint()));
 	}
 
 	@Test
-	@Ignore
+//	@Ignore
 	public void testGetBaseURI() throws Exception {
 		// Test without xml:base specified.
 		TestCase.assertEquals(TestHelper.PATHS.PATH1.getFile()
