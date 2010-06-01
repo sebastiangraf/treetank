@@ -34,8 +34,8 @@ import com.treetank.service.xml.XMLShredder;
  */
 public class TestNodeWrapperS9ApiXQuerySAXHandler {
 
-  /** Treetank session on books document. */
-  private transient static ISession sessionBooks;
+  /** Treetank database on books document. */
+  private transient static IDatabase databaseBooks;
 
   /** Path to books file. */
   private static final File BOOKSXML =
@@ -56,10 +56,9 @@ public class TestNodeWrapperS9ApiXQuerySAXHandler {
     Database.createDatabase(new DatabaseConfiguration(TestHelper.PATHS.PATH1
         .getFile()));
 
-    final IDatabase database =
+    databaseBooks =
         Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
-    sessionBooks = database.getSession();
-    final IWriteTransaction mWTX = sessionBooks.beginWriteTransaction();
+    final IWriteTransaction mWTX = databaseBooks.getSession().beginWriteTransaction();
     final XMLEventReader reader = XMLShredder.createReader(BOOKSXML);
     final XMLShredder shredder = new XMLShredder(mWTX, reader, true);
     shredder.call();
@@ -68,7 +67,7 @@ public class TestNodeWrapperS9ApiXQuerySAXHandler {
 
   @AfterClass
   public static void tearDown() throws TreetankException {
-    sessionBooks.close();
+	  databaseBooks.close();
     Database.forceCloseDatabase(TestHelper.PATHS.PATH1.getFile());
   }
 
@@ -110,8 +109,7 @@ public class TestNodeWrapperS9ApiXQuerySAXHandler {
 
     new XQueryEvaluatorSAXHandler(
         "for $x in /bookstore/book where $x/price>30 return $x/title",
-        sessionBooks,
-        TestHelper.PATHS.PATH1.getFile().getAbsoluteFile(),
+        databaseBooks,
         contHandler).run();
 
     TestCase

@@ -14,6 +14,7 @@ import net.sf.saxon.s9api.XQueryExecutable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.saxon.wrapper.DocumentWrapper;
 import com.treetank.saxon.wrapper.NodeWrapper;
@@ -36,11 +37,8 @@ public class XQueryEvaluatorOutputStream implements Runnable {
 	/** XQuery expression. */
 	private transient final String mExpression;
 
-	/** Target of query. */
-	private transient final File mTarget;
-
-	/** Treetank session. */
-	private transient final ISession mSession;
+	/** Treetank database. */
+	private transient final IDatabase mDatabase;
 
 	/** Output Stream. */
 	private transient final OutputStream mOut;
@@ -53,16 +51,13 @@ public class XQueryEvaluatorOutputStream implements Runnable {
 	 * 
 	 * @param expression
 	 *            XQuery expression.
-	 * @param session
-	 *            Treetank session.
-	 * @param file
-	 *            Target Treetank storage.
+	 * @param database
+	 *            Treetank database.
 	 * @param out
 	 *            Output Stream.
 	 */
-	public XQueryEvaluatorOutputStream(final String expression, final ISession session,
-			final File file, final OutputStream out) {
-		this(expression, session, file, out, null);
+	public XQueryEvaluatorOutputStream(final String expression, final IDatabase database, final OutputStream out) {
+		this(expression, database, out, null);
 	}
 
 	/**
@@ -72,18 +67,14 @@ public class XQueryEvaluatorOutputStream implements Runnable {
 	 *            XQuery expression.
 	 * @param session
 	 *            Treetank session.
-	 * @param file
-	 *            Target Treetank storage.
 	 * @param out
 	 *            Output Stream.
 	 * @param serializer
 	 *            Serializer, for which one can specify output properties.
 	 */
-	public XQueryEvaluatorOutputStream(final String expression, final ISession session,
-			final File file, final OutputStream out, final Serializer serializer) {
+	public XQueryEvaluatorOutputStream(final String expression, final IDatabase database, final OutputStream out, final Serializer serializer) {
 		mExpression = expression;
-		mSession = session;
-		mTarget = file;
+		mDatabase = database;
 		mOut = out;
 		mSerializer = serializer;
 	}
@@ -93,8 +84,8 @@ public class XQueryEvaluatorOutputStream implements Runnable {
 		try {
 			final Processor proc = new Processor(false);
 			final Configuration config = proc.getUnderlyingConfiguration();
-			final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(mSession,
-					config, mTarget.getAbsolutePath()).wrap();
+			final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(mDatabase,
+					config).wrap();
 			final XQueryCompiler comp = proc.newXQueryCompiler();
 			final XQueryExecutable exp = comp.compile(mExpression);
 

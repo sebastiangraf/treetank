@@ -30,8 +30,8 @@ import com.treetank.service.xml.XMLShredder;
  */
 public final class TestNodeWrapperS9ApiXQuery {
 
-  /** Treetank session on books document. */
-  private transient static ISession sessionBooks;
+  /** Treetank database on books document. */
+  private transient static IDatabase databaseBooks;
 
   /** Path to books file. */
   private static final File BOOKSXML =
@@ -52,10 +52,9 @@ public final class TestNodeWrapperS9ApiXQuery {
     Database.createDatabase(new DatabaseConfiguration(TestHelper.PATHS.PATH1
         .getFile()));
 
-    final IDatabase database =
+    databaseBooks =
         Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
-    sessionBooks = database.getSession();
-    final IWriteTransaction mWTX = sessionBooks.beginWriteTransaction();
+    final IWriteTransaction mWTX = databaseBooks.getSession().beginWriteTransaction();
     final XMLEventReader reader = XMLShredder.createReader(BOOKSXML);
     final XMLShredder shredder = new XMLShredder(mWTX, reader, true);
     shredder.call();
@@ -64,7 +63,7 @@ public final class TestNodeWrapperS9ApiXQuery {
 
   @AfterClass
   public static void tearDown() throws TreetankException {
-    sessionBooks.close();
+	databaseBooks.close();
     Database.forceCloseDatabase(TestHelper.PATHS.PATH1.getFile());
   }
 
@@ -73,8 +72,7 @@ public final class TestNodeWrapperS9ApiXQuery {
     final XdmValue value =
         new XQueryEvaluator(
             "for $x in /bookstore/book where $x/price>30 return $x/title",
-            sessionBooks,
-            TestHelper.PATHS.PATH1.getFile().getAbsoluteFile()).call();
+            databaseBooks).call();
 
     final StringBuilder strBuilder = new StringBuilder();
 
@@ -93,8 +91,7 @@ public final class TestNodeWrapperS9ApiXQuery {
     final XdmValue value =
         new XQueryEvaluator(
             "for $x in /bookstore/book where $x/price>30 order by $x/title return $x/title",
-            sessionBooks,
-            TestHelper.PATHS.PATH1.getFile().getAbsoluteFile()).call();
+            databaseBooks).call();
 
     final StringBuilder strBuilder = new StringBuilder();
 
@@ -113,8 +110,7 @@ public final class TestNodeWrapperS9ApiXQuery {
     final XdmValue value =
         new XQueryEvaluator(
             "for $x in /bookstore/book let $y := $x/price where $y>30 order by $x/title return $x/title",
-            sessionBooks,
-            TestHelper.PATHS.PATH1.getFile().getAbsoluteFile()).call();
+            databaseBooks).call();
     final StringBuilder strBuilder = new StringBuilder();
 
     for (final XdmItem item : value) {
