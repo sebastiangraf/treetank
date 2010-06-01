@@ -14,6 +14,7 @@ import net.sf.saxon.s9api.XdmValue;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.saxon.wrapper.DocumentWrapper;
 import com.treetank.saxon.wrapper.NodeWrapper;
@@ -36,25 +37,24 @@ public class XQueryEvaluator implements Callable<XdmValue> {
   /** XQuery expression. */
   private transient final String mExpression;
 
-  /** Target of query. */
-  private transient final File mTarget;
-
   /** Treetank session. */
-  private transient final ISession mSession;
+  private transient final IDatabase mDatabase;
+  
+  /** Treetank serializer. */
+  private transient final Serializer mSerializer;
 
   /**
    * Constructor.
    * 
    * @param expression
    *            XQuery expression.
-   * @param session
-   *            Treetank session.
+   * @param database
+   *            Treetank database.
    * @param file
    *            Target Treetank storage.
    */
-  public XQueryEvaluator(final String expression, final ISession session,
-      final File file) {
-    this(expression, session, file, null);
+  public XQueryEvaluator(final String expression, final IDatabase database) {
+    this(expression, database, null);
   }
 
   /**
@@ -62,18 +62,17 @@ public class XQueryEvaluator implements Callable<XdmValue> {
    * 
    * @param expression
    *            XQuery expression.
-   * @param session
-   *            Treetank session.
+   * @param database
+   *            Treetank database.
    * @param file
    *            Target Treetank storage.
    * @param serializer
    *            Serializer, for which one can specify output properties.
    */
-  public XQueryEvaluator(final String expression, final ISession session,
-      final File file, final Serializer serializer) {
+  public XQueryEvaluator(final String expression, final IDatabase database, final Serializer serializer) {
     mExpression = expression;
-    mSession = session;
-    mTarget = file;
+    mDatabase = database;
+    mSerializer = serializer;
   }
 
   @Override
@@ -83,8 +82,8 @@ public class XQueryEvaluator implements Callable<XdmValue> {
     try {
       final Processor proc = new Processor(false);
       final Configuration config = proc.getUnderlyingConfiguration();
-      final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(mSession,
-          config, mTarget.getAbsolutePath()).wrap();
+      final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(mDatabase,
+          config).wrap();
       final XQueryCompiler comp = proc.newXQueryCompiler();
       final XQueryExecutable exp = comp.compile(mExpression);
       final net.sf.saxon.s9api.XQueryEvaluator exe = exp.load();

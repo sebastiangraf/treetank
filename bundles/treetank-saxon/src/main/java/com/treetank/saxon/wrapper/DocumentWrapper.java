@@ -9,16 +9,18 @@ import net.sf.saxon.om.NamePool;
 import net.sf.saxon.om.NodeInfo;
 
 import com.treetank.api.IAxis;
-import com.treetank.api.ISession;
+import com.treetank.api.IDatabase;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.settings.ENodes;
 
 /**
  * <h1>DocumentWrapper</h1>
  * 
- * <p>Wraps a Treetank document and represents a document node. Therefore it
+ * <p>
+ * Wraps a Treetank document and represents a document node. Therefore it
  * implements Saxon's DocumentInfo core interface and also represents a Node in
- * Saxon's internal node implementation. Thus it extends <tt>NodeWrapper</tt>.</p>
+ * Saxon's internal node implementation. Thus it extends <tt>NodeWrapper</tt>.
+ * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
@@ -34,9 +36,6 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
 	/** Unique document number. */
 	protected static int documentNumber;
 
-	/** Treetank session. */
-	private transient final ISession mSession;
-
 	/**
 	 * Wrap a Treetank document.
 	 * 
@@ -47,12 +46,11 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
 	 * @param baseURI
 	 *            BaseURI of the document (PATH).
 	 */
-	public DocumentWrapper(final ISession session, final Configuration config,
-			final String baseURI) {
-		super(session, 0);
-		mSession = session;
+	public DocumentWrapper(final IDatabase database,
+			final Configuration config) {
+		super(database, 0);
 		nodeKind = ENodes.ROOT_KIND;
-		mBaseURI = baseURI;
+		mBaseURI = database.getFile().getAbsolutePath();
 		mDocWrapper = this;
 		setConfiguration(config);
 	}
@@ -63,7 +61,7 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
 	 * @return The wrapped Treetank transaction in form of a NodeInfo object.
 	 */
 	public NodeInfo wrap() {
-		return makeWrapper(mSession, this, 0);
+		return makeWrapper(this, 0);
 	}
 
 	/**
@@ -74,7 +72,7 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
 	 * @return The wrapping NodeWrapper object.
 	 */
 	public NodeInfo wrap(final long nodeKey) {
-		return makeWrapper(mSession, this, nodeKey);
+		return makeWrapper(this, nodeKey);
 	}
 
 	/**

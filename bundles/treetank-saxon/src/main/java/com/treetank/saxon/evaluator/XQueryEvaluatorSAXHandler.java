@@ -14,6 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xml.sax.ContentHandler;
 
+import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.saxon.wrapper.DocumentWrapper;
 import com.treetank.saxon.wrapper.NodeWrapper;
@@ -36,11 +37,8 @@ public class XQueryEvaluatorSAXHandler implements Runnable {
 	/** XQuery expression. */
 	private final String mExpression;
 
-	/** Target of query. */
-	private final File mTarget;
-
-	/** Treetank session. */
-	private final ISession mSession;
+	/** Treetank database. */
+	private final IDatabase mDatabase;
 
 	/** SAX receiver. */
 	private final ContentHandler mHandler;
@@ -50,18 +48,14 @@ public class XQueryEvaluatorSAXHandler implements Runnable {
 	 * 
 	 * @param expression
 	 *            XQuery expression.
-	 * @param session
-	 *            Treetank session.
-	 * @param file
-	 *            Target Treetank storage.
+	 * @param database
+	 *            Treetank database.
 	 * @param handler
 	 *            SAX content handler.
 	 */
-	public XQueryEvaluatorSAXHandler(final String expression, final ISession session,
-			final File file, final ContentHandler handler) {
+	public XQueryEvaluatorSAXHandler(final String expression, final IDatabase database, final ContentHandler handler) {
 		mExpression = expression;
-		mSession = session;
-		mTarget = file;
+		mDatabase = database;
 		mHandler = handler;
 	}
 
@@ -70,8 +64,8 @@ public class XQueryEvaluatorSAXHandler implements Runnable {
 	  try {
 			final Processor proc = new Processor(false);
 			final Configuration config = proc.getUnderlyingConfiguration();
-			final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(mSession,
-					config, mTarget.getAbsolutePath()).wrap();
+			final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(mDatabase,
+					config).wrap();
 			final XQueryCompiler comp = proc.newXQueryCompiler();
 			final XQueryExecutable exp = comp.compile(mExpression);
 			final net.sf.saxon.s9api.XQueryEvaluator exe = exp.load();

@@ -8,7 +8,7 @@ import net.sf.saxon.om.NamePool;
 import net.sf.saxon.om.NodeInfo;
 
 import com.treetank.api.IAxis;
-import com.treetank.api.ISession;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.ChildAxis;
 import com.treetank.exception.TreetankException;
@@ -17,14 +17,16 @@ import com.treetank.settings.ENodes;
 /**
  * <h1>MutableNodeWrapper</h1>
  * 
- * <p>Implements all methods which are needed to create a modifiable Saxon
- * internal node. Therefore it wraps Treetank's nodes into the appropriate
- * format.</p>
+ * <p>
+ * Implements all methods which are needed to create a modifiable Saxon internal
+ * node. Therefore it wraps Treetank's nodes into the appropriate format.
+ * </p>
  * 
- * <p><strong>Currently not used.</strong> For use with XQuery Update and 
- * requires a "commercial" Saxon license. Furthermore as of now not stable and 
- * doesn't support third party applications. Needs to be fully implemented and 
- * tested.</p>
+ * <p>
+ * <strong>Currently not used.</strong> For use with XQuery Update and requires
+ * a "commercial" Saxon license. Furthermore as of now not stable and doesn't
+ * support third party applications. Needs to be fully implemented and tested.
+ * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
@@ -37,17 +39,17 @@ public class MutableNodeWrapper extends NodeWrapper implements MutableNodeInfo {
 	/**
 	 * Constructor.
 	 * 
-	 * @param session
-	 *            Treetank session.
+	 * @param database
+	 *            Treetank database.
 	 * @param wtx
 	 *            Treetank write transaction.
 	 * @throws TreetankException
 	 *             in case of something went wrong.
 	 */
-	protected MutableNodeWrapper(final ISession session,
+	protected MutableNodeWrapper(final IDatabase database,
 			final IWriteTransaction wtx) throws TreetankException {
-		super(session, 0);
-		mWTX = session.beginWriteTransaction();
+		super(database, 0);
+		mWTX = database.getSession().beginWriteTransaction();
 	}
 
 	/**
