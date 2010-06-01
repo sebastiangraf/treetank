@@ -58,12 +58,7 @@ public class SessionTest {
 		IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
 		database.close();
 
-		try {
-			database.getFile();
-			TestCase.fail();
-		} catch (Exception e) {
-			// Must fail.
-		}
+		assertEquals(null, database.getFile());
 		database = TestHelper.getDatabase(PATHS.PATH1.getFile());
 		final ISession session = database.getSession();
 		IReadTransaction rtx = session.beginReadTransaction();
@@ -79,12 +74,7 @@ public class SessionTest {
 		session.close();
 		database.close();
 
-		try {
-			database.getFile();
-			TestCase.fail();
-		} catch (Exception e) {
-			// Must fail.
-		}
+		assertEquals(null, database.getFile());
 	}
 
 	@Test
