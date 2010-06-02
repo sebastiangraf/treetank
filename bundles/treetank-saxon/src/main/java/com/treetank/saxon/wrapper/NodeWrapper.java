@@ -201,35 +201,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 			retVal = -2;
 		}
 
-		// switch (nodeKind) {
-		// case ELEMENT_KIND:
-		// mRTX.moveToFirstChild();
-		// final long firstChild = mRTX.getNode().getNodeKey();
-		// mRTX.moveTo(mKey);
-		// mRTX.moveToParent();
-		// final long parent = mRTX.getNode().getNodeKey();
-		// mRTX.moveTo(mKey);
-		// mRTX.moveToLeftSibling();
-		// final long leftSibling = mRTX.getNode().getNodeKey();
-		// mRTX.moveTo(mKey);
-		// mRTX.moveToRightSibling();
-		// final long rightSibling = mRTX.getNode().getNodeKey();
-		// mRTX.moveTo(mKey);
-		// final int nameKey = mRTX.getNode().getNameKey();
-		// final int uriKey = mRTX.getNode().getURIKey();
-		// final int typeKey = mRTX.getNode().getTypeKey();
-		// new ElementNode(mKey, parent, firstChild, leftSibling, rightSibling,
-		// nameKey, uriKey, typeKey).compareTo();
-		// break;
-		// case ATTRIBUTE_KIND:
-		//
-		// break;
-		// case TEXT_KIND:
-		// break;
-		// case NAMESPACE_KIND:
-		// case PROCESSING_KIND:
-		// new AbstractNode(1, mKey);
-
+		// FIXME fix the key order, this can result in errors related to
+		// different version of a file.
 		else if (((NodeWrapper) node).mKey > mKey) {
 			retVal = -1;
 		} else if (((NodeWrapper) node).mKey == mKey) {
@@ -280,27 +253,6 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 		}
 
 		mRTX.moveTo(mKey);
-
-		// if (nodeKind == ENodes.ELEMENT_KIND) {
-		// final NamePool pool = mDocWrapper.getNamePool();
-		// final String uri = pool.getURI(fingerprint);
-		// final String local = pool.getLocalName(fingerprint);
-		//
-		// final String namespURI = getURI();
-		// final String localPart = getLocalPart();
-		//
-		// final long atts = mRTX.getNode().getAttributeCount();
-		//
-		// for (int i = 0; i < atts; i++) {
-		// mRTX.moveToAttribute(i);
-		//
-		// if (local.equals(localPart) && uri.equals(namespURI)) {
-		// attVal = mRTX.getValueOfCurrentNode();
-		// mRTX.moveTo(mKey);
-		// break;
-		// }
-		// }
-		// }
 
 		return attVal;
 	}

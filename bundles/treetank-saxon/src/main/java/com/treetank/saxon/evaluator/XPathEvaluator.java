@@ -20,52 +20,57 @@ import com.treetank.saxon.wrapper.NodeWrapper;
 /**
  * <h1>XPath Evaluator</h1>
  * 
- * <p>The XPath evaluator takes an XPath expression and evaluates the expression
- * against a wrapped Treetank document.</p>
+ * <p>
+ * The XPath evaluator takes an XPath expression and evaluates the expression
+ * against a wrapped Treetank document.
+ * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
 public class XPathEvaluator implements Callable<XPathSelector> {
 
-  /** An XPath expression. */
-  private transient final String mExpression;
-  
-  /** Treetank database. */
-  private transient final IDatabase mDatabase;
+	/** An XPath expression. */
+	private transient final String mExpression;
 
-  /** Logger. */
-  private static final Log LOGGER = LogFactory.getLog(XPathEvaluator.class);
+	/** Treetank database. */
+	private transient final IDatabase mDatabase;
 
-  /**
-   * Constructor.
-   * 
-   * @param expression XPath expression.
-   * @param databse Treetank database.
-   */
-  public XPathEvaluator(final String expression, final IDatabase database) {
-    mExpression = expression;
-    mDatabase = database;
-  }
+	/** Logger. */
+	private static final Log LOGGER = LogFactory.getLog(XPathEvaluator.class);
 
-  @Override
-  public XPathSelector call() {
-    final Processor proc = new Processor(false);
-    final Configuration config = proc.getUnderlyingConfiguration();
-    final NodeWrapper doc =
-      (NodeWrapper) new DocumentWrapper(mDatabase, config).wrap();
-    final XPathCompiler xpath = proc.newXPathCompiler();
-    final DocumentBuilder builder = proc.newDocumentBuilder();
-    XPathSelector selector = null;
- 
-    try {
-      final XdmItem booksDoc = builder.build(doc);
-      selector = xpath.compile(mExpression).load();
-      selector.setContextItem(booksDoc);
-    } catch (final SaxonApiException e) {
-      LOGGER.error("Saxon Exception: " + e.getMessage(), e);
-    }
-    
-    return selector;
-  }
+	/**
+	 * Constructor.
+	 * 
+	 * @param expression
+	 *            XPath expression.
+	 * @param databse
+	 *            Treetank database.
+	 */
+	public XPathEvaluator(final String expression, final IDatabase database) {
+		mExpression = expression;
+		mDatabase = database;
+	}
+
+	@Override
+	public XPathSelector call() throws Exception {
+		final Processor proc = new Processor(false);
+		final Configuration config = proc.getUnderlyingConfiguration();
+		final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(mDatabase,
+				config).wrap();
+		final XPathCompiler xpath = proc.newXPathCompiler();
+		final DocumentBuilder builder = proc.newDocumentBuilder();
+		XPathSelector selector = null;
+
+		try {
+			final XdmItem booksDoc = builder.build(doc);
+			selector = xpath.compile(mExpression).load();
+			selector.setContextItem(booksDoc);
+		} catch (final SaxonApiException e) {
+			LOGGER.error("Saxon Exception: " + e.getMessage(), e);
+			throw e;
+		}
+
+		return selector;
+	}
 }

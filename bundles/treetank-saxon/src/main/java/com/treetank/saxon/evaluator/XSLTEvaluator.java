@@ -30,14 +30,14 @@ import com.treetank.saxon.wrapper.NodeWrapper;
  * resulting output stream.
  * </p>
  * 
- * @author johannes
+ * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
 public class XSLTEvaluator implements Callable<OutputStream> {
 
 	/** Logger. */
 	private static final Log LOGGER = LogFactory
-			.getLog("com.treetank.saxon.evaluator.XSLTEvaluator.class");
+			.getLog(XSLTEvaluator.class);
 
 	/** Stylesheet file. */
 	private transient final File mStylesheet;
