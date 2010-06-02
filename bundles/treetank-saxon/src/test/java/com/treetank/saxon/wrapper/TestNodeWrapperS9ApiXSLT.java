@@ -10,8 +10,6 @@ import java.io.OutputStream;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.transform.stream.StreamSource;
 
-import junit.framework.TestCase;
-
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.Serializer;
@@ -32,7 +30,6 @@ import org.junit.Test;
 import com.treetank.TestHelper;
 import com.treetank.access.Database;
 import com.treetank.api.IDatabase;
-import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.saxon.evaluator.XSLTEvaluator;

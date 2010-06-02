@@ -18,7 +18,6 @@ import com.treetank.TestHelper;
 import com.treetank.access.Database;
 import com.treetank.access.DatabaseConfiguration;
 import com.treetank.api.IDatabase;
-import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.saxon.evaluator.XQueryEvaluatorSAXHandler;

@@ -1,12 +1,10 @@
 package com.treetank.saxon.evaluator;
 
-import java.io.File;
 import java.util.concurrent.Callable;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SaxonApiException;
-import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.XQueryCompiler;
 import net.sf.saxon.s9api.XQueryExecutable;
 import net.sf.saxon.s9api.XdmValue;
@@ -15,7 +13,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.treetank.api.IDatabase;
-import com.treetank.api.ISession;
 import com.treetank.saxon.wrapper.DocumentWrapper;
 import com.treetank.saxon.wrapper.NodeWrapper;
 
@@ -39,9 +36,6 @@ public class XQueryEvaluator implements Callable<XdmValue> {
 
   /** Treetank session. */
   private transient final IDatabase mDatabase;
-  
-  /** Treetank serializer. */
-  private transient final Serializer mSerializer;
 
   /**
    * Constructor.
@@ -54,25 +48,8 @@ public class XQueryEvaluator implements Callable<XdmValue> {
    *            Target Treetank storage.
    */
   public XQueryEvaluator(final String expression, final IDatabase database) {
-    this(expression, database, null);
-  }
-
-  /**
-   * Constructor.
-   * 
-   * @param expression
-   *            XQuery expression.
-   * @param database
-   *            Treetank database.
-   * @param file
-   *            Target Treetank storage.
-   * @param serializer
-   *            Serializer, for which one can specify output properties.
-   */
-  public XQueryEvaluator(final String expression, final IDatabase database, final Serializer serializer) {
     mExpression = expression;
     mDatabase = database;
-    mSerializer = serializer;
   }
 
   @Override
