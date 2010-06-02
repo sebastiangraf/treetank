@@ -1,8 +1,5 @@
 package com.treetank.saxon.evaluator;
 
-import java.io.File;
-import java.util.concurrent.Callable;
-
 import net.sf.saxon.Configuration;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SAXDestination;
@@ -15,7 +12,6 @@ import org.apache.commons.logging.LogFactory;
 import org.xml.sax.ContentHandler;
 
 import com.treetank.api.IDatabase;
-import com.treetank.api.ISession;
 import com.treetank.saxon.wrapper.DocumentWrapper;
 import com.treetank.saxon.wrapper.NodeWrapper;
 
