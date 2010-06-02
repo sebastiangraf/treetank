@@ -6,11 +6,12 @@
   <p>
     Code example for use with XPathEvaluator:
     <code><pre>
+      final File file = new File("src" + File.separator + "test"
+             + File.separator + "resources" + File.separator + "testfile");
       Database.truncateDatabase(file);
       final IDatabase database = Database.openDatabase(file);
-      final ISession session = database.getSession();   
       final XPathSelector selector = new XPathEvaluator(QUERYSTRING,
-        session, file).call();
+        database).call();
 
       final StringBuilder strBuilder = new StringBuilder();
 
@@ -35,7 +36,6 @@
              + File.separator + "resources" + File.separator + "testfile");
       Database.truncateDatabase(file);
       final IDatabase database = Database.openDatabase(file);
-      final ISession session = database.getSession(); 
       
       final StringBuilder strBuilder = new StringBuilder();
 
@@ -53,12 +53,10 @@
          + File.separator + "resources" + File.separator + "testfile");
       Database.truncateDatabase(file);
       final IDatabase database = Database.openDatabase(file);
-      final ISession session = database.getSession();   
       final XQueryEvaluator xqe =
         new XQueryEvaluator(
           XQUERYSTRING,
-          session,
-          file,
+          database,
           new ByteArrayOutputStream());
       final String result = xqe.call().toString();
         
@@ -108,12 +106,10 @@
              + File.separator + "resources" + File.separator + "testfile");
       Database.truncateDatabase(file);
       final IDatabase database = Database.openDatabase(file);
-      final ISession session = database.getSession();   
 
       new XQueryEvaluatorSAXHandler(
           XQUERYSTRING,
-          session,
-          file,
+          database,
           contHandler).run();
           
       System.out.println(strBuilder.toString());
@@ -127,14 +123,12 @@
       final File stylesheet = new File("src" + File.separator + "test"
          + File.separator + "resources" + File.separator + "stylesheet.xsl");
       final IDatabase database = Database.openDatabase(file);
-      final ISession session = database.getSession();
       
       final OutputStream out = new ByteArrayOutputStream();
       
       final OutputStream out =
         new XSLTEvaluator(
-            session,
-            file,
+            database,
             stylesheet,
             out).call();
       
