@@ -46,8 +46,7 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
 	 * @param baseURI
 	 *            BaseURI of the document (PATH).
 	 */
-	public DocumentWrapper(final IDatabase database,
-			final Configuration config) {
+	public DocumentWrapper(final IDatabase database, final Configuration config) {
 		super(database, 0);
 		nodeKind = ENodes.ROOT_KIND;
 		mBaseURI = database.getFile().getAbsolutePath();

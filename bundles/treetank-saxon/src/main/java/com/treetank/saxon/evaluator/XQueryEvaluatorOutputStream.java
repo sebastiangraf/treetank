@@ -1,6 +1,7 @@
 package com.treetank.saxon.evaluator;
 
 import java.io.OutputStream;
+import java.util.concurrent.Callable;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.s9api.Processor;
@@ -19,13 +20,15 @@ import com.treetank.saxon.wrapper.NodeWrapper;
 /**
  * <h1>XQuery evaluator</h1>
  * 
- * <p>Evaluates an XQuery expression against a Treetank storage. Output is 
- * available through an output stream.</p>
+ * <p>
+ * Evaluates an XQuery expression against a Treetank storage. Output is
+ * available through an output stream.
+ * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public class XQueryEvaluatorOutputStream implements Runnable {
+public class XQueryEvaluatorOutputStream implements Callable<Void> {
 
 	/** Logger. */
 	private static final Log LOGGER = LogFactory
@@ -53,7 +56,8 @@ public class XQueryEvaluatorOutputStream implements Runnable {
 	 * @param out
 	 *            Output Stream.
 	 */
-	public XQueryEvaluatorOutputStream(final String expression, final IDatabase database, final OutputStream out) {
+	public XQueryEvaluatorOutputStream(final String expression,
+			final IDatabase database, final OutputStream out) {
 		this(expression, database, out, null);
 	}
 
@@ -69,7 +73,9 @@ public class XQueryEvaluatorOutputStream implements Runnable {
 	 * @param serializer
 	 *            Serializer, for which one can specify output properties.
 	 */
-	public XQueryEvaluatorOutputStream(final String expression, final IDatabase database, final OutputStream out, final Serializer serializer) {
+	public XQueryEvaluatorOutputStream(final String expression,
+			final IDatabase database, final OutputStream out,
+			final Serializer serializer) {
 		mExpression = expression;
 		mDatabase = database;
 		mOut = out;
@@ -77,12 +83,12 @@ public class XQueryEvaluatorOutputStream implements Runnable {
 	}
 
 	@Override
-	public void run() {
+	public Void call() throws Exception {
 		try {
 			final Processor proc = new Processor(false);
 			final Configuration config = proc.getUnderlyingConfiguration();
-			final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(mDatabase,
-					config).wrap();
+			final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(
+					mDatabase, config).wrap();
 			final XQueryCompiler comp = proc.newXQueryCompiler();
 			final XQueryExecutable exp = comp.compile(mExpression);
 
@@ -98,8 +104,10 @@ public class XQueryEvaluatorOutputStream implements Runnable {
 			final net.sf.saxon.s9api.XQueryEvaluator exe = exp.load();
 			exe.setSource(doc);
 			exe.run(mSerializer);
+			return null;
 		} catch (final SaxonApiException e) {
 			LOGGER.error("Saxon Exception: " + e.getMessage(), e);
+			throw e;
 		}
 	}
 }

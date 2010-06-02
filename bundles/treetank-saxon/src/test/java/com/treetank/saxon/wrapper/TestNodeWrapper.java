@@ -86,10 +86,10 @@ public class TestNodeWrapper {
 				.getFile());
 
 		// Not the same document.
-		NodeWrapper node = (NodeWrapper) new DocumentWrapper(database, config).wrap();
+		NodeWrapper node = (NodeWrapper) new DocumentWrapper(database, config)
+				.wrap();
 		NodeWrapper other = (NodeWrapper) new DocumentWrapper(databaseTest,
-				config)
-				.wrap(3);
+				config).wrap(3);
 		TestCase.assertEquals(-2, node.compareOrder(other));
 
 		// Before.
@@ -121,14 +121,14 @@ public class TestNodeWrapper {
 				attribute.getLocalPart());
 
 		// Only supported on element nodes.
-//		node = (NodeWrapper) node.getParent();
+		// node = (NodeWrapper) node.getParent();
 
 		TestCase.assertEquals("j", node.getAttributeValue(attribute
 				.getFingerprint()));
 	}
 
 	@Test
-//	@Ignore
+	// @Ignore
 	public void testGetBaseURI() throws Exception {
 		// Test without xml:base specified.
 		TestCase.assertEquals(TestHelper.PATHS.PATH1.getFile()

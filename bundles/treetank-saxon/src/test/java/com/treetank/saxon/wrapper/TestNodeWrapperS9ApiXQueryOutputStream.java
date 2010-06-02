@@ -60,11 +60,11 @@ public final class TestNodeWrapperS9ApiXQueryOutputStream {
 	}
 
 	@Test
-	public void testWhereBooks() {
+	public void testWhereBooks() throws Exception {
 		final OutputStream out = new ByteArrayOutputStream();
 		new XQueryEvaluatorOutputStream(
 				"for $x in /bookstore/book where $x/price>30 return $x/title",
-				databaseBooks, out).run();
+				databaseBooks, out).call();
 		final String result = out.toString();
 		TestCase
 				.assertEquals(
@@ -73,11 +73,11 @@ public final class TestNodeWrapperS9ApiXQueryOutputStream {
 	}
 
 	@Test
-	public void testOrderByBooks() {
+	public void testOrderByBooks() throws Exception {
 		final OutputStream out = new ByteArrayOutputStream();
 		new XQueryEvaluatorOutputStream(
 				"for $x in /bookstore/book where $x/price>30 order by $x/title return $x/title",
-				databaseBooks, out).run();
+				databaseBooks, out).call();
 		final String result = out.toString();
 		TestCase
 				.assertEquals(
@@ -86,11 +86,11 @@ public final class TestNodeWrapperS9ApiXQueryOutputStream {
 	}
 
 	@Test
-	public void testFLOWR() {
+	public void testFLOWR() throws Exception {
 		final OutputStream out = new ByteArrayOutputStream();
 		new XQueryEvaluatorOutputStream(
 				"for $x in /bookstore/book let $y := $x/price where $y>30 order by $x/title return $x/title",
-				databaseBooks, out).run();
+				databaseBooks, out).call();
 		final String result = out.toString();
 		TestCase
 				.assertEquals(
