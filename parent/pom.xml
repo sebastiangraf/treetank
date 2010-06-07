@@ -9,13 +9,6 @@
 	<version>5.3.4-SNAPSHOT</version>
 	<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/disy/forschung/treetank/
 	</url>
-	<scm>
-		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk
-		</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk
-		</developerConnection>
-		<url>https://svn.uni-konstanz.de/disy/Treetank</url>
-	</scm>
 	<issueManagement>
 		<system>Redmine</system>
 		<url>https://projects.uni-konstanz.de/projects/treetank/</url>

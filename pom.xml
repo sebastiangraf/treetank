@@ -16,43 +16,6 @@
 		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk</developerConnection>
 		<url>https://svn.uni-konstanz.de/disy/Treetank</url>
 	</scm>
-	<issueManagement>
-		<system>Redmine</system>
-		<url>https://projects.uni-konstanz.de/projects/treetank/</url>
-	</issueManagement>
-	<ciManagement>
-		<system>hudson</system>
-		<url>http://xen5.disy.inf.uni-konstanz.de:8080/hudson</url>
-	</ciManagement>
-	<organization>
-		<name>University of Konstanz, Distributed Systems Lab</name>
-		<url>http://www.informatik.uni-konstanz.de/ags/disy/
-		</url>
-	</organization>
-	<developers>
-		<developer>
-			<name>Marc Kramis</name>
-			<email>marc.kramis@seabix.com</email>
-			<roles>
-				<role>Architect</role>
-			</roles>
-			<url>http://www.seabix.com</url>
-			<organization>Seabix GmbH</organization>
-			<timezone>+1</timezone>
-		</developer>
-		<developer>
-			<name>Sebastian Graf</name>
-			<email>Sebastian.Graf@uni-konstanz.de</email>
-			<roles>
-				<role>Project Manager</role>
-				<role>Developer</role>
-			</roles>
-			<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/Verteilte-Systeme/mitglieder/Sebastian-Graf</url>
-			<organization>University of Konstanz, Distributed Systems Lab</organization>
-			<organizationUrl>http://www.informatik.uni-konstanz.de/ags/disy/</organizationUrl>
-			<timezone>+1</timezone>
-		</developer>
-	</developers>
 	<distributionManagement>
 		<repository>
 			<id>disyInternal</id>
@@ -65,10 +28,6 @@
 			<uniqueVersion>false</uniqueVersion>
 		</snapshotRepository>
 	</distributionManagement>
-	<properties>
-		<compileSource>1.6</compileSource>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
 	<modules>
 		<module>parent</module>
 		<module>bundles/treetank-core</module>
