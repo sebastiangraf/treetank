@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>treetank</groupId>
-	<artifactId>builder</artifactId>
+	<artifactId>complete</artifactId>
 	<packaging>pom</packaging>
-	<name>treetank-builder</name>
+	<name>treetank-complete</name>
 	<version>5.3.3-SNAPSHOT</version>
 	<description>Treetank is a fully java-implemented native XML-Database. 
 	It supports cursorlike access to all nodes stored in the tree plus XPath 2.0 as query engine. Furthermore, Treetank is completely versionable. That means that each update-operation results in a new version. 
