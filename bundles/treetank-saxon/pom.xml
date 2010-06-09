@@ -4,14 +4,13 @@
 		<artifactId>pom</artifactId>
 		<groupId>treetank</groupId>
 		<version>1.0.0</version>
-		<relativePath>../../parent/pom.xml</relativePath>
 	</parent>
 
 	<groupId>treetank</groupId>
 	<artifactId>saxon</artifactId>
 	<packaging>jar</packaging>
 	<name>treetank-saxon</name>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<description>Saxon binding.</description>
 	<repositories>
 		<repository>
