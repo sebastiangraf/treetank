@@ -4,13 +4,13 @@
 	<parent>
 		<artifactId>pom</artifactId>
 		<groupId>treetank</groupId>
-		<version>1.0.0</version>
+		<version>1.0.0-SNAPSHOT</version>
 		<relativePath>../../parent/pom.xml</relativePath>
 	</parent>
 
 	<groupId>treetank</groupId>
 	<artifactId>core</artifactId>
-	<version>5.3.3</version>
+	<version>5.3.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>treetank-core</name>
 	<description>Treetank is a fully java-implemented native XML-Database.
