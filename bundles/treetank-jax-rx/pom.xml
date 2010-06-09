@@ -11,7 +11,7 @@
 	<artifactId>jax-rx</artifactId>
 	<packaging>jar</packaging>
 	<name>treetank-jax-rx</name>
-	<version>1.0.0</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<description>This project give the jax-rx interface to jax-rx.
 	</description>
 	<repositories>
@@ -22,15 +22,15 @@
 		</repository>
 	</repositories>
 	<scm>
-		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/jax-rx-1.0.0</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/jax-rx-1.0.0</developerConnection>
-		<url>https://svn.uni-konstanz.de/disy/Treetank/tags/jax-rx-1.0.0</url>
+		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</connection>
+		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</developerConnection>
+		<url>https://svn.uni-konstanz.de/disy/Treetank/</url>
 	</scm>
 	<dependencies>
 		<dependency>
 			<groupId>treetank</groupId>
 			<artifactId>core</artifactId>
-			<version>5.3.3</version>
+			<version>5.3.4-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
