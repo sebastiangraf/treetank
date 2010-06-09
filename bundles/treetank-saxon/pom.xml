@@ -11,7 +11,7 @@
 	<artifactId>saxon</artifactId>
 	<packaging>jar</packaging>
 	<name>treetank-saxon</name>
-	<version>1.0.0</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<description>Saxon binding.</description>
 	<repositories>
 		<repository>
@@ -32,9 +32,9 @@
 		</repository>
 	</repositories>
 	<scm>
-		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/saxon-1.0.0</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/saxon-1.0.0</developerConnection>
-		<url>https://svn.uni-konstanz.de/disy/Treetank/tags/saxon-1.0.0</url>
+		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</connection>
+		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</developerConnection>
+		<url>https://svn.uni-konstanz.de/disy/Treetank/</url>
 	</scm>
 	<dependencies>
 		<dependency>
