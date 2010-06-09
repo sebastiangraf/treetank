@@ -5,15 +5,15 @@
 	<artifactId>builder</artifactId>
 	<packaging>pom</packaging>
 	<name>treetank-builder</name>
-	<version>5.3.3</version>
+	<version>5.3.3-SNAPSHOT</version>
 	<description>Treetank is a fully java-implemented native XML-Database. 
 	It supports cursorlike access to all nodes stored in the tree plus XPath 2.0 as query engine. Furthermore, Treetank is completely versionable. That means that each update-operation results in a new version. 
 	These versions can be easily retrieved within the database itself.</description>
 	<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/disy/forschung/treetank/</url>
 	<scm>
-		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/builder-5.3.3</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/builder-5.3.3</developerConnection>
-		<url>https://svn.uni-konstanz.de/disy/Treetank/tags/builder-5.3.3</url>
+		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</connection>
+		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</developerConnection>
+		<url>https://svn.uni-konstanz.de/disy/Treetank/</url>
 	</scm>
 	<distributionManagement>
 		<repository>
