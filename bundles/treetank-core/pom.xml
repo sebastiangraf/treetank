@@ -24,4 +24,23 @@
 		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</developerConnection>
 		<url>https://svn.uni-konstanz.de/disy/Treetank/</url>
 	</scm>
+	<repositories>
+		<repository>
+			<id>oracleReleases</id>
+			<name>Oracle Released Java Packages</name>
+			<url>http://download.oracle.com/maven</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>disyInternal</id>
+			<name>Internal Repository for the Distributed System Group</name>
+			<url>http://xen5.disy.inf.uni-konstanz.de:8080/archiva/repository/disyInternal/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 </project>
