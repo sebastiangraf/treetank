@@ -4,7 +4,7 @@
 	<groupId>treetank</groupId>
 	<artifactId>pom</artifactId>
 	<packaging>pom</packaging>
-	<name>treetank-parent</name>
+	<name>treetank-pom</name>
 	<version>1.0.0-SNAPSHOT</version>
 	<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/disy/forschung/treetank/
 	</url>
