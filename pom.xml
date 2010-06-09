@@ -5,7 +5,7 @@
 	<artifactId>complete</artifactId>
 	<packaging>pom</packaging>
 	<name>treetank-complete</name>
-	<version>5.3.3-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<description>Treetank is a fully java-implemented native XML-Database. 
 	It supports cursorlike access to all nodes stored in the tree plus XPath 2.0 as query engine. Furthermore, Treetank is completely versionable. That means that each update-operation results in a new version. 
 	These versions can be easily retrieved within the database itself.</description>
