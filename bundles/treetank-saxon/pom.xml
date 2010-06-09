@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>pom</artifactId>
 		<groupId>treetank</groupId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.0</version>
 		<relativePath>../../parent/pom.xml</relativePath>
 	</parent>
 
@@ -11,7 +11,7 @@
 	<artifactId>saxon</artifactId>
 	<packaging>jar</packaging>
 	<name>treetank-saxon</name>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<description>Saxon binding.</description>
 	<repositories>
 		<repository>
@@ -32,20 +32,20 @@
 		</repository>
 	</repositories>
 	<scm>
-		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/</developerConnection>
-		<url>https://svn.uni-konstanz.de/disy/Treetank/</url>
+		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/saxon-1.0.0</connection>
+		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/saxon-1.0.0</developerConnection>
+		<url>https://svn.uni-konstanz.de/disy/Treetank/tags/saxon-1.0.0</url>
 	</scm>
 	<dependencies>
 		<dependency>
 			<groupId>treetank</groupId>
 			<artifactId>core</artifactId>
-			<version>5.3.4-SNAPSHOT</version>
+			<version>5.3.3</version>
 		</dependency>
 		<dependency>
 			<groupId>treetank</groupId>
 			<artifactId>core</artifactId>
-			<version>5.3.3-SNAPSHOT</version>
+			<version>5.3.3</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
