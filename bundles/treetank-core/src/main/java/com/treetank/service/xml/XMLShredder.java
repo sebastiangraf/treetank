@@ -23,10 +23,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -427,15 +425,15 @@ public final class XMLShredder implements Callable<Long> {
     }
 
     private final boolean checkElement(final StartElement event) {
-        for (Iterator<?> it = event.getAttributes(); it.hasNext();) {
-            final Attribute attribute = (Attribute) it.next();
-            final int bla = 0;
-        }
-
-        for (Iterator<?> it = event.getNamespaces(); it.hasNext();) {
-            final Namespace namespace = (Namespace) it.next();
-            final int bla = 0;
-        }
+		// for (Iterator<?> it = event.getAttributes(); it.hasNext();) {
+		// final Attribute attribute = (Attribute) it.next();
+		// final int bla = 0;
+		// }
+		//
+		// for (Iterator<?> it = event.getNamespaces(); it.hasNext();) {
+		// final Namespace namespace = (Namespace) it.next();
+		// final int bla = 0;
+		// }
         return true;
 
         // final Map<QName, String> eventAttMap = new HashMap<QName, String>();

@@ -3,10 +3,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>treetank</groupId>
-	<artifactId>treetank</artifactId>
+	<artifactId>pom</artifactId>
 	<packaging>pom</packaging>
 	<name>treetank-parent</name>
-	<version>5.3.4-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/disy/forschung/treetank/
 	</url>
 	<issueManagement>
