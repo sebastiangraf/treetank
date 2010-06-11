@@ -56,12 +56,12 @@ public class NodePageTest {
 		assertEquals(4L, ((IStructuralNode) page2.getNode(0))
 				.getRightSiblingKey());
 		assertEquals(0L, page2.getNode(0).getChildCount());
-		assertEquals(2, page2.getNode(0).getAttributeCount());
-		assertEquals(2, page2.getNode(0).getNamespaceCount());
-		assertEquals(88L, page2.getNode(0).getAttributeKey(0));
-		assertEquals(87L, page2.getNode(0).getAttributeKey(1));
-		assertEquals(99L, page2.getNode(0).getNamespaceKey(0));
-		assertEquals(98L, page2.getNode(0).getNamespaceKey(1));
+		assertEquals(2, ((ElementNode) page2.getNode(0)).getAttributeCount());
+		assertEquals(2, ((ElementNode) page2.getNode(0)).getNamespaceCount());
+		assertEquals(88L, ((ElementNode) page2.getNode(0)).getAttributeKey(0));
+		assertEquals(87L, ((ElementNode) page2.getNode(0)).getAttributeKey(1));
+		assertEquals(99L, ((ElementNode) page2.getNode(0)).getNamespaceKey(0));
+		assertEquals(98L, ((ElementNode) page2.getNode(0)).getNamespaceKey(1));
 		assertEquals(6, page2.getNode(0).getNameKey());
 		assertEquals(7, page2.getNode(0).getURIKey());
 

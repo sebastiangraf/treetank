@@ -289,18 +289,20 @@ public final class WriteTransaction extends ReadTransaction implements
 
 	private final void removeIncludingRelated() throws TreetankIOException {
 		final IItem node = getCurrentNode();
-		// removing attributes
-		for (int i = 0; i < node.getAttributeCount(); i++) {
-			moveTo(node.getAttributeKey(i));
-			((WriteTransactionState) getTransactionState())
-					.removeNode((AbstractNode) this.getCurrentNode());
-		}
-		// removing namespaces
-		moveTo(node.getNodeKey());
-		for (int i = 0; i < node.getNamespaceCount(); i++) {
-			moveTo(node.getNamespaceKey(i));
-			((WriteTransactionState) getTransactionState())
-					.removeNode((AbstractNode) this.getCurrentNode());
+		if (node.getKind() == ENodes.ELEMENT_KIND) {
+			// removing attributes
+			for (int i = 0; i < ((ElementNode) node).getAttributeCount(); i++) {
+				moveTo(((ElementNode) node).getAttributeKey(i));
+				((WriteTransactionState) getTransactionState())
+						.removeNode((AbstractNode) this.getCurrentNode());
+			}
+			// removing namespaces
+			moveTo(node.getNodeKey());
+			for (int i = 0; i < ((ElementNode) node).getNamespaceCount(); i++) {
+				moveTo(((ElementNode) node).getNamespaceKey(i));
+				((WriteTransactionState) getTransactionState())
+						.removeNode((AbstractNode) this.getCurrentNode());
+			}
 		}
 		// Remove old node.
 		((WriteTransactionState) getTransactionState())
@@ -712,20 +714,24 @@ public final class WriteTransaction extends ReadTransaction implements
 					tearDownNodeModification(node);
 				} while (moveToRightSibling());
 			}
-			// setting the attributes and namespaces
-			for (int i = 0; i < oldNode.getAttributeCount(); i++) {
-				newNode.insertAttribute(oldNode.getAttributeKey(i));
-				AbstractNode node = setUpNodeModification(oldNode
-						.getAttributeKey(i));
-				node.setParentKey(newNode.getNodeKey());
-				tearDownNodeModification(node);
-			}
-			for (int i = 0; i < oldNode.getNamespaceCount(); i++) {
-				newNode.insertNamespace(oldNode.getNamespaceKey(i));
-				AbstractNode node = setUpNodeModification(oldNode
-						.getNamespaceKey(i));
-				node.setParentKey(newNode.getNodeKey());
-				tearDownNodeModification(node);
+			if (oldNode.getKind() == ENodes.ELEMENT_KIND) {
+				// setting the attributes and namespaces
+				for (int i = 0; i < ((ElementNode) oldNode).getAttributeCount(); i++) {
+					newNode.insertAttribute(((ElementNode) oldNode)
+							.getAttributeKey(i));
+					AbstractNode node = setUpNodeModification(((ElementNode) oldNode)
+							.getAttributeKey(i));
+					node.setParentKey(newNode.getNodeKey());
+					tearDownNodeModification(node);
+				}
+				for (int i = 0; i < ((ElementNode) oldNode).getNamespaceCount(); i++) {
+					newNode.insertNamespace(((ElementNode) oldNode)
+							.getNamespaceKey(i));
+					AbstractNode node = setUpNodeModification(((ElementNode) oldNode)
+							.getNamespaceKey(i));
+					node.setParentKey(newNode.getNodeKey());
+					tearDownNodeModification(node);
+				}
 			}
 			newNode.setChildCount(oldNode.getChildCount());
 		}

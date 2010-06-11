@@ -21,6 +21,7 @@ package com.treetank.service.xml.xpath.filter;
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbstractFilter;
+import com.treetank.node.ElementNode;
 import com.treetank.settings.ENodes;
 
 /**
@@ -71,7 +72,8 @@ public class WildcardFilter extends AbstractFilter implements IFilter {
 
 				return localnameKey == mKnownPartKey;
 			} else {// namespace prefix is given
-				int nsCount = getTransaction().getNode().getNamespaceCount();
+				int nsCount = ((ElementNode) getTransaction().getNode())
+						.getNamespaceCount();
 				for (int i = 0; i < nsCount; i++) {
 					getTransaction().moveToNamespace(i);
 					int prefixKey = mKnownPartKey;

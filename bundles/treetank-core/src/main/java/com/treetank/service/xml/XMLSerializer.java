@@ -32,6 +32,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.DescendantAxis;
+import com.treetank.node.ElementNode;
 import com.treetank.node.IStructuralNode;
 import com.treetank.settings.ENodes;
 import com.treetank.settings.EXMLSerializing;
@@ -218,7 +219,8 @@ public final class XMLSerializer implements Callable<Void> {
 			mOut.write(mRTX.rawNameForKey(mRTX.getNode().getNameKey()));
 			final long key = mRTX.getNode().getNodeKey();
 			// Emit namespace declarations.
-			for (int index = 0, length = mRTX.getNode().getNamespaceCount(); index < length; index++) {
+			for (int index = 0, length = ((ElementNode) mRTX.getNode())
+					.getNamespaceCount(); index < length; index++) {
 				mRTX.moveToNamespace(index);
 				if (mRTX.nameForKey(mRTX.getNode().getNameKey()).length() == 0) {
 					mOut.write(EXMLSerializing.XMLNS.getBytes());
@@ -248,7 +250,8 @@ public final class XMLSerializer implements Callable<Void> {
 			}
 
 			// Iterate over all persistent attributes.
-			for (int index = 0; index < mRTX.getNode().getAttributeCount(); index++) {
+			for (int index = 0; index < ((ElementNode) mRTX.getNode())
+					.getAttributeCount(); index++) {
 				long nodeKey = mRTX.getNode().getNodeKey();
 				mRTX.moveToAttribute(index);
 				if (mRTX.getNode().getKind() == ENodes.ELEMENT_KIND) {

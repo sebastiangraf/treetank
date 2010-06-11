@@ -56,8 +56,8 @@ public class ElementNodeTest {
 		assertEquals(16L, ((IStructuralNode) node3).getLeftSiblingKey());
 		assertEquals(17L, ((IStructuralNode) node3).getRightSiblingKey());
 		assertEquals(0, node3.getChildCount());
-		assertEquals(1, node3.getAttributeCount());
-		assertEquals(1, node3.getNamespaceCount());
+		assertEquals(1, ((ElementNode) node3).getAttributeCount());
+		assertEquals(1, ((ElementNode) node3).getNamespaceCount());
 		assertEquals(18, node3.getNameKey());
 		assertEquals(19, node3.getURIKey());
 		assertEquals(null, node3.getRawValue());
@@ -67,8 +67,8 @@ public class ElementNodeTest {
 		assertEquals(true, ((IStructuralNode) node3).hasLeftSibling());
 		assertEquals(true, ((IStructuralNode) node3).hasRightSibling());
 		assertEquals(ENodes.ELEMENT_KIND, node3.getKind());
-		assertEquals(98L, node3.getAttributeKey(0));
-		assertEquals(99L, node3.getNamespaceKey(0));
+		assertEquals(98L, ((ElementNode) node3).getAttributeKey(0));
+		assertEquals(99L, ((ElementNode) node3).getNamespaceKey(0));
 
 	}
 

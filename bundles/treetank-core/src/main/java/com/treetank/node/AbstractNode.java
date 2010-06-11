@@ -109,33 +109,6 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
 		return 0L;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public int getAttributeCount() {
-		return 0;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public int getNamespaceCount() {
-		return 0;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public long getAttributeKey(final int index) {
-		return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public long getNamespaceKey(final int index) {
-		return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
-	}
 
 	/**
 	 * {@inheritDoc}
