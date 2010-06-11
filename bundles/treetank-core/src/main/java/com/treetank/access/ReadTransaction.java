@@ -25,7 +25,9 @@ import com.treetank.api.IItemList;
 import com.treetank.api.IReadTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
+import com.treetank.node.IStructuralNode;
 import com.treetank.settings.EFixed;
+import com.treetank.settings.ENodes;
 import com.treetank.utils.NamePageHash;
 import com.treetank.utils.TypedValue;
 
@@ -142,21 +144,33 @@ public class ReadTransaction implements IReadTransaction {
 	 * {@inheritDoc}
 	 */
 	public final boolean moveToFirstChild() {
-		return moveTo(mCurrentNode.getFirstChildKey());
+		if (mCurrentNode.isLeaf()) {
+			return false;
+		} else {
+			return moveTo(((IStructuralNode) mCurrentNode).getFirstChildKey());
+		}
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public final boolean moveToLeftSibling() {
-		return moveTo(mCurrentNode.getLeftSiblingKey());
+		if (mCurrentNode.isLeaf()) {
+			return false;
+		} else {
+			return moveTo(((IStructuralNode) mCurrentNode).getLeftSiblingKey());
+		}
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public final boolean moveToRightSibling() {
-		return moveTo(mCurrentNode.getRightSiblingKey());
+		if (mCurrentNode.isLeaf()) {
+			return false;
+		} else {
+			return moveTo(((IStructuralNode) mCurrentNode).getRightSiblingKey());
+		}
 	}
 
 	/**
@@ -190,24 +204,6 @@ public class ReadTransaction implements IReadTransaction {
 				.getName(mCurrentNode.getNameKey());
 		final String uri = mTransactionState.getName(mCurrentNode.getURIKey());
 		return name == null ? null : buildQName(uri, name);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Deprecated
-	public final String getNameOfCurrentNode() {
-		final QName qname = getQNameOfCurrentNode();
-		return qname == null ? null : WriteTransaction.buildName(qname);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Deprecated
-	public final String getURIOfCurrentNode() {
-		final QName qname = getQNameOfCurrentNode();
-		return qname == null ? null : qname.getNamespaceURI();
 	}
 
 	/**
@@ -276,17 +272,19 @@ public class ReadTransaction implements IReadTransaction {
 	public String toString() {
 		assertNotClosed();
 		final StringBuilder builder = new StringBuilder();
-		if (getNode().isAttribute() || getNode().isElement()) {
+		if (getNode().getKind() == ENodes.ATTRIBUTE_KIND
+				|| getNode().getKind() == ENodes.ELEMENT_KIND) {
 			builder.append("Name of Node: ");
-			builder.append(getNameOfCurrentNode());
+			builder.append(getQNameOfCurrentNode().toString());
 			builder.append("\n");
 		}
-		if (getNode().isAttribute() || getNode().isText()) {
+		if (getNode().getKind() == ENodes.ATTRIBUTE_KIND
+				|| getNode().getKind() == ENodes.TEXT_KIND) {
 			builder.append("Value of Node: ");
 			builder.append(getValueOfCurrentNode());
 			builder.append("\n");
 		}
-		if (getNode().isDocumentRoot()) {
+		if (getNode().getKind() == ENodes.ROOT_KIND) {
 			builder.append("Node is DocumentRoot");
 			builder.append("\n");
 		}

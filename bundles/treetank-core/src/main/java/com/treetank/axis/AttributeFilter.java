@@ -20,6 +20,7 @@ package com.treetank.axis;
 
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
+import com.treetank.settings.ENodes;
 
 /**
  * <h1>AttributeAxisTest</h1>
@@ -30,21 +31,21 @@ import com.treetank.api.IReadTransaction;
  */
 public class AttributeFilter extends AbstractFilter implements IFilter {
 
-    /**
-     * Default constructor.
-     * 
-     * @param rtx
-     *            Transaction this filter is bound to.
-     */
-    public AttributeFilter(final IReadTransaction rtx) {
-        super(rtx);
-    }
+	/**
+	 * Default constructor.
+	 * 
+	 * @param rtx
+	 *            Transaction this filter is bound to.
+	 */
+	public AttributeFilter(final IReadTransaction rtx) {
+		super(rtx);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    public final boolean filter() {
-        return (getTransaction().getNode().isAttribute());
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public final boolean filter() {
+		return (getTransaction().getNode().getKind() == ENodes.ATTRIBUTE_KIND);
+	}
 
 }

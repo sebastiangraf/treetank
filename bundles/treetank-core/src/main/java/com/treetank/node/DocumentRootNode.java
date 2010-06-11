@@ -30,115 +30,131 @@ import com.treetank.settings.ENodes;
  * revision 0 and can not be removed.
  * </p>
  */
-public final class DocumentRootNode extends AbstractNode {
+public final class DocumentRootNode extends AbstractNode implements
+		IStructuralNode {
 
-    private static final int SIZE = 3;
+	private static final int SIZE = 3;
 
-    private static final int FIRST_CHILD_KEY = 1;
+	private static final int FIRST_CHILD_KEY = 1;
 
-    private static final int CHILD_COUNT = 2;
+	private static final int CHILD_COUNT = 2;
 
-    /**
-     * Constructor to create document node.
-     */
-    public DocumentRootNode() {
-        super(SIZE, (Long) EFixed.ROOT_NODE_KEY.getStandardProperty());
-        mData[FIRST_CHILD_KEY] = (Long) EFixed.NULL_NODE_KEY
-                .getStandardProperty();
-        mData[CHILD_COUNT] = 0L;
-    }
+	/**
+	 * Constructor to create document node.
+	 */
+	public DocumentRootNode() {
+		super(SIZE, (Long) EFixed.ROOT_NODE_KEY.getStandardProperty());
+		mData[FIRST_CHILD_KEY] = (Long) EFixed.NULL_NODE_KEY
+				.getStandardProperty();
+		mData[CHILD_COUNT] = 0L;
+	}
 
-    /**
-     * Clone document node.
-     * 
-     * @param node
-     *            Node to clone.
-     */
-    protected DocumentRootNode(final AbstractNode node) {
-        super(node);
-    }
+	/**
+	 * Clone document node.
+	 * 
+	 * @param node
+	 *            Node to clone.
+	 */
+	protected DocumentRootNode(final AbstractNode node) {
+		super(node);
+	}
 
-    /**
-     * Read document node.
-     * 
-     * @param in
-     *            Byte input to read node from.
-     */
-    protected DocumentRootNode(final ITTSource in) {
-        super(SIZE, in);
-    }
+	/**
+	 * Read document node.
+	 * 
+	 * @param in
+	 *            Byte input to read node from.
+	 */
+	protected DocumentRootNode(final ITTSource in) {
+		super(SIZE, in);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isDocumentRoot() {
-        return true;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean hasFirstChild() {
+		return (mData[FIRST_CHILD_KEY] != (Long) EFixed.NULL_NODE_KEY
+				.getStandardProperty());
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean hasFirstChild() {
-        return (mData[FIRST_CHILD_KEY] != (Long) EFixed.NULL_NODE_KEY
-                .getStandardProperty());
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public long getFirstChildKey() {
+		return mData[FIRST_CHILD_KEY];
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long getFirstChildKey() {
-        return mData[FIRST_CHILD_KEY];
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setFirstChildKey(final long firstChildKey) {
+		mData[FIRST_CHILD_KEY] = firstChildKey;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setFirstChildKey(final long firstChildKey) {
-        mData[FIRST_CHILD_KEY] = firstChildKey;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public long getChildCount() {
+		return mData[CHILD_COUNT];
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long getChildCount() {
-        return mData[CHILD_COUNT];
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setChildCount(final long childCount) {
+		mData[CHILD_COUNT] = childCount;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setChildCount(final long childCount) {
-        mData[CHILD_COUNT] = childCount;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void incrementChildCount() {
+		mData[CHILD_COUNT] += 1;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void incrementChildCount() {
-        mData[CHILD_COUNT] += 1;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void decrementChildCount() {
+		mData[CHILD_COUNT] -= 1;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void decrementChildCount() {
-        mData[CHILD_COUNT] -= 1;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ENodes getKind() {
+		return ENodes.ROOT_KIND;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ENodes getKind() {
-        return ENodes.ROOT_KIND;
-    }
+	@Override
+	public long getLeftSiblingKey() {
+		return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
+	}
+
+	@Override
+	public long getRightSiblingKey() {
+		return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
+	}
+
+	@Override
+	public boolean hasLeftSibling() {
+		return false;
+	}
+
+	@Override
+	public boolean hasRightSibling() {
+		return false;
+	}
+
+	@Override
+	public boolean isLeaf() {
+		return false;
+	}
 
 }

@@ -161,7 +161,7 @@ public final class WriteTransactionState extends ReadTransactionState {
      *            node to add.
      * @return Unmodified node from parameter for convenience.
      */
-    protected <N extends AbstractNode> N createNode(final N node)
+    private <N extends AbstractNode> N createNode(final N node)
             throws TreetankIOException {
         // Allocate node key and increment node count.
         mNewRoot.incrementMaxNodeKey();

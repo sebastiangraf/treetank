@@ -21,6 +21,7 @@ package com.treetank.axis;
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.settings.EFixed;
+import com.treetank.settings.ENodes;
 
 /**
  * <h1>AncestorAxis</h1>
@@ -32,60 +33,60 @@ import com.treetank.settings.EFixed;
  */
 public class AncestorAxis extends AbstractAxis implements IAxis {
 
-    private boolean mFirst;
+	private boolean mFirst;
 
-    /**
-     * Constructor initializing internal state.
-     * 
-     * @param rtx
-     *            Exclusive (immutable) trx to iterate with.
-     */
-    public AncestorAxis(final IReadTransaction rtx) {
-        super(rtx);
-    }
+	/**
+	 * Constructor initializing internal state.
+	 * 
+	 * @param rtx
+	 *            Exclusive (immutable) trx to iterate with.
+	 */
+	public AncestorAxis(final IReadTransaction rtx) {
+		super(rtx);
+	}
 
-    /**
-     * Constructor initializing internal state.
-     * 
-     * @param rtx
-     *            Exclusive (immutable) trx to iterate with.
-     * @param includeSelf
-     *            Is self included?
-     */
-    public AncestorAxis(final IReadTransaction rtx, final boolean includeSelf) {
-        super(rtx, includeSelf);
-    }
+	/**
+	 * Constructor initializing internal state.
+	 * 
+	 * @param rtx
+	 *            Exclusive (immutable) trx to iterate with.
+	 * @param includeSelf
+	 *            Is self included?
+	 */
+	public AncestorAxis(final IReadTransaction rtx, final boolean includeSelf) {
+		super(rtx, includeSelf);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final void reset(final long nodeKey) {
-        super.reset(nodeKey);
-        mFirst = true;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final void reset(final long nodeKey) {
+		super.reset(nodeKey);
+		mFirst = true;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    public final boolean hasNext() {
-        resetToLastKey();
+	/**
+	 * {@inheritDoc}
+	 */
+	public final boolean hasNext() {
+		resetToLastKey();
 
-        // Self
-        if (mFirst && isSelfIncluded()) {
-            mFirst = false;
-            return true;
-        }
+		// Self
+		if (mFirst && isSelfIncluded()) {
+			mFirst = false;
+			return true;
+		}
 
-        if (!getTransaction().getNode().isDocumentRoot()
-                && getTransaction().getNode().hasParent()
-                && getTransaction().getNode().getParentKey() != (Long) EFixed.ROOT_NODE_KEY
-                        .getStandardProperty()) {
-            getTransaction().moveToParent();
-            return true;
-        }
-        resetToStartKey();
-        return false;
-    }
+		if (getTransaction().getNode().getKind() != ENodes.ROOT_KIND
+				&& getTransaction().getNode().hasParent()
+				&& getTransaction().getNode().getParentKey() != (Long) EFixed.ROOT_NODE_KEY
+						.getStandardProperty()) {
+			getTransaction().moveToParent();
+			return true;
+		}
+		resetToStartKey();
+		return false;
+	}
 
 }
