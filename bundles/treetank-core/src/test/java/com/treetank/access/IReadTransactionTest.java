@@ -31,6 +31,8 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
+import com.treetank.node.IStructuralNode;
+import com.treetank.settings.ENodes;
 import com.treetank.utils.DocumentCreater;
 
 public class IReadTransactionTest {
@@ -61,11 +63,11 @@ public class IReadTransactionTest {
 		final IReadTransaction rtx = session.beginReadTransaction();
 
 		assertEquals(true, rtx.moveToDocumentRoot());
-		assertEquals(true, rtx.getNode().isDocumentRoot());
+		assertEquals(ENodes.ROOT_KIND, rtx.getNode().getKind());
 		assertEquals(false, rtx.getNode().hasParent());
-		assertEquals(false, rtx.getNode().hasLeftSibling());
-		assertEquals(false, rtx.getNode().hasRightSibling());
-		assertEquals(true, rtx.getNode().hasFirstChild());
+		assertEquals(false, ((IStructuralNode) rtx.getNode()).hasLeftSibling());
+		assertEquals(false, ((IStructuralNode) rtx.getNode()).hasRightSibling());
+		assertEquals(true, ((IStructuralNode) rtx.getNode()).hasFirstChild());
 
 		rtx.close();
 	}
@@ -83,23 +85,28 @@ public class IReadTransactionTest {
 		assertEquals(rtx.getNode().hasParent(), rtx.moveToParent());
 		assertEquals(key, rtx.getNode().getNodeKey());
 
-		assertEquals(rtx.getNode().hasFirstChild(), rtx.moveToFirstChild());
+		assertEquals(((IStructuralNode) rtx.getNode()).hasFirstChild(), rtx
+				.moveToFirstChild());
 		assertEquals(1L, rtx.getNode().getNodeKey());
 
 		assertEquals(false, rtx.moveTo(Integer.MAX_VALUE));
 		assertEquals(false, rtx.moveTo(Integer.MIN_VALUE));
 		assertEquals(1L, rtx.getNode().getNodeKey());
 
-		assertEquals(rtx.getNode().hasRightSibling(), rtx.moveToRightSibling());
+		assertEquals(((IStructuralNode) rtx.getNode()).hasRightSibling(), rtx
+				.moveToRightSibling());
 		assertEquals(1L, rtx.getNode().getNodeKey());
 
-		assertEquals(rtx.getNode().hasFirstChild(), rtx.moveToFirstChild());
+		assertEquals(((IStructuralNode) rtx.getNode()).hasFirstChild(), rtx
+				.moveToFirstChild());
 		assertEquals(4L, rtx.getNode().getNodeKey());
 
-		assertEquals(rtx.getNode().hasRightSibling(), rtx.moveToRightSibling());
+		assertEquals(((IStructuralNode) rtx.getNode()).hasRightSibling(), rtx
+				.moveToRightSibling());
 		assertEquals(5L, rtx.getNode().getNodeKey());
 
-		assertEquals(rtx.getNode().hasLeftSibling(), rtx.moveToLeftSibling());
+		assertEquals(((IStructuralNode) rtx.getNode()).hasLeftSibling(), rtx
+				.moveToLeftSibling());
 		assertEquals(4L, rtx.getNode().getNodeKey());
 
 		assertEquals(rtx.getNode().hasParent(), rtx.moveToParent());

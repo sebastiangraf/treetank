@@ -41,6 +41,8 @@ import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TreetankException;
+import com.treetank.node.IStructuralNode;
+import com.treetank.settings.ENodes;
 import com.treetank.utils.DocumentCreater;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.TypedValue;
@@ -99,12 +101,15 @@ public class XMLShredderTest {
 					.getNodeKey());
 			assertEquals(expectedTrx.getNode().getParentKey(), rtx.getNode()
 					.getParentKey());
-			assertEquals(expectedTrx.getNode().getFirstChildKey(), rtx
-					.getNode().getFirstChildKey());
-			assertEquals(expectedTrx.getNode().getLeftSiblingKey(), rtx
-					.getNode().getLeftSiblingKey());
-			assertEquals(expectedTrx.getNode().getRightSiblingKey(), rtx
-					.getNode().getRightSiblingKey());
+			assertEquals(((IStructuralNode) expectedTrx.getNode())
+					.getFirstChildKey(), ((IStructuralNode) rtx.getNode())
+					.getFirstChildKey());
+			assertEquals(((IStructuralNode) expectedTrx.getNode())
+					.getLeftSiblingKey(), ((IStructuralNode) rtx.getNode())
+					.getLeftSiblingKey());
+			assertEquals(((IStructuralNode) expectedTrx.getNode())
+					.getRightSiblingKey(), ((IStructuralNode) rtx.getNode())
+					.getRightSiblingKey());
 			assertEquals(expectedTrx.getNode().getChildCount(), rtx.getNode()
 					.getChildCount());
 			assertEquals(expectedTrx.getNode().getAttributeCount(), rtx
@@ -117,7 +122,7 @@ public class XMLShredderTest {
 					.getNameKey()), rtx.nameForKey(rtx.getNode().getNameKey()));
 			assertEquals(expectedTrx.nameForKey(expectedTrx.getNode()
 					.getURIKey()), rtx.nameForKey(rtx.getNode().getURIKey()));
-			if (expectedTrx.getNode().isText()) {
+			if (expectedTrx.getNode().getKind() == ENodes.TEXT_KIND) {
 				assertEquals(new String(expectedTrx.getNode().getRawValue(),
 						IConstants.DEFAULT_ENCODING), new String(rtx.getNode()
 						.getRawValue(), IConstants.DEFAULT_ENCODING));

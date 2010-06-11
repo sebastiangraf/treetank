@@ -20,6 +20,8 @@ package com.treetank.axis;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.node.IStructuralNode;
+import com.treetank.settings.ENodes;
 
 /**
  * <h1>PrecedingSiblingAxis</h1>
@@ -31,56 +33,56 @@ import com.treetank.api.IReadTransaction;
  */
 public class PrecedingSiblingAxis extends AbstractAxis implements IAxis {
 
-    private boolean mIsFirst;
+	private boolean mIsFirst;
 
-    /**
-     * Constructor initializing internal state.
-     * 
-     * @param rtx
-     *            Exclusive (immutable) trx to iterate with.
-     */
-    public PrecedingSiblingAxis(final IReadTransaction rtx) {
+	/**
+	 * Constructor initializing internal state.
+	 * 
+	 * @param rtx
+	 *            Exclusive (immutable) trx to iterate with.
+	 */
+	public PrecedingSiblingAxis(final IReadTransaction rtx) {
 
-        super(rtx);
-        mIsFirst = true;
-    }
+		super(rtx);
+		mIsFirst = true;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final void reset(final long nodeKey) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final void reset(final long nodeKey) {
 
-        super.reset(nodeKey);
-        mIsFirst = true;
+		super.reset(nodeKey);
+		mIsFirst = true;
 
-    }
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    public final boolean hasNext() {
+	/**
+	 * {@inheritDoc}
+	 */
+	public final boolean hasNext() {
 
-        if (mIsFirst) {
-            mIsFirst = false;
-            // if the context node is an attribute or namespace node,
-            // the following-sibling axis is empty
-            if (getTransaction().getNode().isAttribute()
-            // || getTransaction().isNamespaceKind()
-            ) {
-                resetToStartKey();
-                return false;
-            }
-        }
+		if (mIsFirst) {
+			mIsFirst = false;
+			// if the context node is an attribute or namespace node,
+			// the following-sibling axis is empty
+			if (getTransaction().getNode().getKind() == ENodes.ATTRIBUTE_KIND
+			// || getTransaction().isNamespaceKind()
+			) {
+				resetToStartKey();
+				return false;
+			}
+		}
 
-        resetToLastKey();
+		resetToLastKey();
 
-        if (getTransaction().getNode().hasLeftSibling()) {
-            getTransaction().moveToLeftSibling();
-            return true;
-        }
-        resetToStartKey();
-        return false;
-    }
+		if (((IStructuralNode) getTransaction().getNode()).hasLeftSibling()) {
+			getTransaction().moveToLeftSibling();
+			return true;
+		}
+		resetToStartKey();
+		return false;
+	}
 
 }
