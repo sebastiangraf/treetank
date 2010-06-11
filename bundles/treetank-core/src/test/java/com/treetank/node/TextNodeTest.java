@@ -56,8 +56,6 @@ public class TextNodeTest {
 		assertEquals(15L, ((IStructuralNode) node3).getLeftSiblingKey());
 		assertEquals(16L, ((IStructuralNode) node3).getRightSiblingKey());
 		assertEquals(0L, node3.getChildCount());
-		assertEquals(0, node3.getAttributeCount());
-		assertEquals(0, node3.getNamespaceCount());
 		assertEquals(19, node3.getTypeKey());
 		assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(), node3
 				.getNameKey());

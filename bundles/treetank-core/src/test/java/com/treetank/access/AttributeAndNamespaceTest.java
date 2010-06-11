@@ -18,7 +18,7 @@
 
 package com.treetank.access;
 
-import junit.framework.TestCase;
+import static junit.framework.TestCase.assertEquals;
 
 import org.junit.After;
 import org.junit.Before;
@@ -30,6 +30,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
+import com.treetank.node.ElementNode;
 import com.treetank.utils.DocumentCreater;
 
 public class AttributeAndNamespaceTest {
@@ -53,16 +54,15 @@ public class AttributeAndNamespaceTest {
 		DocumentCreater.create(wtx);
 
 		wtx.moveTo(1L);
-		TestCase.assertEquals(1, wtx.getNode().getAttributeCount());
+		assertEquals(1, ((ElementNode) wtx.getNode()).getAttributeCount());
 		wtx.moveToAttribute(0);
-		TestCase.assertEquals("i", wtx.nameForKey(wtx.getNode().getNameKey()));
+		assertEquals("i", wtx.nameForKey(wtx.getNode().getNameKey()));
 
 		wtx.moveTo(9L);
-		TestCase.assertEquals(1, wtx.getNode().getAttributeCount());
+		assertEquals(1, ((ElementNode) wtx.getNode()).getAttributeCount());
 		wtx.moveToAttribute(0);
-		TestCase
-				.assertEquals("p:x", wtx.nameForKey(wtx.getNode().getNameKey()));
-		TestCase.assertEquals("ns", wtx.nameForKey(wtx.getNode().getURIKey()));
+		assertEquals("p:x", wtx.nameForKey(wtx.getNode().getNameKey()));
+		assertEquals("ns", wtx.nameForKey(wtx.getNode().getURIKey()));
 
 		wtx.abort();
 		wtx.close();
@@ -74,16 +74,16 @@ public class AttributeAndNamespaceTest {
 	@Test
 	public void testNamespace() throws TreetankException {
 		final IDatabase database = TestHelper
-		.getDatabase(PATHS.PATH1.getFile());
+				.getDatabase(PATHS.PATH1.getFile());
 		final ISession session = database.getSession();
 		final IWriteTransaction wtx = session.beginWriteTransaction();
 		DocumentCreater.create(wtx);
 
 		wtx.moveTo(1L);
-		TestCase.assertEquals(1, wtx.getNode().getNamespaceCount());
+		assertEquals(1, ((ElementNode) wtx.getNode()).getNamespaceCount());
 		wtx.moveToNamespace(0);
-		TestCase.assertEquals("p", wtx.nameForKey(wtx.getNode().getNameKey()));
-		TestCase.assertEquals("ns", wtx.nameForKey(wtx.getNode().getURIKey()));
+		assertEquals("p", wtx.nameForKey(wtx.getNode().getNameKey()));
+		assertEquals("ns", wtx.nameForKey(wtx.getNode().getURIKey()));
 
 		wtx.abort();
 		wtx.close();

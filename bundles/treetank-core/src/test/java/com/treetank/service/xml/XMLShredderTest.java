@@ -41,6 +41,7 @@ import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TreetankException;
+import com.treetank.node.ElementNode;
 import com.treetank.node.IStructuralNode;
 import com.treetank.settings.ENodes;
 import com.treetank.utils.DocumentCreater;
@@ -112,17 +113,23 @@ public class XMLShredderTest {
 					.getRightSiblingKey());
 			assertEquals(expectedTrx.getNode().getChildCount(), rtx.getNode()
 					.getChildCount());
-			assertEquals(expectedTrx.getNode().getAttributeCount(), rtx
-					.getNode().getAttributeCount());
-			assertEquals(expectedTrx.getNode().getNamespaceCount(), rtx
-					.getNode().getNamespaceCount());
+			if (expectedTrx.getNode().getKind() == ENodes.ELEMENT_KIND
+					|| rtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
+				assertEquals(((ElementNode) expectedTrx.getNode())
+						.getAttributeCount(), ((ElementNode) rtx.getNode())
+						.getAttributeCount());
+				assertEquals(((ElementNode) expectedTrx.getNode())
+						.getNamespaceCount(), ((ElementNode) rtx.getNode())
+						.getNamespaceCount());
+			}
 			assertEquals(expectedTrx.getNode().getKind(), rtx.getNode()
 					.getKind());
 			assertEquals(expectedTrx.nameForKey(expectedTrx.getNode()
 					.getNameKey()), rtx.nameForKey(rtx.getNode().getNameKey()));
 			assertEquals(expectedTrx.nameForKey(expectedTrx.getNode()
 					.getURIKey()), rtx.nameForKey(rtx.getNode().getURIKey()));
-			if (expectedTrx.getNode().getKind() == ENodes.TEXT_KIND) {
+			if (expectedTrx.getNode().getKind() == ENodes.TEXT_KIND
+					|| rtx.getNode().getKind() == ENodes.TEXT_KIND) {
 				assertEquals(new String(expectedTrx.getNode().getRawValue(),
 						IConstants.DEFAULT_ENCODING), new String(rtx.getNode()
 						.getRawValue(), IConstants.DEFAULT_ENCODING));
@@ -230,22 +237,30 @@ public class XMLShredderTest {
 		final Iterator<Long> attributes = new DescendantAxis(rtx);
 
 		while (expectedAttributes.hasNext() && attributes.hasNext()) {
-			assertEquals(expectedTrx2.getNode().getNamespaceCount(), rtx
-					.getNode().getNamespaceCount());
-			assertEquals(expectedTrx2.getNode().getAttributeCount(), rtx
-					.getNode().getAttributeCount());
-			for (int i = 0; i < expectedTrx2.getNode().getAttributeCount(); i++) {
-				assertEquals(expectedTrx2.nameForKey(expectedTrx2.getNode()
-						.getNameKey()), rtx.nameForKey(rtx.getNode()
-						.getNameKey()));
-				assertEquals(expectedTrx2.getNode().getNameKey(), rtx.getNode()
-						.getNameKey());
-				assertEquals(expectedTrx2.nameForKey(expectedTrx2.getNode()
-						.getURIKey()), rtx
-						.nameForKey(rtx.getNode().getURIKey()));
+			if (expectedTrx2.getNode().getKind() == ENodes.ELEMENT_KIND
+					|| rtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
+				assertEquals(((ElementNode) expectedTrx2.getNode())
+						.getNamespaceCount(), ((ElementNode) rtx.getNode())
+						.getNamespaceCount());
+				assertEquals(((ElementNode) expectedTrx2.getNode())
+						.getAttributeCount(), ((ElementNode) rtx.getNode())
+						.getAttributeCount());
+				for (int i = 0; i < ((ElementNode) expectedTrx2.getNode())
+						.getAttributeCount(); i++) {
+					assertEquals(expectedTrx2.nameForKey(expectedTrx2.getNode()
+							.getNameKey()), rtx.nameForKey(rtx.getNode()
+							.getNameKey()));
+					assertEquals(expectedTrx2.getNode().getNameKey(), rtx
+							.getNode().getNameKey());
+					assertEquals(expectedTrx2.nameForKey(expectedTrx2.getNode()
+							.getURIKey()), rtx.nameForKey(rtx.getNode()
+							.getURIKey()));
 
+				}
 			}
 		}
+
+		assertEquals(expectedAttributes.hasNext(), attributes.hasNext());
 
 		expectedTrx2.close();
 		expectedSession2.close();

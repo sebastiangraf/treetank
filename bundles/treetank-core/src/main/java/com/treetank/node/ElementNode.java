@@ -108,7 +108,7 @@ public final class ElementNode extends AbstractNode implements IStructuralNode {
 	 * @param node
 	 *            Element node to clone.
 	 */
-	protected ElementNode(final AbstractNode node) {
+	protected ElementNode(final ElementNode node) {
 		super(node);
 		if (mData[ATTRIBUTE_COUNT] > 0) {
 			mAttributeKeys = new ArrayList<Long>((int) mData[ATTRIBUTE_COUNT]);
@@ -147,7 +147,6 @@ public final class ElementNode extends AbstractNode implements IStructuralNode {
 			}
 		}
 	}
-
 
 	/**
 	 * {@inheritDoc}
@@ -277,7 +276,6 @@ public final class ElementNode extends AbstractNode implements IStructuralNode {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public int getAttributeCount() {
 		return (int) mData[ATTRIBUTE_COUNT];
 	}
@@ -285,7 +283,6 @@ public final class ElementNode extends AbstractNode implements IStructuralNode {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public long getAttributeKey(final int index) {
 		if (mAttributeKeys == null) {
 			return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
@@ -319,7 +316,6 @@ public final class ElementNode extends AbstractNode implements IStructuralNode {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public int getNamespaceCount() {
 		return (int) mData[NAMESPACE_COUNT];
 	}
@@ -327,7 +323,6 @@ public final class ElementNode extends AbstractNode implements IStructuralNode {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public long getNamespaceKey(final int index) {
 		if (mNamespaceKeys == null) {
 			return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();

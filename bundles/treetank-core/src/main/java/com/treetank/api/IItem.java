@@ -54,15 +54,6 @@ public interface IItem {
 	long getParentKey();
 
 	/**
-	 * Gets the nodes attribute with the specified index.
-	 * 
-	 * @param index
-	 *            index of the attribute to get
-	 * @return attribute key at index
-	 */
-	long getAttributeKey(int index);
-
-	/**
 	 * Declares, whether the item has a parent.
 	 * 
 	 * @return true, if item has a parent
@@ -82,29 +73,6 @@ public interface IItem {
 	 * @return item's number of children
 	 */
 	long getChildCount();
-
-	/**
-	 * Gets the number of attributes of the item.
-	 * 
-	 * @return item's number of attributes.
-	 */
-	int getAttributeCount();
-
-	/**
-	 * Gets the number of namespaces of the item.
-	 * 
-	 * @return item's number of namespaces.
-	 */
-	int getNamespaceCount();
-
-	/**
-	 * Gets namespace of the item at the specified position.
-	 * 
-	 * @param index
-	 *            index of the namespace to get
-	 * @return item's namespace key at the given index
-	 */
-	long getNamespaceKey(final int index);
 
 	/**
 	 * Gets the kind of the item (atomic value, element node, attribute

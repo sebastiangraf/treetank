@@ -25,6 +25,7 @@ import com.treetank.api.IItemList;
 import com.treetank.api.IReadTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
+import com.treetank.node.ElementNode;
 import com.treetank.node.IStructuralNode;
 import com.treetank.settings.EFixed;
 import com.treetank.settings.ENodes;
@@ -177,14 +178,23 @@ public class ReadTransaction implements IReadTransaction {
 	 * {@inheritDoc}
 	 */
 	public final boolean moveToAttribute(final int index) {
-		return moveTo(mCurrentNode.getAttributeKey(index));
+		if (mCurrentNode.getKind() == ENodes.ELEMENT_KIND) {
+			return moveTo(((ElementNode) mCurrentNode).getAttributeKey(index));
+		} else {
+			return false;
+		}
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public final boolean moveToNamespace(final int index) {
-		return moveTo(mCurrentNode.getNamespaceKey(index));
+		if (mCurrentNode.getKind() == ENodes.ELEMENT_KIND) {
+			return moveTo(((ElementNode) mCurrentNode).getNamespaceKey(index));
+		} else {
+			return false;
+		}
+
 	}
 
 	/**

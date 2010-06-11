@@ -38,6 +38,8 @@ import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.axis.PostOrderAxis;
 import com.treetank.exception.TreetankException;
+import com.treetank.node.ElementNode;
+import com.treetank.settings.ENodes;
 import com.treetank.utils.DocumentCreater;
 
 public class MultipleCommitTest {
@@ -127,8 +129,10 @@ public class MultipleCommitTest {
 		final IAxis postorderAxis = new PostOrderAxis(wtx);
 		while (postorderAxis.hasNext()) {
 			postorderAxis.next();
-			if (wtx.getNode().getAttributeCount() > 0) {
-				for (int i = 0, attrCount = wtx.getNode().getAttributeCount(); i < attrCount; i++) {
+			if (wtx.getNode().getKind() == ENodes.ELEMENT_KIND
+					&& ((ElementNode) wtx.getNode()).getAttributeCount() > 0) {
+				for (int i = 0, attrCount = ((ElementNode) wtx.getNode())
+						.getAttributeCount(); i < attrCount; i++) {
 					wtx.moveToAttribute(i);
 					wtx.remove();
 				}
@@ -141,11 +145,14 @@ public class MultipleCommitTest {
 		final IAxis descAxis = new DescendantAxis(wtx);
 		while (descAxis.hasNext()) {
 			descAxis.next();
-			for (int i = 0, attrCount = wtx.getNode().getAttributeCount(); i < attrCount; i++) {
-				if (wtx.moveToAttribute(i)) {
-					attrTouch++;
-				} else {
-					throw new IllegalStateException("Should never occur!");
+			if (wtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
+				for (int i = 0, attrCount = ((ElementNode) wtx.getNode())
+						.getAttributeCount(); i < attrCount; i++) {
+					if (wtx.moveToAttribute(i)) {
+						attrTouch++;
+					} else {
+						throw new IllegalStateException("Should never occur!");
+					}
 				}
 			}
 		}

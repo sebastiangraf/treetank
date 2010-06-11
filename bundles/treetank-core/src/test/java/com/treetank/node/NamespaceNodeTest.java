@@ -44,8 +44,6 @@ public class NamespaceNodeTest {
 		assertEquals(13L, node2.getParentKey());
 
 		assertEquals(0, node2.getChildCount());
-		assertEquals(0, node2.getAttributeCount());
-		assertEquals(0, node2.getNamespaceCount());
 		assertEquals(14, node2.getURIKey());
 		assertEquals(15, node2.getNameKey());
 		assertEquals(null, node2.getRawValue());

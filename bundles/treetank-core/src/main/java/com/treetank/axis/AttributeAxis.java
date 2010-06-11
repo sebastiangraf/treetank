@@ -20,6 +20,7 @@ package com.treetank.axis;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.node.ElementNode;
 import com.treetank.settings.ENodes;
 
 /**
@@ -65,7 +66,9 @@ public class AttributeAxis extends AbstractAxis implements IAxis {
 			assert getTransaction().getNode().getKind() == ENodes.ATTRIBUTE_KIND;
 			getTransaction().moveToParent();
 		}
-		if (mNextIndex < getTransaction().getNode().getAttributeCount()) {
+		if (getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND
+				&& mNextIndex < ((ElementNode) getTransaction().getNode())
+						.getAttributeCount()) {
 			getTransaction().moveToAttribute(mNextIndex);
 			mNextIndex += 1;
 			return true;

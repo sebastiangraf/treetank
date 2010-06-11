@@ -31,10 +31,12 @@ import org.junit.Test;
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
+import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
+import com.treetank.node.AbstractNode;
 import com.treetank.settings.ENodes;
 import com.treetank.utils.DocumentCreater;
 import com.treetank.utils.IConstants;
@@ -65,7 +67,8 @@ public class SessionTest {
 		rtx.close();
 
 		try {
-			rtx.getNode().getAttributeCount();
+			final IItem node = rtx.getNode();
+			node.getNodeKey();
 			TestCase.fail();
 		} catch (Exception e) {
 			// Must fail.
