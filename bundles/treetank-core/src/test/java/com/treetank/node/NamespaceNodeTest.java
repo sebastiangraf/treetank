@@ -32,9 +32,6 @@ public class NamespaceNodeTest {
 		// Create empty node.
 		final AbstractNode node1 = new NamespaceNode(99L, 13L, 14, 15);
 
-		// Modify it.
-		node1.incrementChildCount();
-		node1.decrementChildCount();
 
 		// Clone node.
 		final AbstractNode node2 = new NamespaceNode(node1);
@@ -43,7 +40,6 @@ public class NamespaceNodeTest {
 		assertEquals(99L, node2.getNodeKey());
 		assertEquals(13L, node2.getParentKey());
 
-		assertEquals(0, node2.getChildCount());
 		assertEquals(14, node2.getURIKey());
 		assertEquals(15, node2.getNameKey());
 		assertEquals(null, node2.getRawValue());

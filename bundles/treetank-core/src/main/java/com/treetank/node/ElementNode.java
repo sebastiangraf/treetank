@@ -293,7 +293,6 @@ public final class ElementNode extends AbstractNode implements IStructuralNode {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public void insertAttribute(final long attributeKey) {
 		if (mAttributeKeys == null) {
 			mAttributeKeys = new ArrayList<Long>(1);
@@ -333,7 +332,6 @@ public final class ElementNode extends AbstractNode implements IStructuralNode {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public void insertNamespace(final long namespaceKey) {
 		if (mNamespaceKeys == null) {
 			mNamespaceKeys = new ArrayList<Long>(1);

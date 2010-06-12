@@ -562,7 +562,7 @@ public final class WriteTransaction extends ReadTransaction implements
 
 		final AbstractNode parentNode = setUpNodeModification(node
 				.getParentKey());
-		parentNode.insertAttribute(node.getNodeKey());
+		((ElementNode) parentNode).insertAttribute(node.getNodeKey());
 		tearDownNodeModification(parentNode);
 
 		return node.getNodeKey();
@@ -584,7 +584,7 @@ public final class WriteTransaction extends ReadTransaction implements
 
 		final AbstractNode parentNode = setUpNodeModification(node
 				.getParentKey());
-		parentNode.insertNamespace(node.getNodeKey());
+		((ElementNode) parentNode).insertNamespace(node.getNodeKey());
 		tearDownNodeModification(parentNode);
 
 		return node.getNodeKey();
@@ -594,9 +594,10 @@ public final class WriteTransaction extends ReadTransaction implements
 			throws TreetankIOException {
 		final AbstractNode parentNode = setUpNodeModification(getCurrentNode()
 				.getParentKey());
-		parentNode.incrementChildCount();
+		((IStructuralNode) parentNode).incrementChildCount();
 		if (updateFirstChild) {
-			parentNode.setFirstChildKey(getCurrentNode().getNodeKey());
+			((IStructuralNode) parentNode).setFirstChildKey(getCurrentNode()
+					.getNodeKey());
 		}
 		tearDownNodeModification(parentNode);
 
@@ -606,7 +607,8 @@ public final class WriteTransaction extends ReadTransaction implements
 		if (((IStructuralNode) getCurrentNode()).hasRightSibling()) {
 			final AbstractNode rightSiblingNode = setUpNodeModification(((IStructuralNode) getCurrentNode())
 					.getRightSiblingKey());
-			rightSiblingNode.setLeftSiblingKey(getCurrentNode().getNodeKey());
+			((IStructuralNode) rightSiblingNode)
+					.setLeftSiblingKey(getCurrentNode().getNodeKey());
 			tearDownNodeModification(rightSiblingNode);
 
 		}
@@ -615,7 +617,8 @@ public final class WriteTransaction extends ReadTransaction implements
 	private void updateLeftSibling() throws TreetankIOException {
 		final AbstractNode leftSiblingNode = setUpNodeModification(((IStructuralNode) getCurrentNode())
 				.getLeftSiblingKey());
-		leftSiblingNode.setRightSiblingKey(getCurrentNode().getNodeKey());
+		((IStructuralNode) leftSiblingNode).setRightSiblingKey(getCurrentNode()
+				.getNodeKey());
 		tearDownNodeModification(leftSiblingNode);
 
 	}
@@ -656,13 +659,16 @@ public final class WriteTransaction extends ReadTransaction implements
 			leftSibling = setUpNodeModification(leftSibling.getNodeKey());
 			if (newNode == null) {
 				if (rightSibling != null) {
-					leftSibling.setRightSiblingKey(rightSibling.getNodeKey());
+					((IStructuralNode) leftSibling)
+							.setRightSiblingKey(rightSibling.getNodeKey());
 				} else {
-					leftSibling.setRightSiblingKey((Long) EFixed.NULL_NODE_KEY
-							.getStandardProperty());
+					((IStructuralNode) leftSibling)
+							.setRightSiblingKey((Long) EFixed.NULL_NODE_KEY
+									.getStandardProperty());
 				}
 			} else {
-				leftSibling.setRightSiblingKey(newNode.getNodeKey());
+				((IStructuralNode) leftSibling).setRightSiblingKey(newNode
+						.getNodeKey());
 			}
 			tearDownNodeModification(leftSibling);
 		}
@@ -672,13 +678,16 @@ public final class WriteTransaction extends ReadTransaction implements
 			rightSibling = setUpNodeModification(rightSibling.getNodeKey());
 			if (newNode == null) {
 				if (leftSibling != null) {
-					rightSibling.setLeftSiblingKey(leftSibling.getNodeKey());
+					((IStructuralNode) rightSibling)
+							.setLeftSiblingKey(leftSibling.getNodeKey());
 				} else {
-					rightSibling.setLeftSiblingKey((Long) EFixed.NULL_NODE_KEY
-							.getStandardProperty());
+					((IStructuralNode) rightSibling)
+							.setLeftSiblingKey((Long) EFixed.NULL_NODE_KEY
+									.getStandardProperty());
 				}
 			} else {
-				rightSibling.setLeftSiblingKey(newNode.getNodeKey());
+				((IStructuralNode) rightSibling).setLeftSiblingKey(newNode
+						.getNodeKey());
 			}
 			tearDownNodeModification(rightSibling);
 		}
@@ -686,19 +695,22 @@ public final class WriteTransaction extends ReadTransaction implements
 		// Adapt parent.
 		parent = setUpNodeModification(parent.getNodeKey());
 		if (newNode == null) {
-			parent.decrementChildCount();
+			((IStructuralNode) parent).decrementChildCount();
 		}
 		if (((IStructuralNode) parent).getFirstChildKey() == oldNode
 				.getNodeKey()) {
 			if (newNode == null) {
 				if (rightSibling != null) {
-					parent.setFirstChildKey(rightSibling.getNodeKey());
+					((IStructuralNode) parent).setFirstChildKey(rightSibling
+							.getNodeKey());
 				} else {
-					parent.setFirstChildKey((Long) EFixed.NULL_NODE_KEY
-							.getStandardProperty());
+					((IStructuralNode) parent)
+							.setFirstChildKey((Long) EFixed.NULL_NODE_KEY
+									.getStandardProperty());
 				}
 			} else {
-				parent.setFirstChildKey(newNode.getNodeKey());
+				((IStructuralNode) parent).setFirstChildKey(newNode
+						.getNodeKey());
 			}
 		}
 		tearDownNodeModification(parent);
@@ -717,23 +729,26 @@ public final class WriteTransaction extends ReadTransaction implements
 			if (oldNode.getKind() == ENodes.ELEMENT_KIND) {
 				// setting the attributes and namespaces
 				for (int i = 0; i < ((ElementNode) oldNode).getAttributeCount(); i++) {
-					newNode.insertAttribute(((ElementNode) oldNode)
-							.getAttributeKey(i));
+					((ElementNode) newNode)
+							.insertAttribute(((ElementNode) oldNode)
+									.getAttributeKey(i));
 					AbstractNode node = setUpNodeModification(((ElementNode) oldNode)
 							.getAttributeKey(i));
 					node.setParentKey(newNode.getNodeKey());
 					tearDownNodeModification(node);
 				}
 				for (int i = 0; i < ((ElementNode) oldNode).getNamespaceCount(); i++) {
-					newNode.insertNamespace(((ElementNode) oldNode)
-							.getNamespaceKey(i));
+					((ElementNode) newNode)
+							.insertNamespace(((ElementNode) oldNode)
+									.getNamespaceKey(i));
 					AbstractNode node = setUpNodeModification(((ElementNode) oldNode)
 							.getNamespaceKey(i));
 					node.setParentKey(newNode.getNodeKey());
 					tearDownNodeModification(node);
 				}
+				((ElementNode) newNode).setChildCount(((ElementNode) oldNode)
+						.getChildCount());
 			}
-			newNode.setChildCount(oldNode.getChildCount());
 		}
 
 	}

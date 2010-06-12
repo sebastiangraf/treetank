@@ -157,4 +157,14 @@ public final class DocumentRootNode extends AbstractNode implements
 		return false;
 	}
 
+	@Override
+	public void setLeftSiblingKey(final long leftSiblingKey) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setRightSiblingKey(final long rightSiblingKey) {
+		throw new UnsupportedOperationException();
+	}
+
 }
