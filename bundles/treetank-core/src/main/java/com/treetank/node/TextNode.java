@@ -239,4 +239,29 @@ public final class TextNode extends AbstractNode implements IStructuralNode {
 		return false;
 	}
 
+	@Override
+	public void setFirstChildKey(final long firstChildKey) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void decrementChildCount() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public long getChildCount() {
+		return 0;
+	}
+
+	@Override
+	public void incrementChildCount() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setChildCount(long childCount) {
+		throw new UnsupportedOperationException();
+	}
+
 }

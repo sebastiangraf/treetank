@@ -31,7 +31,7 @@ public class ElementNodeTest {
 	public void testElementNode() {
 
 		// Create empty node.
-		final AbstractNode node1 = new ElementNode(13L, 14L, 15L, 16L, 17L, 18,
+		final ElementNode node1 = new ElementNode(13L, 14L, 15L, 16L, 17L, 18,
 				19, 0);
 		final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
 
@@ -55,7 +55,7 @@ public class ElementNodeTest {
 		assertEquals(15L, ((IStructuralNode) node3).getFirstChildKey());
 		assertEquals(16L, ((IStructuralNode) node3).getLeftSiblingKey());
 		assertEquals(17L, ((IStructuralNode) node3).getRightSiblingKey());
-		assertEquals(0, node3.getChildCount());
+		assertEquals(0, ((IStructuralNode) node3).getChildCount());
 		assertEquals(1, ((ElementNode) node3).getAttributeCount());
 		assertEquals(1, ((ElementNode) node3).getNamespaceCount());
 		assertEquals(18, node3.getNameKey());

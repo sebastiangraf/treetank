@@ -111,10 +111,12 @@ public class XMLShredderTest {
 			assertEquals(((IStructuralNode) expectedTrx.getNode())
 					.getRightSiblingKey(), ((IStructuralNode) rtx.getNode())
 					.getRightSiblingKey());
-			assertEquals(expectedTrx.getNode().getChildCount(), rtx.getNode()
-					.getChildCount());
+
 			if (expectedTrx.getNode().getKind() == ENodes.ELEMENT_KIND
 					|| rtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
+				assertEquals(((ElementNode) expectedTrx.getNode())
+						.getChildCount(), ((ElementNode) rtx.getNode())
+						.getChildCount());
 				assertEquals(((ElementNode) expectedTrx.getNode())
 						.getAttributeCount(), ((ElementNode) rtx.getNode())
 						.getAttributeCount());

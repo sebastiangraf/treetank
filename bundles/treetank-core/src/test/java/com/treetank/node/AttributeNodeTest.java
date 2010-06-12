@@ -33,10 +33,6 @@ public class AttributeNodeTest {
 		final AbstractNode node1 = new AttributeNode(99L, 13L, 14, 15, 19,
 				new byte[] { (byte) 17, (byte) 18 });
 
-		// Modify it.
-		node1.incrementChildCount();
-		node1.decrementChildCount();
-
 		// Clone node.
 		final AbstractNode node2 = new AttributeNode(node1);
 
@@ -44,7 +40,6 @@ public class AttributeNodeTest {
 		assertEquals(99L, node2.getNodeKey());
 		assertEquals(13L, node2.getParentKey());
 
-		assertEquals(0, node2.getChildCount());
 		assertEquals(14, node2.getNameKey());
 		assertEquals(15, node2.getURIKey());
 		assertEquals(19, node2.getTypeKey());

@@ -105,14 +105,6 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
 	/**
 	 * {@inheritDoc}
 	 */
-	public long getChildCount() {
-		return 0L;
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
 	public ENodes getKind() {
 		return ENodes.UNKOWN_KIND;
 	}
@@ -174,71 +166,6 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
 	public void setParentKey(final long parentKey) {
 	}
 
-	/**
-	 * Setting the first child key.
-	 * 
-	 * @param firstChildKey
-	 *            the key for the first child.
-	 */
-	public void setFirstChildKey(final long firstChildKey) {
-	}
-
-	/**
-	 * Setting the left sibling key.
-	 * 
-	 * @param leftSiblingKey
-	 *            the key for the left sibling.
-	 */
-	public void setLeftSiblingKey(final long leftSiblingKey) {
-	}
-
-	/**
-	 * Setting the right sibling key.
-	 * 
-	 * @param rightSiblingKey
-	 *            the key for the right sibling.
-	 */
-	public void setRightSiblingKey(final long rightSiblingKey) {
-	}
-
-	/**
-	 * Setting the child count.
-	 * 
-	 * @param childCount
-	 *            to be set.
-	 */
-	public void setChildCount(final long childCount) {
-	}
-
-	/**
-	 * Incrementing the child count.
-	 */
-	public void incrementChildCount() {
-	}
-
-	/**
-	 * Decrementing the child count.
-	 */
-	public void decrementChildCount() {
-	}
-
-	/**
-	 * Inserting attribute to this node.
-	 * 
-	 * @param attributeKey
-	 *            to be inserted
-	 */
-	public void insertAttribute(final long attributeKey) {
-	}
-
-	/**
-	 * Inserting namespace to this node.
-	 * 
-	 * @param namespaceKey
-	 *            to be added.
-	 */
-	public void insertNamespace(final long namespaceKey) {
-	}
 
 	/**
 	 * Setting the kind of this node.
@@ -321,7 +248,6 @@ public abstract class AbstractNode implements IItem, Comparable<AbstractNode> {
 	public String toString() {
 		return new StringBuilder(this.getClass().getName()).append(
 				"\n\tnode key: ").append(getNodeKey()).append(
-				"\n\tchildcount: ").append(getChildCount()).append(
 				"\n\tparentKey: ").append(getParentKey()).toString();
 	}
 

@@ -36,9 +36,6 @@ public class TextNodeTest {
 				new byte[] { (byte) 17, (byte) 18 });
 		final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
 
-		// Modify it.
-		node1.incrementChildCount();
-		node1.decrementChildCount();
 
 		// Serialize and deserialize node.
 		node1.serialize(out);
@@ -55,7 +52,6 @@ public class TextNodeTest {
 				((IStructuralNode) node3).getFirstChildKey());
 		assertEquals(15L, ((IStructuralNode) node3).getLeftSiblingKey());
 		assertEquals(16L, ((IStructuralNode) node3).getRightSiblingKey());
-		assertEquals(0L, node3.getChildCount());
 		assertEquals(19, node3.getTypeKey());
 		assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(), node3
 				.getNameKey());

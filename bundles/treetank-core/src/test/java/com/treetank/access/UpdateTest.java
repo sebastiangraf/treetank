@@ -37,6 +37,7 @@ import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankUsageException;
+import com.treetank.node.IStructuralNode;
 import com.treetank.utils.DocumentCreater;
 import com.treetank.utils.TypedValue;
 
@@ -140,9 +141,9 @@ public class UpdateTest {
 		final IWriteTransaction wtx = session.beginWriteTransaction();
 
 		// Document root.
-
+		wtx.insertElementAsFirstChild(new QName(""));
 		for (int i = 0; i < 256 * 256 + 1; i++) {
-			wtx.insertTextAsFirstChild("");
+			wtx.insertTextAsRightSibling("");
 		}
 
 		assertTrue(wtx.moveTo(2L));
@@ -195,7 +196,7 @@ public class UpdateTest {
 		assertEquals(0, rtx.getNode().getNodeKey());
 		assertTrue(rtx.moveToFirstChild());
 		assertEquals(1, rtx.getNode().getNodeKey());
-		assertEquals(4, rtx.getNode().getChildCount());
+		assertEquals(4, ((IStructuralNode) rtx.getNode()).getChildCount());
 		assertTrue(rtx.moveToFirstChild());
 		assertEquals(4, rtx.getNode().getNodeKey());
 		assertTrue(rtx.moveToRightSibling());

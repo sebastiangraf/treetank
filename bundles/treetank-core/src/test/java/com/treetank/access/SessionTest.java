@@ -36,7 +36,6 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
-import com.treetank.node.AbstractNode;
 import com.treetank.settings.ENodes;
 import com.treetank.utils.DocumentCreater;
 import com.treetank.utils.IConstants;

@@ -36,8 +36,8 @@ public class DocumentRootNodeTest {
 		final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
 
 		// Modify it.
-		node1.incrementChildCount();
-		node1.decrementChildCount();
+		((IStructuralNode) node1).incrementChildCount();
+		((IStructuralNode) node1).decrementChildCount();
 
 		// Serialize and deserialize node.
 		node1.serialize(out);
@@ -58,7 +58,7 @@ public class DocumentRootNodeTest {
 				((IStructuralNode) node3).getLeftSiblingKey());
 		assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(),
 				((IStructuralNode) node3).getRightSiblingKey());
-		assertEquals(0L, node3.getChildCount());
+		assertEquals(0L, ((IStructuralNode) node3).getChildCount());
 		assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(), node3
 				.getNameKey());
 		assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(), node3

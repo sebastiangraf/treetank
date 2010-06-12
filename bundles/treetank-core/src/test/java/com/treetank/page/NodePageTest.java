@@ -55,7 +55,7 @@ public class NodePageTest {
 				.getLeftSiblingKey());
 		assertEquals(4L, ((IStructuralNode) page2.getNode(0))
 				.getRightSiblingKey());
-		assertEquals(0L, page2.getNode(0).getChildCount());
+		assertEquals(0L, ((IStructuralNode) page2.getNode(0)).getChildCount());
 		assertEquals(2, ((ElementNode) page2.getNode(0)).getAttributeCount());
 		assertEquals(2, ((ElementNode) page2.getNode(0)).getNamespaceCount());
 		assertEquals(88L, ((ElementNode) page2.getNode(0)).getAttributeKey(0));

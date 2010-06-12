@@ -67,13 +67,7 @@ public interface IItem {
 	 */
 	byte[] getRawValue();
 
-	/**
-	 * Gets the number of children of the item.
-	 * 
-	 * @return item's number of children
-	 */
-	long getChildCount();
-
+	
 	/**
 	 * Gets the kind of the item (atomic value, element node, attribute
 	 * node....).
