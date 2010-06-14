@@ -47,7 +47,7 @@
 		<dependency>
 			<groupId>jax-rx</groupId>
 			<artifactId>jax-rx</artifactId>
-			<version>1.2</version>
+			<version>1.2.2</version>
 		</dependency>
 		<dependency>
 			<!-- the client implementation of JAX-RS for testing purposes-->
