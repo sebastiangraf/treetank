@@ -103,7 +103,7 @@ public class XMLSerializerTest {
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();
 		final IReadTransaction rtx = session.beginReadTransaction();
 		final XMLSerializer serializer = new XMLSerializer(rtx, out, true,
-				false, true);
+				false, true, false);
 		serializer.call();
 		TestCase.assertEquals(DocumentCreater.ID, out.toString());
 		rtx.close();

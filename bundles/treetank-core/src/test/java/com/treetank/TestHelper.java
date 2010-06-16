@@ -40,7 +40,7 @@ public final class TestHelper {
 				File.separator).append("tnk").append(File.separator).append(
 				"path1").toString())),
 
-		// PATH1
+		// PATH2
 		PATH2(new File(new StringBuilder(File.separator).append("tmp").append(
 				File.separator).append("tnk").append(File.separator).append(
 				"path2").toString()));
