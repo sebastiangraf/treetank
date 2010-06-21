@@ -49,6 +49,8 @@ import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankUsageException;
+import com.treetank.node.ElementNode;
+import com.treetank.node.IStructuralNode;
 import com.treetank.settings.EFixed;
 import com.treetank.settings.ENodes;
 import com.treetank.settings.EXMLSerializing;
@@ -198,75 +200,38 @@ public final class XMLShredder implements Callable<Long> {
    */
   private void updateOnly() throws TreetankException {
     try {
-      final Set<Long> visitedKeys = new HashSet<Long>();
-
-      // setting the maxNodeKey for the compare-wtx
+      // Setting the maxNodeKey for the compare-wtx.
       final long maxNodeKey = mWtx.getMaxNodeKey();
 
-      // setting up boolean-Stack. This stack is for holding the current
-      // position to determine if an insertasright-sib should occure.F
+      /*
+       *  Setting up boolean-Stack. This stack is for holding the current
+       *  position to determine if an insertasright-sib should occure.
+       */
       FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
       leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
           .getStandardProperty());
 
-      // setup up of first element of the data
+      // Setup up of first element of the data.
       XMLEvent event = mReader.nextEvent();
       mWtx.moveToDocumentRoot();
-      
-      // if structure already exists, make a sync against the current
-      // structure
-      if (mWtx.getMaxNodeKey() != 0) {
-        
-        // find the start key for the update operation
+
+      // If structure already exists, make a sync against the current structure.
+      if (maxNodeKey != 0) {
+        // Find the start key for the update operation.
         long startkey = (Long) EFixed.ROOT_NODE_KEY.getStandardProperty() + 1;
         while (!mWtx.moveTo(startkey)) {
           startkey++;
         }
 
-        // Iterate over all nodes.(
-        do {
-          // storing the visited key
-          visitedKeys.add(mWtx.getNode().getNodeKey());
+        boolean toInsert = false;
 
+        // Iterate over all nodes.
+        do {
           switch (event.getEventType()) {
           case XMLStreamConstants.START_ELEMENT:
-            //            // Searching for the attribute with the id at the
-            //            // current node
-            //            long id = (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
-            //            for (Iterator<?> it = ((StartElement) event).getAttributes(); it
-            //                .hasNext();) {
-            //              final Attribute attribute = (Attribute) it.next();
-            //              final String attributeName =
-            //                  new String(EXMLSerializing.ID.getBytes());
-            //              // checking for id-attribute
-            //              if (attribute.getName().getLocalPart().equals(attributeName)) {
-            //                id = Long.parseLong(attribute.getValue());
-            //                break;
-            //              }
-            //            }
-            //
-            //            // found id tag
-            //            if (id != (Long) EFixed.NULL_NODE_KEY.getStandardProperty()) {
-            //              // moving transaction to key;
-            //              if (!mWtx.moveTo(id)) {
-            //                mWtx.abort();
-            //                throw new TreetankUsageException(
-            //                    "Move to",
-            //                    Long.toString(id),
-            //                    "not successful.",
-            //                    "That means that the revisioned file is not suitable to the databasae");
-            //              }
-            //
-            //              // TODO node check: Since setName is now resulting
-            //              // in new node, this one should be obsolete but a
-            //              // little bit integrity should not be the problem
-            //              checkElement((StartElement) event);
-            //            }
-            //            // not finding any id tag -> just appending the node as
-            //            // a new one based on the original XML and the current
-            //            // mWtx-position
-            //            else {
-
+            System.out.println("TO SHREDDER: "
+                + ((StartElement) event).getName());
+            System.out.println("SHREDDERED: " + mWtx.getQNameOfCurrentNode());
             /*
              * Check if an element in the shreddered file on the same level
              * equals the current element node.
@@ -289,73 +254,86 @@ public final class XMLShredder implements Callable<Long> {
             /*
              * If current node in the file which has to be shreddered is found 
              * in one of the right siblings of the current node nodes have been
-             * removed, otherwise it has been inserted. If they match at the 
+             * removed, otherwise it has to be inserted. If they match at the 
              * current position do nothing.
              */
             if (found && isRightsibling) {
+              /*
+               * If found in one of the rightsiblings in the current shreddered
+               * structure remove all nodes until the transaction points to the
+               * found node (keyMatches).
+               */
               do {
                 mWtx.remove();
               } while (mWtx.moveToRightSibling()
                   && mWtx.getNode().getNodeKey() != keyMatches);
-            } else if (!found && isRightsibling) {
+              // Move to parent if there is no former right sibling.
+              if (!((IStructuralNode) mWtx.getNode()).hasRightSibling()) {
+                mWtx.moveToParent();
+              }
+            } else if ((!found && isRightsibling)
+                || (!found && !isRightsibling)) {
+              toInsert = true;
+              System.out.println("Bla");
+              /* 
+               * Add node if it's either not found among right siblings (and the 
+               * cursor on the shreddered file is on a right sibling) or if
+               * it's not found in the structure and it is a new last right sibling.
+               */
               leftSiblingKeyStack =
                   addNewElement(
                       false,
                       leftSiblingKeyStack,
                       (StartElement) event);
-            } else {
-              leftSiblingKeyStack.pop();
-              leftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
-              leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY.getStandardProperty());
-              
-              if (!mWtx.getNode().isLeaf()) {
-                mWtx.moveToFirstChild(); 
-              } else if (mWtx.moveToRightSibling()) {
+            } else if (found) {
+              //              // Update stack.
+              //              leftSiblingKeyStack.pop();
+              //              leftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
+              //              leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
+              //                  .getStandardProperty());
+
+              // Move transaction.
+              if (((IStructuralNode) mWtx.getNode()).hasFirstChild()) {
+                mWtx.moveToFirstChild();
+              } else if (((IStructuralNode) mWtx.getNode()).hasRightSibling()) {
+                mWtx.moveToRightSibling();
               } else if (mWtx.getNode().hasParent()) {
                 mWtx.moveToParent();
               }
+            } else {
+              throw new IllegalStateException("Shouldn't happen!");
             }
-
             break;
           case XMLStreamConstants.CHARACTERS:
             final String valFromXML = ((Characters) event).getData().trim();
-            // if wtx is text and equal to the val, do no insert ->
-            // insert if unequal, identification takes place on the
-            // node
-            if (mWtx.moveToFirstChild()) {
-              boolean foundText = false;
-              do {
-                if (!(mWtx.getNode().getKind() == ENodes.TEXT_KIND && mWtx
-                    .getValueOfCurrentNode()
-                    .equals(valFromXML))) {
-                  foundText = true;
-                }
-                if (!foundText) {
-                  leftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
-                  leftSiblingKeyStack =
-                      addNewText(leftSiblingKeyStack, (Characters) event);
-                }
-              } while (mWtx.moveToRightSibling());
-              mWtx.moveToParent();
-            } else {
-              leftSiblingKeyStack.push((Long) EFixed.ROOT_NODE_KEY
-                  .getStandardProperty());
+            if (!(mWtx.getNode().getKind() == ENodes.TEXT_KIND && mWtx
+                .getValueOfCurrentNode()
+                .equals(valFromXML))) {
               leftSiblingKeyStack =
                   addNewText(leftSiblingKeyStack, (Characters) event);
-            }
+            } else {
+              //              // Update stack.
+              //              leftSiblingKeyStack.pop();
+              //              leftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
 
+              // Move to parent element node.
+              mWtx.moveToParent();
+            }
             break;
           case XMLStreamConstants.END_ELEMENT:
-            leftSiblingKeyStack.pop();
-            mWtx.moveTo(leftSiblingKeyStack.peek());
+            if (toInsert) {
+              leftSiblingKeyStack.pop();
+              mWtx.moveTo(leftSiblingKeyStack.peek());
+              toInsert = false;
+            }
             break;
-          }// end switch
+          }
 
-          // parsing the next event
+          // Parsing the next event.
           event = mReader.nextEvent();
         } while (mReader.hasNext() && mWtx.getNode().getNodeKey() < maxNodeKey);
-      } // if no content is in the XML, a normal insertNewContent is
-      // executed
+      }
+      // If no content is in the XML, a normal insertNewContent is executed.
       else {
         insertNewContent();
       }
@@ -492,42 +470,74 @@ public final class XMLShredder implements Callable<Long> {
    * @return true if they are equal, false otherwise.
    */
   private final boolean checkElement(final StartElement event) {
+    boolean retVal = false;
     final long nodeKey = mWtx.getNode().getNodeKey();
 
-    // Check attributes.
-    boolean foundAtts = true;
-    Iterator<?> it = event.getAttributes();
-    for (int i = 0, attCount = mWtx.getNode().getAttributeCount(); i < attCount
-        && it.hasNext(); i++) {
-      final Attribute attribute = (Attribute) it.next();
-      mWtx.moveToAttribute(i);
-      if (!attribute.getName().equals(mWtx.getQNameOfCurrentNode())) {
-        foundAtts = false;
-        break;
+    // Matching element names?
+    if (mWtx.getQNameOfCurrentNode().equals(event.getName())) {
+      // Check if atts and namespaces are the same.
+
+      // Check attributes.
+      boolean foundAtts = false;
+      boolean hasAtts = false;
+      for (Iterator<?> it = event.getAttributes(); it.hasNext();) {
+        hasAtts = true;
+        final Attribute attribute = (Attribute) it.next();
+        for (int i = 0, attCount =
+            ((ElementNode) mWtx.getNode()).getAttributeCount(); i < attCount; i++) {
+          mWtx.moveToAttribute(i);
+          if (attribute.getName().equals(mWtx.getQNameOfCurrentNode())) {
+            foundAtts = true;
+            mWtx.moveTo(nodeKey);
+            break;
+          }
+          mWtx.moveTo(nodeKey);
+        }
+
+        if (!foundAtts) {
+          break;
+        }
       }
-      mWtx.moveTo(nodeKey);
+      if (!hasAtts) {
+        foundAtts = true;
+      }
+
+      // Check namespaces.
+      boolean foundNamesps = false;
+      boolean hasNamesps = false;
+      for (Iterator<?> namespIt = event.getNamespaces(); namespIt.hasNext();) {
+        hasNamesps = true;
+        final Namespace namespace = (Namespace) namespIt.next();
+        for (int i = 0, namespCount =
+            ((ElementNode) mWtx.getNode()).getNamespaceCount(); i < namespCount; i++) {
+          mWtx.moveToNamespace(i);
+          if (namespace.getNamespaceURI().equals(
+              mWtx.nameForKey(mWtx.getNode().getURIKey()))
+              && namespace.getPrefix().equals(
+                  mWtx.nameForKey(mWtx.getNode().getNameKey()))) {
+            foundNamesps = true;
+            mWtx.moveTo(nodeKey);
+            break;
+          }
+          mWtx.moveTo(nodeKey);
+        }
+
+        if (!foundNamesps) {
+          break;
+        }
+      }
+      if (!hasNamesps) {
+        foundNamesps = true;
+      }
+
+      // Check if atts and namespaces are the same.
+      if (foundAtts && foundNamesps) {
+        retVal = true;
+      } else {
+        retVal = false;
+      }
     }
 
-    // Check namespaces.
-    boolean foundNamesp = true;
-    Iterator<?> namespIt = event.getNamespaces();
-    for (int i = 0, namespCount = mWtx.getNode().getNamespaceCount(); i < namespCount
-        && namespIt.hasNext(); i++) {
-      final Namespace namespace = (Namespace) it.next();
-      mWtx.moveToNamespace(i);
-      if (!namespace.getName().equals(mWtx.getQNameOfCurrentNode())) {
-        foundNamesp = false;
-        break;
-      }
-      mWtx.moveTo(nodeKey);
-    }
-
-    boolean retVal;
-    if (foundAtts && foundNamesp) {
-      retVal = true;
-    } else {
-      retVal = false;
-    }
     return retVal;
   }
 
@@ -541,14 +551,18 @@ public final class XMLShredder implements Callable<Long> {
    */
   public static void main(String... args) throws Exception {
     if (args.length < 2 || args.length > 3) {
-      System.out.println("Usage: XMLShredder input.xml output.tnk [true/false]");
+      System.out
+          .println("Usage: XMLShredder input.xml output.tnk [true/false]");
       System.exit(1);
     }
 
     System.out.print("Shredding '" + args[0] + "' to '" + args[1] + "' ... ");
     long time = System.currentTimeMillis();
     final File target = new File(args[1]);
-    Database.truncateDatabase(target);
+
+    if (args.length == 2 || "false".equals(args[2])) {
+      Database.truncateDatabase(target);
+    }
     Database.createDatabase(new DatabaseConfiguration(target));
     final IDatabase db = Database.openDatabase(target);
     final ISession session = db.getSession();
