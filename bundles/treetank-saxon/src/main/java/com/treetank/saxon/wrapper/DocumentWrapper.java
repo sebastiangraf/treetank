@@ -11,6 +11,7 @@ import net.sf.saxon.om.NodeInfo;
 import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.axis.DescendantAxis;
+import com.treetank.node.ElementNode;
 import com.treetank.settings.ENodes;
 
 /**
@@ -104,8 +105,8 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
 	public NodeInfo selectID(final String ID, final boolean getParent) {
 		final IAxis axis = new DescendantAxis(mRTX, true);
 		while (axis.hasNext()) {
-			if (mRTX.getNode().isElement()) {
-				final int attCount = mRTX.getNode().getAttributeCount();
+			if (mRTX.getNode().getKind() == ENodes.ELEMENT_KIND) {
+				final int attCount = ((ElementNode) mRTX.getNode()).getAttributeCount();
 
 				if (attCount > 0) {
 					final long nodeKey = mRTX.getNode().getNodeKey();
