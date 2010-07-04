@@ -76,7 +76,7 @@ public final class TreetankTreeModel extends AbstractTreeModel {
       final IItem parentNode = (IItem) parent;
       final long parentNodeKey = parentNode.getNodeKey();
       mRTX.moveTo(parentNodeKey);
-
+      
       switch (parentNode.getKind()) {
       case ROOT_KIND:
         mRTX.moveToFirstChild();
@@ -152,6 +152,7 @@ public final class TreetankTreeModel extends AbstractTreeModel {
   public int getIndexOfChild(final Object parent, final Object child) {
     // Parent node.
     mRTX.moveTo(((IItem) parent).getNodeKey());
+    System.out.println(mRTX.getQNameOfCurrentNode());
     final IItem parentNode = mRTX.getNode();
 
     // Child node.

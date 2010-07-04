@@ -4,10 +4,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
@@ -39,18 +42,27 @@ public final class GUI extends JPanel {
 
   /** Optionally set the look and feel. */
   private transient static boolean useSystemLookAndFeel = true;
-  
+
   /** Minimum height of panes. */
   private static final int HEIGHT = 1000;
-  
+
   /** Tree view. */
   protected transient JTree tree;
-  
+
   /** XML pane. */
   protected transient JTextArea xmlPane;
 
+  /** AdjustmentListener temporal value. */
+  private static transient int tempValue = 0;
+
+  /** XML view (scrollpane). */
+  public static transient JScrollPane xmlView;
+
+  /** Main GUI reference. */
+  public static transient GUI gui;
+
   /**
-   * Constructor
+   * Empty Constructor.
    */
   public GUI() {
     super(new GridLayout(1, 0));
@@ -77,16 +89,46 @@ public final class GUI extends JPanel {
       treeView.setBackground(Color.WHITE);
 
       // Create a XML text area.
-      xmlPane = new JTextArea(); 
+      xmlPane = new JTextArea();
       xmlPane.setEditable(false);
       xmlPane.setMinimumSize(new Dimension(370, 600));
       xmlPane.setColumns(80);
       xmlPane.setLineWrap(true);
+      xmlPane.setCaretPosition(0);
 
       // Create a scroll pane and add the XML text area to it.
-      final JScrollPane xmlView = new JScrollPane(xmlPane);
-      xmlView.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+      xmlView = new JScrollPane(xmlPane);
+      xmlView
+          .setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
       xmlView.setMinimumSize(new Dimension(400, 600));
+      final JScrollBar vertScrollBar = xmlView.getVerticalScrollBar();
+      vertScrollBar.setValue(vertScrollBar.getMinimum());
+      vertScrollBar.addAdjustmentListener(new AdjustmentListener() {
+        @Override
+        public void adjustmentValueChanged(final AdjustmentEvent evt) {
+          /* 
+           * getValueIsAdjusting() returns true if the user is currently dragging
+           * the scrollbar's knob and has not picked a final value.
+           */
+          if (evt.getValueIsAdjusting()) {
+            // The user is dragging the knob.
+            return;
+          }
+
+          final int lineHeight =
+              xmlPane.getFontMetrics(xmlPane.getFont()).getHeight();
+          int value = evt.getValue();
+          System.out.println("VALUE: " + value);
+          int result = value - tempValue;
+          GUICommands.lineChanges = result / lineHeight;
+          System.out.println("Lines: " + GUICommands.lineChanges);
+          if (GUICommands.lineChanges != 0) {
+            GUICommands.text(gui, xmlPane, false);
+          }
+          
+          tempValue = value;
+        }
+      });
 
       // Add the scroll panes to a split pane.
       final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -130,11 +172,11 @@ public final class GUI extends JPanel {
     final Dimension frameSize = new Dimension(1000, 1100);
     frame.setSize(frameSize);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    
+
     // Create gui with menubar.
-    final GUI gui = new GUI();
+    gui = new GUI();
     final JMenuBar menuBar = new TreetankMenuBar(gui);
-    
+
     // Add menubar.
     frame.setJMenuBar(menuBar);
 
@@ -147,15 +189,18 @@ public final class GUI extends JPanel {
     // Compute position of JFrame.
     final int top = (screenSize.height - frameSize.height) / 2;
     final int left = (screenSize.width - frameSize.width) / 2;
-    
+
     // Set frame position to center.
     frame.setLocation(left, top);
-    
+
     // Display the window.
     frame.pack();
     frame.setVisible(true);
   }
-  
+
+  // GETTER.
+  // =======================================================
+
   /**
    * Get tree.
    * 
@@ -164,7 +209,7 @@ public final class GUI extends JPanel {
   protected JTree getTree() {
     return tree;
   }
-  
+
   /**
    * Get xmlPane.
    * 
