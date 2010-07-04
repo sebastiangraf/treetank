@@ -1,12 +1,14 @@
 package com.treetank.gui;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.AdjustmentListener;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
 import javax.swing.JFileChooser;
+import javax.swing.JScrollBar;
 import javax.swing.JTextArea;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
@@ -80,27 +82,27 @@ public enum GUICommands implements GUICommand {
 
       if (fc.showOpenDialog(gui) == JFileChooser.APPROVE_OPTION) {
         final File source = fc.getSelectedFile();
-        
+
         fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fc.setAcceptAllFileFilterUsed(true);
         if (fc.showSaveDialog(gui) == JFileChooser.APPROVE_OPTION) {
           final File target = fc.getSelectedFile();
           target.delete();
           try {
-          final FileOutputStream outputStream = new FileOutputStream(target);
+            final FileOutputStream outputStream = new FileOutputStream(target);
 
-          final IDatabase db = Database.openDatabase(source);
-          final ISession session = db.getSession();
-          final IReadTransaction rtx = session.beginReadTransaction();
-          final XMLSerializer serializer =
-              new XMLSerializer(rtx, outputStream, true, false, false, true);
-          serializer.call();
+            final IDatabase db = Database.openDatabase(source);
+            final ISession session = db.getSession();
+            final IReadTransaction rtx = session.beginReadTransaction();
+            final XMLSerializer serializer =
+                new XMLSerializer(rtx, outputStream, true, false, false, true);
+            serializer.call();
 
-          rtx.close();
-          session.close();
-          db.close();
-          outputStream.close();
-          } catch(final Exception e1) {
+            rtx.close();
+            session.close();
+            db.close();
+            outputStream.close();
+          } catch (final Exception e1) {
             LOGGER.error(e1.getMessage(), e1);
           }
         }
@@ -140,7 +142,19 @@ public enum GUICommands implements GUICommand {
   private static final Log LOGGER = LogFactory.getLog(GUICommands.class);
 
   /** Description of command. */
-  private transient String mDesc;
+  private transient final String mDesc;
+
+  /** Line number to append or remove from the text field. */
+  public static transient int lineChanges = 0;
+
+  /** Start position of char array for text insertion. */
+  private static transient int startPos = 0;
+
+  /** Text output stream. */
+  public static transient OutputStream out;
+
+  /** Adjustment Listener for textArea. */
+  private static transient AdjustmentListener adjListener;
 
   /**
    * Constructor
@@ -176,9 +190,17 @@ public enum GUICommands implements GUICommand {
       // Tree.
       final JTree tree = gui.getTree();
 
+      /*
+       *  Remove a listener/listeners, which might already exist from another 
+       *  call to setViews(...).
+       */
       for (final TreeSelectionListener listener : tree
           .getTreeSelectionListeners()) {
         tree.removeTreeSelectionListener(listener);
+      }
+      final JScrollBar bar = GUI.xmlView.getVerticalScrollBar();
+      for (final AdjustmentListener listener : bar.getAdjustmentListeners()) {
+        bar.removeAdjustmentListener(listener);
       }
 
       // XML.
@@ -190,85 +212,196 @@ public enum GUICommands implements GUICommand {
 
       // Serialize file into XML view if it is empty.
       final IReadTransaction rtx = session.beginReadTransaction();
-      final OutputStream out = new ByteArrayOutputStream();
+      out = new ByteArrayOutputStream();
       new XMLSerializer(rtx, out, true, false, true, true).call();
-      xmlPane.setText(out.toString().substring(0, 2000));
+      text(gui, xmlPane, true);
 
       // Listen for when the selection changes.
       tree.addTreeSelectionListener(new TreeSelectionListener() {
         public void valueChanged(final TreeSelectionEvent e) {
-          /*
-           * Returns the last path element of the selection. This method is 
-           * useful only when the selection model allows a single selection.
-           */
-          final IItem node = (IItem) tree.getLastSelectedPathComponent();
-          final OutputStream out = new ByteArrayOutputStream();
-          IReadTransaction rtx = null;
-          try {
-            rtx = session.beginReadTransaction();
-            final long nodeKey = node.getNodeKey();
-
-            switch (node.getKind()) {
-            case ROOT_KIND:
-              rtx.moveTo(nodeKey);
-              new XMLSerializer(rtx, out, true, false, false, true).call();
-              break;
-            case ELEMENT_KIND:
-              rtx.moveTo(nodeKey);
-              System.out.println(rtx.getQNameOfCurrentNode());
-              new XMLSerializer(rtx, out, false, false, false, true).call();
-              break;
-            case TEXT_KIND:
-              rtx.moveTo(nodeKey);
-              out.write(rtx.getNode().getRawValue());
-              break;
-            case ATTRIBUTE_KIND:
-              // Move transaction to parent of given attribute node.
-              rtx.moveTo(node.getParentKey());
-              final long aNodeKey = node.getNodeKey();
-              for (int i = 0, attsCount =
-                  ((ElementNode) rtx.getNode()).getAttributeCount(); i < attsCount; i++) {
-                rtx.moveToAttribute(i);
-                if (rtx.getNode().equals(node)) {
-                  break;
-                }
-                rtx.moveTo(aNodeKey);
-              }
-
-              // Display value.
-              final String attPrefix = rtx.getQNameOfCurrentNode().getPrefix();
-              final QName attQName = rtx.getQNameOfCurrentNode();
-
-              if (attPrefix == null || attPrefix == "") {
-                out.write((attQName.getLocalPart()
-                    + "='"
-                    + rtx.getValueOfCurrentNode() + "'").getBytes());
-              } else {
-                out.write((attPrefix
-                    + ":"
-                    + attQName.getLocalPart()
-                    + "='"
-                    + rtx.getValueOfCurrentNode() + "'").getBytes());
-              }
-            default:
-
-            }
-          } catch (final Exception e1) {
-            LOGGER.error(e1.getMessage(), e1);
-          } finally {
+          if (e.getNewLeadSelectionPath() != null
+              && e.getNewLeadSelectionPath() != e.getOldLeadSelectionPath()) {
+            /*
+             * Returns the last path element of the selection. This method is 
+             * useful only when the selection model allows a single selection.
+             */
+            final IItem node =
+                (IItem) e.getNewLeadSelectionPath().getLastPathComponent(); //tree.getLastSelectedPathComponent();
+            out = new ByteArrayOutputStream();
+            IReadTransaction rtx = null;
             try {
-              rtx.close();
-            } catch (final TreetankException e1) {
-              LOGGER.error(e1.getMessage(), e1);
-            }
-          }
+              rtx = session.beginReadTransaction();
+              final long nodeKey = node.getNodeKey();
 
-          xmlPane.setText(out.toString());
+              switch (node.getKind()) {
+              case ROOT_KIND:
+                rtx.moveTo(nodeKey);
+                new XMLSerializer(rtx, out, true, false, false, true).call();
+                break;
+              case ELEMENT_KIND:
+                rtx.moveTo(nodeKey);
+                System.out.println("ELEMENT: " + rtx.getQNameOfCurrentNode());
+                new XMLSerializer(rtx, out, false, false, false, true).call();
+                break;
+              case TEXT_KIND:
+                rtx.moveTo(nodeKey);
+                out.write(rtx.getNode().getRawValue());
+                break;
+              case ATTRIBUTE_KIND:
+                // Move transaction to parent of given attribute node.
+                rtx.moveTo(node.getParentKey());
+                final long aNodeKey = node.getNodeKey();
+                for (int i = 0, attsCount =
+                    ((ElementNode) rtx.getNode()).getAttributeCount(); i < attsCount; i++) {
+                  rtx.moveToAttribute(i);
+                  if (rtx.getNode().equals(node)) {
+                    break;
+                  }
+                  rtx.moveTo(aNodeKey);
+                }
+
+                // Display value.
+                final String attPrefix =
+                    rtx.getQNameOfCurrentNode().getPrefix();
+                final QName attQName = rtx.getQNameOfCurrentNode();
+
+                if (attPrefix == null || attPrefix == "") {
+                  out.write((attQName.getLocalPart()
+                      + "='"
+                      + rtx.getValueOfCurrentNode() + "'").getBytes());
+                } else {
+                  out.write((attPrefix
+                      + ":"
+                      + attQName.getLocalPart()
+                      + "='"
+                      + rtx.getValueOfCurrentNode() + "'").getBytes());
+                }
+              default:
+
+              }
+            } catch (final Exception e1) {
+              LOGGER.error(e1.getMessage(), e1);
+            } finally {
+              try {
+                rtx.close();
+              } catch (final TreetankException e1) {
+                LOGGER.error(e1.getMessage(), e1);
+              }
+            }
+
+            text(gui, xmlPane, true);
+          }
         }
       });
     } catch (final Exception e1) {
       LOGGER.error(e1.getMessage(), e1);
     }
+  }
+
+  public static void text(
+      final GUI gui,
+      final JTextArea xmlPane,
+      final boolean init) {
+    // Remove adjustmnet listeners temporarily.
+    final JScrollBar bar = GUI.xmlView.getVerticalScrollBar();
+    for (final AdjustmentListener listener : bar.getAdjustmentListeners()) {
+      adjListener = listener;
+      bar.removeAdjustmentListener(listener);
+    }
+
+    // Initialize variables.
+    final char[] text = out.toString().toCharArray();
+    final int lineHeight =
+        xmlPane.getFontMetrics(xmlPane.getFont()).getHeight();
+    final int frameHeight = xmlPane.getHeight() + lineChanges * lineHeight;
+    int rowsSize = 0;
+    final StringBuilder sBuilder = new StringBuilder();
+    int indexSepChar = 0;
+    final String NL = System.getProperty("line.separator");
+//    int countNewlines = 0;
+//    final StringBuilder insertAtFirstPos = new StringBuilder();
+//    
+//    if (changeColumns > 0) {
+//      // Get start index.
+//      for (int i = 0; i < text.length; i++) {
+//        final char character = text[i];
+//
+//        // Increment rowSize?
+//        if (indexSepChar < NL.length() && character == NL.charAt(indexSepChar)) {
+//          if (indexSepChar == NL.length() - 1) {
+//            countNewlines++;
+//          }
+//        }
+//
+//        insertAtFirstPos.append(character);
+//        
+//        if (countNewlines == changeColumns) {
+//          startPos = i + 1;
+//          break;
+//        }
+//      }
+//      
+//      xmlPane.replaceRange("", 0, startPos - 1);
+//    } else if (changeColumns < 0) {
+//      xmlPane.insert(insertAtFirstPos.toString(), 0);
+//    }
+    
+    // Build text.
+    rowsSize = 0;
+    if (init) {
+      startPos = 0;
+    }
+    for (int i = startPos == 0 ? startPos : startPos + 1; i < text.length
+        && lineChanges >= 0
+        && startPos + 1 != text.length; i++) {
+      final char character = text[i];
+
+      // Increment rowsSize?
+      if (indexSepChar < NL.length() && character == NL.charAt(indexSepChar)) {
+        if (indexSepChar == NL.length() - 1) {
+          rowsSize += lineHeight;
+        } else {
+          indexSepChar++;
+        }
+      }
+
+      if (rowsSize < frameHeight) {
+        sBuilder.append(character);
+        startPos = i;
+      } else {
+        startPos = i;
+        System.out.println("START: " + startPos);
+        break;
+      }
+    }
+
+    if (lineChanges >= 0 && startPos + 1 <= text.length) {
+      if (init) {
+        xmlPane.setText(sBuilder.toString());
+        xmlPane.setCaretPosition(0);
+      } else {
+        final int caretPos = xmlPane.getCaretPosition();
+        xmlPane.setCaretPosition(xmlPane.getDocument().getLength());
+        xmlPane.append(sBuilder.toString());
+        // Check and update caret position.
+        final int newCaretPos = caretPos + lineChanges * xmlPane.getColumns();
+        final int documentLength = xmlPane.getDocument().getLength();
+        if (newCaretPos < documentLength) {
+          xmlPane.setCaretPosition(newCaretPos);
+        }
+      }
+    }
+
+    /* 
+     * Schedule a job for the event dispatch thread:
+     * (Re)adding the adjustment listener.
+     */
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        System.out.println("BLAAA");
+        bar.addAdjustmentListener(adjListener);
+      }
+    });
   }
 
   /**
