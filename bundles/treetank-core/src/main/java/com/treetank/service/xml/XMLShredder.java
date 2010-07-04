@@ -23,9 +23,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.concurrent.Callable;
 
 import javax.xml.namespace.QName;
@@ -61,10 +59,11 @@ import com.treetank.utils.TypedValue;
  * This class appends a given {@link XMLStreamReader} to a
  * {@link IWriteTransaction}. The content of the stream is added as a subtree.
  * Based on a boolean which identifies the point of insertion, the subtree is
- * either added as subtree or as rightsibling
+ * either added as subtree or as rightsibling.
  * 
  * @author Marc Kramis, Seabix
  * @author Sebastian Graf, University of Konstanz
+ * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
 public final class XMLShredder implements Callable<Long> {
@@ -223,7 +222,10 @@ public final class XMLShredder implements Callable<Long> {
           startkey++;
         }
 
-        boolean toInsert = false;
+        boolean isSame = false;
+        int levelsUp = 0; // Levels to go up to the parent after nodes were not the same.
+        long lastPosKey = 0; // Last position of mWtx where nodes were equal.
+        int insertLevel = 0; // Elements which have been inserted in the current subtree.
 
         // Iterate over all nodes.
         do {
@@ -232,15 +234,16 @@ public final class XMLShredder implements Callable<Long> {
             System.out.println("TO SHREDDER: "
                 + ((StartElement) event).getName());
             System.out.println("SHREDDERED: " + mWtx.getQNameOfCurrentNode());
-            /*
-             * Check if an element in the shreddered file on the same level
-             * equals the current element node.
-             */
+
             final long nodeKey = mWtx.getNode().getNodeKey();
             boolean found = false;
             boolean isRightsibling = false;
             long keyMatches;
             do {
+              /*
+               * Check if an element in the shreddered file on the same level
+               * equals the current element node.
+               */
               found = checkElement((StartElement) event);
 
               if (mWtx.getNode().getNodeKey() != nodeKey) {
@@ -248,6 +251,12 @@ public final class XMLShredder implements Callable<Long> {
               }
 
               keyMatches = mWtx.getNode().getNodeKey();
+
+              if (found && isRightsibling) {
+                // Check all descendants.
+                found = checkDescendants();
+                mWtx.moveTo(keyMatches);
+              }
             } while (!found && mWtx.moveToRightSibling());
             mWtx.moveTo(nodeKey);
 
@@ -258,6 +267,8 @@ public final class XMLShredder implements Callable<Long> {
              * current position do nothing.
              */
             if (found && isRightsibling) {
+              System.out.println("NEIIIIIIIIIIIN");
+              isSame = false;
               /*
                * If found in one of the rightsiblings in the current shreddered
                * structure remove all nodes until the transaction points to the
@@ -265,73 +276,219 @@ public final class XMLShredder implements Callable<Long> {
                */
               do {
                 mWtx.remove();
+                leftSiblingKeyStack.pop();
+                leftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
+                leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
+                    .getStandardProperty());
               } while (mWtx.moveToRightSibling()
                   && mWtx.getNode().getNodeKey() != keyMatches);
               // Move to parent if there is no former right sibling.
               if (!((IStructuralNode) mWtx.getNode()).hasRightSibling()) {
                 mWtx.moveToParent();
+                leftSiblingKeyStack.pop();
+                leftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
+                leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
+                    .getStandardProperty());
               }
-            } else if ((!found && isRightsibling)
-                || (!found && !isRightsibling)) {
-              toInsert = true;
-              System.out.println("Bla");
+              break;
+            } else if (!found) {
               /* 
                * Add node if it's either not found among right siblings (and the 
                * cursor on the shreddered file is on a right sibling) or if
                * it's not found in the structure and it is a new last right sibling.
                */
-              leftSiblingKeyStack =
-                  addNewElement(
-                      false,
-                      leftSiblingKeyStack,
-                      (StartElement) event);
-            } else if (found) {
-              //              // Update stack.
-              //              leftSiblingKeyStack.pop();
-              //              leftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
-              //              leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
-              //                  .getStandardProperty());
+              isSame = false;
+
+              // Move to last position before nodes were unequal if it's the
+              // "root" node of the subtree to insert (if it's a whole subtree).
+              if (levelsUp > 0) {
+                mWtx.moveTo(lastPosKey);
+
+                // Move up levels to the right parent.
+                for (int i = 0; i < levelsUp - 1; i++) {
+                  mWtx.moveToParent();
+                }
+
+                /*
+                 *  Make sure that it's inserted as a right sibling if the 
+                 *  transaction has move to at least one parent before.
+                 */
+                if (leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
+                    .getStandardProperty()) {
+                  leftSiblingKeyStack.pop();
+                }
+
+                // Push dummy on top.
+                leftSiblingKeyStack.push(0L);
+
+                leftSiblingKeyStack =
+                    addNewElement(
+                        false,
+                        leftSiblingKeyStack,
+                        (StartElement) event);
+
+                levelsUp = 0;
+                insertLevel++;
+                break;
+              } else {
+                if (insertLevel == -1) {
+                  // After an insert.
+                  if (leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
+                      .getStandardProperty()) {
+                    leftSiblingKeyStack.pop();
+                    mWtx.moveTo(leftSiblingKeyStack.peek());
+                    leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
+                        .getStandardProperty());
+                  } else {
+                    mWtx.moveTo(leftSiblingKeyStack.peek());
+                  }
+
+                  mWtx.moveToRightSibling();
+
+                  System.out.println(mWtx.getQNameOfCurrentNode());
+
+                  found = checkElement((StartElement) event);
+                } else {
+                  // After a first insert.
+                  insertLevel++;
+
+                  leftSiblingKeyStack =
+                      addNewElement(
+                          false,
+                          leftSiblingKeyStack,
+                          (StartElement) event);
+                  break;
+                }
+              }
+            }
+            if (found) {
+              levelsUp = 0;
+              isSame = true;
+              System.out.println("FOUND: "
+                  + mWtx.getQNameOfCurrentNode()
+                  + mWtx.getNode().getNodeKey());
 
               // Move transaction.
-              if (((IStructuralNode) mWtx.getNode()).hasFirstChild()) {
+              if (((ElementNode) mWtx.getNode()).hasFirstChild()) {
+                // Update stack.
+                leftSiblingKeyStack.pop();
                 mWtx.moveToFirstChild();
-              } else if (((IStructuralNode) mWtx.getNode()).hasRightSibling()) {
+              } else if (((ElementNode) mWtx.getNode()).hasRightSibling()) {
+                // Empty element.
+                // Update stack.
+                if (leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
+                    .getStandardProperty()) {
+                  // Remove NULL.
+                  leftSiblingKeyStack.pop();
+                }
+                /*
+                 *  Remove element (the tag must have been closed, thus remove 
+                 *  it from the stack!).
+                 */
+                leftSiblingKeyStack.pop();
                 mWtx.moveToRightSibling();
               } else if (mWtx.getNode().hasParent()) {
-                mWtx.moveToParent();
+                // Update last position key.
+                lastPosKey = mWtx.getNode().getNodeKey();
+
+                if (leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
+                    .getStandardProperty()) {
+                  leftSiblingKeyStack.pop();
+                }
+
+                if (!leftSiblingKeyStack.empty()) {
+                  leftSiblingKeyStack.pop();
+                  do {
+                    long key = mWtx.getNode().getNodeKey();
+                    if (!leftSiblingKeyStack.empty()) {
+                    mWtx.moveTo(leftSiblingKeyStack.peek());
+                    }
+                    System.out.println("NAME: " + mWtx.getQNameOfCurrentNode());
+                    mWtx.moveTo(key);
+                    if (!leftSiblingKeyStack.empty()) {
+                      leftSiblingKeyStack.pop();
+                    }
+                    mWtx.moveToParent();
+                  } while (!((IStructuralNode) mWtx.getNode())
+                      .hasRightSibling()
+                      && !leftSiblingKeyStack.empty());
+                  mWtx.moveToRightSibling();
+                }
               }
+
+              // Update stack.
+              leftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
+
+              if (mWtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
+                // Update stack.
+                leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
+                    .getStandardProperty());
+              }
+
+              break;
             } else {
               throw new IllegalStateException("Shouldn't happen!");
             }
-            break;
           case XMLStreamConstants.CHARACTERS:
-            final String valFromXML = ((Characters) event).getData().trim();
-            if (!(mWtx.getNode().getKind() == ENodes.TEXT_KIND && mWtx
-                .getValueOfCurrentNode()
-                .equals(valFromXML))) {
-              leftSiblingKeyStack =
-                  addNewText(leftSiblingKeyStack, (Characters) event);
-            } else {
-              //              // Update stack.
-              //              leftSiblingKeyStack.pop();
-              //              leftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
+            final String text = ((Characters) event).getData().trim();
+            if (mWtx.getNode().getKind() == ENodes.TEXT_KIND
+                && mWtx.getValueOfCurrentNode().equals(text)) {
+              levelsUp = 0;
+              isSame = true;
+              lastPosKey = mWtx.getNode().getNodeKey();
+              leftSiblingKeyStack.pop();
 
-              // Move to parent element node.
-              mWtx.moveToParent();
+              // Move to a parent which has the next right sibling in pre order.
+              while (!((IStructuralNode) mWtx.getNode()).hasRightSibling()) {
+                // Move to parent element node.
+                mWtx.moveToParent();
+
+                long key = mWtx.getNode().getNodeKey();
+                mWtx.moveTo(leftSiblingKeyStack.peek());
+                System.out.println("NAME: " + mWtx.getQNameOfCurrentNode());
+                mWtx.moveTo(key);
+
+                // Update stack.
+                // Remove text node or parent nodes which have no right sibl.
+                leftSiblingKeyStack.pop();
+              }
+              mWtx.moveToRightSibling();
+
+              // Update stack.
+              leftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
+
+              if (mWtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
+                leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
+                    .getStandardProperty());
+              }
+            } else {
+              final ByteBuffer textByteBuffer =
+                  ByteBuffer.wrap(TypedValue.getBytes(text));
+              if (textByteBuffer.array().length > 0) {
+                isSame = false;
+                leftSiblingKeyStack =
+                    addNewText(leftSiblingKeyStack, (Characters) event);
+              }
             }
             break;
           case XMLStreamConstants.END_ELEMENT:
-            if (toInsert) {
-              leftSiblingKeyStack.pop();
-              mWtx.moveTo(leftSiblingKeyStack.peek());
-              toInsert = false;
+            if (!isSame) {
+              if (insertLevel != -1) {
+                insertLevel--;
+                levelsUp = 0;
+                leftSiblingKeyStack.pop();
+                mWtx.moveTo(leftSiblingKeyStack.peek());
+                System.out.println("END ELEM: " + mWtx.getQNameOfCurrentNode());
+              }
+            } else {
+              levelsUp++;
             }
             break;
           }
 
           // Parsing the next event.
           event = mReader.nextEvent();
-        } while (mReader.hasNext() && mWtx.getNode().getNodeKey() < maxNodeKey);
+        } while (mReader.hasNext());
       }
       // If no content is in the XML, a normal insertNewContent is executed.
       else {
@@ -342,6 +499,76 @@ public final class XMLShredder implements Callable<Long> {
       throw new TreetankIOException(exc1);
     }
 
+  }
+
+  /**
+   * Check if descendants match.
+   * 
+   * @return true if they match, otherwise false.
+   * @throws XMLStreamException 
+   *                      In case of any streamining exception in the source
+   *                      document.
+   */
+  private final boolean checkDescendants() throws XMLStreamException {
+    boolean found = false;
+    final long key = mWtx.getNode().getNodeKey();
+
+    // Setup stack.
+    final FastStack<Long> stack = new FastStack<Long>();
+    stack.push((Long) EFixed.NULL_NODE_KEY.getStandardProperty());
+
+    // Move cursor.
+    boolean moved = false;
+    if (stack.peek() == (Long) EFixed.NULL_NODE_KEY.getStandardProperty()) {
+      moved = mWtx.moveToFirstChild();
+    } else {
+      moved = mWtx.moveToRightSibling();
+    }
+
+    System.out.println(mWtx.getQNameOfCurrentNode().getLocalPart());
+
+    if (moved) {
+      final XMLEvent xmlEvent = mReader.nextEvent();
+      switch (xmlEvent.getEventType()) {
+      case XMLStreamConstants.START_ELEMENT:
+        // Update stack.
+        stack.pop();
+        stack.push(mWtx.getNode().getNodeKey());
+        stack.push((Long) EFixed.NULL_NODE_KEY.getStandardProperty());
+
+        found = checkElement((StartElement) xmlEvent);
+        break;
+      case XMLStreamConstants.CHARACTERS:
+        final String text = ((Characters) xmlEvent).getData().trim();
+
+        if (!text.isEmpty()) {
+          // Update stack.
+          stack.pop();
+          stack.push(mWtx.getNode().getNodeKey());
+
+          if (mWtx.getNode().getKind() == ENodes.TEXT_KIND) {
+            found =
+                ((Characters) xmlEvent).getData().equals(
+                    mWtx.getValueOfCurrentNode());
+          }
+        }
+        break;
+      case XMLStreamConstants.END_ELEMENT:
+        stack.pop();
+        mWtx.moveTo(stack.peek());
+        break;
+      }
+    } else {
+      found = moved;
+    }
+
+    if (!found) {
+      mWtx.moveTo(key);
+    } else {
+      checkDescendants();
+    }
+
+    return found;
   }
 
   /**
@@ -486,7 +713,8 @@ public final class XMLShredder implements Callable<Long> {
         for (int i = 0, attCount =
             ((ElementNode) mWtx.getNode()).getAttributeCount(); i < attCount; i++) {
           mWtx.moveToAttribute(i);
-          if (attribute.getName().equals(mWtx.getQNameOfCurrentNode())) {
+          if (attribute.getName().equals(mWtx.getQNameOfCurrentNode())
+              && attribute.getValue().equals(mWtx.getValueOfCurrentNode())) {
             foundAtts = true;
             mWtx.moveTo(nodeKey);
             break;
