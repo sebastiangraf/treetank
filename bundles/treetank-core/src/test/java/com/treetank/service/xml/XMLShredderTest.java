@@ -366,7 +366,7 @@ public class XMLShredderTest {
               false);
       serializer.call();
       
-      final StringBuilder sBuilder = TestHelper.readFile(file.getAbsoluteFile(), false);
+//      final StringBuilder sBuilder = TestHelper.readFile(file.getAbsoluteFile(), false);
       
 //      assertEquals(sBuilder.toString(), out.toString());
     }
