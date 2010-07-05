@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:y="http://www.yworks.com/xml/graphml" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd">
   <!--Created by yFiles for Java 2.7-->
   <key for="graphml" id="d0" yfiles.type="resources"/>
@@ -91,8 +91,20 @@
 		</y:PolyLineEdge>
 	</data>
 </edge>
+<edge id="e3" source="n2" target="n3"> 
+	<data key="d5" />
+	<data key="d6">
+		<y:PolyLineEdge>
+			<y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+			<y:LineStyle color="#000000" type="line" width="1.0"/>
+			<y:Arrows source="none" target="standard"/>
+			<y:BendStyle smoothed="false"/>
+		</y:PolyLineEdge>
+	</data>
+</edge>
   </graph>
   <data key="d0">
     <y:Resources/>
   </data>
+  <bla/>
 </graphml>

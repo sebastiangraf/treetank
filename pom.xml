@@ -32,6 +32,7 @@
 		<module>bundles/treetank-core</module>
 		<module>bundles/treetank-jax-rx</module>
 		<module>bundles/treetank-saxon</module>
+		<module>bundles/treetank-gui</module>
 	</modules>
 </project>
 
