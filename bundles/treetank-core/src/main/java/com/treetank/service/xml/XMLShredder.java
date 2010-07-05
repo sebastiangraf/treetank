@@ -587,7 +587,8 @@ public final class XMLShredder implements Callable<Long> {
                           final String data =
                               ((Characters) xmlEvent).getData().trim();
 
-                          if (!(!data.isEmpty() && mWtx
+                          if (!(!data.isEmpty()
+                              && mWtx.getNode().getKind() == ENodes.TEXT_KIND && mWtx
                               .getValueOfCurrentNode()
                               .equals(data))) {
                             mWtx.moveTo(keyInShreddered);
@@ -617,7 +618,8 @@ public final class XMLShredder implements Callable<Long> {
                            * Move to a parent which has the next right sibling 
                            * in pre order.
                            */
-                          while (!((IStructuralNode) mWtx.getNode()).hasRightSibling()) {
+                          while (!((IStructuralNode) mWtx.getNode())
+                              .hasRightSibling()) {
                             // Move to parent element node.
                             mWtx.moveToParent();
                           }
@@ -905,7 +907,8 @@ public final class XMLShredder implements Callable<Long> {
     final long nodeKey = mWtx.getNode().getNodeKey();
 
     // Matching element names?
-    if (mWtx.getQNameOfCurrentNode().equals(event.getName())) {
+    if (mWtx.getNode().getKind() == ENodes.ELEMENT_KIND
+        && mWtx.getQNameOfCurrentNode().equals(event.getName())) {
       // Check if atts and namespaces are the same.
 
       // Check attributes.
