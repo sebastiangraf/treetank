@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>pom</artifactId>
 		<groupId>treetank</groupId>
-		<version>1.0.0</version>
+		<version>1.0.1-SNAPSHOT</version>
 	</parent>
 
 	<groupId>treetank</groupId>
@@ -68,11 +68,6 @@
 			<groupId>jtidy</groupId>
 			<artifactId>jtidy</artifactId>
 			<version>4aug2000r7-dev</version>
-		</dependency>
-		<dependency>
-			<groupId>xmlunit</groupId>
-			<artifactId>xmlunit</artifactId>
-			<version>1.3</version>
 		</dependency>
 		<!--
 			<dependency> <groupId>net.sourceforge.htmlunit</groupId>
