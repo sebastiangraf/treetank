@@ -337,40 +337,39 @@ public class XMLShredderTest extends XMLTestCase {
     assertEquals(xmlBuilder.toString(), tnkString);
   }
 
-  @Test
-  @Ignore
-  public void testShreddingModifiedExisting() throws Exception {
-    final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-    final ISession session = database.getSession();
-    final File folder = new File(XMLREFFOLDER);
-    int i = 1;
-    for (final File file : folder.listFiles()) {
-      if (file.getName().endsWith(".xml")) {
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        final XMLShredder shredder =
-            new XMLShredder(wtx, XMLShredder.createReader(file), true, true);
-        shredder.call();
-        assertEquals(i, wtx.getRevisionNumber());
-        
-        i++;
-        wtx.moveToDocumentRoot();
-        wtx.close();
-        
-        final OutputStream out = new ByteArrayOutputStream();
-        final XMLSerializer serializer =
-            new XMLSerializer(
-                session.beginReadTransaction(),
-                out,
-                true,
-                false,
-                false,
-                false);
-        serializer.call();
-        final StringBuilder sBuilder = TestHelper.readFile(file.getAbsoluteFile(), false);
-        System.out.println(sBuilder.toString());
-        System.out.println(out.toString());
-        assertXMLEqual(sBuilder.toString(), out.toString());
-      }
-    }
-  }
+//  @Ignore
+//  public void testShreddingModifiedExisting() throws Exception {
+//    final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+//    final ISession session = database.getSession();
+//    final File folder = new File(XMLREFFOLDER);
+//    int i = 1;
+//    for (final File file : folder.listFiles()) {
+//      if (file.getName().endsWith(".xml")) {
+//        final IWriteTransaction wtx = session.beginWriteTransaction();
+//        final XMLShredder shredder =
+//            new XMLShredder(wtx, XMLShredder.createReader(file), true, true);
+//        shredder.call();
+//        assertEquals(i, wtx.getRevisionNumber());
+//        
+//        i++;
+//        wtx.moveToDocumentRoot();
+//        wtx.close();
+//        
+//        final OutputStream out = new ByteArrayOutputStream();
+//        final XMLSerializer serializer =
+//            new XMLSerializer(
+//                session.beginReadTransaction(),
+//                out,
+//                true,
+//                false,
+//                false,
+//                false);
+//        serializer.call();
+//        final StringBuilder sBuilder = TestHelper.readFile(file.getAbsoluteFile(), false);
+//        System.out.println(sBuilder.toString());
+//        System.out.println(out.toString());
+//        assertXMLEqual(sBuilder.toString(), out.toString());
+//      }
+//    }
+//  }
 }
