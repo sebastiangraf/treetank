@@ -2,9 +2,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>treetank</artifactId>
 		<groupId>treetank</groupId>
-		<version>5.3.4-SNAPSHOT</version>
+		<artifactId>pom</artifactId>
+		<version>1.0.1-SNAPSHOT</version>
 		<relativePath>../../parent/pom.xml</relativePath>
 	</parent>
 
@@ -39,12 +39,6 @@
 			<artifactId>core</artifactId>
 			<version>5.3.4-SNAPSHOT</version>
 			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.7</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
