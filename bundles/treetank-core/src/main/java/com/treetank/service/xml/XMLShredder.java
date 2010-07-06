@@ -242,6 +242,9 @@ public final class XMLShredder implements Callable<Long> {
         // Insert node at the bottom (no closing tags occured until now).
         boolean insertAtTop = true;
 
+        // Has an element been inserted before?
+        boolean insertedElement = false;
+
         // Iterate over all nodes.
         do {
           switch (event.getEventType()) {
@@ -294,6 +297,7 @@ public final class XMLShredder implements Callable<Long> {
                * found node (keyMatches).
                */
               isSame = false;
+              insertedElement = false;
 
               do {
                 mWtx.remove();
@@ -317,14 +321,13 @@ public final class XMLShredder implements Callable<Long> {
                * it's not found in the structure and it is a new last right sibling.
                */
               isSame = false;
+              insertedElement = true;
 
               if (insertAtTop) {
                 mWtx.moveToParent();
 
                 // Update stack.
                 // Remove NULL.
-                leftSiblingKeyStack.pop();
-                // Remove node.
                 leftSiblingKeyStack.pop();
                 leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
                     .getStandardProperty());
@@ -352,8 +355,8 @@ public final class XMLShredder implements Callable<Long> {
                 }
 
                 /*
-                 *  Make sure that it's inserted as a right sibling if the 
-                 *  transaction has move to at least one parent before.
+                 * Make sure that it's inserted as a right sibling if the 
+                 * transaction has move to at least one parent before.
                  */
                 if (leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
                     .getStandardProperty()) {
@@ -372,41 +375,22 @@ public final class XMLShredder implements Callable<Long> {
                 levelsUp = 0;
                 insertLevel++;
                 break;
-              } else {
-                if (insertLevel == -1) {
-                  throw new IllegalStateException("Never occurs");
-                  //                  // After an insert.
-                  //                  if (leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
-                  //                      .getStandardProperty()) {
-                  //                    leftSiblingKeyStack.pop();
-                  //                    mWtx.moveTo(leftSiblingKeyStack.peek());
-                  //                    leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
-                  //                        .getStandardProperty());
-                  //                  } else {
-                  //                    mWtx.moveTo(leftSiblingKeyStack.peek());
-                  //                  }
-                  //
-                  //                  mWtx.moveToRightSibling();
-                  //
-                  //                  System.out.println(mWtx.getQNameOfCurrentNode());
-                  //
-                  //                  found = checkElement((StartElement) event);
-                } else {
-                  // After a first insert.
-                  insertLevel++;
+              } else if (insertLevel != -1) {
+                // After a first insert.
+                insertLevel++;
 
-                  leftSiblingKeyStack =
-                      addNewElement(
-                          false,
-                          leftSiblingKeyStack,
-                          (StartElement) event);
-                  break;
-                }
+                leftSiblingKeyStack =
+                    addNewElement(
+                        false,
+                        leftSiblingKeyStack,
+                        (StartElement) event);
+                break;
               }
-            }
-            if (found) {
+            } else if (found) {
+              // Nodes are the same.
               levelsUp = 0;
               isSame = true;
+              insertedElement = false;
               System.out.println("FOUND: "
                   + mWtx.getQNameOfCurrentNode()
                   + mWtx.getNode().getNodeKey());
@@ -483,6 +467,7 @@ public final class XMLShredder implements Callable<Long> {
                 && mWtx.getValueOfCurrentNode().equals(text)) {
               levelsUp = 0;
               isSame = true;
+              insertedElement = false;
               lastPosKey = mWtx.getNode().getNodeKey();
               leftSiblingKeyStack.pop();
 
@@ -513,9 +498,63 @@ public final class XMLShredder implements Callable<Long> {
               final ByteBuffer textByteBuffer =
                   ByteBuffer.wrap(TypedValue.getBytes(text));
               if (textByteBuffer.array().length > 0) {
+                /*
+                 * If a text node on it's own (without a previous element node
+                 * has been inserted) move back to the last position key and
+                 * insert as a right sibling.
+                 */
+                if (levelsUp > 0 && !insertedElement) {
+                  mWtx.moveTo(lastPosKey);
+
+                  // Move up levels to the right parent.
+                  for (int i = 0; i < levelsUp - 1; i++) {
+                    mWtx.moveToParent();
+                  }
+
+                  /*
+                   * Make sure that it's inserted as a right sibling if the 
+                   * transaction has move to at least one parent before.
+                   */
+                  if (leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
+                      .getStandardProperty()) {
+                    leftSiblingKeyStack.pop();
+                  }
+
+                  // Insert new node as right sibling.
+                  // Push dummy on top.
+                  leftSiblingKeyStack.push(0L);
+
+                  // Just to be sure it has the right value.
+                  levelsUp = 0;
+                }
                 isSame = false;
+
+                if (insertAtTop) {
+                  mWtx.moveToParent();
+
+                  // Update stack.
+                  // Remove NULL.
+                  leftSiblingKeyStack.pop();
+                  // Remove node.
+                  leftSiblingKeyStack.pop();
+                  leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
+                      .getStandardProperty());
+                }
+
                 leftSiblingKeyStack =
                     addNewText(leftSiblingKeyStack, (Characters) event);
+
+                /*
+                 * If right sibling of current node is the next event move
+                 * cursor and update stack.
+                 */
+                if (((IStructuralNode) mWtx.getNode()).hasRightSibling()) {
+                  checkRightSibling(leftSiblingKeyStack, true, insertAtTop);
+                }
+                
+                if (insertAtTop) {
+                  insertAtTop = false;
+                }
               }
             }
             break;
@@ -541,29 +580,7 @@ public final class XMLShredder implements Callable<Long> {
                  * the right sibling.
                  */
                 if (insertAtTop) {
-                  mWtx.moveToRightSibling();
-                  final XMLEvent xmlEvent = skipWhitespaces();
-
-                  switch (xmlEvent.getEventType()) {
-                  case XMLStreamConstants.CHARACTERS:
-                    final String data =
-                        ((Characters) xmlEvent).getData().trim();
-
-                    if (!(!data.isEmpty() && mWtx
-                        .getValueOfCurrentNode()
-                        .equals(data))) {
-                      mWtx.moveToLeftSibling();
-                    }
-                    break;
-                  case XMLStreamConstants.START_ELEMENT:
-                    if (!checkElement((StartElement) xmlEvent)) {
-                      mWtx.moveToLeftSibling();
-                    }
-                    break;
-                  }
-
-                  leftSiblingKeyStack.pop();
-                  leftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
+                  checkRightSibling(leftSiblingKeyStack, false, insertAtTop);
                 } else if (insertLevel == 0) {
                   /*
                    * Check if move to element before any inserts occured would
@@ -656,6 +673,50 @@ public final class XMLShredder implements Callable<Long> {
       throw new TreetankIOException(exc2);
     }
 
+  }
+
+  /**
+   * Compare right sibling of current node with the next event.
+   * 
+   * @param leftSiblingKeyStack
+   * @throws XMLStreamException
+   */
+  private final boolean checkRightSibling(
+      final FastStack<Long> leftSiblingKeyStack,
+      final boolean text,
+      final boolean insertAtTop) throws XMLStreamException {
+    boolean retVal = false;
+    mWtx.moveToRightSibling();
+    final XMLEvent xmlEvent = skipWhitespaces();
+
+    switch (xmlEvent.getEventType()) {
+    case XMLStreamConstants.CHARACTERS:
+      final String data = ((Characters) xmlEvent).getData().trim();
+
+      if (!data.isEmpty()
+          && mWtx.getNode().getKind() == ENodes.TEXT_KIND
+          && mWtx.getValueOfCurrentNode().equals(data)) {
+        retVal = true;
+      } else {
+        mWtx.moveToLeftSibling();
+      }
+      break;
+    case XMLStreamConstants.START_ELEMENT:
+      if (checkElement((StartElement) xmlEvent)) {
+        retVal = true;
+      } else {
+        mWtx.moveToLeftSibling();
+      }
+      break;
+    }
+
+    if (text && !insertAtTop) {
+      leftSiblingKeyStack.pop();
+    }
+    leftSiblingKeyStack.pop();
+    leftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
+
+    return retVal;
   }
 
   /**
