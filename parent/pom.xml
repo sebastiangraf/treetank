@@ -96,6 +96,17 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+		<repository>
+			<id>disyThirdParty</id>
+			<name>Repository for third party jar used by disy</name>
+			<url>http://xen5.disy.inf.uni-konstanz.de:8080/archiva/repository/disyThirdParty/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
 	</repositories>
 	<reporting>
 		<plugins>
