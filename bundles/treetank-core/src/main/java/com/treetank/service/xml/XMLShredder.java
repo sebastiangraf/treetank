@@ -78,6 +78,8 @@ public final class XMLShredder implements Callable<Long> {
 
   private static File mFile;
 
+  private XMLEventReader mParser;
+
   /**
    * Normal constructor to invoke a shredding process on a existing
    * {@link WriteTransaction}
@@ -205,8 +207,8 @@ public final class XMLShredder implements Callable<Long> {
       final long maxNodeKey = mWtx.getMaxNodeKey();
 
       /*
-       *  Setting up boolean-Stack. This stack is for holding the current
-       *  position to determine if an insertasright-sib should occure.
+       * Setting up boolean-Stack. This stack is for holding the current
+       * position to determine if an insertasright-sib should occure.
        */
       FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
       leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
@@ -277,7 +279,8 @@ public final class XMLShredder implements Callable<Long> {
                  * check all descendants. If they match the node must be 
                  * inserted.
                  */
-                found = checkDescendants(levelToParse);
+                found =
+                    checkDescendants(levelToParse, (StartElement) event, true);
                 mWtx.moveTo(keyMatches);
               }
             } while (!found && (mWtx.moveToRightSibling()));
@@ -290,7 +293,6 @@ public final class XMLShredder implements Callable<Long> {
              * current position do nothing.
              */
             if (found && isRightsibling) {
-              System.out.println("NEIIIIIIIIIIIN");
               /*
                * If found in one of the rightsiblings in the current shreddered
                * structure remove all nodes until the transaction points to the
@@ -395,6 +397,9 @@ public final class XMLShredder implements Callable<Long> {
                   + mWtx.getQNameOfCurrentNode()
                   + mWtx.getNode().getNodeKey());
 
+              // Update last position key.
+              lastPosKey = mWtx.getNode().getNodeKey();
+
               // Move transaction.
               if (((ElementNode) mWtx.getNode()).hasFirstChild()) {
                 // Update stack.
@@ -405,9 +410,6 @@ public final class XMLShredder implements Callable<Long> {
                 }
                 mWtx.moveToFirstChild();
               } else if (((ElementNode) mWtx.getNode()).hasRightSibling()) {
-                // Update last position key.
-                lastPosKey = mWtx.getNode().getNodeKey();
-
                 // Empty element.
                 // Update stack.
                 if (leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
@@ -498,6 +500,7 @@ public final class XMLShredder implements Callable<Long> {
               final ByteBuffer textByteBuffer =
                   ByteBuffer.wrap(TypedValue.getBytes(text));
               if (textByteBuffer.array().length > 0) {
+                boolean foundNode = false;
                 /*
                  * If a text node on it's own (without a previous element node
                  * has been inserted) move back to the last position key and
@@ -526,10 +529,7 @@ public final class XMLShredder implements Callable<Long> {
 
                   // Just to be sure it has the right value.
                   levelsUp = 0;
-                }
-                isSame = false;
-
-                if (insertAtTop) {
+                } else if (insertAtTop) {
                   mWtx.moveToParent();
 
                   // Update stack.
@@ -539,19 +539,71 @@ public final class XMLShredder implements Callable<Long> {
                   leftSiblingKeyStack.pop();
                   leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
                       .getStandardProperty());
+                } else {
+                  /*
+                   * Precondition: Transaction cursor moves down in the tree so
+                   * a start element has been read before the characters event.
+                   * 
+                   * Check if next event equals node on transaction points to.
+                   */
+                  final XMLEvent xmlEvent = skipWhitespaces();
+                  final long nodekey = mWtx.getNode().getNodeKey();
+                  System.out.println(mWtx.getQNameOfCurrentNode());
+                  switch (mReader.peek().getEventType()) {
+                  case XMLStreamConstants.START_ELEMENT:
+                    System.out.println(((StartElement) xmlEvent).getName());
+                    if (mWtx.getNode().getKind() == ENodes.ELEMENT_KIND
+                        && mWtx.getQNameOfCurrentNode().equals(
+                            ((StartElement) xmlEvent).getName())) {
+                      foundNode = true;
+                    }
+                    break;
+                  case XMLStreamConstants.CHARACTERS:
+                    if (mWtx.getNode().getKind() == ENodes.TEXT_KIND
+                        && mWtx.getValueOfCurrentNode() == ((Characters) xmlEvent)
+                            .getData()
+                            .trim()) {
+                      foundNode = true;
+                    }
+                  }
+                  mWtx.moveTo(nodekey);
+
+                  if (foundNode) {
+                    // Go back to parent.
+                    mWtx.moveTo(lastPosKey);
+                    
+                    // Update stack.
+                    if (leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
+                        .getStandardProperty()) {
+                      leftSiblingKeyStack.pop();
+                    }
+                    leftSiblingKeyStack.pop();
+                    leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
+                        .getStandardProperty());
+                  }
                 }
 
+                isSame = false;
+
+                // Insert text.
                 leftSiblingKeyStack =
                     addNewText(leftSiblingKeyStack, (Characters) event);
 
-                /*
-                 * If right sibling of current node is the next event move
-                 * cursor and update stack.
-                 */
-                if (((IStructuralNode) mWtx.getNode()).hasRightSibling()) {
-                  checkRightSibling(leftSiblingKeyStack, true, insertAtTop);
+                if (foundNode) {
+                  // Move transaction to right sibling and update stack.
+                  mWtx.moveToRightSibling();
+                  leftSiblingKeyStack.pop();
+                  leftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
+                } else {
+                  /*
+                   * If right sibling of current node is the next event move
+                   * cursor and update stack.
+                   */
+                  if (((IStructuralNode) mWtx.getNode()).hasRightSibling()) {
+                    checkRightSibling(leftSiblingKeyStack, true, insertAtTop);
+                  }
                 }
-                
+
                 if (insertAtTop) {
                   insertAtTop = false;
                 }
@@ -661,6 +713,8 @@ public final class XMLShredder implements Callable<Long> {
           // Parsing the next event.
           event = mReader.nextEvent();
         } while (mReader.hasNext());
+        
+        mReader.close();
       }
       // If no content is in the XML, a normal insertNewContent is executed.
       else {
@@ -679,7 +733,9 @@ public final class XMLShredder implements Callable<Long> {
    * Compare right sibling of current node with the next event.
    * 
    * @param leftSiblingKeyStack
+   *                        The Stack which has to be modified.
    * @throws XMLStreamException
+   *                        In case the xml parser encounters an error.
    */
   private final boolean checkRightSibling(
       final FastStack<Long> leftSiblingKeyStack,
@@ -713,7 +769,9 @@ public final class XMLShredder implements Callable<Long> {
     if (text && !insertAtTop) {
       leftSiblingKeyStack.pop();
     }
-    leftSiblingKeyStack.pop();
+    if (!leftSiblingKeyStack.empty()) {
+      leftSiblingKeyStack.pop();
+    }
     leftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
 
     return retVal;
@@ -745,6 +803,11 @@ public final class XMLShredder implements Callable<Long> {
    *                      The level on which the currently parsed node of the 
    *                      parser, which parses the file to shredder currently 
    *                      is.
+   * @param elem
+   *                      The start element where the StAX parser currently is.
+   * @param first
+   *                      Determines if it is the first call the method is
+   *                      invoked (a new StAX parser
    * @return true if they match, otherwise false.
    * @throws XMLStreamException 
    *                      In case of any streamining exception in the source
@@ -753,34 +816,40 @@ public final class XMLShredder implements Callable<Long> {
    *                      In case of any I/O exception while opening the
    *                      target file.
    */
-  private final boolean checkDescendants(final int levelToParse)
-      throws XMLStreamException,
-      IOException {
+  private final boolean checkDescendants(
+      final int levelToParse,
+      final StartElement elem,
+      final boolean first) throws XMLStreamException, IOException {
     boolean found = false;
     final long key = mWtx.getNode().getNodeKey();
 
     // Setup stack.
     final FastStack<Long> stack = new FastStack<Long>();
-    stack.push((Long) EFixed.NULL_NODE_KEY.getStandardProperty());
 
-    // Find corresponding node.
-    int level = 0;
-    boolean foundParsedElement = false;
-    final XMLEventReader parser = createReader(null);
-    while (parser.hasNext() && !foundParsedElement) {
-      final XMLEvent xmlEvent = parser.nextEvent();
-      switch (xmlEvent.getEventType()) {
-      case XMLStreamConstants.START_ELEMENT:
-        level++;
+    if (first) {
+      /*
+       * Setup new StAX parser and move it to the node, where the current StAX
+       * parser currently is.
+       */
+      stack.push((Long) EFixed.NULL_NODE_KEY.getStandardProperty());
+      int level = 0;
+      boolean foundParsedElement = false;
+      mParser = createReader(null);
+      while (mParser.hasNext() && !foundParsedElement) {
+        final XMLEvent xmlEvent = mParser.nextEvent();
+        switch (xmlEvent.getEventType()) {
+        case XMLStreamConstants.START_ELEMENT:
+          level++;
 
-        // TODO: new Checkelement method for 
-        if (level == levelToParse && checkElement((StartElement) xmlEvent)) {
-          foundParsedElement = true;
+          if (level == levelToParse && checkStAXElement(mParser, elem)) {
+            // Found corresponding start element.
+            foundParsedElement = true;
+          }
+          break;
+        case XMLStreamConstants.END_ELEMENT:
+          level--;
+          break;
         }
-        break;
-      case XMLStreamConstants.END_ELEMENT:
-        level--;
-        break;
       }
     }
 
@@ -795,11 +864,13 @@ public final class XMLShredder implements Callable<Long> {
     System.out.println(mWtx.getQNameOfCurrentNode().getLocalPart());
 
     if (moved) {
-      final XMLEvent xmlEvent = parser.nextEvent();
+      final XMLEvent xmlEvent = mParser.nextEvent();
       switch (xmlEvent.getEventType()) {
       case XMLStreamConstants.START_ELEMENT:
         // Update stack.
-        stack.pop();
+        if (stack.peek() == (Long) EFixed.NULL_NODE_KEY.getStandardProperty()) {
+          stack.pop();
+        }
         stack.push(mWtx.getNode().getNodeKey());
         stack.push((Long) EFixed.NULL_NODE_KEY.getStandardProperty());
 
@@ -829,13 +900,36 @@ public final class XMLShredder implements Callable<Long> {
       found = moved;
     }
 
-    if (!found) {
-      mWtx.moveTo(key);
+    if (found) {
+      checkDescendants(levelToParse, elem, false);
     } else {
-      checkDescendants(levelToParse);
+      mWtx.moveTo(key);
     }
 
     return found;
+  }
+
+  /**
+   * Check if start element of two StAX parsers match. 
+   * 
+   * @param parseToSameEvent
+   *                          Event to check against the position of the current
+   *                          StAX parser.
+   * @param elem
+   *                          Event of the StAX parser, where it is currently.
+   * @return True if start elements match.
+   * @throws XMLStreamException
+   */
+  private final boolean checkStAXElement(
+      final XMLEventReader parseToSameEvent,
+      final StartElement elem) throws XMLStreamException {
+    boolean retVal = false;
+    final XMLEvent xmlEvent = parseToSameEvent.peek();
+    if (xmlEvent.getEventType() == XMLStreamConstants.START_ELEMENT
+        && ((StartElement) xmlEvent).getName().equals(elem.getName())) {
+      retVal = true;
+    }
+    return retVal;
   }
 
   /**

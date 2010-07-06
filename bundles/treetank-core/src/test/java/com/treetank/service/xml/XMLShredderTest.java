@@ -21,6 +21,8 @@ package com.treetank.service.xml;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.custommonkey.xmlunit.XMLTestCase;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.OutputStream;
@@ -51,7 +53,7 @@ import com.treetank.utils.DocumentCreater;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.TypedValue;
 
-public class XMLShredderTest {
+public class XMLShredderTest extends XMLTestCase {
 
   public static final String XML =
       "src"
@@ -349,26 +351,26 @@ public class XMLShredderTest {
             new XMLShredder(wtx, XMLShredder.createReader(file), true, true);
         shredder.call();
         assertEquals(i, wtx.getRevisionNumber());
+        
         i++;
         wtx.moveToDocumentRoot();
         wtx.close();
+        
+        final OutputStream out = new ByteArrayOutputStream();
+        final XMLSerializer serializer =
+            new XMLSerializer(
+                session.beginReadTransaction(),
+                out,
+                true,
+                false,
+                false,
+                false);
+        serializer.call();
+        final StringBuilder sBuilder = TestHelper.readFile(file.getAbsoluteFile(), false);
+        System.out.println(sBuilder.toString());
+        System.out.println(out.toString());
+        assertXMLEqual(sBuilder.toString(), out.toString());
       }
-
-      final OutputStream out = new ByteArrayOutputStream();
-
-      final XMLSerializer serializer =
-          new XMLSerializer(
-              session.beginReadTransaction(),
-              out,
-              true,
-              false,
-              true,
-              false);
-      serializer.call();
-      
-//      final StringBuilder sBuilder = TestHelper.readFile(file.getAbsoluteFile(), false);
-      
-//      assertEquals(sBuilder.toString(), out.toString());
     }
   }
 }
