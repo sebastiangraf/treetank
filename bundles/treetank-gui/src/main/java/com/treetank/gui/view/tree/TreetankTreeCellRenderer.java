@@ -131,7 +131,7 @@ public final class TreetankTreeCellRenderer extends DefaultTreeCellRenderer {
           value = '<' + localPart + "/>";
         }
       } else {
-        value = '<' + prefix + " " + qName.getLocalPart() + '>';
+        value = '<' + prefix + ":" + qName.getLocalPart() + '>';
       }
 
       break;
