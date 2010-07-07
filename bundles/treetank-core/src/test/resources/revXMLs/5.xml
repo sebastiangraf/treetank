@@ -18,6 +18,7 @@
   <graph edgedefault="directed" parse.edges="8" parse.nodes="5" id="G">
 <node id="n0">
 	<data key="d2" />
+	ttttttt
 	<data key="d3">
 		<y:ShapeNode>
 			dsadsadsa
@@ -126,4 +127,5 @@ foooooobar
   <lalala>
     <test></test>
   </lalala>
+  dhsjak
 </graphml>
