@@ -18,8 +18,7 @@
 
 package com.treetank.api;
 
-import com.treetank.node.IStructuralNode;
-import com.treetank.settings.ENodes;
+import com.treetank.node.ENodes;
 
 /**
  * <h1>IItem</h1>
@@ -29,79 +28,71 @@ import com.treetank.settings.ENodes;
  */
 public interface IItem {
 
-	/**
-	 * Sets unique node key.
-	 * 
-	 * 
-	 * @param key
-	 *            Unique (negative) key of item
-	 */
-	void setNodeKey(final long key);
+    /**
+     * Sets unique node key.
+     * 
+     * 
+     * @param key
+     *            Unique (negative) key of item
+     */
+    void setNodeKey(final long key);
 
-	/**
-	 * Gets unique node key. TODO: maybe this should be renamed in
-	 * "getItemKey()"
-	 * 
-	 * @return node key
-	 */
-	long getNodeKey();
+    /**
+     * Gets unique node key. TODO: maybe this should be renamed in
+     * "getItemKey()"
+     * 
+     * @return node key
+     */
+    long getNodeKey();
 
-	/**
-	 * Gets key of the context item's parent.
-	 * 
-	 * @return parent key
-	 */
-	long getParentKey();
+    /**
+     * Gets key of the context item's parent.
+     * 
+     * @return parent key
+     */
+    long getParentKey();
 
-	/**
-	 * Declares, whether the item has a parent.
-	 * 
-	 * @return true, if item has a parent
-	 */
-	boolean hasParent();
+    /**
+     * Declares, whether the item has a parent.
+     * 
+     * @return true, if item has a parent
+     */
+    boolean hasParent();
 
-	/**
-	 * Return a byte array representation of the item's value.
-	 * 
-	 * @return returns the value of the item
-	 */
-	byte[] getRawValue();
+    /**
+     * Return a byte array representation of the item's value.
+     * 
+     * @return returns the value of the item
+     */
+    byte[] getRawValue();
 
-	
-	/**
-	 * Gets the kind of the item (atomic value, element node, attribute
-	 * node....).
-	 * 
-	 * @return kind of item
-	 */
-	ENodes getKind();
+    /**
+     * Gets the kind of the item (atomic value, element node, attribute
+     * node....).
+     * 
+     * @return kind of item
+     */
+    ENodes getKind();
 
-	/**
-	 * Gets key of qualified name.
-	 * 
-	 * @return key of qualified name
-	 */
-	int getNameKey();
+    /**
+     * Gets key of qualified name.
+     * 
+     * @return key of qualified name
+     */
+    int getNameKey();
 
-	/**
-	 * Gets key of the URI.
-	 * 
-	 * @return URI key
-	 */
-	int getURIKey();
+    /**
+     * Gets key of the URI.
+     * 
+     * @return URI key
+     */
+    int getURIKey();
 
-	/**
-	 * Gets value type of the item.
-	 * 
-	 * @return value type
-	 */
-	int getTypeKey();
-
-	/**
-	 * Returns if node is a leaf
-	 * 
-	 * @return boolean if node is a leaf = is not a {@link IStructuralNode}
-	 */
-	boolean isLeaf();
+    /**
+     * Gets value type of the item.
+     * 
+     * @return value type
+     */
+    int getTypeKey();
 
 }

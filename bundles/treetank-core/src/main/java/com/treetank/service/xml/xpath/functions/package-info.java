@@ -1,6 +1,5 @@
-<html>
-  <body>
-    <h1>Package functions</h1>
+/**
+<h1>Package functions</h1>
     <p>
       Contains XPath functions and operators specified in 
       <a href="http://www.w3.org/TR/xquery-operators/">XQuery 1.0 and XPath 2.0 
@@ -10,6 +9,7 @@
       Make sure to extend AbstractFunction for all new functions and add the
       signature information to the FuncDef enum.
     </p>
-    
-  </body>
-</html>
+ * @author Tina Scherer, University of Konstanz
+ */
+package com.treetank.service.xml.xpath.functions;
+

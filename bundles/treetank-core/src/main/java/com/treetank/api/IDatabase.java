@@ -11,8 +11,8 @@ import com.treetank.exception.TreetankException;
  * done with the help of {@link ISession}s.
  * 
  * Furthermore, databases can be created with the help of
- * {@link DatabaseConfiguration}s. After creation, the settings of a database cannot
- * be changed. 
+ * {@link DatabaseConfiguration}s. After creation, the settings of a database
+ * cannot be changed.
  * 
  * 
  * <h2>Usage Example</h2>
@@ -35,7 +35,7 @@ import com.treetank.exception.TreetankException;
  * </pre>
  * 
  * </p>
- *  
+ * 
  * 
  * @author Sebastian Graf, University of Konstanz
  * 

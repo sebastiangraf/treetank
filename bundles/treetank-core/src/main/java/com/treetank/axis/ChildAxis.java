@@ -20,7 +20,7 @@ package com.treetank.axis;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
-import com.treetank.node.IStructuralNode;
+import com.treetank.node.AbsStructNode;
 
 /**
  * <h1>ChildAxis</h1>
@@ -32,48 +32,47 @@ import com.treetank.node.IStructuralNode;
  */
 public class ChildAxis extends AbstractAxis implements IAxis {
 
-	/** Has another child node. */
-	private boolean mFirst;
+    /** Has another child node. */
+    private boolean mFirst;
 
-	/**
-	 * Constructor initializing internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) trx to iterate with.
-	 */
-	public ChildAxis(final IReadTransaction rtx) {
-		super(rtx);
-	}
+    /**
+     * Constructor initializing internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
+     */
+    public ChildAxis(final IReadTransaction rtx) {
+        super(rtx);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void reset(final long nodeKey) {
-		super.reset(nodeKey);
-		mFirst = true;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void reset(final long nodeKey) {
+        super.reset(nodeKey);
+        mFirst = true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final boolean hasNext() {
-		resetToLastKey();
-		if (!mFirst
-				&& ((IStructuralNode) getTransaction().getNode())
-						.hasRightSibling()) {
-			getTransaction().moveToRightSibling();
-			return true;
-		} else if (mFirst
-				&& ((IStructuralNode) getTransaction().getNode())
-						.hasFirstChild()) {
-			mFirst = false;
-			getTransaction().moveToFirstChild();
-			return true;
-		} else {
-			resetToStartKey();
-			return false;
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public final boolean hasNext() {
+        resetToLastKey();
+        if (!mFirst
+                && ((AbsStructNode) getTransaction().getNode())
+                        .hasRightSibling()) {
+            getTransaction().moveToRightSibling();
+            return true;
+        } else if (mFirst
+                && ((AbsStructNode) getTransaction().getNode()).hasFirstChild()) {
+            mFirst = false;
+            getTransaction().moveToFirstChild();
+            return true;
+        } else {
+            resetToStartKey();
+            return false;
+        }
+    }
 
 }

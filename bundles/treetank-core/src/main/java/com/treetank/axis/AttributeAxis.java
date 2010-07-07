@@ -20,8 +20,8 @@ package com.treetank.axis;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
-import com.treetank.settings.ENodes;
 
 /**
  * <h1>AttributeAxis</h1>
@@ -32,49 +32,49 @@ import com.treetank.settings.ENodes;
  */
 public class AttributeAxis extends AbstractAxis implements IAxis {
 
-	/** Remember next key to visit. */
-	private int mNextIndex;
+    /** Remember next key to visit. */
+    private int mNextIndex;
 
-	/**
-	 * Constructor initializing internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) mTrx to iterate with.
-	 */
-	public AttributeAxis(final IReadTransaction rtx) {
-		super(rtx);
-	}
+    /**
+     * Constructor initializing internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) mTrx to iterate with.
+     */
+    public AttributeAxis(final IReadTransaction rtx) {
+        super(rtx);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void reset(final long nodeKey) {
-		super.reset(nodeKey);
-		mNextIndex = 0;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void reset(final long nodeKey) {
+        super.reset(nodeKey);
+        mNextIndex = 0;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final boolean hasNext() {
-		resetToLastKey();
-		// move back to element, if there was already an attribute found. In
-		// this
-		// case the current node was set to an attribute by resetToLastKey()
-		if (mNextIndex > 0) {
-			assert getTransaction().getNode().getKind() == ENodes.ATTRIBUTE_KIND;
-			getTransaction().moveToParent();
-		}
-		if (getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND
-				&& mNextIndex < ((ElementNode) getTransaction().getNode())
-						.getAttributeCount()) {
-			getTransaction().moveToAttribute(mNextIndex);
-			mNextIndex += 1;
-			return true;
-		}
-		resetToStartKey();
-		return false;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public final boolean hasNext() {
+        resetToLastKey();
+        // move back to element, if there was already an attribute found. In
+        // this
+        // case the current node was set to an attribute by resetToLastKey()
+        if (mNextIndex > 0) {
+            assert getTransaction().getNode().getKind() == ENodes.ATTRIBUTE_KIND;
+            getTransaction().moveToParent();
+        }
+        if (getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND
+                && mNextIndex < ((ElementNode) getTransaction().getNode())
+                        .getAttributeCount()) {
+            getTransaction().moveToAttribute(mNextIndex);
+            mNextIndex += 1;
+            return true;
+        }
+        resetToStartKey();
+        return false;
+    }
 
 }

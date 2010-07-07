@@ -14,32 +14,32 @@ import com.treetank.TestHelper;
 import com.treetank.exception.TreetankException;
 
 public class XMLSerializerPropertiesTest {
-  @Before
-  public void setUp() throws TreetankException {
-    TestHelper.deleteEverything();
-  }
-
-  @After
-  public void tearDown() throws TreetankException {
-    TestHelper.closeEverything();
-  }
-
-  @Test
-  public void testXMLSerializerProp() {
-    final String path = TestHelper.PATHS.PATH1.getFile().getAbsolutePath();
-    if (!new File(path).mkdirs()) {
-      TestCase.fail("Directories couldn't be created!");
+    @Before
+    public void setUp() throws TreetankException {
+        TestHelper.deleteEverything();
     }
-    final XMLSerializerProperties props =
-        new XMLSerializerProperties(new File(path, "props").getAbsolutePath());
-    
-    final ConcurrentHashMap<String, Object> map = props.getmProps();
-    final Enumeration<String> keys = map.keys();
-    
-    while (keys.hasMoreElements()) {
-      System.out.println(map.get(keys.nextElement()));
+
+    @After
+    public void tearDown() throws TreetankException {
+        TestHelper.closeEverything();
     }
-    
-    props.write();
-  }
+
+    @Test
+    public void testXMLSerializerProp() {
+        final String path = TestHelper.PATHS.PATH1.getFile().getAbsolutePath();
+        if (!new File(path).mkdirs()) {
+            TestCase.fail("Directories couldn't be created!");
+        }
+        final XMLSerializerProperties props = new XMLSerializerProperties(
+                new File(path, "props").getAbsolutePath());
+
+        final ConcurrentHashMap<String, Object> map = props.getmProps();
+        final Enumeration<String> keys = map.keys();
+
+        while (keys.hasMoreElements()) {
+            System.out.println(map.get(keys.nextElement()));
+        }
+
+        props.write();
+    }
 }

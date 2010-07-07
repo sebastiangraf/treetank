@@ -32,38 +32,38 @@ import com.treetank.utils.DocumentCreater;
 
 public class NameFilterTest {
 
-	@Before
-	public void setUp() throws TreetankException {
-		TestHelper.deleteEverything();
-	}
+    @Before
+    public void setUp() throws TreetankException {
+        TestHelper.deleteEverything();
+    }
 
-	@Test
-	public void testIFilterConvetions() throws TreetankException {
-		// Build simple test tree.
-		final IDatabase database = TestHelper
-				.getDatabase(PATHS.PATH1.getFile());
-		final ISession session = database.getSession();
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
+    @Test
+    public void testIFilterConvetions() throws TreetankException {
+        // Build simple test tree.
+        final IDatabase database = TestHelper
+                .getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
 
-		wtx.moveTo(9L);
-		IFilterTest.testIFilterConventions(new NameFilter(wtx, "b"), true);
+        wtx.moveTo(9L);
+        IFilterTest.testIFilterConventions(new NameFilter(wtx, "b"), true);
 
-		wtx.moveTo(4L);
-		IFilterTest.testIFilterConventions(new NameFilter(wtx, "b"), false);
+        wtx.moveTo(4L);
+        IFilterTest.testIFilterConventions(new NameFilter(wtx, "b"), false);
 
-		wtx.moveTo(7L);
-		IFilterTest.testIFilterConventions(new NameFilter(wtx, "b"), false);
+        wtx.moveTo(7L);
+        IFilterTest.testIFilterConventions(new NameFilter(wtx, "b"), false);
 
-		wtx.abort();
-		wtx.close();
-		session.close();
-		database.close();
-	}
+        wtx.abort();
+        wtx.close();
+        session.close();
+        database.close();
+    }
 
-	@After
-	public void tearDown() throws TreetankException {
-		TestHelper.closeEverything();
-	}
+    @After
+    public void tearDown() throws TreetankException {
+        TestHelper.closeEverything();
+    }
 
 }

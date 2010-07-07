@@ -22,9 +22,8 @@ import java.util.Arrays;
 
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
-import com.treetank.node.AbstractNode;
-import com.treetank.node.NodePersistenter;
-import com.treetank.settings.ENodes;
+import com.treetank.node.AbsNode;
+import com.treetank.node.ENodes;
 import com.treetank.utils.IConstants;
 
 /**
@@ -40,7 +39,7 @@ public class NodePage extends AbstractPage {
     private final long mNodePageKey;
 
     /** Array of nodes. This can have null nodes that were removed. */
-    private final AbstractNode[] mNodes;
+    private final AbsNode[] mNodes;
 
     /**
      * Create node page.
@@ -51,7 +50,7 @@ public class NodePage extends AbstractPage {
     public NodePage(final long nodePageKey, final long revision) {
         super(0, revision);
         mNodePageKey = nodePageKey;
-        mNodes = new AbstractNode[IConstants.NDP_NODE_COUNT];
+        mNodes = new AbsNode[IConstants.NDP_NODE_COUNT];
     }
 
     /**
@@ -63,7 +62,7 @@ public class NodePage extends AbstractPage {
     protected NodePage(final ITTSource in) {
         super(0, in);
         mNodePageKey = in.readLong();
-        mNodes = new AbstractNode[IConstants.NDP_NODE_COUNT];
+        mNodes = new AbsNode[IConstants.NDP_NODE_COUNT];
 
         final int[] values = new int[IConstants.NDP_NODE_COUNT];
         for (int i = 0; i < values.length; i++) {
@@ -72,7 +71,12 @@ public class NodePage extends AbstractPage {
 
         for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
             final int kind = values[offset];
-            getNodes()[offset] = NodePersistenter.createNode(in, kind);
+            final ENodes enumKind = ENodes.getEnumKind(kind);
+            if (enumKind == ENodes.UNKOWN_KIND) {
+                break;
+            } else {
+                getNodes()[offset] = enumKind.createNodeFromPersistence(in);
+            }
         }
     }
 
@@ -86,12 +90,13 @@ public class NodePage extends AbstractPage {
             final long revisionToUse) {
         super(0, committedNodePage, revisionToUse);
         mNodePageKey = committedNodePage.mNodePageKey;
-        mNodes = new AbstractNode[IConstants.NDP_NODE_COUNT];
+        mNodes = new AbsNode[IConstants.NDP_NODE_COUNT];
         // Deep-copy all nodes.
         for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
-            final AbstractNode node = committedNodePage.getNodes()[offset];
+            final AbsNode node = committedNodePage.getNodes()[offset];
             if (node != null) {
-                getNodes()[offset] = NodePersistenter.createNode(node);
+                getNodes()[offset] = node.clone();
+                // getNodes()[offset] = NodePersistenter.createNode(node);
             }
         }
     }
@@ -112,7 +117,7 @@ public class NodePage extends AbstractPage {
      *            Offset of node within local node page.
      * @return Node at given offset.
      */
-    public AbstractNode getNode(final int offset) {
+    public AbsNode getNode(final int offset) {
         return getNodes()[offset];
     }
 
@@ -124,7 +129,7 @@ public class NodePage extends AbstractPage {
      * @param node
      *            Node to store at given nodeOffset.
      */
-    public void setNode(final int offset, final AbstractNode node) {
+    public void setNode(final int offset, final AbsNode node) {
         getNodes()[offset] = node;
     }
 
@@ -144,7 +149,7 @@ public class NodePage extends AbstractPage {
             }
         }
 
-        for (final AbstractNode node : getNodes()) {
+        for (final AbsNode node : getNodes()) {
             if (node != null) {
                 node.serialize(out);
             }
@@ -160,7 +165,7 @@ public class NodePage extends AbstractPage {
         returnString.append(": nodePageKey=");
         returnString.append(mNodePageKey);
         returnString.append(" nodes: \n");
-        for (final AbstractNode node : getNodes()) {
+        for (final AbsNode node : getNodes()) {
             if (node != null) {
                 returnString.append(node.getNodeKey());
                 returnString.append(",");
@@ -173,7 +178,7 @@ public class NodePage extends AbstractPage {
     /**
      * @return the mNodes
      */
-    public AbstractNode[] getNodes() {
+    public AbsNode[] getNodes() {
         return mNodes;
     }
 

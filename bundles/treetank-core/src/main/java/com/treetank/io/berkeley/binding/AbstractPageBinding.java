@@ -17,7 +17,7 @@ import com.treetank.page.PagePersistenter;
 public final class AbstractPageBinding extends TupleBinding<AbstractPage> {
 
     /**
-     *{@inheritDoc}
+     * {@inheritDoc}
      */
     @Override
     public AbstractPage entryToObject(final TupleInput arg0) {
@@ -25,7 +25,7 @@ public final class AbstractPageBinding extends TupleBinding<AbstractPage> {
     }
 
     /**
-     *{@inheritDoc}
+     * {@inheritDoc}
      */
     @Override
     public void objectToEntry(final AbstractPage arg0, final TupleOutput arg1) {

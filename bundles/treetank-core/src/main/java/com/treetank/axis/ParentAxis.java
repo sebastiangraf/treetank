@@ -20,8 +20,8 @@ package com.treetank.axis;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.node.ENodes;
 import com.treetank.settings.EFixed;
-import com.treetank.settings.ENodes;
 
 /**
  * <h1>ParentAxis</h1>
@@ -32,45 +32,45 @@ import com.treetank.settings.ENodes;
  */
 public class ParentAxis extends AbstractAxis implements IAxis {
 
-	/** Track number of calls of next. */
-	private boolean mFirst;
+    /** Track number of calls of next. */
+    private boolean mFirst;
 
-	/**
-	 * Constructor initializing internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) trx to iterate with.
-	 */
-	public ParentAxis(final IReadTransaction rtx) {
-		super(rtx);
-	}
+    /**
+     * Constructor initializing internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
+     */
+    public ParentAxis(final IReadTransaction rtx) {
+        super(rtx);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void reset(final long nodeKey) {
-		super.reset(nodeKey);
-		mFirst = true;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void reset(final long nodeKey) {
+        super.reset(nodeKey);
+        mFirst = true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final boolean hasNext() {
-		resetToLastKey();
-		if (getTransaction().getNode().getKind() != ENodes.ROOT_KIND
-				&& mFirst
-				&& getTransaction().getNode().hasParent()
-				&& getTransaction().getNode().getParentKey() != (Long) EFixed.ROOT_NODE_KEY
-						.getStandardProperty()) {
-			mFirst = false;
-			getTransaction().moveToParent();
-			return true;
-		} else {
-			resetToStartKey();
-			return false;
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public final boolean hasNext() {
+        resetToLastKey();
+        if (getTransaction().getNode().getKind() != ENodes.ROOT_KIND
+                && mFirst
+                && getTransaction().getNode().hasParent()
+                && getTransaction().getNode().getParentKey() != (Long) EFixed.ROOT_NODE_KEY
+                        .getStandardProperty()) {
+            mFirst = false;
+            getTransaction().moveToParent();
+            return true;
+        } else {
+            resetToStartKey();
+            return false;
+        }
+    }
 
 }

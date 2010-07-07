@@ -52,8 +52,8 @@ public abstract class AbstractPersistenceCache implements ICache {
      */
     protected AbstractPersistenceCache(final DatabaseConfiguration paramConfig) {
         place = new File(paramConfig.getFile(), new StringBuilder(
-                EStoragePaths.TRANSACTIONLOG.getFile().getName()).append(
-                File.separator).append(counter).toString());
+                EStoragePaths.TRANSACTIONLOG.getFile().getName())
+                .append(File.separator).append(counter).toString());
         place.mkdirs();
         counter++;
     }

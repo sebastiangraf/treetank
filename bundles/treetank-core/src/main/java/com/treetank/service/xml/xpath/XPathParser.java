@@ -1508,8 +1508,8 @@ public final class XPathParser implements XPathConstants {
         if (!is(Token.CLOSE_BR, true)) {
             String stringLiteral;
             if (isQuote()) {
-                final byte[] param = getTransaction().getItemList().getItem(
-                        parseStringLiteral()).getRawValue();
+                final byte[] param = getTransaction().getItemList()
+                        .getItem(parseStringLiteral()).getRawValue();
                 stringLiteral = Arrays.toString(param);
             } else {
                 stringLiteral = parseNCName();
@@ -1555,8 +1555,8 @@ public final class XPathParser implements XPathConstants {
                 filter = new NestedFilter(getTransaction(), filter,
                         new NameFilter(getTransaction(), name));
             } // if it is '*', all attributes are accepted, so the normal
-            // attribute
-            // filter is sufficient
+              // attribute
+              // filter is sufficient
 
             if (is(Token.COMMA, true)) {
                 // add type filter
@@ -1648,7 +1648,7 @@ public final class XPathParser implements XPathConstants {
                 filter = new NestedFilter(getTransaction(), filter,
                         new NameFilter(getTransaction(), name));
             } // if it is '*', all elements are accepted, so the normal element
-            // filter is sufficient
+              // filter is sufficient
 
             if (is(Token.COMMA, true)) {
 

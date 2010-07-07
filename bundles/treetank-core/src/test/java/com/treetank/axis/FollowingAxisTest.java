@@ -31,49 +31,49 @@ import com.treetank.exception.TreetankException;
 import com.treetank.utils.DocumentCreater;
 
 public class FollowingAxisTest {
-	@Before
-	public void setUp() throws TreetankException {
-		TestHelper.deleteEverything();
-	}
+    @Before
+    public void setUp() throws TreetankException {
+        TestHelper.deleteEverything();
+    }
 
-	@Test
-	public void testAxisConventions() throws TreetankException {
-		final IDatabase database = TestHelper
-				.getDatabase(PATHS.PATH1.getFile());
-		final ISession session = database.getSession();
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
+    @Test
+    public void testAxisConventions() throws TreetankException {
+        final IDatabase database = TestHelper
+                .getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
 
-		wtx.moveTo(11L);
-		IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {
-				12L, 13L });
+        wtx.moveTo(11L);
+        IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {
+                12L, 13L });
 
-		wtx.moveTo(5L);
-		IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] { 8L,
-				9L, 11L, 12L, 13L });
+        wtx.moveTo(5L);
+        IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] { 8L,
+                9L, 11L, 12L, 13L });
 
-		wtx.moveTo(13L);
-		IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {});
+        wtx.moveTo(13L);
+        IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {});
 
-		wtx.moveTo(1L);
-		IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {});
+        wtx.moveTo(1L);
+        IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {});
 
-		wtx.moveToDocumentRoot();
-		IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {});
+        wtx.moveToDocumentRoot();
+        IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {});
 
-		wtx.moveTo(9L);
-		wtx.moveToAttribute(0);
-		IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {});
+        wtx.moveTo(9L);
+        wtx.moveToAttribute(0);
+        IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {});
 
-		wtx.abort();
-		wtx.close();
-		session.close();
-		database.close();
-	}
+        wtx.abort();
+        wtx.close();
+        session.close();
+        database.close();
+    }
 
-	@After
-	public void tearDown() throws TreetankException {
-		TestHelper.closeEverything();
-	}
+    @After
+    public void tearDown() throws TreetankException {
+        TestHelper.closeEverything();
+    }
 
 }

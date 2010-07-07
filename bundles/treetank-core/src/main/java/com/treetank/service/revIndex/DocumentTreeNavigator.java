@@ -7,92 +7,92 @@ import javax.xml.namespace.QName;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
-import com.treetank.node.IStructuralNode;
-import com.treetank.settings.ENodes;
+import com.treetank.node.AbsStructNode;
+import com.treetank.node.ENodes;
 import com.treetank.utils.NamePageHash;
 
 public final class DocumentTreeNavigator {
 
-	static long adaptDocTree(final IWriteTransaction wtx,
-			final Stack<String> names) throws TreetankException {
-		moveToDocumentStructureRoot(wtx);
-		long currentDocKey = ENodes.UNKOWN_KIND.getNodeIdentifier();
-		// iterating over all names in hierarchical order
-		while (!names.empty()) {
-			final String name = names.pop();
+    static long adaptDocTree(final IWriteTransaction wtx,
+            final Stack<String> names) throws TreetankException {
+        moveToDocumentStructureRoot(wtx);
+        long currentDocKey = ENodes.UNKOWN_KIND.getNodeIdentifier();
+        // iterating over all names in hierarchical order
+        while (!names.empty()) {
+            final String name = names.pop();
 
-			// if firstChild is not existing,...
-			if (!wtx.moveToFirstChild()) {
-				// ..inserting it...
-				wtx.insertElementAsFirstChild(new QName(
-						RevIndex.DOCUMENT_ELEMENT));
-				wtx.insertAttribute(new QName(
-						RevIndex.DOCUMENT_NODE_ATTIBUTEKEY), name);
-				wtx.moveToParent();
-			}
-			// Check if there was already a document on the sibling axis...
-			boolean found = false;
-			do {
-				// ...and check the name against the current document name
-				// for each sibling..
-				if (wtx.getNode().getNameKey() == NamePageHash
-						.generateHashForString(RevIndex.DOCUMENT_ELEMENT)) {
-					// ..and break up if it is canceled
-					if (!wtx.moveToAttribute(0)) {
+            // if firstChild is not existing,...
+            if (!wtx.moveToFirstChild()) {
+                // ..inserting it...
+                wtx.insertElementAsFirstChild(new QName(
+                        RevIndex.DOCUMENT_ELEMENT));
+                wtx.insertAttribute(new QName(
+                        RevIndex.DOCUMENT_NODE_ATTIBUTEKEY), name);
+                wtx.moveToParent();
+            }
+            // Check if there was already a document on the sibling axis...
+            boolean found = false;
+            do {
+                // ...and check the name against the current document name
+                // for each sibling..
+                if (wtx.getNode().getNameKey() == NamePageHash
+                        .generateHashForString(RevIndex.DOCUMENT_ELEMENT)) {
+                    // ..and break up if it is canceled
+                    if (!wtx.moveToAttribute(0)) {
 
-						throw new IllegalStateException();
-					}
-					if (wtx.getValueOfCurrentNode().hashCode() == name
-							.hashCode()) {
-						found = true;
-					}
-					wtx.moveToParent();
-					if (found) {
-						currentDocKey = wtx.getNode().getNodeKey();
-						break;
-					}
-				}
-			} while (wtx.moveToRightSibling());
-			// ...if there hasn't be an element, insert the
-			if (!found) {
-				wtx.insertElementAsRightSibling(new QName(
-						RevIndex.DOCUMENT_ELEMENT));
-				wtx.insertAttribute(new QName(
-						RevIndex.DOCUMENT_NODE_ATTIBUTEKEY), name);
-				wtx.moveToParent();
+                        throw new IllegalStateException();
+                    }
+                    if (wtx.getValueOfCurrentNode().hashCode() == name
+                            .hashCode()) {
+                        found = true;
+                    }
+                    wtx.moveToParent();
+                    if (found) {
+                        currentDocKey = wtx.getNode().getNodeKey();
+                        break;
+                    }
+                }
+            } while (wtx.moveToRightSibling());
+            // ...if there hasn't be an element, insert the
+            if (!found) {
+                wtx.insertElementAsRightSibling(new QName(
+                        RevIndex.DOCUMENT_ELEMENT));
+                wtx.insertAttribute(new QName(
+                        RevIndex.DOCUMENT_NODE_ATTIBUTEKEY), name);
+                wtx.moveToParent();
 
-				currentDocKey = wtx.getNode().getNodeKey();
-			}
-		}
-		return currentDocKey;
-	}
+                currentDocKey = wtx.getNode().getNodeKey();
+            }
+        }
+        return currentDocKey;
+    }
 
-	static Stack<String> getDocElements(final IReadTransaction rtx) {
-		final Stack<String> returnVal = new Stack<String>();
-		do {
-			rtx.moveToAttribute(0);
-			returnVal.add(rtx.getValueOfCurrentNode());
-			rtx.moveToParent();
-		} while (rtx.moveToParent()
-				&& NamePageHash
-						.generateHashForString(RevIndex.DOCUMENTROOT_ELEMENTNAME) != rtx
-						.getNode().getNameKey());
+    static Stack<String> getDocElements(final IReadTransaction rtx) {
+        final Stack<String> returnVal = new Stack<String>();
+        do {
+            rtx.moveToAttribute(0);
+            returnVal.add(rtx.getValueOfCurrentNode());
+            rtx.moveToParent();
+        } while (rtx.moveToParent()
+                && NamePageHash
+                        .generateHashForString(RevIndex.DOCUMENTROOT_ELEMENTNAME) != rtx
+                        .getNode().getNameKey());
 
-		return returnVal;
-	}
+        return returnVal;
+    }
 
-	/**
-	 * Moving to documentstructure root
-	 */
-	private static void moveToDocumentStructureRoot(final IReadTransaction rtx)
-			throws TreetankException {
-		rtx.moveToDocumentRoot();
-		if (!((IStructuralNode) rtx.getNode()).hasFirstChild()) {
-			RevIndex.initialiseBasicStructure(rtx);
-		} else {
-			rtx.moveToFirstChild();
-			rtx.moveToRightSibling();
-			rtx.moveToRightSibling();
-		}
-	}
+    /**
+     * Moving to documentstructure root
+     */
+    private static void moveToDocumentStructureRoot(final IReadTransaction rtx)
+            throws TreetankException {
+        rtx.moveToDocumentRoot();
+        if (!((AbsStructNode) rtx.getNode()).hasFirstChild()) {
+            RevIndex.initialiseBasicStructure(rtx);
+        } else {
+            rtx.moveToFirstChild();
+            rtx.moveToRightSibling();
+            rtx.moveToRightSibling();
+        }
+    }
 }

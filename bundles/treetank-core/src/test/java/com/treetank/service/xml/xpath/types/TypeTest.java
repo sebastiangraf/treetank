@@ -310,8 +310,8 @@ public class TypeTest {
     @Test
     public final void testFacets() {
         assertEquals(true, string.facetIsSatisfiedBy("hallo welt!"));
-        assertEquals(true, string
-                .facetIsSatisfiedBy("r7321741237r8gruqewfgducnb2138"));
+        assertEquals(true,
+                string.facetIsSatisfiedBy("r7321741237r8gruqewfgducnb2138"));
         assertEquals(true, string.facetIsSatisfiedBy("-12.E24"));
         assertEquals(true, string.facetIsSatisfiedBy("&%)=1"));
         assertEquals(true, string.facetIsSatisfiedBy("\""));

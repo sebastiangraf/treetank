@@ -57,8 +57,8 @@ public class ThreadTest {
 
     @Test
     public void testThreads() throws Exception {
-    	final IDatabase database = TestHelper
-		.getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper
+                .getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         IWriteTransaction wtx = session.beginWriteTransaction();
 
@@ -100,8 +100,8 @@ public class ThreadTest {
             }
 
             mRTX.moveTo(12L);
-            TestCase.assertEquals("bar", TypedValue.parseString(mRTX.getNode()
-                    .getRawValue()));
+            TestCase.assertEquals("bar",
+                    TypedValue.parseString(mRTX.getNode().getRawValue()));
             mRTX.close();
             return null;
         }

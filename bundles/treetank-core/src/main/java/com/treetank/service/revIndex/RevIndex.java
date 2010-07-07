@@ -314,9 +314,7 @@ public final class RevIndex {
             wtx.moveToDocumentRoot();
             wtx.insertElementAsFirstChild(new QName(METAROOT_ELEMENTNAME));
             wtx.insertElementAsRightSibling(new QName(TRIEROOT_ELEMENTNAME));
-            wtx
-                    .insertElementAsRightSibling(new QName(
-                            DOCUMENTROOT_ELEMENTNAME));
+            wtx.insertElementAsRightSibling(new QName(DOCUMENTROOT_ELEMENTNAME));
             try {
                 wtx.commit();
             } catch (TreetankIOException exc) {

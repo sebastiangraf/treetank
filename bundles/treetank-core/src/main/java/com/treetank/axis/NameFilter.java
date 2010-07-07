@@ -20,7 +20,7 @@ package com.treetank.axis;
 
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
-import com.treetank.settings.ENodes;
+import com.treetank.node.ENodes;
 
 /**
  * <h1>NameAxisTest</h1>
@@ -31,28 +31,28 @@ import com.treetank.settings.ENodes;
  */
 public class NameFilter extends AbstractFilter implements IFilter {
 
-	/** Key of name to test. */
-	private final int mLocalPartKey;
+    /** Key of name to test. */
+    private final int mLocalPartKey;
 
-	/**
-	 * Default constructor.
-	 * 
-	 * @param rtx
-	 *            Transaction this filter is bound to.
-	 * @param localPart
-	 *            Local part to check.
-	 */
-	public NameFilter(final IReadTransaction rtx, final String localPart) {
-		super(rtx);
-		mLocalPartKey = rtx.keyForName(localPart);
-	}
+    /**
+     * Default constructor.
+     * 
+     * @param rtx
+     *            Transaction this filter is bound to.
+     * @param localPart
+     *            Local part to check.
+     */
+    public NameFilter(final IReadTransaction rtx, final String localPart) {
+        super(rtx);
+        mLocalPartKey = rtx.keyForName(localPart);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final boolean filter() {
-		return ((getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND || getTransaction()
-				.getNode().getKind() == ENodes.ATTRIBUTE_KIND) && (getTransaction()
-				.getNode().getNameKey() == mLocalPartKey));
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public final boolean filter() {
+        return ((getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND || getTransaction()
+                .getNode().getKind() == ENodes.ATTRIBUTE_KIND) && (getTransaction()
+                .getNode().getNameKey() == mLocalPartKey));
+    }
 }

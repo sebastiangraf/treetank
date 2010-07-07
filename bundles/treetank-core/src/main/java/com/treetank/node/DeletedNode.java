@@ -1,8 +1,6 @@
 package com.treetank.node;
 
 import com.treetank.io.ITTSink;
-import com.treetank.io.ITTSource;
-import com.treetank.settings.ENodes;
 
 /**
  * If a node is deleted, it will be encapsulated over this class.
@@ -10,53 +8,40 @@ import com.treetank.settings.ENodes;
  * @author Sebastian Graf
  * 
  */
-public final class DeletedNode extends AbstractNode {
+public final class DeletedNode extends AbsNode {
 
-	private static final int SIZE = 1;
+    DeletedNode(final long[] builder) {
+        super(builder);
+    }
 
-	public DeletedNode(final long nodeKey) {
-		super(SIZE, nodeKey);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void serialize(final ITTSink out) {
+        super.serialize(out);
+    }
 
-	/**
-	 * Read delete node.
-	 * 
-	 * @param in
-	 *            Input bytes to read from.
-	 */
-	protected DeletedNode(final ITTSource in) {
-		super(SIZE, in);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ENodes getKind() {
+        return ENodes.DELETE_KIND;
+    }
 
-	/**
-	 * Clone delete node.
-	 * 
-	 * @param node
-	 *            Text node to clone.
-	 */
-	protected DeletedNode(final AbstractNode node) {
-		super(node);
-	}
+    @Override
+    public AbsNode clone() {
+        final AbsNode toClone = new DeletedNode(AbsNode.cloneData(mData));
+        return toClone;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void serialize(final ITTSink out) {
-		super.serialize(out);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ENodes getKind() {
-		return ENodes.DELETE_KIND;
-	}
-
-	@Override
-	public boolean isLeaf() {
-		return true;
-	}
+    public final static long[] createData(final long nodeKey,
+            final long parentKey) {
+        final long[] data = new long[ENodes.DELETE_KIND.getSize()];
+        data[AbsNode.NODE_KEY] = nodeKey;
+        data[AbsNode.PARENT_KEY] = parentKey;
+        return data;
+    }
 
 }

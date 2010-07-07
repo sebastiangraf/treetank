@@ -61,8 +61,8 @@ public class NodeComp extends AbstractComparator implements IAxis {
         final IReadTransaction rtx = getTransaction();
         // store item key as atomic value
         AtomicValue atomized = new AtomicValue(TypedValue.getBytes(((Long) rtx
-                .getNode().getNodeKey()).toString()), rtx
-                .keyForName("xs:integer"));
+                .getNode().getNodeKey()).toString()),
+                rtx.keyForName("xs:integer"));
         final AtomicValue[] op = { atomized };
 
         // the operands must be singletons in case of a node comparison

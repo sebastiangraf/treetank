@@ -33,38 +33,38 @@ import com.treetank.utils.DocumentCreater;
 
 public class ItemFilterTest {
 
-	@Before
-	public void setUp() throws TreetankException {
-		TestHelper.deleteEverything();
-	}
+    @Before
+    public void setUp() throws TreetankException {
+        TestHelper.deleteEverything();
+    }
 
-	@After
-	public void tearDown() throws TreetankException {
-		TestHelper.closeEverything();
-	}
+    @After
+    public void tearDown() throws TreetankException {
+        TestHelper.closeEverything();
+    }
 
-	@Test
-	public void testIFilterConvetions() throws TreetankException {
-		// Build simple test tree.
-		final IDatabase database = TestHelper
-				.getDatabase(PATHS.PATH1.getFile());
-		final ISession session = database.getSession();
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
+    @Test
+    public void testIFilterConvetions() throws TreetankException {
+        // Build simple test tree.
+        final IDatabase database = TestHelper
+                .getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
 
-		wtx.moveTo(9L);
-		IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
+        wtx.moveTo(9L);
+        IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
 
-		wtx.moveTo(3L);
-		IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
+        wtx.moveTo(3L);
+        IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
 
-		wtx.moveTo(2L);
-		wtx.moveToAttribute(0);
-		IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
+        wtx.moveTo(2L);
+        wtx.moveToAttribute(0);
+        IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
 
-		wtx.abort();
-		wtx.close();
-		session.close();
-		database.close();
-	}
+        wtx.abort();
+        wtx.close();
+        session.close();
+        database.close();
+    }
 }

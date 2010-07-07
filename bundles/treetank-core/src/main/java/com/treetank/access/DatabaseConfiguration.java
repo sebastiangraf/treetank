@@ -87,7 +87,7 @@ public class DatabaseConfiguration {
                 if ((propFile.getName().equals(
                         EStoragePaths.DBSETTINGS.getFile().getName()) && propFile
                         .getParentFile().equals(file))
-                        // and check if the loaded checksum is valid
+                // and check if the loaded checksum is valid
                         && !loadProps.getProperty(
                                 EDatabaseSetting.CHECKSUM.name()).equals(
                                 Integer.toString(this.hashCode()))) {

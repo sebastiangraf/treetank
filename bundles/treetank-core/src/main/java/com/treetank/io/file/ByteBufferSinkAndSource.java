@@ -91,7 +91,7 @@ public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
     }
 
     /**
-     *{@inheritDoc}
+     * {@inheritDoc}
      */
     public void writeInt(final int intVal) {
         checkAndIncrease(4);
@@ -100,7 +100,7 @@ public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
     }
 
     /**
-     *{@inheritDoc}
+     * {@inheritDoc}
      */
     public int readInt() {
         return buffer.getInt();

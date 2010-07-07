@@ -59,8 +59,8 @@ public class ValueComp extends AbstractComparator {
     @Override
     protected boolean compare(final AtomicValue[] operand1,
             final AtomicValue[] operand2) {
-        final Type type = getType(operand1[0].getTypeKey(), operand2[0]
-                .getTypeKey());
+        final Type type = getType(operand1[0].getTypeKey(),
+                operand2[0].getTypeKey());
         final String op1 = TypedValue.parseString(operand1[0].getRawValue());
         final String op2 = TypedValue.parseString(operand2[0].getRawValue());
 

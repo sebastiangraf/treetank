@@ -1,7 +1,6 @@
-<html>
-  <body>
-    <h1>Axis Layer</h1>
-    <p>
+/**
+<h1>Axis Layer</h1>
+      <p>
       Contains all classes that deal with axis navigation.
     </p>
     <p>
@@ -10,5 +9,8 @@
       always call setCurrentNode(node) to make sure that next() will return
       the new currentNode.
     </p>
-  </body>
-</html>
+ *
+ * @author Tina Scherer, University of Konstanz
+ */
+package com.treetank.axis;
+

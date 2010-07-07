@@ -22,9 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.treetank.io.ITTSink;
-import com.treetank.io.ITTSource;
 import com.treetank.settings.EFixed;
-import com.treetank.settings.ENodes;
 
 /**
  * <h1>ElementNode</h1>
@@ -33,390 +31,232 @@ import com.treetank.settings.ENodes;
  * Node representing an XML element.
  * </p>
  */
-public final class ElementNode extends AbstractNode implements IStructuralNode {
+public final class ElementNode extends AbsStructNode {
 
-	private static final int SIZE = 11;
+    protected static final int NAME_KEY = 6;
 
-	private static final int PARENT_KEY = 1;
+    protected static final int URI_KEY = 7;
 
-	private static final int FIRST_CHILD_KEY = 2;
+    protected static final int TYPE = 8;
 
-	private static final int LEFT_SIBLING_KEY = 3;
+    protected static final int ATTRIBUTE_COUNT = 9;
 
-	private static final int RIGHT_SIBLING_KEY = 4;
+    protected static final int NAMESPACE_COUNT = 10;
 
-	private static final int CHILD_COUNT = 5;
+    /** Keys of attributes. */
+    private List<Long> mAttributeKeys;
 
-	private static final int NAME_KEY = 6;
+    /** Keys of namespace declarations. */
+    private List<Long> mNamespaceKeys;
 
-	private static final int URI_KEY = 7;
+    /**
+     * Creating new element
+     * 
+     * @param builder
+     *            array with longs
+     * @param attributeKeys
+     *            attr keys
+     * @param namespaceKeys
+     *            namespace keys
+     */
+    ElementNode(final long[] builder, final List<Long> attributeKeys,
+            final List<Long> namespaceKeys) {
+        super(builder);
 
-	private static final int TYPE = 8;
+        mAttributeKeys = attributeKeys;
+        mNamespaceKeys = namespaceKeys;
+    }
 
-	private static final int ATTRIBUTE_COUNT = 9;
+    /**
+     * {@inheritDoc}
+     */
+    public int getAttributeCount() {
+        return (int) mData[ATTRIBUTE_COUNT];
+    }
 
-	private static final int NAMESPACE_COUNT = 10;
+    /**
+     * {@inheritDoc}
+     */
+    public long getAttributeKey(final int index) {
+        if (mAttributeKeys.size() <= index) {
+            return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
+        }
+        return mAttributeKeys.get(index);
+    }
 
-	/** Keys of attributes. */
-	private List<Long> mAttributeKeys;
+    /**
+     * {@inheritDoc}
+     */
+    public void insertAttribute(final long attributeKey) {
+        mAttributeKeys.add(attributeKey);
+        mData[ATTRIBUTE_COUNT]++;
+    }
 
-	/** Keys of namespace declarations. */
-	private List<Long> mNamespaceKeys;
+    /**
+     * Removing an attribute
+     * 
+     * @param attributeKey
+     *            the key of the attribute to be removed
+     */
+    public void removeAttribute(final long attributeKey) {
+        mAttributeKeys.remove(attributeKey);
+        mData[ATTRIBUTE_COUNT]--;
+    }
 
-	/**
-	 * Create new element node.
-	 * 
-	 * @param nodeKey
-	 *            Key of node.
-	 * @param parentKey
-	 *            Key of parent.
-	 * @param firstChildKey
-	 *            Key of first child.
-	 * @param leftSiblingKey
-	 *            Key of left sibling.
-	 * @param rightSiblingKey
-	 *            Key of right sibling.
-	 * @param nameKey
-	 *            Key of local part.
-	 * @param uriKey
-	 *            Key of URI.
-	 * @param type
-	 *            the type of the element.
-	 */
-	public ElementNode(final long nodeKey, final long parentKey,
-			final long firstChildKey, final long leftSiblingKey,
-			final long rightSiblingKey, final int nameKey, final int uriKey,
-			final int type) {
-		super(SIZE, nodeKey);
-		mData[PARENT_KEY] = nodeKey - parentKey;
-		mData[FIRST_CHILD_KEY] = nodeKey - firstChildKey;
-		mData[LEFT_SIBLING_KEY] = nodeKey - leftSiblingKey;
-		mData[RIGHT_SIBLING_KEY] = nodeKey - rightSiblingKey;
-		mData[CHILD_COUNT] = 0;
-		mData[NAME_KEY] = nameKey;
-		mData[URI_KEY] = uriKey;
-		mData[TYPE] = type;
-		mData[ATTRIBUTE_COUNT] = 0;
-		mData[NAMESPACE_COUNT] = 0;
-		mAttributeKeys = null;
-		mNamespaceKeys = null;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public int getNamespaceCount() {
+        return (int) mData[NAMESPACE_COUNT];
+    }
 
-	/**
-	 * Clone element node.
-	 * 
-	 * @param node
-	 *            Element node to clone.
-	 */
-	protected ElementNode(final ElementNode node) {
-		super(node);
-		if (mData[ATTRIBUTE_COUNT] > 0) {
-			mAttributeKeys = new ArrayList<Long>((int) mData[ATTRIBUTE_COUNT]);
-			for (int i = 0, l = (int) mData[ATTRIBUTE_COUNT]; i < l; i++) {
-				mAttributeKeys.add(node.getAttributeKey(i));
-			}
-		}
-		if (mData[NAMESPACE_COUNT] > 0) {
-			mNamespaceKeys = new ArrayList<Long>((int) mData[NAMESPACE_COUNT]);
-			for (int i = 0, l = (int) mData[NAMESPACE_COUNT]; i < l; i++) {
-				mNamespaceKeys.add(node.getNamespaceKey(i));
-			}
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public long getNamespaceKey(final int index) {
+        if (mNamespaceKeys.size() <= index) {
+            return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
+        }
+        return mNamespaceKeys.get(index);
+    }
 
-	/**
-	 * Read element node.
-	 * 
-	 * @param in
-	 *            Input bytes to read from.
-	 */
-	protected ElementNode(final ITTSource in) {
-		super(SIZE, in);
+    /**
+     * {@inheritDoc}
+     */
+    public void insertNamespace(final long namespaceKey) {
+        mNamespaceKeys.add(namespaceKey);
+        mData[NAMESPACE_COUNT]++;
+    }
 
-		if (mData[ATTRIBUTE_COUNT] > 0) {
-			mAttributeKeys = new ArrayList<Long>((int) mData[ATTRIBUTE_COUNT]);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ENodes getKind() {
+        return ENodes.ELEMENT_KIND;
+    }
 
-			for (int i = 0; i < mData[ATTRIBUTE_COUNT]; i++) {
-				mAttributeKeys.add(in.readLong());
-			}
-		}
-		if (mData[NAMESPACE_COUNT] > 0) {
-			mNamespaceKeys = new ArrayList<Long>((int) mData[NAMESPACE_COUNT]);
-			for (int i = 0; i < mData[NAMESPACE_COUNT]; i++) {
-				mNamespaceKeys.add(in.readLong());
-			}
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getNameKey() {
+        return (int) mData[NAME_KEY];
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean hasParent() {
-		return ((mData[NODE_KEY] - mData[PARENT_KEY]) != (Long) EFixed.NULL_NODE_KEY
-				.getStandardProperty());
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setNameKey(final int localPartKey) {
+        mData[NAME_KEY] = localPartKey;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public long getParentKey() {
-		return mData[NODE_KEY] - mData[PARENT_KEY];
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getURIKey() {
+        return (int) mData[URI_KEY];
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setParentKey(final long parentKey) {
-		mData[PARENT_KEY] = mData[NODE_KEY] - parentKey;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setURIKey(final int uriKey) {
+        mData[URI_KEY] = uriKey;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean hasFirstChild() {
-		return ((mData[NODE_KEY] - mData[FIRST_CHILD_KEY]) != (Long) EFixed.NULL_NODE_KEY
-				.getStandardProperty());
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getTypeKey() {
+        return (int) mData[TYPE];
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public long getFirstChildKey() {
-		return mData[NODE_KEY] - mData[FIRST_CHILD_KEY];
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setType(final int valueType) {
+        mData[TYPE] = valueType;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void setFirstChildKey(final long firstChildKey) {
-		mData[FIRST_CHILD_KEY] = mData[NODE_KEY] - firstChildKey;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void serialize(final ITTSink out) {
+        super.serialize(out);
+        if (mAttributeKeys != null) {
+            for (int i = 0, l = mAttributeKeys.size(); i < l; i++) {
+                out.writeLong(mAttributeKeys.get(i));
+            }
+        }
+        if (mNamespaceKeys != null) {
+            for (int i = 0, l = mNamespaceKeys.size(); i < l; i++) {
+                out.writeLong(mNamespaceKeys.get(i));
+            }
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean hasLeftSibling() {
-		return ((mData[NODE_KEY] - mData[LEFT_SIBLING_KEY]) != (Long) EFixed.NULL_NODE_KEY
-				.getStandardProperty());
-	}
+    @Override
+    public AbsNode clone() {
+        final List<Long> attList = new ArrayList<Long>(mAttributeKeys.size());
+        final List<Long> namespaceList = new ArrayList<Long>(
+                mNamespaceKeys.size());
+        for (final Long i : mAttributeKeys) {
+            attList.add(i);
+        }
+        for (final Long i : mNamespaceKeys) {
+            namespaceList.add(i);
+        }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public long getLeftSiblingKey() {
-		return mData[NODE_KEY] - mData[LEFT_SIBLING_KEY];
-	}
+        final AbsNode toClone = new ElementNode(AbsNode.cloneData(mData),
+                attList, namespaceList);
+        return toClone;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setLeftSiblingKey(final long leftSiblingKey) {
-		mData[LEFT_SIBLING_KEY] = mData[NODE_KEY] - leftSiblingKey;
-	}
+    public final static long[] createData(final long nodeKey,
+            final long parentKey, final long leftSibKey,
+            final long rightSibKey, final long firstChild,
+            final long childCount, final int nameKey, final int uriKey,
+            final int type) {
+        final long[] data = new long[ENodes.ELEMENT_KIND.getSize()];
+        data[AbsNode.NODE_KEY] = nodeKey;
+        data[AbsNode.PARENT_KEY] = parentKey;
+        data[AbsStructNode.LEFT_SIBLING_KEY] = leftSibKey;
+        data[AbsStructNode.RIGHT_SIBLING_KEY] = rightSibKey;
+        data[AbsStructNode.FIRST_CHILD_KEY] = firstChild;
+        data[AbsStructNode.CHILD_COUNT] = childCount;
+        data[ElementNode.NAME_KEY] = nameKey;
+        data[ElementNode.URI_KEY] = uriKey;
+        data[ElementNode.ATTRIBUTE_COUNT] = 0;
+        data[ElementNode.NAMESPACE_COUNT] = 0;
+        data[ElementNode.TYPE] = type;
+        return data;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean hasRightSibling() {
-		return ((mData[NODE_KEY] - mData[RIGHT_SIBLING_KEY]) != (Long) EFixed.NULL_NODE_KEY
-				.getStandardProperty());
-	}
+    public final static long[] createData(final long nodeKey,
+            final ElementNode node) {
+        return createData(nodeKey, node.getParentKey(),
+                node.getLeftSiblingKey(), node.getRightSiblingKey(),
+                node.getFirstChildKey(), node.getChildCount(),
+                node.getNameKey(), node.getURIKey(), node.getTypeKey());
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public long getRightSiblingKey() {
-		return mData[NODE_KEY] - mData[RIGHT_SIBLING_KEY];
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setRightSiblingKey(final long rightSiblingKey) {
-		mData[RIGHT_SIBLING_KEY] = mData[NODE_KEY] - rightSiblingKey;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public long getChildCount() {
-		return mData[CHILD_COUNT];
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setChildCount(final long childCount) {
-		mData[CHILD_COUNT] = childCount;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void incrementChildCount() {
-		mData[CHILD_COUNT] += 1;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void decrementChildCount() {
-		mData[CHILD_COUNT] -= 1;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public int getAttributeCount() {
-		return (int) mData[ATTRIBUTE_COUNT];
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public long getAttributeKey(final int index) {
-		if (mAttributeKeys == null) {
-			return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
-		}
-		return mAttributeKeys.get(index);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void insertAttribute(final long attributeKey) {
-		if (mAttributeKeys == null) {
-			mAttributeKeys = new ArrayList<Long>(1);
-		}
-		mAttributeKeys.add(attributeKey);
-		mData[ATTRIBUTE_COUNT] += 1;
-	}
-
-	/**
-	 * Removing an attribute
-	 * 
-	 * @param attributeKey
-	 *            the key of the attribute to be removed
-	 */
-	public void removeAttribute(final long attributeKey) {
-		mAttributeKeys.remove(attributeKey);
-		mData[ATTRIBUTE_COUNT] -= 1;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public int getNamespaceCount() {
-		return (int) mData[NAMESPACE_COUNT];
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public long getNamespaceKey(final int index) {
-		if (mNamespaceKeys == null) {
-			return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
-		}
-		return mNamespaceKeys.get(index);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void insertNamespace(final long namespaceKey) {
-		if (mNamespaceKeys == null) {
-			mNamespaceKeys = new ArrayList<Long>(1);
-		}
-		mNamespaceKeys.add(namespaceKey);
-		mData[NAMESPACE_COUNT] += 1;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ENodes getKind() {
-		return ENodes.ELEMENT_KIND;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int getNameKey() {
-		return (int) mData[NAME_KEY];
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setNameKey(final int localPartKey) {
-		mData[NAME_KEY] = localPartKey;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int getURIKey() {
-		return (int) mData[URI_KEY];
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setURIKey(final int uriKey) {
-		mData[URI_KEY] = uriKey;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int getTypeKey() {
-		return (int) mData[TYPE];
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setType(final int valueType) {
-		mData[TYPE] = valueType;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void serialize(final ITTSink out) {
-		super.serialize(out);
-		if (mAttributeKeys != null) {
-			for (int i = 0, l = mAttributeKeys.size(); i < l; i++) {
-				out.writeLong(mAttributeKeys.get(i));
-			}
-		}
-		if (mNamespaceKeys != null) {
-			for (int i = 0, l = mNamespaceKeys.size(); i < l; i++) {
-				out.writeLong(mNamespaceKeys.get(i));
-			}
-		}
-	}
-
-	@Override
-	public boolean isLeaf() {
-		return false;
-	}
+    @Override
+    public String toString() {
+        final StringBuilder returnVal = new StringBuilder(super.toString());
+        returnVal.append("\n\ttype key: ").append(getTypeKey())
+                .append("\n\tname key: ").append(getNameKey())
+                .append("\n\turi key: ").append(getURIKey())
+                .append(getNameKey()).append("\n\tnamespaces: ")
+                .append(mNamespaceKeys.toString()).append("\n\tattributes: ")
+                .append(mAttributeKeys.toString()).toString();
+        return returnVal.toString();
+    }
 
 }

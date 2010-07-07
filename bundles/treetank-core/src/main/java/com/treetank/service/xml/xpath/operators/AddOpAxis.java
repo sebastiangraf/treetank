@@ -57,8 +57,8 @@ public class AddOpAxis extends AbstractOpAxis {
     @Override
     public IItem operate(final AtomicValue operand1, final AtomicValue operand2) {
 
-        Type returnType = getReturnType(operand1.getTypeKey(), operand2
-                .getTypeKey());
+        Type returnType = getReturnType(operand1.getTypeKey(),
+                operand2.getTypeKey());
         int typeKey = getTransaction().keyForName(returnType.getStringRepr());
 
         final byte[] value;

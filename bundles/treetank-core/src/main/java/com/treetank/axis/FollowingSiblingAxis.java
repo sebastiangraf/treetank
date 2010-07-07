@@ -20,8 +20,8 @@ package com.treetank.axis;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
-import com.treetank.node.IStructuralNode;
-import com.treetank.settings.ENodes;
+import com.treetank.node.AbsStructNode;
+import com.treetank.node.ENodes;
 
 /**
  * <h1>FollowingSiblingAxis</h1>
@@ -33,56 +33,56 @@ import com.treetank.settings.ENodes;
  */
 public class FollowingSiblingAxis extends AbstractAxis implements IAxis {
 
-	private boolean mIsFirst;
+    private boolean mIsFirst;
 
-	/**
-	 * Constructor initializing internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) trx to iterate with.
-	 */
-	public FollowingSiblingAxis(final IReadTransaction rtx) {
+    /**
+     * Constructor initializing internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
+     */
+    public FollowingSiblingAxis(final IReadTransaction rtx) {
 
-		super(rtx);
-		mIsFirst = true;
-	}
+        super(rtx);
+        mIsFirst = true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void reset(final long nodeKey) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void reset(final long nodeKey) {
 
-		super.reset(nodeKey);
-		mIsFirst = true;
+        super.reset(nodeKey);
+        mIsFirst = true;
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final boolean hasNext() {
+    /**
+     * {@inheritDoc}
+     */
+    public final boolean hasNext() {
 
-		if (mIsFirst) {
-			mIsFirst = false;
-			// if the context node is an attribute or namespace node,
-			// the following-sibling axis is empty
-			if (getTransaction().getNode().getKind() == ENodes.ATTRIBUTE_KIND
-			// || getTransaction().isNamespaceKind()
-			) {
-				resetToStartKey();
-				return false;
-			}
-		}
+        if (mIsFirst) {
+            mIsFirst = false;
+            // if the context node is an attribute or namespace node,
+            // the following-sibling axis is empty
+            if (getTransaction().getNode().getKind() == ENodes.ATTRIBUTE_KIND
+            // || getTransaction().isNamespaceKind()
+            ) {
+                resetToStartKey();
+                return false;
+            }
+        }
 
-		resetToLastKey();
+        resetToLastKey();
 
-		if (((IStructuralNode) getTransaction().getNode()).hasRightSibling()) {
-			getTransaction().moveToRightSibling();
-			return true;
-		}
-		resetToStartKey();
-		return false;
-	}
+        if (((AbsStructNode) getTransaction().getNode()).hasRightSibling()) {
+            getTransaction().moveToRightSibling();
+            return true;
+        }
+        resetToStartKey();
+        return false;
+    }
 
 }

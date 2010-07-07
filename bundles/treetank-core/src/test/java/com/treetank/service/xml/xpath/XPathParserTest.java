@@ -35,120 +35,120 @@ import com.treetank.utils.TypedValue;
 
 public class XPathParserTest {
 
-	private XPathParser parser;
+    private XPathParser parser;
 
-	@Before
-	public void setUp() throws TreetankException {
-		TestHelper.deleteEverything();
-	}
+    @Before
+    public void setUp() throws TreetankException {
+        TestHelper.deleteEverything();
+    }
 
-	@After
-	public void tearDown() throws TreetankException {
-		TestHelper.closeEverything();
-	}
+    @After
+    public void tearDown() throws TreetankException {
+        TestHelper.closeEverything();
+    }
 
-	@Test
-	public void testLiterals() throws TreetankException {
+    @Test
+    public void testLiterals() throws TreetankException {
 
-		// Build simple test tree.
-		final IDatabase database = TestHelper
-				.getDatabase(PATHS.PATH1.getFile());
-		final ISession session = database.getSession();
-		final IReadTransaction rtx = session.beginReadTransaction();
+        // Build simple test tree.
+        final IDatabase database = TestHelper
+                .getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession();
+        final IReadTransaction rtx = session.beginReadTransaction();
 
-		rtx.moveTo(2L);
+        rtx.moveTo(2L);
 
-		IAxis axis;
+        IAxis axis;
 
-		axis = new XPathAxis(rtx, "\"12.5\"");
-		assertEquals(true, axis.hasNext());
-		assertEquals("12.5", TypedValue
-				.parseString(rtx.getNode().getRawValue()));
-		assertEquals(rtx.keyForName("xs:string"), rtx.getNode().getTypeKey());
-		assertEquals(false, axis.hasNext());
+        axis = new XPathAxis(rtx, "\"12.5\"");
+        assertEquals(true, axis.hasNext());
+        assertEquals("12.5",
+                TypedValue.parseString(rtx.getNode().getRawValue()));
+        assertEquals(rtx.keyForName("xs:string"), rtx.getNode().getTypeKey());
+        assertEquals(false, axis.hasNext());
 
-		axis = new XPathAxis(rtx, "\"He said, \"\"I don't like it\"\"\"");
-		assertEquals(true, axis.hasNext());
-		assertEquals("He said, I don't like it", TypedValue.parseString(rtx
-				.getNode().getRawValue()));
-		assertEquals(rtx.keyForName("xs:string"), rtx.getNode().getTypeKey());
-		assertEquals(false, axis.hasNext());
+        axis = new XPathAxis(rtx, "\"He said, \"\"I don't like it\"\"\"");
+        assertEquals(true, axis.hasNext());
+        assertEquals("He said, I don't like it",
+                TypedValue.parseString(rtx.getNode().getRawValue()));
+        assertEquals(rtx.keyForName("xs:string"), rtx.getNode().getTypeKey());
+        assertEquals(false, axis.hasNext());
 
-		axis = new XPathAxis(rtx, "12");
-		assertEquals(true, axis.hasNext());
-		assertEquals(rtx.keyForName("xs:integer"), rtx.getNode().getTypeKey());
-		assertEquals("12", TypedValue.parseString(rtx.getNode().getRawValue()));
-		assertEquals(false, axis.hasNext());
+        axis = new XPathAxis(rtx, "12");
+        assertEquals(true, axis.hasNext());
+        assertEquals(rtx.keyForName("xs:integer"), rtx.getNode().getTypeKey());
+        assertEquals("12", TypedValue.parseString(rtx.getNode().getRawValue()));
+        assertEquals(false, axis.hasNext());
 
-		axis = new XPathAxis(rtx, "12.5");
-		assertEquals(true, axis.hasNext());
-		assertEquals(rtx.keyForName("xs:decimal"), rtx.getNode().getTypeKey());
-		assertEquals("12.5", TypedValue
-				.parseString(rtx.getNode().getRawValue()));
-		assertEquals(false, axis.hasNext());
+        axis = new XPathAxis(rtx, "12.5");
+        assertEquals(true, axis.hasNext());
+        assertEquals(rtx.keyForName("xs:decimal"), rtx.getNode().getTypeKey());
+        assertEquals("12.5",
+                TypedValue.parseString(rtx.getNode().getRawValue()));
+        assertEquals(false, axis.hasNext());
 
-		axis = new XPathAxis(rtx, "12.5E2");
-		assertEquals(true, axis.hasNext());
-		assertEquals(rtx.keyForName("xs:double"), rtx.getNode().getTypeKey());
-		assertEquals("12.5E2", TypedValue.parseString(rtx.getNode()
-				.getRawValue()));
-		assertEquals(false, axis.hasNext());
+        axis = new XPathAxis(rtx, "12.5E2");
+        assertEquals(true, axis.hasNext());
+        assertEquals(rtx.keyForName("xs:double"), rtx.getNode().getTypeKey());
+        assertEquals("12.5E2",
+                TypedValue.parseString(rtx.getNode().getRawValue()));
+        assertEquals(false, axis.hasNext());
 
-		axis = new XPathAxis(rtx, "1");
-		assertEquals(true, axis.hasNext());
-		assertEquals("1", TypedValue.parseString(rtx.getNode().getRawValue()));
-		assertEquals(rtx.keyForName("xs:integer"), rtx.getNode().getTypeKey());
-		assertEquals(false, axis.hasNext());
+        axis = new XPathAxis(rtx, "1");
+        assertEquals(true, axis.hasNext());
+        assertEquals("1", TypedValue.parseString(rtx.getNode().getRawValue()));
+        assertEquals(rtx.keyForName("xs:integer"), rtx.getNode().getTypeKey());
+        assertEquals(false, axis.hasNext());
 
-		rtx.close();
-		session.close();
-		database.close();
-	}
+        rtx.close();
+        session.close();
+        database.close();
+    }
 
-	@Test
-	public void testEBNF() throws TreetankException {
+    @Test
+    public void testEBNF() throws TreetankException {
 
-		// Build simple test tree.
-		final IDatabase database = TestHelper
-				.getDatabase(PATHS.PATH1.getFile());
-		final ISession session = database.getSession();
-		final IReadTransaction rtx = session.beginReadTransaction();
+        // Build simple test tree.
+        final IDatabase database = TestHelper
+                .getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession();
+        final IReadTransaction rtx = session.beginReadTransaction();
 
-		parser = new XPathParser(rtx, "/p:a");
-		parser.parseQuery();
+        parser = new XPathParser(rtx, "/p:a");
+        parser.parseQuery();
 
-		parser = new XPathParser(rtx,
-				"/p:a/node(), /b/descendant-or-self::adsfj");
-		parser.parseQuery();
+        parser = new XPathParser(rtx,
+                "/p:a/node(), /b/descendant-or-self::adsfj");
+        parser.parseQuery();
 
-		parser = new XPathParser(rtx, "for $i in /p:a return $i");
-		parser.parseQuery();
+        parser = new XPathParser(rtx, "for $i in /p:a return $i");
+        parser.parseQuery();
 
-		parser = new XPathParser(rtx, "for $i in /p:a return /p:a");
-		parser.parseQuery();
+        parser = new XPathParser(rtx, "for $i in /p:a return /p:a");
+        parser.parseQuery();
 
-		parser = new XPathParser(rtx, "child::element(person)");
-		parser.parseQuery();
+        parser = new XPathParser(rtx, "child::element(person)");
+        parser.parseQuery();
 
-		parser = new XPathParser(rtx, "child::element(person, xs:string)");
-		parser.parseQuery();
+        parser = new XPathParser(rtx, "child::element(person, xs:string)");
+        parser.parseQuery();
 
-		parser = new XPathParser(rtx, " child::element(*, xs:string)");
-		parser.parseQuery();
+        parser = new XPathParser(rtx, " child::element(*, xs:string)");
+        parser.parseQuery();
 
-		parser = new XPathParser(rtx, "child::element()");
-		parser.parseQuery();
+        parser = new XPathParser(rtx, "child::element()");
+        parser.parseQuery();
 
-		// parser = new XPathParser(rtx, ". treat as item()");
-		// parser.parseQuery();
+        // parser = new XPathParser(rtx, ". treat as item()");
+        // parser.parseQuery();
 
-		parser = new XPathParser(rtx, "/b instance of item()");
-		parser.parseQuery();
+        parser = new XPathParser(rtx, "/b instance of item()");
+        parser.parseQuery();
 
-		rtx.close();
-		session.close();
-		database.close();
+        rtx.close();
+        session.close();
+        database.close();
 
-	}
+    }
 
 }

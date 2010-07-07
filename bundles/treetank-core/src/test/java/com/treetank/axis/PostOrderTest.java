@@ -32,16 +32,16 @@ import com.treetank.utils.DocumentCreater;
 
 public class PostOrderTest {
 
-	@Before
-	public void setUp() throws TreetankException {
-		TestHelper.deleteEverything();
-	}
+    @Before
+    public void setUp() throws TreetankException {
+        TestHelper.deleteEverything();
+    }
 
-	@Test
+    @Test
     public void testIterate() throws TreetankException {
         // Build simple test tree.
-    	final IDatabase database = TestHelper.getDatabase(PATHS.PATH1
-				.getFile());
+        final IDatabase database = TestHelper
+                .getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -56,8 +56,8 @@ public class PostOrderTest {
         database.close();
     }
 
-	@After
-	public void tearDown() throws TreetankException {
-		TestHelper.closeEverything();
-	}
+    @After
+    public void tearDown() throws TreetankException {
+        TestHelper.closeEverything();
+    }
 }

@@ -24,55 +24,53 @@ import org.junit.Test;
 
 import com.treetank.io.file.ByteBufferSinkAndSource;
 import com.treetank.settings.EFixed;
-import com.treetank.settings.ENodes;
 
 public class DocumentRootNodeTest {
 
-	@Test
-	public void testDocumentRootNode() {
+    @Test
+    public void testDocumentRootNode() {
 
-		// Create empty node.
-		final AbstractNode node1 = new DocumentRootNode();
-		final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
+        // Create empty node.
+        final DocumentRootNode node1 = new DocumentRootNode(
+                DocumentRootNode.createData());
+        check(node1);
 
-		// Modify it.
-		((IStructuralNode) node1).incrementChildCount();
-		((IStructuralNode) node1).decrementChildCount();
+        // Serialize and deserialize node.
+        final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
+        node1.serialize(out);
+        out.position(0);
+        final DocumentRootNode node2 = (DocumentRootNode) ENodes.ROOT_KIND
+                .createNodeFromPersistence(out);
+        check(node2);
 
-		// Serialize and deserialize node.
-		node1.serialize(out);
-		out.position(0);
-		final AbstractNode node2 = new DocumentRootNode(out);
+        // Clone node.
+        final DocumentRootNode node3 = (DocumentRootNode) node2.clone();
+        check(node3);
 
-		// Clone node.
-		final AbstractNode node3 = new DocumentRootNode(node2);
+    }
 
-		// Now compare.
-		assertEquals(EFixed.ROOT_NODE_KEY.getStandardProperty(), node3
-				.getNodeKey());
-		assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(), node3
-				.getParentKey());
-		assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(),
-				((IStructuralNode) node3).getFirstChildKey());
-		assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(),
-				((IStructuralNode) node3).getLeftSiblingKey());
-		assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(),
-				((IStructuralNode) node3).getRightSiblingKey());
-		assertEquals(0L, ((IStructuralNode) node3).getChildCount());
-		assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(), node3
-				.getNameKey());
-		assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(), node3
-				.getURIKey());
-		assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(), node3
-				.getNameKey());
-		assertEquals(null, node3.getRawValue());
-		assertEquals(ENodes.ROOT_KIND, node3.getKind());
-		assertEquals(false, ((IStructuralNode) node3).hasFirstChild());
-		assertEquals(false, node3.hasParent());
-		assertEquals(false, ((IStructuralNode) node3).hasLeftSibling());
-		assertEquals(false, ((IStructuralNode) node3).hasRightSibling());
-		assertEquals(ENodes.ROOT_KIND, node3.getKind());
+    private final static void check(final DocumentRootNode node) {
+        // Now compare.
+        assertEquals(EFixed.ROOT_NODE_KEY.getStandardProperty(),
+                node.getNodeKey());
+        assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(),
+                node.getParentKey());
+        assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(),
+                node.getFirstChildKey());
+        assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(),
+                node.getLeftSiblingKey());
+        assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(),
+                node.getRightSiblingKey());
+        assertEquals(0L, node.getChildCount());
+        assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(),
+                node.getNameKey());
+        assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(),
+                node.getURIKey());
+        assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(),
+                node.getNameKey());
+        assertEquals(null, node.getRawValue());
+        assertEquals(ENodes.ROOT_KIND, node.getKind());
 
-	}
+    }
 
 }

@@ -41,45 +41,45 @@ import com.treetank.utils.DocumentCreater;
  */
 public class IfAxisTest {
 
-	@Before
-	public void setUp() throws TreetankException {
+    @Before
+    public void setUp() throws TreetankException {
 
-		TestHelper.deleteEverything();
-	}
+        TestHelper.deleteEverything();
+    }
 
-	@After
-	public void tearDown() throws TreetankException {
-		TestHelper.closeEverything();
-	}
+    @After
+    public void tearDown() throws TreetankException {
+        TestHelper.closeEverything();
+    }
 
-	@Test
-	public void testIf() throws TreetankException {
-		// Build simple test tree.
-		final IDatabase database = TestHelper
-				.getDatabase(PATHS.PATH1.getFile());
-		final ISession session = database.getSession();
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
-		wtx.commit();
-		IReadTransaction rtx = session.beginReadTransaction();
+    @Test
+    public void testIf() throws TreetankException {
+        // Build simple test tree.
+        final IDatabase database = TestHelper
+                .getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        IReadTransaction rtx = session.beginReadTransaction();
 
-		rtx.moveTo(1L);
+        rtx.moveTo(1L);
 
-		IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-				"if (text()) then . else child::node()"), new long[] { 1L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                "if (text()) then . else child::node()"), new long[] { 1L });
 
-		IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-				"if (node()) then . else child::node()"), new long[] { 1L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                "if (node()) then . else child::node()"), new long[] { 1L });
 
-		IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-				"if (processing-instruction()) then . else child::node()"),
-				new long[] { 4L, 5L, 8L, 9L, 13L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                "if (processing-instruction()) then . else child::node()"),
+                new long[] { 4L, 5L, 8L, 9L, 13L });
 
-		rtx.close();
-		wtx.abort();
-		wtx.close();
-		session.close();
-		database.close();
-	}
+        rtx.close();
+        wtx.abort();
+        wtx.close();
+        session.close();
+        database.close();
+    }
 
 }

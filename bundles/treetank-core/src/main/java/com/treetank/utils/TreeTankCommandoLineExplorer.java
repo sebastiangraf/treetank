@@ -129,9 +129,9 @@ public final class TreeTankCommandoLineExplorer {
                 default:
                     if (session == null || rtx == null) {
                         System.out.println(new StringBuilder(
-                                "No database loaded!, Please use ").append(
-                                Command.LOGIN.command).append(
-                                " to load tt-database").toString());
+                                "No database loaded!, Please use ")
+                                .append(Command.LOGIN.command)
+                                .append(" to load tt-database").toString());
                     } else {
                         System.out.println(command.executeCommand(rtx));
                     }
@@ -166,15 +166,12 @@ public final class TreeTankCommandoLineExplorer {
                 final StringBuilder builder = new StringBuilder("Help for ");
                 if (parameter.equals(INFO.command)) {
                     builder.append("info:\n");
-                    builder
-                            .append(
-                                    "prints out nodeKey, child count, parent key, ")
-                            .append(
-                                    "first child key, left sibling key, right sibling key\n");
+                    builder.append(
+                            "prints out nodeKey, child count, parent key, ")
+                            .append("first child key, left sibling key, right sibling key\n");
                 } else if (parameter.equals(CONTENT.command)) {
                     builder.append("content:\n");
-                    builder
-                            .append("prints out kind of node plus relevant content\n");
+                    builder.append("prints out kind of node plus relevant content\n");
                 } else if (parameter.equals(LOGOUT.command)) {
                     builder.append("logout:\n");
                     builder.append("Logout from database\n");
@@ -189,35 +186,29 @@ public final class TreeTankCommandoLineExplorer {
                     builder.append("move:\n");
                     builder.append("Below a concrete parameter list\n");
                     builder.append("up\t\t:\tGo to father if possible\n");
-                    builder
-                            .append("down\t\t:\tGo to first child if possible\n");
-                    builder
-                            .append("left\t\t:\tGo to left sibling if possible\n");
-                    builder
-                            .append("right\t\t:\tGo to right sibling if possible\n");
-                    builder
-                            .append("root\t\t:\tGo to document root if possible\n");
-                    builder
-                            .append(
-                                    "[nodekey]\t:\tGo to specified node key if possible, ")
+                    builder.append("down\t\t:\tGo to first child if possible\n");
+                    builder.append("left\t\t:\tGo to left sibling if possible\n");
+                    builder.append("right\t\t:\tGo to right sibling if possible\n");
+                    builder.append("root\t\t:\tGo to document root if possible\n");
+                    builder.append(
+                            "[nodekey]\t:\tGo to specified node key if possible, ")
                             .append("[nodekey] has to be a long\n");
                 } else {
-                    builder
-                            .append("common usage\n Usage: [COMMAND]:[PARAMETER]\n");
+                    builder.append("common usage\n Usage: [COMMAND]:[PARAMETER]\n");
                     builder.append("For concrete parameter-list, type ")
-                            .append(HELP.command).append(COMMANDDELIM).append(
-                                    "[COMMAND]\n");
+                            .append(HELP.command).append(COMMANDDELIM)
+                            .append("[COMMAND]\n");
                     builder.append("Below a list of all commands:\n");
-                    builder.append(LOGIN.command).append("\t:\t").append(
-                            "Login into database.\n");
-                    builder.append(LOGOUT.command).append("\t:\t").append(
-                            "Logout from database.\n");
-                    builder.append(EXIT.command).append("\t:\t").append(
-                            "Exits the programm.\n");
-                    builder.append(INFO.command).append("\t:\t").append(
-                            "Offers info about the current node.\n");
-                    builder.append(MOVE.command).append("\t:\t").append(
-                            "Moving to given node.\n");
+                    builder.append(LOGIN.command).append("\t:\t")
+                            .append("Login into database.\n");
+                    builder.append(LOGOUT.command).append("\t:\t")
+                            .append("Logout from database.\n");
+                    builder.append(EXIT.command).append("\t:\t")
+                            .append("Exits the programm.\n");
+                    builder.append(INFO.command).append("\t:\t")
+                            .append("Offers info about the current node.\n");
+                    builder.append(MOVE.command).append("\t:\t")
+                            .append("Moving to given node.\n");
                 }
                 return builder.toString();
             }
@@ -286,8 +277,8 @@ public final class TreeTankCommandoLineExplorer {
             @Override
             String executeCommand(final IReadTransaction currentRtx,
                     final String parameter) {
-                return new StringBuilder("Loggin into database ").append(
-                        parameter).append("\n").toString();
+                return new StringBuilder("Loggin into database ")
+                        .append(parameter).append("\n").toString();
             }
         },
         LOGOUT("logout") {
@@ -356,21 +347,18 @@ public final class TreeTankCommandoLineExplorer {
 
                         if (parameter.equals("commit")) {
                             wtx.commit();
-                            builder
-                                    .append(
-                                            " operation: commit succeed. New revision-number is ")
+                            builder.append(
+                                    " operation: commit succeed. New revision-number is ")
                                     .append(wtx.getRevisionNumber());
                         } else if (parameter.equals("abort")) {
                             wtx.abort();
-                            builder
-                                    .append(
-                                            " operation: abort succeed. Old revision-number is ")
+                            builder.append(
+                                    " operation: abort succeed. Old revision-number is ")
                                     .append(wtx.getRevisionNumber());
                         }
 
                     } else {
-                        builder
-                                .append(" not succeed, Please login with write-right (that means without revision parameter");
+                        builder.append(" not succeed, Please login with write-right (that means without revision parameter");
                     }
                 } catch (final TreetankException exc) {
                     builder.append(" throws exception: ").append(exc);
@@ -382,9 +370,9 @@ public final class TreeTankCommandoLineExplorer {
             @Override
             String executeCommand(final IReadTransaction currentRtx,
                     final String parameter) {
-                return new StringBuilder("Command not known. Try ").append(
-                        Command.HELP.getCommand()).append(
-                        " for known commands!").toString();
+                return new StringBuilder("Command not known. Try ")
+                        .append(Command.HELP.getCommand())
+                        .append(" for known commands!").toString();
             }
         };
 
