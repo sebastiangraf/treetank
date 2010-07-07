@@ -47,117 +47,117 @@ import com.treetank.utils.TypedValue;
  */
 public class AndExprTest {
 
-	@Before
-	public void setUp() throws TreetankException {
-		TestHelper.deleteEverything();
-	}
+    @Before
+    public void setUp() throws TreetankException {
+        TestHelper.deleteEverything();
+    }
 
-	@After
-	public void tearDown() throws TreetankException {
-		TestHelper.closeEverything();
-	}
+    @After
+    public void tearDown() throws TreetankException {
+        TestHelper.closeEverything();
+    }
 
-	@Test
-	public void testAnd() throws TreetankException {
-		final IDatabase database = TestHelper
-				.getDatabase(PATHS.PATH1.getFile());
-		final ISession session = database.getSession();
-		final IWriteTransaction rtx = session.beginWriteTransaction();
+    @Test
+    public void testAnd() throws TreetankException {
+        final IDatabase database = TestHelper
+                .getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession();
+        final IWriteTransaction rtx = session.beginWriteTransaction();
 
-		long iTrue = rtx.getItemList().addItem(new AtomicValue(true));
-		long iFalse = rtx.getItemList().addItem(new AtomicValue(false));
+        long iTrue = rtx.getItemList().addItem(new AtomicValue(true));
+        long iFalse = rtx.getItemList().addItem(new AtomicValue(false));
 
-		IAxis trueLit1 = new LiteralExpr(rtx, iTrue);
-		IAxis trueLit2 = new LiteralExpr(rtx, iTrue);
-		IAxis falseLit1 = new LiteralExpr(rtx, iFalse);
-		IAxis falseLit2 = new LiteralExpr(rtx, iFalse);
+        IAxis trueLit1 = new LiteralExpr(rtx, iTrue);
+        IAxis trueLit2 = new LiteralExpr(rtx, iTrue);
+        IAxis falseLit1 = new LiteralExpr(rtx, iFalse);
+        IAxis falseLit2 = new LiteralExpr(rtx, iFalse);
 
-		IAxis axis1 = new AndExpr(rtx, trueLit1, trueLit2);
-		assertEquals(true, axis1.hasNext());
-		assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
-				.getNode().getRawValue()))));
-		assertEquals(false, axis1.hasNext());
+        IAxis axis1 = new AndExpr(rtx, trueLit1, trueLit2);
+        assertEquals(true, axis1.hasNext());
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
+                .getNode().getRawValue()))));
+        assertEquals(false, axis1.hasNext());
 
-		IAxis axis2 = new AndExpr(rtx, trueLit1, falseLit1);
-		assertEquals(true, axis2.hasNext());
-		assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx
-				.getNode().getRawValue()))));
-		assertEquals(false, axis2.hasNext());
+        IAxis axis2 = new AndExpr(rtx, trueLit1, falseLit1);
+        assertEquals(true, axis2.hasNext());
+        assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx
+                .getNode().getRawValue()))));
+        assertEquals(false, axis2.hasNext());
 
-		IAxis axis3 = new AndExpr(rtx, falseLit1, trueLit1);
-		assertEquals(true, axis3.hasNext());
-		assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx
-				.getNode().getRawValue()))));
-		assertEquals(false, axis3.hasNext());
+        IAxis axis3 = new AndExpr(rtx, falseLit1, trueLit1);
+        assertEquals(true, axis3.hasNext());
+        assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx
+                .getNode().getRawValue()))));
+        assertEquals(false, axis3.hasNext());
 
-		IAxis axis4 = new AndExpr(rtx, falseLit1, falseLit2);
-		assertEquals(true, axis4.hasNext());
-		assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx
-				.getNode().getRawValue()))));
-		assertEquals(false, axis4.hasNext());
+        IAxis axis4 = new AndExpr(rtx, falseLit1, falseLit2);
+        assertEquals(true, axis4.hasNext());
+        assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx
+                .getNode().getRawValue()))));
+        assertEquals(false, axis4.hasNext());
 
-		rtx.close();
-		session.close();
-		database.close();
-	}
+        rtx.close();
+        session.close();
+        database.close();
+    }
 
-	@Test
-	public void testAndQuery() throws TreetankException {
-		// Build simple test tree.
-		final IDatabase database = TestHelper
-				.getDatabase(PATHS.PATH1.getFile());
-		final ISession session = database.getSession();
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
-		wtx.commit();
-		IReadTransaction rtx = session.beginReadTransaction();
+    @Test
+    public void testAndQuery() throws TreetankException {
+        // Build simple test tree.
+        final IDatabase database = TestHelper
+                .getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        IReadTransaction rtx = session.beginReadTransaction();
 
-		rtx.moveTo(1L);
+        rtx.moveTo(1L);
 
-		final IAxis axis1 = new XPathAxis(rtx, "text() and node()");
-		assertEquals(true, axis1.hasNext());
-		assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
-				.getNode().getRawValue()))));
-		assertEquals(false, axis1.hasNext());
+        final IAxis axis1 = new XPathAxis(rtx, "text() and node()");
+        assertEquals(true, axis1.hasNext());
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
+                .getNode().getRawValue()))));
+        assertEquals(false, axis1.hasNext());
 
-		final IAxis axis2 = new XPathAxis(rtx, "comment() and node()");
-		assertEquals(true, axis2.hasNext());
-		assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx
-				.getNode().getRawValue()))));
-		assertEquals(false, axis2.hasNext());
+        final IAxis axis2 = new XPathAxis(rtx, "comment() and node()");
+        assertEquals(true, axis2.hasNext());
+        assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx
+                .getNode().getRawValue()))));
+        assertEquals(false, axis2.hasNext());
 
-		final IAxis axis3 = new XPathAxis(rtx, "1 eq 1 and 2 eq 2");
-		assertEquals(true, axis3.hasNext());
-		assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
-				.getNode().getRawValue()))));
-		assertEquals(false, axis3.hasNext());
+        final IAxis axis3 = new XPathAxis(rtx, "1 eq 1 and 2 eq 2");
+        assertEquals(true, axis3.hasNext());
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
+                .getNode().getRawValue()))));
+        assertEquals(false, axis3.hasNext());
 
-		final IAxis axis4 = new XPathAxis(rtx, "1 eq 1 and 2 eq 3");
-		assertEquals(true, axis4.hasNext());
-		assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx
-				.getNode().getRawValue()))));
-		assertEquals(false, axis4.hasNext());
+        final IAxis axis4 = new XPathAxis(rtx, "1 eq 1 and 2 eq 3");
+        assertEquals(true, axis4.hasNext());
+        assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx
+                .getNode().getRawValue()))));
+        assertEquals(false, axis4.hasNext());
 
-		// is never evaluated.
-		final IAxis axis5 = new XPathAxis(rtx, "1 eq 2 and (3 idiv 0 = 1)");
-		assertEquals(true, axis5.hasNext());
-		assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx
-				.getNode().getRawValue()))));
-		assertEquals(false, axis5.hasNext());
+        // is never evaluated.
+        final IAxis axis5 = new XPathAxis(rtx, "1 eq 2 and (3 idiv 0 = 1)");
+        assertEquals(true, axis5.hasNext());
+        assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx
+                .getNode().getRawValue()))));
+        assertEquals(false, axis5.hasNext());
 
-		final IAxis axis6 = new XPathAxis(rtx, "1 eq 1 and 3 idiv 0 = 1");
-		try {
-			assertEquals(true, axis6.hasNext());
-			fail("Expected XPath exception, because of division by zero");
-		} catch (XPathError e) {
-			assertEquals("err:FOAR0001: Division by zero.", e.getMessage());
-		}
+        final IAxis axis6 = new XPathAxis(rtx, "1 eq 1 and 3 idiv 0 = 1");
+        try {
+            assertEquals(true, axis6.hasNext());
+            fail("Expected XPath exception, because of division by zero");
+        } catch (XPathError e) {
+            assertEquals("err:FOAR0001: Division by zero.", e.getMessage());
+        }
 
-		rtx.close();
-		wtx.abort();
-		wtx.close();
-		session.close();
-		database.close();
-	}
+        rtx.close();
+        wtx.abort();
+        wtx.close();
+        session.close();
+        database.close();
+    }
 
 }

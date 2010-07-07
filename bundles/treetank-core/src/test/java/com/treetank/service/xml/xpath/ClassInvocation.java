@@ -32,48 +32,48 @@ import com.treetank.utils.TypedValue;
 
 public class ClassInvocation {
 
-	public static final String XML = "src" + File.separator + "test"
-			+ File.separator + "resources" + File.separator + "test.xml";
+    public static final String XML = "src" + File.separator + "test"
+            + File.separator + "resources" + File.separator + "test.xml";
 
-	public static void main(String[] args) {
-		try {
-			TestHelper.deleteEverything();
-			XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
+    public static void main(String[] args) {
+        try {
+            TestHelper.deleteEverything();
+            XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
 
-			// Build simple test tree.
-			final IDatabase database = TestHelper.getDatabase(PATHS.PATH1
-					.getFile());
-			final ISession session = database.getSession();
-			final IReadTransaction rtx = session.beginReadTransaction();
-			// rtx.moveTo(17L);
+            // Build simple test tree.
+            final IDatabase database = TestHelper.getDatabase(PATHS.PATH1
+                    .getFile());
+            final ISession session = database.getSession();
+            final IReadTransaction rtx = session.beginReadTransaction();
+            // rtx.moveTo(17L);
 
-			String query = "fn:count(//b)";
+            String query = "fn:count(//b)";
 
-			System.out.println("Query: " + query);
-			for (long key : new XPathAxis(rtx, query)) {
-				System.out.println(key);
-				System.out.println(rtx.nameForKey(rtx.getNode().getNameKey()));
-				System.out.println(TypedValue.parseString(rtx.getNode()
-						.getRawValue()));
-				System.out.println(rtx.nameForKey(rtx.getNode().getTypeKey())); // will
-				// return
-				// null
-				// for
-				// atomic
-				// values
-				// TODO:
-				// adapt
-				// ReadTransaction
+            System.out.println("Query: " + query);
+            for (long key : new XPathAxis(rtx, query)) {
+                System.out.println(key);
+                System.out.println(rtx.nameForKey(rtx.getNode().getNameKey()));
+                System.out.println(TypedValue.parseString(rtx.getNode()
+                        .getRawValue()));
+                System.out.println(rtx.nameForKey(rtx.getNode().getTypeKey())); // will
+                // return
+                // null
+                // for
+                // atomic
+                // values
+                // TODO:
+                // adapt
+                // ReadTransaction
 
-			}
+            }
 
-			rtx.close();
-			session.close();
-			database.close();
-			TestHelper.closeEverything();
-		} catch (final Exception exc) {
-			fail(exc.toString());
-		}
-	}
+            rtx.close();
+            session.close();
+            database.close();
+            TestHelper.closeEverything();
+        } catch (final Exception exc) {
+            fail(exc.toString());
+        }
+    }
 
 }

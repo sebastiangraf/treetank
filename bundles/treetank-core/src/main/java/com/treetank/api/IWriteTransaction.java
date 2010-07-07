@@ -108,176 +108,149 @@ import com.treetank.exception.TreetankIOException;
  */
 public interface IWriteTransaction extends IReadTransaction {
 
-	// --- Node Modifiers
-	// --------------------------------------------------------
+    // --- Node Modifiers
+    // --------------------------------------------------------
 
-	/**
-	 * Insert new element node as first child of currently selected node. The
-	 * cursor is moved to the inserted node.
-	 * 
-	 * @param qname
-	 *            Qualified name of inserted node.
-	 * @return Key of inserted node. already has a first child.
-	 */
-	long insertElementAsFirstChild(final QName qname) throws TreetankException;
+    /**
+     * Insert new element node as first child of currently selected node. The
+     * cursor is moved to the inserted node.
+     * 
+     * @param qname
+     *            Qualified name of inserted node.
+     * @return Key of inserted node. already has a first child.
+     */
+    long insertElementAsFirstChild(final QName qname) throws TreetankException;
 
-	/**
-	 * Insert new text node as first child of currently selected node. The
-	 * cursor is moved to the inserted node.
-	 * 
-	 * @param valueType
-	 *            Type of value.
-	 * @param value
-	 *            Value of inserted node.
-	 * @return Key of inserted node. already has a first child.
-	 */
-	long insertTextAsFirstChild(final int valueType, final byte[] value)
-			throws TreetankException;
+    /**
+     * Insert new text node as first child of currently selected node. The
+     * cursor is moved to the inserted node.
+     * 
+     * @param value
+     *            Value of inserted node.
+     * @return Key of inserted node. already has a first child.
+     */
+    long insertTextAsFirstChild(final String value) throws TreetankException;
 
-	/**
-	 * Insert new text node as first child of currently selected node. The
-	 * cursor is moved to the inserted node.
-	 * 
-	 * @param value
-	 *            Value of inserted node.
-	 * @return Key of inserted node. already has a first child.
-	 */
-	long insertTextAsFirstChild(final String value) throws TreetankException;
+    /**
+     * Insert new element node as right sibling of currently selected node. The
+     * cursor is moved to the inserted node.
+     * 
+     * @param qname
+     *            name of the new node
+     * @return Key of inserted node. already has a first child.
+     */
+    long insertElementAsRightSibling(final QName qname)
+            throws TreetankException;
 
-	/**
-	 * Insert new element node as right sibling of currently selected node. The
-	 * cursor is moved to the inserted node.
-	 * 
-	 * @param qname
-	 *            name of the new node
-	 * @return Key of inserted node. already has a first child.
-	 */
-	long insertElementAsRightSibling(final QName qname)
-			throws TreetankException;
+    /**
+     * Insert new element node as right sibling of currently selected node. The
+     * cursor is moved to the inserted node.
+     * 
+     * @param value
+     *            Value of inserted node.
+     * @return Key of inserted node. the root node which is not allowed to have
+     *         right siblings.
+     */
+    long insertTextAsRightSibling(final String value) throws TreetankException;
 
-	/**
-	 * Insert new element node as right sibling of currently selected node. The
-	 * cursor is moved to the inserted node.
-	 * 
-	 * @param valueType
-	 *            Type of value.
-	 * @param value
-	 *            Value of inserted node.
-	 * @return Key of inserted node. the root node which is not allowed to have
-	 *         right siblings.
-	 */
-	long insertTextAsRightSibling(final int valueType, final byte[] value)
-			throws TreetankException;
+    /**
+     * Insert attribute in currently selected node. The cursor is moved to the
+     * inserted node.
+     * 
+     * @param QName
+     *            qname
+     * @param value
+     *            Value of inserted node.
+     * @return Key of inserted node.
+     */
+    long insertAttribute(final QName qname, final String value)
+            throws TreetankException;
 
-	/**
-	 * Insert new element node as right sibling of currently selected node. The
-	 * cursor is moved to the inserted node.
-	 * 
-	 * @param value
-	 *            Value of inserted node.
-	 * @return Key of inserted node. the root node which is not allowed to have
-	 *         right siblings.
-	 */
-	long insertTextAsRightSibling(final String value) throws TreetankException;
+    /**
+     * Insert namespace declaration in currently selected node. The cursor is
+     * moved to the inserted node.
+     * 
+     * @param uri
+     *            URI of inserted node.
+     * @param name
+     *            Prefix of inserted node.
+     * @return Key of inserted node.
+     */
+    long insertNamespace(final String uri, final String name)
+            throws TreetankException;
 
-	/**
-	 * Insert attribute in currently selected node. The cursor is moved to the
-	 * inserted node.
-	 * 
-	 * @param QName
-	 *            qname
-	 * @param value
-	 *            Value of inserted node.
-	 * @return Key of inserted node.
-	 */
-	long insertAttribute(final QName qname, final String value)
-			throws TreetankException;
+    /**
+     * Remove currently selected node. This does automatically remove
+     * descendants.
+     * 
+     * The cursor is located at the former right sibling. If there was no right
+     * sibling, it is located at the former left sibling. If there was no left
+     * sibling, it is located at the former parent.
+     */
+    void remove() throws TreetankException;
 
-	/**
-	 * Insert namespace declaration in currently selected node. The cursor is
-	 * moved to the inserted node.
-	 * 
-	 * @param uri
-	 *            URI of inserted node.
-	 * @param name
-	 *            Prefix of inserted node.
-	 * @return Key of inserted node.
-	 */
-	long insertNamespace(final String uri, final String name)
-			throws TreetankException;
+    // --- Node Setters
+    // -----------------------------------------------------------
 
-	/**
-	 * Remove currently selected node. This does automatically remove
-	 * descendants.
-	 * 
-	 * The cursor is located at the former right sibling. If there was no right
-	 * sibling, it is located at the former left sibling. If there was no left
-	 * sibling, it is located at the former parent.
-	 */
-	void remove() throws TreetankException;
+    /**
+     * Set local part of node.
+     * 
+     * @param name
+     *            New qualified name of node.
+     */
+    void setName(final String name) throws TreetankIOException;
 
-	// --- Node Setters
-	// -----------------------------------------------------------
+    /**
+     * Set URI of node.
+     * 
+     * @param uri
+     *            New URI of node.
+     */
+    void setURI(final String uri) throws TreetankIOException;
 
-	/**
-	 * Set local part of node.
-	 * 
-	 * @param name
-	 *            New qualified name of node.
-	 */
-	void setName(final String name) throws TreetankIOException;
+    /**
+     * Set value of node.
+     * 
+     * @param valueType
+     *            Type of value.
+     * @param value
+     *            New value of node.
+     */
+    void setValue(final int valueType, final byte[] value)
+            throws TreetankIOException;
 
-	/**
-	 * Set URI of node.
-	 * 
-	 * @param uri
-	 *            New URI of node.
-	 */
-	void setURI(final String uri) throws TreetankIOException;
+    /**
+     * Set value of node.
+     * 
+     * @param value
+     *            New value of node.
+     */
+    void setValue(final String value) throws TreetankIOException;
 
-	/**
-	 * Set value of node.
-	 * 
-	 * @param valueType
-	 *            Type of value.
-	 * @param value
-	 *            New value of node.
-	 */
-	void setValue(final int valueType, final byte[] value)
-			throws TreetankIOException;
+    /**
+     * Commit all modifications of the exclusive write transaction. Even commit
+     * if there are no modification at all.
+     */
+    void commit() throws TreetankException;
 
-	/**
-	 * Set value of node.
-	 * 
-	 * @param value
-	 *            New value of node.
-	 */
-	void setValue(final String value) throws TreetankIOException;
+    /**
+     * Abort all modifications of the exclusive write transaction.
+     */
+    void abort() throws TreetankIOException;
 
-	/**
-	 * Commit all modifications of the exclusive write transaction. Even commit
-	 * if there are no modification at all.
-	 */
-	void commit() throws TreetankException;
+    /**
+     * Reverting all changes to the revision defined. This command has to be
+     * finalized with a commit. A revert is always bound to a
+     * {@link IReadTransaction#moveToDocumentRoot()}.
+     * 
+     * @param revision
+     *            revert for the revision
+     */
+    void revertTo(final long revision) throws TreetankException;
 
-	/**
-	 * Abort all modifications of the exclusive write transaction.
-	 */
-	void abort() throws TreetankIOException;
-
-	/**
-	 * Reverting all changes to the revision defined. This command has to be
-	 * finalized with a commit. A revert is always bound to a
-	 * {@link IReadTransaction#moveToDocumentRoot()}.
-	 * 
-	 * @param revision
-	 *            revert for the revision
-	 */
-	void revertTo(final long revision) throws TreetankException;
-
-	/**
-	 * Closing current WriteTransaction
-	 */
-	void close() throws TreetankException;
+    /**
+     * Closing current WriteTransaction
+     */
+    void close() throws TreetankException;
 
 }

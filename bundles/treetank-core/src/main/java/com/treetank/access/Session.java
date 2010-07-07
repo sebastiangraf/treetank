@@ -58,7 +58,8 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    public synchronized IReadTransaction beginReadTransaction() throws TreetankException {
+    public synchronized IReadTransaction beginReadTransaction()
+            throws TreetankException {
         assertNotClosed();
         return mSessionState.beginReadTransaction(new ItemList());
     }
@@ -66,8 +67,8 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    public synchronized IReadTransaction beginReadTransaction(final long revisionKey)
-            throws TreetankException {
+    public synchronized IReadTransaction beginReadTransaction(
+            final long revisionKey) throws TreetankException {
         assertNotClosed();
         mSessionState.assertValidRevision(revisionKey);
         return mSessionState.beginReadTransaction(revisionKey, new ItemList());
@@ -76,7 +77,8 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    public synchronized IWriteTransaction beginWriteTransaction() throws TreetankException {
+    public synchronized IWriteTransaction beginWriteTransaction()
+            throws TreetankException {
         assertNotClosed();
         return mSessionState.beginWriteTransaction(0, 0);
     }
@@ -84,8 +86,8 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    public synchronized IWriteTransaction beginWriteTransaction(final int maxNodeCount,
-            final int maxTime) throws TreetankException {
+    public synchronized IWriteTransaction beginWriteTransaction(
+            final int maxNodeCount, final int maxTime) throws TreetankException {
         assertNotClosed();
         return mSessionState.beginWriteTransaction(maxNodeCount, maxTime);
     }

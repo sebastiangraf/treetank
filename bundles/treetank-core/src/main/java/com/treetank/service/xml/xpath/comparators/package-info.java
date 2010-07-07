@@ -1,7 +1,6 @@
-<html>
-  <body>
-    <h1>Package comparators</h1>
-    <p>
+/**
+<h1>Package comparators</h1>
+     <p>
       Contains XPath comparators specified in 
       <a href="http://www.w3.org/TR/xquery-operators/">XQuery 1.0 and XPath 2.0 
       Functions and Operators</a> and classes that support their usage.
@@ -11,5 +10,7 @@
       to the addComparator() method in the PipelineBuilder.
     </p>
     
-  </body>
-</html>
+ * @author Tina Scherer, University of Konstanz
+ */
+package com.treetank.service.xml.xpath.comparators;
+

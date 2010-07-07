@@ -19,34 +19,45 @@
 package com.treetank.node;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
-import com.treetank.settings.ENodes;
+import com.treetank.io.file.ByteBufferSinkAndSource;
 
 public class NamespaceNodeTest {
 
-	@Test
-	public void testNamespaceNode() {
+    @Test
+    public void testNamespaceNode() {
 
-		// Create empty node.
-		final AbstractNode node1 = new NamespaceNode(99L, 13L, 14, 15);
+        final long[] data = NamespaceNode.createData(99, 13, 14, 15);
+        // Create empty node.
+        final NamespaceNode node1 = new NamespaceNode(data);
 
+        // Serialize and deserialize node.
+        final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
+        node1.serialize(out);
+        out.position(0);
+        final NamespaceNode node2 = (NamespaceNode) ENodes.NAMESPACE_KIND
+                .createNodeFromPersistence(out);
+        check(node2);
 
-		// Clone node.
-		final AbstractNode node2 = new NamespaceNode(node1);
+        // Clone node.
+        final NamespaceNode node3 = (NamespaceNode) node2.clone();
+        check(node3);
 
-		// Now compare.
-		assertEquals(99L, node2.getNodeKey());
-		assertEquals(13L, node2.getParentKey());
+    }
 
-		assertEquals(14, node2.getURIKey());
-		assertEquals(15, node2.getNameKey());
-		assertEquals(null, node2.getRawValue());
-		assertEquals(ENodes.NAMESPACE_KIND, node2.getKind());
-		assertEquals(true, node2.hasParent());
-		assertEquals(ENodes.NAMESPACE_KIND, node2.getKind());
+    private final static void check(final NamespaceNode node) {
+        // Now compare.
+        assertEquals(99L, node.getNodeKey());
+        assertEquals(13L, node.getParentKey());
 
-	}
+        assertEquals(14, node.getURIKey());
+        assertEquals(15, node.getNameKey());
+        assertNull(node.getRawValue());
+        assertEquals(ENodes.NAMESPACE_KIND, node.getKind());
+        assertEquals(true, node.hasParent());
+    }
 
 }

@@ -21,6 +21,7 @@ package com.treetank.page;
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
 import com.treetank.node.DocumentRootNode;
+import com.treetank.node.ENodes;
 import com.treetank.settings.EFixed;
 import com.treetank.utils.IConstants;
 
@@ -83,11 +84,15 @@ public final class UberPage extends AbstractPage {
             reference = page.getReference(0);
         }
 
-        NodePage ndp = new NodePage((Long) EFixed.ROOT_PAGE_KEY
-                .getStandardProperty(), IConstants.UBP_ROOT_REVISION_NUMBER);
+        NodePage ndp = new NodePage(
+                (Long) EFixed.ROOT_PAGE_KEY.getStandardProperty(),
+                IConstants.UBP_ROOT_REVISION_NUMBER);
         reference.setPage(ndp);
 
-        ndp.setNode(0, new DocumentRootNode());
+        ndp.setNode(
+                0,
+                ENodes.ROOT_KIND.createNodeFromScratch(
+                        DocumentRootNode.createData(), null));
         rrp.incrementMaxNodeKey();
 
     }

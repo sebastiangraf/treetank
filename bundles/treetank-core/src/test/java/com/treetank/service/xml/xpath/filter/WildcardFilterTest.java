@@ -38,63 +38,63 @@ import com.treetank.utils.DocumentCreater;
 
 public class WildcardFilterTest {
 
-	@Before
-	public void setUp() throws TreetankException {
-		TestHelper.deleteEverything();
-	}
+    @Before
+    public void setUp() throws TreetankException {
+        TestHelper.deleteEverything();
+    }
 
-	@After
-	public void tearDown() throws TreetankException {
-		TestHelper.closeEverything();
-	}
+    @After
+    public void tearDown() throws TreetankException {
+        TestHelper.closeEverything();
+    }
 
-	@Test
-	public void testIFilterConvetions() throws TreetankException {
-		try {
-			// Build simple test tree.
-			final IDatabase database = TestHelper.getDatabase(PATHS.PATH1
-					.getFile());
-			final ISession session = database.getSession();
-			final IWriteTransaction wtx = session.beginWriteTransaction();
-			DocumentCreater.create(wtx);
+    @Test
+    public void testIFilterConvetions() throws TreetankException {
+        try {
+            // Build simple test tree.
+            final IDatabase database = TestHelper.getDatabase(PATHS.PATH1
+                    .getFile());
+            final ISession session = database.getSession();
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            DocumentCreater.create(wtx);
 
-			wtx.moveTo(9L);
-			IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "b",
-					true), true);
-			wtx.moveToAttribute(0);
-			try {
-				IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "p",
-						false), true);
-				fail("Expected an Exception, because attributes are not supported.");
-			} catch (IllegalStateException e) {
-				assertThat(
-						e.getMessage(),
-						is("Wildcards are not supported in attribute names yet."));
+            wtx.moveTo(9L);
+            IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "b",
+                    true), true);
+            wtx.moveToAttribute(0);
+            try {
+                IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "p",
+                        false), true);
+                fail("Expected an Exception, because attributes are not supported.");
+            } catch (IllegalStateException e) {
+                assertThat(
+                        e.getMessage(),
+                        is("Wildcards are not supported in attribute names yet."));
 
-			}
-			// IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "b",
-			// true), true);
+            }
+            // IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "b",
+            // true), true);
 
-			// wtx.moveTo(3L);
-			// IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
+            // wtx.moveTo(3L);
+            // IFilterTest.testIFilterConventions(new ItemFilter(wtx), true);
 
-			wtx.moveTo(1L);
-			IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "p",
-					false), true);
-			IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "a",
-					true), true);
-			IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "c",
-					true), false);
-			IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "b",
-					false), false);
+            wtx.moveTo(1L);
+            IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "p",
+                    false), true);
+            IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "a",
+                    true), true);
+            IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "c",
+                    true), false);
+            IFilterTest.testIFilterConventions(new WildcardFilter(wtx, "b",
+                    false), false);
 
-			wtx.abort();
-			wtx.close();
-			session.close();
-			database.close();
-		} catch (final TreetankIOException exc) {
-			fail(exc.toString());
-		}
+            wtx.abort();
+            wtx.close();
+            session.close();
+            database.close();
+        } catch (final TreetankIOException exc) {
+            fail(exc.toString());
+        }
 
-	}
+    }
 }

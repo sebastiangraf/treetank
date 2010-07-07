@@ -19,57 +19,67 @@
 package com.treetank.node;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+import java.util.ArrayList;
 
 import org.junit.Test;
 
 import com.treetank.io.file.ByteBufferSinkAndSource;
-import com.treetank.settings.ENodes;
 
 public class ElementNodeTest {
 
-	@Test
-	public void testElementNode() {
+    @Test
+    public void testElementNode() {
 
-		// Create empty node.
-		final ElementNode node1 = new ElementNode(13L, 14L, 15L, 16L, 17L, 18,
-				19, 0);
-		final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
+        final long[] data = ElementNode.createData(13, 14, 16, 17, 12, 1, 18,
+                19, 20);
 
-		// Modify it.
-		node1.incrementChildCount();
-		node1.decrementChildCount();
-		node1.insertAttribute(98L);
-		node1.insertNamespace(99L);
+        // Create empty node.
+        final ElementNode node1 = new ElementNode(data, new ArrayList<Long>(0),
+                new ArrayList<Long>(0));
+        node1.insertAttribute(97);
+        node1.insertAttribute(98);
+        node1.insertNamespace(99);
+        node1.insertNamespace(100);
+        check(node1);
 
-		// Serialize and deserialize node.
-		node1.serialize(out);
-		out.position(0);
-		final AbstractNode node2 = new ElementNode(out);
+        // Serialize and deserialize node.
+        final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
+        node1.serialize(out);
+        out.position(0);
+        final ElementNode node2 = (ElementNode) ENodes.ELEMENT_KIND
+                .createNodeFromPersistence(out);
+        check(node2);
 
-		// Clone node.
-		final AbstractNode node3 = node2; // new ElementNode(node2);
+        // Clone node.
+        final ElementNode node3 = (ElementNode) node2.clone();
+        check(node3);
+    }
 
-		// Now compare.
-		assertEquals(13L, node3.getNodeKey());
-		assertEquals(14L, node3.getParentKey());
-		assertEquals(15L, ((IStructuralNode) node3).getFirstChildKey());
-		assertEquals(16L, ((IStructuralNode) node3).getLeftSiblingKey());
-		assertEquals(17L, ((IStructuralNode) node3).getRightSiblingKey());
-		assertEquals(0, ((IStructuralNode) node3).getChildCount());
-		assertEquals(1, ((ElementNode) node3).getAttributeCount());
-		assertEquals(1, ((ElementNode) node3).getNamespaceCount());
-		assertEquals(18, node3.getNameKey());
-		assertEquals(19, node3.getURIKey());
-		assertEquals(null, node3.getRawValue());
-		assertEquals(ENodes.ELEMENT_KIND, node3.getKind());
-		assertEquals(true, ((IStructuralNode) node3).hasFirstChild());
-		assertEquals(true, node3.hasParent());
-		assertEquals(true, ((IStructuralNode) node3).hasLeftSibling());
-		assertEquals(true, ((IStructuralNode) node3).hasRightSibling());
-		assertEquals(ENodes.ELEMENT_KIND, node3.getKind());
-		assertEquals(98L, ((ElementNode) node3).getAttributeKey(0));
-		assertEquals(99L, ((ElementNode) node3).getNamespaceKey(0));
-
-	}
+    private final static void check(final ElementNode node) {
+        // Now compare.
+        assertEquals(13L, node.getNodeKey());
+        assertEquals(14L, node.getParentKey());
+        assertEquals(12L, node.getFirstChildKey());
+        assertEquals(16L, node.getLeftSiblingKey());
+        assertEquals(17L, node.getRightSiblingKey());
+        assertEquals(1, node.getChildCount());
+        assertEquals(2, node.getAttributeCount());
+        assertEquals(2, node.getNamespaceCount());
+        assertEquals(18, node.getNameKey());
+        assertEquals(19, node.getURIKey());
+        assertNull(null, node.getRawValue());
+        assertEquals(20, node.getTypeKey());
+        assertEquals(ENodes.ELEMENT_KIND, node.getKind());
+        assertEquals(true, node.hasFirstChild());
+        assertEquals(true, node.hasParent());
+        assertEquals(true, node.hasLeftSibling());
+        assertEquals(true, node.hasRightSibling());
+        assertEquals(97L, node.getAttributeKey(0));
+        assertEquals(98L, node.getAttributeKey(1));
+        assertEquals(99L, node.getNamespaceKey(0));
+        assertEquals(100L, node.getNamespaceKey(1));
+    }
 
 }

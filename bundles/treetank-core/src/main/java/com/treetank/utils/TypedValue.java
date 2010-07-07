@@ -103,8 +103,8 @@ public final class TypedValue {
                         andCounter++;
                     } else {
                         if (andCounter == 3) {
-                            builder.append('&').append('a').append('m').append(
-                                    c);
+                            builder.append('&').append('a').append('m')
+                                    .append(c);
                         } else if (andCounter == 1) {
                             builder.append('&').append(c);
                         } else {
@@ -123,8 +123,8 @@ public final class TypedValue {
                         } else if (andCounter == 2) {
                             builder.append('&').append('a').append(c);
                         } else if (andCounter == 4) {
-                            builder.append('&').append('a').append('m').append(
-                                    'p').append(c);
+                            builder.append('&').append('a').append('m')
+                                    .append('p').append(c);
                         } else {
                             builder.append(c);
                         }
@@ -150,8 +150,8 @@ public final class TypedValue {
                         altCounter++;
                     } else {
                         if (altCounter == 3) {
-                            builder.append('&').append('l').append('t').append(
-                                    c);
+                            builder.append('&').append('l').append('t')
+                                    .append(c);
                         } else if (altCounter == 1) {
                             builder.append('&').append(c);
                         } else {
@@ -166,8 +166,8 @@ public final class TypedValue {
                         builder.append('&');
                     } else if (andCounter > 0) {
                         if (andCounter == 3) {
-                            builder.append('&').append('a').append('m').append(
-                                    c);
+                            builder.append('&').append('a').append('m')
+                                    .append(c);
                         } else if (andCounter == 2) {
                             builder.append('&').append('a').append(c);
                         } else {

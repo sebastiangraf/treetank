@@ -40,73 +40,73 @@ import com.treetank.utils.DocumentCreater;
 
 public class IAxisTest {
 
-	@Before
-	public void setUp() throws TreetankException {
-		TestHelper.deleteEverything();
-	}
+    @Before
+    public void setUp() throws TreetankException {
+        TestHelper.deleteEverything();
+    }
 
-	public static void testIAxisConventions(final IAxis axis,
-			final long[] expectedKeys) {
+    public static void testIAxisConventions(final IAxis axis,
+            final long[] expectedKeys) {
 
-		final IReadTransaction rtx = axis.getTransaction();
+        final IReadTransaction rtx = axis.getTransaction();
 
-		// IAxis Convention 1.
-		final long startKey = rtx.getNode().getNodeKey();
+        // IAxis Convention 1.
+        final long startKey = rtx.getNode().getNodeKey();
 
-		final long[] keys = new long[expectedKeys.length];
-		int offset = 0;
-		while (axis.hasNext()) {
-			axis.next();
-			// IAxis results.
-			assertTrue(offset < expectedKeys.length);
-			keys[offset++] = rtx.getNode().getNodeKey();
+        final long[] keys = new long[expectedKeys.length];
+        int offset = 0;
+        while (axis.hasNext()) {
+            axis.next();
+            // IAxis results.
+            assertTrue(offset < expectedKeys.length);
+            keys[offset++] = rtx.getNode().getNodeKey();
 
-			// IAxis Convention 2.
-			try {
-				axis.next();
-				fail("Should only allow to call next() once.");
-			} catch (final IllegalStateException exc) {
-				// Must throw exception.
-			}
+            // IAxis Convention 2.
+            try {
+                axis.next();
+                fail("Should only allow to call next() once.");
+            } catch (final IllegalStateException exc) {
+                // Must throw exception.
+            }
 
-			// IAxis Convention 3.
-			rtx.moveToDocumentRoot();
+            // IAxis Convention 3.
+            rtx.moveToDocumentRoot();
 
-		}
+        }
 
-		// IAxis Convention 5.
-		assertEquals(startKey, rtx.getNode().getNodeKey());
+        // IAxis Convention 5.
+        assertEquals(startKey, rtx.getNode().getNodeKey());
 
-		// IAxis results.
-		assertArrayEquals(expectedKeys, keys);
+        // IAxis results.
+        assertArrayEquals(expectedKeys, keys);
 
-	}
+    }
 
-	@Test
-	public void testIAxisUserExample() throws TreetankException {
+    @Test
+    public void testIAxisUserExample() throws TreetankException {
 
-		final IDatabase database = TestHelper
-				.getDatabase(PATHS.PATH1.getFile());
-		final ISession session = database.getSession();
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
+        final IDatabase database = TestHelper
+                .getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
 
-		wtx.moveToDocumentRoot();
-		final IAxis axis = new DescendantAxis(wtx);
-		long count = 0L;
-		while (axis.hasNext()) {
-			count += 1;
-		}
-		Assert.assertEquals(10L, count);
+        wtx.moveToDocumentRoot();
+        final IAxis axis = new DescendantAxis(wtx);
+        long count = 0L;
+        while (axis.hasNext()) {
+            count += 1;
+        }
+        Assert.assertEquals(10L, count);
 
-		wtx.abort();
-		wtx.close();
-		session.close();
-		database.close();
-	}
+        wtx.abort();
+        wtx.close();
+        session.close();
+        database.close();
+    }
 
-	@After
-	public void tearDown() throws TreetankException {
-		TestHelper.closeEverything();
-	}
+    @After
+    public void tearDown() throws TreetankException {
+        TestHelper.closeEverything();
+    }
 }

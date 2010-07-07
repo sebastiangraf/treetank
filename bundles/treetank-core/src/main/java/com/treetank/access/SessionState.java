@@ -172,8 +172,8 @@ public final class SessionState {
         // Create new read transaction.
         rtx = new ReadTransaction(transactionIDCounter.incrementAndGet(), this,
                 new ReadTransactionState(mDatabaseConfiguration,
-                        mLastCommittedUberPage, revisionNumber, itemList, fac
-                                .getReader()));
+                        mLastCommittedUberPage, revisionNumber, itemList,
+                        fac.getReader()));
 
         // Remember transaction for debugging and safe close.
         if (mTransactionMap.put(rtx.getTransactionID(), rtx) != null) {
@@ -309,20 +309,6 @@ public final class SessionState {
         fac.closeStorage();
     }
 
-    //
-    // /**
-    // * Required to close file handle.
-    // *
-    // * @throws Throwable
-    // * if the finalization of the superclass does not work.
-    // */
-    // protected void finalize() throws Throwable {
-    // try {
-    // close();
-    // } finally {
-    // super.finalize();
-    // }
-    // }
 
     class LogSyncer implements Callable<Void> {
 
@@ -349,8 +335,8 @@ public final class SessionState {
             throw new TreetankUsageException("Revision must be at least 0");
         } else if (rev > mLastCommittedUberPage.getRevision()) {
             throw new TreetankUsageException(
-                    "Revision must not be bigger than", Long
-                            .toString(mLastCommittedUberPage.getRevision()));
+                    "Revision must not be bigger than",
+                    Long.toString(mLastCommittedUberPage.getRevision()));
         }
     }
 

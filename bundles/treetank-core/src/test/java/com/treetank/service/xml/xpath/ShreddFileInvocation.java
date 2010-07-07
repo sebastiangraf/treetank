@@ -33,38 +33,38 @@ import com.treetank.service.xml.XMLShredder;
 
 public class ShreddFileInvocation {
 
-	public static final String XML = "src" + File.separator + "test"
-			+ File.separator + "resources" + File.separator + "content.xml";
+    public static final String XML = "src" + File.separator + "test"
+            + File.separator + "resources" + File.separator + "content.xml";
 
-	public static void main(String[] args) {
-		try {
-			TestHelper.deleteEverything();
-			// Setup parsed session.
-			XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
+    public static void main(String[] args) {
+        try {
+            TestHelper.deleteEverything();
+            // Setup parsed session.
+            XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
 
-			// Verify.
-			final IDatabase database = TestHelper.getDatabase(PATHS.PATH1
-					.getFile());
-			final ISession session = database.getSession();
-			final IReadTransaction rtx = session.beginReadTransaction();
-			final IWriteTransaction wtx = session.beginWriteTransaction();
-			rtx.moveToDocumentRoot();
+            // Verify.
+            final IDatabase database = TestHelper.getDatabase(PATHS.PATH1
+                    .getFile());
+            final ISession session = database.getSession();
+            final IReadTransaction rtx = session.beginReadTransaction();
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            rtx.moveToDocumentRoot();
 
-			final IAxis xpath = new XPathAxis(wtx,
-					"/office:document-content/office:body/office:text/text:p");
-			for (long node : xpath) {
-				System.out.println(node);
-				wtx.moveTo(node);
-				wtx.remove();
-			}
-			wtx.close();
-			session.close();
-			database.close();
-			TestHelper.closeEverything();
-		} catch (final Exception exc) {
-			fail(exc.toString());
-		}
+            final IAxis xpath = new XPathAxis(wtx,
+                    "/office:document-content/office:body/office:text/text:p");
+            for (long node : xpath) {
+                System.out.println(node);
+                wtx.moveTo(node);
+                wtx.remove();
+            }
+            wtx.close();
+            session.close();
+            database.close();
+            TestHelper.closeEverything();
+        } catch (final Exception exc) {
+            fail(exc.toString());
+        }
 
-	}
+    }
 
 }

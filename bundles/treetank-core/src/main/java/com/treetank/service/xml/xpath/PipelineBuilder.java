@@ -575,7 +575,7 @@ public final class PipelineBuilder {
                 // FuncDef.POS.getMin(), FuncDef.POS.getMax(), transaction
                 // .keyForName(FuncDef.POS.getReturnType()));
                 // IAxis expectedPos = new LiteralExpr(transaction, position);
-                //        
+                //
                 // predicate = new ValueComp(transaction, function, expectedPos,
                 // CompKind.EQ);
 

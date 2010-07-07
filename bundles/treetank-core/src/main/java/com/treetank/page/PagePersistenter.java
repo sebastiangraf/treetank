@@ -62,8 +62,9 @@ public final class PagePersistenter {
             sink.writeInt(PagePersistenter.UBERPAGE);
 
         } else {
-            throw new IllegalStateException(new StringBuilder("Page ").append(
-                    page.getClass()).append(" cannot be serialized").toString());
+            throw new IllegalStateException(new StringBuilder("Page ")
+                    .append(page.getClass()).append(" cannot be serialized")
+                    .toString());
         }
         page.serialize(sink);
     }

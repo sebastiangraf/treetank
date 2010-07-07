@@ -2,10 +2,12 @@
 <h1>Access to Treetank</h1>
     <p>
       The access semantics is as follows:
-      <li>There can only be a single Database instance per JVM and TreeTank directory.
-      <li>There can only be a single Session instance per JVM and Database
-      <li>There can only be a single WriteTransaction instance per Session.
-      <li>There can be multiple ReadTransaction instances per session.
+      <ul>
+      <li>There can only be a single {@link com.treetank.api.IDatabase} instance per Database-Folder</li>
+      <li>There can only be a single {@link com.treetank.api.ISession} instance per {@link com.treetank.api.IDatabase}</li>
+      <li>There can only be a single {@link com.treetank.api.IWriteTransaction} instance per {@link com.treetank.api.ISession}</li>
+      <li>There can be multiple {@link com.treetank.api.IReadTransaction} instances per {@link com.treetank.api.ISession}.</li> 
+      </ul>
     </p>
     <p>
       Code examples:

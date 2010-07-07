@@ -36,65 +36,65 @@ import com.treetank.utils.DocumentCreater;
 
 public class MinimumCommitTest {
 
-	@Before
-	public void setUp() throws TreetankException {
-		TestHelper.deleteEverything();
-	}
+    @Before
+    public void setUp() throws TreetankException {
+        TestHelper.deleteEverything();
+    }
 
-	@After
-	public void tearDown() throws TreetankException {
-		TestHelper.closeEverything();
-	}
+    @After
+    public void tearDown() throws TreetankException {
+        TestHelper.closeEverything();
+    }
 
-	@Test
-	public void test() throws TreetankException {
-		final IDatabase database = TestHelper
-				.getDatabase(PATHS.PATH1.getFile());
-		ISession session = database.getSession();
-		IWriteTransaction wtx = session.beginWriteTransaction();
-		assertEquals(0L, wtx.getRevisionNumber());
-		wtx.commit();
+    @Test
+    public void test() throws TreetankException {
+        final IDatabase database = TestHelper
+                .getDatabase(PATHS.PATH1.getFile());
+        ISession session = database.getSession();
+        IWriteTransaction wtx = session.beginWriteTransaction();
+        assertEquals(0L, wtx.getRevisionNumber());
+        wtx.commit();
 
-		wtx.close();
-		session.close();
+        wtx.close();
+        session.close();
 
-		session = database.getSession();
-		wtx = session.beginWriteTransaction();
-		assertEquals(1L, wtx.getRevisionNumber());
-		DocumentCreater.create(wtx);
-		wtx.commit();
-		wtx.close();
+        session = database.getSession();
+        wtx = session.beginWriteTransaction();
+        assertEquals(1L, wtx.getRevisionNumber());
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        wtx.close();
 
-		wtx = session.beginWriteTransaction();
-		assertEquals(2L, wtx.getRevisionNumber());
-		wtx.commit();
-		wtx.close();
+        wtx = session.beginWriteTransaction();
+        assertEquals(2L, wtx.getRevisionNumber());
+        wtx.commit();
+        wtx.close();
 
-		IReadTransaction rtx = session.beginReadTransaction();
-		assertEquals(2L, rtx.getRevisionNumber());
-		rtx.close();
-		session.close();
-		database.close();
+        IReadTransaction rtx = session.beginReadTransaction();
+        assertEquals(2L, rtx.getRevisionNumber());
+        rtx.close();
+        session.close();
+        database.close();
 
-	}
+    }
 
-	@Test
-	public void testTimestamp() throws TreetankException {
-		final IDatabase database = TestHelper
-				.getDatabase(PATHS.PATH1.getFile());
-		final ISession session = database.getSession();
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		assertEquals(0L, wtx.getRevisionTimestamp());
-		wtx.commit();
-		wtx.close();
+    @Test
+    public void testTimestamp() throws TreetankException {
+        final IDatabase database = TestHelper
+                .getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        assertEquals(0L, wtx.getRevisionTimestamp());
+        wtx.commit();
+        wtx.close();
 
-		final IReadTransaction rtx = session.beginReadTransaction();
-		assertTrue(rtx.getRevisionTimestamp() < (System.currentTimeMillis() + 1));
-		rtx.close();
+        final IReadTransaction rtx = session.beginReadTransaction();
+        assertTrue(rtx.getRevisionTimestamp() < (System.currentTimeMillis() + 1));
+        rtx.close();
 
-		session.close();
-		database.close();
+        session.close();
+        database.close();
 
-	}
+    }
 
 }

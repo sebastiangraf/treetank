@@ -1129,8 +1129,9 @@ public enum Type {
 
         keyToType = new HashMap<Integer, Type>();
         for (Type type : Type.values()) {
-            keyToType.put(NamePageHash.generateHashForString(type
-                    .getStringRepr()), type);
+            keyToType.put(
+                    NamePageHash.generateHashForString(type.getStringRepr()),
+                    type);
         }
     }
 

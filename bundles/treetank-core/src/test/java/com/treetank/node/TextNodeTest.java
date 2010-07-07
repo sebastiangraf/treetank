@@ -24,49 +24,53 @@ import org.junit.Test;
 
 import com.treetank.io.file.ByteBufferSinkAndSource;
 import com.treetank.settings.EFixed;
-import com.treetank.settings.ENodes;
 
 public class TextNodeTest {
 
-	@Test
-	public void testTextRootNode() {
+    @Test
+    public void testTextRootNode() {
 
-		// Create empty node.
-		final AbstractNode node1 = new TextNode(13L, 14L, 15L, 16L, 19,
-				new byte[] { (byte) 17, (byte) 18 });
-		final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
+        // Create empty node.
+        final long[] data = TextNode.createData(13, 14, 15, 16, 19);
+        final byte[] value = { (byte) 17, (byte) 18 };
+        final TextNode node1 = new TextNode(data, value);
+        check(node1);
 
+        // Serialize and deserialize node.
+        final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
+        node1.serialize(out);
+        out.position(0);
+        final TextNode node2 = (TextNode) ENodes.TEXT_KIND
+                .createNodeFromPersistence(out);
+        check(node2);
 
-		// Serialize and deserialize node.
-		node1.serialize(out);
-		out.position(0);
-		final AbstractNode node2 = new TextNode(out);
+        // Clone node.
+        final TextNode node3 = (TextNode) node2.clone();
+        check(node3);
+    }
 
-		// Clone node.
-		final AbstractNode node3 = new TextNode(node2);
+    private final static void check(final TextNode node) {
 
-		// Now compare.
-		assertEquals(13L, node3.getNodeKey());
-		assertEquals(14L, node3.getParentKey());
-		assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(),
-				((IStructuralNode) node3).getFirstChildKey());
-		assertEquals(15L, ((IStructuralNode) node3).getLeftSiblingKey());
-		assertEquals(16L, ((IStructuralNode) node3).getRightSiblingKey());
-		assertEquals(19, node3.getTypeKey());
-		assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(), node3
-				.getNameKey());
-		assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(), node3
-				.getURIKey());
-		assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(), node3
-				.getNameKey());
-		assertEquals(2, node3.getRawValue().length);
-		assertEquals(ENodes.TEXT_KIND, node3.getKind());
-		assertEquals(false, ((IStructuralNode) node3).hasFirstChild());
-		assertEquals(true, node3.hasParent());
-		assertEquals(true, ((IStructuralNode) node3).hasLeftSibling());
-		assertEquals(true, ((IStructuralNode) node3).hasRightSibling());
-		assertEquals(ENodes.TEXT_KIND, node3.getKind());
-
-	}
+        // Now compare.
+        assertEquals(13L, node.getNodeKey());
+        assertEquals(14L, node.getParentKey());
+        assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(),
+                node.getFirstChildKey());
+        assertEquals(15L, node.getLeftSiblingKey());
+        assertEquals(16L, node.getRightSiblingKey());
+        assertEquals(19, node.getTypeKey());
+        assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(),
+                node.getNameKey());
+        assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(),
+                node.getURIKey());
+        assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(),
+                node.getNameKey());
+        assertEquals(2, node.getRawValue().length);
+        assertEquals(ENodes.TEXT_KIND, node.getKind());
+        assertEquals(false, node.hasFirstChild());
+        assertEquals(true, node.hasParent());
+        assertEquals(true, node.hasLeftSibling());
+        assertEquals(true, node.hasRightSibling());
+    }
 
 }

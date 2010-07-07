@@ -18,49 +18,49 @@ import com.treetank.utils.DocumentCreater;
 
 public final class RevertTest {
 
-	@Before
-	public void setUp() throws TreetankException {
-		TestHelper.deleteEverything();
-	}
+    @Before
+    public void setUp() throws TreetankException {
+        TestHelper.deleteEverything();
+    }
 
-	@After
-	public void tearDown() throws TreetankException {
-		TestHelper.closeEverything();
-	}
+    @After
+    public void tearDown() throws TreetankException {
+        TestHelper.closeEverything();
+    }
 
-	@Test
-	public void test() throws TreetankException {
-		final IDatabase database = TestHelper
-				.getDatabase(PATHS.PATH1.getFile());
-		final ISession session = database.getSession();
-		IWriteTransaction wtx = session.beginWriteTransaction();
-		assertEquals(0L, wtx.getRevisionNumber());
-		DocumentCreater.create(wtx);
-		assertEquals(0L, wtx.getRevisionNumber());
-		wtx.commit();
-		assertEquals(1L, wtx.getRevisionNumber());
-		wtx.close();
+    @Test
+    public void test() throws TreetankException {
+        final IDatabase database = TestHelper
+                .getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession();
+        IWriteTransaction wtx = session.beginWriteTransaction();
+        assertEquals(0L, wtx.getRevisionNumber());
+        DocumentCreater.create(wtx);
+        assertEquals(0L, wtx.getRevisionNumber());
+        wtx.commit();
+        assertEquals(1L, wtx.getRevisionNumber());
+        wtx.close();
 
-		wtx = session.beginWriteTransaction();
-		assertEquals(1L, wtx.getRevisionNumber());
-		wtx.moveToFirstChild();
-		wtx.insertElementAsFirstChild(new QName("bla"));
-		wtx.commit();
-		assertEquals(2L, wtx.getRevisionNumber());
-		wtx.close();
+        wtx = session.beginWriteTransaction();
+        assertEquals(1L, wtx.getRevisionNumber());
+        wtx.moveToFirstChild();
+        wtx.insertElementAsFirstChild(new QName("bla"));
+        wtx.commit();
+        assertEquals(2L, wtx.getRevisionNumber());
+        wtx.close();
 
-		wtx = session.beginWriteTransaction();
-		assertEquals(2L, wtx.getRevisionNumber());
-		wtx.revertTo(0);
-		wtx.commit();
-		assertEquals(3L, wtx.getRevisionNumber());
-		wtx.close();
+        wtx = session.beginWriteTransaction();
+        assertEquals(2L, wtx.getRevisionNumber());
+        wtx.revertTo(0);
+        wtx.commit();
+        assertEquals(3L, wtx.getRevisionNumber());
+        wtx.close();
 
-		wtx = session.beginWriteTransaction();
-		assertEquals(3L, wtx.getRevisionNumber());
-		wtx.close();
+        wtx = session.beginWriteTransaction();
+        assertEquals(3L, wtx.getRevisionNumber());
+        wtx.close();
 
-		session.close();
-		database.close();
-	}
+        session.close();
+        database.close();
+    }
 }

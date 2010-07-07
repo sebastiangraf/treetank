@@ -20,7 +20,7 @@ package com.treetank.axis;
 
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
-import com.treetank.settings.ENodes;
+import com.treetank.node.ENodes;
 
 /**
  * <h1>NodeAxisTest</h1>
@@ -31,22 +31,22 @@ import com.treetank.settings.ENodes;
  */
 public class NodeFilter extends AbstractFilter implements IFilter {
 
-	/**
-	 * Default constructor.
-	 * 
-	 * @param rtx
-	 *            Transaction this filter is bound to.
-	 */
-	public NodeFilter(final IReadTransaction rtx) {
-		super(rtx);
-	}
+    /**
+     * Default constructor.
+     * 
+     * @param rtx
+     *            Transaction this filter is bound to.
+     */
+    public NodeFilter(final IReadTransaction rtx) {
+        super(rtx);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final boolean filter() {
-		return (getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND || getTransaction()
-				.getNode().getKind() == ENodes.TEXT_KIND);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public final boolean filter() {
+        return (getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND || getTransaction()
+                .getNode().getKind() == ENodes.TEXT_KIND);
+    }
 
 }

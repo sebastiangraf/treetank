@@ -43,8 +43,8 @@ public final class KeyPersistenter {
             returnVal = null;
             break;
         default:
-            throw new IllegalStateException(new StringBuilder("Kind ").append(
-                    kind).append(" is not known").toString());
+            throw new IllegalStateException(new StringBuilder("Kind ")
+                    .append(kind).append(" is not known").toString());
         }
 
         return returnVal;

@@ -35,8 +35,8 @@ public final class NodePageContainer {
      *            to be used as a base for this container.
      */
     public NodePageContainer(final NodePage complete) {
-        this(complete, new NodePage(complete.getNodePageKey(), complete
-                .getRevision()));
+        this(complete, new NodePage(complete.getNodePageKey(),
+                complete.getRevision()));
     }
 
     /**

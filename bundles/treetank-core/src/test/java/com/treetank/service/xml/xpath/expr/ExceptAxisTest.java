@@ -40,56 +40,56 @@ import com.treetank.utils.DocumentCreater;
  * 
  */
 public class ExceptAxisTest {
-	@Before
-	public void setUp() throws TreetankException {
-		TestHelper.deleteEverything();
-	}
+    @Before
+    public void setUp() throws TreetankException {
+        TestHelper.deleteEverything();
+    }
 
-	@After
-	public void tearDown() throws TreetankException {
-		TestHelper.closeEverything();
-	}
+    @After
+    public void tearDown() throws TreetankException {
+        TestHelper.closeEverything();
+    }
 
-	@Test
-	public void testExcept() throws TreetankException {
-		// Build simple test tree.
-		final IDatabase database = TestHelper
-				.getDatabase(PATHS.PATH1.getFile());
-		final ISession session = database.getSession();
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
-		wtx.commit();
-		IReadTransaction rtx = session.beginReadTransaction();
+    @Test
+    public void testExcept() throws TreetankException {
+        // Build simple test tree.
+        final IDatabase database = TestHelper
+                .getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        IReadTransaction rtx = session.beginReadTransaction();
 
-		rtx.moveTo(1L);
+        rtx.moveTo(1L);
 
-		IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-				"child::node() except b"), new long[] { 4L, 8L, 13L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                "child::node() except b"), new long[] { 4L, 8L, 13L });
 
-		IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-				"child::node() except child::node()[attribute::p:x]"),
-				new long[] { 4L, 5L, 8L, 13L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                "child::node() except child::node()[attribute::p:x]"),
+                new long[] { 4L, 5L, 8L, 13L });
 
-		IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-				"child::node()/parent::node() except self::node()"),
-				new long[] {});
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
+                "child::node()/parent::node() except self::node()"),
+                new long[] {});
 
-		IAxisTest
-				.testIAxisConventions(new XPathAxis(rtx,
-						"//node() except //text()"), new long[] { 1L, 5L, 9L,
-						7L, 11L });
+        IAxisTest
+                .testIAxisConventions(new XPathAxis(rtx,
+                        "//node() except //text()"), new long[] { 1L, 5L, 9L,
+                        7L, 11L });
 
-		rtx.moveTo(1L);
-		IAxisTest
-				.testIAxisConventions(new XPathAxis(rtx,
-						"b/preceding::node() except text()"), new long[] { 7L,
-						6L, 5L });
+        rtx.moveTo(1L);
+        IAxisTest
+                .testIAxisConventions(new XPathAxis(rtx,
+                        "b/preceding::node() except text()"), new long[] { 7L,
+                        6L, 5L });
 
-		rtx.close();
-		wtx.abort();
-		wtx.close();
-		session.close();
-		database.close();
-	}
+        rtx.close();
+        wtx.abort();
+        wtx.close();
+        session.close();
+        database.close();
+    }
 
 }

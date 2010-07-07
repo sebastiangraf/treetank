@@ -14,48 +14,48 @@ import com.treetank.settings.EDatabaseSetting;
 
 public class BerkeleyPersistentCacheTest {
 
-	private final NodePage[][] pages = new NodePage[LRUCache.CACHE_CAPACITY + 1][Integer
-			.parseInt(EDatabaseSetting.REVISION_TO_RESTORE
-					.getStandardProperty()) + 1];
+    private final NodePage[][] pages = new NodePage[LRUCache.CACHE_CAPACITY + 1][Integer
+            .parseInt(EDatabaseSetting.REVISION_TO_RESTORE
+                    .getStandardProperty()) + 1];
 
-	private ICache cache;
+    private ICache cache;
 
-	@Before
-	public void setUp() throws TreetankException {
-		TestHelper.deleteEverything();
-		cache = new BerkeleyPersistenceCache(new DatabaseConfiguration(
-				TestHelper.PATHS.PATH1.getFile()), 1);
-		for (int i = 0; i < pages.length; i++) {
-			final NodePage page = new NodePage(i, 0);
-			final NodePage[] revs = new NodePage[Integer
-					.parseInt(EDatabaseSetting.REVISION_TO_RESTORE
-							.getStandardProperty())];
+    @Before
+    public void setUp() throws TreetankException {
+        TestHelper.deleteEverything();
+        cache = new BerkeleyPersistenceCache(new DatabaseConfiguration(
+                TestHelper.PATHS.PATH1.getFile()), 1);
+        for (int i = 0; i < pages.length; i++) {
+            final NodePage page = new NodePage(i, 0);
+            final NodePage[] revs = new NodePage[Integer
+                    .parseInt(EDatabaseSetting.REVISION_TO_RESTORE
+                            .getStandardProperty())];
 
-			for (int j = 0; j < Integer
-					.parseInt(EDatabaseSetting.REVISION_TO_RESTORE
-							.getStandardProperty()); j++) {
-				pages[i][j + 1] = new NodePage(i, 0);
-				revs[j] = pages[i][j + 1];
-			}
-			pages[i][0] = page;
-			cache.put(i, new NodePageContainer(page));
-		}
-	}
+            for (int j = 0; j < Integer
+                    .parseInt(EDatabaseSetting.REVISION_TO_RESTORE
+                            .getStandardProperty()); j++) {
+                pages[i][j + 1] = new NodePage(i, 0);
+                revs[j] = pages[i][j + 1];
+            }
+            pages[i][0] = page;
+            cache.put(i, new NodePageContainer(page));
+        }
+    }
 
-	@Test
-	public void test() {
-		for (int i = 0; i < pages.length; i++) {
-			final NodePageContainer cont = cache.get(i);
-			final NodePage current = cont.getComplete();
-			assertEquals(pages[i][0], current);
+    @Test
+    public void test() {
+        for (int i = 0; i < pages.length; i++) {
+            final NodePageContainer cont = cache.get(i);
+            final NodePage current = cont.getComplete();
+            assertEquals(pages[i][0], current);
 
-		}
+        }
 
-		cache.clear();
-	}
+        cache.clear();
+    }
 
-	@After
-	public void tearDown() throws TreetankException {
-		TestHelper.closeEverything();
-	}
+    @After
+    public void tearDown() throws TreetankException {
+        TestHelper.closeEverything();
+    }
 }

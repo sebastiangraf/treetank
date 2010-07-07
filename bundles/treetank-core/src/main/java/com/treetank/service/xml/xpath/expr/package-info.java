@@ -1,7 +1,6 @@
-<html>
-  <body>
-    <h1>Package Expr</h1>
-    <p>
+/**
+<h1>Package Expr</h1>
+     <p>
       Contains all high level XPath expressions.
     </p>
     <p>
@@ -9,6 +8,7 @@
       return a singleton, like logical, literal or quantifier expressions.
       For all other expression the AbstractAxis has to be extended.
     </p>
-    
-  </body>
-</html>
+ * @author Tina Scherer, University of Konstanz
+ */
+package com.treetank.service.xml.xpath.expr;
+

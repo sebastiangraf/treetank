@@ -19,9 +19,9 @@
 package com.treetank.service.xml.xpath;
 
 import com.treetank.api.IItem;
+import com.treetank.node.ENodes;
 import com.treetank.service.xml.xpath.types.Type;
 import com.treetank.settings.EFixed;
-import com.treetank.settings.ENodes;
 import com.treetank.utils.NamePageHash;
 import com.treetank.utils.TypedValue;
 
@@ -36,343 +36,338 @@ import com.treetank.utils.TypedValue;
  */
 public class AtomicValue implements IItem {
 
-	/** value of the item as byte array. */
-	private byte[] mValue;
-
-	/** The item's value type. */
-	private int mType;
-
-	/**
-	 * The item's key. In case of an Atomic value this is always a negative to
-	 * make them distinguishable from nodes.
-	 */
-	private long mItemKey;
-
-	/**
-	 * Constructor. Initializes the internal state.
-	 * 
-	 * @param value
-	 *            the value of the Item
-	 * @param type
-	 *            the item's type
-	 */
-	public AtomicValue(final byte[] value, final int type) {
-
-		mValue = value;
-
-		mType = type;
-	}
-
-	/**
-	 * Constructor. Initializes the internal state.
-	 * 
-	 * @param value
-	 *            the value of the Item
-	 */
-	public AtomicValue(final boolean value) {
-
-		mValue = TypedValue.getBytes(Boolean.toString(value));
-		mType = NamePageHash.generateHashForString("xs:boolean");
-
-	}
-
-	/**
-	 * Constructor. Initializes the internal state.
-	 * 
-	 * @param value
-	 *            the value of the Item
-	 * @param type
-	 *            the item's type
-	 */
-	public AtomicValue(final Number value, final Type type) {
-
-		mValue = TypedValue.getBytes(value.toString());
-		mType = NamePageHash.generateHashForString(type.getStringRepr());
-	}
-
-	/**
-	 * Constructor. Initializes the internal state.
-	 * 
-	 * @param value
-	 *            the value of the Item
-	 * @param type
-	 *            the item's type
-	 */
-	public AtomicValue(final String value, final Type type) {
-
-		mValue = TypedValue.getBytes(value);
-		mType = NamePageHash.generateHashForString(type.getStringRepr());
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void setNodeKey(final long itemKey) {
-
-		mItemKey = itemKey;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean isNode() {
-
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public byte[] getRawValue() {
-
-		return mValue.clone();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public long getParentKey() {
-
-		return (Integer) EFixed.NULL_NODE_KEY.getStandardProperty();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean hasFirstChild() {
+    /** value of the item as byte array. */
+    private byte[] mValue;
+
+    /** The item's value type. */
+    private int mType;
+
+    /**
+     * The item's key. In case of an Atomic value this is always a negative to
+     * make them distinguishable from nodes.
+     */
+    private long mItemKey;
+
+    /**
+     * Constructor. Initializes the internal state.
+     * 
+     * @param value
+     *            the value of the Item
+     * @param type
+     *            the item's type
+     */
+    public AtomicValue(final byte[] value, final int type) {
+
+        mValue = value;
+
+        mType = type;
+    }
+
+    /**
+     * Constructor. Initializes the internal state.
+     * 
+     * @param value
+     *            the value of the Item
+     */
+    public AtomicValue(final boolean value) {
+
+        mValue = TypedValue.getBytes(Boolean.toString(value));
+        mType = NamePageHash.generateHashForString("xs:boolean");
+
+    }
+
+    /**
+     * Constructor. Initializes the internal state.
+     * 
+     * @param value
+     *            the value of the Item
+     * @param type
+     *            the item's type
+     */
+    public AtomicValue(final Number value, final Type type) {
+
+        mValue = TypedValue.getBytes(value.toString());
+        mType = NamePageHash.generateHashForString(type.getStringRepr());
+    }
+
+    /**
+     * Constructor. Initializes the internal state.
+     * 
+     * @param value
+     *            the value of the Item
+     * @param type
+     *            the item's type
+     */
+    public AtomicValue(final String value, final Type type) {
+
+        mValue = TypedValue.getBytes(value);
+        mType = NamePageHash.generateHashForString(type.getStringRepr());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setNodeKey(final long itemKey) {
+
+        mItemKey = itemKey;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isNode() {
+
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public byte[] getRawValue() {
+
+        return mValue.clone();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public long getParentKey() {
+
+        return (Integer) EFixed.NULL_NODE_KEY.getStandardProperty();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean hasFirstChild() {
 
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean hasLeftSibling() {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean hasLeftSibling() {
 
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean hasParent() {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean hasParent() {
 
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean hasRightSibling() {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean hasRightSibling() {
 
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public long getAttributeKey(final int index) {
-
-		return (Integer) EFixed.NULL_NODE_KEY.getStandardProperty();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public long getNodeKey() {
-
-		return mItemKey;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public int getAttributeCount() {
-
-		return 0;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public long getChildCount() {
-
-		return 0;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public ENodes getKind() {
-
-		return ENodes.UNKOWN_KIND;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public int getNameKey() {
-
-		return 0;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public long getNamespaceKey(final int index) {
-
-		return (Integer) EFixed.NULL_NODE_KEY.getStandardProperty();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public int getNamespaceCount() {
-
-		return 0;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public int getURIKey() {
-
-		return -1;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean isAttribute() {
-
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean isDocumentRoot() {
-
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean isElement() {
-
-		return false;
-	}
-
-	/**
-	 * Check if is fulltext
-	 * 
-	 * @return true if fulltext, false otherwise
-	 */
-	public boolean isFullText() {
-
-		return false;
-	}
-
-	/**
-	 * Test if the lead is tes
-	 * 
-	 * @return true if fulltest leaf, false otherwise
-	 */
-	public boolean isFullTextLeaf() {
-
-		return false;
-	}
-
-	/**
-	 * Test if the root is full text
-	 * 
-	 * @return true if fulltest root, false otherwise
-	 */
-	public boolean isFullTextRoot() {
-
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean isText() {
-
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public final int getTypeKey() {
-		return mType;
-	}
-
-	/**
-	 * Getting the type of the value
-	 * 
-	 * @return the type of this value
-	 */
-	public final String getType() {
-		return Type.getType(mType).getStringRepr();
-	}
-
-	/**
-	 * Returns the atomic value as an integer.
-	 * 
-	 * @return the value as an integer
-	 */
-	public int getInt() {
-
-		return (int) getDBL();
-	}
-
-	/**
-	 * Returns the atomic value as a boolean.
-	 * 
-	 * @return the value as a boolean
-	 */
-	public boolean getBool() {
-
-		return Boolean.parseBoolean(TypedValue.parseString(mValue));
-	}
-
-	/**
-	 * Returns the atomic value as a float.
-	 * 
-	 * @return the value as a float
-	 */
-	public float getFLT() {
-
-		return Float.parseFloat(TypedValue.parseString(mValue));
-	}
-
-	/**
-	 * Returns the atomic value as a double.
-	 * 
-	 * @return the value as a double
-	 */
-	public double getDBL() {
-
-		return Double.parseDouble(TypedValue.parseString(mValue));
-	}
-
-	/**
-	 * To String method
-	 * 
-	 * @return String String representation of this node
-	 */
-	public String toString() {
-		final StringBuilder builder = new StringBuilder();
-		builder.append("Atomic Value: ");
-		builder.append(new String(mValue));
-		return builder.toString();
-	}
-
-	@Override
-	public boolean isLeaf() {
-		return true;
-	}
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public long getAttributeKey(final int index) {
+
+        return (Integer) EFixed.NULL_NODE_KEY.getStandardProperty();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public long getNodeKey() {
+
+        return mItemKey;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getAttributeCount() {
+
+        return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public long getChildCount() {
+
+        return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ENodes getKind() {
+
+        return ENodes.UNKOWN_KIND;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getNameKey() {
+
+        return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public long getNamespaceKey(final int index) {
+
+        return (Integer) EFixed.NULL_NODE_KEY.getStandardProperty();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getNamespaceCount() {
+
+        return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getURIKey() {
+
+        return -1;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isAttribute() {
+
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isDocumentRoot() {
+
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isElement() {
+
+        return false;
+    }
+
+    /**
+     * Check if is fulltext
+     * 
+     * @return true if fulltext, false otherwise
+     */
+    public boolean isFullText() {
+
+        return false;
+    }
+
+    /**
+     * Test if the lead is tes
+     * 
+     * @return true if fulltest leaf, false otherwise
+     */
+    public boolean isFullTextLeaf() {
+
+        return false;
+    }
+
+    /**
+     * Test if the root is full text
+     * 
+     * @return true if fulltest root, false otherwise
+     */
+    public boolean isFullTextRoot() {
+
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isText() {
+
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public final int getTypeKey() {
+        return mType;
+    }
+
+    /**
+     * Getting the type of the value
+     * 
+     * @return the type of this value
+     */
+    public final String getType() {
+        return Type.getType(mType).getStringRepr();
+    }
+
+    /**
+     * Returns the atomic value as an integer.
+     * 
+     * @return the value as an integer
+     */
+    public int getInt() {
+
+        return (int) getDBL();
+    }
+
+    /**
+     * Returns the atomic value as a boolean.
+     * 
+     * @return the value as a boolean
+     */
+    public boolean getBool() {
+
+        return Boolean.parseBoolean(TypedValue.parseString(mValue));
+    }
+
+    /**
+     * Returns the atomic value as a float.
+     * 
+     * @return the value as a float
+     */
+    public float getFLT() {
+
+        return Float.parseFloat(TypedValue.parseString(mValue));
+    }
+
+    /**
+     * Returns the atomic value as a double.
+     * 
+     * @return the value as a double
+     */
+    public double getDBL() {
+
+        return Double.parseDouble(TypedValue.parseString(mValue));
+    }
+
+    /**
+     * To String method
+     * 
+     * @return String String representation of this node
+     */
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append("Atomic Value: ");
+        builder.append(new String(mValue));
+        return builder.toString();
+    }
 
 }

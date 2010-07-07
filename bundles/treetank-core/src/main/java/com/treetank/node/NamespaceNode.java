@@ -18,9 +18,6 @@
 
 package com.treetank.node;
 
-import com.treetank.io.ITTSource;
-import com.treetank.settings.ENodes;
-
 /**
  * <h1>NamespaceNode</h1>
  * 
@@ -28,123 +25,85 @@ import com.treetank.settings.ENodes;
  * Node representing a namespace.
  * </p>
  */
-public final class NamespaceNode extends AbstractNode {
+public final class NamespaceNode extends AbsNode {
 
-	private static final int SIZE = 4;
+    protected static final int NAME_KEY = 2;
+    protected static final int URI_KEY = 3;
 
-	private static final int PARENT_KEY = 1;
+    NamespaceNode(final long[] builder) {
+        super(builder);
+        // mData[NAME_KEY] = builder.getNameKey();
+        // mData[URI_KEY] = builder.getUriKey();
+    }
 
-	private static final int URI_KEY = 2;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ENodes getKind() {
+        return ENodes.NAMESPACE_KIND;
+    }
 
-	private static final int NAME_KEY = 3;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getNameKey() {
+        return (int) mData[NAME_KEY];
+    }
 
-	/**
-	 * Create namespace node.
-	 * 
-	 * @param nodeKey
-	 *            Key of this namespace
-	 * @param uriKey
-	 *            Key of URI.
-	 * @param nameKey
-	 *            Key of prefix.
-	 * @param parentKey
-	 *            Key of the parent.
-	 */
-	public NamespaceNode(final long nodeKey, final long parentKey,
-			final int uriKey, final int nameKey) {
-		super(SIZE, nodeKey);
-		mData[PARENT_KEY] = nodeKey - parentKey;
-		mData[URI_KEY] = uriKey;
-		mData[NAME_KEY] = nameKey;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setNameKey(final int nameKey) {
+        mData[NAME_KEY] = nameKey;
+    }
 
-	/**
-	 * Clone namespace node.
-	 * 
-	 * @param namespace
-	 *            Namespace node to clone.
-	 */
-	protected NamespaceNode(final AbstractNode namespace) {
-		super(namespace);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getURIKey() {
+        return (int) mData[URI_KEY];
+    }
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param in
-	 *            byteBuffer with the relevant data.
-	 */
-	protected NamespaceNode(final ITTSource in) {
-		super(SIZE, in);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setURIKey(final int uriKey) {
+        mData[URI_KEY] = uriKey;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean hasParent() {
-		return true;
-	}
+    @Override
+    public AbsNode clone() {
+        final AbsNode toClone = new NamespaceNode(AbsNode.cloneData(mData));
+        return toClone;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public long getParentKey() {
-		return mData[NODE_KEY] - mData[PARENT_KEY];
-	}
+    public static final long[] createData(final long nodeKey,
+            final long parentKey, final int uriKey, final int prefixKey) {
+        final long[] data = new long[ENodes.NAMESPACE_KIND.getSize()];
+        data[AbsNode.NODE_KEY] = nodeKey;
+        data[AbsNode.PARENT_KEY] = parentKey;
+        data[NamespaceNode.URI_KEY] = uriKey;
+        data[NamespaceNode.NAME_KEY] = prefixKey;
+        return data;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setParentKey(final long parentKey) {
-		mData[PARENT_KEY] = mData[NODE_KEY] - parentKey;
-	}
+    public static final long[] createData(final long nodeKey,
+            final NamespaceNode node) {
+        return createData(nodeKey, node.getParentKey(), node.getURIKey(),
+                node.getNameKey());
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ENodes getKind() {
-		return ENodes.NAMESPACE_KIND;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int getNameKey() {
-		return (int) mData[NAME_KEY];
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setNameKey(final int nameKey) {
-		mData[NAME_KEY] = nameKey;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int getURIKey() {
-		return (int) mData[URI_KEY];
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setURIKey(final int uriKey) {
-		mData[URI_KEY] = uriKey;
-	}
-
-	@Override
-	public boolean isLeaf() {
-		return true;
-	}
+    @Override
+    public String toString() {
+        final StringBuilder returnVal = new StringBuilder(super.toString());
+        returnVal.append("\n\ttype key: ").append(getTypeKey())
+                .append("\n\tname key: ").append(getNameKey()).toString();
+        return returnVal.toString();
+    }
 
 }

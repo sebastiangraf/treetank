@@ -32,33 +32,33 @@ import com.treetank.utils.DocumentCreater;
 
 public class SelfAxisTest {
 
-	@Before
-	public void setUp() throws TreetankException {
-		TestHelper.deleteEverything();
-	}
+    @Before
+    public void setUp() throws TreetankException {
+        TestHelper.deleteEverything();
+    }
 
-	@Test
-	public void testIterate() throws TreetankException {
-		final IDatabase database = TestHelper
-				.getDatabase(PATHS.PATH1.getFile());
-		final ISession session = database.getSession();
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
+    @Test
+    public void testIterate() throws TreetankException {
+        final IDatabase database = TestHelper
+                .getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
 
-		wtx.moveTo(4L);
-		IAxisTest.testIAxisConventions(new SelfAxis(wtx), new long[] { 4L });
+        wtx.moveTo(4L);
+        IAxisTest.testIAxisConventions(new SelfAxis(wtx), new long[] { 4L });
 
-		wtx.moveTo(8L);
-		IAxisTest.testIAxisConventions(new SelfAxis(wtx), new long[] { 8L });
+        wtx.moveTo(8L);
+        IAxisTest.testIAxisConventions(new SelfAxis(wtx), new long[] { 8L });
 
-		wtx.abort();
-		wtx.close();
-		session.close();
-		database.close();
-	}
+        wtx.abort();
+        wtx.close();
+        session.close();
+        database.close();
+    }
 
-	@After
-	public void tearDown() throws TreetankException {
-		TestHelper.closeEverything();
-	}
+    @After
+    public void tearDown() throws TreetankException {
+        TestHelper.closeEverything();
+    }
 }

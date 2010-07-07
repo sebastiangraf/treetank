@@ -25,7 +25,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.axis.FilterAxis;
 import com.treetank.axis.TextFilter;
-import com.treetank.settings.ENodes;
+import com.treetank.node.ENodes;
 import com.treetank.utils.TypedValue;
 
 /**
@@ -42,101 +42,101 @@ import com.treetank.utils.TypedValue;
  */
 public class FNString extends AbstractFunction {
 
-	/**
-	 * Constructor. Initializes internal state and do a statical analysis
-	 * concerning the function's arguments.
-	 * 
-	 * @param rtx
-	 *            Transaction to operate on
-	 * @param args
-	 *            List of function arguments
-	 * @param min
-	 *            min number of allowed function arguments
-	 * @param max
-	 *            max number of allowed function arguments
-	 * @param returnType
-	 *            the type that the function's result will have
-	 */
-	public FNString(final IReadTransaction rtx, final List<IAxis> args,
-			final int min, final int max, final int returnType) {
+    /**
+     * Constructor. Initializes internal state and do a statical analysis
+     * concerning the function's arguments.
+     * 
+     * @param rtx
+     *            Transaction to operate on
+     * @param args
+     *            List of function arguments
+     * @param min
+     *            min number of allowed function arguments
+     * @param max
+     *            max number of allowed function arguments
+     * @param returnType
+     *            the type that the function's result will have
+     */
+    public FNString(final IReadTransaction rtx, final List<IAxis> args,
+            final int min, final int max, final int returnType) {
 
-		super(rtx, args, min, max, returnType);
-	}
+        super(rtx, args, min, max, returnType);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected byte[] computeResult() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected byte[] computeResult() {
 
-		String value;
+        String value;
 
-		if (getArgs().size() == 0) {
-			value = getStrValue();
-		} else {
-			IAxis axis = getArgs().get(0);
-			StringBuilder val = new StringBuilder();
-			while (axis.hasNext()) {
-				String nodeValue = getStrValue();
-				if (!nodeValue.equals("")) {
-					if (val.length() > 0) {
-						val.append(" ");
-					}
-					val.append(nodeValue);
-				}
-			}
-			value = val.toString();
-		}
+        if (getArgs().size() == 0) {
+            value = getStrValue();
+        } else {
+            IAxis axis = getArgs().get(0);
+            StringBuilder val = new StringBuilder();
+            while (axis.hasNext()) {
+                String nodeValue = getStrValue();
+                if (!nodeValue.equals("")) {
+                    if (val.length() > 0) {
+                        val.append(" ");
+                    }
+                    val.append(nodeValue);
+                }
+            }
+            value = val.toString();
+        }
 
-		return TypedValue.getBytes(value);
+        return TypedValue.getBytes(value);
 
-	}
+    }
 
-	/**
-	 * Returns the string value of an item. If the item is the empty sequence,
-	 * the zero-length string is returned. If the item is a node, the function
-	 * returns the string-value of the node, as obtained using the
-	 * dm:string-value accessor defined in the <a
-	 * href="http://www.w3.org/TR/xpath-datamodel/#dm-string-value">Section 5.13
-	 * string-value AccessorDM</a>. If the item is an atomic value, then the
-	 * function returns the same string as is returned by the expression " $arg
-	 * cast as xs:string " (see 17 Casting).
-	 * 
-	 * @return the context item's string value.
-	 */
-	private String getStrValue() {
+    /**
+     * Returns the string value of an item. If the item is the empty sequence,
+     * the zero-length string is returned. If the item is a node, the function
+     * returns the string-value of the node, as obtained using the
+     * dm:string-value accessor defined in the <a
+     * href="http://www.w3.org/TR/xpath-datamodel/#dm-string-value">Section 5.13
+     * string-value AccessorDM</a>. If the item is an atomic value, then the
+     * function returns the same string as is returned by the expression " $arg
+     * cast as xs:string " (see 17 Casting).
+     * 
+     * @return the context item's string value.
+     */
+    private String getStrValue() {
 
-		StringBuilder value = new StringBuilder();
+        StringBuilder value = new StringBuilder();
 
-		if (getTransaction().getNode().getNodeKey() >= 0) { // is node
-			if (getTransaction().getNode().getKind() == ENodes.ATTRIBUTE_KIND
-					|| getTransaction().getNode().getKind() == ENodes.TEXT_KIND) {
-				value.append(TypedValue.parseString(getTransaction().getNode()
-						.getRawValue()));
-			} else if (getTransaction().getNode().getKind() == ENodes.ROOT_KIND
-					|| getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND) {
-				IAxis axis = new FilterAxis(
-						new DescendantAxis(getTransaction()), new TextFilter(
-								getTransaction()));
-				while (axis.hasNext()) {
-					if (value.length() > 0) {
-						value.append(" ");
-					}
-					value.append(TypedValue.parseString(getTransaction()
-							.getNode().getRawValue()));
+        if (getTransaction().getNode().getNodeKey() >= 0) { // is node
+            if (getTransaction().getNode().getKind() == ENodes.ATTRIBUTE_KIND
+                    || getTransaction().getNode().getKind() == ENodes.TEXT_KIND) {
+                value.append(TypedValue.parseString(getTransaction().getNode()
+                        .getRawValue()));
+            } else if (getTransaction().getNode().getKind() == ENodes.ROOT_KIND
+                    || getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND) {
+                IAxis axis = new FilterAxis(
+                        new DescendantAxis(getTransaction()), new TextFilter(
+                                getTransaction()));
+                while (axis.hasNext()) {
+                    if (value.length() > 0) {
+                        value.append(" ");
+                    }
+                    value.append(TypedValue.parseString(getTransaction()
+                            .getNode().getRawValue()));
 
-				}
+                }
 
-			} else {
-				throw new IllegalStateException();
-			}
+            } else {
+                throw new IllegalStateException();
+            }
 
-		} else {
-			value.append(TypedValue.parseString(getTransaction().getNode()
-					.getRawValue()));
-		}
+        } else {
+            value.append(TypedValue.parseString(getTransaction().getNode()
+                    .getRawValue()));
+        }
 
-		return value.toString();
-	}
+        return value.toString();
+    }
 
 }

@@ -38,129 +38,129 @@ import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.axis.PostOrderAxis;
 import com.treetank.exception.TreetankException;
+import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
-import com.treetank.settings.ENodes;
 import com.treetank.utils.DocumentCreater;
 
 public class MultipleCommitTest {
 
-	@Before
-	public void setUp() throws TreetankException {
-		TestHelper.deleteEverything();
-	}
+    @Before
+    public void setUp() throws TreetankException {
+        TestHelper.deleteEverything();
+    }
 
-	@After
-	public void tearDown() throws TreetankException {
-		TestHelper.closeEverything();
-	}
+    @After
+    public void tearDown() throws TreetankException {
+        TestHelper.closeEverything();
+    }
 
-	@Test
-	public void test() throws TreetankException {
-		final IDatabase database = TestHelper
-				.getDatabase(PATHS.PATH1.getFile());
-		final ISession session = database.getSession();
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		TestCase.assertEquals(0L, wtx.getRevisionNumber());
+    @Test
+    public void test() throws TreetankException {
+        final IDatabase database = TestHelper
+                .getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        TestCase.assertEquals(0L, wtx.getRevisionNumber());
 
-		wtx.commit();
+        wtx.commit();
 
-		wtx.insertElementAsFirstChild(new QName("foo"));
-		TestCase.assertEquals(1L, wtx.getRevisionNumber());
-		wtx.moveTo(1);
-		assertEquals(new QName("foo"), wtx.getQNameOfCurrentNode());
-		wtx.abort();
+        wtx.insertElementAsFirstChild(new QName("foo"));
+        TestCase.assertEquals(1L, wtx.getRevisionNumber());
+        wtx.moveTo(1);
+        assertEquals(new QName("foo"), wtx.getQNameOfCurrentNode());
+        wtx.abort();
 
-		TestCase.assertEquals(1L, wtx.getRevisionNumber());
+        TestCase.assertEquals(1L, wtx.getRevisionNumber());
 
-		wtx.close();
+        wtx.close();
 
-		session.close();
-		database.close();
-	}
+        session.close();
+        database.close();
+    }
 
-	@Test
-	public void testAutoCommit() throws TreetankException {
-		final IDatabase database = TestHelper
-				.getDatabase(PATHS.PATH1.getFile());
-		final ISession session = database.getSession();
-		final IWriteTransaction wtx = session.beginWriteTransaction(100, 1);
-		DocumentCreater.create(wtx);
-		wtx.commit();
-		wtx.close();
+    @Test
+    public void testAutoCommit() throws TreetankException {
+        final IDatabase database = TestHelper
+                .getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction(100, 1);
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        wtx.close();
 
-		final IReadTransaction rtx = session.beginReadTransaction();
-		rtx.close();
-		session.close();
-		database.close();
-	}
+        final IReadTransaction rtx = session.beginReadTransaction();
+        rtx.close();
+        session.close();
+        database.close();
+    }
 
-	@Test
-	public void testRemove() throws TreetankException {
-		final IDatabase database = TestHelper
-				.getDatabase(PATHS.PATH1.getFile());
-		final ISession session = database.getSession();
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
-		wtx.commit();
-		TestCase.assertEquals(1L, wtx.getRevisionNumber());
+    @Test
+    public void testRemove() throws TreetankException {
+        final IDatabase database = TestHelper
+                .getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        TestCase.assertEquals(1L, wtx.getRevisionNumber());
 
-		wtx.moveToDocumentRoot();
-		wtx.moveToFirstChild();
-		wtx.remove();
-		wtx.commit();
-		TestCase.assertEquals(2L, wtx.getRevisionNumber());
+        wtx.moveToDocumentRoot();
+        wtx.moveToFirstChild();
+        wtx.remove();
+        wtx.commit();
+        TestCase.assertEquals(2L, wtx.getRevisionNumber());
 
-		wtx.close();
-		session.close();
-		database.close();
+        wtx.close();
+        session.close();
+        database.close();
 
-	}
+    }
 
-	@Test
-	public void testAttributeRemove() throws TreetankException {
-		final IDatabase database = TestHelper
-				.getDatabase(PATHS.PATH1.getFile());
-		final ISession session = database.getSession();
-		final IWriteTransaction wtx = session.beginWriteTransaction();
-		DocumentCreater.create(wtx);
-		wtx.commit();
-		wtx.moveToDocumentRoot();
+    @Test
+    public void testAttributeRemove() throws TreetankException {
+        final IDatabase database = TestHelper
+                .getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        wtx.moveToDocumentRoot();
 
-		final IAxis postorderAxis = new PostOrderAxis(wtx);
-		while (postorderAxis.hasNext()) {
-			postorderAxis.next();
-			if (wtx.getNode().getKind() == ENodes.ELEMENT_KIND
-					&& ((ElementNode) wtx.getNode()).getAttributeCount() > 0) {
-				for (int i = 0, attrCount = ((ElementNode) wtx.getNode())
-						.getAttributeCount(); i < attrCount; i++) {
-					wtx.moveToAttribute(i);
-					wtx.remove();
-				}
-			}
-		}
-		wtx.commit();
-		wtx.moveToDocumentRoot();
+        final IAxis postorderAxis = new PostOrderAxis(wtx);
+        while (postorderAxis.hasNext()) {
+            postorderAxis.next();
+            if (wtx.getNode().getKind() == ENodes.ELEMENT_KIND
+                    && ((ElementNode) wtx.getNode()).getAttributeCount() > 0) {
+                for (int i = 0, attrCount = ((ElementNode) wtx.getNode())
+                        .getAttributeCount(); i < attrCount; i++) {
+                    wtx.moveToAttribute(i);
+                    wtx.remove();
+                }
+            }
+        }
+        wtx.commit();
+        wtx.moveToDocumentRoot();
 
-		int attrTouch = 0;
-		final IAxis descAxis = new DescendantAxis(wtx);
-		while (descAxis.hasNext()) {
-			descAxis.next();
-			if (wtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
-				for (int i = 0, attrCount = ((ElementNode) wtx.getNode())
-						.getAttributeCount(); i < attrCount; i++) {
-					if (wtx.moveToAttribute(i)) {
-						attrTouch++;
-					} else {
-						throw new IllegalStateException("Should never occur!");
-					}
-				}
-			}
-		}
-		wtx.close();
-		session.close();
-		database.close();
-		assertEquals(0, attrTouch);
+        int attrTouch = 0;
+        final IAxis descAxis = new DescendantAxis(wtx);
+        while (descAxis.hasNext()) {
+            descAxis.next();
+            if (wtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
+                for (int i = 0, attrCount = ((ElementNode) wtx.getNode())
+                        .getAttributeCount(); i < attrCount; i++) {
+                    if (wtx.moveToAttribute(i)) {
+                        attrTouch++;
+                    } else {
+                        throw new IllegalStateException("Should never occur!");
+                    }
+                }
+            }
+        }
+        wtx.close();
+        session.close();
+        database.close();
+        assertEquals(0, attrTouch);
 
-	}
+    }
 
 }

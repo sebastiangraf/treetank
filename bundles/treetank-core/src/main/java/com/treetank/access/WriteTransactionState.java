@@ -18,6 +18,8 @@
 
 package com.treetank.access;
 
+import javax.xml.namespace.QName;
+
 import com.treetank.api.IItem;
 import com.treetank.cache.ICache;
 import com.treetank.cache.NodePageContainer;
@@ -25,12 +27,13 @@ import com.treetank.cache.TransactionLogCache;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.io.IWriter;
-import com.treetank.node.AbstractNode;
+import com.treetank.node.AbsNode;
+import com.treetank.node.AbsStructNode;
 import com.treetank.node.AttributeNode;
 import com.treetank.node.DeletedNode;
+import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
 import com.treetank.node.NamespaceNode;
-import com.treetank.node.NodePersistenter;
 import com.treetank.node.TextNode;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.IndirectPage;
@@ -40,6 +43,7 @@ import com.treetank.page.PageReference;
 import com.treetank.page.RevisionRootPage;
 import com.treetank.page.UberPage;
 import com.treetank.settings.EDatabaseSetting;
+import com.treetank.settings.EFixed;
 import com.treetank.settings.ERevisioning;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.ItemList;
@@ -102,13 +106,14 @@ public final class WriteTransactionState extends ReadTransactionState {
     /**
      * Prepare a node for modification. This is getting the node from the
      * (persistence) layer, storing the page in the cache and setting up the
-     * node for upcoming modification.
+     * node for upcoming modification. Note that this only occurs for
+     * {@link AbsStructNode}s.
      * 
      * @param nodeKey
      *            key of the node to be modified
-     * @return an {@link AbstractNode} instance
+     * @return an {@link AbsNodeStruc} instance
      */
-    protected AbstractNode prepareNodeForModification(final long nodeKey)
+    protected AbsNode prepareNodeForModification(final long nodeKey)
             throws TreetankIOException {
         if (nodePageCon != null) {
             throw new IllegalStateException();
@@ -118,15 +123,14 @@ public final class WriteTransactionState extends ReadTransactionState {
         final int nodePageOffset = nodePageOffset(nodeKey);
         prepareNodePage(nodePageKey);
 
-        AbstractNode node = this.nodePageCon.getModified().getNode(
-                nodePageOffset);
+        AbsNode node = this.nodePageCon.getModified().getNode(nodePageOffset);
         if (node == null) {
-            final AbstractNode oldNode = this.nodePageCon.getComplete()
-                    .getNode(nodePageOffset);
+            final AbsNode oldNode = this.nodePageCon.getComplete().getNode(
+                    nodePageOffset);
             if (oldNode == null) {
-                throw new IllegalStateException();
+                throw new TreetankIOException("Cannot retrieve node from cache");
             }
-            node = NodePersistenter.createNode(oldNode);
+            node = oldNode.clone();
             this.nodePageCon.getModified().setNode(nodePageOffset, node);
         }
         return node;
@@ -139,7 +143,7 @@ public final class WriteTransactionState extends ReadTransactionState {
      * @param node
      *            the node to be modified.
      */
-    protected void finishNodeModification(final AbstractNode node) {
+    protected void finishNodeModification(final AbsNode node) {
         final long nodePageKey = nodePageKey(node.getNodeKey());
         if (nodePageCon == null || node == null || log.get(nodePageKey) == null) {
             throw new IllegalStateException();
@@ -155,14 +159,13 @@ public final class WriteTransactionState extends ReadTransactionState {
      * Create fresh node and prepare node nodePageReference for modifications
      * (COW).
      * 
-     * @param <N>
+     * @param AbsNode
      *            Subclass of AbstractNode.
      * @param node
      *            node to add.
      * @return Unmodified node from parameter for convenience.
      */
-    private <N extends AbstractNode> N createNode(final N node)
-            throws TreetankIOException {
+    protected AbsNode createNode(final AbsNode node) throws TreetankIOException {
         // Allocate node key and increment node count.
         mNewRoot.incrementMaxNodeKey();
         // Prepare node nodePageReference (COW).
@@ -177,33 +180,85 @@ public final class WriteTransactionState extends ReadTransactionState {
         return node;
     }
 
+    protected ElementNode createElementNode(final ElementNode oldNode)
+            throws TreetankIOException {
+        final long[] data = ElementNode.createData(
+                mNewRoot.getMaxNodeKey() + 1, oldNode);
+        final ElementNode newNode = (ElementNode) createNode(ENodes.ELEMENT_KIND
+                .createNodeFromScratch(data, null));
+        return newNode;
+    }
+
     protected ElementNode createElementNode(final long parentKey,
-            final long firstChildKey, final long leftSiblingKey,
-            final long rightSiblingKey, final int nameKey, final int uriKey,
-            final int type) throws TreetankIOException {
-        return createNode(new ElementNode(mNewRoot.getMaxNodeKey() + 1,
-                parentKey, firstChildKey, leftSiblingKey, rightSiblingKey,
-                nameKey, uriKey, type));
+            final long leftSibKey, final long rightSibKey, final QName name)
+            throws TreetankIOException {
+
+        final int nameKey = createNameKey(buildName(name));
+        final int namespaceKey = createNameKey(name.getNamespaceURI());
+        final int typeKey = createNameKey("xs:untyped");
+
+        final long[] data = ElementNode.createData(
+                mNewRoot.getMaxNodeKey() + 1, parentKey, leftSibKey,
+                rightSibKey, (Long) EFixed.NULL_NODE_KEY.getStandardProperty(),
+                0, nameKey, namespaceKey, typeKey);
+
+        return (ElementNode) createNode(ENodes.ELEMENT_KIND
+                .createNodeFromScratch(data, null));
+    }
+
+    protected TextNode createTextNode(final TextNode node)
+            throws TreetankIOException {
+        final long[] data = TextNode.createData(mNewRoot.getMaxNodeKey() + 1,
+                node);
+        return (TextNode) createNode(ENodes.TEXT_KIND.createNodeFromScratch(
+                data, node.getRawValue()));
+    }
+
+    protected TextNode createTextNode(final long parentKey,
+            final long leftSibKey, final long rightSibKey, final byte[] value)
+            throws TreetankIOException {
+        final int typeKey = createNameKey("xs:untyped");
+        final long[] data = TextNode.createData(mNewRoot.getMaxNodeKey() + 1,
+                parentKey, leftSibKey, rightSibKey, typeKey);
+        return (TextNode) createNode(ENodes.TEXT_KIND.createNodeFromScratch(
+                data, value));
+    }
+
+    protected AttributeNode createAttributeNode(final AttributeNode node)
+            throws TreetankIOException {
+        final long[] data = AttributeNode.createData(
+                mNewRoot.getMaxNodeKey() + 1, node);
+        return (AttributeNode) createNode(ENodes.ATTRIBUTE_KIND
+                .createNodeFromScratch(data, node.getRawValue()));
     }
 
     protected AttributeNode createAttributeNode(final long parentKey,
-            final int nameKey, final int uriKey, final int type,
-            final byte[] value) throws TreetankIOException {
-        return createNode(new AttributeNode(mNewRoot.getMaxNodeKey() + 1,
-                parentKey, nameKey, uriKey, type, value));
+            final QName name, final byte[] value) throws TreetankIOException {
+
+        final int nameKey = createNameKey(buildName(name));
+        final int namespaceKey = createNameKey(name.getNamespaceURI());
+        final int typeKey = createNameKey("xs:untypedAtomic");
+        final long[] data = AttributeNode.createData(
+                mNewRoot.getMaxNodeKey() + 1, parentKey, nameKey, namespaceKey,
+                typeKey);
+        return (AttributeNode) createNode(ENodes.ATTRIBUTE_KIND
+                .createNodeFromScratch(data, value));
+    }
+
+    protected NamespaceNode createNamespaceNode(final NamespaceNode node)
+            throws TreetankIOException {
+        final long[] data = NamespaceNode.createData(
+                mNewRoot.getMaxNodeKey() + 1, node);
+        return (NamespaceNode) createNode(ENodes.NAMESPACE_KIND
+                .createNodeFromScratch(data, null));
     }
 
     protected NamespaceNode createNamespaceNode(final long parentKey,
             final int uriKey, final int prefixKey) throws TreetankIOException {
-        return createNode(new NamespaceNode(mNewRoot.getMaxNodeKey() + 1,
-                parentKey, uriKey, prefixKey));
-    }
-
-    protected TextNode createTextNode(final long parentKey,
-            final long leftSiblingKey, final long rightSiblingKey,
-            final int valueType, final byte[] value) throws TreetankIOException {
-        return createNode(new TextNode(mNewRoot.getMaxNodeKey() + 1, parentKey,
-                leftSiblingKey, rightSiblingKey, valueType, value));
+        final long[] data = NamespaceNode.createData(
+                mNewRoot.getMaxNodeKey() + 1, parentKey, uriKey, prefixKey);
+        return (NamespaceNode) createNode(ENodes.NAMESPACE_KIND
+                .createNodeFromScratch(data, null));
     }
 
     /**
@@ -214,12 +269,13 @@ public final class WriteTransactionState extends ReadTransactionState {
      * @throws TreetankIOException
      *             if the removal fails
      */
-    protected void removeNode(final AbstractNode node)
-            throws TreetankIOException {
+    protected void removeNode(final AbsNode node) throws TreetankIOException {
         final long nodePageKey = nodePageKey(node.getNodeKey());
         prepareNodePage(nodePageKey);
-        final DeletedNode delNode = new DeletedNode(node.getNodeKey());
-
+        final long[] data = DeletedNode.createData(node.getNodeKey(),
+                node.getParentKey());
+        final AbsNode delNode = ENodes.DELETE_KIND.createNodeFromScratch(data,
+                null);
         nodePageCon.getModified().setNode(nodePageOffset(node.getNodeKey()),
                 delNode);
         nodePageCon.getComplete().setNode(nodePageOffset(node.getNodeKey()),
@@ -452,8 +508,8 @@ public final class WriteTransactionState extends ReadTransactionState {
         if (cont == null) {
 
             // Indirect reference.
-            PageReference reference = prepareLeafOfTree(mNewRoot
-                    .getIndirectPageReference(), nodePageKey);
+            PageReference reference = prepareLeafOfTree(
+                    mNewRoot.getIndirectPageReference(), nodePageKey);
 
             if (!reference.isInstantiated()) {
 
@@ -576,6 +632,25 @@ public final class WriteTransactionState extends ReadTransactionState {
             // TODO implement for MultiWriteTrans
             // Refer to issue #203
         }
+    }
+
+    /**
+     * Building name consisting out of prefix and name. NamespaceUri is not used
+     * over here.
+     * 
+     * @param qname
+     *            the QName of an element
+     * @return a string with [prefix:]localname
+     */
+    private static final String buildName(final QName qname) {
+        String name;
+        if (qname.getPrefix().isEmpty()) {
+            name = qname.getLocalPart();
+        } else {
+            name = new StringBuilder(qname.getPrefix()).append(":")
+                    .append(qname.getLocalPart()).toString();
+        }
+        return name;
     }
 
 }

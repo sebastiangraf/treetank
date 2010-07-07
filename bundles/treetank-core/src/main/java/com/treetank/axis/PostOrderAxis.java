@@ -20,7 +20,7 @@ package com.treetank.axis;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
-import com.treetank.node.IStructuralNode;
+import com.treetank.node.AbsStructNode;
 import com.treetank.settings.EFixed;
 import com.treetank.utils.FastStack;
 
@@ -33,68 +33,66 @@ import com.treetank.utils.FastStack;
  */
 public class PostOrderAxis extends AbstractAxis implements IAxis {
 
-	/** For remembering last parent. */
-	private FastStack<Long> mLastParent;
+    /** For remembering last parent. */
+    private FastStack<Long> mLastParent;
 
-	/** The nodeKey of the next node to visit. */
-	private long mNextKey;
+    /** The nodeKey of the next node to visit. */
+    private long mNextKey;
 
-	/**
-	 * Constructor initializing internal state.
-	 * 
-	 * @param rtx
-	 *            Exclusive (immutable) trx to iterate with.
-	 */
-	public PostOrderAxis(final IReadTransaction rtx) {
-		super(rtx);
-	}
+    /**
+     * Constructor initializing internal state.
+     * 
+     * @param rtx
+     *            Exclusive (immutable) trx to iterate with.
+     */
+    public PostOrderAxis(final IReadTransaction rtx) {
+        super(rtx);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void reset(final long nodeKey) {
-		super.reset(nodeKey);
-		mLastParent = new FastStack<Long>();
-		mLastParent.push((Long) EFixed.NULL_NODE_KEY.getStandardProperty());
-		mNextKey = nodeKey;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void reset(final long nodeKey) {
+        super.reset(nodeKey);
+        mLastParent = new FastStack<Long>();
+        mLastParent.push((Long) EFixed.NULL_NODE_KEY.getStandardProperty());
+        mNextKey = nodeKey;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean hasNext() {
-		resetToLastKey();
-		long key = mNextKey;
-		if (key != (Long) EFixed.NULL_NODE_KEY.getStandardProperty()) {
-			getTransaction().moveTo(mNextKey);
-			while (((IStructuralNode) getTransaction().getNode())
-					.hasFirstChild()
-					&& key != mLastParent.peek()) {
-				mLastParent.push(key);
-				key = ((IStructuralNode) getTransaction().getNode())
-						.getFirstChildKey();
-				getTransaction().moveToFirstChild();
-			}
-			if (key == mLastParent.peek()) {
-				mLastParent.pop();
-			}
+    /**
+     * {@inheritDoc}
+     */
+    public boolean hasNext() {
+        resetToLastKey();
+        long key = mNextKey;
+        if (key != (Long) EFixed.NULL_NODE_KEY.getStandardProperty()) {
+            getTransaction().moveTo(mNextKey);
+            while (((AbsStructNode) getTransaction().getNode()).hasFirstChild()
+                    && key != mLastParent.peek()) {
+                mLastParent.push(key);
+                key = ((AbsStructNode) getTransaction().getNode())
+                        .getFirstChildKey();
+                getTransaction().moveToFirstChild();
+            }
+            if (key == mLastParent.peek()) {
+                mLastParent.pop();
+            }
 
-			if (((IStructuralNode) getTransaction().getNode())
-					.hasRightSibling()) {
-				mNextKey = ((IStructuralNode) getTransaction().getNode())
-						.getRightSiblingKey();
+            if (((AbsStructNode) getTransaction().getNode()).hasRightSibling()) {
+                mNextKey = ((AbsStructNode) getTransaction().getNode())
+                        .getRightSiblingKey();
 
-			} else {
-				mNextKey = mLastParent.peek();
-			}
+            } else {
+                mNextKey = mLastParent.peek();
+            }
 
-			return true;
+            return true;
 
-		} else {
-			resetToStartKey();
-			return false;
-		}
-	}
+        } else {
+            resetToStartKey();
+            return false;
+        }
+    }
 
 }

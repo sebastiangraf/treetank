@@ -2178,7 +2178,8 @@ public enum FuncDef {
     // * fn:unordered($sourceSeq as item()*) as item()
     // * </p>
     // * <p>
-    // * Returns the items of $sourceSeq in an �implementation dependent� order.
+    // * Returns the items of $sourceSeq in an �implementation dependent�
+    // order.
     // * </p>
     // */
     // UNORDERED("fn:unordered", AbstractFunction.class, 1, 1),
