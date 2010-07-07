@@ -402,6 +402,7 @@ public final class XMLShredder implements Callable<Long> {
 
               // Move transaction.
               if (((ElementNode) mWtx.getNode()).hasFirstChild()) {
+                insertAtTop = true;
                 // Update stack.
                 if (leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
                     .getStandardProperty()) {
@@ -410,6 +411,7 @@ public final class XMLShredder implements Callable<Long> {
                 }
                 mWtx.moveToFirstChild();
               } else if (((ElementNode) mWtx.getNode()).hasRightSibling()) {
+                insertAtTop = false;
                 // Empty element.
                 // Update stack.
                 if (leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
@@ -424,6 +426,7 @@ public final class XMLShredder implements Callable<Long> {
                 leftSiblingKeyStack.pop();
                 mWtx.moveToRightSibling();
               } else if (mWtx.getNode().hasParent()) {
+                insertAtTop = false;
                 // Update last position key.
                 lastPosKey = mWtx.getNode().getNodeKey();
 
@@ -530,13 +533,18 @@ public final class XMLShredder implements Callable<Long> {
                   // Just to be sure it has the right value.
                   levelsUp = 0;
                 } else if (insertAtTop) {
+                  lastPosKey = mWtx.getNode().getNodeKey();
                   mWtx.moveToParent();
 
                   // Update stack.
                   // Remove NULL.
                   leftSiblingKeyStack.pop();
-                  // Remove node.
-                  leftSiblingKeyStack.pop();
+                   
+                  if (levelToParse == 2) {
+                    // Child of root element level.
+                    // Remove node.
+                    leftSiblingKeyStack.pop();
+                  }
                   leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
                       .getStandardProperty());
                 } else {
@@ -571,7 +579,7 @@ public final class XMLShredder implements Callable<Long> {
                   if (foundNode) {
                     // Go back to parent.
                     mWtx.moveTo(lastPosKey);
-                    
+
                     // Update stack.
                     if (leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
                         .getStandardProperty()) {
@@ -640,61 +648,64 @@ public final class XMLShredder implements Callable<Long> {
                    * If not move back to current top element on stack (which is
                    * the parent of the currently inserted node).
                    */
-                  final XMLEvent xmlEvent = skipWhitespaces();
+                  if (checkRightSibling(leftSiblingKeyStack, false, insertAtTop)) {
+                    final XMLEvent xmlEvent = skipWhitespaces();
 
-                  if (xmlEvent.getEventType() != XMLStreamConstants.END_ELEMENT) {
-                    if (!leftSiblingKeyStack.empty()) {
-                      // Move to the node before an insert occured.
-                      final long keyOnStack = leftSiblingKeyStack.peek();
-                      final long keyInShreddered = mWtx.getNode().getNodeKey();
-                      leftSiblingKeyStack.pop();
-
+                    if (xmlEvent.getEventType() != XMLStreamConstants.END_ELEMENT) {
                       if (!leftSiblingKeyStack.empty()) {
-                        mWtx.moveTo(leftSiblingKeyStack.peek());
-                        switch (xmlEvent.getEventType()) {
-                        case XMLStreamConstants.CHARACTERS:
-                          final String data =
-                              ((Characters) xmlEvent).getData().trim();
+                        // Move to the node before an insert occured.
+                        final long keyOnStack = leftSiblingKeyStack.peek();
+                        final long keyInShreddered =
+                            mWtx.getNode().getNodeKey();
+                        leftSiblingKeyStack.pop();
 
-                          if (!(!data.isEmpty()
-                              && mWtx.getNode().getKind() == ENodes.TEXT_KIND && mWtx
-                              .getValueOfCurrentNode()
-                              .equals(data))) {
-                            mWtx.moveTo(keyInShreddered);
-                            leftSiblingKeyStack.push(keyOnStack);
-                          }
-                          break;
-                        case XMLStreamConstants.START_ELEMENT:
-                          if (!checkElement((StartElement) xmlEvent)) {
-                            mWtx.moveTo(keyInShreddered);
-                            leftSiblingKeyStack.push(keyOnStack);
-                          }
-                          break;
-                        }
-                      } else {
-                        // Stack is empty, so the node(s) was/were inserted
-                        // somewhere at the top of the XML file.
-                        /* 
-                         * Check if right sibling after an insert equals next 
-                         * event.
-                         */
-                        if (mWtx.moveToRightSibling()) {
-                          if (!checkElement((StartElement) xmlEvent)) {
-                            mWtx.moveToLeftSibling();
+                        if (!leftSiblingKeyStack.empty()) {
+                          mWtx.moveTo(leftSiblingKeyStack.peek());
+                          switch (xmlEvent.getEventType()) {
+                          case XMLStreamConstants.CHARACTERS:
+                            final String data =
+                                ((Characters) xmlEvent).getData().trim();
+
+                            if (!(!data.isEmpty()
+                                && mWtx.getNode().getKind() == ENodes.TEXT_KIND && mWtx
+                                .getValueOfCurrentNode()
+                                .equals(data))) {
+                              mWtx.moveTo(keyInShreddered);
+                              leftSiblingKeyStack.push(keyOnStack);
+                            }
+                            break;
+                          case XMLStreamConstants.START_ELEMENT:
+                            if (!checkElement((StartElement) xmlEvent)) {
+                              mWtx.moveTo(keyInShreddered);
+                              leftSiblingKeyStack.push(keyOnStack);
+                            }
+                            break;
                           }
                         } else {
-                          /*
-                           * Move to a parent which has the next right sibling 
-                           * in pre order.
+                          // Stack is empty, so the node(s) was/were inserted
+                          // somewhere at the top of the XML file.
+                          /* 
+                           * Check if right sibling after an insert equals next 
+                           * event.
                            */
-                          while (!((IStructuralNode) mWtx.getNode())
-                              .hasRightSibling()) {
-                            // Move to parent element node.
-                            mWtx.moveToParent();
+                          if (mWtx.moveToRightSibling()) {
+                            if (!checkElement((StartElement) xmlEvent)) {
+                              mWtx.moveToLeftSibling();
+                            }
+                          } else {
+                            /*
+                             * Move to a parent which has the next right sibling 
+                             * in pre order.
+                             */
+                            while (!((IStructuralNode) mWtx.getNode())
+                                .hasRightSibling()) {
+                              // Move to parent element node.
+                              mWtx.moveToParent();
+                            }
                           }
-                        }
 
-                        leftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
+                          leftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
+                        }
                       }
                     }
                   }
@@ -704,16 +715,16 @@ public final class XMLShredder implements Callable<Long> {
               insertLevel = 0;
               levelsUp++;
             }
-            if (insertAtTop) {
-              insertAtTop = false;
-            }
+            //            if (insertAtTop) {
+            //              insertAtTop = false;
+            //            }
             break;
           }
 
           // Parsing the next event.
           event = mReader.nextEvent();
         } while (mReader.hasNext());
-        
+
         mReader.close();
       }
       // If no content is in the XML, a normal insertNewContent is executed.
