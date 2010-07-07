@@ -35,6 +35,7 @@ import javax.xml.stream.events.XMLEvent;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.treetank.TestHelper;
@@ -337,6 +338,7 @@ public class XMLShredderTest extends XMLTestCase {
   }
 
   @Test
+  @Ignore
   public void testShreddingModifiedExistingInserts() throws Exception {
     final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
     final ISession session = database.getSession();
