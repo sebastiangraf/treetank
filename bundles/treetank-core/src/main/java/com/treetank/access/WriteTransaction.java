@@ -256,9 +256,9 @@ public final class WriteTransaction extends ReadTransaction implements
                 moveTo(((AbsStructNode) node).getRightSiblingKey());
             } else if (((AbsStructNode) node).hasLeftSibling()) {
                 moveTo(((AbsStructNode) node).getLeftSiblingKey());
+            } else {
+              moveTo(node.getParentKey());
             }
-
-            moveTo(node.getParentKey());
 
         } else if (getCurrentNode().getKind() == ENodes.ATTRIBUTE_KIND) {
             moveToParent();
