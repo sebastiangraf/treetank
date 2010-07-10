@@ -280,12 +280,11 @@ public final class XMLShredder implements Callable<Long> {
               keyMatches = -1;
               found = true;
               isRightSibling = true;
-              
+
               while (((AbsStructNode) mWtx.getNode()).hasRightSibling()) {
+                keyMatches = mWtx.getNode().getNodeKey();
                 mWtx.moveToRightSibling();
               }
-              
-              keyMatches = mWtx.getNode().getNodeKey();
             } else {
               // Check current and right sibling nodes.
               do {
@@ -307,7 +306,11 @@ public final class XMLShredder implements Callable<Long> {
                    * they match the node must be inserted.
                    */
                   found =
-                      checkDescendants(levelToParse, (StartElement) event, true);
+                      checkDescendants(
+                          levelToParse,
+                          (StartElement) event,
+                          new FastStack<Long>(),
+                          true);
                   mWtx.moveTo(keyMatches);
                 }
               } while (!found && mWtx.moveToRightSibling());
@@ -351,6 +354,7 @@ public final class XMLShredder implements Callable<Long> {
               while (!((AbsStructNode) mWtx.getNode()).hasRightSibling()) {
                 moveToParents = true;
                 mWtx.moveToParent();
+                levelInShreddered--;
 
                 // Update stack.
                 // Remove NULL.
@@ -360,8 +364,9 @@ public final class XMLShredder implements Callable<Long> {
                 }
                 leftSiblingKeyStack.pop();
               }
-              
+
               if (moveToParents) {
+                // Move to right sibling and update stack. 
                 mWtx.moveToRightSibling();
                 leftSiblingKeyStack.pop();
                 leftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
@@ -597,6 +602,8 @@ public final class XMLShredder implements Callable<Long> {
               while (!((AbsStructNode) mWtx.getNode()).hasRightSibling()) {
                 // Move to parent element node.
                 mWtx.moveToParent();
+
+                levelInShreddered--;
 
                 long key = mWtx.getNode().getNodeKey();
                 mWtx.moveTo(leftSiblingKeyStack.peek());
@@ -835,6 +842,8 @@ public final class XMLShredder implements Callable<Long> {
 
           // Parsing the next event.
           if (removed) {
+            levelToParse--;
+            levelInShreddered--;
             removed = false;
           } else {
             // After an insert or after nodes were the same.
@@ -842,10 +851,18 @@ public final class XMLShredder implements Callable<Long> {
           }
         } while (mReader.hasNext());
 
+        /*
+         * If still nodes are on the stack, they have been removed, thus remove 
+         * them.
+         */
+        while (!leftSiblingKeyStack.empty()) {
+          mWtx.moveTo(leftSiblingKeyStack.pop());
+          mWtx.remove();
+        }
+
         mReader.close();
       }
-      // If no content is in the XML, a normal insertNewContent is
-      // executed.
+      // If no content is in the XML, a normal insertNewContent is executed.
       else {
         insertNewContent();
       }
@@ -947,6 +964,9 @@ public final class XMLShredder implements Callable<Long> {
    *            which parses the file to shredder currently is.
    * @param elem
    *            The start element where the StAX parser currently is.
+   * @param stack
+   *            Used to determine if moveToFirstChild() or moveToRightSibling()
+   *            has to be invoked.
    * @param first
    *            Determines if it is the first call the method is invoked (a
    *            new StAX parser
@@ -959,11 +979,9 @@ public final class XMLShredder implements Callable<Long> {
   private final boolean checkDescendants(
       final int levelToParse,
       final StartElement elem,
+      final FastStack<Long> stack,
       final boolean first) throws XMLStreamException, IOException {
     boolean found = false;
-
-    // Setup stack.
-    final FastStack<Long> stack = new FastStack<Long>();
 
     if (first) {
       /*
@@ -1001,8 +1019,6 @@ public final class XMLShredder implements Callable<Long> {
       moved = mWtx.moveToRightSibling();
     }
 
-    System.out.println(mWtx.getQNameOfCurrentNode().getLocalPart());
-
     if (moved) {
       if (mParser.hasNext()) {
         final XMLEvent xmlEvent = mParser.nextEvent();
@@ -1037,7 +1053,7 @@ public final class XMLShredder implements Callable<Long> {
           mWtx.moveTo(stack.peek());
           break;
         }
-        checkDescendants(levelToParse, elem, false);
+        checkDescendants(levelToParse, elem, stack, false);
       }
     } else {
       found = true;
