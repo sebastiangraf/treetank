@@ -108,7 +108,7 @@ public final class XMLUpdateShredder extends XMLShredder
    */
   private static int levelsUpAfterInserts = 0;
 
-  /** Determines if */
+  /** Determines if the cursor has to move up some levels during to inserts. */
   private static boolean moveUp;
 
   /** Determines if a node or nodes have been deleted immediately before. */
