@@ -7,8 +7,7 @@ import javax.xml.stream.events.Attribute;
  * <h1>RevNode</h1>
  * 
  * <p>
- * Container which holds the full qualified name of the "timestamp" node.
- * Therefore
+ * Container which holds the full qualified name of a "timestamp" node.
  * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz

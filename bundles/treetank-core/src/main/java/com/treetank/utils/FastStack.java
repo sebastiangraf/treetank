@@ -39,12 +39,22 @@ public final class FastStack<E> {
 
     /**
      * Constructor.
-     * 
      */
     @SuppressWarnings("unchecked")
     public FastStack() {
         mStack = (E[]) new Object[16];
         mSize = 0;
+    }
+    
+    /**
+     * Private constructor used for clone method.
+     * 
+     * @param object
+     *                The array from which to create a new stack.
+     */
+    private FastStack(E[] object) {
+      mStack = object;
+      mSize = 0;
     }
 
     /**
@@ -119,6 +129,18 @@ public final class FastStack<E> {
      */
     public boolean empty() {
         return (mSize == 0);
+    }
+    
+    /**
+     * Clone a stack.
+     * 
+     * @return Cloned stack.
+     */
+    @SuppressWarnings("unchecked")
+    public FastStack<E> clone() {
+      final E[] object = (E[]) new Object[mStack.length];
+      System.arraycopy(mStack, 0, object, 0, mStack.length);
+      return new FastStack(object);
     }
 
     /**
