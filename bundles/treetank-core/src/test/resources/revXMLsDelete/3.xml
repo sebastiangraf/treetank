@@ -11,7 +11,6 @@
 	<data key="d2" />
 	<data key="d3">
 		<y:ShapeNode>
-			<y:Geometry height="30.0" width="30.0" x="-562.0" y="-27.5"/>
 			<y:Fill color="#FFCC00" transparent="false"/>
 			<y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="19.92626953125" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="11.22998046875" x="9.385009765625" y="5.036865234375">0</y:NodeLabel>
 		</y:ShapeNode>

@@ -41,7 +41,7 @@ public final class GUI extends JPanel {
   private static final Log LOGGER = LogFactory.getLog(GUI.class);
 
   /** Optionally set the look and feel. */
-  private transient static boolean useSystemLookAndFeel = true;
+  private transient static boolean useSystemLookAndFeel = false;
 
   /** Minimum height of panes. */
   private static final int HEIGHT = 1000;

@@ -80,7 +80,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     /** Treetank reading transaction. */
     protected transient static IReadTransaction mRTX;
 
-    /** Treetank databse. */
+    /** Treetank database. */
     protected transient static IDatabase mDatabase;
 
     /** Kind of current node. */

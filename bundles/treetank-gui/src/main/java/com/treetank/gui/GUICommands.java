@@ -32,6 +32,7 @@ import com.treetank.gui.view.tree.TreetankTreeModel;
 import com.treetank.node.ElementNode;
 import com.treetank.service.xml.XMLSerializer;
 import com.treetank.service.xml.XMLShredder;
+import com.treetank.service.xml.XMLUpdateShredder;
 
 /**
  * <h1>GUICommands</h1>
@@ -318,34 +319,34 @@ public enum GUICommands implements GUICommand {
     final StringBuilder sBuilder = new StringBuilder();
     int indexSepChar = 0;
     final String NL = System.getProperty("line.separator");
-//    int countNewlines = 0;
-//    final StringBuilder insertAtFirstPos = new StringBuilder();
-//    
-//    if (changeColumns > 0) {
-//      // Get start index.
-//      for (int i = 0; i < text.length; i++) {
-//        final char character = text[i];
-//
-//        // Increment rowSize?
-//        if (indexSepChar < NL.length() && character == NL.charAt(indexSepChar)) {
-//          if (indexSepChar == NL.length() - 1) {
-//            countNewlines++;
-//          }
-//        }
-//
-//        insertAtFirstPos.append(character);
-//        
-//        if (countNewlines == changeColumns) {
-//          startPos = i + 1;
-//          break;
-//        }
-//      }
-//      
-//      xmlPane.replaceRange("", 0, startPos - 1);
-//    } else if (changeColumns < 0) {
-//      xmlPane.insert(insertAtFirstPos.toString(), 0);
-//    }
-    
+    //    int countNewlines = 0;
+    //    final StringBuilder insertAtFirstPos = new StringBuilder();
+    //    
+    //    if (changeColumns > 0) {
+    //      // Get start index.
+    //      for (int i = 0; i < text.length; i++) {
+    //        final char character = text[i];
+    //
+    //        // Increment rowSize?
+    //        if (indexSepChar < NL.length() && character == NL.charAt(indexSepChar)) {
+    //          if (indexSepChar == NL.length() - 1) {
+    //            countNewlines++;
+    //          }
+    //        }
+    //
+    //        insertAtFirstPos.append(character);
+    //        
+    //        if (countNewlines == changeColumns) {
+    //          startPos = i + 1;
+    //          break;
+    //        }
+    //      }
+    //      
+    //      xmlPane.replaceRange("", 0, startPos - 1);
+    //    } else if (changeColumns < 0) {
+    //      xmlPane.insert(insertAtFirstPos.toString(), 0);
+    //    }
+
     // Build text.
     rowsSize = 0;
     if (init) {
@@ -433,9 +434,14 @@ public enum GUICommands implements GUICommand {
           final ISession session = database.getSession();
           final IWriteTransaction wtx = session.beginWriteTransaction();
           final XMLEventReader reader = XMLShredder.createReader(source);
-          final XMLShredder shredder =
-              new XMLShredder(wtx, reader, true, updateOnly);
-          shredder.call();
+          if (updateOnly) {
+            final XMLShredder shredder =
+                new XMLUpdateShredder(wtx, reader, true);
+            shredder.call();
+          } else {
+            final XMLShredder shredder = new XMLShredder(wtx, reader, true);
+            shredder.call();
+          }
           wtx.close();
           session.close();
           database.close();
