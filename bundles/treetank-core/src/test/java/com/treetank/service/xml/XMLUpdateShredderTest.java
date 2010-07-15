@@ -38,6 +38,9 @@ public class XMLUpdateShredderTest extends XMLTestCase {
 
   public static final String XMLSAME =
       RESOURCES + File.separator + "revXMLsSame";
+  
+  public static final String XMLALL =
+    RESOURCES + File.separator + "revXMLsAll";
 
   @Before
   public void setUp() throws TreetankException {
@@ -62,6 +65,11 @@ public class XMLUpdateShredderTest extends XMLTestCase {
   @Test
   public void testDeletes() throws Exception {
     test(XMLDELETE);
+  }
+  
+  @Test
+  public void testAll() throws Exception {
+    test(XMLALL);
   }
 
   private void test(final String FOLDER) throws Exception {
