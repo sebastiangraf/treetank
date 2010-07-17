@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,16 +23,16 @@ import org.apache.commons.logging.LogFactory;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class XMLSerializerProperties {
+public final class SerializerProperties {
 
   // ============== Class constants. =================
 
   /** Logger. */
   private static final Log LOGGER =
-      LogFactory.getLog(XMLSerializerProperties.class);
+      LogFactory.getLog(SerializerProperties.class);
 
   /** Properties. */
-  private final ConcurrentHashMap<String, Object> mProps =
+  private final ConcurrentMap<String, Object> mProps =
       new ConcurrentHashMap<String, Object>();
 
   /** Property file. */
@@ -44,32 +45,32 @@ public final class XMLSerializerProperties {
   private static final boolean NO = false;
 
   /** Line separator. */
-  public static final String NL = System.getProperty("line.separator");
+  static final String NL = System.getProperty("line.separator");
 
   // ============ Shredding constants. ===============
 
   /** Serialization parameter: yes/no. */
-  public static final Object[] S_INDENT = { "indent", YES };
+  static final Object[] S_INDENT = { "indent", YES };
 
   /** Serialize XML declaration: yes/no. */
-  public static final Object[] S_XMLDECL = { "xmldecl", YES };
+  static final Object[] S_XMLDECL = { "xmldecl", YES };
 
   /** Specific serialization parameter: number of spaces to indent. */
-  public static final Object[] S_INDENT_SPACES = { "indent-spaces", "2" };
+  static final Object[] S_INDENT_SPACES = { "indent-spaces", "2" };
 
   /** Serialize REST: yes/no. */
-  public static final Object[] S_REST = { "serialize-rest", NO };
+  static final Object[] S_REST = { "serialize-rest", NO };
 
   /** Serialize TT-ID: yes/no. */
-  public static final Object[] S_ID = { "serialize-id", NO };
+  static final Object[] S_ID = { "serialize-id", NO };
 
   /**
-   * Constructor
+   * Constructor.
    * 
    * @param filePath
    *            Path to properties file.
    */
-  public XMLSerializerProperties(final String filePath) {
+  public SerializerProperties(final String filePath) {
     mFilePath = filePath;
 
     try {
@@ -107,11 +108,11 @@ public final class XMLSerializerProperties {
    * default values are overridden by user specified values.
    * </p>
    * 
-   * @return ConcurrentHashMap which holds property key/values.
+   * @return ConcurrentMap which holds property key/values.
    * @throws IOException
    *             in case of any I/O operation failed.
    */
-  public ConcurrentHashMap<String, Object> readInProps() {
+  public ConcurrentMap<String, Object> readInProps() {
     if (!new File(mFilePath).exists()) {
       throw new IllegalStateException("Properties file doesn't exist!");
     }
@@ -190,9 +191,9 @@ public final class XMLSerializerProperties {
   /**
    * Get properties map.
    * 
-   * @return ConcurrentHashMap with key/value property pairs.
+   * @return ConcurrentMap with key/value property pairs.
    */
-  public ConcurrentHashMap<String, Object> getmProps() {
+  public ConcurrentMap<String, Object> getmProps() {
     return mProps;
   }
 

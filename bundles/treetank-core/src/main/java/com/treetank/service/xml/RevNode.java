@@ -14,40 +14,50 @@ import javax.xml.stream.events.Attribute;
  * 
  */
 public final class RevNode {
-    /** QName of the node, which has the timestamp attribute. */
-    private transient final QName mQName;
-    
-    /** Attribute which specifies the timestamp value. */
-    private transient final Attribute mAttribute;
+  /** QName of the node, which has the timestamp attribute. */
+  private transient final QName mQName;
 
-    /**
-     * Constructor.
-     * 
-     * @param qName
-     *            Full qualified name of the timestamp node.
-     * @param att
-     *            Attribute which specifies the timestamp value.
-     */
-    public RevNode(final QName qName, final Attribute att) {
-        mQName = qName;
-        mAttribute = att;
-    }
+  /** Attribute which specifies the timestamp value. */
+  private transient final Attribute mAttribute;
 
-    /**
-     * Get mQName.
-     * 
-     * @return the full qualified name.
-     */
-    public QName getQName() {
-        return mQName;
-    }
-    
-    /**
-     * Get attribute.
-     * 
-     * @return the attribute.
-     */
-    public Attribute getAttribute() {
-      return mAttribute;
-    }
+  /**
+   * Constructor.
+   * 
+   * @param qName
+   *            Full qualified name of the timestamp node.
+   */
+  public RevNode(final QName qName) {
+    this(qName, null);
+  }
+
+  /**
+   * Constructor.
+   * 
+   * @param qName
+   *            Full qualified name of the timestamp node.
+   * @param att
+   *            Attribute which specifies the timestamp value.
+   */
+  public RevNode(final QName qName, final Attribute att) {
+    mQName = qName;
+    mAttribute = att;
+  }
+
+  /**
+   * Get mQName.
+   * 
+   * @return the full qualified name.
+   */
+  public QName getQName() {
+    return mQName;
+  }
+
+  /**
+   * Get attribute.
+   * 
+   * @return the attribute.
+   */
+  public Attribute getAttribute() {
+    return mAttribute;
+  }
 }

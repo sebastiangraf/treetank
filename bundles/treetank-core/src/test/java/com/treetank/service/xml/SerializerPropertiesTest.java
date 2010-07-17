@@ -3,6 +3,7 @@ package com.treetank.service.xml;
 import java.io.File;
 import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import junit.framework.TestCase;
 
@@ -13,7 +14,7 @@ import org.junit.Test;
 import com.treetank.TestHelper;
 import com.treetank.exception.TreetankException;
 
-public class XMLSerializerPropertiesTest {
+public class SerializerPropertiesTest {
   @Before
   public void setUp() throws TreetankException {
     TestHelper.deleteEverything();
@@ -30,10 +31,11 @@ public class XMLSerializerPropertiesTest {
     if (!new File(path).mkdirs()) {
       TestCase.fail("Directories couldn't be created!");
     }
-    final XMLSerializerProperties props =
-        new XMLSerializerProperties(new File(path, "props").getAbsolutePath());
+    final SerializerProperties props =
+        new SerializerProperties(new File(path, "props").getAbsolutePath());
 
-    final ConcurrentHashMap<String, Object> map = props.getmProps();
+    final ConcurrentHashMap<String, Object> map =
+        (ConcurrentHashMap<String, Object>) props.getmProps();
     final Enumeration<String> keys = map.keys();
 
     while (keys.hasMoreElements()) {
