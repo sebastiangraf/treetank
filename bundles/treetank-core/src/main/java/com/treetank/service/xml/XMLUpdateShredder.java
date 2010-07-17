@@ -21,12 +21,14 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.concurrent.Callable;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Characters;
+import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
@@ -48,6 +50,7 @@ import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
 import com.treetank.settings.EFixed;
 import com.treetank.utils.FastStack;
+import com.treetank.utils.LogHelper;
 
 /**
  * This class appends a given {@link XMLStreamReader} to a
@@ -66,12 +69,6 @@ public final class XMLUpdateShredder extends XMLShredder
   // ===================== LOGGER =======================
   /** Logger. */
   private static final Log LOGGER = LogFactory.getLog(XMLUpdateShredder.class);
-
-  /** Determines if debugging is enabled. */
-  private static final boolean DEBUG = LOGGER.isDebugEnabled();
-
-  /** Determines if info is enabled. */
-  private static final boolean INFO = LOGGER.isInfoEnabled();
 
   // ===================== Initial setup ================
 
@@ -195,7 +192,8 @@ public final class XMLUpdateShredder extends XMLShredder
   private void updateOnly() throws TreetankException {
     try {
       final long start = System.currentTimeMillis();
-      info("Start... ");
+      final LogHelper log = new LogHelper(LOGGER);
+      log.info("Start... ");
 
       // Setting up boolean-Stack.
       leftSiblingKeyStack = new FastStack<Long>();
@@ -205,6 +203,14 @@ public final class XMLUpdateShredder extends XMLShredder
       // Setup up of first element of the data.
       XMLEvent event = mReader.nextEvent();
       mWtx.moveToDocumentRoot();
+
+      // Get root element.
+      QName rootElem;
+      if (event.getEventType() == XMLStreamConstants.START_DOCUMENT) {
+        event = mReader.nextEvent();
+        assert event.getEventType() == XMLStreamConstants.START_ELEMENT;
+      }
+      rootElem = ((StartElement) event).getName();
 
       // Initialize.
       levelInToShredder = 0;
@@ -225,14 +231,14 @@ public final class XMLUpdateShredder extends XMLShredder
         do {
           switch (event.getEventType()) {
           case XMLStreamConstants.START_ELEMENT:
-            if (DEBUG) {
+            if (LogHelper.DEBUG) {
               // Debugging output.
-              debug("TO SHREDDER: " + ((StartElement) event).getName());
+              log.debug("TO SHREDDER: " + ((StartElement) event).getName());
 
               if (mWtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
-                debug("SHREDDERED: " + mWtx.getQNameOfCurrentNode());
+                log.debug("SHREDDERED: " + mWtx.getQNameOfCurrentNode());
               } else {
-                debug("SHREDDERED: " + mWtx.getValueOfCurrentNode());
+                log.debug("SHREDDERED: " + mWtx.getValueOfCurrentNode());
               }
             }
 
@@ -391,6 +397,13 @@ public final class XMLUpdateShredder extends XMLShredder
           } else {
             // After an insert or after nodes were the same.
             event = mReader.nextEvent();
+
+            if (event.getEventType() == XMLStreamConstants.END_ELEMENT
+                && rootElem.equals(((EndElement) event).equals(rootElem))
+                && levelInToShredder == 0) {
+              // End with shredding if end_elem equals root-elem.
+              break;
+            }
           }
         } while (mReader.hasNext());
 
@@ -417,7 +430,7 @@ public final class XMLUpdateShredder extends XMLShredder
         insertNewContent();
       }
 
-      info("Done [" + (System.currentTimeMillis() - start) + "]");
+      log.info("Done [" + (System.currentTimeMillis() - start) + "]");
 
     } catch (final XMLStreamException exc1) {
       throw new TreetankIOException(exc1);
@@ -425,30 +438,6 @@ public final class XMLUpdateShredder extends XMLShredder
       throw new TreetankIOException(exc2);
     }
 
-  }
-
-  /**
-   * Log debugging information.
-   * 
-   * @param message
-   *                Message to log.
-   */
-  private void debug(final String message) {
-    if (DEBUG) {
-      LOGGER.debug(message);
-    }
-  }
-
-  /**
-   * Log information.
-   * 
-   * @param message
-   *                Message to log.
-   */
-  private void info(final String message) {
-    if (INFO) {
-      LOGGER.info(message);
-    }
   }
 
   /**
@@ -562,19 +551,19 @@ public final class XMLUpdateShredder extends XMLShredder
 
       assert !leftSiblingKeyStack.empty();
 
-//      // Update stack.
-//      // Remove NULL.
-//      assert leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
-//          .getStandardProperty();
-//      leftSiblingKeyStack.pop();
-//
-//      //      if (levelInToShredder == 1) {
-//      //        // Child of root element level.
-//      //        // Remove node.
-//      //        leftSiblingKeyStack.pop();
-//      //      }
-//      leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
-//          .getStandardProperty());
+      //      // Update stack.
+      //      // Remove NULL.
+      //      assert leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
+      //          .getStandardProperty();
+      //      leftSiblingKeyStack.pop();
+      //
+      //      //      if (levelInToShredder == 1) {
+      //      //        // Child of root element level.
+      //      //        // Remove node.
+      //      //        leftSiblingKeyStack.pop();
+      //      //      }
+      //      leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
+      //          .getStandardProperty());
     }
 
     isSame = false;
@@ -772,12 +761,6 @@ public final class XMLUpdateShredder extends XMLShredder
       if (!leftSiblingKeyStack.empty()) {
         leftSiblingKeyStack.pop();
         do {
-          long key = mWtx.getNode().getNodeKey();
-          if (!leftSiblingKeyStack.empty()) {
-            mWtx.moveTo(leftSiblingKeyStack.peek());
-          }
-          System.out.println("NAME: " + mWtx.getQNameOfCurrentNode());
-          mWtx.moveTo(key);
           if (!leftSiblingKeyStack.empty()) {
             leftSiblingKeyStack.pop();
           }
@@ -1018,8 +1001,6 @@ public final class XMLUpdateShredder extends XMLShredder
     for (int i = 0; i < levelsUpAfterInserts - 1; i++) {
       mWtx.moveToParent();
     }
-
-    debug("QNAME: " + mWtx.getQNameOfCurrentNode());
 
     /*
      * Make sure that it's inserted as a right sibling if the 
