@@ -293,7 +293,7 @@ public final class WriteTransactionState extends ReadTransactionState {
         final long nodePageKey = nodePageKey(nodeKey);
         final int nodePageOffset = nodePageOffset(nodeKey);
 
-        NodePageContainer pageCont = log.get(nodePageKey);
+        final NodePageContainer pageCont = log.get(nodePageKey);
         if (pageCont == null) {
             return super.getNode(nodeKey);
         } else if (pageCont.getModified().getNode(nodePageOffset) == null) {

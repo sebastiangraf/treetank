@@ -1,5 +1,7 @@
 package com.treetank.service.xml;
 
+import java.sql.*;
+
 /**
  * <h1>RelationalDBImport</h1>
  * 
@@ -11,8 +13,12 @@ package com.treetank.service.xml;
  * @author Johannes Lichtenberger, University of Konstanz
  *
  */
-public class RelationalDBImport implements IImport {
+public final class RelationalDBImport implements IImport {
 
+  public RelationalDBImport() {
+    
+  }
+  
   @Override
   public void check(final Object database, final Object tsps) {
     
