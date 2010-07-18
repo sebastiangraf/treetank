@@ -431,7 +431,7 @@ public final class XMLUpdateShredder extends XMLShredder
       }
 
       log.info("Done [" + (System.currentTimeMillis() - start) + "]");
-
+      // TODO: use Java7 multi-catch feature.
     } catch (final XMLStreamException exc1) {
       throw new TreetankIOException(exc1);
     } catch (final IOException exc2) {

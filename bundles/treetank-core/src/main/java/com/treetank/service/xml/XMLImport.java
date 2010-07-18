@@ -100,6 +100,7 @@ public final class XMLImport extends AbsXMLImport {
         final List<RevNode> list = (List<RevNode>) obj;
         process(xml, log, (RevNode[]) list.toArray());
       }
+      // TODO: Use Java7 multi-catch feature.
     } catch (final IOException e) {
       LOGGER.error(e.getMessage(), e);
     } catch (final XMLStreamException e) {
@@ -207,7 +208,7 @@ public final class XMLImport extends AbsXMLImport {
 
     reader.close();
   }
-  
+
   /**
    * Check if current start element matches one of the timestamp/revision nodes.
    * 
@@ -217,14 +218,16 @@ public final class XMLImport extends AbsXMLImport {
    *                Timestamp nodes.
    * @return True if they match, otherwise false.
    */
-  private boolean checkTimestampNodes(final StartElement event, final RevNode... tsns) {
+  private boolean checkTimestampNodes(
+      final StartElement event,
+      final RevNode... tsns) {
     boolean retVal = false;
-    
+
     for (final RevNode tsn : tsns) {
       tsn.toString();
       // TODO
     }
-    
+
     return retVal;
   }
 }

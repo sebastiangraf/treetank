@@ -8,12 +8,12 @@ import com.treetank.node.ENodes;
 import com.treetank.utils.FastStack;
 
 /**
- * Class implements main serialization 
+ * Class implements main serialization algorithm. Other classes can extend it.
  * 
- * @author johannes
+ * @author Johannes Lichtenberger, University of Konstanz
  *
  */
-abstract class SerializeStorage implements ISerialize {
+abstract class AbsSerializeStorage implements ISerialize {
   
   /** Transaction to read from (is the same as the mAxis). */
   final IReadTransaction mRTX;
@@ -37,11 +37,16 @@ abstract class SerializeStorage implements ISerialize {
    * Constructor.
    * 
    * @param rtx
+   *              {@link ReadTransaction}.
    * @param serializeXMLDeclaration
+   *              Determines if XML declaration should be serialized or not.
    * @param serializeRest
+   *              Determines if REST specific functionality should be serialized
+   *              or not.
    * @param serializeId
+   *              Determines if IDs should be serialized or not.
    */
-  public SerializeStorage(
+  public AbsSerializeStorage(
       final IReadTransaction rtx,
       final boolean serializeXMLDeclaration,
       final boolean serializeRest,
@@ -57,8 +62,6 @@ abstract class SerializeStorage implements ISerialize {
   /**
    * Serialize the storage.
    * 
-   * @param serialize
-   *                    Class which implements {@link ISerialize} interface.
    * @throws Exception
    */
   public void serialize() throws Exception {

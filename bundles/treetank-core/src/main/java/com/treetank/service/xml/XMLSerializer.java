@@ -53,7 +53,7 @@ import com.treetank.utils.IConstants;
  * class.
  * </p>
  */
-public final class XMLSerializer extends SerializeStorage implements Callable<Void> {
+public final class XMLSerializer extends AbsSerializeStorage implements Callable<Void> {
 
   /** Offset that must be added to digit to make it ASCII. */
   private static final int ASCII_OFFSET = 48;

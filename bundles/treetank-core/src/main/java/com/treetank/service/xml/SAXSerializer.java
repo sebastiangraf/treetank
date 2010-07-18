@@ -33,7 +33,7 @@ import com.treetank.node.ElementNode;
  * @author Johannes Lichtenberger, University of Konstanz
  *
  */
-public final class SAXSerializer extends SerializeStorage
+public final class SAXSerializer extends AbsSerializeStorage
     implements
     Callable<Void> {
 
@@ -41,7 +41,7 @@ public final class SAXSerializer extends SerializeStorage
   private static final Log LOGGER = LogFactory.getLog(SAXSerializer.class);
 
   /** SAX default handler. */
-  private static DefaultHandler handler = new DefaultHandler();
+  private static final DefaultHandler handler = new DefaultHandler();
 
   /**
    * Initialize XMLStreamReader implementation with transaction. The cursor
@@ -137,24 +137,22 @@ public final class SAXSerializer extends SerializeStorage
         ((ElementNode) mRTX.getNode()).getAttributeCount(); i < attCount; i++) {
       mRTX.moveToAttribute(i);
       final String URI = mRTX.nameForKey(mRTX.getNode().getURIKey());
-      atts.addAttribute(URI, mRTX.getQNameOfCurrentNode().getLocalPart(), mRTX
-          .getQNameOfCurrentNode()
-          .toString(), mRTX.getTypeOfCurrentNode(), mRTX
-          .getValueOfCurrentNode());
+      final QName qName = mRTX.getQNameOfCurrentNode();
+      atts.addAttribute(URI, qName.getLocalPart(), qName.toString(), mRTX
+          .getTypeOfCurrentNode(), mRTX.getValueOfCurrentNode());
       mRTX.moveTo(key);
     }
 
     // Create SAX events.
     try {
-      handler.startElement(mRTX.nameForKey(mRTX.getNode().getURIKey()), mRTX
-          .getQNameOfCurrentNode()
-          .getLocalPart(), mRTX.getQNameOfCurrentNode().toString(), atts);
+      final QName qName = mRTX.getQNameOfCurrentNode();
+      handler.startElement(mRTX.nameForKey(mRTX.getNode().getURIKey()), qName
+          .getLocalPart(), qName.toString(), atts);
 
       // Empty elements.
       if (!((ElementNode) mRTX.getNode()).hasFirstChild()) {
-        handler.endElement(mRTX.nameForKey(mRTX.getNode().getURIKey()), mRTX
-            .getQNameOfCurrentNode()
-            .getLocalPart(), mRTX.getQNameOfCurrentNode().toString());
+        handler.endElement(mRTX.nameForKey(mRTX.getNode().getURIKey()), qName
+            .getLocalPart(), qName.toString());
       }
     } catch (final SAXException e) {
       LOGGER.error(e.getMessage(), e);
