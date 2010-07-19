@@ -60,7 +60,6 @@ import com.treetank.utils.TypedValue;
  * 
  * @author Marc Kramis, Seabix
  * @author Sebastian Graf, University of Konstanz
- * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
 public class XMLShredder implements Callable<Long> {
