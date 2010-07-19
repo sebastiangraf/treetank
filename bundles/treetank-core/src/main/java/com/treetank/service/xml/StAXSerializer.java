@@ -4,9 +4,11 @@ import static com.treetank.service.xml.SerializerProperties.S_ID;
 import static com.treetank.service.xml.SerializerProperties.S_REST;
 import static com.treetank.service.xml.SerializerProperties.S_XMLDECL;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentMap;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
@@ -15,18 +17,25 @@ import javax.xml.stream.events.XMLEvent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.treetank.access.Database;
+import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
+import com.treetank.api.ISession;
 import com.treetank.axis.ElementFilter;
 import com.treetank.axis.FilterAxis;
+import com.treetank.axis.TextFilter;
+import com.treetank.exception.TreetankException;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
+import com.treetank.utils.AttributeIterator;
 import com.treetank.utils.NamespaceIterator;
 
 /**
  * <h1>StAXSerializer</h1>
  * 
  * <p>
- * Provides a StAX implementation (event API) for retrieving a Treetank database. 
+ * Provides a StAX implementation (event API) for retrieving a Treetank 
+ * database. 
  * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
@@ -44,7 +53,14 @@ public class StAXSerializer extends AbsSerializeStorage
    * 
    * @see ElementFilterAxis 
    */
-  private final FilterAxis filterAxis;
+  private static FilterAxis elemFilterAxis;
+  
+  /** 
+   * Text filter axis.
+   * 
+   * @see TextFilterAxis 
+   */
+  private static FilterAxis textFilterAxis;
 
   /** 
    * Determines if start tags have to be closed, thus if end tags have to be 
@@ -63,6 +79,16 @@ public class StAXSerializer extends AbsSerializeStorage
    * @see XMLEventFactory
    */
   private final XMLEventFactory fac = XMLEventFactory.newFactory();
+
+//  /**
+//   * Namespace index.
+//   */
+//  private int namespIndex;
+//
+//  /**
+//   * Attribute index.
+//   */
+//  private int attIndex;
 
   /**
    * Initialize XMLStreamReader implementation with transaction. The cursor
@@ -93,11 +119,12 @@ public class StAXSerializer extends AbsSerializeStorage
       boolean serializeRest,
       boolean serializeId) {
     super(rtx, serializeXMLDeclaration, serializeRest, serializeId);
-    filterAxis = new FilterAxis(mAxis, new ElementFilter(mRTX));
   }
 
   @Override
   public void emitEndElement() throws IOException {
+//    namespIndex = 0;
+//    attIndex = 0;
     event =
         fac.createEndElement(
             mRTX.getQNameOfCurrentNode(),
@@ -112,23 +139,53 @@ public class StAXSerializer extends AbsSerializeStorage
       break;
     case ELEMENT_KIND:
 //      final long key = mRTX.getNode().getNodeKey();
-      // TODO
+//      final int namespCount =
+//          ((ElementNode) mRTX.getNode()).getNamespaceCount();
+//      final int attCount = ((ElementNode) mRTX.getNode()).getAttributeCount();
+      final QName qName = mRTX.getQNameOfCurrentNode();
+
+//      if (namespIndex < namespCount) {
+//        mRTX.moveToNamespace(namespIndex++);
+//        event = fac.createNamespace(qName.getPrefix(), qName.getNamespaceURI());
+//      } else if (attIndex < attCount) {
+//        mRTX.moveToAttribute(attIndex++);
+//        event = fac.createAttribute(qName, mRTX.getValueOfCurrentNode());
+//      } else {
+        event =
+            fac.createStartElement(qName, new AttributeIterator(mRTX), new NamespaceIterator(
+                mRTX));
+//      }
+
+//      mRTX.moveTo(key);
       break;
     case TEXT_KIND:
+//      namespIndex = 0;
+//      attIndex = 0;
+      event = fac.createCharacters(mRTX.getValueOfCurrentNode());
       break;
     }
   }
 
   @Override
   public void close() throws XMLStreamException {
-    // TODO Auto-generated method stub
-
+    try {
+      mRTX.close();
+    } catch (TreetankException e) {
+      LOGGER.error(e.getMessage(), e);
+    }
   }
 
   @Override
   public String getElementText() throws XMLStreamException {
-    // TODO Auto-generated method stub
-    return null;
+    textFilterAxis = new FilterAxis(mAxis, new TextFilter(mRTX));   
+    final StringBuilder sb = new StringBuilder();
+    
+    while (textFilterAxis.hasNext()) {
+      textFilterAxis.next();
+      sb.append(mRTX.getValueOfCurrentNode());
+    }
+    
+    return sb.toString();
   }
 
   @Override
@@ -161,10 +218,11 @@ public class StAXSerializer extends AbsSerializeStorage
   @Override
   public XMLEvent nextTag() throws XMLStreamException {
     long key = mRTX.getNode().getNodeKey();
+    elemFilterAxis = new FilterAxis(mAxis, new ElementFilter(mRTX));
 
     try {
-      if (filterAxis.hasNext()) {
-        key = filterAxis.next();
+      if (elemFilterAxis.hasNext()) {
+        key = elemFilterAxis.next();
         emit(key);
       }
     } catch (final IOException e) {
@@ -177,21 +235,30 @@ public class StAXSerializer extends AbsSerializeStorage
   @Override
   public XMLEvent peek() throws XMLStreamException {
     final long currNodeKey = mRTX.getNode().getNodeKey();
-    long key = currNodeKey;
-    
+    final ENodes nodeKind = mRTX.getNode().getKind();
+
     try {
-      if (mAxis.hasNext()) {
-        key = mAxis.next();
-        emit(key);
+      if (((AbsStructNode)mRTX.getNode()).hasFirstChild()) {
+        mRTX.moveToFirstChild();
+        emitNode();
+      } else if (((AbsStructNode)mRTX.getNode()).hasRightSibling()) {
+        mRTX.moveToRightSibling();
+        processNode(nodeKind);
+      } else if (((AbsStructNode)mRTX.getNode()).hasParent()) {
+        mRTX.moveToParent();
+        emitEndElement();
       }
     } catch (final IOException e) {
       LOGGER.error(e.getMessage(), e);
     }
-    
+
     mRTX.moveTo(currNodeKey);
     return event;
   }
 
+  /**
+   * Just calls nextEvent().
+   */
   @Override
   public Object next() {
     try {
@@ -199,7 +266,7 @@ public class StAXSerializer extends AbsSerializeStorage
     } catch (final XMLStreamException e) {
       LOGGER.error(e.getMessage(), e);
     }
-    
+
     return event;
   }
 
@@ -207,7 +274,28 @@ public class StAXSerializer extends AbsSerializeStorage
   public void remove() {
     throw new UnsupportedOperationException("Not supported!");
   }
-  
+
+  /**
+   * Determines if a node or an end element has to be emitted.
+   * 
+   * @param nodeKind
+   *                    The node kind.
+   * @throws IOException
+   *                    In case of any I/O error.
+   */
+  private void processNode(final ENodes nodeKind) throws IOException {
+    switch (nodeKind) {
+    case ELEMENT_KIND:
+      emitEndElement();
+      break;
+    case TEXT_KIND:
+      emitNode();
+      break;
+    default:
+      // Do nothing.
+    }
+  }
+
   /**
    * Move to node and emit it.
    * 
@@ -250,5 +338,29 @@ public class StAXSerializer extends AbsSerializeStorage
         closeElements = true;
       }
     }
+  }
+  
+  /**
+   * Main method.
+   * 
+   * @param args
+   *                args[0] specifies the path to the TT-storage from which to
+   *                generate SAX events.
+   * @throws Exception
+   */
+  public static void main(final String... args) throws Exception {
+    if (args.length != 1) {
+      LOGGER.error("Usage: StAXSerializer input-TT");
+    }
+
+    final IDatabase database = Database.openDatabase(new File(args[0]));
+    final ISession session = database.getSession();
+    final IReadTransaction rtx = session.beginReadTransaction();
+
+    new StAXSerializer(rtx, new SerializerProperties(null).getmProps());
+
+    rtx.close();
+    session.close();
+    database.close();
   }
 }

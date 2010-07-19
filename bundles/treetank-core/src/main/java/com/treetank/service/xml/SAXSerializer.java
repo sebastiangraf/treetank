@@ -182,7 +182,7 @@ public final class SAXSerializer extends AbsSerializeStorage
    */
   public static void main(final String... args) throws Exception {
     if (args.length != 1) {
-      LOGGER.error("Usage: XMLSerializer input-TT");
+      LOGGER.error("Usage: SAXSerializer input-TT");
     }
 
     final IDatabase database = Database.openDatabase(new File(args[0]));
