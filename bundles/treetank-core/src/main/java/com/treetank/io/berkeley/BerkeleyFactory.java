@@ -79,7 +79,7 @@ public final class BerkeleyFactory extends AbstractIOFactory {
 
         final DatabaseConfig conf = new DatabaseConfig();
         conf.setTransactional(true);
-//        conf.setKeyPrefixing(true);
+        conf.setKeyPrefixing(true);
 
         final EnvironmentConfig config = new EnvironmentConfig();
         config.setTransactional(true);
