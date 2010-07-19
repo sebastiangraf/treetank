@@ -19,6 +19,8 @@
 package com.treetank.node;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -71,6 +73,25 @@ public class TextNodeTest {
         assertEquals(true, node.hasParent());
         assertEquals(true, node.hasLeftSibling());
         assertEquals(true, node.hasRightSibling());
+    }
+    
+    @Test
+    public void testHashCode(){
+        final long[] data = TextNode.createData(99, 13, 14, 15, 19);
+		final long[] data2 = TextNode.createData(100, 15, 12, 16, 123);
+		final byte[] value = { (byte) 17, (byte) 18 };
+		final byte[] value2 = { (byte) 19, (byte) 20 };
+		
+		final TextNode node = new TextNode(data, value);
+		final TextNode node2 = new TextNode(data, value);
+		final TextNode node3 = new TextNode(data, value2);
+		final TextNode node4 = new TextNode(data2, value);
+
+		assertEquals(node2.hashCode(), node.hashCode());
+		assertTrue(node2.equals(node));
+		assertFalse(node3.equals(node));
+		assertFalse(node4.equals(node));
+    	
     }
 
 }

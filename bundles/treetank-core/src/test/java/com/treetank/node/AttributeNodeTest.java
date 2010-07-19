@@ -20,48 +20,68 @@ package com.treetank.node;
 
 import static org.junit.Assert.assertEquals;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import org.junit.Test;
 
 import com.treetank.io.file.ByteBufferSinkAndSource;
 
 public class AttributeNodeTest {
 
-    @Test
-    public void testAttributeNode() {
+	@Test
+	public void testAttributeNode() {
 
-        final long[] data = AttributeNode.createData(99, 13, 14, 15, 19);
-        final byte[] value = { (byte) 17, (byte) 18 };
+		final long[] data = AttributeNode.createData(99, 13, 14, 15, 19);
+		final byte[] value = { (byte) 17, (byte) 18 };
 
-        // Create empty node.
-        final AttributeNode node1 = new AttributeNode(data, value);
-        check(node1);
+		// Create empty node.
+		final AttributeNode node1 = new AttributeNode(data, value);
+		check(node1);
 
-        // Serialize and deserialize node.
-        final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
-        node1.serialize(out);
-        out.position(0);
-        final AttributeNode node2 = (AttributeNode) ENodes.ATTRIBUTE_KIND
-                .createNodeFromPersistence(out);
-        check(node2);
+		// Serialize and deserialize node.
+		final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
+		node1.serialize(out);
+		out.position(0);
+		final AttributeNode node2 = (AttributeNode) ENodes.ATTRIBUTE_KIND
+				.createNodeFromPersistence(out);
+		check(node2);
 
-        // Clone node.
-        final AttributeNode node3 = (AttributeNode) node2.clone();
-        check(node3);
+		// Clone node.
+		final AttributeNode node3 = (AttributeNode) node2.clone();
+		check(node3);
 
-    }
+	}
 
-    private final static void check(final AttributeNode node) {
-        // Now compare.
-        assertEquals(99L, node.getNodeKey());
-        assertEquals(13L, node.getParentKey());
+	private final static void check(final AttributeNode node) {
+		// Now compare.
+		assertEquals(99L, node.getNodeKey());
+		assertEquals(13L, node.getParentKey());
 
-        assertEquals(14, node.getNameKey());
-        assertEquals(15, node.getURIKey());
-        assertEquals(19, node.getTypeKey());
-        assertEquals(2, node.getRawValue().length);
-        assertEquals(ENodes.ATTRIBUTE_KIND, node.getKind());
-        assertEquals(true, node.hasParent());
-        assertEquals(ENodes.ATTRIBUTE_KIND, node.getKind());
-    }
+		assertEquals(14, node.getNameKey());
+		assertEquals(15, node.getURIKey());
+		assertEquals(19, node.getTypeKey());
+		assertEquals(2, node.getRawValue().length);
+		assertEquals(ENodes.ATTRIBUTE_KIND, node.getKind());
+		assertEquals(true, node.hasParent());
+		assertEquals(ENodes.ATTRIBUTE_KIND, node.getKind());
+	}
+
+	@Test
+	public void testHashCode() {
+		final long[] data = AttributeNode.createData(99, 13, 14, 15, 19);
+		final long[] data2 = AttributeNode.createData(100, 15, 12, 16, 123);
+		final byte[] value = { (byte) 17, (byte) 18 };
+		final byte[] value2 = { (byte) 19, (byte) 20 };
+
+		final AttributeNode node = new AttributeNode(data, value);
+		final AttributeNode node2 = new AttributeNode(data, value);
+		final AttributeNode node3 = new AttributeNode(data, value2);
+		final AttributeNode node4 = new AttributeNode(data2, value);
+
+		assertEquals(node2.hashCode(), node.hashCode());
+		assertTrue(node2.equals(node));
+		assertFalse(node3.equals(node));
+		assertFalse(node4.equals(node));
+	}
 
 }

@@ -19,7 +19,9 @@
 package com.treetank.node;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -58,6 +60,22 @@ public class NamespaceNodeTest {
         assertNull(node.getRawValue());
         assertEquals(ENodes.NAMESPACE_KIND, node.getKind());
         assertEquals(true, node.hasParent());
+    }
+    
+    @Test
+    public void testHashCode(){
+        final long[] data = NamespaceNode.createData(99L, 13L, 14, 15);
+		final long[] data2 = NamespaceNode.createData(100L, 15L, 12, 16);
+
+		final NamespaceNode node = new NamespaceNode(data);
+		final NamespaceNode node2 = new NamespaceNode(data);
+		final NamespaceNode node3 = new NamespaceNode(data2);
+		
+		assertEquals(node2.hashCode(), node.hashCode());
+		assertTrue(node2.equals(node));
+		assertFalse(node3.equals(node));
+		assertFalse(node3.equals(node2));
+    	
     }
 
 }
