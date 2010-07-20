@@ -16,13 +16,13 @@
  * $Id: XMLSerializer.java 4414 2008-08-27 20:01:07Z kramis $
  */
 
-package com.treetank.service.xml;
+package com.treetank.service.xml.serialize;
 
-import static com.treetank.service.xml.SerializerProperties.NL;
-import static com.treetank.service.xml.SerializerProperties.S_ID;
-import static com.treetank.service.xml.SerializerProperties.S_INDENT;
-import static com.treetank.service.xml.SerializerProperties.S_REST;
-import static com.treetank.service.xml.SerializerProperties.S_XMLDECL;
+import static com.treetank.service.xml.serialize.SerializerProperties.NL;
+import static com.treetank.service.xml.serialize.SerializerProperties.S_ID;
+import static com.treetank.service.xml.serialize.SerializerProperties.S_INDENT;
+import static com.treetank.service.xml.serialize.SerializerProperties.S_REST;
+import static com.treetank.service.xml.serialize.SerializerProperties.S_XMLDECL;
 
 import java.io.BufferedOutputStream;
 import java.io.File;

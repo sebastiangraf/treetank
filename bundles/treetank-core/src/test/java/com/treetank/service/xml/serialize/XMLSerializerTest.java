@@ -16,7 +16,7 @@
  * $Id: XMLSerializerTest.java 4376 2008-08-25 07:27:39Z kramis $
  */
 
-package com.treetank.service.xml;
+package com.treetank.service.xml.serialize;
 
 import java.io.ByteArrayOutputStream;
 
@@ -33,6 +33,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
+import com.treetank.service.xml.serialize.XMLSerializer;
 import com.treetank.utils.DocumentCreater;
 
 public class XMLSerializerTest {

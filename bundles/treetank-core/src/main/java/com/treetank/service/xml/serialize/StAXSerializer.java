@@ -1,8 +1,8 @@
-package com.treetank.service.xml;
+package com.treetank.service.xml.serialize;
 
-import static com.treetank.service.xml.SerializerProperties.S_ID;
-import static com.treetank.service.xml.SerializerProperties.S_REST;
-import static com.treetank.service.xml.SerializerProperties.S_XMLDECL;
+import static com.treetank.service.xml.serialize.SerializerProperties.S_ID;
+import static com.treetank.service.xml.serialize.SerializerProperties.S_REST;
+import static com.treetank.service.xml.serialize.SerializerProperties.S_XMLDECL;
 
 import java.io.File;
 import java.io.IOException;
