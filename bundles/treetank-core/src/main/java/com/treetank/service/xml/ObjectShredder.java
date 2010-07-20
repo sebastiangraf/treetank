@@ -8,7 +8,7 @@ package com.treetank.service.xml;
  * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz.
- *
+ * 
  */
 public class ObjectShredder {
 

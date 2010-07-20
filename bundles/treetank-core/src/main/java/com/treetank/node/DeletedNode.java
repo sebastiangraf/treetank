@@ -10,8 +10,8 @@ import com.treetank.io.ITTSink;
  */
 public final class DeletedNode extends AbsNode {
 
-    DeletedNode(final long[] builder) {
-        super(builder);
+    DeletedNode(final long[] longBuilder, final int[] intBuilder) {
+        super(longBuilder, intBuilder);
     }
 
     /**
@@ -32,16 +32,17 @@ public final class DeletedNode extends AbsNode {
 
     @Override
     public AbsNode clone() {
-        final AbsNode toClone = new DeletedNode(AbsNode.cloneData(mData));
+        final AbsNode toClone = new DeletedNode(AbsNode.cloneData(mLongData),
+                AbsNode.cloneData(mIntData));
         return toClone;
     }
 
-    public final static long[] createData(final long nodeKey,
+    public final static AbsNode createData(final long nodeKey,
             final long parentKey) {
-        final long[] data = new long[ENodes.DELETE_KIND.getSize()];
-        data[AbsNode.NODE_KEY] = nodeKey;
-        data[AbsNode.PARENT_KEY] = parentKey;
-        return data;
+        final long[] longData = new long[ENodes.DELETE_KIND.getLongSize()];
+        final int[] intData = new int[ENodes.DELETE_KIND.getIntSize()];
+        longData[AbsNode.NODE_KEY] = nodeKey;
+        longData[AbsNode.PARENT_KEY] = parentKey;
+        return new DeletedNode(longData, intData);
     }
-
 }

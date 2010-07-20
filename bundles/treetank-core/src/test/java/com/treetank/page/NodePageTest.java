@@ -23,7 +23,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import com.treetank.io.file.ByteBufferSinkAndSource;
-import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
 
 public class NodePageTest {
@@ -32,10 +31,8 @@ public class NodePageTest {
     public void testSerializeDeserialize() {
         final NodePage page1 = new NodePage(0L, 0L);
         assertEquals(0L, page1.getNodePageKey());
-        final ElementNode node1 = (ElementNode) ENodes.ELEMENT_KIND
-                .createNodeFromScratch(
-                        ElementNode.createData(0, 1, 3, 4, 12, 1, 6, 7, 8),
-                        null);
+        final ElementNode node1 = (ElementNode) ElementNode.createData(0, 1, 3,
+                4, 12, 1, 6, 7, 8);
         node1.insertAttribute(88L);
         node1.insertAttribute(87L);
         node1.insertNamespace(99L);

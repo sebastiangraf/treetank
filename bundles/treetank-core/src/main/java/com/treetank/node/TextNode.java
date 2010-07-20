@@ -32,141 +32,140 @@ import com.treetank.settings.EFixed;
  */
 public final class TextNode extends AbsStructNode {
 
-	protected static final int TYPE = 6;
+    protected static final int VALUE_LENGTH = 1;
 
-	protected static final int VALUE_LENGTH = 7;
+    /** Typed value of node. */
+    private byte[] mValue;
 
-	/** Typed value of node. */
-	private byte[] mValue;
+    /**
+     * Constructor for TextNode
+     * 
+     * @param longBuilder
+     *            vals of longs to set
+     * @param intBuilder
+     *            vals of ints to set
+     * @param value
+     *            val to set
+     */
+    TextNode(final long[] longBuilder, final int[] intBuilder,
+            final byte[] value) {
+        super(longBuilder, intBuilder);
+        mValue = value;
+        mIntData[VALUE_LENGTH] = value.length;
+    }
 
-	TextNode(final long[] builder, final byte[] value) {
-		super(builder);
-		// mData[TYPE] = builder.getTypeKey();
-		mValue = value;
-		mData[VALUE_LENGTH] = value.length;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ENodes getKind() {
+        return ENodes.TEXT_KIND;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ENodes getKind() {
-		return ENodes.TEXT_KIND;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public byte[] getRawValue() {
+        return mValue;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int getTypeKey() {
-		return (int) mData[TYPE];
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void setValue(final int valueType, final byte[] value) {
+        mIntData[AbsNode.TYPE_KEY] = valueType;
+        mIntData[VALUE_LENGTH] = value.length;
+        mValue = value;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public byte[] getRawValue() {
-		return mValue;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setType(final int valueType) {
+        mIntData[AbsNode.TYPE_KEY] = valueType;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setValue(final int valueType, final byte[] value) {
-		mData[TYPE] = valueType;
-		mData[VALUE_LENGTH] = value.length;
-		mValue = value;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void serialize(final ITTSink out) {
+        super.serialize(out);
+        for (final byte byteVal : mValue) {
+            out.writeByte(byteVal);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setType(final int valueType) {
-		mData[TYPE] = valueType;
-	}
+    @Override
+    public long getFirstChildKey() {
+        return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void serialize(final ITTSink out) {
-		super.serialize(out);
-		for (final byte byteVal : mValue) {
-			out.writeByte(byteVal);
-		}
-	}
+    @Override
+    public void setFirstChildKey(final long firstChildKey) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public long getFirstChildKey() {
-		return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
-	}
+    @Override
+    public void decrementChildCount() {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public void setFirstChildKey(final long firstChildKey) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public void incrementChildCount() {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public void decrementChildCount() {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public void setChildCount(long childCount) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public void incrementChildCount() {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + Arrays.hashCode(mValue);
+        return result;
+    }
 
-	@Override
-	public void setChildCount(long childCount) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public AbsNode clone() {
+        final AbsNode toClone = new TextNode(AbsNode.cloneData(mLongData),
+                AbsNode.cloneData(mIntData), AbsNode.cloneData(mValue));
+        return toClone;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + Arrays.hashCode(mValue);
-		return result;
-	}
+    public final static AbsNode createData(final long nodeKey,
+            final long parentKey, final long leftSibKey,
+            final long rightSibKey, final int type, final byte[] value) {
+        final long[] longData = new long[ENodes.TEXT_KIND.getLongSize()];
+        final int[] intData = new int[ENodes.TEXT_KIND.getIntSize()];
+        longData[AbsNode.NODE_KEY] = nodeKey;
+        longData[AbsNode.PARENT_KEY] = parentKey;
+        longData[AbsStructNode.LEFT_SIBLING_KEY] = leftSibKey;
+        longData[AbsStructNode.RIGHT_SIBLING_KEY] = rightSibKey;
+        longData[AbsStructNode.FIRST_CHILD_KEY] = (Long) EFixed.NULL_NODE_KEY
+                .getStandardProperty();
+        intData[AbsNode.TYPE_KEY] = type;
+        return new TextNode(longData, intData, value);
+    }
 
-	@Override
-	public AbsNode clone() {
-		final AbsNode toClone = new TextNode(AbsNode.cloneData(mData),
-				AbsNode.cloneValue(mValue));
-		return toClone;
-	}
+    public final static AbsNode createData(final long nodeKey,
+            final TextNode node) {
+        return createData(nodeKey, node.getParentKey(),
+                node.getLeftSiblingKey(), node.getRightSiblingKey(),
+                node.getTypeKey(), node.getRawValue());
+    }
 
-	public final static long[] createData(final long nodeKey,
-			final long parentKey, final long leftSibKey,
-			final long rightSibKey, final int type) {
-		final long[] data = new long[ENodes.TEXT_KIND.getSize()];
-		data[AbsNode.NODE_KEY] = nodeKey;
-		data[AbsNode.PARENT_KEY] = parentKey;
-		data[AbsStructNode.LEFT_SIBLING_KEY] = leftSibKey;
-		data[AbsStructNode.RIGHT_SIBLING_KEY] = rightSibKey;
-		data[AbsStructNode.FIRST_CHILD_KEY] = (Long) EFixed.NULL_NODE_KEY
-				.getStandardProperty();
-		data[TextNode.TYPE] = type;
-		return data;
-	}
-
-	public final static long[] createData(final long nodeKey,
-			final TextNode node) {
-		return createData(nodeKey, node.getParentKey(),
-				node.getLeftSiblingKey(), node.getRightSiblingKey(),
-				node.getTypeKey());
-	}
-
-	@Override
-	public String toString() {
-		final StringBuilder returnVal = new StringBuilder(super.toString());
-		returnVal.append("\n\ttype key: ").append(getTypeKey())
-				.append("\n\tvalueLength: ").append(mData[VALUE_LENGTH])
-				.append("\n\tvalue:").append(new String(mValue)).toString();
-		return returnVal.toString();
-	}
+    @Override
+    public String toString() {
+        final StringBuilder returnVal = new StringBuilder(super.toString());
+        returnVal.append("\n\ttype key: ").append(getTypeKey())
+                .append("\n\tvalueLength: ").append(mIntData[VALUE_LENGTH])
+                .append("\n\tvalue:").append(new String(mValue)).toString();
+        return returnVal.toString();
+    }
 
 }

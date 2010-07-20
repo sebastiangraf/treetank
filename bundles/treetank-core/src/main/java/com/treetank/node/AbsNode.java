@@ -36,209 +36,217 @@ import com.treetank.settings.EFixed;
  */
 public abstract class AbsNode implements IItem, Comparable<AbsNode> {
 
-	/** standard NODE_KEY. */
-	protected static final int NODE_KEY = 0;
+    /** standard NODE_KEY. */
+    protected static final int NODE_KEY = 0;
 
-	/** standard PARENT_KEY */
-	protected static final int PARENT_KEY = 1;
+    /** standard PARENT_KEY */
+    protected static final int PARENT_KEY = 1;
 
-	/** Node key is common to all node kinds. */
-	protected final long[] mData;
+    /** standard TYPE_KEY */
+    protected static final int TYPE_KEY = 0;
 
-	/**
-	 * Constructor for inserting node.
-	 * 
-	 * @param nodeKey
-	 *            Key of node.
-	 * @param size
-	 *            Size of the data.
-	 */
-	AbsNode(final long[] builder) {
-		mData = builder;
-	}
+    /** Node key is common to all node kinds. */
+    protected final long[] mLongData;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final long getNodeKey() {
-		return mData[NODE_KEY];
-	}
+    /** Node key is common to all node data. */
+    protected final int[] mIntData;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean hasParent() {
-		return mData[PARENT_KEY] != (Long) EFixed.NULL_NODE_KEY
-				.getStandardProperty();
-	}
+    /**
+     * Constructor for inserting node.
+     * 
+     * @param longBuilder
+     *            longData to build
+     * @param intBuilder
+     *            intData to build
+     */
+    AbsNode(final long[] longBuilder, final int[] intBuilder) {
+        mLongData = longBuilder;
+        mIntData = intBuilder;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public long getParentKey() {
-		return mData[PARENT_KEY];
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public final long getNodeKey() {
+        return mLongData[NODE_KEY];
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public ENodes getKind() {
-		return ENodes.UNKOWN_KIND;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public boolean hasParent() {
+        return mLongData[PARENT_KEY] != (Long) EFixed.NULL_NODE_KEY
+                .getStandardProperty();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public int getNameKey() {
-		return (Integer) EFixed.NULL_INT_KEY.getStandardProperty();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public int getNameKey() {
+        return (Integer) EFixed.NULL_INT_KEY.getStandardProperty();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public int getURIKey() {
-		return (Integer) EFixed.NULL_INT_KEY.getStandardProperty();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public long getParentKey() {
+        return mLongData[PARENT_KEY];
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public int getTypeKey() {
-		return (Integer) EFixed.NULL_INT_KEY.getStandardProperty();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public ENodes getKind() {
+        return ENodes.UNKOWN_KIND;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public byte[] getRawValue() {
-		return null;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public int getURIKey() {
+        return (Integer) EFixed.NULL_INT_KEY.getStandardProperty();
+    }
 
-	/**
-	 * Serializing the data.
-	 * 
-	 * @param out
-	 *            target to serialize.
-	 */
-	public void serialize(final ITTSink out) {
-		for (final long longVal : mData) {
-			out.writeLong(longVal);
-		}
+    /**
+     * {@inheritDoc}
+     */
+    public int getTypeKey() {
+        return mIntData[TYPE_KEY];
+    }
 
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public byte[] getRawValue() {
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void setNodeKey(final long nodeKey) {
-		mData[NODE_KEY] = nodeKey;
-	}
+    /**
+     * Serializing the data.
+     * 
+     * @param out
+     *            target to serialize.
+     */
+    public void serialize(final ITTSink out) {
+        for (final long longVal : mLongData) {
+            out.writeLong(longVal);
+        }
+        for (final int intVal : mIntData) {
+            out.writeInt(intVal);
+        }
 
-	/**
-	 * Setting the parent key.
-	 * 
-	 * @param parentKey
-	 *            the key for the parent.
-	 */
-	public void setParentKey(final long parentKey) {
-		mData[PARENT_KEY] = parentKey;
-	}
+    }
 
-	/**
-	 * Setting the kind of this node.
-	 * 
-	 * @param kind
-	 *            to be set.
-	 */
-	public void setKind(final byte kind) {
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void setNodeKey(final long nodeKey) {
+        mLongData[NODE_KEY] = nodeKey;
+    }
 
-	/**
-	 * Setting the name key for this node.
-	 * 
-	 * @param nameKey
-	 *            to be set.
-	 */
-	public void setNameKey(final int nameKey) {
-	}
+    /**
+     * Setting the parent key.
+     * 
+     * @param parentKey
+     *            the key for the parent.
+     */
+    public void setParentKey(final long parentKey) {
+        mLongData[PARENT_KEY] = parentKey;
+    }
 
-	/**
-	 * Setting the uri for this node.
-	 * 
-	 * @param uriKey
-	 *            to be set.
-	 */
-	public void setURIKey(final int uriKey) {
-	}
+    /**
+     * Setting the type of this node.
+     * 
+     * @param valueType
+     *            to be set.
+     */
+    public void setType(final int valueType) {
+        mIntData[TYPE_KEY] = valueType;
+    }
 
-	/**
-	 * Setting the value for this node.
-	 * 
-	 * @param valueType
-	 *            type of value to be set.
-	 * @param value
-	 *            the value to be set.
-	 */
-	public void setValue(final int valueType, final byte[] value) {
-	}
+    /**
+     * Setting the name key for this node.
+     * 
+     * @param nameKey
+     *            to be set.
+     */
+    public void setNameKey(final int nameKey) {
+    }
 
-	/**
-	 * Setting the type of this node.
-	 * 
-	 * @param valueType
-	 *            to be set.
-	 */
-	public void setType(final int valueType) {
-	}
+    /**
+     * Setting the uri for this node.
+     * 
+     * @param uriKey
+     *            to be set.
+     */
+    public void setURIKey(final int uriKey) {
+    }
 
+    /**
+     * Setting the value for this node.
+     * 
+     * @param valueType
+     *            type of value to be set.
+     * @param value
+     *            the value to be set.
+     */
+    public void setValue(final int valueType, final byte[] value) {
+    }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(mLongData);
+        result = prime * result + Arrays.hashCode(mIntData);
+        return result;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Arrays.hashCode(mData);
-		return result;
-	}
+    @Override
+    public boolean equals(final Object obj) {
+        return this.hashCode() == obj.hashCode();
+    }
 
-	@Override
-	public boolean equals(final Object obj) {
-		return this.hashCode()==obj.hashCode();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public int compareTo(final AbsNode node) {
+        final long nodeKey = (node).getNodeKey();
+        if (mLongData[NODE_KEY] < nodeKey) {
+            return -1;
+        } else if (mLongData[NODE_KEY] == nodeKey) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public int compareTo(final AbsNode node) {
-		final long nodeKey = (node).getNodeKey();
-		if (mData[NODE_KEY] < nodeKey) {
-			return -1;
-		} else if (mData[NODE_KEY] == nodeKey) {
-			return 0;
-		} else {
-			return 1;
-		}
-	}
+    @Override
+    public String toString() {
+        return new StringBuilder("\n").append(this.getClass().getName())
+                .append("\n\tnode key: ").append(getNodeKey())
+                .append("\n\tparentKey: ").append(getParentKey())
+                .append("\n\ttypeKey: ").append(getTypeKey()).toString();
+    }
 
-	@Override
-	public String toString() {
-		return new StringBuilder("\n").append(this.getClass().getName())
-				.append("\n\tnode key: ").append(getNodeKey())
-				.append("\n\tparentKey: ").append(getParentKey()).toString();
-	}
+    public abstract AbsNode clone();
 
-	public abstract AbsNode clone();
+    protected static long[] cloneData(final long[] input) {
+        final long[] data = new long[input.length];
+        System.arraycopy(input, 0, data, 0, data.length);
+        return data;
+    }
 
-	protected static long[] cloneData(final long[] input) {
-		final long[] data = new long[input.length];
-		System.arraycopy(input, 0, data, 0, data.length);
-		return data;
-	}
+    protected static int[] cloneData(final int[] input) {
+        final int[] data = new int[input.length];
+        System.arraycopy(input, 0, data, 0, data.length);
+        return data;
+    }
 
-	protected static byte[] cloneValue(final byte[] input) {
-		final byte[] value = new byte[input.length];
-		System.arraycopy(input, 0, value, 0, value.length);
-		return value;
-	}
+    protected static byte[] cloneData(final byte[] input) {
+        final byte[] value = new byte[input.length];
+        System.arraycopy(input, 0, value, 0, value.length);
+        return value;
+    }
 
 }

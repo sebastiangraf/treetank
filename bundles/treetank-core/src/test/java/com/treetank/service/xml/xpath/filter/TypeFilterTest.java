@@ -89,8 +89,8 @@ public class TypeFilterTest {
         IFilterTest.testIFilterConventions(new TypeFilter(xtx,
                 "xs:untypedAtomic"), true);
 
-        IFilterTest.testIFilterConventions(new TypeFilter(xtx,
-                "xs:anyType"), false);
+        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:anyType"),
+                false);
         try {
             IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:bla"),
                     false);

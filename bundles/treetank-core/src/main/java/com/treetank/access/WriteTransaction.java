@@ -155,7 +155,8 @@ public final class WriteTransaction extends ReadTransaction implements
      */
     public synchronized long insertTextAsFirstChild(final String valueAsString)
             throws TreetankException {
-        if (getCurrentNode() instanceof ElementNode || getCurrentNode() instanceof DocumentRootNode) {
+        if (getCurrentNode() instanceof ElementNode
+                || getCurrentNode() instanceof DocumentRootNode) {
             final byte[] value = TypedValue.getBytes(valueAsString);
             final long parentKey = getCurrentNode().getNodeKey();
             final long leftSibKey = (Long) EFixed.NULL_NODE_KEY
@@ -257,7 +258,7 @@ public final class WriteTransaction extends ReadTransaction implements
             } else if (((AbsStructNode) node).hasLeftSibling()) {
                 moveTo(((AbsStructNode) node).getLeftSiblingKey());
             } else {
-              moveTo(node.getParentKey());
+                moveTo(node.getParentKey());
             }
 
         } else if (getCurrentNode().getKind() == ENodes.ATTRIBUTE_KIND) {
@@ -566,8 +567,8 @@ public final class WriteTransaction extends ReadTransaction implements
 
     private void updateParentAfterInsert(final boolean updateFirstChild)
             throws TreetankIOException {
-        final AbsStructNode parentNode = (AbsStructNode)getTransactionState()
-        .prepareNodeForModification(getCurrentNode().getParentKey());
+        final AbsStructNode parentNode = (AbsStructNode) getTransactionState()
+                .prepareNodeForModification(getCurrentNode().getParentKey());
         parentNode.incrementChildCount();
         if (updateFirstChild) {
             parentNode.setFirstChildKey(getCurrentNode().getNodeKey());

@@ -12,8 +12,8 @@ public abstract class AbsStructNode extends AbsNode {
 
     protected static final int CHILD_COUNT = 5;
 
-    protected AbsStructNode(final long[] builder) {
-        super(builder);
+    protected AbsStructNode(final long[] longBuilder, final int[] intBuilder) {
+        super(longBuilder, intBuilder);
     }
 
     /**
@@ -23,7 +23,7 @@ public abstract class AbsStructNode extends AbsNode {
      *            the key for the first child.
      */
     public void setFirstChildKey(final long firstChildKey) {
-        mData[FIRST_CHILD_KEY] = firstChildKey;
+        mLongData[FIRST_CHILD_KEY] = firstChildKey;
     }
 
     /**
@@ -33,7 +33,7 @@ public abstract class AbsStructNode extends AbsNode {
      *            the key for the left sibling.
      */
     public void setLeftSiblingKey(final long leftSiblingKey) {
-        mData[LEFT_SIBLING_KEY] = leftSiblingKey;
+        mLongData[LEFT_SIBLING_KEY] = leftSiblingKey;
     }
 
     /**
@@ -43,7 +43,7 @@ public abstract class AbsStructNode extends AbsNode {
      *            the key for the right sibling.
      */
     public void setRightSiblingKey(final long rightSiblingKey) {
-        mData[RIGHT_SIBLING_KEY] = rightSiblingKey;
+        mLongData[RIGHT_SIBLING_KEY] = rightSiblingKey;
     }
 
     /**
@@ -52,7 +52,7 @@ public abstract class AbsStructNode extends AbsNode {
      * @return first child's key
      */
     public long getFirstChildKey() {
-        return mData[FIRST_CHILD_KEY];
+        return mLongData[FIRST_CHILD_KEY];
     }
 
     /**
@@ -61,7 +61,7 @@ public abstract class AbsStructNode extends AbsNode {
      * @return left sibling key
      */
     public long getLeftSiblingKey() {
-        return mData[LEFT_SIBLING_KEY];
+        return mLongData[LEFT_SIBLING_KEY];
     }
 
     /**
@@ -70,7 +70,7 @@ public abstract class AbsStructNode extends AbsNode {
      * @return right sibling key
      */
     public long getRightSiblingKey() {
-        return mData[RIGHT_SIBLING_KEY];
+        return mLongData[RIGHT_SIBLING_KEY];
     }
 
     /**
@@ -79,7 +79,7 @@ public abstract class AbsStructNode extends AbsNode {
      * @return true, if item has a first child
      */
     public boolean hasFirstChild() {
-        return mData[FIRST_CHILD_KEY] != (Long) EFixed.NULL_NODE_KEY
+        return mLongData[FIRST_CHILD_KEY] != (Long) EFixed.NULL_NODE_KEY
                 .getStandardProperty();
     }
 
@@ -89,7 +89,7 @@ public abstract class AbsStructNode extends AbsNode {
      * @return true, if item has a left sibling
      */
     public boolean hasLeftSibling() {
-        return mData[LEFT_SIBLING_KEY] != (Long) EFixed.NULL_NODE_KEY
+        return mLongData[LEFT_SIBLING_KEY] != (Long) EFixed.NULL_NODE_KEY
                 .getStandardProperty();
     }
 
@@ -99,7 +99,7 @@ public abstract class AbsStructNode extends AbsNode {
      * @return true, if item has a right sibling
      */
     public boolean hasRightSibling() {
-        return mData[RIGHT_SIBLING_KEY] != (Long) EFixed.NULL_NODE_KEY
+        return mLongData[RIGHT_SIBLING_KEY] != (Long) EFixed.NULL_NODE_KEY
                 .getStandardProperty();
     }
 
@@ -109,7 +109,7 @@ public abstract class AbsStructNode extends AbsNode {
      * @return item's number of children
      */
     public long getChildCount() {
-        return mData[CHILD_COUNT];
+        return mLongData[CHILD_COUNT];
     }
 
     /**
@@ -119,21 +119,21 @@ public abstract class AbsStructNode extends AbsNode {
      *            to be set.
      */
     public void setChildCount(final long childCount) {
-        mData[CHILD_COUNT] = childCount;
+        mLongData[CHILD_COUNT] = childCount;
     }
 
     /**
      * Incrementing the child count.
      */
     public void incrementChildCount() {
-        mData[CHILD_COUNT]++;
+        mLongData[CHILD_COUNT]++;
     }
 
     /**
      * Decrementing the child count.
      */
     public void decrementChildCount() {
-        mData[CHILD_COUNT]--;
+        mLongData[CHILD_COUNT]--;
     }
 
     @Override

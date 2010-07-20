@@ -9,17 +9,17 @@ package com.treetank.service.xml;
  * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
- *
+ * 
  */
 public interface IImport {
-  /**
-   * Check one database for one or more timestamp objects and shredder several
-   * revision.
-   * 
-   * @param database
-   *            Database to import.
-   * @param obj
-   *            Timestamp object.
-   */
-  void check(final Object database, final Object obj);
+    /**
+     * Check one database for one or more timestamp objects and shredder several
+     * revision.
+     * 
+     * @param database
+     *            Database to import.
+     * @param obj
+     *            Timestamp object.
+     */
+    void check(final Object database, final Object obj);
 }
