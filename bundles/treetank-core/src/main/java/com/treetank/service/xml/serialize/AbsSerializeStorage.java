@@ -1,4 +1,4 @@
-package com.treetank.service.xml;
+package com.treetank.service.xml.serialize;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;

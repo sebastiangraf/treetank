@@ -93,49 +93,6 @@ public class XMLShredder implements Callable<Long> {
      * @throws TreetankUsageException
      *             if insertasfirstChild && updateOnly is both true OR if wtx is
      *             not pointing to doc-root and updateOnly= true
-     * @deprecated use constructor with XMLEventReader instead
-     */
-    @Deprecated
-    public XMLShredder(final IWriteTransaction wtx,
-            final XMLStreamReader reader, final boolean addAsFirstChild)
-            throws TreetankUsageException {
-        this(wtx, getReader(reader), addAsFirstChild);
-    }
-
-    /**
-     * Static convencience method to provide still a stream interface for
-     * treetank
-     * 
-     * @param streamReader
-     *            for streams as an input
-     * @return {@link XMLEventReader} as return since Treetank works with this
-     *         internally
-     * @throws TreetankUsageException
-     */
-    private final static XMLEventReader getReader(
-            final XMLStreamReader streamReader) throws TreetankUsageException {
-        XMLInputFactory fac = XMLInputFactory.newInstance();
-        try {
-            return fac.createXMLEventReader(streamReader);
-        } catch (final XMLStreamException exc) {
-            throw new TreetankUsageException(exc.toString());
-        }
-    }
-
-    /**
-     * Normal constructor to invoke a shredding process on a existing
-     * {@link WriteTransaction}
-     * 
-     * @param wtx
-     *            where the new XML Fragment should be placed
-     * @param reader
-     *            of the XML Fragment
-     * @param addAsFirstChild
-     *            if the insert is occuring on a node in an existing tree.
-     *            <code>false</code> is not possible when wtx is on root node.
-     * @throws TreetankUsageException
-     *             if insertasfirstChild && updateOnly is both true OR if wtx is
-     *             not pointing to doc-root and updateOnly= true
      */
     public XMLShredder(final IWriteTransaction wtx,
             final XMLEventReader reader, final boolean addAsFirstChild)

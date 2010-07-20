@@ -1,4 +1,4 @@
-package com.treetank.service.xml;
+package com.treetank.service.xml.serialize;
 
 import java.io.IOException;
 

@@ -19,6 +19,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
+import com.treetank.service.xml.serialize.XMLSerializer;
 
 /**
  * Test XMLUpdateShredder.
