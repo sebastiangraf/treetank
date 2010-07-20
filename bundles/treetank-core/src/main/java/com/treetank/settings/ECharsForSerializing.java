@@ -6,7 +6,7 @@ package com.treetank.settings;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public enum EXMLSerializing {
+public enum ECharsForSerializing {
 
     /** " ". */
     SPACE(new byte[] { 32 }),
@@ -50,7 +50,7 @@ public enum EXMLSerializing {
 
     private final byte[] bytes;
 
-    EXMLSerializing(final byte[]... paramBytes) {
+    ECharsForSerializing(final byte[]... paramBytes) {
         int index = 0;
         for (final byte[] runner : paramBytes) {
             index = index + runner.length;
