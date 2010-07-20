@@ -40,7 +40,7 @@ import com.treetank.api.ISession;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
-import com.treetank.settings.EXMLSerializing;
+import com.treetank.settings.ECharsForSerializing;
 import com.treetank.utils.IConstants;
 
 /**
@@ -186,7 +186,7 @@ public final class XMLSerializer extends AbsSerializeStorage implements
         case ELEMENT_KIND:
             // Emit start element.
             indent();
-            mOut.write(EXMLSerializing.OPEN.getBytes());
+            mOut.write(ECharsForSerializing.OPEN.getBytes());
             mOut.write(mRTX.rawNameForKey(mRTX.getNode().getNameKey()));
             final long key = mRTX.getNode().getNodeKey();
             // Emit namespace declarations.
@@ -194,15 +194,15 @@ public final class XMLSerializer extends AbsSerializeStorage implements
                     .getNamespaceCount(); index < length; index++) {
                 mRTX.moveToNamespace(index);
                 if (mRTX.nameForKey(mRTX.getNode().getNameKey()).length() == 0) {
-                    mOut.write(EXMLSerializing.XMLNS.getBytes());
+                    mOut.write(ECharsForSerializing.XMLNS.getBytes());
                     write(mRTX.nameForKey(mRTX.getNode().getURIKey()));
-                    mOut.write(EXMLSerializing.QUOTE.getBytes());
+                    mOut.write(ECharsForSerializing.QUOTE.getBytes());
                 } else {
-                    mOut.write(EXMLSerializing.XMLNS_COLON.getBytes());
+                    mOut.write(ECharsForSerializing.XMLNS_COLON.getBytes());
                     write(mRTX.nameForKey(mRTX.getNode().getNameKey()));
-                    mOut.write(EXMLSerializing.EQUAL_QUOTE.getBytes());
+                    mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
                     write(mRTX.nameForKey(mRTX.getNode().getURIKey()));
-                    mOut.write(EXMLSerializing.QUOTE.getBytes());
+                    mOut.write(ECharsForSerializing.QUOTE.getBytes());
                 }
                 mRTX.moveTo(key);
             }
@@ -210,14 +210,14 @@ public final class XMLSerializer extends AbsSerializeStorage implements
             // Add virtual rest:id attribute.
             if (mSerializeId) {
                 if (mSerializeRest) {
-                    mOut.write(EXMLSerializing.REST_PREFIX.getBytes());
+                    mOut.write(ECharsForSerializing.REST_PREFIX.getBytes());
                 } else {
-                    mOut.write(EXMLSerializing.SPACE.getBytes());
+                    mOut.write(ECharsForSerializing.SPACE.getBytes());
                 }
-                mOut.write(EXMLSerializing.ID.getBytes());
-                mOut.write(EXMLSerializing.EQUAL_QUOTE.getBytes());
+                mOut.write(ECharsForSerializing.ID.getBytes());
+                mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
                 write(mRTX.getNode().getNodeKey());
-                mOut.write(EXMLSerializing.QUOTE.getBytes());
+                mOut.write(ECharsForSerializing.QUOTE.getBytes());
             }
 
             // Iterate over all persistent attributes.
@@ -229,17 +229,17 @@ public final class XMLSerializer extends AbsSerializeStorage implements
                     System.out.println(nodeKey);
                     System.out.println(mRTX.getNode().getNodeKey());
                 }
-                mOut.write(EXMLSerializing.SPACE.getBytes());
+                mOut.write(ECharsForSerializing.SPACE.getBytes());
                 mOut.write(mRTX.rawNameForKey(mRTX.getNode().getNameKey()));
-                mOut.write(EXMLSerializing.EQUAL_QUOTE.getBytes());
+                mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
                 mOut.write(mRTX.getNode().getRawValue());
-                mOut.write(EXMLSerializing.QUOTE.getBytes());
+                mOut.write(ECharsForSerializing.QUOTE.getBytes());
                 mRTX.moveTo(key);
             }
             if (((AbsStructNode) mRTX.getNode()).hasFirstChild()) {
-                mOut.write(EXMLSerializing.CLOSE.getBytes());
+                mOut.write(ECharsForSerializing.CLOSE.getBytes());
             } else {
-                mOut.write(EXMLSerializing.SLASH_CLOSE.getBytes());
+                mOut.write(ECharsForSerializing.SLASH_CLOSE.getBytes());
             }
             if (mIndent) {
                 mOut.write(mNL);
@@ -263,9 +263,9 @@ public final class XMLSerializer extends AbsSerializeStorage implements
     @Override
     public void emitEndElement() throws IOException {
         indent();
-        mOut.write(EXMLSerializing.OPEN_SLASH.getBytes());
+        mOut.write(ECharsForSerializing.OPEN_SLASH.getBytes());
         mOut.write(mRTX.rawNameForKey(mRTX.getNode().getNameKey()));
-        mOut.write(EXMLSerializing.CLOSE.getBytes());
+        mOut.write(ECharsForSerializing.CLOSE.getBytes());
         if (mIndent) {
             mOut.write(mNL);
         }
