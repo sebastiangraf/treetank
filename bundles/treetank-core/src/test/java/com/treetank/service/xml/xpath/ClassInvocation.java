@@ -27,7 +27,7 @@ import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
-import com.treetank.service.xml.XMLShredder;
+import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.utils.TypedValue;
 
 public class ClassInvocation {

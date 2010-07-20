@@ -1,4 +1,4 @@
-package com.treetank.service.xml;
+package com.treetank.service.xml.shredder;
 
 /**
  * <h1>ObjectShredder</h1>

@@ -36,7 +36,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.IFilterTest;
 import com.treetank.exception.TreetankException;
-import com.treetank.service.xml.XMLShredder;
+import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.service.xml.xpath.functions.XPathError;
 

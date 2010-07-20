@@ -16,7 +16,7 @@
  * $Id: XMLShredder.java 4455 2008-09-01 14:46:46Z kramis $
  */
 
-package com.treetank.service.xml;
+package com.treetank.service.xml.shredder;
 
 import java.io.File;
 import java.io.FileInputStream;
