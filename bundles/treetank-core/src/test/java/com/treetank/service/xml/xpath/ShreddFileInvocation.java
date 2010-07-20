@@ -29,7 +29,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.service.xml.XMLShredder;
+import com.treetank.service.xml.shredder.XMLShredder;
 
 public class ShreddFileInvocation {
 

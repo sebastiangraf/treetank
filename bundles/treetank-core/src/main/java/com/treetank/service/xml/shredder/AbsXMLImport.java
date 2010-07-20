@@ -1,4 +1,4 @@
-package com.treetank.service.xml;
+package com.treetank.service.xml.shredder;
 
 import java.io.File;
 import java.util.List;

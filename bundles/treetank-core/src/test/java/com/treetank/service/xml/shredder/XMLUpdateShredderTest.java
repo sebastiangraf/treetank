@@ -1,4 +1,4 @@
-package com.treetank.service.xml;
+package com.treetank.service.xml.shredder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -20,6 +20,8 @@ import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.serialize.XMLSerializer;
+import com.treetank.service.xml.shredder.XMLShredder;
+import com.treetank.service.xml.shredder.XMLUpdateShredder;
 
 /**
  * Test XMLUpdateShredder.

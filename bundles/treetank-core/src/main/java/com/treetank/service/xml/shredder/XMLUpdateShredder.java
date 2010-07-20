@@ -14,7 +14,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.treetank.service.xml;
+package com.treetank.service.xml.shredder;
 
 import java.io.File;
 import java.io.IOException;

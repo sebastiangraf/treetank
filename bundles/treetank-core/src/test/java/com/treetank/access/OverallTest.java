@@ -19,7 +19,7 @@ import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
-import com.treetank.service.xml.XMLShredder;
+import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.settings.EDatabaseSetting;
 
 public final class OverallTest {

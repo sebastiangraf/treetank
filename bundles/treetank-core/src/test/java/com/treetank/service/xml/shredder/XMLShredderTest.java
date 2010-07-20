@@ -16,7 +16,7 @@
  * $Id: XMLShredderTest.java 4413 2008-08-27 16:59:32Z kramis $
  */
 
-package com.treetank.service.xml;
+package com.treetank.service.xml.shredder;
 
 import java.io.File;
 import java.util.Iterator;
@@ -42,6 +42,7 @@ import com.treetank.exception.TreetankException;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
+import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.utils.DocumentCreater;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.TypedValue;
