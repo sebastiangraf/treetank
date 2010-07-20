@@ -32,9 +32,9 @@ public class NamespaceNodeTest {
     @Test
     public void testNamespaceNode() {
 
-        final long[] data = NamespaceNode.createData(99, 13, 14, 15);
+        final NamespaceNode node1 = (NamespaceNode) NamespaceNode.createData(
+                99, 13, 14, 15);
         // Create empty node.
-        final NamespaceNode node1 = new NamespaceNode(data);
 
         // Serialize and deserialize node.
         final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
@@ -61,21 +61,21 @@ public class NamespaceNodeTest {
         assertEquals(ENodes.NAMESPACE_KIND, node.getKind());
         assertEquals(true, node.hasParent());
     }
-    
-    @Test
-    public void testHashCode(){
-        final long[] data = NamespaceNode.createData(99L, 13L, 14, 15);
-		final long[] data2 = NamespaceNode.createData(100L, 15L, 12, 16);
 
-		final NamespaceNode node = new NamespaceNode(data);
-		final NamespaceNode node2 = new NamespaceNode(data);
-		final NamespaceNode node3 = new NamespaceNode(data2);
-		
-		assertEquals(node2.hashCode(), node.hashCode());
-		assertTrue(node2.equals(node));
-		assertFalse(node3.equals(node));
-		assertFalse(node3.equals(node2));
-    	
+    @Test
+    public void testHashCode() {
+        final NamespaceNode node = (NamespaceNode) NamespaceNode.createData(
+                99L, 13L, 14, 15);
+        final NamespaceNode node2 = (NamespaceNode) NamespaceNode.createData(
+                99L, 13L, 14, 15);
+        final NamespaceNode node3 = (NamespaceNode) NamespaceNode.createData(
+                100L, 15L, 12, 16);
+
+        assertEquals(node2.hashCode(), node.hashCode());
+        assertTrue(node2.equals(node));
+        assertFalse(node3.equals(node));
+        assertFalse(node3.equals(node2));
+
     }
 
 }

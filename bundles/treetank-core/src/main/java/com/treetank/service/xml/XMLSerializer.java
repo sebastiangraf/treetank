@@ -53,328 +53,300 @@ import com.treetank.utils.IConstants;
  * class.
  * </p>
  */
-public final class XMLSerializer extends AbsSerializeStorage implements Callable<Void> {
+public final class XMLSerializer extends AbsSerializeStorage implements
+        Callable<Void> {
 
-  /** Offset that must be added to digit to make it ASCII. */
-  private static final int ASCII_OFFSET = 48;
+    /** Offset that must be added to digit to make it ASCII. */
+    private static final int ASCII_OFFSET = 48;
 
-  /** Precalculated powers of each available long digit. */
-  private static final long[] LONG_POWERS =
-      {
-          1L,
-          10L,
-          100L,
-          1000L,
-          10000L,
-          100000L,
-          1000000L,
-          10000000L,
-          100000000L,
-          1000000000L,
-          10000000000L,
-          100000000000L,
-          1000000000000L,
-          10000000000000L,
-          100000000000000L,
-          1000000000000000L,
-          10000000000000000L,
-          100000000000000000L,
-          1000000000000000000L };
+    /** Precalculated powers of each available long digit. */
+    private static final long[] LONG_POWERS = { 1L, 10L, 100L, 1000L, 10000L,
+            100000L, 1000000L, 10000000L, 100000000L, 1000000000L,
+            10000000000L, 100000000000L, 1000000000000L, 10000000000000L,
+            100000000000000L, 1000000000000000L, 10000000000000000L,
+            100000000000000000L, 1000000000000000000L };
 
-  /** OutputStream to write to. */
-  private final OutputStream mOut;
+    /** OutputStream to write to. */
+    private final OutputStream mOut;
 
-  /** Indent output. */
-  private final boolean mIndent;
+    /** Indent output. */
+    private final boolean mIndent;
 
-  /** Line sparator. */
-  private final byte[] mNL = NL.getBytes();
+    /** Line sparator. */
+    private final byte[] mNL = NL.getBytes();
 
-  /**
-   * Initialize XMLStreamReader implementation with transaction. The cursor
-   * points to the node the XMLStreamReader starts to read. Do not serialize
-   * the tank ids.
-   * 
-   * @param rtx
-   *            Transaction with cursor pointing to start node.
-   * @param out
-   *            OutputStream to serialize UTF-8 XML to.
-   */
-  public XMLSerializer(final IReadTransaction rtx, final OutputStream out) {
-    this(rtx, out, true, false, false, false);
-  }
-
-  /**
-   * Initialize XMLStreamReader implementation with transaction. The cursor
-   * points to the node the XMLStreamReader starts to read.
-   * 
-   * @param rtx
-   *            Transaction with cursor pointing to start node.
-   * @param out
-   *            OutputStream to serialize UTF-8 XML to.
-   * @param serializeXMLDeclaration
-   *            Serialize XML declaration if true.
-   * @param serializeRest
-   *            Serialize tank id if true.
-   */
-  public XMLSerializer(
-      final IReadTransaction rtx,
-      final OutputStream out,
-      final boolean serializeXMLDeclaration,
-      final boolean serializeRest) {
-    this(rtx, out, serializeXMLDeclaration, serializeRest, serializeRest, false);
-  }
-
-  /**
-   * Initialize XMLStreamReader implementation with transaction. The cursor
-   * points to the node the XMLStreamReader starts to read. Do not serialize
-   * the tank ids.
-   * 
-   * @param rtx
-   *            Transaction with cursor pointing to start node.
-   * @param out
-   *            OutputStream to serialize UTF-8 XML to.
-   * @param map
-   *            Properties map.
-   */
-  public XMLSerializer(
-      final IReadTransaction rtx,
-      final OutputStream out,
-      final ConcurrentMap<String, Object> map) {
-    this(
-        rtx,
-        out,
-        (Boolean) map.get(S_XMLDECL),
-        (Boolean) map.get(S_REST),
-        (Boolean) map.get(S_ID),
-        (Boolean) map.get(S_INDENT));
-  }
-
-  /**
-   * Initialize XMLStreamReader implementation with transaction. The cursor
-   * points to the node the XMLStreamReader starts to read.
-   * 
-   * @param rtx
-   *            Transaction with cursor pointing to start node.
-   * @param out
-   *            OutputStream to serialize UTF-8 XML to.
-   * @param serializeXMLDeclaration
-   *            Serialize XML declaration if true.
-   * @param serializeRest
-   *            Serialize rest if true.
-   * @param serializeId
-   *            Serialize id if true.
-   */
-  public XMLSerializer(
-      final IReadTransaction rtx,
-      final OutputStream out,
-      final boolean serializeXMLDeclaration,
-      final boolean serializeRest,
-      final boolean serializeId,
-      final boolean indent) {
-    super(rtx, serializeXMLDeclaration, serializeRest, serializeId);
-    mOut = new BufferedOutputStream(out, 4096);
-    mIndent = indent;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public Void call() throws Exception {
-    if (mSerializeXMLDeclaration) {
-      write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
-    }
-    if (mSerializeRest) {
-      write("<rest:sequence xmlns:rest=\"REST\"><rest:item>");
+    /**
+     * Initialize XMLStreamReader implementation with transaction. The cursor
+     * points to the node the XMLStreamReader starts to read. Do not serialize
+     * the tank ids.
+     * 
+     * @param rtx
+     *            Transaction with cursor pointing to start node.
+     * @param out
+     *            OutputStream to serialize UTF-8 XML to.
+     */
+    public XMLSerializer(final IReadTransaction rtx, final OutputStream out) {
+        this(rtx, out, true, false, false, false);
     }
 
-    serialize();
-
-    if (mSerializeRest) {
-      write("</rest:item></rest:sequence>");
+    /**
+     * Initialize XMLStreamReader implementation with transaction. The cursor
+     * points to the node the XMLStreamReader starts to read.
+     * 
+     * @param rtx
+     *            Transaction with cursor pointing to start node.
+     * @param out
+     *            OutputStream to serialize UTF-8 XML to.
+     * @param serializeXMLDeclaration
+     *            Serialize XML declaration if true.
+     * @param serializeRest
+     *            Serialize tank id if true.
+     */
+    public XMLSerializer(final IReadTransaction rtx, final OutputStream out,
+            final boolean serializeXMLDeclaration, final boolean serializeRest) {
+        this(rtx, out, serializeXMLDeclaration, serializeRest, serializeRest,
+                false);
     }
 
-    mOut.flush();
-    return null;
-  }
+    /**
+     * Initialize XMLStreamReader implementation with transaction. The cursor
+     * points to the node the XMLStreamReader starts to read. Do not serialize
+     * the tank ids.
+     * 
+     * @param rtx
+     *            Transaction with cursor pointing to start node.
+     * @param out
+     *            OutputStream to serialize UTF-8 XML to.
+     * @param map
+     *            Properties map.
+     */
+    public XMLSerializer(final IReadTransaction rtx, final OutputStream out,
+            final ConcurrentMap<String, Object> map) {
+        this(rtx, out, (Boolean) map.get(S_XMLDECL), (Boolean) map.get(S_REST),
+                (Boolean) map.get(S_ID), (Boolean) map.get(S_INDENT));
+    }
 
-  /**
-   * Emit node (start element or characters).
-   * 
-   * @throws IOException
-   */
-  @Override
-  public void emitNode() throws IOException {
-    switch (mRTX.getNode().getKind()) {
-    case ROOT_KIND:
-      if (mIndent) {
-        mOut.write(mNL);
-      }
-      break;
-    case ELEMENT_KIND:
-      // Emit start element.
-      indent();
-      mOut.write(EXMLSerializing.OPEN.getBytes());
-      mOut.write(mRTX.rawNameForKey(mRTX.getNode().getNameKey()));
-      final long key = mRTX.getNode().getNodeKey();
-      // Emit namespace declarations.
-      for (int index = 0, length =
-          ((ElementNode) mRTX.getNode()).getNamespaceCount(); index < length; index++) {
-        mRTX.moveToNamespace(index);
-        if (mRTX.nameForKey(mRTX.getNode().getNameKey()).length() == 0) {
-          mOut.write(EXMLSerializing.XMLNS.getBytes());
-          write(mRTX.nameForKey(mRTX.getNode().getURIKey()));
-          mOut.write(EXMLSerializing.QUOTE.getBytes());
-        } else {
-          mOut.write(EXMLSerializing.XMLNS_COLON.getBytes());
-          write(mRTX.nameForKey(mRTX.getNode().getNameKey()));
-          mOut.write(EXMLSerializing.EQUAL_QUOTE.getBytes());
-          write(mRTX.nameForKey(mRTX.getNode().getURIKey()));
-          mOut.write(EXMLSerializing.QUOTE.getBytes());
+    /**
+     * Initialize XMLStreamReader implementation with transaction. The cursor
+     * points to the node the XMLStreamReader starts to read.
+     * 
+     * @param rtx
+     *            Transaction with cursor pointing to start node.
+     * @param out
+     *            OutputStream to serialize UTF-8 XML to.
+     * @param serializeXMLDeclaration
+     *            Serialize XML declaration if true.
+     * @param serializeRest
+     *            Serialize rest if true.
+     * @param serializeId
+     *            Serialize id if true.
+     */
+    public XMLSerializer(final IReadTransaction rtx, final OutputStream out,
+            final boolean serializeXMLDeclaration, final boolean serializeRest,
+            final boolean serializeId, final boolean indent) {
+        super(rtx, serializeXMLDeclaration, serializeRest, serializeId);
+        mOut = new BufferedOutputStream(out, 4096);
+        mIndent = indent;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Void call() throws Exception {
+        if (mSerializeXMLDeclaration) {
+            write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
         }
-        mRTX.moveTo(key);
-      }
-      // Emit attributes.
-      // Add virtual rest:id attribute.
-      if (mSerializeId) {
         if (mSerializeRest) {
-          mOut.write(EXMLSerializing.REST_PREFIX.getBytes());
-        } else {
-          mOut.write(EXMLSerializing.SPACE.getBytes());
+            write("<rest:sequence xmlns:rest=\"REST\"><rest:item>");
         }
-        mOut.write(EXMLSerializing.ID.getBytes());
-        mOut.write(EXMLSerializing.EQUAL_QUOTE.getBytes());
-        write(mRTX.getNode().getNodeKey());
-        mOut.write(EXMLSerializing.QUOTE.getBytes());
-      }
 
-      // Iterate over all persistent attributes.
-      for (int index = 0; index < ((ElementNode) mRTX.getNode())
-          .getAttributeCount(); index++) {
-        long nodeKey = mRTX.getNode().getNodeKey();
-        mRTX.moveToAttribute(index);
-        if (mRTX.getNode().getKind() == ENodes.ELEMENT_KIND) {
-          System.out.println(nodeKey);
-          System.out.println(mRTX.getNode().getNodeKey());
+        serialize();
+
+        if (mSerializeRest) {
+            write("</rest:item></rest:sequence>");
         }
-        mOut.write(EXMLSerializing.SPACE.getBytes());
+
+        mOut.flush();
+        return null;
+    }
+
+    /**
+     * Emit node (start element or characters).
+     * 
+     * @throws IOException
+     */
+    @Override
+    public void emitNode() throws IOException {
+        switch (mRTX.getNode().getKind()) {
+        case ROOT_KIND:
+            if (mIndent) {
+                mOut.write(mNL);
+            }
+            break;
+        case ELEMENT_KIND:
+            // Emit start element.
+            indent();
+            mOut.write(EXMLSerializing.OPEN.getBytes());
+            mOut.write(mRTX.rawNameForKey(mRTX.getNode().getNameKey()));
+            final long key = mRTX.getNode().getNodeKey();
+            // Emit namespace declarations.
+            for (int index = 0, length = ((ElementNode) mRTX.getNode())
+                    .getNamespaceCount(); index < length; index++) {
+                mRTX.moveToNamespace(index);
+                if (mRTX.nameForKey(mRTX.getNode().getNameKey()).length() == 0) {
+                    mOut.write(EXMLSerializing.XMLNS.getBytes());
+                    write(mRTX.nameForKey(mRTX.getNode().getURIKey()));
+                    mOut.write(EXMLSerializing.QUOTE.getBytes());
+                } else {
+                    mOut.write(EXMLSerializing.XMLNS_COLON.getBytes());
+                    write(mRTX.nameForKey(mRTX.getNode().getNameKey()));
+                    mOut.write(EXMLSerializing.EQUAL_QUOTE.getBytes());
+                    write(mRTX.nameForKey(mRTX.getNode().getURIKey()));
+                    mOut.write(EXMLSerializing.QUOTE.getBytes());
+                }
+                mRTX.moveTo(key);
+            }
+            // Emit attributes.
+            // Add virtual rest:id attribute.
+            if (mSerializeId) {
+                if (mSerializeRest) {
+                    mOut.write(EXMLSerializing.REST_PREFIX.getBytes());
+                } else {
+                    mOut.write(EXMLSerializing.SPACE.getBytes());
+                }
+                mOut.write(EXMLSerializing.ID.getBytes());
+                mOut.write(EXMLSerializing.EQUAL_QUOTE.getBytes());
+                write(mRTX.getNode().getNodeKey());
+                mOut.write(EXMLSerializing.QUOTE.getBytes());
+            }
+
+            // Iterate over all persistent attributes.
+            for (int index = 0; index < ((ElementNode) mRTX.getNode())
+                    .getAttributeCount(); index++) {
+                long nodeKey = mRTX.getNode().getNodeKey();
+                mRTX.moveToAttribute(index);
+                if (mRTX.getNode().getKind() == ENodes.ELEMENT_KIND) {
+                    System.out.println(nodeKey);
+                    System.out.println(mRTX.getNode().getNodeKey());
+                }
+                mOut.write(EXMLSerializing.SPACE.getBytes());
+                mOut.write(mRTX.rawNameForKey(mRTX.getNode().getNameKey()));
+                mOut.write(EXMLSerializing.EQUAL_QUOTE.getBytes());
+                mOut.write(mRTX.getNode().getRawValue());
+                mOut.write(EXMLSerializing.QUOTE.getBytes());
+                mRTX.moveTo(key);
+            }
+            if (((AbsStructNode) mRTX.getNode()).hasFirstChild()) {
+                mOut.write(EXMLSerializing.CLOSE.getBytes());
+            } else {
+                mOut.write(EXMLSerializing.SLASH_CLOSE.getBytes());
+            }
+            if (mIndent) {
+                mOut.write(mNL);
+            }
+            break;
+        case TEXT_KIND:
+            indent();
+            mOut.write(mRTX.getNode().getRawValue());
+            if (mIndent) {
+                mOut.write('\n');
+            }
+            break;
+        }
+    }
+
+    /**
+     * Emit end element.
+     * 
+     * @throws IOException
+     */
+    @Override
+    public void emitEndElement() throws IOException {
+        indent();
+        mOut.write(EXMLSerializing.OPEN_SLASH.getBytes());
         mOut.write(mRTX.rawNameForKey(mRTX.getNode().getNameKey()));
-        mOut.write(EXMLSerializing.EQUAL_QUOTE.getBytes());
-        mOut.write(mRTX.getNode().getRawValue());
-        mOut.write(EXMLSerializing.QUOTE.getBytes());
-        mRTX.moveTo(key);
-      }
-      if (((AbsStructNode) mRTX.getNode()).hasFirstChild()) {
         mOut.write(EXMLSerializing.CLOSE.getBytes());
-      } else {
-        mOut.write(EXMLSerializing.SLASH_CLOSE.getBytes());
-      }
-      if (mIndent) {
-        mOut.write(mNL);
-      }
-      break;
-    case TEXT_KIND:
-      indent();
-      mOut.write(mRTX.getNode().getRawValue());
-      if (mIndent) {
-        mOut.write('\n');
-      }
-      break;
-    }
-  }
-
-  /**
-   * Emit end element.
-   * 
-   * @throws IOException
-   */
-  @Override
-  public void emitEndElement() throws IOException {
-    indent();
-    mOut.write(EXMLSerializing.OPEN_SLASH.getBytes());
-    mOut.write(mRTX.rawNameForKey(mRTX.getNode().getNameKey()));
-    mOut.write(EXMLSerializing.CLOSE.getBytes());
-    if (mIndent) {
-      mOut.write(mNL);
-    }
-  }
-
-  /**
-   * Indentation of output.
-   * 
-   * @throws IOException
-   */
-  private void indent() throws IOException {
-    if (mIndent) {
-      for (int i = 0; i < mStack.size(); i++) {
-        mOut.write("  ".getBytes());
-      }
-    }
-  }
-
-  /**
-   * Write characters of string.
-   * 
-   * @throws IOException
-   * @throws UnsupportedEncodingException
-   */
-  private void write(final String string)
-      throws UnsupportedEncodingException,
-      IOException {
-    mOut.write(string.getBytes(IConstants.DEFAULT_ENCODING));
-  }
-
-  /**
-   * Write non-negative non-zero long as UTF-8 bytes.
-   * 
-   * @throws IOException
-   */
-  private void write(final long value) throws IOException {
-    final int length = (int) Math.log10((double) value);
-    int digit = 0;
-    long remainder = value;
-    for (int i = length; i >= 0; i--) {
-      digit = (byte) (remainder / LONG_POWERS[i]);
-      mOut.write((byte) (digit + ASCII_OFFSET));
-      remainder -= digit * LONG_POWERS[i];
-    }
-  }
-
-  /**
-   * Main method.
-   * 
-   * @param args
-   *                 args[0] specifies the input-TT file/folder; 
-   *                 args[1] specifies the output XML file.
-   * @throws Exception
-   *                 Any exception.
-   */
-  public static void main(String... args) throws Exception {
-    if (args.length < 2 || args.length > 3) {
-      System.out.println("Usage: XMLSerializer input-TT output.xml");
-      System.exit(1);
+        if (mIndent) {
+            mOut.write(mNL);
+        }
     }
 
-    System.out.print("Serializing '" + args[0] + "' to '" + args[1] + "' ... ");
-    long time = System.currentTimeMillis();
-    final File target = new File(args[1]);
-    target.delete();
-    final FileOutputStream outputStream = new FileOutputStream(target);
+    /**
+     * Indentation of output.
+     * 
+     * @throws IOException
+     */
+    private void indent() throws IOException {
+        if (mIndent) {
+            for (int i = 0; i < mStack.size(); i++) {
+                mOut.write("  ".getBytes());
+            }
+        }
+    }
 
-    final IDatabase db = Database.openDatabase(new File(args[0]));
-    final ISession session = db.getSession();
-    final IReadTransaction rtx = session.beginReadTransaction();
-    final XMLSerializer serializer =
-        new XMLSerializer(rtx, outputStream, true, false, false, true);
-    serializer.call();
+    /**
+     * Write characters of string.
+     * 
+     * @throws IOException
+     * @throws UnsupportedEncodingException
+     */
+    private void write(final String string)
+            throws UnsupportedEncodingException, IOException {
+        mOut.write(string.getBytes(IConstants.DEFAULT_ENCODING));
+    }
 
-    rtx.close();
-    session.close();
-    db.close();
-    outputStream.close();
+    /**
+     * Write non-negative non-zero long as UTF-8 bytes.
+     * 
+     * @throws IOException
+     */
+    private void write(final long value) throws IOException {
+        final int length = (int) Math.log10((double) value);
+        int digit = 0;
+        long remainder = value;
+        for (int i = length; i >= 0; i--) {
+            digit = (byte) (remainder / LONG_POWERS[i]);
+            mOut.write((byte) (digit + ASCII_OFFSET));
+            remainder -= digit * LONG_POWERS[i];
+        }
+    }
 
-    System.out
-        .println(" done [" + (System.currentTimeMillis() - time) + "ms].");
-  }
+    /**
+     * Main method.
+     * 
+     * @param args
+     *            args[0] specifies the input-TT file/folder; args[1] specifies
+     *            the output XML file.
+     * @throws Exception
+     *             Any exception.
+     */
+    public static void main(String... args) throws Exception {
+        if (args.length < 2 || args.length > 3) {
+            System.out.println("Usage: XMLSerializer input-TT output.xml");
+            System.exit(1);
+        }
+
+        System.out.print("Serializing '" + args[0] + "' to '" + args[1]
+                + "' ... ");
+        long time = System.currentTimeMillis();
+        final File target = new File(args[1]);
+        target.delete();
+        final FileOutputStream outputStream = new FileOutputStream(target);
+
+        final IDatabase db = Database.openDatabase(new File(args[0]));
+        final ISession session = db.getSession();
+        final IReadTransaction rtx = session.beginReadTransaction();
+        final XMLSerializer serializer = new XMLSerializer(rtx, outputStream,
+                true, false, false, true);
+        serializer.call();
+
+        rtx.close();
+        session.close();
+        db.close();
+        outputStream.close();
+
+        System.out.println(" done [" + (System.currentTimeMillis() - time)
+                + "ms].");
+    }
 
 }

@@ -24,7 +24,6 @@ import com.treetank.io.AbstractIOFactory.StorageType;
 import com.treetank.node.AttributeNode;
 import com.treetank.node.DeletedNode;
 import com.treetank.node.DocumentRootNode;
-import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
 import com.treetank.node.NamespaceNode;
 import com.treetank.node.TextNode;
@@ -129,42 +128,44 @@ public final class TestHelper {
         for (int i = offset; i < length; i++) {
             switch (random.nextInt(6)) {
             case 0:
-                page.setNode(i, ENodes.ATTRIBUTE_KIND.createNodeFromScratch(
+                page.setNode(
+                        i,
                         AttributeNode.createData(random.nextLong(),
                                 random.nextLong(), random.nextInt(),
-                                random.nextInt(), random.nextInt()),
-                        new byte[] { 0, 1, 2, 3, 4 }));
+                                random.nextInt(), random.nextInt(), new byte[] {
+                                        0, 1, 2, 3, 4 }));
                 break;
             case 1:
-                page.setNode(i, ENodes.DELETE_KIND.createNodeFromScratch(
+                page.setNode(
+                        i,
                         DeletedNode.createData(random.nextLong(),
-                                random.nextLong()), null));
+                                random.nextLong()));
                 break;
             case 2:
-                page.setNode(i, ENodes.ELEMENT_KIND.createNodeFromScratch(
+                page.setNode(
+                        i,
                         ElementNode.createData(random.nextLong(),
                                 random.nextLong(), random.nextLong(),
                                 random.nextLong(), random.nextLong(),
                                 random.nextLong(), random.nextInt(),
-                                random.nextInt(), random.nextInt()), null));
+                                random.nextInt(), random.nextInt()));
                 break;
             case 3:
-                page.setNode(i, ENodes.NAMESPACE_KIND.createNodeFromScratch(
-                        NamespaceNode.createData(random.nextLong(),
-                                random.nextLong(), random.nextInt(),
-                                random.nextInt()), null));
-                break;
-            case 4:
                 page.setNode(
                         i,
-                        ENodes.ROOT_KIND.createNodeFromScratch(
-                                DocumentRootNode.createData(), null));
+                        NamespaceNode.createData(random.nextLong(),
+                                random.nextLong(), random.nextInt(),
+                                random.nextInt()));
+                break;
+            case 4:
+                page.setNode(i,
+
+                DocumentRootNode.createData());
                 break;
             case 5:
-                page.setNode(i, ENodes.TEXT_KIND.createNodeFromScratch(
-                        TextNode.createData(random.nextLong(),
-                                random.nextLong(), random.nextLong(),
-                                random.nextLong(), random.nextInt()),
+                page.setNode(i, TextNode.createData(random.nextLong(),
+                        random.nextLong(), random.nextLong(),
+                        random.nextLong(), random.nextInt(),
                         new byte[] { 0, 1 }));
                 break;
             }

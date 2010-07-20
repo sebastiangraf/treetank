@@ -33,9 +33,9 @@ public class TextNodeTest {
     public void testTextRootNode() {
 
         // Create empty node.
-        final long[] data = TextNode.createData(13, 14, 15, 16, 19);
         final byte[] value = { (byte) 17, (byte) 18 };
-        final TextNode node1 = new TextNode(data, value);
+        final TextNode node1 = (TextNode) TextNode.createData(13, 14, 15, 16,
+                19, value);
         check(node1);
 
         // Serialize and deserialize node.
@@ -74,24 +74,25 @@ public class TextNodeTest {
         assertEquals(true, node.hasLeftSibling());
         assertEquals(true, node.hasRightSibling());
     }
-    
-    @Test
-    public void testHashCode(){
-        final long[] data = TextNode.createData(99, 13, 14, 15, 19);
-		final long[] data2 = TextNode.createData(100, 15, 12, 16, 123);
-		final byte[] value = { (byte) 17, (byte) 18 };
-		final byte[] value2 = { (byte) 19, (byte) 20 };
-		
-		final TextNode node = new TextNode(data, value);
-		final TextNode node2 = new TextNode(data, value);
-		final TextNode node3 = new TextNode(data, value2);
-		final TextNode node4 = new TextNode(data2, value);
 
-		assertEquals(node2.hashCode(), node.hashCode());
-		assertTrue(node2.equals(node));
-		assertFalse(node3.equals(node));
-		assertFalse(node4.equals(node));
-    	
+    @Test
+    public void testHashCode() {
+        final byte[] value = { (byte) 17, (byte) 18 };
+        final byte[] value2 = { (byte) 19, (byte) 20 };
+        final TextNode node = (TextNode) TextNode.createData(99, 13, 14, 15,
+                19, value);
+        final TextNode node2 = (TextNode) TextNode.createData(99, 13, 14, 15,
+                19, value);
+        final TextNode node3 = (TextNode) TextNode.createData(99, 13, 14, 15,
+                19, value2);
+        final TextNode node4 = (TextNode) TextNode.createData(100, 15, 12, 16,
+                123, value);
+
+        assertEquals(node2.hashCode(), node.hashCode());
+        assertTrue(node2.equals(node));
+        assertFalse(node3.equals(node));
+        assertFalse(node4.equals(node));
+
     }
 
 }

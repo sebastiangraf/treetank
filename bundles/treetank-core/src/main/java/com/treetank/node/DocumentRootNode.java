@@ -30,8 +30,16 @@ import com.treetank.settings.EFixed;
  */
 public final class DocumentRootNode extends AbsStructNode {
 
-    DocumentRootNode(final long[] builder) {
-        super(builder);
+    /**
+     * Constructor
+     * 
+     * @param longBuilder
+     *            long array to set
+     * @param intBuilder
+     *            int array to set
+     */
+    DocumentRootNode(final long[] longBuilder, final int[] intBuilder) {
+        super(longBuilder, intBuilder);
     }
 
     /**
@@ -54,23 +62,25 @@ public final class DocumentRootNode extends AbsStructNode {
 
     @Override
     public AbsNode clone() {
-        return new DocumentRootNode(AbsNode.cloneData(mData));
+        return new DocumentRootNode(AbsNode.cloneData(mLongData),
+                AbsNode.cloneData(mIntData));
     }
 
-    public final static long[] createData() {
-        final long[] data = new long[ENodes.ROOT_KIND.getSize()];
-        data[AbsNode.NODE_KEY] = (Long) EFixed.ROOT_NODE_KEY
+    public final static DocumentRootNode createData() {
+        final long[] longData = new long[ENodes.ROOT_KIND.getLongSize()];
+        final int[] intData = new int[ENodes.ROOT_KIND.getIntSize()];
+        longData[AbsNode.NODE_KEY] = (Long) EFixed.ROOT_NODE_KEY
                 .getStandardProperty();
-        data[AbsNode.PARENT_KEY] = (Long) EFixed.NULL_NODE_KEY
+        longData[AbsNode.PARENT_KEY] = (Long) EFixed.NULL_NODE_KEY
                 .getStandardProperty();
-        data[AbsStructNode.CHILD_COUNT] = 0;
-        data[AbsStructNode.FIRST_CHILD_KEY] = (Long) EFixed.NULL_NODE_KEY
+        longData[AbsStructNode.CHILD_COUNT] = 0;
+        longData[AbsStructNode.FIRST_CHILD_KEY] = (Long) EFixed.NULL_NODE_KEY
                 .getStandardProperty();
-        data[AbsStructNode.LEFT_SIBLING_KEY] = (Long) EFixed.NULL_NODE_KEY
+        longData[AbsStructNode.LEFT_SIBLING_KEY] = (Long) EFixed.NULL_NODE_KEY
                 .getStandardProperty();
-        data[AbsStructNode.RIGHT_SIBLING_KEY] = (Long) EFixed.NULL_NODE_KEY
+        longData[AbsStructNode.RIGHT_SIBLING_KEY] = (Long) EFixed.NULL_NODE_KEY
                 .getStandardProperty();
-        return data;
+        return new DocumentRootNode(longData, intData);
     }
 
 }

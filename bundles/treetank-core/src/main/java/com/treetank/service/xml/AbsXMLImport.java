@@ -11,15 +11,15 @@ import java.util.List;
  * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
- *
+ * 
  */
 public abstract class AbsXMLImport implements IImport {
-  /**
-   * Check several XML files for one or more timestamp objects and shredder 
-   * every file into a new revision.
-   * 
-   * @param list
-   *            List of files.
-   */
-  abstract void check(final List<File> list);
+    /**
+     * Check several XML files for one or more timestamp objects and shredder
+     * every file into a new revision.
+     * 
+     * @param list
+     *            List of files.
+     */
+    abstract void check(final List<File> list);
 }

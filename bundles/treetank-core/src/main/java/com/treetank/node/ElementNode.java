@@ -33,15 +33,13 @@ import com.treetank.settings.EFixed;
  */
 public final class ElementNode extends AbsStructNode {
 
-    protected static final int NAME_KEY = 6;
+    protected static final int NAME_KEY = 1;
 
-    protected static final int URI_KEY = 7;
+    protected static final int URI_KEY = 2;
 
-    protected static final int TYPE = 8;
+    protected static final int ATTRIBUTE_COUNT = 3;
 
-    protected static final int ATTRIBUTE_COUNT = 9;
-
-    protected static final int NAMESPACE_COUNT = 10;
+    protected static final int NAMESPACE_COUNT = 4;
 
     /** Keys of attributes. */
     private List<Long> mAttributeKeys;
@@ -52,17 +50,18 @@ public final class ElementNode extends AbsStructNode {
     /**
      * Creating new element
      * 
-     * @param builder
+     * @param longBuilder
      *            array with longs
+     * @param intBuilder
+     *            array with ints
      * @param attributeKeys
      *            attr keys
      * @param namespaceKeys
      *            namespace keys
      */
-    ElementNode(final long[] builder, final List<Long> attributeKeys,
-            final List<Long> namespaceKeys) {
-        super(builder);
-
+    ElementNode(final long[] longBuilder, final int[] intBuilder,
+            final List<Long> attributeKeys, final List<Long> namespaceKeys) {
+        super(longBuilder, intBuilder);
         mAttributeKeys = attributeKeys;
         mNamespaceKeys = namespaceKeys;
     }
@@ -71,7 +70,7 @@ public final class ElementNode extends AbsStructNode {
      * {@inheritDoc}
      */
     public int getAttributeCount() {
-        return (int) mData[ATTRIBUTE_COUNT];
+        return mIntData[ATTRIBUTE_COUNT];
     }
 
     /**
@@ -89,7 +88,7 @@ public final class ElementNode extends AbsStructNode {
      */
     public void insertAttribute(final long attributeKey) {
         mAttributeKeys.add(attributeKey);
-        mData[ATTRIBUTE_COUNT]++;
+        mIntData[ATTRIBUTE_COUNT]++;
     }
 
     /**
@@ -100,14 +99,14 @@ public final class ElementNode extends AbsStructNode {
      */
     public void removeAttribute(final long attributeKey) {
         mAttributeKeys.remove(attributeKey);
-        mData[ATTRIBUTE_COUNT]--;
+        mIntData[ATTRIBUTE_COUNT]--;
     }
 
     /**
      * {@inheritDoc}
      */
     public int getNamespaceCount() {
-        return (int) mData[NAMESPACE_COUNT];
+        return mIntData[NAMESPACE_COUNT];
     }
 
     /**
@@ -125,7 +124,7 @@ public final class ElementNode extends AbsStructNode {
      */
     public void insertNamespace(final long namespaceKey) {
         mNamespaceKeys.add(namespaceKey);
-        mData[NAMESPACE_COUNT]++;
+        mIntData[NAMESPACE_COUNT]++;
     }
 
     /**
@@ -139,49 +138,29 @@ public final class ElementNode extends AbsStructNode {
     /**
      * {@inheritDoc}
      */
-    @Override
     public int getNameKey() {
-        return (int) mData[NAME_KEY];
+        return mIntData[NAME_KEY];
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
     public void setNameKey(final int localPartKey) {
-        mData[NAME_KEY] = localPartKey;
+        mIntData[NAME_KEY] = localPartKey;
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
     public int getURIKey() {
-        return (int) mData[URI_KEY];
+        return mIntData[URI_KEY];
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
     public void setURIKey(final int uriKey) {
-        mData[URI_KEY] = uriKey;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getTypeKey() {
-        return (int) mData[TYPE];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setType(final int valueType) {
-        mData[TYPE] = valueType;
+        mIntData[URI_KEY] = uriKey;
     }
 
     /**
@@ -214,32 +193,34 @@ public final class ElementNode extends AbsStructNode {
             namespaceList.add(i);
         }
 
-        final AbsNode toClone = new ElementNode(AbsNode.cloneData(mData),
-                attList, namespaceList);
+        final AbsNode toClone = new ElementNode(AbsNode.cloneData(mLongData),
+                AbsNode.cloneData(mIntData), attList, namespaceList);
         return toClone;
     }
 
-    public final static long[] createData(final long nodeKey,
+    public final static AbsNode createData(final long nodeKey,
             final long parentKey, final long leftSibKey,
             final long rightSibKey, final long firstChild,
             final long childCount, final int nameKey, final int uriKey,
             final int type) {
-        final long[] data = new long[ENodes.ELEMENT_KIND.getSize()];
-        data[AbsNode.NODE_KEY] = nodeKey;
-        data[AbsNode.PARENT_KEY] = parentKey;
-        data[AbsStructNode.LEFT_SIBLING_KEY] = leftSibKey;
-        data[AbsStructNode.RIGHT_SIBLING_KEY] = rightSibKey;
-        data[AbsStructNode.FIRST_CHILD_KEY] = firstChild;
-        data[AbsStructNode.CHILD_COUNT] = childCount;
-        data[ElementNode.NAME_KEY] = nameKey;
-        data[ElementNode.URI_KEY] = uriKey;
-        data[ElementNode.ATTRIBUTE_COUNT] = 0;
-        data[ElementNode.NAMESPACE_COUNT] = 0;
-        data[ElementNode.TYPE] = type;
-        return data;
+        final long[] longData = new long[ENodes.ELEMENT_KIND.getLongSize()];
+        final int[] intData = new int[ENodes.ELEMENT_KIND.getIntSize()];
+        longData[AbsNode.NODE_KEY] = nodeKey;
+        longData[AbsNode.PARENT_KEY] = parentKey;
+        longData[AbsStructNode.LEFT_SIBLING_KEY] = leftSibKey;
+        longData[AbsStructNode.RIGHT_SIBLING_KEY] = rightSibKey;
+        longData[AbsStructNode.FIRST_CHILD_KEY] = firstChild;
+        longData[AbsStructNode.CHILD_COUNT] = childCount;
+        intData[ElementNode.NAME_KEY] = nameKey;
+        intData[ElementNode.URI_KEY] = uriKey;
+        intData[AbsNode.TYPE_KEY] = type;
+        intData[ElementNode.ATTRIBUTE_COUNT] = 0;
+        intData[ElementNode.NAMESPACE_COUNT] = 0;
+        return ENodes.ELEMENT_KIND.createNodeFromScratch(longData, intData,
+                null);
     }
 
-    public final static long[] createData(final long nodeKey,
+    public final static AbsNode createData(final long nodeKey,
             final ElementNode node) {
         return createData(nodeKey, node.getParentKey(),
                 node.getLeftSiblingKey(), node.getRightSiblingKey(),
@@ -250,8 +231,7 @@ public final class ElementNode extends AbsStructNode {
     @Override
     public String toString() {
         final StringBuilder returnVal = new StringBuilder(super.toString());
-        returnVal.append("\n\ttype key: ").append(getTypeKey())
-                .append("\n\tname key: ").append(getNameKey())
+        returnVal.append("\n\tname key: ").append(getNameKey())
                 .append("\n\turi key: ").append(getURIKey())
                 .append(getNameKey()).append("\n\tnamespaces: ")
                 .append(mNamespaceKeys.toString()).append("\n\tattributes: ")

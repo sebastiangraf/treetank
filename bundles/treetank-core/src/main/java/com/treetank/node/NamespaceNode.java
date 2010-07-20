@@ -27,13 +27,19 @@ package com.treetank.node;
  */
 public final class NamespaceNode extends AbsNode {
 
-    protected static final int NAME_KEY = 2;
-    protected static final int URI_KEY = 3;
+    protected static final int NAME_KEY = 1;
+    protected static final int URI_KEY = 2;
 
-    NamespaceNode(final long[] builder) {
-        super(builder);
-        // mData[NAME_KEY] = builder.getNameKey();
-        // mData[URI_KEY] = builder.getUriKey();
+    /**
+     * Constructor
+     * 
+     * @param longBuilder
+     *            building long data
+     * @param intBuilder
+     *            building int data
+     */
+    NamespaceNode(final long[] longBuilder, final int[] intBuilder) {
+        super(longBuilder, intBuilder);
     }
 
     /**
@@ -47,52 +53,50 @@ public final class NamespaceNode extends AbsNode {
     /**
      * {@inheritDoc}
      */
-    @Override
     public int getNameKey() {
-        return (int) mData[NAME_KEY];
+        return mIntData[NAME_KEY];
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
     public void setNameKey(final int nameKey) {
-        mData[NAME_KEY] = nameKey;
+        mIntData[NAME_KEY] = nameKey;
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
     public int getURIKey() {
-        return (int) mData[URI_KEY];
+        return mIntData[URI_KEY];
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
     public void setURIKey(final int uriKey) {
-        mData[URI_KEY] = uriKey;
+        mIntData[URI_KEY] = uriKey;
     }
 
     @Override
     public AbsNode clone() {
-        final AbsNode toClone = new NamespaceNode(AbsNode.cloneData(mData));
+        final AbsNode toClone = new NamespaceNode(AbsNode.cloneData(mLongData),
+                AbsNode.cloneData(mIntData));
         return toClone;
     }
 
-    public static final long[] createData(final long nodeKey,
+    public static final AbsNode createData(final long nodeKey,
             final long parentKey, final int uriKey, final int prefixKey) {
-        final long[] data = new long[ENodes.NAMESPACE_KIND.getSize()];
-        data[AbsNode.NODE_KEY] = nodeKey;
-        data[AbsNode.PARENT_KEY] = parentKey;
-        data[NamespaceNode.URI_KEY] = uriKey;
-        data[NamespaceNode.NAME_KEY] = prefixKey;
-        return data;
+        final long[] longData = new long[ENodes.NAMESPACE_KIND.getLongSize()];
+        final int[] intData = new int[ENodes.NAMESPACE_KIND.getIntSize()];
+        longData[AbsNode.NODE_KEY] = nodeKey;
+        longData[AbsNode.PARENT_KEY] = parentKey;
+        intData[NamespaceNode.URI_KEY] = uriKey;
+        intData[NamespaceNode.NAME_KEY] = prefixKey;
+        return new NamespaceNode(longData, intData);
     }
 
-    public static final long[] createData(final long nodeKey,
+    public static final AbsNode createData(final long nodeKey,
             final NamespaceNode node) {
         return createData(nodeKey, node.getParentKey(), node.getURIKey(),
                 node.getNameKey());

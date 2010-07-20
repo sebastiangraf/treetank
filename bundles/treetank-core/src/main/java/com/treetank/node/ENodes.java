@@ -14,7 +14,7 @@ import com.treetank.io.ITTSource;
 public enum ENodes {
 
     /** Unknown kind */
-    UNKOWN_KIND(0, 0) {
+    UNKOWN_KIND(0, 0, 0) {
         @Override
         public AbsNode createNodeFromPersistence(final ITTSource source) {
             throw new UnsupportedOperationException();
@@ -22,91 +22,95 @@ public enum ENodes {
 
         @Override
         public AbsNode createNodeFromScratch(final long[] data,
-                final byte[] value) {
+                final int[] intData, final byte[] value) {
             throw new UnsupportedOperationException();
         }
     },
     /** Node kind is element. */
-    ELEMENT_KIND(1, 11) {
+    ELEMENT_KIND(1, 6, 5) {
         @Override
         public AbsNode createNodeFromPersistence(final ITTSource source) {
-            final long[] data = readSourceData(source);
+            final long[] longData = readLongData(source);
+            final int[] intData = readIntData(source);
 
             final List<Long> attrKeys = new ArrayList<Long>();
             final List<Long> namespKeys = new ArrayList<Long>();
-            if (data[ElementNode.ATTRIBUTE_COUNT] > 0) {
-                for (int i = 0; i < data[ElementNode.ATTRIBUTE_COUNT]; i++) {
+            if (intData[ElementNode.ATTRIBUTE_COUNT] > 0) {
+                for (int i = 0; i < intData[ElementNode.ATTRIBUTE_COUNT]; i++) {
                     attrKeys.add(source.readLong());
                 }
             }
-            if (data[ElementNode.NAMESPACE_COUNT] > 0) {
-                for (int i = 0; i < data[ElementNode.NAMESPACE_COUNT]; i++) {
+            if (intData[ElementNode.NAMESPACE_COUNT] > 0) {
+                for (int i = 0; i < intData[ElementNode.NAMESPACE_COUNT]; i++) {
                     namespKeys.add(source.readLong());
                 }
             }
-            return new ElementNode(data, attrKeys, namespKeys);
+            return new ElementNode(longData, intData, attrKeys, namespKeys);
         }
-
+ 
         @Override
         public AbsNode createNodeFromScratch(final long[] data,
-                final byte[] value) {
-            return new ElementNode(data, new ArrayList<Long>(),
+                final int[] intData, final byte[] value) {
+            return new ElementNode(data, intData, new ArrayList<Long>(),
                     new ArrayList<Long>());
         }
     },
     /** Node kind is attribute. */
-    ATTRIBUTE_KIND(2, 6) {
+    ATTRIBUTE_KIND(2, 2, 4) {
         @Override
         public AbsNode createNodeFromPersistence(final ITTSource source) {
-            final long[] data = readSourceData(source);
-            final byte[] value = new byte[(int) data[AttributeNode.VALUE_LENGTH]];
+            final long[] longData = readLongData(source);
+            final int[] intData = readIntData(source);
+            final byte[] value = new byte[intData[AttributeNode.VALUE_LENGTH]];
             for (int i = 0; i < value.length; i++) {
                 value[i] = source.readByte();
             }
-            return new AttributeNode(data, value);
+            return new AttributeNode(longData, intData, value);
         }
 
         @Override
-        public AbsNode createNodeFromScratch(final long[] data,
-                final byte[] value) {
-            return new AttributeNode(data, value);
+        public AbsNode createNodeFromScratch(final long[] longData,
+                final int[] intData, final byte[] value) {
+            return new AttributeNode(longData, intData, value);
         }
     },
     /** Node kind is text. */
-    TEXT_KIND(3, 8) {
+    TEXT_KIND(3, 6, 2) {
         @Override
         public AbsNode createNodeFromPersistence(final ITTSource source) {
-            final long[] data = readSourceData(source);
-            final byte[] value = new byte[(int) data[TextNode.VALUE_LENGTH]];
+            final long[] longData = readLongData(source);
+            final int[] intData = readIntData(source);
+            final byte[] value = new byte[intData[TextNode.VALUE_LENGTH]];
             for (int i = 0; i < value.length; i++) {
                 value[i] = source.readByte();
             }
-            return new TextNode(data, value);
+            return new TextNode(longData, intData, value);
         }
 
         @Override
-        public AbsNode createNodeFromScratch(final long[] data,
-                final byte[] value) {
-            return new TextNode(data, value);
+        public AbsNode createNodeFromScratch(final long[] longData,
+                final int[] intData, final byte[] value) {
+            return new TextNode(longData, intData, value);
         }
     },
     /** Node kind is namespace. */
-    NAMESPACE_KIND(13, 4) {
+    NAMESPACE_KIND(13, 2, 3) {
 
         @Override
         public AbsNode createNodeFromPersistence(final ITTSource source) {
-            final long[] data = readSourceData(source);
-            return new NamespaceNode(data);
+            final long[] data = readLongData(source);
+            final int[] intData = readIntData(source);
+            return new NamespaceNode(data, intData);
         }
 
         @Override
         public AbsNode createNodeFromScratch(final long[] data,
-                final byte[] value) {
-            return new NamespaceNode(data);
+                final int[] intData, final byte[] value) {
+            return new NamespaceNode(data, intData);
         }
     },
     /** Node kind is processing instruction. */
-    PROCESSING_KIND(7, 0) {
+    PROCESSING_KIND(7, 0, 0) {
         @Override
         public AbsNode createNodeFromPersistence(final ITTSource source) {
             throw new UnsupportedOperationException();
@@ -114,12 +118,12 @@ public enum ENodes {
 
         @Override
         public AbsNode createNodeFromScratch(final long[] data,
-                final byte[] value) {
+                final int[] intData, final byte[] value) {
             throw new UnsupportedOperationException();
         }
     },
     /** Node kind is comment. */
-    COMMENT_KIND(8, 0) {
+    COMMENT_KIND(8, 0, 0) {
         @Override
         public AbsNode createNodeFromPersistence(final ITTSource source) {
             throw new UnsupportedOperationException();
@@ -127,26 +131,27 @@ public enum ENodes {
 
         @Override
         public AbsNode createNodeFromScratch(final long[] data,
-                final byte[] value) {
+                final int[] intData, final byte[] value) {
             throw new UnsupportedOperationException();
         }
     },
     /** Node kind is document root. */
-    ROOT_KIND(9, 6) {
+    ROOT_KIND(9, 6, 1) {
         @Override
         public AbsNode createNodeFromPersistence(final ITTSource source) {
-            final long[] data = readSourceData(source);
-            return new DocumentRootNode(data);
+            final long[] data = readLongData(source);
+            final int[] intData = readIntData(source);
+            return new DocumentRootNode(data, intData);
         }
 
         @Override
         public AbsNode createNodeFromScratch(final long[] data,
-                final byte[] value) {
-            return new DocumentRootNode(data);
+                final int[] intData, final byte[] value) {
+            return new DocumentRootNode(data, intData);
         }
     },
     /** Whitespace text */
-    WHITESPACE_KIND(4, 0) {
+    WHITESPACE_KIND(4, 0, 0) {
         @Override
         public AbsNode createNodeFromPersistence(final ITTSource source) {
             throw new UnsupportedOperationException();
@@ -154,30 +159,34 @@ public enum ENodes {
 
         @Override
         public AbsNode createNodeFromScratch(final long[] data,
-                final byte[] value) {
+                final int[] intData, final byte[] value) {
             throw new UnsupportedOperationException();
         }
     },
     /** Node kind is deleted node. */
-    DELETE_KIND(5, 2) {
+    DELETE_KIND(5, 2, 1) {
         @Override
         public AbsNode createNodeFromPersistence(final ITTSource source) {
-            final long[] data = readSourceData(source);
-            return new DeletedNode(data);
+            final long[] longData = readLongData(source);
+            final int[] intData = readIntData(source);
+            return new DeletedNode(longData, intData);
         }
 
         @Override
-        public AbsNode createNodeFromScratch(final long[] data,
-                final byte[] value) {
-            return new DeletedNode(data);
+        public AbsNode createNodeFromScratch(final long[] longData,
+                final int[] intData, final byte[] value) {
+            return new DeletedNode(longData, intData);
         }
     };
 
     /** Identifier */
     private final int mKind;
 
-    /** Size in the data array */
-    private final int mSize;
+    /** Size in the long data array */
+    private final int mLongSize;
+
+    /** Size in the int data array */
+    private final int mIntSize;
 
     /**
      * Constructor
@@ -185,9 +194,10 @@ public enum ENodes {
      * @param kind
      *            the identifier
      */
-    private ENodes(final int kind, final int size) {
+    private ENodes(final int kind, final int longSize, final int intSize) {
         this.mKind = kind;
-        this.mSize = size;
+        this.mLongSize = longSize;
+        this.mIntSize = intSize;
     }
 
     /**
@@ -201,20 +211,35 @@ public enum ENodes {
 
     public abstract AbsNode createNodeFromPersistence(final ITTSource source);
 
-    public abstract AbsNode createNodeFromScratch(final long[] data,
-            final byte[] value);
+    public abstract AbsNode createNodeFromScratch(final long[] longData,
+            final int[] intData, final byte[] value);
 
     /**
      * @return the mSize
      */
-    int getSize() {
-        return mSize;
+    int getLongSize() {
+        return mLongSize;
     }
 
-    long[] readSourceData(final ITTSource source) {
-        final long[] data = new long[getSize()];
+    /**
+     * @return the mIntSize
+     */
+    int getIntSize() {
+        return mIntSize;
+    }
+
+    long[] readLongData(final ITTSource source) {
+        final long[] data = new long[getLongSize()];
         for (int i = 0; i < data.length; i++) {
             data[i] = source.readLong();
+        }
+        return data;
+    }
+
+    int[] readIntData(final ITTSource source) {
+        final int[] data = new int[getIntSize()];
+        for (int i = 0; i < data.length; i++) {
+            data[i] = source.readInt();
         }
         return data;
     }

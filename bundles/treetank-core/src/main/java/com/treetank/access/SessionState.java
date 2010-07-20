@@ -309,7 +309,6 @@ public final class SessionState {
         fac.closeStorage();
     }
 
-
     class LogSyncer implements Callable<Void> {
 
         final WriteTransactionState state;

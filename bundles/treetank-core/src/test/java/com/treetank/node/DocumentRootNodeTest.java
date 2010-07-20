@@ -33,8 +33,7 @@ public class DocumentRootNodeTest {
     public void testDocumentRootNode() {
 
         // Create empty node.
-        final DocumentRootNode node1 = new DocumentRootNode(
-                DocumentRootNode.createData());
+        final DocumentRootNode node1 = DocumentRootNode.createData();
         check(node1);
 
         // Serialize and deserialize node.
@@ -74,23 +73,23 @@ public class DocumentRootNodeTest {
         assertEquals(ENodes.ROOT_KIND, node.getKind());
 
     }
-    
-    @Test
-    public void testHashCode(){
-        final long[] data = {99, 13, 14, 15, 19};
-		final long[] data2 = {100, 15, 12, 16, 123};
-		
-		final DocumentRootNode node = new DocumentRootNode(data);
-		final DocumentRootNode node2 = new DocumentRootNode(data2);
-		final DocumentRootNode node3 = new DocumentRootNode(data);
-		final DocumentRootNode node4 = new DocumentRootNode(data2);
 
-		
-		assertEquals(node2.hashCode(), node4.hashCode());
-		assertTrue(node3.equals(node));
-		assertFalse(node3.equals(node2));
-		assertFalse(node4.equals(node));
-    	
+    @Test
+    public void testHashCode() {
+        final long[] data = { 99, 13, 14, 15, 12, 34 };
+        final long[] data2 = { 100, 15, 12, 16, 54, 63 };
+
+        final int[] intData = { 123 };
+        final int[] intData2 = { 23 };
+
+        final DocumentRootNode node = new DocumentRootNode(data, intData);
+        final DocumentRootNode node2 = new DocumentRootNode(data2, intData2);
+        final DocumentRootNode node3 = new DocumentRootNode(data, intData);
+
+        assertEquals(node3.hashCode(), node.hashCode());
+        assertTrue(node3.equals(node));
+        assertFalse(node3.equals(node2));
+
     }
 
 }

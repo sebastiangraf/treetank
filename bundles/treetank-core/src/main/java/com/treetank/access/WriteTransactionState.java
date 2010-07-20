@@ -31,7 +31,6 @@ import com.treetank.node.AbsNode;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.AttributeNode;
 import com.treetank.node.DeletedNode;
-import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
 import com.treetank.node.NamespaceNode;
 import com.treetank.node.TextNode;
@@ -182,10 +181,8 @@ public final class WriteTransactionState extends ReadTransactionState {
 
     protected ElementNode createElementNode(final ElementNode oldNode)
             throws TreetankIOException {
-        final long[] data = ElementNode.createData(
-                mNewRoot.getMaxNodeKey() + 1, oldNode);
-        final ElementNode newNode = (ElementNode) createNode(ENodes.ELEMENT_KIND
-                .createNodeFromScratch(data, null));
+        final ElementNode newNode = (ElementNode) createNode(ElementNode
+                .createData(mNewRoot.getMaxNodeKey() + 1, oldNode));
         return newNode;
     }
 
@@ -197,39 +194,31 @@ public final class WriteTransactionState extends ReadTransactionState {
         final int namespaceKey = createNameKey(name.getNamespaceURI());
         final int typeKey = createNameKey("xs:untyped");
 
-        final long[] data = ElementNode.createData(
+        return (ElementNode) createNode(ElementNode.createData(
                 mNewRoot.getMaxNodeKey() + 1, parentKey, leftSibKey,
                 rightSibKey, (Long) EFixed.NULL_NODE_KEY.getStandardProperty(),
-                0, nameKey, namespaceKey, typeKey);
-
-        return (ElementNode) createNode(ENodes.ELEMENT_KIND
-                .createNodeFromScratch(data, null));
+                0, nameKey, namespaceKey, typeKey));
     }
 
     protected TextNode createTextNode(final TextNode node)
             throws TreetankIOException {
-        final long[] data = TextNode.createData(mNewRoot.getMaxNodeKey() + 1,
-                node);
-        return (TextNode) createNode(ENodes.TEXT_KIND.createNodeFromScratch(
-                data, node.getRawValue()));
+        return (TextNode) createNode(TextNode.createData(
+                mNewRoot.getMaxNodeKey() + 1, node));
     }
 
     protected TextNode createTextNode(final long parentKey,
             final long leftSibKey, final long rightSibKey, final byte[] value)
             throws TreetankIOException {
         final int typeKey = createNameKey("xs:untyped");
-        final long[] data = TextNode.createData(mNewRoot.getMaxNodeKey() + 1,
-                parentKey, leftSibKey, rightSibKey, typeKey);
-        return (TextNode) createNode(ENodes.TEXT_KIND.createNodeFromScratch(
-                data, value));
+        return (TextNode) createNode(TextNode.createData(
+                mNewRoot.getMaxNodeKey() + 1, parentKey, leftSibKey,
+                rightSibKey, typeKey, value));
     }
 
     protected AttributeNode createAttributeNode(final AttributeNode node)
             throws TreetankIOException {
-        final long[] data = AttributeNode.createData(
-                mNewRoot.getMaxNodeKey() + 1, node);
-        return (AttributeNode) createNode(ENodes.ATTRIBUTE_KIND
-                .createNodeFromScratch(data, node.getRawValue()));
+        return (AttributeNode) createNode(AttributeNode.createData(
+                mNewRoot.getMaxNodeKey() + 1, node));
     }
 
     protected AttributeNode createAttributeNode(final long parentKey,
@@ -238,27 +227,21 @@ public final class WriteTransactionState extends ReadTransactionState {
         final int nameKey = createNameKey(buildName(name));
         final int namespaceKey = createNameKey(name.getNamespaceURI());
         final int typeKey = createNameKey("xs:untypedAtomic");
-        final long[] data = AttributeNode.createData(
+        return (AttributeNode) createNode(AttributeNode.createData(
                 mNewRoot.getMaxNodeKey() + 1, parentKey, nameKey, namespaceKey,
-                typeKey);
-        return (AttributeNode) createNode(ENodes.ATTRIBUTE_KIND
-                .createNodeFromScratch(data, value));
+                typeKey, value));
     }
 
     protected NamespaceNode createNamespaceNode(final NamespaceNode node)
             throws TreetankIOException {
-        final long[] data = NamespaceNode.createData(
-                mNewRoot.getMaxNodeKey() + 1, node);
-        return (NamespaceNode) createNode(ENodes.NAMESPACE_KIND
-                .createNodeFromScratch(data, null));
+        return (NamespaceNode) createNode(NamespaceNode.createData(
+                mNewRoot.getMaxNodeKey() + 1, node));
     }
 
     protected NamespaceNode createNamespaceNode(final long parentKey,
             final int uriKey, final int prefixKey) throws TreetankIOException {
-        final long[] data = NamespaceNode.createData(
-                mNewRoot.getMaxNodeKey() + 1, parentKey, uriKey, prefixKey);
-        return (NamespaceNode) createNode(ENodes.NAMESPACE_KIND
-                .createNodeFromScratch(data, null));
+        return (NamespaceNode) createNode(NamespaceNode.createData(
+                mNewRoot.getMaxNodeKey() + 1, parentKey, uriKey, prefixKey));
     }
 
     /**
@@ -272,10 +255,8 @@ public final class WriteTransactionState extends ReadTransactionState {
     protected void removeNode(final AbsNode node) throws TreetankIOException {
         final long nodePageKey = nodePageKey(node.getNodeKey());
         prepareNodePage(nodePageKey);
-        final long[] data = DeletedNode.createData(node.getNodeKey(),
+        final AbsNode delNode = DeletedNode.createData(node.getNodeKey(),
                 node.getParentKey());
-        final AbsNode delNode = ENodes.DELETE_KIND.createNodeFromScratch(data,
-                null);
         nodePageCon.getModified().setNode(nodePageOffset(node.getNodeKey()),
                 delNode);
         nodePageCon.getComplete().setNode(nodePageOffset(node.getNodeKey()),

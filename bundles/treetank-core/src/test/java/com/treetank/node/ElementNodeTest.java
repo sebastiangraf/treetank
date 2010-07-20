@@ -23,8 +23,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-
 import org.junit.Test;
 
 import com.treetank.io.file.ByteBufferSinkAndSource;
@@ -34,12 +32,10 @@ public class ElementNodeTest {
     @Test
     public void testElementNode() {
 
-        final long[] data = ElementNode.createData(13, 14, 16, 17, 12, 1, 18,
-                19, 20);
+        final ElementNode node1 = (ElementNode) ElementNode.createData(13, 14,
+                16, 17, 12, 1, 18, 19, 20);
 
         // Create empty node.
-        final ElementNode node1 = new ElementNode(data, new ArrayList<Long>(0),
-                new ArrayList<Long>(0));
         node1.insertAttribute(97);
         node1.insertAttribute(98);
         node1.insertNamespace(99);
@@ -83,21 +79,20 @@ public class ElementNodeTest {
         assertEquals(99L, node.getNamespaceKey(0));
         assertEquals(100L, node.getNamespaceKey(1));
     }
-    
+
     @Test
-	public void testHashCode() {
-    	final long[] data = ElementNode.createData(13, 14, 16, 17, 12, 1, 18, 19, 20);
-		final long[] data2 = ElementNode.createData(14, 15, 17, 18, 19, 2, 19, 20, 21);
+    public void testHashCode() {
+        final ElementNode node = (ElementNode) ElementNode.createData(13, 14,
+                16, 17, 12, 1, 18, 19, 20);
+        final ElementNode node2 = (ElementNode) ElementNode.createData(14, 15,
+                17, 18, 19, 2, 19, 20, 21);
 
-		final ElementNode node = new ElementNode(data, new ArrayList<Long>(0),new ArrayList<Long>(0));
-		final ElementNode node2 = new ElementNode(data2, new ArrayList<Long>(0),new ArrayList<Long>(0));
-		final ElementNode node3 = new ElementNode(data, new ArrayList<Long>(0),new ArrayList<Long>(0));
-		final ElementNode node4 = new ElementNode(data2, new ArrayList<Long>(0),new ArrayList<Long>(0));
+        final ElementNode node3 = (ElementNode) ElementNode.createData(13, 14,
+                16, 17, 12, 1, 18, 19, 20);
 
-		assertEquals(node2.hashCode(), node4.hashCode());
-		assertTrue(node3.equals(node));
-		assertFalse(node2.equals(node3));
-		assertFalse(node4.equals(node));
-	}
+        assertEquals(node3.hashCode(), node.hashCode());
+        assertTrue(node3.equals(node));
+        assertFalse(node2.equals(node3));
+    }
 
 }
