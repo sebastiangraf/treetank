@@ -1,12 +1,7 @@
 package com.treetank.service.xml.serialize;
 
-import static com.treetank.service.xml.serialize.SerializerProperties.S_ID;
-import static com.treetank.service.xml.serialize.SerializerProperties.S_REST;
-import static com.treetank.service.xml.serialize.SerializerProperties.S_XMLDECL;
-
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
@@ -27,6 +22,7 @@ import com.treetank.axis.TextFilter;
 import com.treetank.exception.TreetankException;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
+import com.treetank.service.xml.serialize.SerializerBuilder.StAXSerializerBuilder;
 import com.treetank.utils.AttributeIterator;
 import com.treetank.utils.NamespaceIterator;
 
@@ -99,19 +95,9 @@ public class StAXSerializer extends AbsSerializeStorage implements
      * @param map
      *            Properties map.
      */
-    public StAXSerializer(final IReadTransaction rtx,
-            final ConcurrentMap<String, Object> map) {
-        this(rtx, (Boolean) map.get(S_XMLDECL), (Boolean) map.get(S_REST),
-                (Boolean) map.get(S_ID));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StAXSerializer(IReadTransaction rtx,
-            boolean serializeXMLDeclaration, boolean serializeRest,
-            boolean serializeId) {
-        super(rtx, serializeXMLDeclaration, serializeRest, serializeId);
+    StAXSerializer(final StAXSerializerBuilder builder) {
+        super(builder.mIntermediateRtx, builder.mIntermediateDeclaration,
+                builder.mIntermediateSerializeRest, builder.mIntermediateId);
     }
 
     @Override
@@ -349,7 +335,7 @@ public class StAXSerializer extends AbsSerializeStorage implements
         final ISession session = database.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
 
-        new StAXSerializer(rtx, new SerializerProperties(null).getmProps());
+        // new StAXSerializer(rtx, new SerializerProperties(null).getmProps());
 
         rtx.close();
         session.close();
