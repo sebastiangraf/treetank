@@ -31,6 +31,7 @@ import com.treetank.gui.view.tree.TreetankTreeCellRenderer;
 import com.treetank.gui.view.tree.TreetankTreeModel;
 import com.treetank.node.ElementNode;
 import com.treetank.service.xml.serialize.XMLSerializer;
+import com.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.service.xml.shredder.XMLUpdateShredder;
 
@@ -99,8 +100,8 @@ public enum GUICommands implements GUICommand {
                         final ISession session = db.getSession();
                         final IReadTransaction rtx = session
                                 .beginReadTransaction();
-                        final XMLSerializer serializer = new XMLSerializer(rtx,
-                                outputStream, true, false, false, true);
+                        final XMLSerializer serializer = new XMLSerializerBuilder(
+                                rtx, outputStream).build();
                         serializer.call();
 
                         rtx.close();
@@ -219,7 +220,7 @@ public enum GUICommands implements GUICommand {
             // Serialize file into XML view if it is empty.
             final IReadTransaction rtx = session.beginReadTransaction();
             out = new ByteArrayOutputStream();
-            new XMLSerializer(rtx, out, true, false, true, true).call();
+            new XMLSerializerBuilder(rtx, out).build().call();
             text(gui, xmlPane, true);
 
             // Listen for when the selection changes.
@@ -244,15 +245,15 @@ public enum GUICommands implements GUICommand {
                             switch (node.getKind()) {
                             case ROOT_KIND:
                                 rtx.moveTo(nodeKey);
-                                new XMLSerializer(rtx, out, true, false, false,
-                                        true).call();
+                                new XMLSerializerBuilder(rtx, out).build()
+                                        .call();
                                 break;
                             case ELEMENT_KIND:
                                 rtx.moveTo(nodeKey);
                                 System.out.println("ELEMENT: "
                                         + rtx.getQNameOfCurrentNode());
-                                new XMLSerializer(rtx, out, false, false,
-                                        false, true).call();
+                                new XMLSerializerBuilder(rtx, out).build()
+                                        .call();
                                 break;
                             case TEXT_KIND:
                                 rtx.moveTo(nodeKey);
