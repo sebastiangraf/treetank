@@ -19,8 +19,8 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
+import com.treetank.service.xml.serialize.SerializerBuilder.XMLSerializerBuilder;
 import com.treetank.service.xml.serialize.XMLSerializer;
-import com.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 
 /**
  * Test XMLUpdateShredder.
@@ -134,8 +134,10 @@ public class XMLUpdateShredderTest extends XMLTestCase {
                 wtx.close();
 
                 final OutputStream out = new ByteArrayOutputStream();
-                final XMLSerializer serializer = new XMLSerializerBuilder(
-                        session.beginReadTransaction(), out).build();
+                final XMLSerializerBuilder builder = new XMLSerializerBuilder(
+                        session.beginReadTransaction());
+                builder.setIntermediateStream(out);
+                final XMLSerializer serializer = builder.build();
                 serializer.call();
                 final StringBuilder sBuilder = TestHelper.readFile(
                         file.getAbsoluteFile(), false);

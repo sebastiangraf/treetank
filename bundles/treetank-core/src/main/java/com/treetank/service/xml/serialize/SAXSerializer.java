@@ -1,13 +1,8 @@
 package com.treetank.service.xml.serialize;
 
-import static com.treetank.service.xml.serialize.SerializerProperties.S_ID;
-import static com.treetank.service.xml.serialize.SerializerProperties.S_REST;
-import static com.treetank.service.xml.serialize.SerializerProperties.S_XMLDECL;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.xml.namespace.QName;
 
@@ -22,6 +17,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.node.ElementNode;
+import com.treetank.service.xml.serialize.SerializerBuilder.StAXSerializerBuilder;
 
 /**
  * <h1>SaxSerializer</h1>
@@ -43,27 +39,11 @@ public final class SAXSerializer extends AbsSerializeStorage implements
     private static final DefaultHandler handler = new DefaultHandler();
 
     /**
-     * Initialize XMLStreamReader implementation with transaction. The cursor
-     * points to the node the XMLStreamReader starts to read. Do not serialize
-     * the tank ids.
-     * 
-     * @param rtx
-     *            Transaction with cursor pointing to start node.
-     * @param map
-     *            Properties map.
-     */
-    public SAXSerializer(final IReadTransaction rtx,
-            final ConcurrentMap<String, Object> map) {
-        this(rtx, (Boolean) map.get(S_XMLDECL), (Boolean) map.get(S_REST),
-                (Boolean) map.get(S_ID));
-    }
-
-    /**
      * {@inheritDoc}
      */
-    public SAXSerializer(IReadTransaction rtx, boolean serializeXMLDeclaration,
-            boolean serializeRest, boolean serializeId) {
-        super(rtx, serializeXMLDeclaration, serializeRest, serializeId);
+    public SAXSerializer(final StAXSerializerBuilder builder) {
+        super(builder.mIntermediateRtx, builder.mIntermediateDeclaration,
+                builder.mIntermediateSerializeRest, builder.mIntermediateId);
     }
 
     @Override
@@ -177,8 +157,8 @@ public final class SAXSerializer extends AbsSerializeStorage implements
         final ISession session = database.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
 
-        new SAXSerializer(rtx, new SerializerProperties(null).getmProps())
-                .call();
+        // new SAXSerializer(rtx, new SerializerProperties(null).getmProps())
+        // .call();
 
         rtx.close();
         session.close();

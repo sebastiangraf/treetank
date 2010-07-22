@@ -35,6 +35,7 @@ import com.treetank.api.ISession;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
+import com.treetank.service.xml.serialize.SerializerBuilder.XMLSerializerBuilder;
 import com.treetank.settings.ECharsForSerializing;
 import com.treetank.utils.IConstants;
 
@@ -85,7 +86,7 @@ public final class XMLSerializer extends AbsSerializeStorage implements
      * @param serializeId
      *            Serialize id if true.
      */
-    public XMLSerializer(final XMLSerializerBuilder builder) {
+    XMLSerializer(final XMLSerializerBuilder builder) {
         super(builder.mIntermediateRtx, builder.mIntermediateDeclaration,
                 builder.mIntermediateSerializeRest, builder.mIntermediateId);
         mOut = new BufferedOutputStream(builder.mIntermediateStream, 4096);
@@ -280,8 +281,9 @@ public final class XMLSerializer extends AbsSerializeStorage implements
         final ISession session = db.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
 
-        final XMLSerializer serializer = new XMLSerializerBuilder(rtx,
-                outputStream).build();
+        final XMLSerializerBuilder builder = new XMLSerializerBuilder(rtx);
+        builder.setIntermediateStream(outputStream);
+        final XMLSerializer serializer = builder.build();
         serializer.call();
 
         rtx.close();
@@ -291,72 +293,6 @@ public final class XMLSerializer extends AbsSerializeStorage implements
 
         System.out.println(" done [" + (System.currentTimeMillis() - time)
                 + "ms].");
-    }
-
-    public static class XMLSerializerBuilder {
-
-        /**
-         * Intermediate {@link IReadTransaction} for builder, necessary
-         */
-        private final IReadTransaction mIntermediateRtx;
-
-        /**
-         * Intermediate {@link OutputStream} for stream, necessary
-         */
-        private final OutputStream mIntermediateStream;
-
-        /**
-         * Intermediate boolean for intendtion, not necessary
-         */
-        private boolean mIntermediateIntend = false;
-
-        /**
-         * Intermediate boolean for rest serialization, not necessary
-         */
-        private boolean mIntermediateSerializeRest = false;
-
-        /**
-         * Intermediate boolean for rest serialization, not necessary
-         */
-        private boolean mIntermediateDeclaration = true;
-
-        /**
-         * Intermediate boolean for ids, not necessary
-         */
-        private boolean mIntermediateId = false;
-
-        /**
-         * Constructor for the builder;
-         * 
-         * @param rtx
-         * @param stream
-         */
-        public XMLSerializerBuilder(final IReadTransaction rtx,
-                final OutputStream stream) {
-            mIntermediateRtx = rtx;
-            mIntermediateStream = stream;
-        }
-
-        public void setIntermediateIntend(boolean mIntermediateIntend) {
-            this.mIntermediateIntend = mIntermediateIntend;
-        }
-
-        public void setIntermediateSerializeRest(
-                boolean mIntermediateSerializeRest) {
-            this.mIntermediateSerializeRest = mIntermediateSerializeRest;
-        }
-
-        public void setIntermediateDeclaration(boolean mIntermediateDeclaration) {
-            this.mIntermediateDeclaration = mIntermediateDeclaration;
-        }
-
-        public void setIntermediateId(boolean mIntermediateId) {
-            this.mIntermediateId = mIntermediateId;
-        }
-
-        public XMLSerializer build() {
-            return new XMLSerializer(this);
-        }
     }
 
 }
