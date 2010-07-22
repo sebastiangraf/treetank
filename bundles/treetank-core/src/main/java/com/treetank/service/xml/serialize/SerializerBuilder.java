@@ -3,6 +3,7 @@ package com.treetank.service.xml.serialize;
 import java.io.OutputStream;
 
 import com.treetank.api.IReadTransaction;
+import com.treetank.api.ISession;
 
 /**
  * Central class for building up serializers.
@@ -140,7 +141,44 @@ public abstract class SerializerBuilder {
         public SAXSerializer build() {
             return new SAXSerializer(this);
         }
+    }
 
+    public static class RevisionedXMLSerializerBuilder extends
+            XMLSerializerBuilder {
+
+        private final long[] mVersions;
+
+        private boolean mTimestamp = false;
+
+        private final ISession mSession;
+
+        public RevisionedXMLSerializerBuilder(final ISession paramSession,
+                final OutputStream paramStream, final long... paramVersions) {
+            super(null, paramStream);
+            this.mSession = paramSession;
+            this.mVersions = paramVersions;
+        }
+
+        public long[] getVersions() {
+            return mVersions;
+        }
+
+        public void setTimestamp(boolean mTimestamp) {
+            this.mTimestamp = mTimestamp;
+        }
+
+        public boolean isTimestamp() {
+            return mTimestamp;
+        }
+
+        public ISession getSession() {
+            return mSession;
+        }
+
+        @Override
+        public RevisionedXMLSerializer build() {
+            return new RevisionedXMLSerializer(this);
+        }
     }
 
 }

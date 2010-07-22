@@ -33,8 +33,9 @@ import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.treetank.access.Database;
 import com.treetank.access.DatabaseConfiguration;
@@ -67,8 +68,8 @@ public final class XMLUpdateShredder extends XMLShredder implements
 
     // ===================== LOGGER =======================
     /** Logger. */
-    private static final Log LOGGER = LogFactory
-            .getLog(XMLUpdateShredder.class);
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(XMLUpdateShredder.class);
 
     // ===================== Initial setup ================
 
@@ -189,8 +190,7 @@ public final class XMLUpdateShredder extends XMLShredder implements
     private void updateOnly() throws TreetankException {
         try {
             final long start = System.currentTimeMillis();
-            final LogHelper log = new LogHelper(LOGGER);
-            log.info("Start... ");
+            LOGGER.info("Start... ");
 
             // Setting up boolean-Stack.
             leftSiblingKeyStack = new FastStack<Long>();
@@ -232,14 +232,14 @@ public final class XMLUpdateShredder extends XMLShredder implements
                     case XMLStreamConstants.START_ELEMENT:
                         if (LogHelper.DEBUG) {
                             // Debugging output.
-                            log.debug("TO SHREDDER: "
+                            LOGGER.debug("TO SHREDDER: "
                                     + ((StartElement) event).getName());
 
                             if (mWtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
-                                log.debug("SHREDDERED: "
+                                LOGGER.debug("SHREDDERED: "
                                         + mWtx.getQNameOfCurrentNode());
                             } else {
-                                log.debug("SHREDDERED: "
+                                LOGGER.debug("SHREDDERED: "
                                         + mWtx.getValueOfCurrentNode());
                             }
                         }
@@ -457,11 +457,12 @@ public final class XMLUpdateShredder extends XMLShredder implements
                 insertNewContent();
             }
 
-            log.info("Done [" + (System.currentTimeMillis() - start) + "]");
+            LOGGER.info("Done [" + (System.currentTimeMillis() - start) + "]");
             // TODO: use Java7 multi-catch feature.
         } catch (final XMLStreamException exc1) {
             throw new TreetankIOException(exc1);
         } catch (final IOException exc2) {
+            LOGGER.error(exc2.toString());
             throw new TreetankIOException(exc2);
         }
 
