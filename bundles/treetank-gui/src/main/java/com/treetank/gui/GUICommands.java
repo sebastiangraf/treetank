@@ -26,6 +26,7 @@ import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TreetankException;
 import com.treetank.gui.view.tree.TreetankTreeCellRenderer;
 import com.treetank.gui.view.tree.TreetankTreeModel;
@@ -100,10 +101,8 @@ public enum GUICommands implements GUICommand {
                         final ISession session = db.getSession();
                         final IReadTransaction rtx = session
                                 .beginReadTransaction();
-                        final XMLSerializerBuilder builder = new XMLSerializerBuilder(
-                                rtx);
-                        builder.setIntermediateStream(outputStream);
-                        final XMLSerializer serializer = builder.build();
+                        final XMLSerializer serializer = new XMLSerializerBuilder(
+                                new DescendantAxis(rtx), outputStream).build();
                         serializer.call();
 
                         rtx.close();
@@ -222,9 +221,9 @@ public enum GUICommands implements GUICommand {
             // Serialize file into XML view if it is empty.
             final IReadTransaction rtx = session.beginReadTransaction();
             out = new ByteArrayOutputStream();
-            final XMLSerializerBuilder builder = new XMLSerializerBuilder(rtx);
-            builder.setIntermediateStream(out);
-            builder.build().call();
+            final XMLSerializer serializer = new XMLSerializerBuilder(new DescendantAxis(rtx), out)
+                    .build();
+            serializer.call();
             text(gui, xmlPane, true);
 
             // Listen for when the selection changes.
@@ -249,13 +248,15 @@ public enum GUICommands implements GUICommand {
                             switch (node.getKind()) {
                             case ROOT_KIND:
                                 rtx.moveTo(nodeKey);
-                                builder.build().call();
+                                new XMLSerializerBuilder(new DescendantAxis(rtx), out).build()
+                                        .call();
                                 break;
                             case ELEMENT_KIND:
                                 rtx.moveTo(nodeKey);
                                 System.out.println("ELEMENT: "
                                         + rtx.getQNameOfCurrentNode());
-                                builder.build().call();
+                                new XMLSerializerBuilder(new DescendantAxis(rtx), out).build()
+                                        .call();
                                 break;
                             case TEXT_KIND:
                                 rtx.moveTo(nodeKey);
