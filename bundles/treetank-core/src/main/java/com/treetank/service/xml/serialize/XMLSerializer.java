@@ -29,9 +29,11 @@ import java.io.UnsupportedEncodingException;
 import java.util.concurrent.Callable;
 
 import com.treetank.access.Database;
+import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
+import com.treetank.axis.DescendantAxis;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
@@ -85,8 +87,8 @@ public class XMLSerializer extends AbsSerializer implements Callable<Void> {
      * @param serializeId
      *            Serialize id if true.
      */
-    XMLSerializer(final XMLSerializerBuilder builder) {
-        super(builder);
+    XMLSerializer(final IAxis axis, final XMLSerializerBuilder builder) {
+        super(axis, builder);
         mOut = new BufferedOutputStream(builder.getStream(), 4096);
         mIndent = builder.mIntent;
     }
@@ -279,8 +281,8 @@ public class XMLSerializer extends AbsSerializer implements Callable<Void> {
         final ISession session = db.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
 
-        final XMLSerializer serializer = new XMLSerializerBuilder(rtx,
-                outputStream).build();
+        final XMLSerializer serializer = new XMLSerializerBuilder(
+                new DescendantAxis(rtx), outputStream).build();
         serializer.call();
 
         rtx.close();

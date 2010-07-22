@@ -13,6 +13,7 @@ import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.treetank.access.Database;
+import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
@@ -41,8 +42,8 @@ public final class SAXSerializer extends AbsSerializer implements
     /**
      * {@inheritDoc}
      */
-    SAXSerializer(final SAXSerializerBuilder builder) {
-        super(builder);
+    SAXSerializer(final IAxis axis, final SAXSerializerBuilder builder) {
+        super(axis, builder);
     }
 
     @Override

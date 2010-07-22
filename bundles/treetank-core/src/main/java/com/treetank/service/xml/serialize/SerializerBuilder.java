@@ -2,7 +2,7 @@ package com.treetank.service.xml.serialize;
 
 import java.io.OutputStream;
 
-import com.treetank.api.IReadTransaction;
+import com.treetank.api.IAxis;
 import com.treetank.api.ISession;
 
 /**
@@ -16,10 +16,7 @@ import com.treetank.api.ISession;
  */
 public abstract class SerializerBuilder {
 
-    /**
-     * Intermediate {@link IReadTransaction} for builder, necessary
-     */
-    final IReadTransaction mIntermediateRtx;
+    final IAxis mAxis;
 
     /**
      * Intermediate boolean for intendtion, not necessary
@@ -47,8 +44,8 @@ public abstract class SerializerBuilder {
      * @param rtx
      * @param mStream
      */
-    public SerializerBuilder(final IReadTransaction rtx) {
-        mIntermediateRtx = rtx;
+    public SerializerBuilder(final IAxis paramAxis) {
+        this.mAxis = paramAxis;
     }
 
     /**
@@ -102,15 +99,15 @@ public abstract class SerializerBuilder {
 
         private final OutputStream mStream;
 
-        public XMLSerializerBuilder(final IReadTransaction rtx,
+        public XMLSerializerBuilder(final IAxis paramAxis,
                 final OutputStream paramStream) {
-            super(rtx);
+            super(paramAxis);
             this.mStream = paramStream;
         }
 
         @Override
         public XMLSerializer build() {
-            return new XMLSerializer(this);
+            return new XMLSerializer(mAxis, this);
         }
 
         public OutputStream getStream() {
@@ -121,25 +118,25 @@ public abstract class SerializerBuilder {
 
     public static class StAXSerializerBuilder extends SerializerBuilder {
 
-        public StAXSerializerBuilder(IReadTransaction rtx) {
-            super(rtx);
+        public StAXSerializerBuilder(final IAxis paramAxis) {
+            super(paramAxis);
         }
 
         @Override
         public StAXSerializer build() {
-            return new StAXSerializer(this);
+            return new StAXSerializer(mAxis, this);
         }
     }
 
     public static class SAXSerializerBuilder extends SerializerBuilder {
 
-        public SAXSerializerBuilder(final IReadTransaction rtx) {
-            super(rtx);
+        public SAXSerializerBuilder(final IAxis paramAxis) {
+            super(paramAxis);
         }
 
         @Override
         public SAXSerializer build() {
-            return new SAXSerializer(this);
+            return new SAXSerializer(mAxis, this);
         }
     }
 
@@ -171,13 +168,9 @@ public abstract class SerializerBuilder {
             return mTimestamp;
         }
 
-        public ISession getSession() {
-            return mSession;
-        }
-
         @Override
         public RevisionedXMLSerializer build() {
-            return new RevisionedXMLSerializer(this);
+            return new RevisionedXMLSerializer(mSession, this);
         }
     }
 

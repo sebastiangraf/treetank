@@ -32,6 +32,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.serialize.SerializerBuilder.XMLSerializerBuilder;
 import com.treetank.utils.DocumentCreater;
@@ -61,8 +62,8 @@ public class XMLSerializerTest {
         // Generate from this session.
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final IReadTransaction rtx = session.beginReadTransaction();
-        final XMLSerializer serializer = new XMLSerializerBuilder(rtx, out)
-                .build();
+        final XMLSerializer serializer = new XMLSerializerBuilder(
+                new DescendantAxis(rtx), out).build();
         serializer.call();
         TestCase.assertEquals(DocumentCreater.XML, out.toString());
         rtx.close();
@@ -83,7 +84,8 @@ public class XMLSerializerTest {
         // Generate from this session.
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final IReadTransaction rtx = session.beginReadTransaction();
-        final XMLSerializerBuilder builder = new XMLSerializerBuilder(rtx, out);
+        final XMLSerializerBuilder builder = new XMLSerializerBuilder(
+                new DescendantAxis(rtx), out);
         builder.setREST(true);
         builder.setID(true);
         builder.setDeclaration(true);
@@ -109,7 +111,8 @@ public class XMLSerializerTest {
         // Generate from this session.
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final IReadTransaction rtx = session.beginReadTransaction();
-        final XMLSerializerBuilder builder = new XMLSerializerBuilder(rtx, out);
+        final XMLSerializerBuilder builder = new XMLSerializerBuilder(
+                new DescendantAxis(rtx), out);
         builder.setID(true);
         builder.setDeclaration(true);
         final XMLSerializer serializer = builder.build();
