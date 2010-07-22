@@ -8,6 +8,7 @@ import java.util.concurrent.Callable;
 
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
+import com.treetank.axis.DescendantAxis;
 import com.treetank.service.xml.serialize.SerializerBuilder.RevisionedXMLSerializerBuilder;
 import com.treetank.utils.IConstants;
 
@@ -22,10 +23,11 @@ public class RevisionedXMLSerializer extends XMLSerializer implements
 
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    public RevisionedXMLSerializer(final RevisionedXMLSerializerBuilder builder) {
-        super(builder);
+    public RevisionedXMLSerializer(final ISession paramSession,
+            final RevisionedXMLSerializerBuilder builder) {
+        super(null, builder);
         mBuilder = builder;
-        mSession = builder.getSession();
+        mSession = paramSession;
         mStream = builder.getStream();
         mIsTimestampUsed = builder.isTimestamp();
         mVersions = new long[builder.getVersions().length];
@@ -56,7 +58,7 @@ public class RevisionedXMLSerializer extends XMLSerializer implements
                 write("timestamp=\"" + rtx.getRevisionTimestamp() + "\" ");
             write("revision=\""
                     + (mVersions.length == 0 ? i : mVersions[(int) i]) + "\">");
-            serializer = new XMLSerializer(mBuilder);
+            serializer = new XMLSerializer(new DescendantAxis(rtx), mBuilder);
             serializer.call();
             write(out.toString());
             write("</tt>");

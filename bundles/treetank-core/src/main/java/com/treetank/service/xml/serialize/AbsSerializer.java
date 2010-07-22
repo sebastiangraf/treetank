@@ -2,7 +2,6 @@ package com.treetank.service.xml.serialize;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.DescendantAxis;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.utils.FastStack;
@@ -15,11 +14,10 @@ import com.treetank.utils.FastStack;
  */
 abstract class AbsSerializer implements ISerialize {
 
-    /** Transaction to read from (is the same as the mAxis). */
-    final IReadTransaction mRTX;
-
     /** Descendant-or-self axis used to traverse subtree. */
     final IAxis mAxis;
+
+    final IReadTransaction mRTX;
 
     /** Stack for reading end element. */
     final FastStack<Long> mStack;
@@ -36,15 +34,15 @@ abstract class AbsSerializer implements ISerialize {
     /**
      * Constructor.
      * 
-     * @param rtx
-     *            {@link IReadTransaction}.
+     * @param axis
+     *            {@link IAxis}.
      * @param builder
      *            container of type {@link SerializerBuilder} to store the
      *            setting for serialization.
      */
-    public AbsSerializer(final SerializerBuilder builder) {
-        mRTX = builder.mIntermediateRtx;
-        mAxis = new DescendantAxis(mRTX);
+    public AbsSerializer(final IAxis axis, final SerializerBuilder builder) {
+        mAxis = axis;
+        mRTX = axis.getTransaction();
         mStack = new FastStack<Long>();
         mSerializeXMLDeclaration = builder.mDeclaration;
         mSerializeRest = builder.mREST;
@@ -59,7 +57,7 @@ abstract class AbsSerializer implements ISerialize {
     public void serialize() throws Exception {
         // Setup primitives.
         boolean closeElements = false;
-        long key = mAxis.getTransaction().getNode().getNodeKey();
+        long key = mRTX.getNode().getNodeKey();
 
         // Iterate over all nodes of the subtree including self.
         while (mAxis.hasNext()) {
@@ -87,7 +85,7 @@ abstract class AbsSerializer implements ISerialize {
 
             // Push end element to stack if we are a start element with
             // children.
-            if (mRTX.getNode().getKind() == ENodes.ELEMENT_KIND
+            if (mAxis.getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND
                     && ((AbsStructNode) mRTX.getNode()).hasFirstChild()) {
                 mStack.push(mRTX.getNode().getNodeKey());
             }
@@ -102,7 +100,7 @@ abstract class AbsSerializer implements ISerialize {
 
         // Finally emit all pending end elements.
         while (!mStack.empty()) {
-            mRTX.moveTo(mStack.pop());
+            mAxis.getTransaction().moveTo(mStack.pop());
             emitEndElement();
         }
     }

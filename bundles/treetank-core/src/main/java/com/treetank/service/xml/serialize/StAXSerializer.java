@@ -13,6 +13,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.treetank.access.Database;
+import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
@@ -94,8 +95,8 @@ public class StAXSerializer extends AbsSerializer implements XMLEventReader {
      * @param map
      *            Properties map.
      */
-    StAXSerializer(final StAXSerializerBuilder builder) {
-        super(builder);
+    StAXSerializer(final IAxis paramAxis, final StAXSerializerBuilder builder) {
+        super(paramAxis, builder);
     }
 
     @Override
