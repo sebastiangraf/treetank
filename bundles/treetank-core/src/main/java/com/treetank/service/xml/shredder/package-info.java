@@ -6,6 +6,7 @@
     Furthermore convience classes for jdbc-data are provided.
     </p>
  *
+ *
  * @author Marc Kramis, University of Konstanz
  * @author Sebastian Graf, University of Konstanz
  */
