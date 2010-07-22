@@ -61,9 +61,8 @@ public class XMLSerializerTest {
         // Generate from this session.
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final IReadTransaction rtx = session.beginReadTransaction();
-        final XMLSerializerBuilder builder = new XMLSerializerBuilder(rtx);
-        builder.setIntermediateStream(out);
-        final XMLSerializer serializer = builder.build();
+        final XMLSerializer serializer = new XMLSerializerBuilder(rtx, out)
+                .build();
         serializer.call();
         TestCase.assertEquals(DocumentCreater.XML, out.toString());
         rtx.close();
@@ -84,11 +83,10 @@ public class XMLSerializerTest {
         // Generate from this session.
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final IReadTransaction rtx = session.beginReadTransaction();
-        final XMLSerializerBuilder builder = new XMLSerializerBuilder(rtx);
-        builder.setIntermediateStream(out);
-        builder.setIntermediateSerializeRest(true);
-        builder.setIntermediateId(true);
-        builder.setIntermediateDeclaration(true);
+        final XMLSerializerBuilder builder = new XMLSerializerBuilder(rtx, out);
+        builder.setREST(true);
+        builder.setID(true);
+        builder.setDeclaration(true);
         final XMLSerializer serializer = builder.build();
         serializer.call();
         TestCase.assertEquals(DocumentCreater.REST, out.toString());
@@ -111,10 +109,9 @@ public class XMLSerializerTest {
         // Generate from this session.
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final IReadTransaction rtx = session.beginReadTransaction();
-        final XMLSerializerBuilder builder = new XMLSerializerBuilder(rtx);
-        builder.setIntermediateId(true);
-        builder.setIntermediateDeclaration(true);
-        builder.setIntermediateStream(out);
+        final XMLSerializerBuilder builder = new XMLSerializerBuilder(rtx, out);
+        builder.setID(true);
+        builder.setDeclaration(true);
         final XMLSerializer serializer = builder.build();
         serializer.call();
         TestCase.assertEquals(DocumentCreater.ID, out.toString());

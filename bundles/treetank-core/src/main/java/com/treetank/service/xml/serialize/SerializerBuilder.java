@@ -4,6 +4,15 @@ import java.io.OutputStream;
 
 import com.treetank.api.IReadTransaction;
 
+/**
+ * Central class for building up serializers.
+ * 
+ * Note that not every Implementation (denoted by the internal subclasses) makes
+ * use of all parameters.
+ * 
+ * @author Sebastian Graf, University of Konstanz
+ * 
+ */
 public abstract class SerializerBuilder {
 
     /**
@@ -12,71 +21,99 @@ public abstract class SerializerBuilder {
     final IReadTransaction mIntermediateRtx;
 
     /**
-     * Intermediate {@link OutputStream} for stream
-     */
-    OutputStream mIntermediateStream = System.out;
-
-    /**
      * Intermediate boolean for intendtion, not necessary
      */
-    boolean mIntermediateIntend = false;
+    boolean mIntent = false;
 
     /**
      * Intermediate boolean for rest serialization, not necessary
      */
-    boolean mIntermediateSerializeRest = false;
+    boolean mREST = false;
 
     /**
      * Intermediate boolean for rest serialization, not necessary
      */
-    boolean mIntermediateDeclaration = true;
+    boolean mDeclaration = true;
 
     /**
      * Intermediate boolean for ids, not necessary
      */
-    boolean mIntermediateId = false;
+    boolean mID = false;
 
     /**
      * Constructor for the builder;
      * 
      * @param rtx
-     * @param stream
+     * @param mStream
      */
     public SerializerBuilder(final IReadTransaction rtx) {
         mIntermediateRtx = rtx;
     }
 
-    public void setIntermediateIntend(boolean mIntermediateIntend) {
-        this.mIntermediateIntend = mIntermediateIntend;
+    /**
+     * Setting the intention.
+     * 
+     * @param paramIntent
+     *            to set
+     */
+    public void setIntend(boolean paramIntent) {
+        this.mIntent = paramIntent;
     }
 
-    public void setIntermediateSerializeRest(boolean mIntermediateSerializeRest) {
-        this.mIntermediateSerializeRest = mIntermediateSerializeRest;
+    /**
+     * Setting the RESTful output
+     * 
+     * @param paramREST
+     *            to set
+     */
+    public void setREST(boolean paramREST) {
+        this.mREST = paramREST;
     }
 
-    public void setIntermediateDeclaration(boolean mIntermediateDeclaration) {
-        this.mIntermediateDeclaration = mIntermediateDeclaration;
+    /**
+     * Setting the declaration
+     * 
+     * @param paramDeclaration
+     *            to set
+     */
+    public void setDeclaration(boolean paramDeclaration) {
+        this.mDeclaration = paramDeclaration;
     }
 
-    public void setIntermediateId(boolean mIntermediateId) {
-        this.mIntermediateId = mIntermediateId;
+    /**
+     * Setting the ids on nodes
+     * 
+     * @param paramID
+     *            to set
+     */
+    public void setID(boolean paramID) {
+        this.mID = paramID;
     }
 
-    public void setIntermediateStream(OutputStream mIntermediateStream) {
-        this.mIntermediateStream = mIntermediateStream;
-    }
-
-    public abstract AbsSerializeStorage build();
+    /**
+     * Abstract method to build a given serializer
+     * 
+     * @return the specific implementation of the {@link AbsSerializer}
+     */
+    public abstract AbsSerializer build();
 
     public static class XMLSerializerBuilder extends SerializerBuilder {
 
-        public XMLSerializerBuilder(final IReadTransaction rtx) {
+        private final OutputStream mStream;
+
+        public XMLSerializerBuilder(final IReadTransaction rtx,
+                final OutputStream paramStream) {
             super(rtx);
+            this.mStream = paramStream;
         }
 
         @Override
         public XMLSerializer build() {
             return new XMLSerializer(this);
+        }
+
+        public OutputStream getStream() {
+            return mStream;
         }
 
     }
@@ -91,6 +128,19 @@ public abstract class SerializerBuilder {
         public StAXSerializer build() {
             return new StAXSerializer(this);
         }
+    }
+
+    public static class SAXSerializerBuilder extends SerializerBuilder {
+
+        public SAXSerializerBuilder(final IReadTransaction rtx) {
+            super(rtx);
+        }
+
+        @Override
+        public SAXSerializer build() {
+            return new SAXSerializer(this);
+        }
+
     }
 
 }

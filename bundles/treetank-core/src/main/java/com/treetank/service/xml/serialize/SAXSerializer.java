@@ -17,7 +17,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.node.ElementNode;
-import com.treetank.service.xml.serialize.SerializerBuilder.StAXSerializerBuilder;
+import com.treetank.service.xml.serialize.SerializerBuilder.SAXSerializerBuilder;
 
 /**
  * <h1>SaxSerializer</h1>
@@ -29,7 +29,7 @@ import com.treetank.service.xml.serialize.SerializerBuilder.StAXSerializerBuilde
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class SAXSerializer extends AbsSerializeStorage implements
+public final class SAXSerializer extends AbsSerializer implements
         Callable<Void> {
 
     /** Logger. */
@@ -41,9 +41,8 @@ public final class SAXSerializer extends AbsSerializeStorage implements
     /**
      * {@inheritDoc}
      */
-    public SAXSerializer(final StAXSerializerBuilder builder) {
-        super(builder.mIntermediateRtx, builder.mIntermediateDeclaration,
-                builder.mIntermediateSerializeRest, builder.mIntermediateId);
+    SAXSerializer(final SAXSerializerBuilder builder) {
+        super(builder);
     }
 
     @Override
