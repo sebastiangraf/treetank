@@ -19,10 +19,6 @@
 package com.treetank.service.xml.serialize;
 
 import static com.treetank.service.xml.serialize.SerializerProperties.NL;
-import static com.treetank.service.xml.serialize.SerializerProperties.S_ID;
-import static com.treetank.service.xml.serialize.SerializerProperties.S_INDENT;
-import static com.treetank.service.xml.serialize.SerializerProperties.S_REST;
-import static com.treetank.service.xml.serialize.SerializerProperties.S_XMLDECL;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -31,7 +27,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentMap;
 
 import com.treetank.access.Database;
 import com.treetank.api.IDatabase;
@@ -77,57 +72,6 @@ public final class XMLSerializer extends AbsSerializeStorage implements
 
     /**
      * Initialize XMLStreamReader implementation with transaction. The cursor
-     * points to the node the XMLStreamReader starts to read. Do not serialize
-     * the tank ids.
-     * 
-     * @param rtx
-     *            Transaction with cursor pointing to start node.
-     * @param out
-     *            OutputStream to serialize UTF-8 XML to.
-     */
-    public XMLSerializer(final IReadTransaction rtx, final OutputStream out) {
-        this(rtx, out, true, false, false, false);
-    }
-
-    /**
-     * Initialize XMLStreamReader implementation with transaction. The cursor
-     * points to the node the XMLStreamReader starts to read.
-     * 
-     * @param rtx
-     *            Transaction with cursor pointing to start node.
-     * @param out
-     *            OutputStream to serialize UTF-8 XML to.
-     * @param serializeXMLDeclaration
-     *            Serialize XML declaration if true.
-     * @param serializeRest
-     *            Serialize tank id if true.
-     */
-    public XMLSerializer(final IReadTransaction rtx, final OutputStream out,
-            final boolean serializeXMLDeclaration, final boolean serializeRest) {
-        this(rtx, out, serializeXMLDeclaration, serializeRest, serializeRest,
-                false);
-    }
-
-    /**
-     * Initialize XMLStreamReader implementation with transaction. The cursor
-     * points to the node the XMLStreamReader starts to read. Do not serialize
-     * the tank ids.
-     * 
-     * @param rtx
-     *            Transaction with cursor pointing to start node.
-     * @param out
-     *            OutputStream to serialize UTF-8 XML to.
-     * @param map
-     *            Properties map.
-     */
-    public XMLSerializer(final IReadTransaction rtx, final OutputStream out,
-            final ConcurrentMap<String, Object> map) {
-        this(rtx, out, (Boolean) map.get(S_XMLDECL), (Boolean) map.get(S_REST),
-                (Boolean) map.get(S_ID), (Boolean) map.get(S_INDENT));
-    }
-
-    /**
-     * Initialize XMLStreamReader implementation with transaction. The cursor
      * points to the node the XMLStreamReader starts to read.
      * 
      * @param rtx
@@ -141,12 +85,11 @@ public final class XMLSerializer extends AbsSerializeStorage implements
      * @param serializeId
      *            Serialize id if true.
      */
-    public XMLSerializer(final IReadTransaction rtx, final OutputStream out,
-            final boolean serializeXMLDeclaration, final boolean serializeRest,
-            final boolean serializeId, final boolean indent) {
-        super(rtx, serializeXMLDeclaration, serializeRest, serializeId);
-        mOut = new BufferedOutputStream(out, 4096);
-        mIndent = indent;
+    public XMLSerializer(final XMLSerializerBuilder builder) {
+        super(builder.mIntermediateRtx, builder.mIntermediateDeclaration,
+                builder.mIntermediateSerializeRest, builder.mIntermediateId);
+        mOut = new BufferedOutputStream(builder.mIntermediateStream, 4096);
+        mIndent = builder.mIntermediateIntend;
     }
 
     /**
@@ -336,8 +279,9 @@ public final class XMLSerializer extends AbsSerializeStorage implements
         final IDatabase db = Database.openDatabase(new File(args[0]));
         final ISession session = db.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
-        final XMLSerializer serializer = new XMLSerializer(rtx, outputStream,
-                true, false, false, true);
+
+        final XMLSerializer serializer = new XMLSerializerBuilder(rtx,
+                outputStream).build();
         serializer.call();
 
         rtx.close();
@@ -347,6 +291,72 @@ public final class XMLSerializer extends AbsSerializeStorage implements
 
         System.out.println(" done [" + (System.currentTimeMillis() - time)
                 + "ms].");
+    }
+
+    public static class XMLSerializerBuilder {
+
+        /**
+         * Intermediate {@link IReadTransaction} for builder, necessary
+         */
+        private final IReadTransaction mIntermediateRtx;
+
+        /**
+         * Intermediate {@link OutputStream} for stream, necessary
+         */
+        private final OutputStream mIntermediateStream;
+
+        /**
+         * Intermediate boolean for intendtion, not necessary
+         */
+        private boolean mIntermediateIntend = false;
+
+        /**
+         * Intermediate boolean for rest serialization, not necessary
+         */
+        private boolean mIntermediateSerializeRest = false;
+
+        /**
+         * Intermediate boolean for rest serialization, not necessary
+         */
+        private boolean mIntermediateDeclaration = true;
+
+        /**
+         * Intermediate boolean for ids, not necessary
+         */
+        private boolean mIntermediateId = false;
+
+        /**
+         * Constructor for the builder;
+         * 
+         * @param rtx
+         * @param stream
+         */
+        public XMLSerializerBuilder(final IReadTransaction rtx,
+                final OutputStream stream) {
+            mIntermediateRtx = rtx;
+            mIntermediateStream = stream;
+        }
+
+        public void setIntermediateIntend(boolean mIntermediateIntend) {
+            this.mIntermediateIntend = mIntermediateIntend;
+        }
+
+        public void setIntermediateSerializeRest(
+                boolean mIntermediateSerializeRest) {
+            this.mIntermediateSerializeRest = mIntermediateSerializeRest;
+        }
+
+        public void setIntermediateDeclaration(boolean mIntermediateDeclaration) {
+            this.mIntermediateDeclaration = mIntermediateDeclaration;
+        }
+
+        public void setIntermediateId(boolean mIntermediateId) {
+            this.mIntermediateId = mIntermediateId;
+        }
+
+        public XMLSerializer build() {
+            return new XMLSerializer(this);
+        }
     }
 
 }
