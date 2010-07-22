@@ -10,8 +10,10 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.utils.IConstants;
 
-public class RevsionedXMLSerializer /*extends AbsSerializeStorage implements
-        Callable<Void>*/ {
+public class RevsionedXMLSerializer /*
+                                     * extends AbsSerializeStorage implements
+                                     * Callable<Void>
+                                     */{
 
     // /** Offset that must be added to digit to make it ASCII. */
     // private static final int ASCII_OFFSET = 48;
@@ -93,22 +95,6 @@ public class RevsionedXMLSerializer /*extends AbsSerializeStorage implements
     // private void write(final String string)
     // throws UnsupportedEncodingException, IOException {
     // mStream.write(string.getBytes(IConstants.DEFAULT_ENCODING));
-    // }
-    //
-    // /**
-    // * Write non-negative non-zero long as UTF-8 bytes.
-    // *
-    // * @throws IOException
-    // */
-    // private void write(final long value) throws IOException {
-    // final int length = (int) Math.log10((double) value);
-    // int digit = 0;
-    // long remainder = value;
-    // for (int i = length; i >= 0; i--) {
-    // digit = (byte) (remainder / LONG_POWERS[i]);
-    // mStream.write((byte) (digit + ASCII_OFFSET));
-    // remainder -= digit * LONG_POWERS[i];
-    // }
     // }
 
 }

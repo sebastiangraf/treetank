@@ -37,8 +37,7 @@ import com.treetank.utils.NamespaceIterator;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public class StAXSerializer extends AbsSerializeStorage implements
-        XMLEventReader {
+public class StAXSerializer extends AbsSerializer implements XMLEventReader {
 
     /** Logger. */
     private static final Log LOGGER = LogFactory.getLog(StAXSerializer.class);
@@ -96,8 +95,7 @@ public class StAXSerializer extends AbsSerializeStorage implements
      *            Properties map.
      */
     StAXSerializer(final StAXSerializerBuilder builder) {
-        super(builder.mIntermediateRtx, builder.mIntermediateDeclaration,
-                builder.mIntermediateSerializeRest, builder.mIntermediateId);
+        super(builder);
     }
 
     @Override

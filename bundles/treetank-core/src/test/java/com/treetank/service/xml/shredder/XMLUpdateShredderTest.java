@@ -134,10 +134,8 @@ public class XMLUpdateShredderTest extends XMLTestCase {
                 wtx.close();
 
                 final OutputStream out = new ByteArrayOutputStream();
-                final XMLSerializerBuilder builder = new XMLSerializerBuilder(
-                        session.beginReadTransaction());
-                builder.setIntermediateStream(out);
-                final XMLSerializer serializer = builder.build();
+                final XMLSerializer serializer = new XMLSerializerBuilder(
+                        session.beginReadTransaction(), out).build();
                 serializer.call();
                 final StringBuilder sBuilder = TestHelper.readFile(
                         file.getAbsoluteFile(), false);

@@ -49,7 +49,7 @@ import com.treetank.utils.IConstants;
  * class.
  * </p>
  */
-public final class XMLSerializer extends AbsSerializeStorage implements
+public final class XMLSerializer extends AbsSerializer implements
         Callable<Void> {
 
     /** Offset that must be added to digit to make it ASCII. */
@@ -87,10 +87,9 @@ public final class XMLSerializer extends AbsSerializeStorage implements
      *            Serialize id if true.
      */
     XMLSerializer(final XMLSerializerBuilder builder) {
-        super(builder.mIntermediateRtx, builder.mIntermediateDeclaration,
-                builder.mIntermediateSerializeRest, builder.mIntermediateId);
-        mOut = new BufferedOutputStream(builder.mIntermediateStream, 4096);
-        mIndent = builder.mIntermediateIntend;
+        super(builder);
+        mOut = new BufferedOutputStream(builder.getStream(), 4096);
+        mIndent = builder.mIntent;
     }
 
     /**
@@ -281,9 +280,8 @@ public final class XMLSerializer extends AbsSerializeStorage implements
         final ISession session = db.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
 
-        final XMLSerializerBuilder builder = new XMLSerializerBuilder(rtx);
-        builder.setIntermediateStream(outputStream);
-        final XMLSerializer serializer = builder.build();
+        final XMLSerializer serializer = new XMLSerializerBuilder(rtx,
+                outputStream).build();
         serializer.call();
 
         rtx.close();

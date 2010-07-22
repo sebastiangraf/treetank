@@ -13,7 +13,7 @@ import com.treetank.utils.FastStack;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-abstract class AbsSerializeStorage implements ISerialize {
+abstract class AbsSerializer implements ISerialize {
 
     /** Transaction to read from (is the same as the mAxis). */
     final IReadTransaction mRTX;
@@ -37,24 +37,18 @@ abstract class AbsSerializeStorage implements ISerialize {
      * Constructor.
      * 
      * @param rtx
-     *            {@link ReadTransaction}.
-     * @param serializeXMLDeclaration
-     *            Determines if XML declaration should be serialized or not.
-     * @param serializeRest
-     *            Determines if REST specific functionality should be serialized
-     *            or not.
-     * @param serializeId
-     *            Determines if IDs should be serialized or not.
+     *            {@link IReadTransaction}.
+     * @param builder
+     *            container of type {@link SerializerBuilder} to store the
+     *            setting for serialization.
      */
-    public AbsSerializeStorage(final IReadTransaction rtx,
-            final boolean serializeXMLDeclaration, final boolean serializeRest,
-            final boolean serializeId) {
-        mRTX = rtx;
-        mAxis = new DescendantAxis(rtx, true);
+    public AbsSerializer(final SerializerBuilder builder) {
+        mRTX = builder.mIntermediateRtx;
+        mAxis = new DescendantAxis(mRTX);
         mStack = new FastStack<Long>();
-        mSerializeXMLDeclaration = serializeXMLDeclaration;
-        mSerializeRest = serializeRest;
-        mSerializeId = serializeId;
+        mSerializeXMLDeclaration = builder.mDeclaration;
+        mSerializeRest = builder.mREST;
+        mSerializeId = builder.mID;
     }
 
     /**
