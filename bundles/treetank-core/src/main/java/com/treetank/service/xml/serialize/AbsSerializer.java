@@ -1,10 +1,11 @@
 package com.treetank.service.xml.serialize;
 
-import java.io.IOException;
 import java.util.concurrent.Callable;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.api.ISession;
+import com.treetank.axis.DescendantAxis;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.utils.FastStack;
@@ -17,28 +18,27 @@ import com.treetank.utils.FastStack;
  */
 abstract class AbsSerializer implements Callable<Void> {
 
-    /** Descendant-or-self axis used to traverse subtree. */
-    final IAxis mAxis;
-
-    /** Treetank reading transaction {@link IReadTransaction}. */
-    final IReadTransaction mRTX;
+    /** Treetank reading transaction {@link ISession}. */
+    protected final ISession mSession;
 
     /** Stack for reading end element. */
-    final FastStack<Long> mStack;
+    protected final FastStack<Long> mStack;
+
+    /** array with versions to print */
+    protected final long[] mVersions;
 
     /**
      * Constructor.
      * 
-     * @param axis
-     *            {@link IAxis}.
-     * @param builder
-     *            container of type {@link SerializerBuilder} to store the
-     *            setting for serialization.
+     * @param session
+     *            {@link ISession}.
+     * @param versions
+     *            versions which should be serialized: -
      */
-    public AbsSerializer(final IAxis axis) {
-        mAxis = axis;
-        mRTX = axis.getTransaction();
+    public AbsSerializer(final ISession session, final long... versions) {
         mStack = new FastStack<Long>();
+        mVersions = versions;
+        mSession = session;
     }
 
     /**
@@ -47,59 +47,74 @@ abstract class AbsSerializer implements Callable<Void> {
      * @throws Exception
      */
     public Void call() throws Exception {
+
+        emitStartDocument();
+
+        // for (int i = 0; i < mVersions.length; i++) {
+
+        final IReadTransaction rtx = mSession.beginReadTransaction();
+        final IAxis descAxis = new DescendantAxis(rtx);
+
         // Setup primitives.
         boolean closeElements = false;
-        long key = mRTX.getNode().getNodeKey();
+        long key = rtx.getNode().getNodeKey();
 
         // Iterate over all nodes of the subtree including self.
-        while (mAxis.hasNext()) {
-            key = mAxis.next();
+        while (descAxis.hasNext()) {
+            key = descAxis.next();
 
             // Emit all pending end elements.
             if (closeElements) {
                 while (!mStack.empty()
-                        && mStack.peek() != ((AbsStructNode) mRTX.getNode())
+                        && mStack.peek() != ((AbsStructNode) rtx.getNode())
                                 .getLeftSiblingKey()) {
-                    mRTX.moveTo(mStack.pop());
-                    emitEndElement();
-                    mRTX.moveTo(key);
+                    rtx.moveTo(mStack.pop());
+                    emitEndElement(rtx);
+                    rtx.moveTo(key);
                 }
                 if (!mStack.empty()) {
-                    mRTX.moveTo(mStack.pop());
-                    emitEndElement();
+                    rtx.moveTo(mStack.pop());
+                    emitEndElement(rtx);
                 }
-                mRTX.moveTo(key);
+                rtx.moveTo(key);
                 closeElements = false;
             }
 
             // Emit node.
-            emitNode();
+            emitNode(rtx);
 
             // Push end element to stack if we are a start element with
             // children.
-            if (mAxis.getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND
-                    && ((AbsStructNode) mRTX.getNode()).hasFirstChild()) {
-                mStack.push(mRTX.getNode().getNodeKey());
+            if (rtx.getNode().getKind() == ENodes.ELEMENT_KIND
+                    && ((AbsStructNode) rtx.getNode()).hasFirstChild()) {
+                mStack.push(rtx.getNode().getNodeKey());
             }
 
             // Remember to emit all pending end elements from stack if
             // required.
-            if (!((AbsStructNode) mRTX.getNode()).hasFirstChild()
-                    && !((AbsStructNode) mRTX.getNode()).hasRightSibling()) {
+            if (!((AbsStructNode) rtx.getNode()).hasFirstChild()
+                    && !((AbsStructNode) rtx.getNode()).hasRightSibling()) {
                 closeElements = true;
             }
+
         }
 
         // Finally emit all pending end elements.
         while (!mStack.empty()) {
-            mAxis.getTransaction().moveTo(mStack.pop());
-            emitEndElement();
+            rtx.moveTo(mStack.pop());
+            emitEndElement(rtx);
         }
+        // }
+        emitEndDocument();
 
         return null;
     }
 
-    protected abstract void emitEndElement() throws IOException;
+    protected abstract void emitStartDocument();
 
-    protected abstract void emitNode() throws IOException;
+    protected abstract void emitEndElement(final IReadTransaction rtx);
+
+    protected abstract void emitNode(final IReadTransaction rtx);
+
+    protected abstract void emitEndDocument();
 }

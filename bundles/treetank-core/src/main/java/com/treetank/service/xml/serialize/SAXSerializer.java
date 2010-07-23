@@ -1,7 +1,6 @@
 package com.treetank.service.xml.serialize;
 
 import java.io.File;
-import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
@@ -14,11 +13,9 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import com.treetank.access.Database;
 import com.treetank.access.WriteTransactionState;
-import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
-import com.treetank.axis.DescendantAxis;
 import com.treetank.node.ElementNode;
 
 /**
@@ -43,23 +40,15 @@ public final class SAXSerializer extends AbsSerializer {
     /**
      * {@inheritDoc}
      */
-    SAXSerializer(final IAxis axis, final ContentHandler handler) {
-        super(axis);
+    SAXSerializer(final ISession session, final ContentHandler handler) {
+        super(session);
         mHandler = handler;
     }
 
     @Override
-    public Void call() throws Exception {
-        mHandler.startDocument();
-        super.call();
-        mHandler.endDocument();
-        return null;
-    }
-
-    @Override
-    protected void emitEndElement() throws IOException {
-        final String URI = mRTX.nameForKey(mRTX.getNode().getURIKey());
-        final QName qName = mRTX.getQNameOfCurrentNode();
+    protected void emitEndElement(final IReadTransaction rtx) {
+        final String URI = rtx.nameForKey(rtx.getNode().getURIKey());
+        final QName qName = rtx.getQNameOfCurrentNode();
         try {
             mHandler.endElement(URI, qName.getLocalPart(),
                     WriteTransactionState.buildName(qName));
@@ -69,13 +58,13 @@ public final class SAXSerializer extends AbsSerializer {
     }
 
     @Override
-    protected void emitNode() throws IOException {
-        switch (mRTX.getNode().getKind()) {
+    protected void emitNode(final IReadTransaction rtx) {
+        switch (rtx.getNode().getKind()) {
         case ELEMENT_KIND:
-            generateElement();
+            generateElement(rtx);
             break;
         case TEXT_KIND:
-            generateText();
+            generateText(rtx);
             break;
         default:
             throw new UnsupportedOperationException(
@@ -86,48 +75,47 @@ public final class SAXSerializer extends AbsSerializer {
     /**
      * Generate a start element event.
      */
-    private void generateElement() {
+    private void generateElement(final IReadTransaction rtx) {
         final AttributesImpl atts = new AttributesImpl();
-        final long key = mRTX.getNode().getNodeKey();
+        final long key = rtx.getNode().getNodeKey();
 
         // Process namespace nodes.
-        for (int i = 0, namesCount = ((ElementNode) mRTX.getNode())
+        for (int i = 0, namesCount = ((ElementNode) rtx.getNode())
                 .getNamespaceCount(); i < namesCount; i++) {
-            mRTX.moveToNamespace(i);
-            final String URI = mRTX.nameForKey(mRTX.getNode().getURIKey());
-            if (mRTX.nameForKey(mRTX.getNode().getNameKey()).length() == 0) {
+            rtx.moveToNamespace(i);
+            final String URI = rtx.nameForKey(rtx.getNode().getURIKey());
+            if (rtx.nameForKey(rtx.getNode().getNameKey()).length() == 0) {
                 atts.addAttribute(URI, "xmlns", "xmlns", "CDATA", URI);
             } else {
                 atts.addAttribute(URI, "xmlns", "xmlns:"
-                        + mRTX.getQNameOfCurrentNode().getLocalPart(), "CDATA",
+                        + rtx.getQNameOfCurrentNode().getLocalPart(), "CDATA",
                         URI);
             }
-            mRTX.moveTo(key);
+            rtx.moveTo(key);
         }
 
         // Process attributes.
-        for (int i = 0, attCount = ((ElementNode) mRTX.getNode())
+        for (int i = 0, attCount = ((ElementNode) rtx.getNode())
                 .getAttributeCount(); i < attCount; i++) {
-            mRTX.moveToAttribute(i);
-            final String URI = mRTX.nameForKey(mRTX.getNode().getURIKey());
-            final QName qName = mRTX.getQNameOfCurrentNode();
+            rtx.moveToAttribute(i);
+            final String URI = rtx.nameForKey(rtx.getNode().getURIKey());
+            final QName qName = rtx.getQNameOfCurrentNode();
             atts.addAttribute(URI, qName.getLocalPart(),
                     WriteTransactionState.buildName(qName),
-                    mRTX.getTypeOfCurrentNode(), mRTX.getValueOfCurrentNode());
-            mRTX.moveTo(key);
+                    rtx.getTypeOfCurrentNode(), rtx.getValueOfCurrentNode());
+            rtx.moveTo(key);
         }
 
         // Create SAX events.
         try {
-            final QName qName = mRTX.getQNameOfCurrentNode();
-            mHandler.startElement(mRTX.nameForKey(mRTX.getNode().getURIKey()),
+            final QName qName = rtx.getQNameOfCurrentNode();
+            mHandler.startElement(rtx.nameForKey(rtx.getNode().getURIKey()),
                     qName.getLocalPart(),
                     WriteTransactionState.buildName(qName), atts);
 
             // Empty elements.
-            if (!((ElementNode) mRTX.getNode()).hasFirstChild()) {
-                mHandler.endElement(
-                        mRTX.nameForKey(mRTX.getNode().getURIKey()),
+            if (!((ElementNode) rtx.getNode()).hasFirstChild()) {
+                mHandler.endElement(rtx.nameForKey(rtx.getNode().getURIKey()),
                         qName.getLocalPart(),
                         WriteTransactionState.buildName(qName));
             }
@@ -139,10 +127,10 @@ public final class SAXSerializer extends AbsSerializer {
     /**
      * Generate a text event.
      */
-    private void generateText() {
+    private void generateText(final IReadTransaction rtx) {
         try {
-            mHandler.characters(mRTX.getValueOfCurrentNode().toCharArray(), 0,
-                    mRTX.getValueOfCurrentNode().length());
+            mHandler.characters(rtx.getValueOfCurrentNode().toCharArray(), 0,
+                    rtx.getValueOfCurrentNode().length());
         } catch (final SAXException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -163,16 +151,31 @@ public final class SAXSerializer extends AbsSerializer {
 
         final IDatabase database = Database.openDatabase(new File(args[0]));
         final ISession session = database.getSession();
-        final IReadTransaction rtx = session.beginReadTransaction();
 
         final DefaultHandler defHandler = new DefaultHandler();
 
-        final SAXSerializer serializer = new SAXSerializer(new DescendantAxis(
-                rtx), defHandler);
+        final SAXSerializer serializer = new SAXSerializer(session, defHandler);
         serializer.call();
 
-        rtx.close();
         session.close();
         database.close();
+    }
+
+    @Override
+    protected void emitStartDocument() {
+        try {
+            mHandler.startDocument();
+        } catch (final SAXException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    protected void emitEndDocument() {
+        try {
+            mHandler.endDocument();
+        } catch (final SAXException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 }

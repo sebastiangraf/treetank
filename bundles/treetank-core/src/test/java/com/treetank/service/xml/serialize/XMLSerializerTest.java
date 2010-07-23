@@ -29,10 +29,8 @@ import org.junit.Test;
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
-import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 import com.treetank.utils.DocumentCreater;
@@ -61,12 +59,10 @@ public class XMLSerializerTest {
 
         // Generate from this session.
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final IReadTransaction rtx = session.beginReadTransaction();
-        final XMLSerializer serializer = new XMLSerializerBuilder(
-                new DescendantAxis(rtx), out).build();
+        final XMLSerializer serializer = new XMLSerializerBuilder(session, out)
+                .build();
         serializer.call();
         TestCase.assertEquals(DocumentCreater.XML, out.toString());
-        rtx.close();
         session.close();
         database.close();
     }
@@ -83,9 +79,8 @@ public class XMLSerializerTest {
 
         // Generate from this session.
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final IReadTransaction rtx = session.beginReadTransaction();
-        final XMLSerializerBuilder builder = new XMLSerializerBuilder(
-                new DescendantAxis(rtx), out);
+        final XMLSerializerBuilder builder = new XMLSerializerBuilder(session,
+                out);
         builder.setREST(true);
         builder.setID(true);
         builder.setDeclaration(true);
@@ -93,7 +88,6 @@ public class XMLSerializerTest {
         serializer.call();
         TestCase.assertEquals(DocumentCreater.REST, out.toString());
 
-        rtx.close();
         session.close();
         database.close();
     }
@@ -110,15 +104,13 @@ public class XMLSerializerTest {
 
         // Generate from this session.
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final IReadTransaction rtx = session.beginReadTransaction();
-        final XMLSerializerBuilder builder = new XMLSerializerBuilder(
-                new DescendantAxis(rtx), out);
+        final XMLSerializerBuilder builder = new XMLSerializerBuilder(session,
+                out);
         builder.setID(true);
         builder.setDeclaration(true);
         final XMLSerializer serializer = builder.build();
         serializer.call();
         TestCase.assertEquals(DocumentCreater.ID, out.toString());
-        rtx.close();
         session.close();
         database.close();
     }

@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.treetank.api.IAxis;
+import com.treetank.api.IReadTransaction;
 import com.treetank.axis.FilterAxis;
 import com.treetank.axis.TextFilter;
 import com.treetank.exception.TreetankException;
@@ -19,6 +20,7 @@ import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
 import com.treetank.utils.AttributeIterator;
+import com.treetank.utils.FastStack;
 import com.treetank.utils.NamespaceIterator;
 
 /**
@@ -32,7 +34,7 @@ import com.treetank.utils.NamespaceIterator;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public class StAXSerializer extends AbsSerializer implements XMLEventReader {
+public class StAXSerializer implements XMLEventReader {
 
     /** Logger. */
     private static final Logger LOGGER = LoggerFactory
@@ -41,18 +43,18 @@ public class StAXSerializer extends AbsSerializer implements XMLEventReader {
     /**
      * Text filter axis {@link TextFilterAxis}.
      */
-    private static FilterAxis textFilterAxis;
+    private FilterAxis textFilterAxis;
 
     /**
      * Determines if start tags have to be closed, thus if end tags have to be
      * emitted.
      */
-    private static boolean closeElements;
+    private boolean closeElements;
 
     /**
      * {@inheritDoc}
      */
-    private static XMLEvent event;
+    private XMLEvent event;
 
     /**
      * XMLEventFactory to create events.
@@ -62,15 +64,21 @@ public class StAXSerializer extends AbsSerializer implements XMLEventReader {
     private final XMLEventFactory fac = XMLEventFactory.newFactory();
 
     /** Node key. */
-    private static long key;
+    private long key;
 
     /**
      * Determines if all end tags have been emitted.
      */
-    private static boolean closeElementsEmitted = false;
+    private boolean closeElementsEmitted = false;
 
     /** Determines if nextTag() method has been called. */
-    private static boolean nextTag = false;
+    private boolean nextTag = false;
+
+    /** axis for iteration */
+    private final IAxis mAxis;
+
+    /** Stack for reading end element. */
+    private final FastStack<Long> mStack;
 
     /**
      * Initialize XMLStreamReader implementation with transaction. The cursor
@@ -82,34 +90,34 @@ public class StAXSerializer extends AbsSerializer implements XMLEventReader {
      * @param map
      *            Properties map.
      */
-    StAXSerializer(final IAxis paramAxis) {
-        super(paramAxis);
+    public StAXSerializer(final IAxis axis) {
         nextTag = false;
+        mAxis = axis;
+        mStack = new FastStack<Long>();
+
     }
 
-    @Override
-    public void emitEndElement() throws IOException {
-        final long nodeKey = mRTX.getNode().getNodeKey();
-        event = fac.createEndElement(mRTX.getQNameOfCurrentNode(),
-                new NamespaceIterator(mRTX));
-        mRTX.moveTo(nodeKey);
+    private void emitEndElement(final IReadTransaction rtx) {
+        final long nodeKey = rtx.getNode().getNodeKey();
+        event = fac.createEndElement(rtx.getQNameOfCurrentNode(),
+                new NamespaceIterator(rtx));
+        rtx.moveTo(nodeKey);
     }
 
-    @Override
-    public void emitNode() throws IOException {
-        switch (mRTX.getNode().getKind()) {
+    private void emitNode(final IReadTransaction rtx) {
+        switch (rtx.getNode().getKind()) {
         case ROOT_KIND:
             event = fac.createStartDocument();
             break;
         case ELEMENT_KIND:
-            final long key = mRTX.getNode().getNodeKey();
-            final QName qName = mRTX.getQNameOfCurrentNode();
-            event = fac.createStartElement(qName, new AttributeIterator(mRTX),
-                    new NamespaceIterator(mRTX));
-            mRTX.moveTo(key);
+            final long key = rtx.getNode().getNodeKey();
+            final QName qName = rtx.getQNameOfCurrentNode();
+            event = fac.createStartElement(qName, new AttributeIterator(rtx),
+                    new NamespaceIterator(rtx));
+            rtx.moveTo(key);
             break;
         case TEXT_KIND:
-            event = fac.createCharacters(mRTX.getValueOfCurrentNode());
+            event = fac.createCharacters(rtx.getValueOfCurrentNode());
             break;
         }
     }
@@ -117,20 +125,21 @@ public class StAXSerializer extends AbsSerializer implements XMLEventReader {
     @Override
     public void close() throws XMLStreamException {
         try {
-            mRTX.close();
-        } catch (TreetankException e) {
+            mAxis.getTransaction().close();
+        } catch (final TreetankException e) {
             LOGGER.error(e.getMessage(), e);
         }
     }
 
     @Override
     public String getElementText() throws XMLStreamException {
-        textFilterAxis = new FilterAxis(mAxis, new TextFilter(mRTX));
+        textFilterAxis = new FilterAxis(mAxis, new TextFilter(
+                mAxis.getTransaction()));
         final StringBuilder sb = new StringBuilder();
 
         while (textFilterAxis.hasNext()) {
             textFilterAxis.next();
-            sb.append(mRTX.getValueOfCurrentNode());
+            sb.append(mAxis.getTransaction().getValueOfCurrentNode());
         }
 
         return sb.toString();
@@ -157,14 +166,14 @@ public class StAXSerializer extends AbsSerializer implements XMLEventReader {
                 key = mAxis.next();
 
                 if (nextTag) {
-                    if (mRTX.getNode().getKind() != ENodes.ELEMENT_KIND) {
+                    if (mAxis.getTransaction().getNode().getKind() != ENodes.ELEMENT_KIND) {
                         throw new XMLStreamException(
                                 "The next tag isn't a start- or end-tag!");
                     }
                     nextTag = false;
                 }
             }
-            emit();
+            emit(mAxis.getTransaction());
         } catch (final IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -180,30 +189,30 @@ public class StAXSerializer extends AbsSerializer implements XMLEventReader {
 
     @Override
     public XMLEvent peek() throws XMLStreamException {
-        final long currNodeKey = mRTX.getNode().getNodeKey();
-
+        final long currNodeKey = mAxis.getTransaction().getNode().getNodeKey();
+        final IReadTransaction rtx = mAxis.getTransaction();
         try {
             if (closeElements) {
-                mRTX.moveTo(mStack.peek());
-                emitEndElement();
+                rtx.moveTo(mStack.peek());
+                emitEndElement(rtx);
             } else {
-                final ENodes nodeKind = mRTX.getNode().getKind();
-                if (((AbsStructNode) mRTX.getNode()).hasFirstChild()) {
-                    mRTX.moveToFirstChild();
-                    emitNode();
-                } else if (((AbsStructNode) mRTX.getNode()).hasRightSibling()) {
-                    mRTX.moveToRightSibling();
+                final ENodes nodeKind = rtx.getNode().getKind();
+                if (((AbsStructNode) rtx.getNode()).hasFirstChild()) {
+                    rtx.moveToFirstChild();
+                    emitNode(rtx);
+                } else if (((AbsStructNode) rtx.getNode()).hasRightSibling()) {
+                    rtx.moveToRightSibling();
                     processNode(nodeKind);
-                } else if (((AbsStructNode) mRTX.getNode()).hasParent()) {
-                    mRTX.moveToParent();
-                    emitEndElement();
+                } else if (((AbsStructNode) rtx.getNode()).hasParent()) {
+                    rtx.moveToParent();
+                    emitEndElement(rtx);
                 }
             }
         } catch (final IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
 
-        mRTX.moveTo(currNodeKey);
+        rtx.moveTo(currNodeKey);
         return event;
     }
 
@@ -237,10 +246,10 @@ public class StAXSerializer extends AbsSerializer implements XMLEventReader {
     private void processNode(final ENodes nodeKind) throws IOException {
         switch (nodeKind) {
         case ELEMENT_KIND:
-            emitEndElement();
+            emitEndElement(mAxis.getTransaction());
             break;
         case TEXT_KIND:
-            emitNode();
+            emitNode(mAxis.getTransaction());
             break;
         default:
             // Do nothing.
@@ -255,19 +264,19 @@ public class StAXSerializer extends AbsSerializer implements XMLEventReader {
      * @throws IOException
      *             In case of any I/O error.
      */
-    private void emit() throws IOException {
+    private void emit(final IReadTransaction rtx) throws IOException {
         // Emit pending end elements.
         if (closeElements) {
             if (!mStack.empty()
-                    && mStack.peek() != ((AbsStructNode) mRTX.getNode())
+                    && mStack.peek() != ((AbsStructNode) rtx.getNode())
                             .getLeftSiblingKey()) {
-                mRTX.moveTo(mStack.pop());
-                emitEndElement();
-                mRTX.moveTo(key);
+                rtx.moveTo(mStack.pop());
+                emitEndElement(rtx);
+                rtx.moveTo(key);
             } else if (!mStack.empty()) {
-                mRTX.moveTo(mStack.pop());
-                emitEndElement();
-                mRTX.moveTo(key);
+                rtx.moveTo(mStack.pop());
+                emitEndElement(rtx);
+                rtx.moveTo(key);
                 closeElements = false;
                 closeElementsEmitted = true;
             }
@@ -275,20 +284,20 @@ public class StAXSerializer extends AbsSerializer implements XMLEventReader {
             closeElementsEmitted = false;
 
             // Emit node.
-            emitNode();
+            emitNode(rtx);
 
             // Push end element to stack if we are a start element.
-            if (mRTX.getNode().getKind() == ENodes.ELEMENT_KIND) {
-                mStack.push(mRTX.getNode().getNodeKey());
+            if (rtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
+                mStack.push(rtx.getNode().getNodeKey());
             }
 
             // Remember to emit all pending end elements from stack if
             // required.
-            if (!((AbsStructNode) mRTX.getNode()).hasFirstChild()
-                    && !((AbsStructNode) mRTX.getNode()).hasRightSibling()) {
+            if (!((AbsStructNode) rtx.getNode()).hasFirstChild()
+                    && !((AbsStructNode) rtx.getNode()).hasRightSibling()) {
                 moveToNextNode();
-            } else if (mRTX.getNode().getKind() == ENodes.ELEMENT_KIND
-                    && !((ElementNode) mRTX.getNode()).hasFirstChild()) {
+            } else if (rtx.getNode().getKind() == ENodes.ELEMENT_KIND
+                    && !((ElementNode) rtx.getNode()).hasFirstChild()) {
                 // Case: Empty elements with right siblings.
                 moveToNextNode();
             }

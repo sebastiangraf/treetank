@@ -14,10 +14,8 @@ import org.xml.sax.helpers.XMLFilterImpl;
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
-import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TreetankException;
 import com.treetank.utils.DocumentCreater;
 
@@ -49,8 +47,6 @@ public class SAXSerializerTest extends XMLTestCase {
             DocumentCreater.create(testTrx);
             testTrx.commit();
             testTrx.close();
-
-            final IReadTransaction rtx = session.beginReadTransaction();
 
             final StringBuilder strBuilder = new StringBuilder();
             final ContentHandler contHandler = new XMLFilterImpl() {
@@ -90,8 +86,8 @@ public class SAXSerializerTest extends XMLTestCase {
                 }
             };
 
-            final SAXSerializer serializer = new SAXSerializer(
-                    new DescendantAxis(rtx), contHandler);
+            final SAXSerializer serializer = new SAXSerializer(session,
+                    contHandler);
             serializer.call();
 
             assertXMLEqual(DocumentCreater.XML, strBuilder.toString());
