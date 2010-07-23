@@ -100,8 +100,8 @@ public class XMLSerializer extends AbsSerializer {
      *            Serialize id if true.
      */
     private XMLSerializer(final ISession session,
-            final XMLSerializerBuilder builder) {
-        super(session);
+            final XMLSerializerBuilder builder, final long... versions) {
+        super(session, versions);
         mOut = new BufferedOutputStream(builder.mStream, 4096);
         mIndent = builder.mIntent;
         mSerializeXMLDeclaration = builder.mDeclaration;
@@ -115,7 +115,7 @@ public class XMLSerializer extends AbsSerializer {
      * @throws IOException
      */
     @Override
-    protected void emitNode(final IReadTransaction rtx) {
+    protected void emitEndElement(final IReadTransaction rtx) {
         try {
             switch (rtx.getNode().getKind()) {
             case ROOT_KIND:
@@ -204,7 +204,7 @@ public class XMLSerializer extends AbsSerializer {
      * @throws IOException
      */
     @Override
-    protected void emitEndElement(final IReadTransaction rtx) {
+    protected void emitStartElement(final IReadTransaction rtx) {
         try {
             indent();
             mOut.write(ECharsForSerializing.OPEN_SLASH.getBytes());
@@ -243,6 +243,27 @@ public class XMLSerializer extends AbsSerializer {
             LOGGER.error(exc.getMessage(), exc);
         }
 
+    }
+
+    @Override
+    protected void emitStartManualElement(final long version) {
+        try {
+            write("<tt revision=\"");
+            write(Long.toString(version));
+            write("\">");
+        } catch (final IOException exc) {
+            LOGGER.error(exc.getMessage(), exc);
+        }
+
+    }
+
+    @Override
+    protected void emitEndManualElement(final long version) {
+        try {
+            write("</tt>");
+        } catch (final IOException exc) {
+            LOGGER.error(exc.getMessage(), exc);
+        }
     }
 
     /**
@@ -346,8 +367,11 @@ public class XMLSerializer extends AbsSerializer {
         /** Stream to pipe to */
         private final OutputStream mStream;
 
-        /** Axis to use */
+        /** Session to use */
         private final ISession mSession;
+
+        /** Versions to use */
+        private final long[] mVersions;
 
         /**
          * Constructor, setting the necessary stuff
@@ -355,9 +379,10 @@ public class XMLSerializer extends AbsSerializer {
          * @param paramStream
          */
         public XMLSerializerBuilder(final ISession session,
-                final OutputStream paramStream) {
+                final OutputStream paramStream, final long... versions) {
             mStream = paramStream;
             mSession = session;
+            mVersions = versions;
         }
 
         /**
@@ -406,7 +431,7 @@ public class XMLSerializer extends AbsSerializer {
          * @return a new instance
          */
         public XMLSerializer build() {
-            return new XMLSerializer(mSession, this);
+            return new XMLSerializer(mSession, this, mVersions);
         }
     }
 

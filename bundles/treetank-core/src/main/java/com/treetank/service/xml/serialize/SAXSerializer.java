@@ -40,13 +40,14 @@ public final class SAXSerializer extends AbsSerializer {
     /**
      * {@inheritDoc}
      */
-    SAXSerializer(final ISession session, final ContentHandler handler) {
-        super(session);
+    public SAXSerializer(final ISession session, final ContentHandler handler,
+            final long... versions) {
+        super(session, versions);
         mHandler = handler;
     }
 
     @Override
-    protected void emitEndElement(final IReadTransaction rtx) {
+    protected void emitStartElement(final IReadTransaction rtx) {
         final String URI = rtx.nameForKey(rtx.getNode().getURIKey());
         final QName qName = rtx.getQNameOfCurrentNode();
         try {
@@ -58,7 +59,7 @@ public final class SAXSerializer extends AbsSerializer {
     }
 
     @Override
-    protected void emitNode(final IReadTransaction rtx) {
+    protected void emitEndElement(final IReadTransaction rtx) {
         switch (rtx.getNode().getKind()) {
         case ELEMENT_KIND:
             generateElement(rtx);
@@ -69,6 +70,27 @@ public final class SAXSerializer extends AbsSerializer {
         default:
             throw new UnsupportedOperationException(
                     "Kind not supported by Treetank!");
+        }
+    }
+
+    @Override
+    protected void emitStartManualElement(final long revision) {
+        final AttributesImpl atts = new AttributesImpl();
+        atts.addAttribute("", "revision", "tt", "", Long.toString(revision));
+        try {
+            mHandler.startElement("", "tt", "tt", atts);
+        } catch (final SAXException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+
+    }
+
+    @Override
+    protected void emitEndManualElement(final long revision) {
+        try {
+            mHandler.endElement("", "tt", "tt");
+        } catch (final SAXException e) {
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -178,4 +200,5 @@ public final class SAXSerializer extends AbsSerializer {
             LOGGER.error(e.getMessage(), e);
         }
     }
+
 }

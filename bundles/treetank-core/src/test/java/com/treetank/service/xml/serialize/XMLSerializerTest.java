@@ -18,9 +18,9 @@
 
 package com.treetank.service.xml.serialize;
 
-import java.io.ByteArrayOutputStream;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import java.io.ByteArrayOutputStream;
 
 import org.junit.After;
 import org.junit.Before;
@@ -62,7 +62,7 @@ public class XMLSerializerTest {
         final XMLSerializer serializer = new XMLSerializerBuilder(session, out)
                 .build();
         serializer.call();
-        TestCase.assertEquals(DocumentCreater.XML, out.toString());
+        assertEquals(DocumentCreater.XML, out.toString());
         session.close();
         database.close();
     }
@@ -86,7 +86,7 @@ public class XMLSerializerTest {
         builder.setDeclaration(true);
         final XMLSerializer serializer = builder.build();
         serializer.call();
-        TestCase.assertEquals(DocumentCreater.REST, out.toString());
+        assertEquals(DocumentCreater.REST, out.toString());
 
         session.close();
         database.close();
@@ -110,7 +110,33 @@ public class XMLSerializerTest {
         builder.setDeclaration(true);
         final XMLSerializer serializer = builder.build();
         serializer.call();
-        TestCase.assertEquals(DocumentCreater.ID, out.toString());
+        assertEquals(DocumentCreater.ID, out.toString());
+        session.close();
+        database.close();
+    }
+
+    @Test
+    public void testSampleCompleteSerializer() throws Exception {
+        final IDatabase database = TestHelper
+                .getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        // generate serialize all from this session
+        DocumentCreater.createVersioned(wtx);
+        wtx.commit();
+        wtx.close();
+
+        XMLSerializer serializerall = new XMLSerializerBuilder(session, out, -1)
+                .build();
+        serializerall.call();
+        assertEquals(DocumentCreater.VERSIONEDXML, out.toString());
+        out.reset();
+
+        serializerall = new XMLSerializerBuilder(session, out, 0, 1, 2).build();
+        serializerall.call();
+        assertEquals(DocumentCreater.VERSIONEDXML, out.toString());
         session.close();
         database.close();
     }
