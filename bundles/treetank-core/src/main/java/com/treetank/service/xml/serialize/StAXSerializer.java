@@ -8,8 +8,8 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.treetank.api.IAxis;
 import com.treetank.axis.FilterAxis;
@@ -36,7 +36,7 @@ import com.treetank.utils.NamespaceIterator;
 public class StAXSerializer extends AbsSerializer implements XMLEventReader {
 
   /** Logger. */
-  private static final Log LOGGER = LogFactory.getLog(StAXSerializer.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(StAXSerializer.class);
 
   /**
    * Text filter axis {@link TextFilterAxis}.

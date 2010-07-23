@@ -1,6 +1,6 @@
 package com.treetank.utils;
 
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
 
 /**
  * Provides some logging helper methods.
@@ -11,7 +11,7 @@ import org.apache.commons.logging.Log;
 public final class LogHelper {
 
     /** Logger. */
-    private static Log LOGGER;
+	private static Logger LOGGER;
 
     /** Determines if debugging is enabled. */
     public static boolean DEBUG;
@@ -25,7 +25,7 @@ public final class LogHelper {
      * @param LOGGER
      *            logger.
      */
-    public LogHelper(final Log logger) {
+    public LogHelper(final Logger logger){
         LOGGER = logger;
         DEBUG = LOGGER.isDebugEnabled();
         INFO = LOGGER.isInfoEnabled();
