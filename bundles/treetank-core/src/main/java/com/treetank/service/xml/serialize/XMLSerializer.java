@@ -26,7 +26,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.concurrent.Callable;
 
 import com.treetank.access.Database;
 import com.treetank.api.IAxis;
@@ -50,7 +49,7 @@ import com.treetank.utils.IConstants;
  * class.
  * </p>
  */
-public class XMLSerializer extends AbsSerializer implements Callable<Void> {
+public class XMLSerializer extends AbsSerializer {
 
     /** Offset that must be added to digit to make it ASCII. */
     private static final int ASCII_OFFSET = 48;
@@ -115,7 +114,7 @@ public class XMLSerializer extends AbsSerializer implements Callable<Void> {
             write("<rest:sequence xmlns:rest=\"REST\"><rest:item>");
         }
 
-        serialize();
+        super.call();
 
         if (mSerializeRest) {
             write("</rest:item></rest:sequence>");

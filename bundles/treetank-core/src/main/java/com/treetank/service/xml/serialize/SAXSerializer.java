@@ -2,19 +2,18 @@ package com.treetank.service.xml.serialize;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.Callable;
 
 import javax.xml.namespace.QName;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.treetank.access.Database;
+import com.treetank.access.WriteTransactionState;
 import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
@@ -32,8 +31,7 @@ import com.treetank.node.ElementNode;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class SAXSerializer extends AbsSerializer implements
-        Callable<Void> {
+public final class SAXSerializer extends AbsSerializer {
 
     /** Logger. */
     private static final Logger LOGGER = LoggerFactory
@@ -53,7 +51,7 @@ public final class SAXSerializer extends AbsSerializer implements
     @Override
     public Void call() throws Exception {
         mHandler.startDocument();
-        serialize();
+        super.call();
         mHandler.endDocument();
         return null;
     }
@@ -63,7 +61,8 @@ public final class SAXSerializer extends AbsSerializer implements
         final String URI = mRTX.nameForKey(mRTX.getNode().getURIKey());
         final QName qName = mRTX.getQNameOfCurrentNode();
         try {
-            mHandler.endElement(URI, qName.getLocalPart(), emitQName(qName));
+            mHandler.endElement(URI, qName.getLocalPart(),
+                    WriteTransactionState.buildName(qName));
         } catch (final SAXException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -112,7 +111,8 @@ public final class SAXSerializer extends AbsSerializer implements
             mRTX.moveToAttribute(i);
             final String URI = mRTX.nameForKey(mRTX.getNode().getURIKey());
             final QName qName = mRTX.getQNameOfCurrentNode();
-            atts.addAttribute(URI, qName.getLocalPart(), emitQName(qName),
+            atts.addAttribute(URI, qName.getLocalPart(),
+                    WriteTransactionState.buildName(qName),
                     mRTX.getTypeOfCurrentNode(), mRTX.getValueOfCurrentNode());
             mRTX.moveTo(key);
         }
@@ -121,13 +121,15 @@ public final class SAXSerializer extends AbsSerializer implements
         try {
             final QName qName = mRTX.getQNameOfCurrentNode();
             mHandler.startElement(mRTX.nameForKey(mRTX.getNode().getURIKey()),
-                    qName.getLocalPart(), emitQName(qName), atts);
+                    qName.getLocalPart(),
+                    WriteTransactionState.buildName(qName), atts);
 
             // Empty elements.
             if (!((ElementNode) mRTX.getNode()).hasFirstChild()) {
                 mHandler.endElement(
                         mRTX.nameForKey(mRTX.getNode().getURIKey()),
-                        qName.getLocalPart(), emitQName(qName));
+                        qName.getLocalPart(),
+                        WriteTransactionState.buildName(qName));
             }
         } catch (final SAXException e) {
             LOGGER.error(e.getMessage(), e);
@@ -144,20 +146,6 @@ public final class SAXSerializer extends AbsSerializer implements
         } catch (final SAXException e) {
             LOGGER.error(e.getMessage(), e);
         }
-    }
-
-    /**
-     * Get appropriate string representation of a qName.
-     * 
-     * @param qName
-     *            Full qualified name.
-     * @return string representation of the form prefix:localName or localName
-     *         if prefix is null.
-     */
-    private String emitQName(final QName qName) {
-        return (qName.getPrefix() == null || qName.getPrefix() == "") ? qName
-                .getLocalPart() : qName.getPrefix() + ":"
-                + qName.getLocalPart();
     }
 
     /**
