@@ -18,7 +18,6 @@ import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.serialize.XMLSerializer;
 import com.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
@@ -136,8 +135,7 @@ public class XMLUpdateShredderTest extends XMLTestCase {
 
                 final OutputStream out = new ByteArrayOutputStream();
                 final XMLSerializer serializer = new XMLSerializerBuilder(
-                        new DescendantAxis(session.beginReadTransaction()), out)
-                        .build();
+                        session, out).build();
                 serializer.call();
                 final StringBuilder sBuilder = TestHelper.readFile(
                         file.getAbsoluteFile(), false);

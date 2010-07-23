@@ -62,7 +62,7 @@ public class StAXSerializerTest {
 
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             final XMLSerializerBuilder builder = new XMLSerializerBuilder(
-                    new DescendantAxis(wtx), out);
+                    session, out);
             builder.setDeclaration(false);
             final XMLSerializer xmlSerializer = builder.build();
             xmlSerializer.call();

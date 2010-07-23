@@ -27,12 +27,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.treetank.access.Database;
-import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
-import com.treetank.axis.DescendantAxis;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
@@ -50,6 +51,10 @@ import com.treetank.utils.IConstants;
  * </p>
  */
 public class XMLSerializer extends AbsSerializer {
+
+    /** Logger. */
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(XMLSerializer.class);
 
     /** Offset that must be added to digit to make it ASCII. */
     private static final int ASCII_OFFSET = 48;
@@ -94,8 +99,9 @@ public class XMLSerializer extends AbsSerializer {
      * @param serializeId
      *            Serialize id if true.
      */
-    private XMLSerializer(final IAxis axis, final XMLSerializerBuilder builder) {
-        super(axis);
+    private XMLSerializer(final ISession session,
+            final XMLSerializerBuilder builder) {
+        super(session);
         mOut = new BufferedOutputStream(builder.mStream, 4096);
         mIndent = builder.mIntent;
         mSerializeXMLDeclaration = builder.mDeclaration;
@@ -104,108 +110,91 @@ public class XMLSerializer extends AbsSerializer {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public Void call() throws Exception {
-        if (mSerializeXMLDeclaration) {
-            write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
-        }
-        if (mSerializeRest) {
-            write("<rest:sequence xmlns:rest=\"REST\"><rest:item>");
-        }
-
-        super.call();
-
-        if (mSerializeRest) {
-            write("</rest:item></rest:sequence>");
-        }
-
-        mOut.flush();
-        return null;
-    }
-
-    /**
      * Emit node (start element or characters).
      * 
      * @throws IOException
      */
     @Override
-    protected void emitNode() throws IOException {
-        switch (mRTX.getNode().getKind()) {
-        case ROOT_KIND:
-            if (mIndent) {
-                mOut.write(mNL);
-            }
-            break;
-        case ELEMENT_KIND:
-            // Emit start element.
-            indent();
-            mOut.write(ECharsForSerializing.OPEN.getBytes());
-            mOut.write(mRTX.rawNameForKey(mRTX.getNode().getNameKey()));
-            final long key = mRTX.getNode().getNodeKey();
-            // Emit namespace declarations.
-            for (int index = 0, length = ((ElementNode) mRTX.getNode())
-                    .getNamespaceCount(); index < length; index++) {
-                mRTX.moveToNamespace(index);
-                if (mRTX.nameForKey(mRTX.getNode().getNameKey()).length() == 0) {
-                    mOut.write(ECharsForSerializing.XMLNS.getBytes());
-                    write(mRTX.nameForKey(mRTX.getNode().getURIKey()));
-                    mOut.write(ECharsForSerializing.QUOTE.getBytes());
-                } else {
-                    mOut.write(ECharsForSerializing.XMLNS_COLON.getBytes());
-                    write(mRTX.nameForKey(mRTX.getNode().getNameKey()));
+    protected void emitNode(final IReadTransaction rtx) {
+        try {
+            switch (rtx.getNode().getKind()) {
+            case ROOT_KIND:
+                if (mIndent) {
+                    mOut.write(mNL);
+                }
+                break;
+            case ELEMENT_KIND:
+                // Emit start element.
+                indent();
+                mOut.write(ECharsForSerializing.OPEN.getBytes());
+                mOut.write(rtx.rawNameForKey(rtx.getNode().getNameKey()));
+                final long key = rtx.getNode().getNodeKey();
+                // Emit namespace declarations.
+                for (int index = 0, length = ((ElementNode) rtx.getNode())
+                        .getNamespaceCount(); index < length; index++) {
+                    rtx.moveToNamespace(index);
+                    if (rtx.nameForKey(rtx.getNode().getNameKey()).length() == 0) {
+                        mOut.write(ECharsForSerializing.XMLNS.getBytes());
+                        write(rtx.nameForKey(rtx.getNode().getURIKey()));
+                        mOut.write(ECharsForSerializing.QUOTE.getBytes());
+                    } else {
+                        mOut.write(ECharsForSerializing.XMLNS_COLON.getBytes());
+                        write(rtx.nameForKey(rtx.getNode().getNameKey()));
+                        mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
+                        write(rtx.nameForKey(rtx.getNode().getURIKey()));
+                        mOut.write(ECharsForSerializing.QUOTE.getBytes());
+                    }
+                    rtx.moveTo(key);
+                }
+                // Emit attributes.
+                // Add virtual rest:id attribute.
+                if (mSerializeId) {
+                    if (mSerializeRest) {
+                        mOut.write(ECharsForSerializing.REST_PREFIX.getBytes());
+                    } else {
+                        mOut.write(ECharsForSerializing.SPACE.getBytes());
+                    }
+                    mOut.write(ECharsForSerializing.ID.getBytes());
                     mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
-                    write(mRTX.nameForKey(mRTX.getNode().getURIKey()));
+                    write(rtx.getNode().getNodeKey());
                     mOut.write(ECharsForSerializing.QUOTE.getBytes());
                 }
-                mRTX.moveTo(key);
-            }
-            // Emit attributes.
-            // Add virtual rest:id attribute.
-            if (mSerializeId) {
-                if (mSerializeRest) {
-                    mOut.write(ECharsForSerializing.REST_PREFIX.getBytes());
-                } else {
-                    mOut.write(ECharsForSerializing.SPACE.getBytes());
-                }
-                mOut.write(ECharsForSerializing.ID.getBytes());
-                mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
-                write(mRTX.getNode().getNodeKey());
-                mOut.write(ECharsForSerializing.QUOTE.getBytes());
-            }
 
-            // Iterate over all persistent attributes.
-            for (int index = 0; index < ((ElementNode) mRTX.getNode())
-                    .getAttributeCount(); index++) {
-                long nodeKey = mRTX.getNode().getNodeKey();
-                mRTX.moveToAttribute(index);
-                if (mRTX.getNode().getKind() == ENodes.ELEMENT_KIND) {
-                    System.out.println(nodeKey);
-                    System.out.println(mRTX.getNode().getNodeKey());
+                // Iterate over all persistent attributes.
+                for (int index = 0; index < ((ElementNode) rtx.getNode())
+                        .getAttributeCount(); index++) {
+                    long nodeKey = rtx.getNode().getNodeKey();
+                    rtx.moveToAttribute(index);
+                    if (rtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
+                        System.out.println(nodeKey);
+                        System.out.println(rtx.getNode().getNodeKey());
+                    }
+                    mOut.write(ECharsForSerializing.SPACE.getBytes());
+                    mOut.write(rtx.rawNameForKey(rtx.getNode().getNameKey()));
+                    mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
+                    mOut.write(rtx.getNode().getRawValue());
+                    mOut.write(ECharsForSerializing.QUOTE.getBytes());
+                    rtx.moveTo(key);
                 }
-                mOut.write(ECharsForSerializing.SPACE.getBytes());
-                mOut.write(mRTX.rawNameForKey(mRTX.getNode().getNameKey()));
-                mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
-                mOut.write(mRTX.getNode().getRawValue());
-                mOut.write(ECharsForSerializing.QUOTE.getBytes());
-                mRTX.moveTo(key);
+                if (((AbsStructNode) rtx.getNode()).hasFirstChild()) {
+                    mOut.write(ECharsForSerializing.CLOSE.getBytes());
+                } else {
+                    mOut.write(ECharsForSerializing.SLASH_CLOSE.getBytes());
+                }
+                if (mIndent) {
+                    mOut.write(mNL);
+                }
+                break;
+            case TEXT_KIND:
+                indent();
+                mOut.write(rtx.getNode().getRawValue());
+                if (mIndent) {
+                    mOut.write('\n');
+                }
+                break;
             }
-            if (((AbsStructNode) mRTX.getNode()).hasFirstChild()) {
-                mOut.write(ECharsForSerializing.CLOSE.getBytes());
-            } else {
-                mOut.write(ECharsForSerializing.SLASH_CLOSE.getBytes());
-            }
-            if (mIndent) {
-                mOut.write(mNL);
-            }
-            break;
-        case TEXT_KIND:
-            indent();
-            mOut.write(mRTX.getNode().getRawValue());
-            if (mIndent) {
-                mOut.write('\n');
-            }
-            break;
+        } catch (final IOException exc) {
+            LOGGER.error(exc.getMessage(), exc);
         }
     }
 
@@ -215,14 +204,45 @@ public class XMLSerializer extends AbsSerializer {
      * @throws IOException
      */
     @Override
-    protected void emitEndElement() throws IOException {
-        indent();
-        mOut.write(ECharsForSerializing.OPEN_SLASH.getBytes());
-        mOut.write(mRTX.rawNameForKey(mRTX.getNode().getNameKey()));
-        mOut.write(ECharsForSerializing.CLOSE.getBytes());
-        if (mIndent) {
-            mOut.write(mNL);
+    protected void emitEndElement(final IReadTransaction rtx) {
+        try {
+            indent();
+            mOut.write(ECharsForSerializing.OPEN_SLASH.getBytes());
+            mOut.write(rtx.rawNameForKey(rtx.getNode().getNameKey()));
+            mOut.write(ECharsForSerializing.CLOSE.getBytes());
+            if (mIndent) {
+                mOut.write(mNL);
+            }
+        } catch (final IOException exc) {
+            LOGGER.error(exc.getMessage(), exc);
         }
+    }
+
+    @Override
+    protected void emitStartDocument() {
+        try {
+            if (mSerializeXMLDeclaration) {
+                write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+            }
+            if (mSerializeRest) {
+                write("<rest:sequence xmlns:rest=\"REST\"><rest:item>");
+            }
+        } catch (final IOException exc) {
+            LOGGER.error(exc.getMessage(), exc);
+        }
+    }
+
+    @Override
+    protected void emitEndDocument() {
+        try {
+            if (mSerializeRest) {
+                write("</rest:item></rest:sequence>");
+            }
+            mOut.flush();
+        } catch (final IOException exc) {
+            LOGGER.error(exc.getMessage(), exc);
+        }
+
     }
 
     /**
@@ -289,13 +309,11 @@ public class XMLSerializer extends AbsSerializer {
 
         final IDatabase db = Database.openDatabase(new File(args[0]));
         final ISession session = db.getSession();
-        final IReadTransaction rtx = session.beginReadTransaction();
 
-        final XMLSerializer serializer = new XMLSerializerBuilder(
-                new DescendantAxis(rtx), outputStream).build();
+        final XMLSerializer serializer = new XMLSerializerBuilder(session,
+                outputStream).build();
         serializer.call();
 
-        rtx.close();
         session.close();
         db.close();
         outputStream.close();
@@ -329,17 +347,17 @@ public class XMLSerializer extends AbsSerializer {
         private final OutputStream mStream;
 
         /** Axis to use */
-        private final IAxis mAxis;
+        private final ISession mSession;
 
         /**
          * Constructor, setting the necessary stuff
          * 
          * @param paramStream
          */
-        public XMLSerializerBuilder(final IAxis paramAxis,
+        public XMLSerializerBuilder(final ISession session,
                 final OutputStream paramStream) {
             mStream = paramStream;
-            mAxis = paramAxis;
+            mSession = session;
         }
 
         /**
@@ -388,7 +406,7 @@ public class XMLSerializer extends AbsSerializer {
          * @return a new instance
          */
         public XMLSerializer build() {
-            return new XMLSerializer(mAxis, this);
+            return new XMLSerializer(mSession, this);
         }
     }
 
