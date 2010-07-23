@@ -17,6 +17,7 @@ abstract class AbsSerializer implements ISerialize {
     /** Descendant-or-self axis used to traverse subtree. */
     final IAxis mAxis;
 
+    /** Treetank reading transaction {@link IReadTransaction}. */
     final IReadTransaction mRTX;
 
     /** Stack for reading end element. */
