@@ -10,7 +10,7 @@ import java.io.IOException;
  */
 public interface ISerialize {
     /**
-     * Implements the main serialization algorithm.
+     * Main serialization algorithm.
      */
     void serialize() throws Exception;
 

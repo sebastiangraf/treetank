@@ -3,7 +3,6 @@ package com.treetank.service.xml.serialize;
 import java.io.File;
 import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import junit.framework.TestCase;
 
