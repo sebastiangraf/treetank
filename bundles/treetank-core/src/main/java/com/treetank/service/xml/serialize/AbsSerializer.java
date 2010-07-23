@@ -1,6 +1,7 @@
 package com.treetank.service.xml.serialize;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
@@ -14,7 +15,7 @@ import com.treetank.utils.FastStack;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-abstract class AbsSerializer {
+abstract class AbsSerializer implements Callable<Void> {
 
     /** Descendant-or-self axis used to traverse subtree. */
     final IAxis mAxis;
@@ -45,7 +46,7 @@ abstract class AbsSerializer {
      * 
      * @throws Exception
      */
-    protected void serialize() throws Exception {
+    public Void call() throws Exception {
         // Setup primitives.
         boolean closeElements = false;
         long key = mRTX.getNode().getNodeKey();
@@ -94,6 +95,8 @@ abstract class AbsSerializer {
             mAxis.getTransaction().moveTo(mStack.pop());
             emitEndElement();
         }
+
+        return null;
     }
 
     protected abstract void emitEndElement() throws IOException;

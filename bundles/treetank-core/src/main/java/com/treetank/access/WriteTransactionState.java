@@ -623,7 +623,7 @@ public final class WriteTransactionState extends ReadTransactionState {
      *            the QName of an element
      * @return a string with [prefix:]localname
      */
-    private static final String buildName(final QName qname) {
+    public static final String buildName(final QName qname) {
         String name;
         if (qname.getPrefix().isEmpty()) {
             name = qname.getLocalPart();
