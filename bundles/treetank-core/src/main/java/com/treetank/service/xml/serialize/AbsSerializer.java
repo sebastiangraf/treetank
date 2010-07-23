@@ -50,61 +50,88 @@ abstract class AbsSerializer implements Callable<Void> {
 
         emitStartDocument();
 
-        // for (int i = 0; i < mVersions.length; i++) {
+        long[] versionsToUse;
+        IReadTransaction rtx = mSession.beginReadTransaction();
+        final long lastRevisionNumber = rtx.getRevisionNumber();
+        rtx.close();
 
-        final IReadTransaction rtx = mSession.beginReadTransaction();
-        final IAxis descAxis = new DescendantAxis(rtx);
+        // if there is one negative number in there, serialize all versions
+        if (mVersions.length == 0) {
+            versionsToUse = new long[] { lastRevisionNumber };
+        } else {
+            if (mVersions.length == 1 && mVersions[0] < 0) {
+                versionsToUse = null;
+            } else {
+                versionsToUse = mVersions;
+            }
+        }
 
-        // Setup primitives.
-        boolean closeElements = false;
-        long key = rtx.getNode().getNodeKey();
+        for (long i = 0; versionsToUse == null ? i < lastRevisionNumber
+                : i < versionsToUse.length; i++) {
 
-        // Iterate over all nodes of the subtree including self.
-        while (descAxis.hasNext()) {
-            key = descAxis.next();
+            rtx = mSession.beginReadTransaction(versionsToUse == null ? i
+                    : versionsToUse[(int) i]);
+            if(versionsToUse==null || mVersions.length>1) {
+                emitStartManualElement(i);
+            }
+            
+            
+            final IAxis descAxis = new DescendantAxis(rtx);
 
-            // Emit all pending end elements.
-            if (closeElements) {
-                while (!mStack.empty()
-                        && mStack.peek() != ((AbsStructNode) rtx.getNode())
-                                .getLeftSiblingKey()) {
-                    rtx.moveTo(mStack.pop());
-                    emitEndElement(rtx);
+            // Setup primitives.
+            boolean closeElements = false;
+            long key = rtx.getNode().getNodeKey();
+
+            // Iterate over all nodes of the subtree including self.
+            while (descAxis.hasNext()) {
+                key = descAxis.next();
+
+                // Emit all pending end elements.
+                if (closeElements) {
+                    while (!mStack.empty()
+                            && mStack.peek() != ((AbsStructNode) rtx.getNode())
+                                    .getLeftSiblingKey()) {
+                        rtx.moveTo(mStack.pop());
+                        emitStartElement(rtx);
+                        rtx.moveTo(key);
+                    }
+                    if (!mStack.empty()) {
+                        rtx.moveTo(mStack.pop());
+                        emitStartElement(rtx);
+                    }
                     rtx.moveTo(key);
+                    closeElements = false;
                 }
-                if (!mStack.empty()) {
-                    rtx.moveTo(mStack.pop());
-                    emitEndElement(rtx);
+
+                // Emit node.
+                emitEndElement(rtx);
+
+                // Push end element to stack if we are a start element with
+                // children.
+                if (rtx.getNode().getKind() == ENodes.ELEMENT_KIND
+                        && ((AbsStructNode) rtx.getNode()).hasFirstChild()) {
+                    mStack.push(rtx.getNode().getNodeKey());
                 }
-                rtx.moveTo(key);
-                closeElements = false;
+
+                // Remember to emit all pending end elements from stack if
+                // required.
+                if (!((AbsStructNode) rtx.getNode()).hasFirstChild()
+                        && !((AbsStructNode) rtx.getNode()).hasRightSibling()) {
+                    closeElements = true;
+                }
+
             }
 
-            // Emit node.
-            emitNode(rtx);
-
-            // Push end element to stack if we are a start element with
-            // children.
-            if (rtx.getNode().getKind() == ENodes.ELEMENT_KIND
-                    && ((AbsStructNode) rtx.getNode()).hasFirstChild()) {
-                mStack.push(rtx.getNode().getNodeKey());
+            // Finally emit all pending end elements.
+            while (!mStack.empty()) {
+                rtx.moveTo(mStack.pop());
+                emitStartElement(rtx);
             }
-
-            // Remember to emit all pending end elements from stack if
-            // required.
-            if (!((AbsStructNode) rtx.getNode()).hasFirstChild()
-                    && !((AbsStructNode) rtx.getNode()).hasRightSibling()) {
-                closeElements = true;
+            
+            if(versionsToUse==null || mVersions.length>1) {
+                emitEndManualElement(i);
             }
-
         }
-
-        // Finally emit all pending end elements.
-        while (!mStack.empty()) {
-            rtx.moveTo(mStack.pop());
-            emitEndElement(rtx);
-        }
-        // }
         emitEndDocument();
 
         return null;
@@ -112,9 +139,13 @@ abstract class AbsSerializer implements Callable<Void> {
 
     protected abstract void emitStartDocument();
 
+    protected abstract void emitStartElement(final IReadTransaction rtx);
+
     protected abstract void emitEndElement(final IReadTransaction rtx);
 
-    protected abstract void emitNode(final IReadTransaction rtx);
+    protected abstract void emitStartManualElement(final long version);
+
+    protected abstract void emitEndManualElement(final long version);
 
     protected abstract void emitEndDocument();
 }
