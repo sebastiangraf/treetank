@@ -20,8 +20,8 @@ import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TreetankException;
-import com.treetank.service.xml.serialize.SerializerBuilder.XMLSerializerBuilder;
 import com.treetank.service.xml.serialize.XMLSerializer;
+import com.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 
 /**
  * Test XMLUpdateShredder.

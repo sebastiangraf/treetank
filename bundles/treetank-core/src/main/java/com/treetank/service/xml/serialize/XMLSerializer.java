@@ -37,7 +37,6 @@ import com.treetank.axis.DescendantAxis;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
-import com.treetank.service.xml.serialize.SerializerBuilder.XMLSerializerBuilder;
 import com.treetank.settings.ECharsForSerializing;
 import com.treetank.utils.IConstants;
 
@@ -69,6 +68,15 @@ public class XMLSerializer extends AbsSerializer implements Callable<Void> {
     /** Indent output. */
     private final boolean mIndent;
 
+    /** Serialize XML declaration. */
+    final boolean mSerializeXMLDeclaration;
+
+    /** Serialize rest header and closer and rest:id */
+    final boolean mSerializeRest;
+
+    /** Serialize id */
+    final boolean mSerializeId;
+
     /** Line sparator. */
     private final byte[] mNL = NL.getBytes();
 
@@ -87,10 +95,13 @@ public class XMLSerializer extends AbsSerializer implements Callable<Void> {
      * @param serializeId
      *            Serialize id if true.
      */
-    XMLSerializer(final IAxis axis, final XMLSerializerBuilder builder) {
-        super(axis, builder);
-        mOut = new BufferedOutputStream(builder.getStream(), 4096);
+    private XMLSerializer(final IAxis axis, final XMLSerializerBuilder builder) {
+        super(axis);
+        mOut = new BufferedOutputStream(builder.mStream, 4096);
         mIndent = builder.mIntent;
+        mSerializeXMLDeclaration = builder.mDeclaration;
+        mSerializeRest = builder.mREST;
+        mSerializeId = builder.mID;
     }
 
     /**
@@ -292,6 +303,94 @@ public class XMLSerializer extends AbsSerializer implements Callable<Void> {
 
         System.out.println(" done [" + (System.currentTimeMillis() - time)
                 + "ms].");
+    }
+
+    public static class XMLSerializerBuilder {
+        /**
+         * Intermediate boolean for intendtion, not necessary
+         */
+        private boolean mIntent = false;
+
+        /**
+         * Intermediate boolean for rest serialization, not necessary
+         */
+        private boolean mREST = false;
+
+        /**
+         * Intermediate boolean for rest serialization, not necessary
+         */
+        private boolean mDeclaration = true;
+
+        /**
+         * Intermediate boolean for ids, not necessary
+         */
+        private boolean mID = false;
+
+        /** Stream to pipe to */
+        private final OutputStream mStream;
+
+        /** Axis to use */
+        private final IAxis mAxis;
+
+        /**
+         * Constructor, setting the necessary stuff
+         * 
+         * @param paramStream
+         */
+        public XMLSerializerBuilder(final IAxis paramAxis,
+                final OutputStream paramStream) {
+            mStream = paramStream;
+            mAxis = paramAxis;
+        }
+
+        /**
+         * Setting the intention.
+         * 
+         * @param paramIntent
+         *            to set
+         */
+        public void setIntend(boolean paramIntent) {
+            this.mIntent = paramIntent;
+        }
+
+        /**
+         * Setting the RESTful output
+         * 
+         * @param paramREST
+         *            to set
+         */
+        public void setREST(boolean paramREST) {
+            this.mREST = paramREST;
+        }
+
+        /**
+         * Setting the declaration
+         * 
+         * @param paramDeclaration
+         *            to set
+         */
+        public void setDeclaration(boolean paramDeclaration) {
+            this.mDeclaration = paramDeclaration;
+        }
+
+        /**
+         * Setting the ids on nodes
+         * 
+         * @param paramID
+         *            to set
+         */
+        public void setID(boolean paramID) {
+            this.mID = paramID;
+        }
+
+        /**
+         * Building new Serializer
+         * 
+         * @return a new instance
+         */
+        public XMLSerializer build() {
+            return new XMLSerializer(mAxis, this);
+        }
     }
 
 }
