@@ -9,6 +9,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.treetank.access.Database;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
@@ -118,6 +121,8 @@ public final class TestAll {
 				+ new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
 						.format(rtx.getRevisionTimestamp()));
 		printf("----------------");
+		Logger logger = LoggerFactory.getLogger(TestAll.class);
+		logger.info("Number of All Nodes : {}",rtx.getMaxNodeKey());
 	}
 
 	@Ignore

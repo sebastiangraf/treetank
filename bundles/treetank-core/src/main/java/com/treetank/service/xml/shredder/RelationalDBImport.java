@@ -2,8 +2,9 @@ package com.treetank.service.xml.shredder;
 
 import java.sql.*;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * <h1>RelationalDBImport</h1>
@@ -19,8 +20,7 @@ import org.apache.commons.logging.LogFactory;
 public final class RelationalDBImport implements IImport {
 
     /** Logger. */
-    private static final Log LOGGER = LogFactory
-            .getLog(RelationalDBImport.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(RelationalDBImport.class);
 
     /** Driver class string. */
     private final String mDriverClass;

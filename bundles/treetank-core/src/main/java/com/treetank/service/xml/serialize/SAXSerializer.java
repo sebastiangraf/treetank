@@ -6,8 +6,9 @@ import java.util.concurrent.Callable;
 
 import javax.xml.namespace.QName;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -37,7 +38,7 @@ public final class SAXSerializer extends AbsSerializer
     Callable<Void> {
 
   /** Logger. */
-  private static final Log LOGGER = LogFactory.getLog(SAXSerializer.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(SAXSerializer.class);
 
   /** SAX default handler. */
   private transient final ContentHandler mHandler;

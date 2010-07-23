@@ -10,8 +10,8 @@ import java.lang.reflect.Field;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <h1>XMLSerializerProperties</h1>
@@ -28,8 +28,7 @@ public final class SerializerProperties {
     // ============== Class constants. =================
 
     /** Logger. */
-    private static final Log LOGGER = LogFactory
-            .getLog(SerializerProperties.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SerializerProperties.class);
 
     /** Properties. */
     private final ConcurrentMap<String, Object> mProps = new ConcurrentHashMap<String, Object>();
