@@ -355,7 +355,7 @@ public class XMLSerializer extends AbsSerializer {
         private boolean mREST = false;
 
         /**
-         * Intermediate boolean for rest serialization, not necessary
+         * Intermediate boolean for XML-Decl serialization, not necessary
          */
         private boolean mDeclaration = true;
 

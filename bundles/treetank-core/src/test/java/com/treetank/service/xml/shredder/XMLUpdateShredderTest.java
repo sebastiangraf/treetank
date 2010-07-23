@@ -69,10 +69,10 @@ public class XMLUpdateShredderTest extends XMLTestCase {
         test(XMLDELETE);
     }
 
-    @Test
-    public void testAll() throws Exception {
-        test(XMLALL);
-    }
+//    @Test
+//    public void testAll() throws Exception {
+//        test(XMLALL);
+//    }
 
     private void test(final String FOLDER) throws Exception {
         final IDatabase database = TestHelper
