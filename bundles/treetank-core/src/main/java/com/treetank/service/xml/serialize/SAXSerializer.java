@@ -63,7 +63,7 @@ public final class SAXSerializer extends AbsSerializer
   }
 
   @Override
-  public void emitEndElement() throws IOException {
+  protected void emitEndElement() throws IOException {
     final String URI = mRTX.nameForKey(mRTX.getNode().getURIKey());
     final QName qName = mRTX.getQNameOfCurrentNode();
     try {
@@ -74,7 +74,7 @@ public final class SAXSerializer extends AbsSerializer
   }
 
   @Override
-  public void emitNode() throws IOException {
+  protected void emitNode() throws IOException {
     switch (mRTX.getNode().getKind()) {
     case ELEMENT_KIND:
       generateElement();
