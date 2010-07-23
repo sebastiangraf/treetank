@@ -120,7 +120,7 @@ public class XMLSerializer extends AbsSerializer implements Callable<Void> {
      * @throws IOException
      */
     @Override
-    public void emitNode() throws IOException {
+    protected void emitNode() throws IOException {
         switch (mRTX.getNode().getKind()) {
         case ROOT_KIND:
             if (mIndent) {
@@ -205,7 +205,7 @@ public class XMLSerializer extends AbsSerializer implements Callable<Void> {
      * @throws IOException
      */
     @Override
-    public void emitEndElement() throws IOException {
+    protected void emitEndElement() throws IOException {
         indent();
         mOut.write(ECharsForSerializing.OPEN_SLASH.getBytes());
         mOut.write(mRTX.rawNameForKey(mRTX.getNode().getNameKey()));
@@ -234,7 +234,7 @@ public class XMLSerializer extends AbsSerializer implements Callable<Void> {
      * @throws IOException
      * @throws UnsupportedEncodingException
      */
-    private void write(final String string)
+    protected void write(final String string)
             throws UnsupportedEncodingException, IOException {
         mOut.write(string.getBytes(IConstants.DEFAULT_ENCODING));
     }
