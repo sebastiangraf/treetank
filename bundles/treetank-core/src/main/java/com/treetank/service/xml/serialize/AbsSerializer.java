@@ -25,15 +25,6 @@ abstract class AbsSerializer {
     /** Stack for reading end element. */
     final FastStack<Long> mStack;
 
-    /** Serialize XML declaration. */
-    final boolean mSerializeXMLDeclaration;
-
-    /** Serialize rest header and closer and rest:id */
-    final boolean mSerializeRest;
-
-    /** Serialize id */
-    final boolean mSerializeId;
-
     /**
      * Constructor.
      * 
@@ -43,13 +34,10 @@ abstract class AbsSerializer {
      *            container of type {@link SerializerBuilder} to store the
      *            setting for serialization.
      */
-    public AbsSerializer(final IAxis axis, final SerializerBuilder builder) {
+    public AbsSerializer(final IAxis axis) {
         mAxis = axis;
         mRTX = axis.getTransaction();
         mStack = new FastStack<Long>();
-        mSerializeXMLDeclaration = builder.mDeclaration;
-        mSerializeRest = builder.mREST;
-        mSerializeId = builder.mID;
     }
 
     /**
