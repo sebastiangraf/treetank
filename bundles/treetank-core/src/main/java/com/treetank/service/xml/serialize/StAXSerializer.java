@@ -6,6 +6,7 @@ import java.util.Iterator;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Namespace;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import com.treetank.access.ReadTransaction;
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.axis.DescendantAxis;
 import com.treetank.axis.FilterAxis;
 import com.treetank.axis.TextFilter;
 import com.treetank.exception.TreetankException;
@@ -76,6 +78,12 @@ public class StAXSerializer implements XMLEventReader {
 
   /** Stack for reading end element. */
   private final FastStack<Long> mStack;
+  
+  private boolean goBack = true;
+  
+  private long keyOnStack;
+  
+  private boolean goUp;
 
   /**
    * Initialize XMLStreamReader implementation with transaction. The cursor
@@ -134,8 +142,27 @@ public class StAXSerializer implements XMLEventReader {
 
   @Override
   public String getElementText() throws XMLStreamException {
+    final IReadTransaction rtx = mAxis.getTransaction();
+    final long nodeKey = rtx.getNode().getNodeKey();
+    
+    // Emit pending end elements.
+    if ((closeElements && (goBack || goUp)) || closeElementsEmitted) {
+      if (goUp) {
+        rtx.moveTo(keyOnStack);
+        goUp = false;
+      } else if (goBack) {
+        rtx.moveTo(mStack.peek());
+        goBack = false;
+      }
+    }
+
+    if (event.getEventType() != XMLStreamConstants.START_ELEMENT) {
+      rtx.moveTo(nodeKey);
+      throw new XMLStreamException(
+          "getElementText() only can be called on a start element");
+    }
     final FilterAxis textFilterAxis =
-        new FilterAxis(mAxis, new TextFilter(mAxis.getTransaction()));
+        new FilterAxis(new DescendantAxis(rtx), new TextFilter(rtx));
     final StringBuilder sb = new StringBuilder();
 
     while (textFilterAxis.hasNext()) {
@@ -143,6 +170,7 @@ public class StAXSerializer implements XMLEventReader {
       sb.append(mAxis.getTransaction().getValueOfCurrentNode());
     }
 
+    rtx.moveTo(nodeKey);
     return sb.toString();
   }
 
@@ -155,6 +183,10 @@ public class StAXSerializer implements XMLEventReader {
   @Override
   public boolean hasNext() {
     if (!mStack.empty() && (closeElements || closeElementsEmitted)) {
+      /*
+       * mAxis.hasNext() can't be used in this case, because it would iterate 
+       * to the next node but at first all end-tags have to be emitted.
+       */     
       return true;
     }
     return mAxis.hasNext();
@@ -272,10 +304,12 @@ public class StAXSerializer implements XMLEventReader {
           && mStack.peek() != ((AbsStructNode) rtx.getNode())
               .getLeftSiblingKey()) {
         rtx.moveTo(mStack.pop());
+        keyOnStack = rtx.getNode().getNodeKey();
         emitEndElement(rtx);
         rtx.moveTo(key);
       } else if (!mStack.empty()) {
         rtx.moveTo(mStack.pop());
+        keyOnStack = rtx.getNode().getNodeKey();
         emitEndElement(rtx);
         rtx.moveTo(key);
         closeElements = false;
@@ -287,19 +321,24 @@ public class StAXSerializer implements XMLEventReader {
       // Emit node.
       emitNode(rtx);
 
+      final long nodeKey = rtx.getNode().getNodeKey();
+      keyOnStack = nodeKey;
+
       // Push end element to stack if we are a start element.
       if (rtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
-        mStack.push(rtx.getNode().getNodeKey());
+        mStack.push(nodeKey);
       }
 
       // Remember to emit all pending end elements from stack if
       // required.
       if (!((AbsStructNode) rtx.getNode()).hasFirstChild()
           && !((AbsStructNode) rtx.getNode()).hasRightSibling()) {
+        goUp = true;
         moveToNextNode();
       } else if (rtx.getNode().getKind() == ENodes.ELEMENT_KIND
           && !((ElementNode) rtx.getNode()).hasFirstChild()) {
         // Case: Empty elements with right siblings.
+        goBack = true;
         moveToNextNode();
       }
     }
