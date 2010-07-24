@@ -33,6 +33,7 @@
 		<module>bundles/treetank-jax-rx</module>
 		<module>bundles/treetank-saxon</module>
 		<module>bundles/treetank-gui</module>
-    <module>bundles/treetank-distributed</module>
+        <module>bundles/treetank-distributed</module>
+        <module>bundles/treetank-eclipse</module>
 	</modules>
 </project>
