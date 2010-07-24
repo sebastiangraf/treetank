@@ -122,16 +122,7 @@ public class StAXSerializerTest {
       assertEquals("oops1foooops2baroops3", elemText);
 
       // oops1
-      try {
-        if (serializer.hasNext()) {
-          elemText = "";
-          serializer.next();
-          elemText = serializer.getElementText();
-        }
-        TestCase.fail("");
-      } catch (final XMLStreamException e) {
-        assertEquals("", elemText);
-      }
+      checkForException(serializer);
       
       // <b>
       if (serializer.hasNext()) {
@@ -141,16 +132,7 @@ public class StAXSerializerTest {
       assertEquals("foo", elemText);
       
       // foo
-      try {
-        if (serializer.hasNext()) {
-          elemText = "";
-          serializer.next();
-          elemText = serializer.getElementText();
-        }
-        TestCase.fail("");
-      } catch (final XMLStreamException e) {
-        assertEquals("", elemText);
-      }
+      checkForException(serializer);
       
       // <c>
       if (serializer.hasNext()) {
@@ -160,40 +142,13 @@ public class StAXSerializerTest {
       assertEquals("", elemText);
       
       // </c>
-      try {
-        if (serializer.hasNext()) {
-          elemText = "";
-          serializer.next();
-          elemText = serializer.getElementText();
-        }
-        TestCase.fail("");
-      } catch (final XMLStreamException e) {
-        assertEquals("", elemText);
-      }
+      checkForException(serializer);
       
       // </b>
-      try {
-        if (serializer.hasNext()) {
-          elemText = "";
-          serializer.next();
-          elemText = serializer.getElementText();
-        }
-        TestCase.fail("");
-      } catch (final XMLStreamException e) {
-        assertEquals("", elemText);
-      }
+      checkForException(serializer);
       
       // oops2
-      try {
-        if (serializer.hasNext()) {
-          elemText = "";
-          serializer.next();
-          elemText = serializer.getElementText();
-        }
-        TestCase.fail("");
-      } catch (final XMLStreamException e) {
-        assertEquals("", elemText);
-      }
+      checkForException(serializer);
       
       // <b p:x='y'>
       if (serializer.hasNext()) {
@@ -210,64 +165,19 @@ public class StAXSerializerTest {
       assertEquals("", elemText);
       
       // </c>
-      try {
-        if (serializer.hasNext()) {
-          elemText = "";
-          serializer.next();
-          elemText = serializer.getElementText();
-        }
-        TestCase.fail("");
-      } catch (final XMLStreamException e) {
-        assertEquals("", elemText);
-      }
+      checkForException(serializer);
       
       // bar
-      try {
-        if (serializer.hasNext()) {
-          elemText = "";
-          serializer.next();
-          elemText = serializer.getElementText();
-        }
-        TestCase.fail("");
-      } catch (final XMLStreamException e) {
-        assertEquals("", elemText);
-      }
+      checkForException(serializer);
       
       // </b>
-      try {
-        if (serializer.hasNext()) {
-          elemText = "";
-          serializer.next();
-          elemText = serializer.getElementText();
-        }
-        TestCase.fail("");
-      } catch (final XMLStreamException e) {
-        assertEquals("", elemText);
-      }
+      checkForException(serializer);
       
       // oops3
-      try {
-        if (serializer.hasNext()) {
-          elemText = "";
-          serializer.next();
-          elemText = serializer.getElementText();
-        }
-        TestCase.fail("");
-      } catch (final XMLStreamException e) {
-        assertEquals("", elemText);
-      }
+      checkForException(serializer);
       
       // </p:a>
-      try {
-        if (serializer.hasNext()) {
-          elemText = "";
-          serializer.next();
-          elemText = serializer.getElementText();
-        }
-        TestCase.fail("");
-      } catch (final XMLStreamException e) {
-        assertEquals("", elemText);
-      }
+      checkForException(serializer);
 
       wtx.close();
       rtx.close();
@@ -279,6 +189,26 @@ public class StAXSerializerTest {
       TestCase.fail("Treetank exception occured: " + e.getMessage());
     } catch (final Exception e) {
       TestCase.fail("Any exception occured: " + e.getMessage());
+    }
+  }
+  
+  /**
+   * Checks for an XMLStreamException if the current event isn't a start tag.
+   * Used for testing getElementText().
+   * 
+   * @param serializer
+   *                      {@link StAXSerializer}                     
+   */
+  private void checkForException(final StAXSerializer serializer) {
+    String elemText = "";
+    try {
+      if (serializer.hasNext()) {
+        serializer.next();
+        elemText = serializer.getElementText();
+      }
+      TestCase.fail("");
+    } catch (final XMLStreamException e) {
+      assertEquals("", elemText);
     }
   }
 
