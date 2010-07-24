@@ -145,8 +145,12 @@ public class StAXSerializer implements XMLEventReader {
     final IReadTransaction rtx = mAxis.getTransaction();
     final long nodeKey = rtx.getNode().getNodeKey();
     
-    // Emit pending end elements.
-    if ((closeElements && (goBack || goUp)) || closeElementsEmitted) {
+    /*
+     * The cursor has to move back (once) after determining, that a closing tag 
+     * would be the next event (precond: closeElement and either goBack or goUp 
+     * is true).
+     */
+    if (closeElements && (goBack || goUp)) {
       if (goUp) {
         rtx.moveTo(keyOnStack);
         goUp = false;
