@@ -48,42 +48,53 @@ public class StAXSerializer implements XMLEventReader {
    * Determines if start tags have to be closed, thus if end tags have to be
    * emitted.
    */
-  private boolean closeElements;
+  private transient boolean closeElements;
 
   /**
    * {@inheritDoc}
    */
-  private XMLEvent event;
+  private transient XMLEvent event;
 
   /**
    * XMLEventFactory to create events.
    * 
    * @see XMLEventFactory
    */
-  private final XMLEventFactory fac = XMLEventFactory.newFactory();
+  private transient final XMLEventFactory fac = XMLEventFactory.newFactory();
 
-  /** Node key. */
-  private long key;
+  /** Current node key. */
+  private transient long key;
 
   /**
    * Determines if all end tags have been emitted.
    */
-  private boolean closeElementsEmitted = false;
+  private transient boolean closeElementsEmitted = false;
 
   /** Determines if nextTag() method has been called. */
-  private boolean nextTag = false;
+  private transient boolean nextTag = false;
 
   /** axis for iteration */
-  private final IAxis mAxis;
+  private transient final IAxis mAxis;
 
   /** Stack for reading end element. */
-  private final FastStack<Long> mStack;
+  private transient final FastStack<Long> mStack;
   
-  private boolean goBack = true;
+  /** 
+   * Determines if the cursor has to move back after empty elements (used in
+   * getElementText().
+   */
+  private transient boolean goBack;
   
-  private long keyOnStack;
+  /** 
+   * Determines if the cursor has moved up and therefore has to move back
+   * after to the right node (used in getElementText()). */
+  private transient boolean goUp;
   
-  private boolean goUp;
+  /** 
+   * Last emitted key (start tags, text... except end tags; used in 
+   * getElementText()). 
+   */
+  private transient long lastKey;
 
   /**
    * Initialize XMLStreamReader implementation with transaction. The cursor
@@ -128,6 +139,8 @@ public class StAXSerializer implements XMLEventReader {
     case TEXT_KIND:
       event = fac.createCharacters(rtx.getValueOfCurrentNode());
       break;
+    default:
+      throw new IllegalStateException("Kind not known!");
     }
   }
 
@@ -152,7 +165,7 @@ public class StAXSerializer implements XMLEventReader {
      */
     if (closeElements && (goBack || goUp)) {
       if (goUp) {
-        rtx.moveTo(keyOnStack);
+        rtx.moveTo(lastKey);
         goUp = false;
       } else if (goBack) {
         rtx.moveTo(mStack.peek());
@@ -167,33 +180,37 @@ public class StAXSerializer implements XMLEventReader {
     }
     final FilterAxis textFilterAxis =
         new FilterAxis(new DescendantAxis(rtx), new TextFilter(rtx));
-    final StringBuilder sb = new StringBuilder();
+    final StringBuilder strBuilder = new StringBuilder();
 
     while (textFilterAxis.hasNext()) {
       textFilterAxis.next();
-      sb.append(mAxis.getTransaction().getValueOfCurrentNode());
+      strBuilder.append(mAxis.getTransaction().getValueOfCurrentNode());
     }
 
     rtx.moveTo(nodeKey);
-    return sb.toString();
+    return strBuilder.toString();
   }
 
   @Override
-  public Object getProperty(String arg0) throws IllegalArgumentException {
-    // TODO Auto-generated method stub
-    return null;
+  public Object getProperty(final String name) throws IllegalArgumentException {
+    throw new UnsupportedOperationException("Not supported by Treetank!");
   }
 
   @Override
   public boolean hasNext() {
+    boolean retVal = false;
+    
     if (!mStack.empty() && (closeElements || closeElementsEmitted)) {
       /*
        * mAxis.hasNext() can't be used in this case, because it would iterate 
        * to the next node but at first all end-tags have to be emitted.
        */     
-      return true;
+      retVal = true;
+    } else {
+      retVal = mAxis.hasNext();
     }
-    return mAxis.hasNext();
+    
+    return retVal;
   }
 
   @Override
@@ -308,12 +325,10 @@ public class StAXSerializer implements XMLEventReader {
           && mStack.peek() != ((AbsStructNode) rtx.getNode())
               .getLeftSiblingKey()) {
         rtx.moveTo(mStack.pop());
-        keyOnStack = rtx.getNode().getNodeKey();
         emitEndElement(rtx);
         rtx.moveTo(key);
       } else if (!mStack.empty()) {
         rtx.moveTo(mStack.pop());
-        keyOnStack = rtx.getNode().getNodeKey();
         emitEndElement(rtx);
         rtx.moveTo(key);
         closeElements = false;
@@ -326,7 +341,7 @@ public class StAXSerializer implements XMLEventReader {
       emitNode(rtx);
 
       final long nodeKey = rtx.getNode().getNodeKey();
-      keyOnStack = nodeKey;
+      lastKey = nodeKey;
 
       // Push end element to stack if we are a start element.
       if (rtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
