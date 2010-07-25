@@ -67,6 +67,20 @@
 			</organizationUrl>
 			<timezone>+1</timezone>
 		</developer>
+        <developer>
+			<name>Johannes Lichtenberger</name>
+			<email>johannes.lichtenberger@uni-konstanz.de</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<url>http://www.informatik.uni-konstanz.de/arbeitsgruppen/Verteilte-Systeme
+			</url>
+			<organization>University of Konstanz, Distributed Systems Lab
+			</organization>
+			<organizationUrl>http://www.informatik.uni-konstanz.de/ags/disy/
+			</organizationUrl>
+			<timezone>+1</timezone>
+		</developer>
 	</developers>
 	<repositories>
 		<repository>
