@@ -1,12 +1,12 @@
 package com.treetank.saxon.wrapper;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.OutputStream;
 
 import javax.xml.stream.XMLEventReader;
-
-import junit.framework.TestCase;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -66,8 +66,7 @@ public final class TestNodeWrapperS9ApiXQueryOutputStream {
 				"for $x in /bookstore/book where $x/price>30 return $x/title",
 				databaseBooks, out).call();
 		final String result = out.toString();
-		TestCase
-				.assertEquals(
+		assertEquals(
 						"<title lang=\"en\">XQuery Kick Start</title><title lang=\"en\">Learning XML</title>",
 						result);
 	}
@@ -79,8 +78,7 @@ public final class TestNodeWrapperS9ApiXQueryOutputStream {
 				"for $x in /bookstore/book where $x/price>30 order by $x/title return $x/title",
 				databaseBooks, out).call();
 		final String result = out.toString();
-		TestCase
-				.assertEquals(
+		assertEquals(
 						"<title lang=\"en\">Learning XML</title><title lang=\"en\">XQuery Kick Start</title>",
 						result);
 	}
@@ -92,8 +90,7 @@ public final class TestNodeWrapperS9ApiXQueryOutputStream {
 				"for $x in /bookstore/book let $y := $x/price where $y>30 order by $x/title return $x/title",
 				databaseBooks, out).call();
 		final String result = out.toString();
-		TestCase
-				.assertEquals(
+    assertEquals(
 						"<title lang=\"en\">Learning XML</title><title lang=\"en\">XQuery Kick Start</title>",
 						result);
 	}

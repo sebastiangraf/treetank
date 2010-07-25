@@ -50,6 +50,7 @@ public class NameFilter extends AbstractFilter implements IFilter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean filter() {
         return ((getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND || getTransaction()
                 .getNode().getKind() == ENodes.ATTRIBUTE_KIND) && (getTransaction()

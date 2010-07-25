@@ -19,8 +19,9 @@
 package com.treetank.access;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import junit.framework.TestCase;
+import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -68,7 +69,7 @@ public class SessionTest {
         try {
             final IItem node = rtx.getNode();
             node.getNodeKey();
-            TestCase.fail();
+            fail();
         } catch (Exception e) {
             // Must fail.
         }
@@ -133,10 +134,10 @@ public class SessionTest {
 
         DocumentCreater.create(wtx);
 
-        TestCase.assertNotNull(wtx.moveToDocumentRoot());
+        assertNotNull(wtx.moveToDocumentRoot());
         assertEquals(ENodes.ROOT_KIND, wtx.getNode().getKind());
 
-        TestCase.assertNotNull(wtx.moveToFirstChild());
+        assertNotNull(wtx.moveToFirstChild());
         assertEquals(ENodes.ELEMENT_KIND, wtx.getNode().getKind());
         assertEquals("p:a", wtx.nameForKey(wtx.getNode().getNameKey()));
 

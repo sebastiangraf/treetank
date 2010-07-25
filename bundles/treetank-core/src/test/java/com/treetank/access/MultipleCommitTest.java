@@ -22,7 +22,7 @@ import static org.junit.Assert.assertEquals;
 
 import javax.xml.namespace.QName;
 
-import junit.framework.TestCase;
+import junit.framework.Assert;
 
 import org.junit.After;
 import org.junit.Before;
@@ -60,17 +60,17 @@ public class MultipleCommitTest {
                 .getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
-        TestCase.assertEquals(0L, wtx.getRevisionNumber());
+        Assert.assertEquals(0L, wtx.getRevisionNumber());
 
         wtx.commit();
 
         wtx.insertElementAsFirstChild(new QName("foo"));
-        TestCase.assertEquals(1L, wtx.getRevisionNumber());
+        assertEquals(1L, wtx.getRevisionNumber());
         wtx.moveTo(1);
         assertEquals(new QName("foo"), wtx.getQNameOfCurrentNode());
         wtx.abort();
 
-        TestCase.assertEquals(1L, wtx.getRevisionNumber());
+        assertEquals(1L, wtx.getRevisionNumber());
 
         wtx.close();
 
@@ -102,13 +102,13 @@ public class MultipleCommitTest {
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
         wtx.commit();
-        TestCase.assertEquals(1L, wtx.getRevisionNumber());
+        assertEquals(1L, wtx.getRevisionNumber());
 
         wtx.moveToDocumentRoot();
         wtx.moveToFirstChild();
         wtx.remove();
         wtx.commit();
-        TestCase.assertEquals(2L, wtx.getRevisionNumber());
+        assertEquals(2L, wtx.getRevisionNumber());
 
         wtx.close();
         session.close();

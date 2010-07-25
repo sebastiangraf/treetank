@@ -101,6 +101,7 @@ public class XPathAxis extends AbstractAxis implements IAxis {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean hasNext() {
 
         resetToLastKey();

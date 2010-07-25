@@ -136,6 +136,7 @@ public final class FastStack<E> {
      * 
      * @return Cloned stack.
      */
+    @Override
     @SuppressWarnings("unchecked")
     public FastStack<E> clone() {
         final E[] object = (E[]) new Object[mStack.length];

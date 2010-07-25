@@ -188,6 +188,7 @@ public final class UberPage extends AbstractPage {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void serialize(final ITTSink out) {
         mBootstrap = false;
         super.serialize(out);

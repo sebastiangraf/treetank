@@ -138,7 +138,8 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
 	/**
 	 * Get the name pool used for the names in this document.
 	 */
-	public NamePool getNamePool() {
+	@Override
+  public NamePool getNamePool() {
 		return mConfig.getNamePool();
 	}
 
@@ -161,7 +162,8 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
 	 * Get the configuration previously set using setConfiguration (or the
 	 * default configuraton allocated automatically).
 	 */
-	public Configuration getConfiguration() {
+	@Override
+  public Configuration getConfiguration() {
 		return mConfig;
 	}
 
@@ -170,7 +172,8 @@ public final class DocumentWrapper extends NodeWrapper implements DocumentInfo {
 	 * 
 	 * @return BaseURI.
 	 */
-	public String getBaseURI() {
+	@Override
+  public String getBaseURI() {
 		return mBaseURI;
 	}
 

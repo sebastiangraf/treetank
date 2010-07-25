@@ -61,6 +61,7 @@ public class PrecedingSiblingAxis extends AbstractAxis implements IAxis {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean hasNext() {
 
         if (mIsFirst) {

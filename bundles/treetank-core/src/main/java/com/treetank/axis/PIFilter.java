@@ -43,6 +43,7 @@ public class PIFilter extends AbstractFilter implements IFilter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean filter() {
 
         return getTransaction().getNode().getKind().getNodeIdentifier() == 7;

@@ -1,10 +1,10 @@
 package com.treetank.saxon.wrapper;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 
 import javax.xml.stream.XMLEventReader;
-
-import junit.framework.TestCase;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -103,8 +103,7 @@ public class TestNodeWrapperS9ApiXQuerySAXHandler {
 				"for $x in /bookstore/book where $x/price>30 return $x/title",
 				databaseBooks, contHandler).call();
 
-		TestCase
-				.assertEquals(
+    assertEquals(
 						strBuilder.toString(),
 						"<title lang=\"en\">XQuery Kick Start</title><title lang=\"en\">Learning XML</title>");
 	}

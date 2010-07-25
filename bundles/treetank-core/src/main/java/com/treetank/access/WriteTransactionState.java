@@ -268,6 +268,7 @@ public final class WriteTransactionState extends ReadTransactionState {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected IItem getNode(final long nodeKey) throws TreetankIOException {
 
         // Calculate page and node part for given nodeKey.
@@ -295,6 +296,7 @@ public final class WriteTransactionState extends ReadTransactionState {
      *            for the term searched
      * @return the name
      */
+    @Override
     protected String getName(final int nameKey) {
         final NamePage currentNamePage = (NamePage) mNewRoot
                 .getNamePageReference().getPage();
@@ -598,6 +600,7 @@ public final class WriteTransactionState extends ReadTransactionState {
      * 
      * @return the current revision root page
      */
+    @Override
     protected RevisionRootPage getActualRevisionRootPage() {
         return this.mNewRoot;
     }

@@ -43,6 +43,7 @@ public class ItemFilter extends AbstractFilter implements IFilter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean filter() {
         // everything that is hold by an transaction is either a node or an
         // atomic value, so this yields true for all item kinds

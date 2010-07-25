@@ -81,6 +81,7 @@ public class GeneralComp extends AbstractComparator {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected AtomicValue[] atomize(final IAxis operand) {
 
         final IReadTransaction rtx = getTransaction();

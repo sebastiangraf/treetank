@@ -67,6 +67,7 @@ public class FollowingAxis extends AbstractAxis implements IAxis {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean hasNext() {
 
         // assure, that preceding is not evaluated on an attribute or a

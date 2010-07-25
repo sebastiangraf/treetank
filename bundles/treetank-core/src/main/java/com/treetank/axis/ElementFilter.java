@@ -44,6 +44,7 @@ public class ElementFilter extends AbstractFilter implements IFilter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean filter() {
         return getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND;
     }

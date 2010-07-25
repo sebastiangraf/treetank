@@ -44,6 +44,7 @@ public class CommentFilter extends AbstractFilter implements IFilter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean filter() {
         return getTransaction().getNode().getKind() == ENodes.COMMENT_KIND;
 

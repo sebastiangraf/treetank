@@ -101,9 +101,7 @@ public final class TreetankTreeCellRenderer extends DefaultTreeCellRenderer {
     PATH = database.getFile().getAbsolutePath();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  @Override
   public Component getTreeCellRendererComponent(
       final JTree tree,
       Object value,
@@ -136,7 +134,7 @@ public final class TreetankTreeCellRenderer extends DefaultTreeCellRenderer {
 
       break;
     case ATTRIBUTE_KIND:
-      // Move transaction to given attribute node.
+      // Move transaction to parent of the attribute node.
       mRTX.moveTo(node.getParentKey());
       final long aNodeKey = node.getNodeKey();
       for (int i = 0, attsCount =
@@ -172,7 +170,7 @@ public final class TreetankTreeCellRenderer extends DefaultTreeCellRenderer {
 
       break;
     case NAMESPACE_KIND:
-      // Move transaction to given namespace node.
+      // Move transaction to parent the namespace node.
       mRTX.moveTo(node.getParentKey());
       final long nNodeKey = node.getNodeKey();
       for (int i = 0, namespCount =
@@ -240,6 +238,7 @@ public final class TreetankTreeCellRenderer extends DefaultTreeCellRenderer {
     return this;
   }
 
+  @Override
   public Color getBackground() {
     return null;
   }

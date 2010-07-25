@@ -61,6 +61,7 @@ public class WildcardFilter extends AbstractFilter implements IFilter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean filter() {
         if (getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND) {
 

@@ -91,6 +91,7 @@ public class MulOpAxis extends AbstractOpAxis {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected Type getReturnType(final int op1, final int op2) {
 
         Type type1;

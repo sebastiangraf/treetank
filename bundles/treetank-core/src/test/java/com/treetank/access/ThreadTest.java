@@ -18,12 +18,12 @@
 
 package com.treetank.access;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
-import junit.framework.TestCase;
 
 import org.junit.After;
 import org.junit.Before;
@@ -100,7 +100,7 @@ public class ThreadTest {
             }
 
             mRTX.moveTo(12L);
-            TestCase.assertEquals("bar",
+            assertEquals("bar",
                     TypedValue.parseString(mRTX.getNode().getRawValue()));
             mRTX.close();
             return null;

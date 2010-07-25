@@ -1,7 +1,5 @@
 package com.treetank.service.xml.serialize;
 
-import junit.framework.TestCase;
-
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.junit.After;
 import org.junit.Before;
@@ -26,11 +24,13 @@ import com.treetank.utils.DocumentCreater;
  * 
  */
 public class SAXSerializerTest extends XMLTestCase {
+    @Override
     @Before
     public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
     }
 
+    @Override
     @After
     public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
@@ -92,9 +92,9 @@ public class SAXSerializerTest extends XMLTestCase {
 
             assertXMLEqual(DocumentCreater.XML, strBuilder.toString());
         } catch (final TreetankException e) {
-            TestCase.fail("Treetank exception occured!");
+            fail("Treetank exception occured!");
         } catch (final Exception e) {
-            TestCase.fail("Any exception occured!");
+            fail("Any exception occured!");
         }
     }
 }

@@ -138,6 +138,7 @@ public final class ElementNode extends AbsStructNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getNameKey() {
         return mIntData[NAME_KEY];
     }
@@ -145,6 +146,7 @@ public final class ElementNode extends AbsStructNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setNameKey(final int localPartKey) {
         mIntData[NAME_KEY] = localPartKey;
     }
@@ -152,6 +154,7 @@ public final class ElementNode extends AbsStructNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getURIKey() {
         return mIntData[URI_KEY];
     }
@@ -159,6 +162,7 @@ public final class ElementNode extends AbsStructNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setURIKey(final int uriKey) {
         mIntData[URI_KEY] = uriKey;
     }

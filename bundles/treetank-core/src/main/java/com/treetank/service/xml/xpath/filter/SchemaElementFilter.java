@@ -68,6 +68,7 @@ public class SchemaElementFilter extends AbstractFilter implements IFilter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean filter() {
 
         return false;

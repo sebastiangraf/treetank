@@ -70,6 +70,7 @@ public class ValueComp extends AbstractComparator {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected AtomicValue[] atomize(final IAxis operand) {
 
         final IReadTransaction trx = getTransaction();

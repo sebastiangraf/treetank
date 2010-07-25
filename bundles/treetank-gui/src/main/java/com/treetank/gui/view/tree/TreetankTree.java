@@ -53,6 +53,7 @@ public class TreetankTree extends JTree {
    * @param selectionPath
    *                   Selection path.
    */
+  @Override
   public void setSelectionPath(final TreePath selectionPath) {
     mSelectionPath = selectionPath;
     getSelectionModel().setSelectionPath(selectionPath);
@@ -62,6 +63,7 @@ public class TreetankTree extends JTree {
   /**
    * {@inheritDoc}
    */
+  @Override
   public TreePath getSelectionPath() {
     return mSelectionPath;
   }

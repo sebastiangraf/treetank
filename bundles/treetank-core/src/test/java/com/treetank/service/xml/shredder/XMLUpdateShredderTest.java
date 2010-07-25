@@ -44,11 +44,13 @@ public class XMLUpdateShredderTest extends XMLTestCase {
     public static final String XMLALL = RESOURCES + File.separator
             + "revXMLsAll";
 
+    @Override
     @Before
     public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
     }
 
+    @Override
     @After
     public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
