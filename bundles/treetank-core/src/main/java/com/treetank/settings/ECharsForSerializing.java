@@ -46,7 +46,10 @@ public enum ECharsForSerializing {
             .getBytes(), QUOTE.getBytes()),
 
     /** " xmlns:". */
-    XMLNS_COLON(SPACE.getBytes(), new byte[] { 120, 109, 108, 110, 115, 58 });
+    XMLNS_COLON(SPACE.getBytes(), new byte[] { 120, 109, 108, 110, 115, 58 }),
+    
+    /** Newline. */
+    NEWLINE(System.getProperty("line.separator").getBytes());
 
     private final byte[] bytes;
 

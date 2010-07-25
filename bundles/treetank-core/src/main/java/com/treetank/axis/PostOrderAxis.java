@@ -63,6 +63,7 @@ public class PostOrderAxis extends AbstractAxis implements IAxis {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean hasNext() {
         resetToLastKey();
         long key = mNextKey;

@@ -65,6 +65,7 @@ public final class TextNode extends AbsStructNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public byte[] getRawValue() {
         return mValue;
     }
@@ -72,6 +73,7 @@ public final class TextNode extends AbsStructNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setValue(final int valueType, final byte[] value) {
         mIntData[AbsNode.TYPE_KEY] = valueType;
         mIntData[VALUE_LENGTH] = value.length;

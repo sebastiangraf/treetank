@@ -100,6 +100,7 @@ public enum Type {
      */
     DURATION(ANY_ATOMIC_TYPE, "xs:duration", 4, true) {
 
+        @Override
         public String getFacet() {
 
             return "-?P(((([0-9]+Y([0-9]+M)?)"
@@ -227,6 +228,7 @@ public enum Type {
         /**
          * {@inheritDoc}
          */
+        @Override
         public String getFacet() {
 
             return "-?(([1-9][0-9][0-9][0-9]+)|(0[0-9][0-9][0-9]))"
@@ -313,6 +315,7 @@ public enum Type {
         /**
          * {@inheritDoc}
          */
+        @Override
         public String getFacet() {
 
             return "--((0[1-9])|(1[0-2]))-(([0-2][0-9])|(3[01]))"
@@ -366,6 +369,7 @@ public enum Type {
         /**
          * {@inheritDoc}
          */
+        @Override
         public String getFacet() {
 
             return "--((0[1-9])|(1[0-2]))"
@@ -392,6 +396,7 @@ public enum Type {
         /**
          * {@inheritDoc}
          */
+        @Override
         public String getFacet() {
 
             return "0|1|true|false";
@@ -420,6 +425,7 @@ public enum Type {
         /**
          * {@inheritDoc}
          */
+        @Override
         public String getFacet() {
 
             return "((([A-Za-z0-9+/] ?){4})*(([A-Za-z0-9+/] ?){3}"

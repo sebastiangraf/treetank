@@ -50,6 +50,7 @@ public class NestedFilter extends AbstractFilter implements IFilter {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean filter() {
 
         boolean filterResult = true;

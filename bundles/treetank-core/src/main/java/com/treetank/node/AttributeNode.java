@@ -60,6 +60,7 @@ public final class AttributeNode extends AbsNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getNameKey() {
         return mIntData[NAME_KEY];
     }
@@ -67,6 +68,7 @@ public final class AttributeNode extends AbsNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setNameKey(final int nameKey) {
         this.mIntData[NAME_KEY] = nameKey;
     }
@@ -82,6 +84,7 @@ public final class AttributeNode extends AbsNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getURIKey() {
         return mIntData[URI_KEY];
     }
@@ -89,6 +92,7 @@ public final class AttributeNode extends AbsNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setURIKey(final int uriKey) {
         mIntData[URI_KEY] = uriKey;
     }
@@ -96,6 +100,7 @@ public final class AttributeNode extends AbsNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public byte[] getRawValue() {
         return mValue;
     }
@@ -103,6 +108,7 @@ public final class AttributeNode extends AbsNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setValue(final int valueType, final byte[] value) {
         mIntData[AbsNode.TYPE_KEY] = valueType;
         mIntData[VALUE_LENGTH] = value.length;
@@ -112,6 +118,7 @@ public final class AttributeNode extends AbsNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public ENodes getKind() {
         return ENodes.ATTRIBUTE_KIND;
     }
@@ -127,6 +134,7 @@ public final class AttributeNode extends AbsNode {
         }
     }
 
+    @Override
     public AbsNode clone() {
         final AbsNode toClone = new AttributeNode(AbsNode.cloneData(mLongData),
                 AbsNode.cloneData(mIntData), AbsNode.cloneData(mValue));

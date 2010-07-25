@@ -102,6 +102,7 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void putPersistent(final long key, final NodePageContainer page)
             throws TreetankIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();

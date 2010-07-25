@@ -53,6 +53,7 @@ public final class NamespaceNode extends AbsNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getNameKey() {
         return mIntData[NAME_KEY];
     }
@@ -60,6 +61,7 @@ public final class NamespaceNode extends AbsNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setNameKey(final int nameKey) {
         mIntData[NAME_KEY] = nameKey;
     }
@@ -67,6 +69,7 @@ public final class NamespaceNode extends AbsNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getURIKey() {
         return mIntData[URI_KEY];
     }
@@ -74,6 +77,7 @@ public final class NamespaceNode extends AbsNode {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setURIKey(final int uriKey) {
         mIntData[URI_KEY] = uriKey;
     }

@@ -24,7 +24,7 @@ abstract class AbsSerializer implements Callable<Void> {
     /** Stack for reading end element. */
     protected final FastStack<Long> mStack;
 
-    /** array with versions to print */
+    /** Array with versions to print. */
     protected final long[] mVersions;
 
     /**

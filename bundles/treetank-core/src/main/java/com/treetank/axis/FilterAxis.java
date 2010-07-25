@@ -64,6 +64,7 @@ public class FilterAxis extends AbstractAxis implements IAxis {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean hasNext() {
         resetToLastKey();
         while (mAxis.hasNext()) {

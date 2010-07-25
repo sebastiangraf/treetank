@@ -19,11 +19,10 @@
 package com.treetank.access;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import javax.xml.namespace.QName;
-
-import junit.framework.TestCase;
 
 import org.junit.After;
 import org.junit.Before;
@@ -108,13 +107,13 @@ public class UpdateTest {
         wtx.close();
 
         wtx = session.beginWriteTransaction();
-        TestCase.assertNotNull(wtx.moveToDocumentRoot());
+        assertNotNull(wtx.moveToDocumentRoot());
         assertEquals(1L, wtx.insertElementAsFirstChild(new QName("")));
 
         assertEquals(2L, wtx.insertElementAsFirstChild(new QName("")));
         assertEquals(3L, wtx.insertElementAsFirstChild(new QName("")));
 
-        TestCase.assertNotNull(wtx.moveToParent());
+        assertNotNull(wtx.moveToParent());
         assertEquals(4L, wtx.insertElementAsRightSibling(new QName("")));
 
         wtx.commit();
@@ -122,7 +121,7 @@ public class UpdateTest {
 
         final IWriteTransaction wtx2 = session.beginWriteTransaction();
 
-        TestCase.assertNotNull(wtx2.moveToDocumentRoot());
+        assertNotNull(wtx2.moveToDocumentRoot());
         assertEquals(5L, wtx2.insertElementAsFirstChild(new QName("")));
 
         wtx2.commit();

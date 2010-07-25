@@ -363,6 +363,7 @@ public class AtomicValue implements IItem {
      * 
      * @return String String representation of this node
      */
+    @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
         builder.append("Atomic Value: ");

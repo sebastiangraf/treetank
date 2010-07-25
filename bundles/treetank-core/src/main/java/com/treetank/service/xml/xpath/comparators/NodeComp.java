@@ -56,6 +56,7 @@ public class NodeComp extends AbstractComparator implements IAxis {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected AtomicValue[] atomize(final IAxis operand) {
 
         final IReadTransaction rtx = getTransaction();
@@ -87,6 +88,7 @@ public class NodeComp extends AbstractComparator implements IAxis {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected boolean compare(final AtomicValue[] operand1,
             final AtomicValue[] operand2) {
 

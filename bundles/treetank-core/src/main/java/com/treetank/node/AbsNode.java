@@ -229,6 +229,7 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
                 .append("\n\ttypeKey: ").append(getTypeKey()).toString();
     }
 
+    @Override
     public abstract AbsNode clone();
 
     protected static long[] cloneData(final long[] input) {

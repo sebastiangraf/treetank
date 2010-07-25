@@ -729,6 +729,7 @@ public final class WriteTransaction extends ReadTransaction implements
      * 
      * @return The state of this transaction.
      */
+    @Override
     public final WriteTransactionState getTransactionState() {
         return (WriteTransactionState) super.getTransactionState();
     }

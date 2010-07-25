@@ -15,6 +15,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTree;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.tree.TreeSelectionModel;
@@ -99,7 +100,7 @@ public final class GUI extends JPanel {
       // Create a scroll pane and add the XML text area to it.
       xmlView = new JScrollPane(xmlPane);
       xmlView
-          .setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+          .setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
       xmlView.setMinimumSize(new Dimension(400, 600));
       final JScrollBar vertScrollBar = xmlView.getVerticalScrollBar();
       vertScrollBar.setValue(vertScrollBar.getMinimum());
@@ -125,7 +126,7 @@ public final class GUI extends JPanel {
           if (GUICommands.lineChanges != 0) {
             GUICommands.text(gui, xmlPane, false);
           }
-          
+
           tempValue = value;
         }
       });

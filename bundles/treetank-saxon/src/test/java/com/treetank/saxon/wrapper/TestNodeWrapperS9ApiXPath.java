@@ -1,6 +1,5 @@
 package com.treetank.saxon.wrapper;
 
-import junit.framework.TestCase;
 import net.sf.saxon.s9api.XPathSelector;
 import net.sf.saxon.s9api.XdmItem;
 
@@ -29,6 +28,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
   /** Treetank database on Treetank test document. */
   private transient static IDatabase databaseTest;
 
+  @Override
   @BeforeClass
   public void setUp() throws TreetankException {
     Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
@@ -41,6 +41,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
     XMLUnit.setIgnoreWhitespace(true);
   }
 
+  @Override
   @AfterClass
   public void tearDown() throws TreetankException {
     Database.forceCloseDatabase(TestHelper.PATHS.PATH1.getFile());
@@ -74,7 +75,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
       strBuilder.append(item.toString());
     }
 
-    TestCase.assertEquals("foo", strBuilder.toString());
+    assertEquals("foo", strBuilder.toString());
   }
 
   @Test
@@ -105,7 +106,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
       strBuilder.append(item.toString());
     }
 
-    TestCase.assertEquals("bar", strBuilder.toString());
+    assertEquals("bar", strBuilder.toString());
   }
 
   @Test
@@ -140,7 +141,7 @@ public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
       sb.append(item.getStringValue());
     }
 
-    TestCase.assertEquals("2", sb.toString());
+    assertEquals("2", sb.toString());
   }
 
 }

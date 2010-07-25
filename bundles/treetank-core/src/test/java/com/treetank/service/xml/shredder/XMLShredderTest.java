@@ -58,11 +58,13 @@ public class XMLShredderTest extends XMLTestCase {
     public static final String XML3 = "src" + File.separator + "test"
             + File.separator + "resources" + File.separator + "test3.xml";
 
+    @Override
     @Before
     public void setUp() throws TreetankException {
         TestHelper.deleteEverything();
     }
 
+    @Override
     @After
     public void tearDown() throws TreetankException {
         TestHelper.closeEverything();

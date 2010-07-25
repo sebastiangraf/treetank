@@ -56,8 +56,8 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
 	/** Treetank database on Treetank test document. */
 	private transient static IDatabase databaseBooks;
 
-	//
-	@Before
+	@Override
+  @Before
 	public void setUp() throws Exception {
 		Database.truncateDatabase(TestHelper.PATHS.PATH2.getFile());
 		databaseBooks = Database.openDatabase(TestHelper.PATHS.PATH2
@@ -74,7 +74,8 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
 		XMLUnit.setIgnoreWhitespace(true);
 	}
 
-	@After
+	@Override
+  @After
 	public void tearDown() throws TreetankException {
 		Database.forceCloseDatabase(TestHelper.PATHS.PATH1.getFile());
 		Database.forceCloseDatabase(TestHelper.PATHS.PATH2.getFile());

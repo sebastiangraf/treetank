@@ -212,8 +212,7 @@ public class BerkeleyWriter implements IWriter {
         boolean returnVal = true;
         if (obj == null) {
             returnVal = false;
-        }
-        if (getClass() != obj.getClass()) {
+        } else if (getClass() != obj.getClass()) {
             returnVal = false;
         }
         final BerkeleyWriter other = (BerkeleyWriter) obj;

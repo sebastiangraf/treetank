@@ -57,6 +57,7 @@ public class ParentAxis extends AbstractAxis implements IAxis {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean hasNext() {
         resetToLastKey();
         if (getTransaction().getNode().getKind() != ENodes.ROOT_KIND

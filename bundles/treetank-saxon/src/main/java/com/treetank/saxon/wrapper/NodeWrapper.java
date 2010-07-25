@@ -907,6 +907,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
          * 
          * @see net.sf.saxon.om.Navigator$BaseEnumeration#advance()
          */
+        @Override
         public void advance() {
             if (mAxis.hasNext()) {
                 final long nextKey = mAxis.next();

@@ -57,6 +57,7 @@ public class AttributeAxis extends AbstractAxis implements IAxis {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean hasNext() {
         resetToLastKey();
         // move back to element, if there was already an attribute found. In

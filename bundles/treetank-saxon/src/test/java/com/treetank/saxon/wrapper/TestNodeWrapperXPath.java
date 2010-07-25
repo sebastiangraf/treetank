@@ -1,5 +1,8 @@
 package com.treetank.saxon.wrapper;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -12,7 +15,6 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 import javax.xml.xpath.XPathFactoryConfigurationException;
 
-import junit.framework.TestCase;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.om.NamespaceConstant;
 import net.sf.saxon.xpath.XPathFactoryImpl;
@@ -132,7 +134,7 @@ public final class TestNodeWrapperXPath {
         throw new IllegalStateException("Unknown XPathConstant!");
       }
 
-      TestCase.assertNotNull(result);
+      assertNotNull(result);
 
       if (xpathConstants[i].equals(XPathConstants.NODESET)) {
         final ArrayList<IItem> test = (ArrayList<IItem>) result[i];
@@ -152,17 +154,17 @@ public final class TestNodeWrapperXPath {
           final QName qName = rtx.getQNameOfCurrentNode();
 
           if (rtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
-            TestCase.assertEquals(expRes[j], qName.getPrefix()
+            assertEquals(expRes[j], qName.getPrefix()
                 + ":"
                 + qName.getLocalPart());
           } else if (rtx.getNode().getKind() == ENodes.TEXT_KIND) {
-            TestCase.assertEquals(expRes[j], rtx.getValueOfCurrentNode());
+            assertEquals(expRes[j], rtx.getValueOfCurrentNode());
           }
 
           rtx.close();
         }
       } else {
-        TestCase.assertEquals(expectedResults[i], result[i]);
+        assertEquals(expectedResults[i], result[i]);
       }
     }
   }
@@ -232,8 +234,8 @@ public final class TestNodeWrapperXPath {
         Double.parseDouble(findLine
             .evaluate(doc, XPathConstants.NUMBER)
             .toString());
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals(2.0, result);
+    assertNotNull(result);
+    assertEquals(2D, result, 0D);
   }
 
   @Test
@@ -248,8 +250,8 @@ public final class TestNodeWrapperXPath {
         Double.parseDouble(findLine
             .evaluate(doc, XPathConstants.NUMBER)
             .toString());
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals(0.0, result);
+    assertNotNull(result);
+    assertEquals(0D, result, 0D);
   }
 
   @Test
@@ -264,8 +266,8 @@ public final class TestNodeWrapperXPath {
         Double.parseDouble(findLine
             .evaluate(doc, XPathConstants.NUMBER)
             .toString());
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals(1.0, result);
+    assertNotNull(result);
+    assertEquals(1D, result, 0D);
   }
 
   @Test
@@ -280,8 +282,8 @@ public final class TestNodeWrapperXPath {
         Double.parseDouble(findLine
             .evaluate(doc, XPathConstants.NUMBER)
             .toString());
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals(1.0, result);
+    assertNotNull(result);
+    assertEquals(1D, result, 0D);
   }
 
   @Test
@@ -297,8 +299,8 @@ public final class TestNodeWrapperXPath {
             .evaluate(doc, XPathConstants.NUMBER)
             .toString());
 
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals(0D, result);
+    assertNotNull(result);
+    assertEquals(0D, result, 0D);
   }
 
   @Test
@@ -312,8 +314,8 @@ public final class TestNodeWrapperXPath {
     final String result =
         findLine.evaluate(doc, XPathConstants.STRING).toString();
 
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals("j", result);
+    assertNotNull(result);
+    assertEquals("j", result);
   }
 
   @Test
@@ -327,8 +329,8 @@ public final class TestNodeWrapperXPath {
     final String result =
         findLine.evaluate(doc, XPathConstants.STRING).toString();
 
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals("", result);
+    assertNotNull(result);
+    assertEquals("", result);
   }
 
   @Test
@@ -341,8 +343,8 @@ public final class TestNodeWrapperXPath {
     final String result =
         (String) findLine.evaluate(doc, XPathConstants.STRING);
 
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals("foo", result);
+    assertNotNull(result);
+    assertEquals("foo", result);
   }
 
   @Test
@@ -356,8 +358,8 @@ public final class TestNodeWrapperXPath {
     final String result =
         (String) findLine.evaluate(doc, XPathConstants.STRING);
 
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals("oops1", result);
+    assertNotNull(result);
+    assertEquals("oops1", result);
   }
 
   @Test
@@ -371,8 +373,8 @@ public final class TestNodeWrapperXPath {
     final String result =
         (String) findLine.evaluate(doc, XPathConstants.STRING);
 
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals("oops1", result);
+    assertNotNull(result);
+    assertEquals("oops1", result);
   }
 
   @Test
@@ -386,8 +388,8 @@ public final class TestNodeWrapperXPath {
     final String result =
         (String) findLine.evaluate(doc, XPathConstants.STRING);
 
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals("oops2", result);
+    assertNotNull(result);
+    assertEquals("oops2", result);
   }
 
   @Test
@@ -401,8 +403,8 @@ public final class TestNodeWrapperXPath {
     final String result =
         (String) findLine.evaluate(doc, XPathConstants.STRING);
 
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals("oops3", result);
+    assertNotNull(result);
+    assertEquals("oops3", result);
   }
 
   @SuppressWarnings("unchecked")
@@ -416,15 +418,15 @@ public final class TestNodeWrapperXPath {
     // Execute XPath.
     final ArrayList<IItem> result =
         (ArrayList<IItem>) findLine.evaluate(doc, XPathConstants.NODESET);
-    TestCase.assertNotNull(result);
+    assertNotNull(result);
 
     final IReadTransaction rtx = database.getSession().beginReadTransaction();
     rtx.moveTo(result.get(0).getNodeKey());
-    TestCase.assertEquals("oops1", rtx.getValueOfCurrentNode());
+    assertEquals("oops1", rtx.getValueOfCurrentNode());
     rtx.moveTo(result.get(1).getNodeKey());
-    TestCase.assertEquals("oops2", rtx.getValueOfCurrentNode());
+    assertEquals("oops2", rtx.getValueOfCurrentNode());
     rtx.moveTo(result.get(2).getNodeKey());
-    TestCase.assertEquals("oops3", rtx.getValueOfCurrentNode());
+    assertEquals("oops3", rtx.getValueOfCurrentNode());
   }
 
   @Test
@@ -438,8 +440,8 @@ public final class TestNodeWrapperXPath {
     final String result =
         (String) findLine.evaluate(doc, XPathConstants.STRING);
 
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals("foo", result);
+    assertNotNull(result);
+    assertEquals("foo", result);
   }
 
   @Test
@@ -453,8 +455,8 @@ public final class TestNodeWrapperXPath {
     final String result =
         (String) findLine.evaluate(doc, XPathConstants.STRING);
 
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals("bar", result);
+    assertNotNull(result);
+    assertEquals("bar", result);
   }
 
   @SuppressWarnings("unchecked")
@@ -469,16 +471,16 @@ public final class TestNodeWrapperXPath {
     final ArrayList<IItem> result =
         (ArrayList<IItem>) findLine.evaluate(doc, XPathConstants.NODESET);
 
-    TestCase.assertNotNull(result);
-    TestCase.assertEquals(5, result.get(0).getNodeKey());
-    TestCase.assertEquals(9, result.get(1).getNodeKey());
+    assertNotNull(result);
+    assertEquals(5, result.get(0).getNodeKey());
+    assertEquals(9, result.get(1).getNodeKey());
 
     final IReadTransaction rtx = database.getSession().beginReadTransaction();
     rtx.moveTo(result.get(0).getNodeKey());
-    TestCase.assertEquals("b", rtx.getQNameOfCurrentNode().getLocalPart());
+    assertEquals("b", rtx.getQNameOfCurrentNode().getLocalPart());
 
     rtx.moveTo(result.get(1).getNodeKey());
-    TestCase.assertEquals("b", rtx.getQNameOfCurrentNode().getLocalPart());
+    assertEquals("b", rtx.getQNameOfCurrentNode().getLocalPart());
   }
 
   /**

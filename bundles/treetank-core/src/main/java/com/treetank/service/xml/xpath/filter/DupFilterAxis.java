@@ -91,6 +91,7 @@ public class DupFilterAxis extends AbstractAxis {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean hasNext() {
 
         resetToLastKey();

@@ -178,6 +178,7 @@ public final class XMLUpdateShredder extends XMLShredder
   /**
    * Invoking the shredder.
    */
+  @Override
   public Long call() throws TreetankException {
     final long revision = mWtx.getRevisionNumber();
     updateOnly();

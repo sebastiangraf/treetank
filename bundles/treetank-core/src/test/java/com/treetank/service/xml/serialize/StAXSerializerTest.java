@@ -1,6 +1,7 @@
 package com.treetank.service.xml.serialize;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
@@ -14,8 +15,6 @@ import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
-
-import junit.framework.TestCase;
 
 import org.junit.After;
 import org.junit.Before;
@@ -184,11 +183,11 @@ public class StAXSerializerTest {
       session.close();
       database.close();
     } catch (final XMLStreamException e) {
-      TestCase.fail("XML error while parsing: " + e.getMessage());
+      fail("XML error while parsing: " + e.getMessage());
     } catch (final TreetankException e) {
-      TestCase.fail("Treetank exception occured: " + e.getMessage());
+      fail("Treetank exception occured: " + e.getMessage());
     } catch (final Exception e) {
-      TestCase.fail("Any exception occured: " + e.getMessage());
+      fail("Any exception occured: " + e.getMessage());
     }
   }
   
@@ -206,7 +205,7 @@ public class StAXSerializerTest {
         serializer.next();
         elemText = serializer.getElementText();
       }
-      TestCase.fail("");
+      fail("");
     } catch (final XMLStreamException e) {
       assertEquals("", elemText);
     }

@@ -57,6 +57,7 @@ public class ChildAxis extends AbstractAxis implements IAxis {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean hasNext() {
         resetToLastKey();
         if (!mFirst
