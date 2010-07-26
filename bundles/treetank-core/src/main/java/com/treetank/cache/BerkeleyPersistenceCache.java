@@ -28,6 +28,9 @@ import com.sleepycat.je.OperationStatus;
 import com.treetank.access.DatabaseConfiguration;
 import com.treetank.exception.TreetankIOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Berkeley implementation of a persistent cache. That means that all data is
  * stored in this cache and it is never removed. This is useful e.g. when it
@@ -38,120 +41,153 @@ import com.treetank.exception.TreetankIOException;
  */
 public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
 
-    /**
-     * Berkeley database
-     */
-    private transient final Database database;
+	/** Logger. */
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(BerkeleyPersistenceCache.class);
 
-    /**
-     * Berkeley Environment for the database
-     */
-    private transient final Environment env;
+	/**
+	 * Berkeley database
+	 */
+	private transient final Database database;
 
-    /**
-     * Name for the database.
-     */
-    private transient final static String NAME = "berkeleyCache";
+	/**
+	 * Berkeley Environment for the database
+	 */
+	private transient final Environment env;
 
-    /**
-     * Binding for the key, which is the nodepage.
-     */
-    private transient final TupleBinding<Long> keyBinding;
+	/**
+	 * Name for the database.
+	 */
+	private transient final static String NAME = "berkeleyCache";
 
-    /**
-     * Binding for the value which is a page with related Nodes.
-     */
-    private transient final NodePageContainerBinding valueBinding;
+	/**
+	 * Binding for the key, which is the nodepage.
+	 */
+	private transient final TupleBinding<Long> keyBinding;
 
-    /**
-     * Constructor. Building up the berkeley db and setting necessary settings.
-     * 
-     * @param sessionConfig
-     *            the place where the berkeley db is stored.
-     * @param revision
-     *            revision number, needed to reconstruct the sliding window in
-     *            the correct way
-     */
-    public BerkeleyPersistenceCache(final DatabaseConfiguration sessionConfig,
-            final long revision) throws TreetankIOException {
-        super(sessionConfig);
-        try {
+	/**
+	 * Binding for the value which is a page with related Nodes.
+	 */
+	private transient final NodePageContainerBinding valueBinding;
 
-            /* Create a new, transactional database environment */
-            final EnvironmentConfig config = new EnvironmentConfig();
-            config.setAllowCreate(true);
-            config.setLocking(false);
-            config.setCacheSize(1024 * 1024);
-            env = new Environment(place, config);
+	/**
+	 * Constructor. Building up the berkeley db and setting necessary settings.
+	 * 
+	 * @param sessionConfig
+	 *            the place where the berkeley db is stored.
+	 * @param revision
+	 *            revision number, needed to reconstruct the sliding window in
+	 *            the correct way
+	 */
+	public BerkeleyPersistenceCache(final DatabaseConfiguration sessionConfig,
+			final long revision) throws TreetankIOException {
+		super(sessionConfig);
+		try {
 
-            /* Make a database within that environment */
-            final DatabaseConfig dbConfig = new DatabaseConfig();
-            dbConfig.setAllowCreate(true);
-            dbConfig.setExclusiveCreate(true);
-            database = env.openDatabase(null, NAME, dbConfig);
+			/* Create a new, transactional database environment */
+			final EnvironmentConfig config = new EnvironmentConfig();
+			config.setAllowCreate(true);
+			config.setLocking(false);
+			config.setCacheSize(1024 * 1024);
+			env = new Environment(place, config);
 
-            keyBinding = TupleBinding.getPrimitiveBinding(Long.class);
-            valueBinding = new NodePageContainerBinding();
+			/* Make a database within that environment */
+			final DatabaseConfig dbConfig = new DatabaseConfig();
+			dbConfig.setAllowCreate(true);
+			dbConfig.setExclusiveCreate(true);
+			database = env.openDatabase(null, NAME, dbConfig);
 
-        } catch (final DatabaseException exc) {
-            throw new TreetankIOException(exc);
+			keyBinding = TupleBinding.getPrimitiveBinding(Long.class);
+			valueBinding = new NodePageContainerBinding();
+			
+			//debug
+			LOGGER.debug(new StringBuilder(
+					"Creating new BerkeleyPersistenceCache with revision ")
+					.append(revision).append(" and DatabaseConfiguration ")
+					.append(sessionConfig.toString()).toString());
+			
 
-        }
-    }
+		} catch (final DatabaseException exc) {
+			LOGGER.error(exc.getMessage(), exc);
+			throw new TreetankIOException(exc);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void putPersistent(final long key, final NodePageContainer page)
-            throws TreetankIOException {
-        final DatabaseEntry valueEntry = new DatabaseEntry();
-        final DatabaseEntry keyEntry = new DatabaseEntry();
+		}
+	}
 
-        keyBinding.objectToEntry(key, keyEntry);
-        valueBinding.objectToEntry(page, valueEntry);
-        try {
-            database.put(null, keyEntry, valueEntry);
-        } catch (final DatabaseException exc) {
-            throw new TreetankIOException(exc);
-        }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void putPersistent(final long key, final NodePageContainer page)
+			throws TreetankIOException {
+		final DatabaseEntry valueEntry = new DatabaseEntry();
+		final DatabaseEntry keyEntry = new DatabaseEntry();
 
-    }
+		keyBinding.objectToEntry(key, keyEntry);
+		valueBinding.objectToEntry(page, valueEntry);
+		try {
+			database.put(null, keyEntry, valueEntry);
+			
+			//debug
+			LOGGER.debug(new StringBuilder(
+			"Put new BerkeleyPersistenceCache with key ")
+			.append(key).append(" and Node Page Continer ")
+			.append(page.toString()).toString());
+			
+		} catch (final DatabaseException exc) {
+			LOGGER.error(exc.getMessage(), exc);
+			throw new TreetankIOException(exc);
+		}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void clearPersistent() throws TreetankIOException {
-        try {
-            database.close();
-            env.removeDatabase(null, NAME);
-            env.close();
-        } catch (final DatabaseException exc) {
-            throw new TreetankIOException(exc);
-        }
-    }
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public NodePageContainer getPersistent(final long key)
-            throws TreetankIOException {
-        final DatabaseEntry valueEntry = new DatabaseEntry();
-        final DatabaseEntry keyEntry = new DatabaseEntry();
-        keyBinding.objectToEntry(key, keyEntry);
-        try {
-            final OperationStatus status = database.get(null, keyEntry,
-                    valueEntry, LockMode.DEFAULT);
-            NodePageContainer val = null;
-            if (status == OperationStatus.SUCCESS) {
-                val = valueBinding.entryToObject(valueEntry);
-            }
-            return val;
-        } catch (final DatabaseException exc) {
-            throw new TreetankIOException(exc);
-        }
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void clearPersistent() throws TreetankIOException {
+		try {
+			database.close();
+			env.removeDatabase(null, NAME);
+			env.close();
+			
+			//debug
+			LOGGER.debug(new StringBuilder(
+			"Clear BerkeleyPersistenceCache").toString());
+			
+		} catch (final DatabaseException exc) {
+			LOGGER.error(exc.getMessage(), exc);
+			throw new TreetankIOException(exc);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public NodePageContainer getPersistent(final long key)
+			throws TreetankIOException {
+		final DatabaseEntry valueEntry = new DatabaseEntry();
+		final DatabaseEntry keyEntry = new DatabaseEntry();
+		keyBinding.objectToEntry(key, keyEntry);
+		try {
+			final OperationStatus status = database.get(null, keyEntry,
+					valueEntry, LockMode.DEFAULT);
+			NodePageContainer val = null;
+			if (status == OperationStatus.SUCCESS) {
+				val = valueBinding.entryToObject(valueEntry);
+			}
+			
+			//debug
+			LOGGER.debug(new StringBuilder(
+			"Get BerkeleyPersistenceCache with key ")
+			.append(key).toString());
+			
+			return val;
+		} catch (final DatabaseException exc) {
+			LOGGER.error(exc.getMessage(), exc);
+			throw new TreetankIOException(exc);
+		}
+	}
 
 }

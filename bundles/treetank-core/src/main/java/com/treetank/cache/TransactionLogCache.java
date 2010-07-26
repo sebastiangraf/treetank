@@ -20,6 +20,9 @@ import com.treetank.access.DatabaseConfiguration;
 import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankIOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Transactionlog for storing all upcoming nodes in either the ram cache or a
  * persistent second cache.
@@ -28,6 +31,10 @@ import com.treetank.exception.TreetankIOException;
  * 
  */
 public final class TransactionLogCache extends AbstractPersistenceCache {
+	
+	/** Logger. */
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(TransactionLogCache.class);
 
     /**
      * RAM-Based first cache
@@ -47,6 +54,10 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
         final BerkeleyPersistenceCache secondCache = new BerkeleyPersistenceCache(
                 paramConfig, revision);
         firstCache = new LRUCache(secondCache);
+        
+      //debug
+		LOGGER.debug(new StringBuilder(
+				"Creating new Transaction Log Cache with Database Configuration ").append(paramConfig).append(" and Revision ").append(revision).toString());
     }
 
     /**
@@ -55,6 +66,10 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
     @Override
     public void clearPersistent() throws TreetankIOException {
         firstCache.clear();
+        
+     	//debug
+		LOGGER.debug(new StringBuilder(
+		"Celar Persistence").toString());
     }
 
     /**
@@ -63,6 +78,12 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
     @Override
     public NodePageContainer getPersistent(final long key)
             throws TreetankIOException {
+    	
+    	//debug
+		LOGGER.debug(new StringBuilder(
+		"Get Persistence with key ")
+		.append(key).toString());
+		
         return firstCache.get(key);
     }
 
@@ -73,6 +94,12 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
     public void putPersistent(final long key, final NodePageContainer page)
             throws TreetankIOException {
         firstCache.put(key, page);
+        
+      //debug
+		LOGGER.debug(new StringBuilder(
+		"Put Persistence with key ")
+		.append(key).append(" and Node Page Continer ")
+		.append(page.toString()).toString());
     }
 
 }

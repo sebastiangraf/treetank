@@ -18,6 +18,9 @@ package com.treetank.cache;
 
 import com.treetank.utils.FastWeakHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Simple RAM implementation with the help of a {@link FastWeakHashMap}.
  * 
@@ -26,6 +29,10 @@ import com.treetank.utils.FastWeakHashMap;
  */
 public final class RAMCache implements ICache {
 
+	/** Logger. */
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(RAMCache.class);
+	
     /**
      * local instance
      */
@@ -37,6 +44,10 @@ public final class RAMCache implements ICache {
     public RAMCache() {
         super();
         map = new FastWeakHashMap<Long, NodePageContainer>();
+        
+        //debug
+		LOGGER.debug(new StringBuilder(
+				"Creating new RAMCache").toString());
     }
 
     /**
@@ -44,13 +55,23 @@ public final class RAMCache implements ICache {
      */
     public void clear() {
         map.clear();
+        
+        //debug
+		LOGGER.debug(new StringBuilder(
+				"Clear RAMCache").toString());
     }
 
     /**
      * {@inheritDoc}
      */
     public NodePageContainer get(final long key) {
+    	//debug
+		LOGGER.debug(new StringBuilder(
+				"Get Node Page Container with ").append(key).toString());
+		
         return map.get(key);
+        
+        
     }
 
     /**
@@ -58,6 +79,10 @@ public final class RAMCache implements ICache {
      */
     public void put(final long key, final NodePageContainer page) {
         map.put(key, page);
+        
+        //debug
+		LOGGER.debug(new StringBuilder(
+				"Put Node Page Container with ").append(key).append(" ").append(page).toString());
     }
 
 }
