@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <profiles version="2">
-<profile kind="CleanUpProfile" name="CXF" version="2">
+<profile kind="CleanUpProfile" name="Disy" version="2">
 <setting id="cleanup.always_use_blocks" value="true"/>
 <setting id="cleanup.use_this_for_non_static_field_access_only_if_necessary" value="true"/>
 <setting id="cleanup.use_this_for_non_static_field_access" value="false"/>
