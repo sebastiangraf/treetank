@@ -1,3 +1,19 @@
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
+ * 
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * 
+ */
 package com.treetank.access;
 
 import java.io.File;
@@ -13,8 +29,8 @@ import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.EStoragePaths;
 
 /**
- * <h1>Database Configuration</h1> This class represents a configuration of a
- * database. This includes all
+ * <h1>Database Configuration</h1> class represents a configuration of a
+ * database. includes all
  * settings which have to be made when it comes to the creation of the database.
  * 
  * @author Sebastian Graf, University of Konstanz
@@ -22,78 +38,78 @@ import com.treetank.settings.EStoragePaths;
 public class DatabaseConfiguration {
 
     /** Absolute path to tnk directory. */
-    private final File       mFile;
+    private final File mFile;
 
     /** Props to hold all related data. */
     private final Properties mProps;
 
     /**
      * Constructor, just the location of either an existing or a new database.
-     *
-     * @param file
+     * 
+     * @param paramFile
      *            the path to the database
      * @throws TreetankException
      *             if the reading of the props is failing or properties are not
      *             valid
      */
-    public DatabaseConfiguration(final File file) throws TreetankException {
-        this(file, new File(file, EStoragePaths.DBSETTINGS.getFile().getName()));
+    public DatabaseConfiguration(final File paramFile) throws TreetankException {
+        this(paramFile, new File(paramFile, EStoragePaths.DBSETTINGS.getFile().getName()));
     }
 
     /**
      * Constructor with all possible properties.
      * 
-     * @param file
+     * @param paramFile
      *            the path to the database
-     * @param props
+     * @param paramProps
      *            properties to be set for setting
      * @throws TreetankUsageException
      *             if properties are not valid
      */
-    public DatabaseConfiguration(final File file, final Properties props)
+    public DatabaseConfiguration(final File paramFile, final Properties paramProps)
         throws TreetankUsageException {
-        mFile = file;
-        mProps = new Properties();
-        buildUpProperties(props);
+        mFile =
+            paramFile;
+        mProps =
+            new Properties();
+        buildUpProperties(paramProps);
 
     }
 
     /**
-     * Constructor with all possible properties stored in a file
+     * Constructor with all possible properties stored in a file.
      * 
-     * @param file
+     * @param paramFile
      *            the path to the database
-     * @param propFile
+     * @param paramProp
      *            properties to be set
      * @throws TreetankException
      *             if the reading of the props is failing or properties are not
      *             valid
      */
-    public DatabaseConfiguration(final File file, final File propFile)
-        throws TreetankException {
-        mFile = file;
-        mProps = new Properties();
-        final Properties loadProps = new Properties();
+    public DatabaseConfiguration(final File paramFile, final File paramProp) throws TreetankException {
+        mFile =
+            paramFile;
+        mProps =
+            new Properties();
+        final Properties loadProps =
+            new Properties();
 
         try {
-            if (!propFile.exists() || propFile.length() == 0) {
+            if (!paramProp.exists() || paramProp.length() == 0) {
                 buildUpProperties(mProps);
             } else {
-                loadProps.load(new FileInputStream(propFile));
+                loadProps.load(new FileInputStream(paramProp));
                 buildUpProperties(loadProps);
 
                 // Check if property file comes from external
-                if ((propFile.getName().equals(EStoragePaths.DBSETTINGS
-                                                   .getFile().getName()) && propFile
-                    .getParentFile().equals(file))
+                if ((paramProp.getName().equals(EStoragePaths.DBSETTINGS.getFile().getName()) && paramProp
+                    .getParentFile().equals(paramFile))
                     // and check if the loaded checksum is valid
-                    && !loadProps.getProperty(EDatabaseSetting.CHECKSUM.name())
-                        .equals(Integer.toString(this.hashCode()))) {
-                    throw new TreetankUsageException(
-                                                     "Checksums differ: Loaded",
-                                                     getProps().toString(),
-                                                     "and expected", this
-                                                         .toString());
+                    && !loadProps.getProperty(EDatabaseSetting.CHECKSUM.name()).equals(
+                        Integer.toString(hashCode()))) {
+                    throw new TreetankUsageException("Checksums differ: Loaded", getProps().toString(),
+                        "and expected", toString());
 
                 }
             }
@@ -111,18 +127,13 @@ public class DatabaseConfiguration {
      * @throws TreetankUsageException
      *             if wrong properties are into existing database
      */
-    private void buildUpProperties(final Properties props)
-        throws TreetankUsageException {
+    private void buildUpProperties(final Properties props) throws TreetankUsageException {
         for (final EDatabaseSetting enumProps : EDatabaseSetting.values()) {
             if (enumProps != EDatabaseSetting.CHECKSUM) {
                 if (props.containsKey(enumProps.name())) {
-                    this.getProps().setProperty(enumProps.name(),
-                                                props.getProperty(enumProps
-                                                    .name()));
+                    getProps().setProperty(enumProps.name(), props.getProperty(enumProps.name()));
                 } else {
-                    this.getProps()
-                        .setProperty(enumProps.name(),
-                                     enumProps.getStandardProperty());
+                    getProps().setProperty(enumProps.name(), enumProps.getStandardProperty());
                 }
             }
         }
@@ -130,12 +141,11 @@ public class DatabaseConfiguration {
     }
 
     /**
-     * Getter for the properties. The values are refered over
-     * {@link EDatabaseSetting}.
+     * Getter for the properties. The values are refered over {@link EDatabaseSetting}.
      * 
      * @return the properties
      */
-    public Properties getProps() {
+    public final Properties getProps() {
         return mProps;
     }
 
@@ -144,23 +154,22 @@ public class DatabaseConfiguration {
      * 
      * @return Path to tnk folder.
      */
-    public File getFile() {
+    public final File getFile() {
         return mFile;
     }
 
     /**
-     * Serializing the data
+     * Serializing the data.
+     * 
+     * @return test if serializing the properties was successful
      */
-    public boolean serialize() {
+    public final boolean serialize() {
         try {
-            final Integer hashCode = this.hashCode();
-            getProps().setProperty(EDatabaseSetting.CHECKSUM.name(),
-                                   Integer.toString(hashCode));
-            getProps()
-                .store(new FileOutputStream(new File(mFile,
-                                                     EStoragePaths.DBSETTINGS
-                                                         .getFile().getName())),
-                       "");
+            final Integer hashCode =
+                hashCode();
+            getProps().setProperty(EDatabaseSetting.CHECKSUM.name(), Integer.toString(hashCode));
+            getProps().store(
+                new FileOutputStream(new File(mFile, EStoragePaths.DBSETTINGS.getFile().getName())), "");
         } catch (final IOException exc) {
             return false;
         }
@@ -171,7 +180,7 @@ public class DatabaseConfiguration {
      * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return mProps.hashCode();
     }
 
@@ -179,8 +188,8 @@ public class DatabaseConfiguration {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(final Object obj) {
-        return mProps.equals(obj);
+    public final boolean equals(final Object paramObj) {
+        return mProps.equals(paramObj);
     }
 
 }
