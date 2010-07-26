@@ -48,7 +48,6 @@
                             <configuration>
                                 <source>${compileSource}</source>
                                 <target>${compileSource}</target>
-                                <maxmem>256M</maxmem>
                             </configuration>
                         </plugin>
                     </plugins>
@@ -69,7 +68,7 @@
                         </executions>
                         <configuration>
                             <workspace>${eclipse.workspace.dir}</workspace>
-                            <workspaceCodeStylesURL>file:etc/eclipse/CXFCodeFormatter.xml</workspaceCodeStylesURL>
+                            <workspaceCodeStylesURL>file:etc/eclipse/DisyCodeFormatter.xml</workspaceCodeStylesURL>
                         </configuration>
                     </plugin>
                     <plugin>
@@ -148,11 +147,11 @@
 
 
                                         <!-- Add code format rules -->
-                                        <loadfile property="eclipse.code.cleanup" srcFile="${basedir}/etc/eclipse/CXFCleanUp.xml" />
+                                        <loadfile property="eclipse.code.cleanup" srcFile="${basedir}/etc/eclipse/DisyCleanUp.xml" />
                                         <loadfile property="eclipse.code.templates" srcFile="${basedir}/etc/eclipse/codetemplates.xml" />
                                         <loadfile property="eclipse.xml.templates" srcFile="${basedir}/etc/eclipse/xmltemplates.xml" />
                                         <propertyfile file="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.ui.prefs">
-                                            <entry key="cleanup_profile" value="_CXF" />
+                                            <entry key="cleanup_profile" value="_Disy" />
                                             <entry key="org.eclipse.jdt.ui.cleanupprofiles" value="${eclipse.code.cleanup}" />
                                             <entry key="org.eclipse.jdt.ui.text.custom_code_templates" value="${eclipse.code.templates}" />
 
