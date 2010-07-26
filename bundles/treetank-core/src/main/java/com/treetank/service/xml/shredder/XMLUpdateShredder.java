@@ -134,7 +134,7 @@ public final class XMLUpdateShredder extends XMLShredder
   private static long keyMatches;
 
   /** Maximum node key in revision. */
-  private static long maxNodeKey;
+  private transient final long maxNodeKey;
 
   /** Determines if it's the last node or not. */
   private static boolean isLastNode;
@@ -272,7 +272,7 @@ public final class XMLUpdateShredder extends XMLShredder
               if (found && isRightSibling) {
                 deleteNodes();
               } else if (!found) {
-                insertTextNodes(event, text);
+                insertTextNodes(event);
               } else if (found) {
                 sameNodes();
               }
@@ -311,7 +311,7 @@ public final class XMLUpdateShredder extends XMLShredder
                    */
                   if (insertAtTop) {
                     moveUp = false;
-                    checkRightSibling(leftSiblingKeyStack, false, insertAtTop);
+                    checkRightSibling(leftSiblingKeyStack, false);
                   } else if (insertLevel == 0 || moveUp) {
                     /*
                      * Check if move to element before any
@@ -332,36 +332,9 @@ public final class XMLUpdateShredder extends XMLShredder
                       final long keyInShreddered = mWtx.getNode().getNodeKey();
                       leftSiblingKeyStack.pop();
 
-                      if (!leftSiblingKeyStack.empty()) {
-                        mWtx.moveTo(leftSiblingKeyStack.peek());
-                        boolean foundNode = false;
-                        switch (xmlEvent.getEventType()) {
-                        case XMLStreamConstants.CHARACTERS:
-                          final String data =
-                              ((Characters) xmlEvent).getData().trim();
-
-                          if (!data.isEmpty()
-                              && mWtx.getNode().getKind() == ENodes.TEXT_KIND
-                              && mWtx.getValueOfCurrentNode().equals(data)) {
-                            foundNode = true;
-                          } else {
-                            mWtx.moveTo(keyInShreddered);
-                            leftSiblingKeyStack.push(keyOnStack);
-                          }
-                          break;
-                        case XMLStreamConstants.START_ELEMENT:
-                          foundNode = checkElement((StartElement) xmlEvent);
-                          if (!foundNode) {
-                            mWtx.moveTo(keyInShreddered);
-                            leftSiblingKeyStack.push(keyOnStack);
-                          }
-                          break;
-                        }
-                      } else {
-                        // Stack is empty, so the
-                        // node(s) was/were inserted
-                        // somewhere at the top of the
-                        // XML file.
+                      if (leftSiblingKeyStack.empty()) {
+                        // Stack is empty, so the node(s) was/were inserted
+                        // somewhere at the top of the XML file.
                         /*
                          * Check if right sibling after
                          * an insert equals next event.
@@ -385,6 +358,34 @@ public final class XMLUpdateShredder extends XMLShredder
                         }
 
                         leftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
+                      } else {
+                        // Stack is not empty.
+                        mWtx.moveTo(leftSiblingKeyStack.peek());
+                        boolean foundNode = false;
+                        switch (xmlEvent.getEventType()) {
+                        case XMLStreamConstants.CHARACTERS:
+                          final String data =
+                              ((Characters) xmlEvent).getData().trim();
+
+                          if (!data.isEmpty()
+                              && mWtx.getNode().getKind() == ENodes.TEXT_KIND
+                              && mWtx.getValueOfCurrentNode().equals(data)) {
+                            foundNode = true;
+                          } else {
+                            mWtx.moveTo(keyInShreddered);
+                            leftSiblingKeyStack.push(keyOnStack);
+                          }
+                          break;
+                        case XMLStreamConstants.START_ELEMENT:
+                          foundNode = checkElement((StartElement) xmlEvent);
+                          if (!foundNode) {
+                            mWtx.moveTo(keyInShreddered);
+                            leftSiblingKeyStack.push(keyOnStack);
+                          }
+                          break;
+                        default:
+                          // Do nothing.
+                        }
                       }
                     }
                   }
@@ -411,7 +412,7 @@ public final class XMLUpdateShredder extends XMLShredder
             event = mReader.nextEvent();
 
             if (event.getEventType() == XMLStreamConstants.END_ELEMENT
-                && rootElem.equals(((EndElement) event).equals(rootElem))
+                && rootElem.equals(((EndElement) event).getName())
                 && levelInToShredder == 0) {
               // End with shredding if end_elem equals root-elem.
               break;
@@ -535,15 +536,13 @@ public final class XMLUpdateShredder extends XMLShredder
    * 
    * @param event
    *            XMLStream event from the StAX parser.
-   * @param text
-   *            Text string.
    * @throws TreetankException
    *             In case of any error while inserting the node.
    * @throws XMLStreamException
    *             If StAX failes to parse some XML fragment.
    * 
    */
-  private void insertTextNodes(final XMLEvent event, final String text)
+  private void insertTextNodes(final XMLEvent event)
       throws TreetankException,
       XMLStreamException {
     insert = true;
@@ -589,7 +588,7 @@ public final class XMLUpdateShredder extends XMLShredder
      * update stack.
      */
     if (((AbsStructNode) mWtx.getNode()).hasRightSibling()) {
-      checkRightSibling(leftSiblingKeyStack, true, insertAtTop);
+      checkRightSibling(leftSiblingKeyStack, true);
     }
 
     if (insertAtTop) {
@@ -805,7 +804,7 @@ public final class XMLUpdateShredder extends XMLShredder
    *            StAX event.
    * @return true if they match, otherwise false.
    */
-  private boolean checkText(Characters event) {
+  private boolean checkText(final Characters event) {
     final String text = event.getData().trim();
     return mWtx.getNode().getKind() == ENodes.TEXT_KIND
         && mWtx.getValueOfCurrentNode().equals(text);
@@ -898,13 +897,14 @@ public final class XMLUpdateShredder extends XMLShredder
    * 
    * @param leftSiblingKeyStack
    *            The Stack which has to be modified.
+   * @param text
+   *            Determines if a text node has been inserted.
    * @throws XMLStreamException
-   *             In case the xml parser encounters an error.
+   *            In case the xml parser encounters an error.
    */
   private boolean checkRightSibling(
       final FastStack<Long> leftSiblingKeyStack,
-      final boolean text,
-      final boolean insertAtTop) throws XMLStreamException {
+      final boolean text) throws XMLStreamException {
     boolean retVal = false;
     mWtx.moveToRightSibling();
     final XMLEvent xmlEvent = skipWhitespaces();
@@ -1130,6 +1130,8 @@ public final class XMLUpdateShredder extends XMLShredder
           stack.pop();
           mWtx.moveTo(stack.peek());
           break;
+        default:
+          // Do nothing.
         }
         checkDescendants(levelInToShredder, elem, stack, false);
       }
@@ -1151,7 +1153,7 @@ public final class XMLUpdateShredder extends XMLShredder
    * @return True if start elements match.
    * @throws XMLStreamException
    */
-  private final boolean checkStAXElement(
+  private boolean checkStAXElement(
       final StartElement startTag,
       final StartElement elem) throws XMLStreamException {
     boolean retVal = false;
@@ -1222,7 +1224,7 @@ public final class XMLUpdateShredder extends XMLShredder
    *            StartElement event, from the XML file to shredder.
    * @return true if they are equal, false otherwise.
    */
-  private final boolean checkElement(final StartElement event) {
+  private boolean checkElement(final StartElement event) {
     boolean retVal = false;
     final long nodeKey = mWtx.getNode().getNodeKey();
 
@@ -1234,7 +1236,7 @@ public final class XMLUpdateShredder extends XMLShredder
       // Check attributes.
       boolean foundAtts = false;
       boolean hasAtts = false;
-      for (Iterator<?> it = event.getAttributes(); it.hasNext();) {
+      for (final Iterator<?> it = event.getAttributes(); it.hasNext();) {
         hasAtts = true;
         final Attribute attribute = (Attribute) it.next();
         for (int i = 0, attCount =
@@ -1260,7 +1262,7 @@ public final class XMLUpdateShredder extends XMLShredder
       // Check namespaces.
       boolean foundNamesps = false;
       boolean hasNamesps = false;
-      for (Iterator<?> namespIt = event.getNamespaces(); namespIt.hasNext();) {
+      for (final Iterator<?> namespIt = event.getNamespaces(); namespIt.hasNext();) {
         hasNamesps = true;
         final Namespace namespace = (Namespace) namespIt.next();
         for (int i = 0, namespCount =
@@ -1309,7 +1311,7 @@ public final class XMLUpdateShredder extends XMLShredder
     }
 
     System.out.print("Shredding '" + args[0] + "' to '" + args[1] + "' ... ");
-    long time = System.currentTimeMillis();
+    final long time = System.currentTimeMillis();
     final File target = new File(args[1]);
 
     try {

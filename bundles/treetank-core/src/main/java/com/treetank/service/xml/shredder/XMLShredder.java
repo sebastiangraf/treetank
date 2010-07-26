@@ -64,253 +64,254 @@ import com.treetank.utils.TypedValue;
  */
 public class XMLShredder implements Callable<Long> {
 
-    /** {@link IWriteTransaction} */
-    protected final IWriteTransaction mWtx;
+  /** {@link IWriteTransaction} */
+  protected transient final IWriteTransaction mWtx;
 
-    /** {@link XMLEventReader} */
-    protected final XMLEventReader mReader;
+  /** {@link XMLEventReader} */
+  protected transient final XMLEventReader mReader;
 
-    /** Append as first child or not. */
-    private final boolean mFirstChildAppend;
+  /** Append as first child or not. */
+  private transient final boolean mFirstChildAppend;
 
-    /** File to shredder. */
-    protected static File mFile;
+  /** File to shredder. */
+  protected static File mFile;
 
-    /** StAX parser used to check descendants. */
-    protected static XMLEventReader mParser;
+  /** StAX parser used to check descendants. */
+  protected static XMLEventReader mParser;
 
-    /**
-     * Normal constructor to invoke a shredding process on a existing
-     * {@link WriteTransaction}
-     * 
-     * @param wtx
-     *            where the new XML Fragment should be placed
-     * @param reader
-     *            of the XML Fragment
-     * @param addAsFirstChild
-     *            if the insert is occuring on a node in an existing tree.
-     *            <code>false</code> is not possible when wtx is on root node.
-     * @throws TreetankUsageException
-     *             if insertasfirstChild && updateOnly is both true OR if wtx is
-     *             not pointing to doc-root and updateOnly= true
-     */
-    public XMLShredder(final IWriteTransaction wtx,
-            final XMLEventReader reader, final boolean addAsFirstChild)
-            throws TreetankUsageException {
-        mWtx = wtx;
-        mReader = reader;
-        mFirstChildAppend = addAsFirstChild;
+  /**
+   * Normal constructor to invoke a shredding process on a existing
+   * {@link WriteTransaction}
+   * 
+   * @param wtx
+   *            where the new XML Fragment should be placed
+   * @param reader
+   *            of the XML Fragment
+   * @param addAsFirstChild
+   *            if the insert is occuring on a node in an existing tree.
+   *            <code>false</code> is not possible when wtx is on root node.
+   * @throws TreetankUsageException
+   *             if insertasfirstChild && updateOnly is both true OR if wtx is
+   *             not pointing to doc-root and updateOnly= true
+   */
+  public XMLShredder(
+      final IWriteTransaction wtx,
+      final XMLEventReader reader,
+      final boolean addAsFirstChild) throws TreetankUsageException {
+    mWtx = wtx;
+    mReader = reader;
+    mFirstChildAppend = addAsFirstChild;
+  }
+
+  /**
+   * Invoking the shredder.
+   */
+  public Long call() throws Exception {
+    final long revision = mWtx.getRevisionNumber();
+    insertNewContent();
+    mWtx.commit();
+    return revision;
+  }
+
+  /**
+   * Insert new content.
+   * 
+   * @throws TreetankException
+   */
+  protected final void insertNewContent() throws TreetankException {
+    try {
+
+      FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
+
+      leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
+          .getStandardProperty());
+      boolean firstElement = true;
+
+      // Iterate over all nodes.
+      while (mReader.hasNext()) {
+        final XMLEvent event = mReader.nextEvent();
+        switch (event.getEventType()) {
+        case XMLStreamConstants.START_ELEMENT:
+          leftSiblingKeyStack =
+              addNewElement(
+                  firstElement,
+                  leftSiblingKeyStack,
+                  (StartElement) event);
+          firstElement = false;
+          break;
+
+        case XMLStreamConstants.END_ELEMENT:
+          leftSiblingKeyStack.pop();
+          mWtx.moveTo(leftSiblingKeyStack.peek());
+          break;
+
+        case XMLStreamConstants.CHARACTERS:
+          leftSiblingKeyStack =
+              addNewText(leftSiblingKeyStack, (Characters) event);
+          break;
+        default:
+          // Node kind not known.
+        }
+      }
+    } catch (final XMLStreamException exc1) {
+      throw new TreetankIOException(exc1);
+    }
+  }
+
+  /**
+   * Add a new element node.
+   * 
+   * @param firstElement
+   *            Is it the first element?
+   * @param leftSiblingKeyStack
+   *            Stack used to determine if the new element has to be inserted
+   *            as a right sibling or as a new child (in the latter case is
+   *            NULL on top of the stack).
+   * @param event
+   *            The current event from the StAX parser.
+   * @return the modified stack.
+   * @throws TreetankException
+   *             In case anything went wrong.
+   */
+  protected final FastStack<Long> addNewElement(
+      final boolean firstElement,
+      final FastStack<Long> leftSiblingKeyStack,
+      final StartElement event) throws TreetankException {
+    long key;
+
+    final QName name = event.getName();
+
+    if (firstElement && !mFirstChildAppend) {
+      if (mWtx.getNode().getKind() == ENodes.ROOT_KIND) {
+        throw new TreetankUsageException(
+            "Subtree can not be inserted as sibling of Root");
+      }
+      key = mWtx.insertElementAsRightSibling(name);
+    } else {
+
+      if (leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
+          .getStandardProperty()) {
+        key = mWtx.insertElementAsFirstChild(name);
+      } else {
+        key = mWtx.insertElementAsRightSibling(name);
+      }
     }
 
-    /**
-     * Invoking the shredder.
-     */
-    public Long call() throws Exception {
-        final long revision = mWtx.getRevisionNumber();
-        insertNewContent();
-        mWtx.commit();
-        return revision;
+    leftSiblingKeyStack.pop();
+    leftSiblingKeyStack.push(key);
+    leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY.getStandardProperty());
+
+    // Parse namespaces.
+    for (final Iterator<?> it = event.getNamespaces(); it.hasNext();) {
+      final Namespace namespace = (Namespace) it.next();
+      mWtx.insertNamespace(namespace.getNamespaceURI(), namespace.getPrefix());
+      mWtx.moveTo(key);
     }
 
-    /**
-     * Insert new content.
-     * 
-     * @throws TreetankException
-     */
-    protected final void insertNewContent() throws TreetankException {
-        try {
+    // Parse attributes.
+    for (final Iterator<?> it = event.getAttributes(); it.hasNext();) {
+      final Attribute attribute = (Attribute) it.next();
+      mWtx.insertAttribute(attribute.getName(), attribute.getValue());
+      mWtx.moveTo(key);
+    }
+    return leftSiblingKeyStack;
+  }
 
-            FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
+  /**
+   * Add a new text node.
+   * 
+   * @param leftSiblingKeyStack
+   *            Stack used to determine if the new element has to be inserted
+   *            as a right sibling or as a new child (in the latter case is
+   *            NULL on top of the stack).
+   * @param event
+   *            The current event from the StAX parser.
+   * @return the modified stack.
+   * @throws TreetankException
+   *             In case anything went wrong.
+   */
+  protected final FastStack<Long> addNewText(
+      final FastStack<Long> leftSiblingKeyStack,
+      final Characters event) throws TreetankException {
+    final String text = event.getData().trim();
+    long key;
+    final ByteBuffer textByteBuffer =
+        ByteBuffer.wrap(TypedValue.getBytes(text));
+    if (textByteBuffer.array().length > 0) {
 
-            leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
-                    .getStandardProperty());
-            boolean firstElement = true;
+      if (leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
+          .getStandardProperty()) {
+        key = mWtx.insertTextAsFirstChild(new String(textByteBuffer.array()));
+      } else {
+        key = mWtx.insertTextAsRightSibling(new String(textByteBuffer.array()));
+      }
 
-            // Iterate over all nodes.
-            while (mReader.hasNext()) {
+      leftSiblingKeyStack.pop();
+      leftSiblingKeyStack.push(key);
 
-                final XMLEvent event = mReader.nextEvent();
-                switch (event.getEventType()) {
+    }
+    return leftSiblingKeyStack;
+  }
 
-                case XMLStreamConstants.START_ELEMENT:
-                    leftSiblingKeyStack = addNewElement(firstElement,
-                            leftSiblingKeyStack, (StartElement) event);
-                    firstElement = false;
-                    break;
-
-                case XMLStreamConstants.END_ELEMENT:
-                    leftSiblingKeyStack.pop();
-                    mWtx.moveTo(leftSiblingKeyStack.peek());
-                    break;
-
-                case XMLStreamConstants.CHARACTERS:
-                    leftSiblingKeyStack = addNewText(leftSiblingKeyStack,
-                            (Characters) event);
-                    break;
-                }
-            }
-        } catch (final XMLStreamException exc1) {
-            throw new TreetankIOException(exc1);
-        }
+  /**
+   * Main method.
+   * 
+   * @param args
+   *            Input and output files.
+   * @throws Exception
+   *             In case of any exception.
+   */
+  public static void main(String... args) throws Exception {
+    if (args.length != 2) {
+      System.out.println("Usage: XMLShredder input.xml output.tnk");
+      System.exit(1);
     }
 
-    /**
-     * Add a new element node.
-     * 
-     * @param firstElement
-     *            Is it the first element?
-     * @param leftSiblingKeyStack
-     *            Stack used to determine if the new element has to be inserted
-     *            as a right sibling or as a new child (in the latter case is
-     *            NULL on top of the stack).
-     * @param event
-     *            The current event from the StAX parser.
-     * @return the modified stack.
-     * @throws TreetankException
-     *             In case anything went wrong.
-     */
-    protected final FastStack<Long> addNewElement(final boolean firstElement,
-            final FastStack<Long> leftSiblingKeyStack, final StartElement event)
-            throws TreetankException {
-        long key;
+    System.out.print("Shredding '" + args[0] + "' to '" + args[1] + "' ... ");
+    final long time = System.currentTimeMillis();
+    final File target = new File(args[1]);
+    Database.truncateDatabase(target);
+    Database.createDatabase(new DatabaseConfiguration(target));
+    final IDatabase db = Database.openDatabase(target);
+    final ISession session = db.getSession();
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+    mFile = new File(args[0]);
+    final XMLEventReader reader = createReader(null);
+    final XMLShredder shredder = new XMLShredder(wtx, reader, true);
+    shredder.call();
 
-        final QName name = event.getName();
+    wtx.close();
+    session.close();
+    db.close();
 
-        if (firstElement && !mFirstChildAppend) {
-            if (mWtx.getNode().getKind() == ENodes.ROOT_KIND) {
-                throw new TreetankUsageException(
-                        "Subtree can not be inserted as sibling of Root");
-            }
-            key = mWtx.insertElementAsRightSibling(name);
-        } else {
+    System.out
+        .println(" done [" + (System.currentTimeMillis() - time) + "ms].");
+  }
 
-            if (leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
-                    .getStandardProperty()) {
-                key = mWtx.insertElementAsFirstChild(name);
-            } else {
-                key = mWtx.insertElementAsRightSibling(name);
-            }
-        }
-
-        leftSiblingKeyStack.pop();
-        leftSiblingKeyStack.push(key);
-        leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
-                .getStandardProperty());
-
-        // Parse namespaces.
-        for (Iterator<?> it = event.getNamespaces(); it.hasNext();) {
-            final Namespace namespace = (Namespace) it.next();
-            mWtx.insertNamespace(namespace.getNamespaceURI(),
-                    namespace.getPrefix());
-            mWtx.moveTo(key);
-        }
-
-        // Parse attributes.
-        for (Iterator<?> it = event.getAttributes(); it.hasNext();) {
-            final Attribute attribute = (Attribute) it.next();
-            mWtx.insertAttribute(attribute.getName(), attribute.getValue());
-            mWtx.moveTo(key);
-        }
-        return leftSiblingKeyStack;
+  /**
+   * Create a StAX reader.
+   * 
+   * @param file
+   *            File to shredder.
+   * @return an XMLEventReader.
+   * @throws IOException
+   *             In case of any I/O error.
+   * @throws XMLStreamException
+   *             In case of any XML parser error.
+   */
+  public static synchronized XMLEventReader createReader(final File file)
+      throws IOException,
+      XMLStreamException {
+    InputStream in;
+    if (file == null) {
+      in = new FileInputStream(mFile);
+    } else {
+      mFile = file;
+      in = new FileInputStream(file);
     }
-
-    /**
-     * Add a new text node.
-     * 
-     * @param leftSiblingKeyStack
-     *            Stack used to determine if the new element has to be inserted
-     *            as a right sibling or as a new child (in the latter case is
-     *            NULL on top of the stack).
-     * @param event
-     *            The current event from the StAX parser.
-     * @return the modified stack.
-     * @throws TreetankException
-     *             In case anything went wrong.
-     */
-    protected final FastStack<Long> addNewText(
-            final FastStack<Long> leftSiblingKeyStack, final Characters event)
-            throws TreetankException {
-        final String text = event.getData().trim();
-        long key;
-        final ByteBuffer textByteBuffer = ByteBuffer.wrap(TypedValue
-                .getBytes(text));
-        if (textByteBuffer.array().length > 0) {
-
-            if (leftSiblingKeyStack.peek() == (Long) EFixed.NULL_NODE_KEY
-                    .getStandardProperty()) {
-                key = mWtx.insertTextAsFirstChild(new String(textByteBuffer
-                        .array()));
-            } else {
-                key = mWtx.insertTextAsRightSibling(new String(textByteBuffer
-                        .array()));
-            }
-
-            leftSiblingKeyStack.pop();
-            leftSiblingKeyStack.push(key);
-
-        }
-        return leftSiblingKeyStack;
-    }
-
-    /**
-     * Main method.
-     * 
-     * @param args
-     *            Input and output files.
-     * @throws Exception
-     *             In case of any exception.
-     */
-    public static void main(String... args) throws Exception {
-        if (args.length != 2) {
-            System.out.println("Usage: XMLShredder input.xml output.tnk");
-            System.exit(1);
-        }
-
-        System.out.print("Shredding '" + args[0] + "' to '" + args[1]
-                + "' ... ");
-        long time = System.currentTimeMillis();
-        final File target = new File(args[1]);
-        Database.truncateDatabase(target);
-        Database.createDatabase(new DatabaseConfiguration(target));
-        final IDatabase db = Database.openDatabase(target);
-        final ISession session = db.getSession();
-        final IWriteTransaction wtx = session.beginWriteTransaction();
-        mFile = new File(args[0]);
-        final XMLEventReader reader = createReader(null);
-        final XMLShredder shredder = new XMLShredder(wtx, reader, true);
-        shredder.call();
-
-        wtx.close();
-        session.close();
-        db.close();
-
-        System.out.println(" done [" + (System.currentTimeMillis() - time)
-                + "ms].");
-    }
-
-    /**
-     * Create a StAX reader.
-     * 
-     * @param file
-     *            File to shredder.
-     * @return an XMLEventReader.
-     * @throws IOException
-     *             In case of any I/O error.
-     * @throws XMLStreamException
-     *             In case of any XML parser error.
-     */
-    public static XMLEventReader createReader(final File file)
-            throws IOException, XMLStreamException {
-        InputStream in;
-        if (file == null) {
-            in = new FileInputStream(mFile);
-        } else {
-            mFile = file;
-            in = new FileInputStream(file);
-        }
-        final XMLInputFactory factory = XMLInputFactory.newInstance();
-        factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
-        final XMLEventReader parser = factory.createXMLEventReader(in);
-        return parser;
-    }
+    final XMLInputFactory factory = XMLInputFactory.newInstance();
+    factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+    final XMLEventReader parser = factory.createXMLEventReader(in);
+    return parser;
+  }
 }
