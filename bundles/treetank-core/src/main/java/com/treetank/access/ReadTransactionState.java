@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -13,9 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: ReadTransactionState.java 4424 2008-08-28 09:15:01Z kramis $
  */
-
 package com.treetank.access;
 
 import java.util.ArrayList;
@@ -46,9 +44,9 @@ import com.treetank.utils.IConstants;
  * <h1>ReadTransactionState</h1>
  * 
  * <p>
- * State of a reading transaction. The only thing shared amongst transactions is
- * the page cache. Everything else is exclusive to this transaction. It is
- * required that only a single thread has access to this transaction.
+ * State of a reading transaction. The only thing shared amongst transactions is the page cache. Everything
+ * else is exclusive to this transaction. It is required that only a single thread has access to this
+ * transaction.
  * </p>
  * 
  * <p>
@@ -93,18 +91,22 @@ public class ReadTransactionState {
      * @throws TreetankIOException
      *             if the read of the persistent storage fails
      */
-    protected ReadTransactionState(
-            final DatabaseConfiguration databaseConfiguration,
-            final UberPage uberPage, final long revision,
-            final IItemList itemList, final IReader reader)
-            throws TreetankIOException {
-        mCache = new RAMCache();
-        mDatabaseConfiguration = databaseConfiguration;
-        mPageReader = reader;
-        mUberPage = uberPage;
-        mRootPage = loadRevRoot(revision);
+    protected ReadTransactionState(final DatabaseConfiguration databaseConfiguration,
+        final UberPage uberPage, final long revision, final IItemList itemList, final IReader reader)
+        throws TreetankIOException {
+        mCache =
+            new RAMCache();
+        mDatabaseConfiguration =
+            databaseConfiguration;
+        mPageReader =
+            reader;
+        mUberPage =
+            uberPage;
+        mRootPage =
+            loadRevRoot(revision);
         initializeNamePage();
-        mItemList = itemList;
+        mItemList =
+            itemList;
 
     }
 
@@ -125,29 +127,35 @@ public class ReadTransactionState {
         }
 
         // Calculate page and node part for given nodeKey.
-        final long nodePageKey = nodePageKey(nodeKey);
-        final int nodePageOffset = nodePageOffset(nodeKey);
+        final long nodePageKey =
+            nodePageKey(nodeKey);
+        final int nodePageOffset =
+            nodePageOffset(nodeKey);
 
-        NodePageContainer cont = mCache.get(nodePageKey);
+        NodePageContainer cont =
+            mCache.get(nodePageKey);
 
         if (cont == null) {
-            final NodePage[] revs = getSnapshotPages(nodePageKey);
+            final NodePage[] revs =
+                getSnapshotPages(nodePageKey);
 
-            final int mileStoneRevision = Integer
-                    .parseInt(mDatabaseConfiguration.getProps().getProperty(
-                            EDatabaseSetting.REVISION_TO_RESTORE.name()));
+            final int mileStoneRevision =
+                Integer.parseInt(mDatabaseConfiguration.getProps().getProperty(
+                    EDatabaseSetting.REVISION_TO_RESTORE.name()));
 
             // Build up the complete page.
-            final ERevisioning revision = ERevisioning
-                    .valueOf(mDatabaseConfiguration.getProps().getProperty(
-                            EDatabaseSetting.REVISION_TYPE.name()));
-            final NodePage completePage = revision.combinePages(revs,
-                    mileStoneRevision);
-            cont = new NodePageContainer(completePage);
+            final ERevisioning revision =
+                ERevisioning.valueOf(mDatabaseConfiguration.getProps().getProperty(
+                    EDatabaseSetting.REVISION_TYPE.name()));
+            final NodePage completePage =
+                revision.combinePages(revs, mileStoneRevision);
+            cont =
+                new NodePageContainer(completePage);
             mCache.put(nodePageKey, cont);
         }
         // If nodePage is a weak one, the moveto is not cached
-        final IItem returnVal = cont.getComplete().getNode(nodePageOffset);
+        final IItem returnVal =
+            cont.getComplete().getNode(nodePageOffset);
         return checkItemIfDeleted(returnVal);
     }
 
@@ -175,8 +183,7 @@ public class ReadTransactionState {
      */
     protected String getName(final int nameKey) {
 
-        return ((NamePage) mRootPage.getNamePageReference().getPage())
-                .getName(nameKey);
+        return ((NamePage)mRootPage.getNamePageReference().getPage()).getName(nameKey);
 
     }
 
@@ -188,8 +195,7 @@ public class ReadTransactionState {
      * @return a byte array containing the raw name
      */
     protected final byte[] getRawName(final int nameKey) {
-        return ((NamePage) mRootPage.getNamePageReference().getPage())
-                .getRawName(nameKey);
+        return ((NamePage)mRootPage.getNamePageReference().getPage()).getRawName(nameKey);
 
     }
 
@@ -212,20 +218,21 @@ public class ReadTransactionState {
      *            Key of revision to find revision root page for.
      * @return Revision root page of this revision key.
      */
-    protected final RevisionRootPage loadRevRoot(final long revisionKey)
-            throws TreetankIOException {
+    protected final RevisionRootPage loadRevRoot(final long revisionKey) throws TreetankIOException {
 
-        final PageReference ref = dereferenceLeafOfTree(
-                mUberPage.getIndirectPageReference(), revisionKey);
+        final PageReference ref =
+            dereferenceLeafOfTree(mUberPage.getIndirectPageReference(), revisionKey);
         if (ref.getPage() == null && ref.getKey() == null) {
             throw new TreetankIOException(
-                    "Revision will not be loaded since neither the key nor the page is referencable.");
+                "Revision will not be loaded since neither the key nor the page is referencable.");
         }
-        RevisionRootPage page = (RevisionRootPage) ref.getPage();
+        RevisionRootPage page =
+            (RevisionRootPage)ref.getPage();
 
         // If there is no page, get it from the storage and cache it.
         if (page == null) {
-            page = (RevisionRootPage) mPageReader.read(ref);
+            page =
+                (RevisionRootPage)mPageReader.read(ref);
         }
 
         // Get revision root page which is the leaf of the indirect tree.
@@ -233,9 +240,10 @@ public class ReadTransactionState {
     }
 
     protected final void initializeNamePage() throws TreetankIOException {
-        final PageReference ref = mRootPage.getNamePageReference();
+        final PageReference ref =
+            mRootPage.getNamePageReference();
         if (ref.getPage() == null) {
-            ref.setPage((NamePage) mPageReader.read(ref));
+            ref.setPage((NamePage)mPageReader.read(ref));
         }
     }
 
@@ -253,8 +261,7 @@ public class ReadTransactionState {
         if (mItemList != null) {
             return mItemList;
         } else {
-            throw new IllegalStateException(
-                    "No ItemList for transaction found.");
+            throw new IllegalStateException("No ItemList for transaction found.");
         }
 
     }
@@ -268,27 +275,27 @@ public class ReadTransactionState {
      *            Key of node page.
      * @return Dereferenced page.
      */
-    protected final NodePage[] getSnapshotPages(final long nodePageKey)
-            throws TreetankIOException {
+    protected final NodePage[] getSnapshotPages(final long nodePageKey) throws TreetankIOException {
 
         // ..and get all leaves of nodepages from the revision-trees.
-        final List<PageReference> refs = new ArrayList<PageReference>();
-        final Set<Long> keys = new HashSet<Long>();
+        final List<PageReference> refs =
+            new ArrayList<PageReference>();
+        final Set<Long> keys =
+            new HashSet<Long>();
 
-        for (long i = mRootPage.getRevision(); i >= 0; i--) {
-            final PageReference ref = dereferenceLeafOfTree(loadRevRoot(i)
-                    .getIndirectPageReference(), nodePageKey);
+        for (long i =
+            mRootPage.getRevision(); i >= 0; i--) {
+            final PageReference ref =
+                dereferenceLeafOfTree(loadRevRoot(i).getIndirectPageReference(), nodePageKey);
             if (ref != null && (ref.getPage() != null || ref.getKey() != null)) {
-                if (ref.getKey() == null
-                        || (!keys.contains(ref.getKey().getIdentifier()))) {
+                if (ref.getKey() == null || (!keys.contains(ref.getKey().getIdentifier()))) {
                     refs.add(ref);
                     if (ref.getKey() != null) {
                         keys.add(ref.getKey().getIdentifier());
                     }
                 }
-                if (refs.size() == Integer.parseInt(mDatabaseConfiguration
-                        .getProps().getProperty(
-                                EDatabaseSetting.REVISION_TO_RESTORE.name()))) {
+                if (refs.size() == Integer.parseInt(mDatabaseConfiguration.getProps().getProperty(
+                    EDatabaseSetting.REVISION_TO_RESTORE.name()))) {
                     break;
                 }
 
@@ -298,12 +305,17 @@ public class ReadTransactionState {
         }
 
         // Afterwards read the nodepages if they are not dereferences...
-        final NodePage[] pages = new NodePage[refs.size()];
-        for (int i = 0; i < pages.length; i++) {
-            final PageReference rev = refs.get(i);
-            pages[i] = (NodePage) rev.getPage();
+        final NodePage[] pages =
+            new NodePage[refs.size()];
+        for (int i =
+            0; i < pages.length; i++) {
+            final PageReference rev =
+                refs.get(i);
+            pages[i] =
+                (NodePage)rev.getPage();
             if (pages[i] == null) {
-                pages[i] = (NodePage) mPageReader.read(rev);
+                pages[i] =
+                    (NodePage)mPageReader.read(rev);
             }
         }
         return pages;
@@ -318,14 +330,16 @@ public class ReadTransactionState {
      * @return Dereferenced page.
      * @throws TreetankIOException
      */
-    protected final IndirectPage dereferenceIndirectPage(
-            final PageReference reference) throws TreetankIOException {
+    protected final IndirectPage dereferenceIndirectPage(final PageReference reference)
+        throws TreetankIOException {
 
-        IndirectPage page = (IndirectPage) reference.getPage();
+        IndirectPage page =
+            (IndirectPage)reference.getPage();
 
         // If there is no page, get it from the storage and cache it.
         if (page == null) {
-            page = (IndirectPage) mPageReader.read(reference);
+            page =
+                (IndirectPage)mPageReader.read(reference);
             reference.setPage(page);
         }
 
@@ -342,25 +356,34 @@ public class ReadTransactionState {
      * @return Reference denoted by key pointing to the leaf page.
      * @throws TreetankIOException
      */
-    protected final PageReference dereferenceLeafOfTree(
-            final PageReference startReference, final long key)
-            throws TreetankIOException {
+    protected final PageReference dereferenceLeafOfTree(final PageReference startReference, final long key)
+        throws TreetankIOException {
 
         // Initial state pointing to the indirect page of level 0.
-        PageReference reference = startReference;
-        int offset = 0;
-        long levelKey = key;
+        PageReference reference =
+            startReference;
+        int offset =
+            0;
+        long levelKey =
+            key;
 
         // Iterate through all levels.
-        for (int level = 0, height = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
-            offset = (int) (levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
-            levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
-            final AbstractPage page = dereferenceIndirectPage(reference);
+        for (int level =
+            0, height =
+            IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
+            offset =
+                (int)(levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
+            levelKey -=
+                offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
+            final AbstractPage page =
+                dereferenceIndirectPage(reference);
             if (page == null) {
-                reference = null;
+                reference =
+                    null;
                 break;
             } else {
-                reference = page.getReference(offset);
+                reference =
+                    page.getReference(offset);
             }
         }
 
@@ -376,7 +399,8 @@ public class ReadTransactionState {
      * @return Node page key.
      */
     protected static final long nodePageKey(final long nodeKey) {
-        final long nodePageKey = nodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT;
+        final long nodePageKey =
+            nodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT;
         return nodePageKey;
     }
 
@@ -385,8 +409,7 @@ public class ReadTransactionState {
      * 
      * @return the current revision root page
      */
-    protected RevisionRootPage getActualRevisionRootPage()
-            throws TreetankIOException {
+    protected RevisionRootPage getActualRevisionRootPage() throws TreetankIOException {
         return mRootPage;
     }
 
@@ -407,8 +430,9 @@ public class ReadTransactionState {
      * @return Offset into node page.
      */
     protected static final int nodePageOffset(final long nodeKey) {
-        final long nodePageOffset = (nodeKey - ((nodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT) << IConstants.NDP_NODE_COUNT_EXPONENT));
-        return (int) nodePageOffset;
+        final long nodePageOffset =
+            (nodeKey - ((nodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT) << IConstants.NDP_NODE_COUNT_EXPONENT));
+        return (int)nodePageOffset;
     }
 
 }
