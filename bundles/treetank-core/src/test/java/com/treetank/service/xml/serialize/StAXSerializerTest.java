@@ -49,7 +49,6 @@ public class StAXSerializerTest {
     }
 
     @Test
-    @Ignore
     public void testStAXSerializer() {
         try {
             // Setup test file.
