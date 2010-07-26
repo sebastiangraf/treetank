@@ -36,255 +36,256 @@ import com.treetank.utils.DocumentCreater;
  * Test StAXSerializer.
  * 
  * @author Johannes Lichtenberger, University of Konstanz.
- * 
  */
 public class StAXSerializerTest {
-  @Before
-  public void setUp() throws TreetankException {
-    TestHelper.deleteEverything();
-  }
+    @Before
+    public void setUp() throws TreetankException {
+        TestHelper.deleteEverything();
+    }
 
-  @After
-  public void tearDown() throws TreetankException {
-    TestHelper.closeEverything();
-  }
+    @After
+    public void tearDown() throws TreetankException {
+        TestHelper.closeEverything();
+    }
 
-  @Test
-  public void testStAXSerializer() {
-    try {
-      // Setup test file.
-      final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
-      final ISession session = database.getSession();
-      final IWriteTransaction wtx = session.beginWriteTransaction();
-      DocumentCreater.create(wtx);
-      wtx.commit();
+    @Test
+    @Ignore
+    public void testStAXSerializer() {
+        try {
+            // Setup test file.
+            final IDatabase database =
+                TestHelper.getDatabase(PATHS.PATH1.getFile());
+            final ISession session = database.getSession();
+            final IWriteTransaction wtx = session.beginWriteTransaction();
+            DocumentCreater.create(wtx);
+            wtx.commit();
 
-      final ByteArrayOutputStream out = new ByteArrayOutputStream();
-      final XMLSerializerBuilder builder =
-          new XMLSerializerBuilder(session, out);
-      builder.setDeclaration(false);
-      final XMLSerializer xmlSerializer = builder.build();
-      xmlSerializer.call();
+            final ByteArrayOutputStream out = new ByteArrayOutputStream();
+            final XMLSerializerBuilder builder =
+                new XMLSerializerBuilder(session, out);
+            builder.setDeclaration(false);
+            final XMLSerializer xmlSerializer = builder.build();
+            xmlSerializer.call();
 
-      final IReadTransaction rtx = session.beginReadTransaction();
-      StAXSerializer serializer = new StAXSerializer(new DescendantAxis(rtx));
-      final StringBuilder strBuilder = new StringBuilder();
-      boolean isEmptyElement = false;
+            final IReadTransaction rtx = session.beginReadTransaction();
+            StAXSerializer serializer =
+                new StAXSerializer(new DescendantAxis(rtx));
+            final StringBuilder strBuilder = new StringBuilder();
+            boolean isEmptyElement = false;
 
-      while (serializer.hasNext()) {
-        XMLEvent event = serializer.nextEvent();
+            while (serializer.hasNext()) {
+                XMLEvent event = serializer.nextEvent();
 
-        System.out.println(event);
+                System.out.println(event);
 
-        switch (event.getEventType()) {
-        case XMLStreamConstants.START_DOCUMENT:
-          strBuilder
-              .append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
-          break;
-        case XMLStreamConstants.START_ELEMENT:
-          emitElement(event, strBuilder);
+                switch (event.getEventType()) {
+                case XMLStreamConstants.START_DOCUMENT:
+                    strBuilder
+                        .append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+                    break;
+                case XMLStreamConstants.START_ELEMENT:
+                    emitElement(event, strBuilder);
 
-          if (serializer.peek().getEventType() == XMLStreamConstants.END_ELEMENT) {
-            strBuilder.append("/>");
-            isEmptyElement = true;
-          } else {
-            strBuilder.append('>');
-          }
-          break;
-        case XMLStreamConstants.END_ELEMENT:
-          if (!isEmptyElement) {
-            emitQName(true, event, strBuilder);
-            strBuilder.append('>');
-          } else {
-            isEmptyElement = false;
-          }
-          break;
-        case XMLStreamConstants.CHARACTERS:
-          strBuilder.append(((Characters) event).getData());
-          break;
+                    if (serializer.peek().getEventType() == XMLStreamConstants.END_ELEMENT) {
+                        strBuilder.append("/>");
+                        isEmptyElement = true;
+                    } else {
+                        strBuilder.append('>');
+                    }
+                    break;
+                case XMLStreamConstants.END_ELEMENT:
+                    if (!isEmptyElement) {
+                        emitQName(true, event, strBuilder);
+                        strBuilder.append('>');
+                    } else {
+                        isEmptyElement = false;
+                    }
+                    break;
+                case XMLStreamConstants.CHARACTERS:
+                    strBuilder.append(((Characters)event).getData());
+                    break;
+                }
+            }
+
+            assertEquals(out.toString(), strBuilder.toString());
+
+            // Check getElementText().
+            // ========================================================
+            wtx.moveToDocumentRoot();
+            serializer = new StAXSerializer(new DescendantAxis(rtx));
+            String elemText = null;
+
+            // <p:a>
+            if (serializer.hasNext()) {
+                serializer.next();
+                elemText = serializer.getElementText();
+            }
+            assertEquals("oops1foooops2baroops3", elemText);
+
+            // oops1
+            checkForException(serializer);
+
+            // <b>
+            if (serializer.hasNext()) {
+                serializer.next();
+                elemText = serializer.getElementText();
+            }
+            assertEquals("foo", elemText);
+
+            // foo
+            checkForException(serializer);
+
+            // <c>
+            if (serializer.hasNext()) {
+                serializer.next();
+                elemText = serializer.getElementText();
+            }
+            assertEquals("", elemText);
+
+            // </c>
+            checkForException(serializer);
+
+            // </b>
+            checkForException(serializer);
+
+            // oops2
+            checkForException(serializer);
+
+            // <b p:x='y'>
+            if (serializer.hasNext()) {
+                serializer.next();
+                elemText = serializer.getElementText();
+            }
+            assertEquals("bar", elemText);
+
+            // <c>
+            if (serializer.hasNext()) {
+                serializer.next();
+                elemText = serializer.getElementText();
+            }
+            assertEquals("", elemText);
+
+            // </c>
+            checkForException(serializer);
+
+            // bar
+            checkForException(serializer);
+
+            // </b>
+            checkForException(serializer);
+
+            // oops3
+            checkForException(serializer);
+
+            // </p:a>
+            checkForException(serializer);
+
+            wtx.close();
+            rtx.close();
+            session.close();
+            database.close();
+        } catch (final XMLStreamException e) {
+            fail("XML error while parsing: " + e.getMessage());
+        } catch (final TreetankException e) {
+            fail("Treetank exception occured: " + e.getMessage());
+        } catch (final Exception e) {
+            fail("Any exception occured: " + e.getMessage());
         }
-      }
-
-      assertEquals(out.toString(), strBuilder.toString());
-
-      // Check getElementText().
-      // ========================================================
-      wtx.moveToDocumentRoot();
-      serializer = new StAXSerializer(new DescendantAxis(rtx));
-      String elemText = null;
-      
-      // <p:a>
-      if (serializer.hasNext()) {
-        serializer.next();
-        elemText = serializer.getElementText();
-      }
-      assertEquals("oops1foooops2baroops3", elemText);
-
-      // oops1
-      checkForException(serializer);
-      
-      // <b>
-      if (serializer.hasNext()) {
-        serializer.next();
-        elemText = serializer.getElementText();
-      }
-      assertEquals("foo", elemText);
-      
-      // foo
-      checkForException(serializer);
-      
-      // <c>
-      if (serializer.hasNext()) {
-        serializer.next();
-        elemText = serializer.getElementText();
-      }
-      assertEquals("", elemText);
-      
-      // </c>
-      checkForException(serializer);
-      
-      // </b>
-      checkForException(serializer);
-      
-      // oops2
-      checkForException(serializer);
-      
-      // <b p:x='y'>
-      if (serializer.hasNext()) {
-        serializer.next();
-        elemText = serializer.getElementText();
-      }
-      assertEquals("bar", elemText);
-      
-      // <c>
-      if (serializer.hasNext()) {
-        serializer.next();
-        elemText = serializer.getElementText();
-      }
-      assertEquals("", elemText);
-      
-      // </c>
-      checkForException(serializer);
-      
-      // bar
-      checkForException(serializer);
-      
-      // </b>
-      checkForException(serializer);
-      
-      // oops3
-      checkForException(serializer);
-      
-      // </p:a>
-      checkForException(serializer);
-
-      wtx.close();
-      rtx.close();
-      session.close();
-      database.close();
-    } catch (final XMLStreamException e) {
-      fail("XML error while parsing: " + e.getMessage());
-    } catch (final TreetankException e) {
-      fail("Treetank exception occured: " + e.getMessage());
-    } catch (final Exception e) {
-      fail("Any exception occured: " + e.getMessage());
     }
-  }
-  
-  /**
-   * Checks for an XMLStreamException if the current event isn't a start tag.
-   * Used for testing getElementText().
-   * 
-   * @param serializer
-   *                      {@link StAXSerializer}                     
-   */
-  private void checkForException(final StAXSerializer serializer) {
-    String elemText = "";
-    try {
-      if (serializer.hasNext()) {
-        serializer.next();
-        elemText = serializer.getElementText();
-      }
-      fail("");
-    } catch (final XMLStreamException e) {
-      assertEquals("", elemText);
+
+    /**
+     * Checks for an XMLStreamException if the current event isn't a start tag.
+     * Used for testing getElementText().
+     * 
+     * @param serializer
+     *            {@link StAXSerializer}
+     */
+    private void checkForException(final StAXSerializer serializer) {
+        String elemText = "";
+        try {
+            if (serializer.hasNext()) {
+                serializer.next();
+                elemText = serializer.getElementText();
+            }
+            fail("");
+        } catch (final XMLStreamException e) {
+            assertEquals("", elemText);
+        }
     }
-  }
 
-  /**
-   * Emit an element.
-   * 
-   * @param event
-   *            {@link XMLEvent}, either a start tag or an end tag.
-   * @param strBuilder
-   *            String builder to build the string representation.
-   */
-  @Ignore
-  private void emitElement(final XMLEvent event, final StringBuilder strBuilder) {
-    emitQName(true, event, strBuilder);
+    /**
+     * Emit an element.
+     * 
+     * @param event
+     *            {@link XMLEvent}, either a start tag or an end tag.
+     * @param strBuilder
+     *            String builder to build the string representation.
+     */
+    @Ignore
+    private void emitElement(final XMLEvent event,
+                             final StringBuilder strBuilder) {
+        emitQName(true, event, strBuilder);
 
-    if (event.isStartElement()) {
-      final StartElement elem = ((StartElement) event);
-      // Parse namespaces.
-      for (Iterator<?> it = elem.getNamespaces(); it.hasNext();) {
-        final Namespace namespace = (Namespace) it.next();
+        if (event.isStartElement()) {
+            final StartElement elem = ((StartElement)event);
+            // Parse namespaces.
+            for (Iterator<?> it = elem.getNamespaces(); it.hasNext();) {
+                final Namespace namespace = (Namespace)it.next();
 
-        if ("".equals(namespace.getPrefix())) {
-          strBuilder
-              .append(" xmlns=\"")
-              .append(namespace.getNamespaceURI())
-              .append("\"");
+                if ("".equals(namespace.getPrefix())) {
+                    strBuilder.append(" xmlns=\"")
+                        .append(namespace.getNamespaceURI()).append("\"");
+                } else {
+                    strBuilder.append(" xmlns:").append(namespace.getPrefix())
+                        .append("=\"").append(namespace.getNamespaceURI())
+                        .append("\"");
+                }
+            }
+
+            // Parse attributes.
+            for (Iterator<?> it = elem.getAttributes(); it.hasNext();) {
+                final Attribute attribute = (Attribute)it.next();
+                emitQName(false, attribute, strBuilder);
+                strBuilder.append("=\"").append(attribute.getValue())
+                    .append("\"");
+            }
+        }
+    }
+
+    /**
+     * Emit a qualified name.
+     * 
+     * @param event
+     *            {@link XMLEvent}, either a start tag or an end tag.
+     * @param strBuilder
+     *            String builder to build the string representation.
+     * @param isElem
+     *            Determines if it is an element or an attribute.
+     */
+    @Ignore
+    private void emitQName(final boolean isElem, final XMLEvent event,
+                           final StringBuilder strBuilder) {
+        QName qName;
+        if (isElem) {
+            if (event.isStartElement()) {
+                strBuilder.append('<');
+                qName = ((StartElement)event).getName();
+            } else {
+                strBuilder.append("</");
+                qName = ((EndElement)event).getName();
+            }
         } else {
-          strBuilder.append(" xmlns:").append(namespace.getPrefix()).append(
-              "=\"").append(namespace.getNamespaceURI()).append("\"");
+            qName = ((Attribute)event).getName();
         }
-      }
 
-      // Parse attributes.
-      for (Iterator<?> it = elem.getAttributes(); it.hasNext();) {
-        final Attribute attribute = (Attribute) it.next();
-        emitQName(false, attribute, strBuilder);
-        strBuilder.append("=\"").append(attribute.getValue()).append("\"");
-      }
-    }
-  }
+        if (!isElem) {
+            strBuilder.append(' ');
+        }
 
-  /**
-   * Emit a qualified name.
-   * 
-   * @param event
-   *            {@link XMLEvent}, either a start tag or an end tag.
-   * @param strBuilder
-   *            String builder to build the string representation.
-   * @param isElem
-   *            Determines if it is an element or an attribute.
-   */
-  @Ignore
-  private void emitQName(
-      final boolean isElem,
-      final XMLEvent event,
-      final StringBuilder strBuilder) {
-    QName qName;
-    if (isElem) {
-      if (event.isStartElement()) {
-        strBuilder.append('<');
-        qName = ((StartElement) event).getName();
-      } else {
-        strBuilder.append("</");
-        qName = ((EndElement) event).getName();
-      }
-    } else {
-      qName = ((Attribute) event).getName();
+        if (qName.getPrefix() == "") {
+            strBuilder.append(qName.getLocalPart());
+        } else {
+            strBuilder.append(qName.getPrefix() + ':' + qName.getLocalPart());
+        }
     }
-
-    if (!isElem) {
-      strBuilder.append(' ');
-    }
-
-    if (qName.getPrefix() == "") {
-      strBuilder.append(qName.getLocalPart());
-    } else {
-      strBuilder.append(qName.getPrefix() + ':' + qName.getLocalPart());
-    }
-  }
 }
