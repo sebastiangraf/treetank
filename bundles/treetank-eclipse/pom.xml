@@ -112,7 +112,6 @@
                                         <copy file="${basedir}/etc/eclipse/template.checkstyle-config.xml" tofile="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml" overwrite="no">
                                             <filterset>
                                                 <filter token="CHECKSTYLE_CONFIG_FILE" value="${full.eclipse.workspace}/disy-checkstyle.xml" />
-                                                <filter token="APACHE_HEADER_FILE" value="${full.eclipse.workspace}/apache-header.txt" />
                                             </filterset>
                                         </copy>
 
