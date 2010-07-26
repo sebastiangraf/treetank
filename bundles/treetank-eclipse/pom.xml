@@ -29,46 +29,13 @@
 		<groupId>treetank</groupId>
 		<version>1.0.1-SNAPSHOT</version>
 	</parent>
-    
-    <properties>
-        <cxf.build-utils.version>2.3.0-SNAPSHOT</cxf.build-utils.version>
-    </properties>
 
-    
-    <repositories>
-          <repository>
-              <id>apache.snapshots</id>
-              <url>http://repository.apache.org/snapshots/</url>
-              <name>Apache Snapshot Repo</name>
-             <snapshots>
-                 <enabled>true</enabled>
-             </snapshots>
-             <releases>
-                 <enabled>false</enabled>
-             </releases>
-         </repository> 
-     </repositories>
-    <pluginRepositories>
-         <pluginRepository>
-             <id>apache.snapshots</id>
-             <url>http://repository.apache.org/snapshots/</url>
-             <snapshots>
-                 <enabled>true</enabled>
-             </snapshots>
-             <releases>
-                 <enabled>false</enabled>
-             </releases>
-         </pluginRepository>
-     </pluginRepositories>
-
-    
-
+ 
     <profiles>
          <profile>
             <id>setup.eclipse</id>
-            <properties><!--
-                <eclipse.workspace.dir>${basedir}/../workspace</eclipse.workspace.dir>-->
-                <eclipse.workspace.dir>/tmp/workspace</eclipse.workspace.dir>
+            <properties>
+                <eclipse.workspace.dir>${basedir}/../../../workspace</eclipse.workspace.dir>
             </properties>
             <build>
                 <defaultGoal>process-test-sources</defaultGoal>
@@ -111,9 +78,9 @@
                         <inherited>false</inherited>
                         <dependencies>
                             <dependency>
-                                <groupId>org.apache.cxf.build-utils</groupId>
-                                <artifactId>cxf-buildtools</artifactId>
-                                <version>${cxf.build-utils.version}</version>
+                                <groupId>disy</groupId>
+                                <artifactId>build-eclipse</artifactId>
+                                <version>1.0.0-SNAPSHOT</version>
                                 <exclusions>
                                     <exclusion>
                                         <groupId>pmd</groupId>
@@ -131,46 +98,40 @@
                                         <path id="ecp.ws.path" location="${eclipse.workspace.dir}" />
                                         <property name="full.eclipse.workspace" refid="ecp.ws.path" />
 
-                                        <whichresource resource="/cxf-eclipse-pmd" property="pmd.url" />
-                                        <whichresource resource="/cxf-pmd-ruleset.xml" property="pmdruleset.url" />
-                                        <whichresource resource="/cxf-eclipse-checkstyle" property="eclipse.checkstyle.url" />
-                                        <whichresource resource="/cxf-checkstyle.xml" property="checkstyle.url" />
-                                        <whichresource resource="/cxf-checkstyle-corba.xml" property="corba.checkstyle.url" />
+                                        <whichresource resource="/disy-eclipse-pmd" property="pmd.url" />
+                                        <whichresource resource="/disy-pmd-ruleset.xml" property="pmdruleset.url" />
+                                        <whichresource resource="/disy-eclipse-checkstyle" property="eclipse.checkstyle.url" />
+                                        <whichresource resource="/disy-checkstyle.xml" property="checkstyle.url" />
 
                                         <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings" />
                                         <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle" />
                                         <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/net.sourceforge.pmd.eclipse" />
 
-                                        <get src="${checkstyle.url}" dest="${full.eclipse.workspace}/cxf-checkstyle.xml" />
-                                        <get src="${corba.checkstyle.url}" dest="${full.eclipse.workspace}/cxf-checkstyle-corba.xml" />
+                                        <get src="${checkstyle.url}" dest="${full.eclipse.workspace}/disy-checkstyle.xml" />
 
                                         <!-- Add checkstyle config -->
                                         <copy file="${basedir}/etc/eclipse/template.checkstyle-config.xml" tofile="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml" overwrite="no">
                                             <filterset>
-                                                <filter token="CHECKSTYLE_CONFIG_FILE" value="${full.eclipse.workspace}/cxf-checkstyle.xml" />
-                                                <filter token="CHECKSTYLE_CORBA_CONFIG_FILE" value="${full.eclipse.workspace}/cxf-checkstyle-corba.xml" />
+                                                <filter token="CHECKSTYLE_CONFIG_FILE" value="${full.eclipse.workspace}/disy-checkstyle.xml" />
                                                 <filter token="APACHE_HEADER_FILE" value="${full.eclipse.workspace}/apache-header.txt" />
                                             </filterset>
                                         </copy>
 
                                         <xslt style="${basedir}/etc/eclipse/addcheckstyle.xsl" in="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml" out="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml.new">
-                                            <param name="checkstyleconfig" expression="${full.eclipse.workspace}/cxf-checkstyle.xml" />
-                                            <param name="checkstyleconfigcorba" expression="${full.eclipse.workspace}/cxf-checkstyle-corba.xml" />
+                                            <param name="checkstyleconfig" expression="${full.eclipse.workspace}/disy-checkstyle.xml" />
                                         </xslt>
                                         <copy file="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml.new" tofile="${full.eclipse.workspace}/.metadata/.plugins/com.atlassw.tools.eclipse.checkstyle/checkstyle-config.xml" overwrite="yes" />
 
                                         <!-- Add checkstyle config for 5.0 plugin -->
                                         <copy file="${basedir}/etc/eclipse/template.checkstyle-config.xml" tofile="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml" overwrite="no">
                                             <filterset>
-                                                <filter token="CHECKSTYLE_CONFIG_FILE" value="${full.eclipse.workspace}/cxf-checkstyle.xml" />
-                                                <filter token="CHECKSTYLE_CORBA_CONFIG_FILE" value="${full.eclipse.workspace}/cxf-checkstyle-corba.xml" />
+                                                <filter token="CHECKSTYLE_CONFIG_FILE" value="${full.eclipse.workspace}/disy-checkstyle.xml" />
                                                 <filter token="APACHE_HEADER_FILE" value="${full.eclipse.workspace}/apache-header.txt" />
                                             </filterset>
                                         </copy>
 
                                         <xslt style="${basedir}/etc/eclipse/addcheckstyle.xsl" in="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml" out="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml.new">
-                                            <param name="checkstyleconfig" expression="${full.eclipse.workspace}/cxf-checkstyle.xml" />
-                                            <param name="checkstyleconfigcorba" expression="${full.eclipse.workspace}/cxf-checkstyle-corba.xml" />
+                                            <param name="checkstyleconfig" expression="${full.eclipse.workspace}/disy-checkstyle.xml" />
                                         </xslt>
                                         <copy file="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml.new" tofile="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml" overwrite="yes" />
 
