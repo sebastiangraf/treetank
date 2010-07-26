@@ -54,22 +54,20 @@ import com.treetank.settings.ENodes;
  * <h1>NodeWrapper</h1>
  * 
  * <p>
- * Wraps a Treetank node into Saxon's internal representation of a node. It
- * therefore implements Saxon's core interface NodeInfo as well as two others:
+ * Wraps a Treetank node into Saxon's internal representation of a node. It therefore implements Saxon's core
+ * interface NodeInfo as well as two others:
  * </p>
  * 
  * <dl>
  * <dt>NodeInfo</dt>
- * <dd>The NodeInfo interface represents a node in Saxon's implementation of the
- * XPath 2.0 data model.</dd>
+ * <dd>The NodeInfo interface represents a node in Saxon's implementation of the XPath 2.0 data model.</dd>
  * <dt>VirtualNode</dt>
- * <dd>This interface is implemented by NodeInfo implementations that act as
- * wrappers on some underlying tree. It provides a method to access the real
- * node underlying the virtual node, for use by applications that need to drill
- * down to the underlying data.</dd>
+ * <dd>This interface is implemented by NodeInfo implementations that act as wrappers on some underlying tree.
+ * It provides a method to access the real node underlying the virtual node, for use by applications that need
+ * to drill down to the underlying data.</dd>
  * <dt>SiblingCountingNode</dt>
- * <dd>Interface that extends NodeInfo by providing a method to get the position
- * of a node relative to its siblings.</dd>
+ * <dd>Interface that extends NodeInfo by providing a method to get the position of a node relative to its
+ * siblings.</dd>
  * </dl>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
@@ -112,7 +110,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     protected NodeWrapper(final IDatabase database, final long nodekeyToStart) {
         try {
             if (mDatabase == null || mDatabase.getFile() == null
-                    || !(mDatabase.getFile().equals(database.getFile()))) {
+            || !(mDatabase.getFile().equals(database.getFile()))) {
                 mDatabase = database;
 
                 if (mRTX != null && !mRTX.isClosed()) {
@@ -133,8 +131,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         mKey = mRTX.getNode().getNodeKey();
         node = mRTX.getNode();
 
-        if (nodeKind == ENodes.ELEMENT_KIND
-                || nodeKind == ENodes.ATTRIBUTE_KIND) {
+        if (nodeKind == ENodes.ELEMENT_KIND || nodeKind == ENodes.ATTRIBUTE_KIND) {
             qName = mRTX.getQNameOfCurrentNode();
         }
     }
@@ -148,8 +145,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
      *            Node key of treetank item/node.
      * @return nodeWrapper.
      */
-    protected NodeWrapper makeWrapper(final DocumentWrapper docWrapper,
-            final long key) {
+    protected NodeWrapper makeWrapper(final DocumentWrapper docWrapper, final long key) {
 
         final NodeWrapper mNodeWrapper = new NodeWrapper(mDatabase, key);
         mNodeWrapper.mDocWrapper = docWrapper;
@@ -204,9 +200,9 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
         // FIXME fix the key order, this can result in errors related to
         // different version of a file.
-        else if (((NodeWrapper) node).mKey > mKey) {
+        else if (((NodeWrapper)node).mKey > mKey) {
             retVal = -1;
-        } else if (((NodeWrapper) node).mKey == mKey) {
+        } else if (((NodeWrapper)node).mKey == mKey) {
             retVal = 0;
         } else {
             retVal = 1;
@@ -220,11 +216,9 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
      * 
      * @see net.sf.saxon.om.NodeInfo#copy(Receiver, int, boolean, int)
      */
-    public void copy(final Receiver out, final int whichNamespaces,
-            final boolean copyAnnotations, final int locationId)
-            throws XPathException {
-        Navigator.copy(this, out, mDocWrapper.getNamePool(), whichNamespaces,
-                copyAnnotations, locationId);
+    public void copy(final Receiver out, final int whichNamespaces, final boolean copyAnnotations,
+        final int locationId) throws XPathException {
+        Navigator.copy(this, out, mDocWrapper.getNamePool(), whichNamespaces, copyAnnotations, locationId);
     }
 
     /**
@@ -244,10 +238,9 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     public String getAttributeValue(final int fingerprint) {
         String attVal = null;
 
-        final NameTest test = new NameTest(Type.ATTRIBUTE, fingerprint,
-                getNamePool());
+        final NameTest test = new NameTest(Type.ATTRIBUTE, fingerprint, getNamePool());
         final AxisIterator iterator = iterateAxis(Axis.ATTRIBUTE, test);
-        final NodeInfo attribute = (NodeInfo) iterator.next();
+        final NodeInfo attribute = (NodeInfo)iterator.next();
 
         if (attribute != null) {
             attVal = attribute.getStringValue();
@@ -269,7 +262,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
         NodeInfo node = this;
 
-        while (node != null) {
+        while(node != null) {
             baseURI = node.getAttributeValue(StandardNames.XML_BASE);
 
             if (baseURI == null) {
@@ -313,13 +306,12 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     public int[] getDeclaredNamespaces(final int[] buffer) {
         int[] retVal = null;
         if (nodeKind == ENodes.ELEMENT_KIND) {
-            final int count = ((ElementNode) node).getNamespaceCount();
+            final int count = ((ElementNode)node).getNamespaceCount();
 
             if (count == 0) {
                 retVal = EMPTY_NAMESPACE_LIST;
             } else {
-                retVal = (buffer == null || count > buffer.length ? new int[count]
-                        : buffer);
+                retVal = (buffer == null || count > buffer.length ? new int[count] : buffer);
                 final NamePool pool = getNamePool();
                 int n = 0;
 
@@ -447,8 +439,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         case ATTRIBUTE_KIND:
         case PROCESSING_KIND:
             // case NAMESPACE_KIND:
-            nameCode = mDocWrapper.getNamePool().allocate(getPrefix(),
-                    getURI(), getLocalPart());
+            nameCode = mDocWrapper.getNamePool().allocate(getPrefix(), getURI(), getLocalPart());
             break;
         default:
             // text, comment, document and namespace nodes.
@@ -484,8 +475,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         mRTX.moveTo(mKey);
         if (mRTX.getNode().hasParent()) {
             // Parent transaction.
-            final NodeInfo mParent = makeWrapper(mDocWrapper, mRTX.getNode()
-                    .getParentKey());
+            final NodeInfo mParent = makeWrapper(mDocWrapper, mRTX.getNode().getParentKey());
             return mParent;
         } else {
             return null;
@@ -521,7 +511,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
      * @see net.sf.saxon.om.NodeInfo#getRoot()
      */
     public NodeInfo getRoot() {
-        return (NodeInfo) mDocWrapper;
+        return (NodeInfo)mDocWrapper;
     }
 
     /**
@@ -580,12 +570,10 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
      * @return concatenated String of text node values.
      */
     private String expandString() {
-        final FilterAxis axis = new FilterAxis(new DescendantAxis(mRTX),
-                new TextFilter(mRTX));
-        final FastStringBuffer fsb = new FastStringBuffer(
-                FastStringBuffer.SMALL);
+        final FilterAxis axis = new FilterAxis(new DescendantAxis(mRTX), new TextFilter(mRTX));
+        final FastStringBuffer fsb = new FastStringBuffer(FastStringBuffer.SMALL);
 
-        while (axis.hasNext()) {
+        while(axis.hasNext()) {
             if (mRTX.getNode().getKind() == ENodes.TEXT_KIND) {
                 fsb.append(mRTX.getValueOfCurrentNode());
             }
@@ -672,8 +660,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
      * @see net.sf.saxon.om.NodeInfo#isIdref()
      */
     public boolean isIdref() {
-        throw new UnsupportedOperationException(
-                "Currently not supported by Treetank!");
+        throw new UnsupportedOperationException("Currently not supported by Treetank!");
         // return false;
     }
 
@@ -683,8 +670,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
      * @see net.sf.saxon.om.NodeInfo#isNilled()
      */
     public boolean isNilled() {
-        throw new UnsupportedOperationException(
-                "Currently not supported by Treetank!");
+        throw new UnsupportedOperationException("Currently not supported by Treetank!");
         // return false;
     }
 
@@ -699,7 +685,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         if (!(other instanceof NodeInfo)) {
             retVal = false;
         } else {
-            retVal = ((NodeWrapper) other).mKey == mKey;
+            retVal = ((NodeWrapper)other).mKey == mKey;
         }
 
         return retVal;
@@ -719,8 +705,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
      * 
      * @see net.sf.saxon.om.NodeInfo#iterateAxis(byte, NodeTest)
      */
-    public AxisIterator iterateAxis(final byte axisNumber,
-            final NodeTest nodeTest) {
+    public AxisIterator iterateAxis(final byte axisNumber, final NodeTest nodeTest) {
         mRTX.moveTo(mKey);
 
         if (LOGGER.isDebugEnabled()) {
@@ -732,46 +717,39 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
             if (getNodeKind() == ENodes.ROOT_KIND.getNodeIdentifier()) {
                 return EmptyIterator.getInstance();
             }
-            return new Navigator.AxisFilter(new Enumeration(new AncestorAxis(
-                    mRTX)), nodeTest);
+            return new Navigator.AxisFilter(new Enumeration(new AncestorAxis(mRTX)), nodeTest);
 
         case Axis.ANCESTOR_OR_SELF:
             if (getNodeKind() == ENodes.ROOT_KIND.getNodeIdentifier()) {
                 return Navigator.filteredSingleton(this, nodeTest);
             }
-            return new Navigator.AxisFilter(new Enumeration(new AncestorAxis(
-                    mRTX, true)), nodeTest);
+            return new Navigator.AxisFilter(new Enumeration(new AncestorAxis(mRTX, true)), nodeTest);
 
         case Axis.ATTRIBUTE:
             if (getNodeKind() != ENodes.ELEMENT_KIND.getNodeIdentifier()) {
                 return EmptyIterator.getInstance();
             }
-            return new Navigator.AxisFilter(new Enumeration(new AttributeAxis(
-                    mRTX)), nodeTest);
+            return new Navigator.AxisFilter(new Enumeration(new AttributeAxis(mRTX)), nodeTest);
 
         case Axis.CHILD:
             if (hasChildNodes()) {
-                return new Navigator.AxisFilter(new Enumeration(new ChildAxis(
-                        mRTX)), nodeTest);
+                return new Navigator.AxisFilter(new Enumeration(new ChildAxis(mRTX)), nodeTest);
             } else {
                 return EmptyIterator.getInstance();
             }
 
         case Axis.DESCENDANT:
             if (hasChildNodes()) {
-                return new Navigator.AxisFilter(new Enumeration(
-                        new DescendantAxis(mRTX)), nodeTest);
+                return new Navigator.AxisFilter(new Enumeration(new DescendantAxis(mRTX)), nodeTest);
             } else {
                 return EmptyIterator.getInstance();
             }
 
         case Axis.DESCENDANT_OR_SELF:
-            return new Navigator.AxisFilter(new Enumeration(new DescendantAxis(
-                    mRTX, true)), nodeTest);
+            return new Navigator.AxisFilter(new Enumeration(new DescendantAxis(mRTX, true)), nodeTest);
 
         case Axis.FOLLOWING:
-            return new Navigator.AxisFilter(new Enumeration(new FollowingAxis(
-                    mRTX)), nodeTest);
+            return new Navigator.AxisFilter(new Enumeration(new FollowingAxis(mRTX)), nodeTest);
 
         case Axis.FOLLOWING_SIBLING:
             switch (nodeKind) {
@@ -780,8 +758,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
             case NAMESPACE_KIND:
                 return EmptyIterator.getInstance();
             default:
-                return new Navigator.AxisFilter(new Enumeration(
-                        new FollowingSiblingAxis(mRTX)), nodeTest);
+                return new Navigator.AxisFilter(new Enumeration(new FollowingSiblingAxis(mRTX)), nodeTest);
             }
 
         case Axis.NAMESPACE:
@@ -791,16 +768,13 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
             return NamespaceIterator.makeIterator(this, nodeTest);
 
         case Axis.PARENT:
-            if (mRTX.getNode().getParentKey() == ENodes.ROOT_KIND
-                    .getNodeIdentifier()) {
+            if (mRTX.getNode().getParentKey() == ENodes.ROOT_KIND.getNodeIdentifier()) {
                 return EmptyIterator.getInstance();
             }
-            return new Navigator.AxisFilter(new Enumeration(
-                    new ParentAxis(mRTX)), nodeTest);
+            return new Navigator.AxisFilter(new Enumeration(new ParentAxis(mRTX)), nodeTest);
 
         case Axis.PRECEDING:
-            return new Navigator.AxisFilter(new Enumeration(new PrecedingAxis(
-                    mRTX)), nodeTest);
+            return new Navigator.AxisFilter(new Enumeration(new PrecedingAxis(mRTX)), nodeTest);
 
         case Axis.PRECEDING_SIBLING:
             switch (nodeKind) {
@@ -809,20 +783,17 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
             case NAMESPACE_KIND:
                 return EmptyIterator.getInstance();
             default:
-                return new Navigator.AxisFilter(new Enumeration(
-                        new PrecedingSiblingAxis(mRTX)), nodeTest);
+                return new Navigator.AxisFilter(new Enumeration(new PrecedingSiblingAxis(mRTX)), nodeTest);
             }
 
         case Axis.SELF:
             return Navigator.filteredSingleton(this, nodeTest);
 
         case Axis.PRECEDING_OR_ANCESTOR:
-            return new Navigator.AxisFilter(new Navigator.PrecedingEnumeration(
-                    this, true), nodeTest);
+            return new Navigator.AxisFilter(new Navigator.PrecedingEnumeration(this, true), nodeTest);
 
         default:
-            throw new IllegalArgumentException("Unknown axis number "
-                    + axisNumber);
+            throw new IllegalArgumentException("Unknown axis number " + axisNumber);
         }
     }
 
@@ -841,7 +812,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
      * @see net.sf.saxon.om.NodeInfo#getTypedValue()
      */
     public SequenceIterator getTypedValue() throws XPathException {
-        return SingletonIterator.makeIterator((AtomicValue) atomize());
+        return SingletonIterator.makeIterator((AtomicValue)atomize());
     }
 
     /**
@@ -871,7 +842,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         mRTX.moveTo(mKey);
         int index = 0;
 
-        while (mRTX.getNode().hasLeftSibling()) {
+        while(mRTX.getNode().hasLeftSibling()) {
             mRTX.moveToLeftSibling();
             index++;
         }

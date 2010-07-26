@@ -45,8 +45,7 @@ public class ModOpAxis extends AbstractOpAxis {
      * @param op2
      *            Second value of the operation
      */
-    public ModOpAxis(final IReadTransaction rtx, final IAxis op1,
-            final IAxis op2) {
+    public ModOpAxis(final IReadTransaction rtx, final IAxis op1, final IAxis op2) {
 
         super(rtx, op1, op2);
     }
@@ -57,8 +56,7 @@ public class ModOpAxis extends AbstractOpAxis {
     @Override
     public IItem operate(final AtomicValue operand1, final AtomicValue operand2) {
 
-        Type returnType = getReturnType(operand1.getTypeKey(),
-                operand2.getTypeKey());
+        Type returnType = getReturnType(operand1.getTypeKey(), operand2.getTypeKey());
         int typeKey = getTransaction().keyForName(returnType.getStringRepr());
 
         final byte[] value;
@@ -67,18 +65,14 @@ public class ModOpAxis extends AbstractOpAxis {
         case DOUBLE:
         case FLOAT:
         case DECIMAL:
-            final double dOp1 = Double.parseDouble(TypedValue
-                    .parseString(operand1.getRawValue()));
-            final double dOp2 = Double.parseDouble(TypedValue
-                    .parseString(operand2.getRawValue()));
+            final double dOp1 = Double.parseDouble(TypedValue.parseString(operand1.getRawValue()));
+            final double dOp2 = Double.parseDouble(TypedValue.parseString(operand2.getRawValue()));
             value = TypedValue.getBytes(dOp1 % dOp2);
             break;
         case INTEGER:
             try {
-                final int iOp1 = (int) Double.parseDouble(TypedValue
-                        .parseString(operand1.getRawValue()));
-                final int iOp2 = (int) Double.parseDouble(TypedValue
-                        .parseString(operand2.getRawValue()));
+                final int iOp1 = (int)Double.parseDouble(TypedValue.parseString(operand1.getRawValue()));
+                final int iOp2 = (int)Double.parseDouble(TypedValue.parseString(operand2.getRawValue()));
                 value = TypedValue.getBytes(iOp1 % iOp2);
             } catch (ArithmeticException e) {
                 throw new XPathError(ErrorType.FOAR0001);

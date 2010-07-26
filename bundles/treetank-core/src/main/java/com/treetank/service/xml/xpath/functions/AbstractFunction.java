@@ -32,10 +32,9 @@ import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
  * Abstract super class for all function classes.
  * </p>
  * <p>
- * All functions that extend the abstract class only need take care of the
- * result computation. Everything else, like checking if arguments are valid and
- * adding the result with the corresponding type to the transaction list is done
- * by the abstract super class.
+ * All functions that extend the abstract class only need take care of the result computation. Everything
+ * else, like checking if arguments are valid and adding the result with the corresponding type to the
+ * transaction list is done by the abstract super class.
  * </p>
  * <h2>Developer Example</h2>
  * 
@@ -93,8 +92,8 @@ public abstract class AbstractFunction extends AbstractExpression {
      * @param returnType
      *            the type that the function's result will have
      */
-    public AbstractFunction(final IReadTransaction rtx, final List<IAxis> args,
-            final int min, final int max, final int returnType) {
+    public AbstractFunction(final IReadTransaction rtx, final List<IAxis> args, final int min, final int max,
+        final int returnType) {
 
         super(rtx);
         mArgs = args;
@@ -145,8 +144,7 @@ public abstract class AbstractFunction extends AbstractExpression {
         final byte[] value = computeResult();
 
         // create an atomic value, add it to the list and move the cursor to it.
-        final int itemKey = getTransaction().getItemList().addItem(
-                new AtomicValue(value, mReturnType));
+        final int itemKey = getTransaction().getItemList().addItem(new AtomicValue(value, mReturnType));
         getTransaction().moveTo(itemKey);
 
     }

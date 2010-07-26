@@ -89,9 +89,9 @@ public class ValueFilter extends AbstractFilter implements IFilter {
      */
     @Override
     public final boolean filter() {
-        return ((getTransaction().getNode().getKind() == ENodes.TEXT_KIND || getTransaction()
-                .getNode().getKind() == ENodes.ATTRIBUTE_KIND) && (TypedValue
-                .equals(getTransaction().getNode().getRawValue(), mValue)));
+        return ((getTransaction().getNode().getKind() == ENodes.TEXT_KIND || getTransaction().getNode()
+            .getKind() == ENodes.ATTRIBUTE_KIND) && (TypedValue.equals(getTransaction().getNode()
+            .getRawValue(), mValue)));
     }
 
 }

@@ -30,8 +30,7 @@ import com.treetank.utils.TypedValue;
  * <h1>FNBooleean</h1>
  * <p>
  * IAxis that represents the function fn:boolean specified in <a
- * href="http://www.w3.org/TR/xquery-operators/"> XQuery 1.0 and XPath 2.0
- * Functions and Operators</a>.
+ * href="http://www.w3.org/TR/xquery-operators/"> XQuery 1.0 and XPath 2.0 Functions and Operators</a>.
  * </p>
  * <p>
  * The function returns the effective boolean value of given arguments.
@@ -54,8 +53,8 @@ public class FNBoolean extends AbstractFunction {
      * @param returnType
      *            the type that the function's result will have
      */
-    public FNBoolean(final IReadTransaction rtx, final List<IAxis> args,
-            final int min, final int max, final int returnType) {
+    public FNBoolean(final IReadTransaction rtx, final List<IAxis> args, final int min, final int max,
+        final int returnType) {
 
         super(rtx, args, min, max, returnType);
     }
@@ -81,18 +80,14 @@ public class FNBoolean extends AbstractFunction {
                 final Type type = Type.getType(rtx.getNode().getTypeKey());
 
                 if (type.derivesFrom(Type.BOOLEAN)) {
-                    value = Boolean.parseBoolean(TypedValue.parseString(rtx
-                            .getNode().getRawValue()));
+                    value = Boolean.parseBoolean(TypedValue.parseString(rtx.getNode().getRawValue()));
                     // value = TypedValue.parseBoolean(rtx.getRawValue());
-                } else if (type.derivesFrom(Type.STRING)
-                        || type.derivesFrom(Type.ANY_URI)
-                        || type.derivesFrom(Type.UNTYPED_ATOMIC)) {
+                } else if (type.derivesFrom(Type.STRING) || type.derivesFrom(Type.ANY_URI)
+                || type.derivesFrom(Type.UNTYPED_ATOMIC)) {
                     // if length = 0 -> false
-                    value = (TypedValue
-                            .parseString(rtx.getNode().getRawValue()).length() > 0);
+                    value = (TypedValue.parseString(rtx.getNode().getRawValue()).length() > 0);
                 } else if (type.isNumericType()) {
-                    final double dValue = TypedValue.parseDouble(rtx.getNode()
-                            .getRawValue());
+                    final double dValue = TypedValue.parseDouble(rtx.getNode().getRawValue());
                     value = !(Double.isNaN(dValue) || dValue == 0.0d);
                 } else {
                     // for all other types throw error FORG0006

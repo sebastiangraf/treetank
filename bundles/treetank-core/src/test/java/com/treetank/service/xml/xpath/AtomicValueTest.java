@@ -73,7 +73,7 @@ public class AtomicValueTest {
 
     @Test
     public final void testGetFLT() {
-        assertThat(c.getFLT(), is((float) cVal));
+        assertThat(c.getFLT(), is((float)cVal));
 
     }
 

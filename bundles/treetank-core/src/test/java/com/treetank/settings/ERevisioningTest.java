@@ -28,9 +28,9 @@ public class ERevisioningTest {
         pages[0] = getNodePage(1, 0, 128);
         pages[1] = getNodePage(0, 0, 128);
 
-        final NodePage page = ERevisioning.FULLDUMP.combinePages(pages, Integer
-                .parseInt(EDatabaseSetting.REVISION_TO_RESTORE
-                        .getStandardProperty()));
+        final NodePage page =
+            ERevisioning.FULLDUMP.combinePages(pages, Integer.parseInt(EDatabaseSetting.REVISION_TO_RESTORE
+                .getStandardProperty()));
 
         for (int j = 0; j < page.getNodes().length; j++) {
             assertEquals(pages[0].getNode(j), page.getNode(j));
@@ -41,9 +41,9 @@ public class ERevisioningTest {
     @Test
     public void testDifferentialCombinePages() {
         final NodePage[] pages = prepareNormal(4);
-        final NodePage page = ERevisioning.DIFFERENTIAL.combinePages(pages,
-                Integer.parseInt(EDatabaseSetting.REVISION_TO_RESTORE
-                        .getStandardProperty()));
+        final NodePage page =
+            ERevisioning.DIFFERENTIAL.combinePages(pages, Integer
+                .parseInt(EDatabaseSetting.REVISION_TO_RESTORE.getStandardProperty()));
 
         for (int j = 0; j < 32; j++) {
             assertEquals(pages[0].getNode(j), page.getNode(j));
@@ -57,18 +57,18 @@ public class ERevisioningTest {
     @Test
     public void testIncrementalCombinePages() {
         final NodePage[] pages = prepareNormal(4);
-        final NodePage page = ERevisioning.INCREMENTAL.combinePages(pages,
-                Integer.parseInt(EDatabaseSetting.REVISION_TO_RESTORE
-                        .getStandardProperty()));
+        final NodePage page =
+            ERevisioning.INCREMENTAL.combinePages(pages, Integer
+                .parseInt(EDatabaseSetting.REVISION_TO_RESTORE.getStandardProperty()));
         checkCombined(pages, page);
     }
 
     @Test
     public void testSnapshotCombinePages() {
         final NodePage[] pages = prepareNormal(4);
-        final NodePage page = ERevisioning.SLIDING_SNAPSHOT.combinePages(pages,
-                Integer.parseInt(EDatabaseSetting.REVISION_TO_RESTORE
-                        .getStandardProperty()));
+        final NodePage page =
+            ERevisioning.SLIDING_SNAPSHOT.combinePages(pages, Integer
+                .parseInt(EDatabaseSetting.REVISION_TO_RESTORE.getStandardProperty()));
         checkCombined(pages, page);
     }
 
@@ -93,8 +93,7 @@ public class ERevisioningTest {
     //
     // }
 
-    private static void checkCombined(final NodePage[] toCheck,
-            final NodePage page) {
+    private static void checkCombined(final NodePage[] toCheck, final NodePage page) {
         for (int i = 0; i < toCheck.length; i++) {
             for (int j = i * 32; j < (i * 32) + 32; j++) {
                 assertEquals(toCheck[i].getNode(j), page.getNode(j));

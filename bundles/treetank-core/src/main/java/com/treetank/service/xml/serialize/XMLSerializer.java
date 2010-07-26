@@ -49,447 +49,415 @@ import static com.treetank.service.xml.serialize.XMLSerializerProperties.S_XMLDE
  * <h1>XMLSerializer</h1>
  * 
  * <p>
- * Most efficient way to serialize a subtree into an OutputStream. The encoding
- * always is UTF-8. Note that the OutputStream internally is wrapped by a
- * BufferedOutputStream. There is no need to buffer it again outside of this
- * class.
+ * Most efficient way to serialize a subtree into an OutputStream. The encoding always is UTF-8. Note that the
+ * OutputStream internally is wrapped by a BufferedOutputStream. There is no need to buffer it again outside
+ * of this class.
  * </p>
  */
 public class XMLSerializer extends AbsSerializer {
 
-  /** Logger. */
-  private static final Logger LOGGER =
-      LoggerFactory.getLogger(XMLSerializer.class);
+    /** Logger. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(XMLSerializer.class);
 
-  /** Offset that must be added to digit to make it ASCII. */
-  private static final int ASCII_OFFSET = 48;
+    /** Offset that must be added to digit to make it ASCII. */
+    private static final int ASCII_OFFSET = 48;
 
-  /** Precalculated powers of each available long digit. */
-  private static final long[] LONG_POWERS =
-      {
-          1L,
-          10L,
-          100L,
-          1000L,
-          10000L,
-          100000L,
-          1000000L,
-          10000000L,
-          100000000L,
-          1000000000L,
-          10000000000L,
-          100000000000L,
-          1000000000000L,
-          10000000000000L,
-          100000000000000L,
-          1000000000000000L,
-          10000000000000000L,
-          100000000000000000L,
-          1000000000000000000L };
+    /** Precalculated powers of each available long digit. */
+    private static final long[] LONG_POWERS = {
+        1L, 10L, 100L, 1000L, 10000L, 100000L, 1000000L, 10000000L, 100000000L, 1000000000L, 10000000000L,
+        100000000000L, 1000000000000L, 10000000000000L, 100000000000000L, 1000000000000000L,
+        10000000000000000L, 100000000000000000L, 1000000000000000000L
+    };
 
-  /** OutputStream to write to. */
-  private final OutputStream mOut;
+    /** OutputStream to write to. */
+    private final OutputStream mOut;
 
-  /** Indent output. */
-  private final boolean mIndent;
+    /** Indent output. */
+    private final boolean mIndent;
 
-  /** Serialize XML declaration. */
-  private final boolean mSerializeXMLDeclaration;
+    /** Serialize XML declaration. */
+    private final boolean mSerializeXMLDeclaration;
 
-  /** Serialize rest header and closer and rest:id */
-  private final boolean mSerializeRest;
+    /** Serialize rest header and closer and rest:id */
+    private final boolean mSerializeRest;
 
-  /** Serialize id */
-  private final boolean mSerializeId;
+    /** Serialize id */
+    private final boolean mSerializeId;
 
-  /** Number of spaces to indent. */
-  private final int mIndentSpaces;
+    /** Number of spaces to indent. */
+    private final int mIndentSpaces;
 
-  /**
-   * Initialize XMLStreamReader implementation with transaction. The cursor
-   * points to the node the XMLStreamReader starts to read.
-   * 
-   * @param rtx
-   *            Transaction with cursor pointing to start node.
-   * @param out
-   *            OutputStream to serialize UTF-8 XML to.
-   * @param serializeXMLDeclaration
-   *            Serialize XML declaration if true.
-   * @param serializeRest
-   *            Serialize rest if true.
-   * @param serializeId
-   *            Serialize id if true.
-   */
-  private XMLSerializer(
-      final ISession session,
-      final XMLSerializerBuilder builder,
-      final long... versions) {
-    super(session, versions);
-    mOut = new BufferedOutputStream(builder.mStream, 4096);
-    mIndent = builder.mIndent;
-    mSerializeXMLDeclaration = builder.mDeclaration;
-    mSerializeRest = builder.mREST;
-    mSerializeId = builder.mID;
-    mIndentSpaces = builder.mIndentSpaces;
-  }
+    /**
+     * Initialize XMLStreamReader implementation with transaction. The cursor
+     * points to the node the XMLStreamReader starts to read.
+     * 
+     * @param rtx
+     *            Transaction with cursor pointing to start node.
+     * @param out
+     *            OutputStream to serialize UTF-8 XML to.
+     * @param serializeXMLDeclaration
+     *            Serialize XML declaration if true.
+     * @param serializeRest
+     *            Serialize rest if true.
+     * @param serializeId
+     *            Serialize id if true.
+     */
+    private XMLSerializer(final ISession session, final XMLSerializerBuilder builder, final long... versions) {
+        super(session, versions);
+        mOut = new BufferedOutputStream(builder.mStream, 4096);
+        mIndent = builder.mIndent;
+        mSerializeXMLDeclaration = builder.mDeclaration;
+        mSerializeRest = builder.mREST;
+        mSerializeId = builder.mID;
+        mIndentSpaces = builder.mIndentSpaces;
+    }
 
-  /**
-   * Emit node (start element or characters).
-   * 
-   * @throws IOException
-   */
-  @Override
-  protected void emitEndElement(final IReadTransaction rtx) {
-    try {
-      switch (rtx.getNode().getKind()) {
-      case ROOT_KIND:
+    /**
+     * Emit node (start element or characters).
+     * 
+     * @throws IOException
+     */
+    @Override
+    protected void emitEndElement(final IReadTransaction rtx) {
+        try {
+            switch (rtx.getNode().getKind()) {
+            case ROOT_KIND:
+                if (mIndent) {
+                    mOut.write(ECharsForSerializing.NEWLINE.getBytes());
+                }
+                break;
+            case ELEMENT_KIND:
+                // Emit start element.
+                indent();
+                mOut.write(ECharsForSerializing.OPEN.getBytes());
+                mOut.write(rtx.rawNameForKey(rtx.getNode().getNameKey()));
+                final long key = rtx.getNode().getNodeKey();
+                // Emit namespace declarations.
+                for (int index = 0, length = ((ElementNode)rtx.getNode()).getNamespaceCount(); index < length; index++) {
+                    rtx.moveToNamespace(index);
+                    if (rtx.nameForKey(rtx.getNode().getNameKey()).length() == 0) {
+                        mOut.write(ECharsForSerializing.XMLNS.getBytes());
+                        write(rtx.nameForKey(rtx.getNode().getURIKey()));
+                        mOut.write(ECharsForSerializing.QUOTE.getBytes());
+                    } else {
+                        mOut.write(ECharsForSerializing.XMLNS_COLON.getBytes());
+                        write(rtx.nameForKey(rtx.getNode().getNameKey()));
+                        mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
+                        write(rtx.nameForKey(rtx.getNode().getURIKey()));
+                        mOut.write(ECharsForSerializing.QUOTE.getBytes());
+                    }
+                    rtx.moveTo(key);
+                }
+                // Emit attributes.
+                // Add virtual rest:id attribute.
+                if (mSerializeId) {
+                    if (mSerializeRest) {
+                        mOut.write(ECharsForSerializing.REST_PREFIX.getBytes());
+                    } else {
+                        mOut.write(ECharsForSerializing.SPACE.getBytes());
+                    }
+                    mOut.write(ECharsForSerializing.ID.getBytes());
+                    mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
+                    write(rtx.getNode().getNodeKey());
+                    mOut.write(ECharsForSerializing.QUOTE.getBytes());
+                }
+
+                // Iterate over all persistent attributes.
+                for (int index = 0; index < ((ElementNode)rtx.getNode()).getAttributeCount(); index++) {
+                    long nodeKey = rtx.getNode().getNodeKey();
+                    rtx.moveToAttribute(index);
+                    if (rtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
+                        System.out.println(nodeKey);
+                        System.out.println(rtx.getNode().getNodeKey());
+                    }
+                    mOut.write(ECharsForSerializing.SPACE.getBytes());
+                    mOut.write(rtx.rawNameForKey(rtx.getNode().getNameKey()));
+                    mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
+                    mOut.write(rtx.getNode().getRawValue());
+                    mOut.write(ECharsForSerializing.QUOTE.getBytes());
+                    rtx.moveTo(key);
+                }
+                if (((AbsStructNode)rtx.getNode()).hasFirstChild()) {
+                    mOut.write(ECharsForSerializing.CLOSE.getBytes());
+                } else {
+                    mOut.write(ECharsForSerializing.SLASH_CLOSE.getBytes());
+                }
+                if (mIndent) {
+                    mOut.write(ECharsForSerializing.NEWLINE.getBytes());
+                }
+                break;
+            case TEXT_KIND:
+                indent();
+                mOut.write(rtx.getNode().getRawValue());
+                if (mIndent) {
+                    mOut.write(ECharsForSerializing.NEWLINE.getBytes());
+                }
+                break;
+            }
+        } catch (final IOException exc) {
+            LOGGER.error(exc.getMessage(), exc);
+        }
+    }
+
+    /**
+     * Emit end element.
+     * 
+     * @throws IOException
+     */
+    @Override
+    protected void emitStartElement(final IReadTransaction rtx) {
+        try {
+            indent();
+            mOut.write(ECharsForSerializing.OPEN_SLASH.getBytes());
+            mOut.write(rtx.rawNameForKey(rtx.getNode().getNameKey()));
+            mOut.write(ECharsForSerializing.CLOSE.getBytes());
+            if (mIndent) {
+                mOut.write(ECharsForSerializing.NEWLINE.getBytes());
+            }
+        } catch (final IOException exc) {
+            LOGGER.error(exc.getMessage(), exc);
+        }
+    }
+
+    @Override
+    protected void emitStartDocument() {
+        try {
+            if (mSerializeXMLDeclaration) {
+                write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+            }
+            if (mSerializeRest) {
+                write("<rest:sequence xmlns:rest=\"REST\"><rest:item>");
+            }
+        } catch (final IOException exc) {
+            LOGGER.error(exc.getMessage(), exc);
+        }
+    }
+
+    @Override
+    protected void emitEndDocument() {
+        try {
+            if (mSerializeRest) {
+                write("</rest:item></rest:sequence>");
+            }
+            mOut.flush();
+        } catch (final IOException exc) {
+            LOGGER.error(exc.getMessage(), exc);
+        }
+
+    }
+
+    @Override
+    protected void emitStartManualElement(final long version) {
+        try {
+            write("<tt revision=\"");
+            write(Long.toString(version));
+            write("\">");
+        } catch (final IOException exc) {
+            LOGGER.error(exc.getMessage(), exc);
+        }
+
+    }
+
+    @Override
+    protected void emitEndManualElement(final long version) {
+        try {
+            write("</tt>");
+        } catch (final IOException exc) {
+            LOGGER.error(exc.getMessage(), exc);
+        }
+    }
+
+    /**
+     * Indentation of output.
+     * 
+     * @throws IOException
+     */
+    private void indent() throws IOException {
         if (mIndent) {
-          mOut.write(ECharsForSerializing.NEWLINE.getBytes());
+            for (int i = 0; i < mStack.size() * mIndentSpaces; i++) {
+                mOut.write(" ".getBytes());
+            }
         }
-        break;
-      case ELEMENT_KIND:
-        // Emit start element.
-        indent();
-        mOut.write(ECharsForSerializing.OPEN.getBytes());
-        mOut.write(rtx.rawNameForKey(rtx.getNode().getNameKey()));
-        final long key = rtx.getNode().getNodeKey();
-        // Emit namespace declarations.
-        for (int index = 0, length =
-            ((ElementNode) rtx.getNode()).getNamespaceCount(); index < length; index++) {
-          rtx.moveToNamespace(index);
-          if (rtx.nameForKey(rtx.getNode().getNameKey()).length() == 0) {
-            mOut.write(ECharsForSerializing.XMLNS.getBytes());
-            write(rtx.nameForKey(rtx.getNode().getURIKey()));
-            mOut.write(ECharsForSerializing.QUOTE.getBytes());
-          } else {
-            mOut.write(ECharsForSerializing.XMLNS_COLON.getBytes());
-            write(rtx.nameForKey(rtx.getNode().getNameKey()));
-            mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
-            write(rtx.nameForKey(rtx.getNode().getURIKey()));
-            mOut.write(ECharsForSerializing.QUOTE.getBytes());
-          }
-          rtx.moveTo(key);
+    }
+
+    /**
+     * Write characters of string.
+     * 
+     * @throws IOException
+     * @throws UnsupportedEncodingException
+     */
+    protected void write(final String string) throws UnsupportedEncodingException, IOException {
+        mOut.write(string.getBytes(IConstants.DEFAULT_ENCODING));
+    }
+
+    /**
+     * Write non-negative non-zero long as UTF-8 bytes.
+     * 
+     * @throws IOException
+     */
+    private void write(final long value) throws IOException {
+        final int length = (int)Math.log10((double)value);
+        int digit = 0;
+        long remainder = value;
+        for (int i = length; i >= 0; i--) {
+            digit = (byte)(remainder / LONG_POWERS[i]);
+            mOut.write((byte)(digit + ASCII_OFFSET));
+            remainder -= digit * LONG_POWERS[i];
         }
-        // Emit attributes.
-        // Add virtual rest:id attribute.
-        if (mSerializeId) {
-          if (mSerializeRest) {
-            mOut.write(ECharsForSerializing.REST_PREFIX.getBytes());
-          } else {
-            mOut.write(ECharsForSerializing.SPACE.getBytes());
-          }
-          mOut.write(ECharsForSerializing.ID.getBytes());
-          mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
-          write(rtx.getNode().getNodeKey());
-          mOut.write(ECharsForSerializing.QUOTE.getBytes());
+    }
+
+    /**
+     * Main method.
+     * 
+     * @param args
+     *            args[0] specifies the input-TT file/folder; args[1] specifies
+     *            the output XML file.
+     * @throws Exception
+     *             Any exception.
+     */
+    public static void main(String... args) throws Exception {
+        if (args.length < 2 || args.length > 3) {
+            System.out.println("Usage: XMLSerializer input-TT output.xml");
+            System.exit(1);
         }
 
-        // Iterate over all persistent attributes.
-        for (int index = 0; index < ((ElementNode) rtx.getNode())
-            .getAttributeCount(); index++) {
-          long nodeKey = rtx.getNode().getNodeKey();
-          rtx.moveToAttribute(index);
-          if (rtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
-            System.out.println(nodeKey);
-            System.out.println(rtx.getNode().getNodeKey());
-          }
-          mOut.write(ECharsForSerializing.SPACE.getBytes());
-          mOut.write(rtx.rawNameForKey(rtx.getNode().getNameKey()));
-          mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
-          mOut.write(rtx.getNode().getRawValue());
-          mOut.write(ECharsForSerializing.QUOTE.getBytes());
-          rtx.moveTo(key);
+        System.out.print("Serializing '" + args[0] + "' to '" + args[1] + "' ... ");
+        long time = System.currentTimeMillis();
+        final File target = new File(args[1]);
+        target.delete();
+        final FileOutputStream outputStream = new FileOutputStream(target);
+
+        final IDatabase db = Database.openDatabase(new File(args[0]));
+        final ISession session = db.getSession();
+
+        final XMLSerializer serializer = new XMLSerializerBuilder(session, outputStream).build();
+        serializer.call();
+
+        session.close();
+        db.close();
+        outputStream.close();
+
+        System.out.println(" done [" + (System.currentTimeMillis() - time) + "ms].");
+    }
+
+    public static class XMLSerializerBuilder {
+        /**
+         * Intermediate boolean for indendation, not necessary.
+         */
+        private transient boolean mIndent = false;
+
+        /**
+         * Intermediate boolean for rest serialization, not necessary.
+         */
+        private transient boolean mREST = false;
+
+        /**
+         * Intermediate boolean for XML-Decl serialization, not necessary.
+         */
+        private transient boolean mDeclaration = true;
+
+        /**
+         * Intermediate boolean for ids, not necessary.
+         */
+        private transient boolean mID = false;
+
+        /**
+         * Intermediate number of spaces to indent, not necessary.
+         */
+        private transient int mIndentSpaces = 2;
+
+        /** Stream to pipe to */
+        private transient final OutputStream mStream;
+
+        /** Session to use */
+        private transient final ISession mSession;
+
+        /** Versions to use */
+        private transient final long[] mVersions;
+
+        /**
+         * Constructor, setting the necessary stuff
+         * 
+         * @param paramStream
+         */
+        public XMLSerializerBuilder(final ISession session, final OutputStream paramStream,
+            final long... versions) {
+            this(session, paramStream, null, versions);
         }
-        if (((AbsStructNode) rtx.getNode()).hasFirstChild()) {
-          mOut.write(ECharsForSerializing.CLOSE.getBytes());
-        } else {
-          mOut.write(ECharsForSerializing.SLASH_CLOSE.getBytes());
+
+        /**
+         * Constructor.
+         * 
+         * @param session
+         *            {@link ISession}.
+         * @param paramStream
+         *            {@link OutputStream}.
+         * @param properties
+         *            {@link XMLSerializerProperties}.
+         * @param versions
+         *            Versions to serialize.
+         */
+        public XMLSerializerBuilder(final ISession session, final OutputStream paramStream,
+            final XMLSerializerProperties properties, final long... versions) {
+            mStream = paramStream;
+            mSession = session;
+            mVersions = versions;
+            // final ConcurrentMap<?, ?> map = properties.getmProps();
+            // mIndent = (Boolean) map.get(S_INDENT[0]);
+            // mREST = (Boolean) map.get(S_REST[0]);
+            // mID = (Boolean) map.get(S_ID[0]);
+            // mIndentSpaces = (Integer) map.get(S_INDENT_SPACES[0]);
+            // mDeclaration = (Boolean) map.get(S_XMLDECL[0]);
         }
-        if (mIndent) {
-          mOut.write(ECharsForSerializing.NEWLINE.getBytes());
+
+        /**
+         * Setting the indention.
+         * 
+         * @param paramIndent
+         *            to set
+         */
+        public void setIndend(final boolean paramIndent) {
+            this.mIndent = paramIndent;
         }
-        break;
-      case TEXT_KIND:
-        indent();
-        mOut.write(rtx.getNode().getRawValue());
-        if (mIndent) {
-          mOut.write(ECharsForSerializing.NEWLINE.getBytes());
+
+        /**
+         * Setting the RESTful output
+         * 
+         * @param paramREST
+         *            to set
+         */
+        public void setREST(boolean paramREST) {
+            this.mREST = paramREST;
         }
-        break;
-      }
-    } catch (final IOException exc) {
-      LOGGER.error(exc.getMessage(), exc);
+
+        /**
+         * Setting the declaration
+         * 
+         * @param paramDeclaration
+         *            to set
+         */
+        public void setDeclaration(boolean paramDeclaration) {
+            this.mDeclaration = paramDeclaration;
+        }
+
+        /**
+         * Setting the ids on nodes
+         * 
+         * @param paramID
+         *            to set
+         */
+        public void setID(boolean paramID) {
+            this.mID = paramID;
+        }
+
+        /**
+         * Building new Serializer
+         * 
+         * @return a new instance
+         */
+        public XMLSerializer build() {
+            return new XMLSerializer(mSession, this, mVersions);
+        }
     }
-  }
-
-  /**
-   * Emit end element.
-   * 
-   * @throws IOException
-   */
-  @Override
-  protected void emitStartElement(final IReadTransaction rtx) {
-    try {
-      indent();
-      mOut.write(ECharsForSerializing.OPEN_SLASH.getBytes());
-      mOut.write(rtx.rawNameForKey(rtx.getNode().getNameKey()));
-      mOut.write(ECharsForSerializing.CLOSE.getBytes());
-      if (mIndent) {
-        mOut.write(ECharsForSerializing.NEWLINE.getBytes());
-      }
-    } catch (final IOException exc) {
-      LOGGER.error(exc.getMessage(), exc);
-    }
-  }
-
-  @Override
-  protected void emitStartDocument() {
-    try {
-      if (mSerializeXMLDeclaration) {
-        write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
-      }
-      if (mSerializeRest) {
-        write("<rest:sequence xmlns:rest=\"REST\"><rest:item>");
-      }
-    } catch (final IOException exc) {
-      LOGGER.error(exc.getMessage(), exc);
-    }
-  }
-
-  @Override
-  protected void emitEndDocument() {
-    try {
-      if (mSerializeRest) {
-        write("</rest:item></rest:sequence>");
-      }
-      mOut.flush();
-    } catch (final IOException exc) {
-      LOGGER.error(exc.getMessage(), exc);
-    }
-
-  }
-
-  @Override
-  protected void emitStartManualElement(final long version) {
-    try {
-      write("<tt revision=\"");
-      write(Long.toString(version));
-      write("\">");
-    } catch (final IOException exc) {
-      LOGGER.error(exc.getMessage(), exc);
-    }
-
-  }
-
-  @Override
-  protected void emitEndManualElement(final long version) {
-    try {
-      write("</tt>");
-    } catch (final IOException exc) {
-      LOGGER.error(exc.getMessage(), exc);
-    }
-  }
-
-  /**
-   * Indentation of output.
-   * 
-   * @throws IOException
-   */
-  private void indent() throws IOException {
-    if (mIndent) {
-      for (int i = 0; i < mStack.size() * mIndentSpaces; i++) {
-        mOut.write(" ".getBytes());
-      }
-    }
-  }
-
-  /**
-   * Write characters of string.
-   * 
-   * @throws IOException
-   * @throws UnsupportedEncodingException
-   */
-  protected void write(final String string)
-      throws UnsupportedEncodingException,
-      IOException {
-    mOut.write(string.getBytes(IConstants.DEFAULT_ENCODING));
-  }
-
-  /**
-   * Write non-negative non-zero long as UTF-8 bytes.
-   * 
-   * @throws IOException
-   */
-  private void write(final long value) throws IOException {
-    final int length = (int) Math.log10((double) value);
-    int digit = 0;
-    long remainder = value;
-    for (int i = length; i >= 0; i--) {
-      digit = (byte) (remainder / LONG_POWERS[i]);
-      mOut.write((byte) (digit + ASCII_OFFSET));
-      remainder -= digit * LONG_POWERS[i];
-    }
-  }
-
-  /**
-   * Main method.
-   * 
-   * @param args
-   *            args[0] specifies the input-TT file/folder; args[1] specifies
-   *            the output XML file.
-   * @throws Exception
-   *             Any exception.
-   */
-  public static void main(String... args) throws Exception {
-    if (args.length < 2 || args.length > 3) {
-      System.out.println("Usage: XMLSerializer input-TT output.xml");
-      System.exit(1);
-    }
-
-    System.out.print("Serializing '" + args[0] + "' to '" + args[1] + "' ... ");
-    long time = System.currentTimeMillis();
-    final File target = new File(args[1]);
-    target.delete();
-    final FileOutputStream outputStream = new FileOutputStream(target);
-
-    final IDatabase db = Database.openDatabase(new File(args[0]));
-    final ISession session = db.getSession();
-
-    final XMLSerializer serializer =
-        new XMLSerializerBuilder(session, outputStream).build();
-    serializer.call();
-
-    session.close();
-    db.close();
-    outputStream.close();
-
-    System.out
-        .println(" done [" + (System.currentTimeMillis() - time) + "ms].");
-  }
-
-  public static class XMLSerializerBuilder {
-    /**
-     * Intermediate boolean for indendation, not necessary.
-     */
-    private transient boolean mIndent = false;
-
-    /**
-     * Intermediate boolean for rest serialization, not necessary.
-     */
-    private transient boolean mREST = false;
-
-    /**
-     * Intermediate boolean for XML-Decl serialization, not necessary.
-     */
-    private transient boolean mDeclaration = true;
-
-    /**
-     * Intermediate boolean for ids, not necessary.
-     */
-    private transient boolean mID = false;
-
-    /**
-     * Intermediate number of spaces to indent, not necessary. 
-     */
-    private transient int mIndentSpaces = 2;
-
-    /** Stream to pipe to */
-    private transient final OutputStream mStream;
-
-    /** Session to use */
-    private transient final ISession mSession;
-
-    /** Versions to use */
-    private transient final long[] mVersions;
-
-    /**
-     * Constructor, setting the necessary stuff
-     * 
-     * @param paramStream
-     */
-    public XMLSerializerBuilder(
-        final ISession session,
-        final OutputStream paramStream,
-        final long... versions) {
-      this(session, paramStream, null, versions);
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param session
-     *                  {@link ISession}.
-     * @param paramStream
-     *                  {@link OutputStream}.
-     * @param properties
-     *                  {@link XMLSerializerProperties}.
-     * @param versions
-     *                  Versions to serialize.
-     */
-    public XMLSerializerBuilder(
-        final ISession session,
-        final OutputStream paramStream,
-        final XMLSerializerProperties properties,
-        final long... versions) {
-      mStream = paramStream;
-      mSession = session;
-      mVersions = versions;
-//      final ConcurrentMap<?, ?> map = properties.getmProps();
-//      mIndent = (Boolean) map.get(S_INDENT[0]);
-//      mREST = (Boolean) map.get(S_REST[0]);
-//      mID = (Boolean) map.get(S_ID[0]);
-//      mIndentSpaces = (Integer) map.get(S_INDENT_SPACES[0]);
-//      mDeclaration = (Boolean) map.get(S_XMLDECL[0]);
-    }
-
-    /**
-     * Setting the indention.
-     * 
-     * @param paramIndent
-     *            to set
-     */
-    public void setIndend(final boolean paramIndent) {
-      this.mIndent = paramIndent;
-    }
-
-    /**
-     * Setting the RESTful output
-     * 
-     * @param paramREST
-     *            to set
-     */
-    public void setREST(boolean paramREST) {
-      this.mREST = paramREST;
-    }
-
-    /**
-     * Setting the declaration
-     * 
-     * @param paramDeclaration
-     *            to set
-     */
-    public void setDeclaration(boolean paramDeclaration) {
-      this.mDeclaration = paramDeclaration;
-    }
-
-    /**
-     * Setting the ids on nodes
-     * 
-     * @param paramID
-     *            to set
-     */
-    public void setID(boolean paramID) {
-      this.mID = paramID;
-    }
-
-    /**
-     * Building new Serializer
-     * 
-     * @return a new instance
-     */
-    public XMLSerializer build() {
-      return new XMLSerializer(mSession, this, mVersions);
-    }
-  }
 
 }

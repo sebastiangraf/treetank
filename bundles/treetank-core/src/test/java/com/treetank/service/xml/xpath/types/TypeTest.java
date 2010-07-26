@@ -27,11 +27,10 @@ import com.treetank.service.xml.xpath.functions.XPathError;
 
 public class TypeTest {
 
-    Type anyType, anySimpleType, anyAtomicType, untypedAtomic, untyped, string,
-            duration, dateTime, time, date, yearMonth, month, monthDay, year,
-            day, bool, base64, hex, anyURI, notation, floatT, doubleT,
-            integerT, longT, intT, qName, pDecimal, decimal, shortT, byteT,
-            nPosInt, posInt, unsignedLong, name, token, language;
+    Type anyType, anySimpleType, anyAtomicType, untypedAtomic, untyped, string, duration, dateTime, time,
+    date, yearMonth, month, monthDay, year, day, bool, base64, hex, anyURI, notation, floatT, doubleT,
+    integerT, longT, intT, qName, pDecimal, decimal, shortT, byteT, nPosInt, posInt, unsignedLong, name,
+    token, language;
 
     @Before
     public void setUp() throws Exception {
@@ -77,12 +76,9 @@ public class TypeTest {
     @Test
     public final void testGetLeastCommonType() {
         assertEquals(Type.getLeastCommonType(anyType, string), Type.ANY_TYPE);
-        assertEquals(Type.getLeastCommonType(anyAtomicType, string),
-                Type.ANY_ATOMIC_TYPE);
-        assertEquals(Type.getLeastCommonType(integerT, string),
-                Type.ANY_ATOMIC_TYPE);
-        assertEquals(Type.getLeastCommonType(nPosInt, string),
-                Type.ANY_ATOMIC_TYPE);
+        assertEquals(Type.getLeastCommonType(anyAtomicType, string), Type.ANY_ATOMIC_TYPE);
+        assertEquals(Type.getLeastCommonType(integerT, string), Type.ANY_ATOMIC_TYPE);
+        assertEquals(Type.getLeastCommonType(nPosInt, string), Type.ANY_ATOMIC_TYPE);
         assertEquals(Type.getLeastCommonType(shortT, decimal), Type.DECIMAL);
         assertEquals(Type.getLeastCommonType(name, token), Type.TOKEN);
         assertEquals(Type.getLeastCommonType(hex, date), Type.ANY_ATOMIC_TYPE);
@@ -310,8 +306,7 @@ public class TypeTest {
     @Test
     public final void testFacets() {
         assertEquals(true, string.facetIsSatisfiedBy("hallo welt!"));
-        assertEquals(true,
-                string.facetIsSatisfiedBy("r7321741237r8gruqewfgducnb2138"));
+        assertEquals(true, string.facetIsSatisfiedBy("r7321741237r8gruqewfgducnb2138"));
         assertEquals(true, string.facetIsSatisfiedBy("-12.E24"));
         assertEquals(true, string.facetIsSatisfiedBy("&%)=1"));
         assertEquals(true, string.facetIsSatisfiedBy("\""));

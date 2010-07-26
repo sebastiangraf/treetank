@@ -87,16 +87,11 @@ public final class WriteTransactionState extends ReadTransactionState {
         final SessionState sessionState, final UberPage uberPage, final IWriter writer, final long paramId,
         final long representRevision, final long storeRevision) throws TreetankIOException {
         super(databaseConfiguration, uberPage, representRevision, new ItemList(), writer);
-        mNewRoot =
-            preparePreviousRevisionRootPage(representRevision, storeRevision);
-        mSessionState =
-            sessionState;
-        log =
-            new TransactionLogCache(databaseConfiguration, storeRevision);
-        mPageWriter =
-            writer;
-        transactionID =
-            paramId;
+        mNewRoot = preparePreviousRevisionRootPage(representRevision, storeRevision);
+        mSessionState = sessionState;
+        log = new TransactionLogCache(databaseConfiguration, storeRevision);
+        mPageWriter = writer;
+        transactionID = paramId;
 
     }
 
@@ -114,22 +109,17 @@ public final class WriteTransactionState extends ReadTransactionState {
             throw new IllegalStateException();
         }
 
-        final long nodePageKey =
-            nodePageKey(nodeKey);
-        final int nodePageOffset =
-            nodePageOffset(nodeKey);
+        final long nodePageKey = nodePageKey(nodeKey);
+        final int nodePageOffset = nodePageOffset(nodeKey);
         prepareNodePage(nodePageKey);
 
-        AbsNode node =
-            this.nodePageCon.getModified().getNode(nodePageOffset);
+        AbsNode node = this.nodePageCon.getModified().getNode(nodePageOffset);
         if (node == null) {
-            final AbsNode oldNode =
-                this.nodePageCon.getComplete().getNode(nodePageOffset);
+            final AbsNode oldNode = this.nodePageCon.getComplete().getNode(nodePageOffset);
             if (oldNode == null) {
                 throw new TreetankIOException("Cannot retrieve node from cache");
             }
-            node =
-                oldNode.clone();
+            node = oldNode.clone();
             this.nodePageCon.getModified().setNode(nodePageOffset, node);
         }
         return node;
@@ -143,16 +133,14 @@ public final class WriteTransactionState extends ReadTransactionState {
      *            the node to be modified.
      */
     protected void finishNodeModification(final AbsNode node) {
-        final long nodePageKey =
-            nodePageKey(node.getNodeKey());
+        final long nodePageKey = nodePageKey(node.getNodeKey());
         if (nodePageCon == null || node == null || log.get(nodePageKey) == null) {
             throw new IllegalStateException();
         }
 
         log.put(nodePageKey, nodePageCon);
 
-        this.nodePageCon =
-            null;
+        this.nodePageCon = null;
 
     }
 
@@ -170,15 +158,11 @@ public final class WriteTransactionState extends ReadTransactionState {
         // Allocate node key and increment node count.
         mNewRoot.incrementMaxNodeKey();
         // Prepare node nodePageReference (COW).
-        final long nodeKey =
-            mNewRoot.getMaxNodeKey();
-        final long nodePageKey =
-            nodePageKey(nodeKey);
-        final int nodePageOffset =
-            nodePageOffset(nodeKey);
+        final long nodeKey = mNewRoot.getMaxNodeKey();
+        final long nodePageKey = nodePageKey(nodeKey);
+        final int nodePageOffset = nodePageOffset(nodeKey);
         prepareNodePage(nodePageKey);
-        final NodePage page =
-            nodePageCon.getModified();
+        final NodePage page = nodePageCon.getModified();
         page.setNode(nodePageOffset, node);
         finishNodeModification(node);
 
@@ -194,12 +178,9 @@ public final class WriteTransactionState extends ReadTransactionState {
     protected ElementNode createElementNode(final long parentKey, final long leftSibKey,
         final long rightSibKey, final QName name) throws TreetankIOException {
 
-        final int nameKey =
-            createNameKey(buildName(name));
-        final int namespaceKey =
-            createNameKey(name.getNamespaceURI());
-        final int typeKey =
-            createNameKey("xs:untyped");
+        final int nameKey = createNameKey(buildName(name));
+        final int namespaceKey = createNameKey(name.getNamespaceURI());
+        final int typeKey = createNameKey("xs:untyped");
 
         return (ElementNode)createNode(ElementNode.createData(mNewRoot.getMaxNodeKey() + 1, parentKey,
             leftSibKey, rightSibKey, (Long)EFixed.NULL_NODE_KEY.getStandardProperty(), 0, nameKey,
@@ -212,8 +193,7 @@ public final class WriteTransactionState extends ReadTransactionState {
 
     protected TextNode createTextNode(final long parentKey, final long leftSibKey, final long rightSibKey,
         final byte[] value) throws TreetankIOException {
-        final int typeKey =
-            createNameKey("xs:untyped");
+        final int typeKey = createNameKey("xs:untyped");
         return (TextNode)createNode(TextNode.createData(mNewRoot.getMaxNodeKey() + 1, parentKey, leftSibKey,
             rightSibKey, typeKey, value));
     }
@@ -225,12 +205,9 @@ public final class WriteTransactionState extends ReadTransactionState {
     protected AttributeNode createAttributeNode(final long parentKey, final QName name, final byte[] value)
         throws TreetankIOException {
 
-        final int nameKey =
-            createNameKey(buildName(name));
-        final int namespaceKey =
-            createNameKey(name.getNamespaceURI());
-        final int typeKey =
-            createNameKey("xs:untypedAtomic");
+        final int nameKey = createNameKey(buildName(name));
+        final int namespaceKey = createNameKey(name.getNamespaceURI());
+        final int typeKey = createNameKey("xs:untypedAtomic");
         return (AttributeNode)createNode(AttributeNode.createData(mNewRoot.getMaxNodeKey() + 1, parentKey,
             nameKey, namespaceKey, typeKey, value));
     }
@@ -254,11 +231,9 @@ public final class WriteTransactionState extends ReadTransactionState {
      *             if the removal fails
      */
     protected void removeNode(final AbsNode node) throws TreetankIOException {
-        final long nodePageKey =
-            nodePageKey(node.getNodeKey());
+        final long nodePageKey = nodePageKey(node.getNodeKey());
         prepareNodePage(nodePageKey);
-        final AbsNode delNode =
-            DeletedNode.createData(node.getNodeKey(), node.getParentKey());
+        final AbsNode delNode = DeletedNode.createData(node.getNodeKey(), node.getParentKey());
         nodePageCon.getModified().setNode(nodePageOffset(node.getNodeKey()), delNode);
         nodePageCon.getComplete().setNode(nodePageOffset(node.getNodeKey()), delNode);
         finishNodeModification(node);
@@ -272,23 +247,18 @@ public final class WriteTransactionState extends ReadTransactionState {
     protected IItem getNode(final long nodeKey) throws TreetankIOException {
 
         // Calculate page and node part for given nodeKey.
-        final long nodePageKey =
-            nodePageKey(nodeKey);
-        final int nodePageOffset =
-            nodePageOffset(nodeKey);
+        final long nodePageKey = nodePageKey(nodeKey);
+        final int nodePageOffset = nodePageOffset(nodeKey);
 
-        final NodePageContainer pageCont =
-            log.get(nodePageKey);
+        final NodePageContainer pageCont = log.get(nodePageKey);
         if (pageCont == null) {
             return super.getNode(nodeKey);
         } else if (pageCont.getModified().getNode(nodePageOffset) == null) {
-            final IItem item =
-                pageCont.getComplete().getNode(nodePageOffset);
+            final IItem item = pageCont.getComplete().getNode(nodePageOffset);
             return checkItemIfDeleted(item);
 
         } else {
-            final IItem item =
-                pageCont.getModified().getNode(nodePageOffset);
+            final IItem item = pageCont.getModified().getNode(nodePageOffset);
             return checkItemIfDeleted(item);
         }
 
@@ -303,17 +273,14 @@ public final class WriteTransactionState extends ReadTransactionState {
      */
     @Override
     protected String getName(final int nameKey) {
-        final NamePage currentNamePage =
-            (NamePage)mNewRoot.getNamePageReference().getPage();
+        final NamePage currentNamePage = (NamePage)mNewRoot.getNamePageReference().getPage();
         String returnVal;
         // if currentNamePage == null -> state was commited and no
         // prepareNodepage was invoked yet
         if (currentNamePage == null || currentNamePage.getName(nameKey) == null) {
-            returnVal =
-                super.getName(nameKey);
+            returnVal = super.getName(nameKey);
         } else {
-            returnVal =
-                currentNamePage.getName(nameKey);
+            returnVal = currentNamePage.getName(nameKey);
         }
         return returnVal;
 
@@ -329,13 +296,10 @@ public final class WriteTransactionState extends ReadTransactionState {
      *             if something odd happens while storing the new key
      */
     protected int createNameKey(final String name) throws TreetankIOException {
-        final String string =
-            (name == null ? "" : name);
-        final int nameKey =
-            NamePageHash.generateHashForString(string);
+        final String string = (name == null ? "" : name);
+        final int nameKey = NamePageHash.generateHashForString(string);
 
-        final NamePage namePage =
-            (NamePage)mNewRoot.getNamePageReference().getPage();
+        final NamePage namePage = (NamePage)mNewRoot.getNamePageReference().getPage();
 
         if (namePage.getName(nameKey) == null) {
             namePage.setName(nameKey, string);
@@ -352,22 +316,18 @@ public final class WriteTransactionState extends ReadTransactionState {
      *             if the write fails
      */
     public void commit(final PageReference reference) throws TreetankException {
-        AbstractPage page =
-            null;
+        AbstractPage page = null;
 
         if (reference != null) {
-            final NodePageContainer cont =
-                log.get(reference.getNodePageKey());
+            final NodePageContainer cont = log.get(reference.getNodePageKey());
             if (cont != null) {
-                page =
-                    cont.getModified();
+                page = cont.getModified();
             }
             if (page == null) {
                 if (!reference.isInstantiated()) {
                     return;
                 } else {
-                    page =
-                        reference.getPage();
+                    page = reference.getPage();
                 }
             }
 
@@ -387,10 +347,8 @@ public final class WriteTransactionState extends ReadTransactionState {
 
         mSessionState.mCommitLock.lock();
 
-        final PageReference uberPageReference =
-            new PageReference();
-        final UberPage uberPage =
-            getUberPage();
+        final PageReference uberPageReference = new PageReference();
+        final UberPage uberPage = getUberPage();
         uberPageReference.setPage(uberPage);
 
         // // // /////////////
@@ -479,22 +437,19 @@ public final class WriteTransactionState extends ReadTransactionState {
 
     protected IndirectPage prepareIndirectPage(final PageReference reference) throws TreetankIOException {
 
-        IndirectPage page =
-            (IndirectPage)reference.getPage();
+        IndirectPage page = (IndirectPage)reference.getPage();
         if (!reference.isInstantiated()) {
             if (reference.isCommitted()) {
                 page =
                     new IndirectPage((IndirectPage)dereferenceIndirectPage(reference),
                         mNewRoot.getRevision() + 1);
             } else {
-                page =
-                    new IndirectPage(getUberPage().getRevision());
+                page = new IndirectPage(getUberPage().getRevision());
 
             }
             reference.setPage(page);
         } else {
-            page =
-                (IndirectPage)reference.getPage();
+            page = (IndirectPage)reference.getPage();
         }
         return page;
     }
@@ -502,19 +457,16 @@ public final class WriteTransactionState extends ReadTransactionState {
     protected NodePageContainer prepareNodePage(final long nodePageKey) throws TreetankIOException {
 
         // Last level points to node nodePageReference.
-        NodePageContainer cont =
-            log.get(nodePageKey);
+        NodePageContainer cont = log.get(nodePageKey);
         if (cont == null) {
 
             // Indirect reference.
-            PageReference reference =
-                prepareLeafOfTree(mNewRoot.getIndirectPageReference(), nodePageKey);
+            PageReference reference = prepareLeafOfTree(mNewRoot.getIndirectPageReference(), nodePageKey);
 
             if (!reference.isInstantiated()) {
 
                 if (reference.isCommitted()) {
-                    cont =
-                        dereferenceNodePageForModification(nodePageKey);
+                    cont = dereferenceNodePageForModification(nodePageKey);
                 } else {
                     cont =
                         new NodePageContainer(new NodePage(nodePageKey, IConstants.UBP_ROOT_REVISION_NUMBER));
@@ -523,10 +475,8 @@ public final class WriteTransactionState extends ReadTransactionState {
             } else {
                 // TODO Nodepage is just used as bootstrap-begin. Perhaps this
                 // can be done otherwise
-                final NodePage page =
-                    (NodePage)reference.getPage();
-                cont =
-                    new NodePageContainer(page);
+                final NodePage page = (NodePage)reference.getPage();
+                cont = new NodePageContainer(page);
 
                 reference.setPage(null);
             }
@@ -534,8 +484,7 @@ public final class WriteTransactionState extends ReadTransactionState {
             reference.setNodePageKey(nodePageKey);
             log.put(nodePageKey, cont);
         }
-        nodePageCon =
-            cont;
+        nodePageCon = cont;
         return cont;
     }
 
@@ -572,25 +521,16 @@ public final class WriteTransactionState extends ReadTransactionState {
 
         // Initial state pointing to the indirect nodePageReference of level 0.
 
-        PageReference reference =
-            startReference;
-        int offset =
-            0;
-        long levelKey =
-            key;
+        PageReference reference = startReference;
+        int offset = 0;
+        long levelKey = key;
 
         // Iterate through all levels.
-        for (int level =
-            0, height =
-            IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
-            offset =
-                (int)(levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
-            levelKey -=
-                offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
-            final IndirectPage page =
-                prepareIndirectPage(reference);
-            reference =
-                page.getReference(offset);
+        for (int level = 0, height = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
+            offset = (int)(levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
+            levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
+            final IndirectPage page = prepareIndirectPage(reference);
+            reference = page.getReference(offset);
 
         }
 
@@ -609,8 +549,7 @@ public final class WriteTransactionState extends ReadTransactionState {
      */
     private final NodePageContainer dereferenceNodePageForModification(final long nodePageKey)
         throws TreetankIOException {
-        final NodePage[] revs =
-            getSnapshotPages(nodePageKey);
+        final NodePage[] revs = getSnapshotPages(nodePageKey);
         final ERevisioning revision =
             ERevisioning.valueOf(getDatabaseConfiguration().getProps().getProperty(
                 EDatabaseSetting.REVISION_TYPE.name()));
@@ -655,11 +594,9 @@ public final class WriteTransactionState extends ReadTransactionState {
     public static final String buildName(final QName qname) {
         String name;
         if (qname.getPrefix().isEmpty()) {
-            name =
-                qname.getLocalPart();
+            name = qname.getLocalPart();
         } else {
-            name =
-                new StringBuilder(qname.getPrefix()).append(":").append(qname.getLocalPart()).toString();
+            name = new StringBuilder(qname.getPrefix()).append(":").append(qname.getLocalPart()).toString();
         }
         return name;
     }

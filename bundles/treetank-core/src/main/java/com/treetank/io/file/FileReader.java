@@ -43,8 +43,8 @@ public final class FileReader implements IReader {
      * @throws TreetankIOException
      *             if something bad happens
      */
-    public FileReader(final SessionConfiguration paramConf,
-            final File concreteStorage) throws TreetankIOException {
+    public FileReader(final SessionConfiguration paramConf, final File concreteStorage)
+        throws TreetankIOException {
 
         try {
             if (!concreteStorage.exists()) {
@@ -69,15 +69,14 @@ public final class FileReader implements IReader {
      * @throws TreetankIOException
      *             if there was an error during reading.
      */
-    public AbstractPage read(final PageReference pageReference)
-            throws TreetankIOException {
+    public AbstractPage read(final PageReference pageReference) throws TreetankIOException {
 
         if (!pageReference.isCommitted()) {
             return null;
         }
 
         try {
-            final FileKey fileKey = (FileKey) pageReference.getKey();
+            final FileKey fileKey = (FileKey)pageReference.getKey();
 
             // Prepare environment for read.
             final byte[] checksum = new byte[IConstants.CHECKSUM_SIZE];
@@ -97,8 +96,7 @@ public final class FileReader implements IReader {
             }
 
             // Perform crypto operations.
-            final int outputLength = mDecompressor
-                    .decrypt(inputLength, mBuffer);
+            final int outputLength = mDecompressor.decrypt(inputLength, mBuffer);
             if (outputLength == 0) {
                 throw new TreetankIOException("Page decrypt error.");
             }
@@ -128,13 +126,11 @@ public final class FileReader implements IReader {
             uberPageReference.setChecksum(tmp);
 
             // Check to writer ensure writing after the Beacon_Start
-            if (mFile.getFilePointer() < IConstants.BEACON_START
-                    + IConstants.BEACON_LENGTH) {
-                mFile.setLength(IConstants.BEACON_START
-                        + IConstants.BEACON_LENGTH);
+            if (mFile.getFilePointer() < IConstants.BEACON_START + IConstants.BEACON_LENGTH) {
+                mFile.setLength(IConstants.BEACON_START + IConstants.BEACON_LENGTH);
             }
 
-            final UberPage page = (UberPage) read(uberPageReference);
+            final UberPage page = (UberPage)read(uberPageReference);
             uberPageReference.setPage(page);
 
             return uberPageReference;

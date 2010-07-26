@@ -35,76 +35,68 @@ import com.treetank.service.xml.XMLShredder;
  */
 public class TestNodeWrapperS9ApiXQuerySAXHandler {
 
-	/** Treetank database on books document. */
-	private transient static IDatabase databaseBooks;
+    /** Treetank database on books document. */
+    private transient static IDatabase databaseBooks;
 
-	/** Path to books file. */
-	private static final File BOOKSXML = new File(new StringBuilder("src")
-			.append(File.separator).append("test").append(File.separator)
-			.append("resources").append(File.separator).append("data").append(
-					File.separator).append("my-books.xml").toString());
+    /** Path to books file. */
+    private static final File BOOKSXML = new File(new StringBuilder("src").append(File.separator).append(
+        "test").append(File.separator).append("resources").append(File.separator).append("data").append(
+        File.separator).append("my-books.xml").toString());
 
-	@Before
-	public void setUp() throws Exception {
-		Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
-		Database.createDatabase(new DatabaseConfiguration(
-				TestHelper.PATHS.PATH1.getFile()));
+    @Before
+    public void setUp() throws Exception {
+        Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
+        Database.createDatabase(new DatabaseConfiguration(TestHelper.PATHS.PATH1.getFile()));
 
-		databaseBooks = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
-		final IWriteTransaction mWTX = databaseBooks.getSession()
-				.beginWriteTransaction();
-		final XMLEventReader reader = XMLShredder.createReader(BOOKSXML);
-		final XMLShredder shredder = new XMLShredder(mWTX, reader, true);
-		shredder.call();
-		mWTX.close();
-	}
+        databaseBooks = Database.openDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IWriteTransaction mWTX = databaseBooks.getSession().beginWriteTransaction();
+        final XMLEventReader reader = XMLShredder.createReader(BOOKSXML);
+        final XMLShredder shredder = new XMLShredder(mWTX, reader, true);
+        shredder.call();
+        mWTX.close();
+    }
 
-	@AfterClass
-	public static void tearDown() throws TreetankException {
-		databaseBooks.close();
-		Database.forceCloseDatabase(TestHelper.PATHS.PATH1.getFile());
-	}
+    @AfterClass
+    public static void tearDown() throws TreetankException {
+        databaseBooks.close();
+        Database.forceCloseDatabase(TestHelper.PATHS.PATH1.getFile());
+    }
 
-	@Test
-	public void testWhereBooks() throws Exception {
-		final StringBuilder strBuilder = new StringBuilder();
-		final ContentHandler contHandler = new XMLFilterImpl() {
+    @Test
+    public void testWhereBooks() throws Exception {
+        final StringBuilder strBuilder = new StringBuilder();
+        final ContentHandler contHandler = new XMLFilterImpl() {
 
-			@Override
-			public void startElement(final String uri, final String localName,
-					final String qName, final Attributes atts)
-					throws SAXException {
-				strBuilder.append("<" + localName);
+            @Override
+            public void startElement(final String uri, final String localName, final String qName,
+                final Attributes atts) throws SAXException {
+                strBuilder.append("<" + localName);
 
-				for (int i = 0; i < atts.getLength(); i++) {
-					strBuilder.append(" " + atts.getQName(i));
-					strBuilder.append("=\"" + atts.getValue(i) + "\"");
-				}
+                for (int i = 0; i < atts.getLength(); i++) {
+                    strBuilder.append(" " + atts.getQName(i));
+                    strBuilder.append("=\"" + atts.getValue(i) + "\"");
+                }
 
-				strBuilder.append(">");
-			}
+                strBuilder.append(">");
+            }
 
-			@Override
-			public void endElement(String uri, String localName, String qName)
-					throws SAXException {
-				strBuilder.append("</" + localName + ">");
-			}
+            @Override
+            public void endElement(String uri, String localName, String qName) throws SAXException {
+                strBuilder.append("</" + localName + ">");
+            }
 
-			@Override
-			public void characters(final char[] ch, final int start,
-					final int length) throws SAXException {
-				for (int i = start; i < start + length; i++) {
-					strBuilder.append(ch[i]);
-				}
-			}
-		};
+            @Override
+            public void characters(final char[] ch, final int start, final int length) throws SAXException {
+                for (int i = start; i < start + length; i++) {
+                    strBuilder.append(ch[i]);
+                }
+            }
+        };
 
-		new XQueryEvaluatorSAXHandler(
-				"for $x in /bookstore/book where $x/price>30 return $x/title",
-				databaseBooks, contHandler).call();
+        new XQueryEvaluatorSAXHandler("for $x in /bookstore/book where $x/price>30 return $x/title",
+            databaseBooks, contHandler).call();
 
-    assertEquals(
-						strBuilder.toString(),
-						"<title lang=\"en\">XQuery Kick Start</title><title lang=\"en\">Learning XML</title>");
-	}
+        assertEquals(strBuilder.toString(),
+            "<title lang=\"en\">XQuery Kick Start</title><title lang=\"en\">Learning XML</title>");
+    }
 }

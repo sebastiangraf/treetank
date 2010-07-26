@@ -58,8 +58,7 @@ public class FunctionAxisTest {
     @Test
     public void testFunctions() throws TreetankException {
         // Build simple test tree.
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -70,31 +69,26 @@ public class FunctionAxisTest {
 
         final IAxis axis1 = new XPathAxis(rtx, "fn:count(text())");
         assertEquals(true, axis1.hasNext());
-        assertEquals(3,
-                (int) TypedValue.parseDouble(rtx.getNode().getRawValue()));
+        assertEquals(3, (int)TypedValue.parseDouble(rtx.getNode().getRawValue()));
         assertEquals(false, axis1.hasNext());
 
         final IAxis axis2 = new XPathAxis(rtx, "fn:count(//node())");
         assertEquals(true, axis2.hasNext());
-        assertEquals(10,
-                (int) TypedValue.parseDouble(rtx.getNode().getRawValue()));
+        assertEquals(10, (int)TypedValue.parseDouble(rtx.getNode().getRawValue()));
         assertEquals(false, axis2.hasNext());
 
         final IAxis axis3 = new XPathAxis(rtx, "fn:string(//node())");
         assertEquals(true, axis3.hasNext());
-        assertEquals(
-                "oops1 foo oops2 bar oops3 oops1 foo oops2 bar oops3 foo bar",
-                TypedValue.parseString(rtx.getNode().getRawValue()));
+        assertEquals("oops1 foo oops2 bar oops3 oops1 foo oops2 bar oops3 foo bar", TypedValue
+            .parseString(rtx.getNode().getRawValue()));
         assertEquals(false, axis3.hasNext());
 
         final IAxis axis4 = new XPathAxis(rtx, "fn:string()");
         assertEquals(true, axis4.hasNext());
-        assertEquals("oops1 foo oops2 bar oops3",
-                TypedValue.parseString(rtx.getNode().getRawValue()));
+        assertEquals("oops1 foo oops2 bar oops3", TypedValue.parseString(rtx.getNode().getRawValue()));
         assertEquals(false, axis4.hasNext());
 
-        final IAxis axis5 = new XPathAxis(rtx,
-                "fn:string(./attribute::attribute())");
+        final IAxis axis5 = new XPathAxis(rtx, "fn:string(./attribute::attribute())");
         assertEquals(true, axis5.hasNext());
         assertEquals("j", TypedValue.parseString(rtx.getNode().getRawValue()));
         assertEquals(false, axis5.hasNext());

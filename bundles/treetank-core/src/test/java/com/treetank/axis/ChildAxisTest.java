@@ -43,19 +43,20 @@ public class ChildAxisTest {
     @Test
     @Bench(runs = 10)
     public void testIterate() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
 
         wtx.moveTo(1L);
-        IAxisTest.testIAxisConventions(new ChildAxis(wtx), new long[] { 4L, 5L,
-                8L, 9L, 13L });
+        IAxisTest.testIAxisConventions(new ChildAxis(wtx), new long[] {
+            4L, 5L, 8L, 9L, 13L
+        });
 
         wtx.moveTo(5L);
-        IAxisTest.testIAxisConventions(new ChildAxis(wtx),
-                new long[] { 6L, 7L });
+        IAxisTest.testIAxisConventions(new ChildAxis(wtx), new long[] {
+            6L, 7L
+        });
 
         wtx.moveTo(13L);
         IAxisTest.testIAxisConventions(new ChildAxis(wtx), new long[] {});
@@ -69,8 +70,7 @@ public class ChildAxisTest {
     @Test
     @Bench(runs = 10)
     public void testPersistent() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -80,12 +80,14 @@ public class ChildAxisTest {
         final IReadTransaction rtx = session.beginReadTransaction();
 
         rtx.moveTo(1L);
-        IAxisTest.testIAxisConventions(new ChildAxis(rtx), new long[] { 4L, 5L,
-                8L, 9L, 13L });
+        IAxisTest.testIAxisConventions(new ChildAxis(rtx), new long[] {
+            4L, 5L, 8L, 9L, 13L
+        });
 
         rtx.moveTo(5L);
-        IAxisTest.testIAxisConventions(new ChildAxis(rtx),
-                new long[] { 6L, 7L });
+        IAxisTest.testIAxisConventions(new ChildAxis(rtx), new long[] {
+            6L, 7L
+        });
 
         rtx.moveTo(13L);
         IAxisTest.testIAxisConventions(new ChildAxis(rtx), new long[] {});

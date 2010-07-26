@@ -45,8 +45,7 @@ public class IAxisTest {
         TestHelper.deleteEverything();
     }
 
-    public static void testIAxisConventions(final IAxis axis,
-            final long[] expectedKeys) {
+    public static void testIAxisConventions(final IAxis axis, final long[] expectedKeys) {
 
         final IReadTransaction rtx = axis.getTransaction();
 
@@ -55,7 +54,7 @@ public class IAxisTest {
 
         final long[] keys = new long[expectedKeys.length];
         int offset = 0;
-        while (axis.hasNext()) {
+        while(axis.hasNext()) {
             axis.next();
             // IAxis results.
             assertTrue(offset < expectedKeys.length);
@@ -85,8 +84,7 @@ public class IAxisTest {
     @Test
     public void testIAxisUserExample() throws TreetankException {
 
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -94,7 +92,7 @@ public class IAxisTest {
         wtx.moveToDocumentRoot();
         final IAxis axis = new DescendantAxis(wtx);
         long count = 0L;
-        while (axis.hasNext()) {
+        while(axis.hasNext()) {
             count += 1;
         }
         Assert.assertEquals(10L, count);

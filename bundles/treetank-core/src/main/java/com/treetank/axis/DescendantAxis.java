@@ -28,8 +28,7 @@ import com.treetank.utils.FastStack;
  * <h1>DescendantAxis</h1>
  * 
  * <p>
- * Iterate over all descendants of kind ELEMENT or TEXT starting at a given
- * node. Self is not included.
+ * Iterate over all descendants of kind ELEMENT or TEXT starting at a given node. Self is not included.
  * </p>
  */
 public class DescendantAxis extends AbstractAxis implements IAxis {
@@ -72,8 +71,7 @@ public class DescendantAxis extends AbstractAxis implements IAxis {
         if (isSelfIncluded()) {
             mNextKey = getTransaction().getNode().getNodeKey();
         } else {
-            mNextKey = ((AbsStructNode) getTransaction().getNode())
-                    .getFirstChildKey();
+            mNextKey = ((AbsStructNode)getTransaction().getNode()).getFirstChildKey();
         }
     }
 
@@ -85,7 +83,7 @@ public class DescendantAxis extends AbstractAxis implements IAxis {
         resetToLastKey();
 
         // Fail if there is no node anymore.
-        if (mNextKey == (Long) EFixed.NULL_NODE_KEY.getStandardProperty()) {
+        if (mNextKey == (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
             resetToStartKey();
             return false;
         }
@@ -93,26 +91,23 @@ public class DescendantAxis extends AbstractAxis implements IAxis {
         getTransaction().moveTo(mNextKey);
 
         // Fail if the subtree is finished.
-        if (((AbsStructNode) getTransaction().getNode()).getLeftSiblingKey() == getStartKey()) {
+        if (((AbsStructNode)getTransaction().getNode()).getLeftSiblingKey() == getStartKey()) {
             resetToStartKey();
             return false;
         }
 
         // Always follow first child if there is one.
-        if (((AbsStructNode) getTransaction().getNode()).hasFirstChild()) {
-            mNextKey = ((AbsStructNode) getTransaction().getNode())
-                    .getFirstChildKey();
-            if (((AbsStructNode) getTransaction().getNode()).hasRightSibling()) {
-                mRightSiblingKeyStack.push(((AbsStructNode) getTransaction()
-                        .getNode()).getRightSiblingKey());
+        if (((AbsStructNode)getTransaction().getNode()).hasFirstChild()) {
+            mNextKey = ((AbsStructNode)getTransaction().getNode()).getFirstChildKey();
+            if (((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
+                mRightSiblingKeyStack.push(((AbsStructNode)getTransaction().getNode()).getRightSiblingKey());
             }
             return true;
         }
 
         // Then follow right sibling if there is one.
-        if (((AbsStructNode) getTransaction().getNode()).hasRightSibling()) {
-            mNextKey = ((AbsStructNode) getTransaction().getNode())
-                    .getRightSiblingKey();
+        if (((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
+            mNextKey = ((AbsStructNode)getTransaction().getNode()).getRightSiblingKey();
             return true;
         }
 
@@ -123,7 +118,7 @@ public class DescendantAxis extends AbstractAxis implements IAxis {
         }
 
         // Then end.
-        mNextKey = (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
+        mNextKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
         return true;
     }
 

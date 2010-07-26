@@ -21,21 +21,19 @@ final class TrieNavigator {
      * @param term
      *            to be inserted
      */
-    static void adaptTrie(final IWriteTransaction wtx, final String term)
-            throws TreetankException {
+    static void adaptTrie(final IWriteTransaction wtx, final String term) throws TreetankException {
         moveToTrieRoot(wtx);
         int endIndexOfTerm = 1;
         String current = "";
         // for each letter in the term to be indexed...
-        while (endIndexOfTerm <= term.length()) {
+        while(endIndexOfTerm <= term.length()) {
             // ..create a node in the structure and...
             current = term.substring(0, endIndexOfTerm);
             // ..navigate through the trie by inserting directly the prefix
             // if no firstchild is present in the trie...
             if (!wtx.moveToFirstChild()) {
                 wtx.insertElementAsFirstChild(new QName(RevIndex.TRIE_ELEMENT));
-                wtx.insertAttribute(
-                        new QName(RevIndex.TRIE_PREFIX_ATTRIBUTEKEY), current);
+                wtx.insertAttribute(new QName(RevIndex.TRIE_PREFIX_ATTRIBUTEKEY), current);
                 wtx.moveToParent();
             }
             boolean found = false;
@@ -43,13 +41,11 @@ final class TrieNavigator {
             // checking of the prefix is present as a sibling of the
             // firstchild...
             do {
-                if (wtx.getNode().getNameKey() == NamePageHash
-                        .generateHashForString(RevIndex.TRIE_ELEMENT)) {
+                if (wtx.getNode().getNameKey() == NamePageHash.generateHashForString(RevIndex.TRIE_ELEMENT)) {
                     if (!wtx.moveToAttribute(0)) {
                         throw new IllegalStateException();
                     }
-                    if (wtx.getValueOfCurrentNode().hashCode() == current
-                            .hashCode()) {
+                    if (wtx.getValueOfCurrentNode().hashCode() == current.hashCode()) {
                         found = true;
                     }
                     wtx.moveToParent();
@@ -57,12 +53,11 @@ final class TrieNavigator {
                         break;
                     }
                 }
-            } while (wtx.moveToRightSibling());
+            } while(wtx.moveToRightSibling());
             // ...of not, insert it...
             if (!found) {
                 wtx.insertElementAsRightSibling(new QName(RevIndex.TRIE_ELEMENT));
-                wtx.insertAttribute(
-                        new QName(RevIndex.TRIE_PREFIX_ATTRIBUTEKEY), current);
+                wtx.insertAttribute(new QName(RevIndex.TRIE_PREFIX_ATTRIBUTEKEY), current);
                 wtx.moveToParent();
             }
             // ..and adapt the prefix with the next letter from the trie..
@@ -71,8 +66,7 @@ final class TrieNavigator {
         }
     }
 
-    static long getDocRootInTrie(final IReadTransaction rtx, final String term)
-            throws TreetankException {
+    static long getDocRootInTrie(final IReadTransaction rtx, final String term) throws TreetankException {
         moveToTrieRoot(rtx);
         long returnVal = ENodes.UNKOWN_KIND.getNodeIdentifier();
         StringBuilder toSearch = new StringBuilder();
@@ -81,12 +75,11 @@ final class TrieNavigator {
                 toSearch.append(term.charAt(i));
                 do {
                     if (rtx.getNode().getNameKey() == NamePageHash
-                            .generateHashForString(RevIndex.TRIE_ELEMENT)) {
+                        .generateHashForString(RevIndex.TRIE_ELEMENT)) {
                         if (!rtx.moveToAttribute(0)) {
                             throw new IllegalStateException();
                         }
-                        if (rtx.getValueOfCurrentNode().hashCode() == toSearch
-                                .toString().hashCode()) {
+                        if (rtx.getValueOfCurrentNode().hashCode() == toSearch.toString().hashCode()) {
                             rtx.moveToParent();
                             break;
                         } else {
@@ -94,19 +87,17 @@ final class TrieNavigator {
                         }
 
                     }
-                } while (rtx.moveToRightSibling());
+                } while(rtx.moveToRightSibling());
 
             } else {
                 break;
             }
         }
-        if (rtx.getNode().getNameKey() == NamePageHash
-                .generateHashForString(RevIndex.TRIE_ELEMENT)) {
+        if (rtx.getNode().getNameKey() == NamePageHash.generateHashForString(RevIndex.TRIE_ELEMENT)) {
             if (!rtx.moveToAttribute(0)) {
                 throw new IllegalStateException();
             }
-            if (rtx.getValueOfCurrentNode().hashCode() == toSearch.toString()
-                    .hashCode()) {
+            if (rtx.getValueOfCurrentNode().hashCode() == toSearch.toString().hashCode()) {
                 rtx.moveToParent();
                 returnVal = rtx.getNode().getNodeKey();
             } else {
@@ -121,10 +112,9 @@ final class TrieNavigator {
      * Private method to the root of the trie. Inserting basic structure if not
      * avaliable.
      */
-    private static void moveToTrieRoot(final IReadTransaction rtx)
-            throws TreetankException {
+    private static void moveToTrieRoot(final IReadTransaction rtx) throws TreetankException {
         rtx.moveToDocumentRoot();
-        if (!((AbsStructNode) rtx.getNode()).hasFirstChild()) {
+        if (!((AbsStructNode)rtx.getNode()).hasFirstChild()) {
             RevIndex.initialiseBasicStructure(rtx);
             rtx.moveToLeftSibling();
         } else {

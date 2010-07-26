@@ -30,9 +30,8 @@ import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
 /**
  * <h1>IntersectAxis</h1>
  * <p>
- * Returns an intersection of two operands. This axis takes two node sequences
- * as operands and returns a sequence containing all the nodes that occur in
- * both operands.
+ * Returns an intersection of two operands. This axis takes two node sequences as operands and returns a
+ * sequence containing all the nodes that occur in both operands.
  * </p>
  */
 public class IntersectAxis extends AbstractAxis implements IAxis {
@@ -56,8 +55,7 @@ public class IntersectAxis extends AbstractAxis implements IAxis {
      * @param operand2
      *            Second operand
      */
-    public IntersectAxis(final IReadTransaction rtx, final IAxis operand1,
-            final IAxis operand2) {
+    public IntersectAxis(final IReadTransaction rtx, final IAxis operand1, final IAxis operand2) {
 
         super(rtx);
         mOp1 = operand1;
@@ -93,7 +91,7 @@ public class IntersectAxis extends AbstractAxis implements IAxis {
     public boolean hasNext() {
 
         // store all item keys of the first sequence to the set.
-        while (mOp1.hasNext()) {
+        while(mOp1.hasNext()) {
             if (getTransaction().getNode().getNodeKey() < 0) { // only nodes are
                 // allowed
                 throw new XPathError(ErrorType.XPTY0004);
@@ -102,7 +100,7 @@ public class IntersectAxis extends AbstractAxis implements IAxis {
             mDupSet.add(getTransaction().getNode().getNodeKey());
         }
 
-        while (mOp2.hasNext()) {
+        while(mOp2.hasNext()) {
 
             if (getTransaction().getNode().getNodeKey() < 0) { // only nodes are
                 // allowed

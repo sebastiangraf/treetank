@@ -27,8 +27,7 @@ public final class FileFactory extends AbstractIOFactory {
      * @param paramSession
      *            the location of the storage
      */
-    public FileFactory(final DatabaseConfiguration paramDatabase,
-            final SessionConfiguration paramSession) {
+    public FileFactory(final DatabaseConfiguration paramDatabase, final SessionConfiguration paramSession) {
         super(paramDatabase, paramSession);
     }
 
@@ -57,9 +56,8 @@ public final class FileFactory extends AbstractIOFactory {
     }
 
     protected final File getConcreteStorage() {
-        return new File(super.databaseConfig.getFile(), new StringBuilder(
-                EStoragePaths.TT.getFile().getName()).append(File.separator)
-                .append(FILENAME).toString());
+        return new File(super.databaseConfig.getFile(), new StringBuilder(EStoragePaths.TT.getFile()
+            .getName()).append(File.separator).append(FILENAME).toString());
     }
 
     /**

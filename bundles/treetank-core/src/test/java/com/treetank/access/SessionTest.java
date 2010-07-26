@@ -113,20 +113,16 @@ public class SessionTest {
     }
 
     @Test
-    public void testNonExisting() throws TreetankException,
-            InterruptedException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
-        final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH1
-                .getFile());
+    public void testNonExisting() throws TreetankException, InterruptedException {
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH1.getFile());
         assertTrue(database == database2);
         database.close();
     }
 
     @Test
     public void testInsertChild() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
 
         final ISession session = database.getSession();
 
@@ -149,8 +145,7 @@ public class SessionTest {
 
     @Test
     public void testRevision() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
 
         IReadTransaction rtx = session.beginReadTransaction();
@@ -165,8 +160,7 @@ public class SessionTest {
 
         rtx = session.beginReadTransaction();
 
-        assertEquals(IConstants.UBP_ROOT_REVISION_NUMBER,
-                rtx.getRevisionNumber());
+        assertEquals(IConstants.UBP_ROOT_REVISION_NUMBER, rtx.getRevisionNumber());
         rtx.close();
 
         final IReadTransaction rtx2 = session.beginReadTransaction();
@@ -178,8 +172,7 @@ public class SessionTest {
 
     @Test
     public void testShreddedRevision() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
 
         final IWriteTransaction wtx1 = session.beginWriteTransaction();
@@ -191,18 +184,15 @@ public class SessionTest {
         final IReadTransaction rtx1 = session.beginReadTransaction();
         assertEquals(0L, rtx1.getRevisionNumber());
         rtx1.moveTo(12L);
-        assertEquals("bar",
-                TypedValue.parseString(rtx1.getNode().getRawValue()));
+        assertEquals("bar", TypedValue.parseString(rtx1.getNode().getRawValue()));
 
         final IWriteTransaction wtx2 = session.beginWriteTransaction();
         assertEquals(1L, wtx2.getRevisionNumber());
         wtx2.moveTo(12L);
         wtx2.setValue("bar2");
 
-        assertEquals("bar",
-                TypedValue.parseString(rtx1.getNode().getRawValue()));
-        assertEquals("bar2",
-                TypedValue.parseString(wtx2.getNode().getRawValue()));
+        assertEquals("bar", TypedValue.parseString(rtx1.getNode().getRawValue()));
+        assertEquals("bar2", TypedValue.parseString(wtx2.getNode().getRawValue()));
         rtx1.close();
         wtx2.abort();
         wtx2.close();
@@ -210,8 +200,7 @@ public class SessionTest {
         final IReadTransaction rtx2 = session.beginReadTransaction();
         assertEquals(0L, rtx2.getRevisionNumber());
         rtx2.moveTo(12L);
-        assertEquals("bar",
-                TypedValue.parseString(rtx2.getNode().getRawValue()));
+        assertEquals("bar", TypedValue.parseString(rtx2.getNode().getRawValue()));
         rtx2.close();
 
         session.close();
@@ -220,8 +209,7 @@ public class SessionTest {
 
     @Test
     public void testExisting() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session1 = database.getSession();
 
         final IWriteTransaction wtx1 = session1.beginWriteTransaction();
@@ -235,18 +223,15 @@ public class SessionTest {
         final IReadTransaction rtx1 = session2.beginReadTransaction();
         assertEquals(0L, rtx1.getRevisionNumber());
         rtx1.moveTo(12L);
-        assertEquals("bar",
-                TypedValue.parseString(rtx1.getNode().getRawValue()));
+        assertEquals("bar", TypedValue.parseString(rtx1.getNode().getRawValue()));
 
         final IWriteTransaction wtx2 = session2.beginWriteTransaction();
         assertEquals(1L, wtx2.getRevisionNumber());
         wtx2.moveTo(12L);
         wtx2.setValue("bar2");
 
-        assertEquals("bar",
-                TypedValue.parseString(rtx1.getNode().getRawValue()));
-        assertEquals("bar2",
-                TypedValue.parseString(wtx2.getNode().getRawValue()));
+        assertEquals("bar", TypedValue.parseString(rtx1.getNode().getRawValue()));
+        assertEquals("bar2", TypedValue.parseString(wtx2.getNode().getRawValue()));
 
         rtx1.close();
         wtx2.commit();
@@ -254,14 +239,12 @@ public class SessionTest {
         session2.close();
         database.close();
 
-        final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH1
-                .getFile());
+        final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session3 = database2.getSession();
         final IReadTransaction rtx2 = session3.beginReadTransaction();
         assertEquals(1L, rtx2.getRevisionNumber());
         rtx2.moveTo(14L);
-        assertEquals("bar2",
-                TypedValue.parseString(rtx2.getNode().getRawValue()));
+        assertEquals("bar2", TypedValue.parseString(rtx2.getNode().getRawValue()));
 
         rtx2.close();
         session3.close();
@@ -271,8 +254,7 @@ public class SessionTest {
 
     @Test
     public void testIdempotentClose() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -295,8 +277,7 @@ public class SessionTest {
     @Test
     public void testAutoCommit() throws TreetankException {
 
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
 
         final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -308,8 +289,7 @@ public class SessionTest {
 
     @Test
     public void testAutoClose() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
 
         final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -322,8 +302,7 @@ public class SessionTest {
 
     @Test
     public void testTransactionCount() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
 
         final IWriteTransaction wtx = session.beginWriteTransaction();

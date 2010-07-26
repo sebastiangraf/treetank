@@ -56,8 +56,7 @@ public class MultipleCommitTest {
 
     @Test
     public void test() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         Assert.assertEquals(0L, wtx.getRevisionNumber());
@@ -80,8 +79,7 @@ public class MultipleCommitTest {
 
     @Test
     public void testAutoCommit() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction(100, 1);
         DocumentCreater.create(wtx);
@@ -96,8 +94,7 @@ public class MultipleCommitTest {
 
     @Test
     public void testRemove() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -118,8 +115,7 @@ public class MultipleCommitTest {
 
     @Test
     public void testAttributeRemove() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -127,12 +123,11 @@ public class MultipleCommitTest {
         wtx.moveToDocumentRoot();
 
         final IAxis postorderAxis = new PostOrderAxis(wtx);
-        while (postorderAxis.hasNext()) {
+        while(postorderAxis.hasNext()) {
             postorderAxis.next();
             if (wtx.getNode().getKind() == ENodes.ELEMENT_KIND
-                    && ((ElementNode) wtx.getNode()).getAttributeCount() > 0) {
-                for (int i = 0, attrCount = ((ElementNode) wtx.getNode())
-                        .getAttributeCount(); i < attrCount; i++) {
+            && ((ElementNode)wtx.getNode()).getAttributeCount() > 0) {
+                for (int i = 0, attrCount = ((ElementNode)wtx.getNode()).getAttributeCount(); i < attrCount; i++) {
                     wtx.moveToAttribute(i);
                     wtx.remove();
                 }
@@ -143,11 +138,10 @@ public class MultipleCommitTest {
 
         int attrTouch = 0;
         final IAxis descAxis = new DescendantAxis(wtx);
-        while (descAxis.hasNext()) {
+        while(descAxis.hasNext()) {
             descAxis.next();
             if (wtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
-                for (int i = 0, attrCount = ((ElementNode) wtx.getNode())
-                        .getAttributeCount(); i < attrCount; i++) {
+                for (int i = 0, attrCount = ((ElementNode)wtx.getNode()).getAttributeCount(); i < attrCount; i++) {
                     if (wtx.moveToAttribute(i)) {
                         attrTouch++;
                     } else {

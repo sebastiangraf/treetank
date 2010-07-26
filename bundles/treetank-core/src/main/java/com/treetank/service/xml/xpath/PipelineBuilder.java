@@ -133,8 +133,7 @@ public final class PipelineBuilder {
         // of the stack containing these SingleExpressions have to be the same.
         if (getPipeStack().size() != num) {
             // this should never happen
-            throw new IllegalStateException(
-                    "The query has not been porcessed correctly");
+            throw new IllegalStateException("The query has not been porcessed correctly");
         }
         int no = num;
 
@@ -144,7 +143,7 @@ public final class PipelineBuilder {
             axis = new IAxis[no];
 
             // add all SingleExpression to a list
-            while (no-- > 0) {
+            while(no-- > 0) {
                 axis[no] = getPipeStack().pop().getExpr();
             }
 
@@ -174,8 +173,7 @@ public final class PipelineBuilder {
             }
 
             final IAxis iAxis;
-            if (mExprStack.size() == 1 && getPipeStack().size() == 1
-                    && getExpression().getSize() == 0) {
+            if (mExprStack.size() == 1 && getPipeStack().size() == 1 && getExpression().getSize() == 0) {
                 iAxis = new SequenceAxis(transaction, axis);
             } else {
                 iAxis = axis[0];
@@ -227,11 +225,11 @@ public final class PipelineBuilder {
 
         assert getPipeStack().size() >= (forConditionNum + 1);
 
-        AbstractAxis forAxis = ((AbstractAxis) (getPipeStack().pop().getExpr()));
+        AbstractAxis forAxis = ((AbstractAxis)(getPipeStack().pop().getExpr()));
         final IReadTransaction rtx = forAxis.getTransaction();
         int num = forConditionNum;
 
-        while (num-- > 0) {
+        while(num-- > 0) {
             forAxis = new ForAxis(rtx, getPipeStack().pop().getExpr(), forAxis);
         }
 
@@ -272,8 +270,7 @@ public final class PipelineBuilder {
      * @param comp
      *            Comparator type.
      */
-    public void addCompExpression(final IReadTransaction transaction,
-            final String comp) {
+    public void addCompExpression(final IReadTransaction transaction, final String comp) {
 
         assert getPipeStack().size() >= 2;
 
@@ -334,8 +331,7 @@ public final class PipelineBuilder {
             kind = CompKind.FO;
             axis = new NodeComp(rtx, operand1, operand2, kind);
         } else {
-            throw new IllegalStateException(comp
-                    + " is not a valid comparison.");
+            throw new IllegalStateException(comp + " is not a valid comparison.");
 
         }
 
@@ -354,8 +350,7 @@ public final class PipelineBuilder {
      * @param operator
      *            Operator type.
      */
-    public void addOperatorExpression(final IReadTransaction transaction,
-            final String operator) {
+    public void addOperatorExpression(final IReadTransaction transaction, final String operator) {
 
         assert getPipeStack().size() >= 1;
 
@@ -387,8 +382,7 @@ public final class PipelineBuilder {
             axis = new ModOpAxis(rtx, operand1, operand2);
         } else {
             // TODO: unary operator
-            throw new IllegalStateException(operator
-                    + " is not a valid operator.");
+            throw new IllegalStateException(operator + " is not a valid operator.");
 
         }
 
@@ -410,9 +404,7 @@ public final class PipelineBuilder {
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
         }
-        getExpression().add(
-                new DupFilterAxis(transaction, new UnionAxis(transaction,
-                        operand1, operand2)));
+        getExpression().add(new DupFilterAxis(transaction, new UnionAxis(transaction, operand1, operand2)));
     }
 
     /**
@@ -460,8 +452,7 @@ public final class PipelineBuilder {
      * @param isIntersect
      *            true, if expression is an intersection
      */
-    public void addIntExcExpression(final IReadTransaction transaction,
-            final boolean isIntersect) {
+    public void addIntExcExpression(final IReadTransaction transaction, final boolean isIntersect) {
 
         assert getPipeStack().size() >= 2;
 
@@ -470,8 +461,9 @@ public final class PipelineBuilder {
         final IAxis operand2 = getPipeStack().pop().getExpr();
         final IAxis operand1 = getPipeStack().pop().getExpr();
 
-        final IAxis axis = isIntersect ? new IntersectAxis(rtx, operand1,
-                operand2) : new ExceptAxis(rtx, operand1, operand2);
+        final IAxis axis =
+            isIntersect ? new IntersectAxis(rtx, operand1, operand2)
+                : new ExceptAxis(rtx, operand1, operand2);
 
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
@@ -552,13 +544,10 @@ public final class PipelineBuilder {
             predicate.hasNext();
             // if is numeric literal -> abbrev for position()
             int type = transaction.getNode().getTypeKey();
-            if (type == transaction.keyForName("xs:integer")
-                    || type == transaction.keyForName("xs:double")
-                    || type == transaction.keyForName("xs:float")
-                    || type == transaction.keyForName("xs:decimal")) {
+            if (type == transaction.keyForName("xs:integer") || type == transaction.keyForName("xs:double")
+            || type == transaction.keyForName("xs:float") || type == transaction.keyForName("xs:decimal")) {
 
-                throw new IllegalStateException(
-                        "function fn:position() is not implemented yet.");
+                throw new IllegalStateException("function fn:position() is not implemented yet.");
 
                 // getExpression().add(
                 // new PosFilter(transaction, (int)
@@ -597,8 +586,7 @@ public final class PipelineBuilder {
      * @param varNum
      *            number of binding variables
      */
-    public void addQuantifierExpr(final IReadTransaction transaction,
-            final boolean isSome, final int varNum) {
+    public void addQuantifierExpr(final IReadTransaction transaction, final boolean isSome, final int varNum) {
 
         assert getPipeStack().size() >= (varNum + 1);
 
@@ -606,13 +594,13 @@ public final class PipelineBuilder {
         final List<IAxis> vars = new ArrayList<IAxis>();
         int num = varNum;
 
-        while (num-- > 0) {
+        while(num-- > 0) {
             // invert current order of variables to get original variable order
             vars.add(num, getPipeStack().pop().getExpr());
         }
 
-        IAxis axis = isSome ? new SomeExpr(transaction, vars, satisfy)
-                : new EveryExpr(transaction, vars, satisfy);
+        IAxis axis =
+            isSome ? new SomeExpr(transaction, vars, satisfy) : new EveryExpr(transaction, vars, satisfy);
 
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
@@ -628,8 +616,7 @@ public final class PipelineBuilder {
      * @param singleType
      *            single type the context item will be casted to.
      */
-    public void addCastableExpr(final IReadTransaction transaction,
-            final SingleType singleType) {
+    public void addCastableExpr(final IReadTransaction transaction, final SingleType singleType) {
 
         assert getPipeStack().size() >= 1;
 
@@ -672,8 +659,7 @@ public final class PipelineBuilder {
      * @param singleType
      *            single type the context item will be casted to.
      */
-    public void addCastExpr(final IReadTransaction transaction,
-            final SingleType singleType) {
+    public void addCastExpr(final IReadTransaction transaction, final SingleType singleType) {
 
         assert getPipeStack().size() >= 1;
 
@@ -695,15 +681,13 @@ public final class PipelineBuilder {
      * @param sequenceType
      *            sequence type the context item should match.
      */
-    public void addInstanceOfExpr(final IReadTransaction transaction,
-            final SequenceType sequenceType) {
+    public void addInstanceOfExpr(final IReadTransaction transaction, final SequenceType sequenceType) {
 
         assert getPipeStack().size() >= 1;
 
         final IAxis candidate = getPipeStack().pop().getExpr();
 
-        final IAxis axis = new InstanceOfExpr(transaction, candidate,
-                sequenceType);
+        final IAxis axis = new InstanceOfExpr(transaction, candidate, sequenceType);
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
         }
@@ -719,11 +703,9 @@ public final class PipelineBuilder {
      * @param sequenceType
      *            sequence type the context item will be treated as.
      */
-    public void addTreatExpr(final IReadTransaction transaction,
-            final SequenceType sequenceType) {
+    public void addTreatExpr(final IReadTransaction transaction, final SequenceType sequenceType) {
 
-        throw new IllegalStateException(
-                "the Treat expression is not supported yet");
+        throw new IllegalStateException("the Treat expression is not supported yet");
 
     }
 
@@ -736,8 +718,7 @@ public final class PipelineBuilder {
      * @param varName
      *            name of the variable
      */
-    public void addVariableExpr(final IReadTransaction transaction,
-            final String varName) {
+    public void addVariableExpr(final IReadTransaction transaction, final String varName) {
 
         assert getPipeStack().size() >= 1;
 
@@ -762,8 +743,7 @@ public final class PipelineBuilder {
      * @param num
      *            The number of arguments that are passed to the function
      */
-    public void addFunction(final IReadTransaction transaction,
-            final String funcName, final int num) {
+    public void addFunction(final IReadTransaction transaction, final String funcName, final int num) {
 
         assert getPipeStack().size() >= num;
 
@@ -798,14 +778,14 @@ public final class PipelineBuilder {
         final Integer returnType = transaction.keyForName(func.getReturnType());
 
         // parameter types of the function's constructor
-        final Class<?>[] paramTypes = { IReadTransaction.class, List.class,
-                Integer.TYPE, Integer.TYPE, Integer.TYPE };
+        final Class<?>[] paramTypes = {
+            IReadTransaction.class, List.class, Integer.TYPE, Integer.TYPE, Integer.TYPE
+        };
 
         try {
             // instantiate function class with right constructor
             final Constructor<?> cons = function.getConstructor(paramTypes);
-            final IAxis axis = (IAxis) cons.newInstance(transaction, args, min,
-                    max, returnType);
+            final IAxis axis = (IAxis)cons.newInstance(transaction, args, min, max, returnType);
 
             if (getPipeStack().empty() || getExpression().getSize() != 0) {
                 addExpressionSingle();
@@ -835,10 +815,9 @@ public final class PipelineBuilder {
      * @param varName
      *            the name of the variable
      */
-    public void addVarRefExpr(final IReadTransaction transaction,
-            final String varName) {
+    public void addVarRefExpr(final IReadTransaction transaction, final String varName) {
 
-        final VariableAxis axis = (VariableAxis) mVarRefMap.get(varName);
+        final VariableAxis axis = (VariableAxis)mVarRefMap.get(varName);
         if (axis != null) {
             getExpression().add(new VarRefExpr(transaction, axis));
         } else {

@@ -31,11 +31,9 @@ package com.treetank.api;
  * 
  * <p>
  * <ol>
- * <li><strong>Precondition</strong> before each call to
- * <code>IFilter.filter()</code>:
+ * <li><strong>Precondition</strong> before each call to <code>IFilter.filter()</code>:
  * <code>IReadTransaction.getNodeKey() == n</code>.</li>
- * <li><strong>Postcondition</strong> after each call to
- * <code>IFilter.filter()</code>:
+ * <li><strong>Postcondition</strong> after each call to <code>IFilter.filter()</code>:
  * <code>IReadTransaction.getNodeKey() == n</code>.</li>
  * </ol>
  * </p>

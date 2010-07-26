@@ -30,10 +30,9 @@ import com.treetank.exception.TreetankIOException;
  * 
  * <p>
  * Interface to access nodes based on the
- * Key/ParentKey/FirstChildKey/LeftSiblingKey/RightSiblingKey/ChildCount
- * encoding. This encoding keeps the children ordered but has no knowledge of
- * the global node ordering. The underlying tree is accessed in a cursor-like
- * fashion.
+ * Key/ParentKey/FirstChildKey/LeftSiblingKey/RightSiblingKey/ChildCount encoding. This encoding keeps the
+ * children ordered but has no knowledge of the global node ordering. The underlying tree is accessed in a
+ * cursor-like fashion.
  * </p>
  * 
  * <h2>Convention</h2>
@@ -43,8 +42,7 @@ import com.treetank.exception.TreetankIOException;
  * <li>Only a single thread accesses each IReadTransaction instance.</li>
  * <li><strong>Precondition</strong> before moving cursor:
  * <code>IReadTransaction.getRelatedNode().getNodeKey() == n</code>.</li>
- * <li><strong>Postcondition</strong> after moving cursor:
- * <code>(IReadTransaction.moveX() == true &&
+ * <li><strong>Postcondition</strong> after moving cursor: <code>(IReadTransaction.moveX() == true &&
  *       IReadTransaction.getRelatedNode().getNodeKey() == m) ||
  *       (IReadTransaction.moveX() == false &&
  *       IReadTransaction.getRelatedNode().getNodeKey() == n)</code>.</li>
@@ -102,20 +100,17 @@ import com.treetank.exception.TreetankIOException;
 public interface IReadTransaction {
 
     /** String constants used by xpath. */
-    String[] XPATHCONSTANTS = { "xs:anyType", "xs:anySimpleType",
-            "xs:anyAtomicType", "xs:untypedAtomic", "xs:untyped", "xs:string",
-            "xs:duration", "xs:yearMonthDuration", "xs:dayTimeDuration",
-            "xs:dateTime", "xs:time", "xs:date", "xs:gYearMonth", "xs:gYear",
-            "xs:gMonthDay", "xs:gDay", "xs:gMonth", "xs:boolean",
-            "xs:base64Binary", "xs:hexBinary", "xs:anyURI", "xs:QName",
-            "xs:NOTATION", "xs:float", "xs:double", "xs:pDecimal",
-            "xs:decimal", "xs:integer", "xs:long", "xs:int", "xs:short",
-            "xs:byte", "xs:nonPositiveInteger", "xs:negativeInteger",
-            "xs:nonNegativeInteger", "xs:positiveInteger", "xs:unsignedLong",
-            "xs:unsignedInt", "xs:unsignedShort", "xs:unsignedByte",
-            "xs:normalizedString", "xs:token", "xs:language", "xs:name",
-            "xs:NCName", "xs:ID", "xs:IDREF", "xs:ENTITY", "xs:IDREFS",
-            "xs:NMTOKEN", "xs:NMTOKENS", };
+    String[] XPATHCONSTANTS = {
+        "xs:anyType", "xs:anySimpleType", "xs:anyAtomicType", "xs:untypedAtomic", "xs:untyped", "xs:string",
+        "xs:duration", "xs:yearMonthDuration", "xs:dayTimeDuration", "xs:dateTime", "xs:time", "xs:date",
+        "xs:gYearMonth", "xs:gYear", "xs:gMonthDay", "xs:gDay", "xs:gMonth", "xs:boolean", "xs:base64Binary",
+        "xs:hexBinary", "xs:anyURI", "xs:QName", "xs:NOTATION", "xs:float", "xs:double", "xs:pDecimal",
+        "xs:decimal", "xs:integer", "xs:long", "xs:int", "xs:short", "xs:byte", "xs:nonPositiveInteger",
+        "xs:negativeInteger", "xs:nonNegativeInteger", "xs:positiveInteger", "xs:unsignedLong",
+        "xs:unsignedInt", "xs:unsignedShort", "xs:unsignedByte", "xs:normalizedString", "xs:token",
+        "xs:language", "xs:name", "xs:NCName", "xs:ID", "xs:IDREF", "xs:ENTITY", "xs:IDREFS", "xs:NMTOKEN",
+        "xs:NMTOKENS",
+    };
 
     /**
      * Get ID of transaction.

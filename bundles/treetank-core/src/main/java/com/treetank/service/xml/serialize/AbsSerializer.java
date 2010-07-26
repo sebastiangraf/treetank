@@ -57,7 +57,9 @@ abstract class AbsSerializer implements Callable<Void> {
 
         // if there is one negative number in there, serialize all versions
         if (mVersions.length == 0) {
-            versionsToUse = new long[] { lastRevisionNumber };
+            versionsToUse = new long[] {
+                lastRevisionNumber
+            };
         } else {
             if (mVersions.length == 1 && mVersions[0] < 0) {
                 versionsToUse = null;
@@ -66,16 +68,13 @@ abstract class AbsSerializer implements Callable<Void> {
             }
         }
 
-        for (long i = 0; versionsToUse == null ? i < lastRevisionNumber
-                : i < versionsToUse.length; i++) {
+        for (long i = 0; versionsToUse == null ? i < lastRevisionNumber : i < versionsToUse.length; i++) {
 
-            rtx = mSession.beginReadTransaction(versionsToUse == null ? i
-                    : versionsToUse[(int) i]);
-            if(versionsToUse==null || mVersions.length>1) {
+            rtx = mSession.beginReadTransaction(versionsToUse == null ? i : versionsToUse[(int)i]);
+            if (versionsToUse == null || mVersions.length > 1) {
                 emitStartManualElement(i);
             }
-            
-            
+
             final IAxis descAxis = new DescendantAxis(rtx);
 
             // Setup primitives.
@@ -83,14 +82,13 @@ abstract class AbsSerializer implements Callable<Void> {
             long key = rtx.getNode().getNodeKey();
 
             // Iterate over all nodes of the subtree including self.
-            while (descAxis.hasNext()) {
+            while(descAxis.hasNext()) {
                 key = descAxis.next();
 
                 // Emit all pending end elements.
                 if (closeElements) {
-                    while (!mStack.empty()
-                            && mStack.peek() != ((AbsStructNode) rtx.getNode())
-                                    .getLeftSiblingKey()) {
+                    while(!mStack.empty()
+                    && mStack.peek() != ((AbsStructNode)rtx.getNode()).getLeftSiblingKey()) {
                         rtx.moveTo(mStack.pop());
                         emitStartElement(rtx);
                         rtx.moveTo(key);
@@ -109,26 +107,26 @@ abstract class AbsSerializer implements Callable<Void> {
                 // Push end element to stack if we are a start element with
                 // children.
                 if (rtx.getNode().getKind() == ENodes.ELEMENT_KIND
-                        && ((AbsStructNode) rtx.getNode()).hasFirstChild()) {
+                && ((AbsStructNode)rtx.getNode()).hasFirstChild()) {
                     mStack.push(rtx.getNode().getNodeKey());
                 }
 
                 // Remember to emit all pending end elements from stack if
                 // required.
-                if (!((AbsStructNode) rtx.getNode()).hasFirstChild()
-                        && !((AbsStructNode) rtx.getNode()).hasRightSibling()) {
+                if (!((AbsStructNode)rtx.getNode()).hasFirstChild()
+                && !((AbsStructNode)rtx.getNode()).hasRightSibling()) {
                     closeElements = true;
                 }
 
             }
 
             // Finally emit all pending end elements.
-            while (!mStack.empty()) {
+            while(!mStack.empty()) {
                 rtx.moveTo(mStack.pop());
                 emitStartElement(rtx);
             }
-            
-            if(versionsToUse==null || mVersions.length>1) {
+
+            if (versionsToUse == null || mVersions.length > 1) {
                 emitEndManualElement(i);
             }
         }

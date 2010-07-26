@@ -12,7 +12,6 @@
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- * 
  */
 package com.treetank.cache;
 
@@ -25,8 +24,7 @@ import com.treetank.settings.EStoragePaths;
 
 /**
  * Abstract class for holding all persistence caches. Each instance of this
- * class stores the data in a place related to the {@link SessionConfiguration}
- * at a different subfolder.
+ * class stores the data in a place related to the {@link SessionConfiguration} at a different subfolder.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
@@ -51,9 +49,9 @@ public abstract class AbstractPersistenceCache implements ICache {
      *            the data.
      */
     protected AbstractPersistenceCache(final DatabaseConfiguration paramConfig) {
-        place = new File(paramConfig.getFile(), new StringBuilder(
-                EStoragePaths.TRANSACTIONLOG.getFile().getName())
-                .append(File.separator).append(counter).toString());
+        place =
+            new File(paramConfig.getFile(), new StringBuilder(EStoragePaths.TRANSACTIONLOG.getFile()
+                .getName()).append(File.separator).append(counter).toString());
         place.mkdirs();
         counter++;
     }
@@ -113,8 +111,8 @@ public abstract class AbstractPersistenceCache implements ICache {
      * @throws TreetankIOException
      *             if something odd happens
      */
-    public abstract void putPersistent(final long key,
-            final NodePageContainer page) throws TreetankIOException;
+    public abstract void putPersistent(final long key, final NodePageContainer page)
+        throws TreetankIOException;
 
     /**
      * Getting a NodePage from the persistent cache
@@ -125,7 +123,6 @@ public abstract class AbstractPersistenceCache implements ICache {
      * @throws TreetankIOException
      *             if something odd happens.
      */
-    public abstract NodePageContainer getPersistent(final long key)
-            throws TreetankIOException;
+    public abstract NodePageContainer getPersistent(final long key) throws TreetankIOException;
 
 }

@@ -68,8 +68,7 @@ public class AttributeAxis extends AbstractAxis implements IAxis {
             getTransaction().moveToParent();
         }
         if (getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND
-                && mNextIndex < ((ElementNode) getTransaction().getNode())
-                        .getAttributeCount()) {
+        && mNextIndex < ((ElementNode)getTransaction().getNode()).getAttributeCount()) {
             getTransaction().moveToAttribute(mNextIndex);
             mNextIndex += 1;
             return true;

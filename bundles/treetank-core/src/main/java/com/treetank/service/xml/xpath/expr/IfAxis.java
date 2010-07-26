@@ -26,15 +26,13 @@ import com.treetank.service.xml.xpath.functions.Function;
 /**
  * <h1>IfAxis</h1>
  * <p>
- * IAxis that represents the conditional expression based on the keywords if,
- * then, and else.
+ * IAxis that represents the conditional expression based on the keywords if, then, and else.
  * </p>
  * <p>
- * The first step in processing a conditional expression is to find the
- * effective boolean value of the test expression. If the effective boolean
- * value of the test expression is true, the value of the then-expression is
- * returned. If the effective boolean value of the test expression is false, the
- * value of the else-expression is returned.
+ * The first step in processing a conditional expression is to find the effective boolean value of the test
+ * expression. If the effective boolean value of the test expression is true, the value of the then-expression
+ * is returned. If the effective boolean value of the test expression is false, the value of the
+ * else-expression is returned.
  * </p>
  * 
  */
@@ -59,8 +57,7 @@ public class IfAxis extends AbstractAxis implements IAxis {
      * @param elseAxis
      *            Will be evaluated if test expression evaluates to false.
      */
-    public IfAxis(final IReadTransaction rtx, final IAxis ifAxis,
-            final IAxis thenAxis, final IAxis elseAxis) {
+    public IfAxis(final IReadTransaction rtx, final IAxis ifAxis, final IAxis thenAxis, final IAxis elseAxis) {
 
         super(rtx);
         mIf = ifAxis;

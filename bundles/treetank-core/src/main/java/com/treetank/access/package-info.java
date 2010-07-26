@@ -33,26 +33,20 @@
  * Code examples:
  * 
  * <pre>
- * final ISession someSession =
- *     Session.beginSession(&quot;example.tnk&quot;);
- * final ISession otherSession =
- *     Session.beginSession(&quot;other.tnk&quot;);
+ * final ISession someSession = Session.beginSession(&quot;example.tnk&quot;);
+ * final ISession otherSession = Session.beginSession(&quot;other.tnk&quot;);
  * 
  * // ! final ISession concurrentSession = Session.beginSessoin(&quot;other.tnk&quot;);
  * // ! Error: There already is a session bound to &quot;other.tnk&quot; (otherSession).
  * 
- * final IWriteTransaction someWTX =
- *     someSession.beginWriteTransaction();
- * final IWriteTransaction otherWTX =
- *     otherSession.beginWriteTransaction();
+ * final IWriteTransaction someWTX = someSession.beginWriteTransaction();
+ * final IWriteTransaction otherWTX = otherSession.beginWriteTransaction();
  * 
  * // ! final IWriteTransaction concurrentWTX = otherSession.beginWriteTransaction();
  * // ! Error: There already is a write transaction running (wtx).
  * 
- * final IReadTransaction someRTX =
- *     someSession.beginReadTransaction();
- * final IReadTransaction someConcurrentRTX =
- *     someSession.beginReadTransaction();
+ * final IReadTransaction someRTX = someSession.beginReadTransaction();
+ * final IReadTransaction someConcurrentRTX = someSession.beginReadTransaction();
  * 
  * // ! otherSession.close();
  * // ! Error: All transactions must be closed first.

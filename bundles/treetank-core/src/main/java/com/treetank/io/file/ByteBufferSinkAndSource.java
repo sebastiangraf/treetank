@@ -116,8 +116,7 @@ public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
         final int position = buffer.position();
         if (buffer.position() + length >= buffer.capacity()) {
             buffer.position(0);
-            final ByteBuffer newBuffer = ByteBuffer.allocate(buffer.capacity()
-                    + IConstants.BUFFER_SIZE);
+            final ByteBuffer newBuffer = ByteBuffer.allocate(buffer.capacity() + IConstants.BUFFER_SIZE);
             newBuffer.put(buffer);
             buffer = newBuffer;
             buffer.position(position);

@@ -19,19 +19,18 @@ import com.sun.jersey.api.client.WebResource;
  */
 public class StartServerTest {
 
-	/**
-	 * This method tests the {@link StartServer#main(String[])} method.
-	 */
-	@Test
-	public void startServer() {
-		StartServer.main(null);
-		final Client client = Client.create();
-		final WebResource resource = client.resource("http://localhost:8093");
-		final ClientResponse anotherResponse = resource.accept("text/xml").get(
-				ClientResponse.class);
-		final int status = anotherResponse.getStatus();
-		assertEquals("checks if status meets status 200", 200, status);
+    /**
+     * This method tests the {@link StartServer#main(String[])} method.
+     */
+    @Test
+    public void startServer() {
+        StartServer.main(null);
+        final Client client = Client.create();
+        final WebResource resource = client.resource("http://localhost:8093");
+        final ClientResponse anotherResponse = resource.accept("text/xml").get(ClientResponse.class);
+        final int status = anotherResponse.getStatus();
+        assertEquals("checks if status meets status 200", 200, status);
 
-	}
+    }
 
 }

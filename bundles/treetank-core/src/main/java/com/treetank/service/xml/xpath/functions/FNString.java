@@ -31,13 +31,11 @@ import com.treetank.utils.TypedValue;
 /**
  * <h1>FNString</h1>
  * <p>
- * IAxis that represents the function fn:count specified in <a
- * href="http://www.w3.org/TR/xquery-operators/"> XQuery 1.0 and XPath 2.0
- * Functions and Operators</a>.
+ * IAxis that represents the function fn:count specified in <a href="http://www.w3.org/TR/xquery-operators/">
+ * XQuery 1.0 and XPath 2.0 Functions and Operators</a>.
  * </p>
  * <p>
- * The function returns the string value of the current node or the argument
- * nodes.
+ * The function returns the string value of the current node or the argument nodes.
  * </p>
  */
 public class FNString extends AbstractFunction {
@@ -57,8 +55,8 @@ public class FNString extends AbstractFunction {
      * @param returnType
      *            the type that the function's result will have
      */
-    public FNString(final IReadTransaction rtx, final List<IAxis> args,
-            final int min, final int max, final int returnType) {
+    public FNString(final IReadTransaction rtx, final List<IAxis> args, final int min, final int max,
+        final int returnType) {
 
         super(rtx, args, min, max, returnType);
     }
@@ -76,7 +74,7 @@ public class FNString extends AbstractFunction {
         } else {
             IAxis axis = getArgs().get(0);
             StringBuilder val = new StringBuilder();
-            while (axis.hasNext()) {
+            while(axis.hasNext()) {
                 String nodeValue = getStrValue();
                 if (!nodeValue.equals("")) {
                     if (val.length() > 0) {
@@ -110,20 +108,17 @@ public class FNString extends AbstractFunction {
 
         if (getTransaction().getNode().getNodeKey() >= 0) { // is node
             if (getTransaction().getNode().getKind() == ENodes.ATTRIBUTE_KIND
-                    || getTransaction().getNode().getKind() == ENodes.TEXT_KIND) {
-                value.append(TypedValue.parseString(getTransaction().getNode()
-                        .getRawValue()));
+            || getTransaction().getNode().getKind() == ENodes.TEXT_KIND) {
+                value.append(TypedValue.parseString(getTransaction().getNode().getRawValue()));
             } else if (getTransaction().getNode().getKind() == ENodes.ROOT_KIND
-                    || getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND) {
-                IAxis axis = new FilterAxis(
-                        new DescendantAxis(getTransaction()), new TextFilter(
-                                getTransaction()));
-                while (axis.hasNext()) {
+            || getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND) {
+                IAxis axis =
+                    new FilterAxis(new DescendantAxis(getTransaction()), new TextFilter(getTransaction()));
+                while(axis.hasNext()) {
                     if (value.length() > 0) {
                         value.append(" ");
                     }
-                    value.append(TypedValue.parseString(getTransaction()
-                            .getNode().getRawValue()));
+                    value.append(TypedValue.parseString(getTransaction().getNode().getRawValue()));
 
                 }
 
@@ -132,8 +127,7 @@ public class FNString extends AbstractFunction {
             }
 
         } else {
-            value.append(TypedValue.parseString(getTransaction().getNode()
-                    .getRawValue()));
+            value.append(TypedValue.parseString(getTransaction().getNode().getRawValue()));
         }
 
         return value.toString();

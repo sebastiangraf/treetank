@@ -31,14 +31,13 @@ public class RevIndexTest {
 
     @Test
     public void testTrie() throws TreetankException {
-        TrieNavigator.adaptTrie((IWriteTransaction) index.getTrans(), "bla");
-        TrieNavigator.adaptTrie((IWriteTransaction) index.getTrans(), "blubb");
-        ((IWriteTransaction) index.getTrans()).commit();
+        TrieNavigator.adaptTrie((IWriteTransaction)index.getTrans(), "bla");
+        TrieNavigator.adaptTrie((IWriteTransaction)index.getTrans(), "blubb");
+        ((IWriteTransaction)index.getTrans()).commit();
         index.close();
 
         // check
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
         rtx.moveToDocumentRoot();
@@ -115,19 +114,16 @@ public class RevIndexTest {
         uuids2.push("bl");
         uuids2.push("b");
 
-        DocumentTreeNavigator.adaptDocTree(
-                (IWriteTransaction) index.getTrans(),
-                (Stack<String>) uuids1.clone());
+        DocumentTreeNavigator
+            .adaptDocTree((IWriteTransaction)index.getTrans(), (Stack<String>)uuids1.clone());
         index.finishIndexInput();
 
-        DocumentTreeNavigator.adaptDocTree(
-                (IWriteTransaction) index.getTrans(),
-                (Stack<String>) uuids2.clone());
+        DocumentTreeNavigator
+            .adaptDocTree((IWriteTransaction)index.getTrans(), (Stack<String>)uuids2.clone());
         index.close();
 
         // check
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
         rtx.moveToFirstChild();

@@ -69,8 +69,7 @@ public class LiteralExprTest {
     @Test
     public void testLiteralExpr() throws TreetankException {
         // Build simple test tree.
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -84,16 +83,14 @@ public class LiteralExprTest {
         assertEquals(true, axis1.hasNext());
         assertEquals(key1, rtx.getNode().getNodeKey());
         assertEquals(rtx.keyForName("xs:boolean"), rtx.getNode().getTypeKey());
-        assertEquals(false,
-                TypedValue.parseBoolean((rtx.getNode().getRawValue())));
+        assertEquals(false, TypedValue.parseBoolean((rtx.getNode().getRawValue())));
         assertEquals(false, axis1.hasNext());
 
         final IAxis axis2 = new LiteralExpr(rtx, key2);
         assertEquals(true, axis2.hasNext());
         assertEquals(key2, rtx.getNode().getNodeKey());
         assertEquals(rtx.keyForName("xs:integer"), rtx.getNode().getTypeKey());
-        assertEquals(14,
-                (int) TypedValue.parseDouble(rtx.getNode().getRawValue()));
+        assertEquals(14, (int)TypedValue.parseDouble(rtx.getNode().getRawValue()));
         assertEquals(false, axis2.hasNext());
 
         rtx.close();

@@ -30,8 +30,7 @@ public interface IWriter extends IReader {
      * @throws TreetankIOException
      *             exception if something bad happens
      */
-    void writeFirstReference(final PageReference pageReference)
-            throws TreetankIOException;
+    void writeFirstReference(final PageReference pageReference) throws TreetankIOException;
 
     /**
      * Closing the write access.

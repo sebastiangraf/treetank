@@ -30,15 +30,14 @@ import com.treetank.api.IItemList;
  * Data structure to store XPath items.
  * </p>
  * <p>
- * This structure is used for atomic values that are needed for the evaluation
- * of a query. They can be results of a query expression or be specified
- * directly in the query e.g. as literals perform an arithmetic operation or a
- * comparison.
+ * This structure is used for atomic values that are needed for the evaluation of a query. They can be results
+ * of a query expression or be specified directly in the query e.g. as literals perform an arithmetic
+ * operation or a comparison.
  * </p>
  * <p>
- * Since these items have to be distinguishable from nodes their key will be a
- * negative long value (node key is always a positive long value). This value is
- * retrieved by negate their index in the internal data structure.
+ * Since these items have to be distinguishable from nodes their key will be a negative long value (node key
+ * is always a positive long value). This value is retrieved by negate their index in the internal data
+ * structure.
  * </p>
  */
 public final class ItemList implements IItemList {
@@ -78,7 +77,7 @@ public final class ItemList implements IItemList {
 
         assert key <= Integer.MAX_VALUE;
 
-        int index = (int) key; // cast to integer, because the list only accepts
+        int index = (int)key; // cast to integer, because the list only accepts
         // int
 
         if (index < 0) {

@@ -22,8 +22,8 @@ package com.treetank.utils;
  * <h1>UTF</h1>
  * 
  * <p>
- * Util to efficiently convert byte arrays to various Java types and vice versa.
- * It also provides efficient comparison and hash methods.
+ * Util to efficiently convert byte arrays to various Java types and vice versa. It also provides efficient
+ * comparison and hash methods.
  * </p>
  */
 public final class TypedValue {
@@ -74,8 +74,7 @@ public final class TypedValue {
     public static String parseString(final byte[] bytes) {
         try {
 
-            final String intermediateString = new String(bytes,
-                    IConstants.DEFAULT_ENCODING);
+            final String intermediateString = new String(bytes, IConstants.DEFAULT_ENCODING);
             final StringBuilder builder = new StringBuilder();
             int andCounter = 0;
             int altCounter = 0;
@@ -103,8 +102,7 @@ public final class TypedValue {
                         andCounter++;
                     } else {
                         if (andCounter == 3) {
-                            builder.append('&').append('a').append('m')
-                                    .append(c);
+                            builder.append('&').append('a').append('m').append(c);
                         } else if (andCounter == 1) {
                             builder.append('&').append(c);
                         } else {
@@ -123,8 +121,7 @@ public final class TypedValue {
                         } else if (andCounter == 2) {
                             builder.append('&').append('a').append(c);
                         } else if (andCounter == 4) {
-                            builder.append('&').append('a').append('m')
-                                    .append('p').append(c);
+                            builder.append('&').append('a').append('m').append('p').append(c);
                         } else {
                             builder.append(c);
                         }
@@ -150,8 +147,7 @@ public final class TypedValue {
                         altCounter++;
                     } else {
                         if (altCounter == 3) {
-                            builder.append('&').append('l').append('t')
-                                    .append(c);
+                            builder.append('&').append('l').append('t').append(c);
                         } else if (altCounter == 1) {
                             builder.append('&').append(c);
                         } else {
@@ -166,8 +162,7 @@ public final class TypedValue {
                         builder.append('&');
                     } else if (andCounter > 0) {
                         if (andCounter == 3) {
-                            builder.append('&').append('a').append('m')
-                                    .append(c);
+                            builder.append('&').append('a').append('m').append(c);
                         } else if (andCounter == 2) {
                             builder.append('&').append('a').append(c);
                         } else {
@@ -194,8 +189,7 @@ public final class TypedValue {
             }
             return builder.toString();
         } catch (Exception e) {
-            throw new RuntimeException("Could not convert byte[] to String: "
-                    + e.getLocalizedMessage());
+            throw new RuntimeException("Could not convert byte[] to String: " + e.getLocalizedMessage());
         }
 
     }
@@ -249,21 +243,21 @@ public final class TypedValue {
      */
     public static long parseLong(final byte[] bytes) {
         int position = 1;
-        long value = (long) (bytes[position++] & 255);
+        long value = (long)(bytes[position++] & 255);
         if (bytes[position - 2] > 1) {
-            value += ((long) (bytes[position++] & 255) << 8);
+            value += ((long)(bytes[position++] & 255) << 8);
             if (bytes[position - 3] > 2) {
-                value += ((long) (bytes[position++] & 255) << 16);
+                value += ((long)(bytes[position++] & 255) << 16);
                 if (bytes[position - 4] > 3) {
-                    value += ((long) (bytes[position++] & 255) << 24);
+                    value += ((long)(bytes[position++] & 255) << 24);
                     if (bytes[position - 5] > 4) {
-                        value += ((long) (bytes[position++] & 255) << 32);
+                        value += ((long)(bytes[position++] & 255) << 32);
                         if (bytes[position - 6] > 5) {
-                            value += ((long) (bytes[position++] & 255) << 40);
+                            value += ((long)(bytes[position++] & 255) << 40);
                             if (bytes[position - 7] > 6) {
-                                value += ((long) (bytes[position++] & 255) << 48);
+                                value += ((long)(bytes[position++] & 255) << 48);
                                 if (bytes[position - 8] > 7) {
-                                    value += ((long) bytes[position++] << 56);
+                                    value += ((long)bytes[position++] << 56);
                                 } else if ((bytes[position - 1] & 128) != 0)
                                     value |= 0xFF000000000000L;
                             } else if ((bytes[position - 1] & 128) != 0)
@@ -310,19 +304,19 @@ public final class TypedValue {
     public static byte[] getBytes(final int value) {
         final byte[] tmpBytes = new byte[5];
         int position = 0;
-        tmpBytes[position++] = (byte) (value);
+        tmpBytes[position++] = (byte)(value);
         if (value > 63 || value < -64) {
             tmpBytes[position - 1] |= 128;
-            tmpBytes[position++] = (byte) (value >> 7);
+            tmpBytes[position++] = (byte)(value >> 7);
             if (value > 8191 || value < -8192) {
                 tmpBytes[position - 1] |= 128;
-                tmpBytes[position++] = (byte) (value >> 14);
+                tmpBytes[position++] = (byte)(value >> 14);
                 if (value > 1048575 || value < -1048576) {
                     tmpBytes[position - 1] |= 128;
-                    tmpBytes[position++] = (byte) (value >> 21);
+                    tmpBytes[position++] = (byte)(value >> 21);
                     if (value > 268435455 || value < -268435456) {
                         tmpBytes[position - 1] |= 128;
-                        tmpBytes[position++] = (byte) (value >> 28);
+                        tmpBytes[position++] = (byte)(value >> 28);
                     } else
                         tmpBytes[position - 1] &= 127;
                 } else
@@ -347,36 +341,36 @@ public final class TypedValue {
     public static byte[] getBytes(final long value) {
         final byte[] tmpBytes = new byte[9];
         int position = 1;
-        tmpBytes[position++] = (byte) value;
+        tmpBytes[position++] = (byte)value;
         if (value > 127 || value < -128) {
-            tmpBytes[position++] = (byte) (value >> 8);
+            tmpBytes[position++] = (byte)(value >> 8);
             if (value > 32767 || value < -32768) {
-                tmpBytes[position++] = (byte) (value >>> 16);
+                tmpBytes[position++] = (byte)(value >>> 16);
                 if (value > 8388607 || value < -8388608) {
-                    tmpBytes[position++] = (byte) (value >>> 24);
+                    tmpBytes[position++] = (byte)(value >>> 24);
                     if (value > 2147483647 || value < -2147483648) {
-                        tmpBytes[position++] = (byte) (value >>> 32);
+                        tmpBytes[position++] = (byte)(value >>> 32);
                         if (value > (2 ^ 39) - 1 || value < -(2 ^ 39)) {
-                            tmpBytes[position++] = (byte) (value >>> 40);
+                            tmpBytes[position++] = (byte)(value >>> 40);
                             if (value > (2 ^ 47) - 1 || value < -(2 ^ 47)) {
-                                tmpBytes[position++] = (byte) (value >>> 48);
+                                tmpBytes[position++] = (byte)(value >>> 48);
                                 if (value > (2 ^ 55) - 1 || value < -(2 ^ 55)) {
-                                    tmpBytes[position++] = (byte) (value >>> 56);
-                                    tmpBytes[position - 9] = (byte) 8;
+                                    tmpBytes[position++] = (byte)(value >>> 56);
+                                    tmpBytes[position - 9] = (byte)8;
                                 } else
-                                    tmpBytes[position - 8] = (byte) 7;
+                                    tmpBytes[position - 8] = (byte)7;
                             } else
-                                tmpBytes[position - 7] = (byte) 6;
+                                tmpBytes[position - 7] = (byte)6;
                         } else
-                            tmpBytes[position - 6] = (byte) 5;
+                            tmpBytes[position - 6] = (byte)5;
                     } else
-                        tmpBytes[position - 5] = (byte) 4;
+                        tmpBytes[position - 5] = (byte)4;
                 } else
-                    tmpBytes[position - 4] = (byte) 3;
+                    tmpBytes[position - 4] = (byte)3;
             } else
-                tmpBytes[position - 3] = (byte) 2;
+                tmpBytes[position - 3] = (byte)2;
         } else
-            tmpBytes[position - 2] = (byte) 1;
+            tmpBytes[position - 2] = (byte)1;
         final byte[] bytes = new byte[position];
         System.arraycopy(tmpBytes, 0, bytes, 0, position);
         return bytes;
@@ -409,15 +403,13 @@ public final class TypedValue {
                         builder.append(value.charAt(i));
                     }
                 }
-                bytes = builder.toString()
-                        .getBytes(IConstants.DEFAULT_ENCODING);
+                bytes = builder.toString().getBytes(IConstants.DEFAULT_ENCODING);
 
                 // bytes = value.replace("&", "&amp;").replace("<", "&lt;")
                 // .getBytes(IConstants.DEFAULT_ENCODING);
             }
         } catch (Exception e) {
-            throw new RuntimeException("Could not convert String to byte[]: "
-                    + e.getLocalizedMessage());
+            throw new RuntimeException("Could not convert String to byte[]: " + e.getLocalizedMessage());
         }
         return bytes;
     }

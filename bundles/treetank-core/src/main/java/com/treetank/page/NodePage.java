@@ -86,8 +86,7 @@ public class NodePage extends AbstractPage {
      * @param committedNodePage
      *            Node page to clone.
      */
-    protected NodePage(final NodePage committedNodePage,
-            final long revisionToUse) {
+    protected NodePage(final NodePage committedNodePage, final long revisionToUse) {
         super(0, committedNodePage, revisionToUse);
         mNodePageKey = committedNodePage.mNodePageKey;
         mNodes = new AbsNode[IConstants.NDP_NODE_COUNT];
@@ -186,7 +185,7 @@ public class NodePage extends AbstractPage {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (int) (mNodePageKey ^ (mNodePageKey >>> 32));
+        result = prime * result + (int)(mNodePageKey ^ (mNodePageKey >>> 32));
         result = prime * result + Arrays.hashCode(mNodes);
         return result;
     }
@@ -199,7 +198,7 @@ public class NodePage extends AbstractPage {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        NodePage other = (NodePage) obj;
+        NodePage other = (NodePage)obj;
         if (mNodePageKey != other.mNodePageKey)
             return false;
         if (!Arrays.equals(mNodes, other.mNodes))

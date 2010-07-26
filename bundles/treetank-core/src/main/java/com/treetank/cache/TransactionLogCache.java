@@ -12,7 +12,6 @@
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- * 
  */
 package com.treetank.cache;
 
@@ -31,10 +30,9 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public final class TransactionLogCache extends AbstractPersistenceCache {
-	
-	/** Logger. */
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(TransactionLogCache.class);
+
+    /** Logger. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(TransactionLogCache.class);
 
     /**
      * RAM-Based first cache
@@ -48,16 +46,15 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
      * @param paramConfig
      *            the config for having a storage-place
      */
-    public TransactionLogCache(final DatabaseConfiguration paramConfig,
-            final long revision) throws TreetankIOException {
+    public TransactionLogCache(final DatabaseConfiguration paramConfig, final long revision)
+        throws TreetankIOException {
         super(paramConfig);
-        final BerkeleyPersistenceCache secondCache = new BerkeleyPersistenceCache(
-                paramConfig, revision);
+        final BerkeleyPersistenceCache secondCache = new BerkeleyPersistenceCache(paramConfig, revision);
         firstCache = new LRUCache(secondCache);
-        
-      //debug
-		LOGGER.debug(new StringBuilder(
-				"Creating new Transaction Log Cache with Database Configuration ").append(paramConfig).append(" and Revision ").append(revision).toString());
+
+        // debug
+        LOGGER.debug(new StringBuilder("Creating new Transaction Log Cache with Database Configuration ")
+            .append(paramConfig).append(" and Revision ").append(revision).toString());
     }
 
     /**
@@ -66,24 +63,20 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
     @Override
     public void clearPersistent() throws TreetankIOException {
         firstCache.clear();
-        
-     	//debug
-		LOGGER.debug(new StringBuilder(
-		"Celar Persistence").toString());
+
+        // debug
+        LOGGER.debug(new StringBuilder("Celar Persistence").toString());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public NodePageContainer getPersistent(final long key)
-            throws TreetankIOException {
-    	
-    	//debug
-		LOGGER.debug(new StringBuilder(
-		"Get Persistence with key ")
-		.append(key).toString());
-		
+    public NodePageContainer getPersistent(final long key) throws TreetankIOException {
+
+        // debug
+        LOGGER.debug(new StringBuilder("Get Persistence with key ").append(key).toString());
+
         return firstCache.get(key);
     }
 
@@ -91,15 +84,12 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
      * {@inheritDoc}
      */
     @Override
-    public void putPersistent(final long key, final NodePageContainer page)
-            throws TreetankIOException {
+    public void putPersistent(final long key, final NodePageContainer page) throws TreetankIOException {
         firstCache.put(key, page);
-        
-      //debug
-		LOGGER.debug(new StringBuilder(
-		"Put Persistence with key ")
-		.append(key).append(" and Node Page Continer ")
-		.append(page.toString()).toString());
+
+        // debug
+        LOGGER.debug(new StringBuilder("Put Persistence with key ").append(key).append(
+            " and Node Page Continer ").append(page.toString()).toString());
     }
 
 }

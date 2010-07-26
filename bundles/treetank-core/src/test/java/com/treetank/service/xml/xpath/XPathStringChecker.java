@@ -43,8 +43,7 @@ public class XPathStringChecker {
         TestHelper.closeEverything();
     }
 
-    public static void testIAxisConventions(final IAxis axis,
-            final String[] expectedValues) {
+    public static void testIAxisConventions(final IAxis axis, final String[] expectedValues) {
 
         final IReadTransaction rtx = axis.getTransaction();
 
@@ -53,14 +52,13 @@ public class XPathStringChecker {
 
         final String[] strValues = new String[expectedValues.length];
         int offset = 0;
-        while (axis.hasNext()) {
+        while(axis.hasNext()) {
             axis.next();
             // IAxis results.
             if (offset >= expectedValues.length) {
                 fail("More nodes found than expected.");
             }
-            strValues[offset++] = TypedValue.parseString(rtx.getNode()
-                    .getRawValue());
+            strValues[offset++] = TypedValue.parseString(rtx.getNode().getRawValue());
 
             // IAxis Convention 2.
             try {

@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 public final class LogHelper {
 
     /** Logger. */
-	private static Logger LOGGER;
+    private static Logger LOGGER;
 
     /** Determines if debugging is enabled. */
     public static boolean DEBUG;
@@ -25,7 +25,7 @@ public final class LogHelper {
      * @param LOGGER
      *            logger.
      */
-    public LogHelper(final Logger logger){
+    public LogHelper(final Logger logger) {
         LOGGER = logger;
         DEBUG = LOGGER.isDebugEnabled();
         INFO = LOGGER.isInfoEnabled();

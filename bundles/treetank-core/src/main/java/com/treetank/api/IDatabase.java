@@ -10,8 +10,8 @@ import com.treetank.exception.TreetankException;
  * is a persistent place where all data is stored. The access to the data is
  * done with the help of {@link ISession}s.
  * 
- * Furthermore, databases can be created with the help of
- * {@link DatabaseConfiguration}s. After creation, the settings of a database
+ * Furthermore, databases can be created with the help of {@link DatabaseConfiguration}s. After creation, the
+ * settings of a database
  * cannot be changed.
  * 
  * 

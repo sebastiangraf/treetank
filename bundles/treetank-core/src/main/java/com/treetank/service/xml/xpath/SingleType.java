@@ -25,9 +25,8 @@ import com.treetank.service.xml.xpath.types.Type;
 /**
  * <h1>SingleType</h1>
  * <p>
- * A single type defines a type the a single item can have. It consists of an
- * atomic type and a optional interrogation that, when present indicates that
- * the item can also be the empty sequence.
+ * A single type defines a type the a single item can have. It consists of an atomic type and a optional
+ * interrogation that, when present indicates that the item can also be the empty sequence.
  * </p>
  */
 public class SingleType {

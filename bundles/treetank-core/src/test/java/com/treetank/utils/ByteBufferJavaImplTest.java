@@ -51,7 +51,7 @@ public class ByteBufferJavaImplTest {
         final ByteBuffer buffer = ByteBuffer.allocate(100);
         // Byte.
         buffer.position(0);
-        buffer.put((byte) 13);
+        buffer.put((byte)13);
         buffer.put(Byte.MAX_VALUE);
         Assert.assertEquals(2, buffer.position());
         buffer.position(0);
@@ -79,7 +79,9 @@ public class ByteBufferJavaImplTest {
     public void testPutGetArray() {
         final ByteBuffer buffer = ByteBuffer.allocate(100);
 
-        final byte[] reference = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
+        final byte[] reference = new byte[] {
+            1, 2, 3, 4, 5, 6, 7, 8
+        };
         buffer.position(0);
         for (final byte byteVal : reference) {
             buffer.put(byteVal);

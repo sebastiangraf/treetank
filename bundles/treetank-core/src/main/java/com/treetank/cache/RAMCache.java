@@ -12,7 +12,6 @@
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- * 
  */
 package com.treetank.cache;
 
@@ -29,10 +28,9 @@ import org.slf4j.LoggerFactory;
  */
 public final class RAMCache implements ICache {
 
-	/** Logger. */
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(RAMCache.class);
-	
+    /** Logger. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(RAMCache.class);
+
     /**
      * local instance
      */
@@ -44,10 +42,9 @@ public final class RAMCache implements ICache {
     public RAMCache() {
         super();
         map = new FastWeakHashMap<Long, NodePageContainer>();
-        
-        //debug
-		LOGGER.debug(new StringBuilder(
-				"Creating new RAMCache").toString());
+
+        // debug
+        LOGGER.debug(new StringBuilder("Creating new RAMCache").toString());
     }
 
     /**
@@ -55,23 +52,20 @@ public final class RAMCache implements ICache {
      */
     public void clear() {
         map.clear();
-        
-        //debug
-		LOGGER.debug(new StringBuilder(
-				"Clear RAMCache").toString());
+
+        // debug
+        LOGGER.debug(new StringBuilder("Clear RAMCache").toString());
     }
 
     /**
      * {@inheritDoc}
      */
     public NodePageContainer get(final long key) {
-    	//debug
-		LOGGER.debug(new StringBuilder(
-				"Get Node Page Container with ").append(key).toString());
-		
+        // debug
+        LOGGER.debug(new StringBuilder("Get Node Page Container with ").append(key).toString());
+
         return map.get(key);
-        
-        
+
     }
 
     /**
@@ -79,10 +73,10 @@ public final class RAMCache implements ICache {
      */
     public void put(final long key, final NodePageContainer page) {
         map.put(key, page);
-        
-        //debug
-		LOGGER.debug(new StringBuilder(
-				"Put Node Page Container with ").append(key).append(" ").append(page).toString());
+
+        // debug
+        LOGGER.debug(new StringBuilder("Put Node Page Container with ").append(key).append(" ").append(page)
+            .toString());
     }
 
 }

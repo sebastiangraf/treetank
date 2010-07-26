@@ -29,8 +29,7 @@ import com.treetank.utils.TypedValue;
 /**
  * <h1>NodeComp</h1>
  * <p>
- * Node comparisons are used to compare two nodes, by their identity or by their
- * document order.
+ * Node comparisons are used to compare two nodes, by their identity or by their document order.
  * </p>
  */
 public class NodeComp extends AbstractComparator implements IAxis {
@@ -47,8 +46,8 @@ public class NodeComp extends AbstractComparator implements IAxis {
      * @param comp
      *            comparison kind
      */
-    public NodeComp(final IReadTransaction rtx, final IAxis operand1,
-            final IAxis operand2, final CompKind comp) {
+    public NodeComp(final IReadTransaction rtx, final IAxis operand1, final IAxis operand2,
+        final CompKind comp) {
 
         super(rtx, operand1, operand2, comp);
     }
@@ -61,10 +60,12 @@ public class NodeComp extends AbstractComparator implements IAxis {
 
         final IReadTransaction rtx = getTransaction();
         // store item key as atomic value
-        AtomicValue atomized = new AtomicValue(TypedValue.getBytes(((Long) rtx
-                .getNode().getNodeKey()).toString()),
-                rtx.keyForName("xs:integer"));
-        final AtomicValue[] op = { atomized };
+        AtomicValue atomized =
+            new AtomicValue(TypedValue.getBytes(((Long)rtx.getNode().getNodeKey()).toString()), rtx
+                .keyForName("xs:integer"));
+        final AtomicValue[] op = {
+            atomized
+        };
 
         // the operands must be singletons in case of a node comparison
         if (operand.hasNext()) {
@@ -89,14 +90,12 @@ public class NodeComp extends AbstractComparator implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    protected boolean compare(final AtomicValue[] operand1,
-            final AtomicValue[] operand2) {
+    protected boolean compare(final AtomicValue[] operand1, final AtomicValue[] operand2) {
 
         final String op1 = TypedValue.parseString(operand1[0].getRawValue());
         final String op2 = TypedValue.parseString(operand2[0].getRawValue());
 
-        return getCompKind().compare(op1, op2,
-                getType(operand1[0].getTypeKey(), operand2[0].getTypeKey()));
+        return getCompKind().compare(op1, op2, getType(operand1[0].getTypeKey(), operand2[0].getTypeKey()));
     }
 
 }

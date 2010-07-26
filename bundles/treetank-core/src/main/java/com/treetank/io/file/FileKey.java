@@ -38,7 +38,7 @@ public final class FileKey extends AbstractKey {
      * @return the length of the file fragment
      */
     public int getLength() {
-        return (int) super.getKeys()[1];
+        return (int)super.getKeys()[1];
     }
 
     /**

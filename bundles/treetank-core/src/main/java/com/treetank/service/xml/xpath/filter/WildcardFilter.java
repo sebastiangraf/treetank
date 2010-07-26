@@ -27,8 +27,8 @@ import com.treetank.node.ElementNode;
 /**
  * <h1>WildcardFilter</h1>
  * <p>
- * Filters ELEMENTS and ATTRIBUTES and supports wildcards either instead of the
- * namespace prefix, or the local name.
+ * Filters ELEMENTS and ATTRIBUTES and supports wildcards either instead of the namespace prefix, or the local
+ * name.
  * </p>
  */
 public class WildcardFilter extends AbstractFilter implements IFilter {
@@ -51,8 +51,7 @@ public class WildcardFilter extends AbstractFilter implements IFilter {
      *            defines, if the specified part is the prefix, or the local
      *            name (true, if it is the local name)
      */
-    public WildcardFilter(final IReadTransaction rtx, final String knownPart,
-            final boolean isName) {
+    public WildcardFilter(final IReadTransaction rtx, final String knownPart, final boolean isName) {
         super(rtx);
         mIsName = isName;
         mKnownPartKey = getTransaction().keyForName(knownPart);
@@ -66,15 +65,14 @@ public class WildcardFilter extends AbstractFilter implements IFilter {
         if (getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND) {
 
             if (mIsName) { // local name is given
-                String localname = getTransaction().nameForKey(
-                        getTransaction().getNode().getNameKey()).replaceFirst(
-                        ".*:", "");
+                String localname =
+                    getTransaction().nameForKey(getTransaction().getNode().getNameKey()).replaceFirst(".*:",
+                        "");
                 int localnameKey = getTransaction().keyForName(localname);
 
                 return localnameKey == mKnownPartKey;
             } else {// namespace prefix is given
-                int nsCount = ((ElementNode) getTransaction().getNode())
-                        .getNamespaceCount();
+                int nsCount = ((ElementNode)getTransaction().getNode()).getNamespaceCount();
                 for (int i = 0; i < nsCount; i++) {
                     getTransaction().moveToNamespace(i);
                     int prefixKey = mKnownPartKey;
@@ -90,8 +88,7 @@ public class WildcardFilter extends AbstractFilter implements IFilter {
             // supporting attributes here is difficult, because treetank
             // does not provide a way to acces the name and namespace of
             // the current attribute (attribute index is not known here)
-            throw new IllegalStateException(
-                    "Wildcards are not supported in attribute names yet.");
+            throw new IllegalStateException("Wildcards are not supported in attribute names yet.");
         }
 
         return false;

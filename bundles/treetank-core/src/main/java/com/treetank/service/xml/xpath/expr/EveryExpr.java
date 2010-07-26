@@ -31,10 +31,9 @@ import com.treetank.utils.TypedValue;
  * IAxis that represents the quantified expression "every".
  * </p>
  * <p>
- * The quantified expression is true if every evaluation of the test expression
- * has the effective boolean value true; otherwise the quantified expression is
- * false. This rule implies that, if the in-clauses generate zero binding
- * tuples, the value of the quantified expression is true.
+ * The quantified expression is true if every evaluation of the test expression has the effective boolean
+ * value true; otherwise the quantified expression is false. This rule implies that, if the in-clauses
+ * generate zero binding tuples, the value of the quantified expression is true.
  * </p>
  */
 public class EveryExpr extends AbstractExpression implements IAxis {
@@ -54,8 +53,7 @@ public class EveryExpr extends AbstractExpression implements IAxis {
      *            condition every item of the variable results must satisfy in
      *            order to evaluate expression to true
      */
-    public EveryExpr(final IReadTransaction rtx, final List<IAxis> vars,
-            final IAxis satisfy) {
+    public EveryExpr(final IReadTransaction rtx, final List<IAxis> vars, final IAxis satisfy) {
 
         super(rtx);
         mVars = vars;
@@ -89,7 +87,7 @@ public class EveryExpr extends AbstractExpression implements IAxis {
         boolean satisfiesCond = true;
 
         for (IAxis axis : mVars) {
-            while (axis.hasNext()) {
+            while(axis.hasNext()) {
                 axis.next();
                 if (!mSatisfy.hasNext()) {
                     // condition is not satisfied for this item -> expression is
@@ -99,10 +97,10 @@ public class EveryExpr extends AbstractExpression implements IAxis {
                 }
             }
         }
-        int itemKey = getTransaction().getItemList().addItem(
-                new AtomicValue(TypedValue.getBytes(Boolean
-                        .toString(satisfiesCond)), getTransaction().keyForName(
-                        "xs:boolean")));
+        int itemKey =
+            getTransaction().getItemList().addItem(
+                new AtomicValue(TypedValue.getBytes(Boolean.toString(satisfiesCond)), getTransaction()
+                    .keyForName("xs:boolean")));
         getTransaction().moveTo(itemKey);
 
     }

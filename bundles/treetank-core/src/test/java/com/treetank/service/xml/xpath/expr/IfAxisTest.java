@@ -55,8 +55,7 @@ public class IfAxisTest {
     @Test
     public void testIf() throws TreetankException {
         // Build simple test tree.
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -65,15 +64,20 @@ public class IfAxisTest {
 
         rtx.moveTo(1L);
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                "if (text()) then . else child::node()"), new long[] { 1L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "if (text()) then . else child::node()"),
+            new long[] {
+                1L
+            });
+
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "if (node()) then . else child::node()"),
+            new long[] {
+                1L
+            });
 
         IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                "if (node()) then . else child::node()"), new long[] { 1L });
-
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                "if (processing-instruction()) then . else child::node()"),
-                new long[] { 4L, 5L, 8L, 9L, 13L });
+            "if (processing-instruction()) then . else child::node()"), new long[] {
+            4L, 5L, 8L, 9L, 13L
+        });
 
         rtx.close();
         wtx.abort();

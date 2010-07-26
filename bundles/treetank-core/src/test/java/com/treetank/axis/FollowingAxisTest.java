@@ -38,19 +38,20 @@ public class FollowingAxisTest {
 
     @Test
     public void testAxisConventions() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
 
         wtx.moveTo(11L);
         IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {
-                12L, 13L });
+            12L, 13L
+        });
 
         wtx.moveTo(5L);
-        IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] { 8L,
-                9L, 11L, 12L, 13L });
+        IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {
+            8L, 9L, 11L, 12L, 13L
+        });
 
         wtx.moveTo(13L);
         IAxisTest.testIAxisConventions(new FollowingAxis(wtx), new long[] {});

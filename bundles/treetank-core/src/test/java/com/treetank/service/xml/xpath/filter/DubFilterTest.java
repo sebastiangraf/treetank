@@ -53,26 +53,28 @@ public class DubFilterTest {
     @Test
     public void testDupElemination() throws TreetankException {
         // Build simple test tree.
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
 
         wtx.moveTo(1L);
 
-        IAxisTest.testIAxisConventions(new XPathAxis(wtx,
-                "child::node()/parent::node()"), new long[] { 1L });
+        IAxisTest.testIAxisConventions(new XPathAxis(wtx, "child::node()/parent::node()"), new long[] {
+            1L
+        });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(wtx,
-                "b/following-sibling::node()"), new long[] { 8L, 9L, 13L });
+        IAxisTest.testIAxisConventions(new XPathAxis(wtx, "b/following-sibling::node()"), new long[] {
+            8L, 9L, 13L
+        });
 
-        IAxisTest.testIAxisConventions(
-                new XPathAxis(wtx, "b/preceding::node()"), new long[] { 4L, 8L,
-                        7L, 6L, 5L });
+        IAxisTest.testIAxisConventions(new XPathAxis(wtx, "b/preceding::node()"), new long[] {
+            4L, 8L, 7L, 6L, 5L
+        });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(wtx,
-                "//c/ancestor::node()"), new long[] { 5L, 1L, 9L });
+        IAxisTest.testIAxisConventions(new XPathAxis(wtx, "//c/ancestor::node()"), new long[] {
+            5L, 1L, 9L
+        });
 
         wtx.abort();
         wtx.close();

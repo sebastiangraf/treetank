@@ -38,28 +38,23 @@ public enum CompKind implements XPathConstants {
          * {@inheritDoc}
          */
         @Override
-        public boolean compare(final String operand1, final String operand2,
-                final Type type) {
+        public boolean compare(final String operand1, final String operand2, final Type type) {
 
             switch (type) {
             case FLOAT:
-                return (Float.parseFloat(operand1) == Float
-                        .parseFloat(operand2));
+                return (Float.parseFloat(operand1) == Float.parseFloat(operand2));
 
             case DECIMAL:
             case DOUBLE:
-                return (Double.parseDouble(operand1) == Double
-                        .parseDouble(operand2));
+                return (Double.parseDouble(operand1) == Double.parseDouble(operand2));
 
             case INTEGER:
                 // return (Integer.getInteger(operand1) ==
                 // Integer.getInteger(operand2));
-                return ((int) Double.parseDouble(operand1) == (int) Double
-                        .parseDouble(operand2));
+                return ((int)Double.parseDouble(operand1) == (int)Double.parseDouble(operand2));
 
             case BOOLEAN:
-                return (Boolean.parseBoolean(operand1) == Boolean
-                        .parseBoolean(operand2));
+                return (Boolean.parseBoolean(operand1) == Boolean.parseBoolean(operand2));
 
             case STRING:
             case ANY_URI:
@@ -78,8 +73,7 @@ public enum CompKind implements XPathConstants {
             case G_MONTH:
             case G_YEAR:
             case G_YEAR_MONTH:
-                throw new IllegalStateException(
-                        "Not implemented for this type yet");
+                throw new IllegalStateException("Not implemented for this type yet");
             default:
                 throw new XPathError(ErrorType.XPTY0004);
             }
@@ -94,26 +88,21 @@ public enum CompKind implements XPathConstants {
          * {@inheritDoc}
          */
         @Override
-        public boolean compare(final String operand1, final String operand2,
-                final Type type) {
+        public boolean compare(final String operand1, final String operand2, final Type type) {
 
             switch (type) {
             case FLOAT:
-                return (Float.parseFloat(operand1) != Float
-                        .parseFloat(operand2));
+                return (Float.parseFloat(operand1) != Float.parseFloat(operand2));
 
             case DECIMAL:
             case DOUBLE:
-                return (Double.parseDouble(operand1) != Double
-                        .parseDouble(operand2));
+                return (Double.parseDouble(operand1) != Double.parseDouble(operand2));
 
             case INTEGER:
-                return ((int) Double.parseDouble(operand1) != (int) Double
-                        .parseDouble(operand2));
+                return ((int)Double.parseDouble(operand1) != (int)Double.parseDouble(operand2));
 
             case BOOLEAN:
-                return (Boolean.parseBoolean(operand1) != Boolean
-                        .parseBoolean(operand2));
+                return (Boolean.parseBoolean(operand1) != Boolean.parseBoolean(operand2));
 
             case STRING:
             case ANY_URI:
@@ -132,8 +121,7 @@ public enum CompKind implements XPathConstants {
             case G_MONTH:
             case G_YEAR:
             case G_YEAR_MONTH:
-                throw new IllegalStateException(
-                        "Not implemented for this type yet");
+                throw new IllegalStateException("Not implemented for this type yet");
             default:
                 throw new XPathError(ErrorType.XPTY0004);
             }
@@ -148,8 +136,7 @@ public enum CompKind implements XPathConstants {
          * {@inheritDoc}
          */
         @Override
-        public boolean compare(final String operand1, final String operand2,
-                final Type type) {
+        public boolean compare(final String operand1, final String operand2, final Type type) {
 
             switch (type) {
             case FLOAT:
@@ -157,17 +144,14 @@ public enum CompKind implements XPathConstants {
 
             case DECIMAL:
             case DOUBLE:
-                return (Double.parseDouble(operand1) < Double
-                        .parseDouble(operand2));
+                return (Double.parseDouble(operand1) < Double.parseDouble(operand2));
 
             case INTEGER:
-                return ((int) Double.parseDouble(operand1) < (int) Double
-                        .parseDouble(operand2));
+                return ((int)Double.parseDouble(operand1) < (int)Double.parseDouble(operand2));
 
             case BOOLEAN:
                 // true, if operand1 == false and operand2 == true
-                return (!Boolean.parseBoolean(operand1) && Boolean
-                        .parseBoolean(operand2));
+                return (!Boolean.parseBoolean(operand1) && Boolean.parseBoolean(operand2));
 
             case STRING:
             case ANY_URI:
@@ -179,8 +163,7 @@ public enum CompKind implements XPathConstants {
             case YEAR_MONTH_DURATION:
             case DAY_TIME_DURATION:
 
-                throw new IllegalStateException(
-                        "Not implemented for this type yet");
+                throw new IllegalStateException("Not implemented for this type yet");
             default:
                 throw new XPathError(ErrorType.XPTY0004);
             }
@@ -196,26 +179,21 @@ public enum CompKind implements XPathConstants {
          * {@inheritDoc}
          */
         @Override
-        public boolean compare(final String operand1, final String operand2,
-                final Type type) {
+        public boolean compare(final String operand1, final String operand2, final Type type) {
 
             switch (type) {
             case FLOAT:
-                return (Float.parseFloat(operand1) <= Float
-                        .parseFloat(operand2));
+                return (Float.parseFloat(operand1) <= Float.parseFloat(operand2));
 
             case DECIMAL:
             case DOUBLE:
-                return (Double.parseDouble(operand1) <= Double
-                        .parseDouble(operand2));
+                return (Double.parseDouble(operand1) <= Double.parseDouble(operand2));
 
             case INTEGER:
-                return ((int) Double.parseDouble(operand1) <= (int) Double
-                        .parseDouble(operand2));
+                return ((int)Double.parseDouble(operand1) <= (int)Double.parseDouble(operand2));
 
             case BOOLEAN:
-                return !Boolean.parseBoolean(operand1)
-                        || Boolean.parseBoolean(operand2);
+                return !Boolean.parseBoolean(operand1) || Boolean.parseBoolean(operand2);
 
             case STRING:
             case ANY_URI:
@@ -227,8 +205,7 @@ public enum CompKind implements XPathConstants {
             case YEAR_MONTH_DURATION:
             case DAY_TIME_DURATION:
 
-                throw new IllegalStateException(
-                        "Not implemented for this type yet");
+                throw new IllegalStateException("Not implemented for this type yet");
             default:
                 throw new XPathError(ErrorType.XPTY0004);
             }
@@ -244,8 +221,7 @@ public enum CompKind implements XPathConstants {
          * {@inheritDoc}
          */
         @Override
-        public boolean compare(final String operand1, final String operand2,
-                final Type type) {
+        public boolean compare(final String operand1, final String operand2, final Type type) {
 
             switch (type) {
             case FLOAT:
@@ -253,17 +229,14 @@ public enum CompKind implements XPathConstants {
 
             case DECIMAL:
             case DOUBLE:
-                return (Double.parseDouble(operand1) > Double
-                        .parseDouble(operand2));
+                return (Double.parseDouble(operand1) > Double.parseDouble(operand2));
 
             case INTEGER:
-                return ((int) Double.parseDouble(operand1) > (int) Double
-                        .parseDouble(operand2));
+                return ((int)Double.parseDouble(operand1) > (int)Double.parseDouble(operand2));
 
             case BOOLEAN:
                 // true, if operand1 == true and operand2 == false
-                return (Boolean.parseBoolean(operand1) && !Boolean
-                        .parseBoolean(operand2));
+                return (Boolean.parseBoolean(operand1) && !Boolean.parseBoolean(operand2));
 
             case STRING:
             case ANY_URI:
@@ -275,8 +248,7 @@ public enum CompKind implements XPathConstants {
             case YEAR_MONTH_DURATION:
             case DAY_TIME_DURATION:
 
-                throw new IllegalStateException(
-                        "Not implemented for this type yet");
+                throw new IllegalStateException("Not implemented for this type yet");
             default:
                 throw new XPathError(ErrorType.XPTY0004);
             }
@@ -290,26 +262,21 @@ public enum CompKind implements XPathConstants {
          * {@inheritDoc}
          */
         @Override
-        public boolean compare(final String operand1, final String operand2,
-                final Type type) {
+        public boolean compare(final String operand1, final String operand2, final Type type) {
 
             switch (type) {
             case FLOAT:
-                return (Float.parseFloat(operand1) >= Float
-                        .parseFloat(operand2));
+                return (Float.parseFloat(operand1) >= Float.parseFloat(operand2));
 
             case DECIMAL:
             case DOUBLE:
-                return (Double.parseDouble(operand1) >= Double
-                        .parseDouble(operand2));
+                return (Double.parseDouble(operand1) >= Double.parseDouble(operand2));
 
             case INTEGER:
-                return ((int) Double.parseDouble(operand1) >= (int) Double
-                        .parseDouble(operand2));
+                return ((int)Double.parseDouble(operand1) >= (int)Double.parseDouble(operand2));
 
             case BOOLEAN:
-                return (Boolean.parseBoolean(operand1) || !Boolean
-                        .parseBoolean(operand2));
+                return (Boolean.parseBoolean(operand1) || !Boolean.parseBoolean(operand2));
 
             case STRING:
             case ANY_URI:
@@ -321,8 +288,7 @@ public enum CompKind implements XPathConstants {
             case YEAR_MONTH_DURATION:
             case DAY_TIME_DURATION:
 
-                throw new IllegalStateException(
-                        "Not implemented for this type yet");
+                throw new IllegalStateException("Not implemented for this type yet");
             default:
                 throw new XPathError(ErrorType.XPTY0004);
             }
@@ -337,11 +303,9 @@ public enum CompKind implements XPathConstants {
          * {@inheritDoc}
          */
         @Override
-        public boolean compare(final String operand1, final String operand2,
-                final Type type) {
+        public boolean compare(final String operand1, final String operand2, final Type type) {
 
-            throw new IllegalStateException(
-                    "Evaluation of node comparisons not possible");
+            throw new IllegalStateException("Evaluation of node comparisons not possible");
         }
 
     },
@@ -352,11 +316,9 @@ public enum CompKind implements XPathConstants {
          * {@inheritDoc}
          */
         @Override
-        public boolean compare(final String operand1, final String operand2,
-                final Type type) {
+        public boolean compare(final String operand1, final String operand2, final Type type) {
 
-            throw new IllegalStateException(
-                    "Evaluation of node comparisons not possible");
+            throw new IllegalStateException("Evaluation of node comparisons not possible");
         }
 
     },
@@ -367,11 +329,9 @@ public enum CompKind implements XPathConstants {
          * {@inheritDoc}
          */
         @Override
-        public boolean compare(final String operand1, final String operand2,
-                final Type type) {
+        public boolean compare(final String operand1, final String operand2, final Type type) {
 
-            return ((int) Double.parseDouble(operand1) == (int) Double
-                    .parseDouble(operand2));
+            return ((int)Double.parseDouble(operand1) == (int)Double.parseDouble(operand2));
         }
 
     };
@@ -387,7 +347,6 @@ public enum CompKind implements XPathConstants {
      *            comparison type
      * @return result of the boolean comparison
      */
-    public abstract boolean compare(final String operand1,
-            final String operand2, final Type type);
+    public abstract boolean compare(final String operand1, final String operand2, final Type type);
 
 }

@@ -42,8 +42,8 @@ import com.treetank.service.xml.xpath.functions.XPathError;
 
 public class TypeFilterTest {
 
-    public static final String XML = "src" + File.separator + "test"
-            + File.separator + "resources" + File.separator + "test.xml";
+    public static final String XML = "src" + File.separator + "test" + File.separator + "resources"
+    + File.separator + "test.xml";
 
     @Before
     public void setUp() throws TreetankException {
@@ -65,40 +65,31 @@ public class TypeFilterTest {
         XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
 
         // Verify.
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
         final IAxis axis = new XPathAxis(rtx, "a");
         final IReadTransaction xtx = axis.getTransaction();
 
         xtx.moveTo(9L);
-        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untyped"),
-                true);
-        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:long"),
-                false);
+        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untyped"), true);
+        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:long"), false);
 
         xtx.moveTo(4L);
-        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untyped"),
-                true);
-        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:double"),
-                false);
+        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untyped"), true);
+        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:double"), false);
 
         xtx.moveTo(1L);
         xtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new TypeFilter(xtx,
-                "xs:untypedAtomic"), true);
+        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untypedAtomic"), true);
 
-        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:anyType"),
-                false);
+        IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:anyType"), false);
         try {
-            IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:bla"),
-                    false);
+            IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:bla"), false);
             fail("Expected a Type not found error.");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPST0051 "
-                    + "Type is not defined in the in-scope schema types as an "
-                    + "atomic type."));
+            + "Type is not defined in the in-scope schema types as an " + "atomic type."));
         }
 
         xtx.close();

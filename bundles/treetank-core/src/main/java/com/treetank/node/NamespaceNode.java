@@ -84,13 +84,12 @@ public final class NamespaceNode extends AbsNode {
 
     @Override
     public AbsNode clone() {
-        final AbsNode toClone = new NamespaceNode(AbsNode.cloneData(mLongData),
-                AbsNode.cloneData(mIntData));
+        final AbsNode toClone = new NamespaceNode(AbsNode.cloneData(mLongData), AbsNode.cloneData(mIntData));
         return toClone;
     }
 
-    public static final AbsNode createData(final long nodeKey,
-            final long parentKey, final int uriKey, final int prefixKey) {
+    public static final AbsNode createData(final long nodeKey, final long parentKey, final int uriKey,
+        final int prefixKey) {
         final long[] longData = new long[ENodes.NAMESPACE_KIND.getLongSize()];
         final int[] intData = new int[ENodes.NAMESPACE_KIND.getIntSize()];
         longData[AbsNode.NODE_KEY] = nodeKey;
@@ -100,17 +99,15 @@ public final class NamespaceNode extends AbsNode {
         return new NamespaceNode(longData, intData);
     }
 
-    public static final AbsNode createData(final long nodeKey,
-            final NamespaceNode node) {
-        return createData(nodeKey, node.getParentKey(), node.getURIKey(),
-                node.getNameKey());
+    public static final AbsNode createData(final long nodeKey, final NamespaceNode node) {
+        return createData(nodeKey, node.getParentKey(), node.getURIKey(), node.getNameKey());
     }
 
     @Override
     public String toString() {
         final StringBuilder returnVal = new StringBuilder(super.toString());
-        returnVal.append("\n\ttype key: ").append(getTypeKey())
-                .append("\n\tname key: ").append(getNameKey()).toString();
+        returnVal.append("\n\ttype key: ").append(getTypeKey()).append("\n\tname key: ").append(getNameKey())
+            .toString();
         return returnVal.toString();
     }
 

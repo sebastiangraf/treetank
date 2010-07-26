@@ -32,8 +32,7 @@ public class ElementNodeTest {
     @Test
     public void testElementNode() {
 
-        final ElementNode node1 = (ElementNode) ElementNode.createData(13, 14,
-                16, 17, 12, 1, 18, 19, 20);
+        final ElementNode node1 = (ElementNode)ElementNode.createData(13, 14, 16, 17, 12, 1, 18, 19, 20);
 
         // Create empty node.
         node1.insertAttribute(97);
@@ -46,12 +45,11 @@ public class ElementNodeTest {
         final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
         node1.serialize(out);
         out.position(0);
-        final ElementNode node2 = (ElementNode) ENodes.ELEMENT_KIND
-                .createNodeFromPersistence(out);
+        final ElementNode node2 = (ElementNode)ENodes.ELEMENT_KIND.createNodeFromPersistence(out);
         check(node2);
 
         // Clone node.
-        final ElementNode node3 = (ElementNode) node2.clone();
+        final ElementNode node3 = (ElementNode)node2.clone();
         check(node3);
     }
 
@@ -82,13 +80,10 @@ public class ElementNodeTest {
 
     @Test
     public void testHashCode() {
-        final ElementNode node = (ElementNode) ElementNode.createData(13, 14,
-                16, 17, 12, 1, 18, 19, 20);
-        final ElementNode node2 = (ElementNode) ElementNode.createData(14, 15,
-                17, 18, 19, 2, 19, 20, 21);
+        final ElementNode node = (ElementNode)ElementNode.createData(13, 14, 16, 17, 12, 1, 18, 19, 20);
+        final ElementNode node2 = (ElementNode)ElementNode.createData(14, 15, 17, 18, 19, 2, 19, 20, 21);
 
-        final ElementNode node3 = (ElementNode) ElementNode.createData(13, 14,
-                16, 17, 12, 1, 18, 19, 20);
+        final ElementNode node3 = (ElementNode)ElementNode.createData(13, 14, 16, 17, 12, 1, 18, 19, 20);
 
         assertEquals(node3.hashCode(), node.hashCode());
         assertTrue(node3.equals(node));

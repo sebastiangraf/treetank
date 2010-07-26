@@ -30,18 +30,16 @@ import com.treetank.utils.TypedValue;
 /**
  * <h1>CastableExpression</h1>
  * <p>
- * The castable expression tests whether a given value is castable into a given
- * target type. The target type must be an atomic type that is in the in-scope
- * schema types [err:XPST0051]. In addition, the target type cannot be
- * xs:NOTATION or xs:anyAtomicType [err:XPST0080]. The optional occurrence
- * indicator "?" denotes that an empty sequence is permitted.
+ * The castable expression tests whether a given value is castable into a given target type. The target type
+ * must be an atomic type that is in the in-scope schema types [err:XPST0051]. In addition, the target type
+ * cannot be xs:NOTATION or xs:anyAtomicType [err:XPST0080]. The optional occurrence indicator "?" denotes
+ * that an empty sequence is permitted.
  * </p>
  * <p>
- * The expression V castable as T returns true if the value V can be
- * successfully cast into the target type T by using a cast expression;
- * otherwise it returns false. The castable expression can be used as a
- * predicate to avoid errors at evaluation time. It can also be used to select
- * an appropriate type for processing of a given value.
+ * The expression V castable as T returns true if the value V can be successfully cast into the target type T
+ * by using a cast expression; otherwise it returns false. The castable expression can be used as a predicate
+ * to avoid errors at evaluation time. It can also be used to select an appropriate type for processing of a
+ * given value.
  * </p>
  */
 public class CastableExpr extends AbstractExpression implements IAxis {
@@ -65,8 +63,7 @@ public class CastableExpr extends AbstractExpression implements IAxis {
      * @param target
      *            Type to test, whether the input expression can be casted to.
      */
-    public CastableExpr(final IReadTransaction rtx, final IAxis inputExpr,
-            final SingleType target) {
+    public CastableExpr(final IReadTransaction rtx, final IAxis inputExpr, final SingleType target) {
 
         super(rtx);
         mSourceExpr = inputExpr;
@@ -103,10 +100,8 @@ public class CastableExpr extends AbstractExpression implements IAxis {
 
         if (mSourceExpr.hasNext()) { // result sequence > 0
 
-            final Type sourceType = Type.getType(getTransaction().getNode()
-                    .getTypeKey());
-            final String sourceValue = TypedValue.parseString(getTransaction()
-                    .getNode().getRawValue());
+            final Type sourceType = Type.getType(getTransaction().getNode().getTypeKey());
+            final String sourceValue = TypedValue.parseString(getTransaction().getNode().getRawValue());
 
             // determine castability
             isCastable = sourceType.isCastableTo(mTargetType, sourceValue);
@@ -125,10 +120,10 @@ public class CastableExpr extends AbstractExpression implements IAxis {
         }
 
         // create result item and move transaction to it.
-        int itemKey = getTransaction().getItemList().addItem(
-                new AtomicValue(TypedValue.getBytes(Boolean
-                        .toString(isCastable)), getTransaction().keyForName(
-                        "xs:boolean")));
+        int itemKey =
+            getTransaction().getItemList().addItem(
+                new AtomicValue(TypedValue.getBytes(Boolean.toString(isCastable)), getTransaction()
+                    .keyForName("xs:boolean")));
         getTransaction().moveTo(itemKey);
 
     }

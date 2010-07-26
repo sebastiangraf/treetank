@@ -19,14 +19,14 @@ import com.treetank.settings.ENodes;
  * <h1>MutableNodeWrapper</h1>
  * 
  * <p>
- * Implements all methods which are needed to create a modifiable Saxon internal
- * node. Therefore it wraps Treetank's nodes into the appropriate format.
+ * Implements all methods which are needed to create a modifiable Saxon internal node. Therefore it wraps
+ * Treetank's nodes into the appropriate format.
  * </p>
  * 
  * <p>
- * <strong>Currently not used.</strong> For use with XQuery Update and requires
- * a "commercial" Saxon license. Furthermore as of now not stable and doesn't
- * support third party applications. Needs to be fully implemented and tested.
+ * <strong>Currently not used.</strong> For use with XQuery Update and requires a "commercial" Saxon license.
+ * Furthermore as of now not stable and doesn't support third party applications. Needs to be fully
+ * implemented and tested.
  * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
@@ -34,260 +34,248 @@ import com.treetank.settings.ENodes;
  */
 public class MutableNodeWrapper extends NodeWrapper implements MutableNodeInfo {
 
-  /** Treetank write transaction. */
-  private final IWriteTransaction mWTX;
+    /** Treetank write transaction. */
+    private final IWriteTransaction mWTX;
 
-  /**
-   * Constructor.
-   * 
-   * @param database
-   *            Treetank database.
-   * @param wtx
-   *            Treetank write transaction.
-   * @throws TreetankException
-   *             in case of something went wrong.
-   */
-  protected MutableNodeWrapper(
-      final IDatabase database,
-      final IWriteTransaction wtx) throws TreetankException {
-    super(database, 0);
-    mWTX = database.getSession().beginWriteTransaction();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void addAttribute(
-      final int nameCode,
-      final int typeCode,
-      final CharSequence value,
-      final int properties) {
-    if (mWTX.getNode().getKind() == ENodes.ELEMENT_KIND) {
-      String uri = "";
-      String local = "";
-
-      for (int i = 0; i < ((ElementNode) mWTX.getNode()).getAttributeCount(); i++) {
-        mWTX.moveToAttribute(i);
-
-        NamePool pool = mDocWrapper.getNamePool();
-        uri = pool.getURI(nameCode);
-        local = pool.getLocalName(nameCode);
-
-        if (uri.equals(mWTX.getQNameOfCurrentNode().getNamespaceURI())
-            && local.equals(getLocalPart())) {
-          throw new IllegalStateException(
-              "Attribute with the given name already exists!");
-        }
-
-        mWTX.moveTo(mKey);
-      }
-
-      try {
-        mWTX.insertAttribute(mWTX.getQNameOfCurrentNode(), (String) value);
-      } catch (TreetankException e) {
-        LOGGER.error("Couldn't insert Attribute: " + e.getMessage(), e);
-      }
-    }
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void addNamespace(int nscode, boolean inherit) {
-    final NamePool pool = mDocWrapper.getNamePool();
-    final String uri = pool.getURI(nscode);
-    final String prefix = pool.getPrefix(nscode);
-
-    // Not present in name pool.
-    if (uri == null || prefix == null) {
-      throw new IllegalArgumentException(
-          "Namespace code is not present in the name pool!");
+    /**
+     * Constructor.
+     * 
+     * @param database
+     *            Treetank database.
+     * @param wtx
+     *            Treetank write transaction.
+     * @throws TreetankException
+     *             in case of something went wrong.
+     */
+    protected MutableNodeWrapper(final IDatabase database, final IWriteTransaction wtx)
+        throws TreetankException {
+        super(database, 0);
+        mWTX = database.getSession().beginWriteTransaction();
     }
 
-    // Insert Namespace.
-    if (mWTX.getQNameOfCurrentNode().getNamespaceURI() != uri
-        && getPrefix() != prefix) {
-      try {
-        mWTX.insertNamespace(uri, prefix);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addAttribute(final int nameCode, final int typeCode, final CharSequence value,
+        final int properties) {
+        if (mWTX.getNode().getKind() == ENodes.ELEMENT_KIND) {
+            String uri = "";
+            String local = "";
 
-        // Add namespace to child nodes if prefix
-        if (inherit) {
-          final IAxis axis = new ChildAxis(mWTX);
-          while (axis.hasNext()) {
-            if (getPrefix() != prefix) {
-              mWTX.insertNamespace(uri, prefix);
+            for (int i = 0; i < ((ElementNode)mWTX.getNode()).getAttributeCount(); i++) {
+                mWTX.moveToAttribute(i);
+
+                NamePool pool = mDocWrapper.getNamePool();
+                uri = pool.getURI(nameCode);
+                local = pool.getLocalName(nameCode);
+
+                if (uri.equals(mWTX.getQNameOfCurrentNode().getNamespaceURI())
+                && local.equals(getLocalPart())) {
+                    throw new IllegalStateException("Attribute with the given name already exists!");
+                }
+
+                mWTX.moveTo(mKey);
             }
-            axis.next();
-          }
+
+            try {
+                mWTX.insertAttribute(mWTX.getQNameOfCurrentNode(), (String)value);
+            } catch (TreetankException e) {
+                LOGGER.error("Couldn't insert Attribute: " + e.getMessage(), e);
+            }
         }
-      } catch (TreetankException e) {
-        LOGGER.error("Insert Namespace failed: " + e.getMessage(), e);
-      }
-      // Already bound.
-    } else if (mWTX.getQNameOfCurrentNode().getNamespaceURI() != uri
-        && getPrefix() == prefix) {
-      throw new IllegalArgumentException(
-          "An URI is already bound to this prefix!");
     }
 
-    // Do nothing is uri and prefix already are bound.
-  }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addNamespace(int nscode, boolean inherit) {
+        final NamePool pool = mDocWrapper.getNamePool();
+        final String uri = pool.getURI(nscode);
+        final String prefix = pool.getPrefix(nscode);
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void delete() {
-    try {
-      mWTX.remove();
-    } catch (TreetankException e) {
-      LOGGER.error("Removing current node failed: " + e.getMessage(), e);
-    }
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void insertChildren(NodeInfo[] source, boolean atStart, boolean inherit) {
-    switch (mWTX.getNode().getKind()) {
-    case ROOT_KIND:
-    case ELEMENT_KIND:
-      boolean first = true;
-      for (final NodeInfo node : source) {
-        try {
-          if (first) {
-            mWTX.insertElementAsFirstChild(new QName(node.getURI(), node
-                .getLocalPart(), node.getPrefix()));
-            first = false;
-          } else {
-            mWTX.insertElementAsRightSibling(new QName(node.getURI(), node
-                .getLocalPart(), node.getPrefix()));
-          }
-        } catch (TreetankException e) {
-          LOGGER.error("Insertion of element failed: " + e.getMessage(), e);
+        // Not present in name pool.
+        if (uri == null || prefix == null) {
+            throw new IllegalArgumentException("Namespace code is not present in the name pool!");
         }
-      }
 
-      mWTX.moveTo(mKey);
-      break;
-    default:
-      throw new IllegalStateException("");
-    }
-  }
+        // Insert Namespace.
+        if (mWTX.getQNameOfCurrentNode().getNamespaceURI() != uri && getPrefix() != prefix) {
+            try {
+                mWTX.insertNamespace(uri, prefix);
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void insertSiblings(NodeInfo[] source, boolean before, boolean inherit) {
-    if (before) {
-      mWTX.moveToParent();
-
-      final String uri = mWTX.getQNameOfCurrentNode().getNamespaceURI();
-      final String prefix = getPrefix();
-
-      for (final NodeInfo node : source) {
-        try {
-          mWTX.insertElementAsFirstChild(new QName(node.getURI(), node
-              .getLocalPart(), node.getPrefix()));
-
-          if (inherit) {
-            mWTX.insertNamespace(uri, prefix);
-          }
-
-          mWTX.moveToParent();
-        } catch (TreetankException e) {
-          LOGGER.error("Inserting element failed: " + e.getMessage(), e);
+                // Add namespace to child nodes if prefix
+                if (inherit) {
+                    final IAxis axis = new ChildAxis(mWTX);
+                    while(axis.hasNext()) {
+                        if (getPrefix() != prefix) {
+                            mWTX.insertNamespace(uri, prefix);
+                        }
+                        axis.next();
+                    }
+                }
+            } catch (TreetankException e) {
+                LOGGER.error("Insert Namespace failed: " + e.getMessage(), e);
+            }
+            // Already bound.
+        } else if (mWTX.getQNameOfCurrentNode().getNamespaceURI() != uri && getPrefix() == prefix) {
+            throw new IllegalArgumentException("An URI is already bound to this prefix!");
         }
-      }
 
-      mWTX.moveTo(mKey);
-    } else {
-      // Get URI and prefix of parent node.
-      final long key = mWTX.getNode().getNodeKey();
-      mWTX.moveToParent();
-      final String uri = mWTX.getQNameOfCurrentNode().getNamespaceURI();
-      final String prefix = getPrefix();
-      mWTX.moveTo(key);
-
-      for (final NodeInfo node : source) {
-        try {
-          mWTX.insertElementAsRightSibling(new QName(
-              node.getDisplayName(),
-              node.getURI()));
-
-          if (inherit) {
-            mWTX.insertNamespace(uri, prefix);
-          }
-        } catch (TreetankException e) {
-          LOGGER.error("Inserting element failed: " + e.getMessage(), e);
-        }
-      }
+        // Do nothing is uri and prefix already are bound.
     }
 
-    mWTX.moveTo(mKey);
-  }
-
-  @Override
-  public boolean isDeleted() {
-    // TODO Auto-generated method stub
-    return false;
-  }
-
-  @Override
-  public Builder newBuilder() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public void removeAttribute(final NodeInfo attribute) {
-    if (mWTX.getNode().getKind() == ENodes.ELEMENT_KIND) {
-      for (int i = 0, attCount =
-          ((ElementNode) mWTX.getNode()).getAttributeCount(); i < attCount; i++) {
-        mWTX.moveToAttribute(i);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void delete() {
         try {
-          if (mWTX.getQNameOfCurrentNode().equals(attribute.getDisplayName())) {
             mWTX.remove();
-          }
         } catch (TreetankException e) {
-          LOGGER.error("Removing attribute failed: " + e.getMessage(), e);
+            LOGGER.error("Removing current node failed: " + e.getMessage(), e);
         }
-        mWTX.moveTo(mKey);
-      }
     }
-  }
 
-  @Override
-  public void removeTypeAnnotation() {
-    // TODO Auto-generated method stub
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void insertChildren(NodeInfo[] source, boolean atStart, boolean inherit) {
+        switch (mWTX.getNode().getKind()) {
+        case ROOT_KIND:
+        case ELEMENT_KIND:
+            boolean first = true;
+            for (final NodeInfo node : source) {
+                try {
+                    if (first) {
+                        mWTX.insertElementAsFirstChild(new QName(node.getURI(), node.getLocalPart(), node
+                            .getPrefix()));
+                        first = false;
+                    } else {
+                        mWTX.insertElementAsRightSibling(new QName(node.getURI(), node.getLocalPart(), node
+                            .getPrefix()));
+                    }
+                } catch (TreetankException e) {
+                    LOGGER.error("Insertion of element failed: " + e.getMessage(), e);
+                }
+            }
 
-  }
+            mWTX.moveTo(mKey);
+            break;
+        default:
+            throw new IllegalStateException("");
+        }
+    }
 
-  @Override
-  public void rename(final int newNameCode) {
-    // TODO Auto-generated method stub
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void insertSiblings(NodeInfo[] source, boolean before, boolean inherit) {
+        if (before) {
+            mWTX.moveToParent();
 
-  }
+            final String uri = mWTX.getQNameOfCurrentNode().getNamespaceURI();
+            final String prefix = getPrefix();
 
-  @Override
-  public void replace(final NodeInfo[] replacement, final boolean inherit) {
-    // TODO Auto-generated method stub
+            for (final NodeInfo node : source) {
+                try {
+                    mWTX.insertElementAsFirstChild(new QName(node.getURI(), node.getLocalPart(), node
+                        .getPrefix()));
 
-  }
+                    if (inherit) {
+                        mWTX.insertNamespace(uri, prefix);
+                    }
 
-  @Override
-  public void replaceStringValue(final CharSequence stringValue) {
-    // TODO Auto-generated method stub
+                    mWTX.moveToParent();
+                } catch (TreetankException e) {
+                    LOGGER.error("Inserting element failed: " + e.getMessage(), e);
+                }
+            }
 
-  }
+            mWTX.moveTo(mKey);
+        } else {
+            // Get URI and prefix of parent node.
+            final long key = mWTX.getNode().getNodeKey();
+            mWTX.moveToParent();
+            final String uri = mWTX.getQNameOfCurrentNode().getNamespaceURI();
+            final String prefix = getPrefix();
+            mWTX.moveTo(key);
 
-  @Override
-  public void setTypeAnnotation(final int typeCode) {
-    // TODO Auto-generated method stub
+            for (final NodeInfo node : source) {
+                try {
+                    mWTX.insertElementAsRightSibling(new QName(node.getDisplayName(), node.getURI()));
 
-  }
+                    if (inherit) {
+                        mWTX.insertNamespace(uri, prefix);
+                    }
+                } catch (TreetankException e) {
+                    LOGGER.error("Inserting element failed: " + e.getMessage(), e);
+                }
+            }
+        }
+
+        mWTX.moveTo(mKey);
+    }
+
+    @Override
+    public boolean isDeleted() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public Builder newBuilder() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void removeAttribute(final NodeInfo attribute) {
+        if (mWTX.getNode().getKind() == ENodes.ELEMENT_KIND) {
+            for (int i = 0, attCount = ((ElementNode)mWTX.getNode()).getAttributeCount(); i < attCount; i++) {
+                mWTX.moveToAttribute(i);
+                try {
+                    if (mWTX.getQNameOfCurrentNode().equals(attribute.getDisplayName())) {
+                        mWTX.remove();
+                    }
+                } catch (TreetankException e) {
+                    LOGGER.error("Removing attribute failed: " + e.getMessage(), e);
+                }
+                mWTX.moveTo(mKey);
+            }
+        }
+    }
+
+    @Override
+    public void removeTypeAnnotation() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void rename(final int newNameCode) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void replace(final NodeInfo[] replacement, final boolean inherit) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void replaceStringValue(final CharSequence stringValue) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void setTypeAnnotation(final int typeCode) {
+        // TODO Auto-generated method stub
+
+    }
 }

@@ -4,7 +4,7 @@
  * Patent Pending.
  * 
  * Permission to use, copy, modify, and/or distribute this software for non-
- * commercial use with or without fee is hereby granted, provided that the 
+ * commercial use with or without fee is hereby granted, provided that the
  * above copyright notice, the patent notice, and this permission notice
  * appear in all copies.
  * 
@@ -29,28 +29,22 @@ import java.util.Iterator;
  * <h2>Description</h2>
  * 
  * <p>
- * Interface to iterate over nodes according to a given axis step without
- * storing intermediate lists. <code>IAxis</code> extends the well-known Java
- * <code>Iterator&lt;Long&gt;</code> and <code>Iterable&lt;Long&gt;</code>
- * interfaces
+ * Interface to iterate over nodes according to a given axis step without storing intermediate lists.
+ * <code>IAxis</code> extends the well-known Java <code>Iterator&lt;Long&gt;</code> and
+ * <code>Iterable&lt;Long&gt;</code> interfaces
  * </p>
  * 
  * <h2>Convention</h2>
  * 
  * <p>
  * <ol>
- * <li><strong>Precondition</strong> before first call to
- * <code>IAxis.hasNext()</code>: <code>IReadTransaction.getNodeKey() == n</code>
- * .</li>
- * <li><code>IAxis.next()</code> must be called exactly once after
- * <code>IAxis.hasNext() == true</code>.</li>
- * <li><code>IReadTransaction.getNodeKey()</code> must be equal right after
- * <code>IAxis.hasNext()</code> and right before the next call to
- * <code>IAxis.hasNext()</code>.</li>
- * <li>If used with <code>IWriteTransaction</code>, there are no modification
- * during an enhanced for loop.</li>
- * <li><strong>Postcondition</strong> after
- * <code>IAxis.hasNext() == false</code>:
+ * <li><strong>Precondition</strong> before first call to <code>IAxis.hasNext()</code>:
+ * <code>IReadTransaction.getNodeKey() == n</code> .</li>
+ * <li><code>IAxis.next()</code> must be called exactly once after <code>IAxis.hasNext() == true</code>.</li>
+ * <li><code>IReadTransaction.getNodeKey()</code> must be equal right after <code>IAxis.hasNext()</code> and
+ * right before the next call to <code>IAxis.hasNext()</code>.</li>
+ * <li>If used with <code>IWriteTransaction</code>, there are no modification during an enhanced for loop.</li>
+ * <li><strong>Postcondition</strong> after <code>IAxis.hasNext() == false</code>:
  * <code>IReadTransaction.getNodeKey() == n</code>.</li>
  * </ol>
  * </p>
@@ -123,6 +117,7 @@ import java.util.Iterator;
  *     }
  * 
  * }
+ * 
  * </pre>
  * 
  * </p>

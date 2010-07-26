@@ -39,17 +39,20 @@ public class SelfAxisTest {
 
     @Test
     public void testIterate() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
 
         wtx.moveTo(4L);
-        IAxisTest.testIAxisConventions(new SelfAxis(wtx), new long[] { 4L });
+        IAxisTest.testIAxisConventions(new SelfAxis(wtx), new long[] {
+            4L
+        });
 
         wtx.moveTo(8L);
-        IAxisTest.testIAxisConventions(new SelfAxis(wtx), new long[] { 8L });
+        IAxisTest.testIAxisConventions(new SelfAxis(wtx), new long[] {
+            8L
+        });
 
         wtx.abort();
         wtx.close();

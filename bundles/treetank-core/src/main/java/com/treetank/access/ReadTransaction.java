@@ -67,16 +67,11 @@ public class ReadTransaction implements IReadTransaction {
      */
     protected ReadTransaction(final long transactionID, final SessionState sessionState,
         final ReadTransactionState transactionState) throws TreetankIOException {
-        mTransactionID =
-            transactionID;
-        mSessionState =
-            sessionState;
-        mTransactionState =
-            transactionState;
-        mCurrentNode =
-            getTransactionState().getNode((Long)EFixed.ROOT_NODE_KEY.getStandardProperty());
-        mClosed =
-            false;
+        mTransactionID = transactionID;
+        mSessionState = sessionState;
+        mTransactionState = transactionState;
+        mCurrentNode = getTransactionState().getNode((Long)EFixed.ROOT_NODE_KEY.getStandardProperty());
+        mClosed = false;
     }
 
     /**
@@ -109,20 +104,16 @@ public class ReadTransaction implements IReadTransaction {
         assertNotClosed();
         if (nodeKey != (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
             // Remember old node and fetch new one.
-            final IItem oldNode =
-                mCurrentNode;
+            final IItem oldNode = mCurrentNode;
             try {
-                mCurrentNode =
-                    mTransactionState.getNode(nodeKey);
+                mCurrentNode = mTransactionState.getNode(nodeKey);
             } catch (Exception e) {
-                mCurrentNode =
-                    null;
+                mCurrentNode = null;
             }
             if (mCurrentNode != null) {
                 return true;
             } else {
-                mCurrentNode =
-                    oldNode;
+                mCurrentNode = oldNode;
                 return false;
             }
         } else {
@@ -148,8 +139,7 @@ public class ReadTransaction implements IReadTransaction {
      * {@inheritDoc}
      */
     public final boolean moveToFirstChild() {
-        final AbsStructNode node =
-            checkNode(mCurrentNode);
+        final AbsStructNode node = checkNode(mCurrentNode);
         return node == null ? false : moveTo(node.getFirstChildKey());
     }
 
@@ -157,8 +147,7 @@ public class ReadTransaction implements IReadTransaction {
      * {@inheritDoc}
      */
     public final boolean moveToLeftSibling() {
-        final AbsStructNode node =
-            checkNode(mCurrentNode);
+        final AbsStructNode node = checkNode(mCurrentNode);
         return node == null ? false : moveTo(node.getLeftSiblingKey());
     }
 
@@ -166,8 +155,7 @@ public class ReadTransaction implements IReadTransaction {
      * {@inheritDoc}
      */
     public final boolean moveToRightSibling() {
-        final AbsStructNode node =
-            checkNode(mCurrentNode);
+        final AbsStructNode node = checkNode(mCurrentNode);
         return node == null ? false : moveTo(node.getRightSiblingKey());
     }
 
@@ -207,10 +195,8 @@ public class ReadTransaction implements IReadTransaction {
      */
     public final QName getQNameOfCurrentNode() {
         assertNotClosed();
-        final String name =
-            mTransactionState.getName(mCurrentNode.getNameKey());
-        final String uri =
-            mTransactionState.getName(mCurrentNode.getURIKey());
+        final String name = mTransactionState.getName(mCurrentNode.getNameKey());
+        final String uri = mTransactionState.getName(mCurrentNode.getURIKey());
         return name == null ? null : buildQName(uri, name);
     }
 
@@ -265,15 +251,11 @@ public class ReadTransaction implements IReadTransaction {
             mSessionState.closeReadTransaction(mTransactionID);
 
             // Immediately release all references.
-            mSessionState =
-                null;
-            mTransactionState =
-                null;
-            mCurrentNode =
-                null;
+            mSessionState = null;
+            mTransactionState = null;
+            mCurrentNode = null;
 
-            mClosed =
-                true;
+            mClosed = true;
         }
     }
 
@@ -283,8 +265,7 @@ public class ReadTransaction implements IReadTransaction {
     @Override
     public String toString() {
         assertNotClosed();
-        final StringBuilder builder =
-            new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         if (getNode().getKind() == ENodes.ATTRIBUTE_KIND || getNode().getKind() == ENodes.ELEMENT_KIND) {
             builder.append("Name of Node: ");
             builder.append(getQNameOfCurrentNode().toString());
@@ -308,8 +289,7 @@ public class ReadTransaction implements IReadTransaction {
      * Set state to closed.
      */
     protected final void setClosed() {
-        mClosed =
-            true;
+        mClosed = true;
     }
 
     /**
@@ -346,8 +326,7 @@ public class ReadTransaction implements IReadTransaction {
      *            State of transaction.
      */
     protected final void setTransactionState(final ReadTransactionState transactionState) {
-        mTransactionState =
-            transactionState;
+        mTransactionState = transactionState;
     }
 
     /**
@@ -366,8 +345,7 @@ public class ReadTransaction implements IReadTransaction {
      *            Session state to set.
      */
     protected final void setSessionState(final SessionState sessionState) {
-        mSessionState =
-            sessionState;
+        mSessionState = sessionState;
     }
 
     /**
@@ -386,8 +364,7 @@ public class ReadTransaction implements IReadTransaction {
      *            The current node to set.
      */
     protected final void setCurrentNode(final IItem currentNode) {
-        mCurrentNode =
-            currentNode;
+        mCurrentNode = currentNode;
     }
 
     /**
@@ -418,11 +395,9 @@ public class ReadTransaction implements IReadTransaction {
     protected static final QName buildQName(final String uri, final String name) {
         QName qname;
         if (name.contains(":")) {
-            qname =
-                new QName(uri, name.split(":")[1], name.split(":")[0]);
+            qname = new QName(uri, name.split(":")[1], name.split(":")[0]);
         } else {
-            qname =
-                new QName(uri, name);
+            qname = new QName(uri, name);
         }
         return qname;
     }

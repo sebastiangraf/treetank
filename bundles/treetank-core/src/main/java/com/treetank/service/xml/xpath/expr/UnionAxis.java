@@ -27,10 +27,9 @@ import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
 /**
  * <h1>UnionAxis</h1>
  * <p>
- * Returns an union of two operands. This axis takes two node sequences as
- * operands and returns a sequence containing all the items that occur in either
- * of the operands. A union of two sequences may lead to a sequence containing
- * duplicates. These duplicates can be removed by wrapping the UnionAxis with a
+ * Returns an union of two operands. This axis takes two node sequences as operands and returns a sequence
+ * containing all the items that occur in either of the operands. A union of two sequences may lead to a
+ * sequence containing duplicates. These duplicates can be removed by wrapping the UnionAxis with a
  * DupFilterAxis. The resulting sequence may also be out of document order.
  * </p>
  */
@@ -52,8 +51,7 @@ public class UnionAxis extends AbstractAxis implements IAxis {
      * @param operand2
      *            Second operand
      */
-    public UnionAxis(final IReadTransaction rtx, final IAxis operand1,
-            final IAxis operand2) {
+    public UnionAxis(final IReadTransaction rtx, final IAxis operand1, final IAxis operand2) {
 
         super(rtx);
         mOp1 = operand1;
@@ -83,7 +81,7 @@ public class UnionAxis extends AbstractAxis implements IAxis {
     public boolean hasNext() {
 
         // first return all values of the first operand
-        while (mOp1.hasNext()) {
+        while(mOp1.hasNext()) {
             mOp1.next();
 
             if (getTransaction().getNode().getNodeKey() < 0) { // only nodes are
@@ -94,7 +92,7 @@ public class UnionAxis extends AbstractAxis implements IAxis {
         }
 
         // then all values of the second operand.
-        while (mOp2.hasNext()) {
+        while(mOp2.hasNext()) {
             mOp2.next();
 
             if (getTransaction().getNode().getNodeKey() < 0) { // only nodes are

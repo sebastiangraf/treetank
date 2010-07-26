@@ -45,8 +45,7 @@ public class IDivOpAxis extends AbstractOpAxis {
      * @param op2
      *            Second value of the operation
      */
-    public IDivOpAxis(final IReadTransaction rtx, final IAxis op1,
-            final IAxis op2) {
+    public IDivOpAxis(final IReadTransaction rtx, final IAxis op1, final IAxis op2) {
 
         super(rtx, op1, op2);
     }
@@ -57,17 +56,14 @@ public class IDivOpAxis extends AbstractOpAxis {
     @Override
     public IItem operate(final AtomicValue operand1, final AtomicValue operand2) {
 
-        Type returnType = getReturnType(operand1.getTypeKey(),
-                operand2.getTypeKey());
+        Type returnType = getReturnType(operand1.getTypeKey(), operand2.getTypeKey());
         int typeKey = getTransaction().keyForName(returnType.getStringRepr());
 
         final byte[] value;
 
         try {
-            final int op1 = (int) Double.parseDouble(TypedValue
-                    .parseString(operand1.getRawValue()));
-            final int op2 = (int) Double.parseDouble(TypedValue
-                    .parseString(operand2.getRawValue()));
+            final int op1 = (int)Double.parseDouble(TypedValue.parseString(operand1.getRawValue()));
+            final int op2 = (int)Double.parseDouble(TypedValue.parseString(operand2.getRawValue()));
             final int iValue = op1 / op2;
             value = TypedValue.getBytes(iValue);
             return new AtomicValue(value, typeKey);

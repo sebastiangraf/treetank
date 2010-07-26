@@ -35,8 +35,8 @@ import com.treetank.service.xml.xpath.filter.DupFilterAxis;
 /**
  * <h1>ExpresseionSingle</h1>
  * <p>
- * This class builds an execution chain to execute a XPath query. All added axis
- * are build together by using NestedAxis.
+ * This class builds an execution chain to execute a XPath query. All added axis are build together by using
+ * NestedAxis.
  */
 public class ExpressionSingle {
 
@@ -140,8 +140,8 @@ public class ExpressionSingle {
 
         IAxis axis = ax;
 
-        while (axis instanceof FilterAxis) {
-            axis = ((FilterAxis) axis).getAxis();
+        while(axis instanceof FilterAxis) {
+            axis = ((FilterAxis)axis).getAxis();
         }
 
         if (axis instanceof UnionAxis) {
@@ -167,14 +167,12 @@ public class ExpressionSingle {
             ord = ord.updateOrdAncestor();
             dup = dup.updateDupAncestor();
 
-        } else if (axis instanceof FollowingAxis
-                || axis instanceof PrecedingAxis) {
+        } else if (axis instanceof FollowingAxis || axis instanceof PrecedingAxis) {
 
             ord = ord.updateOrdFollPre();
             dup = dup.updateDupFollPre();
 
-        } else if (axis instanceof FollowingSiblingAxis
-                || axis instanceof PrecedingSiblingAxis) {
+        } else if (axis instanceof FollowingSiblingAxis || axis instanceof PrecedingSiblingAxis) {
 
             ord = ord.updateOrdFollPreSib();
             dup = dup.updateDupFollPreSib();

@@ -27,8 +27,7 @@ import com.treetank.axis.AbstractAxis;
 /**
  * <h1>SequenceAxis</h1>
  * <p>
- * Axis that represents a sequence of singleExpressions, normally separated by a
- * ','.
+ * Axis that represents a sequence of singleExpressions, normally separated by a ','.
  * </p>
  * <p>
  * Calling hasNext() returns the results of the singleExpressions consecutively.
@@ -91,7 +90,7 @@ public class SequenceAxis extends AbstractAxis implements IAxis {
             }
         }
 
-        while (num < mSeq.size()) {
+        while(num < mSeq.size()) {
 
             mCurrent = mSeq.get(num++);
 

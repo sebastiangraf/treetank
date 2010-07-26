@@ -31,8 +31,8 @@ import com.treetank.settings.ESessionSetting;
  * <h1>SessionConfiguration</h1>
  * 
  * <p>
- * Holds the session-wide settings that can not change. This included stuff like
- * commit-threshold and number of usable write/read transactions
+ * Holds the session-wide settings that can not change. This included stuff like commit-threshold and number
+ * of usable write/read transactions
  * 
  */
 public final class SessionConfiguration {
@@ -57,16 +57,13 @@ public final class SessionConfiguration {
      * @throws TreetankUsageException
      *             if session could not be established
      */
-    public SessionConfiguration(final Properties props)
-            throws TreetankUsageException {
+    public SessionConfiguration(final Properties props) throws TreetankUsageException {
         this.mProps = new Properties();
         for (final ESessionSetting enumProps : ESessionSetting.values()) {
             if (props.containsKey(enumProps.name())) {
-                this.getProps().setProperty(enumProps.name(),
-                        props.getProperty(enumProps.name()));
+                this.getProps().setProperty(enumProps.name(), props.getProperty(enumProps.name()));
             } else {
-                this.getProps().setProperty(enumProps.name(),
-                        enumProps.getValue());
+                this.getProps().setProperty(enumProps.name(), enumProps.getValue());
             }
         }
 

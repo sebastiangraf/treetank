@@ -32,175 +32,171 @@ import com.treetank.service.xml.XMLShredder;
 
 public final class WorkerHelper {
 
-	/**
-	 * The map containing the available access types.
-	 */
-	private final transient Map<String, EIdAccessType> typeList;
+    /**
+     * The map containing the available access types.
+     */
+    private final transient Map<String, EIdAccessType> typeList;
 
-	/**
-	 * This constructor initializes the {@link EIdAccessType}s.
-	 */
-	private WorkerHelper() {
-		typeList = new HashMap<String, EIdAccessType>();
-		typeList.put("FIRSTCHILD()", EIdAccessType.FIRSTCHILD);
-		typeList.put("LASTCHILD()", EIdAccessType.LASTCHILD);
-		typeList.put("RIGHTSIBLING()", EIdAccessType.RIGHTSIBLING);
-		typeList.put("LEFTSIBLING()", EIdAccessType.LEFTSIBLING);
-	}
+    /**
+     * This constructor initializes the {@link EIdAccessType}s.
+     */
+    private WorkerHelper() {
+        typeList = new HashMap<String, EIdAccessType>();
+        typeList.put("FIRSTCHILD()", EIdAccessType.FIRSTCHILD);
+        typeList.put("LASTCHILD()", EIdAccessType.LASTCHILD);
+        typeList.put("RIGHTSIBLING()", EIdAccessType.RIGHTSIBLING);
+        typeList.put("LEFTSIBLING()", EIdAccessType.LEFTSIBLING);
+    }
 
-	/**
-	 * The instance variable for singleton.
-	 */
-	private static final transient WorkerHelper INSTANCE = new WorkerHelper();
+    /**
+     * The instance variable for singleton.
+     */
+    private static final transient WorkerHelper INSTANCE = new WorkerHelper();
 
-	/**
-	 * Shreds a given InputStream
-	 * 
-	 * @param wtx
-	 *            current write transaction reference
-	 * @param value
-	 *            InputStream to be shred
-	 */
-	public static void shredInputStream(final IWriteTransaction wtx,
-			final InputStream value, final boolean child) {
-		final XMLInputFactory factory = XMLInputFactory.newInstance();
-		factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
-		XMLEventReader parser;
-		try {
-			parser = factory.createXMLEventReader(value);
-		} catch (final XMLStreamException xmlse) {
-			throw new WebApplicationException(xmlse);
-		}
+    /**
+     * Shreds a given InputStream
+     * 
+     * @param wtx
+     *            current write transaction reference
+     * @param value
+     *            InputStream to be shred
+     */
+    public static void shredInputStream(final IWriteTransaction wtx, final InputStream value,
+        final boolean child) {
+        final XMLInputFactory factory = XMLInputFactory.newInstance();
+        factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+        XMLEventReader parser;
+        try {
+            parser = factory.createXMLEventReader(value);
+        } catch (final XMLStreamException xmlse) {
+            throw new WebApplicationException(xmlse);
+        }
 
-		try {
-			final XMLShredder shredder = new XMLShredder(wtx, parser, child);
-			shredder.call();
-		} catch (final Exception exce) {
-			throw new WebApplicationException(exce);
-		}
-	}
+        try {
+            final XMLShredder shredder = new XMLShredder(wtx, parser, child);
+            shredder.call();
+        } catch (final Exception exce) {
+            throw new WebApplicationException(exce);
+        }
+    }
 
-	/**
-	 * This method checks if the file is available and not empty.
-	 * 
-	 * @param resource
-	 *            The file that will be checked.
-	 * @return <code>true</code> when the file exists and is not empty.
-	 *         <code>false</code> otherwise.
-	 */
-	public static boolean checkExistingResource(final File resource) {
-		boolean isExisting;
-		if (resource.getAbsoluteFile().getTotalSpace() > 0) {
-			isExisting = true;
-		} else {
-			isExisting = false;
-		}
-		return isExisting;
-	}
+    /**
+     * This method checks if the file is available and not empty.
+     * 
+     * @param resource
+     *            The file that will be checked.
+     * @return <code>true</code> when the file exists and is not empty. <code>false</code> otherwise.
+     */
+    public static boolean checkExistingResource(final File resource) {
+        boolean isExisting;
+        if (resource.getAbsoluteFile().getTotalSpace() > 0) {
+            isExisting = true;
+        } else {
+            isExisting = false;
+        }
+        return isExisting;
+    }
 
-	/**
-	 * This method creates a new XMLSerializer reference
-	 * 
-	 * @param rtx
-	 *            IReadTransaction
-	 * @param out
-	 *            OutputStream
-	 * 
-	 * @param serializeXMLDec
-	 *            specifies whether XML declaration should be shown
-	 * @param serializeRest
-	 *            specifies whether node id should be shown
-	 * 
-	 * @return new XMLSerializer reference
-	 */
-	public static XMLSerializer serializeXML(final IReadTransaction rtx,
-			final OutputStream out, final boolean serializeXMLDec,
-			final boolean serializeRest) {
-		return new XMLSerializer(rtx, out, serializeXMLDec, serializeRest);
-	}
+    /**
+     * This method creates a new XMLSerializer reference
+     * 
+     * @param rtx
+     *            IReadTransaction
+     * @param out
+     *            OutputStream
+     * 
+     * @param serializeXMLDec
+     *            specifies whether XML declaration should be shown
+     * @param serializeRest
+     *            specifies whether node id should be shown
+     * 
+     * @return new XMLSerializer reference
+     */
+    public static XMLSerializer serializeXML(final IReadTransaction rtx, final OutputStream out,
+        final boolean serializeXMLDec, final boolean serializeRest) {
+        return new XMLSerializer(rtx, out, serializeXMLDec, serializeRest);
+    }
 
-	/**
-	 * This method creates a new TreeTank reference
-	 * 
-	 * @return new Treetank reference
-	 */
-	public DatabaseRepresentation createTreeTrankObject() {
-		return new DatabaseRepresentation();
-	}
+    /**
+     * This method creates a new TreeTank reference
+     * 
+     * @return new Treetank reference
+     */
+    public DatabaseRepresentation createTreeTrankObject() {
+        return new DatabaseRepresentation();
+    }
 
-	/**
-	 * This method creates a new StringBuilder reference
-	 * 
-	 * @return new StringBuilder reference
-	 */
-	public StringBuilder createStringBuilderObject() {
-		return new StringBuilder();
-	}
+    /**
+     * This method creates a new StringBuilder reference
+     * 
+     * @return new StringBuilder reference
+     */
+    public StringBuilder createStringBuilderObject() {
+        return new StringBuilder();
+    }
 
-	/**
-	 * This method closes all open treetank connections concerning a
-	 * WriteTransaction.
-	 * 
-	 * @param abortTransaction
-	 *            <code>true</code> if the transaction has to be aborted,
-	 *            <code>false</code> otherwise.
-	 * @param wtx
-	 *            IWriteTransaction to be closed
-	 * @param ses
-	 *            ISession to be closed
-	 * @param dbase
-	 *            IDatabase to be closed
-	 * @throws TreetankException
-	 */
-	public static void closeWTX(final boolean abortTransaction,
-			final IWriteTransaction wtx, final ISession ses,
-			final IDatabase dbase) throws TreetankException {
-		synchronized (dbase) {
-			if (abortTransaction) {
-				wtx.abort();
-			}
-			dbase.close();
-		}
-	}
+    /**
+     * This method closes all open treetank connections concerning a
+     * WriteTransaction.
+     * 
+     * @param abortTransaction
+     *            <code>true</code> if the transaction has to be aborted, <code>false</code> otherwise.
+     * @param wtx
+     *            IWriteTransaction to be closed
+     * @param ses
+     *            ISession to be closed
+     * @param dbase
+     *            IDatabase to be closed
+     * @throws TreetankException
+     */
+    public static void closeWTX(final boolean abortTransaction, final IWriteTransaction wtx,
+        final ISession ses, final IDatabase dbase) throws TreetankException {
+        synchronized (dbase) {
+            if (abortTransaction) {
+                wtx.abort();
+            }
+            dbase.close();
+        }
+    }
 
-	/**
-	 * This method closes all open treetank connections concerning a
-	 * ReadTransaction.
-	 * 
-	 * @param rtx
-	 *            IReadTransaction to be closed
-	 * @param ses
-	 *            ISession to be closed
-	 * @param dbase
-	 *            IDatabase to be closed
-	 * @throws TreetankException
-	 */
-	public static void closeRTX(final IReadTransaction rtx, final ISession ses,
-			final IDatabase dbase) throws TreetankException {
-		synchronized (dbase) {
-			dbase.close();
-		}
-	}
+    /**
+     * This method closes all open treetank connections concerning a
+     * ReadTransaction.
+     * 
+     * @param rtx
+     *            IReadTransaction to be closed
+     * @param ses
+     *            ISession to be closed
+     * @param dbase
+     *            IDatabase to be closed
+     * @throws TreetankException
+     */
+    public static void closeRTX(final IReadTransaction rtx, final ISession ses, final IDatabase dbase)
+        throws TreetankException {
+        synchronized (dbase) {
+            dbase.close();
+        }
+    }
 
-	/**
-	 * This method checks the variable URL path after the node id resource (e.g.
-	 * http://.../factbook/3/[ACCESSTYPE]) for the available access type to
-	 * identify a node. The access types are defined in {@link EIdAccesType}.
-	 * 
-	 * @param accessType
-	 *            The access type as String value encoded in the URL request.
-	 * @return The valid access type or null otherwise.
-	 */
-	public EIdAccessType validateAccessType(final String accessType) {
-		return typeList.get(accessType.toUpperCase(Locale.US));
-	}
+    /**
+     * This method checks the variable URL path after the node id resource (e.g.
+     * http://.../factbook/3/[ACCESSTYPE]) for the available access type to
+     * identify a node. The access types are defined in {@link EIdAccesType}.
+     * 
+     * @param accessType
+     *            The access type as String value encoded in the URL request.
+     * @return The valid access type or null otherwise.
+     */
+    public EIdAccessType validateAccessType(final String accessType) {
+        return typeList.get(accessType.toUpperCase(Locale.US));
+    }
 
-	/**
-	 * This method return the singleton instance.
-	 * 
-	 * @return The single instance.
-	 */
-	public static WorkerHelper getInstance() {
-		return INSTANCE;
-	}
+    /**
+     * This method return the singleton instance.
+     * 
+     * @return The single instance.
+     */
+    public static WorkerHelper getInstance() {
+        return INSTANCE;
+    }
 }

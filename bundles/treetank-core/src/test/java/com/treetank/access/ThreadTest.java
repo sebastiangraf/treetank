@@ -57,8 +57,7 @@ public class ThreadTest {
 
     @Test
     public void testThreads() throws Exception {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         IWriteTransaction wtx = session.beginWriteTransaction();
 
@@ -66,8 +65,7 @@ public class ThreadTest {
         wtx.commit();
         wtx.close();
 
-        ExecutorService taskExecutor = Executors
-                .newFixedThreadPool(WORKER_COUNT);
+        ExecutorService taskExecutor = Executors.newFixedThreadPool(WORKER_COUNT);
         long newKey = 10L;
         for (int i = 0; i < WORKER_COUNT; i++) {
             taskExecutor.submit(new Task(session.beginReadTransaction(i)));
@@ -95,13 +93,12 @@ public class ThreadTest {
 
         public Void call() throws Exception {
             final IAxis axis = new DescendantAxis(mRTX);
-            while (axis.hasNext()) {
+            while(axis.hasNext()) {
                 axis.next();
             }
 
             mRTX.moveTo(12L);
-            assertEquals("bar",
-                    TypedValue.parseString(mRTX.getNode().getRawValue()));
+            assertEquals("bar", TypedValue.parseString(mRTX.getNode().getRawValue()));
             mRTX.close();
             return null;
         }

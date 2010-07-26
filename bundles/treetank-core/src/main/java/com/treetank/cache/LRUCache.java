@@ -12,7 +12,6 @@
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- * 
  */
 package com.treetank.cache;
 
@@ -60,8 +59,7 @@ public final class LRUCache implements ICache {
             private static final long serialVersionUID = 1;
 
             @Override
-            protected boolean removeEldestEntry(
-                    final Map.Entry<Long, NodePageContainer> eldest) {
+            protected boolean removeEldestEntry(final Map.Entry<Long, NodePageContainer> eldest) {
                 boolean returnVal = false;
                 if (size() > CACHE_CAPACITY) {
                     secondCache.put(eldest.getKey(), eldest.getValue());

@@ -65,9 +65,9 @@ public class IReadTransactionTest {
         assertEquals(true, rtx.moveToDocumentRoot());
         assertEquals(ENodes.ROOT_KIND, rtx.getNode().getKind());
         assertEquals(false, rtx.getNode().hasParent());
-        assertEquals(false, ((AbsStructNode) rtx.getNode()).hasLeftSibling());
-        assertEquals(false, ((AbsStructNode) rtx.getNode()).hasRightSibling());
-        assertEquals(true, ((AbsStructNode) rtx.getNode()).hasFirstChild());
+        assertEquals(false, ((AbsStructNode)rtx.getNode()).hasLeftSibling());
+        assertEquals(false, ((AbsStructNode)rtx.getNode()).hasRightSibling());
+        assertEquals(true, ((AbsStructNode)rtx.getNode()).hasFirstChild());
 
         rtx.close();
     }
@@ -85,28 +85,23 @@ public class IReadTransactionTest {
         assertEquals(rtx.getNode().hasParent(), rtx.moveToParent());
         assertEquals(key, rtx.getNode().getNodeKey());
 
-        assertEquals(((AbsStructNode) rtx.getNode()).hasFirstChild(),
-                rtx.moveToFirstChild());
+        assertEquals(((AbsStructNode)rtx.getNode()).hasFirstChild(), rtx.moveToFirstChild());
         assertEquals(1L, rtx.getNode().getNodeKey());
 
         assertEquals(false, rtx.moveTo(Integer.MAX_VALUE));
         assertEquals(false, rtx.moveTo(Integer.MIN_VALUE));
         assertEquals(1L, rtx.getNode().getNodeKey());
 
-        assertEquals(((AbsStructNode) rtx.getNode()).hasRightSibling(),
-                rtx.moveToRightSibling());
+        assertEquals(((AbsStructNode)rtx.getNode()).hasRightSibling(), rtx.moveToRightSibling());
         assertEquals(1L, rtx.getNode().getNodeKey());
 
-        assertEquals(((AbsStructNode) rtx.getNode()).hasFirstChild(),
-                rtx.moveToFirstChild());
+        assertEquals(((AbsStructNode)rtx.getNode()).hasFirstChild(), rtx.moveToFirstChild());
         assertEquals(4L, rtx.getNode().getNodeKey());
 
-        assertEquals(((AbsStructNode) rtx.getNode()).hasRightSibling(),
-                rtx.moveToRightSibling());
+        assertEquals(((AbsStructNode)rtx.getNode()).hasRightSibling(), rtx.moveToRightSibling());
         assertEquals(5L, rtx.getNode().getNodeKey());
 
-        assertEquals(((AbsStructNode) rtx.getNode()).hasLeftSibling(),
-                rtx.moveToLeftSibling());
+        assertEquals(((AbsStructNode)rtx.getNode()).hasLeftSibling(), rtx.moveToLeftSibling());
         assertEquals(4L, rtx.getNode().getNodeKey());
 
         assertEquals(rtx.getNode().hasParent(), rtx.moveToParent());

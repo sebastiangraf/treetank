@@ -28,18 +28,16 @@ import com.treetank.axis.AbstractAxis;
  * Evaluates a given XPath query.
  * </p>
  * <p>
- * Axis to iterate over the items (more precisely the item keys) of the query's
- * result sequence. <code>XPathAxis</code> extends treetanks <code>IAxis</code>
- * that extends the well-known Java <code>Iterator&lt;Long&gt;</code> and
- * <code>Iterable&lt;Long&gt;</code> interfaces.
+ * Axis to iterate over the items (more precisely the item keys) of the query's result sequence.
+ * <code>XPathAxis</code> extends treetanks <code>IAxis</code> that extends the well-known Java
+ * <code>Iterator&lt;Long&gt;</code> and <code>Iterable&lt;Long&gt;</code> interfaces.
  * </p>
  * <h2>User Example</h2>
  * <p>
- * In order to use it, at first a treetank session has to be bound to the XML
- * document in question or an tnk file and a <code>ReadTransaction</code> with
- * an <code>IItemList</code> as argument has to be started on it. (For more
- * information how to do that, see the treetank documentation.) Then the
- * <code>XPathAxis</code> can be used like this:
+ * In order to use it, at first a treetank session has to be bound to the XML document in question or an tnk
+ * file and a <code>ReadTransaction</code> with an <code>IItemList</code> as argument has to be started on it.
+ * (For more information how to do that, see the treetank documentation.) Then the <code>XPathAxis</code> can
+ * be used like this:
  * <p>
  * 
  * <pre>
@@ -78,8 +76,7 @@ public class XPathAxis extends AbstractAxis implements IAxis {
      * Constructor initializing internal state.
      * </p>
      * <p>
-     * Starts the query scanning and parsing and retrieves the builded query
-     * execution plan from the parser.
+     * Starts the query scanning and parsing and retrieves the builded query execution plan from the parser.
      * </p>
      * 
      * @param rtx

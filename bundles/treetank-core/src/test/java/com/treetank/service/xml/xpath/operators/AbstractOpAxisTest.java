@@ -54,8 +54,7 @@ public class AbstractOpAxisTest {
     @Test
     public final void testHasNext() throws TreetankException {
 
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         IReadTransaction rtx = session.beginReadTransaction();
         IItem item1 = new AtomicValue(1.0, Type.DOUBLE);
@@ -72,8 +71,7 @@ public class AbstractOpAxisTest {
         // here both operands are the empty sequence
         axis = new DivOpAxis(rtx, op1, op2);
         assertEquals(true, axis.hasNext());
-        assertThat(Double.NaN,
-                is(TypedValue.parseDouble(rtx.getNode().getRawValue())));
+        assertThat(Double.NaN, is(TypedValue.parseDouble(rtx.getNode().getRawValue())));
         assertEquals(rtx.keyForName("xs:double"), rtx.getNode().getTypeKey());
         assertEquals(false, axis.hasNext());
         rtx.close();

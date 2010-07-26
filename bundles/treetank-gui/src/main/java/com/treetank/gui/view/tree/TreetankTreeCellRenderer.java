@@ -19,227 +19,197 @@ import com.treetank.node.ElementNode;
 /**
  * <h>TreetankTreeCellRenderer</h1>
  * 
- * <p>Customized tree cell renderer to render nodes nicely.</p>
+ * <p>
+ * Customized tree cell renderer to render nodes nicely.
+ * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
- *
+ * 
  */
 public final class TreetankTreeCellRenderer extends DefaultTreeCellRenderer {
 
-  /**
-   * Generated UID.
-   */
-  private static final long serialVersionUID = -6242168246410260644L;
-  
-  /** Logger. */
-  private static final Log LOGGER =
-      LogFactory.getLog(TreetankTreeCellRenderer.class);
+    /**
+     * Generated UID.
+     */
+    private static final long serialVersionUID = -6242168246410260644L;
 
-  /** Element color. */
-  private final Color elementColor = new Color(0, 0, 128);
+    /** Logger. */
+    private static final Log LOGGER = LogFactory.getLog(TreetankTreeCellRenderer.class);
 
-  /** Attribute color. */
-  private final Color attributeColor = new Color(0, 128, 0);
+    /** Element color. */
+    private final Color elementColor = new Color(0, 0, 128);
 
-  /** Treetant reading transaction. */
-  private transient static IReadTransaction mRTX;
-  
-  /** Treetank databse. */
-  protected transient static IDatabase mDatabase;
+    /** Attribute color. */
+    private final Color attributeColor = new Color(0, 128, 0);
 
-  /** Path to file. */
-  private static String PATH;
+    /** Treetant reading transaction. */
+    private transient static IReadTransaction mRTX;
 
-  /**
-   * Constructor.
-   * 
-   * @param database
-   *                Treetank database.
-   *                
-   */
-  public TreetankTreeCellRenderer(
-      final IDatabase database) {
-    this(database, 0);
-  }
-  
-  /**
-   * Constructor.
-   * 
-   * @param database
-   *                Treetank database.
-   * @param nodekeyToStart
-   *                Starting point of transaction.
-   *                
-   */
-  public TreetankTreeCellRenderer(
-      final IDatabase database,
-      final long nodekeyToStart) {
-    setOpenIcon(null);
-    setClosedIcon(null);
-    setLeafIcon(null);
-    setBackgroundNonSelectionColor(null);
-    setTextSelectionColor(Color.red);
+    /** Treetank databse. */
+    protected transient static IDatabase mDatabase;
 
-    try {
-      if (mDatabase == null || mDatabase.getFile() == null
-          || !(mDatabase.getFile().equals(database.getFile()))) {
-        mDatabase = database;
+    /** Path to file. */
+    private static String PATH;
 
-        if (mRTX != null && !mRTX.isClosed()) {
-          mRTX.close();
-        }
-      }
-
-      if (mRTX == null || mRTX.isClosed()) {
-        mRTX = mDatabase.getSession().beginReadTransaction();
-      }
-      mRTX.moveTo(nodekeyToStart);
-    } catch (final TreetankException e) {
-      LOGGER.error("TreetankException: " + e.getMessage(), e);
+    /**
+     * Constructor.
+     * 
+     * @param database
+     *            Treetank database.
+     * 
+     */
+    public TreetankTreeCellRenderer(final IDatabase database) {
+        this(database, 0);
     }
 
-    PATH = database.getFile().getAbsolutePath();
-  }
+    /**
+     * Constructor.
+     * 
+     * @param database
+     *            Treetank database.
+     * @param nodekeyToStart
+     *            Starting point of transaction.
+     * 
+     */
+    public TreetankTreeCellRenderer(final IDatabase database, final long nodekeyToStart) {
+        setOpenIcon(null);
+        setClosedIcon(null);
+        setLeafIcon(null);
+        setBackgroundNonSelectionColor(null);
+        setTextSelectionColor(Color.red);
 
-  @Override
-  public Component getTreeCellRendererComponent(
-      final JTree tree,
-      Object value,
-      final boolean sel,
-      final boolean expanded,
-      final boolean leaf,
-      final int row,
-      final boolean hasFocus) {
-    final IItem node = (IItem) value;
+        try {
+            if (mDatabase == null || mDatabase.getFile() == null
+            || !(mDatabase.getFile().equals(database.getFile()))) {
+                mDatabase = database;
 
-    final long key = node.getNodeKey();
-    
-    switch (node.getKind()) {
-    case ELEMENT_KIND:
-      mRTX.moveTo(node.getNodeKey());
-      final String prefix = mRTX.getQNameOfCurrentNode().getPrefix();
-      final QName qName = mRTX.getQNameOfCurrentNode();
+                if (mRTX != null && !mRTX.isClosed()) {
+                    mRTX.close();
+                }
+            }
 
-      if (prefix == null || prefix == "") {
-        final String localPart = qName.getLocalPart();
-        
-        if (((ElementNode) mRTX.getNode()).hasFirstChild()) {
-          value = '<' + localPart + '>';
-        } else {
-          value = '<' + localPart + "/>";
+            if (mRTX == null || mRTX.isClosed()) {
+                mRTX = mDatabase.getSession().beginReadTransaction();
+            }
+            mRTX.moveTo(nodekeyToStart);
+        } catch (final TreetankException e) {
+            LOGGER.error("TreetankException: " + e.getMessage(), e);
         }
-      } else {
-        value = '<' + prefix + ":" + qName.getLocalPart() + '>';
-      }
 
-      break;
-    case ATTRIBUTE_KIND:
-      // Move transaction to parent of the attribute node.
-      mRTX.moveTo(node.getParentKey());
-      final long aNodeKey = node.getNodeKey();
-      for (int i = 0, attsCount =
-          ((ElementNode) mRTX.getNode()).getAttributeCount(); i < attsCount; i++) {
-        mRTX.moveToAttribute(i);
-        if (mRTX.getNode().equals(node)) {
-          break;
-        }
-        mRTX.moveTo(aNodeKey);
-      }
-
-      // Display value.
-      final String attPrefix = mRTX.getQNameOfCurrentNode().getPrefix();
-      final QName attQName = mRTX.getQNameOfCurrentNode();
-
-      if (attPrefix == null || attPrefix == "") {
-        value =
-            '@'
-                + attQName.getLocalPart()
-                + "='"
-                + mRTX.getValueOfCurrentNode()
-                + "'";
-      } else {
-        value =
-            '@'
-                + attPrefix
-                + ":"
-                + attQName.getLocalPart()
-                + "='"
-                + mRTX.getValueOfCurrentNode()
-                + "'";
-      }
-
-      break;
-    case NAMESPACE_KIND:
-      // Move transaction to parent the namespace node.
-      mRTX.moveTo(node.getParentKey());
-      final long nNodeKey = node.getNodeKey();
-      for (int i = 0, namespCount =
-          ((ElementNode) mRTX.getNode()).getNamespaceCount(); i < namespCount; i++) {
-        mRTX.moveToNamespace(i);
-        if (mRTX.getNode().equals(node)) {
-          break;
-        }
-        mRTX.moveTo(nNodeKey);
-      }
-
-      if (mRTX.nameForKey(mRTX.getNode().getNameKey()).length() == 0) {
-        value = "xmlns='" + mRTX.nameForKey(mRTX.getNode().getURIKey()) + "'";
-      } else {
-        value =
-            "xmlns:"
-                + mRTX.nameForKey(mRTX.getNode().getNameKey())
-                + "='"
-                + mRTX.nameForKey(mRTX.getNode().getURIKey())
-                + "'";
-      }
-      break;
-    case TEXT_KIND:
-      mRTX.moveTo(node.getNodeKey());
-      value = mRTX.getValueOfCurrentNode();
-      break;
-    case COMMENT_KIND:
-      mRTX.moveTo(node.getNodeKey());
-      value = "<!-- " + mRTX.getValueOfCurrentNode() + " -->";
-      break;
-    case PROCESSING_KIND:
-      mRTX.moveTo(node.getNodeKey());
-      value = "<? " + mRTX.getValueOfCurrentNode() + " ?>";
-      break;
-    case ROOT_KIND:
-      value = PATH;
-      break;
-    case WHITESPACE_KIND:
-      break;
-    default:
-      new IllegalStateException("Node kind not known!");
+        PATH = database.getFile().getAbsolutePath();
     }
 
-    value = value + " [" + key + "]";
-    
-    super.getTreeCellRendererComponent(
-        tree,
-        value,
-        sel,
-        expanded,
-        leaf,
-        row,
-        hasFocus);
-    if (!selected) {
-      switch (node.getKind()) {
-      case ELEMENT_KIND:
-        setForeground(elementColor);
-        break;
-      case ATTRIBUTE_KIND:
-        setForeground(attributeColor);
-        break;
-      }
+    @Override
+    public Component getTreeCellRendererComponent(final JTree tree, Object value, final boolean sel,
+        final boolean expanded, final boolean leaf, final int row, final boolean hasFocus) {
+        final IItem node = (IItem)value;
+
+        final long key = node.getNodeKey();
+
+        switch (node.getKind()) {
+        case ELEMENT_KIND:
+            mRTX.moveTo(node.getNodeKey());
+            final String prefix = mRTX.getQNameOfCurrentNode().getPrefix();
+            final QName qName = mRTX.getQNameOfCurrentNode();
+
+            if (prefix == null || prefix == "") {
+                final String localPart = qName.getLocalPart();
+
+                if (((ElementNode)mRTX.getNode()).hasFirstChild()) {
+                    value = '<' + localPart + '>';
+                } else {
+                    value = '<' + localPart + "/>";
+                }
+            } else {
+                value = '<' + prefix + ":" + qName.getLocalPart() + '>';
+            }
+
+            break;
+        case ATTRIBUTE_KIND:
+            // Move transaction to parent of the attribute node.
+            mRTX.moveTo(node.getParentKey());
+            final long aNodeKey = node.getNodeKey();
+            for (int i = 0, attsCount = ((ElementNode)mRTX.getNode()).getAttributeCount(); i < attsCount; i++) {
+                mRTX.moveToAttribute(i);
+                if (mRTX.getNode().equals(node)) {
+                    break;
+                }
+                mRTX.moveTo(aNodeKey);
+            }
+
+            // Display value.
+            final String attPrefix = mRTX.getQNameOfCurrentNode().getPrefix();
+            final QName attQName = mRTX.getQNameOfCurrentNode();
+
+            if (attPrefix == null || attPrefix == "") {
+                value = '@' + attQName.getLocalPart() + "='" + mRTX.getValueOfCurrentNode() + "'";
+            } else {
+                value =
+                    '@' + attPrefix + ":" + attQName.getLocalPart() + "='" + mRTX.getValueOfCurrentNode()
+                    + "'";
+            }
+
+            break;
+        case NAMESPACE_KIND:
+            // Move transaction to parent the namespace node.
+            mRTX.moveTo(node.getParentKey());
+            final long nNodeKey = node.getNodeKey();
+            for (int i = 0, namespCount = ((ElementNode)mRTX.getNode()).getNamespaceCount(); i < namespCount; i++) {
+                mRTX.moveToNamespace(i);
+                if (mRTX.getNode().equals(node)) {
+                    break;
+                }
+                mRTX.moveTo(nNodeKey);
+            }
+
+            if (mRTX.nameForKey(mRTX.getNode().getNameKey()).length() == 0) {
+                value = "xmlns='" + mRTX.nameForKey(mRTX.getNode().getURIKey()) + "'";
+            } else {
+                value =
+                    "xmlns:" + mRTX.nameForKey(mRTX.getNode().getNameKey()) + "='"
+                    + mRTX.nameForKey(mRTX.getNode().getURIKey()) + "'";
+            }
+            break;
+        case TEXT_KIND:
+            mRTX.moveTo(node.getNodeKey());
+            value = mRTX.getValueOfCurrentNode();
+            break;
+        case COMMENT_KIND:
+            mRTX.moveTo(node.getNodeKey());
+            value = "<!-- " + mRTX.getValueOfCurrentNode() + " -->";
+            break;
+        case PROCESSING_KIND:
+            mRTX.moveTo(node.getNodeKey());
+            value = "<? " + mRTX.getValueOfCurrentNode() + " ?>";
+            break;
+        case ROOT_KIND:
+            value = PATH;
+            break;
+        case WHITESPACE_KIND:
+            break;
+        default:
+            new IllegalStateException("Node kind not known!");
+        }
+
+        value = value + " [" + key + "]";
+
+        super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+        if (!selected) {
+            switch (node.getKind()) {
+            case ELEMENT_KIND:
+                setForeground(elementColor);
+                break;
+            case ATTRIBUTE_KIND:
+                setForeground(attributeColor);
+                break;
+            }
+        }
+
+        return this;
     }
 
-    return this;
-  }
-
-  @Override
-  public Color getBackground() {
-    return null;
-  }
+    @Override
+    public Color getBackground() {
+        return null;
+    }
 }

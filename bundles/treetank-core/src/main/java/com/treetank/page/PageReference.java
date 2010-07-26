@@ -28,10 +28,9 @@ import com.treetank.utils.IConstants;
  * <h1>PageReference</h1>
  * 
  * <p>
- * Page reference pointing to a page. This might be on stable storage pointing
- * to the start byte in a file, including the length in bytes, and the checksum
- * of the serialized page. Or it might be an immediate reference to an in-memory
- * instance of the deserialized page.
+ * Page reference pointing to a page. This might be on stable storage pointing to the start byte in a file,
+ * including the length in bytes, and the checksum of the serialized page. Or it might be an immediate
+ * reference to an in-memory instance of the deserialized page.
  * </p>
  * 
  * 
@@ -78,8 +77,7 @@ public final class PageReference {
      * @param checksum
      *            Checksum of serialized page.
      */
-    public PageReference(final AbstractPage page, final AbstractKey key,
-            final byte[] checksum) {
+    public PageReference(final AbstractPage page, final AbstractKey key, final byte[] checksum) {
         mPage = page;
         mKey = key;
         System.arraycopy(checksum, 0, mChecksum, 0, IConstants.CHECKSUM_SIZE);

@@ -28,10 +28,9 @@ import com.treetank.settings.EFixed;
  * <h1>AbstractNode</h1>
  * 
  * <p>
- * Abstract node class to implement all methods required with INode. To reduce
- * implementation overhead in subclasses it implements all methods but does
- * silently not do anything there. A subclass must only implement those methods
- * that are required to provide proper subclass functionality.
+ * Abstract node class to implement all methods required with INode. To reduce implementation overhead in
+ * subclasses it implements all methods but does silently not do anything there. A subclass must only
+ * implement those methods that are required to provide proper subclass functionality.
  * </p>
  */
 public abstract class AbsNode implements IItem, Comparable<AbsNode> {
@@ -75,15 +74,14 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
      * {@inheritDoc}
      */
     public boolean hasParent() {
-        return mLongData[PARENT_KEY] != (Long) EFixed.NULL_NODE_KEY
-                .getStandardProperty();
+        return mLongData[PARENT_KEY] != (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
      * {@inheritDoc}
      */
     public int getNameKey() {
-        return (Integer) EFixed.NULL_INT_KEY.getStandardProperty();
+        return (Integer)EFixed.NULL_INT_KEY.getStandardProperty();
     }
 
     /**
@@ -104,7 +102,7 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
      * {@inheritDoc}
      */
     public int getURIKey() {
-        return (Integer) EFixed.NULL_INT_KEY.getStandardProperty();
+        return (Integer)EFixed.NULL_INT_KEY.getStandardProperty();
     }
 
     /**
@@ -223,10 +221,9 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
 
     @Override
     public String toString() {
-        return new StringBuilder("\n").append(this.getClass().getName())
-                .append("\n\tnode key: ").append(getNodeKey())
-                .append("\n\tparentKey: ").append(getParentKey())
-                .append("\n\ttypeKey: ").append(getTypeKey()).toString();
+        return new StringBuilder("\n").append(this.getClass().getName()).append("\n\tnode key: ").append(
+            getNodeKey()).append("\n\tparentKey: ").append(getParentKey()).append("\n\ttypeKey: ").append(
+            getTypeKey()).toString();
     }
 
     @Override

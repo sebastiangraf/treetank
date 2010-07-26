@@ -26,10 +26,9 @@ import com.treetank.exception.TreetankException;
  * <h2>Description</h2>
  * 
  * <p>
- * Each <code>IDatabase</code> is bound to one instance implementing
- * <code>ISession</code>. Transactions can then be started from this instance.
- * There can only be one <code>IWriteTransaction</code> at the time. However,
- * multiple <code>IReadTransactions</code> can coexist concurrently.
+ * Each <code>IDatabase</code> is bound to one instance implementing <code>ISession</code>. Transactions can
+ * then be started from this instance. There can only be one <code>IWriteTransaction</code> at the time.
+ * However, multiple <code>IReadTransactions</code> can coexist concurrently.
  * </p>
  * 
  * 
@@ -69,8 +68,7 @@ public interface ISession {
      *            Revision key to read from.
      * @return IReadTransaction instance.
      */
-    IReadTransaction beginReadTransaction(final long revisionKey)
-            throws TreetankException;
+    IReadTransaction beginReadTransaction(final long revisionKey) throws TreetankException;
 
     /**
      * Begin exclusive read/write transaction without auto commit.
@@ -88,8 +86,8 @@ public interface ISession {
      *            Time in seconds after which a commit is issued.
      * @return IWriteTransaction instance.
      */
-    IWriteTransaction beginWriteTransaction(final int maxNodeCount,
-            final int maxTime) throws TreetankException;
+    IWriteTransaction beginWriteTransaction(final int maxNodeCount, final int maxTime)
+        throws TreetankException;
 
     /**
      * Get number of running read transactions.

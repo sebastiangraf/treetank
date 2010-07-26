@@ -24,9 +24,8 @@ package com.treetank.service.xml.xpath;
  * Lexical scanner to extract tokens from the query.
  * </p>
  * <p>
- * This scanner is used to interpret the query. It reads the the query string
- * char by char and specifies the type of the input and creates a token for
- * every logic text unit.
+ * This scanner is used to interpret the query. It reads the the query string char by char and specifies the
+ * type of the input and creates a token for every logic text unit.
  * </p>
  */
 public class XPathScanner implements XPathConstants {
@@ -141,11 +140,10 @@ public class XPathScanner implements XPathConstants {
                 mPos++;
                 mFinnished = true;
             }
-        } while (!mFinnished || mPos >= mQuery.length());
+        } while(!mFinnished || mPos >= mQuery.length());
 
         if (mCommentCount > 0) {
-            throw new IllegalStateException(
-                    "Error in Query. Comment does not end.");
+            throw new IllegalStateException("Error in Query. Comment does not end.");
         }
 
         return new XPathToken(mOutput.toString(), mType);
@@ -278,8 +276,7 @@ public class XPathScanner implements XPathConstants {
      */
     private boolean isFirstLetter(final char input) {
 
-        return ((input >= 'a' && input <= 'z')
-                || (input >= 'A' && input <= 'Z') || (input == '_'));
+        return ((input >= 'a' && input <= 'z') || (input >= 'A' && input <= 'Z') || (input == '_'));
     }
 
     /**
@@ -305,8 +302,8 @@ public class XPathScanner implements XPathConstants {
      */
     private boolean isSpecialCharacter2(final char input) {
 
-        return (input == '<') || (input == '>') || (input == '(')
-                || (input == '!') || (input == '/') || (input == '.');
+        return (input == '<') || (input == '>') || (input == '(') || (input == '!') || (input == '/')
+        || (input == '.');
     }
 
     /**
@@ -318,11 +315,9 @@ public class XPathScanner implements XPathConstants {
      */
     private boolean isSpecialCharacter(final char input) {
 
-        return ((input == ')') || (input == ';') || (input == ',')
-                || (input == '@') || (input == '[') || (input == ']')
-                || (input == '=') || (input == '"') || (input == '\'')
-                || (input == '$') || (input == ':') || (input == '|')
-                || (input == '+') || (input == '-') || (input == '?') || (input == '*'));
+        return ((input == ')') || (input == ';') || (input == ',') || (input == '@') || (input == '[')
+        || (input == ']') || (input == '=') || (input == '"') || (input == '\'') || (input == '$')
+        || (input == ':') || (input == '|') || (input == '+') || (input == '-') || (input == '?') || (input == '*'));
     }
 
     /**
@@ -448,10 +443,8 @@ public class XPathScanner implements XPathConstants {
      */
     private boolean isLetter(final char input) {
 
-        return ((input >= '0' && input <= '9')
-                || (input >= 'a' && input <= 'z')
-                || (input >= 'A' && input <= 'Z') || (input == '_')
-                || (input == '-') || (input == '.'));
+        return ((input >= '0' && input <= '9') || (input >= 'a' && input <= 'z')
+        || (input >= 'A' && input <= 'Z') || (input == '_') || (input == '-') || (input == '.'));
 
     }
 
@@ -467,7 +460,7 @@ public class XPathScanner implements XPathConstants {
         final int lastPos = mPos;
         XPathToken token = nextToken();
 
-        while (--nextCount > 0) {
+        while(--nextCount > 0) {
             token = nextToken();
             if (token.getType() == Token.SPACE) {
                 nextCount++;

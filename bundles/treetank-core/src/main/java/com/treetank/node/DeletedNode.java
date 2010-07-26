@@ -32,13 +32,11 @@ public final class DeletedNode extends AbsNode {
 
     @Override
     public AbsNode clone() {
-        final AbsNode toClone = new DeletedNode(AbsNode.cloneData(mLongData),
-                AbsNode.cloneData(mIntData));
+        final AbsNode toClone = new DeletedNode(AbsNode.cloneData(mLongData), AbsNode.cloneData(mIntData));
         return toClone;
     }
 
-    public final static AbsNode createData(final long nodeKey,
-            final long parentKey) {
+    public final static AbsNode createData(final long nodeKey, final long parentKey) {
         final long[] longData = new long[ENodes.DELETE_KIND.getLongSize()];
         final int[] intData = new int[ENodes.DELETE_KIND.getIntSize()];
         longData[AbsNode.NODE_KEY] = nodeKey;

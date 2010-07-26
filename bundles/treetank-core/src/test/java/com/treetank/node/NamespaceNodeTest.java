@@ -32,20 +32,18 @@ public class NamespaceNodeTest {
     @Test
     public void testNamespaceNode() {
 
-        final NamespaceNode node1 = (NamespaceNode) NamespaceNode.createData(
-                99, 13, 14, 15);
+        final NamespaceNode node1 = (NamespaceNode)NamespaceNode.createData(99, 13, 14, 15);
         // Create empty node.
 
         // Serialize and deserialize node.
         final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
         node1.serialize(out);
         out.position(0);
-        final NamespaceNode node2 = (NamespaceNode) ENodes.NAMESPACE_KIND
-                .createNodeFromPersistence(out);
+        final NamespaceNode node2 = (NamespaceNode)ENodes.NAMESPACE_KIND.createNodeFromPersistence(out);
         check(node2);
 
         // Clone node.
-        final NamespaceNode node3 = (NamespaceNode) node2.clone();
+        final NamespaceNode node3 = (NamespaceNode)node2.clone();
         check(node3);
 
     }
@@ -64,12 +62,9 @@ public class NamespaceNodeTest {
 
     @Test
     public void testHashCode() {
-        final NamespaceNode node = (NamespaceNode) NamespaceNode.createData(
-                99L, 13L, 14, 15);
-        final NamespaceNode node2 = (NamespaceNode) NamespaceNode.createData(
-                99L, 13L, 14, 15);
-        final NamespaceNode node3 = (NamespaceNode) NamespaceNode.createData(
-                100L, 15L, 12, 16);
+        final NamespaceNode node = (NamespaceNode)NamespaceNode.createData(99L, 13L, 14, 15);
+        final NamespaceNode node2 = (NamespaceNode)NamespaceNode.createData(99L, 13L, 14, 15);
+        final NamespaceNode node3 = (NamespaceNode)NamespaceNode.createData(100L, 15L, 12, 16);
 
         assertEquals(node2.hashCode(), node.hashCode());
         assertTrue(node2.equals(node));

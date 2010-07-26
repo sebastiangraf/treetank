@@ -26,8 +26,7 @@ import com.treetank.utils.IConstants;
  * <h1>RevisionRootPage</h1>
  * 
  * <p>
- * Revision root page holds a reference to the name page as well as the static
- * node page tree.
+ * Revision root page holds a reference to the name page as well as the static node page tree.
  * </p>
  */
 public final class RevisionRootPage extends AbstractPage {
@@ -77,8 +76,7 @@ public final class RevisionRootPage extends AbstractPage {
      * @param committedRevisionRootPage
      *            Page to clone.
      */
-    public RevisionRootPage(final RevisionRootPage committedRevisionRootPage,
-            final long revisionToUse) {
+    public RevisionRootPage(final RevisionRootPage committedRevisionRootPage, final long revisionToUse) {
         super(2, committedRevisionRootPage, revisionToUse);
         mRevisionSize = committedRevisionRootPage.mRevisionSize;
         mMaxNodeKey = committedRevisionRootPage.mMaxNodeKey;
@@ -162,10 +160,9 @@ public final class RevisionRootPage extends AbstractPage {
      */
     @Override
     public String toString() {
-        return super.toString() + " revisionSize=" + mRevisionSize
-                + ", revisionTimestamp=" + mRevisionTimestamp + ", namePage=("
-                + getReference(NAME_REFERENCE_OFFSET) + "), indirectPage=("
-                + getReference(INDIRECT_REFERENCE_OFFSET) + ")";
+        return super.toString() + " revisionSize=" + mRevisionSize + ", revisionTimestamp="
+        + mRevisionTimestamp + ", namePage=(" + getReference(NAME_REFERENCE_OFFSET) + "), indirectPage=("
+        + getReference(INDIRECT_REFERENCE_OFFSET) + ")";
     }
 
 }

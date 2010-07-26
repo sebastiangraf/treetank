@@ -44,14 +44,12 @@ public final class TestHelper {
     public enum PATHS {
 
         // PATH1
-        PATH1(new File(new StringBuilder(File.separator).append("tmp")
-                .append(File.separator).append("tnk").append(File.separator)
-                .append("path1").toString())),
+            PATH1(new File(new StringBuilder(File.separator).append("tmp").append(File.separator).append(
+                "tnk").append(File.separator).append("path1").toString())),
 
-        // PATH2
-        PATH2(new File(new StringBuilder(File.separator).append("tmp")
-                .append(File.separator).append("tnk").append(File.separator)
-                .append("path2").toString()));
+            // PATH2
+            PATH2(new File(new StringBuilder(File.separator).append("tmp").append(File.separator).append(
+                "tnk").append(File.separator).append("path2").toString()));
 
         final File file;
 
@@ -65,7 +63,8 @@ public final class TestHelper {
 
     }
 
-    private final static Map<File, DatabaseConfiguration> configs = new HashMap<File, DatabaseConfiguration>();
+    private final static Map<File, DatabaseConfiguration> configs =
+        new HashMap<File, DatabaseConfiguration>();
 
     public final static Random random = new Random();
 
@@ -89,9 +88,8 @@ public final class TestHelper {
     }
 
     @Ignore
-    public static final void setDB(final String storageKind,
-            final String revisionKind, final int revisions, final File file)
-            throws TreetankUsageException {
+    public static final void setDB(final String storageKind, final String revisionKind, final int revisions,
+        final File file) throws TreetankUsageException {
         final StorageType type = StorageType.valueOf(revisionKind);
         final ERevisioning revision = ERevisioning.valueOf(revisionKind);
 
@@ -99,8 +97,7 @@ public final class TestHelper {
         props.put(EDatabaseSetting.STORAGE_TYPE.name(), type);
         props.put(EDatabaseSetting.REVISION_TYPE.name(), revision);
         props.put(EDatabaseSetting.REVISION_TO_RESTORE.name(), revisions);
-        final DatabaseConfiguration config = new DatabaseConfiguration(file,
-                props);
+        final DatabaseConfiguration config = new DatabaseConfiguration(file, props);
         configs.put(file, config);
     }
 
@@ -122,40 +119,27 @@ public final class TestHelper {
     }
 
     @Ignore
-    public static NodePage getNodePage(final long revision, final int offset,
-            final int length) {
+    public static NodePage getNodePage(final long revision, final int offset, final int length) {
         final NodePage page = new NodePage(0, revision);
         for (int i = offset; i < length; i++) {
             switch (random.nextInt(6)) {
             case 0:
-                page.setNode(
-                        i,
-                        AttributeNode.createData(random.nextLong(),
-                                random.nextLong(), random.nextInt(),
-                                random.nextInt(), random.nextInt(), new byte[] {
-                                        0, 1, 2, 3, 4 }));
+                page.setNode(i, AttributeNode.createData(random.nextLong(), random.nextLong(), random
+                    .nextInt(), random.nextInt(), random.nextInt(), new byte[] {
+                    0, 1, 2, 3, 4
+                }));
                 break;
             case 1:
-                page.setNode(
-                        i,
-                        DeletedNode.createData(random.nextLong(),
-                                random.nextLong()));
+                page.setNode(i, DeletedNode.createData(random.nextLong(), random.nextLong()));
                 break;
             case 2:
-                page.setNode(
-                        i,
-                        ElementNode.createData(random.nextLong(),
-                                random.nextLong(), random.nextLong(),
-                                random.nextLong(), random.nextLong(),
-                                random.nextLong(), random.nextInt(),
-                                random.nextInt(), random.nextInt()));
+                page.setNode(i, ElementNode.createData(random.nextLong(), random.nextLong(), random
+                    .nextLong(), random.nextLong(), random.nextLong(), random.nextLong(), random.nextInt(),
+                    random.nextInt(), random.nextInt()));
                 break;
             case 3:
-                page.setNode(
-                        i,
-                        NamespaceNode.createData(random.nextLong(),
-                                random.nextLong(), random.nextInt(),
-                                random.nextInt()));
+                page.setNode(i, NamespaceNode.createData(random.nextLong(), random.nextLong(), random
+                    .nextInt(), random.nextInt()));
                 break;
             case 4:
                 page.setNode(i,
@@ -163,10 +147,10 @@ public final class TestHelper {
                 DocumentRootNode.createData());
                 break;
             case 5:
-                page.setNode(i, TextNode.createData(random.nextLong(),
-                        random.nextLong(), random.nextLong(),
-                        random.nextLong(), random.nextInt(),
-                        new byte[] { 0, 1 }));
+                page.setNode(i, TextNode.createData(random.nextLong(), random.nextLong(), random.nextLong(),
+                    random.nextLong(), random.nextInt(), new byte[] {
+                        0, 1
+                    }));
                 break;
             }
 
@@ -187,8 +171,7 @@ public final class TestHelper {
      *             throws an IOException if any I/O operation fails.
      */
     @Ignore("Not a test, utility method only")
-    public static final StringBuilder readFile(final File file,
-            final boolean whitespaces) throws IOException {
+    public static final StringBuilder readFile(final File file, final boolean whitespaces) throws IOException {
         final BufferedReader in = new BufferedReader(new FileReader(file));
         final StringBuilder sBuilder = new StringBuilder();
         for (String line = in.readLine(); line != null; line = in.readLine()) {

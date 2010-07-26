@@ -29,14 +29,13 @@ import com.treetank.exception.TreetankException;
  * <h1>TestDocument</h1>
  * 
  * <p>
- * This class creates an XML document that contains all features seen in the
- * Extensible Markup Language (XML) 1.1 (Second Edition) as well as the
- * Namespaces in XML 1.1 (Second Edition).
+ * This class creates an XML document that contains all features seen in the Extensible Markup Language (XML)
+ * 1.1 (Second Edition) as well as the Namespaces in XML 1.1 (Second Edition).
  * </p>
  * 
  * <p>
- * The following figure describes the created test document (see
- * <code>xml/test.xml</code>). The nodes are described as follows:
+ * The following figure describes the created test document (see <code>xml/test.xml</code>). The nodes are
+ * described as follows:
  * 
  * <ul>
  * <li><code>IConstants.DOCUMENT : doc()</code></li>
@@ -65,41 +64,42 @@ import com.treetank.exception.TreetankException;
 public final class DocumentCreater {
 
     /** String representation of ID */
-    public static final String ID = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><p:a xmlns:p=\"ns\" "
-            + "ttid=\"1\" i=\"j\">oops1<b ttid=\"5\">foo<c ttid=\"7\"/></b>oops2<b ttid=\"9\" p:x=\"y\">"
-            + "<c ttid=\"11\"/>bar</b>oops3</p:a>";
+    public static final String ID =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><p:a xmlns:p=\"ns\" "
+        + "ttid=\"1\" i=\"j\">oops1<b ttid=\"5\">foo<c ttid=\"7\"/></b>oops2<b ttid=\"9\" p:x=\"y\">"
+        + "<c ttid=\"11\"/>bar</b>oops3</p:a>";
 
     /** String representation of rest */
-    public static final String REST = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-            + "<rest:sequence xmlns:rest=\"REST\"><rest:item>"
-            + "<p:a xmlns:p=\"ns\" rest:ttid=\"1\" i=\"j\">oops1<b rest:ttid=\"5\">foo<c rest:ttid=\"7\"/></b>oops2<b rest:ttid=\"9\" p:x=\"y\">"
-            + "<c rest:ttid=\"11\"/>bar</b>oops3</p:a>"
-            + "</rest:item></rest:sequence>";
+    public static final String REST =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+        + "<rest:sequence xmlns:rest=\"REST\"><rest:item>"
+        + "<p:a xmlns:p=\"ns\" rest:ttid=\"1\" i=\"j\">oops1<b rest:ttid=\"5\">foo<c rest:ttid=\"7\"/></b>oops2<b rest:ttid=\"9\" p:x=\"y\">"
+        + "<c rest:ttid=\"11\"/>bar</b>oops3</p:a>" + "</rest:item></rest:sequence>";
 
     /** String representation of test document. */
     public static final String XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-            + "<p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b p:x=\"y\">"
-            + "<c/>bar</b>oops3</p:a>";
+    + "<p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b p:x=\"y\">" + "<c/>bar</b>oops3</p:a>";
 
     /** String representation of test document. */
-    public static final String VERSIONEDXML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-            + "<tt revision=\"0\"><p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b p:x=\"y\"><c/>bar</b>oops3</p:a></tt>"
-            + "<tt revision=\"1\"><p:a>OOPS4!</p:a><p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b p:x=\"y\"><c/>bar</b>oops3</p:a></tt>"
-            + "<tt revision=\"2\"><p:a>OOPS4!</p:a><p:a>OOPS4!</p:a><p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b p:x=\"y\"><c/>bar</b>oops3</p:a></tt>";
+    public static final String VERSIONEDXML =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+        + "<tt revision=\"0\"><p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b p:x=\"y\"><c/>bar</b>oops3</p:a></tt>"
+        + "<tt revision=\"1\"><p:a>OOPS4!</p:a><p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b p:x=\"y\"><c/>bar</b>oops3</p:a></tt>"
+        + "<tt revision=\"2\"><p:a>OOPS4!</p:a><p:a>OOPS4!</p:a><p:a xmlns:p=\"ns\" i=\"j\">oops1<b>foo<c/></b>oops2<b p:x=\"y\"><c/>bar</b>oops3</p:a></tt>";
 
     /** String representation of test document without attributes. */
-    public static final String XMLWITHOUTATTRIBUTES = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-            + "<p:a>oops1<b>foo<c></c></b>oops2<b>"
-            + "<c></c>bar</b>oops3</p:a>";
+    public static final String XMLWITHOUTATTRIBUTES =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+        + "<p:a>oops1<b>foo<c></c></b>oops2<b>" + "<c></c>bar</b>oops3</p:a>";
 
     public static final String XML_INDEX = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-            + "<t:o><t:oo><t:oop><t:oops><d:DOCUMENT_ROOT_KIND nodeID=\"0\"><d:p:a nodeID=\"1\">"
-            + "<d:TEXT_KIND nodeID=\"4\"/></d:p:a></d:DOCUMENT_ROOT_KIND></t:oops></t:oop></t:oo>"
-            + "</t:o><t:f><t:fo><t:foo><d:DOCUMENT_ROOT_KIND nodeID=\"0\"><d:p:a nodeID=\"1\">"
-            + "<d:b nodeID=\"5\"><d:TEXT_KIND nodeID=\"6\"/></d:b></d:p:a></d:DOCUMENT_ROOT_KIND></t:foo>"
-            + "</t:fo></t:f><t:b><t:ba><t:bar><d:DOCUMENT_ROOT_KIND nodeID=\"0\"><d:p:a nodeID=\"1\">"
-            + "<d:b nodeID=\"9\"><d:TEXT_KIND nodeID=\"12\"/></d:b></d:p:a></d:DOCUMENT_ROOT_KIND></t:bar>"
-            + "</t:ba></t:b>";
+    + "<t:o><t:oo><t:oop><t:oops><d:DOCUMENT_ROOT_KIND nodeID=\"0\"><d:p:a nodeID=\"1\">"
+    + "<d:TEXT_KIND nodeID=\"4\"/></d:p:a></d:DOCUMENT_ROOT_KIND></t:oops></t:oop></t:oo>"
+    + "</t:o><t:f><t:fo><t:foo><d:DOCUMENT_ROOT_KIND nodeID=\"0\"><d:p:a nodeID=\"1\">"
+    + "<d:b nodeID=\"5\"><d:TEXT_KIND nodeID=\"6\"/></d:b></d:p:a></d:DOCUMENT_ROOT_KIND></t:foo>"
+    + "</t:fo></t:f><t:b><t:ba><t:bar><d:DOCUMENT_ROOT_KIND nodeID=\"0\"><d:p:a nodeID=\"1\">"
+    + "<d:b nodeID=\"9\"><d:TEXT_KIND nodeID=\"12\"/></d:b></d:p:a></d:DOCUMENT_ROOT_KIND></t:bar>"
+    + "</t:ba></t:b>";
 
     /**
      * Create simple test document containing all supported node kinds.
@@ -107,8 +107,7 @@ public final class DocumentCreater {
      * @param wtx
      *            IWriteTransaction to write to.
      */
-    public static void create(final IWriteTransaction wtx)
-            throws TreetankException {
+    public static void create(final IWriteTransaction wtx) throws TreetankException {
         assertTrue(wtx.moveToDocumentRoot());
 
         wtx.insertElementAsFirstChild(new QName("ns", "a", "p"));
@@ -146,8 +145,7 @@ public final class DocumentCreater {
      * @param wtx
      *            IWriteTransaction to write to.
      */
-    public static void createVersioned(final IWriteTransaction wtx)
-            throws TreetankException {
+    public static void createVersioned(final IWriteTransaction wtx) throws TreetankException {
         create(wtx);
         wtx.commit();
         for (int i = 0; i <= 1; i++) {
@@ -200,8 +198,7 @@ public final class DocumentCreater {
      * @param wtx
      *            IWriteTransaction to write to.
      */
-    public static void createWithoutNamespace(final IWriteTransaction wtx)
-            throws TreetankException {
+    public static void createWithoutNamespace(final IWriteTransaction wtx) throws TreetankException {
         wtx.moveToDocumentRoot();
 
         wtx.insertElementAsFirstChild(new QName("a"));

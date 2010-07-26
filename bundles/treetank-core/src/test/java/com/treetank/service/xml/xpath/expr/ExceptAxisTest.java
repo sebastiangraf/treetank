@@ -53,8 +53,7 @@ public class ExceptAxisTest {
     @Test
     public void testExcept() throws TreetankException {
         // Build simple test tree.
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -63,27 +62,26 @@ public class ExceptAxisTest {
 
         rtx.moveTo(1L);
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                "child::node() except b"), new long[] { 4L, 8L, 13L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "child::node() except b"), new long[] {
+            4L, 8L, 13L
+        });
 
         IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                "child::node() except child::node()[attribute::p:x]"),
-                new long[] { 4L, 5L, 8L, 13L });
+            "child::node() except child::node()[attribute::p:x]"), new long[] {
+            4L, 5L, 8L, 13L
+        });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                "child::node()/parent::node() except self::node()"),
-                new long[] {});
+        IAxisTest.testIAxisConventions(
+            new XPathAxis(rtx, "child::node()/parent::node() except self::node()"), new long[] {});
 
-        IAxisTest
-                .testIAxisConventions(new XPathAxis(rtx,
-                        "//node() except //text()"), new long[] { 1L, 5L, 9L,
-                        7L, 11L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "//node() except //text()"), new long[] {
+            1L, 5L, 9L, 7L, 11L
+        });
 
         rtx.moveTo(1L);
-        IAxisTest
-                .testIAxisConventions(new XPathAxis(rtx,
-                        "b/preceding::node() except text()"), new long[] { 7L,
-                        6L, 5L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "b/preceding::node() except text()"), new long[] {
+            7L, 6L, 5L
+        });
 
         rtx.close();
         wtx.abort();

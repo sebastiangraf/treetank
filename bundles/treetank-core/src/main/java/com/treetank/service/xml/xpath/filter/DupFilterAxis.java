@@ -34,10 +34,9 @@ import com.treetank.service.xml.xpath.expr.UnionAxis;
  * Duplicate Filter. Assures that the resulting node set contains no duplicates.
  * </p>
  * <p>
- * Encapsulates a given XPath axis and only passes on those items that have not
- * already been passed. This does not break the pipeline since every
- * intermediary result is immediately passed on, as long as it is not already in
- * the set (which indicates that it was already returned).
+ * Encapsulates a given XPath axis and only passes on those items that have not already been passed. This does
+ * not break the pipeline since every intermediary result is immediately passed on, as long as it is not
+ * already in the set (which indicates that it was already returned).
  * </p>
  */
 public class DupFilterAxis extends AbstractAxis {
@@ -72,7 +71,8 @@ public class DupFilterAxis extends AbstractAxis {
         // be called for those axis after calling 'hasNext()'. For all other
         // axis
         // next() has already been called by another axis.
-        callNext = !(mAxis instanceof FilterAxis || mAxis instanceof NestedAxis || mAxis instanceof UnionAxis);
+        callNext =
+            !(mAxis instanceof FilterAxis || mAxis instanceof NestedAxis || mAxis instanceof UnionAxis);
 
     }
 
@@ -96,7 +96,7 @@ public class DupFilterAxis extends AbstractAxis {
 
         resetToLastKey();
 
-        while (mAxis.hasNext()) {
+        while(mAxis.hasNext()) {
 
             // call next(), if it was not already called for that axis.
             if (callNext) {

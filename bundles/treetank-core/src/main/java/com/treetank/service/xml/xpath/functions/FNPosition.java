@@ -28,8 +28,7 @@ import com.treetank.utils.TypedValue;
  * <h1>FNPosition</h1>
  * <p>
  * IAxis that represents the function fn:position specified in <a
- * href="http://www.w3.org/TR/xquery-operators/"> XQuery 1.0 and XPath 2.0
- * Functions and Operators</a>.
+ * href="http://www.w3.org/TR/xquery-operators/"> XQuery 1.0 and XPath 2.0 Functions and Operators</a>.
  * </p>
  * <p>
  * The function returns position of the item in the expression result set.
@@ -56,14 +55,13 @@ public class FNPosition extends AbstractFunction {
      * @param returnType
      *            the type that the function's result will have
      */
-    public FNPosition(final IReadTransaction rtx, final List<IAxis> args,
-            final int min, final int max, final int returnType) {
+    public FNPosition(final IReadTransaction rtx, final List<IAxis> args, final int min, final int max,
+        final int returnType) {
 
         super(rtx, args, min, max, returnType);
         posCount = 0;
         if (getArgs().size() != 0) {
-            throw new IllegalStateException(
-                    "This function is not supported yet.");
+            throw new IllegalStateException("This function is not supported yet.");
         }
     }
 

@@ -27,13 +27,12 @@ import com.treetank.utils.TypedValue;
 /**
  * <h1>Logical And Expression</h1>
  * <p>
- * The logical and expression performs a logical conjunction of the boolean
- * values of two input sequences. If a logical expression does not raise an
- * error, its value is always one of the boolean values true or false.
+ * The logical and expression performs a logical conjunction of the boolean values of two input sequences. If
+ * a logical expression does not raise an error, its value is always one of the boolean values true or false.
  * </p>
  * <p>
- * The value of an and-expression is determined by the effective boolean values
- * of its operands, as shown in the following table:
+ * The value of an and-expression is determined by the effective boolean values of its operands, as shown in
+ * the following table:
  * <table>
  * <tr>
  * <th>AND</th>
@@ -79,8 +78,7 @@ public class AndExpr extends AbstractExpression implements IAxis {
      * @param operand2
      *            Second operand
      */
-    public AndExpr(final IReadTransaction rtx, final IAxis operand1,
-            final IAxis operand2) {
+    public AndExpr(final IReadTransaction rtx, final IAxis operand1, final IAxis operand2) {
 
         super(rtx);
         mOp1 = operand1;
@@ -116,9 +114,10 @@ public class AndExpr extends AbstractExpression implements IAxis {
         // function.
 
         // add result item to list and set the item as the current item
-        int itemKey = getTransaction().getItemList().addItem(
-                new AtomicValue(TypedValue.getBytes(Boolean.toString(result)),
-                        getTransaction().keyForName("xs:boolean")));
+        int itemKey =
+            getTransaction().getItemList().addItem(
+                new AtomicValue(TypedValue.getBytes(Boolean.toString(result)), getTransaction().keyForName(
+                    "xs:boolean")));
         getTransaction().moveTo(itemKey);
 
     }

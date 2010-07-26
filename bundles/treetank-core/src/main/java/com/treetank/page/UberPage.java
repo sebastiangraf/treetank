@@ -83,8 +83,8 @@ public final class UberPage extends AbstractPage {
             reference = page.getReference(0);
         }
 
-        NodePage ndp = new NodePage(
-                (Long) EFixed.ROOT_PAGE_KEY.getStandardProperty(),
+        NodePage ndp =
+            new NodePage((Long)EFixed.ROOT_PAGE_KEY.getStandardProperty(),
                 IConstants.UBP_ROOT_REVISION_NUMBER);
         reference.setPage(ndp);
 
@@ -200,9 +200,8 @@ public final class UberPage extends AbstractPage {
      */
     @Override
     public String toString() {
-        return super.toString() + ": revisionCount=" + mRevisionCount
-                + ", indirectPage=(" + getReference(INDIRECT_REFERENCE_OFFSET)
-                + "), isBootstrap=" + mBootstrap;
+        return super.toString() + ": revisionCount=" + mRevisionCount + ", indirectPage=("
+        + getReference(INDIRECT_REFERENCE_OFFSET) + "), isBootstrap=" + mBootstrap;
     }
 
 }

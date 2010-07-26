@@ -13,8 +13,7 @@ import com.treetank.page.PageReference;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class PageReferenceUberPageBinding extends
-        TupleBinding<PageReference> {
+public final class PageReferenceUberPageBinding extends TupleBinding<PageReference> {
 
     /**
      * {@inheritDoc}

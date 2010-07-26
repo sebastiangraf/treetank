@@ -22,8 +22,7 @@ package com.treetank.utils;
  * <h1>FastStack</h1>
  * 
  * <p>
- * Unsynchronized stack optimized for generic type. Is significantly faster than
- * Stack.
+ * Unsynchronized stack optimized for generic type. Is significantly faster than Stack.
  * </p>
  * 
  * @param <E>
@@ -42,7 +41,7 @@ public final class FastStack<E> {
      */
     @SuppressWarnings("unchecked")
     public FastStack() {
-        mStack = (E[]) new Object[16];
+        mStack = (E[])new Object[16];
         mSize = 0;
     }
 
@@ -67,7 +66,7 @@ public final class FastStack<E> {
     @SuppressWarnings("unchecked")
     public void push(final E element) {
         if (mStack.length == mSize) {
-            E[] biggerStack = (E[]) new Object[mStack.length << 1];
+            E[] biggerStack = (E[])new Object[mStack.length << 1];
             System.arraycopy(mStack, 0, biggerStack, 0, mStack.length);
             mStack = biggerStack;
         }
@@ -139,7 +138,7 @@ public final class FastStack<E> {
     @Override
     @SuppressWarnings("unchecked")
     public FastStack<E> clone() {
-        final E[] object = (E[]) new Object[mStack.length];
+        final E[] object = (E[])new Object[mStack.length];
         System.arraycopy(mStack, 0, object, 0, mStack.length);
         return new FastStack(object);
     }

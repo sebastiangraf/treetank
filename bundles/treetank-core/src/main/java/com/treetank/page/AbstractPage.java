@@ -79,8 +79,7 @@ public abstract class AbstractPage {
      * @param committedPage
      *            Page to clone.
      */
-    protected AbstractPage(final int referenceCount,
-            final AbstractPage committedPage, final long revision) {
+    protected AbstractPage(final int referenceCount, final AbstractPage committedPage, final long revision) {
 
         this(referenceCount, revision);
         for (int offset = 0; offset < referenceCount; offset++) {
@@ -113,8 +112,7 @@ public abstract class AbstractPage {
      * @param reference
      *            Page reference to set.
      */
-    public final void setReference(final int offset,
-            final PageReference reference) {
+    public final void setReference(final int offset, final PageReference reference) {
         getReferences()[offset] = reference;
     }
 
@@ -125,8 +123,7 @@ public abstract class AbstractPage {
      *            IWriteTransaction state.
      */
 
-    public final void commit(final WriteTransactionState state)
-            throws TreetankException {
+    public final void commit(final WriteTransactionState state) throws TreetankException {
         for (final PageReference reference : getReferences()) {
             state.commit(reference);
         }

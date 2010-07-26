@@ -46,8 +46,8 @@ public class NodeFilter extends AbstractFilter implements IFilter {
      */
     @Override
     public final boolean filter() {
-        return (getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND || getTransaction()
-                .getNode().getKind() == ENodes.TEXT_KIND);
+        return (getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND || getTransaction().getNode()
+            .getKind() == ENodes.TEXT_KIND);
     }
 
 }

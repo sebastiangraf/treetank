@@ -54,8 +54,7 @@ public class UpdateTest {
 
     @Test
     public void testInsertChild() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
 
         IWriteTransaction wtx = session.beginWriteTransaction();
@@ -77,8 +76,7 @@ public class UpdateTest {
             rtx = session.beginReadTransaction();
             rtx.moveToDocumentRoot();
             rtx.moveToFirstChild();
-            assertEquals(Integer.toString(i),
-                    TypedValue.parseString(rtx.getNode().getRawValue()));
+            assertEquals(Integer.toString(i), TypedValue.parseString(rtx.getNode().getRawValue()));
             assertEquals(i, rtx.getRevisionNumber());
             rtx.close();
         }
@@ -97,8 +95,7 @@ public class UpdateTest {
 
     @Test
     public void testInsertPath() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
 
         IWriteTransaction wtx = session.beginWriteTransaction();
@@ -134,8 +131,7 @@ public class UpdateTest {
 
     @Test
     public void testPageBoundary() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
 
@@ -156,8 +152,7 @@ public class UpdateTest {
 
     @Test(expected = TreetankUsageException.class)
     public void testRemoveDocument() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
 
         final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -181,8 +176,7 @@ public class UpdateTest {
 
     @Test
     public void testRemoveDescendant() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -195,7 +189,7 @@ public class UpdateTest {
         assertEquals(0, rtx.getNode().getNodeKey());
         assertTrue(rtx.moveToFirstChild());
         assertEquals(1, rtx.getNode().getNodeKey());
-        assertEquals(4, ((AbsStructNode) rtx.getNode()).getChildCount());
+        assertEquals(4, ((AbsStructNode)rtx.getNode()).getChildCount());
         assertTrue(rtx.moveToFirstChild());
         assertEquals(4, rtx.getNode().getNodeKey());
         assertTrue(rtx.moveToRightSibling());

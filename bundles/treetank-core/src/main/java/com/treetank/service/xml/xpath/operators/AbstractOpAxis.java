@@ -33,8 +33,7 @@ import com.treetank.service.xml.xpath.types.Type;
  * Abstract axis for all operators performing an arithmetic operation.
  * </p>
  */
-public abstract class AbstractOpAxis extends AbstractAxis implements IAxis,
-        XPathConstants {
+public abstract class AbstractOpAxis extends AbstractAxis implements IAxis, XPathConstants {
 
     /** First arithmetic operand. */
     private final IAxis mOperand1;
@@ -55,8 +54,7 @@ public abstract class AbstractOpAxis extends AbstractAxis implements IAxis,
      * @param op2
      *            Second value of the operation
      */
-    public AbstractOpAxis(final IReadTransaction rtx, final IAxis op1,
-            final IAxis op2) {
+    public AbstractOpAxis(final IReadTransaction rtx, final IAxis op1, final IAxis op2) {
 
         super(rtx);
         mOperand1 = op1;
@@ -102,8 +100,7 @@ public abstract class AbstractOpAxis extends AbstractAxis implements IAxis,
                     final AtomicValue item2 = atomize(mOperand2);
                     final IItem result = operate(item1, item2);
                     // add retrieved AtomicValue to item list
-                    int itemKey = getTransaction().getItemList()
-                            .addItem(result);
+                    int itemKey = getTransaction().getItemList().addItem(result);
                     getTransaction().moveTo(itemKey);
 
                     return true;
@@ -141,18 +138,14 @@ public abstract class AbstractOpAxis extends AbstractAxis implements IAxis,
         AtomicValue atom;
 
         if (XPATH_10_COMP) {
-            if (type == rtx.keyForName("xs:double")
-                    || type == rtx.keyForName("xs:untypedAtomic")
-                    || type == rtx.keyForName("xs:boolean")
-                    || type == rtx.keyForName("xs:string")
-                    || type == rtx.keyForName("xs:integer")
-                    || type == rtx.keyForName("xs:float")
-                    || type == rtx.keyForName("xs:decimal")) {
+            if (type == rtx.keyForName("xs:double") || type == rtx.keyForName("xs:untypedAtomic")
+            || type == rtx.keyForName("xs:boolean") || type == rtx.keyForName("xs:string")
+            || type == rtx.keyForName("xs:integer") || type == rtx.keyForName("xs:float")
+            || type == rtx.keyForName("xs:decimal")) {
                 Function.fnnumber(operand.getTransaction());
             }
 
-            atom = new AtomicValue(rtx.getNode().getRawValue(), rtx.getNode()
-                    .getTypeKey());
+            atom = new AtomicValue(rtx.getNode().getRawValue(), rtx.getNode().getTypeKey());
         } else {
             // unatomicType is cast to double
             if (type == rtx.keyForName("xs:untypedAtomic")) {
@@ -181,8 +174,7 @@ public abstract class AbstractOpAxis extends AbstractAxis implements IAxis,
      *            second input operand
      * @return result of the operation
      */
-    protected abstract IItem operate(final AtomicValue operand1,
-            final AtomicValue operand2);
+    protected abstract IItem operate(final AtomicValue operand1, final AtomicValue operand2);
 
     /**
      * Checks if the types of the operands are a valid combination for the
