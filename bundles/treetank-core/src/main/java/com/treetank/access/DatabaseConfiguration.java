@@ -14,23 +14,22 @@ import com.treetank.settings.EStoragePaths;
 
 /**
  * <h1>Database Configuration</h1> This class represents a configuration of a
- * database. This includes all settings which have to be made when it comes to
- * the creation of the database.
+ * database. This includes all
+ * settings which have to be made when it comes to the creation of the database.
  * 
  * @author Sebastian Graf, University of Konstanz
- * 
  */
 public class DatabaseConfiguration {
 
     /** Absolute path to tnk directory. */
-    private final File mFile;
+    private final File       mFile;
 
-    /** Props to hold all related data */
+    /** Props to hold all related data. */
     private final Properties mProps;
 
     /**
      * Constructor, just the location of either an existing or a new database.
-     * 
+     *
      * @param file
      *            the path to the database
      * @throws TreetankException
@@ -52,7 +51,7 @@ public class DatabaseConfiguration {
      *             if properties are not valid
      */
     public DatabaseConfiguration(final File file, final Properties props)
-            throws TreetankUsageException {
+        throws TreetankUsageException {
         mFile = file;
         mProps = new Properties();
         buildUpProperties(props);
@@ -71,7 +70,7 @@ public class DatabaseConfiguration {
      *             valid
      */
     public DatabaseConfiguration(final File file, final File propFile)
-            throws TreetankException {
+        throws TreetankException {
         mFile = file;
         mProps = new Properties();
         final Properties loadProps = new Properties();
@@ -84,16 +83,17 @@ public class DatabaseConfiguration {
                 buildUpProperties(loadProps);
 
                 // Check if property file comes from external
-                if ((propFile.getName().equals(
-                        EStoragePaths.DBSETTINGS.getFile().getName()) && propFile
-                        .getParentFile().equals(file))
-                // and check if the loaded checksum is valid
-                        && !loadProps.getProperty(
-                                EDatabaseSetting.CHECKSUM.name()).equals(
-                                Integer.toString(this.hashCode()))) {
+                if ((propFile.getName().equals(EStoragePaths.DBSETTINGS
+                                                   .getFile().getName()) && propFile
+                    .getParentFile().equals(file))
+                    // and check if the loaded checksum is valid
+                    && !loadProps.getProperty(EDatabaseSetting.CHECKSUM.name())
+                        .equals(Integer.toString(this.hashCode()))) {
                     throw new TreetankUsageException(
-                            "Checksums differ: Loaded", getProps().toString(),
-                            "and expected", this.toString());
+                                                     "Checksums differ: Loaded",
+                                                     getProps().toString(),
+                                                     "and expected", this
+                                                         .toString());
 
                 }
             }
@@ -112,15 +112,17 @@ public class DatabaseConfiguration {
      *             if wrong properties are into existing database
      */
     private void buildUpProperties(final Properties props)
-            throws TreetankUsageException {
+        throws TreetankUsageException {
         for (final EDatabaseSetting enumProps : EDatabaseSetting.values()) {
             if (enumProps != EDatabaseSetting.CHECKSUM) {
                 if (props.containsKey(enumProps.name())) {
                     this.getProps().setProperty(enumProps.name(),
-                            props.getProperty(enumProps.name()));
+                                                props.getProperty(enumProps
+                                                    .name()));
                 } else {
-                    this.getProps().setProperty(enumProps.name(),
-                            enumProps.getStandardProperty());
+                    this.getProps()
+                        .setProperty(enumProps.name(),
+                                     enumProps.getStandardProperty());
                 }
             }
         }
@@ -153,10 +155,12 @@ public class DatabaseConfiguration {
         try {
             final Integer hashCode = this.hashCode();
             getProps().setProperty(EDatabaseSetting.CHECKSUM.name(),
-                    Integer.toString(hashCode));
-            getProps().store(
-                    new FileOutputStream(new File(mFile,
-                            EStoragePaths.DBSETTINGS.getFile().getName())), "");
+                                   Integer.toString(hashCode));
+            getProps()
+                .store(new FileOutputStream(new File(mFile,
+                                                     EStoragePaths.DBSETTINGS
+                                                         .getFile().getName())),
+                       "");
         } catch (final IOException exc) {
             return false;
         }
