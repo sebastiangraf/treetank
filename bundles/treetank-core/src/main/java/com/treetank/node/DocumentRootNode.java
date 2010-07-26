@@ -24,8 +24,8 @@ import com.treetank.settings.EFixed;
  * <h1>DocumentNode</h1>
  * 
  * <p>
- * Node representing the root of a document. This node is guaranteed to exist in
- * revision 0 and can not be removed.
+ * Node representing the root of a document. This node is guaranteed to exist in revision 0 and can not be
+ * removed.
  * </p>
  */
 public final class DocumentRootNode extends AbsStructNode {
@@ -62,24 +62,18 @@ public final class DocumentRootNode extends AbsStructNode {
 
     @Override
     public AbsNode clone() {
-        return new DocumentRootNode(AbsNode.cloneData(mLongData),
-                AbsNode.cloneData(mIntData));
+        return new DocumentRootNode(AbsNode.cloneData(mLongData), AbsNode.cloneData(mIntData));
     }
 
     public final static DocumentRootNode createData() {
         final long[] longData = new long[ENodes.ROOT_KIND.getLongSize()];
         final int[] intData = new int[ENodes.ROOT_KIND.getIntSize()];
-        longData[AbsNode.NODE_KEY] = (Long) EFixed.ROOT_NODE_KEY
-                .getStandardProperty();
-        longData[AbsNode.PARENT_KEY] = (Long) EFixed.NULL_NODE_KEY
-                .getStandardProperty();
+        longData[AbsNode.NODE_KEY] = (Long)EFixed.ROOT_NODE_KEY.getStandardProperty();
+        longData[AbsNode.PARENT_KEY] = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
         longData[AbsStructNode.CHILD_COUNT] = 0;
-        longData[AbsStructNode.FIRST_CHILD_KEY] = (Long) EFixed.NULL_NODE_KEY
-                .getStandardProperty();
-        longData[AbsStructNode.LEFT_SIBLING_KEY] = (Long) EFixed.NULL_NODE_KEY
-                .getStandardProperty();
-        longData[AbsStructNode.RIGHT_SIBLING_KEY] = (Long) EFixed.NULL_NODE_KEY
-                .getStandardProperty();
+        longData[AbsStructNode.FIRST_CHILD_KEY] = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+        longData[AbsStructNode.LEFT_SIBLING_KEY] = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+        longData[AbsStructNode.RIGHT_SIBLING_KEY] = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
         return new DocumentRootNode(longData, intData);
     }
 

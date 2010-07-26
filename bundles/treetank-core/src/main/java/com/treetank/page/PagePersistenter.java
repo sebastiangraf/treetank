@@ -39,7 +39,7 @@ public final class PagePersistenter {
             break;
         default:
             throw new IllegalStateException(
-                    "Invalid Kind of Page. Something went wrong in the serialization/deserialization");
+                "Invalid Kind of Page. Something went wrong in the serialization/deserialization");
         }
         return returnVal;
     }
@@ -62,9 +62,8 @@ public final class PagePersistenter {
             sink.writeInt(PagePersistenter.UBERPAGE);
 
         } else {
-            throw new IllegalStateException(new StringBuilder("Page ")
-                    .append(page.getClass()).append(" cannot be serialized")
-                    .toString());
+            throw new IllegalStateException(new StringBuilder("Page ").append(page.getClass()).append(
+                " cannot be serialized").toString());
         }
         page.serialize(sink);
     }

@@ -26,8 +26,7 @@ import com.treetank.node.AbsStructNode;
  * <h1>ChildAxis</h1>
  * 
  * <p>
- * Iterate over all children of kind ELEMENT or TEXT starting at a given node.
- * Self is not included.
+ * Iterate over all children of kind ELEMENT or TEXT starting at a given node. Self is not included.
  * </p>
  */
 public class ChildAxis extends AbstractAxis implements IAxis {
@@ -60,13 +59,10 @@ public class ChildAxis extends AbstractAxis implements IAxis {
     @Override
     public final boolean hasNext() {
         resetToLastKey();
-        if (!mFirst
-                && ((AbsStructNode) getTransaction().getNode())
-                        .hasRightSibling()) {
+        if (!mFirst && ((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
             getTransaction().moveToRightSibling();
             return true;
-        } else if (mFirst
-                && ((AbsStructNode) getTransaction().getNode()).hasFirstChild()) {
+        } else if (mFirst && ((AbsStructNode)getTransaction().getNode()).hasFirstChild()) {
             mFirst = false;
             getTransaction().moveToFirstChild();
             return true;

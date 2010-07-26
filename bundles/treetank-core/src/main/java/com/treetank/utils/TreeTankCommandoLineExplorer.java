@@ -73,7 +73,7 @@ public final class TreeTankCommandoLineExplorer {
             }
         } else {
             System.out
-                    .println("Usage: java TreeTankCommandoLineExplorer \"tnk-file\" [revision] (if revision not given, explorer works in write mode");
+                .println("Usage: java TreeTankCommandoLineExplorer \"tnk-file\" [revision] (if revision not given, explorer works in write mode");
             System.exit(-1);
         }
 
@@ -82,10 +82,9 @@ public final class TreeTankCommandoLineExplorer {
             System.out.println("Type in \"help\" for help for usage..");
 
             String line = null;
-            final BufferedReader bufferIn = new BufferedReader(
-                    new InputStreamReader(System.in));
+            final BufferedReader bufferIn = new BufferedReader(new InputStreamReader(System.in));
             System.out.print(">");
-            while ((line = bufferIn.readLine()) != null) {
+            while((line = bufferIn.readLine()) != null) {
 
                 final Command command = Command.toCommand(line);
                 switch (command) {
@@ -103,8 +102,7 @@ public final class TreeTankCommandoLineExplorer {
                         rtx = session.beginReadTransaction();
                         System.out.println(command.executeCommand(rtx));
                     } else {
-                        System.out
-                                .println("Invalid path to tt-file! Please use other!");
+                        System.out.println("Invalid path to tt-file! Please use other!");
                     }
                     break;
                 case LOGOUT:
@@ -128,10 +126,8 @@ public final class TreeTankCommandoLineExplorer {
                     break;
                 default:
                     if (session == null || rtx == null) {
-                        System.out.println(new StringBuilder(
-                                "No database loaded!, Please use ")
-                                .append(Command.LOGIN.command)
-                                .append(" to load tt-database").toString());
+                        System.out.println(new StringBuilder("No database loaded!, Please use ").append(
+                            Command.LOGIN.command).append(" to load tt-database").toString());
                     } else {
                         System.out.println(command.executeCommand(rtx));
                     }
@@ -161,14 +157,12 @@ public final class TreeTankCommandoLineExplorer {
     private enum Command {
         HELP("help") {
             @Override
-            String executeCommand(final IReadTransaction currentRtx,
-                    final String parameter) {
+            String executeCommand(final IReadTransaction currentRtx, final String parameter) {
                 final StringBuilder builder = new StringBuilder("Help for ");
                 if (parameter.equals(INFO.command)) {
                     builder.append("info:\n");
-                    builder.append(
-                            "prints out nodeKey, child count, parent key, ")
-                            .append("first child key, left sibling key, right sibling key\n");
+                    builder.append("prints out nodeKey, child count, parent key, ").append(
+                        "first child key, left sibling key, right sibling key\n");
                 } else if (parameter.equals(CONTENT.command)) {
                     builder.append("content:\n");
                     builder.append("prints out kind of node plus relevant content\n");
@@ -177,8 +171,7 @@ public final class TreeTankCommandoLineExplorer {
                     builder.append("Logout from database\n");
                 } else if (parameter.equals(LOGIN.command)) {
                     builder.append("login:\n");
-                    builder.append("Parameter is the path to the tt-database")
-                            .append("\"login:[path]\"\n");
+                    builder.append("Parameter is the path to the tt-database").append("\"login:[path]\"\n");
                 } else if (parameter.equals(EXIT.command)) {
                     builder.append("exit:\n");
                     builder.append("Exits the program\n");
@@ -190,64 +183,49 @@ public final class TreeTankCommandoLineExplorer {
                     builder.append("left\t\t:\tGo to left sibling if possible\n");
                     builder.append("right\t\t:\tGo to right sibling if possible\n");
                     builder.append("root\t\t:\tGo to document root if possible\n");
-                    builder.append(
-                            "[nodekey]\t:\tGo to specified node key if possible, ")
-                            .append("[nodekey] has to be a long\n");
+                    builder.append("[nodekey]\t:\tGo to specified node key if possible, ").append(
+                        "[nodekey] has to be a long\n");
                 } else {
                     builder.append("common usage\n Usage: [COMMAND]:[PARAMETER]\n");
-                    builder.append("For concrete parameter-list, type ")
-                            .append(HELP.command).append(COMMANDDELIM)
-                            .append("[COMMAND]\n");
+                    builder.append("For concrete parameter-list, type ").append(HELP.command).append(
+                        COMMANDDELIM).append("[COMMAND]\n");
                     builder.append("Below a list of all commands:\n");
-                    builder.append(LOGIN.command).append("\t:\t")
-                            .append("Login into database.\n");
-                    builder.append(LOGOUT.command).append("\t:\t")
-                            .append("Logout from database.\n");
-                    builder.append(EXIT.command).append("\t:\t")
-                            .append("Exits the programm.\n");
-                    builder.append(INFO.command).append("\t:\t")
-                            .append("Offers info about the current node.\n");
-                    builder.append(MOVE.command).append("\t:\t")
-                            .append("Moving to given node.\n");
+                    builder.append(LOGIN.command).append("\t:\t").append("Login into database.\n");
+                    builder.append(LOGOUT.command).append("\t:\t").append("Logout from database.\n");
+                    builder.append(EXIT.command).append("\t:\t").append("Exits the programm.\n");
+                    builder.append(INFO.command).append("\t:\t").append(
+                        "Offers info about the current node.\n");
+                    builder.append(MOVE.command).append("\t:\t").append("Moving to given node.\n");
                 }
                 return builder.toString();
             }
         },
         CONTENT("content") {
             @Override
-            String executeCommand(final IReadTransaction currentRtx,
-                    final String parameter) {
+            String executeCommand(final IReadTransaction currentRtx, final String parameter) {
                 final StringBuilder builder = new StringBuilder("Kind: ");
                 switch (currentRtx.getNode().getKind()) {
                 case ELEMENT_KIND:
                     builder.append("Element\n");
-                    builder.append(currentRtx.nameForKey(currentRtx.getNode()
-                            .getNameKey()));
+                    builder.append(currentRtx.nameForKey(currentRtx.getNode().getNameKey()));
                     break;
                 case ATTRIBUTE_KIND:
                     builder.append("Attribute\n");
-                    builder.append(currentRtx.nameForKey(currentRtx.getNode()
-                            .getNameKey()));
+                    builder.append(currentRtx.nameForKey(currentRtx.getNode().getNameKey()));
                     builder.append("=");
-                    builder.append(TypedValue.parseString(currentRtx.getNode()
-                            .getRawValue()));
+                    builder.append(TypedValue.parseString(currentRtx.getNode().getRawValue()));
                     break;
                 case TEXT_KIND:
                     builder.append("Text\n");
-                    builder.append(TypedValue.parseString(currentRtx.getNode()
-                            .getRawValue()));
+                    builder.append(TypedValue.parseString(currentRtx.getNode().getRawValue()));
                     break;
                 case NAMESPACE_KIND:
                     builder.append("Namespace\n");
-                    if (currentRtx
-                            .nameForKey(currentRtx.getNode().getNameKey())
-                            .length() > 0) {
-                        builder.append(currentRtx.nameForKey(currentRtx
-                                .getNode().getNameKey()));
+                    if (currentRtx.nameForKey(currentRtx.getNode().getNameKey()).length() > 0) {
+                        builder.append(currentRtx.nameForKey(currentRtx.getNode().getNameKey()));
                         builder.append("=");
                     }
-                    builder.append(currentRtx.nameForKey(currentRtx.getNode()
-                            .getURIKey()));
+                    builder.append(currentRtx.nameForKey(currentRtx.getNode().getURIKey()));
                     break;
                 case PROCESSING_KIND:
                     builder.append("Processing instruction\n");
@@ -266,8 +244,7 @@ public final class TreeTankCommandoLineExplorer {
         },
         INFO("info") {
             @Override
-            String executeCommand(final IReadTransaction currentRtx,
-                    final String parameter) {
+            String executeCommand(final IReadTransaction currentRtx, final String parameter) {
                 final StringBuilder builder = new StringBuilder();
                 builder.append(currentRtx.toString());
                 return builder.toString();
@@ -275,30 +252,25 @@ public final class TreeTankCommandoLineExplorer {
         },
         LOGIN("login") {
             @Override
-            String executeCommand(final IReadTransaction currentRtx,
-                    final String parameter) {
-                return new StringBuilder("Loggin into database ")
-                        .append(parameter).append("\n").toString();
+            String executeCommand(final IReadTransaction currentRtx, final String parameter) {
+                return new StringBuilder("Loggin into database ").append(parameter).append("\n").toString();
             }
         },
         LOGOUT("logout") {
             @Override
-            String executeCommand(final IReadTransaction currentRtx,
-                    final String parameter) {
+            String executeCommand(final IReadTransaction currentRtx, final String parameter) {
                 return new StringBuilder("Logout from database.").toString();
             }
         },
         EXIT("exit") {
             @Override
-            String executeCommand(final IReadTransaction currentRtx,
-                    final String parameter) {
+            String executeCommand(final IReadTransaction currentRtx, final String parameter) {
                 return new StringBuilder("Exiting the program.").toString();
             }
         },
         MOVE("move") {
             @Override
-            String executeCommand(final IReadTransaction currentRtx,
-                    final String parameter) {
+            String executeCommand(final IReadTransaction currentRtx, final String parameter) {
                 boolean succeed = false;
                 final StringBuilder builder = new StringBuilder("Move to ");
                 if (parameter.equals("up")) {
@@ -319,8 +291,7 @@ public final class TreeTankCommandoLineExplorer {
                 } else {
                     try {
                         final long nodeKey = Long.parseLong(parameter);
-                        builder.append("node with key ").append(nodeKey)
-                                .append(" ");
+                        builder.append("node with key ").append(nodeKey).append(" ");
                         succeed = currentRtx.moveTo(nodeKey);
                     } catch (final NumberFormatException e) {
                         builder.append("invalid node ");
@@ -338,27 +309,25 @@ public final class TreeTankCommandoLineExplorer {
         },
         MODIFICATION("modification") {
             @Override
-            String executeCommand(final IReadTransaction currentRtx,
-                    final String parameter) {
+            String executeCommand(final IReadTransaction currentRtx, final String parameter) {
                 final StringBuilder builder = new StringBuilder("Insert ");
                 try {
                     if (currentRtx instanceof IWriteTransaction) {
-                        IWriteTransaction wtx = (IWriteTransaction) currentRtx;
+                        IWriteTransaction wtx = (IWriteTransaction)currentRtx;
 
                         if (parameter.equals("commit")) {
                             wtx.commit();
-                            builder.append(
-                                    " operation: commit succeed. New revision-number is ")
-                                    .append(wtx.getRevisionNumber());
+                            builder.append(" operation: commit succeed. New revision-number is ").append(
+                                wtx.getRevisionNumber());
                         } else if (parameter.equals("abort")) {
                             wtx.abort();
-                            builder.append(
-                                    " operation: abort succeed. Old revision-number is ")
-                                    .append(wtx.getRevisionNumber());
+                            builder.append(" operation: abort succeed. Old revision-number is ").append(
+                                wtx.getRevisionNumber());
                         }
 
                     } else {
-                        builder.append(" not succeed, Please login with write-right (that means without revision parameter");
+                        builder
+                            .append(" not succeed, Please login with write-right (that means without revision parameter");
                     }
                 } catch (final TreetankException exc) {
                     builder.append(" throws exception: ").append(exc);
@@ -368,11 +337,9 @@ public final class TreeTankCommandoLineExplorer {
         },
         NOVALUE("") {
             @Override
-            String executeCommand(final IReadTransaction currentRtx,
-                    final String parameter) {
-                return new StringBuilder("Command not known. Try ")
-                        .append(Command.HELP.getCommand())
-                        .append(" for known commands!").toString();
+            String executeCommand(final IReadTransaction currentRtx, final String parameter) {
+                return new StringBuilder("Command not known. Try ").append(Command.HELP.getCommand()).append(
+                    " for known commands!").toString();
             }
         };
 
@@ -386,8 +353,7 @@ public final class TreeTankCommandoLineExplorer {
 
         private static final Command toCommand(final String commandString) {
             try {
-                final String[] commandStrings = commandString
-                        .split(COMMANDDELIM);
+                final String[] commandStrings = commandString.split(COMMANDDELIM);
                 final Command command = valueOf(commandStrings[0].toUpperCase());
                 if (commandStrings.length == 2) {
                     command.setAdvise(commandStrings[1].toLowerCase());
@@ -410,8 +376,7 @@ public final class TreeTankCommandoLineExplorer {
          *            on which the command should be executed
          * @return a String as a result
          */
-        abstract String executeCommand(final IReadTransaction currentRtx,
-                final String parameter);
+        abstract String executeCommand(final IReadTransaction currentRtx, final String parameter);
 
         /**
          * Getter for field command.

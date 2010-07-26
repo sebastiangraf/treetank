@@ -6,11 +6,11 @@ import com.treetank.page.NodePage;
 import com.treetank.page.PagePersistenter;
 
 /**
- * <h1>NodePageContainer</h1> This class acts as a container for revisioned
- * {@link NodePage}s. Each {@link NodePage} is stored in a versioned manner. If
+ * <h1>NodePageContainer</h1> This class acts as a container for revisioned {@link NodePage}s. Each
+ * {@link NodePage} is stored in a versioned manner. If
  * modifications occur, the versioned {@link NodePage}s are dereferenced and
- * reconstructed. Afterwards, this container is used to store a complete
- * {@link NodePage} as well as one for upcoming modifications.
+ * reconstructed. Afterwards, this container is used to store a complete {@link NodePage} as well as one for
+ * upcoming modifications.
  * 
  * Both {@link Nodepage}s can differ since the complete one is mainly used for
  * read access and the modifying one for write access (and therefore mostly lazy
@@ -35,8 +35,7 @@ public final class NodePageContainer {
      *            to be used as a base for this container.
      */
     public NodePageContainer(final NodePage complete) {
-        this(complete, new NodePage(complete.getNodePageKey(),
-                complete.getRevision()));
+        this(complete, new NodePage(complete.getNodePageKey(), complete.getRevision()));
     }
 
     /**
@@ -89,10 +88,8 @@ public final class NodePageContainer {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((mComplete == null) ? 0 : mComplete.hashCode());
-        result = prime * result
-                + ((mModified == null) ? 0 : mModified.hashCode());
+        result = prime * result + ((mComplete == null) ? 0 : mComplete.hashCode());
+        result = prime * result + ((mModified == null) ? 0 : mModified.hashCode());
         return result;
     }
 
@@ -107,7 +104,7 @@ public final class NodePageContainer {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        NodePageContainer other = (NodePageContainer) obj;
+        NodePageContainer other = (NodePageContainer)obj;
         if (mComplete == null) {
             if (other.mComplete != null)
                 return false;
@@ -123,8 +120,7 @@ public final class NodePageContainer {
      */
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder(
-                "NodePageContainer has pagekey =");
+        final StringBuilder builder = new StringBuilder("NodePageContainer has pagekey =");
         builder.append(mComplete.getNodePageKey());
         builder.append("\nComplete page: ");
         builder.append(mComplete.toString());

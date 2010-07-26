@@ -40,54 +40,43 @@ public class DocumentRootNodeFilterTest {
     @Test
     public void testIFilterConvetions() throws TreetankException {
         // Build simple test tree.
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
 
         wtx.moveTo(0L);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
-                true);
+        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), true);
 
         wtx.moveTo(1L);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
-                false);
+        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), false);
 
         wtx.moveTo(1L);
         wtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
-                false);
+        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), false);
 
         wtx.moveTo(3L);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
-                false);
+        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), false);
 
         wtx.moveTo(4L);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
-                false);
+        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), false);
 
         wtx.moveTo(5L);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
-                false);
+        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), false);
 
         wtx.moveTo(9L);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
-                false);
+        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), false);
 
         wtx.moveTo(9L);
         wtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
-                false);
+        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), false);
 
         wtx.moveTo(12L);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
-                false);
+        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), false);
 
         wtx.moveTo(13L);
         wtx.moveToDocumentRoot();
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx),
-                true);
+        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), true);
 
         wtx.abort();
         wtx.close();

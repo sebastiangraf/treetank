@@ -88,7 +88,7 @@ public class NestedAxis extends AbstractAxis implements IAxis {
 
         // Execute child axis for each node found with parent axis.
         boolean hasNext = false;
-        while (!(hasNext = mChildAxis.hasNext())) {
+        while(!(hasNext = mChildAxis.hasNext())) {
             if (mParentAxis.hasNext()) {
                 mChildAxis.reset(mParentAxis.next());
             } else {

@@ -79,8 +79,7 @@ public abstract class AbsStructNode extends AbsNode {
      * @return true, if item has a first child
      */
     public boolean hasFirstChild() {
-        return mLongData[FIRST_CHILD_KEY] != (Long) EFixed.NULL_NODE_KEY
-                .getStandardProperty();
+        return mLongData[FIRST_CHILD_KEY] != (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -89,8 +88,7 @@ public abstract class AbsStructNode extends AbsNode {
      * @return true, if item has a left sibling
      */
     public boolean hasLeftSibling() {
-        return mLongData[LEFT_SIBLING_KEY] != (Long) EFixed.NULL_NODE_KEY
-                .getStandardProperty();
+        return mLongData[LEFT_SIBLING_KEY] != (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -99,8 +97,7 @@ public abstract class AbsStructNode extends AbsNode {
      * @return true, if item has a right sibling
      */
     public boolean hasRightSibling() {
-        return mLongData[RIGHT_SIBLING_KEY] != (Long) EFixed.NULL_NODE_KEY
-                .getStandardProperty();
+        return mLongData[RIGHT_SIBLING_KEY] != (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
     /**
@@ -138,12 +135,10 @@ public abstract class AbsStructNode extends AbsNode {
 
     @Override
     public String toString() {
-        return new StringBuilder(super.toString()).append("\n\tfirst child: ")
-                .append(getFirstChildKey()).append("\n\tleft sib: ")
-                .append(getLeftSiblingKey()).append("\n\tright sib: ")
-                .append(getRightSiblingKey()).append("\n\tfirst child: ")
-                .append(getFirstChildKey()).append("\n\tchild count: ")
-                .append(getChildCount()).toString();
+        return new StringBuilder(super.toString()).append("\n\tfirst child: ").append(getFirstChildKey())
+            .append("\n\tleft sib: ").append(getLeftSiblingKey()).append("\n\tright sib: ").append(
+                getRightSiblingKey()).append("\n\tfirst child: ").append(getFirstChildKey()).append(
+                "\n\tchild count: ").append(getChildCount()).toString();
     }
 
 }

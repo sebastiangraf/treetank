@@ -27,9 +27,8 @@ import com.treetank.utils.TypedValue;
 /**
  * <h1>FNCount</h1>
  * <p>
- * IAxis that represents the function fn:count specified in <a
- * href="http://www.w3.org/TR/xquery-operators/"> XQuery 1.0 and XPath 2.0
- * Functions and Operators</a>.
+ * IAxis that represents the function fn:count specified in <a href="http://www.w3.org/TR/xquery-operators/">
+ * XQuery 1.0 and XPath 2.0 Functions and Operators</a>.
  * </p>
  * <p>
  * The function returns the number of given arguments.
@@ -54,8 +53,8 @@ public class FNCount extends AbstractFunction {
      * @param returnType
      *            the type that the function's result will have
      */
-    public FNCount(final IReadTransaction rtx, final List<IAxis> args,
-            final int min, final int max, final int returnType) {
+    public FNCount(final IReadTransaction rtx, final List<IAxis> args, final int min, final int max,
+        final int returnType) {
 
         super(rtx, args, min, max, returnType);
     }
@@ -69,7 +68,7 @@ public class FNCount extends AbstractFunction {
         final IAxis axis = getArgs().get(0);
 
         Integer count = 0;
-        while (axis.hasNext()) {
+        while(axis.hasNext()) {
             axis.next();
             count++;
         }

@@ -50,8 +50,7 @@ public final class AttributeNode extends AbsNode {
      * @param value
      *            value for the node
      */
-    AttributeNode(final long[] longBuilder, final int[] intBuilder,
-            final byte[] value) {
+    AttributeNode(final long[] longBuilder, final int[] intBuilder, final byte[] value) {
         super(longBuilder, intBuilder);
         mValue = value;
         mIntData[VALUE_LENGTH] = value.length;
@@ -136,14 +135,14 @@ public final class AttributeNode extends AbsNode {
 
     @Override
     public AbsNode clone() {
-        final AbsNode toClone = new AttributeNode(AbsNode.cloneData(mLongData),
-                AbsNode.cloneData(mIntData), AbsNode.cloneData(mValue));
+        final AbsNode toClone =
+            new AttributeNode(AbsNode.cloneData(mLongData), AbsNode.cloneData(mIntData), AbsNode
+                .cloneData(mValue));
         return toClone;
     }
 
-    public final static AbsNode createData(final long nodeKey,
-            final long parentKey, final int nameKey, final int uriKey,
-            final int type, final byte[] value) {
+    public final static AbsNode createData(final long nodeKey, final long parentKey, final int nameKey,
+        final int uriKey, final int type, final byte[] value) {
         final long[] longData = new long[ENodes.ATTRIBUTE_KIND.getLongSize()];
         final int[] intData = new int[ENodes.ATTRIBUTE_KIND.getIntSize()];
         longData[AbsNode.NODE_KEY] = nodeKey;
@@ -151,23 +150,20 @@ public final class AttributeNode extends AbsNode {
         intData[AttributeNode.NAME_KEY] = nameKey;
         intData[AttributeNode.URI_KEY] = uriKey;
         intData[AbsNode.TYPE_KEY] = type;
-        return ENodes.ATTRIBUTE_KIND.createNodeFromScratch(longData, intData,
-                value);
+        return ENodes.ATTRIBUTE_KIND.createNodeFromScratch(longData, intData, value);
     }
 
-    public final static AbsNode createData(final long nodeKey,
-            final AttributeNode node) {
-        return createData(nodeKey, node.getParentKey(), node.getNameKey(),
-                node.getURIKey(), node.getTypeKey(), node.getRawValue());
+    public final static AbsNode createData(final long nodeKey, final AttributeNode node) {
+        return createData(nodeKey, node.getParentKey(), node.getNameKey(), node.getURIKey(), node
+            .getTypeKey(), node.getRawValue());
     }
 
     @Override
     public String toString() {
-        return new StringBuilder(super.toString()).append("\n\tname key: ")
-                .append(getNameKey()).append("\n\turi key: ")
-                .append(getURIKey()).append("\n\ttype: ").append(getTypeKey())
-                .append("\n\tvalue length: ").append(mIntData[VALUE_LENGTH])
-                .append("\n\tvalue: ").append(new String(mValue)).toString();
+        return new StringBuilder(super.toString()).append("\n\tname key: ").append(getNameKey()).append(
+            "\n\turi key: ").append(getURIKey()).append("\n\ttype: ").append(getTypeKey()).append(
+            "\n\tvalue length: ").append(mIntData[VALUE_LENGTH]).append("\n\tvalue: ").append(
+            new String(mValue)).toString();
     }
 
     @Override

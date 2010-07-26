@@ -51,8 +51,7 @@ public class VarRefExprTest {
     @Test
     public void testEveryExpr() throws TreetankException {
         // Build simple test tree.
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);

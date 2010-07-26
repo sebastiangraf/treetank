@@ -45,8 +45,7 @@ public class DivOpAxis extends AbstractOpAxis {
      * @param op2
      *            Second value of the operation
      */
-    public DivOpAxis(final IReadTransaction rtx, final IAxis op1,
-            final IAxis op2) {
+    public DivOpAxis(final IReadTransaction rtx, final IAxis op1, final IAxis op2) {
 
         super(rtx, op1, op2);
     }
@@ -57,8 +56,7 @@ public class DivOpAxis extends AbstractOpAxis {
     @Override
     public IItem operate(final AtomicValue operand1, final AtomicValue operand2) {
 
-        Type returnType = getReturnType(operand1.getTypeKey(),
-                operand2.getTypeKey());
+        Type returnType = getReturnType(operand1.getTypeKey(), operand2.getTypeKey());
         int typeKey = getTransaction().keyForName(returnType.getStringRepr());
 
         final byte[] value;
@@ -67,16 +65,13 @@ public class DivOpAxis extends AbstractOpAxis {
         case DECIMAL:
         case FLOAT:
         case DOUBLE:
-            final double aD = Double.parseDouble(TypedValue
-                    .parseString(operand1.getRawValue()));
+            final double aD = Double.parseDouble(TypedValue.parseString(operand1.getRawValue()));
             final double dValue;
 
             if (aD == 0.0 || aD == -0.0) {
                 dValue = Double.NaN;
             } else {
-                dValue = aD
-                        / Double.parseDouble(TypedValue.parseString(operand2
-                                .getRawValue()));
+                dValue = aD / Double.parseDouble(TypedValue.parseString(operand2.getRawValue()));
             }
 
             value = TypedValue.getBytes(dValue);
@@ -84,10 +79,9 @@ public class DivOpAxis extends AbstractOpAxis {
 
         case INTEGER:
             try {
-                final int iValue = (int) Double.parseDouble(TypedValue
-                        .parseString(operand1.getRawValue()))
-                        / (int) Double.parseDouble(TypedValue
-                                .parseString(operand2.getRawValue()));
+                final int iValue =
+                    (int)Double.parseDouble(TypedValue.parseString(operand1.getRawValue()))
+                    / (int)Double.parseDouble(TypedValue.parseString(operand2.getRawValue()));
                 value = TypedValue.getBytes(iValue);
                 return new AtomicValue(value, typeKey);
             } catch (ArithmeticException e) {
@@ -95,9 +89,8 @@ public class DivOpAxis extends AbstractOpAxis {
             }
         case YEAR_MONTH_DURATION:
         case DAY_TIME_DURATION:
-            throw new IllegalStateException(
-                    "Add operator is not implemented for the type "
-                            + returnType.getStringRepr() + " yet.");
+            throw new IllegalStateException("Add operator is not implemented for the type "
+            + returnType.getStringRepr() + " yet.");
         default:
             throw new XPathError(ErrorType.XPTY0004);
 

@@ -61,7 +61,7 @@ public final class NamePage extends AbstractPage {
         int mapSize = in.readInt();
 
         mNameMap = new HashMap<Integer, String>(mapSize);
-        for (int i = 0, l = (int) mapSize; i < l; i++) {
+        for (int i = 0, l = (int)mapSize; i < l; i++) {
             final int key = in.readInt();
             final int valSize = in.readInt();
             final byte[] bytes = new byte[valSize];

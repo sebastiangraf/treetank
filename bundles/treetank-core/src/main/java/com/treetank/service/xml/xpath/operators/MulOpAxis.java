@@ -44,8 +44,7 @@ public class MulOpAxis extends AbstractOpAxis {
      * @param op2
      *            Second value of the operation
      */
-    public MulOpAxis(final IReadTransaction rtx, final IAxis op1,
-            final IAxis op2) {
+    public MulOpAxis(final IReadTransaction rtx, final IAxis op1, final IAxis op2) {
 
         super(rtx, op1, op2);
     }
@@ -56,8 +55,7 @@ public class MulOpAxis extends AbstractOpAxis {
     @Override
     public IItem operate(final AtomicValue operand1, final AtomicValue operand2) {
 
-        Type returnType = getReturnType(operand1.getTypeKey(),
-                operand2.getTypeKey());
+        Type returnType = getReturnType(operand1.getTypeKey(), operand2.getTypeKey());
         int typeKey = getTransaction().keyForName(returnType.getStringRepr());
 
         final byte[] value;
@@ -67,18 +65,15 @@ public class MulOpAxis extends AbstractOpAxis {
         case FLOAT:
         case DECIMAL:
         case INTEGER:
-            final double dOp1 = Double.parseDouble(TypedValue
-                    .parseString(operand1.getRawValue()));
-            final double dOp2 = Double.parseDouble(TypedValue
-                    .parseString(operand2.getRawValue()));
+            final double dOp1 = Double.parseDouble(TypedValue.parseString(operand1.getRawValue()));
+            final double dOp2 = Double.parseDouble(TypedValue.parseString(operand2.getRawValue()));
             value = TypedValue.getBytes(dOp1 * dOp2);
             break;
 
         case YEAR_MONTH_DURATION:
         case DAY_TIME_DURATION:
-            throw new IllegalStateException(
-                    "Add operator is not implemented for the type "
-                            + returnType.getStringRepr() + " yet.");
+            throw new IllegalStateException("Add operator is not implemented for the type "
+            + returnType.getStringRepr() + " yet.");
         default:
             throw new XPathError(ErrorType.XPTY0004);
 
@@ -137,8 +132,7 @@ public class MulOpAxis extends AbstractOpAxis {
             case FLOAT:
             case DECIMAL:
             case INTEGER:
-                if (type2 == Type.DAY_TIME_DURATION
-                        || type2 == Type.YEAR_MONTH_DURATION) {
+                if (type2 == Type.DAY_TIME_DURATION || type2 == Type.YEAR_MONTH_DURATION) {
                     return type2;
                 }
                 break;

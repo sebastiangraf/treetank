@@ -55,8 +55,7 @@ public class UnionAxisTest {
     @Test
     public void testUnion() throws TreetankException {
         // Build simple test tree.
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -65,30 +64,35 @@ public class UnionAxisTest {
 
         rtx.moveTo(1L);
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                "child::node()/parent::node() union child::node()"),
-                new long[] { 1L, 4L, 5L, 8L, 9L, 13L });
+        IAxisTest.testIAxisConventions(
+            new XPathAxis(rtx, "child::node()/parent::node() union child::node()"), new long[] {
+                1L, 4L, 5L, 8L, 9L, 13L
+            });
+
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "child::node()/parent::node() | child::node()"),
+            new long[] {
+                1L, 4L, 5L, 8L, 9L, 13L
+            });
 
         IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                "child::node()/parent::node() | child::node()"), new long[] {
-                1L, 4L, 5L, 8L, 9L, 13L });
+            "child::node()/parent::node() | child::node() | self::node()"), new long[] {
+            1L, 4L, 5L, 8L, 9L, 13L
+        });
 
         IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                "child::node()/parent::node() | child::node() | self::node()"),
-                new long[] { 1L, 4L, 5L, 8L, 9L, 13L });
+            "child::node()/parent::node() | child::node() | self::node()" + "union parent::node()"),
+            new long[] {
+                1L, 4L, 5L, 8L, 9L, 13L, 0L
+            });
 
         IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                "child::node()/parent::node() | child::node() | self::node()"
-                        + "union parent::node()"), new long[] { 1L, 4L, 5L, 8L,
-                9L, 13L, 0L });
+            "b/preceding::node() union text() | descendant::node()"), new long[] {
+            4L, 8L, 7L, 6L, 5L, 13L, 9L, 11L, 12L
+        });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                "b/preceding::node() union text() | descendant::node()"),
-                new long[] { 4L, 8L, 7L, 6L, 5L, 13L, 9L, 11L, 12L });
-
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                "//c/ancestor::node() | //node()"), new long[] { 5L, 1L, 9L,
-                4L, 8L, 13L, 6L, 7L, 11L, 12L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "//c/ancestor::node() | //node()"), new long[] {
+            5L, 1L, 9L, 4L, 8L, 13L, 6L, 7L, 11L, 12L
+        });
 
         rtx.close();
         wtx.abort();

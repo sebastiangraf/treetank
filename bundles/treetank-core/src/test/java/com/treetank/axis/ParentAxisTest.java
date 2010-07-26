@@ -39,20 +39,25 @@ public class ParentAxisTest {
 
     @Test
     public void testIterate() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
 
         wtx.moveTo(5L);
-        IAxisTest.testIAxisConventions(new ParentAxis(wtx), new long[] { 1L });
+        IAxisTest.testIAxisConventions(new ParentAxis(wtx), new long[] {
+            1L
+        });
 
         wtx.moveTo(8L);
-        IAxisTest.testIAxisConventions(new ParentAxis(wtx), new long[] { 1L });
+        IAxisTest.testIAxisConventions(new ParentAxis(wtx), new long[] {
+            1L
+        });
 
         wtx.moveTo(10L);
-        IAxisTest.testIAxisConventions(new ParentAxis(wtx), new long[] { 9L });
+        IAxisTest.testIAxisConventions(new ParentAxis(wtx), new long[] {
+            9L
+        });
 
         wtx.abort();
         wtx.close();

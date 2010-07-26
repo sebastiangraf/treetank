@@ -21,8 +21,7 @@ public enum ENodes {
         }
 
         @Override
-        public AbsNode createNodeFromScratch(final long[] data,
-                final int[] intData, final byte[] value) {
+        public AbsNode createNodeFromScratch(final long[] data, final int[] intData, final byte[] value) {
             throw new UnsupportedOperationException();
         }
     },
@@ -47,12 +46,10 @@ public enum ENodes {
             }
             return new ElementNode(longData, intData, attrKeys, namespKeys);
         }
- 
+
         @Override
-        public AbsNode createNodeFromScratch(final long[] data,
-                final int[] intData, final byte[] value) {
-            return new ElementNode(data, intData, new ArrayList<Long>(),
-                    new ArrayList<Long>());
+        public AbsNode createNodeFromScratch(final long[] data, final int[] intData, final byte[] value) {
+            return new ElementNode(data, intData, new ArrayList<Long>(), new ArrayList<Long>());
         }
     },
     /** Node kind is attribute. */
@@ -69,8 +66,7 @@ public enum ENodes {
         }
 
         @Override
-        public AbsNode createNodeFromScratch(final long[] longData,
-                final int[] intData, final byte[] value) {
+        public AbsNode createNodeFromScratch(final long[] longData, final int[] intData, final byte[] value) {
             return new AttributeNode(longData, intData, value);
         }
     },
@@ -88,8 +84,7 @@ public enum ENodes {
         }
 
         @Override
-        public AbsNode createNodeFromScratch(final long[] longData,
-                final int[] intData, final byte[] value) {
+        public AbsNode createNodeFromScratch(final long[] longData, final int[] intData, final byte[] value) {
             return new TextNode(longData, intData, value);
         }
     },
@@ -104,8 +99,7 @@ public enum ENodes {
         }
 
         @Override
-        public AbsNode createNodeFromScratch(final long[] data,
-                final int[] intData, final byte[] value) {
+        public AbsNode createNodeFromScratch(final long[] data, final int[] intData, final byte[] value) {
             return new NamespaceNode(data, intData);
         }
     },
@@ -117,8 +111,7 @@ public enum ENodes {
         }
 
         @Override
-        public AbsNode createNodeFromScratch(final long[] data,
-                final int[] intData, final byte[] value) {
+        public AbsNode createNodeFromScratch(final long[] data, final int[] intData, final byte[] value) {
             throw new UnsupportedOperationException();
         }
     },
@@ -130,8 +123,7 @@ public enum ENodes {
         }
 
         @Override
-        public AbsNode createNodeFromScratch(final long[] data,
-                final int[] intData, final byte[] value) {
+        public AbsNode createNodeFromScratch(final long[] data, final int[] intData, final byte[] value) {
             throw new UnsupportedOperationException();
         }
     },
@@ -145,8 +137,7 @@ public enum ENodes {
         }
 
         @Override
-        public AbsNode createNodeFromScratch(final long[] data,
-                final int[] intData, final byte[] value) {
+        public AbsNode createNodeFromScratch(final long[] data, final int[] intData, final byte[] value) {
             return new DocumentRootNode(data, intData);
         }
     },
@@ -158,8 +149,7 @@ public enum ENodes {
         }
 
         @Override
-        public AbsNode createNodeFromScratch(final long[] data,
-                final int[] intData, final byte[] value) {
+        public AbsNode createNodeFromScratch(final long[] data, final int[] intData, final byte[] value) {
             throw new UnsupportedOperationException();
         }
     },
@@ -173,8 +163,7 @@ public enum ENodes {
         }
 
         @Override
-        public AbsNode createNodeFromScratch(final long[] longData,
-                final int[] intData, final byte[] value) {
+        public AbsNode createNodeFromScratch(final long[] longData, final int[] intData, final byte[] value) {
             return new DeletedNode(longData, intData);
         }
     };
@@ -211,8 +200,8 @@ public enum ENodes {
 
     public abstract AbsNode createNodeFromPersistence(final ITTSource source);
 
-    public abstract AbsNode createNodeFromScratch(final long[] longData,
-            final int[] intData, final byte[] value);
+    public abstract AbsNode createNodeFromScratch(final long[] longData, final int[] intData,
+        final byte[] value);
 
     /**
      * @return the mSize

@@ -23,8 +23,7 @@ import com.treetank.node.ENodes;
 /**
  * <h1>IItem</h1>
  * <p>
- * Common interface for all item kinds. An item can be a node or an atomic
- * value.
+ * Common interface for all item kinds. An item can be a node or an atomic value.
  */
 public interface IItem {
 

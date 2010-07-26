@@ -28,25 +28,15 @@ public class TypedValueTest {
     public void test() {
         assertEquals("a", TypedValue.parseString(TypedValue.getBytes("a")));
         assertEquals("foo", TypedValue.parseString(TypedValue.getBytes("foo")));
-        assertEquals("fö§",
-                TypedValue.parseString(TypedValue.getBytes("fö§")));
+        assertEquals("fö§", TypedValue.parseString(TypedValue.getBytes("fö§")));
         assertEquals("", TypedValue.parseString(TypedValue.getBytes("")));
     }
 
     @Test
     public void testEquals() {
-        assertEquals(
-                false,
-                TypedValue.equals(TypedValue.getBytes("foo"),
-                        TypedValue.getBytes("foobar")));
-        assertEquals(
-                false,
-                TypedValue.equals(TypedValue.getBytes("foo"),
-                        TypedValue.getBytes("bar")));
-        assertEquals(
-                true,
-                TypedValue.equals(TypedValue.getBytes("foo"),
-                        TypedValue.getBytes("foo")));
+        assertEquals(false, TypedValue.equals(TypedValue.getBytes("foo"), TypedValue.getBytes("foobar")));
+        assertEquals(false, TypedValue.equals(TypedValue.getBytes("foo"), TypedValue.getBytes("bar")));
+        assertEquals(true, TypedValue.equals(TypedValue.getBytes("foo"), TypedValue.getBytes("foo")));
 
         assertEquals(true, TypedValue.equals("foo", TypedValue.getBytes("foo")));
         assertEquals(true, TypedValue.equals(TypedValue.getBytes("foo"), "foo"));

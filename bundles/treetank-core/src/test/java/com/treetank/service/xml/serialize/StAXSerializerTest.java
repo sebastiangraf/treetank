@@ -53,35 +53,31 @@ public class StAXSerializerTest {
     public void testStAXSerializer() {
         try {
             // Setup test file.
-            final IDatabase database =
-                TestHelper.getDatabase(PATHS.PATH1.getFile());
+            final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
             final ISession session = database.getSession();
             final IWriteTransaction wtx = session.beginWriteTransaction();
             DocumentCreater.create(wtx);
             wtx.commit();
 
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
-            final XMLSerializerBuilder builder =
-                new XMLSerializerBuilder(session, out);
+            final XMLSerializerBuilder builder = new XMLSerializerBuilder(session, out);
             builder.setDeclaration(false);
             final XMLSerializer xmlSerializer = builder.build();
             xmlSerializer.call();
 
             final IReadTransaction rtx = session.beginReadTransaction();
-            StAXSerializer serializer =
-                new StAXSerializer(new DescendantAxis(rtx));
+            StAXSerializer serializer = new StAXSerializer(new DescendantAxis(rtx));
             final StringBuilder strBuilder = new StringBuilder();
             boolean isEmptyElement = false;
 
-            while (serializer.hasNext()) {
+            while(serializer.hasNext()) {
                 XMLEvent event = serializer.nextEvent();
 
                 System.out.println(event);
 
                 switch (event.getEventType()) {
                 case XMLStreamConstants.START_DOCUMENT:
-                    strBuilder
-                        .append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+                    strBuilder.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
                     break;
                 case XMLStreamConstants.START_ELEMENT:
                     emitElement(event, strBuilder);
@@ -222,8 +218,7 @@ public class StAXSerializerTest {
      *            String builder to build the string representation.
      */
     @Ignore
-    private void emitElement(final XMLEvent event,
-                             final StringBuilder strBuilder) {
+    private void emitElement(final XMLEvent event, final StringBuilder strBuilder) {
         emitQName(true, event, strBuilder);
 
         if (event.isStartElement()) {
@@ -233,12 +228,10 @@ public class StAXSerializerTest {
                 final Namespace namespace = (Namespace)it.next();
 
                 if ("".equals(namespace.getPrefix())) {
-                    strBuilder.append(" xmlns=\"")
-                        .append(namespace.getNamespaceURI()).append("\"");
+                    strBuilder.append(" xmlns=\"").append(namespace.getNamespaceURI()).append("\"");
                 } else {
-                    strBuilder.append(" xmlns:").append(namespace.getPrefix())
-                        .append("=\"").append(namespace.getNamespaceURI())
-                        .append("\"");
+                    strBuilder.append(" xmlns:").append(namespace.getPrefix()).append("=\"").append(
+                        namespace.getNamespaceURI()).append("\"");
                 }
             }
 
@@ -246,8 +239,7 @@ public class StAXSerializerTest {
             for (Iterator<?> it = elem.getAttributes(); it.hasNext();) {
                 final Attribute attribute = (Attribute)it.next();
                 emitQName(false, attribute, strBuilder);
-                strBuilder.append("=\"").append(attribute.getValue())
-                    .append("\"");
+                strBuilder.append("=\"").append(attribute.getValue()).append("\"");
             }
         }
     }
@@ -263,8 +255,7 @@ public class StAXSerializerTest {
      *            Determines if it is an element or an attribute.
      */
     @Ignore
-    private void emitQName(final boolean isElem, final XMLEvent event,
-                           final StringBuilder strBuilder) {
+    private void emitQName(final boolean isElem, final XMLEvent event, final StringBuilder strBuilder) {
         QName qName;
         if (isElem) {
             if (event.isStartElement()) {

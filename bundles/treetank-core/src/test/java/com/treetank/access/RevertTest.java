@@ -30,8 +30,7 @@ public final class RevertTest {
 
     @Test
     public void test() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         IWriteTransaction wtx = session.beginWriteTransaction();
         assertEquals(0L, wtx.getRevisionNumber());

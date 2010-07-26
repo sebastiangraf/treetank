@@ -51,30 +51,27 @@ public class NestedFilterTest {
     @Test
     public void testIFilterConvetions() throws TreetankException {
         // Build simple test tree.
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
 
         wtx.moveTo(9L);
-        IFilterTest.testIFilterConventions(new NestedFilter(wtx,
-                new ItemFilter(wtx), new ElementFilter(wtx), new NameFilter(
-                        wtx, "b")), true);
-        IFilterTest.testIFilterConventions(new NestedFilter(wtx,
-                new ItemFilter(wtx), new AttributeFilter(wtx), new NameFilter(
-                        wtx, "b")), false);
+        IFilterTest.testIFilterConventions(new NestedFilter(wtx, new ItemFilter(wtx), new ElementFilter(wtx),
+            new NameFilter(wtx, "b")), true);
+        IFilterTest.testIFilterConventions(new NestedFilter(wtx, new ItemFilter(wtx),
+            new AttributeFilter(wtx), new NameFilter(wtx, "b")), false);
 
         wtx.moveTo(4L);
-        IFilterTest.testIFilterConventions(new NestedFilter(wtx,
-                new NodeFilter(wtx), new ElementFilter(wtx)), false);
-        IFilterTest.testIFilterConventions(new NestedFilter(wtx,
-                new NodeFilter(wtx), new TextFilter(wtx)), true);
+        IFilterTest.testIFilterConventions(
+            new NestedFilter(wtx, new NodeFilter(wtx), new ElementFilter(wtx)), false);
+        IFilterTest.testIFilterConventions(new NestedFilter(wtx, new NodeFilter(wtx), new TextFilter(wtx)),
+            true);
 
         wtx.moveTo(1L);
         wtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new NestedFilter(wtx,
-                new AttributeFilter(wtx), new NameFilter(wtx, "i")), true);
+        IFilterTest.testIFilterConventions(new NestedFilter(wtx, new AttributeFilter(wtx), new NameFilter(
+            wtx, "i")), true);
 
         wtx.abort();
         wtx.close();

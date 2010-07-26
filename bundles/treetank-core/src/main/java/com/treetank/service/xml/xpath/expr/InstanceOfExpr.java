@@ -27,9 +27,8 @@ import com.treetank.utils.TypedValue;
 /**
  * <h1>InstanceOfExpr</h1>
  * <p>
- * The boolean instance of expression returns true if the value of its first
- * operand matches the SequenceType in its second operand, according to the
- * rules for SequenceType matching; otherwise it returns false.
+ * The boolean instance of expression returns true if the value of its first operand matches the SequenceType
+ * in its second operand, according to the rules for SequenceType matching; otherwise it returns false.
  * </p>
  */
 public class InstanceOfExpr extends AbstractExpression implements IAxis {
@@ -50,8 +49,7 @@ public class InstanceOfExpr extends AbstractExpression implements IAxis {
      * @param sequenceType
      *            sequence type to test whether the input sequence matches to.
      */
-    public InstanceOfExpr(final IReadTransaction rtx, final IAxis inputExpr,
-            final SequenceType sequenceType) {
+    public InstanceOfExpr(final IReadTransaction rtx, final IAxis inputExpr, final SequenceType sequenceType) {
 
         super(rtx);
         mInputExpr = inputExpr;
@@ -92,9 +90,8 @@ public class InstanceOfExpr extends AbstractExpression implements IAxis {
                     // This seams to break the pipeline, but because the
                     // intermediate
                     // result are no longer used, it might be not that bad
-                    while (mInputExpr.hasNext() && isInstanceOf) {
-                        isInstanceOf = isInstanceOf
-                                && mSequenceType.getFilter().filter();
+                    while(mInputExpr.hasNext() && isInstanceOf) {
+                        isInstanceOf = isInstanceOf && mSequenceType.getFilter().filter();
                     }
                     break;
                 default: // no wildcard, or '?'
@@ -104,17 +101,17 @@ public class InstanceOfExpr extends AbstractExpression implements IAxis {
             }
 
         } else { // empty sequence
-            isInstanceOf = mSequenceType.isEmptySequence()
-                    || (mSequenceType.hasWildcard() && (mSequenceType
-                            .getWildcard() == '?' || mSequenceType
-                            .getWildcard() == '*'));
+            isInstanceOf =
+                mSequenceType.isEmptySequence()
+                || (mSequenceType.hasWildcard() && (mSequenceType.getWildcard() == '?' || mSequenceType
+                    .getWildcard() == '*'));
         }
 
         // create result item and move transaction to it.
-        int itemKey = getTransaction().getItemList().addItem(
-                new AtomicValue(TypedValue.getBytes(Boolean
-                        .toString(isInstanceOf)), getTransaction().keyForName(
-                        "xs:boolean")));
+        int itemKey =
+            getTransaction().getItemList().addItem(
+                new AtomicValue(TypedValue.getBytes(Boolean.toString(isInstanceOf)), getTransaction()
+                    .keyForName("xs:boolean")));
         getTransaction().moveTo(itemKey);
 
     }

@@ -57,8 +57,7 @@ public class ModOpAxisTest {
     @Test
     public final void testOperate() throws TreetankException {
 
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         IReadTransaction rtx = session.beginReadTransaction();
         IItem item1 = new AtomicValue(3.0, Type.DOUBLE);
@@ -81,8 +80,7 @@ public class ModOpAxisTest {
     @Test
     public final void testGetReturnType() throws TreetankException {
 
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         IReadTransaction rtx = session.beginReadTransaction();
 
@@ -90,72 +88,51 @@ public class ModOpAxisTest {
         IAxis op2 = new SequenceAxis(rtx);
         AbstractOpAxis axis = new ModOpAxis(rtx, op1, op2);
 
-        assertEquals(
-                Type.DOUBLE,
-                axis.getReturnType(rtx.keyForName("xs:double"),
-                        rtx.keyForName("xs:double")));
-        assertEquals(
-                Type.DOUBLE,
-                axis.getReturnType(rtx.keyForName("xs:decimal"),
-                        rtx.keyForName("xs:double")));
-        assertEquals(
-                Type.FLOAT,
-                axis.getReturnType(rtx.keyForName("xs:float"),
-                        rtx.keyForName("xs:decimal")));
-        assertEquals(
-                Type.DECIMAL,
-                axis.getReturnType(rtx.keyForName("xs:decimal"),
-                        rtx.keyForName("xs:integer")));
+        assertEquals(Type.DOUBLE, axis
+            .getReturnType(rtx.keyForName("xs:double"), rtx.keyForName("xs:double")));
+        assertEquals(Type.DOUBLE, axis.getReturnType(rtx.keyForName("xs:decimal"), rtx
+            .keyForName("xs:double")));
+        assertEquals(Type.FLOAT, axis.getReturnType(rtx.keyForName("xs:float"), rtx.keyForName("xs:decimal")));
+        assertEquals(Type.DECIMAL, axis.getReturnType(rtx.keyForName("xs:decimal"), rtx
+            .keyForName("xs:integer")));
         // assertEquals(Type.INTEGER,
         // axis.getReturnType(rtx.keyForName("xs:integer"),
         // rtx.keyForName("xs:integer")));
 
         try {
 
-            axis.getReturnType(rtx.keyForName("xs:dateTime"),
-                    rtx.keyForName("xs:yearMonthDuration"));
+            axis.getReturnType(rtx.keyForName("xs:dateTime"), rtx.keyForName("xs:yearMonthDuration"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
-            assertThat(
-                    e.getMessage(),
-                    is("err:XPTY0004 The type is not appropriate the expression or the "
-                            + "typedoes not match a required type as specified by the matching rules."));
+            assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
+            + "typedoes not match a required type as specified by the matching rules."));
         }
 
         try {
 
-            axis.getReturnType(rtx.keyForName("xs:dateTime"),
-                    rtx.keyForName("xs:double"));
+            axis.getReturnType(rtx.keyForName("xs:dateTime"), rtx.keyForName("xs:double"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
-            assertThat(
-                    e.getMessage(),
-                    is("err:XPTY0004 The type is not appropriate the expression or the "
-                            + "typedoes not match a required type as specified by the matching rules."));
+            assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
+            + "typedoes not match a required type as specified by the matching rules."));
         }
 
         try {
 
-            axis.getReturnType(rtx.keyForName("xs:string"),
-                    rtx.keyForName("xs:yearMonthDuration"));
+            axis.getReturnType(rtx.keyForName("xs:string"), rtx.keyForName("xs:yearMonthDuration"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
-            assertThat(
-                    e.getMessage(),
-                    is("err:XPTY0004 The type is not appropriate the expression or the "
-                            + "typedoes not match a required type as specified by the matching rules."));
+            assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
+            + "typedoes not match a required type as specified by the matching rules."));
         }
 
         try {
 
-            axis.getReturnType(rtx.keyForName("xs:dateTime"),
-                    rtx.keyForName("xs:IDREF"));
+            axis.getReturnType(rtx.keyForName("xs:dateTime"), rtx.keyForName("xs:IDREF"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
-            assertThat(
-                    e.getMessage(),
-                    is("err:XPTY0004 The type is not appropriate the expression or the "
-                            + "typedoes not match a required type as specified by the matching rules."));
+            assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
+            + "typedoes not match a required type as specified by the matching rules."));
         }
 
         rtx.close();

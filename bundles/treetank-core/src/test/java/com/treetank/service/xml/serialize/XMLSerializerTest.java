@@ -48,8 +48,7 @@ public class XMLSerializerTest {
     @Test
     @Ignore
     public void testXMLSerializer() throws Exception {
-        final IDatabase database =
-            TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -58,8 +57,7 @@ public class XMLSerializerTest {
 
         // Generate from this session.
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final XMLSerializer serializer =
-            new XMLSerializerBuilder(session, out).build();
+        final XMLSerializer serializer = new XMLSerializerBuilder(session, out).build();
         serializer.call();
         assertEquals(DocumentCreater.XML, out.toString());
         session.close();
@@ -69,8 +67,7 @@ public class XMLSerializerTest {
     @Test
     @Ignore
     public void testRestSerializer() throws Exception {
-        final IDatabase database =
-            TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -79,8 +76,7 @@ public class XMLSerializerTest {
 
         // Generate from this session.
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final XMLSerializerBuilder builder =
-            new XMLSerializerBuilder(session, out);
+        final XMLSerializerBuilder builder = new XMLSerializerBuilder(session, out);
         builder.setREST(true);
         builder.setID(true);
         builder.setDeclaration(true);
@@ -95,8 +91,7 @@ public class XMLSerializerTest {
     @Test
     @Ignore
     public void testIDSerializer() throws Exception {
-        final IDatabase database =
-            TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -105,8 +100,7 @@ public class XMLSerializerTest {
 
         // Generate from this session.
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final XMLSerializerBuilder builder =
-            new XMLSerializerBuilder(session, out);
+        final XMLSerializerBuilder builder = new XMLSerializerBuilder(session, out);
         builder.setID(true);
         builder.setDeclaration(true);
         final XMLSerializer serializer = builder.build();
@@ -119,8 +113,7 @@ public class XMLSerializerTest {
     @Test
     @Ignore
     public void testSampleCompleteSerializer() throws Exception {
-        final IDatabase database =
-            TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -130,8 +123,7 @@ public class XMLSerializerTest {
         wtx.commit();
         wtx.close();
 
-        XMLSerializer serializerall =
-            new XMLSerializerBuilder(session, out, -1).build();
+        XMLSerializer serializerall = new XMLSerializerBuilder(session, out, -1).build();
         serializerall.call();
         assertEquals(DocumentCreater.VERSIONEDXML, out.toString());
         out.reset();

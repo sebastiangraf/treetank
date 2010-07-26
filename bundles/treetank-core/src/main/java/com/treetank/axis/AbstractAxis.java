@@ -27,13 +27,11 @@ import com.treetank.api.IReadTransaction;
  * <h1>AbstractAxis</h1>
  * 
  * <p>
- * Provide standard Java iterator capability compatible with the new enhanced
- * for loop available since Java 5.
+ * Provide standard Java iterator capability compatible with the new enhanced for loop available since Java 5.
  * </p>
  * 
  * <p>
- * All implementations must make sure to call super.hasNext() as the first thing
- * in hasNext().
+ * All implementations must make sure to call super.hasNext() as the first thing in hasNext().
  * </p>
  * 
  * <p>
@@ -95,9 +93,8 @@ public abstract class AbstractAxis implements IAxis {
      */
     public final Long next() {
         if (!mNext) {
-            throw new IllegalStateException(
-                    "IAxis.next() must be called exactely once after hasNext()"
-                            + " evaluated to true.");
+            throw new IllegalStateException("IAxis.next() must be called exactely once after hasNext()"
+            + " evaluated to true.");
         }
         mKey = mRTX.getNode().getNodeKey();
         mNext = false;

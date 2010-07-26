@@ -24,9 +24,8 @@ import com.treetank.service.xml.shredder.XMLShredder;
  */
 public final class XPathWriteTransactionTest {
 
-    public static final String XML = "src" + File.separator + "test"
-            + File.separator + "resources" + File.separator
-            + "enwiki-revisions-test.xml";
+    public static final String XML = "src" + File.separator + "test" + File.separator + "resources"
+    + File.separator + "enwiki-revisions-test.xml";
 
     private ISession session;
 

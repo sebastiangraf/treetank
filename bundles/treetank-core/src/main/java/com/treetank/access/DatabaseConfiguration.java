@@ -68,10 +68,8 @@ public class DatabaseConfiguration {
      */
     public DatabaseConfiguration(final File paramFile, final Properties paramProps)
         throws TreetankUsageException {
-        mFile =
-            paramFile;
-        mProps =
-            new Properties();
+        mFile = paramFile;
+        mProps = new Properties();
         buildUpProperties(paramProps);
 
     }
@@ -88,12 +86,9 @@ public class DatabaseConfiguration {
      *             valid
      */
     public DatabaseConfiguration(final File paramFile, final File paramProp) throws TreetankException {
-        mFile =
-            paramFile;
-        mProps =
-            new Properties();
-        final Properties loadProps =
-            new Properties();
+        mFile = paramFile;
+        mProps = new Properties();
+        final Properties loadProps = new Properties();
 
         try {
             if (!paramProp.exists() || paramProp.length() == 0) {
@@ -105,9 +100,9 @@ public class DatabaseConfiguration {
                 // Check if property file comes from external
                 if ((paramProp.getName().equals(EStoragePaths.DBSETTINGS.getFile().getName()) && paramProp
                     .getParentFile().equals(paramFile))
-                    // and check if the loaded checksum is valid
-                    && !loadProps.getProperty(EDatabaseSetting.CHECKSUM.name()).equals(
-                        Integer.toString(hashCode()))) {
+                // and check if the loaded checksum is valid
+                && !loadProps.getProperty(EDatabaseSetting.CHECKSUM.name()).equals(
+                    Integer.toString(hashCode()))) {
                     throw new TreetankUsageException("Checksums differ: Loaded", getProps().toString(),
                         "and expected", toString());
 
@@ -165,8 +160,7 @@ public class DatabaseConfiguration {
      */
     public final boolean serialize() {
         try {
-            final Integer hashCode =
-                hashCode();
+            final Integer hashCode = hashCode();
             getProps().setProperty(EDatabaseSetting.CHECKSUM.name(), Integer.toString(hashCode));
             getProps().store(
                 new FileOutputStream(new File(mFile, EStoragePaths.DBSETTINGS.getFile().getName())), "");

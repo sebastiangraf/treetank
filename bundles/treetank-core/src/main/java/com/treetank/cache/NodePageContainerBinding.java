@@ -16,15 +16,13 @@ public class NodePageContainerBinding extends TupleBinding<NodePageContainer> {
     @Override
     public NodePageContainer entryToObject(final TupleInput arg0) {
         final ITTSource source = new TupleInputSource(arg0);
-        final NodePage current = (NodePage) PagePersistenter.createPage(source);
-        final NodePage modified = (NodePage) PagePersistenter
-                .createPage(source);
+        final NodePage current = (NodePage)PagePersistenter.createPage(source);
+        final NodePage modified = (NodePage)PagePersistenter.createPage(source);
         return new NodePageContainer(current, modified);
     }
 
     @Override
-    public void objectToEntry(final NodePageContainer arg0,
-            final TupleOutput arg1) {
+    public void objectToEntry(final NodePageContainer arg0, final TupleOutput arg1) {
         arg0.serialize(arg1);
     }
 }

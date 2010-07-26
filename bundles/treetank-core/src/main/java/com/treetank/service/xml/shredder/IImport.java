@@ -4,8 +4,8 @@ package com.treetank.service.xml.shredder;
  * <h1>IImport</h1>
  * 
  * <p>
- * Interface to provide convenient methods which all classes have to implement
- * which shredder revisioned databases into Treetank.
+ * Interface to provide convenient methods which all classes have to implement which shredder revisioned
+ * databases into Treetank.
  * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz

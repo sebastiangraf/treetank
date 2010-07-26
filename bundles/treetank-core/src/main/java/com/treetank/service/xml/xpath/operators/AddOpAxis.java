@@ -45,8 +45,7 @@ public class AddOpAxis extends AbstractOpAxis {
      * @param op2
      *            Second value of the operation
      */
-    public AddOpAxis(final IReadTransaction rtx, final IAxis op1,
-            final IAxis op2) {
+    public AddOpAxis(final IReadTransaction rtx, final IAxis op1, final IAxis op2) {
 
         super(rtx, op1, op2);
     }
@@ -57,8 +56,7 @@ public class AddOpAxis extends AbstractOpAxis {
     @Override
     public IItem operate(final AtomicValue operand1, final AtomicValue operand2) {
 
-        Type returnType = getReturnType(operand1.getTypeKey(),
-                operand2.getTypeKey());
+        Type returnType = getReturnType(operand1.getTypeKey(), operand2.getTypeKey());
         int typeKey = getTransaction().keyForName(returnType.getStringRepr());
 
         final byte[] value;
@@ -68,10 +66,8 @@ public class AddOpAxis extends AbstractOpAxis {
         case FLOAT:
         case DECIMAL:
         case INTEGER:
-            final double dOp1 = Double.parseDouble(TypedValue
-                    .parseString(operand1.getRawValue()));
-            final double dOp2 = Double.parseDouble(TypedValue
-                    .parseString(operand2.getRawValue()));
+            final double dOp1 = Double.parseDouble(TypedValue.parseString(operand1.getRawValue()));
+            final double dOp2 = Double.parseDouble(TypedValue.parseString(operand2.getRawValue()));
             value = TypedValue.getBytes(dOp1 + dOp2);
             break;
         case DATE:
@@ -79,9 +75,8 @@ public class AddOpAxis extends AbstractOpAxis {
         case DATE_TIME:
         case YEAR_MONTH_DURATION:
         case DAY_TIME_DURATION:
-            throw new IllegalStateException(
-                    "Add operator is not implemented for the type "
-                            + returnType.getStringRepr() + " yet.");
+            throw new IllegalStateException("Add operator is not implemented for the type "
+            + returnType.getStringRepr() + " yet.");
         default:
             throw new XPathError(ErrorType.XPTY0004);
 
@@ -126,8 +121,7 @@ public class AddOpAxis extends AbstractOpAxis {
 
             switch (type1) {
             case DATE:
-                if (type2 == Type.YEAR_MONTH_DURATION
-                        || type2 == Type.DAY_TIME_DURATION) {
+                if (type2 == Type.YEAR_MONTH_DURATION || type2 == Type.DAY_TIME_DURATION) {
                     return type1;
                 }
                 break;
@@ -137,21 +131,18 @@ public class AddOpAxis extends AbstractOpAxis {
                 }
                 break;
             case DATE_TIME:
-                if (type2 == Type.YEAR_MONTH_DURATION
-                        || type2 == Type.DAY_TIME_DURATION) {
+                if (type2 == Type.YEAR_MONTH_DURATION || type2 == Type.DAY_TIME_DURATION) {
                     return type1;
                 }
                 break;
             case YEAR_MONTH_DURATION:
-                if (type2 == Type.DATE || type2 == Type.DATE_TIME
-                        || type2 == Type.YEAR_MONTH_DURATION) {
+                if (type2 == Type.DATE || type2 == Type.DATE_TIME || type2 == Type.YEAR_MONTH_DURATION) {
                     return type2;
                 }
                 break;
             case DAY_TIME_DURATION:
-                if (type2 == Type.DATE || type2 == Type.TIME
-                        || type2 == Type.DATE_TIME
-                        || type2 == Type.DAY_TIME_DURATION) {
+                if (type2 == Type.DATE || type2 == Type.TIME || type2 == Type.DATE_TIME
+                || type2 == Type.DAY_TIME_DURATION) {
                     return type2;
                 }
                 break;

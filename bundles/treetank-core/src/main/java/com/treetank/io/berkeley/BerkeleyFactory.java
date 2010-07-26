@@ -29,8 +29,8 @@ import com.treetank.settings.EStoragePaths;
  * Factory class to build up {@link IReader} {@link IWriter} instances for the
  * Treetank Framework.
  * 
- * After all this class is implemented as a Singleton to hold one
- * {@link BerkeleyFactory} per {@link SessionConfiguration}.
+ * After all this class is implemented as a Singleton to hold one {@link BerkeleyFactory} per
+ * {@link SessionConfiguration}.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
@@ -47,8 +47,7 @@ public final class BerkeleyFactory extends AbstractIOFactory {
     public static final TupleBinding<PageReference> FIRST_REV_VAL_B = new PageReferenceUberPageBinding();
 
     /** Binding for {@link Long} */
-    public static final TupleBinding<Long> DATAINFO_VAL_B = TupleBinding
-            .getPrimitiveBinding(Long.class);
+    public static final TupleBinding<Long> DATAINFO_VAL_B = TupleBinding.getPrimitiveBinding(Long.class);
 
     /**
      * Berkeley Environment for the database
@@ -73,8 +72,8 @@ public final class BerkeleyFactory extends AbstractIOFactory {
      * @throws TreetankIOException
      *             of something odd happens while database-connection
      */
-    public BerkeleyFactory(final DatabaseConfiguration paramDatabase,
-            final SessionConfiguration paramSession) throws TreetankIOException {
+    public BerkeleyFactory(final DatabaseConfiguration paramDatabase, final SessionConfiguration paramSession)
+        throws TreetankIOException {
         super(paramDatabase, paramSession);
 
         final DatabaseConfig conf = new DatabaseConfig();
@@ -85,14 +84,12 @@ public final class BerkeleyFactory extends AbstractIOFactory {
         config.setTransactional(true);
         config.setCacheSize(1024 * 1024);
 
-        final File repoFile = new File(paramDatabase.getFile(),
-                EStoragePaths.TT.getFile().getName());
+        final File repoFile = new File(paramDatabase.getFile(), EStoragePaths.TT.getFile().getName());
         if (!repoFile.exists()) {
             repoFile.mkdirs();
         }
         if (repoFile.listFiles().length == 0
-                || (repoFile.listFiles().length == 1 && "tt.tnk"
-                        .equals(repoFile.listFiles()[0].getName()))) {
+        || (repoFile.listFiles().length == 1 && "tt.tnk".equals(repoFile.listFiles()[0].getName()))) {
             conf.setAllowCreate(true);
             config.setAllowCreate(true);
         }
@@ -150,11 +147,9 @@ public final class BerkeleyFactory extends AbstractIOFactory {
         boolean returnVal = false;
         try {
             final IReader reader = new BerkeleyReader(env, mDatabase);
-            BerkeleyFactory.KEY.objectToEntry(BerkeleyKey.getFirstRevKey(),
-                    keyEntry);
+            BerkeleyFactory.KEY.objectToEntry(BerkeleyKey.getFirstRevKey(), keyEntry);
 
-            final OperationStatus status = mDatabase.get(null, keyEntry,
-                    valueEntry, LockMode.DEFAULT);
+            final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
             if (status == OperationStatus.SUCCESS) {
                 returnVal = true;
             }

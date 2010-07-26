@@ -39,32 +39,32 @@ public class PrecedingSiblingAxisTest {
 
     @Test
     public void testAxisConventions() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
 
         wtx.moveTo(12L);
-        IAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx),
-                new long[] { 11L });
+        IAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx), new long[] {
+            11L
+        });
 
         wtx.moveTo(5L);
-        IAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx),
-                new long[] { 4L });
+        IAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx), new long[] {
+            4L
+        });
 
         wtx.moveTo(13L);
-        IAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx),
-                new long[] { 9L, 8L, 5L, 4L });
+        IAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx), new long[] {
+            9L, 8L, 5L, 4L
+        });
 
         wtx.moveTo(1L);
-        IAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx),
-                new long[] {});
+        IAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx), new long[] {});
 
         wtx.moveTo(9L);
         wtx.moveToAttribute(0);
-        IAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx),
-                new long[] {});
+        IAxisTest.testIAxisConventions(new PrecedingSiblingAxis(wtx), new long[] {});
 
         wtx.abort();
         wtx.close();

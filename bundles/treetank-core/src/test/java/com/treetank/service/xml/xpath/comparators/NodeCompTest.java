@@ -67,8 +67,7 @@ public class NodeCompTest {
         wtx.moveToDocumentRoot();
         rtx = session.beginReadTransaction();
 
-        comparator = new NodeComp(rtx, new LiteralExpr(rtx, -2),
-                new LiteralExpr(rtx, -1), CompKind.IS);
+        comparator = new NodeComp(rtx, new LiteralExpr(rtx, -2), new LiteralExpr(rtx, -1), CompKind.IS);
     }
 
     @After
@@ -84,31 +83,33 @@ public class NodeCompTest {
     @Test
     public void testCompare() {
 
-        AtomicValue[] op1 = { new AtomicValue(2, Type.INTEGER) };
-        AtomicValue[] op2 = { new AtomicValue(3, Type.INTEGER) };
-        AtomicValue[] op3 = { new AtomicValue(3, Type.INTEGER) };
+        AtomicValue[] op1 = {
+            new AtomicValue(2, Type.INTEGER)
+        };
+        AtomicValue[] op2 = {
+            new AtomicValue(3, Type.INTEGER)
+        };
+        AtomicValue[] op3 = {
+            new AtomicValue(3, Type.INTEGER)
+        };
 
         assertEquals(false, comparator.compare(op1, op2));
         assertEquals(true, comparator.compare(op3, op2));
 
         try {
-            comparator = new NodeComp(rtx, new LiteralExpr(rtx, -2),
-                    new LiteralExpr(rtx, -1), CompKind.PRE);
+            comparator = new NodeComp(rtx, new LiteralExpr(rtx, -2), new LiteralExpr(rtx, -1), CompKind.PRE);
             comparator.compare(op1, op2);
             fail("Expexcted not yet implemented exception.");
         } catch (IllegalStateException e) {
-            assertEquals("Evaluation of node comparisons not possible",
-                    e.getMessage());
+            assertEquals("Evaluation of node comparisons not possible", e.getMessage());
         }
 
         try {
-            comparator = new NodeComp(rtx, new LiteralExpr(rtx, -2),
-                    new LiteralExpr(rtx, -1), CompKind.FO);
+            comparator = new NodeComp(rtx, new LiteralExpr(rtx, -2), new LiteralExpr(rtx, -1), CompKind.FO);
             comparator.compare(op1, op2);
             fail("Expexcted not yet implemented exception.");
         } catch (IllegalStateException e) {
-            assertEquals("Evaluation of node comparisons not possible",
-                    e.getMessage());
+            assertEquals("Evaluation of node comparisons not possible", e.getMessage());
         }
 
     }
@@ -129,10 +130,9 @@ public class NodeCompTest {
             axis.hasNext();
             comparator.atomize(axis);
         } catch (XPathError e) {
-            assertEquals(
-                    "err:XPTY0004 The type is not appropriate the expression or"
-                            + " the typedoes not match a required type as specified by the "
-                            + "matching rules.", e.getMessage());
+            assertEquals("err:XPTY0004 The type is not appropriate the expression or"
+            + " the typedoes not match a required type as specified by the " + "matching rules.", e
+                .getMessage());
         }
 
     }

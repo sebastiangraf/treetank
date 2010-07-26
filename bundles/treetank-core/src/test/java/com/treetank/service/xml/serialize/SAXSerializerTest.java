@@ -40,8 +40,7 @@ public class SAXSerializerTest extends XMLTestCase {
     public void testSAXSerializer() {
         try {
             // Setup test file.
-            final IDatabase database = TestHelper.getDatabase(PATHS.PATH1
-                    .getFile());
+            final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
             final ISession session = database.getSession();
             final IWriteTransaction testTrx = session.beginWriteTransaction();
             DocumentCreater.create(testTrx);
@@ -53,14 +52,12 @@ public class SAXSerializerTest extends XMLTestCase {
 
                 @Override
                 public void startDocument() {
-                    strBuilder
-                            .append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+                    strBuilder.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
                 }
 
                 @Override
-                public void startElement(final String uri,
-                        final String localName, final String qName,
-                        final Attributes atts) throws SAXException {
+                public void startElement(final String uri, final String localName, final String qName,
+                    final Attributes atts) throws SAXException {
                     strBuilder.append("<" + qName);
 
                     for (int i = 0; i < atts.getLength(); i++) {
@@ -72,22 +69,20 @@ public class SAXSerializerTest extends XMLTestCase {
                 }
 
                 @Override
-                public void endElement(String uri, String localName,
-                        String qName) throws SAXException {
+                public void endElement(String uri, String localName, String qName) throws SAXException {
                     strBuilder.append("</" + qName + ">");
                 }
 
                 @Override
-                public void characters(final char[] ch, final int start,
-                        final int length) throws SAXException {
+                public void characters(final char[] ch, final int start, final int length)
+                    throws SAXException {
                     for (int i = start; i < start + length; i++) {
                         strBuilder.append(ch[i]);
                     }
                 }
             };
 
-            final SAXSerializer serializer = new SAXSerializer(session,
-                    contHandler);
+            final SAXSerializer serializer = new SAXSerializer(session, contHandler);
             serializer.call();
 
             assertXMLEqual(DocumentCreater.XML, strBuilder.toString());

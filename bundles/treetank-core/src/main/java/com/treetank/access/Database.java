@@ -38,8 +38,7 @@ import com.treetank.settings.EStoragePaths;
 public final class Database implements IDatabase {
 
     /** Central repository of all running sessions. */
-    private static final ConcurrentMap<File, Database> DATABASEMAP =
-        new ConcurrentHashMap<File, Database>();
+    private static final ConcurrentMap<File, Database> DATABASEMAP = new ConcurrentHashMap<File, Database>();
 
     /** Queue with all session registered. */
     private ISession mSession;
@@ -62,10 +61,8 @@ public final class Database implements IDatabase {
      */
     private Database(final DatabaseConfiguration paramDBConf, final SessionConfiguration paramSessionConf)
         throws TreetankException {
-        this.mDatabaseConfiguration =
-            paramDBConf;
-        this.mSessionConfiguration =
-            paramSessionConf;
+        this.mDatabaseConfiguration = paramDBConf;
+        this.mSessionConfiguration = paramSessionConf;
         this.checkStorage();
     }
 
@@ -83,26 +80,19 @@ public final class Database implements IDatabase {
     public static synchronized boolean createDatabase(final DatabaseConfiguration paramConf)
         throws TreetankIOException {
         try {
-            final File file =
-                paramConf.getFile();
-            boolean returnVal =
-                true;
+            final File file = paramConf.getFile();
+            boolean returnVal = true;
             if (file.exists()) {
-                returnVal =
-                    false;
+                returnVal = false;
             } else {
-                returnVal =
-                    file.mkdirs();
+                returnVal = file.mkdirs();
                 if (returnVal) {
                     for (EStoragePaths paths : EStoragePaths.values()) {
-                        final File toCreate =
-                            new File(paramConf.getFile(), paths.getFile().getName());
+                        final File toCreate = new File(paramConf.getFile(), paths.getFile().getName());
                         if (paths.isFolder()) {
-                            returnVal =
-                                toCreate.mkdir();
+                            returnVal = toCreate.mkdir();
                         } else {
-                            returnVal =
-                                toCreate.createNewFile();
+                            returnVal = toCreate.createNewFile();
                         }
                         if (!returnVal) {
                             break;
@@ -110,8 +100,7 @@ public final class Database implements IDatabase {
                     }
                 }
             }
-            returnVal =
-                paramConf.serialize();
+            returnVal = paramConf.serialize();
             // if something was not correct, delete the partly created
             // substructure
             if (!returnVal) {
@@ -178,8 +167,7 @@ public final class Database implements IDatabase {
             DATABASEMAP.putIfAbsent(paramFile, new Database(new DatabaseConfiguration(paramFile),
                 paramSessionConf));
         if (database == null) {
-            database =
-                DATABASEMAP.get(paramFile);
+            database = DATABASEMAP.get(paramFile);
         }
         return database;
     }
@@ -193,8 +181,7 @@ public final class Database implements IDatabase {
      *             if something weird happens while closing
      */
     public static synchronized void forceCloseDatabase(final File paramFile) throws TreetankException {
-        final IDatabase database =
-            DATABASEMAP.remove(paramFile);
+        final IDatabase database = DATABASEMAP.remove(paramFile);
         if (database != null) {
             database.close();
         }
@@ -214,8 +201,7 @@ public final class Database implements IDatabase {
         if (mDatabaseConfiguration != null) {
             DATABASEMAP.remove(getFile(), this);
         }
-        this.mDatabaseConfiguration =
-            null;
+        this.mDatabaseConfiguration = null;
     }
 
     /**
@@ -226,8 +212,7 @@ public final class Database implements IDatabase {
     @Override
     public synchronized ISession getSession() throws TreetankException {
         if (mSession == null || mSession.isClosed()) {
-            mSession =
-                new Session(this.mDatabaseConfiguration, this.mSessionConfiguration);
+            mSession = new Session(this.mDatabaseConfiguration, this.mSessionConfiguration);
         }
         return mSession;
     }
@@ -249,8 +234,7 @@ public final class Database implements IDatabase {
      */
     @Override
     public synchronized int[] getVersion() {
-        final int[] versions =
-            new int[3];
+        final int[] versions = new int[3];
         versions[0] =
             Integer.parseInt(mDatabaseConfiguration.getProps().getProperty(
                 EDatabaseSetting.VERSION_MAJOR.name()));
@@ -288,23 +272,16 @@ public final class Database implements IDatabase {
      *             if storage is not valid
      */
     private void checkStorage() throws TreetankUsageException {
-        final int compareStructure =
-            EStoragePaths.compareStructure(getFile());
+        final int compareStructure = EStoragePaths.compareStructure(getFile());
         if (compareStructure != 0) {
             throw new TreetankUsageException("Storage has no valid storage structure."
-                + " Compared to the specification, storage has", Integer.toString(compareStructure),
-                "elements!");
+            + " Compared to the specification, storage has", Integer.toString(compareStructure), "elements!");
         }
-        final int[] versions =
-            new int[3];
-        versions[0] =
-            Integer.parseInt(EDatabaseSetting.VERSION_MAJOR.getStandardProperty());
-        versions[1] =
-            Integer.parseInt(EDatabaseSetting.VERSION_MINOR.getStandardProperty());
-        versions[2] =
-            Integer.parseInt(EDatabaseSetting.VERSION_FIX.getStandardProperty());
-        final int[] storedVersions =
-            getVersion();
+        final int[] versions = new int[3];
+        versions[0] = Integer.parseInt(EDatabaseSetting.VERSION_MAJOR.getStandardProperty());
+        versions[1] = Integer.parseInt(EDatabaseSetting.VERSION_MINOR.getStandardProperty());
+        versions[2] = Integer.parseInt(EDatabaseSetting.VERSION_FIX.getStandardProperty());
+        final int[] storedVersions = getVersion();
         if (storedVersions[0] < versions[0]) {
             throw new TreetankUsageException("Version Major expected:", Integer.toString(storedVersions[0]),
                 "but was", Integer.toString(versions[0]));

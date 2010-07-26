@@ -43,8 +43,8 @@ public final class KeyPersistenter {
             returnVal = null;
             break;
         default:
-            throw new IllegalStateException(new StringBuilder("Kind ")
-                    .append(kind).append(" is not known").toString());
+            throw new IllegalStateException(new StringBuilder("Kind ").append(kind).append(" is not known")
+                .toString());
         }
 
         return returnVal;
@@ -61,9 +61,8 @@ public final class KeyPersistenter {
             } else if (key instanceof BerkeleyKey) {
                 sink.writeInt(BERKELEYKIND);
             } else {
-                throw new IllegalStateException(new StringBuilder("Key ")
-                        .append(key.getClass()).append(" cannot be serialized")
-                        .toString());
+                throw new IllegalStateException(new StringBuilder("Key ").append(key.getClass()).append(
+                    " cannot be serialized").toString());
             }
 
             for (long val : key.getKeys()) {

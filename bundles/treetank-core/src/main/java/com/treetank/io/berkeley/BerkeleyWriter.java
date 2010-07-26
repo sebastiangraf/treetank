@@ -34,8 +34,7 @@ public class BerkeleyWriter implements IWriter {
     private long nodepagekey;
 
     /**
-     * Simple constructor starting with an {@link Environment} and a
-     * {@link Database}.
+     * Simple constructor starting with an {@link Environment} and a {@link Database}.
      * 
      * @param env
      *            for the write
@@ -44,8 +43,7 @@ public class BerkeleyWriter implements IWriter {
      * @throws TreetankIOException
      *             if something off happens
      */
-    public BerkeleyWriter(final Environment env, final Database database)
-            throws TreetankIOException {
+    public BerkeleyWriter(final Environment env, final Database database) throws TreetankIOException {
 
         try {
             mTxn = env.beginTransaction(null, null);
@@ -73,8 +71,7 @@ public class BerkeleyWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    public void write(final PageReference pageReference)
-            throws TreetankIOException {
+    public void write(final PageReference pageReference) throws TreetankIOException {
         final AbstractPage page = pageReference.getPage();
 
         final DatabaseEntry valueEntry = new DatabaseEntry();
@@ -88,12 +85,10 @@ public class BerkeleyWriter implements IWriter {
         BerkeleyFactory.KEY.objectToEntry(key, keyEntry);
 
         try {
-            final OperationStatus status = mDatabase.put(mTxn, keyEntry,
-                    valueEntry);
+            final OperationStatus status = mDatabase.put(mTxn, keyEntry, valueEntry);
             if (status != OperationStatus.SUCCESS) {
-                throw new DatabaseException(new StringBuilder("Write of ")
-                        .append(pageReference.toString()).append(" failed!")
-                        .toString());
+                throw new DatabaseException(new StringBuilder("Write of ").append(pageReference.toString())
+                    .append(" failed!").toString());
             }
         } catch (final DatabaseException exc) {
             throw new TreetankIOException(exc);
@@ -108,8 +103,7 @@ public class BerkeleyWriter implements IWriter {
      * @param data
      *            key to be stored
      */
-    private final void setLastNodePage(final Long data)
-            throws TreetankIOException {
+    private final void setLastNodePage(final Long data) throws TreetankIOException {
         final DatabaseEntry keyEntry = new DatabaseEntry();
         final DatabaseEntry valueEntry = new DatabaseEntry();
 
@@ -137,8 +131,7 @@ public class BerkeleyWriter implements IWriter {
         BerkeleyFactory.KEY.objectToEntry(key, keyEntry);
 
         try {
-            final OperationStatus status = mDatabase.get(mTxn, keyEntry,
-                    valueEntry, LockMode.DEFAULT);
+            final OperationStatus status = mDatabase.get(mTxn, keyEntry, valueEntry, LockMode.DEFAULT);
             Long val;
             if (status == OperationStatus.SUCCESS) {
                 val = BerkeleyFactory.DATAINFO_VAL_B.entryToObject(valueEntry);
@@ -155,17 +148,14 @@ public class BerkeleyWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    public void writeFirstReference(final PageReference pageReference)
-            throws TreetankIOException {
+    public void writeFirstReference(final PageReference pageReference) throws TreetankIOException {
         write(pageReference);
 
         final DatabaseEntry keyEntry = new DatabaseEntry();
-        BerkeleyFactory.KEY.objectToEntry(BerkeleyKey.getFirstRevKey(),
-                keyEntry);
+        BerkeleyFactory.KEY.objectToEntry(BerkeleyKey.getFirstRevKey(), keyEntry);
 
         final DatabaseEntry valueEntry = new DatabaseEntry();
-        BerkeleyFactory.FIRST_REV_VAL_B
-                .objectToEntry(pageReference, valueEntry);
+        BerkeleyFactory.FIRST_REV_VAL_B.objectToEntry(pageReference, valueEntry);
 
         try {
             mDatabase.put(mTxn, keyEntry, valueEntry);
@@ -178,8 +168,7 @@ public class BerkeleyWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    public AbstractPage read(final PageReference pageReference)
-            throws TreetankIOException {
+    public AbstractPage read(final PageReference pageReference) throws TreetankIOException {
         return reader.read(pageReference);
     }
 
@@ -197,8 +186,7 @@ public class BerkeleyWriter implements IWriter {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((mDatabase == null) ? 0 : mDatabase.hashCode());
+        result = prime * result + ((mDatabase == null) ? 0 : mDatabase.hashCode());
         result = prime * result + ((mTxn == null) ? 0 : mTxn.hashCode());
         result = prime * result + ((reader == null) ? 0 : reader.hashCode());
         return result;
@@ -215,7 +203,7 @@ public class BerkeleyWriter implements IWriter {
         } else if (getClass() != obj.getClass()) {
             returnVal = false;
         }
-        final BerkeleyWriter other = (BerkeleyWriter) obj;
+        final BerkeleyWriter other = (BerkeleyWriter)obj;
         if (mDatabase == null) {
             if (other.mDatabase != null) {
                 returnVal = false;

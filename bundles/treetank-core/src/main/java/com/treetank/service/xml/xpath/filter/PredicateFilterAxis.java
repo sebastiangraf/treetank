@@ -26,12 +26,10 @@ import com.treetank.utils.TypedValue;
 /**
  * <h1>PredicateFilterAxis</h1>
  * <p>
- * The PredicateAxis evaluates a predicate (in the form of an axis) and returns
- * true, if the predicates has a value (axis.hasNext == true) and this value if
- * not the boolean value false. Otherwise false is returned. Since a predicate
- * is a kind of filter, the transaction that has been altered by means of the
- * predicate's evaluation has to be reset to the key that it was set to before
- * the evaluation.
+ * The PredicateAxis evaluates a predicate (in the form of an axis) and returns true, if the predicates has a
+ * value (axis.hasNext == true) and this value if not the boolean value false. Otherwise false is returned.
+ * Since a predicate is a kind of filter, the transaction that has been altered by means of the predicate's
+ * evaluation has to be reset to the key that it was set to before the evaluation.
  * </p>
  */
 public class PredicateFilterAxis extends AbstractAxis implements IAxis {
@@ -113,12 +111,11 @@ public class PredicateFilterAxis extends AbstractAxis implements IAxis {
         if (getTransaction().getNode().getNodeKey() >= 0) {
             return false;
         } else { // is AtomicValue
-            if (getTransaction().getNode().getTypeKey() == getTransaction()
-                    .keyForName("xs:boolean")) {
+            if (getTransaction().getNode().getTypeKey() == getTransaction().keyForName("xs:boolean")) {
                 // atomic value of type boolean
                 // return true, if atomic values's value is false
                 return !(Boolean.parseBoolean(TypedValue
-                        .parseString(getTransaction().getNode().getRawValue())));
+                    .parseString(getTransaction().getNode().getRawValue())));
 
             } else {
                 return false;

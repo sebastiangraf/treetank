@@ -9,22 +9,34 @@ package com.treetank.settings;
 public enum ECharsForSerializing {
 
     /** " ". */
-    SPACE(new byte[] { 32 }),
+    SPACE(new byte[] {
+        32
+    }),
 
     /** "&lt;". */
-    OPEN(new byte[] { 60 }),
+    OPEN(new byte[] {
+        60
+    }),
 
     /** "&gt;". */
-    CLOSE(new byte[] { 62 }),
+    CLOSE(new byte[] {
+        62
+    }),
 
     /** "/". */
-    SLASH(new byte[] { 47 }),
+    SLASH(new byte[] {
+        47
+    }),
 
     /** "=". */
-    EQUAL(new byte[] { 61 }),
+    EQUAL(new byte[] {
+        61
+    }),
 
     /** "\"". */
-    QUOTE(new byte[] { 34 }),
+    QUOTE(new byte[] {
+        34
+    }),
 
     /** "=\"". */
     EQUAL_QUOTE(EQUAL.getBytes(), QUOTE.getBytes()),
@@ -36,18 +48,25 @@ public enum ECharsForSerializing {
     SLASH_CLOSE(SLASH.getBytes(), CLOSE.getBytes()),
 
     /** " rest:"". */
-    REST_PREFIX(SPACE.getBytes(), new byte[] { 114, 101, 115, 116, 58 }),
+    REST_PREFIX(SPACE.getBytes(), new byte[] {
+        114, 101, 115, 116, 58
+    }),
 
     /** "ttid". */
-    ID(new byte[] { 116, 116, 105, 100 }),
+    ID(new byte[] {
+        116, 116, 105, 100
+    }),
 
     /** " xmlns=\"". */
-    XMLNS(SPACE.getBytes(), new byte[] { 120, 109, 108, 110, 115 }, EQUAL
-            .getBytes(), QUOTE.getBytes()),
+    XMLNS(SPACE.getBytes(), new byte[] {
+        120, 109, 108, 110, 115
+    }, EQUAL.getBytes(), QUOTE.getBytes()),
 
     /** " xmlns:". */
-    XMLNS_COLON(SPACE.getBytes(), new byte[] { 120, 109, 108, 110, 115, 58 }),
-    
+    XMLNS_COLON(SPACE.getBytes(), new byte[] {
+        120, 109, 108, 110, 115, 58
+    }),
+
     /** Newline. */
     NEWLINE(System.getProperty("line.separator").getBytes());
 

@@ -12,7 +12,6 @@
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- * 
  */
 package com.treetank.cache;
 
@@ -21,8 +20,7 @@ import com.treetank.page.NodePage;
 /**
  * Interface for all upcoming cache implementations. Can be a weak one, a
  * LRU-based one or a persistent. However, clear, put and get must to be
- * provided. Instances of this class are used with
- * <code> IReadTransactions</code> as well as with
+ * provided. Instances of this class are used with <code> IReadTransactions</code> as well as with
  * <code>IWriteTransactions</code>.
  * 
  * @author Sebastian Graf, University of Konstanz

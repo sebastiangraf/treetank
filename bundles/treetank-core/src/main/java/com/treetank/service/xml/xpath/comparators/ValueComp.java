@@ -47,8 +47,8 @@ public class ValueComp extends AbstractComparator {
      * @param comp
      *            comparison kind
      */
-    public ValueComp(final IReadTransaction rtx, final IAxis operand1,
-            final IAxis operand2, final CompKind comp) {
+    public ValueComp(final IReadTransaction rtx, final IAxis operand1, final IAxis operand2,
+        final CompKind comp) {
 
         super(rtx, operand1, operand2, comp);
     }
@@ -57,10 +57,8 @@ public class ValueComp extends AbstractComparator {
      * {@inheritDoc}
      */
     @Override
-    protected boolean compare(final AtomicValue[] operand1,
-            final AtomicValue[] operand2) {
-        final Type type = getType(operand1[0].getTypeKey(),
-                operand2[0].getTypeKey());
+    protected boolean compare(final AtomicValue[] operand1, final AtomicValue[] operand2) {
+        final Type type = getType(operand1[0].getTypeKey(), operand2[0].getTypeKey());
         final String op1 = TypedValue.parseString(operand1[0].getRawValue());
         final String op2 = TypedValue.parseString(operand2[0].getRawValue());
 
@@ -82,9 +80,10 @@ public class ValueComp extends AbstractComparator {
             type = trx.keyForName("xs:string");
         }
 
-        final AtomicValue atomized = new AtomicValue(operand.getTransaction()
-                .getNode().getRawValue(), type);
-        AtomicValue[] op = { atomized };
+        final AtomicValue atomized = new AtomicValue(operand.getTransaction().getNode().getRawValue(), type);
+        AtomicValue[] op = {
+            atomized
+        };
 
         // (4.) the operands must be singletons in case of a value comparison
         if (operand.hasNext()) {

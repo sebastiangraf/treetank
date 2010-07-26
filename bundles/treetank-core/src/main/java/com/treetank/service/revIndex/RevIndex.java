@@ -100,10 +100,9 @@ public final class RevIndex {
      * @param docs
      *            stack with order to be inserted.
      */
-    public void insertNextNode(final Stack<String> docs)
-            throws TreetankException {
+    public void insertNextNode(final Stack<String> docs) throws TreetankException {
         if (rtx instanceof IWriteTransaction) {
-            final IWriteTransaction wtx = (IWriteTransaction) rtx;
+            final IWriteTransaction wtx = (IWriteTransaction)rtx;
             currentDocKey = DocumentTreeNavigator.adaptDocTree(wtx, docs);
         }
     }
@@ -115,11 +114,10 @@ public final class RevIndex {
      * @param term
      *            the term to be indexed.
      */
-    public void insertNextTermForCurrentNode(final String term)
-            throws TreetankException {
+    public void insertNextTermForCurrentNode(final String term) throws TreetankException {
         // check if rtx is instance of WriteTransaction
         if (rtx instanceof IWriteTransaction) {
-            final IWriteTransaction wtx = (IWriteTransaction) rtx;
+            final IWriteTransaction wtx = (IWriteTransaction)rtx;
 
             // Navigating in the trie
             TrieNavigator.adaptTrie(wtx, term);
@@ -127,8 +125,7 @@ public final class RevIndex {
             // If the trienode has no child, insert the root for the
             // references..
             if (!wtx.moveToFirstChild()) {
-                wtx.insertElementAsFirstChild(new QName(
-                        DOCUMENTS_REF_ROOTELEMENT));
+                wtx.insertElementAsFirstChild(new QName(DOCUMENTS_REF_ROOTELEMENT));
             } else
             // ..otherwise go to the first child..
             {
@@ -137,40 +134,34 @@ public final class RevIndex {
                 // combined trie/reference structure
                 do {
                     if (wtx.getNode().getNameKey() == NamePageHash
-                            .generateHashForString(DOCUMENTS_REF_ROOTELEMENT)) {
+                        .generateHashForString(DOCUMENTS_REF_ROOTELEMENT)) {
                         found = true;
                         break;
                     }
-                } while (wtx.moveToRightSibling());
+                } while(wtx.moveToRightSibling());
 
                 // if no document reference root was found, insert it, otherwise
                 // go for it.
                 if (!found) {
-                    wtx.insertElementAsFirstChild(new QName(
-                            DOCUMENTS_REF_ROOTELEMENT));
+                    wtx.insertElementAsFirstChild(new QName(DOCUMENTS_REF_ROOTELEMENT));
                 }
 
             }
             if (wtx.moveToFirstChild()) {
                 if (!wtx.moveToFirstChild()) {
                     throw new IllegalStateException(
-                            "At each reference, there must be a corresponding text containing the reference!");
+                        "At each reference, there must be a corresponding text containing the reference!");
                 }
-                final long lastKey = Long
-                        .parseLong(wtx.getValueOfCurrentNode());
+                final long lastKey = Long.parseLong(wtx.getValueOfCurrentNode());
                 if (lastKey != currentDocKey) {
                     wtx.moveToParent();
                     wtx.moveToParent();
-                    wtx.insertElementAsFirstChild(new QName(
-                            DOCUMENTREFERENCE_ELEMENTNAME));
-                    wtx.insertTextAsFirstChild(new StringBuilder().append(
-                            currentDocKey).toString());
+                    wtx.insertElementAsFirstChild(new QName(DOCUMENTREFERENCE_ELEMENTNAME));
+                    wtx.insertTextAsFirstChild(new StringBuilder().append(currentDocKey).toString());
                 }
             } else {
-                wtx.insertElementAsFirstChild(new QName(
-                        DOCUMENTREFERENCE_ELEMENTNAME, EMPTY_STRING));
-                wtx.insertTextAsFirstChild(new StringBuilder().append(
-                        currentDocKey).toString());
+                wtx.insertElementAsFirstChild(new QName(DOCUMENTREFERENCE_ELEMENTNAME, EMPTY_STRING));
+                wtx.insertTextAsFirstChild(new StringBuilder().append(currentDocKey).toString());
             }
         }
     }
@@ -184,7 +175,7 @@ public final class RevIndex {
      */
     public long finishIndexInput() throws TreetankException {
         if (rtx instanceof IWriteTransaction) {
-            final IWriteTransaction wtx = (IWriteTransaction) rtx;
+            final IWriteTransaction wtx = (IWriteTransaction)rtx;
             try {
                 wtx.commit();
             } catch (final TreetankIOException exc) {
@@ -203,7 +194,7 @@ public final class RevIndex {
     public void close() {
         if (rtx instanceof IWriteTransaction) {
             try {
-                ((IWriteTransaction) rtx).commit();
+                ((IWriteTransaction)rtx).commit();
                 rtx.close();
                 indexSession.close();
             } catch (final TreetankException exc) {
@@ -229,19 +220,17 @@ public final class RevIndex {
         rtx.moveToFirstChild();
         do {
             // got doc-ref-root, taking all childs
-            if (rtx.getNode().getNameKey() == NamePageHash
-                    .generateHashForString(DOCUMENTS_REF_ROOTELEMENT)) {
+            if (rtx.getNode().getNameKey() == NamePageHash.generateHashForString(DOCUMENTS_REF_ROOTELEMENT)) {
                 rtx.moveToFirstChild();
                 do {
                     rtx.moveToFirstChild();
-                    final long key = Long
-                            .parseLong(rtx.getValueOfCurrentNode());
+                    final long key = Long.parseLong(rtx.getValueOfCurrentNode());
                     returnVal.add(key);
                     rtx.moveToParent();
-                } while (rtx.moveToRightSibling());
+                } while(rtx.moveToRightSibling());
                 break;
             }
-        } while (rtx.moveToRightSibling());
+        } while(rtx.moveToRightSibling());
 
         return returnVal;
 
@@ -307,10 +296,9 @@ public final class RevIndex {
     /**
      * Initialising basic structure.
      */
-    static void initialiseBasicStructure(final IReadTransaction rtx)
-            throws TreetankException {
+    static void initialiseBasicStructure(final IReadTransaction rtx) throws TreetankException {
         if (rtx instanceof IWriteTransaction) {
-            final IWriteTransaction wtx = (IWriteTransaction) rtx;
+            final IWriteTransaction wtx = (IWriteTransaction)rtx;
             wtx.moveToDocumentRoot();
             wtx.insertElementAsFirstChild(new QName(METAROOT_ELEMENTNAME));
             wtx.insertElementAsRightSibling(new QName(TRIEROOT_ELEMENTNAME));

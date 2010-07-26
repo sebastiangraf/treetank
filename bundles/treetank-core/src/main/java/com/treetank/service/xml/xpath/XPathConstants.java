@@ -21,8 +21,8 @@ package com.treetank.service.xml.xpath;
 /**
  * <h1>XPathConstants</h1>
  * <p>
- * This interface contains constants that are used by the XPathScanner, the
- * XPathToken and the XPathParser as well.
+ * This interface contains constants that are used by the XPathScanner, the XPathToken and the XPathParser as
+ * well.
  * </p>
  */
 public interface XPathConstants {

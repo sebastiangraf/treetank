@@ -30,10 +30,9 @@ import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
 /**
  * <h1>ExceptAxis</h1>
  * <p>
- * Returns the nodes of the first operand except those of the second operand.
- * This axis takes two node sequences as operands and returns a sequence
- * containing all the nodes that occur in the first, but not in the second
- * operand.
+ * Returns the nodes of the first operand except those of the second operand. This axis takes two node
+ * sequences as operands and returns a sequence containing all the nodes that occur in the first, but not in
+ * the second operand.
  * </p>
  */
 public class ExceptAxis extends AbstractAxis implements IAxis {
@@ -60,8 +59,7 @@ public class ExceptAxis extends AbstractAxis implements IAxis {
      * @param operand2
      *            Second operand
      */
-    public ExceptAxis(final IReadTransaction rtx, final IAxis operand1,
-            final IAxis operand2) {
+    public ExceptAxis(final IReadTransaction rtx, final IAxis operand1, final IAxis operand2) {
 
         super(rtx);
         mOp1 = operand1;
@@ -96,7 +94,7 @@ public class ExceptAxis extends AbstractAxis implements IAxis {
     public boolean hasNext() {
 
         // first all items of the second operand are stored in the set.
-        while (mOp2.hasNext()) {
+        while(mOp2.hasNext()) {
             if (getTransaction().getNode().getNodeKey() < 0) { // only nodes are
                 // allowed
                 throw new XPathError(ErrorType.XPTY0004);
@@ -104,7 +102,7 @@ public class ExceptAxis extends AbstractAxis implements IAxis {
             mDupSet.add(getTransaction().getNode().getNodeKey());
         }
 
-        while (mOp1.hasNext()) {
+        while(mOp1.hasNext()) {
             if (getTransaction().getNode().getNodeKey() < 0) { // only nodes are
                 // allowed
                 throw new XPathError(ErrorType.XPTY0004);

@@ -41,8 +41,7 @@ public class NestedAxisTest {
     @Test
     public void testNestedAxisTest() throws TreetankException {
         // Build simple test tree.
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -52,18 +51,17 @@ public class NestedAxisTest {
 
         // XPath expression /p:a/b/text()
         // Part: /p:a
-        final IAxis childA = new FilterAxis(new ChildAxis(wtx), new NameFilter(
-                wtx, "p:a"));
+        final IAxis childA = new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "p:a"));
         // Part: /b
-        final IAxis childB = new FilterAxis(new ChildAxis(wtx), new NameFilter(
-                wtx, "b"));
+        final IAxis childB = new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "b"));
         // Part: /text()
-        final IAxis text = new FilterAxis(new ChildAxis(wtx), new TextFilter(
-                wtx));
+        final IAxis text = new FilterAxis(new ChildAxis(wtx), new TextFilter(wtx));
         // Part: /p:a/b/text()
         final IAxis axis = new NestedAxis(new NestedAxis(childA, childB), text);
 
-        IAxisTest.testIAxisConventions(axis, new long[] { 6L, 12L });
+        IAxisTest.testIAxisConventions(axis, new long[] {
+            6L, 12L
+        });
 
         wtx.abort();
         wtx.close();
@@ -74,8 +72,7 @@ public class NestedAxisTest {
     @Test
     public void testNestedAxisTest2() throws TreetankException {
         // Build simple test tree.
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -85,19 +82,17 @@ public class NestedAxisTest {
 
         // XPath expression /[:a/b/@p:x]
         // Part: /p:a
-        final IAxis childA = new FilterAxis(new ChildAxis(wtx), new NameFilter(
-                wtx, "p:a"));
+        final IAxis childA = new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "p:a"));
         // Part: /b
-        final IAxis childB = new FilterAxis(new ChildAxis(wtx), new NameFilter(
-                wtx, "b"));
+        final IAxis childB = new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "b"));
         // Part: /@x
-        final IAxis attributeX = new FilterAxis(new AttributeAxis(wtx),
-                new NameFilter(wtx, "p:x"));
+        final IAxis attributeX = new FilterAxis(new AttributeAxis(wtx), new NameFilter(wtx, "p:x"));
         // Part: /p:a/b/@p:x
-        final IAxis axis = new NestedAxis(new NestedAxis(childA, childB),
-                attributeX);
+        final IAxis axis = new NestedAxis(new NestedAxis(childA, childB), attributeX);
 
-        IAxisTest.testIAxisConventions(axis, new long[] { 10L });
+        IAxisTest.testIAxisConventions(axis, new long[] {
+            10L
+        });
 
         wtx.abort();
         wtx.close();
@@ -108,8 +103,7 @@ public class NestedAxisTest {
     @Test
     public void testNestedAxisTest3() throws TreetankException {
         // Build simple test tree.
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -119,18 +113,17 @@ public class NestedAxisTest {
 
         // XPath expression p:a/node():
         // Part: /p:a
-        final IAxis childA = new FilterAxis(new ChildAxis(wtx), new NameFilter(
-                wtx, "p:a"));
+        final IAxis childA = new FilterAxis(new ChildAxis(wtx), new NameFilter(wtx, "p:a"));
 
         // Part: /node()
-        final IAxis childNode = new FilterAxis(new ChildAxis(wtx),
-                new NodeFilter(wtx));
+        final IAxis childNode = new FilterAxis(new ChildAxis(wtx), new NodeFilter(wtx));
 
         // Part: /p:a/node():
         final IAxis axis = new NestedAxis(childA, childNode);
 
-        IAxisTest
-                .testIAxisConventions(axis, new long[] { 4L, 5L, 8L, 9L, 13L });
+        IAxisTest.testIAxisConventions(axis, new long[] {
+            4L, 5L, 8L, 9L, 13L
+        });
 
         wtx.abort();
         wtx.close();

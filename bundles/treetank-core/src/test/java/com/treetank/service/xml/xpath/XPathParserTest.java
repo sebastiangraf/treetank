@@ -51,8 +51,7 @@ public class XPathParserTest {
     public void testLiterals() throws TreetankException {
 
         // Build simple test tree.
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
 
@@ -62,15 +61,13 @@ public class XPathParserTest {
 
         axis = new XPathAxis(rtx, "\"12.5\"");
         assertEquals(true, axis.hasNext());
-        assertEquals("12.5",
-                TypedValue.parseString(rtx.getNode().getRawValue()));
+        assertEquals("12.5", TypedValue.parseString(rtx.getNode().getRawValue()));
         assertEquals(rtx.keyForName("xs:string"), rtx.getNode().getTypeKey());
         assertEquals(false, axis.hasNext());
 
         axis = new XPathAxis(rtx, "\"He said, \"\"I don't like it\"\"\"");
         assertEquals(true, axis.hasNext());
-        assertEquals("He said, I don't like it",
-                TypedValue.parseString(rtx.getNode().getRawValue()));
+        assertEquals("He said, I don't like it", TypedValue.parseString(rtx.getNode().getRawValue()));
         assertEquals(rtx.keyForName("xs:string"), rtx.getNode().getTypeKey());
         assertEquals(false, axis.hasNext());
 
@@ -83,15 +80,13 @@ public class XPathParserTest {
         axis = new XPathAxis(rtx, "12.5");
         assertEquals(true, axis.hasNext());
         assertEquals(rtx.keyForName("xs:decimal"), rtx.getNode().getTypeKey());
-        assertEquals("12.5",
-                TypedValue.parseString(rtx.getNode().getRawValue()));
+        assertEquals("12.5", TypedValue.parseString(rtx.getNode().getRawValue()));
         assertEquals(false, axis.hasNext());
 
         axis = new XPathAxis(rtx, "12.5E2");
         assertEquals(true, axis.hasNext());
         assertEquals(rtx.keyForName("xs:double"), rtx.getNode().getTypeKey());
-        assertEquals("12.5E2",
-                TypedValue.parseString(rtx.getNode().getRawValue()));
+        assertEquals("12.5E2", TypedValue.parseString(rtx.getNode().getRawValue()));
         assertEquals(false, axis.hasNext());
 
         axis = new XPathAxis(rtx, "1");
@@ -109,16 +104,14 @@ public class XPathParserTest {
     public void testEBNF() throws TreetankException {
 
         // Build simple test tree.
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
 
         parser = new XPathParser(rtx, "/p:a");
         parser.parseQuery();
 
-        parser = new XPathParser(rtx,
-                "/p:a/node(), /b/descendant-or-self::adsfj");
+        parser = new XPathParser(rtx, "/p:a/node(), /b/descendant-or-self::adsfj");
         parser.parseQuery();
 
         parser = new XPathParser(rtx, "for $i in /p:a return $i");

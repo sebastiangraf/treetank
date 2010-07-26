@@ -24,11 +24,9 @@ public enum ERevisioning {
          * {@inheritDoc}
          */
         @Override
-        public NodePage combinePages(final NodePage[] pages,
-                final int revToRestore) {
+        public NodePage combinePages(final NodePage[] pages, final int revToRestore) {
             final long nodePageKey = pages[0].getNodePageKey();
-            final NodePage returnVal = new NodePage(nodePageKey,
-                    pages[0].getRevision());
+            final NodePage returnVal = new NodePage(nodePageKey, pages[0].getRevision());
 
             for (int i = 0; i < pages[0].getNodes().length; i++) {
                 returnVal.setNode(i, pages[0].getNode(i));
@@ -41,12 +39,14 @@ public enum ERevisioning {
          * {@inheritDoc}
          */
         @Override
-        public NodePageContainer combinePagesForModification(
-                final NodePage[] pages, final int mileStoneRevision) {
+        public NodePageContainer combinePagesForModification(final NodePage[] pages,
+            final int mileStoneRevision) {
             final long nodePageKey = pages[0].getNodePageKey();
-            final NodePage[] returnVal = {
+            final NodePage[] returnVal =
+                {
                     new NodePage(nodePageKey, pages[0].getRevision() + 1),
-                    new NodePage(nodePageKey, pages[0].getRevision() + 1) };
+                    new NodePage(nodePageKey, pages[0].getRevision() + 1)
+                };
 
             for (int i = 0; i < pages[0].getNodes().length; i++) {
                 returnVal[0].setNode(i, pages[0].getNode(i));
@@ -55,8 +55,7 @@ public enum ERevisioning {
                 }
             }
 
-            final NodePageContainer cont = new NodePageContainer(returnVal[0],
-                    returnVal[1]);
+            final NodePageContainer cont = new NodePageContainer(returnVal[0], returnVal[1]);
             return cont;
         }
 
@@ -72,11 +71,9 @@ public enum ERevisioning {
          * {@inheritDoc}
          */
         @Override
-        public NodePage combinePages(final NodePage[] pages,
-                final int revToRestore) {
+        public NodePage combinePages(final NodePage[] pages, final int revToRestore) {
             final long nodePageKey = pages[0].getNodePageKey();
-            final NodePage returnVal = new NodePage(nodePageKey,
-                    pages[0].getRevision());
+            final NodePage returnVal = new NodePage(nodePageKey, pages[0].getRevision());
             final NodePage latest = pages[0];
 
             NodePage referencePage = pages[0];
@@ -103,12 +100,13 @@ public enum ERevisioning {
          * {@inheritDoc}
          */
         @Override
-        public NodePageContainer combinePagesForModification(
-                final NodePage[] pages, final int revToRestore) {
+        public NodePageContainer combinePagesForModification(final NodePage[] pages, final int revToRestore) {
             final long nodePageKey = pages[0].getNodePageKey();
-            final NodePage[] returnVal = {
+            final NodePage[] returnVal =
+                {
                     new NodePage(nodePageKey, pages[0].getRevision() + 1),
-                    new NodePage(nodePageKey, pages[0].getRevision() + 1) };
+                    new NodePage(nodePageKey, pages[0].getRevision() + 1)
+                };
 
             final NodePage latest = pages[0];
             NodePage fullDump = pages[0];
@@ -128,16 +126,14 @@ public enum ERevisioning {
                     if (fullDump.getNode(j) != null) {
                         returnVal[0].setNode(j, fullDump.getNode(j));
                         if ((latest.getRevision() + 1) % revToRestore == 0) {
-                            returnVal[1]
-                                    .setNode(j, fullDump.getNode(j).clone());
+                            returnVal[1].setNode(j, fullDump.getNode(j).clone());
                         }
                     }
                 }
 
             }
 
-            final NodePageContainer cont = new NodePageContainer(returnVal[0],
-                    returnVal[1]);
+            final NodePageContainer cont = new NodePageContainer(returnVal[0], returnVal[1]);
             return cont;
         }
 
@@ -153,11 +149,9 @@ public enum ERevisioning {
          * {@inheritDoc}
          */
         @Override
-        public NodePage combinePages(final NodePage[] pages,
-                final int revToRestore) {
+        public NodePage combinePages(final NodePage[] pages, final int revToRestore) {
             final long nodePageKey = pages[0].getNodePageKey();
-            final NodePage returnVal = new NodePage(nodePageKey,
-                    pages[0].getRevision());
+            final NodePage returnVal = new NodePage(nodePageKey, pages[0].getRevision());
             for (NodePage page : pages) {
                 assert page.getNodePageKey() == nodePageKey;
                 for (int i = 0; i < page.getNodes().length; i++) {
@@ -173,13 +167,14 @@ public enum ERevisioning {
          * {@inheritDoc}
          */
         @Override
-        public NodePageContainer combinePagesForModification(
-                final NodePage[] pages, final int revToRestore) {
+        public NodePageContainer combinePagesForModification(final NodePage[] pages, final int revToRestore) {
 
             final long nodePageKey = pages[0].getNodePageKey();
-            final NodePage[] returnVal = {
+            final NodePage[] returnVal =
+                {
                     new NodePage(nodePageKey, pages[0].getRevision() + 1),
-                    new NodePage(nodePageKey, pages[0].getRevision() + 1) };
+                    new NodePage(nodePageKey, pages[0].getRevision() + 1)
+                };
 
             final Set<Integer> nodesSet = new TreeSet<Integer>();
 
@@ -187,8 +182,7 @@ public enum ERevisioning {
                 assert pages[j].getNodePageKey() == nodePageKey;
                 for (int i = 0; i < pages[j].getNodes().length; i++) {
                     // Caching the complete page
-                    if (pages[j].getNode(i) != null
-                            && returnVal[0].getNode(i) == null) {
+                    if (pages[j].getNode(i) != null && returnVal[0].getNode(i) == null) {
                         returnVal[0].setNode(i, pages[j].getNode(i));
 
                         if (pages.length == revToRestore) {
@@ -196,16 +190,14 @@ public enum ERevisioning {
                                 nodesSet.add(i);
                             } else {
                                 if (!nodesSet.contains(i)) {
-                                    returnVal[1].setNode(i, pages[j].getNode(i)
-                                            .clone());
+                                    returnVal[1].setNode(i, pages[j].getNode(i).clone());
                                 }
                             }
                         }
                     }
                 }
             }
-            final NodePageContainer cont = new NodePageContainer(returnVal[0],
-                    returnVal[1]);
+            final NodePageContainer cont = new NodePageContainer(returnVal[0], returnVal[1]);
             return cont;
         }
     },
@@ -220,11 +212,9 @@ public enum ERevisioning {
          * {@inheritDoc}
          */
         @Override
-        public NodePage combinePages(final NodePage[] pages,
-                final int revToRestore) {
+        public NodePage combinePages(final NodePage[] pages, final int revToRestore) {
             final long nodePageKey = pages[0].getNodePageKey();
-            final NodePage returnVal = new NodePage(nodePageKey,
-                    pages[0].getRevision());
+            final NodePage returnVal = new NodePage(nodePageKey, pages[0].getRevision());
             for (NodePage page : pages) {
                 assert page.getNodePageKey() == nodePageKey;
                 for (int i = 0; i < page.getNodes().length; i++) {
@@ -244,31 +234,29 @@ public enum ERevisioning {
          * {@inheritDoc}
          */
         @Override
-        public NodePageContainer combinePagesForModification(
-                final NodePage[] pages, final int revToRestore) {
+        public NodePageContainer combinePagesForModification(final NodePage[] pages, final int revToRestore) {
             final long nodePageKey = pages[0].getNodePageKey();
-            final NodePage[] returnVal = {
+            final NodePage[] returnVal =
+                {
                     new NodePage(nodePageKey, pages[0].getRevision() + 1),
-                    new NodePage(nodePageKey, pages[0].getRevision() + 1) };
+                    new NodePage(nodePageKey, pages[0].getRevision() + 1)
+                };
 
             for (int j = 0; j < pages.length; j++) {
                 assert pages[j].getNodePageKey() == nodePageKey;
                 for (int i = 0; i < pages[j].getNodes().length; i++) {
                     // Caching the complete page
-                    if (pages[j].getNode(i) != null
-                            && returnVal[0].getNode(i) == null) {
+                    if (pages[j].getNode(i) != null && returnVal[0].getNode(i) == null) {
                         returnVal[0].setNode(i, pages[j].getNode(i));
 
                         if (returnVal[0].getRevision() % revToRestore == 0) {
-                            returnVal[1]
-                                    .setNode(i, pages[j].getNode(i).clone());
+                            returnVal[1].setNode(i, pages[j].getNode(i).clone());
                         }
                     }
                 }
             }
 
-            final NodePageContainer cont = new NodePageContainer(returnVal[0],
-                    returnVal[1]);
+            final NodePageContainer cont = new NodePageContainer(returnVal[0], returnVal[1]);
             return cont;
         }
     };
@@ -283,8 +271,7 @@ public enum ERevisioning {
      *            the revision needed to build up the complete milestone.
      * @return the complete NodePage
      */
-    public abstract NodePage combinePages(final NodePage[] pages,
-            final int revToRestore);
+    public abstract NodePage combinePages(final NodePage[] pages, final int revToRestore);
 
     /**
      * Method to reconstruct a complete NodePage for reading as well as a
@@ -297,7 +284,7 @@ public enum ERevisioning {
      * @return a NodePageContainer holding a complete NodePage for reading a one
      *         for writing
      */
-    public abstract NodePageContainer combinePagesForModification(
-            final NodePage[] pages, final int mileStoneRevision);
+    public abstract NodePageContainer combinePagesForModification(final NodePage[] pages,
+        final int mileStoneRevision);
 
 }

@@ -59,8 +59,8 @@ public final class ElementNode extends AbsStructNode {
      * @param namespaceKeys
      *            namespace keys
      */
-    ElementNode(final long[] longBuilder, final int[] intBuilder,
-            final List<Long> attributeKeys, final List<Long> namespaceKeys) {
+    ElementNode(final long[] longBuilder, final int[] intBuilder, final List<Long> attributeKeys,
+        final List<Long> namespaceKeys) {
         super(longBuilder, intBuilder);
         mAttributeKeys = attributeKeys;
         mNamespaceKeys = namespaceKeys;
@@ -78,7 +78,7 @@ public final class ElementNode extends AbsStructNode {
      */
     public long getAttributeKey(final int index) {
         if (mAttributeKeys.size() <= index) {
-            return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
+            return (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
         }
         return mAttributeKeys.get(index);
     }
@@ -114,7 +114,7 @@ public final class ElementNode extends AbsStructNode {
      */
     public long getNamespaceKey(final int index) {
         if (mNamespaceKeys.size() <= index) {
-            return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
+            return (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
         }
         return mNamespaceKeys.get(index);
     }
@@ -188,8 +188,7 @@ public final class ElementNode extends AbsStructNode {
     @Override
     public AbsNode clone() {
         final List<Long> attList = new ArrayList<Long>(mAttributeKeys.size());
-        final List<Long> namespaceList = new ArrayList<Long>(
-                mNamespaceKeys.size());
+        final List<Long> namespaceList = new ArrayList<Long>(mNamespaceKeys.size());
         for (final Long i : mAttributeKeys) {
             attList.add(i);
         }
@@ -197,16 +196,14 @@ public final class ElementNode extends AbsStructNode {
             namespaceList.add(i);
         }
 
-        final AbsNode toClone = new ElementNode(AbsNode.cloneData(mLongData),
-                AbsNode.cloneData(mIntData), attList, namespaceList);
+        final AbsNode toClone =
+            new ElementNode(AbsNode.cloneData(mLongData), AbsNode.cloneData(mIntData), attList, namespaceList);
         return toClone;
     }
 
-    public final static AbsNode createData(final long nodeKey,
-            final long parentKey, final long leftSibKey,
-            final long rightSibKey, final long firstChild,
-            final long childCount, final int nameKey, final int uriKey,
-            final int type) {
+    public final static AbsNode createData(final long nodeKey, final long parentKey, final long leftSibKey,
+        final long rightSibKey, final long firstChild, final long childCount, final int nameKey,
+        final int uriKey, final int type) {
         final long[] longData = new long[ENodes.ELEMENT_KIND.getLongSize()];
         final int[] intData = new int[ENodes.ELEMENT_KIND.getIntSize()];
         longData[AbsNode.NODE_KEY] = nodeKey;
@@ -220,26 +217,21 @@ public final class ElementNode extends AbsStructNode {
         intData[AbsNode.TYPE_KEY] = type;
         intData[ElementNode.ATTRIBUTE_COUNT] = 0;
         intData[ElementNode.NAMESPACE_COUNT] = 0;
-        return ENodes.ELEMENT_KIND.createNodeFromScratch(longData, intData,
-                null);
+        return ENodes.ELEMENT_KIND.createNodeFromScratch(longData, intData, null);
     }
 
-    public final static AbsNode createData(final long nodeKey,
-            final ElementNode node) {
-        return createData(nodeKey, node.getParentKey(),
-                node.getLeftSiblingKey(), node.getRightSiblingKey(),
-                node.getFirstChildKey(), node.getChildCount(),
-                node.getNameKey(), node.getURIKey(), node.getTypeKey());
+    public final static AbsNode createData(final long nodeKey, final ElementNode node) {
+        return createData(nodeKey, node.getParentKey(), node.getLeftSiblingKey(), node.getRightSiblingKey(),
+            node.getFirstChildKey(), node.getChildCount(), node.getNameKey(), node.getURIKey(), node
+                .getTypeKey());
     }
 
     @Override
     public String toString() {
         final StringBuilder returnVal = new StringBuilder(super.toString());
-        returnVal.append("\n\tname key: ").append(getNameKey())
-                .append("\n\turi key: ").append(getURIKey())
-                .append(getNameKey()).append("\n\tnamespaces: ")
-                .append(mNamespaceKeys.toString()).append("\n\tattributes: ")
-                .append(mAttributeKeys.toString()).toString();
+        returnVal.append("\n\tname key: ").append(getNameKey()).append("\n\turi key: ").append(getURIKey())
+            .append(getNameKey()).append("\n\tnamespaces: ").append(mNamespaceKeys.toString()).append(
+                "\n\tattributes: ").append(mAttributeKeys.toString()).toString();
         return returnVal.toString();
     }
 

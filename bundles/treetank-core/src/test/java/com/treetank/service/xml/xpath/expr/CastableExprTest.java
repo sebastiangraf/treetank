@@ -59,8 +59,7 @@ public class CastableExprTest {
     @Test
     public void testCastableExpr() throws TreetankException {
         // Build simple test tree.
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -70,20 +69,16 @@ public class CastableExprTest {
         final IAxis axis1 = new XPathAxis(rtx, "1 castable as xs:decimal");
         assertEquals(true, axis1.hasNext());
         assertEquals(rtx.keyForName("xs:boolean"), rtx.getNode().getTypeKey());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
-                .getNode().getRawValue()))));
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx.getNode().getRawValue()))));
         assertEquals(false, axis1.hasNext());
 
-        final IAxis axis2 = new XPathAxis(rtx,
-                "10.0 castable as xs:anyAtomicType");
+        final IAxis axis2 = new XPathAxis(rtx, "10.0 castable as xs:anyAtomicType");
         try {
             assertEquals(true, axis2.hasNext());
         } catch (XPathError e) {
-            assertThat(
-                    e.getMessage(),
-                    is("err:XPST0080 "
-                            + "Target type of a cast or castable expression must not be "
-                            + "xs:NOTATION or xs:anyAtomicType."));
+            assertThat(e.getMessage(), is("err:XPST0080 "
+            + "Target type of a cast or castable expression must not be "
+            + "xs:NOTATION or xs:anyAtomicType."));
         }
 
         // Token is not implemented yet.
@@ -94,12 +89,10 @@ public class CastableExprTest {
         // assertEquals(true, rtx.getValueAsBoolean());
         // assertEquals(false, axis3.hasNext());
 
-        final IAxis axis4 = new XPathAxis(rtx,
-                "\"hello\" castable as xs:string");
+        final IAxis axis4 = new XPathAxis(rtx, "\"hello\" castable as xs:string");
         assertEquals(true, axis4.hasNext());
         assertEquals(rtx.keyForName("xs:boolean"), rtx.getNode().getTypeKey());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
-                .getNode().getRawValue()))));
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx.getNode().getRawValue()))));
         assertEquals(false, axis4.hasNext());
 
         // final IAxis axis5 = new XPathAxis(rtx,

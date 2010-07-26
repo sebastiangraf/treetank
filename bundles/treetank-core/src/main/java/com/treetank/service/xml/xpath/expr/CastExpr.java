@@ -32,15 +32,12 @@ import com.treetank.utils.TypedValue;
  * The cast expression cast a given value into a given target type.
  * </p>
  * <p>
- * Occasionally it is necessary to convert a value to a specific datatype. For
- * this purpose, XPath provides a cast expression that creates a new value of a
- * specific type based on an existing value. A cast expression takes two
- * operands: an input expression and a target type. The type of the input
- * expression is called the input or source type. The target type must be an
- * atomic type that is in the in-scope schema types [err:XPST0051]. In addition,
- * the target type cannot be xs:NOTATION or xs:anyAtomicType [err:XPST0080]. The
- * optional occurrence indicator "?" denotes that an empty sequence is
- * permitted.
+ * Occasionally it is necessary to convert a value to a specific datatype. For this purpose, XPath provides a
+ * cast expression that creates a new value of a specific type based on an existing value. A cast expression
+ * takes two operands: an input expression and a target type. The type of the input expression is called the
+ * input or source type. The target type must be an atomic type that is in the in-scope schema types
+ * [err:XPST0051]. In addition, the target type cannot be xs:NOTATION or xs:anyAtomicType [err:XPST0080]. The
+ * optional occurrence indicator "?" denotes that an empty sequence is permitted.
  * </p>
  */
 public class CastExpr extends AbstractExpression implements IAxis {
@@ -64,8 +61,7 @@ public class CastExpr extends AbstractExpression implements IAxis {
      * @param target
      *            Type the input expression will be casted to.
      */
-    public CastExpr(final IReadTransaction rtx, final IAxis inputExpr,
-            final SingleType target) {
+    public CastExpr(final IReadTransaction rtx, final IAxis inputExpr, final SingleType target) {
 
         super(rtx);
         mSourceExpr = inputExpr;
@@ -99,10 +95,8 @@ public class CastExpr extends AbstractExpression implements IAxis {
 
         if (mSourceExpr.hasNext()) {
 
-            final Type sourceType = Type.getType(getTransaction().getNode()
-                    .getTypeKey());
-            final String sourceValue = TypedValue.parseString(getTransaction()
-                    .getNode().getRawValue());
+            final Type sourceType = Type.getType(getTransaction().getNode().getTypeKey());
+            final String sourceValue = TypedValue.parseString(getTransaction().getNode().getRawValue());
 
             // cast source to target type, if possible
             if (sourceType.isCastableTo(mTargetType, sourceValue)) {

@@ -33,8 +33,8 @@ import com.treetank.service.xml.shredder.XMLShredder;
 
 public class ShreddFileInvocation {
 
-    public static final String XML = "src" + File.separator + "test"
-            + File.separator + "resources" + File.separator + "content.xml";
+    public static final String XML = "src" + File.separator + "test" + File.separator + "resources"
+    + File.separator + "content.xml";
 
     public static void main(String[] args) {
         try {
@@ -43,15 +43,13 @@ public class ShreddFileInvocation {
             XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
 
             // Verify.
-            final IDatabase database = TestHelper.getDatabase(PATHS.PATH1
-                    .getFile());
+            final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
             final ISession session = database.getSession();
             final IReadTransaction rtx = session.beginReadTransaction();
             final IWriteTransaction wtx = session.beginWriteTransaction();
             rtx.moveToDocumentRoot();
 
-            final IAxis xpath = new XPathAxis(wtx,
-                    "/office:document-content/office:body/office:text/text:p");
+            final IAxis xpath = new XPathAxis(wtx, "/office:document-content/office:body/office:text/text:p");
             for (long node : xpath) {
                 System.out.println(node);
                 wtx.moveTo(node);

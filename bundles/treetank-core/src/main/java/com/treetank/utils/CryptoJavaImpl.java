@@ -63,7 +63,7 @@ public class CryptoJavaImpl implements ICrypto {
             mCompressor.setInput(tmp);
             mCompressor.finish();
             int count;
-            while (!mCompressor.finished()) {
+            while(!mCompressor.finished()) {
                 count = mCompressor.deflate(mTmp);
                 mOut.write(mTmp, 0, count);
             }
@@ -101,7 +101,7 @@ public class CryptoJavaImpl implements ICrypto {
             mOut.reset();
             mDecompressor.setInput(tmp);
             int count;
-            while (!mDecompressor.finished()) {
+            while(!mDecompressor.finished()) {
                 count = mDecompressor.inflate(mTmp);
                 mOut.write(mTmp, 0, count);
             }

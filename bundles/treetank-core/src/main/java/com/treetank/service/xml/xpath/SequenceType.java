@@ -23,9 +23,8 @@ import com.treetank.api.IFilter;
 /**
  * <h1>SequenceType</h1>
  * <p>
- * A sequence type defines a type a the items in a sequnce can have. It consists
- * of either an empty-sequence-test, or an ItemType(kind test, item() or atomic
- * value) and an optional wildcard (*, ?, +)
+ * A sequence type defines a type a the items in a sequnce can have. It consists of either an
+ * empty-sequence-test, or an ItemType(kind test, item() or atomic value) and an optional wildcard (*, ?, +)
  * </p>
  */
 public class SequenceType {
@@ -65,11 +64,10 @@ public class SequenceType {
     }
 
     /**
-     * Constructor. Sequence type is an ItemType with an wildcard. <li>'ItemType
-     * ?' means the sequence has zero or one items that are of the ItemType</li>
-     * <li>'ItemType +' means the sequence one or more items that are of the
-     * ItemType</li> <li>'ItemType *' means the sequence has zero or more items
-     * that are of the ItemType</li>
+     * Constructor. Sequence type is an ItemType with an wildcard. <li>'ItemType ?' means the sequence has
+     * zero or one items that are of the ItemType</li> <li>'ItemType +' means the sequence one or more items
+     * that are of the ItemType</li> <li>'ItemType *' means the sequence has zero or more items that are of
+     * the ItemType</li>
      * 
      * @param filter
      *            item type filter

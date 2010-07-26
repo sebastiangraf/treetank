@@ -56,8 +56,7 @@ public class CompAxisTest {
     @Test
     public void testComp() throws TreetankException {
         // Build simple test tree.
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -69,20 +68,17 @@ public class CompAxisTest {
 
         final IAxis axis1 = new XPathAxis(rtx, "1.0 = 1.0");
         assertEquals(true, axis1.hasNext());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
-                .getNode().getRawValue()))));
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx.getNode().getRawValue()))));
         assertEquals(false, axis1.hasNext());
 
         final IAxis axis2 = new XPathAxis(rtx, "(1, 2, 3) < (2, 3)");
         assertEquals(true, axis2.hasNext());
-        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx
-                .getNode().getRawValue()))));
+        assertEquals(true, Boolean.parseBoolean(TypedValue.parseString((rtx.getNode().getRawValue()))));
         assertEquals(false, axis2.hasNext());
 
         final IAxis axis3 = new XPathAxis(rtx, "(1, 2, 3) > (3, 4)");
         assertEquals(true, axis3.hasNext());
-        assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx
-                .getNode().getRawValue()))));
+        assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx.getNode().getRawValue()))));
         assertEquals(false, axis3.hasNext());
 
         rtx.close();

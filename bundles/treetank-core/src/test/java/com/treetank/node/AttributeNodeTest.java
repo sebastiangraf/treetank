@@ -30,9 +30,10 @@ public class AttributeNodeTest {
 
     @Test
     public void testAttributeNode() {
-        final byte[] value = { (byte) 17, (byte) 18 };
-        final AttributeNode node1 = (AttributeNode) AttributeNode.createData(
-                99, 13, 14, 15, 19, value);
+        final byte[] value = {
+            (byte)17, (byte)18
+        };
+        final AttributeNode node1 = (AttributeNode)AttributeNode.createData(99, 13, 14, 15, 19, value);
 
         // Create empty node.
         check(node1);
@@ -41,12 +42,11 @@ public class AttributeNodeTest {
         final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
         node1.serialize(out);
         out.position(0);
-        final AttributeNode node2 = (AttributeNode) ENodes.ATTRIBUTE_KIND
-                .createNodeFromPersistence(out);
+        final AttributeNode node2 = (AttributeNode)ENodes.ATTRIBUTE_KIND.createNodeFromPersistence(out);
         check(node2);
 
         // Clone node.
-        final AttributeNode node3 = (AttributeNode) node2.clone();
+        final AttributeNode node3 = (AttributeNode)node2.clone();
         check(node3);
 
     }
@@ -67,17 +67,17 @@ public class AttributeNodeTest {
 
     @Test
     public void testHashCode() {
-        final byte[] value = { (byte) 17, (byte) 18 };
-        final byte[] value2 = { (byte) 19, (byte) 20 };
+        final byte[] value = {
+            (byte)17, (byte)18
+        };
+        final byte[] value2 = {
+            (byte)19, (byte)20
+        };
 
-        final AttributeNode node = (AttributeNode) AttributeNode.createData(99,
-                13, 14, 15, 19, value);
-        final AttributeNode node2 = (AttributeNode) AttributeNode.createData(
-                99, 13, 14, 15, 19, value);
-        final AttributeNode node3 = (AttributeNode) AttributeNode.createData(
-                99, 13, 14, 15, 19, value2);
-        final AttributeNode node4 = (AttributeNode) AttributeNode.createData(
-                100, 15, 12, 16, 123, value);
+        final AttributeNode node = (AttributeNode)AttributeNode.createData(99, 13, 14, 15, 19, value);
+        final AttributeNode node2 = (AttributeNode)AttributeNode.createData(99, 13, 14, 15, 19, value);
+        final AttributeNode node3 = (AttributeNode)AttributeNode.createData(99, 13, 14, 15, 19, value2);
+        final AttributeNode node4 = (AttributeNode)AttributeNode.createData(100, 15, 12, 16, 123, value);
 
         assertEquals(node2.hashCode(), node.hashCode());
         assertTrue(node2.equals(node));

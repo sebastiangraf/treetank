@@ -42,8 +42,8 @@ import com.treetank.service.xml.shredder.XMLShredder;
 public class XMarkTest {
 
     // XMark 1 GB
-    private static final String XML = "src" + File.separator + "test"
-            + File.separator + "resources" + File.separator + "auction.xml";
+    private static final String XML = "src" + File.separator + "test" + File.separator + "resources"
+    + File.separator + "auction.xml";
 
     private IDatabase database;
 
@@ -72,8 +72,9 @@ public class XMarkTest {
     public void testQ1_10() throws TreetankException {
 
         XPathStringChecker.testIAxisConventions(new XPathAxis(rtx,
-                "/site/people/person[@id=\"person0\"]/name/text()"),
-                new String[] { "Sinisa Farrel" });
+            "/site/people/person[@id=\"person0\"]/name/text()"), new String[] {
+            "Sinisa Farrel"
+        });
 
     }
 
@@ -82,9 +83,9 @@ public class XMarkTest {
 
         // Q1 The name of the person with ID 'person0' {projecting}
         XPathStringChecker.testIAxisConventions(new XPathAxis(rtx,
-                "for $b in /site/people/person[@id=\"person0\"] "
-                        + "return $b/name/text()"),
-                new String[] { "Sinisa Farrel" });
+            "for $b in /site/people/person[@id=\"person0\"] " + "return $b/name/text()"), new String[] {
+            "Sinisa Farrel"
+        });
 
     }
 
@@ -137,8 +138,10 @@ public class XMarkTest {
 
         // Q5 How many sold items cost more than 40?
         XPathStringChecker.testIAxisConventions(new XPathAxis(rtx,
-                "fn:count(for $i in /site/closed_auctions/closed_auction[price/text() >= 40] "
-                        + "return $i/price)"), new String[] { "75" });
+            "fn:count(for $i in /site/closed_auctions/closed_auction[price/text() >= 40] "
+            + "return $i/price)"), new String[] {
+            "75"
+        });
 
     }
 
@@ -147,8 +150,9 @@ public class XMarkTest {
 
         // Q6 How many items are listed on all continents?
         XPathStringChecker.testIAxisConventions(new XPathAxis(rtx,
-                "for $b in //site/regions return fn:count($b//item)"),
-                new String[] { "217" });
+            "for $b in //site/regions return fn:count($b//item)"), new String[] {
+            "217"
+        });
 
     }
 
@@ -156,13 +160,11 @@ public class XMarkTest {
     public void testQ7() throws TreetankException {
 
         // Q7 How many pieces of prose are in our database?
-        XPathStringChecker
-                .testIAxisConventions(
-                        new XPathAxis(
-                                rtx,
-                                "for $p in /site return fn:count($p//description) + "
-                                        + "fn:count($p//annotation) + fn:count($p//emailaddress)"),
-                        new String[] { "916.0" }); // TODO: why double?
+        XPathStringChecker.testIAxisConventions(new XPathAxis(rtx,
+            "for $p in /site return fn:count($p//description) + "
+            + "fn:count($p//annotation) + fn:count($p//emailaddress)"), new String[] {
+            "916.0"
+        }); // TODO: why double?
 
     }
 

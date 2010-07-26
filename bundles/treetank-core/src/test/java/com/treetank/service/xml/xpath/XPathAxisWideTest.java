@@ -38,11 +38,11 @@ import com.treetank.service.xml.shredder.XMLShredder;
 
 public class XPathAxisWideTest {
 
-    public static final String XML = "src" + File.separator + "test"
-            + File.separator + "resources" + File.separator + "factbook.xml";
+    public static final String XML = "src" + File.separator + "test" + File.separator + "resources"
+    + File.separator + "factbook.xml";
 
-    public static final String XML2 = "src" + File.separator + "test"
-            + File.separator + "resources" + File.separator + "shakespeare.xml";
+    public static final String XML2 = "src" + File.separator + "test" + File.separator + "resources"
+    + File.separator + "shakespeare.xml";
 
     @Before
     public void setUp() throws TreetankException {
@@ -61,26 +61,27 @@ public class XPathAxisWideTest {
         XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
 
         // Verify.
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
         rtx.moveToDocumentRoot();
 
-        IAxisTest
-                .testIAxisConventions(new XPathAxis(rtx,
-                        "/mondial/continent[@id]"), new long[] { 2L, 5L, 8L,
-                        11L, 14L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "/mondial/continent[@id]"), new long[] {
+            2L, 5L, 8L, 11L, 14L
+        });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                "mondial/continent[@name]"),
-                new long[] { 2L, 5L, 8L, 11L, 14L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "mondial/continent[@name]"), new long[] {
+            2L, 5L, 8L, 11L, 14L
+        });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                "mondial/continent[@id=\"f0_119\"]"), new long[] { 2L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "mondial/continent[@id=\"f0_119\"]"), new long[] {
+            2L
+        });
 
-        IAxisTest.testIAxisConventions(new XPathAxis(rtx,
-                "/mondial/continent[@name = \"Africa\"]"), new long[] { 14L });
+        IAxisTest.testIAxisConventions(new XPathAxis(rtx, "/mondial/continent[@name = \"Africa\"]"),
+            new long[] {
+                14L
+            });
 
         final IAxis axis5 = new XPathAxis(rtx, "mondial/lake/node()");
         for (int i = 0; i < 61; i++) {
@@ -89,16 +90,14 @@ public class XPathAxisWideTest {
         // assertEquals(29891L, axis5.next());
         assertEquals(false, axis5.hasNext());
 
-        final IAxis axis6 = new XPathAxis(rtx,
-                "mondial/country/religions/node()");
+        final IAxis axis6 = new XPathAxis(rtx, "mondial/country/religions/node()");
         for (int i = 0; i < 446; i++) {
             assertEquals(true, axis6.hasNext());
             axis6.next();
         }
         assertEquals(false, axis6.hasNext());
 
-        final IAxis axis7 = new XPathAxis(rtx,
-                "child::mondial/child::lake/child::node()");
+        final IAxis axis7 = new XPathAxis(rtx, "child::mondial/child::lake/child::node()");
         for (int i = 0; i < 60; i++) {
             assertEquals(true, axis7.hasNext());
             axis7.next();
@@ -114,8 +113,7 @@ public class XPathAxisWideTest {
         }
         assertEquals(false, axis8.hasNext());
 
-        final IAxis axis9 = new XPathAxis(rtx,
-                "/mondial/country/attribute::car_code");
+        final IAxis axis9 = new XPathAxis(rtx, "/mondial/country/attribute::car_code");
         for (int i = 0; i < 194; i++) {
             assertEquals(true, axis9.hasNext());
             axis9.next();

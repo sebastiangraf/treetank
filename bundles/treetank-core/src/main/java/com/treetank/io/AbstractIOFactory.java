@@ -27,7 +27,8 @@ public abstract class AbstractIOFactory {
     /**
      * Concurrent storage for all avaliable databases in runtime
      */
-    private final static Map<SessionConfiguration, AbstractIOFactory> FACTORIES = new ConcurrentHashMap<SessionConfiguration, AbstractIOFactory>();
+    private final static Map<SessionConfiguration, AbstractIOFactory> FACTORIES =
+        new ConcurrentHashMap<SessionConfiguration, AbstractIOFactory>();
 
     /**
      * Config for the session holding information about the location of the
@@ -44,7 +45,7 @@ public abstract class AbstractIOFactory {
      *            to be set
      */
     protected AbstractIOFactory(final DatabaseConfiguration paramDatabase,
-            final SessionConfiguration paramSession) {
+        final SessionConfiguration paramSession) {
         sessionConfig = paramSession;
         databaseConfig = paramDatabase;
     }
@@ -89,16 +90,15 @@ public abstract class AbstractIOFactory {
      *            with settings for the session
      * @return an instance of this factory based on the kind in the conf
      */
-    public final static AbstractIOFactory getInstance(
-            final DatabaseConfiguration databaseConf,
-            final SessionConfiguration sessionConf) throws TreetankIOException {
+    public final static AbstractIOFactory getInstance(final DatabaseConfiguration databaseConf,
+        final SessionConfiguration sessionConf) throws TreetankIOException {
         AbstractIOFactory fac = null;
         if (FACTORIES.containsKey(sessionConf)) {
             fac = FACTORIES.get(sessionConf);
         } else {
-            final AbstractIOFactory.StorageType storageType = AbstractIOFactory.StorageType
-                    .valueOf(databaseConf.getProps().getProperty(
-                            EDatabaseSetting.STORAGE_TYPE.name()));
+            final AbstractIOFactory.StorageType storageType =
+                AbstractIOFactory.StorageType.valueOf(databaseConf.getProps().getProperty(
+                    EDatabaseSetting.STORAGE_TYPE.name()));
             switch (storageType) {
             case File:
                 fac = new FileFactory(databaseConf, sessionConf);
@@ -107,8 +107,7 @@ public abstract class AbstractIOFactory {
                 fac = new BerkeleyFactory(databaseConf, sessionConf);
                 break;
             default:
-                throw new TreetankIOException("Type", storageType.toString(),
-                        "not valid!");
+                throw new TreetankIOException("Type", storageType.toString(), "not valid!");
             }
             FACTORIES.put(sessionConf, fac);
         }
@@ -116,11 +115,9 @@ public abstract class AbstractIOFactory {
     }
 
     /**
-     * Getting of all active {@link AbstractIOFactory} and related
-     * {@link SessionConfiguration}s.
+     * Getting of all active {@link AbstractIOFactory} and related {@link SessionConfiguration}s.
      * 
-     * @return a {@link Map} with the {@link SessionConfiguration} and
-     *         {@link AbstractIOFactory} pairs.
+     * @return a {@link Map} with the {@link SessionConfiguration} and {@link AbstractIOFactory} pairs.
      */
     public final static Map<SessionConfiguration, AbstractIOFactory> getActiveFactories() {
         return FACTORIES;

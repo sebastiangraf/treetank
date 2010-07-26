@@ -32,8 +32,8 @@ import com.treetank.utils.TypedValue;
 
 public class ClassInvocation {
 
-    public static final String XML = "src" + File.separator + "test"
-            + File.separator + "resources" + File.separator + "test.xml";
+    public static final String XML = "src" + File.separator + "test" + File.separator + "resources"
+    + File.separator + "test.xml";
 
     public static void main(String[] args) {
         try {
@@ -41,8 +41,7 @@ public class ClassInvocation {
             XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
 
             // Build simple test tree.
-            final IDatabase database = TestHelper.getDatabase(PATHS.PATH1
-                    .getFile());
+            final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
             final ISession session = database.getSession();
             final IReadTransaction rtx = session.beginReadTransaction();
             // rtx.moveTo(17L);
@@ -53,8 +52,7 @@ public class ClassInvocation {
             for (long key : new XPathAxis(rtx, query)) {
                 System.out.println(key);
                 System.out.println(rtx.nameForKey(rtx.getNode().getNameKey()));
-                System.out.println(TypedValue.parseString(rtx.getNode()
-                        .getRawValue()));
+                System.out.println(TypedValue.parseString(rtx.getNode().getRawValue()));
                 System.out.println(rtx.nameForKey(rtx.getNode().getTypeKey())); // will
                 // return
                 // null

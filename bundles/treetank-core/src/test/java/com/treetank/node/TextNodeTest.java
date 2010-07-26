@@ -33,21 +33,21 @@ public class TextNodeTest {
     public void testTextRootNode() {
 
         // Create empty node.
-        final byte[] value = { (byte) 17, (byte) 18 };
-        final TextNode node1 = (TextNode) TextNode.createData(13, 14, 15, 16,
-                19, value);
+        final byte[] value = {
+            (byte)17, (byte)18
+        };
+        final TextNode node1 = (TextNode)TextNode.createData(13, 14, 15, 16, 19, value);
         check(node1);
 
         // Serialize and deserialize node.
         final ByteBufferSinkAndSource out = new ByteBufferSinkAndSource();
         node1.serialize(out);
         out.position(0);
-        final TextNode node2 = (TextNode) ENodes.TEXT_KIND
-                .createNodeFromPersistence(out);
+        final TextNode node2 = (TextNode)ENodes.TEXT_KIND.createNodeFromPersistence(out);
         check(node2);
 
         // Clone node.
-        final TextNode node3 = (TextNode) node2.clone();
+        final TextNode node3 = (TextNode)node2.clone();
         check(node3);
     }
 
@@ -56,17 +56,13 @@ public class TextNodeTest {
         // Now compare.
         assertEquals(13L, node.getNodeKey());
         assertEquals(14L, node.getParentKey());
-        assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(),
-                node.getFirstChildKey());
+        assertEquals(EFixed.NULL_NODE_KEY.getStandardProperty(), node.getFirstChildKey());
         assertEquals(15L, node.getLeftSiblingKey());
         assertEquals(16L, node.getRightSiblingKey());
         assertEquals(19, node.getTypeKey());
-        assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(),
-                node.getNameKey());
-        assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(),
-                node.getURIKey());
-        assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(),
-                node.getNameKey());
+        assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(), node.getNameKey());
+        assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(), node.getURIKey());
+        assertEquals(EFixed.NULL_INT_KEY.getStandardProperty(), node.getNameKey());
         assertEquals(2, node.getRawValue().length);
         assertEquals(ENodes.TEXT_KIND, node.getKind());
         assertEquals(false, node.hasFirstChild());
@@ -77,16 +73,16 @@ public class TextNodeTest {
 
     @Test
     public void testHashCode() {
-        final byte[] value = { (byte) 17, (byte) 18 };
-        final byte[] value2 = { (byte) 19, (byte) 20 };
-        final TextNode node = (TextNode) TextNode.createData(99, 13, 14, 15,
-                19, value);
-        final TextNode node2 = (TextNode) TextNode.createData(99, 13, 14, 15,
-                19, value);
-        final TextNode node3 = (TextNode) TextNode.createData(99, 13, 14, 15,
-                19, value2);
-        final TextNode node4 = (TextNode) TextNode.createData(100, 15, 12, 16,
-                123, value);
+        final byte[] value = {
+            (byte)17, (byte)18
+        };
+        final byte[] value2 = {
+            (byte)19, (byte)20
+        };
+        final TextNode node = (TextNode)TextNode.createData(99, 13, 14, 15, 19, value);
+        final TextNode node2 = (TextNode)TextNode.createData(99, 13, 14, 15, 19, value);
+        final TextNode node3 = (TextNode)TextNode.createData(99, 13, 14, 15, 19, value2);
+        final TextNode node4 = (TextNode)TextNode.createData(100, 15, 12, 16, 123, value);
 
         assertEquals(node2.hashCode(), node.hashCode());
         assertTrue(node2.equals(node));

@@ -47,8 +47,7 @@ public final class TextNode extends AbsStructNode {
      * @param value
      *            val to set
      */
-    TextNode(final long[] longBuilder, final int[] intBuilder,
-            final byte[] value) {
+    TextNode(final long[] longBuilder, final int[] intBuilder, final byte[] value) {
         super(longBuilder, intBuilder);
         mValue = value;
         mIntData[VALUE_LENGTH] = value.length;
@@ -101,7 +100,7 @@ public final class TextNode extends AbsStructNode {
 
     @Override
     public long getFirstChildKey() {
-        return (Long) EFixed.NULL_NODE_KEY.getStandardProperty();
+        return (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
     }
 
     @Override
@@ -134,39 +133,34 @@ public final class TextNode extends AbsStructNode {
 
     @Override
     public AbsNode clone() {
-        final AbsNode toClone = new TextNode(AbsNode.cloneData(mLongData),
-                AbsNode.cloneData(mIntData), AbsNode.cloneData(mValue));
+        final AbsNode toClone =
+            new TextNode(AbsNode.cloneData(mLongData), AbsNode.cloneData(mIntData), AbsNode.cloneData(mValue));
         return toClone;
     }
 
-    public final static AbsNode createData(final long nodeKey,
-            final long parentKey, final long leftSibKey,
-            final long rightSibKey, final int type, final byte[] value) {
+    public final static AbsNode createData(final long nodeKey, final long parentKey, final long leftSibKey,
+        final long rightSibKey, final int type, final byte[] value) {
         final long[] longData = new long[ENodes.TEXT_KIND.getLongSize()];
         final int[] intData = new int[ENodes.TEXT_KIND.getIntSize()];
         longData[AbsNode.NODE_KEY] = nodeKey;
         longData[AbsNode.PARENT_KEY] = parentKey;
         longData[AbsStructNode.LEFT_SIBLING_KEY] = leftSibKey;
         longData[AbsStructNode.RIGHT_SIBLING_KEY] = rightSibKey;
-        longData[AbsStructNode.FIRST_CHILD_KEY] = (Long) EFixed.NULL_NODE_KEY
-                .getStandardProperty();
+        longData[AbsStructNode.FIRST_CHILD_KEY] = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
         intData[AbsNode.TYPE_KEY] = type;
         return new TextNode(longData, intData, value);
     }
 
-    public final static AbsNode createData(final long nodeKey,
-            final TextNode node) {
-        return createData(nodeKey, node.getParentKey(),
-                node.getLeftSiblingKey(), node.getRightSiblingKey(),
-                node.getTypeKey(), node.getRawValue());
+    public final static AbsNode createData(final long nodeKey, final TextNode node) {
+        return createData(nodeKey, node.getParentKey(), node.getLeftSiblingKey(), node.getRightSiblingKey(),
+            node.getTypeKey(), node.getRawValue());
     }
 
     @Override
     public String toString() {
         final StringBuilder returnVal = new StringBuilder(super.toString());
-        returnVal.append("\n\ttype key: ").append(getTypeKey())
-                .append("\n\tvalueLength: ").append(mIntData[VALUE_LENGTH])
-                .append("\n\tvalue:").append(new String(mValue)).toString();
+        returnVal.append("\n\ttype key: ").append(getTypeKey()).append("\n\tvalueLength: ").append(
+            mIntData[VALUE_LENGTH]).append("\n\tvalue:").append(new String(mValue)).toString();
         return returnVal.toString();
     }
 

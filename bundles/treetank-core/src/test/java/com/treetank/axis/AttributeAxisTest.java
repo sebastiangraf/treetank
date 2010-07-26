@@ -44,8 +44,7 @@ public class AttributeAxisTest {
 
     @Test
     public void testIterate() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -54,12 +53,14 @@ public class AttributeAxisTest {
         IAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
 
         wtx.moveTo(1L);
-        IAxisTest.testIAxisConventions(new AttributeAxis(wtx),
-                new long[] { 2L });
+        IAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {
+            2L
+        });
 
         wtx.moveTo(9L);
-        IAxisTest.testIAxisConventions(new AttributeAxis(wtx),
-                new long[] { 10L });
+        IAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {
+            10L
+        });
 
         wtx.moveTo(12L);
         IAxisTest.testIAxisConventions(new AttributeAxis(wtx), new long[] {});
@@ -75,8 +76,7 @@ public class AttributeAxisTest {
 
     @Test
     public void testMultipleAttributes() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final long nodeKey = wtx.insertElementAsFirstChild(new QName("foo"));
@@ -89,20 +89,17 @@ public class AttributeAxisTest {
         Assert.assertEquals(true, wtx.moveTo(nodeKey));
 
         Assert.assertEquals(true, wtx.moveToAttribute(0));
-        Assert.assertEquals("0",
-                TypedValue.parseString(wtx.getNode().getRawValue()));
+        Assert.assertEquals("0", TypedValue.parseString(wtx.getNode().getRawValue()));
         Assert.assertEquals("foo0", wtx.nameForKey(wtx.getNode().getNameKey()));
 
         Assert.assertEquals(true, wtx.moveToParent());
         Assert.assertEquals(true, wtx.moveToAttribute(1));
-        Assert.assertEquals("1",
-                TypedValue.parseString(wtx.getNode().getRawValue()));
+        Assert.assertEquals("1", TypedValue.parseString(wtx.getNode().getRawValue()));
         Assert.assertEquals("foo1", wtx.nameForKey(wtx.getNode().getNameKey()));
 
         Assert.assertEquals(true, wtx.moveToParent());
         Assert.assertEquals(true, wtx.moveToAttribute(2));
-        Assert.assertEquals("2",
-                TypedValue.parseString(wtx.getNode().getRawValue()));
+        Assert.assertEquals("2", TypedValue.parseString(wtx.getNode().getRawValue()));
         Assert.assertEquals("foo2", wtx.nameForKey(wtx.getNode().getNameKey()));
 
         Assert.assertEquals(true, wtx.moveTo(nodeKey));
@@ -112,22 +109,19 @@ public class AttributeAxisTest {
         axis.next();
         Assert.assertEquals(nodeKey + 1, wtx.getNode().getNodeKey());
         Assert.assertEquals("foo0", wtx.nameForKey(wtx.getNode().getNameKey()));
-        Assert.assertEquals("0",
-                TypedValue.parseString(wtx.getNode().getRawValue()));
+        Assert.assertEquals("0", TypedValue.parseString(wtx.getNode().getRawValue()));
 
         Assert.assertEquals(true, axis.hasNext());
         axis.next();
         Assert.assertEquals(nodeKey + 2, wtx.getNode().getNodeKey());
         Assert.assertEquals("foo1", wtx.nameForKey(wtx.getNode().getNameKey()));
-        Assert.assertEquals("1",
-                TypedValue.parseString(wtx.getNode().getRawValue()));
+        Assert.assertEquals("1", TypedValue.parseString(wtx.getNode().getRawValue()));
 
         Assert.assertEquals(true, axis.hasNext());
         axis.next();
         Assert.assertEquals(nodeKey + 3, wtx.getNode().getNodeKey());
         Assert.assertEquals("foo2", wtx.nameForKey(wtx.getNode().getNameKey()));
-        Assert.assertEquals("2",
-                TypedValue.parseString(wtx.getNode().getRawValue()));
+        Assert.assertEquals("2", TypedValue.parseString(wtx.getNode().getRawValue()));
 
         wtx.abort();
         wtx.close();

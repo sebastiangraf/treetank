@@ -31,8 +31,8 @@ import com.treetank.utils.TypedValue;
 /**
  * <h1>GeneralComp</h1>
  * <p>
- * General comparisons are existentially quantified comparisons that may be
- * applied to operand sequences of any length.
+ * General comparisons are existentially quantified comparisons that may be applied to operand sequences of
+ * any length.
  * </p>
  */
 public class GeneralComp extends AbstractComparator {
@@ -49,8 +49,8 @@ public class GeneralComp extends AbstractComparator {
      * @param comp
      *            comparison kind
      */
-    public GeneralComp(final IReadTransaction rtx, final IAxis operand1,
-            final IAxis operand2, final CompKind comp) {
+    public GeneralComp(final IReadTransaction rtx, final IAxis operand1, final IAxis operand2,
+        final CompKind comp) {
 
         super(rtx, operand1, operand2, comp);
     }
@@ -59,8 +59,7 @@ public class GeneralComp extends AbstractComparator {
      * {@inheritDoc}
      */
     @Override
-    protected boolean compare(final AtomicValue[] operand1,
-            final AtomicValue[] operand2) {
+    protected boolean compare(final AtomicValue[] operand1, final AtomicValue[] operand2) {
 
         assert operand1.length >= 1 && operand2.length >= 1;
 
@@ -68,8 +67,7 @@ public class GeneralComp extends AbstractComparator {
             for (AtomicValue op2 : operand2) {
                 String value1 = TypedValue.parseString(op1.getRawValue());
                 String value2 = TypedValue.parseString(op2.getRawValue());
-                if (getCompKind().compare(value1, value2,
-                        getType(op1.getTypeKey(), op2.getTypeKey()))) {
+                if (getCompKind().compare(value1, value2, getType(op1.getTypeKey(), op2.getTypeKey()))) {
                     return true;
                 }
             }
@@ -88,17 +86,16 @@ public class GeneralComp extends AbstractComparator {
         final List<AtomicValue> op = new ArrayList<AtomicValue>();
         AtomicValue atomized;
         // cast to double, if compatible with XPath 1.0 and <, >, >=, <=
-        final boolean convert = !(!XPATH_10_COMP
-                || getCompKind() == CompKind.EQ || getCompKind() == CompKind.EQ);
+        final boolean convert =
+            !(!XPATH_10_COMP || getCompKind() == CompKind.EQ || getCompKind() == CompKind.EQ);
 
         do {
             if (convert) { // cast to double
                 Function.fnnumber(rtx);
             }
-            atomized = new AtomicValue(rtx.getNode().getRawValue(), rtx
-                    .getNode().getTypeKey());
+            atomized = new AtomicValue(rtx.getNode().getRawValue(), rtx.getNode().getTypeKey());
             op.add(atomized);
-        } while (operand.hasNext());
+        } while(operand.hasNext());
 
         return op.toArray(new AtomicValue[op.size()]);
     }
@@ -117,9 +114,8 @@ public class GeneralComp extends AbstractComparator {
                 return Type.DOUBLE;
             }
 
-            if (type1 == Type.STRING
-                    || type2 == Type.STRING
-                    || (type1 == Type.UNTYPED_ATOMIC && type2 == Type.UNTYPED_ATOMIC)) {
+            if (type1 == Type.STRING || type2 == Type.STRING
+            || (type1 == Type.UNTYPED_ATOMIC && type2 == Type.UNTYPED_ATOMIC)) {
                 return Type.STRING;
             }
 

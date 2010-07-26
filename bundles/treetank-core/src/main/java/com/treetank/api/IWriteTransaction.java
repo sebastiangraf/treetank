@@ -30,18 +30,16 @@ import com.treetank.exception.TreetankIOException;
  * 
  * <p>
  * Interface to access nodes based on the
- * Key/ParentKey/FirstChildKey/LeftSiblingKey/RightSiblingKey/ChildCount
- * encoding. This encoding keeps the children ordered but has no knowledge of
- * the global node ordering. The underlying tree is accessed in a cursor-like
- * fashion.
+ * Key/ParentKey/FirstChildKey/LeftSiblingKey/RightSiblingKey/ChildCount encoding. This encoding keeps the
+ * children ordered but has no knowledge of the global node ordering. The underlying tree is accessed in a
+ * cursor-like fashion.
  * </p>
  * 
  * <p>
- * Each commit at least adds <code>10kB</code> to the TreeTank file. It is thus
- * recommended to work with the auto commit mode only committing after a given
- * amount of node modifications or elapsed time. For very update-intensive data,
- * a value of one million modifications and ten seconds is recommended. Note
- * that this might require to increment to available heap.
+ * Each commit at least adds <code>10kB</code> to the TreeTank file. It is thus recommended to work with the
+ * auto commit mode only committing after a given amount of node modifications or elapsed time. For very
+ * update-intensive data, a value of one million modifications and ten seconds is recommended. Note that this
+ * might require to increment to available heap.
  * </p>
  * 
  * <h2>Convention</h2>
@@ -49,10 +47,8 @@ import com.treetank.exception.TreetankIOException;
  * <p>
  * <ol>
  * <li>Only a single thread accesses the single IWriteTransaction instance.</li>
- * <li><strong>Precondition</strong> before moving cursor:
- * <code>IWriteTransaction.getNodeKey() == n</code>.</li>
- * <li><strong>Postcondition</strong> after modifying the cursor:
- * <code>(IWriteTransaction.insertX() == m &&
+ * <li><strong>Precondition</strong> before moving cursor: <code>IWriteTransaction.getNodeKey() == n</code>.</li>
+ * <li><strong>Postcondition</strong> after modifying the cursor: <code>(IWriteTransaction.insertX() == m &&
  *       IWriteTransaction.getNodeKey() == m)</code>.</li>
  * </ol>
  * </p>
@@ -139,8 +135,7 @@ public interface IWriteTransaction extends IReadTransaction {
      *            name of the new node
      * @return Key of inserted node. already has a first child.
      */
-    long insertElementAsRightSibling(final QName qname)
-            throws TreetankException;
+    long insertElementAsRightSibling(final QName qname) throws TreetankException;
 
     /**
      * Insert new element node as right sibling of currently selected node. The
@@ -163,8 +158,7 @@ public interface IWriteTransaction extends IReadTransaction {
      *            Value of inserted node.
      * @return Key of inserted node.
      */
-    long insertAttribute(final QName qname, final String value)
-            throws TreetankException;
+    long insertAttribute(final QName qname, final String value) throws TreetankException;
 
     /**
      * Insert namespace declaration in currently selected node. The cursor is
@@ -176,8 +170,7 @@ public interface IWriteTransaction extends IReadTransaction {
      *            Prefix of inserted node.
      * @return Key of inserted node.
      */
-    long insertNamespace(final String uri, final String name)
-            throws TreetankException;
+    long insertNamespace(final String uri, final String name) throws TreetankException;
 
     /**
      * Remove currently selected node. This does automatically remove
@@ -216,8 +209,7 @@ public interface IWriteTransaction extends IReadTransaction {
      * @param value
      *            New value of node.
      */
-    void setValue(final int valueType, final byte[] value)
-            throws TreetankIOException;
+    void setValue(final int valueType, final byte[] value) throws TreetankIOException;
 
     /**
      * Set value of node.
@@ -240,8 +232,7 @@ public interface IWriteTransaction extends IReadTransaction {
 
     /**
      * Reverting all changes to the revision defined. This command has to be
-     * finalized with a commit. A revert is always bound to a
-     * {@link IReadTransaction#moveToDocumentRoot()}.
+     * finalized with a commit. A revert is always bound to a {@link IReadTransaction#moveToDocumentRoot()}.
      * 
      * @param revision
      *            revert for the revision

@@ -28,20 +28,17 @@ import com.treetank.axis.AbstractAxis;
  * IAxis that handles a for expression.
  * </p>
  * <p>
- * This Axis represents only the single-variable for expression. A multiple
- * variables for expression is created by wrap for-Axes by first expanding the
- * expression to a set of nested for expressions, each of which uses only one
- * variable. For example, the expression for $x in X, $y in Y return $x + $y is
- * expanded to for $x in X return for $y in Y return $x + $y.
+ * This Axis represents only the single-variable for expression. A multiple variables for expression is
+ * created by wrap for-Axes by first expanding the expression to a set of nested for expressions, each of
+ * which uses only one variable. For example, the expression for $x in X, $y in Y return $x + $y is expanded
+ * to for $x in X return for $y in Y return $x + $y.
  * </p>
  * <p>
- * In a single-variable for expression, the variable is called the range
- * variable, the value of the expression that follows the 'in' keyword is called
- * the binding sequence, and the expression that follows the 'return' keyword is
- * called the return expression. The result of the for expression is obtained by
- * evaluating the return expression once for each item in the binding sequence,
- * with the range variable bound to that item. The resulting sequences are
- * concatenated (as if by the comma operator) in the order of the items in the
+ * In a single-variable for expression, the variable is called the range variable, the value of the expression
+ * that follows the 'in' keyword is called the binding sequence, and the expression that follows the 'return'
+ * keyword is called the return expression. The result of the for expression is obtained by evaluating the
+ * return expression once for each item in the binding sequence, with the range variable bound to that item.
+ * The resulting sequences are concatenated (as if by the comma operator) in the order of the items in the
  * binding sequence from which they were derived.
  * </p>
  */
@@ -66,8 +63,7 @@ public class ForAxis extends AbstractAxis implements IAxis {
      * @param returnExpr
      *            the return expression of the for expression
      */
-    public ForAxis(final IReadTransaction rtx, final IAxis range,
-            final AbstractAxis returnExpr) {
+    public ForAxis(final IReadTransaction rtx, final IAxis range, final AbstractAxis returnExpr) {
 
         super(rtx);
         mRange = range;
@@ -109,7 +105,7 @@ public class ForAxis extends AbstractAxis implements IAxis {
         }
 
         // check for more items in the binding sequence
-        while (mRange.hasNext()) {
+        while(mRange.hasNext()) {
             mRange.next();
 
             // TODO: resetTo startKey would be better here, but not accessible

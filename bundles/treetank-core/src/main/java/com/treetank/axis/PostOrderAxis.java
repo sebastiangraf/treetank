@@ -56,7 +56,7 @@ public class PostOrderAxis extends AbstractAxis implements IAxis {
     public final void reset(final long nodeKey) {
         super.reset(nodeKey);
         mLastParent = new FastStack<Long>();
-        mLastParent.push((Long) EFixed.NULL_NODE_KEY.getStandardProperty());
+        mLastParent.push((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
         mNextKey = nodeKey;
     }
 
@@ -67,22 +67,19 @@ public class PostOrderAxis extends AbstractAxis implements IAxis {
     public boolean hasNext() {
         resetToLastKey();
         long key = mNextKey;
-        if (key != (Long) EFixed.NULL_NODE_KEY.getStandardProperty()) {
+        if (key != (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
             getTransaction().moveTo(mNextKey);
-            while (((AbsStructNode) getTransaction().getNode()).hasFirstChild()
-                    && key != mLastParent.peek()) {
+            while(((AbsStructNode)getTransaction().getNode()).hasFirstChild() && key != mLastParent.peek()) {
                 mLastParent.push(key);
-                key = ((AbsStructNode) getTransaction().getNode())
-                        .getFirstChildKey();
+                key = ((AbsStructNode)getTransaction().getNode()).getFirstChildKey();
                 getTransaction().moveToFirstChild();
             }
             if (key == mLastParent.peek()) {
                 mLastParent.pop();
             }
 
-            if (((AbsStructNode) getTransaction().getNode()).hasRightSibling()) {
-                mNextKey = ((AbsStructNode) getTransaction().getNode())
-                        .getRightSiblingKey();
+            if (((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
+                mNextKey = ((AbsStructNode)getTransaction().getNode()).getRightSiblingKey();
 
             } else {
                 mNextKey = mLastParent.peek();

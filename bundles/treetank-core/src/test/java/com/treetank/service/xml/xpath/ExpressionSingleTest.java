@@ -48,8 +48,8 @@ public class ExpressionSingleTest {
 
     ExpressionSingle builder;
 
-    public static final String XML = "src" + File.separator + "test"
-            + File.separator + "resoruces" + File.separator + "factbook.xml";
+    public static final String XML = "src" + File.separator + "test" + File.separator + "resoruces"
+    + File.separator + "factbook.xml";
 
     @Before
     public void setUp() throws TreetankException {
@@ -66,8 +66,7 @@ public class ExpressionSingleTest {
     @Test
     public void testAdd() throws TreetankException {
         // Build simple test tree.
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -93,8 +92,7 @@ public class ExpressionSingleTest {
     @Test
     public void testDup() throws TreetankException {
         // Build simple test tree.
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
@@ -131,8 +129,7 @@ public class ExpressionSingleTest {
         assertEquals(false, builder.isOrdered());
 
         builder = new ExpressionSingle();
-        builder.add(new UnionAxis(wtx, new DescendantAxis(wtx), new ParentAxis(
-                wtx)));
+        builder.add(new UnionAxis(wtx, new DescendantAxis(wtx), new ParentAxis(wtx)));
         assertEquals(false, builder.isOrdered());
         assertTrue(builder.getExpr() instanceof DupFilterAxis);
 

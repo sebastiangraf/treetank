@@ -135,7 +135,7 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
      */
     private void processQueue() {
         WeakValue<V> weakValue;
-        while ((weakValue = (WeakValue<V>) mQueue.poll()) != null) {
+        while((weakValue = (WeakValue<V>)mQueue.poll()) != null) {
             mInternalMap.remove(weakValue.key);
         }
     }
@@ -157,8 +157,7 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
          * @param initReferenceQueue
          *            Reference queue for cleanup.
          */
-        private WeakValue(final V initValue, final K initKey,
-                final ReferenceQueue initReferenceQueue) {
+        private WeakValue(final V initValue, final K initKey, final ReferenceQueue initReferenceQueue) {
             super(initValue, initReferenceQueue);
             key = initKey;
         }

@@ -30,8 +30,7 @@ public interface IReader {
      * @throws TreetankIOException
      *             if something bad happens during read
      */
-    AbstractPage read(final PageReference pageReference)
-            throws TreetankIOException;
+    AbstractPage read(final PageReference pageReference) throws TreetankIOException;
 
     /**
      * Closing the storage.

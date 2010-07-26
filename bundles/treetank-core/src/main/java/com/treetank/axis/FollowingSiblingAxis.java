@@ -27,8 +27,7 @@ import com.treetank.node.ENodes;
  * <h1>FollowingSiblingAxis</h1>
  * 
  * <p>
- * Iterate over all following siblings of kind ELEMENT or TEXT starting at a
- * given node. Self is not included.
+ * Iterate over all following siblings of kind ELEMENT or TEXT starting at a given node. Self is not included.
  * </p>
  */
 public class FollowingSiblingAxis extends AbstractAxis implements IAxis {
@@ -78,7 +77,7 @@ public class FollowingSiblingAxis extends AbstractAxis implements IAxis {
 
         resetToLastKey();
 
-        if (((AbsStructNode) getTransaction().getNode()).hasRightSibling()) {
+        if (((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
             getTransaction().moveToRightSibling();
             return true;
         }

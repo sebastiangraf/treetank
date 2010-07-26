@@ -27,9 +27,8 @@ import com.treetank.utils.TypedValue;
 /**
  * <h1>FNNot</h1>
  * <p>
- * IAxis that represents the function fn:not specified in <a
- * href="http://www.w3.org/TR/xquery-operators/"> XQuery 1.0 and XPath 2.0
- * Functions and Operators</a>.
+ * IAxis that represents the function fn:not specified in <a href="http://www.w3.org/TR/xquery-operators/">
+ * XQuery 1.0 and XPath 2.0 Functions and Operators</a>.
  * </p>
  * <p>
  * The function inverted boolean value of the argument.
@@ -54,8 +53,8 @@ public class FNNot extends AbstractFunction {
      * @param returnType
      *            the type that the function's result will have
      */
-    public FNNot(final IReadTransaction rtx, final List<IAxis> args,
-            final int min, final int max, final int returnType) {
+    public FNNot(final IReadTransaction rtx, final List<IAxis> args, final int min, final int max,
+        final int returnType) {
 
         super(rtx, args, min, max, returnType);
     }

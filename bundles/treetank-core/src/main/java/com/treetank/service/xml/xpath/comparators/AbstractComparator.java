@@ -33,8 +33,7 @@ import com.treetank.service.xml.xpath.types.Type;
  * Abstract axis that evaluates a comparison.
  * </p>
  */
-public abstract class AbstractComparator extends AbstractAxis implements IAxis,
-        XPathConstants {
+public abstract class AbstractComparator extends AbstractAxis implements IAxis, XPathConstants {
 
     /** Kind of comparison. */
     private final CompKind mComp;
@@ -60,8 +59,8 @@ public abstract class AbstractComparator extends AbstractAxis implements IAxis,
      * @param comp
      *            comparison kind
      */
-    public AbstractComparator(final IReadTransaction rtx, final IAxis operand1,
-            final IAxis operand2, final CompKind comp) {
+    public AbstractComparator(final IReadTransaction rtx, final IAxis operand1, final IAxis operand2,
+        final CompKind comp) {
 
         super(rtx);
         mComp = comp;
@@ -127,8 +126,7 @@ public abstract class AbstractComparator extends AbstractAxis implements IAxis,
                     final IItem result = new AtomicValue(resultValue);
 
                     // add retrieved AtomicValue to item list
-                    final int itemKey = getTransaction().getItemList().addItem(
-                            result);
+                    final int itemKey = getTransaction().getItemList().addItem(result);
                     getTransaction().moveTo(itemKey);
 
                     return true;
@@ -150,8 +148,7 @@ public abstract class AbstractComparator extends AbstractAxis implements IAxis,
      * @param operand2
      *            second operand
      */
-    protected void hook(final AtomicValue[] operand1,
-            final AtomicValue[] operand2) {
+    protected void hook(final AtomicValue[] operand1, final AtomicValue[] operand2) {
 
         // do nothing
     }
@@ -165,8 +162,7 @@ public abstract class AbstractComparator extends AbstractAxis implements IAxis,
      *            second comparison operand.
      * @return the result of the comparison
      */
-    protected abstract boolean compare(final AtomicValue[] operand1,
-            final AtomicValue[] operand2);
+    protected abstract boolean compare(final AtomicValue[] operand1, final AtomicValue[] operand2);
 
     /**
      * Atomizes an operand according to the rules specified in the XPath

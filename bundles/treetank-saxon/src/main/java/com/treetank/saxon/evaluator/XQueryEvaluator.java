@@ -20,8 +20,8 @@ import com.treetank.saxon.wrapper.NodeWrapper;
  * <h1>XQuery evaluator</h1>
  * 
  * <p>
- * Evaluates an XQuery expression against a Treetank storage and returns an
- * XdmValue instance, which corresponds to zero or more XdmItems.
+ * Evaluates an XQuery expression against a Treetank storage and returns an XdmValue instance, which
+ * corresponds to zero or more XdmItems.
  * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
@@ -29,50 +29,48 @@ import com.treetank.saxon.wrapper.NodeWrapper;
  */
 public class XQueryEvaluator implements Callable<XdmValue> {
 
-	/** Logger. */
-	private static final Log LOGGER = LogFactory
-			.getLog(com.treetank.saxon.evaluator.XQueryEvaluator.class);
+    /** Logger. */
+    private static final Log LOGGER = LogFactory.getLog(com.treetank.saxon.evaluator.XQueryEvaluator.class);
 
-	/** XQuery expression. */
-	private transient final String mExpression;
+    /** XQuery expression. */
+    private transient final String mExpression;
 
-	/** Treetank session. */
-	private transient final IDatabase mDatabase;
+    /** Treetank session. */
+    private transient final IDatabase mDatabase;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param expression
-	 *            XQuery expression.
-	 * @param database
-	 *            Treetank database.
-	 * @param file
-	 *            Target Treetank storage.
-	 */
-	public XQueryEvaluator(final String expression, final IDatabase database) {
-		mExpression = expression;
-		mDatabase = database;
-	}
+    /**
+     * Constructor.
+     * 
+     * @param expression
+     *            XQuery expression.
+     * @param database
+     *            Treetank database.
+     * @param file
+     *            Target Treetank storage.
+     */
+    public XQueryEvaluator(final String expression, final IDatabase database) {
+        mExpression = expression;
+        mDatabase = database;
+    }
 
-	@Override
-	public XdmValue call() throws Exception {
-		XdmValue value = null;
+    @Override
+    public XdmValue call() throws Exception {
+        XdmValue value = null;
 
-		try {
-			final Processor proc = new Processor(false);
-			final Configuration config = proc.getUnderlyingConfiguration();
-			final NodeWrapper doc = (NodeWrapper) new DocumentWrapper(
-					mDatabase, config).wrap();
-			final XQueryCompiler comp = proc.newXQueryCompiler();
-			final XQueryExecutable exp = comp.compile(mExpression);
-			final net.sf.saxon.s9api.XQueryEvaluator exe = exp.load();
-			exe.setSource(doc);
-			value = exe.evaluate();
-		} catch (final SaxonApiException e) {
-			LOGGER.error("Saxon Exception: " + e.getMessage(), e);
-			throw e;
-		}
+        try {
+            final Processor proc = new Processor(false);
+            final Configuration config = proc.getUnderlyingConfiguration();
+            final NodeWrapper doc = (NodeWrapper)new DocumentWrapper(mDatabase, config).wrap();
+            final XQueryCompiler comp = proc.newXQueryCompiler();
+            final XQueryExecutable exp = comp.compile(mExpression);
+            final net.sf.saxon.s9api.XQueryEvaluator exe = exp.load();
+            exe.setSource(doc);
+            value = exe.evaluate();
+        } catch (final SaxonApiException e) {
+            LOGGER.error("Saxon Exception: " + e.getMessage(), e);
+            throw e;
+        }
 
-		return value;
-	}
+        return value;
+    }
 }

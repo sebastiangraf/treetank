@@ -36,8 +36,7 @@ public class IFilterTest {
         TestHelper.deleteEverything();
     }
 
-    public static void testIFilterConventions(final IFilter filter,
-            final boolean expected) {
+    public static void testIFilterConventions(final IFilter filter, final boolean expected) {
 
         final IReadTransaction rtx = filter.getTransaction();
 

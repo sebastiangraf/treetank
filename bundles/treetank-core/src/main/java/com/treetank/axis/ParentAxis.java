@@ -60,11 +60,9 @@ public class ParentAxis extends AbstractAxis implements IAxis {
     @Override
     public final boolean hasNext() {
         resetToLastKey();
-        if (getTransaction().getNode().getKind() != ENodes.ROOT_KIND
-                && mFirst
-                && getTransaction().getNode().hasParent()
-                && getTransaction().getNode().getParentKey() != (Long) EFixed.ROOT_NODE_KEY
-                        .getStandardProperty()) {
+        if (getTransaction().getNode().getKind() != ENodes.ROOT_KIND && mFirst
+        && getTransaction().getNode().hasParent()
+        && getTransaction().getNode().getParentKey() != (Long)EFixed.ROOT_NODE_KEY.getStandardProperty()) {
             mFirst = false;
             getTransaction().moveToParent();
             return true;

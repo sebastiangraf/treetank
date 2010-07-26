@@ -39,23 +39,25 @@ public class AncestorAxisTest {
 
     @Test
     public void testAxisConventions() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
 
         wtx.moveTo(12L);
-        IAxisTest.testIAxisConventions(new AncestorAxis(wtx), new long[] { 9L,
-                1L });
+        IAxisTest.testIAxisConventions(new AncestorAxis(wtx), new long[] {
+            9L, 1L
+        });
 
         wtx.moveTo(4L);
-        IAxisTest
-                .testIAxisConventions(new AncestorAxis(wtx), new long[] { 1L });
+        IAxisTest.testIAxisConventions(new AncestorAxis(wtx), new long[] {
+            1L
+        });
 
         wtx.moveTo(5L);
-        IAxisTest
-                .testIAxisConventions(new AncestorAxis(wtx), new long[] { 1L });
+        IAxisTest.testIAxisConventions(new AncestorAxis(wtx), new long[] {
+            1L
+        });
 
         wtx.moveTo(1L);
         IAxisTest.testIAxisConventions(new AncestorAxis(wtx), new long[] {});
@@ -68,27 +70,30 @@ public class AncestorAxisTest {
 
     @Test
     public void testAxisConventionsIncludingSelf() throws TreetankException {
-        final IDatabase database = TestHelper
-                .getDatabase(PATHS.PATH1.getFile());
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
 
         wtx.moveTo(11L);
         IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true), new long[] {
-                11L, 9L, 1L });
+            11L, 9L, 1L
+        });
 
         wtx.moveTo(5L);
         IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true), new long[] {
-                5L, 1L });
+            5L, 1L
+        });
 
         wtx.moveTo(4L);
         IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true), new long[] {
-                4L, 1L });
+            4L, 1L
+        });
 
         wtx.moveTo(1L);
-        IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true),
-                new long[] { 1L });
+        IAxisTest.testIAxisConventions(new AncestorAxis(wtx, true), new long[] {
+            1L
+        });
 
         wtx.abort();
         wtx.close();

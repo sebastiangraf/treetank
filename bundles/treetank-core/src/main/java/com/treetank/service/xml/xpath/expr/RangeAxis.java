@@ -28,19 +28,16 @@ import com.treetank.utils.TypedValue;
 /**
  * <h1>RangeExpr</h1>
  * <p>
- * A range expression can be used to construct a sequence of consecutive
- * integers.
+ * A range expression can be used to construct a sequence of consecutive integers.
  * </p>
  * <p>
- * If either operand is an empty sequence, or if the integer derived from the
- * first operand is greater than the integer derived from the second operand,
- * the result of the range expression is an empty sequence.
+ * If either operand is an empty sequence, or if the integer derived from the first operand is greater than
+ * the integer derived from the second operand, the result of the range expression is an empty sequence.
  * </p>
  * <p>
- * If the two operands convert to the same integer, the result of the range
- * expression is that integer. Otherwise, the result is a sequence containing
- * the two integer operands and every integer between the two operands, in
- * increasing order.
+ * If the two operands convert to the same integer, the result of the range expression is that integer.
+ * Otherwise, the result is a sequence containing the two integer operands and every integer between the two
+ * operands, in increasing order.
  * </p>
  */
 public class RangeAxis extends AbstractAxis implements IAxis {
@@ -70,8 +67,7 @@ public class RangeAxis extends AbstractAxis implements IAxis {
      * @param to
      *            the end of the range
      */
-    public RangeAxis(final IReadTransaction rtx, final IAxis from,
-            final IAxis to) {
+    public RangeAxis(final IReadTransaction rtx, final IAxis from, final IAxis to) {
 
         super(rtx);
         mFrom = from;
@@ -90,19 +86,17 @@ public class RangeAxis extends AbstractAxis implements IAxis {
         if (mFirst) {
             mFirst = false;
             if (mFrom.hasNext()
-                    && Type.getType(
-                            mFrom.getTransaction().getNode().getTypeKey())
-                            .derivesFrom(Type.INTEGER)) {
-                mStart = (int) Double.parseDouble(TypedValue.parseString(mFrom
-                        .getTransaction().getNode().getRawValue()));
+            && Type.getType(mFrom.getTransaction().getNode().getTypeKey()).derivesFrom(Type.INTEGER)) {
+                mStart =
+                    (int)Double.parseDouble(TypedValue.parseString(mFrom.getTransaction().getNode()
+                        .getRawValue()));
 
                 if (mTo.hasNext()
-                        && Type.getType(
-                                mTo.getTransaction().getNode().getTypeKey())
-                                .derivesFrom(Type.INTEGER)) {
+                && Type.getType(mTo.getTransaction().getNode().getTypeKey()).derivesFrom(Type.INTEGER)) {
 
-                    mEnd = Integer.parseInt(TypedValue.parseString(mTo
-                            .getTransaction().getNode().getRawValue()));
+                    mEnd =
+                        Integer
+                            .parseInt(TypedValue.parseString(mTo.getTransaction().getNode().getRawValue()));
 
                 } else {
                     // at least one operand is the empty sequence
@@ -117,10 +111,10 @@ public class RangeAxis extends AbstractAxis implements IAxis {
         }
 
         if (mStart <= mEnd) {
-            int itemKey = getTransaction().getItemList().addItem(
-                    new AtomicValue(TypedValue.getBytes(Integer
-                            .toString(mStart)), getTransaction().keyForName(
-                            "xs:integer")));
+            int itemKey =
+                getTransaction().getItemList().addItem(
+                    new AtomicValue(TypedValue.getBytes(Integer.toString(mStart)), getTransaction()
+                        .keyForName("xs:integer")));
             getTransaction().moveTo(itemKey);
             mStart++;
             return true;

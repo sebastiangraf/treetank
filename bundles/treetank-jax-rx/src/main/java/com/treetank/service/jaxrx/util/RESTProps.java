@@ -10,31 +10,30 @@ import java.io.File;
  */
 public final class RESTProps {
 
-	/**
-	 * This class has a lazy constructor.
-	 */
-	private RESTProps() {
-		// i do nothing
-		// constructor only exists to meet pmd requirements
-	}
+    /**
+     * This class has a lazy constructor.
+     */
+    private RESTProps() {
+        // i do nothing
+        // constructor only exists to meet pmd requirements
+    }
 
-	/**
-	 * The path where the databases will be stored.
-	 */
-	// public final static transient String STOREDBPATH = System
-	// .getProperty("user.home")
-	// + File.separatorChar + "xml-databases";
-	public final static transient String STOREDBPATH = File.separatorChar
-			+ "tmp" + File.separatorChar + "tt";
+    /**
+     * The path where the databases will be stored.
+     */
+    // public final static transient String STOREDBPATH = System
+    // .getProperty("user.home")
+    // + File.separatorChar + "xml-databases";
+    public final static transient String STOREDBPATH = File.separatorChar + "tmp" + File.separatorChar + "tt";
 
-	/**
-	 * The tnk ending.
-	 */
-	public final static transient String TNKEND = ".tnk";
+    /**
+     * The tnk ending.
+     */
+    public final static transient String TNKEND = ".tnk";
 
-	/**
-	 * The collection ending.
-	 */
-	public final static transient String COLEND = ".col";
+    /**
+     * The collection ending.
+     */
+    public final static transient String COLEND = ".col";
 
 }
