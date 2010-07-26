@@ -37,9 +37,6 @@ public final class RelationalDBImport implements IImport {
   /** Database connection. */
   private transient Connection mConnection;
 
-  /** SQL query used to extract revisions. */
-  private final String mSQLQuery;
-
   /**
    * Constructor.
    * 
@@ -58,13 +55,11 @@ public final class RelationalDBImport implements IImport {
       final String driverClass,
       final String connURL,
       final String userName,
-      final String userPass,
-      final String SQLQuery) {
+      final String userPass) {
     mDriverClass = driverClass;
     mConnURL = connURL;
     mUserName = userName;
     mUserPass = userPass;
-    mSQLQuery = SQLQuery;
     try {
       Class.forName(mDriverClass).newInstance();
       mConnection = DriverManager.getConnection(mConnURL, mUserName, mUserPass);
@@ -80,16 +75,17 @@ public final class RelationalDBImport implements IImport {
   }
 
   @Override
-  public void check(final Object database, final Object tsps) {
+  public void check(final Object database, final Object obj) {
     try {
       final PreparedStatement prepStatement =
-          mConnection.prepareStatement(mSQLQuery);
+          mConnection.prepareStatement((String) obj);
       final ResultSet result = prepStatement.executeQuery();
 
       while (result.next()) {
         
       }
       
+      prepStatement.close();
       mConnection.close();
     } catch (final SQLException e) {
       LOGGER.error(e.getMessage(), e);

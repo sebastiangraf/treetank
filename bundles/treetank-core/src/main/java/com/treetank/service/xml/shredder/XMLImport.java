@@ -1,8 +1,9 @@
 package com.treetank.service.xml.shredder;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -10,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
@@ -25,8 +25,6 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
-import com.treetank.exception.TreetankIOException;
-import com.treetank.exception.TreetankUsageException;
 import com.treetank.utils.LogHelper;
 
 /**
@@ -59,230 +57,213 @@ import com.treetank.utils.LogHelper;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class XMLImport extends AbsXMLImport {
+public final class XMLImport implements IImport, Callable<Void> {
 
-    /** Logger. */
-	private static final Logger LOGGER = LoggerFactory.getLogger(XMLImport.class);
+  /** Logger. */
+  private static final Logger LOGGER = LoggerFactory.getLogger(XMLImport.class);
 
-    /** {@link Session}. */
-    private static ISession session;
+  /** {@link Session}. */
+  private transient ISession session;
 
-    /** {@link WriteTransaction}. */
-    private static IWriteTransaction wtx;
+  /** {@link WriteTransaction}. */
+  private transient IWriteTransaction wtx;
 
-    /** Path to Treetank storage. */
-    private static File mTT;
+  /** Path to Treetank storage. */
+  private transient File mTT;
+
+  /** Log helper. */
+  private transient LogHelper log;
+
+  /** Revision nodes {@link RevNode}. */
+  private transient List<RevNode> nodes;
+
+  /** File to shredder. */
+  private transient File xml;
+
+  /**
+   * Constructor.
+   * 
+   * @param tt
+   *            Treetank file.
+   */
+  public XMLImport(final File tt) {
+    try {
+      mTT = tt;
+      log = new LogHelper(LOGGER);
+      nodes = new ArrayList<RevNode>();
+      final IDatabase database = Database.openDatabase(mTT);
+      session = database.getSession();
+    } catch (final TreetankException e) {
+      LOGGER.error(e.getMessage(), e);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public void check(final Object database, final Object obj) {
+    try {
+      // Setup executor service.
+      final ExecutorService execService =
+          Executors.newFixedThreadPool(Runtime
+              .getRuntime()
+              .availableProcessors());
+
+      if (database instanceof File) {
+        // Single file.
+        xml = (File) database;
+        if (obj instanceof RevNode) {
+          nodes.add((RevNode) obj);
+        } else if (obj instanceof List<?>) {
+          nodes = (List<RevNode>) obj;
+        }
+        execService.submit(this);
+      } else if (database instanceof List<?>) {
+        // List of files.
+        final List<?> files = (List<?>) database;
+        if (obj instanceof RevNode) {
+          nodes.add((RevNode) obj);
+          for (final File xmlFile : files.toArray(new File[files.size()])) {
+            xml = xmlFile;
+            execService.submit(this);
+          }
+        } else if (obj instanceof List<?>) {
+          nodes = (List<RevNode>) obj;
+          for (final File xmlFile : files.toArray(new File[files.size()])) {
+            xml = xmlFile;
+            execService.submit(this);
+          }
+        }
+      }
+
+      // Shutdown executor service.
+      execService.shutdown();
+      execService.awaitTermination(10, TimeUnit.MINUTES);
+    } catch (final InterruptedException e) {
+      LOGGER.error(e.getMessage(), e);
+    } finally {
+      try {
+        wtx.close();
+        session.close();
+        Database.forceCloseDatabase(mTT);
+      } catch (final TreetankException e) {
+        LOGGER.error(e.getMessage(), e);
+      }
+    }
+  }
+
+  @Override
+  public Void call() throws Exception {
+    // Setup StAX parser.
+    final XMLEventReader reader = XMLShredder.createReader(xml);
+    XMLEvent event = reader.nextEvent();
+    final IWriteTransaction wtx = session.beginWriteTransaction();
+
+    // Parse file.
+    boolean first = true;
+    do {
+      log.debug(event.toString());
+
+      if (XMLStreamConstants.START_ELEMENT == event.getEventType()
+          && checkTimestampNodes((StartElement) event, nodes
+              .toArray(new RevNode[nodes.size()]))) {
+        // Found revision node.
+        wtx.moveToDocumentRoot();
+
+        if (first) {
+          first = false;
+
+          // Initial shredding.
+          new XMLShredder(wtx, reader, true).call();
+        } else {
+          // Subsequent shredding.
+          new XMLUpdateShredder(wtx, reader, true).call();
+        }
+      }
+
+      reader.nextEvent();
+    } while (reader.hasNext());
+    return null;
+  }
+
+  /**
+   * Check if current start element matches one of the timestamp/revision
+   * nodes.
+   * 
+   * @param event
+   *            Current parsed start element.
+   * @param tsns
+   *            Timestamp nodes.
+   * @return true if they match, otherwise false.
+   */
+  private boolean checkTimestampNodes(
+      final StartElement event,
+      final RevNode... tsns) {
+    boolean retVal = false;
+
+    for (final RevNode tsn : tsns) {
+      tsn.toString();
+      // TODO
+    }
+
+    return retVal;
+  }
+
+  /**
+   * <h1>RevNode</h1>
+   * 
+   * <p>
+   * Container which holds the full qualified name of a "timestamp" node.
+   * </p>
+   * 
+   * @author Johannes Lichtenberger, University of Konstanz
+   * 
+   */
+  final static class RevNode {
+    /** QName of the node, which has the timestamp attribute. */
+    private transient final QName mQName;
+
+    /** Attribute which specifies the timestamp value. */
+    private transient final Attribute mAttribute;
 
     /**
-     * Constructor
+     * Constructor.
      * 
-     * 
-     * @param tt
-     *            Treetank file.
+     * @param qName
+     *            Full qualified name of the timestamp node.
      */
-    public XMLImport(final File tt) {
-        try {
-            setupTT(tt);
-        } catch (final TreetankException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void check(final Object database, final Object obj) {
-        try {
-            final File xml = (File) database;
-            final LogHelper log = new LogHelper(LOGGER);
-
-            if (obj instanceof RevNode) {
-                final RevNode tsn = (RevNode) obj;
-                process(xml, log, tsn);
-            } else if (obj instanceof List<?>) {
-                final List<RevNode> list = (List<RevNode>) obj;
-                process(xml, log, (RevNode[]) list.toArray());
-            }
-            // TODO: Use Java7 multi-catch feature.
-        } catch (final IOException e) {
-            LOGGER.error(e.getMessage(), e);
-        } catch (final XMLStreamException e) {
-            LOGGER.error(e.getMessage(), e);
-        } catch (final TreetankException e) {
-            LOGGER.error(e.getMessage(), e);
-        } catch (final InterruptedException e) {
-            LOGGER.error(e.getMessage(), e);
-        } finally {
-            try {
-                wtx.close();
-                session.close();
-                Database.forceCloseDatabase(mTT);
-            } catch (final TreetankException e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        }
-    }
-
-    @Override
-    public void check(final List<File> list) {
-
+    public RevNode(final QName qName) {
+      this(qName, null);
     }
 
     /**
-     * Setup Treetank.
+     * Constructor.
      * 
-     * @param tt
-     *            Treetank storage.
-     * @throws TreetankException
+     * @param qName
+     *            Full qualified name of the timestamp node.
+     * @param att
+     *            Attribute which specifies the timestamp value.
      */
-    private void setupTT(final File tt) throws TreetankException {
-        mTT = tt;
-        final IDatabase database = Database.openDatabase(tt);
-        session = database.getSession();
-        wtx = session.beginWriteTransaction();
+    public RevNode(final QName qName, final Attribute att) {
+      mQName = qName;
+      mAttribute = att;
     }
 
     /**
-     * Process timestamp node -- therefore shredder subtree as a new revision
-     * into the Treetank storage.
+     * Get mQName.
      * 
-     * @param xml
-     *            XML file to shredder.
-     * @param log
-     *            Log helper.
-     * @param tsns
-     *            Timestamp/Revision nodes.
-     * @throws IOException
-     *             In case of any I/O operation fails.
-     * @throws XMLStreamException
-     *             In case of any StAX parser exception.
-     * @throws TreetankUsageException
-     *             In case of any TreetankUsage error.
-     * @throws TreetankIOException
-     *             In case of any read or write error in Treetank.
-     * @throws InterruptedException
-     *             In case of any interruption while running tasks.
+     * @return the full qualified name.
      */
-    private void process(final File xml, final LogHelper log,
-            final RevNode... tsns) throws IOException, XMLStreamException,
-            TreetankUsageException, TreetankIOException, InterruptedException {
-        // Setup StAX parser.
-        final XMLEventReader reader = XMLShredder.createReader(xml);
-        XMLEvent event = reader.nextEvent();
-
-        // Setup executor service.
-        final ExecutorService execService = Executors
-                .newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-
-        // Parse file.
-        boolean first = true;
-        do {
-            log.debug(event.toString());
-
-            if (XMLStreamConstants.START_ELEMENT == event.getEventType()
-                    && checkTimestampNodes((StartElement) event, tsns)) {
-                // Found revision node.
-                wtx.moveToDocumentRoot();
-
-                if (first) {
-                    first = false;
-
-                    // Initial shredding.
-                    execService.submit(new XMLShredder(wtx, reader, true));
-                } else {
-                    // Subsequent shredding.
-                    execService
-                            .submit(new XMLUpdateShredder(wtx, reader, true));
-                }
-            }
-
-            reader.nextEvent();
-        } while (reader.hasNext());
-
-        execService.shutdown();
-        execService.awaitTermination(10, TimeUnit.MINUTES);
-
-        reader.close();
+    public QName getQName() {
+      return mQName;
     }
 
     /**
-     * Check if current start element matches one of the timestamp/revision
-     * nodes.
+     * Get attribute.
      * 
-     * @param event
-     *            Current parsed start element.
-     * @param tsns
-     *            Timestamp nodes.
-     * @return True if they match, otherwise false.
+     * @return the attribute.
      */
-    private boolean checkTimestampNodes(final StartElement event,
-            final RevNode... tsns) {
-        boolean retVal = false;
-
-        for (final RevNode tsn : tsns) {
-            tsn.toString();
-            // TODO
-        }
-
-        return retVal;
+    public Attribute getAttribute() {
+      return mAttribute;
     }
-
-    /**
-     * <h1>RevNode</h1>
-     * 
-     * <p>
-     * Container which holds the full qualified name of a "timestamp" node.
-     * </p>
-     * 
-     * @author Johannes Lichtenberger, University of Konstanz
-     * 
-     */
-    final class RevNode {
-        /** QName of the node, which has the timestamp attribute. */
-        private transient final QName mQName;
-
-        /** Attribute which specifies the timestamp value. */
-        private transient final Attribute mAttribute;
-
-        /**
-         * Constructor.
-         * 
-         * @param qName
-         *            Full qualified name of the timestamp node.
-         */
-        public RevNode(final QName qName) {
-            this(qName, null);
-        }
-
-        /**
-         * Constructor.
-         * 
-         * @param qName
-         *            Full qualified name of the timestamp node.
-         * @param att
-         *            Attribute which specifies the timestamp value.
-         */
-        public RevNode(final QName qName, final Attribute att) {
-            mQName = qName;
-            mAttribute = att;
-        }
-
-        /**
-         * Get mQName.
-         * 
-         * @return the full qualified name.
-         */
-        public QName getQName() {
-            return mQName;
-        }
-
-        /**
-         * Get attribute.
-         * 
-         * @return the attribute.
-         */
-        public Attribute getAttribute() {
-            return mAttribute;
-        }
-    }
-
+  }
 }

@@ -434,12 +434,12 @@ public class XMLSerializer extends AbsSerializer {
       mStream = paramStream;
       mSession = session;
       mVersions = versions;
-      final ConcurrentMap<?, ?> map = properties.getmProps();
-      mIndent = (Boolean) map.get(S_INDENT[0]);
-      mREST = (Boolean) map.get(S_REST[0]);
-      mID = (Boolean) map.get(S_ID[0]);
-      mIndentSpaces = (Integer) map.get(S_INDENT_SPACES[0]);
-      mDeclaration = (Boolean) map.get(S_XMLDECL[0]);
+//      final ConcurrentMap<?, ?> map = properties.getmProps();
+//      mIndent = (Boolean) map.get(S_INDENT[0]);
+//      mREST = (Boolean) map.get(S_REST[0]);
+//      mID = (Boolean) map.get(S_ID[0]);
+//      mIndentSpaces = (Integer) map.get(S_INDENT_SPACES[0]);
+//      mDeclaration = (Boolean) map.get(S_XMLDECL[0]);
     }
 
     /**

@@ -199,6 +199,24 @@ public final class GUI extends JPanel {
     frame.setVisible(true);
   }
 
+  /**
+   * Main method.
+   * 
+   * @param args
+   *              Not used.
+   */
+  public static void main(final String[] args) {
+    /* 
+     * Schedule a job for the event dispatch thread:
+     * creating and showing this application's GUI.
+     */
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        createAndShowGUI();
+      }
+    });
+  }
+  
   // GETTER.
   // =======================================================
 
@@ -218,23 +236,5 @@ public final class GUI extends JPanel {
    */
   protected JTextArea getXMLPane() {
     return xmlPane;
-  }
-
-  /**
-   * Main method.
-   * 
-   * @param args
-   *              Not used.
-   */
-  public static void main(final String[] args) {
-    /* 
-     * Schedule a job for the event dispatch thread:
-     * creating and showing this application's GUI.
-     */
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        createAndShowGUI();
-      }
-    });
   }
 }
