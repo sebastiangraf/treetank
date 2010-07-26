@@ -31,10 +31,7 @@
 	</parent>
     
     <properties>
-        <compiler.fork>false</compiler.fork>
         <cxf.build-utils.version>2.3.0-SNAPSHOT</cxf.build-utils.version>
-        <cxf.xjc-utils.version>2.3.0-SNAPSHOT</cxf.xjc-utils.version>
-        <jdk.version>1.6</jdk.version>
     </properties>
 
     
@@ -69,8 +66,9 @@
     <profiles>
          <profile>
             <id>setup.eclipse</id>
-            <properties>
-                <eclipse.workspace.dir>${basedir}/../workspace</eclipse.workspace.dir>
+            <properties><!--
+                <eclipse.workspace.dir>${basedir}/../workspace</eclipse.workspace.dir>-->
+                <eclipse.workspace.dir>/tmp/workspace</eclipse.workspace.dir>
             </properties>
             <build>
                 <defaultGoal>process-test-sources</defaultGoal>
@@ -81,10 +79,9 @@
                             <artifactId>maven-compiler-plugin</artifactId>
                             <version>2.3.1</version>
                             <configuration>
-                                <source>${jdk.version}</source>
-                                <target>${jdk.version}</target>
+                                <source>${compileSource}</source>
+                                <target>${compileSource}</target>
                                 <maxmem>256M</maxmem>
-                                <fork>${compiler.fork}</fork>
                             </configuration>
                         </plugin>
                     </plugins>
