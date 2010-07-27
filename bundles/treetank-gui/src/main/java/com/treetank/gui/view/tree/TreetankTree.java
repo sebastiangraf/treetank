@@ -9,7 +9,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 /**
- * <h1>TreetankTree</h>
+ * <h1>TreetankTree</h1>
  * 
  * <p>
  * Provides highlighting functionality to highlight subtrees of selected nodes.

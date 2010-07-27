@@ -63,11 +63,12 @@ public class XMLSerializer extends AbsSerializer {
     private static final int ASCII_OFFSET = 48;
 
     /** Precalculated powers of each available long digit. */
-    private static final long[] LONG_POWERS = {
-        1L, 10L, 100L, 1000L, 10000L, 100000L, 1000000L, 10000000L, 100000000L, 1000000000L, 10000000000L,
-        100000000000L, 1000000000000L, 10000000000000L, 100000000000000L, 1000000000000000L,
-        10000000000000000L, 100000000000000000L, 1000000000000000000L
-    };
+    private static final long[] LONG_POWERS =
+        {
+            1L, 10L, 100L, 1000L, 10000L, 100000L, 1000000L, 10000000L, 100000000L, 1000000000L,
+            10000000000L, 100000000000L, 1000000000000L, 10000000000000L, 100000000000000L,
+            1000000000000000L, 10000000000000000L, 100000000000000000L, 1000000000000000000L
+        };
 
     /** OutputStream to write to. */
     private final OutputStream mOut;
@@ -90,20 +91,10 @@ public class XMLSerializer extends AbsSerializer {
     /**
      * Initialize XMLStreamReader implementation with transaction. The cursor
      * points to the node the XMLStreamReader starts to read.
-     * 
-     * @param rtx
-     *            Transaction with cursor pointing to start node.
-     * @param out
-     *            OutputStream to serialize UTF-8 XML to.
-     * @param serializeXMLDeclaration
-     *            Serialize XML declaration if true.
-     * @param serializeRest
-     *            Serialize rest if true.
-     * @param serializeId
-     *            Serialize id if true.
      */
-    private XMLSerializer(final ISession session, final XMLSerializerBuilder builder, final long... versions) {
-        super(session, versions);
+    private XMLSerializer(final ISession session, final long nodeKey, final XMLSerializerBuilder builder,
+        final long... versions) {
+        super(session, nodeKey, versions);
         mOut = new BufferedOutputStream(builder.mStream, 4096);
         mIndent = builder.mIndent;
         mSerializeXMLDeclaration = builder.mDeclaration;
@@ -366,14 +357,17 @@ public class XMLSerializer extends AbsSerializer {
          */
         private transient int mIndentSpaces = 2;
 
-        /** Stream to pipe to */
+        /** Stream to pipe to. */
         private transient final OutputStream mStream;
 
-        /** Session to use */
+        /** Session to use. */
         private transient final ISession mSession;
 
-        /** Versions to use */
+        /** Versions to use. */
         private transient final long[] mVersions;
+
+        /** Node key of subtree to shredder. */
+        private transient final long mNodeKey;
 
         /**
          * Constructor, setting the necessary stuff
@@ -382,7 +376,10 @@ public class XMLSerializer extends AbsSerializer {
          */
         public XMLSerializerBuilder(final ISession session, final OutputStream paramStream,
             final long... versions) {
-            this(session, paramStream, null, versions);
+            mNodeKey = 0;
+            mStream = paramStream;
+            mSession = session;
+            mVersions = versions;
         }
 
         /**
@@ -390,6 +387,8 @@ public class XMLSerializer extends AbsSerializer {
          * 
          * @param session
          *            {@link ISession}.
+         * @param nodeKey
+         *            Root node key of subtree to shredder.
          * @param paramStream
          *            {@link OutputStream}.
          * @param properties
@@ -397,17 +396,18 @@ public class XMLSerializer extends AbsSerializer {
          * @param versions
          *            Versions to serialize.
          */
-        public XMLSerializerBuilder(final ISession session, final OutputStream paramStream,
-            final XMLSerializerProperties properties, final long... versions) {
-            mStream = paramStream;
+        public XMLSerializerBuilder(final ISession session, final long nodeKey,
+            final OutputStream paramStream, final XMLSerializerProperties properties, final long... versions) {
             mSession = session;
+            mNodeKey = nodeKey;
+            mStream = paramStream;
             mVersions = versions;
-            // final ConcurrentMap<?, ?> map = properties.getmProps();
-            // mIndent = (Boolean) map.get(S_INDENT[0]);
-            // mREST = (Boolean) map.get(S_REST[0]);
-            // mID = (Boolean) map.get(S_ID[0]);
-            // mIndentSpaces = (Integer) map.get(S_INDENT_SPACES[0]);
-            // mDeclaration = (Boolean) map.get(S_XMLDECL[0]);
+            final ConcurrentMap<?, ?> map = properties.getmProps();
+            mIndent = (Boolean)map.get(S_INDENT[0]);
+            mREST = (Boolean)map.get(S_REST[0]);
+            mID = (Boolean)map.get(S_ID[0]);
+            mIndentSpaces = (Integer)map.get(S_INDENT_SPACES[0]);
+            mDeclaration = (Boolean)map.get(S_XMLDECL[0]);
         }
 
         /**
@@ -456,7 +456,7 @@ public class XMLSerializer extends AbsSerializer {
          * @return a new instance
          */
         public XMLSerializer build() {
-            return new XMLSerializer(mSession, this, mVersions);
+            return new XMLSerializer(mSession, mNodeKey, this, mVersions);
         }
     }
 

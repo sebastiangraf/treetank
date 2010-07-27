@@ -28,6 +28,7 @@ import com.treetank.node.ElementNode;
 import com.treetank.node.NamespaceNode;
 import com.treetank.node.TextNode;
 import com.treetank.page.NodePage;
+import com.treetank.settings.ECharsForSerializing;
 import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.ERevisioning;
 
@@ -176,7 +177,7 @@ public final class TestHelper {
         final StringBuilder sBuilder = new StringBuilder();
         for (String line = in.readLine(); line != null; line = in.readLine()) {
             if (whitespaces) {
-                sBuilder.append(line + "\n");
+                sBuilder.append(line + ECharsForSerializing.NEWLINE);
             } else {
                 sBuilder.append(line.trim());
             }

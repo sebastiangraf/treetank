@@ -21,7 +21,6 @@ import java.io.ByteArrayOutputStream;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.treetank.TestHelper;
@@ -46,7 +45,6 @@ public class XMLSerializerTest {
     }
 
     @Test
-    @Ignore
     public void testXMLSerializer() throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -65,7 +63,6 @@ public class XMLSerializerTest {
     }
 
     @Test
-    @Ignore
     public void testRestSerializer() throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -89,7 +86,6 @@ public class XMLSerializerTest {
     }
 
     @Test
-    @Ignore
     public void testIDSerializer() throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -111,7 +107,6 @@ public class XMLSerializerTest {
     }
 
     @Test
-    @Ignore
     public void testSampleCompleteSerializer() throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();

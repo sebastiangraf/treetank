@@ -38,11 +38,11 @@ import com.treetank.service.xml.shredder.XMLShredder;
 
 public class XPathAxisWideTest {
 
-    public static final String XML = "src" + File.separator + "test" + File.separator + "resources"
-    + File.separator + "factbook.xml";
+    public static final String XML =
+        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "factbook.xml";
 
-    public static final String XML2 = "src" + File.separator + "test" + File.separator + "resources"
-    + File.separator + "shakespeare.xml";
+    public static final String XML2 =
+        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "shakespeare.xml";
 
     @Before
     public void setUp() throws TreetankException {

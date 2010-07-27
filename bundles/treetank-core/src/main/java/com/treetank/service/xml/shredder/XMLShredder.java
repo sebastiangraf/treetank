@@ -64,14 +64,14 @@ import com.treetank.utils.TypedValue;
  */
 public class XMLShredder implements Callable<Long> {
 
-    /** {@link IWriteTransaction} */
-    protected transient final IWriteTransaction mWtx;
+    /** {@link IWriteTransaction}. */
+    protected final transient IWriteTransaction mWtx;
 
-    /** {@link XMLEventReader} */
-    protected transient final XMLEventReader mReader;
+    /** {@link XMLEventReader}. */
+    protected final transient XMLEventReader mReader;
 
     /** Append as first child or not. */
-    private transient final boolean mFirstChildAppend;
+    private final transient boolean mFirstChildAppend;
 
     /** File to shredder. */
     protected static File mFile;
@@ -80,7 +80,7 @@ public class XMLShredder implements Callable<Long> {
     protected static XMLEventReader mParser;
 
     /**
-     * Normal constructor to invoke a shredding process on a existing {@link WriteTransaction}
+     * Normal constructor to invoke a shredding process on a existing {@link WriteTransaction}.
      * 
      * @param wtx
      *            where the new XML Fragment should be placed

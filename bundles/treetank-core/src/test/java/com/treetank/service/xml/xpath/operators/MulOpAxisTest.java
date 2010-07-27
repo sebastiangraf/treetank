@@ -136,7 +136,8 @@ public class MulOpAxisTest {
 
         try {
 
-            axis.getReturnType(rtx.keyForName("xs:yearMonthDuration"), rtx.keyForName("xs:yearMonthDuration"));
+            axis
+                .getReturnType(rtx.keyForName("xs:yearMonthDuration"), rtx.keyForName("xs:yearMonthDuration"));
             fail("Expected an XPathError-Exception.");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "

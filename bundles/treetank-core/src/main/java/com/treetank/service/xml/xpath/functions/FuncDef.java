@@ -2274,8 +2274,8 @@ public enum FuncDef {
          * <p>
          * Returns the current dateTime (with timezone) from the dynamic context. (See Section C.2 Dynamic
          * Context ComponentsXP.) This is an xs:dateTime that is current at some time during the evaluation of
-         * a query or transformation in which fn:current-dateTime() is executed. This function is
-         * �stable�. The precise instant during the query or transformation represented by the value of
+         * a query or transformation in which fn:current-dateTime() is executed. This function is �stable�.
+         * The precise instant during the query or transformation represented by the value of
          * fn:current-dateTime() is �implementation dependent�.
          * </p>
          */
@@ -2288,8 +2288,8 @@ public enum FuncDef {
          * <p>
          * Returns xs:date(fn:current-dateTime()). This is an xs:date (with timezone) that is current at some
          * time during the evaluation of a query or transformation in which fn:current-date() is executed.
-         * This function is �stable�. The precise instant during the query or transformation represented
-         * by the value of fn:current-date() is �implementation dependent�.
+         * This function is �stable�. The precise instant during the query or transformation represented by
+         * the value of fn:current-date() is �implementation dependent�.
          * </p>
          */
         CURRENT_DATE("fn:current-date", AbstractFunction.class, 0, 0, "xs:date"),
@@ -2301,8 +2301,8 @@ public enum FuncDef {
          * <p>
          * Returns xs:time(fn:current-dateTime()). This is an xs:time (with timezone) that is current at some
          * time during the evaluation of a query or transformation in which fn:current-time() is executed.
-         * This function is �stable�. The precise instant during the query or transformation represented
-         * by the value of fn:current-time() is �implementation dependent�.
+         * This function is �stable�. The precise instant during the query or transformation represented by
+         * the value of fn:current-time() is �implementation dependent�.
          * </p>
          */
         CURRENT_TIME("fn:current-time", AbstractFunction.class, 0, 0, "xs:time"),

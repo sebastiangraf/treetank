@@ -230,12 +230,9 @@ public enum GUICommands implements GUICommand {
             tree.setCellRenderer(new TreetankTreeCellRenderer(database));
 
             // Serialize file into XML view if it is empty.
-            out =
-                new ByteArrayOutputStream();
-            final XMLSerializerProperties properties =
-                new XMLSerializerProperties();
-            final XMLSerializer serializer =
-                new XMLSerializerBuilder(session, out, properties).build();
+            out = new ByteArrayOutputStream();
+            final XMLSerializerProperties properties = new XMLSerializerProperties();
+            final XMLSerializer serializer = new XMLSerializerBuilder(session, 0, out, properties).build();
             serializer.call();
             text(gui, xmlPane, true);
 
@@ -263,12 +260,10 @@ public enum GUICommands implements GUICommand {
 
                             switch (node.getKind()) {
                             case ROOT_KIND:
-                                rtx.moveTo(nodeKey);
-                                new XMLSerializerBuilder(session, out, properties).build().call();
+                                new XMLSerializerBuilder(session, nodeKey, out, properties).build().call();
                                 break;
                             case ELEMENT_KIND:
-                                rtx.moveTo(nodeKey);
-                                new XMLSerializerBuilder(session, out, properties).build().call();
+                                new XMLSerializerBuilder(session, nodeKey, out, properties).build().call();
                                 break;
                             case TEXT_KIND:
                                 rtx.moveTo(nodeKey);
@@ -326,7 +321,7 @@ public enum GUICommands implements GUICommand {
                                         + rtx.getValueOfCurrentNode() + "'").getBytes());
                                 }
                             default:
-
+                                throw new IllegalStateException("Node kind not known!");
                             }
                         } catch (final Exception e1) {
                             LOGGER.error(e1.getMessage(), e1);

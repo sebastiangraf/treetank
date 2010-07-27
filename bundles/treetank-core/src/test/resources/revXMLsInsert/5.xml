@@ -57,6 +57,7 @@ dddhsajkhj
 	<data key="d2" />
 	<data key="d3">
 		<y:ShapeNode>
+			<bla/>
 			<y:Geometry height="30.0" width="30.0" x="-564.0" y="-231.5"/>
 			<y:Fill color="#FFCC00" transparent="false"/>
 			<y:BorderStyle color="#000000" type="line" width="1.0"/>
