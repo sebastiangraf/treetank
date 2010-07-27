@@ -27,6 +27,9 @@ abstract class AbsSerializer implements Callable<Void> {
     /** Array with versions to print. */
     protected final long[] mVersions;
 
+    /** Root node key of subtree to shredder. */
+    protected final long mNodeKey;
+
     /**
      * Constructor.
      * 
@@ -39,6 +42,24 @@ abstract class AbsSerializer implements Callable<Void> {
         mStack = new FastStack<Long>();
         mVersions = versions;
         mSession = session;
+        mNodeKey = 0;
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param session
+     *            {@link ISession}.
+     * @param nodeKey
+     *            Key of root node from which to shredder the subtree.
+     * @param versions
+     *            versions which should be serialized: -
+     */
+    public AbsSerializer(final ISession session, final long key, final long... versions) {
+        mStack = new FastStack<Long>();
+        mVersions = versions;
+        mSession = session;
+        mNodeKey = key;
     }
 
     /**
@@ -52,6 +73,7 @@ abstract class AbsSerializer implements Callable<Void> {
 
         long[] versionsToUse;
         IReadTransaction rtx = mSession.beginReadTransaction();
+        rtx.moveTo(mNodeKey);
         final long lastRevisionNumber = rtx.getRevisionNumber();
         rtx.close();
 

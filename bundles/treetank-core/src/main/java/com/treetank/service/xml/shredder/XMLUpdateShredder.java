@@ -71,83 +71,83 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
     // ===================== Initial setup ================
 
     /** Determines if the nodes match or not. */
-    private static boolean isSame = false;
+    private boolean isSame = false;
 
     /** Levels to go up to the parent after nodes are not equal (insert). */
-    private static int levelsUp = 0;
+    private int levelsUp;
 
     /** Last position of mWtx before the current. */
-    private static long lastPosKey = 0;
+    private long lastPosKey = 0;
 
     /** Level in the current subtree, which is going to be inserted. */
-    private static int insertLevel = 0;
+    private int insertLevel = 0;
 
     /** Level where the parser is in the file to shredder. */
-    private static int levelInToShredder;
+    private int levelInToShredder;
 
     /** Level where the cursor is in the shreddered file. */
-    private static int levelInShreddered;
+    private int levelInShreddered;
 
     /** Insert node at the top of a subtree. */
-    private static boolean insertAtTop = true;
+    private boolean insertAtTop = true;
 
     /** Determines if an element has been inserted immediately before. */
-    private static boolean insertedElement = false;
+    private boolean insertedElement = false;
 
     /**
      * Levels to move up after inserts at some level and further inserts on a
      * level above the current level.
      */
-    private static int levelsUpAfterInserts = 0;
+    private int levelsUpAfterInserts = 0;
 
     /** Determines if the cursor has to move up some levels during to inserts. */
-    private static boolean moveUp;
+    private boolean moveUp;
 
     /** Determines if a node or nodes have been deleted immediately before. */
-    private static boolean removed;
+    private boolean removed;
 
     /** Node key. */
-    private static long nodeKey;
+    private long nodeKey;
 
     /** Determines if a node is found in the Treetank storage or not. */
-    private static boolean found;
+    private boolean found;
 
     /**
      * This stack is for holding the current position to determine if an
      * insertAsRightSibling() or insertAsFirstChild() should occure.
      */
-    private static FastStack<Long> leftSiblingKeyStack;
+    private FastStack<Long> leftSiblingKeyStack;
 
     /**
      * Determines if it's a right sibling from the currently parsed node, where
      * the parsed node and the node in the Treetank storage match.
      */
-    private static boolean isRightSibling;
+    private boolean isRightSibling;
 
     /**
      * The key of the node, when the nodes are equal if at all (used to check
      * right siblings and therefore if nodes have been deleted).
      */
-    private static long keyMatches;
+    private long keyMatches;
 
     /** Maximum node key in revision. */
     private transient final long maxNodeKey;
 
     /** Determines if it's the last node or not. */
-    private static boolean isLastNode;
+    private boolean isLastNode;
 
     /** Determines if an insert occured. */
-    private static boolean insert;
+    private boolean insert;
 
     /**
-     * Normal constructor to invoke a shredding process on a existing {@link WriteTransaction}
+     * Normal constructor to invoke a shredding process on a existing {@link WriteTransaction}.
      * 
-     * @param wtx
+     * @param paramWtx
      *            {@link IWriteTransaction} where the new XML Fragment should be
      *            placed.
-     * @param reader
+     * @param paramReader
      *            {@link XMLEventReader} (StAX parser) of the XML Fragment.
-     * @param addAsFirstChild
+     * @param paramAddAsFirstChild
      *            If the insert is occuring on a node in an existing tree. <code>false</code> is not possible
      *            when wtx is on root node.
      * @throws TreetankUsageException
@@ -157,10 +157,10 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      *             If Treetank cannot access node keys.
      * 
      */
-    public XMLUpdateShredder(final IWriteTransaction wtx, final XMLEventReader reader,
-        final boolean addAsFirstChild) throws TreetankUsageException, TreetankIOException {
-        super(wtx, reader, addAsFirstChild);
-        if (wtx.getNode().getKind() != ENodes.ROOT_KIND) {
+    public XMLUpdateShredder(final IWriteTransaction paramWtx, final XMLEventReader paramReader,
+        final boolean paramAddAsFirstChild) throws TreetankUsageException, TreetankIOException {
+        super(paramWtx, paramReader, paramAddAsFirstChild);
+        if (paramWtx.getNode().getKind() != ENodes.ROOT_KIND) {
             throw new TreetankUsageException("WriteTransaction must point to doc-root at the beginning!");
         }
         maxNodeKey = mWtx.getMaxNodeKey();
@@ -168,6 +168,10 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
 
     /**
      * Invoking the shredder.
+     * 
+     * @throws TreetankException
+     *             In case any Treetank exception occured.
+     * @return revision of last revision (before commit).
      */
     @Override
     public Long call() throws TreetankException {
@@ -181,6 +185,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * Update a shreddered file.
      * 
      * @throws TreetankException
+     *             In case of any Treetank error.
      */
     private void updateOnly() throws TreetankException {
         try {
@@ -195,7 +200,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             XMLEvent event = mReader.nextEvent();
             mWtx.moveToDocumentRoot();
 
-            // Get root element.
+            // Get root element of subtree or whole XML document to shredder.
             QName rootElem;
             if (event.getEventType() == XMLStreamConstants.START_DOCUMENT) {
                 event = mReader.nextEvent();
@@ -433,11 +438,10 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
 
             LOGGER.info("Done [" + (System.currentTimeMillis() - start) + "]");
             // TODO: use Java7 multi-catch feature.
-        } catch (final XMLStreamException exc1) {
-            throw new TreetankIOException(exc1);
-        } catch (final IOException exc2) {
-            LOGGER.error(exc2.toString());
-            throw new TreetankIOException(exc2);
+        } catch (final XMLStreamException e) {
+            throw new TreetankIOException(e);
+        } catch (final IOException e) {
+            throw new TreetankIOException(e);
         }
 
     }
@@ -792,30 +796,27 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
         removed = true;
 
         if (insert) {
-            if (!mWtx.moveToRightSibling()) {
-                // do {
-                // mWtx.moveToParent();
-                // } while (!((AbsStructNode)mWtx).hasRightSibling());
-            }
+            // Cursor is on the inserted node, so move to right sibling.
+            mWtx.moveToRightSibling();
+            // Remove inserted node from stack.
+            leftSiblingKeyStack.pop();
         }
 
         do {
-            mWtx.remove();
+            if (mWtx.getNode().getNodeKey() != keyMatches) {
+                mWtx.remove();
 
-            // Update stack.
-            if (leftSiblingKeyStack.peek() == (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
+                // Update stack.
+                if (leftSiblingKeyStack.peek() == (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
+                    leftSiblingKeyStack.pop();
+                }
+
                 leftSiblingKeyStack.pop();
+                leftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
+                leftSiblingKeyStack.push((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
             }
-
-            if (insert) {
-                // Remove inserted node from stack.
-                leftSiblingKeyStack.pop();
-            }
-
-            leftSiblingKeyStack.pop();
-            leftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
-            leftSiblingKeyStack.push((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
-        } while(mWtx.getNode().getNodeKey() != keyMatches && mWtx.moveToRightSibling());
+        } while(mWtx.getNode().getNodeKey() != keyMatches
+        && ((AbsStructNode)mWtx.getNode()).hasRightSibling());
         // Move up anchestors if there is no former right sibling.
         boolean moveToParents = false;
         while(!((AbsStructNode)mWtx.getNode()).hasRightSibling()) {

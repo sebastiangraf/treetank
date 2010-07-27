@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * <h>TreetankTreeCellRenderer</h1>
+ * <h1TreetankTreeCellRenderer</h1>
  * 
  * <p>
  * Customized tree cell renderer to render nodes nicely.
@@ -39,18 +39,16 @@ public final class TreetankTreeCellRenderer extends DefaultTreeCellRenderer {
         LoggerFactory.getLogger(TreetankTreeCellRenderer.class);
 
     /** Element color. */
-    private final Color elementColor =
-        new Color(0, 0, 128);
+    private final Color mElementColor = new Color(0, 0, 128);
 
     /** Attribute color. */
-    private final Color attributeColor =
-        new Color(0, 128, 0);
+    private final Color mAttributeColor = new Color(0, 128, 0);
 
     /** Treetant reading transaction. */
-    private transient static IReadTransaction mRTX;
+    private transient IReadTransaction mRTX;
 
     /** Treetank databse. */
-    protected transient static IDatabase mDatabase;
+    protected transient IDatabase mDatabase;
 
     /** Path to file. */
     private static String PATH;
@@ -227,10 +225,10 @@ public final class TreetankTreeCellRenderer extends DefaultTreeCellRenderer {
         if (!selected) {
             switch (node.getKind()) {
             case ELEMENT_KIND:
-                setForeground(elementColor);
+                setForeground(mElementColor);
                 break;
             case ATTRIBUTE_KIND:
-                setForeground(attributeColor);
+                setForeground(mAttributeColor);
                 break;
             }
         }

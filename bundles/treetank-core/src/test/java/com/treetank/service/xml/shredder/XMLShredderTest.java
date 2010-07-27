@@ -49,14 +49,14 @@ import com.treetank.utils.TypedValue;
 
 public class XMLShredderTest extends XMLTestCase {
 
-    public static final String XML = "src" + File.separator + "test" + File.separator + "resources"
-    + File.separator + "test.xml";
+    public static final String XML =
+        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "test.xml";
 
-    public static final String XML2 = "src" + File.separator + "test" + File.separator + "resources"
-    + File.separator + "test2.xml";
+    public static final String XML2 =
+        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "test2.xml";
 
-    public static final String XML3 = "src" + File.separator + "test" + File.separator + "resources"
-    + File.separator + "test3.xml";
+    public static final String XML3 =
+        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "test3.xml";
 
     @Override
     @Before

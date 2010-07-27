@@ -32,8 +32,8 @@ import com.treetank.utils.TypedValue;
 
 public class ClassInvocation {
 
-    public static final String XML = "src" + File.separator + "test" + File.separator + "resources"
-    + File.separator + "test.xml";
+    public static final String XML =
+        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "test.xml";
 
     public static void main(String[] args) {
         try {

@@ -72,8 +72,6 @@ public class StAXSerializerTest {
             while(serializer.hasNext()) {
                 XMLEvent event = serializer.nextEvent();
 
-                System.out.println(event);
-
                 switch (event.getEventType()) {
                 case XMLStreamConstants.START_DOCUMENT:
                     strBuilder.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
@@ -89,11 +87,11 @@ public class StAXSerializerTest {
                     }
                     break;
                 case XMLStreamConstants.END_ELEMENT:
-                    if (!isEmptyElement) {
+                    if (isEmptyElement) {
+                        isEmptyElement = false;
+                    } else {
                         emitQName(true, event, strBuilder);
                         strBuilder.append('>');
-                    } else {
-                        isEmptyElement = false;
                     }
                     break;
                 case XMLStreamConstants.CHARACTERS:

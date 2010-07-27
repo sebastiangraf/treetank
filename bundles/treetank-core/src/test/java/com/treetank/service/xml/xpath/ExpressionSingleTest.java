@@ -48,8 +48,8 @@ public class ExpressionSingleTest {
 
     ExpressionSingle builder;
 
-    public static final String XML = "src" + File.separator + "test" + File.separator + "resoruces"
-    + File.separator + "factbook.xml";
+    public static final String XML =
+        "src" + File.separator + "test" + File.separator + "resoruces" + File.separator + "factbook.xml";
 
     @Before
     public void setUp() throws TreetankException {

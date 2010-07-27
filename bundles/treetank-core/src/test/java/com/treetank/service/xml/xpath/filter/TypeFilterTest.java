@@ -42,8 +42,8 @@ import com.treetank.service.xml.xpath.functions.XPathError;
 
 public class TypeFilterTest {
 
-    public static final String XML = "src" + File.separator + "test" + File.separator + "resources"
-    + File.separator + "test.xml";
+    public static final String XML =
+        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "test.xml";
 
     @Before
     public void setUp() throws TreetankException {

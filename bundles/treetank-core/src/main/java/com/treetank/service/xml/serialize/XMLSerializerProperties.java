@@ -1,10 +1,8 @@
 package com.treetank.service.xml.serialize;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,8 +10,6 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.treetank.settings.ECharsForSerializing;
 
 /**
  * <h1>XMLSerializerProperties</h1>
@@ -47,45 +43,41 @@ public final class XMLSerializerProperties {
     // ============ Shredding constants. ===============
 
     /** Serialization parameter: yes/no. */
-    static final Object[] S_INDENT = {
-        "indent", NO
+    public static final Object[] S_INDENT = {
+        "indent", YES
     };
 
     /** Serialize XML declaration: yes/no. */
-    static final Object[] S_XMLDECL = {
+    public static final Object[] S_XMLDECL = {
         "xmldecl", YES
     };
 
     /** Specific serialization parameter: number of spaces to indent. */
-    static final Object[] S_INDENT_SPACES = {
+    public static final Object[] S_INDENT_SPACES = {
         "indent-spaces", 2
     };
 
     /** Serialize REST: yes/no. */
-    static final Object[] S_REST = {
+    public static final Object[] S_REST = {
         "serialize-rest", NO
     };
 
     /** Serialize TT-ID: yes/no. */
-    static final Object[] S_ID = {
+    public static final Object[] S_ID = {
         "serialize-id", NO
     };
 
     /**
      * Constructor.
-     * 
-     * @param filePath
-     *            Path to properties file.
      */
     public XMLSerializerProperties() {
         try {
             for (final Field f : getClass().getFields()) {
-                System.out.println("BLAAAA");
                 final Object obj = f.get(null);
-                if (!(obj instanceof Object[]))
+                if (!(obj instanceof Object[])) {
                     continue;
+                }
                 final Object[] arr = (Object[])obj;
-                System.out.println(arr[0].toString());
                 mProps.put(arr[0].toString(), arr[1]);
             }
         } catch (final Exception e) {
@@ -113,12 +105,14 @@ public final class XMLSerializerProperties {
      * once the last values are preserved, so the default values are overridden by user specified values.
      * </p>
      * 
+     * @param paramFilePath
+     *                  Path to properties file.
      * @return ConcurrentMap which holds property key/values.
      * @throws IOException
      *             in case of any I/O operation failed.
      */
-    public ConcurrentMap<String, Object> readInProps(final String filePath) {
-        mFilePath = filePath;
+    public ConcurrentMap<String, Object> readProps(final String paramFilePath) {
+        mFilePath = paramFilePath;
         if (!new File(mFilePath).exists()) {
             throw new IllegalStateException("Properties file doesn't exist!");
         }
@@ -150,43 +144,43 @@ public final class XMLSerializerProperties {
         return mProps;
     }
 
-    /**
-     * Writes the properties to disk.
-     */
-    public final synchronized void write() {
-        final File file = new File(mFilePath);
-
-        try {
-            // User has already specified key/values, so cache it.
-            final StringBuilder strBuilder = new StringBuilder();
-            if (file.exists()) {
-                final BufferedReader buffReader = new BufferedReader(new FileReader(file));
-
-                for (String line = buffReader.readLine(); line != null; line = buffReader.readLine()) {
-                    strBuilder.append(line + ECharsForSerializing.NEWLINE);
-                }
-
-                buffReader.close();
-            }
-
-            // Write map properties to file.
-            final BufferedWriter buffWriter = new BufferedWriter(new FileWriter(file));
-            for (final Field f : getClass().getFields()) {
-                final Object obj = f.get(null);
-                if (!(obj instanceof Object[]))
-                    continue;
-                final String key = ((Object[])obj)[0].toString();
-                final Object value = ((Object[])obj)[1];
-                buffWriter.write(key + " = " + value + ECharsForSerializing.NEWLINE);
-            }
-
-            // Append cached properties.
-            buffWriter.write(strBuilder.toString());
-            buffWriter.close();
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-    }
+    // /**
+    // * Writes the properties to disk.
+    // */
+    // public final synchronized void write() {
+    // final File file = new File(mFilePath);
+    //
+    // try {
+    // // User has already specified key/values, so cache it.
+    // final StringBuilder strBuilder = new StringBuilder();
+    // if (file.exists()) {
+    // final BufferedReader buffReader = new BufferedReader(new FileReader(file));
+    //
+    // for (String line = buffReader.readLine(); line != null; line = buffReader.readLine()) {
+    // strBuilder.append(line + ECharsForSerializing.NEWLINE);
+    // }
+    //
+    // buffReader.close();
+    // }
+    //
+    // // Write map properties to file.
+    // final BufferedWriter buffWriter = new BufferedWriter(new FileWriter(file));
+    // for (final Field f : getClass().getFields()) {
+    // final Object obj = f.get(null);
+    // if (!(obj instanceof Object[]))
+    // continue;
+    // final String key = ((Object[])obj)[0].toString();
+    // final Object value = ((Object[])obj)[1];
+    // buffWriter.write(key + " = " + value + ECharsForSerializing.NEWLINE);
+    // }
+    //
+    // // Append cached properties.
+    // buffWriter.write(strBuilder.toString());
+    // buffWriter.close();
+    // } catch (final Exception e) {
+    // LOGGER.error(e.getMessage(), e);
+    // }
+    // }
 
     /**
      * Get properties map.
