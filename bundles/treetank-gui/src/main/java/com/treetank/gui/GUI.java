@@ -20,10 +20,10 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.treetank.gui.view.tree.TreetankTree;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <h1>GUI</h>
@@ -38,16 +38,20 @@ import com.treetank.gui.view.tree.TreetankTree;
 public final class GUI extends JPanel {
 
     /** Serialization UID. */
-    private static final long serialVersionUID = 7396552752125858796L;
+    private static final long serialVersionUID =
+        7396552752125858796L;
 
     /** Logger. */
-    private static final Log LOGGER = LogFactory.getLog(GUI.class);
+    private static final Logger LOGGER =
+        LoggerFactory.getLogger(GUI.class);
 
     /** Optionally set the look and feel. */
-    private transient static boolean useSystemLookAndFeel = false;
+    private transient static boolean useSystemLookAndFeel =
+        false;
 
     /** Minimum height of panes. */
-    private static final int HEIGHT = 1000;
+    private static final int HEIGHT =
+        1000;
 
     /** Tree view. */
     protected transient JTree tree;
@@ -56,7 +60,8 @@ public final class GUI extends JPanel {
     protected transient JTextArea xmlPane;
 
     /** AdjustmentListener temporal value. */
-    private static transient int tempValue = 0;
+    private static transient int tempValue =
+        0;
 
     /** XML view (scrollpane). */
     public static transient JScrollPane xmlView;
@@ -72,7 +77,8 @@ public final class GUI extends JPanel {
 
         try {
             // Build tree view.
-            tree = new TreetankTree(null);
+            tree =
+                new TreetankTree(null);
             tree.setBackground(Color.WHITE);
 
             /*
@@ -87,11 +93,13 @@ public final class GUI extends JPanel {
             tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
             // Create a scroll pane and add the tree to it.
-            final JScrollPane treeView = new JScrollPane(tree);
+            final JScrollPane treeView =
+                new JScrollPane(tree);
             treeView.setBackground(Color.WHITE);
 
             // Create a XML text area.
-            xmlPane = new JTextArea();
+            xmlPane =
+                new JTextArea();
             xmlPane.setEditable(false);
             xmlPane.setMinimumSize(new Dimension(370, 600));
             xmlPane.setColumns(80);
@@ -99,10 +107,12 @@ public final class GUI extends JPanel {
             xmlPane.setCaretPosition(0);
 
             // Create a scroll pane and add the XML text area to it.
-            xmlView = new JScrollPane(xmlPane);
+            xmlView =
+                new JScrollPane(xmlPane);
             xmlView.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
             xmlView.setMinimumSize(new Dimension(400, 600));
-            final JScrollBar vertScrollBar = xmlView.getVerticalScrollBar();
+            final JScrollBar vertScrollBar =
+                xmlView.getVerticalScrollBar();
             vertScrollBar.setValue(vertScrollBar.getMinimum());
             vertScrollBar.addAdjustmentListener(new AdjustmentListener() {
                 @Override
@@ -116,22 +126,28 @@ public final class GUI extends JPanel {
                         return;
                     }
 
-                    final int lineHeight = xmlPane.getFontMetrics(xmlPane.getFont()).getHeight();
-                    int value = evt.getValue();
+                    final int lineHeight =
+                        xmlPane.getFontMetrics(xmlPane.getFont()).getHeight();
+                    int value =
+                        evt.getValue();
                     System.out.println("VALUE: " + value);
-                    int result = value - tempValue;
-                    GUICommands.lineChanges = result / lineHeight;
+                    int result =
+                        value - tempValue;
+                    GUICommands.lineChanges =
+                        result / lineHeight;
                     System.out.println("Lines: " + GUICommands.lineChanges);
                     if (GUICommands.lineChanges != 0) {
                         GUICommands.text(gui, xmlPane, false);
                     }
 
-                    tempValue = value;
+                    tempValue =
+                        value;
                 }
             });
 
             // Add the scroll panes to a split pane.
-            final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+            final JSplitPane splitPane =
+                new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
             splitPane.setLeftComponent(treeView);
             splitPane.setRightComponent(xmlView);
 
@@ -168,14 +184,18 @@ public final class GUI extends JPanel {
         }
 
         // Create and set up the window.
-        final JFrame frame = new JFrame("Treetank GUI");
-        final Dimension frameSize = new Dimension(1000, 1100);
+        final JFrame frame =
+            new JFrame("Treetank GUI");
+        final Dimension frameSize =
+            new Dimension(1000, 1100);
         frame.setSize(frameSize);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Create gui with menubar.
-        gui = new GUI();
-        final JMenuBar menuBar = new TreetankMenuBar(gui);
+        gui =
+            new GUI();
+        final JMenuBar menuBar =
+            new TreetankMenuBar(gui);
 
         // Add menubar.
         frame.setJMenuBar(menuBar);
@@ -184,11 +204,14 @@ public final class GUI extends JPanel {
         frame.add(gui);
 
         // Screen size.
-        final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        final Dimension screenSize =
+            Toolkit.getDefaultToolkit().getScreenSize();
 
         // Compute position of JFrame.
-        final int top = (screenSize.height - frameSize.height) / 2;
-        final int left = (screenSize.width - frameSize.width) / 2;
+        final int top =
+            (screenSize.height - frameSize.height) / 2;
+        final int left =
+            (screenSize.width - frameSize.width) / 2;
 
         // Set frame position to center.
         frame.setLocation(left, top);
