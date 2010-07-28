@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,9 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: XMLSerializer.java 4414 2008-08-27 20:01:07Z kramis $
  */
-
 package com.treetank.service.xml.serialize;
 
 import java.io.BufferedOutputStream;
@@ -38,6 +36,7 @@ import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
 import com.treetank.settings.ECharsForSerializing;
 import com.treetank.utils.IConstants;
+import com.treetank.utils.LogWrapper;
 
 import static com.treetank.service.xml.serialize.XMLSerializerProperties.S_ID;
 import static com.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT;
@@ -54,10 +53,17 @@ import static com.treetank.service.xml.serialize.XMLSerializerProperties.S_XMLDE
  * of this class.
  * </p>
  */
-public class XMLSerializer extends AbsSerializer {
+public final class XMLSerializer extends AbsSerializer {
 
-    /** Logger. */
+    /** 
+     * Logger for determining the log level. 
+    */
     private static final Logger LOGGER = LoggerFactory.getLogger(XMLSerializer.class);
+
+    /**
+     * Log wrapper for better output.
+     */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LOGGER);
 
     /** Offset that must be added to digit to make it ASCII. */
     private static final int ASCII_OFFSET = 48;
@@ -79,10 +85,10 @@ public class XMLSerializer extends AbsSerializer {
     /** Serialize XML declaration. */
     private final boolean mSerializeXMLDeclaration;
 
-    /** Serialize rest header and closer and rest:id */
+    /** Serialize rest header and closer and rest:id. */
     private final boolean mSerializeRest;
 
-    /** Serialize id */
+    /** Serialize id.*/
     private final boolean mSerializeId;
 
     /** Number of spaces to indent. */
@@ -186,7 +192,7 @@ public class XMLSerializer extends AbsSerializer {
                 break;
             }
         } catch (final IOException exc) {
-            LOGGER.error(exc.getMessage(), exc);
+            LOGWRAPPER.error(exc);
         }
     }
 
@@ -206,7 +212,7 @@ public class XMLSerializer extends AbsSerializer {
                 mOut.write(ECharsForSerializing.NEWLINE.getBytes());
             }
         } catch (final IOException exc) {
-            LOGGER.error(exc.getMessage(), exc);
+            LOGWRAPPER.error(exc);
         }
     }
 
@@ -220,7 +226,7 @@ public class XMLSerializer extends AbsSerializer {
                 write("<rest:sequence xmlns:rest=\"REST\"><rest:item>");
             }
         } catch (final IOException exc) {
-            LOGGER.error(exc.getMessage(), exc);
+            LOGWRAPPER.error(exc);
         }
     }
 
@@ -232,7 +238,7 @@ public class XMLSerializer extends AbsSerializer {
             }
             mOut.flush();
         } catch (final IOException exc) {
-            LOGGER.error(exc.getMessage(), exc);
+            LOGWRAPPER.error(exc);
         }
 
     }
@@ -244,7 +250,7 @@ public class XMLSerializer extends AbsSerializer {
             write(Long.toString(version));
             write("\">");
         } catch (final IOException exc) {
-            LOGGER.error(exc.getMessage(), exc);
+            LOGWRAPPER.error(exc);
         }
 
     }
@@ -254,7 +260,7 @@ public class XMLSerializer extends AbsSerializer {
         try {
             write("</tt>");
         } catch (final IOException exc) {
-            LOGGER.error(exc.getMessage(), exc);
+            LOGWRAPPER.error(exc);
         }
     }
 
@@ -335,12 +341,12 @@ public class XMLSerializer extends AbsSerializer {
         /**
          * Intermediate boolean for indendation, not necessary.
          */
-        private transient boolean mIndent = false;
+        private transient boolean mIndent;
 
         /**
          * Intermediate boolean for rest serialization, not necessary.
          */
-        private transient boolean mREST = false;
+        private transient boolean mREST;
 
         /**
          * Intermediate boolean for XML-Decl serialization, not necessary.
@@ -350,7 +356,7 @@ public class XMLSerializer extends AbsSerializer {
         /**
          * Intermediate boolean for ids, not necessary.
          */
-        private transient boolean mID = false;
+        private transient boolean mID;
 
         /**
          * Intermediate number of spaces to indent, not necessary.
@@ -358,19 +364,19 @@ public class XMLSerializer extends AbsSerializer {
         private transient int mIndentSpaces = 2;
 
         /** Stream to pipe to. */
-        private transient final OutputStream mStream;
+        private final transient OutputStream mStream;
 
         /** Session to use. */
-        private transient final ISession mSession;
+        private final transient ISession mSession;
 
         /** Versions to use. */
-        private transient final long[] mVersions;
+        private final transient long[] mVersions;
 
         /** Node key of subtree to shredder. */
-        private transient final long mNodeKey;
+        private final transient long mNodeKey;
 
         /**
-         * Constructor, setting the necessary stuff
+         * Constructor, setting the necessary stuff.
          * 
          * @param paramStream
          */
@@ -421,7 +427,7 @@ public class XMLSerializer extends AbsSerializer {
         }
 
         /**
-         * Setting the RESTful output
+         * Setting the RESTful output.
          * 
          * @param paramREST
          *            to set
@@ -431,7 +437,7 @@ public class XMLSerializer extends AbsSerializer {
         }
 
         /**
-         * Setting the declaration
+         * Setting the declaration.
          * 
          * @param paramDeclaration
          *            to set
@@ -441,7 +447,7 @@ public class XMLSerializer extends AbsSerializer {
         }
 
         /**
-         * Setting the ids on nodes
+         * Setting the ids on nodes.
          * 
          * @param paramID
          *            to set
@@ -451,7 +457,7 @@ public class XMLSerializer extends AbsSerializer {
         }
 
         /**
-         * Building new Serializer
+         * Building new Serializer.
          * 
          * @return a new instance
          */

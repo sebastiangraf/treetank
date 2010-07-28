@@ -1,3 +1,19 @@
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
+ * 
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ * 
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * 
+ */
 package com.treetank.service.xml.serialize;
 
 import java.io.File;
@@ -7,6 +23,7 @@ import javax.xml.namespace.QName;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
 import org.xml.sax.EntityResolver;
@@ -25,6 +42,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.node.ElementNode;
+import com.treetank.utils.LogWrapper;
 
 /**
  * <h1>SaxSerializer</h1>
@@ -38,8 +56,15 @@ import com.treetank.node.ElementNode;
  */
 public final class SAXSerializer extends AbsSerializer implements XMLReader {
 
-    /** Logger. */
+    /** 
+     * Logger for determining the log level. 
+    */
     private static final Logger LOGGER = LoggerFactory.getLogger(SAXSerializer.class);
+
+    /**
+     * Log wrapper for better output.
+     */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LOGGER);
 
     /** SAX content handler. */
     private transient ContentHandler mContHandler;
@@ -59,7 +84,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         try {
             mContHandler.endElement(URI, qName.getLocalPart(), WriteTransactionState.buildName(qName));
         } catch (final SAXException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGWRAPPER.error(e);
         }
     }
 
@@ -84,7 +109,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         try {
             mContHandler.startElement("", "tt", "tt", atts);
         } catch (final SAXException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGWRAPPER.error(e);
         }
 
     }
@@ -94,7 +119,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         try {
             mContHandler.endElement("", "tt", "tt");
         } catch (final SAXException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGWRAPPER.error(e);
         }
     }
 
@@ -140,7 +165,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
                     WriteTransactionState.buildName(qName));
             }
         } catch (final SAXException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGWRAPPER.error(e);
         }
     }
 
@@ -152,7 +177,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
             mContHandler.characters(rtx.getValueOfCurrentNode().toCharArray(), 0, rtx.getValueOfCurrentNode()
                 .length());
         } catch (final SAXException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGWRAPPER.error(e);
         }
     }
 
@@ -166,7 +191,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
      */
     public static void main(final String... args) throws Exception {
         if (args.length != 1) {
-            LOGGER.error("Usage: SAXSerializer input-TT");
+            LOGWRAPPER.error("Usage: SAXSerializer input-TT");
         }
 
         final IDatabase database = Database.openDatabase(new File(args[0]));
@@ -186,7 +211,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         try {
             mContHandler.startDocument();
         } catch (final SAXException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGWRAPPER.error(e);
         }
     }
 
@@ -195,7 +220,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         try {
             mContHandler.endDocument();
         } catch (final SAXException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGWRAPPER.error(e);
         }
     }
 
@@ -252,7 +277,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         try {
             super.call();
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGWRAPPER.error(e.getMessage(), e);
         }
         emitEndDocument();
     }

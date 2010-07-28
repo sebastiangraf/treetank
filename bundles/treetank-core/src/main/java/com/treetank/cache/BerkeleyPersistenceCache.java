@@ -42,7 +42,9 @@ import org.slf4j.LoggerFactory;
  */
 public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
 
-    /** Logger for determing the log level. */
+    /** 
+     * Logger for determining the log level. 
+    */
     private static final Logger LOGGER = LoggerFactory.getLogger(BerkeleyPersistenceCache.class);
 
     /**
@@ -133,11 +135,10 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
             mDatabase.put(null, keyEntry, valueEntry);
 
             // debug
-            LOGGER.debug(new StringBuilder("Put new BerkeleyPersistenceCache with key ").append(key).append(
-                " and Node Page Continer ").append(page.toString()).toString());
+            LOGWRAPPER.debug("Put new BerkeleyPersistenceCache with key {} and Node Page Continer {}", key, page);
 
         } catch (final DatabaseException exc) {
-            LOGGER.error(exc.getMessage(), exc);
+            LOGWRAPPER.error(exc);
             throw new TreetankIOException(exc);
         }
 
@@ -155,10 +156,10 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
 
             // debug
 
-            LOGGER.debug(new StringBuilder("Clear BerkeleyPersistenceCache").toString());
+            LOGWRAPPER.debug("Clear BerkeleyPersistenceCache");
 
         } catch (final DatabaseException exc) {
-            LOGGER.error(exc.getMessage(), exc);
+            LOGWRAPPER.error(exc);
             throw new TreetankIOException(exc);
         }
     }
@@ -179,11 +180,11 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
             }
 
             // debug
-            LOGGER.debug(new StringBuilder("Get BerkeleyPersistenceCache with key ").append(key).toString());
+            LOGWRAPPER.debug("Get BerkeleyPersistenceCache with key {}", key);
 
             return val;
         } catch (final DatabaseException exc) {
-            LOGGER.error(exc.getMessage(), exc);
+            LOGWRAPPER.error(exc);
             throw new TreetankIOException(exc);
         }
     }
