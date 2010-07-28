@@ -50,7 +50,7 @@ import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
 import com.treetank.settings.EFixed;
 import com.treetank.utils.FastStack;
-import com.treetank.utils.LogHelper;
+import com.treetank.utils.LogWrapper;
 
 /**
  * This class appends a given {@link XMLStreamReader} to a {@link IWriteTransaction}. The content of the
@@ -228,7 +228,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                 do {
                     switch (event.getEventType()) {
                     case XMLStreamConstants.START_ELEMENT:
-                        if (LogHelper.DEBUG) {
+                        if (LOGGER.isDebugEnabled()) {
                             // Debugging output.
                             LOGGER.debug("TO SHREDDER: " + ((StartElement)event).getName());
 

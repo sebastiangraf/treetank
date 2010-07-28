@@ -25,7 +25,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
-import com.treetank.utils.LogHelper;
+import com.treetank.utils.LogWrapper;
 
 /**
  * <h1>XMLImport</h1>
@@ -71,7 +71,7 @@ public final class XMLImport implements IImport, Callable<Void> {
     private transient File mTT;
 
     /** Log helper. */
-    private transient LogHelper log;
+    private transient LogWrapper log;
 
     /** Revision nodes {@link RevNode}. */
     private transient List<RevNode> nodes;
@@ -88,7 +88,7 @@ public final class XMLImport implements IImport, Callable<Void> {
     public XMLImport(final File tt) {
         try {
             mTT = tt;
-            log = new LogHelper(LOGGER);
+            log = new LogWrapper(LOGGER);
             nodes = new ArrayList<RevNode>();
             final IDatabase database = Database.openDatabase(mTT);
             session = database.getSession();
