@@ -1,23 +1,25 @@
-/*
- * Copyright (c) 2009, Sebastian Graf (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * 
  */
 package com.treetank.cache;
 
 import com.treetank.access.DatabaseConfiguration;
 import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankIOException;
+import com.treetank.utils.LogWrapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,11 +33,18 @@ import org.slf4j.LoggerFactory;
  */
 public final class TransactionLogCache extends AbstractPersistenceCache {
 
-    /** Logger. */
+    /** 
+     * Logger for determining the log level. 
+    */
     private static final Logger LOGGER = LoggerFactory.getLogger(TransactionLogCache.class);
 
     /**
-     * RAM-Based first cache
+     * Log wrapper for better output.
+     */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LOGGER);
+
+    /**
+     * RAM-Based first cache.
      */
     private transient final LRUCache firstCache;
 
@@ -45,6 +54,10 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
      * 
      * @param paramConfig
      *            the config for having a storage-place
+     * @param revision
+     *            revision number        
+     * @throws TreetankIOException
+     *             Exception if IO is not successful
      */
     public TransactionLogCache(final DatabaseConfiguration paramConfig, final long revision)
         throws TreetankIOException {
@@ -53,8 +66,8 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
         firstCache = new LRUCache(secondCache);
 
         // debug
-        LOGGER.debug(new StringBuilder("Creating new Transaction Log Cache with Database Configuration ")
-            .append(paramConfig).append(" and Revision ").append(revision).toString());
+        LOGWRAPPER.debug("Creating new Transaction Log Cache with Database Configuration {} and Revision {}", 
+            paramConfig, revision);
     }
 
     /**
@@ -65,7 +78,7 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
         firstCache.clear();
 
         // debug
-        LOGGER.debug(new StringBuilder("Celar Persistence").toString());
+        LOGWRAPPER.debug("Celar Persistence");
     }
 
     /**
@@ -75,7 +88,7 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
     public NodePageContainer getPersistent(final long key) throws TreetankIOException {
 
         // debug
-        LOGGER.debug(new StringBuilder("Get Persistence with key ").append(key).toString());
+        LOGWRAPPER.debug("Get Persistence with key {}", key);
 
         return firstCache.get(key);
     }
@@ -88,8 +101,7 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
         firstCache.put(key, page);
 
         // debug
-        LOGGER.debug(new StringBuilder("Put Persistence with key ").append(key).append(
-            " and Node Page Continer ").append(page.toString()).toString());
+        LOGWRAPPER.debug("Put Persistence with key {} and Node Page Continer {}", key, page);
     }
 
 }
