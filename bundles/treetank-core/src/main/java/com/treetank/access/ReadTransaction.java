@@ -5,7 +5,7 @@
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -39,7 +39,7 @@ import com.treetank.utils.TypedValue;
  * </p>
  */
 public class ReadTransaction implements IReadTransaction {
-
+    
     /** ID of transaction. */
     private final long mTransactionID;
 
@@ -64,6 +64,8 @@ public class ReadTransaction implements IReadTransaction {
      *            Session state to work with.
      * @param transactionState
      *            Transaction state to work with.
+     * @throws TreetankIOException
+     *             if something odd happens within the creation process.
      */
     protected ReadTransaction(final long transactionID, final SessionState sessionState,
         final ReadTransactionState transactionState) throws TreetankIOException {
@@ -100,14 +102,14 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
-    public boolean moveTo(final long nodeKey) {
+    public final boolean moveTo(final long mNodeKey) {
         assertNotClosed();
-        if (nodeKey != (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
+        if (mNodeKey != (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
             // Remember old node and fetch new one.
             final IItem oldNode = mCurrentNode;
             try {
-                mCurrentNode = mTransactionState.getNode(nodeKey);
-            } catch (Exception e) {
+                mCurrentNode = mTransactionState.getNode(mNodeKey);
+            } catch (final Exception e) {
                 mCurrentNode = null;
             }
             if (mCurrentNode != null) {
@@ -162,9 +164,9 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
-    public final boolean moveToAttribute(final int index) {
+    public final boolean moveToAttribute(final int mIndex) {
         if (mCurrentNode.getKind() == ENodes.ELEMENT_KIND) {
-            return moveTo(((ElementNode)mCurrentNode).getAttributeKey(index));
+            return moveTo(((ElementNode)mCurrentNode).getAttributeKey(mIndex));
         } else {
             return false;
         }
@@ -173,9 +175,9 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
-    public final boolean moveToNamespace(final int index) {
+    public final boolean moveToNamespace(final int mIndex) {
         if (mCurrentNode.getKind() == ENodes.ELEMENT_KIND) {
-            return moveTo(((ElementNode)mCurrentNode).getNamespaceKey(index));
+            return moveTo(((ElementNode)mCurrentNode).getNamespaceKey(mIndex));
         } else {
             return false;
         }
@@ -211,17 +213,17 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
-    public final int keyForName(final String name) {
+    public final int keyForName(final String mName) {
         assertNotClosed();
-        return NamePageHash.generateHashForString(name);
+        return NamePageHash.generateHashForString(mName);
     }
 
     /**
      * {@inheritDoc}
      */
-    public final String nameForKey(final int key) {
+    public final String nameForKey(final int mKey) {
         assertNotClosed();
-        return mTransactionState.getName(key);
+        return mTransactionState.getName(mKey);
     }
 
     /**
@@ -386,18 +388,18 @@ public class ReadTransaction implements IReadTransaction {
      * Building QName out of uri and name. The name can have the prefix denoted
      * with ":";
      * 
-     * @param uri
+     * @param mUri
      *            the namespaceuri
-     * @param name
+     * @param mName
      *            the name including a possible prefix
      * @return the QName obj
      */
-    protected static final QName buildQName(final String uri, final String name) {
+    protected static final QName buildQName(final String mUri, final String mName) {
         QName qname;
-        if (name.contains(":")) {
-            qname = new QName(uri, name.split(":")[1], name.split(":")[0]);
+        if (mName.contains(":")) {
+            qname = new QName(mUri, mName.split(":")[1], mName.split(":")[0]);
         } else {
-            qname = new QName(uri, name);
+            qname = new QName(mUri, mName);
         }
         return qname;
     }
@@ -405,13 +407,13 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * Check method if node is a structural node.
      * 
-     * @param item
+     * @param mItem
      *            to be checked
      * @return an {@link AbsStructNode} instance if node is a structural one
      */
-    protected static AbsStructNode checkNode(final IItem item) {
-        if (item instanceof AbsStructNode) {
-            return (AbsStructNode)item;
+    protected static AbsStructNode checkNode(final IItem mItem) {
+        if (mItem instanceof AbsStructNode) {
+            return (AbsStructNode)mItem;
         } else {
             return null;
         }

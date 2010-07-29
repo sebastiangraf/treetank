@@ -1,17 +1,18 @@
-/*
- * Copyright (c) 2009, Sebastian Graf (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * 
  */
 package com.treetank.cache;
 
@@ -42,7 +43,7 @@ public final class LRUCache implements ICache {
     /**
      * The reference to the second cache.
      */
-    private transient final ICache secondCache;
+    private transient final ICache mSecondCache;
 
     /**
      * Creates a new LRU cache.
@@ -53,16 +54,16 @@ public final class LRUCache implements ICache {
      * 
      */
     public LRUCache(final ICache paramSecondCache) {
-        secondCache = paramSecondCache;
+        mSecondCache = paramSecondCache;
         map = new LinkedHashMap<Long, NodePageContainer>(CACHE_CAPACITY) {
             // (an anonymous inner class)
             private static final long serialVersionUID = 1;
 
             @Override
-            protected boolean removeEldestEntry(final Map.Entry<Long, NodePageContainer> eldest) {
+            protected boolean removeEldestEntry(final Map.Entry<Long, NodePageContainer> mEldest) {
                 boolean returnVal = false;
                 if (size() > CACHE_CAPACITY) {
-                    secondCache.put(eldest.getKey(), eldest.getValue());
+                    mSecondCache.put(mEldest.getKey(), mEldest.getValue());
                     returnVal = true;
                 }
                 return returnVal;
@@ -82,15 +83,15 @@ public final class LRUCache implements ICache {
      * Retrieves an entry from the cache.<br>
      * The retrieved entry becomes the MRU (most recently used) entry.
      * 
-     * @param key
+     * @param mKey
      *            the key whose associated value is to be returned.
      * @return the value associated to this key, or null if no value with this
      *         key exists in the cache.
      */
-    public NodePageContainer get(final long key) {
-        NodePageContainer page = map.get(key);
+    public NodePageContainer get(final long mKey) {
+        NodePageContainer page = map.get(mKey);
         if (page == null) {
-            page = secondCache.get(key);
+            page = mSecondCache.get(mKey);
         }
         return page;
     }
@@ -100,13 +101,13 @@ public final class LRUCache implements ICache {
      * Adds an entry to this cache. If the cache is full, the LRU (least
      * recently used) entry is dropped.
      * 
-     * @param key
+     * @param mKey
      *            the key with which the specified value is to be associated.
-     * @param value
+     * @param mValue
      *            a value to be associated with the specified key.
      */
-    public void put(final long key, final NodePageContainer value) {
-        map.put(key, value);
+    public void put(final long mKey, final NodePageContainer mValue) {
+        map.put(mKey, mValue);
     }
 
     /**
@@ -114,7 +115,7 @@ public final class LRUCache implements ICache {
      */
     public void clear() {
         map.clear();
-        secondCache.clear();
+        mSecondCache.clear();
     }
 
     /**

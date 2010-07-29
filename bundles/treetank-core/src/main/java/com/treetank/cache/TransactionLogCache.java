@@ -17,11 +17,7 @@
 package com.treetank.cache;
 
 import com.treetank.access.DatabaseConfiguration;
-import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankIOException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Transactionlog for storing all upcoming nodes in either the ram cache or a
@@ -31,17 +27,11 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public final class TransactionLogCache extends AbstractPersistenceCache {
-
-    /**
-     * Logger for determining the log level.
-     */
-    private static final Logger LOGGER =
-        LoggerFactory.getLogger(TransactionLogCache.class);
-
+    
     /**
      * RAM-Based first cache.
      */
-    private transient final LRUCache firstCache;
+    private transient final LRUCache mFirstCache;
 
     /**
      * Constructor including the {@link SessionConfiguration} for persistent
@@ -59,7 +49,7 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
         super(paramConfig);
         final BerkeleyPersistenceCache secondCache =
             new BerkeleyPersistenceCache(paramConfig, revision);
-        firstCache =
+        mFirstCache =
             new LRUCache(secondCache);
     }
 
@@ -68,7 +58,7 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
      */
     @Override
     public void clearPersistent() throws TreetankIOException {
-        firstCache.clear();
+        mFirstCache.clear();
 
     }
 
@@ -76,17 +66,17 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
      * {@inheritDoc}
      */
     @Override
-    public NodePageContainer getPersistent(final long key) throws TreetankIOException {
+    public NodePageContainer getPersistent(final long mKey) throws TreetankIOException {
 
-        return firstCache.get(key);
+        return mFirstCache.get(mKey);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void putPersistent(final long key, final NodePageContainer page) throws TreetankIOException {
-        firstCache.put(key, page);
+    public void putPersistent(final long mKey, final NodePageContainer mPage) throws TreetankIOException {
+        mFirstCache.put(mKey, mPage);
     }
 
 }

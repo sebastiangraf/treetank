@@ -78,8 +78,8 @@ public final class NamespaceNode extends AbsNode {
      * {@inheritDoc}
      */
     @Override
-    public void setURIKey(final int uriKey) {
-        mIntData[URI_KEY] = uriKey;
+    public void setURIKey(final int mUriKey) {
+        mIntData[URI_KEY] = mUriKey;
     }
 
     @Override
@@ -88,19 +88,19 @@ public final class NamespaceNode extends AbsNode {
         return toClone;
     }
 
-    public static final AbsNode createData(final long nodeKey, final long parentKey, final int uriKey,
+    public static AbsNode createData(final long mNodeKey, final long parentKey, final int mUriKey,
         final int prefixKey) {
         final long[] longData = new long[ENodes.NAMESPACE_KIND.getLongSize()];
         final int[] intData = new int[ENodes.NAMESPACE_KIND.getIntSize()];
-        longData[AbsNode.NODE_KEY] = nodeKey;
+        longData[AbsNode.NODE_KEY] = mNodeKey;
         longData[AbsNode.PARENT_KEY] = parentKey;
-        intData[NamespaceNode.URI_KEY] = uriKey;
+        intData[NamespaceNode.URI_KEY] = mUriKey;
         intData[NamespaceNode.NAME_KEY] = prefixKey;
         return new NamespaceNode(longData, intData);
     }
 
-    public static final AbsNode createData(final long nodeKey, final NamespaceNode node) {
-        return createData(nodeKey, node.getParentKey(), node.getURIKey(), node.getNameKey());
+    public static AbsNode createData(final long mNodeKey, final NamespaceNode mNode) {
+        return createData(mNodeKey, mNode.getParentKey(), mNode.getURIKey(), mNode.getNameKey());
     }
 
     @Override

@@ -28,6 +28,9 @@ import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankUsageException;
 import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.EStoragePaths;
+import com.treetank.utils.LogWrapper;
+
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents one concrete database for enabling several {@link ISession} objects.
@@ -37,6 +40,12 @@ import com.treetank.settings.EStoragePaths;
  */
 public final class Database implements IDatabase {
 
+    /**
+     * Log wrapper for better output.
+     */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(Database.class));
+    
     /** Central repository of all running sessions. */
     private static final ConcurrentMap<File, Database> DATABASEMAP = new ConcurrentHashMap<File, Database>();
 
@@ -108,6 +117,7 @@ public final class Database implements IDatabase {
             }
             return returnVal;
         } catch (final IOException exc) {
+            LOGWRAPPER.error(exc);
             throw new TreetankIOException(exc);
         }
     }
