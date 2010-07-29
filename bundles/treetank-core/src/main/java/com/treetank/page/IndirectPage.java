@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: IndirectPage.java 4424 2008-08-28 09:15:01Z kramis $
  */
 
 package com.treetank.page;
@@ -33,19 +32,21 @@ public final class IndirectPage extends AbstractPage {
 
     /**
      * Create indirect page.
+     * @param mRevision
+     *            Revision Number
      */
-    public IndirectPage(final long revision) {
-        super(IConstants.INP_REFERENCE_COUNT, revision);
+    public IndirectPage(final long mRevision) {
+        super(IConstants.INP_REFERENCE_COUNT, mRevision);
     }
 
     /**
      * Read indirect page.
      * 
-     * @param in
+     * @param mIn
      *            Input bytes.
      */
-    protected IndirectPage(final ITTSource in) {
-        super(IConstants.INP_REFERENCE_COUNT, in);
+    protected IndirectPage(final ITTSource mIn) {
+        super(IConstants.INP_REFERENCE_COUNT, mIn);
     }
 
     /**
@@ -53,14 +54,16 @@ public final class IndirectPage extends AbstractPage {
      * 
      * @param page
      *            Page to clone.
+     * @param revisionToUse
+     *            Revision number to use
      */
     public IndirectPage(final IndirectPage page, final long revisionToUse) {
         super(IConstants.INP_REFERENCE_COUNT, page, revisionToUse);
     }
 
     @Override
-    protected void serialize(final ITTSink out) {
-        super.serialize(out);
+    protected void serialize(final ITTSink mOut) {
+        super.serialize(mOut);
     }
 
 }

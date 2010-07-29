@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: UberPage.java 4424 2008-08-28 09:15:01Z kramis $
  */
 
 package com.treetank.page;
@@ -65,7 +64,7 @@ public final class UberPage extends AbstractPage {
             reference = page.getReference(0);
         }
 
-        RevisionRootPage rrp = new RevisionRootPage();
+        final RevisionRootPage rrp = new RevisionRootPage();
         reference.setPage(rrp);
 
         // --- Create node tree
@@ -83,7 +82,7 @@ public final class UberPage extends AbstractPage {
             reference = page.getReference(0);
         }
 
-        NodePage ndp =
+        final NodePage ndp =
             new NodePage((Long)EFixed.ROOT_PAGE_KEY.getStandardProperty(),
                 IConstants.UBP_ROOT_REVISION_NUMBER);
         reference.setPage(ndp);
@@ -96,28 +95,30 @@ public final class UberPage extends AbstractPage {
     /**
      * Read uber page.
      * 
-     * @param in
+     * @param mIn
      *            Input bytes.
      */
-    protected UberPage(final ITTSource in) {
-        super(1, in);
-        mRevisionCount = in.readLong();
+    protected UberPage(final ITTSource mIn) {
+        super(1, mIn);
+        mRevisionCount = mIn.readLong();
         mBootstrap = false;
     }
 
     /**
      * Clone uber page.
      * 
-     * @param committedUberPage
+     * @param mCommittedUberPage
      *            Page to clone.
+     * @param revisionToUse
+     *            Revision number to use.
      */
-    public UberPage(final UberPage committedUberPage, final long revisionToUse) {
-        super(1, committedUberPage, revisionToUse);
-        if (committedUberPage.isBootstrap()) {
-            mRevisionCount = committedUberPage.mRevisionCount;
-            mBootstrap = committedUberPage.mBootstrap;
+    public UberPage(final UberPage mCommittedUberPage, final long revisionToUse) {
+        super(1, mCommittedUberPage, revisionToUse);
+        if (mCommittedUberPage.isBootstrap()) {
+            mRevisionCount = mCommittedUberPage.mRevisionCount;
+            mBootstrap = mCommittedUberPage.mBootstrap;
         } else {
-            mRevisionCount = committedUberPage.mRevisionCount + 1;
+            mRevisionCount = mCommittedUberPage.mRevisionCount + 1;
             mBootstrap = false;
         }
 
@@ -189,10 +190,10 @@ public final class UberPage extends AbstractPage {
      * {@inheritDoc}
      */
     @Override
-    protected void serialize(final ITTSink out) {
+    protected void serialize(final ITTSink mOut) {
         mBootstrap = false;
-        super.serialize(out);
-        out.writeLong(mRevisionCount);
+        super.serialize(mOut);
+        mOut.writeLong(mRevisionCount);
     }
 
     /**

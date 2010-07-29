@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: NamePageBinding.java 4442 2008-08-30 16:17:17Z kramis $
  */
 
 package com.treetank.page;
@@ -42,9 +41,11 @@ public final class NamePage extends AbstractPage {
 
     /**
      * Create name page.
+     * @param mRevision
+     *            Revision number.
      */
-    public NamePage(final long revision) {
-        super(0, revision);
+    public NamePage(final long mRevision) {
+        super(0, mRevision);
         mNameMap = new HashMap<Integer, String>();
         // mRawNameMap = new HashMap<Integer, byte[]>();
     }
@@ -52,21 +53,21 @@ public final class NamePage extends AbstractPage {
     /**
      * Read name page.
      * 
-     * @param in
+     * @param mIn
      *            Input bytes to read from.
      */
-    protected NamePage(final ITTSource in) {
-        super(0, in);
+    protected NamePage(final ITTSource mIn) {
+        super(0, mIn);
 
-        int mapSize = in.readInt();
+        final int mapSize = mIn.readInt();
 
         mNameMap = new HashMap<Integer, String>(mapSize);
         for (int i = 0, l = (int)mapSize; i < l; i++) {
-            final int key = in.readInt();
-            final int valSize = in.readInt();
+            final int key = mIn.readInt();
+            final int valSize = mIn.readInt();
             final byte[] bytes = new byte[valSize];
             for (int j = 0; j < bytes.length; j++) {
-                bytes[j] = in.readByte();
+                bytes[j] = mIn.readByte();
             }
             mNameMap.put(key, TypedValue.parseString(bytes));
             // mRawNameMap.put(key, bytes);
@@ -76,12 +77,14 @@ public final class NamePage extends AbstractPage {
     /**
      * Clone name page.
      * 
-     * @param committedNamePage
+     * @param mCommittedNamePage
      *            Page to clone.
+     * @param revisionToUse
+     *            Revision Number to use.
      */
-    public NamePage(final NamePage committedNamePage, final long revisionToUse) {
-        super(0, committedNamePage, revisionToUse);
-        mNameMap = new HashMap<Integer, String>(committedNamePage.mNameMap);
+    public NamePage(final NamePage mCommittedNamePage, final long revisionToUse) {
+        super(0, mCommittedNamePage, revisionToUse);
+        mNameMap = new HashMap<Integer, String>(mCommittedNamePage.mNameMap);
         // mRawNameMap = new HashMap<Integer, byte[]>(
         // committedNamePage.mRawNameMap);
     }
@@ -89,35 +92,35 @@ public final class NamePage extends AbstractPage {
     /**
      * Get name belonging to name key.
      * 
-     * @param key
+     * @param mKey
      *            Name key identifying name.
      * @return Name of name key.
      */
-    public String getName(final int key) {
-        return mNameMap.get(key);
+    public String getName(final int mKey) {
+        return mNameMap.get(mKey);
     }
 
     /**
      * Get raw name belonging to name key.
      * 
-     * @param key
+     * @param mKey
      *            Name key identifying name.
      * @return Raw name of name key.
      */
-    public byte[] getRawName(final int key) {
-        return TypedValue.getBytes(mNameMap.get(key));
+    public byte[] getRawName(final int mKey) {
+        return TypedValue.getBytes(mNameMap.get(mKey));
     }
 
     /**
      * Create name key given a name.
      * 
-     * @param key
+     * @param mKey
      *            Key for given name.
-     * @param name
+     * @param mName
      *            Name to create key for.
      */
-    public void setName(final int key, final String name) {
-        mNameMap.put(key, name);
+    public void setName(final int mKey, final String mName) {
+        mNameMap.put(mKey, mName);
         // mRawNameMap.put(key, TypedValue.getBytes(name));
     }
 
@@ -125,17 +128,17 @@ public final class NamePage extends AbstractPage {
      * {@inheritDoc}
      */
     @Override
-    protected void serialize(final ITTSink out) {
-        super.serialize(out);
+    protected void serialize(final ITTSink mOut) {
+        super.serialize(mOut);
 
-        out.writeInt(mNameMap.size());
+        mOut.writeInt(mNameMap.size());
 
         for (final int key : mNameMap.keySet()) {
-            out.writeInt(key);
+            mOut.writeInt(key);
             byte[] tmp = TypedValue.getBytes(mNameMap.get(key));
-            out.writeInt(tmp.length);
+            mOut.writeInt(tmp.length);
             for (final byte byteVal : tmp) {
-                out.writeByte(byteVal);
+                mOut.writeByte(byteVal);
             }
         }
     }

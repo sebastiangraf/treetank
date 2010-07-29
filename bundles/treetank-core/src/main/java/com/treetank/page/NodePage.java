@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: NodePage.java 4443 2008-08-30 16:28:14Z kramis $
  */
 
 package com.treetank.page;
@@ -47,8 +46,8 @@ public class NodePage extends AbstractPage {
      * @param nodePageKey
      *            Base key assigned to this node page.
      */
-    public NodePage(final long nodePageKey, final long revision) {
-        super(0, revision);
+    public NodePage(final long nodePageKey, final long mRevision) {
+        super(0, mRevision);
         mNodePageKey = nodePageKey;
         mNodes = new AbsNode[IConstants.NDP_NODE_COUNT];
     }
@@ -56,17 +55,17 @@ public class NodePage extends AbstractPage {
     /**
      * Read node page.
      * 
-     * @param in
+     * @param mIn
      *            Input bytes to read page from.
      */
-    protected NodePage(final ITTSource in) {
-        super(0, in);
-        mNodePageKey = in.readLong();
+    protected NodePage(final ITTSource mIn) {
+        super(0, mIn);
+        mNodePageKey = mIn.readLong();
         mNodes = new AbsNode[IConstants.NDP_NODE_COUNT];
 
         final int[] values = new int[IConstants.NDP_NODE_COUNT];
         for (int i = 0; i < values.length; i++) {
-            values[i] = in.readInt();
+            values[i] = mIn.readInt();
         }
 
         for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
@@ -75,7 +74,7 @@ public class NodePage extends AbstractPage {
             if (enumKind == ENodes.UNKOWN_KIND) {
                 break;
             } else {
-                getNodes()[offset] = enumKind.createNodeFromPersistence(in);
+                getNodes()[offset] = enumKind.createNodeFromPersistence(mIn);
             }
         }
     }
@@ -83,16 +82,16 @@ public class NodePage extends AbstractPage {
     /**
      * Clone node page.
      * 
-     * @param committedNodePage
+     * @param mCommittedNodePage
      *            Node page to clone.
      */
-    protected NodePage(final NodePage committedNodePage, final long revisionToUse) {
-        super(0, committedNodePage, revisionToUse);
-        mNodePageKey = committedNodePage.mNodePageKey;
+    protected NodePage(final NodePage mCommittedNodePage, final long mRevisionToUse) {
+        super(0, mCommittedNodePage, mRevisionToUse);
+        mNodePageKey = mCommittedNodePage.mNodePageKey;
         mNodes = new AbsNode[IConstants.NDP_NODE_COUNT];
         // Deep-copy all nodes.
         for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
-            final AbsNode node = committedNodePage.getNodes()[offset];
+            final AbsNode node = mCommittedNodePage.getNodes()[offset];
             if (node != null) {
                 getNodes()[offset] = node.clone();
                 // getNodes()[offset] = NodePersistenter.createNode(node);
@@ -112,45 +111,45 @@ public class NodePage extends AbstractPage {
     /**
      * Get node at a given offset.
      * 
-     * @param offset
+     * @param mOffset
      *            Offset of node within local node page.
      * @return Node at given offset.
      */
-    public AbsNode getNode(final int offset) {
-        return getNodes()[offset];
+    public AbsNode getNode(final int mOffset) {
+        return getNodes()[mOffset];
     }
 
     /**
      * Overwrite a single node at a given offset.
      * 
-     * @param offset
+     * @param mOffset
      *            Offset of node to overwrite in this node page.
-     * @param node
+     * @param mNode
      *            Node to store at given nodeOffset.
      */
-    public void setNode(final int offset, final AbsNode node) {
-        getNodes()[offset] = node;
+    public void setNode(final int mOffset, final AbsNode mNode) {
+        getNodes()[mOffset] = mNode;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected void serialize(final ITTSink out) {
-        super.serialize(out);
-        out.writeLong(mNodePageKey);
+    protected void serialize(final ITTSink mOut) {
+        super.serialize(mOut);
+        mOut.writeLong(mNodePageKey);
         for (int i = 0; i < getNodes().length; i++) {
             if (getNodes()[i] != null) {
                 final int kind = getNodes()[i].getKind().getNodeIdentifier();
-                out.writeInt(kind);
+                mOut.writeInt(kind);
             } else {
-                out.writeInt(ENodes.UNKOWN_KIND.getNodeIdentifier());
+                mOut.writeInt(ENodes.UNKOWN_KIND.getNodeIdentifier());
             }
         }
 
         for (final AbsNode node : getNodes()) {
             if (node != null) {
-                node.serialize(out);
+                node.serialize(mOut);
             }
         }
     }
@@ -177,7 +176,7 @@ public class NodePage extends AbstractPage {
     /**
      * @return the mNodes
      */
-    public AbsNode[] getNodes() {
+    public final AbsNode[] getNodes() {
         return mNodes;
     }
 
@@ -191,18 +190,28 @@ public class NodePage extends AbstractPage {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object mObj) {
+        if (this == mObj) {
             return true;
-        if (obj == null)
+        }
+            
+        if (mObj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+            
+        if (getClass() != mObj.getClass()) {
             return false;
-        NodePage other = (NodePage)obj;
-        if (mNodePageKey != other.mNodePageKey)
+        }
+            
+        final NodePage mOther = (NodePage)mObj;
+        if (mNodePageKey != mOther.mNodePageKey) {
+            return false; 
+        }
+            
+        if (!Arrays.equals(mNodes, mOther.mNodes)) {
             return false;
-        if (!Arrays.equals(mNodes, other.mNodes))
-            return false;
+        }
+            
         return true;
     }
 

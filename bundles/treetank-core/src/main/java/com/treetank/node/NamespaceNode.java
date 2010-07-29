@@ -31,7 +31,7 @@ public final class NamespaceNode extends AbsNode {
     protected static final int URI_KEY = 2;
 
     /**
-     * Constructor
+     * Constructor.
      * 
      * @param longBuilder
      *            building long data
