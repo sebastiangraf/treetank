@@ -30,16 +30,18 @@ import org.slf4j.LoggerFactory;
  */
 public final class RAMCache implements ICache {
 
-    /** 
-     * Logger for determining the log level. 
-    */
-    private static final Logger LOGGER = LoggerFactory.getLogger(RAMCache.class);
+    /**
+     * Logger for determining the log level.
+     */
+    private static final Logger LOGGER =
+        LoggerFactory.getLogger(RAMCache.class);
 
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LOGGER);
-    
+    private static final LogWrapper LOGWRAPPER =
+        new LogWrapper(LOGGER);
+
     /**
      * local instance.
      */
@@ -50,10 +52,9 @@ public final class RAMCache implements ICache {
      */
     public RAMCache() {
         super();
-        map = new FastWeakHashMap<Long, NodePageContainer>();
+        map =
+            new FastWeakHashMap<Long, NodePageContainer>();
 
-        // debug
-        LOGWRAPPER.debug("Creating new RAMCache");
     }
 
     /**
@@ -62,16 +63,12 @@ public final class RAMCache implements ICache {
     public void clear() {
         map.clear();
 
-        // debug
-        LOGWRAPPER.debug("Clear RAMCache");
     }
 
     /**
      * {@inheritDoc}
      */
     public NodePageContainer get(final long key) {
-        // debug
-        LOGWRAPPER.debug("Get Node Page Container with {}", key);
 
         return map.get(key);
 
@@ -83,8 +80,6 @@ public final class RAMCache implements ICache {
     public void put(final long key, final NodePageContainer page) {
         map.put(key, page);
 
-        // debug
-        LOGWRAPPER.debug("Put Node Page Container with {} {}", key, page);
     }
 
 }

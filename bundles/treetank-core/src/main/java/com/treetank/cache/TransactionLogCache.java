@@ -19,7 +19,6 @@ package com.treetank.cache;
 import com.treetank.access.DatabaseConfiguration;
 import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankIOException;
-import com.treetank.utils.LogWrapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,15 +32,11 @@ import org.slf4j.LoggerFactory;
  */
 public final class TransactionLogCache extends AbstractPersistenceCache {
 
-    /** 
-     * Logger for determining the log level. 
-    */
-    private static final Logger LOGGER = LoggerFactory.getLogger(TransactionLogCache.class);
-
     /**
-     * Log wrapper for better output.
+     * Logger for determining the log level.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LOGGER);
+    private static final Logger LOGGER =
+        LoggerFactory.getLogger(TransactionLogCache.class);
 
     /**
      * RAM-Based first cache.
@@ -55,19 +50,17 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
      * @param paramConfig
      *            the config for having a storage-place
      * @param revision
-     *            revision number        
+     *            revision number
      * @throws TreetankIOException
      *             Exception if IO is not successful
      */
     public TransactionLogCache(final DatabaseConfiguration paramConfig, final long revision)
         throws TreetankIOException {
         super(paramConfig);
-        final BerkeleyPersistenceCache secondCache = new BerkeleyPersistenceCache(paramConfig, revision);
-        firstCache = new LRUCache(secondCache);
-
-        // debug
-        LOGWRAPPER.debug("Creating new Transaction Log Cache with Database Configuration {} and Revision {}", 
-            paramConfig, revision);
+        final BerkeleyPersistenceCache secondCache =
+            new BerkeleyPersistenceCache(paramConfig, revision);
+        firstCache =
+            new LRUCache(secondCache);
     }
 
     /**
@@ -77,8 +70,6 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
     public void clearPersistent() throws TreetankIOException {
         firstCache.clear();
 
-        // debug
-        LOGWRAPPER.debug("Celar Persistence");
     }
 
     /**
@@ -86,9 +77,6 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
      */
     @Override
     public NodePageContainer getPersistent(final long key) throws TreetankIOException {
-
-        // debug
-        LOGWRAPPER.debug("Get Persistence with key {}", key);
 
         return firstCache.get(key);
     }
@@ -99,9 +87,6 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
     @Override
     public void putPersistent(final long key, final NodePageContainer page) throws TreetankIOException {
         firstCache.put(key, page);
-
-        // debug
-        LOGWRAPPER.debug("Put Persistence with key {} and Node Page Continer {}", key, page);
     }
 
 }
