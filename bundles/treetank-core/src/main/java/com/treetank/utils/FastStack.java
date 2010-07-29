@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,8 +13,8 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: FastStack.java 4258 2008-07-14 16:45:28Z kramis $
  */
+
 
 package com.treetank.utils;
 
@@ -48,11 +48,11 @@ public final class FastStack<E> {
     /**
      * Private constructor used for clone method.
      * 
-     * @param object
+     * @param mObject
      *            The array from which to create a new stack.
      */
-    private FastStack(E[] object) {
-        mStack = object;
+    private FastStack(E[] mObject) {
+        mStack = mObject;
         mSize = 0;
     }
 
@@ -60,17 +60,17 @@ public final class FastStack<E> {
      * Place new element on top of stack. This might require to double the size
      * of the internal array.
      * 
-     * @param element
+     * @param mElement
      *            Element to push.
      */
     @SuppressWarnings("unchecked")
-    public void push(final E element) {
+    public void push(final E mElement) {
         if (mStack.length == mSize) {
-            E[] biggerStack = (E[])new Object[mStack.length << 1];
+            final E[] biggerStack = (E[])new Object[mStack.length << 1];
             System.arraycopy(mStack, 0, biggerStack, 0, mStack.length);
             mStack = biggerStack;
         }
-        mStack[mSize++] = element;
+        mStack[mSize++] = mElement;
     }
 
     /**

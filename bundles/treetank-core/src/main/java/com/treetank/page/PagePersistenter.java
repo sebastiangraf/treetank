@@ -1,3 +1,19 @@
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
+ * 
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ * 
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * 
+ */
 package com.treetank.page;
 
 import com.treetank.io.ITTSink;
@@ -18,24 +34,24 @@ public final class PagePersistenter {
         // Not needed over here
     }
 
-    public static AbstractPage createPage(final ITTSource source) {
-        final int kind = source.readInt();
+    public static AbstractPage createPage(final ITTSource mSource) {
+        final int kind = mSource.readInt();
         AbstractPage returnVal = null;
         switch (kind) {
         case NODEPAGE:
-            returnVal = new NodePage(source);
+            returnVal = new NodePage(mSource);
             break;
         case NAMEPAGE:
-            returnVal = new NamePage(source);
+            returnVal = new NamePage(mSource);
             break;
         case UBERPAGE:
-            returnVal = new UberPage(source);
+            returnVal = new UberPage(mSource);
             break;
         case INDIRCTPAGE:
-            returnVal = new IndirectPage(source);
+            returnVal = new IndirectPage(mSource);
             break;
         case REVISIONROOTPAGE:
-            returnVal = new RevisionRootPage(source);
+            returnVal = new RevisionRootPage(mSource);
             break;
         default:
             throw new IllegalStateException(
@@ -44,28 +60,28 @@ public final class PagePersistenter {
         return returnVal;
     }
 
-    public static void serializePage(final ITTSink sink, final AbstractPage page) {
+    public static void serializePage(final ITTSink mSink, final AbstractPage mPage) {
 
-        if (page instanceof NodePage) {
-            sink.writeInt(PagePersistenter.NODEPAGE);
+        if (mPage instanceof NodePage) {
+            mSink.writeInt(PagePersistenter.NODEPAGE);
 
-        } else if (page instanceof IndirectPage) {
-            sink.writeInt(PagePersistenter.INDIRCTPAGE);
+        } else if (mPage instanceof IndirectPage) {
+            mSink.writeInt(PagePersistenter.INDIRCTPAGE);
 
-        } else if (page instanceof NamePage) {
-            sink.writeInt(PagePersistenter.NAMEPAGE);
+        } else if (mPage instanceof NamePage) {
+            mSink.writeInt(PagePersistenter.NAMEPAGE);
 
-        } else if (page instanceof RevisionRootPage) {
-            sink.writeInt(PagePersistenter.REVISIONROOTPAGE);
+        } else if (mPage instanceof RevisionRootPage) {
+            mSink.writeInt(PagePersistenter.REVISIONROOTPAGE);
 
-        } else if (page instanceof UberPage) {
-            sink.writeInt(PagePersistenter.UBERPAGE);
+        } else if (mPage instanceof UberPage) {
+            mSink.writeInt(PagePersistenter.UBERPAGE);
 
         } else {
-            throw new IllegalStateException(new StringBuilder("Page ").append(page.getClass()).append(
+            throw new IllegalStateException(new StringBuilder("Page ").append(mPage.getClass()).append(
                 " cannot be serialized").toString());
         }
-        page.serialize(sink);
+        mPage.serialize(mSink);
     }
 
 }

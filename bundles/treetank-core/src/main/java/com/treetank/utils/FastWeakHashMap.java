@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,8 +13,8 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: FastWeakHashMap.java 4470 2008-09-06 15:24:52Z kramis $
  */
+
 
 package com.treetank.utils;
 
@@ -67,16 +67,16 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
      * {@inheritDoc}
      */
     @Override
-    public V get(final Object key) {
+    public V get(final Object mKey) {
         V value = null;
-        final WeakReference<V> weakReference = mInternalMap.get(key);
+        final WeakReference<V> weakReference = mInternalMap.get(mKey);
         if (weakReference != null) {
             // Weak reference was garbage collected.
             value = weakReference.get();
             if (value == null) {
                 // Reflect garbage collected weak reference in internal hash
                 // map.
-                mInternalMap.remove(key);
+                mInternalMap.remove(mKey);
             }
         }
         return value;
@@ -86,9 +86,9 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
      * {@inheritDoc}
      */
     @Override
-    public V put(final K key, final V value) {
+    public V put(final K mKey, final V mValue) {
         processQueue();
-        mInternalMap.put(key, new WeakValue<V>(value, key, mQueue));
+        mInternalMap.put(mKey, new WeakValue<V>(mValue, mKey, mQueue));
         return null;
     }
 
@@ -96,9 +96,9 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
      * {@inheritDoc}
      */
     @Override
-    public V remove(final Object key) {
+    public V remove(final Object mKey) {
         processQueue();
-        mInternalMap.remove(key);
+        mInternalMap.remove(mKey);
         return null;
     }
 
@@ -135,8 +135,8 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
      */
     private void processQueue() {
         WeakValue<V> weakValue;
-        while((weakValue = (WeakValue<V>)mQueue.poll()) != null) {
-            mInternalMap.remove(weakValue.key);
+        while ((weakValue = (WeakValue<V>)mQueue.poll()) != null) {
+            mInternalMap.remove(weakValue.mKey);
         }
     }
 
@@ -144,22 +144,22 @@ public final class FastWeakHashMap<K, V> extends AbstractMap<K, V> {
      * Internal subclass to store keys and values for more convenient lookups.
      */
     @SuppressWarnings("hiding")
-    private class WeakValue<V> extends WeakReference<V> {
-        private final K key;
+    private final class WeakValue<V> extends WeakReference<V> {
+        private final K mKey;
 
         /**
          * Constructor.
          * 
-         * @param initValue
+         * @param mInitValue
          *            Value wrapped as weak reference.
-         * @param initKey
+         * @param mInitKey
          *            Key for given value.
-         * @param initReferenceQueue
+         * @param mInitReferenceQueue
          *            Reference queue for cleanup.
          */
-        private WeakValue(final V initValue, final K initKey, final ReferenceQueue initReferenceQueue) {
-            super(initValue, initReferenceQueue);
-            key = initKey;
+        private WeakValue(final V mInitValue, final K mInitKey, final ReferenceQueue mInitReferenceQueue) {
+            super(mInitValue, mInitReferenceQueue);
+            mKey = mInitKey;
         }
     }
 

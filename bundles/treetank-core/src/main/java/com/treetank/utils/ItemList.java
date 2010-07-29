@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,8 +13,8 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: ItemList.java 4258 2008-07-14 16:45:28Z kramis $
  */
+
 
 package com.treetank.utils;
 
@@ -58,26 +58,26 @@ public final class ItemList implements IItemList {
     /**
      * {@inheritDoc}
      */
-    public int addItem(final IItem item) {
+    public int addItem(final IItem mItem) {
 
         final int key = mList.size();
-        item.setNodeKey(key);
+        mItem.setNodeKey(key);
         // TODO: +2 is necessary, because key -1 is the NULL_NODE
         final int itemKey = (key + 2) * (-1);
-        item.setNodeKey(itemKey);
+        mItem.setNodeKey(itemKey);
 
-        mList.add(item);
+        mList.add(mItem);
         return itemKey;
     }
 
     /**
      * {@inheritDoc}
      */
-    public IItem getItem(final long key) {
+    public IItem getItem(final long mKey) {
 
-        assert key <= Integer.MAX_VALUE;
+        assert mKey <= Integer.MAX_VALUE;
 
-        int index = (int)key; // cast to integer, because the list only accepts
+        int index = (int)mKey; // cast to integer, because the list only accepts
         // int
 
         if (index < 0) {

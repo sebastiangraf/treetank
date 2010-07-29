@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: PageReference.java 4450 2008-08-31 09:38:41Z kramis $
  */
 
 package com.treetank.page;
@@ -40,10 +39,10 @@ public final class PageReference {
     /** In-memory deserialized page instance. */
     private AbstractPage mPage;
 
-    /** Corresponding mKey of the related node page */
-    private long nodePageKey = -1;
+    /** Corresponding mKey of the related node page. */
+    private long mNodePageKey = -1;
 
-    /** Key in persistent storage */
+    /** Key in persistent storage. */
     private AbstractKey mKey;
 
     /** Checksum of serialized page. */
@@ -86,15 +85,15 @@ public final class PageReference {
     /**
      * Read page reference from storage.
      * 
-     * @param in
+     * @param mIn
      *            Input bytes.
      */
-    public PageReference(final ITTSource in) {
+    public PageReference(final ITTSource mIn) {
         mPage = null;
-        mKey = KeyPersistenter.createKey(in);
+        mKey = KeyPersistenter.createKey(mIn);
         mChecksum = new byte[IConstants.CHECKSUM_SIZE];
         for (int i = 0; i < mChecksum.length; i++) {
-            mChecksum[i] = in.readByte();
+            mChecksum[i] = mIn.readByte();
         }
     }
 
@@ -177,13 +176,13 @@ public final class PageReference {
     /**
      * Serialize page reference to output.
      * 
-     * @param out
+     * @param mOut
      *            Output bytes that get written to a file.
      */
-    public void serialize(final ITTSink out) {
-        KeyPersistenter.serializeKey(out, mKey);
+    public void serialize(final ITTSink mOut) {
+        KeyPersistenter.serializeKey(mOut, mKey);
         for (final byte byteVal : mChecksum) {
-            out.writeByte(byteVal);
+            mOut.writeByte(byteVal);
         }
     }
 
@@ -239,14 +238,14 @@ public final class PageReference {
      *            the nodePageKey to set
      */
     public void setNodePageKey(long nodePageKey) {
-        this.nodePageKey = nodePageKey;
+        this.mNodePageKey = nodePageKey;
     }
 
     /**
      * @return the nodePageKey
      */
     public long getNodePageKey() {
-        return nodePageKey;
+        return mNodePageKey;
     }
 
 }

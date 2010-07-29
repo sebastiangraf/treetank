@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: AbstractPage.java 4443 2008-08-30 16:28:14Z kramis $
  */
 
 package com.treetank.page;
@@ -35,7 +34,7 @@ public abstract class AbstractPage {
     /** Page references. */
     private final PageReference[] mReferences;
 
-    /** revision of this page */
+    /** revision of this page. */
     private final long mRevision;
 
     /**
@@ -43,6 +42,8 @@ public abstract class AbstractPage {
      * 
      * @param referenceCount
      *            Number of references of page.
+     * @param revision
+     *            Revision Number.
      */
     protected AbstractPage(final int referenceCount, final long revision) {
 
@@ -55,18 +56,18 @@ public abstract class AbstractPage {
      * 
      * @param referenceCount
      *            Number of references of page.
-     * @param in
+     * @param mIn
      *            Input reader to read from.
      */
-    protected AbstractPage(final int referenceCount, final ITTSource in) {
-        this(referenceCount, in.readLong());
+    protected AbstractPage(final int referenceCount, final ITTSource mIn) {
+        this(referenceCount, mIn.readLong());
         final int[] values = new int[referenceCount];
         for (int i = 0; i < values.length; i++) {
-            values[i] = in.readInt();
+            values[i] = mIn.readInt();
         }
         for (int offset = 0; offset < referenceCount; offset++) {
             if (values[offset] == 1) {
-                getReferences()[offset] = new PageReference(in);
+                getReferences()[offset] = new PageReference(mIn);
             }
         }
     }
@@ -76,15 +77,17 @@ public abstract class AbstractPage {
      * 
      * @param referenceCount
      *            Number of references of page.
-     * @param committedPage
+     * @param mCommittedPage
      *            Page to clone.
+     * @param revision
+     *            Number of Revision.
      */
-    protected AbstractPage(final int referenceCount, final AbstractPage committedPage, final long revision) {
+    protected AbstractPage(final int referenceCount, final AbstractPage mCommittedPage, final long revision) {
 
         this(referenceCount, revision);
         for (int offset = 0; offset < referenceCount; offset++) {
-            if (committedPage.getReferences()[offset] != null) {
-                final PageReference ref = committedPage.getReferences()[offset];
+            if (mCommittedPage.getReferences()[offset] != null) {
+                final PageReference ref = mCommittedPage.getReferences()[offset];
                 getReferences()[offset] = new PageReference(ref);
             }
         }
@@ -93,61 +96,63 @@ public abstract class AbstractPage {
     /**
      * Get page reference of given offset.
      * 
-     * @param offset
+     * @param mOffset
      *            Offset of page reference.
      * @return PageReference at given offset.
      */
-    public final PageReference getReference(final int offset) {
-        if (getReferences()[offset] == null) {
-            getReferences()[offset] = new PageReference();
+    public final PageReference getReference(final int mOffset) {
+        if (getReferences()[mOffset] == null) {
+            getReferences()[mOffset] = new PageReference();
         }
-        return getReferences()[offset];
+        return getReferences()[mOffset];
     }
 
     /**
      * Set page reference at given offset.
      * 
-     * @param offset
+     * @param mOffset
      *            Offset of page reference.
-     * @param reference
+     * @param mReference
      *            Page reference to set.
      */
-    public final void setReference(final int offset, final PageReference reference) {
-        getReferences()[offset] = reference;
+    public final void setReference(final int mOffset, final PageReference mReference) {
+        getReferences()[mOffset] = mReference;
     }
 
     /**
      * Recursively call commit on all referenced pages.
      * 
-     * @param state
+     * @param mState
      *            IWriteTransaction state.
+     * @throws TreetankException
+     *            thorw when write error
      */
 
-    public final void commit(final WriteTransactionState state) throws TreetankException {
+    public final void commit(final WriteTransactionState mState) throws TreetankException {
         for (final PageReference reference : getReferences()) {
-            state.commit(reference);
+            mState.commit(reference);
         }
     }
 
     /**
      * Serialize page references into output.
      * 
-     * @param out
+     * @param mOut
      *            Output stream.
      */
-    protected void serialize(final ITTSink out) {
-        out.writeLong(mRevision);
+    protected void serialize(final ITTSink mOut) {
+        mOut.writeLong(mRevision);
         for (int i = 0; i < getReferences().length; i++) {
             if (getReferences()[i] != null) {
-                out.writeInt(1);
+                mOut.writeInt(1);
             } else {
-                out.writeInt(0);
+                mOut.writeInt(0);
             }
         }
 
         for (final PageReference reference : getReferences()) {
             if (reference != null) {
-                reference.serialize(out);
+                reference.serialize(mOut);
             }
         }
     }
@@ -177,7 +182,6 @@ public abstract class AbstractPage {
             for (final PageReference ref : getReferences()) {
                 if (ref != null) {
                     builder.append(ref.getKey().getIdentifier()).append(",");
-                    ;
                 }
             }
         } else {

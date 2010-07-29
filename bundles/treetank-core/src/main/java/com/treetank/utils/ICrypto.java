@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,8 +13,8 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: ICrypto.java 4424 2008-08-28 09:15:01Z kramis $
  */
+
 
 package com.treetank.utils;
 
@@ -22,8 +22,8 @@ import com.treetank.io.file.ByteBufferSinkAndSource;
 
 public interface ICrypto {
 
-    public int crypt(final int length, final ByteBufferSinkAndSource buffer);
+    public int crypt(final int mLength, final ByteBufferSinkAndSource mBuffer);
 
-    public int decrypt(final int length, final ByteBufferSinkAndSource buffer);
+    public int decrypt(final int mLength, final ByteBufferSinkAndSource mBuffer);
 
 }

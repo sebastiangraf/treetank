@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,8 +13,8 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: TypedValue.java 4258 2008-07-14 16:45:28Z kramis $
  */
+
 
 package com.treetank.utils;
 
@@ -67,14 +67,14 @@ public final class TypedValue {
     /**
      * Parse string from given UTF-8 byte array.
      * 
-     * @param bytes
+     * @param mBytes
      *            Byte array to parse string from.
      * @return String.
      */
-    public static String parseString(final byte[] bytes) {
+    public static String parseString(final byte[] mBytes) {
         try {
 
-            final String intermediateString = new String(bytes, IConstants.DEFAULT_ENCODING);
+            final String intermediateString = new String(mBytes, IConstants.DEFAULT_ENCODING);
             final StringBuilder builder = new StringBuilder();
             int andCounter = 0;
             int altCounter = 0;
@@ -188,7 +188,7 @@ public final class TypedValue {
                 }
             }
             return builder.toString();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Could not convert byte[] to String: " + e.getLocalizedMessage());
         }
 
@@ -197,39 +197,39 @@ public final class TypedValue {
     /**
      * Parse boolean from given UTF-8 byte array.
      * 
-     * @param bytes
+     * @param mBytes
      *            Byte array to parse int from.
      * @return Boolean.
      */
-    public static boolean parseBoolean(final byte[] bytes) {
-        return (bytes[0] == 1);
+    public static boolean parseBoolean(final byte[] mBytes) {
+        return (mBytes[0] == 1);
     }
 
     /**
      * Parse int from given UTF-8 byte array.
      * 
-     * @param bytes
+     * @param mBytes
      *            Byte array to parse int from.
      * @return Int.
      */
-    public static int parseInt(final byte[] bytes) {
+    public static int parseInt(final byte[] mBytes) {
         int position = 0;
-        int value = ((bytes[position++] & 127));
-        if ((bytes[position - 1] & 128) != 0) {
-            value |= ((bytes[position++] & 127)) << 7;
-            if ((bytes[position - 1] & 128) != 0) {
-                value |= ((bytes[position++] & 127)) << 14;
-                if ((bytes[position - 1] & 128) != 0) {
-                    value |= ((bytes[position++] & 127)) << 21;
-                    if ((bytes[position - 1] & 128) != 0) {
-                        value |= ((bytes[position++] & 255)) << 28;
-                    } else if ((bytes[position - 1] & 64) != 0)
+        int value = ((mBytes[position++] & 127));
+        if ((mBytes[position - 1] & 128) != 0) {
+            value |= ((mBytes[position++] & 127)) << 7;
+            if ((mBytes[position - 1] & 128) != 0) {
+                value |= ((mBytes[position++] & 127)) << 14;
+                if ((mBytes[position - 1] & 128) != 0) {
+                    value |= ((mBytes[position++] & 127)) << 21;
+                    if ((mBytes[position - 1] & 128) != 0) {
+                        value |= ((mBytes[position++] & 255)) << 28;
+                    } else if ((mBytes[position - 1] & 64) != 0)
                         value |= 0xF0000000;
-                } else if ((bytes[position - 1] & 64) != 0)
+                } else if ((mBytes[position - 1] & 64) != 0)
                     value |= 0xFFF00000;
-            } else if ((bytes[position - 1] & 64) != 0)
+            } else if ((mBytes[position - 1] & 64) != 0)
                 value |= 0xFFFFE000;
-        } else if ((bytes[position - 1] & 64) != 0)
+        } else if ((mBytes[position - 1] & 64) != 0)
             value |= 0xFFFFFFC0;
         return value;
     }
@@ -237,40 +237,40 @@ public final class TypedValue {
     /**
      * Parse long from given UTF-8 byte array.
      * 
-     * @param bytes
+     * @param mBytes
      *            Byte array to parse long from.
      * @return Long.
      */
-    public static long parseLong(final byte[] bytes) {
+    public static long parseLong(final byte[] mBytes) {
         int position = 1;
-        long value = (long)(bytes[position++] & 255);
-        if (bytes[position - 2] > 1) {
-            value += ((long)(bytes[position++] & 255) << 8);
-            if (bytes[position - 3] > 2) {
-                value += ((long)(bytes[position++] & 255) << 16);
-                if (bytes[position - 4] > 3) {
-                    value += ((long)(bytes[position++] & 255) << 24);
-                    if (bytes[position - 5] > 4) {
-                        value += ((long)(bytes[position++] & 255) << 32);
-                        if (bytes[position - 6] > 5) {
-                            value += ((long)(bytes[position++] & 255) << 40);
-                            if (bytes[position - 7] > 6) {
-                                value += ((long)(bytes[position++] & 255) << 48);
-                                if (bytes[position - 8] > 7) {
-                                    value += ((long)bytes[position++] << 56);
-                                } else if ((bytes[position - 1] & 128) != 0)
+        long value = (long)(mBytes[position++] & 255);
+        if (mBytes[position - 2] > 1) {
+            value += ((long)(mBytes[position++] & 255) << 8);
+            if (mBytes[position - 3] > 2) {
+                value += ((long)(mBytes[position++] & 255) << 16);
+                if (mBytes[position - 4] > 3) {
+                    value += ((long)(mBytes[position++] & 255) << 24);
+                    if (mBytes[position - 5] > 4) {
+                        value += ((long)(mBytes[position++] & 255) << 32);
+                        if (mBytes[position - 6] > 5) {
+                            value += ((long)(mBytes[position++] & 255) << 40);
+                            if (mBytes[position - 7] > 6) {
+                                value += ((long)(mBytes[position++] & 255) << 48);
+                                if (mBytes[position - 8] > 7) {
+                                    value += ((long)mBytes[position++] << 56);
+                                } else if ((mBytes[position - 1] & 128) != 0)
                                     value |= 0xFF000000000000L;
-                            } else if ((bytes[position - 1] & 128) != 0)
+                            } else if ((mBytes[position - 1] & 128) != 0)
                                 value |= 0xFFFF000000000000L;
-                        } else if ((bytes[position - 1] & 128) != 0)
+                        } else if ((mBytes[position - 1] & 128) != 0)
                             value |= 0xFFFFFF0000000000L;
-                    } else if ((bytes[position - 1] & 128) != 0)
+                    } else if ((mBytes[position - 1] & 128) != 0)
                         value |= 0xFFFFFFFF00000000L;
-                } else if ((bytes[position - 1] & 128) != 0)
+                } else if ((mBytes[position - 1] & 128) != 0)
                     value |= 0xFFFFFFFFFF000000L;
-            } else if ((bytes[position - 1] & 128) != 0)
+            } else if ((mBytes[position - 1] & 128) != 0)
                 value |= 0xFFFFFFFFFFFF0000L;
-        } else if ((bytes[position - 1] & 128) != 0)
+        } else if ((mBytes[position - 1] & 128) != 0)
             value |= 0xFFFFFFFFFFFFFF00L;
         return value;
     }
@@ -279,13 +279,13 @@ public final class TypedValue {
      * Get UTF-8 byte array from int. The given byte array yields a string
      * representation if read with parseString().
      * 
-     * @param value
+     * @param mValue
      *            Int to encode as UTF-8 byte array.
      * @return UTF-8-encoded byte array of int.
      */
-    public static byte[] getBytes(final boolean value) {
+    public static byte[] getBytes(final boolean mValue) {
         final byte[] bytes = new byte[1];
-        if (value) {
+        if (mValue) {
             bytes[0] = 1;
         } else {
             bytes[0] = 0;
@@ -297,34 +297,39 @@ public final class TypedValue {
      * Get UTF-8 byte array from int. The given byte array yields a string
      * representation if read with parseString().
      * 
-     * @param value
+     * @param mValue
      *            Int to encode as UTF-8 byte array.
      * @return UTF-8-encoded byte array of int.
      */
-    public static byte[] getBytes(final int value) {
+    public static byte[] getBytes(final int mValue) {
         final byte[] tmpBytes = new byte[5];
         int position = 0;
-        tmpBytes[position++] = (byte)(value);
-        if (value > 63 || value < -64) {
+        tmpBytes[position++] = (byte)(mValue);
+        if (mValue > 63 || mValue < -64) {
             tmpBytes[position - 1] |= 128;
-            tmpBytes[position++] = (byte)(value >> 7);
-            if (value > 8191 || value < -8192) {
+            tmpBytes[position++] = (byte)(mValue >> 7);
+            if (mValue > 8191 || mValue < -8192) {
                 tmpBytes[position - 1] |= 128;
-                tmpBytes[position++] = (byte)(value >> 14);
-                if (value > 1048575 || value < -1048576) {
+                tmpBytes[position++] = (byte)(mValue >> 14);
+                if (mValue > 1048575 || mValue < -1048576) {
                     tmpBytes[position - 1] |= 128;
-                    tmpBytes[position++] = (byte)(value >> 21);
-                    if (value > 268435455 || value < -268435456) {
+                    tmpBytes[position++] = (byte)(mValue >> 21);
+                    if (mValue > 268435455 || mValue < -268435456) {
                         tmpBytes[position - 1] |= 128;
-                        tmpBytes[position++] = (byte)(value >> 28);
-                    } else
+                        tmpBytes[position++] = (byte)(mValue >> 28);
+                    } else {
                         tmpBytes[position - 1] &= 127;
-                } else
+                    }    
+                } else {
                     tmpBytes[position - 1] &= 127;
-            } else
+                }                   
+            } else {
                 tmpBytes[position - 1] &= 127;
-        } else
+            }                
+        } else {
             tmpBytes[position - 1] &= 127;
+        }
+            
         final byte[] bytes = new byte[position];
         System.arraycopy(tmpBytes, 0, bytes, 0, position);
         return bytes;
@@ -357,20 +362,28 @@ public final class TypedValue {
                                 if (value > (2 ^ 55) - 1 || value < -(2 ^ 55)) {
                                     tmpBytes[position++] = (byte)(value >>> 56);
                                     tmpBytes[position - 9] = (byte)8;
-                                } else
+                                } else {
                                     tmpBytes[position - 8] = (byte)7;
-                            } else
+                                }                                    
+                            } else {
                                 tmpBytes[position - 7] = (byte)6;
-                        } else
+                            }                                
+                        } else {
                             tmpBytes[position - 6] = (byte)5;
-                    } else
+                        }                        
+                    } else { 
                         tmpBytes[position - 5] = (byte)4;
-                } else
+                    }   
+                } else {
                     tmpBytes[position - 4] = (byte)3;
-            } else
+                } 
+            } else {
                 tmpBytes[position - 3] = (byte)2;
-        } else
+            }
+        } else {
             tmpBytes[position - 2] = (byte)1;
+        }
+            
         final byte[] bytes = new byte[position];
         System.arraycopy(tmpBytes, 0, bytes, 0, position);
         return bytes;
@@ -380,19 +393,19 @@ public final class TypedValue {
      * Get UTF-8 byte array from string. The given byte array yields a int if
      * read with parseInt().
      * 
-     * @param value
+     * @param mValue
      *            String to encode as UTF-8 byte array.
      * @return UTF-8-encoded byte array of string.
      */
-    public static byte[] getBytes(final String value) {
+    public static byte[] getBytes(final String mValue) {
         byte[] bytes = null;
         try {
-            if (value == null || value.length() == 0) {
+            if (mValue == null || mValue.length() == 0) {
                 bytes = EMPTY;
             } else {
                 final StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < value.length(); i++) {
-                    switch (value.charAt(i)) {
+                for (int i = 0; i < mValue.length(); i++) {
+                    switch (mValue.charAt(i)) {
                     case '&':
                         builder.append("&amp;");
                         break;
@@ -400,7 +413,7 @@ public final class TypedValue {
                         builder.append("&lt;");
                         break;
                     default:
-                        builder.append(value.charAt(i));
+                        builder.append(mValue.charAt(i));
                     }
                 }
                 bytes = builder.toString().getBytes(IConstants.DEFAULT_ENCODING);
@@ -408,24 +421,24 @@ public final class TypedValue {
                 // bytes = value.replace("&", "&amp;").replace("<", "&lt;")
                 // .getBytes(IConstants.DEFAULT_ENCODING);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Could not convert String to byte[]: " + e.getLocalizedMessage());
         }
         return bytes;
     }
 
-    public static boolean equals(final byte[] value1, final byte[] value2) {
+    public static boolean equals(final byte[] mValue1, final byte[] mValue2) {
         // Fail if one is null.
-        if ((value1 == null) || (value2 == null)) {
+        if ((mValue1 == null) || (mValue2 == null)) {
             return false;
         }
         // Fail if the values are not of equal length.
-        if (value1.length != value2.length) {
+        if (mValue1.length != mValue2.length) {
             return false;
         }
         // Fail if a single byte does not match.
-        for (int i = 0, l = value1.length; i < l; i++) {
-            if (value1[i] != value2[i]) {
+        for (int i = 0, l = mValue1.length; i < l; i++) {
+            if (mValue1[i] != mValue2[i]) {
                 return false;
             }
         }
@@ -433,62 +446,62 @@ public final class TypedValue {
         return true;
     }
 
-    public static boolean equals(final byte[] value1, final String value2) {
-        return equals(value1, TypedValue.getBytes(value2));
+    public static boolean equals(final byte[] mValue1, final String mValue2) {
+        return equals(mValue1, TypedValue.getBytes(mValue2));
     }
 
-    public static boolean equals(final String value1, final byte[] value2) {
-        return equals(TypedValue.getBytes(value1), value2);
+    public static boolean equals(final String mValue1, final byte[] mValue2) {
+        return equals(TypedValue.getBytes(mValue1), mValue2);
     }
 
-    public static boolean equals(final String value1, final String value2) {
-        return equals(TypedValue.getBytes(value1), TypedValue.getBytes(value2));
+    public static boolean equals(final String mValue1, final String mValue2) {
+        return equals(TypedValue.getBytes(mValue1), TypedValue.getBytes(mValue2));
     }
 
     /**
      * Get UTF-8 byte array from double. The given byte array yields a double if
      * read with parseDouble().
      * 
-     * @param value
+     * @param mValue
      *            double value to encode as UTF-8 byte array.
      * @return UTF-8-encoded byte array of double.
      */
-    public static byte[] getBytes(final Double value) {
-        return value.toString().getBytes();
+    public static byte[] getBytes(final Double mValue) {
+        return mValue.toString().getBytes();
     }
 
     /**
      * Get UTF-8 byte array from float. The given byte array yields a float if
      * read with parseFloat().
      * 
-     * @param value
+     * @param mValue
      *            float to encode as UTF-8 byte array.
      * @return UTF-8-encoded byte array of float.
      */
-    public static byte[] getBytes(final Float value) {
-        return value.toString().getBytes();
+    public static byte[] getBytes(final Float mValue) {
+        return mValue.toString().getBytes();
     }
 
     /**
      * Parse double from given UTF-8 byte array.
      * 
-     * @param value
+     * @param mValue
      *            Byte array to parse double from.
      * @return double.
      */
-    public static double parseDouble(final byte[] value) {
-        return Double.parseDouble(parseString(value));
+    public static double parseDouble(final byte[] mValue) {
+        return Double.parseDouble(parseString(mValue));
     }
 
     /**
      * Parse float from given UTF-8 byte array.
      * 
-     * @param value
+     * @param mValue
      *            Byte array to parse float from.
      * @return float.
      */
-    public static float parseFloat(final byte[] value) {
-        return Float.parseFloat(parseString(value));
+    public static float parseFloat(final byte[] mValue) {
+        return Float.parseFloat(parseString(mValue));
     }
 
 }
