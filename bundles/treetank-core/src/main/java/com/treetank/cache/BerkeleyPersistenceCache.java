@@ -135,7 +135,8 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
             mDatabase.put(null, keyEntry, valueEntry);
 
             // debug
-            LOGWRAPPER.debug("Put new BerkeleyPersistenceCache with key {} and Node Page Continer {}", key, page);
+            LOGWRAPPER.debug("Put new BerkeleyPersistenceCache with key {} and Node Page Continer {}"
+                , key, page);
 
         } catch (final DatabaseException exc) {
             LOGWRAPPER.error(exc);

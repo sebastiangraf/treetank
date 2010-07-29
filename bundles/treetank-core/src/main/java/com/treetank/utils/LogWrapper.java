@@ -92,5 +92,19 @@ public final class LogWrapper {
             mLogger.info(paramMessage, paramObjects);
         }
     }
+    
+    /**
+     * Warn information.
+     * 
+     * @param paramMessage
+     *            Message to log.
+     * @param paramObjects
+     *            objects for data
+     */
+    public void warn(final String paramMessage, final Object... paramObjects) {
+        if (mLogger.isWarnEnabled()) {
+            mLogger.warn(paramMessage, paramObjects);
+        }
+    }
 
 }

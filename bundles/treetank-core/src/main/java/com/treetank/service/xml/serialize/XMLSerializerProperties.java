@@ -1,3 +1,19 @@
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
+ * 
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ * 
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * 
+ */
 package com.treetank.service.xml.serialize;
 
 import java.io.BufferedReader;
@@ -7,6 +23,8 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
+import com.treetank.utils.LogWrapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,9 +43,16 @@ public final class XMLSerializerProperties {
 
     // ============== Class constants. =================
 
-    /** Logger. */
+    /** 
+     * Logger for determining the log level. 
+    */
     private static final Logger LOGGER = LoggerFactory.getLogger(XMLSerializerProperties.class);
 
+    /**
+     * Log wrapper for better output.
+     */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LOGGER);
+    
     /** Properties. */
     private final ConcurrentMap<String, Object> mProps = new ConcurrentHashMap<String, Object>();
 
@@ -81,7 +106,7 @@ public final class XMLSerializerProperties {
                 mProps.put(arr[0].toString(), arr[1]);
             }
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGWRAPPER.error(e);
         }
     }
 
@@ -108,8 +133,6 @@ public final class XMLSerializerProperties {
      * @param paramFilePath
      *                  Path to properties file.
      * @return ConcurrentMap which holds property key/values.
-     * @throws IOException
-     *             in case of any I/O operation failed.
      */
     public ConcurrentMap<String, Object> readProps(final String paramFilePath) {
         mFilePath = paramFilePath;
@@ -128,7 +151,7 @@ public final class XMLSerializerProperties {
 
                 final int equals = line.indexOf('=');
                 if (equals < 0) {
-                    LOGGER.warn("Properties file has no '=' sign in line -- parsing error!");
+                    LOGWRAPPER.warn("Properties file has no '=' sign in line -- parsing error!");
                 }
 
                 final String key = line.substring(0, equals).toUpperCase();
@@ -138,7 +161,7 @@ public final class XMLSerializerProperties {
                 buffReader.close();
             }
         } catch (final IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGWRAPPER.error(e);
         }
 
         return mProps;
