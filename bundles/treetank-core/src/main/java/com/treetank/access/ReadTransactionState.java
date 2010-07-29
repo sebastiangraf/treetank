@@ -5,7 +5,7 @@
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -55,7 +55,7 @@ import com.treetank.utils.IConstants;
  */
 public class ReadTransactionState {
 
-    /** Database configuration */
+    /** Database configuration. */
     private final DatabaseConfiguration mDatabaseConfiguration;
 
     /** Page reader exclusively assigned to this transaction. */
@@ -70,14 +70,12 @@ public class ReadTransactionState {
     /** Read-transaction-exclusive item list. */
     private final IItemList mItemList;
 
-    /** Internal reference to cache */
+    /** Internal reference to cache. */
     private final ICache mCache;
 
     /**
      * Standard constructor.
      * 
-     * @param sessionConfiguration
-     *            Configuration of session.
      * @param databaseConfiguration
      *            Configuration of database.
      * @param uberPage
@@ -105,24 +103,24 @@ public class ReadTransactionState {
     }
 
     /**
-     * Getting the node related to the given node key
+     * Getting the node related to the given node key.
      * 
-     * @param nodeKey
+     * @param mNodeKey
      *            searched for
      * @return the related Node
      * @throws TreetankIOException
      *             if the read to the persistent storage fails
      */
-    protected IItem getNode(final long nodeKey) throws TreetankIOException {
+    protected IItem getNode(final long mNodeKey) throws TreetankIOException {
 
         // Immediately return node from item list if node key negative.
-        if (nodeKey < 0) {
-            return mItemList.getItem(nodeKey);
+        if (mNodeKey < 0) {
+            return mItemList.getItem(mNodeKey);
         }
 
         // Calculate page and node part for given nodeKey.
-        final long nodePageKey = nodePageKey(nodeKey);
-        final int nodePageOffset = nodePageOffset(nodeKey);
+        final long nodePageKey = nodePageKey(mNodeKey);
+        final int nodePageOffset = nodePageOffset(mNodeKey);
 
         NodePageContainer cont = mCache.get(nodePageKey);
 
@@ -147,42 +145,42 @@ public class ReadTransactionState {
     }
 
     /**
-     * Method to check if an {@link IItem} is a deleted one
+     * Method to check if an {@link IItem} is a deleted one.
      * 
-     * @param toCheck
+     * @param mToCheck
      *            of the IItem
      * @return the item if it is valid, null otherwise
      */
-    protected final IItem checkItemIfDeleted(final IItem toCheck) {
-        if (toCheck instanceof DeletedNode) {
+    protected final IItem checkItemIfDeleted(final IItem mToCheck) {
+        if (mToCheck instanceof DeletedNode) {
             return null;
         } else {
-            return toCheck;
+            return mToCheck;
         }
     }
 
     /**
-     * Getting the name corresponding to the given key
+     * Getting the name corresponding to the given key.
      * 
-     * @param nameKey
+     * @param mNameKey
      *            for the term searched
      * @return the name
      */
-    protected String getName(final int nameKey) {
+    protected String getName(final int mNameKey) {
 
-        return ((NamePage)mRootPage.getNamePageReference().getPage()).getName(nameKey);
+        return ((NamePage)mRootPage.getNamePageReference().getPage()).getName(mNameKey);
 
     }
 
     /**
-     * Getting the raw name related to the name key
+     * Getting the raw name related to the name key.
      * 
-     * @param nameKey
+     * @param mNameKey
      *            for the raw name searched
      * @return a byte array containing the raw name
      */
-    protected final byte[] getRawName(final int nameKey) {
-        return ((NamePage)mRootPage.getNamePageReference().getPage()).getRawName(nameKey);
+    protected final byte[] getRawName(final int mNameKey) {
+        return ((NamePage)mRootPage.getNamePageReference().getPage()).getRawName(mNameKey);
 
     }
 
@@ -204,6 +202,9 @@ public class ReadTransactionState {
      * @param revisionKey
      *            Key of revision to find revision root page for.
      * @return Revision root page of this revision key.
+     * 
+     * @throws TreetankIOException
+     *             if something odd happens within the creation process.
      */
     protected final RevisionRootPage loadRevRoot(final long revisionKey) throws TreetankIOException {
 
@@ -254,11 +255,14 @@ public class ReadTransactionState {
     /**
      * Dereference node page reference.
      * 
-     * @param nodePageKey
+     * @param mNodePageKey
      *            Key of node page.
      * @return Dereferenced page.
+     * 
+     * @throws TreetankIOException
+     *             if something odd happens within the creation process.
      */
-    protected final NodePage[] getSnapshotPages(final long nodePageKey) throws TreetankIOException {
+    protected final NodePage[] getSnapshotPages(final long mNodePageKey) throws TreetankIOException {
 
         // ..and get all leaves of nodepages from the revision-trees.
         final List<PageReference> refs = new ArrayList<PageReference>();
@@ -266,7 +270,7 @@ public class ReadTransactionState {
 
         for (long i = mRootPage.getRevision(); i >= 0; i--) {
             final PageReference ref =
-                dereferenceLeafOfTree(loadRevRoot(i).getIndirectPageReference(), nodePageKey);
+                dereferenceLeafOfTree(loadRevRoot(i).getIndirectPageReference(), mNodePageKey);
             if (ref != null && (ref.getPage() != null || ref.getKey() != null)) {
                 if (ref.getKey() == null || (!keys.contains(ref.getKey().getIdentifier()))) {
                     refs.add(ref);
@@ -303,7 +307,9 @@ public class ReadTransactionState {
      * @param reference
      *            Reference to dereference.
      * @return Dereferenced page.
+     * 
      * @throws TreetankIOException
+     *             if something odd happens within the creation process.
      */
     protected final IndirectPage dereferenceIndirectPage(final PageReference reference)
         throws TreetankIOException {
@@ -322,23 +328,26 @@ public class ReadTransactionState {
     /**
      * Find reference pointing to leaf page of an indirect tree.
      * 
-     * @param startReference
+     * @param mStartReference
      *            Start reference pointing to the indirect tree.
-     * @param key
+     * @param mKey
      *            Key to look up in the indirect tree.
      * @return Reference denoted by key pointing to the leaf page.
+     * 
      * @throws TreetankIOException
+     *             if something odd happens within the creation process.
      */
-    protected final PageReference dereferenceLeafOfTree(final PageReference startReference, final long key)
+    protected final PageReference dereferenceLeafOfTree(final PageReference mStartReference, final long mKey)
         throws TreetankIOException {
 
         // Initial state pointing to the indirect page of level 0.
-        PageReference reference = startReference;
+        PageReference reference = mStartReference;
         int offset = 0;
-        long levelKey = key;
+        long levelKey = mKey;
 
         // Iterate through all levels.
-        for (int level = 0, height = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
+        for (int level = 0, height = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; 
+        level < height; level++) {
             offset = (int)(levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
             levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
             final AbstractPage page = dereferenceIndirectPage(reference);
@@ -357,19 +366,22 @@ public class ReadTransactionState {
     /**
      * Calculate node page key from a given node key.
      * 
-     * @param nodeKey
+     * @param mNodeKey
      *            Node key to find node page key for.
      * @return Node page key.
      */
-    protected static final long nodePageKey(final long nodeKey) {
-        final long nodePageKey = nodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT;
+    protected static final long nodePageKey(final long mNodeKey) {
+        final long nodePageKey = mNodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT;
         return nodePageKey;
     }
 
     /**
-     * Current reference to actual rev-root page
+     * Current reference to actual rev-root page.
      * 
      * @return the current revision root page
+     * 
+     * @throws TreetankIOException
+     *             if something odd happens within the creation process.
      */
     protected RevisionRootPage getActualRevisionRootPage() throws TreetankIOException {
         return mRootPage;
@@ -387,13 +399,14 @@ public class ReadTransactionState {
     /**
      * Calculate node page offset for a given node key.
      * 
-     * @param nodeKey
+     * @param mNodeKey
      *            Node key to find offset for.
      * @return Offset into node page.
      */
-    protected static final int nodePageOffset(final long nodeKey) {
+    protected static final int nodePageOffset(final long mNodeKey) {
         final long nodePageOffset =
-            (nodeKey - ((nodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT) << IConstants.NDP_NODE_COUNT_EXPONENT));
+            (mNodeKey - ((mNodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT)
+            << IConstants.NDP_NODE_COUNT_EXPONENT));
         return (int)nodePageOffset;
     }
 

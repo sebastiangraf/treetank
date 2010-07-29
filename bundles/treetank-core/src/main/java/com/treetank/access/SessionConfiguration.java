@@ -5,7 +5,7 @@
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -26,6 +26,9 @@ import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankUsageException;
 import com.treetank.settings.ESessionSetting;
+import com.treetank.utils.LogWrapper;
+
+import org.slf4j.LoggerFactory;
 
 /**
  * <h1>SessionConfiguration</h1>
@@ -37,12 +40,20 @@ import com.treetank.settings.ESessionSetting;
  */
 public final class SessionConfiguration {
 
-    /** Props to hold all related data */
+    /**
+     * Log wrapper for better output.
+     */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(SessionConfiguration.class));
+    
+    /** Props to hold all related data. */
     private final Properties mProps;
 
     /**
      * Convenience constructor using the standard settings.
      * 
+     * @throws TreetankUsageException
+     *             if session is not valid
      */
     public SessionConfiguration() throws TreetankUsageException {
         this(new Properties());
@@ -75,7 +86,7 @@ public final class SessionConfiguration {
      * 
      * @param propFile
      *            to be specified
-     * @throws TreetankUsageException
+     * @throws TreetankException
      *             if session could not be established
      */
     public SessionConfiguration(final File propFile) throws TreetankException {
@@ -83,6 +94,7 @@ public final class SessionConfiguration {
         try {
             getProps().load(new FileInputStream(propFile));
         } catch (final IOException exc) {
+            LOGWRAPPER.error(exc);
             throw new TreetankIOException(exc);
         }
 

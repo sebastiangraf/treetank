@@ -5,7 +5,7 @@
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -27,6 +27,9 @@ import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankUsageException;
 import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.EStoragePaths;
+import com.treetank.utils.LogWrapper;
+
+import org.slf4j.LoggerFactory;
 
 /**
  * <h1>Database Configuration</h1> class represents a configuration of a
@@ -36,7 +39,13 @@ import com.treetank.settings.EStoragePaths;
  * @author Sebastian Graf, University of Konstanz
  */
 public class DatabaseConfiguration {
-
+    
+    /**
+     * Log wrapper for better output.
+     */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(DatabaseConfiguration.class));
+    
     /** Absolute path to tnk directory. */
     private final File mFile;
 
@@ -109,6 +118,7 @@ public class DatabaseConfiguration {
                 }
             }
         } catch (final IOException exc) {
+            LOGWRAPPER.error(exc);
             throw new TreetankIOException(exc);
         }
     }
@@ -165,6 +175,7 @@ public class DatabaseConfiguration {
             getProps().store(
                 new FileOutputStream(new File(mFile, EStoragePaths.DBSETTINGS.getFile().getName())), "");
         } catch (final IOException exc) {
+            LOGWRAPPER.error(exc);
             return false;
         }
         return true;

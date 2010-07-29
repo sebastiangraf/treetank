@@ -1,3 +1,19 @@
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
+ * 
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ * 
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * 
+ */
 package com.treetank.cache;
 
 import com.sleepycat.bind.tuple.TupleOutput;
@@ -31,24 +47,24 @@ public final class NodePageContainer {
     /**
      * Constructor with complete page and lazy instantiated modifying page.
      * 
-     * @param complete
+     * @param mComplete
      *            to be used as a base for this container.
      */
-    public NodePageContainer(final NodePage complete) {
-        this(complete, new NodePage(complete.getNodePageKey(), complete.getRevision()));
+    public NodePageContainer(final NodePage mComplete) {
+        this(mComplete, new NodePage(mComplete.getNodePageKey(), mComplete.getRevision()));
     }
 
     /**
      * Constructor with both, complete and modifying page.
      * 
-     * @param complete
+     * @param mComplete
      *            to be used as a base for this container
-     * @param modifying
+     * @param mModifying
      *            to be used as a base for this container
      */
-    public NodePageContainer(final NodePage complete, final NodePage modifying) {
-        this.mComplete = complete;
-        this.mModified = modifying;
+    public NodePageContainer(final NodePage mComplete, final NodePage mModifying) {
+        this.mComplete = mComplete;
+        this.mModified = mModifying;
     }
 
     /**
@@ -72,11 +88,11 @@ public final class NodePageContainer {
     /**
      * Serializing the container to the cache.
      * 
-     * @param out
+     * @param mOut
      *            for serialization
      */
-    public void serialize(final TupleOutput out) {
-        final TupleOutputSink sink = new TupleOutputSink(out);
+    public void serialize(final TupleOutput mOut) {
+        final TupleOutputSink sink = new TupleOutputSink(mOut);
         PagePersistenter.serializePage(sink, mComplete);
         PagePersistenter.serializePage(sink, mModified);
     }
@@ -97,21 +113,30 @@ public final class NodePageContainer {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
+    public boolean equals(final Object mObj) {
+        if (this == mObj) {
+            return true;  
+        }
+            
+        if (mObj == null) {
+            return false; 
+        }
+           
+        if (getClass() != mObj.getClass()) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
-        NodePageContainer other = (NodePageContainer)obj;
+        }
+            
+        final NodePageContainer other = (NodePageContainer)mObj;
         if (mComplete == null) {
-            if (other.mComplete != null)
+            if (other.mComplete != null) {
                 return false;
-        } else if (!mComplete.equals(other.mComplete))
+            } 
+        } else if (!mComplete.equals(other.mComplete)) {
             return false;
-        else if (!mModified.equals(other.mModified))
-            return false;
+        } else if (!mModified.equals(other.mModified)) {
+            return false; 
+        }
+            
         return true;
     }
 

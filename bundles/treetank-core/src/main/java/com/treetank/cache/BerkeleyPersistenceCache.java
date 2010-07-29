@@ -29,7 +29,6 @@ import com.treetank.access.DatabaseConfiguration;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.utils.LogWrapper;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -43,16 +42,10 @@ import org.slf4j.LoggerFactory;
 public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
 
     /**
-     * Logger for determining the log level.
-     */
-    private static final Logger LOGGER =
-        LoggerFactory.getLogger(BerkeleyPersistenceCache.class);
-
-    /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER =
-        new LogWrapper(LOGGER);
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(BerkeleyPersistenceCache.class));
 
     /**
      * Berkeley database.
@@ -67,8 +60,7 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
     /**
      * Name for the database.
      */
-    private static final String NAME =
-        "berkeleyCache";
+    private static final String NAME = "berkeleyCache";
 
     /**
      * Binding for the key, which is the nodepage.
@@ -95,28 +87,21 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
         throws TreetankIOException {
         super(paramSessionConfig);
         try {
-
             /* Create a new, transactional database environment */
-            final EnvironmentConfig config =
-                new EnvironmentConfig();
+            final EnvironmentConfig config = new EnvironmentConfig();
             config.setAllowCreate(true);
             config.setLocking(false);
             config.setCacheSize(1024 * 1024);
-            mEnv =
-                new Environment(place, config);
+            mEnv = new Environment(place, config);
 
             /* Make a database within that environment */
-            final DatabaseConfig dbConfig =
-                new DatabaseConfig();
+            final DatabaseConfig dbConfig = new DatabaseConfig();
             dbConfig.setAllowCreate(true);
             dbConfig.setExclusiveCreate(true);
-            mDatabase =
-                mEnv.openDatabase(null, NAME, dbConfig);
+            mDatabase = mEnv.openDatabase(null, NAME, dbConfig);
 
-            mKeyBinding =
-                TupleBinding.getPrimitiveBinding(Long.class);
-            mValueBinding =
-                new NodePageContainerBinding();
+            mKeyBinding = TupleBinding.getPrimitiveBinding(Long.class);
+            mValueBinding = new NodePageContainerBinding();
 
         } catch (final DatabaseException exc) {
             LOGWRAPPER.error(exc);
@@ -129,14 +114,12 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
      * {@inheritDoc}
      */
     @Override
-    public void putPersistent(final long key, final NodePageContainer page) throws TreetankIOException {
-        final DatabaseEntry valueEntry =
-            new DatabaseEntry();
-        final DatabaseEntry keyEntry =
-            new DatabaseEntry();
+    public void putPersistent(final long mKey, final NodePageContainer mPage) throws TreetankIOException {
+        final DatabaseEntry valueEntry = new DatabaseEntry();
+        final DatabaseEntry keyEntry = new DatabaseEntry();
 
-        mKeyBinding.objectToEntry(key, keyEntry);
-        mValueBinding.objectToEntry(page, valueEntry);
+        mKeyBinding.objectToEntry(mKey, keyEntry);
+        mValueBinding.objectToEntry(mPage, valueEntry);
         try {
             mDatabase.put(null, keyEntry, valueEntry);
 
@@ -167,20 +150,15 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
      * {@inheritDoc}
      */
     @Override
-    public NodePageContainer getPersistent(final long key) throws TreetankIOException {
-        final DatabaseEntry valueEntry =
-            new DatabaseEntry();
-        final DatabaseEntry keyEntry =
-            new DatabaseEntry();
-        mKeyBinding.objectToEntry(key, keyEntry);
+    public NodePageContainer getPersistent(final long mKey) throws TreetankIOException {
+        final DatabaseEntry valueEntry = new DatabaseEntry();
+        final DatabaseEntry keyEntry = new DatabaseEntry();
+        mKeyBinding.objectToEntry(mKey, keyEntry);
         try {
-            final OperationStatus status =
-                mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
-            NodePageContainer val =
-                null;
+            final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
+            NodePageContainer val = null;
             if (status == OperationStatus.SUCCESS) {
-                val =
-                    mValueBinding.entryToObject(valueEntry);
+                val = mValueBinding.entryToObject(valueEntry);
             }
 
             return val;

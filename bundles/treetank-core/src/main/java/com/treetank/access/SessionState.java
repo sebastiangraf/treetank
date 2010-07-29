@@ -5,7 +5,7 @@
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -45,6 +45,9 @@ import com.treetank.io.IWriter;
 import com.treetank.page.PageReference;
 import com.treetank.page.UberPage;
 import com.treetank.settings.ESessionSetting;
+import com.treetank.utils.LogWrapper;
+
+import org.slf4j.LoggerFactory;
 
 /**
  * <h1>SessionState</h1>
@@ -55,7 +58,13 @@ import com.treetank.settings.ESessionSetting;
  */
 public final class SessionState {
 
-    /** Lock for blocking the commit */
+    /**
+     * Log wrapper for better output.
+     */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(SessionState.class));
+    
+    /** Lock for blocking the commit. */
     protected final Lock mCommitLock;
 
     /** Session configuration. */
@@ -76,23 +85,27 @@ public final class SessionState {
     /** Remember all running transactions (both read and write). */
     private final Map<Long, IReadTransaction> mTransactionMap;
 
-    /** Remember the write seperatly because of the concurrent writes */
+    /** Remember the write seperatly because of the concurrent writes. */
     private final Map<Long, WriteTransactionState> mWriteTransactionStateMap;
 
-    /** Storing all return futures from the sync process */
+    /** Storing all return futures from the sync process. */
     private final Map<Long, Map<Long, Collection<Future<Void>>>> mSyncTransactionsReturns;
 
-    /** abstract factory for all interaction to the storage */
-    private final AbstractIOFactory fac;
+    /** abstract factory for all interaction to the storage. */
+    private final AbstractIOFactory mFac;
 
-    /** Atomic counter for concurrent generation of transaction id */
-    private final AtomicLong transactionIDCounter;
+    /** Atomic counter for concurrent generation of transaction id. */
+    private final AtomicLong mTransactionIDCounter;
 
     /**
      * Constructor to bind to a TreeTank file.
      * 
      * @param sessionConfiguration
      *            Session configuration for the TreeTank.
+     * @param databaseConfiguration
+     *            Database configuration for the TreeTank.
+     * @throws TreetankException
+     *            if Session state error
      */
     protected SessionState(final DatabaseConfiguration databaseConfiguration,
         final SessionConfiguration sessionConfiguration) throws TreetankException {
@@ -102,7 +115,7 @@ public final class SessionState {
         mWriteTransactionStateMap = new ConcurrentHashMap<Long, WriteTransactionState>();
         mSyncTransactionsReturns = new ConcurrentHashMap<Long, Map<Long, Collection<Future<Void>>>>();
 
-        transactionIDCounter = new AtomicLong();
+        mTransactionIDCounter = new AtomicLong();
         mCommitLock = new ReentrantLock(true);
 
         // Init session members.
@@ -114,15 +127,15 @@ public final class SessionState {
                 ESessionSetting.MAX_READ_TRANSACTIONS.name())));
         final PageReference uberPageReference = new PageReference();
 
-        fac = AbstractIOFactory.getInstance(mDatabaseConfiguration, mSessionConfiguration);
-        if (!fac.exists()) {
+        mFac = AbstractIOFactory.getInstance(mDatabaseConfiguration, mSessionConfiguration);
+        if (!mFac.exists()) {
             // Bootstrap uber page and make sure there already is a root
             // node.
             mLastCommittedUberPage = new UberPage();
             uberPageReference.setPage(mLastCommittedUberPage);
 
         } else {
-            final IReader reader = fac.getReader();
+            final IReader reader = mFac.getReader();
             final PageReference firstRef = reader.readFirstReference();
             mLastCommittedUberPage = (UberPage)firstRef.getPage();
             reader.close();
@@ -146,17 +159,18 @@ public final class SessionState {
         return beginReadTransaction(mLastCommittedUberPage.getRevisionNumber(), null);
     }
 
-    protected IReadTransaction beginReadTransaction(final IItemList itemList) throws TreetankException {
-        return beginReadTransaction(mLastCommittedUberPage.getRevisionNumber(), itemList);
+    protected IReadTransaction beginReadTransaction(final IItemList mItemList) throws TreetankException {
+        return beginReadTransaction(mLastCommittedUberPage.getRevisionNumber(), mItemList);
     }
 
-    protected IReadTransaction beginReadTransaction(final long revisionNumber, final IItemList itemList)
+    protected IReadTransaction beginReadTransaction(final long mRevisionNumber, final IItemList mItemList)
         throws TreetankException {
 
         // Make sure not to exceed available number of read transactions.
         try {
             mReadSemaphore.acquire();
         } catch (final InterruptedException exc) {
+            LOGWRAPPER.error(exc);
             throw new TreetankException(exc) {
                 private static final long serialVersionUID = 1L;
             };
@@ -165,8 +179,9 @@ public final class SessionState {
         IReadTransaction rtx = null;
         // Create new read transaction.
         rtx =
-            new ReadTransaction(transactionIDCounter.incrementAndGet(), this, new ReadTransactionState(
-                mDatabaseConfiguration, mLastCommittedUberPage, revisionNumber, itemList, fac.getReader()));
+            new ReadTransaction(mTransactionIDCounter.incrementAndGet(), this, new ReadTransactionState(
+                mDatabaseConfiguration, mLastCommittedUberPage, mRevisionNumber, mItemList, 
+                mFac.getReader()));
 
         // Remember transaction for debugging and safe close.
         if (mTransactionMap.put(rtx.getTransactionID(), rtx) != null) {
@@ -185,11 +200,12 @@ public final class SessionState {
         try {
             mWriteSemaphore.acquire();
         } catch (final InterruptedException exc) {
+            LOGWRAPPER.error(exc);
             throw new TreetankThreadedException(exc);
 
         }
 
-        final long currentID = transactionIDCounter.incrementAndGet();
+        final long currentID = mTransactionIDCounter.incrementAndGet();
         final WriteTransactionState wtxState =
             createWriteTransactionState(currentID, mLastCommittedUberPage.getRevisionNumber(),
                 mLastCommittedUberPage.getRevisionNumber());
@@ -206,30 +222,30 @@ public final class SessionState {
         return wtx;
     }
 
-    protected WriteTransactionState createWriteTransactionState(final long id, final long representRevision,
-        final long storeRevision) throws TreetankIOException {
-        final IWriter writer = fac.getWriter();
+    protected WriteTransactionState createWriteTransactionState(final long mId, final long mRepresentRevision,
+        final long mStoreRevision) throws TreetankIOException {
+        final IWriter writer = mFac.getWriter();
 
         return new WriteTransactionState(mDatabaseConfiguration, this, new UberPage(mLastCommittedUberPage,
-            storeRevision + 1), writer, id, representRevision, storeRevision);
+            mStoreRevision + 1), writer, mId, mRepresentRevision, mStoreRevision);
     }
 
-    protected final synchronized void syncLogs(final NodePageContainer contToSync, final long transactionId)
+    protected synchronized void syncLogs(final NodePageContainer mContToSync, final long mTransactionId)
         throws TreetankThreadedException {
         final ExecutorService exec = Executors.newCachedThreadPool();
         final Collection<Future<Void>> returnVals = new ArrayList<Future<Void>>();
         for (final Long key : mWriteTransactionStateMap.keySet()) {
-            if (key != transactionId) {
-                returnVals.add(exec.submit(new LogSyncer(mWriteTransactionStateMap.get(key), contToSync)));
+            if (key != mTransactionId) {
+                returnVals.add(exec.submit(new LogSyncer(mWriteTransactionStateMap.get(key), mContToSync)));
             }
         }
 
-        if (!mSyncTransactionsReturns.containsKey(transactionId)) {
-            mSyncTransactionsReturns.put(transactionId,
+        if (!mSyncTransactionsReturns.containsKey(mTransactionId)) {
+            mSyncTransactionsReturns.put(mTransactionId,
                 new ConcurrentHashMap<Long, Collection<Future<Void>>>());
         }
 
-        if (mSyncTransactionsReturns.get(transactionId).put(contToSync.getComplete().getNodePageKey(),
+        if (mSyncTransactionsReturns.get(mTransactionId).put(mContToSync.getComplete().getNodePageKey(),
             returnVals) != null) {
             throw new TreetankThreadedException(
                 "only one commit and therefore sync per id and nodepage is allowed!");
@@ -237,18 +253,20 @@ public final class SessionState {
 
     }
 
-    protected final synchronized void waitForFinishedSync(final long transactionKey)
+    protected synchronized void waitForFinishedSync(final long mTransactionKey)
         throws TreetankThreadedException {
         final Map<Long, Collection<Future<Void>>> completeVals =
-            mSyncTransactionsReturns.remove(transactionKey);
+            mSyncTransactionsReturns.remove(mTransactionKey);
         if (completeVals != null) {
             for (final Collection<Future<Void>> singleVals : completeVals.values()) {
                 for (final Future<Void> returnVal : singleVals) {
                     try {
                         returnVal.get();
                     } catch (final InterruptedException exc) {
+                        LOGWRAPPER.error(exc);
                         throw new TreetankThreadedException(exc);
                     } catch (final ExecutionException exc) {
+                        LOGWRAPPER.error(exc);
                         throw new TreetankThreadedException(exc);
                     }
                 }
@@ -260,18 +278,18 @@ public final class SessionState {
         mLastCommittedUberPage = lastCommittedUberPage;
     }
 
-    protected void closeWriteTransaction(final long transactionID) {
+    protected void closeWriteTransaction(final long mTransactionID) {
         // Purge transaction from internal state.
-        mTransactionMap.remove(transactionID);
+        mTransactionMap.remove(mTransactionID);
         // Removing the write from the own internal mapping
-        mWriteTransactionStateMap.remove(transactionID);
+        mWriteTransactionStateMap.remove(mTransactionID);
         // Make new transactions available.
         mWriteSemaphore.release();
     }
 
-    protected void closeReadTransaction(final long transactionID) {
+    protected void closeReadTransaction(final long mTransactionID) {
         // Purge transaction from internal state.
-        mTransactionMap.remove(transactionID);
+        mTransactionMap.remove(mTransactionID);
         // Make new transactions available.
         mReadSemaphore.release();
     }
@@ -290,22 +308,22 @@ public final class SessionState {
         mTransactionMap.clear();
         mWriteTransactionStateMap.clear();
 
-        fac.closeStorage();
+        mFac.closeStorage();
     }
 
     class LogSyncer implements Callable<Void> {
 
-        final WriteTransactionState state;
-        final NodePageContainer cont;
+        final WriteTransactionState mState;
+        final NodePageContainer mCont;
 
         LogSyncer(final WriteTransactionState paramState, final NodePageContainer paramCont) {
-            state = paramState;
-            cont = paramCont;
+            mState = paramState;
+            mCont = paramCont;
         }
 
         @Override
         public Void call() throws Exception {
-            state.updateDateContainer(cont);
+            mState.updateDateContainer(mCont);
             return null;
         }
 

@@ -17,11 +17,6 @@
 package com.treetank.cache;
 
 import com.treetank.utils.FastWeakHashMap;
-import com.treetank.utils.LogWrapper;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Simple RAM implementation with the help of a {@link FastWeakHashMap}.
  * 
@@ -29,19 +24,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public final class RAMCache implements ICache {
-
-    /**
-     * Logger for determining the log level.
-     */
-    private static final Logger LOGGER =
-        LoggerFactory.getLogger(RAMCache.class);
-
-    /**
-     * Log wrapper for better output.
-     */
-    private static final LogWrapper LOGWRAPPER =
-        new LogWrapper(LOGGER);
-
+    
     /**
      * local instance.
      */
@@ -68,17 +51,17 @@ public final class RAMCache implements ICache {
     /**
      * {@inheritDoc}
      */
-    public NodePageContainer get(final long key) {
+    public NodePageContainer get(final long mKey) {
 
-        return map.get(key);
+        return map.get(mKey);
 
     }
 
     /**
      * {@inheritDoc}
      */
-    public void put(final long key, final NodePageContainer page) {
-        map.put(key, page);
+    public void put(final long mKey, final NodePageContainer mPage) {
+        map.put(mKey, mPage);
 
     }
 
