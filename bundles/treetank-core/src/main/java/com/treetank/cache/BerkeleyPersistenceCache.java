@@ -42,15 +42,17 @@ import org.slf4j.LoggerFactory;
  */
 public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
 
-    /** 
-     * Logger for determining the log level. 
-    */
-    private static final Logger LOGGER = LoggerFactory.getLogger(BerkeleyPersistenceCache.class);
+    /**
+     * Logger for determining the log level.
+     */
+    private static final Logger LOGGER =
+        LoggerFactory.getLogger(BerkeleyPersistenceCache.class);
 
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LOGGER);
+    private static final LogWrapper LOGWRAPPER =
+        new LogWrapper(LOGGER);
 
     /**
      * Berkeley database.
@@ -65,7 +67,8 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
     /**
      * Name for the database.
      */
-    private static final String NAME = "berkeleyCache";
+    private static final String NAME =
+        "berkeleyCache";
 
     /**
      * Binding for the key, which is the nodepage.
@@ -94,25 +97,26 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
         try {
 
             /* Create a new, transactional database environment */
-            final EnvironmentConfig config = new EnvironmentConfig();
+            final EnvironmentConfig config =
+                new EnvironmentConfig();
             config.setAllowCreate(true);
             config.setLocking(false);
             config.setCacheSize(1024 * 1024);
-            mEnv = new Environment(place, config);
+            mEnv =
+                new Environment(place, config);
 
             /* Make a database within that environment */
-            final DatabaseConfig dbConfig = new DatabaseConfig();
+            final DatabaseConfig dbConfig =
+                new DatabaseConfig();
             dbConfig.setAllowCreate(true);
             dbConfig.setExclusiveCreate(true);
-            mDatabase = mEnv.openDatabase(null, NAME, dbConfig);
+            mDatabase =
+                mEnv.openDatabase(null, NAME, dbConfig);
 
-            mKeyBinding = TupleBinding.getPrimitiveBinding(Long.class);
-            mValueBinding = new NodePageContainerBinding();
-
-            // debug
-            LOGWRAPPER.debug(
-                "Creating new BerkeleyPersistenceCache with revision {} and DatabaseConfiguration {}",
-                paramRevision, paramSessionConfig);
+            mKeyBinding =
+                TupleBinding.getPrimitiveBinding(Long.class);
+            mValueBinding =
+                new NodePageContainerBinding();
 
         } catch (final DatabaseException exc) {
             LOGWRAPPER.error(exc);
@@ -126,17 +130,15 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
      */
     @Override
     public void putPersistent(final long key, final NodePageContainer page) throws TreetankIOException {
-        final DatabaseEntry valueEntry = new DatabaseEntry();
-        final DatabaseEntry keyEntry = new DatabaseEntry();
+        final DatabaseEntry valueEntry =
+            new DatabaseEntry();
+        final DatabaseEntry keyEntry =
+            new DatabaseEntry();
 
         mKeyBinding.objectToEntry(key, keyEntry);
         mValueBinding.objectToEntry(page, valueEntry);
         try {
             mDatabase.put(null, keyEntry, valueEntry);
-
-            // debug
-            LOGWRAPPER.debug("Put new BerkeleyPersistenceCache with key {} and Node Page Continer {}"
-                , key, page);
 
         } catch (final DatabaseException exc) {
             LOGWRAPPER.error(exc);
@@ -155,10 +157,6 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
             mEnv.removeDatabase(null, NAME);
             mEnv.close();
 
-            // debug
-
-            LOGWRAPPER.debug("Clear BerkeleyPersistenceCache");
-
         } catch (final DatabaseException exc) {
             LOGWRAPPER.error(exc);
             throw new TreetankIOException(exc);
@@ -170,18 +168,20 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
      */
     @Override
     public NodePageContainer getPersistent(final long key) throws TreetankIOException {
-        final DatabaseEntry valueEntry = new DatabaseEntry();
-        final DatabaseEntry keyEntry = new DatabaseEntry();
+        final DatabaseEntry valueEntry =
+            new DatabaseEntry();
+        final DatabaseEntry keyEntry =
+            new DatabaseEntry();
         mKeyBinding.objectToEntry(key, keyEntry);
         try {
-            final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
-            NodePageContainer val = null;
+            final OperationStatus status =
+                mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
+            NodePageContainer val =
+                null;
             if (status == OperationStatus.SUCCESS) {
-                val = mValueBinding.entryToObject(valueEntry);
+                val =
+                    mValueBinding.entryToObject(valueEntry);
             }
-
-            // debug
-            LOGWRAPPER.debug("Get BerkeleyPersistenceCache with key {}", key);
 
             return val;
         } catch (final DatabaseException exc) {
