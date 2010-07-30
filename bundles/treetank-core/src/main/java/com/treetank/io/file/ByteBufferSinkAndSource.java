@@ -1,3 +1,20 @@
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
+ * 
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ * 
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * 
+ */
+
 package com.treetank.io.file;
 
 import java.nio.ByteBuffer;
@@ -16,78 +33,78 @@ import com.treetank.utils.IConstants;
  */
 public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
 
-    /** internal buffer */
-    private transient ByteBuffer buffer;
+    /** internal buffer. */
+    private transient ByteBuffer mBuffer;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public ByteBufferSinkAndSource() {
-        buffer = ByteBuffer.allocate(IConstants.BUFFER_SIZE);
+        mBuffer = ByteBuffer.allocate(IConstants.BUFFER_SIZE);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void writeByte(final byte byteVal) {
+    public void writeByte(final byte mByteVal) {
         checkAndIncrease(1);
-        buffer.put(byteVal);
+        mBuffer.put(mByteVal);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void writeLong(final long longVal) {
+    public void writeLong(final long mLongVal) {
         checkAndIncrease(8);
-        buffer.putLong(longVal);
+        mBuffer.putLong(mLongVal);
 
     }
 
     /**
-     * Setting position in buffer
+     * Setting position in buffer.
      * 
-     * @param val
+     * @param mVal
      *            new position to set
      */
-    public void position(final int val) {
-        buffer.position(val);
+    public void position(final int mVal) {
+        mBuffer.position(mVal);
     }
 
     /**
-     * Getting position in buffer
+     * Getting position in buffer.
      * 
      * @return position to get
      */
     public int position() {
-        return buffer.position();
+        return mBuffer.position();
     }
 
     /**
-     * Getting more bytes and fill it in the buffer
+     * Getting more bytes and fill it in the buffer.
      * 
-     * @param dst
+     * @param mDst
      *            to fill
-     * @param offset
+     * @param mOffset
      *            offset in buffer
-     * @param length
+     * @param mLength
      *            length of bytes
      */
-    public void get(final byte[] dst, final int offset, final int length) {
-        buffer.get(dst, offset, length);
+    public void get(final byte[] mDst, final int mOffset, final int mLength) {
+        mBuffer.get(mDst, mOffset, mLength);
     }
 
     /**
      * {@inheritDoc}
      */
     public byte readByte() {
-        return buffer.get();
+        return mBuffer.get();
     }
 
     /**
      * {@inheritDoc}
      */
     public long readLong() {
-        return buffer.getLong();
+        return mBuffer.getLong();
     }
 
     /**
@@ -95,7 +112,7 @@ public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
      */
     public void writeInt(final int intVal) {
         checkAndIncrease(4);
-        buffer.putInt(intVal);
+        mBuffer.putInt(intVal);
 
     }
 
@@ -103,23 +120,23 @@ public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
      * {@inheritDoc}
      */
     public int readInt() {
-        return buffer.getInt();
+        return mBuffer.getInt();
     }
 
     /**
-     * Checking of length is sufficient, if not, increase the bytebuffer
+     * Checking of length is sufficient, if not, increase the bytebuffer.
      * 
-     * @param length
+     * @param mLength
      *            for the bytes which have to be inserted
      */
-    private void checkAndIncrease(final int length) {
-        final int position = buffer.position();
-        if (buffer.position() + length >= buffer.capacity()) {
-            buffer.position(0);
-            final ByteBuffer newBuffer = ByteBuffer.allocate(buffer.capacity() + IConstants.BUFFER_SIZE);
-            newBuffer.put(buffer);
-            buffer = newBuffer;
-            buffer.position(position);
+    private void checkAndIncrease(final int mLength) {
+        final int position = mBuffer.position();
+        if (mBuffer.position() + mLength >= mBuffer.capacity()) {
+            mBuffer.position(0);
+            final ByteBuffer newBuffer = ByteBuffer.allocate(mBuffer.capacity() + IConstants.BUFFER_SIZE);
+            newBuffer.put(mBuffer);
+            mBuffer = newBuffer;
+            mBuffer.position(position);
         }
     }
 

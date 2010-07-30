@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: EveryExpr.java 4246 2008-07-08 08:54:09Z scherer $
  */
 
 package com.treetank.service.xml.xpath.expr;
@@ -47,34 +46,34 @@ public class EveryExpr extends AbstractExpression implements IAxis {
      * 
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
-     * @param vars
+     * @param mVars
      *            Variables for which the condition must be satisfied
-     * @param satisfy
+     * @param mSatisfy
      *            condition every item of the variable results must satisfy in
      *            order to evaluate expression to true
      */
-    public EveryExpr(final IReadTransaction rtx, final List<IAxis> vars, final IAxis satisfy) {
+    public EveryExpr(final IReadTransaction rtx, final List<IAxis> mVars, final IAxis mSatisfy) {
 
         super(rtx);
-        mVars = vars;
-        mSatisfy = satisfy;
+        this.mVars = mVars;
+        this.mSatisfy = mSatisfy;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void reset(final long nodeKey) {
+    public void reset(final long mNodeKey) {
 
-        super.reset(nodeKey);
+        super.reset(mNodeKey);
         if (mVars != null) {
             for (IAxis axis : mVars) {
-                axis.reset(nodeKey);
+                axis.reset(mNodeKey);
             }
         }
 
         if (mSatisfy != null) {
-            mSatisfy.reset(nodeKey);
+            mSatisfy.reset(mNodeKey);
         }
     }
 
@@ -87,7 +86,7 @@ public class EveryExpr extends AbstractExpression implements IAxis {
         boolean satisfiesCond = true;
 
         for (IAxis axis : mVars) {
-            while(axis.hasNext()) {
+            while (axis.hasNext()) {
                 axis.next();
                 if (!mSatisfy.hasNext()) {
                     // condition is not satisfied for this item -> expression is
@@ -97,11 +96,11 @@ public class EveryExpr extends AbstractExpression implements IAxis {
                 }
             }
         }
-        int itemKey =
+        final int mItemKey =
             getTransaction().getItemList().addItem(
                 new AtomicValue(TypedValue.getBytes(Boolean.toString(satisfiesCond)), getTransaction()
                     .keyForName("xs:boolean")));
-        getTransaction().moveTo(itemKey);
+        getTransaction().moveTo(mItemKey);
 
     }
 

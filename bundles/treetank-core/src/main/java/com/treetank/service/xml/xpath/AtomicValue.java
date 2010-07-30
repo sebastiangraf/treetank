@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: AtomicValue.java 4487 2008-10-02 09:12:29Z scherer $
  */
 
 package com.treetank.service.xml.xpath;
@@ -50,65 +49,64 @@ public class AtomicValue implements IItem {
     /**
      * Constructor. Initializes the internal state.
      * 
-     * @param value
+     * @param mValue
      *            the value of the Item
-     * @param type
+     * @param mType
      *            the item's type
      */
-    public AtomicValue(final byte[] value, final int type) {
+    public AtomicValue(final byte[] mValue, final int mType) {
 
-        mValue = value;
-
-        mType = type;
+        this.mValue = mValue;
+        this.mType = mType;
     }
 
     /**
      * Constructor. Initializes the internal state.
      * 
-     * @param value
+     * @param mValue
      *            the value of the Item
      */
-    public AtomicValue(final boolean value) {
+    public AtomicValue(final boolean mValue) {
 
-        mValue = TypedValue.getBytes(Boolean.toString(value));
-        mType = NamePageHash.generateHashForString("xs:boolean");
+        this.mValue = TypedValue.getBytes(Boolean.toString(mValue));
+        this.mType = NamePageHash.generateHashForString("xs:boolean");
 
     }
 
     /**
      * Constructor. Initializes the internal state.
      * 
-     * @param value
+     * @param mValue
      *            the value of the Item
-     * @param type
+     * @param mType
      *            the item's type
      */
-    public AtomicValue(final Number value, final Type type) {
+    public AtomicValue(final Number mValue, final Type mType) {
 
-        mValue = TypedValue.getBytes(value.toString());
-        mType = NamePageHash.generateHashForString(type.getStringRepr());
+        this.mValue = TypedValue.getBytes(mValue.toString());
+        this.mType = NamePageHash.generateHashForString(mType.getStringRepr());
     }
 
     /**
      * Constructor. Initializes the internal state.
      * 
-     * @param value
+     * @param mValue
      *            the value of the Item
-     * @param type
+     * @param mType
      *            the item's type
      */
-    public AtomicValue(final String value, final Type type) {
+    public AtomicValue(final String mValue, final Type mType) {
 
-        mValue = TypedValue.getBytes(value);
-        mType = NamePageHash.generateHashForString(type.getStringRepr());
+        this.mValue = TypedValue.getBytes(mValue);
+        this.mType = NamePageHash.generateHashForString(mType.getStringRepr());
     }
 
     /**
      * {@inheritDoc}
      */
-    public void setNodeKey(final long itemKey) {
+    public void setNodeKey(final long mItemKey) {
 
-        mItemKey = itemKey;
+        this.mItemKey = mItemKey;
     }
 
     /**
@@ -218,7 +216,7 @@ public class AtomicValue implements IItem {
     /**
      * {@inheritDoc}
      */
-    public long getNamespaceKey(final int index) {
+    public long getNamespaceKey(final int mIndex) {
 
         return (Integer)EFixed.NULL_NODE_KEY.getStandardProperty();
     }
@@ -264,7 +262,7 @@ public class AtomicValue implements IItem {
     }
 
     /**
-     * Check if is fulltext
+     * Check if is fulltext.
      * 
      * @return true if fulltext, false otherwise
      */
@@ -274,7 +272,7 @@ public class AtomicValue implements IItem {
     }
 
     /**
-     * Test if the lead is tes
+     * Test if the lead is tes.
      * 
      * @return true if fulltest leaf, false otherwise
      */
@@ -284,7 +282,7 @@ public class AtomicValue implements IItem {
     }
 
     /**
-     * Test if the root is full text
+     * Test if the root is full text.
      * 
      * @return true if fulltest root, false otherwise
      */
@@ -309,7 +307,7 @@ public class AtomicValue implements IItem {
     }
 
     /**
-     * Getting the type of the value
+     * Getting the type of the value.
      * 
      * @return the type of this value
      */
@@ -358,7 +356,7 @@ public class AtomicValue implements IItem {
     }
 
     /**
-     * To String method
+     * To String method.
      * 
      * @return String String representation of this node
      */

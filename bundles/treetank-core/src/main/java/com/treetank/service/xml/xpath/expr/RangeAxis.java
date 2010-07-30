@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: RangeAxis.java 4246 2008-07-08 08:54:09Z scherer $
  */
 
 package com.treetank.service.xml.xpath.expr;
@@ -62,16 +61,16 @@ public class RangeAxis extends AbstractAxis implements IAxis {
      * 
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
-     * @param from
+     * @param mFrom
      *            start of the range
-     * @param to
+     * @param mTo
      *            the end of the range
      */
-    public RangeAxis(final IReadTransaction rtx, final IAxis from, final IAxis to) {
+    public RangeAxis(final IReadTransaction rtx, final IAxis mFrom, final IAxis mTo) {
 
         super(rtx);
-        mFrom = from;
-        mTo = to;
+        this.mFrom = mFrom;
+        this.mTo = mTo;
         mFirst = true;
     }
 
@@ -86,13 +85,13 @@ public class RangeAxis extends AbstractAxis implements IAxis {
         if (mFirst) {
             mFirst = false;
             if (mFrom.hasNext()
-            && Type.getType(mFrom.getTransaction().getNode().getTypeKey()).derivesFrom(Type.INTEGER)) {
+                && Type.getType(mFrom.getTransaction().getNode().getTypeKey()).derivesFrom(Type.INTEGER)) {
                 mStart =
                     (int)Double.parseDouble(TypedValue.parseString(mFrom.getTransaction().getNode()
                         .getRawValue()));
 
                 if (mTo.hasNext()
-                && Type.getType(mTo.getTransaction().getNode().getTypeKey()).derivesFrom(Type.INTEGER)) {
+                    && Type.getType(mTo.getTransaction().getNode().getTypeKey()).derivesFrom(Type.INTEGER)) {
 
                     mEnd =
                         Integer
@@ -111,7 +110,7 @@ public class RangeAxis extends AbstractAxis implements IAxis {
         }
 
         if (mStart <= mEnd) {
-            int itemKey =
+            final int itemKey =
                 getTransaction().getItemList().addItem(
                     new AtomicValue(TypedValue.getBytes(Integer.toString(mStart)), getTransaction()
                         .keyForName("xs:integer")));

@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: CastableExpr.java 4246 2008-07-08 08:54:09Z scherer $
  */
 
 package com.treetank.service.xml.xpath.expr;
@@ -60,15 +59,15 @@ public class CastableExpr extends AbstractExpression implements IAxis {
      *            Exclusive (immutable) trx to iterate with.
      * @param inputExpr
      *            input expression, that's castablity will be tested.
-     * @param target
+     * @param mTarget
      *            Type to test, whether the input expression can be casted to.
      */
-    public CastableExpr(final IReadTransaction rtx, final IAxis inputExpr, final SingleType target) {
+    public CastableExpr(final IReadTransaction rtx, final IAxis inputExpr, final SingleType mTarget) {
 
         super(rtx);
         mSourceExpr = inputExpr;
-        mTargetType = target.getAtomic();
-        mPermitEmptySeq = target.hasInterogation();
+        mTargetType = mTarget.getAtomic();
+        mPermitEmptySeq = mTarget.hasInterogation();
 
     }
 
@@ -76,11 +75,11 @@ public class CastableExpr extends AbstractExpression implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    public void reset(final long nodeKey) {
+    public void reset(final long mNodeKey) {
 
-        super.reset(nodeKey);
+        super.reset(mNodeKey);
         if (mSourceExpr != null) {
-            mSourceExpr.reset(nodeKey);
+            mSourceExpr.reset(mNodeKey);
         }
     }
 
@@ -120,11 +119,11 @@ public class CastableExpr extends AbstractExpression implements IAxis {
         }
 
         // create result item and move transaction to it.
-        int itemKey =
+        final int mItemKey =
             getTransaction().getItemList().addItem(
                 new AtomicValue(TypedValue.getBytes(Boolean.toString(isCastable)), getTransaction()
                     .keyForName("xs:boolean")));
-        getTransaction().moveTo(itemKey);
+        getTransaction().moveTo(mItemKey);
 
     }
 

@@ -1,3 +1,20 @@
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
+ * 
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ * 
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * 
+ */
+
 package com.treetank.service.xml.shredder;
 
 import java.io.File;
@@ -15,9 +32,6 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.treetank.access.Database;
 import com.treetank.access.Session;
 import com.treetank.access.WriteTransaction;
@@ -26,6 +40,8 @@ import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.utils.LogWrapper;
+
+import org.slf4j.LoggerFactory;
 
 /**
  * <h1>XMLImport</h1>
@@ -58,75 +74,77 @@ import com.treetank.utils.LogWrapper;
  */
 public final class XMLImport implements IImport, Callable<Void> {
 
-    /** Logger. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(XMLImport.class);
+    /**
+     * Log wrapper for better output.
+     */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(XMLImport.class));
 
     /** {@link Session}. */
-    private transient ISession session;
+    private transient ISession mSession;
 
     /** {@link WriteTransaction}. */
-    private transient IWriteTransaction wtx;
+    private transient IWriteTransaction mWtx;
 
     /** Path to Treetank storage. */
     private transient File mTT;
 
     /** Log helper. */
-    private transient LogWrapper log;
+    private transient LogWrapper mLog;
 
     /** Revision nodes {@link RevNode}. */
-    private transient List<RevNode> nodes;
+    private transient List<RevNode> mNodes;
 
     /** File to shredder. */
-    private transient File xml;
+    private transient File mXml;
 
     /**
      * Constructor.
      * 
-     * @param tt
+     * @param mTt
      *            Treetank file.
      */
-    public XMLImport(final File tt) {
+    public XMLImport(final File mTt) {
         try {
-            mTT = tt;
-            log = new LogWrapper(LOGGER);
-            nodes = new ArrayList<RevNode>();
+            mTT = mTt;
+            mNodes = new ArrayList<RevNode>();
             final IDatabase database = Database.openDatabase(mTT);
-            session = database.getSession();
+            mSession = database.getSession();
         } catch (final TreetankException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGWRAPPER.error(e);
         }
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void check(final Object database, final Object obj) {
+    public void check(final Object mDatabase, final Object mObj) {
         try {
             // Setup executor service.
             final ExecutorService execService =
                 Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-            if (database instanceof File) {
+            if (mDatabase instanceof File) {
                 // Single file.
-                xml = (File)database;
-                if (obj instanceof RevNode) {
-                    nodes.add((RevNode)obj);
-                } else if (obj instanceof List<?>) {
-                    nodes = (List<RevNode>)obj;
+                mXml = (File)mDatabase;
+                if (mObj instanceof RevNode) {
+                    mNodes.add((RevNode)mObj);
+                } else if (mObj instanceof List<?>) {
+                    mNodes = (List<RevNode>)mObj;
                 }
                 execService.submit(this);
-            } else if (database instanceof List<?>) {
+            } else if (mDatabase instanceof List<?>) {
                 // List of files.
-                final List<?> files = (List<?>)database;
-                if (obj instanceof RevNode) {
-                    nodes.add((RevNode)obj);
+                final List<?> files = (List<?>)mDatabase;
+                if (mObj instanceof RevNode) {
+                    mNodes.add((RevNode)mObj);
                     for (final File xmlFile : files.toArray(new File[files.size()])) {
-                        xml = xmlFile;
+                        mXml = xmlFile;
                         execService.submit(this);
                     }
-                } else if (obj instanceof List<?>) {
-                    nodes = (List<RevNode>)obj;
+                } else if (mObj instanceof List<?>) {
+                    mNodes = (List<RevNode>)mObj;
                     for (final File xmlFile : files.toArray(new File[files.size()])) {
-                        xml = xmlFile;
+                        mXml = xmlFile;
                         execService.submit(this);
                     }
                 }
@@ -136,14 +154,14 @@ public final class XMLImport implements IImport, Callable<Void> {
             execService.shutdown();
             execService.awaitTermination(10, TimeUnit.MINUTES);
         } catch (final InterruptedException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGWRAPPER.error(e);
         } finally {
             try {
-                wtx.close();
-                session.close();
+                mWtx.close();
+                mSession.close();
                 Database.forceCloseDatabase(mTT);
             } catch (final TreetankException e) {
-                LOGGER.error(e.getMessage(), e);
+                LOGWRAPPER.error(e);
             }
         }
     }
@@ -151,17 +169,17 @@ public final class XMLImport implements IImport, Callable<Void> {
     @Override
     public Void call() throws Exception {
         // Setup StAX parser.
-        final XMLEventReader reader = XMLShredder.createReader(xml);
-        XMLEvent event = reader.nextEvent();
-        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final XMLEventReader reader = XMLShredder.createReader(mXml);
+        final XMLEvent mEvent = reader.nextEvent();
+        final IWriteTransaction wtx = mSession.beginWriteTransaction();
 
         // Parse file.
         boolean first = true;
         do {
-            log.debug(event.toString());
+            mLog.debug(mEvent.toString());
 
-            if (XMLStreamConstants.START_ELEMENT == event.getEventType()
-            && checkTimestampNodes((StartElement)event, nodes.toArray(new RevNode[nodes.size()]))) {
+            if (XMLStreamConstants.START_ELEMENT == mEvent.getEventType()
+                && checkTimestampNodes((StartElement)mEvent, mNodes.toArray(new RevNode[mNodes.size()]))) {
                 // Found revision node.
                 wtx.moveToDocumentRoot();
 
@@ -185,21 +203,21 @@ public final class XMLImport implements IImport, Callable<Void> {
      * Check if current start element matches one of the timestamp/revision
      * nodes.
      * 
-     * @param event
+     * @param mEvent
      *            Current parsed start element.
-     * @param tsns
+     * @param mTsns
      *            Timestamp nodes.
      * @return true if they match, otherwise false.
      */
-    private boolean checkTimestampNodes(final StartElement event, final RevNode... tsns) {
-        boolean retVal = false;
+    private boolean checkTimestampNodes(final StartElement mEvent, final RevNode... mTsns) {
+        boolean mRetVal = false;
 
-        for (final RevNode tsn : tsns) {
+        for (final RevNode tsn : mTsns) {
             tsn.toString();
             // TODO
         }
 
-        return retVal;
+        return mRetVal;
     }
 
     /**
@@ -222,24 +240,24 @@ public final class XMLImport implements IImport, Callable<Void> {
         /**
          * Constructor.
          * 
-         * @param qName
+         * @param mQName
          *            Full qualified name of the timestamp node.
          */
-        public RevNode(final QName qName) {
-            this(qName, null);
+        public RevNode(final QName mQName) {
+            this(mQName, null);
         }
 
         /**
          * Constructor.
          * 
-         * @param qName
+         * @param mQName
          *            Full qualified name of the timestamp node.
-         * @param att
+         * @param mAtt
          *            Attribute which specifies the timestamp value.
          */
-        public RevNode(final QName qName, final Attribute att) {
-            mQName = qName;
-            mAttribute = att;
+        public RevNode(final QName mQName, final Attribute mAtt) {
+            this.mQName = mQName;
+            this.mAttribute = mAtt;
         }
 
         /**

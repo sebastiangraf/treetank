@@ -1,3 +1,20 @@
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
+ * 
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ * 
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * 
+ */
+
 package com.treetank.io.berkeley;
 
 import com.sleepycat.je.Database;
@@ -12,6 +29,9 @@ import com.treetank.io.IReader;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.PageReference;
 import com.treetank.page.UberPage;
+import com.treetank.utils.LogWrapper;
+
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents an reading instance of the Treetank-Application
@@ -22,38 +42,44 @@ import com.treetank.page.UberPage;
  */
 public class BerkeleyReader implements IReader {
 
-    /** Link to the {@link Database} */
+    /**
+     * Log wrapper for better output.
+     */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(BerkeleyReader.class));
+    
+    /** Link to the {@link Database}. */
     private transient final Database mDatabase;
 
-    /** Link to the {@link Transaction} */
+    /** Link to the {@link Transaction}. */
     private transient final Transaction mTxn;
 
     /**
      * Constructor.
      * 
-     * @param database
+     * @param mDatabase
      *            to be connected to
-     * @param txn
+     * @param mTxn
      *            transaction to be used
      */
-    public BerkeleyReader(final Database database, final Transaction txn) {
-        mTxn = txn;
-        mDatabase = database;
+    public BerkeleyReader(final Database mDatabase, final Transaction mTxn) {
+        this.mTxn = mTxn;
+        this.mDatabase = mDatabase;
 
     }
 
     /**
-     * Constructor
+     * Constructor.
      * 
-     * @param env
+     * @param mEnv
      *            to be used
-     * @param database
+     * @param mDatabase
      *            to be connected to
      * @throws DatabaseException
      *             if something weird happens
      */
-    public BerkeleyReader(final Environment env, final Database database) throws DatabaseException {
-        this(database, env.beginTransaction(null, null));
+    public BerkeleyReader(final Environment mEnv, final Database mDatabase) throws DatabaseException {
+        this(mDatabase, mEnv.beginTransaction(null, null));
     }
 
     /**
@@ -74,6 +100,7 @@ public class BerkeleyReader implements IReader {
             }
             return page;
         } catch (final DatabaseException exc) {
+            LOGWRAPPER.error(exc);
             throw new TreetankIOException(exc);
         }
 
@@ -102,6 +129,7 @@ public class BerkeleyReader implements IReader {
 
             return uberPageReference;
         } catch (final DatabaseException e) {
+            LOGWRAPPER.error(e);
             throw new TreetankIOException(e);
         }
 
@@ -114,6 +142,7 @@ public class BerkeleyReader implements IReader {
         try {
             mTxn.abort();
         } catch (final DatabaseException e) {
+            LOGWRAPPER.error(e);
             throw new TreetankIOException(e);
 
         }
@@ -135,14 +164,14 @@ public class BerkeleyReader implements IReader {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(final Object mObj) {
         boolean returnVal = true;
-        if (obj == null) {
+        if (mObj == null) {
             returnVal = false;
-        } else if (getClass() != obj.getClass()) {
+        } else if (getClass() != mObj.getClass()) {
             returnVal = false;
         }
-        final BerkeleyReader other = (BerkeleyReader)obj;
+        final BerkeleyReader other = (BerkeleyReader)mObj;
         if (mDatabase == null) {
             if (other.mDatabase != null) {
                 returnVal = false;

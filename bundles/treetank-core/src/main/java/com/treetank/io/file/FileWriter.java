@@ -1,3 +1,20 @@
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
+ * 
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ * 
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * 
+ */
+
 package com.treetank.io.file;
 
 import java.io.File;
@@ -14,6 +31,9 @@ import com.treetank.page.PageReference;
 import com.treetank.utils.CryptoJavaImpl;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.ICrypto;
+import com.treetank.utils.LogWrapper;
+
+import org.slf4j.LoggerFactory;
 
 /**
  * File Writer for providing read/write access for file as a treetank backend.
@@ -24,6 +44,12 @@ import com.treetank.utils.ICrypto;
  */
 public final class FileWriter implements IWriter {
 
+    /**
+     * Log wrapper for better output.
+     */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(FileWriter.class));
+    
     /** Random access mFile to work on. */
     private transient final RandomAccessFile mFile;
 
@@ -33,7 +59,7 @@ public final class FileWriter implements IWriter {
     /** Temporary data buffer. */
     private final transient ByteBufferSinkAndSource mBuffer;
 
-    /** Reader instance for this writer */
+    /** Reader instance for this writer. */
     private transient final FileReader reader;
 
     /**
@@ -41,19 +67,24 @@ public final class FileWriter implements IWriter {
      * 
      * @param paramConf
      *            the path to the storage
+     * @param mConcreteStorage
+     *            the Concrete Storage
+     * @throws TreetankIOException
+     *            if FileWriter IO error
      */
-    public FileWriter(final SessionConfiguration paramConf, final File concreteStorage)
+    public FileWriter(final SessionConfiguration paramConf, final File mConcreteStorage)
         throws TreetankIOException {
         try {
-            mFile = new RandomAccessFile(concreteStorage, IConstants.READ_WRITE);
+            mFile = new RandomAccessFile(mConcreteStorage, IConstants.READ_WRITE);
         } catch (final FileNotFoundException fileExc) {
+            LOGWRAPPER.error(fileExc);
             throw new TreetankIOException(fileExc);
         }
 
         mCompressor = new CryptoJavaImpl();
         mBuffer = new ByteBufferSinkAndSource();
 
-        reader = new FileReader(paramConf, concreteStorage);
+        reader = new FileReader(paramConf, mConcreteStorage);
 
     }
 
@@ -62,7 +93,7 @@ public final class FileWriter implements IWriter {
      * 
      * @param pageReference
      *            Page reference to write.
-     * @throws RuntimeException
+     * @throws TreetankIOException
      *             due to errors during writing.
      */
     public void write(final PageReference pageReference) throws TreetankIOException {
@@ -102,6 +133,7 @@ public final class FileWriter implements IWriter {
             pageReference.setKey(key);
             pageReference.setChecksum(checksum);
         } catch (final IOException paramExc) {
+            LOGWRAPPER.error(paramExc);
             throw new TreetankIOException(paramExc);
         }
 
@@ -117,6 +149,7 @@ public final class FileWriter implements IWriter {
                 mFile.close();
             }
         } catch (final IOException e) {
+            LOGWRAPPER.error(e);
             throw new TreetankIOException(e);
         }
     }
@@ -157,6 +190,7 @@ public final class FileWriter implements IWriter {
             pageReference.getChecksum(tmp);
             mFile.write(tmp);
         } catch (final IOException exc) {
+            LOGWRAPPER.error(exc);
             throw new TreetankIOException(exc);
         }
     }

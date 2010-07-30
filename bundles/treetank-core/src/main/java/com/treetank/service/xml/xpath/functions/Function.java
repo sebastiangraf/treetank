@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: Function.java 4246 2008-07-08 08:54:09Z scherer $
  */
 
 package com.treetank.service.xml.xpath.functions;
@@ -33,15 +32,15 @@ import com.treetank.utils.TypedValue;
 public class Function {
 
     public static boolean ebv(final IAxis axis) {
-        FuncDef ebv = FuncDef.BOOLEAN;
-        List<IAxis> param = new ArrayList<IAxis>();
+        final FuncDef ebv = FuncDef.BOOLEAN;
+        final List<IAxis> param = new ArrayList<IAxis>();
         param.add(axis);
-        IAxis bAxis =
+        final IAxis bAxis =
             new FNBoolean(axis.getTransaction(), param, ebv.getMin(), ebv.getMax(), axis.getTransaction()
                 .keyForName(ebv.getReturnType()));
         if (bAxis.hasNext()) {
             bAxis.next();
-            boolean result =
+            final boolean result =
                 Boolean.parseBoolean(TypedValue.parseString(bAxis.getTransaction().getNode().getRawValue()));
             if (!bAxis.hasNext()) {
                 bAxis.reset(axis.getTransaction().getNode().getNodeKey());
@@ -54,9 +53,9 @@ public class Function {
 
     public static boolean empty(final IReadTransaction rtx, final IAxis axis) {
 
-        boolean result = !axis.hasNext();
+        final boolean result = !axis.hasNext();
 
-        int itemKey = rtx.getItemList().addItem(new AtomicValue(result));
+        final int itemKey = rtx.getItemList().addItem(new AtomicValue(result));
         rtx.moveTo(itemKey);
         return true;
     }
@@ -67,7 +66,7 @@ public class Function {
             if (axis.hasNext()) {
                 throw new XPathError(ErrorType.FORG0005);
             } else {
-                int itemKey = rtx.getItemList().addItem(new AtomicValue(true));
+                final int itemKey = rtx.getItemList().addItem(new AtomicValue(true));
                 rtx.moveTo(itemKey); // only once
 
             }
@@ -81,8 +80,8 @@ public class Function {
 
     public static boolean exists(final IReadTransaction rtx, final IAxis axis) {
 
-        boolean result = axis.hasNext();
-        int itemKey = rtx.getItemList().addItem(new AtomicValue(result));
+        final boolean result = axis.hasNext();
+        final int itemKey = rtx.getItemList().addItem(new AtomicValue(result));
         rtx.moveTo(itemKey);
         return true;
     }
@@ -101,7 +100,8 @@ public class Function {
      * derived from one of these, fn:boolean returns false if the operand value has zero length; otherwise it
      * returns true.</li>
      * <li>If its operand is a singleton value of any numeric type or derived from a numeric type, fn:boolean
-     * returns false if the operand value is NaN or is numerically equal to zero; otherwise it returns true.</li>
+     * returns false if the operand value is NaN or is numerically equal to zero; otherwise 
+     * it returns true.</li>
      * <li>In all other cases, fn:boolean raises a type error [err:FORG0006].</li>
      * </p>
      * 
@@ -113,8 +113,8 @@ public class Function {
      */
     public static boolean fnBoolean(final IReadTransaction rtx, final IAxis axis) {
 
-        boolean ebv = ebv(axis);
-        int itemKey = rtx.getItemList().addItem(new AtomicValue(ebv));
+        final boolean ebv = ebv(axis);
+        final int itemKey = rtx.getItemList().addItem(new AtomicValue(ebv));
         rtx.moveTo(itemKey);
         return true;
     }
@@ -142,7 +142,7 @@ public class Function {
                 // if has no typed value
                 // TODO // throw new XPathError(FOTY0012);
 
-                int itemKey =
+                final int itemKey =
                     rtx.getItemList().addItem(
                         new AtomicValue(rtx.getNode().getRawValue(), rtx.getNode().getTypeKey()));
                 rtx.moveTo(itemKey);
@@ -178,8 +178,8 @@ public class Function {
     public static boolean fnNilled(final IReadTransaction rtx, final IAxis axis) {
 
         if (axis.hasNext() && rtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
-            boolean nilled = false; // TODO how is the nilled property defined?
-            int itemKey = rtx.getItemList().addItem(new AtomicValue(nilled));
+            final boolean nilled = false; // TODO how is the nilled property defined?
+            final int itemKey = rtx.getItemList().addItem(new AtomicValue(nilled));
             rtx.moveTo(itemKey);
             return true;
         }
@@ -205,9 +205,9 @@ public class Function {
 
         if (axis.hasNext()) {
 
-            String name = rtx.nameForKey(rtx.getNode().getNameKey());
+            final String name = rtx.nameForKey(rtx.getNode().getNameKey());
             if (!name.equals("-1")) {
-                int itemKey = rtx.getItemList().addItem(new AtomicValue(name, Type.STRING));
+                final int itemKey = rtx.getItemList().addItem(new AtomicValue(name, Type.STRING));
                 rtx.moveTo(itemKey);
                 return true;
             }
@@ -221,8 +221,8 @@ public class Function {
     public static boolean fnnot(final IReadTransaction rtx, final IAxis axis) {
 
         if (axis.hasNext()) {
-            IItem item = new AtomicValue(!(TypedValue.parseBoolean(rtx.getNode().getRawValue())));
-            int itemKey = rtx.getItemList().addItem(item);
+            final IItem item = new AtomicValue(!(TypedValue.parseBoolean(rtx.getNode().getRawValue())));
+            final int itemKey = rtx.getItemList().addItem(item);
             rtx.moveTo(itemKey);
             return true;
         } else {
@@ -234,22 +234,26 @@ public class Function {
     /**
      * Returns the value of the context item after atomization converted to an
      * xs:double.
+     * 
+     * @param rtx
+     *          Read Transaction.
+     * @return fnnumber boolean.
      */
     public static boolean fnnumber(final IReadTransaction rtx) {
 
         // TODO: add error handling
-        IItem item =
+        final IItem item =
             new AtomicValue(TypedValue.getBytes(TypedValue.parseString(rtx.getNode().getRawValue())), rtx
                 .keyForName("xs:double"));
-        int itemKey = rtx.getItemList().addItem(item);
+        final int itemKey = rtx.getItemList().addItem(item);
         rtx.moveTo(itemKey);
 
         return true;
     }
 
-    public static AtomicValue not(final AtomicValue value) {
+    public static AtomicValue not(final AtomicValue mValue) {
 
-        return new AtomicValue(!Boolean.parseBoolean(TypedValue.parseString(value.getRawValue())));
+        return new AtomicValue(!Boolean.parseBoolean(TypedValue.parseString(mValue.getRawValue())));
     }
 
     public static boolean oneOrMore(final IReadTransaction rtx, final IAxis axis) {
@@ -257,7 +261,7 @@ public class Function {
         if (!axis.hasNext()) {
             throw new XPathError(ErrorType.FORG0004);
         } else {
-            int itemKey = rtx.getItemList().addItem(new AtomicValue(true));
+            final int itemKey = rtx.getItemList().addItem(new AtomicValue(true));
             rtx.moveTo(itemKey);
 
         }
@@ -268,26 +272,26 @@ public class Function {
     public static boolean sum(final IReadTransaction rtx, final IAxis axis) {
 
         Double value = 0.0;
-        while(axis.hasNext()) {
+        while (axis.hasNext()) {
             value = value + Double.parseDouble(TypedValue.parseString(rtx.getNode().getRawValue()));
         }
 
-        int itemKey = rtx.getItemList().addItem(new AtomicValue(value, Type.DOUBLE));
+        final int itemKey = rtx.getItemList().addItem(new AtomicValue(value, Type.DOUBLE));
         rtx.moveTo(itemKey);
         return true;
     }
 
-    public static boolean sum(final IReadTransaction rtx, final IAxis axis, final IAxis zero) {
+    public static boolean sum(final IReadTransaction rtx, final IAxis axis, final IAxis mZero) {
 
         Double value = 0.0;
         if (!axis.hasNext()) {
-            zero.hasNext(); // if is empty sequence, return values specified for
+            mZero.hasNext(); // if is empty sequence, return values specified for
             // zero
         } else {
             do {
                 value = value + Double.parseDouble(TypedValue.parseString(rtx.getNode().getRawValue()));
             } while(axis.hasNext());
-            int itemKey = rtx.getItemList().addItem(new AtomicValue(value, Type.DOUBLE));
+            final int itemKey = rtx.getItemList().addItem(new AtomicValue(value, Type.DOUBLE));
             rtx.moveTo(itemKey);
         }
         return true;
@@ -295,13 +299,13 @@ public class Function {
 
     public static boolean zeroOrOne(final IReadTransaction rtx, final IAxis axis) {
 
-        boolean result = true;
+        final boolean result = true;
 
         if (axis.hasNext() && axis.hasNext()) { // more than one result
             throw new XPathError(ErrorType.FORG0003);
         }
 
-        int itemKey = rtx.getItemList().addItem(new AtomicValue(result));
+        final int itemKey = rtx.getItemList().addItem(new AtomicValue(result));
         rtx.moveTo(itemKey);
         return true;
     }

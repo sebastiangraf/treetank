@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: CastExpr.java 4246 2008-07-08 08:54:09Z scherer $
  */
 
 package com.treetank.service.xml.xpath.expr;
@@ -56,17 +55,17 @@ public class CastExpr extends AbstractExpression implements IAxis {
      * 
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
-     * @param inputExpr
+     * @param mInputExpr
      *            input expression, that will be casted.
-     * @param target
+     * @param mTarget
      *            Type the input expression will be casted to.
      */
-    public CastExpr(final IReadTransaction rtx, final IAxis inputExpr, final SingleType target) {
+    public CastExpr(final IReadTransaction rtx, final IAxis mInputExpr, final SingleType mTarget) {
 
         super(rtx);
-        mSourceExpr = inputExpr;
-        mTargetType = target.getAtomic();
-        mPermitEmptySeq = target.hasInterogation();
+        mSourceExpr = mInputExpr;
+        mTargetType = mTarget.getAtomic();
+        mPermitEmptySeq = mTarget.hasInterogation();
 
     }
 
@@ -74,11 +73,11 @@ public class CastExpr extends AbstractExpression implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    public void reset(final long nodeKey) {
+    public void reset(final long mNodeKey) {
 
-        super.reset(nodeKey);
+        super.reset(mNodeKey);
         if (mSourceExpr != null) {
-            mSourceExpr.reset(nodeKey);
+            mSourceExpr.reset(mNodeKey);
         }
     }
 

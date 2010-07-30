@@ -1,3 +1,20 @@
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
+ * 
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ * 
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * 
+ */
+
 package com.treetank.service.revIndex;
 
 import java.util.Stack;
@@ -13,49 +30,50 @@ import com.treetank.utils.NamePageHash;
 
 public final class DocumentTreeNavigator {
 
-    static long adaptDocTree(final IWriteTransaction wtx, final Stack<String> names) throws TreetankException {
-        moveToDocumentStructureRoot(wtx);
+    static long adaptDocTree(final IWriteTransaction mWtx, final Stack<String> mNames) 
+        throws TreetankException {
+        moveToDocumentStructureRoot(mWtx);
         long currentDocKey = ENodes.UNKOWN_KIND.getNodeIdentifier();
         // iterating over all names in hierarchical order
-        while(!names.empty()) {
-            final String name = names.pop();
+        while (!mNames.empty()) {
+            final String name = mNames.pop();
 
             // if firstChild is not existing,...
-            if (!wtx.moveToFirstChild()) {
+            if (!mWtx.moveToFirstChild()) {
                 // ..inserting it...
-                wtx.insertElementAsFirstChild(new QName(RevIndex.DOCUMENT_ELEMENT));
-                wtx.insertAttribute(new QName(RevIndex.DOCUMENT_NODE_ATTIBUTEKEY), name);
-                wtx.moveToParent();
+                mWtx.insertElementAsFirstChild(new QName(RevIndex.DOCUMENT_ELEMENT));
+                mWtx.insertAttribute(new QName(RevIndex.DOCUMENT_NODE_ATTIBUTEKEY), name);
+                mWtx.moveToParent();
             }
             // Check if there was already a document on the sibling axis...
             boolean found = false;
             do {
                 // ...and check the name against the current document name
                 // for each sibling..
-                if (wtx.getNode().getNameKey() == NamePageHash
+                if (mWtx.getNode().getNameKey() == NamePageHash
                     .generateHashForString(RevIndex.DOCUMENT_ELEMENT)) {
                     // ..and break up if it is canceled
-                    if (!wtx.moveToAttribute(0)) {
+                    if (!mWtx.moveToAttribute(0)) {
 
                         throw new IllegalStateException();
                     }
-                    if (wtx.getValueOfCurrentNode().hashCode() == name.hashCode()) {
+                    if (mWtx.getValueOfCurrentNode().hashCode() == name.hashCode()) {
                         found = true;
                     }
-                    wtx.moveToParent();
+                    mWtx.moveToParent();
                     if (found) {
-                        currentDocKey = wtx.getNode().getNodeKey();
+                        currentDocKey = mWtx.getNode().getNodeKey();
                         break;
                     }
                 }
-            } while(wtx.moveToRightSibling());
+            } while(mWtx.moveToRightSibling());
             // ...if there hasn't be an element, insert the
             if (!found) {
-                wtx.insertElementAsRightSibling(new QName(RevIndex.DOCUMENT_ELEMENT));
-                wtx.insertAttribute(new QName(RevIndex.DOCUMENT_NODE_ATTIBUTEKEY), name);
-                wtx.moveToParent();
+                mWtx.insertElementAsRightSibling(new QName(RevIndex.DOCUMENT_ELEMENT));
+                mWtx.insertAttribute(new QName(RevIndex.DOCUMENT_NODE_ATTIBUTEKEY), name);
+                mWtx.moveToParent();
 
-                currentDocKey = wtx.getNode().getNodeKey();
+                currentDocKey = mWtx.getNode().getNodeKey();
             }
         }
         return currentDocKey;
@@ -75,16 +93,21 @@ public final class DocumentTreeNavigator {
     }
 
     /**
-     * Moving to documentstructure root
+     * Moving to documentstructure root.
+     * 
+     * @param mRtx
+     *            Read Transaction session.
+     * @throws TreetankException
+     *            If can't move to Root of document.
      */
-    private static void moveToDocumentStructureRoot(final IReadTransaction rtx) throws TreetankException {
-        rtx.moveToDocumentRoot();
-        if (!((AbsStructNode)rtx.getNode()).hasFirstChild()) {
-            RevIndex.initialiseBasicStructure(rtx);
+    private static void moveToDocumentStructureRoot(final IReadTransaction mRtx) throws TreetankException {
+        mRtx.moveToDocumentRoot();
+        if (!((AbsStructNode)mRtx.getNode()).hasFirstChild()) {
+            RevIndex.initialiseBasicStructure(mRtx);
         } else {
-            rtx.moveToFirstChild();
-            rtx.moveToRightSibling();
-            rtx.moveToRightSibling();
+            mRtx.moveToFirstChild();
+            mRtx.moveToRightSibling();
+            mRtx.moveToRightSibling();
         }
     }
 }

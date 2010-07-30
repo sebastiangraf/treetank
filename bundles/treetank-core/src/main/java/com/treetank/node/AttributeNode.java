@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: AttributeNode.java 4550 2009-02-05 09:25:46Z graf $
  */
 
 package com.treetank.node;
@@ -41,19 +40,19 @@ public final class AttributeNode extends AbsNode {
     private byte[] mValue;
 
     /**
-     * Creating an attributes
+     * Creating an attributes.
      * 
-     * @param longBuilder
+     * @param mLongBuilder
      *            long array with data
-     * @param intBuilder
+     * @param mIntBuilder
      *            int array with data
-     * @param value
+     * @param mValue
      *            value for the node
      */
-    AttributeNode(final long[] longBuilder, final int[] intBuilder, final byte[] value) {
-        super(longBuilder, intBuilder);
-        mValue = value;
-        mIntData[VALUE_LENGTH] = value.length;
+    AttributeNode(final long[] mLongBuilder, final int[] mIntBuilder, final byte[] mValue) {
+        super(mLongBuilder, mIntBuilder);
+        this.mValue = mValue;
+        mIntData[VALUE_LENGTH] = mValue.length;
     }
 
     /**
@@ -68,8 +67,8 @@ public final class AttributeNode extends AbsNode {
      * {@inheritDoc}
      */
     @Override
-    public void setNameKey(final int nameKey) {
-        this.mIntData[NAME_KEY] = nameKey;
+    public void setNameKey(final int mNameKey) {
+        this.mIntData[NAME_KEY] = mNameKey;
     }
 
     /**
@@ -92,8 +91,8 @@ public final class AttributeNode extends AbsNode {
      * {@inheritDoc}
      */
     @Override
-    public void setURIKey(final int uriKey) {
-        mIntData[URI_KEY] = uriKey;
+    public void setURIKey(final int mUriKey) {
+        mIntData[URI_KEY] = mUriKey;
     }
 
     /**
@@ -108,10 +107,10 @@ public final class AttributeNode extends AbsNode {
      * {@inheritDoc}
      */
     @Override
-    public void setValue(final int valueType, final byte[] value) {
-        mIntData[AbsNode.TYPE_KEY] = valueType;
-        mIntData[VALUE_LENGTH] = value.length;
-        mValue = value;
+    public void setValue(final int mValueType, final byte[] mValue) {
+        mIntData[AbsNode.TYPE_KEY] = mValueType;
+        mIntData[VALUE_LENGTH] = mValue.length;
+        this.mValue = mValue;
     }
 
     /**
@@ -126,10 +125,10 @@ public final class AttributeNode extends AbsNode {
      * {@inheritDoc}
      */
     @Override
-    public void serialize(final ITTSink out) {
-        super.serialize(out);
+    public void serialize(final ITTSink mOut) {
+        super.serialize(mOut);
         for (final byte byteVal : mValue) {
-            out.writeByte(byteVal);
+            mOut.writeByte(byteVal);
         }
     }
 
@@ -141,21 +140,21 @@ public final class AttributeNode extends AbsNode {
         return toClone;
     }
 
-    public final static AbsNode createData(final long nodeKey, final long parentKey, final int nameKey,
-        final int uriKey, final int type, final byte[] value) {
+    public static AbsNode createData(final long mNodeKey, final long parentKey, final int mNameKey,
+        final int mUriKey, final int mType, final byte[] mValue) {
         final long[] longData = new long[ENodes.ATTRIBUTE_KIND.getLongSize()];
         final int[] intData = new int[ENodes.ATTRIBUTE_KIND.getIntSize()];
-        longData[AbsNode.NODE_KEY] = nodeKey;
+        longData[AbsNode.NODE_KEY] = mNodeKey;
         longData[AbsNode.PARENT_KEY] = parentKey;
-        intData[AttributeNode.NAME_KEY] = nameKey;
-        intData[AttributeNode.URI_KEY] = uriKey;
-        intData[AbsNode.TYPE_KEY] = type;
-        return ENodes.ATTRIBUTE_KIND.createNodeFromScratch(longData, intData, value);
+        intData[AttributeNode.NAME_KEY] = mNameKey;
+        intData[AttributeNode.URI_KEY] = mUriKey;
+        intData[AbsNode.TYPE_KEY] = mType;
+        return ENodes.ATTRIBUTE_KIND.createNodeFromScratch(longData, intData, mValue);
     }
 
-    public final static AbsNode createData(final long nodeKey, final AttributeNode node) {
-        return createData(nodeKey, node.getParentKey(), node.getNameKey(), node.getURIKey(), node
-            .getTypeKey(), node.getRawValue());
+    public static AbsNode createData(final long mNodeKey, final AttributeNode mNode) {
+        return createData(mNodeKey, mNode.getParentKey(), mNode.getNameKey(), mNode.getURIKey(), mNode
+            .getTypeKey(), mNode.getRawValue());
     }
 
     @Override

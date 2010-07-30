@@ -55,26 +55,22 @@ import static com.treetank.service.xml.serialize.XMLSerializerProperties.S_XMLDE
  */
 public final class XMLSerializer extends AbsSerializer {
 
-    /** 
-     * Logger for determining the log level. 
-    */
-    private static final Logger LOGGER = LoggerFactory.getLogger(XMLSerializer.class);
-
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LOGGER);
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(XMLSerializer.class));
 
     /** Offset that must be added to digit to make it ASCII. */
     private static final int ASCII_OFFSET = 48;
 
     /** Precalculated powers of each available long digit. */
     private static final long[] LONG_POWERS =
-        {
-            1L, 10L, 100L, 1000L, 10000L, 100000L, 1000000L, 10000000L, 100000000L, 1000000000L,
-            10000000000L, 100000000000L, 1000000000000L, 10000000000000L, 100000000000000L,
-            1000000000000000L, 10000000000000000L, 100000000000000000L, 1000000000000000000L
-        };
+    {
+        1L, 10L, 100L, 1000L, 10000L, 100000L, 1000000L, 10000000L, 100000000L, 1000000000L,
+        10000000000L, 100000000000L, 1000000000000L, 10000000000000L, 100000000000000L,
+        1000000000000000L, 10000000000000000L, 100000000000000000L, 1000000000000000000L
+    };
 
     /** OutputStream to write to. */
     private final OutputStream mOut;
@@ -97,10 +93,19 @@ public final class XMLSerializer extends AbsSerializer {
     /**
      * Initialize XMLStreamReader implementation with transaction. The cursor
      * points to the node the XMLStreamReader starts to read.
+     * 
+     * @param mSession
+     *            Session for read XML
+     * @param mNodeKey
+     *            Node Key
+     * @param builder
+     *            Builder of XML Serializer
+     * @param mVersions
+     *            Version to serailze
      */
-    private XMLSerializer(final ISession session, final long nodeKey, final XMLSerializerBuilder builder,
-        final long... versions) {
-        super(session, nodeKey, versions);
+    private XMLSerializer(final ISession mSession, final long mNodeKey, final XMLSerializerBuilder builder,
+        final long... mVersions) {
+        super(mSession, mNodeKey, mVersions);
         mOut = new BufferedOutputStream(builder.mStream, 4096);
         mIndent = builder.mIndent;
         mSerializeXMLDeclaration = builder.mDeclaration;
@@ -115,9 +120,9 @@ public final class XMLSerializer extends AbsSerializer {
      * @throws IOException
      */
     @Override
-    protected void emitEndElement(final IReadTransaction rtx) {
+    protected void emitEndElement(final IReadTransaction mRtx) {
         try {
-            switch (rtx.getNode().getKind()) {
+            switch (mRtx.getNode().getKind()) {
             case ROOT_KIND:
                 if (mIndent) {
                     mOut.write(ECharsForSerializing.NEWLINE.getBytes());
@@ -127,23 +132,24 @@ public final class XMLSerializer extends AbsSerializer {
                 // Emit start element.
                 indent();
                 mOut.write(ECharsForSerializing.OPEN.getBytes());
-                mOut.write(rtx.rawNameForKey(rtx.getNode().getNameKey()));
-                final long key = rtx.getNode().getNodeKey();
+                mOut.write(mRtx.rawNameForKey(mRtx.getNode().getNameKey()));
+                final long key = mRtx.getNode().getNodeKey();
                 // Emit namespace declarations.
-                for (int index = 0, length = ((ElementNode)rtx.getNode()).getNamespaceCount(); index < length; index++) {
-                    rtx.moveToNamespace(index);
-                    if (rtx.nameForKey(rtx.getNode().getNameKey()).length() == 0) {
+                for (int index = 0, length = ((ElementNode)mRtx.getNode()).getNamespaceCount();
+                    index < length; index++) {
+                    mRtx.moveToNamespace(index);
+                    if (mRtx.nameForKey(mRtx.getNode().getNameKey()).length() == 0) {
                         mOut.write(ECharsForSerializing.XMLNS.getBytes());
-                        write(rtx.nameForKey(rtx.getNode().getURIKey()));
+                        write(mRtx.nameForKey(mRtx.getNode().getURIKey()));
                         mOut.write(ECharsForSerializing.QUOTE.getBytes());
                     } else {
                         mOut.write(ECharsForSerializing.XMLNS_COLON.getBytes());
-                        write(rtx.nameForKey(rtx.getNode().getNameKey()));
+                        write(mRtx.nameForKey(mRtx.getNode().getNameKey()));
                         mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
-                        write(rtx.nameForKey(rtx.getNode().getURIKey()));
+                        write(mRtx.nameForKey(mRtx.getNode().getURIKey()));
                         mOut.write(ECharsForSerializing.QUOTE.getBytes());
                     }
-                    rtx.moveTo(key);
+                    mRtx.moveTo(key);
                 }
                 // Emit attributes.
                 // Add virtual rest:id attribute.
@@ -155,26 +161,26 @@ public final class XMLSerializer extends AbsSerializer {
                     }
                     mOut.write(ECharsForSerializing.ID.getBytes());
                     mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
-                    write(rtx.getNode().getNodeKey());
+                    write(mRtx.getNode().getNodeKey());
                     mOut.write(ECharsForSerializing.QUOTE.getBytes());
                 }
 
                 // Iterate over all persistent attributes.
-                for (int index = 0; index < ((ElementNode)rtx.getNode()).getAttributeCount(); index++) {
-                    long nodeKey = rtx.getNode().getNodeKey();
-                    rtx.moveToAttribute(index);
-                    if (rtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
+                for (int index = 0; index < ((ElementNode)mRtx.getNode()).getAttributeCount(); index++) {
+                    final long nodeKey = mRtx.getNode().getNodeKey();
+                    mRtx.moveToAttribute(index);
+                    if (mRtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
                         System.out.println(nodeKey);
-                        System.out.println(rtx.getNode().getNodeKey());
+                        System.out.println(mRtx.getNode().getNodeKey());
                     }
                     mOut.write(ECharsForSerializing.SPACE.getBytes());
-                    mOut.write(rtx.rawNameForKey(rtx.getNode().getNameKey()));
+                    mOut.write(mRtx.rawNameForKey(mRtx.getNode().getNameKey()));
                     mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
-                    mOut.write(rtx.getNode().getRawValue());
+                    mOut.write(mRtx.getNode().getRawValue());
                     mOut.write(ECharsForSerializing.QUOTE.getBytes());
-                    rtx.moveTo(key);
+                    mRtx.moveTo(key);
                 }
-                if (((AbsStructNode)rtx.getNode()).hasFirstChild()) {
+                if (((AbsStructNode)mRtx.getNode()).hasFirstChild()) {
                     mOut.write(ECharsForSerializing.CLOSE.getBytes());
                 } else {
                     mOut.write(ECharsForSerializing.SLASH_CLOSE.getBytes());
@@ -185,7 +191,7 @@ public final class XMLSerializer extends AbsSerializer {
                 break;
             case TEXT_KIND:
                 indent();
-                mOut.write(rtx.getNode().getRawValue());
+                mOut.write(mRtx.getNode().getRawValue());
                 if (mIndent) {
                     mOut.write(ECharsForSerializing.NEWLINE.getBytes());
                 }
@@ -199,14 +205,16 @@ public final class XMLSerializer extends AbsSerializer {
     /**
      * Emit end element.
      * 
+     * @param mRtx
+     *            Read Transaction
      * @throws IOException
      */
     @Override
-    protected void emitStartElement(final IReadTransaction rtx) {
+    protected void emitStartElement(final IReadTransaction mRtx) {
         try {
             indent();
             mOut.write(ECharsForSerializing.OPEN_SLASH.getBytes());
-            mOut.write(rtx.rawNameForKey(rtx.getNode().getNameKey()));
+            mOut.write(mRtx.rawNameForKey(mRtx.getNode().getNameKey()));
             mOut.write(ECharsForSerializing.CLOSE.getBytes());
             if (mIndent) {
                 mOut.write(ECharsForSerializing.NEWLINE.getBytes());
@@ -244,10 +252,10 @@ public final class XMLSerializer extends AbsSerializer {
     }
 
     @Override
-    protected void emitStartManualElement(final long version) {
+    protected void emitStartManualElement(final long mVersion) {
         try {
             write("<tt revision=\"");
-            write(Long.toString(version));
+            write(Long.toString(mVersion));
             write("\">");
         } catch (final IOException exc) {
             LOGWRAPPER.error(exc);
@@ -256,7 +264,7 @@ public final class XMLSerializer extends AbsSerializer {
     }
 
     @Override
-    protected void emitEndManualElement(final long version) {
+    protected void emitEndManualElement(final long mVersion) {
         try {
             write("</tt>");
         } catch (final IOException exc) {
@@ -268,6 +276,7 @@ public final class XMLSerializer extends AbsSerializer {
      * Indentation of output.
      * 
      * @throws IOException
+     *            if can't indent output
      */
     private void indent() throws IOException {
         if (mIndent) {
@@ -280,22 +289,29 @@ public final class XMLSerializer extends AbsSerializer {
     /**
      * Write characters of string.
      * 
+     * @param mString
+     *            String to write
      * @throws IOException
+     *            if can't write to string
      * @throws UnsupportedEncodingException
+     *            if unsupport encoding
      */
-    protected void write(final String string) throws UnsupportedEncodingException, IOException {
-        mOut.write(string.getBytes(IConstants.DEFAULT_ENCODING));
+    protected void write(final String mString) throws UnsupportedEncodingException, IOException {
+        mOut.write(mString.getBytes(IConstants.DEFAULT_ENCODING));
     }
 
     /**
      * Write non-negative non-zero long as UTF-8 bytes.
      * 
+     * @param mValue
+     *            Value to write
      * @throws IOException
+     *            if can't write to string
      */
-    private void write(final long value) throws IOException {
-        final int length = (int)Math.log10((double)value);
+    private void write(final long mValue) throws IOException {
+        final int length = (int)Math.log10((double)mValue);
         int digit = 0;
-        long remainder = value;
+        long remainder = mValue;
         for (int i = length; i >= 0; i--) {
             digit = (byte)(remainder / LONG_POWERS[i]);
             mOut.write((byte)(digit + ASCII_OFFSET));
@@ -312,14 +328,14 @@ public final class XMLSerializer extends AbsSerializer {
      * @throws Exception
      *             Any exception.
      */
-    public static void main(String... args) throws Exception {
+    public static void main(final String... args) throws Exception {
         if (args.length < 2 || args.length > 3) {
             System.out.println("Usage: XMLSerializer input-TT output.xml");
             System.exit(1);
         }
 
         System.out.print("Serializing '" + args[0] + "' to '" + args[1] + "' ... ");
-        long time = System.currentTimeMillis();
+        final long time = System.currentTimeMillis();
         final File target = new File(args[1]);
         target.delete();
         final FileOutputStream outputStream = new FileOutputStream(target);
@@ -378,37 +394,43 @@ public final class XMLSerializer extends AbsSerializer {
         /**
          * Constructor, setting the necessary stuff.
          * 
-         * @param paramStream
+         * @param mSession
+         *            Session to Serialize
+         * @param mParamStream
+         *            Output Stream
+         * @param mVersions
+         *            Version to Serialize
          */
-        public XMLSerializerBuilder(final ISession session, final OutputStream paramStream,
-            final long... versions) {
+        public XMLSerializerBuilder(final ISession mSession, final OutputStream mParamStream,
+            final long... mVersions) {
             mNodeKey = 0;
-            mStream = paramStream;
-            mSession = session;
-            mVersions = versions;
+            this.mStream = mParamStream;
+            this.mSession = mSession;
+            this.mVersions = mVersions;
         }
 
         /**
          * Constructor.
          * 
-         * @param session
+         * @param mSession
          *            {@link ISession}.
-         * @param nodeKey
+         * @param mNodeKey
          *            Root node key of subtree to shredder.
-         * @param paramStream
+         * @param mParamStream
          *            {@link OutputStream}.
-         * @param properties
+         * @param mProperties
          *            {@link XMLSerializerProperties}.
-         * @param versions
+         * @param mVersions
          *            Versions to serialize.
          */
-        public XMLSerializerBuilder(final ISession session, final long nodeKey,
-            final OutputStream paramStream, final XMLSerializerProperties properties, final long... versions) {
-            mSession = session;
-            mNodeKey = nodeKey;
-            mStream = paramStream;
-            mVersions = versions;
-            final ConcurrentMap<?, ?> map = properties.getmProps();
+        public XMLSerializerBuilder(final ISession mSession, final long mNodeKey,
+            final OutputStream mParamStream, final XMLSerializerProperties mProperties,
+                final long... mVersions) {
+            this.mSession = mSession;
+            this.mNodeKey = mNodeKey;
+            this.mStream = mParamStream;
+            this.mVersions = mVersions;
+            final ConcurrentMap<?, ?> map = mProperties.getmProps();
             mIndent = (Boolean)map.get(S_INDENT[0]);
             mREST = (Boolean)map.get(S_REST[0]);
             mID = (Boolean)map.get(S_ID[0]);
@@ -432,7 +454,7 @@ public final class XMLSerializer extends AbsSerializer {
          * @param paramREST
          *            to set
          */
-        public void setREST(boolean paramREST) {
+        public void setREST(final boolean paramREST) {
             this.mREST = paramREST;
         }
 
@@ -442,7 +464,7 @@ public final class XMLSerializer extends AbsSerializer {
          * @param paramDeclaration
          *            to set
          */
-        public void setDeclaration(boolean paramDeclaration) {
+        public void setDeclaration(final boolean paramDeclaration) {
             this.mDeclaration = paramDeclaration;
         }
 
@@ -452,7 +474,7 @@ public final class XMLSerializer extends AbsSerializer {
          * @param paramID
          *            to set
          */
-        public void setID(boolean paramID) {
+        public void setID(final boolean paramID) {
             this.mID = paramID;
         }
 

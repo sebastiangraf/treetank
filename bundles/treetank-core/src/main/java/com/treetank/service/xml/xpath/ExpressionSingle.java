@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: ExpressionSingle.java 4245 2008-07-08 08:44:34Z scherer $
  */
 
 package com.treetank.service.xml.xpath;
@@ -53,10 +52,10 @@ public class ExpressionSingle {
     private IAxis mExpr;
 
     /** Current ordering state. */
-    private OrdState ord;
+    private OrdState mOrd;
 
     /** Current duplicate state. */
-    private DupState dup;
+    private DupState mDup;
 
     /**
      * Constructor. Initializes the internal state.
@@ -65,9 +64,9 @@ public class ExpressionSingle {
 
         mNumber = 0;
 
-        ord = OrdState.MAX1;
-        ord.init();
-        dup = DupState.MAX1;
+        mOrd = OrdState.MAX1;
+        mOrd.init();
+        mDup = DupState.MAX1;
 
     }
 
@@ -76,11 +75,11 @@ public class ExpressionSingle {
      * to be stored till a second axis is added. When the second axis is added,
      * it is nested with the first one and builds the execution chain.
      * 
-     * @param ax
+     * @param mAx
      *            The axis to add.
      */
-    public void add(final IAxis ax) {
-        IAxis axis = ax;
+    public void add(final IAxis mAx) {
+        IAxis axis = mAx;
 
         if (isDupOrd(axis)) {
             axis = new DupFilterAxis(axis.getTransaction(), axis);
@@ -140,42 +139,42 @@ public class ExpressionSingle {
 
         IAxis axis = ax;
 
-        while(axis instanceof FilterAxis) {
+        while (axis instanceof FilterAxis) {
             axis = ((FilterAxis)axis).getAxis();
         }
 
         if (axis instanceof UnionAxis) {
-            ord = ord.updateOrdUnion();
-            dup = dup.updateUnion();
+            mOrd = mOrd.updateOrdUnion();
+            mDup = mDup.updateUnion();
 
         } else if (axis instanceof ChildAxis) {
-            ord = ord.updateOrdChild();
-            dup = dup.updateDupChild();
+            mOrd = mOrd.updateOrdChild();
+            mDup = mDup.updateDupChild();
 
         } else if (axis instanceof ParentAxis) {
 
-            ord = ord.updateOrdParent();
-            dup = dup.updateDupParent();
+            mOrd = mOrd.updateOrdParent();
+            mDup = mDup.updateDupParent();
 
         } else if (axis instanceof DescendantAxis) {
 
-            ord = ord.updateOrdDesc();
-            dup = dup.updateDupDesc();
+            mOrd = mOrd.updateOrdDesc();
+            mDup = mDup.updateDupDesc();
 
         } else if (axis instanceof AncestorAxis) {
 
-            ord = ord.updateOrdAncestor();
-            dup = dup.updateDupAncestor();
+            mOrd = mOrd.updateOrdAncestor();
+            mDup = mDup.updateDupAncestor();
 
         } else if (axis instanceof FollowingAxis || axis instanceof PrecedingAxis) {
 
-            ord = ord.updateOrdFollPre();
-            dup = dup.updateDupFollPre();
+            mOrd = mOrd.updateOrdFollPre();
+            mDup = mDup.updateDupFollPre();
 
         } else if (axis instanceof FollowingSiblingAxis || axis instanceof PrecedingSiblingAxis) {
 
-            ord = ord.updateOrdFollPreSib();
-            dup = dup.updateDupFollPreSib();
+            mOrd = mOrd.updateOrdFollPreSib();
+            mDup = mDup.updateDupFollPreSib();
         }
 
         return !DupState.nodup;
@@ -190,6 +189,6 @@ public class ExpressionSingle {
         // zero
         // or the order state is in state UNORD
         // return (ord != OrdState.UNORD && ord.mOrdRank == 0);
-        return (ord != OrdState.UNORD && OrdState.mOrdRank == 0);
+        return (mOrd != OrdState.UNORD && OrdState.mOrdRank == 0);
     }
 }

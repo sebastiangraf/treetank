@@ -14,6 +14,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
  */
+
 package com.treetank.service.xml.serialize;
 
 import java.io.File;
@@ -56,33 +57,29 @@ import com.treetank.utils.LogWrapper;
  */
 public final class SAXSerializer extends AbsSerializer implements XMLReader {
 
-    /** 
-     * Logger for determining the log level. 
-    */
-    private static final Logger LOGGER = LoggerFactory.getLogger(SAXSerializer.class);
-
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LOGGER);
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(SAXSerializer.class));
 
     /** SAX content handler. */
     private transient ContentHandler mContHandler;
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
-    public SAXSerializer(final ISession session, final ContentHandler handler, final long... versions) {
-        super(session, versions);
-        mContHandler = handler;
+    public SAXSerializer(final ISession mSession, final ContentHandler mHandler, final long... mVersions) {
+        super(mSession, mVersions);
+        mContHandler = mHandler;
     }
 
     @Override
     protected void emitStartElement(final IReadTransaction rtx) {
-        final String URI = rtx.nameForKey(rtx.getNode().getURIKey());
+        final String mURI = rtx.nameForKey(rtx.getNode().getURIKey());
         final QName qName = rtx.getQNameOfCurrentNode();
         try {
-            mContHandler.endElement(URI, qName.getLocalPart(), WriteTransactionState.buildName(qName));
+            mContHandler.endElement(mURI, qName.getLocalPart(), WriteTransactionState.buildName(qName));
         } catch (final SAXException e) {
             LOGWRAPPER.error(e);
         }
@@ -125,43 +122,46 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
 
     /**
      * Generate a start element event.
+     * 
+     * @param mRtx
+     *            Read Transaction
      */
-    private void generateElement(final IReadTransaction rtx) {
+    private void generateElement(final IReadTransaction mRtx) {
         final AttributesImpl atts = new AttributesImpl();
-        final long key = rtx.getNode().getNodeKey();
+        final long key = mRtx.getNode().getNodeKey();
 
         // Process namespace nodes.
-        for (int i = 0, namesCount = ((ElementNode)rtx.getNode()).getNamespaceCount(); i < namesCount; i++) {
-            rtx.moveToNamespace(i);
-            final String URI = rtx.nameForKey(rtx.getNode().getURIKey());
-            if (rtx.nameForKey(rtx.getNode().getNameKey()).length() == 0) {
-                atts.addAttribute(URI, "xmlns", "xmlns", "CDATA", URI);
+        for (int i = 0, namesCount = ((ElementNode)mRtx.getNode()).getNamespaceCount(); i < namesCount; i++) {
+            mRtx.moveToNamespace(i);
+            final String mURI = mRtx.nameForKey(mRtx.getNode().getURIKey());
+            if (mRtx.nameForKey(mRtx.getNode().getNameKey()).length() == 0) {
+                atts.addAttribute(mURI, "xmlns", "xmlns", "CDATA", mURI);
             } else {
-                atts.addAttribute(URI, "xmlns", "xmlns:" + rtx.getQNameOfCurrentNode().getLocalPart(),
-                    "CDATA", URI);
+                atts.addAttribute(mURI, "xmlns", "xmlns:" + mRtx.getQNameOfCurrentNode().getLocalPart(),
+                    "CDATA", mURI);
             }
-            rtx.moveTo(key);
+            mRtx.moveTo(key);
         }
 
         // Process attributes.
-        for (int i = 0, attCount = ((ElementNode)rtx.getNode()).getAttributeCount(); i < attCount; i++) {
-            rtx.moveToAttribute(i);
-            final String URI = rtx.nameForKey(rtx.getNode().getURIKey());
-            final QName qName = rtx.getQNameOfCurrentNode();
-            atts.addAttribute(URI, qName.getLocalPart(), WriteTransactionState.buildName(qName), rtx
-                .getTypeOfCurrentNode(), rtx.getValueOfCurrentNode());
-            rtx.moveTo(key);
+        for (int i = 0, attCount = ((ElementNode)mRtx.getNode()).getAttributeCount(); i < attCount; i++) {
+            mRtx.moveToAttribute(i);
+            final String mURI = mRtx.nameForKey(mRtx.getNode().getURIKey());
+            final QName qName = mRtx.getQNameOfCurrentNode();
+            atts.addAttribute(mURI, qName.getLocalPart(), WriteTransactionState.buildName(qName), mRtx
+                .getTypeOfCurrentNode(), mRtx.getValueOfCurrentNode());
+            mRtx.moveTo(key);
         }
 
         // Create SAX events.
         try {
-            final QName qName = rtx.getQNameOfCurrentNode();
-            mContHandler.startElement(rtx.nameForKey(rtx.getNode().getURIKey()), qName.getLocalPart(),
+            final QName qName = mRtx.getQNameOfCurrentNode();
+            mContHandler.startElement(mRtx.nameForKey(mRtx.getNode().getURIKey()), qName.getLocalPart(),
                 WriteTransactionState.buildName(qName), atts);
 
             // Empty elements.
-            if (!((ElementNode)rtx.getNode()).hasFirstChild()) {
-                mContHandler.endElement(rtx.nameForKey(rtx.getNode().getURIKey()), qName.getLocalPart(),
+            if (!((ElementNode)mRtx.getNode()).hasFirstChild()) {
+                mContHandler.endElement(mRtx.nameForKey(mRtx.getNode().getURIKey()), qName.getLocalPart(),
                     WriteTransactionState.buildName(qName));
             }
         } catch (final SAXException e) {
@@ -171,11 +171,14 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
 
     /**
      * Generate a text event.
+     * 
+     * @param mRtx
+     *            Read Transaction.
      */
-    private void generateText(final IReadTransaction rtx) {
+    private void generateText(final IReadTransaction mRtx) {
         try {
-            mContHandler.characters(rtx.getValueOfCurrentNode().toCharArray(), 0, rtx.getValueOfCurrentNode()
-                .length());
+            mContHandler.characters(mRtx.getValueOfCurrentNode().toCharArray(),
+                0, mRtx.getValueOfCurrentNode().length());
         } catch (final SAXException e) {
             LOGWRAPPER.error(e);
         }
@@ -188,6 +191,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
      *            args[0] specifies the path to the TT-storage from which to
      *            generate SAX events.
      * @throws Exception
+     *            handling treetank exception
      */
     public static void main(final String... args) throws Exception {
         if (args.length != 1) {
@@ -250,25 +254,25 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
 
     /* Implements XMLReader method. */
     @Override
-    public boolean getFeature(final String name) throws SAXNotRecognizedException, SAXNotSupportedException {
+    public boolean getFeature(final String mName) throws SAXNotRecognizedException, SAXNotSupportedException {
         return false;
     }
 
     /* Implements XMLReader method. */
     @Override
-    public Object getProperty(final String name) throws SAXNotRecognizedException, SAXNotSupportedException {
+    public Object getProperty(final String mName) throws SAXNotRecognizedException, SAXNotSupportedException {
         return null;
     }
 
     /* Implements XMLReader method. */
     @Override
-    public void parse(final InputSource input) throws IOException, SAXException {
+    public void parse(final InputSource mInput) throws IOException, SAXException {
         throw new UnsupportedOperationException("Not supported by Treetank!");
     }
 
     /* Implements XMLReader method. */
     @Override
-    public void parse(final String systemID) throws IOException, SAXException {
+    public void parse(final String mSystemID) throws IOException, SAXException {
         emitStartDocument();
         try {
             super.call();
@@ -280,13 +284,13 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
 
     /* Implements XMLReader method. */
     @Override
-    public void setContentHandler(final ContentHandler content) {
-        mContHandler = content;
+    public void setContentHandler(final ContentHandler mContent) {
+        mContHandler = mContent;
     }
 
     /* Implements XMLReader method. */
     @Override
-    public void setDTDHandler(final DTDHandler handler) {
+    public void setDTDHandler(final DTDHandler mHandler) {
         throw new UnsupportedOperationException("Not supported by Treetank!");
     }
 
@@ -299,20 +303,20 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
 
     /* Implements XMLReader method. */
     @Override
-    public void setErrorHandler(final ErrorHandler handler) {
+    public void setErrorHandler(final ErrorHandler mHandler) {
         throw new UnsupportedOperationException("Not supported by Treetank!");
     }
 
     /* Implements XMLReader method. */
     @Override
-    public void setFeature(final String name, final boolean value) throws SAXNotRecognizedException,
+    public void setFeature(final String mName, final boolean mValue) throws SAXNotRecognizedException,
         SAXNotSupportedException {
         throw new UnsupportedOperationException("Not supported by Treetank!");
     }
 
     /* Implements XMLReader method. */
     @Override
-    public void setProperty(final String name, final Object value) throws SAXNotRecognizedException,
+    public void setProperty(final String mName, final Object mValue) throws SAXNotRecognizedException,
         SAXNotSupportedException {
         throw new UnsupportedOperationException("Not supported by Treetank!");
     }

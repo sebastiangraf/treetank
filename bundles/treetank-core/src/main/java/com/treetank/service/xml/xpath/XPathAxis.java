@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: XPathAxis.java 4245 2008-07-08 08:44:34Z scherer $
  */
 
 package com.treetank.service.xml.xpath;
@@ -69,7 +68,7 @@ import com.treetank.axis.AbstractAxis;
 public class XPathAxis extends AbstractAxis implements IAxis {
 
     /** Axis holding the consecutive query execution plans of the query. */
-    private IAxis pipeline;
+    private IAxis mPipeline;
 
     /**
      * <p>
@@ -81,17 +80,17 @@ public class XPathAxis extends AbstractAxis implements IAxis {
      * 
      * @param rtx
      *            Transaction to operate with.
-     * @param query
+     * @param mQuery
      *            XPath query to process.
      */
-    public XPathAxis(final IReadTransaction rtx, final String query) {
+    public XPathAxis(final IReadTransaction rtx, final String mQuery) {
 
         super(rtx);
 
         // start parsing and get execution plans
-        final XPathParser parser = new XPathParser(getTransaction(), query);
+        final XPathParser parser = new XPathParser(getTransaction(), mQuery);
         parser.parseQuery();
-        pipeline = parser.getQueryPipeline();
+        mPipeline = parser.getQueryPipeline();
 
     }
 
@@ -103,7 +102,7 @@ public class XPathAxis extends AbstractAxis implements IAxis {
 
         resetToLastKey();
 
-        if (pipeline.hasNext()) {
+        if (mPipeline.hasNext()) {
             return true;
         } else {
 

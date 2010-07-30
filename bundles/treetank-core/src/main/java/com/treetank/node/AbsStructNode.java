@@ -1,3 +1,20 @@
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
+ * 
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ * 
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * 
+ */
+
 package com.treetank.node;
 
 import com.treetank.settings.EFixed;
@@ -12,38 +29,38 @@ public abstract class AbsStructNode extends AbsNode {
 
     protected static final int CHILD_COUNT = 5;
 
-    protected AbsStructNode(final long[] longBuilder, final int[] intBuilder) {
-        super(longBuilder, intBuilder);
+    protected AbsStructNode(final long[] mLongBuilder, final int[] mIntBuilder) {
+        super(mLongBuilder, mIntBuilder);
     }
 
     /**
      * Setting the first child key.
      * 
-     * @param firstChildKey
+     * @param mFirstChildKey
      *            the key for the first child.
      */
-    public void setFirstChildKey(final long firstChildKey) {
-        mLongData[FIRST_CHILD_KEY] = firstChildKey;
+    public void setFirstChildKey(final long mFirstChildKey) {
+        mLongData[FIRST_CHILD_KEY] = mFirstChildKey;
     }
 
     /**
      * Setting the left sibling key.
      * 
-     * @param leftSiblingKey
+     * @param mLeftSiblingKey
      *            the key for the left sibling.
      */
-    public void setLeftSiblingKey(final long leftSiblingKey) {
-        mLongData[LEFT_SIBLING_KEY] = leftSiblingKey;
+    public void setLeftSiblingKey(final long mLeftSiblingKey) {
+        mLongData[LEFT_SIBLING_KEY] = mLeftSiblingKey;
     }
 
     /**
      * Setting the right sibling key.
      * 
-     * @param rightSiblingKey
+     * @param mRightSiblingKey
      *            the key for the right sibling.
      */
-    public void setRightSiblingKey(final long rightSiblingKey) {
-        mLongData[RIGHT_SIBLING_KEY] = rightSiblingKey;
+    public void setRightSiblingKey(final long mRightSiblingKey) {
+        mLongData[RIGHT_SIBLING_KEY] = mRightSiblingKey;
     }
 
     /**
@@ -112,11 +129,11 @@ public abstract class AbsStructNode extends AbsNode {
     /**
      * Setting the child count.
      * 
-     * @param childCount
+     * @param mChildCount
      *            to be set.
      */
-    public void setChildCount(final long childCount) {
-        mLongData[CHILD_COUNT] = childCount;
+    public void setChildCount(final long mChildCount) {
+        mLongData[CHILD_COUNT] = mChildCount;
     }
 
     /**

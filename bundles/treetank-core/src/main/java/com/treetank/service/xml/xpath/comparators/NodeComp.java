@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: NodeComp.java 4246 2008-07-08 08:54:09Z scherer $
  */
 
 package com.treetank.service.xml.xpath.comparators;
@@ -39,36 +38,36 @@ public class NodeComp extends AbstractComparator implements IAxis {
      * 
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
-     * @param operand1
+     * @param mOperand1
      *            First value of the comparison
-     * @param operand2
+     * @param mOperand2
      *            Second value of the comparison
-     * @param comp
+     * @param mComp
      *            comparison kind
      */
-    public NodeComp(final IReadTransaction rtx, final IAxis operand1, final IAxis operand2,
-        final CompKind comp) {
+    public NodeComp(final IReadTransaction rtx, final IAxis mOperand1, final IAxis mOperand2,
+        final CompKind mComp) {
 
-        super(rtx, operand1, operand2, comp);
+        super(rtx, mOperand1, mOperand2, mComp);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected AtomicValue[] atomize(final IAxis operand) {
+    protected AtomicValue[] atomize(final IAxis mOperand) {
 
         final IReadTransaction rtx = getTransaction();
         // store item key as atomic value
-        AtomicValue atomized =
+        final AtomicValue mAtomized =
             new AtomicValue(TypedValue.getBytes(((Long)rtx.getNode().getNodeKey()).toString()), rtx
                 .keyForName("xs:integer"));
         final AtomicValue[] op = {
-            atomized
+            mAtomized
         };
 
         // the operands must be singletons in case of a node comparison
-        if (operand.hasNext()) {
+        if (mOperand.hasNext()) {
             throw new XPathError(ErrorType.XPTY0004);
         } else {
             return op;
@@ -80,7 +79,7 @@ public class NodeComp extends AbstractComparator implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    protected Type getType(final int key1, final int key2) {
+    protected Type getType(final int mKey1, final int mKey2) {
 
         return Type.INTEGER;
 
@@ -90,12 +89,12 @@ public class NodeComp extends AbstractComparator implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    protected boolean compare(final AtomicValue[] operand1, final AtomicValue[] operand2) {
+    protected boolean compare(final AtomicValue[] mOperand1, final AtomicValue[] mOperand2) {
 
-        final String op1 = TypedValue.parseString(operand1[0].getRawValue());
-        final String op2 = TypedValue.parseString(operand2[0].getRawValue());
+        final String op1 = TypedValue.parseString(mOperand1[0].getRawValue());
+        final String op2 = TypedValue.parseString(mOperand2[0].getRawValue());
 
-        return getCompKind().compare(op1, op2, getType(operand1[0].getTypeKey(), operand2[0].getTypeKey()));
+        return getCompKind().compare(op1, op2, getType(mOperand1[0].getTypeKey(), mOperand2[0].getTypeKey()));
     }
 
 }

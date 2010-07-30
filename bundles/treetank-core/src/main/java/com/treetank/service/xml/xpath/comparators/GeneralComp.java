@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: GeneralComp.java 4246 2008-07-08 08:54:09Z scherer $
  */
 
 package com.treetank.service.xml.xpath.comparators;
@@ -42,29 +41,29 @@ public class GeneralComp extends AbstractComparator {
      * 
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
-     * @param operand1
+     * @param mOperand1
      *            First value of the comparison
-     * @param operand2
+     * @param mOperand2
      *            Second value of the comparison
-     * @param comp
+     * @param mCom
      *            comparison kind
      */
-    public GeneralComp(final IReadTransaction rtx, final IAxis operand1, final IAxis operand2,
-        final CompKind comp) {
+    public GeneralComp(final IReadTransaction rtx, final IAxis mOperand1, final IAxis mOperand2,
+        final CompKind mCom) {
 
-        super(rtx, operand1, operand2, comp);
+        super(rtx, mOperand1, mOperand2, mCom);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected boolean compare(final AtomicValue[] operand1, final AtomicValue[] operand2) {
+    protected boolean compare(final AtomicValue[] mOperand1, final AtomicValue[] mOperand2) {
 
-        assert operand1.length >= 1 && operand2.length >= 1;
+        assert mOperand1.length >= 1 && mOperand2.length >= 1;
 
-        for (AtomicValue op1 : operand1) {
-            for (AtomicValue op2 : operand2) {
+        for (AtomicValue op1 : mOperand1) {
+            for (AtomicValue op2 : mOperand2) {
                 String value1 = TypedValue.parseString(op1.getRawValue());
                 String value2 = TypedValue.parseString(op2.getRawValue());
                 if (getCompKind().compare(value1, value2, getType(op1.getTypeKey(), op2.getTypeKey()))) {
@@ -80,7 +79,7 @@ public class GeneralComp extends AbstractComparator {
      * {@inheritDoc}
      */
     @Override
-    protected AtomicValue[] atomize(final IAxis operand) {
+    protected AtomicValue[] atomize(final IAxis mOperand) {
 
         final IReadTransaction rtx = getTransaction();
         final List<AtomicValue> op = new ArrayList<AtomicValue>();
@@ -95,7 +94,7 @@ public class GeneralComp extends AbstractComparator {
             }
             atomized = new AtomicValue(rtx.getNode().getRawValue(), rtx.getNode().getTypeKey());
             op.add(atomized);
-        } while(operand.hasNext());
+        } while(mOperand.hasNext());
 
         return op.toArray(new AtomicValue[op.size()]);
     }
@@ -104,22 +103,22 @@ public class GeneralComp extends AbstractComparator {
      * {@inheritDoc}
      */
     @Override
-    protected Type getType(final int key1, final int key2) {
+    protected Type getType(final int mKey1, final int mKey2) {
 
-        final Type type1 = Type.getType(key1).getPrimitiveBaseType();
-        final Type type2 = Type.getType(key2).getPrimitiveBaseType();
+        final Type mType1 = Type.getType(mKey1).getPrimitiveBaseType();
+        final Type mType2 = Type.getType(mKey2).getPrimitiveBaseType();
 
         if (XPATH_10_COMP) {
-            if (type1.isNumericType() || type2.isNumericType()) {
+            if (mType1.isNumericType() || mType2.isNumericType()) {
                 return Type.DOUBLE;
             }
 
-            if (type1 == Type.STRING || type2 == Type.STRING
-            || (type1 == Type.UNTYPED_ATOMIC && type2 == Type.UNTYPED_ATOMIC)) {
+            if (mType1 == Type.STRING || mType2 == Type.STRING
+                || (mType1 == Type.UNTYPED_ATOMIC && mType2 == Type.UNTYPED_ATOMIC)) {
                 return Type.STRING;
             }
 
-            if (type1 == Type.UNTYPED_ATOMIC || type2 == Type.UNTYPED_ATOMIC) {
+            if (mType1 == Type.UNTYPED_ATOMIC || mType2 == Type.UNTYPED_ATOMIC) {
                 return Type.UNTYPED_ATOMIC;
 
             }
@@ -127,8 +126,8 @@ public class GeneralComp extends AbstractComparator {
         }
 
         if (!XPATH_10_COMP) {
-            if (type1 == Type.UNTYPED_ATOMIC) {
-                switch (type2) {
+            if (mType1 == Type.UNTYPED_ATOMIC) {
+                switch (mType2) {
                 case UNTYPED_ATOMIC:
                 case STRING:
                     return Type.STRING;
@@ -139,12 +138,12 @@ public class GeneralComp extends AbstractComparator {
                     return Type.DOUBLE;
 
                 default:
-                    return type2;
+                    return mType2;
                 }
             }
 
-            if (type2 == Type.UNTYPED_ATOMIC) {
-                switch (type1) {
+            if (mType2 == Type.UNTYPED_ATOMIC) {
+                switch (mType1) {
                 case UNTYPED_ATOMIC:
                 case STRING:
                     return Type.STRING;
@@ -155,13 +154,13 @@ public class GeneralComp extends AbstractComparator {
                     return Type.DOUBLE;
 
                 default:
-                    return type1;
+                    return mType1;
                 }
             }
 
         }
 
-        return Type.getLeastCommonType(type1, type2);
+        return Type.getLeastCommonType(mType1, mType2);
 
     }
 

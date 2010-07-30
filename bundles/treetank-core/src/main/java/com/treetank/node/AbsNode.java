@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: AbstractNode.java 4550 2009-02-05 09:25:46Z graf $
  */
 
 package com.treetank.node;
@@ -38,10 +37,10 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     /** standard NODE_KEY. */
     protected static final int NODE_KEY = 0;
 
-    /** standard PARENT_KEY */
+    /** standard PARENT_KEY. */
     protected static final int PARENT_KEY = 1;
 
-    /** standard TYPE_KEY */
+    /** standard TYPE_KEY. */
     protected static final int TYPE_KEY = 0;
 
     /** Node key is common to all node kinds. */
@@ -53,14 +52,14 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     /**
      * Constructor for inserting node.
      * 
-     * @param longBuilder
+     * @param mLongBuilder
      *            longData to build
-     * @param intBuilder
+     * @param mIntBuilder
      *            intData to build
      */
-    AbsNode(final long[] longBuilder, final int[] intBuilder) {
-        mLongData = longBuilder;
-        mIntData = intBuilder;
+    AbsNode(final long[] mLongBuilder, final int[] mIntBuilder) {
+        mLongData = mLongBuilder;
+        mIntData = mIntBuilder;
     }
 
     /**
@@ -122,15 +121,15 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     /**
      * Serializing the data.
      * 
-     * @param out
+     * @param mOut
      *            target to serialize.
      */
-    public void serialize(final ITTSink out) {
+    public void serialize(final ITTSink mOut) {
         for (final long longVal : mLongData) {
-            out.writeLong(longVal);
+            mOut.writeLong(longVal);
         }
         for (final int intVal : mIntData) {
-            out.writeInt(intVal);
+            mOut.writeInt(intVal);
         }
 
     }
@@ -138,8 +137,8 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     /**
      * {@inheritDoc}
      */
-    public void setNodeKey(final long nodeKey) {
-        mLongData[NODE_KEY] = nodeKey;
+    public void setNodeKey(final long mNodeKey) {
+        mLongData[NODE_KEY] = mNodeKey;
     }
 
     /**
@@ -155,40 +154,40 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     /**
      * Setting the type of this node.
      * 
-     * @param valueType
+     * @param mValueType
      *            to be set.
      */
-    public void setType(final int valueType) {
-        mIntData[TYPE_KEY] = valueType;
+    public void setType(final int mValueType) {
+        mIntData[TYPE_KEY] = mValueType;
     }
 
     /**
      * Setting the name key for this node.
      * 
-     * @param nameKey
+     * @param mNameKey
      *            to be set.
      */
-    public void setNameKey(final int nameKey) {
+    public void setNameKey(final int mNameKey) {
     }
 
     /**
      * Setting the uri for this node.
      * 
-     * @param uriKey
+     * @param mUriKey
      *            to be set.
      */
-    public void setURIKey(final int uriKey) {
+    public void setURIKey(final int mUriKey) {
     }
 
     /**
      * Setting the value for this node.
      * 
-     * @param valueType
+     * @param mValueType
      *            type of value to be set.
-     * @param value
+     * @param mValue
      *            the value to be set.
      */
-    public void setValue(final int valueType, final byte[] value) {
+    public void setValue(final int mValueType, final byte[] mValue) {
     }
 
     @Override
@@ -201,15 +200,15 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        return this.hashCode() == obj.hashCode();
+    public boolean equals(final Object mObj) {
+        return this.hashCode() == mObj.hashCode();
     }
 
     /**
      * {@inheritDoc}
      */
-    public int compareTo(final AbsNode node) {
-        final long nodeKey = (node).getNodeKey();
+    public int compareTo(final AbsNode mNode) {
+        final long nodeKey = (mNode).getNodeKey();
         if (mLongData[NODE_KEY] < nodeKey) {
             return -1;
         } else if (mLongData[NODE_KEY] == nodeKey) {
@@ -229,21 +228,21 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     @Override
     public abstract AbsNode clone();
 
-    protected static long[] cloneData(final long[] input) {
-        final long[] data = new long[input.length];
-        System.arraycopy(input, 0, data, 0, data.length);
+    protected static long[] cloneData(final long[] mInput) {
+        final long[] data = new long[mInput.length];
+        System.arraycopy(mInput, 0, data, 0, data.length);
         return data;
     }
 
-    protected static int[] cloneData(final int[] input) {
-        final int[] data = new int[input.length];
-        System.arraycopy(input, 0, data, 0, data.length);
+    protected static int[] cloneData(final int[] mInput) {
+        final int[] data = new int[mInput.length];
+        System.arraycopy(mInput, 0, data, 0, data.length);
         return data;
     }
 
-    protected static byte[] cloneData(final byte[] input) {
-        final byte[] value = new byte[input.length];
-        System.arraycopy(input, 0, value, 0, value.length);
+    protected static byte[] cloneData(final byte[] mInput) {
+        final byte[] value = new byte[mInput.length];
+        System.arraycopy(mInput, 0, value, 0, value.length);
         return value;
     }
 
