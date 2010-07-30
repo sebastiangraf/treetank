@@ -1,3 +1,21 @@
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
+ * 
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ * 
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * 
+ */
+
+
 package com.treetank.io.file;
 
 import java.io.File;
@@ -14,6 +32,9 @@ import com.treetank.page.UberPage;
 import com.treetank.utils.CryptoJavaImpl;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.ICrypto;
+import com.treetank.utils.LogWrapper;
+
+import org.slf4j.LoggerFactory;
 
 /**
  * File Reader. Used for ReadTransaction to provide read only access on a
@@ -26,6 +47,12 @@ import com.treetank.utils.ICrypto;
  */
 public final class FileReader implements IReader {
 
+    /**
+     * Log wrapper for better output.
+     */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(FileReader.class));
+    
     /** Random access mFile to work on. */
     private transient final RandomAccessFile mFile;
 
@@ -43,19 +70,20 @@ public final class FileReader implements IReader {
      * @throws TreetankIOException
      *             if something bad happens
      */
-    public FileReader(final SessionConfiguration paramConf, final File concreteStorage)
+    public FileReader(final SessionConfiguration paramConf, final File mConcreteStorage)
         throws TreetankIOException {
 
         try {
-            if (!concreteStorage.exists()) {
-                concreteStorage.createNewFile();
+            if (!mConcreteStorage.exists()) {
+                mConcreteStorage.createNewFile();
             }
 
-            mFile = new RandomAccessFile(concreteStorage, IConstants.READ_ONLY);
+            mFile = new RandomAccessFile(mConcreteStorage, IConstants.READ_ONLY);
 
             mDecompressor = new CryptoJavaImpl();
             mBuffer = new ByteBufferSinkAndSource();
         } catch (final IOException exc) {
+            LOGWRAPPER.error(exc);
             throw new TreetankIOException(exc);
         }
     }
@@ -102,6 +130,7 @@ public final class FileReader implements IReader {
             }
 
         } catch (final IOException exc) {
+            LOGWRAPPER.error(exc);
             throw new TreetankIOException(exc);
         }
 
@@ -135,6 +164,7 @@ public final class FileReader implements IReader {
 
             return uberPageReference;
         } catch (final IOException exc) {
+            LOGWRAPPER.error(exc);
             throw new TreetankIOException(exc);
         }
     }
@@ -143,6 +173,7 @@ public final class FileReader implements IReader {
         try {
             mFile.close();
         } catch (final IOException exc) {
+            LOGWRAPPER.error(exc);
             throw new TreetankIOException(exc);
 
         }

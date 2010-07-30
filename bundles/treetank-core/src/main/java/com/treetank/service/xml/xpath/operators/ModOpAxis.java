@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: ModOpAxis.java 4246 2008-07-08 08:54:09Z scherer $
  */
 
 package com.treetank.service.xml.xpath.operators;
@@ -26,6 +25,9 @@ import com.treetank.service.xml.xpath.functions.XPathError;
 import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
 import com.treetank.service.xml.xpath.types.Type;
 import com.treetank.utils.TypedValue;
+import com.treetank.utils.LogWrapper;
+
+import org.slf4j.LoggerFactory;
 
 /**
  * <h1>AddOpAxis</h1>
@@ -36,28 +38,34 @@ import com.treetank.utils.TypedValue;
 public class ModOpAxis extends AbstractOpAxis {
 
     /**
+     * Log wrapper for better output.
+     */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(ModOpAxis.class));
+    
+    /**
      * Constructor. Initializes the internal state.
      * 
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
-     * @param op1
+     * @param mOp1
      *            First value of the operation
-     * @param op2
+     * @param mOp2
      *            Second value of the operation
      */
-    public ModOpAxis(final IReadTransaction rtx, final IAxis op1, final IAxis op2) {
+    public ModOpAxis(final IReadTransaction rtx, final IAxis mOp1, final IAxis mOp2) {
 
-        super(rtx, op1, op2);
+        super(rtx, mOp1, mOp2);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public IItem operate(final AtomicValue operand1, final AtomicValue operand2) {
+    public IItem operate(final AtomicValue mOperand1, final AtomicValue mOperand2) {
 
-        Type returnType = getReturnType(operand1.getTypeKey(), operand2.getTypeKey());
-        int typeKey = getTransaction().keyForName(returnType.getStringRepr());
+        final Type returnType = getReturnType(mOperand1.getTypeKey(), mOperand2.getTypeKey());
+        final int typeKey = getTransaction().keyForName(returnType.getStringRepr());
 
         final byte[] value;
 
@@ -65,16 +73,17 @@ public class ModOpAxis extends AbstractOpAxis {
         case DOUBLE:
         case FLOAT:
         case DECIMAL:
-            final double dOp1 = Double.parseDouble(TypedValue.parseString(operand1.getRawValue()));
-            final double dOp2 = Double.parseDouble(TypedValue.parseString(operand2.getRawValue()));
+            final double dOp1 = Double.parseDouble(TypedValue.parseString(mOperand1.getRawValue()));
+            final double dOp2 = Double.parseDouble(TypedValue.parseString(mOperand2.getRawValue()));
             value = TypedValue.getBytes(dOp1 % dOp2);
             break;
         case INTEGER:
             try {
-                final int iOp1 = (int)Double.parseDouble(TypedValue.parseString(operand1.getRawValue()));
-                final int iOp2 = (int)Double.parseDouble(TypedValue.parseString(operand2.getRawValue()));
+                final int iOp1 = (int)Double.parseDouble(TypedValue.parseString(mOperand1.getRawValue()));
+                final int iOp2 = (int)Double.parseDouble(TypedValue.parseString(mOperand2.getRawValue()));
                 value = TypedValue.getBytes(iOp1 % iOp2);
-            } catch (ArithmeticException e) {
+            } catch (final ArithmeticException e) {
+                LOGWRAPPER.error(e);
                 throw new XPathError(ErrorType.FOAR0001);
             }
             break;
@@ -91,13 +100,14 @@ public class ModOpAxis extends AbstractOpAxis {
      * {@inheritDoc}
      */
     @Override
-    protected Type getReturnType(final int op1, final int op2) {
+    protected Type getReturnType(final int mOp1, final int mOp2) {
         Type type1;
         Type type2;
         try {
-            type1 = Type.getType(op1).getPrimitiveBaseType();
-            type2 = Type.getType(op2).getPrimitiveBaseType();
+            type1 = Type.getType(mOp1).getPrimitiveBaseType();
+            type2 = Type.getType(mOp2).getPrimitiveBaseType();
         } catch (IllegalStateException e) {
+            LOGWRAPPER.error(e);
             throw new XPathError(ErrorType.XPTY0004);
         }
 

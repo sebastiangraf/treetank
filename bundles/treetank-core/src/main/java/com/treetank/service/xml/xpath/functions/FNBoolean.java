@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: FNBoolean.java 4487 2008-10-02 09:12:29Z scherer $
  */
 
 package com.treetank.service.xml.xpath.functions;
@@ -83,7 +82,7 @@ public class FNBoolean extends AbstractFunction {
                     value = Boolean.parseBoolean(TypedValue.parseString(rtx.getNode().getRawValue()));
                     // value = TypedValue.parseBoolean(rtx.getRawValue());
                 } else if (type.derivesFrom(Type.STRING) || type.derivesFrom(Type.ANY_URI)
-                || type.derivesFrom(Type.UNTYPED_ATOMIC)) {
+                    || type.derivesFrom(Type.UNTYPED_ATOMIC)) {
                     // if length = 0 -> false
                     value = (TypedValue.parseString(rtx.getNode().getRawValue()).length() > 0);
                 } else if (type.isNumericType()) {

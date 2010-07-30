@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: InstanceOfExpr.java 4246 2008-07-08 08:54:09Z scherer $
  */
 
 package com.treetank.service.xml.xpath.expr;
@@ -42,30 +41,31 @@ public class InstanceOfExpr extends AbstractExpression implements IAxis {
     /**
      * Constructor. Initializes the internal state.
      * 
-     * @param rtx
+     * @param mRtx
      *            Exclusive (immutable) trx to iterate with.
-     * @param inputExpr
+     * @param mInputExpr
      *            input expression, to test
-     * @param sequenceType
+     * @param mSequenceType
      *            sequence type to test whether the input sequence matches to.
      */
-    public InstanceOfExpr(final IReadTransaction rtx, final IAxis inputExpr, final SequenceType sequenceType) {
+    public InstanceOfExpr(final IReadTransaction mRtx, final IAxis mInputExpr, 
+        final SequenceType mSequenceType) {
 
-        super(rtx);
-        mInputExpr = inputExpr;
-        mSequenceType = sequenceType;
+        super(mRtx);
+        this.mInputExpr = mInputExpr;
+        this.mSequenceType = mSequenceType;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void reset(final long nodeKey) {
+    public void reset(final long mNodeKey) {
 
-        super.reset(nodeKey);
+        super.reset(mNodeKey);
 
         if (mInputExpr != null) {
-            mInputExpr.reset(nodeKey);
+            mInputExpr.reset(mNodeKey);
         }
     }
 
@@ -90,7 +90,7 @@ public class InstanceOfExpr extends AbstractExpression implements IAxis {
                     // This seams to break the pipeline, but because the
                     // intermediate
                     // result are no longer used, it might be not that bad
-                    while(mInputExpr.hasNext() && isInstanceOf) {
+                    while (mInputExpr.hasNext() && isInstanceOf) {
                         isInstanceOf = isInstanceOf && mSequenceType.getFilter().filter();
                     }
                     break;
@@ -108,7 +108,7 @@ public class InstanceOfExpr extends AbstractExpression implements IAxis {
         }
 
         // create result item and move transaction to it.
-        int itemKey =
+        final int itemKey =
             getTransaction().getItemList().addItem(
                 new AtomicValue(TypedValue.getBytes(Boolean.toString(isInstanceOf)), getTransaction()
                     .keyForName("xs:boolean")));

@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: AbstractOpAxis.java 4246 2008-07-08 08:54:09Z scherer $
  */
 
 package com.treetank.service.xml.xpath.operators;
@@ -49,16 +48,16 @@ public abstract class AbstractOpAxis extends AbstractAxis implements IAxis, XPat
      * 
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
-     * @param op1
+     * @param mOp1
      *            First value of the operation
-     * @param op2
+     * @param mOp2
      *            Second value of the operation
      */
-    public AbstractOpAxis(final IReadTransaction rtx, final IAxis op1, final IAxis op2) {
+    public AbstractOpAxis(final IReadTransaction rtx, final IAxis mOp1, final IAxis mOp2) {
 
         super(rtx);
-        mOperand1 = op1;
-        mOperand2 = op2;
+        mOperand1 = mOp1;
+        mOperand2 = mOp2;
         mIsFirst = true;
 
     }
@@ -67,16 +66,16 @@ public abstract class AbstractOpAxis extends AbstractAxis implements IAxis, XPat
      * {@inheritDoc}
      */
     @Override
-    public final void reset(final long nodeKey) {
+    public final void reset(final long mNodeKey) {
 
-        super.reset(nodeKey);
+        super.reset(mNodeKey);
         mIsFirst = true;
         if (mOperand1 != null) {
-            mOperand1.reset(nodeKey);
+            mOperand1.reset(mNodeKey);
         }
 
         if (mOperand2 != null) {
-            mOperand2.reset(nodeKey);
+            mOperand2.reset(mNodeKey);
         }
     }
 
@@ -93,14 +92,14 @@ public abstract class AbstractOpAxis extends AbstractAxis implements IAxis, XPat
 
             if (mOperand1.hasNext()) {
                 // atomize operand
-                final AtomicValue item1 = atomize(mOperand1);
+                final AtomicValue mItem1 = atomize(mOperand1);
 
                 if (mOperand2.hasNext()) {
                     // atomize operand
-                    final AtomicValue item2 = atomize(mOperand2);
-                    final IItem result = operate(item1, item2);
+                    final AtomicValue mItem2 = atomize(mOperand2);
+                    final IItem result = operate(mItem1, mItem2);
                     // add retrieved AtomicValue to item list
-                    int itemKey = getTransaction().getItemList().addItem(result);
+                    final int itemKey = getTransaction().getItemList().addItem(result);
                     getTransaction().moveTo(itemKey);
 
                     return true;
@@ -109,7 +108,7 @@ public abstract class AbstractOpAxis extends AbstractAxis implements IAxis, XPat
 
             if (XPATH_10_COMP) { // and empty sequence, return NaN
                 final IItem result = new AtomicValue(Double.NaN, Type.DOUBLE);
-                int itemKey = getTransaction().getItemList().addItem(result);
+                final int itemKey = getTransaction().getItemList().addItem(result);
                 getTransaction().moveTo(itemKey);
                 return true;
             }
@@ -125,24 +124,22 @@ public abstract class AbstractOpAxis extends AbstractAxis implements IAxis, XPat
      * Atomizes an operand according to the rules specified in the XPath
      * specification.
      * 
-     * @param transaction
+     * @param mOperand
      *            the operand to atomize
-     * @param itemKey
-     *            the itemKey of the operand
      * @return the atomized operand. (always an atomic value)
      */
-    private AtomicValue atomize(final IAxis operand) {
+    private AtomicValue atomize(final IAxis mOperand) {
 
-        IReadTransaction rtx = getTransaction();
+        final IReadTransaction rtx = getTransaction();
         int type = rtx.getNode().getTypeKey();
         AtomicValue atom;
 
         if (XPATH_10_COMP) {
             if (type == rtx.keyForName("xs:double") || type == rtx.keyForName("xs:untypedAtomic")
-            || type == rtx.keyForName("xs:boolean") || type == rtx.keyForName("xs:string")
-            || type == rtx.keyForName("xs:integer") || type == rtx.keyForName("xs:float")
-            || type == rtx.keyForName("xs:decimal")) {
-                Function.fnnumber(operand.getTransaction());
+                || type == rtx.keyForName("xs:boolean") || type == rtx.keyForName("xs:string")
+                || type == rtx.keyForName("xs:integer") || type == rtx.keyForName("xs:float")
+                || type == rtx.keyForName("xs:decimal")) {
+                Function.fnnumber(mOperand.getTransaction());
             }
 
             atom = new AtomicValue(rtx.getNode().getRawValue(), rtx.getNode().getTypeKey());
@@ -168,13 +165,13 @@ public abstract class AbstractOpAxis extends AbstractAxis implements IAxis, XPat
      * types of the operands are a valid combination for the operation and if so
      * computed the result. Otherwise an XPathError is thrown.
      * 
-     * @param operand1
+     * @param mOperand1
      *            first input operand
-     * @param operand2
+     * @param mOperand2
      *            second input operand
      * @return result of the operation
      */
-    protected abstract IItem operate(final AtomicValue operand1, final AtomicValue operand2);
+    protected abstract IItem operate(final AtomicValue mOperand1, final AtomicValue mOperand2);
 
     /**
      * Checks if the types of the operands are a valid combination for the
@@ -182,13 +179,13 @@ public abstract class AbstractOpAxis extends AbstractAxis implements IAxis, XPat
      * XPathError is thrown. This typed check is done according to the <a
      * href="http://www.w3.org/TR/xpath20/#mapping">Operator Mapping</a>.
      * 
-     * @param op1
+     * @param mOp1
      *            first operand's type key
-     * @param op2
+     * @param mOp2
      *            second operand's type key
      * @return return type of the arithmetic function according to the operand
      *         type combination.
      */
-    protected abstract Type getReturnType(final int op1, final int op2);
+    protected abstract Type getReturnType(final int mOp1, final int mOp2);
 
 }

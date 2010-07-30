@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: WildcardFilter.java 4418 2008-08-27 22:31:12Z scherer $
  */
 
 package com.treetank.service.xml.xpath.filter;
@@ -44,17 +43,17 @@ public class WildcardFilter extends AbstractFilter implements IFilter {
      * 
      * @param rtx
      *            Transaction to operate on
-     * @param knownPart
+     * @param mKnownPart
      *            part of the qualified name that is specified. This can be
      *            either the namespace prefix, or the local name
-     * @param isName
+     * @param mIsName
      *            defines, if the specified part is the prefix, or the local
      *            name (true, if it is the local name)
      */
-    public WildcardFilter(final IReadTransaction rtx, final String knownPart, final boolean isName) {
+    public WildcardFilter(final IReadTransaction rtx, final String mKnownPart, final boolean mIsName) {
         super(rtx);
-        mIsName = isName;
-        mKnownPartKey = getTransaction().keyForName(knownPart);
+        this.mIsName = mIsName;
+        mKnownPartKey = getTransaction().keyForName(mKnownPart);
     }
 
     /**
@@ -65,17 +64,17 @@ public class WildcardFilter extends AbstractFilter implements IFilter {
         if (getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND) {
 
             if (mIsName) { // local name is given
-                String localname =
+                final String localname =
                     getTransaction().nameForKey(getTransaction().getNode().getNameKey()).replaceFirst(".*:",
                         "");
-                int localnameKey = getTransaction().keyForName(localname);
+                final int localnameKey = getTransaction().keyForName(localname);
 
                 return localnameKey == mKnownPartKey;
-            } else {// namespace prefix is given
-                int nsCount = ((ElementNode)getTransaction().getNode()).getNamespaceCount();
+            } else { // namespace prefix is given
+                final int nsCount = ((ElementNode)getTransaction().getNode()).getNamespaceCount();
                 for (int i = 0; i < nsCount; i++) {
                     getTransaction().moveToNamespace(i);
-                    int prefixKey = mKnownPartKey;
+                    final int prefixKey = mKnownPartKey;
                     if (getTransaction().getNode().getNameKey() == prefixKey) {
                         getTransaction().moveToParent();
                         return true;

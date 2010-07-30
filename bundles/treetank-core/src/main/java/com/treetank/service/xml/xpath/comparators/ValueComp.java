@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: ValueComp.java 4246 2008-07-08 08:54:09Z scherer $
  */
 
 package com.treetank.service.xml.xpath.comparators;
@@ -40,27 +39,27 @@ public class ValueComp extends AbstractComparator {
      * 
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
-     * @param operand1
+     * @param mOperand1
      *            First value of the comparison
-     * @param operand2
+     * @param mOperand2
      *            Second value of the comparison
-     * @param comp
+     * @param mComp
      *            comparison kind
      */
-    public ValueComp(final IReadTransaction rtx, final IAxis operand1, final IAxis operand2,
-        final CompKind comp) {
+    public ValueComp(final IReadTransaction rtx, final IAxis mOperand1, final IAxis mOperand2,
+        final CompKind mComp) {
 
-        super(rtx, operand1, operand2, comp);
+        super(rtx, mOperand1, mOperand2, mComp);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected boolean compare(final AtomicValue[] operand1, final AtomicValue[] operand2) {
-        final Type type = getType(operand1[0].getTypeKey(), operand2[0].getTypeKey());
-        final String op1 = TypedValue.parseString(operand1[0].getRawValue());
-        final String op2 = TypedValue.parseString(operand2[0].getRawValue());
+    protected boolean compare(final AtomicValue[] mOperand1, final AtomicValue[] mOperand2) {
+        final Type type = getType(mOperand1[0].getTypeKey(), mOperand2[0].getTypeKey());
+        final String op1 = TypedValue.parseString(mOperand1[0].getRawValue());
+        final String op2 = TypedValue.parseString(mOperand2[0].getRawValue());
 
         return getCompKind().compare(op1, op2, type);
     }
@@ -69,7 +68,7 @@ public class ValueComp extends AbstractComparator {
      * {@inheritDoc}
      */
     @Override
-    protected AtomicValue[] atomize(final IAxis operand) {
+    protected AtomicValue[] atomize(final IAxis mOperand) {
 
         final IReadTransaction trx = getTransaction();
 
@@ -80,13 +79,13 @@ public class ValueComp extends AbstractComparator {
             type = trx.keyForName("xs:string");
         }
 
-        final AtomicValue atomized = new AtomicValue(operand.getTransaction().getNode().getRawValue(), type);
-        AtomicValue[] op = {
+        final AtomicValue atomized = new AtomicValue(mOperand.getTransaction().getNode().getRawValue(), type);
+        final AtomicValue[] op = {
             atomized
         };
 
         // (4.) the operands must be singletons in case of a value comparison
-        if (operand.hasNext()) {
+        if (mOperand.hasNext()) {
             throw new XPathError(ErrorType.XPTY0004);
         } else {
             return op;
@@ -98,10 +97,10 @@ public class ValueComp extends AbstractComparator {
      * {@inheritDoc}
      */
     @Override
-    protected Type getType(final int key1, final int key2) {
+    protected Type getType(final int mKey1, final int mKey2) {
 
-        Type type1 = Type.getType(key1).getPrimitiveBaseType();
-        Type type2 = Type.getType(key2).getPrimitiveBaseType();
+        Type type1 = Type.getType(mKey1).getPrimitiveBaseType();
+        Type type2 = Type.getType(mKey2).getPrimitiveBaseType();
         return Type.getLeastCommonType(type1, type2);
 
     }

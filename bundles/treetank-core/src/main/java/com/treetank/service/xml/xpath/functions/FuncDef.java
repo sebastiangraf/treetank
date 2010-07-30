@@ -1,14 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
- * 
- * Based on an idea taken from the BaseX project by Christian Gruen,
- * Workgroup DBIS, University of Konstanz 2005-07, ISC License
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -16,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: FuncDef.java 4246 2008-07-08 08:54:09Z scherer $
  */
 
 package com.treetank.service.xml.xpath.functions;
@@ -2274,9 +2270,9 @@ public enum FuncDef {
          * <p>
          * Returns the current dateTime (with timezone) from the dynamic context. (See Section C.2 Dynamic
          * Context ComponentsXP.) This is an xs:dateTime that is current at some time during the evaluation of
-         * a query or transformation in which fn:current-dateTime() is executed. This function is �stable�.
-         * The precise instant during the query or transformation represented by the value of
-         * fn:current-dateTime() is �implementation dependent�.
+         * a query or transformation in which fn:current-dateTime() is executed. 
+         * This function is �stable�. The precise instant during the query or transformation represented 
+         * by the value of fn:current-dateTime() is �implementation dependent�.
          * </p>
          */
         CURRENT_DT("fn:current-dateTime", AbstractFunction.class, 0, 0, "xs:dateTime"),
@@ -2288,8 +2284,8 @@ public enum FuncDef {
          * <p>
          * Returns xs:date(fn:current-dateTime()). This is an xs:date (with timezone) that is current at some
          * time during the evaluation of a query or transformation in which fn:current-date() is executed.
-         * This function is �stable�. The precise instant during the query or transformation represented by
-         * the value of fn:current-date() is �implementation dependent�.
+         * This function is �stable�. The precise instant during the query or transformation represented 
+         * by the value of fn:current-date() is �implementation dependent�.
          * </p>
          */
         CURRENT_DATE("fn:current-date", AbstractFunction.class, 0, 0, "xs:date"),
@@ -2301,8 +2297,8 @@ public enum FuncDef {
          * <p>
          * Returns xs:time(fn:current-dateTime()). This is an xs:time (with timezone) that is current at some
          * time during the evaluation of a query or transformation in which fn:current-time() is executed.
-         * This function is �stable�. The precise instant during the query or transformation represented by
-         * the value of fn:current-time() is �implementation dependent�.
+         * This function is �stable�. The precise instant during the query or transformation represented
+         * by the value of fn:current-time() is �implementation dependent�.
          * </p>
          */
         CURRENT_TIME("fn:current-time", AbstractFunction.class, 0, 0, "xs:time"),
@@ -2359,9 +2355,9 @@ public enum FuncDef {
     /**
      * Constructor. Initializes internal state.
      * 
-     * @param name
+     * @param mName
      *            qualified name of the function
-     * @param func
+     * @param mFunc
      *            class that implements the function
      * @param min
      *            specified minimum number of function arguments
@@ -2370,14 +2366,14 @@ public enum FuncDef {
      * @param returnType
      *            return type of the function
      */
-    private FuncDef(final String name, final Class<? extends AbstractFunction> func, final int min,
+    private FuncDef(final String mName, final Class<? extends AbstractFunction> mFunc, final int min,
         final int max, final String returnType) {
 
-        mName = name;
-        mFunc = func;
-        mMin = min;
-        mMax = max;
-        mReturnType = returnType;
+        this.mName = mName;
+        this.mFunc = mFunc;
+        this.mMin = min;
+        this.mMax = max;
+        this.mReturnType = returnType;
 
     }
 

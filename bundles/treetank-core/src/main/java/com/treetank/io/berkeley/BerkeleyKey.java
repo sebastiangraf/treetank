@@ -1,3 +1,20 @@
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
+ * 
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ * 
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * 
+ */
+
 package com.treetank.io.berkeley;
 
 import com.treetank.io.AbstractKey;
@@ -13,23 +30,23 @@ import com.treetank.io.ITTSource;
 public class BerkeleyKey extends AbstractKey {
 
     /**
-     * Public constructor
+     * Public constructor.
      * 
-     * @param input
+     * @param mInput
      *            base for the key (coming from the db)
      */
-    public BerkeleyKey(final ITTSource input) {
-        super(input.readLong());
+    public BerkeleyKey(final ITTSource mInput) {
+        super(mInput.readLong());
     }
 
     /**
      * Public constructor.
      * 
-     * @param key
+     * @param mKey
      *            , coming from the application
      */
-    public BerkeleyKey(final long key) {
-        super(key);
+    public BerkeleyKey(final long mKey) {
+        super(mKey);
     }
 
     /**
@@ -52,7 +69,7 @@ public class BerkeleyKey extends AbstractKey {
     }
 
     /**
-     * Static method to get the key about the first reference of the Nodepages
+     * Static method to get the key about the first reference of the Nodepages.
      * 
      * @return the key for the first nodepage
      */

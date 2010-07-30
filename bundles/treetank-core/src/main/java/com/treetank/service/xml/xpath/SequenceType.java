@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: SequenceType.java 4245 2008-07-08 08:44:34Z scherer $
  */
 
 package com.treetank.service.xml.xpath;
@@ -52,13 +51,13 @@ public class SequenceType {
     /**
      * Constructor. Sequence type is an ItemType.
      * 
-     * @param filter
+     * @param mFilter
      *            item type filter
      */
-    public SequenceType(final IFilter filter) {
+    public SequenceType(final IFilter mFilter) {
 
         mIsEmptySequence = false;
-        mFilter = filter;
+        this.mFilter = mFilter;
         mHasWildcard = false;
         mWildcard = ' ';
     }
@@ -71,15 +70,15 @@ public class SequenceType {
      * 
      * @param filter
      *            item type filter
-     * @param wildcard
+     * @param mWildcard
      *            either '*', '?' or '+'
      */
-    public SequenceType(final IFilter filter, final char wildcard) {
+    public SequenceType(final IFilter filter, final char mWildcard) {
 
         mIsEmptySequence = false;
-        mFilter = filter;
+        this.mFilter = filter;
         mHasWildcard = true;
-        mWildcard = wildcard;
+        this.mWildcard = mWildcard;
     }
 
     /**

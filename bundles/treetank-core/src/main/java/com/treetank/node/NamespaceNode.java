@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: NamespaceNode.java 4550 2009-02-05 09:25:46Z graf $
  */
 
 package com.treetank.node;
@@ -33,13 +32,13 @@ public final class NamespaceNode extends AbsNode {
     /**
      * Constructor.
      * 
-     * @param longBuilder
+     * @param mLongBuilder
      *            building long data
-     * @param intBuilder
+     * @param mIntBuilder
      *            building int data
      */
-    NamespaceNode(final long[] longBuilder, final int[] intBuilder) {
-        super(longBuilder, intBuilder);
+    NamespaceNode(final long[] mLongBuilder, final int[] mIntBuilder) {
+        super(mLongBuilder, mIntBuilder);
     }
 
     /**
@@ -62,8 +61,8 @@ public final class NamespaceNode extends AbsNode {
      * {@inheritDoc}
      */
     @Override
-    public void setNameKey(final int nameKey) {
-        mIntData[NAME_KEY] = nameKey;
+    public void setNameKey(final int mNameKey) {
+        mIntData[NAME_KEY] = mNameKey;
     }
 
     /**

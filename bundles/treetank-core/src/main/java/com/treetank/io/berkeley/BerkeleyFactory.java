@@ -1,3 +1,20 @@
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
+ * 
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ * 
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * 
+ */
+
 package com.treetank.io.berkeley;
 
 import java.io.File;
@@ -24,6 +41,9 @@ import com.treetank.io.berkeley.binding.PageReferenceUberPageBinding;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.PageReference;
 import com.treetank.settings.EStoragePaths;
+import com.treetank.utils.LogWrapper;
+
+import org.slf4j.LoggerFactory;
 
 /**
  * Factory class to build up {@link IReader} {@link IWriter} instances for the
@@ -37,25 +57,31 @@ import com.treetank.settings.EStoragePaths;
  */
 public final class BerkeleyFactory extends AbstractIOFactory {
 
-    /** Binding for {@link AbstractKey} */
+    /**
+     * Log wrapper for better output.
+     */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(BerkeleyFactory.class));
+    
+    /** Binding for {@link AbstractKey}. */
     public static final TupleBinding<AbstractKey> KEY = new KeyBinding();
 
-    /** Binding for {@link AbstractPage} */
+    /** Binding for {@link AbstractPage}. */
     public static final TupleBinding<AbstractPage> PAGE_VAL_B = new AbstractPageBinding();
 
-    /** Binding for {@link PageReference} */
+    /** Binding for {@link PageReference}. */
     public static final TupleBinding<PageReference> FIRST_REV_VAL_B = new PageReferenceUberPageBinding();
 
-    /** Binding for {@link Long} */
+    /** Binding for {@link Long}. */
     public static final TupleBinding<Long> DATAINFO_VAL_B = TupleBinding.getPrimitiveBinding(Long.class);
 
     /**
-     * Berkeley Environment for the database
+     * Berkeley Environment for the database.
      */
-    private transient final Environment env;
+    private transient final Environment mEnv;
 
     /**
-     * Database instance per session
+     * Database instance per session.
      */
     private transient final Database mDatabase;
 
@@ -67,14 +93,17 @@ public final class BerkeleyFactory extends AbstractIOFactory {
     /**
      * Private constructor.
      * 
+     * @param mParamDatabase
+     *            for the Database settings
      * @param paramSession
      *            for the settings
      * @throws TreetankIOException
      *             of something odd happens while database-connection
      */
-    public BerkeleyFactory(final DatabaseConfiguration paramDatabase, final SessionConfiguration paramSession)
+    public BerkeleyFactory(final DatabaseConfiguration mParamDatabase, 
+            final SessionConfiguration paramSession)
         throws TreetankIOException {
-        super(paramDatabase, paramSession);
+        super(mParamDatabase, paramSession);
 
         final DatabaseConfig conf = new DatabaseConfig();
         conf.setTransactional(true);
@@ -84,21 +113,22 @@ public final class BerkeleyFactory extends AbstractIOFactory {
         config.setTransactional(true);
         config.setCacheSize(1024 * 1024);
 
-        final File repoFile = new File(paramDatabase.getFile(), EStoragePaths.TT.getFile().getName());
+        final File repoFile = new File(mParamDatabase.getFile(), EStoragePaths.TT.getFile().getName());
         if (!repoFile.exists()) {
             repoFile.mkdirs();
         }
         if (repoFile.listFiles().length == 0
-        || (repoFile.listFiles().length == 1 && "tt.tnk".equals(repoFile.listFiles()[0].getName()))) {
+            || (repoFile.listFiles().length == 1 && "tt.tnk".equals(repoFile.listFiles()[0].getName()))) {
             conf.setAllowCreate(true);
             config.setAllowCreate(true);
         }
 
         try {
-            env = new Environment(repoFile, config);
+            mEnv = new Environment(repoFile, config);
 
-            mDatabase = env.openDatabase(null, NAME, conf);
+            mDatabase = mEnv.openDatabase(null, NAME, conf);
         } catch (final DatabaseException exc) {
+            LOGWRAPPER.error(exc);
             throw new TreetankIOException(exc);
         }
 
@@ -110,8 +140,9 @@ public final class BerkeleyFactory extends AbstractIOFactory {
     @Override
     public IReader getReader() throws TreetankIOException {
         try {
-            return new BerkeleyReader(env, mDatabase);
+            return new BerkeleyReader(mEnv, mDatabase);
         } catch (final DatabaseException exc) {
+            LOGWRAPPER.error(exc);
             throw new TreetankIOException(exc);
         }
     }
@@ -121,7 +152,7 @@ public final class BerkeleyFactory extends AbstractIOFactory {
      */
     @Override
     public IWriter getWriter() throws TreetankIOException {
-        return new BerkeleyWriter(env, mDatabase);
+        return new BerkeleyWriter(mEnv, mDatabase);
     }
 
     /**
@@ -131,8 +162,9 @@ public final class BerkeleyFactory extends AbstractIOFactory {
     public void closeConcreteStorage() throws TreetankIOException {
         try {
             mDatabase.close();
-            env.close();
+            mEnv.close();
         } catch (final DatabaseException exc) {
+            LOGWRAPPER.error(exc);
             throw new TreetankIOException(exc);
         }
     }
@@ -146,7 +178,7 @@ public final class BerkeleyFactory extends AbstractIOFactory {
         final DatabaseEntry keyEntry = new DatabaseEntry();
         boolean returnVal = false;
         try {
-            final IReader reader = new BerkeleyReader(env, mDatabase);
+            final IReader reader = new BerkeleyReader(mEnv, mDatabase);
             BerkeleyFactory.KEY.objectToEntry(BerkeleyKey.getFirstRevKey(), keyEntry);
 
             final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
@@ -155,6 +187,7 @@ public final class BerkeleyFactory extends AbstractIOFactory {
             }
             reader.close();
         } catch (final DatabaseException exc) {
+            LOGWRAPPER.error(exc);
             throw new TreetankIOException(exc);
         }
         return returnVal;

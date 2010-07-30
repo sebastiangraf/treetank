@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: DupFilterAxis.java 4246 2008-07-08 08:54:09Z scherer $
  */
 
 package com.treetank.service.xml.xpath.filter;
@@ -51,27 +50,27 @@ public class DupFilterAxis extends AbstractAxis {
      * Defines whether next() has to be called for the dupAxis after calling
      * hasNext(). In some cases next() has already been called by another axis.
      */
-    private final boolean callNext;
+    private final boolean mCallNext;
 
     /**
      * Constructor. Initializes the internal state.
      * 
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
-     * @param dupAxis
+     * @param mDupAxis
      *            Sequence that may return duplicates.
      */
-    public DupFilterAxis(final IReadTransaction rtx, final IAxis dupAxis) {
+    public DupFilterAxis(final IReadTransaction rtx, final IAxis mDupAxis) {
 
         super(rtx);
-        mAxis = dupAxis;
+        mAxis = mDupAxis;
         mDupSet = new HashSet<Long>();
         // if the dupAxis is not one of the specified axis, 'next()' has
         // explicitly
         // be called for those axis after calling 'hasNext()'. For all other
         // axis
         // next() has already been called by another axis.
-        callNext =
+        mCallNext =
             !(mAxis instanceof FilterAxis || mAxis instanceof NestedAxis || mAxis instanceof UnionAxis);
 
     }
@@ -80,11 +79,11 @@ public class DupFilterAxis extends AbstractAxis {
      * {@inheritDoc}
      */
     @Override
-    public final void reset(final long nodeKey) {
+    public final void reset(final long mNodeKey) {
 
-        super.reset(nodeKey);
+        super.reset(mNodeKey);
         if (mAxis != null) {
-            mAxis.reset(nodeKey);
+            mAxis.reset(mNodeKey);
         }
     }
 
@@ -96,10 +95,10 @@ public class DupFilterAxis extends AbstractAxis {
 
         resetToLastKey();
 
-        while(mAxis.hasNext()) {
+        while (mAxis.hasNext()) {
 
             // call next(), if it was not already called for that axis.
-            if (callNext) {
+            if (mCallNext) {
                 mAxis.next();
             }
 

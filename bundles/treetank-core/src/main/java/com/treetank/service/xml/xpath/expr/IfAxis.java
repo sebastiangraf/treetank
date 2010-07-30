@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: IfAxis.java 4246 2008-07-08 08:54:09Z scherer $
  */
 
 package com.treetank.service.xml.xpath.expr;
@@ -50,19 +49,20 @@ public class IfAxis extends AbstractAxis implements IAxis {
      * 
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
-     * @param ifAxis
+     * @param mIfAxis
      *            Test expression
-     * @param thenAxis
+     * @param mThenAxis
      *            Will be evaluated if test expression evaluates to true.
-     * @param elseAxis
+     * @param mElseAxis
      *            Will be evaluated if test expression evaluates to false.
      */
-    public IfAxis(final IReadTransaction rtx, final IAxis ifAxis, final IAxis thenAxis, final IAxis elseAxis) {
+    public IfAxis(final IReadTransaction rtx, final IAxis mIfAxis, 
+        final IAxis mThenAxis, final IAxis mElseAxis) {
 
         super(rtx);
-        mIf = ifAxis;
-        mThen = thenAxis;
-        mElse = elseAxis;
+        mIf = mIfAxis;
+        mThen = mThenAxis;
+        mElse = mElseAxis;
         mFirst = true;
     }
 
@@ -70,21 +70,21 @@ public class IfAxis extends AbstractAxis implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    public void reset(final long nodeKey) {
+    public void reset(final long mNodeKey) {
 
-        super.reset(nodeKey);
+        super.reset(mNodeKey);
         mFirst = true;
 
         if (mIf != null) {
-            mIf.reset(nodeKey);
+            mIf.reset(mNodeKey);
         }
 
         if (mThen != null) {
-            mThen.reset(nodeKey);
+            mThen.reset(mNodeKey);
         }
 
         if (mElse != null) {
-            mElse.reset(nodeKey);
+            mElse.reset(mNodeKey);
         }
 
     }

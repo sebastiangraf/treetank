@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: XPathScanner.java 4245 2008-07-08 08:44:34Z scherer $
  */
 
 package com.treetank.service.xml.xpath;
@@ -82,12 +81,12 @@ public class XPathScanner implements XPathConstants {
      * Constructor. Initializes the internal state. Receives query and adds a
      * end mark to it.
      * 
-     * @param query
+     * @param mQuery
      *            the query to scan
      */
-    public XPathScanner(final String query) {
+    public XPathScanner(final String mQuery) {
 
-        mQuery = query + '#'; // end mark to recognize the end
+        this.mQuery = mQuery + '#'; // end mark to recognize the end
         mPos = 0;
         mLastPos = mPos;
         mStartState = State.START;
@@ -191,14 +190,14 @@ public class XPathScanner implements XPathConstants {
     /**
      * Returns the type of the given character.
      * 
-     * @param input
+     * @param mInput
      *            The character the type should be determined
      * @return type of the given character.
      */
-    private Token retrieveType(final char input) {
+    private Token retrieveType(final char mInput) {
 
         Token type;
-        switch (input) {
+        switch (mInput) {
         case ',':
             type = Token.COMMA;
             break;
@@ -270,54 +269,55 @@ public class XPathScanner implements XPathConstants {
     /**
      * Checks if the given character is a valid first letter.
      * 
-     * @param input
+     * @param mInput
      *            The character to check.
      * @return Returns true, if the character is a first letter.
      */
-    private boolean isFirstLetter(final char input) {
+    private boolean isFirstLetter(final char mInput) {
 
-        return ((input >= 'a' && input <= 'z') || (input >= 'A' && input <= 'Z') || (input == '_'));
+        return ((mInput >= 'a' && mInput <= 'z') || (mInput >= 'A' && mInput <= 'Z') || (mInput == '_'));
     }
 
     /**
      * Checks if the given character is a number.
      * 
-     * @param input
+     * @param mInput
      *            The character to check.
      * @return Returns true, if the character is a number.
      */
-    private boolean isNumber(final char input) {
+    private boolean isNumber(final char mInput) {
 
-        return (input >= '0' && input <= '9');
+        return (mInput >= '0' && mInput <= '9');
     }
 
     /**
      * Checks if the given character is a special character that can have 2
      * digits.
      * 
-     * @param input
+     * @param mInput
      *            The character to check.
      * @return Returns true, if the character is a special character that can
      *         have 2 digits.
      */
-    private boolean isSpecialCharacter2(final char input) {
+    private boolean isSpecialCharacter2(final char mInput) {
 
-        return (input == '<') || (input == '>') || (input == '(') || (input == '!') || (input == '/')
-        || (input == '.');
+        return (mInput == '<') || (mInput == '>') || (mInput == '(') || (mInput == '!') || (mInput == '/')
+            || (mInput == '.');
     }
 
     /**
      * Checks if the given character is a special character.
      * 
-     * @param input
+     * @param mInput
      *            The character to check.
      * @return Returns true, if the character is a special character.
      */
-    private boolean isSpecialCharacter(final char input) {
+    private boolean isSpecialCharacter(final char mInput) {
 
-        return ((input == ')') || (input == ';') || (input == ',') || (input == '@') || (input == '[')
-        || (input == ']') || (input == '=') || (input == '"') || (input == '\'') || (input == '$')
-        || (input == ':') || (input == '|') || (input == '+') || (input == '-') || (input == '?') || (input == '*'));
+        return ((mInput == ')') || (mInput == ';') || (mInput == ',') || (mInput == '@') || (mInput == '[')
+            || (mInput == ']') || (mInput == '=') || (mInput == '"') 
+            || (mInput == '\'') || (mInput == '$') || (mInput == ':')
+            || (mInput == '|') || (mInput == '+') || (mInput == '-') || (mInput == '?') || (mInput == '*'));
     }
 
     /**
@@ -412,8 +412,8 @@ public class XPathScanner implements XPathConstants {
 
         if (mInput == ':') {
             // check if is end of comment, indicated by ':)'
-            final char input2 = mQuery.charAt(mPos + 1);
-            if (input2 == ')') {
+            final char mInput2 = mQuery.charAt(mPos + 1);
+            if (mInput2 == ')') {
                 mCommentCount--;
                 if (mCommentCount == 0) {
                     mState = State.START;
@@ -425,8 +425,8 @@ public class XPathScanner implements XPathConstants {
             }
         } else if (mInput == '(') {
             // check if start of new nested comment, indicated by '(:'
-            final char input2 = mQuery.charAt(mPos + 1);
-            if (input2 == ':') {
+            final char mInput2 = mQuery.charAt(mPos + 1);
+            if (mInput2 == ':') {
                 mCommentCount++;
 
             }
@@ -437,14 +437,14 @@ public class XPathScanner implements XPathConstants {
     /**
      * Checks if the given character is a letter.
      * 
-     * @param input
+     * @param mInput
      *            The character to check.
      * @return Returns true, if the character is a letter.
      */
-    private boolean isLetter(final char input) {
+    private boolean isLetter(final char mInput) {
 
-        return ((input >= '0' && input <= '9') || (input >= 'a' && input <= 'z')
-        || (input >= 'A' && input <= 'Z') || (input == '_') || (input == '-') || (input == '.'));
+        return ((mInput >= '0' && mInput <= '9') || (mInput >= 'a' && mInput <= 'z')
+            || (mInput >= 'A' && mInput <= 'Z') || (mInput == '_') || (mInput == '-') || (mInput == '.'));
 
     }
 
@@ -460,7 +460,7 @@ public class XPathScanner implements XPathConstants {
         final int lastPos = mPos;
         XPathToken token = nextToken();
 
-        while(--nextCount > 0) {
+        while (--nextCount > 0) {
             token = nextToken();
             if (token.getType() == Token.SPACE) {
                 nextCount++;

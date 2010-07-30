@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: PipelineBuilder.java 4245 2008-07-08 08:44:34Z scherer $
  */
 
 package com.treetank.service.xml.xpath;
@@ -64,6 +63,9 @@ import com.treetank.service.xml.xpath.operators.ModOpAxis;
 import com.treetank.service.xml.xpath.operators.MulOpAxis;
 import com.treetank.service.xml.xpath.operators.SubOpAxis;
 import com.treetank.utils.FastStack;
+import com.treetank.utils.LogWrapper;
+
+import org.slf4j.LoggerFactory;
 
 /**
  * <h1>PipeBuilder</h1>
@@ -72,6 +74,12 @@ import com.treetank.utils.FastStack;
  * </p>
  */
 public final class PipelineBuilder {
+    
+    /**
+     * Log wrapper for better output.
+     */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(PipelineBuilder.class));
 
     private final FastStack<FastStack<ExpressionSingle>> mExprStack;
 
@@ -120,22 +128,22 @@ public final class PipelineBuilder {
      * combined by a sequence expression, which is lated added to the next
      * pipeline stack.
      * 
-     * @param transaction
+     * @param mTransaction
      *            transaction to operate on
-     * @param num
+     * @param mNum
      *            number of singleExpressions that will be added to the sequence
      */
-    public void finishExpr(final IReadTransaction transaction, final int num) {
+    public void finishExpr(final IReadTransaction mTransaction, final int mNum) {
 
         // all singleExpression that are on the stack will be combined in the
         // sequence, so the number of singleExpressions in the sequence and the
         // size
         // of the stack containing these SingleExpressions have to be the same.
-        if (getPipeStack().size() != num) {
+        if (getPipeStack().size() != mNum) {
             // this should never happen
             throw new IllegalStateException("The query has not been porcessed correctly");
         }
-        int no = num;
+        int no = mNum;
 
         IAxis[] axis;
         if (no > 1) {
@@ -143,7 +151,7 @@ public final class PipelineBuilder {
             axis = new IAxis[no];
 
             // add all SingleExpression to a list
-            while(no-- > 0) {
+            while (no-- > 0) {
                 axis[no] = getPipeStack().pop().getExpr();
             }
 
@@ -155,7 +163,7 @@ public final class PipelineBuilder {
             if (getPipeStack().empty() || getExpression().getSize() != 0) {
                 addExpressionSingle();
             }
-            getExpression().add(new SequenceAxis(transaction, axis));
+            getExpression().add(new SequenceAxis(mTransaction, axis));
 
         } else if (no == 1) {
             // only one expression does not need to be capsled by a seq
@@ -174,7 +182,7 @@ public final class PipelineBuilder {
 
             final IAxis iAxis;
             if (mExprStack.size() == 1 && getPipeStack().size() == 1 && getExpression().getSize() == 0) {
-                iAxis = new SequenceAxis(transaction, axis);
+                iAxis = new SequenceAxis(mTransaction, axis);
             } else {
                 iAxis = axis[0];
             }
@@ -218,18 +226,18 @@ public final class PipelineBuilder {
      * example: for $a in /a, $b in /b, $c in /c return /d is converted to for
      * $a in /a return for $b in /b return for $c in /c return /d
      * 
-     * @param forConditionNum
+     * @param mForConditionNum
      *            Number of all for conditions of the expression
      */
-    public void addForExpression(final int forConditionNum) {
+    public void addForExpression(final int mForConditionNum) {
 
-        assert getPipeStack().size() >= (forConditionNum + 1);
+        assert getPipeStack().size() >= (mForConditionNum + 1);
 
         AbstractAxis forAxis = ((AbstractAxis)(getPipeStack().pop().getExpr()));
         final IReadTransaction rtx = forAxis.getTransaction();
-        int num = forConditionNum;
+        int num = mForConditionNum;
 
-        while(num-- > 0) {
+        while (num-- > 0) {
             forAxis = new ForAxis(rtx, getPipeStack().pop().getExpr(), forAxis);
         }
 
@@ -242,14 +250,14 @@ public final class PipelineBuilder {
     /**
      * Adds a if expression to the pipeline.
      * 
-     * @param transaction
+     * @param mTransaction
      *            Transaction to operate with.
      */
-    public void addIfExpression(final IReadTransaction transaction) {
+    public void addIfExpression(final IReadTransaction mTransaction) {
 
         assert getPipeStack().size() >= 3;
 
-        final IReadTransaction rtx = transaction;
+        final IReadTransaction rtx = mTransaction;
 
         final IAxis elseExpr = getPipeStack().pop().getExpr();
         final IAxis thenExpr = getPipeStack().pop().getExpr();
@@ -265,73 +273,73 @@ public final class PipelineBuilder {
     /**
      * Adds a comparison expression to the pipeline.
      * 
-     * @param transaction
+     * @param mTransaction
      *            Transaction to operate with.
-     * @param comp
+     * @param mComp
      *            Comparator type.
      */
-    public void addCompExpression(final IReadTransaction transaction, final String comp) {
+    public void addCompExpression(final IReadTransaction mTransaction, final String mComp) {
 
         assert getPipeStack().size() >= 2;
 
-        final IReadTransaction rtx = transaction;
+        final IReadTransaction rtx = mTransaction;
 
-        final IAxis operand2 = getPipeStack().pop().getExpr();
-        final IAxis operand1 = getPipeStack().pop().getExpr();
+        final IAxis mOperand2 = getPipeStack().pop().getExpr();
+        final IAxis mOperand1 = getPipeStack().pop().getExpr();
 
         final IAxis axis;
         final CompKind kind;
 
         // TODO: use typeswitch of JAVA 7
-        if (comp.equals("eq")) {
+        if (mComp.equals("eq")) {
             kind = CompKind.EQ;
-            axis = new ValueComp(rtx, operand1, operand2, kind);
-        } else if (comp.equals("ne")) {
+            axis = new ValueComp(rtx, mOperand1, mOperand2, kind);
+        } else if (mComp.equals("ne")) {
             kind = CompKind.NE;
-            axis = new ValueComp(rtx, operand1, operand2, kind);
-        } else if (comp.equals("lt")) {
+            axis = new ValueComp(rtx, mOperand1, mOperand2, kind);
+        } else if (mComp.equals("lt")) {
             kind = CompKind.LT;
-            axis = new ValueComp(rtx, operand1, operand2, kind);
-        } else if (comp.equals("le")) {
+            axis = new ValueComp(rtx, mOperand1, mOperand2, kind);
+        } else if (mComp.equals("le")) {
             kind = CompKind.LE;
-            axis = new ValueComp(rtx, operand1, operand2, kind);
-        } else if (comp.equals("gt")) {
+            axis = new ValueComp(rtx, mOperand1, mOperand2, kind);
+        } else if (mComp.equals("gt")) {
             kind = CompKind.GT;
-            axis = new ValueComp(rtx, operand1, operand2, kind);
-        } else if (comp.equals("ge")) {
+            axis = new ValueComp(rtx, mOperand1, mOperand2, kind);
+        } else if (mComp.equals("ge")) {
             kind = CompKind.GE;
-            axis = new ValueComp(rtx, operand1, operand2, kind);
+            axis = new ValueComp(rtx, mOperand1, mOperand2, kind);
 
-        } else if (comp.equals("=")) {
+        } else if (mComp.equals("=")) {
             kind = CompKind.EQ;
-            axis = new GeneralComp(rtx, operand1, operand2, kind);
-        } else if (comp.equals("!=")) {
+            axis = new GeneralComp(rtx, mOperand1, mOperand2, kind);
+        } else if (mComp.equals("!=")) {
             kind = CompKind.NE;
-            axis = new GeneralComp(rtx, operand1, operand2, kind);
-        } else if (comp.equals("<")) {
+            axis = new GeneralComp(rtx, mOperand1, mOperand2, kind);
+        } else if (mComp.equals("<")) {
             kind = CompKind.LT;
-            axis = new GeneralComp(rtx, operand1, operand2, kind);
-        } else if (comp.equals("<=")) {
+            axis = new GeneralComp(rtx, mOperand1, mOperand2, kind);
+        } else if (mComp.equals("<=")) {
             kind = CompKind.LE;
-            axis = new GeneralComp(rtx, operand1, operand2, kind);
-        } else if (comp.equals(">")) {
+            axis = new GeneralComp(rtx, mOperand1, mOperand2, kind);
+        } else if (mComp.equals(">")) {
             kind = CompKind.GT;
-            axis = new GeneralComp(rtx, operand1, operand2, kind);
-        } else if (comp.equals(">=")) {
+            axis = new GeneralComp(rtx, mOperand1, mOperand2, kind);
+        } else if (mComp.equals(">=")) {
             kind = CompKind.GE;
-            axis = new GeneralComp(rtx, operand1, operand2, kind);
+            axis = new GeneralComp(rtx, mOperand1, mOperand2, kind);
 
-        } else if (comp.equals("is")) {
+        } else if (mComp.equals("is")) {
             kind = CompKind.IS;
-            axis = new NodeComp(rtx, operand1, operand2, kind);
-        } else if (comp.equals("<<")) {
+            axis = new NodeComp(rtx, mOperand1, mOperand2, kind);
+        } else if (mComp.equals("<<")) {
             kind = CompKind.PRE;
-            axis = new NodeComp(rtx, operand1, operand2, kind);
-        } else if (comp.equals(">>")) {
+            axis = new NodeComp(rtx, mOperand1, mOperand2, kind);
+        } else if (mComp.equals(">>")) {
             kind = CompKind.FO;
-            axis = new NodeComp(rtx, operand1, operand2, kind);
+            axis = new NodeComp(rtx, mOperand1, mOperand2, kind);
         } else {
-            throw new IllegalStateException(comp + " is not a valid comparison.");
+            throw new IllegalStateException(mComp + " is not a valid comparison.");
 
         }
 
@@ -345,21 +353,21 @@ public final class PipelineBuilder {
     /**
      * Adds an operator expression to the pipeline.
      * 
-     * @param transaction
+     * @param mTransaction
      *            Transaction to operate with.
-     * @param operator
+     * @param mOperator
      *            Operator type.
      */
-    public void addOperatorExpression(final IReadTransaction transaction, final String operator) {
+    public void addOperatorExpression(final IReadTransaction mTransaction, final String mOperator) {
 
         assert getPipeStack().size() >= 1;
 
-        final IReadTransaction rtx = transaction;
+        final IReadTransaction rtx = mTransaction;
 
-        final IAxis operand2 = getPipeStack().pop().getExpr();
+        final IAxis mOperand2 = getPipeStack().pop().getExpr();
 
         // the unary operation only has one operator
-        final IAxis operand1 = getPipeStack().pop().getExpr();
+        final IAxis mOperand1 = getPipeStack().pop().getExpr();
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
         }
@@ -367,22 +375,22 @@ public final class PipelineBuilder {
         final IAxis axis;
 
         // TODO: use typeswitch of JAVA 7
-        if (operator.equals("+")) {
-            axis = new AddOpAxis(rtx, operand1, operand2);
-        } else if (operator.equals("-")) {
+        if (mOperator.equals("+")) {
+            axis = new AddOpAxis(rtx, mOperand1, mOperand2);
+        } else if (mOperator.equals("-")) {
 
-            axis = new SubOpAxis(rtx, operand1, operand2);
-        } else if (operator.equals("*")) {
-            axis = new MulOpAxis(rtx, operand1, operand2);
-        } else if (operator.equals("div")) {
-            axis = new DivOpAxis(rtx, operand1, operand2);
-        } else if (operator.equals("idiv")) {
-            axis = new IDivOpAxis(rtx, operand1, operand2);
-        } else if (operator.equals("mod")) {
-            axis = new ModOpAxis(rtx, operand1, operand2);
+            axis = new SubOpAxis(rtx, mOperand1, mOperand2);
+        } else if (mOperator.equals("*")) {
+            axis = new MulOpAxis(rtx, mOperand1, mOperand2);
+        } else if (mOperator.equals("div")) {
+            axis = new DivOpAxis(rtx, mOperand1, mOperand2);
+        } else if (mOperator.equals("idiv")) {
+            axis = new IDivOpAxis(rtx, mOperand1, mOperand2);
+        } else if (mOperator.equals("mod")) {
+            axis = new ModOpAxis(rtx, mOperand1, mOperand2);
         } else {
             // TODO: unary operator
-            throw new IllegalStateException(operator + " is not a valid operator.");
+            throw new IllegalStateException(mOperator + " is not a valid operator.");
 
         }
 
@@ -392,78 +400,78 @@ public final class PipelineBuilder {
     /**
      * Adds a union expression to the pipeline.
      * 
-     * @param transaction
+     * @param mTransaction
      *            Transaction to operate with.
      */
-    public void addUnionExpression(final IReadTransaction transaction) {
+    public void addUnionExpression(final IReadTransaction mTransaction) {
 
         assert getPipeStack().size() >= 2;
 
-        final IAxis operand2 = getPipeStack().pop().getExpr();
-        final IAxis operand1 = getPipeStack().pop().getExpr();
+        final IAxis mOperand2 = getPipeStack().pop().getExpr();
+        final IAxis mOperand1 = getPipeStack().pop().getExpr();
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
         }
-        getExpression().add(new DupFilterAxis(transaction, new UnionAxis(transaction, operand1, operand2)));
+        getExpression().add(new DupFilterAxis(mTransaction, new UnionAxis(mTransaction, 
+               mOperand1, mOperand2)));
     }
 
     /**
      * Adds a and expression to the pipeline.
      * 
-     * @param transaction
+     * @param mTransaction
      *            Transaction to operate with.
      */
-    public void addAndExpression(final IReadTransaction transaction) {
-
+    public void addAndExpression(final IReadTransaction mTransaction) {
         assert getPipeStack().size() >= 2;
 
-        final IAxis operand2 = getPipeStack().pop().getExpr();
+        final IAxis mOperand2 = getPipeStack().pop().getExpr();
         final IAxis operand1 = getPipeStack().pop().getExpr();
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
         }
-        getExpression().add(new AndExpr(transaction, operand1, operand2));
+        getExpression().add(new AndExpr(mTransaction, operand1, mOperand2));
     }
 
     /**
      * Adds a or expression to the pipeline.
      * 
-     * @param transaction
+     * @param mTransaction
      *            Transaction to operate with.
      */
-    public void addOrExpression(final IReadTransaction transaction) {
+    public void addOrExpression(final IReadTransaction mTransaction) {
 
         assert getPipeStack().size() >= 2;
 
-        final IAxis operand2 = getPipeStack().pop().getExpr();
-        final IAxis operand1 = getPipeStack().pop().getExpr();
+        final IAxis mOperand2 = getPipeStack().pop().getExpr();
+        final IAxis mOperand1 = getPipeStack().pop().getExpr();
 
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
         }
-        getExpression().add(new OrExpr(transaction, operand1, operand2));
+        getExpression().add(new OrExpr(mTransaction, mOperand1, mOperand2));
     }
 
     /**
      * Adds a intersect or a exception expression to the pipeline.
      * 
-     * @param transaction
+     * @param mTransaction
      *            Transaction to operate with.
-     * @param isIntersect
+     * @param mIsIntersect
      *            true, if expression is an intersection
      */
-    public void addIntExcExpression(final IReadTransaction transaction, final boolean isIntersect) {
+    public void addIntExcExpression(final IReadTransaction mTransaction, final boolean mIsIntersect) {
 
         assert getPipeStack().size() >= 2;
 
-        final IReadTransaction rtx = transaction;
+        final IReadTransaction rtx = mTransaction;
 
-        final IAxis operand2 = getPipeStack().pop().getExpr();
-        final IAxis operand1 = getPipeStack().pop().getExpr();
+        final IAxis mOperand2 = getPipeStack().pop().getExpr();
+        final IAxis mOperand1 = getPipeStack().pop().getExpr();
 
         final IAxis axis =
-            isIntersect ? new IntersectAxis(rtx, operand1, operand2)
-                : new ExceptAxis(rtx, operand1, operand2);
+            mIsIntersect ? new IntersectAxis(rtx, mOperand1, mOperand2)
+                : new ExceptAxis(rtx, mOperand1, mOperand2);
 
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
@@ -474,15 +482,15 @@ public final class PipelineBuilder {
     /**
      * Adds a literal expression to the pipeline.
      * 
-     * @param transaction
+     * @param mTransaction
      *            Transaction to operate with.
-     * @param itemKey
+     * @param mItemKey
      *            key of the literal expression.
      */
-    public void addLiteral(final IReadTransaction transaction, final int itemKey) {
+    public void addLiteral(final IReadTransaction mTransaction, final int mItemKey) {
 
         // addExpressionSingle();
-        getExpression().add(new LiteralExpr(transaction, itemKey));
+        getExpression().add(new LiteralExpr(mTransaction, mItemKey));
     }
 
     /**
@@ -501,12 +509,12 @@ public final class PipelineBuilder {
      * 
      * @param axis
      *            the axis step to add to the pipeline.
-     * @param filter
+     * @param mFilter
      *            the node test to add to the pipeline.
      */
-    public void addStep(final IAxis axis, final IFilter filter) {
+    public void addStep(final IAxis axis, final IFilter mFilter) {
 
-        getExpression().add(new FilterAxis(axis, filter));
+        getExpression().add(new FilterAxis(axis, mFilter));
     }
 
     /**
@@ -530,22 +538,23 @@ public final class PipelineBuilder {
     /**
      * Adds a predicate to the pipeline.
      * 
-     * @param transaction
+     * @param mTransaction
      *            Transaction to operate with.
      */
-    public void addPredicate(final IReadTransaction transaction) {
+    public void addPredicate(final IReadTransaction mTransaction) {
 
         assert getPipeStack().size() >= 2;
 
-        IAxis predicate = getPipeStack().pop().getExpr();
+        final IAxis mPredicate = getPipeStack().pop().getExpr();
 
-        if (predicate instanceof LiteralExpr) {
+        if (mPredicate instanceof LiteralExpr) {
 
-            predicate.hasNext();
+            mPredicate.hasNext();
             // if is numeric literal -> abbrev for position()
-            int type = transaction.getNode().getTypeKey();
-            if (type == transaction.keyForName("xs:integer") || type == transaction.keyForName("xs:double")
-            || type == transaction.keyForName("xs:float") || type == transaction.keyForName("xs:decimal")) {
+            final int type = mTransaction.getNode().getTypeKey();
+            if (type == mTransaction.keyForName("xs:integer") || type == mTransaction.keyForName("xs:double")
+                || type == mTransaction.keyForName("xs:float") 
+                || type == mTransaction.keyForName("xs:decimal")) {
 
                 throw new IllegalStateException("function fn:position() is not implemented yet.");
 
@@ -571,7 +580,7 @@ public final class PipelineBuilder {
             }
         }
 
-        getExpression().add(new PredicateFilterAxis(transaction, predicate));
+        getExpression().add(new PredicateFilterAxis(mTransaction, mPredicate));
 
     }
 
@@ -579,50 +588,50 @@ public final class PipelineBuilder {
      * Adds a SomeExpression or an EveryExpression to the pipeline, depending on
      * the parameter isSome.
      * 
-     * @param transaction
+     * @param mTransaction
      *            Transaction to operate with.
-     * @param isSome
+     * @param mIsSome
      *            defines whether a some- or an EveryExpression is used.
-     * @param varNum
+     * @param mVarNum
      *            number of binding variables
      */
-    public void addQuantifierExpr(final IReadTransaction transaction, final boolean isSome, final int varNum) {
+    public void addQuantifierExpr(final IReadTransaction mTransaction, final boolean mIsSome, final int mVarNum) {
 
-        assert getPipeStack().size() >= (varNum + 1);
+        assert getPipeStack().size() >= (mVarNum + 1);
 
         final IAxis satisfy = getPipeStack().pop().getExpr();
         final List<IAxis> vars = new ArrayList<IAxis>();
-        int num = varNum;
+        int num = mVarNum;
 
-        while(num-- > 0) {
+        while (num-- > 0) {
             // invert current order of variables to get original variable order
             vars.add(num, getPipeStack().pop().getExpr());
         }
 
-        IAxis axis =
-            isSome ? new SomeExpr(transaction, vars, satisfy) : new EveryExpr(transaction, vars, satisfy);
+        final IAxis mAxis =
+            mIsSome ? new SomeExpr(mTransaction, vars, satisfy) : new EveryExpr(mTransaction, vars, satisfy);
 
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
         }
-        getExpression().add(axis);
+        getExpression().add(mAxis);
     }
 
     /**
      * Adds a castable expression to the pipeline.
      * 
-     * @param transaction
+     * @param mTransaction
      *            Transaction to operate with.
-     * @param singleType
+     * @param mSingleType
      *            single type the context item will be casted to.
      */
-    public void addCastableExpr(final IReadTransaction transaction, final SingleType singleType) {
+    public void addCastableExpr(final IReadTransaction mTransaction, final SingleType mSingleType) {
 
         assert getPipeStack().size() >= 1;
 
         final IAxis candidate = getPipeStack().pop().getExpr();
 
-        final IAxis axis = new CastableExpr(transaction, candidate, singleType);
+        final IAxis axis = new CastableExpr(mTransaction, candidate, mSingleType);
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
         }
@@ -633,17 +642,17 @@ public final class PipelineBuilder {
     /**
      * Adds a range expression to the pipeline.
      * 
-     * @param transaction
+     * @param mTransaction
      *            Transaction to operate with.
      */
-    public void addRangeExpr(final IReadTransaction transaction) {
+    public void addRangeExpr(final IReadTransaction mTransaction) {
 
         assert getPipeStack().size() >= 2;
 
-        final IAxis operand2 = getPipeStack().pop().getExpr();
-        final IAxis operand1 = getPipeStack().pop().getExpr();
+        final IAxis mOperand2 = getPipeStack().pop().getExpr();
+        final IAxis mOperand1 = getPipeStack().pop().getExpr();
 
-        final IAxis axis = new RangeAxis(transaction, operand1, operand2);
+        final IAxis axis = new RangeAxis(mTransaction, mOperand1, mOperand2);
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
         }
@@ -654,18 +663,18 @@ public final class PipelineBuilder {
     /**
      * Adds a cast expression to the pipeline.
      * 
-     * @param transaction
+     * @param mTransaction
      *            Transaction to operate with.
-     * @param singleType
+     * @param mSingleType
      *            single type the context item will be casted to.
      */
-    public void addCastExpr(final IReadTransaction transaction, final SingleType singleType) {
+    public void addCastExpr(final IReadTransaction mTransaction, final SingleType mSingleType) {
 
         assert getPipeStack().size() >= 1;
 
         final IAxis candidate = getPipeStack().pop().getExpr();
 
-        final IAxis axis = new CastExpr(transaction, candidate, singleType);
+        final IAxis axis = new CastExpr(mTransaction, candidate, mSingleType);
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
         }
@@ -676,18 +685,18 @@ public final class PipelineBuilder {
     /**
      * Adds a instance of expression to the pipeline.
      * 
-     * @param transaction
+     * @param mTransaction
      *            Transaction to operate with.
-     * @param sequenceType
+     * @param mSequenceType
      *            sequence type the context item should match.
      */
-    public void addInstanceOfExpr(final IReadTransaction transaction, final SequenceType sequenceType) {
+    public void addInstanceOfExpr(final IReadTransaction mTransaction, final SequenceType mSequenceType) {
 
         assert getPipeStack().size() >= 1;
 
         final IAxis candidate = getPipeStack().pop().getExpr();
 
-        final IAxis axis = new InstanceOfExpr(transaction, candidate, sequenceType);
+        final IAxis axis = new InstanceOfExpr(mTransaction, candidate, mSequenceType);
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
         }
@@ -698,12 +707,12 @@ public final class PipelineBuilder {
     /**
      * Adds a treat as expression to the pipeline.
      * 
-     * @param transaction
+     * @param mTransaction
      *            Transaction to operate with.
-     * @param sequenceType
+     * @param mSequenceType
      *            sequence type the context item will be treated as.
      */
-    public void addTreatExpr(final IReadTransaction transaction, final SequenceType sequenceType) {
+    public void addTreatExpr(final IReadTransaction mTransaction, final SequenceType mSequenceType) {
 
         throw new IllegalStateException("the Treat expression is not supported yet");
 
@@ -713,19 +722,19 @@ public final class PipelineBuilder {
      * Adds a variable expression to the pipeline. Adds the expression that will
      * evaluate the results the variable holds.
      * 
-     * @param transaction
+     * @param mTransaction
      *            Transaction to operate with.
-     * @param varName
+     * @param mVarName
      *            name of the variable
      */
-    public void addVariableExpr(final IReadTransaction transaction, final String varName) {
+    public void addVariableExpr(final IReadTransaction mTransaction, final String mVarName) {
 
         assert getPipeStack().size() >= 1;
 
         final IAxis bindingSeq = getPipeStack().pop().getExpr();
 
-        final IAxis axis = new VariableAxis(transaction, bindingSeq);
-        mVarRefMap.put(varName, axis);
+        final IAxis axis = new VariableAxis(mTransaction, bindingSeq);
+        mVarRefMap.put(mVarName, axis);
 
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
@@ -736,21 +745,21 @@ public final class PipelineBuilder {
     /**
      * Adds a function to the pipeline.
      * 
-     * @param transaction
+     * @param mTransaction
      *            Transaction to operate with.
-     * @param funcName
+     * @param mFuncName
      *            The name of the function
-     * @param num
+     * @param mNum
      *            The number of arguments that are passed to the function
      */
-    public void addFunction(final IReadTransaction transaction, final String funcName, final int num) {
+    public void addFunction(final IReadTransaction mTransaction, final String mFuncName, final int mNum) {
 
-        assert getPipeStack().size() >= num;
+        assert getPipeStack().size() >= mNum;
 
-        final List<IAxis> args = new ArrayList<IAxis>(num);
+        final List<IAxis> args = new ArrayList<IAxis>(mNum);
         // arguments are stored on the stack in reverse order -> invert arg
         // order
-        for (int i = 0; i < num; i++) {
+        for (int i = 0; i < mNum; i++) {
             args.add(getPipeStack().pop().getExpr());
         }
 
@@ -766,8 +775,9 @@ public final class PipelineBuilder {
         // get right function type
         final FuncDef func;
         try {
-            func = FuncDef.values()[mFuncMap.get(funcName)];
-        } catch (NullPointerException e) {
+            func = FuncDef.values()[mFuncMap.get(mFuncName)];
+        } catch (final NullPointerException e) {
+            LOGWRAPPER.error(e);
             throw new XPathError(ErrorType.XPST0017);
         }
 
@@ -775,7 +785,7 @@ public final class PipelineBuilder {
         final Class<? extends AbstractFunction> function = func.getFunc();
         final Integer min = func.getMin();
         final Integer max = func.getMax();
-        final Integer returnType = transaction.keyForName(func.getReturnType());
+        final Integer returnType = mTransaction.keyForName(func.getReturnType());
 
         // parameter types of the function's constructor
         final Class<?>[] paramTypes = {
@@ -785,22 +795,27 @@ public final class PipelineBuilder {
         try {
             // instantiate function class with right constructor
             final Constructor<?> cons = function.getConstructor(paramTypes);
-            final IAxis axis = (IAxis)cons.newInstance(transaction, args, min, max, returnType);
+            final IAxis axis = (IAxis)cons.newInstance(mTransaction, args, min, max, returnType);
 
             if (getPipeStack().empty() || getExpression().getSize() != 0) {
                 addExpressionSingle();
             }
             getExpression().add(axis);
 
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
+            LOGWRAPPER.error(e);
             throw new XPathError(ErrorType.XPST0017);
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
+            LOGWRAPPER.error(e);
             throw new XPathError(ErrorType.XPST0017);
-        } catch (InstantiationException e) {
+        } catch (final InstantiationException e) {
+            LOGWRAPPER.error(e);
             throw new IllegalStateException("Function not implemented yet.");
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
+            LOGWRAPPER.error(e);
             throw new XPathError(ErrorType.XPST0017);
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
+            LOGWRAPPER.error(e);
             throw new XPathError(ErrorType.XPST0017);
         }
 
@@ -810,18 +825,18 @@ public final class PipelineBuilder {
      * Adds a VarRefExpr to the pipeline. This Expression holds a reference to
      * the current context item of the specified variable.
      * 
-     * @param transaction
+     * @param mTransaction
      *            the transaction to operate on.
-     * @param varName
+     * @param mVarName
      *            the name of the variable
      */
-    public void addVarRefExpr(final IReadTransaction transaction, final String varName) {
+    public void addVarRefExpr(final IReadTransaction mTransaction, final String mVarName) {
 
-        final VariableAxis axis = (VariableAxis)mVarRefMap.get(varName);
+        final VariableAxis axis = (VariableAxis)mVarRefMap.get(mVarName);
         if (axis != null) {
-            getExpression().add(new VarRefExpr(transaction, axis));
+            getExpression().add(new VarRefExpr(mTransaction, axis));
         } else {
-            throw new IllegalStateException("Variable " + varName + " unkown.");
+            throw new IllegalStateException("Variable " + mVarName + " unkown.");
         }
 
     }

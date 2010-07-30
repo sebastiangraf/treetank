@@ -1,3 +1,20 @@
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
+ * 
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ * 
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * 
+ */
+
 package com.treetank.service.revIndex;
 
 import java.io.File;
@@ -14,6 +31,9 @@ import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.utils.NamePageHash;
+import com.treetank.utils.LogWrapper;
+
+import org.slf4j.LoggerFactory;
 
 /**
  * Revisioned Index Structure. Consisting of a trie and a document-trie. Both
@@ -25,6 +45,12 @@ import com.treetank.utils.NamePageHash;
  */
 public final class RevIndex {
 
+    /**
+     * Log wrapper for better output.
+     */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(RevIndex.class));
+    
     final static String EMPTY_STRING = "";
 
     // MetaRoot Elemens
@@ -56,54 +82,56 @@ public final class RevIndex {
 
     // private final static Pattern PATTERN = Pattern.compile("[a-zA-Z]+");
 
-    private long indexRev;
+    private long mIndexRev;
 
-    private long currentDocKey = -1;
+    private long mCurrentDocKey = -1;
 
     /**
-     * {@link ISession} to the index structure
+     * {@link ISession} to the index structure.
      */
-    private final ISession indexSession;
+    private final ISession mIndexSession;
     /**
      * {@link IWriteTransaction} to trie session.
      */
-    private final IReadTransaction rtx;
+    private final IReadTransaction mRtx;
 
     /**
-     * Constructor
+     * Constructor.
      * 
      * 
-     * @param index
+     * @param mIndex
      *            folder to be access.
-     * @param rev
+     * @param mRev
      *            revision to be accessed
      * @throws TreetankException
      *             if any access to Treetank fails
      */
-    public RevIndex(final File index, final long rev) throws TreetankException {
-        final IDatabase db = Database.openDatabase(index);
-        indexSession = db.getSession();
-        if (rev < 0) {
-            rtx = indexSession.beginWriteTransaction();
+    public RevIndex(final File mIndex, final long mRev) throws TreetankException {
+        final IDatabase db = Database.openDatabase(mIndex);
+        mIndexSession = db.getSession();
+        if (mRev < 0) {
+            mRtx = mIndexSession.beginWriteTransaction();
         } else {
-            this.rtx = indexSession.beginReadTransaction(rev);
+            this.mRtx = mIndexSession.beginReadTransaction(mRev);
         }
     }
 
-    public void compact(final double threshold) {
+    public void compact(final double mThreshold) {
 
     }
 
     /**
-     * Inserting the next node in the document tree
+     * Inserting the next node in the document tree.
      * 
-     * @param docs
+     * @param mDocs
      *            stack with order to be inserted.
+     * @throws TreetankException
+     *            if can't insert next node.
      */
-    public void insertNextNode(final Stack<String> docs) throws TreetankException {
-        if (rtx instanceof IWriteTransaction) {
-            final IWriteTransaction wtx = (IWriteTransaction)rtx;
-            currentDocKey = DocumentTreeNavigator.adaptDocTree(wtx, docs);
+    public void insertNextNode(final Stack<String> mDocs) throws TreetankException {
+        if (mRtx instanceof IWriteTransaction) {
+            final IWriteTransaction wtx = (IWriteTransaction)mRtx;
+            mCurrentDocKey = DocumentTreeNavigator.adaptDocTree(wtx, mDocs);
         }
     }
 
@@ -111,24 +139,25 @@ public final class RevIndex {
      * Indexing a term with the given Stack full of uuids of an hierarchical
      * structure.
      * 
-     * @param term
+     * @param mTerm
      *            the term to be indexed.
+     * @throws TreetankException
+     *            if can't insert next term in current node.
      */
-    public void insertNextTermForCurrentNode(final String term) throws TreetankException {
+    public void insertNextTermForCurrentNode(final String mTerm) throws TreetankException {
         // check if rtx is instance of WriteTransaction
-        if (rtx instanceof IWriteTransaction) {
-            final IWriteTransaction wtx = (IWriteTransaction)rtx;
+        if (mRtx instanceof IWriteTransaction) {
+            final IWriteTransaction wtx = (IWriteTransaction)mRtx;
 
             // Navigating in the trie
-            TrieNavigator.adaptTrie(wtx, term);
+            TrieNavigator.adaptTrie(wtx, mTerm);
 
             // If the trienode has no child, insert the root for the
             // references..
             if (!wtx.moveToFirstChild()) {
                 wtx.insertElementAsFirstChild(new QName(DOCUMENTS_REF_ROOTELEMENT));
-            } else
+            } else {
             // ..otherwise go to the first child..
-            {
                 boolean found = false;
                 // over there, search for the document reference root in the
                 // combined trie/reference structure
@@ -153,15 +182,15 @@ public final class RevIndex {
                         "At each reference, there must be a corresponding text containing the reference!");
                 }
                 final long lastKey = Long.parseLong(wtx.getValueOfCurrentNode());
-                if (lastKey != currentDocKey) {
+                if (lastKey != mCurrentDocKey) {
                     wtx.moveToParent();
                     wtx.moveToParent();
                     wtx.insertElementAsFirstChild(new QName(DOCUMENTREFERENCE_ELEMENTNAME));
-                    wtx.insertTextAsFirstChild(new StringBuilder().append(currentDocKey).toString());
+                    wtx.insertTextAsFirstChild(new StringBuilder().append(mCurrentDocKey).toString());
                 }
             } else {
                 wtx.insertElementAsFirstChild(new QName(DOCUMENTREFERENCE_ELEMENTNAME, EMPTY_STRING));
-                wtx.insertTextAsFirstChild(new StringBuilder().append(currentDocKey).toString());
+                wtx.insertTextAsFirstChild(new StringBuilder().append(mCurrentDocKey).toString());
             }
         }
     }
@@ -171,18 +200,21 @@ public final class RevIndex {
      * the identifier stored with every field in the structure to provide an
      * unique identifier.
      * 
+     * @throws TreetankException
+     *            if can't finish index input.
      * @return the index revision number.
      */
     public long finishIndexInput() throws TreetankException {
-        if (rtx instanceof IWriteTransaction) {
-            final IWriteTransaction wtx = (IWriteTransaction)rtx;
+        if (mRtx instanceof IWriteTransaction) {
+            final IWriteTransaction wtx = (IWriteTransaction)mRtx;
             try {
                 wtx.commit();
             } catch (final TreetankIOException exc) {
+                LOGWRAPPER.error(exc);
                 throw new IllegalStateException(exc);
             }
             wtx.moveToDocumentRoot();
-            return indexRev;
+            return mIndexRev;
         } else {
             return -1;
         }
@@ -192,12 +224,13 @@ public final class RevIndex {
      * Closing the index structure. No automatic commit is performed.
      */
     public void close() {
-        if (rtx instanceof IWriteTransaction) {
+        if (mRtx instanceof IWriteTransaction) {
             try {
-                ((IWriteTransaction)rtx).commit();
-                rtx.close();
-                indexSession.close();
+                ((IWriteTransaction)mRtx).commit();
+                mRtx.close();
+                mIndexSession.close();
             } catch (final TreetankException exc) {
+                LOGWRAPPER.error(exc);
                 throw new IllegalStateException(exc);
             }
         }
@@ -209,28 +242,29 @@ public final class RevIndex {
      * reached, the following method is getting all the leaves in the document
      * structure and gives back the results as a list of keys.
      * 
-     * @param docLong
+     * @param mDocLong
      *            the root of the document-root structure
      * @return the results as a list of nodes
      */
-    public LinkedList<Long> getDocumentsForDocRoot(final long docLong) {
+    public LinkedList<Long> getDocumentsForDocRoot(final long mDocLong) {
 
         final LinkedList<Long> returnVal = new LinkedList<Long>();
-        rtx.moveTo(docLong);
-        rtx.moveToFirstChild();
+        mRtx.moveTo(mDocLong);
+        mRtx.moveToFirstChild();
         do {
             // got doc-ref-root, taking all childs
-            if (rtx.getNode().getNameKey() == NamePageHash.generateHashForString(DOCUMENTS_REF_ROOTELEMENT)) {
-                rtx.moveToFirstChild();
+            if (mRtx.getNode().getNameKey()
+                == NamePageHash.generateHashForString(DOCUMENTS_REF_ROOTELEMENT)) {
+                mRtx.moveToFirstChild();
                 do {
-                    rtx.moveToFirstChild();
-                    final long key = Long.parseLong(rtx.getValueOfCurrentNode());
+                    mRtx.moveToFirstChild();
+                    final long key = Long.parseLong(mRtx.getValueOfCurrentNode());
                     returnVal.add(key);
-                    rtx.moveToParent();
-                } while(rtx.moveToRightSibling());
+                    mRtx.moveToParent();
+                } while(mRtx.moveToRightSibling());
                 break;
             }
-        } while(rtx.moveToRightSibling());
+        } while(mRtx.moveToRightSibling());
 
         return returnVal;
 
@@ -242,27 +276,27 @@ public final class RevIndex {
      * trie. If nothing is found, the <code>ENodes.UNKOWN</code> key is given
      * back.
      * 
-     * @param term
+     * @param mTerm
      *            to be searched in the trie structure
      * @return the root for the document key
      * @throws TreetankException
      *             for handling treetank errors
      */
-    public long getDocRootForTerm(final String term) throws TreetankException {
-        return TrieNavigator.getDocRootInTrie(rtx, term);
+    public long getDocRootForTerm(final String mTerm) throws TreetankException {
+        return TrieNavigator.getDocRootInTrie(mRtx, mTerm);
 
     }
 
     /**
-     * Getting all the ancestors related to a key in the document structure
+     * Getting all the ancestors related to a key in the document structure.
      * 
-     * @param key
+     * @param mKey
      *            the key in the structure
      * @return a stack containing all the ancestors
      */
-    public Stack<String> getAncestors(final long key) {
-        this.rtx.moveTo(key);
-        return DocumentTreeNavigator.getDocElements(rtx);
+    public Stack<String> getAncestors(final long mKey) {
+        this.mRtx.moveTo(mKey);
+        return DocumentTreeNavigator.getDocElements(mRtx);
     }
 
     // private final void checkAndUpdateLeafAttribute() {
@@ -290,22 +324,28 @@ public final class RevIndex {
     // }
 
     IReadTransaction getTrans() {
-        return rtx;
+        return mRtx;
     }
 
     /**
      * Initialising basic structure.
+     * 
+     * @param mRtx
+     *             Read transaction.
+     * @throws TreetankException
+     *             for handling treetank errors.
      */
-    static void initialiseBasicStructure(final IReadTransaction rtx) throws TreetankException {
-        if (rtx instanceof IWriteTransaction) {
-            final IWriteTransaction wtx = (IWriteTransaction)rtx;
+    static void initialiseBasicStructure(final IReadTransaction mRtx) throws TreetankException {
+        if (mRtx instanceof IWriteTransaction) {
+            final IWriteTransaction wtx = (IWriteTransaction)mRtx;
             wtx.moveToDocumentRoot();
             wtx.insertElementAsFirstChild(new QName(METAROOT_ELEMENTNAME));
             wtx.insertElementAsRightSibling(new QName(TRIEROOT_ELEMENTNAME));
             wtx.insertElementAsRightSibling(new QName(DOCUMENTROOT_ELEMENTNAME));
             try {
                 wtx.commit();
-            } catch (TreetankIOException exc) {
+            } catch (final TreetankIOException exc) {
+                LOGWRAPPER.error(exc);
                 throw new IllegalStateException(exc);
             }
         }

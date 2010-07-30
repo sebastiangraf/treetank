@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: TextNode.java 4448 2008-08-31 07:41:34Z kramis $
  */
 
 package com.treetank.node;
@@ -38,19 +37,19 @@ public final class TextNode extends AbsStructNode {
     private byte[] mValue;
 
     /**
-     * Constructor for TextNode
+     * Constructor for TextNode.
      * 
-     * @param longBuilder
+     * @param mLongBuilder
      *            vals of longs to set
-     * @param intBuilder
+     * @param mIntBuilder
      *            vals of ints to set
-     * @param value
+     * @param mValue
      *            val to set
      */
-    TextNode(final long[] longBuilder, final int[] intBuilder, final byte[] value) {
-        super(longBuilder, intBuilder);
-        mValue = value;
-        mIntData[VALUE_LENGTH] = value.length;
+    TextNode(final long[] mLongBuilder, final int[] mIntBuilder, final byte[] mValue) {
+        super(mLongBuilder, mIntBuilder);
+        this.mValue = mValue;
+        mIntData[VALUE_LENGTH] = mValue.length;
     }
 
     /**
@@ -73,28 +72,28 @@ public final class TextNode extends AbsStructNode {
      * {@inheritDoc}
      */
     @Override
-    public void setValue(final int valueType, final byte[] value) {
-        mIntData[AbsNode.TYPE_KEY] = valueType;
-        mIntData[VALUE_LENGTH] = value.length;
-        mValue = value;
+    public void setValue(final int mValueType, final byte[] mValue) {
+        mIntData[AbsNode.TYPE_KEY] = mValueType;
+        mIntData[VALUE_LENGTH] = mValue.length;
+        this.mValue = mValue;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setType(final int valueType) {
-        mIntData[AbsNode.TYPE_KEY] = valueType;
+    public void setType(final int mValueType) {
+        mIntData[AbsNode.TYPE_KEY] = mValueType;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void serialize(final ITTSink out) {
-        super.serialize(out);
+    public void serialize(final ITTSink mOut) {
+        super.serialize(mOut);
         for (final byte byteVal : mValue) {
-            out.writeByte(byteVal);
+            mOut.writeByte(byteVal);
         }
     }
 
@@ -104,7 +103,7 @@ public final class TextNode extends AbsStructNode {
     }
 
     @Override
-    public void setFirstChildKey(final long firstChildKey) {
+    public void setFirstChildKey(final long mFirstChildKey) {
         throw new UnsupportedOperationException();
     }
 
@@ -119,7 +118,7 @@ public final class TextNode extends AbsStructNode {
     }
 
     @Override
-    public void setChildCount(long childCount) {
+    public void setChildCount(long mChildCount) {
         throw new UnsupportedOperationException();
     }
 
@@ -134,26 +133,27 @@ public final class TextNode extends AbsStructNode {
     @Override
     public AbsNode clone() {
         final AbsNode toClone =
-            new TextNode(AbsNode.cloneData(mLongData), AbsNode.cloneData(mIntData), AbsNode.cloneData(mValue));
+            new TextNode(AbsNode.cloneData(mLongData), AbsNode.cloneData(mIntData),
+                AbsNode.cloneData(mValue));
         return toClone;
     }
 
-    public final static AbsNode createData(final long nodeKey, final long parentKey, final long leftSibKey,
-        final long rightSibKey, final int type, final byte[] value) {
+    public static AbsNode createData(final long mNodeKey, final long mParentKey, final long mLeftSibKey,
+        final long rightSibKey, final int mType, final byte[] mValue) {
         final long[] longData = new long[ENodes.TEXT_KIND.getLongSize()];
         final int[] intData = new int[ENodes.TEXT_KIND.getIntSize()];
-        longData[AbsNode.NODE_KEY] = nodeKey;
-        longData[AbsNode.PARENT_KEY] = parentKey;
-        longData[AbsStructNode.LEFT_SIBLING_KEY] = leftSibKey;
+        longData[AbsNode.NODE_KEY] = mNodeKey;
+        longData[AbsNode.PARENT_KEY] = mParentKey;
+        longData[AbsStructNode.LEFT_SIBLING_KEY] = mLeftSibKey;
         longData[AbsStructNode.RIGHT_SIBLING_KEY] = rightSibKey;
         longData[AbsStructNode.FIRST_CHILD_KEY] = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
-        intData[AbsNode.TYPE_KEY] = type;
-        return new TextNode(longData, intData, value);
+        intData[AbsNode.TYPE_KEY] = mType;
+        return new TextNode(longData, intData, mValue);
     }
 
-    public final static AbsNode createData(final long nodeKey, final TextNode node) {
-        return createData(nodeKey, node.getParentKey(), node.getLeftSiblingKey(), node.getRightSiblingKey(),
-            node.getTypeKey(), node.getRawValue());
+    public static AbsNode createData(final long mNodeKey, final TextNode mNode) {
+        return createData(mNodeKey, mNode.getParentKey(), mNode.getLeftSiblingKey(),
+            mNode.getRightSiblingKey(), mNode.getTypeKey(), mNode.getRawValue());
     }
 
     @Override

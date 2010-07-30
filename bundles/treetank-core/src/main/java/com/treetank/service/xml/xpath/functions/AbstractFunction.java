@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: AbstractFunction.java 4246 2008-07-08 08:54:09Z scherer $
  */
 
 package com.treetank.service.xml.xpath.functions;
@@ -110,12 +109,12 @@ public abstract class AbstractFunction extends AbstractExpression {
      * Functions and Operators</a>. Throws an XPath error in case of a non-valid
      * number.
      * 
-     * @param number
+     * @param mNumber
      *            number of given function arguments
      */
-    public final void varifyParam(final int number) {
+    public final void varifyParam(final int mNumber) {
 
-        if (number < mMin || number > mMax) {
+        if (mNumber < mMin || mNumber > mMax) {
             throw new XPathError(ErrorType.XPST0017);
         }
     }
@@ -124,12 +123,12 @@ public abstract class AbstractFunction extends AbstractExpression {
      * {@inheritDoc}
      */
     @Override
-    public void reset(final long nodeKey) {
+    public void reset(final long mNodeKey) {
 
-        super.reset(nodeKey);
+        super.reset(mNodeKey);
         if (mArgs != null) {
             for (IAxis ax : mArgs) {
-                ax.reset(nodeKey);
+                ax.reset(mNodeKey);
             }
         }
     }

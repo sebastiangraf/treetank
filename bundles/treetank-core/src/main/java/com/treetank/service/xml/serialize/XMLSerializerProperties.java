@@ -43,15 +43,11 @@ public final class XMLSerializerProperties {
 
     // ============== Class constants. =================
 
-    /** 
-     * Logger for determining the log level. 
-    */
-    private static final Logger LOGGER = LoggerFactory.getLogger(XMLSerializerProperties.class);
-
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LOGGER);
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(XMLSerializerProperties.class));
     
     /** Properties. */
     private final ConcurrentMap<String, Object> mProps = new ConcurrentHashMap<String, Object>();
