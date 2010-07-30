@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: IItemList.java 4246 2008-07-08 08:54:09Z scherer $
  */
 
 package com.treetank.api;
@@ -41,19 +40,19 @@ public interface IItemList {
      * and return it. The item key is the negatived index of the item in the
      * item list The key is negatived to make it distinguishable from a node
      * 
-     * @param item
+     * @param mItem
      *            The item to add.
      * @return The item key.
      */
-    int addItem(final IItem item);
+    int addItem(final IItem mItem);
 
     /**
      * Returns the item at a given index in the item list. If the given index is
      * the item key, it has to be negated before.
      * 
-     * @param key
+     * @param mKey
      *            key of the item, that should be returned
      * @return item at the given index.
      */
-    IItem getItem(final long key);
+    IItem getItem(final long mKey);
 }

@@ -28,6 +28,8 @@ import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 
+import org.slf4j.LoggerFactory;
+
 /**
  * This class acts as a commando line interface to navigate through a treetank
  * structure.
@@ -37,6 +39,12 @@ import com.treetank.exception.TreetankException;
  */
 public final class TreeTankCommandoLineExplorer {
 
+    /**
+     * Log wrapper for better output.
+     */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(TreeTankCommandoLineExplorer.class));
+    
     private TreeTankCommandoLineExplorer() {
         // Not used over here.
     }
@@ -47,7 +55,7 @@ public final class TreeTankCommandoLineExplorer {
     private static final String COMMANDDELIM = ":";
 
     /**
-     * Finding file for a given command.z
+     * Finding file for a given command.z.
      * 
      * @param mCommandLine
      *            the line to be analysed
@@ -154,7 +162,7 @@ public final class TreeTankCommandoLineExplorer {
             }
 
         } catch (final Exception e) {
-            e.printStackTrace();
+            LOGWRAPPER.error(e);
             if (rtx != null) {
                 rtx.close();
             }
@@ -312,6 +320,7 @@ public final class TreeTankCommandoLineExplorer {
                         builder.append("node with key ").append(nodeKey).append(" ");
                         succeed = mCurrentRtx.moveTo(nodeKey);
                     } catch (final NumberFormatException e) {
+                        LOGWRAPPER.error(e);
                         builder.append("invalid node ");
                         succeed = false;
                     }
@@ -349,6 +358,7 @@ public final class TreeTankCommandoLineExplorer {
                                 + "(that means without revision parameter");
                     }
                 } catch (final TreetankException exc) {
+                    LOGWRAPPER.error(exc);
                     builder.append(" throws exception: ").append(exc);
                 }
                 return builder.toString();
@@ -380,6 +390,7 @@ public final class TreeTankCommandoLineExplorer {
 
                 return command;
             } catch (final Exception e) {
+                LOGWRAPPER.error(e);
                 return NOVALUE;
             }
         }

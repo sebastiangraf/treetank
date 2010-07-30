@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: PrecedingAxis.java 4246 2008-07-08 08:54:09Z scherer $
  */
 
 package com.treetank.axis;
@@ -55,9 +54,9 @@ public class PrecedingAxis extends AbstractAxis implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    public final void reset(final long nodeKey) {
+    public final void reset(final long mNodeKey) {
 
-        super.reset(nodeKey);
+        super.reset(mNodeKey);
         mIsFirst = true;
         mStack = new FastStack<Long>();
 
@@ -100,7 +99,7 @@ public class PrecedingAxis extends AbstractAxis implements IAxis {
             return true;
         }
 
-        while(getTransaction().getNode().hasParent()) {
+        while (getTransaction().getNode().hasParent()) {
             // ancestors are not part of the preceding set
             getTransaction().moveToParent();
             if (((AbsStructNode)getTransaction().getNode()).hasLeftSibling()) {
@@ -131,14 +130,14 @@ public class PrecedingAxis extends AbstractAxis implements IAxis {
         // push
         // all nodes to the stack
         if (((AbsStructNode)getTransaction().getNode()).hasFirstChild()) {
-            while(((AbsStructNode)getTransaction().getNode()).hasFirstChild()) {
+            while (((AbsStructNode)getTransaction().getNode()).hasFirstChild()) {
                 mStack.push(getTransaction().getNode().getNodeKey());
                 getTransaction().moveToFirstChild();
             }
 
             // traverse all the siblings of the leftmost leave and all their
             // descendants and push all of them to the stack
-            while(((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
+            while (((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
                 mStack.push(getTransaction().getNode().getNodeKey());
                 getTransaction().moveToRightSibling();
                 getLastChild();
@@ -148,18 +147,18 @@ public class PrecedingAxis extends AbstractAxis implements IAxis {
             // all
             // right siblings and their descendants on each step
             if (getTransaction().getNode().hasParent()
-            && (getTransaction().getNode().getParentKey() != parent)) {
+                && (getTransaction().getNode().getParentKey() != parent)) {
 
                 mStack.push(getTransaction().getNode().getNodeKey());
-                while(getTransaction().getNode().hasParent()
-                && (getTransaction().getNode().getParentKey() != parent)) {
+                while (getTransaction().getNode().hasParent()
+                    && (getTransaction().getNode().getParentKey() != parent)) {
 
                     getTransaction().moveToParent();
 
                     // traverse all the siblings of the leftmost leave and all
                     // their
                     // descendants and push all of them to the stack
-                    while(((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
+                    while (((AbsStructNode)getTransaction().getNode()).hasRightSibling()) {
 
                         getTransaction().moveToRightSibling();
                         getLastChild();

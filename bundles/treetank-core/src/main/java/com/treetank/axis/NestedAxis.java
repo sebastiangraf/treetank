@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: NestedAxis.java 4258 2008-07-14 16:45:28Z kramis $
  */
 
 package com.treetank.axis;
@@ -43,27 +42,27 @@ public class NestedAxis extends AbstractAxis implements IAxis {
      * 
      * @param parentAxis
      *            Inner nested axis.
-     * @param childAxis
+     * @param mChildAxis
      *            Outer nested axis.
      */
-    public NestedAxis(final IAxis parentAxis, final IAxis childAxis) {
+    public NestedAxis(final IAxis parentAxis, final IAxis mChildAxis) {
         super(parentAxis.getTransaction());
-        mParentAxis = parentAxis;
-        mChildAxis = childAxis;
-        mIsFirst = true;
+        this.mParentAxis = parentAxis;
+        this.mChildAxis = mChildAxis;
+        this.mIsFirst = true;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final void reset(final long nodeKey) {
-        super.reset(nodeKey);
+    public final void reset(final long mNodeKey) {
+        super.reset(mNodeKey);
         if (mParentAxis != null) {
-            mParentAxis.reset(nodeKey);
+            mParentAxis.reset(mNodeKey);
         }
         if (mChildAxis != null) {
-            mChildAxis.reset(nodeKey);
+            mChildAxis.reset(mNodeKey);
         }
         mIsFirst = true;
     }
@@ -88,7 +87,7 @@ public class NestedAxis extends AbstractAxis implements IAxis {
 
         // Execute child axis for each node found with parent axis.
         boolean hasNext = false;
-        while(!(hasNext = mChildAxis.hasNext())) {
+        while (!(hasNext = mChildAxis.hasNext())) {
             if (mParentAxis.hasNext()) {
                 mChildAxis.reset(mParentAxis.next());
             } else {

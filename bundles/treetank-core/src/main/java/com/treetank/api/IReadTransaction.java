@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: IReadTransaction.java 4460 2008-09-02 09:08:36Z scherer $
  */
 
 package com.treetank.api;
@@ -68,7 +67,8 @@ import com.treetank.exception.TreetankIOException;
  *   }
  *   
  *   // Access local part of element.
- *   if (rtx.getRelatedNode().isElement() &amp;&amp; rtx.getRelatedNode().getName().equalsIgnoreCase(&quot;foo&quot;) {
+ *   if (rtx.getRelatedNode().isElement() &amp;&amp; 
+ *   rtx.getRelatedNode().getName().equalsIgnoreCase(&quot;foo&quot;) {
  *     ...
  *   }
  *   
@@ -101,17 +101,17 @@ public interface IReadTransaction {
 
     /** String constants used by xpath. */
     String[] XPATHCONSTANTS =
-        {
-            "xs:anyType", "xs:anySimpleType", "xs:anyAtomicType", "xs:untypedAtomic", "xs:untyped",
-            "xs:string", "xs:duration", "xs:yearMonthDuration", "xs:dayTimeDuration", "xs:dateTime",
-            "xs:time", "xs:date", "xs:gYearMonth", "xs:gYear", "xs:gMonthDay", "xs:gDay", "xs:gMonth",
-            "xs:boolean", "xs:base64Binary", "xs:hexBinary", "xs:anyURI", "xs:QName", "xs:NOTATION",
-            "xs:float", "xs:double", "xs:pDecimal", "xs:decimal", "xs:integer", "xs:long", "xs:int",
-            "xs:short", "xs:byte", "xs:nonPositiveInteger", "xs:negativeInteger", "xs:nonNegativeInteger",
-            "xs:positiveInteger", "xs:unsignedLong", "xs:unsignedInt", "xs:unsignedShort", "xs:unsignedByte",
-            "xs:normalizedString", "xs:token", "xs:language", "xs:name", "xs:NCName", "xs:ID", "xs:IDREF",
-            "xs:ENTITY", "xs:IDREFS", "xs:NMTOKEN", "xs:NMTOKENS",
-        };
+    {
+        "xs:anyType", "xs:anySimpleType", "xs:anyAtomicType", "xs:untypedAtomic", "xs:untyped",
+        "xs:string", "xs:duration", "xs:yearMonthDuration", "xs:dayTimeDuration", "xs:dateTime",
+        "xs:time", "xs:date", "xs:gYearMonth", "xs:gYear", "xs:gMonthDay", "xs:gDay", "xs:gMonth",
+        "xs:boolean", "xs:base64Binary", "xs:hexBinary", "xs:anyURI", "xs:QName", "xs:NOTATION",
+        "xs:float", "xs:double", "xs:pDecimal", "xs:decimal", "xs:integer", "xs:long", "xs:int",
+        "xs:short", "xs:byte", "xs:nonPositiveInteger", "xs:negativeInteger", "xs:nonNegativeInteger",
+        "xs:positiveInteger", "xs:unsignedLong", "xs:unsignedInt", "xs:unsignedShort", "xs:unsignedByte",
+        "xs:normalizedString", "xs:token", "xs:language", "xs:name", "xs:NCName", "xs:ID", "xs:IDREF",
+        "xs:ENTITY", "xs:IDREFS", "xs:NMTOKEN", "xs:NMTOKENS",
+    };
 
     /**
      * Get ID of transaction.
@@ -123,6 +123,8 @@ public interface IReadTransaction {
     /**
      * What is the revision number of this IReadTransaction?
      * 
+     * @throws TreetankIOException
+     *             if can't get Max Node Key.
      * @return Immutable revision number of this IReadTransaction.
      */
     long getRevisionNumber() throws TreetankIOException;
@@ -130,6 +132,8 @@ public interface IReadTransaction {
     /**
      * UNIX-style timestamp of the commit of the revision.
      * 
+     * @throws TreetankIOException
+     *             if can't get Max Node Key.
      * @return Timestamp of revision commit.
      */
     long getRevisionTimestamp() throws TreetankIOException;
@@ -137,6 +141,8 @@ public interface IReadTransaction {
     /**
      * Getting the maximum nodekey avaliable in this revision.
      * 
+     * @throws TreetankIOException
+     *             if can't get Max Node Key.
      * @return the maximum nodekey
      */
     long getMaxNodeKey() throws TreetankIOException;
@@ -147,11 +153,11 @@ public interface IReadTransaction {
     /**
      * Move cursor to a node by its node key.
      * 
-     * @param nodeKey
+     * @param mNodeKey
      *            Key of node to select.
      * @return True if the node with the given node key is selected.
      */
-    boolean moveTo(final long nodeKey);
+    boolean moveTo(final long mNodeKey);
 
     /**
      * Move cursor to document root node.
@@ -191,67 +197,71 @@ public interface IReadTransaction {
     /**
      * Move cursor to attribute by its index.
      * 
-     * @param index
+     * @param mIndex
      *            Index of attribute to move to.
      * @return True if the attribute node is selected.
      */
-    boolean moveToAttribute(final int index);
+    boolean moveToAttribute(final int mIndex);
 
     /**
      * Move cursor to namespace declaration by its index.
      * 
-     * @param index
+     * @param mIndex
      *            Index of attribute to move to.
      * @return True if the namespace node is selected.
      */
-    boolean moveToNamespace(final int index);
+    boolean moveToNamespace(final int mIndex);
 
     // --- Node Getters
     // ----------------------------------------------------------
 
     /**
-     * Getting the value of the current node
+     * Getting the value of the current node.
+     * 
+     * @return
      */
     String getValueOfCurrentNode();
 
     /**
-     * Getting the name of a current node
+     * Getting the name of a current node.
      * 
      * @return
      */
     QName getQNameOfCurrentNode();
 
     /**
-     * Getting the type of the current node
+     * Getting the type of the current node.
+     * 
+     * @return 
      */
     String getTypeOfCurrentNode();
 
     /**
      * Get key for given name. This is used for efficient name testing.
      * 
-     * @param name
+     * @param mName
      *            Name, i.e., local part, URI, or prefix.
      * @return Internal key assigned to given name.
      */
-    int keyForName(final String name);
+    int keyForName(final String mName);
 
     /**
      * Get name for key. This is used for efficient key testing.
      * 
-     * @param key
+     * @param mKey
      *            Key, i.e., local part key, URI key, or prefix key.
      * @return String containing name for given key.
      */
-    String nameForKey(final int key);
+    String nameForKey(final int mKey);
 
     /**
      * Get raw name for key. This is used for efficient key testing.
      * 
-     * @param key
+     * @param mKey
      *            Key, i.e., local part key, URI key, or prefix key.
      * @return Byte array containing name for given key.
      */
-    byte[] rawNameForKey(final int key);
+    byte[] rawNameForKey(final int mKey);
 
     /**
      * Get item list containing volatile items such as atoms or fragments.
@@ -272,6 +282,9 @@ public interface IReadTransaction {
      * 
      * This is an idempotent operation and does nothing if the transaction is
      * already closed.
+     * 
+     * @throws TreetankException
+     *             If can't close Read Transaction.
      */
     void close() throws TreetankException;
 
