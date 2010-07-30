@@ -1,3 +1,19 @@
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
+ * 
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ * 
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * 
+ */
 package com.treetank.gui.view.tree;
 
 import java.awt.Color;
@@ -51,26 +67,26 @@ public final class TreetankTreeCellRenderer extends DefaultTreeCellRenderer {
     protected transient IDatabase mDatabase;
 
     /** Path to file. */
-    private static String PATH;
+    private static String mPATH;
 
     /**
      * Constructor.
      * 
-     * @param database
-     *            Treetank database.
+     * @param paramDatabase
+     *            Treetank database {@link IDatabase}.
      * 
      */
-    public TreetankTreeCellRenderer(final IDatabase database) {
-        this(database, 0);
+    public TreetankTreeCellRenderer(final IDatabase paramDatabase) {
+        this(paramDatabase, 0);
     }
 
     /**
      * Constructor.
      * 
      * @param database
-     *            Treetank database.
+     *            Treetank database {@link IDatabase}.
      * @param nodekeyToStart
-     *            Starting point of transaction.
+     *            Starting point of transaction (node key).
      * 
      */
     public TreetankTreeCellRenderer(final IDatabase database, final long nodekeyToStart) {
@@ -100,7 +116,7 @@ public final class TreetankTreeCellRenderer extends DefaultTreeCellRenderer {
             LOGGER.error("TreetankException: " + e.getMessage(), e);
         }
 
-        PATH =
+        mPATH =
             database.getFile().getAbsolutePath();
     }
 
@@ -121,7 +137,7 @@ public final class TreetankTreeCellRenderer extends DefaultTreeCellRenderer {
             final QName qName =
                 mRTX.getQNameOfCurrentNode();
 
-            if (prefix == null || prefix == "") {
+            if (prefix == null || prefix.equals("")) {
                 final String localPart =
                     qName.getLocalPart();
 
@@ -159,7 +175,7 @@ public final class TreetankTreeCellRenderer extends DefaultTreeCellRenderer {
             final QName attQName =
                 mRTX.getQNameOfCurrentNode();
 
-            if (attPrefix == null || attPrefix == "") {
+            if (attPrefix == null || attPrefix.equals("")) {
                 value =
                     '@' + attQName.getLocalPart() + "='" + mRTX.getValueOfCurrentNode() + "'";
             } else {
@@ -210,7 +226,7 @@ public final class TreetankTreeCellRenderer extends DefaultTreeCellRenderer {
             break;
         case ROOT_KIND:
             value =
-                PATH;
+                mPATH;
             break;
         case WHITESPACE_KIND:
             break;
@@ -230,6 +246,8 @@ public final class TreetankTreeCellRenderer extends DefaultTreeCellRenderer {
             case ATTRIBUTE_KIND:
                 setForeground(mAttributeColor);
                 break;
+            default:
+                // Do nothing.
             }
         }
 

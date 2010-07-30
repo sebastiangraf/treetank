@@ -43,13 +43,13 @@ import com.treetank.utils.DocumentCreater;
 public final class TestNodeWrapperXPath {
 
     /** TreeTank session. */
-    private transient static IDatabase database;
+    private static transient IDatabase database;
 
     /** XPath expression. */
-    private transient static XPath xpe;
+    private static transient XPath xpe;
 
     /** Saxon configuration. */
-    private transient static Configuration config;
+    private static transient Configuration config;
 
     @Before
     public void setUp() throws TreetankException, XPathFactoryConfigurationException {

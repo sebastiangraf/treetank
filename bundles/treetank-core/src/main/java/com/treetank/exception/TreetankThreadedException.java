@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutionException;
  */
 public final class TreetankThreadedException extends TreetankException {
 
+    /** Generated ID. */
     private static final long serialVersionUID = -2891221683798924769L;
 
     /**

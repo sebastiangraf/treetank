@@ -43,7 +43,7 @@ import com.treetank.utils.DocumentCreater;
 public class TestNodeWrapper {
 
     /** Treetank session on Treetank test document. */
-    private transient static IDatabase databaseTest;
+    private static transient IDatabase databaseTest;
 
     /** Document node. */
     private transient NodeWrapper node;
@@ -66,10 +66,10 @@ public class TestNodeWrapper {
 
     @After
     public void afterMethod() throws TreetankException {
-        Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
-        Database.truncateDatabase(TestHelper.PATHS.PATH2.getFile());
         Database.forceCloseDatabase(TestHelper.PATHS.PATH1.getFile());
         Database.forceCloseDatabase(TestHelper.PATHS.PATH2.getFile());
+        Database.truncateDatabase(TestHelper.PATHS.PATH1.getFile());
+        Database.truncateDatabase(TestHelper.PATHS.PATH2.getFile());
     }
 
     @Test

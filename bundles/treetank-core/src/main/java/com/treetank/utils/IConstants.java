@@ -26,7 +26,14 @@ package com.treetank.utils;
  * interoperability with saxon.
  * </p>
  */
-public interface IConstants {
+public final class IConstants {
+    
+    /**
+     * Private constructor.
+     */
+    private IConstants() {
+        // Cannot be instantiated.
+    }
 
     // --- Varia
     // ------------------------------------------------------------------
@@ -69,11 +76,11 @@ public interface IConstants {
 
     /** Exponent of pages per level (root level = 0, leaf level = 5). */
     public static final int[] INP_LEVEL_PAGE_COUNT_EXPONENT =
-        {
-            4 * INP_REFERENCE_COUNT_EXPONENT, 3 * INP_REFERENCE_COUNT_EXPONENT,
-            2 * INP_REFERENCE_COUNT_EXPONENT, 1 * INP_REFERENCE_COUNT_EXPONENT,
-            0 * INP_REFERENCE_COUNT_EXPONENT
-        };
+    {
+        4 * INP_REFERENCE_COUNT_EXPONENT, 3 * INP_REFERENCE_COUNT_EXPONENT,
+        2 * INP_REFERENCE_COUNT_EXPONENT, 1 * INP_REFERENCE_COUNT_EXPONENT,
+        0 * INP_REFERENCE_COUNT_EXPONENT
+    };
 
     // --- Uber Page
     // -------------------------------------------------------------
