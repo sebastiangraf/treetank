@@ -1,3 +1,19 @@
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
+ * 
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ * 
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * 
+ */
 package com.treetank.gui.view.tree;
 
 import java.awt.Color;
@@ -18,7 +34,7 @@ import javax.swing.tree.TreePath;
  * @author Johannes Lichtenberger, University of Konstanz.
  * 
  */
-public class TreetankTree extends JTree {
+public final class TreetankTree extends JTree {
 
     /**
      * Generated UID.
@@ -26,13 +42,13 @@ public class TreetankTree extends JTree {
     private static final long serialVersionUID = -4157303763028056619L;
 
     /** Highlight path. */
-    private TreePath mSelectionPath = null;
+    private TreePath mSelectionPath;
 
     /** Color used to highlight selected subtrees. */
-    private Color highlightColor = new Color(255, 255, 204);
+    private Color mHighlightColor = new Color(255, 255, 204);
 
     /**
-     * {@inheritDoc}
+     * Constructor.
      */
     public TreetankTree() {
         super();
@@ -51,13 +67,13 @@ public class TreetankTree extends JTree {
     /**
      * Set the selection path.
      * 
-     * @param selectionPath
+     * @param paramSelectionPath
      *            Selection path.
      */
     @Override
-    public void setSelectionPath(final TreePath selectionPath) {
-        mSelectionPath = selectionPath;
-        getSelectionModel().setSelectionPath(selectionPath);
+    public void setSelectionPath(final TreePath paramSelectionPath) {
+        mSelectionPath = paramSelectionPath;
+        getSelectionModel().setSelectionPath(paramSelectionPath);
         treeDidChange();
     }
 
@@ -73,14 +89,14 @@ public class TreetankTree extends JTree {
      * {@inheritDoc}
      */
     @Override
-    protected void paintComponent(final Graphics g) {
+    protected void paintComponent(final Graphics paramGraphics) {
         // Paint background ourself.
-        g.setColor(getBackground());
-        g.fillRect(0, 0, getWidth(), getHeight());
+        paramGraphics.setColor(getBackground());
+        paramGraphics.fillRect(0, 0, getWidth(), getHeight());
 
         // Paint the highlight if any.
-        g.setColor(highlightColor);
-        int fromRow = getRowForPath(mSelectionPath);
+        paramGraphics.setColor(mHighlightColor);
+        final int fromRow = getRowForPath(mSelectionPath);
 
         if (fromRow != -1) {
             int toRow = fromRow;
@@ -97,11 +113,11 @@ public class TreetankTree extends JTree {
             // Paint a rectangle.
             final Rectangle fromBounds = getRowBounds(fromRow);
             final Rectangle toBounds = getRowBounds(toRow - 1);
-            g.fillRect(0, fromBounds.y, getWidth(), toBounds.y - fromBounds.y + toBounds.height);
+            paramGraphics.fillRect(0, fromBounds.y, getWidth(), toBounds.y - fromBounds.y + toBounds.height);
         }
 
         setOpaque(false); // trick not to paint background
-        super.paintComponent(g);
+        super.paintComponent(paramGraphics);
         setOpaque(true);
     }
 }

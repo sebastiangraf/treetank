@@ -1,3 +1,19 @@
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
+ * 
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ * 
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * 
+ */
 package com.treetank.gui;
 
 import java.awt.Color;
@@ -26,7 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * <h1>GUI</h>
+ * <h1>Treetank GUI</h1>
  * 
  * <p>
  * Main GUI frame.
@@ -46,28 +62,26 @@ public final class GUI extends JPanel {
         LoggerFactory.getLogger(GUI.class);
 
     /** Optionally set the look and feel. */
-    private transient static boolean useSystemLookAndFeel =
-        false;
+    private static transient boolean mUseSystemLookAndFeel;
 
     /** Minimum height of panes. */
     private static final int HEIGHT =
         1000;
 
     /** Tree view. */
-    protected transient JTree tree;
+    protected transient JTree mTree;
 
     /** XML pane. */
-    protected transient JTextArea xmlPane;
+    protected transient JTextArea mXMLPane;
 
     /** AdjustmentListener temporal value. */
-    private static transient int tempValue =
-        0;
+    private transient int mTempValue;
 
     /** XML view (scrollpane). */
-    public static transient JScrollPane xmlView;
+    public static transient JScrollPane mXMLView;
 
     /** Main GUI reference. */
-    public static transient GUI gui;
+    public static transient GUI mGUI;
 
     /**
      * Empty Constructor.
@@ -77,42 +91,42 @@ public final class GUI extends JPanel {
 
         try {
             // Build tree view.
-            tree =
+            mTree =
                 new TreetankTree(null);
-            tree.setBackground(Color.WHITE);
+            mTree.setBackground(Color.WHITE);
 
             /*
              * Performance tweak to use FixedLayoutManager and only invoke
              * getChild(..) for nodes inside view "bounding box". Avoids caching but
              * therefore more rendering calls.
              */
-            tree.setRowHeight(20);
-            tree.setLargeModel(true);
+            mTree.setRowHeight(20);
+            mTree.setLargeModel(true);
 
             // Selection Model.
-            tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+            mTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
             // Create a scroll pane and add the tree to it.
             final JScrollPane treeView =
-                new JScrollPane(tree);
+                new JScrollPane(mTree);
             treeView.setBackground(Color.WHITE);
 
             // Create a XML text area.
-            xmlPane =
+            mXMLPane =
                 new JTextArea();
-            xmlPane.setEditable(false);
-            xmlPane.setMinimumSize(new Dimension(370, 600));
-            xmlPane.setColumns(80);
-            xmlPane.setLineWrap(true);
-            xmlPane.setCaretPosition(0);
+            mXMLPane.setEditable(false);
+            mXMLPane.setMinimumSize(new Dimension(370, 600));
+            mXMLPane.setColumns(80);
+            mXMLPane.setLineWrap(true);
+            mXMLPane.setCaretPosition(0);
 
             // Create a scroll pane and add the XML text area to it.
-            xmlView =
-                new JScrollPane(xmlPane);
-            xmlView.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-            xmlView.setMinimumSize(new Dimension(400, 600));
+            mXMLView =
+                new JScrollPane(mXMLPane);
+            mXMLView.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+            mXMLView.setMinimumSize(new Dimension(400, 600));
             final JScrollBar vertScrollBar =
-                xmlView.getVerticalScrollBar();
+                mXMLView.getVerticalScrollBar();
             vertScrollBar.setValue(vertScrollBar.getMinimum());
             vertScrollBar.addAdjustmentListener(new AdjustmentListener() {
                 @Override
@@ -127,20 +141,20 @@ public final class GUI extends JPanel {
                     }
 
                     final int lineHeight =
-                        xmlPane.getFontMetrics(xmlPane.getFont()).getHeight();
+                        mXMLPane.getFontMetrics(mXMLPane.getFont()).getHeight();
                     int value =
                         evt.getValue();
                     System.out.println("VALUE: " + value);
                     int result =
-                        value - tempValue;
+                        value - mTempValue;
                     GUICommands.lineChanges =
                         result / lineHeight;
                     System.out.println("Lines: " + GUICommands.lineChanges);
                     if (GUICommands.lineChanges != 0) {
-                        GUICommands.text(gui, xmlPane, false);
+                        GUICommands.text(mGUI, mXMLPane, false);
                     }
 
-                    tempValue =
+                    mTempValue =
                         value;
                 }
             });
@@ -149,10 +163,10 @@ public final class GUI extends JPanel {
             final JSplitPane splitPane =
                 new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
             splitPane.setLeftComponent(treeView);
-            splitPane.setRightComponent(xmlView);
+            splitPane.setRightComponent(mXMLView);
 
             // Set sizes of components.
-            xmlView.setMinimumSize(new Dimension(800, HEIGHT));
+            mXMLView.setMinimumSize(new Dimension(800, HEIGHT));
             treeView.setMinimumSize(new Dimension(220, HEIGHT));
             splitPane.setDividerLocation(220);
             splitPane.setPreferredSize(new Dimension(1020, HEIGHT));
@@ -169,7 +183,7 @@ public final class GUI extends JPanel {
      * invoked from the event dispatch thread.
      */
     private static void createAndShowGUI() {
-        if (useSystemLookAndFeel) {
+        if (mUseSystemLookAndFeel) {
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } catch (final ClassNotFoundException e) {
@@ -192,16 +206,16 @@ public final class GUI extends JPanel {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Create gui with menubar.
-        gui =
+        mGUI =
             new GUI();
         final JMenuBar menuBar =
-            new TreetankMenuBar(gui);
+            new TreetankMenuBar(mGUI);
 
         // Add menubar.
         frame.setJMenuBar(menuBar);
 
         // Add content to the window.
-        frame.add(gui);
+        frame.add(mGUI);
 
         // Screen size.
         final Dimension screenSize =
@@ -248,7 +262,7 @@ public final class GUI extends JPanel {
      * @return tree.
      */
     protected JTree getTree() {
-        return tree;
+        return mTree;
     }
 
     /**
@@ -257,6 +271,6 @@ public final class GUI extends JPanel {
      * @return xmlPane.
      */
     protected JTextArea getXMLPane() {
-        return xmlPane;
+        return mXMLPane;
     }
 }

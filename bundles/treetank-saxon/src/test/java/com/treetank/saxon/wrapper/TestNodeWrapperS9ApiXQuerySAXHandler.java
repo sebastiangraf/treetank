@@ -36,7 +36,7 @@ import com.treetank.service.xml.XMLShredder;
 public class TestNodeWrapperS9ApiXQuerySAXHandler {
 
     /** Treetank database on books document. */
-    private transient static IDatabase databaseBooks;
+    private static transient IDatabase databaseBooks;
 
     /** Path to books file. */
     private static final File BOOKSXML = new File(new StringBuilder("src").append(File.separator).append(

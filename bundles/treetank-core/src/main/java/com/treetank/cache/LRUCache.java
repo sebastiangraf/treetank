@@ -33,17 +33,17 @@ public final class LRUCache implements ICache {
     /**
      * Capacity of the cache. Number of stored pages
      */
-    final static int CACHE_CAPACITY = 10;
+    static final int CACHE_CAPACITY = 10;
 
     /**
      * The collection to hold the maps.
      */
-    private transient final Map<Long, NodePageContainer> map;
+    private final transient Map<Long, NodePageContainer> map;
 
     /**
      * The reference to the second cache.
      */
-    private transient final ICache mSecondCache;
+    private final transient ICache mSecondCache;
 
     /**
      * Creates a new LRU cache.

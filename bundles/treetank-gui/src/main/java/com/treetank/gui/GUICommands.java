@@ -1,3 +1,19 @@
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
+ * 
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ * 
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * 
+ */
 package com.treetank.gui;
 
 import java.awt.event.ActionEvent;
@@ -32,6 +48,7 @@ import com.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 import com.treetank.service.xml.serialize.XMLSerializerProperties;
 import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.service.xml.shredder.XMLUpdateShredder;
+import com.treetank.settings.ECharsForSerializing;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,65 +64,69 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public enum GUICommands implements GUICommand {
+    /**
+     * Open a Treetank file.
+     */
     OPEN("Open TNK-File") {
         @Override
-        public void execute(final ActionEvent e, final GUI gui) {
+        public void execute(final ActionEvent paramE, final GUI paramGUI) {
             // Create a file chooser.
-            final JFileChooser fc =
-                new JFileChooser();
+            final JFileChooser fc = new JFileChooser();
             fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             fc.setAcceptAllFileFilterUsed(false);
 
             // Handle open button action.
-            if (fc.showOpenDialog(gui) == JFileChooser.APPROVE_OPTION) {
-                final File file =
-                    fc.getSelectedFile();
-                setViews(gui, file);
+            if (fc.showOpenDialog(paramGUI) == JFileChooser.APPROVE_OPTION) {
+                final File file = fc.getSelectedFile();
+                setViews(paramGUI, file);
             }
         }
     },
 
-    SHREDDER("Shredder XML-File") {
+    /**
+     * Shredder an XML-document.
+     */
+    SHREDDER("Shredder XML-document") {
         @Override
-        public void execute(final ActionEvent e, final GUI gui) {
-            shredder(gui, false);
+        public void execute(final ActionEvent paramE, final GUI paramGUI) {
+            shredder(paramGUI, false);
         }
     },
 
-    SHREDDER_INTO("Shredder into TNK-File") {
+    /**
+     * Update a shreddered file.
+     */
+    SHREDDER_UPDATE("Update shreddered file") {
         @Override
-        public void execute(final ActionEvent e, final GUI gui) {
-            shredder(gui, true);
+        public void execute(final ActionEvent paramE, final GUI paramGUI) {
+            shredder(paramGUI, true);
         }
     },
 
+    /**
+     * Serialize a Treetank storage.
+     */
     SERIALIZE("Serialize") {
         @Override
-        public void execute(final ActionEvent e, final GUI gui) {
+        public void execute(final ActionEvent paramE, final GUI paramGUI) {
             // Create a file chooser.
-            final JFileChooser fc =
-                new JFileChooser();
+            final JFileChooser fc = new JFileChooser();
             fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             fc.setAcceptAllFileFilterUsed(false);
 
-            if (fc.showOpenDialog(gui) == JFileChooser.APPROVE_OPTION) {
-                final File source =
-                    fc.getSelectedFile();
+            if (fc.showOpenDialog(paramGUI) == JFileChooser.APPROVE_OPTION) {
+                final File source = fc.getSelectedFile();
 
                 fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
                 fc.setAcceptAllFileFilterUsed(true);
-                if (fc.showSaveDialog(gui) == JFileChooser.APPROVE_OPTION) {
-                    final File target =
-                        fc.getSelectedFile();
+                if (fc.showSaveDialog(paramGUI) == JFileChooser.APPROVE_OPTION) {
+                    final File target = fc.getSelectedFile();
                     target.delete();
                     try {
-                        final FileOutputStream outputStream =
-                            new FileOutputStream(target);
+                        final FileOutputStream outputStream = new FileOutputStream(target);
 
-                        final IDatabase db =
-                            Database.openDatabase(source);
-                        final ISession session =
-                            db.getSession();
+                        final IDatabase db = Database.openDatabase(source);
+                        final ISession session = db.getSession();
                         final XMLSerializer serializer =
                             new XMLSerializerBuilder(session, outputStream).build();
                         serializer.call();
@@ -113,56 +134,65 @@ public enum GUICommands implements GUICommand {
                         session.close();
                         db.close();
                         outputStream.close();
-                    } catch (final Exception e1) {
-                        LOGGER.error(e1.getMessage(), e1);
+                    } catch (final Exception e) {
+                        LOGGER.error(e.getMessage(), e);
                     }
                 }
             }
         }
     },
 
+    /**
+     * Close Treetank GUI.
+     */
     QUIT("Quit") {
         @Override
-        public void execute(final ActionEvent e, final GUI gui) {
+        public void execute(final ActionEvent paramE, final GUI paramGUI) {
             System.exit(0);
         }
     },
 
+    /**
+     * Show tree view.
+     */
     TREE("Tree") {
         @Override
-        public void execute(final ActionEvent e, final GUI gui) {
+        public void execute(final ActionEvent paramE, final GUI paramGUI) {
 
         }
     },
 
+    /**
+     * Show text view.
+     */
     TEXT("Text") {
         @Override
-        public void execute(final ActionEvent e, final GUI gui) {
+        public void execute(final ActionEvent paramE, final GUI paramGUI) {
 
         }
     },
 
+    /**
+     * Show treemap view.
+     */
     TREEMAP("Treemap") {
         @Override
-        public void execute(final ActionEvent e, final GUI gui) {
+        public void execute(final ActionEvent paramE, final GUI paramGUI) {
 
         }
     };
 
     /** Logger. */
-    private static final Logger LOGGER =
-        LoggerFactory.getLogger(GUICommands.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GUICommands.class);
 
     /** Description of command. */
     private transient final String mDesc;
 
     /** Line number to append or remove from the text field. */
-    public static transient int lineChanges =
-        0;
+    public static transient int lineChanges = 0;
 
     /** Start position of char array for text insertion. */
-    private static transient int startPos =
-        0;
+    private static transient int startPos = 0;
 
     /** Text output stream. */
     public static transient OutputStream out;
@@ -173,16 +203,17 @@ public enum GUICommands implements GUICommand {
     /**
      * Constructor
      * 
-     * @param desc
+     * @param paramDesc
      *            Description of command.
      */
-    GUICommands(final String desc) {
-        mDesc =
-            desc;
+    GUICommands(final String paramDesc) {
+        mDesc = paramDesc;
     }
 
     /**
      * Get description.
+     * 
+     * @return description
      */
     public String desc() {
         return mDesc;
@@ -191,22 +222,19 @@ public enum GUICommands implements GUICommand {
     /**
      * Sets Tree and XML views.
      * 
-     * @param gui
+     * @param paramGUI
      *            Main GUI frame.
-     * @param file
+     * @param paramFile
      *            File to open and display.
      */
-    private static void setViews(final GUI gui, final File file) {
+    private static void setViews(final GUI paramGUI, final File paramFile) {
         try {
             // Initialize database.
-            final IDatabase database =
-                Database.openDatabase(file);
-            final ISession session =
-                database.getSession();
+            final IDatabase database = Database.openDatabase(paramFile);
+            final ISession session = database.getSession();
 
             // Tree.
-            final JTree tree =
-                gui.getTree();
+            final JTree tree = paramGUI.getTree();
 
             /*
              * Remove a listener/listeners, which might already exist from
@@ -215,15 +243,13 @@ public enum GUICommands implements GUICommand {
             for (final TreeSelectionListener listener : tree.getTreeSelectionListeners()) {
                 tree.removeTreeSelectionListener(listener);
             }
-            final JScrollBar bar =
-                GUI.xmlView.getVerticalScrollBar();
+            final JScrollBar bar = GUI.mXMLView.getVerticalScrollBar();
             for (final AdjustmentListener listener : bar.getAdjustmentListeners()) {
                 bar.removeAdjustmentListener(listener);
             }
 
             // XML.
-            final JTextArea xmlPane =
-                gui.getXMLPane();
+            final JTextArea xmlPane = paramGUI.getXMLPane();
 
             // Use our Treetank model and renderer.
             tree.setModel(new TreetankTreeModel(database));
@@ -234,29 +260,24 @@ public enum GUICommands implements GUICommand {
             final XMLSerializerProperties properties = new XMLSerializerProperties();
             final XMLSerializer serializer = new XMLSerializerBuilder(session, 0, out, properties).build();
             serializer.call();
-            text(gui, xmlPane, true);
+            text(paramGUI, xmlPane, true);
 
             // Listen for when the selection changes.
             tree.addTreeSelectionListener(new TreeSelectionListener() {
-                public void valueChanged(final TreeSelectionEvent e) {
-                    if (e.getNewLeadSelectionPath() != null
-                        && e.getNewLeadSelectionPath() != e.getOldLeadSelectionPath()) {
+                public void valueChanged(final TreeSelectionEvent paramE) {
+                    if (paramE.getNewLeadSelectionPath() != null
+                    && paramE.getNewLeadSelectionPath() != paramE.getOldLeadSelectionPath()) {
                         /*
                          * Returns the last path element of the selection. This
                          * method is useful only when the selection model allows
                          * a single selection.
                          */
-                        final IItem node =
-                            (IItem)e.getNewLeadSelectionPath().getLastPathComponent(); // tree.getLastSelectedPathComponent();
-                        out =
-                            new ByteArrayOutputStream();
-                        IReadTransaction rtx =
-                            null;
+                        final IItem node = (IItem)paramE.getNewLeadSelectionPath().getLastPathComponent(); // tree.getLastSelectedPathComponent();
+                        out = new ByteArrayOutputStream();
+                        IReadTransaction rtx = null;
                         try {
-                            rtx =
-                                session.beginReadTransaction();
-                            final long nodeKey =
-                                node.getNodeKey();
+                            rtx = session.beginReadTransaction();
+                            final long nodeKey = node.getNodeKey();
 
                             switch (node.getKind()) {
                             case ROOT_KIND:
@@ -273,10 +294,8 @@ public enum GUICommands implements GUICommand {
                                 // Move transaction to parent of given namespace node.
                                 rtx.moveTo(node.getParentKey());
 
-                                final long nNodeKey =
-                                    node.getNodeKey();
-                                for (int i =
-                                    0, namespCount =
+                                final long nNodeKey = node.getNodeKey();
+                                for (int i = 0, namespCount =
                                     ((ElementNode)rtx.getNode()).getNamespaceCount(); i < namespCount; i++) {
                                     rtx.moveToNamespace(i);
                                     if (rtx.getNode().equals(node)) {
@@ -290,16 +309,14 @@ public enum GUICommands implements GUICommand {
                                         .getBytes());
                                 } else {
                                     out.write(("xmlns:" + rtx.nameForKey(rtx.getNode().getNameKey()) + "='"
-                                        + rtx.nameForKey(rtx.getNode().getURIKey()) + "'").getBytes());
+                                    + rtx.nameForKey(rtx.getNode().getURIKey()) + "'").getBytes());
                                 }
+                                break;
                             case ATTRIBUTE_KIND:
                                 // Move transaction to parent of given attribute node.
                                 rtx.moveTo(node.getParentKey());
-                                final long aNodeKey =
-                                    node.getNodeKey();
-                                for (int i =
-                                    0, attsCount =
-                                    ((ElementNode)rtx.getNode()).getAttributeCount(); i < attsCount; i++) {
+                                final long aNodeKey = node.getNodeKey();
+                                for (int i = 0, attsCount = ((ElementNode)rtx.getNode()).getAttributeCount(); i < attsCount; i++) {
                                     rtx.moveToAttribute(i);
                                     if (rtx.getNode().equals(node)) {
                                         break;
@@ -308,67 +325,68 @@ public enum GUICommands implements GUICommand {
                                 }
 
                                 // Display value.
-                                final String attPrefix =
-                                    rtx.getQNameOfCurrentNode().getPrefix();
-                                final QName attQName =
-                                    rtx.getQNameOfCurrentNode();
+                                final String attPrefix = rtx.getQNameOfCurrentNode().getPrefix();
+                                final QName attQName = rtx.getQNameOfCurrentNode();
 
-                                if (attPrefix == null || attPrefix == "") {
-                                    out.write((attQName.getLocalPart() + "='" + rtx.getValueOfCurrentNode() + "'")
-                                        .getBytes());
+                                if (attPrefix == null || attPrefix.equals("")) {
+                                    out
+                                        .write((attQName.getLocalPart() + "='" + rtx.getValueOfCurrentNode() + "'")
+                                            .getBytes());
                                 } else {
                                     out.write((attPrefix + ":" + attQName.getLocalPart() + "='"
-                                        + rtx.getValueOfCurrentNode() + "'").getBytes());
+                                    + rtx.getValueOfCurrentNode() + "'").getBytes());
                                 }
+                                break;
                             default:
                                 throw new IllegalStateException("Node kind not known!");
                             }
-                        } catch (final Exception e1) {
-                            LOGGER.error(e1.getMessage(), e1);
+                        } catch (final Exception e) {
+                            LOGGER.error(e.getMessage(), e);
                         } finally {
                             try {
                                 if (rtx != null) {
                                     rtx.close();
                                 }
-                            } catch (final TreetankException e1) {
-                                LOGGER.error(e1.getMessage(), e1);
+                            } catch (final TreetankException e) {
+                                LOGGER.error(e.getMessage(), e);
                             }
                         }
 
-                        text(gui, xmlPane, true);
+                        text(paramGUI, xmlPane, true);
                     }
                 }
             });
-        } catch (final Exception e1) {
-            LOGGER.error(e1.getMessage(), e1);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
-    public static void text(final GUI gui, final JTextArea xmlPane, final boolean init) {
+    /**
+     * Display text.
+     * 
+     * @param paramGUI
+     *            Main GUI frame.
+     * @param paramXMLPane
+     *            XML panel.
+     * @param paramInit
+     *            Determines if it's the initial invocation.
+     */
+    public static void text(final GUI paramGUI, final JTextArea paramXMLPane, final boolean paramInit) {
         // Remove adjustmnet listeners temporarily.
-        final JScrollBar bar =
-            GUI.xmlView.getVerticalScrollBar();
+        final JScrollBar bar = GUI.mXMLView.getVerticalScrollBar();
         for (final AdjustmentListener listener : bar.getAdjustmentListeners()) {
-            adjListener =
-                listener;
+            adjListener = listener;
             bar.removeAdjustmentListener(listener);
         }
 
         // Initialize variables.
-        final char[] text =
-            out.toString().toCharArray();
-        final int lineHeight =
-            xmlPane.getFontMetrics(xmlPane.getFont()).getHeight();
-        final int frameHeight =
-            xmlPane.getHeight() + lineChanges * lineHeight;
-        int rowsSize =
-            0;
-        final StringBuilder sBuilder =
-            new StringBuilder();
-        int indexSepChar =
-            0;
-        final String NL =
-            System.getProperty("line.separator");
+        final char[] text = out.toString().toCharArray();
+        final int lineHeight = paramXMLPane.getFontMetrics(paramXMLPane.getFont()).getHeight();
+        final int frameHeight = paramXMLPane.getHeight() + lineChanges * lineHeight;
+        int rowsSize = 0;
+        final StringBuilder sBuilder = new StringBuilder();
+        int indexSepChar = 0;
+        final String NL = ECharsForSerializing.NEWLINE.toString();
         // int countNewlines = 0;
         // final StringBuilder insertAtFirstPos = new StringBuilder();
         //
@@ -399,23 +417,18 @@ public enum GUICommands implements GUICommand {
         // }
 
         // Build text.
-        rowsSize =
-            0;
-        if (init) {
-            startPos =
-                0;
+        rowsSize = 0;
+        if (paramInit) {
+            startPos = 0;
         }
-        for (int i =
-            startPos == 0 ? startPos : startPos + 1; i < text.length && lineChanges >= 0
-            && startPos + 1 != text.length; i++) {
-            final char character =
-                text[i];
+        for (int i = startPos == 0 ? startPos : startPos + 1; i < text.length && lineChanges >= 0
+        && startPos + 1 != text.length; i++) {
+            final char character = text[i];
 
             // Increment rowsSize?
             if (indexSepChar < NL.length() && character == NL.charAt(indexSepChar)) {
                 if (indexSepChar == NL.length() - 1) {
-                    rowsSize +=
-                        lineHeight;
+                    rowsSize += lineHeight;
                 } else {
                     indexSepChar++;
                 }
@@ -423,32 +436,27 @@ public enum GUICommands implements GUICommand {
 
             if (rowsSize < frameHeight) {
                 sBuilder.append(character);
-                startPos =
-                    i;
+                startPos = i;
             } else {
-                startPos =
-                    i;
+                startPos = i;
                 System.out.println("START: " + startPos);
                 break;
             }
         }
 
         if (lineChanges >= 0 && startPos + 1 <= text.length) {
-            if (init) {
-                xmlPane.setText(sBuilder.toString());
-                xmlPane.setCaretPosition(0);
+            if (paramInit) {
+                paramXMLPane.setText(sBuilder.toString());
+                paramXMLPane.setCaretPosition(0);
             } else {
-                final int caretPos =
-                    xmlPane.getCaretPosition();
-                xmlPane.setCaretPosition(xmlPane.getDocument().getLength());
-                xmlPane.append(sBuilder.toString());
+                final int caretPos = paramXMLPane.getCaretPosition();
+                paramXMLPane.setCaretPosition(paramXMLPane.getDocument().getLength());
+                paramXMLPane.append(sBuilder.toString());
                 // Check and update caret position.
-                final int newCaretPos =
-                    caretPos + lineChanges * xmlPane.getColumns();
-                final int documentLength =
-                    xmlPane.getDocument().getLength();
+                final int newCaretPos = caretPos + lineChanges * paramXMLPane.getColumns();
+                final int documentLength = paramXMLPane.getDocument().getLength();
                 if (newCaretPos < documentLength) {
-                    xmlPane.setCaretPosition(newCaretPos);
+                    paramXMLPane.setCaretPosition(newCaretPos);
                 }
             }
         }
@@ -467,55 +475,46 @@ public enum GUICommands implements GUICommand {
     /**
      * Shredder or shredder into.
      * 
-     * @param gui
+     * @param paramGUI
      *            Main GUI frame.
-     * @param updateOnly
+     * @param paramUpdateOnly
      *            Shredder into an existing file or not.
      */
-    private static void shredder(final GUI gui, final boolean updateOnly) {
+    private static void shredder(final GUI paramGUI, final boolean paramUpdateOnly) {
         // Create a file chooser.
-        final JFileChooser fc =
-            new JFileChooser();
+        final JFileChooser fc = new JFileChooser();
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         fc.setAcceptAllFileFilterUsed(false);
 
-        if (fc.showOpenDialog(gui) == JFileChooser.APPROVE_OPTION) {
-            final File source =
-                fc.getSelectedFile();
+        if (fc.showOpenDialog(paramGUI) == JFileChooser.APPROVE_OPTION) {
+            final File source = fc.getSelectedFile();
 
-            if (fc.showSaveDialog(gui) == JFileChooser.APPROVE_OPTION) {
-                final File target =
-                    fc.getSelectedFile();
+            if (fc.showSaveDialog(paramGUI) == JFileChooser.APPROVE_OPTION) {
+                final File target = fc.getSelectedFile();
 
                 try {
-                    if (!updateOnly) {
+                    if (!paramUpdateOnly) {
                         Database.truncateDatabase(target);
                         Database.createDatabase(new DatabaseConfiguration(target));
                     }
-                    final IDatabase database =
-                        Database.openDatabase(target);
-                    final ISession session =
-                        database.getSession();
-                    final IWriteTransaction wtx =
-                        session.beginWriteTransaction();
-                    final XMLEventReader reader =
-                        XMLShredder.createReader(source);
-                    if (updateOnly) {
-                        final XMLShredder shredder =
-                            new XMLUpdateShredder(wtx, reader, true);
+                    final IDatabase database = Database.openDatabase(target);
+                    final ISession session = database.getSession();
+                    final IWriteTransaction wtx = session.beginWriteTransaction();
+                    final XMLEventReader reader = XMLShredder.createReader(source);
+                    if (paramUpdateOnly) {
+                        final XMLShredder shredder = new XMLUpdateShredder(wtx, reader, true);
                         shredder.call();
                     } else {
-                        final XMLShredder shredder =
-                            new XMLShredder(wtx, reader, true);
+                        final XMLShredder shredder = new XMLShredder(wtx, reader, true);
                         shredder.call();
                     }
                     wtx.close();
                     session.close();
                     database.close();
 
-                    setViews(gui, target);
-                } catch (final Exception e1) {
-                    LOGGER.error(e1.getMessage(), e1);
+                    setViews(paramGUI, target);
+                } catch (final Exception e) {
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
         }

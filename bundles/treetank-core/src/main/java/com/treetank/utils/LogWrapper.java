@@ -62,7 +62,7 @@ public final class LogWrapper {
      */
     public void error(final Exception paramExc) {
         if (mLogger.isErrorEnabled()) {
-            mLogger.error(paramExc.toString(), paramExc);
+            mLogger.error(paramExc.getMessage(), paramExc);
         }
     }
 

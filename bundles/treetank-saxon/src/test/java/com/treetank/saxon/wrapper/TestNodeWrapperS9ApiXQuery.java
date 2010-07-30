@@ -31,12 +31,13 @@ import com.treetank.service.xml.XMLShredder;
 public final class TestNodeWrapperS9ApiXQuery {
 
     /** Treetank database on books document. */
-    private transient static IDatabase databaseBooks;
+    private static transient IDatabase databaseBooks;
 
     /** Path to books file. */
-    private static final File BOOKSXML = new File(new StringBuilder("src").append(File.separator).append(
-        "test").append(File.separator).append("resources").append(File.separator).append("data").append(
-        File.separator).append("my-books.xml").toString());
+    private static final File BOOKSXML =
+        new File(new StringBuilder("src").append(File.separator).append("test").append(File.separator)
+            .append("resources").append(File.separator).append("data").append(File.separator).append(
+                "my-books.xml").toString());
 
     @Before
     public void setUp() throws Exception {

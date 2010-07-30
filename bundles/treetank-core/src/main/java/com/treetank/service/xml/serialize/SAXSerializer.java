@@ -254,11 +254,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.xml.sax.XMLReader#getProperty(java.lang.String)
-     */
+    /* Implements XMLReader method. */
     @Override
     public Object getProperty(final String name) throws SAXNotRecognizedException, SAXNotSupportedException {
         return null;

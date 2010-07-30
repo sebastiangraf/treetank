@@ -25,8 +25,10 @@ import com.treetank.utils.DocumentCreater;
  */
 public final class TestNodeWrapperS9ApiXPath extends XMLTestCase {
 
-    /** Treetank database on Treetank test document. */
-    private transient static IDatabase databaseTest;
+    /** 
+     * Treetank database on Treetank test document {@link IDatabase}. 
+     */
+    private static transient IDatabase databaseTest;
 
     @Override
     @BeforeClass

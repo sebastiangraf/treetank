@@ -24,27 +24,24 @@ package com.treetank.cache;
  */
 public final class NullCache implements ICache {
 
+    /**
+     * Constructor.
+     */
     public NullCache() {
         super();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void clear() {
         // Not used over here
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public NodePageContainer get(final long mKey) {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void put(final long mKey, final NodePageContainer mPage) {
         // Not used over here
     }

@@ -52,7 +52,7 @@ public final class TestNodeWrapperS9ApiXSLT extends XMLTestCase {
     + File.separator + "data" + File.separator + "books.xml");
 
     /** Treetank database on Treetank test document. */
-    private transient static IDatabase databaseBooks;
+    private static transient IDatabase databaseBooks;
 
     @Override
     @Before

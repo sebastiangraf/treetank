@@ -22,8 +22,8 @@ Not yet implemented things:
 	- ordered sequences 
 	- nilled property
 	- SchemaAttribute() / SchemaElement() node tests (no Schema support in Treetank)
-	-interrogation in the element() node test (nilled property)
-	-wildcards in the name of attributes (ns:name -> *:name or ns:*, because treetank does not
+	- interrogation in the element() node test (nilled property)
+	- wildcards in the name of attributes (ns:name -> *:name or ns:*, because treetank does not
 	 allow to access these easily)
 	- NamespaceAxis
 	- prefix optional (at the moment no support for missing prefixes)

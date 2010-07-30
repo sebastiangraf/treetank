@@ -24,7 +24,7 @@ package com.treetank.exception;
  */
 public abstract class TreetankException extends Exception {
 
-    /** general id. */
+    /** General ID. */
     private static final long serialVersionUID = 1L;
 
     /**
