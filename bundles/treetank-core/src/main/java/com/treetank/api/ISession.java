@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: ISession.java 4410 2008-08-27 13:42:43Z kramis $
  */
 
 package com.treetank.api;
@@ -37,7 +36,8 @@ import com.treetank.exception.TreetankException;
  * <p>
  * 
  * <pre>
- * // Simple session with standards as defined in <code>EDatabaseSetting</code> and <code>ESessionSetting</code>. 
+ * // Simple session with standards as defined in <code>EDatabaseSetting</code> and 
+ * <code>ESessionSetting</code>. 
  * final IDatabase database = Database.openDatabase(&quot;example.tnk&quot;);
  * final ISession session = database.getSession()
  * 
@@ -57,6 +57,8 @@ public interface ISession {
     /**
      * Begin a read-only transaction on the latest committed revision key.
      * 
+     * @throws TreetankException
+     *             If can't begin Read Transaction.
      * @return IReadTransaction instance.
      */
     IReadTransaction beginReadTransaction() throws TreetankException;
@@ -66,6 +68,8 @@ public interface ISession {
      * 
      * @param revisionKey
      *            Revision key to read from.
+     * @throws TreetankException
+     *             If can't begin Read Transaction.
      * @return IReadTransaction instance.
      */
     IReadTransaction beginReadTransaction(final long revisionKey) throws TreetankException;
@@ -73,6 +77,8 @@ public interface ISession {
     /**
      * Begin exclusive read/write transaction without auto commit.
      * 
+     * @throws TreetankException
+     *             If can't begin Write Transaction.
      * @return IWriteTransaction instance.
      */
     IWriteTransaction beginWriteTransaction() throws TreetankException;
@@ -84,6 +90,8 @@ public interface ISession {
      *            Count of node modifications after which a commit is issued.
      * @param maxTime
      *            Time in seconds after which a commit is issued.
+     * @throws TreetankException
+     *             If can't begin Write Transaction.
      * @return IWriteTransaction instance.
      */
     IWriteTransaction beginWriteTransaction(final int maxNodeCount, final int maxTime)
@@ -109,6 +117,9 @@ public interface ISession {
      * 
      * This is an idempotent operation and does nothing if the session is
      * already closed.
+     * 
+     * @throws TreetankException
+     *             If can't close session.
      */
     void close() throws TreetankException;
 

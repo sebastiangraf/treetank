@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: AncestorAxis.java 4258 2008-07-14 16:45:28Z kramis $
  */
 
 package com.treetank.axis;
@@ -49,19 +48,19 @@ public class AncestorAxis extends AbstractAxis implements IAxis {
      * 
      * @param rtx
      *            Exclusive (immutable) trx to iterate with.
-     * @param includeSelf
+     * @param mIncludeSelf
      *            Is self included?
      */
-    public AncestorAxis(final IReadTransaction rtx, final boolean includeSelf) {
-        super(rtx, includeSelf);
+    public AncestorAxis(final IReadTransaction rtx, final boolean mIncludeSelf) {
+        super(rtx, mIncludeSelf);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final void reset(final long nodeKey) {
-        super.reset(nodeKey);
+    public final void reset(final long mNodeKey) {
+        super.reset(mNodeKey);
         mFirst = true;
     }
 
@@ -79,8 +78,9 @@ public class AncestorAxis extends AbstractAxis implements IAxis {
         }
 
         if (getTransaction().getNode().getKind() != ENodes.ROOT_KIND
-        && getTransaction().getNode().hasParent()
-        && getTransaction().getNode().getParentKey() != (Long)EFixed.ROOT_NODE_KEY.getStandardProperty()) {
+            && getTransaction().getNode().hasParent()
+            && getTransaction().getNode().getParentKey() 
+                != (Long)EFixed.ROOT_NODE_KEY.getStandardProperty()) {
             getTransaction().moveToParent();
             return true;
         }

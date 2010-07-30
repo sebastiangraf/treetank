@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: IWriteTransaction.java 4413 2008-08-27 16:59:32Z kramis $
  */
 
 package com.treetank.api;
@@ -47,7 +46,8 @@ import com.treetank.exception.TreetankIOException;
  * <p>
  * <ol>
  * <li>Only a single thread accesses the single IWriteTransaction instance.</li>
- * <li><strong>Precondition</strong> before moving cursor: <code>IWriteTransaction.getNodeKey() == n</code>.</li>
+ * <li><strong>Precondition</strong> before moving cursor: 
+ * <code>IWriteTransaction.getNodeKey() == n</code>.</li>
  * <li><strong>Postcondition</strong> after modifying the cursor: <code>(IWriteTransaction.insertX() == m &&
  *       IWriteTransaction.getNodeKey() == m)</code>.</li>
  * </ol>
@@ -111,66 +111,78 @@ public interface IWriteTransaction extends IReadTransaction {
      * Insert new element node as first child of currently selected node. The
      * cursor is moved to the inserted node.
      * 
-     * @param qname
+     * @param mQname
      *            Qualified name of inserted node.
+     * @throws TreetankException
+     *             If can't insert Element as first child.
      * @return Key of inserted node. already has a first child.
      */
-    long insertElementAsFirstChild(final QName qname) throws TreetankException;
+    long insertElementAsFirstChild(final QName mQname) throws TreetankException;
 
     /**
      * Insert new text node as first child of currently selected node. The
      * cursor is moved to the inserted node.
      * 
-     * @param value
+     * @param mValue
      *            Value of inserted node.
+     * @throws TreetankException
+     *             If can't insert Text node as first child.
      * @return Key of inserted node. already has a first child.
      */
-    long insertTextAsFirstChild(final String value) throws TreetankException;
+    long insertTextAsFirstChild(final String mValue) throws TreetankException;
 
     /**
      * Insert new element node as right sibling of currently selected node. The
      * cursor is moved to the inserted node.
      * 
-     * @param qname
+     * @param mQname
      *            name of the new node
+     * @throws TreetankException
+     *             If can't insert Element node as right sibling.
      * @return Key of inserted node. already has a first child.
      */
-    long insertElementAsRightSibling(final QName qname) throws TreetankException;
+    long insertElementAsRightSibling(final QName mQname) throws TreetankException;
 
     /**
      * Insert new element node as right sibling of currently selected node. The
      * cursor is moved to the inserted node.
      * 
-     * @param value
+     * @param mValue
      *            Value of inserted node.
+     * @throws TreetankException
+     *             If can't insert Text node as right sibling.
      * @return Key of inserted node. the root node which is not allowed to have
      *         right siblings.
      */
-    long insertTextAsRightSibling(final String value) throws TreetankException;
+    long insertTextAsRightSibling(final String mValue) throws TreetankException;
 
     /**
      * Insert attribute in currently selected node. The cursor is moved to the
      * inserted node.
      * 
-     * @param QName
+     * @param mQname
      *            qname
-     * @param value
+     * @param mValue
      *            Value of inserted node.
+     * @throws TreetankException
+     *             If can't insert Attribute to node.     
      * @return Key of inserted node.
      */
-    long insertAttribute(final QName qname, final String value) throws TreetankException;
+    long insertAttribute(final QName mQname, final String mValue) throws TreetankException;
 
     /**
      * Insert namespace declaration in currently selected node. The cursor is
      * moved to the inserted node.
      * 
-     * @param uri
+     * @param mUri
      *            URI of inserted node.
-     * @param name
+     * @param mName
      *            Prefix of inserted node.
+     * @throws TreetankException
+     *             If can't insert Namespace to node.
      * @return Key of inserted node.
      */
-    long insertNamespace(final String uri, final String name) throws TreetankException;
+    long insertNamespace(final String mUri, final String mName) throws TreetankException;
 
     /**
      * Remove currently selected node. This does automatically remove
@@ -179,6 +191,9 @@ public interface IWriteTransaction extends IReadTransaction {
      * The cursor is located at the former right sibling. If there was no right
      * sibling, it is located at the former left sibling. If there was no left
      * sibling, it is located at the former parent.
+     * 
+     * @throws TreetankException
+     *             If can't remove node.
      */
     void remove() throws TreetankException;
 
@@ -188,45 +203,59 @@ public interface IWriteTransaction extends IReadTransaction {
     /**
      * Set local part of node.
      * 
-     * @param name
+     * @param mName
      *            New qualified name of node.
+     * @throws TreetankIOException
+     *             If can't set Name in node.
      */
-    void setName(final String name) throws TreetankIOException;
+    void setName(final String mName) throws TreetankIOException;
 
     /**
      * Set URI of node.
      * 
-     * @param uri
+     * @param mUri
      *            New URI of node.
+     * @throws TreetankIOException
+     *             If can't set URI in node.
      */
-    void setURI(final String uri) throws TreetankIOException;
+    void setURI(final String mUri) throws TreetankIOException;
 
     /**
      * Set value of node.
      * 
-     * @param valueType
+     * @param mValueType
      *            Type of value.
-     * @param value
+     * @param mValue
      *            New value of node.
+     * @throws TreetankIOException
+     *             If can't set Value in node.
      */
-    void setValue(final int valueType, final byte[] value) throws TreetankIOException;
+    void setValue(final int mValueType, final byte[] mValue) throws TreetankIOException;
 
     /**
      * Set value of node.
      * 
-     * @param value
+     * @param mValue
      *            New value of node.
+     * @throws TreetankIOException
+     *             If can't set Value in node.
      */
-    void setValue(final String value) throws TreetankIOException;
+    void setValue(final String mValue) throws TreetankIOException;
 
     /**
      * Commit all modifications of the exclusive write transaction. Even commit
      * if there are no modification at all.
+     * 
+     * @throws TreetankException
+     *             If can't commit this revision.
      */
     void commit() throws TreetankException;
 
     /**
      * Abort all modifications of the exclusive write transaction.
+     * 
+     * @throws TreetankIOException
+     *             If can't abort modification.
      */
     void abort() throws TreetankIOException;
 
@@ -236,11 +265,16 @@ public interface IWriteTransaction extends IReadTransaction {
      * 
      * @param revision
      *            revert for the revision
+     * @throws TreetankException
+     *             If can't revert to revision.      
      */
     void revertTo(final long revision) throws TreetankException;
 
     /**
-     * Closing current WriteTransaction
+     * Closing current WriteTransaction.
+     * 
+     * @throws TreetankException
+     *             If can't close Write Transaction.
      */
     void close() throws TreetankException;
 

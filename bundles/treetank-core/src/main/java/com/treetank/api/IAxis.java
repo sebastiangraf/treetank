@@ -1,14 +1,11 @@
-/*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
- * Patent Pending.
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
  * 
- * Permission to use, copy, modify, and/or distribute this software for non-
- * commercial use with or without fee is hereby granted, provided that the
- * above copyright notice, the patent notice, and this permission notice
- * appear in all copies.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -16,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: IAxis.java 4258 2008-07-14 16:45:28Z kramis $
  */
 
 package com.treetank.api;
@@ -43,7 +39,8 @@ import java.util.Iterator;
  * <li><code>IAxis.next()</code> must be called exactly once after <code>IAxis.hasNext() == true</code>.</li>
  * <li><code>IReadTransaction.getNodeKey()</code> must be equal right after <code>IAxis.hasNext()</code> and
  * right before the next call to <code>IAxis.hasNext()</code>.</li>
- * <li>If used with <code>IWriteTransaction</code>, there are no modification during an enhanced for loop.</li>
+ * <li>If used with <code>IWriteTransaction</code>, there are no modification during an enhanced for 
+ * loop.</li>
  * <li><strong>Postcondition</strong> after <code>IAxis.hasNext() == false</code>:
  * <code>IReadTransaction.getNodeKey() == n</code>.</li>
  * </ol>
@@ -128,10 +125,10 @@ public interface IAxis extends Iterator<Long>, Iterable<Long> {
     /**
      * Reset axis to new start node key. Used for nesting.
      * 
-     * @param nodeKey
+     * @param mNodeKey
      *            New start node key.
      */
-    void reset(final long nodeKey);
+    void reset(final long mNodeKey);
 
     /**
      * Access transaction to which this axis is bound.

@@ -24,7 +24,17 @@ import java.util.zip.Inflater;
 
 import com.treetank.io.file.ByteBufferSinkAndSource;
 
+import org.slf4j.LoggerFactory;
+
+
+
 public class CryptoJavaImpl implements ICrypto {
+    
+    /**
+     * Log wrapper for better output.
+     */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(CryptoJavaImpl.class));
 
     private final Deflater mCompressor;
 
@@ -68,7 +78,7 @@ public class CryptoJavaImpl implements ICrypto {
                 mOut.write(mTmp, 0, count);
             }
         } catch (final Exception e) {
-            e.printStackTrace();
+            LOGWRAPPER.error(e);
             return 0;
         }
         final byte[] result = mOut.toByteArray();
@@ -106,7 +116,7 @@ public class CryptoJavaImpl implements ICrypto {
                 mOut.write(mTmp, 0, count);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGWRAPPER.error(e);
             return 0;
         }
         final byte[] result = mOut.toByteArray();

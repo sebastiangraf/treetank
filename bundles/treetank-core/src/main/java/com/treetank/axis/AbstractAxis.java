@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,7 +13,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: AbstractAxis.java 4258 2008-07-14 16:45:28Z kramis $
  */
 
 package com.treetank.axis;
@@ -72,12 +71,12 @@ public abstract class AbstractAxis implements IAxis {
      * 
      * @param rtx
      *            Transaction to operate with.
-     * @param includeSelf
+     * @param mIncludeSelf
      *            Is self included?
      */
-    public AbstractAxis(final IReadTransaction rtx, final boolean includeSelf) {
-        mRTX = rtx;
-        mIncludeSelf = includeSelf;
+    public AbstractAxis(final IReadTransaction rtx, final boolean mIncludeSelf) {
+        this.mRTX = rtx;
+        this.mIncludeSelf = mIncludeSelf;
         reset(rtx.getNode().getNodeKey());
     }
 
@@ -94,7 +93,7 @@ public abstract class AbstractAxis implements IAxis {
     public final Long next() {
         if (!mNext) {
             throw new IllegalStateException("IAxis.next() must be called exactely once after hasNext()"
-            + " evaluated to true.");
+                + " evaluated to true.");
         }
         mKey = mRTX.getNode().getNodeKey();
         mNext = false;
