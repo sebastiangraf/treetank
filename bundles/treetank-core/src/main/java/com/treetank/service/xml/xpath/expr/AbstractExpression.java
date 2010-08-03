@@ -19,7 +19,7 @@ package com.treetank.service.xml.xpath.expr;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AbstractAxis;
+import com.treetank.axis.AbsAxis;
 
 /**
  * <h1>AbstractExpression</h1>
@@ -32,7 +32,7 @@ import com.treetank.axis.AbstractAxis;
  * evaluated once. Therefore the axis returns true only for the first call and false for all others.
  * </p>
  */
-public abstract class AbstractExpression extends AbstractAxis implements IAxis {
+public abstract class AbstractExpression extends AbsAxis implements IAxis {
 
     /** Defines, whether hasNext() has already been called. */
     private boolean mIsFirst;

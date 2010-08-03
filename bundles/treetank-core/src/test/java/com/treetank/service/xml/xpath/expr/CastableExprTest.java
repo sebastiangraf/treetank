@@ -77,8 +77,8 @@ public class CastableExprTest {
             assertEquals(true, axis2.hasNext());
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPST0080 "
-            + "Target type of a cast or castable expression must not be "
-            + "xs:NOTATION or xs:anyAtomicType."));
+                + "Target type of a cast or castable expression must not be "
+                + "xs:NOTATION or xs:anyAtomicType."));
         }
 
         // Token is not implemented yet.

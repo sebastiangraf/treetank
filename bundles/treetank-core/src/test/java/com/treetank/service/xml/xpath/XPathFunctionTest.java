@@ -42,8 +42,8 @@ import com.treetank.service.xml.shredder.XMLShredder;
  */
 public class XPathFunctionTest {
 
-    public static final String XML =
-        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "alphabet.xml";
+    public static final String XML = "src" + File.separator + "test" + File.separator + "resources"
+        + File.separator + "alphabet.xml";
 
     @Before
     public void setUp() throws Exception {

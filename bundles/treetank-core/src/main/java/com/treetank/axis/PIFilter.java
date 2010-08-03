@@ -27,7 +27,7 @@ import com.treetank.api.IReadTransaction;
  * Only match process instruction nodes.
  * </p>
  */
-public class PIFilter extends AbstractFilter implements IFilter {
+public class PIFilter extends AbsFilter implements IFilter {
 
     /**
      * Default constructor.

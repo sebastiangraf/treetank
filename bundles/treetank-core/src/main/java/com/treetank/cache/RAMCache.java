@@ -17,6 +17,7 @@
 package com.treetank.cache;
 
 import com.treetank.utils.FastWeakHashMap;
+
 /**
  * Simple RAM implementation with the help of a {@link FastWeakHashMap}.
  * 
@@ -24,7 +25,7 @@ import com.treetank.utils.FastWeakHashMap;
  * 
  */
 public final class RAMCache implements ICache {
-    
+
     /**
      * local instance.
      */
@@ -35,8 +36,7 @@ public final class RAMCache implements ICache {
      */
     public RAMCache() {
         super();
-        map =
-            new FastWeakHashMap<Long, NodePageContainer>();
+        map = new FastWeakHashMap<Long, NodePageContainer>();
 
     }
 

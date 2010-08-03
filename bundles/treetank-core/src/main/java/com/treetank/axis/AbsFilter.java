@@ -27,7 +27,7 @@ import com.treetank.api.IReadTransaction;
  * Filter node of transaction this filter is bound to.
  * </p>
  */
-public abstract class AbstractFilter implements IFilter {
+public abstract class AbsFilter implements IFilter {
 
     /** Iterate over transaction exclusive to this step. */
     private final IReadTransaction mRTX;
@@ -38,20 +38,22 @@ public abstract class AbstractFilter implements IFilter {
      * @param rtx
      *            Transaction to operate with.
      */
-    public AbstractFilter(final IReadTransaction rtx) {
+    public AbsFilter(final IReadTransaction rtx) {
         mRTX = rtx;
     }
 
     /**
      * {@inheritDoc}
      */
-    public IReadTransaction getTransaction() {
+    @Override
+    public final IReadTransaction getTransaction() {
         return mRTX;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public abstract boolean filter();
 
 }

@@ -29,7 +29,7 @@ import com.treetank.node.ElementNode;
  * Iterate over all attibutes of a given node.
  * </p>
  */
-public class AttributeAxis extends AbstractAxis implements IAxis {
+public class AttributeAxis extends AbsAxis implements IAxis {
 
     /** Remember next key to visit. */
     private int mNextIndex;

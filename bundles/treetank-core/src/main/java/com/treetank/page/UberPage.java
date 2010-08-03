@@ -202,7 +202,7 @@ public final class UberPage extends AbstractPage {
     @Override
     public String toString() {
         return super.toString() + ": revisionCount=" + mRevisionCount + ", indirectPage=("
-        + getReference(INDIRECT_REFERENCE_OFFSET) + "), isBootstrap=" + mBootstrap;
+            + getReference(INDIRECT_REFERENCE_OFFSET) + "), isBootstrap=" + mBootstrap;
     }
 
 }

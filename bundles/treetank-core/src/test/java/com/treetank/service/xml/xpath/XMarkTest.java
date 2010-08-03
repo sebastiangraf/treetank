@@ -42,8 +42,8 @@ import com.treetank.service.xml.shredder.XMLShredder;
 public class XMarkTest {
 
     // XMark 1 GB
-    private static final String XML =
-        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "auction.xml";
+    private static final String XML = "src" + File.separator + "test" + File.separator + "resources"
+        + File.separator + "auction.xml";
 
     private IDatabase database;
 
@@ -139,7 +139,7 @@ public class XMarkTest {
         // Q5 How many sold items cost more than 40?
         XPathStringChecker.testIAxisConventions(new XPathAxis(rtx,
             "fn:count(for $i in /site/closed_auctions/closed_auction[price/text() >= 40] "
-            + "return $i/price)"), new String[] {
+                + "return $i/price)"), new String[] {
             "75"
         });
 
@@ -162,7 +162,7 @@ public class XMarkTest {
         // Q7 How many pieces of prose are in our database?
         XPathStringChecker.testIAxisConventions(new XPathAxis(rtx,
             "for $p in /site return fn:count($p//description) + "
-            + "fn:count($p//annotation) + fn:count($p//emailaddress)"), new String[] {
+                + "fn:count($p//annotation) + fn:count($p//emailaddress)"), new String[] {
             "916.0"
         }); // TODO: why double?
 

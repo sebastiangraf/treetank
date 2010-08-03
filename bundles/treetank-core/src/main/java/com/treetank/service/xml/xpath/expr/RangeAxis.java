@@ -19,7 +19,7 @@ package com.treetank.service.xml.xpath.expr;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AbstractAxis;
+import com.treetank.axis.AbsAxis;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.types.Type;
 import com.treetank.utils.TypedValue;
@@ -39,7 +39,7 @@ import com.treetank.utils.TypedValue;
  * operands, in increasing order.
  * </p>
  */
-public class RangeAxis extends AbstractAxis implements IAxis {
+public class RangeAxis extends AbsAxis implements IAxis {
 
     /** The expression the range starts from. */
     private final IAxis mFrom;

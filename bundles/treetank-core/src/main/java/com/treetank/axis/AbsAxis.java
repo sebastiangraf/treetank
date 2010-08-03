@@ -37,7 +37,7 @@ import com.treetank.api.IReadTransaction;
  * All users must make sure to call next() after hasNext() evaluated to true.
  * </p>
  */
-public abstract class AbstractAxis implements IAxis {
+public abstract class AbsAxis implements IAxis {
 
     /** Iterate over transaction exclusive to this step. */
     private final IReadTransaction mRTX;
@@ -60,7 +60,7 @@ public abstract class AbstractAxis implements IAxis {
      * @param rtx
      *            Transaction to operate with.
      */
-    public AbstractAxis(final IReadTransaction rtx) {
+    public AbsAxis(final IReadTransaction rtx) {
         mRTX = rtx;
         mIncludeSelf = false;
         reset(rtx.getNode().getNodeKey());
@@ -74,7 +74,7 @@ public abstract class AbstractAxis implements IAxis {
      * @param mIncludeSelf
      *            Is self included?
      */
-    public AbstractAxis(final IReadTransaction rtx, final boolean mIncludeSelf) {
+    public AbsAxis(final IReadTransaction rtx, final boolean mIncludeSelf) {
         this.mRTX = rtx;
         this.mIncludeSelf = mIncludeSelf;
         reset(rtx.getNode().getNodeKey());

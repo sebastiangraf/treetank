@@ -15,7 +15,6 @@
  * 
  */
 
-
 package com.treetank.utils;
 
 import org.slf4j.LoggerFactory;
@@ -33,9 +32,8 @@ public final class TypedValue {
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(TypedValue.class));
-    
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(TypedValue.class));
+
     /** Empty string. */
     public static final byte[] EMPTY = new byte[0];
 
@@ -328,17 +326,17 @@ public final class TypedValue {
                         tmpBytes[position++] = (byte)(mValue >> 28);
                     } else {
                         tmpBytes[position - 1] &= 127;
-                    }    
+                    }
                 } else {
                     tmpBytes[position - 1] &= 127;
-                }                   
+                }
             } else {
                 tmpBytes[position - 1] &= 127;
-            }                
+            }
         } else {
             tmpBytes[position - 1] &= 127;
         }
-            
+
         final byte[] bytes = new byte[position];
         System.arraycopy(tmpBytes, 0, bytes, 0, position);
         return bytes;
@@ -373,26 +371,26 @@ public final class TypedValue {
                                     tmpBytes[position - 9] = (byte)8;
                                 } else {
                                     tmpBytes[position - 8] = (byte)7;
-                                }                                    
+                                }
                             } else {
                                 tmpBytes[position - 7] = (byte)6;
-                            }                                
+                            }
                         } else {
                             tmpBytes[position - 6] = (byte)5;
-                        }                        
-                    } else { 
+                        }
+                    } else {
                         tmpBytes[position - 5] = (byte)4;
-                    }   
+                    }
                 } else {
                     tmpBytes[position - 4] = (byte)3;
-                } 
+                }
             } else {
                 tmpBytes[position - 3] = (byte)2;
             }
         } else {
             tmpBytes[position - 2] = (byte)1;
         }
-            
+
         final byte[] bytes = new byte[position];
         System.arraycopy(tmpBytes, 0, bytes, 0, position);
         return bytes;

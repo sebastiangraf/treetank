@@ -39,7 +39,7 @@ import com.treetank.utils.TypedValue;
  * </p>
  */
 public class ReadTransaction implements IReadTransaction {
-    
+
     /** ID of transaction. */
     private final long mTransactionID;
 

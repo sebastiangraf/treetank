@@ -22,7 +22,7 @@ import java.util.Set;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AbstractAxis;
+import com.treetank.axis.AbsAxis;
 import com.treetank.service.xml.xpath.functions.XPathError;
 import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
 
@@ -34,7 +34,7 @@ import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
  * the second operand.
  * </p>
  */
-public class ExceptAxis extends AbstractAxis implements IAxis {
+public class ExceptAxis extends AbsAxis implements IAxis {
 
     /** First operand sequence. */
     private final IAxis mOp1;

@@ -39,13 +39,13 @@ import org.slf4j.LoggerFactory;
  * @author Sebastian Graf, University of Konstanz
  */
 public class DatabaseConfiguration {
-    
+
     /**
      * Log wrapper for better output.
      */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
         .getLogger(DatabaseConfiguration.class));
-    
+
     /** Absolute path to tnk directory. */
     private final File mFile;
 
@@ -109,9 +109,9 @@ public class DatabaseConfiguration {
                 // Check if property file comes from external
                 if ((paramProp.getName().equals(EStoragePaths.DBSETTINGS.getFile().getName()) && paramProp
                     .getParentFile().equals(paramFile))
-                // and check if the loaded checksum is valid
-                && !loadProps.getProperty(EDatabaseSetting.CHECKSUM.name()).equals(
-                    Integer.toString(hashCode()))) {
+                    // and check if the loaded checksum is valid
+                    && !loadProps.getProperty(EDatabaseSetting.CHECKSUM.name()).equals(
+                        Integer.toString(hashCode()))) {
                     throw new TreetankUsageException("Checksums differ: Loaded", getProps().toString(),
                         "and expected", toString());
 

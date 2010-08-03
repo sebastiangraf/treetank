@@ -34,13 +34,12 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public abstract class AbstractPersistenceCache implements ICache {
-    
+
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(Database.class));
-    
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(Database.class));
+
     /**
      * Place to store the data.
      */

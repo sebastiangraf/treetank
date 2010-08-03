@@ -29,8 +29,11 @@ import com.treetank.settings.EFixed;
  * Iterate over all descendants of kind ELEMENT or TEXT starting at a given node. Self is not included.
  * </p>
  */
-public class AncestorAxis extends AbstractAxis implements IAxis {
+public class AncestorAxis extends AbsAxis implements IAxis {
 
+    /**
+     * First touch of node.
+     */
     private boolean mFirst;
 
     /**
@@ -79,8 +82,7 @@ public class AncestorAxis extends AbstractAxis implements IAxis {
 
         if (getTransaction().getNode().getKind() != ENodes.ROOT_KIND
             && getTransaction().getNode().hasParent()
-            && getTransaction().getNode().getParentKey() 
-                != (Long)EFixed.ROOT_NODE_KEY.getStandardProperty()) {
+            && getTransaction().getNode().getParentKey() != (Long)EFixed.ROOT_NODE_KEY.getStandardProperty()) {
             getTransaction().moveToParent();
             return true;
         }

@@ -19,7 +19,7 @@ package com.treetank.service.xml.xpath.expr;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AbstractAxis;
+import com.treetank.axis.AbsAxis;
 import com.treetank.service.xml.xpath.functions.XPathError;
 import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
 
@@ -32,7 +32,7 @@ import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
  * DupFilterAxis. The resulting sequence may also be out of document order.
  * </p>
  */
-public class UnionAxis extends AbstractAxis implements IAxis {
+public class UnionAxis extends AbsAxis implements IAxis {
 
     /** First operand sequence. */
     private final IAxis mOp1;

@@ -16,7 +16,6 @@
  */
 package com.treetank.cache;
 
-
 /**
  * Interface for all upcoming cache implementations. Can be a weak one, a
  * LRU-based one or a persistent. However, clear, put and get must to be

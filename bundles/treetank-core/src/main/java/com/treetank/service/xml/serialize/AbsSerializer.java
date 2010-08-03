@@ -83,7 +83,7 @@ abstract class AbsSerializer implements Callable<Void> {
      * Serialize the storage.
      * 
      * @throws Exception
-     *            if can't call serailzer   
+     *             if can't call serailzer
      */
     public Void call() throws Exception {
 

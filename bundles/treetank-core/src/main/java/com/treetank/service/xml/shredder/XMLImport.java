@@ -77,8 +77,7 @@ public final class XMLImport implements IImport, Callable<Void> {
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(XMLImport.class));
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(XMLImport.class));
 
     /** {@link Session}. */
     private transient ISession mSession;
@@ -195,7 +194,7 @@ public final class XMLImport implements IImport, Callable<Void> {
             }
 
             reader.nextEvent();
-        } while(reader.hasNext());
+        } while (reader.hasNext());
         return null;
     }
 

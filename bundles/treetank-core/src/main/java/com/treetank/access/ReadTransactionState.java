@@ -346,8 +346,7 @@ public class ReadTransactionState {
         long levelKey = mKey;
 
         // Iterate through all levels.
-        for (int level = 0, height = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; 
-        level < height; level++) {
+        for (int level = 0, height = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
             offset = (int)(levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
             levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
             final AbstractPage page = dereferenceIndirectPage(reference);
@@ -405,8 +404,7 @@ public class ReadTransactionState {
      */
     protected static final int nodePageOffset(final long mNodeKey) {
         final long nodePageOffset =
-            (mNodeKey - ((mNodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT)
-            << IConstants.NDP_NODE_COUNT_EXPONENT));
+            (mNodeKey - ((mNodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT) << IConstants.NDP_NODE_COUNT_EXPONENT));
         return (int)nodePageOffset;
     }
 

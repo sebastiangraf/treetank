@@ -29,7 +29,7 @@ import com.treetank.settings.EFixed;
  * Iterate to parent node starting at a given node. Self is not included.
  * </p>
  */
-public class ParentAxis extends AbstractAxis implements IAxis {
+public class ParentAxis extends AbsAxis implements IAxis {
 
     /** Track number of calls of next. */
     private boolean mFirst;
@@ -61,8 +61,7 @@ public class ParentAxis extends AbstractAxis implements IAxis {
         resetToLastKey();
         if (getTransaction().getNode().getKind() != ENodes.ROOT_KIND && mFirst
             && getTransaction().getNode().hasParent()
-            && getTransaction().getNode().getParentKey() 
-                != (Long)EFixed.ROOT_NODE_KEY.getStandardProperty()) {
+            && getTransaction().getNode().getParentKey() != (Long)EFixed.ROOT_NODE_KEY.getStandardProperty()) {
             mFirst = false;
             getTransaction().moveToParent();
             return true;

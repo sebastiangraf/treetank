@@ -48,7 +48,7 @@ public class InstanceOfExpr extends AbstractExpression implements IAxis {
      * @param mSequenceType
      *            sequence type to test whether the input sequence matches to.
      */
-    public InstanceOfExpr(final IReadTransaction mRtx, final IAxis mInputExpr, 
+    public InstanceOfExpr(final IReadTransaction mRtx, final IAxis mInputExpr,
         final SequenceType mSequenceType) {
 
         super(mRtx);
@@ -103,8 +103,8 @@ public class InstanceOfExpr extends AbstractExpression implements IAxis {
         } else { // empty sequence
             isInstanceOf =
                 mSequenceType.isEmptySequence()
-                || (mSequenceType.hasWildcard() && (mSequenceType.getWildcard() == '?' || mSequenceType
-                    .getWildcard() == '*'));
+                    || (mSequenceType.hasWildcard() && (mSequenceType.getWildcard() == '?' || mSequenceType
+                        .getWildcard() == '*'));
         }
 
         // create result item and move transaction to it.

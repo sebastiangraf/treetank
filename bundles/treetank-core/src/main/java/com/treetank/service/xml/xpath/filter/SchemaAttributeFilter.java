@@ -19,7 +19,7 @@ package com.treetank.service.xml.xpath.filter;
 
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AbstractFilter;
+import com.treetank.axis.AbsFilter;
 
 /**
  * <h1>SchemaAttributeFilter</h1>
@@ -40,7 +40,7 @@ import com.treetank.axis.AbstractFilter;
  * declarations, a static error is raised [err:XPST0008].
  * </p>
  */
-public class SchemaAttributeFilter extends AbstractFilter implements IFilter {
+public class SchemaAttributeFilter extends AbsFilter implements IFilter {
 
     // /** The specified name for the attribute. */
     // private final String attributeName;

@@ -27,7 +27,7 @@ import com.treetank.api.IReadTransaction;
  * Iterate to parent node starting at a given node. Self is not included.
  * </p>
  */
-public class SelfAxis extends AbstractAxis implements IAxis {
+public class SelfAxis extends AbsAxis implements IAxis {
 
     /** Track number of calls of next. */
     private boolean mFirst;

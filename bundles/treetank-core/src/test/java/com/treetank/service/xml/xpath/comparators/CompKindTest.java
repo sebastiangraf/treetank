@@ -98,8 +98,8 @@ public class CompKindTest {
             fail("Expected exception");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate "
-            + "the expression or the typedoes not match a required type as"
-            + " specified by the matching rules."));
+                + "the expression or the typedoes not match a required type as"
+                + " specified by the matching rules."));
         }
 
     }
@@ -172,8 +172,8 @@ public class CompKindTest {
             fail("Expected exception");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate "
-            + "the expression or the typedoes not match a required type as"
-            + " specified by the matching rules."));
+                + "the expression or the typedoes not match a required type as"
+                + " specified by the matching rules."));
         }
     }
 
@@ -245,8 +245,8 @@ public class CompKindTest {
             fail("Expected exception");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate "
-            + "the expression or the typedoes not match a required type as"
-            + " specified by the matching rules."));
+                + "the expression or the typedoes not match a required type as"
+                + " specified by the matching rules."));
         }
     }
 
@@ -318,8 +318,8 @@ public class CompKindTest {
             fail("Expected exception");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate "
-            + "the expression or the typedoes not match a required type as"
-            + " specified by the matching rules."));
+                + "the expression or the typedoes not match a required type as"
+                + " specified by the matching rules."));
         }
 
     }
@@ -392,8 +392,8 @@ public class CompKindTest {
             fail("Expected exception");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate "
-            + "the expression or the typedoes not match a required type as"
-            + " specified by the matching rules."));
+                + "the expression or the typedoes not match a required type as"
+                + " specified by the matching rules."));
         }
     }
 
@@ -465,8 +465,8 @@ public class CompKindTest {
             fail("Expected exception");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate "
-            + "the expression or the typedoes not match a required type as"
-            + " specified by the matching rules."));
+                + "the expression or the typedoes not match a required type as"
+                + " specified by the matching rules."));
         }
     }
 

@@ -30,7 +30,7 @@ import com.treetank.utils.FastStack;
  * Iterate over all descendants of kind ELEMENT or TEXT starting at a given node. Self is not included.
  * </p>
  */
-public class DescendantAxis extends AbstractAxis implements IAxis {
+public class DescendantAxis extends AbsAxis implements IAxis {
 
     /** Stack for remembering next nodeKey in document order. */
     private FastStack<Long> mRightSiblingKeyStack;

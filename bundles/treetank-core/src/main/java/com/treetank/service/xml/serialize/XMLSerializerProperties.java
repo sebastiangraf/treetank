@@ -48,7 +48,7 @@ public final class XMLSerializerProperties {
      */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
         .getLogger(XMLSerializerProperties.class));
-    
+
     /** Properties. */
     private final ConcurrentMap<String, Object> mProps = new ConcurrentHashMap<String, Object>();
 
@@ -127,7 +127,7 @@ public final class XMLSerializerProperties {
      * </p>
      * 
      * @param paramFilePath
-     *                  Path to properties file.
+     *            Path to properties file.
      * @return ConcurrentMap which holds property key/values.
      */
     public ConcurrentMap<String, Object> readProps(final String paramFilePath) {

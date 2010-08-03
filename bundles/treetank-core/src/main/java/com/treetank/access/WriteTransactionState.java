@@ -74,6 +74,7 @@ public final class WriteTransactionState extends ReadTransactionState {
 
     /**
      * Standard constructor.
+     * 
      * @param mDatabaseConfiguration
      *            Database Configuration
      * @param sessionState
@@ -92,8 +93,9 @@ public final class WriteTransactionState extends ReadTransactionState {
      *             if IO Error
      */
     protected WriteTransactionState(final DatabaseConfiguration mDatabaseConfiguration,
-        final SessionState sessionState, final UberPage mUberPage, final IWriter mWriter, final long mParamId,
-        final long mRepresentRevision, final long mStoreRevision) throws TreetankIOException {
+        final SessionState sessionState, final UberPage mUberPage, final IWriter mWriter,
+        final long mParamId, final long mRepresentRevision, final long mStoreRevision)
+        throws TreetankIOException {
         super(mDatabaseConfiguration, mUberPage, mRepresentRevision, new ItemList(), mWriter);
         mNewRoot = preparePreviousRevisionRootPage(mRepresentRevision, mStoreRevision);
         mSessionState = sessionState;
@@ -204,8 +206,8 @@ public final class WriteTransactionState extends ReadTransactionState {
     protected TextNode createTextNode(final long mParentKey, final long mLeftSibKey, final long rightSibKey,
         final byte[] mValue) throws TreetankIOException {
         final int typeKey = createNameKey("xs:untyped");
-        return (TextNode)createNode(TextNode.createData(mNewRoot.getMaxNodeKey() + 1, mParentKey, mLeftSibKey,
-            rightSibKey, typeKey, mValue));
+        return (TextNode)createNode(TextNode.createData(mNewRoot.getMaxNodeKey() + 1, mParentKey,
+            mLeftSibKey, rightSibKey, typeKey, mValue));
     }
 
     protected AttributeNode createAttributeNode(final AttributeNode mNode) throws TreetankIOException {
@@ -471,8 +473,8 @@ public final class WriteTransactionState extends ReadTransactionState {
         if (cont == null) {
 
             // Indirect reference.
-            final PageReference reference = prepareLeafOfTree(mNewRoot.getIndirectPageReference(),
-                mNodePageKey);
+            final PageReference reference =
+                prepareLeafOfTree(mNewRoot.getIndirectPageReference(), mNodePageKey);
 
             if (!reference.isInstantiated()) {
 
@@ -480,8 +482,7 @@ public final class WriteTransactionState extends ReadTransactionState {
                     cont = dereferenceNodePageForModification(mNodePageKey);
                 } else {
                     cont =
-                        new NodePageContainer(new NodePage(mNodePageKey, 
-                            IConstants.UBP_ROOT_REVISION_NUMBER));
+                        new NodePageContainer(new NodePage(mNodePageKey, IConstants.UBP_ROOT_REVISION_NUMBER));
                 }
 
             } else {
@@ -514,8 +515,7 @@ public final class WriteTransactionState extends ReadTransactionState {
             // Prepare indirect tree to hold reference to prepared revision root
             // nodePageReference.
             final PageReference revisionRootPageReference =
-                prepareLeafOfTree(getUberPage().getIndirectPageReference(),
-                    getUberPage().getRevisionNumber());
+                prepareLeafOfTree(getUberPage().getIndirectPageReference(), getUberPage().getRevisionNumber());
 
             // Link the prepared revision root nodePageReference with the
             // prepared indirect tree.
@@ -539,7 +539,7 @@ public final class WriteTransactionState extends ReadTransactionState {
         long levelKey = mKey;
 
         // Iterate through all levels.
-        for (int level = 0, height = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length;level < height; level++) {
+        for (int level = 0, height = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
             offset = (int)(levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
             levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
             final IndirectPage page = prepareIndirectPage(reference);

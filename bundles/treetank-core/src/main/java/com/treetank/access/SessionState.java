@@ -61,9 +61,8 @@ public final class SessionState {
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(SessionState.class));
-    
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(SessionState.class));
+
     /** Lock for blocking the commit. */
     protected final Lock mCommitLock;
 
@@ -105,7 +104,7 @@ public final class SessionState {
      * @param databaseConfiguration
      *            Database configuration for the TreeTank.
      * @throws TreetankException
-     *            if Session state error
+     *             if Session state error
      */
     protected SessionState(final DatabaseConfiguration databaseConfiguration,
         final SessionConfiguration sessionConfiguration) throws TreetankException {
@@ -146,13 +145,13 @@ public final class SessionState {
     protected int getReadTransactionCount() {
         return Integer.parseInt(mSessionConfiguration.getProps().getProperty(
             ESessionSetting.MAX_READ_TRANSACTIONS.name()))
-        - mReadSemaphore.availablePermits();
+            - mReadSemaphore.availablePermits();
     }
 
     protected int getWriteTransactionCount() {
         return Integer.parseInt(mSessionConfiguration.getProps().getProperty(
             ESessionSetting.MAX_WRITE_TRANSACTIONS.name()))
-        - mWriteSemaphore.availablePermits();
+            - mWriteSemaphore.availablePermits();
     }
 
     protected IReadTransaction beginReadTransaction() throws TreetankException {
@@ -180,8 +179,7 @@ public final class SessionState {
         // Create new read transaction.
         rtx =
             new ReadTransaction(mTransactionIDCounter.incrementAndGet(), this, new ReadTransactionState(
-                mDatabaseConfiguration, mLastCommittedUberPage, mRevisionNumber, mItemList, 
-                mFac.getReader()));
+                mDatabaseConfiguration, mLastCommittedUberPage, mRevisionNumber, mItemList, mFac.getReader()));
 
         // Remember transaction for debugging and safe close.
         if (mTransactionMap.put(rtx.getTransactionID(), rtx) != null) {
@@ -215,15 +213,15 @@ public final class SessionState {
 
         // Remember transaction for debugging and safe close.
         if (mTransactionMap.put(currentID, wtx) != null
-        || mWriteTransactionStateMap.put(currentID, wtxState) != null) {
+            || mWriteTransactionStateMap.put(currentID, wtxState) != null) {
             throw new TreetankThreadedException("ID generation is bogus because of duplicate ID.");
         }
 
         return wtx;
     }
 
-    protected WriteTransactionState createWriteTransactionState(final long mId, final long mRepresentRevision,
-        final long mStoreRevision) throws TreetankIOException {
+    protected WriteTransactionState createWriteTransactionState(final long mId,
+        final long mRepresentRevision, final long mStoreRevision) throws TreetankIOException {
         final IWriter writer = mFac.getWriter();
 
         return new WriteTransactionState(mDatabaseConfiguration, this, new UberPage(mLastCommittedUberPage,

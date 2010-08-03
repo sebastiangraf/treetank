@@ -33,8 +33,8 @@ import com.treetank.service.xml.shredder.XMLShredder;
 
 public class ShreddFileInvocation {
 
-    public static final String XML =
-        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "content.xml";
+    public static final String XML = "src" + File.separator + "test" + File.separator + "resources"
+        + File.separator + "content.xml";
 
     public static void main(String[] args) {
         try {

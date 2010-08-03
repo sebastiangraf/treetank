@@ -32,6 +32,7 @@ public final class IndirectPage extends AbstractPage {
 
     /**
      * Create indirect page.
+     * 
      * @param mRevision
      *            Revision Number
      */

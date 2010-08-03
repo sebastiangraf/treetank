@@ -22,7 +22,7 @@ import java.util.Set;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AbstractAxis;
+import com.treetank.axis.AbsAxis;
 import com.treetank.service.xml.xpath.functions.XPathError;
 import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
 
@@ -33,7 +33,7 @@ import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
  * sequence containing all the nodes that occur in both operands.
  * </p>
  */
-public class IntersectAxis extends AbstractAxis implements IAxis {
+public class IntersectAxis extends AbsAxis implements IAxis {
 
     /** First operand sequence. */
     private final IAxis mOp1;

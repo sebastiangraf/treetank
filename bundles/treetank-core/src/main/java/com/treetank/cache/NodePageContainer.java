@@ -115,28 +115,28 @@ public final class NodePageContainer {
     @Override
     public boolean equals(final Object mObj) {
         if (this == mObj) {
-            return true;  
+            return true;
         }
-            
+
         if (mObj == null) {
-            return false; 
+            return false;
         }
-           
+
         if (getClass() != mObj.getClass()) {
             return false;
         }
-            
+
         final NodePageContainer other = (NodePageContainer)mObj;
         if (mComplete == null) {
             if (other.mComplete != null) {
                 return false;
-            } 
+            }
         } else if (!mComplete.equals(other.mComplete)) {
             return false;
         } else if (!mModified.equals(other.mModified)) {
-            return false; 
+            return false;
         }
-            
+
         return true;
     }
 

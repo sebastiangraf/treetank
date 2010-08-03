@@ -27,7 +27,7 @@ import java.util.Map;
 import com.treetank.api.IAxis;
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AbstractAxis;
+import com.treetank.axis.AbsAxis;
 import com.treetank.axis.FilterAxis;
 import com.treetank.service.xml.xpath.comparators.CompKind;
 import com.treetank.service.xml.xpath.comparators.GeneralComp;
@@ -74,7 +74,7 @@ import org.slf4j.LoggerFactory;
  * </p>
  */
 public final class PipelineBuilder {
-    
+
     /**
      * Log wrapper for better output.
      */
@@ -233,7 +233,7 @@ public final class PipelineBuilder {
 
         assert getPipeStack().size() >= (mForConditionNum + 1);
 
-        AbstractAxis forAxis = ((AbstractAxis)(getPipeStack().pop().getExpr()));
+        AbsAxis forAxis = ((AbsAxis)(getPipeStack().pop().getExpr()));
         final IReadTransaction rtx = forAxis.getTransaction();
         int num = mForConditionNum;
 
@@ -412,8 +412,8 @@ public final class PipelineBuilder {
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
         }
-        getExpression().add(new DupFilterAxis(mTransaction, new UnionAxis(mTransaction, 
-               mOperand1, mOperand2)));
+        getExpression().add(
+            new DupFilterAxis(mTransaction, new UnionAxis(mTransaction, mOperand1, mOperand2)));
     }
 
     /**
@@ -470,8 +470,8 @@ public final class PipelineBuilder {
         final IAxis mOperand1 = getPipeStack().pop().getExpr();
 
         final IAxis axis =
-            mIsIntersect ? new IntersectAxis(rtx, mOperand1, mOperand2)
-                : new ExceptAxis(rtx, mOperand1, mOperand2);
+            mIsIntersect ? new IntersectAxis(rtx, mOperand1, mOperand2) : new ExceptAxis(rtx, mOperand1,
+                mOperand2);
 
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
@@ -553,7 +553,7 @@ public final class PipelineBuilder {
             // if is numeric literal -> abbrev for position()
             final int type = mTransaction.getNode().getTypeKey();
             if (type == mTransaction.keyForName("xs:integer") || type == mTransaction.keyForName("xs:double")
-                || type == mTransaction.keyForName("xs:float") 
+                || type == mTransaction.keyForName("xs:float")
                 || type == mTransaction.keyForName("xs:decimal")) {
 
                 throw new IllegalStateException("function fn:position() is not implemented yet.");
@@ -595,7 +595,8 @@ public final class PipelineBuilder {
      * @param mVarNum
      *            number of binding variables
      */
-    public void addQuantifierExpr(final IReadTransaction mTransaction, final boolean mIsSome, final int mVarNum) {
+    public void addQuantifierExpr(final IReadTransaction mTransaction, final boolean mIsSome,
+        final int mVarNum) {
 
         assert getPipeStack().size() >= (mVarNum + 1);
 

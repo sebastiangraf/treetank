@@ -28,7 +28,7 @@ import com.treetank.node.ENodes;
  * Match local part of ELEMENT or ATTRIBUTE by key.
  * </p>
  */
-public class NameFilter extends AbstractFilter implements IFilter {
+public class NameFilter extends AbsFilter implements IFilter {
 
     /** Key of name to test. */
     private final int mLocalPartKey;
@@ -52,7 +52,6 @@ public class NameFilter extends AbstractFilter implements IFilter {
     @Override
     public final boolean filter() {
         return ((getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND || getTransaction().getNode()
-            .getKind() == ENodes.ATTRIBUTE_KIND) && (getTransaction().getNode().getNameKey() 
-                == mLocalPartKey));
+            .getKind() == ENodes.ATTRIBUTE_KIND) && (getTransaction().getNode().getNameKey() == mLocalPartKey));
     }
 }

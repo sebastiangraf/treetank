@@ -36,12 +36,11 @@ import org.slf4j.LoggerFactory;
  * </p>
  */
 public class AddOpAxis extends AbstractOpAxis {
-    
+
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(AddOpAxis.class));
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(AddOpAxis.class));
 
     /**
      * Constructor. Initializes the internal state.

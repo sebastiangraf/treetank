@@ -19,7 +19,7 @@ package com.treetank.service.xml.xpath.filter;
 
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AbstractFilter;
+import com.treetank.axis.AbsFilter;
 
 /**
  * <h1>NestedFilter</h1>
@@ -27,7 +27,7 @@ import com.treetank.axis.AbstractFilter;
  * Nests two or more IFilters.
  * </p>
  */
-public class NestedFilter extends AbstractFilter implements IFilter {
+public class NestedFilter extends AbsFilter implements IFilter {
 
     /** Tests to apply. */
     private final IFilter[] mFilter;

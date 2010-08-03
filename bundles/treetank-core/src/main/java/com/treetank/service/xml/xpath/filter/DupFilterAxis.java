@@ -22,7 +22,7 @@ import java.util.Set;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AbstractAxis;
+import com.treetank.axis.AbsAxis;
 import com.treetank.axis.FilterAxis;
 import com.treetank.axis.NestedAxis;
 import com.treetank.service.xml.xpath.expr.UnionAxis;
@@ -38,7 +38,7 @@ import com.treetank.service.xml.xpath.expr.UnionAxis;
  * already in the set (which indicates that it was already returned).
  * </p>
  */
-public class DupFilterAxis extends AbstractAxis {
+public class DupFilterAxis extends AbsAxis {
 
     /** Sequence that may contain duplicates. */
     private final IAxis mAxis;

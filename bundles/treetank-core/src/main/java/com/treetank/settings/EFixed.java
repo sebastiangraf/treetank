@@ -20,7 +20,7 @@ package com.treetank.settings;
 public enum EFixed {
 
     // --- File Version
-        // ----------------------------------------------------------------
+    // ----------------------------------------------------------------
         /** Major version number of this release. */
         VERSION_MAJOR(5),
         /** Minor version number of this release. */

@@ -22,7 +22,7 @@ import java.util.List;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AbstractAxis;
+import com.treetank.axis.AbsAxis;
 
 /**
  * <h1>VariableAxis</h1>
@@ -32,7 +32,7 @@ import com.treetank.axis.AbstractAxis;
  * evaluated.
  * </p>
  */
-public class VariableAxis extends AbstractAxis implements IAxis {
+public class VariableAxis extends AbsAxis implements IAxis {
 
     /** Sequence that defines the values, the variable is bound to. */
     private final IAxis mBindingSeq;

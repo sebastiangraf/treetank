@@ -100,17 +100,16 @@ import com.treetank.exception.TreetankIOException;
 public interface IReadTransaction {
 
     /** String constants used by xpath. */
-    String[] XPATHCONSTANTS =
-    {
-        "xs:anyType", "xs:anySimpleType", "xs:anyAtomicType", "xs:untypedAtomic", "xs:untyped",
-        "xs:string", "xs:duration", "xs:yearMonthDuration", "xs:dayTimeDuration", "xs:dateTime",
-        "xs:time", "xs:date", "xs:gYearMonth", "xs:gYear", "xs:gMonthDay", "xs:gDay", "xs:gMonth",
-        "xs:boolean", "xs:base64Binary", "xs:hexBinary", "xs:anyURI", "xs:QName", "xs:NOTATION",
-        "xs:float", "xs:double", "xs:pDecimal", "xs:decimal", "xs:integer", "xs:long", "xs:int",
-        "xs:short", "xs:byte", "xs:nonPositiveInteger", "xs:negativeInteger", "xs:nonNegativeInteger",
-        "xs:positiveInteger", "xs:unsignedLong", "xs:unsignedInt", "xs:unsignedShort", "xs:unsignedByte",
-        "xs:normalizedString", "xs:token", "xs:language", "xs:name", "xs:NCName", "xs:ID", "xs:IDREF",
-        "xs:ENTITY", "xs:IDREFS", "xs:NMTOKEN", "xs:NMTOKENS",
+    String[] XPATHCONSTANTS = {
+        "xs:anyType", "xs:anySimpleType", "xs:anyAtomicType", "xs:untypedAtomic", "xs:untyped", "xs:string",
+        "xs:duration", "xs:yearMonthDuration", "xs:dayTimeDuration", "xs:dateTime", "xs:time", "xs:date",
+        "xs:gYearMonth", "xs:gYear", "xs:gMonthDay", "xs:gDay", "xs:gMonth", "xs:boolean", "xs:base64Binary",
+        "xs:hexBinary", "xs:anyURI", "xs:QName", "xs:NOTATION", "xs:float", "xs:double", "xs:pDecimal",
+        "xs:decimal", "xs:integer", "xs:long", "xs:int", "xs:short", "xs:byte", "xs:nonPositiveInteger",
+        "xs:negativeInteger", "xs:nonNegativeInteger", "xs:positiveInteger", "xs:unsignedLong",
+        "xs:unsignedInt", "xs:unsignedShort", "xs:unsignedByte", "xs:normalizedString", "xs:token",
+        "xs:language", "xs:name", "xs:NCName", "xs:ID", "xs:IDREF", "xs:ENTITY", "xs:IDREFS", "xs:NMTOKEN",
+        "xs:NMTOKENS",
     };
 
     /**
@@ -218,21 +217,21 @@ public interface IReadTransaction {
     /**
      * Getting the value of the current node.
      * 
-     * @return
+     * @return the current value of the node
      */
     String getValueOfCurrentNode();
 
     /**
      * Getting the name of a current node.
      * 
-     * @return
+     * @return the {@link QName} of the node
      */
     QName getQNameOfCurrentNode();
 
     /**
      * Getting the type of the current node.
      * 
-     * @return 
+     * @return the normal type of the node
      */
     String getTypeOfCurrentNode();
 
@@ -288,5 +287,10 @@ public interface IReadTransaction {
      */
     void close() throws TreetankException;
 
+    /**
+     * Is this transaction closed?
+     * 
+     * @return true of closed, false otherwise
+     */
     boolean isClosed();
 }

@@ -29,7 +29,7 @@ import com.treetank.utils.TypedValue;
  * Only match nodes of kind TEXT whoms value matches.
  * </p>
  */
-public class ValueFilter extends AbstractFilter implements IFilter {
+public class ValueFilter extends AbsFilter implements IFilter {
 
     /** Value test to do. */
     private final byte[] mValue;

@@ -126,9 +126,9 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
                 final XMLSerializer serializer = new XMLSerializerBuilder(session, out).build();
                 serializer.call();
                 final StringBuilder sBuilder = TestHelper.readFile(file.getAbsoluteFile(), false);
-                
+
                 System.out.println(out.toString());
-                
+
                 assertXMLEqual(sBuilder.toString(), out.toString());
             }
         }

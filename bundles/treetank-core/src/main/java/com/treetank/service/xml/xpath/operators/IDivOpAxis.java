@@ -36,12 +36,11 @@ import org.slf4j.LoggerFactory;
  * </p>
  */
 public class IDivOpAxis extends AbstractOpAxis {
-    
+
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(IDivOpAxis.class));
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(IDivOpAxis.class));
 
     /**
      * Constructor. Initializes the internal state.
@@ -76,7 +75,7 @@ public class IDivOpAxis extends AbstractOpAxis {
             value = TypedValue.getBytes(iValue);
             return new AtomicValue(value, typeKey);
         } catch (final ArithmeticException e) {
-            //LOGWRAPPER.error(e);
+            // LOGWRAPPER.error(e);
             throw new XPathError(ErrorType.FOAR0001);
         }
 

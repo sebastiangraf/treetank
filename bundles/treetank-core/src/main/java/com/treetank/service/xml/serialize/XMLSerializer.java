@@ -58,18 +58,16 @@ public final class XMLSerializer extends AbsSerializer {
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(XMLSerializer.class));
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(XMLSerializer.class));
 
     /** Offset that must be added to digit to make it ASCII. */
     private static final int ASCII_OFFSET = 48;
 
     /** Precalculated powers of each available long digit. */
-    private static final long[] LONG_POWERS =
-    {
-        1L, 10L, 100L, 1000L, 10000L, 100000L, 1000000L, 10000000L, 100000000L, 1000000000L,
-        10000000000L, 100000000000L, 1000000000000L, 10000000000000L, 100000000000000L,
-        1000000000000000L, 10000000000000000L, 100000000000000000L, 1000000000000000000L
+    private static final long[] LONG_POWERS = {
+        1L, 10L, 100L, 1000L, 10000L, 100000L, 1000000L, 10000000L, 100000000L, 1000000000L, 10000000000L,
+        100000000000L, 1000000000000L, 10000000000000L, 100000000000000L, 1000000000000000L,
+        10000000000000000L, 100000000000000000L, 1000000000000000000L
     };
 
     /** OutputStream to write to. */
@@ -84,7 +82,7 @@ public final class XMLSerializer extends AbsSerializer {
     /** Serialize rest header and closer and rest:id. */
     private final boolean mSerializeRest;
 
-    /** Serialize id.*/
+    /** Serialize id. */
     private final boolean mSerializeId;
 
     /** Number of spaces to indent. */
@@ -135,8 +133,7 @@ public final class XMLSerializer extends AbsSerializer {
                 mOut.write(mRtx.rawNameForKey(mRtx.getNode().getNameKey()));
                 final long key = mRtx.getNode().getNodeKey();
                 // Emit namespace declarations.
-                for (int index = 0, length = ((ElementNode)mRtx.getNode()).getNamespaceCount();
-                    index < length; index++) {
+                for (int index = 0, length = ((ElementNode)mRtx.getNode()).getNamespaceCount(); index < length; index++) {
                     mRtx.moveToNamespace(index);
                     if (mRtx.nameForKey(mRtx.getNode().getNameKey()).length() == 0) {
                         mOut.write(ECharsForSerializing.XMLNS.getBytes());
@@ -276,7 +273,7 @@ public final class XMLSerializer extends AbsSerializer {
      * Indentation of output.
      * 
      * @throws IOException
-     *            if can't indent output
+     *             if can't indent output
      */
     private void indent() throws IOException {
         if (mIndent) {
@@ -292,9 +289,9 @@ public final class XMLSerializer extends AbsSerializer {
      * @param mString
      *            String to write
      * @throws IOException
-     *            if can't write to string
+     *             if can't write to string
      * @throws UnsupportedEncodingException
-     *            if unsupport encoding
+     *             if unsupport encoding
      */
     protected void write(final String mString) throws UnsupportedEncodingException, IOException {
         mOut.write(mString.getBytes(IConstants.DEFAULT_ENCODING));
@@ -306,7 +303,7 @@ public final class XMLSerializer extends AbsSerializer {
      * @param mValue
      *            Value to write
      * @throws IOException
-     *            if can't write to string
+     *             if can't write to string
      */
     private void write(final long mValue) throws IOException {
         final int length = (int)Math.log10((double)mValue);
@@ -425,7 +422,7 @@ public final class XMLSerializer extends AbsSerializer {
          */
         public XMLSerializerBuilder(final ISession mSession, final long mNodeKey,
             final OutputStream mParamStream, final XMLSerializerProperties mProperties,
-                final long... mVersions) {
+            final long... mVersions) {
             this.mSession = mSession;
             this.mNodeKey = mNodeKey;
             this.mStream = mParamStream;

@@ -83,8 +83,8 @@ public enum ENodes {
         }
 
         @Override
-        public AbsNode createNodeFromScratch(final long[] mLongData, final int[] mIntData,
-                final byte[] mValue) {
+        public AbsNode
+            createNodeFromScratch(final long[] mLongData, final int[] mIntData, final byte[] mValue) {
             return new AttributeNode(mLongData, mIntData, mValue);
         }
     },
@@ -102,8 +102,8 @@ public enum ENodes {
         }
 
         @Override
-        public AbsNode createNodeFromScratch(final long[] mLongData, final int[] mIntData,
-                final byte[] mValue) {
+        public AbsNode
+            createNodeFromScratch(final long[] mLongData, final int[] mIntData, final byte[] mValue) {
             return new TextNode(mLongData, mIntData, mValue);
         }
     },
@@ -182,8 +182,8 @@ public enum ENodes {
         }
 
         @Override
-        public AbsNode createNodeFromScratch(final long[] mLongData, final int[] mIntData,
-                final byte[] mValue) {
+        public AbsNode
+            createNodeFromScratch(final long[] mLongData, final int[] mIntData, final byte[] mValue) {
             return new DeletedNode(mLongData, mIntData);
         }
     };

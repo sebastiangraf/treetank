@@ -19,7 +19,7 @@ package com.treetank.service.xml.xpath.expr;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AbstractAxis;
+import com.treetank.axis.AbsAxis;
 
 /**
  * <h1>ForAxis</h1>
@@ -41,13 +41,13 @@ import com.treetank.axis.AbstractAxis;
  * binding sequence from which they were derived.
  * </p>
  */
-public class ForAxis extends AbstractAxis implements IAxis {
+public class ForAxis extends AbsAxis implements IAxis {
 
     /** The range expression. */
     private final IAxis mRange;
 
     /** The result expression. */
-    private final AbstractAxis mReturn;
+    private final AbsAxis mReturn;
 
     /** Defines, whether is first call of hasNext(). */
     private boolean mIsFirst;
@@ -62,7 +62,7 @@ public class ForAxis extends AbstractAxis implements IAxis {
      * @param returnExpr
      *            the return expression of the for expression
      */
-    public ForAxis(final IReadTransaction rtx, final IAxis range, final AbstractAxis returnExpr) {
+    public ForAxis(final IReadTransaction rtx, final IAxis range, final AbsAxis returnExpr) {
 
         super(rtx);
         mRange = range;
