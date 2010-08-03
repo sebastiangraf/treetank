@@ -47,7 +47,7 @@ public class XMLSerializerPropertiesTest {
 
         assertNotNull(keys);
 
-        while(keys.hasMoreElements()) {
+        while (keys.hasMoreElements()) {
             final String key = keys.nextElement();
 
             if (key.equals(S_ID[0])) {

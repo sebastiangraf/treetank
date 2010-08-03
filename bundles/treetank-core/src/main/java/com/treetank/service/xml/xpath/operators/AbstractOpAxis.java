@@ -20,7 +20,7 @@ package com.treetank.service.xml.xpath.operators;
 import com.treetank.api.IAxis;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AbstractAxis;
+import com.treetank.axis.AbsAxis;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.XPathConstants;
 import com.treetank.service.xml.xpath.functions.Function;
@@ -32,7 +32,7 @@ import com.treetank.service.xml.xpath.types.Type;
  * Abstract axis for all operators performing an arithmetic operation.
  * </p>
  */
-public abstract class AbstractOpAxis extends AbstractAxis implements IAxis, XPathConstants {
+public abstract class AbstractOpAxis extends AbsAxis implements IAxis, XPathConstants {
 
     /** First arithmetic operand. */
     private final IAxis mOperand1;

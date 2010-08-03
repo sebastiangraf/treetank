@@ -30,7 +30,7 @@ import com.treetank.utils.FastStack;
  * Iterate over all preceding nodes of kind ELEMENT or TEXT starting at a given node. Self is not included.
  * </p>
  */
-public class PrecedingAxis extends AbstractAxis implements IAxis {
+public class PrecedingAxis extends AbsAxis implements IAxis {
 
     private boolean mIsFirst;
 

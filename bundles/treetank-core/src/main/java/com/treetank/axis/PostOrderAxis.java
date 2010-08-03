@@ -30,7 +30,7 @@ import com.treetank.utils.FastStack;
  * Iterate over the whole tree starting with the last node.
  * </p>
  */
-public class PostOrderAxis extends AbstractAxis implements IAxis {
+public class PostOrderAxis extends AbsAxis implements IAxis {
 
     /** For remembering last parent. */
     private FastStack<Long> mLastParent;

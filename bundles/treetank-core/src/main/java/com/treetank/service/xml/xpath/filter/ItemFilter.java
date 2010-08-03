@@ -19,7 +19,7 @@ package com.treetank.service.xml.xpath.filter;
 
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AbstractFilter;
+import com.treetank.axis.AbsFilter;
 
 /**
  * <h1>ItemFilter</h1>
@@ -28,7 +28,7 @@ import com.treetank.axis.AbstractFilter;
  * Match any item type (nodes and atomic values).
  * </p>
  */
-public class ItemFilter extends AbstractFilter implements IFilter {
+public class ItemFilter extends AbsFilter implements IFilter {
 
     /**
      * Default constructor.

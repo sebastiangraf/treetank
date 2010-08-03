@@ -108,7 +108,7 @@ public abstract class AbstractIOFactory {
      * @param mSessionConf
      *            with settings for the session
      * @throws TreetankIOException
-     *            If error
+     *             If error
      * @return an instance of this factory based on the kind in the conf
      */
     public final static AbstractIOFactory getInstance(final DatabaseConfiguration mDatabaseConf,

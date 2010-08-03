@@ -46,8 +46,7 @@ import com.treetank.exception.TreetankIOException;
  * <p>
  * <ol>
  * <li>Only a single thread accesses the single IWriteTransaction instance.</li>
- * <li><strong>Precondition</strong> before moving cursor: 
- * <code>IWriteTransaction.getNodeKey() == n</code>.</li>
+ * <li><strong>Precondition</strong> before moving cursor: <code>IWriteTransaction.getNodeKey() == n</code>.</li>
  * <li><strong>Postcondition</strong> after modifying the cursor: <code>(IWriteTransaction.insertX() == m &&
  *       IWriteTransaction.getNodeKey() == m)</code>.</li>
  * </ol>
@@ -165,7 +164,7 @@ public interface IWriteTransaction extends IReadTransaction {
      * @param mValue
      *            Value of inserted node.
      * @throws TreetankException
-     *             If can't insert Attribute to node.     
+     *             If can't insert Attribute to node.
      * @return Key of inserted node.
      */
     long insertAttribute(final QName mQname, final String mValue) throws TreetankException;
@@ -266,7 +265,7 @@ public interface IWriteTransaction extends IReadTransaction {
      * @param revision
      *            revert for the revision
      * @throws TreetankException
-     *             If can't revert to revision.      
+     *             If can't revert to revision.
      */
     void revertTo(final long revision) throws TreetankException;
 

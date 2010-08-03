@@ -139,7 +139,7 @@ public class XPathScanner implements XPathConstants {
                 mPos++;
                 mFinnished = true;
             }
-        } while(!mFinnished || mPos >= mQuery.length());
+        } while (!mFinnished || mPos >= mQuery.length());
 
         if (mCommentCount > 0) {
             throw new IllegalStateException("Error in Query. Comment does not end.");
@@ -315,9 +315,8 @@ public class XPathScanner implements XPathConstants {
     private boolean isSpecialCharacter(final char mInput) {
 
         return ((mInput == ')') || (mInput == ';') || (mInput == ',') || (mInput == '@') || (mInput == '[')
-            || (mInput == ']') || (mInput == '=') || (mInput == '"') 
-            || (mInput == '\'') || (mInput == '$') || (mInput == ':')
-            || (mInput == '|') || (mInput == '+') || (mInput == '-') || (mInput == '?') || (mInput == '*'));
+            || (mInput == ']') || (mInput == '=') || (mInput == '"') || (mInput == '\'') || (mInput == '$')
+            || (mInput == ':') || (mInput == '|') || (mInput == '+') || (mInput == '-') || (mInput == '?') || (mInput == '*'));
     }
 
     /**

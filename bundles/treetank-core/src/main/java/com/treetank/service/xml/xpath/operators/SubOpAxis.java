@@ -36,12 +36,11 @@ import org.slf4j.LoggerFactory;
  * </p>
  */
 public class SubOpAxis extends AbstractOpAxis {
-    
+
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(SubOpAxis.class));
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(SubOpAxis.class));
 
     /**
      * Constructor. Initializes the internal state.

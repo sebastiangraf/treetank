@@ -60,10 +60,10 @@ public enum ERevisioning {
             final int mileStoneRevision) {
             final long nodePageKey = pages[0].getNodePageKey();
             final NodePage[] returnVal =
-            {
-                new NodePage(nodePageKey, pages[0].getRevision() + 1),
-                new NodePage(nodePageKey, pages[0].getRevision() + 1)
-            };
+                {
+                    new NodePage(nodePageKey, pages[0].getRevision() + 1),
+                    new NodePage(nodePageKey, pages[0].getRevision() + 1)
+                };
 
             for (int i = 0; i < pages[0].getNodes().length; i++) {
                 returnVal[0].setNode(i, pages[0].getNode(i));
@@ -120,10 +120,10 @@ public enum ERevisioning {
         public NodePageContainer combinePagesForModification(final NodePage[] pages, final int revToRestore) {
             final long nodePageKey = pages[0].getNodePageKey();
             final NodePage[] returnVal =
-            {
-                new NodePage(nodePageKey, pages[0].getRevision() + 1),
-                new NodePage(nodePageKey, pages[0].getRevision() + 1)
-            };
+                {
+                    new NodePage(nodePageKey, pages[0].getRevision() + 1),
+                    new NodePage(nodePageKey, pages[0].getRevision() + 1)
+                };
 
             final NodePage latest = pages[0];
             NodePage fullDump = pages[0];
@@ -188,10 +188,10 @@ public enum ERevisioning {
 
             final long nodePageKey = pages[0].getNodePageKey();
             final NodePage[] returnVal =
-            {
-                new NodePage(nodePageKey, pages[0].getRevision() + 1),
-                new NodePage(nodePageKey, pages[0].getRevision() + 1)
-            };
+                {
+                    new NodePage(nodePageKey, pages[0].getRevision() + 1),
+                    new NodePage(nodePageKey, pages[0].getRevision() + 1)
+                };
 
             final Set<Integer> nodesSet = new TreeSet<Integer>();
 
@@ -254,10 +254,10 @@ public enum ERevisioning {
         public NodePageContainer combinePagesForModification(final NodePage[] pages, final int revToRestore) {
             final long nodePageKey = pages[0].getNodePageKey();
             final NodePage[] returnVal =
-            {
-                new NodePage(nodePageKey, pages[0].getRevision() + 1),
-                new NodePage(nodePageKey, pages[0].getRevision() + 1)
-            };
+                {
+                    new NodePage(nodePageKey, pages[0].getRevision() + 1),
+                    new NodePage(nodePageKey, pages[0].getRevision() + 1)
+                };
 
             for (int j = 0; j < pages.length; j++) {
                 assert pages[j].getNodePageKey() == nodePageKey;

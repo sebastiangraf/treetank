@@ -19,7 +19,7 @@ package com.treetank.service.xml.xpath.filter;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AbstractAxis;
+import com.treetank.axis.AbsAxis;
 
 /**
  * <h1>DocumentNodeAxis</h1>
@@ -27,7 +27,7 @@ import com.treetank.axis.AbstractAxis;
  * Iterate to document node starting at a given node.
  * </p>
  */
-public class DocumentNodeAxis extends AbstractAxis implements IAxis {
+public class DocumentNodeAxis extends AbsAxis implements IAxis {
 
     /** Track number of calls of next. */
     private boolean mFirst;

@@ -28,7 +28,7 @@ import com.treetank.node.ENodes;
  * Only match comment nodes.
  * </p>
  */
-public class CommentFilter extends AbstractFilter implements IFilter {
+public class CommentFilter extends AbsFilter implements IFilter {
 
     /**
      * Default constructor.

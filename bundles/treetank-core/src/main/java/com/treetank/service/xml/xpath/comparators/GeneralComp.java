@@ -94,7 +94,7 @@ public class GeneralComp extends AbstractComparator {
             }
             atomized = new AtomicValue(rtx.getNode().getRawValue(), rtx.getNode().getTypeKey());
             op.add(atomized);
-        } while(mOperand.hasNext());
+        } while (mOperand.hasNext());
 
         return op.toArray(new AtomicValue[op.size()]);
     }

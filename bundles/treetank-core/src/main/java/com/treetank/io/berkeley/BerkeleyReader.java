@@ -45,9 +45,9 @@ public class BerkeleyReader implements IReader {
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(BerkeleyReader.class));
-    
+    private static final LogWrapper LOGWRAPPER =
+        new LogWrapper(LoggerFactory.getLogger(BerkeleyReader.class));
+
     /** Link to the {@link Database}. */
     private transient final Database mDatabase;
 

@@ -19,7 +19,7 @@ package com.treetank.service.xml.xpath.filter;
 
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AbstractFilter;
+import com.treetank.axis.AbsFilter;
 import com.treetank.service.xml.xpath.functions.XPathError;
 import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
 import com.treetank.service.xml.xpath.types.Type;
@@ -31,7 +31,7 @@ import com.treetank.service.xml.xpath.types.Type;
  * Only match nodes with the specified value type.
  * </p>
  */
-public class TypeFilter extends AbstractFilter implements IFilter {
+public class TypeFilter extends AbsFilter implements IFilter {
 
     private final int mType;
 

@@ -48,9 +48,8 @@ public final class RevIndex {
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(RevIndex.class));
-    
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(RevIndex.class));
+
     final static String EMPTY_STRING = "";
 
     // MetaRoot Elemens
@@ -126,7 +125,7 @@ public final class RevIndex {
      * @param mDocs
      *            stack with order to be inserted.
      * @throws TreetankException
-     *            if can't insert next node.
+     *             if can't insert next node.
      */
     public void insertNextNode(final Stack<String> mDocs) throws TreetankException {
         if (mRtx instanceof IWriteTransaction) {
@@ -142,7 +141,7 @@ public final class RevIndex {
      * @param mTerm
      *            the term to be indexed.
      * @throws TreetankException
-     *            if can't insert next term in current node.
+     *             if can't insert next term in current node.
      */
     public void insertNextTermForCurrentNode(final String mTerm) throws TreetankException {
         // check if rtx is instance of WriteTransaction
@@ -157,7 +156,7 @@ public final class RevIndex {
             if (!wtx.moveToFirstChild()) {
                 wtx.insertElementAsFirstChild(new QName(DOCUMENTS_REF_ROOTELEMENT));
             } else {
-            // ..otherwise go to the first child..
+                // ..otherwise go to the first child..
                 boolean found = false;
                 // over there, search for the document reference root in the
                 // combined trie/reference structure
@@ -167,7 +166,7 @@ public final class RevIndex {
                         found = true;
                         break;
                     }
-                } while(wtx.moveToRightSibling());
+                } while (wtx.moveToRightSibling());
 
                 // if no document reference root was found, insert it, otherwise
                 // go for it.
@@ -201,7 +200,7 @@ public final class RevIndex {
      * unique identifier.
      * 
      * @throws TreetankException
-     *            if can't finish index input.
+     *             if can't finish index input.
      * @return the index revision number.
      */
     public long finishIndexInput() throws TreetankException {
@@ -253,18 +252,17 @@ public final class RevIndex {
         mRtx.moveToFirstChild();
         do {
             // got doc-ref-root, taking all childs
-            if (mRtx.getNode().getNameKey()
-                == NamePageHash.generateHashForString(DOCUMENTS_REF_ROOTELEMENT)) {
+            if (mRtx.getNode().getNameKey() == NamePageHash.generateHashForString(DOCUMENTS_REF_ROOTELEMENT)) {
                 mRtx.moveToFirstChild();
                 do {
                     mRtx.moveToFirstChild();
                     final long key = Long.parseLong(mRtx.getValueOfCurrentNode());
                     returnVal.add(key);
                     mRtx.moveToParent();
-                } while(mRtx.moveToRightSibling());
+                } while (mRtx.moveToRightSibling());
                 break;
             }
-        } while(mRtx.moveToRightSibling());
+        } while (mRtx.moveToRightSibling());
 
         return returnVal;
 
@@ -331,7 +329,7 @@ public final class RevIndex {
      * Initialising basic structure.
      * 
      * @param mRtx
-     *             Read transaction.
+     *            Read transaction.
      * @throws TreetankException
      *             for handling treetank errors.
      */

@@ -49,14 +49,14 @@ import com.treetank.utils.TypedValue;
 
 public class XMLShredderTest extends XMLTestCase {
 
-    public static final String XML =
-        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "test.xml";
+    public static final String XML = "src" + File.separator + "test" + File.separator + "resources"
+        + File.separator + "test.xml";
 
-    public static final String XML2 =
-        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "test2.xml";
+    public static final String XML2 = "src" + File.separator + "test" + File.separator + "resources"
+        + File.separator + "test2.xml";
 
-    public static final String XML3 =
-        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "test3.xml";
+    public static final String XML3 = "src" + File.separator + "test" + File.separator + "resources"
+        + File.separator + "test3.xml";
 
     @Override
     @Before
@@ -91,7 +91,7 @@ public class XMLShredderTest extends XMLTestCase {
         final Iterator<Long> expectedDescendants = new DescendantAxis(expectedTrx);
         final Iterator<Long> descendants = new DescendantAxis(rtx);
 
-        while(expectedDescendants.hasNext() && descendants.hasNext()) {
+        while (expectedDescendants.hasNext() && descendants.hasNext()) {
             assertEquals(expectedTrx.getNode().getNodeKey(), rtx.getNode().getNodeKey());
             assertEquals(expectedTrx.getNode().getParentKey(), rtx.getNode().getParentKey());
             assertEquals(((AbsStructNode)expectedTrx.getNode()).getFirstChildKey(), ((AbsStructNode)rtx
@@ -102,7 +102,7 @@ public class XMLShredderTest extends XMLTestCase {
                 .getNode()).getRightSiblingKey());
 
             if (expectedTrx.getNode().getKind() == ENodes.ELEMENT_KIND
-            || rtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
+                || rtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
                 assertEquals(((ElementNode)expectedTrx.getNode()).getChildCount(), ((ElementNode)rtx
                     .getNode()).getChildCount());
                 assertEquals(((ElementNode)expectedTrx.getNode()).getAttributeCount(), ((ElementNode)rtx
@@ -116,7 +116,7 @@ public class XMLShredderTest extends XMLTestCase {
             assertEquals(expectedTrx.nameForKey(expectedTrx.getNode().getURIKey()), rtx.nameForKey(rtx
                 .getNode().getURIKey()));
             if (expectedTrx.getNode().getKind() == ENodes.TEXT_KIND
-            || rtx.getNode().getKind() == ENodes.TEXT_KIND) {
+                || rtx.getNode().getKind() == ENodes.TEXT_KIND) {
                 assertEquals(new String(expectedTrx.getNode().getRawValue(), IConstants.DEFAULT_ENCODING),
                     new String(rtx.getNode().getRawValue(), IConstants.DEFAULT_ENCODING));
             }
@@ -158,7 +158,7 @@ public class XMLShredderTest extends XMLTestCase {
         final Iterator<Long> descendants = new DescendantAxis(rtx);
         final Iterator<Long> expectedDescendants = new DescendantAxis(expectedTrx);
 
-        while(expectedDescendants.hasNext()) {
+        while (expectedDescendants.hasNext()) {
             expectedDescendants.next();
             descendants.hasNext();
             descendants.next();
@@ -167,7 +167,7 @@ public class XMLShredderTest extends XMLTestCase {
 
         expectedTrx.moveToDocumentRoot();
         final Iterator<Long> expectedDescendants2 = new DescendantAxis(expectedTrx);
-        while(expectedDescendants2.hasNext()) {
+        while (expectedDescendants2.hasNext()) {
             expectedDescendants2.next();
             descendants.hasNext();
             descendants.next();
@@ -207,9 +207,9 @@ public class XMLShredderTest extends XMLTestCase {
         final Iterator<Long> expectedAttributes = new DescendantAxis(expectedTrx2);
         final Iterator<Long> attributes = new DescendantAxis(rtx);
 
-        while(expectedAttributes.hasNext() && attributes.hasNext()) {
+        while (expectedAttributes.hasNext() && attributes.hasNext()) {
             if (expectedTrx2.getNode().getKind() == ENodes.ELEMENT_KIND
-            || rtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
+                || rtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
                 assertEquals(((ElementNode)expectedTrx2.getNode()).getNamespaceCount(), ((ElementNode)rtx
                     .getNode()).getNamespaceCount());
                 assertEquals(((ElementNode)expectedTrx2.getNode()).getAttributeCount(), ((ElementNode)rtx
@@ -251,7 +251,7 @@ public class XMLShredderTest extends XMLTestCase {
         final StringBuilder tnkBuilder = new StringBuilder();
         do {
             tnkBuilder.append(TypedValue.parseString(rtx.getNode().getRawValue()));
-        } while(rtx.moveToRightSibling());
+        } while (rtx.moveToRightSibling());
 
         final String tnkString = tnkBuilder.toString();
 
@@ -260,7 +260,7 @@ public class XMLShredderTest extends XMLTestCase {
 
         final XMLEventReader validater = XMLShredder.createReader(new File(XML3));
         final StringBuilder xmlBuilder = new StringBuilder();
-        while(validater.hasNext()) {
+        while (validater.hasNext()) {
             final XMLEvent event = validater.nextEvent();
             switch (event.getEventType()) {
             case XMLStreamConstants.CHARACTERS:

@@ -28,7 +28,7 @@ import com.treetank.node.ENodes;
  * Only match ROOT nodes.
  * </p>
  */
-public class DocumentRootNodeFilter extends AbstractFilter implements IFilter {
+public class DocumentRootNodeFilter extends AbsFilter implements IFilter {
 
     /**
      * Default constructor.

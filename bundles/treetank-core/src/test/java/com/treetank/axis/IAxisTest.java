@@ -54,7 +54,7 @@ public class IAxisTest {
 
         final long[] keys = new long[expectedKeys.length];
         int offset = 0;
-        while(axis.hasNext()) {
+        while (axis.hasNext()) {
             axis.next();
             // IAxis results.
             assertTrue(offset < expectedKeys.length);
@@ -92,7 +92,7 @@ public class IAxisTest {
         wtx.moveToDocumentRoot();
         final IAxis axis = new DescendantAxis(wtx);
         long count = 0L;
-        while(axis.hasNext()) {
+        while (axis.hasNext()) {
             count += 1;
         }
         Assert.assertEquals(10L, count);

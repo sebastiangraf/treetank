@@ -36,12 +36,11 @@ import org.slf4j.LoggerFactory;
  * </p>
  */
 public class DivOpAxis extends AbstractOpAxis {
-    
+
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(DivOpAxis.class));
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(DivOpAxis.class));
 
     /**
      * Constructor. Initializes the internal state.
@@ -89,7 +88,7 @@ public class DivOpAxis extends AbstractOpAxis {
             try {
                 final int iValue =
                     (int)Double.parseDouble(TypedValue.parseString(mOperand1.getRawValue()))
-                    / (int)Double.parseDouble(TypedValue.parseString(mOperand2.getRawValue()));
+                        / (int)Double.parseDouble(TypedValue.parseString(mOperand2.getRawValue()));
                 value = TypedValue.getBytes(iValue);
                 return new AtomicValue(value, typeKey);
             } catch (final ArithmeticException e) {

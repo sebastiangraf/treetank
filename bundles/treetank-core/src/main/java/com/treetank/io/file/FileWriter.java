@@ -47,9 +47,8 @@ public final class FileWriter implements IWriter {
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(FileWriter.class));
-    
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(FileWriter.class));
+
     /** Random access mFile to work on. */
     private transient final RandomAccessFile mFile;
 
@@ -70,7 +69,7 @@ public final class FileWriter implements IWriter {
      * @param mConcreteStorage
      *            the Concrete Storage
      * @throws TreetankIOException
-     *            if FileWriter IO error
+     *             if FileWriter IO error
      */
     public FileWriter(final SessionConfiguration paramConf, final File mConcreteStorage)
         throws TreetankIOException {

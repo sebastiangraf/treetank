@@ -28,7 +28,7 @@ import com.treetank.node.ENodes;
  * Only select nodes of kind FULLTEXT_LEAF.
  * </p>
  */
-public class TextFilter extends AbstractFilter implements IFilter {
+public class TextFilter extends AbsFilter implements IFilter {
 
     /**
      * Default constructor.

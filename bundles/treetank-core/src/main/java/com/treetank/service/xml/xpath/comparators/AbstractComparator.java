@@ -20,7 +20,7 @@ package com.treetank.service.xml.xpath.comparators;
 import com.treetank.api.IAxis;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AbstractAxis;
+import com.treetank.axis.AbsAxis;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.XPathConstants;
 import com.treetank.service.xml.xpath.expr.LiteralExpr;
@@ -32,7 +32,7 @@ import com.treetank.service.xml.xpath.types.Type;
  * Abstract axis that evaluates a comparison.
  * </p>
  */
-public abstract class AbstractComparator extends AbstractAxis implements IAxis, XPathConstants {
+public abstract class AbstractComparator extends AbsAxis implements IAxis, XPathConstants {
 
     /** Kind of comparison. */
     private final CompKind mComp;

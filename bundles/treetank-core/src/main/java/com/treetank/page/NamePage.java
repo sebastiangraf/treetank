@@ -41,6 +41,7 @@ public final class NamePage extends AbstractPage {
 
     /**
      * Create name page.
+     * 
      * @param mRevision
      *            Revision number.
      */

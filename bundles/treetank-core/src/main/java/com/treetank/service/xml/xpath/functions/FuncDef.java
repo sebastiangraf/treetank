@@ -2270,9 +2270,9 @@ public enum FuncDef {
          * <p>
          * Returns the current dateTime (with timezone) from the dynamic context. (See Section C.2 Dynamic
          * Context ComponentsXP.) This is an xs:dateTime that is current at some time during the evaluation of
-         * a query or transformation in which fn:current-dateTime() is executed. 
-         * This function is �stable�. The precise instant during the query or transformation represented 
-         * by the value of fn:current-dateTime() is �implementation dependent�.
+         * a query or transformation in which fn:current-dateTime() is executed. This function is
+         * �stable�. The precise instant during the query or transformation represented by the value of
+         * fn:current-dateTime() is �implementation dependent�.
          * </p>
          */
         CURRENT_DT("fn:current-dateTime", AbstractFunction.class, 0, 0, "xs:dateTime"),
@@ -2284,7 +2284,7 @@ public enum FuncDef {
          * <p>
          * Returns xs:date(fn:current-dateTime()). This is an xs:date (with timezone) that is current at some
          * time during the evaluation of a query or transformation in which fn:current-date() is executed.
-         * This function is �stable�. The precise instant during the query or transformation represented 
+         * This function is �stable�. The precise instant during the query or transformation represented
          * by the value of fn:current-date() is �implementation dependent�.
          * </p>
          */

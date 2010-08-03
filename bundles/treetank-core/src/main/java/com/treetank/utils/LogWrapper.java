@@ -93,7 +93,7 @@ public final class LogWrapper {
             mLogger.info(paramMessage, paramObjects);
         }
     }
-    
+
     /**
      * Warn information.
      * 

@@ -42,8 +42,8 @@ import com.treetank.service.xml.xpath.functions.XPathError;
 
 public class TypeFilterTest {
 
-    public static final String XML =
-        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "test.xml";
+    public static final String XML = "src" + File.separator + "test" + File.separator + "resources"
+        + File.separator + "test.xml";
 
     @Before
     public void setUp() throws TreetankException {
@@ -89,7 +89,7 @@ public class TypeFilterTest {
             fail("Expected a Type not found error.");
         } catch (XPathError e) {
             assertThat(e.getMessage(), is("err:XPST0051 "
-            + "Type is not defined in the in-scope schema types as an " + "atomic type."));
+                + "Type is not defined in the in-scope schema types as an " + "atomic type."));
         }
 
         xtx.close();

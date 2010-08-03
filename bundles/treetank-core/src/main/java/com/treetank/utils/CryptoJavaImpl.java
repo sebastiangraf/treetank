@@ -15,7 +15,6 @@
  * 
  */
 
-
 package com.treetank.utils;
 
 import java.io.ByteArrayOutputStream;
@@ -26,15 +25,13 @@ import com.treetank.io.file.ByteBufferSinkAndSource;
 
 import org.slf4j.LoggerFactory;
 
-
-
 public class CryptoJavaImpl implements ICrypto {
-    
+
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(CryptoJavaImpl.class));
+    private static final LogWrapper LOGWRAPPER =
+        new LogWrapper(LoggerFactory.getLogger(CryptoJavaImpl.class));
 
     private final Deflater mCompressor;
 

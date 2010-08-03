@@ -21,6 +21,7 @@ import java.sql.*;
 
 import com.treetank.utils.LogWrapper;
 import org.slf4j.LoggerFactory;
+
 /**
  * <h1>RelationalDBImport</h1>
  * 
@@ -38,7 +39,7 @@ public final class RelationalDBImport implements IImport {
      */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
         .getLogger(RelationalDBImport.class));
-    
+
     /** Driver class string. */
     private final String mDriverClass;
 

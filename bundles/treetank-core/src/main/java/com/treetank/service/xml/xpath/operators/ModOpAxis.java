@@ -40,9 +40,8 @@ public class ModOpAxis extends AbstractOpAxis {
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(ModOpAxis.class));
-    
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(ModOpAxis.class));
+
     /**
      * Constructor. Initializes the internal state.
      * 

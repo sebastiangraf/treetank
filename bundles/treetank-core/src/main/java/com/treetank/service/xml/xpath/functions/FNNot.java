@@ -65,7 +65,7 @@ public class FNNot extends AbstractFunction {
     protected byte[] computeResult() {
         final IAxis axis = getArgs().get(0);
         final boolean value = !Function.ebv(axis);
-        
+
         return TypedValue.getBytes(Boolean.toString(value));
 
     }

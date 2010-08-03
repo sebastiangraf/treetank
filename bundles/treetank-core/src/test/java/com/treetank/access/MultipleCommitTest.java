@@ -123,10 +123,10 @@ public class MultipleCommitTest {
         wtx.moveToDocumentRoot();
 
         final IAxis postorderAxis = new PostOrderAxis(wtx);
-        while(postorderAxis.hasNext()) {
+        while (postorderAxis.hasNext()) {
             postorderAxis.next();
             if (wtx.getNode().getKind() == ENodes.ELEMENT_KIND
-            && ((ElementNode)wtx.getNode()).getAttributeCount() > 0) {
+                && ((ElementNode)wtx.getNode()).getAttributeCount() > 0) {
                 for (int i = 0, attrCount = ((ElementNode)wtx.getNode()).getAttributeCount(); i < attrCount; i++) {
                     wtx.moveToAttribute(i);
                     wtx.remove();
@@ -138,7 +138,7 @@ public class MultipleCommitTest {
 
         int attrTouch = 0;
         final IAxis descAxis = new DescendantAxis(wtx);
-        while(descAxis.hasNext()) {
+        while (descAxis.hasNext()) {
             descAxis.next();
             if (wtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
                 for (int i = 0, attrCount = ((ElementNode)wtx.getNode()).getAttributeCount(); i < attrCount; i++) {

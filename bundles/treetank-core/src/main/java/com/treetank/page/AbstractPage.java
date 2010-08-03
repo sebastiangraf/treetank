@@ -125,7 +125,7 @@ public abstract class AbstractPage {
      * @param mState
      *            IWriteTransaction state.
      * @throws TreetankException
-     *            thorw when write error
+     *             thorw when write error
      */
 
     public final void commit(final WriteTransactionState mState) throws TreetankException {

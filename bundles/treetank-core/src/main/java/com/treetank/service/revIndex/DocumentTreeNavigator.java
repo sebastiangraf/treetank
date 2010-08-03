@@ -30,7 +30,7 @@ import com.treetank.utils.NamePageHash;
 
 public final class DocumentTreeNavigator {
 
-    static long adaptDocTree(final IWriteTransaction mWtx, final Stack<String> mNames) 
+    static long adaptDocTree(final IWriteTransaction mWtx, final Stack<String> mNames)
         throws TreetankException {
         moveToDocumentStructureRoot(mWtx);
         long currentDocKey = ENodes.UNKOWN_KIND.getNodeIdentifier();
@@ -66,7 +66,7 @@ public final class DocumentTreeNavigator {
                         break;
                     }
                 }
-            } while(mWtx.moveToRightSibling());
+            } while (mWtx.moveToRightSibling());
             // ...if there hasn't be an element, insert the
             if (!found) {
                 mWtx.insertElementAsRightSibling(new QName(RevIndex.DOCUMENT_ELEMENT));
@@ -85,9 +85,9 @@ public final class DocumentTreeNavigator {
             rtx.moveToAttribute(0);
             returnVal.add(rtx.getValueOfCurrentNode());
             rtx.moveToParent();
-        } while(rtx.moveToParent()
-        && NamePageHash.generateHashForString(RevIndex.DOCUMENTROOT_ELEMENTNAME) != rtx.getNode()
-            .getNameKey());
+        } while (rtx.moveToParent()
+            && NamePageHash.generateHashForString(RevIndex.DOCUMENTROOT_ELEMENTNAME) != rtx.getNode()
+                .getNameKey());
 
         return returnVal;
     }
@@ -98,7 +98,7 @@ public final class DocumentTreeNavigator {
      * @param mRtx
      *            Read Transaction session.
      * @throws TreetankException
-     *            If can't move to Root of document.
+     *             If can't move to Root of document.
      */
     private static void moveToDocumentStructureRoot(final IReadTransaction mRtx) throws TreetankException {
         mRtx.moveToDocumentRoot();

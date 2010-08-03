@@ -59,7 +59,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
      */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
         .getLogger(WriteTransaction.class));
-    
+
     /** Maximum number of node modifications before auto commit. */
     private final int mMaxNodeCount;
 
@@ -84,7 +84,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
      *            Maximum number of seconds before auto commit.
      * @throws TreetankException
      *             if the reading of the props is failing or properties are not
-     *             valid    
+     *             valid
      */
     protected WriteTransaction(final long mTransactionID, final SessionState mSessionState,
         final WriteTransactionState mTransactionState, final int maxNodeCount, final int maxTime)
@@ -203,8 +203,8 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     /**
      * {@inheritDoc}
      */
-    public synchronized long insertNamespace(final String mUri, final String mPrefix) throws 
-    TreetankException {
+    public synchronized long insertNamespace(final String mUri, final String mPrefix)
+        throws TreetankException {
         if (getCurrentNode() instanceof ElementNode) {
             final long parentKey = getCurrentNode().getNodeKey();
             // TODO check against QName class
@@ -659,7 +659,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
                         getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
                     node.setParentKey(mNewNode.getNodeKey());
                     getTransactionState().finishNodeModification(node);
-                } while(moveToRightSibling());
+                } while (moveToRightSibling());
             }
             if (mOldNode.getKind() == ENodes.ELEMENT_KIND) {
                 // setting the attributes and namespaces

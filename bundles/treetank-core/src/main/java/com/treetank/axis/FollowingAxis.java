@@ -30,7 +30,7 @@ import com.treetank.utils.FastStack;
  * Iterate over all following nodes of kind ELEMENT or TEXT starting at a given node. Self is not included.
  * </p>
  */
-public class FollowingAxis extends AbstractAxis implements IAxis {
+public class FollowingAxis extends AbsAxis implements IAxis {
 
     private boolean mIsFirst;
 
@@ -71,7 +71,7 @@ public class FollowingAxis extends AbstractAxis implements IAxis {
         // assure, that preceding is not evaluated on an attribute or a
         // namespace
         if (mIsFirst && getTransaction().getNode().getKind() == ENodes.ATTRIBUTE_KIND) {
-        // || getTransaction().isNamespaceKind() {
+            // || getTransaction().isNamespaceKind() {
             resetToStartKey();
             return false;
 

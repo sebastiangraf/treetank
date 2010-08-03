@@ -44,7 +44,7 @@ public final class TreeTankCommandoLineExplorer {
      */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
         .getLogger(TreeTankCommandoLineExplorer.class));
-    
+
     private TreeTankCommandoLineExplorer() {
         // Not used over here.
     }
@@ -97,9 +97,8 @@ public final class TreeTankCommandoLineExplorer {
                 rtx = session.beginReadTransaction(revision);
             }
         } else {
-            System.out
-                .println("Usage: java TreeTankCommandoLineExplorer \"tnk-file\" [revision] " 
-                    + "(if revision not given, explorer works in write mode");
+            System.out.println("Usage: java TreeTankCommandoLineExplorer \"tnk-file\" [revision] "
+                + "(if revision not given, explorer works in write mode");
             System.exit(-1);
         }
 
@@ -353,9 +352,8 @@ public final class TreeTankCommandoLineExplorer {
                         }
 
                     } else {
-                        builder
-                            .append(" not succeed, Please login with write-right " 
-                                + "(that means without revision parameter");
+                        builder.append(" not succeed, Please login with write-right "
+                            + "(that means without revision parameter");
                     }
                 } catch (final TreetankException exc) {
                     LOGWRAPPER.error(exc);

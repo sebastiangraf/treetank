@@ -45,9 +45,9 @@ public class BerkeleyWriter implements IWriter {
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(BerkeleyWriter.class));
-    
+    private static final LogWrapper LOGWRAPPER =
+        new LogWrapper(LoggerFactory.getLogger(BerkeleyWriter.class));
+
     /** Current {@link Database} to write to. */
     private transient final Database mDatabase;
 

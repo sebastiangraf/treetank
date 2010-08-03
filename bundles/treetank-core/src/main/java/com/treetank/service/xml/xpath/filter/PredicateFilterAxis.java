@@ -19,7 +19,7 @@ package com.treetank.service.xml.xpath.filter;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AbstractAxis;
+import com.treetank.axis.AbsAxis;
 import com.treetank.utils.TypedValue;
 
 /**
@@ -31,7 +31,7 @@ import com.treetank.utils.TypedValue;
  * evaluation has to be reset to the key that it was set to before the evaluation.
  * </p>
  */
-public class PredicateFilterAxis extends AbstractAxis implements IAxis {
+public class PredicateFilterAxis extends AbsAxis implements IAxis {
 
     private boolean mIsFirst;
 

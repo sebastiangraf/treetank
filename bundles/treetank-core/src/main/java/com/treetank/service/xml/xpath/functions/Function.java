@@ -100,8 +100,7 @@ public class Function {
      * derived from one of these, fn:boolean returns false if the operand value has zero length; otherwise it
      * returns true.</li>
      * <li>If its operand is a singleton value of any numeric type or derived from a numeric type, fn:boolean
-     * returns false if the operand value is NaN or is numerically equal to zero; otherwise 
-     * it returns true.</li>
+     * returns false if the operand value is NaN or is numerically equal to zero; otherwise it returns true.</li>
      * <li>In all other cases, fn:boolean raises a type error [err:FORG0006].</li>
      * </p>
      * 
@@ -236,7 +235,7 @@ public class Function {
      * xs:double.
      * 
      * @param rtx
-     *          Read Transaction.
+     *            Read Transaction.
      * @return fnnumber boolean.
      */
     public static boolean fnnumber(final IReadTransaction rtx) {
@@ -290,7 +289,7 @@ public class Function {
         } else {
             do {
                 value = value + Double.parseDouble(TypedValue.parseString(rtx.getNode().getRawValue()));
-            } while(axis.hasNext());
+            } while (axis.hasNext());
             final int itemKey = rtx.getItemList().addItem(new AtomicValue(value, Type.DOUBLE));
             rtx.moveTo(itemKey);
         }

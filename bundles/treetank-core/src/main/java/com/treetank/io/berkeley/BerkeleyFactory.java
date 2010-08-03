@@ -62,7 +62,7 @@ public final class BerkeleyFactory extends AbstractIOFactory {
      */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
         .getLogger(BerkeleyFactory.class));
-    
+
     /** Binding for {@link AbstractKey}. */
     public static final TupleBinding<AbstractKey> KEY = new KeyBinding();
 
@@ -100,8 +100,7 @@ public final class BerkeleyFactory extends AbstractIOFactory {
      * @throws TreetankIOException
      *             of something odd happens while database-connection
      */
-    public BerkeleyFactory(final DatabaseConfiguration mParamDatabase, 
-            final SessionConfiguration paramSession)
+    public BerkeleyFactory(final DatabaseConfiguration mParamDatabase, final SessionConfiguration paramSession)
         throws TreetankIOException {
         super(mParamDatabase, paramSession);
 

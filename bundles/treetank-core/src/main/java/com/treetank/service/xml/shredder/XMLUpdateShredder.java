@@ -50,7 +50,6 @@ import com.treetank.utils.LogWrapper;
 
 import org.slf4j.LoggerFactory;
 
-
 /**
  * This class appends a given {@link XMLStreamReader} to a {@link IWriteTransaction}. The content of the
  * stream is added as a subtree.
@@ -118,7 +117,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * insertAsRightSibling() or insertAsFirstChild() should occure.
      */
     private FastStack<Long> mLeftSiblingKeyStack;
-    
+
     /**
      * Determines if it's a right sibling from the currently parsed node, where
      * the parsed node and the node in the Treetank storage match.
@@ -227,16 +226,18 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                 do {
                     switch (event.getEventType()) {
                     case XMLStreamConstants.START_ELEMENT:
-                        /*if (LOGGER.isDebugEnabled()) {
-                            // Debugging output.
-                            LOGGER.debug("TO SHREDDER: " + ((StartElement)event).getName());
-
-                            if (mWtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
-                                LOGGER.debug("SHREDDERED: " + mWtx.getQNameOfCurrentNode());
-                            } else {
-                                LOGGER.debug("SHREDDERED: " + mWtx.getValueOfCurrentNode());
-                            }
-                        }*/
+                        /*
+                         * if (LOGGER.isDebugEnabled()) {
+                         * // Debugging output.
+                         * LOGGER.debug("TO SHREDDER: " + ((StartElement)event).getName());
+                         * 
+                         * if (mWtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
+                         * LOGGER.debug("SHREDDERED: " + mWtx.getQNameOfCurrentNode());
+                         * } else {
+                         * LOGGER.debug("SHREDDERED: " + mWtx.getValueOfCurrentNode());
+                         * }
+                         * }
+                         */
 
                         // Initialize variables.
                         initializeVars();
@@ -343,8 +344,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                                                      * has the next right
                                                      * sibling in pre order.
                                                      */
-                                                    while (!((AbsStructNode)mWtx.getNode())
-                                                        .hasRightSibling()) {
+                                                    while (!((AbsStructNode)mWtx.getNode()).hasRightSibling()) {
                                                         // Move to parent
                                                         // element node.
                                                         mWtx.moveToParent();
@@ -411,7 +411,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                             break;
                         }
                     }
-                } while(mReader.hasNext());
+                } while (mReader.hasNext());
 
                 /*
                  * If still nodes are on the stack, they have been removed, thus
@@ -427,7 +427,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                         mLeftSiblingKeyStack.pop();
                     }
                 }
-                mReader.close(); 
+                mReader.close();
             }
             // If no content is in the XML, a normal insertNewContent is
             // executed.
@@ -539,11 +539,11 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
          * inserted) move back to the last position key and insert as a right
          * sibling.
          */
-            if (mLevelsUp > 0 && !mInsertedElement) {
-                levelsUp();
-            } else if (mInsertAtTop) {
-                mLastPosKey = mWtx.getNode().getNodeKey();
-                mWtx.moveToParent();
+        if (mLevelsUp > 0 && !mInsertedElement) {
+            levelsUp();
+        } else if (mInsertAtTop) {
+            mLastPosKey = mWtx.getNode().getNodeKey();
+            mWtx.moveToParent();
             assert !mLeftSiblingKeyStack.empty();
 
             // // Update stack.
@@ -559,7 +559,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             // // }
             // leftSiblingKeyStack.push((Long) EFixed.NULL_NODE_KEY
             // .getStandardProperty());
-            }
+        }
 
         mIsSame = false;
 
@@ -680,7 +680,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                     }
                     mWtx.moveTo(keyMatches);
                 }
-            } while(!mFound && mWtx.moveToRightSibling());
+            } while (!mFound && mWtx.moveToRightSibling());
             mWtx.moveTo(mNodeKey);
         }
     }
@@ -745,7 +745,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                     }
                     mLevelInShreddered--;
                     mWtx.moveToParent();
-                } while(!((AbsStructNode)mWtx.getNode()).hasRightSibling() && !mLeftSiblingKeyStack.empty());
+                } while (!((AbsStructNode)mWtx.getNode()).hasRightSibling() && !mLeftSiblingKeyStack.empty());
                 if (!mWtx.moveToRightSibling()) {
                     mIsLastNode = true;
                 }
@@ -810,7 +810,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                 mLeftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
                 mLeftSiblingKeyStack.push((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
             }
-        } while(mWtx.getNode().getNodeKey() != keyMatches
+        } while (mWtx.getNode().getNodeKey() != keyMatches
             && ((AbsStructNode)mWtx.getNode()).hasRightSibling());
         // Move up anchestors if there is no former right sibling.
         boolean moveToParents = false;
@@ -855,7 +855,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * @param mText
      *            Determines if a text node has been inserted.
      * @return retVal
-     *             return value.
+     *         return value.
      * @throws XMLStreamException
      *             In case the xml parser encounters an error.
      */
@@ -914,7 +914,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * Skip all whitespace events between nodes.
      * 
      * @return mReader.peek()
-     *             return peek. 
+     *         return peek.
      * @throws XMLStreamException
      *             In case of any error while parsing the file to shredder into
      *             an existing storage.
@@ -924,7 +924,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
         // Ignore all whitespace between elements.
         while (mReader.peek().getEventType() == XMLStreamConstants.CHARACTERS
             && (((Characters)mReader.peek()).isIgnorableWhiteSpace() || ((Characters)mReader.peek())
-            .isWhiteSpace())) {
+                .isWhiteSpace())) {
             mReader.nextEvent();
         }
 
@@ -1185,8 +1185,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             for (final Iterator<?> it = mEvent.getAttributes(); it.hasNext();) {
                 hasAtts = true;
                 final Attribute attribute = (Attribute)it.next();
-                for (int i = 0, attCount = ((ElementNode)mWtx.getNode()).getAttributeCount();
-                    i < attCount; i++) {
+                for (int i = 0, attCount = ((ElementNode)mWtx.getNode()).getAttributeCount(); i < attCount; i++) {
                     mWtx.moveToAttribute(i);
                     if (attribute.getName().equals(mWtx.getQNameOfCurrentNode())
                         && attribute.getValue().equals(mWtx.getValueOfCurrentNode())) {
@@ -1211,8 +1210,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             for (final Iterator<?> namespIt = mEvent.getNamespaces(); namespIt.hasNext();) {
                 hasNamesps = true;
                 final Namespace namespace = (Namespace)namespIt.next();
-                for (int i = 0, namespCount = ((ElementNode)mWtx.getNode()).getNamespaceCount();
-                    i < namespCount; i++) {
+                for (int i = 0, namespCount = ((ElementNode)mWtx.getNode()).getNamespaceCount(); i < namespCount; i++) {
                     mWtx.moveToNamespace(i);
                     if (namespace.getNamespaceURI().equals(mWtx.nameForKey(mWtx.getNode().getURIKey()))
                         && namespace.getPrefix().equals(mWtx.nameForKey(mWtx.getNode().getNameKey()))) {

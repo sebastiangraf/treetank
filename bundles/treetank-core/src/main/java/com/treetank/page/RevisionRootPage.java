@@ -162,8 +162,8 @@ public final class RevisionRootPage extends AbstractPage {
     @Override
     public String toString() {
         return super.toString() + " revisionSize=" + mRevisionSize + ", revisionTimestamp="
-        + mRevisionTimestamp + ", namePage=(" + getReference(NAME_REFERENCE_OFFSET) + "), indirectPage=("
-        + getReference(INDIRECT_REFERENCE_OFFSET) + ")";
+            + mRevisionTimestamp + ", namePage=(" + getReference(NAME_REFERENCE_OFFSET) + "), indirectPage=("
+            + getReference(INDIRECT_REFERENCE_OFFSET) + ")";
     }
 
 }

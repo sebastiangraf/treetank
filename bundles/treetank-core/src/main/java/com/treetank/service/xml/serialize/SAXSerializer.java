@@ -60,8 +60,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(SAXSerializer.class));
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(SAXSerializer.class));
 
     /** SAX content handler. */
     private transient ContentHandler mContHandler;
@@ -177,8 +176,8 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
      */
     private void generateText(final IReadTransaction mRtx) {
         try {
-            mContHandler.characters(mRtx.getValueOfCurrentNode().toCharArray(),
-                0, mRtx.getValueOfCurrentNode().length());
+            mContHandler.characters(mRtx.getValueOfCurrentNode().toCharArray(), 0, mRtx
+                .getValueOfCurrentNode().length());
         } catch (final SAXException e) {
             LOGWRAPPER.error(e);
         }
@@ -191,7 +190,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
      *            args[0] specifies the path to the TT-storage from which to
      *            generate SAX events.
      * @throws Exception
-     *            handling treetank exception
+     *             handling treetank exception
      */
     public static void main(final String... args) throws Exception {
         if (args.length != 1) {

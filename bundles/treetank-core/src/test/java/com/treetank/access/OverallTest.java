@@ -31,8 +31,8 @@ public final class OverallTest {
     private static final Random ran = new Random(0l);
     public static String chars = "abcdefghijklm";
 
-    private static final String XML =
-        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "auction.xml";
+    private static final String XML = "src" + File.separator + "test" + File.separator + "resources"
+        + File.separator + "auction.xml";
 
     @Before
     public void setUp() {
@@ -99,11 +99,11 @@ public final class OverallTest {
                     } else {
                         wtx.insertElementAsRightSibling(new QName(getString()));
                     }
-                    while(ran.nextBoolean()) {
+                    while (ran.nextBoolean()) {
                         wtx.insertAttribute(new QName(getString()), getString());
                         wtx.moveToParent();
                     }
-                    while(ran.nextBoolean()) {
+                    while (ran.nextBoolean()) {
                         wtx.insertNamespace(getString(), getString());
                         wtx.moveToParent();
                     }
@@ -119,7 +119,7 @@ public final class OverallTest {
                 do {
                     final int newKey = ran.nextInt(i + 1) + 1;
                     wtx.moveTo(newKey);
-                } while(wtx.getNode() == null);
+                } while (wtx.getNode() == null);
                 // TODO Check if reference check can occur on "=="
                 if (wtx.getNode().getKind() != ENodes.ELEMENT_KIND) {
                     wtx.moveToParent();

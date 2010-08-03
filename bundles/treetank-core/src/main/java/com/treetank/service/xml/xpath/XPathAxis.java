@@ -19,7 +19,7 @@ package com.treetank.service.xml.xpath;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AbstractAxis;
+import com.treetank.axis.AbsAxis;
 
 /**
  * <h1>XPath Axis</h1>
@@ -65,7 +65,7 @@ import com.treetank.axis.AbstractAxis;
  * 
  * </p>
  */
-public class XPathAxis extends AbstractAxis implements IAxis {
+public class XPathAxis extends AbsAxis implements IAxis {
 
     /** Axis holding the consecutive query execution plans of the query. */
     private IAxis mPipeline;

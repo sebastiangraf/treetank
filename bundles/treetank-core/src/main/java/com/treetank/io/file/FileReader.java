@@ -15,7 +15,6 @@
  * 
  */
 
-
 package com.treetank.io.file;
 
 import java.io.File;
@@ -50,9 +49,8 @@ public final class FileReader implements IReader {
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(FileReader.class));
-    
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(FileReader.class));
+
     /** Random access mFile to work on. */
     private transient final RandomAccessFile mFile;
 

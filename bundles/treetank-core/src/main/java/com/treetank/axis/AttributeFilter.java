@@ -28,7 +28,7 @@ import com.treetank.node.ENodes;
  * Only match ATTRIBUTE nodes.
  * </p>
  */
-public class AttributeFilter extends AbstractFilter implements IFilter {
+public class AttributeFilter extends AbsFilter implements IFilter {
 
     /**
      * Default constructor.
@@ -45,7 +45,7 @@ public class AttributeFilter extends AbstractFilter implements IFilter {
      */
     @Override
     public final boolean filter() {
-        return (getTransaction().getNode().getKind() == ENodes.ATTRIBUTE_KIND);
+        return getTransaction().getNode().getKind() == ENodes.ATTRIBUTE_KIND;
     }
 
 }

@@ -19,7 +19,7 @@ package com.treetank.service.xml.xpath.filter;
 
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AbstractFilter;
+import com.treetank.axis.AbsFilter;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
 
@@ -30,7 +30,7 @@ import com.treetank.node.ElementNode;
  * name.
  * </p>
  */
-public class WildcardFilter extends AbstractFilter implements IFilter {
+public class WildcardFilter extends AbsFilter implements IFilter {
 
     /** Defines, if the defined part of the qualified name is the local name. */
     private final boolean mIsName;

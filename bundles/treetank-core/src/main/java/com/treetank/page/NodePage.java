@@ -194,24 +194,24 @@ public class NodePage extends AbstractPage {
         if (this == mObj) {
             return true;
         }
-            
+
         if (mObj == null) {
             return false;
         }
-            
+
         if (getClass() != mObj.getClass()) {
             return false;
         }
-            
+
         final NodePage mOther = (NodePage)mObj;
         if (mNodePageKey != mOther.mNodePageKey) {
-            return false; 
+            return false;
         }
-            
+
         if (!Arrays.equals(mNodes, mOther.mNodes)) {
             return false;
         }
-            
+
         return true;
     }
 

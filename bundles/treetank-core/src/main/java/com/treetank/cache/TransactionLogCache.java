@@ -27,7 +27,7 @@ import com.treetank.exception.TreetankIOException;
  * 
  */
 public final class TransactionLogCache extends AbstractPersistenceCache {
-    
+
     /**
      * RAM-Based first cache.
      */
@@ -47,10 +47,8 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
     public TransactionLogCache(final DatabaseConfiguration paramConfig, final long revision)
         throws TreetankIOException {
         super(paramConfig);
-        final BerkeleyPersistenceCache secondCache =
-            new BerkeleyPersistenceCache(paramConfig, revision);
-        mFirstCache =
-            new LRUCache(secondCache);
+        final BerkeleyPersistenceCache secondCache = new BerkeleyPersistenceCache(paramConfig, revision);
+        mFirstCache = new LRUCache(secondCache);
     }
 
     /**

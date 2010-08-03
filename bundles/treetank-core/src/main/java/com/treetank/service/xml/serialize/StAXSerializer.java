@@ -57,8 +57,8 @@ public class StAXSerializer implements XMLEventReader {
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(StAXSerializer.class));
+    private static final LogWrapper LOGWRAPPER =
+        new LogWrapper(LoggerFactory.getLogger(StAXSerializer.class));
 
     /**
      * Determines if start tags have to be closed, thus if end tags have to be
@@ -119,7 +119,7 @@ public class StAXSerializer implements XMLEventReader {
      * the tank ids.
      * 
      * @param axis
-     *          input axis
+     *            input axis
      */
     public StAXSerializer(final IAxis axis) {
         mNextTag = false;

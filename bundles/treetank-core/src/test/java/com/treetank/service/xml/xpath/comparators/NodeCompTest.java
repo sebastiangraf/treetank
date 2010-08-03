@@ -131,7 +131,7 @@ public class NodeCompTest {
             comparator.atomize(axis);
         } catch (XPathError e) {
             assertEquals("err:XPTY0004 The type is not appropriate the expression or"
-            + " the typedoes not match a required type as specified by the " + "matching rules.", e
+                + " the typedoes not match a required type as specified by the " + "matching rules.", e
                 .getMessage());
         }
 

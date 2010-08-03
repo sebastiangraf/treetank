@@ -76,8 +76,9 @@ public final class IOTestHelper {
      * @param sessionConf
      *            to be tested
      */
-    public static void testFactory(final DatabaseConfiguration dbConf, final SessionConfiguration sessionConf)
-        throws TreetankException {
+    public static void
+        testFactory(final DatabaseConfiguration dbConf, final SessionConfiguration sessionConf)
+            throws TreetankException {
         final AbstractIOFactory fac1 = AbstractIOFactory.getInstance(dbConf, sessionConf);
         final AbstractIOFactory fac2 = AbstractIOFactory.getInstance(dbConf, sessionConf);
         assertSame(fac1, fac2);

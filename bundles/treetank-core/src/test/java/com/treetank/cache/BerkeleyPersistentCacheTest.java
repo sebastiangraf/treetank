@@ -14,9 +14,8 @@ import com.treetank.settings.EDatabaseSetting;
 
 public class BerkeleyPersistentCacheTest {
 
-    private final NodePage[][] pages =
-        new NodePage[LRUCache.CACHE_CAPACITY + 1][Integer.parseInt(EDatabaseSetting.REVISION_TO_RESTORE
-            .getStandardProperty()) + 1];
+    private final NodePage[][] pages = new NodePage[LRUCache.CACHE_CAPACITY + 1][Integer
+        .parseInt(EDatabaseSetting.REVISION_TO_RESTORE.getStandardProperty()) + 1];
 
     private ICache cache;
 

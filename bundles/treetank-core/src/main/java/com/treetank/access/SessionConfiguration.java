@@ -45,7 +45,7 @@ public final class SessionConfiguration {
      */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
         .getLogger(SessionConfiguration.class));
-    
+
     /** Props to hold all related data. */
     private final Properties mProps;
 

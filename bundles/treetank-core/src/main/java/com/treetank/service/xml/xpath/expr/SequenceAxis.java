@@ -22,7 +22,7 @@ import java.util.List;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AbstractAxis;
+import com.treetank.axis.AbsAxis;
 
 /**
  * <h1>SequenceAxis</h1>
@@ -34,7 +34,7 @@ import com.treetank.axis.AbstractAxis;
  * </p>
  * 
  */
-public class SequenceAxis extends AbstractAxis implements IAxis {
+public class SequenceAxis extends AbsAxis implements IAxis {
 
     private final List<IAxis> mSeq;
     private IAxis mCurrent;

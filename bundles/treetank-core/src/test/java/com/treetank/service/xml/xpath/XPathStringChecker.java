@@ -52,7 +52,7 @@ public class XPathStringChecker {
 
         final String[] strValues = new String[expectedValues.length];
         int offset = 0;
-        while(axis.hasNext()) {
+        while (axis.hasNext()) {
             axis.next();
             // IAxis results.
             if (offset >= expectedValues.length) {

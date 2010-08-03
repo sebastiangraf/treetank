@@ -43,9 +43,8 @@ public final class Database implements IDatabase {
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(Database.class));
-    
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(Database.class));
+
     /** Central repository of all running sessions. */
     private static final ConcurrentMap<File, Database> DATABASEMAP = new ConcurrentHashMap<File, Database>();
 
@@ -285,7 +284,8 @@ public final class Database implements IDatabase {
         final int compareStructure = EStoragePaths.compareStructure(getFile());
         if (compareStructure != 0) {
             throw new TreetankUsageException("Storage has no valid storage structure."
-            + " Compared to the specification, storage has", Integer.toString(compareStructure), "elements!");
+                + " Compared to the specification, storage has", Integer.toString(compareStructure),
+                "elements!");
         }
         final int[] versions = new int[3];
         versions[0] = Integer.parseInt(EDatabaseSetting.VERSION_MAJOR.getStandardProperty());

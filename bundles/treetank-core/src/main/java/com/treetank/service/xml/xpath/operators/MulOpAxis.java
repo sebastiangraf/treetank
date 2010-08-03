@@ -40,9 +40,8 @@ public class MulOpAxis extends AbstractOpAxis {
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(MulOpAxis.class));
-    
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(MulOpAxis.class));
+
     /**
      * Constructor. Initializes the internal state.
      * 

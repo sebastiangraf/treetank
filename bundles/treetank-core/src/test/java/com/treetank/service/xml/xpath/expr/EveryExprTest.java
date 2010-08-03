@@ -76,7 +76,7 @@ public class EveryExprTest {
         rtx.moveTo(1L);
         final IAxis axis3 =
             new XPathAxis(rtx, "every $child in child::element()"
-            + " satisfies $child/attribute::attribute()");
+                + " satisfies $child/attribute::attribute()");
         assertEquals(true, axis3.hasNext());
         assertEquals(false, Boolean.parseBoolean(TypedValue.parseString((rtx.getNode().getRawValue()))));
         assertEquals(false, axis3.hasNext());

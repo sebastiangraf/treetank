@@ -29,7 +29,7 @@ import com.treetank.node.ENodes;
  * Iterate over all following siblings of kind ELEMENT or TEXT starting at a given node. Self is not included.
  * </p>
  */
-public class FollowingSiblingAxis extends AbstractAxis implements IAxis {
+public class FollowingSiblingAxis extends AbsAxis implements IAxis {
 
     private boolean mIsFirst;
 

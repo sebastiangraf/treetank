@@ -81,60 +81,60 @@ public class XPathError extends RuntimeException {
 
             /** XPath static error 0001. */
             XPST0001("err:XPST0001:  Some component of the static context has not "
-            + "been assigned a value."),
+                + "been assigned a value."),
 
             /** XPath dynamic error 0004. */
             XPDY0002("err:XPDY0002:   Some part of the dynamic context has not " + "been assigned a value."),
 
             /** XPath static error 0003. */
             XPST0003("err:XPST0003: Expression is not a valid instance of the grammar"
-            + "defined in A.1 EBNF."),
+                + "defined in A.1 EBNF."),
 
             /** XPath type error 0004. */
             XPTY0004("err:XPTY0004 The type is not appropriate the expression or the "
-            + "typedoes not match a required type as specified by the matching rules."),
+                + "typedoes not match a required type as specified by the matching rules."),
 
             /** XPath static error 0005. */
             XPST0005("err:XPST0005:  The static type assigned to an expression other than the "
-            + "expression() or data(()) is empty-sequence()."),
+                + "expression() or data(()) is empty-sequence()."),
 
             /** XPath static error 0008. */
             XPST0008("err:XPST0008 Expression refers to a name that is not defined in the "
-            + "static context"),
+                + "static context"),
 
             /** XPath static error 0010. */
             XPST0010("err:XPST0010: " + "Axis is not supported."),
 
             /** XPath static error 0017. */
             XPST0017("err:XPST0017  The expanded QName and number of arguments in a "
-            + "function call do not match the name and arity of a function " + "signature."),
+                + "function call do not match the name and arity of a function " + "signature."),
 
             /** XPath type error 0018. */
             XPTY0018("err:XPTY0018  Result of the last step "
-            + "in a path expression contains both nodes and atomic values."),
+                + "in a path expression contains both nodes and atomic values."),
 
             /** XPath type error 0019. */
             XPTY0019("err:XPTY0019  Result of a step (other "
-            + "than the last step) in a path expression contains an atomic value."),
+                + "than the last step) in a path expression contains an atomic value."),
 
             /** XPath type error 0020. */
             XPTY0020("err:XPTY0020 Context item in an axis step is not a node."),
 
             /** XPath dynamic error 0050. */
             XPDY0050("err:XPDY0050 " + "Dynamic type of the operand of a treat expression does not match"
-            + " the sequence type specified by the treat expression."),
+                + " the sequence type specified by the treat expression."),
 
             /** XPath static error 0051. */
             XPST0051("err:XPST0051 " + "Type is not defined in the in-scope schema types as an "
-            + "atomic type."),
+                + "atomic type."),
 
             /** XPath static error 0080. */
             XPST0080("err:XPST0080 " + "Target type of a cast or castable expression must not be "
-            + "xs:NOTATION or xs:anyAtomicType."),
+                + "xs:NOTATION or xs:anyAtomicType."),
 
             /** XPath static error 0081. */
             XPST0081("err:XPST0081 " + "Namespace prefix cannot be expanded into a namespace URI by "
-            + "using the statically known namespaces."),
+                + "using the statically known namespaces."),
 
             FOCA0001("err:FOCA0001, Input value too large for decimal."),
             FOCA0002("err:FOCA0002, Invalid lexical value."),

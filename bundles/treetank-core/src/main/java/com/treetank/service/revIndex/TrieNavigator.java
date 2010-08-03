@@ -38,7 +38,7 @@ final class TrieNavigator {
      * @param mTerm
      *            to be inserted
      * @throws TreetankException
-     *            handling treetank exception
+     *             handling treetank exception
      */
     static void adaptTrie(final IWriteTransaction mWtx, final String mTerm) throws TreetankException {
         moveToTrieRoot(mWtx);
@@ -60,8 +60,7 @@ final class TrieNavigator {
             // checking of the prefix is present as a sibling of the
             // firstchild...
             do {
-                if (mWtx.getNode().getNameKey()
-                    == NamePageHash.generateHashForString(RevIndex.TRIE_ELEMENT)) {
+                if (mWtx.getNode().getNameKey() == NamePageHash.generateHashForString(RevIndex.TRIE_ELEMENT)) {
                     if (!mWtx.moveToAttribute(0)) {
                         throw new IllegalStateException();
                     }
@@ -73,7 +72,7 @@ final class TrieNavigator {
                         break;
                     }
                 }
-            } while(mWtx.moveToRightSibling());
+            } while (mWtx.moveToRightSibling());
             // ...of not, insert it...
             if (!found) {
                 mWtx.insertElementAsRightSibling(new QName(RevIndex.TRIE_ELEMENT));
@@ -107,7 +106,7 @@ final class TrieNavigator {
                         }
 
                     }
-                } while(mRtx.moveToRightSibling());
+                } while (mRtx.moveToRightSibling());
 
             } else {
                 break;
@@ -135,7 +134,7 @@ final class TrieNavigator {
      * @param mRtx
      *            Read Transaction
      * @throws TreetankException
-     *            handling treetank exception
+     *             handling treetank exception
      */
     private static void moveToTrieRoot(final IReadTransaction mRtx) throws TreetankException {
         mRtx.moveToDocumentRoot();

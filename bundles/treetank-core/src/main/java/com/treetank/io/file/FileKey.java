@@ -43,7 +43,7 @@ public final class FileKey extends AbstractKey {
      * Constructor for direct data.
      * 
      * @param mOffset
-     *           Offset of data
+     *            Offset of data
      * @param mLength
      *            Length of data
      */

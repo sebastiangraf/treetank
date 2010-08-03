@@ -63,12 +63,11 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class XMLShredder implements Callable<Long> {
-    
+
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(XMLShredder.class));
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(XMLShredder.class));
 
     /** {@link IWriteTransaction}. */
     protected final transient IWriteTransaction mWtx;
@@ -100,8 +99,7 @@ public class XMLShredder implements Callable<Long> {
      *             not pointing to doc-root and updateOnly= true
      */
     public XMLShredder(final IWriteTransaction mWtx, final XMLEventReader mReader,
-            final boolean mAddAsFirstChild)
-        throws TreetankUsageException {
+        final boolean mAddAsFirstChild) throws TreetankUsageException {
         this.mWtx = mWtx;
         this.mReader = mReader;
         this.mFirstChildAppend = mAddAsFirstChild;
@@ -111,9 +109,9 @@ public class XMLShredder implements Callable<Long> {
      * Invoking the shredder.
      * 
      * @throws Exception
-     *             handling treetank exception 
+     *             handling treetank exception
      * @return revision
-     *             return revision
+     *         return revision
      */
     public Long call() throws Exception {
         final long revision = mWtx.getRevisionNumber();
@@ -126,7 +124,7 @@ public class XMLShredder implements Callable<Long> {
      * Insert new content.
      * 
      * @throws TreetankException
-     *             handling treetank exception 
+     *             handling treetank exception
      */
     protected final void insertNewContent() throws TreetankException {
         try {

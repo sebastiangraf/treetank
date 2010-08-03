@@ -93,7 +93,7 @@ public class ThreadTest {
 
         public Void call() throws Exception {
             final IAxis axis = new DescendantAxis(mRTX);
-            while(axis.hasNext()) {
+            while (axis.hasNext()) {
                 axis.next();
             }
 

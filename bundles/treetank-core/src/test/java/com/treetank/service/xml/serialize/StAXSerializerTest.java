@@ -69,7 +69,7 @@ public class StAXSerializerTest {
             final StringBuilder strBuilder = new StringBuilder();
             boolean isEmptyElement = false;
 
-            while(serializer.hasNext()) {
+            while (serializer.hasNext()) {
                 XMLEvent event = serializer.nextEvent();
 
                 switch (event.getEventType()) {
