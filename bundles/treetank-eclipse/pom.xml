@@ -29,7 +29,47 @@
 		<groupId>treetank</groupId>
 		<version>1.0.1-SNAPSHOT</version>
 	</parent>
-
+	<repositories>
+		<repository>
+			<id>oracleReleases</id>
+			<name>Oracle Released Java Packages</name>
+			<url>http://download.oracle.com/maven</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>disyInternal</id>
+			<name>Internal Repository for the Distributed System Group</name>
+			<url>http://xen5.disy.inf.uni-konstanz.de:8080/archiva/repository/disyInternal/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>disyInternalSnapshot</id>
+			<name>Internal Snapshot Repository for the Distributed System Group</name>
+			<url>http://xen5.disy.inf.uni-konstanz.de:8080/archiva/repository/disyInternalSnapshot/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>disyThirdParty</id>
+			<name>Repository for third party jar used by disy</name>
+			<url>http://xen5.disy.inf.uni-konstanz.de:8080/archiva/repository/disyThirdParty/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
  
     <profiles>
          <profile>
