@@ -20,7 +20,7 @@
 	</issueManagement>
 	<ciManagement>
 		<system>hudson</system>
-		<url>http://xen5.disy.inf.uni-konstanz.de:8080/hudson</url>
+		<url>http://xen5.disy.inf.uni-konstanz.de/hudson</url>
 	</ciManagement>
 	<organization>
 		<name>University of Konstanz, Distributed Systems Lab</name>
@@ -92,7 +92,7 @@
 		<repository>
 			<id>disyInternal</id>
 			<name>Internal Repository for the Distributed System Group</name>
-			<url>http://xen5.disy.inf.uni-konstanz.de:8080/archiva/repository/disyInternal/</url>
+			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternal/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -103,7 +103,7 @@
 		<repository>
 			<id>disyInternalSnapshot</id>
 			<name>Internal Snapshot Repository for the Distributed System Group</name>
-			<url>http://xen5.disy.inf.uni-konstanz.de:8080/archiva/repository/disyInternalSnapshot/</url>
+			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternal/Snapshot/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -114,7 +114,7 @@
 		<repository>
 			<id>disyThirdParty</id>
 			<name>Repository for third party jar used by disy</name>
-			<url>http://xen5.disy.inf.uni-konstanz.de:8080/archiva/repository/disyThirdParty/</url>
+			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyThirdParty/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -246,12 +246,12 @@
 	<distributionManagement>
 		<repository>
 			<id>disyInternal</id>
-			<url>http://xen5.disy.inf.uni-konstanz.de:8080/archiva/repository/disyInternal/</url>
+			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternal/</url>
 			<uniqueVersion>false</uniqueVersion>
 		</repository>
 		<snapshotRepository>
 			<id>disyInternalSnapshot</id>
-			<url>http://xen5.disy.inf.uni-konstanz.de:8080/archiva/repository/disyInternalSnapshot/</url>
+			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternalSnapshot/</url>
 			<uniqueVersion>false</uniqueVersion>
 		</snapshotRepository>
 	</distributionManagement>
