@@ -21,6 +21,7 @@ import javax.xml.namespace.QName;
 import com.treetank.api.IItem;
 import com.treetank.api.IItemList;
 import com.treetank.api.IReadTransaction;
+import com.treetank.api.IStructuralItem;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.node.AbsStructNode;
@@ -141,7 +142,7 @@ public class ReadTransaction implements IReadTransaction {
      * {@inheritDoc}
      */
     public final boolean moveToFirstChild() {
-        final AbsStructNode node = checkNode(mCurrentNode);
+        final IStructuralItem node = getNodeIfStructural();
         return node == null ? false : moveTo(node.getFirstChildKey());
     }
 
@@ -149,7 +150,7 @@ public class ReadTransaction implements IReadTransaction {
      * {@inheritDoc}
      */
     public final boolean moveToLeftSibling() {
-        final AbsStructNode node = checkNode(mCurrentNode);
+        final IStructuralItem node = getNodeIfStructural();
         return node == null ? false : moveTo(node.getLeftSiblingKey());
     }
 
@@ -157,7 +158,7 @@ public class ReadTransaction implements IReadTransaction {
      * {@inheritDoc}
      */
     public final boolean moveToRightSibling() {
-        final AbsStructNode node = checkNode(mCurrentNode);
+        final IStructuralItem node = getNodeIfStructural();
         return node == null ? false : moveTo(node.getRightSiblingKey());
     }
 
@@ -380,7 +381,7 @@ public class ReadTransaction implements IReadTransaction {
      * {@inheritDoc}
      */
     @Override
-    public long getMaxNodeKey() throws TreetankIOException {
+    public final long getMaxNodeKey() throws TreetankIOException {
         return getTransactionState().getActualRevisionRootPage().getMaxNodeKey();
     }
 
@@ -405,15 +406,12 @@ public class ReadTransaction implements IReadTransaction {
     }
 
     /**
-     * Check method if node is a structural node.
-     * 
-     * @param mItem
-     *            to be checked
-     * @return an {@link AbsStructNode} instance if node is a structural one
+     * {@inheritDoc}
      */
-    protected static AbsStructNode checkNode(final IItem mItem) {
-        if (mItem instanceof AbsStructNode) {
-            return (AbsStructNode)mItem;
+    @Override
+    public final IStructuralItem getNodeIfStructural() {
+        if (mCurrentNode instanceof AbsStructNode) {
+            return (IStructuralItem)mCurrentNode;
         } else {
             return null;
         }

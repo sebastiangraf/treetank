@@ -17,9 +17,10 @@
 
 package com.treetank.node;
 
+import com.treetank.api.IStructuralItem;
 import com.treetank.settings.EFixed;
 
-public abstract class AbsStructNode extends AbsNode {
+public abstract class AbsStructNode extends AbsNode implements IStructuralItem {
 
     protected static final int FIRST_CHILD_KEY = 2;
 

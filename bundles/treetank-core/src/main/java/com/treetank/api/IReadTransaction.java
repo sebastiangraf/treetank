@@ -277,6 +277,14 @@ public interface IReadTransaction {
     IItem getNode();
 
     /**
+     * This method returns the current {@link IItem} as a {@link IStructuralItem} if and only if it is a
+     * structural one.
+     * 
+     * @return the current node as {@link IStructuralItem} if possible, null otherwise
+     */
+    IStructuralItem getNodeIfStructural();
+
+    /**
      * Close shared read transaction and immediately release all resources.
      * 
      * This is an idempotent operation and does nothing if the transaction is
