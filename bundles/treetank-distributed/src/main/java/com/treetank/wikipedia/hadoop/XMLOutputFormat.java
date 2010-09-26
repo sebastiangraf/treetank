@@ -19,6 +19,7 @@ package com.treetank.wikipedia.hadoop;
 import java.io.IOException;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -53,20 +54,27 @@ public class XMLOutputFormat<K, V> extends FileOutputFormat<K, V> {
      * Log wrapper {@link LogWrapper}.
      */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LOGGER);
-    
-    /** Root element {@link QName}. */
-    private final transient StartElement mRoot;
-    
+
+    // /** Root element {@link QName}. */
+    // private final transient StartElement mRoot;
+    //
+    // /**
+    // * Empty constructor.
+    // *
+    // * @param paramRootElem
+    // * Root element.
+    // */
+    // public XMLOutputFormat(final StartElement paramRootElem) {
+    // mRoot = paramRootElem;
+    // }
+
     /**
-     * Empty constructor.
-     * 
-     * @param paramRootElem
-     *                   Root element.
+     * Default constructor.
      */
-    public XMLOutputFormat(final StartElement paramRootElem) {
-        mRoot = paramRootElem;
+    public XMLOutputFormat() {
+        // To make Checkstyle happy.
     }
-    
+
     @Override
     public RecordWriter<K, V> getRecordWriter(final TaskAttemptContext paramContext) throws IOException,
         InterruptedException {
@@ -76,9 +84,12 @@ public class XMLOutputFormat<K, V> extends FileOutputFormat<K, V> {
         final XMLOutputFactory factory = XMLOutputFactory.newInstance();
         XMLEventWriter writer = null;
         XMLRecordWriter<K, V> recordWriter = null;
+        final StartElement root =
+            XMLEventFactory.newFactory().createStartElement(paramContext.getConfiguration().get("root"),
+                null, null);
         try {
             writer = factory.createXMLEventWriter(out);
-            recordWriter = new XMLRecordWriter<K, V>(writer, mRoot);
+            recordWriter = new XMLRecordWriter<K, V>(writer, root);
         } catch (final XMLStreamException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }

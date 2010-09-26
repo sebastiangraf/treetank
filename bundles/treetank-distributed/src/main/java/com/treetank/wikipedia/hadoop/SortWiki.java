@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
@@ -73,7 +74,7 @@ public final class SortWiki extends Configured implements Tool {
         job.setReducerClass(XMLReduce.class);
         
         job.setInputFormatClass(XMLInputFormat.class);
-        job.setOutputFormatClass(FileOutputFormat.class);
+        job.setOutputFormatClass(XMLOutputFormat.class);
         
         final Configuration config = job.getConfiguration();
         config.set("timestamp", "timestamp");
@@ -81,6 +82,7 @@ public final class SortWiki extends Configured implements Tool {
         config.set("record_element_name", "page");
         config.set("namespace_prefix", "");
         config.set("namespace_URI", "");
+        config.set("root", "mediawiki");
         
         FileInputFormat.setInputPaths(job, args[0]);
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
