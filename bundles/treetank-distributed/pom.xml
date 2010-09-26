@@ -42,6 +42,10 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+		<repository>
+			<id>cloudera</id>
+			<url>https://repository.cloudera.com/content/repositories/releases/</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -57,15 +61,26 @@
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-core</artifactId>
 			<version>0.20.2</version>
+		</dependency> -->
+	  <dependency>
+			<groupId>com.cloudera.hadoop</groupId>
+			<artifactId>hadoop-core</artifactId>
+			<version>0.20.2-320</version>
 		</dependency>
 		<dependency>
-		  <groupId>xerces</groupId>
-  		<artifactId>xercesImpl</artifactId>
-  		<version>2.6.2</version>
+			<groupId>com.cloudera.hadoop</groupId>
+			<artifactId>hadoop-mrunit</artifactId>
+			<version>0.20.2-320</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>xerces</groupId>
+			<artifactId>xercesImpl</artifactId>
+			<version>2.6.2</version>
 		</dependency>
 	</dependencies>
 </project>

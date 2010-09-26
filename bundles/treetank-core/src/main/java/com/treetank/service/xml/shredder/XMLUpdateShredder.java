@@ -1102,7 +1102,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * @throws XMLStreamException
      *             handling XML Stream Exception
      */
-    private boolean checkStAXElement(final StartElement mStartTag, final StartElement mElem)
+    static boolean checkStAXElement(final StartElement mStartTag, final StartElement mElem)
         throws XMLStreamException {
         boolean retVal = false;
         if (mStartTag.getEventType() == XMLStreamConstants.START_ELEMENT

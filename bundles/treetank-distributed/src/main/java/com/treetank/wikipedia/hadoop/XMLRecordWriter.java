@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.apache.hadoop.mapreduce.RecordWriter;
@@ -35,7 +36,7 @@ import com.treetank.utils.LogWrapper;
  * <h1>XMLRecordReader</h1>
  * 
  * <p>
- * 
+ * Appends values to an output file.
  * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
@@ -58,12 +59,12 @@ public final class XMLRecordWriter<K, V> extends RecordWriter<K, V> {
     private transient XMLEventFactory mEventFactory;
 
     /** Full qualified name of root element {@link QName}. */
-    private transient QName mRootElem;
+    private transient StartElement mRootElem;
 
     /**
      * Constructor.
      * 
-     * @param paramWriter
+     * @param paramWriterQName
      *            Instance of {@link XMLEventWriter}.
      * @param paramRootElem
      *            Root element.
@@ -72,19 +73,19 @@ public final class XMLRecordWriter<K, V> extends RecordWriter<K, V> {
      * @throws XMLStreamException
      *             In case any error occurs while creating events.
      */
-    public XMLRecordWriter(final XMLEventWriter paramWriter, final QName paramRootElem) throws IOException,
+    public XMLRecordWriter(final XMLEventWriter paramWriter, final StartElement paramRootElem) throws IOException,
         XMLStreamException {
         mWriter = paramWriter;
         mEventFactory = XMLEventFactory.newInstance();
         mRootElem = paramRootElem;
-        mWriter.add(mEventFactory.createStartElement(mRootElem, null, null));
+        mWriter.add(mRootElem);
     }
 
     @Override
     public synchronized void close(final TaskAttemptContext paramContext) throws IOException,
         InterruptedException {
         try {
-            mWriter.add(mEventFactory.createEndElement(mRootElem, null));
+            mWriter.add(mEventFactory.createEndElement(mRootElem.getName(), null));
         } catch (final XMLStreamException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }

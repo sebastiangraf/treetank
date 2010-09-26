@@ -46,7 +46,7 @@ import com.treetank.utils.LogWrapper;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public class ExtractArticles extends XMLFilterImpl {
+public final class ExtractArticles extends XMLFilterImpl {
 
     /**
      * Logger for determining the log level.
@@ -98,7 +98,7 @@ public class ExtractArticles extends XMLFilterImpl {
     }
 
     @Override
-    public final void startElement(final String paramURI, final String paramLocalName,
+    public void startElement(final String paramURI, final String paramLocalName,
         final String paramQName, final Attributes paramAtts) throws SAXException {
 
         if (paramQName.equalsIgnoreCase("page")) {
