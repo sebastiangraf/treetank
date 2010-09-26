@@ -73,7 +73,10 @@ public class XMLShredder implements Callable<Long> {
     protected final transient IWriteTransaction mWtx;
 
     /** {@link XMLEventReader}. */
-    protected final transient XMLEventReader mReader;
+    protected transient XMLEventReader mReader;
+
+    /** Array of {@link XMLEvent}s. */
+    protected transient XMLEvent[] mEvents;
 
     /** Append as first child or not. */
     private final transient boolean mFirstChildAppend;
@@ -106,6 +109,27 @@ public class XMLShredder implements Callable<Long> {
     }
 
     /**
+     * Normal constructor to invoke a shredding process on a existing {@link WriteTransaction}.
+     * 
+     * @param mWtx
+     *            where the new XML Fragment should be placed
+     * @param mAddAsFirstChild
+     *            if the insert is occuring on a node in an existing tree. <code>false</code> is not possible
+     *            when wtx is on root node.
+     * @param paramEvents
+     *            events to shredder
+     * @throws TreetankUsageException
+     *             if insertasfirstChild && updateOnly is both true OR if wtx is
+     *             not pointing to doc-root and updateOnly= true
+     */
+    public XMLShredder(final IWriteTransaction mWtx, final boolean mAddAsFirstChild,
+        final XMLEvent... paramEvents) throws TreetankUsageException {
+        this.mWtx = mWtx;
+        this.mEvents = paramEvents;
+        this.mFirstChildAppend = mAddAsFirstChild;
+    }
+
+    /**
      * Invoking the shredder.
      * 
      * @throws Exception
@@ -113,22 +137,57 @@ public class XMLShredder implements Callable<Long> {
      * @return revision
      *         return revision
      */
-    public Long call() throws Exception {
+    public Long call() throws TreetankException {
         final long revision = mWtx.getRevisionNumber();
-        insertNewContent();
+        if (mReader == null) {
+            insertXMLEvents();
+        } else {
+            insertNewContent();
+        }
         mWtx.commit();
         return revision;
     }
 
     /**
-     * Insert new content.
+     * Insert new content based on XMLEvents {@link XMLEvent}.
      * 
      * @throws TreetankException
-     *             handling treetank exception
+     *             Handling Treetank exceptions.
+     */
+    protected final void insertXMLEvents() throws TreetankException {
+        FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
+
+        leftSiblingKeyStack.push((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
+        boolean firstElement = true;
+
+        for (final XMLEvent event : mEvents) {
+            switch (event.getEventType()) {
+            case XMLStreamConstants.START_ELEMENT:
+                leftSiblingKeyStack = addNewElement(firstElement, leftSiblingKeyStack, (StartElement)event);
+                firstElement = false;
+                break;
+            case XMLStreamConstants.END_ELEMENT:
+                leftSiblingKeyStack.pop();
+                mWtx.moveTo(leftSiblingKeyStack.peek());
+                break;
+            case XMLStreamConstants.CHARACTERS:
+                leftSiblingKeyStack = addNewText(leftSiblingKeyStack, (Characters)event);
+                break;
+            default:
+                // Node kind not known.
+            }
+            // processEvent(event, leftSiblingKeyStack, firstElement);
+        }
+    }
+
+    /**
+     * Insert new content based on a StAX parser {@link XMLStreamReader}.
+     * 
+     * @throws TreetankException
+     *             Handling Treetank exceptions.
      */
     protected final void insertNewContent() throws TreetankException {
         try {
-
             FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
 
             leftSiblingKeyStack.push((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
@@ -137,18 +196,17 @@ public class XMLShredder implements Callable<Long> {
             // Iterate over all nodes.
             while (mReader.hasNext()) {
                 final XMLEvent event = mReader.nextEvent();
+
                 switch (event.getEventType()) {
                 case XMLStreamConstants.START_ELEMENT:
                     leftSiblingKeyStack =
                         addNewElement(firstElement, leftSiblingKeyStack, (StartElement)event);
                     firstElement = false;
                     break;
-
                 case XMLStreamConstants.END_ELEMENT:
                     leftSiblingKeyStack.pop();
                     mWtx.moveTo(leftSiblingKeyStack.peek());
                     break;
-
                 case XMLStreamConstants.CHARACTERS:
                     leftSiblingKeyStack = addNewText(leftSiblingKeyStack, (Characters)event);
                     break;
@@ -156,9 +214,36 @@ public class XMLShredder implements Callable<Long> {
                     // Node kind not known.
                 }
             }
-        } catch (final XMLStreamException mExc) {
-            LOGWRAPPER.error(mExc);
-            throw new TreetankIOException(mExc);
+        } catch (final XMLStreamException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+            throw new TreetankIOException(e);
+        }
+    }
+
+    /**
+     * Process an event.
+     * 
+     * @throws XMLStreamException
+     *             In case of any parser error.
+     * @throws TreetankException
+     *             In case any Treetank error occurs.
+     */
+    private final void processEvent(final XMLEvent paramEvent, FastStack<Long> paramStack,
+        boolean paramFirstElement) throws XMLStreamException, TreetankException {
+        switch (paramEvent.getEventType()) {
+        case XMLStreamConstants.START_ELEMENT:
+            paramStack = addNewElement(paramFirstElement, paramStack, (StartElement)paramEvent);
+            paramFirstElement = false;
+            break;
+        case XMLStreamConstants.END_ELEMENT:
+            paramStack.pop();
+            mWtx.moveTo(paramStack.peek());
+            break;
+        case XMLStreamConstants.CHARACTERS:
+            paramStack = addNewText(paramStack, (Characters)paramEvent);
+            break;
+        default:
+            // Node kind not known.
         }
     }
 

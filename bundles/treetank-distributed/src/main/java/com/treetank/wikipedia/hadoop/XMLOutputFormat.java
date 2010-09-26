@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.StartElement;
 
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -35,6 +36,12 @@ import org.slf4j.LoggerFactory;
 import com.treetank.utils.LogWrapper;
 
 /**
+ * <h1>XMLOutputFormat</h1>
+ * 
+ * <p>
+ * Outputs
+ * </p>
+ * 
  * @author Johannes Lichtenberger, University of Konstanz
  */
 public class XMLOutputFormat<K, V> extends FileOutputFormat<K, V> {
@@ -48,7 +55,7 @@ public class XMLOutputFormat<K, V> extends FileOutputFormat<K, V> {
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LOGGER);
     
     /** Root element {@link QName}. */
-    private static QName mRoot;
+    private final transient StartElement mRoot;
     
     /**
      * Empty constructor.
@@ -56,7 +63,7 @@ public class XMLOutputFormat<K, V> extends FileOutputFormat<K, V> {
      * @param paramRootElem
      *                   Root element.
      */
-    public XMLOutputFormat(final QName paramRootElem) {
+    public XMLOutputFormat(final StartElement paramRootElem) {
         mRoot = paramRootElem;
     }
     
