@@ -30,9 +30,11 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.EventFilter;
+import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.apache.hadoop.conf.Configuration;
@@ -94,7 +96,7 @@ public final class XMLRecordReader extends RecordReader<Date, List<XMLEvent>> {
 
     /** Full qualified name of the timestamp element used as the key {link QName}. */
     private transient QName mDate;
-    
+
     /** Value is a list of XML events. */
     private transient List<XMLEvent> mValue = new ArrayList<XMLEvent>();
 
@@ -108,19 +110,19 @@ public final class XMLRecordReader extends RecordReader<Date, List<XMLEvent>> {
     @Override
     public void initialize(final InputSplit paramGenericSplit, final TaskAttemptContext paramContext)
         throws IOException {
-        final FileSplit split = (FileSplit) paramGenericSplit;
-        final Configuration jobConf = paramContext.getConfiguration();
+        final FileSplit split = (FileSplit)paramGenericSplit;
+        final Configuration conf = paramContext.getConfiguration();
 
         mStart = split.getStart();
         mEnd = mStart + split.getLength();
         final Path file = split.getPath();
 
         // Open the file and seek to the start of the split.
-        final FileSystem fs = file.getFileSystem(jobConf);
+        final FileSystem fs = file.getFileSystem(conf);
         final FSDataInputStream fileIn = fs.open(split.getPath());
         fileIn.seek(mStart);
 
-        mCompressionCodecs = new CompressionCodecFactory(jobConf);
+        mCompressionCodecs = new CompressionCodecFactory(conf);
         final CompressionCodec codec = mCompressionCodecs.getCodec(file);
 
         InputStream in = fileIn;
@@ -138,26 +140,29 @@ public final class XMLRecordReader extends RecordReader<Date, List<XMLEvent>> {
         }
 
         // Create start/end record filters.
-        final String recordIdentifier = jobConf.get("record_element_name");
-        final String recordNsPrefix = jobConf.get("namespace_prefix");
-        final String recordNsURI = jobConf.get("namespace_URI");
+        final String recordIdentifier = conf.get("record_element_name");
+        final String recordNsPrefix = conf.get("namespace_prefix");
+        final String recordNsURI = conf.get("namespace_URI");
+
+        final StartElement recordElem =
+            XMLEventFactory.newFactory().createStartElement(
+                new QName(recordNsURI, recordIdentifier, recordNsPrefix), null, null);
 
         mBeginFilter = new EventFilter() {
+            @Override
             public boolean accept(final XMLEvent paramEvent) {
-                return paramEvent.isStartElement()
-                    && paramEvent.asStartElement().getName().getLocalPart().equals(recordIdentifier)
-                    && paramEvent.asStartElement().getName().getPrefix().equals(recordNsPrefix)
-                    && paramEvent.asStartElement().getName().getNamespaceURI().equals(recordNsURI);
+                return paramEvent.isStartElement() && paramEvent.asStartElement().equals(recordElem);
             }
         };
         mEndFilter = new EventFilter() {
+            @Override
             public boolean accept(final XMLEvent paramEvent) {
                 return paramEvent.isEndElement()
                     && paramEvent.asEndElement().getName().getLocalPart().equals(recordIdentifier);
             }
         };
 
-        mDate = new QName(jobConf.get("timestamp"));
+        mDate = new QName(conf.get("timestamp"));
     }
 
     @Override
@@ -176,7 +181,7 @@ public final class XMLRecordReader extends RecordReader<Date, List<XMLEvent>> {
             return 0f;
         } else {
             try {
-                return Math.min(1.0f, (mFileIn.getPos() - mStart) / (float) (mEnd - mStart));
+                return Math.min(1.0f, (mFileIn.getPos() - mStart) / (float)(mEnd - mStart));
             } catch (final IOException e) {
                 LOGGER.error(e.getMessage(), e);
             }
@@ -207,7 +212,7 @@ public final class XMLRecordReader extends RecordReader<Date, List<XMLEvent>> {
                 if (foundEndEvent) {
                     // Add last element to the writer.
                     mValue.add(mReader.nextEvent());
-                    
+
                     retVal = true;
                 }
             }
@@ -243,11 +248,11 @@ public final class XMLRecordReader extends RecordReader<Date, List<XMLEvent>> {
         final boolean paramIsRecord) throws XMLStreamException {
         boolean isTimestamp = false;
         while (paramReader.hasNext() && !paramFilter.accept(paramReader.peek())) {
-            final XMLEvent event = (XMLEvent) paramReader.next();
+            final XMLEvent event = (XMLEvent)paramReader.next();
 
             if (isTimestamp && event.isCharacters() && !event.asCharacters().isWhiteSpace()) {
                 isTimestamp = false;
-                final DateFormat formatter = new SimpleDateFormat("yyyy.MM.ddTHH.mm.ssZ"); 
+                final DateFormat formatter = new SimpleDateFormat("yyyy.MM.ddTHH.mm.ssZ");
                 try {
                     mKey = (Date)formatter.parse(event.asCharacters().getData());
                 } catch (final ParseException e) {
