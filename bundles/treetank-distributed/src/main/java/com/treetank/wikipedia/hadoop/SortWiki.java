@@ -47,18 +47,20 @@ public final class SortWiki extends Configured implements Tool {
     private SortWiki() {
         // To make Checkstyle happy.
     }
-    
+
     /**
      * Main method.
      * 
      * @param args
      *            Program arguments.
      * @throws Exception
-     *            Any exception which might have been occured while running Hadoop.
+     *             Any exception which might have been occured while running Hadoop.
      */
     public static void main(final String[] args) throws Exception {
-        final int res = ToolRunner.run(new Configuration(), new SortWiki(), args);
-        System.exit(res);
+
+        System.out.println("Running!");
+        // final int res = ToolRunner.run(new Configuration(), new SortWiki(), args);
+        // System.exit(res);
     }
 
     @Override
@@ -66,16 +68,16 @@ public final class SortWiki extends Configured implements Tool {
         final Job job = new Job(getConf());
         job.setJarByClass(this.getClass());
         job.setJobName(this.getClass().getName());
-        
+
         job.setOutputKeyClass(Date.class);
         job.setOutputValueClass(List.class);
-        
+
         job.setMapperClass(XMLMap.class);
         job.setReducerClass(XMLReduce.class);
-        
+
         job.setInputFormatClass(XMLInputFormat.class);
         job.setOutputFormatClass(XMLOutputFormat.class);
-        
+
         final Configuration config = job.getConfiguration();
         config.set("timestamp", "timestamp");
         config.set("revision", "revision");
@@ -83,11 +85,11 @@ public final class SortWiki extends Configured implements Tool {
         config.set("namespace_prefix", "");
         config.set("namespace_URI", "");
         config.set("root", "mediawiki");
-        
+
         FileInputFormat.setInputPaths(job, args[0]);
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
         final boolean success = job.waitForCompletion(true);
-        return success ? 0 : 1; 
+        return success ? 0 : 1;
     }
 }
