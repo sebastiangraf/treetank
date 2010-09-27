@@ -1009,6 +1009,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
     private boolean checkDescendants(final int mLevelInToShredder, final StartElement mElem,
         final FastStack<Long> mStack, final boolean mFirst) throws XMLStreamException, IOException {
         boolean found = false;
+        XMLEventReader mParser = null;
 
         if (mFirst) {
             /*

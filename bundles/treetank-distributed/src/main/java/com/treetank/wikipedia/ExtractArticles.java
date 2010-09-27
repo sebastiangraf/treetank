@@ -59,7 +59,7 @@ public final class ExtractArticles extends XMLFilterImpl {
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LOGGER);
 
     /** Number of articles to extract. */
-    private transient int mArtNr = 50;
+    private transient int mArtNr = 10;
 
     /** Articles parsed so far. */
     private transient int mArtParsed;
@@ -72,7 +72,7 @@ public final class ExtractArticles extends XMLFilterImpl {
     private static final String SEP = System.getProperty("file.separator");
 
     /** File to write SAX output to. */
-    private static final File TARGET = new File("target" + SEP + "XML" + SEP + "wikipedia.xml");
+    private static final File TARGET = new File("target" + SEP + "wikipedia.xml");
     
     /** Start of computation in milliseconds. */
     private static long start;
