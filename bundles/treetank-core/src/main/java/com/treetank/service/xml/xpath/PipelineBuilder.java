@@ -141,7 +141,7 @@ public final class PipelineBuilder {
         // of the stack containing these SingleExpressions have to be the same.
         if (getPipeStack().size() != mNum) {
             // this should never happen
-            throw new IllegalStateException("The query has not been porcessed correctly");
+            throw new IllegalStateException("The query has not been processed correctly");
         }
         int no = mNum;
 

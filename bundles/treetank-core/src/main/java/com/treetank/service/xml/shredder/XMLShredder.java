@@ -83,9 +83,9 @@ public class XMLShredder implements Callable<Long> {
 
     /** File to shredder. */
     protected static File mFile;
-
-    /** StAX parser used to check descendants. */
-    protected static XMLEventReader mParser;
+    
+    /** Determines if changes are going to be commit right after shredding. */
+    private transient boolean mCommit;
 
     /**
      * Normal constructor to invoke a shredding process on a existing {@link WriteTransaction}.
@@ -103,9 +103,29 @@ public class XMLShredder implements Callable<Long> {
      */
     public XMLShredder(final IWriteTransaction mWtx, final XMLEventReader mReader,
         final boolean mAddAsFirstChild) throws TreetankUsageException {
+        this(mWtx, mReader, mAddAsFirstChild, true);
+    }
+    
+    /**
+     * Normal constructor to invoke a shredding process on a existing {@link WriteTransaction}.
+     * 
+     * @param mWtx
+     *            where the new XML Fragment should be placed
+     * @param mReader
+     *            of the XML Fragment
+     * @param mAddAsFirstChild
+     *            if the insert is occuring on a node in an existing tree. <code>false</code> is not possible
+     *            when wtx is on root node.
+     * @throws TreetankUsageException
+     *             if insertasfirstChild && updateOnly is both true OR if wtx is
+     *             not pointing to doc-root and updateOnly= true
+     */
+    public XMLShredder(final IWriteTransaction mWtx, final XMLEventReader paramReader,
+        final boolean mAddAsFirstChild, final boolean paramCommit) throws TreetankUsageException {
         this.mWtx = mWtx;
-        this.mReader = mReader;
+        this.mReader = paramReader;
         this.mFirstChildAppend = mAddAsFirstChild;
+        this.mCommit = paramCommit;
     }
 
     /**
@@ -116,14 +136,19 @@ public class XMLShredder implements Callable<Long> {
      * @param mAddAsFirstChild
      *            if the insert is occuring on a node in an existing tree. <code>false</code> is not possible
      *            when wtx is on root node.
+     * @param paramCommit
+     *            determines if changes should be commited right after shredding
      * @param paramEvents
      *            events to shredder
      * @throws TreetankUsageException
      *             if insertasfirstChild && updateOnly is both true OR if wtx is
      *             not pointing to doc-root and updateOnly= true
      */
-    public XMLShredder(final IWriteTransaction mWtx, final boolean mAddAsFirstChild,
+    public XMLShredder(final IWriteTransaction mWtx, final boolean mAddAsFirstChild, final boolean paramCommit,
         final XMLEvent... paramEvents) throws TreetankUsageException {
+        if (this.mReader != null) {
+            mReader = null;
+        }
         this.mWtx = mWtx;
         this.mEvents = paramEvents;
         this.mFirstChildAppend = mAddAsFirstChild;
@@ -137,6 +162,7 @@ public class XMLShredder implements Callable<Long> {
      * @return revision
      *         return revision
      */
+    @Override
     public Long call() throws TreetankException {
         final long revision = mWtx.getRevisionNumber();
         if (mReader == null) {
@@ -144,7 +170,10 @@ public class XMLShredder implements Callable<Long> {
         } else {
             insertNewContent();
         }
-        mWtx.commit();
+        
+        if (mCommit) {
+            mWtx.commit();
+        }
         return revision;
     }
 
@@ -192,18 +221,29 @@ public class XMLShredder implements Callable<Long> {
 
             leftSiblingKeyStack.push((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
             boolean firstElement = true;
-
+            int level = 0;
+            QName rootElement = null;
+            boolean endElemReached = false;
+            
             // Iterate over all nodes.
-            while (mReader.hasNext()) {
+            while (mReader.hasNext() && !endElemReached) {
                 final XMLEvent event = mReader.nextEvent();
 
                 switch (event.getEventType()) {
                 case XMLStreamConstants.START_ELEMENT:
+                    level++;
                     leftSiblingKeyStack =
                         addNewElement(firstElement, leftSiblingKeyStack, (StartElement)event);
+                    if (firstElement) {
+                        rootElement = event.asStartElement().getName();
+                    }
                     firstElement = false;
                     break;
                 case XMLStreamConstants.END_ELEMENT:
+                    level--;
+                    if (level == 0 && rootElement != null && rootElement.equals(event.asEndElement().getName())) {
+                        endElemReached = true;
+                    }
                     leftSiblingKeyStack.pop();
                     mWtx.moveTo(leftSiblingKeyStack.peek());
                     break;

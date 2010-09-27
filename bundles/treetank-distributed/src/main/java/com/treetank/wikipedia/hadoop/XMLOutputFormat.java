@@ -40,7 +40,7 @@ import com.treetank.utils.LogWrapper;
  * <h1>XMLOutputFormat</h1>
  * 
  * <p>
- * Outputs
+ * Outputs only values and appends them
  * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz

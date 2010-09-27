@@ -86,6 +86,7 @@ public final class XMLRecordWriter<K, V> extends RecordWriter<K, V> {
         InterruptedException {
         try {
             mWriter.add(mEventFactory.createEndElement(mRootElem.getName(), null));
+            mWriter.flush();
         } catch (final XMLStreamException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }

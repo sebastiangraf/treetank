@@ -22,7 +22,6 @@ import java.util.List;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
@@ -41,10 +40,15 @@ import org.apache.hadoop.util.ToolRunner;
  */
 public final class SortWiki extends Configured implements Tool {
 
+    static {
+        System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
+            "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl");
+    }
+
     /**
-     * Private constructor.
+     * Default constructor.
      */
-    private SortWiki() {
+    public SortWiki() {
         // To make Checkstyle happy.
     }
 
@@ -57,10 +61,11 @@ public final class SortWiki extends Configured implements Tool {
      *             Any exception which might have been occured while running Hadoop.
      */
     public static void main(final String[] args) throws Exception {
-
+        final long start = System.currentTimeMillis();
         System.out.println("Running!");
-        // final int res = ToolRunner.run(new Configuration(), new SortWiki(), args);
-        // System.exit(res);
+        final int res = ToolRunner.run(new Configuration(), new SortWiki(), args);
+        System.out.println("Done in " + (System.currentTimeMillis() - start / 1000) + " seconds");
+        System.exit(res);
     }
 
     @Override
@@ -85,8 +90,12 @@ public final class SortWiki extends Configured implements Tool {
         config.set("namespace_prefix", "");
         config.set("namespace_URI", "");
         config.set("root", "mediawiki");
+        
+        // Debug settings.
+        config.set("mapred.job.tracker", "local");
+        config.set("fs.default.name", "local");
 
-        FileInputFormat.setInputPaths(job, args[0]);
+        FileInputFormat.setInputPaths(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
         final boolean success = job.waitForCompletion(true);
