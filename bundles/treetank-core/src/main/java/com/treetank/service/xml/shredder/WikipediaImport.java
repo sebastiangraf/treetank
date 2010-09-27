@@ -282,21 +282,31 @@ public class WikipediaImport {
                         LOGWRAPPER.error(e.getMessage(), e);
                     }
 
-                    /* Move StAX parser to </page> tag and shredder next revision if another revision with the
-                       same timestamp exists. */
+                    /*
+                     * Move StAX parser to </page> tag and shredder next revision if another revision with the
+                     * same timestamp exists.
+                     */
                     while (mReader.hasNext()
-                        && !(event.isEndElement() && event.asEndElement().getName()
-                            .equals(paramPage.getName()))) {
+                        && !(event.isEndElement() && event.asEndElement().getName().equals(
+                            paramPage.getName()))) {
                         event = mReader.nextEvent();
-                        nextEvent = mReader.peek();
-                        
-                        if (nextEvent.isStartElement() && nextEvent.asStartElement().equals(paramRev)) {
-                            shredder = new XMLShredder(mWTX, mReader, false);
-                            shredder.call();
-                        }
+                        // nextEvent = mReader.peek();
+                        //                        
+                        // if (nextEvent.isStartElement() && nextEvent.asStartElement().equals(paramRev)) {
+                        // shredder = new XMLShredder(mWTX, mReader, false);
+                        // shredder.call();
+                        // }
                     }
-                    
+
                     event = mReader.nextEvent();
+
+                    // Move cursor in TT to page element.
+                    while (((AbsStructNode)mWTX.getNode()).hasParent()
+                        && !mWTX.getQNameOfCurrentNode().equals(paramPage.getName())) {
+                        mWTX.moveToParent();
+                    }
+
+                    assert mWTX.getQNameOfCurrentNode().equals(paramPage.getName());
                 }
             }
         }
