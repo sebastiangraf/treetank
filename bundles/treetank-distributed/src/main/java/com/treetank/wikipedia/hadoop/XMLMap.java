@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.events.XMLEvent;
 
 import org.apache.hadoop.conf.Configuration;
@@ -55,6 +56,9 @@ public final class XMLMap extends Mapper<Date, List<XMLEvent>, Date, List<XMLEve
      */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LOGGER);
 
+    /** The page element, which specifies an article. */
+    private transient QName mPage;
+    
     /** The revision element, which specifies a revision of an article. */
     private transient QName mRevision;
 
@@ -78,6 +82,7 @@ public final class XMLMap extends Mapper<Date, List<XMLEvent>, Date, List<XMLEve
     public void setup(final Context paramContext) throws IOException, InterruptedException {
         final Configuration config = paramContext.getConfiguration();
         mTimestamp = new QName(config.get("timestamp"));
+        mPage = new QName(config.get("page"));
         mRevision = new QName(config.get("revision"));
         mInputFile = config.get("mapreduce.map.input.file");
     }
@@ -108,6 +113,7 @@ public final class XMLMap extends Mapper<Date, List<XMLEvent>, Date, List<XMLEve
             if (event.isStartElement() && event.asStartElement().getName().equals(mRevision)) {
                 // Determines if page header end is found.
                 isPage = false;
+                rev.clear();
             }
 
             if (isPage) {
@@ -122,6 +128,10 @@ public final class XMLMap extends Mapper<Date, List<XMLEvent>, Date, List<XMLEve
             if (event.isEndElement() && event.asEndElement().getName().equals(mRevision)) {
                 // Write output.
                 try {
+                    // Make sure to create the page end tag.
+                    rev.add(XMLEventFactory.newFactory().createEndElement(mPage, null));
+                    
+                    // Write key/value pairs.
                     value.addAll(page);
                     value.addAll(rev);
                     paramContext.write(key, value);

@@ -16,13 +16,31 @@
  */
 package com.treetank.wikipedia.hadoop;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
+import javax.xml.transform.stax.StAXSource;
+import javax.xml.transform.stream.StreamSource;
 
+import net.sf.saxon.s9api.Processor;
+import net.sf.saxon.s9api.SaxonApiException;
+import net.sf.saxon.s9api.Serializer;
+import net.sf.saxon.s9api.XsltCompiler;
+import net.sf.saxon.s9api.XsltExecutable;
+import net.sf.saxon.s9api.XsltTransformer;
+
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.slf4j.LoggerFactory;
+
+import com.treetank.utils.LogWrapper;
+import com.treetank.wikipedia.ListEventReader;
 
 /**
  * <h1>XMLReducer</h1>
@@ -34,20 +52,50 @@ import org.apache.hadoop.mapreduce.Reducer;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class XMLReduce extends Reducer<Date, List<XMLEvent>, Date, List<XMLEvent>> {
+public final class XMLReduce extends Reducer<Date, List<XMLEvent>, Date, Text> {
 
-    /** 
-     * Empty Constructor. 
+    /**
+     * Log wrapper for better output.
+     */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(XMLReduce.class));
+
+    /** Path to stylesheet for XSLT transformation. */
+    private static final String STYLESHEET =
+        "src" + File.separator + "main" + File.separator + "resources" + File.separator + "wikipedia.xsd";
+
+    /**
+     * Empty Constructor.
      */
     public XMLReduce() {
         // To make Checkstyle happy.
     }
-    
+
     @Override
     public void reduce(final Date paramKey, final Iterable<List<XMLEvent>> paramValue,
         final Context paramContext) throws IOException, InterruptedException {
+        final List<XMLEvent> combined = new ArrayList<XMLEvent>();
+
         for (final List<XMLEvent> events : paramValue) {
-            paramContext.write(paramKey, events);
+            combined.addAll(events);
         }
+
+        final Processor proc = new Processor(false);
+        final XsltCompiler compiler = proc.newXsltCompiler();
+        try {
+            final XsltExecutable exec = compiler.compile(new StreamSource(new File(STYLESHEET)));
+            final XsltTransformer transform = exec.load();
+            transform.setSource(new StAXSource(new ListEventReader(combined)));
+            final ByteArrayOutputStream out = new ByteArrayOutputStream();
+            final Serializer serializer = new Serializer();
+            serializer.setOutputStream(out);
+            transform.setDestination(serializer);
+            final String value = out.toString();
+            paramContext.write(null, new Text(value));
+        } catch (final SaxonApiException e) {
+            LOGWRAPPER.error(e);
+        } catch (final XMLStreamException e) {
+            LOGWRAPPER.error(e);
+        }
+
     }
 }

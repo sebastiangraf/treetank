@@ -25,6 +25,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
@@ -62,9 +63,9 @@ public final class SortWiki extends Configured implements Tool {
      */
     public static void main(final String[] args) throws Exception {
         final long start = System.currentTimeMillis();
-        System.out.println("Running!");
+        System.out.print("Running...");
         final int res = ToolRunner.run(new Configuration(), new SortWiki(), args);
-        System.out.println("Done in " + (System.currentTimeMillis() - start / 1000) + " seconds");
+        System.out.println("Done in " + (System.currentTimeMillis() - start) / 1000 + "s");
         System.exit(res);
     }
 
@@ -81,7 +82,7 @@ public final class SortWiki extends Configured implements Tool {
         job.setReducerClass(XMLReduce.class);
 
         job.setInputFormatClass(XMLInputFormat.class);
-        job.setOutputFormatClass(XMLOutputFormat.class);
+        job.setOutputFormatClass(TextOutputFormat.class);
 
         final Configuration config = job.getConfiguration();
         config.set("timestamp", "timestamp");
