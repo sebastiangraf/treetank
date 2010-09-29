@@ -40,6 +40,11 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
  */
 public final class XMLInputFormat extends FileInputFormat<Date, List<XMLEvent>> {
 
+    static {
+        System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
+            "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl");
+    }
+
     /**
      * Empty constructor.
      */

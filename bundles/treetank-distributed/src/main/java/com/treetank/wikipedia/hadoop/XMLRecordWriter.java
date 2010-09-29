@@ -64,7 +64,7 @@ public final class XMLRecordWriter<K, V> extends RecordWriter<K, V> {
     /**
      * Constructor.
      * 
-     * @param paramWriterQName
+     * @param paramWriter
      *            Instance of {@link XMLEventWriter}.
      * @param paramRootElem
      *            Root element.
@@ -73,8 +73,8 @@ public final class XMLRecordWriter<K, V> extends RecordWriter<K, V> {
      * @throws XMLStreamException
      *             In case any error occurs while creating events.
      */
-    public XMLRecordWriter(final XMLEventWriter paramWriter, final StartElement paramRootElem) throws IOException,
-        XMLStreamException {
+    public XMLRecordWriter(final XMLEventWriter paramWriter, final StartElement paramRootElem)
+        throws IOException, XMLStreamException {
         mWriter = paramWriter;
         mEventFactory = XMLEventFactory.newInstance();
         mRootElem = paramRootElem;
