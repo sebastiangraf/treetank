@@ -16,14 +16,22 @@
  */
 package com.treetank.gui;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
+import javax.swing.BoxLayout;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JTextArea;
 import javax.swing.JTree;
@@ -31,6 +39,9 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.treetank.access.Database;
 import com.treetank.access.DatabaseConfiguration;
@@ -44,14 +55,11 @@ import com.treetank.gui.view.tree.TreetankTreeCellRenderer;
 import com.treetank.gui.view.tree.TreetankTreeModel;
 import com.treetank.node.ElementNode;
 import com.treetank.service.xml.serialize.XMLSerializer;
-import com.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 import com.treetank.service.xml.serialize.XMLSerializerProperties;
+import com.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.service.xml.shredder.XMLUpdateShredder;
 import com.treetank.settings.ECharsForSerializing;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <h1>GUICommands</h1>
@@ -63,11 +71,14 @@ import org.slf4j.LoggerFactory;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public enum GUICommands implements GUICommand {
+public enum GUICommands implements IGUICommand {
     /**
      * Open a Treetank file.
      */
     OPEN("Open TNK-File") {
+        /** Revision number. */
+        private long mRevNumber;
+        
         @Override
         public void execute(final ActionEvent paramE, final GUI paramGUI) {
             // Create a file chooser.
@@ -75,10 +86,71 @@ public enum GUICommands implements GUICommand {
             fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             fc.setAcceptAllFileFilterUsed(false);
 
+            // Create new panel etc.pp. for choosing the revision at the bottom of the frame.
+            final JPanel panel = new JPanel();
+            final BoxLayout box = new BoxLayout(panel, BoxLayout.Y_AXIS);
+            final BorderLayout layout = (BorderLayout)fc.getLayout();
+            panel.setLayout(box);
+            final Component comp = layout.getLayoutComponent(BorderLayout.SOUTH);
+            panel.add(comp);
+            final JComboBox cb = new JComboBox();    
+            
+            cb.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(final ActionEvent paramEvent) {
+                    final JComboBox cb = (JComboBox)paramEvent.getSource();
+                    mRevNumber = (Long)cb.getSelectedItem();
+                };
+            });
+            
+            panel.add(cb);
+            fc.add(panel, BorderLayout.SOUTH);
+
+            final PropertyChangeListener changeListener = new PropertyChangeListener() {
+                
+                @Override
+                public void propertyChange(final PropertyChangeEvent paramEvent) {
+                    // Get last revision number from TT-storage.
+                    final JFileChooser fileChooser = (JFileChooser)paramEvent.getSource();
+                    final File tmpDir = fileChooser.getSelectedFile();
+                    long revNumber = 0;
+
+                    if (tmpDir != null) {
+                        // A directory is in focus.
+                        boolean error = false;
+
+                        try {
+                            final IDatabase db = Database.openDatabase(tmpDir);
+                            final IReadTransaction rtx = db.getSession().beginReadTransaction();
+                            revNumber = rtx.getRevisionNumber();
+                            rtx.close();
+                            db.close();
+                        } catch (final TreetankException e) {
+                            // Selected directory is not a Treetank storage.
+                            error = true;
+                        }
+
+                        if (!error) {
+                            // Create items, which are used as available revisions.
+                            for (long i = 0; i < revNumber; i++) {
+                                cb.addItem(i);
+                            }
+
+                            // Repaint components.
+                            panel.repaint();
+                            fc.repaint();
+                        }
+                    }
+
+                }
+
+            };
+            fc.addPropertyChangeListener(changeListener);
+
             // Handle open button action.
             if (fc.showOpenDialog(paramGUI) == JFileChooser.APPROVE_OPTION) {
                 final File file = fc.getSelectedFile();
-                setViews(paramGUI, file);
+                setViews(paramGUI, file, mRevNumber);
             }
         }
     },
@@ -186,7 +258,7 @@ public enum GUICommands implements GUICommand {
     private static final Logger LOGGER = LoggerFactory.getLogger(GUICommands.class);
 
     /** Description of command. */
-    private transient final String mDesc;
+    private final transient String mDesc;
 
     /** Line number to append or remove from the text field. */
     public static transient int lineChanges = 0;
@@ -226,9 +298,12 @@ public enum GUICommands implements GUICommand {
      *            Main GUI frame.
      * @param paramFile
      *            File to open and display.
+     * @param paramRevision
+     *            Revision to open.
      */
-    private static void setViews(final GUI paramGUI, final File paramFile) {
+    private static void setViews(final GUI paramGUI, final File paramFile, final long paramRevision) {
         try {
+            System.out.println(paramRevision);
             // Initialize database.
             final IDatabase database = Database.openDatabase(paramFile);
             final ISession session = database.getSession();
@@ -252,8 +327,8 @@ public enum GUICommands implements GUICommand {
             final JTextArea xmlPane = paramGUI.getXMLPane();
 
             // Use our Treetank model and renderer.
-            tree.setModel(new TreetankTreeModel(database));
-            tree.setCellRenderer(new TreetankTreeCellRenderer(database));
+            tree.setModel(new TreetankTreeModel(database, paramRevision));
+            tree.setCellRenderer(new TreetankTreeCellRenderer(database, paramRevision));
 
             // Serialize file into XML view if it is empty.
             out = new ByteArrayOutputStream();
@@ -266,7 +341,7 @@ public enum GUICommands implements GUICommand {
             tree.addTreeSelectionListener(new TreeSelectionListener() {
                 public void valueChanged(final TreeSelectionEvent paramE) {
                     if (paramE.getNewLeadSelectionPath() != null
-                    && paramE.getNewLeadSelectionPath() != paramE.getOldLeadSelectionPath()) {
+                        && paramE.getNewLeadSelectionPath() != paramE.getOldLeadSelectionPath()) {
                         /*
                          * Returns the last path element of the selection. This
                          * method is useful only when the selection model allows
@@ -276,7 +351,7 @@ public enum GUICommands implements GUICommand {
                         out = new ByteArrayOutputStream();
                         IReadTransaction rtx = null;
                         try {
-                            rtx = session.beginReadTransaction();
+                            rtx = session.beginReadTransaction(paramRevision);
                             final long nodeKey = node.getNodeKey();
 
                             switch (node.getKind()) {
@@ -309,7 +384,7 @@ public enum GUICommands implements GUICommand {
                                         .getBytes());
                                 } else {
                                     out.write(("xmlns:" + rtx.nameForKey(rtx.getNode().getNameKey()) + "='"
-                                    + rtx.nameForKey(rtx.getNode().getURIKey()) + "'").getBytes());
+                                        + rtx.nameForKey(rtx.getNode().getURIKey()) + "'").getBytes());
                                 }
                                 break;
                             case ATTRIBUTE_KIND:
@@ -334,7 +409,7 @@ public enum GUICommands implements GUICommand {
                                             .getBytes());
                                 } else {
                                     out.write((attPrefix + ":" + attQName.getLocalPart() + "='"
-                                    + rtx.getValueOfCurrentNode() + "'").getBytes());
+                                        + rtx.getValueOfCurrentNode() + "'").getBytes());
                                 }
                                 break;
                             default:
@@ -422,7 +497,7 @@ public enum GUICommands implements GUICommand {
             startPos = 0;
         }
         for (int i = startPos == 0 ? startPos : startPos + 1; i < text.length && lineChanges >= 0
-        && startPos + 1 != text.length; i++) {
+            && startPos + 1 != text.length; i++) {
             final char character = text[i];
 
             // Increment rowsSize?
@@ -512,7 +587,7 @@ public enum GUICommands implements GUICommand {
                     session.close();
                     database.close();
 
-                    setViews(paramGUI, target);
+//                    setViews(paramGUI, target);
                 } catch (final Exception e) {
                     LOGGER.error(e.getMessage(), e);
                 }

@@ -48,7 +48,7 @@ public final class TreetankMenuBar extends JMenuBar {
             menu.setMnemonic((int)MENUBAR[i].charAt(0));
 
             for (int j = 0; j < MENUITEMS[i].length; j++) {
-                final GUICommand cmd = (GUICommand)MENUITEMS[i][j];
+                final IGUICommand cmd = (IGUICommand)MENUITEMS[i][j];
                 final JMenuItem item = new JMenuItem(cmd.desc());
                 item.addActionListener(new ActionListener() {
                     public void actionPerformed(final ActionEvent paramE) {
