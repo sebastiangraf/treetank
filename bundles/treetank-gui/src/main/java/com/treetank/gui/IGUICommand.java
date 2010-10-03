@@ -24,7 +24,7 @@ import java.awt.event.ActionEvent;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public interface GUICommand {
+public interface IGUICommand {
     /**
      * Invokes a command.
      * 
