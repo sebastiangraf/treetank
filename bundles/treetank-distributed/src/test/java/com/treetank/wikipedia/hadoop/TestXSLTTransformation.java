@@ -18,14 +18,9 @@ package com.treetank.wikipedia.hadoop;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.XMLEvent;
-import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.s9api.Processor;
@@ -35,67 +30,60 @@ import net.sf.saxon.s9api.XsltCompiler;
 import net.sf.saxon.s9api.XsltExecutable;
 import net.sf.saxon.s9api.XsltTransformer;
 
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Reducer;
+import org.junit.Test;
 import org.slf4j.LoggerFactory;
 
 import com.treetank.utils.LogWrapper;
-import com.treetank.wikipedia.ListEventReader;
 
 /**
- * <h1>XMLReducer</h1>
+ * <h1>TestXSLTTransformation</h1>
  * 
  * <p>
- * After sorting and grouping key's the reducer just emits the results (identity reducer).
+ * Tests the grouping of revisions in one page, which have the same timestamp.
  * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class XMLReduce extends Reducer<Date, List<XMLEvent>, Date, Text> {
+public final class TestXSLTTransformation {
 
     /**
      * Log wrapper for better output.
      */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(XMLReduce.class));
 
+    /** Input XML file. */
+    private static final String INPUT =
+        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "testInput.xml";
+
     /** Path to stylesheet for XSLT transformation. */
     private static final String STYLESHEET =
         "src" + File.separator + "main" + File.separator + "resources" + File.separator + "wikipedia.xsl";
 
-    /**
-     * Empty Constructor.
-     */
-    public XMLReduce() {
+    /** Default Constructor. */
+    public TestXSLTTransformation() {
         // To make Checkstyle happy.
     }
 
-    @Override
-    public void reduce(final Date paramKey, final Iterable<List<XMLEvent>> paramValue,
-        final Context paramContext) throws IOException, InterruptedException {
-        final List<XMLEvent> combined = new ArrayList<XMLEvent>();
+//    @Before
+//    public void setUp() throws FileNotFoundException {
+//    }
 
-        for (final List<XMLEvent> events : paramValue) {
-            combined.addAll(events);
-        }
-
+    @Test
+    public void testTransform() throws FileNotFoundException {
         final Processor proc = new Processor(false);
         final XsltCompiler compiler = proc.newXsltCompiler();
         try {
             final XsltExecutable exec = compiler.compile(new StreamSource(new File(STYLESHEET)));
             final XsltTransformer transform = exec.load();
-            transform.setSource(new StAXSource(new ListEventReader(combined)));
+            transform.setSource(new StreamSource(new FileInputStream(INPUT)));
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             final Serializer serializer = new Serializer();
-            serializer.setOutputStream(out);
+            serializer.setOutputStream(System.out);
             transform.setDestination(serializer);
-            final String value = out.toString();
-            paramContext.write(null, new Text(value));
+//            System.out.println(out.toString());
         } catch (final SaxonApiException e) {
             LOGWRAPPER.error(e);
-        } catch (final XMLStreamException e) {
-            LOGWRAPPER.error(e);
         }
-
     }
 }

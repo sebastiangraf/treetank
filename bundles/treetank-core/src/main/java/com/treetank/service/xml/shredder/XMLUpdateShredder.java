@@ -1095,10 +1095,10 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * Check if start element of two StAX parsers match.
      * 
      * @param mStartTag
-     *            StartTag to check against.
-     * @param mElem
      *            StartTag of the StAX parser, where it is currently (the "real"
      *            StAX parser over the whole document).
+     * @param mElem
+     *            StartTag to check against.
      * @return True if start elements match.
      * @throws XMLStreamException
      *             handling XML Stream Exception
