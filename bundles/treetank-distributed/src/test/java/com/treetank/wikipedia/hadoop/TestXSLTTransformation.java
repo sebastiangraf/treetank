@@ -19,10 +19,11 @@ package com.treetank.wikipedia.hadoop;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.OutputStream;
 
 import javax.xml.transform.stream.StreamSource;
 
+import junit.framework.TestCase;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.Serializer;
@@ -30,9 +31,11 @@ import net.sf.saxon.s9api.XsltCompiler;
 import net.sf.saxon.s9api.XsltExecutable;
 import net.sf.saxon.s9api.XsltTransformer;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
 
+import com.treetank.TestHelper;
 import com.treetank.utils.LogWrapper;
 
 /**
@@ -45,7 +48,7 @@ import com.treetank.utils.LogWrapper;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class TestXSLTTransformation {
+public final class TestXSLTTransformation extends TestCase {
 
     /**
      * Log wrapper for better output.
@@ -54,34 +57,44 @@ public final class TestXSLTTransformation {
 
     /** Input XML file. */
     private static final String INPUT =
-        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "testInput.xml";
+        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "testXSLTInput.xml";
 
     /** Path to stylesheet for XSLT transformation. */
     private static final String STYLESHEET =
         "src" + File.separator + "main" + File.separator + "resources" + File.separator + "wikipedia.xsl";
+
+    /** Path to output for XSLT transformation. */
+    private static final String EXPECTED =
+        "src" + File.separator + "test" + File.separator + "resources" + File.separator
+            + "testXSLTOutput.xml";
 
     /** Default Constructor. */
     public TestXSLTTransformation() {
         // To make Checkstyle happy.
     }
 
-//    @Before
-//    public void setUp() throws FileNotFoundException {
-//    }
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        // XMLUnit.setIgnoreWhitespace(true);
+    }
 
     @Test
-    public void testTransform() throws FileNotFoundException {
+    public void testTransform() throws Exception {
         final Processor proc = new Processor(false);
         final XsltCompiler compiler = proc.newXsltCompiler();
         try {
             final XsltExecutable exec = compiler.compile(new StreamSource(new File(STYLESHEET)));
             final XsltTransformer transform = exec.load();
             transform.setSource(new StreamSource(new FileInputStream(INPUT)));
-            final ByteArrayOutputStream out = new ByteArrayOutputStream();
             final Serializer serializer = new Serializer();
-            serializer.setOutputStream(System.out);
+            final OutputStream out = new ByteArrayOutputStream();
+            serializer.setOutputStream(out);
             transform.setDestination(serializer);
-//            System.out.println(out.toString());
+            transform.transform();
+            final StringBuilder expected = TestHelper.readFile(new File(EXPECTED), false);
+            assertEquals("XML files match", expected.toString(), "<root>" + out.toString()
+                + "</root>");
         } catch (final SaxonApiException e) {
             LOGWRAPPER.error(e);
         }
