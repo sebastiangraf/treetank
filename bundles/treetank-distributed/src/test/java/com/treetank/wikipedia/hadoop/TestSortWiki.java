@@ -116,35 +116,9 @@ public final class TestSortWiki extends XMLTestCase {
         FileOutputFormat.setOutputPath(job, new Path(OUTPUT.getAbsolutePath()));
 
         assertTrue("Job completed without any exceptions", job.waitForCompletion(false));
-        final StringBuilder output = readFile(OUTPUT);
-        final StringBuilder expected = readFile(EXPECTED);
+        final StringBuilder output = TestHelper.readFile(OUTPUT, false);
+        final StringBuilder expected = TestHelper.readFile(EXPECTED, false);
         assertXMLEqual("XML files are at least similar", expected.toString(), output.toString());
-    }
-
-    /**
-     * Read in a file.
-     * 
-     * @param paramFile
-     *            File to read.
-     * @return StringBuilder instance, which has the string representation of
-     *         the document.
-     * @throws IOException
-     *             throws an IOException if any I/O operation fails.
-     */
-    @Ignore("Not a test, utility method only")
-    public StringBuilder readFile(final File paramFile) throws IOException {
-        final BufferedReader in =
-            new BufferedReader(new FileReader(new File(TestHelper.PATHS.PATH1.getFile(), "testOutput.xml")));
-        final StringBuilder sBuilder = new StringBuilder();
-        for (String line = in.readLine(); line != null; line = in.readLine()) {
-            sBuilder.append(line + "\n");
-        }
-
-        // Remove last newline.
-        sBuilder.replace(sBuilder.length() - 1, sBuilder.length(), "");
-        in.close();
-
-        return sBuilder;
     }
     
     @Test
