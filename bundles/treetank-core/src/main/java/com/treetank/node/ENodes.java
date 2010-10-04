@@ -43,7 +43,7 @@ public enum ENodes {
         }
     },
     /** Node kind is element. */
-    ELEMENT_KIND(1, 6, 5) {
+    ELEMENT_KIND(1, 7, 5) {
         @Override
         public AbsNode createNodeFromPersistence(final ITTSource mSource) {
             final long[] longData = readLongData(mSource);
@@ -70,7 +70,7 @@ public enum ENodes {
         }
     },
     /** Node kind is attribute. */
-    ATTRIBUTE_KIND(2, 2, 4) {
+    ATTRIBUTE_KIND(2, 3, 4) {
         @Override
         public AbsNode createNodeFromPersistence(final ITTSource mSource) {
             final long[] longData = readLongData(mSource);
@@ -89,7 +89,7 @@ public enum ENodes {
         }
     },
     /** Node kind is text. */
-    TEXT_KIND(3, 6, 2) {
+    TEXT_KIND(3, 7, 2) {
         @Override
         public AbsNode createNodeFromPersistence(final ITTSource mSource) {
             final long[] longData = readLongData(mSource);
@@ -108,7 +108,7 @@ public enum ENodes {
         }
     },
     /** Node kind is namespace. */
-    NAMESPACE_KIND(13, 2, 3) {
+    NAMESPACE_KIND(13, 3, 3) {
 
         @Override
         public AbsNode createNodeFromPersistence(final ITTSource mSource) {
@@ -147,7 +147,7 @@ public enum ENodes {
         }
     },
     /** Node kind is document root. */
-    ROOT_KIND(9, 6, 1) {
+    ROOT_KIND(9, 7, 1) {
         @Override
         public AbsNode createNodeFromPersistence(final ITTSource mSource) {
             final long[] data = readLongData(mSource);
@@ -173,7 +173,7 @@ public enum ENodes {
         }
     },
     /** Node kind is deleted node. */
-    DELETE_KIND(5, 2, 1) {
+    DELETE_KIND(5, 3, 1) {
         @Override
         public AbsNode createNodeFromPersistence(final ITTSource mSource) {
             final long[] longData = readLongData(mSource);

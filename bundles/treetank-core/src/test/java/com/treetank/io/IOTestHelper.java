@@ -12,7 +12,7 @@ import com.treetank.access.DatabaseConfiguration;
 import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankUsageException;
-import com.treetank.io.AbstractIOFactory.StorageType;
+import com.treetank.io.AbsIOFactory.StorageType;
 import com.treetank.page.PageReference;
 import com.treetank.page.UberPage;
 import com.treetank.settings.EDatabaseSetting;
@@ -57,9 +57,9 @@ public final class IOTestHelper {
      */
     public static void clean() throws TreetankException {
 
-        final Map<SessionConfiguration, AbstractIOFactory> mapping = AbstractIOFactory.getActiveFactories();
+        final Map<SessionConfiguration, AbsIOFactory> mapping = AbsIOFactory.getActiveFactories();
         for (final SessionConfiguration conf : mapping.keySet()) {
-            final AbstractIOFactory fac = mapping.get(conf);
+            final AbsIOFactory fac = mapping.get(conf);
 
             // Closing all storages
             fac.closeStorage();
@@ -79,11 +79,11 @@ public final class IOTestHelper {
     public static void
         testFactory(final DatabaseConfiguration dbConf, final SessionConfiguration sessionConf)
             throws TreetankException {
-        final AbstractIOFactory fac1 = AbstractIOFactory.getInstance(dbConf, sessionConf);
-        final AbstractIOFactory fac2 = AbstractIOFactory.getInstance(dbConf, sessionConf);
+        final AbsIOFactory fac1 = AbsIOFactory.getInstance(dbConf, sessionConf);
+        final AbsIOFactory fac2 = AbsIOFactory.getInstance(dbConf, sessionConf);
         assertSame(fac1, fac2);
         fac1.closeStorage();
-        final AbstractIOFactory fac3 = AbstractIOFactory.getInstance(dbConf, sessionConf);
+        final AbsIOFactory fac3 = AbsIOFactory.getInstance(dbConf, sessionConf);
         assertNotSame(fac1, fac3);
         fac3.closeStorage();
     }
@@ -91,7 +91,7 @@ public final class IOTestHelper {
     public static void testReadWriteFirstRef(final DatabaseConfiguration dbConf,
         final SessionConfiguration sessionConf) throws TreetankException {
 
-        final AbstractIOFactory fac = AbstractIOFactory.getInstance(dbConf, sessionConf);
+        final AbsIOFactory fac = AbsIOFactory.getInstance(dbConf, sessionConf);
         final PageReference pageRef1 = new PageReference();
         final UberPage page1 = new UberPage();
         pageRef1.setPage(page1);

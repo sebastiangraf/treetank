@@ -297,8 +297,8 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         if (oldNode instanceof AbsStructNode) {
             adaptNeighbours((AbsStructNode)oldNode, (AbsStructNode)newNode);
         }
-        newNode.setNameKey(((WriteTransactionState)getTransactionState()).createNameKey(mName));
-        ((WriteTransactionState)getTransactionState()).removeNode(oldNode);
+        newNode.setNameKey(getTransactionState().createNameKey(mName));
+        getTransactionState().removeNode(oldNode);
         setCurrentNode(newNode);
 
     }
@@ -317,8 +317,8 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         if (oldNode instanceof AbsStructNode) {
             adaptNeighbours((AbsStructNode)oldNode, (AbsStructNode)newNode);
         }
-        newNode.setURIKey(((WriteTransactionState)getTransactionState()).createNameKey(mUri));
-        ((WriteTransactionState)getTransactionState()).removeNode(oldNode);
+        newNode.setURIKey(getTransactionState().createNameKey(mUri));
+        getTransactionState().removeNode(oldNode);
         setCurrentNode(newNode);
     }
 

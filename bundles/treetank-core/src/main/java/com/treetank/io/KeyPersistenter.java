@@ -35,6 +35,9 @@ public final class KeyPersistenter {
     /** Constant to define that no key is stored. */
     private static final int NULLKIND = 3;
 
+    /**
+     * Empty constructor for this class, should never be initialized.
+     */
     private KeyPersistenter() {
         // method to prohibit instantiation
     }
@@ -42,19 +45,19 @@ public final class KeyPersistenter {
     /**
      * Simple create-method.
      * 
-     * @param mSource
+     * @param paramSource
      *            the input from the storage
      * @return the Key.
      */
-    public static AbstractKey createKey(final ITTSource mSource) {
-        final int kind = mSource.readInt();
-        AbstractKey returnVal = null;
+    public static AbsKey createKey(final ITTSource paramSource) {
+        final int kind = paramSource.readInt();
+        AbsKey returnVal = null;
         switch (kind) {
         case FILEKIND:
-            returnVal = new FileKey(mSource);
+            returnVal = new FileKey(paramSource);
             break;
         case BERKELEYKIND:
-            returnVal = new BerkeleyKey(mSource);
+            returnVal = new BerkeleyKey(paramSource);
             break;
         case NULLKIND:
             returnVal = null;
@@ -67,23 +70,31 @@ public final class KeyPersistenter {
         return returnVal;
     }
 
-    public static void serializeKey(final ITTSink mSink, final AbstractKey mKey) {
+    /**
+     * Serialize a key to a designated {@link ITTSink}.
+     * 
+     * @param paramSink
+     *            where the data should be serialized to.
+     * @param paramKey
+     *            key which is serialized
+     */
+    public static void serializeKey(final ITTSink paramSink, final AbsKey paramKey) {
 
-        if (mKey == null) {
-            mSink.writeInt(NULLKIND);
+        if (paramKey == null) {
+            paramSink.writeInt(NULLKIND);
         } else {
 
-            if (mKey instanceof FileKey) {
-                mSink.writeInt(FILEKIND);
-            } else if (mKey instanceof BerkeleyKey) {
-                mSink.writeInt(BERKELEYKIND);
+            if (paramKey instanceof FileKey) {
+                paramSink.writeInt(FILEKIND);
+            } else if (paramKey instanceof BerkeleyKey) {
+                paramSink.writeInt(BERKELEYKIND);
             } else {
-                throw new IllegalStateException(new StringBuilder("Key ").append(mKey.getClass()).append(
+                throw new IllegalStateException(new StringBuilder("Key ").append(paramKey.getClass()).append(
                     " cannot be serialized").toString());
             }
 
-            for (long val : mKey.getKeys()) {
-                mSink.writeLong(val);
+            for (long val : paramKey.getKeys()) {
+                paramSink.writeLong(val);
             }
         }
 

@@ -46,6 +46,7 @@ public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void writeByte(final byte mByteVal) {
         checkAndIncrease(1);
         mBuffer.put(mByteVal);
@@ -54,20 +55,21 @@ public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
     /**
      * {@inheritDoc}
      */
-    public void writeLong(final long mLongVal) {
+    @Override
+    public void writeLong(final long paramLongVal) {
         checkAndIncrease(8);
-        mBuffer.putLong(mLongVal);
+        mBuffer.putLong(paramLongVal);
 
     }
 
     /**
      * Setting position in buffer.
      * 
-     * @param mVal
+     * @param paramVal
      *            new position to set
      */
-    public void position(final int mVal) {
-        mBuffer.position(mVal);
+    public void position(final int paramVal) {
+        mBuffer.position(paramVal);
     }
 
     /**
@@ -96,6 +98,7 @@ public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public byte readByte() {
         return mBuffer.get();
     }
@@ -103,6 +106,7 @@ public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public long readLong() {
         return mBuffer.getLong();
     }
@@ -110,15 +114,17 @@ public final class ByteBufferSinkAndSource implements ITTSink, ITTSource {
     /**
      * {@inheritDoc}
      */
-    public void writeInt(final int intVal) {
+    @Override
+    public void writeInt(final int paramIntVal) {
         checkAndIncrease(4);
-        mBuffer.putInt(intVal);
+        mBuffer.putInt(paramIntVal);
 
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public int readInt() {
         return mBuffer.getInt();
     }

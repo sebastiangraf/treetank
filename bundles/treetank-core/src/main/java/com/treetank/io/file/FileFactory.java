@@ -22,7 +22,7 @@ import java.io.File;
 import com.treetank.access.DatabaseConfiguration;
 import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankIOException;
-import com.treetank.io.AbstractIOFactory;
+import com.treetank.io.AbsIOFactory;
 import com.treetank.io.IReader;
 import com.treetank.io.IWriter;
 import com.treetank.settings.EStoragePaths;
@@ -33,10 +33,10 @@ import com.treetank.settings.EStoragePaths;
  * @author Sebastian Graf, University of Konstanz.
  * 
  */
-public final class FileFactory extends AbstractIOFactory {
+public final class FileFactory extends AbsIOFactory {
 
     /** private constant for fileName. */
-    private final static String FILENAME = "tt.tnk";
+    private static final String FILENAME = "tt.tnk";
 
     /**
      * Constructor.
@@ -74,6 +74,11 @@ public final class FileFactory extends AbstractIOFactory {
         // not used over here
     }
 
+    /**
+     * Getting concrete storage for this file.
+     * 
+     * @return the concrete storage for this database
+     */
     protected File getConcreteStorage() {
         return new File(super.mDatabaseConfig.getFile(), new StringBuilder(EStoragePaths.TT.getFile()
             .getName()).append(File.separator).append(FILENAME).toString());

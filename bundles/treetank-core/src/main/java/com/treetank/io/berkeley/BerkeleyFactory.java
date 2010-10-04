@@ -31,8 +31,8 @@ import com.sleepycat.je.OperationStatus;
 import com.treetank.access.DatabaseConfiguration;
 import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankIOException;
-import com.treetank.io.AbstractIOFactory;
-import com.treetank.io.AbstractKey;
+import com.treetank.io.AbsIOFactory;
+import com.treetank.io.AbsKey;
 import com.treetank.io.IReader;
 import com.treetank.io.IWriter;
 import com.treetank.io.berkeley.binding.AbstractPageBinding;
@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class BerkeleyFactory extends AbstractIOFactory {
+public final class BerkeleyFactory extends AbsIOFactory {
 
     /**
      * Log wrapper for better output.
@@ -63,8 +63,8 @@ public final class BerkeleyFactory extends AbstractIOFactory {
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
         .getLogger(BerkeleyFactory.class));
 
-    /** Binding for {@link AbstractKey}. */
-    public static final TupleBinding<AbstractKey> KEY = new KeyBinding();
+    /** Binding for {@link AbsKey}. */
+    public static final TupleBinding<AbsKey> KEY = new KeyBinding();
 
     /** Binding for {@link AbstractPage}. */
     public static final TupleBinding<AbstractPage> PAGE_VAL_B = new AbstractPageBinding();

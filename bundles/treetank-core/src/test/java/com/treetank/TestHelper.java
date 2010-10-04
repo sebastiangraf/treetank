@@ -20,7 +20,7 @@ import com.treetank.access.Session;
 import com.treetank.api.IDatabase;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankUsageException;
-import com.treetank.io.AbstractIOFactory.StorageType;
+import com.treetank.io.AbsIOFactory.StorageType;
 import com.treetank.node.AttributeNode;
 import com.treetank.node.DeletedNode;
 import com.treetank.node.DocumentRootNode;

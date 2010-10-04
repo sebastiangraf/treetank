@@ -20,18 +20,51 @@ package com.treetank.node;
 import com.treetank.api.IStructuralItem;
 import com.treetank.settings.EFixed;
 
+/**
+ * Abstact class to represent all structural nodes which are the base for a tree.
+ * 
+ * Each AbsStructNode represents pointers to the parent, the left- and rightsibling plus a pointer to
+ * the firstchild.
+ * 
+ * The pointers of a node is stored in a longArray while additional data is stored in a intarray.
+ * 
+ * @author Sebastian Graf, University of Konstanz
+ */
 public abstract class AbsStructNode extends AbsNode implements IStructuralItem {
 
-    protected static final int FIRST_CHILD_KEY = 2;
+    /**
+     * Pointer to the first child.
+     */
+    protected static final int FIRST_CHILD_KEY = 3;
 
-    protected static final int LEFT_SIBLING_KEY = 3;
+    /**
+     * Pointer to the left sib.
+     */
+    protected static final int LEFT_SIBLING_KEY = 4;
 
-    protected static final int RIGHT_SIBLING_KEY = 4;
+    /**
+     * Pointer to the right sib.
+     */
+    protected static final int RIGHT_SIBLING_KEY = 5;
 
-    protected static final int CHILD_COUNT = 5;
+    /**
+     * Pointer to children.
+     */
+    protected static final int CHILD_COUNT = 6;
 
-    protected AbsStructNode(final long[] mLongBuilder, final int[] mIntBuilder) {
-        super(mLongBuilder, mIntBuilder);
+
+    /**
+     * Abstract constructor with datasetting arrays.
+     * 
+     * The concrete arrays are set by the concrete classes.
+     * 
+     * @param paramLongBuilder
+     *            long array to be set
+     * @param paramIntBuilder
+     *            int array to be set
+     */
+    protected AbsStructNode(final long[] paramLongBuilder, final int[] paramIntBuilder) {
+        super(paramLongBuilder, paramIntBuilder);
     }
 
     /**
@@ -130,11 +163,11 @@ public abstract class AbsStructNode extends AbsNode implements IStructuralItem {
     /**
      * Setting the child count.
      * 
-     * @param mChildCount
+     * @param paramChildCount
      *            to be set.
      */
-    public void setChildCount(final long mChildCount) {
-        mLongData[CHILD_COUNT] = mChildCount;
+    public void setChildCount(final long paramChildCount) {
+        mLongData[CHILD_COUNT] = paramChildCount;
     }
 
     /**

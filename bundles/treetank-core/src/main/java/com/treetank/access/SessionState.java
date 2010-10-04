@@ -39,7 +39,7 @@ import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankThreadedException;
 import com.treetank.exception.TreetankUsageException;
-import com.treetank.io.AbstractIOFactory;
+import com.treetank.io.AbsIOFactory;
 import com.treetank.io.IReader;
 import com.treetank.io.IWriter;
 import com.treetank.page.PageReference;
@@ -91,7 +91,7 @@ public final class SessionState {
     private final Map<Long, Map<Long, Collection<Future<Void>>>> mSyncTransactionsReturns;
 
     /** abstract factory for all interaction to the storage. */
-    private final AbstractIOFactory mFac;
+    private final AbsIOFactory mFac;
 
     /** Atomic counter for concurrent generation of transaction id. */
     private final AtomicLong mTransactionIDCounter;
@@ -126,7 +126,7 @@ public final class SessionState {
                 ESessionSetting.MAX_READ_TRANSACTIONS.name())));
         final PageReference uberPageReference = new PageReference();
 
-        mFac = AbstractIOFactory.getInstance(mDatabaseConfiguration, mSessionConfiguration);
+        mFac = AbsIOFactory.getInstance(mDatabaseConfiguration, mSessionConfiguration);
         if (!mFac.exists()) {
             // Bootstrap uber page and make sure there already is a root
             // node.

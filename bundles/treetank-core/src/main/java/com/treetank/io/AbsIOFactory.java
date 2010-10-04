@@ -34,25 +34,31 @@ import com.treetank.settings.EDatabaseSetting;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public abstract class AbstractIOFactory {
+public abstract class AbsIOFactory {
 
     /** Type for different storages. */
     public enum StorageType {
-        File, Berkeley
+        /** File Storage. */
+        File,
+        /** Berkeley Storage. */
+        Berkeley
     }
 
     /**
      * Concurrent storage for all avaliable databases in runtime.
      */
-    private final static Map<SessionConfiguration, AbstractIOFactory> FACTORIES =
-        new ConcurrentHashMap<SessionConfiguration, AbstractIOFactory>();
+    private static final Map<SessionConfiguration, AbsIOFactory> FACTORIES =
+        new ConcurrentHashMap<SessionConfiguration, AbsIOFactory>();
 
     /**
-     * Config for the session holding information about the location of the
-     * storage.
+     * Config for the session holding information about the settings of the
+     * session.
      */
     protected final transient SessionConfiguration mSessionConfig;
 
+    /**
+     * Config for the database holding information about the location of the storage.
+     */
     protected final transient DatabaseConfiguration mDatabaseConfig;
 
     /**
@@ -63,8 +69,7 @@ public abstract class AbstractIOFactory {
      * @param paramDatabase
      *            to be set
      */
-    protected AbstractIOFactory(final DatabaseConfiguration paramDatabase,
-        final SessionConfiguration paramSession) {
+    protected AbsIOFactory(final DatabaseConfiguration paramDatabase, final SessionConfiguration paramSession) {
         mSessionConfig = paramSession;
         mDatabaseConfig = paramDatabase;
     }
@@ -98,49 +103,55 @@ public abstract class AbstractIOFactory {
         FACTORIES.remove(this.mSessionConfig);
     }
 
+    /**
+     * Closing concrete storage.
+     * 
+     * @throws TreetankIOException
+     *             if anything weird happens
+     */
     protected abstract void closeConcreteStorage() throws TreetankIOException;
 
     /**
      * Getting an AbstractIOFactory instance.
      * 
-     * @param mDatabaseConf
+     * @param paramDatabaseConf
      *            with settings for the storage.
-     * @param mSessionConf
+     * @param paramSessionConf
      *            with settings for the session
      * @throws TreetankIOException
      *             If error
      * @return an instance of this factory based on the kind in the conf
      */
-    public final static AbstractIOFactory getInstance(final DatabaseConfiguration mDatabaseConf,
-        final SessionConfiguration mSessionConf) throws TreetankIOException {
-        AbstractIOFactory fac = null;
-        if (FACTORIES.containsKey(mSessionConf)) {
-            fac = FACTORIES.get(mSessionConf);
+    public static final AbsIOFactory getInstance(final DatabaseConfiguration paramDatabaseConf,
+        final SessionConfiguration paramSessionConf) throws TreetankIOException {
+        AbsIOFactory fac = null;
+        if (FACTORIES.containsKey(paramSessionConf)) {
+            fac = FACTORIES.get(paramSessionConf);
         } else {
-            final AbstractIOFactory.StorageType storageType =
-                AbstractIOFactory.StorageType.valueOf(mDatabaseConf.getProps().getProperty(
+            final AbsIOFactory.StorageType storageType =
+                AbsIOFactory.StorageType.valueOf(paramDatabaseConf.getProps().getProperty(
                     EDatabaseSetting.STORAGE_TYPE.name()));
             switch (storageType) {
             case File:
-                fac = new FileFactory(mDatabaseConf, mSessionConf);
+                fac = new FileFactory(paramDatabaseConf, paramSessionConf);
                 break;
             case Berkeley:
-                fac = new BerkeleyFactory(mDatabaseConf, mSessionConf);
+                fac = new BerkeleyFactory(paramDatabaseConf, paramSessionConf);
                 break;
             default:
                 throw new TreetankIOException("Type", storageType.toString(), "not valid!");
             }
-            FACTORIES.put(mSessionConf, fac);
+            FACTORIES.put(paramSessionConf, fac);
         }
         return fac;
     }
 
     /**
-     * Getting of all active {@link AbstractIOFactory} and related {@link SessionConfiguration}s.
+     * Getting of all active {@link AbsIOFactory} and related {@link SessionConfiguration}s.
      * 
-     * @return a {@link Map} with the {@link SessionConfiguration} and {@link AbstractIOFactory} pairs.
+     * @return a {@link Map} with the {@link SessionConfiguration} and {@link AbsIOFactory} pairs.
      */
-    public final static Map<SessionConfiguration, AbstractIOFactory> getActiveFactories() {
+    public static final Map<SessionConfiguration, AbsIOFactory> getActiveFactories() {
         return FACTORIES;
     }
 
