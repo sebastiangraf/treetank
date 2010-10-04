@@ -29,7 +29,7 @@ package com.treetank.io;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public abstract class AbstractKey {
+public abstract class AbsKey {
 
     /** all keys. */
     private final transient long[] mKeys;
@@ -40,7 +40,7 @@ public abstract class AbstractKey {
      * @param paramKeys
      *            setting the keys.
      */
-    protected AbstractKey(final long... paramKeys) {
+    protected AbsKey(final long... paramKeys) {
         mKeys = paramKeys;
     }
 
@@ -49,7 +49,7 @@ public abstract class AbstractKey {
      * 
      * @return the keys
      */
-    protected long[] getKeys() {
+    protected final long[] getKeys() {
         final long[] returnKeys = new long[mKeys.length];
         System.arraycopy(mKeys, 0, returnKeys, 0, mKeys.length);
         return returnKeys;

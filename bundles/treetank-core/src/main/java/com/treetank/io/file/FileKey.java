@@ -17,7 +17,7 @@
 
 package com.treetank.io.file;
 
-import com.treetank.io.AbstractKey;
+import com.treetank.io.AbsKey;
 import com.treetank.io.ITTSource;
 
 /**
@@ -27,7 +27,7 @@ import com.treetank.io.ITTSource;
  * @author Sebastian Graf, University of Konstnz
  * 
  */
-public final class FileKey extends AbstractKey {
+public final class FileKey extends AbsKey {
 
     /**
      * Constructor for {@link ITTSource}.

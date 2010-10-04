@@ -20,24 +20,24 @@ package com.treetank.io.berkeley.binding;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
-import com.treetank.io.AbstractKey;
+import com.treetank.io.AbsKey;
 import com.treetank.io.KeyPersistenter;
 import com.treetank.io.berkeley.TupleInputSource;
 import com.treetank.io.berkeley.TupleOutputSink;
 
 /**
- * Class to store {@link AbstractKey} objects in the BerkeleyDB.
+ * Class to store {@link AbsKey} objects in the BerkeleyDB.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class KeyBinding extends TupleBinding<AbstractKey> {
+public final class KeyBinding extends TupleBinding<AbsKey> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public AbstractKey entryToObject(final TupleInput arg0) {
+    public AbsKey entryToObject(final TupleInput arg0) {
         return KeyPersistenter.createKey(new TupleInputSource(arg0));
     }
 
@@ -45,7 +45,7 @@ public final class KeyBinding extends TupleBinding<AbstractKey> {
      * {@inheritDoc}
      */
     @Override
-    public void objectToEntry(final AbstractKey arg0, final TupleOutput arg1) {
+    public void objectToEntry(final AbsKey arg0, final TupleOutput arg1) {
         KeyPersistenter.serializeKey(new TupleOutputSink(arg1), arg0);
     }
 }

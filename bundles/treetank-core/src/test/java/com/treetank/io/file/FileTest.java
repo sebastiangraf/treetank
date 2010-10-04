@@ -8,7 +8,7 @@ import com.treetank.access.DatabaseConfiguration;
 import com.treetank.access.SessionConfiguration;
 import com.treetank.exception.TreetankException;
 import com.treetank.io.IOTestHelper;
-import com.treetank.io.AbstractIOFactory.StorageType;
+import com.treetank.io.AbsIOFactory.StorageType;
 
 public class FileTest {
     private DatabaseConfiguration dbConf;

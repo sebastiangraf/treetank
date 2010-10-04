@@ -17,7 +17,7 @@
 
 package com.treetank.settings;
 
-import com.treetank.io.AbstractIOFactory.StorageType;
+import com.treetank.io.AbsIOFactory.StorageType;
 
 /**
  * Setting for a database. Once a database is existing, no other settings can be

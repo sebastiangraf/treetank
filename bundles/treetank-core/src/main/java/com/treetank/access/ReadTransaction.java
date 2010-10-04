@@ -59,20 +59,20 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * Constructor.
      * 
-     * @param transactionID
+     * @param paramTransactionID
      *            ID of transaction.
-     * @param sessionState
+     * @param paramSessionState
      *            Session state to work with.
-     * @param transactionState
+     * @param paramTransactionState
      *            Transaction state to work with.
      * @throws TreetankIOException
      *             if something odd happens within the creation process.
      */
-    protected ReadTransaction(final long transactionID, final SessionState sessionState,
-        final ReadTransactionState transactionState) throws TreetankIOException {
-        mTransactionID = transactionID;
-        mSessionState = sessionState;
-        mTransactionState = transactionState;
+    protected ReadTransaction(final long paramTransactionID, final SessionState paramSessionState,
+        final ReadTransactionState paramTransactionState) throws TreetankIOException {
+        mTransactionID = paramTransactionID;
+        mSessionState = paramSessionState;
+        mTransactionState = paramTransactionState;
         mCurrentNode = getTransactionState().getNode((Long)EFixed.ROOT_NODE_KEY.getStandardProperty());
         mClosed = false;
     }
@@ -80,6 +80,7 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final long getTransactionID() {
         return mTransactionID;
     }
@@ -87,6 +88,7 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final long getRevisionNumber() throws TreetankIOException {
         assertNotClosed();
         return mTransactionState.getActualRevisionRootPage().getRevision();
@@ -95,6 +97,7 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final long getRevisionTimestamp() throws TreetankIOException {
         assertNotClosed();
         return mTransactionState.getActualRevisionRootPage().getRevisionTimestamp();
@@ -103,6 +106,7 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean moveTo(final long mNodeKey) {
         assertNotClosed();
         if (mNodeKey != (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
@@ -127,6 +131,7 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean moveToDocumentRoot() {
         return moveTo((Long)EFixed.ROOT_NODE_KEY.getStandardProperty());
     }
@@ -134,6 +139,7 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean moveToParent() {
         return moveTo(mCurrentNode.getParentKey());
     }
@@ -141,6 +147,7 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean moveToFirstChild() {
         final IStructuralItem node = getNodeIfStructural();
         return node == null ? false : moveTo(node.getFirstChildKey());
@@ -149,6 +156,7 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean moveToLeftSibling() {
         final IStructuralItem node = getNodeIfStructural();
         return node == null ? false : moveTo(node.getLeftSiblingKey());
@@ -157,6 +165,7 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean moveToRightSibling() {
         final IStructuralItem node = getNodeIfStructural();
         return node == null ? false : moveTo(node.getRightSiblingKey());
@@ -165,6 +174,7 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean moveToAttribute(final int mIndex) {
         if (mCurrentNode.getKind() == ENodes.ELEMENT_KIND) {
             return moveTo(((ElementNode)mCurrentNode).getAttributeKey(mIndex));
@@ -176,6 +186,7 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean moveToNamespace(final int mIndex) {
         if (mCurrentNode.getKind() == ENodes.ELEMENT_KIND) {
             return moveTo(((ElementNode)mCurrentNode).getNamespaceKey(mIndex));
@@ -188,6 +199,7 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final String getValueOfCurrentNode() {
         assertNotClosed();
         return TypedValue.parseString(mCurrentNode.getRawValue());
@@ -196,6 +208,7 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final QName getQNameOfCurrentNode() {
         assertNotClosed();
         final String name = mTransactionState.getName(mCurrentNode.getNameKey());
@@ -206,6 +219,7 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final String getTypeOfCurrentNode() {
         assertNotClosed();
         return mTransactionState.getName(mCurrentNode.getTypeKey());
@@ -214,6 +228,7 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final int keyForName(final String mName) {
         assertNotClosed();
         return NamePageHash.generateHashForString(mName);
@@ -222,6 +237,7 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final String nameForKey(final int mKey) {
         assertNotClosed();
         return mTransactionState.getName(mKey);
@@ -230,14 +246,16 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
-    public final byte[] rawNameForKey(final int key) {
+    @Override
+    public final byte[] rawNameForKey(final int paramKey) {
         assertNotClosed();
-        return mTransactionState.getRawName(key);
+        return mTransactionState.getRawName(paramKey);
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public final IItemList getItemList() {
         return mTransactionState.getItemList();
     }
@@ -266,7 +284,7 @@ public class ReadTransaction implements IReadTransaction {
      * {@inheritDoc}
      */
     @Override
-    public String toString() {
+    public final String toString() {
         assertNotClosed();
         final StringBuilder builder = new StringBuilder();
         if (getNode().getKind() == ENodes.ATTRIBUTE_KIND || getNode().getKind() == ENodes.ELEMENT_KIND) {
@@ -325,11 +343,11 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * Replace the state of the transaction.
      * 
-     * @param transactionState
+     * @param paramTransactionState
      *            State of transaction.
      */
-    protected final void setTransactionState(final ReadTransactionState transactionState) {
-        mTransactionState = transactionState;
+    protected final void setTransactionState(final ReadTransactionState paramTransactionState) {
+        mTransactionState = paramTransactionState;
     }
 
     /**
@@ -344,11 +362,11 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * Set session state.
      * 
-     * @param sessionState
+     * @param paramSessionState
      *            Session state to set.
      */
-    protected final void setSessionState(final SessionState sessionState) {
-        mSessionState = sessionState;
+    protected final void setSessionState(final SessionState paramSessionState) {
+        mSessionState = paramSessionState;
     }
 
     /**
@@ -363,17 +381,18 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * Setter for superclasses.
      * 
-     * @param currentNode
+     * @param paramCurrentNode
      *            The current node to set.
      */
-    protected final void setCurrentNode(final IItem currentNode) {
-        mCurrentNode = currentNode;
+    protected final void setCurrentNode(final IItem paramCurrentNode) {
+        mCurrentNode = paramCurrentNode;
     }
 
     /**
      * {@inheritDoc}
      */
-    public IItem getNode() {
+    @Override
+    public final IItem getNode() {
         return this.mCurrentNode;
     }
 

@@ -17,7 +17,7 @@
 
 package com.treetank.io.berkeley;
 
-import com.treetank.io.AbstractKey;
+import com.treetank.io.AbsKey;
 import com.treetank.io.ITTSource;
 
 /**
@@ -27,7 +27,7 @@ import com.treetank.io.ITTSource;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class BerkeleyKey extends AbstractKey {
+public class BerkeleyKey extends AbsKey {
 
     /**
      * Public constructor.

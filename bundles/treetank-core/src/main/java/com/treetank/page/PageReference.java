@@ -17,7 +17,7 @@
 
 package com.treetank.page;
 
-import com.treetank.io.AbstractKey;
+import com.treetank.io.AbsKey;
 import com.treetank.io.ITTSink;
 import com.treetank.io.ITTSource;
 import com.treetank.io.KeyPersistenter;
@@ -43,7 +43,7 @@ public final class PageReference {
     private long mNodePageKey = -1;
 
     /** Key in persistent storage. */
-    private AbstractKey mKey;
+    private AbsKey mKey;
 
     /** Checksum of serialized page. */
     private byte[] mChecksum = new byte[IConstants.CHECKSUM_SIZE];
@@ -71,12 +71,12 @@ public final class PageReference {
      * @param page
      *            In-memory deserialized page instance.
      * @param key
-     *            {@link AbstractKey} of the page to be referenced in the
+     *            {@link AbsKey} of the page to be referenced in the
      *            persistent storage
      * @param checksum
      *            Checksum of serialized page.
      */
-    public PageReference(final AbstractPage page, final AbstractKey key, final byte[] checksum) {
+    public PageReference(final AbstractPage page, final AbsKey key, final byte[] checksum) {
         mPage = page;
         mKey = key;
         System.arraycopy(checksum, 0, mChecksum, 0, IConstants.CHECKSUM_SIZE);
@@ -159,7 +159,7 @@ public final class PageReference {
      * 
      * @return Start offset in file.
      */
-    public AbstractKey getKey() {
+    public AbsKey getKey() {
         return mKey;
     }
 
@@ -169,7 +169,7 @@ public final class PageReference {
      * @param key
      *            Key of this reference set by the persistent storage
      */
-    public void setKey(final AbstractKey key) {
+    public void setKey(final AbsKey key) {
         this.mKey = key;
     }
 

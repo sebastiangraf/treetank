@@ -76,51 +76,51 @@ public class ReadTransactionState {
     /**
      * Standard constructor.
      * 
-     * @param databaseConfiguration
+     * @param paramDatabaseConfiguration
      *            Configuration of database.
-     * @param uberPage
+     * @param paramUberPage
      *            Uber page to start reading with.
-     * @param revision
+     * @param paramRevision
      *            Key of revision to read from uber page.
-     * @param itemList
+     * @param paramItemList
      *            List of non-persistent items.
      * @param reader
      *            for this transaction
      * @throws TreetankIOException
      *             if the read of the persistent storage fails
      */
-    protected ReadTransactionState(final DatabaseConfiguration databaseConfiguration,
-        final UberPage uberPage, final long revision, final IItemList itemList, final IReader reader)
-        throws TreetankIOException {
+    protected ReadTransactionState(final DatabaseConfiguration paramDatabaseConfiguration,
+        final UberPage paramUberPage, final long paramRevision, final IItemList paramItemList,
+        final IReader reader) throws TreetankIOException {
         mCache = new RAMCache();
-        mDatabaseConfiguration = databaseConfiguration;
+        mDatabaseConfiguration = paramDatabaseConfiguration;
         mPageReader = reader;
-        mUberPage = uberPage;
-        mRootPage = loadRevRoot(revision);
+        mUberPage = paramUberPage;
+        mRootPage = loadRevRoot(paramRevision);
         initializeNamePage();
-        mItemList = itemList;
+        mItemList = paramItemList;
 
     }
 
     /**
      * Getting the node related to the given node key.
      * 
-     * @param mNodeKey
+     * @param paramNodeKey
      *            searched for
      * @return the related Node
      * @throws TreetankIOException
      *             if the read to the persistent storage fails
      */
-    protected IItem getNode(final long mNodeKey) throws TreetankIOException {
+    protected IItem getNode(final long paramNodeKey) throws TreetankIOException {
 
         // Immediately return node from item list if node key negative.
-        if (mNodeKey < 0) {
-            return mItemList.getItem(mNodeKey);
+        if (paramNodeKey < 0) {
+            return mItemList.getItem(paramNodeKey);
         }
 
         // Calculate page and node part for given nodeKey.
-        final long nodePageKey = nodePageKey(mNodeKey);
-        final int nodePageOffset = nodePageOffset(mNodeKey);
+        final long nodePageKey = nodePageKey(paramNodeKey);
+        final int nodePageOffset = nodePageOffset(paramNodeKey);
 
         NodePageContainer cont = mCache.get(nodePageKey);
 

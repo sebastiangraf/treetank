@@ -40,6 +40,9 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     /** standard PARENT_KEY. */
     protected static final int PARENT_KEY = 1;
 
+    /** Hashcode for subtree integrity. */
+    protected static final int HASHCODE = 2;
+
     /** standard TYPE_KEY. */
     protected static final int TYPE_KEY = 0;
 
@@ -111,6 +114,10 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
         return mIntData[TYPE_KEY];
     }
 
+    public long getHash() {
+        return mLongData[HASHCODE];
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -159,6 +166,19 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
      */
     public void setType(final int mValueType) {
         mIntData[TYPE_KEY] = mValueType;
+    }
+
+    /**
+     * setting hash to current node.
+     * 
+     * @param paramHash
+     *            to be set
+     */
+    public final void setHash(final long... paramHash) {
+        final int prime = 13;
+
+        final long result = prime *  Arrays.hashCode(mLongData);
+        mLongData[HASHCODE] = result;
     }
 
     /**
