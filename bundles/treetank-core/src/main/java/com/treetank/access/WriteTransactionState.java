@@ -144,7 +144,7 @@ public final class WriteTransactionState extends ReadTransactionState {
      * @param mNode
      *            the node to be modified.
      */
-    protected void finishNodeModification(final AbsNode mNode) {
+    protected void finishNodeModification(final IItem mNode) {
         final long nodePageKey = nodePageKey(mNode.getNodeKey());
         if (mNodePageCon == null || mNode == null || mLog.get(nodePageKey) == null) {
             throw new IllegalStateException();

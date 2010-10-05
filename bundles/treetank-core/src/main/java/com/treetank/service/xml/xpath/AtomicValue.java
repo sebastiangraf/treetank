@@ -368,4 +368,16 @@ public class AtomicValue implements IItem {
         return builder.toString();
     }
 
+    @Override
+    public void setHash(long hash) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public long getHash() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
 }

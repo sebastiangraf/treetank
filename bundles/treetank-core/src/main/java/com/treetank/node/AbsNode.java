@@ -174,11 +174,8 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
      * @param paramHash
      *            to be set
      */
-    public final void setHash(final long... paramHash) {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Arrays.hashCode(paramHash);
-        mLongData[HASHCODE] = result;
+    public final void setHash(final long paramHash) {
+        mLongData[HASHCODE] = paramHash;
     }
 
     /**

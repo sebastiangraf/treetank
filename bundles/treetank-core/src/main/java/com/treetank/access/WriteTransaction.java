@@ -17,6 +17,7 @@
 
 package com.treetank.access;
 
+import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -131,7 +132,9 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             final long rightSibKey = ((AbsStructNode)getCurrentNode()).getFirstChildKey();
             final ElementNode node =
                 getTransactionState().createElementNode(parentKey, leftSibKey, rightSibKey, mQname);
-            return insertFirstChild(node);
+            final long key = insertFirstChild(node);
+            adaptHashesWithAdd();
+            return key;
         } else {
             throw new TreetankUsageException("Insert is not allowed if current node is not an ElementNode!");
         }
@@ -145,7 +148,9 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             final long rightSibKey = ((AbsStructNode)getCurrentNode()).getRightSiblingKey();
             final ElementNode node =
                 getTransactionState().createElementNode(parentKey, leftSibKey, rightSibKey, mQname);
-            return insertRightSibling(node);
+            final long key = insertRightSibling(node);
+            adaptHashesWithAdd();
+            return key;
         } else {
             throw new TreetankUsageException(
                 "Insert is not allowed if current node is not an StructuralNode (either Text or Element)!");
@@ -163,7 +168,9 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             final long rightSibKey = ((AbsStructNode)getCurrentNode()).getFirstChildKey();
             final TextNode node =
                 getTransactionState().createTextNode(parentKey, leftSibKey, rightSibKey, value);
-            return insertFirstChild(node);
+            final long key = insertFirstChild(node);
+            adaptHashesWithAdd();
+            return key;
         } else {
             throw new TreetankUsageException("Insert is not allowed if current node is not an ElementNode!");
         }
@@ -180,7 +187,9 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             final long rightSibKey = ((AbsStructNode)getCurrentNode()).getRightSiblingKey();
             final TextNode node =
                 getTransactionState().createTextNode(parentKey, leftSibKey, rightSibKey, value);
-            return insertRightSibling(node);
+            final long key = insertRightSibling(node);
+            adaptHashesWithAdd();
+            return key;
         } else {
             throw new TreetankUsageException(
                 "Insert is not allowed if current node is not an StructuralNode (either Text or Element)!");
@@ -193,7 +202,9 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             final byte[] value = TypedValue.getBytes(mValueAsString);
             final long elementKey = getCurrentNode().getNodeKey();
             final AttributeNode node = getTransactionState().createAttributeNode(elementKey, mQname, value);
-            return insertAttribute(node);
+            final long key = insertAttribute(node);
+            adaptHashesWithAdd();
+            return key;
 
         } else {
             throw new TreetankUsageException("Insert is not allowed if current node is not an ElementNode!");
@@ -213,7 +224,9 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
 
             final NamespaceNode node =
                 getTransactionState().createNamespaceNode(parentKey, uriKey, prefixKey);
-            return insertNamespace(node);
+            final long key = insertNamespace(node);
+            adaptHashesWithAdd();
+            return key;
         } else {
             throw new TreetankUsageException("Insert is not allowed if current node is not an ElementNode!");
         }
@@ -465,7 +478,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         }
     }
 
-    private long insertFirstChild(final AbsNode mNode) throws TreetankException {
+    private long insertFirstChild(final AbsStructNode mNode) throws TreetankException {
 
         assertNotClosed();
         mModificationCount++;
@@ -473,13 +486,13 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
 
         setCurrentNode(mNode);
 
-        updateParentAfterInsert(true);
-        updateRightSibling();
+        updateParentAfterInsert(mNode, true);
+        updateRightSibling(mNode);
 
         return mNode.getNodeKey();
     }
 
-    private long insertRightSibling(final AbsNode mNode) throws TreetankException {
+    private long insertRightSibling(final AbsStructNode mNode) throws TreetankException {
 
         assertNotClosed();
         mModificationCount++;
@@ -491,9 +504,9 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
 
         setCurrentNode(mNode);
 
-        updateParentAfterInsert(false);
-        updateLeftSibling();
-        updateRightSibling();
+        updateParentAfterInsert(mNode, false);
+        updateLeftSibling(mNode);
+        updateRightSibling(mNode);
 
         return mNode.getNodeKey();
     }
@@ -536,9 +549,11 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         return mNode.getNodeKey();
     }
 
-    private void updateParentAfterInsert(final boolean mUpdateFirstChild) throws TreetankIOException {
+    private void updateParentAfterInsert(final AbsStructNode paramNewWithPointers,
+        final boolean mUpdateFirstChild) throws TreetankIOException {
         final AbsStructNode parentNode =
-            (AbsStructNode)getTransactionState().prepareNodeForModification(getCurrentNode().getParentKey());
+            (AbsStructNode)getTransactionState().prepareNodeForModification(
+                paramNewWithPointers.getParentKey());
         parentNode.incrementChildCount();
         if (mUpdateFirstChild) {
             parentNode.setFirstChildKey(getCurrentNode().getNodeKey());
@@ -547,23 +562,23 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
 
     }
 
-    private void updateRightSibling() throws TreetankIOException {
-        final AbsStructNode current = (AbsStructNode)getCurrentNode();
+    private void updateRightSibling(final AbsStructNode paramNewWithPointers) throws TreetankIOException {
 
-        if (current.hasRightSibling()) {
+        if (paramNewWithPointers.hasRightSibling()) {
             final AbsStructNode rightSiblingNode =
-                (AbsStructNode)getTransactionState().prepareNodeForModification(current.getRightSiblingKey());
+                (AbsStructNode)getTransactionState().prepareNodeForModification(
+                    paramNewWithPointers.getRightSiblingKey());
             rightSiblingNode.setLeftSiblingKey(getCurrentNode().getNodeKey());
             getTransactionState().finishNodeModification(rightSiblingNode);
 
         }
     }
 
-    private void updateLeftSibling() throws TreetankIOException {
-        final AbsStructNode current = (AbsStructNode)getCurrentNode();
-        if (current.hasLeftSibling()) {
+    private void updateLeftSibling(final AbsStructNode paramNewWithPointers) throws TreetankIOException {
+        if (paramNewWithPointers.hasLeftSibling()) {
             final AbsStructNode leftSiblingNode =
-                (AbsStructNode)getTransactionState().prepareNodeForModification(current.getLeftSiblingKey());
+                (AbsStructNode)getTransactionState().prepareNodeForModification(
+                    paramNewWithPointers.getLeftSiblingKey());
             leftSiblingNode.setRightSiblingKey(getCurrentNode().getNodeKey());
             getTransactionState().finishNodeModification(leftSiblingNode);
         }
@@ -681,7 +696,6 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
                 }
             }
         }
-
     }
 
     /**
@@ -692,6 +706,37 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     @Override
     public WriteTransactionState getTransactionState() {
         return (WriteTransactionState)super.getTransactionState();
+    }
+
+    // private void adaptHashesWithRemove(final AbsNode oldNode) {
+    // final int prime = 97;
+    //
+    // int result = 1;
+    // result = prime * result + Arrays.hashCode(mIntData);
+    //
+    // int hash = oldNode.hashCode();
+    //
+    // }
+
+    private void adaptHashesWithAdd() throws TreetankIOException {
+        final IItem startNode = getCurrentNode();
+        final int prime = 97;
+        long result = 1;
+        do {
+
+            getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+            if (getCurrentNode().getHash() == 0) {
+                result = prime * result + getCurrentNode().hashCode();
+            } else {
+                result = prime * result + getCurrentNode().getHash();
+            }
+            getCurrentNode().setHash(result);
+            getTransactionState().finishNodeModification(getCurrentNode());
+
+        } while (moveTo(getCurrentNode().getParentKey()));
+
+        moveTo(startNode.getNodeKey());
+
     }
 
 }
