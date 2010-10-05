@@ -21,6 +21,17 @@
 			<url>http://download.java.net/maven/2</url>
 		</repository>
 		<repository>
+			<id>disyThirdParty</id>
+			<name>Third Party Repository for the Distributed System Group</name>
+			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyThirdParty/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
 			<id>disyInternal</id>
 			<name>Internal Repository for the Distributed System Group</name>
 			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternal/</url>
@@ -61,11 +72,8 @@
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
-		<!--
-			<dependency> <groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-core</artifactId> <version>0.20.2</version>
-			</dependency>
-		-->
+		<!-- <dependency> <groupId>org.apache.hadoop</groupId> <artifactId>hadoop-core</artifactId> 
+			<version>0.20.2</version> </dependency> -->
 		<dependency>
 			<groupId>com.cloudera.hadoop</groupId>
 			<artifactId>hadoop-core</artifactId>
