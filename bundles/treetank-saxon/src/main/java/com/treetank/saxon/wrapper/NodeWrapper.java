@@ -46,6 +46,8 @@ import net.sf.saxon.value.Value;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
@@ -64,6 +66,7 @@ import com.treetank.axis.PrecedingSiblingAxis;
 import com.treetank.axis.TextFilter;
 import com.treetank.exception.TreetankException;
 import com.treetank.node.ElementNode;
+import com.treetank.saxon.evaluator.XSLTEvaluator;
 import com.treetank.settings.ENodes;
 
 /**
@@ -103,8 +106,10 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     /** Document wrapper. */
     protected transient DocumentWrapper mDocWrapper;
 
-    /** Logger. */
-    protected static final Log LOGGER = LogFactory.getLog(NodeWrapper.class);
+    /**
+     * Log wrapper for better output.
+     */
+    protected static final Logger LOGGER = LoggerFactory.getLogger(NodeWrapper.class);
 
     /** Key of node. */
     protected transient final long mKey;
@@ -126,7 +131,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     protected NodeWrapper(final IDatabase database, final long nodekeyToStart) {
         try {
             if (mDatabase == null || mDatabase.getFile() == null
-            || !(mDatabase.getFile().equals(database.getFile()))) {
+                || !(mDatabase.getFile().equals(database.getFile()))) {
                 mDatabase = database;
 
                 if (mRTX != null && !mRTX.isClosed()) {
@@ -278,7 +283,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
         NodeInfo node = this;
 
-        while(node != null) {
+        while (node != null) {
             baseURI = node.getAttributeValue(StandardNames.XML_BASE);
 
             if (baseURI == null) {
@@ -589,7 +594,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         final FilterAxis axis = new FilterAxis(new DescendantAxis(mRTX), new TextFilter(mRTX));
         final FastStringBuffer fsb = new FastStringBuffer(FastStringBuffer.SMALL);
 
-        while(axis.hasNext()) {
+        while (axis.hasNext()) {
             if (mRTX.getNode().getKind() == ENodes.TEXT_KIND) {
                 fsb.append(mRTX.getValueOfCurrentNode());
             }
@@ -858,7 +863,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         mRTX.moveTo(mKey);
         int index = 0;
 
-        while(mRTX.getNode().hasLeftSibling()) {
+        while (mRTX.getNode().hasLeftSibling()) {
             mRTX.moveToLeftSibling();
             index++;
         }
