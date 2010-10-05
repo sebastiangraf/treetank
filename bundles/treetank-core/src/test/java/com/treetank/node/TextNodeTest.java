@@ -79,10 +79,10 @@ public class TextNodeTest {
         final byte[] value2 = {
             (byte)19, (byte)20
         };
-        final TextNode node = (TextNode)TextNode.createData(99, 13, 14, 15, 19, value);
-        final TextNode node2 = (TextNode)TextNode.createData(99, 13, 14, 15, 19, value);
-        final TextNode node3 = (TextNode)TextNode.createData(99, 13, 14, 15, 19, value2);
-        final TextNode node4 = (TextNode)TextNode.createData(100, 15, 12, 16, 123, value);
+        final TextNode node = (TextNode)TextNode.createData(2, 2, 2, 2, 19, value);
+        final TextNode node2 = (TextNode)TextNode.createData(3, 3, 3, 3, 19, value);
+        final TextNode node3 = (TextNode)TextNode.createData(4, 4, 4, 4, 19, value2);
+        final TextNode node4 = (TextNode)TextNode.createData(5, 5, 5, 5, 123, value);
 
         assertEquals(node2.hashCode(), node.hashCode());
         assertTrue(node2.equals(node));

@@ -62,9 +62,9 @@ public class NamespaceNodeTest {
 
     @Test
     public void testHashCode() {
-        final NamespaceNode node = (NamespaceNode)NamespaceNode.createData(99L, 13L, 14, 15);
-        final NamespaceNode node2 = (NamespaceNode)NamespaceNode.createData(99L, 13L, 14, 15);
-        final NamespaceNode node3 = (NamespaceNode)NamespaceNode.createData(100L, 15L, 12, 16);
+        final NamespaceNode node = (NamespaceNode)NamespaceNode.createData(0, 0, 14, 15);
+        final NamespaceNode node2 = (NamespaceNode)NamespaceNode.createData(1, 1, 14, 15);
+        final NamespaceNode node3 = (NamespaceNode)NamespaceNode.createData(2, 2, 12, 16);
 
         assertEquals(node2.hashCode(), node.hashCode());
         assertTrue(node2.equals(node));

@@ -74,10 +74,10 @@ public class AttributeNodeTest {
             (byte)19, (byte)20
         };
 
-        final AttributeNode node = (AttributeNode)AttributeNode.createData(99, 13, 14, 15, 19, value);
-        final AttributeNode node2 = (AttributeNode)AttributeNode.createData(99, 13, 14, 15, 19, value);
-        final AttributeNode node3 = (AttributeNode)AttributeNode.createData(99, 13, 14, 15, 19, value2);
-        final AttributeNode node4 = (AttributeNode)AttributeNode.createData(100, 15, 12, 16, 123, value);
+        final AttributeNode node = (AttributeNode)AttributeNode.createData(0, 0, 14, 15, 19, value);
+        final AttributeNode node2 = (AttributeNode)AttributeNode.createData(1, 1, 14, 15, 19, value);
+        final AttributeNode node3 = (AttributeNode)AttributeNode.createData(2, 2, 14, 15, 19, value2);
+        final AttributeNode node4 = (AttributeNode)AttributeNode.createData(3, 3, 12, 16, 123, value);
 
         assertEquals(node2.hashCode(), node.hashCode());
         assertTrue(node2.equals(node));

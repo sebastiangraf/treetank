@@ -80,10 +80,10 @@ public class ElementNodeTest {
 
     @Test
     public void testHashCode() {
-        final ElementNode node = (ElementNode)ElementNode.createData(13, 14, 16, 17, 12, 1, 18, 19, 20);
-        final ElementNode node2 = (ElementNode)ElementNode.createData(14, 15, 17, 18, 19, 2, 19, 20, 21);
+        final ElementNode node = (ElementNode)ElementNode.createData(0, 0, 0, 0, 0, 0, 18, 19, 20);
+        final ElementNode node2 = (ElementNode)ElementNode.createData(1, 1, 1, 1, 1, 1, 19, 20, 21);
 
-        final ElementNode node3 = (ElementNode)ElementNode.createData(13, 14, 16, 17, 12, 1, 18, 19, 20);
+        final ElementNode node3 = (ElementNode)ElementNode.createData(2, 2, 2, 2, 2, 2, 18, 19, 20);
 
         assertEquals(node3.hashCode(), node.hashCode());
         assertTrue(node3.equals(node));
