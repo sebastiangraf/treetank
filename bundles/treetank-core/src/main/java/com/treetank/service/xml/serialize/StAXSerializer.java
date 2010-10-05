@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public class StAXSerializer implements XMLEventReader {
+public final class StAXSerializer implements XMLEventReader {
 
     /**
      * Log wrapper for better output.
@@ -79,7 +79,7 @@ public class StAXSerializer implements XMLEventReader {
     private transient XMLEventFactory mFac = XMLEventFactory.newFactory();
 
     /** Current node key. */
-    private transient long key;
+    private transient long mKey;
 
     /**
      * Determines if all end tags have been emitted.
@@ -127,25 +127,39 @@ public class StAXSerializer implements XMLEventReader {
         mStack = new FastStack<Long>();
     }
 
-    private void emitEndElement(final IReadTransaction rtx) {
-        final long nodeKey = rtx.getNode().getNodeKey();
-        mEvent = mFac.createEndElement(rtx.getQNameOfCurrentNode(), new NamespaceIterator(rtx));
-        rtx.moveTo(nodeKey);
+    /** 
+     * Emit end tag.
+     * 
+     * @param paramRTX
+     *                  Treetank reading transaction {@link IReadTransaction}.
+     */
+    private void emitEndTag(final IReadTransaction paramRTX) {
+        final long nodeKey = paramRTX.getNode().getNodeKey();
+        mEvent = mFac.createEndElement(paramRTX.getQNameOfCurrentNode(), new NamespaceIterator(paramRTX));
+        paramRTX.moveTo(nodeKey);
     }
 
-    private void emitNode(final IReadTransaction rtx) {
-        switch (rtx.getNode().getKind()) {
+    /**
+     * Emit a node.
+     * 
+     * @param paramRTX
+     *                  Treetank reading transaction {@link IReadTransaction}.
+     */
+    private void emitNode(final IReadTransaction paramRTX) {
+        switch (paramRTX.getNode().getKind()) {
         case ROOT_KIND:
             mEvent = mFac.createStartDocument();
             break;
         case ELEMENT_KIND:
-            final long key = rtx.getNode().getNodeKey();
-            final QName qName = rtx.getQNameOfCurrentNode();
-            mEvent = mFac.createStartElement(qName, new AttributeIterator(rtx), new NamespaceIterator(rtx));
-            rtx.moveTo(key);
+            final long key = paramRTX.getNode().getNodeKey();
+            final QName qName = paramRTX.getQNameOfCurrentNode();
+            mEvent =
+                mFac.createStartElement(qName, new AttributeIterator(paramRTX), new NamespaceIterator(
+                    paramRTX));
+            paramRTX.moveTo(key);
             break;
         case TEXT_KIND:
-            mEvent = mFac.createCharacters(rtx.getValueOfCurrentNode());
+            mEvent = mFac.createCharacters(paramRTX.getValueOfCurrentNode());
             break;
         default:
             throw new IllegalStateException("Kind not known!");
@@ -223,7 +237,7 @@ public class StAXSerializer implements XMLEventReader {
     public XMLEvent nextEvent() throws XMLStreamException {
         try {
             if (!mCloseElements && !mCloseElementsEmitted) {
-                key = mAxis.next();
+                mKey = mAxis.next();
 
                 if (mNextTag) {
                     if (mAxis.getTransaction().getNode().getKind() != ENodes.ELEMENT_KIND) {
@@ -253,7 +267,7 @@ public class StAXSerializer implements XMLEventReader {
         try {
             if (mCloseElements) {
                 rtx.moveTo(mStack.peek());
-                emitEndElement(rtx);
+                emitEndTag(rtx);
             } else {
                 final ENodes nodeKind = rtx.getNode().getKind();
                 if (((AbsStructNode)rtx.getNode()).hasFirstChild()) {
@@ -264,7 +278,7 @@ public class StAXSerializer implements XMLEventReader {
                     processNode(nodeKind);
                 } else if (((AbsStructNode)rtx.getNode()).hasParent()) {
                     rtx.moveToParent();
-                    emitEndElement(rtx);
+                    emitEndTag(rtx);
                 }
             }
         } catch (final IOException e) {
@@ -277,6 +291,8 @@ public class StAXSerializer implements XMLEventReader {
 
     /**
      * Just calls nextEvent().
+     * 
+     * @return next event.
      */
     @Override
     public Object next() {
@@ -305,7 +321,7 @@ public class StAXSerializer implements XMLEventReader {
     private void processNode(final ENodes mNodeKind) throws IOException {
         switch (mNodeKind) {
         case ELEMENT_KIND:
-            emitEndElement(mAxis.getTransaction());
+            emitEndTag(mAxis.getTransaction());
             break;
         case TEXT_KIND:
             emitNode(mAxis.getTransaction());
@@ -328,12 +344,12 @@ public class StAXSerializer implements XMLEventReader {
         if (mCloseElements) {
             if (!mStack.empty() && mStack.peek() != ((AbsStructNode)rtx.getNode()).getLeftSiblingKey()) {
                 rtx.moveTo(mStack.pop());
-                emitEndElement(rtx);
-                rtx.moveTo(key);
+                emitEndTag(rtx);
+                rtx.moveTo(mKey);
             } else if (!mStack.empty()) {
                 rtx.moveTo(mStack.pop());
-                emitEndElement(rtx);
-                rtx.moveTo(key);
+                emitEndTag(rtx);
+                rtx.moveTo(mKey);
                 mCloseElements = false;
                 mCloseElementsEmitted = true;
             }
@@ -374,7 +390,7 @@ public class StAXSerializer implements XMLEventReader {
     private void moveToNextNode() {
         mCloseElements = true;
         if (mAxis.hasNext()) {
-            key = mAxis.next();
+            mKey = mAxis.next();
         }
     }
 
@@ -403,6 +419,9 @@ public class StAXSerializer implements XMLEventReader {
     // database.close();
     // }
 
+    /**
+     * Implements an iterator for attributes.
+     */
     class AttributeIterator implements Iterator<Attribute> {
 
         /**
@@ -422,7 +441,7 @@ public class StAXSerializer implements XMLEventReader {
         private final long mNodeKey;
 
         /** Factory to create nodes {@link XMLEventFactory}. */
-        private final transient XMLEventFactory fac = XMLEventFactory.newFactory();
+        private final transient XMLEventFactory mFac = XMLEventFactory.newFactory();
 
         /**
          * Constructor.
@@ -461,7 +480,7 @@ public class StAXSerializer implements XMLEventReader {
             final QName qName = mRTX.getQNameOfCurrentNode();
             final String value = mRTX.getValueOfCurrentNode();
             mRTX.moveTo(mNodeKey);
-            return fac.createAttribute(qName, value);
+            return mFac.createAttribute(qName, value);
         }
 
         @Override
@@ -495,7 +514,7 @@ public class StAXSerializer implements XMLEventReader {
         private final long mNodeKey;
 
         /** Factory to create nodes {@link XMLEventFactory}. */
-        private final transient XMLEventFactory fac = XMLEventFactory.newFactory();
+        private final transient XMLEventFactory mFac = XMLEventFactory.newFactory();
 
         /**
          * Constructor.
@@ -533,7 +552,7 @@ public class StAXSerializer implements XMLEventReader {
             assert mRTX.getNode().getKind() == ENodes.NAMESPACE_KIND;
             final QName qName = mRTX.getQNameOfCurrentNode();
             mRTX.moveTo(mNodeKey);
-            return fac.createNamespace(qName.getLocalPart(), qName.getNamespaceURI());
+            return mFac.createNamespace(qName.getLocalPart(), qName.getNamespaceURI());
         }
 
         @Override

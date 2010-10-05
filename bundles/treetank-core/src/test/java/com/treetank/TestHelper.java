@@ -162,9 +162,9 @@ public final class TestHelper {
     /**
      * Read a file into a StringBuilder.
      * 
-     * @param file
+     * @param paramFile
      *            The file to read.
-     * @param whitespaces
+     * @param paramWhitespaces
      *            Retrieve file and don't remove any whitespaces.
      * @return StringBuilder instance, which has the string representation of
      *         the document.
@@ -172,11 +172,12 @@ public final class TestHelper {
      *             throws an IOException if any I/O operation fails.
      */
     @Ignore("Not a test, utility method only")
-    public static final StringBuilder readFile(final File file, final boolean whitespaces) throws IOException {
-        final BufferedReader in = new BufferedReader(new FileReader(file));
+    public static StringBuilder readFile(final File paramFile, final boolean paramWhitespaces)
+        throws IOException {
+        final BufferedReader in = new BufferedReader(new FileReader(paramFile));
         final StringBuilder sBuilder = new StringBuilder();
         for (String line = in.readLine(); line != null; line = in.readLine()) {
-            if (whitespaces) {
+            if (paramWhitespaces) {
                 sBuilder.append(line + ECharsForSerializing.NEWLINE);
             } else {
                 sBuilder.append(line.trim());
@@ -184,7 +185,7 @@ public final class TestHelper {
         }
 
         // Remove last newline.
-        if (whitespaces) {
+        if (paramWhitespaces) {
             sBuilder.replace(sBuilder.length() - 1, sBuilder.length(), "");
         }
         in.close();

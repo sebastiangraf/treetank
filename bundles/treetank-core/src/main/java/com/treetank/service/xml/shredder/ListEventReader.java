@@ -14,7 +14,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
  */
-package com.treetank.wikipedia;
+package com.treetank.service.xml.shredder;
 
 import java.util.List;
 import java.util.NoSuchElementException;

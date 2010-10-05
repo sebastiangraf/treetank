@@ -64,11 +64,19 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
     private transient ContentHandler mContHandler;
 
     /**
-     * {@inheritDoc}.
+     * Constructor.
+     * 
+     * @param paramSession
+     *            Treetank session {@link ISession}.
+     * @param paramHandler
+     *            SAX ContentHandler {@link ContentHandler}.
+     * @param paramVersions
+     *            Revisions to serialize.
      */
-    public SAXSerializer(final ISession mSession, final ContentHandler mHandler, final long... mVersions) {
-        super(mSession, mVersions);
-        mContHandler = mHandler;
+    public SAXSerializer(final ISession paramSession, final ContentHandler paramHandler,
+        final long... paramVersions) {
+        super(paramSession, paramVersions);
+        mContHandler = paramHandler;
     }
 
     @Override

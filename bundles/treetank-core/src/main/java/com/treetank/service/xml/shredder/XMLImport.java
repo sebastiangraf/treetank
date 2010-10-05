@@ -189,7 +189,7 @@ public final class XMLImport implements IImport, Callable<Void> {
                     new XMLShredder(wtx, reader, true).call();
                 } else {
                     // Subsequent shredding.
-                    new XMLUpdateShredder(wtx, reader, true).call();
+                    new XMLUpdateShredder(wtx, reader, true, true).call();
                 }
             }
 

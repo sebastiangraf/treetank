@@ -82,6 +82,7 @@ abstract class AbsSerializer implements Callable<Void> {
     /**
      * Serialize the storage.
      * 
+     * @return null.
      * @throws Exception
      *             if can't call serailzer
      */
@@ -175,15 +176,41 @@ abstract class AbsSerializer implements Callable<Void> {
         return null;
     }
 
+    /** Emit start document. */
     protected abstract void emitStartDocument();
 
-    protected abstract void emitStartElement(final IReadTransaction rtx);
+    /** 
+     * Emit start tag.
+     * 
+     * @param paramRTX
+     *                  Treetank reading transaction {@link IReadTransaction}.
+     */
+    protected abstract void emitStartElement(final IReadTransaction paramRTX);
 
-    protected abstract void emitEndElement(final IReadTransaction rtx);
+    /**
+     * Emit end tag.
+     * 
+     * @param paramRTX
+     *                  Treetank reading transaction {@link IReadTransaction}.
+     */
+    protected abstract void emitEndElement(final IReadTransaction paramRTX);
 
-    protected abstract void emitStartManualElement(final long version);
+    /**
+     * Emit a start tag, which specifies a revision.
+     * 
+     * @param paramVersion
+     *                  The revision to serialize.
+     */
+    protected abstract void emitStartManualElement(final long paramVersion);
 
-    protected abstract void emitEndManualElement(final long version);
+    /**
+     * Emit an end tag, which specifies a revision.
+     * 
+     * @param paramVersion
+     *                  The revision to serialize.
+     */
+    protected abstract void emitEndManualElement(final long paramVersion);
 
+    /** Emit end document. */
     protected abstract void emitEndDocument();
 }

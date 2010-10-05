@@ -16,6 +16,8 @@
  */
 package com.treetank.gui.view.tree;
 
+import java.awt.Color;
+
 import com.treetank.api.IDatabase;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
@@ -40,14 +42,13 @@ import org.slf4j.LoggerFactory;
  */
 public final class TreetankTreeModel extends AbstractTreeModel {
     /** Logger. */
-    private static final Logger LOGGER =
-        LoggerFactory.getLogger(TreetankTreeModel.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TreetankTreeModel.class);
 
-    /** Treetank reading transaction. */
-    private transient static IReadTransaction mRTX;
+    /** Treetank reading transaction {@link IReadTransaction}. */
+    private static transient IReadTransaction mRTX;
 
-    /** Treetank database. */
-    protected transient static IDatabase mDatabase;
+    /** Treetank database {@link IDatabase}. */
+    protected static transient IDatabase mDatabase;
 
     /**
      * Constructor.
@@ -71,8 +72,7 @@ public final class TreetankTreeModel extends AbstractTreeModel {
         try {
             if (mDatabase == null || mDatabase.getFile() == null
                 || !(mDatabase.getFile().equals(database.getFile()))) {
-                mDatabase =
-                    database;
+                mDatabase = database;
 
                 if (mRTX != null && !mRTX.isClosed()) {
                     mRTX.close();
@@ -80,8 +80,7 @@ public final class TreetankTreeModel extends AbstractTreeModel {
             }
 
             if (mRTX == null || mRTX.isClosed()) {
-                mRTX =
-                    mDatabase.getSession().beginReadTransaction();
+                mRTX = mDatabase.getSession().beginReadTransaction();
             }
             mRTX.moveTo(nodekeyToStart);
         } catch (final TreetankException e) {
@@ -90,14 +89,44 @@ public final class TreetankTreeModel extends AbstractTreeModel {
     }
 
     /**
+     * Constructor.
+     * 
+     * @param paramDatabase
+     *            Treetank database {@link IDatabase}.
+     * @param paramNodekeyToStart
+     *            Starting point of transaction (node key).
+     * @param paramRevision
+     *            Revision to open.
+     */
+    public TreetankTreeModel(final IDatabase paramDatabase, final long paramNodekeyToStart,
+        final long paramRevision) {
+        try {
+            if (mDatabase == null || mDatabase.getFile() == null
+                || !(mDatabase.getFile().equals(paramDatabase.getFile()))) {
+                mDatabase = paramDatabase;
+
+                if (mRTX != null && !mRTX.isClosed()) {
+                    mRTX.close();
+                }
+            }
+
+            if (mRTX == null || mRTX.isClosed()) {
+                mRTX = mDatabase.getSession().beginReadTransaction(paramRevision);
+            }
+            mRTX.moveTo(paramNodekeyToStart);
+        } catch (final TreetankException e) {
+            LOGGER.error("TreetankException: " + e.getMessage(), e);
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
+    @Override
     public Object getChild(final Object parent, final int index) {
         // if (index >= 0 && index < getChildCount(parent)) {
-        final IItem parentNode =
-            (IItem)parent;
-        final long parentNodeKey =
-            parentNode.getNodeKey();
+        final IItem parentNode = (IItem)parent;
+        final long parentNodeKey = parentNode.getNodeKey();
         mRTX.moveTo(parentNodeKey);
 
         switch (parentNode.getKind()) {
@@ -106,10 +135,8 @@ public final class TreetankTreeModel extends AbstractTreeModel {
             return mRTX.getNode();
         case ELEMENT_KIND:
             // Namespaces.
-            final int namespCount =
-                ((ElementNode)parentNode).getNamespaceCount();
-            for (int namespIndex =
-                0; namespIndex < namespCount; namespIndex++) {
+            final int namespCount = ((ElementNode)parentNode).getNamespaceCount();
+            for (int namespIndex = 0; namespIndex < namespCount; namespIndex++) {
                 mRTX.moveToNamespace(namespIndex);
                 if (namespIndex == index) {
                     return mRTX.getNode();
@@ -118,10 +145,8 @@ public final class TreetankTreeModel extends AbstractTreeModel {
             }
 
             // Attributes.
-            final int attCount =
-                ((ElementNode)parentNode).getAttributeCount();
-            for (int attIndex =
-                0; attIndex < attCount; attIndex++) {
+            final int attCount = ((ElementNode)parentNode).getAttributeCount();
+            for (int attIndex = 0; attIndex < attCount; attIndex++) {
                 mRTX.moveToAttribute(attIndex);
                 if ((namespCount + attIndex) == index) {
                     return mRTX.getNode();
@@ -130,9 +155,7 @@ public final class TreetankTreeModel extends AbstractTreeModel {
             }
 
             // Children.
-            for (long childIndex =
-                0, childCount =
-                ((ElementNode)parentNode).getChildCount(); childIndex < childCount; childIndex++) {
+            for (long childIndex = 0, childCount = ((ElementNode)parentNode).getChildCount(); childIndex < childCount; childIndex++) {
                 if (childIndex == 0) {
                     mRTX.moveToFirstChild();
                 } else {
@@ -153,22 +176,19 @@ public final class TreetankTreeModel extends AbstractTreeModel {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getChildCount(final Object parent) {
         mRTX.moveTo(((IItem)parent).getNodeKey());
 
-        final IItem parentNode =
-            mRTX.getNode();
+        final IItem parentNode = mRTX.getNode();
 
         switch (parentNode.getKind()) {
         case ROOT_KIND:
             return 1;
         case ELEMENT_KIND:
-            final int namespaces =
-                ((ElementNode)parentNode).getNamespaceCount();
-            final int attributes =
-                ((ElementNode)parentNode).getAttributeCount();
-            final long children =
-                ((ElementNode)parentNode).getChildCount();
+            final int namespaces = ((ElementNode)parentNode).getNamespaceCount();
+            final int attributes = ((ElementNode)parentNode).getAttributeCount();
+            final long children = ((ElementNode)parentNode).getChildCount();
 
             // TODO: possibly unsafe cast.
             return (int)(namespaces + attributes + children);
@@ -185,51 +205,38 @@ public final class TreetankTreeModel extends AbstractTreeModel {
         // Parent node.
         mRTX.moveTo(((IItem)parent).getNodeKey());
         System.out.println(mRTX.getQNameOfCurrentNode());
-        final IItem parentNode =
-            mRTX.getNode();
+        final IItem parentNode = mRTX.getNode();
 
         // Child node.
-        final IItem childNode =
-            (IItem)child;
+        final IItem childNode = (IItem)child;
 
         // Return value.
-        int index =
-            -1;
+        int index = -1;
 
         // Values needed.
-        final long nodeKey =
-            parentNode.getNodeKey();
-        int namespCount =
-            0;
-        int attCount =
-            0;
+        final long nodeKey = parentNode.getNodeKey();
+        int namespCount = 0;
+        int attCount = 0;
 
         switch (childNode.getKind()) {
         case NAMESPACE_KIND:
-            namespCount =
-                ((ElementNode)parentNode).getNamespaceCount();
-            for (int i =
-                0; i < namespCount; i++) {
+            namespCount = ((ElementNode)parentNode).getNamespaceCount();
+            for (int i = 0; i < namespCount; i++) {
                 mRTX.moveToNamespace(i);
                 if (mRTX.getNode().equals(childNode)) {
-                    index =
-                        i;
+                    index = i;
                     break;
                 }
                 mRTX.moveTo(nodeKey);
             }
             break;
         case ATTRIBUTE_KIND:
-            namespCount =
-                ((ElementNode)parentNode).getNamespaceCount();
-            attCount =
-                ((ElementNode)parentNode).getAttributeCount();
-            for (int i =
-                0; i < attCount; i++) {
+            namespCount = ((ElementNode)parentNode).getNamespaceCount();
+            attCount = ((ElementNode)parentNode).getAttributeCount();
+            for (int i = 0; i < attCount; i++) {
                 mRTX.moveToAttribute(i);
                 if (mRTX.getNode().equals(childNode)) {
-                    index =
-                        namespCount + i;
+                    index = namespCount + i;
                     break;
                 }
                 mRTX.moveTo(nodeKey);
@@ -243,20 +250,14 @@ public final class TreetankTreeModel extends AbstractTreeModel {
         case TEXT_KIND:
             switch (parentNode.getKind()) {
             case ROOT_KIND:
-                namespCount =
-                    0;
-                attCount =
-                    0;
-                index =
-                    getChildIndex(parentNode, childNode);
+                namespCount = 0;
+                attCount = 0;
+                index = getChildIndex(parentNode, childNode);
                 break;
             case ELEMENT_KIND:
-                namespCount =
-                    ((ElementNode)parentNode).getNamespaceCount();
-                attCount =
-                    ((ElementNode)parentNode).getAttributeCount();
-                index =
-                    getChildIndex(parentNode, childNode);
+                namespCount = ((ElementNode)parentNode).getNamespaceCount();
+                attCount = ((ElementNode)parentNode).getAttributeCount();
+                index = getChildIndex(parentNode, childNode);
                 break;
             default:
                 throw new IllegalStateException("Parent node kind not known!");
@@ -272,6 +273,7 @@ public final class TreetankTreeModel extends AbstractTreeModel {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Object getRoot() {
         mRTX.moveToDocumentRoot();
         return mRTX.getNode();
@@ -280,17 +282,16 @@ public final class TreetankTreeModel extends AbstractTreeModel {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isLeaf(final Object node) {
         mRTX.moveTo(((IItem)node).getNodeKey());
-        final IItem currNode =
-            mRTX.getNode();
+        final IItem currNode = mRTX.getNode();
 
         switch (currNode.getKind()) {
         case ROOT_KIND:
             return false;
         case ELEMENT_KIND:
-            final ElementNode elemNode =
-                (ElementNode)currNode;
+            final ElementNode elemNode = (ElementNode)currNode;
             if (elemNode.getNamespaceCount() > 0) {
                 return false;
             }
@@ -316,33 +317,25 @@ public final class TreetankTreeModel extends AbstractTreeModel {
      * @return Index of child node.
      */
     private int getChildIndex(final IItem parentNode, final IItem childNode) {
-        int index =
-            -1;
-        final long childCount =
-            ((AbsStructNode)parentNode).getChildCount();
+        int index = -1;
+        final long childCount = ((AbsStructNode)parentNode).getChildCount();
 
-        int namespCount =
-            0;
-        int attCount =
-            0;
+        int namespCount = 0;
+        int attCount = 0;
 
         if (parentNode.getKind().getNodeIdentifier() == ENodes.ELEMENT_KIND.getNodeIdentifier()) {
-            namespCount =
-                ((ElementNode)parentNode).getNamespaceCount();
-            attCount =
-                ((ElementNode)parentNode).getAttributeCount();
+            namespCount = ((ElementNode)parentNode).getNamespaceCount();
+            attCount = ((ElementNode)parentNode).getAttributeCount();
         }
 
-        for (int i =
-            0; i < childCount; i++) {
+        for (int i = 0; i < childCount; i++) {
             if (i == 0) {
                 mRTX.moveToFirstChild();
             } else {
                 mRTX.moveToRightSibling();
             }
             if (mRTX.getNode().equals(childNode)) {
-                index =
-                    namespCount + attCount + i;
+                index = namespCount + attCount + i;
                 break;
             }
         }

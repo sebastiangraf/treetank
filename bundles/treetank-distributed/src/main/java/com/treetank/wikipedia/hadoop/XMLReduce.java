@@ -39,8 +39,8 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.slf4j.LoggerFactory;
 
+import com.treetank.service.xml.shredder.ListEventReader;
 import com.treetank.utils.LogWrapper;
-import com.treetank.wikipedia.ListEventReader;
 
 /**
  * <h1>XMLReducer</h1>

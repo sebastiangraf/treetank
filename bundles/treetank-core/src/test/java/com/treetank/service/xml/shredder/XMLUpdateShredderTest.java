@@ -85,16 +85,16 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
 
         // Sort files array according to file names.
         Collections.sort(list, new Comparator<Object>() {
-            public int compare(final Object o1, final Object o2) {
-                final String fileName1 =
-                    ((File)o1).getName().toString()
-                        .substring(0, ((File)o1).getName().toString().indexOf('.'));
-                final String fileName2 =
-                    ((File)o2).getName().toString()
-                        .substring(0, ((File)o2).getName().toString().indexOf('.'));
-                if (Integer.parseInt(fileName1) < Integer.parseInt(fileName2)) {
+            public int compare(final Object paramFirst, final Object paramSecond) {
+                final String firstName =
+                    ((File)paramFirst).getName().toString().substring(0,
+                        ((File)paramFirst).getName().toString().indexOf('.'));
+                final String secondName =
+                    ((File)paramSecond).getName().toString().substring(0,
+                        ((File)paramSecond).getName().toString().indexOf('.'));
+                if (Integer.parseInt(firstName) < Integer.parseInt(secondName)) {
                     return -1;
-                } else if (Integer.parseInt(fileName1) > Integer.parseInt(fileName2)) {
+                } else if (Integer.parseInt(firstName) > Integer.parseInt(secondName)) {
                     return +1;
                 } else {
                     return 0;
@@ -113,7 +113,7 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
                     first = false;
                 } else {
                     final XMLShredder shredder =
-                        new XMLUpdateShredder(wtx, XMLShredder.createReader(file), true);
+                        new XMLUpdateShredder(wtx, XMLShredder.createReader(file), true, true);
                     shredder.call();
                 }
                 assertEquals(i, wtx.getRevisionNumber());
@@ -126,8 +126,6 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
                 final XMLSerializer serializer = new XMLSerializerBuilder(session, out).build();
                 serializer.call();
                 final StringBuilder sBuilder = TestHelper.readFile(file.getAbsoluteFile(), false);
-
-                System.out.println(out.toString());
 
                 assertXMLEqual(sBuilder.toString(), out.toString());
             }

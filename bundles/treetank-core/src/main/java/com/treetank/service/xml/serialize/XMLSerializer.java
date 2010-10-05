@@ -16,6 +16,12 @@
  */
 package com.treetank.service.xml.serialize;
 
+import static com.treetank.service.xml.serialize.XMLSerializerProperties.S_ID;
+import static com.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT;
+import static com.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT_SPACES;
+import static com.treetank.service.xml.serialize.XMLSerializerProperties.S_REST;
+import static com.treetank.service.xml.serialize.XMLSerializerProperties.S_XMLDECL;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,7 +30,6 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.ConcurrentMap;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.treetank.access.Database;
@@ -37,12 +42,6 @@ import com.treetank.node.ElementNode;
 import com.treetank.settings.ECharsForSerializing;
 import com.treetank.utils.IConstants;
 import com.treetank.utils.LogWrapper;
-
-import static com.treetank.service.xml.serialize.XMLSerializerProperties.S_ID;
-import static com.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT;
-import static com.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT_SPACES;
-import static com.treetank.service.xml.serialize.XMLSerializerProperties.S_REST;
-import static com.treetank.service.xml.serialize.XMLSerializerProperties.S_XMLDECL;
 
 /**
  * <h1>XMLSerializer</h1>
@@ -64,11 +63,12 @@ public final class XMLSerializer extends AbsSerializer {
     private static final int ASCII_OFFSET = 48;
 
     /** Precalculated powers of each available long digit. */
-    private static final long[] LONG_POWERS = {
-        1L, 10L, 100L, 1000L, 10000L, 100000L, 1000000L, 10000000L, 100000000L, 1000000000L, 10000000000L,
-        100000000000L, 1000000000000L, 10000000000000L, 100000000000000L, 1000000000000000L,
-        10000000000000000L, 100000000000000000L, 1000000000000000000L
-    };
+    private static final long[] LONG_POWERS =
+        {
+            1L, 10L, 100L, 1000L, 10000L, 100000L, 1000000L, 10000000L, 100000000L, 1000000000L,
+            10000000000L, 100000000000L, 1000000000000L, 10000000000000L, 100000000000000L,
+            1000000000000000L, 10000000000000000L, 100000000000000000L, 1000000000000000000L
+        };
 
     /** OutputStream to write to. */
     private final OutputStream mOut;
@@ -92,24 +92,24 @@ public final class XMLSerializer extends AbsSerializer {
      * Initialize XMLStreamReader implementation with transaction. The cursor
      * points to the node the XMLStreamReader starts to read.
      * 
-     * @param mSession
+     * @param paramSession
      *            Session for read XML
-     * @param mNodeKey
+     * @param paramNodeKey
      *            Node Key
-     * @param builder
+     * @param paramBuilder
      *            Builder of XML Serializer
-     * @param mVersions
+     * @param paramVersions
      *            Version to serailze
      */
-    private XMLSerializer(final ISession mSession, final long mNodeKey, final XMLSerializerBuilder builder,
-        final long... mVersions) {
-        super(mSession, mNodeKey, mVersions);
-        mOut = new BufferedOutputStream(builder.mStream, 4096);
-        mIndent = builder.mIndent;
-        mSerializeXMLDeclaration = builder.mDeclaration;
-        mSerializeRest = builder.mREST;
-        mSerializeId = builder.mID;
-        mIndentSpaces = builder.mIndentSpaces;
+    private XMLSerializer(final ISession paramSession, final long paramNodeKey,
+        final XMLSerializerBuilder paramBuilder, final long... paramVersions) {
+        super(paramSession, paramNodeKey, paramVersions);
+        mOut = new BufferedOutputStream(paramBuilder.mStream, 4096);
+        mIndent = paramBuilder.mIndent;
+        mSerializeXMLDeclaration = paramBuilder.mDeclaration;
+        mSerializeRest = paramBuilder.mREST;
+        mSerializeId = paramBuilder.mID;
+        mIndentSpaces = paramBuilder.mIndentSpaces;
     }
 
     /**
@@ -118,9 +118,9 @@ public final class XMLSerializer extends AbsSerializer {
      * @throws IOException
      */
     @Override
-    protected void emitEndElement(final IReadTransaction mRtx) {
+    protected void emitEndElement(final IReadTransaction paramRTX) {
         try {
-            switch (mRtx.getNode().getKind()) {
+            switch (paramRTX.getNode().getKind()) {
             case ROOT_KIND:
                 if (mIndent) {
                     mOut.write(ECharsForSerializing.NEWLINE.getBytes());
@@ -130,23 +130,23 @@ public final class XMLSerializer extends AbsSerializer {
                 // Emit start element.
                 indent();
                 mOut.write(ECharsForSerializing.OPEN.getBytes());
-                mOut.write(mRtx.rawNameForKey(mRtx.getNode().getNameKey()));
-                final long key = mRtx.getNode().getNodeKey();
+                mOut.write(paramRTX.rawNameForKey(paramRTX.getNode().getNameKey()));
+                final long key = paramRTX.getNode().getNodeKey();
                 // Emit namespace declarations.
-                for (int index = 0, length = ((ElementNode)mRtx.getNode()).getNamespaceCount(); index < length; index++) {
-                    mRtx.moveToNamespace(index);
-                    if (mRtx.nameForKey(mRtx.getNode().getNameKey()).length() == 0) {
+                for (int index = 0, length = ((ElementNode)paramRTX.getNode()).getNamespaceCount(); index < length; index++) {
+                    paramRTX.moveToNamespace(index);
+                    if (paramRTX.nameForKey(paramRTX.getNode().getNameKey()).length() == 0) {
                         mOut.write(ECharsForSerializing.XMLNS.getBytes());
-                        write(mRtx.nameForKey(mRtx.getNode().getURIKey()));
+                        write(paramRTX.nameForKey(paramRTX.getNode().getURIKey()));
                         mOut.write(ECharsForSerializing.QUOTE.getBytes());
                     } else {
                         mOut.write(ECharsForSerializing.XMLNS_COLON.getBytes());
-                        write(mRtx.nameForKey(mRtx.getNode().getNameKey()));
+                        write(paramRTX.nameForKey(paramRTX.getNode().getNameKey()));
                         mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
-                        write(mRtx.nameForKey(mRtx.getNode().getURIKey()));
+                        write(paramRTX.nameForKey(paramRTX.getNode().getURIKey()));
                         mOut.write(ECharsForSerializing.QUOTE.getBytes());
                     }
-                    mRtx.moveTo(key);
+                    paramRTX.moveTo(key);
                 }
                 // Emit attributes.
                 // Add virtual rest:id attribute.
@@ -158,26 +158,26 @@ public final class XMLSerializer extends AbsSerializer {
                     }
                     mOut.write(ECharsForSerializing.ID.getBytes());
                     mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
-                    write(mRtx.getNode().getNodeKey());
+                    write(paramRTX.getNode().getNodeKey());
                     mOut.write(ECharsForSerializing.QUOTE.getBytes());
                 }
 
                 // Iterate over all persistent attributes.
-                for (int index = 0; index < ((ElementNode)mRtx.getNode()).getAttributeCount(); index++) {
-                    final long nodeKey = mRtx.getNode().getNodeKey();
-                    mRtx.moveToAttribute(index);
-                    if (mRtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
+                for (int index = 0; index < ((ElementNode)paramRTX.getNode()).getAttributeCount(); index++) {
+                    final long nodeKey = paramRTX.getNode().getNodeKey();
+                    paramRTX.moveToAttribute(index);
+                    if (paramRTX.getNode().getKind() == ENodes.ELEMENT_KIND) {
                         System.out.println(nodeKey);
-                        System.out.println(mRtx.getNode().getNodeKey());
+                        System.out.println(paramRTX.getNode().getNodeKey());
                     }
                     mOut.write(ECharsForSerializing.SPACE.getBytes());
-                    mOut.write(mRtx.rawNameForKey(mRtx.getNode().getNameKey()));
+                    mOut.write(paramRTX.rawNameForKey(paramRTX.getNode().getNameKey()));
                     mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
-                    mOut.write(mRtx.getNode().getRawValue());
+                    mOut.write(paramRTX.getNode().getRawValue());
                     mOut.write(ECharsForSerializing.QUOTE.getBytes());
-                    mRtx.moveTo(key);
+                    paramRTX.moveTo(key);
                 }
-                if (((AbsStructNode)mRtx.getNode()).hasFirstChild()) {
+                if (((AbsStructNode)paramRTX.getNode()).hasFirstChild()) {
                     mOut.write(ECharsForSerializing.CLOSE.getBytes());
                 } else {
                     mOut.write(ECharsForSerializing.SLASH_CLOSE.getBytes());
@@ -188,7 +188,7 @@ public final class XMLSerializer extends AbsSerializer {
                 break;
             case TEXT_KIND:
                 indent();
-                mOut.write(mRtx.getNode().getRawValue());
+                mOut.write(paramRTX.getNode().getRawValue());
                 if (mIndent) {
                     mOut.write(ECharsForSerializing.NEWLINE.getBytes());
                 }
@@ -202,16 +202,16 @@ public final class XMLSerializer extends AbsSerializer {
     /**
      * Emit end element.
      * 
-     * @param mRtx
+     * @param paramRTX
      *            Read Transaction
      * @throws IOException
      */
     @Override
-    protected void emitStartElement(final IReadTransaction mRtx) {
+    protected void emitStartElement(final IReadTransaction paramRTX) {
         try {
             indent();
             mOut.write(ECharsForSerializing.OPEN_SLASH.getBytes());
-            mOut.write(mRtx.rawNameForKey(mRtx.getNode().getNameKey()));
+            mOut.write(paramRTX.rawNameForKey(paramRTX.getNode().getNameKey()));
             mOut.write(ECharsForSerializing.CLOSE.getBytes());
             if (mIndent) {
                 mOut.write(ECharsForSerializing.NEWLINE.getBytes());
