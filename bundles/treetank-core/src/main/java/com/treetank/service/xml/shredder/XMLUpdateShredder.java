@@ -26,15 +26,18 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Characters;
-import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import org.slf4j.LoggerFactory;
+
 import com.treetank.access.Database;
 import com.treetank.access.DatabaseConfiguration;
+import com.treetank.access.WriteTransaction;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -47,8 +50,6 @@ import com.treetank.node.ElementNode;
 import com.treetank.settings.EFixed;
 import com.treetank.utils.FastStack;
 import com.treetank.utils.LogWrapper;
-
-import org.slf4j.LoggerFactory;
 
 /**
  * This class appends a given {@link XMLStreamReader} to a {@link IWriteTransaction}. The content of the
@@ -65,8 +66,8 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(XMLUpdateShredder.class));
+    private static final LogWrapper LOGWRAPPER =
+        new LogWrapper(LoggerFactory.getLogger(XMLUpdateShredder.class));
 
     // ===================== Initial setup ================
 
@@ -139,6 +140,12 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
     /** Determines if an insert occured. */
     private boolean mInsert;
 
+    /** Determines if changes should be commited. */
+    private transient boolean mCommit;
+    
+    /** {@link XMLEventParser} used to check descendants. */
+    private transient XMLEventReader mParser;
+
     /**
      * Normal constructor to invoke a shredding process on a existing {@link WriteTransaction}.
      * 
@@ -150,6 +157,8 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * @param paramAddAsFirstChild
      *            If the insert is occuring on a node in an existing tree. <code>false</code> is not possible
      *            when wtx is on root node.
+     * @param paramCommit
+     *            Determines if changes should be commited.
      * @throws TreetankUsageException
      *             If insertasfirstChild && updateOnly is both true OR if wtx is
      *             not pointing to doc-root and updateOnly= true
@@ -158,12 +167,14 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * 
      */
     public XMLUpdateShredder(final IWriteTransaction paramWtx, final XMLEventReader paramReader,
-        final boolean paramAddAsFirstChild) throws TreetankUsageException, TreetankIOException {
+        final boolean paramAddAsFirstChild, final boolean paramCommit) throws TreetankUsageException,
+        TreetankIOException {
         super(paramWtx, paramReader, paramAddAsFirstChild);
-        if (paramWtx.getNode().getKind() != ENodes.ROOT_KIND) {
-            throw new TreetankUsageException("WriteTransaction must point to doc-root at the beginning!");
-        }
+        // if (paramWtx.getNode().getKind() != ENodes.ROOT_KIND) {
+        // throw new TreetankUsageException("WriteTransaction must point to doc-root at the beginning!");
+        // }
         mMaxNodeKey = mWtx.getMaxNodeKey();
+        mCommit = paramCommit;
     }
 
     /**
@@ -177,7 +188,9 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
     public Long call() throws TreetankException {
         final long revision = mWtx.getRevisionNumber();
         updateOnly();
-        mWtx.commit();
+        if (mCommit) {
+            mWtx.commit();
+        }
         return revision;
     }
 
@@ -196,7 +209,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
 
             // Setup up of first element of the data.
             XMLEvent event = mReader.nextEvent();
-            mWtx.moveToDocumentRoot();
+            // mWtx.moveToDocumentRoot();
 
             // Get root element of subtree or whole XML document to shredder.
             QName rootElem;
@@ -216,10 +229,12 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             // If structure already exists, make a sync against the current
             // structure.
             if (mMaxNodeKey != 0) {
-                // Find the start key for the update operation.
-                long startkey = (Long)EFixed.ROOT_NODE_KEY.getStandardProperty() + 1;
-                while (!mWtx.moveTo(startkey)) {
-                    startkey++;
+                if (mWtx.getNode().getKind() == ENodes.ROOT_KIND) {
+                    // Find the start key for the update operation.
+                    long startkey = (Long)EFixed.ROOT_NODE_KEY.getStandardProperty() + 1;
+                    while (!mWtx.moveTo(startkey)) {
+                        startkey++;
+                    }
                 }
 
                 // Iterate over all nodes.
@@ -405,8 +420,8 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                         // After an insert or after nodes were the same.
                         event = mReader.nextEvent();
 
-                        if (event.getEventType() == XMLStreamConstants.END_ELEMENT
-                            && rootElem.equals(((EndElement)event).getName()) && mLevelInToShredder == 0) {
+                        if (event.isEndElement() && rootElem.equals(event.asEndElement().getName())
+                            && mLevelInToShredder == 0) {
                             // End with shredding if end_elem equals root-elem.
                             break;
                         }
@@ -656,10 +671,10 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                  * Check if a node in the shreddered file on the same level
                  * equals the current element node.
                  */
-                if (mEvent instanceof StartElement) {
-                    mFound = checkElement((StartElement)mEvent);
-                } else if (mEvent instanceof Characters) {
-                    mFound = checkText((Characters)mEvent);
+                if (mEvent.isStartElement()) {
+                    mFound = checkElement(mEvent.asStartElement());
+                } else if (mEvent.isCharacters()) {
+                    mFound = checkText(mEvent.asCharacters());
                 }
                 if (mWtx.getNode().getNodeKey() != mNodeKey) {
                     mIsRightSibling = true;
@@ -673,10 +688,10 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                      * so check all descendants. If they match the node must be
                      * inserted.
                      */
-                    if (mEvent instanceof StartElement) {
-                        mFound = checkDescendants(mLevelInToShredder, (StartElement)mEvent, stack, true);
-                    } else {
-                        mFound = checkText((Characters)mEvent);
+                    if (mEvent.isStartElement()) {
+                        mFound = checkDescendants(mLevelInToShredder, mEvent.asStartElement(), stack, true);
+                    } else if (mEvent.isCharacters()) {
+                        mFound = checkText(mEvent.asCharacters());
                     }
                     mWtx.moveTo(keyMatches);
                 }
@@ -1009,17 +1024,16 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
     private boolean checkDescendants(final int mLevelInToShredder, final StartElement mElem,
         final FastStack<Long> mStack, final boolean mFirst) throws XMLStreamException, IOException {
         boolean found = false;
-        XMLEventReader mParser = null;
 
         if (mFirst) {
             /*
              * Setup new StAX parser and move it to the node, where the current
-             * StAX parser currently is.
+             * StAX parser is.
              */
             mStack.push((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
-            int level = 0;
-            boolean foundParsedElement = false;
             mParser = createReader(null);
+            boolean foundParsedElement = false;
+            int level = 0;
             while (mParser.hasNext() && !foundParsedElement) {
                 final XMLEvent xmlEvent = mParser.nextEvent();
                 switch (xmlEvent.getEventType()) {
@@ -1039,6 +1053,8 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                 }
             }
         }
+        
+        assert mParser != null;
 
         // Move cursor.
         boolean moved = false;
@@ -1264,7 +1280,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             final IWriteTransaction wtx = session.beginWriteTransaction();
             mFile = new File(args[0]);
             final XMLEventReader reader = createReader(null);
-            final XMLUpdateShredder shredder = new XMLUpdateShredder(wtx, reader, true);
+            final XMLUpdateShredder shredder = new XMLUpdateShredder(wtx, reader, true, true);
             shredder.call();
 
             wtx.close();

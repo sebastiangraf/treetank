@@ -327,8 +327,8 @@ public enum GUICommands implements IGUICommand {
             final JTextArea xmlPane = paramGUI.getXMLPane();
 
             // Use our Treetank model and renderer.
-            tree.setModel(new TreetankTreeModel(database, paramRevision));
-            tree.setCellRenderer(new TreetankTreeCellRenderer(database, paramRevision));
+            tree.setModel(new TreetankTreeModel(database, 0, paramRevision));
+            tree.setCellRenderer(new TreetankTreeCellRenderer(database, 0, paramRevision));
 
             // Serialize file into XML view if it is empty.
             out = new ByteArrayOutputStream();
@@ -577,7 +577,7 @@ public enum GUICommands implements IGUICommand {
                     final IWriteTransaction wtx = session.beginWriteTransaction();
                     final XMLEventReader reader = XMLShredder.createReader(source);
                     if (paramUpdateOnly) {
-                        final XMLShredder shredder = new XMLUpdateShredder(wtx, reader, true);
+                        final XMLShredder shredder = new XMLUpdateShredder(wtx, reader, true, true);
                         shredder.call();
                     } else {
                         final XMLShredder shredder = new XMLShredder(wtx, reader, true);
