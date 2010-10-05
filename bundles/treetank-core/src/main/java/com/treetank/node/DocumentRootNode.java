@@ -17,6 +17,8 @@
 
 package com.treetank.node;
 
+import java.util.Arrays;
+
 import com.treetank.settings.EFixed;
 
 /**
@@ -74,6 +76,15 @@ public final class DocumentRootNode extends AbsStructNode {
         longData[AbsStructNode.LEFT_SIBLING_KEY] = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
         longData[AbsStructNode.RIGHT_SIBLING_KEY] = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
         return new DocumentRootNode(longData, intData);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 37;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(mLongData);
+        result = prime * result + Arrays.hashCode(mIntData);
+        return result;
     }
 
 }

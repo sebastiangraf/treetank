@@ -175,9 +175,9 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
      *            to be set
      */
     public final void setHash(final long... paramHash) {
-        final int prime = 13;
-
-        final long result = prime *  Arrays.hashCode(mLongData);
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(paramHash);
         mLongData[HASHCODE] = result;
     }
 
@@ -211,13 +211,7 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Arrays.hashCode(mLongData);
-        result = prime * result + Arrays.hashCode(mIntData);
-        return result;
-    }
+    public abstract int hashCode();
 
     @Override
     public boolean equals(final Object mObj) {
