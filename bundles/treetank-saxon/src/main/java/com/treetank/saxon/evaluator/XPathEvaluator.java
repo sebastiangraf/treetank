@@ -18,6 +18,10 @@ package com.treetank.saxon.evaluator;
 
 import java.util.concurrent.Callable;
 
+import com.treetank.api.IDatabase;
+import com.treetank.saxon.wrapper.DocumentWrapper;
+import com.treetank.saxon.wrapper.NodeWrapper;
+
 import net.sf.saxon.Configuration;
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.Processor;
@@ -26,12 +30,8 @@ import net.sf.saxon.s9api.XPathCompiler;
 import net.sf.saxon.s9api.XPathSelector;
 import net.sf.saxon.s9api.XdmItem;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import com.treetank.api.IDatabase;
-import com.treetank.saxon.wrapper.DocumentWrapper;
-import com.treetank.saxon.wrapper.NodeWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <h1>XPath Evaluator</h1>
@@ -52,8 +52,10 @@ public final class XPathEvaluator implements Callable<XPathSelector> {
     /** Treetank database. */
     private transient final IDatabase mDatabase;
 
-    /** Logger. */
-    private static final Log LOGGER = LogFactory.getLog(XPathEvaluator.class);
+    /**
+     * Log wrapper for better output.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(XPathEvaluator.class);
 
     /**
      * Constructor.

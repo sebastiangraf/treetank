@@ -18,6 +18,10 @@ package com.treetank.saxon.evaluator;
 
 import java.util.concurrent.Callable;
 
+import com.treetank.api.IDatabase;
+import com.treetank.saxon.wrapper.DocumentWrapper;
+import com.treetank.saxon.wrapper.NodeWrapper;
+
 import net.sf.saxon.Configuration;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.SaxonApiException;
@@ -25,12 +29,8 @@ import net.sf.saxon.s9api.XQueryCompiler;
 import net.sf.saxon.s9api.XQueryExecutable;
 import net.sf.saxon.s9api.XdmValue;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import com.treetank.api.IDatabase;
-import com.treetank.saxon.wrapper.DocumentWrapper;
-import com.treetank.saxon.wrapper.NodeWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <h1>XQuery evaluator</h1>
@@ -45,8 +45,10 @@ import com.treetank.saxon.wrapper.NodeWrapper;
  */
 public final class XQueryEvaluator implements Callable<XdmValue> {
 
-    /** Logger. */
-    private static final Log LOGGER = LogFactory.getLog(com.treetank.saxon.evaluator.XQueryEvaluator.class);
+    /**
+     * Log wrapper for better output.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(XQueryEvaluator.class);
 
     /** XQuery expression. */
     private final transient String mExpression;
