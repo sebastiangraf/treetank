@@ -60,4 +60,9 @@ public final class DeletedNode extends AbsNode {
         longData[AbsNode.PARENT_KEY] = parentKey;
         return new DeletedNode(longData, intData);
     }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
 }

@@ -18,6 +18,7 @@
 package com.treetank.node;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.treetank.io.ITTSink;
@@ -232,6 +233,16 @@ public final class ElementNode extends AbsStructNode {
             .append(getNameKey()).append("\n\tnamespaces: ").append(mNamespaceKeys.toString()).append(
                 "\n\tattributes: ").append(mAttributeKeys.toString()).toString();
         return returnVal.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 43;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(mIntData);
+//        result = prime * result + mAttributeKeys.hashCode();
+//        result = prime * result + mNamespaceKeys.hashCode();
+        return result;
     }
 
 }

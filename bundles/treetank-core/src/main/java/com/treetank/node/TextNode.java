@@ -118,14 +118,15 @@ public final class TextNode extends AbsStructNode {
     }
 
     @Override
-    public void setChildCount(long mChildCount) {
+    public void setChildCount(final long paramChildCount) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
+        final int prime = 51;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(mIntData);
         result = prime * result + Arrays.hashCode(mValue);
         return result;
     }

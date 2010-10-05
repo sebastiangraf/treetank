@@ -17,6 +17,8 @@
 
 package com.treetank.node;
 
+import java.util.Arrays;
+
 /**
  * <h1>NamespaceNode</h1>
  * 
@@ -108,6 +110,14 @@ public final class NamespaceNode extends AbsNode {
         returnVal.append("\n\ttype key: ").append(getTypeKey()).append("\n\tname key: ").append(getNameKey())
             .toString();
         return returnVal.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 49;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(mIntData);
+        return result;
     }
 
 }
