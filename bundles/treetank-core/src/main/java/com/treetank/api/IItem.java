@@ -26,6 +26,10 @@ import com.treetank.node.ENodes;
  */
 public interface IItem {
 
+    void setHash(final long hash);
+
+    long getHash();
+
     /**
      * Sets unique node key.
      * 
