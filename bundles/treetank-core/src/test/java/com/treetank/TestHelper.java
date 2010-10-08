@@ -120,8 +120,9 @@ public final class TestHelper {
     }
 
     @Ignore
-    public static NodePage getNodePage(final long revision, final int offset, final int length) {
-        final NodePage page = new NodePage(0, revision);
+    public static NodePage getNodePage(final long revision, final int offset, final int length,
+        final long nodePageKey) {
+        final NodePage page = new NodePage(nodePageKey, revision);
         for (int i = offset; i < length; i++) {
             switch (random.nextInt(6)) {
             case 0:

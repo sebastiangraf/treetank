@@ -230,7 +230,7 @@ public final class ElementNode extends AbsStructNode {
     public String toString() {
         final StringBuilder returnVal = new StringBuilder(super.toString());
         returnVal.append("\n\tname key: ").append(getNameKey()).append("\n\turi key: ").append(getURIKey())
-            .append(getNameKey()).append("\n\tnamespaces: ").append(mNamespaceKeys.toString()).append(
+            .append("\n\tnamespaces: ").append(mNamespaceKeys.toString()).append(
                 "\n\tattributes: ").append(mAttributeKeys.toString()).toString();
         return returnVal.toString();
     }

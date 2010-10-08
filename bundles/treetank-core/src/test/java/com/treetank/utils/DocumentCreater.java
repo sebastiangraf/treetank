@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+/**
+ * Copyright (c) 2010, Distributed Systems Group, University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * THE SOFTWARE IS PROVIDED AS IS AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
  * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
@@ -13,17 +13,16 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id:TestDocument.java 4373 2008-08-25 07:24:30Z kramis $
  */
 
 package com.treetank.utils;
-
-import static org.junit.Assert.assertTrue;
 
 import javax.xml.namespace.QName;
 
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * <h1>TestDocument</h1>
@@ -63,13 +62,13 @@ import com.treetank.exception.TreetankException;
  */
 public final class DocumentCreater {
 
-    /** String representation of ID */
+    /** String representation of ID. */
     public static final String ID =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><p:a xmlns:p=\"ns\" "
             + "ttid=\"1\" i=\"j\">oops1<b ttid=\"5\">foo<c ttid=\"7\"/></b>oops2<b ttid=\"9\" p:x=\"y\">"
             + "<c ttid=\"11\"/>bar</b>oops3</p:a>";
 
-    /** String representation of rest */
+    /** String representation of rest. */
     public static final String REST =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
             + "<rest:sequence xmlns:rest=\"REST\"><rest:item>"
@@ -92,6 +91,7 @@ public final class DocumentCreater {
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
             + "<p:a>oops1<b>foo<c></c></b>oops2<b>" + "<c></c>bar</b>oops3</p:a>";
 
+    /** XML for the index structure. */
     public static final String XML_INDEX = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
         + "<t:o><t:oo><t:oop><t:oops><d:DOCUMENT_ROOT_KIND nodeID=\"0\"><d:p:a nodeID=\"1\">"
         + "<d:TEXT_KIND nodeID=\"4\"/></d:p:a></d:DOCUMENT_ROOT_KIND></t:oops></t:oop></t:oo>"
@@ -102,41 +102,49 @@ public final class DocumentCreater {
         + "</t:ba></t:b>";
 
     /**
+     * Private Constructor, not used.
+     */
+    private DocumentCreater() {
+    }
+
+    /**
      * Create simple test document containing all supported node kinds.
      * 
-     * @param wtx
+     * @param paramWtx
      *            IWriteTransaction to write to.
+     * @throws TreetankException
+     *             if any weird happens
      */
-    public static void create(final IWriteTransaction wtx) throws TreetankException {
-        assertTrue(wtx.moveToDocumentRoot());
+    public static void create(final IWriteTransaction paramWtx) throws TreetankException {
+        assertTrue(paramWtx.moveToDocumentRoot());
 
-        wtx.insertElementAsFirstChild(new QName("ns", "a", "p"));
-        wtx.insertAttribute(new QName("i"), "j");
-        assertTrue(wtx.moveToParent());
-        wtx.insertNamespace("ns", "p");
-        assertTrue(wtx.moveToParent());
+        paramWtx.insertElementAsFirstChild(new QName("ns", "a", "p"));
+        paramWtx.insertAttribute(new QName("i"), "j");
+        assertTrue(paramWtx.moveToParent());
+        paramWtx.insertNamespace("ns", "p");
+        assertTrue(paramWtx.moveToParent());
 
-        wtx.insertTextAsFirstChild("oops1");
+        paramWtx.insertTextAsFirstChild("oops1");
 
-        wtx.insertElementAsRightSibling(new QName("b"));
+        paramWtx.insertElementAsRightSibling(new QName("b"));
 
-        wtx.insertTextAsFirstChild("foo");
-        wtx.insertElementAsRightSibling(new QName("c"));
-        assertTrue(wtx.moveToParent());
+        paramWtx.insertTextAsFirstChild("foo");
+        paramWtx.insertElementAsRightSibling(new QName("c"));
+        assertTrue(paramWtx.moveToParent());
 
-        wtx.insertTextAsRightSibling("oops2");
+        paramWtx.insertTextAsRightSibling("oops2");
 
-        wtx.insertElementAsRightSibling(new QName("b"));
-        wtx.insertAttribute(new QName("ns", "x", "p"), "y");
-        assertTrue(wtx.moveToParent());
+        paramWtx.insertElementAsRightSibling(new QName("b"));
+        paramWtx.insertAttribute(new QName("ns", "x", "p"), "y");
+        assertTrue(paramWtx.moveToParent());
 
-        wtx.insertElementAsFirstChild(new QName("c"));
-        wtx.insertTextAsRightSibling("bar");
-        assertTrue(wtx.moveToParent());
+        paramWtx.insertElementAsFirstChild(new QName("c"));
+        paramWtx.insertTextAsRightSibling("bar");
+        assertTrue(paramWtx.moveToParent());
 
-        wtx.insertTextAsRightSibling("oops3");
+        paramWtx.insertTextAsRightSibling("oops3");
 
-        wtx.moveToDocumentRoot();
+        paramWtx.moveToDocumentRoot();
     }
 
     /**

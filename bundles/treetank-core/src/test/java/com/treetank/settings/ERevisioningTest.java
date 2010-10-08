@@ -25,8 +25,8 @@ public class ERevisioningTest {
     @Test
     public void testFulldumpCombinePages() {
         final NodePage[] pages = new NodePage[2];
-        pages[0] = getNodePage(1, 0, 128);
-        pages[1] = getNodePage(0, 0, 128);
+        pages[0] = getNodePage(1, 0, 128, 0);
+        pages[1] = getNodePage(0, 0, 128, 0);
 
         final NodePage page =
             ERevisioning.FULLDUMP.combinePages(pages, Integer.parseInt(EDatabaseSetting.REVISION_TO_RESTORE
@@ -74,9 +74,9 @@ public class ERevisioningTest {
 
     private static NodePage[] prepareNormal(final int length) {
         final NodePage[] pages = new NodePage[length];
-        pages[pages.length - 1] = getNodePage(0, 0, 128);
+        pages[pages.length - 1] = getNodePage(0, 0, 128, 0);
         for (int i = 0; i < pages.length - 1; i++) {
-            pages[i] = getNodePage(pages.length - i - 1, i * 32, (i * 32) + 32);
+            pages[i] = getNodePage(pages.length - i - 1, i * 32, (i * 32) + 32, 0);
         }
         return pages;
     }

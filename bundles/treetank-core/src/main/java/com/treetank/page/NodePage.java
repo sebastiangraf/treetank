@@ -63,19 +63,17 @@ public class NodePage extends AbstractPage {
         mNodePageKey = mIn.readLong();
         mNodes = new AbsNode[IConstants.NDP_NODE_COUNT];
 
-        final int[] values = new int[IConstants.NDP_NODE_COUNT];
-        for (int i = 0; i < values.length; i++) {
-            values[i] = mIn.readInt();
+        final int[] kinds = new int[IConstants.NDP_NODE_COUNT];
+        for (int i = 0; i < kinds.length; i++) {
+            kinds[i] = mIn.readInt();
         }
 
         for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
-            final int kind = values[offset];
+            final int kind = kinds[offset];
             final ENodes enumKind = ENodes.getEnumKind(kind);
-            if (enumKind == ENodes.UNKOWN_KIND) {
-                break;
-            } else {
+            if (enumKind != ENodes.UNKOWN_KIND) {
                 getNodes()[offset] = enumKind.createNodeFromPersistence(mIn);
-            }
+            } 
         }
     }
 

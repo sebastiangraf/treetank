@@ -40,6 +40,7 @@ public final class OverallTest {
     }
 
     @Test
+    @Ignore
     public void testXML() throws Exception {
 
         for (int i = 0; i < Integer.parseInt(EDatabaseSetting.REVISION_TO_RESTORE.getStandardProperty()) * 2; i++) {
@@ -65,7 +66,6 @@ public final class OverallTest {
     }
 
     @Test
-    @Ignore
     public void testJustEverything() throws TreetankException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();

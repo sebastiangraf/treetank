@@ -17,7 +17,6 @@
 
 package com.treetank.access;
 
-import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -127,14 +126,18 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     public synchronized long insertElementAsFirstChild(final QName mQname) throws TreetankException {
         if (getCurrentNode() instanceof ElementNode || getCurrentNode() instanceof DocumentRootNode) {
 
+            checkAccessAndCommit();
+
             final long parentKey = getCurrentNode().getNodeKey();
             final long leftSibKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
             final long rightSibKey = ((AbsStructNode)getCurrentNode()).getFirstChildKey();
             final ElementNode node =
                 getTransactionState().createElementNode(parentKey, leftSibKey, rightSibKey, mQname);
-            final long key = insertFirstChild(node);
-            adaptHashesWithAdd();
-            return key;
+
+            adaptForInsert(node, true);
+            setCurrentNode(node);
+
+            return node.getNodeKey();
         } else {
             throw new TreetankUsageException("Insert is not allowed if current node is not an ElementNode!");
         }
@@ -143,14 +146,18 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     public synchronized long insertElementAsRightSibling(final QName mQname) throws TreetankException {
         if (getCurrentNode() instanceof AbsStructNode) {
 
+            checkAccessAndCommit();
+
             final long parentKey = getCurrentNode().getParentKey();
             final long leftSibKey = getCurrentNode().getNodeKey();
             final long rightSibKey = ((AbsStructNode)getCurrentNode()).getRightSiblingKey();
             final ElementNode node =
                 getTransactionState().createElementNode(parentKey, leftSibKey, rightSibKey, mQname);
-            final long key = insertRightSibling(node);
-            adaptHashesWithAdd();
-            return key;
+
+            adaptForInsert(node, false);
+            setCurrentNode(node);
+
+            return node.getNodeKey();
         } else {
             throw new TreetankUsageException(
                 "Insert is not allowed if current node is not an StructuralNode (either Text or Element)!");
@@ -162,15 +169,20 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
      */
     public synchronized long insertTextAsFirstChild(final String mValueAsString) throws TreetankException {
         if (getCurrentNode() instanceof ElementNode || getCurrentNode() instanceof DocumentRootNode) {
+
+            checkAccessAndCommit();
+
             final byte[] value = TypedValue.getBytes(mValueAsString);
             final long parentKey = getCurrentNode().getNodeKey();
             final long leftSibKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
             final long rightSibKey = ((AbsStructNode)getCurrentNode()).getFirstChildKey();
             final TextNode node =
                 getTransactionState().createTextNode(parentKey, leftSibKey, rightSibKey, value);
-            final long key = insertFirstChild(node);
-            adaptHashesWithAdd();
-            return key;
+
+            adaptForInsert(node, true);
+            setCurrentNode(node);
+
+            return node.getNodeKey();
         } else {
             throw new TreetankUsageException("Insert is not allowed if current node is not an ElementNode!");
         }
@@ -181,15 +193,21 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
      */
     public synchronized long insertTextAsRightSibling(final String mValueAsString) throws TreetankException {
         if (getCurrentNode() instanceof AbsStructNode) {
+
+            checkAccessAndCommit();
+
             final byte[] value = TypedValue.getBytes(mValueAsString);
             final long parentKey = getCurrentNode().getParentKey();
             final long leftSibKey = getCurrentNode().getNodeKey();
             final long rightSibKey = ((AbsStructNode)getCurrentNode()).getRightSiblingKey();
             final TextNode node =
                 getTransactionState().createTextNode(parentKey, leftSibKey, rightSibKey, value);
-            final long key = insertRightSibling(node);
-            adaptHashesWithAdd();
-            return key;
+
+            adaptForInsert(node, false);
+            setCurrentNode(node);
+
+            return node.getNodeKey();
+
         } else {
             throw new TreetankUsageException(
                 "Insert is not allowed if current node is not an StructuralNode (either Text or Element)!");
@@ -199,12 +217,20 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     public synchronized long insertAttribute(final QName mQname, final String mValueAsString)
         throws TreetankException {
         if (getCurrentNode() instanceof ElementNode) {
+
+            checkAccessAndCommit();
+
             final byte[] value = TypedValue.getBytes(mValueAsString);
             final long elementKey = getCurrentNode().getNodeKey();
             final AttributeNode node = getTransactionState().createAttributeNode(elementKey, mQname, value);
-            final long key = insertAttribute(node);
-            adaptHashesWithAdd();
-            return key;
+
+            final AbsNode parentNode = getTransactionState().prepareNodeForModification(node.getParentKey());
+            ((ElementNode)parentNode).insertAttribute(node.getNodeKey());
+            getTransactionState().finishNodeModification(parentNode);
+
+            setCurrentNode(node);
+
+            return node.getNodeKey();
 
         } else {
             throw new TreetankUsageException("Insert is not allowed if current node is not an ElementNode!");
@@ -217,16 +243,24 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     public synchronized long insertNamespace(final String mUri, final String mPrefix)
         throws TreetankException {
         if (getCurrentNode() instanceof ElementNode) {
-            final long parentKey = getCurrentNode().getNodeKey();
+
+            checkAccessAndCommit();
+
             // TODO check against QName class
             final int uriKey = getTransactionState().createNameKey(mUri);
             final int prefixKey = getTransactionState().createNameKey(mPrefix);
+            final long elementKey = getCurrentNode().getNodeKey();
 
             final NamespaceNode node =
-                getTransactionState().createNamespaceNode(parentKey, uriKey, prefixKey);
-            final long key = insertNamespace(node);
-            adaptHashesWithAdd();
-            return key;
+                getTransactionState().createNamespaceNode(elementKey, uriKey, prefixKey);
+
+            final AbsNode parentNode = getTransactionState().prepareNodeForModification(node.getParentKey());
+            ((ElementNode)parentNode).insertNamespace(node.getNodeKey());
+            getTransactionState().finishNodeModification(parentNode);
+
+            setCurrentNode(node);
+
+            return node.getNodeKey();
         } else {
             throw new TreetankUsageException("Insert is not allowed if current node is not an ElementNode!");
         }
@@ -236,64 +270,39 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
      * {@inheritDoc}
      */
     public synchronized void remove() throws TreetankException {
-
-        assertNotClosed();
-        mModificationCount++;
-        final AbsNode node = (AbsNode)getCurrentNode();
-
-        if (node.getKind() == ENodes.ROOT_KIND) {
+        checkAccessAndCommit();
+        if (getCurrentNode().getKind() == ENodes.ROOT_KIND) {
             throw new TreetankUsageException("Root node can not be removed.");
-        } else if (node instanceof AbsStructNode) {
-
-            adaptNeighbours((AbsStructNode)node, null);
-
-            // removing subtree
+        } else if (getCurrentNode() instanceof AbsStructNode) {
+            final AbsStructNode node = (AbsStructNode)getCurrentNode();
+            // // removing subtree
             final IAxis desc = new DescendantAxis(this, false);
             while (desc.hasNext()) {
                 desc.next();
-                removeIncludingRelated();
+                getTransactionState().removeNode((AbsNode)getCurrentNode());
 
             }
             moveTo(node.getNodeKey());
-            removeIncludingRelated();
+            adaptForRemove(node);
 
             // Set current node.
-            if (((AbsStructNode)node).hasRightSibling()) {
-                moveTo(((AbsStructNode)node).getRightSiblingKey());
-            } else if (((AbsStructNode)node).hasLeftSibling()) {
-                moveTo(((AbsStructNode)node).getLeftSiblingKey());
+            if (node.hasRightSibling()) {
+                moveTo(node.getRightSiblingKey());
+            } else if (node.hasLeftSibling()) {
+                moveTo(node.getLeftSiblingKey());
             } else {
                 moveTo(node.getParentKey());
             }
 
         } else if (getCurrentNode().getKind() == ENodes.ATTRIBUTE_KIND) {
-            moveToParent();
+            AbsNode node = (AbsNode)getCurrentNode();
 
             final ElementNode parent =
-                (ElementNode)getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+                (ElementNode)getTransactionState().prepareNodeForModification(node.getParentKey());
             parent.removeAttribute(node.getNodeKey());
             getTransactionState().finishNodeModification(parent);
         }
 
-    }
-
-    private void removeIncludingRelated() throws TreetankIOException {
-        final IItem node = getCurrentNode();
-        if (node.getKind() == ENodes.ELEMENT_KIND) {
-            // removing attributes
-            for (int i = 0; i < ((ElementNode)node).getAttributeCount(); i++) {
-                moveTo(((ElementNode)node).getAttributeKey(i));
-                getTransactionState().removeNode((AbsNode)this.getCurrentNode());
-            }
-            // removing namespaces
-            moveTo(node.getNodeKey());
-            for (int i = 0; i < ((ElementNode)node).getNamespaceCount(); i++) {
-                moveTo(((ElementNode)node).getNamespaceKey(i));
-                getTransactionState().removeNode((AbsNode)this.getCurrentNode());
-            }
-        }
-        // Remove old node.
-        getTransactionState().removeNode((AbsNode)node);
     }
 
     /**
@@ -308,7 +317,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         final AbsNode newNode = createNodeToModify(oldNode);
 
         if (oldNode instanceof AbsStructNode) {
-            adaptNeighbours((AbsStructNode)oldNode, (AbsStructNode)newNode);
+            adaptForUpdate((AbsStructNode)oldNode, (AbsStructNode)newNode);
         }
         newNode.setNameKey(getTransactionState().createNameKey(mName));
         getTransactionState().removeNode(oldNode);
@@ -328,7 +337,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         final AbsNode newNode = createNodeToModify(oldNode);
 
         if (oldNode instanceof AbsStructNode) {
-            adaptNeighbours((AbsStructNode)oldNode, (AbsStructNode)newNode);
+            adaptForUpdate((AbsStructNode)oldNode, (AbsStructNode)newNode);
         }
         newNode.setURIKey(getTransactionState().createNameKey(mUri));
         getTransactionState().removeNode(oldNode);
@@ -347,7 +356,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         final AbsNode newNode = createNodeToModify(oldNode);
 
         if (oldNode instanceof AbsStructNode) {
-            adaptNeighbours((AbsStructNode)oldNode, (AbsStructNode)newNode);
+            adaptForUpdate((AbsStructNode)oldNode, (AbsStructNode)newNode);
         }
         newNode.setValue(mValueType, mValue);
         getTransactionState().removeNode(oldNode);
@@ -360,53 +369,6 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
      */
     public synchronized void setValue(final String mValue) throws TreetankIOException {
         setValue(getTransactionState().createNameKey("xs:untyped"), TypedValue.getBytes(mValue));
-    }
-
-    private final AbsNode createNodeToModify(final AbsNode mOldNode) throws TreetankIOException {
-        AbsNode newNode = null;
-        switch (mOldNode.getKind()) {
-        case ELEMENT_KIND:
-            newNode = getTransactionState().createElementNode((ElementNode)mOldNode);
-            break;
-        case ATTRIBUTE_KIND:
-            newNode = getTransactionState().createAttributeNode((AttributeNode)mOldNode);
-            break;
-        case NAMESPACE_KIND:
-            newNode = getTransactionState().createNamespaceNode((NamespaceNode)mOldNode);
-            break;
-        case TEXT_KIND:
-            newNode = getTransactionState().createTextNode((TextNode)mOldNode);
-            break;
-        default:
-            break;
-        }
-        return newNode;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized void close() throws TreetankException {
-        if (!isClosed()) {
-            // Make sure to commit all dirty data.
-            if (mModificationCount > 0) {
-                throw new TreetankUsageException("Must commit/abort transaction first");
-            }
-            // Make sure to cancel the periodic commit task if it was started.
-            if (mCommitScheduler != null) {
-                mCommitScheduler.shutdownNow();
-                mCommitScheduler = null;
-            }
-            // Release all state immediately.
-            getTransactionState().close();
-            getSessionState().closeWriteTransaction(getTransactionID());
-            setSessionState(null);
-            setTransactionState(null);
-            setCurrentNode(null);
-            // Remember that we are closed.
-            setClosed();
-        }
     }
 
     /**
@@ -471,230 +433,217 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             revisionToSet));
     }
 
-    private void intermediateCommitIfRequired() throws TreetankException {
-        assertNotClosed();
-        if ((mMaxNodeCount > 0) && (mModificationCount > mMaxNodeCount)) {
-            commit();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized void close() throws TreetankException {
+        if (!isClosed()) {
+            // Make sure to commit all dirty data.
+            if (mModificationCount > 0) {
+                throw new TreetankUsageException("Must commit/abort transaction first");
+            }
+            // Make sure to cancel the periodic commit task if it was started.
+            if (mCommitScheduler != null) {
+                mCommitScheduler.shutdownNow();
+                mCommitScheduler = null;
+            }
+            // Release all state immediately.
+            getTransactionState().close();
+            getSessionState().closeWriteTransaction(getTransactionID());
+            setSessionState(null);
+            setTransactionState(null);
+            setCurrentNode(null);
+            // Remember that we are closed.
+            setClosed();
         }
     }
 
-    private long insertFirstChild(final AbsStructNode mNode) throws TreetankException {
-
-        assertNotClosed();
-        mModificationCount++;
-        intermediateCommitIfRequired();
-
-        setCurrentNode(mNode);
-
-        updateParentAfterInsert(mNode, true);
-        updateRightSibling(mNode);
-
-        return mNode.getNodeKey();
-    }
-
-    private long insertRightSibling(final AbsStructNode mNode) throws TreetankException {
-
-        assertNotClosed();
-        mModificationCount++;
-        intermediateCommitIfRequired();
-
-        if (getCurrentNode().getNodeKey() == (Long)EFixed.ROOT_NODE_KEY.getStandardProperty()) {
-            throw new TreetankUsageException("Root node can not have siblings.");
-        }
-
-        setCurrentNode(mNode);
-
-        updateParentAfterInsert(mNode, false);
-        updateLeftSibling(mNode);
-        updateRightSibling(mNode);
-
-        return mNode.getNodeKey();
-    }
-
-    private long insertAttribute(final AttributeNode mNode) throws TreetankException {
-
+    private void checkAccessAndCommit() throws TreetankException {
         assertNotClosed();
         mModificationCount++;
         intermediateCommitIfRequired();
-
-        if (getCurrentNode().getKind() != ENodes.ELEMENT_KIND) {
-            throw new IllegalStateException("Only element nodes can have attributes.");
-        }
-
-        setCurrentNode(mNode);
-
-        final AbsNode parentNode = getTransactionState().prepareNodeForModification(mNode.getParentKey());
-        ((ElementNode)parentNode).insertAttribute(mNode.getNodeKey());
-        getTransactionState().finishNodeModification(parentNode);
-
-        return mNode.getNodeKey();
     }
 
-    private long insertNamespace(final NamespaceNode mNode) throws TreetankException {
+    // ////////////////////////////////////////////////////////////
+    // insert operation
+    // //////////////////////////////////////////////////////////
 
-        assertNotClosed();
-        mModificationCount++;
-        intermediateCommitIfRequired();
-
-        if (getCurrentNode().getKind() != ENodes.ELEMENT_KIND) {
-            throw new IllegalStateException("Only element nodes can have namespaces.");
+    private void adaptForInsert(final AbsStructNode newNode, final boolean addAsFirstChild)
+        throws TreetankIOException {
+        final AbsStructNode parent =
+            (AbsStructNode)getTransactionState().prepareNodeForModification(newNode.getParentKey());
+        parent.incrementChildCount();
+        if (addAsFirstChild) {
+            parent.setFirstChildKey(newNode.getNodeKey());
         }
+        getTransactionState().finishNodeModification(parent);
 
-        setCurrentNode(mNode);
-
-        final AbsNode parentNode = getTransactionState().prepareNodeForModification(mNode.getParentKey());
-        ((ElementNode)parentNode).insertNamespace(mNode.getNodeKey());
-        getTransactionState().finishNodeModification(parentNode);
-
-        return mNode.getNodeKey();
-    }
-
-    private void updateParentAfterInsert(final AbsStructNode paramNewWithPointers,
-        final boolean mUpdateFirstChild) throws TreetankIOException {
-        final AbsStructNode parentNode =
-            (AbsStructNode)getTransactionState().prepareNodeForModification(
-                paramNewWithPointers.getParentKey());
-        parentNode.incrementChildCount();
-        if (mUpdateFirstChild) {
-            parentNode.setFirstChildKey(getCurrentNode().getNodeKey());
-        }
-        getTransactionState().finishNodeModification(parentNode);
-
-    }
-
-    private void updateRightSibling(final AbsStructNode paramNewWithPointers) throws TreetankIOException {
-
-        if (paramNewWithPointers.hasRightSibling()) {
+        if (newNode.hasRightSibling()) {
             final AbsStructNode rightSiblingNode =
-                (AbsStructNode)getTransactionState().prepareNodeForModification(
-                    paramNewWithPointers.getRightSiblingKey());
-            rightSiblingNode.setLeftSiblingKey(getCurrentNode().getNodeKey());
+                (AbsStructNode)getTransactionState().prepareNodeForModification(newNode.getRightSiblingKey());
+            rightSiblingNode.setLeftSiblingKey(newNode.getNodeKey());
             getTransactionState().finishNodeModification(rightSiblingNode);
-
         }
-    }
-
-    private void updateLeftSibling(final AbsStructNode paramNewWithPointers) throws TreetankIOException {
-        if (paramNewWithPointers.hasLeftSibling()) {
+        if (newNode.hasLeftSibling()) {
             final AbsStructNode leftSiblingNode =
-                (AbsStructNode)getTransactionState().prepareNodeForModification(
-                    paramNewWithPointers.getLeftSiblingKey());
-            leftSiblingNode.setRightSiblingKey(getCurrentNode().getNodeKey());
+                (AbsStructNode)getTransactionState().prepareNodeForModification(newNode.getLeftSiblingKey());
+            leftSiblingNode.setRightSiblingKey(newNode.getNodeKey());
             getTransactionState().finishNodeModification(leftSiblingNode);
         }
     }
 
-    private void adaptNeighbours(final AbsStructNode mOldNode, final AbsStructNode mNewNode)
+    // ////////////////////////////////////////////////////////////
+    // end of insert operation
+    // ////////////////////////////////////////////////////////////
+
+    // ////////////////////////////////////////////////////////////
+    // update operation
+    // ////////////////////////////////////////////////////////////
+
+    private final AbsNode createNodeToModify(final AbsNode mOldNode) throws TreetankIOException {
+        AbsNode newNode = null;
+        switch (mOldNode.getKind()) {
+        case ELEMENT_KIND:
+            newNode = getTransactionState().createElementNode((ElementNode)mOldNode);
+            break;
+        case ATTRIBUTE_KIND:
+            newNode = getTransactionState().createAttributeNode((AttributeNode)mOldNode);
+            break;
+        case NAMESPACE_KIND:
+            newNode = getTransactionState().createNamespaceNode((NamespaceNode)mOldNode);
+            break;
+        case TEXT_KIND:
+            newNode = getTransactionState().createTextNode((TextNode)mOldNode);
+            break;
+        default:
+            break;
+        }
+        return newNode;
+    }
+
+    private void adaptForUpdate(final AbsStructNode mOldNode, final AbsStructNode mNewNode)
         throws TreetankIOException {
-
-        // // Remember all related nodes.
-        AbsStructNode leftSibling = null;
-        AbsStructNode rightSibling = null;
-        AbsStructNode parent = null;
-        AbsStructNode firstChild = null;
-
-        // getting the neighbourhood
-        if (mOldNode.hasLeftSibling()) {
-            moveToLeftSibling();
-            leftSibling = (AbsStructNode)getCurrentNode();
-            moveToRightSibling();
-        }
-        if (mOldNode.hasRightSibling()) {
-            moveToRightSibling();
-            rightSibling = (AbsStructNode)getCurrentNode();
-            moveToLeftSibling();
-        }
-        if (!moveToParent()) {
-            throw new IllegalStateException("Node has no parent!");
-        }
-        parent = (AbsStructNode)getCurrentNode();
-        moveTo(mOldNode.getNodeKey());
-        if (mOldNode.hasFirstChild()) {
-            moveToFirstChild();
-            firstChild = (AbsStructNode)getCurrentNode();
-        }
-        moveTo(mOldNode.getNodeKey());
-
         // Adapt left sibling node if there is one.
-        if (leftSibling != null) {
-            leftSibling =
-                (AbsStructNode)getTransactionState().prepareNodeForModification(leftSibling.getNodeKey());
-            if (mNewNode == null) {
-                if (rightSibling != null) {
-                    ((AbsStructNode)leftSibling).setRightSiblingKey(rightSibling.getNodeKey());
-                } else {
-                    leftSibling.setRightSiblingKey((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
-                }
-            } else {
-                leftSibling.setRightSiblingKey(mNewNode.getNodeKey());
-            }
+        if (mOldNode.hasLeftSibling()) {
+            final AbsStructNode leftSibling =
+                (AbsStructNode)getTransactionState().prepareNodeForModification(mOldNode.getLeftSiblingKey());
+            leftSibling.setRightSiblingKey(mNewNode.getNodeKey());
             getTransactionState().finishNodeModification(leftSibling);
         }
 
         // Adapt right sibling node if there is one.
-        if (rightSibling != null) {
-            rightSibling =
-                (AbsStructNode)getTransactionState().prepareNodeForModification(rightSibling.getNodeKey());
-            if (mNewNode == null) {
-                if (leftSibling != null) {
-                    rightSibling.setLeftSiblingKey(leftSibling.getNodeKey());
-                } else {
-                    rightSibling.setLeftSiblingKey((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
-                }
-            } else {
-                rightSibling.setLeftSiblingKey(mNewNode.getNodeKey());
-            }
+        if (mOldNode.hasRightSibling()) {
+            final AbsStructNode rightSibling =
+                (AbsStructNode)getTransactionState()
+                    .prepareNodeForModification(mOldNode.getRightSiblingKey());
+            rightSibling.setLeftSiblingKey(mNewNode.getNodeKey());
             getTransactionState().finishNodeModification(rightSibling);
         }
 
-        // Adapt parent.
-        parent = (AbsStructNode)getTransactionState().prepareNodeForModification(parent.getNodeKey());
-        if (mNewNode == null) {
-            parent.decrementChildCount();
+        // Adapt parent, if node has now left sibling it is a first child.
+        if (!mOldNode.hasLeftSibling()) {
+            final AbsStructNode parent =
+                (AbsStructNode)getTransactionState().prepareNodeForModification(mOldNode.getParentKey());
+            parent.setFirstChildKey(mNewNode.getNodeKey());
+            getTransactionState().finishNodeModification(parent);
         }
-        if (parent.getFirstChildKey() == mOldNode.getNodeKey()) {
-            if (mNewNode == null) {
-                if (rightSibling != null) {
-                    parent.setFirstChildKey(rightSibling.getNodeKey());
-                } else {
-                    parent.setFirstChildKey((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
-                }
-            } else {
-                parent.setFirstChildKey(mNewNode.getNodeKey());
+
+        if (mOldNode.hasFirstChild()) {
+            moveToFirstChild();
+            final AbsStructNode firstChild = (AbsStructNode)getCurrentNode();
+            setCurrentNode(firstChild);
+            do {
+                final AbsNode node =
+                    getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+                node.setParentKey(mNewNode.getNodeKey());
+                getTransactionState().finishNodeModification(node);
+            } while (moveToRightSibling());
+        }
+
+        if (mOldNode.getKind() == ENodes.ELEMENT_KIND) {
+            // setting the attributes and namespaces
+            for (int i = 0; i < ((ElementNode)mOldNode).getAttributeCount(); i++) {
+                ((ElementNode)mNewNode).insertAttribute(((ElementNode)mOldNode).getAttributeKey(i));
+                final AbsNode node =
+                    getTransactionState().prepareNodeForModification(
+                        ((ElementNode)mOldNode).getAttributeKey(i));
+                node.setParentKey(mNewNode.getNodeKey());
+                getTransactionState().finishNodeModification(node);
+            }
+            for (int i = 0; i < ((ElementNode)mOldNode).getNamespaceCount(); i++) {
+                ((ElementNode)mNewNode).insertNamespace(((ElementNode)mOldNode).getNamespaceKey(i));
+                final AbsNode node =
+                    getTransactionState().prepareNodeForModification(
+                        ((ElementNode)mOldNode).getNamespaceKey(i));
+                node.setParentKey(mNewNode.getNodeKey());
+                getTransactionState().finishNodeModification(node);
             }
         }
+
+    }
+
+    // ////////////////////////////////////////////////////////////
+    // end of update operation
+    // ////////////////////////////////////////////////////////////
+
+    // ////////////////////////////////////////////////////////////
+    // remove operation
+    // ////////////////////////////////////////////////////////////
+
+    private void adaptForRemove(final AbsStructNode oldNode) throws TreetankIOException {
+
+        // Adapt left sibling node if there is one.
+        if (oldNode.hasLeftSibling()) {
+            final AbsStructNode leftSibling =
+                (AbsStructNode)getTransactionState().prepareNodeForModification(oldNode.getLeftSiblingKey());
+            leftSibling.setRightSiblingKey(oldNode.getRightSiblingKey());
+            getTransactionState().finishNodeModification(leftSibling);
+        }
+
+        // Adapt right sibling node if there is one.
+        if (oldNode.hasRightSibling()) {
+            final AbsStructNode rightSibling =
+                (AbsStructNode)getTransactionState().prepareNodeForModification(oldNode.getRightSiblingKey());
+            rightSibling.setLeftSiblingKey(oldNode.getLeftSiblingKey());
+            getTransactionState().finishNodeModification(rightSibling);
+        }
+
+        // Adapt parent, if node has now left sibling it is a first child.
+        final AbsStructNode parent =
+            (AbsStructNode)getTransactionState().prepareNodeForModification(oldNode.getParentKey());
+        if (!oldNode.hasLeftSibling()) {
+            parent.setFirstChildKey(oldNode.getRightSiblingKey());
+        }
+        parent.decrementChildCount();
         getTransactionState().finishNodeModification(parent);
 
-        // adapt associated nodes
-        if (mNewNode != null) {
-            if (firstChild != null) {
-                setCurrentNode(firstChild);
-                do {
-                    final AbsNode node =
-                        getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
-                    node.setParentKey(mNewNode.getNodeKey());
-                    getTransactionState().finishNodeModification(node);
-                } while (moveToRightSibling());
+        if (oldNode.getKind() == ENodes.ELEMENT_KIND) {
+            // removing attributes
+            for (int i = 0; i < ((ElementNode)oldNode).getAttributeCount(); i++) {
+                moveTo(((ElementNode)oldNode).getAttributeKey(i));
+                getTransactionState().removeNode((AbsNode)this.getCurrentNode());
             }
-            if (mOldNode.getKind() == ENodes.ELEMENT_KIND) {
-                // setting the attributes and namespaces
-                for (int i = 0; i < ((ElementNode)mOldNode).getAttributeCount(); i++) {
-                    ((ElementNode)mNewNode).insertAttribute(((ElementNode)mOldNode).getAttributeKey(i));
-                    AbsNode node =
-                        getTransactionState().prepareNodeForModification(
-                            ((ElementNode)mOldNode).getAttributeKey(i));
-                    node.setParentKey(mNewNode.getNodeKey());
-                    getTransactionState().finishNodeModification(node);
-                }
-                for (int i = 0; i < ((ElementNode)mOldNode).getNamespaceCount(); i++) {
-                    ((ElementNode)mNewNode).insertNamespace(((ElementNode)mOldNode).getNamespaceKey(i));
-                    AbsNode node =
-                        getTransactionState().prepareNodeForModification(
-                            ((ElementNode)mOldNode).getNamespaceKey(i));
-                    node.setParentKey(mNewNode.getNodeKey());
-                    getTransactionState().finishNodeModification(node);
-                }
+            // removing namespaces
+            moveTo(oldNode.getNodeKey());
+            for (int i = 0; i < ((ElementNode)oldNode).getNamespaceCount(); i++) {
+                moveTo(((ElementNode)oldNode).getNamespaceKey(i));
+                getTransactionState().removeNode((AbsNode)this.getCurrentNode());
             }
+        }
+
+        // Remove old node.
+        getTransactionState().removeNode((AbsNode)oldNode);
+    }
+
+    // ////////////////////////////////////////////////////////////
+    // end of remove operation
+    // ////////////////////////////////////////////////////////////
+
+    private void intermediateCommitIfRequired() throws TreetankException {
+        assertNotClosed();
+        if ((mMaxNodeCount > 0) && (mModificationCount > mMaxNodeCount)) {
+            commit();
         }
     }
 
