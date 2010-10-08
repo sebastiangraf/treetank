@@ -75,33 +75,33 @@ public final class WriteTransactionState extends ReadTransactionState {
     /**
      * Standard constructor.
      * 
-     * @param mDatabaseConfiguration
+     * @param paramDatabaseConfig
      *            Database Configuration
-     * @param sessionState
+     * @param paramSessionState
      *            Session State
-     * @param mUberPage
+     * @param paramUberPage
      *            Root of revision.
-     * @param mWriter
+     * @param paramWriter
      *            Writer where this transaction should write to
-     * @param mParamId
+     * @param paramParamId
      *            parameter ID
-     * @param mRepresentRevision
+     * @param paramRepresentRev
      *            Revision Represent
-     * @param mStoreRevision
+     * @param paramStoreRev
      *            Revision Store
      * @throws TreetankIOException
      *             if IO Error
      */
-    protected WriteTransactionState(final DatabaseConfiguration mDatabaseConfiguration,
-        final SessionState sessionState, final UberPage mUberPage, final IWriter mWriter,
-        final long mParamId, final long mRepresentRevision, final long mStoreRevision)
+    protected WriteTransactionState(final DatabaseConfiguration paramDatabaseConfig,
+        final SessionState paramSessionState, final UberPage paramUberPage, final IWriter paramWriter,
+        final long paramParamId, final long paramRepresentRev, final long paramStoreRev)
         throws TreetankIOException {
-        super(mDatabaseConfiguration, mUberPage, mRepresentRevision, new ItemList(), mWriter);
-        mNewRoot = preparePreviousRevisionRootPage(mRepresentRevision, mStoreRevision);
-        mSessionState = sessionState;
-        mLog = new TransactionLogCache(mDatabaseConfiguration, mStoreRevision);
-        mPageWriter = mWriter;
-        mTransactionID = mParamId;
+        super(paramDatabaseConfig, paramUberPage, paramRepresentRev, new ItemList(), paramWriter);
+        mNewRoot = preparePreviousRevisionRootPage(paramRepresentRev, paramStoreRev);
+        mSessionState = paramSessionState;
+        mLog = new TransactionLogCache(paramDatabaseConfig, paramStoreRev);
+        mPageWriter = paramWriter;
+        mTransactionID = paramParamId;
 
     }
 
