@@ -243,16 +243,14 @@ public final class Database implements IDatabase {
      */
     @Override
     public synchronized int[] getVersion() {
-        final int[] versions = new int[3];
-        versions[0] =
-            Integer.parseInt(mDatabaseConfiguration.getProps().getProperty(
-                EDatabaseSetting.VERSION_MAJOR.name()));
-        versions[1] =
-            Integer.parseInt(mDatabaseConfiguration.getProps().getProperty(
-                EDatabaseSetting.VERSION_MINOR.name()));
-        versions[2] =
-            Integer.parseInt(mDatabaseConfiguration.getProps().getProperty(
-                EDatabaseSetting.VERSION_FIX.name()));
+        final int[] versions = {
+                Integer.parseInt(mDatabaseConfiguration.getProps().getProperty(
+                    EDatabaseSetting.VERSION_MAJOR.name())),
+                Integer.parseInt(mDatabaseConfiguration.getProps().getProperty(
+                    EDatabaseSetting.VERSION_MINOR.name())),
+                Integer.parseInt(mDatabaseConfiguration.getProps().getProperty(
+                    EDatabaseSetting.VERSION_FIX.name()))
+        };
         return versions;
     }
 
@@ -287,10 +285,11 @@ public final class Database implements IDatabase {
                 + " Compared to the specification, storage has", Integer.toString(compareStructure),
                 "elements!");
         }
-        final int[] versions = new int[3];
-        versions[0] = Integer.parseInt(EDatabaseSetting.VERSION_MAJOR.getStandardProperty());
-        versions[1] = Integer.parseInt(EDatabaseSetting.VERSION_MINOR.getStandardProperty());
-        versions[2] = Integer.parseInt(EDatabaseSetting.VERSION_FIX.getStandardProperty());
+        final int[] versions = {
+                Integer.parseInt(EDatabaseSetting.VERSION_MAJOR.getStandardProperty()),
+                Integer.parseInt(EDatabaseSetting.VERSION_MINOR.getStandardProperty()),
+                Integer.parseInt(EDatabaseSetting.VERSION_FIX.getStandardProperty())
+        };
         final int[] storedVersions = getVersion();
         if (storedVersions[0] < versions[0]) {
             throw new TreetankUsageException("Version Major expected:", Integer.toString(storedVersions[0]),

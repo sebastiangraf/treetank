@@ -51,6 +51,8 @@ import org.slf4j.LoggerFactory;
  * <p>
  * Single-threaded instance of only write transaction per session.
  * </p>
+ * 
+ * @author Sebastian Graf, University of Konstanz
  */
 public final class WriteTransaction extends ReadTransaction implements IWriteTransaction {
 
@@ -123,6 +125,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized long insertElementAsFirstChild(final QName mQname) throws TreetankException {
         if (getCurrentNode() instanceof ElementNode || getCurrentNode() instanceof DocumentRootNode) {
 
@@ -143,6 +146,10 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public synchronized long insertElementAsRightSibling(final QName mQname) throws TreetankException {
         if (getCurrentNode() instanceof AbsStructNode) {
 
@@ -167,6 +174,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized long insertTextAsFirstChild(final String mValueAsString) throws TreetankException {
         if (getCurrentNode() instanceof ElementNode || getCurrentNode() instanceof DocumentRootNode) {
 
@@ -191,6 +199,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized long insertTextAsRightSibling(final String mValueAsString) throws TreetankException {
         if (getCurrentNode() instanceof AbsStructNode) {
 
@@ -214,6 +223,10 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public synchronized long insertAttribute(final QName mQname, final String mValueAsString)
         throws TreetankException {
         if (getCurrentNode() instanceof ElementNode) {
@@ -228,6 +241,8 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             ((ElementNode)parentNode).insertAttribute(node.getNodeKey());
             getTransactionState().finishNodeModification(parentNode);
 
+            adaptForInsert(node, false);
+
             setCurrentNode(node);
 
             return node.getNodeKey();
@@ -240,6 +255,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized long insertNamespace(final String mUri, final String mPrefix)
         throws TreetankException {
         if (getCurrentNode() instanceof ElementNode) {
@@ -258,6 +274,8 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             ((ElementNode)parentNode).insertNamespace(node.getNodeKey());
             getTransactionState().finishNodeModification(parentNode);
 
+            adaptForInsert(node, false);
+
             setCurrentNode(node);
 
             return node.getNodeKey();
@@ -269,6 +287,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized void remove() throws TreetankException {
         checkAccessAndCommit();
         if (getCurrentNode().getKind() == ENodes.ROOT_KIND) {
@@ -295,7 +314,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             }
 
         } else if (getCurrentNode().getKind() == ENodes.ATTRIBUTE_KIND) {
-            AbsNode node = (AbsNode)getCurrentNode();
+            final AbsNode node = (AbsNode)getCurrentNode();
 
             final ElementNode parent =
                 (ElementNode)getTransactionState().prepareNodeForModification(node.getParentKey());
@@ -308,6 +327,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized void setName(final String mName) throws TreetankIOException {
 
         assertNotClosed();
@@ -328,6 +348,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized void setURI(final String mUri) throws TreetankIOException {
 
         assertNotClosed();
@@ -347,6 +368,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized void setValue(final int mValueType, final byte[] mValue) throws TreetankIOException {
 
         assertNotClosed();
@@ -367,6 +389,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized void setValue(final String mValue) throws TreetankIOException {
         setValue(getTransactionState().createNameKey("xs:untyped"), TypedValue.getBytes(mValue));
     }
@@ -391,6 +414,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized void commit() throws TreetankException {
 
         assertNotClosed();
@@ -414,6 +438,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized void abort() throws TreetankIOException {
 
         assertNotClosed();
@@ -469,28 +494,37 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     // insert operation
     // //////////////////////////////////////////////////////////
 
-    private void adaptForInsert(final AbsStructNode newNode, final boolean addAsFirstChild)
+    private void adaptForInsert(final AbsNode newNode, final boolean addAsFirstChild)
         throws TreetankIOException {
-        final AbsStructNode parent =
-            (AbsStructNode)getTransactionState().prepareNodeForModification(newNode.getParentKey());
-        parent.incrementChildCount();
-        if (addAsFirstChild) {
-            parent.setFirstChildKey(newNode.getNodeKey());
-        }
-        getTransactionState().finishNodeModification(parent);
 
-        if (newNode.hasRightSibling()) {
-            final AbsStructNode rightSiblingNode =
-                (AbsStructNode)getTransactionState().prepareNodeForModification(newNode.getRightSiblingKey());
-            rightSiblingNode.setLeftSiblingKey(newNode.getNodeKey());
-            getTransactionState().finishNodeModification(rightSiblingNode);
+        if (newNode instanceof AbsStructNode) {
+            final AbsStructNode strucNode = (AbsStructNode)newNode;
+            final AbsStructNode parent =
+                (AbsStructNode)getTransactionState().prepareNodeForModification(newNode.getParentKey());
+            parent.incrementChildCount();
+            if (addAsFirstChild) {
+                parent.setFirstChildKey(newNode.getNodeKey());
+            }
+            getTransactionState().finishNodeModification(parent);
+
+            if (strucNode.hasRightSibling()) {
+                final AbsStructNode rightSiblingNode =
+                    (AbsStructNode)getTransactionState().prepareNodeForModification(
+                        strucNode.getRightSiblingKey());
+                rightSiblingNode.setLeftSiblingKey(newNode.getNodeKey());
+                getTransactionState().finishNodeModification(rightSiblingNode);
+            }
+            if (strucNode.hasLeftSibling()) {
+                final AbsStructNode leftSiblingNode =
+                    (AbsStructNode)getTransactionState().prepareNodeForModification(
+                        strucNode.getLeftSiblingKey());
+                leftSiblingNode.setRightSiblingKey(newNode.getNodeKey());
+                getTransactionState().finishNodeModification(leftSiblingNode);
+            }
         }
-        if (newNode.hasLeftSibling()) {
-            final AbsStructNode leftSiblingNode =
-                (AbsStructNode)getTransactionState().prepareNodeForModification(newNode.getLeftSiblingKey());
-            leftSiblingNode.setRightSiblingKey(newNode.getNodeKey());
-            getTransactionState().finishNodeModification(leftSiblingNode);
-        }
+
+        adaptHashesWithAdd();
+
     }
 
     // ////////////////////////////////////////////////////////////
@@ -580,6 +614,8 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
                 getTransactionState().finishNodeModification(node);
             }
         }
+
+        adaptHashedWithUpdate(mOldNode);
 
     }
 
@@ -683,9 +719,29 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             getTransactionState().finishNodeModification(getCurrentNode());
 
         } while (moveTo(getCurrentNode().getParentKey()));
-
         moveTo(startNode.getNodeKey());
+    }
 
+    private void adaptHashedWithUpdate(final IItem oldNode) throws TreetankIOException {
+        final IItem newNode = getCurrentNode();
+        final int prime = 97;
+        long resultOld = oldNode.getHash();
+        long resultNew = newNode.hashCode();
+
+        do {
+            getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+            resultOld = (resultOld - getCurrentNode().getHash()) / prime;
+            if (getCurrentNode().getHash() == 0) {
+                resultNew = prime * resultOld + getCurrentNode().hashCode();
+            } else {
+                resultNew = prime * resultOld + getCurrentNode().getHash();
+            }
+
+            getCurrentNode().setHash(resultNew);
+            getTransactionState().finishNodeModification(getCurrentNode());
+
+        } while (moveTo(getCurrentNode().getParentKey()));
+        moveTo(newNode.getNodeKey());
     }
 
 }
