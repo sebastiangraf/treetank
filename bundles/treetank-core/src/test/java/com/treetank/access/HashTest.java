@@ -1,5 +1,7 @@
 package com.treetank.access;
 
+import javax.xml.namespace.QName;
+
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
@@ -13,6 +15,8 @@ import org.junit.Test;
 
 public class HashTest {
 
+    private final static String NAME="a";
+    
     @Before
     public void setUp() {
         TestHelper.deleteEverything();
@@ -24,7 +28,16 @@ public class HashTest {
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         
-        
+        wtx.insertElementAsFirstChild(new QName(NAME));
+        final long hash11Element = wtx.getNode().getHash();
+        wtx.insertElementAsFirstChild(new QName(NAME));
+        final long hash12Element = wtx.getNode().getHash();
+        wtx.moveToParent();
+        final long hash21Element = wtx.getNode().getHash();
+        wtx.moveToFirstChild();
+        wtx.remove();
+        final long hash13Element = wtx.getNode().getHash();
+        System.out.println();
         
         
     }

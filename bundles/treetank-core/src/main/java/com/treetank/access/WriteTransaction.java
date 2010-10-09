@@ -59,8 +59,8 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(WriteTransaction.class));
+    private static final LogWrapper LOGWRAPPER =
+        new LogWrapper(LoggerFactory.getLogger(WriteTransaction.class));
 
     /** Maximum number of node modifications before auto commit. */
     private final int mMaxNodeCount;
@@ -137,8 +137,8 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             final ElementNode node =
                 getTransactionState().createElementNode(parentKey, leftSibKey, rightSibKey, mQname);
 
-            adaptForInsert(node, true);
             setCurrentNode(node);
+            adaptForInsert(node, true);
 
             return node.getNodeKey();
         } else {
@@ -161,8 +161,8 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             final ElementNode node =
                 getTransactionState().createElementNode(parentKey, leftSibKey, rightSibKey, mQname);
 
-            adaptForInsert(node, false);
             setCurrentNode(node);
+            adaptForInsert(node, false);
 
             return node.getNodeKey();
         } else {
@@ -187,8 +187,8 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             final TextNode node =
                 getTransactionState().createTextNode(parentKey, leftSibKey, rightSibKey, value);
 
-            adaptForInsert(node, true);
             setCurrentNode(node);
+            adaptForInsert(node, true);
 
             return node.getNodeKey();
         } else {
@@ -212,8 +212,8 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             final TextNode node =
                 getTransactionState().createTextNode(parentKey, leftSibKey, rightSibKey, value);
 
-            adaptForInsert(node, false);
             setCurrentNode(node);
+            adaptForInsert(node, false);
 
             return node.getNodeKey();
 
@@ -241,9 +241,8 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             ((ElementNode)parentNode).insertAttribute(node.getNodeKey());
             getTransactionState().finishNodeModification(parentNode);
 
-            adaptForInsert(node, false);
-
             setCurrentNode(node);
+            adaptForInsert(node, false);
 
             return node.getNodeKey();
 
@@ -274,9 +273,8 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             ((ElementNode)parentNode).insertNamespace(node.getNodeKey());
             getTransactionState().finishNodeModification(parentNode);
 
-            adaptForInsert(node, false);
-
             setCurrentNode(node);
+            adaptForInsert(node, false);
 
             return node.getNodeKey();
         } else {
@@ -303,6 +301,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             }
             moveTo(node.getNodeKey());
             adaptForRemove(node);
+            adaptHashesWithRemove();
 
             // Set current node.
             if (node.hasRightSibling()) {
@@ -320,8 +319,11 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
                 (ElementNode)getTransactionState().prepareNodeForModification(node.getParentKey());
             parent.removeAttribute(node.getNodeKey());
             getTransactionState().finishNodeModification(parent);
+            adaptHashesWithRemove();
+            moveToParent();
         }
 
+        // TODO remove for namespace is missing
     }
 
     /**
@@ -693,16 +695,6 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         return (WriteTransactionState)super.getTransactionState();
     }
 
-    // private void adaptHashesWithRemove(final AbsNode oldNode) {
-    // final int prime = 97;
-    //
-    // int result = 1;
-    // result = prime * result + Arrays.hashCode(mIntData);
-    //
-    // int hash = oldNode.hashCode();
-    //
-    // }
-
     private void adaptHashesWithAdd() throws TreetankIOException {
         final IItem startNode = getCurrentNode();
         final int prime = 97;
@@ -742,6 +734,21 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
 
         } while (moveTo(getCurrentNode().getParentKey()));
         moveTo(newNode.getNodeKey());
+    }
+
+    private void adaptHashesWithRemove() throws TreetankIOException {
+        final IItem startNode = getCurrentNode();
+        final int prime = 97;
+        long result = 1;
+        do {
+            result = startNode.getHash();
+            getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+            result = (result - getCurrentNode().getHash()) / prime;
+            getCurrentNode().setHash(result);
+            getTransactionState().finishNodeModification(getCurrentNode());
+
+        } while (moveTo(getCurrentNode().getParentKey()));
+        moveTo(startNode.getNodeKey());
     }
 
 }
