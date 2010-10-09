@@ -26,18 +26,31 @@ import com.treetank.node.ENodes;
  */
 public interface IItem {
 
-    void setHash(final long hash);
+    /**
+     * Setting the actual hash of the structure. The hash of one node should have the entire integrity of the
+     * related subtree.
+     * 
+     * @param paramHash
+     *            hash to be set for this node
+     * 
+     */
+    void setHash(final long paramHash);
 
+    /**
+     * Getting the persistent stored hash.
+     * 
+     * @return the hash of this node
+     */
     long getHash();
 
     /**
      * Sets unique node key.
      * 
      * 
-     * @param mKey
+     * @param paramKey
      *            Unique (negative) key of item
      */
-    void setNodeKey(final long mKey);
+    void setNodeKey(final long paramKey);
 
     /**
      * Gets unique node key. TODO: maybe this should be renamed in
