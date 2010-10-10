@@ -124,7 +124,7 @@ public final class TextNode extends AbsStructNode {
 
     @Override
     public int hashCode() {
-        final int prime = 51;
+        final int prime = 17;
         int result = 1;
         result = prime * result + Arrays.hashCode(mIntData);
         result = prime * result + Arrays.hashCode(mValue);

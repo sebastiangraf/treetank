@@ -59,8 +59,8 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER =
-        new LogWrapper(LoggerFactory.getLogger(WriteTransaction.class));
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(WriteTransaction.class));
 
     /** Maximum number of node modifications before auto commit. */
     private final int mMaxNodeCount;
@@ -139,6 +139,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
 
             setCurrentNode(node);
             adaptForInsert(node, true);
+            adaptHashesWithAdd();
 
             return node.getNodeKey();
         } else {
@@ -163,6 +164,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
 
             setCurrentNode(node);
             adaptForInsert(node, false);
+            adaptHashesWithAdd();
 
             return node.getNodeKey();
         } else {
@@ -189,6 +191,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
 
             setCurrentNode(node);
             adaptForInsert(node, true);
+            adaptHashesWithAdd();
 
             return node.getNodeKey();
         } else {
@@ -214,6 +217,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
 
             setCurrentNode(node);
             adaptForInsert(node, false);
+            adaptHashesWithAdd();
 
             return node.getNodeKey();
 
@@ -238,11 +242,14 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             final AttributeNode node = getTransactionState().createAttributeNode(elementKey, mQname, value);
 
             final AbsNode parentNode = getTransactionState().prepareNodeForModification(node.getParentKey());
+            final long oldHash = parentNode.getHash();
             ((ElementNode)parentNode).insertAttribute(node.getNodeKey());
             getTransactionState().finishNodeModification(parentNode);
 
             setCurrentNode(node);
             adaptForInsert(node, false);
+
+            adaptHashedWithUpdate(oldHash);
 
             return node.getNodeKey();
 
@@ -525,8 +532,6 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             }
         }
 
-        adaptHashesWithAdd();
-
     }
 
     // ////////////////////////////////////////////////////////////
@@ -617,7 +622,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             }
         }
 
-        adaptHashedWithUpdate(mOldNode);
+        // adaptHashedWithUpdate(mOldNode.getHash());
 
     }
 
@@ -695,60 +700,60 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         return (WriteTransactionState)super.getTransactionState();
     }
 
+    private final static int startPrime = 3;
+
     private void adaptHashesWithAdd() throws TreetankIOException {
         final IItem startNode = getCurrentNode();
-        final int prime = 97;
         long result = 1;
         do {
 
             getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
             if (getCurrentNode().getHash() == 0) {
-                result = prime * result + getCurrentNode().hashCode();
+                final long nodeHash = getCurrentNode().hashCode();
+                result = startPrime * result + nodeHash;
             } else {
-                result = prime * result + getCurrentNode().getHash();
+                final long nodeHash = getCurrentNode().getHash();
+                result = startPrime * result + nodeHash;
             }
             getCurrentNode().setHash(result);
             getTransactionState().finishNodeModification(getCurrentNode());
 
         } while (moveTo(getCurrentNode().getParentKey()));
         moveTo(startNode.getNodeKey());
-    }
-
-    private void adaptHashedWithUpdate(final IItem oldNode) throws TreetankIOException {
-        final IItem newNode = getCurrentNode();
-        final int prime = 97;
-        long resultOld = oldNode.getHash();
-        long resultNew = newNode.hashCode();
-
-        do {
-            getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
-            resultOld = (resultOld - getCurrentNode().getHash()) / prime;
-            if (getCurrentNode().getHash() == 0) {
-                resultNew = prime * resultOld + getCurrentNode().hashCode();
-            } else {
-                resultNew = prime * resultOld + getCurrentNode().getHash();
-            }
-
-            getCurrentNode().setHash(resultNew);
-            getTransactionState().finishNodeModification(getCurrentNode());
-
-        } while (moveTo(getCurrentNode().getParentKey()));
-        moveTo(newNode.getNodeKey());
     }
 
     private void adaptHashesWithRemove() throws TreetankIOException {
         final IItem startNode = getCurrentNode();
-        final int prime = 97;
-        long result = 1;
-        do {
-            result = startNode.getHash();
+        long result = startNode.getHash();
+        while (moveTo(getCurrentNode().getParentKey())) {
             getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
-            result = (result - getCurrentNode().getHash()) / prime;
+            final long tempResult = result*startPrime;
+            final long nodeHash = getCurrentNode().getHash();
+            result = nodeHash - tempResult;
             getCurrentNode().setHash(result);
             getTransactionState().finishNodeModification(getCurrentNode());
-
-        } while (moveTo(getCurrentNode().getParentKey()));
+        }
         moveTo(startNode.getNodeKey());
     }
 
+    private void adaptHashedWithUpdate(final long oldHash) throws TreetankIOException {
+        // final IItem newNode = getCurrentNode();
+        // long resultOld = oldHash;
+        // long resultNew = newNode.hashCode();
+        //
+        // while (moveTo(getCurrentNode().getParentKey())) {
+        // getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+        // resultOld = (getCurrentNode().getHash() - resultOld) / startPrime;
+        // if (getCurrentNode().getHash() == 0) {
+        // resultNew = startPrime * resultOld + getCurrentNode().hashCode();
+        // } else {
+        // resultNew = startPrime * resultOld + getCurrentNode().getHash();
+        // }
+        //
+        // getCurrentNode().setHash(resultNew);
+        // getTransactionState().finishNodeModification(getCurrentNode());
+        //
+        // }
+        // moveTo(newNode.getNodeKey());
+    }
 }

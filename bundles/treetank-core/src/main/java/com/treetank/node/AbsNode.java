@@ -17,8 +17,6 @@
 
 package com.treetank.node;
 
-import java.util.Arrays;
-
 import com.treetank.api.IItem;
 import com.treetank.io.ITTSink;
 import com.treetank.settings.EFixed;
@@ -233,7 +231,7 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     public String toString() {
         return new StringBuilder("\n").append(this.getClass().getName()).append("\n\tnode key: ").append(
             getNodeKey()).append("\n\tparentKey: ").append(getParentKey()).append("\n\ttypeKey: ").append(
-            getTypeKey()).toString();
+            getTypeKey()).append("\n\thash: ").append(getHash()).toString();
     }
 
     @Override

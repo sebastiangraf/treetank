@@ -80,7 +80,7 @@ public final class DocumentRootNode extends AbsStructNode {
 
     @Override
     public int hashCode() {
-        final int prime = 37;
+        final int prime = 7;
         int result = 1;
         result = prime * result + Arrays.hashCode(mLongData);
         result = prime * result + Arrays.hashCode(mIntData);
