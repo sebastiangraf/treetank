@@ -59,8 +59,8 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(WriteTransaction.class));
+    private static final LogWrapper LOGWRAPPER =
+        new LogWrapper(LoggerFactory.getLogger(WriteTransaction.class));
 
     /** Maximum number of node modifications before auto commit. */
     private final int mMaxNodeCount;
@@ -704,33 +704,37 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
 
     private void adaptHashesWithAdd() throws TreetankIOException {
         final IItem startNode = getCurrentNode();
-        long result = 1;
+        long hashToAdd = startNode.hashCode();
+        long newHash = 0;
+        long possibleOldKey = 0;
         do {
-
             getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
-            if (getCurrentNode().getHash() == 0) {
-                final long nodeHash = getCurrentNode().hashCode();
-                result = startPrime * result + nodeHash;
+            if (getCurrentNode().getNodeKey() == startNode.getNodeKey()) {
+                newHash = hashToAdd;
+            } else if (getCurrentNode().getNodeKey() == startNode.getParentKey()) {
+                possibleOldKey = getCurrentNode().getHash();
+                newHash = startPrime * possibleOldKey + hashToAdd;
+                hashToAdd = newHash;
             } else {
-                final long nodeHash = getCurrentNode().getHash();
-                result = startPrime * result + nodeHash;
+                newHash = (getCurrentNode().getHash() - possibleOldKey) / startPrime;
+                newHash = startPrime * newHash + hashToAdd;
+                possibleOldKey = getCurrentNode().getHash();
             }
-            getCurrentNode().setHash(result);
+            getCurrentNode().setHash(newHash);
             getTransactionState().finishNodeModification(getCurrentNode());
-
         } while (moveTo(getCurrentNode().getParentKey()));
         moveTo(startNode.getNodeKey());
     }
 
     private void adaptHashesWithRemove() throws TreetankIOException {
         final IItem startNode = getCurrentNode();
-        long result = startNode.getHash();
+        long hashToRemove = startNode.getHash();
+
         while (moveTo(getCurrentNode().getParentKey())) {
             getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
-            final long tempResult = result*startPrime;
-            final long nodeHash = getCurrentNode().getHash();
-            result = nodeHash - tempResult;
-            getCurrentNode().setHash(result);
+            final long oldHash = getCurrentNode().getHash();
+            final long newHash = (oldHash - hashToRemove) / startPrime;
+            getCurrentNode().setHash(newHash);
             getTransactionState().finishNodeModification(getCurrentNode());
         }
         moveTo(startNode.getNodeKey());
