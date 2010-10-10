@@ -27,7 +27,6 @@ public class HashTest {
     }
 
     @Test
-    @Ignore
     public void adaptHashWithInsertAndRemove() throws TreetankException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
