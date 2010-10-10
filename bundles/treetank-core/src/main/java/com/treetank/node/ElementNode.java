@@ -237,7 +237,7 @@ public final class ElementNode extends AbsStructNode {
 
     @Override
     public int hashCode() {
-        final int prime = 43;
+        final int prime = 11;
         int result = 1;
         result = prime * result + Arrays.hashCode(mIntData);
 //        result = prime * result + mAttributeKeys.hashCode();
