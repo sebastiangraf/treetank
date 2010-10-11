@@ -59,8 +59,8 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER =
-        new LogWrapper(LoggerFactory.getLogger(WriteTransaction.class));
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(WriteTransaction.class));
 
     /** Maximum number of node modifications before auto commit. */
     private final int mMaxNodeCount;
@@ -250,7 +250,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             adaptForInsert(node, false);
 
             adaptHashedWithUpdate(oldHash);
-
+            adaptHashesWithAdd();
             return node.getNodeKey();
 
         } else {
@@ -282,7 +282,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
 
             setCurrentNode(node);
             adaptForInsert(node, false);
-
+            adaptHashesWithAdd();
             return node.getNodeKey();
         } else {
             throw new TreetankUsageException("Insert is not allowed if current node is not an ElementNode!");
@@ -713,11 +713,12 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
                 newHash = hashToAdd;
             } else if (getCurrentNode().getNodeKey() == startNode.getParentKey()) {
                 possibleOldKey = getCurrentNode().getHash();
-                newHash = startPrime * possibleOldKey + hashToAdd;
+                newHash = possibleOldKey + hashToAdd * startPrime;
                 hashToAdd = newHash;
             } else {
-                newHash = (getCurrentNode().getHash() - possibleOldKey) / startPrime;
-                newHash = startPrime * newHash + hashToAdd;
+                newHash = getCurrentNode().getHash() - (possibleOldKey * startPrime);
+                newHash = newHash + hashToAdd * startPrime;
+                hashToAdd = newHash;
                 possibleOldKey = getCurrentNode().getHash();
             }
             getCurrentNode().setHash(newHash);
@@ -733,7 +734,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         while (moveTo(getCurrentNode().getParentKey())) {
             getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
             final long oldHash = getCurrentNode().getHash();
-            final long newHash = (oldHash - hashToRemove) / startPrime;
+            final long newHash = oldHash - (hashToRemove * startPrime);
             getCurrentNode().setHash(newHash);
             getTransactionState().finishNodeModification(getCurrentNode());
         }
