@@ -17,28 +17,26 @@
 package com.treetank.wikipedia.hadoop;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
 
-import javax.xml.stream.events.XMLEvent;
-
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 
 /**
  * <h1>InputFormat</h1>
  * 
  * <p>
- * Custom input format, which splits XML files according to an XPath query. Key is a date/timestamp, value the
- * according subtree of the matching XPath query.
+ * Custom input format, which splits XML files. Key is a date/timestamp, value the
+ * according subtree of a matching elemt, which is configurable.
  * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class XMLInputFormat extends FileInputFormat<Date, List<XMLEvent>> {
+public final class XMLInputFormat extends FileInputFormat<DateWritable, Text> {
 
     static {
         System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
@@ -53,10 +51,10 @@ public final class XMLInputFormat extends FileInputFormat<Date, List<XMLEvent>> 
     }
 
     @Override
-    public RecordReader<Date, List<XMLEvent>> createRecordReader(final InputSplit paramSplit,
+    public RecordReader<DateWritable, Text> createRecordReader(final InputSplit paramSplit,
         final TaskAttemptContext paramContext) throws IOException, InterruptedException {
-        final XMLRecordReader reader = new XMLRecordReader();
-        reader.initialize(paramSplit, paramContext);
+        final RecordReader<DateWritable, Text> reader =  new XMLRecordReader();
+        reader.initialize((FileSplit)paramSplit, paramContext);
         return reader;
     }
 }

@@ -16,8 +16,12 @@
  */
 package com.treetank.wikipedia.hadoop;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+
+import javax.servlet.jsp.jstl.core.Config;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -70,13 +74,13 @@ public final class SortWiki extends Configured implements Tool {
     }
 
     @Override
-    public int run(final String[] args) throws Exception {
+    public int run(final String[] args) throws IOException, ClassNotFoundException, InterruptedException {
         final Job job = new Job(getConf());
         job.setJarByClass(this.getClass());
         job.setJobName(this.getClass().getName());
 
-        job.setOutputKeyClass(Date.class);
-        job.setOutputValueClass(List.class);
+        job.setOutputKeyClass(DateWritable.class);
+        job.setOutputValueClass(java.util.List.class);
 
         job.setMapperClass(XMLMap.class);
         job.setReducerClass(XMLReduce.class);
@@ -96,6 +100,7 @@ public final class SortWiki extends Configured implements Tool {
         config.set("mapred.job.tracker", "local");
         config.set("fs.default.name", "local");
 
+        new File(args[1]).delete();
         FileInputFormat.setInputPaths(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 

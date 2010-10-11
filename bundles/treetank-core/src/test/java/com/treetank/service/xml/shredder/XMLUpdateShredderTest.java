@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.junit.After;
 import org.junit.Before;
@@ -32,11 +33,19 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
 
     public static final String XMLINSERT = RESOURCES + File.separator + "revXMLsInsert";
 
-    public static final String XMLDELETE = RESOURCES + File.separator + "revXMLsDelete";
+    public static final String XMLDELETEFIRST = RESOURCES + File.separator + "revXMLsDelete";
+
+    public static final String XMLDELETESECOND = RESOURCES + File.separator + "revXMLsDelete1";
 
     public static final String XMLSAME = RESOURCES + File.separator + "revXMLsSame";
 
-    public static final String XMLALL = RESOURCES + File.separator + "revXMLsAll";
+    public static final String XMLALLFIRST = RESOURCES + File.separator + "revXMLsAll";
+
+    public static final String XMLALLSECOND = RESOURCES + File.separator + "revXMLsAll1";
+    
+    public static final String XMLALLTHIRD = RESOURCES + File.separator + "revXMLsAll2";
+    
+    public static final String XMLALLFOURTH = RESOURCES + File.separator + "revXMLsAll3";
 
     @Override
     @Before
@@ -61,14 +70,35 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
     }
 
     @Test
-    public void testDeletes() throws Exception {
-        test(XMLDELETE);
+    public void testDeletesFirst() throws Exception {
+        test(XMLDELETEFIRST);
     }
 
     @Test
-    public void testAll() throws Exception {
-        test(XMLALL);
+    public void testDeletesSecond() throws Exception {
+        test(XMLDELETESECOND);
     }
+
+    @Test
+    public void testAllFirst() throws Exception {
+        test(XMLALLFIRST);
+    }
+
+    @Test
+    public void testAllSecond() throws Exception {
+        test(XMLALLSECOND);
+    }
+    
+    @Test
+    public void testAllThird() throws Exception {
+        test(XMLALLTHIRD);
+    }
+    
+//    @Test
+//    public void testAllFourth() throws Exception {
+//        test(XMLALLFOURTH);
+//    }
+
 
     private void test(final String FOLDER) throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
@@ -104,6 +134,7 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
 
         boolean first = true;
 
+        // Shredder files.
         for (final File file : list) {
             if (file.getName().endsWith(".xml")) {
                 final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -113,21 +144,24 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
                     first = false;
                 } else {
                     final XMLShredder shredder =
-                        new XMLUpdateShredder(wtx, XMLShredder.createReader(file), true, true);
+                        new XMLUpdateShredder(wtx, XMLShredder.createReader(file), true, file, true);
                     shredder.call();
                 }
                 assertEquals(i, wtx.getRevisionNumber());
 
                 i++;
-                wtx.moveToDocumentRoot();
-                wtx.close();
 
                 final OutputStream out = new ByteArrayOutputStream();
                 final XMLSerializer serializer = new XMLSerializerBuilder(session, out).build();
                 serializer.call();
                 final StringBuilder sBuilder = TestHelper.readFile(file.getAbsoluteFile(), false);
 
-                assertXMLEqual(sBuilder.toString(), out.toString());
+                System.out.println(out.toString());
+                
+                final Diff myDiff = new Diff(sBuilder.toString(), out.toString());
+                assertTrue("pieces of XML are similar " + myDiff, myDiff.similar());
+                assertTrue("but are they identical? " + myDiff, myDiff.identical());
+                wtx.close();
             }
         }
     }
