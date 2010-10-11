@@ -78,7 +78,7 @@ public enum GUICommands implements IGUICommand {
     OPEN("Open TNK-File") {
         /** Revision number. */
         private long mRevNumber;
-        
+
         @Override
         public void execute(final ActionEvent paramE, final GUI paramGUI) {
             // Create a file chooser.
@@ -93,8 +93,8 @@ public enum GUICommands implements IGUICommand {
             panel.setLayout(box);
             final Component comp = layout.getLayoutComponent(BorderLayout.SOUTH);
             panel.add(comp);
-            final JComboBox cb = new JComboBox();    
-            
+            final JComboBox cb = new JComboBox();
+
             cb.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(final ActionEvent paramEvent) {
@@ -102,12 +102,12 @@ public enum GUICommands implements IGUICommand {
                     mRevNumber = (Long)cb.getSelectedItem();
                 };
             });
-            
+
             panel.add(cb);
             fc.add(panel, BorderLayout.SOUTH);
 
             final PropertyChangeListener changeListener = new PropertyChangeListener() {
-                
+
                 @Override
                 public void propertyChange(final PropertyChangeEvent paramEvent) {
                     // Get last revision number from TT-storage.
@@ -132,7 +132,8 @@ public enum GUICommands implements IGUICommand {
 
                         if (!error) {
                             // Create items, which are used as available revisions.
-                            for (long i = 0; i < revNumber; i++) {
+                            cb.removeAll();
+                            for (long i = 0; i <= revNumber; i++) {
                                 cb.addItem(i);
                             }
 
@@ -577,7 +578,7 @@ public enum GUICommands implements IGUICommand {
                     final IWriteTransaction wtx = session.beginWriteTransaction();
                     final XMLEventReader reader = XMLShredder.createReader(source);
                     if (paramUpdateOnly) {
-                        final XMLShredder shredder = new XMLUpdateShredder(wtx, reader, true, true);
+                        final XMLShredder shredder = new XMLUpdateShredder(wtx, reader, true, source, true);
                         shredder.call();
                     } else {
                         final XMLShredder shredder = new XMLShredder(wtx, reader, true);
@@ -587,7 +588,7 @@ public enum GUICommands implements IGUICommand {
                     session.close();
                     database.close();
 
-//                    setViews(paramGUI, target);
+                    // setViews(paramGUI, target);
                 } catch (final Exception e) {
                     LOGGER.error(e.getMessage(), e);
                 }

@@ -53,6 +53,7 @@ public final class ListEventReader implements XMLEventReader {
      */
     public ListEventReader(final List<XMLEvent> paramEvents) {
         mEvents = paramEvents;
+        mIndex = -1;
     }
 
     @Override
@@ -100,7 +101,7 @@ public final class ListEventReader implements XMLEventReader {
     @Override
     public boolean hasNext() {
         boolean retVal = true;
-        if (mIndex < 0 || mIndex > mEvents.size() - 1) {
+        if (mIndex < -1 || mIndex + 1 > mEvents.size() - 1) {
             retVal = false;
         }
         return retVal;
@@ -110,7 +111,7 @@ public final class ListEventReader implements XMLEventReader {
     public XMLEvent nextEvent() throws XMLStreamException {
         XMLEvent retVal;
         try {
-            retVal = mEvents.get(mIndex++);
+            retVal = mEvents.get(++mIndex);
         } catch (final IndexOutOfBoundsException e) {
             throw new NoSuchElementException();
         }
@@ -158,6 +159,15 @@ public final class ListEventReader implements XMLEventReader {
     @Override
     public void remove() {
         throw new UnsupportedOperationException("Not supported!");
+    }
+    
+    /** 
+     * Create a copy. 
+     * 
+     * @return copied ListEventReader. 
+     */
+    public XMLEventReader copy() {
+        return new ListEventReader(mEvents);
     }
 
 }

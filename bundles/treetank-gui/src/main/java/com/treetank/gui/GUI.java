@@ -101,7 +101,7 @@ public final class GUI extends JPanel {
              * therefore more rendering calls.
              */
             mTree.setRowHeight(20);
-            mTree.setLargeModel(true);
+//            mTree.setLargeModel(false);
 
             // Selection Model.
             mTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);

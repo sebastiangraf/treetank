@@ -16,13 +16,18 @@
  */
 package com.treetank.wikipedia.hadoop;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringBufferInputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.stream.XMLEventFactory;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.stax.StAXSource;
@@ -52,7 +57,7 @@ import com.treetank.utils.LogWrapper;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class XMLReduce extends Reducer<Date, List<XMLEvent>, Date, Text> {
+public final class XMLReduce extends Reducer<DateWritable, Text, DateWritable, Text> {
 
     /**
      * Log wrapper for better output.
@@ -71,20 +76,22 @@ public final class XMLReduce extends Reducer<Date, List<XMLEvent>, Date, Text> {
     }
 
     @Override
-    public void reduce(final Date paramKey, final Iterable<List<XMLEvent>> paramValue,
+    public void reduce(final DateWritable paramKey, final Iterable<Text> paramValue,
         final Context paramContext) throws IOException, InterruptedException {
-        final List<XMLEvent> combined = new ArrayList<XMLEvent>();
+        final Text combined = new Text();
 
-        for (final List<XMLEvent> events : paramValue) {
-            combined.addAll(events);
+        for (final Text event : paramValue) {
+            combined.append(event.getBytes(), 0, event.getLength());
         }
 
         final Processor proc = new Processor(false);
         final XsltCompiler compiler = proc.newXsltCompiler();
         try {
+            final XMLInputFactory xmlif = XMLInputFactory.newInstance();
             final XsltExecutable exec = compiler.compile(new StreamSource(new File(STYLESHEET)));
             final XsltTransformer transform = exec.load();
-            transform.setSource(new StAXSource(new ListEventReader(combined)));
+            transform.setSource(new StAXSource(xmlif.createXMLEventReader(new StringReader(combined
+                .toString()))));
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             final Serializer serializer = new Serializer();
             serializer.setOutputStream(out);

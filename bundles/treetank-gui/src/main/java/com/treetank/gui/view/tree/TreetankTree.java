@@ -101,7 +101,7 @@ public final class TreetankTree extends JTree {
         if (fromRow != -1) {
             int toRow = fromRow;
 
-            while(toRow < getRowCount()) {
+            while (toRow < getRowCount()) {
                 final TreePath path = getPathForRow(toRow);
                 if (mSelectionPath.isDescendant(path)) {
                     toRow++;

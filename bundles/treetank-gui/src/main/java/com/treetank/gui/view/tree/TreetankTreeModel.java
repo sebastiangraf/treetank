@@ -45,54 +45,38 @@ public final class TreetankTreeModel extends AbstractTreeModel {
     private static final Logger LOGGER = LoggerFactory.getLogger(TreetankTreeModel.class);
 
     /** Treetank reading transaction {@link IReadTransaction}. */
-    private static transient IReadTransaction mRTX;
+    private transient IReadTransaction mRTX;
 
     /** Treetank database {@link IDatabase}. */
-    protected static transient IDatabase mDatabase;
+    protected transient IDatabase mDatabase;
 
     /**
      * Constructor.
      * 
-     * @param database
-     *            TreeTank database.
+     * @param paramDatabase
+     *            {@link IDatabase} on a Treetank file.
      */
-    public TreetankTreeModel(final IDatabase database) {
-        this(database, 0);
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param database
-     *            TreeTank database.
-     * @param nodekeyToStart
-     *            NodeKey to move to.
-     */
-    public TreetankTreeModel(final IDatabase database, final long nodekeyToStart) {
-        try {
-            if (mDatabase == null || mDatabase.getFile() == null
-                || !(mDatabase.getFile().equals(database.getFile()))) {
-                mDatabase = database;
-
-                if (mRTX != null && !mRTX.isClosed()) {
-                    mRTX.close();
-                }
-            }
-
-            if (mRTX == null || mRTX.isClosed()) {
-                mRTX = mDatabase.getSession().beginReadTransaction();
-            }
-            mRTX.moveTo(nodekeyToStart);
-        } catch (final TreetankException e) {
-            LOGGER.error("TreetankException: " + e.getMessage(), e);
-        }
+    public TreetankTreeModel(final IDatabase paramDatabase) {
+        this(paramDatabase, 0, -1);
     }
 
     /**
      * Constructor.
      * 
      * @param paramDatabase
-     *            Treetank database {@link IDatabase}.
+     *            {@link IDatabase} on a Treetank file.
+     * @param paramNodeKeyToStart
+     *            NodeKey to move to.
+     */
+    public TreetankTreeModel(final IDatabase paramDatabase, final long paramNodeKeyToStart) {
+        this(paramDatabase, paramNodeKeyToStart, -1);
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param paramDatabase
+     *            {@link IDatabase} on a Treetank file.
      * @param paramNodekeyToStart
      *            Starting point of transaction (node key).
      * @param paramRevision
@@ -111,7 +95,11 @@ public final class TreetankTreeModel extends AbstractTreeModel {
             }
 
             if (mRTX == null || mRTX.isClosed()) {
-                mRTX = mDatabase.getSession().beginReadTransaction(paramRevision);
+                if (paramRevision == -1) {
+                    mRTX = mDatabase.getSession().beginReadTransaction();
+                } else {
+                    mRTX = mDatabase.getSession().beginReadTransaction(paramRevision);
+                }
             }
             mRTX.moveTo(paramNodekeyToStart);
         } catch (final TreetankException e) {
