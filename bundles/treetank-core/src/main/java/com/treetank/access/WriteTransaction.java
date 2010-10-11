@@ -56,6 +56,9 @@ import org.slf4j.LoggerFactory;
  */
 public final class WriteTransaction extends ReadTransaction implements IWriteTransaction {
 
+    /** Prime for computing the hash. */
+    private static final int PRIME = 3;
+
     /**
      * Log wrapper for better output.
      */
@@ -242,14 +245,12 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             final AttributeNode node = getTransactionState().createAttributeNode(elementKey, mQname, value);
 
             final AbsNode parentNode = getTransactionState().prepareNodeForModification(node.getParentKey());
-            final long oldHash = parentNode.getHash();
             ((ElementNode)parentNode).insertAttribute(node.getNodeKey());
             getTransactionState().finishNodeModification(parentNode);
 
             setCurrentNode(node);
             adaptForInsert(node, false);
 
-            adaptHashedWithUpdate(oldHash);
             adaptHashesWithAdd();
             return node.getNodeKey();
 
@@ -328,9 +329,17 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             getTransactionState().finishNodeModification(parent);
             adaptHashesWithRemove();
             moveToParent();
+        } else if (getCurrentNode().getKind() == ENodes.NAMESPACE_KIND) {
+            final AbsNode node = (AbsNode)getCurrentNode();
+
+            final ElementNode parent =
+                (ElementNode)getTransactionState().prepareNodeForModification(node.getParentKey());
+            parent.removeNamespace(node.getNodeKey());
+            getTransactionState().finishNodeModification(parent);
+            adaptHashesWithRemove();
+            moveToParent();
         }
 
-        // TODO remove for namespace is missing
     }
 
     /**
@@ -352,6 +361,8 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         getTransactionState().removeNode(oldNode);
         setCurrentNode(newNode);
 
+        adaptHashedWithUpdate(oldNode.getHash());
+
     }
 
     /**
@@ -372,6 +383,8 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         newNode.setURIKey(getTransactionState().createNameKey(mUri));
         getTransactionState().removeNode(oldNode);
         setCurrentNode(newNode);
+
+        adaptHashedWithUpdate(oldNode.getHash());
     }
 
     /**
@@ -392,6 +405,8 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         newNode.setValue(mValueType, mValue);
         getTransactionState().removeNode(oldNode);
         setCurrentNode(newNode);
+
+        adaptHashedWithUpdate(oldNode.getHash());
 
     }
 
@@ -493,6 +508,12 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         }
     }
 
+    /**
+     * Checking write access and intermediate commit.
+     * 
+     * @throws TreetankException
+     *             if anything weird happens.
+     */
     private void checkAccessAndCommit() throws TreetankException {
         assertNotClosed();
         mModificationCount++;
@@ -503,16 +524,26 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     // insert operation
     // //////////////////////////////////////////////////////////
 
-    private void adaptForInsert(final AbsNode newNode, final boolean addAsFirstChild)
+    /**
+     * Adapting everything for insert operations.
+     * 
+     * @param paramNewNode
+     *            pointer of the new node to be inserted
+     * @param paramAsFirstChild
+     *            should the new element added as a first child?
+     * @throws TreetankIOException
+     *             if anything weird happens
+     */
+    private void adaptForInsert(final AbsNode paramNewNode, final boolean paramAsFirstChild)
         throws TreetankIOException {
 
-        if (newNode instanceof AbsStructNode) {
-            final AbsStructNode strucNode = (AbsStructNode)newNode;
+        if (paramNewNode instanceof AbsStructNode) {
+            final AbsStructNode strucNode = (AbsStructNode)paramNewNode;
             final AbsStructNode parent =
-                (AbsStructNode)getTransactionState().prepareNodeForModification(newNode.getParentKey());
+                (AbsStructNode)getTransactionState().prepareNodeForModification(paramNewNode.getParentKey());
             parent.incrementChildCount();
-            if (addAsFirstChild) {
-                parent.setFirstChildKey(newNode.getNodeKey());
+            if (paramAsFirstChild) {
+                parent.setFirstChildKey(paramNewNode.getNodeKey());
             }
             getTransactionState().finishNodeModification(parent);
 
@@ -520,14 +551,14 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
                 final AbsStructNode rightSiblingNode =
                     (AbsStructNode)getTransactionState().prepareNodeForModification(
                         strucNode.getRightSiblingKey());
-                rightSiblingNode.setLeftSiblingKey(newNode.getNodeKey());
+                rightSiblingNode.setLeftSiblingKey(paramNewNode.getNodeKey());
                 getTransactionState().finishNodeModification(rightSiblingNode);
             }
             if (strucNode.hasLeftSibling()) {
                 final AbsStructNode leftSiblingNode =
                     (AbsStructNode)getTransactionState().prepareNodeForModification(
                         strucNode.getLeftSiblingKey());
-                leftSiblingNode.setRightSiblingKey(newNode.getNodeKey());
+                leftSiblingNode.setRightSiblingKey(paramNewNode.getNodeKey());
                 getTransactionState().finishNodeModification(leftSiblingNode);
             }
         }
@@ -542,20 +573,29 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     // update operation
     // ////////////////////////////////////////////////////////////
 
-    private final AbsNode createNodeToModify(final AbsNode mOldNode) throws TreetankIOException {
+    /**
+     * Creating a new element for an existing node.
+     * 
+     * @param paramOldNode
+     *            new Node to be cloned
+     * @throws TreetankIOException
+     *             if anything weird happens
+     * @return an {@link AbsNode} which is cloned
+     */
+    private AbsNode createNodeToModify(final AbsNode paramOldNode) throws TreetankIOException {
         AbsNode newNode = null;
-        switch (mOldNode.getKind()) {
+        switch (paramOldNode.getKind()) {
         case ELEMENT_KIND:
-            newNode = getTransactionState().createElementNode((ElementNode)mOldNode);
+            newNode = getTransactionState().createElementNode((ElementNode)paramOldNode);
             break;
         case ATTRIBUTE_KIND:
-            newNode = getTransactionState().createAttributeNode((AttributeNode)mOldNode);
+            newNode = getTransactionState().createAttributeNode((AttributeNode)paramOldNode);
             break;
         case NAMESPACE_KIND:
-            newNode = getTransactionState().createNamespaceNode((NamespaceNode)mOldNode);
+            newNode = getTransactionState().createNamespaceNode((NamespaceNode)paramOldNode);
             break;
         case TEXT_KIND:
-            newNode = getTransactionState().createTextNode((TextNode)mOldNode);
+            newNode = getTransactionState().createTextNode((TextNode)paramOldNode);
             break;
         default:
             break;
@@ -563,66 +603,78 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         return newNode;
     }
 
-    private void adaptForUpdate(final AbsStructNode mOldNode, final AbsStructNode mNewNode)
+    /**
+     * Adapting everything for update operations.
+     * 
+     * @param paramOldNode
+     *            pointer of the old node to be replaces
+     * @param paramNewNode
+     *            pointer of new node to be inserted
+     * @throws TreetankIOException
+     *             if anything weird happens
+     */
+    private void adaptForUpdate(final AbsStructNode paramOldNode, final AbsStructNode paramNewNode)
         throws TreetankIOException {
         // Adapt left sibling node if there is one.
-        if (mOldNode.hasLeftSibling()) {
+        if (paramOldNode.hasLeftSibling()) {
             final AbsStructNode leftSibling =
-                (AbsStructNode)getTransactionState().prepareNodeForModification(mOldNode.getLeftSiblingKey());
-            leftSibling.setRightSiblingKey(mNewNode.getNodeKey());
+                (AbsStructNode)getTransactionState().prepareNodeForModification(
+                    paramOldNode.getLeftSiblingKey());
+            leftSibling.setRightSiblingKey(paramNewNode.getNodeKey());
             getTransactionState().finishNodeModification(leftSibling);
         }
 
         // Adapt right sibling node if there is one.
-        if (mOldNode.hasRightSibling()) {
+        if (paramOldNode.hasRightSibling()) {
             final AbsStructNode rightSibling =
-                (AbsStructNode)getTransactionState()
-                    .prepareNodeForModification(mOldNode.getRightSiblingKey());
-            rightSibling.setLeftSiblingKey(mNewNode.getNodeKey());
+                (AbsStructNode)getTransactionState().prepareNodeForModification(
+                    paramOldNode.getRightSiblingKey());
+            rightSibling.setLeftSiblingKey(paramNewNode.getNodeKey());
             getTransactionState().finishNodeModification(rightSibling);
         }
 
         // Adapt parent, if node has now left sibling it is a first child.
-        if (!mOldNode.hasLeftSibling()) {
+        if (!paramOldNode.hasLeftSibling()) {
             final AbsStructNode parent =
-                (AbsStructNode)getTransactionState().prepareNodeForModification(mOldNode.getParentKey());
-            parent.setFirstChildKey(mNewNode.getNodeKey());
+                (AbsStructNode)getTransactionState().prepareNodeForModification(paramOldNode.getParentKey());
+            parent.setFirstChildKey(paramNewNode.getNodeKey());
             getTransactionState().finishNodeModification(parent);
         }
 
-        if (mOldNode.hasFirstChild()) {
+        // Adapt first child + all childs
+        if (paramOldNode.hasFirstChild()) {
             moveToFirstChild();
             final AbsStructNode firstChild = (AbsStructNode)getCurrentNode();
             setCurrentNode(firstChild);
             do {
                 final AbsNode node =
                     getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
-                node.setParentKey(mNewNode.getNodeKey());
+                node.setParentKey(paramNewNode.getNodeKey());
                 getTransactionState().finishNodeModification(node);
             } while (moveToRightSibling());
         }
 
-        if (mOldNode.getKind() == ENodes.ELEMENT_KIND) {
+        // Caring about attributes and namespaces
+        if (paramOldNode.getKind() == ENodes.ELEMENT_KIND) {
             // setting the attributes and namespaces
-            for (int i = 0; i < ((ElementNode)mOldNode).getAttributeCount(); i++) {
-                ((ElementNode)mNewNode).insertAttribute(((ElementNode)mOldNode).getAttributeKey(i));
+            for (int i = 0; i < ((ElementNode)paramOldNode).getAttributeCount(); i++) {
+                ((ElementNode)paramNewNode).insertAttribute(((ElementNode)paramOldNode).getAttributeKey(i));
                 final AbsNode node =
                     getTransactionState().prepareNodeForModification(
-                        ((ElementNode)mOldNode).getAttributeKey(i));
-                node.setParentKey(mNewNode.getNodeKey());
+                        ((ElementNode)paramOldNode).getAttributeKey(i));
+                node.setParentKey(paramNewNode.getNodeKey());
                 getTransactionState().finishNodeModification(node);
             }
-            for (int i = 0; i < ((ElementNode)mOldNode).getNamespaceCount(); i++) {
-                ((ElementNode)mNewNode).insertNamespace(((ElementNode)mOldNode).getNamespaceKey(i));
+            for (int i = 0; i < ((ElementNode)paramOldNode).getNamespaceCount(); i++) {
+                ((ElementNode)paramNewNode).insertNamespace(((ElementNode)paramOldNode).getNamespaceKey(i));
                 final AbsNode node =
                     getTransactionState().prepareNodeForModification(
-                        ((ElementNode)mOldNode).getNamespaceKey(i));
-                node.setParentKey(mNewNode.getNodeKey());
+                        ((ElementNode)paramOldNode).getNamespaceKey(i));
+                node.setParentKey(paramNewNode.getNodeKey());
                 getTransactionState().finishNodeModification(node);
             }
         }
 
-        // adaptHashedWithUpdate(mOldNode.getHash());
 
     }
 
@@ -634,55 +686,71 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     // remove operation
     // ////////////////////////////////////////////////////////////
 
-    private void adaptForRemove(final AbsStructNode oldNode) throws TreetankIOException {
+    /**
+     * Adapting everything for remove operations.
+     * 
+     * @param paramOldNode
+     *            pointer of the old node to be replaces
+     * @throws TreetankIOException
+     *             if anything weird happens
+     */
+    private void adaptForRemove(final AbsStructNode paramOldNode) throws TreetankIOException {
 
         // Adapt left sibling node if there is one.
-        if (oldNode.hasLeftSibling()) {
+        if (paramOldNode.hasLeftSibling()) {
             final AbsStructNode leftSibling =
-                (AbsStructNode)getTransactionState().prepareNodeForModification(oldNode.getLeftSiblingKey());
-            leftSibling.setRightSiblingKey(oldNode.getRightSiblingKey());
+                (AbsStructNode)getTransactionState().prepareNodeForModification(
+                    paramOldNode.getLeftSiblingKey());
+            leftSibling.setRightSiblingKey(paramOldNode.getRightSiblingKey());
             getTransactionState().finishNodeModification(leftSibling);
         }
 
         // Adapt right sibling node if there is one.
-        if (oldNode.hasRightSibling()) {
+        if (paramOldNode.hasRightSibling()) {
             final AbsStructNode rightSibling =
-                (AbsStructNode)getTransactionState().prepareNodeForModification(oldNode.getRightSiblingKey());
-            rightSibling.setLeftSiblingKey(oldNode.getLeftSiblingKey());
+                (AbsStructNode)getTransactionState().prepareNodeForModification(
+                    paramOldNode.getRightSiblingKey());
+            rightSibling.setLeftSiblingKey(paramOldNode.getLeftSiblingKey());
             getTransactionState().finishNodeModification(rightSibling);
         }
 
         // Adapt parent, if node has now left sibling it is a first child.
         final AbsStructNode parent =
-            (AbsStructNode)getTransactionState().prepareNodeForModification(oldNode.getParentKey());
-        if (!oldNode.hasLeftSibling()) {
-            parent.setFirstChildKey(oldNode.getRightSiblingKey());
+            (AbsStructNode)getTransactionState().prepareNodeForModification(paramOldNode.getParentKey());
+        if (!paramOldNode.hasLeftSibling()) {
+            parent.setFirstChildKey(paramOldNode.getRightSiblingKey());
         }
         parent.decrementChildCount();
         getTransactionState().finishNodeModification(parent);
 
-        if (oldNode.getKind() == ENodes.ELEMENT_KIND) {
+        if (paramOldNode.getKind() == ENodes.ELEMENT_KIND) {
             // removing attributes
-            for (int i = 0; i < ((ElementNode)oldNode).getAttributeCount(); i++) {
-                moveTo(((ElementNode)oldNode).getAttributeKey(i));
+            for (int i = 0; i < ((ElementNode)paramOldNode).getAttributeCount(); i++) {
+                moveTo(((ElementNode)paramOldNode).getAttributeKey(i));
                 getTransactionState().removeNode((AbsNode)this.getCurrentNode());
             }
             // removing namespaces
-            moveTo(oldNode.getNodeKey());
-            for (int i = 0; i < ((ElementNode)oldNode).getNamespaceCount(); i++) {
-                moveTo(((ElementNode)oldNode).getNamespaceKey(i));
+            moveTo(paramOldNode.getNodeKey());
+            for (int i = 0; i < ((ElementNode)paramOldNode).getNamespaceCount(); i++) {
+                moveTo(((ElementNode)paramOldNode).getNamespaceKey(i));
                 getTransactionState().removeNode((AbsNode)this.getCurrentNode());
             }
         }
 
         // Remove old node.
-        getTransactionState().removeNode((AbsNode)oldNode);
+        getTransactionState().removeNode((AbsNode)paramOldNode);
     }
 
     // ////////////////////////////////////////////////////////////
     // end of remove operation
     // ////////////////////////////////////////////////////////////
 
+    /**
+     * Making an intermediate commit based on set attributes.
+     * 
+     * @throws TreetankException
+     *             if commit fails.
+     */
     private void intermediateCommitIfRequired() throws TreetankException {
         assertNotClosed();
         if ((mMaxNodeCount > 0) && (mModificationCount > mMaxNodeCount)) {
@@ -700,26 +768,35 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         return (WriteTransactionState)super.getTransactionState();
     }
 
-    private final static int startPrime = 3;
-
+    /**
+     * Adapting the structure with a rolling hash for all ancestors only with insert.
+     * 
+     * @throws TreetankIOException
+     *             of anything weird happened.
+     */
     private void adaptHashesWithAdd() throws TreetankIOException {
+        // start with hash to add
         final IItem startNode = getCurrentNode();
         long hashToAdd = startNode.hashCode();
         long newHash = 0;
-        long possibleOldKey = 0;
+        long possibleOldHash = 0;
+        // go the path to the root
         do {
             getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
             if (getCurrentNode().getNodeKey() == startNode.getNodeKey()) {
+                // at the beginning, take the hashcode of the node only
                 newHash = hashToAdd;
             } else if (getCurrentNode().getNodeKey() == startNode.getParentKey()) {
-                possibleOldKey = getCurrentNode().getHash();
-                newHash = possibleOldKey + hashToAdd * startPrime;
+                // at the parent level, just add the node
+                possibleOldHash = getCurrentNode().getHash();
+                newHash = possibleOldHash + hashToAdd * PRIME;
                 hashToAdd = newHash;
             } else {
-                newHash = getCurrentNode().getHash() - (possibleOldKey * startPrime);
-                newHash = newHash + hashToAdd * startPrime;
+                // at the rest, remove the existing old key for this element and add the new one
+                newHash = getCurrentNode().getHash() - (possibleOldHash * PRIME);
+                newHash = newHash + hashToAdd * PRIME;
                 hashToAdd = newHash;
-                possibleOldKey = getCurrentNode().getHash();
+                possibleOldHash = getCurrentNode().getHash();
             }
             getCurrentNode().setHash(newHash);
             getTransactionState().finishNodeModification(getCurrentNode());
@@ -727,38 +804,69 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         moveTo(startNode.getNodeKey());
     }
 
+    /**
+     * Adapting the structure with a rolling hash for all ancestors only with remove.
+     * 
+     * @throws TreetankIOException
+     *             of anything weird happened.
+     */
     private void adaptHashesWithRemove() throws TreetankIOException {
         final IItem startNode = getCurrentNode();
         long hashToRemove = startNode.getHash();
-
-        while (moveTo(getCurrentNode().getParentKey())) {
+        long hashToAdd = 0;
+        long newHash = 0;
+        // go the path to the root
+        do {
             getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
-            final long oldHash = getCurrentNode().getHash();
-            final long newHash = oldHash - (hashToRemove * startPrime);
+            if (getCurrentNode().getNodeKey() == startNode.getNodeKey()) {
+                // the begin node is always null
+                newHash = 0;
+            } else if (getCurrentNode().getNodeKey() == startNode.getParentKey()) {
+                // the parent node is just removed
+                newHash = getCurrentNode().getHash() - (hashToRemove * PRIME);
+                hashToRemove = getCurrentNode().getHash();
+            } else {
+                // the ancestors are all touched regarding the modification
+                newHash = getCurrentNode().getHash() - (hashToRemove * PRIME);
+                newHash = newHash + hashToAdd * PRIME;
+                hashToRemove = getCurrentNode().getHash();
+            }
             getCurrentNode().setHash(newHash);
+            hashToAdd = newHash;
             getTransactionState().finishNodeModification(getCurrentNode());
-        }
+        } while (moveTo(getCurrentNode().getParentKey()));
+
         moveTo(startNode.getNodeKey());
     }
 
-    private void adaptHashedWithUpdate(final long oldHash) throws TreetankIOException {
-        // final IItem newNode = getCurrentNode();
-        // long resultOld = oldHash;
-        // long resultNew = newNode.hashCode();
-        //
-        // while (moveTo(getCurrentNode().getParentKey())) {
-        // getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
-        // resultOld = (getCurrentNode().getHash() - resultOld) / startPrime;
-        // if (getCurrentNode().getHash() == 0) {
-        // resultNew = startPrime * resultOld + getCurrentNode().hashCode();
-        // } else {
-        // resultNew = startPrime * resultOld + getCurrentNode().getHash();
-        // }
-        //
-        // getCurrentNode().setHash(resultNew);
-        // getTransactionState().finishNodeModification(getCurrentNode());
-        //
-        // }
-        // moveTo(newNode.getNodeKey());
+    /**
+     * Adapting the structure with a rolling hash for all ancestors only with update.
+     * 
+     * @param paramOldHash
+     *            oldhash to be removed
+     * @throws TreetankIOException
+     *             of anything weird happened.
+     */
+    private void adaptHashedWithUpdate(final long paramOldHash) throws TreetankIOException {
+        final IItem newNode = getCurrentNode();
+        long resultNew = 0;
+        long resultOld = 0;
+
+        // go the path to the root
+        do {
+            getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+            if (getCurrentNode().getNodeKey() == newNode.getNodeKey()) {
+                resultNew = newNode.hashCode();
+                resultOld = paramOldHash;
+            } else {
+                resultNew = getCurrentNode().getHash() - (resultOld * PRIME);
+                resultOld = getCurrentNode().getHash() + resultOld * PRIME;
+            }
+            getCurrentNode().setHash(resultNew);
+            getTransactionState().finishNodeModification(getCurrentNode());
+
+        } while (moveTo(getCurrentNode().getParentKey()));
+
+        moveTo(newNode.getNodeKey());
     }
 }
