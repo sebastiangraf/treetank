@@ -27,6 +27,7 @@ public class HashTest {
     }
 
     @Test
+    @Ignore
     public void adaptHashWithInsertAndRemove() throws TreetankException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -65,18 +66,45 @@ public class HashTest {
         // adding additional element for showing that hashes are computed incrementilly
         wtx.insertTextAsFirstChild(NAME);
         wtx.insertElementAsRightSibling(new QName(NAME));
+        wtx.insertAttribute(new QName(NAME), NAME);
+        wtx.moveToParent();
         wtx.insertElementAsFirstChild(new QName(NAME));
+        wtx.insertAttribute(new QName(NAME), NAME);
 
         wtx.moveTo(rootKey);
         wtx.moveToFirstChild();
-        wtx.moveToRightSibling();
         wtx.remove();
-        wtx.moveToLeftSibling();
         wtx.remove();
         wtx.remove();
 
         wtx.moveTo(rootKey);
         assertEquals(firstRootHash, wtx.getNode().getHash());
+
+    }
+
+    @Test
+    public void testDeepTree() throws TreetankException {
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+
+        wtx.insertElementAsFirstChild(new QName(NAME));
+        final long oldHash = wtx.getNode().getHash();
+
+        wtx.insertElementAsFirstChild(new QName(NAME));
+        wtx.insertElementAsFirstChild(new QName(NAME));
+        wtx.insertElementAsFirstChild(new QName(NAME));
+        wtx.insertElementAsFirstChild(new QName(NAME));
+        wtx.insertElementAsFirstChild(new QName(NAME));
+        wtx.insertElementAsFirstChild(new QName(NAME));
+        wtx.insertElementAsFirstChild(new QName(NAME));
+        wtx.insertElementAsFirstChild(new QName(NAME));
+        wtx.insertElementAsFirstChild(new QName(NAME));
+        wtx.insertElementAsFirstChild(new QName(NAME));
+
+        wtx.moveTo(2);
+        wtx.remove();
+        assertEquals(oldHash, wtx.getNode().getHash());
 
     }
 
