@@ -67,64 +67,93 @@ public final class ElementNode extends AbsStructNode {
     }
 
     /**
-     * {@inheritDoc}
+     * Getting the count of attributes.
+     * 
+     * @return the count of attributes
      */
     public int getAttributeCount() {
         return mIntData[ATTRIBUTE_COUNT];
     }
 
     /**
-     * {@inheritDoc}
+     * Getting the attribute key for an given index.
+     * 
+     * @param paramIndex
+     *            index of the attribute
+     * @return the attribute key
      */
-    public long getAttributeKey(final int mIndex) {
-        if (mAttributeKeys.size() <= mIndex) {
+    public long getAttributeKey(final int paramIndex) {
+        if (mAttributeKeys.size() <= paramIndex) {
             return (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
         }
-        return mAttributeKeys.get(mIndex);
+        return mAttributeKeys.get(paramIndex);
     }
 
     /**
-     * {@inheritDoc}
+     * Inserting a namespace.
+     * 
+     * @param paramAttributeKey
+     *            the new attribute key
      */
-    public void insertAttribute(final long mAttributeKey) {
-        mAttributeKeys.add(mAttributeKey);
+    public void insertAttribute(final long paramAttributeKey) {
+        mAttributeKeys.add(paramAttributeKey);
         mIntData[ATTRIBUTE_COUNT]++;
     }
 
     /**
      * Removing an attribute.
      * 
-     * @param attributeKey
+     * @param paramAttributeKey
      *            the key of the attribute to be removed
      */
-    public void removeAttribute(final long attributeKey) {
-        mAttributeKeys.remove(attributeKey);
+    public void removeAttribute(final long paramAttributeKey) {
+        mAttributeKeys.remove(paramAttributeKey);
         mIntData[ATTRIBUTE_COUNT]--;
     }
 
     /**
-     * {@inheritDoc}
+     * Getting the count of namespaces.
+     * 
+     * @return the count of namespaces
      */
     public int getNamespaceCount() {
         return mIntData[NAMESPACE_COUNT];
     }
 
     /**
-     * {@inheritDoc}
+     * Getting the namespace key for an given index.
+     * 
+     * @param paramIndex
+     *            index of the namespace
+     * @return the namespace key
      */
-    public long getNamespaceKey(final int mIndex) {
-        if (mNamespaceKeys.size() <= mIndex) {
+    public long getNamespaceKey(final int paramIndex) {
+        if (mNamespaceKeys.size() <= paramIndex) {
             return (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
         }
-        return mNamespaceKeys.get(mIndex);
+        return mNamespaceKeys.get(paramIndex);
     }
 
     /**
-     * {@inheritDoc}
+     * Inserting a namespace.
+     * 
+     * @param paramNamespaceKey
+     *            new namespace key
      */
-    public void insertNamespace(final long mNamespaceKey) {
-        mNamespaceKeys.add(mNamespaceKey);
+    public void insertNamespace(final long paramNamespaceKey) {
+        mNamespaceKeys.add(paramNamespaceKey);
         mIntData[NAMESPACE_COUNT]++;
+    }
+
+    /**
+     * Removing a namepsace.
+     * 
+     * @param paramNamespaceKey
+     *            the key of the namespace to be removed
+     */
+    public void removeNamespace(final long paramNamespaceKey) {
+        mAttributeKeys.remove(paramNamespaceKey);
+        mIntData[ATTRIBUTE_COUNT]--;
     }
 
     /**
@@ -230,8 +259,8 @@ public final class ElementNode extends AbsStructNode {
     public String toString() {
         final StringBuilder returnVal = new StringBuilder(super.toString());
         returnVal.append("\n\tname key: ").append(getNameKey()).append("\n\turi key: ").append(getURIKey())
-            .append("\n\tnamespaces: ").append(mNamespaceKeys.toString()).append(
-                "\n\tattributes: ").append(mAttributeKeys.toString()).toString();
+            .append("\n\tnamespaces: ").append(mNamespaceKeys.toString()).append("\n\tattributes: ").append(
+                mAttributeKeys.toString()).toString();
         return returnVal.toString();
     }
 
@@ -240,8 +269,8 @@ public final class ElementNode extends AbsStructNode {
         final int prime = 11;
         int result = 1;
         result = prime * result + Arrays.hashCode(mIntData);
-//        result = prime * result + mAttributeKeys.hashCode();
-//        result = prime * result + mNamespaceKeys.hashCode();
+        // result = prime * result + mAttributeKeys.hashCode();
+        // result = prime * result + mNamespaceKeys.hashCode();
         return result;
     }
 

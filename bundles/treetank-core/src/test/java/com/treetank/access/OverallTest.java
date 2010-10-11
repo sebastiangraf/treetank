@@ -66,6 +66,7 @@ public final class OverallTest {
     }
 
     @Test
+    @Ignore
     public void testJustEverything() throws TreetankException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();

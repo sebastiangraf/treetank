@@ -19,7 +19,8 @@ import static org.junit.Assert.assertFalse;
 
 public class HashTest {
 
-    private final static String NAME = "a";
+    private final static String NAME1 = "a";
+    private final static String NAME2 = "b";
 
     @Before
     public void setUp() {
@@ -27,26 +28,25 @@ public class HashTest {
     }
 
     @Test
-    @Ignore
     public void adaptHashWithInsertAndRemove() throws TreetankException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
 
         // inserting a element as root
-        wtx.insertElementAsFirstChild(new QName(NAME));
+        wtx.insertElementAsFirstChild(new QName(NAME1));
         final long rootKey = wtx.getNode().getNodeKey();
         final long firstRootHash = wtx.getNode().getHash();
 
         // inserting a text as second child of root
         wtx.moveTo(rootKey);
-        wtx.insertTextAsFirstChild(NAME);
+        wtx.insertTextAsFirstChild(NAME1);
         wtx.moveToParent();
         final long secondRootHash = wtx.getNode().getHash();
 
         // inserting a second element on level 2 under the only element
         wtx.moveToFirstChild();
-        wtx.insertElementAsRightSibling(new QName(NAME));
+        wtx.insertElementAsRightSibling(new QName(NAME2));
         // wtx.insertAttribute(new QName(NAME), NAME);
         wtx.moveTo(rootKey);
         final long thirdRootHash = wtx.getNode().getHash();
@@ -64,12 +64,12 @@ public class HashTest {
         assertEquals(secondRootHash, wtx.getNode().getHash());
 
         // adding additional element for showing that hashes are computed incrementilly
-        wtx.insertTextAsFirstChild(NAME);
-        wtx.insertElementAsRightSibling(new QName(NAME));
-        wtx.insertAttribute(new QName(NAME), NAME);
+        wtx.insertTextAsFirstChild(NAME1);
+        wtx.insertElementAsRightSibling(new QName(NAME1));
+        wtx.insertAttribute(new QName(NAME1), NAME2);
         wtx.moveToParent();
-        wtx.insertElementAsFirstChild(new QName(NAME));
-        wtx.insertAttribute(new QName(NAME), NAME);
+        wtx.insertElementAsFirstChild(new QName(NAME1));
+        wtx.insertAttribute(new QName(NAME2), NAME1);
 
         wtx.moveTo(rootKey);
         wtx.moveToFirstChild();
@@ -88,24 +88,52 @@ public class HashTest {
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
 
-        wtx.insertElementAsFirstChild(new QName(NAME));
+        wtx.insertElementAsFirstChild(new QName(NAME1));
         final long oldHash = wtx.getNode().getHash();
 
-        wtx.insertElementAsFirstChild(new QName(NAME));
-        wtx.insertElementAsFirstChild(new QName(NAME));
-        wtx.insertElementAsFirstChild(new QName(NAME));
-        wtx.insertElementAsFirstChild(new QName(NAME));
-        wtx.insertElementAsFirstChild(new QName(NAME));
-        wtx.insertElementAsFirstChild(new QName(NAME));
-        wtx.insertElementAsFirstChild(new QName(NAME));
-        wtx.insertElementAsFirstChild(new QName(NAME));
-        wtx.insertElementAsFirstChild(new QName(NAME));
-        wtx.insertElementAsFirstChild(new QName(NAME));
+        wtx.insertElementAsFirstChild(new QName(NAME1));
+        wtx.insertElementAsFirstChild(new QName(NAME2));
+        wtx.insertElementAsFirstChild(new QName(NAME1));
+        wtx.insertElementAsFirstChild(new QName(NAME2));
+        wtx.insertElementAsFirstChild(new QName(NAME1));
+        wtx.remove();
+        wtx.insertElementAsFirstChild(new QName(NAME2));
+        wtx.insertElementAsFirstChild(new QName(NAME2));
+        wtx.insertElementAsFirstChild(new QName(NAME1));
 
-        wtx.moveTo(2);
+        wtx.moveTo(1);
+        wtx.moveToFirstChild();
         wtx.remove();
         assertEquals(oldHash, wtx.getNode().getHash());
 
+    }
+
+    @Test
+    public void testSetter() throws TreetankException {
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+
+        wtx.insertElementAsFirstChild(new QName(NAME1));
+        final long hashRoot1 = wtx.getNode().getHash();
+        wtx.insertElementAsFirstChild(new QName(NAME1));
+        final long leafKey = wtx.insertElementAsFirstChild(new QName(NAME1));
+        final long hashLeaf1 = wtx.getNode().getHash();
+        wtx.setName(NAME2);
+        final long hashLeaf2 = wtx.getNode().getHash();
+        wtx.moveToDocumentRoot();
+        wtx.moveToFirstChild();
+        final long hashRoot2 = wtx.getNode().getHash();
+        assertFalse(hashRoot1 == hashRoot2);
+        assertFalse(hashLeaf1 == hashLeaf2);
+        wtx.moveTo(leafKey);
+        wtx.setName(NAME1);
+        final long hashLeaf3 = wtx.getNode().getHash();
+        assertEquals(hashLeaf1, hashLeaf3);
+        wtx.moveToDocumentRoot();
+        wtx.moveToFirstChild();
+        final long hashRoot3 = wtx.getNode().getHash();
+        assertEquals(hashRoot1, hashRoot3);
     }
 
     @After
