@@ -31,8 +31,8 @@ public final class OverallTest {
     private static final Random ran = new Random(0l);
     public static String chars = "abcdefghijklm";
 
-    private static final String XML = "src" + File.separator + "test" + File.separator + "resources"
-        + File.separator + "auction.xml";
+    private static final String XML =
+        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "auction.xml";
 
     @Before
     public void setUp() {
@@ -40,7 +40,6 @@ public final class OverallTest {
     }
 
     @Test
-    @Ignore
     public void testXML() throws Exception {
 
         for (int i = 0; i < Integer.parseInt(EDatabaseSetting.REVISION_TO_RESTORE.getStandardProperty()) * 2; i++) {
@@ -66,7 +65,6 @@ public final class OverallTest {
     }
 
     @Test
-    @Ignore
     public void testJustEverything() throws TreetankException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();

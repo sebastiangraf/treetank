@@ -62,8 +62,8 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(WriteTransaction.class));
+    private static final LogWrapper LOGWRAPPER =
+        new LogWrapper(LoggerFactory.getLogger(WriteTransaction.class));
 
     /** Maximum number of node modifications before auto commit. */
     private final int mMaxNodeCount;
@@ -675,7 +675,6 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             }
         }
 
-
     }
 
     // ////////////////////////////////////////////////////////////
@@ -801,7 +800,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             getCurrentNode().setHash(newHash);
             getTransactionState().finishNodeModification(getCurrentNode());
         } while (moveTo(getCurrentNode().getParentKey()));
-        moveTo(startNode.getNodeKey());
+        setCurrentNode(startNode);
     }
 
     /**
@@ -836,7 +835,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             getTransactionState().finishNodeModification(getCurrentNode());
         } while (moveTo(getCurrentNode().getParentKey()));
 
-        moveTo(startNode.getNodeKey());
+        setCurrentNode(startNode);
     }
 
     /**
@@ -867,6 +866,6 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
 
         } while (moveTo(getCurrentNode().getParentKey()));
 
-        moveTo(newNode.getNodeKey());
+        setCurrentNode(newNode);
     }
 }
