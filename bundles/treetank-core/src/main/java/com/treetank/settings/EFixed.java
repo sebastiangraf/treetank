@@ -17,6 +17,11 @@
 
 package com.treetank.settings;
 
+/**
+ * Fixed constants for treetank stuff. These constants should never be changed.
+ * 
+ * @author Sebastian Graf, University of Konstanz
+ */
 public enum EFixed {
 
     // --- File Version
@@ -41,12 +46,26 @@ public enum EFixed {
         /** Null key for nodes. */
         NULL_INT_KEY(-1);
 
+    /**
+     * Standard property.
+     */
     private final Object mStandardProperty;
 
-    private EFixed(final Object mStandardProperty) {
-        this.mStandardProperty = mStandardProperty;
+    /**
+     * Private constructor.
+     * 
+     * @param paramProperty
+     *            property to set.
+     */
+    private EFixed(final Object paramProperty) {
+        this.mStandardProperty = paramProperty;
     }
 
+    /**
+     * Getting the property.
+     * 
+     * @return the prop
+     */
     public Object getStandardProperty() {
         return mStandardProperty;
     }

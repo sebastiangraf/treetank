@@ -70,7 +70,7 @@ public final class SessionState {
     protected final SessionConfiguration mSessionConfiguration;
 
     /** Database configuration. */
-    private final DatabaseConfiguration mDatabaseConfiguration;
+    protected final DatabaseConfiguration mDatabaseConfiguration;
 
     /** Write semaphore to assure only one exclusive write transaction exists. */
     private final Semaphore mWriteSemaphore;
@@ -99,17 +99,17 @@ public final class SessionState {
     /**
      * Constructor to bind to a TreeTank file.
      * 
-     * @param sessionConfiguration
+     * @param paramSessionConfig
      *            Session configuration for the TreeTank.
-     * @param databaseConfiguration
+     * @param paramDBConfig
      *            Database configuration for the TreeTank.
      * @throws TreetankException
      *             if Session state error
      */
-    protected SessionState(final DatabaseConfiguration databaseConfiguration,
-        final SessionConfiguration sessionConfiguration) throws TreetankException {
-        mDatabaseConfiguration = databaseConfiguration;
-        mSessionConfiguration = sessionConfiguration;
+    protected SessionState(final DatabaseConfiguration paramDBConfig,
+        final SessionConfiguration paramSessionConfig) throws TreetankException {
+        mDatabaseConfiguration = paramDBConfig;
+        mSessionConfiguration = paramSessionConfig;
         mTransactionMap = new ConcurrentHashMap<Long, IReadTransaction>();
         mWriteTransactionStateMap = new ConcurrentHashMap<Long, WriteTransactionState>();
         mSyncTransactionsReturns = new ConcurrentHashMap<Long, Map<Long, Collection<Future<Void>>>>();
@@ -119,10 +119,10 @@ public final class SessionState {
 
         // Init session members.
         mWriteSemaphore =
-            new Semaphore(Integer.parseInt(sessionConfiguration.getProps().getProperty(
+            new Semaphore(Integer.parseInt(paramSessionConfig.getProps().getProperty(
                 ESessionSetting.MAX_WRITE_TRANSACTIONS.name())));
         mReadSemaphore =
-            new Semaphore(Integer.parseInt(sessionConfiguration.getProps().getProperty(
+            new Semaphore(Integer.parseInt(paramSessionConfig.getProps().getProperty(
                 ESessionSetting.MAX_READ_TRANSACTIONS.name())));
         final PageReference uberPageReference = new PageReference();
 

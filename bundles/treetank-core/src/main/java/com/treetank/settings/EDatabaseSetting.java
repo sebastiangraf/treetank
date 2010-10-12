@@ -17,6 +17,7 @@
 
 package com.treetank.settings;
 
+import com.treetank.access.WriteTransaction.HashKind;
 import com.treetank.io.AbsIOFactory.StorageType;
 
 /**
@@ -46,8 +47,11 @@ public enum EDatabaseSetting {
     /** version fix identifier for binary compatibility. */
     VERSION_FIX("0"),
 
-    /** Checksum for settings. */
-    CHECKSUM("0");
+    /** Checksum for checking the integrity of serialized settings. */
+    CHECKSUM("0"),
+
+    /** Kind of hashing of the treestructure. */
+    HASHKIND_TYPE(HashKind.Rolling.name());
 
     /** Member for holding the standardpropertey. */
     private final String mStandardProperty;

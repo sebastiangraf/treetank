@@ -39,6 +39,7 @@ import com.treetank.node.ElementNode;
 import com.treetank.node.NamespaceNode;
 import com.treetank.node.TextNode;
 import com.treetank.page.UberPage;
+import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.EFixed;
 import com.treetank.utils.LogWrapper;
 import com.treetank.utils.TypedValue;
@@ -55,6 +56,18 @@ import org.slf4j.LoggerFactory;
  * @author Sebastian Graf, University of Konstanz
  */
 public final class WriteTransaction extends ReadTransaction implements IWriteTransaction {
+
+    /**
+     * How is the Hash for this storage computed?
+     */
+    public enum HashKind {
+        /** Rolling hash, only nodes on ancestor axis are touched. */
+        Rolling,
+        /** Postorder hash, all nodes on ancestor plus postorder are at least read. */
+        Postorder,
+        /** No hash structure after all. */
+        None;
+    }
 
     /** Prime for computing the hash. */
     private static final int PRIME = 3;
@@ -73,6 +86,9 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
 
     /** Modification counter. */
     private long mModificationCount;
+
+    /** Hash kind of Structure. */
+    private final HashKind mHashKind;
 
     /**
      * Constructor.
@@ -123,6 +139,9 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         } else {
             mCommitScheduler = null;
         }
+        mHashKind =
+            HashKind.valueOf(getSessionState().mDatabaseConfiguration.getProps().getProperty(
+                EDatabaseSetting.HASHKIND_TYPE.name()));
     }
 
     /**
@@ -774,7 +793,15 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
      *             of anything weird happened.
      */
     private void adaptHashesWithAdd() throws TreetankIOException {
-        rollingAdd();
+        switch (mHashKind) {
+        case Rolling:
+            rollingAdd();
+            break;
+        case Postorder:
+            break;
+        default:
+        }
+
     }
 
     /**
@@ -784,26 +811,40 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
      *             of anything weird happened.
      */
     private void adaptHashesWithRemove() throws TreetankIOException {
-        rollingRemove();
+        switch (mHashKind) {
+        case Rolling:
+            rollingRemove();
+            break;
+        case Postorder:
+            break;
+        default:
+        }
     }
 
     /**
      * Adapting the structure with a hash for all ancestors only with update.
      * 
      * @param paramOldHash
-     *            oldhash to be removed
+     *            paramOldHash to be removed
      * @throws TreetankIOException
      *             of anything weird happened.
      */
     private void adaptHashedWithUpdate(final long paramOldHash) throws TreetankIOException {
-        rollingUpdate(paramOldHash);
+        switch (mHashKind) {
+        case Rolling:
+            rollingUpdate(paramOldHash);
+            break;
+        case Postorder:
+            break;
+        default:
+        }
     }
 
     /**
      * Adapting the structure with a rolling hash for all ancestors only with update.
      * 
      * @param paramOldHash
-     *            oldhash to be removed
+     *            paramOldHash to be removed
      * @throws TreetankIOException
      *             of anything weird happened.
      */
