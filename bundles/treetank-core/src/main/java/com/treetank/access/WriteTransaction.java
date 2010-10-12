@@ -27,6 +27,7 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IItem;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
+import com.treetank.axis.PostOrderAxis;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankUsageException;
@@ -798,6 +799,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             rollingAdd();
             break;
         case Postorder:
+            postorderAdd();
             break;
         default:
         }
@@ -838,6 +840,33 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             break;
         default:
         }
+    }
+
+    /**
+     * Adapting the structure with a rolling hash for all ancestors only with insert.
+     * 
+     * @throws TreetankIOException
+     *             of anything weird happened.
+     */
+    private void postorderAdd() throws TreetankIOException {
+        // start with hash to add
+        final IItem startNode = getCurrentNode();
+        long hashToAdd = startNode.hashCode();
+        IItem lastNode = startNode;
+        final IAxis postorderAxis = new PostOrderAxis(this);
+
+        // go the path to the root
+        do {
+            if (getCurrentNode().getNodeKey() == lastNode.getParentKey()) {
+                getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+                getCurrentNode().setHash(hashToAdd);
+                getTransactionState().finishNodeModification(getCurrentNode());
+                lastNode = getCurrentNode();
+            }
+            hashToAdd = hashToAdd + getCurrentNode().getHash() * PRIME;
+            postorderAxis.next();
+        } while (postorderAxis.hasNext());
+        setCurrentNode(startNode);
     }
 
     /**
