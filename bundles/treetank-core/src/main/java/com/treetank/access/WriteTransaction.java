@@ -62,8 +62,8 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER =
-        new LogWrapper(LoggerFactory.getLogger(WriteTransaction.class));
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(WriteTransaction.class));
 
     /** Maximum number of node modifications before auto commit. */
     private final int mMaxNodeCount;
@@ -768,39 +768,66 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     }
 
     /**
-     * Adapting the structure with a rolling hash for all ancestors only with insert.
+     * Adapting the structure with a hash for all ancestors only with insert.
      * 
      * @throws TreetankIOException
      *             of anything weird happened.
      */
     private void adaptHashesWithAdd() throws TreetankIOException {
-        // start with hash to add
-        final IItem startNode = getCurrentNode();
-        long hashToAdd = startNode.hashCode();
-        long newHash = 0;
-        long possibleOldHash = 0;
+        rollingAdd();
+    }
+
+    /**
+     * Adapting the structure with a hash for all ancestors only with remove.
+     * 
+     * @throws TreetankIOException
+     *             of anything weird happened.
+     */
+    private void adaptHashesWithRemove() throws TreetankIOException {
+        rollingRemove();
+    }
+
+    /**
+     * Adapting the structure with a hash for all ancestors only with update.
+     * 
+     * @param paramOldHash
+     *            oldhash to be removed
+     * @throws TreetankIOException
+     *             of anything weird happened.
+     */
+    private void adaptHashedWithUpdate(final long paramOldHash) throws TreetankIOException {
+        rollingUpdate(paramOldHash);
+    }
+
+    /**
+     * Adapting the structure with a rolling hash for all ancestors only with update.
+     * 
+     * @param paramOldHash
+     *            oldhash to be removed
+     * @throws TreetankIOException
+     *             of anything weird happened.
+     */
+    private void rollingUpdate(final long paramOldHash) throws TreetankIOException {
+        final IItem newNode = getCurrentNode();
+        long resultNew = 0;
+        long resultOld = 0;
+
         // go the path to the root
         do {
             getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
-            if (getCurrentNode().getNodeKey() == startNode.getNodeKey()) {
-                // at the beginning, take the hashcode of the node only
-                newHash = hashToAdd;
-            } else if (getCurrentNode().getNodeKey() == startNode.getParentKey()) {
-                // at the parent level, just add the node
-                possibleOldHash = getCurrentNode().getHash();
-                newHash = possibleOldHash + hashToAdd * PRIME;
-                hashToAdd = newHash;
+            if (getCurrentNode().getNodeKey() == newNode.getNodeKey()) {
+                resultNew = newNode.hashCode();
+                resultOld = paramOldHash;
             } else {
-                // at the rest, remove the existing old key for this element and add the new one
-                newHash = getCurrentNode().getHash() - (possibleOldHash * PRIME);
-                newHash = newHash + hashToAdd * PRIME;
-                hashToAdd = newHash;
-                possibleOldHash = getCurrentNode().getHash();
+                resultNew = getCurrentNode().getHash() - (resultOld * PRIME);
+                resultOld = getCurrentNode().getHash() + resultOld * PRIME;
             }
-            getCurrentNode().setHash(newHash);
+            getCurrentNode().setHash(resultNew);
             getTransactionState().finishNodeModification(getCurrentNode());
+
         } while (moveTo(getCurrentNode().getParentKey()));
-        setCurrentNode(startNode);
+
+        setCurrentNode(newNode);
     }
 
     /**
@@ -809,7 +836,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
      * @throws TreetankIOException
      *             of anything weird happened.
      */
-    private void adaptHashesWithRemove() throws TreetankIOException {
+    private void rollingRemove() throws TreetankIOException {
         final IItem startNode = getCurrentNode();
         long hashToRemove = startNode.getHash();
         long hashToAdd = 0;
@@ -839,33 +866,38 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     }
 
     /**
-     * Adapting the structure with a rolling hash for all ancestors only with update.
+     * Adapting the structure with a rolling hash for all ancestors only with insert.
      * 
-     * @param paramOldHash
-     *            oldhash to be removed
      * @throws TreetankIOException
      *             of anything weird happened.
      */
-    private void adaptHashedWithUpdate(final long paramOldHash) throws TreetankIOException {
-        final IItem newNode = getCurrentNode();
-        long resultNew = 0;
-        long resultOld = 0;
-
+    private void rollingAdd() throws TreetankIOException {
+        // start with hash to add
+        final IItem startNode = getCurrentNode();
+        long hashToAdd = startNode.hashCode();
+        long newHash = 0;
+        long possibleOldHash = 0;
         // go the path to the root
         do {
             getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
-            if (getCurrentNode().getNodeKey() == newNode.getNodeKey()) {
-                resultNew = newNode.hashCode();
-                resultOld = paramOldHash;
+            if (getCurrentNode().getNodeKey() == startNode.getNodeKey()) {
+                // at the beginning, take the hashcode of the node only
+                newHash = hashToAdd;
+            } else if (getCurrentNode().getNodeKey() == startNode.getParentKey()) {
+                // at the parent level, just add the node
+                possibleOldHash = getCurrentNode().getHash();
+                newHash = possibleOldHash + hashToAdd * PRIME;
+                hashToAdd = newHash;
             } else {
-                resultNew = getCurrentNode().getHash() - (resultOld * PRIME);
-                resultOld = getCurrentNode().getHash() + resultOld * PRIME;
+                // at the rest, remove the existing old key for this element and add the new one
+                newHash = getCurrentNode().getHash() - (possibleOldHash * PRIME);
+                newHash = newHash + hashToAdd * PRIME;
+                hashToAdd = newHash;
+                possibleOldHash = getCurrentNode().getHash();
             }
-            getCurrentNode().setHash(resultNew);
+            getCurrentNode().setHash(newHash);
             getTransactionState().finishNodeModification(getCurrentNode());
-
         } while (moveTo(getCurrentNode().getParentKey()));
-
-        setCurrentNode(newNode);
+        setCurrentNode(startNode);
     }
 }

@@ -49,12 +49,24 @@ public enum EDatabaseSetting {
     /** Checksum for settings. */
     CHECKSUM("0");
 
+    /** Member for holding the standardpropertey. */
     private final String mStandardProperty;
 
-    private EDatabaseSetting(final String mStandardProperty) {
-        this.mStandardProperty = mStandardProperty;
+    /**
+     * Simple constructor.
+     * 
+     * @param paramStandardProperty
+     *            the standardproperty to set
+     */
+    private EDatabaseSetting(final String paramStandardProperty) {
+        this.mStandardProperty = paramStandardProperty;
     }
 
+    /**
+     * Getting the property.
+     * 
+     * @return the standard property
+     */
     public String getStandardProperty() {
         return mStandardProperty;
     }
