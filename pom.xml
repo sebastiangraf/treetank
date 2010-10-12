@@ -35,6 +35,6 @@
 		<module>bundles/treetank-gui</module>
         <!--<module>bundles/treetank-distributed</module>-->
         <module>bundles/treetank-eclipse</module>
-        <module>bundles/treetank-paper</module>
+        <!--  <module>bundles/treetank-paper</module>-->
 	</modules>
 </project>

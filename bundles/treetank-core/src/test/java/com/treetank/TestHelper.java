@@ -17,6 +17,8 @@ import org.junit.Test;
 import com.treetank.access.Database;
 import com.treetank.access.DatabaseConfiguration;
 import com.treetank.access.Session;
+import com.treetank.access.WriteTransaction;
+import com.treetank.access.WriteTransaction.HashKind;
 import com.treetank.api.IDatabase;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankUsageException;
@@ -89,15 +91,23 @@ public final class TestHelper {
     }
 
     @Ignore
-    public static final void setDB(final String storageKind, final String revisionKind, final int revisions,
-        final File file) throws TreetankUsageException {
-        final StorageType type = StorageType.valueOf(revisionKind);
-        final ERevisioning revision = ERevisioning.valueOf(revisionKind);
+    public static final void setDB(final File file, final HashKind hashKind) throws TreetankUsageException {
 
         final Properties props = new Properties();
-        props.put(EDatabaseSetting.STORAGE_TYPE.name(), type);
-        props.put(EDatabaseSetting.REVISION_TYPE.name(), revision);
+        props.put(EDatabaseSetting.HASHKIND_TYPE, hashKind);
+        final DatabaseConfiguration config = new DatabaseConfiguration(file, props);
+        configs.put(file, config);
+    }
+
+    @Ignore
+    public static final void setDB(final StorageType storageKind, final ERevisioning revisionKind,
+        final int revisions, final File file, final HashKind hashKind) throws TreetankUsageException {
+
+        final Properties props = new Properties();
+        props.put(EDatabaseSetting.STORAGE_TYPE.name(), storageKind);
+        props.put(EDatabaseSetting.REVISION_TYPE.name(), revisionKind);
         props.put(EDatabaseSetting.REVISION_TO_RESTORE.name(), revisions);
+        props.put(EDatabaseSetting.HASHKIND_TYPE, hashKind);
         final DatabaseConfiguration config = new DatabaseConfiguration(file, props);
         configs.put(file, config);
     }
