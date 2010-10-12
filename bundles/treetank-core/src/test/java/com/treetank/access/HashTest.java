@@ -1,13 +1,20 @@
 package com.treetank.access;
 
+import java.io.File;
+import java.io.IOException;
+
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
+import com.treetank.api.IItem;
+import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
+import com.treetank.service.xml.shredder.XMLShredder;
 
 import org.junit.After;
 import org.junit.Before;
@@ -19,6 +26,9 @@ import static org.junit.Assert.assertFalse;
 
 public class HashTest {
 
+    private static final String RESOURCES = "src" + File.separator + "test" + File.separator + "resources";
+    private static final String XML = RESOURCES + File.separator + "revXMLsSame" + File.separator + "1.xml";
+    
     private final static String NAME1 = "a";
     private final static String NAME2 = "b";
 
@@ -134,6 +144,25 @@ public class HashTest {
         wtx.moveToFirstChild();
         final long hashRoot3 = wtx.getNode().getHash();
         assertEquals(hashRoot1, hashRoot3);
+    }
+    
+    @Test
+    public void testNamespace() throws Exception {
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        final XMLShredder shredder = new XMLShredder(wtx, XMLShredder.createReader(new File(XML)), true);
+        shredder.call();
+        wtx.close();
+        final IReadTransaction rtx = session.beginReadTransaction();
+        rtx.moveToFirstChild();
+        final long nodeKey = rtx.getNode().getNodeKey();
+        rtx.moveToNamespace(0);
+        final long firstHash = rtx.getNode().getHash();
+        rtx.moveTo(nodeKey);
+        rtx.moveToNamespace(1);
+        final long secondHash = rtx.getNode().getHash();
+        assertFalse(firstHash == secondHash);
     }
 
     @After
