@@ -87,8 +87,15 @@ public enum ECharsForSerializing {
     /** Newline. */
     NEWLINE(System.getProperty("line.separator").getBytes());
 
+    /** Getting the bytes for the char. */
     private final byte[] mBytes;
 
+    /**
+     * Private constructor.
+     * 
+     * @param paramBytes
+     *            the bytes for the chars
+     */
     ECharsForSerializing(final byte[]... paramBytes) {
         int index = 0;
         for (final byte[] runner : paramBytes) {
@@ -102,6 +109,11 @@ public enum ECharsForSerializing {
         }
     }
 
+    /**
+     * Getting the bytes.
+     * 
+     * @return the bytes for the char.
+     */
     public byte[] getBytes() {
         return mBytes;
     }
