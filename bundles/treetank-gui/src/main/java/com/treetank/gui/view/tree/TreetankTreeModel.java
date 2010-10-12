@@ -16,8 +16,6 @@
  */
 package com.treetank.gui.view.tree;
 
-import java.awt.Color;
-
 import com.treetank.api.IDatabase;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
@@ -44,11 +42,11 @@ public final class TreetankTreeModel extends AbstractTreeModel {
     /** Logger. */
     private static final Logger LOGGER = LoggerFactory.getLogger(TreetankTreeModel.class);
 
-    /** Treetank reading transaction {@link IReadTransaction}. */
-    private transient IReadTransaction mRTX;
-
     /** Treetank database {@link IDatabase}. */
     protected transient IDatabase mDatabase;
+
+    /** Treetank reading transaction {@link IReadTransaction}. */
+    private transient IReadTransaction mRTX;
 
     /**
      * Constructor.
@@ -111,9 +109,9 @@ public final class TreetankTreeModel extends AbstractTreeModel {
      * {@inheritDoc}
      */
     @Override
-    public Object getChild(final Object parent, final int index) {
+    public Object getChild(final Object paramParent, final int paramIndex) {
         // if (index >= 0 && index < getChildCount(parent)) {
-        final IItem parentNode = (IItem)parent;
+        final IItem parentNode = (IItem)paramParent;
         final long parentNodeKey = parentNode.getNodeKey();
         mRTX.moveTo(parentNodeKey);
 
@@ -124,34 +122,28 @@ public final class TreetankTreeModel extends AbstractTreeModel {
         case ELEMENT_KIND:
             // Namespaces.
             final int namespCount = ((ElementNode)parentNode).getNamespaceCount();
-            for (int namespIndex = 0; namespIndex < namespCount; namespIndex++) {
-                mRTX.moveToNamespace(namespIndex);
-                if (namespIndex == index) {
-                    return mRTX.getNode();
-                }
-                mRTX.moveTo(parentNodeKey);
+            if (paramIndex < namespCount) {
+                mRTX.moveToNamespace(paramIndex);
+                return mRTX.getNode();
             }
 
             // Attributes.
             final int attCount = ((ElementNode)parentNode).getAttributeCount();
-            for (int attIndex = 0; attIndex < attCount; attIndex++) {
-                mRTX.moveToAttribute(attIndex);
-                if ((namespCount + attIndex) == index) {
-                    return mRTX.getNode();
-                }
-                mRTX.moveTo(parentNodeKey);
+            if (paramIndex < (namespCount + attCount)) {
+                mRTX.moveToAttribute(paramIndex - namespCount);
+                return mRTX.getNode();
             }
-
+            
             // Children.
-            for (long childIndex = 0, childCount = ((ElementNode)parentNode).getChildCount(); childIndex < childCount; childIndex++) {
-                if (childIndex == 0) {
-                    mRTX.moveToFirstChild();
-                } else {
+            final long childCount = ((ElementNode)parentNode).getChildCount();
+            if (paramIndex < (namespCount + attCount + childCount)) {
+                mRTX.moveToFirstChild();
+                final long upper = paramIndex - namespCount - attCount;
+                for (long i = 0; i < upper; i++) {
                     mRTX.moveToRightSibling();
                 }
-                if ((namespCount + attCount + childIndex) == index) {
-                    return mRTX.getNode();
-                }
+                
+                return mRTX.getNode();
             }
         default:
             return null;
@@ -181,7 +173,6 @@ public final class TreetankTreeModel extends AbstractTreeModel {
             // TODO: possibly unsafe cast.
             return (int)(namespaces + attributes + children);
         default:
-            System.out.println("Value: " + mRTX.getValueOfCurrentNode());
             return 0;
         }
     }
@@ -189,14 +180,15 @@ public final class TreetankTreeModel extends AbstractTreeModel {
     /**
      * {@inheritDoc}
      */
-    public int getIndexOfChild(final Object parent, final Object child) {
+    @Override
+    public int getIndexOfChild(final Object paramParent, final Object paramChild) {
         // Parent node.
-        mRTX.moveTo(((IItem)parent).getNodeKey());
+        mRTX.moveTo(((IItem)paramParent).getNodeKey());
         System.out.println(mRTX.getQNameOfCurrentNode());
         final IItem parentNode = mRTX.getNode();
 
         // Child node.
-        final IItem childNode = (IItem)child;
+        final IItem childNode = (IItem)paramChild;
 
         // Return value.
         int index = -1;
