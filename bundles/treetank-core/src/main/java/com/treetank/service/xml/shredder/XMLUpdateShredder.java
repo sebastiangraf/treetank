@@ -18,6 +18,7 @@ package com.treetank.service.xml.shredder;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -49,6 +50,7 @@ import com.treetank.node.ElementNode;
 import com.treetank.settings.EFixed;
 import com.treetank.utils.FastStack;
 import com.treetank.utils.LogWrapper;
+import com.treetank.utils.TypedValue;
 
 /**
  * 
@@ -80,16 +82,13 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
     private transient boolean mInsertAtTop;
 
     /**
-     * This stack is for holding the current position to determine if an
-     * insertAsRightSibling() or insertAsFirstChild() should occure.
-     */
-    private transient FastStack<Long> mLeftSiblingKeyStack;
-
-    /**
      * Determines if it's a right sibling from the currently parsed node, where
      * the parsed node and the node in the Treetank storage match.
      */
     private transient boolean mIsRightSibling;
+
+    /** Last node key. */
+    private transient long mLastNodeKey;
 
     /**
      * The key of the node, when the nodes are equal if at all (used to check
@@ -193,10 +192,6 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
      */
     private void updateOnly() throws TreetankException {
         try {
-            // Setting up boolean-Stack.
-            mLeftSiblingKeyStack = new FastStack<Long>();
-            mLeftSiblingKeyStack.push((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
-
             // Initialize variables.
             mLevelInToShredder = 0;
             mLevelInShreddered = 0;
@@ -399,35 +394,32 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
         mLevelInToShredder--;
         mLevelInShreddered--;
 
-        // Modify stack.
-        if (!mLeftSiblingKeyStack.empty()) {
-            mLeftSiblingKeyStack.pop();
-
-            if (!mLeftSiblingKeyStack.empty()) {
-                mWtx.moveTo(mLeftSiblingKeyStack.peek());
+        // Move cursor to parent.
+        if (mWtx.getNode().getNodeKey() == mLastNodeKey) {
+            /* 
+             * An end tag must have been parsed immediately before and it must have been an empty element at 
+             * the end of a subtree.
+             */
+            assert mWtx.getNode().hasParent() && mWtx.getNode().getKind() == ENodes.ELEMENT_KIND;
+            mWtx.moveToParent();
+        } else {
+            if (mWtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
+                final ElementNode element = (ElementNode)mWtx.getNode();
+                if (element.hasFirstChild() && element.hasParent()) {
+                    // It's not an empty element, thus move to parent.
+                    mWtx.moveToParent();
+                }
+            } else if (((AbsStructNode)mWtx.getNode()).hasParent()) {
+                mWtx.moveToParent();
             }
         }
+        
+        mLastNodeKey = mWtx.getNode().getNodeKey();
 
-        // Move cursor to right sibling if it has one and update stack.
+        // Move cursor to right sibling if it has one.
         if (((AbsStructNode)mWtx.getNode()).hasRightSibling()) {
-            // Stack might be empty after an insert at the 2nd level (child of root node).
-            if (!mLeftSiblingKeyStack.empty()) {
-                mLeftSiblingKeyStack.pop();
-            }
             mWtx.moveToRightSibling();
-            pushOnStack();
-        }
-    }
-
-    /** Push node key on stack. */
-    private void pushOnStack() {
-        // Update stack.
-        mLeftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
-
-        if (mWtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
-            // Update stack.
-            mLeftSiblingKeyStack.push((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
-        }
+        }       
     }
 
     /**
@@ -558,15 +550,7 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
         final ElementNode element = (ElementNode)mWtx.getNode();
         if (element.hasFirstChild()) {
             mInsertAtTop = true;
-            // Update stack.
-            if (mLeftSiblingKeyStack.peek() == (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
-                // Remove NULL.
-                mLeftSiblingKeyStack.pop();
-            }
             mWtx.moveToFirstChild();
-
-            // Update stack.
-            pushOnStack();
         }
     }
 
@@ -599,34 +583,15 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
             // Has to be inserted on the parent node.
             mWtx.moveToParent();
 
-            // Remove key from the node, which was unequal from stack.
-            assert !mLeftSiblingKeyStack.empty();
-            if (mLeftSiblingKeyStack.peek() == (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
-                // Means the next node is an element node.
-                mLeftSiblingKeyStack.pop();
-            }
-            mLeftSiblingKeyStack.pop();
-
-            // Add null node key, because it must be inserted as first child.
-            mLeftSiblingKeyStack.push((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
+            // Insert element as first child.
+            addNewElement(false, true, paramElement);
         } else {
-            // Remove key from the node, which was unequal from stack.
-            assert !mLeftSiblingKeyStack.empty();
-            if (mLeftSiblingKeyStack.peek() == (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
-                // Means the next node is an element node.
-                mLeftSiblingKeyStack.pop();
-            }
-            mLeftSiblingKeyStack.pop();
-            // Stack might be empty on level 1 (child of root node).
-            if (mLeftSiblingKeyStack.empty()) {
-                // Push dummy on top, because otherwise peek() when inserting throws NullPointerException.
-                mLeftSiblingKeyStack.push(0L);
-            }
-
+            // Move one sibling back.
             mWtx.moveToLeftSibling();
-        }
 
-        mLeftSiblingKeyStack = addNewElement(false, mLeftSiblingKeyStack, paramElement);
+            // Insert element as right sibling.
+            addNewElement(false, false, paramElement);
+        }
     }
 
     /**
@@ -653,14 +618,18 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
         if (mInsertAtTop) {
             mInsertAtTop = false;
             mWtx.moveToParent();
+            addNewText(true, paramText);
+            if (mReader.peek().getEventType() != XMLStreamConstants.END_ELEMENT) {
+                mWtx.moveToRightSibling();
+            }
+        } else {
+            // Move one sibling back.
+            mWtx.moveToLeftSibling();
 
-            assert mLeftSiblingKeyStack.peek() == (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
-        }
-
-        mLeftSiblingKeyStack = addNewText(mLeftSiblingKeyStack, paramText);
-
-        if (mReader.peek().getEventType() != XMLStreamConstants.END_ELEMENT) {
-            mLeftSiblingKeyStack.pop();
+            // Insert element as right sibling.
+            addNewText(false, paramText);
+            
+            // Move to next node.
             mWtx.moveToRightSibling();
         }
     }
@@ -673,66 +642,66 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
      *             deleting nodes in Treetank.
      */
     private void deleteNode() throws TreetankException {
-        /*
-         * If found in one of the rightsiblings in the current shreddered
-         * structure remove all nodes until the transaction points to the found
-         * node (keyMatches).
-         */
-        mIsSame = false;
-        mRemoved = true;
-
-        if (mInsert) {
-            if (((AbsStructNode)mWtx.getNode()).hasRightSibling()) {
-                // Cursor is on the inserted node, so move to right sibling.
-                mWtx.moveToRightSibling();
-                // Remove inserted node from stack.
-                mLeftSiblingKeyStack.pop();
-            }
-        }
-
-        boolean moveToParents = false;
-
-        do {
-            if (mWtx.getNode().getNodeKey() != mKeyMatches) {
-                if (!((AbsStructNode)mWtx.getNode()).hasRightSibling()) {
-                    moveToParents = true;
-                    mLevelInShreddered--;
-                }
-                mWtx.remove();
-
-                // Update stack.
-                if (mLeftSiblingKeyStack.peek() == (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
-                    mLeftSiblingKeyStack.pop();
-                }
-
-                mLeftSiblingKeyStack.pop();
-                mLeftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
-                mLeftSiblingKeyStack.push((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
-            }
-        } while (mWtx.getNode().getNodeKey() != mKeyMatches
-            && ((AbsStructNode)mWtx.getNode()).hasRightSibling() && mLevelInToShredder < mLevelInShreddered);
-        // Move up anchestors if there is no former right sibling.
-        while (!((AbsStructNode)mWtx.getNode()).hasRightSibling()) {
-            moveToParents = true;
-            mWtx.moveToParent();
-            mLevelInShreddered--;
-
-            // Update stack.
-            // Remove NULL.
-            if (mLeftSiblingKeyStack.peek() == EFixed.NULL_NODE_KEY.getStandardProperty()) {
-                mLeftSiblingKeyStack.pop();
-            }
-            mLeftSiblingKeyStack.pop();
-        }
-
-        if (moveToParents) {
-            // Move to right sibling and update stack.
-            mWtx.moveToRightSibling();
-            mLeftSiblingKeyStack.pop();
-            mLeftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
-        }
-
-        mInsert = false;
+        // /*
+        // * If found in one of the rightsiblings in the current shreddered
+        // * structure remove all nodes until the transaction points to the found
+        // * node (keyMatches).
+        // */
+        // mIsSame = false;
+        // mRemoved = true;
+        //
+        // if (mInsert) {
+        // if (((AbsStructNode)mWtx.getNode()).hasRightSibling()) {
+        // // Cursor is on the inserted node, so move to right sibling.
+        // mWtx.moveToRightSibling();
+        // // Remove inserted node from stack.
+        // mLeftSiblingKeyStack.pop();
+        // }
+        // }
+        //
+        // boolean moveToParents = false;
+        //
+        // do {
+        // if (mWtx.getNode().getNodeKey() != mKeyMatches) {
+        // if (!((AbsStructNode)mWtx.getNode()).hasRightSibling()) {
+        // moveToParents = true;
+        // mLevelInShreddered--;
+        // }
+        // mWtx.remove();
+        //
+        // // Update stack.
+        // if (mLeftSiblingKeyStack.peek() == (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
+        // mLeftSiblingKeyStack.pop();
+        // }
+        //
+        // mLeftSiblingKeyStack.pop();
+        // mLeftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
+        // mLeftSiblingKeyStack.push((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
+        // }
+        // } while (mWtx.getNode().getNodeKey() != mKeyMatches
+        // && ((AbsStructNode)mWtx.getNode()).hasRightSibling() && mLevelInToShredder < mLevelInShreddered);
+        // // Move up anchestors if there is no former right sibling.
+        // while (!((AbsStructNode)mWtx.getNode()).hasRightSibling()) {
+        // moveToParents = true;
+        // mWtx.moveToParent();
+        // mLevelInShreddered--;
+        //
+        // // Update stack.
+        // // Remove NULL.
+        // if (mLeftSiblingKeyStack.peek() == EFixed.NULL_NODE_KEY.getStandardProperty()) {
+        // mLeftSiblingKeyStack.pop();
+        // }
+        // mLeftSiblingKeyStack.pop();
+        // }
+        //
+        // if (moveToParents) {
+        // // Move to right sibling and update stack.
+        // mWtx.moveToRightSibling();
+        // mLeftSiblingKeyStack.pop();
+        // mLeftSiblingKeyStack.push(mWtx.getNode().getNodeKey());
+        // }
+        //
+        // mInsert = false;
     }
 
     /**
@@ -743,6 +712,71 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
         mFound = false;
         mIsRightSibling = false;
         mKeyMatches = -1;
+    }
+
+    /**
+     * Add a new text node.
+     * 
+     * @param paramAsFirstChild
+     *            If true text node is inserted as first child, otherwise as right sibling.
+     * @param paramTextEvent
+     *            The current event from the StAX parser.
+     * @throws TreetankException
+     *             In case anything went wrong.
+     */
+    protected final void addNewText(final boolean paramAsFirstChild, final Characters paramTextEvent)
+        throws TreetankException {
+        final String text = paramTextEvent.getData().trim();
+        final ByteBuffer textByteBuffer = ByteBuffer.wrap(TypedValue.getBytes(text));
+        if (textByteBuffer.array().length > 0) {
+            if (paramAsFirstChild) {
+                mWtx.insertTextAsFirstChild(new String(textByteBuffer.array()));
+            } else {
+                mWtx.insertTextAsRightSibling(new String(textByteBuffer.array()));
+            }
+        }
+    }
+
+    /**
+     * Add a new element node.
+     * 
+     * @param paramFirstElement
+     *            Is it the first element?
+     * @param paramAsFirstChild
+     *            If true element node is inserted as first child, otherwise as right sibling.
+     * @param paramStartElement
+     *            The current {@link StartElement} .
+     * @throws TreetankException
+     *             In case anything went wrong.
+     */
+    protected final void addNewElement(final boolean paramFirstElement, final boolean paramAsFirstChild,
+        final StartElement paramStartElement) throws TreetankException {
+        final QName name = paramStartElement.getName();
+        long key;
+
+        if (paramFirstElement) {
+            key = mWtx.insertElementAsRightSibling(name);
+        } else {
+            if (paramAsFirstChild) {
+                key = mWtx.insertElementAsFirstChild(name);
+            } else {
+                key = mWtx.insertElementAsRightSibling(name);
+            }
+        }
+
+        // Parse namespaces.
+        for (final Iterator<?> it = paramStartElement.getNamespaces(); it.hasNext();) {
+            final Namespace namespace = (Namespace)it.next();
+            mWtx.insertNamespace(namespace.getNamespaceURI(), namespace.getPrefix());
+            mWtx.moveTo(key);
+        }
+
+        // Parse attributes.
+        for (final Iterator<?> it = paramStartElement.getAttributes(); it.hasNext();) {
+            final Attribute attribute = (Attribute)it.next();
+            mWtx.insertAttribute(attribute.getName(), attribute.getValue());
+            mWtx.moveTo(key);
+        }
     }
 
     /**
