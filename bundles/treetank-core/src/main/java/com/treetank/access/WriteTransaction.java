@@ -852,20 +852,28 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         // start with hash to add
         final IItem startNode = getCurrentNode();
         long hashToAdd = startNode.hashCode();
-        IItem lastNode = startNode;
-        final IAxis postorderAxis = new PostOrderAxis(this);
-
-        // go the path to the root
-        do {
-            if (getCurrentNode().getNodeKey() == lastNode.getParentKey()) {
-                getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
-                getCurrentNode().setHash(hashToAdd);
-                getTransactionState().finishNodeModification(getCurrentNode());
-                lastNode = getCurrentNode();
-            }
+        getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+        getCurrentNode().setHash(hashToAdd);
+        getTransactionState().finishNodeModification(getCurrentNode());
+        if (!(getCurrentNode() instanceof AbsStructNode)) {
+            moveTo(getCurrentNode().getParentKey());
             hashToAdd = hashToAdd + getCurrentNode().getHash() * PRIME;
-            postorderAxis.next();
-        } while (postorderAxis.hasNext());
+            getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+            getCurrentNode().setHash(hashToAdd);
+            getTransactionState().finishNodeModification(getCurrentNode());
+        }
+
+        while (moveTo(getCurrentNode().getParentKey())) {
+            hashToAdd = hashToAdd + getCurrentNode().getHash() * PRIME;
+            getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+            getCurrentNode().setHash(hashToAdd);
+            getTransactionState().finishNodeModification(getCurrentNode());
+
+            while (moveTo(((AbsStructNode)getCurrentNode()).getLeftSiblingKey())) {
+                hashToAdd = hashToAdd + getCurrentNode().getHash() * PRIME;
+            }
+
+        }
         setCurrentNode(startNode);
     }
 

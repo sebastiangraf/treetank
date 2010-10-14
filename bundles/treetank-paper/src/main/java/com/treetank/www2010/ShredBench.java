@@ -21,7 +21,7 @@ public class ShredBench {
 
     private XMLShredder shredderNone;
 
-    private static final int RUNS = 100;
+    private static final int RUNS = 50;
 
     private static final File XMLFile = new File("src" + File.separator + "main" + File.separator
         + "resources" + File.separator + "1MB.xml");
@@ -29,7 +29,7 @@ public class ShredBench {
     public void setUpNone() {
         TestHelper.deleteEverything();
         try {
-            TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.None);
+            TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.None.name());
 
             final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
             final ISession session = database.getSession();
@@ -43,7 +43,7 @@ public class ShredBench {
     public void setUpRolling() {
         TestHelper.deleteEverything();
         try {
-            TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Rolling);
+            TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Rolling.name());
 
             final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
             final ISession session = database.getSession();
@@ -57,7 +57,7 @@ public class ShredBench {
     public void setUpPostorder() {
         TestHelper.deleteEverything();
         try {
-            TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Postorder);
+            TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Postorder.name());
 
             final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
             final ISession session = database.getSession();
