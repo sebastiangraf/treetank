@@ -78,10 +78,10 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
 //        test(XMLINSERTSECOND);
 //    }
 
-     @Test
-     public void testDeletesFirst() throws Exception {
-     test(XMLDELETEFIRST);
-     }
+//     @Test
+//     public void testDeletesFirst() throws Exception {
+//     test(XMLDELETEFIRST);
+//     }
 
     @Test
     public void testDeletesSecond() throws Exception {
