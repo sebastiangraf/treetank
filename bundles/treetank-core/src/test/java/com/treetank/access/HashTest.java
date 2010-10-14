@@ -48,9 +48,7 @@ public class HashTest {
     }
 
     @Test
-     @Ignore
-        public
-        void testPostorderInsertRemove() throws TreetankException {
+    public void testPostorderInsertRemove() throws TreetankException {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Postorder.name());
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -59,7 +57,6 @@ public class HashTest {
     }
 
     @Test
-    @Ignore
     public void testPostorderDeep() throws TreetankException {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Postorder.name());
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
@@ -116,21 +113,24 @@ public class HashTest {
 
     /**
      * Inserting nodes and removing them.
+     * 
      * <pre>
      * -a (1)
-     *  '-test (4)
-     *  '-a (5)
-     *    '-attr(6)
-     *    '-a (7)
-     *      '-attr (8)
+     *  '-test (5)
+     *  '-a (6)
+     *    '-attr(7)
+     *    '-a (8)
+     *      '-attr (9)
      *  '-text (2)
      *  '-a (3(x))
+     *    '-attr(4(x))
      * </pre>
+     * 
      * @param wtx
      * @throws TreetankException
      */
     private void testHashTreeWithInsertAndRemove(final IWriteTransaction wtx) throws TreetankException {
-        
+
         // inserting a element as root
         wtx.insertElementAsFirstChild(new QName(NAME1));
         final long rootKey = wtx.getNode().getNodeKey();
@@ -145,7 +145,7 @@ public class HashTest {
         // inserting a second element on level 2 under the only element
         wtx.moveToFirstChild();
         wtx.insertElementAsRightSibling(new QName(NAME2));
-        // wtx.insertAttribute(new QName(NAME), NAME);
+        wtx.insertAttribute(new QName(NAME2), NAME1);
         wtx.moveTo(rootKey);
         final long thirdRootHash = wtx.getNode().getHash();
 
