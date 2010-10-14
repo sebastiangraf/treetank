@@ -91,10 +91,10 @@ public final class TestHelper {
     }
 
     @Ignore
-    public static final void setDB(final File file, final HashKind hashKind) throws TreetankUsageException {
+    public static final void setDB(final File file, final String hashKind) throws TreetankUsageException {
 
         final Properties props = new Properties();
-        props.put(EDatabaseSetting.HASHKIND_TYPE, hashKind);
+        props.put(EDatabaseSetting.HASHKIND_TYPE.name(), hashKind);
         final DatabaseConfiguration config = new DatabaseConfiguration(file, props);
         configs.put(file, config);
     }
@@ -116,6 +116,7 @@ public final class TestHelper {
     public static final void deleteEverything() {
         Database.truncateDatabase(PATHS.PATH1.getFile());
         Database.truncateDatabase(PATHS.PATH2.getFile());
+        configs.clear();
 
     }
 
