@@ -158,7 +158,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             final long leftSibKey = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
             final long rightSibKey = ((AbsStructNode)getCurrentNode()).getFirstChildKey();
             final ElementNode node =
-                getTransactionState().createElementNode(parentKey, leftSibKey, rightSibKey, mQname);
+                getTransactionState().createElementNode(parentKey, leftSibKey, rightSibKey, 0, mQname);
 
             setCurrentNode(node);
             adaptForInsert(node, true);
@@ -183,7 +183,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             final long leftSibKey = getCurrentNode().getNodeKey();
             final long rightSibKey = ((AbsStructNode)getCurrentNode()).getRightSiblingKey();
             final ElementNode node =
-                getTransactionState().createElementNode(parentKey, leftSibKey, rightSibKey, mQname);
+                getTransactionState().createElementNode(parentKey, leftSibKey, rightSibKey, 0, mQname);
 
             setCurrentNode(node);
             adaptForInsert(node, false);
@@ -381,7 +381,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         getTransactionState().removeNode(oldNode);
         setCurrentNode(newNode);
 
-        adaptHashedWithUpdate(oldNode.getHash());
+        adaptHashedWithUpdate(oldNode.hashCode());
 
     }
 
@@ -838,6 +838,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             rollingUpdate(paramOldHash);
             break;
         case Postorder:
+            postorderAdd();
             break;
         default:
         }
@@ -909,18 +910,18 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
      */
     private void rollingUpdate(final long paramOldHash) throws TreetankIOException {
         final IItem newNode = getCurrentNode();
-        long resultNew = 0;
-        long resultOld = 0;
+        final long newNodeHash = newNode.hashCode();
+        long resultNew = newNode.hashCode();
 
         // go the path to the root
         do {
             getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
             if (getCurrentNode().getNodeKey() == newNode.getNodeKey()) {
-                resultNew = newNode.hashCode();
-                resultOld = paramOldHash;
+                resultNew = getCurrentNode().getHash() - paramOldHash;
+                resultNew = resultNew + newNodeHash;
             } else {
-                resultNew = getCurrentNode().getHash() - (resultOld * PRIME);
-                resultOld = getCurrentNode().getHash() + resultOld * PRIME;
+                resultNew = getCurrentNode().getHash() - (paramOldHash * PRIME);
+                resultNew = resultNew + newNodeHash * PRIME;
             }
             getCurrentNode().setHash(resultNew);
             getTransactionState().finishNodeModification(getCurrentNode());

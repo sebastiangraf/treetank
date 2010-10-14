@@ -31,7 +31,7 @@ public class NodePageTest {
     public void testSerializeDeserialize() {
         final NodePage page1 = new NodePage(0L, 0L);
         assertEquals(0L, page1.getNodePageKey());
-        final ElementNode node1 = (ElementNode)ElementNode.createData(0, 1, 3, 4, 12, 1, 6, 7, 8);
+        final ElementNode node1 = (ElementNode)ElementNode.createData(0, 1, 3, 4, 12, 1, 6, 7, 8, 9);
         node1.insertAttribute(88L);
         node1.insertAttribute(87L);
         node1.insertNamespace(99L);

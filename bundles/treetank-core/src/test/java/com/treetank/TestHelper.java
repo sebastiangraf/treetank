@@ -47,12 +47,12 @@ public final class TestHelper {
     public enum PATHS {
 
         // PATH1
-            PATH1(new File(new StringBuilder(File.separator).append("tmp").append(File.separator).append(
-                "tnk").append(File.separator).append("path1").toString())),
+            PATH1(new File(new StringBuilder(File.separator).append("tmp").append(File.separator)
+                .append("tnk").append(File.separator).append("path1").toString())),
 
             // PATH2
-            PATH2(new File(new StringBuilder(File.separator).append("tmp").append(File.separator).append(
-                "tnk").append(File.separator).append("path2").toString()));
+            PATH2(new File(new StringBuilder(File.separator).append("tmp").append(File.separator)
+                .append("tnk").append(File.separator).append("path2").toString()));
 
         final File file;
 
@@ -137,22 +137,28 @@ public final class TestHelper {
         for (int i = offset; i < length; i++) {
             switch (random.nextInt(6)) {
             case 0:
-                page.setNode(i, AttributeNode.createData(random.nextLong(), random.nextLong(), random
-                    .nextInt(), random.nextInt(), random.nextInt(), new byte[] {
-                    0, 1, 2, 3, 4
-                }));
+                page.setNode(
+                    i,
+                    AttributeNode.createData(random.nextLong(), random.nextLong(), random.nextInt(),
+                        random.nextInt(), random.nextInt(), new byte[] {
+                            0, 1, 2, 3, 4
+                        }));
                 break;
             case 1:
                 page.setNode(i, DeletedNode.createData(random.nextLong(), random.nextLong()));
                 break;
             case 2:
-                page.setNode(i, ElementNode.createData(random.nextLong(), random.nextLong(), random
-                    .nextLong(), random.nextLong(), random.nextLong(), random.nextLong(), random.nextInt(),
-                    random.nextInt(), random.nextInt()));
+                page.setNode(
+                    i,
+                    ElementNode.createData(random.nextLong(), random.nextLong(), random.nextLong(),
+                        random.nextLong(), random.nextLong(), random.nextLong(), random.nextInt(),
+                        random.nextInt(), random.nextInt(), random.nextLong()));
                 break;
             case 3:
-                page.setNode(i, NamespaceNode.createData(random.nextLong(), random.nextLong(), random
-                    .nextInt(), random.nextInt()));
+                page.setNode(
+                    i,
+                    NamespaceNode.createData(random.nextLong(), random.nextLong(), random.nextInt(),
+                        random.nextInt()));
                 break;
             case 4:
                 page.setNode(i,
@@ -160,10 +166,12 @@ public final class TestHelper {
                 DocumentRootNode.createData());
                 break;
             case 5:
-                page.setNode(i, TextNode.createData(random.nextLong(), random.nextLong(), random.nextLong(),
-                    random.nextLong(), random.nextInt(), new byte[] {
-                        0, 1
-                    }));
+                page.setNode(
+                    i,
+                    TextNode.createData(random.nextLong(), random.nextLong(), random.nextLong(),
+                        random.nextLong(), random.nextInt(), new byte[] {
+                            0, 1
+                        }));
                 break;
             }
 

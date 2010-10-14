@@ -232,7 +232,7 @@ public final class ElementNode extends AbsStructNode {
 
     public static AbsNode createData(final long mNodeKey, final long parentKey, final long mLeftSibKey,
         final long rightSibKey, final long mFirstChild, final long mChildCount, final int mNameKey,
-        final int mUriKey, final int mType) {
+        final int mUriKey, final int mType, final long oldHash) {
         final long[] longData = new long[ENodes.ELEMENT_KIND.getLongSize()];
         final int[] intData = new int[ENodes.ELEMENT_KIND.getIntSize()];
         longData[AbsNode.NODE_KEY] = mNodeKey;
@@ -241,6 +241,7 @@ public final class ElementNode extends AbsStructNode {
         longData[AbsStructNode.RIGHT_SIBLING_KEY] = rightSibKey;
         longData[AbsStructNode.FIRST_CHILD_KEY] = mFirstChild;
         longData[AbsStructNode.CHILD_COUNT] = mChildCount;
+        longData[AbsNode.HASHCODE] = oldHash;
         intData[ElementNode.NAME_KEY] = mNameKey;
         intData[ElementNode.URI_KEY] = mUriKey;
         intData[AbsNode.TYPE_KEY] = mType;
@@ -250,17 +251,17 @@ public final class ElementNode extends AbsStructNode {
     }
 
     public static AbsNode createData(final long mNodeKey, final ElementNode mNode) {
-        return createData(mNodeKey, mNode.getParentKey(), mNode.getLeftSiblingKey(), mNode
-            .getRightSiblingKey(), mNode.getFirstChildKey(), mNode.getChildCount(), mNode.getNameKey(), mNode
-            .getURIKey(), mNode.getTypeKey());
+        return createData(mNodeKey, mNode.getParentKey(), mNode.getLeftSiblingKey(),
+            mNode.getRightSiblingKey(), mNode.getFirstChildKey(), mNode.getChildCount(), mNode.getNameKey(),
+            mNode.getURIKey(), mNode.getTypeKey(), mNode.getHash());
     }
 
     @Override
     public String toString() {
         final StringBuilder returnVal = new StringBuilder(super.toString());
         returnVal.append("\n\tname key: ").append(getNameKey()).append("\n\turi key: ").append(getURIKey())
-            .append("\n\tnamespaces: ").append(mNamespaceKeys.toString()).append("\n\tattributes: ").append(
-                mAttributeKeys.toString()).toString();
+            .append("\n\tnamespaces: ").append(mNamespaceKeys.toString()).append("\n\tattributes: ")
+            .append(mAttributeKeys.toString()).toString();
         return returnVal.toString();
     }
 

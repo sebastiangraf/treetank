@@ -38,7 +38,6 @@ public class HashTest {
     }
 
     @Test
-    @Ignore
     public void testPostorderNamespace() throws Exception {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Postorder.name());
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
@@ -66,7 +65,6 @@ public class HashTest {
     }
 
     @Test
-    @Ignore
     public void testPostorderSetter() throws TreetankException {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Postorder.name());
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
@@ -218,10 +216,16 @@ public class HashTest {
     }
 
     private void testSetter(final IWriteTransaction wtx) throws TreetankException {
+
+        // Testing node inheritance
         wtx.insertElementAsFirstChild(new QName(NAME1));
+        wtx.insertElementAsFirstChild(new QName(NAME1));
+        wtx.insertElementAsFirstChild(new QName(NAME1));
+        wtx.moveToDocumentRoot();
+        wtx.moveToFirstChild();
         final long hashRoot1 = wtx.getNode().getHash();
-        wtx.insertElementAsFirstChild(new QName(NAME1));
-        final long leafKey = wtx.insertElementAsFirstChild(new QName(NAME1));
+        wtx.moveToFirstChild();
+        wtx.moveToFirstChild();
         final long hashLeaf1 = wtx.getNode().getHash();
         wtx.setName(NAME2);
         final long hashLeaf2 = wtx.getNode().getHash();
@@ -230,7 +234,8 @@ public class HashTest {
         final long hashRoot2 = wtx.getNode().getHash();
         assertFalse(hashRoot1 == hashRoot2);
         assertFalse(hashLeaf1 == hashLeaf2);
-        wtx.moveTo(leafKey);
+        wtx.moveToFirstChild();
+        wtx.moveToFirstChild();
         wtx.setName(NAME1);
         final long hashLeaf3 = wtx.getNode().getHash();
         assertEquals(hashLeaf1, hashLeaf3);
@@ -238,6 +243,18 @@ public class HashTest {
         wtx.moveToFirstChild();
         final long hashRoot3 = wtx.getNode().getHash();
         assertEquals(hashRoot1, hashRoot3);
+
+        // Testing root inheritance
+        wtx.moveToDocumentRoot();
+        wtx.moveToFirstChild();
+        wtx.setName(NAME2);
+        final long hashRoot4 = wtx.getNode().getHash();
+        assertFalse(hashRoot4 == hashRoot2);
+        assertFalse(hashRoot4 == hashRoot1);
+        assertFalse(hashRoot4 == hashRoot3);
+        assertFalse(hashRoot4 == hashLeaf1);
+        assertFalse(hashRoot4 == hashLeaf2);
+        assertFalse(hashRoot4 == hashLeaf3);
     }
 
     @After
