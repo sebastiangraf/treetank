@@ -188,7 +188,7 @@ public final class WriteTransactionState extends ReadTransactionState {
     }
 
     protected ElementNode createElementNode(final long parentKey, final long mLeftSibKey,
-        final long rightSibKey, final QName mName) throws TreetankIOException {
+        final long rightSibKey, final long hash, final QName mName) throws TreetankIOException {
 
         final int nameKey = createNameKey(buildName(mName));
         final int namespaceKey = createNameKey(mName.getNamespaceURI());
@@ -196,7 +196,7 @@ public final class WriteTransactionState extends ReadTransactionState {
 
         return (ElementNode)createNode(ElementNode.createData(mNewRoot.getMaxNodeKey() + 1, parentKey,
             mLeftSibKey, rightSibKey, (Long)EFixed.NULL_NODE_KEY.getStandardProperty(), 0, nameKey,
-            namespaceKey, typeKey));
+            namespaceKey, typeKey, hash));
     }
 
     protected TextNode createTextNode(final TextNode mNode) throws TreetankIOException {
