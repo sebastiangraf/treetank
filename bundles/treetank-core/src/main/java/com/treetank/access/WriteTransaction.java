@@ -25,9 +25,9 @@ import javax.xml.namespace.QName;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IItem;
+import com.treetank.api.IStructuralItem;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
-import com.treetank.axis.PostOrderAxis;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankUsageException;
@@ -76,8 +76,8 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(WriteTransaction.class));
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(
+        LoggerFactory.getLogger(WriteTransaction.class));
 
     /** Maximum number of node modifications before auto commit. */
     private final int mMaxNodeCount;
@@ -818,6 +818,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
             rollingRemove();
             break;
         case Postorder:
+            postorderRemove();
             break;
         default:
         }
@@ -842,6 +843,11 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         }
     }
 
+    public void postorderRemove() throws TreetankIOException {
+        moveTo(getCurrentNode().getParentKey());
+        postorderAdd();
+    }
+
     /**
      * Adapting the structure with a rolling hash for all ancestors only with insert.
      * 
@@ -851,29 +857,45 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     private void postorderAdd() throws TreetankIOException {
         // start with hash to add
         final IItem startNode = getCurrentNode();
-        long hashToAdd = startNode.hashCode();
-        getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
-        getCurrentNode().setHash(hashToAdd);
-        getTransactionState().finishNodeModification(getCurrentNode());
-        if (!(getCurrentNode() instanceof AbsStructNode)) {
-            moveTo(getCurrentNode().getParentKey());
-            hashToAdd = hashToAdd + getCurrentNode().getHash() * PRIME;
-            getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
-            getCurrentNode().setHash(hashToAdd);
-            getTransactionState().finishNodeModification(getCurrentNode());
+        // long for adapting the hash of the parent
+        long hashCodeForParent = 0;
+        // adapting the parent if the current node is no structural one.
+        if (!(startNode instanceof IStructuralItem)) {
+            moveTo(startNode.getParentKey());
         }
-
-        while (moveTo(getCurrentNode().getParentKey())) {
-            hashToAdd = hashToAdd + getCurrentNode().getHash() * PRIME;
-            getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
-            getCurrentNode().setHash(hashToAdd);
-            getTransactionState().finishNodeModification(getCurrentNode());
-
-            while (moveTo(((AbsStructNode)getCurrentNode()).getLeftSiblingKey())) {
-                hashToAdd = hashToAdd + getCurrentNode().getHash() * PRIME;
+        // Cursor to root
+        IStructuralItem cursorToRoot = getNodeIfStructural();
+        do {
+            cursorToRoot = getNodeIfStructural();
+            hashCodeForParent = getCurrentNode().hashCode() + hashCodeForParent * PRIME;
+            // Caring about attributes and namespaces if node is an element.
+            if (cursorToRoot.getKind() == ENodes.ELEMENT_KIND) {
+                final ElementNode currentElement = (ElementNode)cursorToRoot;
+                // setting the attributes and namespaces
+                for (int i = 0; i < ((ElementNode)cursorToRoot).getAttributeCount(); i++) {
+                    moveTo(currentElement.getAttributeKey(i));
+                    hashCodeForParent = getCurrentNode().hashCode() + hashCodeForParent * PRIME;
+                }
+                for (int i = 0; i < ((ElementNode)cursorToRoot).getNamespaceCount(); i++) {
+                    moveTo(currentElement.getNamespaceKey(i));
+                    hashCodeForParent = getCurrentNode().hashCode() + hashCodeForParent * PRIME;
+                }
+                moveTo(cursorToRoot.getNodeKey());
             }
 
-        }
+            // Caring about the children of a node
+            if (moveTo(getNodeIfStructural().getFirstChildKey())) {
+                do {
+                    hashCodeForParent = getCurrentNode().getHash() + hashCodeForParent * PRIME;
+                } while (moveTo(getNodeIfStructural().getRightSiblingKey()));
+                moveTo(getNodeIfStructural().getParentKey());
+            }
+
+            // setting hash and resetting hash
+            cursorToRoot.setHash(hashCodeForParent);
+            hashCodeForParent = 0;
+        } while (moveTo(cursorToRoot.getParentKey()));
+
         setCurrentNode(startNode);
     }
 
