@@ -66,6 +66,12 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
     private static final LogWrapper LOGWRAPPER =
         new LogWrapper(LoggerFactory.getLogger(XMLUpdateShredder.class));
 
+    /** File to parse. */
+    protected transient File mFile;
+
+    /** Events to parse. */
+    protected transient List<XMLEvent> mEvents;
+
     /** Determines if the nodes match or not. */
     private transient boolean mIsSame;
 
@@ -78,8 +84,14 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
     /** Determines if an insert occured. */
     private transient boolean mInsert;
 
+    /** Determines if an end tag has been read while inserting nodes. */
+    private transient boolean mInsertedEndTag;
+
     /** Determines if node has to be inserted at the top of a subtree. */
     private transient boolean mInsertAtTop;
+
+    /** Determines if transaction has been moved to right sibling. */
+    private transient boolean mMovedToRightSibling;
 
     /**
      * Determines if it's a right sibling from the currently parsed node, where
@@ -113,12 +125,6 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
 
     /** Level where the cursor is in the shreddered file. */
     private transient int mLevelInShreddered;
-
-    /** File to parse. */
-    protected transient File mFile;
-
-    /** Events to parse. */
-    protected transient List<XMLEvent> mEvents;
 
     /** {@link QName} of root node from which to shredder the subtree. */
     private transient QName mRootElem;
@@ -175,7 +181,7 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
      * @return revision of last revision (before commit).
      */
     @Override
-    public Long call() throws TreetankException {
+    public final Long call() throws TreetankException {
         final long revision = mWtx.getRevisionNumber();
         updateOnly();
         if (mCommit) {
@@ -198,6 +204,7 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
             mElemsParsed = 0;
             mIsLastNode = false;
             mRemoved = false;
+            mMovedToRightSibling = false;
             boolean firstEvent = true;
 
             // If structure already exists, make a sync against the current structure.
@@ -394,10 +401,14 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
         mLevelInToShredder--;
         mLevelInShreddered--;
 
+        if (mInsert) {
+            mInsertedEndTag = true;
+        }
+
         // Move cursor to parent.
         if (mWtx.getNode().getNodeKey() == mLastNodeKey) {
-            /* 
-             * An end tag must have been parsed immediately before and it must have been an empty element at 
+            /*
+             * An end tag must have been parsed immediately before and it must have been an empty element at
              * the end of a subtree.
              */
             assert mWtx.getNode().hasParent() && mWtx.getNode().getKind() == ENodes.ELEMENT_KIND;
@@ -413,13 +424,16 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
                 mWtx.moveToParent();
             }
         }
-        
+
         mLastNodeKey = mWtx.getNode().getNodeKey();
 
         // Move cursor to right sibling if it has one.
         if (((AbsStructNode)mWtx.getNode()).hasRightSibling()) {
             mWtx.moveToRightSibling();
-        }       
+            mMovedToRightSibling = true;
+        } else {
+            mMovedToRightSibling = false;
+        }
     }
 
     /**
@@ -495,13 +509,18 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
         mIsSame = true;
         mInsert = false;
         mInsertAtTop = false;
+        mInsertedEndTag = false;
 
         // Check if last node reached.
         checkIfLastNode();
 
         // Move to right sibling if next node isn't an end tag.
         if (mReader.peek().getEventType() != XMLStreamConstants.END_ELEMENT) {
-            mWtx.moveToRightSibling();
+            if (mWtx.moveToRightSibling()) {
+                mMovedToRightSibling = true;
+            } else {
+                mMovedToRightSibling = false;
+            }
         }
     }
 
@@ -539,6 +558,7 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
         mIsSame = true;
         mInsert = false;
         mInsertAtTop = false;
+        mInsertedEndTag = false;
 
         // Check if last node reached.
         checkIfLastNode();
@@ -574,7 +594,6 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
          */
         mIsSame = false;
         mRemoved = false;
-        mInsert = true;
 
         if (mInsertAtTop) {
             // We are at the top of a subtree, no end tag has been parsed before.
@@ -585,13 +604,43 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
 
             // Insert element as first child.
             addNewElement(false, true, paramElement);
+        } else if (mInsert) {
+            // Inserts have been made before.
+            boolean insertAsFirstChild = true;
+
+            if (mInsertedEndTag) {
+                /*
+                 * An end tag has been read while inserting, thus insert node as right sibling of parent node.
+                 */
+                insertAsFirstChild = false;
+                mInsertedEndTag = false;
+            }
+
+            // Possibly move one sibling back if transaction already moved to next node.
+            if (mMovedToRightSibling) {
+                mWtx.moveToLeftSibling();
+            }
+            
+            // Make sure if transaction is on a text node the node is inserted as a right sibling.
+            if (mWtx.getNode().getKind() == ENodes.TEXT_KIND) {
+                insertAsFirstChild = false;
+            }
+
+            addNewElement(false, insertAsFirstChild, paramElement);
         } else {
+            // Insert occurs at the middle or end of a subtree.
+
             // Move one sibling back.
-            mWtx.moveToLeftSibling();
+            if (mMovedToRightSibling) {
+                mWtx.moveToLeftSibling();
+                mMovedToRightSibling = false;
+            }
 
             // Insert element as right sibling.
             addNewElement(false, false, paramElement);
         }
+
+        mInsert = true;
     }
 
     /**
@@ -613,25 +662,68 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
          */
         mIsSame = false;
         mRemoved = false;
-        mInsert = true;
 
         if (mInsertAtTop) {
+            // Insert occurs at the top of a subtree (no end tag has been parsed immediately before).
             mInsertAtTop = false;
+
+            // Move to parent.
             mWtx.moveToParent();
+
+            // Insert as first child.
             addNewText(true, paramText);
+
+            // Move to next node if no end tag follows (thus cursor isn't moved to parent in processEndTag()).
             if (mReader.peek().getEventType() != XMLStreamConstants.END_ELEMENT) {
-                mWtx.moveToRightSibling();
+                if (mWtx.moveToRightSibling()) {
+                    mMovedToRightSibling = true;
+                } else {
+                    mMovedToRightSibling = false;
+                }
+            }
+        } else if (mInsert) {
+            // Inserts have been made before.
+            boolean insertAsFirstChild = true;
+
+            if (mInsertedEndTag) {
+                /*
+                 * An end tag has been read while inserting, so move back to left sibling if there is one and
+                 * insert as right sibling.
+                 */
+                if (mMovedToRightSibling) {
+                    mWtx.moveToLeftSibling();
+                }
+                insertAsFirstChild = false;
+                mInsertedEndTag = false;
+            }
+
+            // Insert element as right sibling.
+            addNewText(insertAsFirstChild, paramText);
+
+            // Move to next node if no end tag follows (thus cursor isn't moved to parent in processEndTag()).
+            if (mReader.peek().getEventType() != XMLStreamConstants.END_ELEMENT) {
+                if (mWtx.moveToRightSibling()) {
+                    mMovedToRightSibling = true;
+                } else {
+                    mMovedToRightSibling = false;
+                }
             }
         } else {
+            // Insert occurs in the middle or end of a subtree.
+
             // Move one sibling back.
-            mWtx.moveToLeftSibling();
+            if (mMovedToRightSibling) {
+                mWtx.moveToLeftSibling();
+            }
 
             // Insert element as right sibling.
             addNewText(false, paramText);
-            
+
             // Move to next node.
             mWtx.moveToRightSibling();
         }
+
+        mInsert = true;
     }
 
     /**
