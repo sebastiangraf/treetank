@@ -94,8 +94,8 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
     /** Determines if transaction has been moved to right sibling. */
     private transient boolean mMovedToRightSibling;
 
-    /** Determines if node has to be removed at the end of a subtree. */
-    private transient boolean mRemoveNode;
+    /** Determines if node has been removed at the end of a subtree. */
+    private transient boolean mRemovedNode;
 
     /**
      * Determines if it's a right sibling from the currently parsed node, where
@@ -285,12 +285,8 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
                 }
 
                 if (!mIsLastNode) {
-                    if (mInsert && mWtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
-                        /*
-                         * Remove next node after node, which was inserted, because it must have been deleted.
-                         * Note: Cursor is located at the inserted node if it's an element node, otherwise
-                         * it's already located at the right sibling.
-                         */
+                    if (mInsert) {                       
+                        // Remove next node after node, which was inserted, because it must have been deleted.
                         if (mWtx.moveToRightSibling()) {
                             mWtx.remove();
                         }
@@ -355,7 +351,7 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
         algorithm(paramElem);
 
         if (mFound && mIsRightSibling) {
-            deleteNode();
+            deleteNode(false);
         } else if (!mFound) {
             // Increment levels.
             mLevelInToShredder++;
@@ -393,7 +389,7 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
             algorithm(paramText);
 
             if (mFound && mIsRightSibling) {
-                deleteNode();
+                deleteNode(false);
             } else if (!mFound) {
                 insertTextNode(paramText);
             } else if (mFound) {
@@ -407,25 +403,24 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
      * 
      * @throws XMLStreamException
      *             In case of any parsing error.
-     * @throws TreetankIOException
-     *             In case or any Treetank I/O error.
+     * @throws TreetankException
+     *             In case anything went wrong while moving/deleting nodes in Treetank.
      */
-    private void processEndTag() throws XMLStreamException, TreetankIOException {
+    private void processEndTag() throws XMLStreamException, TreetankException {
         mLevelInToShredder--;
 
         if (mInsert) {
             mInsertedEndTag = true;
         }
 
-        if (!mRemoveNode) {
+        if (!mRemovedNode) {
             mLevelInShreddered--;
 
             // Move cursor to parent.
             if (mWtx.getNode().getNodeKey() == mLastNodeKey) {
                 /*
                  * An end tag must have been parsed immediately before and it must have been an empty element
-                 * at
-                 * the end of a subtree, thus move this time to parent node.
+                 * at the end of a subtree, thus move this time to parent node.
                  */
                 assert mWtx.getNode().hasParent() && mWtx.getNode().getKind() == ENodes.ELEMENT_KIND;
                 mWtx.moveToParent();
@@ -455,11 +450,14 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
                      * Means next event is an end tag in StAX reader, but something different where the
                      * Treetank transaction points to, which also means it has to be deleted.
                      */
-                    mRemoveNode = true;
+                    mKeyMatches = -1;
+                    deleteNode(true);
                 }
             } else {
                 mMovedToRightSibling = false;
             }
+        } else {
+            mRemovedNode = false;
         }
     }
 
@@ -476,53 +474,37 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
      *             In case any StAX parser problem occurs.
      */
     private void algorithm(final XMLEvent paramEvent) throws IOException, XMLStreamException {
-        if (mLevelInToShredder < mLevelInShreddered) {
+        do {
             /*
-             * Node or nodes were removed on a level which is higher than the
-             * current one.
+             * Check if a node in the shreddered file on the same level
+             * equals the current element node.
              */
-            mKeyMatches = -1;
-            mFound = true;
-            mIsRightSibling = true;
-
-            // Maybe more than one node has to be removed, thus update mKeyMatches.
-            while (((AbsStructNode)mWtx.getNode()).hasRightSibling()) {
-                mKeyMatches = mWtx.getNode().getNodeKey();
-                mWtx.moveToRightSibling();
+            if (paramEvent.isStartElement()) {
+                mFound = checkElement(paramEvent.asStartElement());
+            } else if (paramEvent.isCharacters()) {
+                mFound = checkText(paramEvent.asCharacters());
             }
-        } else {
-            do {
+            if (mWtx.getNode().getNodeKey() != mNodeKey) {
+                mIsRightSibling = true;
+            }
+
+            mKeyMatches = mWtx.getNode().getNodeKey();
+
+            if (mFound && mIsRightSibling) {
                 /*
-                 * Check if a node in the shreddered file on the same level
-                 * equals the current element node.
+                 * Root element of next subtree in shreddered file matches
+                 * so check all descendants. If they match the node must be
+                 * inserted.
                  */
                 if (paramEvent.isStartElement()) {
-                    mFound = checkElement(paramEvent.asStartElement());
+                    mFound = checkDescendants(paramEvent.asStartElement(), true);
                 } else if (paramEvent.isCharacters()) {
                     mFound = checkText(paramEvent.asCharacters());
                 }
-                if (mWtx.getNode().getNodeKey() != mNodeKey) {
-                    mIsRightSibling = true;
-                }
-
-                mKeyMatches = mWtx.getNode().getNodeKey();
-
-                if (mFound && mIsRightSibling) {
-                    /*
-                     * Root element of next subtree in shreddered file matches
-                     * so check all descendants. If they match the node must be
-                     * inserted.
-                     */
-                    if (paramEvent.isStartElement()) {
-                        mFound = checkDescendants(paramEvent.asStartElement(), true);
-                    } else if (paramEvent.isCharacters()) {
-                        mFound = checkText(paramEvent.asCharacters());
-                    }
-                    mWtx.moveTo(mKeyMatches);
-                }
-            } while (!mFound && mWtx.moveToRightSibling());
-            mWtx.moveTo(mNodeKey);
-        }
+                mWtx.moveTo(mKeyMatches);
+            }
+        } while (!mFound && mWtx.moveToRightSibling());
+        mWtx.moveTo(mNodeKey);
     }
 
     /**
@@ -552,10 +534,10 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
         mInsert = false;
         mInsertAtTop = false;
         mInsertedEndTag = false;
-        mRemoveNode = false;
+        mRemovedNode = false;
 
         // Check if last node reached.
-        checkIfLastNode();
+        checkIfLastNode(false);
 
         // Move to right sibling if next node isn't an end tag.
         if (mReader.peek().getEventType() != XMLStreamConstants.END_ELEMENT) {
@@ -584,43 +566,57 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
     /**
      * Check if it's the last node in the shreddered file and modify flag mIsLastNode
      * if it is the last node.
+     * 
+     * @param paramDeleted
+     *            Determines if method is invoked inside deleteNode()
      */
-    private void checkIfLastNode() {
+    private void checkIfLastNode(final boolean paramDeleted) {
         // Last node or not?
         int level = mLevelInShreddered;
-        if (level > 1) {
-            final long nodeKey = mWtx.getNode().getNodeKey();
-            while (!((AbsStructNode)mWtx.getNode()).hasRightSibling() && level != 0) {
-                mWtx.moveToParent();
-                level--;
-                if (mWtx.getNode().getKind() == ENodes.ELEMENT_KIND
-                    && mWtx.getQNameOfCurrentNode().equals(mRootElem) && level == 1) {
-                    mIsLastNode = true;
-                    break;
-                }
+
+        if (paramDeleted && level == 1 && mWtx.getNode().getKind() == ENodes.ELEMENT_KIND
+            && mWtx.getQNameOfCurrentNode().equals(mRootElem) && level == 1) {
+            mIsLastNode = true;
+        }
+        
+        if (!mIsLastNode) {
+            if (paramDeleted && level == 1) {
+                level++;
             }
-            mWtx.moveTo(nodeKey);
+            if (level > 0) {
+                final long nodeKey = mWtx.getNode().getNodeKey();
+                while (!((AbsStructNode)mWtx.getNode()).hasRightSibling() && level != 0) {
+                    mWtx.moveToParent();
+                    level--;
+                    if (mWtx.getNode().getKind() == ENodes.ELEMENT_KIND
+                        && mWtx.getQNameOfCurrentNode().equals(mRootElem) && level == 1) {
+                        mIsLastNode = true;
+                        break;
+                    }
+                }
+                mWtx.moveTo(nodeKey);
+            }
         }
     }
 
     /**
      * Nodes match, thus update stack and move cursor to first child if it is not a leaf node.
      * 
-     * @throws TreetankIOException
-     *             In case Treetank cannot read the max node key.
      * @throws XMLStreamException
      *             In case of any StAX parsing error.
+     * @throws TreetankException
+     *             In case anything went wrong while moving the Treetank transaction.
      */
-    private void sameElementNode() throws TreetankIOException, XMLStreamException {
+    private void sameElementNode() throws XMLStreamException, TreetankException {
         // Update variables.
         mRemoved = false;
         mInsert = false;
         mInsertAtTop = false;
         mInsertedEndTag = false;
-        mRemoveNode = false;
+        mRemovedNode = false;
 
         // Check if last node reached.
-        checkIfLastNode();
+        checkIfLastNode(false);
 
         // Log debugging messages.
         LOGWRAPPER.debug("FOUND: " + mWtx.getQNameOfCurrentNode() + mWtx.getNode().getNodeKey());
@@ -642,17 +638,18 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
             if (mReader.peek().getEventType() == XMLStreamConstants.END_ELEMENT) {
                 /*
                  * Next event is an end tag, so the current child element, where the transaction currently is
-                 * located needs to be removed, thus, don't move cursor in processEndTag().
+                 * located needs to be removed.
                  */
-                mRemoveNode = true;
+                mKeyMatches = -1;
+                deleteNode(true);
             }
         } else if (mReader.peek().getEventType() == XMLStreamConstants.END_ELEMENT
             && !mReader.peek().asEndElement().getName().equals(mWtx.getQNameOfCurrentNode())) {
             /*
-             * Node must be removed when next end tag doesn't match the current name and it has no children,
-             * so don't move cursor in processEndTag().
+             * Node must be removed when next end tag doesn't match the current name and it has no children.
              */
-            mRemoveNode = true;
+            mKeyMatches = -1;
+            deleteNode(true);
         }
     }
 
@@ -688,7 +685,7 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
          * found in the structure and it is a new last right sibling.
          */
         mRemoved = false;
-        mRemoveNode = false;
+        mRemovedNode = false;
 
         if (mInsertAtTop) {
             // We are at the top of a subtree, no end tag has been parsed before.
@@ -757,7 +754,7 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
          * found in the structure and it is a new last right sibling.
          */
         mRemoved = false;
-        mRemoveNode = false;
+        mRemovedNode = false;
 
         if (mInsertAtTop) {
             // Insert occurs at the top of a subtree (no end tag has been parsed immediately before).
@@ -826,17 +823,26 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
     /**
      * Delete node.
      * 
+     * @param paramAtBottom
+     *            Determines if it is a node before an end tag is going to be parsed.
      * @throws TreetankException
      *             In case any exception occurs while moving the cursor or
      *             deleting nodes in Treetank.
      */
-    private void deleteNode() throws TreetankException {
+    private void deleteNode(final boolean paramAtBottom) throws TreetankException {
         /*
          * If found in one of the rightsiblings in the current shreddered
          * structure remove all nodes until the transaction points to the found
          * node (keyMatches).
          */
-        mRemoved = true;
+        if (!paramAtBottom) {
+            /*
+             * Only set to true, if the node/nodes have to be removed at the top or in the middle of a
+             * subtree, but not right before an end tag is parsed. Thus the StAX parser can move to the next
+             * node.
+             */
+            mRemoved = true;
+        }
 
         if (mInsert) {
             if (((AbsStructNode)mWtx.getNode()).hasRightSibling()) {
@@ -845,32 +851,69 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
             }
         }
 
-        boolean movedToParents = false;
+        // Determines if transaction has moved to the parent node after a delete operation.
+        boolean movedToParent = false;
+        
+        // Determines if last node in a subtree is going to be deleted.
+        boolean isLast = false;
 
         do {
             if (mWtx.getNode().getNodeKey() != mKeyMatches) {
-                final AbsStructNode node = (AbsStructNode) mWtx.getNode();
+                final AbsStructNode node = (AbsStructNode)mWtx.getNode();
                 if (!node.hasRightSibling() && !node.hasLeftSibling()) {
-                    mLevelInShreddered--;
-                    movedToParents = true;
+                    if (!paramAtBottom) {
+                        // If the delete occurs right before an end tag the level hasn't been incremented.
+                        mLevelInShreddered--;
+                    }
+                    /*
+                     * Node has no right and no left sibling, so the transaction moves to the parent after the
+                     * delete.
+                     */
+                    movedToParent = true;
+                } else if (!node.hasRightSibling()) {
+                    // Last node has been reached, which means that the transaction moves to the left sibling.
+                    isLast = true;
                 }
-                
+
                 mWtx.remove();
             }
-        } while (mWtx.getNode().getNodeKey() != mKeyMatches
-            && ((AbsStructNode)mWtx.getNode()).hasRightSibling() && mLevelInToShredder < mLevelInShreddered);
-        // Move up anchestors if there is no former right sibling.
-        while (!((AbsStructNode)mWtx.getNode()).hasRightSibling()) { 
-            movedToParents = true;
-            mWtx.moveToParent();
-            mLevelInShreddered--;
-        }
-        
-        if (movedToParents) {
-            // Move to right sibling and update stack.
+        } while (mWtx.getNode().getNodeKey() != mKeyMatches && !movedToParent && !isLast);
+
+        if (movedToParent) {
+            if (paramAtBottom) {
+                /*
+                 * Deleted right before an end tag has been parsed, thus don't move transaction to next
+                 * node in processEndTag().
+                 */
+                mRemovedNode = true;
+            }
+            /*
+             * Treetank transaction has been moved to parent, because all child nodes have been deleted, thus
+             * to right sibling.
+             */
             mWtx.moveToRightSibling();
+        } else {
+            if (((AbsStructNode)mWtx.getNode()).hasFirstChild()) {
+                if (paramAtBottom) {
+                    /*
+                     * Deleted right before an end tag has been parsed, thus don't move transaction to next
+                     * node in processEndTag().
+                     */
+                    mRemovedNode = true;
+                } else {
+                    // If the delete occurs right before an end tag the level hasn't been incremented.
+                    mLevelInShreddered--;
+                }
+                if (isLast) {
+                    // If last node of a subtree has been removed, move to parent and right sibling.
+                    mWtx.moveToParent();
+                    mWtx.moveToRightSibling();
+                }
+            }
         }
 
+        // Check if transaction is on the last node in the shreddered file.
+        checkIfLastNode(true);
         mInsert = false;
     }
 

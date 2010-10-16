@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,7 +39,6 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
-import com.treetank.node.AbsStructNode;
 import com.treetank.node.DocumentRootNode;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
