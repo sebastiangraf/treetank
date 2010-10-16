@@ -63,25 +63,25 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
         TestHelper.closeEverything();
     }
 
-//    @Test
-//    public void testSame() throws Exception {
-//        test(XMLSAME);
-//    }
-//
-//    @Test
-//    public void testInsertsFirst() throws Exception {
-//        test(XMLINSERTFIRST);
-//    }
-//
-//    @Test
-//    public void testInsertsSecond() throws Exception {
-//        test(XMLINSERTSECOND);
-//    }
+    @Test
+    public void testSame() throws Exception {
+        test(XMLSAME);
+    }
 
-//     @Test
-//     public void testDeletesFirst() throws Exception {
-//     test(XMLDELETEFIRST);
-//     }
+    @Test
+    public void testInsertsFirst() throws Exception {
+        test(XMLINSERTFIRST);
+    }
+
+    @Test
+    public void testInsertsSecond() throws Exception {
+        test(XMLINSERTSECOND);
+    }
+
+    @Test
+    public void testDeletesFirst() throws Exception {
+        test(XMLDELETEFIRST);
+    }
 
     @Test
     public void testDeletesSecond() throws Exception {
