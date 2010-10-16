@@ -31,7 +31,7 @@
 			<y:BorderStyle color="#000000" type="line" width="1.0"/>
 			<y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="19.92626953125" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="11.22998046875" x="9.385009765625" y="5.036865234375">0</y:NodeLabel>
 			<y:Shape type="rectangle"/>
-			extNodeAtBottom
+			textNodeAtBottom
 		</y:ShapeNode>
 	</data>
 </node>
