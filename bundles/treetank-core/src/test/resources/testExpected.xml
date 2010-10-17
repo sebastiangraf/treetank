@@ -4,7 +4,7 @@
     <title>blubb</title>
     <revision>
       <id>233192</id>
-      <timestamp>2000-61-21T02:12:21Z</timestamp>
+      <timestamp>2000-01-20T02:12:21Z</timestamp>
       <text>blaaaaa</text>
     </revision>
   </page>
@@ -23,6 +23,15 @@
     </revision>
   </page>
   <page>
+    <id>732819</id>
+    <title>blubb</title>
+    <revision>
+      <id>233192</id>
+      <timestamp>2001-02-21T02:12:21Z</timestamp>
+      <text>tztztz</text>
+    </revision>
+  </page>
+  <page>
     <id>774932</id>
     <title>foo</title>
     <revision>
@@ -37,7 +46,7 @@
     <revision>
       <id>89865</id>
       <timestamp>2003-11-21T02:12:21Z</timestamp>
-      <text>blaaaaa</text>
+      <text>dshajkl</text>
     </revision>
   </page>
 </root>
