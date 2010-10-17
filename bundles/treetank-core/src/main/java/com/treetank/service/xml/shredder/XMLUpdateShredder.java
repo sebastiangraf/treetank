@@ -790,6 +790,7 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
                 }
                 // }
             } else if (((AbsStructNode)mWtx.getNode()).hasRightSibling()) {
+                mMovedToRightSibling = false;
                 mInsert = true;
                 mKeyMatches = -1;
                 deleteNode(true);
