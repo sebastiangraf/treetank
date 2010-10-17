@@ -88,10 +88,10 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
         test(XMLDELETESECOND);
     }
 
-//    @Test
-//    public void testAllFirst() throws Exception {
-//        test(XMLALLFIRST);
-//    }
+    @Test
+    public void testAllFirst() throws Exception {
+        test(XMLALLFIRST);
+    }
 
     @Test
     public void testAllSecond() throws Exception {
@@ -102,16 +102,16 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
     public void testAllThird() throws Exception {
         test(XMLALLTHIRD);
     }
-    //
-    // @Test
-    // public void testAllFourth() throws Exception {
-    // test(XMLALLFOURTH);
-    // }
-    //
-    // @Test
-    // public void testAllFifth() throws Exception {
-    // test(XMLALLFIFTH);
-    // }
+
+    @Test
+    public void testAllFourth() throws Exception {
+        test(XMLALLFOURTH);
+    }
+
+    @Test
+    public void testAllFifth() throws Exception {
+        test(XMLALLFIFTH);
+    }
 
     private void test(final String FOLDER) throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
