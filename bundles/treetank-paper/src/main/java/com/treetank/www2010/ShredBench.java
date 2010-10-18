@@ -2,29 +2,14 @@ package com.treetank.www2010;
 
 import java.io.File;
 
-import com.treetank.TestHelper;
-import com.treetank.TestHelper.PATHS;
-import com.treetank.access.WriteTransaction;
-import com.treetank.api.IDatabase;
-import com.treetank.api.ISession;
-import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
-import com.treetank.service.xml.shredder.XMLShredder;
-
-import org.perfidix.Benchmark;
-import org.perfidix.annotation.AfterEachRun;
-import org.perfidix.annotation.Bench;
-import org.perfidix.ouput.TabularSummaryOutput;
-import org.perfidix.result.BenchmarkResult;
-
 public class ShredBench {
 
     private XMLShredder shredderNone;
 
-    private static final int RUNS = 50;
+    private static final int RUNS = 100;
 
     private static final File XMLFile = new File("src" + File.separator + "main" + File.separator
-        + "resources" + File.separator + "1MB.xml");
+        + "resources" + File.separator + "small.xml");
 
     public void setUpNone() {
         TestHelper.deleteEverything();
@@ -98,6 +83,8 @@ public class ShredBench {
     @AfterEachRun
     public void tearDown() {
         TestHelper.closeEverything();
+
+        System.out.println("Run finished!");
     }
 
     public static void main(final String[] args) {
