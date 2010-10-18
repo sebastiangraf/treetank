@@ -23,8 +23,8 @@ public class ShredBench {
 
     private static final int RUNS = 100;
 
-    private static final File XMLFile = new File("src" + File.separator + "main" + File.separator
-        + "resources" + File.separator + "small.xml");
+    public static File XMLFile = new File("src" + File.separator + "main" + File.separator + "resources"
+        + File.separator + "small.xml");
 
     public void setUpNone() {
         TestHelper.deleteEverything();
@@ -103,6 +103,11 @@ public class ShredBench {
     }
 
     public static void main(final String[] args) {
+
+        if (args.length > 0) {
+            final File filetoshred = new File(args[0]);
+            ShredBench.XMLFile = filetoshred;
+        }
 
         final Benchmark bench = new Benchmark();
         bench.add(ShredBench.class);
