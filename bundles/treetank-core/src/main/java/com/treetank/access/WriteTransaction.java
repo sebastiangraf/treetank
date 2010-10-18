@@ -76,8 +76,8 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(
-        LoggerFactory.getLogger(WriteTransaction.class));
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(WriteTransaction.class));
 
     /** Maximum number of node modifications before auto commit. */
     private final int mMaxNodeCount;
@@ -844,6 +844,12 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         }
     }
 
+    /**
+     * Removal operation for postorder hash computation.
+     * 
+     * @throws TreetankIOException
+     *             if anything weird happens
+     */
     public void postorderRemove() throws TreetankIOException {
         moveTo(getCurrentNode().getParentKey());
         postorderAdd();
@@ -861,13 +867,18 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         // long for adapting the hash of the parent
         long hashCodeForParent = 0;
         // adapting the parent if the current node is no structural one.
-        if (!(startNode instanceof IStructuralItem)) {
-            moveTo(startNode.getParentKey());
+        if (!(getCurrentNode() instanceof IStructuralItem)) {
+            getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+            getCurrentNode().setHash(getCurrentNode().hashCode());
+            getTransactionState().finishNodeModification(getCurrentNode());
+            moveTo(getCurrentNode().getParentKey());
         }
         // Cursor to root
-        IStructuralItem cursorToRoot = getNodeIfStructural();
+        IStructuralItem cursorToRoot;
         do {
-            cursorToRoot = getNodeIfStructural();
+            cursorToRoot =
+                (IStructuralItem)getTransactionState().prepareNodeForModification(
+                    getCurrentNode().getNodeKey());
             hashCodeForParent = getCurrentNode().hashCode() + hashCodeForParent * PRIME;
             // Caring about attributes and namespaces if node is an element.
             if (cursorToRoot.getKind() == ENodes.ELEMENT_KIND) {
@@ -894,6 +905,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
 
             // setting hash and resetting hash
             cursorToRoot.setHash(hashCodeForParent);
+            getTransactionState().finishNodeModification(cursorToRoot);
             hashCodeForParent = 0;
         } while (moveTo(cursorToRoot.getParentKey()));
 
