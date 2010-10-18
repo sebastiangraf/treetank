@@ -2,6 +2,21 @@ package com.treetank.www2010;
 
 import java.io.File;
 
+import com.treetank.TestHelper;
+import com.treetank.TestHelper.PATHS;
+import com.treetank.access.WriteTransaction;
+import com.treetank.api.IDatabase;
+import com.treetank.api.ISession;
+import com.treetank.api.IWriteTransaction;
+import com.treetank.exception.TreetankException;
+import com.treetank.service.xml.shredder.XMLShredder;
+
+import org.perfidix.Benchmark;
+import org.perfidix.annotation.AfterEachRun;
+import org.perfidix.annotation.Bench;
+import org.perfidix.ouput.TabularSummaryOutput;
+import org.perfidix.result.BenchmarkResult;
+
 public class ShredBench {
 
     private XMLShredder shredderNone;
