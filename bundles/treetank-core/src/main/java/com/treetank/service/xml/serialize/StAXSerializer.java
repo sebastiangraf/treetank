@@ -422,7 +422,7 @@ public final class StAXSerializer implements XMLEventReader {
     /**
      * Implements an iterator for attributes.
      */
-    class AttributeIterator implements Iterator<Attribute> {
+    final class AttributeIterator implements Iterator<Attribute> {
 
         /**
          * Treetank reading transaction.

@@ -22,7 +22,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -32,6 +31,7 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.Namespace;
@@ -213,7 +213,8 @@ public class XMLShredder implements Callable<Long> {
      *             In case anything went wrong.
      */
     protected final FastStack<Long> addNewElement(final boolean paramFirstElement,
-        final FastStack<Long> paramLeftSiblingKeyStack, final StartElement paramEvent) throws TreetankException {
+        final FastStack<Long> paramLeftSiblingKeyStack, final StartElement paramEvent)
+        throws TreetankException {
         long key;
 
         final QName name = paramEvent.getName();

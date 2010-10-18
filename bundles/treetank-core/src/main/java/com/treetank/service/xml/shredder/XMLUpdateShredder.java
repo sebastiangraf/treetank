@@ -1309,8 +1309,8 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
             final ISession session = db.getSession();
             final IWriteTransaction wtx = session.beginWriteTransaction();
             final XMLEventReader reader = createReader(new File(args[0]));
-            final OldUpdateShredder shredder =
-                new OldUpdateShredder(wtx, reader, true, new File(args[0]), true);
+            final XMLUpdateShredder shredder =
+                new XMLUpdateShredder(wtx, reader, true, new File(args[0]), true);
             shredder.call();
 
             wtx.close();
