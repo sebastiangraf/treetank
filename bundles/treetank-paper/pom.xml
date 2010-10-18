@@ -22,7 +22,6 @@
 			<artifactId>core</artifactId>
 			<version>5.3.4-SNAPSHOT</version>
 			<type>test-jar</type>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<build>
