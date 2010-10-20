@@ -34,11 +34,14 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +86,7 @@ public final class XMLMap extends Mapper<DateWritable, Text, DateWritable, Text>
 
     /** {@link DateFormat}. */
     private final transient DateFormat mFormatter =
-        new SimpleDateFormat("yyyy.MM.dd HH.mm.ss", Locale.ENGLISH);
+        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
     /**
      * Default constructor.
@@ -93,14 +96,17 @@ public final class XMLMap extends Mapper<DateWritable, Text, DateWritable, Text>
     }
 
     @Override
-    public void setup(final Context paramContext) throws IOException, InterruptedException {
+    protected void setup(final Context paramContext) throws IOException, InterruptedException {
         final Configuration config = paramContext.getConfiguration();
         mTimestamp = new QName(config.get("timestamp"));
-        mPage = new QName(config.get("page"));
+        mPage = new QName(config.get("record_element_name"));
         mRevision = new QName(config.get("revision"));
         mInputFile = config.get("mapreduce.map.input.file");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void map(final DateWritable paramKey, final Text paramValue, final Context paramContext) {
         boolean isTimestamp = false;
@@ -109,7 +115,7 @@ public final class XMLMap extends Mapper<DateWritable, Text, DateWritable, Text>
         boolean isPage = true;
         final DateWritable key = new DateWritable();
         final Text value = new Text();
-        final Writer writer = new StringWriter();
+        final StringWriter writer = new StringWriter();
         XMLEventReader eventReader = null;
         XMLEventWriter eventWriter = null;
         try {
@@ -123,6 +129,7 @@ public final class XMLMap extends Mapper<DateWritable, Text, DateWritable, Text>
         }
 
         assert eventReader != null;
+        assert eventWriter != null;
         while (eventReader.hasNext()) {
             XMLEvent event = null;
             try {
@@ -132,63 +139,95 @@ public final class XMLMap extends Mapper<DateWritable, Text, DateWritable, Text>
             }
 
             assert event != null;
-            // Parse timestamp (key).
-            if (event.isStartElement() && event.asStartElement().getName().equals(mTimestamp)) {
-                isTimestamp = true;
-            } else if (isTimestamp && event.isCharacters() && !event.asCharacters().isWhiteSpace()) {
-                isTimestamp = false;
-                try {
-                    // Parse timestamp.
-                    final String text = event.asCharacters().getData();
-                    final String[] splitted = text.split("T");
-                    final String time = splitted[1].substring(0, splitted[1].length() - 1);
-                    key.setTimestamp(mFormatter.parse(splitted[0] + " " + time));
-                } catch (final ParseException e) {
-                    LOGWRAPPER.error(e.getMessage(), e);
+            
+            switch (event.getEventType()) {
+            case XMLStreamConstants.START_ELEMENT:
+                // Parse timestamp (key).
+                final StartElement startTag = event.asStartElement();
+                // TODO: Use Java7 string-switch.
+                if (startTag.getName().equals(mTimestamp)) {
+                    isTimestamp = true;
+                } else if (startTag.getName().equals(mRevision)) {
+                    // Determines if page header end is found.
+                    isPage = false;
+                } else if (startTag.getName().equals(mPage)) {
+                    // Determines if page header start is found.
+                    isPage = true;
                 }
-            }
+                break;
+            case XMLStreamConstants.CHARACTERS:
+                if (isTimestamp && !event.asCharacters().isWhiteSpace()) {
+                    isTimestamp = false;
+                    try {
+                        // Parse timestamp.
+                        final String text = event.asCharacters().getData();
+                        final String[] splitted = text.split("T");
+                        final String time = splitted[1].substring(0, splitted[1].length() - 1);
+                        key.setTimestamp(mFormatter.parse(splitted[0] + " " + time));
+                    } catch (final ParseException e) {
+                        LOGWRAPPER.error(e.getMessage(), e);
+                    }
+                }
+                break;
+            case XMLStreamConstants.END_ELEMENT:
+                if (event.asEndElement().getName().equals(mRevision)) {
+                    // Write output.
+                    try {
+                        // Make sure to get the revision end tag.
+                        rev.add(event);
+                        
+                        // Make sure to create the page end tag.
+                        rev.add(XMLEventFactory.newFactory().createEndElement(mPage, null));
 
-            if (event.isStartElement() && event.asStartElement().getName().equals(mRevision)) {
-                // Determines if page header end is found.
-                isPage = false;
-                rev.clear();
+                        // Append events to an event writer.
+                        assert eventWriter != null;
+                        for (final XMLEvent ev : page) {
+                            eventWriter.add(ev);
+                        }
+                        for (final XMLEvent ev : rev) {
+                            eventWriter.add(ev);
+                        }
+                        
+                        // Flush the event writer and underlying string writer.
+                        eventWriter.flush();
+                        writer.flush();
+                        
+                        final String strValue = writer.toString();
+                        
+                        // Clear buffer.
+                        writer.getBuffer().setLength(0);
+                        
+                        // Append buffered string to Text value.
+                        value.append(strValue.getBytes(), 0, strValue.length());
+                        
+                        // Write key/value pairs.
+                        paramContext.write(key, value);
+                        
+                        // Clear revision list and value text.
+                        rev.clear();
+                        value.clear();
+                    } catch (final IOException e) {
+                        LOGWRAPPER.error(e.getMessage(), e);
+                    } catch (final InterruptedException e) {
+                        LOGWRAPPER.error(e.getMessage(), e);
+                    } catch (final XMLStreamException e) {
+                        LOGWRAPPER.error(e.getMessage(), e);
+                    }
+                }               
+                break;
+            default:
+                break;
             }
 
             if (isPage) {
                 // Inside page header (author, ID, pagename...)
-                page.clear();
-                rev.clear();
-                page.add(event);
+                if (!event.isStartDocument()) {
+                    page.add(event);
+                }
             } else {
                 // Inside revision.
-                rev.add(event);
-            }
-
-            if (event.isEndElement() && event.asEndElement().getName().equals(mRevision)) {
-                // Write output.
-                try {
-                    // Make sure to create the page end tag.
-                    rev.add(XMLEventFactory.newFactory().createEndElement(mPage, null));
-
-                    // Write key/value pairs.
-                    assert eventWriter != null;
-                    for (final XMLEvent ev : page) {
-                        eventWriter.add(ev);
-                    }
-                    for (final XMLEvent ev : rev) {
-                        eventWriter.add(ev);
-                    }
-                    eventWriter.flush();
-                    final String strValue = writer.toString();
-                    value.append(strValue.getBytes(), 0, strValue.length());
-                    paramContext.write(key, value);
-                    value.clear();
-                } catch (final IOException e) {
-                    LOGGER.error(e.getMessage(), e);
-                } catch (final InterruptedException e) {
-                    LOGGER.error(e.getMessage(), e);
-                } catch (final XMLStreamException e) {
-                    LOGGER.error(e.getMessage(), e);
+                if (!(event.isEndElement() && event.asEndElement().getName().equals(mRevision))) {
+                    rev.add(event);
                 }
             }
         }
@@ -196,6 +235,13 @@ public final class XMLMap extends Mapper<DateWritable, Text, DateWritable, Text>
         if ((++mNumRecords % 100) == 0) {
             paramContext.setStatus("Finished processing " + mNumRecords + " records "
                 + "from the input file: " + mInputFile);
+        }
+        
+        try {
+            eventReader.close();
+            eventWriter.close();
+        } catch (final XMLStreamException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
         }
     }
 }

@@ -24,9 +24,7 @@ import java.io.Writer;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import javax.xml.namespace.QName;
@@ -94,19 +92,19 @@ public final class XMLRecordReader extends RecordReader<DateWritable, Text> {
 
     /** Key is a date (timestamp) {@link Date}. */
     private DateWritable mKey;
-    
+
     /** Value is of type {@link Text}. */
     private Text mValue;
 
     /** Record element identifier {@see StartElement}. */
     private transient StartElement mRecordElem;
-    
+
     /** {@link XMLEventWriter} for event data. */
     private transient XMLEventWriter mEventWriter;
-    
-    /** A {@link Writer}, where the {@link XMLEventWriter} writes to. */ 
-    private transient Writer mWriter;
-    
+
+    /** A {@link StringWriter}, where the {@link XMLEventWriter} writes to. */
+    private transient StringWriter mWriter;
+
     /** Counter which counts parsed {@link XMLEvent}s to track process. */
     private transient int mCountEvents;
 
@@ -126,6 +124,7 @@ public final class XMLRecordReader extends RecordReader<DateWritable, Text> {
         mStart = split.getStart();
         mEnd = mStart + split.getLength();
         mValue = new Text();
+        mKey = new DateWritable();
         mWriter = new StringWriter();
         try {
             mEventWriter = XMLOutputFactory.newInstance().createXMLEventWriter(mWriter);
@@ -180,7 +179,8 @@ public final class XMLRecordReader extends RecordReader<DateWritable, Text> {
         mBeginFilter = new EventFilter() {
             @Override
             public boolean accept(final XMLEvent paramEvent) {
-                return paramEvent.isStartElement() && paramEvent.asStartElement().equals(mRecordElem);
+                return paramEvent.isStartElement()
+                    && paramEvent.asStartElement().getName().equals(mRecordElem.getName());
             }
         };
         mEndFilter = new EventFilter() {
@@ -232,11 +232,12 @@ public final class XMLRecordReader extends RecordReader<DateWritable, Text> {
 
                 if (foundEndEvent) {
                     // Add last element to the writer.
-                    mReader.nextEvent().writeAsEncodedUnicode(mWriter);
+                    mEventWriter.add(mReader.nextEvent());
                     retVal = true;
-                    
+
                     mWriter.flush();
                     mValue.set(mWriter.toString());
+                    mWriter.getBuffer().setLength(0);
                 }
             }
         } catch (final XMLStreamException e) {
@@ -262,8 +263,8 @@ public final class XMLRecordReader extends RecordReader<DateWritable, Text> {
     private boolean moveToEvent(final XMLEventReader paramReader, final EventFilter paramFilter,
         final boolean paramIsRecord) throws XMLStreamException {
         boolean isTimestamp = false;
-        final DateFormat formatter = new SimpleDateFormat("yyyy.MM.dd HH.mm.ss", Locale.ENGLISH);
-        
+        final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+
         while (paramReader.hasNext() && !paramFilter.accept(paramReader.peek())) {
             final XMLEvent event = paramReader.nextEvent();
             mCountEvents++;
@@ -274,7 +275,7 @@ public final class XMLRecordReader extends RecordReader<DateWritable, Text> {
                     // Parse timestamp.
                     final String text = event.asCharacters().getData();
                     final String[] splitted = text.split("T");
-                    final String time = splitted[1].substring(0, splitted[1].length()-1);
+                    final String time = splitted[1].substring(0, splitted[1].length() - 1);
                     mKey.setTimestamp(formatter.parse(splitted[0] + " " + time));
                 } catch (final ParseException e) {
                     LOGWRAPPER.warn(e.getMessage(), e);
