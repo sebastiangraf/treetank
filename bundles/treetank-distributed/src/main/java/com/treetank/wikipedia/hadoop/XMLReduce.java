@@ -80,29 +80,29 @@ public final class XMLReduce extends Reducer<DateWritable, Text, DateWritable, T
         final Context paramContext) throws IOException, InterruptedException {
         final Text combined = new Text();
 
+        combined.append("<root>".getBytes(), 0, "<root>".length());
         for (final Text event : paramValue) {
             combined.append(event.getBytes(), 0, event.getLength());
         }
+        combined.append("</root>".getBytes(), 0, "</root>".length());
 
         final Processor proc = new Processor(false);
         final XsltCompiler compiler = proc.newXsltCompiler();
         try {
-            final XMLInputFactory xmlif = XMLInputFactory.newInstance();
             final XsltExecutable exec = compiler.compile(new StreamSource(new File(STYLESHEET)));
             final XsltTransformer transform = exec.load();
-            transform.setSource(new StAXSource(xmlif.createXMLEventReader(new StringReader(combined
-                .toString()))));
+            transform.setSource(new StreamSource(new StringReader(combined
+                .toString())));
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             final Serializer serializer = new Serializer();
             serializer.setOutputStream(out);
             transform.setDestination(serializer);
+            transform.transform();
             final String value = out.toString();
+            System.out.println(value);
             paramContext.write(null, new Text(value));
         } catch (final SaxonApiException e) {
             LOGWRAPPER.error(e);
-        } catch (final XMLStreamException e) {
-            LOGWRAPPER.error(e);
         }
-
     }
 }

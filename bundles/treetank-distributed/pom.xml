@@ -77,18 +77,18 @@
 		<dependency>
 			<groupId>com.cloudera.hadoop</groupId>
 			<artifactId>hadoop-core</artifactId>
-			<version>0.20.2-320</version>
+			<version>0.20.2-737</version>
 		</dependency>
 		<dependency>
 			<groupId>com.cloudera.hadoop</groupId>
 			<artifactId>hadoop-test</artifactId>
-			<version>0.20.2-320</version>
+			<version>0.20.2-737</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.cloudera.hadoop</groupId>
 			<artifactId>hadoop-mrunit</artifactId>
-			<version>0.20.2-320</version>
+			<version>0.20.2-737</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
