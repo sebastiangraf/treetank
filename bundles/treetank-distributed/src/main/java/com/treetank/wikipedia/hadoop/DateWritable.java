@@ -100,9 +100,9 @@ public final class DateWritable implements WritableComparable<DateWritable> {
         int retVal = 0;
 
         if (paramDate.mTimestamp.before(this.mTimestamp)) {
-            retVal = -1;
-        } else if (paramDate.mTimestamp.after(this.mTimestamp)) {
             retVal = 1;
+        } else if (paramDate.mTimestamp.after(this.mTimestamp)) {
+            retVal = -1;
         }
 
         return retVal;

@@ -45,7 +45,8 @@ import com.treetank.utils.LogWrapper;
  * <h1>XMLEventWritable</h1>
  * 
  * <p>
- * 
+ * Serialize/Deserialize {@link XMLEvent}s. Very inefficient, because fpr deserializing a StAX parser is being
+ * created.
  * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
