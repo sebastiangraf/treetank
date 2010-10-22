@@ -103,11 +103,18 @@ public class ShredBench {
 
     public static void main(final String[] args) {
 
+        if (args.length != 2) {
+            System.out
+                .println("Please use java -jar JAR \"folder with xmls to parse\" \"folder to write csv\"");
+            System.exit(-1);
+        }
+
         // Argument is a folder with only XML in there. For each XML one benchmark should be executed.
         final File filetoshred = new File(args[0]);
         final File[] files = filetoshred.listFiles();
         final File filetoexport = new File(args[1]);
         for (final File currentFile : files) {
+            System.out.println("Starting benchmark for " + currentFile.getName());
             final int index = currentFile.getName().lastIndexOf(".");
             final File folder = new File(filetoexport, currentFile.getName().substring(0, index));
             folder.mkdirs();
