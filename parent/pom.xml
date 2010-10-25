@@ -205,7 +205,7 @@
 		<dependency>
 			<groupId>perfidix</groupId>
 			<artifactId>perfidix</artifactId>
-			<version>3.6.2</version>
+			<version>3.6.3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>xmlunit</groupId>
