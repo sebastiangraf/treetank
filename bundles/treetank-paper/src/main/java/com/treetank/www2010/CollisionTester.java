@@ -131,7 +131,7 @@ public class CollisionTester {
         public boolean filter() {
             final long hash = rtx.getNode().getHash();
             if (hashSet.contains(hash)) {
-                System.out.println(rtx.getQNameOfCurrentNode());
+//                System.out.println(rtx.getQNameOfCurrentNode());
                 return true;
             } else {
                 hashSet.add(hash);
