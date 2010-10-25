@@ -8,6 +8,7 @@ import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
 import com.treetank.access.WriteTransaction;
 import com.treetank.api.IDatabase;
+import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -24,9 +25,12 @@ import org.perfidix.meter.AbstractMeter;
 import org.perfidix.meter.CountingMeter;
 import org.perfidix.ouput.AbstractOutput;
 import org.perfidix.ouput.CSVOutput;
+import org.perfidix.ouput.TabularSummaryOutput;
 import org.perfidix.result.BenchmarkResult;
 
 public class CollisionTester {
+
+    private final static NodeCounter nodeCounter = new NodeCounter(new HashFilter());
 
     private static IWriteTransaction wtx;
 
@@ -44,6 +48,7 @@ public class CollisionTester {
             final XMLShredder shredder = new XMLShredder(wtx, XMLShredder.createReader(XMLFile), true);
             shredder.call();
             wtx.moveToDocumentRoot();
+            ((HashFilter)nodeCounter.getFilter()).setTrx(wtx);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -60,6 +65,7 @@ public class CollisionTester {
             final XMLShredder shredder = new XMLShredder(wtx, XMLShredder.createReader(XMLFile), true);
             shredder.call();
             wtx.moveToDocumentRoot();
+            ((HashFilter)nodeCounter.getFilter()).setTrx(wtx);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -67,24 +73,19 @@ public class CollisionTester {
 
     @Bench(beforeEachRun = "setUpPostorder")
     public void benchPostorder() {
-        // try {
-        //
-        // } catch (TreetankException e) {
-        // e.printStackTrace();
-        // }
+        nodeCounter.call();
     }
 
     @Bench(beforeEachRun = "setUpRolling")
     public void benchRolling() {
-//        try {
-//        } catch (TreetankException e) {
-//            e.printStackTrace();
-//        }
+        nodeCounter.call();
     }
 
     @AfterEachRun
     public void tearDown() {
         TestHelper.closeEverything();
+        nodeCounter.reset();
+        ((HashFilter)nodeCounter.getFilter()).reset();
     }
 
     public static void main(final String[] args) {
@@ -94,7 +95,6 @@ public class CollisionTester {
                 .println("Please use java -jar JAR \"folder with xmls to parse\" \"folder to write csv\"");
             System.exit(-1);
         }
-
         // Argument is a folder with only XML in there. For each XML one benchmark should be executed.
         final File filetoshred = new File(args[0]);
         final File[] files = filetoshred.listFiles();
@@ -105,37 +105,51 @@ public class CollisionTester {
             final File folder = new File(filetoexport, currentFile.getName().substring(0, index));
             folder.mkdirs();
             XMLFile = currentFile;
-
             final Benchmark bench = new Benchmark(new AbstractConfig(1, new AbstractMeter[] {
-                new CounterFilter(new HashFilter(wtx), new CountingMeter())
+                nodeCounter
             }, new AbstractOutput[0], KindOfArrangement.SequentialMethodArrangement, 1.0d) {
             });
             bench.add(CollisionTester.class);
             final BenchmarkResult res = bench.run();
+            new TabularSummaryOutput().visitBenchmark(res);
             new CSVOutput(folder).visitBenchmark(res);
             System.out.println("Finished benchmark for " + currentFile.getName());
         }
     }
 
-    static class HashFilter extends AbsFilter {
+    static class HashFilter implements IFilter {
 
         private final Set<Long> hashSet;
 
-        public HashFilter(IReadTransaction rtx) {
-            super(rtx);
+        private IReadTransaction rtx;
+
+        public HashFilter() {
             hashSet = new HashSet<Long>();
         }
 
         @Override
         public boolean filter() {
-            final long hash = getTransaction().getNode().getHash();
+            final long hash = rtx.getNode().getHash();
             if (hashSet.contains(hash)) {
+                System.out.println(rtx.getQNameOfCurrentNode());
                 return true;
             } else {
                 hashSet.add(hash);
                 return false;
             }
+        }
 
+        public void reset() {
+            hashSet.clear();
+        }
+
+        public void setTrx(final IReadTransaction rtx) {
+            this.rtx = rtx;
+        }
+
+        @Override
+        public IReadTransaction getTransaction() {
+            return rtx;
         }
 
     }
