@@ -32,7 +32,7 @@
 					</descriptors>
 					<archive>
 						<manifest>
-							<mainClass>com.treetank.www2010.ShredBench</mainClass>
+							<mainClass>com.treetank.www2010.CollisionTester</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
