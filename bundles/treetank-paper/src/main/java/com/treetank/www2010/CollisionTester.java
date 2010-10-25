@@ -100,7 +100,7 @@ public class CollisionTester {
         final File[] files = filetoshred.listFiles();
         final File filetoexport = new File(args[1]);
         for (final File currentFile : files) {
-            System.out.println("Starting benchmark for " + currentFile.getName());
+            System.out.println("Starting collisiontest for " + currentFile.getName());
             final int index = currentFile.getName().lastIndexOf(".");
             final File folder = new File(filetoexport, currentFile.getName().substring(0, index));
             folder.mkdirs();
@@ -113,7 +113,7 @@ public class CollisionTester {
             final BenchmarkResult res = bench.run();
             new TabularSummaryOutput().visitBenchmark(res);
             new CSVOutput(folder).visitBenchmark(res);
-            System.out.println("Finished benchmark for " + currentFile.getName());
+            System.out.println("Finished collisiontest for " + currentFile.getName());
         }
     }
 
