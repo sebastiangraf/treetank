@@ -47,7 +47,7 @@ public class CollisionTester {
         Database.truncateDatabase(TNKFILE);
         try {
             TestHelper.setDB(TNKFILE, WriteTransaction.HashKind.Rolling.name());
-            final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+            final IDatabase database = TestHelper.getDatabase(TNKFILE);
             final ISession session = database.getSession();
             wtx = session.beginWriteTransaction();
             final XMLShredder shredder = new XMLShredder(wtx, XMLShredder.createReader(XMLFile), true);
@@ -69,7 +69,7 @@ public class CollisionTester {
         try {
             TestHelper.setDB(TNKFILE, WriteTransaction.HashKind.Postorder.name());
 
-            final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+            final IDatabase database = TestHelper.getDatabase(TNKFILE);
             final ISession session = database.getSession();
             wtx = session.beginWriteTransaction();
             final XMLShredder shredder = new XMLShredder(wtx, XMLShredder.createReader(XMLFile), true);
