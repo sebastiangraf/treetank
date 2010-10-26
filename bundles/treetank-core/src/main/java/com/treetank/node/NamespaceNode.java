@@ -114,7 +114,7 @@ public final class NamespaceNode extends AbsNode {
 
     @Override
     public int hashCode() {
-        final int prime = 13;
+        final int prime = 98807;
         int result = 1;
         result = prime * result + Arrays.hashCode(mIntData);
         return result;

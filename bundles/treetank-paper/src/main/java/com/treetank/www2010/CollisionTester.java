@@ -125,28 +125,30 @@ public class CollisionTester {
 
     public static void main(final String[] args) {
 
-         if (args.length != 2) {
-         System.out
-         .println("Please use java -jar JAR \"folder with xmls to parse\" \"folder to write csv\"");
-         System.exit(-1);
-         }
-         // Argument is a folder with only XML in there. For each XML one benchmark should be executed.
-         final File filetoshred = new File(args[0]);
-         final File[] files = filetoshred.listFiles();
-         final File filetoexport = new File(args[1]);
-         for (final File currentFile : files) {
-         System.out.println("Starting collisiontest for " + currentFile.getName());
-         final int index = currentFile.getName().lastIndexOf(".");
-         final File folder = new File(filetoexport, currentFile.getName().substring(0, index));
-         folder.mkdirs();
-         XMLFile = currentFile;
-        final Benchmark bench = new Benchmark(new AbstractConfig(1, new AbstractMeter[] {
-            filterCounter, relativeCounter, nodeCounter
-        }, new AbstractOutput[0], KindOfArrangement.SequentialMethodArrangement, 1.0d) {
-        });
-        bench.add(CollisionTester.class);
-        final BenchmarkResult res = bench.run();
-        new TabularSummaryOutput().visitBenchmark(res);
+        if (args.length != 2) {
+            System.out
+                .println("Please use java -jar JAR \"folder with xmls to parse\" \"folder to write csv\"");
+            System.exit(-1);
+        }
+        // Argument is a folder with only XML in there. For each XML one benchmark should be executed.
+        final File filetoshred = new File(args[0]);
+        final File[] files = filetoshred.listFiles();
+        final File filetoexport = new File(args[1]);
+        for (final File currentFile : files) {
+            System.out.println("Starting collisiontest for " + currentFile.getName());
+            final int index = currentFile.getName().lastIndexOf(".");
+            final File folder = new File(filetoexport, currentFile.getName().substring(0, index));
+            folder.mkdirs();
+            XMLFile = currentFile;
+            final Benchmark bench = new Benchmark(new AbstractConfig(1, new AbstractMeter[] {
+                filterCounter, relativeCounter, nodeCounter
+            }, new AbstractOutput[] {
+                new TabularSummaryOutput()
+            }, KindOfArrangement.SequentialMethodArrangement, 1.0d) {
+            });
+            bench.add(CollisionTester.class);
+            final BenchmarkResult res = bench.run();
+            new TabularSummaryOutput().visitBenchmark(res);
             new CSVOutput(folder).visitBenchmark(res);
             System.out.println("Finished collisiontest for " + currentFile.getName());
         }

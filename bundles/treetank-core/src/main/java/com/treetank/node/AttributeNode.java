@@ -167,7 +167,7 @@ public final class AttributeNode extends AbsNode {
 
     @Override
     public int hashCode() {
-        final int prime = 5;
+        final int prime = 44819;
         int result = 1;
         result = prime * result + Arrays.hashCode(mIntData);
         result = prime * result + Arrays.hashCode(mValue);
