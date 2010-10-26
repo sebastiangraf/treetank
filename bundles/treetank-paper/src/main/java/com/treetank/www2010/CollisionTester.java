@@ -3,6 +3,9 @@ package com.treetank.www2010;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
@@ -27,8 +30,9 @@ import org.perfidix.result.BenchmarkResult;
 
 public class CollisionTester {
 
-    private final static FilterCounter nodeCounter = new FilterCounter(new HashFilter());
+    private final static FilterCounter filterCounter = new FilterCounter(new HashFilter());
     private final static RelativeNodeCounter relativeCounter = new RelativeNodeCounter(new HashFilter());
+    private final static NodeCounter nodeCounter = new NodeCounter();
 
     private static IWriteTransaction wtx;
 
@@ -45,9 +49,13 @@ public class CollisionTester {
             wtx = session.beginWriteTransaction();
             final XMLShredder shredder = new XMLShredder(wtx, XMLShredder.createReader(XMLFile), true);
             shredder.call();
-            wtx.moveToDocumentRoot();
-            ((HashFilter)nodeCounter.getFilter()).setTrx(wtx);
-            ((HashFilter)relativeCounter.getFilter()).setTrx(wtx);
+            wtx.close();
+            final IReadTransaction rtx1 = session.beginReadTransaction();
+            final IReadTransaction rtx2 = session.beginReadTransaction();
+            final IReadTransaction rtx3 = session.beginReadTransaction();
+            ((HashFilter)filterCounter.getFilter()).setTrx(rtx1);
+            ((HashFilter)relativeCounter.getFilter()).setTrx(rtx2);
+            nodeCounter.setRtx(rtx3);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -63,9 +71,13 @@ public class CollisionTester {
             wtx = session.beginWriteTransaction();
             final XMLShredder shredder = new XMLShredder(wtx, XMLShredder.createReader(XMLFile), true);
             shredder.call();
-            wtx.moveToDocumentRoot();
-            ((HashFilter)nodeCounter.getFilter()).setTrx(wtx);
-            ((HashFilter)relativeCounter.getFilter()).setTrx(wtx);
+            wtx.close();
+            final IReadTransaction rtx1 = session.beginReadTransaction();
+            final IReadTransaction rtx2 = session.beginReadTransaction();
+            final IReadTransaction rtx3 = session.beginReadTransaction();
+            ((HashFilter)filterCounter.getFilter()).setTrx(rtx1);
+            ((HashFilter)relativeCounter.getFilter()).setTrx(rtx2);
+            nodeCounter.setRtx(rtx3);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -73,20 +85,42 @@ public class CollisionTester {
 
     @Bench(beforeEachRun = "setUpPostorder")
     public void benchPostorder() {
-        nodeCounter.call();
+        ExecutorService exec = Executors.newCachedThreadPool();
+        final Future<Void> return1 = exec.submit(filterCounter);
+        final Future<Void> return2 = exec.submit(relativeCounter);
+        final Future<Void> return3 = exec.submit(nodeCounter);
+        exec.shutdown();
+        try {
+            return1.get();
+            return2.get();
+            return3.get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Bench(beforeEachRun = "setUpRolling")
     public void benchRolling() {
-        nodeCounter.call();
+        ExecutorService exec = Executors.newCachedThreadPool();
+        final Future<Void> return1 = exec.submit(filterCounter);
+        final Future<Void> return2 = exec.submit(relativeCounter);
+        final Future<Void> return3 = exec.submit(nodeCounter);
+        exec.shutdown();
+        try {
+            return1.get();
+            return2.get();
+            return3.get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @AfterEachRun
     public void tearDown() {
         TestHelper.closeEverything();
         nodeCounter.reset();
-        ((HashFilter)nodeCounter.getFilter()).reset();
-        ((HashFilter)relativeCounter.getFilter()).reset();
+        filterCounter.reset();
+        relativeCounter.reset();
     }
 
     public static void main(final String[] args) {
@@ -107,7 +141,7 @@ public class CollisionTester {
          folder.mkdirs();
          XMLFile = currentFile;
         final Benchmark bench = new Benchmark(new AbstractConfig(1, new AbstractMeter[] {
-            nodeCounter, relativeCounter
+            filterCounter, relativeCounter, nodeCounter
         }, new AbstractOutput[0], KindOfArrangement.SequentialMethodArrangement, 1.0d) {
         });
         bench.add(CollisionTester.class);
