@@ -71,7 +71,7 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
     }
 
     /** Prime for computing the hash. */
-    private static final int PRIME = 3;
+    private static final int PRIME = 77081;
 
     /**
      * Log wrapper for better output.
