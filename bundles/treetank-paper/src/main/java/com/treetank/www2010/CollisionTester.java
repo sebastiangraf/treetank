@@ -132,7 +132,7 @@ public class CollisionTester {
 
     public static void main(final String[] args) {
 
-        if (args.length != 2) {
+        if (args.length != 3) {
             System.out
                 .println("Please use java -jar JAR \"folder with xmls to parse\" \"tt location\" \"folder to write csv\"");
             System.exit(-1);
