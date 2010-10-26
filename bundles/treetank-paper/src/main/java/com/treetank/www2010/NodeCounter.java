@@ -4,36 +4,31 @@ import java.util.concurrent.Callable;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IFilter;
+import com.treetank.api.IReadTransaction;
 import com.treetank.axis.DescendantAxis;
-import com.treetank.www2010.CollisionTester.HashFilter;
 
 import org.perfidix.meter.AbstractMeter;
 
-public class FilterCounter extends AbstractMeter implements Callable<Void> {
+public class NodeCounter extends AbstractMeter implements Callable<Void> {
 
-    private final IFilter mFilter;
-
+    private IReadTransaction rtx;
     private long counter;
 
-    public FilterCounter(final IFilter paramFilter) {
-        this.mFilter = paramFilter;
+    public NodeCounter() {
         counter = 0;
     }
 
     public Void call() {
-        final IAxis desc = new DescendantAxis(mFilter.getTransaction());
+        final IAxis desc = new DescendantAxis(getRtx());
         while (desc.hasNext()) {
             desc.next();
-            if (mFilter.filter()) {
-                counter++;
-            }
+            counter++;
         }
         return null;
     }
 
     public void reset() {
         counter = 0;
-        ((HashFilter)mFilter).reset();
     }
 
     @Override
@@ -48,7 +43,7 @@ public class FilterCounter extends AbstractMeter implements Callable<Void> {
 
     @Override
     public String getName() {
-        return "filter nodes";
+        return "all nodes";
     }
 
     @Override
@@ -66,8 +61,12 @@ public class FilterCounter extends AbstractMeter implements Callable<Void> {
         return "n";
     }
 
-    public IFilter getFilter() {
-        return this.mFilter;
+    public void setRtx(IReadTransaction rtx) {
+        this.rtx = rtx;
+    }
+
+    public IReadTransaction getRtx() {
+        return rtx;
     }
 
 }

@@ -1,17 +1,20 @@
 package com.treetank.www2010;
 
+import java.util.concurrent.Callable;
+
 import com.treetank.api.IAxis;
 import com.treetank.api.IFilter;
 import com.treetank.axis.DescendantAxis;
+import com.treetank.www2010.CollisionTester.HashFilter;
 
 import org.perfidix.meter.AbstractMeter;
 
-public class RelativeNodeCounter extends AbstractMeter {
+public class RelativeNodeCounter extends AbstractMeter implements Callable<Void> {
 
     private final IFilter mFilter;
 
-    private long counter;
-    private long overallCounter;
+    private double counter;
+    private double overallCounter;
 
     public RelativeNodeCounter(final IFilter paramFilter) {
         this.mFilter = paramFilter;
@@ -19,7 +22,7 @@ public class RelativeNodeCounter extends AbstractMeter {
         overallCounter = 1;
     }
 
-    public void call() {
+    public Void call() {
         final IAxis desc = new DescendantAxis(mFilter.getTransaction());
         while (desc.hasNext()) {
             desc.next();
@@ -28,16 +31,18 @@ public class RelativeNodeCounter extends AbstractMeter {
             }
             overallCounter++;
         }
+        return null;
     }
 
     public void reset() {
         counter = 0;
         overallCounter = 1;
+        ((HashFilter)mFilter).reset();
     }
 
     @Override
     public double getValue() {
-        return counter / overallCounter;
+        return counter / overallCounter * 100;
     }
 
     @Override
