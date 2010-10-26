@@ -132,9 +132,9 @@ public class CollisionTester {
 
     public static void main(final String[] args) {
 
-        if (args.length != 3) {
+        if (args.length != 4) {
             System.out
-                .println("Please use java -jar JAR \"folder with xmls to parse\" \"tt location\" \"folder to write csv\"");
+                .println("Please use java -jar JAR \"folder with xmls to parse\" \"tt location\" \"folder to write csv\" true|false");
             System.exit(-1);
         }
         // Argument is a folder with only XML in there. For each XML one benchmark should be executed.
@@ -148,12 +148,22 @@ public class CollisionTester {
             final File folder = new File(filetoexport, currentFile.getName().substring(0, index));
             folder.mkdirs();
             XMLFile = currentFile;
-            final Benchmark bench = new Benchmark(new AbstractConfig(1, new AbstractMeter[] {
-                filterCounter, relativeCounter, nodeCounter
-            }, new AbstractOutput[] {
-                new TabularSummaryOutput()
-            }, KindOfArrangement.SequentialMethodArrangement, 1.0d) {
-            });
+            Benchmark bench;
+            final boolean listener = Boolean.parseBoolean(args[4]);
+            if (listener) {
+                bench = new Benchmark(new AbstractConfig(1, new AbstractMeter[] {
+                    filterCounter, relativeCounter, nodeCounter
+                }, new AbstractOutput[] {
+                    new TabularSummaryOutput()
+                }, KindOfArrangement.SequentialMethodArrangement, 1.0d) {
+                });
+            } else {
+                bench = new Benchmark(new AbstractConfig(1, new AbstractMeter[] {
+                    filterCounter, relativeCounter, nodeCounter
+                }, new AbstractOutput[0], KindOfArrangement.SequentialMethodArrangement, 1.0d) {
+                });
+            }
+
             bench.add(CollisionTester.class);
             final BenchmarkResult res = bench.run();
             new TabularSummaryOutput().visitBenchmark(res);
