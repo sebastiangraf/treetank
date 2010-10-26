@@ -9,12 +9,14 @@ import java.util.concurrent.Future;
 
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
+import com.treetank.access.Database;
 import com.treetank.access.WriteTransaction;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.shredder.XMLShredder;
 
 import org.perfidix.AbstractConfig;
@@ -39,11 +41,12 @@ public class CollisionTester {
     public static File XMLFile = new File("src" + File.separator + "main" + File.separator + "resources"
         + File.separator + "small.xml");
 
-    public void setUpRolling() {
-        TestHelper.deleteEverything();
-        try {
-            TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Rolling.name());
+    public static File TNKFILE = TestHelper.PATHS.PATH1.getFile();
 
+    public void setUpRolling() {
+        Database.truncateDatabase(TNKFILE);
+        try {
+            TestHelper.setDB(TNKFILE, WriteTransaction.HashKind.Rolling.name());
             final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
             final ISession session = database.getSession();
             wtx = session.beginWriteTransaction();
@@ -62,9 +65,9 @@ public class CollisionTester {
     }
 
     public void setUpPostorder() {
-        TestHelper.deleteEverything();
+        Database.truncateDatabase(TNKFILE);
         try {
-            TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Postorder.name());
+            TestHelper.setDB(TNKFILE, WriteTransaction.HashKind.Postorder.name());
 
             final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
             final ISession session = database.getSession();
@@ -117,7 +120,11 @@ public class CollisionTester {
 
     @AfterEachRun
     public void tearDown() {
-        TestHelper.closeEverything();
+        try {
+            Database.forceCloseDatabase(TNKFILE);
+        } catch (TreetankException e) {
+            e.printStackTrace();
+        }
         nodeCounter.reset();
         filterCounter.reset();
         relativeCounter.reset();
@@ -127,13 +134,14 @@ public class CollisionTester {
 
         if (args.length != 2) {
             System.out
-                .println("Please use java -jar JAR \"folder with xmls to parse\" \"folder to write csv\"");
+                .println("Please use java -jar JAR \"folder with xmls to parse\" \"tt location\" \"folder to write csv\"");
             System.exit(-1);
         }
         // Argument is a folder with only XML in there. For each XML one benchmark should be executed.
         final File filetoshred = new File(args[0]);
         final File[] files = filetoshred.listFiles();
-        final File filetoexport = new File(args[1]);
+        final File filetoexport = new File(args[2]);
+        TNKFILE = new File(args[1]);
         for (final File currentFile : files) {
             System.out.println("Starting collisiontest for " + currentFile.getName());
             final int index = currentFile.getName().lastIndexOf(".");
