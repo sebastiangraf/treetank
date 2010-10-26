@@ -6,13 +6,13 @@ import com.treetank.axis.DescendantAxis;
 
 import org.perfidix.meter.AbstractMeter;
 
-public class NodeCounter extends AbstractMeter {
+public class FilterCounter extends AbstractMeter {
 
     private final IFilter mFilter;
 
     private long counter;
 
-    public NodeCounter(final IFilter paramFilter) {
+    public FilterCounter(final IFilter paramFilter) {
         this.mFilter = paramFilter;
         counter = 0;
     }

@@ -27,7 +27,7 @@ import org.perfidix.result.BenchmarkResult;
 
 public class CollisionTester {
 
-    private final static NodeCounter nodeCounter = new NodeCounter(new HashFilter());
+    private final static FilterCounter nodeCounter = new FilterCounter(new HashFilter());
     private final static RelativeNodeCounter relativeCounter = new RelativeNodeCounter(new HashFilter());
 
     private static IWriteTransaction wtx;
