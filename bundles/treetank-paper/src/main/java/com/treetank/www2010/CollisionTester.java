@@ -149,7 +149,7 @@ public class CollisionTester {
             folder.mkdirs();
             XMLFile = currentFile;
             Benchmark bench;
-            final boolean listener = Boolean.parseBoolean(args[4]);
+            final boolean listener = Boolean.parseBoolean(args[3]);
             if (listener) {
                 bench = new Benchmark(new AbstractConfig(1, new AbstractMeter[] {
                     filterCounter, relativeCounter, nodeCounter
