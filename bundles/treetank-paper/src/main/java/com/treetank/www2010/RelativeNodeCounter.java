@@ -6,15 +6,17 @@ import com.treetank.axis.DescendantAxis;
 
 import org.perfidix.meter.AbstractMeter;
 
-public class NodeCounter extends AbstractMeter {
+public class RelativeNodeCounter extends AbstractMeter {
 
     private final IFilter mFilter;
 
     private long counter;
+    private long overallCounter;
 
-    public NodeCounter(final IFilter paramFilter) {
+    public RelativeNodeCounter(final IFilter paramFilter) {
         this.mFilter = paramFilter;
         counter = 0;
+        overallCounter = 1;
     }
 
     public void call() {
@@ -24,31 +26,33 @@ public class NodeCounter extends AbstractMeter {
             if (mFilter.filter()) {
                 counter++;
             }
+            overallCounter++;
         }
     }
 
     public void reset() {
         counter = 0;
+        overallCounter = 1;
     }
 
     @Override
     public double getValue() {
-        return counter;
+        return counter / overallCounter;
     }
 
     @Override
     public String getUnitDescription() {
-        return "nodes touched";
+        return "relative nodes touched";
     }
 
     @Override
     public String getName() {
-        return "nodes";
+        return "relative nodes touched";
     }
 
     @Override
     public int hashCode() {
-        return 0;
+        return 1;
     }
 
     @Override
@@ -58,7 +62,7 @@ public class NodeCounter extends AbstractMeter {
 
     @Override
     public String getUnit() {
-        return "n";
+        return "n/n";
     }
 
     public IFilter getFilter() {
