@@ -16,93 +16,36 @@
  */
 package com.treetank.gui.view.tree;
 
-import com.treetank.api.IDatabase;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
-import com.treetank.exception.TreetankException;
+import com.treetank.gui.ReadDB;
 import com.treetank.node.AbsStructNode;
+import com.treetank.node.DocumentRootNode;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
- * <h1>TreetankTreeModel</h1>
+ * <h1>TreeModel</h1>
  * 
- * <p>
- * Extends an AbstractTreeModel and implements main methods, used to construct the Tree representation with
- * Treetank items.
- * </p>
+ * <p>Extends an AbstractTreeModel and implements main methods, used to construct the Tree representation with
+ * Treetank items.</p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz.
  * 
  */
-public final class TreetankTreeModel extends AbstractTreeModel {
-    /** Logger. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(TreetankTreeModel.class);
+public final class TreeModel extends AbsTreeModel {
 
-    /** Treetank database {@link IDatabase}. */
-    protected transient IDatabase mDatabase;
-
-    /** Treetank reading transaction {@link IReadTransaction}. */
-    private transient IReadTransaction mRTX;
+    /** Treetank {@link IReadTransaction}. */
+    private final IReadTransaction mRTX;
 
     /**
      * Constructor.
      * 
-     * @param paramDatabase
-     *            {@link IDatabase} on a Treetank file.
+     * @param paramDB
+     *            {@link ReadDB}.
      */
-    public TreetankTreeModel(final IDatabase paramDatabase) {
-        this(paramDatabase, 0, -1);
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param paramDatabase
-     *            {@link IDatabase} on a Treetank file.
-     * @param paramNodeKeyToStart
-     *            NodeKey to move to.
-     */
-    public TreetankTreeModel(final IDatabase paramDatabase, final long paramNodeKeyToStart) {
-        this(paramDatabase, paramNodeKeyToStart, -1);
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param paramDatabase
-     *            {@link IDatabase} on a Treetank file.
-     * @param paramNodekeyToStart
-     *            Starting point of transaction (node key).
-     * @param paramRevision
-     *            Revision to open.
-     */
-    public TreetankTreeModel(final IDatabase paramDatabase, final long paramNodekeyToStart,
-        final long paramRevision) {
-        try {
-            if (mDatabase == null || mDatabase.getFile() == null
-                || !(mDatabase.getFile().equals(paramDatabase.getFile()))) {
-                mDatabase = paramDatabase;
-
-                if (mRTX != null && !mRTX.isClosed()) {
-                    mRTX.close();
-                }
-            }
-
-            if (mRTX == null || mRTX.isClosed()) {
-                if (paramRevision == -1) {
-                    mRTX = mDatabase.getSession().beginReadTransaction();
-                } else {
-                    mRTX = mDatabase.getSession().beginReadTransaction(paramRevision);
-                }
-            }
-            mRTX.moveTo(paramNodekeyToStart);
-        } catch (final TreetankException e) {
-            LOGGER.error("TreetankException: " + e.getMessage(), e);
-        }
+    public TreeModel(final ReadDB paramDB) {
+        mRTX = paramDB.getRtx();
     }
 
     /**
@@ -116,33 +59,54 @@ public final class TreetankTreeModel extends AbstractTreeModel {
 
         switch (parentNode.getKind()) {
         case ROOT_KIND:
+            assert paramIndex == 0;
             mRTX.moveToFirstChild();
             return mRTX.getNode();
         case ELEMENT_KIND:
             // Namespaces.
             final int namespCount = ((ElementNode)parentNode).getNamespaceCount();
             if (paramIndex < namespCount) {
-                mRTX.moveToNamespace(paramIndex);
+                if (!mRTX.moveToNamespace(paramIndex)) {
+                    throw new IllegalStateException("No namespace with index " + paramIndex + " found!");
+                }
                 return mRTX.getNode();
             }
 
             // Attributes.
             final int attCount = ((ElementNode)parentNode).getAttributeCount();
             if (paramIndex < (namespCount + attCount)) {
-                mRTX.moveToAttribute(paramIndex - namespCount);
+                if (!mRTX.moveToAttribute(paramIndex - namespCount)) {
+                    throw new IllegalStateException("No attribute with index " + paramIndex + " found!");
+                }
                 return mRTX.getNode();
             }
-            
+
             // Children.
             final long childCount = ((ElementNode)parentNode).getChildCount();
             if (paramIndex < (namespCount + attCount + childCount)) {
-                mRTX.moveToFirstChild();
+                if (!mRTX.moveToFirstChild()) {
+                    throw new IllegalStateException("No node with index " + paramIndex + " found!");
+                }
                 final long upper = paramIndex - namespCount - attCount;
                 for (long i = 0; i < upper; i++) {
-                    mRTX.moveToRightSibling();
+                    if (!mRTX.moveToRightSibling()) {
+                        throw new IllegalStateException("No node with index " + paramIndex + " found!");
+                    }
                 }
-                
+                // for (int i = 0; i < childCount; i++) {
+                // if (i == 0) {
+                // mRTX.moveToFirstChild();
+                // } else {
+                // mRTX.moveToRightSibling();
+                // }
+                // if (paramIndex == namespCount + attCount + i) {
+                // break;
+                // }
+                // }
+
                 return mRTX.getNode();
+            } else {
+                throw new IllegalStateException("May not happen: node with " + paramIndex + " not found!");
             }
         default:
             return null;
@@ -160,6 +124,7 @@ public final class TreetankTreeModel extends AbstractTreeModel {
 
         switch (parentNode.getKind()) {
         case ROOT_KIND:
+            assert ((DocumentRootNode)mRTX.getNode()).hasFirstChild();
             return 1;
         case ELEMENT_KIND:
             final int namespaces = ((ElementNode)parentNode).getNamespaceCount();
@@ -180,7 +145,6 @@ public final class TreetankTreeModel extends AbstractTreeModel {
     public int getIndexOfChild(final Object paramParent, final Object paramChild) {
         // Parent node.
         mRTX.moveTo(((IItem)paramParent).getNodeKey());
-        System.out.println("Parent: " + mRTX.getQNameOfCurrentNode());
         final IItem parentNode = mRTX.getNode();
 
         // Child node.
@@ -199,7 +163,7 @@ public final class TreetankTreeModel extends AbstractTreeModel {
             namespCount = ((ElementNode)parentNode).getNamespaceCount();
             for (int i = 0; i < namespCount; i++) {
                 mRTX.moveToNamespace(i);
-                if (mRTX.getNode().equals(childNode)) {
+                if (mRTX.getNode().getNodeKey() == childNode.getNodeKey()) {
                     index = i;
                     break;
                 }
@@ -211,7 +175,7 @@ public final class TreetankTreeModel extends AbstractTreeModel {
             attCount = ((ElementNode)parentNode).getAttributeCount();
             for (int i = 0; i < attCount; i++) {
                 mRTX.moveToAttribute(i);
-                if (mRTX.getNode().equals(childNode)) {
+                if (mRTX.getNode().getNodeKey() == childNode.getNodeKey()) {
                     index = namespCount + i;
                     break;
                 }
@@ -226,13 +190,7 @@ public final class TreetankTreeModel extends AbstractTreeModel {
         case TEXT_KIND:
             switch (parentNode.getKind()) {
             case ROOT_KIND:
-//                namespCount = 0;
-//                attCount = 0;
-                index = getChildIndex(parentNode, childNode);
-                break;
             case ELEMENT_KIND:
-//                namespCount = ((ElementNode)parentNode).getNamespaceCount();
-//                attCount = ((ElementNode)parentNode).getAttributeCount();
                 index = getChildIndex(parentNode, childNode);
                 break;
             default:
@@ -299,7 +257,7 @@ public final class TreetankTreeModel extends AbstractTreeModel {
         int namespCount = 0;
         int attCount = 0;
 
-        if (paramParentNode.getKind().getNodeIdentifier() == ENodes.ELEMENT_KIND.getNodeIdentifier()) {
+        if (paramParentNode.getKind() == ENodes.ELEMENT_KIND) {
             namespCount = ((ElementNode)paramParentNode).getNamespaceCount();
             attCount = ((ElementNode)paramParentNode).getAttributeCount();
         }
@@ -310,7 +268,7 @@ public final class TreetankTreeModel extends AbstractTreeModel {
             } else {
                 mRTX.moveToRightSibling();
             }
-            if (mRTX.getNode().equals(paramChildNode)) {
+            if (mRTX.getNode().getNodeKey() == paramChildNode.getNodeKey()) {
                 index = namespCount + attCount + i;
                 break;
             }

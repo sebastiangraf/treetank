@@ -18,9 +18,7 @@
 /**
  * <h1>Treetank GUI</h1>
  * 
- * <p>
- * Provides a GUI to interact and visualize xml-tree structures.
- * </p>
+ * <p>Provides a GUI to interact with and visualize the Treetank storage.</p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  */

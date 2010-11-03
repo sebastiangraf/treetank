@@ -24,13 +24,13 @@ import javax.swing.tree.TreePath;
 /**
  * @author Santhosh Kumar T
  */
-public abstract class AbstractTreeModel implements TreeModel {
+public abstract class AbsTreeModel implements TreeModel {
     protected Object root;
 
-    protected AbstractTreeModel() {
+    protected AbsTreeModel() {
     }
 
-    protected AbstractTreeModel(Object root) {
+    protected AbsTreeModel(Object root) {
         this.root = root;
     }
 

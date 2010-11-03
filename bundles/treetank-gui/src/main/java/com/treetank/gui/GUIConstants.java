@@ -21,22 +21,13 @@ import static com.treetank.gui.GUICommands.*;
 /**
  * <h1>GUIConstants</h1>
  * 
- * <p>
- * Some constants which are used all over the GUI packages.
- * </p>
+ * <p>Some constants which are used all over the GUI packages.</p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz.
  * 
  */
 public final class GUIConstants {
-    
-    /**
-     * Constructor.
-     */
-    private GUIConstants() {
-        // No instance allowed.
-    }
-
+  
     // MENU =====================================================================
 
     /** Menu file. */
@@ -63,4 +54,11 @@ public final class GUIConstants {
             TREE, TEXT, TREEMAP
         }
     };
+    
+    /**
+     * Constructor.
+     */
+    private GUIConstants() {
+        // No instance allowed.
+    }
 }
