@@ -18,9 +18,9 @@
 /**
  * <h1>Shredder Package</h1>
  * <p>
- * All class in this package are for getting data into Treetank. This includes the import of single XML
+ * All classes in this package are for getting data into Treetank. This includes the import of single XML
  * Instances plus the the possibility to shred several independant versions into Treetank. Furthermore
- * convience classes for jdbc-data are provided.
+ * convenience classes for jdbc-data are provided.
  * </p>
  * 
  * 

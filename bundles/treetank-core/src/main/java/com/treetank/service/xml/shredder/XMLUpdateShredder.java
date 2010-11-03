@@ -62,7 +62,7 @@ import com.treetank.utils.TypedValue;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
+public final class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
 
     /**
      * Log wrapper for better output.
@@ -191,7 +191,7 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
      * @return revision of last revision (before commit).
      */
     @Override
-    public final Long call() throws TreetankException {
+    public Long call() throws TreetankException {
         final long revision = mWtx.getRevisionNumber();
         updateOnly();
         if (mCommit) {
@@ -964,7 +964,7 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
      * @throws TreetankException
      *             In case anything went wrong.
      */
-    protected final void addNewText(final boolean paramAsFirstChild, final Characters paramTextEvent)
+    private void addNewText(final boolean paramAsFirstChild, final Characters paramTextEvent)
         throws TreetankException {
         final String text = paramTextEvent.getData().trim();
         final ByteBuffer textByteBuffer = ByteBuffer.wrap(TypedValue.getBytes(text));
@@ -989,7 +989,7 @@ public class XMLUpdateShredder extends XMLShredder implements Callable<Long> {
      * @throws TreetankException
      *             In case anything went wrong.
      */
-    protected final void addNewElement(final boolean paramFirstElement, final boolean paramAsFirstChild,
+    private void addNewElement(final boolean paramFirstElement, final boolean paramAsFirstChild,
         final StartElement paramStartElement) throws TreetankException {
         final QName name = paramStartElement.getName();
         long key;

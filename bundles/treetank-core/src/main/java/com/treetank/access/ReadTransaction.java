@@ -263,6 +263,7 @@ public class ReadTransaction implements IReadTransaction {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void close() throws TreetankException {
         if (!mClosed) {
             // Close own state.
