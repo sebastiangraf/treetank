@@ -24,7 +24,7 @@ import javax.swing.JPanel;
  * @author Johannes Lichtenberger, University of Konstanz
  *
  */
-public abstract class AbsView extends JPanel {
+abstract class AbsView extends JPanel {
     
     /**
      * Called by the controller when it needs to pass along a property change 
