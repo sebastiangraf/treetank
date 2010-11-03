@@ -23,6 +23,7 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.DescendantAxis;
+import com.treetank.exception.TreetankException;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.utils.FastStack;
@@ -35,7 +36,7 @@ import com.treetank.utils.FastStack;
  */
 abstract class AbsSerializer implements Callable<Void> {
 
-    /** Treetank reading transaction {@link ISession}. */
+    /** Treetank session {@link ISession}. */
     protected final ISession mSession;
 
     /** Stack for reading end element. */
@@ -50,44 +51,43 @@ abstract class AbsSerializer implements Callable<Void> {
     /**
      * Constructor.
      * 
-     * @param mSession
+     * @param paramSession
      *            {@link ISession}.
-     * @param mVersions
+     * @param paramVersions
      *            versions which should be serialized: -
      */
-    public AbsSerializer(final ISession mSession, final long... mVersions) {
+    public AbsSerializer(final ISession paramSession, final long... paramVersions) {
         mStack = new FastStack<Long>();
-        this.mVersions = mVersions;
-        this.mSession = mSession;
+        mVersions = paramVersions;
+        mSession = paramSession;
         mNodeKey = 0;
     }
 
     /**
      * Constructor.
      * 
-     * @param mSession
+     * @param paramSession
      *            {@link ISession}.
-     * @param mKey
+     * @param paramKey
      *            Key of root node from which to shredder the subtree.
-     * @param mVersions
+     * @param paramVersions
      *            versions which should be serialized: -
      */
-    public AbsSerializer(final ISession mSession, final long mKey, final long... mVersions) {
+    public AbsSerializer(final ISession paramSession, final long paramKey, final long... paramVersions) {
         mStack = new FastStack<Long>();
-        this.mVersions = mVersions;
-        this.mSession = mSession;
-        mNodeKey = mKey;
+        mVersions = paramVersions;
+        mSession = paramSession;
+        mNodeKey = paramKey;
     }
 
     /**
      * Serialize the storage.
      * 
      * @return null.
-     * @throws Exception
+     * @throws TreetankException
      *             if can't call serailzer
      */
-    public Void call() throws Exception {
-
+    public Void call() throws TreetankException {
         emitStartDocument();
 
         long[] versionsToUse;

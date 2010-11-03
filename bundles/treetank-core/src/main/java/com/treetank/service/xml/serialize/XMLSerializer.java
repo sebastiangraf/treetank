@@ -350,7 +350,10 @@ public final class XMLSerializer extends AbsSerializer {
         System.out.println(" done [" + (System.currentTimeMillis() - time) + "ms].");
     }
 
-    public static class XMLSerializerBuilder {
+    /**
+     * XMLSerializerBuilder to setup the XMLSerializer.
+     */
+    public static final class XMLSerializerBuilder {
         /**
          * Intermediate boolean for indendation, not necessary.
          */
@@ -391,43 +394,43 @@ public final class XMLSerializer extends AbsSerializer {
         /**
          * Constructor, setting the necessary stuff.
          * 
-         * @param mSession
-         *            Session to Serialize
-         * @param mParamStream
-         *            Output Stream
-         * @param mVersions
-         *            Version to Serialize
+         * @param paramSession
+         *            {@link ISession} to Serialize.
+         * @param paramStream
+         *            {@link OutputStream}.
+         * @param paramVersions
+         *            Version to Serialize.
          */
-        public XMLSerializerBuilder(final ISession mSession, final OutputStream mParamStream,
-            final long... mVersions) {
+        public XMLSerializerBuilder(final ISession paramSession, final OutputStream paramStream,
+            final long... paramVersions) {
             mNodeKey = 0;
-            this.mStream = mParamStream;
-            this.mSession = mSession;
-            this.mVersions = mVersions;
+            mStream = paramStream;
+            mSession = paramSession;
+            mVersions = paramVersions;
         }
 
         /**
          * Constructor.
          * 
-         * @param mSession
+         * @param paramSession
          *            {@link ISession}.
-         * @param mNodeKey
+         * @param paramNodeKey
          *            Root node key of subtree to shredder.
-         * @param mParamStream
+         * @param paramParamStream
          *            {@link OutputStream}.
-         * @param mProperties
+         * @param paramProperties
          *            {@link XMLSerializerProperties}.
-         * @param mVersions
+         * @param paramVersions
          *            Versions to serialize.
          */
-        public XMLSerializerBuilder(final ISession mSession, final long mNodeKey,
-            final OutputStream mParamStream, final XMLSerializerProperties mProperties,
-            final long... mVersions) {
-            this.mSession = mSession;
-            this.mNodeKey = mNodeKey;
-            this.mStream = mParamStream;
-            this.mVersions = mVersions;
-            final ConcurrentMap<?, ?> map = mProperties.getmProps();
+        public XMLSerializerBuilder(final ISession paramSession, final long paramNodeKey,
+            final OutputStream paramParamStream, final XMLSerializerProperties paramProperties,
+            final long... paramVersions) {
+            mSession = paramSession;
+            mNodeKey = paramNodeKey;
+            mStream = paramParamStream;
+            mVersions = paramVersions;
+            final ConcurrentMap<?, ?> map = paramProperties.getmProps();
             mIndent = (Boolean)map.get(S_INDENT[0]);
             mREST = (Boolean)map.get(S_REST[0]);
             mID = (Boolean)map.get(S_ID[0]);
@@ -442,7 +445,7 @@ public final class XMLSerializer extends AbsSerializer {
          *            to set
          */
         public void setIndend(final boolean paramIndent) {
-            this.mIndent = paramIndent;
+            mIndent = paramIndent;
         }
 
         /**
@@ -452,7 +455,7 @@ public final class XMLSerializer extends AbsSerializer {
          *            to set
          */
         public void setREST(final boolean paramREST) {
-            this.mREST = paramREST;
+            mREST = paramREST;
         }
 
         /**
@@ -462,7 +465,7 @@ public final class XMLSerializer extends AbsSerializer {
          *            to set
          */
         public void setDeclaration(final boolean paramDeclaration) {
-            this.mDeclaration = paramDeclaration;
+            mDeclaration = paramDeclaration;
         }
 
         /**
@@ -472,7 +475,7 @@ public final class XMLSerializer extends AbsSerializer {
          *            to set
          */
         public void setID(final boolean paramID) {
-            this.mID = paramID;
+            mID = paramID;
         }
 
         /**

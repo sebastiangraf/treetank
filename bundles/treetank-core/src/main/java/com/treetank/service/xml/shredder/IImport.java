@@ -17,6 +17,8 @@
 
 package com.treetank.service.xml.shredder;
 
+import java.util.List;
+
 /**
  * <h1>IImport</h1>
  * 
@@ -25,18 +27,20 @@ package com.treetank.service.xml.shredder;
  * databases into Treetank.
  * </p>
  * 
+ * @param <T>
+ *            Generic argument for the list of Timestamp objects etc.pp..
+ * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public interface IImport {
+public interface IImport<T> {
     /**
-     * Check one database for one or more timestamp objects and shredder several
-     * revision.
+     * Import data.
      * 
-     * @param mDatabase
-     *            Database to import.
-     * @param mObj
-     *            Timestamp object.
+     * @param paramDateRange
+     *            Date range, which is used to determine the time between single revisions.
+     * @param paramTimestamps
+     *            {@link List} of Timestamp objects.
      */
-    void check(final Object mDatabase, final Object mObj);
+    void importData(final char paramDateRange, final List<T> paramTimestamps);
 }

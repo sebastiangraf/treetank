@@ -55,7 +55,7 @@ import com.treetank.utils.LogWrapper;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class WikipediaImport {
+public final class WikipediaImport implements IImport<StartElement> {
 
     /** Logger. */
     private static final LogWrapper LOGWRAPPER =
@@ -121,18 +121,10 @@ public final class WikipediaImport {
     /**
      * Import data.
      * 
-     * @param paramTimestamp
-     *            Timestamp start tag {@link StartElement}.
-     * @param paramPage
-     *            Page start tag {@link StartElement}.
-     * @param paramRev
-     *            Revision start tag {@link StartElement}.
-     * @param paramID
-     *            Page-ID start tag {@link StartElement}.
-     * @param paramText
-     *            Revision text start tag {@link StartElement}.
      * @param paramDateRange
+     *            <p>
      *            Date range, the following values are possible:
+     *            </p>
      *            <dl>
      *            <dt>h</dt>
      *            <dd>hourly revisions</dd>
@@ -143,91 +135,134 @@ public final class WikipediaImport {
      *            <dt>m</dt>
      *            <dd>monthly revisions</dd>
      *            </dl>
-     * @throws XMLStreamException
-     *             In case of any XML parsing errors.
-     * @throws TreetankException
-     *             In case of any Treetank errors.
-     * @throws IOException
-     *             In case of any I/O error.
+     * 
+     * @param paramData
+     *            <p>
+     *            List of {@link StartElement}s with the following meaning:
+     *            </p>
+     *            <dl>
+     *            <dt>Zero index</dt>
+     *            <dd>Timestamp start tag {@link StartElement}.</dd>
+     *            <dt>First index</dt>
+     *            <dd>Page start tag {@link StartElement}.</dd>
+     *            <dt>Second index</dt>
+     *            <dd>Revision start tag {@link StartElement}.</dd>
+     *            <dt>Third index</dt>
+     *            <dd>Page-ID start tag {@link StartElement}.</dd>
+     *            <dt>Fourth index</dt>
+     *            <dd>Revision text start tag {@link StartElement}.</dd>
+     *            </dl>
      */
-    public void importData(final StartElement paramTimestamp, final StartElement paramPage,
-        final StartElement paramRev, final StartElement paramID, final StartElement paramText,
-        final char paramDateRange) throws XMLStreamException, TreetankException, IOException {
+    public void importData(final char paramDateRange, final List<StartElement> paramData) {
+        // Some checks.
+        switch (paramDateRange) {
+        case 'h':
+        case 'd':
+        case 'w':
+        case 'm':
+            break;
+        default:
+            throw new IllegalStateException("paramDateRange has to match documented values!");
+        }
+
+        if (paramData == null) {
+            throw new NullPointerException("paramData may not be null!");
+        }
+        if (paramData.size() != 5) {
+            throw new IllegalStateException("paramData may not be null and must have 5 elements!");
+        }
+
+        final StartElement timestamp = paramData.get(0);
+        final StartElement page = paramData.get(1);
+        final StartElement rev = paramData.get(2);
+        final StartElement id = paramData.get(3);
+        final StartElement text = paramData.get(4);
 
         // Initialize variables.
         mFound = false;
         mIsRev = false;
         boolean isFirst = true;
 
-        while (mReader.hasNext()) {
-            final XMLEvent event = mReader.nextEvent();
+        try {
+            while (mReader.hasNext()) {
+                final XMLEvent event = mReader.nextEvent();
 
-            if (isWhitespace(event)) {
-                continue;
-            }
-
-            // Add event to page or revision metadata list if it's not a whitespace.
-            if (!isWhitespace(event)) {
-                mPageEvents.add(event);
-            }
-
-            switch (event.getEventType()) {
-            case XMLStreamConstants.START_ELEMENT:
-                if (XMLUpdateShredder.checkStAXStartElement(event.asStartElement(), paramRev)) {
-                    // StAX parser in rev metadata.
-                    isFirst = false;
-                    mIsRev = true;
-                } else {
-                    parseStartTag(event, paramTimestamp, paramPage, paramRev, paramID, paramDateRange);
+                if (isWhitespace(event)) {
+                    continue;
                 }
-                break;
-            case XMLStreamConstants.END_ELEMENT:
-                if (event.asEndElement().getName().equals(paramPage.getName()) && !isFirst) {
-                    // StAX parser is located at the end of an article/page.
-                    mIsRev = false;
 
-                    if (mFound) {
-                        try {
-                            final XMLShredder updateShredder =
-                                new XMLUpdateShredder(mWTX, XMLShredder.createListReader(mPageEvents), false,
-                                    mPageEvents, false);
-                            updateShredder.call();
-                        } catch (final IOException e) {
-                            LOGWRAPPER.error(e.getMessage(), e);
-                        }
+                // Add event to page or revision metadata list if it's not a whitespace.
+                if (!isWhitespace(event)) {
+                    mPageEvents.add(event);
+                }
+
+                switch (event.getEventType()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    if (XMLUpdateShredder.checkStAXStartElement(event.asStartElement(), rev)) {
+                        // StAX parser in rev metadata.
+                        isFirst = false;
+                        mIsRev = true;
                     } else {
-                        // Move wtx to end of file and append page.
-                        mWTX.moveToDocumentRoot();
-                        final boolean hasFirstChild = ((DocumentRootNode)mWTX.getNode()).hasFirstChild();
-                        if (hasFirstChild) {
-                            moveToLastPage(paramPage);
-                        }
-
-                        XMLShredder shredder = null;
-                        if (hasFirstChild) {
-                            // Shredder as child.
-                            shredder =
-                                new XMLShredder(mWTX, XMLShredder.createListReader(mPageEvents), false, false);
-                        } else {
-                            // Shredder as right sibling.
-                            shredder =
-                                new XMLShredder(mWTX, XMLShredder.createListReader(mPageEvents), true, false);
-                        }
-
-                        shredder.call();
-                        assert mWTX.getQNameOfCurrentNode().equals(paramPage.getName());
+                        parseStartTag(event, timestamp, page, rev, id, paramDateRange);
                     }
 
-                    mPageEvents.clear();
-                }
-                break;
-            default:
-            }
-        }
+                    break;
+                case XMLStreamConstants.END_ELEMENT:
+                    if (event.asEndElement().getName().equals(page.getName()) && !isFirst) {
+                        // StAX parser is located at the end of an article/page.
+                        mIsRev = false;
 
-        mWTX.commit();
-        mWTX.close();
-        mSession.close();
+                        if (mFound) {
+                            try {
+                                final XMLShredder updateShredder =
+                                    new XMLUpdateShredder(mWTX, XMLShredder.createListReader(mPageEvents),
+                                        false, mPageEvents, false);
+                                updateShredder.call();
+                            } catch (final IOException e) {
+                                LOGWRAPPER.error(e.getMessage(), e);
+                            }
+                        } else {
+                            // Move wtx to end of file and append page.
+                            mWTX.moveToDocumentRoot();
+                            final boolean hasFirstChild = ((DocumentRootNode)mWTX.getNode()).hasFirstChild();
+                            if (hasFirstChild) {
+                                moveToLastPage(page);
+                            }
+
+                            XMLShredder shredder = null;
+                            if (hasFirstChild) {
+                                // Shredder as child.
+                                shredder =
+                                    new XMLShredder(mWTX, XMLShredder.createListReader(mPageEvents), false,
+                                        false);
+                            } else {
+                                // Shredder as right sibling.
+                                shredder =
+                                    new XMLShredder(mWTX, XMLShredder.createListReader(mPageEvents), true,
+                                        false);
+                            }
+
+                            shredder.call();
+                            assert mWTX.getQNameOfCurrentNode().equals(page.getName());
+                        }
+
+                        mPageEvents.clear();
+                    }
+                    break;
+                default:
+                }
+            }
+
+            mWTX.commit();
+            mWTX.close();
+            mSession.close();
+        } catch (final XMLStreamException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final TreetankException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final IOException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        }
     }
 
     /**
@@ -391,12 +426,12 @@ public final class WikipediaImport {
         }
         return retVal;
     }
-    
+
     /**
      * Moves {@link IWriteTransaction} to last shreddered article/page.
      * 
      * @param paramPage
-     *                  {@link StartElement} page.
+     *            {@link StartElement} page.
      */
     private void moveToLastPage(final StartElement paramPage) {
         // All subsequent shredders, move cursor to the end.
@@ -436,15 +471,17 @@ public final class WikipediaImport {
         final StartElement rev = eventFactory.createStartElement(new QName("revision"), null, null);
         final StartElement id = eventFactory.createStartElement(new QName("id"), null, null);
         final StartElement text = eventFactory.createStartElement(new QName("text"), null, null);
-        try {
-            new WikipediaImport(xml, tnk).importData(timestamp, page, rev, id, text, 'h');
-        } catch (final XMLStreamException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        } catch (final TreetankException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        } catch (final IOException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        }
+        
+        // Create list.
+        final List<StartElement> list = new LinkedList<StartElement>();
+        list.add(timestamp);
+        list.add(page);
+        list.add(rev);
+        list.add(id);
+        list.add(text);
+        
+        // Invoke import.
+        new WikipediaImport(xml, tnk).importData('h', list);
 
         System.out.println(" done in " + (System.currentTimeMillis() - start) / 1000 + "[s].");
     }

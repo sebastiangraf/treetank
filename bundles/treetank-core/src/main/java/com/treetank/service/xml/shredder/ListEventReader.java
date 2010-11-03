@@ -162,9 +162,9 @@ public final class ListEventReader implements XMLEventReader {
     }
     
     /** 
-     * Create a copy. 
+     * Create a copy, but reset index. 
      * 
-     * @return copied ListEventReader. 
+     * @return copied {@link ListEventReader}. 
      */
     public XMLEventReader copy() {
         return new ListEventReader(mEvents);

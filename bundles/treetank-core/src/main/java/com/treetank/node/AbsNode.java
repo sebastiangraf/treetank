@@ -209,14 +209,15 @@ public abstract class AbsNode implements IItem, Comparable<AbsNode> {
     public abstract int hashCode();
 
     @Override
-    public boolean equals(final Object mObj) {
+    public final boolean equals(final Object mObj) {
         return this.hashCode() == mObj.hashCode();
     }
 
     /**
      * {@inheritDoc}
      */
-    public int compareTo(final AbsNode mNode) {
+    @Override
+    public final int compareTo(final AbsNode mNode) {
         final long nodeKey = (mNode).getNodeKey();
         if (mLongData[NODE_KEY] < nodeKey) {
             return -1;

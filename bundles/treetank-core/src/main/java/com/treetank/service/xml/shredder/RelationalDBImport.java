@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class RelationalDBImport implements IImport {
+public final class RelationalDBImport implements IImport<Object> {
 
     /**
      * Log wrapper for better output.
@@ -89,24 +89,24 @@ public final class RelationalDBImport implements IImport {
     /**
      * Constructor.
      * 
-     * @param mDriverClass
+     * @param paramDriverClass
      *            Driver class used for specific database driver.
-     * @param mConnURL
+     * @param paramConnURL
      *            URL to connect to.
-     * @param mUserName
+     * @param paramUserName
      *            Username credential.
-     * @param mUserPass
+     * @param paramUserPass
      *            Password credential.
      */
-    public RelationalDBImport(final String mDriverClass, final String mConnURL, final String mUserName,
-        final String mUserPass) {
-        this.mDriverClass = mDriverClass;
-        this.mConnURL = mConnURL;
-        this.mUserName = mUserName;
-        this.mUserPass = mUserPass;
+    public RelationalDBImport(final String paramDriverClass, final String paramConnURL, final String paramUserName,
+        final String paramUserPass) {
+        mDriverClass = paramDriverClass;
+        mConnURL = paramConnURL;
+        mUserName = paramUserName;
+        mUserPass = paramUserPass;
         try {
-            Class.forName(this.mDriverClass).newInstance();
-            mConnection = DriverManager.getConnection(this.mConnURL, this.mUserName, this.mUserPass);
+            Class.forName(mDriverClass).newInstance();
+            mConnection = DriverManager.getConnection(mConnURL, mUserName, mUserPass);
         } catch (final InstantiationException e) {
             LOGWRAPPER.error(e);
         } catch (final IllegalAccessException e) {
@@ -119,7 +119,7 @@ public final class RelationalDBImport implements IImport {
     }
 
     @Override
-    public void check(final Object mDatabase, final Object mObj) {
+    public void importData(final char paramDateRange, final List<Object> mObj) {
 //        try {
 //            final PreparedStatement prepStatement = mConnection.prepareStatement((String) mObj);
 //            final ResultSet result = prepStatement.executeQuery();

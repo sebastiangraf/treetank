@@ -17,12 +17,6 @@
 package com.treetank.service.xml.shredder;
 
 import java.io.File;
-import java.io.IOException;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
 
 import junit.framework.TestCase;
 
@@ -31,7 +25,6 @@ import org.junit.Before;
 
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
-import com.treetank.access.Database;
 import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.serialize.XMLSerializer;
 
