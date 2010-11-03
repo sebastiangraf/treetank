@@ -20,46 +20,33 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.OutputStream;
+import java.io.IOException;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JTextArea;
-import javax.swing.JTree;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.xml.stream.XMLStreamException;
 
 import com.treetank.access.Database;
 import com.treetank.access.DatabaseConfiguration;
 import com.treetank.api.IDatabase;
-import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
-import com.treetank.gui.view.tree.TreetankTreeCellRenderer;
-import com.treetank.gui.view.tree.TreetankTreeModel;
-import com.treetank.node.ElementNode;
 import com.treetank.service.xml.serialize.XMLSerializer;
-import com.treetank.service.xml.serialize.XMLSerializerProperties;
 import com.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.service.xml.shredder.XMLUpdateShredder;
-import com.treetank.settings.ECharsForSerializing;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <h1>GUICommands</h1>
@@ -72,10 +59,11 @@ import com.treetank.settings.ECharsForSerializing;
  * 
  */
 public enum GUICommands implements IGUICommand {
+    
     /**
      * Open a Treetank file.
      */
-    OPEN("Open TNK-File") {
+    OPEN("Open TNK-File", false) {
         /** Revision number. */
         private long mRevNumber;
 
@@ -151,7 +139,7 @@ public enum GUICommands implements IGUICommand {
             // Handle open button action.
             if (fc.showOpenDialog(paramGUI) == JFileChooser.APPROVE_OPTION) {
                 final File file = fc.getSelectedFile();
-                setViews(paramGUI, file, mRevNumber);
+                paramGUI.execute(file, mRevNumber);
             }
         }
     },
@@ -159,7 +147,7 @@ public enum GUICommands implements IGUICommand {
     /**
      * Shredder an XML-document.
      */
-    SHREDDER("Shredder XML-document") {
+    SHREDDER("Shredder XML-document", false) {
         @Override
         public void execute(final ActionEvent paramE, final GUI paramGUI) {
             shredder(paramGUI, false);
@@ -169,7 +157,7 @@ public enum GUICommands implements IGUICommand {
     /**
      * Update a shreddered file.
      */
-    SHREDDER_UPDATE("Update shreddered file") {
+    SHREDDER_UPDATE("Update shreddered file", false) {
         @Override
         public void execute(final ActionEvent paramE, final GUI paramGUI) {
             shredder(paramGUI, true);
@@ -179,7 +167,7 @@ public enum GUICommands implements IGUICommand {
     /**
      * Serialize a Treetank storage.
      */
-    SERIALIZE("Serialize") {
+    SERIALIZE("Serialize", false) {
         @Override
         public void execute(final ActionEvent paramE, final GUI paramGUI) {
             // Create a file chooser.
@@ -207,8 +195,10 @@ public enum GUICommands implements IGUICommand {
                         session.close();
                         db.close();
                         outputStream.close();
-                    } catch (final Exception e) {
-                        LOGGER.error(e.getMessage(), e);
+                    } catch (final TreetankException e) {
+                        LOGWRAPPER.error(e.getMessage(), e);
+                    } catch (final IOException e) {
+                        LOGWRAPPER.error(e.getMessage(), e);
                     }
                 }
             }
@@ -218,336 +208,85 @@ public enum GUICommands implements IGUICommand {
     /**
      * Close Treetank GUI.
      */
-    QUIT("Quit") {
+    QUIT("Quit", false) {
         @Override
         public void execute(final ActionEvent paramE, final GUI paramGUI) {
-            System.exit(0);
+            paramGUI.dispose();
         }
     },
 
     /**
      * Show tree view.
      */
-    TREE("Tree") {
+    TREE("Tree", true) {
         @Override
         public void execute(final ActionEvent paramE, final GUI paramGUI) {
-
+            GUIProp.EShowViews.SHOWTREE.setValue(true);
         }
     },
 
     /**
      * Show text view.
      */
-    TEXT("Text") {
+    TEXT("Text", true) {
         @Override
         public void execute(final ActionEvent paramE, final GUI paramGUI) {
-
+            GUIProp.EShowViews.SHOWTEXT.setValue(true);
         }
     },
 
     /**
      * Show treemap view.
      */
-    TREEMAP("Treemap") {
+    TREEMAP("Treemap", true) {
         @Override
         public void execute(final ActionEvent paramE, final GUI paramGUI) {
-
+            GUIProp.EShowViews.SHOWTREE.setValue(true);
+        }
+    },
+    
+    /**
+     * Show sunburst view.
+     */
+    SUNBURST("Sunburst", true) {
+        @Override
+        public void execute(final ActionEvent paramE, final GUI paramGUI) {
+            GUIProp.EShowViews.SHOWSUNBURST.setValue(true);
         }
     };
 
     /** Logger. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(GUICommands.class);
+    private static final Logger LOGWRAPPER = LoggerFactory.getLogger(GUICommands.class);
 
     /** Description of command. */
-    private final transient String mDesc;
-
-    /** Line number to append or remove from the text field. */
-    public static transient int lineChanges = 0;
-
-    /** Start position of char array for text insertion. */
-    private static transient int startPos = 0;
-
-    /** Text output stream. */
-    public static transient OutputStream out;
-
-    /** Adjustment Listener for textArea. */
-    private static transient AdjustmentListener adjListener;
+    private final String mDesc;
+    
+    /** Determins if menu item is checked or not. */
+    private final boolean mChecked;
 
     /**
-     * Constructor
+     * Constructor.
      * 
      * @param paramDesc
      *            Description of command.
+     * @param paramChecked
+     *            Determines if menu item is checked or not.       
      */
-    GUICommands(final String paramDesc) {
+    GUICommands(final String paramDesc, final boolean paramChecked) {
         mDesc = paramDesc;
+        mChecked = paramChecked;
     }
 
-    /**
-     * Get description.
-     * 
-     * @return description
-     */
+    @Override
     public String desc() {
         return mDesc;
     }
-
-    /**
-     * Sets Tree and XML views.
-     * 
-     * @param paramGUI
-     *            Main GUI frame.
-     * @param paramFile
-     *            File to open and display.
-     * @param paramRevision
-     *            Revision to open.
-     */
-    private static void setViews(final GUI paramGUI, final File paramFile, final long paramRevision) {
-        try {
-            System.out.println(paramRevision);
-            // Initialize database.
-            final IDatabase database = Database.openDatabase(paramFile);
-            final ISession session = database.getSession();
-
-            // Tree.
-            final JTree tree = paramGUI.getTree();
-
-            /*
-             * Remove a listener/listeners, which might already exist from
-             * another call to setViews(...).
-             */
-            for (final TreeSelectionListener listener : tree.getTreeSelectionListeners()) {
-                tree.removeTreeSelectionListener(listener);
-            }
-            final JScrollBar bar = GUI.mXMLView.getVerticalScrollBar();
-            for (final AdjustmentListener listener : bar.getAdjustmentListeners()) {
-                bar.removeAdjustmentListener(listener);
-            }
-
-            // XML.
-            final JTextArea xmlPane = paramGUI.getXMLPane();
-
-            // Use our Treetank model and renderer.
-            tree.setModel(new TreetankTreeModel(database, 0, paramRevision));
-            tree.setCellRenderer(new TreetankTreeCellRenderer(database, 0, paramRevision));
-
-            // Serialize file into XML view if it is empty.
-            out = new ByteArrayOutputStream();
-            final XMLSerializerProperties properties = new XMLSerializerProperties();
-            final XMLSerializer serializer = new XMLSerializerBuilder(session, 0, out, properties).build();
-            serializer.call();
-            text(paramGUI, xmlPane, true);
-
-            // Listen for when the selection changes.
-            tree.addTreeSelectionListener(new TreeSelectionListener() {
-                public void valueChanged(final TreeSelectionEvent paramE) {
-                    if (paramE.getNewLeadSelectionPath() != null
-                        && paramE.getNewLeadSelectionPath() != paramE.getOldLeadSelectionPath()) {
-                        /*
-                         * Returns the last path element of the selection. This
-                         * method is useful only when the selection model allows
-                         * a single selection.
-                         */
-                        final IItem node = (IItem)paramE.getNewLeadSelectionPath().getLastPathComponent(); // tree.getLastSelectedPathComponent();
-                        out = new ByteArrayOutputStream();
-                        IReadTransaction rtx = null;
-                        try {
-                            rtx = session.beginReadTransaction(paramRevision);
-                            final long nodeKey = node.getNodeKey();
-
-                            switch (node.getKind()) {
-                            case ROOT_KIND:
-                                new XMLSerializerBuilder(session, nodeKey, out, properties).build().call();
-                                break;
-                            case ELEMENT_KIND:
-                                new XMLSerializerBuilder(session, nodeKey, out, properties).build().call();
-                                break;
-                            case TEXT_KIND:
-                                rtx.moveTo(nodeKey);
-                                out.write(rtx.getNode().getRawValue());
-                                break;
-                            case NAMESPACE_KIND:
-                                // Move transaction to parent of given namespace node.
-                                rtx.moveTo(node.getParentKey());
-
-                                final long nNodeKey = node.getNodeKey();
-                                for (int i = 0, namespCount =
-                                    ((ElementNode)rtx.getNode()).getNamespaceCount(); i < namespCount; i++) {
-                                    rtx.moveToNamespace(i);
-                                    if (rtx.getNode().equals(node)) {
-                                        break;
-                                    }
-                                    rtx.moveTo(nNodeKey);
-                                }
-
-                                if (rtx.nameForKey(rtx.getNode().getNameKey()).length() == 0) {
-                                    out.write(("xmlns='" + rtx.nameForKey(rtx.getNode().getURIKey()) + "'")
-                                        .getBytes());
-                                } else {
-                                    out.write(("xmlns:" + rtx.nameForKey(rtx.getNode().getNameKey()) + "='"
-                                        + rtx.nameForKey(rtx.getNode().getURIKey()) + "'").getBytes());
-                                }
-                                break;
-                            case ATTRIBUTE_KIND:
-                                // Move transaction to parent of given attribute node.
-                                rtx.moveTo(node.getParentKey());
-                                final long aNodeKey = node.getNodeKey();
-                                for (int i = 0, attsCount = ((ElementNode)rtx.getNode()).getAttributeCount(); i < attsCount; i++) {
-                                    rtx.moveToAttribute(i);
-                                    if (rtx.getNode().equals(node)) {
-                                        break;
-                                    }
-                                    rtx.moveTo(aNodeKey);
-                                }
-
-                                // Display value.
-                                final String attPrefix = rtx.getQNameOfCurrentNode().getPrefix();
-                                final QName attQName = rtx.getQNameOfCurrentNode();
-
-                                if (attPrefix == null || attPrefix.equals("")) {
-                                    out
-                                        .write((attQName.getLocalPart() + "='" + rtx.getValueOfCurrentNode() + "'")
-                                            .getBytes());
-                                } else {
-                                    out.write((attPrefix + ":" + attQName.getLocalPart() + "='"
-                                        + rtx.getValueOfCurrentNode() + "'").getBytes());
-                                }
-                                break;
-                            default:
-                                throw new IllegalStateException("Node kind not known!");
-                            }
-                        } catch (final Exception e) {
-                            LOGGER.error(e.getMessage(), e);
-                        } finally {
-                            try {
-                                if (rtx != null) {
-                                    rtx.close();
-                                }
-                            } catch (final TreetankException e) {
-                                LOGGER.error(e.getMessage(), e);
-                            }
-                        }
-
-                        text(paramGUI, xmlPane, true);
-                    }
-                }
-            });
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+    
+    @Override
+    public boolean checked() {
+        return mChecked;
     }
-
-    /**
-     * Display text.
-     * 
-     * @param paramGUI
-     *            Main GUI frame.
-     * @param paramXMLPane
-     *            XML panel.
-     * @param paramInit
-     *            Determines if it's the initial invocation.
-     */
-    public static void text(final GUI paramGUI, final JTextArea paramXMLPane, final boolean paramInit) {
-        // Remove adjustmnet listeners temporarily.
-        final JScrollBar bar = GUI.mXMLView.getVerticalScrollBar();
-        for (final AdjustmentListener listener : bar.getAdjustmentListeners()) {
-            adjListener = listener;
-            bar.removeAdjustmentListener(listener);
-        }
-
-        // Initialize variables.
-        final char[] text = out.toString().toCharArray();
-        final int lineHeight = paramXMLPane.getFontMetrics(paramXMLPane.getFont()).getHeight();
-        final int frameHeight = paramXMLPane.getHeight() + lineChanges * lineHeight;
-        int rowsSize = 0;
-        final StringBuilder sBuilder = new StringBuilder();
-        int indexSepChar = 0;
-        final String NL = ECharsForSerializing.NEWLINE.toString();
-        // int countNewlines = 0;
-        // final StringBuilder insertAtFirstPos = new StringBuilder();
-        //
-        // if (changeColumns > 0) {
-        // // Get start index.
-        // for (int i = 0; i < text.length; i++) {
-        // final char character = text[i];
-        //
-        // // Increment rowSize?
-        // if (indexSepChar < NL.length() && character ==
-        // NL.charAt(indexSepChar)) {
-        // if (indexSepChar == NL.length() - 1) {
-        // countNewlines++;
-        // }
-        // }
-        //
-        // insertAtFirstPos.append(character);
-        //
-        // if (countNewlines == changeColumns) {
-        // startPos = i + 1;
-        // break;
-        // }
-        // }
-        //
-        // xmlPane.replaceRange("", 0, startPos - 1);
-        // } else if (changeColumns < 0) {
-        // xmlPane.insert(insertAtFirstPos.toString(), 0);
-        // }
-
-        // Build text.
-        rowsSize = 0;
-        if (paramInit) {
-            startPos = 0;
-        }
-        for (int i = startPos == 0 ? startPos : startPos + 1; i < text.length && lineChanges >= 0
-            && startPos + 1 != text.length; i++) {
-            final char character = text[i];
-
-            // Increment rowsSize?
-            if (indexSepChar < NL.length() && character == NL.charAt(indexSepChar)) {
-                if (indexSepChar == NL.length() - 1) {
-                    rowsSize += lineHeight;
-                } else {
-                    indexSepChar++;
-                }
-            }
-
-            if (rowsSize < frameHeight) {
-                sBuilder.append(character);
-                startPos = i;
-            } else {
-                startPos = i;
-                System.out.println("START: " + startPos);
-                break;
-            }
-        }
-
-        if (lineChanges >= 0 && startPos + 1 <= text.length) {
-            if (paramInit) {
-                paramXMLPane.setText(sBuilder.toString());
-                paramXMLPane.setCaretPosition(0);
-            } else {
-                final int caretPos = paramXMLPane.getCaretPosition();
-                paramXMLPane.setCaretPosition(paramXMLPane.getDocument().getLength());
-                paramXMLPane.append(sBuilder.toString());
-                // Check and update caret position.
-                final int newCaretPos = caretPos + lineChanges * paramXMLPane.getColumns();
-                final int documentLength = paramXMLPane.getDocument().getLength();
-                if (newCaretPos < documentLength) {
-                    paramXMLPane.setCaretPosition(newCaretPos);
-                }
-            }
-        }
-
-        /*
-         * Schedule a job for the event dispatch thread: (Re)adding the
-         * adjustment listener.
-         */
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                bar.addAdjustmentListener(adjListener);
-            }
-        });
-    }
-
+    
     /**
      * Shredder or shredder into.
      * 
@@ -576,10 +315,12 @@ public enum GUICommands implements IGUICommand {
                     final IDatabase database = Database.openDatabase(target);
                     final ISession session = database.getSession();
                     final IWriteTransaction wtx = session.beginWriteTransaction();
+
                     final XMLEventReader reader = XMLShredder.createReader(source);
                     if (paramUpdateOnly) {
                         final XMLShredder shredder = new XMLUpdateShredder(wtx, reader, true, source, true);
                         shredder.call();
+
                     } else {
                         final XMLShredder shredder = new XMLShredder(wtx, reader, true);
                         shredder.call();
@@ -589,8 +330,12 @@ public enum GUICommands implements IGUICommand {
                     database.close();
 
                     // setViews(paramGUI, target);
-                } catch (final Exception e) {
-                    LOGGER.error(e.getMessage(), e);
+                } catch (final TreetankException e) {
+                    LOGWRAPPER.error(e.getMessage(), e);
+                } catch (final IOException e) {
+                    LOGWRAPPER.error(e.getMessage(), e);
+                } catch (final XMLStreamException e) {
+                    LOGWRAPPER.error(e.getMessage(), e);
                 }
             }
         }

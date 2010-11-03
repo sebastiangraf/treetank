@@ -16,166 +16,147 @@
  */
 package com.treetank.gui;
 
-import java.awt.Color;
+import com.treetank.gui.view.ViewNotifier;
+import com.treetank.gui.view.text.TextView;
+import com.treetank.gui.view.tree.TreeView;
+import com.treetank.utils.LogWrapper;
+
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
+import java.io.File;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import javax.swing.JTree;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.tree.TreeSelectionModel;
 
-import com.treetank.gui.view.tree.TreetankTree;
-
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * <h1>Treetank GUI</h1>
  * 
- * <p>
- * Main GUI frame.
- * </p>
+ * <p>Main GUI frame.</p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class GUI extends JPanel {
-
+public final class GUI extends JFrame {
     /** Serialization UID. */
-    private static final long serialVersionUID =
-        7396552752125858796L;
+    private static final long serialVersionUID = 7396552752125858796L;
 
-    /** Logger. */
-    private static final Logger LOGGER =
-        LoggerFactory.getLogger(GUI.class);
+    /** {@link LogWrapper} which wraps a Logger. */
+    private static final LogWrapper LOGGER = new LogWrapper(LoggerFactory.getLogger(GUI.class));
 
     /** Optionally set the look and feel. */
-    private static transient boolean mUseSystemLookAndFeel;
+    private static boolean mUseSystemLookAndFeel;
 
     /** Minimum height of panes. */
-    private static final int HEIGHT =
-        1000;
-
-    /** Tree view. */
-    protected transient JTree mTree;
-
-    /** XML pane. */
-    protected transient JTextArea mXMLPane;
-
-    /** AdjustmentListener temporal value. */
-    private transient int mTempValue;
-
-    /** XML view (scrollpane). */
-    public static transient JScrollPane mXMLView;
-
-    /** Main GUI reference. */
-    public static transient GUI mGUI;
+    private static final int HEIGHT = 1000;
+    
+    /** {@link GUIProp}. */
+    private final GUIProp mProp;
+    
+    /** {@link ViewNotifier}. */
+    private final ViewNotifier mNotifier;
+    
+    /** {@link ReadDB}. */
+    private transient ReadDB mReadDB;
 
     /**
-     * Empty Constructor.
+     * Constructor.
+     * 
+     * @param paramProp
+     *                {@link GUIProp}
      */
-    public GUI() {
-        super(new GridLayout(1, 0));
+    public GUI(final GUIProp paramProp) {
+        mProp = paramProp;
+        setTitle("Treetank GUI");
+        
+        final Dimension frameSize = new Dimension(1000, 1100);
+        setSize(frameSize);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        final JMenuBar menuBar = new TreetankMenuBar(this);
+        
+        // Add menubar.
+        setJMenuBar(menuBar);
 
-        try {
-            // Build tree view.
-            mTree =
-                new TreetankTree(null);
-            mTree.setBackground(Color.WHITE);
+        // Screen size.
+        final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-            /*
-             * Performance tweak to use FixedLayoutManager and only invoke
-             * getChild(..) for nodes inside view "bounding box". Avoids caching but
-             * therefore more rendering calls.
-             */
-            mTree.setRowHeight(20);
-            mTree.setLargeModel(true);
+        // Compute position of JFrame.
+        final int topPos = (screenSize.height - frameSize.height) / 2;
+        final int leftPos = (screenSize.width - frameSize.width) / 2;
 
-            // Selection Model.
-            mTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        // Set frame position to center.
+        setLocation(leftPos, topPos);
+        
+        // Create Panels.
+        final JPanel top = new JPanel();
+        top.setLayout(new BorderLayout());       
+        final JPanel treeText = new JPanel();
+        treeText.setLayout(new GridLayout(1, 0));
+        
+        // Create default views.
+        mNotifier = new ViewNotifier(this);
+        final TreeView treeView = new TreeView(mNotifier);
+        final TextView textView = new TextView(mNotifier);
 
-            // Create a scroll pane and add the tree to it.
-            final JScrollPane treeView =
-                new JScrollPane(mTree);
-            treeView.setBackground(Color.WHITE);
+        // Add the scroll panes to a split pane.
+        final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitPane.setLeftComponent(treeView);
+        splitPane.setRightComponent(textView);
 
-            // Create a XML text area.
-            mXMLPane =
-                new JTextArea();
-            mXMLPane.setEditable(false);
-            mXMLPane.setMinimumSize(new Dimension(370, 600));
-            mXMLPane.setColumns(80);
-            mXMLPane.setLineWrap(true);
-            mXMLPane.setCaretPosition(0);
+        // Set sizes of components.
+        treeView.setMinimumSize(new Dimension(220, HEIGHT));
+        textView.setMinimumSize(new Dimension(800, HEIGHT));
+        splitPane.setDividerLocation(220);
+        splitPane.setPreferredSize(new Dimension(1020, HEIGHT));
 
-            // Create a scroll pane and add the XML text area to it.
-            mXMLView =
-                new JScrollPane(mXMLPane);
-            mXMLView.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-            mXMLView.setMinimumSize(new Dimension(400, 600));
-            final JScrollBar vertScrollBar =
-                mXMLView.getVerticalScrollBar();
-            vertScrollBar.setValue(vertScrollBar.getMinimum());
-            vertScrollBar.addAdjustmentListener(new AdjustmentListener() {
-                @Override
-                public void adjustmentValueChanged(final AdjustmentEvent evt) {
-                    /*
-                     * getValueIsAdjusting() returns true if the user is currently dragging
-                     * the scrollbar's knob and has not picked a final value.
-                     */
-                    if (evt.getValueIsAdjusting()) {
-                        // The user is dragging the knob.
-                        return;
-                    }
-
-                    final int lineHeight =
-                        mXMLPane.getFontMetrics(mXMLPane.getFont()).getHeight();
-                    int value =
-                        evt.getValue();
-                    System.out.println("VALUE: " + value);
-                    int result =
-                        value - mTempValue;
-                    GUICommands.lineChanges =
-                        result / lineHeight;
-                    System.out.println("Lines: " + GUICommands.lineChanges);
-                    if (GUICommands.lineChanges != 0) {
-                        GUICommands.text(mGUI, mXMLPane, false);
-                    }
-
-                    mTempValue =
-                        value;
-                }
-            });
-
-            // Add the scroll panes to a split pane.
-            final JSplitPane splitPane =
-                new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-            splitPane.setLeftComponent(treeView);
-            splitPane.setRightComponent(mXMLView);
-
-            // Set sizes of components.
-            mXMLView.setMinimumSize(new Dimension(800, HEIGHT));
-            treeView.setMinimumSize(new Dimension(220, HEIGHT));
-            splitPane.setDividerLocation(220);
-            splitPane.setPreferredSize(new Dimension(1020, HEIGHT));
-
-            // Add the split pane to this panel.
-            add(splitPane);
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+        // Add the split pane.
+        treeText.add(splitPane);
+        top.add(treeText, BorderLayout.CENTER);
+        add(top);
+        
+        // Display the window.
+        pack();
+        setVisible(true);
+    }
+    
+    /**
+     * Execute.
+     * 
+     * @param paramFile
+     *                  {@link File} to open.
+     * @param paramRevision
+     *                  Determines the revision.
+     */
+    public void execute(final File paramFile, final long paramRevision) {
+        if (mReadDB == null) {
+            mReadDB = new ReadDB(paramFile, paramRevision);
         }
+        mNotifier.update();
+        validate();
+        repaint();
+    }
+    
+    @Override
+    public void dispose() {
+        mReadDB.close();
+        super.dispose();
+    }
+    
+    /**
+     * Get the {@link ReadDB} instance.
+     * 
+     * @return the ReadDB
+     */
+    public ReadDB getReadDB() {
+        return mReadDB;
     }
 
     /**
@@ -196,43 +177,9 @@ public final class GUI extends JPanel {
                 LOGGER.error(e.getMessage(), e);
             }
         }
-
-        // Create and set up the window.
-        final JFrame frame =
-            new JFrame("Treetank GUI");
-        final Dimension frameSize =
-            new Dimension(1000, 1100);
-        frame.setSize(frameSize);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        // Create gui with menubar.
-        mGUI =
-            new GUI();
-        final JMenuBar menuBar =
-            new TreetankMenuBar(mGUI);
-
-        // Add menubar.
-        frame.setJMenuBar(menuBar);
-
-        // Add content to the window.
-        frame.add(mGUI);
-
-        // Screen size.
-        final Dimension screenSize =
-            Toolkit.getDefaultToolkit().getScreenSize();
-
-        // Compute position of JFrame.
-        final int top =
-            (screenSize.height - frameSize.height) / 2;
-        final int left =
-            (screenSize.width - frameSize.width) / 2;
-
-        // Set frame position to center.
-        frame.setLocation(left, top);
-
-        // Display the window.
-        frame.pack();
-        frame.setVisible(true);
+        
+        // Create GUI.
+        new GUI(new GUIProp());
     }
 
     /**
@@ -251,26 +198,5 @@ public final class GUI extends JPanel {
                 createAndShowGUI();
             }
         });
-    }
-
-    // GETTER.
-    // =======================================================
-
-    /**
-     * Get tree.
-     * 
-     * @return tree.
-     */
-    protected JTree getTree() {
-        return mTree;
-    }
-
-    /**
-     * Get xmlPane.
-     * 
-     * @return xmlPane.
-     */
-    protected JTextArea getXMLPane() {
-        return mXMLPane;
     }
 }

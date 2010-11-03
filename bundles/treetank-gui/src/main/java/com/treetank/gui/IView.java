@@ -16,38 +16,29 @@
  */
 package com.treetank.gui;
 
-import java.awt.event.ActionEvent;
-
 /**
- * <h1>IGUICommand</h1>
+ * <h1>IView</h1>
  * 
- * <p>Interface for GUI menus.</p>
+ * <p>Interface every view has to implement.</p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
- * 
+ *
  */
-public interface IGUICommand {
+public interface IView {
     /**
-     * Invokes a command.
-     * 
-     * @param paramE
-     *            The action event.
-     * @param paramGUI
-     *            Main GUI frame.
+     * Called when the data reference has changed.
      */
-    void execute(final ActionEvent paramE, final GUI paramGUI);
-
-    /**
-     * Description of the command.
-     * 
-     * @return the description
-     */
-    String desc();
+    void refreshInit();
     
     /**
-     * Returns if this command includes a menu checkbox.
+     * Called when updates have been done in the data structure.
+     */
+    void refreshUpdate();
+
+    /**
+     * Returns if this view is currently visible.
      * 
      * @return result of check
      */
-    boolean checked();
+    boolean isVisible();
 }

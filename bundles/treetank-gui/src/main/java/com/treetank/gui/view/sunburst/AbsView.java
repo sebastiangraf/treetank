@@ -14,40 +14,23 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
  */
-package com.treetank.gui;
+package com.treetank.gui.view.sunburst;
 
-import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+
+import javax.swing.JPanel;
 
 /**
- * <h1>IGUICommand</h1>
- * 
- * <p>Interface for GUI menus.</p>
- * 
  * @author Johannes Lichtenberger, University of Konstanz
- * 
+ *
  */
-public interface IGUICommand {
-    /**
-     * Invokes a command.
-     * 
-     * @param paramE
-     *            The action event.
-     * @param paramGUI
-     *            Main GUI frame.
-     */
-    void execute(final ActionEvent paramE, final GUI paramGUI);
-
-    /**
-     * Description of the command.
-     * 
-     * @return the description
-     */
-    String desc();
+public abstract class AbsView extends JPanel {
     
     /**
-     * Returns if this command includes a menu checkbox.
-     * 
-     * @return result of check
+     * Called by the controller when it needs to pass along a property change 
+     * from a model.
+     *
+     * @param paramEvt The property change event from the model
      */
-    boolean checked();
+    protected abstract void modelPropertyChange(final PropertyChangeEvent paramEvt);
 }

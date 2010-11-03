@@ -14,40 +14,31 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
  */
-package com.treetank.gui;
-
-import java.awt.event.ActionEvent;
+package com.treetank.gui.view.sunburst;
 
 /**
- * <h1>IGUICommand</h1>
+ * <h1>SunburstController</h1>
  * 
- * <p>Interface for GUI menus.</p>
+ * <p>
+ * Controller, which acts as a mediator between the view and the model.
+ * </p>
+ * 
+ * @param <M> Model, which extends {@link AbsModel}.
+ * @param <V> View, which extends {@link AbsView}.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public interface IGUICommand {
-    /**
-     * Invokes a command.
-     * 
-     * @param paramE
-     *            The action event.
-     * @param paramGUI
-     *            Main GUI frame.
-     */
-    void execute(final ActionEvent paramE, final GUI paramGUI);
-
-    /**
-     * Description of the command.
-     * 
-     * @return the description
-     */
-    String desc();
+final class SunburstController<M extends AbsModel, V extends AbsView> extends AbsController<M, V> {
     
     /**
-     * Returns if this command includes a menu checkbox.
+     * Ask the model for a property.
      * 
-     * @return result of check
+     * @param paramProperty
+     *              The property to get.
+     * @return The property.
      */
-    boolean checked();
+    Object get(final String paramProperty) {
+        return getModelProperty(paramProperty);                                 
+    }
 }

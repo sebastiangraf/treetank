@@ -34,23 +34,21 @@ import javax.swing.tree.TreePath;
  * @author Johannes Lichtenberger, University of Konstanz.
  * 
  */
-public final class TreetankTree extends JTree {
+public final class Tree extends JTree {
 
-    /**
-     * Generated UID.
-     */
+    /** Generated UID. */
     private static final long serialVersionUID = -4157303763028056619L;
 
+    /** Color used to highlight selected subtrees. */
+    private static final Color HIGHLIGHT_COLOR = new Color(255, 255, 204);
+    
     /** Highlight path. */
     private TreePath mSelectionPath;
-
-    /** Color used to highlight selected subtrees. */
-    private Color mHighlightColor = new Color(255, 255, 204);
 
     /**
      * Constructor.
      */
-    public TreetankTree() {
+    public Tree() {
         super();
     }
 
@@ -60,7 +58,7 @@ public final class TreetankTree extends JTree {
      * @param model
      *            TreeModel to use.
      */
-    public TreetankTree(final TreeModel model) {
+    public Tree(final TreeModel model) {
         super(model);
     }
 
@@ -95,7 +93,7 @@ public final class TreetankTree extends JTree {
         paramGraphics.fillRect(0, 0, getWidth(), getHeight());
 
         // Paint the highlight if any.
-        paramGraphics.setColor(mHighlightColor);
+        paramGraphics.setColor(HIGHLIGHT_COLOR);
         final int fromRow = getRowForPath(mSelectionPath);
 
         if (fromRow != -1) {
