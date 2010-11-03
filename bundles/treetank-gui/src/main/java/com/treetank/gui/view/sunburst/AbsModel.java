@@ -29,7 +29,7 @@ import java.beans.PropertyChangeSupport;
  * @author Johannes Lichtenberger, University of Konstanz
  *
  */
-public abstract class AbsModel {
+abstract class AbsModel {
     
     /** {@link PropertyChangeSupport} to register listeners. */
     private final PropertyChangeSupport mPropertyChangeSupport;

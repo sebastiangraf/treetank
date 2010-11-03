@@ -35,7 +35,7 @@ import processing.core.PApplet;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class SunburstView extends PApplet implements IView {
+final class SunburstView extends PApplet implements IView {
 
     /** Width of the frame. */
     private static final int WIDTH = 1000;

@@ -43,7 +43,7 @@ import com.treetank.utils.LogWrapper;
  * @author Johannes Lichtenberger, University of Konstanz
  *  
  */
-public abstract class AbsController<M extends AbsModel, V extends AbsView> implements PropertyChangeListener {
+abstract class AbsController<M extends AbsModel, V extends AbsView> implements PropertyChangeListener {
 
     /** {@link LogWrapper}. */
     private static final LogWrapper LOGWRAPPER =
