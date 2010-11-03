@@ -46,11 +46,9 @@ public final class Tree extends JTree {
     private TreePath mSelectionPath;
 
     /**
-     * Constructor.
+     * Default Constructor.
      */
-    public Tree() {
-        super();
-    }
+    public Tree() { }
 
     /**
      * Constructor with TreeModel parameter.
