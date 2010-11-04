@@ -92,6 +92,7 @@ abstract class AbsSerializer implements Callable<Void> {
 
         long[] versionsToUse;
         IReadTransaction rtx = mSession.beginReadTransaction();
+        System.out.println(mNodeKey);
         rtx.moveTo(mNodeKey);
         final long lastRevisionNumber = rtx.getRevisionNumber();
         rtx.close();
@@ -115,8 +116,10 @@ abstract class AbsSerializer implements Callable<Void> {
             if (versionsToUse == null || mVersions.length > 1) {
                 emitStartManualElement(i);
             }
+            
+            rtx.moveTo(mNodeKey);
 
-            final IAxis descAxis = new DescendantAxis(rtx);
+            final IAxis descAxis = new DescendantAxis(rtx, true);
 
             // Setup primitives.
             boolean closeElements = false;
