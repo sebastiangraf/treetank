@@ -24,10 +24,9 @@ import java.lang.reflect.Field;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import com.treetank.utils.LogWrapper;
-
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.treetank.utils.LogWrapper;
 
 /**
  * <h1>XMLSerializerProperties</h1>
@@ -48,31 +47,25 @@ public final class XMLSerializerProperties {
      */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
         .getLogger(XMLSerializerProperties.class));
-
-    /** Properties. */
-    private final ConcurrentMap<String, Object> mProps = new ConcurrentHashMap<String, Object>();
-
-    /** Property file. */
-    private static transient String mFilePath;
-
+    
     /** YES maps to true. */
     private static final boolean YES = true;
 
     /** NO maps to false. */
     private static final boolean NO = false;
-
+    
     // ============ Shredding constants. ===============
-
+    
+    /** Serialize TT-ID: yes/no. */
+    public static final Object[] S_ID = {
+        "serialize-id", NO
+    };
+    
     /** Serialization parameter: yes/no. */
     public static final Object[] S_INDENT = {
         "indent", YES
     };
-
-    /** Serialize XML declaration: yes/no. */
-    public static final Object[] S_XMLDECL = {
-        "xmldecl", YES
-    };
-
+    
     /** Specific serialization parameter: number of spaces to indent. */
     public static final Object[] S_INDENT_SPACES = {
         "indent-spaces", 2
@@ -82,11 +75,17 @@ public final class XMLSerializerProperties {
     public static final Object[] S_REST = {
         "serialize-rest", NO
     };
-
-    /** Serialize TT-ID: yes/no. */
-    public static final Object[] S_ID = {
-        "serialize-id", NO
+    
+    /** Serialize XML declaration: yes/no. */
+    public static final Object[] S_XMLDECL = {
+        "xmldecl", YES
     };
+    
+    /** Property file. */
+    private static String mFilePath;
+
+    /** Properties. */
+    private final ConcurrentMap<String, Object> mProps = new ConcurrentHashMap<String, Object>();
 
     /**
      * Constructor.

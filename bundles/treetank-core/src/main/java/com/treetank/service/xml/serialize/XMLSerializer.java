@@ -416,7 +416,7 @@ public final class XMLSerializer extends AbsSerializer {
          *            {@link ISession}.
          * @param paramNodeKey
          *            Root node key of subtree to shredder.
-         * @param paramParamStream
+         * @param paramStream
          *            {@link OutputStream}.
          * @param paramProperties
          *            {@link XMLSerializerProperties}.
@@ -424,11 +424,11 @@ public final class XMLSerializer extends AbsSerializer {
          *            Versions to serialize.
          */
         public XMLSerializerBuilder(final ISession paramSession, final long paramNodeKey,
-            final OutputStream paramParamStream, final XMLSerializerProperties paramProperties,
+            final OutputStream paramStream, final XMLSerializerProperties paramProperties,
             final long... paramVersions) {
             mSession = paramSession;
             mNodeKey = paramNodeKey;
-            mStream = paramParamStream;
+            mStream = paramStream;
             mVersions = paramVersions;
             final ConcurrentMap<?, ?> map = paramProperties.getmProps();
             mIndent = (Boolean)map.get(S_INDENT[0]);
@@ -442,10 +442,12 @@ public final class XMLSerializer extends AbsSerializer {
          * Setting the indention.
          * 
          * @param paramIndent
-         *            to set
+         *            to set         
+         * @return XMLSerializerBuilder reference.
          */
-        public void setIndend(final boolean paramIndent) {
+        public XMLSerializerBuilder setIndend(final boolean paramIndent) {
             mIndent = paramIndent;
+            return this;
         }
 
         /**
@@ -453,9 +455,11 @@ public final class XMLSerializer extends AbsSerializer {
          * 
          * @param paramREST
          *            to set
+         * @return XMLSerializerBuilder reference.
          */
-        public void setREST(final boolean paramREST) {
+        public XMLSerializerBuilder setREST(final boolean paramREST) {
             mREST = paramREST;
+            return this;
         }
 
         /**
@@ -463,9 +467,11 @@ public final class XMLSerializer extends AbsSerializer {
          * 
          * @param paramDeclaration
          *            to set
+         * @return XMLSerializerBuilder reference.
          */
-        public void setDeclaration(final boolean paramDeclaration) {
+        public XMLSerializerBuilder setDeclaration(final boolean paramDeclaration) {
             mDeclaration = paramDeclaration;
+            return this;
         }
 
         /**
@@ -473,9 +479,11 @@ public final class XMLSerializer extends AbsSerializer {
          * 
          * @param paramID
          *            to set
+         * @return XMLSerializerBuilder reference.
          */
-        public void setID(final boolean paramID) {
+        public XMLSerializerBuilder setID(final boolean paramID) {
             mID = paramID;
+            return this;
         }
 
         /**
