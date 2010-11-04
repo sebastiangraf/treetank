@@ -30,9 +30,11 @@ import java.io.File;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.WindowConstants;
 
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +60,7 @@ public final class GUI extends JFrame {
     private static final int HEIGHT = 1000;
     
     /** {@link GUIProp}. */
-    private final GUIProp mProp;
+    private final GUIProp mProp;   // Will be used in future versions (more GUI properties).
     
     /** {@link ViewNotifier}. */
     private final ViewNotifier mNotifier;
@@ -74,26 +76,17 @@ public final class GUI extends JFrame {
      */
     public GUI(final GUIProp paramProp) {
         mProp = paramProp;
+        
+        // ===== Setup GUI ======
         setTitle("Treetank GUI");
         
         final Dimension frameSize = new Dimension(1000, 1100);
         setSize(frameSize);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
-        final JMenuBar menuBar = new TreetankMenuBar(this);
-        
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+          
         // Add menubar.
+        final JMenuBar menuBar = new TreetankMenuBar(this);
         setJMenuBar(menuBar);
-
-        // Screen size.
-        final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-
-        // Compute position of JFrame.
-        final int topPos = (screenSize.height - frameSize.height) / 2;
-        final int leftPos = (screenSize.width - frameSize.width) / 2;
-
-        // Set frame position to center.
-        setLocation(leftPos, topPos);
         
         // Create Panels.
         final JPanel top = new JPanel();
@@ -120,15 +113,20 @@ public final class GUI extends JFrame {
         // Add the split pane.
         treeText.add(splitPane);
         top.add(treeText, BorderLayout.CENTER);
-        add(top);
+        getContentPane().add(top);;
+        
+        // Center the frame.
+        setLocationRelativeTo(null);
+        
+        // Size the frame.
+        pack();
         
         // Display the window.
-        pack();
         setVisible(true);
     }
     
     /**
-     * Execute.
+     * Execute command.
      * 
      * @param paramFile
      *                  {@link File} to open.
@@ -140,13 +138,14 @@ public final class GUI extends JFrame {
             mReadDB = new ReadDB(paramFile, paramRevision);
         }
         mNotifier.update();
-        validate();
-        repaint();
     }
     
     @Override
     public void dispose() {
-        mReadDB.close();
+        if (mReadDB != null) {
+            mReadDB.close();
+        }
+        mNotifier.init();
         super.dispose();
     }
     

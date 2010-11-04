@@ -17,6 +17,7 @@
 package com.treetank.gui.view.tree;
 
 import java.awt.Color;
+import java.awt.event.FocusListener;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -37,12 +38,14 @@ import com.treetank.gui.view.ViewNotifier;
 /**
  * <h1>TreeView</h1>
  * 
- * <p>Tree view on a Treetank storage.</p>
+ * <p>
+ * Tree view on a Treetank storage.
+ * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public class TreeView extends JScrollPane implements IView {
+public final class TreeView extends JScrollPane implements IView {
 
     /** Row height. */
     private static final int ROW_HEIGHT = 20;
@@ -55,7 +58,7 @@ public class TreeView extends JScrollPane implements IView {
 
     /** Main {@link GUI} window. */
     private final GUI mGUI;
-    
+
     /** Treetank {@link IReadTransaction}. */
     private IReadTransaction mRtx;
 
@@ -87,21 +90,21 @@ public class TreeView extends JScrollPane implements IView {
         // Selection Model.
         mTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
-        // Create a scroll pane and add the tree to it.
-        add(mTree);
+        // Add the tree to the scroll pane.
+        setViewportView(mTree);
         setBackground(Color.WHITE);
     }
 
     @Override
-    public final boolean isVisible() {
+    public boolean isVisible() {
         return GUIProp.EShowViews.SHOWTREE.getValue();
     }
 
     @Override
-    public final void refreshUpdate() {
+    public void refreshUpdate() {
         // Use our Treetank model and renderer.
         final ReadDB db = mGUI.getReadDB();
-        
+
         // Set model and renderer.
         if (mTree.getModel() == null || mTree.getModel() instanceof DefaultTreeModel) {
             mTree.setModel(new TreeModel(db));
@@ -109,38 +112,41 @@ public class TreeView extends JScrollPane implements IView {
         if (mTree.getCellRenderer() instanceof DefaultTreeCellRenderer) {
             mTree.setCellRenderer(new TreeCellRenderer(db));
         }
-        
+
         mRtx = db.getRtx();
-        
+
         /*
          * Remove a listener/listeners, which might already exist from
          * another call to refreshUpdate().
          */
-        for (final TreeSelectionListener listener : mTree.getTreeSelectionListeners()) {
-            mTree.removeTreeSelectionListener(listener);
-        }
+//        for (final TreeSelectionListener listener : mTree.getTreeSelectionListeners()) {
+//            mTree.removeTreeSelectionListener(listener);
+//        }
 
-        // Listen for when the selection changes.
-        mTree.addTreeSelectionListener(new TreeSelectionListener() {
-            public void valueChanged(final TreeSelectionEvent paramE) {
-                if (paramE.getNewLeadSelectionPath() != null
-                    && paramE.getNewLeadSelectionPath() != paramE.getOldLeadSelectionPath()) {
-                    /*
-                     * Returns the last path element of the selection. This
-                     * method is useful only when the selection model allows
-                     * a single selection.
-                     */
-                    final IItem node = (IItem)paramE.getNewLeadSelectionPath().getLastPathComponent();
-                    mRtx.moveTo(node.getNodeKey());
-                    mNotifier.update();
+        if (mTree.getTreeSelectionListeners().length == 0) {
+            // Listen for when the selection changes.
+            mTree.addTreeSelectionListener(new TreeSelectionListener() {
+                public void valueChanged(final TreeSelectionEvent paramE) {
+                    if (paramE.getNewLeadSelectionPath() != null
+                        && paramE.getNewLeadSelectionPath() != paramE.getOldLeadSelectionPath()) {
+                        /*
+                         * Returns the last path element of the selection. This
+                         * method is useful only when the selection model allows
+                         * a single selection.
+                         */
+                        final IItem node = (IItem)paramE.getNewLeadSelectionPath().getLastPathComponent();
+                        mRtx.moveTo(node.getNodeKey());
+                        mNotifier.update();
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     @Override
     public void refreshInit() {
-        // TODO Auto-generated method stub
-
+        for (final FocusListener listener : mTree.getFocusListeners()) {
+            mTree.removeFocusListener(listener);
+        }
     }
 }

@@ -47,10 +47,14 @@ import javax.xml.namespace.QName;
 import org.slf4j.LoggerFactory;
 
 /**
+ * <h1>TextView</h1>
+ * 
+ * <p>Basic text view.</h1>
+ * 
  * @author Johannes Lichtenberger, University of Konstanz
  *
  */
-public class TextView extends JScrollPane implements IView {
+public final class TextView extends JScrollPane implements IView {
     
     /** Logger. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(TextView.class));
@@ -119,24 +123,26 @@ public class TextView extends JScrollPane implements IView {
         mTextArea.setCaretPosition(0);
 
         // Create a scroll pane and add the XML text area to it.
-        add(mTextArea);
+        setViewportView(mTextArea);
         setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         setMinimumSize(new Dimension(PANE_WIDTH, PANE_HEIGHT));
     }
 
     @Override
-    public final boolean isVisible() {
+    public boolean isVisible() {
         return GUIProp.EShowViews.SHOWTEXT.getValue();
     }
     
     @Override
     public void refreshInit() {
-        // TODO Auto-generated method stub
-        
+        final JScrollBar bar = this.getVerticalScrollBar();
+        for (final AdjustmentListener listener : bar.getAdjustmentListeners()) {
+            bar.removeAdjustmentListener(listener);
+        }
     }
 
     @Override
-    public final void refreshUpdate() {
+    public void refreshUpdate() {
         final JScrollBar bar = this.getVerticalScrollBar();
         for (final AdjustmentListener listener : bar.getAdjustmentListeners()) {
             bar.removeAdjustmentListener(listener);
@@ -224,37 +230,39 @@ public class TextView extends JScrollPane implements IView {
             LOGWRAPPER.error(e.getMessage(), e);
         }
         
-        text(false);
+        mTextArea.setText(mOut.toString());
+//        text(false);
         
         final JScrollBar vertScrollBar = getVerticalScrollBar();
         vertScrollBar.setValue(vertScrollBar.getMinimum());
         vertScrollBar.addAdjustmentListener(new AdjustmentListener() {
             @Override
             public void adjustmentValueChanged(final AdjustmentEvent paramEvt) {
-                /*
-                 * getValueIsAdjusting() returns true if the user is currently dragging
-                 * the scrollbar's knob and has not picked a final value.
-                 */
-                if (paramEvt.getValueIsAdjusting()) {
-                    // The user is dragging the knob.
-                    return;
-                }
-
-                final int lineHeight = mTextArea.getFontMetrics(mTextArea.getFont()).getHeight();
-                final int value = paramEvt.getValue();
-                System.out.println("VALUE: " + value);
-                final int result = value - mTempValue;
-                mLineChanges = result / lineHeight;
-                System.out.println("Lines: " + mLineChanges);
-                if (mLineChanges != 0) {
-                    text(false);
-                }
-
-                mTempValue = value;
-                mNotifier.update();
+//                /*
+//                 * getValueIsAdjusting() returns true if the user is currently dragging
+//                 * the scrollbar's knob and has not picked a final value.
+//                 */
+//                if (paramEvt.getValueIsAdjusting()) {
+//                    // The user is dragging the knob.
+//                    return;
+//                }
+//
+//                final int lineHeight = mTextArea.getFontMetrics(mTextArea.getFont()).getHeight();
+//                final int value = paramEvt.getValue();
+//                System.out.println("VALUE: " + value);
+//                final int result = value - mTempValue;
+//                mLineChanges = result / lineHeight;
+//                System.out.println("Lines: " + mLineChanges);
+//                if (mLineChanges != 0) {
+//                    text(false);
+//                }
+//
+//                mTempValue = value;
+//                mNotifier.update();
             }
         });
         
+//        repaint();
     }
     
     /**
