@@ -49,71 +49,72 @@ import org.slf4j.LoggerFactory;
 /**
  * <h1>TextView</h1>
  * 
- * <p>Basic text view.</h1>
+ * <p>
+ * Basic text view.</h1>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
- *
+ * 
  */
 public final class TextView extends JScrollPane implements IView {
-    
+
     /** Logger. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(TextView.class));
-    
+
     // ======== Component bounds ==========
-    
+
     /** Width of text component. */
     private static final int WIDTH = 370;
-    
+
     /** Height of text component. */
     private static final int HEIGHT = 600;
-    
+
     /** Columns in text component. */
     private static final int COLUMNS = 80;
-    
+
     /** Scrollpane width. */
     private static final int PANE_WIDTH = 400;
-    
+
     /** Scrollpane height. */
     private static final int PANE_HEIGHT = 600;
-    
+
     // ======= Global member variables =====
-     
+
     /** {@link JTextArea}, which displays XML data. */
     private final JTextArea mTextArea;
-    
+
     /** {@link ViewNotifier} which notifies views of changes. */
     private final ViewNotifier mNotifier;
-    
+
     /** Main {@link GUI} window. */
     private final GUI mGUI;
-    
+
     /** AdjustmentListener temporal value. */
     private int mTempValue;
-    
+
     /** Text output stream. */
     private transient OutputStream mOut;
 
     /** Adjustment Listener for textArea. */
     private transient AdjustmentListener mAdjListener;
-    
+
     /** Start position of char array for text insertion. */
     private transient int mStartPos;
-    
+
     /** Line number to append or remove from the text field. */
     private transient int mLineChanges;
-    
+
     /**
      * Constructor.
      * 
      * @param paramNotifier
-     *                  {@link ViewNotifier} to notify views of changes etc.pp.
+     *            {@link ViewNotifier} to notify views of changes etc.pp.
      */
     public TextView(final ViewNotifier paramNotifier) {
         mNotifier = paramNotifier;
         mGUI = paramNotifier.getGUI();
-        
+
         mNotifier.add(this);
-        
+
         // Create a XML text area.
         mTextArea = new JTextArea();
         mTextArea.setEditable(false);
@@ -132,7 +133,7 @@ public final class TextView extends JScrollPane implements IView {
     public boolean isVisible() {
         return GUIProp.EShowViews.SHOWTEXT.getValue();
     }
-    
+
     @Override
     public void refreshInit() {
         final JScrollBar bar = this.getVerticalScrollBar();
@@ -143,30 +144,33 @@ public final class TextView extends JScrollPane implements IView {
 
     @Override
     public void refreshUpdate() {
-        final JScrollBar bar = this.getVerticalScrollBar();
-        for (final AdjustmentListener listener : bar.getAdjustmentListeners()) {
-            bar.removeAdjustmentListener(listener);
-        }
+        // final JScrollBar bar = this.getVerticalScrollBar();
+        // for (final AdjustmentListener listener : bar.getAdjustmentListeners()) {
+        // bar.removeAdjustmentListener(listener);
+        // }
 
         // Serialize file into XML view if it is empty.
         mOut = new ByteArrayOutputStream();
         final XMLSerializerProperties properties = new XMLSerializerProperties();
-        
+
         // Get references.
         final ReadDB db = mGUI.getReadDB();
         final ISession session = db.getSession();
         final IReadTransaction rtx = db.getRtx();
         final IItem node = rtx.getNode();
-        
+
         try {
             final long nodeKey = node.getNodeKey();
+
+            System.out.println(nodeKey);
 
             switch (node.getKind()) {
             case ROOT_KIND:
                 new XMLSerializerBuilder(session, nodeKey, mOut, properties).build().call();
                 break;
             case ELEMENT_KIND:
-                new XMLSerializerBuilder(session, nodeKey, mOut, properties).build().call();
+                new XMLSerializerBuilder(session, nodeKey, mOut, properties).setDeclaration(false).build()
+                    .call();
                 break;
             case TEXT_KIND:
                 rtx.moveTo(nodeKey);
@@ -177,8 +181,7 @@ public final class TextView extends JScrollPane implements IView {
                 rtx.moveTo(node.getParentKey());
 
                 final long nNodeKey = node.getNodeKey();
-                for (int i = 0, namespCount =
-                    ((ElementNode)rtx.getNode()).getNamespaceCount(); i < namespCount; i++) {
+                for (int i = 0, namespCount = ((ElementNode)rtx.getNode()).getNamespaceCount(); i < namespCount; i++) {
                     rtx.moveToNamespace(i);
                     if (rtx.getNode().equals(node)) {
                         break;
@@ -187,8 +190,7 @@ public final class TextView extends JScrollPane implements IView {
                 }
 
                 if (rtx.nameForKey(rtx.getNode().getNameKey()).length() == 0) {
-                    mOut.write(("xmlns='" + rtx.nameForKey(rtx.getNode().getURIKey()) + "'")
-                        .getBytes());
+                    mOut.write(("xmlns='" + rtx.nameForKey(rtx.getNode().getURIKey()) + "'").getBytes());
                 } else {
                     mOut.write(("xmlns:" + rtx.nameForKey(rtx.getNode().getNameKey()) + "='"
                         + rtx.nameForKey(rtx.getNode().getURIKey()) + "'").getBytes());
@@ -211,9 +213,8 @@ public final class TextView extends JScrollPane implements IView {
                 final QName attQName = rtx.getQNameOfCurrentNode();
 
                 if (attPrefix == null || attPrefix.equals("")) {
-                    mOut
-                        .write((attQName.getLocalPart() + "='" + rtx.getValueOfCurrentNode() + "'")
-                            .getBytes());
+                    mOut.write((attQName.getLocalPart() + "='" + rtx.getValueOfCurrentNode() + "'")
+                        .getBytes());
                 } else {
                     mOut.write((attPrefix + ":" + attQName.getLocalPart() + "='"
                         + rtx.getValueOfCurrentNode() + "'").getBytes());
@@ -229,42 +230,47 @@ public final class TextView extends JScrollPane implements IView {
         } catch (final IOException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
-        
+
+        // System.out.println(mOut.toString());
+
         mTextArea.setText(mOut.toString());
-//        text(false);
-        
+        // text(false);
+
         final JScrollBar vertScrollBar = getVerticalScrollBar();
         vertScrollBar.setValue(vertScrollBar.getMinimum());
-        vertScrollBar.addAdjustmentListener(new AdjustmentListener() {
-            @Override
-            public void adjustmentValueChanged(final AdjustmentEvent paramEvt) {
-//                /*
-//                 * getValueIsAdjusting() returns true if the user is currently dragging
-//                 * the scrollbar's knob and has not picked a final value.
-//                 */
-//                if (paramEvt.getValueIsAdjusting()) {
-//                    // The user is dragging the knob.
-//                    return;
-//                }
-//
-//                final int lineHeight = mTextArea.getFontMetrics(mTextArea.getFont()).getHeight();
-//                final int value = paramEvt.getValue();
-//                System.out.println("VALUE: " + value);
-//                final int result = value - mTempValue;
-//                mLineChanges = result / lineHeight;
-//                System.out.println("Lines: " + mLineChanges);
-//                if (mLineChanges != 0) {
-//                    text(false);
-//                }
-//
-//                mTempValue = value;
-//                mNotifier.update();
-            }
-        });
-        
-//        repaint();
+
+        if (vertScrollBar.getAdjustmentListeners().length == 0) {
+            vertScrollBar.addAdjustmentListener(new AdjustmentListener() {
+                @Override
+                public void adjustmentValueChanged(final AdjustmentEvent paramEvt) {
+                    // /*
+                    // * getValueIsAdjusting() returns true if the user is currently dragging
+                    // * the scrollbar's knob and has not picked a final value.
+                    // */
+                    // if (paramEvt.getValueIsAdjusting()) {
+                    // // The user is dragging the knob.
+                    // return;
+                    // }
+                    //
+                    // final int lineHeight = mTextArea.getFontMetrics(mTextArea.getFont()).getHeight();
+                    // final int value = paramEvt.getValue();
+                    // System.out.println("VALUE: " + value);
+                    // final int result = value - mTempValue;
+                    // mLineChanges = result / lineHeight;
+                    // System.out.println("Lines: " + mLineChanges);
+                    // if (mLineChanges != 0) {
+                    // text(false);
+                    // }
+                    //
+                    // mTempValue = value;
+                    // mNotifier.update();
+                }
+            });
+        }
+
+        repaint();
     }
-    
+
     /**
      * Display text.
      * 
