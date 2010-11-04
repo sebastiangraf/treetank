@@ -18,6 +18,7 @@ package com.treetank.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -26,6 +27,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -77,8 +79,8 @@ public enum GUICommands implements IGUICommand {
             // Create new panel etc.pp. for choosing the revision at the bottom of the frame.
             final JPanel panel = new JPanel();
             final BoxLayout box = new BoxLayout(panel, BoxLayout.Y_AXIS);
-            final BorderLayout layout = (BorderLayout)fc.getLayout();
             panel.setLayout(box);
+            final BorderLayout layout = (BorderLayout)fc.getLayout();
             final Component comp = layout.getLayoutComponent(BorderLayout.SOUTH);
             panel.add(comp);
             final JComboBox cb = new JComboBox();
@@ -87,7 +89,9 @@ public enum GUICommands implements IGUICommand {
                 @Override
                 public void actionPerformed(final ActionEvent paramEvent) {
                     final JComboBox cb = (JComboBox)paramEvent.getSource();
-                    mRevNumber = (Long)cb.getSelectedItem();
+                    if (cb.getSelectedItem() != null) {
+                        mRevNumber = (Long)cb.getSelectedItem();
+                    }
                 };
             });
 
@@ -95,10 +99,10 @@ public enum GUICommands implements IGUICommand {
             fc.add(panel, BorderLayout.SOUTH);
 
             final PropertyChangeListener changeListener = new PropertyChangeListener() {
-
                 @Override
                 public void propertyChange(final PropertyChangeEvent paramEvent) {
                     // Get last revision number from TT-storage.
+                    cb.removeAllItems();
                     final JFileChooser fileChooser = (JFileChooser)paramEvent.getSource();
                     final File tmpDir = fileChooser.getSelectedFile();
                     long revNumber = 0;
@@ -120,19 +124,12 @@ public enum GUICommands implements IGUICommand {
 
                         if (!error) {
                             // Create items, which are used as available revisions.
-                            cb.removeAll();
                             for (long i = 0; i <= revNumber; i++) {
                                 cb.addItem(i);
                             }
-
-                            // Repaint components.
-                            panel.repaint();
-                            fc.repaint();
                         }
                     }
-
                 }
-
             };
             fc.addPropertyChangeListener(changeListener);
 
