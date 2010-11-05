@@ -19,6 +19,7 @@ package com.treetank.gui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -49,7 +50,8 @@ public final class TreetankMenuBar extends JMenuBar {
 
             for (int j = 0; j < MENUITEMS[i].length; j++) {
                 final IGUICommand cmd = (IGUICommand)MENUITEMS[i][j];
-                final JMenuItem item = new JMenuItem(cmd.desc());
+                final JMenuItem item = cmd.checked() ?
+                    new JCheckBoxMenuItem(cmd.desc()) : new JMenuItem(cmd.desc());
                 item.addActionListener(new ActionListener() {
                     public void actionPerformed(final ActionEvent paramE) {
                         cmd.execute(paramE, paramGUI);
