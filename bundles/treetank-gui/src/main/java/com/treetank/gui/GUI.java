@@ -74,9 +74,6 @@ public final class GUI extends JFrame {
 
     /** {@link ReadDB}. */
     private transient ReadDB mReadDB;
-    
-    /** Determines if {@link ReadDB} reference has been updated. */
-    private boolean updatedDB;
 
     /**
      * Constructor.
@@ -146,6 +143,7 @@ public final class GUI extends JFrame {
             if (mReadDB == null || !paramFile.equals(mReadDB.getDatabase().getFile())
                 || paramRevision != mReadDB.getRtx().getRevisionNumber()) {
                 mReadDB = new ReadDB(paramFile, paramRevision);
+                System.out.println("LALALA");
                 mNotifier.init();
             }
         } catch (final TreetankIOException e) {
