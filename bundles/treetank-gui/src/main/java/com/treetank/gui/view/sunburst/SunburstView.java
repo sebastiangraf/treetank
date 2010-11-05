@@ -18,8 +18,6 @@ package com.treetank.gui.view.sunburst;
 
 import java.awt.event.MouseEvent;
 
-import com.treetank.access.Database;
-import com.treetank.api.IDatabase;
 import com.treetank.gui.GUIProp;
 import com.treetank.gui.IView;
 import com.treetank.gui.view.ViewNotifier;
@@ -36,7 +34,7 @@ import processing.core.PApplet;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-final class SunburstView extends PApplet implements IView {
+public final class SunburstView extends PApplet implements IView {
 
     /** Width of the frame. */
     private static final int WIDTH = 1000;

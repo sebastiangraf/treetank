@@ -31,6 +31,7 @@ import javax.swing.WindowConstants;
 
 import com.treetank.exception.TreetankIOException;
 import com.treetank.gui.view.ViewNotifier;
+import com.treetank.gui.view.sunburst.SunburstView;
 import com.treetank.gui.view.text.TextView;
 import com.treetank.gui.view.tree.TreeView;
 import com.treetank.utils.LogWrapper;
@@ -105,6 +106,7 @@ public final class GUI extends JFrame {
         mNotifier = new ViewNotifier(this);
         final TreeView treeView = new TreeView(mNotifier);
         final TextView textView = new TextView(mNotifier);
+        new SunburstView(mNotifier);
 
         // Add the scroll panes to a split pane.
         final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);

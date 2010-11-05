@@ -28,12 +28,14 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.gui.ReadDB;
 import com.treetank.node.ElementNode;
 
+import static com.treetank.gui.GUIConstants.ATTRIBUTE_COLOR;
+import static com.treetank.gui.GUIConstants.DOC_COLOR;
+import static com.treetank.gui.GUIConstants.ELEMENT_COLOR;
+
 /**
- * <h1TreetankTreeCellRenderer</h1>
+ * <h1>TreeCellRenderer</h1>
  * 
- * <p>
- * Customized tree cell renderer to render nodes nicely.
- * </p>
+ * <p>Customized tree cell renderer to render nodes nicely.</p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
@@ -44,15 +46,6 @@ public final class TreeCellRenderer extends DefaultTreeCellRenderer {
      * Generated UID.
      */
     private static final long serialVersionUID = -6242168246410260644L;
-
-    /** Document root color. */
-    private static final Color DOC_COLOR = new Color(128, 0, 0);
-    
-    /** Element color. */
-    private static final Color ELEMENT_COLOR = new Color(0, 0, 128);
-
-    /** Attribute color. */
-    private static final Color ATTRIBUTE_COLOR = new Color(0, 128, 0);
 
     /** Treetant reading transaction {@link IReadTransaction}. */
     private final IReadTransaction mRTX;

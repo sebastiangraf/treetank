@@ -18,6 +18,8 @@ package com.treetank.gui;
 
 import static com.treetank.gui.GUICommands.*;
 
+import java.awt.Color;
+
 /**
  * <h1>GUIConstants</h1>
  * 
@@ -27,6 +29,23 @@ import static com.treetank.gui.GUICommands.*;
  * 
  */
 public final class GUIConstants {
+    
+    // COLORS ===================================================================
+    
+    /** Document root color. */
+    public static final Color DOC_COLOR = new Color(128, 0, 0);
+    
+    /** Element color. */
+    public static final Color ELEMENT_COLOR = new Color(0, 0, 128);
+
+    /** Attribute color. */
+    public static final Color ATTRIBUTE_COLOR = new Color(0, 128, 0);
+    
+    /** Namespace color. */
+    public static final Color NAMESPACE_COLOR = new Color(128, 128, 128);
+    
+    /** Text color. */
+    public static final Color TEXT_COLOR = Color.BLACK;
   
     // MENU =====================================================================
 
