@@ -72,6 +72,12 @@ public final class GUIProp {
             return mShow;
         }
     }
+    
+    /** Indent spaces. */
+    public static final int INDENT_SPACES = 2;
+    
+    /** Newline string representation. */
+    public static final String NEWLINE = System.getProperty("line.separator");
 
     /**
      * Constructor.
