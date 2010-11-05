@@ -104,15 +104,6 @@ public final class TreeView extends JScrollPane implements IView {
     public void refreshUpdate() {
         // Use our Treetank model and renderer.
         final ReadDB db = mGUI.getReadDB();
-
-        // Set model and renderer.
-        if (mTree.getModel() == null || mTree.getModel() instanceof DefaultTreeModel) {
-            mTree.setModel(new TreeModel(db));
-        }
-        if (mTree.getCellRenderer() instanceof DefaultTreeCellRenderer) {
-            mTree.setCellRenderer(new TreeCellRenderer(db));
-        }
-
         mRtx = db.getRtx();
 
         /*
@@ -144,9 +135,17 @@ public final class TreeView extends JScrollPane implements IView {
     }
 
     @Override
-    public void refreshInit() {
+    public void dispose() {
         for (final FocusListener listener : mTree.getFocusListeners()) {
             mTree.removeFocusListener(listener);
         }
+    }
+
+    @Override
+    public void refreshInit() {
+        // Use our Treetank model and renderer.
+        final ReadDB db = mGUI.getReadDB();
+        mTree.setModel(new TreeModel(db));
+        mTree.setCellRenderer(new TreeCellRenderer(db));
     }
 }

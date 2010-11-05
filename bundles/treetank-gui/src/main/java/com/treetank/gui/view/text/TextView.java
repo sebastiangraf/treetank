@@ -16,41 +16,39 @@
  */
 package com.treetank.gui.view.text;
 
-import com.treetank.api.IItem;
-import com.treetank.api.IReadTransaction;
-import com.treetank.api.ISession;
-import com.treetank.exception.TreetankException;
-import com.treetank.gui.GUI;
-import com.treetank.gui.GUIProp;
-import com.treetank.gui.IView;
-import com.treetank.gui.ReadDB;
-import com.treetank.gui.view.ViewNotifier;
-import com.treetank.node.ElementNode;
-import com.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
-import com.treetank.service.xml.serialize.XMLSerializerProperties;
-import com.treetank.settings.ECharsForSerializing;
-import com.treetank.utils.LogWrapper;
-
 import java.awt.Dimension;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.EndElement;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
 
 import org.slf4j.LoggerFactory;
+
+import com.treetank.api.IItem;
+import com.treetank.api.IReadTransaction;
+import com.treetank.axis.DescendantAxis;
+import com.treetank.gui.GUI;
+import com.treetank.gui.GUIProp;
+import com.treetank.gui.IView;
+import com.treetank.gui.ReadDB;
+import com.treetank.gui.view.ViewNotifier;
+import com.treetank.node.ElementNode;
+import com.treetank.service.xml.serialize.StAXSerializer;
+import com.treetank.utils.LogWrapper;
 
 /**
  * <h1>TextView</h1>
  * 
- * <p>
- * Basic text view.</h1>
+ * <p>Basic text view.</p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
@@ -88,21 +86,6 @@ public final class TextView extends JScrollPane implements IView {
     /** Main {@link GUI} window. */
     private final GUI mGUI;
 
-    /** AdjustmentListener temporal value. */
-    private int mTempValue;
-
-    /** Text output stream. */
-    private transient OutputStream mOut;
-
-    /** Adjustment Listener for textArea. */
-    private transient AdjustmentListener mAdjListener;
-
-    /** Start position of char array for text insertion. */
-    private transient int mStartPos;
-
-    /** Line number to append or remove from the text field. */
-    private transient int mLineChanges;
-
     /**
      * Constructor.
      * 
@@ -135,46 +118,38 @@ public final class TextView extends JScrollPane implements IView {
     }
 
     @Override
-    public void refreshInit() {
+    public void dispose() {
         final JScrollBar bar = this.getVerticalScrollBar();
         for (final AdjustmentListener listener : bar.getAdjustmentListeners()) {
             bar.removeAdjustmentListener(listener);
         }
-    }
+    }  
+
+    @Override
+    public void refreshInit() { }
 
     @Override
     public void refreshUpdate() {
-        // final JScrollBar bar = this.getVerticalScrollBar();
-        // for (final AdjustmentListener listener : bar.getAdjustmentListeners()) {
-        // bar.removeAdjustmentListener(listener);
-        // }
-
         // Serialize file into XML view if it is empty.
-        mOut = new ByteArrayOutputStream();
-        final XMLSerializerProperties properties = new XMLSerializerProperties();
+        final StringBuilder out = new StringBuilder();
 
         // Get references.
         final ReadDB db = mGUI.getReadDB();
-        final ISession session = db.getSession();
         final IReadTransaction rtx = db.getRtx();
         final IItem node = rtx.getNode();
+        StAXSerializer serializer = null;
 
         try {
             final long nodeKey = node.getNodeKey();
 
-            System.out.println(nodeKey);
-
             switch (node.getKind()) {
             case ROOT_KIND:
-                new XMLSerializerBuilder(session, nodeKey, mOut, properties).build().call();
-                break;
             case ELEMENT_KIND:
-                new XMLSerializerBuilder(session, nodeKey, mOut, properties).setDeclaration(false).build()
-                    .call();
+                serializer = new StAXSerializer(new DescendantAxis(rtx, true), false);
                 break;
             case TEXT_KIND:
                 rtx.moveTo(nodeKey);
-                mOut.write(rtx.getNode().getRawValue());
+                out.append(new String(rtx.getNode().getRawValue()));
                 break;
             case NAMESPACE_KIND:
                 // Move transaction to parent of given namespace node.
@@ -190,10 +165,10 @@ public final class TextView extends JScrollPane implements IView {
                 }
 
                 if (rtx.nameForKey(rtx.getNode().getNameKey()).length() == 0) {
-                    mOut.write(("xmlns='" + rtx.nameForKey(rtx.getNode().getURIKey()) + "'").getBytes());
+                    out.append("xmlns='").append(rtx.nameForKey(rtx.getNode().getURIKey())).append("'");
                 } else {
-                    mOut.write(("xmlns:" + rtx.nameForKey(rtx.getNode().getNameKey()) + "='"
-                        + rtx.nameForKey(rtx.getNode().getURIKey()) + "'").getBytes());
+                    out.append("xmlns:").append(rtx.nameForKey(rtx.getNode().getNameKey())).append("='")
+                        .append(rtx.nameForKey(rtx.getNode().getURIKey())).append("'");
                 }
                 break;
             case ATTRIBUTE_KIND:
@@ -212,28 +187,31 @@ public final class TextView extends JScrollPane implements IView {
                 final String attPrefix = rtx.getQNameOfCurrentNode().getPrefix();
                 final QName attQName = rtx.getQNameOfCurrentNode();
 
-                if (attPrefix == null || attPrefix.equals("")) {
-                    mOut.write((attQName.getLocalPart() + "='" + rtx.getValueOfCurrentNode() + "'")
-                        .getBytes());
+                if (attPrefix == null || attPrefix.isEmpty()) {
+                    out.append(attQName.getLocalPart()).append("='").append(rtx.getValueOfCurrentNode())
+                        .append("'");
                 } else {
-                    mOut.write((attPrefix + ":" + attQName.getLocalPart() + "='"
-                        + rtx.getValueOfCurrentNode() + "'").getBytes());
+                    out.append(attPrefix).append(":").append(attQName.getLocalPart()).append("='").append(
+                        rtx.getValueOfCurrentNode()).append("'");
                 }
                 break;
             default:
                 throw new IllegalStateException("Node kind not known!");
             }
-        } catch (final TreetankException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
         } catch (final IllegalStateException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        } catch (final IOException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
 
-        // System.out.println(mOut.toString());
+        try {
+            if (out.toString().isEmpty()) {
+                processStAX(out, serializer);
+            }
 
-        mTextArea.setText(mOut.toString());
+            mTextArea.setText(out.toString());
+        } catch (final XMLStreamException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
+        }
+
         // text(false);
 
         final JScrollBar vertScrollBar = getVerticalScrollBar();
@@ -272,109 +250,103 @@ public final class TextView extends JScrollPane implements IView {
     }
 
     /**
-     * Display text.
+     * Process StAX output.
      * 
-     * @param paramInit
-     *            Determines if it's the initial invocation.
+     * @param paramOut
+     *            {@link StringBuilder} to hold the serialized representation.
+     * @param paramSerializer
+     *            The {@link StAXSerializer}.
+     * @return the StringBuilder instance (the serialized representation).
+     * @throws XMLStreamException
+     *             if any parsing exception occurs
      */
-    private void text(final boolean paramInit) {
-        // Remove adjustmnet listeners temporarily.
-        final JScrollBar bar = this.getVerticalScrollBar();
-        for (final AdjustmentListener listener : bar.getAdjustmentListeners()) {
-            mAdjListener = listener;
-            bar.removeAdjustmentListener(listener);
-        }
+    private StringBuilder processStAX(final StringBuilder paramOut, final StAXSerializer paramSerializer)
+        throws XMLStreamException {
+        final StAXSerializer serializer = paramSerializer;
+        final StringBuilder out = paramOut;
 
-        // Initialize variables.
-        final char[] text = mOut.toString().toCharArray();
+        final StringBuilder spaces = new StringBuilder();
+        for (int i = 0; i < GUIProp.INDENT_SPACES; i++) {
+            spaces.append(" ");
+        }
+        final String indentSpaces = spaces.toString();
+        
         final int lineHeight = mTextArea.getFontMetrics(this.getFont()).getHeight();
-        final int frameHeight = mTextArea.getHeight() + mLineChanges * lineHeight;
-        int rowsSize = 0;
-        final StringBuilder sBuilder = new StringBuilder();
-        int indexSepChar = 0;
-        final String NL = ECharsForSerializing.NEWLINE.toString();
-        // int countNewlines = 0;
-        // final StringBuilder insertAtFirstPos = new StringBuilder();
-        //
-        // if (changeColumns > 0) {
-        // // Get start index.
-        // for (int i = 0; i < text.length; i++) {
-        // final char character = text[i];
-        //
-        // // Increment rowSize?
-        // if (indexSepChar < NL.length() && character ==
-        // NL.charAt(indexSepChar)) {
-        // if (indexSepChar == NL.length() - 1) {
-        // countNewlines++;
-        // }
-        // }
-        //
-        // insertAtFirstPos.append(character);
-        //
-        // if (countNewlines == changeColumns) {
-        // startPos = i + 1;
-        // break;
-        // }
-        // }
-        //
-        // xmlPane.replaceRange("", 0, startPos - 1);
-        // } else if (changeColumns < 0) {
-        // xmlPane.insert(insertAtFirstPos.toString(), 0);
-        // }
-
-        // Build text.
-        rowsSize = 0;
-        if (paramInit) {
-            mStartPos = 0;
-        }
-        for (int i = mStartPos == 0 ? mStartPos : mStartPos + 1; i < text.length && mLineChanges >= 0
-            && mStartPos + 1 != text.length; i++) {
-            final char character = text[i];
-
-            // Increment rowsSize?
-            if (indexSepChar < NL.length() && character == NL.charAt(indexSepChar)) {
-                if (indexSepChar == NL.length() - 1) {
-                    rowsSize += lineHeight;
-                } else {
-                    indexSepChar++;
-                }
-            }
-
-            if (rowsSize < frameHeight) {
-                sBuilder.append(character);
-                mStartPos = i;
-            } else {
-                mStartPos = i;
-                System.out.println("START: " + mStartPos);
+        final int frameHeight = mTextArea.getHeight();
+        
+        int level = -1;
+        long height = 0;
+        assert serializer != null;
+        while (serializer.hasNext() && height < frameHeight) {
+            final XMLEvent event = serializer.nextEvent();
+            switch (event.getEventType()) {
+            case XMLStreamConstants.START_DOCUMENT:
                 break;
+            case XMLStreamConstants.START_ELEMENT:
+                final StartElement startTag = event.asStartElement();
+                final String qName = qNameToString(startTag.getName());
+                level++;
+                indent(out, level, indentSpaces);
+                out.append("<").append(qName).append(">");
+                out.append(GUIProp.NEWLINE);
+                height += lineHeight;
+                break;
+            case XMLStreamConstants.END_ELEMENT:
+                final EndElement endTag = event.asEndElement();
+                indent(out, level, indentSpaces);
+                out.append("</").append(endTag.getName()).append(">");
+                out.append(GUIProp.NEWLINE);
+                level--;
+                height += lineHeight;
+                break;
+            case XMLStreamConstants.CHARACTERS:
+                level++;
+                indent(out, level, indentSpaces);
+                level--;
+                out.append(event.asCharacters().getData());
+                out.append(GUIProp.NEWLINE);
+                height += lineHeight;
+                break;
+            default:
+                // Empty.
             }
         }
+        
+        return out;
+    }
 
-        if (mLineChanges >= 0 && mStartPos + 1 <= text.length) {
-            if (paramInit) {
-                mTextArea.setText(sBuilder.toString());
-                mTextArea.setCaretPosition(0);
-            } else {
-                final int caretPos = mTextArea.getCaretPosition();
-                mTextArea.setCaretPosition(mTextArea.getDocument().getLength());
-                mTextArea.append(sBuilder.toString());
-                // Check and update caret position.
-                final int newCaretPos = caretPos + mLineChanges * mTextArea.getColumns();
-                final int documentLength = mTextArea.getDocument().getLength();
-                if (newCaretPos < documentLength) {
-                    mTextArea.setCaretPosition(newCaretPos);
-                }
-            }
+    /**
+     * Serialization compatible String representation of a {@link QName} reference.
+     * 
+     * @param paramQName
+     *            The {@QName} reference.
+     * @return the string representation
+     */
+    private String qNameToString(final QName paramQName) {
+        String retVal;
+
+        if (paramQName.getPrefix().isEmpty()) {
+            retVal = paramQName.getLocalPart();
+        } else {
+            retVal = paramQName.getPrefix() + ":" + paramQName.getLocalPart();
         }
 
-        /*
-         * Schedule a job for the event dispatch thread: (Re)adding the
-         * adjustment listener.
-         */
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                bar.addAdjustmentListener(mAdjListener);
-            }
-        });
+        return retVal;
+    }
+    
+    /**
+     * Indent serialized output.
+     * 
+     * @param paramOut
+     *                  {@link StringBuilder} to hold spaces.
+     * @param paramLevel
+     *                  Current level in the tree.
+     * @param paramIndentSpaces
+     *                  Determines how many spaces to indent at every level.
+     */
+    private void indent(final StringBuilder paramOut, final int paramLevel, final String paramIndentSpaces) {
+        for (int i = 0; i < paramLevel; i++) {
+            paramOut.append(paramIndentSpaces);
+        }
     }
 }

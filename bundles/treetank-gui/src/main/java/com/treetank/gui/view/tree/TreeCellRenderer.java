@@ -45,11 +45,14 @@ public final class TreeCellRenderer extends DefaultTreeCellRenderer {
      */
     private static final long serialVersionUID = -6242168246410260644L;
 
+    /** Document root color. */
+    private static final Color DOC_COLOR = new Color(128, 0, 0);
+    
     /** Element color. */
-    private final Color mElementColor = new Color(0, 0, 128);
+    private static final Color ELEMENT_COLOR = new Color(0, 0, 128);
 
     /** Attribute color. */
-    private final Color mAttributeColor = new Color(0, 128, 0);
+    private static final Color ATTRIBUTE_COLOR = new Color(0, 128, 0);
 
     /** Treetant reading transaction {@link IReadTransaction}. */
     private final IReadTransaction mRTX;
@@ -71,7 +74,7 @@ public final class TreeCellRenderer extends DefaultTreeCellRenderer {
         setTextSelectionColor(Color.red);
 
         mRTX = paramReadDB.getRtx();
-        mPATH = paramReadDB.getDatabase().getFile().getAbsolutePath();
+        mPATH = paramReadDB.getDatabase().getFile().getName();
     }
 
     @Override
@@ -161,7 +164,7 @@ public final class TreeCellRenderer extends DefaultTreeCellRenderer {
             paramValue = "<? " + mRTX.getValueOfCurrentNode() + " ?>";
             break;
         case ROOT_KIND:
-            paramValue = mPATH;
+            paramValue = "Doc: " + mPATH;
             break;
         case WHITESPACE_KIND:
             break;
@@ -175,11 +178,14 @@ public final class TreeCellRenderer extends DefaultTreeCellRenderer {
             paramRow, paramHasFocus);
         if (!selected) {
             switch (node.getKind()) {
+            case ROOT_KIND:
+                setForeground(DOC_COLOR);
+                break;
             case ELEMENT_KIND:
-                setForeground(mElementColor);
+                setForeground(ELEMENT_COLOR);
                 break;
             case ATTRIBUTE_KIND:
-                setForeground(mAttributeColor);
+                setForeground(ATTRIBUTE_COLOR);
                 break;
             default:
                 // Do nothing.

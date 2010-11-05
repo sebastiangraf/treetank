@@ -20,6 +20,7 @@ import java.awt.event.MouseEvent;
 
 import com.treetank.access.Database;
 import com.treetank.api.IDatabase;
+import com.treetank.gui.GUIProp;
 import com.treetank.gui.IView;
 import com.treetank.gui.view.ViewNotifier;
 
@@ -98,10 +99,16 @@ final class SunburstView extends PApplet implements IView {
         mGUI.keyReleased();
     }
     
+
+    @Override
+    public void dispose() {
+        // TODO Auto-generated method stub
+        
+    }
+    
     @Override
     public boolean isVisible() {
-        // TODO Auto-generated method stub
-        return false;
+        return GUIProp.EShowViews.SHOWSUNBURST.getValue();
     }
 
     @Override

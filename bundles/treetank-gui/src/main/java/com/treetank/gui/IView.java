@@ -41,4 +41,9 @@ public interface IView {
      * @return result of check
      */
     boolean isVisible();
+    
+    /**
+     * Called when frame is going to dispose.
+     */
+    void dispose();
 }

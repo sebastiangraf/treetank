@@ -78,6 +78,17 @@ public final class ViewNotifier {
         }
     }
     
+    /**
+     * Notifies all views of updates in the data structure.
+     */
+    public void dispose() {
+        for (final IView view : mViews) {
+            if (view.isVisible()) {
+                view.dispose();
+            }
+        }
+    }
+    
     /** 
      * Get the main {@link GUI} frame. 
      * 

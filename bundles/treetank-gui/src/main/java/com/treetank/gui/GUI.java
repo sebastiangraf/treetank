@@ -16,32 +16,33 @@
  */
 package com.treetank.gui;
 
-import com.treetank.gui.view.ViewNotifier;
-import com.treetank.gui.view.text.TextView;
-import com.treetank.gui.view.tree.TreeView;
-import com.treetank.utils.LogWrapper;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Toolkit;
 import java.io.File;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
+
+import com.treetank.exception.TreetankIOException;
+import com.treetank.gui.view.ViewNotifier;
+import com.treetank.gui.view.text.TextView;
+import com.treetank.gui.view.tree.TreeView;
+import com.treetank.utils.LogWrapper;
 
 import org.slf4j.LoggerFactory;
 
 /**
  * <h1>Treetank GUI</h1>
  * 
- * <p>Main GUI frame.</p>
+ * <p>
+ * Main GUI frame.
+ * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
@@ -56,44 +57,53 @@ public final class GUI extends JFrame {
     /** Optionally set the look and feel. */
     private static boolean mUseSystemLookAndFeel;
 
+    /** Minimum width of panes. */
+    private static final int WIDTH = 1100;
+
     /** Minimum height of panes. */
-    private static final int HEIGHT = 1000;
-    
+    private static final int HEIGHT = 1100;
+
+    /** {@link JSplitPane} divider location. */
+    private static final int DIVIDER_LOCATION = 220;
+
     /** {@link GUIProp}. */
-    private final GUIProp mProp;   // Will be used in future versions (more GUI properties).
-    
+    private final GUIProp mProp; // Will be used in future versions (more GUI properties).
+
     /** {@link ViewNotifier}. */
     private final ViewNotifier mNotifier;
-    
+
     /** {@link ReadDB}. */
     private transient ReadDB mReadDB;
+    
+    /** Determines if {@link ReadDB} reference has been updated. */
+    private boolean updatedDB;
 
     /**
      * Constructor.
      * 
      * @param paramProp
-     *                {@link GUIProp}
+     *            {@link GUIProp}
      */
     public GUI(final GUIProp paramProp) {
         mProp = paramProp;
-        
+
         // ===== Setup GUI ======
         setTitle("Treetank GUI");
-        
-        final Dimension frameSize = new Dimension(1000, 1100);
+
+        final Dimension frameSize = new Dimension(1000, HEIGHT);
         setSize(frameSize);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-          
+
         // Add menubar.
         final JMenuBar menuBar = new TreetankMenuBar(this);
         setJMenuBar(menuBar);
-        
+
         // Create Panels.
         final JPanel top = new JPanel();
-        top.setLayout(new BorderLayout());       
+        top.setLayout(new BorderLayout());
         final JPanel treeText = new JPanel();
         treeText.setLayout(new GridLayout(1, 0));
-        
+
         // Create default views.
         mNotifier = new ViewNotifier(this);
         final TreeView treeView = new TreeView(mNotifier);
@@ -105,50 +115,54 @@ public final class GUI extends JFrame {
         splitPane.setRightComponent(textView);
 
         // Set sizes of components.
-        treeView.setMinimumSize(new Dimension(220, HEIGHT));
-        textView.setMinimumSize(new Dimension(800, HEIGHT));
-        splitPane.setDividerLocation(220);
-        splitPane.setPreferredSize(new Dimension(1020, HEIGHT));
+        splitPane.setDividerLocation(DIVIDER_LOCATION);
+        splitPane.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 
         // Add the split pane.
         treeText.add(splitPane);
         top.add(treeText, BorderLayout.CENTER);
-        getContentPane().add(top);;
-        
+        getContentPane().add(top);
+
         // Center the frame.
         setLocationRelativeTo(null);
-        
+
         // Size the frame.
         pack();
-        
+
         // Display the window.
         setVisible(true);
     }
-    
+
     /**
      * Execute command.
      * 
      * @param paramFile
-     *                  {@link File} to open.
+     *            {@link File} to open.
      * @param paramRevision
-     *                  Determines the revision.
+     *            Determines the revision.
      */
     public void execute(final File paramFile, final long paramRevision) {
-        if (mReadDB == null) {
-            mReadDB = new ReadDB(paramFile, paramRevision);
+        try {
+            if (mReadDB == null || !paramFile.equals(mReadDB.getDatabase().getFile())
+                || paramRevision != mReadDB.getRtx().getRevisionNumber()) {
+                mReadDB = new ReadDB(paramFile, paramRevision);
+                mNotifier.init();
+            }
+        } catch (final TreetankIOException e) {
+            LOGGER.error(e.getMessage(), e);
         }
         mNotifier.update();
     }
-    
+
     @Override
     public void dispose() {
         if (mReadDB != null) {
             mReadDB.close();
         }
-        mNotifier.init();
+        mNotifier.dispose();
         super.dispose();
     }
-    
+
     /**
      * Get the {@link ReadDB} instance.
      * 
@@ -176,7 +190,7 @@ public final class GUI extends JFrame {
                 LOGGER.error(e.getMessage(), e);
             }
         }
-        
+
         // Create GUI.
         new GUI(new GUIProp());
     }

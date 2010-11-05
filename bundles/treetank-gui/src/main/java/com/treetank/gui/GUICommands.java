@@ -91,6 +91,7 @@ public enum GUICommands implements IGUICommand {
                     final JComboBox cb = (JComboBox)paramEvent.getSource();
                     if (cb.getSelectedItem() != null) {
                         mRevNumber = (Long)cb.getSelectedItem();
+                        System.out.println(mRevNumber);
                     }
                 };
             });
@@ -102,7 +103,6 @@ public enum GUICommands implements IGUICommand {
                 @Override
                 public void propertyChange(final PropertyChangeEvent paramEvent) {
                     // Get last revision number from TT-storage.
-                    cb.removeAllItems();
                     final JFileChooser fileChooser = (JFileChooser)paramEvent.getSource();
                     final File tmpDir = fileChooser.getSelectedFile();
                     long revNumber = 0;
@@ -120,6 +120,7 @@ public enum GUICommands implements IGUICommand {
                         } catch (final TreetankException e) {
                             // Selected directory is not a Treetank storage.
                             error = true;
+                            cb.removeAllItems();
                         }
 
                         if (!error) {
