@@ -66,30 +66,22 @@ public final class StAXSerializer implements XMLEventReader {
      */
     private transient boolean mCloseElements;
 
-    /**
-     * {@inheritDoc}.
-     */
+    /** {@link XMLEvent}. */
     private transient XMLEvent mEvent;
 
-    /**
-     * XMLEventFactory to create events.
-     * 
-     * @see XMLEventFactory
-     */
+    /** {@link XMLEventFactory} to create events. */
     private transient XMLEventFactory mFac = XMLEventFactory.newFactory();
 
     /** Current node key. */
     private transient long mKey;
 
-    /**
-     * Determines if all end tags have been emitted.
-     */
+    /** Determines if all end tags have been emitted. */
     private transient boolean mCloseElementsEmitted;
 
     /** Determines if nextTag() method has been called. */
     private transient boolean mNextTag;
 
-    /** axis for iteration. */
+    /** {@link IAxis} for iteration. */
     private final transient IAxis mAxis;
 
     /** Stack for reading end element. */
@@ -113,25 +105,43 @@ public final class StAXSerializer implements XMLEventReader {
      */
     private transient long mLastKey;
 
+    /** Determines if {@link IReadTransaction} should be closed afterwards. */
+    private transient boolean mCloseRtx;
+
     /**
      * Initialize XMLStreamReader implementation with transaction. The cursor
      * points to the node the XMLStreamReader starts to read. Do not serialize
      * the tank ids.
      * 
-     * @param axis
-     *            input axis
+     * @param paramAxis
+     *            {@link IAxis} which is used to iterate over and generate StAX events.
      */
-    public StAXSerializer(final IAxis axis) {
+    public StAXSerializer(final IAxis paramAxis) {
+        this(paramAxis, true);
+    }
+
+    /**
+     * Initialize XMLStreamReader implementation with transaction. The cursor
+     * points to the node the XMLStreamReader starts to read. Do not serialize
+     * the tank ids.
+     * 
+     * @param paramAxis
+     *            {@link IAxis} which is used to iterate over and generate StAX events.
+     * @param paramCloseRtx
+     *            Determines if rtx should be closed afterwards.
+     */
+    public StAXSerializer(final IAxis paramAxis, final boolean paramCloseRtx) {
         mNextTag = false;
-        mAxis = axis;
+        mAxis = paramAxis;
+        mCloseRtx = paramCloseRtx;
         mStack = new FastStack<Long>();
     }
 
-    /** 
+    /**
      * Emit end tag.
      * 
      * @param paramRTX
-     *                  Treetank reading transaction {@link IReadTransaction}.
+     *            Treetank reading transaction {@link IReadTransaction}.
      */
     private void emitEndTag(final IReadTransaction paramRTX) {
         final long nodeKey = paramRTX.getNode().getNodeKey();
@@ -143,7 +153,7 @@ public final class StAXSerializer implements XMLEventReader {
      * Emit a node.
      * 
      * @param paramRTX
-     *                  Treetank reading transaction {@link IReadTransaction}.
+     *            Treetank reading transaction {@link IReadTransaction}.
      */
     private void emitNode(final IReadTransaction paramRTX) {
         switch (paramRTX.getNode().getKind()) {
@@ -168,10 +178,12 @@ public final class StAXSerializer implements XMLEventReader {
 
     @Override
     public void close() throws XMLStreamException {
-        try {
-            mAxis.getTransaction().close();
-        } catch (final TreetankException e) {
-            LOGWRAPPER.error(e);
+        if (mCloseRtx) {
+            try {
+                mAxis.getTransaction().close();
+            } catch (final TreetankException e) {
+                LOGWRAPPER.error(e);
+            }
         }
     }
 
