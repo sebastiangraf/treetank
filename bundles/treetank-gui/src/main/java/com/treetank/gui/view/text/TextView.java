@@ -48,7 +48,9 @@ import com.treetank.utils.LogWrapper;
 /**
  * <h1>TextView</h1>
  * 
- * <p>Basic text view.</p>
+ * <p>
+ * Basic text view.
+ * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
@@ -85,6 +87,23 @@ public final class TextView extends JScrollPane implements IView {
 
     /** Main {@link GUI} window. */
     private final GUI mGUI;
+
+    /** {@link StAXSerializer}. */
+    private transient StAXSerializer mSerializer;
+
+    /** Temporal adjustment value. */
+    private transient int mTempValue;
+
+    /** Lines changed during adjustment. */
+    private transient int mLineChanges;
+
+    /** State. */
+    private enum State {
+        INITIAL, UPDATE
+    };
+    
+    /** Temporary level after initial filling of the text area. */
+    private transient int mTempLevel;
 
     /**
      * Constructor.
@@ -123,21 +142,58 @@ public final class TextView extends JScrollPane implements IView {
         for (final AdjustmentListener listener : bar.getAdjustmentListeners()) {
             bar.removeAdjustmentListener(listener);
         }
-    }  
+    }
 
     @Override
-    public void refreshInit() { }
+    public void refreshInit() {
+        final JScrollBar vertScrollBar = getVerticalScrollBar();
+        vertScrollBar.setValue(vertScrollBar.getMinimum());
+
+        if (vertScrollBar.getAdjustmentListeners().length == 0) {
+            vertScrollBar.addAdjustmentListener(new AdjustmentListener() {
+                @Override
+                public void adjustmentValueChanged(final AdjustmentEvent paramEvt) {
+                    /*
+                     * getValueIsAdjusting() returns true if the user is currently dragging
+                     * the scrollbar's knob and has not picked a final value.
+                     */
+                    if (paramEvt.getValueIsAdjusting()) {
+                        // The user is dragging the knob.
+                        return;
+                    }
+
+                    final int lineHeight = mTextArea.getFontMetrics(mTextArea.getFont()).getHeight();
+                    final int value = paramEvt.getValue();
+                    System.out.println("VALUE: " + value);
+                    final int result = value - mTempValue;
+                    mLineChanges = result / lineHeight;
+                    System.out.println("Lines: " + mLineChanges);
+                    if (mLineChanges != 0) {
+                        StringBuilder sBuilder = new StringBuilder();
+                        try {
+                            sBuilder = processStAX(State.UPDATE);
+                        } catch (final XMLStreamException e) {
+                            LOGWRAPPER.error(e.getMessage(), e);
+                        }
+                        
+                        mTextArea.append(sBuilder.toString());
+                    }
+
+                    mTempValue = value;
+                }
+            });
+        }
+    }
 
     @Override
     public void refreshUpdate() {
         // Serialize file into XML view if it is empty.
-        final StringBuilder out = new StringBuilder();
+        StringBuilder out = new StringBuilder();
 
         // Get references.
         final ReadDB db = mGUI.getReadDB();
         final IReadTransaction rtx = db.getRtx();
         final IItem node = rtx.getNode();
-        StAXSerializer serializer = null;
 
         try {
             final long nodeKey = node.getNodeKey();
@@ -145,7 +201,7 @@ public final class TextView extends JScrollPane implements IView {
             switch (node.getKind()) {
             case ROOT_KIND:
             case ELEMENT_KIND:
-                serializer = new StAXSerializer(new DescendantAxis(rtx, true), false);
+                mSerializer = new StAXSerializer(new DescendantAxis(rtx, true), false);
                 break;
             case TEXT_KIND:
                 rtx.moveTo(nodeKey);
@@ -204,46 +260,13 @@ public final class TextView extends JScrollPane implements IView {
 
         try {
             if (out.toString().isEmpty()) {
-                processStAX(out, serializer);
+                out = processStAX(State.INITIAL);
             }
 
             mTextArea.setText(out.toString());
+            mTextArea.setCaretPosition(0);
         } catch (final XMLStreamException e) {
             LOGWRAPPER.error(e.getMessage(), e);
-        }
-
-        // text(false);
-
-        final JScrollBar vertScrollBar = getVerticalScrollBar();
-        vertScrollBar.setValue(vertScrollBar.getMinimum());
-
-        if (vertScrollBar.getAdjustmentListeners().length == 0) {
-            vertScrollBar.addAdjustmentListener(new AdjustmentListener() {
-                @Override
-                public void adjustmentValueChanged(final AdjustmentEvent paramEvt) {
-                    // /*
-                    // * getValueIsAdjusting() returns true if the user is currently dragging
-                    // * the scrollbar's knob and has not picked a final value.
-                    // */
-                    // if (paramEvt.getValueIsAdjusting()) {
-                    // // The user is dragging the knob.
-                    // return;
-                    // }
-                    //
-                    // final int lineHeight = mTextArea.getFontMetrics(mTextArea.getFont()).getHeight();
-                    // final int value = paramEvt.getValue();
-                    // System.out.println("VALUE: " + value);
-                    // final int result = value - mTempValue;
-                    // mLineChanges = result / lineHeight;
-                    // System.out.println("Lines: " + mLineChanges);
-                    // if (mLineChanges != 0) {
-                    // text(false);
-                    // }
-                    //
-                    // mTempValue = value;
-                    // mNotifier.update();
-                }
-            });
         }
 
         repaint();
@@ -252,18 +275,15 @@ public final class TextView extends JScrollPane implements IView {
     /**
      * Process StAX output.
      * 
-     * @param paramOut
-     *            {@link StringBuilder} to hold the serialized representation.
-     * @param paramSerializer
-     *            The {@link StAXSerializer}.
+     * @param paramState
+     *            {@link State} enum, which determines if an initial or update of the view occurs.
      * @return the StringBuilder instance (the serialized representation).
      * @throws XMLStreamException
      *             if any parsing exception occurs
      */
-    private StringBuilder processStAX(final StringBuilder paramOut, final StAXSerializer paramSerializer)
-        throws XMLStreamException {
-        final StAXSerializer serializer = paramSerializer;
-        final StringBuilder out = paramOut;
+    private StringBuilder processStAX(final State paramState) throws XMLStreamException {
+        assert paramState != null;
+        final StringBuilder out = new StringBuilder();
 
         final StringBuilder spaces = new StringBuilder();
         for (int i = 0; i < GUIProp.INDENT_SPACES; i++) {
@@ -271,47 +291,87 @@ public final class TextView extends JScrollPane implements IView {
         }
         final String indentSpaces = spaces.toString();
         
-        final int lineHeight = mTextArea.getFontMetrics(this.getFont()).getHeight();
-        final int frameHeight = mTextArea.getHeight();
-        
-        int level = -1;
-        long height = 0;
-        assert serializer != null;
-        while (serializer.hasNext() && height < frameHeight) {
-            final XMLEvent event = serializer.nextEvent();
-            switch (event.getEventType()) {
-            case XMLStreamConstants.START_DOCUMENT:
-                break;
-            case XMLStreamConstants.START_ELEMENT:
-                final StartElement startTag = event.asStartElement();
-                final String qName = qNameToString(startTag.getName());
-                level++;
-                indent(out, level, indentSpaces);
-                out.append("<").append(qName).append(">");
-                out.append(GUIProp.NEWLINE);
-                height += lineHeight;
-                break;
-            case XMLStreamConstants.END_ELEMENT:
-                final EndElement endTag = event.asEndElement();
-                indent(out, level, indentSpaces);
-                out.append("</").append(endTag.getName()).append(">");
-                out.append(GUIProp.NEWLINE);
-                level--;
-                height += lineHeight;
-                break;
-            case XMLStreamConstants.CHARACTERS:
-                level++;
-                indent(out, level, indentSpaces);
-                level--;
-                out.append(event.asCharacters().getData());
-                out.append(GUIProp.NEWLINE);
-                height += lineHeight;
-                break;
-            default:
-                // Empty.
+        assert mSerializer != null;
+        switch (paramState) {
+        case INITIAL:
+            // Initialize variables.
+            final int lineHeight = mTextArea.getFontMetrics(this.getFont()).getHeight();
+            final int frameHeight = mTextArea.getHeight();
+            int level = -1;
+            long height = 0;
+            while (mSerializer.hasNext() && height < frameHeight) {
+                final XMLEvent event = mSerializer.nextEvent();
+                switch (event.getEventType()) {
+                case XMLStreamConstants.START_DOCUMENT:
+                    break;
+                case XMLStreamConstants.START_ELEMENT:
+                    final StartElement startTag = event.asStartElement();
+                    final String qName = qNameToString(startTag.getName());
+                    level++;
+                    indent(out, level, indentSpaces);
+                    out.append("<").append(qName).append(">");
+                    out.append(GUIProp.NEWLINE);
+                    height += lineHeight;
+                    break;
+                case XMLStreamConstants.END_ELEMENT:
+                    final EndElement endTag = event.asEndElement();
+                    indent(out, level, indentSpaces);
+                    out.append("</").append(endTag.getName()).append(">");
+                    out.append(GUIProp.NEWLINE);
+                    level--;
+                    height += lineHeight;
+                    break;
+                case XMLStreamConstants.CHARACTERS:
+                    level++;
+                    indent(out, level, indentSpaces);
+                    level--;
+                    out.append(event.asCharacters().getData());
+                    out.append(GUIProp.NEWLINE);
+                    height += lineHeight;
+                    break;
+                default:
+                    // Empty.
+                }
             }
+            mTempLevel = level;
+            break;
+        case UPDATE:
+            for (int i = 0; mSerializer.hasNext() && i <= mLineChanges; i++) {
+                final XMLEvent event = mSerializer.nextEvent();
+                switch (event.getEventType()) {
+                case XMLStreamConstants.START_DOCUMENT:
+                    break;
+                case XMLStreamConstants.START_ELEMENT:
+                    final StartElement startTag = event.asStartElement();
+                    final String qName = qNameToString(startTag.getName());
+                    mTempLevel++;
+                    indent(out, mTempLevel, indentSpaces);
+                    out.append("<").append(qName).append(">");
+                    out.append(GUIProp.NEWLINE);
+                    break;
+                case XMLStreamConstants.END_ELEMENT:
+                    final EndElement endTag = event.asEndElement();
+                    indent(out, mTempLevel, indentSpaces);
+                    out.append("</").append(endTag.getName()).append(">");
+                    out.append(GUIProp.NEWLINE);
+                    mTempLevel--;
+                    break;
+                case XMLStreamConstants.CHARACTERS:
+                    mTempLevel++;
+                    indent(out, mTempLevel, indentSpaces);
+                    mTempLevel--;
+                    out.append(event.asCharacters().getData());
+                    out.append(GUIProp.NEWLINE);
+                    break;
+                default:
+                    // Empty.
+                }
+            }
+            break;
+        default:
+            // Do nothing.
         }
-        
+
         return out;
     }
 
@@ -333,16 +393,16 @@ public final class TextView extends JScrollPane implements IView {
 
         return retVal;
     }
-    
+
     /**
      * Indent serialized output.
      * 
      * @param paramOut
-     *                  {@link StringBuilder} to hold spaces.
+     *            {@link StringBuilder} to hold spaces.
      * @param paramLevel
-     *                  Current level in the tree.
+     *            Current level in the tree.
      * @param paramIndentSpaces
-     *                  Determines how many spaces to indent at every level.
+     *            Determines how many spaces to indent at every level.
      */
     private void indent(final StringBuilder paramOut, final int paramLevel, final String paramIndentSpaces) {
         for (int i = 0; i < paramLevel; i++) {
