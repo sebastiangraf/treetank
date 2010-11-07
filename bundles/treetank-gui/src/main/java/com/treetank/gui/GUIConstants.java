@@ -16,9 +16,9 @@
  */
 package com.treetank.gui;
 
-import static com.treetank.gui.GUICommands.*;
-
 import java.awt.Color;
+
+import static com.treetank.gui.GUICommands.*;
 
 /**
  * <h1>GUIConstants</h1>
@@ -46,6 +46,12 @@ public final class GUIConstants {
     
     /** Text color. */
     public static final Color TEXT_COLOR = Color.BLACK;
+    
+    
+    // OTHER ===================================================================
+    
+    /** Newline string representation. */
+    public static final String NEWLINE = System.getProperty("line.separator");
   
     // MENU =====================================================================
 
@@ -70,7 +76,7 @@ public final class GUIConstants {
         {
             OPEN, SHREDDER, SHREDDER_UPDATE, SERIALIZE, QUIT
         }, {
-            TREE, TEXT, TREEMAP
+            TREE, TEXT, TREEMAP, SUNBURST
         }
     };
     

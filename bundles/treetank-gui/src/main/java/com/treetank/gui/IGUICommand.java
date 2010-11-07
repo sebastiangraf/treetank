@@ -16,8 +16,6 @@
  */
 package com.treetank.gui;
 
-import java.awt.event.ActionEvent;
-
 /**
  * <h1>IGUICommand</h1>
  * 
@@ -26,16 +24,14 @@ import java.awt.event.ActionEvent;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public interface IGUICommand {
+interface IGUICommand {
     /**
      * Invokes a command.
      * 
-     * @param paramE
-     *            The action event.
      * @param paramGUI
      *            Main GUI frame.
      */
-    void execute(final ActionEvent paramE, final GUI paramGUI);
+    void execute(final GUI paramGUI);
 
     /**
      * Description of the command.

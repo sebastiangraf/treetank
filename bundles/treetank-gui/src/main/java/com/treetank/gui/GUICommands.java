@@ -68,7 +68,7 @@ public enum GUICommands implements IGUICommand {
         private long mRevNumber;
 
         @Override
-        public void execute(final ActionEvent paramE, final GUI paramGUI) {
+        public void execute(final GUI paramGUI) {
             // Create a file chooser.
             final JFileChooser fc = new JFileChooser();
             fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -145,7 +145,7 @@ public enum GUICommands implements IGUICommand {
      */
     SHREDDER("Shredder XML-document", false) {
         @Override
-        public void execute(final ActionEvent paramE, final GUI paramGUI) {
+        public void execute(final GUI paramGUI) {
             shredder(paramGUI, false);
         }
     },
@@ -155,7 +155,7 @@ public enum GUICommands implements IGUICommand {
      */
     SHREDDER_UPDATE("Update shreddered file", false) {
         @Override
-        public void execute(final ActionEvent paramE, final GUI paramGUI) {
+        public void execute(final GUI paramGUI) {
             shredder(paramGUI, true);
         }
     },
@@ -165,7 +165,7 @@ public enum GUICommands implements IGUICommand {
      */
     SERIALIZE("Serialize", false) {
         @Override
-        public void execute(final ActionEvent paramE, final GUI paramGUI) {
+        public void execute(final GUI paramGUI) {
             // Create a file chooser.
             final JFileChooser fc = new JFileChooser();
             fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -206,7 +206,7 @@ public enum GUICommands implements IGUICommand {
      */
     QUIT("Quit", false) {
         @Override
-        public void execute(final ActionEvent paramE, final GUI paramGUI) {
+        public void execute(final GUI paramGUI) {
             paramGUI.dispose();
         }
     },
@@ -216,8 +216,8 @@ public enum GUICommands implements IGUICommand {
      */
     TREE("Tree", true) {
         @Override
-        public void execute(final ActionEvent paramE, final GUI paramGUI) {
-            GUIProp.EShowViews.SHOWTREE.setValue(true);
+        public void execute(final GUI paramGUI) {
+            GUIProp.EShowViews.SHOWTREE.invert();
         }
     },
 
@@ -226,8 +226,8 @@ public enum GUICommands implements IGUICommand {
      */
     TEXT("Text", true) {
         @Override
-        public void execute(final ActionEvent paramE, final GUI paramGUI) {
-            GUIProp.EShowViews.SHOWTEXT.setValue(true);
+        public void execute(final GUI paramGUI) {
+            GUIProp.EShowViews.SHOWTEXT.invert();
         }
     },
 
@@ -236,8 +236,8 @@ public enum GUICommands implements IGUICommand {
      */
     TREEMAP("Treemap", true) {
         @Override
-        public void execute(final ActionEvent paramE, final GUI paramGUI) {
-            GUIProp.EShowViews.SHOWTREE.setValue(true);
+        public void execute(final GUI paramGUI) {
+            GUIProp.EShowViews.SHOWTREE.invert();
         }
     },
     
@@ -246,8 +246,8 @@ public enum GUICommands implements IGUICommand {
      */
     SUNBURST("Sunburst", true) {
         @Override
-        public void execute(final ActionEvent paramE, final GUI paramGUI) {
-            GUIProp.EShowViews.SHOWSUNBURST.setValue(true);
+        public void execute(final GUI paramGUI) {
+            GUIProp.EShowViews.SHOWSUNBURST.invert();
         }
     };
 

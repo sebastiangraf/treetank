@@ -29,8 +29,8 @@ import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.gui.GUI;
 import com.treetank.gui.GUIProp;
-import com.treetank.gui.IView;
 import com.treetank.gui.ReadDB;
+import com.treetank.gui.view.IView;
 import com.treetank.gui.view.ViewNotifier;
 
 /**

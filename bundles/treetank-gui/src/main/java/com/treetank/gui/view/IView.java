@@ -14,7 +14,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
  */
-package com.treetank.gui;
+package com.treetank.gui.view;
 
 /**
  * <h1>IView</h1>

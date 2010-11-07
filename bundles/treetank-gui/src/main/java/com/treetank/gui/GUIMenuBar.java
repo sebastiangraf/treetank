@@ -18,6 +18,8 @@ package com.treetank.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
@@ -34,7 +36,7 @@ import static com.treetank.gui.GUIConstants.*;
  * @author Johannes Lichtenberger, University of Konstanz.
  */
 @SuppressWarnings("serial")
-public final class TreetankMenuBar extends JMenuBar {
+public final class GUIMenuBar extends JMenuBar {
 
     /**
      * Constructor.
@@ -42,7 +44,7 @@ public final class TreetankMenuBar extends JMenuBar {
      * @param paramGUI
      *            Main GUI frame.
      */
-    public TreetankMenuBar(final GUI paramGUI) {
+    public GUIMenuBar(final GUI paramGUI) {
         // Loop through all menu entries
         for (int i = 0; i < MENUBAR.length; i++) {
             final JMenu menu = new JMenu(MENUBAR[i]);
@@ -50,13 +52,15 @@ public final class TreetankMenuBar extends JMenuBar {
 
             for (int j = 0; j < MENUITEMS[i].length; j++) {
                 final IGUICommand cmd = (IGUICommand)MENUITEMS[i][j];
-                final JMenuItem item = cmd.checked() ?
-                    new JCheckBoxMenuItem(cmd.desc()) : new JMenuItem(cmd.desc());
+                final JMenuItem item =
+                    cmd.checked() ? new JCheckBoxMenuItem(cmd.desc()) : new JMenuItem(cmd.desc());
                 item.addActionListener(new ActionListener() {
-                    public void actionPerformed(final ActionEvent paramE) {
-                        cmd.execute(paramE, paramGUI);
+                    @Override
+                    public void actionPerformed(final ActionEvent paramEvent) {
+                        cmd.execute(paramGUI);
                     }
                 });
+                
                 item.setMnemonic(cmd.desc().charAt(0));
                 menu.add(item);
             }

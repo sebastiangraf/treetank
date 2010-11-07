@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.treetank.gui.GUI;
-import com.treetank.gui.IView;
 
 /**
  * <h1>ViewNotifier</h1>

@@ -19,44 +19,40 @@ package com.treetank.gui.view.sunburst;
 import java.util.List;
 
 import com.treetank.api.IItem;
-import com.treetank.node.AbsNode;
 
 import processing.core.PApplet;
 
 /**
  * <h1>SunburstItem</h1>
  * 
- * <p>
- * Represents the view and exactly one item in the Sunburst diagram. Note that this class is not immutable
- * (notably because AbsStructNodes and all subclasses can be modified), but since it's package private it
- * should be used in a convenient way.
- * </p>
+ * <p>Represents the view and exactly one item in the Sunburst diagram. Note that this class is not immutable
+ * (notably because {@link AbsNodes} and all subclasses can be modified), but since it's package private it
+ * should be used in a convenient way.</p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
 final class SunburstItem {
     // Relations.
-    /** Node depth in the tree. */
-    private int mDepth;
-    
-    /** Index of current node. */
-    private int mIndex;
-    
     /** Index to parent node. */
-    private int mIndexToParent;
-    
-    /** Number of child nodes of the current node. */
-    private long mChildCount;
+    private final int mIndexToParent;
 
-    // Arc and lines drawing vars.
+    /** Number of child nodes of the current node. */
+    private final long mChildCount;
+
+    // Arc and lines drawing vars. ===========================
     private int mCol;
     private int mLineCol;
     private float mLineWeight;
-    private float mAngleStart;
-    private float mAngleCenter;
-    private float mAngleEnd;
-    private float mExtension;
+
+    /** The start degree. */
+    private final float mAngleStart;
+
+    /** The extension of the angle. */
+    private final float mExtension;
+    private final float mAngleCenter;
+    private final float mAngleEnd;
+
     private float mRadius;
     private float mDepthWeight; // stroke weight of the arc
     private float mX;
@@ -67,20 +63,26 @@ final class SunburstItem {
     private float mC2X;
     private float mC2Y; // bezier controlpoints
 
+    /** Current {@link IItem} in Treetank. */
+    private final IItem mNode;
+    
+    /** Depth in the tree. */
+    private final int mDepth;
+
+    /** Minimum child count of leaf nodes. */
+    private final long mMinChildCount;
+
+    /** Maximum child count of leaf nodes. */
+    private final long mMaxChildCount;
+
     /** Determines if current node is a leaf node. */
-    private boolean mIsLeaf;
+    private transient boolean mIsLeaf;
 
     /** Singleton {@link SunburstGUI} instance. */
     private transient SunburstGUI mGUI;
 
-    /** {@link IItem}. */
-    private final IItem mNode;
-
     /** {@link PApplet} representing the core processing library. */
     private final PApplet mParent;
-
-    /** {@link List} of {@link SunburstItem}s. */
-    private final List<SunburstItem> mItems;
 
     /** SunburstController. */
     private final SunburstController<? extends AbsModel, ? extends AbsView> mController;
@@ -90,13 +92,10 @@ final class SunburstItem {
         /** {@link PApplet} representing the core processing library. */
         private final PApplet mParent;
 
-        /** {@link List} of {@link SunburstItem}s. */
-        private final List<SunburstItem> mItems;
-
         /** SunburstController. */
         private final SunburstController<? extends AbsModel, ? extends AbsView> mController;
 
-        /** {@link IItem}. */
+        /** Current {@link IItem} in Treetank. */
         private final IItem mNode;
 
         /** Determines if the current node is a leaf node. */
@@ -105,6 +104,24 @@ final class SunburstItem {
         /** Determines how many children the current node has. */
         private final long mChildCount;
 
+        /** The start degree. */
+        private final float mAngleStart;
+
+        /** The extension of the angle. */
+        private final float mExtension;
+
+        /** Minimum child count of leaf nodes. */
+        private final long mMinChildCount;
+
+        /** Maximum child count of leaf nodes. */
+        private final long mMaxChildCount;
+        
+        /** Depth in the tree. */
+        private final int mDepth;
+        
+        /** Index to parent node/SunburstItem. */
+        private final int mIndexToParent;
+
         /**
          * Constructor.
          * 
@@ -112,23 +129,39 @@ final class SunburstItem {
          *            The processing core library @see PApplet.
          * @param paramController
          *            {@link SunburstController}.
-         * @param paramItem
-         *            A Treetank {@link AbsNode}, which should be represented by this sunburst item.
+         * @param paramNode
+         *            {@link IItem} in Treetank, which belongs to this {@link SunburstItem}.
+         * @param paramDepth
+         *            Depth in the tree.
          * @param paramIsLeaf
          *            Determines if the current node is a leaf node.
          * @param paramchildCount
          *            Determines how many children the current node has.
+         * @param paramAngleStart
+         *            The start degree.
+         * @param paramExtension
+         *            The extension of the angle.
+         * @param paramMinChildCount
+         *            Minimum child count of current child nodes.
+         * @param paramMaxChildCount
+         *            Maximum child count of current child nodes.
          */
-        @SuppressWarnings("unchecked")
         public Builder(final PApplet paramApplet,
             final SunburstController<? extends AbsModel, ? extends AbsView> paramController,
-            final IItem paramItem, final boolean paramIsLeaf, final long paramchildCount) {
+            final IItem paramNode, final int paramDepth, final boolean paramIsLeaf, final long paramchildCount,
+            final float paramAngleStart, final float paramExtension, final long paramMinChildCount,
+            final long paramMaxChildCount, final int paramIndexToParent) {
             mParent = paramApplet;
             mController = paramController;
-            mItems = (List<SunburstItem>)paramController.get("Items");
-            mNode = paramItem;
+            mNode = paramNode;
+            mDepth = paramDepth;
             mIsLeaf = paramIsLeaf;
             mChildCount = paramchildCount;
+            mAngleStart = paramAngleStart;
+            mExtension = paramExtension;
+            mMinChildCount = paramMinChildCount;
+            mMaxChildCount = paramMaxChildCount;
+            mIndexToParent = paramIndexToParent;
         }
 
         /**
@@ -149,16 +182,30 @@ final class SunburstItem {
      */
     private SunburstItem(final Builder paramBuilder) {
         mGUI = SunburstGUI.createGUI(paramBuilder.mParent, paramBuilder.mController);
+        mNode = paramBuilder.mNode;
         mParent = paramBuilder.mParent;
         mController = paramBuilder.mController;
-        mItems = paramBuilder.mItems;
-        mNode = paramBuilder.mNode;
         mIsLeaf = paramBuilder.mIsLeaf;
         mChildCount = paramBuilder.mChildCount;
+        mMinChildCount = paramBuilder.mMinChildCount;
+        mMaxChildCount = paramBuilder.mMaxChildCount;
+        mAngleStart = paramBuilder.mAngleStart;
+        mExtension = paramBuilder.mExtension;
+        mAngleCenter = mAngleStart + mExtension / 2;
+        mAngleEnd = mAngleStart + mExtension;
+        mIndexToParent = paramBuilder.mIndexToParent;
+        mDepth = paramBuilder.mDepth;
     }
 
-    // ------ update function, called only when the input files are changed ------
-    void update(int theMappingMode) {
+    /**
+     * Update item, called only when the Treetank storage has changed.
+     * 
+     * @param paramMappingMode
+     *            Specifies the mapping mode (currently only 1 is permitted).
+     */
+    void update(final int paramMappingMode) {
+        assert paramMappingMode == 1;
+        
         if (mIndexToParent > -1) {
             final int depthMax = (Integer)mController.get("DepthMax");
             mRadius = calcEqualAreaRadius(mDepth, depthMax);
@@ -175,16 +222,10 @@ final class SunburstItem {
 
             // color mapings
             float percent = 0;
-            switch (theMappingMode) {
+            switch (paramMappingMode) {
             case 1:
-                // percent = norm(lastModified, lastModifiedOldest, lastModifiedYoungest);
-                // break;
-                // case 2:
-                // percent = norm(fileSize, fileSizeMin, fileSizeMax);
-                // break;
-                // case 3:
-                // percent = norm(fileSize, folderMinFilesize, folderMaxFilesize);
-                // break;
+                percent = PApplet.norm(mChildCount, mMinChildCount, mMaxChildCount);
+                break;
             default:
             }
 
@@ -219,15 +260,34 @@ final class SunburstItem {
             mC1X = PApplet.cos(mAngleCenter) * calcEqualAreaRadius(mDepth - 1, depthMax);
             mC1Y = PApplet.sin(mAngleCenter) * calcEqualAreaRadius(mDepth - 1, depthMax);
 
-            mC2X = PApplet.cos(mItems.get(mIndexToParent).mAngleCenter);
+            final List<SunburstItem> items = getItems();
+            mC2X = PApplet.cos(items.get(mIndexToParent).mAngleCenter);
             mC2X *= calcEqualAreaRadius(mDepth, depthMax);
 
-            mC2Y = PApplet.sin(mItems.get(mIndexToParent).mAngleCenter);
+            mC2Y = PApplet.sin(items.get(mIndexToParent).mAngleCenter);
             mC2Y *= calcEqualAreaRadius(mDepth, depthMax);
         }
     }
+    
+    /**
+     * Get sunburst items.
+     * 
+     * @return {@link List} of {@link SunburstItem}s.
+     */
+    @SuppressWarnings("unchecked")
+    private List<SunburstItem> getItems() {
+        return (List<SunburstItem>)mController.get("Items");
+    }
 
-    // ------ draw functions ------
+    // Draw methods ====================================
+    /**
+     * Draw an arc.
+     * 
+     * @param paramInnerNodeScale
+     *            Scale of inner nodes.
+     * @param paramLeafScale
+     *            Scale of leaf nodes.
+     */
     void drawArc(final float paramInnerNodeScale, final float paramLeafScale) {
         float arcRadius;
         if (mDepth > 0) {
@@ -245,9 +305,17 @@ final class SunburstItem {
         }
     }
 
-    // fix for arc
-    // it seems that the arc functions has a problem with very tiny angles ...
-    // arcWrap is a quick hack to get rid of this problem
+    /** 
+     * Fix for arc it seems that the arc functions has a problem with very tiny angles ...
+     * arcWrap is a quick hack to get rid of this problem.
+     * 
+     * @param paramX
+     * @param paramY
+     * @param paramW
+     * @param paramH
+     * @param paramA1
+     * @param paramA2
+     */
     void arcWrap(final float paramX, final float paramY, final float paramW, final float paramH,
         final float paramA1, final float paramA2) {
         if (mArcLength > 2.5) {
@@ -299,7 +367,7 @@ final class SunburstItem {
                 diameter = mArcLength * 0.95f;
             }
             if (mDepth == 0) {
-                diameter = 3;
+                diameter = 3f;
             }
             mParent.fill(0, 0, mGUI.getDotBrightness());
             mParent.noStroke();
@@ -315,7 +383,8 @@ final class SunburstItem {
         if (mDepth > 0) {
             mParent.stroke(mLineCol);
             mParent.strokeWeight(mLineWeight);
-            mParent.line(mX, mY, mItems.get(mIndexToParent).mX, mItems.get(mIndexToParent).mY);
+            final List<SunburstItem> items = getItems();
+            mParent.line(mX, mY, items.get(mIndexToParent).mX, items.get(mIndexToParent).mY);
         }
     }
 
@@ -326,7 +395,8 @@ final class SunburstItem {
         if (mDepth > 1) {
             mParent.stroke(mLineCol);
             mParent.strokeWeight(mLineWeight);
-            mParent.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, mItems.get(mIndexToParent).mX, mItems
+            final List<SunburstItem> items = getItems();
+            mParent.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, items.get(mIndexToParent).mX, items
                 .get(mIndexToParent).mY);
         }
     }
@@ -357,7 +427,7 @@ final class SunburstItem {
         return PApplet.map(paramDepth, 0, paramDepthMax + 1, 0, mParent.height / 2);
     }
 
-    // -------- Getter -------
+    // Getter ==========================================
     /**
      * @return the angleStart.
      */

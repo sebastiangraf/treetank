@@ -43,19 +43,16 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.gui.GUI;
 import com.treetank.gui.GUIProp;
-import com.treetank.gui.IView;
 import com.treetank.gui.ReadDB;
+import com.treetank.gui.view.IView;
 import com.treetank.gui.view.ViewNotifier;
 import com.treetank.node.ElementNode;
 import com.treetank.service.xml.serialize.StAXSerializer;
 import com.treetank.utils.LogWrapper;
 
-import org.slf4j.LoggerFactory;
+import static com.treetank.gui.GUIConstants.*;
 
-import static com.treetank.gui.GUIConstants.ATTRIBUTE_COLOR;
-import static com.treetank.gui.GUIConstants.ELEMENT_COLOR;
-import static com.treetank.gui.GUIConstants.NAMESPACE_COLOR;
-import static com.treetank.gui.GUIConstants.TEXT_COLOR;
+import org.slf4j.LoggerFactory;
 
 /**
  * <h1>TextView</h1>
@@ -106,14 +103,22 @@ public final class TextView extends JScrollPane implements IView {
     /** Lines changed during adjustment. */
     private transient int mLineChanges;
 
-    /** State. */
+    /** State to serialize data. */
     private enum State {
-        INITIAL, UPDATE
+        /** Initial state. */
+        INITIAL, 
+        
+        /** Update state. */
+        UPDATE,
     };
 
     /** Determines if a node has children or not. */
     private enum Child {
-        NOCHILD, CHILD
+        /** Node has no children. */
+        NOCHILD, 
+        
+        /** Node has children. */
+        CHILD,
     }
 
     /** Temporary level after initial filling of the text area. */
@@ -127,9 +132,9 @@ public final class TextView extends JScrollPane implements IView {
      */
     public TextView(final ViewNotifier paramNotifier) {
         mNotifier = paramNotifier;
+        mNotifier.add(this);
         mGUI = paramNotifier.getGUI();
 
-        mNotifier.add(this);
 
         // Setup text field.
         mText.setEditable(false);
@@ -204,24 +209,21 @@ public final class TextView extends JScrollPane implements IView {
         final IReadTransaction rtx = db.getRtx();
         final IItem node = rtx.getNode();
 
-        final boolean insert = processNode(rtx, node);
-
-        try {
-            if (insert) {
-                processStAX(State.INITIAL);
-            }
-
-            mText.setCaretPosition(0);
-        } catch (final XMLStreamException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        } catch (final BadLocationException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        }
-
+        serialize(rtx, node);
+        mText.setCaretPosition(0);
+      
         repaint();
     }
 
-    private boolean processNode(final IReadTransaction paramRtx, final IItem paramNode) {
+    /**
+     * Serialize a tree.
+     * 
+     * @param paramRtx
+     *            Treetank {@link IReadTransaction}.
+     * @param paramNode
+     *            Treetank {@link IItem}.
+     */
+    private void serialize(final IReadTransaction paramRtx, final IItem paramNode) {
         assert paramRtx != null && paramNode != null;
         final IReadTransaction rtx = paramRtx;
         final IItem node = paramNode;
@@ -307,11 +309,15 @@ public final class TextView extends JScrollPane implements IView {
             default:
                 throw new IllegalStateException("Node kind not known!");
             }
+            
+            if (insert) {
+                processStAX(State.INITIAL);
+            }
         } catch (final BadLocationException e) {
             LOGWRAPPER.error(e.getMessage(), e);
+        } catch (final XMLStreamException e) {
+            LOGWRAPPER.error(e.getMessage(), e);
         }
-
-        return insert;
     }
 
     /**
@@ -327,8 +333,10 @@ public final class TextView extends JScrollPane implements IView {
     private void processStAX(final State paramState) throws XMLStreamException, BadLocationException {
         assert paramState != null;
 
+        final GUIProp prop = new GUIProp();
+        final int indent = prop.getIndentSpaces();
         final StringBuilder spaces = new StringBuilder();
-        for (int i = 0; i < GUIProp.INDENT_SPACES; i++) {
+        for (int i = 0; i < indent; i++) {
             spaces.append(" ");
         }
         final String indentSpaces = spaces.toString();
@@ -373,7 +381,7 @@ public final class TextView extends JScrollPane implements IView {
                         final EndElement endTag = event.asEndElement();
                         indent(doc, level, indentSpaces);
                         doc.insertString(doc.getLength(), new StringBuilder().append("</").append(
-                            qNameToString(endTag.getName())).append(">").append(GUIProp.NEWLINE).toString(),
+                            qNameToString(endTag.getName())).append(">").append(NEWLINE).toString(),
                             styleElements);
                     }
                     level--;
@@ -382,7 +390,7 @@ public final class TextView extends JScrollPane implements IView {
                     level++;
                     indent(doc, level, indentSpaces);
                     level--;
-                    doc.insertString(doc.getLength(), event.asCharacters().getData() + GUIProp.NEWLINE,
+                    doc.insertString(doc.getLength(), event.asCharacters().getData() + NEWLINE,
                         styleText);
                     height += lineHeight;
                     break;
@@ -416,7 +424,7 @@ public final class TextView extends JScrollPane implements IView {
                         final EndElement endTag = event.asEndElement();
                         indent(doc, mTempLevel, indentSpaces);
                         doc.insertString(doc.getLength(), new StringBuilder().append("</").append(
-                            qNameToString(endTag.getName())).append(">").append(GUIProp.NEWLINE).toString(),
+                            qNameToString(endTag.getName())).append(">").append(NEWLINE).toString(),
                             styleElements);
                     }
                     mTempLevel--;
@@ -425,7 +433,7 @@ public final class TextView extends JScrollPane implements IView {
                     mTempLevel++;
                     indent(doc, mTempLevel, indentSpaces);
                     mTempLevel--;
-                    doc.insertString(doc.getLength(), event.asCharacters().getData() + GUIProp.NEWLINE,
+                    doc.insertString(doc.getLength(), event.asCharacters().getData() + NEWLINE,
                         styleText);
                     break;
                 default:
@@ -520,10 +528,10 @@ public final class TextView extends JScrollPane implements IView {
 
             switch (paramHasChild) {
             case CHILD:
-                paramDoc.insertString(paramDoc.getLength(), ">" + GUIProp.NEWLINE, styleElements);
+                paramDoc.insertString(paramDoc.getLength(), ">" + NEWLINE, styleElements);
                 break;
             case NOCHILD:
-                paramDoc.insertString(paramDoc.getLength(), "/>" + GUIProp.NEWLINE, styleElements);
+                paramDoc.insertString(paramDoc.getLength(), "/>" + NEWLINE, styleElements);
                 break;
             default:
                 break;

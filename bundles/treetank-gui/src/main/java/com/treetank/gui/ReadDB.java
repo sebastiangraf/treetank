@@ -30,7 +30,9 @@ import org.slf4j.LoggerFactory;
 /**
  * <h1>ReadDB</h1>
  * 
- * <p>Provides access to a Treetank storage.</p>
+ * <p>
+ * Provides access to a Treetank storage.
+ * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
@@ -87,13 +89,13 @@ public final class ReadDB {
 
             if (mRtx == null || mRtx.isClosed()) {
                 mRtx = mDatabase.getSession().beginReadTransaction(paramRevision);
-             }
+            }
             mRtx.moveTo(paramNodekeyToStart);
         } catch (final TreetankException e) {
             LOGWRAPPER.error("TreetankException: " + e.getMessage(), e);
         }
     }
-    
+
     /**
      * Get the {@link IDatabase} instance.
      * 
@@ -102,7 +104,7 @@ public final class ReadDB {
     public IDatabase getDatabase() {
         return mDatabase;
     }
-    
+
     /**
      * Get the {@link ISession} instance.
      * 
@@ -111,7 +113,7 @@ public final class ReadDB {
     public ISession getSession() {
         return mSession;
     }
-    
+
     /**
      * Get the {@link IReadTransaction} instance.
      * 
