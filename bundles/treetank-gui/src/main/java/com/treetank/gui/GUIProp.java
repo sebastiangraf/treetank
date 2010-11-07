@@ -28,61 +28,79 @@ public final class GUIProp {
     /** Show views enum. */
     public enum EShowViews {
         /** Show tree view. */
-        SHOWTREE(true), 
-        
+        SHOWTREE(true),
+
         /** Show text view. */
-        SHOWTEXT(true), 
-        
+        SHOWTEXT(true),
+
         /** Show treemap view. */
         SHOWTREEMAP(false),
-        
+
         /** Show sunburst view. */
         SHOWSUNBURST(false);
 
         /** Determines if view should be shown. */
         private boolean mShow;
-        
+
         /**
          * Constructor.
          * 
          * @param paramShow
-         *             determines if view should be shown
+         *            determines if view should be shown
          */
         EShowViews(final boolean paramShow) {
             mShow = paramShow;
         }
-        
+
         /**
-         * Set show value.
-         * 
-         * @param paramShow
-         *             determines if view should be shown
-         * @return 
+         * Invert show value.
          */
-        public void setValue(final boolean paramShow) {
-            mShow = paramShow;
+        public void invert() {
+            if (mShow) {
+                mShow = false;
+            } else {
+                mShow = true;
+            }
         }
-        
-        /** 
-         * Get show value. 
+
+        /**
+         * Get show value.
          * 
-         * @return the show value. 
+         * @return the show value.
          */
         public boolean getValue() {
             return mShow;
         }
     }
-    
+
     /** Indent spaces. */
-    public static final int INDENT_SPACES = 2;
-    
-    /** Newline string representation. */
-    public static final String NEWLINE = System.getProperty("line.separator");
+    private transient int mIndentSpaces = 2;
 
     /**
      * Constructor.
      */
-    GUIProp() {
+    public GUIProp() {
 
+    }
+    
+    // ACCESSORS ==============================================
+
+    /**
+     * Set how many spaces should be used per level to indent.
+     * 
+     * @param paramIndentSpaces
+     *            Spaces to indent.
+     */
+    public void setIndentSpaces(final int paramIndentSpaces) {
+        mIndentSpaces = paramIndentSpaces;
+    }
+    
+    /** 
+     * Get spaces to indent.
+     * 
+     * @return spaces to indent.
+     */
+    public int getIndentSpaces() {
+        return mIndentSpaces;
     }
 }

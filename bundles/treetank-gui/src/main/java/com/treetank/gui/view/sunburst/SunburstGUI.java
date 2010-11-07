@@ -34,9 +34,7 @@ import controlP5.Toggle;
 /**
  * <h1>SunburstGUI</h1>
  * 
- * <p>
- * GUI for the Sunburst view.
- * </p>
+ * <p>Internal Sunburst view GUI.</p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
@@ -81,13 +79,13 @@ final class SunburstGUI extends AbsView {
     /** Inner node stroke brightness end value. */
     private transient float mInnerNodeStrokeBrightnessEnd = 90;
 
-    private transient float mLeafArcScale = 1.0F;
-    private transient float mInnerNodeArcScale = 0.2F;
-    private transient float mStrokeWeightStart = 0.5F;
-    private transient float mStrokeWeightEnd = 1.0F;
-    private transient float mDotSize = 3;
-    private transient float mDotBrightness = 1;
-    private transient float mBackgroundBrightness = 100;
+    private transient float mLeafArcScale = 1.0f;
+    private transient float mInnerNodeArcScale = 0.2f;
+    private transient float mStrokeWeightStart = 0.5f;
+    private transient float mStrokeWeightEnd = 1.0f;
+    private transient float mDotSize = 3f;
+    private transient float mDotBrightness = 1f;
+    private transient float mBackgroundBrightness = 100f;
 
     private transient int mMappingMode = 1;
     private transient boolean mUseArc = true;
@@ -109,9 +107,6 @@ final class SunburstGUI extends AbsView {
     /** {@link PFont}. */
     private transient PFont mFont;
 
-    /** {@link List} of {@link SunburstItem}s which represent segments in the circle and one node. */
-    private final List<SunburstItem> mItems;
-
     /**
      * Constructor.
      * 
@@ -125,7 +120,6 @@ final class SunburstGUI extends AbsView {
         final SunburstController<? extends AbsModel, ? extends AbsView> paramController) {
         mParent = paramParentApplet;
         mController = paramController;
-        mItems = (List<SunburstItem>)paramController.get("Items");
         final int activeColor = mParent.color(0, 130, 164);
         mControlP5 = new ControlP5(mParent);
         // controlP5.setAutoDraw(false);
@@ -172,8 +166,8 @@ final class SunburstGUI extends AbsView {
                 15);
         posY += 50;
 
-        mSliders[si++] = mControlP5.addSlider("folderArcScale", 0, 1, left, top + posY + 0, len, 15);
-        mSliders[si++] = mControlP5.addSlider("fileArcScale", 0, 1, left, top + posY + 20, len, 15);
+        mSliders[si++] = mControlP5.addSlider("inndeNodeArcScale", 0, 1, left, top + posY + 0, len, 15);
+        mSliders[si++] = mControlP5.addSlider("leafNodeArcScale", 0, 1, left, top + posY + 20, len, 15);
         posY += 50;
 
         mRanges[ri++] =
@@ -238,7 +232,7 @@ final class SunburstGUI extends AbsView {
      *            The controller.
      * @return a GUI singleton.
      */
-    protected static final SunburstGUI createGUI(final PApplet paramParentApplet,
+    static SunburstGUI createGUI(final PApplet paramParentApplet,
         final SunburstController<? extends AbsModel, ? extends AbsView> paramController) {
         if (mGUI == null) {
             mGUI = new SunburstGUI(paramParentApplet, paramController);
@@ -246,12 +240,14 @@ final class SunburstGUI extends AbsView {
         return mGUI;
     }
 
+    
     void drawGUI() {
         mControlP5.show();
         mControlP5.draw();
     }
 
     // called on every change of the gui
+    @SuppressWarnings("unchecked")
     void controlEvent(final ControlEvent paramControlEvent) {
         // println("got a control event from controller with id "+theControlEvent.controller().id());
         if (paramControlEvent.controller().name().equals("leaf node hue range")) {
@@ -284,14 +280,16 @@ final class SunburstGUI extends AbsView {
             mStrokeWeightStart = f[0];
             mStrokeWeightEnd = f[1];
         }
+        
+        final List<SunburstItem> items = (List<SunburstItem>)mController.get("Items");
 
-        for (final SunburstItem item : mItems) {
+        for (final SunburstItem item : items) {
             item.update(mMappingMode);
         }
     }
 
     /** Initial setup of the GUI. */
-    public final void setupGUI() {
+    void setupGUI() {
         mParent.colorMode(PConstants.HSB, 360, 100, 100);
         mFont = mParent.createFont("Arial", 14);
         mParent.textFont(mFont, 12);
@@ -300,7 +298,8 @@ final class SunburstGUI extends AbsView {
         mParent.cursor(PConstants.CROSS);
     }
 
-    public void draw() {
+    @SuppressWarnings("unchecked")
+    void draw() {
         if (mSavePDF) {
             PApplet.println("\n" + "saving to pdf – starting");
             mParent.beginRecord(PConstants.PDF, timestamp() + ".pdf");
@@ -333,12 +332,13 @@ final class SunburstGUI extends AbsView {
         }
         // Calc mouse depth with mouse radius ... transformation of calcEqualAreaRadius()
         final int mDepth =
-            PApplet.floor(PApplet.pow(mRadius, 2) * ((Integer)mController.get("DepthMax") + 1)
+            PApplet.floor(PApplet.pow(mRadius, 2) * (((Integer)mController.get("DepthMax")) + 1)
                 / PApplet.pow(mParent.height * 0.5f, 2));
 
         // Draw the vizualization items.
         int index = 0;
-        for (final SunburstItem item : mItems) {
+        final List<SunburstItem> items = (List<SunburstItem>)mController.get("Items");
+        for (final SunburstItem item : items) {
             // Draw arcs or rects.
             if (mShowArcs) {
                 if (mUseArc) {
@@ -382,7 +382,7 @@ final class SunburstGUI extends AbsView {
             // Rollover text.
             if (hitTestIndex != -1) {
                 // TODO
-                final String tex = mItems.get(hitTestIndex).toString();
+                final String tex = Integer.toString(items.get(hitTestIndex).getDepth());
                 final float texW = mParent.textWidth(tex) * 1.2f;
                 mParent.fill(0, 0, 0);
                 final int offset = 5;
@@ -408,6 +408,7 @@ final class SunburstGUI extends AbsView {
      * 
      * @see controlP5.PAppletWindow#keyReleased().
      */
+    @SuppressWarnings("unchecked")
     void keyReleased() {
         switch (mParent.key) {
         case 's':
@@ -420,15 +421,12 @@ final class SunburstGUI extends AbsView {
             break;
         case 'o':
         case 'O':
-            // setInputFolder(selectFolder("please select a folder"));
             break;
         case '1':
             mMappingMode = 1;
-            mParent.frame.setTitle("last modified: old / young files, global");
             break;
         case '2':
             mMappingMode = 2;
-
             break;
         case '3':
             mMappingMode = 3;
@@ -438,7 +436,8 @@ final class SunburstGUI extends AbsView {
         }
 
         if (mParent.key == '1' || mParent.key == '2' || mParent.key == '3') {
-            for (final SunburstItem item : mItems) {
+            final List<SunburstItem> items = (List<SunburstItem>)mController.get("Items");
+            for (final SunburstItem item : items) {
                 item.update(mMappingMode);
             }
         } else if (mParent.key == 'm' || mParent.key == 'M') {

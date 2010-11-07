@@ -24,7 +24,6 @@ import java.io.File;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
-import javax.swing.JSplitPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
@@ -32,8 +31,6 @@ import javax.swing.WindowConstants;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.gui.view.ViewNotifier;
 import com.treetank.gui.view.sunburst.SunburstView;
-import com.treetank.gui.view.text.TextView;
-import com.treetank.gui.view.tree.TreeView;
 import com.treetank.utils.LogWrapper;
 
 import org.slf4j.LoggerFactory;
@@ -76,6 +73,10 @@ public final class GUI extends JFrame {
     /** {@link ReadDB}. */
     private transient ReadDB mReadDB;
 
+    //
+    // /** {@link Set} for views. */
+    // private final Set<IView> mViews;
+
     /**
      * Constructor.
      * 
@@ -93,33 +94,38 @@ public final class GUI extends JFrame {
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
         // Add menubar.
-        final JMenuBar menuBar = new TreetankMenuBar(this);
+        final JMenuBar menuBar = new GUIMenuBar(this);
         setJMenuBar(menuBar);
 
         // Create Panels.
         final JPanel top = new JPanel();
         top.setLayout(new BorderLayout());
-        final JPanel treeText = new JPanel();
-        treeText.setLayout(new GridLayout(1, 0));
+//        final JPanel treeText = new JPanel();
+//        treeText.setLayout(new GridLayout(1, 0));
 
         // Create default views.
         mNotifier = new ViewNotifier(this);
-        final TreeView treeView = new TreeView(mNotifier);
-        final TextView textView = new TextView(mNotifier);
-        new SunburstView(mNotifier);
-
-        // Add the scroll panes to a split pane.
-        final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        splitPane.setLeftComponent(treeView);
-        splitPane.setRightComponent(textView);
-
-        // Set sizes of components.
-        splitPane.setDividerLocation(DIVIDER_LOCATION);
-        splitPane.setPreferredSize(new Dimension(WIDTH, HEIGHT));
-
-        // Add the split pane.
-        treeText.add(splitPane);
-        top.add(treeText, BorderLayout.CENTER);
+        // final TreeView treeView = new TreeView(mNotifier);
+        // final TextView textView = new TextView(mNotifier);
+        //
+        // // Add the scroll panes to a split pane.
+        // final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        // splitPane.setLeftComponent(treeView);
+        // splitPane.setRightComponent(textView);
+        //
+        // // Set sizes of components.
+        // splitPane.setDividerLocation(DIVIDER_LOCATION);
+        // splitPane.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        //
+        // // Add the split pane.
+        // treeText.add(splitPane);
+        // top.add(treeText, BorderLayout.CENTER);
+        final JPanel sunburst = new JPanel();
+        sunburst.setLayout(new GridLayout(0, 1));
+        final SunburstView sunburstView = new SunburstView(mNotifier);
+        sunburstView.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        sunburst.add(sunburstView);
+        top.add(sunburst, BorderLayout.CENTER);
         getContentPane().add(top);
 
         // Center the frame.
@@ -145,7 +151,6 @@ public final class GUI extends JFrame {
             if (mReadDB == null || !paramFile.equals(mReadDB.getDatabase().getFile())
                 || paramRevision != mReadDB.getRtx().getRevisionNumber()) {
                 mReadDB = new ReadDB(paramFile, paramRevision);
-                System.out.println("LALALA");
                 mNotifier.init();
             }
         } catch (final TreetankIOException e) {

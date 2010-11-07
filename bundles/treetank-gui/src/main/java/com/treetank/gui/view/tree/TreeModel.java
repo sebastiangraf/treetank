@@ -27,8 +27,10 @@ import com.treetank.node.ElementNode;
 /**
  * <h1>TreeModel</h1>
  * 
- * <p>Extends an AbstractTreeModel and implements main methods, used to construct the Tree representation with
- * Treetank items.</p>
+ * <p>
+ * Extends an AbstractTreeModel and implements main methods, used to construct the Tree representation with
+ * Treetank items.
+ * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz.
  * 
@@ -93,16 +95,16 @@ public final class TreeModel extends AbsTreeModel {
                         throw new IllegalStateException("No node with index " + paramIndex + " found!");
                     }
                 }
-                // for (int i = 0; i < childCount; i++) {
-                // if (i == 0) {
-                // mRTX.moveToFirstChild();
-                // } else {
-                // mRTX.moveToRightSibling();
-                // }
-                // if (paramIndex == namespCount + attCount + i) {
-                // break;
-                // }
-                // }
+//                for (int i = 0; i < childCount; i++) {
+//                    if (i == 0) {
+//                        mRTX.moveToFirstChild();
+//                    } else {
+//                        mRTX.moveToRightSibling();
+//                    }
+//                    if (paramIndex == namespCount + attCount + i) {
+//                        break;
+//                    }
+//                }
 
                 return mRTX.getNode();
             } else {
@@ -143,6 +145,10 @@ public final class TreeModel extends AbsTreeModel {
      */
     @Override
     public int getIndexOfChild(final Object paramParent, final Object paramChild) {
+        if (paramParent == null || paramChild == null) {
+            return -1;
+        }
+        
         // Parent node.
         mRTX.moveTo(((IItem)paramParent).getNodeKey());
         final IItem parentNode = mRTX.getNode();
@@ -188,17 +194,38 @@ public final class TreeModel extends AbsTreeModel {
         case COMMENT_KIND:
         case PROCESSING_KIND:
         case TEXT_KIND:
-            switch (parentNode.getKind()) {
-            case ROOT_KIND:
-            case ELEMENT_KIND:
-                index = getChildIndex(parentNode, childNode);
-                break;
-            default:
-                throw new IllegalStateException("Parent node kind not known!");
+            final AbsStructNode parent = (AbsStructNode)parentNode;
+            if (parent.getKind() == ENodes.ELEMENT_KIND) {
+                namespCount = ((ElementNode)parent).getNamespaceCount();
+                attCount = ((ElementNode)parent).getAttributeCount();
             }
+            final long childCount = parent.getChildCount();
+            
+            if (childCount == 0) {
+                throw new IllegalStateException("May not happen!");
+            }
+
+            for (int i = 0; i < childCount; i++) {
+                System.out.println(i);
+                if (i == 0) {
+                    mRTX.moveToFirstChild();
+                } else {
+                    mRTX.moveToRightSibling();
+                }
+                System.out.println("node key: " + mRTX.getNode().getNodeKey());
+                if (mRTX.getNode().getNodeKey() == childNode.getNodeKey()) {
+                    index = namespCount + attCount + i;
+                    System.out.println("LALALA");
+                    break;
+                }
+            }
+            
+            System.out.println("ChildCount: " + childCount);
+            System.out.println("Child node: " + childNode);
+            
             break;
         default:
-            throw new IllegalStateException("Child node kind not known!");
+            throw new IllegalStateException("Child node kind not known! ");
         }
 
         return index;
@@ -239,40 +266,5 @@ public final class TreeModel extends AbsTreeModel {
             // If it's not document root or element node it must be a leaf node.
             return true;
         }
-    }
-
-    /**
-     * Get child index.
-     * 
-     * @param paramParentNode
-     *            Parent node.
-     * @param paramChildNode
-     *            Child node.
-     * @return Index of child node.
-     */
-    private int getChildIndex(final IItem paramParentNode, final IItem paramChildNode) {
-        int index = -1;
-        final long childCount = ((AbsStructNode)paramParentNode).getChildCount();
-
-        int namespCount = 0;
-        int attCount = 0;
-
-        if (paramParentNode.getKind() == ENodes.ELEMENT_KIND) {
-            namespCount = ((ElementNode)paramParentNode).getNamespaceCount();
-            attCount = ((ElementNode)paramParentNode).getAttributeCount();
-        }
-
-        for (int i = 0; i < childCount; i++) {
-            if (i == 0) {
-                mRTX.moveToFirstChild();
-            } else {
-                mRTX.moveToRightSibling();
-            }
-            if (mRTX.getNode().getNodeKey() == paramChildNode.getNodeKey()) {
-                index = namespCount + attCount + i;
-                break;
-            }
-        }
-        return index;
     }
 }

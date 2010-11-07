@@ -19,9 +19,7 @@ package com.treetank.gui.view.sunburst;
 /**
  * <h1>SunburstController</h1>
  * 
- * <p>
- * Controller, which acts as a mediator between the view and the model.
- * </p>
+ * <p>Controller, which acts as a mediator between the views and the models.</p>
  * 
  * @param <M> Model, which extends {@link AbsModel}.
  * @param <V> View, which extends {@link AbsView}.

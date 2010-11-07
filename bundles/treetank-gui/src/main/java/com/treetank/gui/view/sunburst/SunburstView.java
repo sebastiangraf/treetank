@@ -16,120 +16,161 @@
  */
 package com.treetank.gui.view.sunburst;
 
+import java.awt.BorderLayout;
+import java.awt.Window;
 import java.awt.event.MouseEvent;
+import java.util.List;
+
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 import com.treetank.gui.GUIProp;
-import com.treetank.gui.IView;
+import com.treetank.gui.ReadDB;
+import com.treetank.gui.view.IView;
 import com.treetank.gui.view.ViewNotifier;
 
 import processing.core.PApplet;
 
 /**
- * <h1>SunView</h1>
+ * <h1>SunburstView</h1>
  * 
  * <p>
- * Main sunbirst class.
+ * Main sunburst class.
  * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class SunburstView extends PApplet implements IView {
+public final class SunburstView extends JScrollPane implements IView {
 
-    /** Width of the frame. */
-    private static final int WIDTH = 1000;
-
-    /** Height of the frame. */
-    private static final int HEIGHT = 800;
-
-    /** {@link SunburstGUI} which represents the GUI interface of the Sunburst view. */
-    private transient SunburstGUI mGUI;
-    
     /** {@link ViewNotifier} to notify views of changes. */
     private final ViewNotifier mNotifier;
+
+    /** {@link ReadDB} instance to interact with Treetank. */
+    private transient ReadDB mDB;
+
+    /** Processing {@link PApplet} reference. */
+    private transient PApplet mEmbed;
 
     /**
      * Constructor.
      * 
      * @param paramNotifier
-     *                  {@link ViewNotifier} instance.
+     *            {@link ViewNotifier} instance.
      */
     public SunburstView(final ViewNotifier paramNotifier) {
         mNotifier = paramNotifier;
-    }
-    
-    @Override
-    public void setup() {
-        size(WIDTH, HEIGHT);
 
-        final SunburstController<SunburstModel, SunburstGUI> controller =
-            new SunburstController<SunburstModel, SunburstGUI>();
-        mGUI = SunburstGUI.createGUI(this, controller);
-        final SunburstModel model = new SunburstModel(this, mNotifier.getGUI().getReadDB(), controller);
-
-        controller.addView(mGUI);
-        controller.addModel(model);
-
-        frame.setTitle("press 'o' to select an input folder!");
-
-        mGUI.setupGUI();
-    }
-    
-    
-
-    @Override
-    public void draw() {
-        mGUI.draw();
+        // Add view to notifier.
+        mNotifier.add(this);
     }
 
-    @Override
-    public void mouseEntered(final MouseEvent paramEvent) {
-        mGUI.mouseEntered(paramEvent);
-    }
-
-    @Override
-    public void mouseExited(final MouseEvent paramEvent) {
-        mGUI.mouseExited(paramEvent);
-    }
-
-    @Override
-    public void keyReleased() {
-        mGUI.keyReleased();
-    }
-    
-
-    @Override
-    public void dispose() {
-        // TODO Auto-generated method stub
-        
-    }
-    
     @Override
     public boolean isVisible() {
         return GUIProp.EShowViews.SHOWSUNBURST.getValue();
     }
 
     @Override
-    public void refreshUpdate() {
-        // TODO Auto-generated method stub
-        
-    }
-    
-    @Override
     public void refreshInit() {
-        // TODO Auto-generated method stub
-        
+        mDB = mNotifier.getGUI().getReadDB();
+        mEmbed = new Embedded();
+        setViewportView(mEmbed);
+
+        /*
+         * Important to call this whenever embedding a PApplet.
+         * It ensures that the animation thread is started and
+         * that other internal variables are properly set.
+         */
+        mEmbed.init();
+        // revalidate();
+        // final Window window = SwingUtilities.getWindowAncestor(this);
+        // if (window != null) {
+        // window.validate();
+        // }
     }
 
-    /**
-     * Main method.
-     * 
-     * @param args
-     *            Arguments not used.
-     */
-    public static void main(final String[] args) {
-        PApplet.main(new String[] {
-            "--present", "Sunburst"
-        });
+    @Override
+    public void refreshUpdate() {
+        mEmbed.draw();
+        // revalidate();
+        // final Window window = SwingUtilities.getWindowAncestor(this);
+        // if (window != null) {
+        // window.validate();
+        // }
+    }
+
+    @Override
+    public void dispose() {
+    }
+
+    /** Embedded processing view. */
+    private final class Embedded extends PApplet {
+        /** {@link SunburstGUI} which represents the GUI interface of the Sunburst view. */
+        private SunburstGUI mGUI;
+
+        /** {@link List} of {@link SunburstItem}s. */
+        private transient List<SunburstItem> mItems;
+
+        @Override
+        public void setup() {
+            final SunburstController<SunburstModel, SunburstGUI> controller =
+                new SunburstController<SunburstModel, SunburstGUI>();
+            final SunburstModel model = new SunburstModel(this, mDB, controller);
+            mItems = model.traverseTree();
+
+            // Create GUI.
+            mGUI = SunburstGUI.createGUI(this, controller);
+
+            // Add components to controller.
+            controller.addView(mGUI);
+            controller.addModel(model);
+
+            // Setup GUI and draw initial sunburst items.
+            mGUI.setupGUI();
+
+            // Prevent thread from starving everything else.
+            // noLoop();
+        }
+
+        @Override
+        public void draw() {
+            if (mGUI != null) {
+                mGUI.draw();
+
+                for (final SunburstItem item : mItems) {
+                    item.update(mGUI.getMappingMode());
+                }
+            }
+        }
+
+        @Override
+        public void mouseEntered(final MouseEvent paramEvent) {
+            if (mGUI != null) {
+                mGUI.mouseEntered(paramEvent);
+            }
+        }
+
+        @Override
+        public void mouseExited(final MouseEvent paramEvent) {
+            if (mGUI != null) {
+                mGUI.mouseExited(paramEvent);
+            }
+        }
+
+        @Override
+        public void keyReleased() {
+            if (mGUI != null) {
+                mGUI.keyReleased();
+            }
+        }
+
+        @Override
+        public void mousePressed(final MouseEvent paramEvent) {
+            super.mousePressed(paramEvent);
+
+            // Update the screen (run draw once).
+            redraw();
+        }
     }
 }

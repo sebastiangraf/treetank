@@ -31,34 +31,33 @@ import com.treetank.utils.LogWrapper;
  * <h1>AbsController</h1>
  * 
  * <p>
- * Abstract controller, which provides methods to register and remove views/models as well as provides
- * methods to set and get properties from a registered model.
+ * Abstract controller, which provides methods to register and remove views/models as well as provides methods
+ * to set and get properties from a registered model.
  * </p>
  * 
  * @param <M>
- *             The model which has to extend {@link AbsModel}.
+ *            The model which has to extend {@link AbsModel}.
  * @param <V>
- *             The view which has to extend {@link AbsView}.
- *             
+ *            The view which has to extend {@link AbsView}.
+ * 
  * @author Johannes Lichtenberger, University of Konstanz
- *  
+ * 
  */
 abstract class AbsController<M extends AbsModel, V extends AbsView> implements PropertyChangeListener {
 
     /** {@link LogWrapper}. */
-    private static final LogWrapper LOGWRAPPER =
-        new LogWrapper(LoggerFactory.getLogger(AbsController.class));
-    
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(AbsController.class));
+
     /** Registered models. */
     private final List<M> mRegisteredModels;
-    
+
     /** Registered views. */
     private final List<V> mRegisteredViews;
 
     /**
      * Constructor.
      */
-    public AbsController() {
+    AbsController() {
         mRegisteredModels = new LinkedList<M>();
         mRegisteredViews = new LinkedList<V>();
     }
@@ -67,9 +66,9 @@ abstract class AbsController<M extends AbsModel, V extends AbsView> implements P
      * Add a model.
      * 
      * @param paramModel
-     *               The model to add.
+     *            The model to add.
      */
-    public final void addModel(final M paramModel) {
+    final void addModel(final M paramModel) {
         mRegisteredModels.add(paramModel);
         paramModel.addPropertyChangeListener(this);
     }
@@ -78,9 +77,9 @@ abstract class AbsController<M extends AbsModel, V extends AbsView> implements P
      * Remove a model.
      * 
      * @param paramModel
-     *               The model to remove.
+     *            The model to remove.
      */
-    public final void removeModel(final M paramModel) {
+    final void removeModel(final M paramModel) {
         mRegisteredModels.remove(paramModel);
         paramModel.removePropertyChangeListener(this);
     }
@@ -89,37 +88,37 @@ abstract class AbsController<M extends AbsModel, V extends AbsView> implements P
      * Add a view.
      * 
      * @param paramView
-     *               The view to add.
+     *            The view to add.
      */
-    public final void addView(final V paramView) {
+    final void addView(final V paramView) {
         mRegisteredViews.add(paramView);
     }
 
     /**
-     * Remove a view. 
+     * Remove a view.
      * 
      * @param paramView
-     *               The view to remove.
+     *            The view to remove.
      */
-    public final void removeView(final V paramView) {
+    final void removeView(final V paramView) {
         mRegisteredViews.remove(paramView);
     }
-    
+
     /**
      * Get registered models.
      * 
      * @return The registeredModels.
      */
-    public final List<M> getRegisteredModels() {
+    final List<M> getRegisteredModels() {
         return mRegisteredModels;
     }
-    
+
     /**
      * Get registered views.
      * 
      * @return The registeredViews.
      */
-    public final List<V> getRegisteredViews() {
+    final List<V> getRegisteredViews() {
         return mRegisteredViews;
     }
 
@@ -127,7 +126,7 @@ abstract class AbsController<M extends AbsModel, V extends AbsView> implements P
      * Observe property changes from registered models.
      * 
      * @param paramEvt
-     *                 {@link PropertyChangeEvent}.
+     *            {@link PropertyChangeEvent}.
      */
     public final void propertyChange(final PropertyChangeEvent paramEvt) {
         for (final V view : mRegisteredViews) {
@@ -149,7 +148,7 @@ abstract class AbsController<M extends AbsModel, V extends AbsView> implements P
      *            An object that represents the new value
      *            of the property.
      */
-    protected final void setModelProperty(final String paramPropertyName, final Object paramNewValue) {
+    public final void setModelProperty(final String paramPropertyName, final Object paramNewValue) {
 
         for (final M model : mRegisteredModels) {
             try {
@@ -168,59 +167,32 @@ abstract class AbsController<M extends AbsModel, V extends AbsView> implements P
             }
         }
     }
-    
+
     /**
+     * Get return value of a method.
      * 
-     * @param paramProperty
-     * @param paramNewValue
+     * @param paramPropertyName
+     *            Part of the method to call.
+     * @return Object.
      */
-    protected final void setModelProperty(final boolean paramProperty, final Object paramNewValue) {
+    public final Object getModelProperty(final String paramPropertyName) {
+        Object retValue = null;
 
         for (final M model : mRegisteredModels) {
             try {
-
-                final Method method = model.getClass().getMethod("set" + paramProperty, new Class[] {
-                    paramNewValue.getClass()
-                });
-                method.invoke(model, paramNewValue);
-
+                final Method method = model.getClass().getDeclaredMethod("get" + paramPropertyName);
+                retValue = method.invoke(model);
             } catch (final NoSuchMethodException e) {
-                
-            } catch (IllegalArgumentException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOGWRAPPER.error(e.getMessage(), e);
+            } catch (final IllegalArgumentException e) {
+                LOGWRAPPER.error(e.getMessage(), e);
+            } catch (final IllegalAccessException e) {
+                LOGWRAPPER.error(e.getMessage(), e);
+            } catch (final InvocationTargetException e) {
+                LOGWRAPPER.error(e.getMessage(), e);
             }
         }
-    }
-    
-    @SuppressWarnings("unchecked")
-    final <T> T getModelProperty(final String paramPropertyName) {
-        T retValue = null;
-        
-        for (final M model : mRegisteredModels) {
-            try {
-                final Method method = model.getClass().getMethod("get" + paramPropertyName);
-                retValue = (T) method.invoke(model);
-            } catch (final NoSuchMethodException e) {
-                
-            } catch (IllegalArgumentException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-        
+
         return retValue;
     }
 
