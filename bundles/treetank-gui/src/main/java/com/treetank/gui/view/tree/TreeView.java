@@ -108,9 +108,9 @@ public final class TreeView extends JScrollPane implements IView {
          * Remove a listener/listeners, which might already exist from
          * another call to refreshUpdate().
          */
-//        for (final TreeSelectionListener listener : mTree.getTreeSelectionListeners()) {
-//            mTree.removeTreeSelectionListener(listener);
-//        }
+        // for (final TreeSelectionListener listener : mTree.getTreeSelectionListeners()) {
+        // mTree.removeTreeSelectionListener(listener);
+        // }
 
         if (mTree.getTreeSelectionListeners().length == 0) {
             // Listen for when the selection changes.

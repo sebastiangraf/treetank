@@ -19,7 +19,9 @@ package com.treetank.gui;
 /**
  * <h1>GUIProps</h1>
  * 
- * <p>GUI properties.</p>
+ * <p>
+ * GUI properties.
+ * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
@@ -82,7 +84,7 @@ public final class GUIProp {
     public GUIProp() {
 
     }
-    
+
     // ACCESSORS ==============================================
 
     /**
@@ -94,8 +96,8 @@ public final class GUIProp {
     public void setIndentSpaces(final int paramIndentSpaces) {
         mIndentSpaces = paramIndentSpaces;
     }
-    
-    /** 
+
+    /**
      * Get spaces to indent.
      * 
      * @return spaces to indent.

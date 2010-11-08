@@ -19,24 +19,28 @@ package com.treetank.gui.view.sunburst;
 /**
  * <h1>SunburstController</h1>
  * 
- * <p>Controller, which acts as a mediator between the views and the models.</p>
+ * <p>
+ * Controller, which acts as a mediator between the views and the models.
+ * </p>
  * 
- * @param <M> Model, which extends {@link AbsModel}.
- * @param <V> View, which extends {@link AbsView}.
+ * @param <M>
+ *            Model, which extends {@link AbsModel}.
+ * @param <V>
+ *            View, which extends {@link AbsView}.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
 final class SunburstController<M extends AbsModel, V extends AbsView> extends AbsController<M, V> {
-    
+
     /**
      * Ask the model for a property.
      * 
      * @param paramProperty
-     *              The property to get.
+     *            The property to get.
      * @return The property.
      */
     Object get(final String paramProperty) {
-        return getModelProperty(paramProperty);                                 
+        return getModelProperty(paramProperty);
     }
 }

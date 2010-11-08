@@ -100,8 +100,8 @@ public final class GUI extends JFrame {
         // Create Panels.
         final JPanel top = new JPanel();
         top.setLayout(new BorderLayout());
-//        final JPanel treeText = new JPanel();
-//        treeText.setLayout(new GridLayout(1, 0));
+        // final JPanel treeText = new JPanel();
+        // treeText.setLayout(new GridLayout(1, 0));
 
         // Create default views.
         mNotifier = new ViewNotifier(this);

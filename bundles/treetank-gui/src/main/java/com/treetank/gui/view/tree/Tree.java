@@ -27,7 +27,9 @@ import javax.swing.tree.TreePath;
 /**
  * <h1>Tree</h1>
  * 
- * <p>Provides highlighting functionality to highlight subtrees of selected nodes.</p>
+ * <p>
+ * Provides highlighting functionality to highlight subtrees of selected nodes.
+ * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz.
  * 
@@ -39,14 +41,15 @@ public final class Tree extends JTree {
 
     /** Color used to highlight selected subtrees. */
     private static final Color HIGHLIGHT_COLOR = new Color(255, 255, 204);
-    
+
     /** Highlight path. */
     private TreePath mSelectionPath;
 
     /**
      * Default Constructor.
      */
-    public Tree() { }
+    public Tree() {
+    }
 
     /**
      * Constructor with TreeModel parameter.

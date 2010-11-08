@@ -19,7 +19,9 @@ package com.treetank.gui;
 /**
  * <h1>IGUICommand</h1>
  * 
- * <p>Interface for GUI menus.</p>
+ * <p>
+ * Interface for GUI menus.
+ * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
@@ -39,7 +41,7 @@ interface IGUICommand {
      * @return the description
      */
     String desc();
-    
+
     /**
      * Returns if this command includes a menu checkbox.
      * 

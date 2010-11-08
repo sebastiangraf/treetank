@@ -59,7 +59,7 @@ import com.treetank.service.xml.shredder.XMLUpdateShredder;
  * 
  */
 public enum GUICommands implements IGUICommand {
-    
+
     /**
      * Open a Treetank file.
      */
@@ -240,7 +240,7 @@ public enum GUICommands implements IGUICommand {
             GUIProp.EShowViews.SHOWTREE.invert();
         }
     },
-    
+
     /**
      * Show sunburst view.
      */
@@ -256,7 +256,7 @@ public enum GUICommands implements IGUICommand {
 
     /** Description of command. */
     private final String mDesc;
-    
+
     /** Determins if menu item is checked or not. */
     private final boolean mChecked;
 
@@ -266,7 +266,7 @@ public enum GUICommands implements IGUICommand {
      * @param paramDesc
      *            Description of command.
      * @param paramChecked
-     *            Determines if menu item is checked or not.       
+     *            Determines if menu item is checked or not.
      */
     GUICommands(final String paramDesc, final boolean paramChecked) {
         mDesc = paramDesc;
@@ -277,12 +277,12 @@ public enum GUICommands implements IGUICommand {
     public String desc() {
         return mDesc;
     }
-    
+
     @Override
     public boolean checked() {
         return mChecked;
     }
-    
+
     /**
      * Shredder or shredder into.
      * 

@@ -20,15 +20,16 @@ import java.beans.PropertyChangeEvent;
 
 /**
  * @author Johannes Lichtenberger, University of Konstanz
- *
+ * 
  */
 abstract class AbsView {
-    
+
     /**
-     * Called by the controller when it needs to pass along a property change 
+     * Called by the controller when it needs to pass along a property change
      * from a model.
-     *
-     * @param paramEvt The property change event from the model
+     * 
+     * @param paramEvt
+     *            The property change event from the model
      */
     protected abstract void modelPropertyChange(final PropertyChangeEvent paramEvt);
 }

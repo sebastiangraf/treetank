@@ -106,8 +106,8 @@ public final class TextView extends JScrollPane implements IView {
     /** State to serialize data. */
     private enum State {
         /** Initial state. */
-        INITIAL, 
-        
+        INITIAL,
+
         /** Update state. */
         UPDATE,
     };
@@ -115,8 +115,8 @@ public final class TextView extends JScrollPane implements IView {
     /** Determines if a node has children or not. */
     private enum Child {
         /** Node has no children. */
-        NOCHILD, 
-        
+        NOCHILD,
+
         /** Node has children. */
         CHILD,
     }
@@ -134,7 +134,6 @@ public final class TextView extends JScrollPane implements IView {
         mNotifier = paramNotifier;
         mNotifier.add(this);
         mGUI = paramNotifier.getGUI();
-
 
         // Setup text field.
         mText.setEditable(false);
@@ -211,7 +210,7 @@ public final class TextView extends JScrollPane implements IView {
 
         serialize(rtx, node);
         mText.setCaretPosition(0);
-      
+
         repaint();
     }
 
@@ -309,7 +308,7 @@ public final class TextView extends JScrollPane implements IView {
             default:
                 throw new IllegalStateException("Node kind not known!");
             }
-            
+
             if (insert) {
                 processStAX(State.INITIAL);
             }
@@ -390,8 +389,7 @@ public final class TextView extends JScrollPane implements IView {
                     level++;
                     indent(doc, level, indentSpaces);
                     level--;
-                    doc.insertString(doc.getLength(), event.asCharacters().getData() + NEWLINE,
-                        styleText);
+                    doc.insertString(doc.getLength(), event.asCharacters().getData() + NEWLINE, styleText);
                     height += lineHeight;
                     break;
                 default:
@@ -433,8 +431,7 @@ public final class TextView extends JScrollPane implements IView {
                     mTempLevel++;
                     indent(doc, mTempLevel, indentSpaces);
                     mTempLevel--;
-                    doc.insertString(doc.getLength(), event.asCharacters().getData() + NEWLINE,
-                        styleText);
+                    doc.insertString(doc.getLength(), event.asCharacters().getData() + NEWLINE, styleText);
                     break;
                 default:
                     // Empty.
