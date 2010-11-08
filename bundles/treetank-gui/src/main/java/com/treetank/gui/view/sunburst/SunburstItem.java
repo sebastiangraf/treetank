@@ -25,9 +25,11 @@ import processing.core.PApplet;
 /**
  * <h1>SunburstItem</h1>
  * 
- * <p>Represents the view and exactly one item in the Sunburst diagram. Note that this class is not immutable
+ * <p>
+ * Represents the view and exactly one item in the Sunburst diagram. Note that this class is not immutable
  * (notably because {@link AbsNodes} and all subclasses can be modified), but since it's package private it
- * should be used in a convenient way.</p>
+ * should be used in a convenient way.
+ * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
@@ -65,7 +67,7 @@ final class SunburstItem {
 
     /** Current {@link IItem} in Treetank. */
     private final IItem mNode;
-    
+
     /** Depth in the tree. */
     private final int mDepth;
 
@@ -75,8 +77,17 @@ final class SunburstItem {
     /** Maximum child count of leaf nodes. */
     private final long mMaxChildCount;
 
-    /** Determines if current node is a leaf node. */
-    private transient boolean mIsLeaf;
+    /** Structural kind of node. */
+    enum StructKind {
+        /** Node is a leaf node. */
+        ISLEAF,
+
+        /** Node is an inner node. */
+        ISINNERNODE,
+    }
+
+    /** Structural kind of node. */
+    private final StructKind mStructKind;
 
     /** Singleton {@link SunburstGUI} instance. */
     private transient SunburstGUI mGUI;
@@ -98,29 +109,14 @@ final class SunburstItem {
         /** Current {@link IItem} in Treetank. */
         private final IItem mNode;
 
-        /** Determines if the current node is a leaf node. */
-        private final boolean mIsLeaf;
-
-        /** Determines how many children the current node has. */
-        private final long mChildCount;
+        /** {@link NodeRelations} reference. */
+        private final NodeRelations mRelations;
 
         /** The start degree. */
         private final float mAngleStart;
 
         /** The extension of the angle. */
         private final float mExtension;
-
-        /** Minimum child count of leaf nodes. */
-        private final long mMinChildCount;
-
-        /** Maximum child count of leaf nodes. */
-        private final long mMaxChildCount;
-        
-        /** Depth in the tree. */
-        private final int mDepth;
-        
-        /** Index to parent node/SunburstItem. */
-        private final int mIndexToParent;
 
         /**
          * Constructor.
@@ -131,37 +127,23 @@ final class SunburstItem {
          *            {@link SunburstController}.
          * @param paramNode
          *            {@link IItem} in Treetank, which belongs to this {@link SunburstItem}.
-         * @param paramDepth
-         *            Depth in the tree.
-         * @param paramIsLeaf
-         *            Determines if the current node is a leaf node.
-         * @param paramchildCount
-         *            Determines how many children the current node has.
          * @param paramAngleStart
          *            The start degree.
          * @param paramExtension
          *            The extension of the angle.
-         * @param paramMinChildCount
-         *            Minimum child count of current child nodes.
-         * @param paramMaxChildCount
-         *            Maximum child count of current child nodes.
+         * @param paramRelations
+         *            {@link NodeRelations} instance.
          */
         public Builder(final PApplet paramApplet,
             final SunburstController<? extends AbsModel, ? extends AbsView> paramController,
-            final IItem paramNode, final int paramDepth, final boolean paramIsLeaf, final long paramchildCount,
-            final float paramAngleStart, final float paramExtension, final long paramMinChildCount,
-            final long paramMaxChildCount, final int paramIndexToParent) {
+            final IItem paramNode, final float paramAngleStart, final float paramExtension,
+            final NodeRelations paramRelations) {
             mParent = paramApplet;
             mController = paramController;
             mNode = paramNode;
-            mDepth = paramDepth;
-            mIsLeaf = paramIsLeaf;
-            mChildCount = paramchildCount;
             mAngleStart = paramAngleStart;
             mExtension = paramExtension;
-            mMinChildCount = paramMinChildCount;
-            mMaxChildCount = paramMaxChildCount;
-            mIndexToParent = paramIndexToParent;
+            mRelations = paramRelations;
         }
 
         /**
@@ -185,16 +167,16 @@ final class SunburstItem {
         mNode = paramBuilder.mNode;
         mParent = paramBuilder.mParent;
         mController = paramBuilder.mController;
-        mIsLeaf = paramBuilder.mIsLeaf;
-        mChildCount = paramBuilder.mChildCount;
-        mMinChildCount = paramBuilder.mMinChildCount;
-        mMaxChildCount = paramBuilder.mMaxChildCount;
+        mStructKind = paramBuilder.mRelations.mStructKind;
+        mChildCount = paramBuilder.mRelations.mChildCount;
+        mMinChildCount = paramBuilder.mRelations.mMinChildCount;
+        mMaxChildCount = paramBuilder.mRelations.mMaxChildCount;
         mAngleStart = paramBuilder.mAngleStart;
         mExtension = paramBuilder.mExtension;
         mAngleCenter = mAngleStart + mExtension / 2;
         mAngleEnd = mAngleStart + mExtension;
-        mIndexToParent = paramBuilder.mIndexToParent;
-        mDepth = paramBuilder.mDepth;
+        mIndexToParent = paramBuilder.mRelations.mIndexToParent;
+        mDepth = paramBuilder.mRelations.mDepth;
     }
 
     /**
@@ -205,7 +187,7 @@ final class SunburstItem {
      */
     void update(final int paramMappingMode) {
         assert paramMappingMode == 1;
-        
+
         if (mIndexToParent > -1) {
             final int depthMax = (Integer)mController.get("DepthMax");
             mRadius = calcEqualAreaRadius(mDepth, depthMax);
@@ -230,28 +212,33 @@ final class SunburstItem {
             }
 
             // Colors for leaf nodes and inner nodes.
-            if (mIsLeaf) {
+            switch (mStructKind) {
+            case ISLEAF:
                 final int from =
-                    mParent.color(mGUI.getHueStart(), mGUI.getSaturationStart(), mGUI.getBrightnessStart());
+                    mParent.color(mGUI.mHueStart, mGUI.mSaturationStart, mGUI.mBrightnessStart);
                 final int to =
-                    mParent.color(mGUI.getHueEnd(), mGUI.getSaturationEnd(), mGUI.getBrightnessEnd());
+                    mParent.color(mGUI.mHueEnd, mGUI.mSaturationEnd, mGUI.mBrightnessEnd);
                 mCol = mParent.lerpColor(from, to, percent);
                 mLineCol = mCol;
-            } else {
+                break;
+            case ISINNERNODE:
                 float bright = 0;
                 bright =
-                    PApplet.lerp(mGUI.getInnerNodeBrightnessStart(), mGUI.getInnerNodeStrokeBrightnessEnd(),
+                    PApplet.lerp(mGUI.mInnerNodeBrightnessStart, mGUI.mInnerNodeStrokeBrightnessEnd,
                         percent);
                 mCol = mParent.color(0, 0, bright);
                 bright =
-                    PApplet.lerp(mGUI.getInnerNodeStrokeBrightnessStart(), mGUI
-                        .getInnerNodeStrokeBrightnessEnd(), percent);
+                    PApplet.lerp(mGUI.mInnerNodeStrokeBrightnessStart, mGUI
+                        .mInnerNodeStrokeBrightnessEnd, percent);
                 mLineCol = mParent.color(0, 0, bright);
+                break;
+            default:
+                throw new IllegalStateException("Structural kind not known!");
             }
 
             // Calculate stroke weight for relations line.
             mLineWeight =
-                PApplet.map(mDepth, depthMax, 1, mGUI.getStrokeWeightStart(), mGUI.getStrokeWeightEnd());
+                PApplet.map(mDepth, depthMax, 1, mGUI.mStrokeWeightStart, mGUI.mStrokeWeightEnd);
             if (mArcLength < mLineWeight) {
                 mLineWeight = mArcLength * 0.93f;
             }
@@ -268,7 +255,7 @@ final class SunburstItem {
             mC2Y *= calcEqualAreaRadius(mDepth, depthMax);
         }
     }
-    
+
     /**
      * Get sunburst items.
      * 
@@ -289,15 +276,20 @@ final class SunburstItem {
      *            Scale of leaf nodes.
      */
     void drawArc(final float paramInnerNodeScale, final float paramLeafScale) {
-        float arcRadius;
+        assert paramInnerNodeScale != 0f && paramLeafScale != 0f;
+        float arcRadius = 0;
         if (mDepth > 0) {
-            if (mIsLeaf) {
+            switch (mStructKind) {
+            case ISLEAF:
                 mParent.strokeWeight(mDepthWeight * paramLeafScale);
                 arcRadius = mRadius + mDepthWeight * paramLeafScale / 2;
-            } else {
+                break;
+            case ISINNERNODE:
                 mParent.strokeWeight(mDepthWeight * paramInnerNodeScale);
                 arcRadius = mRadius + mDepthWeight * paramInnerNodeScale / 2;
-
+                break;
+            default:
+                throw new IllegalStateException("Structural kind not known!");
             }
             mParent.stroke(mCol);
             // arc(0,0, arcRadius,arcRadius, angleStart, angleEnd);
@@ -305,7 +297,7 @@ final class SunburstItem {
         }
     }
 
-    /** 
+    /**
      * Fix for arc it seems that the arc functions has a problem with very tiny angles ...
      * arcWrap is a quick hack to get rid of this problem.
      * 
@@ -341,10 +333,15 @@ final class SunburstItem {
     void drawRect(final float paramInnerNodeScale, final float paramLeafScale) {
         float rectWidth;
         if (mDepth > 0) {
-            if (mIsLeaf) {
+            switch (mStructKind) {
+            case ISLEAF:
                 rectWidth = mRadius + mDepthWeight * paramLeafScale / 2;
-            } else {
+                break;
+            case ISINNERNODE:
                 rectWidth = mRadius + mDepthWeight * paramInnerNodeScale / 2;
+                break;
+            default:
+                throw new IllegalStateException("Structural kind not known!");
             }
 
             mParent.stroke(mCol);
@@ -362,14 +359,14 @@ final class SunburstItem {
      */
     void drawDot() {
         if (mDepth > 0) {
-            float diameter = mGUI.getDotSize();
+            float diameter = mGUI.mDotSize;
             if (mArcLength < diameter) {
                 diameter = mArcLength * 0.95f;
             }
             if (mDepth == 0) {
                 diameter = 3f;
             }
-            mParent.fill(0, 0, mGUI.getDotBrightness());
+            mParent.fill(0, 0, mGUI.mDotBrightness);
             mParent.noStroke();
             mParent.ellipse(mX, mY, diameter, diameter);
             mParent.noFill();

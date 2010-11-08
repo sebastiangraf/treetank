@@ -18,13 +18,11 @@ package com.treetank.gui.view.sunburst;
 
 import java.beans.PropertyChangeEvent;
 
-import javax.swing.JPanel;
-
 /**
  * @author Johannes Lichtenberger, University of Konstanz
  *
  */
-abstract class AbsView extends JPanel {
+abstract class AbsView {
     
     /**
      * Called by the controller when it needs to pass along a property change 

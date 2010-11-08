@@ -149,12 +149,12 @@ abstract class AbsController<M extends AbsModel, V extends AbsView> implements P
      *            of the property.
      */
     public final void setModelProperty(final String paramPropertyName, final Object paramNewValue) {
-
         for (final M model : mRegisteredModels) {
             try {
-                final Method method = model.getClass().getMethod("set" + paramPropertyName, new Class[] {
-                    paramNewValue.getClass()
-                });
+                final Method method =
+                    model.getClass().getDeclaredMethod("set" + paramPropertyName, new Class[] {
+                        paramNewValue.getClass()
+                    });
                 method.invoke(model, paramNewValue);
             } catch (final NoSuchMethodException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
