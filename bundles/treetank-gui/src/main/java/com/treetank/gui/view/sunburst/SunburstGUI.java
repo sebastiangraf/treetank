@@ -16,10 +16,13 @@
  */
 package com.treetank.gui.view.sunburst;
 
+import java.awt.Window;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.util.Calendar;
 import java.util.List;
+
+import javax.swing.SwingUtilities;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -50,41 +53,41 @@ final class SunburstGUI extends AbsView {
     private static SunburstGUI mGUI;
 
     /** Hue start value. */
-    private transient float mHueStart = 273;
+    transient float mHueStart = 273;
 
     /** Hue end value. */
-    private transient float mHueEnd = 323;
+    transient float mHueEnd = 323;
 
     /** Saturation start value. */
-    private transient float mSaturationStart = 73;
+    transient float mSaturationStart = 73;
 
     /** Saturation end value. */
-    private transient float mSaturationEnd = 100;
+    transient float mSaturationEnd = 100;
 
     /** Brightness start value. */
-    private transient float mBrightnessStart = 51;
+    transient float mBrightnessStart = 51;
 
     /** Brightness end value. */
-    private transient float mBrightnessEnd = 77;
+    transient float mBrightnessEnd = 77;
 
     /** Inner node brightness start value. */
-    private transient float mInnerNodeBrightnessStart = 20;
+    transient float mInnerNodeBrightnessStart = 20;
 
     /** Inner node brightness end value. */
     private transient float mInnerNodeBrightnessEnd = 90;
 
     /** Inner node stroke brightness start value. */
-    private transient float mInnerNodeStrokeBrightnessStart = 20;
+    transient float mInnerNodeStrokeBrightnessStart = 20;
 
     /** Inner node stroke brightness end value. */
-    private transient float mInnerNodeStrokeBrightnessEnd = 90;
+    transient float mInnerNodeStrokeBrightnessEnd = 90;
 
     private transient float mLeafArcScale = 1.0f;
     private transient float mInnerNodeArcScale = 0.2f;
-    private transient float mStrokeWeightStart = 0.5f;
-    private transient float mStrokeWeightEnd = 1.0f;
-    private transient float mDotSize = 3f;
-    private transient float mDotBrightness = 1f;
+    transient float mStrokeWeightStart = 0.5f;
+    transient float mStrokeWeightEnd = 1.0f;
+    transient float mDotSize = 3f;
+    transient float mDotBrightness = 1f;
     private transient float mBackgroundBrightness = 100f;
 
     private transient int mMappingMode = 1;
@@ -517,125 +520,12 @@ final class SunburstGUI extends AbsView {
         return PApplet.map(paramDepth, 0, paramDepthMax + 1, 0, mParent.height / 2);
     }
 
-    // ============== GETTER =====================
-
     /**
-     * Get dotSize.
+     * Get mapping mode.
      * 
-     * @return The dotSize.
-     */
-    float getDotSize() {
-        return mDotSize;
-    }
-
-    /**
-     * Get dotBrightness.
-     * 
-     * @return The dotBrightness.
-     */
-    float getDotBrightness() {
-        return mDotBrightness;
-    }
-
-    /**
-     * @return the mHueStart
-     */
-    float getHueStart() {
-        return mHueStart;
-    }
-
-    /**
-     * @return the mHueEnd
-     */
-    float getHueEnd() {
-        return mHueEnd;
-    }
-
-    /**
-     * @return the mappingMode
+     * @return mappingMode
      */
     int getMappingMode() {
         return mMappingMode;
-    }
-
-    /**
-     * @return the mSaturationStart
-     */
-    float getSaturationStart() {
-        return mSaturationStart;
-    }
-
-    /**
-     * @return the mSaturationEnd
-     */
-    float getSaturationEnd() {
-        return mSaturationEnd;
-    }
-
-    /**
-     * @return the mShowGUI
-     */
-    boolean isShowGUI() {
-        return mShowGUI;
-    }
-
-    /**
-     * @return the mBrightnessStart
-     */
-    float getBrightnessStart() {
-        return mBrightnessStart;
-    }
-
-    /**
-     * @return the mBrightnessEnd
-     */
-    float getBrightnessEnd() {
-        return mBrightnessEnd;
-    }
-
-    /**
-     * @return the mStrokeWeightStart
-     */
-    float getStrokeWeightStart() {
-        return mStrokeWeightStart;
-    }
-
-    /**
-     * @return the mStrokeWeightEnd
-     */
-    float getStrokeWeightEnd() {
-        return mStrokeWeightEnd;
-    }
-
-    /**
-     * @return the mInnerNodeBrightnessStart
-     */
-    float getInnerNodeBrightnessStart() {
-        return mInnerNodeBrightnessStart;
-    }
-
-    /**
-     * @return the mInnerNodeBrightnessEnd
-     */
-    float getInnerNodeBrightnessEnd() {
-        return mInnerNodeBrightnessEnd;
-    }
-
-    /**
-     * Get innerNodeStrokeBrightnessStart.
-     * 
-     * @return The innerNodeStrokeBrightnessStart.
-     */
-    float getInnerNodeStrokeBrightnessStart() {
-        return mInnerNodeStrokeBrightnessStart;
-    }
-
-    /**
-     * Get innerNodeStrokeBrightnessEnd.
-     * 
-     * @return The innerNodeStrokeBrightnessEnd.
-     */
-    float getInnerNodeStrokeBrightnessEnd() {
-        return mInnerNodeStrokeBrightnessEnd;
     }
 }

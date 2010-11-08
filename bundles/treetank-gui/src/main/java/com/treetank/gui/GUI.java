@@ -166,6 +166,7 @@ public final class GUI extends JFrame {
         }
         mNotifier.dispose();
         super.dispose();
+        System.exit(0);
     }
 
     /**

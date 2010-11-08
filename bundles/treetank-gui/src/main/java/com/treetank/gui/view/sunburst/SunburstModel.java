@@ -24,6 +24,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.axis.ChildAxis;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.gui.ReadDB;
+import com.treetank.gui.view.sunburst.SunburstItem.StructKind;
 import com.treetank.gui.view.tree.TreeModel;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
@@ -37,9 +38,7 @@ import processing.core.PConstants;
 /**
  * <h1>SunburstModel</h1>
  * 
- * <p>
- * The model, which interacts with Treetank.
- * </p>
+ * <p>The model, which interacts with Treetank.</p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
@@ -125,14 +124,10 @@ final class SunburstModel extends AbsModel {
         long maxChildCount = Long.MIN_VALUE;
         int depth = 0;
         int indexToParent = -1;
-
+        final NodeRelations relations = new NodeRelations();
+        
         // Iterate over descendant axis.
         for (final IAxis axis = new DescendantAxis(mRtx, true); axis.hasNext(); axis.next()) {
-            indexToParent++;
-
-            final long childCount = ((AbsStructNode)mRtx.getNode()).getChildCount();
-            final float anglePerChild = PConstants.TWO_PI / childCount;
-
             // If there is an angle change (= entering a new child node) reset angleOffset
             if (oldAngle != angle) {
                 angleOffset = 0f;
@@ -148,10 +143,14 @@ final class SunburstModel extends AbsModel {
             } while (((AbsStructNode)mRtx.getNode()).hasRightSibling() && mRtx.moveToRightSibling());
             mRtx.moveTo(key);
 
-            final float extension = ((AbsStructNode)mRtx.getNode()).getChildCount() * anglePerChild;
-
             // Add a sunburst item.
-            addItem(depth, angle, angleOffset, extension, minChildCount, maxChildCount, indexToParent);
+            final AbsStructNode node = (AbsStructNode)mRtx.getNode();
+            final StructKind structKind = node.hasFirstChild() ? StructKind.ISINNERNODE : StructKind.ISLEAF;
+            final long childCount = node.getChildCount();
+            final float anglePerChild = PConstants.TWO_PI / childCount;
+            final float extension = ((AbsStructNode)mRtx.getNode()).getChildCount() * anglePerChild;
+            relations.setAll(depth, structKind, childCount, minChildCount, maxChildCount, indexToParent);
+            mItems.add(new SunburstItem.Builder(mParent, mController, node, (angle + angleOffset) % PConstants.TWO_PI, extension, relations).build());
 
             // Increment angle offset.
             angleOffset += extension;
@@ -159,9 +158,9 @@ final class SunburstModel extends AbsModel {
 
             // Determines if angle needs to be adjusted.
             if (((AbsStructNode)mRtx.getNode()).hasFirstChild()) {
-                mRtx.moveToFirstChild();
                 depth++;
                 angle += angleOffset;
+                indexToParent++;
             }
         }
 
@@ -203,14 +202,8 @@ final class SunburstModel extends AbsModel {
      * @param paramIndexToParent
      *            Index of parent node.
      */
-    private void addItem(final int paramDepth, final float paramAngle, final float paramAngleOffset,
-        final float paramExtension, final long paramMinChildCount, final long paramMaxChildCount,
-        final int paramIndexToParent) {
-        final AbsStructNode node = (AbsStructNode)mRtx.getNode();
-        final boolean isLeaf = node.hasFirstChild() ? false : true;
-        final long childCount = node.getChildCount();
-        mItems.add(new SunburstItem.Builder(mParent, mController, node, paramDepth, isLeaf, childCount,
-            (paramAngle + paramAngleOffset) % PConstants.TWO_PI, paramExtension, paramMinChildCount,
-            paramMaxChildCount, paramIndexToParent).build());
+    private void addItem(final float paramAngle, final float paramAngleOffset,
+        final float paramExtension) {
+
     }
 }
