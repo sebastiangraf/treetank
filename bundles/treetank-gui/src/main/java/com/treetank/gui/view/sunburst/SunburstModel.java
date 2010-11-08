@@ -38,7 +38,9 @@ import processing.core.PConstants;
 /**
  * <h1>SunburstModel</h1>
  * 
- * <p>The model, which interacts with Treetank.</p>
+ * <p>
+ * The model, which interacts with Treetank.
+ * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
@@ -125,7 +127,7 @@ final class SunburstModel extends AbsModel {
         int depth = 0;
         int indexToParent = -1;
         final NodeRelations relations = new NodeRelations();
-        
+
         // Iterate over descendant axis.
         for (final IAxis axis = new DescendantAxis(mRtx, true); axis.hasNext(); axis.next()) {
             // If there is an angle change (= entering a new child node) reset angleOffset
@@ -150,7 +152,8 @@ final class SunburstModel extends AbsModel {
             final float anglePerChild = PConstants.TWO_PI / childCount;
             final float extension = ((AbsStructNode)mRtx.getNode()).getChildCount() * anglePerChild;
             relations.setAll(depth, structKind, childCount, minChildCount, maxChildCount, indexToParent);
-            mItems.add(new SunburstItem.Builder(mParent, mController, node, (angle + angleOffset) % PConstants.TWO_PI, extension, relations).build());
+            mItems.add(new SunburstItem.Builder(mParent, mController, node, (angle + angleOffset)
+                % PConstants.TWO_PI, extension, relations).build());
 
             // Increment angle offset.
             angleOffset += extension;
@@ -202,8 +205,7 @@ final class SunburstModel extends AbsModel {
      * @param paramIndexToParent
      *            Index of parent node.
      */
-    private void addItem(final float paramAngle, final float paramAngleOffset,
-        final float paramExtension) {
+    private void addItem(final float paramAngle, final float paramAngleOffset, final float paramExtension) {
 
     }
 }

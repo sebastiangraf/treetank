@@ -95,16 +95,16 @@ public final class TreeModel extends AbsTreeModel {
                         throw new IllegalStateException("No node with index " + paramIndex + " found!");
                     }
                 }
-//                for (int i = 0; i < childCount; i++) {
-//                    if (i == 0) {
-//                        mRTX.moveToFirstChild();
-//                    } else {
-//                        mRTX.moveToRightSibling();
-//                    }
-//                    if (paramIndex == namespCount + attCount + i) {
-//                        break;
-//                    }
-//                }
+                // for (int i = 0; i < childCount; i++) {
+                // if (i == 0) {
+                // mRTX.moveToFirstChild();
+                // } else {
+                // mRTX.moveToRightSibling();
+                // }
+                // if (paramIndex == namespCount + attCount + i) {
+                // break;
+                // }
+                // }
 
                 return mRTX.getNode();
             } else {
@@ -148,7 +148,7 @@ public final class TreeModel extends AbsTreeModel {
         if (paramParent == null || paramChild == null) {
             return -1;
         }
-        
+
         // Parent node.
         mRTX.moveTo(((IItem)paramParent).getNodeKey());
         final IItem parentNode = mRTX.getNode();
@@ -200,7 +200,7 @@ public final class TreeModel extends AbsTreeModel {
                 attCount = ((ElementNode)parent).getAttributeCount();
             }
             final long childCount = parent.getChildCount();
-            
+
             if (childCount == 0) {
                 throw new IllegalStateException("May not happen!");
             }
@@ -219,10 +219,10 @@ public final class TreeModel extends AbsTreeModel {
                     break;
                 }
             }
-            
+
             System.out.println("ChildCount: " + childCount);
             System.out.println("Child node: " + childNode);
-            
+
             break;
         default:
             throw new IllegalStateException("Child node kind not known! ");

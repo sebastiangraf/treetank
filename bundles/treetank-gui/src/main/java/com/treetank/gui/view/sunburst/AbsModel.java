@@ -27,25 +27,25 @@ import java.beans.PropertyChangeSupport;
  * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
- *
+ * 
  */
 abstract class AbsModel {
-    
+
     /** {@link PropertyChangeSupport} to register listeners. */
     private final PropertyChangeSupport mPropertyChangeSupport;
-    
+
     /**
      * Constructor.
      */
     AbsModel() {
         mPropertyChangeSupport = new PropertyChangeSupport(this);
     }
-    
-    /** 
+
+    /**
      * Add a {@link PropertyChangeListener}.
      * 
      * @param paramListener
-     *                  The listener to add.
+     *            The listener to add.
      */
     public final void addPropertyChangeListener(final PropertyChangeListener paramListener) {
         mPropertyChangeSupport.addPropertyChangeListener(paramListener);
@@ -55,7 +55,7 @@ abstract class AbsModel {
      * Remove a {@link PropertyChangeListener}.
      * 
      * @param paramListener
-     *                  The listener to remove.
+     *            The listener to remove.
      */
     public final void removePropertyChangeListener(final PropertyChangeListener paramListener) {
         mPropertyChangeSupport.removePropertyChangeListener(paramListener);
@@ -65,11 +65,11 @@ abstract class AbsModel {
      * Fire a property change.
      * 
      * @param paramPropertyName
-     *                  Name of the property.
+     *            Name of the property.
      * @param paramOldValue
-     *                  Old value.
+     *            Old value.
      * @param paramNewValue
-     *                  New value.
+     *            New value.
      */
     protected final void firePropertyChange(final String paramPropertyName, final Object paramOldValue,
         final Object paramNewValue) {

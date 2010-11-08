@@ -35,7 +35,9 @@ import static com.treetank.gui.GUIConstants.ELEMENT_COLOR;
 /**
  * <h1>TreeCellRenderer</h1>
  * 
- * <p>Customized tree cell renderer to render nodes nicely.</p>
+ * <p>
+ * Customized tree cell renderer to render nodes nicely.
+ * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
@@ -101,8 +103,7 @@ public final class TreeCellRenderer extends DefaultTreeCellRenderer {
             // Move transaction to parent of the attribute node.
             mRTX.moveTo(node.getParentKey());
             final long aNodeKey = node.getNodeKey();
-            for (int i = 0, attsCount = ((ElementNode)mRTX.getNode()).getAttributeCount(); 
-                i < attsCount; i++) {
+            for (int i = 0, attsCount = ((ElementNode)mRTX.getNode()).getAttributeCount(); i < attsCount; i++) {
                 mRTX.moveToAttribute(i);
                 if (mRTX.getNode().equals(node)) {
                     break;
@@ -127,8 +128,7 @@ public final class TreeCellRenderer extends DefaultTreeCellRenderer {
             // Move transaction to parent the namespace node.
             mRTX.moveTo(node.getParentKey());
             final long nNodeKey = node.getNodeKey();
-            for (int i = 0, namespCount = ((ElementNode)mRTX.getNode()).getNamespaceCount(); 
-                i < namespCount; i++) {
+            for (int i = 0, namespCount = ((ElementNode)mRTX.getNode()).getNamespaceCount(); i < namespCount; i++) {
                 mRTX.moveToNamespace(i);
                 if (mRTX.getNode().equals(node)) {
                     break;

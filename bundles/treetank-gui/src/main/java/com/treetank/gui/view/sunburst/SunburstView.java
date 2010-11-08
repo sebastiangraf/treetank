@@ -168,14 +168,14 @@ public final class SunburstView extends JScrollPane implements IView {
             }
         }
 
-//        @Override
-//        public void mousePressed(final MouseEvent paramEvent) {
-//            super.mousePressed(paramEvent);
-//
-//            // Update the screen (run draw once).
-//            redraw();
-//            handleHLWeight();
-//        }
+        // @Override
+        // public void mousePressed(final MouseEvent paramEvent) {
+        // super.mousePressed(paramEvent);
+        //
+        // // Update the screen (run draw once).
+        // redraw();
+        // handleHLWeight();
+        // }
 
         /** Handle mix of heavyweight ({@link PApplet}) and leightweight ({@link JMenuBar}) components. */
         private void handleHLWeight() {

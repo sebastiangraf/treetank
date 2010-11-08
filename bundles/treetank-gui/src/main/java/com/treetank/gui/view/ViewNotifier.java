@@ -24,7 +24,9 @@ import com.treetank.gui.GUI;
 /**
  * <h1>ViewNotifier</h1>
  * 
- * <p>Notifies views of changes (observer pattern).</p>
+ * <p>
+ * Notifies views of changes (observer pattern).
+ * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
@@ -56,7 +58,7 @@ public final class ViewNotifier {
     public void add(final IView paramView) {
         mViews.add(paramView);
     }
-    
+
     /**
      * Notifies all views of a data reference change.
      */
@@ -65,7 +67,7 @@ public final class ViewNotifier {
             view.refreshInit();
         }
     }
-    
+
     /**
      * Notifies all views of updates in the data structure.
      */
@@ -76,7 +78,7 @@ public final class ViewNotifier {
             }
         }
     }
-    
+
     /**
      * Notifies all views of updates in the data structure.
      */
@@ -87,11 +89,11 @@ public final class ViewNotifier {
             }
         }
     }
-    
-    /** 
-     * Get the main {@link GUI} frame. 
+
+    /**
+     * Get the main {@link GUI} frame.
      * 
-     * @return the gui 
+     * @return the gui
      */
     public GUI getGUI() {
         return mGUI;

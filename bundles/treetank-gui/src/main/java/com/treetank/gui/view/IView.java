@@ -19,17 +19,19 @@ package com.treetank.gui.view;
 /**
  * <h1>IView</h1>
  * 
- * <p>Interface every view has to implement.</p>
+ * <p>
+ * Interface every view has to implement.
+ * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
- *
+ * 
  */
 public interface IView {
     /**
      * Called when the data reference has changed.
      */
     void refreshInit();
-    
+
     /**
      * Called when updates have been done in the data structure.
      */
@@ -41,7 +43,7 @@ public interface IView {
      * @return result of check
      */
     boolean isVisible();
-    
+
     /**
      * Called when frame is going to dispose.
      */

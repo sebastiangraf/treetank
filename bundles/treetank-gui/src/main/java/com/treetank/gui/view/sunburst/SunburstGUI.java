@@ -37,7 +37,9 @@ import controlP5.Toggle;
 /**
  * <h1>SunburstGUI</h1>
  * 
- * <p>Internal Sunburst view GUI.</p>
+ * <p>
+ * Internal Sunburst view GUI.
+ * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
@@ -243,7 +245,6 @@ final class SunburstGUI extends AbsView {
         return mGUI;
     }
 
-    
     void drawGUI() {
         mControlP5.show();
         mControlP5.draw();
@@ -283,7 +284,7 @@ final class SunburstGUI extends AbsView {
             mStrokeWeightStart = f[0];
             mStrokeWeightEnd = f[1];
         }
-        
+
         final List<SunburstItem> items = (List<SunburstItem>)mController.get("Items");
 
         for (final SunburstItem item : items) {

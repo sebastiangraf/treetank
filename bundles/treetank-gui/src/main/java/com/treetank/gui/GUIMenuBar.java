@@ -60,7 +60,7 @@ public final class GUIMenuBar extends JMenuBar {
                         cmd.execute(paramGUI);
                     }
                 });
-                
+
                 item.setMnemonic(cmd.desc().charAt(0));
                 menu.add(item);
             }

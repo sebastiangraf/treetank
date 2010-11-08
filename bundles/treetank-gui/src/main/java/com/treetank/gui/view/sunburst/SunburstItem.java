@@ -214,22 +214,19 @@ final class SunburstItem {
             // Colors for leaf nodes and inner nodes.
             switch (mStructKind) {
             case ISLEAF:
-                final int from =
-                    mParent.color(mGUI.mHueStart, mGUI.mSaturationStart, mGUI.mBrightnessStart);
-                final int to =
-                    mParent.color(mGUI.mHueEnd, mGUI.mSaturationEnd, mGUI.mBrightnessEnd);
+                final int from = mParent.color(mGUI.mHueStart, mGUI.mSaturationStart, mGUI.mBrightnessStart);
+                final int to = mParent.color(mGUI.mHueEnd, mGUI.mSaturationEnd, mGUI.mBrightnessEnd);
                 mCol = mParent.lerpColor(from, to, percent);
                 mLineCol = mCol;
                 break;
             case ISINNERNODE:
                 float bright = 0;
                 bright =
-                    PApplet.lerp(mGUI.mInnerNodeBrightnessStart, mGUI.mInnerNodeStrokeBrightnessEnd,
-                        percent);
+                    PApplet.lerp(mGUI.mInnerNodeBrightnessStart, mGUI.mInnerNodeStrokeBrightnessEnd, percent);
                 mCol = mParent.color(0, 0, bright);
                 bright =
-                    PApplet.lerp(mGUI.mInnerNodeStrokeBrightnessStart, mGUI
-                        .mInnerNodeStrokeBrightnessEnd, percent);
+                    PApplet.lerp(mGUI.mInnerNodeStrokeBrightnessStart, mGUI.mInnerNodeStrokeBrightnessEnd,
+                        percent);
                 mLineCol = mParent.color(0, 0, bright);
                 break;
             default:
@@ -237,8 +234,7 @@ final class SunburstItem {
             }
 
             // Calculate stroke weight for relations line.
-            mLineWeight =
-                PApplet.map(mDepth, depthMax, 1, mGUI.mStrokeWeightStart, mGUI.mStrokeWeightEnd);
+            mLineWeight = PApplet.map(mDepth, depthMax, 1, mGUI.mStrokeWeightStart, mGUI.mStrokeWeightEnd);
             if (mArcLength < mLineWeight) {
                 mLineWeight = mArcLength * 0.93f;
             }
