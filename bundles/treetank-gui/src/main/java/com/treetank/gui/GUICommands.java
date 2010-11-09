@@ -33,9 +33,6 @@ import javax.swing.JPanel;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.treetank.access.Database;
 import com.treetank.access.DatabaseConfiguration;
 import com.treetank.api.IDatabase;
@@ -47,6 +44,9 @@ import com.treetank.service.xml.serialize.XMLSerializer;
 import com.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.service.xml.shredder.XMLUpdateShredder;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <h1>GUICommands</h1>

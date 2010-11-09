@@ -47,6 +47,7 @@ final class SunburstItem {
     private int mLineCol;
     private float mLineWeight;
 
+    // Angle variables. ======================================
     /** The start degree. */
     private final float mAngleStart;
 
@@ -55,15 +56,25 @@ final class SunburstItem {
     private final float mAngleCenter;
     private final float mAngleEnd;
 
+    
     private float mRadius;
     private float mDepthWeight; // stroke weight of the arc
     private float mX;
     private float mY;
     private float mArcLength;
+    
+    // Bezier controlpoints. =================================
+    /** X coordinate of first bezier control point. */
     private float mC1X;
+    
+    /** Y coordinate of first bezier control point. */
     private float mC1Y;
+    
+    /** X coordinate of second bezier control point. */
     private float mC2X;
-    private float mC2Y; // bezier controlpoints
+    
+    /** Y coordinate of second bezier control point. */
+    private float mC2Y; 
 
     /** Current {@link IItem} in Treetank. */
     private final IItem mNode;
@@ -187,6 +198,8 @@ final class SunburstItem {
      */
     void update(final int paramMappingMode) {
         assert paramMappingMode == 1;
+        
+        System.out.println("blabala");
 
         if (mIndexToParent > -1) {
             final int depthMax = (Integer)mController.get("DepthMax");
@@ -422,6 +435,8 @@ final class SunburstItem {
 
     // Getter ==========================================
     /**
+     * Get angle start.
+     * 
      * @return the angleStart.
      */
     float getAngleStart() {
@@ -429,6 +444,8 @@ final class SunburstItem {
     }
 
     /**
+     * Get angle end.
+     * 
      * @return the angleEnd.
      */
     float getAngleEnd() {
@@ -436,6 +453,8 @@ final class SunburstItem {
     }
 
     /**
+     * Get current depth.
+     * 
      * @return the depth.
      */
     int getDepth() {

@@ -26,6 +26,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 
+import com.treetank.api.IReadTransaction;
 import com.treetank.gui.GUIProp;
 import com.treetank.gui.ReadDB;
 import com.treetank.gui.view.IView;
@@ -52,7 +53,7 @@ public final class SunburstView extends JScrollPane implements IView {
     private transient ReadDB mDB;
 
     /** Processing {@link PApplet} reference. */
-    private transient PApplet mEmbed;
+    private transient Embedded mEmbed;
 
     /** This container. */
     private final JComponent mContainer = this;
@@ -94,11 +95,12 @@ public final class SunburstView extends JScrollPane implements IView {
 
     @Override
     public void refreshUpdate() {
-        mEmbed.draw();
+        mEmbed.refreshUpdate();
     }
 
     @Override
     public void dispose() {
+        mEmbed.noLoop();
     }
 
     /** Embedded processing view. */
@@ -108,14 +110,16 @@ public final class SunburstView extends JScrollPane implements IView {
 
         /** The Treetank {@link SunburstModel}. */
         private transient SunburstModel mModel;
+        
+        /** Treetank {@link IReadTransaction}. */
+        private transient IReadTransaction mRtx;
 
         @Override
         public void setup() {
-            size(getSketchWidth(), getSketchHeight());
+            size(getSketchWidth(), getSketchHeight(), P2D);
             final SunburstController<SunburstModel, SunburstGUI> controller =
                 new SunburstController<SunburstModel, SunburstGUI>();
             mModel = new SunburstModel(this, mDB, controller);
-            mModel.traverseTree();
 
             // Create GUI.
             mGUI = SunburstGUI.createGUI(this, controller);
@@ -127,6 +131,10 @@ public final class SunburstView extends JScrollPane implements IView {
             // Setup GUI and draw initial sunburst items.
             mGUI.setupGUI();
             handleHLWeight();
+            
+            mRtx = mDB.getRtx();
+            
+            refreshUpdate();
 
             // Prevent thread from starving everything else.
             // noLoop();
@@ -135,10 +143,6 @@ public final class SunburstView extends JScrollPane implements IView {
         @Override
         public void draw() {
             if (mGUI != null) {
-                final List<SunburstItem> items = mModel.traverseTree();
-                for (final SunburstItem item : items) {
-                    item.update(mGUI.getMappingMode());
-                }
                 mGUI.draw();
                 handleHLWeight();
             }
@@ -176,6 +180,16 @@ public final class SunburstView extends JScrollPane implements IView {
         // redraw();
         // handleHLWeight();
         // }
+
+        /** Refresh. */
+        public void refreshUpdate() {
+            if (mModel != null) {
+                final List<SunburstItem> items = mModel.traverseTree(mRtx.getNode().getNodeKey());
+                for (final SunburstItem item : items) {
+                    item.update(mGUI.getMappingMode());
+                }
+            }
+        }
 
         /** Handle mix of heavyweight ({@link PApplet}) and leightweight ({@link JMenuBar}) components. */
         private void handleHLWeight() {
