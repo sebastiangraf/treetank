@@ -46,6 +46,9 @@ import processing.core.PApplet;
  */
 public final class SunburstView extends JScrollPane implements IView {
 
+    /** {@link SunburstView} instance. */
+    private static SunburstView mView;
+
     /** {@link ViewNotifier} to notify views of changes. */
     private final ViewNotifier mNotifier;
 
@@ -64,7 +67,7 @@ public final class SunburstView extends JScrollPane implements IView {
      * @param paramNotifier
      *            {@link ViewNotifier} instance.
      */
-    public SunburstView(final ViewNotifier paramNotifier) {
+    private SunburstView(final ViewNotifier paramNotifier) {
         mNotifier = paramNotifier;
 
         // Add view to notifier.
@@ -72,6 +75,23 @@ public final class SunburstView extends JScrollPane implements IView {
 
         // Simple scroll mode, because we are adding a heavyweight component (PApplet to the JScrollPane).
         getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
+
+        mEmbed = new Embedded();
+    }
+
+    /**
+     * Singleton factory method.
+     * 
+     * @param paramNotifier
+     *            {@link ViewNotifier} to notify views of changes etc.pp.
+     * @return {@link SunburstView} instance.
+     */
+    public static SunburstView createInstance(final ViewNotifier paramNotifier) {
+        if (mView == null) {
+            mView = new SunburstView(paramNotifier);
+        }
+
+        return mView;
     }
 
     @Override
@@ -82,7 +102,6 @@ public final class SunburstView extends JScrollPane implements IView {
     @Override
     public void refreshInit() {
         mDB = mNotifier.getGUI().getReadDB();
-        mEmbed = new Embedded();
         setViewportView(mEmbed);
 
         /*
@@ -100,7 +119,9 @@ public final class SunburstView extends JScrollPane implements IView {
 
     @Override
     public void dispose() {
-        mEmbed.noLoop();
+        if (mEmbed != null) {
+            mEmbed.noLoop();
+        }
     }
 
     /** Embedded processing view. */
@@ -110,39 +131,46 @@ public final class SunburstView extends JScrollPane implements IView {
 
         /** The Treetank {@link SunburstModel}. */
         private transient SunburstModel mModel;
-        
+
         /** Treetank {@link IReadTransaction}. */
         private transient IReadTransaction mRtx;
+
+        /** {@link SunburstController} used for communication between models and views. */
+        private transient SunburstController<SunburstModel, SunburstGUI> mController;
 
         @Override
         public void setup() {
             size(getSketchWidth(), getSketchHeight(), P2D);
-            final SunburstController<SunburstModel, SunburstGUI> controller =
-                new SunburstController<SunburstModel, SunburstGUI>();
-            mModel = new SunburstModel(this, mDB, controller);
+            mController = new SunburstController<SunburstModel, SunburstGUI>();
+            mModel = new SunburstModel(this, mDB, mController);
 
             // Create GUI.
-            mGUI = SunburstGUI.createGUI(this, controller);
+            mGUI = SunburstGUI.createGUI(this, mController);
 
             // Add components to controller.
-            controller.addView(mGUI);
-            controller.addModel(mModel);
+            mController.addView(mGUI);
+            mController.addModel(mModel);
 
             // Setup GUI and draw initial sunburst items.
             mGUI.setupGUI();
             handleHLWeight();
-            
+
             mRtx = mDB.getRtx();
-            
+
             refreshUpdate();
 
             // Prevent thread from starving everything else.
             // noLoop();
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public void draw() {
             if (mGUI != null) {
+                final List<SunburstItem> items = (List<SunburstItem>)mController.get("Items");
+                for (final SunburstItem item : items) {
+                    item.update(mGUI.getMappingMode());
+                }
                 mGUI.draw();
                 handleHLWeight();
             }

@@ -16,6 +16,12 @@
  */
 package com.treetank.gui.view.text;
 
+import static com.treetank.gui.GUIConstants.ATTRIBUTE_COLOR;
+import static com.treetank.gui.GUIConstants.ELEMENT_COLOR;
+import static com.treetank.gui.GUIConstants.NAMESPACE_COLOR;
+import static com.treetank.gui.GUIConstants.NEWLINE;
+import static com.treetank.gui.GUIConstants.TEXT_COLOR;
+
 import java.awt.Dimension;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
@@ -38,6 +44,8 @@ import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import org.slf4j.LoggerFactory;
+
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.DescendantAxis;
@@ -49,10 +57,6 @@ import com.treetank.gui.view.ViewNotifier;
 import com.treetank.node.ElementNode;
 import com.treetank.service.xml.serialize.StAXSerializer;
 import com.treetank.utils.LogWrapper;
-
-import static com.treetank.gui.GUIConstants.*;
-
-import org.slf4j.LoggerFactory;
 
 /**
  * <h1>TextView</h1>
@@ -84,6 +88,9 @@ public final class TextView extends JScrollPane implements IView {
     private static final int PANE_HEIGHT = 600;
 
     // ======= Global member variables =====
+    
+    /** {@link TextView} instance. */
+    private static TextView mView;
 
     /** {@link JTextPane}, which displays XML data. */
     private final JTextPane mText = new JTextPane();
@@ -125,12 +132,12 @@ public final class TextView extends JScrollPane implements IView {
     private transient int mTempLevel;
 
     /**
-     * Constructor.
+     * Private constructor, called from singleton factory method.
      * 
      * @param paramNotifier
      *            {@link ViewNotifier} to notify views of changes etc.pp.
      */
-    public TextView(final ViewNotifier paramNotifier) {
+    private TextView(final ViewNotifier paramNotifier) {
         mNotifier = paramNotifier;
         mNotifier.add(this);
         mGUI = paramNotifier.getGUI();
@@ -146,6 +153,21 @@ public final class TextView extends JScrollPane implements IView {
         setViewportView(mText);
         setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         setMinimumSize(new Dimension(PANE_WIDTH, PANE_HEIGHT));
+    }
+    
+    /**
+     * Singleton factory method.
+     * 
+     * @param paramNotifier
+     *            {@link ViewNotifier} to notify views of changes etc.pp.
+     * @return {@link TextView} instance.
+     */
+    public static TextView createInstance(final ViewNotifier paramNotifier) {
+        if (mView == null) {
+            mView = new TextView(paramNotifier);
+        }
+        
+        return mView;
     }
 
     @Override

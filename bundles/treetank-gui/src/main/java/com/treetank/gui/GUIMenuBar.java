@@ -18,15 +18,14 @@ package com.treetank.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
-import static com.treetank.gui.GUIConstants.*;
+import static com.treetank.gui.GUIConstants.MENUBAR;
+import static com.treetank.gui.GUIConstants.MENUITEMS;
 
 /**
  * This is the menu bar of the main window.

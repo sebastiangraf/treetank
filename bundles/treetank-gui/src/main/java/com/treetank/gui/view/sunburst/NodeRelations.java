@@ -29,7 +29,7 @@ import com.treetank.gui.view.sunburst.SunburstItem.StructKind;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public final class NodeRelations {
+final class NodeRelations {
     /** Depth in the tree. */
     transient int mDepth;
 

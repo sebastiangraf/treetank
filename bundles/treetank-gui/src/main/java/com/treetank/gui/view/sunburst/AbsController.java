@@ -148,7 +148,7 @@ abstract class AbsController<M extends AbsModel, V extends AbsView> implements P
      *            An object that represents the new value
      *            of the property.
      */
-    public final void setModelProperty(final String paramPropertyName, final Object paramNewValue) {
+    final void setModelProperty(final String paramPropertyName, final Object paramNewValue) {
         for (final M model : mRegisteredModels) {
             try {
                 final Method method =
@@ -175,7 +175,7 @@ abstract class AbsController<M extends AbsModel, V extends AbsView> implements P
      *            Part of the method to call.
      * @return Object.
      */
-    public final Object getModelProperty(final String paramPropertyName) {
+    final Object getModelProperty(final String paramPropertyName) {
         Object retValue = null;
 
         for (final M model : mRegisteredModels) {
