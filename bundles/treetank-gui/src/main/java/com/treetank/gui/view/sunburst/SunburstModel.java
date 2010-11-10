@@ -17,6 +17,7 @@
 package com.treetank.gui.view.sunburst;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ import com.treetank.axis.DescendantAxis;
 import com.treetank.gui.ReadDB;
 import com.treetank.gui.view.sunburst.SunburstItem.StructKind;
 import com.treetank.gui.view.tree.TreeModel;
+import com.treetank.node.AbsNode;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.utils.LogWrapper;
@@ -73,7 +75,6 @@ final class SunburstModel extends AbsModel {
     SunburstModel(final PApplet paramApplet, final ReadDB paramDb,
         final SunburstController<? extends AbsModel, ? extends AbsView> paramController) {
         mController = paramController;
-        mItems = new ArrayList<SunburstItem>();
         mParent = paramApplet;
         mRtx = paramDb.getRtx();
     }
@@ -114,71 +115,165 @@ final class SunburstModel extends AbsModel {
         assert mRtx != null;
         final long nodeKey = mRtx.getNode().getNodeKey();
         mRtx.moveTo(paramKey);
+        if (mRtx.getNode().getKind() == ENodes.ROOT_KIND) {
+            mRtx.moveToFirstChild();
+        }
+        
+        long childCount = ((AbsStructNode) mRtx.getNode()).getChildCount();
+        final float anglePerChild = 2f;//PConstants.TWO_PI / childCount;
 
-        // Initialize variables.
-        float angleOffset = 0f;
-        float oldAngle = 0f;
-        float angle = 0f;
-        float tmpAngle = 0f;
-        int depth = 0;
-        int indexToParent = -1;
+        // Initialize variables. =====================================================
+        // Temp array for pushing and saving all elements in "breadth first search" style
+        final List<AbsNode> nodes = new LinkedList<AbsNode>();
+        final List<Integer> depths = new LinkedList<Integer>();
+        final List<Integer> indicesParent = new LinkedList<Integer>();
+        mItems = new LinkedList<SunburstItem>();
+        final List<Float> angles = new ArrayList<Float>();
+
+        // Add first elements and startingpoint.
+        nodes.add((AbsNode)mRtx.getNode());
+        depths.add(0);
+        indicesParent.add(-1);
+        angles.add(0f);
         final NodeRelations relations = new NodeRelations();
 
-        // Iterate over descendant axis.
-        for (final IAxis axis = new DescendantAxis(mRtx, true); axis.hasNext(); axis.next()) {
-            if (mRtx.getNode().getKind() == ENodes.ROOT_KIND) {
-                continue;
-            }
-            
+        // Tmp vars for running in while loop.
+        int index = 0;
+        float angleOffset = 0;
+        float oldAngle = 0;
+
+        // Iterate over a queue.
+        while (nodes.size() > index) {
+            mRtx.moveTo(nodes.get(index).getNodeKey());
+            final int depth = depths.get(index);
+            final int indexToParent = indicesParent.get(index);
+            final float angle = angles.get(index);
+
             // If there is an angle change (= entering a new child node) reset angleOffset
             if (oldAngle != angle) {
                 angleOffset = 0f;
             }
 
-            // Compute min and max child count of the children of the current node.
-            long minChildCount = Long.MAX_VALUE;
-            long maxChildCount = Long.MIN_VALUE;
-            final long key = mRtx.getNode().getNodeKey();
+            long key = mRtx.getNode().getNodeKey();
             if (((AbsStructNode)mRtx.getNode()).hasFirstChild()) {
                 mRtx.moveToFirstChild();
                 do {
-                    final AbsStructNode node = (AbsStructNode)mRtx.getNode();
-                    minChildCount = Math.min(node.getChildCount(), minChildCount);
-                    maxChildCount = Math.max(node.getChildCount(), maxChildCount);
+                    nodes.add((AbsNode)mRtx.getNode());
+                    depths.add(depth + 1);
+                    indicesParent.add(index);
+                    angles.add(angle + angleOffset);
                 } while (((AbsStructNode)mRtx.getNode()).hasRightSibling() && mRtx.moveToRightSibling());
-
                 mRtx.moveTo(key);
             }
+
+            // Compute min and max child count of the children of the current node.
+            long minChildCount = Long.MAX_VALUE;
+            long maxChildCount = Long.MIN_VALUE;
+            key = mRtx.getNode().getNodeKey();
+            do {
+                final AbsStructNode node = (AbsStructNode)mRtx.getNode();
+                minChildCount = Math.min(node.getChildCount(), minChildCount);
+                maxChildCount = Math.max(node.getChildCount(), maxChildCount);
+            } while (((AbsStructNode)mRtx.getNode()).hasRightSibling() && mRtx.moveToRightSibling());
+            mRtx.moveTo(key);
 
             // Add a sunburst item.
             final AbsStructNode node = (AbsStructNode)mRtx.getNode();
             final StructKind structKind = node.hasFirstChild() ? StructKind.ISINNERNODE : StructKind.ISLEAF;
-            final long childCount = node.getChildCount();
-            final float anglePerChild = PConstants.TWO_PI / childCount;
-            final float extension = ((AbsStructNode)mRtx.getNode()).getChildCount() * anglePerChild;
+            childCount = ((AbsStructNode)mRtx.getNode()).getChildCount();
+            final float extension = childCount * anglePerChild;
             relations.setAll(depth, structKind, childCount, minChildCount, maxChildCount, indexToParent);
             mItems.add(new SunburstItem.Builder(mParent, mController, node, (angle + angleOffset)
                 % PConstants.TWO_PI, extension, relations).build());
 
             // Increment angle offset.
             angleOffset += extension;
+            index++;
             oldAngle = angle;
-
-            // Determines if angle needs to be adjusted.
-            if (node.hasFirstChild()) {
-                depth++;
-                angle += angleOffset;
-                tmpAngle = angle;
-                indexToParent++;
-            } else if (!node.hasRightSibling()) {
-                depth--;
-                angle = tmpAngle;
-                oldAngle = angle;
-                indexToParent--;
-            }
         }
 
         mRtx.moveTo(nodeKey);
+        LOGWRAPPER.info(index + " SunburstItems created!");
         return mItems;
     }
+
+    // /**
+    // * Traverse the tree and create sunburst items.
+    // *
+    // * @param paramKey
+    // * Node key to start from.
+    // * @return {@link List} of {@link SunburstItem}s.
+    // */
+    // List<SunburstItem> traverseTree(final long paramKey) {
+    // LOGWRAPPER.debug("Build sunburst items.");
+    // assert mRtx != null;
+    // final long nodeKey = mRtx.getNode().getNodeKey();
+    // mRtx.moveTo(paramKey);
+    //
+    // // Initialize variables.
+    // float angleOffset = 0f;
+    // float oldAngle = 0f;
+    // float angle = 0f;
+    // float tmpAngle = 0f;
+    // int depth = 0;
+    // int indexToParent = -1;
+    // final NodeRelations relations = new NodeRelations();
+    //
+    // // Iterate over nodes.
+    // for (final IAxis axis = new DescendantAxis(mRtx, true); axis.hasNext(); axis.next()) {
+    // if (mRtx.getNode().getKind() == ENodes.ROOT_KIND) {
+    // continue;
+    // }
+    //            
+    // // If there is an angle change (= entering a new child node) reset angleOffset
+    // if (oldAngle != angle) {
+    // angleOffset = 0f;
+    // }
+    //
+    // // Compute min and max child count of the children of the current node.
+    // long minChildCount = Long.MAX_VALUE;
+    // long maxChildCount = Long.MIN_VALUE;
+    // final long key = mRtx.getNode().getNodeKey();
+    // // if (((AbsStructNode)mRtx.getNode()).hasFirstChild()) {
+    // // mRtx.moveToFirstChild();
+    // do {
+    // final AbsStructNode node = (AbsStructNode)mRtx.getNode();
+    // minChildCount = Math.min(node.getChildCount(), minChildCount);
+    // maxChildCount = Math.max(node.getChildCount(), maxChildCount);
+    // } while (((AbsStructNode)mRtx.getNode()).hasRightSibling() && mRtx.moveToRightSibling());
+    //
+    // mRtx.moveTo(key);
+    // // }
+    //
+    // // Add a sunburst item.
+    // final AbsStructNode node = (AbsStructNode)mRtx.getNode();
+    // final StructKind structKind = node.hasFirstChild() ? StructKind.ISINNERNODE : StructKind.ISLEAF;
+    // final long childCount = node.getChildCount();
+    // final float anglePerChild = PConstants.TWO_PI / childCount;
+    // final float extension = ((AbsStructNode)mRtx.getNode()).getChildCount() * anglePerChild;
+    // relations.setAll(depth, structKind, childCount, minChildCount, maxChildCount, indexToParent);
+    // mItems.add(new SunburstItem.Builder(mParent, mController, node, (angle + angleOffset)
+    // % PConstants.TWO_PI, extension, relations).build());
+    //
+    // // Increment angle offset.
+    // angleOffset += extension;
+    // oldAngle = angle;
+    //
+    // // Determines if angle needs to be adjusted.
+    // if (node.hasFirstChild()) {
+    // depth++;
+    // angle += angleOffset;
+    // tmpAngle = angle;
+    // indexToParent++;
+    // } else if (!node.hasRightSibling()) {
+    // depth--;
+    // angle = tmpAngle;
+    // oldAngle = angle;
+    // indexToParent--;
+    // }
+    // }
+    //
+    // mRtx.moveTo(nodeKey);
+    // return mItems;
+    // }
 }

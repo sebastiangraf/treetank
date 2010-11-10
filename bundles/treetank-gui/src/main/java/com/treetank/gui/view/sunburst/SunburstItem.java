@@ -198,9 +198,6 @@ final class SunburstItem {
      */
     void update(final int paramMappingMode) {
         assert paramMappingMode == 1;
-        
-        System.out.println("blabala");
-
         if (mIndexToParent > -1) {
             final int depthMax = (Integer)mController.get("DepthMax");
             mRadius = calcEqualAreaRadius(mDepth, depthMax);
@@ -247,7 +244,7 @@ final class SunburstItem {
             }
 
             // Calculate stroke weight for relations line.
-            mLineWeight = PApplet.map(mDepth, depthMax, 1, mGUI.mStrokeWeightStart, mGUI.mStrokeWeightEnd);
+            mLineWeight = PApplet.map(mDepth, 1, depthMax, mGUI.mStrokeWeightStart, mGUI.mStrokeWeightEnd);
             if (mArcLength < mLineWeight) {
                 mLineWeight = mArcLength * 0.93f;
             }
@@ -285,7 +282,6 @@ final class SunburstItem {
      *            Scale of leaf nodes.
      */
     void drawArc(final float paramInnerNodeScale, final float paramLeafScale) {
-        assert paramInnerNodeScale != 0f && paramLeafScale != 0f;
         float arcRadius = 0;
         if (mDepth > 0) {
             switch (mStructKind) {

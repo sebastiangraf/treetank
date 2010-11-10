@@ -122,7 +122,7 @@ public final class GUI extends JFrame {
         // top.add(treeText, BorderLayout.CENTER);
         final JPanel sunburst = new JPanel();
         sunburst.setLayout(new GridLayout(0, 1));
-        final SunburstView sunburstView = new SunburstView(mNotifier);
+        final SunburstView sunburstView = SunburstView.createInstance(mNotifier);
         sunburstView.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         sunburst.add(sunburstView);
         top.add(sunburst, BorderLayout.CENTER);
@@ -146,7 +146,7 @@ public final class GUI extends JFrame {
      * @param paramRevision
      *            Determines the revision.
      */
-    public void execute(final File paramFile, final long paramRevision) {
+    void execute(final File paramFile, final long paramRevision) {
         try {
             if (mReadDB == null || !paramFile.equals(mReadDB.getDatabase().getFile())
                 || paramRevision != mReadDB.getRtx().getRevisionNumber()) {

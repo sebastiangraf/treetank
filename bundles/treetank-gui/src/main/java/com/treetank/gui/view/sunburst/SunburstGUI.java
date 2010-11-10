@@ -190,7 +190,6 @@ final class SunburstGUI extends AbsView {
         final List<SunburstItem> items = (List<SunburstItem>)mController.get("Items");
 
         for (final SunburstItem item : items) {
-            System.out.println("SUBBAAA");
             item.update(mMappingMode);
         }
     }
@@ -243,9 +242,12 @@ final class SunburstGUI extends AbsView {
         posY += 50;
 
         // name, minimum, maximum, default value (float), x, y, width, height
-        mSliders[si] = mControlP5.addSlider("mInnerNodeArcScale", 0, 1, mInnerNodeArcScale, left, top + posY + 0, len, 15);
+        mSliders[si] =
+            mControlP5.addSlider("mInnerNodeArcScale", 0, 1, mInnerNodeArcScale, left, top + posY + 0, len,
+                15);
         mSliders[si++].setLabel("innerNodeArcScale");
-        mSliders[si] = mControlP5.addSlider("mLeafArcScale", 0, 1, mLeafArcScale, left, top + posY + 20, len, 15);
+        mSliders[si] =
+            mControlP5.addSlider("mLeafArcScale", 0, 1, mLeafArcScale, left, top + posY + 20, len, 15);
         mSliders[si++].setLabel("leafNodeArcScale");
         posY += 50;
 
@@ -256,11 +258,14 @@ final class SunburstGUI extends AbsView {
 
         mSliders[si] = mControlP5.addSlider("mDotSize", 0, 10, mDotSize, left, top + posY + 0, len, 15);
         mSliders[si++].setLabel("dotSize");
-        mSliders[si] = mControlP5.addSlider("mDotBrightness", 0, 100, mDotBrightness, left, top + posY + 20, len, 15);
+        mSliders[si] =
+            mControlP5.addSlider("mDotBrightness", 0, 100, mDotBrightness, left, top + posY + 20, len, 15);
         mSliders[si++].setLabel("dotBrightness");
         posY += 50;
 
-        mSliders[si] = mControlP5.addSlider("mBackgroundBrightness", 0, 100, left, top + posY + 0, len, 15);
+        mSliders[si] =
+            mControlP5.addSlider("mBackgroundBrightness", 0, 100, mBackgroundBrightness, left,
+                top + posY + 0, len, 15);
         mSliders[si++].setLabel("backgroundBrightness");
         posY += 30;
 
@@ -298,7 +303,7 @@ final class SunburstGUI extends AbsView {
 
         for (int i = 0; i < ti; i++) {
             mToggles[i].setGroup(ctrl);
-//            mToggles[i].setColorValue(mParent.color(50));
+            // mToggles[i].setColorValue(mParent.color(50));
             mToggles[i].captionLabel().style().padding(4, 3, 1, 3);
             mToggles[i].captionLabel().style().marginTop = -19;
             mToggles[i].captionLabel().style().marginLeft = 18;

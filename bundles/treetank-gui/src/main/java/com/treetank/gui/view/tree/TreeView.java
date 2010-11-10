@@ -44,10 +44,13 @@ import com.treetank.gui.view.ViewNotifier;
  * 
  */
 public final class TreeView extends JScrollPane implements IView {
-
+    
     /** Row height. */
     private static final int ROW_HEIGHT = 20;
 
+    /** {@link TreeView} instance. */
+    private static TreeView mView;
+    
     /** A {@link JTree} instance. */
     private final JTree mTree;
 
@@ -58,10 +61,10 @@ public final class TreeView extends JScrollPane implements IView {
     private final GUI mGUI;
 
     /** Treetank {@link IReadTransaction}. */
-    private IReadTransaction mRtx;
+    private transient IReadTransaction mRtx;
 
     /**
-     * Constructor.
+     * Private Constructor, called from singleton factory method.
      * 
      * @param paramNotifier
      *            {@link ViewNotifier} to notify views of changes etc.pp.
@@ -91,6 +94,21 @@ public final class TreeView extends JScrollPane implements IView {
         // Add the tree to the scroll pane.
         setViewportView(mTree);
         setBackground(Color.WHITE);
+    }
+    
+    /**
+     * Singleton factory.
+     * 
+     * @param paramNotifier
+     *            {@link ViewNotifier} to notify views of changes etc.pp.
+     * @return {@link TreeView} instance.
+     */
+    public static TreeView createInstance(final ViewNotifier paramNotifier) {
+        if (mView == null) {
+            mView = new TreeView(paramNotifier);
+        }
+        
+        return mView;
     }
 
     @Override
