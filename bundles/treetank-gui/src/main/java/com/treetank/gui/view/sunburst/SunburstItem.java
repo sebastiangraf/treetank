@@ -18,6 +18,8 @@ package com.treetank.gui.view.sunburst;
 
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import com.treetank.api.IItem;
 
 import processing.core.PApplet;
@@ -39,8 +41,8 @@ final class SunburstItem {
     /** Index to parent node. */
     private final int mIndexToParent;
 
-    /** Number of child nodes of the current node. */
-    private final long mChildCount;
+    /** Number of descendant nodes of the current node. */
+    private final long mDescendantCount;
 
     // Arc and lines drawing vars. ===========================
     private int mCol;
@@ -48,45 +50,54 @@ final class SunburstItem {
     private float mLineWeight;
 
     // Angle variables. ======================================
-    /** The start degree. */
+    /** The start of the angle in radians. */
     private final float mAngleStart;
 
     /** The extension of the angle. */
     private final float mExtension;
+    
+    /** The center of the angle in radians. */
     private final float mAngleCenter;
+    
+    /** The end of the angle in radians. */
     private final float mAngleEnd;
 
-    
+    /** Radius of the current depth. */
     private float mRadius;
+    
+    
     private float mDepthWeight; // stroke weight of the arc
     private float mX;
     private float mY;
     private float mArcLength;
-    
+
     // Bezier controlpoints. =================================
     /** X coordinate of first bezier control point. */
     private float mC1X;
-    
+
     /** Y coordinate of first bezier control point. */
     private float mC1Y;
-    
+
     /** X coordinate of second bezier control point. */
     private float mC2X;
-    
+
     /** Y coordinate of second bezier control point. */
-    private float mC2Y; 
+    private float mC2Y;
 
     /** Current {@link IItem} in Treetank. */
     private final IItem mNode;
 
+    /** {@link QName} of current node. */
+    private final QName mQName;
+
     /** Depth in the tree. */
     private final int mDepth;
 
-    /** Minimum child count of leaf nodes. */
-    private final long mMinChildCount;
+    /** Global minimum of descendant nodes. */
+    private final long mMinDescendantCount;
 
-    /** Maximum child count of leaf nodes. */
-    private final long mMaxChildCount;
+    /** Global maximum of descendant nodes. */
+    private final long mMaxDescendantCount;
 
     /** Structural kind of node. */
     enum StructKind {
@@ -120,6 +131,9 @@ final class SunburstItem {
         /** Current {@link IItem} in Treetank. */
         private final IItem mNode;
 
+        /** {@link QName} of current node. */
+        private final QName mQName;
+
         /** {@link NodeRelations} reference. */
         private final NodeRelations mRelations;
 
@@ -138,6 +152,8 @@ final class SunburstItem {
          *            {@link SunburstController}.
          * @param paramNode
          *            {@link IItem} in Treetank, which belongs to this {@link SunburstItem}.
+         * @param paramQName
+         *            {@link QName} of current node.
          * @param paramAngleStart
          *            The start degree.
          * @param paramExtension
@@ -147,11 +163,12 @@ final class SunburstItem {
          */
         public Builder(final PApplet paramApplet,
             final SunburstController<? extends AbsModel, ? extends AbsView> paramController,
-            final IItem paramNode, final float paramAngleStart, final float paramExtension,
-            final NodeRelations paramRelations) {
+            final IItem paramNode, final QName paramQName, final float paramAngleStart,
+            final float paramExtension, final NodeRelations paramRelations) {
             mParent = paramApplet;
             mController = paramController;
             mNode = paramNode;
+            mQName = paramQName;
             mAngleStart = paramAngleStart;
             mExtension = paramExtension;
             mRelations = paramRelations;
@@ -174,14 +191,17 @@ final class SunburstItem {
      *            The Builder to build a new sunburst item.
      */
     private SunburstItem(final Builder paramBuilder) {
+        // Returns GUI singleton instance.
         mGUI = SunburstGUI.createGUI(paramBuilder.mParent, paramBuilder.mController);
+        
         mNode = paramBuilder.mNode;
+        mQName = paramBuilder.mQName;
         mParent = paramBuilder.mParent;
         mController = paramBuilder.mController;
         mStructKind = paramBuilder.mRelations.mStructKind;
-        mChildCount = paramBuilder.mRelations.mChildCount;
-        mMinChildCount = paramBuilder.mRelations.mMinChildCount;
-        mMaxChildCount = paramBuilder.mRelations.mMaxChildCount;
+        mDescendantCount = paramBuilder.mRelations.mDescendantCount;
+        mMinDescendantCount = paramBuilder.mRelations.mMinDescendantCount;
+        mMaxDescendantCount = paramBuilder.mRelations.mMaxDescendantCount;
         mAngleStart = paramBuilder.mAngleStart;
         mExtension = paramBuilder.mExtension;
         mAngleCenter = mAngleStart + mExtension / 2;
@@ -194,7 +214,7 @@ final class SunburstItem {
      * Update item, called only when the Treetank storage has changed.
      * 
      * @param paramMappingMode
-     *            Specifies the mapping mode (currently only 1 is permitted).
+     *            Specifies the mapping mode (currently only '1' is permitted).
      */
     void update(final int paramMappingMode) {
         assert paramMappingMode == 1;
@@ -216,7 +236,7 @@ final class SunburstItem {
             float percent = 0;
             switch (paramMappingMode) {
             case 1:
-                percent = PApplet.norm(mChildCount, mMinChildCount, mMaxChildCount);
+                percent = PApplet.norm(mDescendantCount, mMinDescendantCount, mMaxDescendantCount);
                 break;
             default:
             }
@@ -231,8 +251,7 @@ final class SunburstItem {
                 break;
             case ISINNERNODE:
                 float bright = 0;
-                bright =
-                    PApplet.lerp(mGUI.mInnerNodeBrightnessStart, mGUI.mInnerNodeStrokeBrightnessEnd, percent);
+                bright = PApplet.lerp(mGUI.mInnerNodeBrightnessStart, mGUI.mInnerNodeBrightnessEnd, percent);
                 mCol = mParent.color(0, 0, bright);
                 bright =
                     PApplet.lerp(mGUI.mInnerNodeStrokeBrightnessStart, mGUI.mInnerNodeStrokeBrightnessEnd,
@@ -253,23 +272,13 @@ final class SunburstItem {
             mC1X = PApplet.cos(mAngleCenter) * calcEqualAreaRadius(mDepth - 1, depthMax);
             mC1Y = PApplet.sin(mAngleCenter) * calcEqualAreaRadius(mDepth - 1, depthMax);
 
-            final List<SunburstItem> items = getItems();
+            final List<SunburstItem> items = mGUI.getItems();
             mC2X = PApplet.cos(items.get(mIndexToParent).mAngleCenter);
             mC2X *= calcEqualAreaRadius(mDepth, depthMax);
 
             mC2Y = PApplet.sin(items.get(mIndexToParent).mAngleCenter);
             mC2Y *= calcEqualAreaRadius(mDepth, depthMax);
         }
-    }
-
-    /**
-     * Get sunburst items.
-     * 
-     * @return {@link List} of {@link SunburstItem}s.
-     */
-    @SuppressWarnings("unchecked")
-    private List<SunburstItem> getItems() {
-        return (List<SunburstItem>)mController.get("Items");
     }
 
     // Draw methods ====================================
@@ -363,7 +372,7 @@ final class SunburstItem {
      * Draw a dot which are the bezier-curve anchors.
      */
     void drawDot() {
-        if (mDepth > 0) {
+        if (mDepth >= 0) {
             float diameter = mGUI.mDotSize;
             if (mArcLength < diameter) {
                 diameter = mArcLength * 0.95f;
@@ -385,7 +394,7 @@ final class SunburstItem {
         if (mDepth > 0) {
             mParent.stroke(mLineCol);
             mParent.strokeWeight(mLineWeight);
-            final List<SunburstItem> items = getItems();
+            final List<SunburstItem> items = mGUI.getItems();
             mParent.line(mX, mY, items.get(mIndexToParent).mX, items.get(mIndexToParent).mY);
         }
     }
@@ -394,10 +403,10 @@ final class SunburstItem {
      * Draw a bezier curve from child to parent.
      */
     void drawRelationBezier() {
-        if (mDepth > 1) {
+        if (mDepth > 0) {
             mParent.stroke(mLineCol);
             mParent.strokeWeight(mLineWeight);
-            final List<SunburstItem> items = getItems();
+            final List<SunburstItem> items = mGUI.getItems();
             mParent.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, items.get(mIndexToParent).mX, items
                 .get(mIndexToParent).mY);
         }
@@ -455,5 +464,10 @@ final class SunburstItem {
      */
     int getDepth() {
         return mDepth;
+    }
+
+    @Override
+    public String toString() {
+        return "[Depth: " + mDepth + " QName: " + mQName + "]";
     }
 }
