@@ -31,5 +31,5 @@ abstract class AbsView {
      * @param paramEvt
      *            The property change event from the model
      */
-    protected abstract void modelPropertyChange(final PropertyChangeEvent paramEvt);
+    abstract void modelPropertyChange(final PropertyChangeEvent paramEvt);
 }

@@ -36,14 +36,14 @@ final class NodeRelations {
     /** Determines the structural kind of the node. */
     transient StructKind mStructKind;
 
-    /** The child count of the node. */
-    transient long mChildCount;
+    /** Descendant count of the node. */
+    transient long mDescendantCount;
 
-    /** Minimum child count of it's children. */
-    transient long mMinChildCount;
+    /** Global minimum descendant count. */
+    transient long mMinDescendantCount;
 
-    /** Maximum child count of it's childre. */
-    transient long mMaxChildCount;
+    /** Global maximum descendant count. */
+    transient long mMaxDescendantCount;
 
     /** Index to the parent item. */
     transient int mIndexToParent;
@@ -55,24 +55,25 @@ final class NodeRelations {
      *            Depth in the tree.
      * @param paramStructKind
      *            Determines the structural kind of the node.
-     * @param paramChildCount
-     *            The child count of the node.
-     * @param paramMinChildCount
-     *            Minimum child count of it's children.
-     * @param paramMaxChildCount
-     *            Maximum child count of it's childre.
+     * @param paramDescendantCount
+     *            The descendant count of the node.
+     * @param paramMinDescendantCount
+     *            Global minimum descendant count.
+     * @param paramMaxDescendantCount
+     *            Global maximum descendant count.
      * @param paramIndexToParent
      *            Index to the parent item.
      * @return NodeRelations instance.
      */
-    NodeRelations setAll(final int paramDepth, final StructKind paramStructKind, final long paramChildCount,
-        final long paramMinChildCount, final long paramMaxChildCount, final int paramIndexToParent) {
+    NodeRelations setAll(final int paramDepth, final StructKind paramStructKind,
+        final long paramDescendantCount, final long paramMinDescendantCount,
+        final long paramMaxDescendantCount, final int paramIndexToParent) {
         assert paramStructKind != null;
         mDepth = paramDepth;
         mStructKind = paramStructKind;
-        mChildCount = paramChildCount;
-        mMinChildCount = paramMinChildCount;
-        mMaxChildCount = paramMaxChildCount;
+        mDescendantCount = paramDescendantCount;
+        mMinDescendantCount = paramMinDescendantCount;
+        mMaxDescendantCount = paramMaxDescendantCount;
         mIndexToParent = paramIndexToParent;
         return this;
     }
