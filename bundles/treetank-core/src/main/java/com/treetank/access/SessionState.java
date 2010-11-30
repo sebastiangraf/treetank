@@ -237,7 +237,7 @@ public final class SessionState {
                 returnVals.add(exec.submit(new LogSyncer(mWriteTransactionStateMap.get(key), mContToSync)));
             }
         }
-
+        exec.shutdown();
         if (!mSyncTransactionsReturns.containsKey(mTransactionId)) {
             mSyncTransactionsReturns.put(mTransactionId,
                 new ConcurrentHashMap<Long, Collection<Future<Void>>>());
