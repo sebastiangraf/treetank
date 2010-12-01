@@ -14,10 +14,22 @@ import org.jaxrx.StartJetty;
 public final class StartServer {
 
     /**
-     * I'm a lazy constructor.
+     * The Jetty instance.
      */
-    private StartServer() {
+    private StartJetty jetty;
 
+    /**
+     * I'm a lazy constructor.
+     * 
+     * @param sPort
+     *            port for the REST server.
+     * 
+     */
+    public StartServer(final int sPort) {
+        System.setProperty("org.jaxrx.systemPath",
+            "com.treetank.service.jaxrx.implementation.TreeTankMediator");
+        System.setProperty("org.jaxrx.systemName", "treetank");
+        jetty = new StartJetty(sPort);
     }
 
     /**
@@ -27,13 +39,23 @@ public final class StartServer {
      *            Not used parameter.
      */
     public static void main(final String[] args) {
-        int port=8093;
-        if(args!=null && args.length>0){
+        int port = 8093;
+        if (args != null && args.length > 0) {
             port = Integer.parseInt(args[0]);
         }
         System.setProperty("org.jaxrx.systemPath",
             "com.treetank.service.jaxrx.implementation.TreeTankMediator");
         System.setProperty("org.jaxrx.systemName", "treetank");
         new StartJetty(port);
+    }
+
+    /**
+     * This method stops the Jetty server.
+     * 
+     * @throws Exception
+     *             The exception occurred while stopping server.
+     */
+    public void stopServer() throws Exception {
+        jetty.stop();
     }
 }
