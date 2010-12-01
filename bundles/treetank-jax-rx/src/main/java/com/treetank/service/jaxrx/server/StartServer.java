@@ -56,6 +56,6 @@ public final class StartServer {
      *             The exception occurred while stopping server.
      */
     public void stopServer() throws Exception {
-        jetty.stop();
+        // jetty.stop();
     }
 }
