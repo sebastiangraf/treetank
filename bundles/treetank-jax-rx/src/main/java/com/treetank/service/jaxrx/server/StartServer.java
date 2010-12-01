@@ -27,9 +27,13 @@ public final class StartServer {
      *            Not used parameter.
      */
     public static void main(final String[] args) {
+        int port=8093;
+        if(args!=null && args.length>0){
+            port = Integer.parseInt(args[0]);
+        }
         System.setProperty("org.jaxrx.systemPath",
             "com.treetank.service.jaxrx.implementation.TreeTankMediator");
         System.setProperty("org.jaxrx.systemName", "treetank");
-        new StartJetty(8093);
+        new StartJetty(port);
     }
 }
