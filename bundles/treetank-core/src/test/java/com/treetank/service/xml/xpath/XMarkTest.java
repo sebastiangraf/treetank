@@ -34,7 +34,7 @@ import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.shredder.XMLShredder;
 
 /**
- * Performes the XMark benchmark.
+ * Performes the XMark benchmark.				
  * 
  * @author Tina Scherer
  */

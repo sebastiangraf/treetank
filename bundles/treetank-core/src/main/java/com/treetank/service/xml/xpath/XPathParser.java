@@ -111,7 +111,7 @@ public final class XPathParser implements XPathConstants {
 
         // after the parsing of the expression no token must be left
         if (mToken.getType() != Token.END) {
-            throw new IllegalStateException("The query  has not been processed completely.");
+            throw new IllegalStateException("The query has not been processed completely.");
         }
     }
 
