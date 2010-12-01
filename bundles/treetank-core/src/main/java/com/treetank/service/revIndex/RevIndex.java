@@ -19,6 +19,7 @@ package com.treetank.service.revIndex;
 
 import java.io.File;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Stack;
 
 import javax.xml.namespace.QName;
@@ -30,8 +31,8 @@ import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
-import com.treetank.utils.NamePageHash;
 import com.treetank.utils.LogWrapper;
+import com.treetank.utils.NamePageHash;
 
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +51,7 @@ public final class RevIndex {
      */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(RevIndex.class));
 
-    final static String EMPTY_STRING = "";
+    protected static final String EMPTY_STRING = "";
 
     // MetaRoot Elemens
     final static String META_ELEMENT = "indexRevision";
@@ -245,9 +246,9 @@ public final class RevIndex {
      *            the root of the document-root structure
      * @return the results as a list of nodes
      */
-    public LinkedList<Long> getDocumentsForDocRoot(final long mDocLong) {
+    public List<Long> getDocumentsForDocRoot(final long mDocLong) {
 
-        final LinkedList<Long> returnVal = new LinkedList<Long>();
+        final List<Long> returnVal = new LinkedList<Long>();
         mRtx.moveTo(mDocLong);
         mRtx.moveToFirstChild();
         do {
