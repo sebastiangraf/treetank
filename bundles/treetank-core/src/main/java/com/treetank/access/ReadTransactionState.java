@@ -99,7 +99,6 @@ public class ReadTransactionState {
         mRootPage = loadRevRoot(paramRevision);
         initializeNamePage();
         mItemList = paramItemList;
-
     }
 
     /**
