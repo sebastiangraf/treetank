@@ -183,7 +183,6 @@ public class XMLSerializerTest {
      * the children of the books will be serialized and NOT the book node itself.
      */
     @Test
-    @Ignore
     public void testKeyStart() throws Exception {
 
         final File dir = new File(STOREDBPATH);
