@@ -876,37 +876,39 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         // Cursor to root
         IStructuralItem cursorToRoot;
         do {
-            cursorToRoot =
-                (IStructuralItem)getTransactionState().prepareNodeForModification(
-                    getCurrentNode().getNodeKey());
-            hashCodeForParent = getCurrentNode().hashCode() + hashCodeForParent * PRIME;
-            // Caring about attributes and namespaces if node is an element.
-            if (cursorToRoot.getKind() == ENodes.ELEMENT_KIND) {
-                final ElementNode currentElement = (ElementNode)cursorToRoot;
-                // setting the attributes and namespaces
-                for (int i = 0; i < ((ElementNode)cursorToRoot).getAttributeCount(); i++) {
-                    moveTo(currentElement.getAttributeKey(i));
-                    hashCodeForParent = getCurrentNode().hashCode() + hashCodeForParent * PRIME;
+            synchronized (getCurrentNode()) {
+                cursorToRoot =
+                    (IStructuralItem)getTransactionState().prepareNodeForModification(
+                        getCurrentNode().getNodeKey());
+                hashCodeForParent = getCurrentNode().hashCode() + hashCodeForParent * PRIME;
+                // Caring about attributes and namespaces if node is an element.
+                if (cursorToRoot.getKind() == ENodes.ELEMENT_KIND) {
+                    final ElementNode currentElement = (ElementNode)cursorToRoot;
+                    // setting the attributes and namespaces
+                    for (int i = 0; i < ((ElementNode)cursorToRoot).getAttributeCount(); i++) {
+                        moveTo(currentElement.getAttributeKey(i));
+                        hashCodeForParent = getCurrentNode().hashCode() + hashCodeForParent * PRIME;
+                    }
+                    for (int i = 0; i < ((ElementNode)cursorToRoot).getNamespaceCount(); i++) {
+                        moveTo(currentElement.getNamespaceKey(i));
+                        hashCodeForParent = getCurrentNode().hashCode() + hashCodeForParent * PRIME;
+                    }
+                    moveTo(cursorToRoot.getNodeKey());
                 }
-                for (int i = 0; i < ((ElementNode)cursorToRoot).getNamespaceCount(); i++) {
-                    moveTo(currentElement.getNamespaceKey(i));
-                    hashCodeForParent = getCurrentNode().hashCode() + hashCodeForParent * PRIME;
+
+                // Caring about the children of a node
+                if (moveTo(getNodeIfStructural().getFirstChildKey())) {
+                    do {
+                        hashCodeForParent = getCurrentNode().getHash() + hashCodeForParent * PRIME;
+                    } while (moveTo(getNodeIfStructural().getRightSiblingKey()));
+                    moveTo(getNodeIfStructural().getParentKey());
                 }
-                moveTo(cursorToRoot.getNodeKey());
-            }
 
-            // Caring about the children of a node
-            if (moveTo(getNodeIfStructural().getFirstChildKey())) {
-                do {
-                    hashCodeForParent = getCurrentNode().getHash() + hashCodeForParent * PRIME;
-                } while (moveTo(getNodeIfStructural().getRightSiblingKey()));
-                moveTo(getNodeIfStructural().getParentKey());
+                // setting hash and resetting hash
+                cursorToRoot.setHash(hashCodeForParent);
+                getTransactionState().finishNodeModification(cursorToRoot);
+                hashCodeForParent = 0;
             }
-
-            // setting hash and resetting hash
-            cursorToRoot.setHash(hashCodeForParent);
-            getTransactionState().finishNodeModification(cursorToRoot);
-            hashCodeForParent = 0;
         } while (moveTo(cursorToRoot.getParentKey()));
 
         setCurrentNode(startNode);
@@ -927,17 +929,18 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
 
         // go the path to the root
         do {
-            getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
-            if (getCurrentNode().getNodeKey() == newNode.getNodeKey()) {
-                resultNew = getCurrentNode().getHash() - paramOldHash;
-                resultNew = resultNew + newNodeHash;
-            } else {
-                resultNew = getCurrentNode().getHash() - (paramOldHash * PRIME);
-                resultNew = resultNew + newNodeHash * PRIME;
+            synchronized (getCurrentNode()) {
+                getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+                if (getCurrentNode().getNodeKey() == newNode.getNodeKey()) {
+                    resultNew = getCurrentNode().getHash() - paramOldHash;
+                    resultNew = resultNew + newNodeHash;
+                } else {
+                    resultNew = getCurrentNode().getHash() - (paramOldHash * PRIME);
+                    resultNew = resultNew + newNodeHash * PRIME;
+                }
+                getCurrentNode().setHash(resultNew);
+                getTransactionState().finishNodeModification(getCurrentNode());
             }
-            getCurrentNode().setHash(resultNew);
-            getTransactionState().finishNodeModification(getCurrentNode());
-
         } while (moveTo(getCurrentNode().getParentKey()));
 
         setCurrentNode(newNode);
@@ -956,23 +959,25 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         long newHash = 0;
         // go the path to the root
         do {
-            getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
-            if (getCurrentNode().getNodeKey() == startNode.getNodeKey()) {
-                // the begin node is always null
-                newHash = 0;
-            } else if (getCurrentNode().getNodeKey() == startNode.getParentKey()) {
-                // the parent node is just removed
-                newHash = getCurrentNode().getHash() - (hashToRemove * PRIME);
-                hashToRemove = getCurrentNode().getHash();
-            } else {
-                // the ancestors are all touched regarding the modification
-                newHash = getCurrentNode().getHash() - (hashToRemove * PRIME);
-                newHash = newHash + hashToAdd * PRIME;
-                hashToRemove = getCurrentNode().getHash();
+            synchronized (getCurrentNode()) {
+                getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+                if (getCurrentNode().getNodeKey() == startNode.getNodeKey()) {
+                    // the begin node is always null
+                    newHash = 0;
+                } else if (getCurrentNode().getNodeKey() == startNode.getParentKey()) {
+                    // the parent node is just removed
+                    newHash = getCurrentNode().getHash() - (hashToRemove * PRIME);
+                    hashToRemove = getCurrentNode().getHash();
+                } else {
+                    // the ancestors are all touched regarding the modification
+                    newHash = getCurrentNode().getHash() - (hashToRemove * PRIME);
+                    newHash = newHash + hashToAdd * PRIME;
+                    hashToRemove = getCurrentNode().getHash();
+                }
+                getCurrentNode().setHash(newHash);
+                hashToAdd = newHash;
+                getTransactionState().finishNodeModification(getCurrentNode());
             }
-            getCurrentNode().setHash(newHash);
-            hashToAdd = newHash;
-            getTransactionState().finishNodeModification(getCurrentNode());
         } while (moveTo(getCurrentNode().getParentKey()));
 
         setCurrentNode(startNode);
@@ -992,24 +997,26 @@ public final class WriteTransaction extends ReadTransaction implements IWriteTra
         long possibleOldHash = 0;
         // go the path to the root
         do {
-            getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
-            if (getCurrentNode().getNodeKey() == startNode.getNodeKey()) {
-                // at the beginning, take the hashcode of the node only
-                newHash = hashToAdd;
-            } else if (getCurrentNode().getNodeKey() == startNode.getParentKey()) {
-                // at the parent level, just add the node
-                possibleOldHash = getCurrentNode().getHash();
-                newHash = possibleOldHash + hashToAdd * PRIME;
-                hashToAdd = newHash;
-            } else {
-                // at the rest, remove the existing old key for this element and add the new one
-                newHash = getCurrentNode().getHash() - (possibleOldHash * PRIME);
-                newHash = newHash + hashToAdd * PRIME;
-                hashToAdd = newHash;
-                possibleOldHash = getCurrentNode().getHash();
+            synchronized (getCurrentNode()) {
+                getTransactionState().prepareNodeForModification(getCurrentNode().getNodeKey());
+                if (getCurrentNode().getNodeKey() == startNode.getNodeKey()) {
+                    // at the beginning, take the hashcode of the node only
+                    newHash = hashToAdd;
+                } else if (getCurrentNode().getNodeKey() == startNode.getParentKey()) {
+                    // at the parent level, just add the node
+                    possibleOldHash = getCurrentNode().getHash();
+                    newHash = possibleOldHash + hashToAdd * PRIME;
+                    hashToAdd = newHash;
+                } else {
+                    // at the rest, remove the existing old key for this element and add the new one
+                    newHash = getCurrentNode().getHash() - (possibleOldHash * PRIME);
+                    newHash = newHash + hashToAdd * PRIME;
+                    hashToAdd = newHash;
+                    possibleOldHash = getCurrentNode().getHash();
+                }
+                getCurrentNode().setHash(newHash);
+                getTransactionState().finishNodeModification(getCurrentNode());
             }
-            getCurrentNode().setHash(newHash);
-            getTransactionState().finishNodeModification(getCurrentNode());
         } while (moveTo(getCurrentNode().getParentKey()));
         setCurrentNode(startNode);
     }
