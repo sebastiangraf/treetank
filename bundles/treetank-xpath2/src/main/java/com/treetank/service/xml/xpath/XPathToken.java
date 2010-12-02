@@ -67,5 +67,4 @@ public class XPathToken implements XPathConstants {
 
         return mType;
     }
-
 }
