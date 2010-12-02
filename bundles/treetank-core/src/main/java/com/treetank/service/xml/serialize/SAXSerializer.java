@@ -93,6 +93,8 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
     @Override
     protected void emitEndElement(final IReadTransaction rtx) {
         switch (rtx.getNode().getKind()) {
+        case ROOT_KIND:
+            break;
         case ELEMENT_KIND:
             generateElement(rtx);
             break;
