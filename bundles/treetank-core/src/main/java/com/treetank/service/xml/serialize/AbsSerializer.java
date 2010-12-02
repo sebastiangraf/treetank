@@ -119,7 +119,7 @@ abstract class AbsSerializer implements Callable<Void> {
             
             rtx.moveTo(mNodeKey);
 
-            final IAxis descAxis = new DescendantAxis(rtx);
+            final IAxis descAxis = new DescendantAxis(rtx, true);
 
             // Setup primitives.
             boolean closeElements = false;
