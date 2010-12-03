@@ -3,9 +3,6 @@
  */
 package com.treetank.service.jaxrx.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -16,14 +13,19 @@ import java.io.OutputStream;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+
 import org.xml.sax.SAXException;
 
 import com.treetank.exception.TreetankException;
 import com.treetank.service.jaxrx.implementation.DatabaseRepresentation;
+
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * This class tests the class {@link RestXPathProcessor}.

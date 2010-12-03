@@ -1,8 +1,5 @@
 package com.treetank.service.jaxrx.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -11,10 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.treetank.access.Database;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
@@ -22,6 +15,13 @@ import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.service.jaxrx.implementation.DatabaseRepresentation;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * This class is responsible to test the {@link WorkerHelper} class.
@@ -105,11 +105,9 @@ public class WorkerHelperTest {
     public void testSerializeXML() throws TreetankException, IOException {
         final IDatabase database = Database.openDatabase(DBFILE);
         final ISession session = database.getSession();
-        final IReadTransaction rtx = session.beginReadTransaction();
         final OutputStream out = new ByteArrayOutputStream();
 
-        assertNotNull("test serialize xml", WorkerHelper.serializeXML(rtx, out, true, true));
-        rtx.close();
+        assertNotNull("test serialize xml", WorkerHelper.serializeXML(session, out, true, true, null));
         session.close();
         database.close();
         out.close();

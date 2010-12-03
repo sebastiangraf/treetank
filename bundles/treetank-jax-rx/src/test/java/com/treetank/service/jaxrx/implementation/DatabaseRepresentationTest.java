@@ -1,10 +1,5 @@
 package com.treetank.service.jaxrx.implementation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -18,19 +13,27 @@ import javax.ws.rs.core.StreamingOutput;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.jaxrx.core.JaxRxException;
-import org.jaxrx.core.QueryParameter;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import org.xml.sax.SAXException;
 
 import com.treetank.exception.TreetankException;
 import com.treetank.service.jaxrx.util.DOMHelper;
+
+import org.jaxrx.core.JaxRxException;
+import org.jaxrx.core.QueryParameter;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * This class is responsible to test the implementation class {@link DatabaseRepresentation};

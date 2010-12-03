@@ -8,9 +8,6 @@ import java.util.Map;
 
 import javax.ws.rs.core.StreamingOutput;
 
-import org.jaxrx.core.JaxRxException;
-import org.jaxrx.core.QueryParameter;
-
 import com.treetank.access.Database;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
@@ -21,7 +18,12 @@ import com.treetank.service.jaxrx.enums.EIdAccessType;
 import com.treetank.service.jaxrx.util.RESTProps;
 import com.treetank.service.jaxrx.util.RestXPathProcessor;
 import com.treetank.service.jaxrx.util.WorkerHelper;
-import com.treetank.service.xml.XMLSerializer;
+import com.treetank.service.xml.serialize.XMLSerializer;
+import com.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
+import com.treetank.service.xml.serialize.XMLSerializerProperties;
+
+import org.jaxrx.core.JaxRxException;
+import org.jaxrx.core.QueryParameter;
 
 /**
  * This class is responsible to work with database specific XML node id's. It
@@ -392,33 +394,29 @@ public class NodeIdRepresentation {
         if (WorkerHelper.checkExistingResource(dbFile)) {
             ISession session = null;
             IDatabase database = null;
-            IReadTransaction rtx = null;
             try {
                 database = Database.openDatabase(dbFile);
                 session = database.getSession();
-                if (revision == null) {
-                    rtx = session.beginReadTransaction();
-                } else {
-                    rtx = session.beginReadTransaction(revision);
-                }
-
-                // move to node with given id and read it
                 if (wrapResult) {
                     output.write(BEGINRESULT);
-                    if (rtx.moveTo(nodeId)) {
-                        new XMLSerializer(rtx, output, false, doNodeId).call();
-                    } else {
-                        // workerHelper.close(null, rtx, session, database);
-                        throw new JaxRxException(404, NOTFOUND);
-                    }
+                    final XMLSerializerProperties props = new XMLSerializerProperties();
+                    final XMLSerializerBuilder builder =
+                        new XMLSerializerBuilder(session, nodeId, output, props);
+                    builder.setREST(doNodeId);
+                    builder.setID(doNodeId);
+                    builder.setDeclaration(false);
+                    final XMLSerializer serializer = builder.build();
+                    serializer.call();
                     output.write(ENDRESULT);
                 } else {
-                    if (rtx.moveTo(nodeId)) {
-                        new XMLSerializer(rtx, output, false, doNodeId).call();
-                    } else {
-                        // workerHelper.close(null, rtx, session, database);
-                        throw new JaxRxException(404, NOTFOUND);
-                    }
+                    final XMLSerializerProperties props = new XMLSerializerProperties();
+                    final XMLSerializerBuilder builder =
+                        new XMLSerializerBuilder(session, nodeId, output, props);
+                    builder.setREST(doNodeId);
+                    builder.setID(doNodeId);
+                    builder.setDeclaration(false);
+                    final XMLSerializer serializer = builder.build();
+                    serializer.call();
 
                 }
             } catch (final TreetankException ttExcep) {
@@ -437,7 +435,7 @@ public class NodeIdRepresentation {
                 }
             } finally {
                 try {
-                    WorkerHelper.closeRTX(rtx, session, database);
+                    WorkerHelper.closeRTX(null, session, database);
                 } catch (final TreetankException exce) {
                     throw new JaxRxException(exce);
                 }
@@ -516,11 +514,27 @@ public class NodeIdRepresentation {
                     }
                     if (wrapResult) {
                         output.write(BEGINRESULT);
-                        new XMLSerializer(rtx, output, false, doNodeId).call();
+                        final XMLSerializerProperties props = new XMLSerializerProperties();
+                        final XMLSerializerBuilder builder =
+                            new XMLSerializerBuilder(session, rtx.getNode().getNodeKey(), output, props);
+                        builder.setREST(doNodeId);
+                        builder.setID(doNodeId);
+                        builder.setDeclaration(false);
+                        builder.setIndend(false);
+                        final XMLSerializer serializer = builder.build();
+                        serializer.call();
 
                         output.write(ENDRESULT);
                     } else {
-                        new XMLSerializer(rtx, output, false, doNodeId).call();
+                        final XMLSerializerProperties props = new XMLSerializerProperties();
+                        final XMLSerializerBuilder builder =
+                            new XMLSerializerBuilder(session, rtx.getNode().getNodeKey(), output, props);
+                        builder.setREST(doNodeId);
+                        builder.setID(doNodeId);
+                        builder.setDeclaration(false);
+                        builder.setIndend(false);
+                        final XMLSerializer serializer = builder.build();
+                        serializer.call();
                     }
                 } else {
                     throw new JaxRxException(404, NOTFOUND);

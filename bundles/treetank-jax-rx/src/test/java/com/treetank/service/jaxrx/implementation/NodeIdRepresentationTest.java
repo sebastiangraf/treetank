@@ -3,10 +3,6 @@
  */
 package com.treetank.service.jaxrx.implementation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -18,21 +14,28 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.StreamingOutput;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.jaxrx.core.JaxRxException;
-import org.jaxrx.core.QueryParameter;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import org.xml.sax.SAXException;
 
 import com.treetank.exception.TreetankException;
 import com.treetank.service.jaxrx.enums.EIdAccessType;
 import com.treetank.service.jaxrx.util.DOMHelper;
+
+import org.jaxrx.core.JaxRxException;
+import org.jaxrx.core.QueryParameter;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * This class is responsible to test the {@link NodeIdRepresentation} class.
@@ -334,6 +337,7 @@ public class NodeIdRepresentationTest {
         attribute = (Attr)node.getAttributes().getNamedItem(IDNAME);
         resultNode = doc.getElementsByTagName(RESULTNAME).item(0);
         textContent = node.getTextContent();
+        System.out.println(textContent);
         assertEquals("Test expected city Tirane", "Tirane", textContent);
         assertNotNull("Test if wrapping is available", resultNode);
         assertNotNull("Test if node id is supported", attribute);

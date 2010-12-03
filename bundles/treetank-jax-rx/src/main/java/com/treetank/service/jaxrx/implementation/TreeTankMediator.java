@@ -6,14 +6,14 @@ import java.util.Set;
 
 import javax.ws.rs.core.StreamingOutput;
 
+import com.treetank.exception.TreetankException;
+import com.treetank.service.jaxrx.enums.EIdAccessType;
+import com.treetank.service.jaxrx.util.WorkerHelper;
+
 import org.jaxrx.JaxRx;
 import org.jaxrx.core.JaxRxException;
 import org.jaxrx.core.QueryParameter;
 import org.jaxrx.core.ResourcePath;
-
-import com.treetank.exception.TreetankException;
-import com.treetank.service.jaxrx.enums.EIdAccessType;
-import com.treetank.service.jaxrx.util.WorkerHelper;
 
 /**
  * This class works as mediator between the JAX-RX REST interface layer and the
@@ -122,8 +122,8 @@ public final class TreeTankMediator implements JaxRx {
             break;
         case 2:
             response =
-                nodeIdResource.getResource(path.getResource(0), Long.valueOf(path.getResource(1)), path
-                    .getQueryParameter());
+                nodeIdResource.getResource(path.getResource(0), Long.valueOf(path.getResource(1)),
+                    path.getQueryParameter());
             break;
         case 3:
             final EIdAccessType accessType =
