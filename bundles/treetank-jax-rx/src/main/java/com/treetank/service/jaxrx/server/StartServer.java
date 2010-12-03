@@ -3,7 +3,7 @@
  */
 package com.treetank.service.jaxrx.server;
 
-import org.jaxrx.StartJetty;
+import org.jaxrx.JettyServer;
 
 /**
  * This class starts the in JAX-RX embedded Jetty server.
@@ -16,20 +16,22 @@ public final class StartServer {
     /**
      * The Jetty instance.
      */
-    private StartJetty jetty;
+    private JettyServer jetty;
 
     /**
      * I'm a lazy constructor.
      * 
      * @param sPort
      *            port for the REST server.
+     * @throws Exception
+     *             Exception occurred
      * 
      */
-    public StartServer(final int sPort) {
+    public StartServer(final int sPort) throws Exception {
         System.setProperty("org.jaxrx.systemPath",
             "com.treetank.service.jaxrx.implementation.TreeTankMediator");
         System.setProperty("org.jaxrx.systemName", "treetank");
-        jetty = new StartJetty(sPort);
+        jetty = new JettyServer(sPort);
     }
 
     /**
@@ -37,8 +39,10 @@ public final class StartServer {
      * 
      * @param args
      *            Not used parameter.
+     * @throws Exception
+     *             Exception occurred.
      */
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws Exception {
         int port = 8093;
         if (args != null && args.length > 0) {
             port = Integer.parseInt(args[0]);
@@ -46,7 +50,7 @@ public final class StartServer {
         System.setProperty("org.jaxrx.systemPath",
             "com.treetank.service.jaxrx.implementation.TreeTankMediator");
         System.setProperty("org.jaxrx.systemName", "treetank");
-        new StartJetty(port);
+        new JettyServer(port);
     }
 
     /**
@@ -56,6 +60,6 @@ public final class StartServer {
      *             The exception occurred while stopping server.
      */
     public void stopServer() throws Exception {
-        // jetty.stop();
+        jetty.stop();
     }
 }

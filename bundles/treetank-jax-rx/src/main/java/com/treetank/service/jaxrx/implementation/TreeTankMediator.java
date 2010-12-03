@@ -41,7 +41,7 @@ public final class TreeTankMediator implements JaxRx {
     private static final transient String NOTALLOWEDSTRING = "Method not allowed on this resource request";
 
     @Override
-    public void add(final InputStream input, final ResourcePath path) throws JaxRxException {
+    public String add(final InputStream input, final ResourcePath path) throws JaxRxException {
         final int depth = path.getDepth();
         if (depth == 1) {
             database.add(input, path.getResourcePath());
@@ -54,6 +54,7 @@ public final class TreeTankMediator implements JaxRx {
             nodeIdResource.addSubResource(path.getResource(0), Long.valueOf(path.getResource(1)), input,
                 accessType);
         }
+        return null;
     }
 
     @Override
@@ -82,7 +83,7 @@ public final class TreeTankMediator implements JaxRx {
     }
 
     @Override
-    public void update(final InputStream input, final ResourcePath path) throws JaxRxException {
+    public String update(final InputStream input, final ResourcePath path) throws JaxRxException {
         final int depth = path.getDepth();
         if (depth == 1) {
             database.createResource(input, path.getResourcePath());
@@ -91,11 +92,12 @@ public final class TreeTankMediator implements JaxRx {
         } else {
             throw new JaxRxException(405, NOTALLOWEDSTRING);
         }
+        return null;
 
     }
 
     @Override
-    public void delete(final ResourcePath path) throws JaxRxException {
+    public String delete(final ResourcePath path) throws JaxRxException {
         final int depth = path.getDepth();
         switch (depth) {
         case 1:
@@ -107,6 +109,7 @@ public final class TreeTankMediator implements JaxRx {
         default:
             throw new JaxRxException(405, NOTALLOWEDSTRING);
         }
+        return null;
     }
 
     @Override
