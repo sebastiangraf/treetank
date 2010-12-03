@@ -52,7 +52,7 @@
 		<dependency>
 			<groupId>treetank</groupId>
 			<artifactId>core</artifactId>
-			<version>5.3.3</version>
+			<version>5.3.4-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
@@ -94,9 +94,9 @@
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
+					<descriptors>
+						<descriptor>src/main/assembly/jarAssembly.xml</descriptor>
+					</descriptors>
 					<archive>
 						<manifest>
 							<mainClass>com.treetank.service.jaxrx.server.StartServer</mainClass>

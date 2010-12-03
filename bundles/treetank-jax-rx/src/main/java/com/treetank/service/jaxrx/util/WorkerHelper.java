@@ -19,8 +19,10 @@ import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.service.jaxrx.enums.EIdAccessType;
 import com.treetank.service.jaxrx.implementation.DatabaseRepresentation;
-import com.treetank.service.xml.XMLSerializer;
-import com.treetank.service.xml.XMLShredder;
+import com.treetank.service.xml.serialize.XMLSerializer;
+import com.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
+import com.treetank.service.xml.serialize.XMLSerializerProperties;
+import com.treetank.service.xml.shredder.XMLShredder;
 
 /**
  * This class contains methods that are respectively used by this worker classes
@@ -100,8 +102,8 @@ public final class WorkerHelper {
     /**
      * This method creates a new XMLSerializer reference
      * 
-     * @param rtx
-     *            IReadTransaction
+     * @param session
+     *            Associated session.
      * @param out
      *            OutputStream
      * 
@@ -112,9 +114,53 @@ public final class WorkerHelper {
      * 
      * @return new XMLSerializer reference
      */
-    public static XMLSerializer serializeXML(final IReadTransaction rtx, final OutputStream out,
-        final boolean serializeXMLDec, final boolean serializeRest) {
-        return new XMLSerializer(rtx, out, serializeXMLDec, serializeRest);
+    public static XMLSerializer serializeXML(final ISession session, final OutputStream out,
+        final boolean serializeXMLDec, final boolean serializeRest, final Long revision) {
+        final XMLSerializerBuilder builder;
+        if (revision == null)
+            builder = new XMLSerializerBuilder(session, out);
+        else
+            builder = new XMLSerializerBuilder(session, out, revision);
+        builder.setREST(serializeRest);
+        builder.setID(serializeRest);
+        builder.setDeclaration(serializeXMLDec);
+        final XMLSerializer serializer = builder.build();
+        return serializer;
+    }
+
+    /**
+     * This method creates a new XMLSerializer reference
+     * 
+     * @param session
+     *            Associated session.
+     * @param out
+     *            OutputStream
+     * 
+     * @param serializeXMLDec
+     *            specifies whether XML declaration should be shown
+     * @param serializeRest
+     *            specifies whether node id should be shown
+     * 
+     * @return new XMLSerializer reference
+     */
+    public static XMLSerializer serializeXML(final ISession session, final OutputStream out,
+        final boolean serializeXMLDec, final boolean serializeRest, final Long nodekey, final Long revision) {
+        final XMLSerializerProperties props = new XMLSerializerProperties();
+        final XMLSerializerBuilder builder;
+        if (revision == null && nodekey == null)
+            builder = new XMLSerializerBuilder(session, out);
+        else if (revision != null && nodekey == null)
+            builder = new XMLSerializerBuilder(session, out, revision);
+        else if (revision == null && nodekey != null)
+            builder = new XMLSerializerBuilder(session, nodekey, out, props);
+        else
+            builder = new XMLSerializerBuilder(session, nodekey, out, props, revision);
+        builder.setREST(serializeRest);
+        builder.setID(serializeRest);
+        builder.setDeclaration(serializeXMLDec);
+        builder.setIndend(false);
+        final XMLSerializer serializer = builder.build();
+        return serializer;
     }
 
     /**

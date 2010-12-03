@@ -3,6 +3,7 @@
  */
 package com.treetank.service.jaxrx.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -101,7 +102,6 @@ public class RestXPathProcessor {
                 throw new WebApplicationException(Response.Status.NOT_FOUND);
             }
         }
-
         return output;
     }
 
@@ -159,7 +159,8 @@ public class RestXPathProcessor {
                     output.write(beginResult.getBytes());
                     for (final long key : axis) {
                         if (key >= 0) {
-                            WorkerHelper.serializeXML(rtx, output, false, doNodeId).call();
+                            WorkerHelper.serializeXML(session, output, false, doNodeId, key, doRevision)
+                                .call();
                         } else {
                             output.write(rtx.getNode().getRawValue());
                         }
@@ -169,7 +170,8 @@ public class RestXPathProcessor {
                 } else {
                     for (final long key : axis) {
                         if (key >= 0) {
-                            WorkerHelper.serializeXML(rtx, output, false, doNodeId).call();
+                            WorkerHelper.serializeXML(session, output, false, doNodeId, key, doRevision)
+                                .call();
                         } else {
                             output.write(rtx.getNode().getRawValue());
                         }
@@ -230,7 +232,9 @@ public class RestXPathProcessor {
             final IAxis axis = new XPathAxis(rtx, xpath);
             for (final long key : axis) {
                 if (key >= 0) {
-                    WorkerHelper.serializeXML(rtx, output, false, nodeid).call();
+                    WorkerHelper.serializeXML(session, output, false, nodeid, key, revision).call();
+                    final String book = new String(((ByteArrayOutputStream)output).toByteArray());
+                    System.out.print(book);
                 } else {
                     output.write(rtx.getNode().getRawValue());
                 }

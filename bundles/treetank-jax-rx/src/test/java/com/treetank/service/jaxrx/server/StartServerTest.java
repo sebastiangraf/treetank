@@ -3,13 +3,13 @@
  */
 package com.treetank.service.jaxrx.server;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * This class is responsible to test the {@link StartServer} class.

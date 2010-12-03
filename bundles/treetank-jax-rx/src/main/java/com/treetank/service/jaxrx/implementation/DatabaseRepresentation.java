@@ -1,5 +1,6 @@
 package com.treetank.service.jaxrx.implementation; // NOPMD we need all these imports, declaring with * is
-                                                   // pointless
+
+// pointless
 
 import java.io.File;
 import java.io.IOException;
@@ -19,9 +20,6 @@ import java.util.regex.Pattern;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.StreamingOutput;
 
-import org.jaxrx.core.JaxRxException;
-import org.jaxrx.core.QueryParameter;
-
 import com.treetank.access.Database;
 import com.treetank.access.DatabaseConfiguration;
 import com.treetank.api.IAxis;
@@ -35,10 +33,14 @@ import com.treetank.service.jaxrx.util.RESTResponseHelper;
 import com.treetank.service.jaxrx.util.RESTXMLShredder;
 import com.treetank.service.jaxrx.util.RestXPathProcessor;
 import com.treetank.service.jaxrx.util.WorkerHelper;
-import com.treetank.service.xml.XMLSerializer;
-import com.treetank.service.xml.XMLShredder;
+import com.treetank.service.xml.serialize.XMLSerializer;
+import com.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
+import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.settings.EDatabaseSetting;
+
+import org.jaxrx.core.JaxRxException;
+import org.jaxrx.core.QueryParameter;
 
 /**
  * This class is the TreeTank DB connection for RESTful Web Services processing.
@@ -569,7 +571,7 @@ public class DatabaseRepresentation {
 
                 for (Long nodeKey : modificRestids) {
                     rtx.moveTo(nodeKey);
-                    WorkerHelper.serializeXML(rtx, output, false, nodeid).call();
+                    WorkerHelper.serializeXML(session, output, false, nodeid, nodeKey, revision2).call();
                 }
                 rtx.moveToDocumentRoot();
                 rtx.close();
@@ -581,7 +583,7 @@ public class DatabaseRepresentation {
                 rtx = session.beginReadTransaction(revision1);
                 for (Long nodeKey : restIdsRev1New) {
                     rtx.moveTo(nodeKey);
-                    WorkerHelper.serializeXML(rtx, output, false, nodeid).call();
+                    WorkerHelper.serializeXML(session, output, false, nodeid, nodeKey, revision1).call();
                 }
                 if (wrap) {
                     output.write(endResult.getBytes());
@@ -646,24 +648,31 @@ public class DatabaseRepresentation {
         // Connection to treetank, creating a session
         IDatabase database = null;
         ISession session = null;
-        IReadTransaction rtx = null;
+        // IReadTransaction rtx = null;
         try {
             database = Database.openDatabase(aTNK);
             session = database.getSession();
             // and creating a transaction
-            if (revision == null) {
-                rtx = session.beginReadTransaction();
-            } else {
-                rtx = session.beginReadTransaction(revision);
-            }
-
-            final XMLSerializer serializer = new XMLSerializer(rtx, output, false, nodeid);
+            // if (revision == null) {
+            // rtx = session.beginReadTransaction();
+            // } else {
+            // rtx = session.beginReadTransaction(revision);
+            // }
+            final XMLSerializerBuilder builder;
+            if (revision == null)
+                builder = new XMLSerializerBuilder(session, output);
+            else
+                builder = new XMLSerializerBuilder(session, output, revision);
+            builder.setREST(nodeid);
+            builder.setID(nodeid);
+            builder.setDeclaration(false);
+            final XMLSerializer serializer = builder.build();
             serializer.call();
         } catch (final Exception exce) {
             throw new JaxRxException(exce);
         } finally {
             // closing the treetank storage
-            WorkerHelper.closeRTX(rtx, session, database);
+            WorkerHelper.closeRTX(null, session, database);
         }
     }
 
