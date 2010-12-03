@@ -16,11 +16,16 @@
  */
 package com.treetank.gui.view.sunburst;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.slf4j.LoggerFactory;
+
 import com.treetank.api.IItem;
+import com.treetank.utils.LogWrapper;
 
 import processing.core.PApplet;
 
@@ -36,7 +41,11 @@ import processing.core.PApplet;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-final class SunburstItem {
+final class SunburstItem implements PropertyChangeListener {
+
+    /** Current {@link IItem} in Treetank. */
+    final IItem mNode;
+
     // Relations.
     /** Index to parent node. */
     private final int mIndexToParent;
@@ -45,9 +54,14 @@ final class SunburstItem {
     private final long mDescendantCount;
 
     // Arc and lines drawing vars. ===========================
-    private int mCol;
-    private int mLineCol;
-    private float mLineWeight;
+    /** Color of item. */
+    private transient int mCol;
+
+    /** Color of relation line. */
+    private transient int mLineCol;
+
+    /** Relation line weight. */
+    private transient float mLineWeight;
 
     // Angle variables. ======================================
     /** The start of the angle in radians. */
@@ -55,21 +69,27 @@ final class SunburstItem {
 
     /** The extension of the angle. */
     private final float mExtension;
-    
+
     /** The center of the angle in radians. */
     private final float mAngleCenter;
-    
+
     /** The end of the angle in radians. */
     private final float mAngleEnd;
 
     /** Radius of the current depth. */
-    private float mRadius;
-    
-    
-    private float mDepthWeight; // stroke weight of the arc
-    private float mX;
-    private float mY;
-    private float mArcLength;
+    private transient float mRadius;
+
+    /** Stroke weight of the arc. */
+    private transient float mDepthWeight;
+
+    /** X coordinate control point of the relation line. */
+    private transient float mX;
+
+    /** Y coordinate control point of the relation line. */
+    private transient float mY;
+
+    /** Distance between the two relation points (child/parent). */
+    private transient float mArcLength;
 
     // Bezier controlpoints. =================================
     /** X coordinate of first bezier control point. */
@@ -83,9 +103,6 @@ final class SunburstItem {
 
     /** Y coordinate of second bezier control point. */
     private float mC2Y;
-
-    /** Current {@link IItem} in Treetank. */
-    private final IItem mNode;
 
     /** {@link QName} of current node. */
     private final QName mQName;
@@ -111,22 +128,34 @@ final class SunburstItem {
     /** Structural kind of node. */
     private final StructKind mStructKind;
 
+    /** XPath enum to determine if current item is found by an XPath expression or not. */
+    enum XPathState {
+        /** Item is found. */
+        ISFOUND,
+
+        /** Default: Item is not found. */
+        ISNOTFOUND,
+    }
+
+    /** State which determines if current item is found by an XPath expression or not. */
+    private transient XPathState mXPathState = XPathState.ISNOTFOUND;
+
     /** Singleton {@link SunburstGUI} instance. */
     private transient SunburstGUI mGUI;
 
     /** {@link PApplet} representing the core processing library. */
     private final PApplet mParent;
 
-    /** SunburstController. */
-    private final SunburstController<? extends AbsModel, ? extends AbsView> mController;
+    /** Text. */
+    private final String mText;
 
     /** Builder to setup the Items. */
     public static final class Builder {
         /** {@link PApplet} representing the core processing library. */
         private final PApplet mParent;
 
-        /** SunburstController. */
-        private final SunburstController<? extends AbsModel, ? extends AbsView> mController;
+        /** {@link SunburstModel}. */
+        private final SunburstModel mModel;
 
         /** Current {@link IItem} in Treetank. */
         private final IItem mNode;
@@ -143,17 +172,22 @@ final class SunburstItem {
         /** The extension of the angle. */
         private final float mExtension;
 
+        /** Text string. */
+        private final String mText;
+
         /**
          * Constructor.
          * 
          * @param paramApplet
          *            The processing core library @see PApplet.
-         * @param paramController
-         *            {@link SunburstController}.
+         * @param paramModel
+         *            {@link SunburstModel}.
          * @param paramNode
          *            {@link IItem} in Treetank, which belongs to this {@link SunburstItem}.
          * @param paramQName
          *            {@link QName} of current node.
+         * @param paramText
+         *            Text string in case of a text node.
          * @param paramAngleStart
          *            The start degree.
          * @param paramExtension
@@ -161,14 +195,14 @@ final class SunburstItem {
          * @param paramRelations
          *            {@link NodeRelations} instance.
          */
-        public Builder(final PApplet paramApplet,
-            final SunburstController<? extends AbsModel, ? extends AbsView> paramController,
-            final IItem paramNode, final QName paramQName, final float paramAngleStart,
+        public Builder(final PApplet paramApplet, final SunburstModel paramModel, final IItem paramNode,
+            final QName paramQName, final String paramText, final float paramAngleStart,
             final float paramExtension, final NodeRelations paramRelations) {
             mParent = paramApplet;
-            mController = paramController;
+            mModel = paramModel;
             mNode = paramNode;
             mQName = paramQName;
+            mText = paramText;
             mAngleStart = paramAngleStart;
             mExtension = paramExtension;
             mRelations = paramRelations;
@@ -192,12 +226,12 @@ final class SunburstItem {
      */
     private SunburstItem(final Builder paramBuilder) {
         // Returns GUI singleton instance.
-        mGUI = SunburstGUI.createGUI(paramBuilder.mParent, paramBuilder.mController);
-        
+        mGUI = SunburstGUI.createGUI(paramBuilder.mParent, paramBuilder.mModel);
+
         mNode = paramBuilder.mNode;
         mQName = paramBuilder.mQName;
+        mText = paramBuilder.mText;
         mParent = paramBuilder.mParent;
-        mController = paramBuilder.mController;
         mStructKind = paramBuilder.mRelations.mStructKind;
         mDescendantCount = paramBuilder.mRelations.mDescendantCount;
         mMinDescendantCount = paramBuilder.mRelations.mMinDescendantCount;
@@ -217,26 +251,39 @@ final class SunburstItem {
      *            Specifies the mapping mode (currently only '1' is permitted).
      */
     void update(final int paramMappingMode) {
-        assert paramMappingMode == 1;
+        assert paramMappingMode == 1 || paramMappingMode == 2 || paramMappingMode == 3;
         if (mIndexToParent > -1) {
-            final int depthMax = (Integer)mController.get("DepthMax");
-            mRadius = calcEqualAreaRadius(mDepth, depthMax);
-            mDepthWeight = calcEqualAreaRadius(mDepth + 1, depthMax) - mRadius;
+            final int depthMax = mGUI.mDepthMax;
+            mRadius = mGUI.calcEqualAreaRadius(mDepth, depthMax);
+            mDepthWeight = mGUI.calcEqualAreaRadius(mDepth + 1, depthMax) - mRadius;
             mX = PApplet.cos(mAngleCenter) * mRadius;
             mY = PApplet.sin(mAngleCenter) * mRadius;
 
-            // chord
+            // Chord.
             final float startX = PApplet.cos(mAngleCenter) * mRadius;
             final float startY = PApplet.sin(mAngleCenter) * mRadius;
             final float endX = PApplet.cos(mAngleEnd) * mRadius;
             final float endY = PApplet.sin(mAngleEnd) * mRadius;
             mArcLength = PApplet.dist(startX, startY, endX, endY);
 
-            // color mapings
+            // Color mapings.
             float percent = 0;
             switch (paramMappingMode) {
             case 1:
-                percent = PApplet.norm(mDescendantCount, mMinDescendantCount, mMaxDescendantCount);
+                percent =
+                    (float)(mDescendantCount - mMinDescendantCount)
+                        / (float)(mMaxDescendantCount - mMinDescendantCount);
+                // percent = PApplet.norm(mDescendantCount, mMinDescendantCount, mMaxDescendantCount);
+                break;
+            case 2:
+                percent =
+                    (PApplet.log(mDescendantCount) - PApplet.log(mMinDescendantCount))
+                        / (PApplet.log(mMaxDescendantCount) - PApplet.log(mMinDescendantCount));
+                break;
+            case 3:
+                percent =
+                    (PApplet.sqrt(mDescendantCount) - PApplet.sqrt(mMinDescendantCount))
+                        / (PApplet.sqrt(mMaxDescendantCount) - PApplet.sqrt(mMinDescendantCount));
                 break;
             default:
             }
@@ -246,12 +293,13 @@ final class SunburstItem {
             case ISLEAF:
                 final int from = mParent.color(mGUI.mHueStart, mGUI.mSaturationStart, mGUI.mBrightnessStart);
                 final int to = mParent.color(mGUI.mHueEnd, mGUI.mSaturationEnd, mGUI.mBrightnessEnd);
-                mCol = mParent.lerpColor(from, to, percent);
+                mCol = mParent.lerpColor(from, to, 1 - percent);
                 mLineCol = mCol;
                 break;
             case ISINNERNODE:
                 float bright = 0;
-                bright = PApplet.lerp(mGUI.mInnerNodeBrightnessStart, mGUI.mInnerNodeBrightnessEnd, percent);
+                bright =
+                    PApplet.lerp(mGUI.mInnerNodeBrightnessStart, mGUI.mInnerNodeBrightnessEnd, 1 - percent);
                 mCol = mParent.color(0, 0, bright);
                 bright =
                     PApplet.lerp(mGUI.mInnerNodeStrokeBrightnessStart, mGUI.mInnerNodeStrokeBrightnessEnd,
@@ -269,15 +317,15 @@ final class SunburstItem {
             }
 
             // Calculate bezier controlpoints.
-            mC1X = PApplet.cos(mAngleCenter) * calcEqualAreaRadius(mDepth - 1, depthMax);
-            mC1Y = PApplet.sin(mAngleCenter) * calcEqualAreaRadius(mDepth - 1, depthMax);
+            mC1X = PApplet.cos(mAngleCenter) * mGUI.calcEqualAreaRadius(mDepth - 1, depthMax);
+            mC1Y = PApplet.sin(mAngleCenter) * mGUI.calcEqualAreaRadius(mDepth - 1, depthMax);
 
-            final List<SunburstItem> items = mGUI.getItems();
+            final List<SunburstItem> items = mGUI.mItems;
             mC2X = PApplet.cos(items.get(mIndexToParent).mAngleCenter);
-            mC2X *= calcEqualAreaRadius(mDepth, depthMax);
+            mC2X *= mGUI.calcEqualAreaRadius(mDepth, depthMax);
 
             mC2Y = PApplet.sin(items.get(mIndexToParent).mAngleCenter);
-            mC2Y *= calcEqualAreaRadius(mDepth, depthMax);
+            mC2Y *= mGUI.calcEqualAreaRadius(mDepth, depthMax);
         }
     }
 
@@ -292,7 +340,7 @@ final class SunburstItem {
      */
     void drawArc(final float paramInnerNodeScale, final float paramLeafScale) {
         float arcRadius = 0;
-        if (mDepth > 0) {
+        if (mDepth >= 0) {
             switch (mStructKind) {
             case ISLEAF:
                 mParent.strokeWeight(mDepthWeight * paramLeafScale);
@@ -305,7 +353,25 @@ final class SunburstItem {
             default:
                 throw new IllegalStateException("Structural kind not known!");
             }
-            mParent.stroke(mCol);
+
+            // if (mDepth == 0) {
+            // mParent.strokeWeight(paramLeafScale);
+            // mCol = mParent.color(0, 0, 1-mGUI.mInnerNodeBrightnessEnd);
+            // arcRadius = mGUI.calcEqualAreaRadius(mDepth, mGUI.mDepthMax);
+            // System.out.println(arcRadius + " " + mAngleStart + " " + mAngleEnd);
+            // }
+            switch (mXPathState) {
+            case ISFOUND:
+                mParent.stroke(1);
+                break;
+            case ISNOTFOUND:
+                mParent.stroke(mCol);
+                break;
+            default:
+                throw new IllegalStateException("XPathState not known!");
+            }
+
+
             // arc(0,0, arcRadius,arcRadius, angleStart, angleEnd);
             arcWrap(0, 0, arcRadius, arcRadius, mAngleStart, mAngleEnd); // normaly arc should work
         }
@@ -346,7 +412,7 @@ final class SunburstItem {
      */
     void drawRect(final float paramInnerNodeScale, final float paramLeafScale) {
         float rectWidth;
-        if (mDepth > 0) {
+        if (mDepth >= 0) {
             switch (mStructKind) {
             case ISLEAF:
                 rectWidth = mRadius + mDepthWeight * paramLeafScale / 2;
@@ -394,7 +460,7 @@ final class SunburstItem {
         if (mDepth > 0) {
             mParent.stroke(mLineCol);
             mParent.strokeWeight(mLineWeight);
-            final List<SunburstItem> items = mGUI.getItems();
+            final List<SunburstItem> items = mGUI.mItems;
             mParent.line(mX, mY, items.get(mIndexToParent).mX, items.get(mIndexToParent).mY);
         }
     }
@@ -406,36 +472,10 @@ final class SunburstItem {
         if (mDepth > 0) {
             mParent.stroke(mLineCol);
             mParent.strokeWeight(mLineWeight);
-            final List<SunburstItem> items = mGUI.getItems();
+            final List<SunburstItem> items = mGUI.mItems;
             mParent.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, items.get(mIndexToParent).mX, items
                 .get(mIndexToParent).mY);
         }
-    }
-
-    /**
-     * Calculate area so that radiuses have equal areas in each depth.
-     * 
-     * @param paramDepth
-     *            The actual depth.
-     * @param paramDepthMax
-     *            The maximum depth.
-     * @return calculated area.
-     */
-    float calcEqualAreaRadius(final int paramDepth, final int paramDepthMax) {
-        return PApplet.sqrt(paramDepth * PApplet.pow(mParent.height / 2, 2) / (paramDepthMax + 1));
-    }
-
-    /**
-     * Calculate area radius in a linear way.
-     * 
-     * @param paramDepth
-     *            The actual depth.
-     * @param paramDepthMax
-     *            The maximum depth.
-     * @return calculated area.
-     */
-    float calcAreaRadius(final int paramDepth, final int paramDepthMax) {
-        return PApplet.map(paramDepth, 0, paramDepthMax + 1, 0, mParent.height / 2);
     }
 
     // Getter ==========================================
@@ -466,8 +506,45 @@ final class SunburstItem {
         return mDepth;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
-        return "[Depth: " + mDepth + " QName: " + mQName + "]";
+        String retVal;
+        if (mQName == null) {
+            retVal = "[Depth: " + mDepth + " Text: " + mText + " NodeKey: " + mNode.getNodeKey() + "]";
+        } else {
+            retVal = "[Depth: " + mDepth + " QName: " + mQName + " NodeKey: " + mNode.getNodeKey() + "]";
+        }
+        return retVal;
+    }
+
+    /**
+     * Set XPath state.
+     * 
+     * @param paramState
+     *            set state to this value
+     */
+    void setXPathState(final XPathState paramState) {
+        mXPathState = paramState;
+    }
+    
+    /**
+     * Get node.
+     * 
+     * @return the Node
+     */
+    public IItem getNode() {
+        return mNode;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void propertyChange(final PropertyChangeEvent paramEvent) {
+        System.out.println(paramEvent.getPropagationId());
+
     }
 }

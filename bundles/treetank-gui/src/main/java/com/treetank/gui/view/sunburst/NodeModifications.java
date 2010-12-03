@@ -16,33 +16,32 @@
  */
 package com.treetank.gui.view.sunburst;
 
+import com.treetank.api.IItem;
+import com.treetank.gui.view.sunburst.SunburstModel.Modification;
+
 /**
- * <h1>SunburstController</h1>
- * 
- * <p>
- * Controller, which acts as a mediator between the views and the models.
- * </p>
- * 
- * @param <M>
- *            Model, which extends {@link AbsModel}.
- * @param <V>
- *            View, which extends {@link AbsView}.
+ * Modifications container.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-final class SunburstController<M extends AbsModel, V extends AbsView> extends AbsController<M, V> {
+final class NodeModifications {
+    /** Treetank {@link IItem}. */
+    transient IItem mNode;
+
+    /** */
+    transient Modification mMod;
 
     /**
-     * Ask the model for a property.
+     * Constructor.
      * 
-     * @param paramProperty
-     *            The property to get.
-     * @param params
-     *            Method parameters.
-     * @return The property.
+     * @param paramNode
+     *            Treetank {@link IItem}.
+     * @param paramMod
+     *            Kind of modification to the node.
      */
-    Object get(final String paramProperty, final Object... params) {
-        return getModelProperty(paramProperty, params);
+    NodeModifications(final IItem paramNode, final Modification paramMod) {
+        mNode = paramNode;
+        mMod = paramMod;
     }
 }

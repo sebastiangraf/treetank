@@ -21,18 +21,26 @@ import java.awt.Window;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 
+import org.slf4j.LoggerFactory;
+
 import com.treetank.api.IReadTransaction;
+import com.treetank.exception.TreetankIOException;
 import com.treetank.gui.GUIProp;
 import com.treetank.gui.ReadDB;
 import com.treetank.gui.view.IView;
 import com.treetank.gui.view.ViewNotifier;
+import com.treetank.utils.LogWrapper;
 
 import processing.core.PApplet;
 
@@ -47,6 +55,9 @@ import processing.core.PApplet;
  * 
  */
 public final class SunburstView extends JScrollPane implements IView {
+    
+    /** {@link LogWrapper}. */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(Embedded.class));
 
     /** {@link SunburstView} instance. */
     private static SunburstView mView;
@@ -85,16 +96,6 @@ public final class SunburstView extends JScrollPane implements IView {
             @Override
             public void componentResized(final ComponentEvent paramEvt) {
                 mEmbed.loop();
-                // if (mEmbed.mController != null) {
-                // final List<SunburstItem> items = (List<SunburstItem>)mEmbed.mController.get("Items");
-                // if (items != null) {
-                // System.out.println("TADAAAM");
-                // for (final SunburstItem item : items) {
-                // item.update(mEmbed.mGUI.getMappingMode());
-                // }
-                // mEmbed.draw();
-                // }
-                // }
             }
 
             @Override
@@ -129,11 +130,17 @@ public final class SunburstView extends JScrollPane implements IView {
         return mView;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isVisible() {
         return GUIProp.EShowViews.SHOWSUNBURST.getValue();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void refreshInit() {
         mDB = mNotifier.getGUI().getReadDB();
@@ -147,11 +154,18 @@ public final class SunburstView extends JScrollPane implements IView {
         mEmbed.init();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void refreshUpdate() {
+        mDB = mNotifier.getGUI().getReadDB();
         mEmbed.refreshUpdate();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void dispose() {
         if (mEmbed != null) {
@@ -160,7 +174,7 @@ public final class SunburstView extends JScrollPane implements IView {
     }
 
     /** Embedded processing view. */
-    private final class Embedded extends PApplet {
+    final class Embedded extends PApplet implements PropertyChangeListener {
         /** {@link SunburstGUI} which represents the GUI interface of the Sunburst view. */
         private SunburstGUI mGUI;
 
@@ -170,20 +184,20 @@ public final class SunburstView extends JScrollPane implements IView {
         /** Treetank {@link IReadTransaction}. */
         private transient IReadTransaction mRtx;
 
-        /** {@link SunburstController} used for communication between models and views. */
-        private transient SunburstController<SunburstModel, SunburstGUI> mController;
+        /** {@link List} of {@link SunburstItem}s. */
+        private transient List<SunburstItem> mItems;
 
+        /** Flag to indicate that it's not drawing while updating. */
+        private transient Lock mLock = new ReentrantLock();
+
+        /** {@inheritDoc} */
         @Override
         public void setup() {
-            mController = new SunburstController<SunburstModel, SunburstGUI>();
-            mModel = new SunburstModel(this, mDB, mController);
+            // Create Model.
+            mModel = new SunburstModel(this, mDB);
 
             // Create GUI.
-            mGUI = SunburstGUI.createGUI(this, mController);
-
-            // Add components to controller.
-            mController.addView(mGUI);
-            mController.addModel(mModel);
+            mGUI = SunburstGUI.createGUI(this, mModel);
 
             // Setup GUI and draw initial sunburst items.
             mGUI.setupGUI();
@@ -192,24 +206,28 @@ public final class SunburstView extends JScrollPane implements IView {
             mRtx = mDB.getRtx();
 
             mModel.traverseTree(mRtx.getNode().getNodeKey(), mGUI.mTextWeight);
-
-            // Prevent thread from starving everything else.
-            // noLoop();
+            //            
+            // mModel.traverseCompareTree(mRtx.getRevisionNumber() + 1, mRtx.getNode().getNodeKey(), 1000,
+            // 0.5f,
+            // mGUI.mTextWeight);
         }
 
-        @SuppressWarnings("unchecked")
+        /** {@inheritDoc} */
         @Override
         public void draw() {
-            if (mGUI != null) {
-                final List<SunburstItem> items = (List<SunburstItem>)mController.get("Items");
-                for (final SunburstItem item : items) {
+            if (mGUI != null && mItems != null) {
+                mLock.lock();
+                LOGWRAPPER.debug("drawing");
+                for (final SunburstItem item : mItems) {
                     item.update(mGUI.getMappingMode());
                 }
                 mGUI.draw();
                 handleHLWeight();
+                mLock.unlock();
             }
         }
 
+        /** {@inheritDoc} */
         @Override
         public void mouseEntered(final MouseEvent paramEvent) {
             if (mGUI != null) {
@@ -218,6 +236,7 @@ public final class SunburstView extends JScrollPane implements IView {
             }
         }
 
+        /** {@inheritDoc} */
         @Override
         public void mouseExited(final MouseEvent paramEvent) {
             if (mGUI != null) {
@@ -226,6 +245,7 @@ public final class SunburstView extends JScrollPane implements IView {
             }
         }
 
+        /** {@inheritDoc} */
         @Override
         public void keyReleased() {
             if (mGUI != null) {
@@ -234,23 +254,29 @@ public final class SunburstView extends JScrollPane implements IView {
             }
         }
 
-        // @Override
-        // public void mousePressed(final MouseEvent paramEvent) {
-        // super.mousePressed(paramEvent);
-        //
-        // // Update the screen (run draw once).
-        // redraw();
-        // handleHLWeight();
-        // }
+        /** {@inheritDoc} */
+        @Override
+        public void mousePressed(final MouseEvent paramEvent) {
+            if (mGUI != null) {
+                mGUI.mousePressed(paramEvent);
+                handleHLWeight();
+            }
+        }
 
         /** Refresh. */
         public void refreshUpdate() {
-            if (mModel != null) {
-                final List<SunburstItem> items =
-                    mModel.traverseTree(mRtx.getNode().getNodeKey(), mGUI.mTextWeight);
-                for (final SunburstItem item : items) {
-                    item.update(mGUI.getMappingMode());
-                }
+            if (mGUI != null && mModel != null && mItems != null) {
+                noLoop();
+                mLock.lock();
+                LOGWRAPPER.info("refreshUpdate");
+                mModel = new SunburstModel(this, mDB);
+                mGUI = mGUI.refresh(this, mModel);
+                mGUI.setupGUI();
+                handleHLWeight();
+                mRtx = mDB.getRtx();
+                mModel.traverseTree(mRtx.getNode().getNodeKey(), mGUI.mTextWeight);
+                mLock.unlock();
+                loop();
             }
         }
 
@@ -264,6 +290,21 @@ public final class SunburstView extends JScrollPane implements IView {
             if (window != null) {
                 window.validate();
             }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @SuppressWarnings("unchecked")
+        @Override
+        public void propertyChange(final PropertyChangeEvent paramEvent) {
+            noLoop();
+            mLock.lock();
+            if (paramEvent.getPropertyName().equals("items")) {
+                mItems = (List<SunburstItem>)paramEvent.getNewValue();
+            }
+            mLock.unlock();
+            loop();
         }
     }
 }
