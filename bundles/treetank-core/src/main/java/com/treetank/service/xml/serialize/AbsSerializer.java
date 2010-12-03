@@ -92,7 +92,6 @@ abstract class AbsSerializer implements Callable<Void> {
 
         long[] versionsToUse;
         IReadTransaction rtx = mSession.beginReadTransaction();
-        System.out.println(mNodeKey);
         rtx.moveTo(mNodeKey);
         final long lastRevisionNumber = rtx.getRevisionNumber();
         rtx.close();
