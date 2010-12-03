@@ -164,12 +164,7 @@ public final class XMLSerializer extends AbsSerializer {
 
                 // Iterate over all persistent attributes.
                 for (int index = 0; index < ((ElementNode)paramRTX.getNode()).getAttributeCount(); index++) {
-                    final long nodeKey = paramRTX.getNode().getNodeKey();
                     paramRTX.moveToAttribute(index);
-                    if (paramRTX.getNode().getKind() == ENodes.ELEMENT_KIND) {
-                        System.out.println(nodeKey);
-                        System.out.println(paramRTX.getNode().getNodeKey());
-                    }
                     mOut.write(ECharsForSerializing.SPACE.getBytes());
                     mOut.write(paramRTX.rawNameForKey(paramRTX.getNode().getNameKey()));
                     mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
