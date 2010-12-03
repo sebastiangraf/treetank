@@ -32,14 +32,14 @@ import javax.xml.transform.stream.StreamSource;
 
 import com.treetank.utils.LogWrapper;
 
-//import net.sf.saxon.s9api.DocumentBuilder;
-//import net.sf.saxon.s9api.Processor;
-//import net.sf.saxon.s9api.SaxonApiException;
-//import net.sf.saxon.s9api.WhitespaceStrippingPolicy;
-//import net.sf.saxon.s9api.XPathCompiler;
-//import net.sf.saxon.s9api.XPathSelector;
-//import net.sf.saxon.s9api.XdmItem;
-//import net.sf.saxon.s9api.XdmNode;
+// import net.sf.saxon.s9api.DocumentBuilder;
+// import net.sf.saxon.s9api.Processor;
+// import net.sf.saxon.s9api.SaxonApiException;
+// import net.sf.saxon.s9api.WhitespaceStrippingPolicy;
+// import net.sf.saxon.s9api.XPathCompiler;
+// import net.sf.saxon.s9api.XPathSelector;
+// import net.sf.saxon.s9api.XdmItem;
+// import net.sf.saxon.s9api.XdmNode;
 
 import org.slf4j.LoggerFactory;
 
@@ -64,8 +64,8 @@ public final class RelationalDBImport implements IImport<Object> {
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER =
-        new LogWrapper(LoggerFactory.getLogger(RelationalDBImport.class));
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(RelationalDBImport.class));
 
     /** Driver class string. */
     private final String mDriverClass;
@@ -98,8 +98,8 @@ public final class RelationalDBImport implements IImport<Object> {
      * @param paramUserPass
      *            Password credential.
      */
-    public RelationalDBImport(final String paramDriverClass, final String paramConnURL, final String paramUserName,
-        final String paramUserPass) {
+    public RelationalDBImport(final String paramDriverClass, final String paramConnURL,
+        final String paramUserName, final String paramUserPass) {
         mDriverClass = paramDriverClass;
         mConnURL = paramConnURL;
         mUserName = paramUserName;
@@ -120,78 +120,78 @@ public final class RelationalDBImport implements IImport<Object> {
 
     @Override
     public void importData(final char paramDateRange, final List<Object> mObj) {
-//        try {
-//            final PreparedStatement prepStatement = mConnection.prepareStatement((String) mObj);
-//            final ResultSet result = prepStatement.executeQuery();
-//            String tmpTimestamp;
-//
-//            // Initial temporal timestamp.
-//            if (result.next()) {
-//                tmpTimestamp = result.getString("timestamp");
-//            } else {
-//                throw new IllegalStateException("No result!");
-//            }
-//
-//            int i = 0;
-//            File resFile = new File("target" + File.separator + "result" + i);
-//            final List<NDataTuple> dataList = new ArrayList<NDataTuple>();
-//
-//            final Processor proc = new Processor(false);
-//            final XPathCompiler xpath = proc.newXPathCompiler();
-//
-//            final DocumentBuilder builder = proc.newDocumentBuilder();
-//            builder.setLineNumbering(true);
-//            builder.setWhitespaceStrippingPolicy(WhitespaceStrippingPolicy.ALL);
-//            final XdmNode booksDoc = builder.build(new StreamSource(IANA_IPV4));
-//
-//            // Iterate over result set.
-//            while (result.next()) {
-//                final String timestamp = result.getString("timestamp");
-//
-//                // Write into a new file if timestamp changes.
-//                if (tmpTimestamp != timestamp) {
-//                    resFile = new File("target" + File.separator + "result" + ++i);
-//                }
-//
-//                final String srcIP = result.getString("srcaddr");
-//                String prefix = srcIP.split(".")[0];
-//
-//                if (prefix.toCharArray()[0] != '0') {
-//                    switch (prefix.length()) {
-//                    case 1:
-//                        prefix = "00" + prefix;
-//                        break;
-//                    case 2:
-//                        prefix = "0" + prefix;
-//                        break;
-//                    case 3:
-//                        break;
-//                    default:
-//                        throw new IllegalStateException(
-//                            "IPv4 address prefixes don't have more than 3 digits.");
-//                    }
-//                }
-//                
-//                final XPathSelector selector = xpath.compile("//record[./prefix/" + prefix + "]/").load();
-//                selector.setContextItem(booksDoc);
-//                
-//                for (final XdmItem item : selector) {
-//                    
-//                }
-//            }
-//
-//            prepStatement.close();
-//            mConnection.close();
-//        } catch (final SQLException e) {
-//            LOGWRAPPER.error(e);
-//        } catch (SaxonApiException e) {
-//            LOGWRAPPER.error(e);
-//        } finally {
-//            try {
-//                mConnection.close();
-//            } catch (final SQLException e) {
-//                LOGWRAPPER.error(e);
-//            }
-//        }
+        // try {
+        // final PreparedStatement prepStatement = mConnection.prepareStatement((String) mObj);
+        // final ResultSet result = prepStatement.executeQuery();
+        // String tmpTimestamp;
+        //
+        // // Initial temporal timestamp.
+        // if (result.next()) {
+        // tmpTimestamp = result.getString("timestamp");
+        // } else {
+        // throw new IllegalStateException("No result!");
+        // }
+        //
+        // int i = 0;
+        // File resFile = new File("target" + File.separator + "result" + i);
+        // final List<NDataTuple> dataList = new ArrayList<NDataTuple>();
+        //
+        // final Processor proc = new Processor(false);
+        // final XPathCompiler xpath = proc.newXPathCompiler();
+        //
+        // final DocumentBuilder builder = proc.newDocumentBuilder();
+        // builder.setLineNumbering(true);
+        // builder.setWhitespaceStrippingPolicy(WhitespaceStrippingPolicy.ALL);
+        // final XdmNode booksDoc = builder.build(new StreamSource(IANA_IPV4));
+        //
+        // // Iterate over result set.
+        // while (result.next()) {
+        // final String timestamp = result.getString("timestamp");
+        //
+        // // Write into a new file if timestamp changes.
+        // if (tmpTimestamp != timestamp) {
+        // resFile = new File("target" + File.separator + "result" + ++i);
+        // }
+        //
+        // final String srcIP = result.getString("srcaddr");
+        // String prefix = srcIP.split(".")[0];
+        //
+        // if (prefix.toCharArray()[0] != '0') {
+        // switch (prefix.length()) {
+        // case 1:
+        // prefix = "00" + prefix;
+        // break;
+        // case 2:
+        // prefix = "0" + prefix;
+        // break;
+        // case 3:
+        // break;
+        // default:
+        // throw new IllegalStateException(
+        // "IPv4 address prefixes don't have more than 3 digits.");
+        // }
+        // }
+        //
+        // final XPathSelector selector = xpath.compile("//record[./prefix/" + prefix + "]/").load();
+        // selector.setContextItem(booksDoc);
+        //
+        // for (final XdmItem item : selector) {
+        //
+        // }
+        // }
+        //
+        // prepStatement.close();
+        // mConnection.close();
+        // } catch (final SQLException e) {
+        // LOGWRAPPER.error(e);
+        // } catch (SaxonApiException e) {
+        // LOGWRAPPER.error(e);
+        // } finally {
+        // try {
+        // mConnection.close();
+        // } catch (final SQLException e) {
+        // LOGWRAPPER.error(e);
+        // }
+        // }
     }
 }

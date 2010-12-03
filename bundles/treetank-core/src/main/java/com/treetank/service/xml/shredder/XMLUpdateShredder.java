@@ -67,8 +67,8 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER =
-        new LogWrapper(LoggerFactory.getLogger(XMLUpdateShredder.class));
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(XMLUpdateShredder.class));
 
     /** File to parse. */
     protected transient File mFile;
@@ -144,7 +144,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
 
     /** Determines if it's an empty element before an insert at the top of a subtree. */
     private transient boolean mEmptyElement;
-    
+
     /**
      * Normal constructor to invoke a shredding process on a existing {@link WriteTransaction}.
      * 
@@ -871,7 +871,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                 mWtx.moveToRightSibling();
             }
         }
-        
+
         // Check if transaction is on the last node in the shreddered file.
         checkIfLastNode(true);
 
@@ -924,13 +924,13 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                      * node in processEndTag().
                      */
                     mRemovedNode = true;
-                } 
+                }
 
                 if (isLast) {
                     // If last node of a subtree has been removed, move to parent and right sibling.
                     mWtx.moveToParent();
                     mWtx.moveToRightSibling();
-                    
+
                     // If the delete occurs right before an end tag the level hasn't been incremented.
                     if (!paramAtBottom) {
                         mLevelInShreddered--;
@@ -938,7 +938,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                 }
             }
         }
-        
+
         // Check if transaction is on the last node in the shreddered file.
         checkIfLastNode(true);
         mInsert = false;

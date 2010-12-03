@@ -115,7 +115,7 @@ abstract class AbsSerializer implements Callable<Void> {
             if (versionsToUse == null || mVersions.length > 1) {
                 emitStartManualElement(i);
             }
-            
+
             rtx.moveTo(mNodeKey);
 
             final IAxis descAxis = new DescendantAxis(rtx, true);
@@ -181,11 +181,11 @@ abstract class AbsSerializer implements Callable<Void> {
     /** Emit start document. */
     protected abstract void emitStartDocument();
 
-    /** 
+    /**
      * Emit start tag.
      * 
      * @param paramRTX
-     *                  Treetank reading transaction {@link IReadTransaction}.
+     *            Treetank reading transaction {@link IReadTransaction}.
      */
     protected abstract void emitStartElement(final IReadTransaction paramRTX);
 
@@ -193,7 +193,7 @@ abstract class AbsSerializer implements Callable<Void> {
      * Emit end tag.
      * 
      * @param paramRTX
-     *                  Treetank reading transaction {@link IReadTransaction}.
+     *            Treetank reading transaction {@link IReadTransaction}.
      */
     protected abstract void emitEndElement(final IReadTransaction paramRTX);
 
@@ -201,7 +201,7 @@ abstract class AbsSerializer implements Callable<Void> {
      * Emit a start tag, which specifies a revision.
      * 
      * @param paramVersion
-     *                  The revision to serialize.
+     *            The revision to serialize.
      */
     protected abstract void emitStartManualElement(final long paramVersion);
 
@@ -209,7 +209,7 @@ abstract class AbsSerializer implements Callable<Void> {
      * Emit an end tag, which specifies a revision.
      * 
      * @param paramVersion
-     *                  The revision to serialize.
+     *            The revision to serialize.
      */
     protected abstract void emitEndManualElement(final long paramVersion);
 

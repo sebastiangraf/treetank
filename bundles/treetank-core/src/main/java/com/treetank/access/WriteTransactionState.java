@@ -330,14 +330,15 @@ public final class WriteTransactionState extends ReadTransactionState {
     public void commit(final PageReference reference) throws TreetankException {
         AbstractPage page = null;
 
-        //if reference is not null, get one from the persistent storage.
+        // if reference is not null, get one from the persistent storage.
         if (reference != null) {
-            //first, try to get one from the log
+            // first, try to get one from the log
             final NodePageContainer cont = mLog.get(reference.getNodePageKey());
             if (cont != null) {
                 page = cont.getModified();
             }
-            //if none is in the log, test if one is instantiated, if so, get the one flexible from the reference
+            // if none is in the log, test if one is instantiated, if so, get the one flexible from the
+            // reference
             if (page == null) {
                 if (!reference.isInstantiated()) {
                     return;
@@ -352,7 +353,8 @@ public final class WriteTransactionState extends ReadTransactionState {
             page.commit(this);
             mPageWriter.write(reference);
             reference.setPage(null);
-            //afterwards synchronize all logs since the changes must to be written to the transaction log as well
+            // afterwards synchronize all logs since the changes must to be written to the transaction log as
+            // well
             if (cont != null) {
                 mSessionState.syncLogs(cont, mTransactionID);
             }

@@ -58,8 +58,8 @@ import com.treetank.utils.LogWrapper;
 public final class WikipediaImport implements IImport<StartElement> {
 
     /** Logger. */
-    private static final LogWrapper LOGWRAPPER =
-        new LogWrapper(LoggerFactory.getLogger(WikipediaImport.class));
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
+        .getLogger(WikipediaImport.class));
 
     /** StAX parser {@link XMLEventReader}. */
     private transient XMLEventReader mReader;
@@ -471,7 +471,7 @@ public final class WikipediaImport implements IImport<StartElement> {
         final StartElement rev = eventFactory.createStartElement(new QName("revision"), null, null);
         final StartElement id = eventFactory.createStartElement(new QName("id"), null, null);
         final StartElement text = eventFactory.createStartElement(new QName("text"), null, null);
-        
+
         // Create list.
         final List<StartElement> list = new LinkedList<StartElement>();
         list.add(timestamp);
@@ -479,7 +479,7 @@ public final class WikipediaImport implements IImport<StartElement> {
         list.add(rev);
         list.add(id);
         list.add(text);
-        
+
         // Invoke import.
         new WikipediaImport(xml, tnk).importData('h', list);
 

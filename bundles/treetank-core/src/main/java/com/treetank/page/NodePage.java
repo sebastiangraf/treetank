@@ -73,7 +73,7 @@ public class NodePage extends AbstractPage {
             final ENodes enumKind = ENodes.getEnumKind(kind);
             if (enumKind != ENodes.UNKOWN_KIND) {
                 getNodes()[offset] = enumKind.createNodeFromPersistence(mIn);
-            } 
+            }
         }
     }
 

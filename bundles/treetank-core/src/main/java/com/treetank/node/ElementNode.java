@@ -251,17 +251,17 @@ public final class ElementNode extends AbsStructNode {
     }
 
     public static AbsNode createData(final long mNodeKey, final ElementNode mNode) {
-        return createData(mNodeKey, mNode.getParentKey(), mNode.getLeftSiblingKey(),
-            mNode.getRightSiblingKey(), mNode.getFirstChildKey(), mNode.getChildCount(), mNode.getNameKey(),
-            mNode.getURIKey(), mNode.getTypeKey(), mNode.getHash());
+        return createData(mNodeKey, mNode.getParentKey(), mNode.getLeftSiblingKey(), mNode
+            .getRightSiblingKey(), mNode.getFirstChildKey(), mNode.getChildCount(), mNode.getNameKey(), mNode
+            .getURIKey(), mNode.getTypeKey(), mNode.getHash());
     }
 
     @Override
     public String toString() {
         final StringBuilder returnVal = new StringBuilder(super.toString());
         returnVal.append("\n\tname key: ").append(getNameKey()).append("\n\turi key: ").append(getURIKey())
-            .append("\n\tnamespaces: ").append(mNamespaceKeys.toString()).append("\n\tattributes: ")
-            .append(mAttributeKeys.toString()).toString();
+            .append("\n\tnamespaces: ").append(mNamespaceKeys.toString()).append("\n\tattributes: ").append(
+                mAttributeKeys.toString()).toString();
         return returnVal.toString();
     }
 
