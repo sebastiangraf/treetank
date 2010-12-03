@@ -31,8 +31,8 @@ public final class OverallTest {
     private static final Random ran = new Random(0l);
     public static String chars = "abcdefghijklm";
 
-    private static final String XML =
-        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "auction.xml";
+    private static final String XML = "src" + File.separator + "test" + File.separator + "resources"
+        + File.separator + "auction.xml";
 
     @Before
     public void setUp() {

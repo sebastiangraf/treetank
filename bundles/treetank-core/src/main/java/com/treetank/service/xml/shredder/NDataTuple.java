@@ -20,35 +20,36 @@ package com.treetank.service.xml.shredder;
  * Container for hierarichal network data (Continent, Country, AS, Prefix).
  * 
  * @author Johannes Lichtenberger, University of Konstanz
- *
+ * 
  */
 public class NDataTuple {
-    
+
     /** Continent. */
     private transient String mContinent;
-    
+
     /** Country. */
     private transient String mCountry;
-    
+
     /** Autonomous System. */
     private transient String mAS;
-    
+
     /** IP-Prefix. */
     private transient String mPrefix;
-    
+
     /**
      * Constructor.
      * 
      * @param paramContinent
-     *                        Continent.
+     *            Continent.
      * @param paramCountry
-     *                        Country.
+     *            Country.
      * @param paramAS
-     *                        Autonomous System.
+     *            Autonomous System.
      * @param paramPrefix
-     *                        IP-Prefix.
+     *            IP-Prefix.
      */
-    public NDataTuple(final String paramContinent, final String paramCountry, final String paramAS, final String paramPrefix) {
+    public NDataTuple(final String paramContinent, final String paramCountry, final String paramAS,
+        final String paramPrefix) {
         mContinent = paramContinent;
         mCountry = paramCountry;
         mAS = paramAS;
@@ -63,7 +64,8 @@ public class NDataTuple {
     }
 
     /**
-     * @param mContinent the mContinent to set
+     * @param mContinent
+     *            the mContinent to set
      */
     public void setmContinent(String mContinent) {
         this.mContinent = mContinent;
@@ -77,7 +79,8 @@ public class NDataTuple {
     }
 
     /**
-     * @param mCountry the mCountry to set
+     * @param mCountry
+     *            the mCountry to set
      */
     public void setmCountry(String mCountry) {
         this.mCountry = mCountry;
@@ -91,7 +94,8 @@ public class NDataTuple {
     }
 
     /**
-     * @param mAS the mAS to set
+     * @param mAS
+     *            the mAS to set
      */
     public void setmAS(String mAS) {
         this.mAS = mAS;
@@ -105,11 +109,11 @@ public class NDataTuple {
     }
 
     /**
-     * @param mPrefix the mPrefix to set
+     * @param mPrefix
+     *            the mPrefix to set
      */
     public void setmPrefix(String mPrefix) {
         this.mPrefix = mPrefix;
-    } 
-    
-    
+    }
+
 }

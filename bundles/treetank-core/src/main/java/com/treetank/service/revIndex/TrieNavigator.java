@@ -26,7 +26,6 @@ import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.utils.NamePageHash;
 
-
 final class TrieNavigator {
 
     /**

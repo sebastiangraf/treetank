@@ -36,11 +36,11 @@ import com.treetank.service.xml.serialize.XMLSerializer;
  */
 public class WikipediaImportTest extends TestCase {
 
-    public static final String WIKIPEDIA =
-        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "testWikipedia.xml";
-    
-    public static final String EXPECTED =
-        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "testWikipediaExpected.xml";
+    public static final String WIKIPEDIA = "src" + File.separator + "test" + File.separator + "resources"
+        + File.separator + "testWikipedia.xml";
+
+    public static final String EXPECTED = "src" + File.separator + "test" + File.separator + "resources"
+        + File.separator + "testWikipediaExpected.xml";
 
     @Override
     @Before
@@ -57,7 +57,7 @@ public class WikipediaImportTest extends TestCase {
     public void testWikipediaImport() throws Exception {
         WikipediaImport.main(WIKIPEDIA, PATHS.PATH2.getFile().getAbsolutePath());
         XMLSerializer.main(PATHS.PATH2.getFile().getAbsolutePath(), PATHS.PATH1.getFile().getAbsolutePath());
-        
+
         final StringBuilder actual = TestHelper.readFile(PATHS.PATH1.getFile().getAbsoluteFile(), false);
         final StringBuilder expected = TestHelper.readFile(new File(EXPECTED), false);
         assertEquals("XML files match", expected.toString(), actual.toString());

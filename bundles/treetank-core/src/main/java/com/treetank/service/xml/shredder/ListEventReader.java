@@ -72,8 +72,8 @@ public final class ListEventReader implements XMLEventReader {
         final QName root = mEvents.get(mIndex).asStartElement().getName();
         int level = 0;
         while (level >= 0
-            && !(mEvents.get(mIndex).isEndElement() && mEvents.get(mIndex).asEndElement().getName()
-                .equals(root))) {
+            && !(mEvents.get(mIndex).isEndElement() && mEvents.get(mIndex).asEndElement().getName().equals(
+                root))) {
             final XMLEvent event = mEvents.get(mIndex);
             switch (event.getEventType()) {
             case XMLStreamConstants.START_ELEMENT:
@@ -143,7 +143,7 @@ public final class ListEventReader implements XMLEventReader {
      * 
      * @return null if an XMLStreamException occured
      * @throw NoSuchElementException
-     *             thrown if no more elements are in the list.
+     *        thrown if no more elements are in the list.
      */
     @Override
     public Object next() {
@@ -160,11 +160,11 @@ public final class ListEventReader implements XMLEventReader {
     public void remove() {
         throw new UnsupportedOperationException("Not supported!");
     }
-    
-    /** 
-     * Create a copy, but reset index. 
+
+    /**
+     * Create a copy, but reset index.
      * 
-     * @return copied {@link ListEventReader}. 
+     * @return copied {@link ListEventReader}.
      */
     public XMLEventReader copy() {
         return new ListEventReader(mEvents);

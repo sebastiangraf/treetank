@@ -10,22 +10,21 @@ import org.perfidix.ouput.AbstractOutput;
 import org.perfidix.AbstractConfig;
 
 public class BenchConfigClass extends AbstractConfig {
-	
-	private final static int RUNS = 10;
-    private final static AbstractMeter[] METERS =
-            { new TimeMeter(Time.Seconds), new MemMeter(Memory.Mebibyte) };
+
+    private final static int RUNS = 10;
+    private final static AbstractMeter[] METERS = {
+        new TimeMeter(Time.Seconds), new MemMeter(Memory.Mebibyte)
+    };
     private final static AbstractOutput[] OUTPUT = {/*
                                                      * new
                                                      * TabularSummaryOutput()
                                                      */};
-    private final static KindOfArrangement ARRAN =
-            KindOfArrangement.SequentialMethodArrangement;
+    private final static KindOfArrangement ARRAN = KindOfArrangement.SequentialMethodArrangement;
     private final static double GCPROB = 1.0d;
 
     public BenchConfigClass() {
         super(RUNS, METERS, OUTPUT, ARRAN, GCPROB);
 
     }
-
 
 }

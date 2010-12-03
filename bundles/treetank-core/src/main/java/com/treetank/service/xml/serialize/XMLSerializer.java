@@ -63,12 +63,11 @@ public final class XMLSerializer extends AbsSerializer {
     private static final int ASCII_OFFSET = 48;
 
     /** Precalculated powers of each available long digit. */
-    private static final long[] LONG_POWERS =
-        {
-            1L, 10L, 100L, 1000L, 10000L, 100000L, 1000000L, 10000000L, 100000000L, 1000000000L,
-            10000000000L, 100000000000L, 1000000000000L, 10000000000000L, 100000000000000L,
-            1000000000000000L, 10000000000000000L, 100000000000000000L, 1000000000000000000L
-        };
+    private static final long[] LONG_POWERS = {
+        1L, 10L, 100L, 1000L, 10000L, 100000L, 1000000L, 10000000L, 100000000L, 1000000000L, 10000000000L,
+        100000000000L, 1000000000000L, 10000000000000L, 100000000000000L, 1000000000000000L,
+        10000000000000000L, 100000000000000000L, 1000000000000000000L
+    };
 
     /** OutputStream to write to. */
     private final OutputStream mOut;
@@ -437,7 +436,7 @@ public final class XMLSerializer extends AbsSerializer {
          * Setting the indention.
          * 
          * @param paramIndent
-         *            to set         
+         *            to set
          * @return XMLSerializerBuilder reference.
          */
         public XMLSerializerBuilder setIndend(final boolean paramIndent) {

@@ -47,25 +47,25 @@ public final class XMLSerializerProperties {
      */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
         .getLogger(XMLSerializerProperties.class));
-    
+
     /** YES maps to true. */
     private static final boolean YES = true;
 
     /** NO maps to false. */
     private static final boolean NO = false;
-    
+
     // ============ Shredding constants. ===============
-    
+
     /** Serialize TT-ID: yes/no. */
     public static final Object[] S_ID = {
         "serialize-id", NO
     };
-    
+
     /** Serialization parameter: yes/no. */
     public static final Object[] S_INDENT = {
         "indent", YES
     };
-    
+
     /** Specific serialization parameter: number of spaces to indent. */
     public static final Object[] S_INDENT_SPACES = {
         "indent-spaces", 2
@@ -75,12 +75,12 @@ public final class XMLSerializerProperties {
     public static final Object[] S_REST = {
         "serialize-rest", NO
     };
-    
+
     /** Serialize XML declaration: yes/no. */
     public static final Object[] S_XMLDECL = {
         "xmldecl", YES
     };
-    
+
     /** Property file. */
     private static String mFilePath;
 

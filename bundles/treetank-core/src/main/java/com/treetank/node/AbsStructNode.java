@@ -52,7 +52,6 @@ public abstract class AbsStructNode extends AbsNode implements IStructuralItem {
      */
     protected static final int CHILD_COUNT = 6;
 
-
     /**
      * Abstract constructor with datasetting arrays.
      * 
