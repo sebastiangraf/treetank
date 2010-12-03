@@ -18,19 +18,30 @@ package com.treetank.gui.view.sunburst;
 
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+import com.treetank.utils.LogWrapper;
 
 import controlP5.ControlEvent;
 import controlP5.ControlGroup;
 import controlP5.ControlP5;
+import controlP5.ListBox;
 import controlP5.Range;
 import controlP5.Slider;
+import controlP5.Textfield;
 import controlP5.Toggle;
+
+import org.slf4j.LoggerFactory;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
-import processing.core.PFont;
 
 /**
  * <h1>SunburstGUI</h1>
@@ -42,12 +53,18 @@ import processing.core.PFont;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-final class SunburstGUI extends AbsView {
+final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
+
+    /** {@link LogWrapper}. */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(SunburstGUI.class));
 
     /**
      * Serial version UID.
      */
     private static final long serialVersionUID = -4747210906900567484L;
+
+    /** Path to save visualization as a PDF or PNG file. */
+    private static final String SAVEPATH = "target" + File.separator + timestamp();
 
     /** The GUI of the Sunburst view. */
     private static SunburstGUI mGUI;
@@ -65,7 +82,7 @@ final class SunburstGUI extends AbsView {
     transient float mSaturationEnd = 100;
 
     /** Brightness start value. */
-    transient float mBrightnessStart = 51;
+    transient float mBrightnessStart = 30;
 
     /** Brightness end value. */
     transient float mBrightnessEnd = 77;
@@ -99,9 +116,15 @@ final class SunburstGUI extends AbsView {
 
     /** Show arcs. */
     transient boolean mShowArcs = true;
-    
+
     /** Determines how much text lenght should be weighted. */
     transient float mTextWeight = 0.2f;
+
+    /** {@link List} of {@link SunburstItem}s. */
+    transient List<SunburstItem> mItems;
+
+    /** Maximum depth in the tree. */
+    transient int mDepthMax;
 
     /** Leaf node arc scale. */
     private transient float mLeafArcScale = 1.0f;
@@ -128,57 +151,90 @@ final class SunburstGUI extends AbsView {
     private transient ControlP5 mControlP5;
 
     /** Determines if SunburstGUI interface should be shown. */
-    private boolean mShowGUI;
+    private transient boolean mShowGUI;
 
     /** {@link ControlP5} sliders. */
-    private transient Slider[] mSliders;
+    private transient List<Slider> mSliders;
 
     /** {@link ControlP5} ranges. */
-    private transient Range[] mRanges;
+    private transient List<Range> mRanges;
 
     /** {@link ControlP5} toggles. */
-    private transient Toggle[] mToggles;
+    private transient List<Toggle> mToggles;
+
+    /** Lock. */
+    private transient Lock mLock = new ReentrantLock();
+
+    /** {@link ControlP5} listboxes. */
+    private transient List<ListBox> mBoxes;
+
+    /** {@link ControlP5#} textfield. */
+    private transient Textfield mXPathField;
+
+    /** Determines the update state. */
+    private enum State {
+        /** Drawing "event". */
+        DRAW,
+
+        /** Double-click event. */
+        DOUBLECLICK
+    };
+
+    /** State to update. */
+    private transient State mUpdate = State.DRAW;
+
+    /**
+     * Temporary {@link List} of {@link List}s of {@link SunburstItem}s.
+     */
+    private final List<List<SunburstItem>> mLastItems = new ArrayList<List<SunburstItem>>();
 
     /** Parent {@link PApplet}. */
     private final PApplet mParent;
 
-    /** {@link SunburstController}. */
-    private final SunburstController<? extends AbsModel, ? extends AbsView> mController;
-
-    /** {@link PFont}. */
-    private transient PFont mFont;
-
-    /** {@link List} of {@link SunburstItem}s. */
-    private transient List<SunburstItem> mItems;
+    /** {@link SunburstModel}. */
+    private final SunburstModel mModel;
 
     /**
-     * Constructor.
+     * Private constructor.
      * 
      * @param paramParentApplet
      *            Parent processing applet.
-     * @param paramController
-     *            The controller.
+     * @param paramModel
+     *            The model.
      */
-    private SunburstGUI(final PApplet paramParentApplet,
-        final SunburstController<? extends AbsModel, ? extends AbsView> paramController) {
+    private SunburstGUI(final PApplet paramParentApplet, final SunburstModel paramModel) {
         mParent = paramParentApplet;
-        mController = paramController;
+        mModel = paramModel;
     }
 
     /**
-     * Factory method (Singleton).
+     * Factory method (Singleton). Note that it's always called from the animation thread, thus it doesn't
+     * need to be synchronized.
      * 
      * @param paramParentApplet
      *            Parent processing applet.
-     * @param paramController
-     *            The controller.
+     * @param paramModel
+     *            The model.
      * @return a GUI singleton.
      */
-    static SunburstGUI createGUI(final PApplet paramParentApplet,
-        final SunburstController<? extends AbsModel, ? extends AbsView> paramController) {
+    static SunburstGUI createGUI(final PApplet paramParentApplet, final SunburstModel paramModel) {
         if (mGUI == null) {
-            mGUI = new SunburstGUI(paramParentApplet, paramController);
+            mGUI = new SunburstGUI(paramParentApplet, paramModel);
         }
+        return mGUI;
+    }
+
+    /**
+     * Refresh GUI.
+     * 
+     * @param paramParentApplet
+     *            Parent processing applet.
+     * @param paramModel
+     *            The model.
+     * @return new instance
+     */
+    SunburstGUI refresh(final PApplet paramParentApplet, final SunburstModel paramModel) {
+        mGUI = new SunburstGUI(paramParentApplet, paramModel);
         return mGUI;
     }
 
@@ -192,9 +248,10 @@ final class SunburstGUI extends AbsView {
         mControlP5.setColorLabel(mParent.color(50));
         mControlP5.setColorValue(mParent.color(255));
 
-        mSliders = new Slider[10];
-        mRanges = new Range[10];
-        mToggles = new Toggle[10];
+        mSliders = new LinkedList<Slider>();
+        mRanges = new LinkedList<Range>();
+        mToggles = new LinkedList<Toggle>();
+        mBoxes = new LinkedList<ListBox>();
 
         final int left = 0;
         final int top = 5;
@@ -205,68 +262,65 @@ final class SunburstGUI extends AbsView {
         int ti = 0;
         int posY = 0;
 
-        mRanges[ri++] =
-            mControlP5.addRange("leaf node hue range", 0, 360, mHueStart, mHueEnd, left, top + posY + 0, len,
-                15);
-        mRanges[ri++] =
-            mControlP5.addRange("leaf node saturation range", 0, 100, mSaturationStart, mSaturationEnd, left,
-                top + posY + 20, len, 15);
-        mRanges[ri++] =
-            mControlP5.addRange("leaf node brightness range", 0, 100, mBrightnessStart, mBrightnessEnd, left,
-                top + posY + 40, len, 15);
+        mRanges.add(ri++, mControlP5.addRange("leaf node hue range", 0, 360, mHueStart, mHueEnd, left, top
+            + posY + 0, len, 15));
+        mRanges.add(ri++, mControlP5.addRange("leaf node saturation range", 0, 100, mSaturationStart,
+            mSaturationEnd, left, top + posY + 20, len, 15));
+        mRanges.add(ri++, mControlP5.addRange("leaf node brightness range", 0, 100, mBrightnessStart,
+            mBrightnessEnd, left, top + posY + 40, len, 15));
         posY += 70;
 
-        mRanges[ri++] =
-            mControlP5.addRange("inner node brightness range", 0, 100, mInnerNodeBrightnessStart,
-                mInnerNodeBrightnessEnd, left, top + posY + 0, len, 15);
-        mRanges[ri++] =
-            mControlP5.addRange("inner node stroke brightness range", 0, 100,
-                mInnerNodeStrokeBrightnessStart, mInnerNodeStrokeBrightnessEnd, left, top + posY + 20, len,
-                15);
+        mRanges.add(ri++, mControlP5.addRange("inner node brightness range", 0, 100,
+            mInnerNodeBrightnessStart, mInnerNodeBrightnessEnd, left, top + posY + 0, len, 15));
+        mRanges.add(ri++, mControlP5.addRange("inner node stroke brightness range", 0, 100,
+            mInnerNodeStrokeBrightnessStart, mInnerNodeStrokeBrightnessEnd, left, top + posY + 20, len, 15));
         posY += 50;
 
         // name, minimum, maximum, default value (float), x, y, width, height
-        mSliders[si] =
-            mControlP5.addSlider("mInnerNodeArcScale", 0, 1, mInnerNodeArcScale, left, top + posY + 0, len,
-                15);
-        mSliders[si++].setLabel("innerNodeArcScale");
-        mSliders[si] =
-            mControlP5.addSlider("mLeafArcScale", 0, 1, mLeafArcScale, left, top + posY + 20, len, 15);
-        mSliders[si++].setLabel("leafNodeArcScale");
+        mSliders.add(si, mControlP5.addSlider("mInnerNodeArcScale", 0, 1, mInnerNodeArcScale, left, top
+            + posY + 0, len, 15));
+        mSliders.get(si++).setLabel("innerNodeArcScale");
+        mSliders.add(si, mControlP5.addSlider("mLeafArcScale", 0, 1, mLeafArcScale, left, top + posY + 20,
+            len, 15));
+        mSliders.get(si++).setLabel("leafNodeArcScale");
         posY += 50;
 
-        mRanges[ri++] =
-            mControlP5.addRange("stroke weight range", 0, 10, mStrokeWeightStart, mStrokeWeightEnd, left, top
-                + posY + 0, len, 15);
+        mRanges.add(ri++, mControlP5.addRange("stroke weight range", 0, 10, mStrokeWeightStart,
+            mStrokeWeightEnd, left, top + posY + 0, len, 15));
         posY += 30;
 
-        mSliders[si] = mControlP5.addSlider("mDotSize", 0, 10, mDotSize, left, top + posY + 0, len, 15);
-        mSliders[si++].setLabel("dotSize");
-        mSliders[si] =
-            mControlP5.addSlider("mDotBrightness", 0, 100, mDotBrightness, left, top + posY + 20, len, 15);
-        mSliders[si++].setLabel("dotBrightness");
+        mSliders.add(si, mControlP5.addSlider("mDotSize", 0, 10, mDotSize, left, top + posY + 0, len, 15));
+        mSliders.get(si++).setLabel("dotSize");
+        mSliders.add(si, mControlP5.addSlider("mDotBrightness", 0, 100, mDotBrightness, left,
+            top + posY + 20, len, 15));
+        mSliders.get(si++).setLabel("dotBrightness");
         posY += 50;
 
-        mSliders[si] =
-            mControlP5.addSlider("mBackgroundBrightness", 0, 100, mBackgroundBrightness, left,
-                top + posY + 0, len, 15);
-        mSliders[si++].setLabel("backgroundBrightness");
+        mSliders.add(si, mControlP5.addSlider("mBackgroundBrightness", 0, 100, mBackgroundBrightness, left,
+            top + posY + 0, len, 15));
+        mSliders.get(si++).setLabel("backgroundBrightness");
         posY += 30;
-        
-        mSliders[si] =
-            mControlP5.addSlider("mTextWeight", 0, 10, mTextWeight, left, top + posY + 0, len, 15);
-        mSliders[si++].setLabel("text weight");
+
+        mSliders.add(si, mControlP5.addSlider("mTextWeight", 0, 10, mTextWeight, left, top + posY + 0, len,
+            15));
+        mSliders.get(si++).setLabel("text weight");
         posY += 50;
 
-        mToggles[ti] = mControlP5.addToggle("mShowArcs", mShowArcs, left + 0, top + posY, 15, 15);
-        mToggles[ti++].setLabel("show Arcs");
-        mToggles[ti] = mControlP5.addToggle("mShowLines", mShowLines, left + 0, top + posY + 20, 15, 15);
-        mToggles[ti++].setLabel("show Lines");
-        mToggles[ti] =
-            mControlP5.addToggle("mUseBezierLine", mUseBezierLine, left + 0, top + posY + 40, 15, 15);
-        mToggles[ti++].setLabel("Bezier / Line");
-        mToggles[ti] = mControlP5.addToggle("mUseArc", mUseArc, left + 0, top + posY + 60, 15, 15);
-        mToggles[ti++].setLabel("Arc / Rect");
+        mToggles.add(ti, mControlP5.addToggle("mShowArcs", mShowArcs, left + 0, top + posY, 15, 15));
+        mToggles.get(ti++).setLabel("show Arcs");
+        mToggles.add(ti, mControlP5.addToggle("mShowLines", mShowLines, left + 0, top + posY + 20, 15, 15));
+        mToggles.get(ti++).setLabel("show Lines");
+        mToggles.add(ti, mControlP5.addToggle("mUseBezierLine", mUseBezierLine, left + 0, top + posY + 40,
+            15, 15));
+        mToggles.get(ti++).setLabel("Bezier / Line");
+        mToggles.add(ti, mControlP5.addToggle("mUseArc", mUseArc, left + 0, top + posY + 60, 15, 15));
+        mToggles.get(ti++).setLabel("Arc / Rect");
+
+        mXPathField = mControlP5.addTextfield("xpath", left + 800, top + 20, 200, 20);
+        mXPathField.setLabel("XPath expression");
+        mXPathField.setFocus(true);
+        mXPathField.setAutoClear(false);
+        mXPathField.plugTo(this);
 
         style(si, ri, ti);
     }
@@ -286,42 +340,46 @@ final class SunburstGUI extends AbsView {
         ctrl.setColorLabel(mParent.color(255));
         ctrl.close();
 
-        for (int i = 0; i < paramSi; i++) {
-            mSliders[i].setGroup(ctrl);
-            mSliders[i].setId(i);
-            mSliders[i].captionLabel().toUpperCase(true);
-            mSliders[i].captionLabel().style().padding(4, 0, 1, 3);
-            mSliders[i].captionLabel().style().marginTop = -4;
-            mSliders[i].captionLabel().style().marginLeft = 0;
-            mSliders[i].captionLabel().style().marginRight = -14;
-            mSliders[i].captionLabel().setColorBackground(0x99ffffff);
-            mSliders[i].plugTo(this);
+        int i = 0;
+        for (final Slider slider : mSliders) {
+            slider.setGroup(ctrl);
+            slider.setId(i);
+            slider.captionLabel().toUpperCase(true);
+            slider.captionLabel().style().padding(4, 0, 1, 3);
+            slider.captionLabel().style().marginTop = -4;
+            slider.captionLabel().style().marginLeft = 0;
+            slider.captionLabel().style().marginRight = -14;
+            slider.captionLabel().setColorBackground(0x99ffffff);
+            slider.plugTo(this);
+            i++;
         }
 
-        for (int i = 0; i < paramRi; i++) {
-            mRanges[i].setGroup(ctrl);
-            mRanges[i].setId(i);
-            mRanges[i].captionLabel().toUpperCase(true);
-            mRanges[i].captionLabel().style().padding(4, 0, 1, 3);
-            mRanges[i].captionLabel().style().marginTop = -4;
-            mRanges[i].captionLabel().setColorBackground(0x99ffffff);
-            mRanges[i].plugTo(this);
+        i = 0;
+        for (final Range range : mRanges) {
+            range.setGroup(ctrl);
+            range.setId(i);
+            range.captionLabel().toUpperCase(true);
+            range.captionLabel().style().padding(4, 0, 1, 3);
+            range.captionLabel().style().marginTop = -4;
+            range.captionLabel().setColorBackground(0x99ffffff);
+            range.plugTo(this);
+            i++;
         }
 
-        for (int i = 0; i < paramTi; i++) {
-            mToggles[i].setGroup(ctrl);
-            // mToggles[i].setColorValue(mParent.color(50));
-            mToggles[i].captionLabel().style().padding(4, 3, 1, 3);
-            mToggles[i].captionLabel().style().marginTop = -19;
-            mToggles[i].captionLabel().style().marginLeft = 18;
-            mToggles[i].captionLabel().style().marginRight = 5;
-            mToggles[i].captionLabel().setColorBackground(0x99ffffff);
-            mToggles[i].plugTo(this);
+        i = 0;
+        for (final Toggle toggle : mToggles) {
+            toggle.setGroup(ctrl);
+            toggle.setId(i);
+            toggle.captionLabel().style().padding(4, 3, 1, 3);
+            toggle.captionLabel().style().marginTop = -19;
+            toggle.captionLabel().style().marginLeft = 18;
+            toggle.captionLabel().style().marginRight = 5;
+            toggle.captionLabel().setColorBackground(0x99ffffff);
+            toggle.plugTo(this);
+            i++;
         }
-        
+
         mParent.colorMode(PConstants.HSB, 360, 100, 100);
-        mFont = mParent.createFont("Arial", 14);
-        mParent.textFont(mFont, 12);
         mParent.textLeading(14);
         mParent.textAlign(PConstants.LEFT, PConstants.TOP);
         mParent.cursor(PConstants.CROSS);
@@ -368,60 +426,50 @@ final class SunburstGUI extends AbsView {
         }
         if (paramControlEvent.controller().name().equals("stroke weight range")) {
             final float[] f = paramControlEvent.controller().arrayValue();
+            firePropertyChange("strokeWeightStart", mStrokeWeightStart, f[0]);
             mStrokeWeightStart = f[0];
             mStrokeWeightEnd = f[1];
         }
 
-        final List<SunburstItem> items = getItems();
-
-        for (final SunburstItem item : items) {
+        for (final SunburstItem item : mItems) {
             item.update(mMappingMode);
         }
+    }
+
+    /**
+     * XPath expression.
+     * 
+     * @param paramXPath
+     *            The XPath expression.
+     */
+    public void xpath(final String paramXPath) {
+        mParent.noLoop();
+        mLock.lock();
+        mModel.evaluateXPath(paramXPath);
+        mLock.unlock();
+        mParent.loop();
     }
 
     /**
      * Implements the {@link PApplet} draw() method.
      */
     void draw() {
-        if (mSavePDF) {
-            PApplet.println("\n" + "saving to pdf – starting");
-            mParent.beginRecord(PConstants.PDF, timestamp() + ".pdf");
-        }
-
+        mLock.lock();
         mParent.pushMatrix();
         mParent.colorMode(PConstants.HSB, 360, 100, 100, 100);
         mParent.background(0, 0, mBackgroundBrightness);
         mParent.noFill();
         mParent.ellipseMode(PConstants.RADIUS);
         mParent.strokeCap(PConstants.SQUARE);
-        mParent.textFont(mFont, 12f);
         mParent.textLeading(14);
         mParent.textAlign(PConstants.LEFT, PConstants.TOP);
         mParent.smooth();
 
-        mParent.translate(mParent.width / 2, mParent.height / 2);
-
-        // Mouse rollover, arc hittest vars.
-        int hitTestIndex = -1;
-        final float x = mParent.mouseX - mParent.width / 2;
-        final float y = mParent.mouseY - mParent.height / 2;
-        float angle = PApplet.atan2(y - 0, x - 0);
-        final float radius = PApplet.dist(0, 0, x, y);
-
-        if (angle < 0) {
-            angle = PApplet.map(angle, -PConstants.PI, 0, PConstants.PI, PConstants.TWO_PI);
-        } else {
-            angle = PApplet.map(angle, 0, PConstants.PI, 0, PConstants.PI);
-        }
-        // Calc mouse depth with mouse radius ... transformation of calcEqualAreaRadius()
-        final int depthMax = (Integer)mController.get("DepthMax");
-        final int depth =
-            PApplet.floor(PApplet.pow(radius, 2) * (depthMax + 1) / PApplet.pow(mParent.height * 0.5f, 2));
+        // Add menubar height (21 pixels).
+        mParent.translate(mParent.width / 2, mParent.height / 2 + 21);
 
         // Draw the vizualization items.
-        int index = 0;
-        final List<SunburstItem> items = getItems();
-        for (final SunburstItem item : items) {
+        for (final SunburstItem item : mItems) {
             // Draw arcs or rects.
             if (mShowArcs) {
                 if (mUseArc) {
@@ -430,16 +478,9 @@ final class SunburstGUI extends AbsView {
                     item.drawRect(mInnerNodeArcScale, mLeafArcScale);
                 }
             }
-
-            // Hittest, which arc is the closest to the mouse.
-            if (item.getDepth() == depth && angle > item.getAngleStart() && angle < item.getAngleEnd()) {
-                hitTestIndex = index;
-            }
-
-            index++;
         }
 
-        for (final SunburstItem item : items) {
+        for (final SunburstItem item : mItems) {
             if (mShowLines) {
                 if (mUseBezierLine) {
                     item.drawRelationBezier();
@@ -449,32 +490,13 @@ final class SunburstGUI extends AbsView {
             }
         }
 
-        for (final SunburstItem item : items) {
+        for (final SunburstItem item : mItems) {
             item.drawDot();
         }
 
-        // Mouse rollover.
-        if (!mShowGUI) {
-            // Depth level focus.
-            if (depth <= depthMax) {
-                final float firstRad = calcEqualAreaRadius(depth, depthMax);
-                final float secondRad = calcEqualAreaRadius(depth + 1, depthMax);
-                mParent.stroke(0, 0, 0, 30);
-                mParent.strokeWeight(5.5f);
-                mParent.ellipse(0, 0, firstRad, firstRad);
-                mParent.ellipse(0, 0, secondRad, secondRad);
-            }
-            // Rollover text.
-            if (hitTestIndex != -1) {
-                final String text = items.get(hitTestIndex).toString();
-                final float texW = mParent.textWidth(text) * 1.2f;
-                mParent.fill(0, 0, 0);
-                final int offset = 5;
-                mParent.rect(x + offset, y + offset, texW + 4, mParent.textAscent() * 3.6f);
-                mParent.fill(0, 0, 100);
-                mParent.text(text.toUpperCase(), x + offset + 2, y + offset + 2);
-            }
-        }
+        // Rollover test.
+        mUpdate = State.DRAW;
+        rollover(mUpdate);
 
         mParent.popMatrix();
 
@@ -485,76 +507,157 @@ final class SunburstGUI extends AbsView {
         }
 
         drawGUI();
+        mLock.unlock();
     }
 
     /**
-     * Get sunburst items.
+     * Mouse rollover test.
      * 
-     * @return {@link List} of {@link SunburstItem}s.
+     * @param paramState
+     *            Determines the state, if item info should be printed or not.
+     * @return Index of the {@link SunburstItem}, which is currently hovered. -1 if no matching item can be
+     *         found.
      */
-    @SuppressWarnings("unchecked")
-    List<SunburstItem> getItems() {
-        if (mItems == null) {
-            mItems = (List<SunburstItem>)mController.get("Items");
+    private int rollover(final State paramState) {
+        // Mouse rollover, arc hittest vars.
+        int hitTestIndex = -1;
+        final float x = mParent.mouseX - mParent.width / 2;
+        final float y = mParent.mouseY - (mParent.height / 2 + 21);
+        float angle = PApplet.atan2(y - 0, x - 0);
+        final float radius = PApplet.dist(0, 0, x, y);
+
+        if (angle < 0) {
+            angle = PApplet.map(angle, -PConstants.PI, 0, PConstants.PI, PConstants.TWO_PI);
+        } else {
+            angle = PApplet.map(angle, 0, PConstants.PI, 0, PConstants.PI);
         }
-        return mItems;
+        // Calc mouse depth with mouse radius ... transformation of calcEqualAreaRadius()
+        final int depth =
+            PApplet.floor(PApplet.pow(radius, 2) * (mDepthMax + 1) / PApplet.pow(getInitialRadius(), 2));
+
+        int index = 0;
+        for (final SunburstItem item : mItems) {
+            // Hittest, which arc is the closest to the mouse.
+            if (item.getDepth() == depth && angle > item.getAngleStart() && angle < item.getAngleEnd()) {
+                hitTestIndex = index;
+            }
+
+            index++;
+        }
+
+        // Mouse rollover.
+        if (!mShowGUI && paramState == State.DRAW) {
+            // Depth level focus.
+            if (depth <= mDepthMax) {
+                final float firstRad = calcEqualAreaRadius(depth, mDepthMax);
+                final float secondRad = calcEqualAreaRadius(depth + 1, mDepthMax);
+                mParent.stroke(0, 0, 0, 30);
+                mParent.strokeWeight(5.5f);
+                mParent.ellipse(0, 0, firstRad, firstRad);
+                mParent.ellipse(0, 0, secondRad, secondRad);
+            }
+            // Rollover text.
+            if (hitTestIndex != -1) {
+                final String text = mItems.get(hitTestIndex).toString();
+                final float texW = mParent.textWidth(text) * 1.2f;
+                mParent.fill(0, 0, 0);
+                final int offset = 5;
+                mParent.rect(x + offset, y + offset, texW + 4, mParent.textAscent() * 3.6f);
+                mParent.fill(0, 0, 100);
+                mParent.text(text.toUpperCase(), x + offset + 2, y + offset + 2);
+            }
+        }
+
+        return hitTestIndex;
+    }
+
+    /**
+     * Get initial radius.
+     * 
+     * @return initial radius
+     */
+    private float getInitialRadius() {
+        return mParent.height / 3.5f;
     }
 
     /**
      * Is getting called from processings keyRealeased-method and implements it.
      * 
-     * @see controlP5.PAppletWindow#keyReleased().
+     * @see processing.core.PApplet#keyReleased()
      */
     void keyReleased() {
-        switch (mParent.key) {
-        case 's':
-        case 'S':
-            mParent.saveFrame(timestamp() + "_##.png");
-            break;
-        case 'p':
-        case 'P':
-            mSavePDF = true;
-            break;
-        case 'o':
-        case 'O':
-            break;
-        case '1':
-            mMappingMode = 1;
-            break;
-        case '2':
-            mMappingMode = 2;
-            break;
-        case '3':
-            mMappingMode = 3;
-            break;
-        default:
-            break;
-        }
-
-        if (mParent.key == '1' || mParent.key == '2' || mParent.key == '3') {
-            final List<SunburstItem> items = getItems();
-            for (final SunburstItem item : items) {
-                item.update(mMappingMode);
+        if (!mXPathField.isFocus()) {
+            switch (mParent.key) {
+            case 's':
+            case 'S':
+                // Save PNG.
+                mParent.saveFrame(SAVEPATH + "_##.png");
+                break;
+            case 'p':
+            case 'P':
+                // Save PDF.
+                mSavePDF = true;
+                PApplet.println("\n" + "saving to pdf – starting");
+                mParent.beginRecord(PConstants.PDF, SAVEPATH + ".pdf");
+                break;
+            case '\b':
+                // Backspace.
+                if (!mLastItems.isEmpty()) {
+                    // Go back one index in history list.
+                    final int lastItemIndex = mLastItems.size() - 1;
+                    mItems = mLastItems.get(lastItemIndex);
+                    mLastItems.remove(lastItemIndex);
+                    for (final SunburstItem item : mItems) {
+                        item.update(mMappingMode);
+                    }
+                    draw();
+                }
+                break;
+            case '1':
+                mMappingMode = 1;
+                break;
+            case '2':
+                mMappingMode = 2;
+                break;
+            case '3':
+                mMappingMode = 3;
+                break;
+            default:
+                break;
             }
-        } else if (mParent.key == 'm' || mParent.key == 'M') {
-            mShowGUI = mControlP5.group("menu").isOpen();
-            mShowGUI = !mShowGUI;
-        }
 
-        if (mShowGUI) {
-            mControlP5.group("menu").open();
-        } else {
-            mControlP5.group("menu").close();
+            switch (mParent.key) {
+            case '1':
+            case '2':
+            case '3':
+                for (final SunburstItem item : mItems) {
+                    item.update(mMappingMode);
+                }
+                break;
+            case 'm':
+            case 'M':
+                mShowGUI = mControlP5.group("menu").isOpen();
+                mShowGUI = !mShowGUI;
+                break;
+            default:
+
+            }
+
+            if (mShowGUI) {
+                mControlP5.group("menu").open();
+            } else {
+                mControlP5.group("menu").close();
+            }
         }
     }
 
     /**
      * Implements processing mouseEntered.
      * 
-     * @see controlP5.PAppletWindow#mouseEntered.
-     * 
      * @param paramEvent
      *            The {@link MouseEvent}.
+     * 
+     * @see processing.core.PApplet#mouseEntered
      */
     void mouseEntered(final MouseEvent paramEvent) {
         mParent.loop();
@@ -563,45 +666,56 @@ final class SunburstGUI extends AbsView {
     /**
      * Implements processing mouseExited.
      * 
-     * @see controlP5.PAppletWindow#mouseExited.
-     * 
      * @param paramEvent
      *            The {@link MouseEvent}.
+     * 
+     * @see processing.core.PApplet#mouseExited
      */
     void mouseExited(final MouseEvent paramEvent) {
         mParent.noLoop();
     }
 
-    @Override
-    protected void modelPropertyChange(final PropertyChangeEvent paramEvt) {
-        // Redraw.
-        final List<SunburstItem> items = getItems();
-        for (final SunburstItem item : items) {
-            item.update(mGUI.getMappingMode());
-        }
-        draw();
-    }
-
     /**
-     * Format a timestamp.
+     * Implements processing mousePressed.
      * 
-     * @return Formatted timestamp.
+     * @see processing.core.PApplet#mousePressed
+     * 
+     * @param paramEvent
+     *            The {@link MouseEvent}.
      */
-    private String timestamp() {
-        return String.format("%1$ty%1$tm%1$td_%1$tH%1$tM%1$tS", Calendar.getInstance());
+    void mousePressed(final MouseEvent paramEvent) {
+        mControlP5.controlWindow.mouseEvent(paramEvent);
+
+        // Mouse rollover.
+        mUpdate = State.DOUBLECLICK;
+        final int hitTestIndex = rollover(mUpdate);
+        if (!mShowGUI && hitTestIndex != -1 && paramEvent.getClickCount() == 2) {
+            mLastItems.add(new ArrayList<SunburstItem>(mItems));
+            final long nodeKey = mItems.get(hitTestIndex).mNode.getNodeKey();
+            mModel.traverseTree(nodeKey, mTextWeight);
+        }
     }
 
     /**
      * Calculate area so that radiuses have equal areas in each depth.
      * 
      * @param paramDepth
-     *            The actual depth.
+     *            The actual depth.e
      * @param paramDepthMax
      *            The maximum depth.
-     * @return calculated area.
+     * @return calculated area
      */
     float calcEqualAreaRadius(final int paramDepth, final int paramDepthMax) {
-        return PApplet.sqrt(paramDepth * PApplet.pow(mParent.height / 2, 2) / (paramDepthMax + 1));
+        float retVal = 0f;
+
+        if (paramDepth == 0) {
+            retVal = PApplet.sqrt(PApplet.pow(getInitialRadius(), 2) / (paramDepthMax + 1));
+//            System.out.println("LAAAAAAAAA: " + retVal);
+        } else {
+            retVal = PApplet.sqrt(paramDepth * PApplet.pow(getInitialRadius(), 2) / (paramDepthMax + 1));
+        }
+
+        return retVal;
     }
 
     /**
@@ -611,10 +725,10 @@ final class SunburstGUI extends AbsView {
      *            The actual depth.
      * @param paramDepthMax
      *            The maximum depth.
-     * @return calculated area.
+     * @return calculated area
      */
     float calcAreaRadius(final int paramDepth, final int paramDepthMax) {
-        return PApplet.map(paramDepth, 0, paramDepthMax + 1, 0, mParent.height / 2);
+        return PApplet.map(paramDepth, 0, paramDepthMax + 1, 0, getInitialRadius());
     }
 
     /**
@@ -624,5 +738,31 @@ final class SunburstGUI extends AbsView {
      */
     int getMappingMode() {
         return mMappingMode;
+    }
+
+    /**
+     * Format a timestamp.
+     * 
+     * @return Formatted timestamp.
+     */
+    private static String timestamp() {
+        return String.format("%1$ty%1$tm%1$td_%1$tH%1$tM%1$tS", Calendar.getInstance());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public void propertyChange(final PropertyChangeEvent paramEvent) {
+        mParent.noLoop();
+        mLock.lock();
+        if (paramEvent.getPropertyName().equals("items")) {
+            mItems = (List<SunburstItem>)paramEvent.getNewValue();
+        } else if (paramEvent.getPropertyName().equals("maxDepth")) {
+            mDepthMax = (Integer)paramEvent.getNewValue();
+        }
+        mLock.unlock();
+        mParent.loop();
     }
 }

@@ -145,8 +145,6 @@ public final class TextView extends JScrollPane implements IView {
         // Setup text field.
         mText.setEditable(false);
         mText.setMinimumSize(new Dimension(WIDTH, HEIGHT));
-        // mText.setColumns(COLUMNS);
-        // mText.setLineWrap(true);
         mText.setCaretPosition(0);
 
         // Create a scroll pane and add the XML text area to it.

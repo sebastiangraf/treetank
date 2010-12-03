@@ -169,19 +169,27 @@ abstract class AbsController<M extends AbsModel, V extends AbsView> implements P
     }
 
     /**
-     * Get return value of a method.
+     * Invoke a method and return possible return value.
      * 
      * @param paramPropertyName
      *            Part of the method to call.
+     * @param params
+     *            Method parameters.
      * @return Object.
      */
-    final Object getModelProperty(final String paramPropertyName) {
+    final Object getModelProperty(final String paramPropertyName, final Object... params) {
         Object retValue = null;
 
         for (final M model : mRegisteredModels) {
             try {
-                final Method method = model.getClass().getDeclaredMethod("get" + paramPropertyName);
-                retValue = method.invoke(model);
+                final Class[] classes = new Class[params.length];
+                
+                for (int i = 0; i < params.length; i++) {
+                    classes[i] = params[i].getClass();
+                }
+                final Method method =
+                    model.getClass().getDeclaredMethod(paramPropertyName, classes);
+                retValue = method.invoke(model, params);
             } catch (final NoSuchMethodException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
             } catch (final IllegalArgumentException e) {
