@@ -110,8 +110,8 @@ public class FunctionsXMarkTest {
 	// @Test
 	// public void testPosition() {
 	// final String query =
-	// "/site/open_auctions/open_auction/bidder/increase/position()=1";
-	// final String result = "true";
+	// "/site/open_auctions/open_auction/bidder/increase[position()=1]";
+	// final String result = "<increase>10.50</increase>";
 	// XPathStringChecker.testIAxisConventions(new XPathAxis(rtx, query),
 	// new String[] { result });
 	// }
