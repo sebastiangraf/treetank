@@ -67,7 +67,7 @@ public class IntersectAxis extends AbsAxis implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    public void reset(final long mNodeKey) {
+    public synchronized void reset(final long mNodeKey) {
 
         super.reset(mNodeKey);
 
@@ -87,7 +87,7 @@ public class IntersectAxis extends AbsAxis implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    public boolean hasNext() {
+    public synchronized boolean hasNext() {
 
         // store all item keys of the first sequence to the set.
         while (mOp1.hasNext()) {

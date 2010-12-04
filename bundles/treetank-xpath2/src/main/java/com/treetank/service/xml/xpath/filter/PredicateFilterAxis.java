@@ -56,7 +56,7 @@ public class PredicateFilterAxis extends AbsAxis implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    public final void reset(final long mNodeKey) {
+    public final synchronized void reset(final long mNodeKey) {
 
         super.reset(mNodeKey);
         if (mPredicate != null) {
@@ -69,7 +69,7 @@ public class PredicateFilterAxis extends AbsAxis implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    public final boolean hasNext() {
+    public final synchronized boolean hasNext() {
 
         resetToLastKey();
 

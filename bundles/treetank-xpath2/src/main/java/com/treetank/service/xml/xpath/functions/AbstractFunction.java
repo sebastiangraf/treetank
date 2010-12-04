@@ -112,7 +112,7 @@ public abstract class AbstractFunction extends AbstractExpression {
      * @param mNumber
      *            number of given function arguments
      */
-    public final void varifyParam(final int mNumber) {
+    public final synchronized void varifyParam(final int mNumber) {
 
         if (mNumber < mMin || mNumber > mMax) {
             throw new XPathError(ErrorType.XPST0017);
@@ -123,7 +123,7 @@ public abstract class AbstractFunction extends AbstractExpression {
      * {@inheritDoc}
      */
     @Override
-    public void reset(final long mNodeKey) {
+    public synchronized void reset(final long mNodeKey) {
 
         super.reset(mNodeKey);
         if (mArgs != null) {
@@ -137,7 +137,7 @@ public abstract class AbstractFunction extends AbstractExpression {
      * {@inheritDoc}
      */
     @Override
-    protected void evaluate() {
+    protected synchronized void evaluate() {
 
         // compute the function's result
         final byte[] value = computeResult();
@@ -155,7 +155,7 @@ public abstract class AbstractFunction extends AbstractExpression {
      * 
      * @return value of the result
      */
-    protected byte[] computeResult() {
+    protected synchronized byte[] computeResult() {
 
         throw new IllegalStateException("This function is not supported yet.");
     }

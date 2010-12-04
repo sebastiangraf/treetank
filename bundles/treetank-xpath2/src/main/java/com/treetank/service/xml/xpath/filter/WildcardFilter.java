@@ -60,7 +60,7 @@ public class WildcardFilter extends AbsFilter implements IFilter {
      * {@inheritDoc}
      */
     @Override
-    public final boolean filter() {
+    public final synchronized boolean filter() {
         if (getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND) {
 
             if (mIsName) { // local name is given

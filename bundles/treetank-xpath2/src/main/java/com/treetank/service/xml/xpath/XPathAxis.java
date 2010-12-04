@@ -17,8 +17,12 @@
 
 package com.treetank.service.xml.xpath;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.api.ISession;
 import com.treetank.axis.AbsAxis;
 
 /**
@@ -27,16 +31,18 @@ import com.treetank.axis.AbsAxis;
  * Evaluates a given XPath query.
  * </p>
  * <p>
- * Axis to iterate over the items (more precisely the item keys) of the query's result sequence.
- * <code>XPathAxis</code> extends treetanks <code>IAxis</code> that extends the well-known Java
- * <code>Iterator&lt;Long&gt;</code> and <code>Iterable&lt;Long&gt;</code> interfaces.
+ * Axis to iterate over the items (more precisely the item keys) of the query's
+ * result sequence. <code>XPathAxis</code> extends treetanks <code>IAxis</code>
+ * that extends the well-known Java <code>Iterator&lt;Long&gt;</code> and
+ * <code>Iterable&lt;Long&gt;</code> interfaces.
  * </p>
  * <h2>User Example</h2>
  * <p>
- * In order to use it, at first a treetank session has to be bound to the XML document in question or an tnk
- * file and a <code>ReadTransaction</code> with an <code>IItemList</code> as argument has to be started on it.
- * (For more information how to do that, see the treetank documentation.) Then the <code>XPathAxis</code> can
- * be used like this:
+ * In order to use it, at first a treetank session has to be bound to the XML
+ * document in question or an tnk file and a <code>ReadTransaction</code> with
+ * an <code>IItemList</code> as argument has to be started on it. (For more
+ * information how to do that, see the treetank documentation.) Then the
+ * <code>XPathAxis</code> can be used like this:
  * <p>
  * 
  * <pre>
@@ -67,49 +73,62 @@ import com.treetank.axis.AbsAxis;
  */
 public class XPathAxis extends AbsAxis implements IAxis {
 
-    /** Axis holding the consecutive query execution plans of the query. */
-    private IAxis mPipeline;
+	/** Axis holding the consecutive query execution plans of the query. */
+	private IAxis mPipeline;
 
-    /**
-     * <p>
-     * Constructor initializing internal state.
-     * </p>
-     * <p>
-     * Starts the query scanning and parsing and retrieves the builded query execution plan from the parser.
-     * </p>
-     * 
-     * @param rtx
-     *            Transaction to operate with.
-     * @param mQuery
-     *            XPath query to process.
-     */
-    public XPathAxis(final IReadTransaction rtx, final String mQuery) {
+	/** Executor Service holding the execution plan for future tasks. */
+	public static ExecutorService executor;
 
-        super(rtx);
+	/** Size of thread pool for executor service. */
+	private static int THREADPOOLSIZE = 2;
 
-        // start parsing and get execution plans
-        final XPathParser parser = new XPathParser(getTransaction(), mQuery);
-        parser.parseQuery();
-        mPipeline = parser.getQueryPipeline();
+	/**
+	 * <p>
+	 * Constructor initializing internal state.
+	 * </p>
+	 * <p>
+	 * Starts the query scanning and parsing and retrieves the builded query
+	 * execution plan from the parser.
+	 * </p>
+	 * 
+	 * @param rtx
+	 *            Transaction to operate with.
+	 * @param mQuery
+	 *            XPath query to process.
+	 */
+	public XPathAxis(final IReadTransaction rtx, final String mQuery) {
+		
+		//IReadTransaction rtx = mSession.
 
-    }
+		super(rtx);
+		/** Initializing executor service with fixed thread pool. */
+		executor = Executors.newFixedThreadPool(THREADPOOLSIZE);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean hasNext() {
+		// start parsing and get execution plans
+		final XPathParser parser = new XPathParser(getTransaction(), mQuery);
+		parser.parseQuery();
+		mPipeline = parser.getQueryPipeline();
 
-        resetToLastKey();
+	}
 
-        if (mPipeline.hasNext()) {
-            return true;
-        } else {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean hasNext() {
 
-            resetToStartKey();
-            return false;
-        }
+		resetToLastKey();
 
-    }
+		if (mPipeline.hasNext()) {
+			// getTransaction().moveTo(mPipeline.getTransaction().getNodeKey());
+			return true;
+		} else {
+
+			resetToStartKey();
+			executor.shutdown();
+			return false;
+		}
+
+	}
 
 }

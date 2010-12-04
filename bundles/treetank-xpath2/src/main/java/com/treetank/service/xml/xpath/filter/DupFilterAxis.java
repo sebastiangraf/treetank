@@ -79,7 +79,7 @@ public class DupFilterAxis extends AbsAxis {
      * {@inheritDoc}
      */
     @Override
-    public final void reset(final long mNodeKey) {
+    public final synchronized void reset(final long mNodeKey) {
 
         super.reset(mNodeKey);
         if (mAxis != null) {
@@ -91,7 +91,7 @@ public class DupFilterAxis extends AbsAxis {
      * {@inheritDoc}
      */
     @Override
-    public final boolean hasNext() {
+    public final synchronized boolean hasNext() {
 
         resetToLastKey();
 

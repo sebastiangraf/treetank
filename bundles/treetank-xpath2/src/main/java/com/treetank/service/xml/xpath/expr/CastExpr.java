@@ -73,7 +73,7 @@ public class CastExpr extends AbstractExpression implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    public void reset(final long mNodeKey) {
+    public synchronized void reset(final long mNodeKey) {
 
         super.reset(mNodeKey);
         if (mSourceExpr != null) {
@@ -85,7 +85,7 @@ public class CastExpr extends AbstractExpression implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    protected void evaluate() {
+    protected synchronized void evaluate() {
 
         // atomic type must not be xs:anyAtomicType or xs:NOTATION
         if (mTargetType == Type.ANY_ATOMIC_TYPE || mTargetType == Type.NOTATION) {

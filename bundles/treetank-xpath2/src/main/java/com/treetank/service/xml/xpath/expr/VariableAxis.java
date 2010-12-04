@@ -70,7 +70,7 @@ public class VariableAxis extends AbsAxis implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    public boolean hasNext() {
+    public synchronized boolean hasNext() {
 
         resetToLastKey();
 
@@ -88,7 +88,7 @@ public class VariableAxis extends AbsAxis implements IAxis {
      * Tell all observers that the a new item of the binding sequence has been
      * evaluated.
      */
-    private void notifyObs() {
+    private synchronized void notifyObs() {
 
         for (VarRefExpr varRef : mVarRefs) {
             varRef.update(getTransaction().getNode().getNodeKey());
@@ -101,7 +101,7 @@ public class VariableAxis extends AbsAxis implements IAxis {
      * @param mObserver
      *            axis that wants to be notified of any change of this axis
      */
-    public void addObserver(final VarRefExpr mObserver) {
+    public synchronized void addObserver(final VarRefExpr mObserver) {
 
         mVarRefs.add(mObserver);
     }

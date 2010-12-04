@@ -75,7 +75,7 @@ public class CastableExpr extends AbstractExpression implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    public void reset(final long mNodeKey) {
+    public synchronized void reset(final long mNodeKey) {
 
         super.reset(mNodeKey);
         if (mSourceExpr != null) {
@@ -87,7 +87,7 @@ public class CastableExpr extends AbstractExpression implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    protected void evaluate() {
+    protected synchronized void evaluate() {
 
         // defines if current item is castable to the target type, or not
         boolean isCastable;

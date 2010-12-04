@@ -47,7 +47,7 @@ public class DocumentNodeAxis extends AbsAxis implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    public final void reset(final long mNodeKey) {
+    public final synchronized void reset(final long mNodeKey) {
 
         super.reset(mNodeKey);
         mFirst = true;
@@ -57,7 +57,7 @@ public class DocumentNodeAxis extends AbsAxis implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    public final boolean hasNext() {
+    public final synchronized boolean hasNext() {
 
         resetToLastKey();
 
