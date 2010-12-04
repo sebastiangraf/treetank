@@ -22,12 +22,9 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.slf4j.LoggerFactory;
+import processing.core.PApplet;
 
 import com.treetank.api.IItem;
-import com.treetank.utils.LogWrapper;
-
-import processing.core.PApplet;
 
 /**
  * <h1>SunburstItem</h1>
@@ -41,12 +38,12 @@ import processing.core.PApplet;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-final class SunburstItem implements PropertyChangeListener {
+final class SunburstItem {
 
     /** Current {@link IItem} in Treetank. */
     final IItem mNode;
 
-    // Relations.
+    // Relations. ============================================
     /** Index to parent node. */
     private final int mIndexToParent;
 
@@ -117,7 +114,7 @@ final class SunburstItem implements PropertyChangeListener {
     private final long mMaxDescendantCount;
 
     /** Structural kind of node. */
-    enum StructKind {
+    enum StructType {
         /** Node is a leaf node. */
         ISLEAF,
 
@@ -126,19 +123,10 @@ final class SunburstItem implements PropertyChangeListener {
     }
 
     /** Structural kind of node. */
-    private final StructKind mStructKind;
-
-    /** XPath enum to determine if current item is found by an XPath expression or not. */
-    enum XPathState {
-        /** Item is found. */
-        ISFOUND,
-
-        /** Default: Item is not found. */
-        ISNOTFOUND,
-    }
+    private final StructType mStructKind;
 
     /** State which determines if current item is found by an XPath expression or not. */
-    private transient XPathState mXPathState = XPathState.ISNOTFOUND;
+    private transient EXPathState mXPathState = EXPathState.ISNOTFOUND;
 
     /** Singleton {@link SunburstGUI} instance. */
     private transient SunburstGUI mGUI;
@@ -307,7 +295,7 @@ final class SunburstItem implements PropertyChangeListener {
                 mLineCol = mParent.color(0, 0, bright);
                 break;
             default:
-                throw new IllegalStateException("Structural kind not known!");
+                throw new AssertionError("Structural kind not known!");
             }
 
             // Calculate stroke weight for relations line.
@@ -351,29 +339,13 @@ final class SunburstItem implements PropertyChangeListener {
                 arcRadius = mRadius + mDepthWeight * paramInnerNodeScale / 2;
                 break;
             default:
-                throw new IllegalStateException("Structural kind not known!");
+                throw new AssertionError("Structural kind not known!");
             }
 
-            // if (mDepth == 0) {
-            // mParent.strokeWeight(paramLeafScale);
-            // mCol = mParent.color(0, 0, 1-mGUI.mInnerNodeBrightnessEnd);
-            // arcRadius = mGUI.calcEqualAreaRadius(mDepth, mGUI.mDepthMax);
-            // System.out.println(arcRadius + " " + mAngleStart + " " + mAngleEnd);
-            // }
-            switch (mXPathState) {
-            case ISFOUND:
-                mParent.stroke(1);
-                break;
-            case ISNOTFOUND:
-                mParent.stroke(mCol);
-                break;
-            default:
-                throw new IllegalStateException("XPathState not known!");
-            }
-
+            mXPathState.setStroke(mParent, mCol);
 
             // arc(0,0, arcRadius,arcRadius, angleStart, angleEnd);
-            arcWrap(0, 0, arcRadius, arcRadius, mAngleStart, mAngleEnd); // normaly arc should work
+            arcWrap(0, 0, arcRadius, arcRadius, mAngleStart, mAngleEnd); // normaly arc should workk
         }
     }
 
@@ -421,7 +393,7 @@ final class SunburstItem implements PropertyChangeListener {
                 rectWidth = mRadius + mDepthWeight * paramInnerNodeScale / 2;
                 break;
             default:
-                throw new IllegalStateException("Structural kind not known!");
+                throw new AssertionError("Structural kind not known!");
             }
 
             mParent.stroke(mCol);
@@ -477,6 +449,30 @@ final class SunburstItem implements PropertyChangeListener {
                 .get(mIndexToParent).mY);
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        String retVal;
+        if (mQName == null) {
+            retVal = "[Depth: " + mDepth + " Text: " + mText + " NodeKey: " + mNode.getNodeKey() + "]";
+        } else {
+            retVal = "[Depth: " + mDepth + " QName: " + mQName + " NodeKey: " + mNode.getNodeKey() + "]";
+        }
+        return retVal;
+    }
+
+    /**
+     * Set XPath state.
+     * 
+     * @param paramState
+     *            set state to this value
+     */
+    void setXPathState(final EXPathState paramState) {
+        mXPathState = paramState;
+    }
 
     // Getter ==========================================
     /**
@@ -507,44 +503,11 @@ final class SunburstItem implements PropertyChangeListener {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        String retVal;
-        if (mQName == null) {
-            retVal = "[Depth: " + mDepth + " Text: " + mText + " NodeKey: " + mNode.getNodeKey() + "]";
-        } else {
-            retVal = "[Depth: " + mDepth + " QName: " + mQName + " NodeKey: " + mNode.getNodeKey() + "]";
-        }
-        return retVal;
-    }
-
-    /**
-     * Set XPath state.
-     * 
-     * @param paramState
-     *            set state to this value
-     */
-    void setXPathState(final XPathState paramState) {
-        mXPathState = paramState;
-    }
-    
-    /**
      * Get node.
      * 
      * @return the Node
      */
     public IItem getNode() {
         return mNode;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void propertyChange(final PropertyChangeEvent paramEvent) {
-        System.out.println(paramEvent.getPropagationId());
-
     }
 }

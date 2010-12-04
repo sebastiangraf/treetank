@@ -27,18 +27,13 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.treetank.utils.LogWrapper;
-
 import controlP5.ControlEvent;
 import controlP5.ControlGroup;
 import controlP5.ControlP5;
-import controlP5.ListBox;
 import controlP5.Range;
 import controlP5.Slider;
 import controlP5.Textfield;
 import controlP5.Toggle;
-
-import org.slf4j.LoggerFactory;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -54,9 +49,6 @@ import processing.core.PConstants;
  * 
  */
 final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
-
-    /** {@link LogWrapper}. */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(SunburstGUI.class));
 
     /**
      * Serial version UID.
@@ -162,11 +154,11 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
     /** {@link ControlP5} toggles. */
     private transient List<Toggle> mToggles;
 
-    /** Lock. */
+    /** {@link Lock}. */
     private transient Lock mLock = new ReentrantLock();
-
-    /** {@link ControlP5} listboxes. */
-    private transient List<ListBox> mBoxes;
+//
+//    /** {@link ControlP5} listboxes. */
+//    private transient List<ListBox> mBoxes;
 
     /** {@link ControlP5#} textfield. */
     private transient Textfield mXPathField;
@@ -179,9 +171,6 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
         /** Double-click event. */
         DOUBLECLICK
     };
-
-    /** State to update. */
-    private transient State mUpdate = State.DRAW;
 
     /**
      * Temporary {@link List} of {@link List}s of {@link SunburstItem}s.
@@ -251,7 +240,7 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
         mSliders = new LinkedList<Slider>();
         mRanges = new LinkedList<Range>();
         mToggles = new LinkedList<Toggle>();
-        mBoxes = new LinkedList<ListBox>();
+//        mBoxes = new LinkedList<ListBox>();
 
         final int left = 0;
         final int top = 5;
@@ -495,8 +484,7 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
         }
 
         // Rollover test.
-        mUpdate = State.DRAW;
-        rollover(mUpdate);
+        rollover(State.DRAW);
 
         mParent.popMatrix();
 
@@ -687,8 +675,7 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
         mControlP5.controlWindow.mouseEvent(paramEvent);
 
         // Mouse rollover.
-        mUpdate = State.DOUBLECLICK;
-        final int hitTestIndex = rollover(mUpdate);
+        final int hitTestIndex = rollover(State.DOUBLECLICK);
         if (!mShowGUI && hitTestIndex != -1 && paramEvent.getClickCount() == 2) {
             mLastItems.add(new ArrayList<SunburstItem>(mItems));
             final long nodeKey = mItems.get(hitTestIndex).mNode.getNodeKey();

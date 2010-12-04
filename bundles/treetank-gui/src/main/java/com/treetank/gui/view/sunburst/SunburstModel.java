@@ -36,8 +36,7 @@ import com.treetank.axis.SunburstPostOrderAxis;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.gui.ReadDB;
-import com.treetank.gui.view.sunburst.SunburstItem.StructKind;
-import com.treetank.gui.view.sunburst.SunburstItem.XPathState;
+import com.treetank.gui.view.sunburst.SunburstItem.StructType;
 import com.treetank.gui.view.sunburst.SunburstView.Embedded;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
@@ -75,18 +74,6 @@ final class SunburstModel extends AbsModel {
 
     /** The processing {@link PApplet} core library. */
     private final PApplet mParent;
-
-    /** Determines if cursor moved to child of parent node. */
-    private enum Moved {
-        /** Start of traversal. */
-        START,
-
-        /** Next node is a child of the current node. */
-        CHILD,
-
-        /** Next node is the rightsibling of the first anchestor node which has one. */
-        ANCHESTSIBL
-    };
 
     /** Determines the modification. */
     enum Modification {
@@ -157,7 +144,7 @@ final class SunburstModel extends AbsModel {
      */
     void evaluateXPath(final String paramXPathExpression) {
         for (final SunburstItem item : mItems) {
-            item.setXPathState(XPathState.ISNOTFOUND);
+            item.setXPathState(EXPathState.ISNOTFOUND);
         }
 
         if (!paramXPathExpression.isEmpty()) {
@@ -563,7 +550,7 @@ final class SunburstModel extends AbsModel {
             for (final SunburstItem item : mSunburstItems) {
                 for (final long key : mKeys) {
                     if (item.getNode().getNodeKey() == key) {
-                        item.setXPathState(XPathState.ISFOUND);
+                        item.setXPathState(EXPathState.ISFOUND);
                     }
                 }
             }
@@ -638,7 +625,7 @@ final class SunburstModel extends AbsModel {
                 final List<Future<Long>> descendants = getDescendants(rtx);
 
                 // Determines movement of transaction.
-                Moved moved = Moved.START;
+                EMoved moved = EMoved.START;
 
                 // Index to parent node.
                 int indexToParent = -1;
@@ -650,42 +637,50 @@ final class SunburstModel extends AbsModel {
                 final Stack<Float> angleStack = new Stack<Float>();
                 final Stack<Integer> parentStack = new Stack<Integer>();
 
+                final Item item = new Item();
+
                 for (final IAxis axis = new DescendantAxis(mRtx, true); axis.hasNext(); axis.next()) {
-                    switch (moved) {
-                    case START:
-                        break;
-                    case CHILD:
-                        assert !angleStack.empty();
-                        angle = angleStack.peek();
-                        assert !extensionStack.empty();
-                        extension = extensionStack.peek();
-                        assert !childrenPerDepth.empty();
-                        childCountPerDepth = childCountPerDepth();
-                        assert !parentStack.empty();
-                        indexToParent = parentStack.peek();
-                        break;
-                    case ANCHESTSIBL:
-                        assert !angleStack.empty();
-                        angle = angleStack.pop();
-                        assert !extensionStack.empty();
-                        angle += extensionStack.pop();
-                        assert !extensionStack.empty();
-                        extension = extensionStack.peek();
-                        assert !parentStack.empty();
-                        parentStack.pop();
-                        assert !parentStack.empty();
-                        indexToParent = parentStack.peek();
-                        assert !childrenPerDepth.empty();
-                        childCountPerDepth = childrenPerDepth.pop();
-                        break;
-                    default:
-                        // Do nothing.
-                    }
+                    item.setAll(angle, extension, childCountPerDepth, indexToParent);
+                    moved.processMove(mRtx, item, angleStack, extensionStack, childrenPerDepth, parentStack);
+                    angle = item.mAngle;
+                    extension = item.mExtension;
+                    childCountPerDepth = item.mChildCountPerDepth;
+                    indexToParent = item.mIndexToParent;
+                    // switch (moved) {
+                    // case START:
+                    // break;
+                    // case CHILD:
+                    // assert !angleStack.empty();
+                    // angle = angleStack.peek();
+                    // assert !extensionStack.empty();
+                    // extension = extensionStack.peek();
+                    // assert !childrenPerDepth.empty();
+                    // childCountPerDepth = childCountPerDepth();
+                    // assert !parentStack.empty();
+                    // indexToParent = parentStack.peek();
+                    // break;
+                    // case ANCHESTSIBL:
+                    // assert !angleStack.empty();
+                    // angle = angleStack.pop();
+                    // assert !extensionStack.empty();
+                    // angle += extensionStack.pop();
+                    // assert !extensionStack.empty();
+                    // extension = extensionStack.peek();
+                    // assert !parentStack.empty();
+                    // parentStack.pop();
+                    // assert !parentStack.empty();
+                    // indexToParent = parentStack.peek();
+                    // assert !childrenPerDepth.empty();
+                    // childCountPerDepth = childrenPerDepth.pop();
+                    // break;
+                    // default:
+                    // // Do nothing.
+                    // }
 
                     // Add a sunburst item.
                     final AbsStructNode node = (AbsStructNode)mRtx.getNode();
-                    final StructKind structKind =
-                        node.hasFirstChild() ? StructKind.ISINNERNODE : StructKind.ISLEAF;
+                    final StructType structKind =
+                        node.hasFirstChild() ? StructType.ISINNERNODE : StructType.ISLEAF;
                     final long childCount = ((AbsStructNode)mRtx.getNode()).getChildCount();
 
                     // Calculate extension.
@@ -701,7 +696,7 @@ final class SunburstModel extends AbsModel {
                     LOGWRAPPER.debug("indexToParent: " + indexToParent);
 
                     // Set node relations.
-                    if (structKind == StructKind.ISINNERNODE
+                    if (structKind == StructType.ISINNERNODE
                         || mRtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
                         relations.setAll(depth, structKind, descendants.get(index + 1).get(), 0,
                             mMaxDescendantCount, indexToParent);
@@ -717,7 +712,7 @@ final class SunburstModel extends AbsModel {
                     }
                     mItems.add(new SunburstItem.Builder(mParent, mModel, node, mRtx.getQNameOfCurrentNode(),
                         text, angle, childExtension, relations).build());
-                    mGUI.addPropertyChangeListener(mItems.get(index + 1));
+//                    mGUI.addPropertyChangeListener(mItems.get(index + 1));
 
                     // Set depth max.
                     mDepthMax = PApplet.max(depth, mDepthMax);
@@ -730,7 +725,7 @@ final class SunburstModel extends AbsModel {
                         extensionStack.push(childExtension);
                         parentStack.push(index);
                         depth++;
-                        moved = Moved.CHILD;
+                        moved = EMoved.CHILD;
 
                         // Children per depth.
                         childrenPerDepth.push(childCountPerDepth);
@@ -739,7 +734,7 @@ final class SunburstModel extends AbsModel {
                         angle += childExtension;
                     } else if (!node.hasRightSibling()) {
                         // Next node will be a right sibling of an anchestor node or the traversal ends.
-                        moved = Moved.ANCHESTSIBL;
+                        moved = EMoved.ANCHESTSIBL;
                         final long currNodeKey = mRtx.getNode().getNodeKey();
                         boolean first = true;
                         do {

@@ -32,15 +32,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 
-import org.slf4j.LoggerFactory;
-
 import com.treetank.api.IReadTransaction;
-import com.treetank.exception.TreetankIOException;
 import com.treetank.gui.GUIProp;
 import com.treetank.gui.ReadDB;
 import com.treetank.gui.view.IView;
 import com.treetank.gui.view.ViewNotifier;
 import com.treetank.utils.LogWrapper;
+
+import org.slf4j.LoggerFactory;
 
 import processing.core.PApplet;
 
