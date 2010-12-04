@@ -78,7 +78,7 @@ public class RangeAxis extends AbsAxis implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    public boolean hasNext() {
+    public synchronized boolean hasNext() {
 
         resetToLastKey();
 

@@ -62,7 +62,7 @@ public class FNNot extends AbstractFunction {
      * {@inheritDoc}
      */
     @Override
-    protected byte[] computeResult() {
+    protected synchronized byte[] computeResult() {
         final IAxis axis = getArgs().get(0);
         final boolean value = !Function.ebv(axis);
 

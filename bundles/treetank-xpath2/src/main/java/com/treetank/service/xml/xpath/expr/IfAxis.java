@@ -70,7 +70,7 @@ public class IfAxis extends AbsAxis implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    public void reset(final long mNodeKey) {
+    public synchronized void reset(final long mNodeKey) {
 
         super.reset(mNodeKey);
         mFirst = true;
@@ -93,7 +93,7 @@ public class IfAxis extends AbsAxis implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    public boolean hasNext() {
+    public synchronized boolean hasNext() {
 
         resetToLastKey();
 

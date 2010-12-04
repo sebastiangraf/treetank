@@ -74,7 +74,7 @@ public class ForAxis extends AbsAxis implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    public void reset(final long mNodeKey) {
+    public synchronized void reset(final long mNodeKey) {
         super.reset(mNodeKey);
         mIsFirst = true;
         if (mRange != null) {
@@ -87,7 +87,7 @@ public class ForAxis extends AbsAxis implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    public boolean hasNext() {
+    public synchronized boolean hasNext() {
 
         resetToLastKey();
 

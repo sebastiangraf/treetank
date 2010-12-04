@@ -51,7 +51,7 @@ public class VarRefExpr extends AbstractExpression implements IAxis, IObserver {
     /**
      * {@inheritDoc}
      */
-    public void update(final long mVarKey) {
+    public synchronized void update(final long mVarKey) {
 
         this.mVarKey = mVarKey;
         reset(this.mVarKey);
@@ -62,7 +62,7 @@ public class VarRefExpr extends AbstractExpression implements IAxis, IObserver {
      * {@inheritDoc}
      */
     @Override
-    protected void evaluate() {
+    protected synchronized void evaluate() {
 
         // assure that the transaction is set to the current context item of the
         // variable's binding sequence.

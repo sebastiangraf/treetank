@@ -69,7 +69,7 @@ public class FNPosition extends AbstractFunction {
      * the current item is not the position in the final result sequence, but an
      * intermediate result sequence.
      */
-    public void resetCounter() {
+    public synchronized void resetCounter() {
         posCount = 0;
     }
 
@@ -77,7 +77,7 @@ public class FNPosition extends AbstractFunction {
      * {@inheritDoc}
      */
     @Override
-    protected byte[] computeResult() {
+    protected synchronized byte[] computeResult() {
 
         posCount++;
 

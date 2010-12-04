@@ -71,7 +71,7 @@ public class ExceptAxis extends AbsAxis implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    public void reset(final long mNodeKey) {
+    public synchronized void reset(final long mNodeKey) {
 
         super.reset(mNodeKey);
         if (mDupSet != null) {
@@ -90,7 +90,7 @@ public class ExceptAxis extends AbsAxis implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    public boolean hasNext() {
+    public synchronized boolean hasNext() {
 
         // first all items of the second operand are stored in the set.
         while (mOp2.hasNext()) {

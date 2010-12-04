@@ -64,7 +64,7 @@ public class FNString extends AbstractFunction {
      * {@inheritDoc}
      */
     @Override
-    protected byte[] computeResult() {
+    protected synchronized byte[] computeResult() {
 
         String value;
 

@@ -70,7 +70,7 @@ public class TypeFilter extends AbsFilter implements IFilter {
      * {@inheritDoc}
      */
     @Override
-    public final boolean filter() {
+    public final synchronized boolean filter() {
         return getTransaction().getNode().getTypeKey() == mType;
     }
 

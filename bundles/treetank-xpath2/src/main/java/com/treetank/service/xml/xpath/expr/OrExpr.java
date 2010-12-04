@@ -89,7 +89,7 @@ public class OrExpr extends AbstractExpression implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    public void reset(final long mNodeKey) {
+    public synchronized void reset(final long mNodeKey) {
 
         super.reset(mNodeKey);
         if (mOp1 != null) {
@@ -104,7 +104,7 @@ public class OrExpr extends AbstractExpression implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    protected void evaluate() {
+    protected synchronized void evaluate() {
 
         // first find the effective boolean values of the two operands, then
         // determine value of the and-expression and store it in am item

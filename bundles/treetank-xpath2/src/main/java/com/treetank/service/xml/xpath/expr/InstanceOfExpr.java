@@ -60,7 +60,7 @@ public class InstanceOfExpr extends AbstractExpression implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    public void reset(final long mNodeKey) {
+    public synchronized void reset(final long mNodeKey) {
 
         super.reset(mNodeKey);
 
@@ -73,7 +73,7 @@ public class InstanceOfExpr extends AbstractExpression implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    protected void evaluate() {
+    protected synchronized void evaluate() {
 
         boolean isInstanceOf;
 

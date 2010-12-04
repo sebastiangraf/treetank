@@ -62,7 +62,7 @@ public class FNSum extends AbstractFunction {
      * {@inheritDoc}
      */
     @Override
-    protected byte[] computeResult() {
+    protected synchronized byte[] computeResult() {
 
         final IAxis axis = getArgs().get(0);
 

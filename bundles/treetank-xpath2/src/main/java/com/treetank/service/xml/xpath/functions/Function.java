@@ -31,7 +31,7 @@ import com.treetank.utils.TypedValue;
 
 public class Function {
 
-    public static boolean ebv(final IAxis axis) {
+    public static synchronized boolean ebv(final IAxis axis) {
         final FuncDef ebv = FuncDef.BOOLEAN;
         final List<IAxis> param = new ArrayList<IAxis>();
         param.add(axis);
@@ -51,7 +51,7 @@ public class Function {
         throw new IllegalStateException("This should not happen!"); // TODO!!
     }
 
-    public static boolean empty(final IReadTransaction rtx, final IAxis axis) {
+    public static synchronized boolean empty(final IReadTransaction rtx, final IAxis axis) {
 
         final boolean result = !axis.hasNext();
 
@@ -60,7 +60,7 @@ public class Function {
         return true;
     }
 
-    public static boolean exactlyOne(final IReadTransaction rtx, final IAxis axis) {
+    public static synchronized boolean exactlyOne(final IReadTransaction rtx, final IAxis axis) {
 
         if (axis.hasNext()) {
             if (axis.hasNext()) {
@@ -78,7 +78,7 @@ public class Function {
         return true;
     }
 
-    public static boolean exists(final IReadTransaction rtx, final IAxis axis) {
+    public static synchronized boolean exists(final IReadTransaction rtx, final IAxis axis) {
 
         final boolean result = axis.hasNext();
         final int itemKey = rtx.getItemList().addItem(new AtomicValue(result));
@@ -110,7 +110,7 @@ public class Function {
      *            Expression to get the effective boolean value for
      * @return err:FORG0006
      */
-    public static boolean fnBoolean(final IReadTransaction rtx, final IAxis axis) {
+    public static synchronized boolean fnBoolean(final IReadTransaction rtx, final IAxis axis) {
 
         final boolean ebv = ebv(axis);
         final int itemKey = rtx.getItemList().addItem(new AtomicValue(ebv));
@@ -132,7 +132,7 @@ public class Function {
      *            The sequence to atomize.
      * @return true, if an atomic value can be returned
      */
-    public static boolean fnData(final IReadTransaction rtx, final IAxis axis) {
+    public static synchronized boolean fnData(final IReadTransaction rtx, final IAxis axis) {
 
         if (axis.hasNext()) {
 
@@ -174,7 +174,7 @@ public class Function {
      * @return true, if current item is a node that has the nilled property
      *         (only elements)
      */
-    public static boolean fnNilled(final IReadTransaction rtx, final IAxis axis) {
+    public static synchronized boolean fnNilled(final IReadTransaction rtx, final IAxis axis) {
 
         if (axis.hasNext() && rtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
             final boolean nilled = false; // TODO how is the nilled property defined?
@@ -200,7 +200,7 @@ public class Function {
      *            The sequence, containing the node, to return its QName
      * @return true, if node has a name
      */
-    public static boolean fnNodeName(final IReadTransaction rtx, final IAxis axis) {
+    public static synchronized boolean fnNodeName(final IReadTransaction rtx, final IAxis axis) {
 
         if (axis.hasNext()) {
 
@@ -217,7 +217,7 @@ public class Function {
 
     }
 
-    public static boolean fnnot(final IReadTransaction rtx, final IAxis axis) {
+    public static synchronized boolean fnnot(final IReadTransaction rtx, final IAxis axis) {
 
         if (axis.hasNext()) {
             final IItem item = new AtomicValue(!(TypedValue.parseBoolean(rtx.getNode().getRawValue())));
@@ -238,7 +238,7 @@ public class Function {
      *            Read Transaction.
      * @return fnnumber boolean.
      */
-    public static boolean fnnumber(final IReadTransaction rtx) {
+    public static synchronized boolean fnnumber(final IReadTransaction rtx) {
 
         // TODO: add error handling
         final IItem item =
@@ -250,12 +250,12 @@ public class Function {
         return true;
     }
 
-    public static AtomicValue not(final AtomicValue mValue) {
+    public static synchronized AtomicValue not(final AtomicValue mValue) {
 
         return new AtomicValue(!Boolean.parseBoolean(TypedValue.parseString(mValue.getRawValue())));
     }
 
-    public static boolean oneOrMore(final IReadTransaction rtx, final IAxis axis) {
+    public static synchronized boolean oneOrMore(final IReadTransaction rtx, final IAxis axis) {
 
         if (!axis.hasNext()) {
             throw new XPathError(ErrorType.FORG0004);
@@ -268,7 +268,7 @@ public class Function {
         return true;
     }
 
-    public static boolean sum(final IReadTransaction rtx, final IAxis axis) {
+    public static synchronized boolean sum(final IReadTransaction rtx, final IAxis axis) {
 
         Double value = 0.0;
         while (axis.hasNext()) {
@@ -280,7 +280,7 @@ public class Function {
         return true;
     }
 
-    public static boolean sum(final IReadTransaction rtx, final IAxis axis, final IAxis mZero) {
+    public static synchronized boolean sum(final IReadTransaction rtx, final IAxis axis, final IAxis mZero) {
 
         Double value = 0.0;
         if (!axis.hasNext()) {
@@ -296,7 +296,7 @@ public class Function {
         return true;
     }
 
-    public static boolean zeroOrOne(final IReadTransaction rtx, final IAxis axis) {
+    public static synchronized boolean zeroOrOne(final IReadTransaction rtx, final IAxis axis) {
 
         final boolean result = true;
 

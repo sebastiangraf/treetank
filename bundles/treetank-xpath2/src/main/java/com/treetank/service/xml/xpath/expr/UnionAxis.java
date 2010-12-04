@@ -61,7 +61,7 @@ public class UnionAxis extends AbsAxis implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    public void reset(final long mNodeKey) {
+    public synchronized void reset(final long mNodeKey) {
 
         super.reset(mNodeKey);
 
@@ -77,7 +77,7 @@ public class UnionAxis extends AbsAxis implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    public boolean hasNext() {
+    public synchronized boolean hasNext() {
 
         // first return all values of the first operand
         while (mOp1.hasNext()) {
