@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -228,6 +229,8 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                 }
 
                 XMLEvent event = null;
+                StringBuilder sBuilder = new StringBuilder();
+                XMLEventFactory fac = XMLEventFactory.newInstance();
 
                 // Iterate over all nodes.
                 while (mReader.hasNext()) {
@@ -277,7 +280,13 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                         processStartTag(event.asStartElement());
                         break;
                     case XMLStreamConstants.CHARACTERS:
-                        processCharacters(event.asCharacters());
+                        sBuilder.append(event.asCharacters().getData().trim());
+                        while (mReader.peek().getEventType() == XMLStreamConstants.CHARACTERS) {
+                            sBuilder.append(mReader.nextEvent().asCharacters().getData().trim());
+                        }
+                        final Characters text = fac.createCharacters(sBuilder.toString());
+                        processCharacters(text);
+                        sBuilder = new StringBuilder();
                         break;
                     case XMLStreamConstants.END_ELEMENT:
                         processEndTag();
@@ -386,7 +395,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
         TreetankException {
         // Initialize variables.
         initializeVars();
-        final String text = paramText.getData().trim();
+        final String text = paramText.getData().toString();
         if (!text.isEmpty()) {
             // Main algorithm to determine if same, insert or a delete has to be made.
             algorithm(paramText);
