@@ -1,7 +1,7 @@
 package com.treetank;
 
 import static org.junit.Assert.fail;
-
+import static org.junit.Assert.assertTrue;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -114,8 +114,13 @@ public final class TestHelper {
 
     @Ignore
     public static final void deleteEverything() {
-        Database.truncateDatabase(PATHS.PATH1.getFile());
-        Database.truncateDatabase(PATHS.PATH2.getFile());
+        if (PATHS.PATH1.getFile().exists()) {
+            assertTrue(Database.truncateDatabase(PATHS.PATH1.getFile()));
+        }
+        if (PATHS.PATH2.getFile().exists()) {
+            assertTrue(Database.truncateDatabase(PATHS.PATH2.getFile()));
+        }
+
         configs.clear();
 
     }
