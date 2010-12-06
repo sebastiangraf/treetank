@@ -174,6 +174,9 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
         final EShredderInsert paramAddAsFirstChild, final Object paramData, final EShredderCommit paramCommit)
         throws TreetankUsageException, TreetankIOException {
         super(paramWtx, paramReader, paramAddAsFirstChild);
+        if (paramData == null || paramCommit == null) {
+            throw new IllegalArgumentException("None of the constructor parameters may be null!");
+        }
         mMaxNodeKey = mWtx.getMaxNodeKey();
         mCommit = paramCommit;
 
@@ -230,7 +233,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
 
                 XMLEvent event = null;
                 StringBuilder sBuilder = new StringBuilder();
-                XMLEventFactory fac = XMLEventFactory.newInstance();
+                final XMLEventFactory fac = XMLEventFactory.newInstance();
 
                 // Iterate over all nodes.
                 while (mReader.hasNext()) {
@@ -348,6 +351,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      */
     private void processStartTag(final StartElement paramElem) throws IOException, XMLStreamException,
         TreetankException {
+        assert paramElem != null;
         // Log debugging messages.
         LOGWRAPPER.debug("TO SHREDDER: " + paramElem.getName());
         if (mWtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
@@ -393,6 +397,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      */
     private void processCharacters(final Characters paramText) throws IOException, XMLStreamException,
         TreetankException {
+        assert paramText != null;
         // Initialize variables.
         initializeVars();
         final String text = paramText.getData().toString();
@@ -488,6 +493,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      *             In case any StAX parser problem occurs.
      */
     private void algorithm(final XMLEvent paramEvent) throws IOException, XMLStreamException {
+        assert paramEvent != null;
         do {
             /*
              * Check if a node in the shreddered file on the same level
@@ -529,6 +535,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * @return true if they match, otherwise false.
      */
     private boolean checkText(final Characters paramEvent) {
+        assert paramEvent != null;
         final String text = paramEvent.getData().trim();
         return mWtx.getNode().getKind() == ENodes.TEXT_KIND && mWtx.getValueOfCurrentNode().equals(text);
     }
@@ -701,6 +708,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      */
     private void insertElementNode(final StartElement paramElement) throws TreetankException,
         XMLStreamException {
+        assert paramElement != null;
         /*
          * Add node if it's either not found among right siblings (and the
          * cursor on the shreddered file is on a right sibling) or if it's not
@@ -772,6 +780,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      *             In case of any StAX parsing error.
      */
     private void insertTextNode(final Characters paramText) throws TreetankException, XMLStreamException {
+        assert paramText != null;
         /*
          * Add node if it's either not found among right siblings (and the
          * cursor on the shreddered file is on a right sibling) or if it's not
@@ -975,6 +984,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      */
     private void addNewText(final boolean paramAsFirstChild, final Characters paramTextEvent)
         throws TreetankException {
+        assert paramTextEvent != null;
         final String text = paramTextEvent.getData().trim();
         final ByteBuffer textByteBuffer = ByteBuffer.wrap(TypedValue.getBytes(text));
         if (textByteBuffer.array().length > 0) {
@@ -1000,6 +1010,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      */
     private void addNewElement(final boolean paramFirstElement, final boolean paramAsFirstChild,
         final StartElement paramStartElement) throws TreetankException {
+        assert paramStartElement != null;
         final QName name = paramStartElement.getName();
         long key;
 
@@ -1160,6 +1171,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      */
     static boolean checkStAXStartElement(final StartElement mStartTag, final StartElement mElem)
         throws XMLStreamException {
+        assert mStartTag != null && mElem != null;
         boolean retVal = false;
         if (mStartTag.getEventType() == XMLStreamConstants.START_ELEMENT
             && mStartTag.getName().equals(mElem.getName())) {
@@ -1227,6 +1239,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * @return true if they are equal, false otherwise.
      */
     private boolean checkElement(final StartElement mEvent) {
+        assert mEvent != null;
         boolean retVal = false;
 
         // Matching element names?

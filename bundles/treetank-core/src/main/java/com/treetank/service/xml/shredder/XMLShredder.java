@@ -120,7 +120,11 @@ public class XMLShredder implements Callable<Long> {
      *             not pointing to doc-root and updateOnly= true
      */
     public XMLShredder(final IWriteTransaction paramWtx, final XMLEventReader paramReader,
-        final EShredderInsert paramAddAsFirstChild, final EShredderCommit paramCommit) throws TreetankUsageException {
+        final EShredderInsert paramAddAsFirstChild, final EShredderCommit paramCommit)
+        throws TreetankUsageException {
+        if (paramWtx == null || paramReader == null || paramAddAsFirstChild == null || paramCommit == null) {
+            throw new IllegalArgumentException("None of the constructor parameters may be null!");
+        }
         mWtx = paramWtx;
         mReader = paramReader;
         mFirstChildAppend = paramAddAsFirstChild;
@@ -190,7 +194,7 @@ public class XMLShredder implements Callable<Long> {
                         sBuilder.append(event.asCharacters().getData().trim());
                     } else {
                         sBuilder.append(event.asCharacters().getData().trim());
-                        leftSiblingKeyStack = addNewText(leftSiblingKeyStack, sBuilder);
+                        leftSiblingKeyStack = addNewText(leftSiblingKeyStack, sBuilder.toString());
                         sBuilder = new StringBuilder();
                     }
                     break;
@@ -222,6 +226,7 @@ public class XMLShredder implements Callable<Long> {
     protected final FastStack<Long> addNewElement(final boolean paramFirstElement,
         final FastStack<Long> paramLeftSiblingKeyStack, final StartElement paramEvent)
         throws TreetankException {
+        assert paramLeftSiblingKeyStack != null && paramEvent != null;
         long key;
 
         final QName name = paramEvent.getName();
@@ -267,15 +272,16 @@ public class XMLShredder implements Callable<Long> {
      *            Stack used to determine if the new element has to be inserted
      *            as a right sibling or as a new child (in the latter case is
      *            NULL on top of the stack).
-     * @param mEvent
-     *            The current event from the StAX parser.
+     * @param paramText
+     *            The text string to add.
      * @return the modified stack.
      * @throws TreetankException
      *             In case anything went wrong.
      */
     protected final FastStack<Long> addNewText(final FastStack<Long> paramLeftSiblingKeyStack,
-        final StringBuilder paramBuilder) throws TreetankException {
-        final String text = paramBuilder.toString();
+        final String paramText) throws TreetankException {
+        assert paramLeftSiblingKeyStack != null;
+        final String text = paramText;
         long key;
         final ByteBuffer textByteBuffer = ByteBuffer.wrap(TypedValue.getBytes(text));
         if (textByteBuffer.array().length > 0) {
@@ -358,6 +364,9 @@ public class XMLShredder implements Callable<Long> {
      */
     public static synchronized XMLEventReader createListReader(final List<XMLEvent> paramEvents)
         throws IOException, XMLStreamException {
+        if (paramEvents == null) {
+            throw new IllegalArgumentException("paramEvents may not be null!");
+        }
         return new ListEventReader(paramEvents);
     }
 }
