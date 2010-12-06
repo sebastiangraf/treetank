@@ -116,7 +116,6 @@ public class XPathAxis extends AbsAxis implements IAxis {
 	 */
 	@Override
 	public boolean hasNext() {
-
 		resetToLastKey();
 
 		if (mPipeline.hasNext()) {
