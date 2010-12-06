@@ -70,7 +70,7 @@ public final class StAXSerializer implements XMLEventReader {
     private transient XMLEvent mEvent;
 
     /** {@link XMLEventFactory} to create events. */
-    private transient XMLEventFactory mFac = XMLEventFactory.newInstance();
+    private transient XMLEventFactory mFac = XMLEventFactory.newFactory();
 
     /** Current node key. */
     private transient long mKey;
@@ -437,9 +437,7 @@ public final class StAXSerializer implements XMLEventReader {
     final class AttributeIterator implements Iterator<Attribute> {
 
         /**
-         * Treetank reading transaction.
-         * 
-         * @see ReadTransaction
+         * Treetank {@link IReadTransaction}.
          */
         private final IReadTransaction mRTX;
 
@@ -453,7 +451,7 @@ public final class StAXSerializer implements XMLEventReader {
         private final long mNodeKey;
 
         /** Factory to create nodes {@link XMLEventFactory}. */
-        private final transient XMLEventFactory mFac = XMLEventFactory.newInstance();
+        private final transient XMLEventFactory mFac = XMLEventFactory.newFactory();
 
         /**
          * Constructor.
@@ -510,9 +508,7 @@ public final class StAXSerializer implements XMLEventReader {
     final class NamespaceIterator implements Iterator<Namespace> {
 
         /**
-         * Treetank reading transaction.
-         * 
-         * @see ReadTransaction
+         * Treetank {@link IReadTransaction}.
          */
         private final IReadTransaction mRTX;
 

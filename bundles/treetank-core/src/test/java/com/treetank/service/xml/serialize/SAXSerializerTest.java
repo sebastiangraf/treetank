@@ -89,6 +89,7 @@ public class SAXSerializerTest extends XMLTestCase {
         } catch (final TreetankException e) {
             fail("Treetank exception occured!");
         } catch (final Exception e) {
+            e.printStackTrace();
             fail("Any exception occured!");
         }
     }

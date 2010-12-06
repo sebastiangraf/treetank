@@ -160,6 +160,7 @@ public class XMLShredder implements Callable<Long> {
             int level = 0;
             QName rootElement = null;
             boolean endElemReached = false;
+            StringBuilder sBuilder = new StringBuilder();
 
             // Iterate over all nodes.
             while (mReader.hasNext() && !endElemReached) {
@@ -185,7 +186,13 @@ public class XMLShredder implements Callable<Long> {
                     mWtx.moveTo(leftSiblingKeyStack.peek());
                     break;
                 case XMLStreamConstants.CHARACTERS:
-                    leftSiblingKeyStack = addNewText(leftSiblingKeyStack, (Characters)event);
+                    if (mReader.peek().getEventType() == XMLStreamConstants.CHARACTERS) {
+                        sBuilder.append(event.asCharacters().getData().trim());
+                    } else {
+                        sBuilder.append(event.asCharacters().getData().trim());
+                        leftSiblingKeyStack = addNewText(leftSiblingKeyStack, sBuilder);
+                        sBuilder = new StringBuilder();
+                    }
                     break;
                 default:
                     // Node kind not known.
@@ -256,7 +263,7 @@ public class XMLShredder implements Callable<Long> {
     /**
      * Add a new text node.
      * 
-     * @param mLeftSiblingKeyStack
+     * @param paramLeftSiblingKeyStack
      *            Stack used to determine if the new element has to be inserted
      *            as a right sibling or as a new child (in the latter case is
      *            NULL on top of the stack).
@@ -266,24 +273,24 @@ public class XMLShredder implements Callable<Long> {
      * @throws TreetankException
      *             In case anything went wrong.
      */
-    protected final FastStack<Long> addNewText(final FastStack<Long> mLeftSiblingKeyStack,
-        final Characters mEvent) throws TreetankException {
-        final String text = mEvent.getData().trim();
+    protected final FastStack<Long> addNewText(final FastStack<Long> paramLeftSiblingKeyStack,
+        final StringBuilder paramBuilder) throws TreetankException {
+        final String text = paramBuilder.toString();
         long key;
         final ByteBuffer textByteBuffer = ByteBuffer.wrap(TypedValue.getBytes(text));
         if (textByteBuffer.array().length > 0) {
 
-            if (mLeftSiblingKeyStack.peek() == (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
+            if (paramLeftSiblingKeyStack.peek() == (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
                 key = mWtx.insertTextAsFirstChild(new String(textByteBuffer.array()));
             } else {
                 key = mWtx.insertTextAsRightSibling(new String(textByteBuffer.array()));
             }
 
-            mLeftSiblingKeyStack.pop();
-            mLeftSiblingKeyStack.push(key);
+            paramLeftSiblingKeyStack.pop();
+            paramLeftSiblingKeyStack.push(key);
 
         }
-        return mLeftSiblingKeyStack;
+        return paramLeftSiblingKeyStack;
     }
 
     /**
