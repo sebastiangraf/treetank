@@ -32,8 +32,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import org.slf4j.LoggerFactory;
-
 import com.treetank.access.Database;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
@@ -44,6 +42,8 @@ import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.utils.LogWrapper;
+
+import org.slf4j.LoggerFactory;
 
 /**
  * <h1>WikipediaImport</h1>
@@ -162,14 +162,14 @@ public final class WikipediaImport implements IImport<StartElement> {
         case 'm':
             break;
         default:
-            throw new IllegalStateException("paramDateRange has to match documented values!");
+            throw new IllegalArgumentException("paramDateRange has to match documented values!");
         }
 
         if (paramData == null) {
             throw new NullPointerException("paramData may not be null!");
         }
         if (paramData.size() != 5) {
-            throw new IllegalStateException("paramData may not be null and must have 5 elements!");
+            throw new IllegalArgumentException("paramData may not be null and must have 5 elements!");
         }
 
         final StartElement timestamp = paramData.get(0);

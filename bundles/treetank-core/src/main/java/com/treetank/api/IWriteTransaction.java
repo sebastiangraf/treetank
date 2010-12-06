@@ -46,7 +46,8 @@ import com.treetank.exception.TreetankIOException;
  * <p>
  * <ol>
  * <li>Only a single thread accesses the single IWriteTransaction instance.</li>
- * <li><strong>Precondition</strong> before moving cursor: <code>IWriteTransaction.getNodeKey() == n</code>.</li>
+ * <li><strong>Precondition</strong> before moving cursor: <code>IWriteTransaction.getNodeKey() == n</code>.
+ * </li>
  * <li><strong>Postcondition</strong> after modifying the cursor: <code>(IWriteTransaction.insertX() == m &&
  *       IWriteTransaction.getNodeKey() == m)</code>.</li>
  * </ol>
@@ -143,7 +144,7 @@ public interface IWriteTransaction extends IReadTransaction {
     long insertElementAsRightSibling(final QName mQname) throws TreetankException;
 
     /**
-     * Insert new element node as right sibling of currently selected node. The
+     * Insert new text node as right sibling of currently selected node. The
      * cursor is moved to the inserted node.
      * 
      * @param mValue
