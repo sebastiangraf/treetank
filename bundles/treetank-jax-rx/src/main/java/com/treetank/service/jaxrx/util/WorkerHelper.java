@@ -22,6 +22,7 @@ import com.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import com.treetank.service.xml.serialize.XMLSerializer;
 import com.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 import com.treetank.service.xml.serialize.XMLSerializerProperties;
+import com.treetank.service.xml.shredder.EShredderInsert;
 import com.treetank.service.xml.shredder.XMLShredder;
 
 /**
@@ -64,7 +65,7 @@ public final class WorkerHelper {
      *            InputStream to be shred
      */
     public static void shredInputStream(final IWriteTransaction wtx, final InputStream value,
-        final boolean child) {
+        final EShredderInsert child) {
         final XMLInputFactory factory = XMLInputFactory.newInstance();
         factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
         XMLEventReader parser;

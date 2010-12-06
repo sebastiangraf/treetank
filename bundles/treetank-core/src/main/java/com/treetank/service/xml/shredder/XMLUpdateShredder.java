@@ -68,8 +68,8 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(XMLUpdateShredder.class));
+    private static final LogWrapper LOGWRAPPER =
+        new LogWrapper(LoggerFactory.getLogger(XMLUpdateShredder.class));
 
     /** File to parse. */
     protected transient File mFile;
@@ -117,7 +117,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
     private transient long mMaxNodeKey;
 
     /** Determines if changes should be commited. */
-    private transient boolean mCommit;
+    private transient EShredderCommit mCommit;
 
     /** {@link XMLEventParser} used to check descendants. */
     private transient XMLEventReader mParser;
@@ -171,7 +171,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      */
     @SuppressWarnings("unchecked")
     public XMLUpdateShredder(final IWriteTransaction paramWtx, final XMLEventReader paramReader,
-        final boolean paramAddAsFirstChild, final Object paramData, final boolean paramCommit)
+        final EShredderInsert paramAddAsFirstChild, final Object paramData, final EShredderCommit paramCommit)
         throws TreetankUsageException, TreetankIOException {
         super(paramWtx, paramReader, paramAddAsFirstChild);
         mMaxNodeKey = mWtx.getMaxNodeKey();
@@ -195,7 +195,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
     public Long call() throws TreetankException {
         final long revision = mWtx.getRevisionNumber();
         updateOnly();
-        if (mCommit) {
+        if (mCommit == EShredderCommit.COMMIT) {
             mWtx.commit();
         }
         return revision;
@@ -1319,7 +1319,8 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             final IWriteTransaction wtx = session.beginWriteTransaction();
             final XMLEventReader reader = createReader(new File(args[0]));
             final XMLUpdateShredder shredder =
-                new XMLUpdateShredder(wtx, reader, true, new File(args[0]), true);
+                new XMLUpdateShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD, new File(args[0]),
+                    EShredderCommit.COMMIT);
             shredder.call();
 
             wtx.close();

@@ -14,38 +14,19 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
  */
-package com.treetank.gui;
+package com.treetank.service.xml.shredder;
 
 /**
- * <h1>IGUICommand</h1>
- * 
- * <p>
- * Interface for GUI menus.
- * </p>
- * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-interface IGUICommand {
-    /**
-     * Invokes a command.
-     * 
-     * @param paramGUI
-     *            Main GUI frame.
-     */
-    void execute(final GUI paramGUI);
+public enum EShredderInsert {
+    /** Subtree should be added as first child of the current node. */
+    ADDASFIRSTCHILD,
 
     /**
-     * Description of the command.
-     * 
-     * @return the description
+     * Subtree should be added as a right sibling of the current node. This is not possible
+     * when the {@link IWriteTransaction} is on root node.
      */
-    String desc();
-
-    /**
-     * Returns the type of menu item.
-     * 
-     * @return type of menu item
-     */
-    EMenu type();
+    ADDASRIGHTSIBLING,
 }

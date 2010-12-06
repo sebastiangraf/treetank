@@ -16,21 +16,16 @@
  */
 package com.treetank.gui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-
 import static com.treetank.gui.GUIConstants.MENUBAR;
 import static com.treetank.gui.GUIConstants.MENUITEMS;
 
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+
 /**
  * This is the menu bar of the main window.
- * The menu structure is defined in {@link GUIConstants#MENUBAR} and {@link GUIConstants#MENUITEMS}. Based on
- * BaseX version.
+ * The menu structure is defined in {@link GUIConstants#MENUBAR} and {@link GUIConstants#MENUITEMS}.
  * 
  * @author Johannes Lichtenberger, University of Konstanz.
  */
@@ -41,7 +36,7 @@ public final class GUIMenuBar extends JMenuBar {
      * Constructor.
      * 
      * @param paramGUI
-     *            Main GUI frame.
+     *            Main {@link GUI} frame.
      */
     public GUIMenuBar(final GUI paramGUI) {
         // Loop through all menu entries
@@ -51,16 +46,7 @@ public final class GUIMenuBar extends JMenuBar {
 
             for (int j = 0; j < MENUITEMS[i].length; j++) {
                 final IGUICommand cmd = (IGUICommand)MENUITEMS[i][j];
-                final JMenuItem item =
-                    cmd.checked() ? new JCheckBoxMenuItem(cmd.desc()) : new JMenuItem(cmd.desc());
-                item.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(final ActionEvent paramEvent) {
-                        cmd.execute(paramGUI);
-                    }
-                });
-
-                item.setMnemonic(cmd.desc().charAt(0));
+                final JComponent item = cmd.type().construct(paramGUI, cmd);
                 menu.add(item);
             }
 

@@ -49,14 +49,14 @@ import com.treetank.utils.TypedValue;
 
 public class XMLShredderTest extends XMLTestCase {
 
-    public static final String XML = "src" + File.separator + "test" + File.separator + "resources"
-        + File.separator + "test.xml";
+    public static final String XML =
+        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "test.xml";
 
-    public static final String XML2 = "src" + File.separator + "test" + File.separator + "resources"
-        + File.separator + "test2.xml";
+    public static final String XML2 =
+        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "test2.xml";
 
-    public static final String XML3 = "src" + File.separator + "test" + File.separator + "resources"
-        + File.separator + "test3.xml";
+    public static final String XML3 =
+        "src" + File.separator + "test" + File.separator + "resources" + File.separator + "test3.xml";
 
     @Override
     @Before
@@ -133,12 +133,14 @@ public class XMLShredderTest extends XMLTestCase {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
-        final XMLShredder shredder = new XMLShredder(wtx, XMLShredder.createReader(new File(XML)), true);
+        final XMLShredder shredder =
+            new XMLShredder(wtx, XMLShredder.createReader(new File(XML)), EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
         assertEquals(1, wtx.getRevisionNumber());
         wtx.moveToDocumentRoot();
         wtx.moveToFirstChild();
-        final XMLShredder shredder2 = new XMLShredder(wtx, XMLShredder.createReader(new File(XML)), false);
+        final XMLShredder shredder2 =
+            new XMLShredder(wtx, XMLShredder.createReader(new File(XML)), EShredderInsert.ADDASRIGHTSIBLING);
         shredder2.call();
         assertEquals(2, wtx.getRevisionNumber());
         wtx.close();
@@ -196,7 +198,8 @@ public class XMLShredderTest extends XMLTestCase {
         final IDatabase database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
         final ISession session2 = database2.getSession();
         final IWriteTransaction wtx = session2.beginWriteTransaction();
-        final XMLShredder shredder = new XMLShredder(wtx, XMLShredder.createReader(new File(XML2)), true);
+        final XMLShredder shredder =
+            new XMLShredder(wtx, XMLShredder.createReader(new File(XML2)), EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
         wtx.commit();
         wtx.close();
@@ -240,7 +243,8 @@ public class XMLShredderTest extends XMLTestCase {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH2.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
-        final XMLShredder shredder = new XMLShredder(wtx, XMLShredder.createReader(new File(XML3)), true);
+        final XMLShredder shredder =
+            new XMLShredder(wtx, XMLShredder.createReader(new File(XML3)), EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
         wtx.close();
 

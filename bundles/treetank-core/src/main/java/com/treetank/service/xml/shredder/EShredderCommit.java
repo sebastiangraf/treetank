@@ -14,38 +14,16 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
  */
-package com.treetank.gui;
+package com.treetank.service.xml.shredder;
 
 /**
- * <h1>IGUICommand</h1>
- * 
- * <p>
- * Interface for GUI menus.
- * </p>
- * 
  * @author Johannes Lichtenberger, University of Konstanz
- * 
+ *
  */
-interface IGUICommand {
-    /**
-     * Invokes a command.
-     * 
-     * @param paramGUI
-     *            Main GUI frame.
-     */
-    void execute(final GUI paramGUI);
-
-    /**
-     * Description of the command.
-     * 
-     * @return the description
-     */
-    String desc();
-
-    /**
-     * Returns the type of menu item.
-     * 
-     * @return type of menu item
-     */
-    EMenu type();
+public enum EShredderCommit {
+    /** Auto commit afterwards. */
+    COMMIT,
+    
+    /** Do not commit after subtree has been shreddered. */
+    NOCOMMIT,
 }

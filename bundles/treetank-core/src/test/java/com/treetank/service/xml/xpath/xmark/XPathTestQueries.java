@@ -22,6 +22,7 @@ import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.exception.TreetankUsageException;
+import com.treetank.service.xml.shredder.EShredderInsert;
 import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.settings.EDatabaseSetting;
@@ -90,7 +91,7 @@ public class XPathTestQueries {
             }
 
             final XMLEventReader reader = createReader(new File(XMLFILE));
-            final XMLShredder shredder = new XMLShredder(wtx, reader, true);
+            final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
             shredder.call();
 
             wtx.close();

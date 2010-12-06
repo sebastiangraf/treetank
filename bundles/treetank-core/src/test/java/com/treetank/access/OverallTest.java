@@ -19,6 +19,7 @@ import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
+import com.treetank.service.xml.shredder.EShredderInsert;
 import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.settings.EDatabaseSetting;
 
@@ -54,7 +55,7 @@ public final class OverallTest {
             }
 
             final XMLEventReader reader = XMLShredder.createReader(new File(XML));
-            final XMLShredder shredder = new XMLShredder(wtx, reader, true);
+            final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
             shredder.call();
 
             wtx.close();

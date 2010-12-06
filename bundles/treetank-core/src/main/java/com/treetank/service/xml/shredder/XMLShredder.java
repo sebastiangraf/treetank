@@ -79,10 +79,10 @@ public class XMLShredder implements Callable<Long> {
     protected transient XMLEventReader mReader;
 
     /** Append as first child or not. */
-    private final transient boolean mFirstChildAppend;
+    private final transient EShredderInsert mFirstChildAppend;
 
     /** Determines if changes are going to be commit right after shredding. */
-    private transient boolean mCommit;
+    private transient EShredderCommit mCommit;
 
     /**
      * Normal constructor to invoke a shredding process on a existing {@link WriteTransaction}.
@@ -99,8 +99,8 @@ public class XMLShredder implements Callable<Long> {
      *             not pointing to doc-root and updateOnly= true
      */
     public XMLShredder(final IWriteTransaction paramWtx, final XMLEventReader paramReader,
-        final boolean paramAddAsFirstChild) throws TreetankUsageException {
-        this(paramWtx, paramReader, paramAddAsFirstChild, true);
+        final EShredderInsert paramAddAsFirstChild) throws TreetankUsageException {
+        this(paramWtx, paramReader, paramAddAsFirstChild, EShredderCommit.COMMIT);
     }
 
     /**
@@ -120,7 +120,7 @@ public class XMLShredder implements Callable<Long> {
      *             not pointing to doc-root and updateOnly= true
      */
     public XMLShredder(final IWriteTransaction paramWtx, final XMLEventReader paramReader,
-        final boolean paramAddAsFirstChild, final boolean paramCommit) throws TreetankUsageException {
+        final EShredderInsert paramAddAsFirstChild, final EShredderCommit paramCommit) throws TreetankUsageException {
         mWtx = paramWtx;
         mReader = paramReader;
         mFirstChildAppend = paramAddAsFirstChild;
@@ -139,7 +139,7 @@ public class XMLShredder implements Callable<Long> {
         final long revision = mWtx.getRevisionNumber();
         insertNewContent();
 
-        if (mCommit) {
+        if (mCommit == EShredderCommit.COMMIT) {
             mWtx.commit();
         }
         return revision;
@@ -226,7 +226,7 @@ public class XMLShredder implements Callable<Long> {
 
         final QName name = paramEvent.getName();
 
-        if (paramFirstElement && !mFirstChildAppend) {
+        if (paramFirstElement && mFirstChildAppend == EShredderInsert.ADDASRIGHTSIBLING) {
             if (mWtx.getNode().getKind() == ENodes.ROOT_KIND) {
                 throw new TreetankUsageException("Subtree can not be inserted as sibling of Root");
             }
@@ -316,7 +316,7 @@ public class XMLShredder implements Callable<Long> {
         final ISession session = db.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLEventReader reader = createReader(new File(mArgs[0]));
-        final XMLShredder shredder = new XMLShredder(wtx, reader, true);
+        final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
 
         wtx.close();
