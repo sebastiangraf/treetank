@@ -16,15 +16,14 @@
  */
 package com.treetank.gui.view.sunburst;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import processing.core.PApplet;
-
 import com.treetank.api.IItem;
+import com.treetank.gui.view.ViewUtilities;
+
+import processing.core.PApplet;
 
 /**
  * <h1>SunburstItem</h1>
@@ -449,7 +448,7 @@ final class SunburstItem {
                 .get(mIndexToParent).mY);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -457,9 +456,14 @@ final class SunburstItem {
     public String toString() {
         String retVal;
         if (mQName == null) {
-            retVal = "[Depth: " + mDepth + " Text: " + mText + " NodeKey: " + mNode.getNodeKey() + "]";
+            retVal =
+                new StringBuilder().append("[Depth: ").append(mDepth).append(" Text: ").append(mText).append(
+                    " NodeKey: ").append(mNode.getNodeKey()).append("]").toString();
         } else {
-            retVal = "[Depth: " + mDepth + " QName: " + mQName + " NodeKey: " + mNode.getNodeKey() + "]";
+            retVal =
+                new StringBuilder().append("[Depth: ").append(mDepth).append(" QName: ").append(
+                    ViewUtilities.qNameToString(mQName)).append(" NodeKey: ").append(mNode.getNodeKey())
+                    .append("]").toString();
         }
         return retVal;
     }

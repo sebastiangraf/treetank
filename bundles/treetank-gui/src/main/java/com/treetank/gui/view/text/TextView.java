@@ -52,6 +52,7 @@ import com.treetank.axis.DescendantAxis;
 import com.treetank.gui.GUI;
 import com.treetank.gui.GUIProp;
 import com.treetank.gui.ReadDB;
+import com.treetank.gui.view.ViewUtilities;
 import com.treetank.gui.view.IView;
 import com.treetank.gui.view.ViewNotifier;
 import com.treetank.node.ElementNode;
@@ -88,7 +89,7 @@ public final class TextView extends JScrollPane implements IView {
     private static final int PANE_HEIGHT = 600;
 
     // ======= Global member variables =====
-    
+
     /** {@link TextView} instance. */
     private static TextView mView;
 
@@ -152,7 +153,7 @@ public final class TextView extends JScrollPane implements IView {
         setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         setMinimumSize(new Dimension(PANE_WIDTH, PANE_HEIGHT));
     }
-    
+
     /**
      * Singleton factory method.
      * 
@@ -164,7 +165,7 @@ public final class TextView extends JScrollPane implements IView {
         if (mView == null) {
             mView = new TextView(paramNotifier);
         }
-        
+
         return mView;
     }
 
@@ -400,7 +401,7 @@ public final class TextView extends JScrollPane implements IView {
                         final EndElement endTag = event.asEndElement();
                         indent(doc, level, indentSpaces);
                         doc.insertString(doc.getLength(), new StringBuilder().append("</").append(
-                            qNameToString(endTag.getName())).append(">").append(NEWLINE).toString(),
+                            ViewUtilities.qNameToString(endTag.getName())).append(">").append(NEWLINE).toString(),
                             styleElements);
                     }
                     level--;
@@ -442,7 +443,7 @@ public final class TextView extends JScrollPane implements IView {
                         final EndElement endTag = event.asEndElement();
                         indent(doc, mTempLevel, indentSpaces);
                         doc.insertString(doc.getLength(), new StringBuilder().append("</").append(
-                            qNameToString(endTag.getName())).append(">").append(NEWLINE).toString(),
+                            ViewUtilities.qNameToString(endTag.getName())).append(">").append(NEWLINE).toString(),
                             styleElements);
                     }
                     mTempLevel--;
@@ -461,26 +462,6 @@ public final class TextView extends JScrollPane implements IView {
         default:
             // Do nothing.
         }
-    }
-
-    /**
-     * Serialization compatible String representation of a {@link QName} reference.
-     * 
-     * @param paramQName
-     *            The {@QName} reference.
-     * @return the string representation
-     */
-    private String qNameToString(final QName paramQName) {
-        assert paramQName != null;
-        String retVal;
-
-        if (paramQName.getPrefix().isEmpty()) {
-            retVal = paramQName.getLocalPart();
-        } else {
-            retVal = paramQName.getPrefix() + ":" + paramQName.getLocalPart();
-        }
-
-        return retVal;
     }
 
     /**
@@ -506,7 +487,7 @@ public final class TextView extends JScrollPane implements IView {
         StyleConstants.setForeground(styleAttributes, ATTRIBUTE_COLOR);
 
         try {
-            final String qName = qNameToString(paramStartTag.getName());
+            final String qName = ViewUtilities.qNameToString(paramStartTag.getName());
             paramDoc.insertString(paramDoc.getLength(), "<" + qName, styleElements);
 
             // Insert a space if namespaces or attributes follow.
@@ -535,7 +516,7 @@ public final class TextView extends JScrollPane implements IView {
                 final Attribute att = (Attribute)attributes.next();
 
                 paramDoc.insertString(paramDoc.getLength(), new StringBuilder().append(
-                    qNameToString(att.getName())).append("=\"").append(att.getValue()).append("\"")
+                    ViewUtilities.qNameToString(att.getName())).append("=\"").append(att.getValue()).append("\"")
                     .toString(), styleAttributes);
 
                 if (attributes.hasNext()) {

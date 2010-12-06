@@ -15,6 +15,7 @@ import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.service.jaxrx.implementation.DatabaseRepresentation;
+import com.treetank.service.xml.shredder.EShredderInsert;
 
 import org.junit.After;
 import org.junit.Before;
@@ -127,7 +128,7 @@ public class WorkerHelperTest {
 
         final InputStream inputStream = new ByteArrayInputStream("<testNode/>".getBytes());
 
-        WorkerHelper.shredInputStream(wtx, inputStream, true);
+        WorkerHelper.shredInputStream(wtx, inputStream, EShredderInsert.ADDASFIRSTCHILD);
 
         assertEquals("test shred input stream", treeTank.getLastRevision(RESOURCENAME), ++lastRevision);
         wtx.close();

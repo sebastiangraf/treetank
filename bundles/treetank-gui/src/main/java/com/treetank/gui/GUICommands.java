@@ -25,25 +25,22 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLStreamException;
 
 import com.treetank.access.Database;
-import com.treetank.access.DatabaseConfiguration;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
-import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.serialize.XMLSerializer;
 import com.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
-import com.treetank.service.xml.shredder.XMLShredder;
-import com.treetank.service.xml.shredder.XMLUpdateShredder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,11 +56,11 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public enum GUICommands implements IGUICommand {
-
+   
     /**
      * Open a Treetank file.
      */
-    OPEN("Open TNK-File", false) {
+    OPEN("Open TNK-File", EMenu.MENU) {
         /** Revision number. */
         private long mRevNumber;
 
@@ -89,7 +86,6 @@ public enum GUICommands implements IGUICommand {
                     final JComboBox cb = (JComboBox)paramEvent.getSource();
                     if (cb.getSelectedItem() != null) {
                         mRevNumber = (Long)cb.getSelectedItem();
-                        System.out.println(mRevNumber);
                     }
                 };
             });
@@ -143,27 +139,27 @@ public enum GUICommands implements IGUICommand {
     /**
      * Shredder an XML-document.
      */
-    SHREDDER("Shredder XML-document", false) {
+    SHREDDER("Shredder XML-document", EMenu.MENU) {
         @Override
         public void execute(final GUI paramGUI) {
-            shredder(paramGUI, false);
+            shredder(paramGUI, EShredder.NORMAL);
         }
     },
 
     /**
      * Update a shreddered file.
      */
-    SHREDDER_UPDATE("Update shreddered file", false) {
+    SHREDDER_UPDATE("Update shreddered file", EMenu.MENU) {
         @Override
         public void execute(final GUI paramGUI) {
-            shredder(paramGUI, true);
+            shredder(paramGUI, EShredder.UPDATEONLY);
         }
     },
 
     /**
      * Serialize a Treetank storage.
      */
-    SERIALIZE("Serialize", false) {
+    SERIALIZE("Serialize", EMenu.MENU) {
         @Override
         public void execute(final GUI paramGUI) {
             // Create a file chooser.
@@ -173,7 +169,6 @@ public enum GUICommands implements IGUICommand {
 
             if (fc.showOpenDialog(paramGUI) == JFileChooser.APPROVE_OPTION) {
                 final File source = fc.getSelectedFile();
-
                 fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
                 fc.setAcceptAllFileFilterUsed(true);
                 if (fc.showSaveDialog(paramGUI) == JFileChooser.APPROVE_OPTION) {
@@ -184,9 +179,18 @@ public enum GUICommands implements IGUICommand {
 
                         final IDatabase db = Database.openDatabase(source);
                         final ISession session = db.getSession();
+                        
+                        final ExecutorService executor = Executors.newSingleThreadExecutor();
                         final XMLSerializer serializer =
                             new XMLSerializerBuilder(session, outputStream).build();
-                        serializer.call();
+                        executor.submit(serializer);
+                        executor.shutdown();
+                        try {
+                            executor.awaitTermination(5, TimeUnit.SECONDS);
+                        } catch (final InterruptedException e) {
+                            LOGWRAPPER.error(e.getMessage(), e);
+                            return;
+                        }
 
                         session.close();
                         db.close();
@@ -200,11 +204,21 @@ public enum GUICommands implements IGUICommand {
             }
         }
     },
+    
+    /**
+     * Separator.
+     */
+    SEPARATOR("", EMenu.SEPARATOR) {
+        @Override
+        public void execute(final GUI paramGUI) {
+            
+        }
+    },
 
     /**
      * Close Treetank GUI.
      */
-    QUIT("Quit", false) {
+    QUIT("Quit", EMenu.MENU) {
         @Override
         public void execute(final GUI paramGUI) {
             paramGUI.dispose();
@@ -214,7 +228,7 @@ public enum GUICommands implements IGUICommand {
     /**
      * Show tree view.
      */
-    TREE("Tree", true) {
+    TREE("Tree", EMenu.CHECKBOXITEM) {
         @Override
         public void execute(final GUI paramGUI) {
             GUIProp.EShowViews.SHOWTREE.invert();
@@ -224,7 +238,7 @@ public enum GUICommands implements IGUICommand {
     /**
      * Show text view.
      */
-    TEXT("Text", true) {
+    TEXT("Text", EMenu.CHECKBOXITEM) {
         @Override
         public void execute(final GUI paramGUI) {
             GUIProp.EShowViews.SHOWTEXT.invert();
@@ -234,7 +248,7 @@ public enum GUICommands implements IGUICommand {
     /**
      * Show treemap view.
      */
-    TREEMAP("Treemap", true) {
+    TREEMAP("Treemap", EMenu.CHECKBOXITEM) {
         @Override
         public void execute(final GUI paramGUI) {
             GUIProp.EShowViews.SHOWTREE.invert();
@@ -244,7 +258,7 @@ public enum GUICommands implements IGUICommand {
     /**
      * Show sunburst view.
      */
-    SUNBURST("Sunburst", true) {
+    SUNBURST("Sunburst", EMenu.CHECKBOXITEM) {
         @Override
         public void execute(final GUI paramGUI) {
             GUIProp.EShowViews.SHOWSUNBURST.invert();
@@ -257,82 +271,60 @@ public enum GUICommands implements IGUICommand {
     /** Description of command. */
     private final String mDesc;
 
-    /** Determins if menu item is checked or not. */
-    private final boolean mChecked;
+    /** Determines menu entry type. */
+    private final EMenu mType;
 
     /**
      * Constructor.
      * 
      * @param paramDesc
-     *            Description of command.
-     * @param paramChecked
-     *            Determines if menu item is checked or not.
+     *            Description of command
+     * @param paramType
+     *            Determines if menu item is checked or not
      */
-    GUICommands(final String paramDesc, final boolean paramChecked) {
+    GUICommands(final String paramDesc, final EMenu paramType) {
         mDesc = paramDesc;
-        mChecked = paramChecked;
+        mType = paramType;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String desc() {
         return mDesc;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public boolean checked() {
-        return mChecked;
+    public EMenu type() {
+        return mType;
     }
 
     /**
      * Shredder or shredder into.
      * 
      * @param paramGUI
-     *            Main GUI frame.
-     * @param paramUpdateOnly
-     *            Shredder into an existing file or not.
+     *            Main GUI frame
+     * @param paramShredding
+     *            Determines which shredder to use
      */
-    private static void shredder(final GUI paramGUI, final boolean paramUpdateOnly) {
+    private static void shredder(final GUI paramGUI, final EShredder paramShredding) {
         // Create a file chooser.
         final JFileChooser fc = new JFileChooser();
-        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         fc.setAcceptAllFileFilterUsed(false);
 
         if (fc.showOpenDialog(paramGUI) == JFileChooser.APPROVE_OPTION) {
+            fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
             final File source = fc.getSelectedFile();
 
             if (fc.showSaveDialog(paramGUI) == JFileChooser.APPROVE_OPTION) {
+                fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 final File target = fc.getSelectedFile();
-
-                try {
-                    if (!paramUpdateOnly) {
-                        Database.truncateDatabase(target);
-                        Database.createDatabase(new DatabaseConfiguration(target));
-                    }
-                    final IDatabase database = Database.openDatabase(target);
-                    final ISession session = database.getSession();
-                    final IWriteTransaction wtx = session.beginWriteTransaction();
-
-                    final XMLEventReader reader = XMLShredder.createReader(source);
-                    if (paramUpdateOnly) {
-                        final XMLShredder shredder = new XMLUpdateShredder(wtx, reader, true, source, true);
-                        shredder.call();
-
-                    } else {
-                        final XMLShredder shredder = new XMLShredder(wtx, reader, true);
-                        shredder.call();
-                    }
-                    wtx.close();
-                    session.close();
-                    database.close();
-
-                    // setViews(paramGUI, target);
-                } catch (final TreetankException e) {
-                    LOGWRAPPER.error(e.getMessage(), e);
-                } catch (final IOException e) {
-                    LOGWRAPPER.error(e.getMessage(), e);
-                } catch (final XMLStreamException e) {
-                    LOGWRAPPER.error(e.getMessage(), e);
-                }
+                
+                paramShredding.shred(source, target);
             }
         }
     }

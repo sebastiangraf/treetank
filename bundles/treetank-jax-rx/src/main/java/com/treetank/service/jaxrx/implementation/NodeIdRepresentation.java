@@ -21,6 +21,7 @@ import com.treetank.service.jaxrx.util.WorkerHelper;
 import com.treetank.service.xml.serialize.XMLSerializer;
 import com.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 import com.treetank.service.xml.serialize.XMLSerializerProperties;
+import com.treetank.service.xml.shredder.EShredderInsert;
 
 import org.jaxrx.core.JaxRxException;
 import org.jaxrx.core.QueryParameter;
@@ -48,8 +49,8 @@ public class NodeIdRepresentation {
     /**
      * This field specifies the begin result element of the request.
      */
-    private static final transient byte[] BEGINRESULT = "<jaxrx:result xmlns:jaxrx=\"http://jaxrx.org/\">"
-        .getBytes();
+    private static final transient byte[] BEGINRESULT =
+        "<jaxrx:result xmlns:jaxrx=\"http://jaxrx.org/\">".getBytes();
 
     /**
      * This field specifies the end result element of the request.
@@ -265,7 +266,7 @@ public class NodeIdRepresentation {
                         final long parentKey = wtx.getNode().getParentKey();
                         wtx.remove();
                         wtx.moveTo(parentKey);
-                        WorkerHelper.shredInputStream(wtx, newValue, true);
+                        WorkerHelper.shredInputStream(wtx, newValue, EShredderInsert.ADDASFIRSTCHILD);
 
                     } else {
                         // workerHelper.closeWTX(abort, wtx, session, database);
@@ -326,17 +327,17 @@ public class NodeIdRepresentation {
                     final boolean exist = wtx.moveTo(nodeId);
                     if (exist) {
                         if (type == EIdAccessType.FIRSTCHILD) {
-                            WorkerHelper.shredInputStream(wtx, input, true);
+                            WorkerHelper.shredInputStream(wtx, input, EShredderInsert.ADDASFIRSTCHILD);
                         } else if (type == EIdAccessType.RIGHTSIBLING) {
-                            WorkerHelper.shredInputStream(wtx, input, false);
+                            WorkerHelper.shredInputStream(wtx, input, EShredderInsert.ADDASRIGHTSIBLING);
                         } else if (type == EIdAccessType.LASTCHILD) {
                             if (wtx.moveToFirstChild()) {
                                 long last = wtx.getNode().getNodeKey();
-                                while(wtx.moveToRightSibling()) {
+                                while (wtx.moveToRightSibling()) {
                                     last = wtx.getNode().getNodeKey();
                                 }
                                 wtx.moveTo(last);
-                                WorkerHelper.shredInputStream(wtx, input, false);
+                                WorkerHelper.shredInputStream(wtx, input, EShredderInsert.ADDASRIGHTSIBLING);
 
                             } else {
                                 throw new JaxRxException(404, NOTFOUND);
@@ -344,7 +345,7 @@ public class NodeIdRepresentation {
 
                         } else if (type == EIdAccessType.LEFTSIBLING && wtx.moveToLeftSibling()) {
 
-                            WorkerHelper.shredInputStream(wtx, input, false);
+                            WorkerHelper.shredInputStream(wtx, input, EShredderInsert.ADDASRIGHTSIBLING);
 
                         }
                     } else {
@@ -494,7 +495,7 @@ public class NodeIdRepresentation {
                     case LASTCHILD:
                         if (rtx.moveToFirstChild()) {
                             int last = rtx.getNode().getNameKey();
-                            while(rtx.moveToRightSibling()) {
+                            while (rtx.moveToRightSibling()) {
                                 last = rtx.getNode().getNameKey();
                             }
                             rtx.moveTo(last);

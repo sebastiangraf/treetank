@@ -14,6 +14,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
+import com.treetank.service.xml.shredder.EShredderInsert;
 import com.treetank.service.xml.shredder.XMLShredder;
 
 import org.junit.After;
@@ -180,7 +181,8 @@ public class HashTest {
     private void testNamespace(final ISession session) throws TreetankException, IOException,
         XMLStreamException {
         final IWriteTransaction wtx = session.beginWriteTransaction();
-        final XMLShredder shredder = new XMLShredder(wtx, XMLShredder.createReader(new File(XML)), true);
+        final XMLShredder shredder =
+            new XMLShredder(wtx, XMLShredder.createReader(new File(XML)), EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
         wtx.close();
         final IReadTransaction rtx = session.beginReadTransaction();

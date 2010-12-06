@@ -132,7 +132,6 @@ final class SunburstModel extends AbsModel {
         mGUI = SunburstGUI.createGUI(mParent, this);
         mModel = this;
         addPropertyChangeListener(mGUI);
-        addPropertyChangeListener((Embedded)paramApplet);
     }
 
     /**
@@ -142,6 +141,7 @@ final class SunburstModel extends AbsModel {
      *            XPath expression to evaluate.
      */
     void evaluateXPath(final String paramXPathExpression) {
+        // Initialize all items to ISNOTFOUND.
         for (final SunburstItem item : mItems) {
             item.setXPathState(EXPathState.ISNOTFOUND);
         }
@@ -576,7 +576,7 @@ final class SunburstModel extends AbsModel {
             assert paramKey > -1 && mRtx != null && !mRtx.isClosed();
             mKey = paramKey;
             mModel = paramModel;
-            mModel.addPropertyChangeListener(mGUI);
+//            mModel.addPropertyChangeListener(mGUI);
 
             mRtx.moveTo(mKey);
             if (mRtx.getNode().getKind() == ENodes.ROOT_KIND) {
@@ -687,7 +687,10 @@ final class SunburstModel extends AbsModel {
                         final long key = mRtx.getNode().getNodeKey();
                         mRtx.moveToParent();
                         childExtension = extension / (float)((AbsStructNode)mRtx.getNode()).getChildCount();
+                        System.out.println("extension: " + childExtension);
+                        System.out.println(((AbsStructNode)mRtx.getNode()).getChildCount());
                         mRtx.moveTo(key);
+                        System.out.println(mRtx.getValueOfCurrentNode());
                     } else {
                         childExtension = extension * (float)childCount / (float)childCountPerDepth;
                     }
@@ -695,20 +698,17 @@ final class SunburstModel extends AbsModel {
                     LOGWRAPPER.debug("indexToParent: " + indexToParent);
 
                     // Set node relations.
-                    if (structKind == StructType.ISINNERNODE
-                        || mRtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
-                        relations.setAll(depth, structKind, descendants.get(index + 1).get(), 0,
-                            mMaxDescendantCount, indexToParent);
-                    } else {
-                        relations.setAll(depth, structKind, mRtx.getValueOfCurrentNode().length(),
-                            mMinTextLength, mMaxTextLength, indexToParent);
-                    }
-
-                    // Build item.
                     String text = null;
                     if (mRtx.getNode().getKind() == ENodes.TEXT_KIND) {
+                        relations.setAll(depth, structKind, mRtx.getValueOfCurrentNode().length(),
+                            mMinTextLength, mMaxTextLength, indexToParent);
                         text = mRtx.getValueOfCurrentNode();
+                    } else {
+                        relations.setAll(depth, structKind, descendants.get(index + 1).get(), 0,
+                            mMaxDescendantCount, indexToParent);
                     }
+                    
+                    // Build item.
                     mItems.add(new SunburstItem.Builder(mParent, mModel, node, mRtx.getQNameOfCurrentNode(),
                         text, angle, childExtension, relations).build());
 //                    mGUI.addPropertyChangeListener(mItems.get(index + 1));
@@ -778,21 +778,21 @@ final class SunburstModel extends AbsModel {
             LOGWRAPPER.info(mItems.size() + " SunburstItems created!");
         }
 
-        /**
-         * Traverses all right siblings and sums up child count. Thus a precondition to invoke the method is
-         * that it must be called on the first child node.
-         * 
-         * @return child count per depth
-         */
-        private long childCountPerDepth() {
-            long retVal = 0;
-            final long key = mRtx.getNode().getNodeKey();
-            do {
-                retVal += ((AbsStructNode)mRtx.getNode()).getChildCount();
-            } while (((AbsStructNode)mRtx.getNode()).hasRightSibling() && mRtx.moveToRightSibling());
-            mRtx.moveTo(key);
-            return retVal;
-        }
+//        /**
+//         * Traverses all right siblings and sums up child count. Thus a precondition to invoke the method is
+//         * that it must be called on the first child node.
+//         * 
+//         * @return child count per depth
+//         */
+//        private long childCountPerDepth() {
+//            long retVal = 0;
+//            final long key = mRtx.getNode().getNodeKey();
+//            do {
+//                retVal += ((AbsStructNode)mRtx.getNode()).getChildCount();
+//            } while (((AbsStructNode)mRtx.getNode()).hasRightSibling() && mRtx.moveToRightSibling());
+//            mRtx.moveTo(key);
+//            return retVal;
+//        }
 
     }
 

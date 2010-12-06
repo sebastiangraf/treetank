@@ -58,8 +58,8 @@ import org.slf4j.LoggerFactory;
 public final class WikipediaImport implements IImport<StartElement> {
 
     /** Logger. */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(WikipediaImport.class));
+    private static final LogWrapper LOGWRAPPER =
+        new LogWrapper(LoggerFactory.getLogger(WikipediaImport.class));
 
     /** StAX parser {@link XMLEventReader}. */
     private transient XMLEventReader mReader;
@@ -216,7 +216,8 @@ public final class WikipediaImport implements IImport<StartElement> {
                             try {
                                 final XMLShredder updateShredder =
                                     new XMLUpdateShredder(mWTX, XMLShredder.createListReader(mPageEvents),
-                                        false, mPageEvents, false);
+                                        EShredderInsert.ADDASFIRSTCHILD, mPageEvents,
+                                        EShredderCommit.NOCOMMIT);
                                 updateShredder.call();
                             } catch (final IOException e) {
                                 LOGWRAPPER.error(e.getMessage(), e);
@@ -233,13 +234,13 @@ public final class WikipediaImport implements IImport<StartElement> {
                             if (hasFirstChild) {
                                 // Shredder as child.
                                 shredder =
-                                    new XMLShredder(mWTX, XMLShredder.createListReader(mPageEvents), false,
-                                        false);
+                                    new XMLShredder(mWTX, XMLShredder.createListReader(mPageEvents),
+                                        EShredderInsert.ADDASRIGHTSIBLING, EShredderCommit.NOCOMMIT);
                             } else {
                                 // Shredder as right sibling.
                                 shredder =
-                                    new XMLShredder(mWTX, XMLShredder.createListReader(mPageEvents), true,
-                                        false);
+                                    new XMLShredder(mWTX, XMLShredder.createListReader(mPageEvents),
+                                        EShredderInsert.ADDASFIRSTCHILD, EShredderCommit.NOCOMMIT);
                             }
 
                             shredder.call();

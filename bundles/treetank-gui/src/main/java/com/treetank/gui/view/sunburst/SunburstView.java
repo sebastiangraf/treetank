@@ -24,8 +24,7 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.Semaphore;
 
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
@@ -54,7 +53,7 @@ import processing.core.PApplet;
  * 
  */
 public final class SunburstView extends JScrollPane implements IView {
-    
+
     /** {@link LogWrapper}. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(Embedded.class));
 
@@ -142,7 +141,7 @@ public final class SunburstView extends JScrollPane implements IView {
      */
     @Override
     public void refreshInit() {
-        mDB = mNotifier.getGUI().getReadDB();
+//        mDB = mNotifier.getGUI().getReadDB();
         setViewportView(mEmbed);
 
         /*
@@ -173,7 +172,7 @@ public final class SunburstView extends JScrollPane implements IView {
     }
 
     /** Embedded processing view. */
-    final class Embedded extends PApplet implements PropertyChangeListener {
+    final class Embedded extends PApplet {
         /** {@link SunburstGUI} which represents the GUI interface of the Sunburst view. */
         private SunburstGUI mGUI;
 
@@ -186,43 +185,22 @@ public final class SunburstView extends JScrollPane implements IView {
         /** {@link List} of {@link SunburstItem}s. */
         private transient List<SunburstItem> mItems;
 
-        /** Flag to indicate that it's not drawing while updating. */
-        private transient Lock mLock = new ReentrantLock();
-
-        /** {@inheritDoc} */
-        @Override
-        public void setup() {
-            // Create Model.
-            mModel = new SunburstModel(this, mDB);
-
-            // Create GUI.
-            mGUI = SunburstGUI.createGUI(this, mModel);
-
-            // Setup GUI and draw initial sunburst items.
-            mGUI.setupGUI();
-            handleHLWeight();
-
-            mRtx = mDB.getRtx();
-
-            mModel.traverseTree(mRtx.getNode().getNodeKey(), mGUI.mTextWeight);
-            //            
-            // mModel.traverseCompareTree(mRtx.getRevisionNumber() + 1, mRtx.getNode().getNodeKey(), 1000,
-            // 0.5f,
-            // mGUI.mTextWeight);
-        }
+        /** Sempahore to indicate that it's not drawing while updating. */
+//        private transient Semaphore mLock = new Semaphore(1);
 
         /** {@inheritDoc} */
         @Override
         public void draw() {
-            if (mGUI != null && mItems != null) {
-                mLock.lock();
+            if (mGUI != null) {
+//                try {
+//                    mGUI.mLock.acquire();
+//                } catch (final InterruptedException e) {
+//                    return;
+//                }
                 LOGWRAPPER.debug("drawing");
-                for (final SunburstItem item : mItems) {
-                    item.update(mGUI.getMappingMode());
-                }
                 mGUI.draw();
                 handleHLWeight();
-                mLock.unlock();
+//                mGUI.mLock.release();
             }
         }
 
@@ -264,19 +242,25 @@ public final class SunburstView extends JScrollPane implements IView {
 
         /** Refresh. */
         public void refreshUpdate() {
-            if (mGUI != null && mModel != null && mItems != null) {
-                noLoop();
-                mLock.lock();
-                LOGWRAPPER.info("refreshUpdate");
-                mModel = new SunburstModel(this, mDB);
-                mGUI = mGUI.refresh(this, mModel);
-                mGUI.setupGUI();
-                handleHLWeight();
-                mRtx = mDB.getRtx();
-                mModel.traverseTree(mRtx.getNode().getNodeKey(), mGUI.mTextWeight);
-                mLock.unlock();
-                loop();
+            noLoop();
+            // Create Model.
+            mModel = new SunburstModel(this, mDB);
+
+            // Create GUI.
+            mGUI = SunburstGUI.createGUI(this, mModel);
+
+            // Traverse.
+            handleHLWeight();
+            mRtx = mDB.getRtx();
+            
+            try {
+                mGUI.mLock.acquire();
+            } catch (final InterruptedException e) {
+                return;
             }
+            mModel.traverseTree(mRtx.getNode().getNodeKey(), mGUI.mTextWeight);
+            mGUI.mLock.release();
+            loop();
         }
 
         /** Handle mix of heavyweight ({@link PApplet}) and leightweight ({@link JMenuBar}) components. */
@@ -289,21 +273,6 @@ public final class SunburstView extends JScrollPane implements IView {
             if (window != null) {
                 window.validate();
             }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @SuppressWarnings("unchecked")
-        @Override
-        public void propertyChange(final PropertyChangeEvent paramEvent) {
-            noLoop();
-            mLock.lock();
-            if (paramEvent.getPropertyName().equals("items")) {
-                mItems = (List<SunburstItem>)paramEvent.getNewValue();
-            }
-            mLock.unlock();
-            loop();
         }
     }
 }

@@ -24,25 +24,22 @@ import processing.core.PApplet;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-public enum EXPathState {
+enum EXPathState {
     /** Item is found. */
-    ISFOUND(StateType.ISFOUND),
+    ISFOUND {
+        @Override
+        void setStroke(final PApplet paramApplet, final int paramColor) {
+            paramApplet.stroke(1);
+        }
+    },
 
     /** Default: Item is not found. */
-    ISNOTFOUND(StateType.ISNOTFOUND);
-
-    /** {@link StateType}. */
-    private final StateType mStateType;
-
-    /**
-     * Constructor.
-     * 
-     * @param paramType
-     *            private {@link StateType}
-     */
-    EXPathState(final StateType paramType) {
-        mStateType = paramType;
-    }
+    ISNOTFOUND {
+        @Override
+        void setStroke(final PApplet paramApplet, final int paramColor) {
+            paramApplet.stroke(paramColor);
+        }
+    };
 
     /**
      * Set stroke.
@@ -52,36 +49,5 @@ public enum EXPathState {
      * @param paramColor
      *            The color to use.
      */
-    void setStroke(final PApplet paramApplet, final int paramColor) {
-        mStateType.setStroke(paramApplet, paramColor);
-    }
-
-    /** Determines state of XPath expression evaluation. */
-    private enum StateType {
-        /** Item is found. */
-        ISFOUND {
-            @Override
-            void setStroke(final PApplet paramApplet, final int paramColor) {
-                paramApplet.stroke(1);
-            }
-        },
-
-        /** Default: Item is not found. */
-        ISNOTFOUND {
-            @Override
-            void setStroke(final PApplet paramApplet, final int paramColor) {
-                paramApplet.stroke(paramColor);
-            }
-        };
-
-        /**
-         * Set stroke.
-         * 
-         * @param paramApplet
-         *            Processing {@link PApplet} core.
-         * @param paramColor
-         *            The color to use.
-         */
-        abstract void setStroke(final PApplet paramApplet, final int paramColor);
-    }
+    abstract void setStroke(final PApplet paramApplet, final int paramColor);
 }

@@ -35,6 +35,7 @@ import com.treetank.service.jaxrx.util.RestXPathProcessor;
 import com.treetank.service.jaxrx.util.WorkerHelper;
 import com.treetank.service.xml.serialize.XMLSerializer;
 import com.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
+import com.treetank.service.xml.shredder.EShredderInsert;
 import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.settings.EDatabaseSetting;
@@ -255,7 +256,7 @@ public class DatabaseRepresentation {
             if (resourceName.endsWith(RESTProps.COLEND)) {
                 isDeleted =
                     deleteCompleteDirectory(new File(RESTProps.STOREDBPATH + File.separatorChar
-                    + resourceName));
+                        + resourceName));
                 if (!isDeleted) {
                     throw new JaxRxException(404, "Resource not found");
                 }
@@ -309,7 +310,8 @@ public class DatabaseRepresentation {
                 wtx.remove();
                 wtx.commit();
             }
-            final XMLShredder shredder = new XMLShredder(wtx, RESTXMLShredder.createReader(xmlInput), true);
+            final XMLShredder shredder =
+                new XMLShredder(wtx, RESTXMLShredder.createReader(xmlInput), EShredderInsert.ADDASFIRSTCHILD);
             shredder.call();
             allOk = true;
         } catch (final Exception exce) {
@@ -504,7 +506,7 @@ public class DatabaseRepresentation {
                 rtx = session.beginReadTransaction(revision1);
                 axis = new XPathAxis(rtx, ".//*");
 
-                while(axis.hasNext()) {
+                while (axis.hasNext()) {
                     if (rtx.getNode().getNodeKey() > maxRestidRev1) {
                         maxRestidRev1 = rtx.getNode().getNodeKey();
                     }
@@ -518,7 +520,7 @@ public class DatabaseRepresentation {
                 rtx = session.beginReadTransaction(revision2);
                 axis = new XPathAxis(rtx, ".//*");
 
-                while(axis.hasNext()) {
+                while (axis.hasNext()) {
                     final Long nodeKey = rtx.getNode().getNodeKey();
                     if (nodeKey > maxRestidRev2) {
                         maxRestidRev2 = rtx.getNode().getNodeKey();

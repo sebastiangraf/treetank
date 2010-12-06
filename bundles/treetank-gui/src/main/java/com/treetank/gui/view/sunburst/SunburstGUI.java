@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -37,6 +38,7 @@ import controlP5.Toggle;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PImage;
 
 /**
  * <h1>SunburstGUI</h1>
@@ -57,6 +59,9 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
 
     /** Path to save visualization as a PDF or PNG file. */
     private static final String SAVEPATH = "target" + File.separator + timestamp();
+
+    /** Amount of effect in the fisheye transformation. */
+    private static final float EFFECT_AMOUNT = 0.9f;
 
     /** The GUI of the Sunburst view. */
     private static SunburstGUI mGUI;
@@ -118,6 +123,9 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
     /** Maximum depth in the tree. */
     transient int mDepthMax;
 
+    /** {@link Sempahore} to block re-initializing sunburst item list until draw() is finished(). */
+    transient Semaphore mLock = new Semaphore(1);
+
     /** Leaf node arc scale. */
     private transient float mLeafArcScale = 1.0f;
 
@@ -126,6 +134,9 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
 
     /** Color mapping mode. */
     private transient int mMappingMode = 1;
+
+    /** Determines if fisheye should be used. */
+    private transient boolean mFisheye;
 
     /** Determines if arcs should be used (Default: true). */
     private transient boolean mUseArc = true;
@@ -154,11 +165,8 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
     /** {@link ControlP5} toggles. */
     private transient List<Toggle> mToggles;
 
-    /** {@link Lock}. */
-    private transient Lock mLock = new ReentrantLock();
-//
-//    /** {@link ControlP5} listboxes. */
-//    private transient List<ListBox> mBoxes;
+    // /** {@link ControlP5} listboxes. */
+    // private transient List<ListBox> mBoxes;
 
     /** {@link ControlP5#} textfield. */
     private transient Textfield mXPathField;
@@ -168,8 +176,8 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
         /** Drawing "event". */
         DRAW,
 
-        /** Double-click event. */
-        DOUBLECLICK
+        /** Click event. */
+        CLICK
     };
 
     /**
@@ -209,21 +217,8 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
     static SunburstGUI createGUI(final PApplet paramParentApplet, final SunburstModel paramModel) {
         if (mGUI == null) {
             mGUI = new SunburstGUI(paramParentApplet, paramModel);
+            mGUI.setupGUI();
         }
-        return mGUI;
-    }
-
-    /**
-     * Refresh GUI.
-     * 
-     * @param paramParentApplet
-     *            Parent processing applet.
-     * @param paramModel
-     *            The model.
-     * @return new instance
-     */
-    SunburstGUI refresh(final PApplet paramParentApplet, final SunburstModel paramModel) {
-        mGUI = new SunburstGUI(paramParentApplet, paramModel);
         return mGUI;
     }
 
@@ -240,7 +235,7 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
         mSliders = new LinkedList<Slider>();
         mRanges = new LinkedList<Range>();
         mToggles = new LinkedList<Toggle>();
-//        mBoxes = new LinkedList<ListBox>();
+        // mBoxes = new LinkedList<ListBox>();
 
         final int left = 0;
         final int top = 5;
@@ -304,6 +299,8 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
         mToggles.get(ti++).setLabel("Bezier / Line");
         mToggles.add(ti, mControlP5.addToggle("mUseArc", mUseArc, left + 0, top + posY + 60, 15, 15));
         mToggles.get(ti++).setLabel("Arc / Rect");
+        mToggles.add(ti, mControlP5.addToggle("mFisheye", mFisheye, left + 0, top + posY + 80, 15, 15));
+        mToggles.get(ti++).setLabel("Fisheye lense");
 
         mXPathField = mControlP5.addTextfield("xpath", left + 800, top + 20, 200, 20);
         mXPathField.setLabel("XPath expression");
@@ -433,9 +430,13 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
      */
     public void xpath(final String paramXPath) {
         mParent.noLoop();
-        mLock.lock();
+        try {
+            mLock.acquire();
+        } catch (final InterruptedException e) {
+
+        }
         mModel.evaluateXPath(paramXPath);
-        mLock.unlock();
+        mLock.release();
         mParent.loop();
     }
 
@@ -443,59 +444,71 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
      * Implements the {@link PApplet} draw() method.
      */
     void draw() {
-        mLock.lock();
-        mParent.pushMatrix();
-        mParent.colorMode(PConstants.HSB, 360, 100, 100, 100);
-        mParent.background(0, 0, mBackgroundBrightness);
-        mParent.noFill();
-        mParent.ellipseMode(PConstants.RADIUS);
-        mParent.strokeCap(PConstants.SQUARE);
-        mParent.textLeading(14);
-        mParent.textAlign(PConstants.LEFT, PConstants.TOP);
-        mParent.smooth();
+        if (mItems != null) {
+            try {
+                mLock.acquire();
+            } catch (final InterruptedException e) {
+                return;
+            }
 
-        // Add menubar height (21 pixels).
-        mParent.translate(mParent.width / 2, mParent.height / 2 + 21);
+            mParent.pushMatrix();
+            mParent.colorMode(PConstants.HSB, 360, 100, 100, 100);
+            mParent.background(0, 0, mBackgroundBrightness);
+            mParent.noFill();
+            mParent.ellipseMode(PConstants.RADIUS);
+            mParent.strokeCap(PConstants.SQUARE);
+            mParent.textLeading(14);
+            mParent.textAlign(PConstants.LEFT, PConstants.TOP);
+            mParent.smooth();
 
-        // Draw the vizualization items.
-        for (final SunburstItem item : mItems) {
-            // Draw arcs or rects.
-            if (mShowArcs) {
-                if (mUseArc) {
-                    item.drawArc(mInnerNodeArcScale, mLeafArcScale);
-                } else {
-                    item.drawRect(mInnerNodeArcScale, mLeafArcScale);
+            // Add menubar height (21 pixels).
+            mParent.translate(mParent.width / 2, mParent.height / 2 + 21);
+
+            // Draw the vizualization items.
+            for (final SunburstItem item : mItems) {
+                // Draw arcs or rects.
+                if (mShowArcs) {
+                    if (mUseArc) {
+                        item.drawArc(mInnerNodeArcScale, mLeafArcScale);
+                    } else {
+                        item.drawRect(mInnerNodeArcScale, mLeafArcScale);
+                    }
                 }
             }
-        }
 
-        for (final SunburstItem item : mItems) {
-            if (mShowLines) {
-                if (mUseBezierLine) {
-                    item.drawRelationBezier();
-                } else {
-                    item.drawRelationLine();
+            for (final SunburstItem item : mItems) {
+                if (mShowLines) {
+                    if (mUseBezierLine) {
+                        item.drawRelationBezier();
+                    } else {
+                        item.drawRelationLine();
+                    }
                 }
             }
+
+            for (final SunburstItem item : mItems) {
+                item.drawDot();
+            }
+
+            // Rollover test.
+            rollover(State.DRAW);
+
+            mParent.popMatrix();
+
+            if (mSavePDF) {
+                mSavePDF = false;
+                mParent.endRecord();
+                PApplet.println("saving to pdf – done");
+            }
+
+            drawGUI();
+
+            if (mFisheye) {
+                fisheye(mParent.mouseX, mParent.mouseY, 120);
+            }
+
+            mLock.release();
         }
-
-        for (final SunburstItem item : mItems) {
-            item.drawDot();
-        }
-
-        // Rollover test.
-        rollover(State.DRAW);
-
-        mParent.popMatrix();
-
-        if (mSavePDF) {
-            mSavePDF = false;
-            mParent.endRecord();
-            PApplet.println("saving to pdf – done");
-        }
-
-        drawGUI();
-        mLock.unlock();
     }
 
     /**
@@ -560,6 +573,52 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
     }
 
     /**
+     * Fisheye transformation.
+     * 
+     * @param paramXPos
+     *            X position of middle point of the transformation
+     * @param paramYPos
+     *            Y position of middle point of the transformation
+     * @param paramRadius
+     *            the radius to use
+     */
+    void fisheye(final int paramXPos, final int paramYPos, final int paramRadius) {
+        // Start point of rectangle to grab.
+        final int tlx = paramXPos - paramRadius;
+        final int tly = paramYPos - paramRadius;
+        // Rectangle with pixels.
+        final PImage pi = mParent.get(tlx, tly, paramRadius * 2, paramRadius * 2);
+        for (int x = -paramRadius; x < paramRadius; x++) {
+            for (int y = -paramRadius; y < paramRadius; y++) {
+                // Rescale cartesian coords between -1 and 1.
+                final float cx = (float)x / paramRadius;
+                final float cy = (float)y / paramRadius;
+
+                // Outside of the sphere -> skip.
+                final float square = PApplet.sq(cx) + PApplet.sq(cy);
+                if (square >= 1) {
+                    continue;
+                }
+
+                // Compute cz from cx & cy.
+                final float cz = PApplet.sqrt(1 - square);
+
+                // Cartesian coords cx, cy, cz -> spherical coords sx, sy, still in -1, 1 range.
+                final float sx = PApplet.atan(EFFECT_AMOUNT * cx / cz) * 2 / PConstants.PI;
+                final float sy = PApplet.atan(EFFECT_AMOUNT * cy / cz) * 2 / PConstants.PI;
+
+                // Spherical coords sx & sy -> texture coords.
+                final int tx = tlx + (int)((sx + 1) * paramRadius);
+                final int ty = tly + (int)((sy + 1) * paramRadius);
+
+                // Set pixel value.
+                pi.set(paramRadius + x, paramRadius + y, mParent.get(tx, ty));
+            }
+        }
+        mParent.set(tlx, tly, pi);
+    }
+
+    /**
      * Get initial radius.
      * 
      * @return initial radius
@@ -593,12 +652,19 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
                 if (!mLastItems.isEmpty()) {
                     // Go back one index in history list.
                     final int lastItemIndex = mLastItems.size() - 1;
+                    mParent.noLoop();
+                    try {
+                        mLock.acquire();
+                    } catch (final InterruptedException e) {
+                        return;
+                    }
                     mItems = mLastItems.get(lastItemIndex);
                     mLastItems.remove(lastItemIndex);
                     for (final SunburstItem item : mItems) {
                         item.update(mMappingMode);
                     }
-                    draw();
+                    mLock.release();
+                    mParent.loop();
                 }
                 break;
             case '1':
@@ -628,7 +694,7 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
                 mShowGUI = !mShowGUI;
                 break;
             default:
-
+                // No action.
             }
 
             if (mShowGUI) {
@@ -648,7 +714,7 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
      * @see processing.core.PApplet#mouseEntered
      */
     void mouseEntered(final MouseEvent paramEvent) {
-        mParent.loop();
+        // mParent.loop();
     }
 
     /**
@@ -660,7 +726,7 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
      * @see processing.core.PApplet#mouseExited
      */
     void mouseExited(final MouseEvent paramEvent) {
-        mParent.noLoop();
+        // mParent.noLoop();
     }
 
     /**
@@ -675,11 +741,35 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
         mControlP5.controlWindow.mouseEvent(paramEvent);
 
         // Mouse rollover.
-        final int hitTestIndex = rollover(State.DOUBLECLICK);
-        if (!mShowGUI && hitTestIndex != -1 && paramEvent.getClickCount() == 2) {
-            mLastItems.add(new ArrayList<SunburstItem>(mItems));
-            final long nodeKey = mItems.get(hitTestIndex).mNode.getNodeKey();
-            mModel.traverseTree(nodeKey, mTextWeight);
+        final int hitTestIndex = rollover(State.CLICK);
+        if (!mShowGUI && hitTestIndex != -1) {
+            switch (paramEvent.getClickCount()) {
+            case 1:
+                switch (mParent.mouseButton) {
+                case PConstants.LEFT:
+                    break;
+                case PConstants.RIGHT:
+                    break;
+                default:
+                    // Take no action.
+                }
+                break;
+            case 2:
+                mLastItems.add(new ArrayList<SunburstItem>(mItems));
+                final long nodeKey = mItems.get(hitTestIndex).mNode.getNodeKey();
+                mParent.noLoop();
+                try {
+                    mLock.acquire();
+                } catch (final InterruptedException e) {
+                    return;
+                }
+                mModel.traverseTree(nodeKey, mTextWeight);
+                mLock.release();
+                mParent.loop();
+                break;
+            default:
+                // Take no action.
+            }
         }
     }
 
@@ -697,7 +787,7 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
 
         if (paramDepth == 0) {
             retVal = PApplet.sqrt(PApplet.pow(getInitialRadius(), 2) / (paramDepthMax + 1));
-//            System.out.println("LAAAAAAAAA: " + retVal);
+            // System.out.println("LAAAAAAAAA: " + retVal);
         } else {
             retVal = PApplet.sqrt(paramDepth * PApplet.pow(getInitialRadius(), 2) / (paramDepthMax + 1));
         }
@@ -743,13 +833,22 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
     @Override
     public void propertyChange(final PropertyChangeEvent paramEvent) {
         mParent.noLoop();
-        mLock.lock();
+        try {
+            mLock.acquire();
+        } catch (final InterruptedException e) {
+            return;
+        }
+
         if (paramEvent.getPropertyName().equals("items")) {
             mItems = (List<SunburstItem>)paramEvent.getNewValue();
         } else if (paramEvent.getPropertyName().equals("maxDepth")) {
             mDepthMax = (Integer)paramEvent.getNewValue();
         }
-        mLock.unlock();
+
+        for (final SunburstItem item : mItems) {
+            item.update(mGUI.getMappingMode());
+        }
+        mLock.release();
         mParent.loop();
     }
 }
