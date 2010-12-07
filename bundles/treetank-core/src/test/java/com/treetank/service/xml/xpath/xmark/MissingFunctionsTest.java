@@ -13,6 +13,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+
 package com.treetank.service.xml.xpath.xmark;
 
 import java.io.File;
@@ -33,15 +34,14 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * This class performs tests for XQuery functions used for XMark bench test and
- * XPathMark bench test.
+ * This class contains test cases for not yet implemented xpath/xquery functions with test.xml file.
  * 
  * @author Patrick Lang, Konstanz University
- * 
  */
-public class FunctionsXMarkTest {
+public class MissingFunctionsTest {
+
     /** XML file name to test. */
-    private static final String XMLFILE = "10mb.xml";
+    private static final String XMLFILE = "test.xml";
     /** Path to XML file. */
     private static final String XML = "src" + File.separator + "test" + File.separator + "resources"
         + File.separator + XMLFILE;
@@ -55,7 +55,7 @@ public class FunctionsXMarkTest {
     /**
      * Constructor, just to meet checkstyle requirements.
      */
-    public FunctionsXMarkTest() {
+    public MissingFunctionsTest() {
 
     }
 
@@ -63,7 +63,6 @@ public class FunctionsXMarkTest {
      * Method is called once before each test. It deletes all states, shreds XML file to database and
      * initializes the required variables.
      */
-    @Ignore
     @Before
     public final void setUp() {
         try {
@@ -80,11 +79,10 @@ public class FunctionsXMarkTest {
     /**
      * Test function string().
      */
-    @Ignore
     @Test
     public final void testString() {
-        final String query = "fn:string(/site/people/person[@id=\"person3\"]/name)";
-        final String result = "Limor Simone";
+        final String query = "fn:string(/p:a/b)";
+        final String result = "foo bar";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
         });
@@ -93,7 +91,6 @@ public class FunctionsXMarkTest {
     /**
      * Test comment.
      */
-    @Ignore
     @Test
     public final void testComment() {
         final String query = "2 (: this is a comment :)";
@@ -106,11 +103,10 @@ public class FunctionsXMarkTest {
     /**
      * Test function node().
      */
-    @Ignore
     @Test
     public final void testNode() {
-        final String query = "for $b in /site/people/person[@id=\"person1\"] return $b/name/node()";
-        final String result = "Keung Yetim";
+        final String query = "p:a[./node()/node()/node()]";
+        final String result = null;
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
         });
@@ -119,11 +115,10 @@ public class FunctionsXMarkTest {
     /**
      * Test function text().
      */
-    @Ignore
     @Test
     public final void testText() {
-        final String query = "for $b in /site/people/person[@id=\"person0\"] return $b/name/text()";
-        final String result = "Krishna Merle";
+        final String query = "p:a[/text()]";
+        final String result = null;
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
         });
@@ -132,12 +127,34 @@ public class FunctionsXMarkTest {
     /**
      * Test function count().
      */
-    @Ignore
     @Test
     public final void testCount() {
-        final String query =
-            "fn:count(for $i in /site/closed_auctions/closed_auction[price/text() >= 40] return $i/price)";
-        final String result = "670";
+        final String query = "fn:count(//p:a/b)";
+        final String result = "2";
+        XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
+            result
+        });
+    }
+
+    /**
+     * Test function not().
+     */
+    @Test
+    public final void testNot() {
+        final String query = "fn:not(//b)";
+        final String result = "false";
+        XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
+            result
+        });
+    }
+
+    /**
+     * Test function sum().
+     */
+    @Test
+    public final void testSum() {
+        final String query = "fn:sum(5)";
+        final String result = "1";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
         });
@@ -149,21 +166,8 @@ public class FunctionsXMarkTest {
     @Ignore
     @Test
     public final void testPosition() {
-        final String query = "/site/open_auctions/open_auction/bidder/increase[position()=1]";
-        final String result = "<increase>10.50</increase>";
-        XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
-            result
-        });
-    }
-
-    /**
-     * Test function not().
-     */
-    @Ignore
-    @Test
-    public final void testNot() {
-        final String query = "/site/people/person[not(homepage)][@id=\"person1\"]/name/text()";
-        final String result = "<name>Keung Yetim</name>";
+        final String query = "//b[position()=1]";
+        final String result = "<b xmlns:p=\"ns\">foo<c/></b>";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
         });
@@ -175,7 +179,7 @@ public class FunctionsXMarkTest {
     @Ignore
     @Test
     public final void testId() {
-        final String query = "fn:id(/site/people/person[@id=\"person1\"]/watches/watch/@open_auction)";
+        final String query = "//b/fn:id()";
         final String result = "";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
@@ -188,8 +192,8 @@ public class FunctionsXMarkTest {
     @Ignore
     @Test
     public final void testData() {
-        final String query = "for $b in /site/people/person[@id=\"person0\"] return fn:data($b/name)";
-        final String result = "Krishna Merle";
+        final String query = "fn:data(//b)";
+        final String result = "foo bar";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
         });
@@ -201,9 +205,8 @@ public class FunctionsXMarkTest {
     @Ignore
     @Test
     public final void testContains() {
-        final String query =
-            "/site/regions/*/item[contains(description,\"gold\")]/location[text()=\"El Salvador\"]";
-        final String result = "<location>El Salvador</location>";
+        final String query = "fn:contains(/p:a/b, \"\")";
+        final String result = "true";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
         });
@@ -211,26 +214,12 @@ public class FunctionsXMarkTest {
 
     /**
      * Test function exactly-one().
-     * alternative query: exactly-one('a') -> result: a
      */
     @Ignore
     @Test
     public final void testExactlyOne() {
-        final String query = "exactly-one(/site/people/person[@id=\"person0\"]/name)";
-        final String result = "<name>Krishna Merle</name>";
-        XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
-            result
-        });
-    }
-
-    /**
-     * Test function sum().
-     */
-    @Ignore
-    @Test
-    public final void testSum() {
-        final String query = "fn:sum(/site/open_auctions/open_auction/bidder/increase/text())";
-        final String result = "96496.5";
+        final String query = "fn:exactly-one(\"a\")";
+        final String result = "a";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
         });
@@ -238,14 +227,12 @@ public class FunctionsXMarkTest {
 
     /**
      * Test function zero-or-one().
-     * alternative query: zero-or-one('a') -> result: a
      */
     @Ignore
     @Test
     public final void testZeroOrOne() {
-        final String query =
-            " for $i in /site/open_auctions/open_auction return zero-or-one($i/reserve[text()=\"20.54\"]/text())";
-        final String result = "20.54";
+        final String query = "fn:zero-or-one(\"a\")";
+        final String result = "a";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
         });
@@ -257,8 +244,8 @@ public class FunctionsXMarkTest {
     @Ignore
     @Test
     public final void testMax() {
-        final String query = "fn:max(for $i in /site/open_auctions/open_auction return $i/reserve/text())";
-        final String result = "4701.79";
+        final String query = "fn:max((2, 1, 5, 4, 3))";
+        final String result = "5";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
         });
@@ -270,8 +257,8 @@ public class FunctionsXMarkTest {
     @Ignore
     @Test
     public final void testMin() {
-        final String query = "fn:min(for $i in /site/open_auctions/open_auction return $i/reserve/text())";
-        final String result = "0.43";
+        final String query = "fn:min((2, 1, 5, 4, 3))";
+        final String result = "1";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
         });
@@ -283,8 +270,8 @@ public class FunctionsXMarkTest {
     @Ignore
     @Test
     public final void testEmpty() {
-        final String query = "fn:empty(for $i in /site/open_auctions/open_auction return $i/reserve/text())";
-        final String result = "false";
+        final String query = "fn:empty(/p:a)";
+        final String result = "true";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
         });
@@ -296,8 +283,8 @@ public class FunctionsXMarkTest {
     @Ignore
     @Test
     public final void testOneOrMore() {
-        final String query = "fn:one-or-more(\"a\")";
-        final String result = "a";
+        final String query = "fn:one-or-more(//b/c)";
+        final String result = "<c xmlns:p=\"ns\"/><c xmlns:p=\"ns\"/>";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
         });
@@ -309,7 +296,7 @@ public class FunctionsXMarkTest {
     @Ignore
     @Test
     public final void testExists() {
-        final String query = "fn:exists( ('a', 'b', 'c') )";
+        final String query = "fn:exists(('a', 'b', 'c'))";
         final String result = "true";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
@@ -348,8 +335,8 @@ public class FunctionsXMarkTest {
     @Ignore
     @Test
     public final void testLast() {
-        final String query = "/site/open_auctions/open_auction/reserve[last()]";
-        final String result = "<reserve>539.66</reserve>";
+        final String query = "//b[last()]";
+        final String result = "<b xmlns:p=\"ns\" p:x=\"y\"><c/>bar</b>";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
         });
@@ -374,9 +361,8 @@ public class FunctionsXMarkTest {
     @Ignore
     @Test
     public final void testNumber() {
-        final String query =
-            "/site/open_auctions/open_auction/bidder[personref[@person=\"person2436\"]]/increase/number()";
-        final String result = "12 12";
+        final String query = "fn:number('29.99')";
+        final String result = "29.99";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
         });
@@ -388,9 +374,8 @@ public class FunctionsXMarkTest {
     @Ignore
     @Test
     public final void testDistinctValues() {
-        final String query =
-            "fn:distinct-values(/site/open_auctions/open_auction/bidder[personref[@person=\"person2436\"]]/increase)";
-        final String result = "12.00";
+        final String query = "fn:distinct-values(('a', 'a'))";
+        final String result = "a";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
         });
@@ -402,8 +387,8 @@ public class FunctionsXMarkTest {
     @Ignore
     @Test
     public final void testRoot() {
-        final String query = "fn:root()/site/people/person[@id=\"person0\"]/name/text()";
-        final String result = "Krishna Merle";
+        final String query = "fn:root()//c";
+        final String result = "<c xmlns:p=\"ns\"/><c xmlns:p=\"ns\"/>";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
         });
@@ -428,9 +413,8 @@ public class FunctionsXMarkTest {
     @Ignore
     @Test
     public final void testElementAttributeInReturn() {
-        final String query =
-            "for $b in /site/open_auctions/open_auction/bidder[personref[@person=\"person2436\"]]/increase return <element attribute=\"{$b/text()}\"/>";
-        final String result = "<element attribute=\"12.00\"/><element attribute=\"12.00\"/>";
+        final String query = "for $x in //b/text() return <element attr=\"{$x}\"/>";
+        final String result = "<element attr=\"foo\"/><element attr=\"bar\"/>";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
         });
@@ -439,7 +423,6 @@ public class FunctionsXMarkTest {
     /**
      * Close all connections.
      */
-    @Ignore
     @After
     public final void tearDown() {
         try {
