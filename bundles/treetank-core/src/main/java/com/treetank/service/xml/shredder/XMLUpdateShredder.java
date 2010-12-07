@@ -34,11 +34,8 @@ import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import org.slf4j.LoggerFactory;
-
 import com.treetank.access.Database;
 import com.treetank.access.DatabaseConfiguration;
-import com.treetank.access.WriteTransaction;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -51,6 +48,8 @@ import com.treetank.node.ElementNode;
 import com.treetank.settings.EFixed;
 import com.treetank.utils.LogWrapper;
 import com.treetank.utils.TypedValue;
+
+import org.slf4j.LoggerFactory;
 
 /**
  * <h1>XMLUpdateShredder</h1>
