@@ -35,9 +35,13 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
 
     private static final String XMLINSERTSECOND = RESOURCES + File.separator + "revXMLsInsert1";
 
+    private static final String XMLINSERTTHIRD = RESOURCES + File.separator + "revXMLsInsert2";
+
     private static final String XMLDELETEFIRST = RESOURCES + File.separator + "revXMLsDelete";
 
     private static final String XMLDELETESECOND = RESOURCES + File.separator + "revXMLsDelete1";
+
+    private static final String XMLDELETETHIRD = RESOURCES + File.separator + "revXMLsDelete2";
 
     private static final String XMLSAME = RESOURCES + File.separator + "revXMLsSame";
 
@@ -79,6 +83,11 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
     }
 
     @Test
+    public void testInsertsThird() throws Exception {
+        test(XMLINSERTTHIRD);
+    }
+
+    @Test
     public void testDeletesFirst() throws Exception {
         test(XMLDELETEFIRST);
     }
@@ -88,30 +97,35 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
         test(XMLDELETESECOND);
     }
 
-    @Test
-    public void testAllFirst() throws Exception {
-        test(XMLALLFIRST);
-    }
-
-    @Test
-    public void testAllSecond() throws Exception {
-        test(XMLALLSECOND);
-    }
-
-    @Test
-    public void testAllThird() throws Exception {
-        test(XMLALLTHIRD);
-    }
-
-    @Test
-    public void testAllFourth() throws Exception {
-        test(XMLALLFOURTH);
-    }
-
-    @Test
-    public void testAllFifth() throws Exception {
-        test(XMLALLFIFTH);
-    }
+     @Test
+     public void testDeletesThird() throws Exception {
+     test(XMLDELETETHIRD);
+     }
+    
+     @Test
+     public void testAllFirst() throws Exception {
+     test(XMLALLFIRST);
+     }
+    
+     @Test
+     public void testAllSecond() throws Exception {
+     test(XMLALLSECOND);
+     }
+    
+     @Test
+     public void testAllThird() throws Exception {
+     test(XMLALLTHIRD);
+     }
+    
+     @Test
+     public void testAllFourth() throws Exception {
+     test(XMLALLFOURTH);
+     }
+    
+     @Test
+     public void testAllFifth() throws Exception {
+     test(XMLALLFIFTH);
+     }
 
     private void test(final String FOLDER) throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
@@ -171,7 +185,7 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
                 serializer.call();
                 final StringBuilder sBuilder = TestHelper.readFile(file.getAbsoluteFile(), false);
 
-                System.out.println(out.toString());
+                // System.out.println(out.toString());
 
                 final Diff myDiff = new Diff(sBuilder.toString(), out.toString());
                 assertTrue("pieces of XML are similar " + myDiff, myDiff.similar());

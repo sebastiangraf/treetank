@@ -120,7 +120,7 @@ public interface IReadTransaction {
     long getTransactionID();
 
     /**
-     * What is the revision number of this IReadTransaction?
+     * What is the revision number of this transaction?
      * 
      * @throws TreetankIOException
      *             if can't get Max Node Key.
@@ -298,7 +298,7 @@ public interface IReadTransaction {
     /**
      * Is this transaction closed?
      * 
-     * @return true of closed, false otherwise
+     * @return true if closed, false otherwise
      */
     boolean isClosed();
 }
