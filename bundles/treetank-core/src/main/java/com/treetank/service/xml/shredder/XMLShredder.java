@@ -76,7 +76,7 @@ public class XMLShredder implements Callable<Long> {
     protected transient XMLEventReader mReader;
 
     /** Append as first child or not. */
-    private final transient EShredderInsert mFirstChildAppend;
+    protected transient EShredderInsert mFirstChildAppend;
 
     /** Determines if changes are going to be commit right after shredding. */
     private transient EShredderCommit mCommit;
@@ -171,12 +171,11 @@ public class XMLShredder implements Callable<Long> {
                 switch (event.getEventType()) {
                 case XMLStreamConstants.START_ELEMENT:
                     level++;
-                    leftSiblingKeyStack =
-                        addNewElement(firstElement, leftSiblingKeyStack, (StartElement)event);
+                    leftSiblingKeyStack = addNewElement(leftSiblingKeyStack, (StartElement)event);
                     if (firstElement) {
+                        firstElement = false;
                         rootElement = event.asStartElement().getName();
                     }
-                    firstElement = false;
                     break;
                 case XMLStreamConstants.END_ELEMENT:
                     level--;
@@ -209,8 +208,6 @@ public class XMLShredder implements Callable<Long> {
     /**
      * Add a new element node.
      * 
-     * @param paramFirstElement
-     *            determines if it's the first element which should be inserted
      * @param paramLeftSiblingKeyStack
      *            stack used to determine if the new element has to be inserted
      *            as a right sibling or as a new child (in the latter case is
@@ -221,21 +218,20 @@ public class XMLShredder implements Callable<Long> {
      * @throws TreetankException
      *             if adding {@link ElementNode} fails
      */
-    protected final FastStack<Long> addNewElement(final boolean paramFirstElement,
-        final FastStack<Long> paramLeftSiblingKeyStack, final StartElement paramEvent)
-        throws TreetankException {
+    protected final FastStack<Long> addNewElement(final FastStack<Long> paramLeftSiblingKeyStack,
+        final StartElement paramEvent) throws TreetankException {
         assert paramLeftSiblingKeyStack != null && paramEvent != null;
         long key;
 
         final QName name = paramEvent.getName();
 
-        if (paramFirstElement && mFirstChildAppend == EShredderInsert.ADDASRIGHTSIBLING) {
+        if (mFirstChildAppend == EShredderInsert.ADDASRIGHTSIBLING) {
             if (mWtx.getNode().getKind() == ENodes.ROOT_KIND) {
                 throw new TreetankUsageException("Subtree can not be inserted as sibling of Root");
             }
             key = mWtx.insertElementAsRightSibling(name);
+            mFirstChildAppend = EShredderInsert.ADDASFIRSTCHILD;
         } else {
-
             if (paramLeftSiblingKeyStack.peek() == (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
                 key = mWtx.insertElementAsFirstChild(name);
             } else {

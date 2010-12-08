@@ -166,15 +166,29 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
     /** Determines where a delete in the tree occured. */
     private transient EDelete mDelete;
 
+    /** Cursor moved. */
     private enum EMoved {
+        /** Cursor moved to first node. */
         FIRSTNODE,
 
+        /** Cursor moved to first child or right sibling. */
         NOTTOPARENT,
 
+        /** Cursor either didn't move or it moved to parent or right sibl. of parent. */
         TOPARENT,
     }
 
+    /** Determines cursor movement in checkDescendants(StartElement). */
     private transient EMoved mMoved;
+
+    /** Determines how to add a new node. */
+    private enum EAdd {
+        /** Add as first child. */
+        ASFIRSTCHILD,
+
+        /** Add as right sibling. */
+        ASRIGHTSIBLING
+    }
 
     /** Determines if a node has been inserted into Treetank. */
     private transient boolean mInserted;
@@ -790,19 +804,19 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             }
 
             // Insert element as first child.
-            addNewElement(false, true, paramElement);
+            addNewElement(EAdd.ASFIRSTCHILD, paramElement);
             mInsert = EInsert.INTERMEDIATE;
             break;
         case INTERMEDIATE:
             // Inserts have been made before.
-            boolean insertAsFirstChild = true;
+            EAdd insertNode = EAdd.ASFIRSTCHILD;
 
             if (mInsertedEndTag) {
                 /*
                  * An end tag has been read while inserting, thus insert node as right sibling of parent node.
                  */
                 mInsertedEndTag = false;
-                insertAsFirstChild = false;
+                insertNode = EAdd.ASRIGHTSIBLING;
             }
 
             // Possibly move one sibling back if transaction already moved to next node.
@@ -812,10 +826,10 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
 
             // Make sure if transaction is on a text node the node is inserted as a right sibling.
             if (mWtx.getNode().getKind() == ENodes.TEXT_KIND) {
-                insertAsFirstChild = false;
+                insertNode = EAdd.ASRIGHTSIBLING;
             }
 
-            addNewElement(false, insertAsFirstChild, paramElement);
+            addNewElement(insertNode, paramElement);
             break;
         case ATMIDDLEBOTTOM:
             // Insert occurs at the middle or end of a subtree.
@@ -827,7 +841,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             }
 
             // Insert element as right sibling.
-            addNewElement(false, false, paramElement);
+            addNewElement(EAdd.ASRIGHTSIBLING, paramElement);
             mInsert = EInsert.INTERMEDIATE;
             break;
         default:
@@ -866,7 +880,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             mWtx.moveToParent();
 
             // Insert as first child.
-            addNewText(true, paramText);
+            addNewText(EAdd.ASFIRSTCHILD, paramText);
 
             // Move to next node if no end tag follows (thus cursor isn't moved to parent in processEndTag()).
             if (mReader.peek().getEventType() != XMLStreamConstants.END_ELEMENT) {
@@ -887,7 +901,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
         case INTERMEDIATE:
             // Inserts have been made before.
 
-            boolean insertAsFirstChild = true;
+            EAdd addNode = EAdd.ASFIRSTCHILD;
 
             if (mInsertedEndTag) {
                 /*
@@ -897,12 +911,12 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                 if (mMovedToRightSibling) {
                     mWtx.moveToLeftSibling();
                 }
-                insertAsFirstChild = false;
+                addNode = EAdd.ASRIGHTSIBLING;
                 mInsertedEndTag = false;
             }
 
             // Insert element as right sibling.
-            addNewText(insertAsFirstChild, paramText);
+            addNewText(addNode, paramText);
 
             // Move to next node if no end tag follows (thus cursor isn't moved to parent in processEndTag()).
             if (mReader.peek().getEventType() != XMLStreamConstants.END_ELEMENT) {
@@ -922,7 +936,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             }
 
             // Insert element as right sibling.
-            addNewText(false, paramText);
+            addNewText(EAdd.ASRIGHTSIBLING, paramText);
 
             // Move to next node.
             mWtx.moveToRightSibling();
@@ -1042,20 +1056,19 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
     /**
      * Add a new text node.
      * 
-     * @param paramAsFirstChild
-     *            If true text node is inserted as first child, otherwise as right sibling.
+     * @param paramAdd
+     *            determines how to add the node
      * @param paramTextEvent
-     *            The current event from the StAX parser.
+     *            the current {@link Character} event from the StAX parser.
      * @throws TreetankException
-     *             In case anything went wrong.
+     *             if adding text node fails
      */
-    private void addNewText(final boolean paramAsFirstChild, final Characters paramTextEvent)
-        throws TreetankException {
+    private void addNewText(final EAdd paramAdd, final Characters paramTextEvent) throws TreetankException {
         assert paramTextEvent != null;
         final String text = paramTextEvent.getData().trim();
         final ByteBuffer textByteBuffer = ByteBuffer.wrap(TypedValue.getBytes(text));
         if (textByteBuffer.array().length > 0) {
-            if (paramAsFirstChild) {
+            if (paramAdd == EAdd.ASFIRSTCHILD) {
                 mWtx.insertTextAsFirstChild(new String(textByteBuffer.array()));
             } else {
                 mWtx.insertTextAsRightSibling(new String(textByteBuffer.array()));
@@ -1066,25 +1079,23 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
     /**
      * Add a new element node.
      * 
-     * @param paramFirstElement
-     *            Determines if it's the first
-     * @param paramAsFirstChild
-     *            If true element node is inserted as first child, otherwise as right sibling.
+     * @param paramAdd
+     *            determines wether node is added as first child or right sibling
      * @param paramStartElement
-     *            The current {@link StartElement} .
+     *            the current {@link StartElement}
      * @throws TreetankException
-     *             In case anything went wrong.
+     *             if inserting node fails
      */
-    private void addNewElement(final boolean paramFirstElement, final boolean paramAsFirstChild,
-        final StartElement paramStartElement) throws TreetankException {
+    private void addNewElement(final EAdd paramAdd, final StartElement paramStartElement)
+        throws TreetankException {
         assert paramStartElement != null;
         final QName name = paramStartElement.getName();
         long key;
 
-        if (paramFirstElement) {
+        if (mFirstChildAppend == EShredderInsert.ADDASRIGHTSIBLING) {
             key = mWtx.insertElementAsRightSibling(name);
         } else {
-            if (paramAsFirstChild) {
+            if (paramAdd == EAdd.ASFIRSTCHILD) {
                 key = mWtx.insertElementAsFirstChild(name);
             } else {
                 key = mWtx.insertElementAsRightSibling(name);
@@ -1218,10 +1229,9 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                         found = mWtx.moveToParent();
                         mDescendantLevel--;
                     }
-                    
+
                     if (mWtx.getNode().getKind() == ENodes.ELEMENT_KIND
-                        && mWtx.getQNameOfCurrentNode().equals(paramElem.getName())
-                        && mDescendantLevel == 0) {
+                        && mWtx.getQNameOfCurrentNode().equals(paramElem.getName()) && mDescendantLevel == 0) {
                         found = true;
                         lastToCheck = true;
                     }
