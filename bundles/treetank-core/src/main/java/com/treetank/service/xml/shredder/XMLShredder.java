@@ -31,18 +31,13 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.Attribute;
-import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import org.slf4j.LoggerFactory;
-
 import com.treetank.access.Database;
 import com.treetank.access.DatabaseConfiguration;
-import com.treetank.access.WriteTransaction;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
@@ -54,6 +49,8 @@ import com.treetank.settings.EFixed;
 import com.treetank.utils.FastStack;
 import com.treetank.utils.LogWrapper;
 import com.treetank.utils.TypedValue;
+
+import org.slf4j.LoggerFactory;
 
 /**
  * This class appends a given {@link XMLStreamReader} to a {@link IWriteTransaction}. The content of the
@@ -107,14 +104,15 @@ public class XMLShredder implements Callable<Long> {
      * Normal constructor to invoke a shredding process on a existing {@link WriteTransaction}.
      * 
      * @param paramWtx
-     *            {@link IWriteTransaction} where the new XML Fragment should be placed.
+     *            {@link IWriteTransaction} where the new XML Fragment should be placed
      * @param paramReader
-     *            Parses the XML Fragment.
+     *            {@link XMLEventReader} to parse the xml fragment, which should be inserted
      * @param paramAddAsFirstChild
-     *            If the insert is occuring on a node in an existing tree. <code>false</code> is not possible
-     *            when wtx is on root node.
+     *            determines if the insert is occuring on a node in an existing tree. <code>false</code> is
+     *            not possible
+     *            when wtx is on root node
      * @param paramCommit
-     *            Determines if inserted nodes should be commited right afterwards.
+     *            determines if inserted nodes should be commited right afterwards
      * @throws TreetankUsageException
      *             if insertasfirstChild && updateOnly is both true OR if wtx is
      *             not pointing to doc-root and updateOnly= true
@@ -135,8 +133,8 @@ public class XMLShredder implements Callable<Long> {
      * Invoking the shredder.
      * 
      * @throws TreetankException
-     *             Any kind of Treetank exception which has occured.
-     * @return revision of file.
+     *             if any kind of Treetank exception which has occured
+     * @return revision of file
      */
     @Override
     public Long call() throws TreetankException {
@@ -153,7 +151,7 @@ public class XMLShredder implements Callable<Long> {
      * Insert new content based on a StAX parser {@link XMLStreamReader}.
      * 
      * @throws TreetankException
-     *             Handling Treetank exceptions.
+     *             if something went wrong while inserting
      */
     protected final void insertNewContent() throws TreetankException {
         try {
@@ -212,16 +210,16 @@ public class XMLShredder implements Callable<Long> {
      * Add a new element node.
      * 
      * @param paramFirstElement
-     *            Is it the first element?
+     *            determines if it's the first element which should be inserted
      * @param paramLeftSiblingKeyStack
-     *            Stack used to determine if the new element has to be inserted
+     *            stack used to determine if the new element has to be inserted
      *            as a right sibling or as a new child (in the latter case is
-     *            NULL on top of the stack).
+     *            NULL on top of the stack)
      * @param paramEvent
-     *            The current event from the StAX parser.
-     * @return the modified stack.
+     *            the current event from the StAX parser
+     * @return the modified stack
      * @throws TreetankException
-     *             In case anything went wrong.
+     *             if adding {@link ElementNode} fails
      */
     protected final FastStack<Long> addNewElement(final boolean paramFirstElement,
         final FastStack<Long> paramLeftSiblingKeyStack, final StartElement paramEvent)
@@ -269,14 +267,14 @@ public class XMLShredder implements Callable<Long> {
      * Add a new text node.
      * 
      * @param paramLeftSiblingKeyStack
-     *            Stack used to determine if the new element has to be inserted
+     *            stack used to determine if the new element has to be inserted
      *            as a right sibling or as a new child (in the latter case is
-     *            NULL on top of the stack).
+     *            NULL on top of the stack)
      * @param paramText
-     *            The text string to add.
-     * @return the modified stack.
+     *            the text string to add
+     * @return the modified stack
      * @throws TreetankException
-     *             In case anything went wrong.
+     *             if adding text fails
      */
     protected final FastStack<Long> addNewText(final FastStack<Long> paramLeftSiblingKeyStack,
         final String paramText) throws TreetankException {
@@ -336,12 +334,12 @@ public class XMLShredder implements Callable<Long> {
      * Create a new StAX reader on a file.
      * 
      * @param paramFile
-     *            The XML file to parse.
-     * @return an {@link XMLEventReader}.
+     *            the XML file to parse
+     * @return an {@link XMLEventReader}
      * @throws IOException
-     *             In case of any I/O error.
+     *             if I/O operation fails
      * @throws XMLStreamException
-     *             In case of any XML parser error.
+     *             if any parsing error occurs
      */
     public static synchronized XMLEventReader createReader(final File paramFile) throws IOException,
         XMLStreamException {
@@ -355,12 +353,12 @@ public class XMLShredder implements Callable<Long> {
      * Create a new StAX reader based on a List of {@link XMLEvent}s.
      * 
      * @param paramEvents
-     *            {@link XMLEvent}s.
-     * @return an {@link XMLEventReader}.
+     *            {@link XMLEvent}s
+     * @return an {@link XMLEventReader}
      * @throws IOException
-     *             In case of any I/O error.
+     *             if I/O operation fails
      * @throws XMLStreamException
-     *             In case of any XML parser error.
+     *             if any parsing error occurs
      */
     public static synchronized XMLEventReader createListReader(final List<XMLEvent> paramEvents)
         throws IOException, XMLStreamException {

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,6 +30,8 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
@@ -198,7 +201,7 @@ public final class WikipediaImport implements IImport<StartElement> {
 
                 switch (event.getEventType()) {
                 case XMLStreamConstants.START_ELEMENT:
-                    if (XMLUpdateShredder.checkStAXStartElement(event.asStartElement(), rev)) {
+                    if (checkStAXStartElement(event.asStartElement(), rev)) {
                         // StAX parser in rev metadata.
                         isFirst = false;
                         mIsRev = true;
@@ -301,14 +304,14 @@ public final class WikipediaImport implements IImport<StartElement> {
         final char paramDateRange) throws XMLStreamException, TreetankException {
         XMLEvent event = paramEvent;
 
-        if (XMLUpdateShredder.checkStAXStartElement(event.asStartElement(), paramID)) {
+        if (checkStAXStartElement(event.asStartElement(), paramID)) {
             event = mReader.nextEvent();
             mPageEvents.add(event);
 
             if (!mIsRev) {
                 mIdText = event.asCharacters().getData();
             }
-        } else if (XMLUpdateShredder.checkStAXStartElement(event.asStartElement(), paramTimestamp)) {
+        } else if (checkStAXStartElement(event.asStartElement(), paramTimestamp)) {
             // Timestamp start tag found.
             event = mReader.nextEvent();
             mPageEvents.add(event);
@@ -336,7 +339,7 @@ public final class WikipediaImport implements IImport<StartElement> {
             final QName id = paramID.getName();
             final String query =
                 "//" + qNameToString(page) + "[fn:string(" + qNameToString(id) + ") = '" + mIdText + "']";
-            System.out.println(query);
+//            System.out.println(query);
             mWTX.moveToDocumentRoot();
             final XPathAxis axis = new XPathAxis(mWTX, query);
 
@@ -446,6 +449,80 @@ public final class WikipediaImport implements IImport<StartElement> {
         }
         assert mWTX.getNode().getKind() == ENodes.ELEMENT_KIND;
         assert mWTX.getQNameOfCurrentNode().equals(paramPage.getName());
+    }
+    
+    /**
+     * Check if start element of two StAX parsers match.
+     * 
+     * @param mStartTag
+     *            StartTag of the StAX parser, where it is currently (the "real"
+     *            StAX parser over the whole document).
+     * @param mElem
+     *            StartTag to check against.
+     * @return True if start elements match.
+     * @throws XMLStreamException
+     *             handling XML Stream Exception
+     */
+    static boolean checkStAXStartElement(final StartElement mStartTag, final StartElement mElem)
+        throws XMLStreamException {
+        assert mStartTag != null && mElem != null;
+        boolean retVal = false;
+        if (mStartTag.getEventType() == XMLStreamConstants.START_ELEMENT
+            && mStartTag.getName().equals(mElem.getName())) {
+            // Check attributes.
+            boolean foundAtts = false;
+            boolean hasAtts = false;
+            for (final Iterator<?> itStartTag = mStartTag.getAttributes(); itStartTag.hasNext();) {
+                hasAtts = true;
+                final Attribute attStartTag = (Attribute)itStartTag.next();
+                for (final Iterator<?> itElem = mElem.getAttributes(); itElem.hasNext();) {
+                    final Attribute attElem = (Attribute)itElem.next();
+                    if (attStartTag.getName().equals(attElem.getName())
+                        && attStartTag.getName().equals(attElem.getName())) {
+                        foundAtts = true;
+                        break;
+                    }
+                }
+
+                if (!foundAtts) {
+                    break;
+                }
+            }
+            if (!hasAtts) {
+                foundAtts = true;
+            }
+
+            // Check namespaces.
+            boolean foundNamesps = false;
+            boolean hasNamesps = false;
+            for (final Iterator<?> itStartTag = mStartTag.getNamespaces(); itStartTag.hasNext();) {
+                hasNamesps = true;
+                final Namespace nsStartTag = (Namespace)itStartTag.next();
+                for (final Iterator<?> itElem = mElem.getNamespaces(); itElem.hasNext();) {
+                    final Namespace nsElem = (Namespace)itElem.next();
+                    if (nsStartTag.getName().equals(nsElem.getName())
+                        && nsStartTag.getName().equals(nsElem.getName())) {
+                        foundNamesps = true;
+                        break;
+                    }
+                }
+
+                if (!foundNamesps) {
+                    break;
+                }
+            }
+            if (!hasNamesps) {
+                foundNamesps = true;
+            }
+
+            // Check if qname, atts and namespaces are the same.
+            if (foundAtts && foundNamesps) {
+                retVal = true;
+            } else {
+                retVal = false;
+            }
+        }
+        return retVal;
     }
 
     /**
