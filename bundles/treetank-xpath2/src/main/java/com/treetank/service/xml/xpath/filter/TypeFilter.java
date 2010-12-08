@@ -74,4 +74,13 @@ public class TypeFilter extends AbsFilter implements IFilter {
         return getTransaction().getNode().getTypeKey() == mType;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setTransaction(IReadTransaction rtx) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

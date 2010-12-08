@@ -105,5 +105,14 @@ public class VariableAxis extends AbsAxis implements IAxis {
 
         mVarRefs.add(mObserver);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setTransaction(final IReadTransaction rtx) {
+      super.setTransaction(rtx);
+      mBindingSeq.setTransaction(rtx);
+    }
 
 }

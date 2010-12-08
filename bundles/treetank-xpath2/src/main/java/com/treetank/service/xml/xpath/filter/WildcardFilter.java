@@ -93,4 +93,13 @@ public class WildcardFilter extends AbsFilter implements IFilter {
         return false;
 
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setTransaction(IReadTransaction rtx) {
+        // TODO Auto-generated method stub
+        
+    }
 }

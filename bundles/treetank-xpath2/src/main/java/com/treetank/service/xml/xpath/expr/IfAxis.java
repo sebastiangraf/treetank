@@ -109,5 +109,16 @@ public class IfAxis extends AbsAxis implements IAxis {
             return false;
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setTransaction(final IReadTransaction rtx) {
+      super.setTransaction(rtx);
+      mIf.setTransaction(rtx);
+      mElse.setTransaction(rtx);
+      mThen.setTransaction(rtx);
+    }
 
 }

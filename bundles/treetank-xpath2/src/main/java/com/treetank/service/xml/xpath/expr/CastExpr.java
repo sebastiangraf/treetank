@@ -123,5 +123,14 @@ public class CastExpr extends AbstractExpression implements IAxis {
         }
 
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setTransaction(final IReadTransaction rtx) {
+      super.setTransaction(rtx);
+      mSourceExpr.setTransaction(rtx);
+    }
 
 }

@@ -120,5 +120,15 @@ public class OrExpr extends AbstractExpression implements IAxis {
         getTransaction().moveTo(itemKey);
 
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setTransaction(final IReadTransaction rtx) {
+      super.setTransaction(rtx);
+      mOp1.setTransaction(rtx);
+      mOp2.setTransaction(rtx);
+    }
 
 }

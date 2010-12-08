@@ -60,4 +60,13 @@ public class NestedFilter extends AbsFilter implements IFilter {
 
         return filterResult;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setTransaction(IReadTransaction rtx) {
+        // TODO Auto-generated method stub
+        
+    }
 }

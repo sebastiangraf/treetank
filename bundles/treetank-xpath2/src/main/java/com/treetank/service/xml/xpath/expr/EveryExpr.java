@@ -103,5 +103,18 @@ public class EveryExpr extends AbstractExpression implements IAxis {
         getTransaction().moveTo(mItemKey);
 
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setTransaction(final IReadTransaction rtx) {
+      super.setTransaction(rtx);
+      for (IAxis axis : mVars) {
+        axis.setTransaction(rtx);
+      }
+      
+      mSatisfy.setTransaction(rtx);
+    }
 
 }
