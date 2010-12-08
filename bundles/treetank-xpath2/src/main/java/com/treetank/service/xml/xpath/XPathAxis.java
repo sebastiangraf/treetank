@@ -24,6 +24,7 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.AbsAxis;
+import com.treetank.utils.FastStack;
 
 /**
  * <h1>XPath Axis</h1>
@@ -82,6 +83,7 @@ public class XPathAxis extends AbsAxis implements IAxis {
 	/** Size of thread pool for executor service. */
 	private static int THREADPOOLSIZE = 2;
 
+
 	/**
 	 * <p>
 	 * Constructor initializing internal state.
@@ -103,12 +105,10 @@ public class XPathAxis extends AbsAxis implements IAxis {
 		super(rtx);
 		/** Initializing executor service with fixed thread pool. */
 		executor = Executors.newFixedThreadPool(THREADPOOLSIZE);
-
 		// start parsing and get execution plans
 		final XPathParser parser = new XPathParser(getTransaction(), mQuery);
 		parser.parseQuery();
 		mPipeline = parser.getQueryPipeline();
-
 	}
 
 	/**

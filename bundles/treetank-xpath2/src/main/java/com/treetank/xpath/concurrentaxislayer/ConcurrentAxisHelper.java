@@ -31,6 +31,7 @@ import com.treetank.service.xml.xpath.expr.LiteralExpr;
 import com.treetank.service.xml.xpath.expr.SequenceAxis;
 import com.treetank.service.xml.xpath.expr.UnionAxis;
 import com.treetank.service.xml.xpath.filter.DupFilterAxis;
+import com.treetank.settings.EFixed;
 
 /**
  * <h1>ConcurrentAxisHelper</h1>
@@ -75,10 +76,10 @@ public class ConcurrentAxisHelper implements Runnable {
    */
   public ConcurrentAxisHelper(
       final IReadTransaction rtx,
-      final IAxis axis,
+ final IAxis axis,
       final BlockingQueue<Long> results) {
     mRTX = new ReadTransaction((ReadTransaction) rtx);
-    mAxis = axis;
+      mAxis = axis;
     mAxis.setTransaction(mRTX);
     mResults = results;
     callNext =
@@ -104,7 +105,7 @@ public class ConcurrentAxisHelper implements Runnable {
       }
       try {
         //store result in queue as soon as there is space left
-        mResults.put(mAxis.getTransaction().getNodeKey());
+        mResults.put(mAxis.getTransaction().getNode().getNodeKey());
       } catch (InterruptedException e) {
         e.printStackTrace();
 
@@ -113,7 +114,7 @@ public class ConcurrentAxisHelper implements Runnable {
 
     try {
       //Mark end of result sequence by the NULL_NODE_KEY
-      mResults.put(IReadTransaction.NULL_NODE_KEY);
+      mResults.put((Long)EFixed.NULL_NODE_KEY.getStandardProperty());
     } catch (InterruptedException e) {
       e.printStackTrace();
     }

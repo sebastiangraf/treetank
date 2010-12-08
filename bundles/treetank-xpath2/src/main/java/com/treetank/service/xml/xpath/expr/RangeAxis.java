@@ -122,5 +122,12 @@ public class RangeAxis extends AbsAxis implements IAxis {
             return false;
         }
     }
+    
+    @Override
+    public void setTransaction(final IReadTransaction rtx) {
+      super.setTransaction(rtx);
+      mTo.setTransaction(rtx);
+      mFrom.setTransaction(rtx);
+    }
 
 }

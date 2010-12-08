@@ -25,6 +25,7 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
 import com.treetank.service.xml.xpath.XPathAxis;
+import com.treetank.settings.*;
 
 /**
  * <h1>ConcurrentAxis</h1>
@@ -124,7 +125,9 @@ public class ConcurrentAxis extends AbsAxis implements IAxis {
       return false;
     }
 
-    long result = IReadTransaction.NULL_NODE_KEY;
+    //long result = IReadTransaction.NULL_NODE_KEY;
+    long result = (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
+    
 
     try {
       //get result from producer as soon as it is available
@@ -134,7 +137,7 @@ public class ConcurrentAxis extends AbsAxis implements IAxis {
     }
 
     //NULL_NODE_KEY marks end of the sequence computed by the producer
-    if (result != IReadTransaction.NULL_NODE_KEY) {
+    if (result != (Long)EFixed.NULL_NODE_KEY.getStandardProperty()) {
       getTransaction().moveTo(result);
       return true;
     }

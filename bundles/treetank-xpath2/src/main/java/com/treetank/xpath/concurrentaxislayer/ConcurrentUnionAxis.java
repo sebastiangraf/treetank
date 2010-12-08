@@ -18,12 +18,13 @@
 
 package com.treetank.xpath.concurrentaxislayer;
 
-import org.treetank.api.IAxis;
-import org.treetank.api.IReadTransaction;
-import org.treetank.axislayer.AbstractAxis;
-import org.treetank.xpath.XPathAxis;
-import org.treetank.xpath.functions.XPathError;
-import org.treetank.xpath.functions.XPathError.ErrorType;
+import com.treetank.api.IAxis;
+import com.treetank.api.IReadTransaction;
+import com.treetank.axis.AbsAxis;
+import com.treetank.service.xml.xpath.XPathAxis;
+import com.treetank.service.xml.xpath.functions.XPathError;
+import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
+import com.treetank.settings.EFixed;
 
 /**
  * <h1>ConcurrentUnionAxis</h1>
@@ -35,7 +36,7 @@ import org.treetank.xpath.functions.XPathError.ErrorType;
  * concept of .... Additionally this guarantees the document order.
  * </p>
  */
-public class ConcurrentUnionAxis extends AbstractAxis implements IAxis {
+public class ConcurrentUnionAxis extends AbsAxis implements IAxis {
 
   /** First operand sequence. */
   private final ConcurrentAxis mOp1;
@@ -163,7 +164,7 @@ public class ConcurrentUnionAxis extends AbstractAxis implements IAxis {
    * @return the next result of the axis. If the axis has no next result, the 
    *  null node key is returned. */
   private long getNext(final IAxis axis) {
-    return (axis.hasNext()) ? axis.next() : IReadTransaction.NULL_NODE_KEY;
+    return (axis.hasNext()) ? axis.next() : (Long)EFixed.NULL_NODE_KEY.getStandardProperty();
 
   }
   
@@ -184,6 +185,9 @@ public class ConcurrentUnionAxis extends AbstractAxis implements IAxis {
 
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void setTransaction(final IReadTransaction rtx) {
     super.setTransaction(rtx);

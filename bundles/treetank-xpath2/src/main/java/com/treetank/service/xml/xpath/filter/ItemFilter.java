@@ -50,4 +50,13 @@ public class ItemFilter extends AbsFilter implements IFilter {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setTransaction(IReadTransaction rtx) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

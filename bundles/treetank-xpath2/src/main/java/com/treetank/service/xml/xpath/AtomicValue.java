@@ -104,7 +104,7 @@ public class AtomicValue implements IItem {
     /**
      * {@inheritDoc}
      */
-    public void setNodeKey(final long mItemKey) {
+    public final void setNodeKey(long mItemKey) {
 
         this.mItemKey = mItemKey;
     }
@@ -121,7 +121,6 @@ public class AtomicValue implements IItem {
      * {@inheritDoc}
      */
     public byte[] getRawValue() {
-
         return mValue.clone();
     }
 

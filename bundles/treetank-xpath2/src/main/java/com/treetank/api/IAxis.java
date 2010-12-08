@@ -14,17 +14,15 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
  */
-
 package com.treetank.api;
 
 import java.util.Iterator;
 
-import com.treetank.api.IReadTransaction;
 
 /**
  * <h1>IAxis</h1>
  * 
- * <h2>Description</h2>
+ * <h2>Descript¯ion</h2>
  * 
  * <p>
  * Interface to iterate over nodes according to a given axis step without storing intermediate lists.
@@ -142,10 +140,10 @@ public interface IAxis extends Iterator<Long>, Iterable<Long> {
      */
     IReadTransaction getTransaction();
     
-//    /**
-//     * Sets transaction to which this axis should be bound. 
-//     * @param rtx
-//     */
-//    void setTransaction(final IReadTransaction rtx);
+    /**
+     * Sets transaction to which this axis should be bound. 
+     * @param rtx
+     */
+    void setTransaction(final IReadTransaction rtx);
 
 }

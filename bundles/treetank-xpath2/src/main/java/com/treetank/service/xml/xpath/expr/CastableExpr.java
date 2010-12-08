@@ -126,5 +126,14 @@ public class CastableExpr extends AbstractExpression implements IAxis {
         getTransaction().moveTo(mItemKey);
 
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setTransaction(final IReadTransaction rtx) {
+      super.setTransaction(rtx);
+      mSourceExpr.setTransaction(rtx);
+    }
 
 }

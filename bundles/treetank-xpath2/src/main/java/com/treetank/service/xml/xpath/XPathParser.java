@@ -52,6 +52,7 @@ import com.treetank.service.xml.xpath.filter.TypeFilter;
 import com.treetank.service.xml.xpath.filter.WildcardFilter;
 import com.treetank.service.xml.xpath.functions.XPathError;
 import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
+import com.treetank.utils.FastStack;
 import com.treetank.utils.TypedValue;
 
 /**
@@ -96,7 +97,7 @@ public final class XPathParser implements XPathConstants {
 		mRTX = rtx;
 		mScanner = new XPathScanner(mQuery);
 		mPipeBuilder = new PipelineBuilder();
-
+	
 	}
 
 	/**
