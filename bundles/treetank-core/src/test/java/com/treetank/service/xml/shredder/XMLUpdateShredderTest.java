@@ -43,6 +43,8 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
 
     private static final String XMLDELETETHIRD = RESOURCES + File.separator + "revXMLsDelete2";
 
+    private static final String XMLDELETEFOURTH = RESOURCES + File.separator + "revXMLsDelete3";
+
     private static final String XMLSAME = RESOURCES + File.separator + "revXMLsSame";
 
     private static final String XMLALLFIRST = RESOURCES + File.separator + "revXMLsAll";
@@ -97,35 +99,40 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
         test(XMLDELETESECOND);
     }
 
-     @Test
-     public void testDeletesThird() throws Exception {
-     test(XMLDELETETHIRD);
-     }
-    
-     @Test
-     public void testAllFirst() throws Exception {
-     test(XMLALLFIRST);
-     }
-    
-     @Test
-     public void testAllSecond() throws Exception {
-     test(XMLALLSECOND);
-     }
-    
-     @Test
-     public void testAllThird() throws Exception {
-     test(XMLALLTHIRD);
-     }
-    
-     @Test
-     public void testAllFourth() throws Exception {
-     test(XMLALLFOURTH);
-     }
-    
-     @Test
-     public void testAllFifth() throws Exception {
-     test(XMLALLFIFTH);
-     }
+    @Test
+    public void testDeletesThird() throws Exception {
+        test(XMLDELETETHIRD);
+    }
+
+    @Test
+    public void testDeletesFourth() throws Exception {
+        test(XMLDELETEFOURTH);
+    }
+
+    @Test
+    public void testAllFirst() throws Exception {
+        test(XMLALLFIRST);
+    }
+
+    @Test
+    public void testAllSecond() throws Exception {
+        test(XMLALLSECOND);
+    }
+
+    @Test
+    public void testAllThird() throws Exception {
+        test(XMLALLTHIRD);
+    }
+
+    @Test
+    public void testAllFourth() throws Exception {
+        test(XMLALLFOURTH);
+    }
+
+    @Test
+    public void testAllFifth() throws Exception {
+        test(XMLALLFIFTH);
+    }
 
     private void test(final String FOLDER) throws Exception {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
@@ -144,11 +151,11 @@ public final class XMLUpdateShredderTest extends XMLTestCase {
         Collections.sort(list, new Comparator<Object>() {
             public int compare(final Object paramFirst, final Object paramSecond) {
                 final String firstName =
-                    ((File)paramFirst).getName().toString().substring(0,
-                        ((File)paramFirst).getName().toString().indexOf('.'));
+                    ((File)paramFirst).getName().toString()
+                        .substring(0, ((File)paramFirst).getName().toString().indexOf('.'));
                 final String secondName =
-                    ((File)paramSecond).getName().toString().substring(0,
-                        ((File)paramSecond).getName().toString().indexOf('.'));
+                    ((File)paramSecond).getName().toString()
+                        .substring(0, ((File)paramSecond).getName().toString().indexOf('.'));
                 if (Integer.parseInt(firstName) < Integer.parseInt(secondName)) {
                     return -1;
                 } else if (Integer.parseInt(firstName) > Integer.parseInt(secondName)) {

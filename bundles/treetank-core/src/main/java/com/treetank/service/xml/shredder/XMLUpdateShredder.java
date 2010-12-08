@@ -67,8 +67,8 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER =
-        new LogWrapper(LoggerFactory.getLogger(XMLUpdateShredder.class));
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(
+        LoggerFactory.getLogger(XMLUpdateShredder.class));
 
     /** File to parse. */
     protected transient File mFile;
@@ -99,6 +99,9 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
 
     /** Last node key. */
     private transient long mLastNodeKey;
+
+    /** Last node key in descendant check. */
+    private transient long mLastDescCheckNodeKey;
 
     /**
      * The key of the node, when the nodes are equal if at all (used to check
@@ -162,6 +165,16 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
 
     /** Determines where a delete in the tree occured. */
     private transient EDelete mDelete;
+
+    private enum EMoved {
+        FIRSTNODE,
+
+        NOTTOPARENT,
+
+        TOPARENT,
+    }
+
+    private transient EMoved mMoved;
 
     /** Determines if a node has been inserted into Treetank. */
     private transient boolean mInserted;
@@ -502,7 +515,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                 mWtx.moveToRightSibling();
                 mMovedToRightSibling = true;
 
-                skipWhitespaces();
+                skipWhitespaces(mReader);
                 if (mReader.peek().getEventType() == XMLStreamConstants.END_ELEMENT) {
                     /*
                      * Means next event is an end tag in StAX reader, but something different where the
@@ -556,7 +569,8 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                  */
                 switch (paramEvent.getEventType()) {
                 case XMLStreamConstants.START_ELEMENT:
-                    mFound = checkDescendants(paramEvent.asStartElement(), true);
+                    mMoved = EMoved.FIRSTNODE;
+                    mFound = checkDescendants(paramEvent.asStartElement());
                     break;
                 case XMLStreamConstants.CHARACTERS:
                     mFound = checkText(paramEvent.asCharacters());
@@ -604,7 +618,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
         // checkIfLastNode(false);
 
         // Skip whitespace events.
-        skipWhitespaces();
+        skipWhitespaces(mReader);
 
         // Move to right sibling if next node isn't an end tag.
         if (mReader.peek().getEventType() != XMLStreamConstants.END_ELEMENT) {
@@ -688,7 +702,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
         LOGWRAPPER.debug("FOUND: " + mWtx.getQNameOfCurrentNode() + mWtx.getNode().getNodeKey());
 
         // Skip whitespace events.
-        skipWhitespaces();
+        skipWhitespaces(mReader);
 
         // Move transaction.
         final ElementNode element = (ElementNode)mWtx.getNode();
@@ -733,13 +747,15 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
     /**
      * Skip any whitespace event.
      * 
+     * @param paramReader
+     *            the StAX {@link XMLEventReader} to use
      * @throws XMLStreamException
-     *             In case anything fails while moving the StAX parser.
+     *             if any parsing error occurs while moving the StAX parser
      */
-    private void skipWhitespaces() throws XMLStreamException {
-        while (mReader.peek().getEventType() == XMLStreamConstants.CHARACTERS
-            && mReader.peek().asCharacters().isWhiteSpace()) {
-            mReader.nextEvent();
+    private void skipWhitespaces(final XMLEventReader paramReader) throws XMLStreamException {
+        while (paramReader.peek().getEventType() == XMLStreamConstants.CHARACTERS
+            && paramReader.peek().asCharacters().isWhiteSpace()) {
+            paramReader.nextEvent();
         }
     }
 
@@ -1096,21 +1112,17 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * 
      * @param paramElem
      *            the start element where the StAX parser currently is
-     * @param paramFirst
-     *            determines if it is the first call the method is invoked (a
-     *            new StAX parser
      * @return true if they match, otherwise false
      * @throws XMLStreamException
      *             if streamining exception in the source document
      * @throws IOException
      *             if any I/O exception while opening the target file
      */
-    private boolean checkDescendants(final StartElement paramElem, final boolean paramFirst)
-        throws XMLStreamException, IOException {
+    private boolean checkDescendants(final StartElement paramElem) throws XMLStreamException, IOException {
         assert paramElem != null;
         boolean found = false;
         boolean lastToCheck = false;
-        if (paramFirst) {
+        if (mMoved == EMoved.FIRSTNODE) {
             // Initialize level.
             mDescendantLevel = 0;
             /*
@@ -1151,26 +1163,25 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
         boolean moved = false;
         final AbsStructNode node = (AbsStructNode)mWtx.getNode();
 
-        if (node.hasFirstChild()) {
-            moved = mWtx.moveToFirstChild();
-            mDescendantLevel++;
-        } else if (node.hasRightSibling()) {
-            moved = mWtx.moveToRightSibling();
-            if (mDescendantLevel == 0) {
-                moved = false;
-            }
+        if (mMoved == EMoved.TOPARENT) {
+            mMoved = EMoved.NOTTOPARENT;
+            moved = true;
         } else {
-            mWtx.moveToParent();
-            mDescendantLevel--;
-
-            if (((AbsStructNode)mWtx.getNode()).hasRightSibling()) {
+            if (node.hasFirstChild()) {
+                moved = mWtx.moveToFirstChild();
+                mDescendantLevel++;
+            } else if (node.hasRightSibling()) {
                 moved = mWtx.moveToRightSibling();
+            } else {
+                moved = true;
             }
         }
 
         // Check if nodes are equal.
         if (moved) {
+            mMoved = EMoved.NOTTOPARENT;
             if (mParser.hasNext()) {
+                skipWhitespaces(mParser);
                 final XMLEvent event = mParser.nextEvent();
 
                 switch (event.getEventType()) {
@@ -1181,26 +1192,51 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
                     found = checkText(event.asCharacters());
                     break;
                 case XMLStreamConstants.END_ELEMENT:
-                    if (node.getKind() == ENodes.ELEMENT_KIND) {
-                        if (node.hasFirstChild()) {
+                    mMoved = EMoved.TOPARENT;
+                    if (mWtx.getNode().getKind() == ENodes.ELEMENT_KIND) {
+                        // Move cursor to parent.
+                        if (mWtx.getNode().getNodeKey() == mLastDescCheckNodeKey) {
+                            /*
+                             * An end tag must have been parsed immediately before and it must have been an
+                             * empty element
+                             * at the end of a subtree, thus move this time to parent node.
+                             */
+                            assert mWtx.getNode().hasParent()
+                                && mWtx.getNode().getKind() == ENodes.ELEMENT_KIND;
                             found = mWtx.moveToParent();
+                            mDescendantLevel--;
                         } else {
-                            if (mWtx.getQNameOfCurrentNode().equals(paramElem.getName())
-                                && mDescendantLevel == 0) {
+                            if (((AbsStructNode)mWtx.getNode()).hasFirstChild()) {
+                                found = mWtx.moveToParent();
+                                mDescendantLevel--;
+                            } else {
                                 found = true;
-                                lastToCheck = true;
+                                mLastDescCheckNodeKey = mWtx.getNode().getNodeKey();
                             }
                         }
                     } else if (node.getKind() == ENodes.TEXT_KIND) {
                         found = mWtx.moveToParent();
+                        mDescendantLevel--;
                     }
+                    
+                    if (mWtx.getNode().getKind() == ENodes.ELEMENT_KIND
+                        && mWtx.getQNameOfCurrentNode().equals(paramElem.getName())
+                        && mDescendantLevel == 0) {
+                        found = true;
+                        lastToCheck = true;
+                    }
+
+                    if (((AbsStructNode)mWtx.getNode()).hasRightSibling()) {
+                        found = mWtx.moveToRightSibling();
+                    }
+
                     break;
                 default:
                     // Do nothing.
                 }
 
                 if (found && !lastToCheck) {
-                    checkDescendants(paramElem, false);
+                    checkDescendants(paramElem);
                 }
             }
         }
