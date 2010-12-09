@@ -14,7 +14,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.treetank.service.xml.xpath.xmark;
+package com.treetank.service.xml.xpath;
 
 import java.io.File;
 
@@ -26,7 +26,6 @@ import com.treetank.api.ISession;
 import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.service.xml.xpath.XPathAxis;
-import com.treetank.service.xml.xpath.XPathStringChecker;
 
 import org.junit.After;
 import org.junit.Before;
@@ -38,7 +37,7 @@ import org.junit.Test;
  * 
  * @author Patrick Lang, Konstanz University
  */
-public class MissingFunctionsTest {
+public class FunctionsTest {
 
     /** XML file name to test. */
     private static final String XMLFILE = "test.xml";
@@ -55,7 +54,7 @@ public class MissingFunctionsTest {
     /**
      * Constructor, just to meet checkstyle requirements.
      */
-    public MissingFunctionsTest() {
+    public FunctionsTest() {
 
     }
 
