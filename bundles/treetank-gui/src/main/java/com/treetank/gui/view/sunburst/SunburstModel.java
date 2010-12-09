@@ -21,12 +21,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
@@ -36,7 +31,6 @@ import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.gui.ReadDB;
 import com.treetank.gui.view.sunburst.SunburstItem.StructType;
-import com.treetank.gui.view.sunburst.SunburstView.Embedded;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.service.xml.xpath.XPathAxis;
@@ -108,12 +102,19 @@ final class SunburstModel extends AbsModel {
     private transient int mDepthMax;
 
     /**
+     * Read database.
+     * 
+     * @see ReadDB
+     */
+    private final ReadDB mDb;
+
+    /**
      * Constructor.
      * 
      * @param paramApplet
-     *            The processing {@link PApplet} core library.
+     *            the processing {@link PApplet} core library
      * @param paramDb
-     *            {@link ReadDB} reference.
+     *            {@link ReadDB} reference
      */
     SunburstModel(final PApplet paramApplet, final ReadDB paramDb) {
         assert paramApplet != null && paramDb != null;
@@ -129,8 +130,9 @@ final class SunburstModel extends AbsModel {
             LOGWRAPPER.error(e.getMessage(), e);
         }
         mItems = new ArrayList<SunburstItem>();
-        mGUI = SunburstGUI.createGUI(mParent, this);
+        mGUI = SunburstGUI.createGUI(mParent, this, paramDb);
         mModel = this;
+        mDb = paramDb;
         addPropertyChangeListener(mGUI);
     }
 
@@ -155,15 +157,15 @@ final class SunburstModel extends AbsModel {
      * Traverse and compare a tree.
      * 
      * @param paramRevision
-     *            Revision to compare.
+     *            revision to compare
      * @param paramKey
-     *            Node key to start from.
+     *            node key to start from
      * @param paramDepth
-     *            Depth in the tree.
+     *            Depth in the tree
      * @param paramModificationWeight
-     *            Weighting of modifications.
+     *            weighting of modifications
      * @param paramTextWeight
-     *            Weighting of text length.
+     *            weighting of text length
      */
     void traverseCompareTree(final long paramRevision, final long paramKey, final int paramDepth,
         final float paramModificationWeight, final float paramTextWeight) {
@@ -321,14 +323,16 @@ final class SunburstModel extends AbsModel {
      * Traverse the tree and create sunburst items.
      * 
      * @param paramKey
-     *            Node key to start from.
+     *            node key to start from
      * @param paramTextWeight
-     *            Weighting of text length.
+     *            weighting of text length
      */
     void traverseTree(final long paramKey, final float paramTextWeight) {
         // final ExecutorService executor = Executors.newSingleThreadExecutor();
         // executor.submit(new TraverseTree(paramKey, this));
         // executor.shutdown();
+        assert paramKey >= 0;
+        assert paramTextWeight >= 0;
         new Thread(new TraverseTree(paramKey, this)).start();
     }
 
@@ -336,7 +340,7 @@ final class SunburstModel extends AbsModel {
      * Initialize traversal.
      * 
      * @param paramKey
-     *            Node key to start from.
+     *            node key to start from
      * @return node key
      */
     private long initialize(final long paramKey) {
@@ -354,7 +358,7 @@ final class SunburstModel extends AbsModel {
      * Get minimum and maximum global text length.
      * 
      * @param paramRtx
-     *            Treetank {@link IReadTransaction}.
+     *            Treetank {@link IReadTransaction}
      */
     private void getMinMaxTextLength(final IReadTransaction paramRtx) {
         assert paramRtx != null && !paramRtx.isClosed();
@@ -378,7 +382,7 @@ final class SunburstModel extends AbsModel {
      * Get descendants of node.
      * 
      * @param paramNodeKey
-     *            NodeKey of current node.
+     *            nodeKey of current node
      * @return {@link Future} which has the descendant count
      * @throws ExecutionException
      *             if execution fails
@@ -387,6 +391,7 @@ final class SunburstModel extends AbsModel {
      */
     private Future<Long> getDescendantsOfNode(final long paramNodeKey) throws InterruptedException,
         ExecutionException {
+        assert paramNodeKey > 0;
         final ExecutorService executor =
             Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         final Future<Long> submit = executor.submit(new Descendants(paramNodeKey));
@@ -407,6 +412,8 @@ final class SunburstModel extends AbsModel {
      */
     private List<Future<Long>> getDescendants(final IReadTransaction paramRtx) throws InterruptedException,
         ExecutionException {
+        assert paramRtx != null;
+
         // Get descendants for every node and save it to a list.
         final List<Future<Long>> descendants = new LinkedList<Future<Long>>();
         final ExecutorService executor =
@@ -456,7 +463,8 @@ final class SunburstModel extends AbsModel {
          *            The XPath query.
          */
         private XPathEvaluation(final long paramKey, final String paramQuery) {
-            assert paramKey > -1;
+            assert paramKey >= 0;
+            assert paramQuery != null;
             mKey = paramKey;
             mQuery = paramQuery;
             try {
@@ -504,8 +512,8 @@ final class SunburstModel extends AbsModel {
             }
 
             // Copy list and fire changes with unmodifiable lists.
-            mModel.firePropertyChange("items", Collections.unmodifiableList(itemList), Collections
-                .unmodifiableList(new ArrayList<SunburstItem>(mItems)));
+            mModel.firePropertyChange("items", Collections.unmodifiableList(itemList),
+                Collections.unmodifiableList(new ArrayList<SunburstItem>(mItems)));
             mModel.firePropertyChange("maxDepth", maxDepth, mDepthMax);
         }
     }
@@ -576,7 +584,7 @@ final class SunburstModel extends AbsModel {
             assert paramKey > -1 && mRtx != null && !mRtx.isClosed();
             mKey = paramKey;
             mModel = paramModel;
-//            mModel.addPropertyChangeListener(mGUI);
+            // mModel.addPropertyChangeListener(mGUI);
 
             mRtx.moveTo(mKey);
             if (mRtx.getNode().getKind() == ENodes.ROOT_KIND) {
@@ -707,11 +715,11 @@ final class SunburstModel extends AbsModel {
                         relations.setAll(depth, structKind, descendants.get(index + 1).get(), 0,
                             mMaxDescendantCount, indexToParent);
                     }
-                    
+
                     // Build item.
                     mItems.add(new SunburstItem.Builder(mParent, mModel, node, mRtx.getQNameOfCurrentNode(),
-                        text, angle, childExtension, relations).build());
-//                    mGUI.addPropertyChangeListener(mItems.get(index + 1));
+                        text, angle, childExtension, relations, mDb).build());
+                    // mGUI.addPropertyChangeListener(mItems.get(index + 1));
 
                     // Set depth max.
                     mDepthMax = PApplet.max(depth, mDepthMax);
@@ -769,8 +777,8 @@ final class SunburstModel extends AbsModel {
             }
 
             // Copy list and fire changes with unmodifiable lists.
-            mModel.firePropertyChange("items", Collections.unmodifiableList(itemList), Collections
-                .unmodifiableList(new ArrayList<SunburstItem>(mItems)));
+            mModel.firePropertyChange("items", Collections.unmodifiableList(itemList),
+                Collections.unmodifiableList(new ArrayList<SunburstItem>(mItems)));
             mModel.firePropertyChange("maxDepth", maxDepth, mDepthMax);
 
             mRtx.moveTo(mKey);
@@ -778,21 +786,21 @@ final class SunburstModel extends AbsModel {
             LOGWRAPPER.info(mItems.size() + " SunburstItems created!");
         }
 
-//        /**
-//         * Traverses all right siblings and sums up child count. Thus a precondition to invoke the method is
-//         * that it must be called on the first child node.
-//         * 
-//         * @return child count per depth
-//         */
-//        private long childCountPerDepth() {
-//            long retVal = 0;
-//            final long key = mRtx.getNode().getNodeKey();
-//            do {
-//                retVal += ((AbsStructNode)mRtx.getNode()).getChildCount();
-//            } while (((AbsStructNode)mRtx.getNode()).hasRightSibling() && mRtx.moveToRightSibling());
-//            mRtx.moveTo(key);
-//            return retVal;
-//        }
+        // /**
+        // * Traverses all right siblings and sums up child count. Thus a precondition to invoke the method is
+        // * that it must be called on the first child node.
+        // *
+        // * @return child count per depth
+        // */
+        // private long childCountPerDepth() {
+        // long retVal = 0;
+        // final long key = mRtx.getNode().getNodeKey();
+        // do {
+        // retVal += ((AbsStructNode)mRtx.getNode()).getChildCount();
+        // } while (((AbsStructNode)mRtx.getNode()).hasRightSibling() && mRtx.moveToRightSibling());
+        // mRtx.moveTo(key);
+        // return retVal;
+        // }
 
     }
 
@@ -809,6 +817,7 @@ final class SunburstModel extends AbsModel {
          *            Node key to which the current transaction should move.
          */
         private Descendants(final long paramNodeKey) {
+            assert paramNodeKey >= 0;
             try {
                 mRTX = mSession.beginReadTransaction(mRtx.getRevisionNumber());
                 mRTX.moveTo(paramNodeKey);

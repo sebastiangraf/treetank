@@ -25,8 +25,11 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+
+import com.treetank.api.IWriteTransaction;
+import com.treetank.exception.TreetankException;
+import com.treetank.gui.ReadDB;
+import com.treetank.gui.view.sunburst.SunburstView.Embedded;
 
 import controlP5.ControlEvent;
 import controlP5.ControlGroup;
@@ -186,22 +189,34 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
     private final List<List<SunburstItem>> mLastItems = new ArrayList<List<SunburstItem>>();
 
     /** Parent {@link PApplet}. */
-    private final PApplet mParent;
+    private final Embedded mParent;
 
     /** {@link SunburstModel}. */
     private final SunburstModel mModel;
 
     /**
+     * Read database.
+     * 
+     * @see ReadDB
+     */
+    private final ReadDB mReadDB;
+
+    /**
      * Private constructor.
      * 
      * @param paramParentApplet
-     *            Parent processing applet.
+     *            parent processing applet
      * @param paramModel
-     *            The model.
+     *            the model
+     * @param paramReadDB
+     *            read database
      */
-    private SunburstGUI(final PApplet paramParentApplet, final SunburstModel paramModel) {
-        mParent = paramParentApplet;
+    private SunburstGUI(final PApplet paramParentApplet, final SunburstModel paramModel,
+        final ReadDB paramReadDB) {
+        mParent = (Embedded)paramParentApplet;
         mModel = paramModel;
+        mReadDB = paramReadDB;
+        setupGUI();
     }
 
     /**
@@ -209,15 +224,17 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
      * need to be synchronized.
      * 
      * @param paramParentApplet
-     *            Parent processing applet.
+     *            parent processing applet
      * @param paramModel
-     *            The model.
-     * @return a GUI singleton.
+     *            the model
+     * @param paramReadDB
+     *            read database
+     * @return a GUI singleton
      */
-    static SunburstGUI createGUI(final PApplet paramParentApplet, final SunburstModel paramModel) {
+    static SunburstGUI createGUI(final PApplet paramParentApplet, final SunburstModel paramModel,
+        final ReadDB paramReadDB) {
         if (mGUI == null) {
-            mGUI = new SunburstGUI(paramParentApplet, paramModel);
-            mGUI.setupGUI();
+            mGUI = new SunburstGUI(paramParentApplet, paramModel, paramReadDB);
         }
         return mGUI;
     }
@@ -433,7 +450,7 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
         try {
             mLock.acquire();
         } catch (final InterruptedException e) {
-
+            return;
         }
         mModel.evaluateXPath(paramXPath);
         mLock.release();
@@ -443,13 +460,13 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
     /**
      * Implements the {@link PApplet} draw() method.
      */
-    void draw() {
+    synchronized void draw() {
         if (mItems != null) {
-            try {
-                mLock.acquire();
-            } catch (final InterruptedException e) {
-                return;
-            }
+            // try {
+            // mLock.acquire();
+            // } catch (final InterruptedException e) {
+            // return;
+            // }
 
             mParent.pushMatrix();
             mParent.colorMode(PConstants.HSB, 360, 100, 100, 100);
@@ -507,7 +524,7 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
                 fisheye(mParent.mouseX, mParent.mouseY, 120);
             }
 
-            mLock.release();
+            // mLock.release();
         }
     }
 
@@ -632,7 +649,7 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
      * 
      * @see processing.core.PApplet#keyReleased()
      */
-    void keyReleased() {
+    synchronized void keyReleased() {
         if (!mXPathField.isFocus()) {
             switch (mParent.key) {
             case 's':
@@ -648,24 +665,26 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
                 mParent.beginRecord(PConstants.PDF, SAVEPATH + ".pdf");
                 break;
             case '\b':
+
                 // Backspace.
-                if (!mLastItems.isEmpty()) {
+                if (!mItems.isEmpty()) {
                     // Go back one index in history list.
                     final int lastItemIndex = mLastItems.size() - 1;
                     mParent.noLoop();
-                    try {
-                        mLock.acquire();
-                    } catch (final InterruptedException e) {
-                        return;
-                    }
+                    // try {
+                    // mLock.acquire();
+                    // } catch (final InterruptedException e) {
+                    // return;
+                    // }
                     mItems = mLastItems.get(lastItemIndex);
                     mLastItems.remove(lastItemIndex);
                     for (final SunburstItem item : mItems) {
                         item.update(mMappingMode);
                     }
-                    mLock.release();
+                    // mLock.release();
                     mParent.loop();
                 }
+
                 break;
             case '1':
                 mMappingMode = 1;
@@ -732,10 +751,10 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
     /**
      * Implements processing mousePressed.
      * 
-     * @see processing.core.PApplet#mousePressed
-     * 
      * @param paramEvent
      *            The {@link MouseEvent}.
+     * 
+     * @see processing.core.PApplet#mousePressed
      */
     void mousePressed(final MouseEvent paramEvent) {
         mControlP5.controlWindow.mouseEvent(paramEvent);
@@ -745,27 +764,60 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
         if (!mShowGUI && hitTestIndex != -1) {
             switch (paramEvent.getClickCount()) {
             case 1:
+                System.out.println("SINGLE CLICK");
                 switch (mParent.mouseButton) {
                 case PConstants.LEFT:
+                    System.out.println("LEFT");
                     break;
                 case PConstants.RIGHT:
+                    System.out.println("RIGHT");
+                    IWriteTransaction wtx = null;
+                    try {
+                        mParent.noLoop();
+                        try {
+                            mLock.acquire();
+                        } catch (final InterruptedException e) {
+                            return;
+                        }
+                        if (wtx != null && !wtx.isClosed()) {
+                            wtx.close();
+                        }
+                        wtx = mReadDB.getSession().beginWriteTransaction();
+                        wtx.revertTo(mReadDB.getRtx().getRevisionNumber());
+                        wtx.moveTo(mItems.get(hitTestIndex).mNode.getNodeKey());
+                        final SunburstPopupMenu menu = new SunburstPopupMenu(mParent, wtx, mReadDB);
+                        menu.show(paramEvent.getComponent(), paramEvent.getX(), paramEvent.getY());
+                        mLock.release();
+                        mParent.loop();
+                    } catch (final TreetankException e) {
+                        // TODO
+                    }
+
                     break;
                 default:
                     // Take no action.
                 }
                 break;
             case 2:
-                mLastItems.add(new ArrayList<SunburstItem>(mItems));
-                final long nodeKey = mItems.get(hitTestIndex).mNode.getNodeKey();
-                mParent.noLoop();
-                try {
-                    mLock.acquire();
-                } catch (final InterruptedException e) {
-                    return;
+                switch (mParent.mouseButton) {
+                case PConstants.LEFT:
+                    mLastItems.add(new ArrayList<SunburstItem>(mItems));
+                    final long nodeKey = mItems.get(hitTestIndex).mNode.getNodeKey();
+                    mParent.noLoop();
+                    try {
+                        mLock.acquire();
+                    } catch (final InterruptedException e) {
+                        return;
+                    }
+                    mModel.traverseTree(nodeKey, mTextWeight);
+                    mLock.release();
+                    mParent.loop();
+                    break;
+                case PConstants.RIGHT:
+                    break;
+                default:
+                    // Take no action.
                 }
-                mModel.traverseTree(nodeKey, mTextWeight);
-                mLock.release();
-                mParent.loop();
                 break;
             default:
                 // Take no action.

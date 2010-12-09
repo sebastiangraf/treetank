@@ -16,12 +16,12 @@
  */
 package com.treetank.gui;
 
-import static com.treetank.gui.GUIConstants.MENUBAR;
-import static com.treetank.gui.GUIConstants.MENUITEMS;
-
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+
+import static com.treetank.gui.GUIConstants.MENUBAR;
+import static com.treetank.gui.GUIConstants.MENUITEMS;
 
 /**
  * This is the menu bar of the main window.

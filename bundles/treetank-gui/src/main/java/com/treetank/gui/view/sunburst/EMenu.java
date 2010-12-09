@@ -16,54 +16,23 @@
  */
 package com.treetank.gui.view.sunburst;
 
-import com.treetank.api.IWriteTransaction;
-
 /**
  * @author Johannes Lichtenberger, University of Konstanz
- *
+ * 
  */
 public enum EMenu {
-//    /** Insert element as left sibling. */
-//    INSERT_ELEMENT_LEFT {
-//        @Override
-//        boolean insert(final IWriteTransaction paramWtx) {
-//            
-//        }
-//    },
-//    
-//    /** Insert element as right sibling. */
-//    INSERT_ELEMENT_RIGHT {
-//        @Override
-//        boolean insert(final IWriteTransaction paramWtx) {
-//            
-//        }
-//    },
-//    
-//    /** Insert text as first child. */
-//    INSERT_TEXT_CHILD {
-//        @Override
-//        boolean insert(final IWriteTransaction paramWtx, final String paramText) {
-//            return paramWtx.insertTextAsFirstChild(paramText);
-//        }        
-//    },
-//    
-//    /** Insert text as right sibling. */
-//    INSERT_TEXT_RIGHT {
-//        @Override
-//        boolean insert(final IWriteTransaction paramWtx) {
-//            
-//        }
-//    },
-//    
-//    /** Delete node. */
-//    DELETE {
-//        @Override
-//        boolean insert(final IWriteTransaction paramWtx) {
-//            
-//        }
-//        
-//        boolean delete()
-//    };
-//    
-//    abstract boolean insert(final IWriteTransaction paramWtx, );
+    /** Insert element as first child. */
+    INSERT_ELEMENT_AS_FIRST_CHILD,
+
+    /** Insert element as right sibling. */
+    INSERT_ELEMENT_AS_RIGHT_SIBLING,
+    
+    /** Insert text as first child. */
+    INSERT_TEXT_AS_FIRST_CHILD,
+
+    /** Insert text as right sibling. */
+    INSERT_TEXT_AS_RIGHT_SIBLING,
+
+    /** Delete node. */
+    DELETE;
 }

@@ -17,8 +17,10 @@
 package com.treetank.gui.view.tree;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.FocusListener;
 
+import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
@@ -45,6 +47,9 @@ import com.treetank.gui.view.ViewNotifier;
  */
 public final class TreeView extends JScrollPane implements IView {
     
+    /** Name of the view. */
+    private static final String NAME = "TreeView";
+    
     /** Row height. */
     private static final int ROW_HEIGHT = 20;
 
@@ -69,7 +74,7 @@ public final class TreeView extends JScrollPane implements IView {
      * @param paramNotifier
      *            {@link ViewNotifier} to notify views of changes etc.pp.
      */
-    public TreeView(final ViewNotifier paramNotifier) {
+    private TreeView(final ViewNotifier paramNotifier) {
         mNotifier = paramNotifier;
         mGUI = paramNotifier.getGUI();
 
@@ -103,7 +108,7 @@ public final class TreeView extends JScrollPane implements IView {
      *            {@link ViewNotifier} to notify views of changes etc.pp.
      * @return {@link TreeView} instance.
      */
-    public static TreeView createInstance(final ViewNotifier paramNotifier) {
+    public static TreeView getInstance(final ViewNotifier paramNotifier) {
         if (mView == null) {
             mView = new TreeView(paramNotifier);
         }
@@ -111,11 +116,29 @@ public final class TreeView extends JScrollPane implements IView {
         return mView;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isVisible() {
         return GUIProp.EShowViews.SHOWTREE.getValue();
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String name() {
+        return NAME;
+    };
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JComponent component() {
+        return this;
+    }
 
+    /** {@inheritDoc} */
     @Override
     public void refreshUpdate() {
         // Use our Treetank model and renderer.
@@ -150,6 +173,7 @@ public final class TreeView extends JScrollPane implements IView {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void dispose() {
         for (final FocusListener listener : mTree.getFocusListeners()) {
@@ -157,11 +181,20 @@ public final class TreeView extends JScrollPane implements IView {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void refreshInit() {
         // Use our Treetank model and renderer.
         final ReadDB db = mGUI.getReadDB();
         mTree.setModel(new TreeModel(db));
         mTree.setCellRenderer(new TreeCellRenderer(db));
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(200, 800);
     }
 }

@@ -63,7 +63,7 @@ public enum GUICommands implements IGUICommand {
     OPEN("Open TNK-File", EMenu.MENU) {
         /** Revision number. */
         private long mRevNumber;
-
+        
         @Override
         public void execute(final GUI paramGUI) {
             // Create a file chooser.
@@ -230,8 +230,14 @@ public enum GUICommands implements IGUICommand {
      */
     TREE("Tree", EMenu.CHECKBOXITEM) {
         @Override
+        public boolean selected() {
+            return GUIProp.EShowViews.SHOWTREE.getValue();
+        }
+        
+        @Override
         public void execute(final GUI paramGUI) {
             GUIProp.EShowViews.SHOWTREE.invert();
+            paramGUI.getViewContainer().layoutViews();
         }
     },
 
@@ -240,8 +246,14 @@ public enum GUICommands implements IGUICommand {
      */
     TEXT("Text", EMenu.CHECKBOXITEM) {
         @Override
+        public boolean selected() {
+            return GUIProp.EShowViews.SHOWTEXT.getValue();
+        }
+        
+        @Override
         public void execute(final GUI paramGUI) {
             GUIProp.EShowViews.SHOWTEXT.invert();
+            paramGUI.getViewContainer().layoutViews();
         }
     },
 
@@ -250,8 +262,14 @@ public enum GUICommands implements IGUICommand {
      */
     TREEMAP("Treemap", EMenu.CHECKBOXITEM) {
         @Override
+        public boolean selected() {
+            return GUIProp.EShowViews.SHOWTREEMAP.getValue();
+        }
+        
+        @Override
         public void execute(final GUI paramGUI) {
             GUIProp.EShowViews.SHOWTREE.invert();
+            paramGUI.getViewContainer().layoutViews();
         }
     },
 
@@ -260,8 +278,14 @@ public enum GUICommands implements IGUICommand {
      */
     SUNBURST("Sunburst", EMenu.CHECKBOXITEM) {
         @Override
+        public boolean selected() {
+            return GUIProp.EShowViews.SHOWSUNBURST.getValue();
+        }
+        
+        @Override
         public void execute(final GUI paramGUI) {
             GUIProp.EShowViews.SHOWSUNBURST.invert();
+            paramGUI.getViewContainer().layoutViews();
         }
     };
 
@@ -301,6 +325,14 @@ public enum GUICommands implements IGUICommand {
     @Override
     public EMenu type() {
         return mType;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean selected() {
+        return false;
     }
 
     /**

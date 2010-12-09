@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 enum EShredder {
-    
+
     /** Determines normal shredding. */
     NORMAL {
         @Override
@@ -97,7 +97,8 @@ enum EShredder {
 
                 final XMLEventReader reader = XMLShredder.createReader(paramSource);
                 final ExecutorService executor = Executors.newSingleThreadExecutor();
-                executor.submit(new XMLUpdateShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD, paramSource, EShredderCommit.COMMIT));
+                executor.submit(new XMLUpdateShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD,
+                    paramSource, EShredderCommit.COMMIT));
                 executor.shutdown();
                 executor.awaitTermination(5, TimeUnit.SECONDS);
                 wtx.close();
@@ -120,7 +121,7 @@ enum EShredder {
             return retVal;
         }
     };
-    
+
     /** Logger. */
     private static final Logger LOGWRAPPER = LoggerFactory.getLogger(EShredder.class);
 

@@ -18,19 +18,19 @@ package com.treetank.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.io.File;
 
-import javax.swing.JFrame;
-import javax.swing.JMenuBar;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 
 import com.treetank.exception.TreetankIOException;
+import com.treetank.gui.view.ViewContainer;
 import com.treetank.gui.view.ViewNotifier;
 import com.treetank.gui.view.sunburst.SunburstView;
+import com.treetank.gui.view.text.TextView;
+import com.treetank.gui.view.tree.TreeView;
 import com.treetank.utils.LogWrapper;
 
 import org.slf4j.LoggerFactory;
@@ -55,27 +55,23 @@ public final class GUI extends JFrame {
     /** Optionally set the look and feel. */
     private static boolean mUseSystemLookAndFeel;
 
-    /** Minimum width of panes. */
-    private static final int WIDTH = 1100;
+    /** Width of the frame. */
+    private static final int WIDTH = 1280;
 
-    /** Minimum height of panes. */
-    private static final int HEIGHT = 1100;
-
-    /** {@link JSplitPane} divider location. */
-    private static final int DIVIDER_LOCATION = 220;
+    /** Height of the frame. */
+    private static final int HEIGHT = 1024;
 
     /** {@link GUIProp}. */
     private final GUIProp mProp; // Will be used in future versions (more GUI properties).
 
-    /** {@link ViewNotifier}. */
+    /** {@link ViewNotifier} to notify all views of changes in the underlying data structure. */
     private final ViewNotifier mNotifier;
+
+    /** {@link ViewContainer} which contains all {@link IView} implementations available. */
+    private final ViewContainer mContainer;
 
     /** {@link ReadDB}. */
     private transient ReadDB mReadDB;
-
-    //
-    // /** {@link Set} for views. */
-    // private final Set<IView> mViews;
 
     /**
      * Constructor.
@@ -88,8 +84,22 @@ public final class GUI extends JFrame {
 
         // ===== Setup GUI ======
         setTitle("Treetank GUI");
+        
+        // Component listener, to revalidate layout manager.
+        addComponentListener(new ComponentAdapter() {
+            /**
+             * Relayout all components.
+             * 
+             * @param paramEvent
+             *            {@link ComponentEvent} reference
+             */
+            @Override
+            public void componentResized(final ComponentEvent paramEvent) {
+                mContainer.revalidate();
+            }
+        });
 
-        final Dimension frameSize = new Dimension(1000, HEIGHT);
+        final Dimension frameSize = new Dimension(WIDTH, HEIGHT);
         setSize(frameSize);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -120,12 +130,16 @@ public final class GUI extends JFrame {
         // // Add the split pane.
         // treeText.add(splitPane);
         // top.add(treeText, BorderLayout.CENTER);
-        final JPanel sunburst = new JPanel();
-        sunburst.setLayout(new GridLayout(0, 1));
-        final SunburstView sunburstView = SunburstView.createInstance(mNotifier);
-        sunburstView.setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        sunburst.add(sunburstView);
-        top.add(sunburst, BorderLayout.CENTER);
+        // final JPanel sunburst = new JPanel();
+        // sunburst.setLayout(new GridLayout(0, 1));
+        // final SunburstView sunburstView = SunburstView.createInstance(mNotifier);
+        // sunburstView.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        // sunburst.add(sunburstView);
+        mContainer =
+            ViewContainer.getInstance(this, TreeView.getInstance(mNotifier),
+                SunburstView.getInstance(mNotifier), TextView.getInstance(mNotifier));
+        mContainer.layoutViews();
+        top.add(mContainer, BorderLayout.CENTER);
         getContentPane().add(top);
 
         // Center the frame.
@@ -179,6 +193,15 @@ public final class GUI extends JFrame {
     }
 
     /**
+     * Get view container.
+     * 
+     * @return the Container
+     */
+    public ViewContainer getViewContainer() {
+        return mContainer;
+    }
+
+    /**
      * Create the GUI and show it. For thread safety, this method should be
      * invoked from the event dispatch thread.
      */
@@ -213,6 +236,7 @@ public final class GUI extends JFrame {
          * creating and showing this application's GUI.
          */
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 createAndShowGUI();
             }

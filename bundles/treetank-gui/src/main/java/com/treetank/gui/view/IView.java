@@ -16,6 +16,8 @@
  */
 package com.treetank.gui.view;
 
+import javax.swing.JComponent;
+
 /**
  * <h1>IView</h1>
  * 
@@ -27,6 +29,13 @@ package com.treetank.gui.view;
  * 
  */
 public interface IView {
+    /**
+     * Get name of the view.
+     * 
+     * @return name of the view
+     */
+    String name();
+    
     /**
      * Called when the data reference has changed.
      */
@@ -48,4 +57,11 @@ public interface IView {
      * Called when frame is going to dispose.
      */
     void dispose();
+    
+    /**
+     * Get the component.
+     * 
+     * @return the component
+     */
+    JComponent component();
 }
