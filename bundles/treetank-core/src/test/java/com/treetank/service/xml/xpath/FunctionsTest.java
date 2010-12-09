@@ -16,16 +16,14 @@
 
 package com.treetank.service.xml.xpath;
 
-import java.io.File;
-
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
+import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
-import com.treetank.service.xml.shredder.XMLShredder;
-import com.treetank.service.xml.xpath.XPathAxis;
+import com.treetank.utils.DocumentCreater;
 
 import org.junit.After;
 import org.junit.Before;
@@ -39,15 +37,6 @@ import org.junit.Test;
  */
 public class FunctionsTest {
 
-    /** XML file name to test. */
-    private static final String XMLFILE = "test.xml";
-    /** Path to XML file. */
-    private static final String XML = "src" + File.separator + "test" + File.separator + "resources"
-        + File.separator + XMLFILE;
-    /** IDatabase instance. */
-    private IDatabase mDatabase;
-    /** ISession instance. */
-    private ISession mSession;
     /** IReadTranscation instance. */
     private IReadTransaction mRtx;
 
@@ -61,18 +50,22 @@ public class FunctionsTest {
     /**
      * Method is called once before each test. It deletes all states, shreds XML file to database and
      * initializes the required variables.
+     * 
+     * @throws Exception
+     *             of any kind
      */
     @Before
-    public final void setUp() {
-        try {
-            TestHelper.deleteEverything();
-            XMLShredder.main(XML, PATHS.PATH1.getFile().getAbsolutePath());
-            mDatabase = TestHelper.getDatabase(PATHS.PATH1.getFile());
-            mSession = mDatabase.getSession();
-            mRtx = mSession.beginReadTransaction();
-        } catch (final Exception mExe) {
-            mExe.printStackTrace();
-        }
+    public final void setUp() throws Exception {
+        TestHelper.deleteEverything();
+
+        // Build simple test tree.
+        final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final ISession session = database.getSession();
+        final IWriteTransaction wtx = session.beginWriteTransaction();
+        DocumentCreater.create(wtx);
+        wtx.commit();
+        wtx.close();
+        mRtx = session.beginReadTransaction();
     }
 
     /**
@@ -426,8 +419,6 @@ public class FunctionsTest {
     public final void tearDown() {
         try {
             mRtx.close();
-            mSession.close();
-            mDatabase.close();
             TestHelper.closeEverything();
         } catch (final TreetankException mExe) {
             mExe.printStackTrace();
