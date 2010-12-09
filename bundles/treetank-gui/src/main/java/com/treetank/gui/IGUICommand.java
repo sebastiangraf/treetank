@@ -48,4 +48,11 @@ interface IGUICommand {
      * @return type of menu item
      */
     EMenu type();
+    
+    /**
+     * Returns if view is selected.
+     * 
+     * @return if view is selected
+     */
+    boolean selected();
 }

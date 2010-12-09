@@ -21,6 +21,7 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import com.treetank.api.IItem;
+import com.treetank.gui.ReadDB;
 import com.treetank.gui.view.ViewUtilities;
 
 import processing.core.PApplet;
@@ -163,28 +164,37 @@ final class SunburstItem {
         private final String mText;
 
         /**
+         * Read database.
+         * 
+         * @see ReadDB
+         */
+        private final ReadDB mReadDB;
+
+        /**
          * Constructor.
          * 
          * @param paramApplet
-         *            The processing core library @see PApplet.
+         *            the processing core library @see PApplet
          * @param paramModel
-         *            {@link SunburstModel}.
+         *            the {@link SunburstModel}
          * @param paramNode
-         *            {@link IItem} in Treetank, which belongs to this {@link SunburstItem}.
+         *            {@link IItem} in Treetank, which belongs to this {@link SunburstItem}
          * @param paramQName
-         *            {@link QName} of current node.
+         *            {@link QName} of current node
          * @param paramText
-         *            Text string in case of a text node.
+         *            text string in case of a text node
          * @param paramAngleStart
-         *            The start degree.
+         *            the start degree
          * @param paramExtension
-         *            The extension of the angle.
+         *            the extension of the angle
          * @param paramRelations
-         *            {@link NodeRelations} instance.
+         *            {@link NodeRelations} instance
+         * @param paramReadDB
+         *            read database
          */
         public Builder(final PApplet paramApplet, final SunburstModel paramModel, final IItem paramNode,
             final QName paramQName, final String paramText, final float paramAngleStart,
-            final float paramExtension, final NodeRelations paramRelations) {
+            final float paramExtension, final NodeRelations paramRelations, final ReadDB paramReadDB) {
             mParent = paramApplet;
             mModel = paramModel;
             mNode = paramNode;
@@ -193,6 +203,7 @@ final class SunburstItem {
             mAngleStart = paramAngleStart;
             mExtension = paramExtension;
             mRelations = paramRelations;
+            mReadDB = paramReadDB;
         }
 
         /**
@@ -213,7 +224,7 @@ final class SunburstItem {
      */
     private SunburstItem(final Builder paramBuilder) {
         // Returns GUI singleton instance.
-        mGUI = SunburstGUI.createGUI(paramBuilder.mParent, paramBuilder.mModel);
+        mGUI = SunburstGUI.createGUI(paramBuilder.mParent, paramBuilder.mModel, paramBuilder.mReadDB);
 
         mNode = paramBuilder.mNode;
         mQName = paramBuilder.mQName;

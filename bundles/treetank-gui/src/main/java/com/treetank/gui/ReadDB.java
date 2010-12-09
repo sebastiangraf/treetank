@@ -49,6 +49,9 @@ public final class ReadDB {
 
     /** Treetank {@link IReadTransaction}. */
     private transient IReadTransaction mRtx;
+    
+    /** Revision number. */
+    private transient long mRevision;
 
     /**
      * Constructor.
@@ -87,7 +90,7 @@ public final class ReadDB {
                 }
             }
 
-            if (mRtx == null || mRtx.isClosed()) {
+            if (mRtx == null || mRtx.isClosed() || mRevision != paramRevision) {
                 mRtx = mDatabase.getSession().beginReadTransaction(paramRevision);
             }
             mRtx.moveTo(paramNodekeyToStart);

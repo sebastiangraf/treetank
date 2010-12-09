@@ -17,7 +17,7 @@
 package com.treetank.gui.view.sunburst;
 
 /**
- * Item container to simplify moved enum.
+ * Item container to simplify EMoved enum.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 

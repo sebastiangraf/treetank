@@ -39,7 +39,7 @@ public final class GUIProp {
         SHOWTREEMAP(false),
 
         /** Show sunburst view. */
-        SHOWSUNBURST(false);
+        SHOWSUNBURST(true);
 
         /** Determines if view should be shown. */
         private boolean mShow;
@@ -58,11 +58,7 @@ public final class GUIProp {
          * Invert show value.
          */
         public void invert() {
-            if (mShow) {
-                mShow = false;
-            } else {
-                mShow = true;
-            }
+            mShow = !mShow;
         }
 
         /**

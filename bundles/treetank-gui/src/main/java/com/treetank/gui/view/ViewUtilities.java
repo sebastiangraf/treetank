@@ -28,7 +28,7 @@ public final class ViewUtilities {
     
     /** Private constructor. */
     private ViewUtilities() {
-        // Just in case of some helper method tries to invoke the constructor.
+        // Just in case of a helper method tries to invoke the constructor.
         throw new AssertionError();
     }
     

@@ -27,6 +27,7 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.util.Iterator;
 
+import javax.swing.JComponent;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
@@ -74,6 +75,9 @@ public final class TextView extends JScrollPane implements IView {
     /** Logger. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(TextView.class));
 
+    /** Name of the view. */
+    private static final String NAME = "TextView";
+    
     // ======== Component bounds ==========
 
     /** Width of text component. */
@@ -161,7 +165,7 @@ public final class TextView extends JScrollPane implements IView {
      *            {@link ViewNotifier} to notify views of changes etc.pp.
      * @return {@link TextView} instance.
      */
-    public static TextView createInstance(final ViewNotifier paramNotifier) {
+    public static TextView getInstance(final ViewNotifier paramNotifier) {
         if (mView == null) {
             mView = new TextView(paramNotifier);
         }
@@ -169,11 +173,33 @@ public final class TextView extends JScrollPane implements IView {
         return mView;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isVisible() {
         return GUIProp.EShowViews.SHOWTEXT.getValue();
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String name() {
+        return NAME;
+    };
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JComponent component() {
+        return this;
+    }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void dispose() {
         final JScrollBar bar = this.getVerticalScrollBar();
@@ -559,5 +585,13 @@ public final class TextView extends JScrollPane implements IView {
         } catch (final BadLocationException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(1000, 800);
     }
 }

@@ -55,6 +55,7 @@ enum EMenu {
         JComponent construct(final GUI paramGUI, final IGUICommand paramCommand) {
             final JCheckBoxMenuItem item = new JCheckBoxMenuItem(paramCommand.desc());
             setupItem(item, paramGUI, paramCommand);
+            item.setSelected(paramCommand.selected());
             return item;
         }
     },
