@@ -16,7 +16,6 @@
  */
 package com.treetank.gui.view;
 
-import java.awt.Component;
 import java.awt.FlowLayout;
 import java.util.LinkedList;
 import java.util.List;
@@ -90,13 +89,15 @@ public final class ViewContainer extends JPanel {
         final List<IView> views = visibleViews();
 
         JComponent tmpView = null;
+        int width = 0;
         int i = 0;
         for (final IView view : views) {
             if (views.size() == 1) {
                 add(view.component());
                 tmpView = view.component();
                 break;
-            } else if (i % 2 != 0) {
+//            } else if (i % 2 != 0) {
+            } else if (i % 2 != 0 && width < mGUI.getSize().width) {
                 assert tmpView != null;
                 final JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
                 if (tmpView instanceof IView) {
@@ -118,6 +119,7 @@ public final class ViewContainer extends JPanel {
             }
             
             i++;
+            width += tmpView.getPreferredSize().width;
         }
 
         super.revalidate();

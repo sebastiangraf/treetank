@@ -64,7 +64,9 @@ public final class ViewNotifier {
      */
     public void init() {
         for (final IView view : mViews) {
-            view.refreshInit();
+            if (view.isVisible()) {
+                view.refreshInit();
+            }
         }
     }
 
@@ -80,7 +82,7 @@ public final class ViewNotifier {
     }
 
     /**
-     * Notifies all views of updates in the data structure.
+     * Dispose all views.
      */
     public void dispose() {
         for (final IView view : mViews) {

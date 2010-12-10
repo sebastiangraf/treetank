@@ -504,6 +504,7 @@ public final class TextView extends JScrollPane implements IView {
         final Child paramHasChild) {
         assert paramStartTag != null;
         assert paramDoc != null;
+        assert paramHasChild != null;
 
         final Style styleElements = paramDoc.addStyle("elements", null);
         StyleConstants.setForeground(styleElements, ELEMENT_COLOR);
@@ -592,6 +593,7 @@ public final class TextView extends JScrollPane implements IView {
      */
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(1000, 800);
+        final Dimension mainFrame = mGUI.getSize();
+        return new Dimension(mainFrame.width, 400);
     }
 }

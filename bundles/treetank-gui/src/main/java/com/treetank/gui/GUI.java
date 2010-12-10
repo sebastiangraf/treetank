@@ -20,7 +20,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.io.File;
 
 import javax.swing.*;
@@ -83,6 +82,7 @@ public final class GUI extends JFrame {
         mProp = paramProp;
 
         // ===== Setup GUI ======
+        // Title of the frame.
         setTitle("Treetank GUI");
         
         // Component listener, to revalidate layout manager.
@@ -99,6 +99,7 @@ public final class GUI extends JFrame {
             }
         });
 
+        // Set default size and close operation.
         final Dimension frameSize = new Dimension(WIDTH, HEIGHT);
         setSize(frameSize);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -110,31 +111,9 @@ public final class GUI extends JFrame {
         // Create Panels.
         final JPanel top = new JPanel();
         top.setLayout(new BorderLayout());
-        // final JPanel treeText = new JPanel();
-        // treeText.setLayout(new GridLayout(1, 0));
 
-        // Create default views.
+        // Create views.
         mNotifier = new ViewNotifier(this);
-        // final TreeView treeView = new TreeView(mNotifier);
-        // final TextView textView = new TextView(mNotifier);
-        //
-        // // Add the scroll panes to a split pane.
-        // final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        // splitPane.setLeftComponent(treeView);
-        // splitPane.setRightComponent(textView);
-        //
-        // // Set sizes of components.
-        // splitPane.setDividerLocation(DIVIDER_LOCATION);
-        // splitPane.setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        //
-        // // Add the split pane.
-        // treeText.add(splitPane);
-        // top.add(treeText, BorderLayout.CENTER);
-        // final JPanel sunburst = new JPanel();
-        // sunburst.setLayout(new GridLayout(0, 1));
-        // final SunburstView sunburstView = SunburstView.createInstance(mNotifier);
-        // sunburstView.setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        // sunburst.add(sunburstView);
         mContainer =
             ViewContainer.getInstance(this, TreeView.getInstance(mNotifier),
                 SunburstView.getInstance(mNotifier), TextView.getInstance(mNotifier));
@@ -173,12 +152,15 @@ public final class GUI extends JFrame {
         mNotifier.update();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void dispose() {
+        mNotifier.dispose();
         if (mReadDB != null) {
             mReadDB.close();
         }
-        mNotifier.dispose();
         super.dispose();
         System.exit(0);
     }
@@ -186,7 +168,7 @@ public final class GUI extends JFrame {
     /**
      * Get the {@link ReadDB} instance.
      * 
-     * @return the ReadDB
+     * @return the ReadDB instance
      */
     public ReadDB getReadDB() {
         return mReadDB;

@@ -281,19 +281,21 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
         mSliders.add(si, mControlP5.addSlider("mInnerNodeArcScale", 0, 1, mInnerNodeArcScale, left, top
             + posY + 0, len, 15));
         mSliders.get(si++).setLabel("innerNodeArcScale");
-        mSliders.add(si, mControlP5.addSlider("mLeafArcScale", 0, 1, mLeafArcScale, left, top + posY + 20,
-            len, 15));
+        mSliders.add(si,
+            mControlP5.addSlider("mLeafArcScale", 0, 1, mLeafArcScale, left, top + posY + 20, len, 15));
         mSliders.get(si++).setLabel("leafNodeArcScale");
         posY += 50;
 
-        mRanges.add(ri++, mControlP5.addRange("stroke weight range", 0, 10, mStrokeWeightStart,
-            mStrokeWeightEnd, left, top + posY + 0, len, 15));
+        mRanges.add(
+            ri++,
+            mControlP5.addRange("stroke weight range", 0, 10, mStrokeWeightStart, mStrokeWeightEnd, left, top
+                + posY + 0, len, 15));
         posY += 30;
 
         mSliders.add(si, mControlP5.addSlider("mDotSize", 0, 10, mDotSize, left, top + posY + 0, len, 15));
         mSliders.get(si++).setLabel("dotSize");
-        mSliders.add(si, mControlP5.addSlider("mDotBrightness", 0, 100, mDotBrightness, left,
-            top + posY + 20, len, 15));
+        mSliders.add(si,
+            mControlP5.addSlider("mDotBrightness", 0, 100, mDotBrightness, left, top + posY + 20, len, 15));
         mSliders.get(si++).setLabel("dotBrightness");
         posY += 50;
 
@@ -302,8 +304,8 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
         mSliders.get(si++).setLabel("backgroundBrightness");
         posY += 30;
 
-        mSliders.add(si, mControlP5.addSlider("mTextWeight", 0, 10, mTextWeight, left, top + posY + 0, len,
-            15));
+        mSliders.add(si,
+            mControlP5.addSlider("mTextWeight", 0, 10, mTextWeight, left, top + posY + 0, len, 15));
         mSliders.get(si++).setLabel("text weight");
         posY += 50;
 
@@ -311,8 +313,8 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
         mToggles.get(ti++).setLabel("show Arcs");
         mToggles.add(ti, mControlP5.addToggle("mShowLines", mShowLines, left + 0, top + posY + 20, 15, 15));
         mToggles.get(ti++).setLabel("show Lines");
-        mToggles.add(ti, mControlP5.addToggle("mUseBezierLine", mUseBezierLine, left + 0, top + posY + 40,
-            15, 15));
+        mToggles.add(ti,
+            mControlP5.addToggle("mUseBezierLine", mUseBezierLine, left + 0, top + posY + 40, 15, 15));
         mToggles.get(ti++).setLabel("Bezier / Line");
         mToggles.add(ti, mControlP5.addToggle("mUseArc", mUseArc, left + 0, top + posY + 60, 15, 15));
         mToggles.get(ti++).setLabel("Arc / Rect");
@@ -446,85 +448,76 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
      *            The XPath expression.
      */
     public void xpath(final String paramXPath) {
-        mParent.noLoop();
-        try {
-            mLock.acquire();
-        } catch (final InterruptedException e) {
-            return;
-        }
         mModel.evaluateXPath(paramXPath);
-        mLock.release();
-        mParent.loop();
     }
 
     /**
      * Implements the {@link PApplet} draw() method.
      */
-    synchronized void draw() {
+    void draw() {
         if (mItems != null) {
-            // try {
-            // mLock.acquire();
-            // } catch (final InterruptedException e) {
-            // return;
-            // }
+            try {
+                mLock.acquire();
 
-            mParent.pushMatrix();
-            mParent.colorMode(PConstants.HSB, 360, 100, 100, 100);
-            mParent.background(0, 0, mBackgroundBrightness);
-            mParent.noFill();
-            mParent.ellipseMode(PConstants.RADIUS);
-            mParent.strokeCap(PConstants.SQUARE);
-            mParent.textLeading(14);
-            mParent.textAlign(PConstants.LEFT, PConstants.TOP);
-            mParent.smooth();
+                mParent.pushMatrix();
+                mParent.colorMode(PConstants.HSB, 360, 100, 100, 100);
+                mParent.background(0, 0, mBackgroundBrightness);
+                mParent.noFill();
+                mParent.ellipseMode(PConstants.RADIUS);
+                mParent.strokeCap(PConstants.SQUARE);
+                mParent.textLeading(14);
+                mParent.textAlign(PConstants.LEFT, PConstants.TOP);
+                mParent.smooth();
 
-            // Add menubar height (21 pixels).
-            mParent.translate(mParent.width / 2, mParent.height / 2 + 21);
+                // Add menubar height (21 pixels).
+                mParent.translate(mParent.width / 2, mParent.height / 2 + 21);
 
-            // Draw the vizualization items.
-            for (final SunburstItem item : mItems) {
-                // Draw arcs or rects.
-                if (mShowArcs) {
-                    if (mUseArc) {
-                        item.drawArc(mInnerNodeArcScale, mLeafArcScale);
-                    } else {
-                        item.drawRect(mInnerNodeArcScale, mLeafArcScale);
+                // Draw the vizualization items.
+                for (final SunburstItem item : mItems) {
+                    // Draw arcs or rects.
+                    if (mShowArcs) {
+                        if (mUseArc) {
+                            item.drawArc(mInnerNodeArcScale, mLeafArcScale);
+                        } else {
+                            item.drawRect(mInnerNodeArcScale, mLeafArcScale);
+                        }
                     }
                 }
-            }
 
-            for (final SunburstItem item : mItems) {
-                if (mShowLines) {
-                    if (mUseBezierLine) {
-                        item.drawRelationBezier();
-                    } else {
-                        item.drawRelationLine();
+                for (final SunburstItem item : mItems) {
+                    if (mShowLines) {
+                        if (mUseBezierLine) {
+                            item.drawRelationBezier();
+                        } else {
+                            item.drawRelationLine();
+                        }
                     }
                 }
+
+                for (final SunburstItem item : mItems) {
+                    item.drawDot();
+                }
+
+                // Rollover test.
+                rollover(State.DRAW);
+
+                mParent.popMatrix();
+
+                if (mSavePDF) {
+                    mSavePDF = false;
+                    mParent.endRecord();
+                    PApplet.println("saving to pdf – done");
+                }
+
+                drawGUI();
+
+                if (mFisheye) {
+                    fisheye(mParent.mouseX, mParent.mouseY, 120);
+                }
+            } catch (final InterruptedException e) {
+            } finally {
+                mLock.release();
             }
-
-            for (final SunburstItem item : mItems) {
-                item.drawDot();
-            }
-
-            // Rollover test.
-            rollover(State.DRAW);
-
-            mParent.popMatrix();
-
-            if (mSavePDF) {
-                mSavePDF = false;
-                mParent.endRecord();
-                PApplet.println("saving to pdf – done");
-            }
-
-            drawGUI();
-
-            if (mFisheye) {
-                fisheye(mParent.mouseX, mParent.mouseY, 120);
-            }
-
-            // mLock.release();
         }
     }
 
@@ -641,7 +634,7 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
      * @return initial radius
      */
     private float getInitialRadius() {
-        return mParent.height / 3.5f;
+        return mParent.height / 2f;
     }
 
     /**
@@ -649,7 +642,7 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
      * 
      * @see processing.core.PApplet#keyReleased()
      */
-    synchronized void keyReleased() {
+    void keyReleased() {
         if (!mXPathField.isFocus()) {
             switch (mParent.key) {
             case 's':
@@ -665,23 +658,24 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
                 mParent.beginRecord(PConstants.PDF, SAVEPATH + ".pdf");
                 break;
             case '\b':
-
                 // Backspace.
-                if (!mItems.isEmpty()) {
-                    // Go back one index in history list.
-                    final int lastItemIndex = mLastItems.size() - 1;
-                    mParent.noLoop();
-                    // try {
-                    // mLock.acquire();
-                    // } catch (final InterruptedException e) {
-                    // return;
-                    // }
-                    mItems = mLastItems.get(lastItemIndex);
-                    mLastItems.remove(lastItemIndex);
-                    for (final SunburstItem item : mItems) {
-                        item.update(mMappingMode);
+                mParent.noLoop();
+                try {
+                    mLock.acquire();
+
+                    if (!mItems.isEmpty()) {
+                        // Go back one index in history list.
+                        final int lastItemIndex = mLastItems.size() - 1;
+
+                        mItems = mLastItems.get(lastItemIndex);
+                        mLastItems.remove(lastItemIndex);
+                        for (final SunburstItem item : mItems) {
+                            item.update(mMappingMode);
+                        }
                     }
-                    // mLock.release();
+                } catch (final Exception e) {
+                } finally {
+                    mLock.release();
                     mParent.loop();
                 }
 
@@ -733,7 +727,7 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
      * @see processing.core.PApplet#mouseEntered
      */
     void mouseEntered(final MouseEvent paramEvent) {
-        // mParent.loop();
+        mParent.loop();
     }
 
     /**
@@ -745,7 +739,7 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
      * @see processing.core.PApplet#mouseExited
      */
     void mouseExited(final MouseEvent paramEvent) {
-        // mParent.noLoop();
+        mParent.noLoop();
     }
 
     /**
@@ -764,54 +758,38 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
         if (!mShowGUI && hitTestIndex != -1) {
             switch (paramEvent.getClickCount()) {
             case 1:
-                System.out.println("SINGLE CLICK");
-                switch (mParent.mouseButton) {
-                case PConstants.LEFT:
-                    System.out.println("LEFT");
-                    break;
-                case PConstants.RIGHT:
-                    System.out.println("RIGHT");
-                    IWriteTransaction wtx = null;
-                    try {
-                        mParent.noLoop();
-                        try {
-                            mLock.acquire();
-                        } catch (final InterruptedException e) {
-                            return;
-                        }
-                        if (wtx != null && !wtx.isClosed()) {
-                            wtx.close();
-                        }
-                        wtx = mReadDB.getSession().beginWriteTransaction();
-                        wtx.revertTo(mReadDB.getRtx().getRevisionNumber());
-                        wtx.moveTo(mItems.get(hitTestIndex).mNode.getNodeKey());
-                        final SunburstPopupMenu menu = new SunburstPopupMenu(mParent, wtx, mReadDB);
-                        menu.show(paramEvent.getComponent(), paramEvent.getX(), paramEvent.getY());
-                        mLock.release();
-                        mParent.loop();
-                    } catch (final TreetankException e) {
-                        // TODO
-                    }
-
-                    break;
-                default:
-                    // Take no action.
-                }
-                break;
+                // System.out.println("SINGLE CLICK");
+                // switch (mParent.mouseButton) {
+                // case PConstants.LEFT:
+                // System.out.println("LEFT");
+                // break;
+                // case PConstants.RIGHT:
+                // System.out.println("RIGHT");
+                // IWriteTransaction wtx = null;
+                // try {
+                // if (wtx != null && !wtx.isClosed()) {
+                // wtx.close();
+                // }
+                // wtx = mReadDB.getSession().beginWriteTransaction();
+                // wtx.revertTo(mReadDB.getRtx().getRevisionNumber());
+                // wtx.moveTo(mItems.get(hitTestIndex).mNode.getNodeKey());
+                // final SunburstPopupMenu menu = new SunburstPopupMenu(mParent, wtx, mReadDB);
+                // menu.show(paramEvent.getComponent(), paramEvent.getX(), paramEvent.getY());
+                // } catch (final TreetankException e) {
+                // // TODO
+                // }
+                //
+                // break;
+                // default:
+                // // Take no action.
+                // }
+                // break;
             case 2:
                 switch (mParent.mouseButton) {
                 case PConstants.LEFT:
                     mLastItems.add(new ArrayList<SunburstItem>(mItems));
                     final long nodeKey = mItems.get(hitTestIndex).mNode.getNodeKey();
-                    mParent.noLoop();
-                    try {
-                        mLock.acquire();
-                    } catch (final InterruptedException e) {
-                        return;
-                    }
                     mModel.traverseTree(nodeKey, mTextWeight);
-                    mLock.release();
-                    mParent.loop();
                     break;
                 case PConstants.RIGHT:
                     break;
@@ -887,20 +865,20 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
         mParent.noLoop();
         try {
             mLock.acquire();
+
+            if (paramEvent.getPropertyName().equals("items")) {
+                mItems = (List<SunburstItem>)paramEvent.getNewValue();
+            } else if (paramEvent.getPropertyName().equals("maxDepth")) {
+                mDepthMax = (Integer)paramEvent.getNewValue();
+            }
+
+            for (final SunburstItem item : mItems) {
+                item.update(mGUI.getMappingMode());
+            }
         } catch (final InterruptedException e) {
-            return;
+        } finally {
+            mLock.release();
+            mParent.loop();
         }
-
-        if (paramEvent.getPropertyName().equals("items")) {
-            mItems = (List<SunburstItem>)paramEvent.getNewValue();
-        } else if (paramEvent.getPropertyName().equals("maxDepth")) {
-            mDepthMax = (Integer)paramEvent.getNewValue();
-        }
-
-        for (final SunburstItem item : mItems) {
-            item.update(mGUI.getMappingMode());
-        }
-        mLock.release();
-        mParent.loop();
     }
 }

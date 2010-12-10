@@ -145,17 +145,10 @@ public final class TreeView extends JScrollPane implements IView {
         final ReadDB db = mGUI.getReadDB();
         mRtx = db.getRtx();
 
-        /*
-         * Remove a listener/listeners, which might already exist from
-         * another call to refreshUpdate().
-         */
-        // for (final TreeSelectionListener listener : mTree.getTreeSelectionListeners()) {
-        // mTree.removeTreeSelectionListener(listener);
-        // }
-
         if (mTree.getTreeSelectionListeners().length == 0) {
             // Listen for when the selection changes.
             mTree.addTreeSelectionListener(new TreeSelectionListener() {
+                @Override
                 public void valueChanged(final TreeSelectionEvent paramE) {
                     if (paramE.getNewLeadSelectionPath() != null
                         && paramE.getNewLeadSelectionPath() != paramE.getOldLeadSelectionPath()) {
@@ -195,6 +188,6 @@ public final class TreeView extends JScrollPane implements IView {
      */
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(200, 800);
+        return new Dimension(200, mGUI.getSize().height - 200);
     }
 }

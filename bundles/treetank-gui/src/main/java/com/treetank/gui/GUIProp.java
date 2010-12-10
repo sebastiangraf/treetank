@@ -30,10 +30,10 @@ public final class GUIProp {
     /** Show views enum. */
     public enum EShowViews {
         /** Show tree view. */
-        SHOWTREE(true),
+        SHOWTREE(false),
 
         /** Show text view. */
-        SHOWTEXT(true),
+        SHOWTEXT(false),
 
         /** Show treemap view. */
         SHOWTREEMAP(false),
