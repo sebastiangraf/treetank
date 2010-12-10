@@ -452,7 +452,11 @@ final class SunburstItem {
      */
     void drawRelationBezier() {
         if (mDepth > 0) {
+            assert mIndexToParent >= 0;
             mParent.stroke(mLineCol);
+            if (mLineWeight < 0) {
+                mLineWeight *= -1;
+            }
             mParent.strokeWeight(mLineWeight);
             final List<SunburstItem> items = mGUI.mItems;
             mParent.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, items.get(mIndexToParent).mX, items

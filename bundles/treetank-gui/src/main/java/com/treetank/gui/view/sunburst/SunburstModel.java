@@ -65,6 +65,9 @@ final class SunburstModel extends AbsModel {
     /** Treetank {@link ISession}. */
     private transient ISession mSession;
 
+    /** Semaphore to guarantee mutual exclusion for all methods. */
+    private transient Semaphore mLock = new Semaphore(1);
+
     /** The processing {@link PApplet} core library. */
     private final PApplet mParent;
 
@@ -167,8 +170,8 @@ final class SunburstModel extends AbsModel {
      * @param paramTextWeight
      *            weighting of text length
      */
-    void traverseCompareTree(final long paramRevision, final long paramKey, final int paramDepth,
-        final float paramModificationWeight, final float paramTextWeight) {
+    synchronized void traverseCompareTree(final long paramRevision, final long paramKey,
+        final int paramDepth, final float paramModificationWeight, final float paramTextWeight) {
         final long nodeKey = initialize(paramKey);
 
         try {
@@ -333,7 +336,14 @@ final class SunburstModel extends AbsModel {
         // executor.shutdown();
         assert paramKey >= 0;
         assert paramTextWeight >= 0;
-        new Thread(new TraverseTree(paramKey, this)).start();
+        try {
+            mLock.acquire();
+            new Thread(new TraverseTree(paramKey, this)).start();
+        } catch (final Exception e) {
+
+        } finally {
+            mLock.release();
+        }
     }
 
     /**
@@ -820,10 +830,11 @@ final class SunburstModel extends AbsModel {
             assert paramNodeKey >= 0;
             try {
                 mRTX = mSession.beginReadTransaction(mRtx.getRevisionNumber());
-                mRTX.moveTo(paramNodeKey);
             } catch (final TreetankException e) {
-                LOGWRAPPER.error(e.getMessage(), e);
+                e.printStackTrace();
+                // LOGWRAPPER.error(e.getMessage(), e);
             }
+            mRTX.moveTo(paramNodeKey);
         }
 
         @Override
@@ -834,6 +845,7 @@ final class SunburstModel extends AbsModel {
                 retVal++;
             }
 
+            mRTX.close();
             return retVal;
         }
 
