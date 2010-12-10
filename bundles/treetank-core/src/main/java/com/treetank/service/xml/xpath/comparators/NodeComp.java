@@ -31,7 +31,7 @@ import com.treetank.utils.TypedValue;
  * Node comparisons are used to compare two nodes, by their identity or by their document order.
  * </p>
  */
-public class NodeComp extends AbstractComparator implements IAxis {
+public class NodeComp extends AbsComparator implements IAxis {
 
     /**
      * Constructor. Initializes the internal state.

@@ -24,7 +24,7 @@ package com.treetank.service.xml.xpath;
  * well.
  * </p>
  */
-public interface XPathConstants {
+interface XPathConstants {
 
     /** Token types. */
     enum Token {
@@ -98,7 +98,7 @@ public interface XPathConstants {
     }
 
     /** Declares if the evaluation is compatible to XPath 1.0 or not. */
-    public static boolean XPATH_10_COMP = true;
+    boolean XPATH_10_COMP = true;
 
     /** Enum representing the wildcards '*', '+' and '?'. */
     public enum Wildcard {

@@ -65,7 +65,7 @@ public class ModOpAxisTest {
 
         IAxis op1 = new LiteralExpr(rtx, rtx.getItemList().addItem(item1));
         IAxis op2 = new LiteralExpr(rtx, rtx.getItemList().addItem(item2));
-        AbstractOpAxis axis = new ModOpAxis(rtx, op1, op2);
+        AbsObAxis axis = new ModOpAxis(rtx, op1, op2);
 
         assertEquals(true, axis.hasNext());
         assertThat(1.0, is(TypedValue.parseDouble(rtx.getNode().getRawValue())));
@@ -86,7 +86,7 @@ public class ModOpAxisTest {
 
         IAxis op1 = new SequenceAxis(rtx);
         IAxis op2 = new SequenceAxis(rtx);
-        AbstractOpAxis axis = new ModOpAxis(rtx, op1, op2);
+        AbsObAxis axis = new ModOpAxis(rtx, op1, op2);
 
         assertEquals(Type.DOUBLE, axis
             .getReturnType(rtx.keyForName("xs:double"), rtx.keyForName("xs:double")));

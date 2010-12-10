@@ -27,7 +27,7 @@ package com.treetank.service.xml.xpath;
  * type of the input and creates a token for every logic text unit.
  * </p>
  */
-public class XPathScanner implements XPathConstants {
+public final class XPathScanner implements XPathConstants {
 
     /** The XPath query to scan. */
     private final String mQuery;
@@ -40,9 +40,22 @@ public class XPathScanner implements XPathConstants {
 
     /** Scanner states. */
     private enum State {
-        START, NUMBER, TEXT, SPECIAL, /* Unary special character. */
-        SPECIAL2, /* special character with 2 possible characters. */
-        COMMENT, E_NUM, UNKNOWN
+        /** Start state. */
+        START,
+        /** Number state. */
+        NUMBER,
+        /** Text state. */
+        TEXT,
+        /** Special state. */
+        SPECIAL,
+        /** Special state with 2 caracters. */
+        SPECIAL2,
+        /** Comment state. */
+        COMMENT,
+        /** Enum state. */
+        E_NUM,
+        /** Unknown state. */
+        UNKNOWN
     }
 
     /** The state the scanner is currently in. */
@@ -127,7 +140,7 @@ public class XPathScanner implements XPathConstants {
                 scanText();
                 break;
             case SPECIAL2: // special character that could have 2 digits
-                scanSpecial2();
+                scanTwoDigitSpecial();
                 break;
             case COMMENT:
                 scanComment();
@@ -161,12 +174,12 @@ public class XPathScanner implements XPathConstants {
             mState = State.TEXT; // word
             mOutput.append(mInput);
             mType = Token.TEXT;
-        } else if (isSpecialCharacter(mInput)) {
+        } else if (isSpecial(mInput)) {
             mState = State.SPECIAL; // special character with only one digit
             mOutput.append(mInput);
             mType = retrieveType(mInput);
             mFinnished = true;
-        } else if (isSpecialCharacter2(mInput)) {
+        } else if (isTwoDigistSpecial(mInput)) {
             mState = State.SPECIAL2; // 2 digit special character
             mOutput.append(mInput);
             mType = retrieveType(mInput);
@@ -190,14 +203,14 @@ public class XPathScanner implements XPathConstants {
     /**
      * Returns the type of the given character.
      * 
-     * @param mInput
+     * @param paramInput
      *            The character the type should be determined
      * @return type of the given character.
      */
-    private Token retrieveType(final char mInput) {
+    private Token retrieveType(final char paramInput) {
 
         Token type;
-        switch (mInput) {
+        switch (paramInput) {
         case ',':
             type = Token.COMMA;
             break;
@@ -269,54 +282,56 @@ public class XPathScanner implements XPathConstants {
     /**
      * Checks if the given character is a valid first letter.
      * 
-     * @param mInput
+     * @param paramInput
      *            The character to check.
      * @return Returns true, if the character is a first letter.
      */
-    private boolean isFirstLetter(final char mInput) {
+    private boolean isFirstLetter(final char paramInput) {
 
-        return ((mInput >= 'a' && mInput <= 'z') || (mInput >= 'A' && mInput <= 'Z') || (mInput == '_'));
+        return (paramInput >= 'a' && paramInput <= 'z') || (paramInput >= 'A' && paramInput <= 'Z')
+            || (paramInput == '_');
     }
 
     /**
      * Checks if the given character is a number.
      * 
-     * @param mInput
+     * @param paramInput
      *            The character to check.
      * @return Returns true, if the character is a number.
      */
-    private boolean isNumber(final char mInput) {
+    private boolean isNumber(final char paramInput) {
 
-        return (mInput >= '0' && mInput <= '9');
+        return paramInput >= '0' && paramInput <= '9';
     }
 
     /**
      * Checks if the given character is a special character that can have 2
      * digits.
      * 
-     * @param mInput
+     * @param paramInput
      *            The character to check.
      * @return Returns true, if the character is a special character that can
      *         have 2 digits.
      */
-    private boolean isSpecialCharacter2(final char mInput) {
+    private boolean isTwoDigistSpecial(final char paramInput) {
 
-        return (mInput == '<') || (mInput == '>') || (mInput == '(') || (mInput == '!') || (mInput == '/')
-            || (mInput == '.');
+        return (paramInput == '<') || (paramInput == '>') || (paramInput == '(') || (paramInput == '!')
+            || (paramInput == '/') || (paramInput == '.');
     }
 
     /**
      * Checks if the given character is a special character.
      * 
-     * @param mInput
+     * @param paramInput
      *            The character to check.
      * @return Returns true, if the character is a special character.
      */
-    private boolean isSpecialCharacter(final char mInput) {
+    private boolean isSpecial(final char paramInput) {
 
-        return ((mInput == ')') || (mInput == ';') || (mInput == ',') || (mInput == '@') || (mInput == '[')
-            || (mInput == ']') || (mInput == '=') || (mInput == '"') || (mInput == '\'') || (mInput == '$')
-            || (mInput == ':') || (mInput == '|') || (mInput == '+') || (mInput == '-') || (mInput == '?') || (mInput == '*'));
+        return (paramInput == ')') || (paramInput == ';') || (paramInput == ',') || (paramInput == '@')
+            || (paramInput == '[') || (paramInput == ']') || (paramInput == '=') || (paramInput == '"')
+            || (paramInput == '\'') || (paramInput == '$') || (paramInput == ':') || (paramInput == '|')
+            || (paramInput == '+') || (paramInput == '-') || (paramInput == '?') || (paramInput == '*');
     }
 
     /**
@@ -324,7 +339,7 @@ public class XPathScanner implements XPathConstants {
      */
     private void scanNumber() {
 
-        if ((mInput >= '0' && mInput <= '9')) {
+        if (mInput >= '0' && mInput <= '9') {
             mOutput.append(mInput);
             mPos++;
         } else {
@@ -356,9 +371,9 @@ public class XPathScanner implements XPathConstants {
      * Scans special characters that can have more then one digit. E.g. ==, !=,
      * <=, >=, //, .., (:
      */
-    private void scanSpecial2() {
+    private void scanTwoDigitSpecial() {
 
-        if ((mInput == '=' && (mType == Token.COMP || mType == Token.EQ || mType == Token.N_EQ))) {
+        if (mInput == '=' && (mType == Token.COMP || mType == Token.EQ || mType == Token.N_EQ)) {
             mOutput.append(mInput);
             mPos++;
         } else if (mInput == '/' && (mType == Token.SLASH)) {
@@ -407,12 +422,14 @@ public class XPathScanner implements XPathConstants {
         }
     }
 
+    /**
+     * Scans comments.
+     */
     private void scanComment() {
-
+        final char input = mQuery.charAt(mPos + 1);
         if (mInput == ':') {
             // check if is end of comment, indicated by ':)'
-            final char mInput2 = mQuery.charAt(mPos + 1);
-            if (mInput2 == ')') {
+            if (input == ')') {
                 mCommentCount--;
                 if (mCommentCount == 0) {
                     mState = State.START;
@@ -424,8 +441,7 @@ public class XPathScanner implements XPathConstants {
             }
         } else if (mInput == '(') {
             // check if start of new nested comment, indicated by '(:'
-            final char mInput2 = mQuery.charAt(mPos + 1);
-            if (mInput2 == ':') {
+            if (input == ':') {
                 mCommentCount++;
 
             }
@@ -436,24 +452,29 @@ public class XPathScanner implements XPathConstants {
     /**
      * Checks if the given character is a letter.
      * 
-     * @param mInput
+     * @param paramInput
      *            The character to check.
      * @return Returns true, if the character is a letter.
      */
-    private boolean isLetter(final char mInput) {
+    private boolean isLetter(final char paramInput) {
 
-        return ((mInput >= '0' && mInput <= '9') || (mInput >= 'a' && mInput <= 'z')
-            || (mInput >= 'A' && mInput <= 'Z') || (mInput == '_') || (mInput == '-') || (mInput == '.'));
+        return (paramInput >= '0' && paramInput <= '9') || (paramInput >= 'a' && paramInput <= 'z')
+            || (paramInput >= 'A' && paramInput <= 'Z') || (paramInput == '_') || (paramInput == '-')
+            || (paramInput == '.');
 
     }
 
     /**
-     * Return the token that will be returned by the scanner after the >next<th * call of nextToken(), without changing the internal state of the scanner. * * @param next * number of next tokens to be read * @return token that will be read after calling nextToken() >
-     * next< times
+     * Return the token that will be returned by the scanner after the call of nextToken(), without changing
+     * the internal state of the scanner.
+     * 
+     * @param paramNext
+     *            number of next tokens to be read
+     * @return token that will be read after calling nextToken()
      */
-    public XPathToken lookUpTokens(final int next) {
+    public XPathToken lookUpTokens(final int paramNext) {
 
-        int nextCount = next;
+        int nextCount = paramNext;
 
         // save current position of the scanner, to restore it later
         final int lastPos = mPos;

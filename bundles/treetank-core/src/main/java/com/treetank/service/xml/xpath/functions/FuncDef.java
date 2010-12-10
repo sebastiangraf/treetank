@@ -17,6 +17,9 @@
 
 package com.treetank.service.xml.xpath.functions;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * <h1>FuncDef</h1>
  * <p>
@@ -2341,16 +2344,25 @@ public enum FuncDef {
     private final String mName;
 
     /** Minimum number of possible arguments. */
-    private int mMin;
+    private final int mMin;
 
     /** Maximum number of possible arguments. */
-    private int mMax;
+    private final int mMax;
 
     /** Return type of the function. */
-    private String mReturnType;
+    private final String mReturnType;
 
     /** The class that implements the function. */
     private Class<? extends AbstractFunction> mFunc;
+
+    /** Private mapping for easy retrieval of enums. */
+    private static final Map<String, FuncDef> STRINGTOENUM = new HashMap<String, FuncDef>();
+
+    static {
+        for (FuncDef def : values()) {
+            STRINGTOENUM.put(def.getName(), def);
+        }
+    }
 
     /**
      * Constructor. Initializes internal state.
@@ -2415,6 +2427,17 @@ public enum FuncDef {
     public String getReturnType() {
 
         return mReturnType;
+    }
+
+    /**
+     * Public method to easy retrieve the Function-Class for a name.
+     * 
+     * @param paramName
+     *            the name of the function to be retrieved.
+     * @return the Function
+     */
+    public static FuncDef fromString(final String paramName) {
+        return STRINGTOENUM.get(paramName);
     }
 
 }

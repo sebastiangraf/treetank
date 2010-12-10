@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * Performs an arithmetic subtraction on two input operators.
  * </p>
  */
-public class SubOpAxis extends AbstractOpAxis {
+public class SubOpAxis extends AbsObAxis {
 
     /**
      * Log wrapper for better output.

@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * Performs an arithmetic multiplication on two input operators.
  * </p>
  */
-public class MulOpAxis extends AbstractOpAxis {
+public class MulOpAxis extends AbsObAxis {
 
     /**
      * Log wrapper for better output.

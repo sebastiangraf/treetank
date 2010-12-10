@@ -34,7 +34,7 @@ import com.treetank.utils.TypedValue;
  * any length.
  * </p>
  */
-public class GeneralComp extends AbstractComparator {
+public class GeneralComp extends AbsComparator {
 
     /**
      * Constructor. Initializes the internal state.
@@ -123,9 +123,7 @@ public class GeneralComp extends AbstractComparator {
 
             }
 
-        }
-
-        if (!XPATH_10_COMP) {
+        } else {
             if (mType1 == Type.UNTYPED_ATOMIC) {
                 switch (mType2) {
                 case UNTYPED_ATOMIC:

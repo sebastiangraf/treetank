@@ -17,7 +17,6 @@
 
 package com.treetank.service.xml.xpath.comparators;
 
-import com.treetank.service.xml.xpath.XPathConstants;
 import com.treetank.service.xml.xpath.functions.XPathError;
 import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
 import com.treetank.service.xml.xpath.types.Type;
@@ -28,7 +27,7 @@ import com.treetank.service.xml.xpath.types.Type;
  * Enumeration for all comparison kinds.
  * </p>
  */
-public enum CompKind implements XPathConstants {
+public enum CompKind {
 
     /** comparison type 'equal'. */
     EQ {
