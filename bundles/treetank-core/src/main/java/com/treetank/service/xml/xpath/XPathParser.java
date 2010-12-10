@@ -43,6 +43,7 @@ import com.treetank.axis.PrecedingAxis;
 import com.treetank.axis.PrecedingSiblingAxis;
 import com.treetank.axis.SelfAxis;
 import com.treetank.axis.TextFilter;
+import com.treetank.service.xml.xpath.XPathToken.TokenType;
 import com.treetank.service.xml.xpath.filter.DocumentNodeAxis;
 import com.treetank.service.xml.xpath.filter.ItemFilter;
 import com.treetank.service.xml.xpath.filter.NestedFilter;
@@ -63,7 +64,7 @@ import com.treetank.utils.TypedValue;
  * http://www.w3.org/TR/xquery-xpath-parsing/</a>.Then it constitutes the query execution chain.
  * </p>
  */
-public final class XPathParser implements XPathConstants {
+public final class XPathParser {
 
     /** IReadTransaction to access the nodes. Is needed for filters and axes. */
     private final IReadTransaction mRTX;
@@ -104,13 +105,13 @@ public final class XPathParser implements XPathConstants {
         // get first token, ignore all white spaces
         do {
             mToken = mScanner.nextToken();
-        } while (mToken.getType() == Token.SPACE);
+        } while (mToken.getType() == TokenType.SPACE);
 
         // parse the query according to the rules specified in the XPath 2.0 REC
         parseExpression();
 
         // after the parsing of the expression no token must be left
-        if (mToken.getType() != Token.END) {
+        if (mToken.getType() != TokenType.END) {
             throw new IllegalStateException("The query has not been processed completely.");
         }
     }
@@ -131,7 +132,7 @@ public final class XPathParser implements XPathConstants {
             parseExprSingle();
             no++;
 
-        } while (is(Token.COMMA, true));
+        } while (is(TokenType.COMMA, true));
 
         mPipeBuilder.finishExpr(getTransaction(), no);
     }
@@ -197,7 +198,7 @@ public final class XPathParser implements XPathConstants {
         // parse all conditions and count them
         do {
 
-            consume(Token.DOLLAR, true);
+            consume(TokenType.DOLLAR, true);
 
             // parse for variables
             final String varName = parseVarName();
@@ -207,7 +208,7 @@ public final class XPathParser implements XPathConstants {
             mPipeBuilder.addVariableExpr(getTransaction(), varName);
             forCondNo++;
 
-        } while (is(Token.COMMA, true));
+        } while (is(TokenType.COMMA, true));
 
         return forCondNo;
 
@@ -235,7 +236,7 @@ public final class XPathParser implements XPathConstants {
         do {
 
             // parse variable name
-            consume(Token.DOLLAR, true);
+            consume(TokenType.DOLLAR, true);
             final String varName = parseVarName();
             consume("in", true);
             varNo++;
@@ -243,7 +244,7 @@ public final class XPathParser implements XPathConstants {
             parseExprSingle();
             mPipeBuilder.addVariableExpr(getTransaction(), varName);
 
-        } while (is(Token.COMMA, true));
+        } while (is(TokenType.COMMA, true));
 
         // parse satisfies expression
         consume("satisfies", true);
@@ -264,11 +265,11 @@ public final class XPathParser implements XPathConstants {
 
         // parse if expression
         consume("if", true);
-        consume(Token.OPEN_BR, true);
+        consume(TokenType.OPEN_BR, true);
 
         // parse test expression axis
         parseExpression();
-        consume(Token.CLOSE_BR, true);
+        consume(TokenType.CLOSE_BR, true);
 
         // parse then expression
         consume("then", true);
@@ -369,12 +370,12 @@ public final class XPathParser implements XPathConstants {
      */
     private boolean isComp() {
 
-        return is(Token.L_SHIFT, true)
-            || is(Token.R_SHIFT, true)
-            || is(Token.EQ, true)
-            || is(Token.N_EQ, true)
-            || is(Token.COMP, true)
-            || mToken.getType() == Token.TEXT
+        return is(TokenType.L_SHIFT, true)
+            || is(TokenType.R_SHIFT, true)
+            || is(TokenType.EQ, true)
+            || is(TokenType.N_EQ, true)
+            || is(TokenType.COMP, true)
+            || mToken.getType() == TokenType.TEXT
             && (is("ne", true) || is("eq", true) || is("lt", true) || is("le", true) || is("gt", true)
                 || is("ge", true) || is("is", true));
     }
@@ -410,7 +411,7 @@ public final class XPathParser implements XPathConstants {
         parseMultiplicativeExpr();
 
         String op = mToken.getContent();
-        while (is(Token.PLUS, true) || is(Token.MINUS, true)) {
+        while (is(TokenType.PLUS, true) || is(TokenType.MINUS, true)) {
 
             // identify current operator kind
             // for (Operators op : Operators.values()) {
@@ -469,7 +470,7 @@ public final class XPathParser implements XPathConstants {
 
         parseIntersectExceptExpr();
 
-        while (is("union", true) || is(Token.OR, true)) {
+        while (is("union", true) || is(TokenType.OR, true)) {
 
             // parse second operand axis
 
@@ -587,9 +588,9 @@ public final class XPathParser implements XPathConstants {
         boolean isUnaryMinus = false;
 
         // the plus can be ignored since it does not modify the result
-        while (is(Token.PLUS, true) || mToken.getType() == Token.MINUS) {
+        while (is(TokenType.PLUS, true) || mToken.getType() == TokenType.MINUS) {
 
-            if (is(Token.MINUS, true)) {
+            if (is(TokenType.MINUS, true)) {
                 // two following minuses is a plus and therefore can be ignored,
                 // thus only in case of an odd number of minus signs, the unary
                 // operation
@@ -631,12 +632,12 @@ public final class XPathParser implements XPathConstants {
      */
     private void parsePathExpr() {
 
-        if (is(Token.SLASH, true)) {
+        if (is(TokenType.SLASH, true)) {
             // path expression starts from the root
             mPipeBuilder.addStep(new DocumentNodeAxis(getTransaction()));
-            final Token type = mToken.getType();
+            final TokenType type = mToken.getType();
 
-            if (type != Token.END && type != Token.COMMA) {
+            if (type != TokenType.END && type != TokenType.COMMA) {
                 // all immediately following keywords or '*' are nametests, not
                 // operators
                 // leading-lone-slash constrain
@@ -644,7 +645,7 @@ public final class XPathParser implements XPathConstants {
                 parseRelativePathExpr();
             }
 
-        } else if (is(Token.DESC_STEP, true)) {
+        } else if (is(TokenType.DESC_STEP, true)) {
             // path expression starts from the root with a descendant-or-self
             // step
             mPipeBuilder.addStep(new DocumentNodeAxis(getTransaction()));
@@ -670,15 +671,15 @@ public final class XPathParser implements XPathConstants {
 
         parseStepExpr();
 
-        while (mToken.getType() == Token.SLASH || mToken.getType() == Token.DESC_STEP) {
+        while (mToken.getType() == TokenType.SLASH || mToken.getType() == TokenType.DESC_STEP) {
 
-            if (is(Token.DESC_STEP, true)) {
+            if (is(TokenType.DESC_STEP, true)) {
                 final IAxis mAxis = new DescendantAxis(getTransaction(), true);
 
                 mPipeBuilder.addStep(mAxis);
             } else {
                 // in this case the slash is just a separator
-                consume(Token.SLASH, true);
+                consume(TokenType.SLASH, true);
             }
             parseStepExpr();
         }
@@ -705,9 +706,9 @@ public final class XPathParser implements XPathConstants {
      */
     private boolean isFilterExpr() {
 
-        final Token type = mToken.getType();
-        return type == Token.DOLLAR || type == Token.POINT || type == Token.OPEN_BR || isFunctionCall()
-            || isLiteral();
+        final TokenType type = mToken.getType();
+        return type == TokenType.DOLLAR || type == TokenType.POINT || type == TokenType.OPEN_BR
+            || isFunctionCall() || isLiteral();
     }
 
     /**
@@ -720,10 +721,10 @@ public final class XPathParser implements XPathConstants {
      */
     private boolean isFunctionCall() {
 
-        return mToken.getType() == Token.TEXT
+        return mToken.getType() == TokenType.TEXT
             && (!isReservedKeyword())
-            && (mScanner.lookUpTokens(1).getType() == Token.OPEN_BR || (mScanner.lookUpTokens(1).getType() == Token.COLON && mScanner
-                .lookUpTokens(3).getType() == Token.OPEN_BR));
+            && (mScanner.lookUpTokens(1).getType() == TokenType.OPEN_BR || (mScanner.lookUpTokens(1)
+                .getType() == TokenType.COLON && mScanner.lookUpTokens(3).getType() == TokenType.OPEN_BR));
     }
 
     /**
@@ -825,8 +826,8 @@ public final class XPathParser implements XPathConstants {
 
         }
 
-        consume(Token.COLON, true);
-        consume(Token.COLON, true);
+        consume(TokenType.COLON, true);
+        consume(TokenType.COLON, true);
 
         return axis;
 
@@ -840,8 +841,11 @@ public final class XPathParser implements XPathConstants {
     private boolean isForwardAxis() {
 
         final String content = mToken.getContent();
-        return (mToken.getType() == Token.TEXT && ("child".equals(content) || ("descendant".equals(content)
-            || "descendant-or-self".equals(content) || "attribute".equals(content) || "self".equals(content)
+        return (mToken.getType() == TokenType.TEXT && ("child".equals(content) || ("descendant"
+            .equals(content)
+            || "descendant-or-self".equals(content)
+            || "attribute".equals(content)
+            || "self".equals(content)
             || "following".equals(content) || "following-sibling".equals(content) || "namespace"
             .equals(content))));
     }
@@ -860,7 +864,7 @@ public final class XPathParser implements XPathConstants {
         IAxis axis;
         boolean isAttribute;
 
-        if (is(Token.AT, true) || mToken.getContent().equals("attribute")
+        if (is(TokenType.AT, true) || mToken.getContent().equals("attribute")
             || mToken.getContent().equals("schema-attribute")) {
             // in case of .../attribute(..), or .../schema-attribute() the
             // default
@@ -889,7 +893,7 @@ public final class XPathParser implements XPathConstants {
     private void parseReverceStep() {
 
         IAxis axis;
-        if (mToken.getType() == Token.PARENT) {
+        if (mToken.getType() == TokenType.PARENT) {
             axis = parseAbbrevReverseStep();
 
             mPipeBuilder.addStep(axis);
@@ -933,8 +937,8 @@ public final class XPathParser implements XPathConstants {
 
         }
 
-        consume(Token.COLON, true);
-        consume(Token.COLON, true);
+        consume(TokenType.COLON, true);
+        consume(TokenType.COLON, true);
 
         return axis;
     }
@@ -950,7 +954,7 @@ public final class XPathParser implements XPathConstants {
      */
     private IAxis parseAbbrevReverseStep() {
 
-        consume(Token.PARENT, true);
+        consume(TokenType.PARENT, true);
         return new ParentAxis(getTransaction());
     }
 
@@ -959,10 +963,10 @@ public final class XPathParser implements XPathConstants {
      */
     private boolean isReverceStep() {
 
-        final Token type = mToken.getType();
+        final TokenType type = mToken.getType();
         final String content = mToken.getContent();
 
-        return (type == Token.PARENT || (type == Token.TEXT && ("parent".equals(content)
+        return (type == TokenType.PARENT || (type == TokenType.TEXT && ("parent".equals(content)
             || "ancestor".equals(content) || "preceding".equals(content)
             || "preceding-sibling".equals(content) || "ancestor-or-self".equals(content))));
     }
@@ -1014,9 +1018,9 @@ public final class XPathParser implements XPathConstants {
      */
     private boolean isWildcardNameTest() {
 
-        return mToken.getType() == Token.STAR
-            || (mToken.getType() == Token.TEXT && mScanner.lookUpTokens(1).getType() == Token.COLON && mScanner
-                .lookUpTokens(2).getType() == Token.STAR);
+        return mToken.getType() == TokenType.STAR
+            || (mToken.getType() == TokenType.TEXT && mScanner.lookUpTokens(1).getType() == TokenType.COLON && mScanner
+                .lookUpTokens(2).getType() == TokenType.STAR);
     }
 
     /**
@@ -1034,9 +1038,9 @@ public final class XPathParser implements XPathConstants {
         IFilter filter;
         boolean isName = false;
 
-        if (is(Token.STAR, true)) {
+        if (is(TokenType.STAR, true)) {
 
-            if (is(Token.COLON, true)) {
+            if (is(TokenType.COLON, true)) {
                 isName = true; // < "*" ":" NCName > .
             } else {
 
@@ -1048,8 +1052,8 @@ public final class XPathParser implements XPathConstants {
 
         filter = new WildcardFilter(getTransaction(), parseNCName(), isName);
         if (!isName) { // < NCName ":" "*" >
-            consume(Token.COLON, true);
-            consume(Token.STAR, true);
+            consume(TokenType.COLON, true);
+            consume(TokenType.STAR, true);
         }
         return filter;
     }
@@ -1076,7 +1080,7 @@ public final class XPathParser implements XPathConstants {
      */
     private void parsePredicateList() {
 
-        while (mToken.getType() == Token.OPEN_SQP) {
+        while (mToken.getType() == TokenType.OPEN_SQP) {
             parsePredicate();
         }
     }
@@ -1093,13 +1097,13 @@ public final class XPathParser implements XPathConstants {
      */
     private void parsePredicate() {
 
-        consume(Token.OPEN_SQP, true);
+        consume(TokenType.OPEN_SQP, true);
 
         mPipeBuilder.addExpressionSingle();
 
         parseExpression();
 
-        consume(Token.CLOSE_SQP, true);
+        consume(TokenType.CLOSE_SQP, true);
 
         mPipeBuilder.addPredicate(getTransaction());
     }
@@ -1115,11 +1119,11 @@ public final class XPathParser implements XPathConstants {
 
         if (isLiteral()) {
             parseLiteral();
-        } else if (mToken.getType() == Token.DOLLAR) {
+        } else if (mToken.getType() == TokenType.DOLLAR) {
             parseVarRef();
-        } else if (mToken.getType() == Token.OPEN_BR) {
+        } else if (mToken.getType() == TokenType.OPEN_BR) {
             parseParenthesizedExpr();
-        } else if (mToken.getType() == Token.POINT) {
+        } else if (mToken.getType() == TokenType.POINT) {
             parseContextItemExpr();
         } else if (!isReservedKeyword()) {
             parseFunctionCall();
@@ -1134,8 +1138,8 @@ public final class XPathParser implements XPathConstants {
      */
     private boolean isLiteral() {
 
-        final Token type = mToken.getType();
-        return (type == Token.SINGLE_QUOTE || type == Token.DBL_QUOTE || type == Token.VALUE);
+        final TokenType type = mToken.getType();
+        return (type == TokenType.SINGLE_QUOTE || type == TokenType.DBL_QUOTE || type == TokenType.VALUE);
     }
 
     /**
@@ -1148,12 +1152,12 @@ public final class XPathParser implements XPathConstants {
 
         int itemKey;
 
-        if (mToken.getType() == Token.VALUE || mToken.getType() == Token.POINT) {
+        if (mToken.getType() == TokenType.VALUE || mToken.getType() == TokenType.POINT) {
             // is numeric literal
             itemKey = parseNumericLiteral();
         } else {
             // is string literal
-            assert (mToken.getType() == Token.DBL_QUOTE || mToken.getType() == Token.SINGLE_QUOTE);
+            assert (mToken.getType() == TokenType.DBL_QUOTE || mToken.getType() == TokenType.SINGLE_QUOTE);
             itemKey = parseStringLiteral();
         }
 
@@ -1184,7 +1188,7 @@ public final class XPathParser implements XPathConstants {
      */
     private void parseVarRef() {
 
-        consume(Token.DOLLAR, true);
+        consume(TokenType.DOLLAR, true);
         final String varName = parseVarName();
         mPipeBuilder.addVarRefExpr(getTransaction(), varName);
     }
@@ -1198,11 +1202,11 @@ public final class XPathParser implements XPathConstants {
      */
     private void parseParenthesizedExpr() {
 
-        consume(Token.OPEN_BR, true);
-        if (!(mToken.getType() == Token.CLOSE_BR)) {
+        consume(TokenType.OPEN_BR, true);
+        if (!(mToken.getType() == TokenType.CLOSE_BR)) {
             parseExpression();
         }
-        consume(Token.CLOSE_BR, true);
+        consume(TokenType.CLOSE_BR, true);
 
     }
 
@@ -1215,7 +1219,7 @@ public final class XPathParser implements XPathConstants {
      */
     private void parseContextItemExpr() {
 
-        consume(Token.POINT, true);
+        consume(TokenType.POINT, true);
 
         mPipeBuilder.addStep(new SelfAxis(getTransaction()));
     }
@@ -1231,20 +1235,20 @@ public final class XPathParser implements XPathConstants {
 
         final String funcName = parseQName();
 
-        consume(Token.OPEN_BR, true);
+        consume(TokenType.OPEN_BR, true);
 
         int num = 0;
-        if (!(mToken.getType() == Token.CLOSE_BR)) {
+        if (!(mToken.getType() == TokenType.CLOSE_BR)) {
 
             do {
 
                 parseExprSingle();
                 num++;
 
-            } while (is(Token.COMMA, true));
+            } while (is(TokenType.COMMA, true));
         }
 
-        consume(Token.CLOSE_BR, true);
+        consume(TokenType.CLOSE_BR, true);
         mPipeBuilder.addFunction(getTransaction(), funcName, num);
 
     }
@@ -1261,7 +1265,7 @@ public final class XPathParser implements XPathConstants {
     private SingleType parseSingleType() {
 
         final String atomicType = parseAtomicType();
-        final boolean intero = is(Token.INTERROGATION, true);
+        final boolean intero = is(TokenType.INTERROGATION, true);
         return new SingleType(atomicType, intero);
     }
 
@@ -1277,8 +1281,8 @@ public final class XPathParser implements XPathConstants {
     private SequenceType parseSequenceType() {
 
         if (is("empty-sequence", true)) {
-            consume(Token.OPEN_BR, true);
-            consume(Token.CLOSE_BR, true);
+            consume(TokenType.OPEN_BR, true);
+            consume(TokenType.CLOSE_BR, true);
             return new SequenceType();
 
         } else {
@@ -1296,8 +1300,8 @@ public final class XPathParser implements XPathConstants {
      */
     private boolean isWildcard() {
 
-        final Token type = mToken.getType();
-        return (type == Token.STAR || type == Token.PLUS || type == Token.INTERROGATION);
+        final TokenType type = mToken.getType();
+        return (type == TokenType.STAR || type == TokenType.PLUS || type == TokenType.INTERROGATION);
     }
 
     /**
@@ -1313,12 +1317,12 @@ public final class XPathParser implements XPathConstants {
 
         char wildcard;
 
-        if (is(Token.STAR, true)) {
+        if (is(TokenType.STAR, true)) {
             wildcard = '*';
-        } else if (is(Token.PLUS, true)) {
+        } else if (is(TokenType.PLUS, true)) {
             wildcard = '+';
         } else {
-            consume(Token.INTERROGATION, true);
+            consume(TokenType.INTERROGATION, true);
             wildcard = '?';
 
         }
@@ -1340,8 +1344,8 @@ public final class XPathParser implements XPathConstants {
         if (isKindTest()) {
             filter = parseKindTest();
         } else if (is("item", true)) {
-            consume(Token.OPEN_BR, true);
-            consume(Token.CLOSE_BR, true);
+            consume(TokenType.OPEN_BR, true);
+            consume(TokenType.CLOSE_BR, true);
 
             filter = new ItemFilter(getTransaction());
         } else {
@@ -1413,8 +1417,8 @@ public final class XPathParser implements XPathConstants {
     private IFilter parseAnyKindTest() {
 
         consume("node", true);
-        consume(Token.OPEN_BR, true);
-        consume(Token.CLOSE_BR, true);
+        consume(TokenType.OPEN_BR, true);
+        consume(TokenType.CLOSE_BR, true);
 
         return new NodeFilter(getTransaction());
     }
@@ -1434,7 +1438,7 @@ public final class XPathParser implements XPathConstants {
         return (("node".equals(content) || "attribute".equals(content) || "schema-attribute".equals(content)
             || "schema-element".equals(content) || "element".equals(content) || "text".equals(content)
             || "comment".equals(content) || "document-node".equals(content) || "processing-instruction"
-            .equals(content)) && mScanner.lookUpTokens(1).getType() == Token.OPEN_BR);
+            .equals(content)) && mScanner.lookUpTokens(1).getType() == TokenType.OPEN_BR);
     }
 
     /**
@@ -1449,7 +1453,7 @@ public final class XPathParser implements XPathConstants {
     private IFilter parseDocumentTest() {
 
         consume("document-node", true);
-        consume(Token.OPEN_BR, true);
+        consume(TokenType.OPEN_BR, true);
         IFilter filter = new DocumentRootNodeFilter(getTransaction());
 
         IFilter innerFilter;
@@ -1461,7 +1465,7 @@ public final class XPathParser implements XPathConstants {
             filter = new NestedFilter(getTransaction(), filter, innerFilter);
         }
 
-        consume(Token.CLOSE_BR, true);
+        consume(TokenType.CLOSE_BR, true);
 
         return filter;
     }
@@ -1477,8 +1481,8 @@ public final class XPathParser implements XPathConstants {
     private IFilter parseTextTest() {
 
         consume("text", true);
-        consume(Token.OPEN_BR, true);
-        consume(Token.CLOSE_BR, true);
+        consume(TokenType.OPEN_BR, true);
+        consume(TokenType.CLOSE_BR, true);
 
         return new TextFilter(getTransaction());
     }
@@ -1495,8 +1499,8 @@ public final class XPathParser implements XPathConstants {
     private IFilter parseCommentTest() {
 
         consume("comment", true);
-        consume(Token.OPEN_BR, true);
-        consume(Token.CLOSE_BR, true);
+        consume(TokenType.OPEN_BR, true);
+        consume(TokenType.CLOSE_BR, true);
 
         return new CommentFilter(getTransaction());
     }
@@ -1512,11 +1516,11 @@ public final class XPathParser implements XPathConstants {
     private IFilter parsePITest() {
 
         consume("processing-instruction", true);
-        consume(Token.OPEN_BR, true);
+        consume(TokenType.OPEN_BR, true);
 
         IFilter filter = new PIFilter(getTransaction());
 
-        if (!is(Token.CLOSE_BR, true)) {
+        if (!is(TokenType.CLOSE_BR, true)) {
             String stringLiteral;
             if (isQuote()) {
                 final byte[] param =
@@ -1526,7 +1530,7 @@ public final class XPathParser implements XPathConstants {
                 stringLiteral = parseNCName();
             }
 
-            consume(Token.CLOSE_BR, true);
+            consume(TokenType.CLOSE_BR, true);
 
             filter =
                 new NestedFilter(getTransaction(), filter, (IFilter)new NameFilter(getTransaction(),
@@ -1541,8 +1545,8 @@ public final class XPathParser implements XPathConstants {
      */
     private boolean isQuote() {
 
-        final Token type = mToken.getType();
-        return (type == Token.SINGLE_QUOTE || type == Token.DBL_QUOTE);
+        final TokenType type = mToken.getType();
+        return (type == TokenType.SINGLE_QUOTE || type == TokenType.DBL_QUOTE);
     }
 
     /**
@@ -1557,11 +1561,11 @@ public final class XPathParser implements XPathConstants {
     private IFilter parseAttributeTest() {
 
         consume("attribute", true);
-        consume(Token.OPEN_BR, true);
+        consume(TokenType.OPEN_BR, true);
 
         IFilter filter = new AttributeFilter(getTransaction());
 
-        if (!(mToken.getType() == Token.CLOSE_BR)) {
+        if (!(mToken.getType() == TokenType.CLOSE_BR)) {
             // add name filter
             final String name = parseAttributeNameOrWildcard();
             if (!name.equals("*")) {
@@ -1570,7 +1574,7 @@ public final class XPathParser implements XPathConstants {
               // attribute
               // filter is sufficient
 
-            if (is(Token.COMMA, true)) {
+            if (is(TokenType.COMMA, true)) {
                 // add type filter
                 filter =
                     new NestedFilter(getTransaction(), filter, new TypeFilter(getTransaction(),
@@ -1578,7 +1582,7 @@ public final class XPathParser implements XPathConstants {
             }
         }
 
-        consume(Token.CLOSE_BR, true);
+        consume(TokenType.CLOSE_BR, true);
 
         return filter;
     }
@@ -1596,7 +1600,7 @@ public final class XPathParser implements XPathConstants {
 
         String name;
 
-        if (is(Token.STAR, true)) {
+        if (is(TokenType.STAR, true)) {
             name = mToken.getContent();
         } else {
             name = parseAttributeName();
@@ -1617,7 +1621,7 @@ public final class XPathParser implements XPathConstants {
     private IFilter parseSchemaAttributeTest() {
 
         consume("schema-attribute", true);
-        consume(Token.OPEN_BR, true);
+        consume(TokenType.OPEN_BR, true);
 
         final IFilter filter = new SchemaAttributeFilter(getTransaction()/*
                                                                           * ,
@@ -1625,7 +1629,7 @@ public final class XPathParser implements XPathConstants {
                                                                           * ()
                                                                           */);
 
-        consume(Token.CLOSE_BR, true);
+        consume(TokenType.CLOSE_BR, true);
 
         return filter;
     }
@@ -1654,11 +1658,11 @@ public final class XPathParser implements XPathConstants {
     private IFilter parseElementTest() {
 
         consume("element", true);
-        consume(Token.OPEN_BR, true);
+        consume(TokenType.OPEN_BR, true);
 
         IFilter filter = new ElementFilter(getTransaction());
 
-        if (!(mToken.getType() == Token.CLOSE_BR)) {
+        if (!(mToken.getType() == TokenType.CLOSE_BR)) {
 
             final String mName = parseElementNameOrWildcard();
             if (!mName.equals("*")) {
@@ -1666,13 +1670,13 @@ public final class XPathParser implements XPathConstants {
             } // if it is '*', all elements are accepted, so the normal element
               // filter is sufficient
 
-            if (is(Token.COMMA, true)) {
+            if (is(TokenType.COMMA, true)) {
 
                 filter =
                     new NestedFilter(getTransaction(), filter, (IFilter)new TypeFilter(getTransaction(),
                         parseTypeName()));
 
-                if (is(Token.INTERROGATION, true)) {
+                if (is(TokenType.INTERROGATION, true)) {
                     // TODO: Nilled property of node can be true or false.
                     // Without, must
                     // be false
@@ -1681,7 +1685,7 @@ public final class XPathParser implements XPathConstants {
             }
         }
 
-        consume(Token.CLOSE_BR, true);
+        consume(TokenType.CLOSE_BR, true);
 
         return filter;
     }
@@ -1699,7 +1703,7 @@ public final class XPathParser implements XPathConstants {
 
         String name;
 
-        if (is(Token.STAR, true)) {
+        if (is(TokenType.STAR, true)) {
             name = mToken.getContent();
         } else {
             name = parseElementName();
@@ -1720,11 +1724,11 @@ public final class XPathParser implements XPathConstants {
     private IFilter parseSchemaElementTest() {
 
         consume("schema-element", true);
-        consume(Token.OPEN_BR, true);
+        consume(TokenType.OPEN_BR, true);
 
         // final String elementDec = parseElementDeclaration();
 
-        consume(Token.CLOSE_BR, true);
+        consume(TokenType.CLOSE_BR, true);
 
         return new SchemaElementFilter(getTransaction()/* ,elementDec */);
     }
@@ -1796,30 +1800,30 @@ public final class XPathParser implements XPathConstants {
         String value = mToken.getContent();
         String type = "xs:integer";
 
-        if (is(Token.VALUE, false)) {
+        if (is(TokenType.VALUE, false)) {
 
             // is at least decimal literal (could also be a double literal)
-            if (mToken.getType() == Token.POINT) {
+            if (mToken.getType() == TokenType.POINT) {
                 // TODO: not so nice, try to find a better solution
-                final boolean isDouble = mScanner.lookUpTokens(2).getType() == Token.E_NUMBER;
+                final boolean isDouble = mScanner.lookUpTokens(2).getType() == TokenType.E_NUMBER;
                 value = parseDecimalLiteral(value);
                 type = isDouble ? "xs:double" : "xs:decimal";
             }
 
             // values containing an 'e' are double literals
-            if (mToken.getType() == Token.E_NUMBER) {
+            if (mToken.getType() == TokenType.E_NUMBER) {
                 value = parseDoubleLiteral(value);
                 type = "xs:double";
             }
 
         } else {
             // decimal literal that starts with a "."
-            final boolean isDouble = mScanner.lookUpTokens(2).getType() == Token.E_NUMBER;
+            final boolean isDouble = mScanner.lookUpTokens(2).getType() == TokenType.E_NUMBER;
             value = parseDecimalLiteral("");
             type = isDouble ? "xs:double" : "xs:decimal";
         }
 
-        is(Token.SPACE, true);
+        is(TokenType.SPACE, true);
 
         final IItem mIntLiteral =
             new AtomicValue(TypedValue.getBytes(value), getTransaction().keyForName(type));
@@ -1840,14 +1844,14 @@ public final class XPathParser implements XPathConstants {
      */
     private String parseDecimalLiteral(final String mValue) {
 
-        consume(Token.POINT, false);
+        consume(TokenType.POINT, false);
         String dValue = mValue;
 
-        if (mToken.getType() == Token.VALUE) {
+        if (mToken.getType() == TokenType.VALUE) {
             dValue = mValue + "." + mToken.getContent();
-            consume(Token.VALUE, false);
+            consume(TokenType.VALUE, false);
 
-            if (mToken.getType() == Token.E_NUMBER) {
+            if (mToken.getType() == TokenType.E_NUMBER) {
                 // TODO: set type to double
                 dValue = parseDoubleLiteral(dValue);
             }
@@ -1873,16 +1877,16 @@ public final class XPathParser implements XPathConstants {
 
         final StringBuilder dValue = new StringBuilder(mValue);
 
-        if (is(Token.E_NUMBER, false)) {
+        if (is(TokenType.E_NUMBER, false)) {
             dValue.append("E");
             dValue.append(mToken.getContent());
         }
 
-        if (is(Token.PLUS, false) || is(Token.MINUS, false)) {
+        if (is(TokenType.PLUS, false) || is(TokenType.MINUS, false)) {
             dValue.append(mToken.getContent());
         }
 
-        consume(Token.VALUE, true);
+        consume(TokenType.VALUE, true);
 
         return dValue.toString();
     }
@@ -1900,11 +1904,11 @@ public final class XPathParser implements XPathConstants {
 
         final StringBuilder mValue = new StringBuilder();
 
-        if (is(Token.DBL_QUOTE, true)) {
+        if (is(TokenType.DBL_QUOTE, true)) {
 
             do {
 
-                while (mToken.getType() != Token.DBL_QUOTE) {
+                while (mToken.getType() != TokenType.DBL_QUOTE) {
                     mValue.append(mToken.getContent());
                     // consume(Token.TEXT, false); // TODO: does not need to be
                     // a text
@@ -1912,23 +1916,23 @@ public final class XPathParser implements XPathConstants {
                     mToken = mScanner.nextToken();
                 }
 
-                consume(Token.DBL_QUOTE, true);
-            } while (is(Token.DBL_QUOTE, true));
+                consume(TokenType.DBL_QUOTE, true);
+            } while (is(TokenType.DBL_QUOTE, true));
 
         } else {
 
-            consume(Token.SINGLE_QUOTE, true);
+            consume(TokenType.SINGLE_QUOTE, true);
 
             do {
 
-                while (mToken.getType() != Token.SINGLE_QUOTE) {
+                while (mToken.getType() != TokenType.SINGLE_QUOTE) {
                     mValue.append(mToken.getContent());
                     // consume(Token.TEXT, false);
                     mToken = mScanner.nextToken();
                 }
 
-                consume(Token.SINGLE_QUOTE, true);
-            } while (is(Token.SINGLE_QUOTE, true));
+                consume(TokenType.SINGLE_QUOTE, true);
+            } while (is(TokenType.SINGLE_QUOTE, true));
 
         }
 
@@ -1958,7 +1962,7 @@ public final class XPathParser implements XPathConstants {
      */
     private boolean isMultiplication() {
 
-        return (is(Token.STAR, true) || is("div", true) || is("idiv", true) || is("mod", true));
+        return (is(TokenType.STAR, true) || is("div", true) || is("idiv", true) || is("mod", true));
 
     }
 
@@ -1987,7 +1991,7 @@ public final class XPathParser implements XPathConstants {
 
         String qName = parseNCName(); // can be prefix or localPartName
 
-        if (is(Token.COLON, false)) {
+        if (is(TokenType.COLON, false)) {
 
             qName += ":";
             qName += parseNCName(); // is localPartName
@@ -2015,7 +2019,7 @@ public final class XPathParser implements XPathConstants {
 
         final String ncName = mToken.getContent();
 
-        consume(Token.TEXT, true);
+        consume(TokenType.TEXT, true);
 
         return ncName;
     }
@@ -2033,7 +2037,7 @@ public final class XPathParser implements XPathConstants {
      *            if true all new tokens with type whitespace are ignored and
      *            the next token is retrieved from the scanner
      */
-    private void consume(final Token mType, final boolean mIgnoreWhitespace) {
+    private void consume(final TokenType mType, final boolean mIgnoreWhitespace) {
 
         if (!is(mType, mIgnoreWhitespace)) {
             // error found by parser - stopping
@@ -2083,12 +2087,12 @@ public final class XPathParser implements XPathConstants {
             return false;
         }
 
-        if (mToken.getType() == Token.COMP || mToken.getType() == Token.EQ || mToken.getType() == Token.N_EQ
-            || mToken.getType() == Token.PLUS || mToken.getType() == Token.MINUS
-            || mToken.getType() == Token.STAR) {
+        if (mToken.getType() == TokenType.COMP || mToken.getType() == TokenType.EQ
+            || mToken.getType() == TokenType.N_EQ || mToken.getType() == TokenType.PLUS
+            || mToken.getType() == TokenType.MINUS || mToken.getType() == TokenType.STAR) {
             return is(mToken.getType(), mIgnoreWhitespace);
         } else {
-            return is(Token.TEXT, mIgnoreWhitespace);
+            return is(TokenType.TEXT, mIgnoreWhitespace);
         }
     }
 
@@ -2105,7 +2109,7 @@ public final class XPathParser implements XPathConstants {
      *            the next token is retrieved from the scanner
      * @return is
      */
-    private boolean is(final Token mType, final boolean mIgnoreWhitespace) {
+    private boolean is(final TokenType mType, final boolean mIgnoreWhitespace) {
 
         if (mType != mToken.getType()) {
 
@@ -2115,7 +2119,7 @@ public final class XPathParser implements XPathConstants {
         do {
             // scan next token
             mToken = mScanner.nextToken();
-        } while (mIgnoreWhitespace && mToken.getType() == Token.SPACE);
+        } while (mIgnoreWhitespace && mToken.getType() == TokenType.SPACE);
 
         return true;
     }

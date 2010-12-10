@@ -33,7 +33,7 @@ import com.treetank.utils.TypedValue;
  * The function returns the number of given arguments.
  * </p>
  */
-public class FNCount extends AbstractFunction {
+public class FNCount extends AbsFunction {
 
     /**
      * Constructor.

@@ -33,7 +33,7 @@ import com.treetank.utils.TypedValue;
  * The function returns position of the item in the expression result set.
  * </p>
  */
-public class FNPosition extends AbstractFunction {
+public class FNPosition extends AbsFunction {
 
     private Integer posCount;
 

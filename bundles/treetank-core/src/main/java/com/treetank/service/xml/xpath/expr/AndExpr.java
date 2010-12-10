@@ -59,7 +59,7 @@ import com.treetank.utils.TypedValue;
  * </tr>
  * </table>
  */
-public class AndExpr extends AbstractExpression implements IAxis {
+public class AndExpr extends AbsExpression implements IAxis {
 
     /** First operand of the logical expression. */
     private final IAxis mOp1;

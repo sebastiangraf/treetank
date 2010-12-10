@@ -25,6 +25,8 @@ import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.functions.Function;
 import com.treetank.service.xml.xpath.types.Type;
 
+import static com.treetank.service.xml.xpath.XPathAxis.XPATH_10_COMP;
+
 /**
  * <h1>AbstractOpAxis</h1>
  * <p>
@@ -32,9 +34,6 @@ import com.treetank.service.xml.xpath.types.Type;
  * </p>
  */
 public abstract class AbsObAxis extends AbsAxis implements IAxis {
-
-    /** Declares if the evaluation is compatible to XPath 1.0 or not. */
-    static boolean XPATH_10_COMP = true;
 
     /** First arithmetic operand. */
     private final IAxis mOperand1;

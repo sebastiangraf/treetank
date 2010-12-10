@@ -26,7 +26,7 @@ import com.treetank.api.IReadTransaction;
  * Reference to the current item of the variable expression.
  * </p>
  */
-public class VarRefExpr extends AbstractExpression implements IAxis, IObserver {
+public class VarRefExpr extends AbsExpression implements IAxis, IObserver {
 
     /** Key of the item the variable is set to at the moment. */
     private long mVarKey;

@@ -41,7 +41,7 @@ import com.treetank.utils.TypedValue;
  * given value.
  * </p>
  */
-public class CastableExpr extends AbstractExpression implements IAxis {
+public class CastableExpr extends AbsExpression implements IAxis {
 
     /** The input expression to cast to a specified target expression. */
     private final IAxis mSourceExpr;

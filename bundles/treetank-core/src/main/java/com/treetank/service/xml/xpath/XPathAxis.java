@@ -67,6 +67,9 @@ import com.treetank.axis.AbsAxis;
  */
 public final class XPathAxis extends AbsAxis implements IAxis {
 
+    /** Declares if the evaluation is compatible to XPath 1.0 or not. */
+    public final static boolean XPATH_10_COMP = true;
+
     /** Axis holding the consecutive query execution plans of the query. */
     private IAxis mPipeline;
 

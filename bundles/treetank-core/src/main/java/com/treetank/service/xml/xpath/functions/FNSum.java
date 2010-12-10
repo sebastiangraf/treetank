@@ -33,7 +33,7 @@ import com.treetank.utils.TypedValue;
  * The function returns the sum of all input item values.
  * </p>
  */
-public class FNSum extends AbstractFunction {
+public class FNSum extends AbsFunction {
 
     /**
      * Constructor.
