@@ -30,7 +30,7 @@ import com.treetank.utils.TypedValue;
  * in its second operand, according to the rules for SequenceType matching; otherwise it returns false.
  * </p>
  */
-public class InstanceOfExpr extends AbstractExpression implements IAxis {
+public class InstanceOfExpr extends AbsExpression implements IAxis {
 
     /** The sequence to test. */
     private final IAxis mInputExpr;

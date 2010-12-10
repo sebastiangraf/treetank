@@ -52,7 +52,7 @@ import com.treetank.service.xml.xpath.expr.VarRefExpr;
 import com.treetank.service.xml.xpath.expr.VariableAxis;
 import com.treetank.service.xml.xpath.filter.DupFilterAxis;
 import com.treetank.service.xml.xpath.filter.PredicateFilterAxis;
-import com.treetank.service.xml.xpath.functions.AbstractFunction;
+import com.treetank.service.xml.xpath.functions.AbsFunction;
 import com.treetank.service.xml.xpath.functions.FuncDef;
 import com.treetank.service.xml.xpath.functions.XPathError;
 import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
@@ -770,7 +770,7 @@ public final class PipelineBuilder {
         }
 
         // get function class
-        final Class<? extends AbstractFunction> function = func.getFunc();
+        final Class<? extends AbsFunction> function = func.getFunc();
         final Integer min = func.getMin();
         final Integer max = func.getMax();
         final Integer returnType = mTransaction.keyForName(func.getReturnType());

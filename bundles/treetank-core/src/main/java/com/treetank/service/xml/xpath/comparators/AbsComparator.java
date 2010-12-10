@@ -32,8 +32,7 @@ import com.treetank.service.xml.xpath.types.Type;
  * </p>
  */
 public abstract class AbsComparator extends AbsAxis implements IAxis {
-    /** Declares if the evaluation is compatible to XPath 1.0 or not. */
-    static boolean XPATH_10_COMP = true;
+
     /** Kind of comparison. */
     private final CompKind mComp;
 

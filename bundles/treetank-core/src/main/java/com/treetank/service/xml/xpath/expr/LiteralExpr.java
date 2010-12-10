@@ -26,7 +26,7 @@ import com.treetank.api.IReadTransaction;
  * Expression that holds a literal.
  * </p>
  */
-public class LiteralExpr extends AbstractExpression implements IAxis {
+public class LiteralExpr extends AbsExpression implements IAxis {
 
     private final long mLiteralKey;
 

@@ -35,7 +35,7 @@ import com.treetank.utils.TypedValue;
  * generate zero binding tuples, the value of the quantified expression is true.
  * </p>
  */
-public class EveryExpr extends AbstractExpression implements IAxis {
+public class EveryExpr extends AbsExpression implements IAxis {
 
     private final List<IAxis> mVars;
 

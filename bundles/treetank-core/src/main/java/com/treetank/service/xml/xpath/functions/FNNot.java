@@ -33,7 +33,7 @@ import com.treetank.utils.TypedValue;
  * The function inverted boolean value of the argument.
  * </p>
  */
-public class FNNot extends AbstractFunction {
+public class FNNot extends AbsFunction {
 
     /**
      * Constructor.

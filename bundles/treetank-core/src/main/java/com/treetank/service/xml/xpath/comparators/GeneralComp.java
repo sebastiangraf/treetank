@@ -27,6 +27,8 @@ import com.treetank.service.xml.xpath.functions.Function;
 import com.treetank.service.xml.xpath.types.Type;
 import com.treetank.utils.TypedValue;
 
+import static com.treetank.service.xml.xpath.XPathAxis.XPATH_10_COMP;
+
 /**
  * <h1>GeneralComp</h1>
  * <p>

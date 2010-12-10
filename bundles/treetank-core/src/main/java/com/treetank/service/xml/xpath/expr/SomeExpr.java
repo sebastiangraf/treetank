@@ -35,7 +35,7 @@ import com.treetank.utils.TypedValue;
  * generate zero binding tuples, the value of the quantified expression is false.
  * </p>
  */
-public class SomeExpr extends AbstractExpression implements IAxis {
+public class SomeExpr extends AbsExpression implements IAxis {
 
     private final List<IAxis> mVars;
 

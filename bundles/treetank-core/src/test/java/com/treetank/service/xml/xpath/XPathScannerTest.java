@@ -18,12 +18,14 @@
 
 package com.treetank.service.xml.xpath;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
+
+import com.treetank.service.xml.xpath.XPathToken.TokenType;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * JUnit test class to test the functionality of the XPathScanner.
@@ -57,67 +59,67 @@ public class XPathScannerTest {
 
     @Test
     public void testScan() throws IOException {
-        assertEquals(XPathConstants.Token.SLASH, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.TEXT, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.SLASH, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.TEXT, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.COLON, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.TEXT, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.SPACE, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.SPACE, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.SPACE, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.SPACE, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.SLASH, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.VALUE, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.DESC_STEP, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.CLOSE_SQP, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.AT, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.TEXT, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.SPACE, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.EQ, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.EQ, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.VALUE, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.E_NUMBER, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.PLUS, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.VALUE, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.E_NUMBER, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.OPEN_SQP, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.TEXT, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.SPACE, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.COMP, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.AT, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.STAR, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.INTERROGATION, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.L_SHIFT, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.COMP, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.COMP, scanner.nextToken().getType());
-        assertEquals(XPathConstants.Token.COMP, scanner.nextToken().getType());
+        assertEquals(TokenType.SLASH, scanner.nextToken().getType());
+        assertEquals(TokenType.TEXT, scanner.nextToken().getType());
+        assertEquals(TokenType.SLASH, scanner.nextToken().getType());
+        assertEquals(TokenType.TEXT, scanner.nextToken().getType());
+        assertEquals(TokenType.COLON, scanner.nextToken().getType());
+        assertEquals(TokenType.TEXT, scanner.nextToken().getType());
+        assertEquals(TokenType.SPACE, scanner.nextToken().getType());
+        assertEquals(TokenType.SPACE, scanner.nextToken().getType());
+        assertEquals(TokenType.SPACE, scanner.nextToken().getType());
+        assertEquals(TokenType.SPACE, scanner.nextToken().getType());
+        assertEquals(TokenType.SLASH, scanner.nextToken().getType());
+        assertEquals(TokenType.VALUE, scanner.nextToken().getType());
+        assertEquals(TokenType.DESC_STEP, scanner.nextToken().getType());
+        assertEquals(TokenType.CLOSE_SQP, scanner.nextToken().getType());
+        assertEquals(TokenType.AT, scanner.nextToken().getType());
+        assertEquals(TokenType.TEXT, scanner.nextToken().getType());
+        assertEquals(TokenType.SPACE, scanner.nextToken().getType());
+        assertEquals(TokenType.EQ, scanner.nextToken().getType());
+        assertEquals(TokenType.EQ, scanner.nextToken().getType());
+        assertEquals(TokenType.VALUE, scanner.nextToken().getType());
+        assertEquals(TokenType.E_NUMBER, scanner.nextToken().getType());
+        assertEquals(TokenType.PLUS, scanner.nextToken().getType());
+        assertEquals(TokenType.VALUE, scanner.nextToken().getType());
+        assertEquals(TokenType.E_NUMBER, scanner.nextToken().getType());
+        assertEquals(TokenType.OPEN_SQP, scanner.nextToken().getType());
+        assertEquals(TokenType.TEXT, scanner.nextToken().getType());
+        assertEquals(TokenType.SPACE, scanner.nextToken().getType());
+        assertEquals(TokenType.COMP, scanner.nextToken().getType());
+        assertEquals(TokenType.AT, scanner.nextToken().getType());
+        assertEquals(TokenType.STAR, scanner.nextToken().getType());
+        assertEquals(TokenType.INTERROGATION, scanner.nextToken().getType());
+        assertEquals(TokenType.L_SHIFT, scanner.nextToken().getType());
+        assertEquals(TokenType.COMP, scanner.nextToken().getType());
+        assertEquals(TokenType.COMP, scanner.nextToken().getType());
+        assertEquals(TokenType.COMP, scanner.nextToken().getType());
     }
 
     @Test
     public void testComment() throws IOException {
-        assertEquals(XPathConstants.Token.OPEN_BR, scanner2.nextToken().getType());
-        assertEquals(XPathConstants.Token.SLASH, scanner2.nextToken().getType());
-        assertEquals(XPathConstants.Token.TEXT, scanner2.nextToken().getType());
-        assertEquals(XPathConstants.Token.COLON, scanner2.nextToken().getType());
-        assertEquals(XPathConstants.Token.COLON, scanner2.nextToken().getType());
-        assertEquals(XPathConstants.Token.CLOSE_BR, scanner2.nextToken().getType());
-        assertEquals(XPathConstants.Token.TEXT, scanner2.nextToken().getType());
-        assertEquals(XPathConstants.Token.SLASH, scanner2.nextToken().getType());
-        assertEquals(XPathConstants.Token.TEXT, scanner2.nextToken().getType());
-        assertEquals(XPathConstants.Token.DESC_STEP, scanner2.nextToken().getType());
-        assertEquals(XPathConstants.Token.CLOSE_SQP, scanner2.nextToken().getType());
-        assertEquals(XPathConstants.Token.AT, scanner2.nextToken().getType());
-        assertEquals(XPathConstants.Token.TEXT, scanner2.nextToken().getType());
-        assertEquals(XPathConstants.Token.SPACE, scanner2.nextToken().getType());
-        assertEquals(XPathConstants.Token.EQ, scanner2.nextToken().getType());
-        assertEquals(XPathConstants.Token.EQ, scanner2.nextToken().getType());
-        assertEquals(XPathConstants.Token.VALUE, scanner2.nextToken().getType());
-        assertEquals(XPathConstants.Token.OPEN_SQP, scanner2.nextToken().getType());
-        assertEquals(XPathConstants.Token.TEXT, scanner2.nextToken().getType());
-        assertEquals(XPathConstants.Token.SPACE, scanner2.nextToken().getType());
-        assertEquals(XPathConstants.Token.COMP, scanner2.nextToken().getType());
-        assertEquals(XPathConstants.Token.STAR, scanner2.nextToken().getType());
+        assertEquals(TokenType.OPEN_BR, scanner2.nextToken().getType());
+        assertEquals(TokenType.SLASH, scanner2.nextToken().getType());
+        assertEquals(TokenType.TEXT, scanner2.nextToken().getType());
+        assertEquals(TokenType.COLON, scanner2.nextToken().getType());
+        assertEquals(TokenType.COLON, scanner2.nextToken().getType());
+        assertEquals(TokenType.CLOSE_BR, scanner2.nextToken().getType());
+        assertEquals(TokenType.TEXT, scanner2.nextToken().getType());
+        assertEquals(TokenType.SLASH, scanner2.nextToken().getType());
+        assertEquals(TokenType.TEXT, scanner2.nextToken().getType());
+        assertEquals(TokenType.DESC_STEP, scanner2.nextToken().getType());
+        assertEquals(TokenType.CLOSE_SQP, scanner2.nextToken().getType());
+        assertEquals(TokenType.AT, scanner2.nextToken().getType());
+        assertEquals(TokenType.TEXT, scanner2.nextToken().getType());
+        assertEquals(TokenType.SPACE, scanner2.nextToken().getType());
+        assertEquals(TokenType.EQ, scanner2.nextToken().getType());
+        assertEquals(TokenType.EQ, scanner2.nextToken().getType());
+        assertEquals(TokenType.VALUE, scanner2.nextToken().getType());
+        assertEquals(TokenType.OPEN_SQP, scanner2.nextToken().getType());
+        assertEquals(TokenType.TEXT, scanner2.nextToken().getType());
+        assertEquals(TokenType.SPACE, scanner2.nextToken().getType());
+        assertEquals(TokenType.COMP, scanner2.nextToken().getType());
+        assertEquals(TokenType.STAR, scanner2.nextToken().getType());
     }
 
 }

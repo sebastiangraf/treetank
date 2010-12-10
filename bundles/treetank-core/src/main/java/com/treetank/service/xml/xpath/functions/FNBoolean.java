@@ -35,7 +35,7 @@ import com.treetank.utils.TypedValue;
  * The function returns the effective boolean value of given arguments.
  * </p>
  */
-public class FNBoolean extends AbstractFunction {
+public class FNBoolean extends AbsFunction {
 
     /**
      * Constructor. Initializes internal state and do a statical analysis

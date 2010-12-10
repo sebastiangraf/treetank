@@ -22,7 +22,7 @@ import java.util.List;
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.service.xml.xpath.AtomicValue;
-import com.treetank.service.xml.xpath.expr.AbstractExpression;
+import com.treetank.service.xml.xpath.expr.AbsExpression;
 import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
 
 /**
@@ -62,7 +62,7 @@ import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
  * 
  * </p>
  */
-public abstract class AbstractFunction extends AbstractExpression {
+public abstract class AbsFunction extends AbsExpression {
 
     /** The function's arguments. */
     private final List<IAxis> mArgs;
@@ -91,7 +91,7 @@ public abstract class AbstractFunction extends AbstractExpression {
      * @param returnType
      *            the type that the function's result will have
      */
-    public AbstractFunction(final IReadTransaction rtx, final List<IAxis> args, final int min, final int max,
+    public AbsFunction(final IReadTransaction rtx, final List<IAxis> args, final int min, final int max,
         final int returnType) {
 
         super(rtx);

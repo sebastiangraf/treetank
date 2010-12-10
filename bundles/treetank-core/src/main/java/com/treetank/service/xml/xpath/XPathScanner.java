@@ -17,6 +17,8 @@
 
 package com.treetank.service.xml.xpath;
 
+import com.treetank.service.xml.xpath.XPathToken.TokenType;
+
 /**
  * <h1>XPathScanner</h1>
  * <p>
@@ -27,7 +29,7 @@ package com.treetank.service.xml.xpath;
  * type of the input and creates a token for every logic text unit.
  * </p>
  */
-public final class XPathScanner implements XPathConstants {
+public final class XPathScanner {
 
     /** The XPath query to scan. */
     private final String mQuery;
@@ -71,7 +73,7 @@ public final class XPathScanner implements XPathConstants {
     private boolean mFinnished;
 
     /** The type of the current token. */
-    private Token mType;
+    private TokenType mType;
 
     /** The current character. */
     private char mInput;
@@ -123,7 +125,7 @@ public final class XPathScanner implements XPathConstants {
         mStartState = State.START;
         mOutput = new StringBuilder();
         mFinnished = false;
-        mType = Token.INVALID;
+        mType = TokenType.INVALID;
         mLastPos = mPos;
 
         do {
@@ -169,11 +171,11 @@ public final class XPathScanner implements XPathConstants {
         if (isNumber(mInput)) {
             mState = State.NUMBER;
             mOutput.append(mInput);
-            mType = Token.VALUE; // number
+            mType = TokenType.VALUE; // number
         } else if (isFirstLetter(mInput)) {
             mState = State.TEXT; // word
             mOutput.append(mInput);
-            mType = Token.TEXT;
+            mType = TokenType.TEXT;
         } else if (isSpecial(mInput)) {
             mState = State.SPECIAL; // special character with only one digit
             mOutput.append(mInput);
@@ -187,9 +189,9 @@ public final class XPathScanner implements XPathConstants {
             mState = State.START;
             mOutput.append(mInput);
             mFinnished = true;
-            mType = Token.SPACE;
+            mType = TokenType.SPACE;
         } else if (mInput == '#') {
-            mType = Token.END; // end of query
+            mType = TokenType.END; // end of query
             mFinnished = true;
             mPos--;
         } else {
@@ -207,73 +209,73 @@ public final class XPathScanner implements XPathConstants {
      *            The character the type should be determined
      * @return type of the given character.
      */
-    private Token retrieveType(final char paramInput) {
+    private TokenType retrieveType(final char paramInput) {
 
-        Token type;
+        TokenType type;
         switch (paramInput) {
         case ',':
-            type = Token.COMMA;
+            type = TokenType.COMMA;
             break;
         case '(':
-            type = Token.OPEN_BR;
+            type = TokenType.OPEN_BR;
             break;
         case ')':
-            type = Token.CLOSE_BR;
+            type = TokenType.CLOSE_BR;
             break;
         case '[':
-            type = Token.OPEN_SQP;
+            type = TokenType.OPEN_SQP;
             break;
         case ']':
-            type = Token.CLOSE_SQP;
+            type = TokenType.CLOSE_SQP;
             break;
         case '@':
-            type = Token.AT;
+            type = TokenType.AT;
             break;
         case '=':
-            type = Token.EQ;
+            type = TokenType.EQ;
             break;
         case '<':
         case '>':
-            type = Token.COMP;
+            type = TokenType.COMP;
             break;
         case '!':
-            type = Token.N_EQ;
+            type = TokenType.N_EQ;
             break;
         case '/':
-            type = Token.SLASH;
+            type = TokenType.SLASH;
             break;
         case ':':
-            type = Token.COLON;
+            type = TokenType.COLON;
             break;
         case '.':
-            type = Token.POINT;
+            type = TokenType.POINT;
             break;
         case '+':
-            type = Token.PLUS;
+            type = TokenType.PLUS;
             break;
         case '-':
-            type = Token.MINUS;
+            type = TokenType.MINUS;
             break;
         case '\'':
-            type = Token.SINGLE_QUOTE;
+            type = TokenType.SINGLE_QUOTE;
             break;
         case '"':
-            type = Token.DBL_QUOTE;
+            type = TokenType.DBL_QUOTE;
             break;
         case '$':
-            type = Token.DOLLAR;
+            type = TokenType.DOLLAR;
             break;
         case '?':
-            type = Token.INTERROGATION;
+            type = TokenType.INTERROGATION;
             break;
         case '*':
-            type = Token.STAR;
+            type = TokenType.STAR;
             break;
         case '|':
-            type = Token.OR;
+            type = TokenType.OR;
             break;
         default:
-            type = Token.INVALID;
+            type = TokenType.INVALID;
         }
         return type;
 
@@ -362,7 +364,7 @@ public final class XPathScanner implements XPathConstants {
             mPos++;
 
         } else {
-            mType = Token.TEXT;
+            mType = TokenType.TEXT;
             mFinnished = true;
         }
     }
@@ -373,29 +375,29 @@ public final class XPathScanner implements XPathConstants {
      */
     private void scanTwoDigitSpecial() {
 
-        if (mInput == '=' && (mType == Token.COMP || mType == Token.EQ || mType == Token.N_EQ)) {
+        if (mInput == '=' && (mType == TokenType.COMP || mType == TokenType.EQ || mType == TokenType.N_EQ)) {
             mOutput.append(mInput);
             mPos++;
-        } else if (mInput == '/' && (mType == Token.SLASH)) {
+        } else if (mInput == '/' && (mType == TokenType.SLASH)) {
             mOutput.append(mInput);
-            mType = Token.DESC_STEP;
+            mType = TokenType.DESC_STEP;
             mPos++;
-        } else if (mInput == '.' && (mType == Token.POINT)) {
+        } else if (mInput == '.' && (mType == TokenType.POINT)) {
             mOutput.append(mInput);
-            mType = Token.PARENT;
+            mType = TokenType.PARENT;
             mPos++;
         } else if (mInput == '<' && mOutput.toString().equals("<")) {
             mOutput.append(mInput);
-            mType = Token.L_SHIFT;
+            mType = TokenType.L_SHIFT;
             mPos++;
         } else if (mInput == '>' && mOutput.toString().equals(">")) {
             mOutput.append(mInput);
-            mType = Token.R_SHIFT;
+            mType = TokenType.R_SHIFT;
             mPos++;
-        } else if (mInput == ':' && mType == Token.OPEN_BR) {
+        } else if (mInput == ':' && mType == TokenType.OPEN_BR) {
             // could be start of a comment
             mOutput = new StringBuilder();
-            mType = Token.COMMENT;
+            mType = TokenType.COMMENT;
             mCommentCount++;
             mState = State.COMMENT;
             mPos++;
@@ -412,13 +414,13 @@ public final class XPathScanner implements XPathConstants {
         if (mInput == 'E' || mInput == 'e') {
             mOutput.append(mInput);
             mState = State.START;
-            mType = Token.E_NUMBER;
+            mType = TokenType.E_NUMBER;
             mFinnished = true;
             mPos++;
         } else {
             mFinnished = true;
             mState = State.START;
-            mType = Token.INVALID;
+            mType = TokenType.INVALID;
         }
     }
 
@@ -482,7 +484,7 @@ public final class XPathScanner implements XPathConstants {
 
         while (--nextCount > 0) {
             token = nextToken();
-            if (token.getType() == Token.SPACE) {
+            if (token.getType() == TokenType.SPACE) {
                 nextCount++;
             }
         }

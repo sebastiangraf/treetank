@@ -39,7 +39,7 @@ import com.treetank.utils.TypedValue;
  * optional occurrence indicator "?" denotes that an empty sequence is permitted.
  * </p>
  */
-public class CastExpr extends AbstractExpression implements IAxis {
+public class CastExpr extends AbsExpression implements IAxis {
 
     /** The input expression to cast to a specified target expression. */
     private final IAxis mSourceExpr;
