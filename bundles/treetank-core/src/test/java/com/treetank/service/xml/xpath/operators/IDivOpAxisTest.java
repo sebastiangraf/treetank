@@ -64,7 +64,7 @@ public class IDivOpAxisTest {
 
         IAxis op1 = new LiteralExpr(rtx, rtx.getItemList().addItem(item1));
         IAxis op2 = new LiteralExpr(rtx, rtx.getItemList().addItem(item2));
-        AbstractOpAxis axis = new IDivOpAxis(rtx, op1, op2);
+        AbsObAxis axis = new IDivOpAxis(rtx, op1, op2);
 
         assertEquals(true, axis.hasNext());
         // note: although getRawValue() returns [1], parseString returns ""
@@ -87,7 +87,7 @@ public class IDivOpAxisTest {
 
         IAxis op1 = new SequenceAxis(rtx);
         IAxis op2 = new SequenceAxis(rtx);
-        AbstractOpAxis axis = new IDivOpAxis(rtx, op1, op2);
+        AbsObAxis axis = new IDivOpAxis(rtx, op1, op2);
 
         assertEquals(Type.INTEGER, axis.getReturnType(rtx.keyForName("xs:double"), rtx
             .keyForName("xs:double")));

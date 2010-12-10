@@ -155,8 +155,8 @@ public class FunctionsTest {
     /**
      * Test function position().
      */
-    @Ignore
     @Test
+    @Ignore
     public final void testPosition() {
         final String query = "//b[position()=1]";
         final String result = "<b xmlns:p=\"ns\">foo<c/></b>";

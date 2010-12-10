@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * Performs a modulo operation using two input operators.
  * </p>
  */
-public class ModOpAxis extends AbstractOpAxis {
+public class ModOpAxis extends AbsObAxis {
 
     /**
      * Log wrapper for better output.

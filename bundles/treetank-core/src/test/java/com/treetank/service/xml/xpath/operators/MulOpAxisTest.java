@@ -65,7 +65,7 @@ public class MulOpAxisTest {
 
         IAxis op1 = new LiteralExpr(rtx, rtx.getItemList().addItem(item1));
         IAxis op2 = new LiteralExpr(rtx, rtx.getItemList().addItem(item2));
-        AbstractOpAxis axis = new MulOpAxis(rtx, op1, op2);
+        AbsObAxis axis = new MulOpAxis(rtx, op1, op2);
 
         assertEquals(true, axis.hasNext());
         assertThat(6.0, is(Double.parseDouble(TypedValue.parseString(rtx.getNode().getRawValue()))));
@@ -86,7 +86,7 @@ public class MulOpAxisTest {
 
         IAxis op1 = new SequenceAxis(rtx);
         IAxis op2 = new SequenceAxis(rtx);
-        AbstractOpAxis axis = new MulOpAxis(rtx, op1, op2);
+        AbsObAxis axis = new MulOpAxis(rtx, op1, op2);
 
         assertEquals(Type.DOUBLE, axis
             .getReturnType(rtx.keyForName("xs:double"), rtx.keyForName("xs:double")));

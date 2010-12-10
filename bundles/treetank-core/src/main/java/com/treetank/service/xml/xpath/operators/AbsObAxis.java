@@ -22,7 +22,6 @@ import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
 import com.treetank.service.xml.xpath.AtomicValue;
-import com.treetank.service.xml.xpath.XPathConstants;
 import com.treetank.service.xml.xpath.functions.Function;
 import com.treetank.service.xml.xpath.types.Type;
 
@@ -32,7 +31,10 @@ import com.treetank.service.xml.xpath.types.Type;
  * Abstract axis for all operators performing an arithmetic operation.
  * </p>
  */
-public abstract class AbstractOpAxis extends AbsAxis implements IAxis, XPathConstants {
+public abstract class AbsObAxis extends AbsAxis implements IAxis {
+
+    /** Declares if the evaluation is compatible to XPath 1.0 or not. */
+    static boolean XPATH_10_COMP = true;
 
     /** First arithmetic operand. */
     private final IAxis mOperand1;
@@ -53,7 +55,7 @@ public abstract class AbstractOpAxis extends AbsAxis implements IAxis, XPathCons
      * @param mOp2
      *            Second value of the operation
      */
-    public AbstractOpAxis(final IReadTransaction rtx, final IAxis mOp1, final IAxis mOp2) {
+    public AbsObAxis(final IReadTransaction rtx, final IAxis mOp1, final IAxis mOp2) {
 
         super(rtx);
         mOperand1 = mOp1;

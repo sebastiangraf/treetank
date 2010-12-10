@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * Performs an arithmetic integer division on two input operators.
  * </p>
  */
-public class IDivOpAxis extends AbstractOpAxis {
+public class IDivOpAxis extends AbsObAxis {
 
     /**
      * Log wrapper for better output.

@@ -369,10 +369,14 @@ public final class XPathParser implements XPathConstants {
      */
     private boolean isComp() {
 
-        return (is(Token.L_SHIFT, true) || is(Token.R_SHIFT, true) || is(Token.EQ, true)
-            || is(Token.N_EQ, true) || is(Token.COMP, true) || mToken.getType() == Token.TEXT
+        return is(Token.L_SHIFT, true)
+            || is(Token.R_SHIFT, true)
+            || is(Token.EQ, true)
+            || is(Token.N_EQ, true)
+            || is(Token.COMP, true)
+            || mToken.getType() == Token.TEXT
             && (is("ne", true) || is("eq", true) || is("lt", true) || is("le", true) || is("gt", true)
-                || is("ge", true) || is("is", true)));
+                || is("ge", true) || is("is", true));
     }
 
     /**
@@ -583,7 +587,7 @@ public final class XPathParser implements XPathConstants {
         boolean isUnaryMinus = false;
 
         // the plus can be ignored since it does not modify the result
-        while ((is(Token.PLUS, true) || mToken.getType() == Token.MINUS)) {
+        while (is(Token.PLUS, true) || mToken.getType() == Token.MINUS) {
 
             if (is(Token.MINUS, true)) {
                 // two following minuses is a plus and therefore can be ignored,
@@ -702,7 +706,8 @@ public final class XPathParser implements XPathConstants {
     private boolean isFilterExpr() {
 
         final Token type = mToken.getType();
-        return (type == Token.DOLLAR || type == Token.POINT || type == Token.OPEN_BR || isFunctionCall() || isLiteral());
+        return type == Token.DOLLAR || type == Token.POINT || type == Token.OPEN_BR || isFunctionCall()
+            || isLiteral();
     }
 
     /**
@@ -715,9 +720,10 @@ public final class XPathParser implements XPathConstants {
      */
     private boolean isFunctionCall() {
 
-        return (mToken.getType() == Token.TEXT && (!isReservedKeyword()) && (mScanner.lookUpTokens(1)
-            .getType() == Token.OPEN_BR || (mScanner.lookUpTokens(1).getType() == Token.COLON && mScanner
-            .lookUpTokens(3).getType() == Token.OPEN_BR)));
+        return mToken.getType() == Token.TEXT
+            && (!isReservedKeyword())
+            && (mScanner.lookUpTokens(1).getType() == Token.OPEN_BR || (mScanner.lookUpTokens(1).getType() == Token.COLON && mScanner
+                .lookUpTokens(3).getType() == Token.OPEN_BR));
     }
 
     /**
@@ -730,8 +736,8 @@ public final class XPathParser implements XPathConstants {
     private boolean isReservedKeyword() {
 
         final String content = mToken.getContent();
-        return (isKindTest() || "item".equals(content) || "if".equals(content)
-            || "empty-sequence".equals(content) || "typeswitch".equals(content));
+        return isKindTest() || "item".equals(content) || "if".equals(content)
+            || "empty-sequence".equals(content) || "typeswitch".equals(content);
     }
 
     /**

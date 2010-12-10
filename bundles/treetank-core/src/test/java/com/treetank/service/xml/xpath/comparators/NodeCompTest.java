@@ -42,7 +42,7 @@ import com.treetank.utils.DocumentCreater;
 
 public class NodeCompTest {
 
-    private AbstractComparator comparator;
+    private AbsComparator comparator;
 
     private IDatabase database;
 

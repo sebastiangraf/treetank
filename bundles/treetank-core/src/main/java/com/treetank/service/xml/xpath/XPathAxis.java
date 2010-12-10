@@ -65,7 +65,7 @@ import com.treetank.axis.AbsAxis;
  * 
  * </p>
  */
-public class XPathAxis extends AbsAxis implements IAxis {
+public final class XPathAxis extends AbsAxis implements IAxis {
 
     /** Axis holding the consecutive query execution plans of the query. */
     private IAxis mPipeline;

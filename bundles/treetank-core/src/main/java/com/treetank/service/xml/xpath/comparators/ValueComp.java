@@ -32,7 +32,7 @@ import com.treetank.utils.TypedValue;
  * </p>
  * 
  */
-public class ValueComp extends AbstractComparator {
+public class ValueComp extends AbsComparator {
 
     /**
      * Constructor. Initializes the internal state.

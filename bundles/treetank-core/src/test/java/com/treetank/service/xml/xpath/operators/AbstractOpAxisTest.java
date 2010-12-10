@@ -62,7 +62,7 @@ public class AbstractOpAxisTest {
 
         IAxis op1 = new LiteralExpr(rtx, rtx.getItemList().addItem(item1));
         IAxis op2 = new LiteralExpr(rtx, rtx.getItemList().addItem(item2));
-        AbstractOpAxis axis = new DivOpAxis(rtx, op1, op2);
+        AbsObAxis axis = new DivOpAxis(rtx, op1, op2);
 
         assertEquals(true, axis.hasNext());
         assertEquals(rtx.keyForName("xs:double"), rtx.getNode().getTypeKey());

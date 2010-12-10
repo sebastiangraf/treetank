@@ -22,7 +22,6 @@ import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
 import com.treetank.service.xml.xpath.AtomicValue;
-import com.treetank.service.xml.xpath.XPathConstants;
 import com.treetank.service.xml.xpath.expr.LiteralExpr;
 import com.treetank.service.xml.xpath.types.Type;
 
@@ -32,8 +31,9 @@ import com.treetank.service.xml.xpath.types.Type;
  * Abstract axis that evaluates a comparison.
  * </p>
  */
-public abstract class AbstractComparator extends AbsAxis implements IAxis, XPathConstants {
-
+public abstract class AbsComparator extends AbsAxis implements IAxis {
+    /** Declares if the evaluation is compatible to XPath 1.0 or not. */
+    static boolean XPATH_10_COMP = true;
     /** Kind of comparison. */
     private final CompKind mComp;
 
@@ -58,7 +58,7 @@ public abstract class AbstractComparator extends AbsAxis implements IAxis, XPath
      * @param mComp
      *            comparison kind
      */
-    public AbstractComparator(final IReadTransaction mRtx, final IAxis mOperand1, final IAxis mOperand2,
+    public AbsComparator(final IReadTransaction mRtx, final IAxis mOperand1, final IAxis mOperand2,
         final CompKind mComp) {
 
         super(mRtx);

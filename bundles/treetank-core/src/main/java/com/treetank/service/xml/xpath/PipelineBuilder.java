@@ -86,11 +86,6 @@ public final class PipelineBuilder {
     /** Maps a variable name to the item that the variable holds. */
     private final Map<String, IAxis> mVarRefMap;
 
-    /**
-     * Maps a function name to the ordinal value of the function in the enum
-     * Func.
-     */
-    private Map<String, Integer> mFuncMap;
 
     /**
      * Constructor.
@@ -764,19 +759,11 @@ public final class PipelineBuilder {
             args.add(getPipeStack().pop().getExpr());
         }
 
-        // initializer function mapping only, when needed
-        if (mFuncMap == null) {
-            mFuncMap = new HashMap<String, Integer>();
-
-            for (FuncDef func : FuncDef.values()) {
-                mFuncMap.put(func.getName(), func.ordinal());
-            }
-        }
-
+      
         // get right function type
         final FuncDef func;
         try {
-            func = FuncDef.values()[mFuncMap.get(mFuncName)];
+            func = FuncDef.fromString(mFuncName);
         } catch (final NullPointerException e) {
             LOGWRAPPER.error(e);
             throw new XPathError(ErrorType.XPST0017);
