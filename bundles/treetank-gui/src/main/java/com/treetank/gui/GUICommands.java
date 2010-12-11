@@ -332,7 +332,7 @@ public enum GUICommands implements IGUICommand {
      */
     @Override
     public boolean selected() {
-        return false;
+        throw new IllegalStateException("May not be invoked on this command!");
     }
 
     /**

@@ -133,7 +133,7 @@ final class SunburstModel extends AbsModel {
             LOGWRAPPER.error(e.getMessage(), e);
         }
         mItems = new ArrayList<SunburstItem>();
-        mGUI = SunburstGUI.createGUI(mParent, this, paramDb);
+        mGUI = SunburstGUI.getInstance(mParent, this, paramDb);
         mModel = this;
         mDb = paramDb;
         addPropertyChangeListener(mGUI);

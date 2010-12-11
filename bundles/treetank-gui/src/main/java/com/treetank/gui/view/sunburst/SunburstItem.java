@@ -224,7 +224,7 @@ final class SunburstItem {
      */
     private SunburstItem(final Builder paramBuilder) {
         // Returns GUI singleton instance.
-        mGUI = SunburstGUI.createGUI(paramBuilder.mParent, paramBuilder.mModel, paramBuilder.mReadDB);
+        mGUI = SunburstGUI.getInstance(paramBuilder.mParent, paramBuilder.mModel, paramBuilder.mReadDB);
 
         mNode = paramBuilder.mNode;
         mQName = paramBuilder.mQName;
