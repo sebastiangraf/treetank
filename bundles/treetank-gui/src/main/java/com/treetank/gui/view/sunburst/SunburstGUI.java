@@ -30,6 +30,9 @@ import com.treetank.api.IWriteTransaction;
 import com.treetank.exception.TreetankException;
 import com.treetank.gui.ReadDB;
 import com.treetank.gui.view.sunburst.SunburstView.Embedded;
+import com.treetank.utils.LogWrapper;
+
+import org.slf4j.LoggerFactory;
 
 import controlP5.ControlEvent;
 import controlP5.ControlGroup;
@@ -59,6 +62,9 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
      * Serial version UID.
      */
     private static final long serialVersionUID = -4747210906900567484L;
+    
+    /** {@link LogWrapper}. */
+    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(SunburstGUI.class));
 
     /** Path to save visualization as a PDF or PNG file. */
     private static final String SAVEPATH = "target" + File.separator + timestamp();
@@ -668,6 +674,7 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
                         }
                     }
                 } catch (final Exception e) {
+                    LOGWRAPPER.warn(e.getMessage(), e);
                 } finally {
                     mLock.release();
                     mParent.loop();
@@ -872,6 +879,7 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
                 item.update(mGUI.getMappingMode());
             }
         } catch (final Exception e) {
+            LOGWRAPPER.warn(e.getMessage(), e);
         } finally {
             mLock.release();
             mParent.loop();

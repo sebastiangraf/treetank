@@ -727,9 +727,13 @@ final class SunburstModel extends AbsModel {
                     }
 
                     // Build item.
-                    mItems.add(new SunburstItem.Builder(mParent, mModel, node, mRtx.getQNameOfCurrentNode(),
-                        text, angle, childExtension, relations, mDb).build());
-                    // mGUI.addPropertyChangeListener(mItems.get(index + 1));
+                    if (text != null) {
+                        mItems.add(new SunburstItem.Builder(mParent, mModel, angle, childExtension,
+                            relations, mDb).setNode(node).setText(text).build());
+                    } else {
+                        mItems.add(new SunburstItem.Builder(mParent, mModel, angle, childExtension,
+                            relations, mDb).setNode(node).setQName(mRtx.getQNameOfCurrentNode()).build());
+                    }
 
                     // Set depth max.
                     mDepthMax = PApplet.max(depth, mDepthMax);
