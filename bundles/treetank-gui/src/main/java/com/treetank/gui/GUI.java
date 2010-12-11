@@ -60,8 +60,8 @@ public final class GUI extends JFrame {
     /** Height of the frame. */
     private static final int HEIGHT = 1024;
 
-    /** {@link GUIProp}. */
-    private final GUIProp mProp; // Will be used in future versions (more GUI properties).
+//    /** {@link GUIProp}. */
+//    private final GUIProp mProp; // Will be used in future versions (more GUI properties).
 
     /** {@link ViewNotifier} to notify all views of changes in the underlying data structure. */
     private final ViewNotifier mNotifier;
@@ -79,7 +79,7 @@ public final class GUI extends JFrame {
      *            {@link GUIProp}
      */
     public GUI(final GUIProp paramProp) {
-        mProp = paramProp;
+//        mProp = paramProp;
 
         // ===== Setup GUI ======
         // Title of the frame.

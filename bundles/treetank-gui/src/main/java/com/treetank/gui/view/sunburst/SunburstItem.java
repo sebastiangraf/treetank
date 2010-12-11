@@ -138,7 +138,7 @@ final class SunburstItem {
     private final String mText;
 
     /** Builder to setup the Items. */
-    public static final class Builder {
+    static final class Builder {
         /** {@link PApplet} representing the core processing library. */
         private final PApplet mParent;
 
@@ -146,10 +146,10 @@ final class SunburstItem {
         private final SunburstModel mModel;
 
         /** Current {@link IItem} in Treetank. */
-        private final IItem mNode;
+        private transient IItem mNode;
 
         /** {@link QName} of current node. */
-        private final QName mQName;
+        private transient QName mQName;
 
         /** {@link NodeRelations} reference. */
         private final NodeRelations mRelations;
@@ -161,7 +161,7 @@ final class SunburstItem {
         private final float mExtension;
 
         /** Text string. */
-        private final String mText;
+        private transient String mText;
 
         /**
          * Read database.
@@ -177,12 +177,6 @@ final class SunburstItem {
          *            the processing core library @see PApplet
          * @param paramModel
          *            the {@link SunburstModel}
-         * @param paramNode
-         *            {@link IItem} in Treetank, which belongs to this {@link SunburstItem}
-         * @param paramQName
-         *            {@link QName} of current node
-         * @param paramText
-         *            text string in case of a text node
          * @param paramAngleStart
          *            the start degree
          * @param paramExtension
@@ -192,14 +186,10 @@ final class SunburstItem {
          * @param paramReadDB
          *            read database
          */
-        public Builder(final PApplet paramApplet, final SunburstModel paramModel, final IItem paramNode,
-            final QName paramQName, final String paramText, final float paramAngleStart,
+        Builder(final PApplet paramApplet, final SunburstModel paramModel, final float paramAngleStart,
             final float paramExtension, final NodeRelations paramRelations, final ReadDB paramReadDB) {
             mParent = paramApplet;
             mModel = paramModel;
-            mNode = paramNode;
-            mQName = paramQName;
-            mText = paramText;
             mAngleStart = paramAngleStart;
             mExtension = paramExtension;
             mRelations = paramRelations;
@@ -207,11 +197,53 @@ final class SunburstItem {
         }
 
         /**
+         * Set the node.
+         * 
+         * @param paramNode
+         *            {@link IItem} in Treetank, which belongs to this {@link SunburstItem}
+         * @return this builder
+         */
+        Builder setNode(final IItem paramNode) {
+            assert paramNode != null;
+            mNode = paramNode;
+            return this;
+        }
+
+        /**
+         * Set {@link QName}.
+         * 
+         * @param paramQName
+         *              {@link QName} of the current node.
+         * @return this builder
+         */
+        Builder setQName(final QName paramQName) {
+            assert paramQName != null;
+            mQName = paramQName;
+            return this;
+        }
+        
+        /**
+         * Set character content.
+         * 
+         * @param paramText
+         *         
+         *            text string in case of a text node
+         * @return this builder
+         */
+        Builder setText(final String paramText) {
+            assert paramText != null;
+            mText = paramText;
+            return this;
+        }
+
+        /**
          * Build a new sunburst item.
          * 
-         * @return a new sunburst item.
+         * @return a new sunburst item
          */
-        public SunburstItem build() {
+        SunburstItem build() {
+            assert mNode != null;
+            assert mQName != null || mText != null;
             return new SunburstItem(this);
         }
     }
@@ -355,7 +387,7 @@ final class SunburstItem {
             mXPathState.setStroke(mParent, mCol);
 
             // arc(0,0, arcRadius,arcRadius, angleStart, angleEnd);
-            arcWrap(0, 0, arcRadius, arcRadius, mAngleStart, mAngleEnd); // normaly arc should workk
+            arcWrap(0, 0, arcRadius, arcRadius, mAngleStart, mAngleEnd); // normaly arc should work
         }
     }
 
@@ -364,11 +396,17 @@ final class SunburstItem {
      * arcWrap is a quick hack to get rid of this problem.
      * 
      * @param paramX
+     *            X position of middle point
      * @param paramY
+     *            Y position of middle point
      * @param paramW
+     *            width of ellipse
      * @param paramH
+     *            height of ellipse
      * @param paramA1
+     *            angle to start from
      * @param paramA2
+     *            angle to end
      */
     void arcWrap(final float paramX, final float paramY, final float paramW, final float paramH,
         final float paramA1, final float paramA2) {
@@ -459,8 +497,8 @@ final class SunburstItem {
             }
             mParent.strokeWeight(mLineWeight);
             final List<SunburstItem> items = mGUI.mItems;
-            mParent.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, items.get(mIndexToParent).mX, items
-                .get(mIndexToParent).mY);
+            mParent.bezier(mX, mY, mC1X, mC1Y, mC2X, mC2Y, items.get(mIndexToParent).mX,
+                items.get(mIndexToParent).mY);
         }
     }
 
@@ -472,13 +510,13 @@ final class SunburstItem {
         String retVal;
         if (mQName == null) {
             retVal =
-                new StringBuilder().append("[Depth: ").append(mDepth).append(" Text: ").append(mText).append(
-                    " NodeKey: ").append(mNode.getNodeKey()).append("]").toString();
+                new StringBuilder().append("[Depth: ").append(mDepth).append(" Text: ").append(mText)
+                    .append(" NodeKey: ").append(mNode.getNodeKey()).append("]").toString();
         } else {
             retVal =
-                new StringBuilder().append("[Depth: ").append(mDepth).append(" QName: ").append(
-                    ViewUtilities.qNameToString(mQName)).append(" NodeKey: ").append(mNode.getNodeKey())
-                    .append("]").toString();
+                new StringBuilder().append("[Depth: ").append(mDepth).append(" QName: ")
+                    .append(ViewUtilities.qNameToString(mQName)).append(" NodeKey: ")
+                    .append(mNode.getNodeKey()).append("]").toString();
         }
         return retVal;
     }

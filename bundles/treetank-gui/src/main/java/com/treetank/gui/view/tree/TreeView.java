@@ -47,6 +47,11 @@ import com.treetank.gui.view.ViewNotifier;
  */
 public final class TreeView extends JScrollPane implements IView {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5191158290313970043L;
+
     /** Name of the view. */
     private static final String NAME = "TreeView";
     
