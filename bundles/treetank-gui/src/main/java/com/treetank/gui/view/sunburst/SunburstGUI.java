@@ -171,7 +171,7 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
     // /** {@link ControlP5} listboxes. */
     // private transient List<ListBox> mBoxes;
 
-    /** {@link ControlP5#} textfield. */
+    /** {@link ControlP5} text field. */
     private transient Textfield mXPathField;
 
     /** Determines the update state. */
@@ -195,13 +195,6 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
     private final SunburstModel mModel;
 
     /**
-     * Read database.
-     * 
-     * @see ReadDB
-     */
-    private final ReadDB mReadDB;
-
-    /**
      * Private constructor.
      * 
      * @param paramParentApplet
@@ -215,8 +208,6 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
         final ReadDB paramReadDB) {
         mParent = (Embedded)paramParentApplet;
         mModel = paramModel;
-        mReadDB = paramReadDB;
-        setupGUI();
     }
 
     /**
@@ -231,16 +222,18 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
      *            read database
      * @return a GUI singleton
      */
-    static SunburstGUI createGUI(final PApplet paramParentApplet, final SunburstModel paramModel,
+    static SunburstGUI getInstance(final PApplet paramParentApplet, final SunburstModel paramModel,
         final ReadDB paramReadDB) {
         if (mGUI == null) {
             mGUI = new SunburstGUI(paramParentApplet, paramModel, paramReadDB);
+            mGUI.setupGUI();
         }
         return mGUI;
     }
 
     /** Initial setup of the GUI. */
-    void setupGUI() {
+    private void setupGUI() {
+        mParent.noLoop();
         final int activeColor = mParent.color(0, 130, 164);
         mControlP5 = new ControlP5(mParent);
         mControlP5.setColorActive(activeColor);
@@ -262,6 +255,8 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
         int ri = 0;
         int ti = 0;
         int posY = 0;
+
+        assert mControlP5 != null;
 
         mRanges.add(ri++, mControlP5.addRange("leaf node hue range", 0, 360, mHueStart, mHueEnd, left, top
             + posY + 0, len, 15));
@@ -328,6 +323,7 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
         mXPathField.plugTo(this);
 
         style(si, ri, ti);
+        mParent.loop();
     }
 
     /**
@@ -391,7 +387,7 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
     }
 
     /** Draw controlP5 GUI. */
-    void drawGUI() {
+    private void drawGUI() {
         mControlP5.show();
         mControlP5.draw();
     }
@@ -455,10 +451,9 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
      * Implements the {@link PApplet} draw() method.
      */
     void draw() {
-        if (mItems != null) {
+        if (mItems != null && mControlP5 != null) {
             try {
-                mLock.acquire();
-
+                mLock.tryAcquire();
                 mParent.pushMatrix();
                 mParent.colorMode(PConstants.HSB, 360, 100, 100, 100);
                 mParent.background(0, 0, mBackgroundBrightness);
@@ -514,7 +509,6 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
                 if (mFisheye) {
                     fisheye(mParent.mouseX, mParent.mouseY, 120);
                 }
-            } catch (final InterruptedException e) {
             } finally {
                 mLock.release();
             }
@@ -867,15 +861,17 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
             mLock.acquire();
 
             if (paramEvent.getPropertyName().equals("items")) {
+                assert paramEvent.getNewValue() instanceof List;
                 mItems = (List<SunburstItem>)paramEvent.getNewValue();
             } else if (paramEvent.getPropertyName().equals("maxDepth")) {
+                assert paramEvent.getNewValue() instanceof Integer;
                 mDepthMax = (Integer)paramEvent.getNewValue();
             }
 
             for (final SunburstItem item : mItems) {
                 item.update(mGUI.getMappingMode());
             }
-        } catch (final InterruptedException e) {
+        } catch (final Exception e) {
         } finally {
             mLock.release();
             mParent.loop();

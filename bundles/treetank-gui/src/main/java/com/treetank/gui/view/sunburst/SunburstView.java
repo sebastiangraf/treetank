@@ -22,7 +22,6 @@ import java.awt.Window;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
-import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
@@ -52,6 +51,11 @@ import processing.core.PApplet;
  * 
  */
 public final class SunburstView extends JScrollPane implements IView {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     /** {@link LogWrapper}. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(SunburstView.class));
@@ -206,17 +210,19 @@ public final class SunburstView extends JScrollPane implements IView {
 
     /** Embedded processing view. */
     final class Embedded extends PApplet {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
+
         /** {@link SunburstGUI} which represents the GUI interface of the Sunburst view. */
-        private SunburstGUI mGUI;
+        private transient SunburstGUI mGUI;
 
         /** The Treetank {@link SunburstModel}. */
         private transient SunburstModel mModel;
 
         /** Treetank {@link IReadTransaction}. */
         private transient IReadTransaction mRtx;
-
-        /** {@link List} of {@link SunburstItem}s. */
-        private transient List<SunburstItem> mItems;
 
         /** {@inheritDoc} */
         @Override
@@ -228,23 +234,23 @@ public final class SunburstView extends JScrollPane implements IView {
             }
         }
 
-        // /** {@inheritDoc} */
-        // @Override
-        // public void mouseEntered(final MouseEvent paramEvent) {
-        // if (mGUI != null) {
-        // mGUI.mouseEntered(paramEvent);
-        // handleHLWeight();
-        // }
-        // }
-        //
-        // /** {@inheritDoc} */
-        // @Override
-        // public void mouseExited(final MouseEvent paramEvent) {
-        // if (mGUI != null) {
-        // mGUI.mouseExited(paramEvent);
-        // handleHLWeight();
-        // }
-        // }
+        /** {@inheritDoc} */
+        @Override
+        public void mouseEntered(final MouseEvent paramEvent) {
+            if (mGUI != null) {
+                mGUI.mouseEntered(paramEvent);
+                handleHLWeight();
+            }
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void mouseExited(final MouseEvent paramEvent) {
+            if (mGUI != null) {
+                mGUI.mouseExited(paramEvent);
+                handleHLWeight();
+            }
+        }
 
         /** {@inheritDoc} */
         @Override
@@ -270,7 +276,7 @@ public final class SunburstView extends JScrollPane implements IView {
             mModel = new SunburstModel(this, mDB);
 
             // Create GUI.
-            mGUI = SunburstGUI.createGUI(this, mModel, mDB);
+            mGUI = SunburstGUI.getInstance(this, mModel, mDB);
 
             // Traverse.
             handleHLWeight();
