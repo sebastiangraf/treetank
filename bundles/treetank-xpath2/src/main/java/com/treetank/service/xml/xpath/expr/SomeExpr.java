@@ -106,6 +106,9 @@ public class SomeExpr extends AbstractExpression implements IAxis {
 
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setTransaction(final IReadTransaction rtx) {
       super.setTransaction(rtx);

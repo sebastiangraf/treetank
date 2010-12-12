@@ -187,5 +187,15 @@ public abstract class AbstractOpAxis extends AbsAxis implements IAxis, XPathCons
      *         type combination.
      */
     protected abstract Type getReturnType(final int mOp1, final int mOp2);
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setTransaction(final IReadTransaction rtx) {
+      super.setTransaction(rtx);
+      mOperand1.setTransaction(rtx);
+      mOperand2.setTransaction(rtx);
+    }
 
 }

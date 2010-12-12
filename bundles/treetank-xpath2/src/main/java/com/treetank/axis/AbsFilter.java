@@ -15,50 +15,53 @@
  * 
  */
 
-package com.treetank.service.xml.xpath.filter;
+package com.treetank.axis;
 
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AbsFilter;
 
 /**
- * <h1>NestedFilter</h1>
+ * <h1>AbstractFilter</h1>
+ * 
  * <p>
- * Nests two or more IFilters.
+ * Filter node of transaction this filter is bound to.
  * </p>
  */
-public class NestedFilter extends AbsFilter implements IFilter {
+public abstract class AbsFilter implements IFilter {
 
-    /** Tests to apply. */
-    private final IFilter[] mFilter;
+    /** Iterate over transaction exclusive to this step. */
+    private IReadTransaction mRTX;
 
     /**
-     * Default constructor.
+     * Bind axis step to transaction.
      * 
      * @param rtx
-     *            Transaction this filter is bound to.
-     * @param axisTest
-     *            Test to perform for each node found with axis.
+     *            Transaction to operate with.
      */
-    public NestedFilter(final IReadTransaction rtx, final IFilter... axisTest) {
-
-        super(rtx);
-        mFilter = axisTest;
+    public AbsFilter(final IReadTransaction rtx) {
+        mRTX = rtx;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final synchronized boolean filter() {
-
-        boolean filterResult = true;
-
-        for (final IFilter filter : mFilter) {
-            filterResult = filterResult && filter.filter();
-        }
-
-        return filterResult;
+    public final IReadTransaction getTransaction() {
+        return mRTX;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public abstract boolean filter();
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setTransaction(final IReadTransaction rtx) {
+        mRTX = rtx;
+      }
 
 }
