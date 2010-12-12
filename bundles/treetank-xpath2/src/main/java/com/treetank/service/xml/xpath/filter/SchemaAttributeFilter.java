@@ -88,13 +88,5 @@ public class SchemaAttributeFilter extends AbsFilter implements IFilter {
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setTransaction(IReadTransaction rtx) {
-        // TODO Auto-generated method stub
-        
-    }
 
 }

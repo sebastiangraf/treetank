@@ -209,5 +209,16 @@ public abstract class AbstractComparator extends AbsAxis implements IAxis, XPath
 
         return mComp;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setTransaction(final IReadTransaction rtx) {
+      super.setTransaction(rtx);
+      mOperand1.setTransaction(rtx);
+      mOperand2.setTransaction(rtx);
+    }
+
 
 }

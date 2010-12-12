@@ -167,5 +167,16 @@ public abstract class AbstractFunction extends AbstractExpression {
 
         return mArgs;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized void setTransaction(final IReadTransaction rtx) {
+      super.setTransaction(rtx);
+      for (IAxis ax: mArgs) {
+        ax.setTransaction(rtx);
+      }
+    }
 
 }

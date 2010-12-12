@@ -104,6 +104,10 @@ public class UnionAxis extends AbsAxis implements IAxis {
         return false;
     }
     
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setTransaction(final IReadTransaction rtx) {
       super.setTransaction(rtx);
