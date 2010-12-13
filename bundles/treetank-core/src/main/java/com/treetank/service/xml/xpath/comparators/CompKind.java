@@ -17,6 +17,10 @@
 
 package com.treetank.service.xml.xpath.comparators;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import com.treetank.service.xml.xpath.functions.FuncDef;
 import com.treetank.service.xml.xpath.functions.XPathError;
 import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
 import com.treetank.service.xml.xpath.types.Type;
@@ -30,7 +34,7 @@ import com.treetank.service.xml.xpath.types.Type;
 public enum CompKind {
 
     /** comparison type 'equal'. */
-    EQ {
+    EQ("eq", "=") {
 
         /**
          * {@inheritDoc}
@@ -80,7 +84,7 @@ public enum CompKind {
     },
 
     /** comparison type 'not equal'. */
-    NE {
+    NE("ne", "!=") {
 
         /**
          * {@inheritDoc}
@@ -128,7 +132,7 @@ public enum CompKind {
     },
 
     /** comparison type 'less than'. */
-    LT {
+    LT("lt", "<") {
 
         /**
          * {@inheritDoc}
@@ -171,7 +175,7 @@ public enum CompKind {
     },
 
     /** comparison type 'less or equal than'. */
-    LE {
+    LE("le", "<=") {
 
         /**
          * {@inheritDoc}
@@ -213,7 +217,7 @@ public enum CompKind {
     },
 
     /** comparison type 'greater than'. */
-    GT {
+    GT("gt", ">") {
 
         /**
          * {@inheritDoc}
@@ -254,7 +258,7 @@ public enum CompKind {
     },
 
     /** value comparison type 'greater or equal than'. */
-    GE {
+    GE("ge", ">=") {
 
         /**
          * {@inheritDoc}
@@ -295,7 +299,7 @@ public enum CompKind {
     },
 
     /** node comparison type. */
-    FO {
+    FO(">>") {
 
         /**
          * {@inheritDoc}
@@ -308,7 +312,7 @@ public enum CompKind {
 
     },
     /** node comparison type . */
-    PRE {
+    PRE("<<") {
 
         /**
          * {@inheritDoc}
@@ -321,7 +325,7 @@ public enum CompKind {
 
     },
     /** node comparison type . */
-    IS {
+    IS("is") {
 
         /**
          * {@inheritDoc}
@@ -329,10 +333,34 @@ public enum CompKind {
         @Override
         public boolean compare(final String mOperand1, final String mOperand2, final Type mType) {
 
-            return ((int)Double.parseDouble(mOperand1) == (int)Double.parseDouble(mOperand2));
+            return (int)Double.parseDouble(mOperand1) == (int)Double.parseDouble(mOperand2);
         }
 
     };
+
+    /** String representation of comp. */
+    private final String[] mCompAsString;
+
+    /** Private mapping for easy retrieval of enums. */
+    private static final Map<String, CompKind> STRINGTOENUM = new HashMap<String, CompKind>();
+
+    static {
+        for (final CompKind kind : values()) {
+            for (final String compAsString : kind.mCompAsString) {
+                STRINGTOENUM.put(compAsString, kind);
+            }
+        }
+    }
+
+    /**
+     * Private Constructor.
+     * 
+     * @param paramCompAsString
+     *            String to be set.
+     */
+    private CompKind(final String... paramCompAsString) {
+        mCompAsString = paramCompAsString;
+    }
 
     /**
      * Compares the two input values.
@@ -346,5 +374,16 @@ public enum CompKind {
      * @return result of the boolean comparison
      */
     public abstract boolean compare(final String mOperand1, final String mOperand2, final Type mType);
+
+    /**
+     * Public method to easy retrieve the Function-Class for a name.
+     * 
+     * @param paramName
+     *            the name of the function to be retrieved.
+     * @return the Function
+     */
+    public static CompKind fromString(final String paramName) {
+        return STRINGTOENUM.get(paramName);
+    }
 
 }

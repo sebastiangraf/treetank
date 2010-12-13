@@ -86,7 +86,6 @@ public final class PipelineBuilder {
     /** Maps a variable name to the item that the variable holds. */
     private final Map<String, IAxis> mVarRefMap;
 
-
     /**
      * Constructor.
      */
@@ -283,55 +282,55 @@ public final class PipelineBuilder {
         final IAxis mOperand1 = getPipeStack().pop().getExpr();
 
         final IAxis axis;
-        final CompKind kind;
+        final CompKind kind = CompKind.fromString(mComp);
 
         // TODO: use typeswitch of JAVA 7
         if (mComp.equals("eq")) {
-            kind = CompKind.EQ;
+
             axis = new ValueComp(rtx, mOperand1, mOperand2, kind);
         } else if (mComp.equals("ne")) {
-            kind = CompKind.NE;
+
             axis = new ValueComp(rtx, mOperand1, mOperand2, kind);
         } else if (mComp.equals("lt")) {
-            kind = CompKind.LT;
+
             axis = new ValueComp(rtx, mOperand1, mOperand2, kind);
         } else if (mComp.equals("le")) {
-            kind = CompKind.LE;
+
             axis = new ValueComp(rtx, mOperand1, mOperand2, kind);
         } else if (mComp.equals("gt")) {
-            kind = CompKind.GT;
+
             axis = new ValueComp(rtx, mOperand1, mOperand2, kind);
         } else if (mComp.equals("ge")) {
-            kind = CompKind.GE;
+
             axis = new ValueComp(rtx, mOperand1, mOperand2, kind);
 
         } else if (mComp.equals("=")) {
-            kind = CompKind.EQ;
+
             axis = new GeneralComp(rtx, mOperand1, mOperand2, kind);
         } else if (mComp.equals("!=")) {
-            kind = CompKind.NE;
+
             axis = new GeneralComp(rtx, mOperand1, mOperand2, kind);
         } else if (mComp.equals("<")) {
-            kind = CompKind.LT;
+
             axis = new GeneralComp(rtx, mOperand1, mOperand2, kind);
         } else if (mComp.equals("<=")) {
-            kind = CompKind.LE;
+
             axis = new GeneralComp(rtx, mOperand1, mOperand2, kind);
         } else if (mComp.equals(">")) {
-            kind = CompKind.GT;
+
             axis = new GeneralComp(rtx, mOperand1, mOperand2, kind);
         } else if (mComp.equals(">=")) {
-            kind = CompKind.GE;
+
             axis = new GeneralComp(rtx, mOperand1, mOperand2, kind);
 
         } else if (mComp.equals("is")) {
-            kind = CompKind.IS;
+
             axis = new NodeComp(rtx, mOperand1, mOperand2, kind);
         } else if (mComp.equals("<<")) {
-            kind = CompKind.PRE;
+
             axis = new NodeComp(rtx, mOperand1, mOperand2, kind);
         } else if (mComp.equals(">>")) {
-            kind = CompKind.FO;
+
             axis = new NodeComp(rtx, mOperand1, mOperand2, kind);
         } else {
             throw new IllegalStateException(mComp + " is not a valid comparison.");
@@ -759,7 +758,6 @@ public final class PipelineBuilder {
             args.add(getPipeStack().pop().getExpr());
         }
 
-      
         // get right function type
         final FuncDef func;
         try {

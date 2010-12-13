@@ -23,7 +23,7 @@ package com.treetank.service.xml.xpath;
  * Categorized block of text.
  * </p>
  */
-public class XPathToken {
+public final class XPathToken {
 
     /** Token types. */
     enum TokenType {
@@ -137,6 +137,14 @@ public class XPathToken {
     public TokenType getType() {
 
         return mType;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return new StringBuilder(mType.toString()).append(":").append(mContent).toString();
     }
 
 }
