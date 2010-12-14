@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Sebastian Graf, University of Konstanz
  */
-public final class WriteTransaction extends ReadTransaction implements IWriteTransaction {
+public class WriteTransaction extends ReadTransaction implements IWriteTransaction {
 
     /**
      * How is the Hash for this storage computed?
