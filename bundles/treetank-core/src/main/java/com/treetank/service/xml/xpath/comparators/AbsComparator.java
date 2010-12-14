@@ -88,7 +88,7 @@ public abstract class AbsComparator extends AbsAxis implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    public boolean hasNext() {
+    public final boolean hasNext() {
 
         resetToLastKey();
 
@@ -113,14 +113,14 @@ public abstract class AbsComparator extends AbsAxis implements IAxis {
 
             if (mOperand1.hasNext()) {
                 // atomize operands
-                final AtomicValue[] operand1 = atomize(mOperand1);
+                final AtomicValue[] operandOne = atomize(mOperand1);
                 if (mOperand2.hasNext()) {
-                    final AtomicValue[] operand2 = atomize(mOperand2);
+                    final AtomicValue[] operandTwo = atomize(mOperand2);
 
-                    hook(operand1, operand2);
+                    hook(operandOne, operandTwo);
 
                     // get comparison result
-                    final boolean resultValue = compare(operand1, operand2);
+                    final boolean resultValue = compare(operandOne, operandTwo);
                     final IItem result = new AtomicValue(resultValue);
 
                     // add retrieved AtomicValue to item list
@@ -141,12 +141,12 @@ public abstract class AbsComparator extends AbsAxis implements IAxis {
     /**
      * Allowes the general comparisons to do some extra functionality.
      * 
-     * @param mOperand1
+     * @param paramOperandOne
      *            first operand
-     * @param mOperand2
+     * @param paramOperandTwo
      *            second operand
      */
-    protected void hook(final AtomicValue[] mOperand1, final AtomicValue[] mOperand2) {
+    protected void hook(final AtomicValue[] paramOperandOne, final AtomicValue[] paramOperandTwo) {
 
         // do nothing
     }
@@ -154,23 +154,24 @@ public abstract class AbsComparator extends AbsAxis implements IAxis {
     /**
      * Performs the comparison of two atomic values.
      * 
-     * @param mOperand1
+     * @param paramOperandOne
      *            first comparison operand.
-     * @param mOperand2
+     * @param paramOperandTwo
      *            second comparison operand.
      * @return the result of the comparison
      */
-    protected abstract boolean compare(final AtomicValue[] mOperand1, final AtomicValue[] mOperand2);
+    protected abstract boolean compare(final AtomicValue[] paramOperandOne,
+        final AtomicValue[] paramOperandTwo);
 
     /**
      * Atomizes an operand according to the rules specified in the XPath
      * specification.
      * 
-     * @param mOperand
+     * @param paramOperand
      *            the operand that will be atomized.
      * @return the atomized operand. (always an atomic value)
      */
-    protected abstract AtomicValue[] atomize(final IAxis mOperand);
+    protected abstract AtomicValue[] atomize(final IAxis paramOperand);
 
     /**
      * Returns the common comparable type of the two operands, or an error, if
@@ -186,27 +187,42 @@ public abstract class AbsComparator extends AbsAxis implements IAxis {
     protected abstract Type getType(final int mKey1, final int mKey2);
 
     /**
-     * @return the first operand
-     */
-    public final IAxis getOperand1() {
-
-        return mOperand1;
-    }
-
-    /**
-     * @return the second operand
-     */
-    public final IAxis getOperand2() {
-
-        return mOperand2;
-    }
-
-    /**
+     * Getting CompKind for this Comparator.
+     * 
      * @return comparison kind
      */
-    public CompKind getCompKind() {
-
+    public final CompKind getCompKind() {
         return mComp;
+    }
+
+    /**
+     * Factory method to implement the comparator.
+     * 
+     * @param paramRtx
+     *            rtx for accessing data
+     * @param paramOperandOne
+     *            operand one to be compared
+     * @param paramOperandTwo
+     *            operand two to be compared
+     * @param paramKind
+     *            kind of comparison
+     * @param paramVal
+     *            string value to estimate
+     * @return
+     */
+    public static final AbsComparator getComparator(final IReadTransaction paramRtx,
+        final IAxis paramOperandOne, final IAxis paramOperandTwo, final CompKind paramKind,
+        final String paramVal) {
+        if ("eq".equals(paramVal) || "lt".equals(paramVal) || "le".equals(paramVal) || "gt".equals(paramVal)
+            || "ge".equals(paramVal)) {
+            return new ValueComp(paramRtx, paramOperandOne, paramOperandTwo, paramKind);
+        } else if ("=".equals(paramVal) || "!=".equals(paramVal) || "<".equals(paramVal)
+            || "<=".equals(paramVal) || ">".equals(paramVal) || ">=".equals(paramVal)) {
+            return new GeneralComp(paramRtx, paramOperandOne, paramOperandTwo, paramKind);
+        } else if ("is".equals(paramVal) || "<<".equals(paramVal) || ">>".equals(paramVal)) {
+            new NodeComp(paramRtx, paramOperandOne, paramOperandTwo, paramKind);
+        }
+        throw new IllegalStateException(paramVal + " is not a valid comparison.");
     }
 
 }

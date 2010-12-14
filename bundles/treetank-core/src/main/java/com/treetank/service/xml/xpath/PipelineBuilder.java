@@ -29,10 +29,8 @@ import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
 import com.treetank.axis.FilterAxis;
+import com.treetank.service.xml.xpath.comparators.AbsComparator;
 import com.treetank.service.xml.xpath.comparators.CompKind;
-import com.treetank.service.xml.xpath.comparators.GeneralComp;
-import com.treetank.service.xml.xpath.comparators.NodeComp;
-import com.treetank.service.xml.xpath.comparators.ValueComp;
 import com.treetank.service.xml.xpath.expr.AndExpr;
 import com.treetank.service.xml.xpath.expr.CastExpr;
 import com.treetank.service.xml.xpath.expr.CastableExpr;
@@ -278,64 +276,64 @@ public final class PipelineBuilder {
 
         final IReadTransaction rtx = mTransaction;
 
-        final IAxis mOperand2 = getPipeStack().pop().getExpr();
-        final IAxis mOperand1 = getPipeStack().pop().getExpr();
+        final IAxis paramOperandTwo = getPipeStack().pop().getExpr();
+        final IAxis paramOperandOne = getPipeStack().pop().getExpr();
 
-        final IAxis axis;
         final CompKind kind = CompKind.fromString(mComp);
+        final IAxis axis = AbsComparator.getComparator(rtx, paramOperandOne, paramOperandTwo, kind, mComp);
 
-        // TODO: use typeswitch of JAVA 7
-        if (mComp.equals("eq")) {
-
-            axis = new ValueComp(rtx, mOperand1, mOperand2, kind);
-        } else if (mComp.equals("ne")) {
-
-            axis = new ValueComp(rtx, mOperand1, mOperand2, kind);
-        } else if (mComp.equals("lt")) {
-
-            axis = new ValueComp(rtx, mOperand1, mOperand2, kind);
-        } else if (mComp.equals("le")) {
-
-            axis = new ValueComp(rtx, mOperand1, mOperand2, kind);
-        } else if (mComp.equals("gt")) {
-
-            axis = new ValueComp(rtx, mOperand1, mOperand2, kind);
-        } else if (mComp.equals("ge")) {
-
-            axis = new ValueComp(rtx, mOperand1, mOperand2, kind);
-
-        } else if (mComp.equals("=")) {
-
-            axis = new GeneralComp(rtx, mOperand1, mOperand2, kind);
-        } else if (mComp.equals("!=")) {
-
-            axis = new GeneralComp(rtx, mOperand1, mOperand2, kind);
-        } else if (mComp.equals("<")) {
-
-            axis = new GeneralComp(rtx, mOperand1, mOperand2, kind);
-        } else if (mComp.equals("<=")) {
-
-            axis = new GeneralComp(rtx, mOperand1, mOperand2, kind);
-        } else if (mComp.equals(">")) {
-
-            axis = new GeneralComp(rtx, mOperand1, mOperand2, kind);
-        } else if (mComp.equals(">=")) {
-
-            axis = new GeneralComp(rtx, mOperand1, mOperand2, kind);
-
-        } else if (mComp.equals("is")) {
-
-            axis = new NodeComp(rtx, mOperand1, mOperand2, kind);
-        } else if (mComp.equals("<<")) {
-
-            axis = new NodeComp(rtx, mOperand1, mOperand2, kind);
-        } else if (mComp.equals(">>")) {
-
-            axis = new NodeComp(rtx, mOperand1, mOperand2, kind);
-        } else {
-            throw new IllegalStateException(mComp + " is not a valid comparison.");
-
-        }
+        // // TODO: use typeswitch of JAVA 7
+        // if (mComp.equals("eq")) {
+        //
+        // axis = new ValueComp(rtx, paramOperandOne, paramOperandTwo, kind);
+        // } else if (mComp.equals("ne")) {
+        //
+        // axis = new ValueComp(rtx, paramOperandOne, paramOperandTwo, kind);
+        // } else if (mComp.equals("lt")) {
+        //
+        // axis = new ValueComp(rtx, paramOperandOne, paramOperandTwo, kind);
+        // } else if (mComp.equals("le")) {
+        //
+        // axis = new ValueComp(rtx, paramOperandOne, paramOperandTwo, kind);
+        // } else if (mComp.equals("gt")) {
+        //
+        // axis = new ValueComp(rtx, paramOperandOne, paramOperandTwo, kind);
+        // } else if (mComp.equals("ge")) {
+        //
+        // axis = new ValueComp(rtx, paramOperandOne, paramOperandTwo, kind);
+        //
+        // } else if (mComp.equals("=")) {
+        //
+        // axis = new GeneralComp(rtx, paramOperandOne, paramOperandTwo, kind);
+        // } else if (mComp.equals("!=")) {
+        //
+        // axis = new GeneralComp(rtx, paramOperandOne, paramOperandTwo, kind);
+        // } else if (mComp.equals("<")) {
+        //
+        // axis = new GeneralComp(rtx, paramOperandOne, paramOperandTwo, kind);
+        // } else if (mComp.equals("<=")) {
+        //
+        // axis = new GeneralComp(rtx, paramOperandOne, paramOperandTwo, kind);
+        // } else if (mComp.equals(">")) {
+        //
+        // axis = new GeneralComp(rtx, paramOperandOne, paramOperandTwo, kind);
+        // } else if (mComp.equals(">=")) {
+        //
+        // axis = new GeneralComp(rtx, paramOperandOne, paramOperandTwo, kind);
+        //
+        // } else if (mComp.equals("is")) {
+        //
+        // axis = new NodeComp(rtx, paramOperandOne, paramOperandTwo, kind);
+        // } else if (mComp.equals("<<")) {
+        //
+        // axis = new NodeComp(rtx, paramOperandOne, paramOperandTwo, kind);
+        // } else if (mComp.equals(">>")) {
+        //
+        // axis = new NodeComp(rtx, paramOperandOne, paramOperandTwo, kind);
+        // } else {
+        // throw new IllegalStateException(mComp + " is not a valid comparison.");
+        //
+        // }
 
         if (getPipeStack().empty() || getExpression().getSize() != 0) {
             addExpressionSingle();
