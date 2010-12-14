@@ -32,7 +32,7 @@ import com.treetank.axis.AbsAxis;
  * evaluated once. Therefore the axis returns true only for the first call and false for all others.
  * </p>
  */
-public abstract class AbsExpression extends AbsAxis implements IAxis {
+public abstract class AbsExpression extends AbsAxis {
 
     /** Defines, whether hasNext() has already been called. */
     private boolean mIsFirst;

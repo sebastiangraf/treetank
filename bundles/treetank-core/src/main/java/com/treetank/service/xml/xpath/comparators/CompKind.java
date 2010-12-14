@@ -32,7 +32,7 @@ import com.treetank.service.xml.xpath.types.Type;
  * </p>
  */
 public enum CompKind {
-
+    
     /** comparison type 'equal'. */
     EQ("eq", "=") {
 
