@@ -16,12 +16,6 @@
  */
 package com.treetank.gui.view.text;
 
-import static com.treetank.gui.GUIConstants.ATTRIBUTE_COLOR;
-import static com.treetank.gui.GUIConstants.ELEMENT_COLOR;
-import static com.treetank.gui.GUIConstants.NAMESPACE_COLOR;
-import static com.treetank.gui.GUIConstants.NEWLINE;
-import static com.treetank.gui.GUIConstants.TEXT_COLOR;
-
 import java.awt.Dimension;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
@@ -45,20 +39,26 @@ import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import org.slf4j.LoggerFactory;
-
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.gui.GUI;
 import com.treetank.gui.GUIProp;
 import com.treetank.gui.ReadDB;
-import com.treetank.gui.view.ViewUtilities;
 import com.treetank.gui.view.IView;
 import com.treetank.gui.view.ViewNotifier;
+import com.treetank.gui.view.ViewUtilities;
 import com.treetank.node.ElementNode;
 import com.treetank.service.xml.serialize.StAXSerializer;
 import com.treetank.utils.LogWrapper;
+
+import static com.treetank.gui.GUIConstants.ATTRIBUTE_COLOR;
+import static com.treetank.gui.GUIConstants.ELEMENT_COLOR;
+import static com.treetank.gui.GUIConstants.NAMESPACE_COLOR;
+import static com.treetank.gui.GUIConstants.NEWLINE;
+import static com.treetank.gui.GUIConstants.TEXT_COLOR;
+
+import org.slf4j.LoggerFactory;
 
 /**
  * <h1>TextView</h1>
@@ -72,12 +72,17 @@ import com.treetank.utils.LogWrapper;
  */
 public final class TextView extends JScrollPane implements IView {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5001983007463504219L;
+
     /** Logger. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(TextView.class));
 
     /** Name of the view. */
     private static final String NAME = "TextView";
-    
+
     // ======== Component bounds ==========
 
     /** Width of text component. */
@@ -180,7 +185,7 @@ public final class TextView extends JScrollPane implements IView {
     public boolean isVisible() {
         return GUIProp.EShowViews.SHOWTEXT.getValue();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -188,7 +193,7 @@ public final class TextView extends JScrollPane implements IView {
     public String name() {
         return NAME;
     };
-    
+
     /**
      * {@inheritDoc}
      */
@@ -250,6 +255,7 @@ public final class TextView extends JScrollPane implements IView {
 
     @Override
     public void refreshUpdate() {
+        assert mGUI != null;
         // Get references.
         final ReadDB db = mGUI.getReadDB();
         final IReadTransaction rtx = db.getRtx();
@@ -316,12 +322,18 @@ public final class TextView extends JScrollPane implements IView {
                 }
 
                 if (rtx.nameForKey(rtx.getNode().getNameKey()).length() == 0) {
-                    doc.insertString(doc.getLength(), new StringBuilder().append("xmlns='").append(
-                        rtx.nameForKey(rtx.getNode().getURIKey())).append("'").toString(), styleNamespaces);
+                    doc.insertString(
+                        doc.getLength(),
+                        new StringBuilder().append("xmlns='")
+                            .append(rtx.nameForKey(rtx.getNode().getURIKey())).append("'").toString(),
+                        styleNamespaces);
                 } else {
-                    doc.insertString(doc.getLength(), new StringBuilder().append("xmlns:").append(
-                        rtx.nameForKey(rtx.getNode().getNameKey())).append("='").append(
-                        rtx.nameForKey(rtx.getNode().getURIKey())).append("'").toString(), styleNamespaces);
+                    doc.insertString(
+                        doc.getLength(),
+                        new StringBuilder().append("xmlns:")
+                            .append(rtx.nameForKey(rtx.getNode().getNameKey())).append("='")
+                            .append(rtx.nameForKey(rtx.getNode().getURIKey())).append("'").toString(),
+                        styleNamespaces);
                 }
                 break;
             case ATTRIBUTE_KIND:
@@ -426,9 +438,11 @@ public final class TextView extends JScrollPane implements IView {
                     } else {
                         final EndElement endTag = event.asEndElement();
                         indent(doc, level, indentSpaces);
-                        doc.insertString(doc.getLength(), new StringBuilder().append("</").append(
-                            ViewUtilities.qNameToString(endTag.getName())).append(">").append(NEWLINE).toString(),
-                            styleElements);
+                        doc.insertString(
+                            doc.getLength(),
+                            new StringBuilder().append("</")
+                                .append(ViewUtilities.qNameToString(endTag.getName())).append(">")
+                                .append(NEWLINE).toString(), styleElements);
                     }
                     level--;
                     break;
@@ -444,6 +458,7 @@ public final class TextView extends JScrollPane implements IView {
                 }
             }
             mTempLevel = level;
+            LOGWRAPPER.info("level: " + mTempLevel);
             break;
         case UPDATE:
             for (int i = 0; mSerializer.hasNext() && i <= mLineChanges; i++) {
@@ -468,9 +483,11 @@ public final class TextView extends JScrollPane implements IView {
                     } else {
                         final EndElement endTag = event.asEndElement();
                         indent(doc, mTempLevel, indentSpaces);
-                        doc.insertString(doc.getLength(), new StringBuilder().append("</").append(
-                            ViewUtilities.qNameToString(endTag.getName())).append(">").append(NEWLINE).toString(),
-                            styleElements);
+                        doc.insertString(
+                            doc.getLength(),
+                            new StringBuilder().append("</")
+                                .append(ViewUtilities.qNameToString(endTag.getName())).append(">")
+                                .append(NEWLINE).toString(), styleElements);
                     }
                     mTempLevel--;
                     break;
@@ -529,8 +546,8 @@ public final class TextView extends JScrollPane implements IView {
                     paramDoc.insertString(paramDoc.getLength(), " xmlns=" + ns.getNamespaceURI(),
                         styleNamespaces);
                 } else {
-                    paramDoc.insertString(paramDoc.getLength(), " xmlns:" + ns.getPrefix() + "="
-                        + ns.getNamespaceURI(), styleNamespaces);
+                    paramDoc.insertString(paramDoc.getLength(),
+                        " xmlns:" + ns.getPrefix() + "=" + ns.getNamespaceURI(), styleNamespaces);
                 }
 
                 if (paramStartTag.getAttributes().hasNext()) {
@@ -542,9 +559,9 @@ public final class TextView extends JScrollPane implements IView {
             for (final Iterator<?> attributes = paramStartTag.getAttributes(); attributes.hasNext();) {
                 final Attribute att = (Attribute)attributes.next();
 
-                paramDoc.insertString(paramDoc.getLength(), new StringBuilder().append(
-                    ViewUtilities.qNameToString(att.getName())).append("=\"").append(att.getValue()).append("\"")
-                    .toString(), styleAttributes);
+                paramDoc.insertString(paramDoc.getLength(),
+                    new StringBuilder().append(ViewUtilities.qNameToString(att.getName())).append("=\"")
+                        .append(att.getValue()).append("\"").toString(), styleAttributes);
 
                 if (attributes.hasNext()) {
                     paramDoc.insertString(paramDoc.getLength(), " ", styleElements);
@@ -578,22 +595,28 @@ public final class TextView extends JScrollPane implements IView {
      */
     private void indent(final StyledDocument paramDocument, final int paramLevel,
         final String paramIndentSpaces) {
+        assert paramDocument != null;
+        System.out.println("Level: " + paramLevel);
+        assert paramLevel > -1;
+//        LOGWRAPPER.debug("LEVEL: " + paramLevel);
+        assert paramIndentSpaces != null;
         try {
             for (int i = 0; i < paramLevel; i++) {
-                paramDocument.insertString(paramDocument.getLength(), paramIndentSpaces, paramDocument
-                    .addStyle(null, null));
+                paramDocument.insertString(paramDocument.getLength(), paramIndentSpaces,
+                    paramDocument.addStyle(null, null));
             }
         } catch (final BadLocationException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public Dimension getPreferredSize() {
+        assert mGUI != null;
         final Dimension mainFrame = mGUI.getSize();
-        return new Dimension(mainFrame.width, 400);
+        return new Dimension(1000, 300);
     }
 }

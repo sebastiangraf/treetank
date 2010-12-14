@@ -193,6 +193,6 @@ public final class TreeView extends JScrollPane implements IView {
      */
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(200, mGUI.getSize().height - 200);
+        return new Dimension(300, 500);
     }
 }

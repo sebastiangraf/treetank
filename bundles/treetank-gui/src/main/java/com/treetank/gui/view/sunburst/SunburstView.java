@@ -205,7 +205,8 @@ public final class SunburstView extends JScrollPane implements IView {
     @Override
     public Dimension getPreferredSize() {
         final Dimension parentFrame = mGUI.getSize();
-        return new Dimension((int)(parentFrame.width), parentFrame.height);
+        return new Dimension(1000, 900);
+//        return new Dimension((int)(parentFrame.width), parentFrame.height);
     }
 
     /** Embedded processing view. */
