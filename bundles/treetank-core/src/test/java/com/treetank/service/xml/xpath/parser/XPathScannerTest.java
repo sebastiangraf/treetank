@@ -16,11 +16,12 @@
  * $Id: XPathScannerTest.java 4362 2008-08-24 11:46:16Z kramis $
  */
 
-package com.treetank.service.xml.xpath;
+package com.treetank.service.xml.xpath.parser;
 
 import java.io.IOException;
 
-import com.treetank.service.xml.xpath.XPathToken.TokenType;
+import com.treetank.service.xml.xpath.parser.XPathScanner;
+import com.treetank.service.xml.xpath.parser.VariableXPathToken.TokenType;
 
 import org.junit.Before;
 import org.junit.Test;

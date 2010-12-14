@@ -15,9 +15,9 @@
  * 
  */
 
-package com.treetank.service.xml.xpath;
+package com.treetank.service.xml.xpath.parser;
 
-import com.treetank.service.xml.xpath.XPathToken.TokenType;
+import com.treetank.service.xml.xpath.parser.VariableXPathToken.TokenType;
 
 /**
  * <h1>XPathScanner</h1>
@@ -117,7 +117,7 @@ public final class XPathScanner {
      * 
      * @return token The new token.
      */
-    public XPathToken nextToken() {
+    public VariableXPathToken nextToken() {
 
         // some tokens start in another state than the START state
         mState = mStartState;
@@ -160,7 +160,7 @@ public final class XPathScanner {
             throw new IllegalStateException("Error in Query. Comment does not end.");
         }
 
-        return new XPathToken(mOutput.toString(), mType);
+        return new VariableXPathToken(mOutput.toString(), mType);
     }
 
     /**
@@ -474,13 +474,13 @@ public final class XPathScanner {
      *            number of next tokens to be read
      * @return token that will be read after calling nextToken()
      */
-    public XPathToken lookUpTokens(final int paramNext) {
+    public VariableXPathToken lookUpTokens(final int paramNext) {
 
         int nextCount = paramNext;
 
         // save current position of the scanner, to restore it later
         final int lastPos = mPos;
-        XPathToken token = nextToken();
+        VariableXPathToken token = nextToken();
 
         while (--nextCount > 0) {
             token = nextToken();

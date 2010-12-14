@@ -16,7 +16,7 @@
  * $Id: XPathParserTest.java 4433 2008-08-28 14:26:02Z scherer $
  */
 
-package com.treetank.service.xml.xpath;
+package com.treetank.service.xml.xpath.parser;
 
 import static org.junit.Assert.assertEquals;
 
@@ -31,6 +31,8 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.exception.TreetankException;
+import com.treetank.service.xml.xpath.XPathAxis;
+import com.treetank.service.xml.xpath.parser.XPathParser;
 import com.treetank.utils.TypedValue;
 
 public class XPathParserTest {

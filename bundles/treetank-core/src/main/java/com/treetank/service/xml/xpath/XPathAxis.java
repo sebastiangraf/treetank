@@ -20,6 +20,7 @@ package com.treetank.service.xml.xpath;
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
+import com.treetank.service.xml.xpath.parser.XPathParser;
 
 /**
  * <h1>XPath Axis</h1>

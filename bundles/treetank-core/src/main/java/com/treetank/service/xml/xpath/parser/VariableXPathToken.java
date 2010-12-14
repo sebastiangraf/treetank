@@ -15,7 +15,7 @@
  * 
  */
 
-package com.treetank.service.xml.xpath;
+package com.treetank.service.xml.xpath.parser;
 
 /**
  * <h1>XPathToken</h1>
@@ -23,7 +23,7 @@ package com.treetank.service.xml.xpath;
  * Categorized block of text.
  * </p>
  */
-public final class XPathToken {
+public final class VariableXPathToken {
 
     /** Token types. */
     enum TokenType {
@@ -113,7 +113,7 @@ public final class XPathToken {
      * @param mType
      *            the type of the token
      */
-    public XPathToken(final String mStr, final TokenType mType) {
+    public VariableXPathToken(final String mStr, final TokenType mType) {
 
         this.mContent = mStr;
         this.mType = mType;
