@@ -56,7 +56,6 @@ import com.treetank.service.xml.xpath.filter.TypeFilter;
 import com.treetank.service.xml.xpath.filter.WildcardFilter;
 import com.treetank.service.xml.xpath.functions.XPathError;
 import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
-import com.treetank.service.xml.xpath.parser.VariableXPathToken.TokenType;
 import com.treetank.utils.TypedValue;
 
 /**
@@ -77,7 +76,7 @@ public final class XPathParser {
     private final XPathScanner mScanner;
 
     /** Represents the current read token. */
-    private VariableXPathToken mToken;
+    private IXPathToken mToken;
 
     /**
      * Builds the chain of nested IAxis that evaluate the query in a pipeline

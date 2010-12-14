@@ -17,8 +17,6 @@
 
 package com.treetank.service.xml.xpath.parser;
 
-import com.treetank.service.xml.xpath.parser.VariableXPathToken.TokenType;
-
 /**
  * <h1>XPathScanner</h1>
  * <p>
@@ -117,7 +115,7 @@ public final class XPathScanner {
      * 
      * @return token The new token.
      */
-    public VariableXPathToken nextToken() {
+    public IXPathToken nextToken() {
 
         // some tokens start in another state than the START state
         mState = mStartState;
@@ -474,13 +472,13 @@ public final class XPathScanner {
      *            number of next tokens to be read
      * @return token that will be read after calling nextToken()
      */
-    public VariableXPathToken lookUpTokens(final int paramNext) {
+    public IXPathToken lookUpTokens(final int paramNext) {
 
         int nextCount = paramNext;
 
         // save current position of the scanner, to restore it later
         final int lastPos = mPos;
-        VariableXPathToken token = nextToken();
+        IXPathToken token = nextToken();
 
         while (--nextCount > 0) {
             token = nextToken();
