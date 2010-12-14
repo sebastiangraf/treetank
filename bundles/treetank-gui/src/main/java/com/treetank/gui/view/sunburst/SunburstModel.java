@@ -83,8 +83,8 @@ final class SunburstModel extends AbsModel {
         NONE
     };
 
-    /** Tracks modification of the current node. */
-    private transient Modification mod = Modification.NONE;
+    /** Modification of current node. */
+    private transient Modification mMod = Modification.NONE;
 
     /** Maximum descendant count in tree. */
     private transient long mMaxDescendantCount;
@@ -152,7 +152,14 @@ final class SunburstModel extends AbsModel {
         }
 
         if (!paramXPathExpression.isEmpty()) {
-            new Thread(new XPathEvaluation(paramXPathExpression)).start();
+            try {
+                mLock.acquire();
+                new Thread(new XPathEvaluation(paramXPathExpression)).start();
+            } catch (final Exception e) {
+                LOGWRAPPER.warn(e.getMessage(), e);
+            } finally {
+                mLock.release();
+            }
         }
     }
 
@@ -170,156 +177,172 @@ final class SunburstModel extends AbsModel {
      * @param paramTextWeight
      *            weighting of text length
      */
-    synchronized void traverseCompareTree(final long paramRevision, final long paramKey,
-        final int paramDepth, final float paramModificationWeight, final float paramTextWeight) {
-        final long nodeKey = initialize(paramKey);
+    void traverseCompareTree(final long paramRevision, final long paramKey, final int paramDepth,
+        final float paramModificationWeight, final float paramTextWeight) {
+        assert paramRevision >= 0;
+        assert paramKey >= 0;
+        assert paramDepth >= 0;
+        assert paramModificationWeight >= 0;
+        assert paramTextWeight >= 0;
 
         try {
-            if (paramRevision < mRtx.getRevisionNumber()) {
-                throw new IllegalArgumentException(
-                    "paramRevision must be greater than the currently opened revision!");
-            }
-            final IReadTransaction rtx = mSession.beginReadTransaction(paramRevision);
-
-            // Temporary list.
-            final List<SunburstItem> itemList = new LinkedList<SunburstItem>(mItems);
-
-            // Temporary max depth.
-            // final int maxDepth = getDepthMax();
-
-            // Remove all elements from item list.
-            mItems.clear();
-
-            // Initial extension and childExtension.
-            float extension = PConstants.TWO_PI;
-            float childExtension = 0f;
-
-            // Node relations used for simplyfing the SunburstItem constructor.
-            final NodeRelations relations = new NodeRelations();
-
-            // Depth in the tree starting at 0.
-            int depth = 0;
-
-            // Start angle.
-            float angle = 0f;
-
-            final List<SunburstItem> items = new LinkedList<SunburstItem>();
-            final List<Integer> modifications = new LinkedList<Integer>();
-            final Stack<Integer> modCountPerSubtree = new Stack<Integer>();
-
-            if (rtx.moveTo(nodeKey)) {
-                final SunburstPostOrderAxis revision = new SunburstPostOrderAxis(mRtx);
-                final SunburstPostOrderAxis secRevision = new SunburstPostOrderAxis(rtx);
-                int modificationsPerNode = 0;
-                final Future<Long> descCount =
-                    getDescendantsOfNode(secRevision.getTransaction().getNode().getNodeKey());
-
-                for (int index = 0; secRevision.hasNext(); index++) {
-                    final Future<Long> childDescCount =
-                        getDescendantsOfNode(secRevision.getTransaction().getNode().getNodeKey());
-
-                    // Move cursors.
-                    if (mod == Modification.DELETED) {
-                        mod = Modification.NONE;
-                    } else {
-                        secRevision.next();
-                    }
-                    if (revision.hasNext()) {
-                        revision.next();
-                    }
-
-                    modificationsPerNode = checkModification(rtx);
-
-                    switch (secRevision.getMoved()) {
-                    case CHILD:
-                        if (modCountPerSubtree.empty()) {
-                            modCountPerSubtree.push(modificationsPerNode);
-                        } else {
-                            throw new IllegalStateException("Stack should be empty!");
-                        }
-
-                        break;
-                    case SIBL:
-                        modCountPerSubtree.push(modCountPerSubtree.pop() + modificationsPerNode);
-                        break;
-                    case PARENT:
-                        assert !modCountPerSubtree.empty();
-                        modificationsPerNode += modCountPerSubtree.pop();
-                        assert modCountPerSubtree.empty();
-                        break;
-                    default:
-                        break;
-                    }
-
-                    childExtension = extension * descCount.get() / childDescCount.get();
-                }
-            } else {
-                throw new IllegalArgumentException("Parameter nodeKey must exist in both revisions!");
-            }
-
-            firePropertyChange("list", itemList, Collections.unmodifiableList(mItems));
-            // firePropertyChange("maxDepth", maxDepth, getDepthMax());
-        } catch (final TreetankException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        } catch (final InterruptedException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        } catch (final ExecutionException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
+            mLock.acquire();
+            new Thread(new TraverseCompareTree(paramRevision, paramKey, paramDepth, paramModificationWeight,
+                paramTextWeight, this)).start();
+        } catch (final Exception e) {
+            LOGWRAPPER.warn(e.getMessage(), e);
+        } finally {
+            mLock.release();
         }
-
-        mRtx.moveTo(nodeKey);
     }
+
+    // final long nodeKey = initialize(paramKey);
+    //
+    // try {
+    // if (paramRevision < mRtx.getRevisionNumber()) {
+    // throw new IllegalArgumentException(
+    // "paramRevision must be greater than the currently opened revision!");
+    // }
+    // final IReadTransaction rtx = mSession.beginReadTransaction(paramRevision);
+    //
+    // // Temporary list.
+    // final List<SunburstItem> itemList = new LinkedList<SunburstItem>(mItems);
+    //
+    // // Temporary max depth.
+    // // final int maxDepth = getDepthMax();
+    //
+    // // Remove all elements from item list.
+    // mItems.clear();
+    //
+    // // Initial extension and childExtension.
+    // float extension = PConstants.TWO_PI;
+    // float childExtension = 0f;
+    //
+    // // Node relations used for simplyfing the SunburstItem constructor.
+    // final NodeRelations relations = new NodeRelations();
+    //
+    // // Depth in the tree starting at 0.
+    // int depth = 0;
+    //
+    // // Start angle.
+    // float angle = 0f;
+    //
+    // final List<SunburstItem> items = new LinkedList<SunburstItem>();
+    // final List<Integer> modifications = new LinkedList<Integer>();
+    // final Stack<Integer> modCountPerSubtree = new Stack<Integer>();
+    //
+    // if (rtx.moveTo(nodeKey)) {
+    // final SunburstPostOrderAxis revision = new SunburstPostOrderAxis(mRtx);
+    // final SunburstPostOrderAxis secRevision = new SunburstPostOrderAxis(rtx);
+    // int modificationsPerNode = 0;
+    // final Future<Long> descCount =
+    // getDescendantsOfNode(secRevision.getTransaction().getNode().getNodeKey());
+    //
+    // for (int index = 0; secRevision.hasNext(); index++) {
+    // final Future<Long> childDescCount =
+    // getDescendantsOfNode(secRevision.getTransaction().getNode().getNodeKey());
+    //
+    // // Move cursors.
+    // if (mod == Modification.DELETED) {
+    // mod = Modification.NONE;
+    // } else {
+    // secRevision.next();
+    // }
+    // if (revision.hasNext()) {
+    // revision.next();
+    // }
+    //
+    // modificationsPerNode = checkModification(rtx);
+    //
+    // switch (secRevision.getMoved()) {
+    // case CHILD:
+    // if (modCountPerSubtree.empty()) {
+    // modCountPerSubtree.push(modificationsPerNode);
+    // } else {
+    // throw new IllegalStateException("Stack should be empty!");
+    // }
+    //
+    // break;
+    // case SIBL:
+    // modCountPerSubtree.push(modCountPerSubtree.pop() + modificationsPerNode);
+    // break;
+    // case PARENT:
+    // assert !modCountPerSubtree.empty();
+    // modificationsPerNode += modCountPerSubtree.pop();
+    // assert modCountPerSubtree.empty();
+    // break;
+    // default:
+    // break;
+    // }
+    //
+    // childExtension = extension * descCount.get() / childDescCount.get();
+    // }
+    // } else {
+    // throw new IllegalArgumentException("Parameter nodeKey must exist in both revisions!");
+    // }
+    //
+    // firePropertyChange("list", itemList, Collections.unmodifiableList(mItems));
+    // // firePropertyChange("maxDepth", maxDepth, getDepthMax());
+    // } catch (final TreetankException e) {
+    // LOGWRAPPER.error(e.getMessage(), e);
+    // } catch (final InterruptedException e) {
+    // LOGWRAPPER.error(e.getMessage(), e);
+    // } catch (final ExecutionException e) {
+    // LOGWRAPPER.error(e.getMessage(), e);
+    // }
+    //
+    // mRtx.moveTo(nodeKey);
+    // }
 
     /**
      * Check for modification of the current node.
      * 
-     * @param paramRtx
-     *            The {@link IReadTransaction} to compare against.
-     * @return modification count
+     * @param paramNewRtx
+     *            the {@link IReadTransaction} from the new revision
+     * @param paramOldRtx
+     *            the {@link IReadTransaction} from the old revision
      */
-    private int checkModification(final IReadTransaction paramRtx) {
-        assert paramRtx != null;
+    private void checkModification(final IReadTransaction paramNewRtx, final IReadTransaction paramOldRtx) {
+        assert paramNewRtx != null;
+        assert paramOldRtx != null;
+
         // Check for modifications.
-        int modificationsPerNode = 0;
-        switch (paramRtx.getNode().getKind()) {
+        switch (paramNewRtx.getNode().getKind()) {
         case TEXT_KIND:
         case ELEMENT_KIND:
-            if (!paramRtx.getNode().equals(mRtx.getNode())) {
-                modificationsPerNode++;
+            if (!paramNewRtx.getNode().equals(paramOldRtx.getNode())) {
                 boolean found = false;
                 boolean isRightSibling = false;
 
                 // See if one of the right sibling matches.
-                final long key = mRtx.getNode().getNodeKey();
+                final long key = paramNewRtx.getNode().getNodeKey();
                 do {
-                    if (mRtx.getNode().equals(paramRtx.getNode())) {
+                    if (paramNewRtx.getNode().equals(paramOldRtx.getNode())) {
                         found = true;
                     }
 
-                    if (mRtx.getNode().getNodeKey() != key) {
+                    if (paramNewRtx.getNode().getNodeKey() != key) {
                         isRightSibling = true;
                     }
-                } while (((AbsStructNode)mRtx.getNode()).hasRightSibling() && mRtx.moveToRightSibling()
-                    && !found);
-                mRtx.moveTo(key);
+                } while (((AbsStructNode)paramNewRtx.getNode()).hasRightSibling()
+                    && paramNewRtx.moveToRightSibling() && !found);
+                paramNewRtx.moveTo(key);
 
                 if (isRightSibling) {
                     // It has been deleted.
-                    mod = Modification.DELETED;
+                    mMod = Modification.DELETED;
                 } else if (found) {
                     // Same.
-                    mod = Modification.NONE;
+                    mMod = Modification.NONE;
                 } else {
                     // It has been inserted.
-                    mod = Modification.INSERTED;
+                    mMod = Modification.INSERTED;
                 }
             }
             break;
         default:
             // Do nothing.
         }
-
-        return modificationsPerNode;
     }
 
     /**
@@ -340,28 +363,46 @@ final class SunburstModel extends AbsModel {
             mLock.acquire();
             new Thread(new TraverseTree(paramKey, this)).start();
         } catch (final Exception e) {
-
+            LOGWRAPPER.warn(e.getMessage(), e);
         } finally {
             mLock.release();
         }
     }
-
+    
     /**
-     * Initialize traversal.
+     * Get the maximum depth in the tree.
      * 
-     * @param paramKey
-     *            node key to start from
-     * @return node key
+     * @param paramRtx
+     *                  {@link IReadTransaction} on the tree
+     * @return maximum depth
      */
-    private long initialize(final long paramKey) {
-        LOGWRAPPER.debug("Build sunburst items.");
-        assert paramKey > -1 && mRtx != null && !mRtx.isClosed();
-        final long nodeKey = mRtx.getNode().getNodeKey();
-        mRtx.moveTo(paramKey);
-        if (mRtx.getNode().getKind() == ENodes.ROOT_KIND) {
-            mRtx.moveToFirstChild();
+    private int getDepthMax(final IReadTransaction paramRtx) {
+        assert paramRtx != null && !paramRtx.isClosed();
+        int depthMax = 0;
+        int depth = 0;
+        final long nodeKey = paramRtx.getNode().getNodeKey();
+        for (final IAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next()) {
+            final AbsStructNode node = (AbsStructNode) paramRtx.getNode();
+            if (node.hasFirstChild()) {
+                depth++;
+                // Set depth max.
+                depthMax = Math.max(depth, depthMax);
+            } else if (!node.hasRightSibling()) {
+                // Next node will be a right sibling of an anchestor node or the traversal ends.
+                final long currNodeKey = mRtx.getNode().getNodeKey();
+                do {
+                    if (((AbsStructNode)mRtx.getNode()).hasParent()) {
+                        mRtx.moveToParent();
+                        depth--;
+                    } else {
+                        break;
+                    }
+                } while (!((AbsStructNode)mRtx.getNode()).hasRightSibling());
+                mRtx.moveTo(currNodeKey);
+            }
         }
-        return nodeKey;
+        paramRtx.moveTo(nodeKey);
+        return depthMax;
     }
 
     /**
@@ -389,24 +430,40 @@ final class SunburstModel extends AbsModel {
     }
 
     /**
-     * Get descendants of node.
+     * Get a list of descendants and modifications per node.
      * 
-     * @param paramNodeKey
-     *            nodeKey of current node
-     * @return {@link Future} which has the descendant count
+     * @param paramRevision
+     *            revision to compare
+     * @param paramRtx
+     *            Treetank {@link IReadTransaction} over which to iterate.
+     * @return List of {@link Future}s.
      * @throws ExecutionException
      *             if execution fails
      * @throws InterruptedException
      *             if task gets interrupted
      */
-    private Future<Long> getDescendantsOfNode(final long paramNodeKey) throws InterruptedException,
-        ExecutionException {
-        assert paramNodeKey > 0;
+    private List<Future<List<?>>> get(final long paramRevision, final IReadTransaction paramRtx)
+        throws InterruptedException, ExecutionException {
+        assert paramRtx != null;
+
+        // Get descendants for every node and save it to a list.
+        final List<Future<List<? extends Object>>> list = new LinkedList<Future<List<?>>>();
         final ExecutorService executor =
             Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        final Future<Long> submit = executor.submit(new Descendants(paramNodeKey));
+        boolean firstNode = true;
+        for (final IAxis axis = new DescendantAxis(paramRtx, true); axis.hasNext(); axis.next()) {
+            final Future<List<?>> submit =
+                executor.submit(new TreeWalk(paramRevision, paramRtx.getNode().getNodeKey()));
+
+            if (firstNode) {
+                firstNode = false;
+                mMaxDescendantCount = (Long)submit.get().get(0);
+            }
+            list.add(submit);
+        }
         executor.shutdown();
-        return submit;
+
+        return list;
     }
 
     /**
@@ -574,6 +631,169 @@ final class SunburstModel extends AbsModel {
         }
     }
 
+    /** Traverse and compare trees. */
+    private final class TraverseCompareTree implements Runnable {
+
+        /** Revision to compare. */
+        private final long mRevision;
+
+        /** Key from which to start traversal. */
+        private final long mKey;
+
+        /** Weighting of modifications. */
+        private final float mModWeight;
+
+        /** Weighting of textnode length. */
+        private final float mTextWeight;
+
+        /** {@link SunburstModel}. */
+        private final SunburstModel mModel;
+
+        /**
+         * Constructor.
+         * 
+         * @param paramRevision
+         *            the revision to compare
+         * @param paramKey
+         *            key from which to start traversal
+         * @param paramDepth
+         *            depth to prune
+         * @param paramModificationWeight
+         *            determines how much modifications are weighted to compute the extension angle of each
+         *            {@link SunburstItem}
+         * @param paramTextWeight
+         *            determines how much text is weighted to compute the extension angle of each
+         *            {@link SunburstItem}
+         * @param paramModel
+         *            the {@link SunburstModel}
+         */
+        private TraverseCompareTree(final long paramRevision, final long paramKey, final long paramDepth,
+            final float paramModificationWeight, final float paramTextWeight, final SunburstModel paramModel) {
+            assert paramRevision >= 0;
+            assert paramKey > -1 && mRtx != null && !mRtx.isClosed();
+            assert paramDepth >= 0;
+            assert paramModificationWeight >= 0;
+            assert paramTextWeight >= 0;
+            assert paramModel != null;
+
+            mRevision = paramRevision;
+            mKey = paramKey;
+            mModWeight = paramModificationWeight;
+            mTextWeight = paramTextWeight;
+            mModel = paramModel;
+
+            mRtx.moveTo(mKey);
+            if (mRtx.getNode().getKind() == ENodes.ROOT_KIND) {
+                mRtx.moveToFirstChild();
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void run() {
+            LOGWRAPPER.debug("Build sunburst items.");
+
+            // Initialize variables. =============================
+            final List<SunburstItem> itemList = new ArrayList<SunburstItem>(mItems);
+            final int maxDepth = mDepthMax;
+
+            // Remove all elements from item list.
+            mItems.clear();
+
+            // Initial extension and childExtension.
+            float extension = PConstants.TWO_PI;
+            float childExtension = 0f;
+
+            // Node relations used for simplyfing the SunburstItem constructor.
+            final NodeRelations relations = new NodeRelations();
+
+            // Depth in the tree starting at 0.
+            int depth = 0;
+
+            // Start angle.
+            float angle = 0f;
+
+            // Child count per depth.
+            long childCountPerDepth = ((AbsStructNode)mRtx.getNode()).getChildCount();
+
+            try {
+                // Get min and max textLength of the new revision.
+                getMinMaxTextLength(mRtx);
+
+                // Get list of descendants per node on the new revision.
+                final IReadTransaction firstRtx = mSession.beginReadTransaction(mRevision);
+                firstRtx.moveTo(mRtx.getNode().getNodeKey());
+                final List<Future<List<?>>> descsAndMods = get(mRevision, firstRtx);
+                
+                // Get maximum depth of the old revision.
+                final IReadTransaction secondRtx = mSession.beginReadTransaction(mRtx.getRevisionNumber());
+                mDepthMax = getDepthMax(secondRtx);
+
+                // Determines movement of transaction.
+                EMoved moved = EMoved.START;
+
+                // Index to parent node.
+                int indexToParent = -1;
+                int index = -1;
+
+                // Setting up stacks.
+                final Stack<Float> extensionStack = new Stack<Float>();
+                final Stack<Long> childrenPerDepth = new Stack<Long>();
+                final Stack<Float> angleStack = new Stack<Float>();
+                final Stack<Integer> parentStack = new Stack<Integer>();
+
+                final Item item = new Item();
+
+                for (final IAxis axis = new DescendantAxis(mRtx, true); axis.hasNext(); axis.next()) {
+                    item.setAll(angle, extension, childCountPerDepth, indexToParent);
+                    moved.processMove(mRtx, item, angleStack, extensionStack, childrenPerDepth, parentStack);
+                    angle = item.mAngle;
+                    extension = item.mExtension;
+                    childCountPerDepth = item.mChildCountPerDepth;
+                    indexToParent = item.mIndexToParent;
+
+                    // Add a sunburst item.
+                    final AbsStructNode node = (AbsStructNode)mRtx.getNode();
+                    final StructType structKind =
+                        node.hasFirstChild() ? StructType.ISINNERNODE : StructType.ISLEAF;
+                    
+                    final long descendants = (Long)descsAndMods.get(indexToParent).get().get(0);
+                    
+                    // Calculate extension.
+                    if (childCountPerDepth == 0) {
+                        final long key = mRtx.getNode().getNodeKey();
+                        mRtx.moveToParent();
+                        childExtension = extension / (float)descendants;
+                        mRtx.moveTo(key);
+                    } else {
+                        childExtension = extension * (float)descendants / (float)childCountPerDepth;
+                    }
+                    
+                }
+
+                firstRtx.close();
+                secondRtx.close();
+            } catch (final InterruptedException e) {
+                LOGWRAPPER.error(e.getMessage(), e);
+            } catch (final ExecutionException e) {
+                LOGWRAPPER.error(e.getMessage(), e);
+            } catch (final TreetankException e) {
+                LOGWRAPPER.error(e.getMessage(), e);
+            }
+
+            // Copy list and fire changes with unmodifiable lists.
+            mModel.firePropertyChange("items", Collections.unmodifiableList(itemList),
+                Collections.unmodifiableList(new ArrayList<SunburstItem>(mItems)));
+            mModel.firePropertyChange("maxDepth", maxDepth, mDepthMax);
+
+            mRtx.moveTo(mKey);
+
+            LOGWRAPPER.info(mItems.size() + " SunburstItems created!");
+        }
+    }
+
     /** Traverse a tree (single revision). */
     private final class TraverseTree implements Runnable {
         /** Key from which to start traversal. */
@@ -594,7 +814,6 @@ final class SunburstModel extends AbsModel {
             assert paramKey > -1 && mRtx != null && !mRtx.isClosed();
             mKey = paramKey;
             mModel = paramModel;
-            // mModel.addPropertyChangeListener(mGUI);
 
             mRtx.moveTo(mKey);
             if (mRtx.getNode().getKind() == ENodes.ROOT_KIND) {
@@ -663,36 +882,6 @@ final class SunburstModel extends AbsModel {
                     extension = item.mExtension;
                     childCountPerDepth = item.mChildCountPerDepth;
                     indexToParent = item.mIndexToParent;
-                    // switch (moved) {
-                    // case START:
-                    // break;
-                    // case CHILD:
-                    // assert !angleStack.empty();
-                    // angle = angleStack.peek();
-                    // assert !extensionStack.empty();
-                    // extension = extensionStack.peek();
-                    // assert !childrenPerDepth.empty();
-                    // childCountPerDepth = childCountPerDepth();
-                    // assert !parentStack.empty();
-                    // indexToParent = parentStack.peek();
-                    // break;
-                    // case ANCHESTSIBL:
-                    // assert !angleStack.empty();
-                    // angle = angleStack.pop();
-                    // assert !extensionStack.empty();
-                    // angle += extensionStack.pop();
-                    // assert !extensionStack.empty();
-                    // extension = extensionStack.peek();
-                    // assert !parentStack.empty();
-                    // parentStack.pop();
-                    // assert !parentStack.empty();
-                    // indexToParent = parentStack.peek();
-                    // assert !childrenPerDepth.empty();
-                    // childCountPerDepth = childrenPerDepth.pop();
-                    // break;
-                    // default:
-                    // // Do nothing.
-                    // }
 
                     // Add a sunburst item.
                     final AbsStructNode node = (AbsStructNode)mRtx.getNode();
@@ -705,10 +894,7 @@ final class SunburstModel extends AbsModel {
                         final long key = mRtx.getNode().getNodeKey();
                         mRtx.moveToParent();
                         childExtension = extension / (float)((AbsStructNode)mRtx.getNode()).getChildCount();
-                        System.out.println("extension: " + childExtension);
-                        System.out.println(((AbsStructNode)mRtx.getNode()).getChildCount());
                         mRtx.moveTo(key);
-                        System.out.println(mRtx.getValueOfCurrentNode());
                     } else {
                         childExtension = extension * (float)childCount / (float)childCountPerDepth;
                     }
@@ -736,7 +922,7 @@ final class SunburstModel extends AbsModel {
                     }
 
                     // Set depth max.
-                    mDepthMax = PApplet.max(depth, mDepthMax);
+                    mDepthMax = Math.max(depth, mDepthMax);
 
                     index++;
 
@@ -799,22 +985,60 @@ final class SunburstModel extends AbsModel {
 
             LOGWRAPPER.info(mItems.size() + " SunburstItems created!");
         }
+    }
 
-        // /**
-        // * Traverses all right siblings and sums up child count. Thus a precondition to invoke the method is
-        // * that it must be called on the first child node.
-        // *
-        // * @return child count per depth
-        // */
-        // private long childCountPerDepth() {
-        // long retVal = 0;
-        // final long key = mRtx.getNode().getNodeKey();
-        // do {
-        // retVal += ((AbsStructNode)mRtx.getNode()).getChildCount();
-        // } while (((AbsStructNode)mRtx.getNode()).hasRightSibling() && mRtx.moveToRightSibling());
-        // mRtx.moveTo(key);
-        // return retVal;
-        // }
+    /** Counts descendants and modifications. */
+    private final class TreeWalk implements Callable<List<?>> {
+
+        /** Treetank {@link IReadTransaction} (on old revision). */
+        private transient IReadTransaction mOldRev;
+
+        /** Treetank {@link IReadTransaction} (on new revision). */
+        private transient IReadTransaction mNewRev;
+
+        /**
+         * Constructor.
+         * 
+         * @param paramRevision
+         *            revision to compare
+         * @param paramNodeKey
+         *            node key to which the current transaction should move
+         */
+        private TreeWalk(final long paramRevision, final long paramNodeKey) {
+            assert mRtx != null && !mRtx.isClosed();
+            assert paramNodeKey >= 0;
+            try {
+                assert paramRevision > mRtx.getRevisionNumber();
+                mNewRev = mSession.beginReadTransaction(paramRevision);
+                mOldRev = mSession.beginReadTransaction(mRtx.getRevisionNumber());
+            } catch (final TreetankException e) {
+                LOGWRAPPER.error(e.getMessage(), e);
+            }
+            mOldRev.moveTo(paramNodeKey);
+        }
+
+        @Override
+        public List<?> call() throws Exception {
+            final List<Object> retVal = new LinkedList<Object>();
+
+            final IAxis revNew = new DescendantAxis(mNewRev, true);
+            final IAxis revOld = new DescendantAxis(mOldRev, true);
+            int descendants = 0;
+            int modifications = 0;
+            while (revNew.hasNext()) {
+                descendants++;
+                checkModification(revNew.getTransaction(), revOld.getTransaction());
+
+                if (mMod != Modification.NONE) {
+                    modifications++;
+                }
+            }
+
+            retVal.add(descendants, modifications);
+            mNewRev.close();
+            mOldRev.close();
+            return retVal;
+        }
 
     }
 
@@ -831,12 +1055,12 @@ final class SunburstModel extends AbsModel {
          *            Node key to which the current transaction should move.
          */
         private Descendants(final long paramNodeKey) {
+            assert mRtx != null && !mRtx.isClosed();
             assert paramNodeKey >= 0;
             try {
                 mRTX = mSession.beginReadTransaction(mRtx.getRevisionNumber());
             } catch (final TreetankException e) {
-                e.printStackTrace();
-                // LOGWRAPPER.error(e.getMessage(), e);
+                LOGWRAPPER.error(e.getMessage(), e);
             }
             mRTX.moveTo(paramNodeKey);
         }

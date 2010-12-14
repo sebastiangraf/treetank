@@ -62,7 +62,7 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
      * Serial version UID.
      */
     private static final long serialVersionUID = -4747210906900567484L;
-    
+
     /** {@link LogWrapper}. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(SunburstGUI.class));
 
@@ -240,96 +240,106 @@ final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
     /** Initial setup of the GUI. */
     private void setupGUI() {
         mParent.noLoop();
-        final int activeColor = mParent.color(0, 130, 164);
-        mControlP5 = new ControlP5(mParent);
-        mControlP5.setColorActive(activeColor);
-        mControlP5.setColorBackground(mParent.color(170));
-        mControlP5.setColorForeground(mParent.color(50));
-        mControlP5.setColorLabel(mParent.color(50));
-        mControlP5.setColorValue(mParent.color(255));
+        try {
+            mLock.acquire();
+            final int activeColor = mParent.color(0, 130, 164);
+            mControlP5 = new ControlP5(mParent);
+            mControlP5.setColorActive(activeColor);
+            mControlP5.setColorBackground(mParent.color(170));
+            mControlP5.setColorForeground(mParent.color(50));
+            mControlP5.setColorLabel(mParent.color(50));
+            mControlP5.setColorValue(mParent.color(255));
 
-        mSliders = new LinkedList<Slider>();
-        mRanges = new LinkedList<Range>();
-        mToggles = new LinkedList<Toggle>();
-        // mBoxes = new LinkedList<ListBox>();
+            mSliders = new LinkedList<Slider>();
+            mRanges = new LinkedList<Range>();
+            mToggles = new LinkedList<Toggle>();
+            // mBoxes = new LinkedList<ListBox>();
 
-        final int left = 0;
-        final int top = 5;
-        final int len = 300;
+            final int left = 0;
+            final int top = 5;
+            final int len = 300;
 
-        int si = 0;
-        int ri = 0;
-        int ti = 0;
-        int posY = 0;
+            int si = 0;
+            int ri = 0;
+            int ti = 0;
+            int posY = 0;
 
-        assert mControlP5 != null;
+            assert mControlP5 != null;
 
-        mRanges.add(ri++, mControlP5.addRange("leaf node hue range", 0, 360, mHueStart, mHueEnd, left, top
-            + posY + 0, len, 15));
-        mRanges.add(ri++, mControlP5.addRange("leaf node saturation range", 0, 100, mSaturationStart,
-            mSaturationEnd, left, top + posY + 20, len, 15));
-        mRanges.add(ri++, mControlP5.addRange("leaf node brightness range", 0, 100, mBrightnessStart,
-            mBrightnessEnd, left, top + posY + 40, len, 15));
-        posY += 70;
+            mRanges.add(ri++, mControlP5.addRange("leaf node hue range", 0, 360, mHueStart, mHueEnd, left,
+                top + posY + 0, len, 15));
+            mRanges.add(ri++, mControlP5.addRange("leaf node saturation range", 0, 100, mSaturationStart,
+                mSaturationEnd, left, top + posY + 20, len, 15));
+            mRanges.add(ri++, mControlP5.addRange("leaf node brightness range", 0, 100, mBrightnessStart,
+                mBrightnessEnd, left, top + posY + 40, len, 15));
+            posY += 70;
 
-        mRanges.add(ri++, mControlP5.addRange("inner node brightness range", 0, 100,
-            mInnerNodeBrightnessStart, mInnerNodeBrightnessEnd, left, top + posY + 0, len, 15));
-        mRanges.add(ri++, mControlP5.addRange("inner node stroke brightness range", 0, 100,
-            mInnerNodeStrokeBrightnessStart, mInnerNodeStrokeBrightnessEnd, left, top + posY + 20, len, 15));
-        posY += 50;
+            mRanges.add(ri++, mControlP5.addRange("inner node brightness range", 0, 100,
+                mInnerNodeBrightnessStart, mInnerNodeBrightnessEnd, left, top + posY + 0, len, 15));
+            mRanges.add(ri++, mControlP5.addRange("inner node stroke brightness range", 0, 100,
+                mInnerNodeStrokeBrightnessStart, mInnerNodeStrokeBrightnessEnd, left, top + posY + 20, len,
+                15));
+            posY += 50;
 
-        // name, minimum, maximum, default value (float), x, y, width, height
-        mSliders.add(si, mControlP5.addSlider("mInnerNodeArcScale", 0, 1, mInnerNodeArcScale, left, top
-            + posY + 0, len, 15));
-        mSliders.get(si++).setLabel("innerNodeArcScale");
-        mSliders.add(si,
-            mControlP5.addSlider("mLeafArcScale", 0, 1, mLeafArcScale, left, top + posY + 20, len, 15));
-        mSliders.get(si++).setLabel("leafNodeArcScale");
-        posY += 50;
-
-        mRanges.add(
-            ri++,
-            mControlP5.addRange("stroke weight range", 0, 10, mStrokeWeightStart, mStrokeWeightEnd, left, top
+            // name, minimum, maximum, default value (float), x, y, width, height
+            mSliders.add(si, mControlP5.addSlider("mInnerNodeArcScale", 0, 1, mInnerNodeArcScale, left, top
                 + posY + 0, len, 15));
-        posY += 30;
+            mSliders.get(si++).setLabel("innerNodeArcScale");
+            mSliders.add(si,
+                mControlP5.addSlider("mLeafArcScale", 0, 1, mLeafArcScale, left, top + posY + 20, len, 15));
+            mSliders.get(si++).setLabel("leafNodeArcScale");
+            posY += 50;
 
-        mSliders.add(si, mControlP5.addSlider("mDotSize", 0, 10, mDotSize, left, top + posY + 0, len, 15));
-        mSliders.get(si++).setLabel("dotSize");
-        mSliders.add(si,
-            mControlP5.addSlider("mDotBrightness", 0, 100, mDotBrightness, left, top + posY + 20, len, 15));
-        mSliders.get(si++).setLabel("dotBrightness");
-        posY += 50;
+            mRanges.add(ri++, mControlP5.addRange("stroke weight range", 0, 10, mStrokeWeightStart,
+                mStrokeWeightEnd, left, top + posY + 0, len, 15));
+            posY += 30;
 
-        mSliders.add(si, mControlP5.addSlider("mBackgroundBrightness", 0, 100, mBackgroundBrightness, left,
-            top + posY + 0, len, 15));
-        mSliders.get(si++).setLabel("backgroundBrightness");
-        posY += 30;
+            mSliders
+                .add(si, mControlP5.addSlider("mDotSize", 0, 10, mDotSize, left, top + posY + 0, len, 15));
+            mSliders.get(si++).setLabel("dotSize");
+            mSliders.add(si, mControlP5.addSlider("mDotBrightness", 0, 100, mDotBrightness, left, top + posY
+                + 20, len, 15));
+            mSliders.get(si++).setLabel("dotBrightness");
+            posY += 50;
 
-        mSliders.add(si,
-            mControlP5.addSlider("mTextWeight", 0, 10, mTextWeight, left, top + posY + 0, len, 15));
-        mSliders.get(si++).setLabel("text weight");
-        posY += 50;
+            mSliders.add(
+                si,
+                mControlP5.addSlider("mBackgroundBrightness", 0, 100, mBackgroundBrightness, left, top + posY
+                    + 0, len, 15));
+            mSliders.get(si++).setLabel("backgroundBrightness");
+            posY += 30;
 
-        mToggles.add(ti, mControlP5.addToggle("mShowArcs", mShowArcs, left + 0, top + posY, 15, 15));
-        mToggles.get(ti++).setLabel("show Arcs");
-        mToggles.add(ti, mControlP5.addToggle("mShowLines", mShowLines, left + 0, top + posY + 20, 15, 15));
-        mToggles.get(ti++).setLabel("show Lines");
-        mToggles.add(ti,
-            mControlP5.addToggle("mUseBezierLine", mUseBezierLine, left + 0, top + posY + 40, 15, 15));
-        mToggles.get(ti++).setLabel("Bezier / Line");
-        mToggles.add(ti, mControlP5.addToggle("mUseArc", mUseArc, left + 0, top + posY + 60, 15, 15));
-        mToggles.get(ti++).setLabel("Arc / Rect");
-        mToggles.add(ti, mControlP5.addToggle("mFisheye", mFisheye, left + 0, top + posY + 80, 15, 15));
-        mToggles.get(ti++).setLabel("Fisheye lense");
+            mSliders.add(si,
+                mControlP5.addSlider("mTextWeight", 0, 10, mTextWeight, left, top + posY + 0, len, 15));
+            mSliders.get(si++).setLabel("text weight");
+            posY += 50;
 
-        mXPathField = mControlP5.addTextfield("xpath", left + 800, top + 20, 200, 20);
-        mXPathField.setLabel("XPath expression");
-        mXPathField.setFocus(true);
-        mXPathField.setAutoClear(false);
-        mXPathField.plugTo(this);
+            mToggles.add(ti, mControlP5.addToggle("mShowArcs", mShowArcs, left + 0, top + posY, 15, 15));
+            mToggles.get(ti++).setLabel("show Arcs");
+            mToggles.add(ti,
+                mControlP5.addToggle("mShowLines", mShowLines, left + 0, top + posY + 20, 15, 15));
+            mToggles.get(ti++).setLabel("show Lines");
+            mToggles.add(ti,
+                mControlP5.addToggle("mUseBezierLine", mUseBezierLine, left + 0, top + posY + 40, 15, 15));
+            mToggles.get(ti++).setLabel("Bezier / Line");
+            mToggles.add(ti, mControlP5.addToggle("mUseArc", mUseArc, left + 0, top + posY + 60, 15, 15));
+            mToggles.get(ti++).setLabel("Arc / Rect");
+            mToggles.add(ti, mControlP5.addToggle("mFisheye", mFisheye, left + 0, top + posY + 80, 15, 15));
+            mToggles.get(ti++).setLabel("Fisheye lense");
 
-        style(si, ri, ti);
-        mParent.loop();
+            mXPathField = mControlP5.addTextfield("xpath", left + 800, top + 20, 200, 20);
+            mXPathField.setLabel("XPath expression");
+            mXPathField.setFocus(true);
+            mXPathField.setAutoClear(false);
+            mXPathField.plugTo(this);
+
+            style(si, ri, ti);
+        } catch (final Exception e) {
+            LOGWRAPPER.warn(e.getMessage(), e);
+        } finally {
+            mLock.release();
+            mParent.loop();
+        }
     }
 
     /**

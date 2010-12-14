@@ -55,10 +55,10 @@ public final class GUI extends JFrame {
     private static boolean mUseSystemLookAndFeel;
 
     /** Width of the frame. */
-    private static final int WIDTH = 1280;
+    private static final int WIDTH = 1000;
 
     /** Height of the frame. */
-    private static final int HEIGHT = 1024;
+    private static final int HEIGHT = 900;
 
 //    /** {@link GUIProp}. */
 //    private final GUIProp mProp; // Will be used in future versions (more GUI properties).
