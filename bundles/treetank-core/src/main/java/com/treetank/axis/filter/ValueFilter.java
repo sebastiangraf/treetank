@@ -15,7 +15,7 @@
  * 
  */
 
-package com.treetank.axis;
+package com.treetank.axis.filter;
 
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
@@ -29,7 +29,7 @@ import com.treetank.utils.TypedValue;
  * Only match nodes of kind TEXT whoms value matches.
  * </p>
  */
-public class ValueFilter extends AbsFilter implements IFilter {
+public class ValueFilter extends AbsFilter {
 
     /** Value test to do. */
     private final byte[] mValue;
@@ -89,8 +89,8 @@ public class ValueFilter extends AbsFilter implements IFilter {
     @Override
     public final boolean filter() {
         return (getTransaction().getNode().getKind() == ENodes.TEXT_KIND || getTransaction().getNode()
-            .getKind() == ENodes.ATTRIBUTE_KIND) && (TypedValue.equals(getTransaction().getNode()
-            .getRawValue(), mValue));
+            .getKind() == ENodes.ATTRIBUTE_KIND)
+            && (TypedValue.equals(getTransaction().getNode().getRawValue(), mValue));
     }
 
 }

@@ -15,7 +15,7 @@
  * 
  * $Id: AttributeFilterTest.java 4417 2008-08-27 21:19:26Z scherer $
  */
-package com.treetank.axis;
+package com.treetank.axis.filter;
 
 import org.junit.After;
 import org.junit.Before;
@@ -26,6 +26,7 @@ import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.axis.filter.AttributeFilter;
 import com.treetank.exception.TreetankException;
 import com.treetank.utils.DocumentCreater;
 

@@ -15,37 +15,45 @@
  * 
  */
 
-package com.treetank.axis;
+package com.treetank.axis.filter;
 
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
-import com.treetank.node.ENodes;
 
 /**
- * <h1>FullTextLeafAxisTest</h1>
+ * <h1>AbstractFilter</h1>
  * 
  * <p>
- * Only select nodes of kind FULLTEXT_LEAF.
+ * Filter node of transaction this filter is bound to.
  * </p>
  */
-public class TextFilter extends AbsFilter implements IFilter {
+public abstract class AbsFilter implements IFilter {
+
+    /** Iterate over transaction exclusive to this step. */
+    private final IReadTransaction mRTX;
 
     /**
-     * Default constructor.
+     * Bind axis step to transaction.
      * 
      * @param rtx
-     *            Transaction this filter is bound to.
+     *            Transaction to operate with.
      */
-    public TextFilter(final IReadTransaction rtx) {
-        super(rtx);
+    protected AbsFilter(final IReadTransaction rtx) {
+        mRTX = rtx;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    // @Override
+    protected final IReadTransaction getTransaction() {
+        return mRTX;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final boolean filter() {
-        return getTransaction().getNode().getKind() == ENodes.TEXT_KIND;
-    }
+    public abstract boolean filter();
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
+ * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -13,10 +13,10 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: DocumentRootNodeFilterTest.java 4417 2008-08-27 21:19:26Z scherer $
+ * $Id: ValueFilterTest.java 4417 2008-08-27 21:19:26Z scherer $
  */
 
-package com.treetank.axis;
+package com.treetank.axis.filter;
 
 import org.junit.After;
 import org.junit.Before;
@@ -27,10 +27,11 @@ import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.axis.filter.ValueFilter;
 import com.treetank.exception.TreetankException;
 import com.treetank.utils.DocumentCreater;
 
-public class DocumentRootNodeFilterTest {
+public class ValueFilterTest {
 
     @Before
     public void setUp() throws TreetankException {
@@ -45,38 +46,16 @@ public class DocumentRootNodeFilterTest {
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
 
-        wtx.moveTo(0L);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), true);
-
-        wtx.moveTo(1L);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), false);
-
-        wtx.moveTo(1L);
-        wtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), false);
-
-        wtx.moveTo(3L);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), false);
-
         wtx.moveTo(4L);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), false);
+        IFilterTest.testIFilterConventions(new ValueFilter(wtx, "oops1"), true);
+        IFilterTest.testIFilterConventions(new ValueFilter(wtx, "foo"), false);
 
-        wtx.moveTo(5L);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), false);
-
-        wtx.moveTo(9L);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), false);
-
-        wtx.moveTo(9L);
+        wtx.moveTo(1L);
         wtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), false);
+        IFilterTest.testIFilterConventions(new ValueFilter(wtx, "j"), true);
 
-        wtx.moveTo(12L);
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), false);
-
-        wtx.moveTo(13L);
-        wtx.moveToDocumentRoot();
-        IFilterTest.testIFilterConventions(new DocumentRootNodeFilter(wtx), true);
+        wtx.moveTo(2L);
+        IFilterTest.testIFilterConventions(new ValueFilter(wtx, "j"), true);
 
         wtx.abort();
         wtx.close();
@@ -88,4 +67,5 @@ public class DocumentRootNodeFilterTest {
     public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
+
 }

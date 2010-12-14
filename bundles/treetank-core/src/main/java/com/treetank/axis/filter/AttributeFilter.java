@@ -15,20 +15,20 @@
  * 
  */
 
-package com.treetank.axis;
+package com.treetank.axis.filter;
 
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
 import com.treetank.node.ENodes;
 
 /**
- * <h1>NodeAxisTest</h1>
+ * <h1>AttributeAxisTest</h1>
  * 
  * <p>
- * Only match comment nodes.
+ * Only match ATTRIBUTE nodes.
  * </p>
  */
-public class CommentFilter extends AbsFilter implements IFilter {
+public class AttributeFilter extends AbsFilter {
 
     /**
      * Default constructor.
@@ -36,7 +36,7 @@ public class CommentFilter extends AbsFilter implements IFilter {
      * @param rtx
      *            Transaction this filter is bound to.
      */
-    public CommentFilter(final IReadTransaction rtx) {
+    public AttributeFilter(final IReadTransaction rtx) {
         super(rtx);
     }
 
@@ -45,13 +45,7 @@ public class CommentFilter extends AbsFilter implements IFilter {
      */
     @Override
     public final boolean filter() {
-        return getTransaction().getNode().getKind() == ENodes.COMMENT_KIND;
-
-        // TODO: As soon as an comment node is implemented, use the second
-        // version,
-        // because this is much cleaner and more consistent to the other
-        // node-filters.
-        // return (getTransaction().isCommentKind());
+        return getTransaction().getNode().getKind() == ENodes.ATTRIBUTE_KIND;
     }
 
 }

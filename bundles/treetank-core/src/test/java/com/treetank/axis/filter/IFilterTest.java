@@ -16,18 +16,19 @@
  * $Id: IFilterTest.java 4258 2008-07-14 16:45:28Z kramis $
  */
 
-package com.treetank.axis;
+package com.treetank.axis.filter;
 
-import static org.junit.Assert.assertEquals;
+import com.treetank.TestHelper;
+import com.treetank.api.IFilter;
+import com.treetank.api.IReadTransaction;
+import com.treetank.axis.filter.AbsFilter;
+import com.treetank.exception.TreetankException;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.treetank.TestHelper;
-import com.treetank.api.IFilter;
-import com.treetank.api.IReadTransaction;
-import com.treetank.exception.TreetankException;
+import static org.junit.Assert.assertEquals;
 
 public class IFilterTest {
 
@@ -38,7 +39,7 @@ public class IFilterTest {
 
     public static void testIFilterConventions(final IFilter filter, final boolean expected) {
 
-        final IReadTransaction rtx = filter.getTransaction();
+        final IReadTransaction rtx = ((AbsFilter)filter).getTransaction();
 
         // IFilter Convention 1.
         final long startKey = rtx.getNode().getNodeKey();

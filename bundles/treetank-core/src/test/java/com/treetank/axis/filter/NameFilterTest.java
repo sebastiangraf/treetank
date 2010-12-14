@@ -13,10 +13,10 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: TextFilterTest.java 4417 2008-08-27 21:19:26Z scherer $
+ * $Id: NameFilterTest.java 4417 2008-08-27 21:19:26Z scherer $
  */
 
-package com.treetank.axis;
+package com.treetank.axis.filter;
 
 import org.junit.After;
 import org.junit.Before;
@@ -27,10 +27,11 @@ import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.axis.filter.NameFilter;
 import com.treetank.exception.TreetankException;
 import com.treetank.utils.DocumentCreater;
 
-public class TextFilterTest {
+public class NameFilterTest {
 
     @Before
     public void setUp() throws TreetankException {
@@ -45,18 +46,14 @@ public class TextFilterTest {
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
 
-        wtx.moveTo(8L);
-        IFilterTest.testIFilterConventions(new TextFilter(wtx), true);
+        wtx.moveTo(9L);
+        IFilterTest.testIFilterConventions(new NameFilter(wtx, "b"), true);
 
-        wtx.moveTo(3L);
-        IFilterTest.testIFilterConventions(new TextFilter(wtx), false);
+        wtx.moveTo(4L);
+        IFilterTest.testIFilterConventions(new NameFilter(wtx, "b"), false);
 
-        wtx.moveTo(5L);
-        IFilterTest.testIFilterConventions(new TextFilter(wtx), false);
-
-        wtx.moveTo(1L);
-        wtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new TextFilter(wtx), false);
+        wtx.moveTo(7L);
+        IFilterTest.testIFilterConventions(new NameFilter(wtx, "b"), false);
 
         wtx.abort();
         wtx.close();
@@ -68,4 +65,5 @@ public class TextFilterTest {
     public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
+
 }

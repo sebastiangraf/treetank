@@ -13,10 +13,10 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: CommentFilterTest.java 4417 2008-08-27 21:19:26Z scherer $
+ * $Id: ElementFilterTest.java 4417 2008-08-27 21:19:26Z scherer $
  */
 
-package com.treetank.axis;
+package com.treetank.axis.filter;
 
 import org.junit.After;
 import org.junit.Before;
@@ -27,10 +27,11 @@ import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.axis.filter.ElementFilter;
 import com.treetank.exception.TreetankException;
 import com.treetank.utils.DocumentCreater;
 
-public class CommentFilterTest {
+public class ElementFilterTest {
 
     @Before
     public void setUp() throws TreetankException {
@@ -45,19 +46,34 @@ public class CommentFilterTest {
         final IWriteTransaction wtx = session.beginWriteTransaction();
         DocumentCreater.create(wtx);
 
-        wtx.moveTo(9L);
-        IFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
+        wtx.moveTo(0L);
+        IFilterTest.testIFilterConventions(new ElementFilter(wtx), false);
 
-        wtx.moveTo(4L);
-        IFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
+        wtx.moveTo(1L);
+        IFilterTest.testIFilterConventions(new ElementFilter(wtx), true);
 
         wtx.moveTo(1L);
         wtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
+        IFilterTest.testIFilterConventions(new ElementFilter(wtx), false);
+
+        wtx.moveTo(4L);
+        IFilterTest.testIFilterConventions(new ElementFilter(wtx), false);
+
+        wtx.moveTo(5L);
+        IFilterTest.testIFilterConventions(new ElementFilter(wtx), true);
+
+        wtx.moveTo(6L);
+        IFilterTest.testIFilterConventions(new ElementFilter(wtx), false);
+
+        wtx.moveTo(9L);
+        IFilterTest.testIFilterConventions(new ElementFilter(wtx), true);
 
         wtx.moveTo(9L);
         wtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
+        IFilterTest.testIFilterConventions(new ElementFilter(wtx), false);
+
+        wtx.moveTo(12L);
+        IFilterTest.testIFilterConventions(new ElementFilter(wtx), false);
 
         wtx.abort();
         wtx.close();
@@ -69,4 +85,5 @@ public class CommentFilterTest {
     public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
+
 }

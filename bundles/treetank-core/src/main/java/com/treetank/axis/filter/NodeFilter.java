@@ -15,7 +15,7 @@
  * 
  */
 
-package com.treetank.axis;
+package com.treetank.axis.filter;
 
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
@@ -25,10 +25,10 @@ import com.treetank.node.ENodes;
  * <h1>NodeAxisTest</h1>
  * 
  * <p>
- * Only match ELEMENTnodes.
+ * Only match ELEMENT and TEXT nodes.
  * </p>
  */
-public class ElementFilter extends AbsFilter implements IFilter {
+public class NodeFilter extends AbsFilter  {
 
     /**
      * Default constructor.
@@ -36,7 +36,7 @@ public class ElementFilter extends AbsFilter implements IFilter {
      * @param rtx
      *            Transaction this filter is bound to.
      */
-    public ElementFilter(final IReadTransaction rtx) {
+    public NodeFilter(final IReadTransaction rtx) {
         super(rtx);
     }
 
@@ -45,7 +45,8 @@ public class ElementFilter extends AbsFilter implements IFilter {
      */
     @Override
     public final boolean filter() {
-        return getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND;
+        return (getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND || getTransaction().getNode()
+            .getKind() == ENodes.TEXT_KIND);
     }
 
 }

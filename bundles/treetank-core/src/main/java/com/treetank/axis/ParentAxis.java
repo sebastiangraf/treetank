@@ -29,7 +29,7 @@ import com.treetank.settings.EFixed;
  * Iterate to parent node starting at a given node. Self is not included.
  * </p>
  */
-public class ParentAxis extends AbsAxis implements IAxis {
+public class ParentAxis extends AbsAxis {
 
     /** Track number of calls of next. */
     private boolean mFirst;

@@ -19,7 +19,7 @@ package com.treetank.service.xml.xpath.filter;
 
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.AbsFilter;
+import com.treetank.axis.filter.AbsFilter;
 
 /**
  * <h1>NestedFilter</h1>
