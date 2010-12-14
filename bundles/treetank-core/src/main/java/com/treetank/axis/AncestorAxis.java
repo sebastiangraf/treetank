@@ -29,7 +29,7 @@ import com.treetank.settings.EFixed;
  * Iterate over all descendants of kind ELEMENT or TEXT starting at a given node. Self is not included.
  * </p>
  */
-public class AncestorAxis extends AbsAxis implements IAxis {
+public class AncestorAxis extends AbsAxis {
 
     /**
      * First touch of node.

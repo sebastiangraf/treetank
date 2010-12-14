@@ -16,7 +16,7 @@
  * $Id: FilterAxisTest.java 4417 2008-08-27 21:19:26Z scherer $
  */
 
-package com.treetank.axis;
+package com.treetank.axis.filter;
 
 import org.junit.After;
 import org.junit.Before;
@@ -27,6 +27,12 @@ import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.axis.AttributeAxis;
+import com.treetank.axis.DescendantAxis;
+import com.treetank.axis.FilterAxis;
+import com.treetank.axis.IAxisTest;
+import com.treetank.axis.filter.NameFilter;
+import com.treetank.axis.filter.ValueFilter;
 import com.treetank.exception.TreetankException;
 import com.treetank.utils.DocumentCreater;
 

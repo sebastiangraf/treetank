@@ -15,42 +15,16 @@
  * 
  */
 
-package com.treetank.axis;
-
-import com.treetank.api.IFilter;
-import com.treetank.api.IReadTransaction;
-
 /**
- * <h1>NodeAxisTest</h1>
- * 
+ * <h1>Filter Package</h1>
  * <p>
- * Only match process instruction nodes.
+ * Contains all Filters for filtering regarding different purposes.
  * </p>
+ * <p>
+ * Make sure to inherit the AbsFilter Class for having the filter functionality.
+ * </p>
+ * 
+ * @author Tina Scherer, University of Konstanz
  */
-public class PIFilter extends AbsFilter implements IFilter {
+package com.treetank.axis.filter;
 
-    /**
-     * Default constructor.
-     * 
-     * @param rtx
-     *            Transaction this filter is bound to.
-     */
-    public PIFilter(final IReadTransaction rtx) {
-        super(rtx);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final boolean filter() {
-
-        return getTransaction().getNode().getKind().getNodeIdentifier() == 7;
-
-        // TODO: As soon as an PI-node is implemented, use the second version,
-        // because this is much cleaner and more consistent to the other
-        // node-filters.
-        // return (getTransaction().isPIKind());
-    }
-
-}

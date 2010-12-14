@@ -28,7 +28,7 @@ import com.treetank.node.AbsStructNode;
  * Iterate over all children of kind ELEMENT or TEXT starting at a given node. Self is not included.
  * </p>
  */
-public class ChildAxis extends AbsAxis implements IAxis {
+public class ChildAxis extends AbsAxis {
 
     /** Has another child node. */
     private boolean mFirst;

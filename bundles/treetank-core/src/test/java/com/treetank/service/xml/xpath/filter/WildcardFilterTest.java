@@ -31,7 +31,7 @@ import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.axis.IFilterTest;
+import com.treetank.axis.filter.IFilterTest;
 import com.treetank.exception.TreetankException;
 import com.treetank.exception.TreetankIOException;
 import com.treetank.utils.DocumentCreater;

@@ -15,29 +15,35 @@
  * 
  */
 
-package com.treetank.axis;
+package com.treetank.axis.filter;
 
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
 import com.treetank.node.ENodes;
 
 /**
- * <h1>NodeAxisTest</h1>
+ * <h1>NameAxisTest</h1>
  * 
  * <p>
- * Only match ROOT nodes.
+ * Match local part of ELEMENT or ATTRIBUTE by key.
  * </p>
  */
-public class DocumentRootNodeFilter extends AbsFilter implements IFilter {
+public class NameFilter extends AbsFilter {
+
+    /** Key of name to test. */
+    private final int mLocalPartKey;
 
     /**
      * Default constructor.
      * 
      * @param rtx
      *            Transaction this filter is bound to.
+     * @param mLocalPart
+     *            Local part to check.
      */
-    public DocumentRootNodeFilter(final IReadTransaction rtx) {
+    public NameFilter(final IReadTransaction rtx, final String mLocalPart) {
         super(rtx);
+        mLocalPartKey = rtx.keyForName(mLocalPart);
     }
 
     /**
@@ -45,7 +51,7 @@ public class DocumentRootNodeFilter extends AbsFilter implements IFilter {
      */
     @Override
     public final boolean filter() {
-        return getTransaction().getNode().getKind() == ENodes.ROOT_KIND;
+        return ((getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND || getTransaction().getNode()
+            .getKind() == ENodes.ATTRIBUTE_KIND) && (getTransaction().getNode().getNameKey() == mLocalPartKey));
     }
-
 }

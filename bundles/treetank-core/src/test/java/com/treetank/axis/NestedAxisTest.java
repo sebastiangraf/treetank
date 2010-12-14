@@ -28,6 +28,9 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.axis.filter.NameFilter;
+import com.treetank.axis.filter.NodeFilter;
+import com.treetank.axis.filter.TextFilter;
 import com.treetank.exception.TreetankException;
 import com.treetank.utils.DocumentCreater;
 

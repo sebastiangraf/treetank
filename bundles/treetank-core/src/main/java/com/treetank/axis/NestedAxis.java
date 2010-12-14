@@ -26,7 +26,7 @@ import com.treetank.api.IAxis;
  * Chains two axis operations.
  * </p>
  */
-public class NestedAxis extends AbsAxis implements IAxis {
+public class NestedAxis extends AbsAxis{
 
     /** Parent axis. */
     private final IAxis mParentAxis;

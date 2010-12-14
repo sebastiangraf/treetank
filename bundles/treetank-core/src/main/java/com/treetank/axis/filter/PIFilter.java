@@ -15,30 +15,27 @@
  * 
  */
 
-package com.treetank.axis;
+package com.treetank.axis.filter;
 
-import com.treetank.api.IAxis;
+import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
 
 /**
- * <h1>ParentAxis</h1>
+ * <h1>NodeAxisTest</h1>
  * 
  * <p>
- * Iterate to parent node starting at a given node. Self is not included.
+ * Only match process instruction nodes.
  * </p>
  */
-public class SelfAxis extends AbsAxis  {
-
-    /** Track number of calls of next. */
-    private boolean mFirst;
+public class PIFilter extends AbsFilter  {
 
     /**
-     * Constructor initializing internal state.
+     * Default constructor.
      * 
      * @param rtx
-     *            Exclusive (immutable) trx to iterate with.
+     *            Transaction this filter is bound to.
      */
-    public SelfAxis(final IReadTransaction rtx) {
+    public PIFilter(final IReadTransaction rtx) {
         super(rtx);
     }
 
@@ -46,24 +43,14 @@ public class SelfAxis extends AbsAxis  {
      * {@inheritDoc}
      */
     @Override
-    public final void reset(final long mNodeKey) {
-        super.reset(mNodeKey);
-        mFirst = true;
-    }
+    public final boolean filter() {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final boolean hasNext() {
-        resetToLastKey();
-        if (mFirst) {
-            mFirst = false;
-            return true;
-        } else {
-            resetToStartKey();
-            return false;
-        }
+        return getTransaction().getNode().getKind().getNodeIdentifier() == 7;
+
+        // TODO: As soon as an PI-node is implemented, use the second version,
+        // because this is much cleaner and more consistent to the other
+        // node-filters.
+        // return (getTransaction().isPIKind());
     }
 
 }

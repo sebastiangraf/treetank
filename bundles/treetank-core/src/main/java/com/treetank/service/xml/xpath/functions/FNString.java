@@ -23,7 +23,7 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.axis.FilterAxis;
-import com.treetank.axis.TextFilter;
+import com.treetank.axis.filter.TextFilter;
 import com.treetank.node.ENodes;
 import com.treetank.utils.TypedValue;
 

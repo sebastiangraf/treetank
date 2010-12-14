@@ -15,35 +15,29 @@
  * 
  */
 
-package com.treetank.axis;
+package com.treetank.axis.filter;
 
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
 import com.treetank.node.ENodes;
 
 /**
- * <h1>NameAxisTest</h1>
+ * <h1>FullTextLeafAxisTest</h1>
  * 
  * <p>
- * Match local part of ELEMENT or ATTRIBUTE by key.
+ * Only select nodes of kind FULLTEXT_LEAF.
  * </p>
  */
-public class NameFilter extends AbsFilter implements IFilter {
-
-    /** Key of name to test. */
-    private final int mLocalPartKey;
+public class TextFilter extends AbsFilter  {
 
     /**
      * Default constructor.
      * 
      * @param rtx
      *            Transaction this filter is bound to.
-     * @param mLocalPart
-     *            Local part to check.
      */
-    public NameFilter(final IReadTransaction rtx, final String mLocalPart) {
+    public TextFilter(final IReadTransaction rtx) {
         super(rtx);
-        mLocalPartKey = rtx.keyForName(mLocalPart);
     }
 
     /**
@@ -51,7 +45,7 @@ public class NameFilter extends AbsFilter implements IFilter {
      */
     @Override
     public final boolean filter() {
-        return ((getTransaction().getNode().getKind() == ENodes.ELEMENT_KIND || getTransaction().getNode()
-            .getKind() == ENodes.ATTRIBUTE_KIND) && (getTransaction().getNode().getNameKey() == mLocalPartKey));
+        return getTransaction().getNode().getKind() == ENodes.TEXT_KIND;
     }
+
 }

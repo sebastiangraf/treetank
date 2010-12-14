@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Marc Kramis (Ph.D. Thesis), University of Konstanz
+ * Copyright (c) 2008, Tina Scherer (Master Thesis), University of Konstanz
  * 
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -13,10 +13,10 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * 
- * $Id: NodeFilterTest.java 4417 2008-08-27 21:19:26Z scherer $
+ * $Id: CommentFilterTest.java 4417 2008-08-27 21:19:26Z scherer $
  */
 
-package com.treetank.axis;
+package com.treetank.axis.filter;
 
 import org.junit.After;
 import org.junit.Before;
@@ -27,10 +27,11 @@ import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
+import com.treetank.axis.filter.CommentFilter;
 import com.treetank.exception.TreetankException;
 import com.treetank.utils.DocumentCreater;
 
-public class NodeFilterTest {
+public class CommentFilterTest {
 
     @Before
     public void setUp() throws TreetankException {
@@ -46,14 +47,18 @@ public class NodeFilterTest {
         DocumentCreater.create(wtx);
 
         wtx.moveTo(9L);
-        IFilterTest.testIFilterConventions(new NodeFilter(wtx), true);
+        IFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
 
         wtx.moveTo(4L);
-        IFilterTest.testIFilterConventions(new NodeFilter(wtx), true);
+        IFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
 
         wtx.moveTo(1L);
         wtx.moveToAttribute(0);
-        IFilterTest.testIFilterConventions(new NodeFilter(wtx), false);
+        IFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
+
+        wtx.moveTo(9L);
+        wtx.moveToAttribute(0);
+        IFilterTest.testIFilterConventions(new CommentFilter(wtx), false);
 
         wtx.abort();
         wtx.close();
@@ -65,5 +70,4 @@ public class NodeFilterTest {
     public void tearDown() throws TreetankException {
         TestHelper.closeEverything();
     }
-
 }

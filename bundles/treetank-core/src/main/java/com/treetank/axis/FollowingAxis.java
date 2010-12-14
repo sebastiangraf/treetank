@@ -30,7 +30,7 @@ import com.treetank.utils.FastStack;
  * Iterate over all following nodes of kind ELEMENT or TEXT starting at a given node. Self is not included.
  * </p>
  */
-public class FollowingAxis extends AbsAxis implements IAxis {
+public class FollowingAxis extends AbsAxis {
 
     private boolean mIsFirst;
 

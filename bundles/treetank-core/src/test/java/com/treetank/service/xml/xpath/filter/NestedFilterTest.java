@@ -27,12 +27,12 @@ import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.axis.AttributeFilter;
-import com.treetank.axis.ElementFilter;
-import com.treetank.axis.IFilterTest;
-import com.treetank.axis.NameFilter;
-import com.treetank.axis.NodeFilter;
-import com.treetank.axis.TextFilter;
+import com.treetank.axis.filter.AttributeFilter;
+import com.treetank.axis.filter.ElementFilter;
+import com.treetank.axis.filter.IFilterTest;
+import com.treetank.axis.filter.NameFilter;
+import com.treetank.axis.filter.NodeFilter;
+import com.treetank.axis.filter.TextFilter;
 import com.treetank.exception.TreetankException;
 import com.treetank.utils.DocumentCreater;
 
