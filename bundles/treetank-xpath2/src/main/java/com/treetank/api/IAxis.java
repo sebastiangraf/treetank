@@ -22,7 +22,7 @@ import java.util.Iterator;
 /**
  * <h1>IAxis</h1>
  * 
- * <h2>Descript¯ion</h2>
+ * <h2>Description</h2>
  * 
  * <p>
  * Interface to iterate over nodes according to a given axis step without storing intermediate lists.
