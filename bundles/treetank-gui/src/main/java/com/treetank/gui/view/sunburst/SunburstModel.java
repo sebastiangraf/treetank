@@ -48,7 +48,7 @@ import processing.core.PConstants;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-final class SunburstModel extends AbsModel {
+final class SunburstModel extends AbsComponent {
 
     /** {@link LogWrapper}. */
     private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory.getLogger(SunburstModel.class));

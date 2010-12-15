@@ -27,6 +27,9 @@ import processing.core.PApplet;
 enum EXPathState {
     /** Item is found. */
     ISFOUND {
+        /**
+         * {@inheritDoc}
+         */
         @Override
         void setStroke(final PApplet paramApplet, final int paramColor) {
             paramApplet.stroke(1);
@@ -35,6 +38,9 @@ enum EXPathState {
 
     /** Default: Item is not found. */
     ISNOTFOUND {
+        /**
+         * {@inheritDoc}
+         */
         @Override
         void setStroke(final PApplet paramApplet, final int paramColor) {
             paramApplet.stroke(paramColor);
