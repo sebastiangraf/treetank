@@ -23,7 +23,7 @@ import com.treetank.gui.view.sunburst.SunburstItem.StructType;
  * 
  * <p>
  * Relations between a node and it's children. Container class used to simplify the
- * {@link SunburstView.Builder} constructor.
+ * {@link SunburstItem.Builder} constructor.
  * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
@@ -70,8 +70,10 @@ final class NodeRelations {
         final long paramMaxDescendantCount, final int paramIndexToParent) {
         assert paramDepth >= 0;
         assert paramStructKind != null;
-        assert paramDescendantCount >= 0 && paramMinDescendantCount >= 0 && paramMaxDescendantCount >= 0 
-                && paramIndexToParent >= -1;
+        assert paramDescendantCount >= 0;
+        assert paramMinDescendantCount >= 0;
+        assert paramMaxDescendantCount >= 0;
+        assert paramIndexToParent >= -1;
         mDepth = paramDepth;
         mStructKind = paramStructKind;
         mDescendantCount = paramDescendantCount;
