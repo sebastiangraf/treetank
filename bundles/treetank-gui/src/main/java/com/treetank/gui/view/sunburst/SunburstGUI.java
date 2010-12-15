@@ -56,7 +56,7 @@ import processing.core.PImage;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-final class SunburstGUI extends AbsGUI implements PropertyChangeListener {
+final class SunburstGUI extends AbsComponent implements PropertyChangeListener {
 
     /**
      * Serial version UID.

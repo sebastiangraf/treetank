@@ -20,16 +20,12 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 /**
- * <h1>AbsModel</h1>
- * 
- * <p>
  * Provides methods to add and remove {@link PropertyChangeListener}s as well as firing property changes.
- * </p>
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-abstract class AbsModel {
+abstract class AbsComponent {
 
     /** {@link PropertyChangeSupport} to register listeners. */
     private final PropertyChangeSupport mPropertyChangeSupport;
@@ -37,7 +33,7 @@ abstract class AbsModel {
     /**
      * Constructor.
      */
-    AbsModel() {
+    AbsComponent() {
         mPropertyChangeSupport = new PropertyChangeSupport(this);
     }
 

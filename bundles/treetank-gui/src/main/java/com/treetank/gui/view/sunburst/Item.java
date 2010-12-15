@@ -105,7 +105,7 @@ public final class Item {
         /**
          * Set descendant count.
          * 
-         * @param paramDescendantCountParent
+         * @param paramDescendantCount
          *            parent descendant count
          * @return this builder
          */

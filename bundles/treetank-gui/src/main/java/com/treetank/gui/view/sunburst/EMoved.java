@@ -31,6 +31,9 @@ enum EMoved {
 
     /** Start of traversal. */
     START {
+        /**
+         * {@inheritDoc}
+         */
         @Override
         void processMove(final IReadTransaction paramRtx, final Item paramItem,
             final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
@@ -38,6 +41,9 @@ enum EMoved {
             // Do nothing.
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         void processCompareMove(final IReadTransaction paramRtx, final Item paramItem,
             final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
@@ -49,6 +55,9 @@ enum EMoved {
 
     /** Next node is a child of the current node. */
     CHILD {
+        /**
+         * {@inheritDoc}
+         */
         @Override
         void processMove(final IReadTransaction paramRtx, final Item paramItem,
             final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
@@ -63,6 +72,9 @@ enum EMoved {
             paramItem.mIndexToParent = paramParentStack.peek();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         void processCompareMove(final IReadTransaction paramRtx, final Item paramItem,
             final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
@@ -83,6 +95,9 @@ enum EMoved {
 
     /** Next node is the rightsibling of the first anchestor node which has one. */
     ANCHESTSIBL {
+        /**
+         * {@inheritDoc}
+         */
         @Override
         void processMove(final IReadTransaction paramRtx, final Item paramItem,
             final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
@@ -101,6 +116,9 @@ enum EMoved {
             paramItem.mChildCountPerDepth = paramChildrenPerDepth.pop();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         void processCompareMove(final IReadTransaction paramRtx, final Item paramItem,
             final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
