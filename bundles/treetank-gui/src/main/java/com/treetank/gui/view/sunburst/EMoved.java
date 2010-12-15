@@ -22,7 +22,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.node.AbsStructNode;
 
 /**
- * Determines if cursor moved to child of parent node.
+ * Determines movement of transaction and updates stacks accordingly.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 
@@ -35,6 +35,14 @@ enum EMoved {
         void processMove(final IReadTransaction paramRtx, final Item paramItem,
             final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
             final Stack<Long> paramChildrenPerDepth, final Stack<Integer> paramParentStack) {
+            // Do nothing.
+        }
+
+        @Override
+        void processCompareMove(final IReadTransaction paramRtx, final Item paramItem,
+            final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
+            final Stack<Long> paramDescendants, final Stack<Integer> paramParentStack,
+            final Stack<Integer> paramModificationStack) {
             // Do nothing.
         }
     },
@@ -53,6 +61,23 @@ enum EMoved {
             paramItem.mChildCountPerDepth = childCountPerDepth(paramRtx);
             assert !paramParentStack.empty();
             paramItem.mIndexToParent = paramParentStack.peek();
+        }
+
+        @Override
+        void processCompareMove(final IReadTransaction paramRtx, final Item paramItem,
+            final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
+            final Stack<Long> paramDescendants, final Stack<Integer> paramParentStack,
+            final Stack<Integer> paramModificationStack) {
+            assert !paramAngleStack.empty();
+            paramItem.mAngle = paramAngleStack.peek();
+            assert !paramExtensionStack.empty();
+            paramItem.mExtension = paramExtensionStack.peek();
+            assert !paramDescendants.empty();
+            paramItem.mDescendantCount = paramDescendants.peek();
+            assert !paramParentStack.empty();
+            paramItem.mIndexToParent = paramParentStack.peek();
+            assert !paramModificationStack.empty();
+            paramItem.mModificationCount = paramModificationStack.peek();
         }
     },
 
@@ -75,6 +100,27 @@ enum EMoved {
             assert !paramChildrenPerDepth.empty();
             paramItem.mChildCountPerDepth = paramChildrenPerDepth.pop();
         }
+
+        @Override
+        void processCompareMove(final IReadTransaction paramRtx, final Item paramItem,
+            final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
+            final Stack<Long> paramDescendants, final Stack<Integer> paramParentStack,
+            final Stack<Integer> paramModificationStack) {
+            assert !paramAngleStack.empty();
+            paramItem.mAngle = paramAngleStack.pop();
+            assert !paramExtensionStack.empty();
+            paramItem.mAngle += paramExtensionStack.pop();
+            assert !paramExtensionStack.empty();
+            paramItem.mExtension = paramExtensionStack.peek();
+            assert !paramParentStack.empty();
+            paramParentStack.pop();
+            assert !paramParentStack.empty();
+            paramItem.mIndexToParent = paramParentStack.peek();
+            assert !paramDescendants.empty();
+            paramItem.mDescendantCount = paramDescendants.pop();
+            assert !paramModificationStack.empty();
+            paramItem.mModificationCount = paramModificationStack.pop();
+        }
     };
 
     /**
@@ -85,22 +131,44 @@ enum EMoved {
      * @param paramItem
      *            Item which does hold sunburst item angles and extensions
      * @param paramAngleStack
-     *            Stack for angles
+     *            stack for angles
      * @param paramExtensionStack
-     *            Stack for extensions
+     *            stack for extensions
      * @param paramChildrenPerDepth
-     *            Stack for children per depth
+     *            stack for children per depth
      * @param paramParentStack
-     *            Stack for parent indexes
+     *            stack for parent indexes
      */
     abstract void processMove(final IReadTransaction paramRtx, final Item paramItem,
         final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
         final Stack<Long> paramChildrenPerDepth, final Stack<Integer> paramParentStack);
 
     /**
+     * Process movement of Treetank {@link IReadTransaction}, while comparing revisions.
+     * 
+     * @param paramRtx
+     *            Treetank {@link IReadTransaction}
+     * @param paramItem
+     *            Item which does hold sunburst item angles and extensions
+     * @param paramAngleStack
+     *            stack for angles
+     * @param paramExtensionStack
+     *            stack for extensions
+     * @param paramDescendants
+     *            stack for descendants
+     * @param paramParentStack
+     *            stack for parent indexes
+     * @param paramModificationStack
+     *            stack for modifications
+     */
+    abstract void processCompareMove(final IReadTransaction paramRtx, final Item paramItem,
+        final Stack<Float> paramAngleStack, final Stack<Float> paramExtensionStack,
+        final Stack<Long> paramDescendants, final Stack<Integer> paramParentStack,
+        final Stack<Integer> paramModificationStack);
+
+    /**
      * Traverses all right siblings and sums up child count. Thus a precondition to invoke the method
-     * is
-     * that it must be called on the first child node.
+     * is that it must be called on the first child node.
      * 
      * @param paramRtx
      *            Treetank {@link IReadTransaction}.
