@@ -513,4 +513,11 @@ public final class XPathScanner {
 
         return mPos;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return mQuery;
+    }
 }

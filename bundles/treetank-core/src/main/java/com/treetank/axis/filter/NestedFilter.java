@@ -15,11 +15,10 @@
  * 
  */
 
-package com.treetank.service.xml.xpath.filter;
+package com.treetank.axis.filter;
 
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.filter.AbsFilter;
 
 /**
  * <h1>NestedFilter</h1>
@@ -27,7 +26,7 @@ import com.treetank.axis.filter.AbsFilter;
  * Nests two or more IFilters.
  * </p>
  */
-public class NestedFilter extends AbsFilter implements IFilter {
+public class NestedFilter extends AbsFilter {
 
     /** Tests to apply. */
     private final IFilter[] mFilter;

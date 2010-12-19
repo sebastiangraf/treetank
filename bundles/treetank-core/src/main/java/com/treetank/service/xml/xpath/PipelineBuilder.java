@@ -76,8 +76,8 @@ public final class PipelineBuilder {
     /**
      * Log wrapper for better output.
      */
-    private static final LogWrapper LOGWRAPPER = new LogWrapper(LoggerFactory
-        .getLogger(PipelineBuilder.class));
+    private static final LogWrapper LOGWRAPPER =
+        new LogWrapper(LoggerFactory.getLogger(PipelineBuilder.class));
 
     private final FastStack<FastStack<ExpressionSingle>> mExprStack;
 
@@ -823,6 +823,14 @@ public final class PipelineBuilder {
             throw new IllegalStateException("Variable " + mVarName + " unkown.");
         }
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return new StringBuilder("Expression Stack: ").append(this.mExprStack).append("\nHashMap: ").append(
+            this.mVarRefMap).toString();
     }
 
 }

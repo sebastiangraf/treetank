@@ -15,11 +15,10 @@
  * 
  */
 
-package com.treetank.service.xml.xpath.filter;
+package com.treetank.axis.filter;
 
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.filter.AbsFilter;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
 
@@ -30,7 +29,7 @@ import com.treetank.node.ElementNode;
  * name.
  * </p>
  */
-public class WildcardFilter extends AbsFilter implements IFilter {
+public class WildcardFilter extends AbsFilter {
 
     /** Defines, if the defined part of the qualified name is the local name. */
     private final boolean mIsName;

@@ -15,29 +15,54 @@
  * 
  */
 
-package com.treetank.service.xml.xpath.filter;
+package com.treetank.axis.filter;
 
 import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
-import com.treetank.axis.filter.AbsFilter;
+import com.treetank.service.xml.xpath.functions.XPathError;
+import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
+import com.treetank.service.xml.xpath.types.Type;
 
 /**
- * <h1>ItemFilter</h1>
+ * <h1>TypeFilter</h1>
  * 
  * <p>
- * Match any item type (nodes and atomic values).
+ * Only match nodes with the specified value type.
  * </p>
  */
-public class ItemFilter extends AbsFilter implements IFilter {
+public class TypeFilter extends AbsFilter {
+
+    private final int mType;
 
     /**
-     * Default constructor.
+     * Constructor. Initializes the internal state.
      * 
      * @param rtx
      *            Transaction this filter is bound to.
+     * @param mType
+     *            Type to match
      */
-    public ItemFilter(final IReadTransaction rtx) {
+    public TypeFilter(final IReadTransaction rtx, final int mType) {
         super(rtx);
+        this.mType = mType;
+
+        // TODO: not really good solution
+        if (Type.getType(this.mType) == null) {
+            throw new XPathError(ErrorType.XPST0051);
+        }
+    }
+
+    /**
+     * Constructor. Initializes the internal state.
+     * 
+     * @param rtx
+     *            Transaction this filter is bound to.
+     * @param mTypeName
+     *            Name of the type to match
+     */
+    public TypeFilter(final IReadTransaction rtx, final String mTypeName) {
+        this(rtx, rtx.keyForName(mTypeName));
+
     }
 
     /**
@@ -45,9 +70,7 @@ public class ItemFilter extends AbsFilter implements IFilter {
      */
     @Override
     public final boolean filter() {
-        // everything that is hold by an transaction is either a node or an
-        // atomic value, so this yields true for all item kinds
-        return true;
+        return getTransaction().getNode().getTypeKey() == mType;
     }
 
 }
