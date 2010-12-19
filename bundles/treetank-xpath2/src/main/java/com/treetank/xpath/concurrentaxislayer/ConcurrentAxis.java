@@ -91,6 +91,7 @@ public class ConcurrentAxis extends AbsAxis implements IAxis {
    * {@inheritDoc}
    */
   public synchronized void reset(final long nodeKey) {
+     
     super.reset(nodeKey);
     mFirst = true;
     mFinished = false;

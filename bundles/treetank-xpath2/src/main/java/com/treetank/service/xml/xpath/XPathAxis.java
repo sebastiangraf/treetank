@@ -103,6 +103,7 @@ public class XPathAxis extends AbsAxis implements IAxis {
 		//IReadTransaction rtx = mSession.
 
 		super(rtx);
+		System.out.println(mQuery);
 		/** Initializing executor service with fixed thread pool. */
 		executor = Executors.newFixedThreadPool(THREADPOOLSIZE);
 		// start parsing and get execution plans
