@@ -33,10 +33,6 @@ import com.treetank.settings.EFixed;
 import com.treetank.utils.NamePageHash;
 import com.treetank.utils.TypedValue;
 
-import com.treetank.access.ReadTransaction;
-import com.treetank.access.ReadTransactionState;
-import com.treetank.access.SessionState;
-
 /**
  * <h1>ReadTransaction</h1>
  * 
