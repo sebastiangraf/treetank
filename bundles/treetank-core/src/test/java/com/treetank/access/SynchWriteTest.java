@@ -1,7 +1,13 @@
 package com.treetank.access;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.Exchanger;
-import static org.junit.Assert.assertEquals;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.Semaphore;
+
 import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
@@ -31,7 +37,14 @@ public class SynchWriteTest {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
-        DocumentCreater.create(wtx);
+        wtx.moveToDocumentRoot();
+        wtx.insertElementAsFirstChild(new QName(""));
+        wtx.insertElementAsRightSibling(new QName(""));
+        wtx.moveToLeftSibling();
+        wtx.insertElementAsFirstChild(new QName(""));
+        wtx.moveToParent();
+        wtx.moveToRightSibling();
+        wtx.insertElementAsFirstChild(new QName(""));
         wtx.commit();
         wtx.close();
         session.close();
@@ -44,124 +57,93 @@ public class SynchWriteTest {
 
     @Test
     @Ignore
-    public void testConcurrentWrite() throws TreetankException {
+    /**
+     * Two threads are launched which access the file concurrently, performing changes 
+     * that have to persist.
+     */
+    public void testConcurrentWrite() throws TreetankException, InterruptedException, ExecutionException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final Semaphore semaphore = new Semaphore(1);
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final IWriteTransaction wtx2 = session.beginWriteTransaction();
+        final ExecutorService exec = Executors.newFixedThreadPool(2);
+        final Callable<Void> c1 = new Wtx1(wtx, semaphore);
+        final Callable<Void> c2 = new Wtx2(wtx2, semaphore);
+        final Future<Void> r1 = exec.submit(c1);
+        final Future<Void> r2 = exec.submit(c2);
+        exec.shutdown();
 
-        Thread t1 = new Thread(new Wtx1(wtx, threadsFinished));
-        Thread t2 = new Thread(new Wtx2(wtx2, threadsFinished, verify));
-        t1.start();
-        t2.start();
-
-        boolean ready = false;
-        while (!ready) {
-            try {
-                ready = verify.exchange(false);
-            } catch (final InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        final IReadTransaction rtx = session.beginReadTransaction();
+        r1.get();
+        r2.get();
+        
+        final IReadTransaction rtx = session.beginWriteTransaction();
         TestCase.assertTrue(rtx.moveToFirstChild());
         TestCase.assertTrue(rtx.moveToFirstChild());
-        TestCase.assertTrue(rtx.moveToRightSibling());
-        TestCase.assertTrue(rtx.moveToFirstChild()); // should be at 6:foo
-        TestCase.assertEquals("foobar", rtx.getValueOfCurrentNode());
-
-        rtx.moveToDocumentRoot();
-        TestCase.assertTrue(rtx.moveToFirstChild());
-        TestCase.assertTrue(rtx.moveToFirstChild());
-        TestCase.assertTrue(rtx.moveToRightSibling());
-        TestCase.assertTrue(rtx.moveToRightSibling());
+        TestCase.assertFalse(rtx.moveToRightSibling());
+        TestCase.assertTrue(rtx.moveToParent());
         TestCase.assertTrue(rtx.moveToRightSibling());
         TestCase.assertTrue(rtx.moveToFirstChild());
-        TestCase.assertTrue(rtx.moveToRightSibling()); // should be at 12:bar
-        TestCase.assertEquals("barfoo", rtx.getValueOfCurrentNode());
+        TestCase.assertTrue(rtx.moveToFirstChild());
+        rtx.close();
     }
 }
 
-class Wtx1 implements Runnable {
-    IWriteTransaction wtx;
-    Exchanger<Boolean> threadsFinished;
+class Wtx1 implements Callable<Void> {
+    final IWriteTransaction wtx;
+    final Semaphore mSemaphore;
 
-    Wtx1(IWriteTransaction swtx, Exchanger<Boolean> threadsFinished) {
+    Wtx1(final IWriteTransaction swtx, final Semaphore semaphore) {
         this.wtx = swtx;
-        this.threadsFinished = threadsFinished;
+        mSemaphore = semaphore;
     }
 
     @Override
-    public void run() {
+    public Void call() throws Exception {
         wtx.moveToFirstChild();
         wtx.moveToFirstChild();
-        wtx.moveToRightSibling();
-        wtx.moveToFirstChild(); // should be at 6:foo
-        try {
-            wtx.setValue("foobar");
-            wtx.commit();
-            wtx.close();
-        } catch (TreetankIOException e1) {
-            e1.printStackTrace();
-        } catch (TreetankException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        try {
-            threadsFinished.exchange(true);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        mSemaphore.acquire();
+        wtx.insertElementAsFirstChild(new QName("a"));
+        mSemaphore.release();
+        mSemaphore.acquire();
+        wtx.insertElementAsRightSibling(new QName("a"));
+        mSemaphore.release();
+        mSemaphore.acquire();
+        wtx.moveToLeftSibling();
+        wtx.remove();
+        mSemaphore.release();
+        wtx.commit();
+        wtx.close();
+        return null;
     }
+
 }
 
-class Wtx2 implements Runnable {
+class Wtx2 implements Callable<Void> {
 
-    IWriteTransaction wtx;
-    boolean t1ready = false;
-    Exchanger threadsFinished;
-    Exchanger verify;
+    final IWriteTransaction wtx;
+    final Semaphore mSemaphore;
 
-    Wtx2(IWriteTransaction swtx, Exchanger<Boolean> threadsFinished, Exchanger<Boolean> verify) {
+    Wtx2(final IWriteTransaction swtx, final Semaphore semaphore) {
         this.wtx = swtx;
-        this.verify = verify;
-        this.threadsFinished = threadsFinished;
+        mSemaphore = semaphore;
     }
 
     @Override
-    public void run() {
-        wtx.moveToFirstChild();
+    public Void call() throws Exception {
         wtx.moveToFirstChild();
         wtx.moveToRightSibling();
-        wtx.moveToRightSibling();
-        wtx.moveToRightSibling();
         wtx.moveToFirstChild();
-        wtx.moveToRightSibling(); // should be at 12:bar
-        try {
-            wtx.setValue("barfoo");
-            wtx.commit();
-            wtx.close();
-        } catch (TreetankIOException e) {
-            e.printStackTrace();
-        } catch (TreetankException e) {
-            e.printStackTrace();
-        }
-
-        while (!t1ready) { // waiting for t1 to finish
-            try {
-                t1ready = (Boolean)threadsFinished.exchange(false);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        try {
-            verify.exchange(true); // signaling that t2 has finished after t1 has finished
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        mSemaphore.acquire();
+        wtx.insertElementAsFirstChild(new QName("a"));
+        mSemaphore.release();
+        mSemaphore.acquire();
+        wtx.moveToParent();
+        wtx.insertElementAsFirstChild(new QName("a"));
+        mSemaphore.release();
+        wtx.commit();
+        wtx.close();
+        return null;
     }
 
 }
