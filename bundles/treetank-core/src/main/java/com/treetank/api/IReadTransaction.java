@@ -19,8 +19,8 @@ package com.treetank.api;
 
 import javax.xml.namespace.QName;
 
-import com.treetank.exception.TreetankException;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TTException;
+import com.treetank.exception.TTIOException;
 
 /**
  * <h1>IReadTransaction</h1>
@@ -122,29 +122,29 @@ public interface IReadTransaction {
     /**
      * What is the revision number of this transaction?
      * 
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if can't get Max Node Key.
      * @return Immutable revision number of this IReadTransaction.
      */
-    long getRevisionNumber() throws TreetankIOException;
+    long getRevisionNumber() throws TTIOException;
 
     /**
      * UNIX-style timestamp of the commit of the revision.
      * 
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if can't get Max Node Key.
      * @return Timestamp of revision commit.
      */
-    long getRevisionTimestamp() throws TreetankIOException;
+    long getRevisionTimestamp() throws TTIOException;
 
     /**
      * Getting the maximum nodekey avaliable in this revision.
      * 
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if can't get Max Node Key.
      * @return the maximum nodekey
      */
-    long getMaxNodeKey() throws TreetankIOException;
+    long getMaxNodeKey() throws TTIOException;
 
     // --- Node Selectors
     // --------------------------------------------------------
@@ -290,10 +290,10 @@ public interface IReadTransaction {
      * This is an idempotent operation and does nothing if the transaction is
      * already closed.
      * 
-     * @throws TreetankException
+     * @throws TTException
      *             If can't close Read Transaction.
      */
-    void close() throws TreetankException;
+    void close() throws TTException;
 
     /**
      * Is this transaction closed?

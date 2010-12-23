@@ -29,10 +29,9 @@ import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
 import com.treetank.axis.FilterAxis;
-import com.treetank.service.xml.xpath.XPathError.ErrorType;
+import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.comparators.AbsComparator;
 import com.treetank.service.xml.xpath.comparators.CompKind;
-import com.treetank.service.xml.xpath.comparators.ValueComp;
 import com.treetank.service.xml.xpath.expr.AndExpr;
 import com.treetank.service.xml.xpath.expr.CastExpr;
 import com.treetank.service.xml.xpath.expr.CastableExpr;
@@ -53,7 +52,6 @@ import com.treetank.service.xml.xpath.expr.VariableAxis;
 import com.treetank.service.xml.xpath.filter.DupFilterAxis;
 import com.treetank.service.xml.xpath.filter.PredicateFilterAxis;
 import com.treetank.service.xml.xpath.functions.AbsFunction;
-import com.treetank.service.xml.xpath.functions.FNPosition;
 import com.treetank.service.xml.xpath.functions.FuncDef;
 import com.treetank.service.xml.xpath.operators.AddOpAxis;
 import com.treetank.service.xml.xpath.operators.DivOpAxis;
@@ -744,8 +742,11 @@ public final class PipelineBuilder {
      *            The name of the function
      * @param mNum
      *            The number of arguments that are passed to the function
+     * @throws TTXPathException
+     *             if function can't be added
      */
-    public void addFunction(final IReadTransaction mTransaction, final String mFuncName, final int mNum) {
+    public void addFunction(final IReadTransaction mTransaction, final String mFuncName, final int mNum)
+        throws TTXPathException {
 
         assert getPipeStack().size() >= mNum;
 
@@ -762,7 +763,7 @@ public final class PipelineBuilder {
             func = FuncDef.fromString(mFuncName);
         } catch (final NullPointerException e) {
             LOGWRAPPER.error(e);
-            throw new XPathError(ErrorType.XPST0017);
+            throw EXPathError.XPST0017.getEncapsulatedException();
         }
 
         // get function class
@@ -788,19 +789,19 @@ public final class PipelineBuilder {
 
         } catch (final NoSuchMethodException e) {
             LOGWRAPPER.error(e);
-            throw new XPathError(ErrorType.XPST0017);
+            throw EXPathError.XPST0017.getEncapsulatedException();
         } catch (final IllegalArgumentException e) {
             LOGWRAPPER.error(e);
-            throw new XPathError(ErrorType.XPST0017);
+            throw EXPathError.XPST0017.getEncapsulatedException();
         } catch (final InstantiationException e) {
             LOGWRAPPER.error(e);
             throw new IllegalStateException("Function not implemented yet.");
         } catch (final IllegalAccessException e) {
             LOGWRAPPER.error(e);
-            throw new XPathError(ErrorType.XPST0017);
+            throw EXPathError.XPST0017.getEncapsulatedException();
         } catch (final InvocationTargetException e) {
             LOGWRAPPER.error(e);
-            throw new XPathError(ErrorType.XPST0017);
+            throw EXPathError.XPST0017.getEncapsulatedException();
         }
 
     }

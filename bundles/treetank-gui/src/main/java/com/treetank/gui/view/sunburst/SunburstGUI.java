@@ -26,13 +26,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
-import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
 import com.treetank.gui.ReadDB;
 import com.treetank.gui.view.sunburst.SunburstView.Embedded;
 import com.treetank.utils.LogWrapper;
-
-import org.slf4j.LoggerFactory;
 
 import controlP5.ControlEvent;
 import controlP5.ControlGroup;
@@ -41,6 +37,8 @@ import controlP5.Range;
 import controlP5.Slider;
 import controlP5.Textfield;
 import controlP5.Toggle;
+
+import org.slf4j.LoggerFactory;
 
 import processing.core.PApplet;
 import processing.core.PConstants;

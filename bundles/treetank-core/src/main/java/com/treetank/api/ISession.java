@@ -17,7 +17,7 @@
 
 package com.treetank.api;
 
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 
 /**
  * <h1>ISession</h1>
@@ -57,31 +57,31 @@ public interface ISession {
     /**
      * Begin a read-only transaction on the latest committed revision key.
      * 
-     * @throws TreetankException
+     * @throws TTException
      *             If can't begin Read Transaction.
      * @return IReadTransaction instance.
      */
-    IReadTransaction beginReadTransaction() throws TreetankException;
+    IReadTransaction beginReadTransaction() throws TTException;
 
     /**
      * Begin a read-only transaction on the given revision key.
      * 
      * @param revisionKey
      *            Revision key to read from.
-     * @throws TreetankException
+     * @throws TTException
      *             If can't begin Read Transaction.
      * @return IReadTransaction instance.
      */
-    IReadTransaction beginReadTransaction(final long revisionKey) throws TreetankException;
+    IReadTransaction beginReadTransaction(final long revisionKey) throws TTException;
 
     /**
      * Begin exclusive read/write transaction without auto commit.
      * 
-     * @throws TreetankException
+     * @throws TTException
      *             If can't begin Write Transaction.
      * @return IWriteTransaction instance.
      */
-    IWriteTransaction beginWriteTransaction() throws TreetankException;
+    IWriteTransaction beginWriteTransaction() throws TTException;
 
     /**
      * Begin exclusive read/write transaction with auto commit.
@@ -90,12 +90,12 @@ public interface ISession {
      *            Count of node modifications after which a commit is issued.
      * @param maxTime
      *            Time in seconds after which a commit is issued.
-     * @throws TreetankException
+     * @throws TTException
      *             If can't begin Write Transaction.
      * @return IWriteTransaction instance.
      */
     IWriteTransaction beginWriteTransaction(final int maxNodeCount, final int maxTime)
-        throws TreetankException;
+        throws TTException;
 
     /**
      * Get number of running read transactions.
@@ -118,10 +118,10 @@ public interface ISession {
      * This is an idempotent operation and does nothing if the session is
      * already closed.
      * 
-     * @throws TreetankException
+     * @throws TTException
      *             If can't close session.
      */
-    void close() throws TreetankException;
+    void close() throws TTException;
 
     /**
      * Test if session is closed. Needed for check against database for creation

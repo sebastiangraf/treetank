@@ -19,6 +19,7 @@ package com.treetank.service.xml.xpath.comparators;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.XPathError;
 import com.treetank.service.xml.xpath.XPathError.ErrorType;
@@ -54,9 +55,11 @@ public class ValueComp extends AbsComparator {
 
     /**
      * {@inheritDoc}
+     * 
      */
     @Override
-    protected boolean compare(final AtomicValue[] mOperand1, final AtomicValue[] mOperand2) {
+    protected boolean compare(final AtomicValue[] mOperand1, final AtomicValue[] mOperand2)
+        throws TTXPathException {
         final Type type = getType(mOperand1[0].getTypeKey(), mOperand2[0].getTypeKey());
         final String op1 = TypedValue.parseString(mOperand1[0].getRawValue());
         final String op2 = TypedValue.parseString(mOperand2[0].getRawValue());
@@ -95,9 +98,11 @@ public class ValueComp extends AbsComparator {
 
     /**
      * {@inheritDoc}
+     * 
+     * @throws TTXPathException
      */
     @Override
-    protected Type getType(final int mKey1, final int mKey2) {
+    protected Type getType(final int mKey1, final int mKey2) throws TTXPathException {
 
         Type type1 = Type.getType(mKey1).getPrimitiveBaseType();
         Type type2 = Type.getType(mKey2).getPrimitiveBaseType();

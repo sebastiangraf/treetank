@@ -31,7 +31,8 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.IAxisTest;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
+import com.treetank.exception.TTXPathException;
 import com.treetank.utils.DocumentCreater;
 
 /**
@@ -50,7 +51,7 @@ public class XPathAxisTest {
     private IReadTransaction rtx;
 
     @Before
-    public void setUp() throws TreetankException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
 
         // Build simple test tree.
@@ -65,7 +66,7 @@ public class XPathAxisTest {
     }
 
     @After
-    public void tearDown() throws TreetankException {
+    public void tearDown() throws TTException {
 
         rtx.close();
         session.close();
@@ -74,7 +75,7 @@ public class XPathAxisTest {
     }
 
     @Test
-    public void testSteps() {
+    public void testSteps() throws TTXPathException {
 
         IAxisTest.testIAxisConventions(new XPathAxis(rtx, "/text:p/b"), new long[] {});
 
@@ -101,7 +102,7 @@ public class XPathAxisTest {
     }
 
     @Test
-    public void testAttributes() {
+    public void testAttributes() throws TTXPathException {
 
         // Find descendants starting from nodeKey 0L (root).
         rtx.moveToDocumentRoot();
@@ -202,7 +203,7 @@ public class XPathAxisTest {
     }
 
     @Test
-    public void testNodeTests() {
+    public void testNodeTests() throws TTXPathException {
         // Find descendants starting from nodeKey 0L (root).
         rtx.moveToDocumentRoot();
 
@@ -225,7 +226,7 @@ public class XPathAxisTest {
     }
 
     @Test
-    public void testDescendant() {
+    public void testDescendant() throws TTXPathException {
 
         // Find descendants starting from nodeKey 0L (root).
         rtx.moveToDocumentRoot();
@@ -255,7 +256,7 @@ public class XPathAxisTest {
     }
 
     @Test
-    public void testAncestor() {
+    public void testAncestor() throws TTXPathException {
 
         // Find ancestor starting from nodeKey 8L.
         rtx.moveTo(11L);
@@ -281,7 +282,7 @@ public class XPathAxisTest {
     }
 
     @Test
-    public void testParent() {
+    public void testParent() throws TTXPathException {
 
         // Find ancestor starting from nodeKey 8L.
         rtx.moveTo(9L);
@@ -306,7 +307,7 @@ public class XPathAxisTest {
     }
 
     @Test
-    public void testSelf() {
+    public void testSelf() throws TTXPathException {
 
         // Find ancestor starting from nodeKey 8L.
         rtx.moveTo(1L);
@@ -335,7 +336,7 @@ public class XPathAxisTest {
     }
 
     @Test
-    public void testPosition() {
+    public void testPosition() throws TTXPathException {
 
         // Find descendants starting from nodeKey 0L (root).
         rtx.moveTo(1L);
@@ -360,7 +361,7 @@ public class XPathAxisTest {
 
     //
     @Test
-    public void testDupElemination() {
+    public void testDupElemination() throws TTXPathException {
 
         // Find descendants starting from nodeKey 0L (root).
         rtx.moveTo(1L);
@@ -384,7 +385,7 @@ public class XPathAxisTest {
     }
 
     @Test
-    public void testUnabbreviate() {
+    public void testUnabbreviate() throws TTXPathException {
 
         // Find descendants starting from nodeKey 0L (root).
         rtx.moveTo(1L);
@@ -472,7 +473,7 @@ public class XPathAxisTest {
     }
 
     @Test
-    public void testMultiExpr() {
+    public void testMultiExpr() throws TTXPathException {
 
         rtx.moveTo(1L);
 
@@ -497,7 +498,7 @@ public class XPathAxisTest {
     }
 
     @Test
-    public void testCount() throws IOException {
+    public void testCount() throws TTXPathException {
 
         rtx.moveTo(1L);
 

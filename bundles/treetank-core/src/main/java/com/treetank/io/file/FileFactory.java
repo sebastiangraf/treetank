@@ -21,7 +21,7 @@ import java.io.File;
 
 import com.treetank.access.DatabaseConfiguration;
 import com.treetank.access.SessionConfiguration;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TTIOException;
 import com.treetank.io.AbsIOFactory;
 import com.treetank.io.IReader;
 import com.treetank.io.IWriter;
@@ -54,7 +54,7 @@ public final class FileFactory extends AbsIOFactory {
      * {@inheritDoc}
      */
     @Override
-    public IReader getReader() throws TreetankIOException {
+    public IReader getReader() throws TTIOException {
         return new FileReader(super.mSessionConfig, getConcreteStorage());
     }
 
@@ -62,7 +62,7 @@ public final class FileFactory extends AbsIOFactory {
      * {@inheritDoc}
      */
     @Override
-    public IWriter getWriter() throws TreetankIOException {
+    public IWriter getWriter() throws TTIOException {
         return new FileWriter(super.mSessionConfig, getConcreteStorage());
     }
 
@@ -88,7 +88,7 @@ public final class FileFactory extends AbsIOFactory {
      * {@inheritDoc}
      */
     @Override
-    public boolean exists() throws TreetankIOException {
+    public boolean exists() throws TTIOException {
         final File file = getConcreteStorage();
         final boolean returnVal = file.length() > 0;
         return returnVal;

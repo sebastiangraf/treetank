@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import com.treetank.access.SessionConfiguration;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TTIOException;
 import com.treetank.io.IReader;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.PagePersistenter;
@@ -65,11 +65,11 @@ public final class FileReader implements IReader {
      * 
      * @param paramConf
      *            Configuration of session we are bound to.
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if something bad happens
      */
     public FileReader(final SessionConfiguration paramConf, final File mConcreteStorage)
-        throws TreetankIOException {
+        throws TTIOException {
 
         try {
             if (!mConcreteStorage.exists()) {
@@ -82,7 +82,7 @@ public final class FileReader implements IReader {
             mBuffer = new ByteBufferSinkAndSource();
         } catch (final IOException exc) {
             LOGWRAPPER.error(exc);
-            throw new TreetankIOException(exc);
+            throw new TTIOException(exc);
         }
     }
 
@@ -92,10 +92,10 @@ public final class FileReader implements IReader {
      * @param pageReference
      *            to read.
      * @return Byte array reader to read bytes from.o
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if there was an error during reading.
      */
-    public AbstractPage read(final PageReference pageReference) throws TreetankIOException {
+    public AbstractPage read(final PageReference pageReference) throws TTIOException {
 
         if (!pageReference.isCommitted()) {
             return null;
@@ -124,12 +124,12 @@ public final class FileReader implements IReader {
             // Perform crypto operations.
             final int outputLength = mDecompressor.decrypt(inputLength, mBuffer);
             if (outputLength == 0) {
-                throw new TreetankIOException("Page decrypt error.");
+                throw new TTIOException("Page decrypt error.");
             }
 
         } catch (final IOException exc) {
             LOGWRAPPER.error(exc);
-            throw new TreetankIOException(exc);
+            throw new TTIOException(exc);
         }
 
         // Return reader required to instantiate and deserialize page.
@@ -138,7 +138,7 @@ public final class FileReader implements IReader {
 
     }
 
-    public PageReference readFirstReference() throws TreetankIOException {
+    public PageReference readFirstReference() throws TTIOException {
         final PageReference uberPageReference = new PageReference();
         try {
             final byte[] tmp = new byte[IConstants.CHECKSUM_SIZE];
@@ -163,16 +163,16 @@ public final class FileReader implements IReader {
             return uberPageReference;
         } catch (final IOException exc) {
             LOGWRAPPER.error(exc);
-            throw new TreetankIOException(exc);
+            throw new TTIOException(exc);
         }
     }
 
-    public void close() throws TreetankIOException {
+    public void close() throws TTIOException {
         try {
             mFile.close();
         } catch (final IOException exc) {
             LOGWRAPPER.error(exc);
-            throw new TreetankIOException(exc);
+            throw new TTIOException(exc);
 
         }
     }

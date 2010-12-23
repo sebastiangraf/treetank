@@ -19,7 +19,7 @@ package com.treetank.api;
 
 import java.io.File;
 
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 
 /**
  * This interface describes database instances handled by treetank. A database
@@ -77,18 +77,18 @@ public interface IDatabase {
     /**
      * Getting the session associated within this database.
      * 
-     * @throws TreetankException
+     * @throws TTException
      *             if can't get session.
      * @return the database
      */
-    ISession getSession() throws TreetankException;
+    ISession getSession() throws TTException;
 
     /**
      * Closing the database for further operations.
      * 
-     * @throws TreetankException
+     * @throws TTException
      *             if close is not valid
      */
-    void close() throws TreetankException;
+    void close() throws TTException;
 
 }

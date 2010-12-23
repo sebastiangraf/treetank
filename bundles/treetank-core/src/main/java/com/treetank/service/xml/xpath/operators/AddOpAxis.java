@@ -20,12 +20,12 @@ package com.treetank.service.xml.xpath.operators;
 import com.treetank.api.IAxis;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
+import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
-import com.treetank.service.xml.xpath.XPathError;
-import com.treetank.service.xml.xpath.XPathError.ErrorType;
+import com.treetank.service.xml.xpath.EXPathError;
 import com.treetank.service.xml.xpath.types.Type;
-import com.treetank.utils.TypedValue;
 import com.treetank.utils.LogWrapper;
+import com.treetank.utils.TypedValue;
 
 import org.slf4j.LoggerFactory;
 
@@ -59,9 +59,10 @@ public class AddOpAxis extends AbsObAxis {
 
     /**
      * {@inheritDoc}
+     * 
      */
     @Override
-    public IItem operate(final AtomicValue mOperand1, final AtomicValue mOperand2) {
+    public IItem operate(final AtomicValue mOperand1, final AtomicValue mOperand2) throws TTXPathException {
 
         final Type returnType = getReturnType(mOperand1.getTypeKey(), mOperand2.getTypeKey());
         final int typeKey = getTransaction().keyForName(returnType.getStringRepr());
@@ -85,7 +86,7 @@ public class AddOpAxis extends AbsObAxis {
             throw new IllegalStateException("Add operator is not implemented for the type "
                 + returnType.getStringRepr() + " yet.");
         default:
-            throw new XPathError(ErrorType.XPTY0004);
+            throw EXPathError.XPTY0004.getEncapsulatedException();
 
         }
 
@@ -95,28 +96,20 @@ public class AddOpAxis extends AbsObAxis {
 
     /**
      * {@inheritDoc}
+     * 
      */
     @Override
-    protected Type getReturnType(final int mOp1, final int mOp2) {
+    protected Type getReturnType(final int mOp1, final int mOp2) throws TTXPathException {
 
-        Type mType1;
-        Type mType2;
-        try {
-            mType1 = Type.getType(mOp1).getPrimitiveBaseType();
-            mType2 = Type.getType(mOp2).getPrimitiveBaseType();
-        } catch (final IllegalStateException e) {
-            LOGWRAPPER.error(e);
-            throw new XPathError(ErrorType.XPTY0004);
-        }
+        final Type mType1 = Type.getType(mOp1).getPrimitiveBaseType();
+        final Type mType2 = Type.getType(mOp2).getPrimitiveBaseType();
 
         if (mType1.isNumericType() && mType2.isNumericType()) {
 
             // if both have the same numeric type, return it
             if (mType1 == mType2) {
                 return mType1;
-            }
-
-            if (mType1 == Type.DOUBLE || mType2 == Type.DOUBLE) {
+            } else if (mType1 == Type.DOUBLE || mType2 == Type.DOUBLE) {
                 return Type.DOUBLE;
             } else if (mType1 == Type.FLOAT || mType2 == Type.FLOAT) {
                 return Type.FLOAT;
@@ -155,9 +148,9 @@ public class AddOpAxis extends AbsObAxis {
                 }
                 break;
             default:
-                throw new XPathError(ErrorType.XPTY0004);
+                throw EXPathError.XPTY0004.getEncapsulatedException();
             }
-            throw new XPathError(ErrorType.XPTY0004);
+            throw EXPathError.XPTY0004.getEncapsulatedException();
         }
     }
 

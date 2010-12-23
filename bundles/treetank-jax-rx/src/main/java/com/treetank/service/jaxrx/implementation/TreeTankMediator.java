@@ -6,7 +6,7 @@ import java.util.Set;
 
 import javax.ws.rs.core.StreamingOutput;
 
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.service.jaxrx.enums.EIdAccessType;
 import com.treetank.service.jaxrx.util.WorkerHelper;
 
@@ -71,7 +71,7 @@ public final class TreeTankMediator implements JaxRx {
                     return null;
                 } catch (final NumberFormatException exce) {
                     throw new JaxRxException(400, "False value for REVISION paramter: " + exce.getMessage());
-                } catch (final TreetankException exce) {
+                } catch (final TTException exce) {
                     throw new JaxRxException(exce);
                 }
             }
@@ -125,15 +125,15 @@ public final class TreeTankMediator implements JaxRx {
             break;
         case 2:
             response =
-                nodeIdResource.getResource(path.getResource(0), Long.valueOf(path.getResource(1)),
-                    path.getQueryParameter());
+                nodeIdResource.getResource(path.getResource(0), Long.valueOf(path.getResource(1)), path
+                    .getQueryParameter());
             break;
         case 3:
             final EIdAccessType accessType =
                 WorkerHelper.getInstance().validateAccessType(path.getResource(2));
             if (accessType == null) {
                 throw new JaxRxException(400, "The access type: " + path.getResource(2)
-                + " is not supported.");
+                    + " is not supported.");
 
             } else {
                 response =

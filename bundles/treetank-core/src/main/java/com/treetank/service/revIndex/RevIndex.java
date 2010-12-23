@@ -29,8 +29,8 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TTException;
+import com.treetank.exception.TTIOException;
 import com.treetank.utils.LogWrapper;
 import com.treetank.utils.NamePageHash;
 
@@ -103,10 +103,10 @@ public final class RevIndex {
      *            folder to be access.
      * @param mRev
      *            revision to be accessed
-     * @throws TreetankException
+     * @throws TTException
      *             if any access to Treetank fails
      */
-    public RevIndex(final File mIndex, final long mRev) throws TreetankException {
+    public RevIndex(final File mIndex, final long mRev) throws TTException {
         final IDatabase db = Database.openDatabase(mIndex);
         mIndexSession = db.getSession();
         if (mRev < 0) {
@@ -125,10 +125,10 @@ public final class RevIndex {
      * 
      * @param mDocs
      *            stack with order to be inserted.
-     * @throws TreetankException
+     * @throws TTException
      *             if can't insert next node.
      */
-    public void insertNextNode(final Stack<String> mDocs) throws TreetankException {
+    public void insertNextNode(final Stack<String> mDocs) throws TTException {
         if (mRtx instanceof IWriteTransaction) {
             final IWriteTransaction wtx = (IWriteTransaction)mRtx;
             mCurrentDocKey = DocumentTreeNavigator.adaptDocTree(wtx, mDocs);
@@ -141,10 +141,10 @@ public final class RevIndex {
      * 
      * @param mTerm
      *            the term to be indexed.
-     * @throws TreetankException
+     * @throws TTException
      *             if can't insert next term in current node.
      */
-    public void insertNextTermForCurrentNode(final String mTerm) throws TreetankException {
+    public void insertNextTermForCurrentNode(final String mTerm) throws TTException {
         // check if rtx is instance of WriteTransaction
         if (mRtx instanceof IWriteTransaction) {
             final IWriteTransaction wtx = (IWriteTransaction)mRtx;
@@ -200,16 +200,16 @@ public final class RevIndex {
      * the identifier stored with every field in the structure to provide an
      * unique identifier.
      * 
-     * @throws TreetankException
+     * @throws TTException
      *             if can't finish index input.
      * @return the index revision number.
      */
-    public long finishIndexInput() throws TreetankException {
+    public long finishIndexInput() throws TTException {
         if (mRtx instanceof IWriteTransaction) {
             final IWriteTransaction wtx = (IWriteTransaction)mRtx;
             try {
                 wtx.commit();
-            } catch (final TreetankIOException exc) {
+            } catch (final TTIOException exc) {
                 LOGWRAPPER.error(exc);
                 throw new IllegalStateException(exc);
             }
@@ -229,7 +229,7 @@ public final class RevIndex {
                 ((IWriteTransaction)mRtx).commit();
                 mRtx.close();
                 mIndexSession.close();
-            } catch (final TreetankException exc) {
+            } catch (final TTException exc) {
                 LOGWRAPPER.error(exc);
                 throw new IllegalStateException(exc);
             }
@@ -278,10 +278,10 @@ public final class RevIndex {
      * @param mTerm
      *            to be searched in the trie structure
      * @return the root for the document key
-     * @throws TreetankException
+     * @throws TTException
      *             for handling treetank errors
      */
-    public long getDocRootForTerm(final String mTerm) throws TreetankException {
+    public long getDocRootForTerm(final String mTerm) throws TTException {
         return TrieNavigator.getDocRootInTrie(mRtx, mTerm);
 
     }
@@ -331,10 +331,10 @@ public final class RevIndex {
      * 
      * @param mRtx
      *            Read transaction.
-     * @throws TreetankException
+     * @throws TTException
      *             for handling treetank errors.
      */
-    static void initialiseBasicStructure(final IReadTransaction mRtx) throws TreetankException {
+    static void initialiseBasicStructure(final IReadTransaction mRtx) throws TTException {
         if (mRtx instanceof IWriteTransaction) {
             final IWriteTransaction wtx = (IWriteTransaction)mRtx;
             wtx.moveToDocumentRoot();
@@ -343,7 +343,7 @@ public final class RevIndex {
             wtx.insertElementAsRightSibling(new QName(DOCUMENTROOT_ELEMENTNAME));
             try {
                 wtx.commit();
-            } catch (final TreetankIOException exc) {
+            } catch (final TTIOException exc) {
                 LOGWRAPPER.error(exc);
                 throw new IllegalStateException(exc);
             }

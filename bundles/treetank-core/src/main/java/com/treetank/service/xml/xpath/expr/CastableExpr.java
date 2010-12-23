@@ -19,6 +19,7 @@ package com.treetank.service.xml.xpath.expr;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.SingleType;
 import com.treetank.service.xml.xpath.XPathError;
@@ -85,9 +86,10 @@ public class CastableExpr extends AbsExpression implements IAxis {
 
     /**
      * {@inheritDoc}
+     * 
      */
     @Override
-    protected void evaluate() {
+    protected void evaluate() throws TTXPathException {
 
         // defines if current item is castable to the target type, or not
         boolean isCastable;

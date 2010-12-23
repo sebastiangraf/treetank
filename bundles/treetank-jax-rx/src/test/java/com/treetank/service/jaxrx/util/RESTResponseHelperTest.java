@@ -20,7 +20,7 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.SAXException;
 
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import com.treetank.service.jaxrx.implementation.NodeIdRepresentationTest;
 
@@ -87,12 +87,12 @@ public class RESTResponseHelperTest {
      * @throws WebApplicationException
      * @throws SAXException
      * @throws ParserConfigurationException
-     * @throws TreetankException
+     * @throws TTException
      * @throws InterruptedException
      */
     @Test
     public final void testBuildResponseOfDomLR() throws WebApplicationException, IOException,
-        ParserConfigurationException, SAXException, TreetankException, InterruptedException {
+        ParserConfigurationException, SAXException, TTException, InterruptedException {
 
         final Map<String, String> availResources = new HashMap<String, String>();
         availResources.put(FACT + TNKEND, "resource");

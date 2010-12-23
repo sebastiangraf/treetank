@@ -22,7 +22,7 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.SAXException;
 
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.service.jaxrx.enums.EIdAccessType;
 import com.treetank.service.jaxrx.util.DOMHelper;
 
@@ -412,11 +412,11 @@ public class NodeIdRepresentationTest {
      * {@link com.treetank.service.jaxrx.implementation.NodeIdRepresentation#modifyResource(java.lang.String, long, java.io.InputStream)}
      * .
      * 
-     * @throws TreetankException
+     * @throws TTException
      * @throws JaxRxException
      */
     @Test
-    public final void testModifyResource() throws JaxRxException, TreetankException {
+    public final void testModifyResource() throws JaxRxException, TTException {
         final InputStream inputStream = new ByteArrayInputStream("<testNode/>".getBytes());
         long lastRevision = treeTank.getLastRevision(RESOURCENAME);
         ridWorker.modifyResource(RESOURCENAME, NODEIDTOMODIFY, inputStream);

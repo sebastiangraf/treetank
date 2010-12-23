@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.treetank.service.xml.xpath.XPathError;
-import com.treetank.service.xml.xpath.XPathError.ErrorType;
+import com.treetank.exception.TTXPathException;
+import com.treetank.service.xml.xpath.EXPathError;
 import com.treetank.utils.NamePageHash;
 
 /**
@@ -802,6 +802,38 @@ public enum Type {
      */
     NMTOKENS(ANY_SIMPLE_TYPE, "xs:NMTOKENS", 3, false);
 
+    private static Map<Integer, Type> keyToType = new HashMap<Integer, Type>();
+    private static Map<String, Type> nameToType = new HashMap<String, Type>();
+    static {
+        for (final Type type : Type.values()) {
+            nameToType.put(type.getStringRepr(), type);
+            keyToType.put(NamePageHash.generateHashForString(type.getStringRepr()), type);
+        }
+    }
+
+    /**
+     * Getting the type for the key
+     * 
+     * @param paramKey
+     *            the key for the type
+     * @return the type
+     */
+    public static Type getType(final int paramKey) {
+        return keyToType.get(paramKey);
+        // throw EXPathError.XPST0051.getEncapsulatedException();
+    }
+
+    /**
+     * Getting type for string
+     * 
+     * @param paramRepr
+     *            the string for the type
+     * @return the type
+     */
+    public static Type getType(final String paramRepr) {
+        return nameToType.get(paramRepr);
+    }
+
     /** Base type of the type. */
     private final Type mDerivedFrom;
 
@@ -966,13 +998,15 @@ public enum Type {
      * @param mValue
      *            value of the source value
      * @return true, if the source value is castable to the target type.
+     * @throws TTXPathException
+     *             if casts fails
      */
-    public boolean isCastableTo(final Type mTargetType, final String mValue) {
+    public boolean isCastableTo(final Type mTargetType, final String mValue) throws TTXPathException {
 
         // casting to or from NOTATION or anySimpleType is not possible
         if (mTargetType == NOTATION || this == NOTATION || mTargetType == ANY_SIMPLE_TYPE
             || this == ANY_SIMPLE_TYPE) {
-            throw new XPathError(ErrorType.XPST0080);
+            throw EXPathError.XPST0080.getEncapsulatedException();
         }
 
         // (4.a) a type can always be casted to itself, or one of its super
@@ -988,24 +1022,22 @@ public enum Type {
                 || mTargetType.facetIsSatisfiedBy(mValue)) {
                 return true;
             } else {
-                throw new XPathError(ErrorType.XPTY0004);
+                throw EXPathError.XPTY0004.getEncapsulatedException();
             }
         }
 
         if (!mTargetType.isPrimitive() && mTargetType.derivesFrom(this)) {
             // (4.d) if target type is non-primitive-atomic-type and target type
-            // is
-            // supertype of source type, the source type must satisfy all facets
-            // of
-            // the target type.
+            // is supertype of source type, the source type must satisfy all facets
+            // of the target type.
             return mTargetType.facetIsSatisfiedBy(mValue);
 
         } else {
-            // (4.e)if the primitive base type of the source is castable to the
+            // (4.e) if the primitive base type of the source is castable to the
             // primitive base type of the target type, the source is castable to
-            // the
-            // target, if the facets of the target is satisfied.
-            // getPrimitiveBaseType(); //TODO: what is that??
+            // the target, if the facets of the target is satisfied.
+            // getPrimitiveBaseType(); 
+            //TODO: what is that??
 
             return (getPrimitiveBaseType().isCastableTo(mTargetType.getPrimitiveBaseType(), mValue) && mTargetType
                 .facetIsSatisfiedBy(mValue));
@@ -1021,7 +1053,7 @@ public enum Type {
      * 
      * @return primitive base type of the current type
      */
-    public Type getPrimitiveBaseType() {
+    public Type getPrimitiveBaseType() throws TTXPathException {
 
         Type type = this;
 
@@ -1029,7 +1061,7 @@ public enum Type {
             return type; // real primitive type
         }
         if (type.mPrecedence <= 3 && type != ANY_ATOMIC_TYPE) {
-            throw new IllegalStateException("Type " + type.mStringRepr + " has no primitive base type.");
+            throw new TTXPathException("Type " + type.mStringRepr + " has no primitive base type.");
         }
 
         while (!type.mIsPrimitive) {
@@ -1082,33 +1114,6 @@ public enum Type {
     public boolean castsTo(final Type mTargetType) {
 
         return false;
-    }
-
-    private static Map<Integer, Type> keyToType;
-    static {
-
-        Map<String, Type> nameToKey;
-
-        nameToKey = new HashMap<String, Type>();
-        for (Type type : Type.values()) {
-            nameToKey.put(type.getStringRepr(), type);
-        }
-
-        keyToType = new HashMap<Integer, Type>();
-        for (Type type : Type.values()) {
-            keyToType.put(NamePageHash.generateHashForString(type.getStringRepr()), type);
-        }
-    }
-
-    public static Type getType(final int mKey) {
-
-        final Type type = keyToType.get(mKey);
-        if (type != null) {
-
-            return type;
-        }
-        throw new XPathError(ErrorType.XPST0051);
-
     }
 
 }

@@ -17,7 +17,7 @@
 
 package com.treetank.io;
 
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TTIOException;
 import com.treetank.page.PageReference;
 
 /**
@@ -34,27 +34,27 @@ public interface IWriter extends IReader {
      * 
      * @param pageReference
      *            that points to a page
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             execption to be thrown if something bad happens
      */
-    void write(final PageReference pageReference) throws TreetankIOException;
+    void write(final PageReference pageReference) throws TTIOException;
 
     /**
      * Write Beacon for the first reference.
      * 
      * @param pageReference
      *            that points to the beacon
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             exception if something bad happens
      */
-    void writeFirstReference(final PageReference pageReference) throws TreetankIOException;
+    void writeFirstReference(final PageReference pageReference) throws TTIOException;
 
     /**
      * Closing the write access.
      * 
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if closing fails
      */
-    void close() throws TreetankIOException;
+    void close() throws TTIOException;
 
 }

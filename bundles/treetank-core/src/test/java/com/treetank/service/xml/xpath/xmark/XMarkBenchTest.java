@@ -16,7 +16,8 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
+import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.service.xml.xpath.XPathStringChecker;
@@ -59,7 +60,7 @@ public class XMarkBenchTest {
     }
 
     @Test
-    public void xMarkTest_Q1() {
+    public void xMarkTest_Q1() throws TTXPathException {
         String query = xmbq.getQuery(1, FACTOR);
         String result = xmbq.getResult(1, FACTOR);
         XPathStringChecker.testIAxisConventions(new XPathAxis(rtx, query), new String[] {
@@ -68,7 +69,7 @@ public class XMarkBenchTest {
     }
 
     @Test
-    public void xMarkTest_Q5() {
+    public void xMarkTest_Q5() throws TTXPathException {
         String query = xmbq.getQuery(5, FACTOR);
         String result = xmbq.getResult(5, FACTOR);
         XPathStringChecker.testIAxisConventions(new XPathAxis(rtx, query), new String[] {
@@ -77,7 +78,7 @@ public class XMarkBenchTest {
     }
 
     @Test
-    public void xMarkTest_Q6() {
+    public void xMarkTest_Q6() throws TTXPathException {
         String query = xmbq.getQuery(6, FACTOR);
         String result = xmbq.getResult(6, FACTOR);
         XPathStringChecker.testIAxisConventions(new XPathAxis(rtx, query), new String[] {
@@ -86,7 +87,7 @@ public class XMarkBenchTest {
     }
 
     @Test
-    public void xMarkTest_Q7() {
+    public void xMarkTest_Q7() throws TTXPathException {
         String query = xmbq.getQuery(7, FACTOR);
         String result = xmbq.getResult(7, FACTOR);
         XPathStringChecker.testIAxisConventions(new XPathAxis(rtx, query), new String[] {
@@ -127,7 +128,7 @@ public class XMarkBenchTest {
             session.close();
             database.close();
             TestHelper.closeEverything();
-        } catch (TreetankException e) {
+        } catch (TTException e) {
             e.printStackTrace();
         }
 

@@ -23,17 +23,17 @@ import java.util.List;
 import com.treetank.api.IAxis;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
+import com.treetank.exception.TTXPathException;
 import com.treetank.node.ENodes;
 import com.treetank.service.xml.xpath.AtomicValue;
-import com.treetank.service.xml.xpath.XPathError;
-import com.treetank.service.xml.xpath.XPathError.ErrorType;
+import com.treetank.service.xml.xpath.EXPathError;
 import com.treetank.service.xml.xpath.functions.sequences.FNBoolean;
 import com.treetank.service.xml.xpath.types.Type;
 import com.treetank.utils.TypedValue;
 
 public class Function {
 
-    public static boolean ebv(final IAxis axis) {
+    public static boolean ebv(final IAxis axis) throws TTXPathException {
         final FuncDef ebv = FuncDef.BOOLEAN;
         final List<IAxis> param = new ArrayList<IAxis>();
         param.add(axis);
@@ -62,11 +62,11 @@ public class Function {
         return true;
     }
 
-    public static boolean exactlyOne(final IReadTransaction rtx, final IAxis axis) {
+    public static boolean exactlyOne(final IReadTransaction rtx, final IAxis axis) throws TTXPathException {
 
         if (axis.hasNext()) {
             if (axis.hasNext()) {
-                throw new XPathError(ErrorType.FORG0005);
+                throw EXPathError.FORG0005.getEncapsulatedException();
             } else {
                 final int itemKey = rtx.getItemList().addItem(new AtomicValue(true));
                 rtx.moveTo(itemKey); // only once
@@ -74,7 +74,7 @@ public class Function {
             }
 
         } else {
-            throw new XPathError(ErrorType.FORG0005);
+            throw EXPathError.FORG0005.getEncapsulatedException();
         }
 
         return true;
@@ -110,9 +110,10 @@ public class Function {
      *            the transaction to operate on.
      * @param axis
      *            Expression to get the effective boolean value for
-     * @return err:FORG0006
+     * @return true if sucessfull, false otherwise
+     * @throws TTXPathException
      */
-    public static boolean fnBoolean(final IReadTransaction rtx, final IAxis axis) {
+    public static boolean fnBoolean(final IReadTransaction rtx, final IAxis axis) throws TTXPathException {
 
         final boolean ebv = ebv(axis);
         final int itemKey = rtx.getItemList().addItem(new AtomicValue(ebv));
@@ -257,10 +258,10 @@ public class Function {
         return new AtomicValue(!Boolean.parseBoolean(TypedValue.parseString(mValue.getRawValue())));
     }
 
-    public static boolean oneOrMore(final IReadTransaction rtx, final IAxis axis) {
+    public static boolean oneOrMore(final IReadTransaction rtx, final IAxis axis) throws TTXPathException {
 
         if (!axis.hasNext()) {
-            throw new XPathError(ErrorType.FORG0004);
+            throw EXPathError.FORG0004.getEncapsulatedException();
         } else {
             final int itemKey = rtx.getItemList().addItem(new AtomicValue(true));
             rtx.moveTo(itemKey);
@@ -298,12 +299,12 @@ public class Function {
         return true;
     }
 
-    public static boolean zeroOrOne(final IReadTransaction rtx, final IAxis axis) {
+    public static boolean zeroOrOne(final IReadTransaction rtx, final IAxis axis) throws TTXPathException {
 
         final boolean result = true;
 
         if (axis.hasNext() && axis.hasNext()) { // more than one result
-            throw new XPathError(ErrorType.FORG0003);
+            throw EXPathError.FORG0003.getEncapsulatedException();
         }
 
         final int itemKey = rtx.getItemList().addItem(new AtomicValue(result));

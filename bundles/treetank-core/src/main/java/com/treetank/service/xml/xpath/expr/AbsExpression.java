@@ -20,6 +20,7 @@ package com.treetank.service.xml.xpath.expr;
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
+import com.treetank.exception.TTXPathException;
 
 /**
  * <h1>AbstractExpression</h1>
@@ -72,7 +73,11 @@ public abstract class AbsExpression extends AbsAxis {
             mIsFirst = false;
 
             // evaluate expression
-            evaluate();
+            try {
+                evaluate();
+            } catch (TTXPathException e) {
+                throw new RuntimeException(e);
+            }
 
             return true;
         } else {
@@ -90,7 +95,10 @@ public abstract class AbsExpression extends AbsAxis {
     /**
      * Performs the expression dependent evaluation of the expression. (Template
      * method)
+     * 
+     * @throws TTXPathException
+     *             if evaluation fails.
      */
-    protected abstract void evaluate();
+    protected abstract void evaluate() throws TTXPathException;
 
 }

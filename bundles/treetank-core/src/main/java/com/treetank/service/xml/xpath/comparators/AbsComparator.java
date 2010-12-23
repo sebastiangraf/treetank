@@ -21,6 +21,7 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
+import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.expr.LiteralExpr;
 import com.treetank.service.xml.xpath.types.Type;
@@ -118,15 +119,17 @@ public abstract class AbsComparator extends AbsAxis implements IAxis {
                     final AtomicValue[] operandTwo = atomize(mOperand2);
 
                     hook(operandOne, operandTwo);
+                    try {
+                        // get comparison result
+                        final boolean resultValue = compare(operandOne, operandTwo);
+                        final IItem result = new AtomicValue(resultValue);
 
-                    // get comparison result
-                    final boolean resultValue = compare(operandOne, operandTwo);
-                    final IItem result = new AtomicValue(resultValue);
-
-                    // add retrieved AtomicValue to item list
-                    final int itemKey = getTransaction().getItemList().addItem(result);
-                    getTransaction().moveTo(itemKey);
-
+                        // add retrieved AtomicValue to item list
+                        final int itemKey = getTransaction().getItemList().addItem(result);
+                        getTransaction().moveTo(itemKey);
+                    } catch (TTXPathException e) {
+                        throw new RuntimeException(e);
+                    }
                     return true;
 
                 }
@@ -161,7 +164,7 @@ public abstract class AbsComparator extends AbsAxis implements IAxis {
      * @return the result of the comparison
      */
     protected abstract boolean compare(final AtomicValue[] paramOperandOne,
-        final AtomicValue[] paramOperandTwo);
+        final AtomicValue[] paramOperandTwo) throws TTXPathException;
 
     /**
      * Atomizes an operand according to the rules specified in the XPath
@@ -184,7 +187,7 @@ public abstract class AbsComparator extends AbsAxis implements IAxis {
      *            second comparison operand's type key
      * @return the type the comparison can be evaluated on
      */
-    protected abstract Type getType(final int mKey1, final int mKey2);
+    protected abstract Type getType(final int mKey1, final int mKey2) throws TTXPathException;
 
     /**
      * Getting CompKind for this Comparator.

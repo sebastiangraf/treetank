@@ -23,7 +23,7 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.DescendantAxis;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.utils.FastStack;
@@ -84,10 +84,10 @@ abstract class AbsSerializer implements Callable<Void> {
      * Serialize the storage.
      * 
      * @return null.
-     * @throws TreetankException
+     * @throws TTException
      *             if can't call serailzer
      */
-    public Void call() throws TreetankException {
+    public Void call() throws TTException {
         emitStartDocument();
 
         long[] versionsToUse;

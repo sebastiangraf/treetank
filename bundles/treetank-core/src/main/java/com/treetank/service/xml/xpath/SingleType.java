@@ -17,7 +17,7 @@
 
 package com.treetank.service.xml.xpath;
 
-import com.treetank.service.xml.xpath.XPathError.ErrorType;
+import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.types.Type;
 
 /**
@@ -40,8 +40,9 @@ public class SingleType {
      *            string representation of the atomic value
      * @param mIntero
      *            true, if interrogation sign is present
+     * @throws TTXPathException
      */
-    public SingleType(final String atomic, final boolean mIntero) {
+    public SingleType(final String atomic, final boolean mIntero) throws TTXPathException {
 
         // get atomic type
         mAtomicType = null; // TODO. = null is not good style
@@ -53,7 +54,7 @@ public class SingleType {
         }
 
         if (mAtomicType == null) {
-            throw new XPathError(ErrorType.XPST0051);
+            throw EXPathError.XPST0051.getEncapsulatedException();
         }
 
         mhasInterogation = mIntero;

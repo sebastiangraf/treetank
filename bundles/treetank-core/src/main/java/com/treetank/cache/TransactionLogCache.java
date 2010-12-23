@@ -17,7 +17,7 @@
 package com.treetank.cache;
 
 import com.treetank.access.DatabaseConfiguration;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TTIOException;
 
 /**
  * Transactionlog for storing all upcoming nodes in either the ram cache or a
@@ -41,11 +41,11 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
      *            the config for having a storage-place
      * @param revision
      *            revision number
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             Exception if IO is not successful
      */
     public TransactionLogCache(final DatabaseConfiguration paramConfig, final long revision)
-        throws TreetankIOException {
+        throws TTIOException {
         super(paramConfig);
         final BerkeleyPersistenceCache secondCache = new BerkeleyPersistenceCache(paramConfig, revision);
         mFirstCache = new LRUCache(secondCache);
@@ -55,7 +55,7 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
      * {@inheritDoc}
      */
     @Override
-    public void clearPersistent() throws TreetankIOException {
+    public void clearPersistent() throws TTIOException {
         mFirstCache.clear();
 
     }
@@ -64,7 +64,7 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
      * {@inheritDoc}
      */
     @Override
-    public NodePageContainer getPersistent(final long mKey) throws TreetankIOException {
+    public NodePageContainer getPersistent(final long mKey) throws TTIOException {
 
         return mFirstCache.get(mKey);
     }
@@ -73,7 +73,7 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
      * {@inheritDoc}
      */
     @Override
-    public void putPersistent(final long mKey, final NodePageContainer mPage) throws TreetankIOException {
+    public void putPersistent(final long mKey, final NodePageContainer mPage) throws TTIOException {
         mFirstCache.put(mKey, mPage);
     }
 

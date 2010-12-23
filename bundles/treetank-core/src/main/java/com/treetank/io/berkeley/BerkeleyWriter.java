@@ -24,7 +24,7 @@ import com.sleepycat.je.Environment;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
 import com.sleepycat.je.Transaction;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TTIOException;
 import com.treetank.io.IWriter;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.PageReference;
@@ -66,10 +66,10 @@ public class BerkeleyWriter implements IWriter {
      *            for the write
      * @param mDatabase
      *            where the data should be written to
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if something off happens
      */
-    public BerkeleyWriter(final Environment mEnv, final Database mDatabase) throws TreetankIOException {
+    public BerkeleyWriter(final Environment mEnv, final Database mDatabase) throws TTIOException {
 
         try {
             this.mTxn = mEnv.beginTransaction(null, null);
@@ -77,7 +77,7 @@ public class BerkeleyWriter implements IWriter {
             this.mNodepagekey = getLastNodePage();
         } catch (final DatabaseException exc) {
             LOGWRAPPER.error(exc);
-            throw new TreetankIOException(exc);
+            throw new TTIOException(exc);
         }
 
         mReader = new BerkeleyReader(mDatabase, mTxn);
@@ -86,20 +86,20 @@ public class BerkeleyWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    public void close() throws TreetankIOException {
+    public void close() throws TTIOException {
         try {
             setLastNodePage(mNodepagekey);
             mTxn.commit();
         } catch (final DatabaseException exc) {
             LOGWRAPPER.error(exc);
-            throw new TreetankIOException(exc);
+            throw new TTIOException(exc);
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public void write(final PageReference pageReference) throws TreetankIOException {
+    public void write(final PageReference pageReference) throws TTIOException {
         final AbstractPage page = pageReference.getPage();
 
         final DatabaseEntry valueEntry = new DatabaseEntry();
@@ -120,7 +120,7 @@ public class BerkeleyWriter implements IWriter {
             }
         } catch (final DatabaseException exc) {
             LOGWRAPPER.error(exc);
-            throw new TreetankIOException(exc);
+            throw new TTIOException(exc);
         }
         pageReference.setKey(key);
 
@@ -129,12 +129,12 @@ public class BerkeleyWriter implements IWriter {
     /**
      * Setting the last nodePage to the persistent storage.
      * 
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             If can't set last Node page
      * @param mData
      *            key to be stored
      */
-    private void setLastNodePage(final Long mData) throws TreetankIOException {
+    private void setLastNodePage(final Long mData) throws TTIOException {
         final DatabaseEntry keyEntry = new DatabaseEntry();
         final DatabaseEntry valueEntry = new DatabaseEntry();
 
@@ -146,18 +146,18 @@ public class BerkeleyWriter implements IWriter {
 
         } catch (final DatabaseException exc) {
             LOGWRAPPER.error(exc);
-            throw new TreetankIOException(exc);
+            throw new TTIOException(exc);
         }
     }
 
     /**
      * Getting the last nodePage from the persistent storage.
      * 
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             If can't get last Node page
      * @return the last nodepage-key
      */
-    private long getLastNodePage() throws TreetankIOException {
+    private long getLastNodePage() throws TTIOException {
         final DatabaseEntry keyEntry = new DatabaseEntry();
         final DatabaseEntry valueEntry = new DatabaseEntry();
 
@@ -175,7 +175,7 @@ public class BerkeleyWriter implements IWriter {
             return val;
         } catch (final DatabaseException exc) {
             LOGWRAPPER.error(exc);
-            throw new TreetankIOException(exc);
+            throw new TTIOException(exc);
         }
 
     }
@@ -183,7 +183,7 @@ public class BerkeleyWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    public void writeFirstReference(final PageReference pageReference) throws TreetankIOException {
+    public void writeFirstReference(final PageReference pageReference) throws TTIOException {
         write(pageReference);
 
         final DatabaseEntry keyEntry = new DatabaseEntry();
@@ -196,7 +196,7 @@ public class BerkeleyWriter implements IWriter {
             mDatabase.put(mTxn, keyEntry, valueEntry);
         } catch (final DatabaseException exc) {
             LOGWRAPPER.error(exc);
-            throw new TreetankIOException(exc);
+            throw new TTIOException(exc);
         }
 
     }
@@ -204,14 +204,14 @@ public class BerkeleyWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    public AbstractPage read(final PageReference pageReference) throws TreetankIOException {
+    public AbstractPage read(final PageReference pageReference) throws TTIOException {
         return mReader.read(pageReference);
     }
 
     /**
      * {@inheritDoc}
      */
-    public PageReference readFirstReference() throws TreetankIOException {
+    public PageReference readFirstReference() throws TTIOException {
         return mReader.readFirstReference();
     }
 

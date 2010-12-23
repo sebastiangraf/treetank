@@ -17,7 +17,7 @@
 
 package com.treetank.io;
 
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TTIOException;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.PageReference;
 
@@ -33,10 +33,10 @@ public interface IReader {
      * Getting the first reference of the <code>Uberpage</code>.
      * 
      * @return a {@link PageReference} with link to the first reference
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if something bad happens
      */
-    PageReference readFirstReference() throws TreetankIOException;
+    PageReference readFirstReference() throws TTIOException;
 
     /**
      * Getting a reference for the given pointer.
@@ -44,17 +44,17 @@ public interface IReader {
      * @param pageReference
      *            the reference for the page to be determined
      * @return a {@link AbstractPage} as the base for a page
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if something bad happens during read
      */
-    AbstractPage read(final PageReference pageReference) throws TreetankIOException;
+    AbstractPage read(final PageReference pageReference) throws TTIOException;
 
     /**
      * Closing the storage.
      * 
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if something bad happens while access
      */
-    void close() throws TreetankIOException;
+    void close() throws TTIOException;
 
 }

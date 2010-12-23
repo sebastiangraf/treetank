@@ -28,9 +28,9 @@ import com.treetank.api.IItem;
 import com.treetank.api.IStructuralItem;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
-import com.treetank.exception.TreetankException;
-import com.treetank.exception.TreetankIOException;
-import com.treetank.exception.TreetankUsageException;
+import com.treetank.exception.TTException;
+import com.treetank.exception.TTIOException;
+import com.treetank.exception.TTUsageException;
 import com.treetank.node.AbsNode;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.AttributeNode;
@@ -104,18 +104,18 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      *            Maximum number of node modifications before auto commit.
      * @param maxTime
      *            Maximum number of seconds before auto commit.
-     * @throws TreetankException
+     * @throws TTException
      *             if the reading of the props is failing or properties are not
      *             valid
      */
     protected WriteTransaction(final long mTransactionID, final SessionState mSessionState,
         final WriteTransactionState mTransactionState, final int maxNodeCount, final int maxTime)
-        throws TreetankException {
+        throws TTException {
         super(mTransactionID, mSessionState, mTransactionState);
 
         // Do not accept negative values.
         if ((maxNodeCount < 0) || (maxTime < 0)) {
-            throw new TreetankUsageException("Negative arguments are not accepted.");
+            throw new TTUsageException("Negative arguments are not accepted.");
         }
 
         // Only auto commit by node modifications if it is more then 0.
@@ -130,7 +130,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
                     if (mModificationCount > 0) {
                         try {
                             commit();
-                        } catch (final TreetankException exc) {
+                        } catch (final TTException exc) {
                             LOGWRAPPER.error(exc);
                             throw new IllegalStateException(exc);
                         }
@@ -149,7 +149,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertElementAsFirstChild(final QName mQname) throws TreetankException {
+    public synchronized long insertElementAsFirstChild(final QName mQname) throws TTException {
         if (getCurrentNode() instanceof ElementNode || getCurrentNode() instanceof DocumentRootNode) {
 
             checkAccessAndCommit();
@@ -166,7 +166,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
 
             return node.getNodeKey();
         } else {
-            throw new TreetankUsageException("Insert is not allowed if current node is not an ElementNode!");
+            throw new TTUsageException("Insert is not allowed if current node is not an ElementNode!");
         }
     }
 
@@ -174,7 +174,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertElementAsRightSibling(final QName mQname) throws TreetankException {
+    public synchronized long insertElementAsRightSibling(final QName mQname) throws TTException {
         if (getCurrentNode() instanceof AbsStructNode) {
 
             checkAccessAndCommit();
@@ -191,7 +191,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
 
             return node.getNodeKey();
         } else {
-            throw new TreetankUsageException(
+            throw new TTUsageException(
                 "Insert is not allowed if current node is not an StructuralNode (either Text or Element)!");
         }
     }
@@ -200,7 +200,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertTextAsFirstChild(final String mValueAsString) throws TreetankException {
+    public synchronized long insertTextAsFirstChild(final String mValueAsString) throws TTException {
         if (getCurrentNode() instanceof ElementNode || getCurrentNode() instanceof DocumentRootNode) {
 
             checkAccessAndCommit();
@@ -218,7 +218,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
 
             return node.getNodeKey();
         } else {
-            throw new TreetankUsageException("Insert is not allowed if current node is not an ElementNode!");
+            throw new TTUsageException("Insert is not allowed if current node is not an ElementNode!");
         }
     }
 
@@ -226,7 +226,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertTextAsRightSibling(final String mValueAsString) throws TreetankException {
+    public synchronized long insertTextAsRightSibling(final String mValueAsString) throws TTException {
         if (getCurrentNode() instanceof AbsStructNode) {
 
             checkAccessAndCommit();
@@ -245,7 +245,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             return node.getNodeKey();
 
         } else {
-            throw new TreetankUsageException(
+            throw new TTUsageException(
                 "Insert is not allowed if current node is not an StructuralNode (either Text or Element)!");
         }
     }
@@ -255,7 +255,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      */
     @Override
     public synchronized long insertAttribute(final QName mQname, final String mValueAsString)
-        throws TreetankException {
+        throws TTException {
         if (getCurrentNode() instanceof ElementNode) {
 
             checkAccessAndCommit();
@@ -275,7 +275,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             return node.getNodeKey();
 
         } else {
-            throw new TreetankUsageException("Insert is not allowed if current node is not an ElementNode!");
+            throw new TTUsageException("Insert is not allowed if current node is not an ElementNode!");
         }
     }
 
@@ -284,7 +284,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      */
     @Override
     public synchronized long insertNamespace(final String mUri, final String mPrefix)
-        throws TreetankException {
+        throws TTException {
         if (getCurrentNode() instanceof ElementNode) {
 
             checkAccessAndCommit();
@@ -306,7 +306,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
             adaptHashesWithAdd();
             return node.getNodeKey();
         } else {
-            throw new TreetankUsageException("Insert is not allowed if current node is not an ElementNode!");
+            throw new TTUsageException("Insert is not allowed if current node is not an ElementNode!");
         }
     }
 
@@ -314,10 +314,10 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized void remove() throws TreetankException {
+    public synchronized void remove() throws TTException {
         checkAccessAndCommit();
         if (getCurrentNode().getKind() == ENodes.ROOT_KIND) {
-            throw new TreetankUsageException("Root node can not be removed.");
+            throw new TTUsageException("Root node can not be removed.");
         } else if (getCurrentNode() instanceof AbsStructNode) {
             final AbsStructNode node = (AbsStructNode)getCurrentNode();
             // // removing subtree
@@ -366,7 +366,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setName(final String mName) throws TreetankIOException {
+    public synchronized void setName(final String mName) throws TTIOException {
 
         assertNotClosed();
         mModificationCount++;
@@ -389,7 +389,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setURI(final String mUri) throws TreetankIOException {
+    public synchronized void setURI(final String mUri) throws TTIOException {
 
         assertNotClosed();
         mModificationCount++;
@@ -411,7 +411,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setValue(final int mValueType, final byte[] mValue) throws TreetankIOException {
+    public synchronized void setValue(final int mValueType, final byte[] mValue) throws TTIOException {
 
         assertNotClosed();
         mModificationCount++;
@@ -434,7 +434,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setValue(final String mValue) throws TreetankIOException {
+    public synchronized void setValue(final String mValue) throws TTIOException {
         setValue(getTransactionState().createNameKey("xs:untyped"), TypedValue.getBytes(mValue));
     }
 
@@ -442,7 +442,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public void revertTo(final long revision) throws TreetankException {
+    public void revertTo(final long revision) throws TTException {
         assertNotClosed();
         getSessionState().assertValidRevision(revision);
         getTransactionState().close();
@@ -459,7 +459,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized void commit() throws TreetankException {
+    public synchronized void commit() throws TTException {
 
         assertNotClosed();
 
@@ -483,7 +483,7 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized void abort() throws TreetankIOException {
+    public synchronized void abort() throws TTIOException {
 
         assertNotClosed();
 
@@ -506,11 +506,11 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * {@inheritDoc}
      */
     @Override
-    public synchronized void close() throws TreetankException {
+    public synchronized void close() throws TTException {
         if (!isClosed()) {
             // Make sure to commit all dirty data.
             if (mModificationCount > 0) {
-                throw new TreetankUsageException("Must commit/abort transaction first");
+                throw new TTUsageException("Must commit/abort transaction first");
             }
             // Make sure to cancel the periodic commit task if it was started.
             if (mCommitScheduler != null) {
@@ -531,10 +531,10 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     /**
      * Checking write access and intermediate commit.
      * 
-     * @throws TreetankException
+     * @throws TTException
      *             if anything weird happens.
      */
-    private void checkAccessAndCommit() throws TreetankException {
+    private void checkAccessAndCommit() throws TTException {
         assertNotClosed();
         mModificationCount++;
         intermediateCommitIfRequired();
@@ -551,11 +551,11 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      *            pointer of the new node to be inserted
      * @param paramAsFirstChild
      *            should the new element added as a first child?
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if anything weird happens
      */
     private void adaptForInsert(final AbsNode paramNewNode, final boolean paramAsFirstChild)
-        throws TreetankIOException {
+        throws TTIOException {
 
         if (paramNewNode instanceof AbsStructNode) {
             final AbsStructNode strucNode = (AbsStructNode)paramNewNode;
@@ -598,11 +598,11 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * 
      * @param paramOldNode
      *            new Node to be cloned
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if anything weird happens
      * @return an {@link AbsNode} which is cloned
      */
-    private AbsNode createNodeToModify(final AbsNode paramOldNode) throws TreetankIOException {
+    private AbsNode createNodeToModify(final AbsNode paramOldNode) throws TTIOException {
         AbsNode newNode = null;
         switch (paramOldNode.getKind()) {
         case ELEMENT_KIND:
@@ -630,11 +630,11 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      *            pointer of the old node to be replaces
      * @param paramNewNode
      *            pointer of new node to be inserted
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if anything weird happens
      */
     private void adaptForUpdate(final AbsStructNode paramOldNode, final AbsStructNode paramNewNode)
-        throws TreetankIOException {
+        throws TTIOException {
         // Adapt left sibling node if there is one.
         if (paramOldNode.hasLeftSibling()) {
             final AbsStructNode leftSibling =
@@ -710,10 +710,10 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * 
      * @param paramOldNode
      *            pointer of the old node to be replaces
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if anything weird happens
      */
-    private void adaptForRemove(final AbsStructNode paramOldNode) throws TreetankIOException {
+    private void adaptForRemove(final AbsStructNode paramOldNode) throws TTIOException {
 
         // Adapt left sibling node if there is one.
         if (paramOldNode.hasLeftSibling()) {
@@ -767,10 +767,10 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     /**
      * Making an intermediate commit based on set attributes.
      * 
-     * @throws TreetankException
+     * @throws TTException
      *             if commit fails.
      */
-    private void intermediateCommitIfRequired() throws TreetankException {
+    private void intermediateCommitIfRequired() throws TTException {
         assertNotClosed();
         if ((mMaxNodeCount > 0) && (mModificationCount > mMaxNodeCount)) {
             commit();
@@ -790,10 +790,10 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     /**
      * Adapting the structure with a hash for all ancestors only with insert.
      * 
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             of anything weird happened.
      */
-    private void adaptHashesWithAdd() throws TreetankIOException {
+    private void adaptHashesWithAdd() throws TTIOException {
         switch (mHashKind) {
         case Rolling:
             rollingAdd();
@@ -809,10 +809,10 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     /**
      * Adapting the structure with a hash for all ancestors only with remove.
      * 
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             of anything weird happened.
      */
-    private void adaptHashesWithRemove() throws TreetankIOException {
+    private void adaptHashesWithRemove() throws TTIOException {
         switch (mHashKind) {
         case Rolling:
             rollingRemove();
@@ -829,10 +829,10 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * 
      * @param paramOldHash
      *            paramOldHash to be removed
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             of anything weird happened.
      */
-    private void adaptHashedWithUpdate(final long paramOldHash) throws TreetankIOException {
+    private void adaptHashedWithUpdate(final long paramOldHash) throws TTIOException {
         switch (mHashKind) {
         case Rolling:
             rollingUpdate(paramOldHash);
@@ -847,10 +847,10 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     /**
      * Removal operation for postorder hash computation.
      * 
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if anything weird happens
      */
-    public void postorderRemove() throws TreetankIOException {
+    public void postorderRemove() throws TTIOException {
         moveTo(getCurrentNode().getParentKey());
         postorderAdd();
     }
@@ -858,10 +858,10 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     /**
      * Adapting the structure with a rolling hash for all ancestors only with insert.
      * 
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             of anything weird happened.
      */
-    private void postorderAdd() throws TreetankIOException {
+    private void postorderAdd() throws TTIOException {
         // start with hash to add
         final IItem startNode = getCurrentNode();
         // long for adapting the hash of the parent
@@ -919,10 +919,10 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
      * 
      * @param paramOldHash
      *            paramOldHash to be removed
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             of anything weird happened.
      */
-    private void rollingUpdate(final long paramOldHash) throws TreetankIOException {
+    private void rollingUpdate(final long paramOldHash) throws TTIOException {
         final IItem newNode = getCurrentNode();
         final long newNodeHash = newNode.hashCode();
         long resultNew = newNode.hashCode();
@@ -949,10 +949,10 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     /**
      * Adapting the structure with a rolling hash for all ancestors only with remove.
      * 
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             of anything weird happened.
      */
-    private void rollingRemove() throws TreetankIOException {
+    private void rollingRemove() throws TTIOException {
         final IItem startNode = getCurrentNode();
         long hashToRemove = startNode.getHash();
         long hashToAdd = 0;
@@ -986,10 +986,10 @@ public class WriteTransaction extends ReadTransaction implements IWriteTransacti
     /**
      * Adapting the structure with a rolling hash for all ancestors only with insert.
      * 
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             of anything weird happened.
      */
-    private void rollingAdd() throws TreetankIOException {
+    private void rollingAdd() throws TTIOException {
         // start with hash to add
         final IItem startNode = getCurrentNode();
         long hashToAdd = startNode.hashCode();

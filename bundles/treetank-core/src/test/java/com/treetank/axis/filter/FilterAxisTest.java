@@ -33,17 +33,17 @@ import com.treetank.axis.FilterAxis;
 import com.treetank.axis.IAxisTest;
 import com.treetank.axis.filter.NameFilter;
 import com.treetank.axis.filter.ValueFilter;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.utils.DocumentCreater;
 
 public class FilterAxisTest {
     @Before
-    public void setUp() throws TreetankException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
     }
 
     @Test
-    public void testNameAxisTest() throws TreetankException {
+    public void testNameAxisTest() throws TTException {
         // Build simple test tree.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -63,7 +63,7 @@ public class FilterAxisTest {
     }
 
     @Test
-    public void testValueAxisTest() throws TreetankException {
+    public void testValueAxisTest() throws TTException {
         // Build simple test tree.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -83,7 +83,7 @@ public class FilterAxisTest {
     }
 
     @Test
-    public void testValueAndNameAxisTest() throws TreetankException {
+    public void testValueAndNameAxisTest() throws TTException {
         // Build simple test tree.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -107,7 +107,7 @@ public class FilterAxisTest {
     }
 
     @After
-    public void tearDown() throws TreetankException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
     }
 }

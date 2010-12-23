@@ -28,7 +28,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 import com.treetank.utils.DocumentCreater;
 
@@ -39,12 +39,12 @@ import com.treetank.utils.DocumentCreater;
  */
 public class StAXSerializerTest {
     @Before
-    public void setUp() throws TreetankException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() throws TreetankException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
     }
 
@@ -179,7 +179,7 @@ public class StAXSerializerTest {
             database.close();
         } catch (final XMLStreamException e) {
             fail("XML error while parsing: " + e.getMessage());
-        } catch (final TreetankException e) {
+        } catch (final TTException e) {
             fail("Treetank exception occured: " + e.getMessage());
         } catch (final Exception e) {
             fail("Any exception occured: " + e.getMessage());

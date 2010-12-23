@@ -26,7 +26,7 @@ import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
 import com.treetank.access.DatabaseConfiguration;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TTIOException;
 import com.treetank.utils.LogWrapper;
 
 import org.slf4j.LoggerFactory;
@@ -80,11 +80,11 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
      * @param paramRevision
      *            revision number, needed to reconstruct the sliding window in
      *            the correct way
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             Exception if IO is not successful
      */
     public BerkeleyPersistenceCache(final DatabaseConfiguration paramSessionConfig, final long paramRevision)
-        throws TreetankIOException {
+        throws TTIOException {
         super(paramSessionConfig);
         try {
             /* Create a new, transactional database environment */
@@ -105,7 +105,7 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
 
         } catch (final DatabaseException exc) {
             LOGWRAPPER.error(exc);
-            throw new TreetankIOException(exc);
+            throw new TTIOException(exc);
 
         }
     }
@@ -114,7 +114,7 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
      * {@inheritDoc}
      */
     @Override
-    public void putPersistent(final long mKey, final NodePageContainer mPage) throws TreetankIOException {
+    public void putPersistent(final long mKey, final NodePageContainer mPage) throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
 
@@ -125,7 +125,7 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
 
         } catch (final DatabaseException exc) {
             LOGWRAPPER.error(exc);
-            throw new TreetankIOException(exc);
+            throw new TTIOException(exc);
         }
 
     }
@@ -134,7 +134,7 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
      * {@inheritDoc}
      */
     @Override
-    public void clearPersistent() throws TreetankIOException {
+    public void clearPersistent() throws TTIOException {
         try {
             mDatabase.close();
             mEnv.removeDatabase(null, NAME);
@@ -142,7 +142,7 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
 
         } catch (final DatabaseException exc) {
             LOGWRAPPER.error(exc);
-            throw new TreetankIOException(exc);
+            throw new TTIOException(exc);
         }
     }
 
@@ -150,7 +150,7 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
      * {@inheritDoc}
      */
     @Override
-    public NodePageContainer getPersistent(final long mKey) throws TreetankIOException {
+    public NodePageContainer getPersistent(final long mKey) throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
         mKeyBinding.objectToEntry(mKey, keyEntry);
@@ -164,7 +164,7 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
             return val;
         } catch (final DatabaseException exc) {
             LOGWRAPPER.error(exc);
-            throw new TreetankIOException(exc);
+            throw new TTIOException(exc);
         }
     }
 

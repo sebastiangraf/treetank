@@ -24,8 +24,8 @@ import com.treetank.api.IItem;
 import com.treetank.api.IItemList;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IStructuralItem;
-import com.treetank.exception.TreetankException;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TTException;
+import com.treetank.exception.TTIOException;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
@@ -67,11 +67,11 @@ public class ReadTransaction implements IReadTransaction {
      *            Session state to work with.
      * @param paramTransactionState
      *            Transaction state to work with.
-     * @throws TreetankIOException
+     * @throws TTException
      *             if something odd happens within the creation process.
      */
     protected ReadTransaction(final long paramTransactionID, final SessionState paramSessionState,
-        final ReadTransactionState paramTransactionState) throws TreetankIOException {
+        final ReadTransactionState paramTransactionState) throws TTIOException {
         mTransactionID = paramTransactionID;
         mSessionState = paramSessionState;
         mTransactionState = paramTransactionState;
@@ -103,8 +103,6 @@ public class ReadTransaction implements IReadTransaction {
             mCurrentNode = getTransactionState().getNode(rtx.getNode().getNodeKey());
             mClosed = false;
 
-        } catch(final TreetankIOException mExp){
-            mExp.getStackTrace();
         } catch (final Exception mExp) {
             mExp.printStackTrace();
         }
@@ -123,7 +121,7 @@ public class ReadTransaction implements IReadTransaction {
      * {@inheritDoc}
      */
     @Override
-    public final long getRevisionNumber() throws TreetankIOException {
+    public final long getRevisionNumber() throws TTIOException {
         assertNotClosed();
         return mTransactionState.getActualRevisionRootPage().getRevision();
     }
@@ -132,7 +130,7 @@ public class ReadTransaction implements IReadTransaction {
      * {@inheritDoc}
      */
     @Override
-    public final long getRevisionTimestamp() throws TreetankIOException {
+    public final long getRevisionTimestamp() throws TTIOException {
         assertNotClosed();
         return mTransactionState.getActualRevisionRootPage().getRevisionTimestamp();
     }
@@ -298,7 +296,7 @@ public class ReadTransaction implements IReadTransaction {
      * {@inheritDoc}
      */
     @Override
-    public void close() throws TreetankException {
+    public void close() throws TTException {
         if (!mClosed) {
             // Close own state.
             mTransactionState.close();
@@ -435,7 +433,7 @@ public class ReadTransaction implements IReadTransaction {
      * {@inheritDoc}
      */
     @Override
-    public final long getMaxNodeKey() throws TreetankIOException {
+    public final long getMaxNodeKey() throws TTIOException {
         return getTransactionState().getActualRevisionRootPage().getMaxNodeKey();
     }
 

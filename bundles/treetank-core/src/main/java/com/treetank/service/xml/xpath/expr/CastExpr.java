@@ -19,6 +19,7 @@ package com.treetank.service.xml.xpath.expr;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.SingleType;
 import com.treetank.service.xml.xpath.XPathError;
 import com.treetank.service.xml.xpath.XPathError.ErrorType;
@@ -85,7 +86,7 @@ public class CastExpr extends AbsExpression implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    protected void evaluate() {
+    protected void evaluate() throws TTXPathException {
 
         // atomic type must not be xs:anyAtomicType or xs:NOTATION
         if (mTargetType == Type.ANY_ATOMIC_TYPE || mTargetType == Type.NOTATION) {

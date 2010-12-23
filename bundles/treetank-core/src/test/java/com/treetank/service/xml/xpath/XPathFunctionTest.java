@@ -30,7 +30,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.IAxisTest;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.service.xml.shredder.XMLShredder;
 
 /**
@@ -53,12 +53,12 @@ public class XPathFunctionTest {
     }
 
     @After
-    public void tearDown() throws TreetankException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testA_Axes() throws TreetankException {
+    public void testA_Axes() throws TTException {
 
         // Verify.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
@@ -121,7 +121,7 @@ public class XPathFunctionTest {
     }
 
     @Test
-    public void testP_Filters() throws TreetankException {
+    public void testP_Filters() throws TTException {
 
         // Verify.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
@@ -196,7 +196,7 @@ public class XPathFunctionTest {
     }
 
     @Test
-    public void testT_NodeTests() throws TreetankException {
+    public void testT_NodeTests() throws TTException {
 
         // Verify.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
@@ -236,7 +236,7 @@ public class XPathFunctionTest {
     }
 
     @Test
-    public void testQ_Operators() throws TreetankException {
+    public void testQ_Operators() throws TTException {
 
         // Verify.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());

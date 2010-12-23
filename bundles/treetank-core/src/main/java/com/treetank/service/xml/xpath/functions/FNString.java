@@ -24,6 +24,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.axis.FilterAxis;
 import com.treetank.axis.filter.TextFilter;
+import com.treetank.exception.TTXPathException;
 import com.treetank.node.ENodes;
 import com.treetank.utils.TypedValue;
 
@@ -53,9 +54,11 @@ public class FNString extends AbsFunction {
      *            max number of allowed function arguments
      * @param returnType
      *            the type that the function's result will have
+     * @throws TTXPathException
+     *             if function check fails
      */
     public FNString(final IReadTransaction rtx, final List<IAxis> args, final int min, final int max,
-        final int returnType) {
+        final int returnType) throws TTXPathException {
 
         super(rtx, args, min, max, returnType);
     }

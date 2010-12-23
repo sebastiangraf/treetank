@@ -34,8 +34,8 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
-import com.treetank.exception.TreetankUsageException;
+import com.treetank.exception.TTException;
+import com.treetank.exception.TTUsageException;
 import com.treetank.node.AbsStructNode;
 import com.treetank.utils.DocumentCreater;
 import com.treetank.utils.TypedValue;
@@ -43,17 +43,17 @@ import com.treetank.utils.TypedValue;
 public class UpdateTest {
 
     @Before
-    public void setUp() throws TreetankException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() throws TreetankException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testInsertChild() throws TreetankException {
+    public void testInsertChild() throws TTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
 
@@ -94,7 +94,7 @@ public class UpdateTest {
     }
 
     @Test
-    public void testInsertPath() throws TreetankException {
+    public void testInsertPath() throws TTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
 
@@ -130,7 +130,7 @@ public class UpdateTest {
     }
 
     @Test
-    public void testPageBoundary() throws TreetankException {
+    public void testPageBoundary() throws TTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -150,8 +150,8 @@ public class UpdateTest {
         database.close();
     }
 
-    @Test(expected = TreetankUsageException.class)
-    public void testRemoveDocument() throws TreetankException {
+    @Test(expected = TTUsageException.class)
+    public void testRemoveDocument() throws TTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
 
@@ -175,7 +175,7 @@ public class UpdateTest {
     }
 
     @Test
-    public void testRemoveDescendant() throws TreetankException {
+    public void testRemoveDescendant() throws TTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();

@@ -16,15 +16,29 @@
  */
 package com.treetank.gui.view.sunburst;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EmptyStackException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Stack;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+
+import javax.xml.xpath.XPathException;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.axis.DescendantAxis;
-import com.treetank.exception.TreetankException;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TTException;
+import com.treetank.exception.TTIOException;
+import com.treetank.exception.TTXPathException;
 import com.treetank.gui.ReadDB;
 import com.treetank.gui.view.sunburst.Item.Builder;
 import com.treetank.gui.view.sunburst.SunburstItem.StructType;
@@ -124,9 +138,7 @@ final class SunburstModel extends AbsComponent {
             mSession = paramDb.getSession();
             mRtx = mSession.beginReadTransaction(rtx.getRevisionNumber());
             mRtx.moveTo(rtx.getNode().getNodeKey());
-        } catch (final TreetankIOException e) {
-            LOGWRAPPER.error(e.getMessage(), e);
-        } catch (final TreetankException e) {
+        } catch (final TTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
         mItems = new ArrayList<SunburstItem>();
@@ -537,48 +549,53 @@ final class SunburstModel extends AbsComponent {
                 if (mRTX.getNode().getKind() == ENodes.ROOT_KIND) {
                     mRTX.moveToFirstChild();
                 }
-            } catch (final TreetankException e) {
+            } catch (final TTException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
             }
         }
 
         @Override
         public void run() {
-            final List<Long> nodeKeys = new LinkedList<Long>();
-            final IAxis axis = new XPathAxis(mRTX, mQuery);
-
-            while (axis.hasNext()) {
-                axis.next();
-                nodeKeys.add(mRTX.getNode().getNodeKey());
-            }
-
-            // Old values for PropertyChangeListener.
-            final List<SunburstItem> itemList = mItems;
-            final int maxDepth = mDepthMax;
-
-            // Do the work.
-            final int processors = Runtime.getRuntime().availableProcessors();
-            final ExecutorService executor = Executors.newFixedThreadPool(processors);
-            for (int fromIndex = 0; fromIndex < mItems.size(); fromIndex += (int)(mItems.size() / processors)) {
-                int toIndex = fromIndex + (int)(mItems.size() / processors);
-                if (toIndex >= mItems.size()) {
-                    toIndex = mItems.size() - 1;
-                }
-                executor.submit(new XPathSublistEvaluation(nodeKeys, mItems.subList(fromIndex, toIndex)));
-            }
-
-            executor.shutdown();
             try {
-                executor.awaitTermination(5, TimeUnit.SECONDS);
-            } catch (final InterruptedException e) {
-                LOGWRAPPER.error(e.getMessage(), e);
-                return;
-            }
+                final List<Long> nodeKeys = new LinkedList<Long>();
+                final IAxis axis = new XPathAxis(mRTX, mQuery);
 
-            // Copy list and fire changes with unmodifiable lists.
-            mModel.firePropertyChange("items", Collections.unmodifiableList(itemList),
-                Collections.unmodifiableList(new ArrayList<SunburstItem>(mItems)));
-            mModel.firePropertyChange("maxDepth", maxDepth, mDepthMax);
+                while (axis.hasNext()) {
+                    axis.next();
+                    nodeKeys.add(mRTX.getNode().getNodeKey());
+                }
+
+                // Old values for PropertyChangeListener.
+                final List<SunburstItem> itemList = mItems;
+                final int maxDepth = mDepthMax;
+
+                // Do the work.
+                final int processors = Runtime.getRuntime().availableProcessors();
+                final ExecutorService executor = Executors.newFixedThreadPool(processors);
+                for (int fromIndex = 0; fromIndex < mItems.size(); fromIndex +=
+                    (int)(mItems.size() / processors)) {
+                    int toIndex = fromIndex + (int)(mItems.size() / processors);
+                    if (toIndex >= mItems.size()) {
+                        toIndex = mItems.size() - 1;
+                    }
+                    executor.submit(new XPathSublistEvaluation(nodeKeys, mItems.subList(fromIndex, toIndex)));
+                }
+
+                executor.shutdown();
+                try {
+                    executor.awaitTermination(5, TimeUnit.SECONDS);
+                } catch (final InterruptedException e) {
+                    LOGWRAPPER.error(e.getMessage(), e);
+                    return;
+                }
+
+                // Copy list and fire changes with unmodifiable lists.
+                mModel.firePropertyChange("items", Collections.unmodifiableList(itemList), Collections
+                    .unmodifiableList(new ArrayList<SunburstItem>(mItems)));
+                mModel.firePropertyChange("maxDepth", maxDepth, mDepthMax);
+            } catch (final TTXPathException exc) {
+                LOGWRAPPER.error(exc);
+            }
         }
     }
 
@@ -609,9 +626,7 @@ final class SunburstModel extends AbsComponent {
             try {
                 mRTX = mSession.beginReadTransaction(mRtx.getRevisionNumber());
                 mRTX.moveTo(mRtx.getNode().getNodeKey());
-            } catch (final TreetankIOException e) {
-                LOGWRAPPER.error(e.getMessage(), e);
-            } catch (final TreetankException e) {
+            } catch (final TTException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
             }
         }
@@ -678,7 +693,7 @@ final class SunburstModel extends AbsComponent {
                     throw new IllegalArgumentException(
                         "paramRevision must be greater than the currently opened revision!");
                 }
-            } catch (final TreetankIOException e) {
+            } catch (final TTIOException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
             }
 
@@ -782,7 +797,7 @@ final class SunburstModel extends AbsComponent {
                     } else {
                         long parentDescCount = 0;
                         int parentModCount = 0;
-                        
+
                         try {
                             parentDescCount = descendantsStack.peek();
                             parentModCount = modificationStack.peek();
@@ -790,7 +805,7 @@ final class SunburstModel extends AbsComponent {
                             parentDescCount = descendantCount;
                             parentModCount = modificationCount;
                         }
-                        
+
                         childExtension =
                             mModWeight * (extension * (float)descendantCount / (float)parentDescCount)
                                 + (1 - mModWeight)
@@ -877,13 +892,13 @@ final class SunburstModel extends AbsComponent {
                 LOGWRAPPER.error(e.getMessage(), e);
             } catch (final ExecutionException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
-            } catch (final TreetankException e) {
+            } catch (final TTException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
             }
 
             // Copy list and fire changes with unmodifiable lists.
-            mModel.firePropertyChange("items", Collections.unmodifiableList(itemList),
-                Collections.unmodifiableList(new ArrayList<SunburstItem>(mItems)));
+            mModel.firePropertyChange("items", Collections.unmodifiableList(itemList), Collections
+                .unmodifiableList(new ArrayList<SunburstItem>(mItems)));
             mModel.firePropertyChange("maxDepth", maxDepth, mDepthMax);
 
             mRtx.moveTo(mKey);
@@ -1072,13 +1087,13 @@ final class SunburstModel extends AbsComponent {
                 LOGWRAPPER.error(e.getMessage(), e);
             } catch (final ExecutionException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
-            } catch (final TreetankException e) {
+            } catch (final TTException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
             }
 
             // Copy list and fire changes with unmodifiable lists.
-            mModel.firePropertyChange("items", Collections.unmodifiableList(itemList),
-                Collections.unmodifiableList(new ArrayList<SunburstItem>(mItems)));
+            mModel.firePropertyChange("items", Collections.unmodifiableList(itemList), Collections
+                .unmodifiableList(new ArrayList<SunburstItem>(mItems)));
             mModel.firePropertyChange("maxDepth", maxDepth, mDepthMax);
 
             mRtx.moveTo(mKey);
@@ -1111,7 +1126,7 @@ final class SunburstModel extends AbsComponent {
                 assert paramRevision > mRtx.getRevisionNumber();
                 mNewRev = mSession.beginReadTransaction(paramRevision);
                 mOldRev = mSession.beginReadTransaction(mRtx.getRevisionNumber());
-            } catch (final TreetankException e) {
+            } catch (final TTException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
             }
             mOldRev.moveTo(paramNodeKey);
@@ -1159,7 +1174,7 @@ final class SunburstModel extends AbsComponent {
             assert paramNodeKey >= 0;
             try {
                 mRTX = mSession.beginReadTransaction(mRtx.getRevisionNumber());
-            } catch (final TreetankException e) {
+            } catch (final TTException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
             }
             mRTX.moveTo(paramNodeKey);

@@ -19,7 +19,7 @@ package com.treetank.access;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.utils.ItemList;
 
 /**
@@ -44,11 +44,11 @@ public final class Session implements ISession {
      *            DatabaseConfiguration for general setting about the storage
      * @param mSessionConf
      *            SessionConfiguration for handling this specific session
-     * @throws TreetankException
+     * @throws TTException
      *             Exception if something weird happens
      */
     protected Session(final DatabaseConfiguration mDatabaseConf, final SessionConfiguration mSessionConf)
-        throws TreetankException {
+        throws TTException {
         mSessionState = new SessionState(mDatabaseConf, mSessionConf);
         mClosed = false;
     }
@@ -57,7 +57,7 @@ public final class Session implements ISession {
      * {@inheritDoc}
      */
     @Override
-    public synchronized IReadTransaction beginReadTransaction() throws TreetankException {
+    public synchronized IReadTransaction beginReadTransaction() throws TTException {
         assertNotClosed();
         return mSessionState.beginReadTransaction(new ItemList());
     }
@@ -67,7 +67,7 @@ public final class Session implements ISession {
      */
     @Override
     public synchronized IReadTransaction beginReadTransaction(final long revisionKey)
-        throws TreetankException {
+        throws TTException {
         assertNotClosed();
         mSessionState.assertValidRevision(revisionKey);
         return mSessionState.beginReadTransaction(revisionKey, new ItemList());
@@ -77,7 +77,7 @@ public final class Session implements ISession {
      * {@inheritDoc}
      */
     @Override
-    public synchronized IWriteTransaction beginWriteTransaction() throws TreetankException {
+    public synchronized IWriteTransaction beginWriteTransaction() throws TTException {
         assertNotClosed();
         return mSessionState.beginWriteTransaction(0, 0);
     }
@@ -87,7 +87,7 @@ public final class Session implements ISession {
      */
     @Override
     public synchronized IWriteTransaction beginWriteTransaction(final int maxNodeCount, final int maxTime)
-        throws TreetankException {
+        throws TTException {
         assertNotClosed();
         return mSessionState.beginWriteTransaction(maxNodeCount, maxTime);
     }
@@ -112,7 +112,7 @@ public final class Session implements ISession {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void close() throws TreetankException {
+    public synchronized void close() throws TTException {
         if (!mClosed) {
             mSessionState.close();
             mSessionState = null;

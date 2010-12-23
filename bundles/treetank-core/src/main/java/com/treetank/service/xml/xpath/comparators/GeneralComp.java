@@ -22,6 +22,7 @@ import java.util.List;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.functions.Function;
 import com.treetank.service.xml.xpath.types.Type;
@@ -60,7 +61,8 @@ public class GeneralComp extends AbsComparator {
      * {@inheritDoc}
      */
     @Override
-    protected boolean compare(final AtomicValue[] mOperand1, final AtomicValue[] mOperand2) {
+    protected boolean compare(final AtomicValue[] mOperand1, final AtomicValue[] mOperand2)
+        throws TTXPathException {
 
         assert mOperand1.length >= 1 && mOperand2.length >= 1;
 
@@ -105,7 +107,7 @@ public class GeneralComp extends AbsComparator {
      * {@inheritDoc}
      */
     @Override
-    protected Type getType(final int mKey1, final int mKey2) {
+    protected Type getType(final int mKey1, final int mKey2) throws TTXPathException {
 
         final Type mType1 = Type.getType(mKey1).getPrimitiveBaseType();
         final Type mType2 = Type.getType(mKey2).getPrimitiveBaseType();

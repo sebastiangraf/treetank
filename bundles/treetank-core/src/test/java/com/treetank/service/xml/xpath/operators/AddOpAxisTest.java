@@ -18,15 +18,6 @@
 
 package com.treetank.service.xml.xpath.operators;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IAxis;
@@ -34,28 +25,38 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
+import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
-import com.treetank.service.xml.xpath.XPathError;
 import com.treetank.service.xml.xpath.expr.LiteralExpr;
 import com.treetank.service.xml.xpath.expr.SequenceAxis;
 import com.treetank.service.xml.xpath.types.Type;
 import com.treetank.utils.TypedValue;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.is;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+
 public class AddOpAxisTest {
 
     @Before
-    public void setUp() throws TreetankException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() throws TreetankException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
     }
 
     @Test
-    public final void testOperate() throws TreetankException {
+    public final void testOperate() throws TTException {
 
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -78,7 +79,7 @@ public class AddOpAxisTest {
     }
 
     @Test
-    public final void testGetReturnType() throws TreetankException {
+    public final void testGetReturnType() throws TTException {
 
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -116,38 +117,36 @@ public class AddOpAxisTest {
             .keyForName("xs:dayTimeDuration")));
 
         try {
-
             axis.getReturnType(rtx.keyForName("xs:dateTime"), rtx.keyForName("xs:dateTime"));
             fail("Expected an XPathError-Exception.");
-        } catch (XPathError e) {
+        } catch (final TTXPathException e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
-                + "typedoes not match a required type as specified by the matching rules."));
+                + "typedoes not match a required type as specified by the matching rules. "));
         }
 
         try {
             axis.getReturnType(rtx.keyForName("xs:dateTime"), rtx.keyForName("xs:double"));
             fail("Expected an XPathError-Exception.");
-        } catch (XPathError e) {
+        } catch (final TTXPathException e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
-                + "typedoes not match a required type as specified by the matching rules."));
+                + "typedoes not match a required type as specified by the matching rules. "));
         }
 
         try {
-
             axis.getReturnType(rtx.keyForName("xs:string"), rtx.keyForName("xs:yearMonthDuration"));
             fail("Expected an XPathError-Exception.");
-        } catch (XPathError e) {
+        } catch (final TTXPathException e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
-                + "typedoes not match a required type as specified by the matching rules."));
+                + "typedoes not match a required type as specified by the matching rules. "));
         }
 
         try {
 
             axis.getReturnType(rtx.keyForName("xs:dateTime"), rtx.keyForName("xs:IDREF"));
             fail("Expected an XPathError-Exception.");
-        } catch (XPathError e) {
+        } catch (final TTXPathException e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
-                + "typedoes not match a required type as specified by the matching rules."));
+                + "typedoes not match a required type as specified by the matching rules. "));
         }
 
         rtx.close();

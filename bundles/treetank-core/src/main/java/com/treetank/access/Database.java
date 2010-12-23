@@ -23,9 +23,9 @@ import java.util.concurrent.ConcurrentMap;
 
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
-import com.treetank.exception.TreetankException;
-import com.treetank.exception.TreetankIOException;
-import com.treetank.exception.TreetankUsageException;
+import com.treetank.exception.TTException;
+import com.treetank.exception.TTIOException;
+import com.treetank.exception.TTUsageException;
 import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.EStoragePaths;
 import com.treetank.utils.LogWrapper;
@@ -64,11 +64,11 @@ public final class Database implements IDatabase {
      *            conf for Database
      * @param paramSessionConf
      *            conf for session
-     * @throws TreetankException
+     * @throws TTException
      *             Exception if something weird happens
      */
     private Database(final DatabaseConfiguration paramDBConf, final SessionConfiguration paramSessionConf)
-        throws TreetankException {
+        throws TTException {
         this.mDatabaseConfiguration = paramDBConf;
         this.mSessionConfiguration = paramSessionConf;
         this.checkStorage();
@@ -82,11 +82,11 @@ public final class Database implements IDatabase {
      * @param paramConf
      *            which are used for the database
      * @return true of creation is valid, false otherwise
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if something odd happens within the creation process.
      */
     public static synchronized boolean createDatabase(final DatabaseConfiguration paramConf)
-        throws TreetankIOException {
+        throws TTIOException {
         try {
             final File file = paramConf.getFile();
             boolean returnVal = true;
@@ -117,7 +117,7 @@ public final class Database implements IDatabase {
             return returnVal;
         } catch (final IOException exc) {
             LOGWRAPPER.error(exc);
-            throw new TreetankIOException(exc);
+            throw new TTIOException(exc);
         }
     }
 
@@ -146,10 +146,10 @@ public final class Database implements IDatabase {
      * @param paramFile
      *            where the database is located
      * @return {@link IDatabase} instance.
-     * @throws TreetankException
+     * @throws TTException
      *             if something odd happens
      */
-    public static synchronized IDatabase openDatabase(final File paramFile) throws TreetankException {
+    public static synchronized IDatabase openDatabase(final File paramFile) throws TTException {
         return openDatabase(paramFile, new SessionConfiguration());
     }
 
@@ -164,13 +164,13 @@ public final class Database implements IDatabase {
      * @param paramSessionConf
      *            session conf for the new session
      * @return {@link IDatabase} instance.
-     * @throws TreetankException
+     * @throws TTException
      *             if something odd happens
      */
     public static synchronized IDatabase openDatabase(final File paramFile,
-        final SessionConfiguration paramSessionConf) throws TreetankException {
+        final SessionConfiguration paramSessionConf) throws TTException {
         if (!paramFile.exists() && !createDatabase(new DatabaseConfiguration(paramFile))) {
-            throw new TreetankUsageException("DB could not be created at location", paramFile.toString());
+            throw new TTUsageException("DB could not be created at location", paramFile.toString());
         }
         IDatabase database =
             DATABASEMAP.putIfAbsent(paramFile, new Database(new DatabaseConfiguration(paramFile),
@@ -186,10 +186,10 @@ public final class Database implements IDatabase {
      * 
      * @param paramFile
      *            where the database should be closed
-     * @throws TreetankException
+     * @throws TTException
      *             if something weird happens while closing
      */
-    public static synchronized void forceCloseDatabase(final File paramFile) throws TreetankException {
+    public static synchronized void forceCloseDatabase(final File paramFile) throws TTException {
         final IDatabase database = DATABASEMAP.remove(paramFile);
         if (database != null) {
             database.close();
@@ -200,10 +200,10 @@ public final class Database implements IDatabase {
      * Closing a database. All {@link ISession} instances within this database
      * are closed.
      * 
-     * @throws TreetankException
+     * @throws TTException
      *             if close is not successful.
      */
-    public synchronized void close() throws TreetankException {
+    public synchronized void close() throws TTException {
         if (mSession != null) {
             mSession.close();
         }
@@ -216,10 +216,10 @@ public final class Database implements IDatabase {
     /**
      * {@inheritDoc}
      * 
-     * @throws TreetankException
+     * @throws TTException
      */
     @Override
-    public synchronized ISession getSession() throws TreetankException {
+    public synchronized ISession getSession() throws TTException {
         if (mSession == null || mSession.isClosed()) {
             mSession = new Session(this.mDatabaseConfiguration, this.mSessionConfiguration);
         }
@@ -276,13 +276,13 @@ public final class Database implements IDatabase {
     /**
      * Checking if storage is valid.
      * 
-     * @throws TreetankUsageException
+     * @throws TTUsageException
      *             if storage is not valid
      */
-    private void checkStorage() throws TreetankUsageException {
+    private void checkStorage() throws TTUsageException {
         final int compareStructure = EStoragePaths.compareStructure(getFile());
         if (compareStructure != 0) {
-            throw new TreetankUsageException("Storage has no valid storage structure."
+            throw new TTUsageException("Storage has no valid storage structure."
                 + " Compared to the specification, storage has", Integer.toString(compareStructure),
                 "elements!");
         }
@@ -294,15 +294,15 @@ public final class Database implements IDatabase {
             };
         final int[] storedVersions = getVersion();
         if (storedVersions[0] < versions[0]) {
-            throw new TreetankUsageException("Version Major expected:", Integer.toString(storedVersions[0]),
+            throw new TTUsageException("Version Major expected:", Integer.toString(storedVersions[0]),
                 "but was", Integer.toString(versions[0]));
         } else {
             if (storedVersions[1] < versions[1]) {
-                throw new TreetankUsageException("Version Minor expected:", Integer
+                throw new TTUsageException("Version Minor expected:", Integer
                     .toString(storedVersions[1]), "but was", Integer.toString(versions[1]));
             } else {
                 if (storedVersions[2] < versions[2]) {
-                    throw new TreetankUsageException("Version Fix expected:", Integer
+                    throw new TTUsageException("Version Fix expected:", Integer
                         .toString(storedVersions[2]), "but was", Integer.toString(versions[2]));
                 }
             }

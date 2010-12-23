@@ -18,7 +18,9 @@
 package com.treetank.node;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.treetank.io.ITTSource;
 
@@ -197,6 +199,14 @@ public enum ENodes {
     /** Size in the int data array. */
     private final int mIntSize;
 
+    /** Mapping of keys -> Nodes */
+    private final static Map<Integer, ENodes> MAPPING = new HashMap<Integer, ENodes>();
+    static {
+        for (final ENodes node : values()) {
+            MAPPING.put(node.mKind, node);
+        }
+    }
+
     /**
      * Constructor.
      * 
@@ -260,48 +270,12 @@ public enum ENodes {
     /**
      * Public method to get the related node based on the identifier.
      * 
-     * @param mIntKind
+     * @param paramKind
      *            the identifier for the node
-     * @return the related nodekind
+     * @return the related node
      */
-    public static ENodes getEnumKind(final int mIntKind) {
-        ENodes returnVal;
-        switch (mIntKind) {
-        case 0:
-            returnVal = UNKOWN_KIND;
-            break;
-        case 1:
-            returnVal = ELEMENT_KIND;
-            break;
-        case 2:
-            returnVal = ATTRIBUTE_KIND;
-            break;
-        case 3:
-            returnVal = TEXT_KIND;
-            break;
-        case 13:
-            returnVal = NAMESPACE_KIND;
-            break;
-        case 7:
-            returnVal = PROCESSING_KIND;
-            break;
-        case 8:
-            returnVal = COMMENT_KIND;
-            break;
-        case 9:
-            returnVal = ROOT_KIND;
-            break;
-        case 5:
-            returnVal = DELETE_KIND;
-            break;
-        case 4:
-            returnVal = WHITESPACE_KIND;
-            break;
-        default:
-            returnVal = null;
-            break;
-        }
-        return returnVal;
+    public static ENodes getEnumKind(final int paramKind) {
+        return MAPPING.get(paramKind);
     }
 
 }

@@ -30,7 +30,7 @@ import com.treetank.access.DatabaseConfiguration;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.service.xml.shredder.EShredderCommit;
 import com.treetank.service.xml.shredder.EShredderInsert;
 import com.treetank.service.xml.shredder.XMLShredder;
@@ -70,7 +70,7 @@ enum EShredder {
             } catch (final InterruptedException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
                 retVal = false;
-            } catch (final TreetankException e) {
+            } catch (final TTException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
                 retVal = false;
             } catch (final IOException e) {
@@ -107,7 +107,7 @@ enum EShredder {
             } catch (final InterruptedException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
                 retVal = false;
-            } catch (final TreetankException e) {
+            } catch (final TTException e) {
                 LOGWRAPPER.error(e.getMessage(), e);
                 retVal = false;
             } catch (final IOException e) {

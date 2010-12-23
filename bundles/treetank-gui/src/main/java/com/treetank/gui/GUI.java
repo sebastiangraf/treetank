@@ -22,14 +22,18 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.File;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JMenuBar;
+import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.WindowConstants;
 
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TTIOException;
+import com.treetank.gui.view.IView;
 import com.treetank.gui.view.ViewContainer;
 import com.treetank.gui.view.ViewNotifier;
 import com.treetank.gui.view.sunburst.SunburstView;
-import com.treetank.gui.view.text.TextView;
-import com.treetank.gui.view.tree.TreeView;
 import com.treetank.utils.LogWrapper;
 
 import org.slf4j.LoggerFactory;
@@ -60,8 +64,8 @@ public final class GUI extends JFrame {
     /** Height of the frame. */
     private static final int HEIGHT = 900;
 
-//    /** {@link GUIProp}. */
-//    private final GUIProp mProp; // Will be used in future versions (more GUI properties).
+    // /** {@link GUIProp}. */
+    // private final GUIProp mProp; // Will be used in future versions (more GUI properties).
 
     /** {@link ViewNotifier} to notify all views of changes in the underlying data structure. */
     private final ViewNotifier mNotifier;
@@ -79,12 +83,12 @@ public final class GUI extends JFrame {
      *            {@link GUIProp}
      */
     public GUI(final GUIProp paramProp) {
-//        mProp = paramProp;
+        // mProp = paramProp;
 
         // ===== Setup GUI ======
         // Title of the frame.
         setTitle("Treetank GUI");
-        
+
         // Component listener, to revalidate layout manager.
         addComponentListener(new ComponentAdapter() {
             /**
@@ -114,8 +118,7 @@ public final class GUI extends JFrame {
 
         // Create views.
         mNotifier = new ViewNotifier(this);
-        mContainer =
-            ViewContainer.getInstance(this, SunburstView.getInstance(mNotifier));
+        mContainer = ViewContainer.getInstance(this, SunburstView.getInstance(mNotifier));
         mContainer.layoutViews();
         top.add(mContainer, BorderLayout.CENTER);
         getContentPane().add(top);
@@ -145,7 +148,7 @@ public final class GUI extends JFrame {
                 mReadDB = new ReadDB(paramFile, paramRevision);
                 mNotifier.init();
             }
-        } catch (final TreetankIOException e) {
+        } catch (final TTIOException e) {
             LOGGER.error(e.getMessage(), e);
         }
         mNotifier.update();

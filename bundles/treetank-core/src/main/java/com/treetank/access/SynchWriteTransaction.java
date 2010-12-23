@@ -8,9 +8,9 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IItem;
 import com.treetank.api.IStructuralItem;
 import com.treetank.axis.DescendantAxis;
-import com.treetank.exception.TreetankException;
-import com.treetank.exception.TreetankIOException;
-import com.treetank.exception.TreetankUsageException;
+import com.treetank.exception.TTException;
+import com.treetank.exception.TTIOException;
+import com.treetank.exception.TTUsageException;
 import com.treetank.node.AbsNode;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.AttributeNode;
@@ -27,7 +27,7 @@ public class SynchWriteTransaction extends WriteTransaction {
 
     private LockManager lock;
     protected SynchWriteTransaction(long mTransactionID, SessionState mSessionState,
-        WriteTransactionState mTransactionState, int maxNodeCount, int maxTime) throws TreetankException {
+        WriteTransactionState mTransactionState, int maxNodeCount, int maxTime) throws TTException {
         super(mTransactionID, mSessionState, mTransactionState, maxNodeCount, maxTime);
        lock = LockManager.getLockManager();
     }
@@ -36,7 +36,7 @@ public class SynchWriteTransaction extends WriteTransaction {
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertElementAsFirstChild(final QName mQname) throws TreetankException {
+    public synchronized long insertElementAsFirstChild(final QName mQname) throws TTException {
        lock.getWritePermission(getCurrentNode().getNodeKey(), this);
        return super.insertElementAsFirstChild(mQname);
     }
@@ -45,7 +45,7 @@ public class SynchWriteTransaction extends WriteTransaction {
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertElementAsRightSibling(final QName mQname) throws TreetankException {
+    public synchronized long insertElementAsRightSibling(final QName mQname) throws TTException {
         lock.getWritePermission(getCurrentNode().getNodeKey(), this);
         return super.insertElementAsRightSibling(mQname);
     }
@@ -54,7 +54,7 @@ public class SynchWriteTransaction extends WriteTransaction {
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertTextAsFirstChild(final String mValueAsString) throws TreetankException {
+    public synchronized long insertTextAsFirstChild(final String mValueAsString) throws TTException {
         lock.getWritePermission(getCurrentNode().getNodeKey(), this);
         return super.insertTextAsFirstChild(mValueAsString);
     }
@@ -63,7 +63,7 @@ public class SynchWriteTransaction extends WriteTransaction {
      * {@inheritDoc}
      */
     @Override
-    public synchronized long insertTextAsRightSibling(final String mValueAsString) throws TreetankException {
+    public synchronized long insertTextAsRightSibling(final String mValueAsString) throws TTException {
         lock.getWritePermission(getCurrentNode().getNodeKey(), this);
         return insertTextAsRightSibling(mValueAsString);
     }
@@ -73,12 +73,12 @@ public class SynchWriteTransaction extends WriteTransaction {
      */
     @Override
     public synchronized long insertAttribute(final QName mQname, final String mValueAsString)
-        throws TreetankException {
+        throws TTException {
         if (getCurrentNode() instanceof ElementNode) {
             lock.getWritePermission(getCurrentNode().getNodeKey(), this);
             return super.insertAttribute(mQname, mValueAsString);
         } else {
-            throw new TreetankUsageException("Insert is not allowed if current node is not an ElementNode!");
+            throw new TTUsageException("Insert is not allowed if current node is not an ElementNode!");
         }
     }
 
@@ -87,7 +87,7 @@ public class SynchWriteTransaction extends WriteTransaction {
      */
     @Override
     public synchronized long insertNamespace(final String mUri, final String mPrefix)
-        throws TreetankException {
+        throws TTException {
         lock.getWritePermission(getCurrentNode().getNodeKey(), this);
         return super.insertNamespace(mUri, mPrefix);
     }
@@ -96,7 +96,7 @@ public class SynchWriteTransaction extends WriteTransaction {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void remove() throws TreetankException {
+    public synchronized void remove() throws TTException {
         lock.getWritePermission(getCurrentNode().getNodeKey(), this);
         super.remove();
     }
@@ -105,7 +105,7 @@ public class SynchWriteTransaction extends WriteTransaction {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setName(final String mName) throws TreetankIOException {
+    public synchronized void setName(final String mName) throws TTIOException {
         lock.getWritePermission(getCurrentNode().getNodeKey(), this);
         super.setName(mName);
     }
@@ -114,7 +114,7 @@ public class SynchWriteTransaction extends WriteTransaction {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setURI(final String mUri) throws TreetankIOException {
+    public synchronized void setURI(final String mUri) throws TTIOException {
         lock.getWritePermission(getCurrentNode().getNodeKey(), this);
         super.setURI(mUri);
     }
@@ -123,7 +123,7 @@ public class SynchWriteTransaction extends WriteTransaction {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setValue(final int mValueType, final byte[] mValue) throws TreetankIOException {
+    public synchronized void setValue(final int mValueType, final byte[] mValue) throws TTIOException {
         lock.getWritePermission(getCurrentNode().getNodeKey(), this);
         super.setValue(mValueType, mValue);
     }
@@ -132,7 +132,7 @@ public class SynchWriteTransaction extends WriteTransaction {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void setValue(final String mValue) throws TreetankIOException {
+    public synchronized void setValue(final String mValue) throws TTIOException {
         lock.getWritePermission(getCurrentNode().getNodeKey(), this);
         super.setValue(mValue);
     }

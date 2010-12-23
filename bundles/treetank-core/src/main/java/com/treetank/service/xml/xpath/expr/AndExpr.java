@@ -19,6 +19,7 @@ package com.treetank.service.xml.xpath.expr;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.functions.Function;
 import com.treetank.utils.TypedValue;
@@ -59,7 +60,7 @@ import com.treetank.utils.TypedValue;
  * </tr>
  * </table>
  */
-public class AndExpr extends AbsExpression implements IAxis {
+public class AndExpr extends AbsExpression {
 
     /** First operand of the logical expression. */
     private final IAxis mOp1;
@@ -102,9 +103,11 @@ public class AndExpr extends AbsExpression implements IAxis {
 
     /**
      * {@inheritDoc}
+     * 
+     * @throws TTXPathException
      */
     @Override
-    protected void evaluate() {
+    protected void evaluate() throws TTXPathException {
 
         // first find the effective boolean values of the two operands, then
         // determine value of the and-expression and store it in an item

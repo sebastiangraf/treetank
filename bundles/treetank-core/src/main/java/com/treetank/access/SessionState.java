@@ -35,10 +35,10 @@ import com.treetank.api.IItemList;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.cache.NodePageContainer;
-import com.treetank.exception.TreetankException;
-import com.treetank.exception.TreetankIOException;
-import com.treetank.exception.TreetankThreadedException;
-import com.treetank.exception.TreetankUsageException;
+import com.treetank.exception.TTException;
+import com.treetank.exception.TTIOException;
+import com.treetank.exception.TTThreadedException;
+import com.treetank.exception.TTUsageException;
 import com.treetank.io.AbsIOFactory;
 import com.treetank.io.IReader;
 import com.treetank.io.IWriter;
@@ -103,11 +103,11 @@ public final class SessionState {
      *            Session configuration for the TreeTank.
      * @param paramDBConfig
      *            Database configuration for the TreeTank.
-     * @throws TreetankException
+     * @throws TTException
      *             if Session state error
      */
     protected SessionState(final DatabaseConfiguration paramDBConfig,
-        final SessionConfiguration paramSessionConfig) throws TreetankException {
+        final SessionConfiguration paramSessionConfig) throws TTException {
         mDatabaseConfiguration = paramDBConfig;
         mSessionConfiguration = paramSessionConfig;
         mTransactionMap = new ConcurrentHashMap<Long, IReadTransaction>();
@@ -154,23 +154,23 @@ public final class SessionState {
             - mWriteSemaphore.availablePermits();
     }
 
-    protected IReadTransaction beginReadTransaction() throws TreetankException {
+    protected IReadTransaction beginReadTransaction() throws TTException {
         return beginReadTransaction(mLastCommittedUberPage.getRevisionNumber(), null);
     }
 
-    protected IReadTransaction beginReadTransaction(final IItemList mItemList) throws TreetankException {
+    protected IReadTransaction beginReadTransaction(final IItemList mItemList) throws TTException {
         return beginReadTransaction(mLastCommittedUberPage.getRevisionNumber(), mItemList);
     }
 
     protected IReadTransaction beginReadTransaction(final long mRevisionNumber, final IItemList mItemList)
-        throws TreetankException {
+        throws TTException {
 
         // Make sure not to exceed available number of read transactions.
         try {
             mReadSemaphore.acquire();
         } catch (final InterruptedException exc) {
             LOGWRAPPER.error(exc);
-            throw new TreetankException(exc) {
+            throw new TTException(exc) {
                 private static final long serialVersionUID = 1L;
             };
         }
@@ -183,13 +183,13 @@ public final class SessionState {
 
         // Remember transaction for debugging and safe close.
         if (mTransactionMap.put(rtx.getTransactionID(), rtx) != null) {
-            throw new TreetankUsageException("ID generation is bogus because of duplicate ID.");
+            throw new TTUsageException("ID generation is bogus because of duplicate ID.");
         }
         return rtx;
     }
 
     protected IWriteTransaction beginWriteTransaction(final int maxNodeCount, final int maxTime)
-        throws TreetankException {
+        throws TTException {
 
         // Make sure not to exceed available number of write transactions.
         if (mWriteSemaphore.availablePermits() == 0) {
@@ -199,7 +199,7 @@ public final class SessionState {
             mWriteSemaphore.acquire();
         } catch (final InterruptedException exc) {
             LOGWRAPPER.error(exc);
-            throw new TreetankThreadedException(exc);
+            throw new TTThreadedException(exc);
 
         }
 
@@ -214,14 +214,14 @@ public final class SessionState {
         // Remember transaction for debugging and safe close.
         if (mTransactionMap.put(currentID, wtx) != null
             || mWriteTransactionStateMap.put(currentID, wtxState) != null) {
-            throw new TreetankThreadedException("ID generation is bogus because of duplicate ID.");
+            throw new TTThreadedException("ID generation is bogus because of duplicate ID.");
         }
 
         return wtx;
     }
 
     protected WriteTransactionState createWriteTransactionState(final long mId,
-        final long mRepresentRevision, final long mStoreRevision) throws TreetankIOException {
+        final long mRepresentRevision, final long mStoreRevision) throws TTIOException {
         final IWriter writer = mFac.getWriter();
 
         return new WriteTransactionState(mDatabaseConfiguration, this, new UberPage(mLastCommittedUberPage,
@@ -229,7 +229,7 @@ public final class SessionState {
     }
 
     protected synchronized void syncLogs(final NodePageContainer mContToSync, final long mTransactionId)
-        throws TreetankThreadedException {
+        throws TTThreadedException {
         final ExecutorService exec = Executors.newCachedThreadPool();
         final Collection<Future<Void>> returnVals = new ArrayList<Future<Void>>();
         for (final Long key : mWriteTransactionStateMap.keySet()) {
@@ -245,14 +245,14 @@ public final class SessionState {
 
         if (mSyncTransactionsReturns.get(mTransactionId).put(mContToSync.getComplete().getNodePageKey(),
             returnVals) != null) {
-            throw new TreetankThreadedException(
+            throw new TTThreadedException(
                 "only one commit and therefore sync per id and nodepage is allowed!");
         }
 
     }
 
     protected synchronized void waitForFinishedSync(final long mTransactionKey)
-        throws TreetankThreadedException {
+        throws TTThreadedException {
         final Map<Long, Collection<Future<Void>>> completeVals =
             mSyncTransactionsReturns.remove(mTransactionKey);
         if (completeVals != null) {
@@ -262,10 +262,10 @@ public final class SessionState {
                         returnVal.get();
                     } catch (final InterruptedException exc) {
                         LOGWRAPPER.error(exc);
-                        throw new TreetankThreadedException(exc);
+                        throw new TTThreadedException(exc);
                     } catch (final ExecutionException exc) {
                         LOGWRAPPER.error(exc);
-                        throw new TreetankThreadedException(exc);
+                        throw new TTThreadedException(exc);
                     }
                 }
             }
@@ -292,7 +292,7 @@ public final class SessionState {
         mReadSemaphore.release();
     }
 
-    protected void close() throws TreetankException {
+    protected void close() throws TTException {
         // Forcibly close all open transactions.
         for (final IReadTransaction rtx : mTransactionMap.values()) {
             if (rtx instanceof IWriteTransaction) {
@@ -327,11 +327,11 @@ public final class SessionState {
 
     }
 
-    protected void assertValidRevision(final long rev) throws TreetankUsageException {
+    protected void assertValidRevision(final long rev) throws TTUsageException {
         if (rev < 0) {
-            throw new TreetankUsageException("Revision must be at least 0");
+            throw new TTUsageException("Revision must be at least 0");
         } else if (rev > mLastCommittedUberPage.getRevision()) {
-            throw new TreetankUsageException("Revision must not be bigger than", Long
+            throw new TTUsageException("Revision must not be bigger than", Long
                 .toString(mLastCommittedUberPage.getRevision()));
         }
     }

@@ -30,7 +30,7 @@ import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
 import com.treetank.access.DatabaseConfiguration;
 import com.treetank.access.SessionConfiguration;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TTIOException;
 import com.treetank.io.AbsIOFactory;
 import com.treetank.io.AbsKey;
 import com.treetank.io.IReader;
@@ -97,11 +97,11 @@ public final class BerkeleyFactory extends AbsIOFactory {
      *            for the Database settings
      * @param paramSession
      *            for the settings
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             of something odd happens while database-connection
      */
     public BerkeleyFactory(final DatabaseConfiguration mParamDatabase, final SessionConfiguration paramSession)
-        throws TreetankIOException {
+        throws TTIOException {
         super(mParamDatabase, paramSession);
 
         final DatabaseConfig conf = new DatabaseConfig();
@@ -128,7 +128,7 @@ public final class BerkeleyFactory extends AbsIOFactory {
             mDatabase = mEnv.openDatabase(null, NAME, conf);
         } catch (final DatabaseException exc) {
             LOGWRAPPER.error(exc);
-            throw new TreetankIOException(exc);
+            throw new TTIOException(exc);
         }
 
     }
@@ -137,12 +137,12 @@ public final class BerkeleyFactory extends AbsIOFactory {
      * {@inheritDoc}
      */
     @Override
-    public IReader getReader() throws TreetankIOException {
+    public IReader getReader() throws TTIOException {
         try {
             return new BerkeleyReader(mEnv, mDatabase);
         } catch (final DatabaseException exc) {
             LOGWRAPPER.error(exc);
-            throw new TreetankIOException(exc);
+            throw new TTIOException(exc);
         }
     }
 
@@ -150,7 +150,7 @@ public final class BerkeleyFactory extends AbsIOFactory {
      * {@inheritDoc}
      */
     @Override
-    public IWriter getWriter() throws TreetankIOException {
+    public IWriter getWriter() throws TTIOException {
         return new BerkeleyWriter(mEnv, mDatabase);
     }
 
@@ -158,13 +158,13 @@ public final class BerkeleyFactory extends AbsIOFactory {
      * {@inheritDoc}
      */
     @Override
-    public void closeConcreteStorage() throws TreetankIOException {
+    public void closeConcreteStorage() throws TTIOException {
         try {
             mDatabase.close();
             mEnv.close();
         } catch (final DatabaseException exc) {
             LOGWRAPPER.error(exc);
-            throw new TreetankIOException(exc);
+            throw new TTIOException(exc);
         }
     }
 
@@ -172,7 +172,7 @@ public final class BerkeleyFactory extends AbsIOFactory {
      * {@inheritDoc}
      */
     @Override
-    public boolean exists() throws TreetankIOException {
+    public boolean exists() throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
         boolean returnVal = false;
@@ -187,7 +187,7 @@ public final class BerkeleyFactory extends AbsIOFactory {
             reader.close();
         } catch (final DatabaseException exc) {
             LOGWRAPPER.error(exc);
-            throw new TreetankIOException(exc);
+            throw new TTIOException(exc);
         }
         return returnVal;
 

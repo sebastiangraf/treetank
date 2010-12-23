@@ -30,7 +30,7 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.service.xml.xpath.XPathAxis;
 import com.treetank.service.xml.xpath.parser.XPathParser;
 import com.treetank.utils.TypedValue;
@@ -40,17 +40,17 @@ public class XPathParserTest {
     private XPathParser parser;
 
     @Before
-    public void setUp() throws TreetankException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() throws TreetankException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testLiterals() throws TreetankException {
+    public void testLiterals() throws TTException {
 
         // Build simple test tree.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
@@ -103,7 +103,7 @@ public class XPathParserTest {
     }
 
     @Test
-    public void testEBNF() throws TreetankException {
+    public void testEBNF() throws TTException {
 
         // Build simple test tree.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());

@@ -21,7 +21,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 
 /**
@@ -82,12 +82,11 @@ public final class RESTResponseHelper {
      * @param document
      *            The XML {@link Document} instance.
      * @return A list of XML {@link Element} as the collection.
-     * @throws TreetankException
+     * @throws TTException
      * @throws WebApplicationException
      */
     private static List<Element> createCollectionElementDBs(final List<String> resources,
-        final List<String> collections, final Document document) throws WebApplicationException,
-        TreetankException {
+        final List<String> collections, final Document document) throws WebApplicationException, TTException {
         final List<Element> collectionsEls = new ArrayList<Element>();
         for (final String res : resources) {
             final Element elRes = document.createElement("resource");
@@ -133,7 +132,7 @@ public final class RESTResponseHelper {
                 avCol.add("/" + entry.getKey());
             } else if ("resource".equals(value)) {
                 avRes.add("/"
-                + entry.getKey().substring(0, entry.getKey().length() - RESTProps.TNKEND.length()));
+                    + entry.getKey().substring(0, entry.getKey().length() - RESTProps.TNKEND.length()));
             }
 
         }
@@ -149,7 +148,7 @@ public final class RESTResponseHelper {
                     List<Element> collections;
                     try {
                         collections = RESTResponseHelper.createCollectionElementDBs(avRes, avCol, document);
-                    } catch (final TreetankException exce) {
+                    } catch (final TTException exce) {
                         throw new WebApplicationException(exce);
                     }
                     for (final Element resource : collections) {

@@ -25,7 +25,7 @@ import org.junit.Before;
 
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.service.xml.serialize.XMLSerializer;
 
 /**
@@ -44,13 +44,13 @@ public class WikipediaImportTest extends TestCase {
 
     @Override
     @Before
-    public void setUp() throws TreetankException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
     }
 
     @Override
     @After
-    public void tearDown() throws TreetankException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
     }
 

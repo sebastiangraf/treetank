@@ -39,9 +39,9 @@ import com.treetank.access.DatabaseConfiguration;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
-import com.treetank.exception.TreetankIOException;
-import com.treetank.exception.TreetankUsageException;
+import com.treetank.exception.TTException;
+import com.treetank.exception.TTIOException;
+import com.treetank.exception.TTUsageException;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
@@ -215,17 +215,17 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      *            {@link File}.
      * @param paramCommit
      *            Determines if changes should be commited.
-     * @throws TreetankUsageException
+     * @throws TTUsageException
      *             If insertasfirstChild && updateOnly is both true OR if wtx is
      *             not pointing to doc-root and updateOnly= true
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             If Treetank cannot access node keys.
      * 
      */
     @SuppressWarnings("unchecked")
     public XMLUpdateShredder(final IWriteTransaction paramWtx, final XMLEventReader paramReader,
         final EShredderInsert paramAddAsFirstChild, final Object paramData, final EShredderCommit paramCommit)
-        throws TreetankUsageException, TreetankIOException {
+        throws TTUsageException, TTIOException {
         super(paramWtx, paramReader, paramAddAsFirstChild);
         if (paramData == null || paramCommit == null) {
             throw new IllegalArgumentException("None of the constructor parameters may be null!");
@@ -243,12 +243,12 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
     /**
      * Invoking the shredder.
      * 
-     * @throws TreetankException
+     * @throws TTException
      *             In case any Treetank exception occured.
      * @return revision of last revision (before commit).
      */
     @Override
-    public Long call() throws TreetankException {
+    public Long call() throws TTException {
         final long revision = mWtx.getRevisionNumber();
         updateOnly();
         if (mCommit == EShredderCommit.COMMIT) {
@@ -260,10 +260,10 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
     /**
      * Update a shreddered file.
      * 
-     * @throws TreetankException
+     * @throws TTException
      *             In case of any Treetank error.
      */
-    private void updateOnly() throws TreetankException {
+    private void updateOnly() throws TTException {
         try {
             // Initialize variables.
             mLevelInToShredder = 0;
@@ -384,10 +384,10 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             // TODO: use Java7 multi-catch feature.
         } catch (final XMLStreamException e) {
             LOGWRAPPER.error(e);
-            throw new TreetankIOException(e);
+            throw new TTIOException(e);
         } catch (final IOException e) {
             LOGWRAPPER.error(e);
-            throw new TreetankIOException(e);
+            throw new TTIOException(e);
         }
 
     }
@@ -401,11 +401,11 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      *             In case of any StAX parsing error.
      * @throws IOException
      *             In case of any I/O error.
-     * @throws TreetankException
+     * @throws TTException
      *             In case of any Treetank error.
      */
     private void processStartTag(final StartElement paramElem) throws IOException, XMLStreamException,
-        TreetankException {
+        TTException {
         assert paramElem != null;
         // Log debugging messages.
         LOGWRAPPER.debug("TO SHREDDER: " + paramElem.getName());
@@ -448,11 +448,11 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      *             In case of any StAX parsing error.
      * @throws IOException
      *             In case of any I/O error.
-     * @throws TreetankException
+     * @throws TTException
      *             In case of any Treetank error.
      */
     private void processCharacters(final Characters paramText) throws IOException, XMLStreamException,
-        TreetankException {
+        TTException {
         assert paramText != null;
         // Initialize variables.
         initializeVars();
@@ -483,10 +483,10 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * 
      * @throws XMLStreamException
      *             In case of any parsing error.
-     * @throws TreetankException
+     * @throws TTException
      *             In case anything went wrong while moving/deleting nodes in Treetank.
      */
-    private void processEndTag() throws XMLStreamException, TreetankException {
+    private void processEndTag() throws XMLStreamException, TTException {
         mLevelInToShredder--;
 
         if (mInserted) {
@@ -615,12 +615,12 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * In case they are the same nodes move cursor to next node and update
      * stack.
      * 
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             In case of any Treetank error.
      * @throws XMLStreamException
      *             In case of any StAX parsing error.
      */
-    private void sameTextNode() throws TreetankIOException, XMLStreamException {
+    private void sameTextNode() throws TTIOException, XMLStreamException {
         // Update variables.
         mInsert = EInsert.NOINSERT;
         mDelete = EDelete.NODELETE;
@@ -698,10 +698,10 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * 
      * @throws XMLStreamException
      *             In case of any StAX parsing error.
-     * @throws TreetankException
+     * @throws TTException
      *             In case anything went wrong while moving the Treetank transaction.
      */
-    private void sameElementNode() throws XMLStreamException, TreetankException {
+    private void sameElementNode() throws XMLStreamException, TTException {
         // Update variables.
         mInsert = EInsert.NOINSERT;
         mDelete = EDelete.NODELETE;
@@ -778,13 +778,13 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * 
      * @param paramElement
      *            {@link StartElement}, which is going to be inserted.
-     * @throws TreetankException
+     * @throws TTException
      *             In case any exception occurs while moving the cursor or
      *             deleting nodes in Treetank.
      * @throws XMLStreamException
      *             In case of any StAX parsing error.
      */
-    private void insertElementNode(final StartElement paramElement) throws TreetankException,
+    private void insertElementNode(final StartElement paramElement) throws TTException,
         XMLStreamException {
         assert paramElement != null;
         /*
@@ -856,13 +856,13 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      * 
      * @param paramText
      *            {@link Characters}, which is going to be inserted.
-     * @throws TreetankException
+     * @throws TTException
      *             In case any exception occurs while moving the cursor or
      *             deleting nodes in Treetank.
      * @throws XMLStreamException
      *             In case of any StAX parsing error.
      */
-    private void insertTextNode(final Characters paramText) throws TreetankException, XMLStreamException {
+    private void insertTextNode(final Characters paramText) throws TTException, XMLStreamException {
         assert paramText != null;
         /*
          * Add node if it's either not found among right siblings (and the
@@ -953,11 +953,11 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
     /**
      * Delete node.
      * 
-     * @throws TreetankException
+     * @throws TTException
      *             In case any exception occurs while moving the cursor or
      *             deleting nodes in Treetank.
      */
-    private void deleteNode() throws TreetankException {
+    private void deleteNode() throws TTException {
         /*
          * If found in one of the rightsiblings in the current shreddered
          * structure remove all nodes until the transaction points to the found
@@ -1060,10 +1060,10 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      *            determines how to add the node
      * @param paramTextEvent
      *            the current {@link Character} event from the StAX parser.
-     * @throws TreetankException
+     * @throws TTException
      *             if adding text node fails
      */
-    private void addNewText(final EAdd paramAdd, final Characters paramTextEvent) throws TreetankException {
+    private void addNewText(final EAdd paramAdd, final Characters paramTextEvent) throws TTException {
         assert paramTextEvent != null;
         final String text = paramTextEvent.getData().trim();
         final ByteBuffer textByteBuffer = ByteBuffer.wrap(TypedValue.getBytes(text));
@@ -1083,11 +1083,11 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
      *            determines wether node is added as first child or right sibling
      * @param paramStartElement
      *            the current {@link StartElement}
-     * @throws TreetankException
+     * @throws TTException
      *             if inserting node fails
      */
     private void addNewElement(final EAdd paramAdd, final StartElement paramStartElement)
-        throws TreetankException {
+        throws TTException {
         assert paramStartElement != null;
         final QName name = paramStartElement.getName();
         long key;
@@ -1363,7 +1363,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Lon
             wtx.close();
             session.close();
             db.close();
-        } catch (final TreetankException e) {
+        } catch (final TTException e) {
             LOGWRAPPER.error(e);
         } catch (final IOException e) {
             LOGWRAPPER.error(e);

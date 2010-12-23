@@ -20,7 +20,7 @@ import java.io.File;
 
 import com.treetank.access.Database;
 import com.treetank.access.DatabaseConfiguration;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TTIOException;
 import com.treetank.settings.EStoragePaths;
 import com.treetank.utils.LogWrapper;
 
@@ -71,7 +71,7 @@ public abstract class AbstractPersistenceCache implements ICache {
     public final void put(final long mKey, final NodePageContainer mPage) {
         try {
             putPersistent(mKey, mPage);
-        } catch (final TreetankIOException exc) {
+        } catch (final TTIOException exc) {
             LOGWRAPPER.error(exc);
             throw new IllegalStateException(exc);
         }
@@ -87,7 +87,7 @@ public abstract class AbstractPersistenceCache implements ICache {
                 files.delete();
             }
             place.delete();
-        } catch (final TreetankIOException exc) {
+        } catch (final TTIOException exc) {
             LOGWRAPPER.error(exc);
             throw new IllegalStateException(exc);
         }
@@ -99,7 +99,7 @@ public abstract class AbstractPersistenceCache implements ICache {
     public final NodePageContainer get(final long mKey) {
         try {
             return getPersistent(mKey);
-        } catch (final TreetankIOException exc) {
+        } catch (final TTIOException exc) {
             LOGWRAPPER.error(exc);
             throw new IllegalStateException(exc);
         }
@@ -108,10 +108,10 @@ public abstract class AbstractPersistenceCache implements ICache {
     /**
      * Clearing a persistent cache.
      * 
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if something odd happens
      */
-    public abstract void clearPersistent() throws TreetankIOException;
+    public abstract void clearPersistent() throws TTIOException;
 
     /**
      * Putting a page into a persistent log.
@@ -120,11 +120,11 @@ public abstract class AbstractPersistenceCache implements ICache {
      *            to be put
      * @param mPage
      *            to be put
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if something odd happens
      */
     public abstract void putPersistent(final long mKey, final NodePageContainer mPage)
-        throws TreetankIOException;
+        throws TTIOException;
 
     /**
      * Getting a NodePage from the persistent cache.
@@ -132,9 +132,9 @@ public abstract class AbstractPersistenceCache implements ICache {
      * @param mKey
      *            to get the page
      * @return the Nodepage to be fetched
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if something odd happens.
      */
-    public abstract NodePageContainer getPersistent(final long mKey) throws TreetankIOException;
+    public abstract NodePageContainer getPersistent(final long mKey) throws TTIOException;
 
 }

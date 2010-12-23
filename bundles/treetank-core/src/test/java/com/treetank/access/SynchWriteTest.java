@@ -18,8 +18,8 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TTException;
+import com.treetank.exception.TTIOException;
 import com.treetank.utils.DocumentCreater;
 
 import org.junit.After;
@@ -32,7 +32,7 @@ public class SynchWriteTest {
     Exchanger<Boolean> verify = new Exchanger<Boolean>();
 
     @Before
-    public void setUp() throws TreetankException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -51,7 +51,7 @@ public class SynchWriteTest {
     }
 
     @After
-    public void tearDown() throws TreetankException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
     }
 
@@ -61,7 +61,7 @@ public class SynchWriteTest {
      * Two threads are launched which access the file concurrently, performing changes 
      * that have to persist.
      */
-    public void testConcurrentWrite() throws TreetankException, InterruptedException, ExecutionException {
+    public void testConcurrentWrite() throws TTException, InterruptedException, ExecutionException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final Semaphore semaphore = new Semaphore(1);
         final ISession session = database.getSession();

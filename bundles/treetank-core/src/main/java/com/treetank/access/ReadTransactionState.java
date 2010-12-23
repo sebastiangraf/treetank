@@ -26,7 +26,7 @@ import com.treetank.api.IItemList;
 import com.treetank.cache.ICache;
 import com.treetank.cache.NodePageContainer;
 import com.treetank.cache.RAMCache;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TTIOException;
 import com.treetank.io.IReader;
 import com.treetank.node.DeletedNode;
 import com.treetank.page.AbstractPage;
@@ -86,12 +86,12 @@ public class ReadTransactionState {
      *            List of non-persistent items.
      * @param reader
      *            for this transaction
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if the read of the persistent storage fails
      */
     protected ReadTransactionState(final DatabaseConfiguration paramDatabaseConfiguration,
         final UberPage paramUberPage, final long paramRevision, final IItemList paramItemList,
-        final IReader reader) throws TreetankIOException {
+        final IReader reader) throws TTIOException {
         mCache = new RAMCache();
         mDatabaseConfiguration = paramDatabaseConfiguration;
         mPageReader = reader;
@@ -107,10 +107,10 @@ public class ReadTransactionState {
      * @param paramNodeKey
      *            searched for
      * @return the related Node
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if the read to the persistent storage fails
      */
-    protected IItem getNode(final long paramNodeKey) throws TreetankIOException {
+    protected IItem getNode(final long paramNodeKey) throws TTIOException {
 
         // Immediately return node from item list if node key negative.
         if (paramNodeKey < 0) {
@@ -186,10 +186,10 @@ public class ReadTransactionState {
     /**
      * Closing this Readtransaction.
      * 
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if the closing to the persistent storage fails.
      */
-    protected void close() throws TreetankIOException {
+    protected void close() throws TTIOException {
         mPageReader.close();
         mCache.clear();
 
@@ -202,14 +202,14 @@ public class ReadTransactionState {
      *            Key of revision to find revision root page for.
      * @return Revision root page of this revision key.
      * 
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected final RevisionRootPage loadRevRoot(final long revisionKey) throws TreetankIOException {
+    protected final RevisionRootPage loadRevRoot(final long revisionKey) throws TTIOException {
 
         final PageReference ref = dereferenceLeafOfTree(mUberPage.getIndirectPageReference(), revisionKey);
         if (ref.getPage() == null && ref.getKey() == null) {
-            throw new TreetankIOException(
+            throw new TTIOException(
                 "Revision will not be loaded since neither the key nor the page is referencable.");
         }
         RevisionRootPage page = (RevisionRootPage)ref.getPage();
@@ -223,7 +223,7 @@ public class ReadTransactionState {
         return page;
     }
 
-    protected final void initializeNamePage() throws TreetankIOException {
+    protected final void initializeNamePage() throws TTIOException {
         final PageReference ref = mRootPage.getNamePageReference();
         if (ref.getPage() == null) {
             ref.setPage((NamePage)mPageReader.read(ref));
@@ -253,10 +253,10 @@ public class ReadTransactionState {
      *            Key of node page.
      * @return Dereferenced page.
      * 
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected final NodePage[] getSnapshotPages(final long mNodePageKey) throws TreetankIOException {
+    protected final NodePage[] getSnapshotPages(final long mNodePageKey) throws TTIOException {
 
         // ..and get all leaves of nodepages from the revision-trees.
         final List<PageReference> refs = new ArrayList<PageReference>();
@@ -302,11 +302,11 @@ public class ReadTransactionState {
      *            Reference to dereference.
      * @return Dereferenced page.
      * 
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if something odd happens within the creation process.
      */
     protected final IndirectPage dereferenceIndirectPage(final PageReference reference)
-        throws TreetankIOException {
+        throws TTIOException {
 
         IndirectPage page = (IndirectPage)reference.getPage();
 
@@ -328,11 +328,11 @@ public class ReadTransactionState {
      *            Key to look up in the indirect tree.
      * @return Reference denoted by key pointing to the leaf page.
      * 
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if something odd happens within the creation process.
      */
     protected final PageReference dereferenceLeafOfTree(final PageReference mStartReference, final long mKey)
-        throws TreetankIOException {
+        throws TTIOException {
 
         // Initial state pointing to the indirect page of level 0.
         PageReference reference = mStartReference;
@@ -373,10 +373,10 @@ public class ReadTransactionState {
      * 
      * @return the current revision root page
      * 
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected RevisionRootPage getActualRevisionRootPage() throws TreetankIOException {
+    protected RevisionRootPage getActualRevisionRootPage() throws TTIOException {
         return mRootPage;
     }
 

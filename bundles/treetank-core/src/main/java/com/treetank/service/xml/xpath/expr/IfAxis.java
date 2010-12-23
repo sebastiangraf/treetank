@@ -20,6 +20,7 @@ package com.treetank.service.xml.xpath.expr;
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
+import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.functions.Function;
 
 /**
@@ -99,7 +100,11 @@ public class IfAxis extends AbsAxis implements IAxis {
 
         if (mFirst) {
             mFirst = false;
-            mResult = (Function.ebv(mIf)) ? mThen : mElse;
+            try {
+                mResult = (Function.ebv(mIf)) ? mThen : mElse;
+            } catch (TTXPathException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         if (mResult.hasNext()) {

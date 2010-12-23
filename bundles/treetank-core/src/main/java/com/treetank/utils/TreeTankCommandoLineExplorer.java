@@ -26,7 +26,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 
 import org.slf4j.LoggerFactory;
 
@@ -355,7 +355,7 @@ public final class TreeTankCommandoLineExplorer {
                         builder.append(" not succeed, Please login with write-right "
                             + "(that means without revision parameter");
                     }
-                } catch (final TreetankException exc) {
+                } catch (final TTException exc) {
                     LOGWRAPPER.error(exc);
                     builder.append(" throws exception: ").append(exc);
                 }

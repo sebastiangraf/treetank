@@ -13,7 +13,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.service.jaxrx.enums.EIdAccessType;
 import com.treetank.service.jaxrx.util.RESTProps;
 import com.treetank.service.jaxrx.util.RestXPathProcessor;
@@ -49,8 +49,8 @@ public class NodeIdRepresentation {
     /**
      * This field specifies the begin result element of the request.
      */
-    private static final transient byte[] BEGINRESULT =
-        "<jaxrx:result xmlns:jaxrx=\"http://jaxrx.org/\">".getBytes();
+    private static final transient byte[] BEGINRESULT = "<jaxrx:result xmlns:jaxrx=\"http://jaxrx.org/\">"
+        .getBytes();
 
     /**
      * This field specifies the end result element of the request.
@@ -173,7 +173,7 @@ public class NodeIdRepresentation {
                 final RestXPathProcessor xpathProcessor = new RestXPathProcessor();
                 try {
                     xpathProcessor.getXpathResource(dbFile, nodeId, query, nodeid, rev, output, wrapResult);
-                } catch (final TreetankException exce) {
+                } catch (final TTException exce) {
                     throw new JaxRxException(exce);
                 }
             }
@@ -216,13 +216,13 @@ public class NodeIdRepresentation {
                         // workerHelper.closeWTX(abort, wtx, session, database);
                         throw new JaxRxException(404, NOTFOUND);
                     }
-                } catch (final TreetankException exce) {
+                } catch (final TTException exce) {
                     abort = true;
                     throw new JaxRxException(exce);
                 } finally {
                     try {
                         WorkerHelper.closeWTX(abort, wtx, session, database);
-                    } catch (final TreetankException exce) {
+                    } catch (final TTException exce) {
                         throw new JaxRxException(exce);
                     }
                 }
@@ -273,13 +273,13 @@ public class NodeIdRepresentation {
                         throw new JaxRxException(404, NOTFOUND);
                     }
 
-                } catch (final TreetankException exc) {
+                } catch (final TTException exc) {
                     abort = true;
                     throw new JaxRxException(exc);
                 } finally {
                     try {
                         WorkerHelper.closeWTX(abort, wtx, session, database);
-                    } catch (final TreetankException exce) {
+                    } catch (final TTException exce) {
                         throw new JaxRxException(exce);
                     }
                 }
@@ -364,7 +364,7 @@ public class NodeIdRepresentation {
                 } finally {
                     try {
                         WorkerHelper.closeWTX(abort, wtx, session, database);
-                    } catch (final TreetankException exce) {
+                    } catch (final TTException exce) {
                         throw new JaxRxException(exce);
                     }
                 }
@@ -420,7 +420,7 @@ public class NodeIdRepresentation {
                     serializer.call();
 
                 }
-            } catch (final TreetankException ttExcep) {
+            } catch (final TTException ttExcep) {
                 throw new JaxRxException(ttExcep);
             } catch (final IOException ioExcep) {
                 throw new JaxRxException(ioExcep);
@@ -437,7 +437,7 @@ public class NodeIdRepresentation {
             } finally {
                 try {
                     WorkerHelper.closeRTX(null, session, database);
-                } catch (final TreetankException exce) {
+                } catch (final TTException exce) {
                     throw new JaxRxException(exce);
                 }
             }
@@ -540,7 +540,7 @@ public class NodeIdRepresentation {
                 } else {
                     throw new JaxRxException(404, NOTFOUND);
                 }
-            } catch (final TreetankException ttExcep) {
+            } catch (final TTException ttExcep) {
                 throw new JaxRxException(ttExcep);
             } catch (final IOException ioExcep) {
                 throw new JaxRxException(ioExcep);
@@ -557,7 +557,7 @@ public class NodeIdRepresentation {
             } finally {
                 try {
                     WorkerHelper.closeRTX(rtx, session, database);
-                } catch (final TreetankException exce) {
+                } catch (final TTException exce) {
                     throw new JaxRxException(exce);
                 }
             }

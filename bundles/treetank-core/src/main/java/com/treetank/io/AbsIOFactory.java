@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.treetank.access.DatabaseConfiguration;
 import com.treetank.access.SessionConfiguration;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TTIOException;
 import com.treetank.io.berkeley.BerkeleyFactory;
 import com.treetank.io.file.FileFactory;
 import com.treetank.settings.EDatabaseSetting;
@@ -78,27 +78,27 @@ public abstract class AbsIOFactory {
      * Getting a writer.
      * 
      * @return an {@link IWriter} instance
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if the initalisation fails
      */
-    public abstract IWriter getWriter() throws TreetankIOException;
+    public abstract IWriter getWriter() throws TTIOException;
 
     /**
      * Getting a reader.
      * 
      * @return an {@link IReader} instance
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if the initalisation fails
      */
-    public abstract IReader getReader() throws TreetankIOException;
+    public abstract IReader getReader() throws TTIOException;
 
     /**
      * Getting a Closing this storage. Is equivalent to Session.close
      * 
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             exception to be throwns
      */
-    public final void closeStorage() throws TreetankIOException {
+    public final void closeStorage() throws TTIOException {
         closeConcreteStorage();
         FACTORIES.remove(this.mSessionConfig);
     }
@@ -106,10 +106,10 @@ public abstract class AbsIOFactory {
     /**
      * Closing concrete storage.
      * 
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if anything weird happens
      */
-    protected abstract void closeConcreteStorage() throws TreetankIOException;
+    protected abstract void closeConcreteStorage() throws TTIOException;
 
     /**
      * Getting an AbstractIOFactory instance.
@@ -118,12 +118,12 @@ public abstract class AbsIOFactory {
      *            with settings for the storage.
      * @param paramSessionConf
      *            with settings for the session
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             If error
      * @return an instance of this factory based on the kind in the conf
      */
     public static final AbsIOFactory getInstance(final DatabaseConfiguration paramDatabaseConf,
-        final SessionConfiguration paramSessionConf) throws TreetankIOException {
+        final SessionConfiguration paramSessionConf) throws TTIOException {
         AbsIOFactory fac = null;
         if (FACTORIES.containsKey(paramSessionConf)) {
             fac = FACTORIES.get(paramSessionConf);
@@ -139,7 +139,7 @@ public abstract class AbsIOFactory {
                 fac = new BerkeleyFactory(paramDatabaseConf, paramSessionConf);
                 break;
             default:
-                throw new TreetankIOException("Type", storageType.toString(), "not valid!");
+                throw new TTIOException("Type", storageType.toString(), "not valid!");
             }
             FACTORIES.put(paramSessionConf, fac);
         }
@@ -159,8 +159,8 @@ public abstract class AbsIOFactory {
      * Check if storage exists.
      * 
      * @return true if storage holds data, false otherwise
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if storage is not accessable
      */
-    public abstract boolean exists() throws TreetankIOException;
+    public abstract boolean exists() throws TTIOException;
 }

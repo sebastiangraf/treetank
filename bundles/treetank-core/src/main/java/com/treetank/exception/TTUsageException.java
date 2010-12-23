@@ -22,7 +22,7 @@ package com.treetank.exception;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class TreetankUsageException extends TreetankException {
+public class TTUsageException extends TTException {
 
     /**
      * Constructor.
@@ -31,7 +31,7 @@ public class TreetankUsageException extends TreetankException {
      *            message as string, they are concatenated with spaces in
      *            between
      */
-    public TreetankUsageException(final String... message) {
+    public TTUsageException(final String... message) {
         super(message);
     }
 

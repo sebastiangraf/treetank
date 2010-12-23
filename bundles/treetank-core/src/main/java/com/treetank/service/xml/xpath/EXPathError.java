@@ -1,6 +1,6 @@
 package com.treetank.service.xml.xpath;
 
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTXPathException;
 
 public enum EXPathError {
 
@@ -107,7 +107,7 @@ public enum EXPathError {
     /**
      * Encapsulated Exception for the specified Enum.
      */
-    private final TTXPathException encapsulatedException;
+    private final TTXPathException mException;
 
     /**
      * Constructor. Initializes the internal state.
@@ -117,7 +117,7 @@ public enum EXPathError {
      */
     private EXPathError(final String msg) {
         mMessage = msg;
-        encapsulatedException = new TTXPathException(mMessage);
+        mException = new TTXPathException(mMessage);
     }
 
     /**
@@ -129,25 +129,13 @@ public enum EXPathError {
         return mMessage;
     }
 
-    public TTXPathException getEncapsulatedException() {
-        return encapsulatedException;
-    }
-
     /**
-     * Static class for handling the Enum as an {@link TreetankException}
+     * Getting the specific exception for a type.
+     * 
+     * @return {@link TTXPathException} encapsulated
      */
-    static class TTXPathException extends TreetankException {
-
-        /**
-         * Constructor.
-         * 
-         * @param paramMessage
-         *            message of the XPath Error.
-         */
-        TTXPathException(final String paramMessage) {
-            super(paramMessage);
-        }
-
+    public TTXPathException getEncapsulatedException() {
+        return mException;
     }
 
 }
