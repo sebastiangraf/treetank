@@ -19,9 +19,9 @@ package com.treetank.service.xml.xpath.comparators;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
-import com.treetank.service.xml.xpath.XPathError;
-import com.treetank.service.xml.xpath.XPathError.ErrorType;
+import com.treetank.service.xml.xpath.EXPathError;
 import com.treetank.service.xml.xpath.types.Type;
 import com.treetank.utils.TypedValue;
 
@@ -55,7 +55,7 @@ public class NodeComp extends AbsComparator implements IAxis {
      * {@inheritDoc}
      */
     @Override
-    protected AtomicValue[] atomize(final IAxis mOperand) {
+    protected AtomicValue[] atomize(final IAxis mOperand) throws TTXPathException {
 
         final IReadTransaction rtx = getTransaction();
         // store item key as atomic value
@@ -68,7 +68,7 @@ public class NodeComp extends AbsComparator implements IAxis {
 
         // the operands must be singletons in case of a node comparison
         if (mOperand.hasNext()) {
-            throw new XPathError(ErrorType.XPTY0004);
+            throw EXPathError.XPTY0004.getEncapsulatedException();
         } else {
             return op;
         }
@@ -87,9 +87,11 @@ public class NodeComp extends AbsComparator implements IAxis {
 
     /**
      * {@inheritDoc}
+     * 
      */
     @Override
-    protected boolean compare(final AtomicValue[] mOperand1, final AtomicValue[] mOperand2) {
+    protected boolean compare(final AtomicValue[] mOperand1, final AtomicValue[] mOperand2)
+        throws TTXPathException {
 
         final String op1 = TypedValue.parseString(mOperand1[0].getRawValue());
         final String op2 = TypedValue.parseString(mOperand2[0].getRawValue());

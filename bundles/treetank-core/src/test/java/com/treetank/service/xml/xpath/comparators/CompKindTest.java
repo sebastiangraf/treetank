@@ -18,20 +18,21 @@
 
 package com.treetank.service.xml.xpath.comparators;
 
+import com.treetank.exception.TTXPathException;
+import com.treetank.service.xml.xpath.types.Type;
+
+import org.junit.Test;
+
 import static org.hamcrest.CoreMatchers.is;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-import org.junit.Test;
-
-import com.treetank.service.xml.xpath.XPathError;
-import com.treetank.service.xml.xpath.types.Type;
-
 public class CompKindTest {
 
     @Test
-    public void testEQ() {
+    public void testEQ() throws TTXPathException {
 
         assertEquals(CompKind.EQ.compare("2.0", "2", Type.DOUBLE), true);
         assertEquals(CompKind.EQ.compare("2.0", "2.01", Type.DOUBLE), false);
@@ -96,16 +97,16 @@ public class CompKindTest {
         try {
             assertEquals(CompKind.EQ.compare("2.0", "2.01", Type.YEAR_MONTH_DURATION), false);
             fail("Expected exception");
-        } catch (XPathError e) {
+        } catch (TTXPathException e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate "
                 + "the expression or the typedoes not match a required type as"
-                + " specified by the matching rules."));
+                + " specified by the matching rules. "));
         }
 
     }
 
     @Test
-    public void testNE() {
+    public void testNE() throws TTXPathException {
 
         assertEquals(CompKind.NE.compare("2.0", "2", Type.DOUBLE), false);
         assertEquals(CompKind.NE.compare("2.0", "2.01", Type.DOUBLE), true);
@@ -170,15 +171,15 @@ public class CompKindTest {
         try {
             assertEquals(CompKind.NE.compare("2.0", "2.01", Type.YEAR_MONTH_DURATION), true);
             fail("Expected exception");
-        } catch (XPathError e) {
+        } catch (TTXPathException e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate "
                 + "the expression or the typedoes not match a required type as"
-                + " specified by the matching rules."));
+                + " specified by the matching rules. "));
         }
     }
 
     @Test
-    public void testLT() {
+    public void testLT() throws TTXPathException {
 
         assertEquals(CompKind.LT.compare("2.0", "2", Type.DOUBLE), false);
         assertEquals(CompKind.LT.compare("2.0", "2.01", Type.DOUBLE), true);
@@ -243,15 +244,15 @@ public class CompKindTest {
         try {
             assertEquals(CompKind.LT.compare("2.0", "2.01", Type.G_MONTH), true);
             fail("Expected exception");
-        } catch (XPathError e) {
+        } catch (TTXPathException e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate "
                 + "the expression or the typedoes not match a required type as"
-                + " specified by the matching rules."));
+                + " specified by the matching rules. "));
         }
     }
 
     @Test
-    public void testLE() {
+    public void testLE() throws TTXPathException {
 
         assertEquals(CompKind.LE.compare("2.0", "2", Type.DOUBLE), true);
         assertEquals(CompKind.LE.compare("2.0", "2.01", Type.DOUBLE), true);
@@ -316,16 +317,16 @@ public class CompKindTest {
         try {
             assertEquals(CompKind.LE.compare("2.0", "2.01", Type.G_MONTH), true);
             fail("Expected exception");
-        } catch (XPathError e) {
+        } catch (TTXPathException e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate "
                 + "the expression or the typedoes not match a required type as"
-                + " specified by the matching rules."));
+                + " specified by the matching rules. "));
         }
 
     }
 
     @Test
-    public void testGT() {
+    public void testGT() throws TTXPathException {
 
         assertEquals(CompKind.GT.compare("2.0", "2", Type.DOUBLE), false);
         assertEquals(CompKind.GT.compare("2.0", "2.01", Type.DOUBLE), false);
@@ -390,15 +391,15 @@ public class CompKindTest {
         try {
             assertEquals(CompKind.GT.compare("2.0", "2.01", Type.G_MONTH), false);
             fail("Expected exception");
-        } catch (XPathError e) {
+        } catch (TTXPathException e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate "
                 + "the expression or the typedoes not match a required type as"
-                + " specified by the matching rules."));
+                + " specified by the matching rules. "));
         }
     }
 
     @Test
-    public void testGE() {
+    public void testGE() throws TTXPathException {
 
         assertEquals(CompKind.GE.compare("2.0", "2", Type.DOUBLE), true);
         assertEquals(CompKind.GE.compare("2.0", "2.01", Type.DOUBLE), false);
@@ -463,15 +464,15 @@ public class CompKindTest {
         try {
             assertEquals(CompKind.GE.compare("2.0", "2.01", Type.G_MONTH), false);
             fail("Expected exception");
-        } catch (XPathError e) {
+        } catch (TTXPathException e) {
             assertThat(e.getMessage(), is("err:XPTY0004 The type is not appropriate "
                 + "the expression or the typedoes not match a required type as"
-                + " specified by the matching rules."));
+                + " specified by the matching rules. "));
         }
     }
 
     @Test
-    public void testFO() {
+    public void testFO() throws TTXPathException {
 
         try {
             assertEquals(CompKind.FO.compare("2.0", "2", Type.DATE), false);
@@ -482,7 +483,7 @@ public class CompKindTest {
     }
 
     @Test
-    public void testPRE() {
+    public void testPRE() throws TTXPathException {
 
         try {
             assertEquals(CompKind.PRE.compare("2.0", "2", Type.DATE), false);
@@ -493,7 +494,7 @@ public class CompKindTest {
     }
 
     @Test
-    public void testIS() {
+    public void testIS() throws TTXPathException {
 
         assertEquals(CompKind.IS.compare("2.0", "2", Type.DOUBLE), true);
         assertEquals(CompKind.IS.compare("2.0", "2.01", Type.DOUBLE), true);

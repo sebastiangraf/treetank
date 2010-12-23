@@ -18,13 +18,6 @@
 
 package com.treetank.service.xml.xpath.comparators;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IAxis;
@@ -36,10 +29,16 @@ import com.treetank.axis.DescendantAxis;
 import com.treetank.exception.TTException;
 import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
-import com.treetank.service.xml.xpath.XPathError;
 import com.treetank.service.xml.xpath.expr.LiteralExpr;
 import com.treetank.service.xml.xpath.types.Type;
 import com.treetank.utils.DocumentCreater;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class NodeCompTest {
 
@@ -116,7 +115,7 @@ public class NodeCompTest {
     }
 
     @Test
-    public void testAtomize() {
+    public void testAtomize() throws TTXPathException {
 
         IAxis axis = new LiteralExpr(rtx, -2);
         axis.hasNext(); // this is needed, because hasNext() has already been
@@ -130,9 +129,9 @@ public class NodeCompTest {
             axis = new DescendantAxis(rtx, false);
             axis.hasNext();
             comparator.atomize(axis);
-        } catch (XPathError e) {
+        } catch (TTXPathException e) {
             assertEquals("err:XPTY0004 The type is not appropriate the expression or"
-                + " the typedoes not match a required type as specified by the " + "matching rules.", e
+                + " the typedoes not match a required type as specified by the " + "matching rules. ", e
                 .getMessage());
         }
 

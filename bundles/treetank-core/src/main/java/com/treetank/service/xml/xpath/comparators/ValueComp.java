@@ -21,8 +21,7 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
-import com.treetank.service.xml.xpath.XPathError;
-import com.treetank.service.xml.xpath.XPathError.ErrorType;
+import com.treetank.service.xml.xpath.EXPathError;
 import com.treetank.service.xml.xpath.types.Type;
 import com.treetank.utils.TypedValue;
 
@@ -71,7 +70,7 @@ public class ValueComp extends AbsComparator {
      * {@inheritDoc}
      */
     @Override
-    protected AtomicValue[] atomize(final IAxis mOperand) {
+    protected AtomicValue[] atomize(final IAxis mOperand) throws TTXPathException {
 
         final IReadTransaction trx = getTransaction();
 
@@ -89,7 +88,7 @@ public class ValueComp extends AbsComparator {
 
         // (4.) the operands must be singletons in case of a value comparison
         if (mOperand.hasNext()) {
-            throw new XPathError(ErrorType.XPTY0004);
+            throw EXPathError.XPTY0004.getEncapsulatedException();
         } else {
             return op;
         }
