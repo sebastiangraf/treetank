@@ -111,31 +111,33 @@ public abstract class AbsComparator extends AbsAxis implements IAxis {
              * executes the comparison on them. At the end, the transaction is
              * set to the retrieved result item.
              */
-
             if (mOperand1.hasNext()) {
-                // atomize operands
-                final AtomicValue[] operandOne = atomize(mOperand1);
-                if (mOperand2.hasNext()) {
-                    final AtomicValue[] operandTwo = atomize(mOperand2);
+                try {
+                    // atomize operands
+                    final AtomicValue[] operandOne = atomize(mOperand1);
+                    if (mOperand2.hasNext()) {
+                        final AtomicValue[] operandTwo = atomize(mOperand2);
 
-                    hook(operandOne, operandTwo);
-                    try {
-                        // get comparison result
-                        final boolean resultValue = compare(operandOne, operandTwo);
-                        final IItem result = new AtomicValue(resultValue);
+                        hook(operandOne, operandTwo);
+                        try {
+                            // get comparison result
+                            final boolean resultValue = compare(operandOne, operandTwo);
+                            final IItem result = new AtomicValue(resultValue);
 
-                        // add retrieved AtomicValue to item list
-                        final int itemKey = getTransaction().getItemList().addItem(result);
-                        getTransaction().moveTo(itemKey);
-                    } catch (TTXPathException e) {
-                        throw new RuntimeException(e);
+                            // add retrieved AtomicValue to item list
+                            final int itemKey = getTransaction().getItemList().addItem(result);
+                            getTransaction().moveTo(itemKey);
+                        } catch (TTXPathException e) {
+                            throw new RuntimeException(e);
+                        }
+                        return true;
+
                     }
-                    return true;
-
+                } catch (final TTXPathException exc) {
+                    throw new RuntimeException(exc);
                 }
             }
         }
-
         // return empty sequence or function called more than once
         resetToStartKey();
         return false;
@@ -173,8 +175,10 @@ public abstract class AbsComparator extends AbsAxis implements IAxis {
      * @param paramOperand
      *            the operand that will be atomized.
      * @return the atomized operand. (always an atomic value)
+     * @throws TTXPathException
+     *             if any goes wrong.
      */
-    protected abstract AtomicValue[] atomize(final IAxis paramOperand);
+    protected abstract AtomicValue[] atomize(final IAxis paramOperand) throws TTXPathException;
 
     /**
      * Returns the common comparable type of the two operands, or an error, if

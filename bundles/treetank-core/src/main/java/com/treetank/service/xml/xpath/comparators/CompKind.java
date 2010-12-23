@@ -20,8 +20,8 @@ package com.treetank.service.xml.xpath.comparators;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.treetank.service.xml.xpath.XPathError;
-import com.treetank.service.xml.xpath.XPathError.ErrorType;
+import com.treetank.exception.TTXPathException;
+import com.treetank.service.xml.xpath.EXPathError;
 import com.treetank.service.xml.xpath.types.Type;
 
 /**
@@ -39,7 +39,8 @@ public enum CompKind {
          * {@inheritDoc}
          */
         @Override
-        public boolean compare(final String mOperand1, final String mOperand2, final Type mType) {
+        public boolean compare(final String mOperand1, final String mOperand2, final Type mType)
+            throws TTXPathException {
 
             switch (mType) {
             case FLOAT:
@@ -76,7 +77,7 @@ public enum CompKind {
             case G_YEAR_MONTH:
                 throw new IllegalStateException("Not implemented for this type yet");
             default:
-                throw new XPathError(ErrorType.XPTY0004);
+                throw EXPathError.XPTY0004.getEncapsulatedException();
             }
         }
 
@@ -89,7 +90,8 @@ public enum CompKind {
          * {@inheritDoc}
          */
         @Override
-        public boolean compare(final String mOperand1, final String mOperand2, final Type mType) {
+        public boolean compare(final String mOperand1, final String mOperand2, final Type mType)
+            throws TTXPathException {
 
             switch (mType) {
             case FLOAT:
@@ -124,7 +126,7 @@ public enum CompKind {
             case G_YEAR_MONTH:
                 throw new IllegalStateException("Not implemented for this type yet");
             default:
-                throw new XPathError(ErrorType.XPTY0004);
+                throw EXPathError.XPTY0004.getEncapsulatedException();
             }
         }
 
@@ -137,7 +139,8 @@ public enum CompKind {
          * {@inheritDoc}
          */
         @Override
-        public boolean compare(final String mOperand1, final String mOperand2, final Type mType) {
+        public boolean compare(final String mOperand1, final String mOperand2, final Type mType)
+            throws TTXPathException {
 
             switch (mType) {
             case FLOAT:
@@ -166,7 +169,7 @@ public enum CompKind {
 
                 throw new IllegalStateException("Not implemented for this type yet");
             default:
-                throw new XPathError(ErrorType.XPTY0004);
+                throw EXPathError.XPTY0004.getEncapsulatedException();
             }
 
         }
@@ -180,7 +183,8 @@ public enum CompKind {
          * {@inheritDoc}
          */
         @Override
-        public boolean compare(final String mOperand1, final String mOperand2, final Type mType) {
+        public boolean compare(final String mOperand1, final String mOperand2, final Type mType)
+            throws TTXPathException {
 
             switch (mType) {
             case FLOAT:
@@ -208,7 +212,7 @@ public enum CompKind {
 
                 throw new IllegalStateException("Not implemented for this type yet");
             default:
-                throw new XPathError(ErrorType.XPTY0004);
+                throw EXPathError.XPTY0004.getEncapsulatedException();
             }
 
         }
@@ -222,7 +226,8 @@ public enum CompKind {
          * {@inheritDoc}
          */
         @Override
-        public boolean compare(final String mOperand1, final String mOperand2, final Type mType) {
+        public boolean compare(final String mOperand1, final String mOperand2, final Type mType)
+            throws TTXPathException {
 
             switch (mType) {
             case FLOAT:
@@ -251,7 +256,7 @@ public enum CompKind {
 
                 throw new IllegalStateException("Not implemented for this type yet");
             default:
-                throw new XPathError(ErrorType.XPTY0004);
+                throw EXPathError.XPTY0004.getEncapsulatedException();
             }
         }
     },
@@ -263,7 +268,8 @@ public enum CompKind {
          * {@inheritDoc}
          */
         @Override
-        public boolean compare(final String mOperand1, final String mOperand2, final Type mType) {
+        public boolean compare(final String mOperand1, final String mOperand2, final Type mType)
+            throws TTXPathException {
 
             switch (mType) {
             case FLOAT:
@@ -291,7 +297,7 @@ public enum CompKind {
 
                 throw new IllegalStateException("Not implemented for this type yet");
             default:
-                throw new XPathError(ErrorType.XPTY0004);
+                throw EXPathError.XPTY0004.getEncapsulatedException();
             }
 
         }
@@ -304,7 +310,8 @@ public enum CompKind {
          * {@inheritDoc}
          */
         @Override
-        public boolean compare(final String mOperand1, final String mOperand2, final Type mType) {
+        public boolean compare(final String mOperand1, final String mOperand2, final Type mType)
+            throws TTXPathException {
 
             throw new IllegalStateException("Evaluation of node comparisons not possible");
         }
@@ -317,7 +324,8 @@ public enum CompKind {
          * {@inheritDoc}
          */
         @Override
-        public boolean compare(final String mOperand1, final String mOperand2, final Type mType) {
+        public boolean compare(final String mOperand1, final String mOperand2, final Type mType)
+            throws TTXPathException {
 
             throw new IllegalStateException("Evaluation of node comparisons not possible");
         }
@@ -330,7 +338,8 @@ public enum CompKind {
          * {@inheritDoc}
          */
         @Override
-        public boolean compare(final String mOperand1, final String mOperand2, final Type mType) {
+        public boolean compare(final String mOperand1, final String mOperand2, final Type mType)
+            throws TTXPathException {
 
             return (int)Double.parseDouble(mOperand1) == (int)Double.parseDouble(mOperand2);
         }
@@ -371,8 +380,11 @@ public enum CompKind {
      * @param mType
      *            comparison type
      * @return result of the boolean comparison
+     * @throws TTXPathException
+     *             if anything weird happens while comparison.
      */
-    public abstract boolean compare(final String mOperand1, final String mOperand2, final Type mType);
+    public abstract boolean compare(final String mOperand1, final String mOperand2, final Type mType)
+        throws TTXPathException;
 
     /**
      * Public method to easy retrieve the Function-Class for a name.
