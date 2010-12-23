@@ -18,15 +18,7 @@
 
 package com.treetank.service.xml.xpath.filter;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-
 import java.io.File;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 import com.treetank.TestHelper;
 import com.treetank.TestHelper.PATHS;
@@ -39,7 +31,10 @@ import com.treetank.axis.filter.TypeFilter;
 import com.treetank.exception.TTException;
 import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.service.xml.xpath.XPathAxis;
-import com.treetank.service.xml.xpath.XPathError;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public class TypeFilterTest {
 
@@ -85,13 +80,6 @@ public class TypeFilterTest {
         IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:untypedAtomic"), true);
 
         IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:anyType"), false);
-        try {
-            IFilterTest.testIFilterConventions(new TypeFilter(xtx, "xs:bla"), false);
-            fail("Expected a Type not found error.");
-        } catch (XPathError e) {
-            assertThat(e.getMessage(), is("err:XPST0051 "
-                + "Type is not defined in the in-scope schema types as an " + "atomic type."));
-        }
 
         xtx.close();
         rtx.close();

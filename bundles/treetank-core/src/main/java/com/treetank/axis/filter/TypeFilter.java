@@ -18,9 +18,6 @@
 package com.treetank.axis.filter;
 
 import com.treetank.api.IReadTransaction;
-import com.treetank.service.xml.xpath.EXPathError;
-import com.treetank.service.xml.xpath.XPathError;
-import com.treetank.service.xml.xpath.types.Type;
 
 /**
  * <h1>TypeFilter</h1>
@@ -44,11 +41,6 @@ public class TypeFilter extends AbsFilter {
     public TypeFilter(final IReadTransaction rtx, final int mType) {
         super(rtx);
         this.mType = mType;
-
-        // TODO: not really good solution
-        if (Type.getType(this.mType) == null) {
-            throw new XPathError(XPathError.ErrorType.XPST0051);
-        }
     }
 
     /**
