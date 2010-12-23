@@ -69,11 +69,71 @@ public class FunctionsTest {
     }
 
     /**
+     * Test function boolean().
+     */
+    @Test
+    public final void testBoolean() {
+        final String query = "fn:boolean(0)";
+        final String result = "false";
+        XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
+            result
+        });
+    }
+    
+    /**
+     * Test function boolean() for XPath 1.0.
+     */
+    @Test
+    public final void testBooleanXPath10() {
+        final String query = "boolean(1)";
+        final String result = "true";
+        XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
+            result
+        });
+    }
+    
+    /**
+     * Test function count().
+     */
+    @Test
+    public final void testCount() {
+        final String query = "fn:count(//p:a/b)";
+        final String result = "2";
+        XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
+            result
+        });
+    }
+
+    /**
+     * Test function count() for XPath 1.0.
+     */
+    @Test
+    public final void testCountXPath10() {
+        final String query = "count(//p:a/b)";
+        final String result = "2";
+        XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
+            result
+        });
+    }
+
+    /**
      * Test function string().
      */
     @Test
     public final void testString() {
         final String query = "fn:string(/p:a/b)";
+        final String result = "foo bar";
+        XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
+            result
+        });
+    }
+
+    /**
+     * Test function string() for XPath 1.0.
+     */
+    @Test
+    public final void testStringXPath10() {
+        final String query = "string(/p:a/b)";
         final String result = "foo bar";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
@@ -97,8 +157,8 @@ public class FunctionsTest {
      */
     @Test
     public final void testNode() {
-        final String query = "p:a[./node()/node()/node()]";
-        final String result = null;
+        final String query = "p:a[./node()/node()]";
+        final String result = "{ns}a";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
         });
@@ -109,20 +169,8 @@ public class FunctionsTest {
      */
     @Test
     public final void testText() {
-        final String query = "p:a[/text()]";
-        final String result = null;
-        XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
-            result
-        });
-    }
-
-    /**
-     * Test function count().
-     */
-    @Test
-    public final void testCount() {
-        final String query = "fn:count(//p:a/b)";
-        final String result = "2";
+        final String query = "p:a[./text()]";
+        final String result = "{ns}a";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
         });
@@ -134,6 +182,18 @@ public class FunctionsTest {
     @Test
     public final void testNot() {
         final String query = "fn:not(//b)";
+        final String result = "false";
+        XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
+            result
+        });
+    }
+
+    /**
+     * Test function not() for XPath 1.0.
+     */
+    @Test
+    public final void testNotXPath10() {
+        final String query = "not(//b)";
         final String result = "false";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
@@ -153,13 +213,25 @@ public class FunctionsTest {
     }
 
     /**
+     * Test function sum() for XPath 1.0.
+     */
+    @Test
+    public final void testSumXPath10() {
+        final String query = "sum(5)";
+        final String result = "1";
+        XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
+            result
+        });
+    }
+
+    /**
      * Test function position().
      */
     @Test
     @Ignore
     public final void testPosition() {
-        final String query = "//b[position()=1]";
-        final String result = "<b xmlns:p=\"ns\">foo<c/></b>";
+        final String query = "//b[position()=2]";
+        final String result = "{ns}b";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
         });
@@ -329,19 +401,6 @@ public class FunctionsTest {
     public final void testLast() {
         final String query = "//b[last()]";
         final String result = "<b xmlns:p=\"ns\" p:x=\"y\"><c/>bar</b>";
-        XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
-            result
-        });
-    }
-
-    /**
-     * Test function boolean().
-     */
-    @Ignore
-    @Test
-    public final void testBoolean() {
-        final String query = "fn:boolean(0)";
-        final String result = "false";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
             result
         });

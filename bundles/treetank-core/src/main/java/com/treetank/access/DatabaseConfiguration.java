@@ -197,4 +197,11 @@ public class DatabaseConfiguration {
         return mProps.equals(paramObj);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public final String toString() {
+        return new StringBuilder(mProps.toString()).toString();
+    }
+
 }

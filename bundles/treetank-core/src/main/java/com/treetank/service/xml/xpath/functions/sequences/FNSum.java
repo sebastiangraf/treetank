@@ -15,12 +15,13 @@
  * 
  */
 
-package com.treetank.service.xml.xpath.functions;
+package com.treetank.service.xml.xpath.functions.sequences;
 
 import java.util.List;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.service.xml.xpath.functions.AbsFunction;
 import com.treetank.utils.TypedValue;
 
 /**

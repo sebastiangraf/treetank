@@ -89,4 +89,11 @@ public final class ItemList implements IItemList {
         return mList.get(index);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return new StringBuilder("ItemList: ").append(mList.toString()).toString();
+    }
+
 }
