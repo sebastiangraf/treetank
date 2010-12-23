@@ -20,9 +20,9 @@ package com.treetank.service.xml.xpath.comparators;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.treetank.service.xml.xpath.XPathError;
+import com.treetank.service.xml.xpath.XPathError.ErrorType;
 import com.treetank.service.xml.xpath.functions.FuncDef;
-import com.treetank.service.xml.xpath.functions.XPathError;
-import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
 import com.treetank.service.xml.xpath.types.Type;
 
 /**

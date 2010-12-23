@@ -22,8 +22,9 @@ import java.util.List;
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.service.xml.xpath.AtomicValue;
+import com.treetank.service.xml.xpath.XPathError;
+import com.treetank.service.xml.xpath.XPathError.ErrorType;
 import com.treetank.service.xml.xpath.expr.AbsExpression;
-import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
 
 /**
  * <h1>AbstractFunction</h1>

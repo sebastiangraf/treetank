@@ -36,9 +36,9 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.xpath.AtomicValue;
+import com.treetank.service.xml.xpath.XPathError;
 import com.treetank.service.xml.xpath.expr.LiteralExpr;
 import com.treetank.service.xml.xpath.expr.SequenceAxis;
-import com.treetank.service.xml.xpath.functions.XPathError;
 import com.treetank.service.xml.xpath.types.Type;
 import com.treetank.utils.TypedValue;
 

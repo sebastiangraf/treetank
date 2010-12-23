@@ -25,7 +25,7 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
-import com.treetank.service.xml.xpath.functions.XPathError;
+import com.treetank.service.xml.xpath.XPathError;
 import com.treetank.service.xml.xpath.types.Type;
 
 public class CompKindTest {
