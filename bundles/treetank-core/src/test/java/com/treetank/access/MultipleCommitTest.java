@@ -37,7 +37,7 @@ import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
 import com.treetank.axis.PostOrderAxis;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
 import com.treetank.utils.DocumentCreater;
@@ -45,17 +45,17 @@ import com.treetank.utils.DocumentCreater;
 public class MultipleCommitTest {
 
     @Before
-    public void setUp() throws TreetankException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() throws TreetankException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
     }
 
     @Test
-    public void test() throws TreetankException {
+    public void test() throws TTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -78,7 +78,7 @@ public class MultipleCommitTest {
     }
 
     @Test
-    public void testAutoCommit() throws TreetankException {
+    public void testAutoCommit() throws TTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction(100, 1);
@@ -93,7 +93,7 @@ public class MultipleCommitTest {
     }
 
     @Test
-    public void testRemove() throws TreetankException {
+    public void testRemove() throws TTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -114,7 +114,7 @@ public class MultipleCommitTest {
     }
 
     @Test
-    public void testAttributeRemove() throws TreetankException {
+    public void testAttributeRemove() throws TTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();

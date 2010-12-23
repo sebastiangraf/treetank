@@ -22,7 +22,6 @@ import java.util.Map;
 
 import com.treetank.service.xml.xpath.XPathError;
 import com.treetank.service.xml.xpath.XPathError.ErrorType;
-import com.treetank.service.xml.xpath.functions.FuncDef;
 import com.treetank.service.xml.xpath.types.Type;
 
 /**
@@ -32,7 +31,7 @@ import com.treetank.service.xml.xpath.types.Type;
  * </p>
  */
 public enum CompKind {
-    
+
     /** comparison type 'equal'. */
     EQ("eq", "=") {
 

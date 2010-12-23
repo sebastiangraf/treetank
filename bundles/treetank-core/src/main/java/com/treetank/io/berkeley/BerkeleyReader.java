@@ -24,7 +24,7 @@ import com.sleepycat.je.Environment;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
 import com.sleepycat.je.Transaction;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TTIOException;
 import com.treetank.io.IReader;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.PageReference;
@@ -85,7 +85,7 @@ public class BerkeleyReader implements IReader {
     /**
      * {@inheritDoc}
      */
-    public AbstractPage read(final PageReference pageReference) throws TreetankIOException {
+    public AbstractPage read(final PageReference pageReference) throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
 
@@ -101,7 +101,7 @@ public class BerkeleyReader implements IReader {
             return page;
         } catch (final DatabaseException exc) {
             LOGWRAPPER.error(exc);
-            throw new TreetankIOException(exc);
+            throw new TTIOException(exc);
         }
 
     }
@@ -109,7 +109,7 @@ public class BerkeleyReader implements IReader {
     /**
      * {@inheritDoc}
      */
-    public PageReference readFirstReference() throws TreetankIOException {
+    public PageReference readFirstReference() throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
         BerkeleyFactory.KEY.objectToEntry(BerkeleyKey.getFirstRevKey(), keyEntry);
@@ -130,7 +130,7 @@ public class BerkeleyReader implements IReader {
             return uberPageReference;
         } catch (final DatabaseException e) {
             LOGWRAPPER.error(e);
-            throw new TreetankIOException(e);
+            throw new TTIOException(e);
         }
 
     }
@@ -138,12 +138,12 @@ public class BerkeleyReader implements IReader {
     /**
      * {@inheritDoc}
      */
-    public void close() throws TreetankIOException {
+    public void close() throws TTIOException {
         try {
             mTxn.abort();
         } catch (final DatabaseException e) {
             LOGWRAPPER.error(e);
-            throw new TreetankIOException(e);
+            throw new TTIOException(e);
 
         }
     }

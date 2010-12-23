@@ -30,19 +30,19 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.utils.DocumentCreater;
 
 @BenchClass(runs = 1)
 public class ChildAxisTest {
     @Before
-    public void setUp() throws TreetankException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
     }
 
     @Test
     @Bench(runs = 10)
-    public void testIterate() throws TreetankException {
+    public void testIterate() throws TTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -69,7 +69,7 @@ public class ChildAxisTest {
 
     @Test
     @Bench(runs = 10)
-    public void testPersistent() throws TreetankException {
+    public void testPersistent() throws TTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -99,7 +99,7 @@ public class ChildAxisTest {
     }
 
     @After
-    public void tearDown() throws TreetankException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
     }
 }

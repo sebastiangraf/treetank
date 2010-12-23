@@ -16,7 +16,7 @@ import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
 import com.treetank.service.xml.shredder.EShredderInsert;
@@ -66,7 +66,7 @@ public final class OverallTest {
     }
 
     @Test
-    public void testJustEverything() throws TreetankException {
+    public void testJustEverything() throws TTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();

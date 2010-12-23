@@ -30,7 +30,7 @@ import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.service.xml.shredder.XMLShredder;
 
 /**
@@ -64,12 +64,12 @@ public class XMarkTest {
     }
 
     @After
-    public void tearDown() throws TreetankException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testQ1_10() throws TreetankException {
+    public void testQ1_10() throws TTException {
 
         XPathStringChecker.testIAxisConventions(new XPathAxis(rtx,
             "/site/people/person[@id=\"person0\"]/name/text()"), new String[] {
@@ -79,7 +79,7 @@ public class XMarkTest {
     }
 
     @Test
-    public void testQ1() throws TreetankException {
+    public void testQ1() throws TTException {
 
         // Q1 The name of the person with ID 'person0' {projecting}
         XPathStringChecker.testIAxisConventions(new XPathAxis(rtx,
@@ -134,7 +134,7 @@ public class XMarkTest {
     // }
 
     @Test
-    public void testQ5() throws TreetankException {
+    public void testQ5() throws TTException {
 
         // Q5 How many sold items cost more than 40?
         XPathStringChecker.testIAxisConventions(new XPathAxis(rtx,
@@ -146,7 +146,7 @@ public class XMarkTest {
     }
 
     @Test
-    public void testQ6() throws TreetankException {
+    public void testQ6() throws TTException {
 
         // Q6 How many items are listed on all continents?
         XPathStringChecker.testIAxisConventions(new XPathAxis(rtx,
@@ -157,7 +157,7 @@ public class XMarkTest {
     }
 
     @Test
-    public void testQ7() throws TreetankException {
+    public void testQ7() throws TTException {
 
         // Q7 How many pieces of prose are in our database?
         XPathStringChecker.testIAxisConventions(new XPathAxis(rtx,

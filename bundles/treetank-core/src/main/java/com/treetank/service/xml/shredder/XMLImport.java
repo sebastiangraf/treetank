@@ -38,7 +38,7 @@ import com.treetank.access.WriteTransaction;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.utils.LogWrapper;
 
 import org.slf4j.LoggerFactory;

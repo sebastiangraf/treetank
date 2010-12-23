@@ -45,7 +45,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.service.xml.xpath.XPathAxis;
@@ -62,12 +62,12 @@ import static org.junit.Assert.assertEquals;
 public class XMLSerializerTest {
 
     @Before
-    public void setUp() throws TreetankException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() throws TreetankException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
     }
 

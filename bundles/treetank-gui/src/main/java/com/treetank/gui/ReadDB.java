@@ -22,7 +22,7 @@ import com.treetank.access.Database;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.utils.LogWrapper;
 
 import org.slf4j.LoggerFactory;
@@ -49,7 +49,7 @@ public final class ReadDB {
 
     /** Treetank {@link IReadTransaction}. */
     private transient IReadTransaction mRtx;
-    
+
     /** Revision number. */
     private transient long mRevision;
 
@@ -94,7 +94,7 @@ public final class ReadDB {
                 mRtx = mDatabase.getSession().beginReadTransaction(paramRevision);
             }
             mRtx.moveTo(paramNodekeyToStart);
-        } catch (final TreetankException e) {
+        } catch (final TTException e) {
             LOGWRAPPER.error("TreetankException: " + e.getMessage(), e);
         }
     }
@@ -134,7 +134,7 @@ public final class ReadDB {
             mRtx.close();
             mSession.close();
             mDatabase.close();
-        } catch (final TreetankException e) {
+        } catch (final TTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
     }

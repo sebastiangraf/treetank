@@ -14,7 +14,7 @@ import com.treetank.axis.FilterAxis;
 import com.treetank.axis.NestedAxis;
 import com.treetank.axis.filter.NameFilter;
 import com.treetank.axis.filter.TextFilter;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.service.xml.xpath.comparators.CompKind;
 import com.treetank.service.xml.xpath.comparators.GeneralComp;
@@ -27,7 +27,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class ConcurrentAxisTest {
 
@@ -98,11 +98,11 @@ public class ConcurrentAxisTest {
                 new TextFilter(mRtx)), new LiteralExpr(mRtx, person3), CompKind.EQ)))), new FilterAxis(
                 new ChildAxis(mRtx), new NameFilter(mRtx, "name")));
 
-//        XPathStringChecker.testIAxisConventions(axis, new String[] {
-//            result
-//        });
-        
-        //TODO: bekommt hier kein Ergbnis zurück, NULL. Nachschauen ob Anfrage stimmt.
+        // XPathStringChecker.testIAxisConventions(axis, new String[] {
+        // result
+        // });
+
+        // TODO: bekommt hier kein Ergbnis zurück, NULL. Nachschauen ob Anfrage stimmt.
         for (int i = 0; i < 1; i++) {
             assertEquals(true, axis.hasNext());
         }
@@ -150,7 +150,7 @@ public class ConcurrentAxisTest {
             mSession.close();
             mDatabase.close();
             TestHelper.closeEverything();
-        } catch (final TreetankException mExe) {
+        } catch (final TTException mExe) {
             mExe.printStackTrace();
         }
 

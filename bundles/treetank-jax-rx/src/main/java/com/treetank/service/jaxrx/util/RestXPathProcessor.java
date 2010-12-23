@@ -19,7 +19,7 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.service.xml.xpath.XPathAxis;
 
 /**
@@ -59,11 +59,11 @@ public class RestXPathProcessor {
      * @return the queried XML fragment
      * @throws IOException
      *             The exception occurred.
-     * @throws TreetankException
+     * @throws TTException
      */
     public OutputStream getXpathResource(final String resourceName, final String xpath, final boolean nodeid,
         final Long revision, final OutputStream output, final boolean wrapResult) throws IOException,
-        TreetankException {
+        TTException {
 
         // work around because of query root char '/'
         String qQuery = xpath;
@@ -126,11 +126,11 @@ public class RestXPathProcessor {
      *            specifies whether node id should be shown
      * @param doWrap
      *            output of result elements
-     * @throws TreetankException
+     * @throws TTException
      */
     public void getXpathResource(final File dbFile, final long rId, final String query,
         final boolean doNodeId, final Long doRevision, final OutputStream output, final boolean doWrap)
-        throws TreetankException {
+        throws TTException {
 
         // work around because of query root char '/'
         String qQuery = query;
@@ -182,13 +182,6 @@ public class RestXPathProcessor {
                 throw new WebApplicationException(404);
             }
 
-        } catch (final TreetankException ttExcep) {
-            throw new WebApplicationException(ttExcep, Response.Status.INTERNAL_SERVER_ERROR);
-        } catch (final IOException ioExcep) {
-            throw new WebApplicationException(ioExcep, Response.Status.INTERNAL_SERVER_ERROR);
-        } catch (final WebApplicationException exce) { // NOPMD framework need
-            // WebapplicationException
-            throw exce;
         } catch (final Exception globExcep) {
             throw new WebApplicationException(globExcep, Response.Status.INTERNAL_SERVER_ERROR);
         } finally {
@@ -210,10 +203,10 @@ public class RestXPathProcessor {
      *            <code>true</code> if node id's have to be delivered. <code>false</code> otherwise.
      * @param xpath
      *            The XPath expression.
-     * @throws TreetankException
+     * @throws TTException
      */
     private void doXPathRes(final File dbFile, final Long revision, final OutputStream output,
-        final boolean nodeid, final String xpath) throws TreetankException {
+        final boolean nodeid, final String xpath) throws TTException {
         // Database connection to treetank
         IDatabase database = null;
         ISession session = null;
@@ -240,10 +233,6 @@ public class RestXPathProcessor {
                 }
             }
 
-        } catch (final TreetankException ttExcep) {
-            throw new WebApplicationException(ttExcep, Response.Status.INTERNAL_SERVER_ERROR);
-        } catch (final IOException ioExcep) {
-            throw new WebApplicationException(ioExcep, Response.Status.INTERNAL_SERVER_ERROR);
         } catch (final Exception globExcep) {
             throw new WebApplicationException(globExcep, Response.Status.INTERNAL_SERVER_ERROR);
         } finally {

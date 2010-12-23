@@ -38,7 +38,7 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
@@ -60,13 +60,13 @@ public class XMLShredderTest extends XMLTestCase {
 
     @Override
     @Before
-    public void setUp() throws TreetankException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
     }
 
     @Override
     @After
-    public void tearDown() throws TreetankException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
     }
 

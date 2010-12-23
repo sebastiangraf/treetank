@@ -21,6 +21,7 @@ import java.util.List;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.exception.TTXPathException;
 import com.treetank.utils.TypedValue;
 
 /**
@@ -51,18 +52,22 @@ public class FNNot extends AbsFunction {
      *            max number of allowed function arguments
      * @param returnType
      *            the type that the function's result will have
+     * @throws TTXPathException
+     *             if function check fails
      */
     public FNNot(final IReadTransaction rtx, final List<IAxis> args, final int min, final int max,
-        final int returnType) {
+        final int returnType) throws TTXPathException {
 
         super(rtx, args, min, max, returnType);
     }
 
     /**
      * {@inheritDoc}
+     * 
+     * @throws TTXPathException
      */
     @Override
-    protected byte[] computeResult() {
+    protected byte[] computeResult() throws TTXPathException {
         final IAxis axis = getArgs().get(0);
         final boolean value = !Function.ebv(axis);
 

@@ -39,7 +39,7 @@ import com.treetank.axis.FollowingSiblingAxis;
 import com.treetank.axis.NestedAxis;
 import com.treetank.axis.ParentAxis;
 import com.treetank.axis.SelfAxis;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.service.xml.xpath.expr.UnionAxis;
 import com.treetank.service.xml.xpath.filter.DupFilterAxis;
 import com.treetank.utils.DocumentCreater;
@@ -52,19 +52,19 @@ public class ExpressionSingleTest {
         + File.separator + "factbook.xml";
 
     @Before
-    public void setUp() throws TreetankException {
+    public void setUp() throws TTException {
 
         builder = new ExpressionSingle();
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() throws TreetankException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testAdd() throws TreetankException {
+    public void testAdd() throws TTException {
         // Build simple test tree.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -90,7 +90,7 @@ public class ExpressionSingleTest {
     }
 
     @Test
-    public void testDup() throws TreetankException {
+    public void testDup() throws TTException {
         // Build simple test tree.
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();

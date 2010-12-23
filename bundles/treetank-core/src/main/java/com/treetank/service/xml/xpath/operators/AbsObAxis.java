@@ -21,6 +21,7 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
+import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.functions.Function;
 import com.treetank.service.xml.xpath.types.Type;
@@ -33,7 +34,7 @@ import static com.treetank.service.xml.xpath.XPathAxis.XPATH_10_COMP;
  * Abstract axis for all operators performing an arithmetic operation.
  * </p>
  */
-public abstract class AbsObAxis extends AbsAxis implements IAxis {
+public abstract class AbsObAxis extends AbsAxis {
 
     /** First arithmetic operand. */
     private final IAxis mOperand1;
@@ -98,12 +99,16 @@ public abstract class AbsObAxis extends AbsAxis implements IAxis {
                 if (mOperand2.hasNext()) {
                     // atomize operand
                     final AtomicValue mItem2 = atomize(mOperand2);
-                    final IItem result = operate(mItem1, mItem2);
-                    // add retrieved AtomicValue to item list
-                    final int itemKey = getTransaction().getItemList().addItem(result);
-                    getTransaction().moveTo(itemKey);
+                    try {
+                        final IItem result = operate(mItem1, mItem2);
+                        // add retrieved AtomicValue to item list
+                        final int itemKey = getTransaction().getItemList().addItem(result);
+                        getTransaction().moveTo(itemKey);
 
-                    return true;
+                        return true;
+                    } catch (TTXPathException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
 
@@ -171,8 +176,11 @@ public abstract class AbsObAxis extends AbsAxis implements IAxis {
      * @param mOperand2
      *            second input operand
      * @return result of the operation
+     * @throws TTXPathException
+     *             if the operations fails
      */
-    protected abstract IItem operate(final AtomicValue mOperand1, final AtomicValue mOperand2);
+    protected abstract IItem operate(final AtomicValue mOperand1, final AtomicValue mOperand2)
+        throws TTXPathException;
 
     /**
      * Checks if the types of the operands are a valid combination for the
@@ -186,7 +194,9 @@ public abstract class AbsObAxis extends AbsAxis implements IAxis {
      *            second operand's type key
      * @return return type of the arithmetic function according to the operand
      *         type combination.
+     * @throws TTXPathException
+     *             if type is not specified
      */
-    protected abstract Type getReturnType(final int mOp1, final int mOp2);
+    protected abstract Type getReturnType(final int mOp1, final int mOp2) throws TTXPathException;
 
 }

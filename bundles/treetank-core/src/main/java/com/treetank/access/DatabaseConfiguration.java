@@ -22,9 +22,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import com.treetank.exception.TreetankException;
-import com.treetank.exception.TreetankIOException;
-import com.treetank.exception.TreetankUsageException;
+import com.treetank.exception.TTException;
+import com.treetank.exception.TTIOException;
+import com.treetank.exception.TTUsageException;
 import com.treetank.settings.EDatabaseSetting;
 import com.treetank.settings.EStoragePaths;
 import com.treetank.utils.LogWrapper;
@@ -57,11 +57,11 @@ public class DatabaseConfiguration {
      * 
      * @param paramFile
      *            the path to the database
-     * @throws TreetankException
+     * @throws TTException
      *             if the reading of the props is failing or properties are not
      *             valid
      */
-    public DatabaseConfiguration(final File paramFile) throws TreetankException {
+    public DatabaseConfiguration(final File paramFile) throws TTException {
         this(paramFile, new File(paramFile, EStoragePaths.DBSETTINGS.getFile().getName()));
     }
 
@@ -72,11 +72,11 @@ public class DatabaseConfiguration {
      *            the path to the database
      * @param paramProps
      *            properties to be set for setting
-     * @throws TreetankUsageException
+     * @throws TTUsageException
      *             if properties are not valid
      */
     public DatabaseConfiguration(final File paramFile, final Properties paramProps)
-        throws TreetankUsageException {
+        throws TTUsageException {
         mFile = paramFile;
         mProps = new Properties();
         buildUpProperties(paramProps);
@@ -90,11 +90,11 @@ public class DatabaseConfiguration {
      *            the path to the database
      * @param paramProp
      *            properties to be set
-     * @throws TreetankException
+     * @throws TTException
      *             if the reading of the props is failing or properties are not
      *             valid
      */
-    public DatabaseConfiguration(final File paramFile, final File paramProp) throws TreetankException {
+    public DatabaseConfiguration(final File paramFile, final File paramProp) throws TTException {
         mFile = paramFile;
         mProps = new Properties();
         final Properties loadProps = new Properties();
@@ -112,14 +112,14 @@ public class DatabaseConfiguration {
                     // and check if the loaded checksum is valid
                     && !loadProps.getProperty(EDatabaseSetting.CHECKSUM.name()).equals(
                         Integer.toString(hashCode()))) {
-                    throw new TreetankUsageException("Checksums differ: Loaded", getProps().toString(),
+                    throw new TTUsageException("Checksums differ: Loaded", getProps().toString(),
                         "and expected", toString());
 
                 }
             }
         } catch (final IOException exc) {
             LOGWRAPPER.error(exc);
-            throw new TreetankIOException(exc);
+            throw new TTIOException(exc);
         }
     }
 
@@ -129,10 +129,10 @@ public class DatabaseConfiguration {
      * 
      * @param props
      *            to be included
-     * @throws TreetankUsageException
+     * @throws TTUsageException
      *             if wrong properties are into existing database
      */
-    private void buildUpProperties(final Properties props) throws TreetankUsageException {
+    private void buildUpProperties(final Properties props) throws TTUsageException {
         for (final EDatabaseSetting enumProps : EDatabaseSetting.values()) {
             if (enumProps != EDatabaseSetting.CHECKSUM) {
                 if (props.containsKey(enumProps.name())) {

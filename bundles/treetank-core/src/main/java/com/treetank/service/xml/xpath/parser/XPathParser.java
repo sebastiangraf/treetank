@@ -47,6 +47,7 @@ import com.treetank.axis.filter.PIFilter;
 import com.treetank.axis.filter.TextFilter;
 import com.treetank.axis.filter.TypeFilter;
 import com.treetank.axis.filter.WildcardFilter;
+import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.PipelineBuilder;
 import com.treetank.service.xml.xpath.SequenceType;
@@ -102,8 +103,9 @@ public final class XPathParser {
 
     /**
      * Starts parsing the query.
+     * @throws TTXPathException 
      */
-    public void parseQuery() {
+    public void parseQuery() throws TTXPathException {
 
         // get first token, ignore all white spaces
         do {
@@ -125,8 +127,9 @@ public final class XPathParser {
      * <p>
      * [2] Expr ::= ExprSingle ("," ExprSingle)* .
      * </p>
+     * @throws TTXPathException 
      */
-    private void parseExpression() {
+    private void parseExpression() throws TTXPathException {
 
         mPipeBuilder.addExpr();
 
@@ -146,8 +149,10 @@ public final class XPathParser {
      * <p>
      * [3] ExprSingle ::= ForExpr | QuantifiedExpr | IfExpr | OrExpr .
      * </p>
+     * 
+     * @throws TTXPathException
      */
-    private void parseExprSingle() {
+    private void parseExprSingle() throws TTXPathException {
 
         mPipeBuilder.addExpressionSingle();
 
@@ -169,8 +174,9 @@ public final class XPathParser {
      * <p>
      * ForExpr ::= SimpleForClause "return" ExprSingle .
      * </p>
+     * @throws TTXPathException 
      */
-    private void parseForExpr() {
+    private void parseForExpr() throws TTXPathException {
 
         // get number of all for conditions
         final int rangeVarNo = parseSimpleForClause();
@@ -191,8 +197,9 @@ public final class XPathParser {
      * </p>
      * 
      * @return returns the number of for-conditions
+     * @throws TTXPathException 
      */
-    private int parseSimpleForClause() {
+    private int parseSimpleForClause() throws TTXPathException {
 
         consume("for", true);
 
@@ -224,8 +231,9 @@ public final class XPathParser {
      * [6] QuantifiedExpr ::= (<"some" "$"> | <"every" "$">) VarName "in" ExprSingle ("," "$" VarName "in"
      * ExprSingle)* "satisfies" ExprSingle .
      * </p>
+     * @throws TTXPathException 
      */
-    private void parseQuantifiedExpr() {
+    private void parseQuantifiedExpr() throws TTXPathException {
 
         // identify quantifier type
         final boolean isSome = is("some", true);
@@ -263,8 +271,9 @@ public final class XPathParser {
      * <p>
      * [7] IfExpr ::= <"if" "("> Expr ")" "then" ExprSingle "else" ExprSingle.
      * </p>
+     * @throws TTXPathException 
      */
-    private void parseIfExpr() {
+    private void parseIfExpr() throws TTXPathException {
 
         // parse if expression
         consume("if", true);
@@ -291,8 +300,10 @@ public final class XPathParser {
      * <p>
      * [8] OrExpr ::= AndExpr ( "or" AndExpr )* .
      * </p>
+     * 
+     * @throws TTXPathException
      */
-    private void parseOrExpr() {
+    private void parseOrExpr() throws TTXPathException {
 
         parseAndExpr();
 
@@ -311,8 +322,9 @@ public final class XPathParser {
      * <p>
      * [9] AndExpr ::= ComparisonExpr ( "and" ComparisonExpr )* .
      * </p>
+     * @throws TTXPathException 
      */
-    private void parseAndExpr() {
+    private void parseAndExpr() throws TTXPathException {
 
         parseComparisionExpr();
 
@@ -332,8 +344,9 @@ public final class XPathParser {
      * <p>
      * [10] ComparisonExpr ::= RangeExpr ( (ValueComp | GeneralComp | NodeComp) RangeExpr )? .
      * </p>
+     * @throws TTXPathException 
      */
-    private void parseComparisionExpr() {
+    private void parseComparisionExpr() throws TTXPathException {
 
         parseRangeExpr();
 
@@ -388,8 +401,10 @@ public final class XPathParser {
      * <p>
      * [11] RangeExpr ::= AdditiveExpr ( "to" AdditiveExpr )? .
      * </p>
+     * 
+     * @throws TTXPathException
      */
-    private void parseRangeExpr() {
+    private void parseRangeExpr() throws TTXPathException {
 
         parseAdditiveExpr();
         if (is("to", true)) {
@@ -408,8 +423,9 @@ public final class XPathParser {
      * <p>
      * [12] AdditiveExpr ::= MultiplicativeExpr(("+" | "-") MultiplicativeExpr)* .
      * </p>
+     * @throws TTXPathException 
      */
-    private void parseAdditiveExpr() {
+    private void parseAdditiveExpr() throws TTXPathException {
 
         parseMultiplicativeExpr();
 
@@ -439,8 +455,9 @@ public final class XPathParser {
      * <p>
      * [13] MultiplicativeExpr ::= UnionExpr ( ("*" | "div" | "idiv" | "mod") UnionExpr )* .
      * </p>
+     * @throws TTXPathException 
      */
-    private void parseMultiplicativeExpr() {
+    private void parseMultiplicativeExpr() throws TTXPathException {
 
         parseUnionExpr();
 
@@ -468,8 +485,9 @@ public final class XPathParser {
      * <p>
      * [14] UnionExpr ::= IntersectExceptExpr ( ("union" | "|") IntersectExceptExpr )* .
      * </p>
+     * @throws TTXPathException 
      */
-    private void parseUnionExpr() {
+    private void parseUnionExpr() throws TTXPathException {
 
         parseIntersectExceptExpr();
 
@@ -492,8 +510,9 @@ public final class XPathParser {
      * <p>
      * [15] IntersectExceptExpr ::= InstanceofExpr ( ("intersect" | * "except") InstanceofExpr )* .
      * </p>
+     * @throws TTXPathException 
      */
-    private void parseIntersectExceptExpr() {
+    private void parseIntersectExceptExpr() throws TTXPathException {
 
         parseInstanceOfExpr();
 
@@ -519,8 +538,9 @@ public final class XPathParser {
      * <p>
      * [16] InstanceofExpr ::= TreatExpr ( <"instance" "of"> SequenceType )?.
      * </p>
+     * @throws TTXPathException 
      */
-    private void parseInstanceOfExpr() {
+    private void parseInstanceOfExpr() throws TTXPathException {
 
         parseTreatExpr();
 
@@ -536,8 +556,10 @@ public final class XPathParser {
      * <p>
      * [17] TreatExpr ::= CastableExpr ( <"treat" "as"> SequenceType )? .
      * </p>
+     * 
+     * @throws TTXPathException
      */
-    private void parseTreatExpr() {
+    private void parseTreatExpr() throws TTXPathException {
 
         parseCastableExpr();
         if (is("treat", true)) {
@@ -552,8 +574,9 @@ public final class XPathParser {
      * <p>
      * [18] CastableExpr ::= CastExpr ( <"castable" "as"> SingleType )? .
      * </p>
+     * @throws TTXPathException 
      */
-    private void parseCastableExpr() {
+    private void parseCastableExpr() throws TTXPathException {
 
         parseCastExpr();
         if (is("castable", true)) {
@@ -569,8 +592,10 @@ public final class XPathParser {
      * <p>
      * [19] CastExpr ::= UnaryExpr ( <"cast" "as"> SingleType )? .
      * </p>
+     * 
+     * @throws TTXPathException
      */
-    private void parseCastExpr() {
+    private void parseCastExpr() throws TTXPathException {
 
         parseUnaryExpr();
         if (is("cast", true)) {
@@ -585,8 +610,10 @@ public final class XPathParser {
      * <p>
      * [20] UnaryExpr ::= ("-" | "+")* ValueExpr .
      * </p>
+     * 
+     * @throws TTXPathException
      */
-    private void parseUnaryExpr() {
+    private void parseUnaryExpr() throws TTXPathException {
 
         boolean isUnaryMinus = false;
 
@@ -621,8 +648,10 @@ public final class XPathParser {
      * <p>
      * [21] ValueExpr ::= PathExpr .
      * </p>
+     * 
+     * @throws TTXPathException
      */
-    private void parseValueExpr() {
+    private void parseValueExpr() throws TTXPathException {
 
         parsePathExpr();
     }
@@ -632,8 +661,10 @@ public final class XPathParser {
      * <p>
      * [25] PathExpr ::= ("/" RelativePathExpr?) | ("//" RelativePathExpr) | RelativePathExpr .
      * </p>
+     * 
+     * @throws TTXPathException
      */
-    private void parsePathExpr() {
+    private void parsePathExpr() throws TTXPathException {
 
         if (is(TokenType.SLASH, true)) {
             // path expression starts from the root
@@ -669,8 +700,10 @@ public final class XPathParser {
      * <p>
      * [26] RelativePathExpr ::= StepExpr (("/" | "//") StepExpr)* .
      * </p>
+     * 
+     * @throws TTXPathException
      */
-    private void parseRelativePathExpr() {
+    private void parseRelativePathExpr() throws TTXPathException {
 
         parseStepExpr();
 
@@ -694,8 +727,9 @@ public final class XPathParser {
      * <p>
      * [27] StepExpr ::= AxisStep | FilterExpr .
      * </p>
+     * @throws TTXPathException 
      */
-    private void parseStepExpr() {
+    private void parseStepExpr() throws TTXPathException {
 
         if (isFilterExpr()) {
             parseFilterExpr();
@@ -749,8 +783,9 @@ public final class XPathParser {
      * <p>
      * [28] AxisStep ::= (ForwardStep | ReverseStep) PredicateList .
      * </p>
+     * @throws TTXPathException 
      */
-    private void parseAxisStep() {
+    private void parseAxisStep() throws TTXPathException {
 
         if (isReverceStep()) {
             parseReverceStep();
@@ -1067,8 +1102,10 @@ public final class XPathParser {
      * <p>
      * [38] FilterExpr ::= PrimaryExpr PredicateList .
      * </p>
+     * 
+     * @throws TTXPathException
      */
-    private void parseFilterExpr() {
+    private void parseFilterExpr() throws TTXPathException {
 
         parsePrimaryExpr();
         parsePredicateList();
@@ -1080,8 +1117,9 @@ public final class XPathParser {
      * <p>
      * [39] PredicateList ::= Predicate* .
      * </p>
+     * @throws TTXPathException 
      */
-    private void parsePredicateList() {
+    private void parsePredicateList() throws TTXPathException {
 
         while (mToken.getType() == TokenType.OPEN_SQP) {
             parsePredicate();
@@ -1097,8 +1135,9 @@ public final class XPathParser {
      * The whole predicate expression is build as a separate expression chain and is then inserted to the main
      * expression chain by a predicate filter.
      * </p>
+     * @throws TTXPathException 
      */
-    private void parsePredicate() {
+    private void parsePredicate() throws TTXPathException {
 
         consume(TokenType.OPEN_SQP, true);
 
@@ -1117,8 +1156,9 @@ public final class XPathParser {
      * <p>
      * [41] PrimaryExpr ::= Literal | VarRef | ParenthesizedExpr | ContextItemExpr | FunctionCall .
      * </p>
+     * @throws TTXPathException 
      */
-    private void parsePrimaryExpr() {
+    private void parsePrimaryExpr() throws TTXPathException {
 
         if (isLiteral()) {
             parseLiteral();
@@ -1202,8 +1242,9 @@ public final class XPathParser {
      * <p>
      * [45] ParenthesizedExpr ::= "(" Expr? ")" .
      * </p>
+     * @throws TTXPathException 
      */
-    private void parseParenthesizedExpr() {
+    private void parseParenthesizedExpr() throws TTXPathException {
 
         consume(TokenType.OPEN_BR, true);
         if (!(mToken.getType() == TokenType.CLOSE_BR)) {
@@ -1233,8 +1274,9 @@ public final class XPathParser {
      * <p>
      * [47] FunctionCall ::= < QName "(" > (ExprSingle ("," ExprSingle)*)? ")" .
      * </p>
+     * @throws TTXPathException 
      */
-    private void parseFunctionCall() {
+    private void parseFunctionCall() throws TTXPathException {
 
         final String funcName = parseQName();
 
@@ -1264,8 +1306,9 @@ public final class XPathParser {
      * </p>
      * 
      * @return SingleType
+     * @throws TTXPathException
      */
-    private SingleType parseSingleType() {
+    private SingleType parseSingleType() throws TTXPathException {
 
         final String atomicType = parseAtomicType();
         final boolean intero = is(TokenType.INTERROGATION, true);

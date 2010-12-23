@@ -13,7 +13,7 @@ import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.service.xml.shredder.EShredderInsert;
 import com.treetank.service.xml.shredder.XMLShredder;
 
@@ -48,7 +48,7 @@ public class HashTest {
     }
 
     @Test
-    public void testPostorderInsertRemove() throws TreetankException {
+    public void testPostorderInsertRemove() throws TTException {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Postorder.name());
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -57,7 +57,7 @@ public class HashTest {
     }
 
     @Test
-    public void testPostorderDeep() throws TreetankException {
+    public void testPostorderDeep() throws TTException {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Postorder.name());
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -66,7 +66,7 @@ public class HashTest {
     }
 
     @Test
-    public void testPostorderSetter() throws TreetankException {
+    public void testPostorderSetter() throws TTException {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Postorder.name());
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -84,7 +84,7 @@ public class HashTest {
     }
 
     @Test
-    public void testRollingInsertRemove() throws TreetankException {
+    public void testRollingInsertRemove() throws TTException {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Rolling.name());
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -93,7 +93,7 @@ public class HashTest {
     }
 
     @Test
-    public void testRollingDeep() throws TreetankException {
+    public void testRollingDeep() throws TTException {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Rolling.name());
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -102,7 +102,7 @@ public class HashTest {
     }
 
     @Test
-    public void testRollingSetter() throws TreetankException {
+    public void testRollingSetter() throws TTException {
         TestHelper.setDB(TestHelper.PATHS.PATH1.getFile(), WriteTransaction.HashKind.Rolling.name());
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -126,9 +126,9 @@ public class HashTest {
      * </pre>
      * 
      * @param wtx
-     * @throws TreetankException
+     * @throws TTException
      */
-    private void testHashTreeWithInsertAndRemove(final IWriteTransaction wtx) throws TreetankException {
+    private void testHashTreeWithInsertAndRemove(final IWriteTransaction wtx) throws TTException {
 
         // inserting a element as root
         wtx.insertElementAsFirstChild(new QName(NAME1));
@@ -178,7 +178,7 @@ public class HashTest {
         assertEquals(firstRootHash, wtx.getNode().getHash());
     }
 
-    private void testNamespace(final ISession session) throws TreetankException, IOException,
+    private void testNamespace(final ISession session) throws TTException, IOException,
         XMLStreamException {
         final IWriteTransaction wtx = session.beginWriteTransaction();
         final XMLShredder shredder =
@@ -196,7 +196,7 @@ public class HashTest {
         assertFalse(firstHash == secondHash);
     }
 
-    private void testDeepTree(final IWriteTransaction wtx) throws TreetankException {
+    private void testDeepTree(final IWriteTransaction wtx) throws TTException {
 
         wtx.insertElementAsFirstChild(new QName(NAME1));
         final long oldHash = wtx.getNode().getHash();
@@ -217,7 +217,7 @@ public class HashTest {
         assertEquals(oldHash, wtx.getNode().getHash());
     }
 
-    private void testSetter(final IWriteTransaction wtx) throws TreetankException {
+    private void testSetter(final IWriteTransaction wtx) throws TTException {
 
         // Testing node inheritance
         wtx.insertElementAsFirstChild(new QName(NAME1));

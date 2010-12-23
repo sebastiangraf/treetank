@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import com.treetank.access.SessionConfiguration;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TTIOException;
 import com.treetank.io.IWriter;
 import com.treetank.page.AbstractPage;
 import com.treetank.page.PagePersistenter;
@@ -68,16 +68,16 @@ public final class FileWriter implements IWriter {
      *            the path to the storage
      * @param mConcreteStorage
      *            the Concrete Storage
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if FileWriter IO error
      */
     public FileWriter(final SessionConfiguration paramConf, final File mConcreteStorage)
-        throws TreetankIOException {
+        throws TTIOException {
         try {
             mFile = new RandomAccessFile(mConcreteStorage, IConstants.READ_WRITE);
         } catch (final FileNotFoundException fileExc) {
             LOGWRAPPER.error(fileExc);
-            throw new TreetankIOException(fileExc);
+            throw new TTIOException(fileExc);
         }
 
         mCompressor = new CryptoJavaImpl();
@@ -92,10 +92,10 @@ public final class FileWriter implements IWriter {
      * 
      * @param pageReference
      *            Page reference to write.
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             due to errors during writing.
      */
-    public void write(final PageReference pageReference) throws TreetankIOException {
+    public void write(final PageReference pageReference) throws TTIOException {
 
         // Serialise page.
         mBuffer.position(24);
@@ -107,7 +107,7 @@ public final class FileWriter implements IWriter {
         mBuffer.position(0);
         final int outputLength = mCompressor.crypt(inputLength, mBuffer);
         if (outputLength == 0) {
-            throw new TreetankIOException("Page crypt error.");
+            throw new TTIOException("Page crypt error.");
         }
 
         // Write page to file.
@@ -133,7 +133,7 @@ public final class FileWriter implements IWriter {
             pageReference.setChecksum(checksum);
         } catch (final IOException paramExc) {
             LOGWRAPPER.error(paramExc);
-            throw new TreetankIOException(paramExc);
+            throw new TTIOException(paramExc);
         }
 
     }
@@ -141,7 +141,7 @@ public final class FileWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    public void close() throws TreetankIOException {
+    public void close() throws TTIOException {
         try {
             if (mFile != null) {
                 reader.close();
@@ -149,7 +149,7 @@ public final class FileWriter implements IWriter {
             }
         } catch (final IOException e) {
             LOGWRAPPER.error(e);
-            throw new TreetankIOException(e);
+            throw new TTIOException(e);
         }
     }
 
@@ -171,7 +171,7 @@ public final class FileWriter implements IWriter {
     /**
      * {@inheritDoc}
      */
-    public void writeFirstReference(final PageReference pageReference) throws TreetankIOException {
+    public void writeFirstReference(final PageReference pageReference) throws TTIOException {
         final byte[] tmp = new byte[IConstants.CHECKSUM_SIZE];
         try {
 
@@ -190,21 +190,21 @@ public final class FileWriter implements IWriter {
             mFile.write(tmp);
         } catch (final IOException exc) {
             LOGWRAPPER.error(exc);
-            throw new TreetankIOException(exc);
+            throw new TTIOException(exc);
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public AbstractPage read(final PageReference pageReference) throws TreetankIOException {
+    public AbstractPage read(final PageReference pageReference) throws TTIOException {
         return reader.read(pageReference);
     }
 
     /**
      * {@inheritDoc}
      */
-    public PageReference readFirstReference() throws TreetankIOException {
+    public PageReference readFirstReference() throws TTIOException {
         return reader.readFirstReference();
     }
 

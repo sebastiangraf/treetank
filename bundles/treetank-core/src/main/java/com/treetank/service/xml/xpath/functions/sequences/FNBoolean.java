@@ -21,8 +21,8 @@ import java.util.List;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
-import com.treetank.service.xml.xpath.XPathError;
-import com.treetank.service.xml.xpath.XPathError.ErrorType;
+import com.treetank.exception.TTXPathException;
+import com.treetank.service.xml.xpath.EXPathError;
 import com.treetank.service.xml.xpath.functions.AbsFunction;
 import com.treetank.service.xml.xpath.types.Type;
 import com.treetank.utils.TypedValue;
@@ -53,18 +53,20 @@ public class FNBoolean extends AbsFunction {
      *            max number of allowed function arguments
      * @param returnType
      *            the type that the function's result will have
+     * @throws TTXPathException  if function check fails
      */
     public FNBoolean(final IReadTransaction rtx, final List<IAxis> args, final int min, final int max,
-        final int returnType) {
+        final int returnType) throws TTXPathException {
 
         super(rtx, args, min, max, returnType);
     }
 
     /**
      * {@inheritDoc}
+     * 
      */
     @Override
-    protected byte[] computeResult() {
+    protected byte[] computeResult() throws TTXPathException {
 
         final IAxis axis = getArgs().get(0);
         boolean value = false;
@@ -92,12 +94,12 @@ public class FNBoolean extends AbsFunction {
                     value = !(Double.isNaN(dValue) || dValue == 0.0d);
                 } else {
                     // for all other types throw error FORG0006
-                    throw new XPathError(ErrorType.FORG0006);
+                    throw EXPathError.FORG0006.getEncapsulatedException();
                 }
 
                 // if is not a singleton
                 if (axis.hasNext()) {
-                    throw new XPathError(ErrorType.FORG0006);
+                    throw EXPathError.FORG0006.getEncapsulatedException();
                 }
             }
 

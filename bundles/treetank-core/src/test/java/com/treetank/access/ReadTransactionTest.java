@@ -30,7 +30,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.node.AbsStructNode;
 import com.treetank.node.ENodes;
 import com.treetank.utils.DocumentCreater;
@@ -40,7 +40,7 @@ public class ReadTransactionTest {
     private IDatabase database;
 
     @Before
-    public void setUp() throws TreetankException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
         database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -52,13 +52,13 @@ public class ReadTransactionTest {
     }
 
     @After
-    public void tearDown() throws TreetankException {
+    public void tearDown() throws TTException {
         database.close();
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testDocumentRoot() throws TreetankException {
+    public void testDocumentRoot() throws TTException {
         final ISession session = database.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
 
@@ -73,7 +73,7 @@ public class ReadTransactionTest {
     }
 
     @Test
-    public void testConventions() throws TreetankException {
+    public void testConventions() throws TTException {
         final ISession session = database.getSession();
         final IReadTransaction rtx = session.beginReadTransaction();
 

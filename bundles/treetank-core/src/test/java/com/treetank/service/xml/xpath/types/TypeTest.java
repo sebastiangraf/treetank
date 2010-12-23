@@ -18,12 +18,16 @@
 
 package com.treetank.service.xml.xpath.types;
 
-import static org.junit.Assert.assertEquals;
+import com.treetank.exception.TTXPathException;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import com.treetank.service.xml.xpath.XPathError;
+import static org.hamcrest.CoreMatchers.is;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class TypeTest {
 
@@ -287,7 +291,7 @@ public class TypeTest {
 
     // set modifier of getPrimitiveBaseType to private
     @Test
-    public final void testgetPrimBT() {
+    public final void testgetPrimBT() throws TTXPathException {
 
         assertEquals(notation.getPrimitiveBaseType(), Type.NOTATION);
         assertEquals(integerT.getPrimitiveBaseType(), Type.DECIMAL);
@@ -333,22 +337,36 @@ public class TypeTest {
     }
 
     @Test
-    public final void testCastability() {
+    public final void testCastability() throws TTXPathException {
         assertEquals(true, string.isCastableTo(Type.INTEGER, "-1232138"));
         assertEquals(true, string.isCastableTo(Type.BOOLEAN, "1"));
 
     }
 
-    @Test(expected = XPathError.class)
-    public final void testCastException() {
-        assertEquals(false, string.isCastableTo(Type.INTEGER, "hallo welt!"));
-        assertEquals(false, string.isCastableTo(Type.BOOLEAN, "13"));
-
-        assertEquals(true, string.isCastableTo(Type.NOTATION, "\""));
-
+    @Test
+    public final void testCastException() throws TTXPathException {
+        try {
+            string.isCastableTo(Type.INTEGER, "hallo welt!");
+            fail();
+        } catch (final TTXPathException exc) {
+            assertThat(exc.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
+                + "typedoes not match a required type as specified by the matching rules. "));
+        }
+        try {
+            string.isCastableTo(Type.BOOLEAN, "13");
+            fail();
+        } catch (final TTXPathException exc) {
+            assertThat(exc.getMessage(), is("err:XPTY0004 The type is not appropriate the expression or the "
+                + "typedoes not match a required type as specified by the matching rules. "));
+        }
+        try {
+            string.isCastableTo(Type.NOTATION, "\"");
+        } catch (final TTXPathException exc) {
+            assertThat(exc.getMessage(), is("err:XPST0080 Target type of a cast or castable expression "
+                + "must not be xs:NOTATION or xs:anyAtomicType. "));
+        }
         assertEquals(true, integerT.isCastableTo(Type.DOUBLE, "12345"));
         assertEquals(true, integerT.isCastableTo(Type.FLOAT, "-12345"));
-        // TODO: add more tests
     }
 
 }

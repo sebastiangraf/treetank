@@ -39,7 +39,7 @@ import com.treetank.access.Database;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.node.DocumentRootNode;
 import com.treetank.node.ENodes;
 import com.treetank.node.ElementNode;
@@ -116,7 +116,7 @@ public final class WikipediaImport implements IImport<StartElement> {
             final IDatabase db = Database.openDatabase(paramTTDir);
             mSession = db.getSession();
             mWTX = mSession.beginWriteTransaction();
-        } catch (final TreetankException e) {
+        } catch (final TTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         }
     }
@@ -262,7 +262,7 @@ public final class WikipediaImport implements IImport<StartElement> {
             mSession.close();
         } catch (final XMLStreamException e) {
             LOGWRAPPER.error(e.getMessage(), e);
-        } catch (final TreetankException e) {
+        } catch (final TTException e) {
             LOGWRAPPER.error(e.getMessage(), e);
         } catch (final IOException e) {
             LOGWRAPPER.error(e.getMessage(), e);
@@ -296,12 +296,12 @@ public final class WikipediaImport implements IImport<StartElement> {
      *            </dl>
      * @throws XMLStreamException
      *             In case of any XML parsing errors.
-     * @throws TreetankException
+     * @throws TTException
      *             In case of any Treetank errors.
      */
     private void parseStartTag(final XMLEvent paramEvent, final StartElement paramTimestamp,
         final StartElement paramPage, final StartElement paramRev, final StartElement paramID,
-        final char paramDateRange) throws XMLStreamException, TreetankException {
+        final char paramDateRange) throws XMLStreamException, TTException {
         XMLEvent event = paramEvent;
 
         if (checkStAXStartElement(event.asStartElement(), paramID)) {

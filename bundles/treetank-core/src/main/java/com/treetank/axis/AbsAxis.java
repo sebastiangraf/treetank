@@ -131,7 +131,7 @@ public abstract class AbsAxis implements IAxis {
      *         hasNext().
      */
     protected final long resetToStartKey() {
-        // No check beacause of IAxis Convention 4.
+        // No check because of IAxis Convention 4.
         mRTX.moveTo(mStartKey);
         mNext = false;
         return mStartKey;

@@ -20,8 +20,8 @@ import com.treetank.access.Session;
 import com.treetank.access.WriteTransaction;
 import com.treetank.access.WriteTransaction.HashKind;
 import com.treetank.api.IDatabase;
-import com.treetank.exception.TreetankException;
-import com.treetank.exception.TreetankUsageException;
+import com.treetank.exception.TTException;
+import com.treetank.exception.TTUsageException;
 import com.treetank.io.AbsIOFactory.StorageType;
 import com.treetank.node.AttributeNode;
 import com.treetank.node.DeletedNode;
@@ -84,14 +84,14 @@ public final class TestHelper {
                 Database.createDatabase(config);
             }
             return Database.openDatabase(file);
-        } catch (final TreetankException exc) {
+        } catch (final TTException exc) {
             fail(exc.toString());
             return null;
         }
     }
 
     @Ignore
-    public static final void setDB(final File file, final String hashKind) throws TreetankUsageException {
+    public static final void setDB(final File file, final String hashKind) throws TTUsageException {
 
         final Properties props = new Properties();
         props.put(EDatabaseSetting.HASHKIND_TYPE.name(), hashKind);
@@ -101,7 +101,7 @@ public final class TestHelper {
 
     @Ignore
     public static final void setDB(final StorageType storageKind, final ERevisioning revisionKind,
-        final int revisions, final File file, final HashKind hashKind) throws TreetankUsageException {
+        final int revisions, final File file, final HashKind hashKind) throws TTUsageException {
 
         final Properties props = new Properties();
         props.put(EDatabaseSetting.STORAGE_TYPE.name(), storageKind);
@@ -130,7 +130,7 @@ public final class TestHelper {
         try {
             Database.forceCloseDatabase(PATHS.PATH1.getFile());
             Database.forceCloseDatabase(PATHS.PATH2.getFile());
-        } catch (final TreetankException exc) {
+        } catch (final TTException exc) {
             fail(exc.toString());
         }
     }

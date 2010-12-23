@@ -34,7 +34,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.XPathError;
 import com.treetank.service.xml.xpath.expr.LiteralExpr;
@@ -45,17 +45,17 @@ import com.treetank.utils.TypedValue;
 public class ModOpAxisTest {
 
     @Before
-    public void setUp() throws TreetankException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() throws TreetankException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
     }
 
     @Test
-    public final void testOperate() throws TreetankException {
+    public final void testOperate() throws TTException {
 
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -78,7 +78,7 @@ public class ModOpAxisTest {
     }
 
     @Test
-    public final void testGetReturnType() throws TreetankException {
+    public final void testGetReturnType() throws TTException {
 
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();

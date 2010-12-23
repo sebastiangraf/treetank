@@ -35,13 +35,13 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.utils.DocumentCreater;
 
 public class IAxisTest {
 
     @Before
-    public void setUp() throws TreetankException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
     }
 
@@ -82,7 +82,7 @@ public class IAxisTest {
     }
 
     @Test
-    public void testIAxisUserExample() throws TreetankException {
+    public void testIAxisUserExample() throws TTException {
 
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
@@ -104,7 +104,7 @@ public class IAxisTest {
     }
 
     @After
-    public void tearDown() throws TreetankException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
     }
 }

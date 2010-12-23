@@ -19,9 +19,9 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
-import com.treetank.exception.TreetankIOException;
-import com.treetank.exception.TreetankUsageException;
+import com.treetank.exception.TTException;
+import com.treetank.exception.TTIOException;
+import com.treetank.exception.TTUsageException;
 import com.treetank.service.xml.shredder.EShredderInsert;
 import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.service.xml.xpath.XPathAxis;
@@ -60,7 +60,7 @@ public class XPathTestQueries {
             session.close();
             db.close();
 
-        } catch (TreetankException e) {
+        } catch (TTException e) {
             e.printStackTrace();
         }
 

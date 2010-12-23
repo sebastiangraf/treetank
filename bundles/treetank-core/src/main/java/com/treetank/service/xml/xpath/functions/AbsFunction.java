@@ -21,9 +21,9 @@ import java.util.List;
 
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
+import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
-import com.treetank.service.xml.xpath.XPathError;
-import com.treetank.service.xml.xpath.XPathError.ErrorType;
+import com.treetank.service.xml.xpath.EXPathError;
 import com.treetank.service.xml.xpath.expr.AbsExpression;
 
 /**
@@ -91,9 +91,11 @@ public abstract class AbsFunction extends AbsExpression {
      *            max number of allowed function arguments
      * @param returnType
      *            the type that the function's result will have
+     * @throws TTXPathException
+     *             if the verify process is failing.
      */
     public AbsFunction(final IReadTransaction rtx, final List<IAxis> args, final int min, final int max,
-        final int returnType) {
+        final int returnType) throws TTXPathException {
 
         super(rtx);
         mArgs = args;
@@ -112,11 +114,13 @@ public abstract class AbsFunction extends AbsExpression {
      * 
      * @param mNumber
      *            number of given function arguments
+     * @throws TTXPathException
+     *             if function call fails.
      */
-    public final void varifyParam(final int mNumber) {
+    public final void varifyParam(final int mNumber) throws TTXPathException {
 
         if (mNumber < mMin || mNumber > mMax) {
-            throw new XPathError(ErrorType.XPST0017);
+            throw EXPathError.XPST0017.getEncapsulatedException();
         }
     }
 
@@ -138,7 +142,7 @@ public abstract class AbsFunction extends AbsExpression {
      * {@inheritDoc}
      */
     @Override
-    protected void evaluate() {
+    protected void evaluate() throws TTXPathException {
 
         // compute the function's result
         final byte[] value = computeResult();
@@ -155,11 +159,10 @@ public abstract class AbsFunction extends AbsExpression {
      * classes, otherwise an exception is thrown.
      * 
      * @return value of the result
+     * @throws TTXPathException
+     *             if anythin odd happens while execution
      */
-    protected byte[] computeResult() {
-
-        throw new IllegalStateException("This function is not supported yet.");
-    }
+    protected abstract byte[] computeResult() throws TTXPathException;
 
     /**
      * @return the list of function arguments

@@ -13,7 +13,7 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import com.treetank.service.xml.shredder.EShredderInsert;
 
@@ -47,7 +47,7 @@ public class WorkerHelperTest {
      * The test file that has to be saved on the server.
      */
     private final static File DBFILE = new File(RESTProps.STOREDBPATH + File.separatorChar + RESOURCENAME
-    + ".tnk");
+        + ".tnk");
 
     /**
      * The test file that has to be saved on the server.
@@ -61,7 +61,7 @@ public class WorkerHelperTest {
      * @throws FileNotFoundException
      */
     @Before
-    public void setUp() throws FileNotFoundException, TreetankException {
+    public void setUp() throws FileNotFoundException, TTException {
         workerHelper = WorkerHelper.getInstance();
         treeTank = new DatabaseRepresentation();
         treeTank.shred(INPUTFILE, RESOURCENAME);
@@ -103,7 +103,7 @@ public class WorkerHelperTest {
      * This method tests {@link WorkerHelper#serializeXML(IReadTransaction, OutputStream, boolean, boolean)}
      */
     @Test
-    public void testSerializeXML() throws TreetankException, IOException {
+    public void testSerializeXML() throws TTException, IOException {
         final IDatabase database = Database.openDatabase(DBFILE);
         final ISession session = database.getSession();
         final OutputStream out = new ByteArrayOutputStream();
@@ -118,7 +118,7 @@ public class WorkerHelperTest {
      * This method tests {@link WorkerHelper#shredInputStream(IWriteTransaction, InputStream, boolean)}
      */
     @Test
-    public void testShredInputStream() throws TreetankException, IOException {
+    public void testShredInputStream() throws TTException, IOException {
 
         long lastRevision = treeTank.getLastRevision(RESOURCENAME);
 
@@ -141,7 +141,7 @@ public class WorkerHelperTest {
      * This method tests {@link WorkerHelper#close(IWriteTransaction, IReadTransaction, ISession, IDatabase)}
      */
     @Test(expected = IllegalStateException.class)
-    public void testClose() throws TreetankException {
+    public void testClose() throws TTException {
         IDatabase database = Database.openDatabase(DBFILE);
         ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();

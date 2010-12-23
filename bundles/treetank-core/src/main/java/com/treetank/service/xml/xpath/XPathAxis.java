@@ -20,6 +20,7 @@ package com.treetank.service.xml.xpath;
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
+import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.parser.XPathParser;
 
 /**
@@ -86,8 +87,9 @@ public final class XPathAxis extends AbsAxis implements IAxis {
      *            Transaction to operate with.
      * @param mQuery
      *            XPath query to process.
+     * @throws TTXPathException
      */
-    public XPathAxis(final IReadTransaction rtx, final String mQuery) {
+    public XPathAxis(final IReadTransaction rtx, final String mQuery) throws TTXPathException {
 
         super(rtx);
 

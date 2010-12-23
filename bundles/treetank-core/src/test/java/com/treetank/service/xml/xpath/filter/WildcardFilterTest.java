@@ -33,24 +33,24 @@ import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.filter.IFilterTest;
 import com.treetank.axis.filter.WildcardFilter;
-import com.treetank.exception.TreetankException;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TTException;
+import com.treetank.exception.TTIOException;
 import com.treetank.utils.DocumentCreater;
 
 public class WildcardFilterTest {
 
     @Before
-    public void setUp() throws TreetankException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
     }
 
     @After
-    public void tearDown() throws TreetankException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
     }
 
     @Test
-    public void testIFilterConvetions() throws TreetankException {
+    public void testIFilterConvetions() throws TTException {
         try {
             // Build simple test tree.
             final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
@@ -84,7 +84,7 @@ public class WildcardFilterTest {
             wtx.close();
             session.close();
             database.close();
-        } catch (final TreetankIOException exc) {
+        } catch (final TTIOException exc) {
             fail(exc.toString());
         }
 

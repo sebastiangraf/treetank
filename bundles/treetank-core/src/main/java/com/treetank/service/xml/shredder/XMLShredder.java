@@ -41,9 +41,9 @@ import com.treetank.access.DatabaseConfiguration;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
-import com.treetank.exception.TreetankIOException;
-import com.treetank.exception.TreetankUsageException;
+import com.treetank.exception.TTException;
+import com.treetank.exception.TTIOException;
+import com.treetank.exception.TTUsageException;
 import com.treetank.node.ENodes;
 import com.treetank.settings.EFixed;
 import com.treetank.utils.FastStack;
@@ -91,12 +91,12 @@ public class XMLShredder implements Callable<Long> {
      * @param paramAddAsFirstChild
      *            if the insert is occuring on a node in an existing tree. <code>false</code> is not possible
      *            when wtx is on root node.
-     * @throws TreetankUsageException
+     * @throws TTUsageException
      *             if insertasfirstChild && updateOnly is both true OR if wtx is
      *             not pointing to doc-root and updateOnly= true
      */
     public XMLShredder(final IWriteTransaction paramWtx, final XMLEventReader paramReader,
-        final EShredderInsert paramAddAsFirstChild) throws TreetankUsageException {
+        final EShredderInsert paramAddAsFirstChild) throws TTUsageException {
         this(paramWtx, paramReader, paramAddAsFirstChild, EShredderCommit.COMMIT);
     }
 
@@ -113,13 +113,13 @@ public class XMLShredder implements Callable<Long> {
      *            when wtx is on root node
      * @param paramCommit
      *            determines if inserted nodes should be commited right afterwards
-     * @throws TreetankUsageException
+     * @throws TTUsageException
      *             if insertasfirstChild && updateOnly is both true OR if wtx is
      *             not pointing to doc-root and updateOnly= true
      */
     public XMLShredder(final IWriteTransaction paramWtx, final XMLEventReader paramReader,
         final EShredderInsert paramAddAsFirstChild, final EShredderCommit paramCommit)
-        throws TreetankUsageException {
+        throws TTUsageException {
         if (paramWtx == null || paramReader == null || paramAddAsFirstChild == null || paramCommit == null) {
             throw new IllegalArgumentException("None of the constructor parameters may be null!");
         }
@@ -132,12 +132,12 @@ public class XMLShredder implements Callable<Long> {
     /**
      * Invoking the shredder.
      * 
-     * @throws TreetankException
+     * @throws TTException
      *             if any kind of Treetank exception which has occured
      * @return revision of file
      */
     @Override
-    public Long call() throws TreetankException {
+    public Long call() throws TTException {
         final long revision = mWtx.getRevisionNumber();
         insertNewContent();
 
@@ -150,10 +150,10 @@ public class XMLShredder implements Callable<Long> {
     /**
      * Insert new content based on a StAX parser {@link XMLStreamReader}.
      * 
-     * @throws TreetankException
+     * @throws TTException
      *             if something went wrong while inserting
      */
-    protected final void insertNewContent() throws TreetankException {
+    protected final void insertNewContent() throws TTException {
         try {
             FastStack<Long> leftSiblingKeyStack = new FastStack<Long>();
 
@@ -201,7 +201,7 @@ public class XMLShredder implements Callable<Long> {
             }
         } catch (final XMLStreamException e) {
             LOGWRAPPER.error(e.getMessage(), e);
-            throw new TreetankIOException(e);
+            throw new TTIOException(e);
         }
     }
 
@@ -215,11 +215,11 @@ public class XMLShredder implements Callable<Long> {
      * @param paramEvent
      *            the current event from the StAX parser
      * @return the modified stack
-     * @throws TreetankException
+     * @throws TTException
      *             if adding {@link ElementNode} fails
      */
     protected final FastStack<Long> addNewElement(final FastStack<Long> paramLeftSiblingKeyStack,
-        final StartElement paramEvent) throws TreetankException {
+        final StartElement paramEvent) throws TTException {
         assert paramLeftSiblingKeyStack != null && paramEvent != null;
         long key;
 
@@ -227,7 +227,7 @@ public class XMLShredder implements Callable<Long> {
 
         if (mFirstChildAppend == EShredderInsert.ADDASRIGHTSIBLING) {
             if (mWtx.getNode().getKind() == ENodes.ROOT_KIND) {
-                throw new TreetankUsageException("Subtree can not be inserted as sibling of Root");
+                throw new TTUsageException("Subtree can not be inserted as sibling of Root");
             }
             key = mWtx.insertElementAsRightSibling(name);
             mFirstChildAppend = EShredderInsert.ADDASFIRSTCHILD;
@@ -269,11 +269,11 @@ public class XMLShredder implements Callable<Long> {
      * @param paramText
      *            the text string to add
      * @return the modified stack
-     * @throws TreetankException
+     * @throws TTException
      *             if adding text fails
      */
     protected final FastStack<Long> addNewText(final FastStack<Long> paramLeftSiblingKeyStack,
-        final String paramText) throws TreetankException {
+        final String paramText) throws TTException {
         assert paramLeftSiblingKeyStack != null;
         final String text = paramText;
         long key;

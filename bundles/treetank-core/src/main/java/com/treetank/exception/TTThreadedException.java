@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutionException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class TreetankThreadedException extends TreetankException {
+public final class TTThreadedException extends TTException {
 
     /** Generated ID. */
     private static final long serialVersionUID = -2891221683798924769L;
@@ -36,7 +36,7 @@ public final class TreetankThreadedException extends TreetankException {
      * @param mExc
      *            tp be stored
      */
-    public TreetankThreadedException(final InterruptedException mExc) {
+    public TTThreadedException(final InterruptedException mExc) {
         super(mExc);
     }
 
@@ -46,7 +46,7 @@ public final class TreetankThreadedException extends TreetankException {
      * @param message
      *            to be stored
      */
-    public TreetankThreadedException(final String... message) {
+    public TTThreadedException(final String... message) {
         super(message);
     }
 
@@ -56,7 +56,7 @@ public final class TreetankThreadedException extends TreetankException {
      * @param mExc
      *            to be stored
      */
-    public TreetankThreadedException(final ExecutionException mExc) {
+    public TTThreadedException(final ExecutionException mExc) {
         super(mExc);
     }
 

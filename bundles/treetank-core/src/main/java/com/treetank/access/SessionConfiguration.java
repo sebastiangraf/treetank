@@ -22,9 +22,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import com.treetank.exception.TreetankException;
-import com.treetank.exception.TreetankIOException;
-import com.treetank.exception.TreetankUsageException;
+import com.treetank.exception.TTException;
+import com.treetank.exception.TTIOException;
+import com.treetank.exception.TTUsageException;
 import com.treetank.settings.ESessionSetting;
 import com.treetank.utils.LogWrapper;
 
@@ -52,10 +52,10 @@ public final class SessionConfiguration {
     /**
      * Convenience constructor using the standard settings.
      * 
-     * @throws TreetankUsageException
+     * @throws TTUsageException
      *             if session is not valid
      */
-    public SessionConfiguration() throws TreetankUsageException {
+    public SessionConfiguration() throws TTUsageException {
         this(new Properties());
     }
 
@@ -65,10 +65,10 @@ public final class SessionConfiguration {
      * 
      * @param props
      *            to be specified
-     * @throws TreetankUsageException
+     * @throws TTUsageException
      *             if session could not be established
      */
-    public SessionConfiguration(final Properties props) throws TreetankUsageException {
+    public SessionConfiguration(final Properties props) throws TTUsageException {
         this.mProps = new Properties();
         for (final ESessionSetting enumProps : ESessionSetting.values()) {
             if (props.containsKey(enumProps.name())) {
@@ -86,16 +86,16 @@ public final class SessionConfiguration {
      * 
      * @param propFile
      *            to be specified
-     * @throws TreetankException
+     * @throws TTException
      *             if session could not be established
      */
-    public SessionConfiguration(final File propFile) throws TreetankException {
+    public SessionConfiguration(final File propFile) throws TTException {
         this(new Properties());
         try {
             getProps().load(new FileInputStream(propFile));
         } catch (final IOException exc) {
             LOGWRAPPER.error(exc);
-            throw new TreetankIOException(exc);
+            throw new TTIOException(exc);
         }
 
     }

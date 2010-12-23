@@ -20,6 +20,7 @@ package com.treetank.service.xml.xpath.operators;
 import com.treetank.api.IAxis;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
+import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.XPathError;
 import com.treetank.service.xml.xpath.XPathError.ErrorType;
@@ -61,7 +62,7 @@ public class IDivOpAxis extends AbsObAxis {
      * {@inheritDoc}
      */
     @Override
-    public IItem operate(final AtomicValue mOperand1, final AtomicValue mOperand2) {
+    public IItem operate(final AtomicValue mOperand1, final AtomicValue mOperand2) throws TTXPathException {
 
         final Type returnType = getReturnType(mOperand1.getTypeKey(), mOperand2.getTypeKey());
         final int typeKey = getTransaction().keyForName(returnType.getStringRepr());
@@ -85,7 +86,7 @@ public class IDivOpAxis extends AbsObAxis {
      * {@inheritDoc}
      */
     @Override
-    protected Type getReturnType(final int mOp1, final int mOp2) {
+    protected Type getReturnType(final int mOp1, final int mOp2) throws TTXPathException {
 
         Type type1;
         Type type2;

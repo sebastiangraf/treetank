@@ -13,7 +13,8 @@ import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
+import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.shredder.XMLShredder;
 
 /**
@@ -46,7 +47,7 @@ public final class XPathWriteTransactionTest {
     }
 
     @Test
-    public void test() {
+    public void test() throws TTXPathException {
         wtx.moveToDocumentRoot();
         // final XPathAxis xpa =
         // new XPathAxis(wtx, "//revision[./parent::page/title/text() = '"
@@ -60,7 +61,7 @@ public final class XPathWriteTransactionTest {
     }
 
     @After
-    public void tearDown() throws TreetankException {
+    public void tearDown() throws TTException {
         // wtx.abort();
         wtx.close();
         session.close();

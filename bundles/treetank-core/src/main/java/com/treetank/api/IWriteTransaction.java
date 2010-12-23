@@ -19,8 +19,8 @@ package com.treetank.api;
 
 import javax.xml.namespace.QName;
 
-import com.treetank.exception.TreetankException;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TTException;
+import com.treetank.exception.TTIOException;
 
 /**
  * <h1>IWriteTransaction</h1>
@@ -113,11 +113,11 @@ public interface IWriteTransaction extends IReadTransaction {
      * 
      * @param mQname
      *            Qualified name of inserted node.
-     * @throws TreetankException
+     * @throws TTException
      *             If can't insert Element as first child.
      * @return Key of inserted node. already has a first child.
      */
-    long insertElementAsFirstChild(final QName mQname) throws TreetankException;
+    long insertElementAsFirstChild(final QName mQname) throws TTException;
 
     /**
      * Insert new text node as first child of currently selected node. The
@@ -125,11 +125,11 @@ public interface IWriteTransaction extends IReadTransaction {
      * 
      * @param mValue
      *            Value of inserted node.
-     * @throws TreetankException
+     * @throws TTException
      *             If can't insert Text node as first child.
      * @return Key of inserted node. already has a first child.
      */
-    long insertTextAsFirstChild(final String mValue) throws TreetankException;
+    long insertTextAsFirstChild(final String mValue) throws TTException;
 
     /**
      * Insert new element node as right sibling of currently selected node. The
@@ -137,11 +137,11 @@ public interface IWriteTransaction extends IReadTransaction {
      * 
      * @param mQname
      *            name of the new node
-     * @throws TreetankException
+     * @throws TTException
      *             If can't insert Element node as right sibling.
      * @return Key of inserted node. already has a first child.
      */
-    long insertElementAsRightSibling(final QName mQname) throws TreetankException;
+    long insertElementAsRightSibling(final QName mQname) throws TTException;
 
     /**
      * Insert new text node as right sibling of currently selected node. The
@@ -149,12 +149,12 @@ public interface IWriteTransaction extends IReadTransaction {
      * 
      * @param mValue
      *            Value of inserted node.
-     * @throws TreetankException
+     * @throws TTException
      *             If can't insert Text node as right sibling.
      * @return Key of inserted node. the root node which is not allowed to have
      *         right siblings.
      */
-    long insertTextAsRightSibling(final String mValue) throws TreetankException;
+    long insertTextAsRightSibling(final String mValue) throws TTException;
 
     /**
      * Insert attribute in currently selected node. The cursor is moved to the
@@ -164,11 +164,11 @@ public interface IWriteTransaction extends IReadTransaction {
      *            qname
      * @param mValue
      *            Value of inserted node.
-     * @throws TreetankException
+     * @throws TTException
      *             If can't insert Attribute to node.
      * @return Key of inserted node.
      */
-    long insertAttribute(final QName mQname, final String mValue) throws TreetankException;
+    long insertAttribute(final QName mQname, final String mValue) throws TTException;
 
     /**
      * Insert namespace declaration in currently selected node. The cursor is
@@ -178,11 +178,11 @@ public interface IWriteTransaction extends IReadTransaction {
      *            URI of inserted node.
      * @param mName
      *            Prefix of inserted node.
-     * @throws TreetankException
+     * @throws TTException
      *             If can't insert Namespace to node.
      * @return Key of inserted node.
      */
-    long insertNamespace(final String mUri, final String mName) throws TreetankException;
+    long insertNamespace(final String mUri, final String mName) throws TTException;
 
     /**
      * Remove currently selected node. This does automatically remove
@@ -192,10 +192,10 @@ public interface IWriteTransaction extends IReadTransaction {
      * sibling, it is located at the former left sibling. If there was no left
      * sibling, it is located at the former parent.
      * 
-     * @throws TreetankException
+     * @throws TTException
      *             If can't remove node.
      */
-    void remove() throws TreetankException;
+    void remove() throws TTException;
 
     // --- Node Setters
     // -----------------------------------------------------------
@@ -205,20 +205,20 @@ public interface IWriteTransaction extends IReadTransaction {
      * 
      * @param mName
      *            New qualified name of node.
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             If can't set Name in node.
      */
-    void setName(final String mName) throws TreetankIOException;
+    void setName(final String mName) throws TTIOException;
 
     /**
      * Set URI of node.
      * 
      * @param mUri
      *            New URI of node.
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             If can't set URI in node.
      */
-    void setURI(final String mUri) throws TreetankIOException;
+    void setURI(final String mUri) throws TTIOException;
 
     /**
      * Set value of node.
@@ -227,37 +227,37 @@ public interface IWriteTransaction extends IReadTransaction {
      *            Type of value.
      * @param mValue
      *            New value of node.
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             If can't set Value in node.
      */
-    void setValue(final int mValueType, final byte[] mValue) throws TreetankIOException;
+    void setValue(final int mValueType, final byte[] mValue) throws TTIOException;
 
     /**
      * Set value of node.
      * 
      * @param mValue
      *            New value of node.
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             If can't set Value in node.
      */
-    void setValue(final String mValue) throws TreetankIOException;
+    void setValue(final String mValue) throws TTIOException;
 
     /**
      * Commit all modifications of the exclusive write transaction. Even commit
      * if there are no modification at all.
      * 
-     * @throws TreetankException
+     * @throws TTException
      *             If can't commit this revision.
      */
-    void commit() throws TreetankException;
+    void commit() throws TTException;
 
     /**
      * Abort all modifications of the exclusive write transaction.
      * 
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             If can't abort modification.
      */
-    void abort() throws TreetankIOException;
+    void abort() throws TTIOException;
 
     /**
      * Reverting all changes to the revision defined. This command has to be
@@ -265,17 +265,17 @@ public interface IWriteTransaction extends IReadTransaction {
      * 
      * @param revision
      *            revert for the revision
-     * @throws TreetankException
+     * @throws TTException
      *             If can't revert to revision.
      */
-    void revertTo(final long revision) throws TreetankException;
+    void revertTo(final long revision) throws TTException;
 
     /**
      * Closing current WriteTransaction.
      * 
-     * @throws TreetankException
+     * @throws TTException
      *             If can't close Write Transaction.
      */
-    void close() throws TreetankException;
+    void close() throws TTException;
 
 }

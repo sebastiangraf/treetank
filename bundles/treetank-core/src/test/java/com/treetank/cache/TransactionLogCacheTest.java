@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import com.treetank.TestHelper;
 import com.treetank.access.DatabaseConfiguration;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.page.NodePage;
 import com.treetank.settings.EDatabaseSetting;
 
@@ -20,7 +20,7 @@ public class TransactionLogCacheTest {
     private ICache cache;
 
     @Before
-    public void setUp() throws TreetankException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
 
         cache = new TransactionLogCache(new DatabaseConfiguration(TestHelper.PATHS.PATH1.getFile()), 1);
@@ -50,7 +50,7 @@ public class TransactionLogCacheTest {
     }
 
     @After
-    public void tearDown() throws TreetankException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
     }
 }

@@ -22,7 +22,8 @@ import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
+import com.treetank.exception.TTXPathException;
 import com.treetank.utils.DocumentCreater;
 
 import org.junit.After;
@@ -70,9 +71,10 @@ public class FunctionsTest {
 
     /**
      * Test function boolean().
+     * @throws TTXPathException 
      */
     @Test
-    public final void testBoolean() {
+    public final void testBoolean() throws TTXPathException {
         final String query = "fn:boolean(0)";
         final String result = "false";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -82,9 +84,10 @@ public class FunctionsTest {
     
     /**
      * Test function boolean() for XPath 1.0.
+     * @throws TTXPathException 
      */
     @Test
-    public final void testBooleanXPath10() {
+    public final void testBooleanXPath10() throws TTXPathException {
         final String query = "boolean(1)";
         final String result = "true";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -94,9 +97,10 @@ public class FunctionsTest {
     
     /**
      * Test function count().
+     * @throws TTXPathException 
      */
     @Test
-    public final void testCount() {
+    public final void testCount() throws TTXPathException {
         final String query = "fn:count(//p:a/b)";
         final String result = "2";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -106,9 +110,10 @@ public class FunctionsTest {
 
     /**
      * Test function count() for XPath 1.0.
+     * @throws TTXPathException 
      */
     @Test
-    public final void testCountXPath10() {
+    public final void testCountXPath10() throws TTXPathException {
         final String query = "count(//p:a/b)";
         final String result = "2";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -118,9 +123,10 @@ public class FunctionsTest {
 
     /**
      * Test function string().
+     * @throws TTXPathException 
      */
     @Test
-    public final void testString() {
+    public final void testString() throws TTXPathException {
         final String query = "fn:string(/p:a/b)";
         final String result = "foo bar";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -130,9 +136,10 @@ public class FunctionsTest {
 
     /**
      * Test function string() for XPath 1.0.
+     * @throws TTXPathException 
      */
     @Test
-    public final void testStringXPath10() {
+    public final void testStringXPath10() throws TTXPathException {
         final String query = "string(/p:a/b)";
         final String result = "foo bar";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -142,9 +149,10 @@ public class FunctionsTest {
 
     /**
      * Test comment.
+     * @throws TTXPathException 
      */
     @Test
-    public final void testComment() {
+    public final void testComment() throws TTXPathException {
         final String query = "2 (: this is a comment :)";
         final String result = "2";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -154,9 +162,10 @@ public class FunctionsTest {
 
     /**
      * Test function node().
+     * @throws TTXPathException 
      */
     @Test
-    public final void testNode() {
+    public final void testNode() throws TTXPathException {
         final String query = "p:a[./node()/node()]";
         final String result = "{ns}a";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -166,9 +175,10 @@ public class FunctionsTest {
 
     /**
      * Test function text().
+     * @throws TTXPathException 
      */
     @Test
-    public final void testText() {
+    public final void testText() throws TTXPathException {
         final String query = "p:a[./text()]";
         final String result = "{ns}a";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -178,9 +188,10 @@ public class FunctionsTest {
 
     /**
      * Test function not().
+     * @throws TTXPathException 
      */
     @Test
-    public final void testNot() {
+    public final void testNot() throws TTXPathException {
         final String query = "fn:not(//b)";
         final String result = "false";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -190,9 +201,10 @@ public class FunctionsTest {
 
     /**
      * Test function not() for XPath 1.0.
+     * @throws TTXPathException 
      */
     @Test
-    public final void testNotXPath10() {
+    public final void testNotXPath10() throws TTXPathException {
         final String query = "not(//b)";
         final String result = "false";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -202,9 +214,10 @@ public class FunctionsTest {
 
     /**
      * Test function sum().
+     * @throws TTXPathException 
      */
     @Test
-    public final void testSum() {
+    public final void testSum() throws TTXPathException {
         final String query = "fn:sum(5)";
         final String result = "1";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -214,9 +227,10 @@ public class FunctionsTest {
 
     /**
      * Test function sum() for XPath 1.0.
+     * @throws TTXPathException 
      */
     @Test
-    public final void testSumXPath10() {
+    public final void testSumXPath10() throws TTXPathException {
         final String query = "sum(5)";
         final String result = "1";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -226,10 +240,11 @@ public class FunctionsTest {
 
     /**
      * Test function position().
+     * @throws TTXPathException 
      */
     @Test
     @Ignore
-    public final void testPosition() {
+    public final void testPosition() throws TTXPathException {
         final String query = "//b[position()=2]";
         final String result = "{ns}b";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -239,10 +254,11 @@ public class FunctionsTest {
 
     /**
      * Test function id().
+     * @throws TTXPathException 
      */
     @Ignore
     @Test
-    public final void testId() {
+    public final void testId() throws TTXPathException {
         final String query = "//b/fn:id()";
         final String result = "";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -252,10 +268,11 @@ public class FunctionsTest {
 
     /**
      * Test function data().
+     * @throws TTXPathException 
      */
     @Ignore
     @Test
-    public final void testData() {
+    public final void testData() throws TTXPathException {
         final String query = "fn:data(//b)";
         final String result = "foo bar";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -265,10 +282,11 @@ public class FunctionsTest {
 
     /**
      * Test function contains().
+     * @throws TTXPathException 
      */
     @Ignore
     @Test
-    public final void testContains() {
+    public final void testContains() throws TTXPathException {
         final String query = "fn:contains(/p:a/b, \"\")";
         final String result = "true";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -278,10 +296,11 @@ public class FunctionsTest {
 
     /**
      * Test function exactly-one().
+     * @throws TTXPathException 
      */
     @Ignore
     @Test
-    public final void testExactlyOne() {
+    public final void testExactlyOne() throws TTXPathException {
         final String query = "fn:exactly-one(\"a\")";
         final String result = "a";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -291,10 +310,11 @@ public class FunctionsTest {
 
     /**
      * Test function zero-or-one().
+     * @throws TTXPathException 
      */
     @Ignore
     @Test
-    public final void testZeroOrOne() {
+    public final void testZeroOrOne() throws TTXPathException {
         final String query = "fn:zero-or-one(\"a\")";
         final String result = "a";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -304,10 +324,11 @@ public class FunctionsTest {
 
     /**
      * Test function max().
+     * @throws TTXPathException 
      */
     @Ignore
     @Test
-    public final void testMax() {
+    public final void testMax() throws TTXPathException {
         final String query = "fn:max((2, 1, 5, 4, 3))";
         final String result = "5";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -317,10 +338,11 @@ public class FunctionsTest {
 
     /**
      * Test function min().
+     * @throws TTXPathException 
      */
     @Ignore
     @Test
-    public final void testMin() {
+    public final void testMin() throws TTXPathException {
         final String query = "fn:min((2, 1, 5, 4, 3))";
         final String result = "1";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -330,10 +352,11 @@ public class FunctionsTest {
 
     /**
      * Test function empty().
+     * @throws TTXPathException 
      */
     @Ignore
     @Test
-    public final void testEmpty() {
+    public final void testEmpty() throws TTXPathException {
         final String query = "fn:empty(/p:a)";
         final String result = "true";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -343,10 +366,11 @@ public class FunctionsTest {
 
     /**
      * Test function one-or-more().
+     * @throws TTXPathException 
      */
     @Ignore
     @Test
-    public final void testOneOrMore() {
+    public final void testOneOrMore() throws TTXPathException {
         final String query = "fn:one-or-more(//b/c)";
         final String result = "<c xmlns:p=\"ns\"/><c xmlns:p=\"ns\"/>";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -356,10 +380,11 @@ public class FunctionsTest {
 
     /**
      * Test function exists().
+     * @throws TTXPathException 
      */
     @Ignore
     @Test
-    public final void testExists() {
+    public final void testExists() throws TTXPathException {
         final String query = "fn:exists(('a', 'b', 'c'))";
         final String result = "true";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -369,10 +394,11 @@ public class FunctionsTest {
 
     /**
      * Test function substring-after().
+     * @throws TTXPathException 
      */
     @Ignore
     @Test
-    public final void testSubstringAfter() {
+    public final void testSubstringAfter() throws TTXPathException {
         final String query = "fn:substring-after(\"query\", \"u\")";
         final String result = "ery";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -382,10 +408,11 @@ public class FunctionsTest {
 
     /**
      * Test function substring-before().
+     * @throws TTXPathException 
      */
     @Ignore
     @Test
-    public final void testSubstringBefore() {
+    public final void testSubstringBefore() throws TTXPathException {
         final String query = "fn:substring-before(\"query\", \"r\")";
         final String result = "que";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -395,10 +422,11 @@ public class FunctionsTest {
 
     /**
      * Test function last().
+     * @throws TTXPathException 
      */
     @Ignore
     @Test
-    public final void testLast() {
+    public final void testLast() throws TTXPathException {
         final String query = "//b[last()]";
         final String result = "<b xmlns:p=\"ns\" p:x=\"y\"><c/>bar</b>";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -408,10 +436,11 @@ public class FunctionsTest {
 
     /**
      * Test function number().
+     * @throws TTXPathException 
      */
     @Ignore
     @Test
-    public final void testNumber() {
+    public final void testNumber() throws TTXPathException {
         final String query = "fn:number('29.99')";
         final String result = "29.99";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -421,10 +450,11 @@ public class FunctionsTest {
 
     /**
      * Test function distinct-values().
+     * @throws TTXPathException 
      */
     @Ignore
     @Test
-    public final void testDistinctValues() {
+    public final void testDistinctValues() throws TTXPathException {
         final String query = "fn:distinct-values(('a', 'a'))";
         final String result = "a";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -434,10 +464,11 @@ public class FunctionsTest {
 
     /**
      * Test function root().
+     * @throws TTXPathException 
      */
     @Ignore
     @Test
-    public final void testRoot() {
+    public final void testRoot() throws TTXPathException {
         final String query = "fn:root()//c";
         final String result = "<c xmlns:p=\"ns\"/><c xmlns:p=\"ns\"/>";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -447,10 +478,11 @@ public class FunctionsTest {
 
     /**
      * Test function floor().
+     * @throws TTXPathException 
      */
     @Ignore
     @Test
-    public final void testFloor() {
+    public final void testFloor() throws TTXPathException {
         final String query = "fn:floor(5.7)";
         final String result = "5";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -460,10 +492,12 @@ public class FunctionsTest {
 
     /**
      * Test <element attribute=""/> in return statement.
+     * 
+     * @throws TTXPathException
      */
     @Ignore
     @Test
-    public final void testElementAttributeInReturn() {
+    public final void testElementAttributeInReturn() throws TTXPathException {
         final String query = "for $x in //b/text() return <element attr=\"{$x}\"/>";
         final String result = "<element attr=\"foo\"/><element attr=\"bar\"/>";
         XPathStringChecker.testIAxisConventions(new XPathAxis(mRtx, query), new String[] {
@@ -479,7 +513,7 @@ public class FunctionsTest {
         try {
             mRtx.close();
             TestHelper.closeEverything();
-        } catch (final TreetankException mExe) {
+        } catch (final TTException mExe) {
             mExe.printStackTrace();
         }
 

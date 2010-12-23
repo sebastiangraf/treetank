@@ -17,10 +17,9 @@
 
 package com.treetank.axis.filter;
 
-import com.treetank.api.IFilter;
 import com.treetank.api.IReadTransaction;
+import com.treetank.service.xml.xpath.EXPathError;
 import com.treetank.service.xml.xpath.XPathError;
-import com.treetank.service.xml.xpath.XPathError.ErrorType;
 import com.treetank.service.xml.xpath.types.Type;
 
 /**
@@ -48,7 +47,7 @@ public class TypeFilter extends AbsFilter {
 
         // TODO: not really good solution
         if (Type.getType(this.mType) == null) {
-            throw new XPathError(ErrorType.XPST0051);
+            throw new XPathError(XPathError.ErrorType.XPST0051);
         }
     }
 

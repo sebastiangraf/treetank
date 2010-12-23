@@ -29,7 +29,7 @@ import com.sleepycat.je.DatabaseException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class TreetankIOException extends TreetankException {
+public final class TTIOException extends TTException {
 
     /**
      * serializable id.
@@ -42,7 +42,7 @@ public final class TreetankIOException extends TreetankException {
      * @param paramExc
      *            exception to be wrapped
      */
-    public TreetankIOException(final XMLStreamException paramExc) {
+    public TTIOException(final XMLStreamException paramExc) {
         super(paramExc);
     }
 
@@ -52,7 +52,7 @@ public final class TreetankIOException extends TreetankException {
      * @param paramExc
      *            exception to be wrapped
      */
-    public TreetankIOException(final IOException paramExc) {
+    public TTIOException(final IOException paramExc) {
         super(paramExc);
     }
 
@@ -62,7 +62,7 @@ public final class TreetankIOException extends TreetankException {
      * @param paramExc
      *            exception to be wrapped
      */
-    public TreetankIOException(final DatabaseException paramExc) {
+    public TTIOException(final DatabaseException paramExc) {
         super(paramExc);
     }
 
@@ -72,7 +72,7 @@ public final class TreetankIOException extends TreetankException {
      * @param message
      *            for the overlaying {@link IOException}
      */
-    public TreetankIOException(final String... message) {
+    public TTIOException(final String... message) {
         super(message);
     }
 

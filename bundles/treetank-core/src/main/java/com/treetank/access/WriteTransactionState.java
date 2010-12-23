@@ -22,8 +22,8 @@ import com.treetank.api.IItem;
 import com.treetank.cache.ICache;
 import com.treetank.cache.NodePageContainer;
 import com.treetank.cache.TransactionLogCache;
-import com.treetank.exception.TreetankException;
-import com.treetank.exception.TreetankIOException;
+import com.treetank.exception.TTException;
+import com.treetank.exception.TTIOException;
 import com.treetank.io.IWriter;
 import com.treetank.node.AbsNode;
 import com.treetank.node.AttributeNode;
@@ -89,13 +89,13 @@ public final class WriteTransactionState extends ReadTransactionState {
      *            Revision Represent
      * @param paramStoreRev
      *            Revision Store
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if IO Error
      */
     protected WriteTransactionState(final DatabaseConfiguration paramDatabaseConfig,
         final SessionState paramSessionState, final UberPage paramUberPage, final IWriter paramWriter,
         final long paramParamId, final long paramRepresentRev, final long paramStoreRev)
-        throws TreetankIOException {
+        throws TTIOException {
         super(paramDatabaseConfig, paramUberPage, paramRepresentRev, new ItemList(), paramWriter);
         mNewRoot = preparePreviousRevisionRootPage(paramRepresentRev, paramStoreRev);
         mSessionState = paramSessionState;
@@ -113,10 +113,10 @@ public final class WriteTransactionState extends ReadTransactionState {
      * @param mNodeKey
      *            key of the node to be modified
      * @return an {@link AbsNodeStruc} instance
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if IO Error
      */
-    protected AbsNode prepareNodeForModification(final long mNodeKey) throws TreetankIOException {
+    protected AbsNode prepareNodeForModification(final long mNodeKey) throws TTIOException {
         if (mNodePageCon != null) {
             throw new IllegalStateException();
         }
@@ -129,7 +129,7 @@ public final class WriteTransactionState extends ReadTransactionState {
         if (node == null) {
             final AbsNode oldNode = this.mNodePageCon.getComplete().getNode(nodePageOffset);
             if (oldNode == null) {
-                throw new TreetankIOException("Cannot retrieve node from cache");
+                throw new TTIOException("Cannot retrieve node from cache");
             }
             node = oldNode.clone();
             this.mNodePageCon.getModified().setNode(nodePageOffset, node);
@@ -163,10 +163,10 @@ public final class WriteTransactionState extends ReadTransactionState {
      * @param mNode
      *            node to add.
      * @return Unmodified node from parameter for convenience.
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if IO Error
      */
-    protected AbsNode createNode(final AbsNode mNode) throws TreetankIOException {
+    protected AbsNode createNode(final AbsNode mNode) throws TTIOException {
         // Allocate node key and increment node count.
         mNewRoot.incrementMaxNodeKey();
         // Prepare node nodePageReference (COW).
@@ -181,14 +181,14 @@ public final class WriteTransactionState extends ReadTransactionState {
         return mNode;
     }
 
-    protected ElementNode createElementNode(final ElementNode oldNode) throws TreetankIOException {
+    protected ElementNode createElementNode(final ElementNode oldNode) throws TTIOException {
         final ElementNode newNode =
             (ElementNode)createNode(ElementNode.createData(mNewRoot.getMaxNodeKey() + 1, oldNode));
         return newNode;
     }
 
     protected ElementNode createElementNode(final long parentKey, final long mLeftSibKey,
-        final long rightSibKey, final long hash, final QName mName) throws TreetankIOException {
+        final long rightSibKey, final long hash, final QName mName) throws TTIOException {
 
         final int nameKey = createNameKey(buildName(mName));
         final int namespaceKey = createNameKey(mName.getNamespaceURI());
@@ -199,23 +199,23 @@ public final class WriteTransactionState extends ReadTransactionState {
             namespaceKey, typeKey, hash));
     }
 
-    protected TextNode createTextNode(final TextNode mNode) throws TreetankIOException {
+    protected TextNode createTextNode(final TextNode mNode) throws TTIOException {
         return (TextNode)createNode(TextNode.createData(mNewRoot.getMaxNodeKey() + 1, mNode));
     }
 
     protected TextNode createTextNode(final long mParentKey, final long mLeftSibKey, final long rightSibKey,
-        final byte[] mValue) throws TreetankIOException {
+        final byte[] mValue) throws TTIOException {
         final int typeKey = createNameKey("xs:untyped");
         return (TextNode)createNode(TextNode.createData(mNewRoot.getMaxNodeKey() + 1, mParentKey,
             mLeftSibKey, rightSibKey, typeKey, mValue));
     }
 
-    protected AttributeNode createAttributeNode(final AttributeNode mNode) throws TreetankIOException {
+    protected AttributeNode createAttributeNode(final AttributeNode mNode) throws TTIOException {
         return (AttributeNode)createNode(AttributeNode.createData(mNewRoot.getMaxNodeKey() + 1, mNode));
     }
 
     protected AttributeNode createAttributeNode(final long parentKey, final QName mName, final byte[] mValue)
-        throws TreetankIOException {
+        throws TTIOException {
 
         final int nameKey = createNameKey(buildName(mName));
         final int namespaceKey = createNameKey(mName.getNamespaceURI());
@@ -224,12 +224,12 @@ public final class WriteTransactionState extends ReadTransactionState {
             nameKey, namespaceKey, typeKey, mValue));
     }
 
-    protected NamespaceNode createNamespaceNode(final NamespaceNode mNode) throws TreetankIOException {
+    protected NamespaceNode createNamespaceNode(final NamespaceNode mNode) throws TTIOException {
         return (NamespaceNode)createNode(NamespaceNode.createData(mNewRoot.getMaxNodeKey() + 1, mNode));
     }
 
     protected NamespaceNode createNamespaceNode(final long parentKey, final int mUriKey, final int prefixKey)
-        throws TreetankIOException {
+        throws TTIOException {
         return (NamespaceNode)createNode(NamespaceNode.createData(mNewRoot.getMaxNodeKey() + 1, parentKey,
             mUriKey, prefixKey));
     }
@@ -239,10 +239,10 @@ public final class WriteTransactionState extends ReadTransactionState {
      * 
      * @param mNode
      *            to be removed
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if the removal fails
      */
-    protected void removeNode(final AbsNode mNode) throws TreetankIOException {
+    protected void removeNode(final AbsNode mNode) throws TTIOException {
         final long nodePageKey = nodePageKey(mNode.getNodeKey());
         prepareNodePage(nodePageKey);
         final AbsNode delNode = DeletedNode.createData(mNode.getNodeKey(), mNode.getParentKey());
@@ -256,7 +256,7 @@ public final class WriteTransactionState extends ReadTransactionState {
      * {@inheritDoc}
      */
     @Override
-    protected IItem getNode(final long mNodeKey) throws TreetankIOException {
+    protected IItem getNode(final long mNodeKey) throws TTIOException {
 
         // Calculate page and node part for given nodeKey.
         final long nodePageKey = nodePageKey(mNodeKey);
@@ -304,10 +304,10 @@ public final class WriteTransactionState extends ReadTransactionState {
      * @param mName
      *            for which the key should be created.
      * @return an int, representing the namekey
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if something odd happens while storing the new key
      */
-    protected int createNameKey(final String mName) throws TreetankIOException {
+    protected int createNameKey(final String mName) throws TTIOException {
         final String string = (mName == null ? "" : mName);
         final int nameKey = NamePageHash.generateHashForString(string);
 
@@ -324,10 +324,10 @@ public final class WriteTransactionState extends ReadTransactionState {
      * 
      * @param reference
      *            to be commited
-     * @throws TreetankException
+     * @throws TTException
      *             if the write fails
      */
-    public void commit(final PageReference reference) throws TreetankException {
+    public void commit(final PageReference reference) throws TTException {
         AbstractPage page = null;
 
         // if reference is not null, get one from the persistent storage.
@@ -361,7 +361,7 @@ public final class WriteTransactionState extends ReadTransactionState {
         }
     }
 
-    protected UberPage commit() throws TreetankException {
+    protected UberPage commit() throws TTException {
 
         mSessionState.mCommitLock.lock();
 
@@ -443,17 +443,17 @@ public final class WriteTransactionState extends ReadTransactionState {
     /**
      * {@inheritDoc}
      * 
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             if something weird happened in the storage
      */
     @Override
-    protected void close() throws TreetankIOException {
+    protected void close() throws TTIOException {
         // super.close();
         mLog.clear();
         mPageWriter.close();
     }
 
-    protected IndirectPage prepareIndirectPage(final PageReference reference) throws TreetankIOException {
+    protected IndirectPage prepareIndirectPage(final PageReference reference) throws TTIOException {
 
         IndirectPage page = (IndirectPage)reference.getPage();
         if (!reference.isInstantiated()) {
@@ -472,7 +472,7 @@ public final class WriteTransactionState extends ReadTransactionState {
         return page;
     }
 
-    protected NodePageContainer prepareNodePage(final long mNodePageKey) throws TreetankIOException {
+    protected NodePageContainer prepareNodePage(final long mNodePageKey) throws TTIOException {
 
         // Last level points to node nodePageReference.
         NodePageContainer cont = mLog.get(mNodePageKey);
@@ -508,7 +508,7 @@ public final class WriteTransactionState extends ReadTransactionState {
     }
 
     private RevisionRootPage preparePreviousRevisionRootPage(final long mBaseRevision,
-        final long representRevision) throws TreetankIOException {
+        final long representRevision) throws TTIOException {
 
         if (getUberPage().isBootstrap()) {
             return super.loadRevRoot(mBaseRevision);
@@ -536,7 +536,7 @@ public final class WriteTransactionState extends ReadTransactionState {
     }
 
     protected PageReference prepareLeafOfTree(final PageReference mStartReference, final long mKey)
-        throws TreetankIOException {
+        throws TTIOException {
 
         // Initial state pointing to the indirect nodePageReference of level 0.
 
@@ -563,11 +563,11 @@ public final class WriteTransactionState extends ReadTransactionState {
      * @param mNodePageKey
      *            Key of node page.
      * @return Dereferenced page.
-     * @throws TreetankIOException
+     * @throws TTIOException
      *             If something happend in the node.
      */
     private NodePageContainer dereferenceNodePageForModification(final long mNodePageKey)
-        throws TreetankIOException {
+        throws TTIOException {
         final NodePage[] revs = getSnapshotPages(mNodePageKey);
         final ERevisioning revision =
             ERevisioning.valueOf(getDatabaseConfiguration().getProps().getProperty(

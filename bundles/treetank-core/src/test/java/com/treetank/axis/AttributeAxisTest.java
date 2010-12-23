@@ -31,19 +31,19 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IDatabase;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.utils.DocumentCreater;
 import com.treetank.utils.TypedValue;
 
 public class AttributeAxisTest {
 
     @Before
-    public void setUp() throws TreetankException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
     }
 
     @Test
-    public void testIterate() throws TreetankException {
+    public void testIterate() throws TTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -75,7 +75,7 @@ public class AttributeAxisTest {
     }
 
     @Test
-    public void testMultipleAttributes() throws TreetankException {
+    public void testMultipleAttributes() throws TTException {
         final IDatabase database = TestHelper.getDatabase(PATHS.PATH1.getFile());
         final ISession session = database.getSession();
         final IWriteTransaction wtx = session.beginWriteTransaction();
@@ -130,7 +130,7 @@ public class AttributeAxisTest {
     }
 
     @After
-    public void tearDown() throws TreetankException {
+    public void tearDown() throws TTException {
         TestHelper.closeEverything();
     }
 }

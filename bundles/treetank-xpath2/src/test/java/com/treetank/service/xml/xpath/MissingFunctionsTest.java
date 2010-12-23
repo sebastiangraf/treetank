@@ -23,10 +23,8 @@ import com.treetank.TestHelper.PATHS;
 import com.treetank.api.IDatabase;
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.service.xml.shredder.XMLShredder;
-import com.treetank.service.xml.xpath.XPathAxis;
-import com.treetank.service.xml.xpath.XPathStringChecker;
 
 import org.junit.After;
 import org.junit.Before;
@@ -156,7 +154,7 @@ public class MissingFunctionsTest {
     /**
      * Test function sum().
      */
-    
+
     @Ignore
     @Test
     public final void testSum() {
@@ -437,7 +435,7 @@ public class MissingFunctionsTest {
             mSession.close();
             mDatabase.close();
             TestHelper.closeEverything();
-        } catch (final TreetankException mExe) {
+        } catch (final TTException mExe) {
             mExe.printStackTrace();
         }
 

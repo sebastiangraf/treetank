@@ -33,7 +33,8 @@ import com.treetank.api.IReadTransaction;
 import com.treetank.api.ISession;
 import com.treetank.api.IWriteTransaction;
 import com.treetank.axis.DescendantAxis;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
+import com.treetank.exception.TTXPathException;
 import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.XPathError;
 import com.treetank.service.xml.xpath.expr.LiteralExpr;
@@ -53,7 +54,7 @@ public class NodeCompTest {
     private IReadTransaction rtx;
 
     @Before
-    public void setUp() throws TreetankException {
+    public void setUp() throws TTException {
         TestHelper.deleteEverything();
 
         // Build simple test tree.
@@ -71,7 +72,7 @@ public class NodeCompTest {
     }
 
     @After
-    public void tearDown() throws TreetankException {
+    public void tearDown() throws TTException {
         rtx.close();
         wtx.abort();
         wtx.close();
@@ -81,7 +82,7 @@ public class NodeCompTest {
     }
 
     @Test
-    public void testCompare() {
+    public void testCompare() throws TTXPathException {
 
         AtomicValue[] op1 = {
             new AtomicValue(2, Type.INTEGER)
@@ -138,7 +139,7 @@ public class NodeCompTest {
     }
 
     @Test
-    public void testGetType() {
+    public void testGetType() throws TTXPathException {
 
         assertEquals(Type.INTEGER, comparator.getType(123, 2435));
     }

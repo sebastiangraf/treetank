@@ -26,9 +26,11 @@ import javax.xml.namespace.QName;
 
 import com.treetank.api.IReadTransaction;
 import com.treetank.api.IWriteTransaction;
-import com.treetank.exception.TreetankException;
+import com.treetank.exception.TTException;
 import com.treetank.gui.ReadDB;
 import com.treetank.gui.view.sunburst.SunburstView.Embedded;
+
+import processing.core.PApplet;
 
 /**
  * Sunburst PopupMenu to insert and delete nodes.
@@ -65,14 +67,14 @@ final class SunburstPopupMenu extends JPopupMenu {
         for (EMenu menu : EMenu.values()) {
             // Create and add a menu item
             final JMenuItem item = new JMenuItem(menu.toString());
-            
+
             switch (menu) {
             case INSERT_ELEMENT_AS_FIRST_CHILD:
                 item.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(final ActionEvent paramEvent) {
                         // TODO Auto-generated method stub
-                        
+
                     }
                 });
                 break;
@@ -81,7 +83,7 @@ final class SunburstPopupMenu extends JPopupMenu {
                     @Override
                     public void actionPerformed(final ActionEvent paramEvent) {
                         // TODO Auto-generated method stub
-                        
+
                     }
                 });
                 break;
@@ -90,7 +92,7 @@ final class SunburstPopupMenu extends JPopupMenu {
                     @Override
                     public void actionPerformed(final ActionEvent paramEvent) {
                         // TODO Auto-generated method stub
-                        
+
                     }
                 });
                 break;
@@ -99,7 +101,7 @@ final class SunburstPopupMenu extends JPopupMenu {
                     @Override
                     public void actionPerformed(final ActionEvent paramEvent) {
                         // TODO Auto-generated method stub
-                        
+
                     }
                 });
                 break;
@@ -107,14 +109,14 @@ final class SunburstPopupMenu extends JPopupMenu {
                 item.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(final ActionEvent paramEvent) {
-                        delete();       
+                        delete();
                     }
                 });
                 break;
             default:
                 throw new AssertionError("Enum value not known!");
             }
-            
+
             add(item);
         }
     }
@@ -128,10 +130,10 @@ final class SunburstPopupMenu extends JPopupMenu {
     private void insertElementAsFirstChild(final QName paramName) {
         try {
             mWtx.insertElementAsFirstChild(paramName);
-        } catch (final TreetankException e) {
+        } catch (final TTException e) {
             JOptionPane.showMessageDialog(mParent, "Failed to insert node: " + e.getMessage());
         }
-        
+
         refresh();
     }
 
@@ -144,10 +146,10 @@ final class SunburstPopupMenu extends JPopupMenu {
     private void insertElementAsRightSibling(final QName paramName) {
         try {
             mWtx.insertElementAsRightSibling(paramName);
-        } catch (final TreetankException e) {
+        } catch (final TTException e) {
             JOptionPane.showMessageDialog(mParent, "Failed to insert node: " + e.getMessage());
         }
-        
+
         refresh();
     }
 
@@ -160,10 +162,10 @@ final class SunburstPopupMenu extends JPopupMenu {
     private void insertTextAsFirstChild(final String paramText) {
         try {
             mWtx.insertTextAsFirstChild(paramText);
-        } catch (final TreetankException e) {
+        } catch (final TTException e) {
             JOptionPane.showMessageDialog(mParent, "Failed to insert node: " + e.getMessage());
         }
-        
+
         refresh();
     }
 
@@ -176,10 +178,10 @@ final class SunburstPopupMenu extends JPopupMenu {
     private void insertTextAsRightSibling(final String paramText) {
         try {
             mWtx.insertTextAsRightSibling(paramText);
-        } catch (final TreetankException e) {
+        } catch (final TTException e) {
             JOptionPane.showMessageDialog(mParent, "Failed to insert node: " + e.getMessage());
         }
-        
+
         refresh();
     }
 
@@ -187,10 +189,10 @@ final class SunburstPopupMenu extends JPopupMenu {
     private void delete() {
         try {
             mWtx.remove();
-        } catch (final TreetankException e) {
+        } catch (final TTException e) {
             JOptionPane.showMessageDialog(mParent, "Failed to delete node: " + e.getMessage());
         }
-        
+
         refresh();
     }
 
@@ -204,7 +206,7 @@ final class SunburstPopupMenu extends JPopupMenu {
             final IReadTransaction rtx = mDb.getSession().beginReadTransaction();
             mDb = new ReadDB(mDb.getDatabase().getFile(), rtx.getRevisionNumber());
             rtx.close();
-        } catch (final TreetankException e) {
+        } catch (final TTException e) {
             JOptionPane.showMessageDialog(mParent, "Failed to commit change: " + e.getMessage());
         }
         mParent.refreshInit();
