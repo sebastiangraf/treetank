@@ -51,11 +51,11 @@ import com.treetank.service.xml.xpath.AtomicValue;
 import com.treetank.service.xml.xpath.PipelineBuilder;
 import com.treetank.service.xml.xpath.SequenceType;
 import com.treetank.service.xml.xpath.SingleType;
+import com.treetank.service.xml.xpath.XPathError;
+import com.treetank.service.xml.xpath.XPathError.ErrorType;
 import com.treetank.service.xml.xpath.filter.DocumentNodeAxis;
 import com.treetank.service.xml.xpath.filter.SchemaAttributeFilter;
 import com.treetank.service.xml.xpath.filter.SchemaElementFilter;
-import com.treetank.service.xml.xpath.functions.XPathError;
-import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
 import com.treetank.utils.TypedValue;
 
 /**

@@ -23,7 +23,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.treetank.service.xml.xpath.functions.XPathError;
+import com.treetank.service.xml.xpath.XPathError;
 
 public class TypeTest {
 

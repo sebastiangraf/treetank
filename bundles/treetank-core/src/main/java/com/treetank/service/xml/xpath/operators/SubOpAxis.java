@@ -21,8 +21,8 @@ import com.treetank.api.IAxis;
 import com.treetank.api.IItem;
 import com.treetank.api.IReadTransaction;
 import com.treetank.service.xml.xpath.AtomicValue;
-import com.treetank.service.xml.xpath.functions.XPathError;
-import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
+import com.treetank.service.xml.xpath.XPathError;
+import com.treetank.service.xml.xpath.XPathError.ErrorType;
 import com.treetank.service.xml.xpath.types.Type;
 import com.treetank.utils.TypedValue;
 

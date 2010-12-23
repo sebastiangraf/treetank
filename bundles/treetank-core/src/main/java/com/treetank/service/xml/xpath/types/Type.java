@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.treetank.service.xml.xpath.functions.XPathError;
-import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
+import com.treetank.service.xml.xpath.XPathError;
+import com.treetank.service.xml.xpath.XPathError.ErrorType;
 import com.treetank.utils.NamePageHash;
 
 /**

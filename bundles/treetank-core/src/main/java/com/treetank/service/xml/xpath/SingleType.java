@@ -17,8 +17,7 @@
 
 package com.treetank.service.xml.xpath;
 
-import com.treetank.service.xml.xpath.functions.XPathError;
-import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
+import com.treetank.service.xml.xpath.XPathError.ErrorType;
 import com.treetank.service.xml.xpath.types.Type;
 
 /**

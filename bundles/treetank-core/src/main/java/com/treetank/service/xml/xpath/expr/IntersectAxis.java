@@ -23,8 +23,8 @@ import java.util.Set;
 import com.treetank.api.IAxis;
 import com.treetank.api.IReadTransaction;
 import com.treetank.axis.AbsAxis;
-import com.treetank.service.xml.xpath.functions.XPathError;
-import com.treetank.service.xml.xpath.functions.XPathError.ErrorType;
+import com.treetank.service.xml.xpath.XPathError;
+import com.treetank.service.xml.xpath.XPathError.ErrorType;
 
 /**
  * <h1>IntersectAxis</h1>

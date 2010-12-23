@@ -39,7 +39,7 @@ import com.treetank.axis.filter.TypeFilter;
 import com.treetank.exception.TreetankException;
 import com.treetank.service.xml.shredder.XMLShredder;
 import com.treetank.service.xml.xpath.XPathAxis;
-import com.treetank.service.xml.xpath.functions.XPathError;
+import com.treetank.service.xml.xpath.XPathError;
 
 public class TypeFilterTest {
 

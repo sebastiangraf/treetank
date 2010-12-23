@@ -15,7 +15,7 @@
  * 
  */
 
-package com.treetank.service.xml.xpath.functions;
+package com.treetank.service.xml.xpath;
 
 /**
  * <h1>XPathError</h1>
@@ -40,6 +40,7 @@ package com.treetank.service.xml.xpath.functions;
  * <li>YY denotes the error category, using the following encoding: ST denotes a static error. DY denotes a
  * dynamic error. TY denotes a type error. nnnn is a unique numeric code.</li>
  */
+@Deprecated
 public class XPathError extends RuntimeException {
 
     /** . */
